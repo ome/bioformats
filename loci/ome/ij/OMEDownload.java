@@ -1,5 +1,3 @@
-// OMEDownload_.java
-
 import ij.*;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.*;
@@ -16,12 +14,11 @@ import org.openmicroscopy.is.*;
 
 
 /**
- * OMEUpload is the plugin for ImageJ 
- * that handles the interaction between
- * ImageJ and the Open Microscopy Environment.
+ * OMEDownload handles exporting images from
+ * the Open Microscopy Environment.
  * @author Philip Huettl pmhuettl@wisc.edu
  */
-public class OMEDownload_ implements PlugInFilter {
+public class OMEDownload{
   
   // -- Fields --
 
@@ -48,25 +45,11 @@ public class OMEDownload_ implements PlugInFilter {
   private boolean cancelPlugin;
  
   // -- Runnable API methods --
- /**ImageJ plugin method*/  
-  public int setup(String arg, ImagePlus imp) {
-    if (arg.equals("about"))
-      {showAbout(); return DONE;}
-      imageP=imp;
-      return NO_IMAGE_REQUIRED+NO_CHANGES+NO_UNDO;
-    }
-    void showAbout() {
-		IJ.showMessage("About OMEDownload_...",
-   			"This plug-in takes the image and uploads it into the\n" +
-			"OME database."
-		);
-	}//end of setup method
+ 
   
   /**The getInput method prompts and receives user input to determine
   the OME login fields and whether the stack is in the time or space domain*/
   private void getInput(boolean b, OMELoginPanel d){
-    
-
     String[] in=d.getInput(b);
     if (in==null) {
       cancelPlugin=true;
@@ -111,11 +94,10 @@ public class OMEDownload_ implements PlugInFilter {
   
   /**method that retrieves the Images from the database that match the 
   criteria given*/
-  public Image[] retrieveImages(DataFactory datafact, Criteria criteria){
-    if ( criteria==null || cancelPlugin) return null;
+  public static Image[] retrieveImages(DataFactory datafact, Criteria criteria){
+    if ( criteria==null) return null;
     List l=datafact.retrieveList(Image.class, criteria);
     if ( l.size()==0) {
-      cancelPlugin=true;
       return null;
     }
     Object[] ob=l.toArray();
@@ -217,12 +199,18 @@ public class OMEDownload_ implements PlugInFilter {
   }//end of retrieveExperimenters method
   
   /**adds all image fields to an image criteria*/
-  private void addImageFields(Criteria criteria){
+  public static void addImageFields(Criteria criteria){
     criteria.addWantedField("id");
 		criteria.addWantedField("name");
 		criteria.addWantedField("created");
     criteria.addWantedField("description");
     criteria.addWantedField("owner");
+    criteria.addWantedField("datasets");
+    criteria.addWantedField("all_features");
+    criteria.addWantedField("all_features", "name");
+    criteria.addWantedField("all_features", "tag");
+    criteria.addWantedField("all_features", "children");
+    criteria.addWantedField("all_features", "parent_feature");
     criteria.addWantedField("owner", "FirstName");
     criteria.addWantedField("owner", "LastName");
     criteria.addWantedField("owner", "id");
@@ -236,11 +224,61 @@ public class OMEDownload_ implements PlugInFilter {
     criteria.addWantedField("default_pixels","SizeZ");
     criteria.addWantedField("default_pixels","FileSHA1");
     criteria.addWantedField("default_pixels","ImageServerID");
+    
+//    criteria.addWantedField("default_pixels","Repository");
+//    criteria.addWantedField("default_pixels","Repository.ImageServerURL");
+    
 		FieldsSpecification repoFieldSpec = new FieldsSpecification();
     repoFieldSpec.addWantedField("Repository");
     repoFieldSpec.addWantedField("Repository", "ImageServerURL");
     criteria.addWantedFields("default_pixels", repoFieldSpec);
   }//end of addImageFields method
+  
+  public static final Criteria IMAGE_FIELDS = makeImageFields();
+  private static Criteria makeImageFields() {
+    Criteria criteria = new Criteria();
+    criteria.addWantedField("id");
+		criteria.addWantedField("name");
+		criteria.addWantedField("created");
+    criteria.addWantedField("description");
+    criteria.addWantedField("owner");
+    criteria.addWantedField("datasets");
+    criteria.addWantedField("all_features");
+    criteria.addWantedField("all_features", "name");
+    criteria.addWantedField("all_features", "tag");
+    criteria.addWantedField("all_features", "children");
+    criteria.addWantedField("all_features", "parent_feature");
+    criteria.addWantedField("owner", "FirstName");
+    criteria.addWantedField("owner", "LastName");
+    criteria.addWantedField("owner", "id");
+    criteria.addWantedField("default_pixels");
+    criteria.addWantedField("default_pixels", "id");
+    criteria.addWantedField("default_pixels", "PixelType");
+    criteria.addWantedField("default_pixels","SizeC");
+    criteria.addWantedField("default_pixels","SizeT");
+    criteria.addWantedField("default_pixels","SizeX");
+    criteria.addWantedField("default_pixels","SizeY");
+    criteria.addWantedField("default_pixels","SizeZ");
+    criteria.addWantedField("default_pixels","FileSHA1");
+    criteria.addWantedField("default_pixels","ImageServerID");
+    //
+    criteria.addWantedField("default_pixels","Repository");
+    criteria.addWantedField("default_pixels","Repository.ImageServerURL");
+//		FieldsSpecification repoFieldSpec = new FieldsSpecification();
+//    repoFieldSpec.addWantedField("Repository");
+//    repoFieldSpec.addWantedField("Repository", "ImageServerURL");
+//    criteria.addWantedFields("default_pixels", repoFieldSpec);
+    return criteria;
+  }//end of makeImageFields method
+  
+  /**populates the criteria for a certain attribute*/
+  public static Criteria makeAttributeFields(String[] attrName) {
+    Criteria criteria=new Criteria();
+    for (int i=0; i<attrName.length; i++){
+      criteria.addWantedField(attrName[i]);
+    }
+    return criteria;
+  }
   
   /**retrieves images using the object array that specifies
   String Project, String Owner, Integer ImageID, String ImageName, 
@@ -251,7 +289,6 @@ public class OMEDownload_ implements PlugInFilter {
     String owner=(String)ob[1];
     int imageID=((Integer)ob[2]).intValue();
     String imageName=(String)ob[3];
-    String imageType=(String)ob[4];
     //array to return
     Image[] images;
     //create criteria to add filters to
@@ -306,8 +343,17 @@ public class OMEDownload_ implements PlugInFilter {
     }
   }//end of retrieveImages(Object[] ob) method
   
+  /**Method that retrieves an image from its ID*/
+  public static Image getImagefromID(DataFactory datafactory, int imageID){
+    Criteria criteria=new Criteria();
+    addImageFields(criteria);
+    criteria.addFilter("id", new Integer(imageID));
+    Image[] imas=retrieveImages(datafactory, criteria);
+    return imas[0];
+  }//end of getImagefromID method
+  
   /**Method that puts an image from OME back into ImageJ*/
-  private void download(Image image, PixelsFactory pf){
+  private void download(Image image, PixelsFactory pf, OMESidePanel omesp, DataFactory df){
     if (cancelPlugin) {
       return;
     }
@@ -327,6 +373,7 @@ public class OMEDownload_ implements PlugInFilter {
     table.put("color256", new Integer(ImagePlus.COLOR_256));
     table.put("colorRGB", new Integer(ImagePlus.COLOR_RGB));
     table.put("uint32", new Integer(17));
+    table.put("int16", new Integer(ImagePlus.GRAY16));
     int type=((Integer)table.get(typeS)).intValue();
     if ( sizeC==3) {
       type=ImagePlus.COLOR_RGB;
@@ -434,6 +481,12 @@ public class OMEDownload_ implements PlugInFilter {
     }
     //Create the ImagePlus in ImageJ and display it
     ImagePlus iPlus=new ImagePlus(image.getName(), is);
+    
+    //retrieve metadata to possibly edit
+    Object[] metas=new Object[2];
+    metas[0]=new Integer(image.getID());
+    metas[1]=OMEMetaDataHandler.exportMeta(image, df);
+    omesp.hashInImage(iPlus.getID(), metas);
     iPlus.show();
   }//end of download method
   
@@ -455,9 +508,11 @@ public class OMEDownload_ implements PlugInFilter {
   }//end of getProjectImages method
   
   /**returns a list of images that the user chooses*/
-  private Image[] getDownPicks(Image[] ima, DataFactory df){
+  private Image[] getDownPicks(Image[] ima, DataFactory df, PixelsFactory pf){
     //table array
-    String[][] props=new String[ima.length][11];
+    Object[][] props=new Object[ima.length][4];
+    //details array
+    Object[][] details=new Object[ima.length][9];
     //build a hashtable of experimenters to display names
     String[][] expers=retrieveExperimenters(df);
     Hashtable hm=new Hashtable(expers.length);
@@ -466,23 +521,44 @@ public class OMEDownload_ implements PlugInFilter {
     }
     //assemble the table array
     for ( int i=0 ;i<props.length ;i++ ) {
-      props[i][0]=ima[i].getName();
-      props[i][1]=String.valueOf(ima[i].getID());
-      props[i][2]=(String)hm.get(new Integer(ima[i].getOwner().getID()));
+      props[i][1]=ima[i].getName();
+      props[i][2]=String.valueOf(ima[i].getID());
+      details[i][1]=(String)hm.get(new Integer(ima[i].getOwner().getID()));
       props[i][3]=ima[i].getCreated();
-      props[i][10]=ima[i].getDescription();
+      props[i][0]=new Boolean(false);
+      details[i][8]=ima[i].getDescription();
       Pixels p=ima[i].getDefaultPixels();
-      props[i][4]=p.getPixelType();
-      props[i][5]=p.getSizeC().toString();
-      props[i][6]=p.getSizeT().toString();
-      props[i][7]=p.getSizeX().toString();
-      props[i][8]=p.getSizeY().toString();
-      props[i][9]=p.getSizeZ().toString();
+      try {
+        details[i][0]=pf.getThumbnail(p);
+      }
+      
+      catch (NoClassDefFoundError e) {
+          details[i][0]=null;
+      }
+      catch (Throwable t) {
+        OMEDownPanel.error(IJ.getInstance(),
+        "An exception occured.\n"+t.toString(), 
+        "Error");
+        IJ.showStatus("Error Downloading thumbnails.");
+        t.printStackTrace();
+        details[i][0]=null;
+      }
+      
+      details[i][2]=p.getPixelType();
+      details[i][3]=p.getSizeC().toString();
+      details[i][4]=p.getSizeT().toString();
+      details[i][5]=p.getSizeX().toString();
+      details[i][6]=p.getSizeY().toString();
+      details[i][7]=p.getSizeZ().toString();
     }
-    String[] columns={"Name","ID","Owner","Date Created","Pixel Type",
-    "Size C","Size T","Size X","Size Y","Size Z","Description"};
+    String[] columns={"","Name","ID","Date Created"};
+    //The details array has the following contents
+    //"Thumbnail", "Owner", "Pixel Type", "Size C","Size T",
+    //"Size X","Size Y","Size Z","Description"
+
     //create the table
-    OMETablePanel tp=new OMETablePanel(IJ.getInstance(), props, columns);
+    OMETablePanel tp=new OMETablePanel(IJ.getInstance(), props, columns,
+    details);
     int[] results=tp.getInput();
     if ( results==null) {
       cancelPlugin=true;
@@ -491,7 +567,7 @@ public class OMEDownload_ implements PlugInFilter {
     Image[] returns=new Image[results.length];
     for ( int i=0;i<results.length ;i++ ) {
       for ( int j=0;j<props.length ;j++ ) {
-        if ( results[i]==Integer.parseInt(props[j][1])) {
+        if ( results[i]==Integer.parseInt((String)props[j][2])) {
           returns[i]=ima[j];
         }
       }
@@ -500,10 +576,11 @@ public class OMEDownload_ implements PlugInFilter {
   }//end of getDownPicks method
 
   /** Does the work for uploading data to OME. */
-  public void run(ImageProcessor ip) {
+  public void run(OMESidePanel osp) {
     IJ.showProgress(0);
     IJ.showStatus("OmeDownload: Logging in...");
     OMELoginPanel lp=new OMELoginPanel(IJ.getInstance());
+
     // This code has been adapted from Doug Creager's TestImport example
     try {
       // login to OME
@@ -556,8 +633,7 @@ public class OMEDownload_ implements PlugInFilter {
       IJ.showStatus("OmeDownload: Starting import...");
       im.startImport();
       IJ.showProgress(0.15);
-     
-
+  
       if ( cancelPlugin) {
         IJ.showProgress(1);
         IJ.showStatus("OmeDownload: Exited.");
@@ -588,7 +664,7 @@ public class OMEDownload_ implements PlugInFilter {
          "OME Download");
        }else {
          //pick from results
-         images=getDownPicks(images,df);
+         images=getDownPicks(images,df, pf);
        
          if ( cancelPlugin) {
           IJ.showProgress(1);
@@ -599,7 +675,7 @@ public class OMEDownload_ implements PlugInFilter {
       }
       //download into ImageJ
       for ( int i=0;i<images.length ;i++ ) {
-        download(images[i], pf);
+        download(images[i], pf, osp, df);
         if ( cancelPlugin) {
           IJ.showProgress(1);
           IJ.showStatus("OmeDownload: Exited.");

@@ -1,5 +1,3 @@
-// OMEUpload_.java
-
 import ij.*;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.*;
@@ -18,14 +16,15 @@ import org.openmicroscopy.ds.managers.*;
 import org.openmicroscopy.ds.st.*;
 import org.openmicroscopy.is.*;
 
+import loci.ome.xml.*;
+
 
 /**
- * OMEUpload is the plugin for ImageJ 
- * that handles the interaction between
- * ImageJ and the Open Microscopy Environment.
+ * OMEUpload handles importing images into
+ * the Open Microscopy Environment.
  * @author Philip Huettl pmhuettl@wisc.edu
  */
-public class OMEUpload_ implements PlugInFilter {
+public class OMEUpload{
   
   // -- Fields --
 
@@ -52,43 +51,8 @@ public class OMEUpload_ implements PlugInFilter {
   private boolean cancelPlugin;
  
   // -- Runnable API methods --
- 
-  /*This method sets up the plugin filter for use. The arg string has the same function
-  as in the run method of the PlugIn interface. You do not have to care for the
-  argument imp—this is handled by ImageJ and the currently active image is passed.
-  The setup method returns a flag word that represents the filters capabilities (i.e.
-  which types of images it can handle).
-  The following capability flags are defined in PlugInFilter:
-  static int DOES 16 The plugin filter handles 16 bit grayscale images.
-  static int DOES 32 The plugin filter handles 32 bit floating point grayscale images.
-  static int DOES 8C The plugin filter handles 8 bit color images.
-  static int DOES 8G The plugin filter handles 8 bit grayscale images.
-  static int DOES ALL The plugin filter handles all types of images.
-  static int DOES RGB The plugin filter handles RGB images.
-  static int DOES STACKS The plugin filter supports stacks, ImageJ will call it for each slice in a stack.
-  static int DONE If the setup method returns DONE the run method will not be called.
-  static int NO CHANGES The plugin filter does not change the pixel data.
-  static int NO IMAGE REQUIRED The plugin filter does not require an image to be open.
-  static int NO UNDO The plugin filter does not require undo.
-  static int ROI REQUIRED The plugin filter requires a region of interest (ROI).
-  Static int STACK REQUIRED The plugin filter requires a stack.
-  static int SUPPORTS MASKING Plugin filters always work on the bounding rectangle of the
-  ROI. If this flag is set and there is a non-rectangular ROI, ImageJ will restore the pixels
-  that are inside the bounding rectangle but outside the ROI.*/
-  public int setup(String arg, ImagePlus imp) {
-    if (arg.equals("about"))
-      {showAbout(); return DONE;}
-      imageP=imp;
-      return DOES_ALL+NO_CHANGES+NO_UNDO;
-    }
-    void showAbout() {
-		IJ.showMessage("About OMEUpload_...",
-   			"This plug-in takes the image and uploads it into the\n" +
-			"OME database."
-		);
-	}
-  
-  /*The getInput method prompts and receives user input to determine
+   
+  /**The getInput method prompts and receives user input to determine
   the OME login fields and whether the stack is in the time or space domain*/
   private void getInput(boolean b){
     IJ.showStatus("OmeUpload: Logging in...");
@@ -100,9 +64,9 @@ public class OMEUpload_ implements PlugInFilter {
     java.awt.Panel curt = new java.awt.Panel();
     java.awt.GridLayout grid=new java.awt.GridLayout(3,2);
     curt.setLayout(grid);
-    TextField passField = new TextField(8);
-    TextField servField= new TextField(8);
-    TextField useField= new TextField(8);
+    TextField passField = new TextField("",8);
+    TextField servField= new TextField("",8);
+    TextField useField= new TextField("",8);
     passField.setEchoChar('*');    
     curt.add(new java.awt.Label("Server:"), "1");
     curt.add(servField, "2");    
@@ -140,7 +104,10 @@ public class OMEUpload_ implements PlugInFilter {
 
 
   /** Does the work for uploading data to OME. */
-  public void run(ImageProcessor ip) {
+  public void run(ImagePlus ip, Object[] metadata) {
+    imageP=ip;
+//    System.out.println(ip.getOriginalFileInfo().fileName+
+//    " is white zero: "+ip.getOriginalFileInfo().whiteIsZero);
     IJ.showProgress(0);
 
     // This code has been adapted from Doug Creager's TestImport example
@@ -174,6 +141,9 @@ public class OMEUpload_ implements PlugInFilter {
         }
       }
 
+      
+      
+      
       // retrieve helper classes needed for importing
       IJ.showStatus("OmeUpload: Getting image information...");
       IJ.showProgress(.1);
@@ -193,6 +163,20 @@ public class OMEUpload_ implements PlugInFilter {
       fs.addWantedField("experimenter", "id");
       UserState userState = df.getUserState(fs);
       Experimenter user = userState.getExperimenter();
+      
+      
+      //getting the image to add the pixels to from OME
+      Image omeImage;
+      int omeID=((Integer)metadata[0]).intValue();
+      if ( omeID!=0) {
+        omeImage=OMEDownload.getImagefromID(df, omeID);
+        OMEMetaDataHandler.importMeta((OMEElement)metadata[1],
+          true, omeImage, df);
+      } else {
+        omeImage=null;
+        
+      }
+
 
       // start the import process
       IJ.showStatus("OmeUpload: Starting import...");
@@ -200,6 +184,9 @@ public class OMEUpload_ implements PlugInFilter {
       IJ.showProgress(0.15);
 
       // create a dataset to contain the images that create
+      //This code was taken out to reduce redundancy where
+      //you have datasets with only one image
+      /*
       IJ.showStatus("OmeUpload: Creating dataset...");
       Dataset importDataset = (Dataset) df.createNew(Dataset.class);
       List images = new ArrayList();
@@ -209,44 +196,76 @@ public class OMEUpload_ implements PlugInFilter {
       importDataset.setOwner(user);
       df.markForUpdate(importDataset);
       IJ.showProgress(0.17);
+      */
 
-      // create File objects for the files we want to upload
-      String ids="untitled";
-      try {
-         ids = imageP.getOriginalFileInfo().fileName;
+      //create a features to put metadata into
+/*
+      Feature quan=null;
+      if (metadata!=null) {
+        IJ.showStatus("OmeUpload: Creating image feature...");
+        quan = (Feature) df.createNew(Feature.class);
+        quan.setTag(((String)metadata[2]));
+        quan.setName("Quantity");
       }
-      catch (NullPointerException e) {}
-      File files = new File(ids);
-      long bytelen = files.length();
+      Feature qual=null;
+      if (metadata!=null) {
+        IJ.showStatus("OmeUpload: Creating image feature...");
+        qual = (Feature) df.createNew(Feature.class);
+        qual.setTag(((String)metadata[3]));
+        qual.setName("Quality");
+      }
+*/      
+
+      IJ.showProgress(0.17);
+      
+      
+      // create File objects for the files we want to upload
+//      String ids="untitled";
+//      try {
+//         ids = imageP.getOriginalFileInfo().fileName;
+//      }
+//      catch (NullPointerException e) {}
+//      File files = new File(ids);
+//      long bytelen = files.length();
       
       // locate a repository object to contain the original files and pixels
-      IJ.showStatus("OmeUpload: Finding repository...");
-      Repository rep = pf.findRepository(bytelen);
+//      IJ.showStatus("OmeUpload: Finding repository...");
+      Repository rep = pf.findRepository(0);
 
       // ask the ImportManager for a MEX for the original files
-      ModuleExecution of = im.getOriginalFilesMEX();
-      IJ.showProgress(0.19);
+//      ModuleExecution of = im.getOriginalFilesMEX();
+//      IJ.showProgress(0.19);
 
       // upload each original file into the repository, using the MEX
-      for (int i=0; i<files.length(); i++) {
-        IJ.showStatus("OmeUpload: Uploading file " + files.getName() + "...");
-        OriginalFile fileAttr = pf.uploadFile(rep, of, files);
-      }
+//      IJ.showStatus("OmeUpload: Uploading file " + files.getName() + "...");
+//      OriginalFile fileAttr = pf.uploadFile(rep, of, files);
             
       // once all of the files are uploaded, mark the MEX as completed
-      of.setStatus("FINISHED");
-      df.markForUpdate(of);
+//      of.setStatus("FINISHED");
+//      df.markForUpdate(of);
+//      System.out.println("module execution marked for update");
 
       // create a new Image object for the multidimensional image
       IJ.showStatus("OmeUpload: Creating image entry...");
-      Image image = (Image) df.createNew(Image.class);
-      image.setName(imageP.getTitle());
-      image.setOwner(user);
-      image.setInserted("now");
-      image.setCreated("now");
-      image.setDescription("This image was uploaded from ImageJ");
-      df.markForUpdate(image);
-      images.add(image);
+      Image image;
+      if ( omeImage!=null) {
+        image=omeImage;
+        df.markForUpdate(image);
+      }else{
+        image = (Image) df.createNew(Image.class);
+//        Criteria criteria=new Criteria();
+//        OMEDownload.addImageFields(criteria);
+//        image=(Image)df.load(Image.class, image.getID(), criteria);
+        image.setName(imageP.getTitle());
+        image.setOwner(user);
+        image.setInserted("now");
+        image.setCreated("now");
+        image.setDescription("This image was uploaded from ImageJ");
+//        OMEMetaDataHandler.importMeta((OMEElement)metadata[1], false, image, df);
+        df.markForUpdate(image);
+        //taken out as part of dataset redundancy
+        //images.add(image);
+      }
       IJ.showProgress(0.2);
 
       // extract image dimensions
@@ -301,7 +320,7 @@ public class OMEUpload_ implements PlugInFilter {
 
       // create a new pixels file on the image server to contain image pixels
       Pixels pix = pf.newPixels(rep, image, ii,
-        sizeX, sizeY, sizeZ, sizeC, sizeT, bytesPerPix, false, isFloat);
+        sizeX, sizeY, sizeZ, sizeC, sizeT, bytesPerPix, isFloat, isFloat);
 
       // extract image pixels from each plane
       byte [] r=new byte[sizeX*sizeY];
@@ -323,13 +342,13 @@ public class OMEUpload_ implements PlugInFilter {
               case ImagePlus.COLOR_RGB:
                 ((ColorProcessor)imageP.getStack().getProcessor(Math.max(z,t)+1)).getRGB(r, g, b);
                 switch (c) {
-                  case 0:
+                  case 2:
                     pixels=r;
                     break;
                   case 1:
                     pixels=g;
                     break;
-                  case 2:
+                  case 0:
                     pixels=b;
                     break;
                 }
@@ -361,6 +380,50 @@ public class OMEUpload_ implements PlugInFilter {
            }
               // upload the byte buffer
               pf.setPlane(pix, z, c, t, pixels, true);
+              
+              // This next piece of metadata is necessary for all
+              // images; otherwise, the standard OME viewers will not be
+              // able to display the image.  The PixelChannelComponent
+              // attribute represents one channel index in the pixels
+              // file; there should be at least one of these for each
+              // channel in the image.  The LogicalChannel attribute
+              // describes a logical channel, which might comprise more
+              // than one channel index in the pixels file.  (Usually it
+              // doesn't.)  The mutators listed below are the minimum
+              // necessary to fully represents the image's channels;
+              // there are others which might be populated if the
+              // metadata exists in the original file.  As with the
+              // Pixels attribute, the channel attributes should use the
+              // image import MEX received earlier from the
+              // ImportManager.
+              LogicalChannel logical = (LogicalChannel)
+              df.createNew("LogicalChannel");
+              logical.setImage(image);
+              logical.setModuleExecution(ii);
+              if (range==3) {
+                if ( c==2) {
+                  logical.setFluor("Red");
+                  logical.setPhotometricInterpretation("red");
+                }else if ( c==1) {
+                  logical.setFluor("Green");
+                  logical.setPhotometricInterpretation("green");
+                }else if ( c==0) {
+                  logical.setFluor("Blue");
+                  logical.setPhotometricInterpretation("blue");
+                }
+              }else{
+                logical.setFluor("Gray 00");
+                logical.setPhotometricInterpretation("monochrome");
+              }
+              df.markForUpdate(logical);
+              
+              PixelChannelComponent physical = (PixelChannelComponent)
+              df.createNew("PixelChannelComponent");
+              physical.setImage(image);
+              physical.setPixels(pix);
+              physical.setIndex(new Integer(c));
+              physical.setLogicalChannel(logical);
+              df.markForUpdate(physical);
           }
         }
       }
@@ -369,72 +432,67 @@ public class OMEUpload_ implements PlugInFilter {
       // close the pixels file on the image server
       IJ.showStatus("OmeUpload: Closing pixels file..");
       pf.finishPixels(pix);
+      System.out.println("finished pixels");
       IJ.showProgress(.55);
 
       // create a default thumbnail for the image
       IJ.showStatus("OmeUpload: Creating PGI thumbnail...");
-      pf.setThumbnail(pix, CompositingSettings.
-        createDefaultPGISettings(sizeZ, sizeC, sizeT));
+      pf.setThumbnail(pix, 
+        CompositingSettings.createDefaultPGISettings(sizeZ, sizeC, sizeT));
+      System.out.println("set thumbnail");
       IJ.showProgress(.6);
       
-      // This next piece of metadata is necessary for all
-      // images; otherwise, the standard OME viewers will not be
-      // able to display the image.  The PixelChannelComponent
-      // attribute represents one channel index in the pixels
-      // file; there should be at least one of these for each
-      // channel in the image.  The LogicalChannel attribute
-      // describes a logical channel, which might comprise more
-      // than one channel index in the pixels file.  (Usually it
-      // doesn't.)  The mutators listed below are the minimum
-      // necessary to fully represents the image's channels;
-      // there are others which might be populated if the
-      // metadata exists in the original file.  As with the
-      // Pixels attribute, the channel attributes should use the
-      // image import MEX received earlier from the
-      // ImportManager.
-      IJ.showStatus("OmeUpload: Assigning channel components...");
-      LogicalChannel logical = (LogicalChannel)
-        df.createNew("LogicalChannel");
-      logical.setImage(image);
-      logical.setModuleExecution(ii);
-      logical.setFluor("Gray 00");
-      logical.setPhotometricInterpretation("monochrome");
-      df.markForUpdate(logical);
-      IJ.showProgress(.7);
-
-      PixelChannelComponent physical = (PixelChannelComponent)
-        df.createNew("PixelChannelComponent");
-      physical.setImage(image);
-      physical.setPixels(pix);
-      physical.setIndex(new Integer(0));
-      physical.setLogicalChannel(logical);
-      df.markForUpdate(physical);
-      IJ.showProgress(.8);
-
       // mark image import MEX as having completed executing
       ii.setStatus("FINISHED");
       df.markForUpdate(ii);
+      System.out.println("mex marked for update");
       IJ.showProgress(.85);
 
       // commit all changes
       IJ.showStatus("OmeUpload: Committing changes...");
       df.updateMarked();
+      System.out.println("datafactory update marked");
       IJ.showProgress(.87);
 
       // set default pixels entry
       image.setDefaultPixels(pix);
+      System.out.println("before datafactory update");
       df.update(image);
+      System.out.println("datafactory updated");
 
       // add the image to the dataset
+      //part of dataset redundancy
+      /*
       IJ.showStatus("OmeUpload: Adding image to dataset...");
       dm.addImagesToDataset(importDataset, images);
       images.clear();
+      */
+/*      
+      //set the features image
+      if ( quan!=null || qual!=null) {
+        quan.setImage(image);
+        qual.setImage(image);
+        System.out.println("feature image set");
+        df.update(quan);
+        df.update(qual);
+      }
+*/      
+      //set the imageAnnotation image
+/*
+      if ( ia!=null) {
+        ia.setImage(image);
+        System.out.println("Image set");
+        df.update(ia);
+      }
+*/
+          
       IJ.showProgress(.9);
 
       // execute the import analysis chain
       IJ.showStatus("OmeUpload: Executing import chain...");
       AnalysisChain chain = cm.getImportChain();
-      aem.executeAnalysisChain(chain, importDataset);
+      //was taken out as part of dataset redundancy
+      //aem.executeAnalysisChain(chain, importDataset);
       IJ.showProgress(.95);
 
       // log out

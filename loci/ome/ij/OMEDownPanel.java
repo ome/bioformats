@@ -1,5 +1,3 @@
-// OMEDownPanel.java
-
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
@@ -98,15 +96,6 @@ public class OMEDownPanel implements ActionListener{
     lname.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
     paneL.add(lname);
     
-    JLabel ltype=new JLabel("Image Type:");
-    ltype.setBorder(bordCombo);
-    ltype.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
-    paneL.add(ltype);
-    String[] typeS={"All","8 bit", "16 bit", "32 bit", "RGB Color"};
-    ctype = new JComboBox(typeS);
-    ctype.setAlignmentX(JComponent.LEFT_ALIGNMENT);
-    paneR.add(ctype);
-    
     JButton search= new JButton("Search"), cancel=new JButton("Cancel"),
     resets=new JButton("Reset");
     resets.setActionCommand("reset");
@@ -130,7 +119,7 @@ public class OMEDownPanel implements ActionListener{
     dia.show();
     if ( cancelPlugin) return null;
     //checks and puts results into an array
-    Object[] results=new Object[5];
+    Object[] results=new Object[4];
     results[0]=cproj.getSelectedItem();
     results[1]=cowner.getSelectedItem();
     try {
@@ -153,18 +142,7 @@ public class OMEDownPanel implements ActionListener{
     catch (NullPointerException e) {
       results[3]="";
     }
-    int f=ctype.getSelectedIndex();
-    if (f==0 ) {
-      results[4]="";
-    }else if ( f==1) {
-      results[4]="uint8";
-    }else if ( f==2) {
-      results[4]="unint16";
-    }else if ( f==3) {
-      results[4]="float";
-    }else if ( f==4) {
-      results[4]="3";
-    }
+
     return results;
   }//end of search method
   
