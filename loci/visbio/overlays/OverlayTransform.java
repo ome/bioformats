@@ -277,7 +277,7 @@ public class OverlayTransform extends DataTransform
    *
    * @return null if the transform does not provide data of that dimensionality
    */
-  public Data getData(int[] pos, int dim) {
+  public Data getData(int[] pos, int dim, DataCache cache) {
     if (dim != 2) {
       System.err.println(name + ": invalid dimensionality (" + dim + ")");
       return null;

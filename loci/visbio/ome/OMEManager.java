@@ -248,7 +248,7 @@ public class OMEManager extends LogicManager implements Runnable {
             for (int i=1; i<cPos.length; i++) pos[cIndex[i]] = cPos[i];
 
             // load appropriate image plane from disk
-            FlatField ff = (FlatField) data.getData(pos, 2);
+            FlatField ff = (FlatField) data.getData(pos, 2, null);
             float[][] samples = ff.getFloats(false);
 
             // upload an image plane for each range component
