@@ -1,5 +1,57 @@
 <html><body><h2>Spectral mappings</h2>
 
-<p>Spectral mappings TODO
+<p>The spectral mapping transform allows you to compute a weighted average of a
+data object's range components. Actually, it lets you create different three
+weighted averages at the same time, into three output range components. By
+default, VisBio treats the first component as red, the second as green, and the
+third as blue. Thus, the spectral mapping converts a data object with many
+range components into one with exactly three (weighted averages).
+
+<p>To create a spectral mapping, first import your dataset as described in the
+<a href="import_data.html">Importing a dataset from disk</a> topic. Next,
+create a dimensional collapse based on the dataset as described in the
+<a href="collapse.html">Dimensional collapse</a> topic, along your "Channels"
+dimension. This step converts the spectral dimension into a set of distinct
+range components that the spectral mapping can use for its weighted average.
+Finally, select the collapsed data object from the list, then click the "Add
+&gt;" button and choose "Spectral mapping" from the popup menu.
+
+<p>Choose a name for the spectral mapping, and VisBio will create another data
+object, a child of the collapsed data object, that represents the spectrally
+mapped data. To alter the mapping's weights, select the mapped data object and
+click the "Edit" button. A window similar to this one will appear:
+
+<p><img src="spectral.png" alt="TODO: spectral mapping screenshot ">
+
+<p>Each range component can be assigned a weight between -1.0 and 1.0, which
+determines its contribution to the first, second and third range components of
+the mapped data object. By default, the mapping fully weights the first N/3
+channels toward the first component, the next N/3 toward the second component,
+and the last N/3 toward the third component. When you are finished altering the
+weight sliders, click the "Apply" button to lock in your changes. VisBio will
+recompute thumbnails as necessary for the new mapping parameters.
+
+<p>For example, say you have imported a 3D dataset with 17 spectral channels
+(with one range component indicating the intensity of that pixel for the given
+channel). Collapsing the Channel dimension results in a single-image data
+object with 17 range components. After creating a spectral mapping for that
+image, the final data object is a single image with 3 range components (which
+can be mapped to red, green and blue color components in a display), whose
+values can be controlled via the spectral weighting sliders.
+
+<br><h3>See also:</h3>
+
+<ul>
+  <li><a href="import_data.html">Importing a dataset from disk</a>
+    - to load a dataset into VisBio</li>
+  <li><a href="add_data.html">Add a data object</a>
+    - to create derivative data objects</li>
+  <li><a href="collapse.html">Dimensional collapse</a>
+    - to collapse a dimensional axis into distinct range components</li>
+  <li><a href="data_transforms.html">Data transforms</a>
+    - for an overview of data objects</li>
+  <li><a href="data_panel.html">Data panel</a>
+    - controls for managing data</li>
+</ul>
 
 <p>&nbsp;<p></body></html>

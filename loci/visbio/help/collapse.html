@@ -1,5 +1,49 @@
 <html><body><h2>Dimensional collapse transforms</h2>
 
-<p>Dimensional collapse transforms TODO
+<p>The dimensional collapse transform allows you to select a dimensional axis
+and converts it into a series of range components (see the
+<a href="colors.html">Colors dialog box</a> topic for an overview of range
+components). To do it, first import your dataset as described in the
+<a href="import_data.html">Importing a dataset from disk</a> topic. Select your
+data from the list, then click the "Add &gt;" button and choose "Dimensional
+collapse" from the popup menu.
+
+<p>Choose a name for the dimensional collapse, and VisBio will create another
+data object, a child of your original dataset, that represents the collapsed
+data. To alter which dimension is collapsed into range components, select the
+collapsed data object and click the "Edit" button. A window similar to this one
+will appear:
+
+<p><img src="collapse.png" alt="TODO: dimensional collapse screenshot ">
+
+<p>After choosing a dimensional axis to collapse from the pulldown menu, click
+the "Apply" button to lock in your changes. VisBio will recompute thumbnails as
+necessary for the new collapse parameters.
+
+<p>For example, say you have imported a 4D dataset with 85 time points and 33
+focal planes of color images (three range components: Red, Green and Blue). If
+you collapse the time dimension, the resultant data object will have 33 focal
+planes, with 255 (85 x 3) range components.
+
+<p>The dimensional collapse transform is most often used in conjunction with
+spectral mappings (see the <a href="spectral.html">Spectral mappings</a> topic
+for more information).
+
+<br><h3>See also:</h3>
+
+<ul>
+  <li><a href="import_data.html">Importing a dataset from disk</a>
+    - to load a dataset into VisBio</li>
+  <li><a href="add_data.html">Add a data object</a>
+    - to create derivative data objects</li>
+  <li><a href="spectral.html">Spectral mappings</a>
+    - to create a spectral mapping for a data object</li>
+  <li><a href="colors.html">Colors dialog box</a>
+    - to adjust a data object's coloration</li>
+  <li><a href="data_transforms.html">Data transforms</a>
+    - for an overview of data objects</li>
+  <li><a href="data_panel.html">Data panel</a>
+    - controls for managing data</li>
+</ul>
 
 <p>&nbsp;<p></body></html>
