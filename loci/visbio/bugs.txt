@@ -1,5 +1,12 @@
 Bugfixes and enhancements to address:
 
+  - Update online help to latest beta functionality; also include new topics:
+
+    Program options (Basic "File, Options" menu explanation)
+      - General (Window docking, Floating control windows)
+      - Warnings (Quitting VisBio also quits ImageJ)
+      - Debug (Pop up console windows, Dump output to console)
+
   - Arbitrary slice, volume rendering and high-resolution burn-in all load the
     high-resolution data separately. This is inefficient. Come up with a better
     way to share this data as efficiently as possible.
