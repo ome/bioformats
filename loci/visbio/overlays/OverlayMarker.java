@@ -100,6 +100,12 @@ public class OverlayMarker extends OverlayObject {
   }
 
 
+  // -- Object API methods --
+
+  /** Gets a short string representation of this measurement marker. */
+  public String toString() { return "Marker"; }
+
+
   // -- Helper methods --
 
   /** Computes parameters needed for selection grid computation. */

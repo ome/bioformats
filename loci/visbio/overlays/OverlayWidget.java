@@ -39,10 +39,17 @@ import javax.swing.*;
 
 import javax.swing.border.EtchedBorder;
 
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import loci.visbio.data.TransformEvent;
+
 import loci.visbio.util.*;
 
 /** OverlayWidget is a set of GUI controls for an overlay transform. */
-public class OverlayWidget extends JPanel implements ActionListener {
+public class OverlayWidget extends JPanel
+  implements ActionListener, ListSelectionListener
+{
 
   // -- Fields --
 
@@ -69,6 +76,9 @@ public class OverlayWidget extends JPanel implements ActionListener {
 
   /** List of overlays. */
   protected JList overlayList;
+
+  /** List model for overlay list. */
+  protected DefaultListModel overlayListModel;
 
   /** Button for removing selected overlays. */
   protected JButton remove;
@@ -141,7 +151,9 @@ public class OverlayWidget extends JPanel implements ActionListener {
       currentFont, chooseFont}, new boolean[] {false, true, false});
 
     // overlay list
-    overlayList = new JList();
+    overlayListModel = new DefaultListModel();
+    overlayList = new JList(overlayListModel);
+    overlayList.addListSelectionListener(this);
     JScrollPane overlayScroll = new JScrollPane(overlayList);
     SwingUtil.configureScrollPane(overlayScroll);
     overlayScroll.setPreferredSize(new Dimension(100, 0));
@@ -292,14 +304,46 @@ public class OverlayWidget extends JPanel implements ActionListener {
     return (String) groupList.getSelectedItem();
   }
 
-  /** Sets description for current overlay. */
-  public void setDescription(String text) {
+  /** Sets notes for current overlay. */
+  public void setNotes(String text) {
+    notes.setText(text);
+    // CTR TODO fire overlay parameter change event
+  }
+
+  /** Gets notes for current overlay. */
+  public String getNotes() { return notes.getText(); }
+
+  /** Sets statistics for current overlay. */
+  public void setStatistics(String text) {
     stats.setText(text);
     // CTR TODO fire overlay parameter change event
   }
 
-  /** Gets description for current overlay. */
-  public String getDescription() { return stats.getText(); }
+  /** Gets statistics for current overlay. */
+  public String getStatistics() { return stats.getText(); }
+
+  /** Updates items on overlay list based on current transform state. */
+  public void refreshListObjects() {
+    OverlayObject[] obj = overlay.getObjects();
+    overlayListModel.clear();
+    overlayListModel.ensureCapacity(obj.length);
+    for (int i=0; i<obj.length; i++) overlayListModel.addElement(obj[i]);
+  }
+
+  /** Updates overlay list's selection based on current transform state. */
+  public void refreshListSelection() {
+    OverlayObject[] obj = overlay.getObjects();
+    int sel = 0;
+    for (int i=0; i<obj.length; i++) {
+      if (obj[i].isSelected()) sel++;
+    }
+    int[] indices = new int[sel];
+    int c = 0;
+    for (int i=0; i<obj.length && c<sel; i++) {
+      if (obj[i].isSelected()) indices[c++] = i;
+    }
+    overlayList.setSelectedIndices(indices);
+  }
 
 
   // -- ActionListener API methods --
@@ -328,6 +372,25 @@ public class OverlayWidget extends JPanel implements ActionListener {
         JOptionPane.INFORMATION_MESSAGE, null, null, nextGroup);
       if (group != null) setActiveGroup(group);
     }
+  }
+
+
+  // -- ListSelectionListener API methods --
+
+  /** Handles list selection changes. */
+  public void valueChanged(ListSelectionEvent e) {
+    OverlayObject[] obj = overlay.getObjects();
+
+    // deselect all previously selected overlays
+    for (int i=0; i<obj.length; i++) obj[i].setSelected(false);
+
+    // select highlighted overlays
+    Object[] sel = overlayList.getSelectedValues();
+    for (int i=0; i<sel.length; i++) {
+      ((OverlayObject) sel[i]).setSelected(true);
+    }
+
+    overlay.notifyListeners(new TransformEvent(overlay));
   }
 
 }

@@ -107,6 +107,12 @@ public class OverlayLine extends OverlayObject {
   }
 
 
+  // -- Object API methods --
+
+  /** Gets a short string representation of this measurement line. */
+  public String toString() { return "Line"; }
+
+
   // -- Helper methods --
 
   /** Computes parameters needed for selection grid computation. */

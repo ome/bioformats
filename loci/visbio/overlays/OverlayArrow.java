@@ -145,6 +145,12 @@ public class OverlayArrow extends OverlayObject {
   }
 
 
+  // -- Object API methods --
+
+  /** Gets a short string representation of this overlay arrow. */
+  public String toString() { return "Arrow"; }
+
+
   // -- Helper methods --
 
   /** Computes parameters needed for selection grid computation. */

@@ -34,8 +34,7 @@ import loci.visbio.data.*;
 
 import loci.visbio.state.Dynamic;
 
-import loci.visbio.util.MathUtil;
-import loci.visbio.util.VisUtil;
+import loci.visbio.util.*;
 
 import loci.visbio.view.DisplayWindow;
 
@@ -84,6 +83,9 @@ public class OverlayTransform extends DataTransform
   /** List of overlays for each dimensional position. */
   protected Vector[] overlays;
 
+  /** Current dimensional position. */
+  protected int[] pos;
+
   /** MathType for Text mappings. */
   protected TextType textType;
 
@@ -115,24 +117,35 @@ public class OverlayTransform extends DataTransform
 
   // -- OverlayTransform API methods --
 
+  /** Adds an overlay object at the current dimensional position. */
+  public void addObject(OverlayObject obj) { addObject(obj, pos); }
+
   /** Adds an overlay object at the given dimensional position. */
   public void addObject(OverlayObject obj, int[] pos) {
     int ndx = MathUtil.positionToRaster(lengths, pos);
     if (ndx < 0 || ndx >= overlays.length) return;
     overlays[ndx].add(obj);
+    if (ObjectUtil.arraysEqual(pos, this.pos)) controls.refreshListObjects();
     notifyListeners(new TransformEvent(this));
   }
 
-  /** Removes an overlay object from the given dimensional position. */
+  /** Removes an overlay object at the current dimensional position. */
+  public void removeObject(OverlayObject obj) { removeObject(obj, pos); }
+
+  /** Removes an overlay object at the given dimensional position. */
   public void removeObject(OverlayObject obj, int[] pos) {
     int ndx = MathUtil.positionToRaster(lengths, pos);
     if (ndx < 0 || ndx >= overlays.length) return;
     overlays[ndx].remove(obj);
+    if (ObjectUtil.arraysEqual(pos, this.pos)) controls.refreshListObjects();
     notifyListeners(new TransformEvent(this));
   }
 
-  /** Removes all selected overlay objects. */
-  public void removeSelectedObjects() {
+  /** Removes selected overlay objects at the current dimensional position. */
+  public void removeSelectedObjects() { removeSelectedObjects(pos); }
+
+  /** Removes selected overlay objects at the given dimensional position. */
+  public void removeSelectedObjects(int[] pos) {
     boolean anyRemoved = false;
     for (int j=0; j<overlays.length; j++) {
       int i = 0;
@@ -145,8 +158,14 @@ public class OverlayTransform extends DataTransform
         else i++;
       }
     }
-    if (anyRemoved) notifyListeners(new TransformEvent(this));
+    if (anyRemoved) {
+      if (ObjectUtil.arraysEqual(pos, this.pos)) controls.refreshListObjects();
+      notifyListeners(new TransformEvent(this));
+    }
   }
+
+  /** Gets the overlay objects at the current dimensional position. */
+  public OverlayObject[] getObjects() { return getObjects(pos); }
 
   /** Gets the overlay objects at the given dimensional position. */
   public OverlayObject[] getObjects(int[] pos) {
@@ -156,6 +175,16 @@ public class OverlayTransform extends DataTransform
     overlays[ndx].copyInto(oo);
     return oo;
   }
+
+  /** Sets transform's current dimensional position. */
+  public void setPos(int[] pos) {
+    if (ObjectUtil.arraysEqual(this.pos, pos)) return;
+    this.pos = pos;
+    controls.refreshListObjects();
+  }
+
+  /** Gets transform's current dimensional position. */
+  public int[] getPos() { return pos; }
 
   /** Gets domain type (XY). */
   public RealTupleType getDomainType() {
@@ -355,31 +384,30 @@ public class OverlayTransform extends DataTransform
     int eventId = e.getId();
     OverlayTool tool = controls.getActiveTool();
     DisplayImpl display = (DisplayImpl) e.getDisplay();
-    if (eventId == DisplayEvent.MOUSE_PRESSED_LEFT) {
+
+    if (eventId == DisplayEvent.TRANSFORM_DONE) updatePosition(display);
+    else if (eventId == DisplayEvent.MOUSE_PRESSED_LEFT) {
       mouseDownLeft = true;
+      updatePosition(display);
       if (tool != null) {
         double[] coords = VisUtil.pixelToDomain(display, e.getX(), e.getY());
-        DisplayWindow window = DisplayWindow.getDisplayWindow(display);
-        int[] pos = window.getTransformHandler().getPos(this);
         tool.mouseDown((float) coords[0], (float) coords[1], pos,
           e.getInputEvent().getModifiers());
       }
     }
     else if (eventId == DisplayEvent.MOUSE_RELEASED_LEFT) {
       mouseDownLeft = false;
+      updatePosition(display);
       if (tool != null) {
         double[] coords = VisUtil.pixelToDomain(display, e.getX(), e.getY());
-        DisplayWindow window = DisplayWindow.getDisplayWindow(display);
-        int[] pos = window.getTransformHandler().getPos(this);
         tool.mouseUp((float) coords[0], (float) coords[1], pos,
           e.getInputEvent().getModifiers());
       }
     }
     else if (mouseDownLeft && eventId == DisplayEvent.MOUSE_DRAGGED) {
+      updatePosition(display);
       if (tool != null) {
         double[] coords = VisUtil.pixelToDomain(display, e.getX(), e.getY());
-        DisplayWindow window = DisplayWindow.getDisplayWindow(display);
-        int[] pos = window.getTransformHandler().getPos(this);
         tool.mouseDrag((float) coords[0], (float) coords[1], pos,
           e.getInputEvent().getModifiers());
       }
@@ -444,6 +472,7 @@ public class OverlayTransform extends DataTransform
     }
     for (int i=minLen; i<len; i++) v[i] = new Vector();
     overlays = v;
+    pos = new int[lengths.length];
 
     controls = new OverlayWidget(this);
   }
@@ -464,6 +493,18 @@ public class OverlayTransform extends DataTransform
       initState(null);
       notifyListeners(new TransformEvent(this));
     }
+  }
+
+
+  // -- Helper methods --
+
+  /**
+   * Updates the dimensional position based on
+   * the current state of the given display.
+   */
+  public void updatePosition(DisplayImpl display) {
+    DisplayWindow window = DisplayWindow.getDisplayWindow(display);
+    setPos(window.getTransformHandler().getPos(this));
   }
 
 }

@@ -46,11 +46,11 @@ public class PointerTool extends OverlayTool {
     boolean ctrl = (mods & InputEvent.CTRL_MASK) != 0;
 
     // pick nearest object
-    OverlayObject[] oo = overlay.getObjects(pos);
+    OverlayObject[] obj = overlay.getObjects(pos);
     double dist = Double.POSITIVE_INFINITY;
     int ndx = -1;
-    for (int i=0; i<oo.length; i++) {
-      double d = oo[i].getDistance(x, y);
+    for (int i=0; i<obj.length; i++) {
+      double d = obj[i].getDistance(x, y);
       if (d < dist) {
         dist = d;
         ndx = i;
@@ -59,15 +59,16 @@ public class PointerTool extends OverlayTool {
 
     if (!shift && !ctrl) {
       // deselect all previously selected objects
-      for (int i=0; i<oo.length; i++) oo[i].setSelected(false);
+      for (int i=0; i<obj.length; i++) obj[i].setSelected(false);
     }
 
     // select (or deselect) newly picked object
     double threshold = 0.02 * overlay.getScalingValue();
     if (dist < threshold) {
-      oo[ndx].setSelected(ctrl ? !oo[ndx].isSelected() : true);
+      obj[ndx].setSelected(ctrl ? !obj[ndx].isSelected() : true);
     }
 
+    ((OverlayWidget) overlay.getControls()).refreshListSelection();
     overlay.notifyListeners(new TransformEvent(overlay));
   }
 

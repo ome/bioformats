@@ -81,11 +81,11 @@ public class OverlayTool {
   // -- Utility methods --
 
   /** Configures the given overlay to match the current settings. */
-  protected void configureOverlay(OverlayObject oo) {
+  protected void configureOverlay(OverlayObject obj) {
     OverlayWidget panel = (OverlayWidget) overlay.getControls();
-    oo.setColor(panel.getActiveColor());
-    oo.setGroup(panel.getActiveGroup());
-    oo.setDescription(panel.getDescription());
+    obj.setColor(panel.getActiveColor());
+    obj.setGroup(panel.getActiveGroup());
+    obj.setNotes(panel.getNotes());
   }
 
 }

@@ -140,6 +140,12 @@ public class OverlayBox extends OverlayObject {
   }
 
 
+  // -- Object API methods --
+
+  /** Gets a short string representation of this overlay box. */
+  public String toString() { return "Box"; }
+
+
   // -- Helper methods --
 
   /** Computes parameters needed for selection grid computation. */

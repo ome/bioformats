@@ -102,6 +102,11 @@ public class OverlayText extends OverlayObject {
   public boolean isText() { return true; }
 
 
+  // -- Object API methods --
+
+  /** Gets a short string representation of this overlay text. */
+  public String toString() { return "Text"; }
+
 
   // -- Helper methods --
 

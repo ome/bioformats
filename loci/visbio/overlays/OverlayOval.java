@@ -187,6 +187,12 @@ public class OverlayOval extends OverlayObject {
   }
 
 
+  // -- Object API methods --
+
+  /** Gets a short string representation of this overlay oval. */
+  public String toString() { return "Oval"; }
+
+
   // -- Helper methods --
 
   /** Computes parameters needed for selection grid computation. */

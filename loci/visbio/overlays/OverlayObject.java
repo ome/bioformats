@@ -43,8 +43,8 @@ public abstract class OverlayObject {
   /** Group to which this overlay belongs. */
   protected String group;
 
-  /** Description of this overlay. */
-  protected String description;
+  /** Notes associated with this overlay. */
+  protected String notes;
 
   /** Flag indicating this overlay is currently selected. */
   protected boolean selected;
@@ -67,7 +67,7 @@ public abstract class OverlayObject {
 
   // -- Constructor --
 
-  /** Constructs a measurement line creation tool. */
+  /** Constructs an overlay. */
   public OverlayObject(OverlayTransform overlay) { this.overlay = overlay; }
 
 
@@ -76,10 +76,13 @@ public abstract class OverlayObject {
   /** Gets VisAD data object representing this overlay. */
   public abstract DataImpl getData();
 
-  /** Computes the shortest distance from this object to the given point. */
+  /** Computes the shortest distance from this overlay to the given point. */
   public abstract double getDistance(double x, double y);
 
-  /** True iff this overlay object returns text to render. */
+  /** Retrieves useful statistics about this overlay. */
+  public String getStatistics() { return ""; }
+
+  /** True iff this overlay returns text to render. */
   public boolean isText() { return false; }
 
   /**
@@ -186,11 +189,11 @@ public abstract class OverlayObject {
   /** Gets group to which this overlay belongs. */
   public String getGroup() { return group; }
 
-  /** Sets description of this overlay. */
-  public void setDescription(String text) { description = text; }
+  /** Sets notes for this overlay. */
+  public void setNotes(String text) { notes = text; }
 
-  /** Gets description of this overlay. */
-  public String getDescription() { return description; }
+  /** Gets notes for this overlay. */
+  public String getNotes() { return notes; }
 
   /** Sets whether this overlay is currently selected. */
   public void setSelected(boolean selected) { this.selected = selected; }
