@@ -1,3 +1,11 @@
+v3.00 beta3 - Not yet released
+
+- ADDED: System button for dumping system properties to output console
+
+- TWEAK: Dataset chooser displays progress bar while analyzing file pattern
+- TWEAK: Dataset chooser jumps to directory specified in file pattern field
+
+
 v3.00 beta2 - Wednesday, October 27, 2004
 
 - ADDED: Preliminary support for Zeiss LSM and ZVI file formats
