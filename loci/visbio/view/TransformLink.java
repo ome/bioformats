@@ -414,7 +414,7 @@ public class TransformLink
       setMessage("loading full-resolution data");
       if (!ObjectUtil.arraysEqual(pos, cachedPos)) {
         // for now, simply dump old full-resolution data
-        handler.getCache().dump(trans, cachedPos);
+        handler.getCache().dump(trans, cachedPos, null);
       }
       cachedPos = pos;
       Data d = dim == 3 ?

@@ -54,9 +54,6 @@ public class StackLink extends TransformLink {
   /** Data reference for volume rendered cube. */
   protected DataReferenceImpl volumeRef;
 
-  /** Collapsed volume at current dimensional position. */
-  protected FlatField collapse;
-
   /** Whether volume rendering is currently enabled. */
   protected boolean volume = false;
 
@@ -313,6 +310,7 @@ public class StackLink extends TransformLink {
     int len = references.size();
 
     // check whether dimensional position has changed
+    DataCache cache = handler.getCache();
     if (!thumbs) {
       if (cachedPos != null && cachedPos.length == pos.length) {
         for (int i=0; i<pos.length; i++) {
@@ -320,14 +318,19 @@ public class StackLink extends TransformLink {
             // for now, simply dump old full-resolution data
             for (int s=0; s<len; s++) {
               if (stackAxis >= 0) cachedPos[stackAxis] = s;
-              handler.getCache().dump(trans, cachedPos);
+              cache.dump(trans, cachedPos, null);
             }
+            // also dump old collapsed image stack
+            cache.dump(trans, cachedPos, "collapse");
             break;
           }
         }
       }
       cachedPos = pos;
     }
+
+    // retrieve collapsed image stack from data cache
+    FlatField collapse = (FlatField) cache.getData(trans, pos, "collapse", 3);
 
     // compute image data at each slice
     DisplayImpl display = handler.getWindow().getDisplay();
@@ -354,10 +357,9 @@ public class StackLink extends TransformLink {
         else setData(slices[s], sliceRef);
       }
     }
-    if (thumbs) {
-      setData(DUMMY, volumeRef, false);
-      collapse = null;
-    }
+    if (stackAxis >= 0) pos[stackAxis] = 0;
+
+    if (thumbs) setData(DUMMY, volumeRef, false);
     else {
       if (volume) {
         // render slices as a volume
@@ -368,13 +370,14 @@ public class StackLink extends TransformLink {
         FunctionType imageType = it.getType();
         try {
           if (collapse == null) {
-            // convert slices to proper type
+            // use image transform's recommended MathType
             for (int i=0; i<len; i++) {
               slices[i] = VisUtil.switchType((FlatField) slices[i], imageType);
             }
             // compile slices into a single volume and collapse
-            FieldImpl field = VisUtil.makeField(slices, zType, -1, 1);
-            collapse = VisUtil.collapse(field);
+            collapse = VisUtil.collapse(
+              VisUtil.makeField(slices, zType, -1, 1));
+            cache.putData(trans, pos, "collapse", collapse);
           }
           // resample volume
           setData(VisUtil.makeCube(collapse, volumeRes), volumeRef, false);
