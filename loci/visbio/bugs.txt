@@ -1,65 +1,38 @@
-Bugfixes and enhancements to address:
+This file lists bugfixes and enhancements to address.
+Priority is ranked H (high), N (normal) or L (low).
 
-  - Finish updating online help to latest beta functionality.
-  
-  - Include new help topics:
 
-    Program options (Basic "File, Options" menu explanation)
-      - General (Window docking, Floating control windows)
-      - Warnings (Quitting VisBio also quits ImageJ)
-      - Debug (Pop up console windows, Dump output to console)
+Data engine
+-----------
 
-  - Friendlier JAR signing technique for Java Web Start distribution.
+[H] Data transforms must have a "destroy" method that is called when they are
+    deleted, so that (e.g.) their GUI controls do not remain in memory.
 
-  - Add hooks to the data transform model to allow alternative thumbnail
+[M] Data transforms have an event they generate when their parameters change.
+    Children transforms must listen to this event and react to it.
+    Also update HTML description panel when data transform's parameters change.
+
+[M] Add hooks to the data transform model to allow alternative thumbnail
     computation implementation on a per-transform basis, rather than always
     doing a full-resolution computation followed by a resampling to low res.
 
-  - Expand DataCache functionality to allow multiple dimensional positions in
+[L] Expand DataCache functionality to allow multiple dimensional positions in
     memory at once. This allows crisper, faster animation at full resolution.
 
-  - Some derivative transforms are designed to be shown only in the same window
+[L] Some derivative transforms are designed to be shown only in the same window
     as their parent transform (overlays, arbitrary slices). These transforms
     should return true for a new "isShownWithParent" method, and if they are
     added to a display that does not already contain their parent transform,
     the parent is automatically added first.
 
-  - VisAD QT reader is horribly inefficient; clean up code to acceptable
+
+File formats
+------------
+
+[H] VisAD QT reader is horribly inefficient; clean up code to acceptable
     standards.
 
-  - Eliminate all XML-based state stuff; switch back to standard vanilla text
-    INI-style files, because they make more sense.
-
-  - Overlays need to be fixed to work properly in 3D displays.
-
-  - Overlays should not affect ScalarMap scaling.
-
-  - Add rubber band box renderer to all displays (at least 2D ones) and send
-    "rubber band" events down the transform chain so that transforms can react
-    (in particular, so OverlayTransform can do multiple selection).
-
-  - Data transforms must have a "destroy" method that is called when they are
-    deleted, so that (e.g.) their GUI controls do not remain in memory.
-
-  - Data transforms have an event they generate when their parameters change.
-    Children transforms must listen to this event and react to it.
-    Also update HTML description panel when data transform's parameters change.
-
-  - Flag indicating whether latest state change should "stack up" or "replace"
-    last change (if last change was of the same type as this one).
-
-  - Command+? Macintosh Help shortcut does not function.
-
-  - Set "Window Modified Indicator" when content has changed since last save?
-
-  - Use java.awt.FileDialog on Mac OS X?
-
-  - Add -Dsun.java2d.opengl=true to options, and add option to toggle it
-    (Java 1.5+ only)
-
-  - Ignore Openlab images named "Original Image."
-
-  - Fix bug in many file readers where ImageLine is numbered upside down so
+[L] Fix bug in many file readers where ImageLine is numbered upside down so
     that VisAD displays the image right side up. The numbering should be
     normal, not an upside down Linear2DSet, and then the range should be set
     in the display so that the image is displayed properly anyway. This way,
@@ -69,17 +42,67 @@ Bugfixes and enhancements to address:
     the domain sets of all images that get read in, so that the cursor is
     correct.
 
-  - Create a command-line upload utility for use doing generic client-side
-    uploads--use loci.visbio.ome.ImageUploader.main(String[]) for this.
+[L] Ignore Openlab images named "Original Image."
 
-  - Make sure no two data objects can have the same name. If one already does,
+
+State engine
+------------
+
+[H] Redo multiple undo/redo support to save an inverse command that undoes the
+    action that was just done, instead of loading state files. This is required
+    because loading state files is simply too slow. For example, if there are
+    30 MB worth of overlays, loading them all back in every time the user wants
+    to undo a simple overlay alteration is prohibitively expensive.
+
+[H] Eliminate all XML-based state stuff; switch back to standard vanilla text
+    INI-style files, because they make more sense.
+
+[M] Flag indicating whether latest state change should "stack up" or "replace"
+    last change (if last change was of the same type as this one).
+
+[L] Set "Window Modified Indicator" when content has changed since last state
+    save?
+
+
+Overlays transform
+------------------
+
+[H] Overlays need to be fixed to display properly in 3D displays.
+
+[H] Overlays should not affect ScalarMap scaling.
+
+[H] Text overlay mesh grid should enclose the entire text overlay.
+
+[L] Add rubber band box renderer to all displays (at least 2D ones) and send
+    "rubber band" events down the transform chain so that transforms can react
+    (in particular, so OverlayTransform can do multiple selection).
+
+
+User interface
+--------------
+
+[M] Make sure no two data objects can have the same name. If one already does,
     append "2", "3", etc., to the end until we find a new name. If they try to
     create one with the same name as an existing one, don't let them do it.
 
     Probably also don't let them create two displays with the same name
     (use same strategy), because otherwise state might not restore correctly.
 
-  - Uploading to OME from VisBio works, but throws this exception:
+[L] Command+? Macintosh Help shortcut does not function.
+
+[L] Use java.awt.FileDialog on Mac OS X?
+
+[L] Add -Dsun.java2d.opengl=true to options, and add option to toggle it
+    (Java 1.5+ only)
+
+
+Open Microscopy Environment
+---------------------------
+
+[L] Create a command-line upload utility for use doing generic client-side
+    uploads--use loci.visbio.ome.ImageUploader.main(String[]) for this.
+
+[L] Uploading to OME from VisBio works, but throws this exception:
 
     class org.apache.xmlrpc.XmlRpcException
     org.openmicroscopy.ds.RemoteServerErrorException: Can't locate object method "new" via package "OME::Tasks::NotificationManager" (perhaps you forgot to load "OME::Tasks::NotificationManager"?) at /home/bassem/OME/src/perl2//OME/Analysis/Engine.pm line 802.
@@ -88,3 +111,9 @@ Bugfixes and enhancements to address:
         at org.openmicroscopy.ds.managers.AnalysisEngineManager.executeAnalysisChain(AnalysisEngineManager.java:84)
         at loci.visbio.ome.OMEManager.run(OMEManager.java:342)
         at java.lang.Thread.run(Unknown Source)
+
+
+Java Web Start
+--------------
+
+[L] Friendlier JAR signing technique for Java Web Start distribution.

@@ -5,6 +5,7 @@ v3.00 final - Not yet released
 - ADDED: Support for key/value pair command-line parameters
 - ADDED: Ability launch VisBio through a web browser with Java Web Start
 - ADDED: Support for PNG images
+- ADDED: All online help topics are written
 
 - TWEAK: VisBio icon is now used instead of default Java cup icon
 - TWEAK: System property for controlling native frame decoration (for L&Fs)
