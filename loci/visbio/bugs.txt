@@ -18,6 +18,16 @@ Bugfixes and enhancements:
   - Add transparency controls to left side of color dialog box.
 
   - Change each data object to have its own MathType for better color controls.
+    Unique RealTypes of the form x1, x2, x3, ..., y1, y2, y3, ...,
+    rgba1_1, rgba1_2, rgba1_3, ..., rgba2_1, rgba2_2, rgba2_3, ...
+    This ensures that every dataset has unique RealTypes, for independent
+    color and spatial controls.
+
+    This will also allow the getSuggestedMaps method to be eliminated, since
+    what should be mapped is obvious from the type names. However, it requires
+    all data transforms to return data with MathTypes containing RealTypes of
+    the standard form. Each created DataTransform has a unique ID number that
+    is used for choosing the RealType names.
 
   - Make Up and Down buttons in display window's controls actually work.
 
@@ -39,3 +49,9 @@ Bugfixes and enhancements:
     If this breaks VisAD too much (probably would), then just have VisBio flip
     the domain sets of all images that get read in, so that the cursor is
     correct.
+
+  - Separate OME upload logic into separate static utility method, with a given
+    output stream for displaying the progress. Create a command-line upload
+    utility for use doing generic client-side uploads. Put all of this into the
+    loci.ome package. The only issue is how/whether to handle various file
+    formats.
