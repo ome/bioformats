@@ -24,8 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.help;
 
 import java.awt.event.KeyEvent;
-import javax.swing.KeyStroke;
-import javax.swing.JMenuItem;
+import javax.swing.*;
 import loci.visbio.*;
 import loci.visbio.util.SwingUtil;
 
@@ -108,7 +107,11 @@ public class HelpManager extends LogicManager {
 
   /** Brings up VisBio's about dialog. */
   public void helpAbout() {
-    // CTR TODO
+    String about = VisBio.TITLE + " " + VisBio.VERSION +
+      ", built " + VisBio.DATE + "\nWritten by " + VisBio.AUTHOR + "\n" +
+      "http://www.loci.wisc.edu/visbio/";
+    JOptionPane.showMessageDialog(bio, about,
+      "About VisBio", JOptionPane.INFORMATION_MESSAGE);
   }
 
 }
