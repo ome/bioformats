@@ -58,7 +58,7 @@ import visad.util.Util;
 /** Provides logic for capturing display screenshots and movies. */
 public class CaptureHandler {
 
-  // -- Fields --
+  // -- Fields - GUI components --
 
   /** Associated display window. */
   protected DisplayWindow window;
@@ -73,6 +73,21 @@ public class CaptureHandler {
   protected JFileChooser movieBox;
 
 
+  // -- Fields - state --
+
+  /** List of positions. */
+  protected Vector positions;
+
+  /** Movie speed. */
+  protected int movieSpeed;
+
+  /** Movie frames per second. */
+  protected int movieFPS;
+
+  /** Whether transitions use a smoothing sine function. */
+  protected boolean movieSmooth;
+
+
   // -- Constructor --
 
   /** Creates a display capture handler. */
@@ -80,6 +95,26 @@ public class CaptureHandler {
 
 
   // -- CaptureHandler API methods --
+
+  /** Gets positions on the list. */
+  public Vector getPositions() {
+    return panel == null ? positions : panel.getCaptureWindow().getPositions();
+  }
+
+  /** Gets movie speed. */
+  public int getSpeed() {
+    return panel == null ? movieSpeed : panel.getCaptureWindow().getSpeed();
+  }
+
+  /** Gets movie frames per second. */
+  public int getFPS() {
+    return panel == null ? movieFPS : panel.getCaptureWindow().getFPS();
+  }
+
+  /** Gets whether transitions use a smoothing sine function. */
+  public boolean isSmooth() {
+    return panel == null ? movieSmooth : panel.getCaptureWindow().isSmooth();
+  }
 
   /** Gets associated display window. */
   public DisplayWindow getWindow() { return window; }
@@ -304,16 +339,16 @@ public class CaptureHandler {
   /** Writes the current state. */
   public void saveState() {
     CaptureWindow captureWindow = panel.getCaptureWindow();
-    Vector positions = captureWindow.getPositions();
+    Vector pos = captureWindow.getPositions();
     int speed = captureWindow.getSpeed();
     int fps = captureWindow.getFPS();
     boolean smooth = captureWindow.isSmooth();
 
     // save display positions
-    int numPositions = positions.size();
+    int numPositions = pos.size();
     window.setAttr("positions", "" + numPositions);
     for (int i=0; i<numPositions; i++) {
-      DisplayPosition position = (DisplayPosition) positions.elementAt(i);
+      DisplayPosition position = (DisplayPosition) pos.elementAt(i);
       position.saveState(window, "position" + i);
     }
 
@@ -325,38 +360,31 @@ public class CaptureHandler {
 
   /** Restores the current state. */
   public void restoreState() {
-    // read in new display position list
     int numPositions = Integer.parseInt(window.getAttr("positions"));
-    Vector vn = new Vector();
+    positions = new Vector(numPositions);
     for (int i=0; i<numPositions; i++) {
       DisplayPosition position = new DisplayPosition();
       position.restoreState(window, "position" + i);
-      vn.add(position);
+      positions.add(position);
     }
-
-    // merge old and new display position lists
-    CaptureWindow captureWindow = panel.getCaptureWindow();
-    Vector vo = captureWindow.getPositions();
-    StateManager.mergeStates(vo, vn);
-
-    // read in other parameters
-    int speed = Integer.parseInt(window.getAttr("movieSpeed"));
-    int fps = Integer.parseInt(window.getAttr("movieFPS"));
-    boolean smooth = window.getAttr("movieSmooth").equalsIgnoreCase("true");
-
-    // restore capture state
-    captureWindow.setPositions(vn);
-    captureWindow.setSpeed(speed);
-    captureWindow.setFPS(fps);
-    captureWindow.setSmooth(smooth);
+    movieSpeed = Integer.parseInt(window.getAttr("movieSpeed"));
+    movieFPS = Integer.parseInt(window.getAttr("movieFPS"));
+    movieSmooth = window.getAttr("movieSmooth").equalsIgnoreCase("true");
   }
 
   /** Tests whether two objects are in equivalent states. */
   public boolean matches(CaptureHandler handler) {
-    // CTR START HERE implement matches and initState,
-    // then test this new capture state logic.
-    // CTR TODO CaptureHandler matches
-    return false;
+    if (handler == null) return false;
+    Vector vo = getPositions();
+    Vector vn = handler.getPositions();
+    if (vo == null && vn != null) return false;
+    if (vo != null && !vo.equals(vn)) return false;
+    if (getSpeed() != handler.getSpeed() ||
+      getFPS() != handler.getFPS() || isSmooth() != handler.isSmooth())
+    {
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -365,9 +393,17 @@ public class CaptureHandler {
    * its current state instead.
    */ 
   public void initState(CaptureHandler handler) {
-    // CTR TODO CaptureHandler initState
     if (handler != null) {
-      //this.thing = that.thing...
+      // merge old and new position vectors
+      Vector vo = getPositions();
+      Vector vn = handler.getPositions();
+      StateManager.mergeStates(vo, vn);
+      positions = vn;
+
+      // set other parameters
+      movieSpeed = handler.getSpeed();
+      movieFPS = handler.getFPS();
+      movieSmooth = handler.isSmooth();
     }
 
     if (panel == null) {
@@ -387,6 +423,13 @@ public class CaptureHandler {
       movieBox.addChoosableFileFilter(new ExtensionFileFilter(
         new String[] {"avi"}, "AVI movies"));
     }
+
+    // set capture window state to match
+    CaptureWindow captureWindow = panel.getCaptureWindow();
+    captureWindow.setPositions(positions);
+    captureWindow.setSpeed(movieSpeed);
+    captureWindow.setFPS(movieFPS);
+    captureWindow.setSmooth(movieSmooth);
   }
 
 

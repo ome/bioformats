@@ -247,6 +247,7 @@ public class CaptureWindow extends JFrame implements ActionListener,
   /** Sets positions on the list. */
   public void setPositions(Vector v) {
     posListModel.removeAllElements();
+    if (v == null) return;
     int size = v.size();
     for (int i=0; i<size; i++) posListModel.addElement(v.elementAt(i));
   }
