@@ -179,7 +179,7 @@ public class PanelManager extends LogicManager implements ActionListener {
     bio.setSplashStatus(null);
     OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
     om.addBooleanOption("General", FLOATING, 'f',
-      "Toggles whether each control panel has its own window", false);
+      "Toggles whether each control panel has its own window", floating);
   }
 
   /** Sets whether control panels are separate, floating windows. */

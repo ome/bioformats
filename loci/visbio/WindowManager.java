@@ -74,7 +74,7 @@ public class WindowManager extends LogicManager implements WindowListener {
   protected Docker docker;
 
   /** Whether window docking features are enabled. */
-  protected boolean docking;
+  protected boolean docking = true;
 
   /** Whether to distribute the menu bar across all registered frames. */
   protected boolean distributed;
@@ -293,7 +293,7 @@ public class WindowManager extends LogicManager implements WindowListener {
     bio.setSplashStatus(null);
     OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
     om.addBooleanOption("General", DOCKING, 'd',
-      "Toggles whether window docking features are enabled", true);
+      "Toggles whether window docking features are enabled", docking);
   }
 
   /** Sets whether window docking features are enabled. */

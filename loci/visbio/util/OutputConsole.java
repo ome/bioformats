@@ -26,15 +26,11 @@ package loci.visbio.util;
 import java.awt.BorderLayout;
 import java.awt.Font;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import java.util.Vector;
+
+import javax.swing.*;
 
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -59,9 +55,10 @@ public class OutputConsole extends OutputStream {
   private Document doc;
   private JTextArea area;
   private String log;
+  private Vector listeners;
 
 
-  // -- Constructor --
+  // -- Constructors --
 
   /** Constructs a new instance of OutputConsole. */
   public OutputConsole(String title) { this(title, null); }
@@ -92,6 +89,7 @@ public class OutputConsole extends OutputStream {
     SwingUtil.configureScrollPane(scroll);
     pane.add(scroll, BorderLayout.CENTER);
     doc = area.getDocument();
+    listeners = new Vector();
 
     frame.pack();
   }
@@ -99,11 +97,43 @@ public class OutputConsole extends OutputStream {
 
   // -- OutputConsole API methods --
 
+  public void show() {
+    if (!frame.isVisible()) Util.centerWindow(frame);
+    frame.setVisible(true);
+  }
+
+  public JFrame getWindow() { return frame; }
+
+  public void addOutputListener(OutputListener l) {
+    synchronized (listeners) { listeners.addElement(l); }
+  }
+
+  public void removeOutputListener(OutputListener l) {
+    synchronized (listeners) { listeners.removeElement(l); }
+  }
+
+  public void removeAllOutputListeners() {
+    synchronized (listeners) { listeners.removeAllElements(); }
+  }
+
+  public void notifyListeners(OutputEvent e) {
+    synchronized (listeners) {
+      int size = listeners.size();
+      for (int i=0; i<size; i++) {
+        ((OutputListener) listeners.elementAt(i)).outputProduced(e);
+      }
+    }
+  }
+
+
+  // -- OutputStream API methods --
+
   public void write(int b) throws IOException {
     write(new byte[] {(byte) b}, 0, 1);
   }
 
   public void write(byte[] b, int off, int len) throws IOException {
+    final OutputConsole out = this;
     final String s = new String(b, off, len);
     Util.invoke(false, new Runnable() {
       public void run() {
@@ -117,16 +147,9 @@ public class OutputConsole extends OutputStream {
         }
         catch (BadLocationException exc) { }
         catch (IOException exc) { }
-        if (!frame.isVisible()) show();
+        notifyListeners(new OutputEvent(out));
       }
     });
   }
-
-  public void show() {
-    if (!frame.isVisible()) Util.centerWindow(frame);
-    frame.setVisible(true);
-  }
-
-  public JFrame getWindow() { return frame; }
 
 }

@@ -25,20 +25,27 @@ package loci.visbio;
 
 import java.io.PrintStream;
 
+import javax.swing.JFrame;
+
 import loci.visbio.state.BooleanOption;
 import loci.visbio.state.OptionManager;
 
-import loci.visbio.util.OutputConsole;
+import loci.visbio.util.*;
 
 /**
  * ConsoleManager is the manager encapsulating VisBio's console output logic.
  */
-public class ConsoleManager extends LogicManager {
+public class ConsoleManager extends LogicManager implements OutputListener {
 
   // -- Constants --
 
+  /** String for automatically displaying console windows option. */
+  private static final String AUTO_POPUP =
+    "Pop up console windows whenever output is produced";
+
   /** String for debug mode option. */
-  private static final String DEBUG_MODE = "Debug mode";
+  private static final String DEBUG_MODE =
+    "Dump output to console rather than graphical windows";
 
 
   // -- Fields --
@@ -55,6 +62,9 @@ public class ConsoleManager extends LogicManager {
   /** The original error stream. */
   private PrintStream origErr;
 
+  /** Whether consoles should automatically be shown when output occurs. */
+  private boolean autoPopup = true;
+
   /** Whether output should be dumped to the default console window. */
   private boolean debug;
 
@@ -66,6 +76,12 @@ public class ConsoleManager extends LogicManager {
 
 
   // -- ConsoleManager API methods --
+
+  /** Sets whether consoles are automatically shown when output occurs. */
+  public void setAutoPopup(boolean autoPopup) { this.autoPopup = autoPopup; }
+
+  /** Gets whether consoles are automatically shown when output occurs. */
+  public boolean isAutoPopup() { return autoPopup; }
 
   /** Sets whether debugging mode is enabled. */
   public void setDebug(boolean debug) {
@@ -99,14 +115,29 @@ public class ConsoleManager extends LogicManager {
       Object src = evt.getSource();
       if (src instanceof OptionManager) {
         OptionManager om = (OptionManager) src;
-        BooleanOption option = (BooleanOption) om.getOption(DEBUG_MODE);
-        setDebug(option.getValue());
+        BooleanOption autoPop = (BooleanOption) om.getOption(AUTO_POPUP);
+        if (autoPop != null) setAutoPopup(autoPop.getValue());
+        BooleanOption debugMode = (BooleanOption) om.getOption(DEBUG_MODE);
+        if (debugMode != null) setDebug(debugMode.getValue());
       }
     }
   }
 
   /** Gets the number of tasks required to initialize this logic manager. */
   public int getTasks() { return 2; }
+
+
+  // -- OutputListener API methods --
+
+  /** Handles output and error console window updates. */
+  public void outputProduced(OutputEvent e) {
+    if (!autoPopup) return;
+    Object src = e.getSource();
+    JFrame frame = null;
+    if (src == out) frame = out.getWindow();
+    else if (src == err) frame = err.getWindow();
+    if (frame != null && !frame.isVisible()) frame.show();
+  }
 
 
   // -- Helper methods --
@@ -124,6 +155,10 @@ public class ConsoleManager extends LogicManager {
       System.setErr(new PrintStream(err));
     }
 
+    // listen for output produced within console windows
+    out.addOutputListener(this);
+    err.addOutputListener(this);
+
     // register console windows with window manager
     WindowManager wm = (WindowManager) bio.getManager(WindowManager.class);
     wm.addWindow(out.getWindow());
@@ -132,8 +167,10 @@ public class ConsoleManager extends LogicManager {
     // options menu
     bio.setSplashStatus(null);
     OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
-    om.addBooleanOption("General", DEBUG_MODE, 'd',
-      "Toggles whether output dumps to the default console", false);
+    om.addBooleanOption("Debug", AUTO_POPUP, 'p',
+      "Toggles whether output causes console windows to be shown", autoPopup);
+    om.addBooleanOption("Debug", DEBUG_MODE, 'd',
+      "Toggles whether output dumps to the default console", debug);
 
     // window menu
     bio.addMenuSeparator("Window");
