@@ -25,25 +25,15 @@ package loci.visbio.view;
 
 import com.jgoodies.forms.builder.ButtonStackBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
-
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.*;
-
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import loci.visbio.ControlPanel;
-import loci.visbio.LogicManager;
-import loci.visbio.WindowManager;
-
-import loci.visbio.util.LAFUtil;
-import loci.visbio.util.SwingUtil;
-import loci.visbio.util.VisUtil;
+import loci.visbio.*;
+import loci.visbio.util.*;
 
 /** DisplayControls is the control panel for managing displays. */
 public class DisplayControls extends ControlPanel

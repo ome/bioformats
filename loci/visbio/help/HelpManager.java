@@ -24,18 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.help;
 
 import java.awt.event.KeyEvent;
-
 import java.util.Vector;
-
 import javax.swing.KeyStroke;
-
-import loci.visbio.LogicManager;
-import loci.visbio.VisBioEvent;
-import loci.visbio.VisBioFrame;
-import loci.visbio.WindowManager;
-
+import loci.visbio.*;
 import loci.visbio.util.SwingUtil;
-
 import visad.util.Util;
 
 /** HelpManager is the manager encapsulating VisBio's help window logic. */

@@ -23,19 +23,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.util;
 
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.Window;
-
+import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Vector;
-
+import java.util.*;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 

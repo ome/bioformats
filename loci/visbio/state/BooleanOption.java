@@ -25,11 +25,8 @@ package loci.visbio.state;
 
 import loci.ome.xml.CAElement;
 import loci.ome.xml.OMEElement;
-
 import loci.visbio.util.LAFUtil;
-
 import java.awt.Component;
-
 import javax.swing.JCheckBox;
 
 /** BooleanOption is a true-or-false option in the VisBio Options dialog. */

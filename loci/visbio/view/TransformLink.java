@@ -24,21 +24,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.view;
 
 import java.awt.Font;
-
 import java.rmi.RemoteException;
-
 import java.util.Vector;
-
 import loci.visbio.VisBioFrame;
-
 import loci.visbio.data.*;
-
 import loci.visbio.state.Dynamic;
-
 import loci.visbio.util.VisUtil;
-
 import visad.*;
-
 import visad.util.Util;
 
 /** Represents a link between a data transform and a display. */

@@ -24,11 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.overlays;
 
 import java.rmi.RemoteException;
-
 import java.util.Arrays;
-
 import loci.visbio.util.MathUtil;
-
 import visad.*;
 
 /** OverlayLine is a measurement line overlay. */

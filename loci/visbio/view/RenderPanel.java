@@ -24,15 +24,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.view;
 
 import java.awt.BorderLayout;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JPanel;
-
 import loci.visbio.WindowManager;
-
 import loci.visbio.util.LAFUtil;
 
 /** Provides GUI controls for a volume rendering handler. */

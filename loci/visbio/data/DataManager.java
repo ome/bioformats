@@ -24,24 +24,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.data;
 
 import java.awt.event.KeyEvent;
-
 import java.util.Vector;
-
 import javax.swing.tree.DefaultMutableTreeNode;
-
 import loci.ome.xml.CAElement;
 import loci.ome.xml.OMEElement;
-
-import loci.visbio.LogicManager;
-import loci.visbio.PanelManager;
-import loci.visbio.VisBioEvent;
-import loci.visbio.VisBioFrame;
-
+import loci.visbio.*;
 import loci.visbio.help.HelpManager;
-
 import loci.visbio.state.SaveException;
 import loci.visbio.state.StateManager;
-
 import loci.visbio.util.SwingUtil;
 
 /** DataManager is the manager encapsulating VisBio's data transform logic. */

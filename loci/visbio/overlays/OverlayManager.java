@@ -23,10 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
-import loci.visbio.VisBioEvent;
-import loci.visbio.VisBioFrame;
-import loci.visbio.LogicManager;
-
+import loci.visbio.*;
 import loci.visbio.data.DataManager;
 
 /** OverlayManager is the manager encapsulating VisBio's overlay logic. */

@@ -24,13 +24,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio;
 
 import com.jgoodies.plaf.LookUtils;
-
 import java.io.*;
-
 import java.util.Vector;
-
 import loci.visbio.help.HelpManager;
-
 import visad.util.Util;
 
 /**

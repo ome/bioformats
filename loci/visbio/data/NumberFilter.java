@@ -25,7 +25,6 @@ package loci.visbio.data;
 
 import java.io.File;
 import java.io.FileFilter;
-
 import java.math.BigInteger;
 
 /** NumberFilter is a helper filter for DataManager.findPattern(). */

@@ -23,22 +23,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio;
 
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-
+import java.awt.datatransfer.*;
 import java.io.File;
 import java.io.IOException;
-
 import java.util.List;
-
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
-
-import loci.visbio.data.DataManager;
-import loci.visbio.data.Dataset;
-import loci.visbio.data.DataTransform;
-
+import loci.visbio.data.*;
 import loci.visbio.state.StateManager;
 
 /**

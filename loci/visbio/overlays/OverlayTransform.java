@@ -23,21 +23,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
+import java.io.BufferedReader;
+import java.io.PrintWriter;
 import java.rmi.RemoteException;
-
 import java.util.Vector;
-
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-
 import loci.visbio.data.*;
-
 import loci.visbio.state.Dynamic;
-
 import loci.visbio.util.*;
-
 import loci.visbio.view.DisplayWindow;
-
 import visad.*;
 
 /** A set of overlays on top another transform. */
@@ -185,6 +180,16 @@ public class OverlayTransform extends DataTransform
 
   /** Gets transform's current dimensional position. */
   public int[] getPos() { return pos; }
+
+  /** Reads the overlays from the given reader. */
+  public void loadOverlays(BufferedReader in) {
+    /*TEMP*/
+  }
+
+  /** Writes the overlays to the given writer. */
+  public void saveOverlays(PrintWriter out) {
+    /*TEMP*/
+  }
 
   /** Gets domain type (XY). */
   public RealTupleType getDomainType() {

@@ -24,15 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.util;
 
 import java.awt.Color;
-
 import java.io.*;
-
 import java.rmi.RemoteException;
-
 import java.util.Arrays;
-
 import visad.*;
-
 import loci.visbio.util.ObjectUtil;
 
 /** ColorUtil contains useful color table functions. */

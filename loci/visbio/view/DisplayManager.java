@@ -24,19 +24,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.view;
 
 import java.util.Vector;
-
 import javax.swing.JOptionPane;
-
 import loci.ome.xml.CAElement;
 import loci.ome.xml.OMEElement;
-
 import loci.visbio.*;
-
 import loci.visbio.help.HelpManager;
-
-import loci.visbio.state.OptionManager;
-import loci.visbio.state.SaveException;
-import loci.visbio.state.StateManager;
+import loci.visbio.state.*;
 
 /** DisplayManager is the manager encapsulating VisBio's 2D and 3D displays. */
 public class DisplayManager extends LogicManager {

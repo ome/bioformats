@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.overlays;
 
 import java.awt.event.InputEvent;
-
 import loci.visbio.data.TransformEvent;
 
 /** PointerTool is the tool for manipulating existing overlays. */

@@ -23,37 +23,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.view;
 
-import ij.IJ;
-import ij.ImageJ;
-import ij.ImagePlus;
-
+import ij.*;
 import ij.io.FileSaver;
-
 import java.awt.Image;
-
 import java.io.IOException;
 import java.io.File;
-
 import java.rmi.RemoteException;
-
 import java.util.Vector;
-
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-
 import loci.visbio.SystemManager;
 import loci.visbio.WindowManager;
-
 import loci.visbio.state.OptionManager;
 import loci.visbio.state.StateManager;
-
 import visad.*;
-
 import visad.data.avi.AVIForm;
-
-import visad.util.DataUtility;
-import visad.util.ExtensionFileFilter;
-import visad.util.Util;
+import visad.util.*;
 
 /** Provides logic for capturing display screenshots and movies. */
 public class CaptureHandler {

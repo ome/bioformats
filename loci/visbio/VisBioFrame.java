@@ -23,43 +23,24 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
-
+import java.awt.*;
 import java.awt.event.ActionEvent;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
 import java.util.Vector;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-
+import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
-
 import loci.visbio.data.DataManager;
-
 import loci.visbio.help.HelpManager;
-
 import loci.visbio.overlays.OverlayManager;
-
 import loci.visbio.ome.OMEManager;
-
 import loci.visbio.state.OptionManager;
 import loci.visbio.state.StateManager;
-
 import loci.visbio.util.LAFUtil;
 import loci.visbio.util.SplashScreen;
-
 import loci.visbio.view.DisplayManager;
-
-import visad.util.GUIFrame;
-import visad.util.ReflectedUniverse;
-import visad.util.Util;
+import visad.util.*;
 
 /** VisBioFrame is the main GUI frame for VisBio. */
 public class VisBioFrame extends GUIFrame {

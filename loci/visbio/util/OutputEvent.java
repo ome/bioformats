@@ -25,10 +25,12 @@ package loci.visbio.util;
 
 import java.awt.AWTEvent;
 
+/** An event indicating an OutputConsole has produced output. */
 public class OutputEvent extends AWTEvent {
 
   // -- Constructor --
 
+  /** Constructs an output console event. */
   public OutputEvent(Object src) { super(src, 0); }
 
 }

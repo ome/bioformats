@@ -25,17 +25,12 @@ package loci.visbio.view;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
 import com.jgoodies.forms.builder.PanelBuilder;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.*;
-
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
 import loci.visbio.util.SwingUtil;
 
 /** RenderWindow is a window for adjusting volume rendering settings. */

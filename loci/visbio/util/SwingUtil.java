@@ -24,27 +24,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.util;
 
 import java.awt.*;
-
 import java.awt.event.ActionListener;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
-
 import java.net.URL;
-
 import java.util.Vector;
-
 import javax.swing.*;
-
 import javax.swing.filechooser.FileFilter;
-
-import visad.util.ComboFileFilter;
-import visad.util.ExtensionFileFilter;
-import visad.util.GUIFrame;
-import visad.util.OpenlabFileFilter;
+import visad.util.*;
 
 /** SwingUtil contains useful Swing functions. */
 public abstract class SwingUtil {

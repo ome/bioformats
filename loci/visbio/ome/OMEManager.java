@@ -24,27 +24,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.ome;
 
 import java.io.File;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.openmicroscopy.ds.*;
 import org.openmicroscopy.ds.dto.*;
 import org.openmicroscopy.ds.managers.*;
 import org.openmicroscopy.ds.st.*;
 import org.openmicroscopy.is.*;
-
-import loci.visbio.LogicManager;
-import loci.visbio.VisBio;
-import loci.visbio.VisBioEvent;
-import loci.visbio.VisBioFrame;
-
+import loci.visbio.*;
 import loci.visbio.data.DataManager;
-
 import loci.visbio.help.HelpManager;
-
 import loci.visbio.util.MathUtil;
-
 import visad.FlatField;
 
 /**

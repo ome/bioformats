@@ -24,29 +24,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.data;
 
 import com.jgoodies.forms.builder.PanelBuilder;
-
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
 import java.awt.BorderLayout;
-
 import java.awt.event.ActionEvent;
-
 import java.io.File;
 import java.io.IOException;
-
 import java.math.BigInteger;
-
 import javax.swing.*;
-
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-
 import loci.visbio.util.SwingUtil;
 import loci.visbio.util.WizardPane;
-
 import visad.VisADException;
-
 import visad.util.Util;
 
 /**

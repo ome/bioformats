@@ -25,16 +25,11 @@ package loci.visbio.util;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
-
 import java.io.*;
-
 import java.util.Vector;
-
 import javax.swing.*;
-
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-
 import visad.util.Util;
 
 /**

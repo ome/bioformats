@@ -24,13 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.state;
 
 import java.awt.Component;
-
 import javax.swing.JPanel;
 import javax.swing.JComboBox;
-
 import loci.ome.xml.CAElement;
 import loci.ome.xml.OMEElement;
-
 import loci.visbio.util.FormsUtil;
 
 /** ListOption is an option from a list in the VisBio Options dialog. */

@@ -25,25 +25,14 @@ package loci.visbio.help;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-
 import java.io.IOException;
-
 import java.net.URL;
-
 import java.util.Vector;
-
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-
+import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-
 import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import javax.swing.text.html.HTMLDocument;
-
 import loci.visbio.util.BrowserLauncher;
 import loci.visbio.util.SwingUtil;
 

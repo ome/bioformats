@@ -24,23 +24,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.ome;
 
 import com.jgoodies.forms.builder.PanelBuilder;
-
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
 import java.awt.event.ActionEvent;
-
-import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
-import javax.swing.JProgressBar;
-import javax.swing.JTextField;
-
+import javax.swing.*;
 import loci.visbio.VisBioFrame;
-
-import loci.visbio.data.DataManager;
-import loci.visbio.data.DataTransform;
-import loci.visbio.data.Dataset;
-
+import loci.visbio.data.*;
 import loci.visbio.util.DialogPane;
 
 /** OMEUploadPane is the control panel for uploading data to OME. */

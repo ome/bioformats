@@ -23,8 +23,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.util;
 
+/** A listener for output console events. */
 public interface OutputListener {
 
+  /** Used to notify listeners when an output console produces output. */
   void outputProduced(OutputEvent e);
 
 }

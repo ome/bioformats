@@ -24,15 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.view;
 
 import java.rmi.RemoteException;
-
 import java.util.Arrays;
-
 import loci.visbio.VisBioFrame;
-
 import loci.visbio.data.*;
-
 import loci.visbio.util.*;
-
 import visad.*;
 
 /** Provides logic for controlling a TransformLink's color settings. */

@@ -24,26 +24,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.data;
 
 import java.io.IOException;
-
 import java.net.URL;
-
 import java.util.Hashtable;
-
-import visad.Data;
-import visad.DataImpl;
-import visad.VisADException;
-
+import visad.*;
 import visad.data.*;
-
 import visad.data.avi.AVIForm;
-
 import visad.data.bio.*;
-
 import visad.data.ij.ImageJForm;
-
 import visad.data.qt.PictForm;
 import visad.data.qt.QTForm;
-
 import visad.data.tiff.TiffForm;
 
 /**

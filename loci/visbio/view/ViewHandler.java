@@ -24,22 +24,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.view;
 
 import java.rmi.RemoteException;
-
 import loci.visbio.VisBioFrame;
-
 import loci.visbio.data.DataTransform;
 import loci.visbio.data.ImageTransform;
-
 import loci.visbio.util.ObjectUtil;
-
-import visad.DisplayImpl;
-import visad.DisplayRenderer;
-import visad.GraphicsModeControl;
-import visad.ProjectionControl;
-import visad.VisADException;
-
+import visad.*;
 import visad.java2d.DisplayImplJ2D;
-
 import visad.java3d.DisplayImplJ3D;
 import visad.java3d.GraphicsModeControlJ3D;
 

@@ -24,23 +24,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.state;
 
 import java.awt.Component;
-
 import java.io.File;
 import java.io.IOException;
-
 import java.util.Vector;
-
 import javax.swing.JCheckBox;
-
 import loci.ome.xml.OMEElement;
-
-import loci.visbio.ExitManager;
-import loci.visbio.LogicManager;
-import loci.visbio.VisBioEvent;
-import loci.visbio.VisBioFrame;
-
+import loci.visbio.*;
 import loci.visbio.util.WarningPane;
-
 import org.xml.sax.SAXException;
 
 /** OptionManager is the manager encapsulating VisBio's options. */

@@ -23,10 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-
+import java.awt.event.*;
 import loci.visbio.util.SwingUtil;
 
 /** ExitManager is the manager encapsulating VisBio's shutdown logic. */

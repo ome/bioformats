@@ -24,25 +24,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.view;
 
 import com.jgoodies.forms.builder.ButtonStackBuilder;
-
 import java.awt.BorderLayout;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.*;
-
 import javax.swing.event.*;
-
 import javax.swing.tree.DefaultMutableTreeNode;
-
-import loci.visbio.data.DataManager;
-import loci.visbio.data.DataTransform;
-import loci.visbio.data.ImageTransform;
-
-import loci.visbio.util.FormsUtil;
-import loci.visbio.util.LAFUtil;
-import loci.visbio.util.SwingUtil;
+import loci.visbio.data.*;
+import loci.visbio.util.*;
 
 /** Provides GUI controls for a display transform handler. */
 public class TransformPanel extends JPanel

@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio;
 
 import java.awt.Window;
-
 import loci.visbio.util.SwingUtil;
 
 /** A class containing a window's state. */

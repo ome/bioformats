@@ -24,26 +24,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.view;
 
 import com.jgoodies.forms.builder.PanelBuilder;
-
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
 import java.awt.BorderLayout;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-
-import loci.visbio.util.FormsUtil;
-import loci.visbio.util.LAFUtil;
-import loci.visbio.util.SwingUtil;
+import loci.visbio.util.*;
 
 /** Provides GUI controls for a display view handler. */
 public class ViewPanel extends JPanel

@@ -24,36 +24,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.view;
 
 import com.jgoodies.forms.builder.PanelBuilder;
-
 import com.jgoodies.forms.factories.ButtonBarFactory;
-
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
 import java.awt.BorderLayout;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-
+import java.awt.event.*;
 import java.io.File;
-
 import java.rmi.RemoteException;
-
 import javax.swing.*;
-
 import javax.swing.border.TitledBorder;
-
 import javax.swing.event.*;
-
 import loci.visbio.util.*;
-
 import visad.*;
-
 import visad.browser.Convert;
-
 import visad.java2d.DisplayImplJ2D;
-
 import visad.util.ColorMapWidget;
 import visad.util.ExtensionFileFilter;
 

@@ -25,17 +25,10 @@ package loci.visbio;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.util.Vector;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-
+import javax.swing.*;
 import loci.visbio.state.BooleanOption;
 import loci.visbio.state.OptionManager;
-
 import loci.visbio.util.SwingUtil;
 
 /** PanelManager is the manager encapsulating VisBio's control panel logic. */

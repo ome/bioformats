@@ -24,18 +24,10 @@ MA 02111-1307, USA
 
 package loci.visbio.data;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.EOFException;
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-
+import java.io.*;
 import java.util.Vector;
-
 import visad.FlatField;
 import visad.VisADException;
-
 import visad.data.visad.BinaryReader;
 import visad.data.visad.BinaryWriter;
 

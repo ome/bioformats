@@ -24,28 +24,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio;
 
 import com.jgoodies.forms.builder.PanelBuilder;
-
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.util.Enumeration;
 import java.util.Properties;
-
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.Timer;
-
+import javax.swing.*;
 import loci.visbio.util.LAFUtil;
 import loci.visbio.util.VisUtil;
-
 import visad.VisADException;
-
 import visad.data.qt.QTForm;
-
 import visad.util.ReflectedUniverse;
 
 /** SystemControls is the control panel for reporting system information. */

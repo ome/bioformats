@@ -25,40 +25,24 @@ package loci.visbio.data;
 
 import com.jgoodies.forms.builder.ButtonStackBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
-
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
 import java.awt.BorderLayout;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.util.Enumeration;
 import java.util.Hashtable;
-
 import javax.swing.*;
-
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-
 import javax.swing.tree.*;
-
 import loci.visbio.*;
-
 import loci.visbio.ome.OMEManager;
-
 import loci.visbio.state.StateManager;
-
-import loci.visbio.util.LAFUtil;
-import loci.visbio.util.SwingUtil;
-import loci.visbio.util.VisUtil;
-
+import loci.visbio.util.*;
 import loci.visbio.view.DisplayWindow;
 import loci.visbio.view.DisplayManager;
-
 import visad.VisADException;
-
 import visad.util.ReflectedUniverse;
 
 /** DataControls is the control panel for managing data. */

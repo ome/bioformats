@@ -24,19 +24,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.data;
 
 import java.rmi.RemoteException;
-
 import java.util.Vector;
-
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-
 import loci.ome.xml.CAElement;
 import loci.ome.xml.OMEElement;
-
 import loci.visbio.state.Dynamic;
-
 import loci.visbio.util.ObjectUtil;
-
 import visad.*;
 
 /**

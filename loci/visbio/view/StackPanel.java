@@ -24,15 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.view;
 
 import java.awt.event.ActionEvent;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
+import javax.swing.*;
 import loci.visbio.data.DataTransform;
-
 import loci.visbio.util.FormsUtil;
 import loci.visbio.util.LAFUtil;
 

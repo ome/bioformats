@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio;
 
 import loci.ome.xml.OMEElement;
-
 import loci.visbio.state.SaveException;
 import loci.visbio.state.Saveable;
 

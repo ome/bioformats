@@ -25,36 +25,17 @@ package loci.visbio.view;
 
 import com.jgoodies.forms.builder.ButtonStackBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
-
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-
+import java.awt.event.*;
 import java.rmi.RemoteException;
-
 import java.util.Hashtable;
 import java.util.Vector;
-
 import javax.swing.*;
-
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
+import javax.swing.event.*;
 import loci.visbio.VisBioFrame;
-
-import loci.visbio.util.FormsUtil;
-import loci.visbio.util.LAFUtil;
-import loci.visbio.util.SwingUtil;
-
-import visad.DisplayImpl;
-import visad.ProjectionControl;
-import visad.VisADException;
+import loci.visbio.util.*;
+import visad.*;
 
 /** CaptureWindow is a window for capturing display image sequences. */
 public class CaptureWindow extends JFrame implements ActionListener,

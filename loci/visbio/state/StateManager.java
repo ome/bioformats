@@ -24,32 +24,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.state;
 
 import java.awt.event.KeyEvent;
-
 import java.io.File;
 import java.io.IOException;
-
-import java.util.Arrays;
-import java.util.Stack;
-import java.util.Vector;
-
-import javax.swing.JFileChooser;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
-import javax.swing.SwingUtilities;
-
+import java.util.*;
+import javax.swing.*;
 import loci.ome.xml.OMEElement;
-
-import loci.visbio.ExitManager;
-import loci.visbio.LogicManager;
-import loci.visbio.VisBioEvent;
-import loci.visbio.VisBioFrame;
-import loci.visbio.WindowManager;
-
+import loci.visbio.*;
 import loci.visbio.util.SwingUtil;
-
 import org.xml.sax.SAXException;
-
 import visad.util.ExtensionFileFilter;
 
 /** StateManager is the manager encapsulating VisBio's state logic. */

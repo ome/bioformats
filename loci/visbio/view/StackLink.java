@@ -24,13 +24,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.view;
 
 import java.util.Vector;
-
 import java.rmi.RemoteException;
-
 import loci.visbio.data.*;
-
 import loci.visbio.util.VisUtil;
-
 import visad.*;
 
 public class StackLink extends TransformLink {

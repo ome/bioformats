@@ -25,18 +25,10 @@ package loci.visbio.data;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JProgressBar;
-import javax.swing.SwingUtilities;
-
+import javax.swing.*;
 import loci.visbio.util.LAFUtil;
 import loci.visbio.util.MathUtil;
-
-import visad.Data;
-import visad.FlatField;
-import visad.FunctionType;
-import visad.RealTupleType;
+import visad.*;
 
 /** Provides logic for handling data transform thumbnails. */
 public class ThumbnailHandler

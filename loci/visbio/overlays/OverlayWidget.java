@@ -24,30 +24,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.overlays;
 
 import com.jgoodies.forms.builder.PanelBuilder;
-
 import com.jgoodies.forms.factories.ButtonBarFactory;
-
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
 import java.awt.*;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.io.*;
 import java.util.Vector;
-
 import javax.swing.*;
-
 import javax.swing.border.EtchedBorder;
-
 import javax.swing.event.*;
-
 import javax.swing.text.Document;
-
 import loci.visbio.data.*;
-
 import loci.visbio.util.*;
+import visad.util.ExtensionFileFilter;
 
 /** OverlayWidget is a set of GUI controls for an overlay transform. */
 public class OverlayWidget extends JPanel implements ActionListener,
@@ -82,6 +73,9 @@ public class OverlayWidget extends JPanel implements ActionListener,
 
 
   // -- GUI components - global --
+
+  /** File chooser for loading and saving overlays. */
+  protected JFileChooser overlayBox;
 
   /** Text field indicating current font. */
   protected JTextField currentFont;
@@ -158,6 +152,11 @@ public class OverlayWidget extends JPanel implements ActionListener,
     Object[] buttonList = new Object[buttons.size()];
     buttons.copyInto(buttonList);
     JPanel toolsRow = FormsUtil.makeRow(buttonList);
+
+    // file chooser for loading and saving overlays
+    overlayBox = new JFileChooser();
+    overlayBox.addChoosableFileFilter(new ExtensionFileFilter(
+      new String[] {"txt"}, "Overlay text files"));
 
     // current font text field
     currentFont = new JTextField();
@@ -558,10 +557,36 @@ public class OverlayWidget extends JPanel implements ActionListener,
     }
     else if (src == remove) overlay.removeSelectedObjects();
     else if (src == load) {
-      /*TEMP*/System.out.println("load overlays");
+      Window w = SwingUtil.getWindow(this);
+      int rval = overlayBox.showOpenDialog(w);
+      if (rval != JFileChooser.APPROVE_OPTION) return;
+      File file = overlayBox.getSelectedFile();
+      try {
+        BufferedReader fin = new BufferedReader(new FileReader(file));
+        overlay.loadOverlays(fin);
+        fin.close();
+      }
+      catch (IOException exc) {
+        JOptionPane.showMessageDialog(w, "Error loading overlay file " +
+          file + "): " + exc.getMessage(), "Cannot load overlays",
+          JOptionPane.ERROR_MESSAGE);
+      }
     }
     else if (src == save) {
-      /*TEMP*/System.out.println("save overlays");
+      Window w = SwingUtil.getWindow(this);
+      int rval = overlayBox.showSaveDialog(w);
+      if (rval != JFileChooser.APPROVE_OPTION) return;
+      File file = overlayBox.getSelectedFile();
+      try {
+        PrintWriter fout = new PrintWriter(new FileWriter(file));
+        overlay.saveOverlays(fout);
+        fout.close();
+      }
+      catch (IOException exc) {
+        JOptionPane.showMessageDialog(w, "Error saving overlay file " +
+          file + "): " + exc.getMessage(), "Cannot save overlays",
+          JOptionPane.ERROR_MESSAGE);
+      }
     }
   }
 
