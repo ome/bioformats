@@ -86,7 +86,13 @@ public abstract class FormsUtil {
           l.setLabelFor((Component) o[i + 1]);
         }
       }
-      else builder.add((Component) o[i], cc.xy(2 * i + 1, 1));
+      else if (o[i] instanceof Component) {
+        builder.add((Component) o[i], cc.xy(2 * i + 1, 1));
+      }
+      else {
+        System.err.println("Cannot lay out object #" +
+          i + ": " + o[i].getClass().getName());
+      }
     }
 
     return builder.getPanel();
@@ -136,7 +142,13 @@ public abstract class FormsUtil {
       if (o[i] instanceof String) {
         builder.addSeparator((String) o[i], cc.xy(1, 2 * i + 1));
       }
-      else builder.add((Component) o[i], cc.xy(1, 2 * i + 1));
+      else if (o[i] instanceof Component) {
+        builder.add((Component) o[i], cc.xy(1, 2 * i + 1));
+      }
+      else {
+        System.err.println("Cannot lay out object #" +
+          i + ": " + o[i].getClass().getName());
+      }
     }
 
     return builder.getPanel();
