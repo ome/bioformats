@@ -47,6 +47,9 @@ public class DisplayManager extends LogicManager {
 
   // -- Constants --
 
+  /** Maximum number of simultaneous displays. */
+  public static final int MAX_DISPLAYS = 32;
+
   /** String for ImageJ quit warning. */
   public static final String WARN_IMAGEJ =
     "Warn about problem where quitting ImageJ also quits VisBio";
@@ -74,20 +77,31 @@ public class DisplayManager extends LogicManager {
 
   /** Pops up a dialog allowing the user to create a new display. */
   public DisplayWindow createDisplay(boolean threeD) {
+    nextId++;
+    DisplayWindow window = createDisplay("display" + nextId, threeD);
+    if (window == null) nextId--;
+    return window;
+  }
+
+  /**
+   * Pops up a dialog allowing the user to create a new display,
+   * with the given default name.
+   */
+  public DisplayWindow createDisplay(String defaultName, boolean threeD) {
     DisplayWindow window = null;
-    if (getDisplays().length < 32) {
+    if (getDisplays().length < MAX_DISPLAYS) {
       String name = (String) JOptionPane.showInputDialog(null,
         "Display name:", "Add display", JOptionPane.INFORMATION_MESSAGE,
-        null, null, "display" + ++nextId);
+        null, null, defaultName);
       if (name != null) {
         window = new DisplayWindow(this, name, threeD);
         addDisplay(window);
       }
     }
     else {
-      JOptionPane.showMessageDialog(null, "Sorry, but there is a limit " +
-        "of 32 displays maximum.\nPlease reuse or delete one of your " +
-        "existing displays.", "Cannot create display",
+      JOptionPane.showMessageDialog(null, "Sorry, but there is a limit of " +
+        MAX_DISPLAYS + " displays maximum.\nPlease reuse or delete one of " +
+        "your existing displays.", "Cannot create display",
         JOptionPane.ERROR_MESSAGE);
     }
     return window;
