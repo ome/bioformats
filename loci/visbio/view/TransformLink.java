@@ -156,6 +156,7 @@ public class TransformLink
 
   /** Sets status messages displayed in display's bottom left-hand corner. */
   public void setMessage(String msg) {
+    if (trans.isImmediate()) return; // no messages in immediate mode
     status = msg == null ? null :
       new VisADException(trans.getName() + ": " + msg);
     doMessages(false);
@@ -337,10 +338,13 @@ public class TransformLink
 
   /** Updates displayed data based on current dimensional position. */
   protected void doTransform(long delay) {
-    computeData(true);
-    // request a new burn-in in delay milliseconds
-    burnTime = System.currentTimeMillis() + delay;
-    if (delay < 100) burnNow = true;
+    if (trans.isImmediate()) computeData(false);
+    else {
+      computeData(true);
+      // request a new burn-in in delay milliseconds
+      burnTime = System.currentTimeMillis() + delay;
+      if (delay < 100) burnNow = true;
+    }
   }
 
   /**
@@ -348,7 +352,6 @@ public class TransformLink
    * utilizing thumbnails as appropriate.
    */
   protected synchronized void computeData(boolean thumbs) {
-    /*TEMP*///System.out.println("computeData(" + thumbs + "): start");
     int[] pos = handler.getPos(trans);
     ThumbnailHandler th = trans.getThumbHandler();
     Data thumb = th == null ? null : th.getThumb(pos);
@@ -365,7 +368,6 @@ public class TransformLink
       setData(d);
       if (colorHandler != null) colorHandler.reAutoScale();
     }
-    /*TEMP*///System.out.println("computeData(" + thumbs + "): end");
   }
 
   /** Gets the transform's data at the given dimensional position. */
