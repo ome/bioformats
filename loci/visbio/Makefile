@@ -94,8 +94,8 @@ PACKAGES = \
 	loci.visbio \
 	loci.visbio.data \
 	loci.visbio.help \
-	loci.visbio.measure \
 	loci.visbio.ome \
+	loci.visbio.overlays \
 	loci.visbio.state \
 	loci.visbio.util \
 	loci.visbio.view
@@ -110,7 +110,7 @@ RESOURCE_FILES = \
 	loci/visbio/*.png \
 	loci/visbio/help/*.html \
 	loci/visbio/help/*.png \
-	loci/visbio/measure/*.png \
+	loci/visbio/overlays/*.png \
 	loci/visbio/view/*.png
 
 JAR_FILES = \
