@@ -408,11 +408,13 @@ public class TransformPanel extends JPanel
   protected JPanel doAnimationPanel() {
     // left/right combo box
     leftRightBox = new JComboBox(new String[] {"None"});
+    SwingUtil.configureComboBox(leftRightBox);
     leftRightBox.setToolTipText("The axis " +
       "traversed by the left and right arrow keys");
 
     // up/down combo box
     upDownBox = new JComboBox(new String[] {"None"});
+    SwingUtil.configureComboBox(upDownBox);
     upDownBox.setToolTipText("The axis " +
       "traversed by the up and down arrow keys");
 
@@ -434,6 +436,7 @@ public class TransformPanel extends JPanel
 
     // animation axis combo box
     animBox = new JComboBox(new String[] {"None"});
+    SwingUtil.configureComboBox(animBox);
     animBox.setToolTipText("The axis over which to animate");
     animBox.setActionCommand("animBox");
     animBox.addActionListener(this);
