@@ -10,6 +10,8 @@ public class OME_Import_Export implements ij.plugin.PlugIn{
 
   /**shows and retrieves info from the SidePanel*/
   public void run(java.lang.String arg){
+    // redirect stack traces to error log file
+    System.setErr(new PrintStream(new FileOutputStream("ome-errors.log")));
     if ( omeSidePanel == null ) {
       // side panel not initialized; initialize now
       omeSidePanel = new OMESidePanel(ij.IJ.getInstance());
