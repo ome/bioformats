@@ -100,7 +100,7 @@ public class SplashScreen extends JWindow {
   // -- SplashScreen API methods --
 
   /** Sets the number of tasks for splash screen progress bar. */
-  public void setTasks(int tasks) { this.tasks = tasks; }
+  public void setTaskCount(int tasks) { this.tasks = tasks; }
 
   /** Changes the currently displayed text. */
   public void setText(String msg) { msgLabel.setText(msg); }
@@ -113,5 +113,11 @@ public class SplashScreen extends JWindow {
       bar.setValue(p);
     }
   }
+
+  /** Gets current task number. */
+  public int getTask() { return task; }
+
+  /** Gets number of tasks for splash screen progress bar. */
+  public int getTaskCount() { return tasks; }
 
 }
