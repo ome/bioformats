@@ -159,6 +159,16 @@ public class ColorHandler {
       "color adjustment for " + window.getName(), true);
   }
 
+  /** Recomputes autoscaled color range bounds. */
+  public void reAutoScale() {
+    DisplayImpl display = window.getDisplay();
+    ScalarMap[] maps = getMaps();
+    for (int i=0; i<maps.length; i++) {
+      if (fixed[i]) continue;
+      ColorUtil.reAutoScale(display, maps[i]);
+    }
+  }
+
   /** Gets brightness value. */
   public int getBrightness() { return brightness; }
 

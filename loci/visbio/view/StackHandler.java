@@ -43,6 +43,9 @@ public class StackHandler extends TransformHandler {
 
   // -- Constants --
 
+  /** Starting FPS for animation for image stacks. */
+  public static final int STACK_ANIMATION_RATE = 2;
+
   public static final RealType ZBOX = RealType.getRealType("zbox");
 
 
@@ -103,7 +106,10 @@ public class StackHandler extends TransformHandler {
   // -- Internal TransformHandler API methods --
 
   /** Constructs GUI controls for the stack handler. */
-  protected void makePanel() { panel = new StackPanel(this); }
+  protected void makePanel() {
+    fps = STACK_ANIMATION_RATE;
+    panel = new StackPanel(this);
+  }
 
   /** Adds any required custom mappings to the display. */
   protected void doCustomMaps() throws VisADException, RemoteException {

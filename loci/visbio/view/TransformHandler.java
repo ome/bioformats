@@ -55,7 +55,7 @@ public class TransformHandler implements ChangeListener, Runnable  {
   // -- Constant --
 
   /** Starting FPS for animation. */
-  public static final int DEFAULT_ANIMATION_RATE = 5;
+  public static final int DEFAULT_ANIMATION_RATE = 10;
 
 
   // -- Fields --

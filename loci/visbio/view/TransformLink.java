@@ -30,6 +30,8 @@ import java.util.Vector;
 import loci.visbio.data.DataTransform;
 import loci.visbio.data.ImageTransform;
 import loci.visbio.data.ThumbnailHandler;
+import loci.visbio.data.TransformEvent;
+import loci.visbio.data.TransformListener;
 
 import loci.visbio.util.VisUtil;
 
@@ -38,7 +40,9 @@ import visad.*;
 import visad.util.Util;
 
 /** Represents a link between a data transform and a display. */
-public class TransformLink implements DisplayListener, Runnable {
+public class TransformLink
+  implements DisplayListener, Runnable, TransformListener
+{
 
   // -- Constants --
 
@@ -96,6 +100,9 @@ public class TransformLink implements DisplayListener, Runnable {
       display.addDisplayListener(this);
     }
     catch (VisADException exc) { exc.printStackTrace(); }
+
+    // listen for changes to this transform
+    t.addTransformListener(this);
 
     // initialize thread for handling full-resolution burn-in operations
     Thread burnThread = new Thread(this);
@@ -197,12 +204,21 @@ public class TransformLink implements DisplayListener, Runnable {
   }
 
 
+  // -- TransformListener API methods --
+
+  /** Called when a data transform's parameters are updated. */
+  public void transformChanged(TransformEvent e) { doTransform(100); }
+
+
   // -- Internal TransformLink API methods --
 
   /** Updates displayed data based on current dimensional position. */
-  protected void doTransform() {
-    // request a new burn-in in BURN_DELAY milliseconds
-    burnTime = System.currentTimeMillis() + BURN_DELAY;
+  protected void doTransform() { doTransform(BURN_DELAY); }
+
+  /** Updates displayed data based on current dimensional position. */
+  protected void doTransform(long delay) {
+    // request a new burn-in in delay milliseconds
+    burnTime = System.currentTimeMillis() + delay;
     computeData(true);
   }
 
@@ -231,6 +247,7 @@ public class TransformLink implements DisplayListener, Runnable {
       try { ref.setData(d); }
       catch (VisADException exc) { exc.printStackTrace(); }
       catch (RemoteException exc) { exc.printStackTrace(); }
+      handler.getWindow().getColorHandler().reAutoScale();
     }
   }
 
