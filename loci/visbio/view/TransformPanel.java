@@ -213,18 +213,18 @@ public class TransformPanel extends JPanel
       DataTransform data = (DataTransform) transformList.getSelectedValue();
       if (data != null) handler.getWindow().removeTransform(data);
     }
+    else if (cmd.equals("dataControls")) {
+      DataManager dm = (DataManager)
+        handler.getWindow().getVisBio().getManager(DataManager.class);
+      DataTransform data = (DataTransform) transformList.getSelectedValue();
+      if (data != null) dm.showControls(data);
+    }
     else if (cmd.equals("dataColors")) {
       DataTransform data = (DataTransform) transformList.getSelectedValue();
       if (data != null) {
         TransformLink link = handler.getLink(data);
         link.getColorHandler().showColorDialog();
       }
-    }
-    else if (cmd.equals("dataControls")) {
-      DataManager dm = (DataManager)
-        handler.getWindow().getVisBio().getManager(DataManager.class);
-      DataTransform data = (DataTransform) transformList.getSelectedValue();
-      if (data != null) dm.showControls(data);
     }
     else if (cmd.equals("animate")) {
       boolean on = animate.getText().equals("Animate");
@@ -314,6 +314,14 @@ public class TransformPanel extends JPanel
     removeTransform.setToolTipText("Removes data from this display");
     removeTransform.setEnabled(false);
 
+    // button for displaying a data transform's controls
+    dataControls = new JButton("Edit");
+    dataControls.setActionCommand("dataControls");
+    dataControls.addActionListener(this);
+    if (!LAFUtil.isMacLookAndFeel()) dataControls.setMnemonic('i');
+    dataControls.setToolTipText("Shows data's controls");
+    dataControls.setEnabled(false);
+
     // button for editing a data transform's colors
     dataColors = new JButton("Colors");
     dataColors.setActionCommand("dataColors");
@@ -321,14 +329,6 @@ public class TransformPanel extends JPanel
     if (!LAFUtil.isMacLookAndFeel()) dataColors.setMnemonic('c');
     dataColors.setToolTipText("Edits data's color scheme");
     dataColors.setEnabled(false);
-
-    // button for displaying a data transform's controls
-    dataControls = new JButton("Controls");
-    dataControls.setActionCommand("dataControls");
-    dataControls.addActionListener(this);
-    if (!LAFUtil.isMacLookAndFeel()) dataControls.setMnemonic('o');
-    dataControls.setToolTipText("Shows data's controls");
-    dataControls.setEnabled(false);
 
     // button for shifting a data transform up in the list
     moveUp = new JButton("Up");
@@ -360,9 +360,9 @@ public class TransformPanel extends JPanel
     bsb.addRelatedGap();
     bsb.addGridded(removeTransform);
     bsb.addRelatedGap();
-    bsb.addGridded(dataColors);
-    bsb.addRelatedGap();
     bsb.addGridded(dataControls);
+    bsb.addRelatedGap();
+    bsb.addGridded(dataColors);
     bsb.addRelatedGap();
     bsb.addGridded(moveUp);
     bsb.addRelatedGap();
