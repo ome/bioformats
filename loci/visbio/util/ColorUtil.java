@@ -594,4 +594,40 @@ public abstract class ColorUtil {
     return true;
   }
 
+  /** Gets a hexidecimal representation for this color. */
+  public static String colorToHex(Color color) {
+    String red = Integer.toHexString(color.getRed());
+    String green = Integer.toHexString(color.getGreen());
+    String blue = Integer.toHexString(color.getBlue());
+
+    // ensure all hex strings are the same length
+    int len = red.length();
+    if (green.length() > len) len = green.length();
+    if (blue.length() > len) len = blue.length();
+    while (red.length() < len) red = "0" + red;
+    while (green.length() < len) green = "0" + green;
+    while (blue.length() < len) blue = "0" + blue;
+
+    return red + green + blue;
+  }
+
+  /** Gets the corresponding Color object for this hexidecimal string. */
+  public static Color hexToColor(String hex) {
+    if (hex == null) return null;
+    int len = hex.length();
+    if (len == 0 || len % 3 != 0) return null;
+    int len3 = len / 3;
+    float max = (float) Math.pow(16, len3) - 1;
+    Color color = null;
+    try {
+      // divide hex string into three equal parts, normalizing to (0.0 - 1.0)
+      float r = Integer.parseInt(hex.substring(0, len3), 16) / max;
+      float g = Integer.parseInt(hex.substring(len3, 2 * len3), 16) / max;
+      float b = Integer.parseInt(hex.substring(2 * len3), 16) / max;
+      color = new Color(r, g, b);
+    }
+    catch (NumberFormatException exc) { }
+    return color;
+  }
+
 }
