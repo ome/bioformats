@@ -1,4 +1,4 @@
-v3.00 beta4 - In progress
+v3.00 beta4 - Wednesday, March 16, 2005
 
 - ADDED: Volume rendering
 - ADDED: Arbitrary slice data transform

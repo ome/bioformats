@@ -1,9 +1,5 @@
 Bugfixes and enhancements to address:
 
-  - The burn-in delay should not apply if the full-res data is already in the
-    cache. Tweak display architecture to delay only if there is a cache miss.
-    Checking for cache misses also needs to be thread-safe--think about this.
-
   - Finish updating online help to latest beta functionality
   
   - Include new help topics:
