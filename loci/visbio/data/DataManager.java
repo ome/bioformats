@@ -302,10 +302,11 @@ public class DataManager extends LogicManager {
     hm.addHelpTopic(s + "/Overlays", "overlays.html");
     s = "Control panels/Data panel";
     hm.addHelpTopic(s, "data_panel.html");
+    hm.addHelpTopic(s + "/Importing a dataset from disk", "import_data.html");
     hm.addHelpTopic(s + "/Adding a data object", "add_data.html");
     hm.addHelpTopic(s + "/Generating thumbnails", "thumbnails.html");
     hm.addHelpTopic(s + "/Displaying a data object", "display_data.html");
-    hm.addHelpTopic(s + "/Exporting data to disk", "export.html");
+    hm.addHelpTopic(s + "/Exporting data to disk", "export_data.html");
     hm.addHelpTopic(s + "/Uploading to an OME database", "upload_ome.html");
   }
 
