@@ -474,7 +474,7 @@ public class OverlayTransform extends DataTransform
   public static DataTransform makeTransform(DataManager dm) {
     DataTransform dt = dm.getSelectedData();
     if (!isValidParent(dt)) return null;
-    String n = (String) JOptionPane.showInputDialog(dm.getVisBio(),
+    String n = (String) JOptionPane.showInputDialog(dm.getControlPanel(),
       "Title of overlays:", "Create overlays",
       JOptionPane.INFORMATION_MESSAGE, null, null,
       dt.getName() + " overlays");

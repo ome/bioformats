@@ -78,6 +78,7 @@ public class WizardPane extends DialogPane {
   public void setPage(int page) {
     if (this.page == page) return;
     if (this.page >= 0) pages[this.page].setVisible(false);
+    try {Thread.sleep(500);}catch(Exception exc){}
     pages[page].setVisible(true);
     this.page = page;
     enableButtons();
@@ -87,10 +88,14 @@ public class WizardPane extends DialogPane {
   /** Resizes and centers dialog based on its contents. */
   public void repack() {
     if (dialog == null) return;
-    Dimension ss = Toolkit.getDefaultToolkit().getScreenSize();
-    Dimension w = dialog.getPreferredSize();
-    dialog.setBounds(new Rectangle((ss.width - w.width) / 2,
-      (ss.height - w.height) / 2, w.width, w.height));
+    Point loc = dialog.getLocation();
+    Dimension size = dialog.getSize();
+    Dimension pref = dialog.getPreferredSize();
+    int x = loc.x + (size.width - pref.width) / 2;
+    int y = loc.y + (size.height - pref.height) / 2;
+    if (x < 0) x = 0;
+    if (y < 0) y = 0;
+    dialog.setBounds(new Rectangle(x, y, pref.width, pref.height));
     dialog.validate();
   }
 

@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.data;
 
+import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.util.Vector;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -111,8 +112,11 @@ public class DataManager extends LogicManager {
   }
 
   /** Imports a dataset. */
-  public void importData() {
-    DataTransform dt = Dataset.makeTransform(this);
+  public void importData() { importData(bio); }
+
+  /** Imports a dataset, using the given parent component for user dialogs. */
+  public void importData(Component parent) {
+    DataTransform dt = Dataset.makeTransform(this, null, parent);
     if (dt != null) addData(dt);
   }
 

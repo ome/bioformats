@@ -178,8 +178,8 @@ public class DisplayControls extends ControlPanel
   public void actionPerformed(ActionEvent e) {
     DisplayManager dm = (DisplayManager) lm;
     Object src = e.getSource();
-    if (src == add2D) dm.createDisplay(false);
-    else if (src == add3D) dm.createDisplay(true);
+    if (src == add2D) dm.createDisplay(this, false);
+    else if (src == add3D) dm.createDisplay(this, true);
     else if (src == show) showDisplay();
     else if (src == capture) {
       DisplayWindow d = (DisplayWindow) displayList.getSelectedValue();

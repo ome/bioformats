@@ -274,6 +274,7 @@ public class WindowManager extends LogicManager implements WindowListener {
     // window listener
     bio.setSplashStatus("Initializing windowing logic");
     docker = new Docker();
+    docker.setEnabled(docking);
     docker.addWindow(bio);
     bio.addWindowListener(this);
 

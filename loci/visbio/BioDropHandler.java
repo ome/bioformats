@@ -86,7 +86,7 @@ public class BioDropHandler extends TransferHandler {
       DataManager dm = (DataManager)
         bio.getManager(DataManager.class);
       if (dm == null) return false;
-      DataTransform data = Dataset.makeTransform(dm, file);
+      DataTransform data = Dataset.makeTransform(dm, file, bio);
       if (data != null) dm.addData(data);
     }
     return true;

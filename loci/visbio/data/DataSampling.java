@@ -141,7 +141,7 @@ public class DataSampling extends ImageTransform {
   public static DataTransform makeTransform(DataManager dm) {
     DataTransform data = dm.getSelectedData();
     if (!isValidParent(data)) return null;
-    String n = (String) JOptionPane.showInputDialog(dm.getVisBio(),
+    String n = (String) JOptionPane.showInputDialog(dm.getControlPanel(),
       "Sampling name:", "Create sampling", JOptionPane.INFORMATION_MESSAGE,
       null, null, data.getName() + " sampling");
     if (n == null) return null;

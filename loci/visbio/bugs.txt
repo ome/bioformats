@@ -1,9 +1,7 @@
 Bugfixes and enhancements to address:
 
   - Discovered that VisAD QT and TIFF readers are horribly inefficient; clean
-    up all file form code to acceptable standards. Experiment with ImageIO to
-    see what it is capable of. If necessary, suggest ImageJ hacks to allow for
-    single-plane extraction from multi-image files.
+    up all file form code to acceptable standards.
 
   - Eliminate all XML-based state stuff; switch back to standard vanilla text
     INI-style files, because they make more sense.
@@ -15,10 +13,6 @@ Bugfixes and enhancements to address:
   - Add rubber band box renderer to all displays (at least 2D ones) and send
     "rubber band" events down the transform chain so that transforms can react
     (in particular, so OverlayTransform can do multiple selection).
-
-  - "Add display" dialog needs to be centered around parent, not screen.
-
-  - Page 2 and later of wizards need to be centered around parent, not screen.
 
   - Remove, up and down buttons on capture dialog need to be grayed out
     if they are inapplicable.

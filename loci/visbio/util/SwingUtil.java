@@ -87,16 +87,11 @@ public abstract class SwingUtil {
 
   /** Gets the containing window for the given component. */
   public static Window getWindow(Component c) {
-    Window w = null;
-    Component p = c;
-    while (p != null) {
-      p = p.getParent();
-      if (p instanceof Window) {
-        w = (Window) p;
-        break;
-      }
+    while (c != null) {
+      if (c instanceof Window) return (Window) c;
+      c = c.getParent();
     }
-    return w;
+    return null;
   }
 
   /**

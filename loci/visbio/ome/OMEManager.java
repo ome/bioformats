@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.ome;
 
+import java.awt.Component;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +74,7 @@ public class OMEManager extends LogicManager implements Runnable {
   // -- OMEManager API methods --
 
   /** Brings up a dialog box allowing upload of the selected dataset. */
-  public void upload() { uploadPanel.showDialog(bio); }
+  public void upload(Component c) { uploadPanel.showDialog(c); }
 
   /**
    * Uploads the given data to the specified OME server,

@@ -79,7 +79,7 @@ public class ProjectionWidget extends JPanel implements ActionListener {
 
   // -- ActionListener API methods --
 
-  /** Applies changes to this spectral mapping's parameters. */
+  /** Applies changes to this projection's parameters. */
   public void actionPerformed(ActionEvent e) {
     int index = axes.getSelectedIndex();
     projection.setParameters(index);

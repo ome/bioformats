@@ -100,7 +100,7 @@ public class ProjectionTransform extends ImageTransform {
   public static DataTransform makeTransform(DataManager dm) {
     DataTransform data = dm.getSelectedData();
     if (!isValidParent(data)) return null;
-    String n = (String) JOptionPane.showInputDialog(dm.getVisBio(),
+    String n = (String) JOptionPane.showInputDialog(dm.getControlPanel(),
       "Projection name:", "Create maximum intensity projection",
       JOptionPane.INFORMATION_MESSAGE, null, null,
       data.getName() + " projection");

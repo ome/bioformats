@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.view;
 
+import java.awt.Component;
 import java.util.Vector;
 import javax.swing.JOptionPane;
 import loci.ome.xml.CAElement;
@@ -65,9 +66,9 @@ public class DisplayManager extends LogicManager {
   // -- DisplayManager API methods --
 
   /** Pops up a dialog allowing the user to create a new display. */
-  public DisplayWindow createDisplay(boolean threeD) {
+  public DisplayWindow createDisplay(Component parent, boolean threeD) {
     nextId++;
-    DisplayWindow window = createDisplay("display" + nextId, threeD);
+    DisplayWindow window = createDisplay(parent, "display" + nextId, threeD);
     if (window == null) nextId--;
     return window;
   }
@@ -76,10 +77,12 @@ public class DisplayManager extends LogicManager {
    * Pops up a dialog allowing the user to create a new display,
    * with the given default name.
    */
-  public DisplayWindow createDisplay(String defaultName, boolean threeD) {
+  public DisplayWindow createDisplay(Component parent,
+    String defaultName, boolean threeD)
+  {
     DisplayWindow window = null;
     if (getDisplays().length < MAX_DISPLAYS) {
-      String name = (String) JOptionPane.showInputDialog(null,
+      String name = (String) JOptionPane.showInputDialog(parent,
         "Display name:", "Add display", JOptionPane.INFORMATION_MESSAGE,
         null, null, defaultName);
       if (name != null) {
@@ -88,10 +91,10 @@ public class DisplayManager extends LogicManager {
       }
     }
     else {
-      JOptionPane.showMessageDialog(null, "Sorry, but there is a limit of " +
-        MAX_DISPLAYS + " displays maximum.\nPlease reuse or delete one of " +
-        "your existing displays.", "Cannot create display",
-        JOptionPane.ERROR_MESSAGE);
+      JOptionPane.showMessageDialog(parent,
+        "Sorry, but there is a limit of " + MAX_DISPLAYS +
+        " displays maximum.\nPlease reuse or delete one of your existing " +
+        "displays.", "Cannot create display", JOptionPane.ERROR_MESSAGE);
     }
     return window;
   }

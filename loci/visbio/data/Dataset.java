@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.data;
 
+import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.*;
 import java.io.File;
@@ -186,14 +187,16 @@ public class Dataset extends ImageTransform {
 
   /** Creates a new dataset, with user interaction. */
   public static DataTransform makeTransform(DataManager dm) {
-    return makeTransform(dm, null);
+    return makeTransform(dm, null, dm.getControlPanel());
   }
 
   /**
    * Creates a new dataset, with user interaction,
    * with the given default file.
    */
-  public static DataTransform makeTransform(DataManager dm, File file) {
+  public static DataTransform makeTransform(DataManager dm,
+    File file, Component parent)
+  {
     // create dataset import dialog if it doesn't already exist
     if (datasetImporter == null) {
       datasetImporter = new DatasetPane(SwingUtil.getVisBioFileChooser());
@@ -220,7 +223,7 @@ public class Dataset extends ImageTransform {
     datasetImporter.selectFile(file);
 
     // get file pattern from dataset import dialog
-    int rval = datasetImporter.showDialog(dm.getVisBio());
+    int rval = datasetImporter.showDialog(parent);
     return rval == DatasetPane.APPROVE_OPTION ?
       datasetImporter.getDataset() : null;
   }

@@ -414,7 +414,7 @@ public class DataControls extends ControlPanel
     else if (cmd.equals("uploadToOME")) {
       OMEManager om = (OMEManager) lm.getVisBio().getManager(OMEManager.class);
       if (om == null) return;
-      om.upload();
+      om.upload(this);
     }
     else {
       // command represents a class to instantiate via reflection
@@ -529,7 +529,7 @@ public class DataControls extends ControlPanel
     DisplayManager disp = (DisplayManager)
       lm.getVisBio().getManager(DisplayManager.class);
     if (disp == null) return;
-    DisplayWindow window = disp.createDisplay(data.getName(), threeD);
+    DisplayWindow window = disp.createDisplay(this, data.getName(), threeD);
     if (window == null) return;
     window.addTransform(data);
     WindowManager wm = (WindowManager)
