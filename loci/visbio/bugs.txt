@@ -1,6 +1,6 @@
 Bugfixes and enhancements to address:
 
-  - Finish updating online help to latest beta functionality
+  - Finish updating online help to latest beta functionality.
   
   - Include new help topics:
 
@@ -8,6 +8,12 @@ Bugfixes and enhancements to address:
       - General (Window docking, Floating control windows)
       - Warnings (Quitting VisBio also quits ImageJ)
       - Debug (Pop up console windows, Dump output to console)
+
+  - Friendlier JAR signing technique for Java Web Start distribution.
+
+  - Add hooks to the data transform model to allow alternative thumbnail
+    computation implementation on a per-transform basis, rather than always
+    doing a full-resolution computation followed by a resampling to low res.
 
   - Expand DataCache functionality to allow multiple dimensional positions in
     memory at once. This allows crisper, faster animation at full resolution.
@@ -40,7 +46,7 @@ Bugfixes and enhancements to address:
     Also update HTML description panel when data transform's parameters change.
 
   - Flag indicating whether latest state change should "stack up" or "replace"
-    last change (if last change was of the same type as this one)
+    last change (if last change was of the same type as this one).
 
   - Command+? Macintosh Help shortcut does not function.
 
@@ -82,3 +88,41 @@ Bugfixes and enhancements to address:
         at org.openmicroscopy.ds.managers.AnalysisEngineManager.executeAnalysisChain(AnalysisEngineManager.java:84)
         at loci.visbio.ome.OMEManager.run(OMEManager.java:342)
         at java.lang.Thread.run(Unknown Source)
+
+  - Uploading to OME from ImageJ randomly did this:
+
+    class org.apache.xmlrpc.XmlRpcException
+    org.openmicroscopy.ds.RemoteServerErrorException: DBD::Pg::st execute failed: ERROR:  invalid input syntax for integer: "*([-NULL-])*" at /usr/local/share/perl/5.8.4/OME/Factory.pm line 1111.
+        at org.openmicroscopy.ds.XmlRpcCaller.invoke(XmlRpcCaller.java:299)
+        at org.openmicroscopy.ds.XmlRpcCaller.dispatch(XmlRpcCaller.java:442)
+        at org.openmicroscopy.ds.InstantiatingCaller.dispatch(InstantiatingCaller.java:104)
+        at org.openmicroscopy.ds.DataFactory.retrieve(DataFactory.java:384)
+        at org.openmicroscopy.ds.managers.ModuleExecutionManager.addActualInput(ModuleExecutionManager.java:369)
+        at org.openmicroscopy.ds.managers.ModuleExecutionManager.addActualInput(ModuleExecutionManager.java:437)
+        at org.openmicroscopy.ds.managers.ImportManager.getImageImportMEX(ImportManager.java:160)
+        at OMEUpload.run(OMEUpload.java:254)
+        at OMESidePanel.actionPerformed(OMESidePanel.java:173)
+        at javax.swing.AbstractButton.fireActionPerformed(Unknown Source)
+        at javax.swing.AbstractButton$Handler.actionPerformed(Unknown Source)
+        at javax.swing.DefaultButtonModel.fireActionPerformed(Unknown Source)
+        at javax.swing.DefaultButtonModel.setPressed(Unknown Source)
+        at javax.swing.plaf.basic.BasicButtonListener.mouseReleased(Unknown Source)
+        at java.awt.Component.processMouseEvent(Unknown Source)
+        at javax.swing.JComponent.processMouseEvent(Unknown Source)
+        at java.awt.Component.processEvent(Unknown Source)
+        at java.awt.Container.processEvent(Unknown Source)
+        at java.awt.Component.dispatchEventImpl(Unknown Source)
+        at java.awt.Container.dispatchEventImpl(Unknown Source)
+        at java.awt.Component.dispatchEvent(Unknown Source)
+        at java.awt.LightweightDispatcher.retargetMouseEvent(Unknown Source)
+        at java.awt.LightweightDispatcher.processMouseEvent(Unknown Source)
+        at java.awt.LightweightDispatcher.dispatchEvent(Unknown Source)
+        at java.awt.Container.dispatchEventImpl(Unknown Source)
+        at java.awt.Window.dispatchEventImpl(Unknown Source)
+        at java.awt.Component.dispatchEvent(Unknown Source)
+        at java.awt.EventQueue.dispatchEvent(Unknown Source)
+        at java.awt.EventDispatchThread.pumpOneEventForHierarchy(Unknown Source)
+        at java.awt.EventDispatchThread.pumpEventsForHierarchy(Unknown Source)
+        at java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+        at java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+        at java.awt.EventDispatchThread.run(Unknown Source)

@@ -95,7 +95,7 @@ public class SystemControls extends ControlPanel implements ActionListener {
     heapField.setEditable(false);
 
     // memory maximum alteration button
-    JButton heap = new JButton("Change");
+    JButton heap = new JButton("Change...");
     if (!LAFUtil.isMacLookAndFeel()) heap.setMnemonic('a');
     if (sm.isJNLP()) heap.setEnabled(false);
     heap.setToolTipText(
@@ -140,7 +140,7 @@ public class SystemControls extends ControlPanel implements ActionListener {
     lafField.setEditable(false);
 
     // Look & Feel alteration button
-    JButton laf = new JButton("Change");
+    JButton laf = new JButton("Change...");
     if (!LAFUtil.isMacLookAndFeel()) laf.setMnemonic('n');
     if (sm.isJNLP()) laf.setEnabled(false);
     laf.setToolTipText("Edits VisBio's graphical Look & Feel");
