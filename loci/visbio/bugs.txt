@@ -1,5 +1,9 @@
 Bugfixes and enhancements:
 
+  - Overlays need to be fixed to work properly in 3D displays.
+
+  - Overlays should not affect ScalarMap scaling.
+
   - Add rubber band box renderer to all displays (at least 2D ones) and send
     "rubber band" events down the transform chain so that transforms can react
     (in particular, so OverlayTransform can do multiple selection).

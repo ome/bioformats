@@ -24,8 +24,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio;
 
 import com.jgoodies.plaf.LookUtils;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.Vector;
+import javax.swing.Timer;
 import loci.visbio.help.HelpManager;
 import visad.util.Util;
 
@@ -33,7 +36,9 @@ import visad.util.Util;
  * SystemManager is the manager encapsulating
  * VisBio's system information report logic.
  */
-public class SystemManager extends LogicManager implements Runnable {
+public class SystemManager extends LogicManager
+  implements ActionListener, Runnable
+{
 
   // -- Control panel --
 
@@ -48,6 +53,17 @@ public class SystemManager extends LogicManager implements Runnable {
 
 
   // -- SystemManager API methods --
+
+  /** Gets a string detailing current memory usage. */
+  public String getMemoryUsage() {
+    Runtime runtime = Runtime.getRuntime();
+    long total = runtime.totalMemory();
+    long free = runtime.freeMemory();
+    long used = total - free;
+    long memUsed = used >> 20;
+    long memTotal = total >> 20;
+    return memUsed + " MB used (" + memTotal + " MB reserved)";
+  }
 
   /** Gets maximum amount of memory available to VisBio in megabytes. */
   public int getMaximumMemory() {
@@ -155,6 +171,14 @@ public class SystemManager extends LogicManager implements Runnable {
   public int getTasks() { return 2; }
 
 
+  // -- ActionListener API methods --
+
+  /** Outputs current RAM usage to console. */
+  public void actionPerformed(ActionEvent e) {
+    System.out.println(System.currentTimeMillis() + ": " + getMemoryUsage());
+  }
+
+
   // -- Runnable API methods --
 
   /** Performs garbage collection, displaying a wait cursor while doing so. */
@@ -180,6 +204,9 @@ public class SystemManager extends LogicManager implements Runnable {
     bio.setSplashStatus(null);
     HelpManager hm = (HelpManager) bio.getManager(HelpManager.class);
     hm.addHelpTopic("System", "system.html");
+
+    // RAM usage debugging output
+    if (VisBioFrame.DEBUG) new Timer(500, this).start();
   }
 
 

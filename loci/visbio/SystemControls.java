@@ -48,11 +48,8 @@ public class SystemControls extends ControlPanel implements ActionListener {
 
   // -- Fields --
 
-  /** Current memory usage in megabytes. */
-  protected long memUsed;
-
-  /** Current memory total in megabytes. */
-  protected long memTotal;
+  /** Current memory usage. */
+  protected String memUsage;
 
 
   // -- Constructor --
@@ -275,15 +272,10 @@ public class SystemControls extends ControlPanel implements ActionListener {
     else {
       // update system information
       if (!lm.getVisBio().isVisible()) return;
-      long total = Runtime.getRuntime().totalMemory();
-      long free = Runtime.getRuntime().freeMemory();
-      long used = total - free;
-      long umeg = used >> 20;
-      long tmeg = total >> 20;
-      if (memUsed != umeg || memTotal != tmeg) {
-        memUsed = umeg;
-        memTotal = tmeg;
-        memField.setText(umeg + " MB used (" + tmeg + " MB reserved)");
+      String mem = ((SystemManager) lm).getMemoryUsage();
+      if (!mem.equals(memUsage)) {
+        memUsage = mem;
+        memField.setText(mem);
       }
     }
   }

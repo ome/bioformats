@@ -48,7 +48,8 @@ public class VisBioFrame extends GUIFrame {
   // -- Constants --
 
   /** Debugging flag for event logic. */
-  public static final boolean DEBUG = false;
+  public static final boolean DEBUG =
+    "true".equalsIgnoreCase(System.getProperty("visbio.debug"));
 
   /** Flag indicating operating system is Mac OS X. */
   public static final boolean MAC_OS_X =
