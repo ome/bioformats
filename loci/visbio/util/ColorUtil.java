@@ -277,7 +277,7 @@ public abstract class ColorUtil {
   public static final int CONSTANT_ALPHA = 0;
 
   /** Polynomial alpha curve transparency model. */
-  public static final int POLYNOMIAL_ALPHA = 1;
+  public static final int CURVED_ALPHA = 1;
 
   /** RealType for indicating nothing mapped to a color component. */
   public static final RealType CLEAR = RealType.getRealType("bio_clear");
@@ -381,18 +381,19 @@ public abstract class ColorUtil {
    * Computes alpha table component from the given transparency settings.
    *
    * @param opacity Level of solidity, from 0 to COLOR_DETAIL
-   * @param model Transparency model: CONSTANT_ALPHA or POLYNOMIAL_ALPHA
+   * @param model Transparency model: CONSTANT_ALPHA or CURVED_ALPHA
    */
   public static float[] computeAlphaTable(int opacity, int model) {
     // compute transparency values
     float[] avals = new float[COLOR_DETAIL];
-    if (model == POLYNOMIAL_ALPHA) {
-      // [0, 0.5] -> [1/N, 1]
-      // [0.5, 1] -> [1, N]
-      double value = opacity / COLOR_DETAIL;
+    if (model == CURVED_ALPHA) {
+      double value = 1 - (double) opacity / COLOR_DETAIL;
       boolean invert = value < 0.5;
       if (invert) value = 1 - value;
-      double pow = (MAX_POWER - 1) * 2 * (value - 0.5) + 1;
+      // 0.50 -> 1
+      // 0.75 -> ~4
+      // 1.00 -> ~1000
+      double pow = Math.pow(4, Math.pow(4 * value - 2, 2.32));
       if (invert) pow = 1 / pow;
       for (int i=0; i<COLOR_DETAIL; i++) {
         double inc = (double) i / (COLOR_DETAIL - 1);

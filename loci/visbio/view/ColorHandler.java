@@ -68,7 +68,7 @@ public class ColorHandler {
   /** Opacity value. */
   protected int opacityValue;
 
-  /** Transparency model (CONSTANT_ALPHA or POLYNOMIAL_ALPHA). */
+  /** Transparency model (CONSTANT_ALPHA or CURVED_ALPHA). */
   protected int opacityModel;
 
   /** Color model (RGB_MODEL, HSV_MODEL or COMPOSITE_MODEL). */
@@ -183,6 +183,8 @@ public class ColorHandler {
       setColors(colorPane.getBrightness(), colorPane.getContrast(),
         colorPane.getColorMode(), colorPane.getRed(), colorPane.getGreen(),
         colorPane.getBlue(), false);
+      setOpacity(colorPane.getOpacityValue(),
+        colorPane.getOpacityModel(), false);
       setRanges(colorPane.getLo(), colorPane.getHi(), colorPane.getFixed());
       setTables(colorPane.getTables());
       VisUtil.setDisplayDisabled(d, false);
@@ -202,6 +204,21 @@ public class ColorHandler {
     if (compute) {
       setTables(ColorUtil.computeColorTables(getMaps(),
         brightness, contrast, colorModel, red, green, blue));
+    }
+  }
+
+  /**
+   * Sets opacity.
+   * @param opacityValue How opaque data should be, ranging from 0 - 256
+   * @param opacityModel ColorUtil.CONSTANT_ALPHA or ColorUtil.CURVED_ALPHA
+   * @param compute Whether to actually update the data
+   */
+  public void setOpacity(int opacityValue, int opacityModel, boolean compute) {
+    this.opacityValue = opacityValue;
+    this.opacityModel = opacityModel;
+    if (compute) {
+      float[] alpha = ColorUtil.computeAlphaTable(opacityValue, opacityModel);
+      ColorUtil.setAlphaTable(getMaps(), alpha);
     }
   }
 
@@ -240,7 +257,7 @@ public class ColorHandler {
   /** Gets opacity value. */
   public int getOpacityValue() { return opacityValue; }
 
-  /** Gets opacity model (CONSTANT_ALPHA or POLYNOMIAL_ALPHA). */
+  /** Gets opacity model (CONSTANT_ALPHA or CURVED_ALPHA). */
   public int getOpacityModel() { return opacityModel; }
 
   /** Gets color model (RGB_MODEL, HSV_MODEL or COMPOSITE_MODEL). */

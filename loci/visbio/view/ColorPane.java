@@ -111,7 +111,7 @@ public class ColorPane extends DialogPane
   protected JLabel opacityValue;
 
   /** Opacity model options. */
-  protected JRadioButton constant, poly;
+  protected JRadioButton constant, curved;
 
   /** Color model options. */
   protected JRadioButton rgb, hsv, composite;
@@ -307,8 +307,8 @@ public class ColorPane extends DialogPane
 
   /** Gets current opacity model. */
   public int getOpacityModel() {
-    return poly.isSelected() ?
-      ColorUtil.POLYNOMIAL_ALPHA : ColorUtil.CONSTANT_ALPHA;
+    return curved.isSelected() ?
+      ColorUtil.CURVED_ALPHA : ColorUtil.CONSTANT_ALPHA;
   }
 
   /** Gets current color model. */
@@ -420,7 +420,8 @@ public class ColorPane extends DialogPane
   /** Handles GUI events. */
   public void actionPerformed(ActionEvent e) {
     Object o = e.getSource();
-    if (o == rgb || o == hsv || o == composite) {
+    if (o == constant || o == curved) doAlphas();
+    else if (o == rgb || o == hsv || o == composite) {
       int colorModel = o == rgb ? ColorUtil.RGB_MODEL :
         o == hsv ? ColorUtil.HSV_MODEL : ColorUtil.COMPOSITE_MODEL;
       red.setModel(colorModel);
@@ -560,10 +561,27 @@ public class ColorPane extends DialogPane
     opacityValue = new JLabel("999");
     opacityValue.setToolTipText("Current transparency value");
 
+    // constant transparency option
+    constant = new JRadioButton("Constant", true);
+    constant.addActionListener(this);
+    if (!LAFUtil.isMacLookAndFeel()) constant.setMnemonic('a');
+    constant.setToolTipText("Switches to a constant value transparency");
+
+    // curved transparency option
+    curved = new JRadioButton("Curved");
+    curved.addActionListener(this);
+    if (!LAFUtil.isMacLookAndFeel()) curved.setMnemonic('d');
+    curved.setToolTipText("Switches to a curved function transparency");
+
+    // transparency model button group
+    ButtonGroup group = new ButtonGroup();
+    group.add(constant);
+    group.add(curved);
+
     // lay out components
     PanelBuilder builder = new PanelBuilder(new FormLayout(
       "pref, 3dlu, pref:grow, 3dlu, pref",
-      "pref, 3dlu, pref, 3dlu, top:pref"));
+      "pref, 3dlu, pref, 3dlu, top:pref, 3dlu, pref"));
     CellConstraints cc = new CellConstraints();
 
     builder.addLabel("&Brightness", cc.xy(1, 1)).setLabelFor(brightness);
@@ -574,9 +592,12 @@ public class ColorPane extends DialogPane
     builder.add(contrast, cc.xy(3, 3));
     builder.add(contrastValue, cc.xy(5, 3));
 
-    builder.addLabel("Trans&parency", cc.xy(1, 5)).setLabelFor(opacity);
+    builder.addLabel("O&pacity", cc.xy(1, 5)).setLabelFor(opacity);
     builder.add(opacity, cc.xy(3, 5));
     builder.add(opacityValue, cc.xy(5, 5));
+
+    builder.add(FormsUtil.makeRow(new Object[] {"Transparency model",
+      constant, curved}), cc.xyw(1, 7, 5, "center, default"));
 
     return builder.getPanel();
   }
@@ -746,7 +767,7 @@ public class ColorPane extends DialogPane
     if (ignore) return;
 
     int opac = getOpacityValue();
-    int om = handler.getOpacityModel();
+    int om = getOpacityModel();
 
     opacityValue.setText("" + opac);
 

@@ -14,8 +14,6 @@ Bugfixes and enhancements:
   - Flag indicating whether latest state change should "stack up" or "replace"
     last change (if last change was of the same type as this one)
 
-  - Add transparency method to color dialog: constant or exponential.
-
   - Command+? Macintosh Help shortcut does not function.
 
   - Set "Window Modified Indicator" when content has changed since last save?
