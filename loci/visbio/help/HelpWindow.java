@@ -42,7 +42,7 @@ public class HelpWindow extends JFrame
   // -- Constants --
 
   /** Default width of help window in pixels. */
-  private static final int DEFAULT_WIDTH = 650;
+  private static final int DEFAULT_WIDTH = 950;
 
   /** Default height of help window in pixels. */
   private static final int DEFAULT_HEIGHT = 600;
@@ -69,13 +69,12 @@ public class HelpWindow extends JFrame
     // create components
     root = new HelpTopic("VisBio Help Topics", null);
     topics = new JTree(root);
-    //topics.setRootVisible(false);
-    TreeSelectionModel treeModel = new DefaultTreeSelectionModel();
-    treeModel.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-    //topics.setVisibleRowCount(8);
-    topics.setSelectionModel(treeModel);
+    topics.setRootVisible(false);
+    topics.setShowsRootHandles(true);
+    topics.getSelectionModel().setSelectionMode(
+       TreeSelectionModel.SINGLE_TREE_SELECTION);
     topics.addTreeSelectionListener(this);
-    pane = new JEditorPane();
+    pane = new JEditorPane("text/html", "");
     pane.addHyperlinkListener(this);
     pane.setEditable(false);
 
@@ -96,6 +95,27 @@ public class HelpWindow extends JFrame
   /** Adds the given topic to the list, from the given source file. */
   public void addTopic(String topic, String source) {
     addTopic(root, topic, source);
+  }
+
+
+  // -- JFrame API methods --
+
+  /** Expands tree fully before packing help window. */
+  public void pack() {
+    // HACK - Expanding nodes as they are added to the tree results in bizarre
+    // behavior (nodes permanently missing from the tree). Better to expand
+    // everything after the tree has been completely built.
+    Enumeration e = root.breadthFirstEnumeration();
+    topics.expandPath(new TreePath(root.getPath()));
+    while (e.hasMoreElements()) {
+      HelpTopic node = (HelpTopic) e.nextElement();
+      if (node.isLeaf()) continue;
+      topics.expandPath(new TreePath(node.getPath()));
+    }
+    // select first child node
+    HelpTopic firstChild = (HelpTopic) root.getChildAt(0);
+    topics.setSelectionPath(new TreePath(firstChild.getPath()));
+    super.pack();
   }
 
 
@@ -145,8 +165,14 @@ public class HelpWindow extends JFrame
         catch (IOException exc) {
           StringWriter sw = new StringWriter();
           exc.printStackTrace(new PrintWriter(sw));
-          pane.setText(sw.toString());
+          pane.setText(source + "<pre>" + sw.toString() + "</pre>");
         }
+        // HACK - JEditorPane.setPage(URL) throws a RuntimeException
+        // ("Must insert new content into body element-")
+        // when editor pane is successively updated too rapidly.
+        // This 10ms delay seems sufficient to prevent the exception.
+        try { Thread.sleep(10); }
+        catch (InterruptedException exc) { }
       }
     });
   }
@@ -155,6 +181,7 @@ public class HelpWindow extends JFrame
 
   /** Recursively adds the given topic to the tree at the given position. */
   private void addTopic(HelpTopic parent, String topic, String source) {
+    //topics.expandPath(new TreePath(parent.getPath()));
     int slash = topic.indexOf("/");
     if (slash < 0) parent.add(new HelpTopic(topic, source));
     else {
@@ -169,7 +196,10 @@ public class HelpWindow extends JFrame
           break;
         }
       }
-      if (child == null) child = new HelpTopic(pre, null);
+      if (child == null) {
+        child = new HelpTopic(pre, null);
+        parent.add(child);
+      }
       addTopic(child, post, source);
     }
   }

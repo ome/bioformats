@@ -1,0 +1,52 @@
+<html><body><h2>Generating thumbnails</h2>
+
+<p>Some introductory text.
+
+<br><h3>Data thumbnailing (how animation works)</h3>
+
+To save memory, VisBio only keeps one dimensional position of the dataset
+(e.g., one timestep) in memory at a time, thus allowing visualization of huge
+datasets quickly. Unfortunately, when switching positions, VisBio needs to load
+the new position into memory from disk, which takes time and slows down
+animation.
+
+<p>To sidestep this problem, VisBio reads in all data when it first imports the
+dataset. It creates a low-resolution thumbnail of every image, keeping all
+these thumbnails in memory at once. It does this in the background, so that you
+can begin visualizing your data even before all thumbnails have been computed.
+You can see how far along the computation is from the progress bar in the main
+VisBio window. You can stop the computation process by clicking the "Stop"
+button next the progress bar, if you wish to conserve memory or CPU use.
+
+<p>VisBio has a "lo-res" mode and a "hi-res" mode. In lo-res mode the thumbnail
+is displayed, whereas in hi-res mode the data is loaded from disk. When you
+switch positions, VisBio uses lo-res mode by default to avoid the slowdown of
+going to disk for the data, keeping animation quick.
+
+<p>VisBio loads hi-res data for the current dimensional position in the
+background. If it finishes loading the hi-res data, it displays it. Thus, the
+hi-res data will eventually "burn in" if you leave the displays idle for a
+moment.
+
+<br><h3>Controlling thumbnailing</h3>
+
+Since the thumbnails' memory footprint is much smaller than it would be at
+full resolution, VisBio gives you both efficient memory use and realtime
+animation at the expense of an initial thumbnail loading time.
+
+<p>The default thumbnail resolution is 96 x 96 pixels. Making these numbers
+smaller will result in lo-res mode looking blockier but thumbnails taking less
+memory, whereas larger numbers will require more memory to store the thumbnails
+but look crisper while animating.
+<i>[Author's note: Sorry, options for controlling thumbnailing parameters are
+not included in this beta release.]</i>
+
+<br><h3>Thumbnail disk cache files</h3>
+
+For each dataset you import, VisBio creates a disk cache of computed thumbnails
+in a file with extension ".visbio" in the same directory as your dataset. If
+this file already exists, VisBio reads the thumbnails from it, greatly speeding
+thumbnail generation. To cause VisBio to regenerate thumbnails from the source
+data, just delete the ".visbio" cache file.
+
+<p>&nbsp;<p></body></html>

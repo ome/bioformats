@@ -94,8 +94,7 @@ public class HelpManager extends LogicManager {
 
     // help topics
     bio.setSplashStatus(null);
-    addHelpTopic("Overview", "overview.html");
-    addHelpTopic("QuickTime", "quicktime.html");
+    addHelpTopic("Introduction", "introduction.html");
   }
 
 
