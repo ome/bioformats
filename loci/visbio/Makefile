@@ -30,6 +30,7 @@ default:
 	@echo "	make jar	to create visbio.jar"
 	@echo "	make source	to create visbio_src.jar"
 	@echo "	make docs	to create visbio_docs.jar"
+	@echo " make all	recompiles, then does jar, source and docs"
 	@echo ""
 
 ############################################################################
@@ -206,3 +207,4 @@ docs:
 	$(RMDIR) $(DOC_DIR) ; \
 	ls -l $(JAR_DIR)/visbio_docs.jar
 
+all: recompile jar source docs

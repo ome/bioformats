@@ -1,6 +1,7 @@
-v3.00 beta1 - Sunday, August 29, 2004
+v3.00 beta1 - Tuesday, August 31, 2004
 
 - ADDED: Support for Metamorph STK file format
+- ADDED: Support for Olympus Fluoview file format
 - ADDED: Support for Openlab LIFF file format (requires QuickTime for Java)
 - ADDED: Dimensional collapse transform
 - ADDED: Weighted multispectral component mapping transform
@@ -11,9 +12,9 @@ v3.00 beta1 - Sunday, August 29, 2004
 - FIXED: Tons of bugfixes and improvements
 
 - TWEAK: Switched Windows distribution to ZIP file; no need for an installer
+- TWEAK: Windows distribution now defaults to "JGoodies Windows" Look & Feel
+- TWEAK: Linux distribution now defaults to "JGoodies Plastic 3D" Look & Feel
 - TWEAK: Fixed up all distribution packages
-- TWEAK: Windows distribution now defaults to JGoodies Windows Look & Feel
-- TWEAK: Linux distribution now defaults to JGoodies Plastic 3D Look & Feel
 
 -------------------------------------------------------------------------------
 v2.31 - Thursday, July 1, 2004
