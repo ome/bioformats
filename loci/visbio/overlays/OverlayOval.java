@@ -27,7 +27,7 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import visad.*;
 
-/** OverlayOval is an oval overlay. */
+/** OverlayOval is a bounding oval overlay. */
 public class OverlayOval extends OverlayObject {
 
   // -- Constants --
@@ -63,9 +63,12 @@ public class OverlayOval extends OverlayObject {
   }
 
 
-  // -- Constructor --
+  // -- Constructors --
 
-  /** Constructs an oval. */
+  /** Constructs an uninitialized bounding oval. */
+  public OverlayOval(OverlayTransform overlay) { super(overlay); }
+
+  /** Constructs an bounding oval. */
   public OverlayOval(OverlayTransform overlay,
     float x1, float y1, float x2, float y2)
   {

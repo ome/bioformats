@@ -46,6 +46,7 @@ public class BoxTool extends OverlayTool {
 
   /** Instructs this tool to respond to a mouse press. */
   public void mouseDown(float x, float y, int[] pos, int mods) {
+    deselectAll();
     box = new OverlayBox(overlay, x, y, x, y);
     configureOverlay(box);
     OverlayWidget panel = (OverlayWidget) overlay.getControls();

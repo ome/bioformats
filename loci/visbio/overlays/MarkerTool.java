@@ -46,6 +46,7 @@ public class MarkerTool extends OverlayTool {
 
   /** Instructs this tool to respond to a mouse press. */
   public void mouseDown(float x, float y, int[] pos, int mods) {
+    deselectAll();
     marker = new OverlayMarker(overlay, x, y);
     configureOverlay(marker);
     overlay.addObject(marker, pos);

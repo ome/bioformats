@@ -78,7 +78,7 @@ public class OverlayTool {
   public String getIcon() { return icon; }
 
 
-  // -- Utility methods --
+  // -- Helper methods --
 
   /** Configures the given overlay to match the current settings. */
   protected void configureOverlay(OverlayObject obj) {
@@ -86,6 +86,12 @@ public class OverlayTool {
     obj.setColor(panel.getActiveColor());
     obj.setGroup(panel.getActiveGroup());
     obj.setNotes(panel.getNotes());
+  }
+
+  /** Deselect all selected overlays. */
+  protected void deselectAll() {
+    OverlayObject[] obj = overlay.getObjects();
+    for (int i=0; i<obj.length; i++) obj[i].setSelected(false);
   }
 
 }

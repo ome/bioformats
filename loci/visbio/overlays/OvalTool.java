@@ -46,6 +46,7 @@ public class OvalTool extends OverlayTool {
 
   /** Instructs this tool to respond to a mouse press. */
   public void mouseDown(float x, float y, int[] pos, int mods) {
+    deselectAll();
     oval = new OverlayOval(overlay, x, y, x, y);
     configureOverlay(oval);
     OverlayWidget panel = (OverlayWidget) overlay.getControls();

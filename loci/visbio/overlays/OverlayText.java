@@ -29,7 +29,10 @@ import visad.*;
 /** OverlayText is a text string overlay. */
 public class OverlayText extends OverlayObject {
 
-  // -- Constructor --
+  // -- Constructors --
+
+  /** Constructs an uninitialized text string overlay. */
+  public OverlayText(OverlayTransform overlay) { super(overlay); }
 
   /** Constructs a text string overlay. */
   public OverlayText(OverlayTransform overlay, float x, float y, String text) {

@@ -46,6 +46,7 @@ public class TextTool extends OverlayTool {
 
   /** Instructs this tool to respond to a mouse press. */
   public void mouseDown(float x, float y, int[] pos, int mods) {
+    deselectAll();
     OverlayWidget controls = (OverlayWidget) overlay.getControls();
     text = new OverlayText(overlay, x, y, controls.getText());
     configureOverlay(text);

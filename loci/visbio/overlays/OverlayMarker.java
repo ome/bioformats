@@ -30,7 +30,10 @@ import visad.*;
 /** OverlayMarker is a marker crosshairs overlay. */
 public class OverlayMarker extends OverlayObject {
 
-  // -- Constructor --
+  // -- Constructors --
+
+  /** Constructs an uninitialized measurement marker. */
+  public OverlayMarker(OverlayTransform overlay) { super(overlay); }
 
   /** Constructs a measurement marker. */
   public OverlayMarker(OverlayTransform overlay, float x, float y) {

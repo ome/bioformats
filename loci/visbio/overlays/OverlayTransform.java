@@ -25,6 +25,8 @@ package loci.visbio.overlays;
 
 import java.awt.Color;
 import java.io.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import java.util.*;
 import javax.swing.JComponent;
@@ -187,6 +189,7 @@ public class OverlayTransform extends DataTransform
 
   /** Reads the overlays from the given reader. */
   public void loadOverlays(BufferedReader in) throws IOException {
+    Vector[] loadedOverlays = null;
     boolean foundHeader = false;
     int lineNum = 0;
     while (true) {
@@ -204,7 +207,7 @@ public class OverlayTransform extends DataTransform
         int numDims = count - 10;
         if (numDims < 0) {
           JOptionPane.showMessageDialog(controls,
-            "Invalid table header; insufficient column headings.",
+            "Invalid table header: insufficient column headings.",
             "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
           return;
         }
@@ -226,15 +229,20 @@ public class OverlayTransform extends DataTransform
         }
         if (!ObjectUtil.arraysEqual(dims, theDims)) {
           JOptionPane.showMessageDialog(controls,
-            "Invalid table header; dimensional axis types do not match.",
+            "Invalid table header: dimensional axis types do not match.",
             "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
           return;
         }
         if (!ObjectUtil.arraysEqual(lengths, theLengths)) {
           JOptionPane.showMessageDialog(controls,
-            "Invalid table header; dimensional axis lengths do not match.",
+            "Invalid table header: dimensional axis lengths do not match.",
             "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
           return;
+        }
+        // initialize replacement overlay lists
+        loadedOverlays = new Vector[overlays.length];
+        for (int i=0; i<loadedOverlays.length; i++) {
+          loadedOverlays[i] = new Vector();
         }
         foundHeader = true;
       }
@@ -287,12 +295,86 @@ public class OverlayTransform extends DataTransform
         String group = st.nextToken();
         String notes = st.nextToken();
         notes = notes.substring(0, notes.length() - 1); // remove trailing #
-        // CTR START HERE
-        /*TEMP*/System.out.print("Successfully parsed overlay on line #" + lineNum + ": type=" + type + "; pos=");
-        /*TEMP*/for (int i=0; i<position.length; i++) System.out.print(pos[i] + " ");
-        /*TEMP*/System.out.println("; p=(" + x1 + "," + y1 + "); p2=(" + x2 + "," + y2 + "); text=" + text + "; color=" + ColorUtil.colorToHex(color) + "; filled=" + filled + "; group=" + group + "; notes=" + notes);
+
+        // instantiate overlay object
+        String className = "loci.visbio.overlays.Overlay" + type;
+        String classError = "Warning: could not reconstruct overlay " +
+          "of type " + type + " defined on line " + lineNum + ": ";
+        OverlayObject obj = null;
+        try {
+          Class c = Class.forName(className);
+          Constructor con = c.getConstructor(new Class[] {getClass()});
+          obj = (OverlayObject) con.newInstance(new Object[] {this});
+        }
+        catch (ClassCastException exc) {
+          System.err.println(classError +
+            "class " + className + " does not extend OverlayObject.");
+          continue;
+        }
+        catch (ClassNotFoundException exc) {
+          System.err.println(classError +
+            "class " + className + " not found.");
+          continue;
+        }
+        catch (IllegalAccessException exc) {
+          System.err.println(classError +
+            "cannot access constructor for class " + className + ".");
+          continue;
+        }
+        catch (InstantiationException exc) {
+          System.err.println(classError +
+            "cannot instantiate class " + className + ".");
+          continue;
+        }
+        catch (InvocationTargetException exc) {
+          System.err.println(classError +
+            "error invoking constructor for class " + className + ".");
+          continue;
+        }
+        catch (NoSuchMethodException exc) {
+          System.err.println(classError +
+            "no appropriate constructor for class " + className + ".");
+          continue;
+        }
+        if (obj == null) {
+          System.err.println(classError +
+            "constructor for class " + className + " returned null object.");
+          continue;
+        }
+
+        // assign overlay parameters
+        int r = MathUtil.positionToRaster(lengths, position);
+        if (r < 0 || r >= loadedOverlays.length) {
+          System.err.println(classError + "invalid dimensional position.");
+          continue;
+        }
+        obj.x1 = x1;
+        obj.y1 = y1;
+        obj.x2 = x2;
+        obj.y2 = y2;
+        obj.text = text;
+        obj.color = color;
+        obj.filled = filled;
+        obj.group = group;
+        obj.notes = notes;
+        obj.drawing = false;
+        obj.selected = false;
+        obj.computeGridParameters();
+
+        // add overlay to list
+        loadedOverlays[r].add(obj);
       }
     }
+
+    if (loadedOverlays == null) {
+      JOptionPane.showMessageDialog(controls,
+        "Invalid overlay file: no table header found.",
+        "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
+      return;
+    }
+    overlays = loadedOverlays;
+    controls.refreshListObjects();
+    notifyListeners(new TransformEvent(this));
   }
 
   /** Writes the overlays to the given writer. */
@@ -320,23 +402,23 @@ public class OverlayTransform extends DataTransform
         out.print(obj.toString());
         out.print("\t");
         out.print(posString);
-        out.print(obj.hasEndpoint() ? "" + obj.getX() : NOT_APPLICABLE);
+        out.print(obj.hasEndpoint() ? "" + obj.x1 : NOT_APPLICABLE);
         out.print("\t");
-        out.print(obj.hasEndpoint() ? "" + obj.getY() : NOT_APPLICABLE);
+        out.print(obj.hasEndpoint() ? "" + obj.y1 : NOT_APPLICABLE);
         out.print("\t");
-        out.print(obj.hasEndpoint2() ? "" + obj.getX2() : NOT_APPLICABLE);
+        out.print(obj.hasEndpoint2() ? "" + obj.x2 : NOT_APPLICABLE);
         out.print("\t");
-        out.print(obj.hasEndpoint2() ? "" + obj.getY2() : NOT_APPLICABLE);
+        out.print(obj.hasEndpoint2() ? "" + obj.y2 : NOT_APPLICABLE);
         out.print("\t");
-        out.print(obj.hasText() ? obj.getText() : NOT_APPLICABLE);
+        out.print(obj.hasText() ? obj.text : NOT_APPLICABLE);
         out.print("\t");
-        out.print(ColorUtil.colorToHex(obj.getColor()));
+        out.print(ColorUtil.colorToHex(obj.color));
         out.print("\t");
-        out.print(obj.isFilled());
+        out.print(obj.canBeFilled() ? "" + obj.filled : NOT_APPLICABLE);
         out.print("\t");
-        out.print(obj.getGroup().replaceAll("\t", " "));
+        out.print(obj.group.replaceAll("\t", " "));
         out.print("\t");
-        out.println(obj.getNotes().replaceAll("\t", " "));
+        out.println(obj.notes.replaceAll("\t", " "));
       }
     }
   }

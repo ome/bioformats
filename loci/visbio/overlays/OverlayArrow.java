@@ -31,7 +31,10 @@ import visad.*;
 /** OverlayArrow is an arrow wedge overlay. */
 public class OverlayArrow extends OverlayObject {
 
-  // -- Constructor --
+  // -- Constructors --
+
+  /** Constructs an uninitialized arrow wedge overlay. */
+  public OverlayArrow(OverlayTransform overlay) { super(overlay); }
 
   /** Constructs an arrow wedge overlay. */
   public OverlayArrow(OverlayTransform overlay,
@@ -133,13 +136,7 @@ public class OverlayArrow extends OverlayObject {
   public boolean canBeFilled() { return true; }
 
 
-  // -- Object API methods --
-
-  /** Gets a short string representation of this overlay arrow. */
-  public String toString() { return "Arrow"; }
-
-
-  // -- Helper methods --
+  // -- Internal OverlayObject API methods --
 
   /** Computes parameters needed for selection grid computation. */
   protected void computeGridParameters() {
@@ -153,5 +150,11 @@ public class OverlayArrow extends OverlayObject {
     xGrid4 = corners2[0]; yGrid4 = corners2[1];
     horizGridCount = 3; vertGridCount = 2;
   }
+
+
+  // -- Object API methods --
+
+  /** Gets a short string representation of this overlay arrow. */
+  public String toString() { return "Arrow"; }
 
 }

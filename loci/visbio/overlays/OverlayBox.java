@@ -30,7 +30,10 @@ import visad.*;
 /** OverlayBox is a rectangle overlay. */
 public class OverlayBox extends OverlayObject {
 
-  // -- Constructor --
+  // -- Constructors --
+
+  /** Constructs an uninitialized bounding rectangle. */
+  public OverlayBox(OverlayTransform overlay) { super(overlay); }
 
   /** Constructs a bounding rectangle. */
   public OverlayBox(OverlayTransform overlay,

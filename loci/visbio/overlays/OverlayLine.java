@@ -31,7 +31,10 @@ import visad.*;
 /** OverlayLine is a measurement line overlay. */
 public class OverlayLine extends OverlayObject {
 
-  // -- Constructor --
+  // -- Constructors --
+
+  /** Constructs an uninitialized measurement line. */
+  public OverlayLine(OverlayTransform overlay) { super(overlay); }
 
   /** Constructs a measurement line. */
   public OverlayLine(OverlayTransform overlay,

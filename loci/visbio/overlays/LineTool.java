@@ -46,6 +46,7 @@ public class LineTool extends OverlayTool {
 
   /** Instructs this tool to respond to a mouse press. */
   public void mouseDown(float x, float y, int[] pos, int mods) {
+    deselectAll();
     line = new OverlayLine(overlay, x, y, x, y);
     configureOverlay(line);
     overlay.addObject(line, pos);
