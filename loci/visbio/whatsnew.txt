@@ -1,3 +1,8 @@
+v3.00 beta2 - ?
+
+- ADDED: Preliminary support for Zeiss ZVI file format
+
+
 v3.00 beta1 - Wednesday, September 1, 2004
 
 - ADDED: Support for Metamorph STK file format
