@@ -38,7 +38,7 @@ public class LineTool extends OverlayTool {
 
   /** Constructs a measurement line creation tool. */
   public LineTool(OverlayTransform overlay) {
-    super(overlay, "Line", "Measurement line", "line.png");
+    super(overlay, "Line", "Line", "line.png");
   }
 
 
@@ -47,6 +47,10 @@ public class LineTool extends OverlayTool {
   /** Instructs this tool to respond to a mouse press. */
   public void mouseDown(float x, float y, int[] pos) {
     line = new OverlayLine(overlay, x, y, x, y);
+    OverlayWidget panel = (OverlayWidget) overlay.getControls();
+    line.setColor(panel.getActiveColor());
+    line.setGroup(panel.getActiveGroup());
+    line.setDescription(panel.getDescription());
     overlay.addObject(line, pos);
   }
 

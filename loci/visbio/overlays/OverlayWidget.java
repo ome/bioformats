@@ -24,6 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.overlays;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import java.util.Vector;
 
@@ -33,7 +37,7 @@ import loci.visbio.util.FormsUtil;
 import loci.visbio.util.SwingUtil;
 
 /** OverlayWidget is a set of GUI controls for an overlay transform. */
-public class OverlayWidget extends JPanel {
+public class OverlayWidget extends JPanel implements ActionListener {
 
   // -- Fields --
 
@@ -50,6 +54,24 @@ public class OverlayWidget extends JPanel {
   protected Vector buttons;
 
 
+  // -- GUI components --
+
+  /** Button for choosing overlay color. */
+  protected JButton color;
+
+  /** Check box indicating whether overlay should be filled or hollow. */
+  protected JCheckBox filled;
+
+  /** Combo box for selecting an overlay group. */
+  protected JComboBox groupList;
+
+  /** Button for creating a new overlay group. */
+  protected JButton newGroup;
+
+  /** Text area for overlay description. */
+  protected JTextArea descriptionBox;
+
+
   // -- Constructor --
 
   /** Creates overlay GUI controls. */
@@ -58,6 +80,7 @@ public class OverlayWidget extends JPanel {
     this.ann = ann;
     buttonGroup = new ButtonGroup();
 
+    // create list of tools
     OverlayTool[] toolList = {
       new PointerTool(ann),
       new LineTool(ann),
@@ -68,15 +91,44 @@ public class OverlayWidget extends JPanel {
       new ArrowTool(ann)
     };
     tools = new Vector(toolList.length);
-    buttons = new Vector(toolList.length);
 
+    // create tool buttons
+    buttons = new Vector(toolList.length);
     for (int i=0; i<toolList.length; i++) addTool(toolList[i]);
+    Object[] buttonList = new Object[buttons.size()];
+    buttons.copyInto(buttonList);
+    JPanel toolsRow = FormsUtil.makeRow(buttonList);
+
+    // create color chooser
+    color = new JButton(" ");
+    color.setBackground(Color.white);
+    color.addActionListener(this);
+    filled = new JCheckBox("Filled");
+    filled.setMnemonic('f');
+    filled.setEnabled(false);
+    JPanel colorRow = FormsUtil.makeRow("&Color", color, filled);
+
+    // create group selector
+    groupList = new JComboBox(new Object[] {"None"});
+    newGroup = new JButton("New");
+    newGroup.addActionListener(this);
+    newGroup.setMnemonic('n');
+    newGroup.setToolTipText("Creates a new measurement group");
+ 
+    JPanel groupRow = FormsUtil.makeRow("&Group", groupList, newGroup);
+
+    // create description text area
+    descriptionBox = new JTextArea();
+    descriptionBox.setRows(4);
+    descriptionBox.setLineWrap(true);
+    descriptionBox.setWrapStyleWord(true);
+    JScrollPane descriptionScroll = new JScrollPane(descriptionBox);
+    SwingUtil.configureScrollPane(descriptionScroll);
 
     // lay out components
     setLayout(new BorderLayout());
-    Object[] buttonList = new Object[buttons.size()];
-    buttons.copyInto(buttonList);
-    add(FormsUtil.makeRow(buttonList));
+    add(FormsUtil.makeColumn(new Object[] {"Tools", toolsRow,
+      "Controls", colorRow, groupRow, "Description", descriptionScroll}));
   }
 
 
@@ -100,6 +152,65 @@ public class OverlayWidget extends JPanel {
       if (b.isSelected()) return (OverlayTool) tools.elementAt(i);
     }
     return null;
+  }
+
+  /** Sets currently active overlay color. */
+  public void setActiveColor(Color c) {
+    color.setBackground(c);
+    // CTR TODO fire overlay parameter change event
+  }
+
+  /** Gets currently active overlay color. */
+  public Color getActiveColor() { return color.getBackground(); }
+
+  /** Sets whether current overlay is filled. */
+  public void setFilled(boolean fill) {
+    filled.setSelected(fill);
+    // CTR TODO fire overlay parameter change event
+  }
+
+  /** Gets whether current overlay is filled. */
+  public boolean isFilled() { return filled.isSelected(); }
+
+  /** Sets currently active overlay group. */
+  public void setActiveGroup(String group) {
+    DefaultComboBoxModel model = (DefaultComboBoxModel) groupList.getModel();
+    if (model.getIndexOf(group) < 0) groupList.addItem(group);
+    groupList.setSelectedItem(group);
+    // CTR TODO fire overlay parameter change event
+  }
+
+  /** Gets currently active overlay group. */
+  public String getActiveGroup() {
+    return (String) groupList.getSelectedItem();
+  }
+
+  /** Sets description for current overlay. */
+  public void setDescription(String text) {
+    descriptionBox.setText(text);
+    // CTR TODO fire overlay parameter change event
+  }
+
+  /** Gets description for current overlay. */
+  public String getDescription() { return descriptionBox.getText(); }
+
+  // -- ActionListener API methods --
+
+  /** Handles button presses. */
+  public void actionPerformed(ActionEvent e) {
+    Object src = e.getSource();
+    if (src == color) {
+      Color c = getActiveColor();
+      c = JColorChooser.showDialog(this, "Select a color", c);
+      if (c != null) setActiveColor(c);
+    }
+    else if (src == newGroup) {
+      String nextGroup = "group" + groupList.getItemCount();
+      String group = (String) JOptionPane.showInputDialog(this,
+        "Group name:", "Create measurement group",
+        JOptionPane.INFORMATION_MESSAGE, null, null, nextGroup);
+      if (group != null) setActiveGroup(group);
+    }
   }
 
 }

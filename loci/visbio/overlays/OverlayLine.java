@@ -72,11 +72,10 @@ public class OverlayLine extends OverlayObject {
     RealTupleType range = overlay.getRangeType();
 
     float[][] setSamples = {{x1, x2}, {y1, y2}};
-    float[][] fieldSamples = {
-      {1, 1}, // red
-      {1, 1}, // green
-      {1, 1}  // blue
-    };
+    float r = color.getRed() / 255f;
+    float g = color.getGreen() / 255f;
+    float b = color.getBlue() / 255f;
+    float[][] fieldSamples = {{r, r}, {g, g}, {b, b}};
 
     FlatField field = null;
     try {
