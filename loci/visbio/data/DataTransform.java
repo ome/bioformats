@@ -38,6 +38,7 @@ import loci.visbio.util.MathUtil;
 import loci.visbio.util.ObjectUtil;
 
 import visad.Data;
+import visad.DisplayEvent;
 import visad.ScalarMap;
 
 /** DataTransform is the superclass of all data transform types. */
@@ -234,6 +235,13 @@ public abstract class DataTransform implements Dynamic {
 
   /** Gets label for each dimensional position. */
   public String[][] getLabels() { return labels; }
+
+  /**
+   * Whenever a display to which this transform is linked changes, the
+   * DisplayEvent is passed to this method so that the transform can
+   * adjust itself (i.e., is interactive).
+   */
+  public void displayChanged(DisplayEvent e) { }
 
   /** Adds the given listener to the list of listeners. */
   public void addTransformListener(TransformListener l) {
