@@ -31,7 +31,6 @@ import java.util.Hashtable;
 import java.util.Vector;
 import visad.*;
 import visad.java2d.*;
-import visad.java3d.*;
 import visad.util.ReflectedUniverse;
 import visad.util.Util;
 
@@ -83,7 +82,7 @@ public abstract class VisUtil {
   }
 
   /**
-   * Collapses a field from the form <tt>(z -> ((x, y) -> (v1, ..., vn))</tt>
+   * Collapses a field from the form <tt>(z -> ((x, y) -> (v1, ..., vn)))</tt>
    * into the form <tt>((x, y, z) -> (v1, ..., vn))</tt>.
    */
   public static FlatField collapse(FieldImpl f)
@@ -224,14 +223,43 @@ public abstract class VisUtil {
       // create display
       if (threeD) {
         if (!ok3D) return null;
-        d = config == null ? new DisplayImplJ3D(name) :
-          new DisplayImplJ3D(name, config);
+        // keep class loader ignorant of visad.java3d classes
+        ReflectedUniverse r = new ReflectedUniverse();
+        try {
+          r.exec("import visad.java3d.DisplayImplJ3D");
+          r.setVar("name", name);
+          if (config == null) r.exec("d = new DisplayImplJ3D(name)");
+          else {
+            r.setVar("config", config);
+            r.exec("d = new DisplayImplJ3D(name, config)");
+          }
+          d = (DisplayImpl) r.getVar("d");
+        }
+        catch (VisADException exc) { d = null; }
+        //d = config == null ? new DisplayImplJ3D(name) :
+        //  new DisplayImplJ3D(name, config);
       }
       else {
         if (ok3D) {
-          TwoDDisplayRendererJ3D renderer = new TwoDDisplayRendererJ3D();
-          d = config == null ? new DisplayImplJ3D(name, renderer) :
-            new DisplayImplJ3D(name, renderer, config);
+          // keep class loader ignorant of visad.java3d classes
+          ReflectedUniverse r = new ReflectedUniverse();
+          try {
+            r.exec("import visad.java3d.TwoDDisplayRendererJ3D");
+            r.setVar("name", name);
+            r.exec("renderer = new TwoDDisplayRendererJ3D()");
+            if (config == null) {
+              r.exec("d = new DisplayImplJ3D(name, renderer)");
+            }
+            else {
+              r.setVar("config", config);
+              r.exec("d = new DisplayImplJ3D(name, renderer, config)");
+            }
+            d = (DisplayImpl) r.getVar("d");
+          }
+          catch (VisADException exc) { d = null; }
+          //TwoDDisplayRendererJ3D renderer = new TwoDDisplayRendererJ3D();
+          //d = config == null ? new DisplayImplJ3D(name, renderer) :
+          //  new DisplayImplJ3D(name, renderer, config);
         }
         else d = new DisplayImplJ2D(name);
       }
@@ -256,18 +284,40 @@ public abstract class VisUtil {
       // configure keyboard behavior
       KeyboardBehavior kb = null;
       if (ok3D) {
-        DisplayRendererJ3D dr = (DisplayRendererJ3D) d.getDisplayRenderer();
-        kb = new KeyboardBehaviorJ3D(dr);
-        dr.addKeyboardBehavior((KeyboardBehaviorJ3D) kb);
-        int mods = InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK;
-        kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_X_POS,
-          KeyEvent.VK_DOWN, mods);
-        kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_X_NEG,
-          KeyEvent.VK_UP, mods);
-        kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_Y_POS,
-          KeyEvent.VK_LEFT, mods);
-        kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_Y_NEG,
-          KeyEvent.VK_RIGHT, mods);
+        // keep class loader ignorant of visad.java3d classes
+        ReflectedUniverse r = new ReflectedUniverse();
+        try {
+          r.exec("import java.awt.KeyEvent");
+          r.exec("import visad.java3d.DisplayRendererJ3D");
+          r.exec("import visad.java3d.KeyboardBehaviorJ3D");
+          r.setVar("d", d);
+          r.exec("dr = d.getDisplayRenderer()");
+          r.exec("kb = new KeyboardBehaviorJ3D(dr)");
+          r.exec("dr.addKeyboardBehavior(kb)");
+          r.setVar("mods", InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK);
+          r.exec("kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_X_POS, " +
+            "KeyEvent.VK_DOWN, mods");
+          r.exec("kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_X_NEG, " +
+            "KeyEvent.VK_UP, mods");
+          r.exec("kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_Y_POS, " +
+            "KeyEvent.VK_LEFT, mods");
+          r.exec("kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_Y_NEG, " +
+            "KeyEvent.VK_RIGHT, mods");
+          kb = (KeyboardBehavior) r.getVar("kb");
+        }
+        catch (VisADException exc) { exc.printStackTrace(); }
+        //DisplayRendererJ3D dr = (DisplayRendererJ3D) d.getDisplayRenderer();
+        //kb = new KeyboardBehaviorJ3D(dr);
+        //dr.addKeyboardBehavior((KeyboardBehaviorJ3D) kb);
+        //int mods = InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK;
+        //kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_X_POS,
+        //  KeyEvent.VK_DOWN, mods);
+        //kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_X_NEG,
+        //  KeyEvent.VK_UP, mods);
+        //kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_Y_POS,
+        //  KeyEvent.VK_LEFT, mods);
+        //kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_Y_NEG,
+        //  KeyEvent.VK_RIGHT, mods);
       }
       else {
         DisplayRendererJ2D dr = (DisplayRendererJ2D) d.getDisplayRenderer();
@@ -327,8 +377,13 @@ public abstract class VisUtil {
 
   /** Determines whether the given display is 3D. */
   public static boolean isDisplay3D(DisplayImpl display) {
-    return display instanceof DisplayImplJ3D &&
-      !(display.getDisplayRenderer() instanceof TwoDDisplayRendererJ3D);
+    // keep class loader ignorant of visad.java3d classes
+    String displayClass = display.getClass().getName();
+    String drClass = display.getDisplayRenderer().getClass().getName();
+    return displayClass.equals("visad.java3d.DisplayImplJ3D") &&
+      !drClass.equals("visad.java3d.TwoDDisplayRendererJ3D");
+    //return display instanceof DisplayImplJ3D &&
+    //  !(display.getDisplayRenderer() instanceof TwoDDisplayRendererJ3D);
   }
 
   /**
@@ -463,9 +518,20 @@ public abstract class VisUtil {
   public static void redrawMessages(DisplayImpl d) {
     // HACK - awful, awful code to force quick redraw of exception strings
     DisplayRenderer dr = d.getDisplayRenderer();
-    if (dr instanceof DisplayRendererJ3D) {
-      VisADCanvasJ3D canvas = ((DisplayRendererJ3D) dr).getCanvas();
-      canvas.renderField(0);
+    if (dr instanceof DisplayRendererJ2D) {
+      ((DisplayRendererJ2D) dr).getCanvas().repaint();
+    }
+    else { // renderer instanceof visad.java3d.DisplayRendererJ3D
+      ReflectedUniverse r = new ReflectedUniverse();
+      try {
+        r.setVar("dr", dr);
+        r.exec("canvas = dr.getCanvas()");
+        r.setVar("zero", 0);
+        r.exec("canvas.renderField(zero)");
+      }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      //VisADCanvasJ3D canvas = ((DisplayRendererJ3D) dr).getCanvas();
+      //canvas.renderField(0);
 
       // CTR: The following line forces the countdown to update immediately,
       // but causes a strange deadlock problem to occur when there are multiple
@@ -477,9 +543,25 @@ public abstract class VisUtil {
 
       //canvas.getGraphicsContext3D().flush(true);
     }
-    else if (dr instanceof DisplayRendererJ2D) {
-      ((DisplayRendererJ2D) dr).getCanvas().repaint();
+  }
+
+  /** Sets whether the given 3D display uses a parallel projection. */
+  public static void setParallelProjection(DisplayImpl d, boolean parallel) {
+    if (!isDisplay3D(d)) return;
+    ReflectedUniverse r = new ReflectedUniverse();
+    try {
+      r.exec("import visad.java3d.DisplayImplJ3D");
+      r.setVar("d", d);
+      r.exec("gmc = d.getGraphicsModeControl()");
+      if (parallel) {
+        r.exec("gmc.setProjectionPolicy(DisplayImplJ3D.PARALLEL_PROJECTION");
+      }
+      else {
+        r.exec("gmc.setProjectionPolicy(" +
+          "DisplayImplJ3D.PERSPECTIVE_PROJECTION");
+      }
     }
+    catch (VisADException exc) { exc.printStackTrace(); }
   }
 
 }

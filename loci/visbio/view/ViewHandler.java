@@ -28,10 +28,9 @@ import loci.visbio.VisBioFrame;
 import loci.visbio.data.DataTransform;
 import loci.visbio.data.ImageTransform;
 import loci.visbio.util.ObjectUtil;
+import loci.visbio.util.VisUtil;
 import visad.*;
 import visad.java2d.DisplayImplJ2D;
-import visad.java3d.DisplayImplJ3D;
-import visad.java3d.GraphicsModeControlJ3D;
 
 /** Provides logic for controlling a VisAD display's view. */
 public class ViewHandler {
@@ -280,15 +279,7 @@ public class ViewHandler {
     if (!window.is3D()) return;
     parallel = value;
 
-    GraphicsModeControlJ3D gmc = (GraphicsModeControlJ3D)
-      window.getDisplay().getGraphicsModeControl();
-    try {
-      gmc.setProjectionPolicy(value ?
-        DisplayImplJ3D.PARALLEL_PROJECTION :
-        DisplayImplJ3D.PERSPECTIVE_PROJECTION);
-    }
-    catch (VisADException exc) { exc.printStackTrace(); }
-    catch (RemoteException exc) { exc.printStackTrace(); }
+    VisUtil.setParallelProjection(window.getDisplay(), parallel);
     VisBioFrame bio = window.getVisBio();
     String endis = value ? "enable" : "disable";
     bio.generateEvent(bio.getManager(DisplayManager.class),
