@@ -24,11 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.help;
 
 import java.awt.event.KeyEvent;
-import java.util.Vector;
 import javax.swing.KeyStroke;
+import javax.swing.JMenuItem;
 import loci.visbio.*;
 import loci.visbio.util.SwingUtil;
-import visad.util.Util;
 
 /** HelpManager is the manager encapsulating VisBio's help window logic. */
 public class HelpManager extends LogicManager {
@@ -36,10 +35,7 @@ public class HelpManager extends LogicManager {
   // -- Fields --
 
   /** Help dialog for detailing basic program usage. */
-  private HelpWindow help;
-
-  /** List of help topics. */
-  private Vector topics;
+  private HelpWindow helpWindow;
 
 
   // -- Constructor --
@@ -50,28 +46,9 @@ public class HelpManager extends LogicManager {
 
   // -- HelpManager API methods --
 
-  /** Adds a new control panel help topic. */
+  /** Adds a new help topic. */
   public void addHelpTopic(String name, String source) {
-    addHelpTopic("Topics", name, source);
-  }
-
-  /** Adds a new help topic. */
-  public void addHelpTopic(String menu,
-    String name, String source)
-  {
-    addHelpTopic(menu, name, source, true);
-  }
-
-  /** Adds a new help topic. */
-  public void addHelpTopic(String menu, String name,
-    String source, boolean doMenuItem)
-  {
-    topics.add(name);
-    help.addTab(name, source);
-    if (doMenuItem) {
-      bio.addMenuItem(menu, name,
-        "loci.visbio.help.HelpManager.helpShow(" + name + ")", name.charAt(0));
-    }
+    helpWindow.addTopic(name, source);
   }
 
 
@@ -87,7 +64,7 @@ public class HelpManager extends LogicManager {
   }
 
   /** Gets the number of tasks required to initialize this logic manager. */
-  public int getTasks() { return 2; }
+  public int getTasks() { return 3; }
 
 
   // -- Helper methods --
@@ -95,53 +72,44 @@ public class HelpManager extends LogicManager {
   /** Adds help-related GUI components to VisBio. */
   private void doGUI() {
     bio.setSplashStatus("Initializing help logic");
-    topics = new Vector();
-    help = new HelpWindow();
+    helpWindow = new HelpWindow();
     WindowManager wm = (WindowManager) bio.getManager(WindowManager.class);
-    wm.addWindow(help);
+    wm.addWindow(helpWindow);
 
     // help menu
     bio.setSplashStatus(null);
 
-    addHelpTopic("Help", "Overview", "overview.html");
+    JMenuItem help = bio.addMenuItem("Help", "VisBio Help",
+      "loci.visbio.help.HelpManager.helpHelp", 'h');
     KeyStroke helpStroke = VisBioFrame.MAC_OS_X ? KeyStroke.getKeyStroke(
       new Character('?'), SwingUtil.MENU_MASK) :
       KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0);
-    bio.getMenuItem("Help", "Overview").setAccelerator(helpStroke);
+    help.setAccelerator(helpStroke);
 
-    addHelpTopic("Help", "QuickTime", "quicktime.html");
+    if (!VisBioFrame.MAC_OS_X) {
+      bio.addMenuSeparator("Help");
+      bio.addMenuItem("Help", "About",
+        "loci.visbio.help.HelpManager.helpAbout", 'a');
+    }
 
-    bio.addMenuSeparator("Help");
-    bio.addSubMenu("Help", "Topics", 't');
-
-    if (!VisBioFrame.MAC_OS_X) bio.addMenuSeparator("Help");
-    addHelpTopic("Help", "About", "about.html", !VisBioFrame.MAC_OS_X);
+    // help topics
+    bio.setSplashStatus(null);
+    addHelpTopic("Overview", "overview.html");
+    addHelpTopic("QuickTime", "quicktime.html");
   }
 
 
   // -- Menu commands --
 
   /** Brings up a window detailing basic program usage. */
-  public void helpShow(String name) {
-    final String fname = name;
-    Util.invoke(false, new Runnable() {
-      public void run() {
-        int tab = -1;
-        for (int i=0; i<topics.size(); i++) {
-          String s = (String) topics.elementAt(i);
-          if (s.equals(fname)) {
-            tab = i;
-            break;
-          }
-        }
-        if (tab >= 0) {
-          help.setTab(tab);
-          WindowManager wm = (WindowManager)
-            bio.getManager(WindowManager.class);
-          wm.showWindow(help);
-        }
-      }
-    });
+  public void helpHelp() {
+    WindowManager wm = (WindowManager) bio.getManager(WindowManager.class);
+    wm.showWindow(helpWindow);
+  }
+
+  /** Brings up VisBio's about dialog. */
+  public void helpAbout() {
+    // CTR TODO
   }
 
 }
