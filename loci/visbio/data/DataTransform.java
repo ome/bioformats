@@ -119,6 +119,15 @@ public abstract class DataTransform implements Dynamic {
    */
   public abstract String getCacheId(int[] pos, boolean global);
 
+  /**
+   * Gets whether this transform should be drawn immediately, or "burned in"
+   * at full resolution after the usual delay by a separate thread. It is
+   * recommended that most transforms not be immediate, unless they are fast
+   * to render and require frequent, high-priority updates (see
+   * {@link loci.visbio.measure.AnnTransform} for one such example).
+   */
+  public abstract boolean isImmediate();
+
   /** Gets the parent of this transform. */
   public DataTransform getParent() { return parent; }
 

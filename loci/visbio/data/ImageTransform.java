@@ -127,4 +127,7 @@ public abstract class ImageTransform extends DataTransform {
     return maps;
   }
 
+  /** Most image transforms are not rendered immediately. */
+  public boolean isImmediate() { return false; }
+
 }
