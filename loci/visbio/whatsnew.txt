@@ -3,9 +3,12 @@ v3.00 final - Not yet released
 - ADDED: Data export: save a data object to a file series on disk
 - ADDED: Ability to download images from an OME database (OME image transform)
 - ADDED: Support for key/value pair command-line parameters
+- ADDED: Ability launch VisBio through a web browser with Java Web Start
 
 - TWEAK: VisBio icon is now used instead of default Java cup icon
+- TWEAK: System property for controlling native frame decoration (for L&Fs)
 
+- FIXED: More robust behavior when Java3D is not installed
 - FIXED: Combo box width for Windows Look & Feel
 - FIXED: Lots of little bugfixes
 
