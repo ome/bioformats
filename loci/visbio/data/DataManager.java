@@ -273,7 +273,6 @@ public class DataManager extends LogicManager {
       "Maximum intensity projection");
     registerDataType(CollapseTransform.class, "Dimensional collapse");
     registerDataType(SpectralTransform.class, "Spectral mapping");
-    registerDataType(VolumeTransform.class, "Volume rendering");
 
     // menu items
     bio.setSplashStatus(null);

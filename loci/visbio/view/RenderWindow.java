@@ -28,8 +28,6 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import loci.visbio.VisBioFrame;
-
 import loci.visbio.util.FormsUtil;
 import loci.visbio.util.SwingUtil;
 
@@ -47,6 +45,9 @@ public class RenderWindow extends JFrame implements ChangeListener {
   /** Slider for adjusting volume resolution. */
   protected JSlider res;
 
+  /** Label for current volume resolution. */
+  protected JLabel resLabel;
+
 
   // -- Constructor --
 
@@ -59,15 +60,20 @@ public class RenderWindow extends JFrame implements ChangeListener {
     render = new JCheckBox("Enable volume rendering");
 
     // slider for adjusting volume resolution
-    res = new JSlider(RenderHandler.MINIMUM_RESOLUTION,
-      RenderHandler.MAXIMUM_RESOLUTION, RenderHandler.DEFAULT_RESOLUTION);
+    res = new JSlider(0, RenderHandler.MAXIMUM_RESOLUTION,
+      RenderHandler.DEFAULT_RESOLUTION);
     res.addChangeListener(this);
+    res.setMajorTickSpacing(RenderHandler.MAXIMUM_RESOLUTION / 4);
+    res.setMinorTickSpacing(RenderHandler.MAXIMUM_RESOLUTION / 16);
+    res.setPaintTicks(true);
+    res.setToolTipText("Adjusts the resolution of the rendering.");
 
     // label for current resolution value
+    resLabel = new JLabel("" + RenderHandler.DEFAULT_RESOLUTION);
 
     // lay out components
     JScrollPane pane = new JScrollPane(FormsUtil.makeRow(new Object[] {
-      "Resolution", res}, "pref:grow", true));
+      "Resolution", res, resLabel}, "pref:grow", true));
     SwingUtil.configureScrollPane(pane);
     setContentPane(pane);
   }
@@ -86,16 +92,12 @@ public class RenderWindow extends JFrame implements ChangeListener {
 
   /** Called when slider is adjusted. */
   public void stateChanged(ChangeEvent e) {
-    DisplayWindow display = handler.getWindow();
-    VisBioFrame bio = display.getVisBio();
-
     Object src = e.getSource();
     if (src == res) {
-      if (!res.getValueIsAdjusting()) {
-        bio.generateEvent(bio.getManager(DisplayManager.class),
-          "volume rendering resolution adjustment for " + display.getName(),
-          true);
-      }
+      int value = res.getValue();
+      resLabel.setText("" + (value < RenderHandler.MINIMUM_RESOLUTION ?
+        RenderHandler.MINIMUM_RESOLUTION : value));
+      if (!res.getValueIsAdjusting()) handler.setResolution(res.getValue());
     }
   }
 

@@ -23,6 +23,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.view;
 
+import java.rmi.RemoteException;
+
+import loci.visbio.VisBioFrame;
+
+import loci.visbio.util.VisUtil;
+
+import visad.*;
+
 /** Provides logic for capturing display screenshots and movies. */
 public class RenderHandler {
 
@@ -32,7 +40,7 @@ public class RenderHandler {
   public static final int MINIMUM_RESOLUTION = 2;
 
   /** Maximum length of each spatial axis. */
-  public static final int MAXIMUM_RESOLUTION = 192;
+  public static final int MAXIMUM_RESOLUTION = 160;
 
   /** Default length of each spatial axis. */
   public static final int DEFAULT_RESOLUTION = 64;
@@ -64,9 +72,25 @@ public class RenderHandler {
 
   // -- RenderHandler API methods --
 
+  /** Sets volume rendering resolution. */
+  public void setResolution(int res) {
+    if (panel == null) renderRes = res;
+    else panel.getRenderWindow().setResolution(res);
+
+    // CTR START HERE actually do something
+
+    VisBioFrame bio = window.getVisBio();
+    bio.generateEvent(bio.getManager(DisplayManager.class),
+      "volume rendering resolution adjustment for " + window.getName(), true);
+  }
+
   /** Gets volume rendering resolution. */
   public int getResolution() {
-    return panel == null ? renderRes : panel.getRenderWindow().getResolution();
+    int res = panel == null ? renderRes :
+      panel.getRenderWindow().getResolution();
+    if (res < MINIMUM_RESOLUTION) res = MINIMUM_RESOLUTION;
+    else if (res > MAXIMUM_RESOLUTION) res = MAXIMUM_RESOLUTION;
+    return res;
   }
 
   /** Gets associated display window. */
@@ -80,10 +104,8 @@ public class RenderHandler {
 
   /** Writes the current state. */
   public void saveState() {
-    RenderWindow renderWindow = panel.getRenderWindow();
-
     // save parameters
-    int res = renderWindow.getResolution();
+    int res = getResolution();
     window.setAttr("renderRes", "" + res);
   }
 
@@ -103,7 +125,7 @@ public class RenderHandler {
    * Modifies this object's state to match that of the given object.
    * If the argument is null, the object is initialized according to
    * its current state instead.
-   */ 
+   */
   public void initState(RenderHandler handler) {
     if (handler != null) {
       // set parameters
@@ -115,6 +137,41 @@ public class RenderHandler {
     // set render window state to match
     RenderWindow renderWindow = panel.getRenderWindow();
     renderWindow.setResolution(renderRes);
+  }
+
+
+  // -- Utility methods --
+
+  /** Computes a volume across the given fields. */
+  public static FlatField makeVolume(FieldImpl field, int volumeRes) {
+    FlatField collapse = null;
+    try { collapse = VisUtil.collapse(field); }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
+    if (collapse == null) return null;
+
+    GriddedSet set = (GriddedSet) collapse.getDomainSet();
+    int[] len = set.getLengths();
+
+    FlatField volumeField = null;
+    if (len[0] == volumeRes && len[1] == volumeRes && len[2] == volumeRes) {
+      // no need to resample
+      volumeField = collapse;
+    }
+    else {
+      // resampling required
+      float[] lo = set.getLow();
+      float[] hi = set.getHi();
+      try {
+        Linear3DSet nset = new Linear3DSet(set.getType(), lo[0], hi[0],
+          volumeRes, lo[1], hi[1], volumeRes, lo[2], hi[2], volumeRes);
+        volumeField = (FlatField) collapse.resample(nset,
+          Data.WEIGHTED_AVERAGE, Data.NO_ERRORS);
+      }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
+    }
+    return volumeField;
   }
 
 }
