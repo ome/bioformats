@@ -123,6 +123,31 @@ public class OverlayTransform extends DataTransform
     notifyListeners(new TransformEvent(this));
   }
 
+  /** Removes an overlay object from the given dimensional position. */
+  public void removeObject(OverlayObject obj, int[] pos) {
+    int ndx = MathUtil.positionToRaster(lengths, pos);
+    if (ndx < 0 || ndx >= overlays.length) return;
+    overlays[ndx].remove(obj);
+    notifyListeners(new TransformEvent(this));
+  }
+
+  /** Removes all selected overlay objects. */
+  public void removeSelectedObjects() {
+    boolean anyRemoved = false;
+    for (int j=0; j<overlays.length; j++) {
+      int i = 0;
+      while (i < overlays[j].size()) {
+        OverlayObject obj = (OverlayObject) overlays[j].elementAt(i);
+        if (obj.isSelected()) {
+          overlays[j].removeElementAt(i);
+          anyRemoved = true;
+        }
+        else i++;
+      }
+    }
+    if (anyRemoved) notifyListeners(new TransformEvent(this));
+  }
+
   /** Gets the overlay objects at the given dimensional position. */
   public OverlayObject[] getObjects(int[] pos) {
     int ndx = MathUtil.positionToRaster(lengths, pos);

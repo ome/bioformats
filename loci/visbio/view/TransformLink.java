@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.view;
 
+import java.awt.Font;
+
 import java.rmi.RemoteException;
 
 import java.util.Vector;
@@ -333,13 +335,35 @@ public class TransformLink
       doTransform(TransformHandler.MINIMUM_BURN_DELAY);
     }
     else if (id == TransformEvent.FONT_CHANGED) {
-      // CTR TODO set the font here
-    /*
-    TextControl textControl = (TextControl) tMap.getControl();
-    if (textControl != null) textControl.setFont(font);
-    */
-      String append = handler.getWindow().getName() + ":" + trans.getName();
-      /*TEMP*/System.out.println(append + ": Font change");
+      Font font = trans.getFont();
+
+      // compile list of potential maps to Display.Text
+      Vector textMaps = new Vector();
+      ScalarMap[] maps = trans.getSuggestedMaps();
+      for (int i=0; i<maps.length; i++) {
+        if (maps[i].getDisplayScalar().equals(Display.Text)) {
+          textMaps.add(maps[i]);
+        }
+      }
+
+      // search display for matching text maps
+      DisplayImpl display = handler.getWindow().getDisplay();
+      Vector mapVector = display.getMapVector();
+      for (int i=0; i<mapVector.size(); i++) {
+        ScalarMap map = (ScalarMap) mapVector.elementAt(i);
+        for (int j=0; j<textMaps.size(); j++) {
+          ScalarMap textMap = (ScalarMap) textMaps.elementAt(j);
+          if (map.equals(textMap)) {
+            // update font for matching text map
+            TextControl textControl = (TextControl) map.getControl();
+            if (textControl != null) {
+              try { textControl.setFont(font); }
+              catch (VisADException exc) { exc.printStackTrace(); }
+              catch (RemoteException exc) { exc.printStackTrace(); }
+            }
+          }
+        }
+      }
     }
   }
 

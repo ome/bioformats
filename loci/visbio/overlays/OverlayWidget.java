@@ -190,7 +190,7 @@ public class OverlayWidget extends JPanel implements ActionListener {
     setLayout(new BorderLayout());
     FormLayout layout = new FormLayout(
       "pref, 5dlu, pref, 3dlu, pref:grow, 5dlu, pref, 3dlu, pref:grow",
-      "pref, 3dlu, pref, 9dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, " +
+      "pref, 3dlu, pref, 9dlu, pref, 3dlu, pref, 9dlu, pref, 3dlu, pref, " +
       "3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 9dlu, pref, 3dlu, " +
       "fill:pref:grow");
     PanelBuilder builder = new PanelBuilder(layout);
@@ -254,20 +254,6 @@ public class OverlayWidget extends JPanel implements ActionListener {
     return null;
   }
 
-  // CTR START HERE add more methods corresponding to GUI widgets here
-  // redo font stuff, because we can only have one font per Text mapping.
-  // So, change it to a "Fonts..." button to the right of the text, that
-  // when clicked, brings up a dialog for configuring "the" font for the
-  // text overlays. On the plus side, investigate whether there is a standard
-  // Java font chooser, and use it if there is (VisAD does support
-  // java.awt.Font fonts), and also allow the option to use a Hershey font.
-
-    // Get the new widgets in OverlayWidget working; concentrate on fonts.
-    // More info on Hershey fonts online at: http://batbox.org/font.html
-    // Check out "DisplayTest 69" for code example of using Hershey fonts.
-    //
-    // Also, don't forget to add Remove/Delete button.
-
   public float getX1() { return Float.NaN; }
   public float getY1() { return Float.NaN; }
   public float getX2() { return Float.NaN; }
@@ -329,6 +315,7 @@ public class OverlayWidget extends JPanel implements ActionListener {
         if (font != null) overlay.setFont(font);
       }
     }
+    else if (src == remove) overlay.removeSelectedObjects();
     else if (src == color) {
       Color c = getActiveColor();
       c = JColorChooser.showDialog(this, "Select a color", c);

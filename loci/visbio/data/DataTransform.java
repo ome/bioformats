@@ -48,7 +48,7 @@ public abstract class DataTransform implements Dynamic {
 
   /** Default font for text mappings. */
   protected static final Font DEFAULT_FONT =
-    new Font("Default", 11, Font.PLAIN);
+    new Font("Default", Font.PLAIN, 11);
 
 
   // -- Static fields --

@@ -50,7 +50,7 @@ public class OverlayManager extends LogicManager {
   }
 
   /** Gets the number of tasks required to initialize this logic manager. */
-  public int getTasks() { return 2; }
+  public int getTasks() { return 1; }
 
 
   // -- Helper methods --
@@ -61,10 +61,6 @@ public class OverlayManager extends LogicManager {
     bio.setSplashStatus("Initializing overlay logic");
     DataManager dm = (DataManager) bio.getManager(DataManager.class);
     dm.registerDataType(OverlayTransform.class, "Overlays");
-
-    // preloaded classes
-    bio.setSplashStatus(null);
-    preload("loci.visbio.overlays.OverlayTransform", false);
   }
 
 }
