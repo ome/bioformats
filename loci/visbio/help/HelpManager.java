@@ -34,6 +34,8 @@ import loci.visbio.VisBioEvent;
 import loci.visbio.VisBioFrame;
 import loci.visbio.WindowManager;
 
+import loci.visbio.util.SwingUtil;
+
 import visad.util.Util;
 
 /** HelpManager is the manager encapsulating VisBio's help window logic. */
@@ -110,8 +112,10 @@ public class HelpManager extends LogicManager {
     bio.setStatus(null);
 
     addHelpTopic("Help", "Overview", "overview.html");
-    bio.getMenuItem("Help", "Overview").setAccelerator(
-      KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+    KeyStroke helpStroke = VisBioFrame.MAC_OS_X ? KeyStroke.getKeyStroke(
+      new Character('?'), SwingUtil.MENU_MASK) :
+      KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0);
+    bio.getMenuItem("Help", "Overview").setAccelerator(helpStroke);
 
     addHelpTopic("Help", "QuickTime", "quicktime.html");
 
