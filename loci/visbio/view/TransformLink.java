@@ -101,7 +101,9 @@ public class TransformLink
   public TransformLink(TransformHandler h, DataTransform t) {
     handler = h;
     trans = t;
-    colorHandler = new ColorHandler(this);
+    if (trans instanceof ImageTransform) {
+      colorHandler = new ColorHandler(this);
+    }
     visible = true;
     initState(null);
   }

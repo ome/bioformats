@@ -104,29 +104,20 @@ public class ColorPane extends DialogPane
   /** Label for current contrast value. */
   protected JLabel contrastValue;
 
-  /** Slider for level of transparency. */
-  protected JSlider transparency;
+  /** Slider for level of opacity. */
+  protected JSlider opacity;
 
-  /** Label for current transparency value. */
-  protected JLabel transparencyValue;
+  /** Label for current opacity value. */
+  protected JLabel opacityValue;
 
-  /** Option for RGB color model. */
-  protected JRadioButton rgb;
+  /** Opacity model options. */
+  protected JRadioButton constant, poly;
 
-  /** Option for HSV color model. */
-  protected JRadioButton hsv;
+  /** Color model options. */
+  protected JRadioButton rgb, hsv, composite;
 
-  /** Option for composite coloring. */
-  protected JRadioButton composite;
-
-  /** Red/hue color map widget. */
-  protected BioColorWidget red;
-
-  /** Green/saturation color map widget. */
-  protected BioColorWidget green;
-
-  /** Blue/value color map widget. */
-  protected BioColorWidget blue;
+  /** Color map widgets. */
+  protected BioColorWidget red, green, blue;
 
   /** Combo box for choosing color widgets. */
   protected JComboBox selector;
@@ -311,10 +302,17 @@ public class ColorPane extends DialogPane
   /** Gets current contrast value. */
   public int getContrast() { return contrast.getValue(); }
 
-  public int getTransparency() { return transparency.getValue(); }
+  /** Gets current opacity value. */
+  public int getOpacityValue() { return opacity.getValue(); }
+
+  /** Gets current opacity model. */
+  public int getOpacityModel() {
+    return poly.isSelected() ?
+      ColorUtil.POLYNOMIAL_ALPHA : ColorUtil.CONSTANT_ALPHA;
+  }
 
   /** Gets current color model. */
-  public int getModel() {
+  public int getColorMode() {
     return rgb.isSelected() ? ColorUtil.RGB_MODEL : (hsv.isSelected() ?
       ColorUtil.HSV_MODEL : ColorUtil.COMPOSITE_MODEL);
   }
@@ -369,8 +367,9 @@ public class ColorPane extends DialogPane
   public void resetComponents() {
     int bright = handler.getBrightness();
     int cont = handler.getContrast();
-    int trans = handler.getTransparency();
-    int model = handler.getModel();
+    int opac = handler.getOpacityValue();
+    int om = handler.getOpacityModel();
+    int cm = handler.getColorModel();
     RealType rType = handler.getRed();
     RealType gType = handler.getGreen();
     RealType bType = handler.getBlue();
@@ -383,18 +382,18 @@ public class ColorPane extends DialogPane
     brightnessValue.setText("" + bright);
     contrast.setValue(cont);
     contrastValue.setText("" + cont);
-    transparency.setValue(trans);
-    transparencyValue.setText("" + trans);
-    if (model == ColorUtil.RGB_MODEL) rgb.setSelected(true);
-    else if (model == ColorUtil.HSV_MODEL) hsv.setSelected(true);
-    else if (model == ColorUtil.COMPOSITE_MODEL) composite.setSelected(true);
+    opacity.setValue(opac);
+    opacityValue.setText("" + opac);
+    if (cm == ColorUtil.RGB_MODEL) rgb.setSelected(true);
+    else if (cm == ColorUtil.HSV_MODEL) hsv.setSelected(true);
+    else if (cm == ColorUtil.COMPOSITE_MODEL) composite.setSelected(true);
     red.setSelectedItem(rType);
     green.setSelectedItem(gType);
     blue.setSelectedItem(bType);
     float[][][] tables = handler.getTables();
     if (maps != null) {
       VisUtil.setDisplayDisabled(preview, true);
-      ColorUtil.setColorMode(preview, model);
+      ColorUtil.setColorMode(preview, cm);
       for (int i=0; i<maps.length; i++) {
         if (fix[i]) {
           try { maps[i].setRange(lo[i], hi[i]); }
@@ -422,11 +421,11 @@ public class ColorPane extends DialogPane
   public void actionPerformed(ActionEvent e) {
     Object o = e.getSource();
     if (o == rgb || o == hsv || o == composite) {
-      int model = o == rgb ? ColorUtil.RGB_MODEL :
+      int colorModel = o == rgb ? ColorUtil.RGB_MODEL :
         o == hsv ? ColorUtil.HSV_MODEL : ColorUtil.COMPOSITE_MODEL;
-      red.setModel(model);
-      green.setModel(model);
-      blue.setModel(model);
+      red.setModel(colorModel);
+      green.setModel(colorModel);
+      blue.setModel(colorModel);
       guessTypes();
       doColorTables();
     }
@@ -490,7 +489,10 @@ public class ColorPane extends DialogPane
   // -- ChangeListener API methods --
 
   /** Handles slider changes. */
-  public void stateChanged(ChangeEvent e) { doColorTables(); }
+  public void stateChanged(ChangeEvent e) {
+    if (e.getSource() == opacity) doAlphas();
+    else doColorTables();
+  }
 
 
   // -- DocumentListener API methods --
@@ -545,18 +547,18 @@ public class ColorPane extends DialogPane
     contrastValue.setToolTipText("Current contrast value");
 
     // transparency slider
-    transparency = new JSlider(0,
+    opacity = new JSlider(0,
       ColorUtil.COLOR_DETAIL, ColorUtil.COLOR_DETAIL);
-    transparency.addChangeListener(this);
-    transparency.setAlignmentY(JSlider.TOP_ALIGNMENT);
-    transparency.setMajorTickSpacing(ColorUtil.COLOR_DETAIL / 4);
-    transparency.setMinorTickSpacing(ColorUtil.COLOR_DETAIL / 16);
-    transparency.setPaintTicks(true);
-    transparency.setToolTipText("Adjusts the transparency of the data.");
+    opacity.addChangeListener(this);
+    opacity.setAlignmentY(JSlider.TOP_ALIGNMENT);
+    opacity.setMajorTickSpacing(ColorUtil.COLOR_DETAIL / 4);
+    opacity.setMinorTickSpacing(ColorUtil.COLOR_DETAIL / 16);
+    opacity.setPaintTicks(true);
+    opacity.setToolTipText("Adjusts the transparency of the data.");
 
     // current transparency value
-    transparencyValue = new JLabel("999");
-    transparencyValue.setToolTipText("Current transparency value");
+    opacityValue = new JLabel("999");
+    opacityValue.setToolTipText("Current transparency value");
 
     // lay out components
     PanelBuilder builder = new PanelBuilder(new FormLayout(
@@ -572,9 +574,9 @@ public class ColorPane extends DialogPane
     builder.add(contrast, cc.xy(3, 3));
     builder.add(contrastValue, cc.xy(5, 3));
 
-    builder.addLabel("Trans&parency", cc.xy(1, 5)).setLabelFor(transparency);
-    builder.add(transparency, cc.xy(3, 5));
-    builder.add(transparencyValue, cc.xy(5, 5));
+    builder.addLabel("Trans&parency", cc.xy(1, 5)).setLabelFor(opacity);
+    builder.add(opacity, cc.xy(3, 5));
+    builder.add(opacityValue, cc.xy(5, 5));
 
     return builder.getPanel();
   }
@@ -721,22 +723,37 @@ public class ColorPane extends DialogPane
 
     int bright = getBrightness();
     int cont = getContrast();
-    int trans = getTransparency();
-    int model = getModel();
+    int cm = getColorMode();
     RealType rType = getRed();
     RealType gType = getGreen();
     RealType bType = getBlue();
 
     brightnessValue.setText("" + bright);
     contrastValue.setText("" + cont);
-    transparencyValue.setText("" + trans);
 
     if (maps != null) {
       VisUtil.setDisplayDisabled(preview, true);
       float[][][] tables = ColorUtil.computeColorTables(maps,
-        bright, cont, trans, model, rType, gType, bType);
-      ColorUtil.setColorMode(preview, model);
+        bright, cont, cm, rType, gType, bType);
+      ColorUtil.setColorMode(preview, cm);
       ColorUtil.setColorTables(maps, tables);
+      VisUtil.setDisplayDisabled(preview, false);
+    }
+  }
+
+  /** Updates image transparencies, when settings are adjusted. */
+  protected void doAlphas() {
+    if (ignore) return;
+
+    int opac = getOpacityValue();
+    int om = handler.getOpacityModel();
+
+    opacityValue.setText("" + opac);
+
+    if (maps != null) {
+      VisUtil.setDisplayDisabled(preview, true);
+      float[] alpha = ColorUtil.computeAlphaTable(opac, om);
+      ColorUtil.setAlphaTable(maps, alpha);
       VisUtil.setDisplayDisabled(preview, false);
     }
   }

@@ -43,6 +43,9 @@ public abstract class ColorUtil {
   /** Resolution of color tables. */
   public static final int COLOR_DETAIL = 256;
 
+  /** Maximum alpha exponent for polynomial transparency curve. */
+  public static final int MAX_POWER = 8;
+
   /** Zeroed out color table componented used in several presets. */
   protected static final float[] ZEROED = makeZeroed();
 
@@ -270,6 +273,12 @@ public abstract class ColorUtil {
   /** Composite RGB color space model. */
   public static final int COMPOSITE_MODEL = 2;
 
+  /** Constant alpha value transparency model. */
+  public static final int CONSTANT_ALPHA = 0;
+
+  /** Polynomial alpha curve transparency model. */
+  public static final int POLYNOMIAL_ALPHA = 1;
+
   /** RealType for indicating nothing mapped to a color component. */
   public static final RealType CLEAR = RealType.getRealType("bio_clear");
 
@@ -288,7 +297,7 @@ public abstract class ColorUtil {
    * @param blue RealType to map to blue color component
    */
   public static float[][][] computeColorTables(ScalarMap[] maps,
-    int brightness, int contrast, int transparency, int model,
+    int brightness, int contrast, int model,
     RealType red, RealType green, RealType blue)
   {
     // compute center and slope from brightness and contrast
@@ -330,10 +339,6 @@ public abstract class ColorUtil {
       else if (vals[i] > 1.0f) vals[i] = 1.0f;
     }
 
-    // compute transparency values
-    float[] avals = new float[COLOR_DETAIL];
-    Arrays.fill(avals, (float) transparency / COLOR_DETAIL);
-
     // update color tables and map ranges
     boolean rSolid = red == SOLID;
     boolean gSolid = green == SOLID;
@@ -349,8 +354,7 @@ public abstract class ColorUtil {
         t = new float[][] {
           rt.equals(red) ? rvals : new float[COLOR_DETAIL],
           rt.equals(green) ? gvals : new float[COLOR_DETAIL],
-          rt.equals(blue) ? bvals : new float[COLOR_DETAIL],
-          avals
+          rt.equals(blue) ? bvals : new float[COLOR_DETAIL]
         };
         if (rSolid) Arrays.fill(t[0], 1.0f);
         if (gSolid) Arrays.fill(t[1], 1.0f);
@@ -371,6 +375,32 @@ public abstract class ColorUtil {
       colorTables[j] = t;
     }
     return colorTables;
+  }
+
+  /**
+   * Computes alpha table component from the given transparency settings.
+   *
+   * @param opacity Level of solidity, from 0 to COLOR_DETAIL
+   * @param model Transparency model: CONSTANT_ALPHA or POLYNOMIAL_ALPHA
+   */
+  public static float[] computeAlphaTable(int opacity, int model) {
+    // compute transparency values
+    float[] avals = new float[COLOR_DETAIL];
+    if (model == POLYNOMIAL_ALPHA) {
+      // [0, 0.5] -> [1/N, 1]
+      // [0.5, 1] -> [1, N]
+      double value = opacity / COLOR_DETAIL;
+      boolean invert = value < 0.5;
+      if (invert) value = 1 - value;
+      double pow = (MAX_POWER - 1) * 2 * (value - 0.5) + 1;
+      if (invert) pow = 1 / pow;
+      for (int i=0; i<COLOR_DETAIL; i++) {
+        double inc = (double) i / (COLOR_DETAIL - 1);
+        avals[i] = (float) Math.pow(inc, pow);
+      }
+    }
+    else Arrays.fill(avals, (float) opacity / COLOR_DETAIL);
+    return avals;
   }
 
   /** Assigns the given color range to the specified display and mapping. */
@@ -437,6 +467,26 @@ public abstract class ColorUtil {
       float[][] t = ColorUtil.adjustColorTable(tables[i],
         oldTable.length > 3 ? oldTable[3] : null, doAlpha);
       if (ObjectUtil.arraysEqual(oldTable, t)) continue;
+
+      try { cc.setTable(t); }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
+    }
+  }
+
+  /** Assigns the given alpha channel to the specified mappings. */
+  public static void setAlphaTable(ScalarMap[] maps, float[] alpha) {
+    for (int i=0; i<maps.length; i++) {
+      if (!maps[i].getDisplayScalar().equals(Display.RGBA)) continue;
+
+      BaseColorControl cc = (BaseColorControl) maps[i].getControl();
+      float[][] oldTable = cc.getTable();
+      if (oldTable.length > 3 && ObjectUtil.arraysEqual(oldTable[3], alpha)) {
+        continue;
+      }
+      float[][] t = new float[][] {
+        oldTable[0], oldTable[1], oldTable[2], alpha
+      };
 
       try { cc.setTable(t); }
       catch (VisADException exc) { exc.printStackTrace(); }
