@@ -45,7 +45,7 @@ import loci.visbio.data.DataManager;
 
 import loci.visbio.help.HelpManager;
 
-import loci.visbio.measure.AnnManager;
+import loci.visbio.overlays.OverlayManager;
 
 import loci.visbio.ome.OMEManager;
 
@@ -151,7 +151,7 @@ public class VisBioFrame extends GUIFrame {
       new DataManager(this),
       new OMEManager(this),
       new DisplayManager(this),
-      new AnnManager(this),
+      new OverlayManager(this),
       new SystemManager(this),
       new ConsoleManager(this),
       new ExitManager(this)
