@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.event.KeyEvent;
 import java.io.*;
 import java.rmi.RemoteException;
@@ -92,6 +94,9 @@ public class OverlayTransform extends DataTransform
 
   /** Whether left mouse button is currently being pressed. */
   protected boolean mouseDownLeft;
+
+  /** Font metrics for the current font. */
+  protected FontMetrics fontMetrics;
 
 
   // -- Constructor --
@@ -236,11 +241,31 @@ public class OverlayTransform extends DataTransform
    * an overlay size or picking threshold.
    */
   public int getScalingValue() {
-    ImageTransform it = (ImageTransform) parent;
-    int width = it.getImageWidth();
-    int height = it.getImageHeight();
+    int width = getScalingValueX();
+    int height = getScalingValueY();
     return width < height ? width : height;
   }
+
+  /**
+   * Gets a scaling value along the X axis, suitable for
+   * computing an overlay width or picking threshold.
+   */
+  public int getScalingValueX() {
+    ImageTransform it = (ImageTransform) parent;
+    return it.getImageWidth();
+  }
+
+  /**
+   * Gets a scaling value along the Y axis, suitable for
+   * computing an overlay height or picking threshold.
+   */
+  public int getScalingValueY() {
+    ImageTransform it = (ImageTransform) parent;
+    return it.getImageHeight();
+  }
+
+  /** Gets font metrics for the current font. */
+  public FontMetrics getFontMetrics() { return fontMetrics; }
 
 
   // -- Static DataTransform API methods --
@@ -395,6 +420,28 @@ public class OverlayTransform extends DataTransform
   /** Gets associated GUI controls for this transform. */
   public JComponent getControls() { return controls; }
 
+  /**
+   * Sets the font used for text overlays.
+   * Since changing the font changes the data (text overlay bounding boxes,
+   * this method is overridden to send a DATA_CHANGED after recomputing them.
+   */
+  public void setFont(Font font) {
+    super.setFont(font);
+
+    // obtain new font metrics
+    fontMetrics = controls.getFontMetrics(font);
+
+    // recompute grid boxes for text overlays
+    for (int j=0; j<overlays.length; j++) {
+      for (int i=0; i<overlays[j].size(); i++) {
+        OverlayObject obj = (OverlayObject) overlays[j].elementAt(i);
+        if (obj instanceof OverlayText) obj.computeGridParameters();
+      }
+    }
+
+    notifyListeners(new TransformEvent(this, TransformEvent.DATA_CHANGED));
+  }
+
   /** Responds to mouse gestures with appropriate overlay interaction. */
   public void displayChanged(DisplayEvent e) {
     int id = e.getId();
@@ -531,6 +578,7 @@ public class OverlayTransform extends DataTransform
     pos = new int[lengths.length];
 
     controls = new OverlayWidget(this);
+    fontMetrics = controls.getFontMetrics(font);
   }
 
   /**

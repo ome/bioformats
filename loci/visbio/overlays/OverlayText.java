@@ -23,11 +23,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
+import java.awt.FontMetrics;
 import java.rmi.RemoteException;
 import visad.*;
 
 /** OverlayText is a text string overlay. */
 public class OverlayText extends OverlayObject {
+
 
   // -- Constructors --
 
@@ -70,9 +72,13 @@ public class OverlayText extends OverlayObject {
 
   /** Computes the shortest distance from this object to the given point. */
   public double getDistance(double x, double y) {
-    double xx = x1 - x;
-    double yy = y1 - y;
-    return Math.sqrt(xx * xx + yy * yy);
+    double xdist = 0;
+    if (x < x1 && x < x2) xdist = Math.min(x1, x2) - x;
+    else if (x > x1 && x > x2) xdist = x - Math.max(x1, x2);
+    double ydist = 0;
+    if (y < y1 && y < y2) ydist = Math.min(y1, y2) - y;
+    else if (y > y1 && y > y2) ydist = y - Math.max(y1, y2);
+    return Math.sqrt(xdist * xdist + ydist * ydist);
   }
 
   /** Retrieves useful statistics about this overlay. */
@@ -91,17 +97,32 @@ public class OverlayText extends OverlayObject {
 
   /** Computes parameters needed for selection grid computation. */
   protected void computeGridParameters() {
-    float padding = 0.03f * overlay.getScalingValue();
-    float xx1 = x1 - padding;
-    float xx2 = x1 + padding;
-    float yy1 = y1 - padding;
-    float yy2 = y1 + padding;
+    // Computing the grid for text overlays is difficult because the size of
+    // the overlay depends on the font metrics, which are obtained from an AWT
+    // component (in this case, window.getDisplay().getComponent() for a
+    // display window), but data transforms have no knowledge of which display
+    // windows are currently displaying them.
+
+    // HACK - for now, use this harebrained scheme to estimate the bounds
+    int sx = overlay.getScalingValueX();
+    int sy = overlay.getScalingValueY();
+    float mw = sx / 318f, mh = sy / 640f; // obtained through experimentation
+    FontMetrics fm = overlay.getFontMetrics();
+    x2 = x1 + mw * fm.stringWidth(text);
+    y2 = y1 + mh * fm.getHeight();
+
+    float padx = 0.03f * sx;
+    float pady = 0.03f * sy;
+    float xx1 = x1 - padx;
+    float xx2 = x2 + padx;
+    float yy1 = y1 - pady;
+    float yy2 = y2 + pady;
 
     xGrid1 = xx1; yGrid1 = yy1;
     xGrid2 = xx2; yGrid2 = yy1;
     xGrid3 = xx1; yGrid3 = yy2;
     xGrid4 = xx2; yGrid4 = yy2;
-    horizGridCount = 2; vertGridCount = 2;
+    horizGridCount = 2; vertGridCount = 3;
   }
 
 

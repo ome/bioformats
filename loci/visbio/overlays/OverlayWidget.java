@@ -515,12 +515,12 @@ public class OverlayWidget extends JPanel implements ActionListener,
     if (ignoreEvents) return;
     Object src = e.getSource();
     if (src == refreshTimer) {
-      synchronized (refreshTimer) {
+      //synchronized (refreshTimer) {
         if (needRefresh) {
           refreshWidgetComponents();
           needRefresh = false;
         }
-      }
+      //}
     }
     else if (src == chooseFont) {
       FontChooserPane fcp = new FontChooserPane(overlay.getFont());
