@@ -100,7 +100,7 @@ public abstract class ImageTransform extends DataTransform {
     if (functionType == null) {
       try {
         RealTupleType domain = new RealTupleType(xType, yType);
-        RealTupleType range = new RealTupleType(rangeTypes);
+        RealTupleType range = new RealTupleType(getRangeTypes());
         functionType = new FunctionType(domain, range);
       }
       catch (VisADException exc) { exc.printStackTrace(); }
@@ -116,8 +116,8 @@ public abstract class ImageTransform extends DataTransform {
     RealType[] range = getRangeTypes();
     ScalarMap[] maps = new ScalarMap[2 + range.length];
     try {
-      maps[0] = new ScalarMap(getXType(), Display.XAxis);
-      maps[1] = new ScalarMap(getYType(), Display.YAxis);
+      maps[0] = new ScalarMap(xType, Display.XAxis);
+      maps[1] = new ScalarMap(yType, Display.YAxis);
       for (int i=0; i<range.length; i++) {
         maps[i + 2] = new ScalarMap(range[i], Display.RGBA);
       }
