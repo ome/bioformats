@@ -270,8 +270,9 @@ public class Dataset extends DataTransform implements ImageTransform {
       else break;
     }
     if (!(d instanceof FlatField)) {
+      String name = d == null ? "null" : d.getClass().getName();
       System.err.println("Data chunk #" + (imgIndex + 1) + " from file " +
-        filename + " is not an image (" + d.getClass().getName() + ")");
+        filename + " is not an image (" + name + ")");
       return null;
     }
     return (FlatField) d;

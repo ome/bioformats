@@ -278,7 +278,9 @@ public class DataControls extends ControlPanel
       builder.setDefaultDialogBorder();
       CellConstraints cc = new CellConstraints();
       builder.add(dataControls, cc.xy(1, 1));
-      pane.add(builder.getPanel(), BorderLayout.CENTER);
+      JScrollPane scroll = new JScrollPane(builder.getPanel());
+      SwingUtil.configureScrollPane(scroll);
+      pane.add(scroll, BorderLayout.CENTER);
 
       // add data's controls to table
       frameTable.put(data, frame);

@@ -44,7 +44,7 @@ import visad.*;
  * color space, as specified by the user with weighted sliders.
  */
 public class SpectralTransform extends DataTransform
-  implements ImageTransform
+  implements ImageTransform, TransformListener
 {
 
   // -- Fields --
@@ -83,6 +83,7 @@ public class SpectralTransform extends DataTransform
     }
 
     initState(null);
+    parent.addTransformListener(this);
   }
 
 
@@ -317,6 +318,18 @@ public class SpectralTransform extends DataTransform
     RealType[] rt = new RealType[range.length];
     System.arraycopy(range, 0, rt, 0, range.length);
     return rt;
+  }
+
+
+  // -- TransformListener API methods --
+
+  /** Called when parent data transform's parameters are updated. */
+  public void transformChanged(TransformEvent e) {
+    // CTR TODO
+    // depending on how parent changed, recompute weights array size
+    // if it changes size, need to redo spectral widget layout
+    // but always need to notify listeners of spectral transform change
+    notifyListeners(new TransformEvent(this));
   }
 
 
