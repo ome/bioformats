@@ -229,7 +229,7 @@ public class DisplayManager extends LogicManager {
     hm.addHelpTopic(s + "/Appearance settings", "appearance.html");
     hm.addHelpTopic(s + "/Appearance settings/Capture window", "capture.html");
     hm.addHelpTopic(s + "/Data settings", "data_settings.html");
-    hm.addHelpTopic(s + "/Data settings/Color dialog box", "colors.html");
+    hm.addHelpTopic(s + "/Data settings/Colors dialog box", "colors.html");
     hm.addHelpTopic(s + "/Position settings", "position.html");
   }
 
