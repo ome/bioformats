@@ -294,9 +294,9 @@ public class TransformLink
       burnNow = false;
 
       // wait until appointed burn-in time (which could change during the wait)
-      if (!alive) break;
       long time;
       while ((time = System.currentTimeMillis()) < burnTime) {
+        if (!alive) break;
         long wait = burnTime - time;
         if (wait >= 1000) {
           long seconds = wait / 1000;
@@ -409,11 +409,29 @@ public class TransformLink
   protected Data getImageData(int[] pos) { return trans.getData(pos, 2); }
 
   /** Assigns the given data object to the data reference. */
-  protected void setData(Data d) { setData(d, ref); }
+  protected void setData(Data d) { setData(d, ref, true); }
+
+  /**
+   * Assigns the given data object to the data reference,
+   * switching to the proper types if the flag is set.
+   */
+  protected void setData(Data d, boolean autoSwitch) {
+    setData(d, ref, autoSwitch);
+  }
 
   /** Assigns the given data object to the given data reference. */
   protected void setData(Data d, DataReference dataRef) {
-    if (d instanceof FlatField && trans instanceof ImageTransform) {
+    setData(d, dataRef, true);
+  }
+
+  /**
+   * Assigns the given data object to the given data reference,
+   * switching to the proper types if the flag is set.
+   */
+  protected void setData(Data d, DataReference dataRef, boolean autoSwitch) {
+    if (autoSwitch && d instanceof FlatField &&
+      trans instanceof ImageTransform)
+    {
       // special case: use ImageTransform's suggested MathType instead
       FlatField ff = (FlatField) d;
       FunctionType ftype = ((ImageTransform) trans).getType();

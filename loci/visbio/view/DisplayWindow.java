@@ -26,7 +26,6 @@ package loci.visbio.view;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Vector;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import loci.ome.xml.CAElement;
@@ -67,9 +66,6 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
 
   /** Handles logic for capturing the display screenshots and movies. */
   protected CaptureHandler captureHandler;
-
-  /** Handles logic for volume rendering. */
-  protected RenderHandler renderHandler;
 
   /** Handles logic for linking data transforms to the VisAD display. */
   protected TransformHandler transformHandler;
@@ -158,9 +154,6 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
   /** Gets the capture handler. */
   public CaptureHandler getCaptureHandler() { return captureHandler; }
 
-  /** Gets the volume rendering handler. */
-  public RenderHandler getRenderHandler() { return renderHandler; }
-
   /** Gets the transform handler. */
   public TransformHandler getTransformHandler() { return transformHandler; }
 
@@ -217,7 +210,6 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
     setAttr("threeD", "" + threeD);
     viewHandler.saveState();
     captureHandler.saveState();
-    if (renderHandler != null) renderHandler.saveState();
     transformHandler.saveState();
   }
 
@@ -249,7 +241,6 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
     createHandlers();
     viewHandler.restoreState();
     captureHandler.restoreState();
-    if (renderHandler != null) renderHandler.saveState();
     transformHandler.restoreState();
   }
 
@@ -294,12 +285,9 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
     if (!isCompatible(dyn)) return false;
     DisplayWindow window = (DisplayWindow) dyn;
 
-    boolean renderMatch =
-      (renderHandler == null && window.renderHandler == null) ||
-      (renderHandler != null && renderHandler.matches(window.renderHandler));
     return ObjectUtil.objectsEqual(name, window.name) &&
       viewHandler.matches(window.viewHandler) &&
-      captureHandler.matches(window.captureHandler) && renderMatch &&
+      captureHandler.matches(window.captureHandler) &&
       transformHandler.matches(window.transformHandler);
   }
 
@@ -337,7 +325,6 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
     if (window == null) {
       viewHandler.initState(null);
       captureHandler.initState(null);
-      if (renderHandler != null) renderHandler.initState(null);
       transformHandler.initState(null);
     }
     else {
@@ -345,7 +332,6 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
       // their components only when necessary, to ensure efficiency
       viewHandler.initState(window.viewHandler);
       captureHandler.initState(window.captureHandler);
-      renderHandler.initState(window.renderHandler);
       transformHandler.initState(window.transformHandler);
     }
 
@@ -367,18 +353,12 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
         manager.getVisBio().getManager(WindowManager.class);
       wm.addWindow(controls.getWindow());
 
-      // lay out handler panels
-      Vector handlerPanels = new Vector();
-      handlerPanels.add(captureHandler.getPanel());
-      if (renderHandler != null) handlerPanels.add(renderHandler.getPanel());
-      Object[] handlerPanelArray = new Object[handlerPanels.size()];
-      handlerPanels.copyInto(handlerPanelArray);
-
       // lay out components
       pane.add(display.getComponent(), BorderLayout.CENTER);
       controls.setContentPane(FormsUtil.makeColumn(new Object[] {
-        viewHandler.getPanel(), FormsUtil.makeRow(handlerPanelArray),
-        "Data", transformHandler.getPanel(), sliders}, null, true));
+        viewHandler.getPanel(), FormsUtil.makeRow(new Object[] {
+        captureHandler.getPanel()}), "Data", transformHandler.getPanel(),
+        sliders}, null, true));
       pack();
       repack();
     }
@@ -398,9 +378,6 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
   protected void createHandlers() {
     if (viewHandler == null) viewHandler = new ViewHandler(this);
     if (captureHandler == null) captureHandler = new CaptureHandler(this);
-    if (renderHandler == null) {
-      if (threeD) renderHandler = new RenderHandler(this);
-    }
     if (transformHandler == null) {
       transformHandler = threeD ?
         new StackHandler(this) : new TransformHandler(this);

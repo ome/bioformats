@@ -31,6 +31,12 @@ import visad.*;
 
 public class StackLink extends TransformLink {
 
+  // -- Constants --
+
+  /** Dummy data to avoid "Data is null" status messages. */
+  protected static final Real DUMMY = new Real(0);
+
+
   // -- Fields --
 
   /** Data references linking data to the display. */
@@ -45,6 +51,15 @@ public class StackLink extends TransformLink {
   /** Last known dimensional position of the link. */
   protected int[] lastPos;
 
+  /** Data reference for volume rendered cube. */
+  protected DataReferenceImpl volumeRef;
+
+  /** Whether volume rendering is currently enabled. */
+  protected boolean volume = false;
+
+  /** Resolution of rendered volumes. */
+  protected int volumeRes = StackHandler.DEFAULT_VOLUME_RESOLUTION;
+
 
   // -- Constructor --
 
@@ -56,6 +71,8 @@ public class StackLink extends TransformLink {
     super(h, t);
     references = new Vector();
     renderers = new Vector();
+    try { volumeRef = new DataReferenceImpl(trans.getName() + "_volume"); }
+    catch (VisADException exc) { exc.printStackTrace(); }
 
     int axis = -1;
     String[] dims = t.getDimTypes();
@@ -143,6 +160,26 @@ public class StackLink extends TransformLink {
   /** Gets visibility of the given data transform's yellow bounding box. */
   public boolean isBoundingBoxVisible() { return super.isVisible(); }
 
+  /** Enables or disables volume rendering. */
+  public void setVolumeRendered(boolean volume) {
+    if (this.volume == volume) return;
+    this.volume = volume;
+    doTransform(TransformHandler.MINIMUM_BURN_DELAY);
+  }
+
+  /** Gets status of volume rendering. */
+  public boolean isVolumeRendered() { return volume; }
+
+  /** Sets maximum resolution per axis of rendered volumes. */
+  public void setVolumeResolution(int res) {
+    if (volumeRes == res) return;
+    volumeRes = res;
+    doTransform(TransformHandler.MINIMUM_BURN_DELAY);
+  }
+
+  /** Gets maximum resolution per axis of rendered volumes. */
+  public int getVolumeResolution() { return volumeRes; }
+
 
   // -- TransformLink API methods --
 
@@ -172,6 +209,9 @@ public class StackLink extends TransformLink {
         new ConstantMap(0, Display.Blue),
         new ConstantMap(3, Display.LineWidth)
       });
+
+      // add volume
+      display.addReference(volumeRef);
     }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
@@ -264,7 +304,7 @@ public class StackLink extends TransformLink {
    * Computes the reference data at the current position,
    * utilizing thumbnails as appropriate.
    */
-  protected void computeData(boolean thumbs) {
+  protected synchronized void computeData(boolean thumbs) {
     int[] pos = handler.getPos(trans);
     ThumbnailHandler th = trans.getThumbHandler();
     int len = references.size();
@@ -272,25 +312,58 @@ public class StackLink extends TransformLink {
     // compute image data at each slice
     DisplayImpl display = handler.getWindow().getDisplay();
     VisUtil.setDisplayDisabled(display, true);
+    Data[] slices = new Data[len];
     for (int s=0; s<len; s++) {
       if (stackAxis >= 0) pos[stackAxis] = s;
-      String current = " (" + (s + 1) + "/" + len + ")";
 
       Data thumb = th == null ? null : th.getThumb(pos);
       DataReferenceImpl sliceRef = (DataReferenceImpl) references.elementAt(s);
       if (thumbs) setData(thumb, sliceRef);
       else {
-        setMessage("loading full-resolution data" + current);
-        Data d = getImageData(pos);
-        if (th != null && thumb == null) {
+        setMessage("loading full-resolution data (" +
+          (s + 1) + "/" + len + ")");
+        slices[s] = getImageData(pos);
+        if (th != null && thumb == null && !volume) {
           // fill in missing thumbnail
-          th.setThumb(pos, th.makeThumb(d));
+          th.setThumb(pos, th.makeThumb(slices[s]));
         }
-        setData(d, sliceRef);
+        if (volume) setData(DUMMY, sliceRef, false);
+        else setData(slices[s], sliceRef);
       }
     }
-    if (!thumbs) {
-      setMessage("burning in full-resolution data");
+    if (thumbs) setData(DUMMY, volumeRef, false);
+    else {
+      if (volume) {
+        // render slices as a volume
+        String res = volumeRes + "x" + volumeRes + "x" + volumeRes;
+        setMessage("constructing " + res + " volume");
+        ImageTransform it = (ImageTransform) trans;
+        RealType zType = it.getZType();
+        FunctionType imageType = it.getType();
+        try {
+          // convert slices to proper type
+          for (int i=0; i<len; i++) {
+            slices[i] = VisUtil.switchType((FlatField) slices[i], imageType);
+          }
+          // compile slices into a single volume
+          FunctionType volumeType = new FunctionType(zType, imageType);
+          Linear1DSet volumeSet = new Linear1DSet(zType, -1, 1, len);
+          FieldImpl field = new FieldImpl(volumeType, volumeSet);
+          field.setSamples(slices, false);
+          // collapse volume
+          FlatField collapsed = VisUtil.collapse(field);
+          // resample volume
+          setData(VisUtil.makeCube(collapsed, volumeRes), volumeRef, false);
+          setMessage("rendering " + res + " volume");
+        }
+        catch (VisADException exc) { exc.printStackTrace(); }
+        catch (RemoteException exc) { exc.printStackTrace(); }
+      }
+      else {
+        // slice data is already set; just display burn-in message
+        setData(DUMMY, volumeRef, false);
+        setMessage("burning in full-resolution data");
+      }
       clearWhenDone = true;
     }
     VisUtil.setDisplayDisabled(display, false);
@@ -306,7 +379,8 @@ public class StackLink extends TransformLink {
     int[] len = set.getLengths();
     int[] res = new int[len.length];
     boolean same = true;
-    int maxRes = ((StackHandler) handler).getMaximumResolution();
+    int maxRes = volume ? volumeRes :
+      ((StackHandler) handler).getStackResolution();
     for (int i=0; i<len.length; i++) {
       if (len[i] > maxRes) {
         same = false;

@@ -37,8 +37,20 @@ public class StackHandler extends TransformHandler {
 
   // -- Constants --
 
+  /** Default maximum resolution for images in a stack. */
+  public static final int DEFAULT_STACK_RESOLUTION = 192;
+
   /** Starting FPS for animation for image stacks. */
   public static final int STACK_ANIMATION_RATE = 2;
+
+  /** Minimum length of each volume rendered spatial axis. */
+  public static final int MIN_VOLUME_RESOLUTION = 2;
+
+  /** Maximum length of each volume rendered spatial axis. */
+  public static final int MAX_VOLUME_RESOLUTION = 160;
+
+  /** Default length of each volume rendered spatial axis. */
+  public static final int DEFAULT_VOLUME_RESOLUTION = 64;
 
 
   // -- Fields --
@@ -52,8 +64,8 @@ public class StackHandler extends TransformHandler {
    */
   protected Vector thumbnails;
 
-  /** Maximum resolution of stack images. */
-  protected int maxResolution;
+  /** Resolution of stack images. */
+  protected int stackRes;
 
 
   // -- Constructor --
@@ -63,17 +75,17 @@ public class StackHandler extends TransformHandler {
     super(dw);
     positions = new Vector();
     thumbnails = new Vector();
-    maxResolution = 192;
+    stackRes = DEFAULT_STACK_RESOLUTION;
   }
 
 
   // -- StackHandler API methods --
 
   /** Sets maximum resolution per axis of stacked images. */
-  public void setMaximumResolution(int res) { maxResolution = res; }
+  public void setStackResolution(int res) { stackRes = res; }
 
   /** Gets maximum resolution per axis of stacked images. */
-  public int getMaximumResolution() { return maxResolution; }
+  public int getStackResolution() { return stackRes; }
 
 
   // -- TransformHandler API methods --

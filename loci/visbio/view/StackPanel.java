@@ -25,6 +25,7 @@ package loci.visbio.view;
 
 import java.awt.event.ActionEvent;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
 import loci.visbio.data.DataTransform;
 import loci.visbio.util.FormsUtil;
 import loci.visbio.util.LAFUtil;
@@ -40,9 +41,6 @@ public class StackPanel extends TransformPanel {
   /** List of axes for stacking. */
   protected JComboBox stackBox;
 
-  /** Checkbox for choosing whether current slice is highlighted. */
-  protected JCheckBox highlight;
-
   /** Dialog box for toggling individual slices. */
   protected SliceToggler sliceToggler;
 
@@ -51,6 +49,15 @@ public class StackPanel extends TransformPanel {
 
   /** Checkbox for choosing whether current slice is visible. */
   protected JCheckBox sliceVisible;
+
+  /** Checkbox for choosing whether current slice is highlighted. */
+  protected JCheckBox highlight;
+
+  /** Checkbox indicating whether volume rendering is enabled. */
+  protected JCheckBox render;
+
+  /** Spinner for volume rendering resolution. */
+  protected JSpinner renderRes;
 
 
   // -- Constructor --
@@ -69,9 +76,11 @@ public class StackPanel extends TransformPanel {
     boolean b = trans != null;
     stackLabel.setEnabled(b);
     stackBox.setEnabled(b);
-    highlight.setEnabled(b);
     toggleSlices.setEnabled(b);
     sliceVisible.setEnabled(b);
+    highlight.setEnabled(b);
+    render.setEnabled(b);
+    renderRes.setEnabled(b);
     if (b) {
       StackLink link = (StackLink) handler.getLink(trans);
 
@@ -95,12 +104,16 @@ public class StackPanel extends TransformPanel {
       stackBox.setSelectedIndex(stackAxis + 1);
       stackBox.addActionListener(this);
 
-      // update "highlight current slice" checkbox
-      highlight.setSelected(link.isBoundingBoxVisible());
-
       // update "current slice visible" checkbox
       int slice = link.getCurrentSlice();
       sliceVisible.setSelected(link.isSliceVisible(slice));
+
+      // update "highlight current slice" checkbox
+      highlight.setSelected(link.isBoundingBoxVisible());
+
+      // update "render as a volume" checkbox and spinner
+      render.setSelected(link.isVolumeRendered());
+      renderRes.setValue(new Integer(link.getVolumeResolution()));
     }
   }
 
@@ -112,16 +125,9 @@ public class StackPanel extends TransformPanel {
     String cmd = e.getActionCommand();
     if (cmd.equals("stackBox")) {
       DataTransform trans = (DataTransform) transformList.getSelectedValue();
-      int axis = stackBox.getSelectedIndex() - 1;
       StackLink link = (StackLink) handler.getLink(trans);
-      link.setStackAxis(axis);
+      link.setStackAxis(stackBox.getSelectedIndex() - 1);
       handler.rebuild();
-    }
-    else if (cmd.equals("highlight")) {
-      DataTransform trans = (DataTransform) transformList.getSelectedValue();
-      boolean vis = highlight.isSelected();
-      StackLink link = (StackLink) handler.getLink(trans);
-      link.setBoundingBoxVisible(vis);
     }
     else if (cmd.equals("toggleSlices")) {
       DisplayWindow window = handler.getWindow();
@@ -134,15 +140,34 @@ public class StackPanel extends TransformPanel {
     else if (cmd.equals("sliceVisible")) {
       DataTransform trans = (DataTransform) transformList.getSelectedValue();
       StackLink link = (StackLink) handler.getLink(trans);
-      int slice = link.getCurrentSlice();
-      boolean vis = sliceVisible.isSelected();
-      link.setSliceVisible(slice, vis);
+      link.setSliceVisible(link.getCurrentSlice(), sliceVisible.isSelected());
       updateControls();
     }
-    else {
-      if (cmd.equals("transformBox")) updateControls();
-      super.actionPerformed(e);
+    else if (cmd.equals("highlight")) {
+      DataTransform trans = (DataTransform) transformList.getSelectedValue();
+      StackLink link = (StackLink) handler.getLink(trans);
+      link.setBoundingBoxVisible(highlight.isSelected());
     }
+    else if (cmd.equals("render")) {
+      DataTransform trans = (DataTransform) transformList.getSelectedValue();
+      StackLink link = (StackLink) handler.getLink(trans);
+      link.setVolumeRendered(render.isSelected());
+    }
+    else super.actionPerformed(e);
+  }
+
+
+  // -- ChangeListener API methods --
+
+  /** Handles spinner changes. */
+  public void stateChanged(ChangeEvent e) {
+    Object src = e.getSource();
+    if (src == renderRes) {
+      DataTransform trans = (DataTransform) transformList.getSelectedValue();
+      StackLink link = (StackLink) handler.getLink(trans);
+      link.setVolumeResolution(((Integer) renderRes.getValue()).intValue());
+    }
+    else super.stateChanged(e);
   }
 
 
@@ -162,14 +187,6 @@ public class StackPanel extends TransformPanel {
     if (!LAFUtil.isMacLookAndFeel()) stackLabel.setDisplayedMnemonic('k');
     stackLabel.setLabelFor(stackBox);
     stackLabel.setEnabled(false);
-
-    // highlight current slice checkbox
-    highlight = new JCheckBox("Highlight current slice");
-    if (!LAFUtil.isMacLookAndFeel()) highlight.setMnemonic('h');
-    highlight.setToolTipText("Toggles yellow highlight around current slice");
-    highlight.setActionCommand("highlight");
-    highlight.addActionListener(this);
-    highlight.setEnabled(false);
 
     // slice toggler dialog box
     sliceToggler = new SliceToggler((StackHandler) handler);
@@ -191,10 +208,35 @@ public class StackPanel extends TransformPanel {
     sliceVisible.addActionListener(this);
     sliceVisible.setEnabled(false);
 
+    // highlight current slice checkbox
+    highlight = new JCheckBox("Highlight current slice");
+    if (!LAFUtil.isMacLookAndFeel()) highlight.setMnemonic('h');
+    highlight.setToolTipText("Toggles yellow highlight around current slice");
+    highlight.setActionCommand("highlight");
+    highlight.addActionListener(this);
+    highlight.setEnabled(false);
+
+    // checkbox for toggling volume rendering
+    render = new JCheckBox("Render as a volume");
+    render.setActionCommand("render");
+    render.addActionListener(this);
+    render.setMnemonic('v');
+
+    // slider for adjusting volume resolution
+    SpinnerNumberModel renderModel = new SpinnerNumberModel(
+      StackHandler.DEFAULT_VOLUME_RESOLUTION,
+      StackHandler.MIN_VOLUME_RESOLUTION,
+      StackHandler.MAX_VOLUME_RESOLUTION, 16);
+    renderRes = new JSpinner(renderModel);
+    renderRes.setToolTipText("Adjusts the resolution of the rendering.");
+    renderRes.setEnabled(false);
+    renderRes.addChangeListener(this);
+
     // lay out components
-    return FormsUtil.makeColumn(new Object[] {visible,
+    return FormsUtil.makeColumn(new Object[] {
       FormsUtil.makeRow(stackLabel, stackBox),
-      toggleSlices, sliceVisible, highlight});
+      FormsUtil.makeRow(visible, toggleSlices),
+      sliceVisible, highlight, FormsUtil.makeRow(render, renderRes)});
   }
 
 }
