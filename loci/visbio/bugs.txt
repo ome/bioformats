@@ -1,7 +1,9 @@
 Bugfixes and enhancements to address:
 
-  - Discovered that VisAD QT and TIFF readers are horribly inefficient; clean
-    up all file form code to acceptable standards.
+  - DataSampling is broken now; figure out why.
+
+  - VisAD QT reader is horribly inefficient; clean up code to acceptable
+    standards.
 
   - Eliminate all XML-based state stuff; switch back to standard vanilla text
     INI-style files, because they make more sense.
