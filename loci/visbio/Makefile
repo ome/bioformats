@@ -108,6 +108,7 @@ JAVA_FILES = \
 
 RESOURCE_FILES = \
 	loci/visbio/*.png \
+	loci/visbio/*.gif \
 	loci/visbio/help/*.html \
 	loci/visbio/help/*.png \
 	loci/visbio/overlays/*.png \
