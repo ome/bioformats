@@ -56,15 +56,9 @@ public abstract class ImageTransform extends DataTransform {
     super(parent, name);
 
     // initialize internal MathTypes
-    try {
-      xType = RealType.getRealType("x_" + id);
-      xType.alias(name + "_X");
-      yType = RealType.getRealType("y_" + id);
-      yType.alias(name + "_Y");
-      zType = RealType.getRealType("z_" + id);
-      zType.alias(name + "_Z");
-    }
-    catch (TypeException exc) { exc.printStackTrace(); }
+    xType = RealType.getRealType(name + "_X");
+    yType = RealType.getRealType(name + "_Y");
+    zType = RealType.getRealType(name + "_Z");
   }
 
 
@@ -94,9 +88,7 @@ public abstract class ImageTransform extends DataTransform {
       rangeTypes = new RealType[getRangeCount()];
       for (int i=0; i<rangeTypes.length; i++) {
         String s = "range" + i;
-        rangeTypes[i] = RealType.getRealType(s + "_" + id);
-        try { rangeTypes[i].alias(name + "_" + s); }
-        catch (TypeException exc) { exc.printStackTrace(); }
+        rangeTypes[i] = RealType.getRealType(name + "_" + s);
       }
     }
     return rangeTypes;

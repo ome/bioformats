@@ -42,12 +42,6 @@ import visad.*;
 /** DataTransform is the superclass of all data transform types. */
 public abstract class DataTransform implements Dynamic {
 
-  // -- Static fields --
-
-  /** Next free data transform ID number (for unique MathType numbering). */
-  private static int nextId = 0;
-
-
   // -- Fields --
 
   /** Parent transform from which this transform obtains its data. */
@@ -90,7 +84,6 @@ public abstract class DataTransform implements Dynamic {
   public DataTransform(DataTransform parent, String name) {
     this.parent = parent;
     this.name = name;
-    id = nextId++;
   }
 
 
