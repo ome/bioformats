@@ -34,7 +34,6 @@ import org.openmicroscopy.ds.st.*;
 import org.openmicroscopy.is.*;
 import loci.visbio.*;
 import loci.visbio.data.DataManager;
-import loci.visbio.help.HelpManager;
 import loci.visbio.util.MathUtil;
 import visad.FlatField;
 
@@ -105,7 +104,7 @@ public class OMEManager extends LogicManager implements Runnable {
   }
 
   /** Gets the number of tasks required to initialize this logic manager. */
-  public int getTasks() { return 2; }
+  public int getTasks() { return 1; }
 
 
   // -- Runnable API methods --
@@ -366,11 +365,6 @@ public class OMEManager extends LogicManager implements Runnable {
     bio.setSplashStatus("Initializing OME logic");
     DataManager dm = (DataManager) bio.getManager(DataManager.class);
     uploadPanel = new OMEUploadPane(this, bio.getProgressBar());
-
-    // help window
-    bio.setSplashStatus(null);
-    HelpManager hm = (HelpManager) bio.getManager(HelpManager.class);
-    if (hm != null) hm.addHelpTopic("Uploading to OME", "ome.html");
   }
 
 }

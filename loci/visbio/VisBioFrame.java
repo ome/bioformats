@@ -129,8 +129,8 @@ public class VisBioFrame extends GUIFrame {
       om, // OptionManager
       new ClassManager(this),
       wm, // WindowManager
-      new PanelManager(this),
       new HelpManager(this),
+      new PanelManager(this),
       new DataManager(this),
       new OMEManager(this),
       new DisplayManager(this),

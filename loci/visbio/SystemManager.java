@@ -203,7 +203,7 @@ public class SystemManager extends LogicManager
     // help window
     bio.setSplashStatus(null);
     HelpManager hm = (HelpManager) bio.getManager(HelpManager.class);
-    hm.addHelpTopic("System", "system.html");
+    hm.addHelpTopic("Control panels/System panel", "system_panel.html");
 
     // RAM usage debugging output
     if (VisBioFrame.DEBUG) new Timer(500, this).start();

@@ -27,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
 import javax.swing.*;
+import loci.visbio.help.HelpManager;
 import loci.visbio.state.BooleanOption;
 import loci.visbio.state.OptionManager;
 import loci.visbio.util.SwingUtil;
@@ -141,7 +142,7 @@ public class PanelManager extends LogicManager implements ActionListener {
   }
 
   /** Gets the number of tasks required to initialize this logic manager. */
-  public int getTasks() { return 2; }
+  public int getTasks() { return 3; }
 
 
   // -- ActionListener API methods --
@@ -173,6 +174,11 @@ public class PanelManager extends LogicManager implements ActionListener {
     OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
     om.addBooleanOption("General", FLOATING, 'f',
       "Toggles whether each control panel has its own window", floating);
+
+    // help window
+    bio.setSplashStatus(null);
+    HelpManager hm = (HelpManager) bio.getManager(HelpManager.class);
+    hm.addHelpTopic("Control panels", "control_panels.html");
   }
 
   /** Sets whether control panels are separate, floating windows. */

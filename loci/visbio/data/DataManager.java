@@ -278,7 +278,35 @@ public class DataManager extends LogicManager {
     // help window
     bio.setSplashStatus(null);
     HelpManager hm = (HelpManager) bio.getManager(HelpManager.class);
-    hm.addHelpTopic("Data", "data.html");
+    String s = "File formats";
+    hm.addHelpTopic(s, "formats.html");
+    hm.addHelpTopic(s + "/Bio-Rad PIC", "biorad.html");
+    hm.addHelpTopic(s + "/Olympus Fluoview TIFF", "fluoview.html");
+    hm.addHelpTopic(s + "/Metamorph STK", "metamorph.html");
+    hm.addHelpTopic(s + "/Openlab LIFF", "openlab.html");
+    hm.addHelpTopic(s + "/QuickTime movies", "quicktime.html");
+    hm.addHelpTopic(s + "/TIFF stacks", "tiff.html");
+    hm.addHelpTopic(s + "/Zeiss LSM", "zeiss_lsm.html");
+    hm.addHelpTopic(s + "/Zeiss ZVI (Axiovision)", "zeiss_zvi.html");
+    hm.addHelpTopic(s + "/Other formats (JPEG, BMP, etc.)",
+      "other_formats.html");
+    s = "Data transforms";
+    hm.addHelpTopic(s, "data_transforms.html");
+    hm.addHelpTopic(s + "/Datasets", "datasets.html");
+    hm.addHelpTopic(s + "/Subsamplings", "subsampling.html");
+    hm.addHelpTopic(s + "/Maximum intensity projections",
+      "max_intensity.html");
+    hm.addHelpTopic(s + "/Dimensional collapse transforms", "collapse.html");
+    hm.addHelpTopic(s + "/Spectral mappings", "spectral.html");
+    hm.addHelpTopic(s + "/Arbitrary slices", "arbitrary_slice.html");
+    hm.addHelpTopic(s + "/Overlays", "overlays.html");
+    s = "Control panels/Data panel";
+    hm.addHelpTopic(s, "data_panel.html");
+    hm.addHelpTopic(s + "/Adding a data object", "add_data.html");
+    hm.addHelpTopic(s + "/Generating thumbnails", "thumbnails.html");
+    hm.addHelpTopic(s + "/Displaying a data object", "display_data.html");
+    hm.addHelpTopic(s + "/Exporting data to disk", "export.html");
+    hm.addHelpTopic(s + "/Uploading to an OME database", "upload_ome.html");
   }
 
   /** Recursively creates a list of data transforms below the given node. */

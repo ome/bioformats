@@ -104,10 +104,9 @@ public class DataControls extends ControlPanel
     dataModel = new DefaultTreeModel(dataRoot);
     dataTree = new JTree(dataModel);
     dataTree.setRootVisible(false);
-    TreeSelectionModel treeModel = new DefaultTreeSelectionModel();
-    treeModel.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+    dataTree.getSelectionModel().setSelectionMode(
+      TreeSelectionModel.SINGLE_TREE_SELECTION);
     dataTree.setVisibleRowCount(8);
-    dataTree.setSelectionModel(treeModel);
     dataTree.addTreeSelectionListener(this);
     JScrollPane treePane = new JScrollPane(dataTree);
     SwingUtil.configureScrollPane(treePane);

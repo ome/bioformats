@@ -223,9 +223,14 @@ public class DisplayManager extends LogicManager {
     // help topics
     bio.setSplashStatus(null);
     HelpManager hm = (HelpManager) bio.getManager(HelpManager.class);
-    hm.addHelpTopic("Displays", "displays.html");
-    hm.addHelpTopic("Colors", "colors.html");
-    hm.addHelpTopic("Capture", "capture.html");
+    hm.addHelpTopic("Control panels/Displays panel", "displays_panel.html");
+    String s = "Display windows";
+    hm.addHelpTopic(s, "display_windows.html");
+    hm.addHelpTopic(s + "/Appearance settings", "appearance.html");
+    hm.addHelpTopic(s + "/Appearance settings/Capture window", "capture.html");
+    hm.addHelpTopic(s + "/Data settings", "data_settings.html");
+    hm.addHelpTopic(s + "/Data settings/Color dialog box", "colors.html");
+    hm.addHelpTopic(s + "/Position settings", "position.html");
   }
 
 }
