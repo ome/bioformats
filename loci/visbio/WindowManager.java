@@ -90,6 +90,7 @@ public class WindowManager extends LogicManager implements WindowListener {
    * the window should be packed prior to being shown for the first time.
    */
   public void addWindow(Window w, boolean pack) {
+    if (w instanceof Frame) ((Frame) w).setIconImage(bio.getIcon());
     WindowInfo winfo = new WindowInfo(w, pack);
     String wname = SwingUtil.getWindowTitle(w);
     WindowState ws = (WindowState) windowStates.get(wname);

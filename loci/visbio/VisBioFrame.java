@@ -73,6 +73,9 @@ public class VisBioFrame extends GUIFrame {
   /** Stop button for various operations. */
   protected JButton stop;
 
+  /** VisBio program icon. */
+  protected Image icon;
+
 
   // -- Constructor --
 
@@ -94,6 +97,11 @@ public class VisBioFrame extends GUIFrame {
 
     // initialize Look & Feel parameters
     LAFUtil.initLookAndFeel();
+
+    // load program icon
+		URL urlIcon = getClass().getResource("visbio-icon.gif");
+		if (urlIcon != null) icon = new ImageIcon(urlIcon).getImage();
+    if (icon != null) setIconImage(icon);
 
     // make menus appear in the right order
     getMenu("File");
@@ -173,13 +181,6 @@ public class VisBioFrame extends GUIFrame {
 
     // distribute menu bar across all frames
     if (LAFUtil.isMacLookAndFeel()) wm.setDistributedMenus(true);
-
-    // set program icon
-		URL url = getClass().getResource("visbio-icon.gif");
-		if (url != null) {
-  		Image icon = new ImageIcon(url).getImage();
-  		if (icon != null) setIconImage(icon);
-  	}
 
     // show VisBio window onscreen
     pack();
@@ -343,6 +344,9 @@ public class VisBioFrame extends GUIFrame {
     status.setValue(0);
     stop.setEnabled(false);
   }
+
+  /** Gets VisBio program icon. */
+  public Image getIcon() { return icon; }
 
 
   // -- ActionListener API methods --
