@@ -60,7 +60,7 @@ public class MacAdapter extends ApplicationAdapter {
     if (hm == null) evt.setHandled(false);
     else {
       evt.setHandled(true);
-      hm.helpShow("About");
+      hm.helpAbout();
     }
   }
 

@@ -1,5 +1,45 @@
 Bugfixes and enhancements to address:
 
+  - Arbitrary slice, volume rendering and high-resolution burn-in all load the
+    high-resolution data separately. This is inefficient. Come up with a better
+    way to share this data as efficiently as possible.
+
+      loci.visbio.data.DataCache
+    A new class for handling caching of full-resolution data in memory.
+    Each DisplayWindow has its own DataCache.
+    DataCache keeps a copy of any data loaded through it (with associated
+    DataTransform and dimensional positions). It also contains a function to
+    drop all data associated with a given transform, so things don't build up
+    too much.
+    DataTransform.getData has a new signature where a DataCache can be passed
+    in, to check for the data already having been loaded.
+
+    One problem is that multiple threads can simultaneously be trying to load
+    data. So DataCache needs to be thread-safe, blocking if the given data is
+    currently being loaded before returning it.
+
+    DataCache is backed by a hashtable. Each data object has a name. Any data
+    can be crammed into the cache with an appropriate name (e.g., "collapsed"
+    version of high-res stacks is very useful to cache). Expand thumbnail cache
+    naming scheme to work with DataCache as well.
+
+    DataCache would also be ideal for managing keeping an entire dataset in
+    memory at once, an entire set of image planes across time, etc.
+
+    Think about how to present a GUI for controlling what is cached when, to
+    make VisBio perform better. Analyze dataset size vs max memory limit to
+    decide whether/when to dump the cache automatically.
+
+    The burn-in delay should not apply if the full-res data is already in the
+    cache. Tweak display architecture to delay only if there is a cache miss.
+    Checking for cache misses also needs to be thread-safe--think about this.
+
+    Some derivative transforms are designed to be shown only in the same window
+    as their parent transform (overlays, arbitrary slices). These transforms
+    should return true for a new "isShownWithParent" method, and if they are
+    added to a display that does not already contain their parent transform,
+    the parent is automatically added first.
+
   - VisAD QT reader is horribly inefficient; clean up code to acceptable
     standards.
 
