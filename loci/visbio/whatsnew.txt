@@ -4,11 +4,13 @@ v3.00 final - Not yet released
 - ADDED: Ability to download images from an OME database (OME image transform)
 - ADDED: Support for key/value pair command-line parameters
 - ADDED: Ability launch VisBio through a web browser with Java Web Start
+- ADDED: Support for PNG images
 
 - TWEAK: VisBio icon is now used instead of default Java cup icon
 - TWEAK: System property for controlling native frame decoration (for L&Fs)
 
 - FIXED: More robust behavior when Java3D is not installed
+- FIXED: More descriptive error messages if VisBio fails to start up
 - FIXED: Combo box width for Windows Look & Feel
 - FIXED: Lots of little bugfixes
 
