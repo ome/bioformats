@@ -1,5 +1,53 @@
 <html><body><h2>Capture window</h2>
 
-<p>Capture window
+<p>The Capture window contains functions for recording movies of smooth
+transitions between display positions, as well as taking display snapshots. To
+access it, click the "Capture" button within the
+<a href="appearance.html">Appearance</a> controls of a
+<a href="display_windows.html">display window</a>, or the one on the
+<a href="displays_panel.html">Displays panel</a>.
+
+<br><h3>Creating a list of display positions</h3>
+
+To create a movie of a VisBio display in motion, navigate the display to
+the desired orientation (see the
+<a href="display_windows.html">Display windows</a> topic for more information),
+then click the "Add" button. An entry will appear on the list of display
+positions. Repeat this process for each display position in the chain.
+
+<p>The "Remove" button will eliminate the currently selected entry in the list.
+The "Up" and "Down" buttons will move the currently selected entry up or down
+in the list, respectively.
+
+<p>You can click an entry on the list to restore the display to that position.
+Thus, in addition to movie creation, the list serves as a useful way to capture
+effective visualization angles.
+
+<br><h3>Taking a snapshot of a display</h3>
+
+The "Snapshot" button takes a snapshot of the display, saving it to an image
+file on disk in TIFF, JPEG or RAW format.
+
+<p>The "Send to ImageJ" button, instead of saving the snapshot to disk, instead
+launches ImageJ and opens the snapshot within ImageJ for further processing.
+
+<br><h3>Creating a movie of transitions</h3>
+
+By clicking the "Record &gt;" button, VisBio will construct a movie consisting
+of the display being rotated, panned and zoomed between the positions defined
+in the list. In this way, a movie can be made of the display shifting between
+any set of orientations. If "AVI movie" is chosen, the movie will be saved as a
+single AVI movie. If "Image sequence" is selected, each frame of the movie will
+be saved as a separate single-image TIFF, JPEG or RAW file.
+
+<p>By default, the transitions start slowly, speed up, then slow down again at
+each display position, resulting in a smooth animation with emphasis on each of
+the defined display positions. However, by unchecking the "Emphasize transition
+at each display position" checkbox, this behavior can be changed so that each
+transition is completely linear.
+
+<p>Lastly, the speed of the transitions can be controlled with the "Seconds per
+transition" slider, and "Frames per second" spinner. (Note that the frames per
+second is only saved for AVI movies, not image sequences.)
 
 <p>&nbsp;<p></body></html>

@@ -1,5 +1,32 @@
 <html><body><h2>Subsamplings</h2>
 
-<p>Subsamplings
+<p>Sometimes, it is desirable to create a version of your data at a lower
+resolution, with fewer dimensional positions or fewer range components, to
+conserve memory or improve rendering time. VisBio refers to this procedure as
+"subsampling." To do it, first import your dataset as described in the
+<a href="datasets.html">Datasets</a> topic. Select your data from the list,
+then click the "Add &gt;" button and choose "Subsampling" from the popup menu.
+
+<p>Choose a name for the subsampling, and VisBio will create another data
+object, a child of your original dataset, that represents the subsampling. To
+alter the sampling parameters, select the subsampled data object and click the
+"Edit" button. A window similar to the following one will appear:
+
+<p><img src="screen-dialog.png">
+
+<p>You can subsample the image resolution, as well as each dimensional axis. In
+the example above, Time is subsampled to every fourth timestep
+(1, 5, 9, ..., 81, 85), and Slice is subsampled to every second timestep
+(1, 3, 5, ..., 31, 33).
+
+<p>Lastly, you can choose to exclude one or more range components of the data,
+by unchecking those range component checkboxes. In the example above, there is
+only one range component, and you must have at least one range component
+included in the dataset (otherwise there would be no data!). However, if the
+data instead had three components<i>—</i>Red, Green and Blue<i>—</i>you could
+choose to include only the Green component, for example.
+
+<p>When finished, click the "Apply" button to lock in your changes. VisBio will
+recompute thumbnails as necessary for the new sampling parameters.
 
 <p>&nbsp;<p></body></html>
