@@ -44,7 +44,7 @@ public class VisBio {
   public static final String TITLE = "VisBio";
 
   /** Application version. */
-  public static final String VERSION = "v3.00 beta3d";
+  public static final String VERSION = "v3.00 beta3e";
 
   /** Application author. */
   public static final String AUTHOR = "Curtis Rueden, LOCI";
