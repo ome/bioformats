@@ -25,10 +25,9 @@ package loci.visbio.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
+
+// Modified by Curtis Rueden to use Firefox in a new tab instead of Netscape.
 
 /**
  * BrowserLauncher is a class that provides one static method, openURL, which
@@ -62,7 +61,7 @@ import java.lang.reflect.Method;
  * systems.  On Windows, it only runs under Win32 systems (Windows 95, 98, and
  * NT 4.0, as well as later versions of all).  On other systems, this drops
  * back from the inherently platform-sensitive concept of a default browser and
- * simply attempts to launch Netscape via a shell command.
+ * simply attempts to launch Firefox via a shell command.
  * <p>
  * This code is Copyright 1999-2001 by Eric Albert (ejalbert@cs.stanford.edu)
  * and may be redistributed or modified in any form without restrictions as
@@ -79,7 +78,7 @@ import java.lang.reflect.Method;
  * Andrea Cantatore, Larry Barowski, Trevor Bedzek, Frank Miedrich, and
  * Ron Rabakukk
  *
- * @author Eric Albert (<a href="mailto:ejalbert@cs.stanford.edu">ejalbert@cs.stanford.edu</a>)
+ * @author Eric Albert ejalbert@cs.stanford.edu)
  * @version 1.4b1 (Released June 20, 2001)
  */
 public abstract class BrowserLauncher {
@@ -214,12 +213,12 @@ public abstract class BrowserLauncher {
   private static final String THIRD_WINDOWS_PARAMETER = "\"\"";
 
   /**
-   * The shell parameters for Netscape that opens a given URL in an
-   * already-open copy of Netscape on many command-line systems.
+   * The shell parameters for Firefox that opens a given URL in an
+   * already-open copy of Firefox on many command-line systems.
    */
-  private static final String NETSCAPE_REMOTE_PARAMETER = "-remote";
-  private static final String NETSCAPE_OPEN_PARAMETER_START = "'openURL(";
-  private static final String NETSCAPE_OPEN_PARAMETER_END = ")'";
+  private static final String FIREFOX_REMOTE_PARAMETER = "-remote";
+  private static final String FIREFOX_OPEN_PARAMETER_START = "'openUrl(";
+  private static final String FIREFOX_OPEN_PARAMETER_END = ",new-tab)'";
 
   /**
    * The message from any exception thrown
@@ -624,17 +623,17 @@ public abstract class BrowserLauncher {
         }
         break;
       case OTHER:
-        // Assume that we're on Unix and that Netscape is installed
+        // Assume that we're on Unix and that Firefox is installed
 
         // First, attempt to open the URL in a currently running session
-        // of Netscape
+        // of Firefox
         process = Runtime.getRuntime().exec(new String[] {
-          (String) browser, NETSCAPE_REMOTE_PARAMETER,
-          NETSCAPE_OPEN_PARAMETER_START + url + NETSCAPE_OPEN_PARAMETER_END
+          (String) browser, FIREFOX_REMOTE_PARAMETER,
+          FIREFOX_OPEN_PARAMETER_START + url + FIREFOX_OPEN_PARAMETER_END
         });
         try {
           int exitCode = process.waitFor();
-          if (exitCode != 0) {  // if Netscape was not open
+          if (exitCode != 0) {  // if Firefox was not open
             Runtime.getRuntime().exec(new String[] { (String) browser, url });
           }
         } catch (InterruptedException ie) {
