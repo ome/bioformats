@@ -224,7 +224,12 @@ public abstract class SwingUtil {
     dialog.addChoosableFileFilter(openlab);
     filters.add(openlab);
 
-    // Metamorph STK - bio/MetamorphForm
+    // Zeiss LSM - bio/ZeissForm
+    FileFilter lsm = new ExtensionFileFilter("lsm", "Zeiss LSM files");
+    dialog.addChoosableFileFilter(lsm);
+    filters.add(lsm);
+
+    // Zeiss ZVI - bio/ZVIForm
     FileFilter zvi = new ExtensionFileFilter("zvi", "Zeiss ZVI files");
     dialog.addChoosableFileFilter(zvi);
     filters.add(zvi);
