@@ -44,7 +44,7 @@ public class WindowManager extends LogicManager implements WindowListener {
   // -- Constants --
 
   /** String for window docking option. */
-  public static final String DOCKING = "Window docking";
+  public static final String DOCKING = "Window docking (buggy)";
 
 
   // -- Fields --
@@ -62,7 +62,7 @@ public class WindowManager extends LogicManager implements WindowListener {
   protected Docker docker;
 
   /** Whether window docking features are enabled. */
-  protected boolean docking = true;
+  protected boolean docking = false;
 
   /** Whether to distribute the menu bar across all registered frames. */
   protected boolean distributed;
