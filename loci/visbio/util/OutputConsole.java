@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
-import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -56,7 +56,7 @@ public class OutputConsole extends OutputStream {
 
   // -- Fields --
 
-  private JDialog dialog;
+  private JFrame frame;
   private Document doc;
   private JTextArea area;
   private String log;
@@ -65,13 +65,13 @@ public class OutputConsole extends OutputStream {
   // -- Constructor --
 
   /** Constructs a new instance of OutputConsole. */
-  public OutputConsole(Frame owner, String title) { this(owner, title, null); }
+  public OutputConsole(String title) { this(title, null); }
 
   /**
    * Constructs a new instance of OutputConsole,
    * logging all output to the given log file.
    */
-  public OutputConsole(Frame owner, String title, String logFile) {
+  public OutputConsole(String title, String logFile) {
     super();
     log = logFile;
     if (log != null) {
@@ -79,11 +79,11 @@ public class OutputConsole extends OutputStream {
       try { new FileWriter(log).close(); }
       catch (IOException exc) { }
     }
-    dialog = new JDialog(owner, title);
+    frame = new JFrame(title);
 
     JPanel pane = new JPanel();
     pane.setLayout(new BorderLayout());
-    dialog.setContentPane(pane);
+    frame.setContentPane(pane);
 
     area = new JTextArea(25, 100);
     area.setEditable(false);
@@ -93,7 +93,7 @@ public class OutputConsole extends OutputStream {
     pane.add(scroll, BorderLayout.CENTER);
     doc = area.getDocument();
 
-    dialog.pack();
+    frame.pack();
   }
 
 
@@ -117,16 +117,16 @@ public class OutputConsole extends OutputStream {
         }
         catch (BadLocationException exc) { }
         catch (IOException exc) { }
-        if (!dialog.isVisible()) show();
+        if (!frame.isVisible()) show();
       }
     });
   }
 
   public void show() {
-    if (!dialog.isVisible()) Util.centerWindow(dialog);
-    dialog.setVisible(true);
+    if (!frame.isVisible()) Util.centerWindow(frame);
+    frame.setVisible(true);
   }
 
-  public JDialog getDialog() { return dialog; }
+  public JFrame getWindow() { return frame; }
 
 }

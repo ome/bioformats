@@ -156,13 +156,13 @@ public class DisplayControls extends ControlPanel
   // -- DisplayControls API methods --
 
   /** Adds a display to the list of current displays. */
-  public void addDisplay(DisplayDialog d) {
+  public void addDisplay(DisplayWindow d) {
     listModel.addElement(d);
     displayList.setSelectedValue(d, true);
   }
 
   /** Removes a display from the list of current displays. */
-  public void removeDisplay(DisplayDialog d) {
+  public void removeDisplay(DisplayWindow d) {
     if (d == null) return;
     listModel.removeElement(d);
     d.setVisible(false);
@@ -170,15 +170,15 @@ public class DisplayControls extends ControlPanel
   }
 
   /** Gets the current list of displays. */
-  public DisplayDialog[] getDisplays() {
-    DisplayDialog[] d = new DisplayDialog[listModel.size()];
+  public DisplayWindow[] getDisplays() {
+    DisplayWindow[] d = new DisplayWindow[listModel.size()];
     listModel.copyInto(d);
     return d;
   }
 
   /** Refreshes GUI components based on current selection. */
   public void refresh() {
-    DisplayDialog d = (DisplayDialog) displayList.getSelectedValue();
+    DisplayWindow d = (DisplayWindow) displayList.getSelectedValue();
     show.setEnabled(isShowable(d));
     capture.setEnabled(isShowable(d));
     remove.setEnabled(d != null);
@@ -195,11 +195,11 @@ public class DisplayControls extends ControlPanel
     else if (src == add3D) dm.createDisplay(true);
     else if (src == show) showDisplay();
     else if (src == capture) {
-      DisplayDialog d = (DisplayDialog) displayList.getSelectedValue();
-      d.getCaptureHandler().getPanel().showCaptureDialog();
+      DisplayWindow d = (DisplayWindow) displayList.getSelectedValue();
+      d.getCaptureHandler().getPanel().showCaptureWindow();
     }
     else if (src == remove) {
-      dm.removeDisplay((DisplayDialog) displayList.getSelectedValue());
+      dm.removeDisplay((DisplayWindow) displayList.getSelectedValue());
     }
   }
 
@@ -217,7 +217,7 @@ public class DisplayControls extends ControlPanel
 
   /** Shows the selected display onscreen. */
   protected void showDisplay() {
-    DisplayDialog d = (DisplayDialog) displayList.getSelectedValue();
+    DisplayWindow d = (DisplayWindow) displayList.getSelectedValue();
     if (isShowable(d)) {
       WindowManager wm = (WindowManager)
         lm.getVisBio().getManager(WindowManager.class);
@@ -226,7 +226,7 @@ public class DisplayControls extends ControlPanel
   }
 
   /** Gets whether the given display should be allowed to be shown onscreen. */
-  protected boolean isShowable(DisplayDialog d) {
+  protected boolean isShowable(DisplayWindow d) {
     return d != null && d.getTransformHandler().getTransformCount() > 0;
   }
 

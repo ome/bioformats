@@ -43,8 +43,8 @@ public class CapturePanel extends JPanel implements ActionListener {
   /** Capture handler upon which GUI controls operate. */
   protected CaptureHandler handler;
 
-  /** Capture dialog pane. */
-  protected CaptureDialog captureDialog;
+  /** Capture window. */
+  protected CaptureWindow captureWindow;
 
 
   // -- Constructor --
@@ -53,10 +53,10 @@ public class CapturePanel extends JPanel implements ActionListener {
   public CapturePanel(CaptureHandler h) {
     super();
     handler = h;
-    captureDialog = new CaptureDialog(handler);
+    captureWindow = new CaptureWindow(handler);
     WindowManager wm = (WindowManager)
-      h.getDialog().getVisBio().getManager(WindowManager.class);
-    wm.addWindow(captureDialog);
+      h.getWindow().getVisBio().getManager(WindowManager.class);
+    wm.addWindow(captureWindow);
 
     // capture button
     JButton capture = new JButton("Capture");
@@ -72,20 +72,20 @@ public class CapturePanel extends JPanel implements ActionListener {
 
   // -- CapturePanel API methods --
 
-  /** Displays the capture dialog pane onscreen. */
-  public void showCaptureDialog() {
+  /** Displays the capture window pane onscreen. */
+  public void showCaptureWindow() {
     WindowManager wm = (WindowManager)
-      handler.getDialog().getVisBio().getManager(WindowManager.class);
-    wm.showWindow(captureDialog);
+      handler.getWindow().getVisBio().getManager(WindowManager.class);
+    wm.showWindow(captureWindow);
   }
 
   /** Gets the capture pane. */
-  public CaptureDialog getCaptureDialog() { return captureDialog; }
+  public CaptureWindow getCaptureWindow() { return captureWindow; }
 
 
   // -- ActionListener API methods --
 
   /** Handles button presses and combo box selections. */
-  public void actionPerformed(ActionEvent e) { showCaptureDialog(); }
+  public void actionPerformed(ActionEvent e) { showCaptureWindow(); }
 
 }

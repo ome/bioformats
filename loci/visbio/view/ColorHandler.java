@@ -47,8 +47,8 @@ public class ColorHandler {
 
   // -- Fields --
 
-  /** Associated display dialog. */
-  protected DisplayDialog dialog;
+  /** Associated display window. */
+  protected DisplayWindow window;
 
   /** GUI controls for color handler. */
   protected ColorPanel panel;
@@ -81,8 +81,8 @@ public class ColorHandler {
   // -- Constructor --
 
   /** Creates a display color handler. */
-  public ColorHandler(DisplayDialog dd) {
-    dialog = dd;
+  public ColorHandler(DisplayWindow dw) {
+    window = dw;
 
     // default color settings
     brightness = NORMAL_BRIGHTNESS;
@@ -94,15 +94,15 @@ public class ColorHandler {
 
   // -- ColorHandler API methods --
 
-  /** Gets associated display dialog. */
-  public DisplayDialog getDialog() { return dialog; }
+  /** Gets associated display window. */
+  public DisplayWindow getWindow() { return window; }
 
   /** Gets GUI controls for this color handler. */
   public ColorPanel getPanel() { return panel; }
 
   /** Gets color mappings for this color handler's display. */
   public ScalarMap[] getMaps() {
-    DisplayImpl display = dialog.getDisplay();
+    DisplayImpl display = window.getDisplay();
     return display == null ? null : VisUtil.getMaps(display,
       new DisplayRealType[] {Display.RGB, Display.RGBA});
   }
@@ -147,16 +147,16 @@ public class ColorHandler {
 
   /** Updates map ranges to those given. */
   public void setRanges(double[] lo, double[] hi, boolean[] fixed) {
-    ColorUtil.setColorRanges(dialog.getDisplay(), getMaps(), lo, hi, fixed);
+    ColorUtil.setColorRanges(window.getDisplay(), getMaps(), lo, hi, fixed);
   }
 
   /** Updates color tables to those given. */
   public void setTables(float[][][] tables) {
-    ColorUtil.setColorMode(dialog.getDisplay(), model);
+    ColorUtil.setColorMode(window.getDisplay(), model);
     ColorUtil.setColorTables(getMaps(), tables);
-    VisBioFrame bio = dialog.getVisBio();
+    VisBioFrame bio = window.getVisBio();
     bio.generateEvent(bio.getManager(DisplayManager.class),
-      "color adjustment for " + dialog.getName(), true);
+      "color adjustment for " + window.getName(), true);
   }
 
   /** Gets brightness value. */
@@ -221,32 +221,32 @@ public class ColorHandler {
 
   /** Writes the current state to the given OME-CA XML object. */
   public void saveState() {
-    dialog.setAttr("brightness", "" + brightness);
-    dialog.setAttr("contrast", "" + contrast);
-    dialog.setAttr("colorModel", "" + model);
-    dialog.setAttr("red", red == null ? "null" : red.getName());
-    dialog.setAttr("green", green == null ? "null" : green.getName());
-    dialog.setAttr("blue", blue == null ? "null" : blue.getName());
-    dialog.setAttr("colorMin", ObjectUtil.arrayToString(getLo()));
-    dialog.setAttr("colorMax", ObjectUtil.arrayToString(getHi()));
-    dialog.setAttr("colorFixed", ObjectUtil.arrayToString(getFixed()));
+    window.setAttr("brightness", "" + brightness);
+    window.setAttr("contrast", "" + contrast);
+    window.setAttr("colorModel", "" + model);
+    window.setAttr("red", red == null ? "null" : red.getName());
+    window.setAttr("green", green == null ? "null" : green.getName());
+    window.setAttr("blue", blue == null ? "null" : blue.getName());
+    window.setAttr("colorMin", ObjectUtil.arrayToString(getLo()));
+    window.setAttr("colorMax", ObjectUtil.arrayToString(getHi()));
+    window.setAttr("colorFixed", ObjectUtil.arrayToString(getFixed()));
 
     float[][][] tables = getTables();
     if (tables == null) {
-      dialog.setAttr("tables", "null");
+      window.setAttr("tables", "null");
     }
     else {
-      dialog.setAttr("tables", "" + tables.length);
+      window.setAttr("tables", "" + tables.length);
       for (int i=0; i<tables.length; i++) {
-        if (tables[i] == null) dialog.setAttr("table" + i, "null");
+        if (tables[i] == null) window.setAttr("table" + i, "null");
         else {
-          dialog.setAttr("table" + i, "" + tables[i].length);
+          window.setAttr("table" + i, "" + tables[i].length);
           for (int j=0; j<tables[i].length; j++) {
             if (tables[i][j] == null) {
-              dialog.setAttr("table" + i + "-" + j, "null");
+              window.setAttr("table" + i + "-" + j, "null");
             }
             else {
-              dialog.setAttr("table" + i + "-" + j,
+              window.setAttr("table" + i + "-" + j,
                 ObjectUtil.arrayToString(tables[i][j]));
             }
           }
@@ -257,35 +257,35 @@ public class ColorHandler {
 
   /** Restores the current state from the given OME-CA XML object. */
   public void restoreState() {
-    brightness = Integer.parseInt(dialog.getAttr("brightness"));
-    contrast = Integer.parseInt(dialog.getAttr("contrast"));
-    model = Integer.parseInt(dialog.getAttr("colorModel"));
+    brightness = Integer.parseInt(window.getAttr("brightness"));
+    contrast = Integer.parseInt(window.getAttr("contrast"));
+    model = Integer.parseInt(window.getAttr("colorModel"));
 
-    String r = dialog.getAttr("red");
-    String g = dialog.getAttr("green");
-    String b = dialog.getAttr("blue");
+    String r = window.getAttr("red");
+    String g = window.getAttr("green");
+    String b = window.getAttr("blue");
     red = r.equals("null") ? null : RealType.getRealType(r);
     green = g.equals("null") ? null : RealType.getRealType(g);
     blue = b.equals("null") ? null : RealType.getRealType(b);
 
-    lo = ObjectUtil.stringToDoubleArray(dialog.getAttr("colorMin"));
-    hi = ObjectUtil.stringToDoubleArray(dialog.getAttr("colorMax"));
-    fixed = ObjectUtil.stringToBooleanArray(dialog.getAttr("colorFixed"));
+    lo = ObjectUtil.stringToDoubleArray(window.getAttr("colorMin"));
+    hi = ObjectUtil.stringToDoubleArray(window.getAttr("colorMax"));
+    fixed = ObjectUtil.stringToBooleanArray(window.getAttr("colorFixed"));
 
     colorTables = null;
-    String s = dialog.getAttr("tables");
+    String s = window.getAttr("tables");
     if (!s.equals("null")) {
       int ilen = Integer.parseInt(s);
       colorTables = new float[ilen][][];
       for (int i=0; i<ilen; i++) {
-        s = dialog.getAttr("table" + i);
+        s = window.getAttr("table" + i);
         if (s.equals("null")) colorTables[i] = null;
         else {
           int jlen = Integer.parseInt(s);
           colorTables[i] = new float[jlen][];
           for (int j=0; j<jlen; j++) {
             colorTables[i][j] = ObjectUtil.stringToFloatArray(
-              dialog.getAttr("table" + i + "-" + j));
+              window.getAttr("table" + i + "-" + j));
           }
         }
       }

@@ -135,7 +135,7 @@ public class ViewPanel extends JPanel
 
   /** Creates a panel with orientation-related components. */
   protected JPanel doOrientationPanel() {
-    boolean threeD = handler.getDialog().is3D();
+    boolean threeD = handler.getWindow().is3D();
 
     // zoom buttons
     JButton zoomIn = makeButton("zoom-in.png", "Zoom in", "zoomIn",
@@ -199,7 +199,7 @@ public class ViewPanel extends JPanel
 
   /** Creates a panel with aspect ratio-related components. */
   protected JPanel doAspectPanel() {
-    boolean threeD = handler.getDialog().is3D();
+    boolean threeD = handler.getWindow().is3D();
 
     // aspect ratio X component
     aspectX = new JTextField("" + handler.getAspectX(), 4);
@@ -224,7 +224,7 @@ public class ViewPanel extends JPanel
 
   /** Creates a panel with appearance-related components. */
   protected JPanel doAppearancePanel() {
-    boolean threeD = handler.getDialog().is3D();
+    boolean threeD = handler.getWindow().is3D();
 
     // scale checkbox
     JCheckBox scale = new JCheckBox("Scale", handler.isScale());

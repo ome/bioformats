@@ -1,7 +1,7 @@
-v3.00 alpha3 - Sunday, August 29, 2004
+v3.00 beta1 - Sunday, August 29, 2004
 
 - ADDED: Support for Metamorph STK file format
-- ADDED: Support for Openlab LIFF file format
+- ADDED: Support for Openlab LIFF file format (requires QuickTime for Java)
 - ADDED: Dimensional collapse transform
 - ADDED: Weighted multispectral component mapping transform
 - ADDED: Ability to change maximum memory value from the System panel

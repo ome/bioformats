@@ -25,8 +25,6 @@ package loci.visbio;
 
 import java.io.PrintStream;
 
-import javax.swing.JFrame;
-
 import loci.visbio.state.BooleanOption;
 import loci.visbio.state.OptionManager;
 
@@ -116,8 +114,8 @@ public class ConsoleManager extends LogicManager {
   /** Adds data-related GUI components to VisBio. */
   private void doGUI() {
     bio.setStatus("Initializing console logic");
-    out = new OutputConsole((JFrame) null, "Output Console");
-    err = new OutputConsole((JFrame) null, "Error Console", "errors.log");
+    out = new OutputConsole("Output Console");
+    err = new OutputConsole("Error Console", "errors.log");
 
     origOut = System.out;
     origErr = System.err;
@@ -128,8 +126,8 @@ public class ConsoleManager extends LogicManager {
 
     // register console windows with window manager
     WindowManager wm = (WindowManager) bio.getManager(WindowManager.class);
-    wm.addWindow(out.getDialog());
-    wm.addWindow(err.getDialog());
+    wm.addWindow(out.getWindow());
+    wm.addWindow(err.getWindow());
 
     // options menu
     bio.setStatus(null);

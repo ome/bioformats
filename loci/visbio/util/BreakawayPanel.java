@@ -33,14 +33,13 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 /**
  * BreakawayPanel is a container with arrows for controlling which edge of
- * its parent container it borders, or whether it floats in a separate dialog.
+ * its parent container it borders, or whether it floats in a separate window.
  */
 public class BreakawayPanel extends JPanel implements ActionListener {
 
@@ -52,8 +51,8 @@ public class BreakawayPanel extends JPanel implements ActionListener {
   /** Owner window for breakaway panel and its parent. */
   protected Window owner;
 
-  /** Floating dialog containing the breakaway panel. */
-  protected JDialog dialog;
+  /** Floating window containing the breakaway panel. */
+  protected JFrame window;
 
   /** Pane to which GUI components can be added to the breakaway panel. */
   protected Container pane;
@@ -79,12 +78,12 @@ public class BreakawayPanel extends JPanel implements ActionListener {
   public BreakawayPanel(Container parent, String name, boolean scroll) {
     this.parent = parent;
     owner = SwingUtil.getWindow(parent);
-    dialog = new JDialog((JFrame) null, name);
+    window = new JFrame(name);
     pane = new JPanel();
     edge = null;
     autoSize = true;
 
-    dialog.getContentPane().setLayout(new BorderLayout());
+    window.getContentPane().setLayout(new BorderLayout());
 
     // up arrow button
     Dimension tallArrow = new Dimension(12, Integer.MAX_VALUE);
@@ -128,7 +127,7 @@ public class BreakawayPanel extends JPanel implements ActionListener {
     }
     else add(pane, BorderLayout.CENTER);
 
-    dialog.getContentPane().add(this);
+    window.getContentPane().add(this);
   }
 
 
@@ -147,8 +146,8 @@ public class BreakawayPanel extends JPanel implements ActionListener {
   /** Gets pane to which GUI components can be added. */
   public Container getContentPane() { return pane; }
 
-  /** Gets floating dialog used when panel breaks away from its parent. */
-  public JDialog getDialog() { return dialog; }
+  /** Gets floating window used when panel breaks away from its parent. */
+  public JFrame getWindow() { return window; }
 
   /**
    * Sets the edge upon which the breakaway panel lies. Automatically adds
@@ -166,19 +165,19 @@ public class BreakawayPanel extends JPanel implements ActionListener {
     Point pos;
     try { pos = getLocationOnScreen(); }
     catch (IllegalComponentStateException exc) { pos = null; }
-    if (edge == null) dialog.getContentPane().remove(this);
+    if (edge == null) window.getContentPane().remove(this);
     else parent.remove(this);
 
     // add breakaway panel to new location
     if (e == null) {
-      dialog.getContentPane().add(this, BorderLayout.CENTER);
-      dialog.pack();
-      dialog.setLocation(pos.x, pos.y);
-      dialog.setVisible(true);
+      window.getContentPane().add(this, BorderLayout.CENTER);
+      window.pack();
+      window.setLocation(pos.x, pos.y);
+      window.setVisible(true);
     }
     else {
-      dialog.setVisible(false);
-      dialog.getContentPane().remove(this);
+      window.setVisible(false);
+      window.getContentPane().remove(this);
       parent.add(this, e);
     }
 
@@ -240,12 +239,12 @@ public class BreakawayPanel extends JPanel implements ActionListener {
   /** Gets whether changing the edge intelligently resizes the owner window. */
   public boolean isAutoSize() { return autoSize; }
 
-  /** If breakaway panel is in a separate dialog, ensures it is visible. */
-  public void reshow() { if (edge == null) dialog.setVisible(true); }
+  /** If breakaway panel is in a separate window, ensures it is visible. */
+  public void reshow() { if (edge == null) window.setVisible(true); }
 
-  /** Enlarges the dialog to its preferred size if it is too small. */
+  /** Enlarges the window to its preferred size if it is too small. */
   public void repack() {
-    if (edge == null) dialog.setSize(SwingUtil.getRepackSize(dialog));
+    if (edge == null) window.setSize(SwingUtil.getRepackSize(window));
   }
 
 

@@ -148,7 +148,7 @@ public class ColorPane extends DialogPane
 
   /** Constructs a dialog for adjusting color parameters. */
   public ColorPane(ColorHandler h) {
-    super("Edit colors - " + h.getDialog().getTitle());
+    super("Edit colors - " + h.getWindow().getTitle());
     handler = h;
 
     // LUT file chooser

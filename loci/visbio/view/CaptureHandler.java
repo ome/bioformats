@@ -59,8 +59,8 @@ public class CaptureHandler {
 
   // -- Fields --
 
-  /** Associated display dialog. */
-  protected DisplayDialog dialog;
+  /** Associated display window. */
+  protected DisplayWindow window;
 
   /** GUI controls for capture handler. */
   protected CapturePanel panel;
@@ -75,23 +75,23 @@ public class CaptureHandler {
   // -- Constructor --
 
   /** Creates a display capture handler. */
-  public CaptureHandler(DisplayDialog dd) { dialog = dd; }
+  public CaptureHandler(DisplayWindow dw) { window = dw; }
 
 
   // -- CaptureHandler API methods --
 
-  /** Gets associated display dialog. */
-  public DisplayDialog getDialog() { return dialog; }
+  /** Gets associated display window. */
+  public DisplayWindow getWindow() { return window; }
 
   /** Gets GUI controls for this capture handler. */
   public CapturePanel getPanel() { return panel; }
 
   /** Gets a snapshot of the display. */
-  public Image getSnapshot() { return dialog.getDisplay().getImage(); }
+  public Image getSnapshot() { return window.getDisplay().getImage(); }
 
   /** Saves a snapshot of the display to a file specified by the user. */
   public void saveSnapshot() {
-    int rval = imageBox.showSaveDialog(dialog);
+    int rval = imageBox.showSaveDialog(window);
     if (rval != JFileChooser.APPROVE_OPTION) return;
 
     // determine file type
@@ -103,7 +103,7 @@ public class CaptureHandler {
     final boolean jpeg = ext.equals("jpg") || ext.equals("jpeg");
     final boolean raw = ext.equals("raw");
     if (!tiff && !jpeg && !raw) {
-      JOptionPane.showMessageDialog(dialog, "Invalid filename (" +
+      JOptionPane.showMessageDialog(window, "Invalid filename (" +
         file + "): extension must be TIFF, JPEG or RAW.",
         "Cannot export snapshot", JOptionPane.ERROR_MESSAGE);
       return;
@@ -136,7 +136,7 @@ public class CaptureHandler {
 
           // display ImageJ warning
           OptionManager om = (OptionManager)
-            dialog.getVisBio().getManager(OptionManager.class);
+            window.getVisBio().getManager(OptionManager.class);
           om.checkWarning(DisplayManager.WARN_IMAGEJ, false,
             "Quitting ImageJ will also shut down VisBio, with no\n" +
             "warning or opportunity to save your work. Similarly,\n" +
@@ -156,15 +156,15 @@ public class CaptureHandler {
   {
     final int size = positions.size();
     if (size < 1) {
-      JOptionPane.showMessageDialog(dialog, "Must have at least two display " +
+      JOptionPane.showMessageDialog(window, "Must have at least two display " +
         "positions on the list.", "Cannot record movie",
         JOptionPane.ERROR_MESSAGE);
       return;
     }
 
-    final DisplayImpl d = dialog.getDisplay();
+    final DisplayImpl d = window.getDisplay();
     if (d == null) {
-      JOptionPane.showMessageDialog(dialog, "Display not found.",
+      JOptionPane.showMessageDialog(window, "Display not found.",
         "Cannot record movie", JOptionPane.ERROR_MESSAGE);
       return;
     }
@@ -179,13 +179,13 @@ public class CaptureHandler {
     int dot = -1;
     boolean tiff = false, jpeg = false, raw = false;
     if (movie) {
-      int rval = movieBox.showSaveDialog(dialog);
+      int rval = movieBox.showSaveDialog(window);
       if (rval != JFileChooser.APPROVE_OPTION) return;
       file = movieBox.getSelectedFile().getPath();
       if (file.indexOf(".") < 0) file = file + ".avi";
     }
     else {
-      int rval = imageBox.showSaveDialog(dialog);
+      int rval = imageBox.showSaveDialog(window);
       if (rval != JFileChooser.APPROVE_OPTION) return;
       file = imageBox.getSelectedFile().getPath();
       String ext = "";
@@ -195,7 +195,7 @@ public class CaptureHandler {
       jpeg = ext.equals("jpg") || ext.equals("jpeg");
       raw = ext.equals("raw");
       if (!tiff && !jpeg && !raw) {
-        JOptionPane.showMessageDialog(dialog, "Invalid filename (" +
+        JOptionPane.showMessageDialog(window, "Invalid filename (" +
           file + "): extension must be TIFF, JPEG or RAW.",
           "Cannot create image sequence", JOptionPane.ERROR_MESSAGE);
         return;
@@ -214,7 +214,7 @@ public class CaptureHandler {
     Thread t = new Thread(new Runnable() {
       public void run() {
         WindowManager wm = (WindowManager)
-          dialog.getVisBio().getManager(WindowManager.class);
+          window.getVisBio().getManager(WindowManager.class);
         wm.setWaitCursor(true);
 
         // step incremental from position to position, grabbing images
@@ -302,35 +302,35 @@ public class CaptureHandler {
 
   /** Writes the current state. */
   public void saveState() {
-    // CTR START HERE - panel.getCaptureDialog(), extract settings from there
+    // CTR START HERE - panel.getCaptureWindow(), extract settings from there
     // CTR TODO CaptureHandler saveState
     /*
-    dialog.setAttr("brightness", "" + brightness);
-    dialog.setAttr("contrast", "" + contrast);
-    dialog.setAttr("colorModel", "" + model);
-    dialog.setAttr("red", red == null ? "null" : red.getName());
-    dialog.setAttr("green", green == null ? "null" : green.getName());
-    dialog.setAttr("blue", blue == null ? "null" : blue.getName());
-    dialog.setAttr("colorMin", ObjectUtil.arrayToString(getLo()));
-    dialog.setAttr("colorMax", ObjectUtil.arrayToString(getHi()));
-    dialog.setAttr("colorFixed", ObjectUtil.arrayToString(getFixed()));
+    window.setAttr("brightness", "" + brightness);
+    window.setAttr("contrast", "" + contrast);
+    window.setAttr("colorModel", "" + model);
+    window.setAttr("red", red == null ? "null" : red.getName());
+    window.setAttr("green", green == null ? "null" : green.getName());
+    window.setAttr("blue", blue == null ? "null" : blue.getName());
+    window.setAttr("colorMin", ObjectUtil.arrayToString(getLo()));
+    window.setAttr("colorMax", ObjectUtil.arrayToString(getHi()));
+    window.setAttr("colorFixed", ObjectUtil.arrayToString(getFixed()));
 
     float[][][] tables = getTables();
     if (tables == null) {
-      dialog.setAttr("tables", "null");
+      window.setAttr("tables", "null");
     }
     else {
-      dialog.setAttr("tables", "" + tables.length);
+      window.setAttr("tables", "" + tables.length);
       for (int i=0; i<tables.length; i++) {
-        if (tables[i] == null) dialog.setAttr("table" + i, "null");
+        if (tables[i] == null) window.setAttr("table" + i, "null");
         else {
-          dialog.setAttr("table" + i, "" + tables[i].length);
+          window.setAttr("table" + i, "" + tables[i].length);
           for (int j=0; j<tables[i].length; j++) {
             if (tables[i][j] == null) {
-              dialog.setAttr("table" + i + "-" + j, "null");
+              window.setAttr("table" + i + "-" + j, "null");
             }
             else {
-              dialog.setAttr("table" + i + "-" + j,
+              window.setAttr("table" + i + "-" + j,
                 ObjectUtil.arrayToString(tables[i][j]));
             }
           }
@@ -413,9 +413,9 @@ public class CaptureHandler {
     final String msg = message;
     Util.invoke(false, new Runnable() {
       public void run() {
-        CaptureDialog dialog = panel.getCaptureDialog();
-        dialog.setProgressValue(value);
-        if (msg != null) dialog.setProgressMessage(msg);
+        CaptureWindow window = panel.getCaptureWindow();
+        window.setProgressValue(value);
+        if (msg != null) window.setProgressMessage(msg);
       }
     });
   }

@@ -176,7 +176,7 @@ public class TransformPanel extends JPanel
     else if (cmd.equals("addTransform")) {
       // get root node of data tree
       DataManager dm = (DataManager)
-        handler.getDialog().getVisBio().getManager(DataManager.class);
+        handler.getWindow().getVisBio().getManager(DataManager.class);
       DefaultMutableTreeNode root = dm.getDataRoot();
       int children = root.getChildCount();
 
@@ -195,11 +195,11 @@ public class TransformPanel extends JPanel
     }
     else if (cmd.equals("removeTransform")) {
       DataTransform data = (DataTransform) transformList.getSelectedValue();
-      if (data != null) handler.getDialog().removeTransform(data);
+      if (data != null) handler.getWindow().removeTransform(data);
     }
     else if (cmd.equals("dataControls")) {
       DataManager dm = (DataManager)
-        handler.getDialog().getVisBio().getManager(DataManager.class);
+        handler.getWindow().getVisBio().getManager(DataManager.class);
       DataTransform data = (DataTransform) transformList.getSelectedValue();
       if (data != null) dm.showControls(data);
     }
@@ -358,7 +358,7 @@ public class TransformPanel extends JPanel
     items[0] = new JMenuItem(name);
     items[0].addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        handler.getDialog().addTransform(data);
+        handler.getWindow().addTransform(data);
       }
     });
     if (children > 0) items[1] = new JMenu(name);

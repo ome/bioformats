@@ -65,8 +65,8 @@ public class StackHandler extends TransformHandler {
   // -- Constructor --
 
   /** Creates a 3D display transform handler. */
-  public StackHandler(DisplayDialog dd) {
-    super(dd);
+  public StackHandler(DisplayWindow dw) {
+    super(dw);
     positions = new Vector();
     thumbnails = new Vector();
     maxResolution = 192;
@@ -110,7 +110,7 @@ public class StackHandler extends TransformHandler {
     // create a default Z axis mapping for use with yellow bounding boxes
     ScalarMap zmap = new ScalarMap(ZBOX, Display.ZAxis);
     zmap.setRange(-1, 1);
-    dialog.getDisplay().addMap(zmap);
+    window.getDisplay().addMap(zmap);
   }
 
 }

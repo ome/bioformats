@@ -60,8 +60,8 @@ public class TransformHandler implements ChangeListener, Runnable  {
 
   // -- Fields --
 
-  /** Associated display dialog. */
-  protected DisplayDialog dialog;
+  /** Associated display window. */
+  protected DisplayWindow window;
 
   /** GUI controls for transform handler. */
   protected TransformPanel panel;
@@ -94,8 +94,8 @@ public class TransformHandler implements ChangeListener, Runnable  {
   // -- Constructor --
 
   /** Creates a display transform handler. */
-  public TransformHandler(DisplayDialog dd) {
-    dialog = dd;
+  public TransformHandler(DisplayWindow dw) {
+    window = dw;
     links = new Vector();
     sliders = new Vector();
     sliderPanel = new JPanel();
@@ -144,8 +144,8 @@ public class TransformHandler implements ChangeListener, Runnable  {
   /** Gets number of data transforms linked to the display. */
   public int getTransformCount() { return links.size(); }
 
-  /** Gets associated display dialog. */
-  public DisplayDialog getDialog() { return dialog; }
+  /** Gets associated display window. */
+  public DisplayWindow getWindow() { return window; }
 
   /** Gets GUI controls for this transform handler. */
   public TransformPanel getPanel() { return panel; }
@@ -185,9 +185,9 @@ public class TransformHandler implements ChangeListener, Runnable  {
   /** Sets animation rate. */
   public void setAnimationRate(int fps) {
     synchronized (animSync) { this.fps = fps; }
-    VisBioFrame bio = dialog.getVisBio();
+    VisBioFrame bio = window.getVisBio();
     bio.generateEvent(bio.getManager(DisplayManager.class),
-      "change animation rate for " + dialog.getName(), true);
+      "change animation rate for " + window.getName(), true);
   }
 
   /** Gets animation rate. */
@@ -196,9 +196,9 @@ public class TransformHandler implements ChangeListener, Runnable  {
   /** Assigns the given axis as the animation axis. */
   public void setAnimationAxis(int animAxis) {
     synchronized (animSync) { this.animAxis = animAxis; }
-    VisBioFrame bio = dialog.getVisBio();
+    VisBioFrame bio = window.getVisBio();
     bio.generateEvent(bio.getManager(DisplayManager.class),
-      "change animation axis for " + dialog.getName(), true);
+      "change animation axis for " + window.getName(), true);
   }
 
   /** Gets the currently assigned animation axis. */
@@ -273,7 +273,7 @@ public class TransformHandler implements ChangeListener, Runnable  {
       links.copyInto(lnk);
 
       // clear old transforms
-      DisplayImpl display = dialog.getDisplay();
+      DisplayImpl display = window.getDisplay();
       try {
         VisUtil.setDisplayDisabled(display, true);
         display.removeAllReferences();
@@ -344,10 +344,10 @@ public class TransformHandler implements ChangeListener, Runnable  {
       panel.updateControls();
 
       if (lnk.length > 0) {
-        dialog.getColorHandler().initColors();
-        dialog.repack();
+        window.getColorHandler().initColors();
+        window.repack();
       }
-      else dialog.setVisible(false);
+      else window.setVisible(false);
     }
   }
 

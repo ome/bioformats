@@ -36,6 +36,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import javax.swing.JFrame;
+
 import loci.ome.xml.CAElement;
 import loci.ome.xml.OMEElement;
 
@@ -93,6 +95,16 @@ public class WindowManager extends LogicManager implements WindowListener {
    */
   public void addWindow(Window w, boolean pack) {
     windows.put(w, new WindowInfo(w, pack));
+    if (/*VisBioFrame.MAC_OS_X &&*/ w instanceof JFrame) {
+      // CTR TODO make this work on Mac OS X
+      // Need this class (or a separate menu manager class) to manage window menus.
+      // Whenever anything wants to alter a menu, it goes through this class, so that
+      // all copies of the menu can be changed, to preserve correctness on Mac OS X.
+      /*
+      JFrame f = (JFrame) w;
+      if (f.getJMenuBar() == null) f.setJMenuBar(SwingUtil.duplicate(bio.getJMenuBar()));
+      */
+    }
     docker.addWindow(w);
   }
 

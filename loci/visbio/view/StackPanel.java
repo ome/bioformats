@@ -130,10 +130,10 @@ public class StackPanel extends TransformPanel {
       link.setBoundingBoxVisible(vis);
     }
     else if (cmd.equals("toggleSlices")) {
-      DisplayDialog dialog = handler.getDialog();
+      DisplayWindow window = handler.getWindow();
       DataTransform trans = (DataTransform) transformList.getSelectedValue();
       sliceToggler.setTransform(trans);
-      int rval = sliceToggler.showDialog(dialog);
+      int rval = sliceToggler.showDialog(window);
       if (rval != SliceToggler.APPROVE_OPTION) return;
       updateControls();
     }

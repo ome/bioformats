@@ -84,9 +84,9 @@ public class ColorPanel extends JPanel implements ActionListener {
    */
   public void showColorDialog() {
     refreshPreviewData();
-    DisplayDialog dialog = handler.getDialog();
-    if (colorPane.showDialog(dialog) == ColorPane.APPROVE_OPTION) {
-      DisplayImpl d = dialog.getDisplay();
+    DisplayWindow window = handler.getWindow();
+    if (colorPane.showDialog(window) == ColorPane.APPROVE_OPTION) {
+      DisplayImpl d = window.getDisplay();
       VisUtil.setDisplayDisabled(d, true);
       handler.setParameters(colorPane.getBrightness(),
         colorPane.getContrast(), colorPane.getModel(), colorPane.getRed(),
@@ -100,7 +100,7 @@ public class ColorPanel extends JPanel implements ActionListener {
 
   /** Refreshes preview data from the transform handler. */
   public void refreshPreviewData() {
-    TransformHandler th = handler.getDialog().getTransformHandler();
+    TransformHandler th = handler.getWindow().getTransformHandler();
     DataTransform[] dt = th.getTransforms();
     ImageTransform it = null;
     ThumbnailHandler thumbs = null;

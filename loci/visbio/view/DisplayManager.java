@@ -73,15 +73,15 @@ public class DisplayManager extends LogicManager {
   // -- DisplayManager API methods --
 
   /** Pops up a dialog allowing the user to create a new display. */
-  public DisplayDialog createDisplay(boolean threeD) {
-    DisplayDialog dialog = null;
+  public DisplayWindow createDisplay(boolean threeD) {
+    DisplayWindow window = null;
     if (getDisplays().length < 32) {
       String name = (String) JOptionPane.showInputDialog(null,
         "Display name:", "Add display", JOptionPane.INFORMATION_MESSAGE,
         null, null, "display" + ++nextId);
       if (name != null) {
-        dialog = new DisplayDialog(this, name, threeD);
-        addDisplay(dialog);
+        window = new DisplayWindow(this, name, threeD);
+        addDisplay(window);
       }
     }
     else {
@@ -90,11 +90,11 @@ public class DisplayManager extends LogicManager {
         "existing displays.", "Cannot create display",
         JOptionPane.ERROR_MESSAGE);
     }
-    return dialog;
+    return window;
   }
 
   /** Adds a display to the list of current displays. */
-  public void addDisplay(DisplayDialog d) {
+  public void addDisplay(DisplayWindow d) {
     displayControls.addDisplay(d);
     WindowManager wm = (WindowManager) bio.getManager(WindowManager.class);
     wm.addWindow(d, false);
@@ -102,13 +102,13 @@ public class DisplayManager extends LogicManager {
   }
 
   /** Removes a display from the list of current displays. */
-  public void removeDisplay(DisplayDialog d) {
+  public void removeDisplay(DisplayWindow d) {
     displayControls.removeDisplay(d);
     bio.generateEvent(this, "remove display: " + d.getName(), true);
   }
 
   /** Gets the current list of displays. */
-  public DisplayDialog[] getDisplays() {
+  public DisplayWindow[] getDisplays() {
     return displayControls.getDisplays();
   }
 
@@ -137,15 +137,15 @@ public class DisplayManager extends LogicManager {
 
   /** Writes the current state to the given OME-CA XML object. */
   public void saveState(OMEElement ome) throws SaveException {
-    DisplayDialog[] dialogs = getDisplays();
+    DisplayWindow[] windows = getDisplays();
 
     // save number of displays
     CAElement custom = ome.getCustomAttr();
     custom.createElement(DISPLAY_MANAGER);
-    custom.setAttribute("count", "" + dialogs.length);
+    custom.setAttribute("count", "" + windows.length);
 
     // save all displays
-    for (int i=0; i<dialogs.length; i++) dialogs[i].saveState(ome, i);
+    for (int i=0; i<windows.length; i++) windows[i].saveState(ome, i);
   }
 
   /** Restores the current state from the given OME-CA XML object. */
@@ -167,30 +167,30 @@ public class DisplayManager extends LogicManager {
     Vector vn = new Vector();
     for (int i=0; i<count; i++) {
       // construct display
-      DisplayDialog dialog = new DisplayDialog(this);
+      DisplayWindow window = new DisplayWindow(this);
 
       // restore display state
-      dialog.restoreState(ome, i);
-      vn.add(dialog);
+      window.restoreState(ome, i);
+      vn.add(window);
     }
 
     // merge old and new display lists
-    DisplayDialog[] dialogs = getDisplays();
-    Vector vo = new Vector(dialogs.length);
-    for (int i=0; i<dialogs.length; i++) vo.add(dialogs[i]);
+    DisplayWindow[] windows = getDisplays();
+    Vector vo = new Vector(windows.length);
+    for (int i=0; i<windows.length; i++) vo.add(windows[i]);
     StateManager.mergeStates(vo, vn);
 
     // add new displays to display list
     int nlen = vn.size();
     for (int i=0; i<nlen; i++) {
-      DisplayDialog display = (DisplayDialog) vn.elementAt(i);
+      DisplayWindow display = (DisplayWindow) vn.elementAt(i);
       if (vo.indexOf(display) < 0) addDisplay(display);
     }
 
     // purge old displays from display list
     int olen = vo.size();
     for (int i=0; i<olen; i++) {
-      DisplayDialog display = (DisplayDialog) vo.elementAt(i);
+      DisplayWindow display = (DisplayWindow) vo.elementAt(i);
       if (vn.indexOf(display) < 0) removeDisplay(display);
     }
   }

@@ -39,7 +39,6 @@ import java.util.Hashtable;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -68,7 +67,7 @@ import loci.visbio.ome.OMEManager;
 
 import loci.visbio.util.VisUtil;
 
-import loci.visbio.view.DisplayDialog;
+import loci.visbio.view.DisplayWindow;
 import loci.visbio.view.DisplayManager;
 
 import visad.VisADException;
@@ -121,8 +120,8 @@ public class DataControls extends ControlPanel
 
   // -- Other fields --
 
-  /** Table of control dialogs corresponding to each data transform. */
-  private Hashtable dialogTable;
+  /** Table of control frames corresponding to each data transform. */
+  private Hashtable frameTable;
 
   /** Thumbnail handler for selected data object. */
   private ThumbnailHandler thumbHandler;
@@ -133,7 +132,7 @@ public class DataControls extends ControlPanel
   /** Constructs a tool panel for adjusting data parameters. */
   public DataControls(LogicManager logic) {
     super(logic, "Data", "Controls for managing data");
-    dialogTable = new Hashtable();
+    frameTable = new Hashtable();
 
     // list of data objects
     dataRoot = new DefaultMutableTreeNode("Data objects");
@@ -267,18 +266,18 @@ public class DataControls extends ControlPanel
     DefaultMutableTreeNode node = new DefaultMutableTreeNode(data);
     dataModel.insertNodeInto(node, parent, parent.getChildCount());
 
-    // create dialog for housing data's controls
+    // create frame for housing data's controls
     JComponent dataControls = data.getControls();
     if (dataControls != null) {
-      JDialog dialog = new JDialog((JFrame) null, data.getName());
+      JFrame frame = new JFrame(data.getName());
       JPanel pane = new JPanel();
       pane.setLayout(new BorderLayout());
-      dialog.setContentPane(pane);
+      frame.setContentPane(pane);
       WindowManager wm = (WindowManager)
         lm.getVisBio().getManager(WindowManager.class);
-      wm.addWindow(dialog);
+      wm.addWindow(frame);
 
-      // lay out dialog components
+      // lay out frame components
       PanelBuilder builder = new PanelBuilder(new FormLayout(
         "pref:grow", "fill:pref:grow"));
       builder.setDefaultDialogBorder();
@@ -287,7 +286,7 @@ public class DataControls extends ControlPanel
       pane.add(builder.getPanel(), BorderLayout.CENTER);
 
       // add data's controls to table
-      dialogTable.put(data, dialog);
+      frameTable.put(data, frame);
     }
 
     selectNode(node);
@@ -308,7 +307,7 @@ public class DataControls extends ControlPanel
     dataModel.removeNodeFromParent(node);
 
     // remove data's controls from table
-    dialogTable.remove(data);
+    frameTable.remove(data);
 
     return true;
   }
@@ -333,13 +332,13 @@ public class DataControls extends ControlPanel
     return (DataTransform) obj;
   }
 
-  /** Shows dialog containing controls for the given data object. */
+  /** Shows frame containing controls for the given data object. */
   public void showControls(DataTransform data) {
-    JDialog dialog = (JDialog) dialogTable.get(data);
-    if (dialog == null) return;
+    JFrame frame = (JFrame) frameTable.get(data);
+    if (frame == null) return;
     WindowManager wm = (WindowManager)
       lm.getVisBio().getManager(WindowManager.class);
-    wm.showWindow(dialog);
+    wm.showWindow(frame);
   }
 
   /** Gets progress bar for reporting current progress on operations. */
@@ -397,21 +396,21 @@ public class DataControls extends ControlPanel
       DisplayManager disp = (DisplayManager)
         lm.getVisBio().getManager(DisplayManager.class);
       if (disp == null) return;
-      DisplayDialog[] dd = disp.getDisplays();
+      DisplayWindow[] dd = disp.getDisplays();
 
       // build popup menu from display list
       JPopupMenu menu = new JPopupMenu();
       for (int i=0; i<dd.length; i++) {
-        final DisplayDialog dialog = dd[i];
-        JMenuItem item = new JMenuItem(dialog.toString());
+        final DisplayWindow display = dd[i];
+        JMenuItem item = new JMenuItem(display.toString());
         item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             // add selected data object to chosen display
             DataTransform data = getSelectedData();
-            if (data != null) dialog.addTransform(data);
+            if (data != null) display.addTransform(data);
             WindowManager wm = (WindowManager)
               lm.getVisBio().getManager(WindowManager.class);
-            wm.showWindow(dialog);
+            wm.showWindow(display);
           }
         });
         menu.add(item);
@@ -553,7 +552,7 @@ public class DataControls extends ControlPanel
     boolean canDisplay2D = isData && data.isValidDimension(2);
     boolean canDisplay3D = isData && data.isValidDimension(3);
     boolean canDisplay = canDisplay2D || canDisplay3D;
-    boolean hasControls = isData && dialogTable.get(data) != null;
+    boolean hasControls = isData && frameTable.get(data) != null;
     display.setEnabled(canDisplay);
     editData.setEnabled(hasControls);
     export.setEnabled(data instanceof Dataset);
@@ -567,12 +566,12 @@ public class DataControls extends ControlPanel
     DisplayManager disp = (DisplayManager)
       lm.getVisBio().getManager(DisplayManager.class);
     if (disp == null) return;
-    DisplayDialog dialog = disp.createDisplay(threeD);
-    if (dialog == null) return;
-    dialog.addTransform(data);
+    DisplayWindow display = disp.createDisplay(threeD);
+    if (display == null) return;
+    display.addTransform(data);
     WindowManager wm = (WindowManager)
       lm.getVisBio().getManager(WindowManager.class);
-    wm.showWindow(dialog);
+    wm.showWindow(display);
   }
 
 }

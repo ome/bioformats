@@ -91,7 +91,7 @@ public class TransformLink implements DisplayListener, Runnable {
     // build data reference
     try {
       ref = new DataReferenceImpl(trans.getName());
-      DisplayImpl display = handler.getDialog().getDisplay();
+      DisplayImpl display = handler.getWindow().getDisplay();
       rend = display.getDisplayRenderer().makeDefaultRenderer();
       display.addDisplayListener(this);
     }
@@ -117,7 +117,7 @@ public class TransformLink implements DisplayListener, Runnable {
   /** Links this transform into the display. */
   public void link() {
     try {
-      DisplayImpl display = handler.getDialog().getDisplay();
+      DisplayImpl display = handler.getWindow().getDisplay();
       display.addReferences(rend, ref);
     }
     catch (VisADException exc) { exc.printStackTrace(); }
@@ -241,7 +241,7 @@ public class TransformLink implements DisplayListener, Runnable {
   protected void computeCursor() {
     // check for active cursor
     cursor = null;
-    DisplayImpl display = handler.getDialog().getDisplay();
+    DisplayImpl display = handler.getWindow().getDisplay();
     DisplayRenderer dr = display.getDisplayRenderer();
     Vector cursorStringVector = dr.getCursorStringVector();
     if (cursorStringVector == null || cursorStringVector.size() == 0) return;
@@ -348,11 +348,11 @@ public class TransformLink implements DisplayListener, Runnable {
     if (swing) {
       Util.invoke(false, new Runnable() {
         public void run() {
-          VisUtil.redrawMessages(handler.getDialog().getDisplay());
+          VisUtil.redrawMessages(handler.getWindow().getDisplay());
         }
       });
     }
-    else VisUtil.redrawMessages(handler.getDialog().getDisplay());
+    else VisUtil.redrawMessages(handler.getWindow().getDisplay());
   }
 
 }

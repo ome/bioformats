@@ -37,6 +37,8 @@ import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;
@@ -218,8 +220,7 @@ public abstract class SwingUtil {
 
   /** Pops up a message box, for blocking the current thread. */
   public static void pause(String msg) {
-    JOptionPane.showMessageDialog(null, msg,
-      "VisBio", JOptionPane.PLAIN_MESSAGE);
+    JOptionPane.showMessageDialog(null, msg, "VisBio", JOptionPane.PLAIN_MESSAGE);
   }
 
 }

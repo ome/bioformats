@@ -107,7 +107,7 @@ public class StackLink extends TransformLink {
 
     // build reference/renderer pairs
     String name = trans.getName();
-    DisplayRenderer dr = handler.getDialog().getDisplay().getDisplayRenderer();
+    DisplayRenderer dr = handler.getWindow().getDisplay().getDisplayRenderer();
     try {
       for (int i=0; i<len; i++) {
         references.add(new DataReferenceImpl(name + i));
@@ -158,7 +158,7 @@ public class StackLink extends TransformLink {
     try {
       // add image slices
       int len = references.size();
-      DisplayImpl display = handler.getDialog().getDisplay();
+      DisplayImpl display = handler.getWindow().getDisplay();
       if (stackAxis < 0) {
         display.addReferences((DataRenderer) renderers.elementAt(0),
           (DataReferenceImpl) references.elementAt(0));
@@ -261,7 +261,7 @@ public class StackLink extends TransformLink {
     int len = references.size();
 
     // compute image data at each slice
-    DisplayImpl display = handler.getDialog().getDisplay();
+    DisplayImpl display = handler.getWindow().getDisplay();
     VisUtil.setDisplayDisabled(display, true);
     for (int s=0; s<len; s++) {
       if (stackAxis >= 0) pos[stackAxis] = s;
@@ -318,7 +318,7 @@ public class StackLink extends TransformLink {
   protected void computeCursor() {
     // check for active cursor
     cursor = null;
-    DisplayImpl display = handler.getDialog().getDisplay();
+    DisplayImpl display = handler.getWindow().getDisplay();
     DisplayRenderer dr = display.getDisplayRenderer();
     Vector cursorStringVector = dr.getCursorStringVector();
     if (cursorStringVector == null || cursorStringVector.size() == 0) return;

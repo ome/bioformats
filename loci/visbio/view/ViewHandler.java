@@ -69,8 +69,8 @@ public class ViewHandler {
 
   // -- Fields --
 
-  /** Associated display dialog. */
-  protected DisplayDialog dialog;
+  /** Associated display window. */
+  protected DisplayWindow window;
 
   /**
    * Matrix representing current display projection
@@ -100,8 +100,8 @@ public class ViewHandler {
   // -- Constructor --
 
   /** Creates a display view handler. */
-  public ViewHandler(DisplayDialog dd) {
-    dialog = dd;
+  public ViewHandler(DisplayWindow dw) {
+    window = dw;
 
     // default view settings
     xasp = yasp = zasp = 1.0;
@@ -113,8 +113,8 @@ public class ViewHandler {
 
   // -- ViewHandler API methods --
 
-  /** Gets associated display dialog. */
-  public DisplayDialog getDialog() { return dialog; }
+  /** Gets associated display window. */
+  public DisplayWindow getWindow() { return window; }
 
   /** Gets GUI controls for this view handler. */
   public ViewPanel getPanel() { return panel; }
@@ -151,27 +151,27 @@ public class ViewHandler {
 
   /** Zooms the display by the given amount. */
   public void zoom(double scale) {
-    double[] zoom = dialog.getDisplay().make_matrix(0, 0, 0, scale, 0, 0, 0);
+    double[] zoom = window.getDisplay().make_matrix(0, 0, 0, scale, 0, 0, 0);
     applyMatrix(zoom);
   }
 
   /** Rotates the display in the given direction. */
   public void rotate(double rotx, double roty, double rotz) {
-    double[] rotate = dialog.getDisplay().make_matrix(
+    double[] rotate = window.getDisplay().make_matrix(
       rotx, roty, rotz, 1, 0, 0, 0);
     applyMatrix(rotate);
   }
 
   /** Pans the display in the given direction. */
   public void pan(double panx, double pany, double panz) {
-    double[] pan = dialog.getDisplay().make_matrix(
+    double[] pan = window.getDisplay().make_matrix(
       0, 0, 0, 1, panx, pany, panz);
     applyMatrix(pan);
   }
 
   /** Applies the given matrix transform to the display. */
   public void applyMatrix(double[] m) {
-    DisplayImpl display = dialog.getDisplay();
+    DisplayImpl display = window.getDisplay();
     try {
       ProjectionControl control = display.getProjectionControl();
       double[] oldMatrix = control.getMatrix();
@@ -180,21 +180,21 @@ public class ViewHandler {
     }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
-    VisBioFrame bio = dialog.getVisBio();
+    VisBioFrame bio = window.getVisBio();
     bio.generateEvent(bio.getManager(DisplayManager.class),
-      "adjust orientation for " + dialog.getName(), true);
+      "adjust orientation for " + window.getName(), true);
   }
 
   /** Gets the display's current matrix transform. */
   public double[] getMatrix() {
-    DisplayImpl display = dialog.getDisplay();
+    DisplayImpl display = window.getDisplay();
     return display == null ? matrix :
       display.getProjectionControl().getMatrix();
   }
 
   /** Restores the display's zoom and orientation to the original values. */
   public void reset() {
-    DisplayImpl display = dialog.getDisplay();
+    DisplayImpl display = window.getDisplay();
     if (display instanceof DisplayImplJ2D) {
       try { display.getProjectionControl().resetProjection(); }
       catch (VisADException exc) { exc.printStackTrace(); }
@@ -202,14 +202,14 @@ public class ViewHandler {
       doAspect(xasp, yasp, zasp);
     }
     else setMatrix(makeDefaultMatrix());
-    VisBioFrame bio = dialog.getVisBio();
+    VisBioFrame bio = window.getVisBio();
     bio.generateEvent(bio.getManager(DisplayManager.class),
-      "reset orientation for " + dialog.getName(), true);
+      "reset orientation for " + window.getName(), true);
   }
 
   /** Guesses aspect ratio based on linked data transforms. */
   public void guessAspect() {
-    TransformHandler transformHandler = dialog.getTransformHandler();
+    TransformHandler transformHandler = window.getTransformHandler();
     DataTransform[] trans = transformHandler.getTransforms();
     int x = 0, y = 0;
     for (int i=0; i<trans.length; i++) {
@@ -237,9 +237,9 @@ public class ViewHandler {
     xasp = xx;
     yasp = yy;
     zasp = zz;
-    VisBioFrame bio = dialog.getVisBio();
+    VisBioFrame bio = window.getVisBio();
     bio.generateEvent(bio.getManager(DisplayManager.class),
-      "adjust aspect ratio for " + dialog.getName(), true);
+      "adjust aspect ratio for " + window.getName(), true);
   }
 
   /** Gets aspect ratio X component. */
@@ -255,14 +255,14 @@ public class ViewHandler {
   public void toggleScale(boolean value) {
     showScale = value;
 
-    GraphicsModeControl gmc = dialog.getDisplay().getGraphicsModeControl();
+    GraphicsModeControl gmc = window.getDisplay().getGraphicsModeControl();
     try { gmc.setScaleEnable(value); }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
-    VisBioFrame bio = dialog.getVisBio();
+    VisBioFrame bio = window.getVisBio();
     String endis = value ? "enable" : "disable";
     bio.generateEvent(bio.getManager(DisplayManager.class),
-      endis + " scale for " + dialog.getName(), true);
+      endis + " scale for " + window.getName(), true);
   }
 
   /** Gets visibility of scale. */
@@ -272,14 +272,14 @@ public class ViewHandler {
   public void toggleBoundingBox(boolean value) {
     boundingBox = value;
 
-    DisplayRenderer dr = dialog.getDisplay().getDisplayRenderer();
+    DisplayRenderer dr = window.getDisplay().getDisplayRenderer();
     try { dr.setBoxOn(value); }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
-    VisBioFrame bio = dialog.getVisBio();
+    VisBioFrame bio = window.getVisBio();
     String endis = value ? "enable" : "disable";
     bio.generateEvent(bio.getManager(DisplayManager.class),
-      endis + " bounding box for " + dialog.getName(), true);
+      endis + " bounding box for " + window.getName(), true);
   }
 
   /** Gets visibility of the display's bounding box. */
@@ -287,11 +287,11 @@ public class ViewHandler {
 
   /** Toggles whether 3D display uses a parallel projection. */
   public void toggleParallel(boolean value) {
-    if (!dialog.is3D()) return;
+    if (!window.is3D()) return;
     parallel = value;
 
     GraphicsModeControlJ3D gmc = (GraphicsModeControlJ3D)
-      dialog.getDisplay().getGraphicsModeControl();
+      window.getDisplay().getGraphicsModeControl();
     try {
       gmc.setProjectionPolicy(value ?
         DisplayImplJ3D.PARALLEL_PROJECTION :
@@ -299,10 +299,10 @@ public class ViewHandler {
     }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
-    VisBioFrame bio = dialog.getVisBio();
+    VisBioFrame bio = window.getVisBio();
     String endis = value ? "enable" : "disable";
     bio.generateEvent(bio.getManager(DisplayManager.class),
-      endis + " parallel projection mode for " + dialog.getName(), true);
+      endis + " parallel projection mode for " + window.getName(), true);
   }
 
   /** Gets whether 3D display uses a parallel projection. */
@@ -313,24 +313,24 @@ public class ViewHandler {
 
   /** Writes the current state. */
   public void saveState() {
-    dialog.setAttr("matrix", ObjectUtil.arrayToString(getMatrix()));
-    dialog.setAttr("aspectX", "" + xasp);
-    dialog.setAttr("aspectY", "" + yasp);
-    dialog.setAttr("aspectZ", "" + zasp);
-    dialog.setAttr("showScale", "" + showScale);
-    dialog.setAttr("boundingBox", "" + boundingBox);
-    dialog.setAttr("parallel", "" + parallel);
+    window.setAttr("matrix", ObjectUtil.arrayToString(getMatrix()));
+    window.setAttr("aspectX", "" + xasp);
+    window.setAttr("aspectY", "" + yasp);
+    window.setAttr("aspectZ", "" + zasp);
+    window.setAttr("showScale", "" + showScale);
+    window.setAttr("boundingBox", "" + boundingBox);
+    window.setAttr("parallel", "" + parallel);
   }
 
   /** Restores the current state. */
   public void restoreState() {
-    matrix = ObjectUtil.stringToDoubleArray(dialog.getAttr("matrix"));
-    xasp = ObjectUtil.stringToDouble(dialog.getAttr("aspectX"));
-    yasp = ObjectUtil.stringToDouble(dialog.getAttr("aspectY"));
-    zasp = ObjectUtil.stringToDouble(dialog.getAttr("aspectZ"));
-    showScale = dialog.getAttr("showScale").equalsIgnoreCase("true");
-    boundingBox = dialog.getAttr("boundingBox").equalsIgnoreCase("true");
-    parallel = dialog.getAttr("parallel").equalsIgnoreCase("true");
+    matrix = ObjectUtil.stringToDoubleArray(window.getAttr("matrix"));
+    xasp = ObjectUtil.stringToDouble(window.getAttr("aspectX"));
+    yasp = ObjectUtil.stringToDouble(window.getAttr("aspectY"));
+    zasp = ObjectUtil.stringToDouble(window.getAttr("aspectZ"));
+    showScale = window.getAttr("showScale").equalsIgnoreCase("true");
+    boundingBox = window.getAttr("boundingBox").equalsIgnoreCase("true");
+    parallel = window.getAttr("parallel").equalsIgnoreCase("true");
   }
 
   /** Tests whether two objects are in equivalent states. */
@@ -375,7 +375,7 @@ public class ViewHandler {
 
   /** Adjusts the aspect ratio. */
   protected void doAspect(double x, double y, double z) {
-    DisplayImpl display = dialog.getDisplay();
+    DisplayImpl display = window.getDisplay();
     ProjectionControl pc = display.getProjectionControl();
     if (display instanceof DisplayImplJ2D) {
       try { pc.setAspect(new double[] {x, y}); }
@@ -413,11 +413,11 @@ public class ViewHandler {
 
   /** Creates a matrix at the default orientation for the display. */
   protected double[] makeDefaultMatrix() {
-    DisplayImpl display = dialog.getDisplay();
+    DisplayImpl display = window.getDisplay();
     if (display == null || display instanceof DisplayImplJ2D) return null;
 
-    double scale = dialog.is3D() ? DEFAULT_ZOOM_3D : DEFAULT_ZOOM_2D;
-    double rotate = dialog.is3D() ? DEFAULT_ROTATION : 0;
+    double scale = window.is3D() ? DEFAULT_ZOOM_3D : DEFAULT_ZOOM_2D;
+    double rotate = window.is3D() ? DEFAULT_ROTATION : 0;
     double[] newMatrix = display.make_matrix(rotate, 0, 0, scale, 0, 0, 0);
     double[] aspect = new double[]
       {xasp, 0, 0, 0, 0, yasp, 0, 0, 0, 0, zasp, 0, 0, 0, 0, 1};
@@ -426,7 +426,7 @@ public class ViewHandler {
 
   /** Sets the display's projection matrix to match the given one. */
   protected void setMatrix(double[] m) {
-    DisplayImpl display = dialog.getDisplay();
+    DisplayImpl display = window.getDisplay();
     if (display != null) {
       try { display.getProjectionControl().setMatrix(m); }
       catch (VisADException exc) { exc.printStackTrace(); }
