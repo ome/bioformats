@@ -143,6 +143,27 @@ public class WindowManager extends LogicManager implements WindowListener {
     winfo.showWindow();
   }
 
+  /** Hides all visible windows. */
+  public void hideWindows() {
+    Enumeration en = windows.keys();
+    while (en.hasMoreElements()) {
+      Window w = (Window) en.nextElement();
+      if (w.isVisible()) {
+        visible.add(w);
+        w.setVisible(false);
+      }
+    }
+  }
+
+  /** Disposes all windows, prior to program exit. */
+  public void disposeWindows() {
+    Enumeration en = windows.keys();
+    while (en.hasMoreElements()) {
+      Window w = (Window) en.nextElement();
+      w.dispose();
+    }
+  }
+
   /**
    * Sets whether all registered frames should have a duplicate of the main
    * VisBio menu bar. This feature is only here to support the Macintosh
@@ -190,17 +211,7 @@ public class WindowManager extends LogicManager implements WindowListener {
     bio.toFront();
   }
 
-  public void windowIconified(WindowEvent e) {
-    // program has been minimized; hide all visible windows
-    Enumeration en = windows.keys();
-    while (en.hasMoreElements()) {
-      Window w = (Window) en.nextElement();
-      if (w.isVisible()) {
-        visible.add(w);
-        w.setVisible(false);
-      }
-    }
-  }
+  public void windowIconified(WindowEvent e) { hideWindows(); }
 
   public void windowActivated(WindowEvent e) { }
   public void windowClosed(WindowEvent e) { }
