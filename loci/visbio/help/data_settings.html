@@ -1,6 +1,87 @@
 <html><body><h2>Data settings</h2>
 
-<p>Data settings TODO
+<p>The portion of display window controls labeled "Data" encompasses controls
+related to the data objects themselves and how they are displayed.
+
+<p>The list on the left shows all data objects currently linked to the display.
+Clicking a data object selects it, so that its characteristics can be
+configured with the controls to the right.
+
+<p>The "Add &gt;" button links a data object into the display. When clicked, a
+popup menu appears allowing you to choose a data object to be visualized. Each
+display can visualize any number of data objects simultaneously, although not
+all combinations of data objects make sense this way.
+
+<p>The "Remove" button eliminates the selectted data object from the list,
+unlinking it from the display. This option does not remove the data object from
+the list on the main <a href="data_panel.html">Data panel</a>, but simply stops
+visualizing the object in the display.
+
+<p>The "Edit" button shows controls for manipulating the parameters of the
+selected data object. For datasets, it displays metadata associated within each
+file on disk. The button is grayed out when no controls or information are
+available.
+
+<p>The "Colors" button brings up a dialog box for adjusting the selected data
+object's color properties. For a full description, see the
+<a href="colors.html">Colors dialog box</a> topic.
+
+<p>The "Up" and "Down" buttons shift the selected data object up or down in the
+list. This order is important because it defines the order in which objects are
+drawn within the display. Some data may be drawn over top other data
+undesirably if the list is not in the correct order.
+
+<p>When checked, the "Delay burn-in" checkbox instructs VisBio to wait some
+number of seconds (configurable with the box to the right of the checkbox)
+before beginning to compute full-resolution data. By default, VisBio waits
+three seconds, giving you extra time to navigate by clicking the dimensional
+position arrow buttons next to the axis sliders, or by using the arrow keys to
+roam through your data. Unchecking the box causes VisBio to always compute
+full-resolution data immediately.
+
+<p>The "Visible" checkbox toggles the visibility of the selected data object.
+If you have many data objects within a single display, it can be useful to
+temporarily hide some of them to get a better view of others.
+
+<br><h3>For 3D displays only</h3>
+
+Many data features are only applicable for 3D displays. These controls are
+outlined below.
+
+<p>First and foremost, the "Stack axis" dropdown box allows you to select which
+dimensional axis to use for the display's Z axis when stacking images. VisBio
+defaults to using a "Slice" dimension (focal planes) if one is present.
+
+<p>Next to the "Visible" checkbox is a "Toggle slices" button. Clicking it
+brings up a dialog box for controlling which stack slices are visible. This
+feature can be useful if your stack contains many slices that are closely
+packed visually. For example, you can toggle the data off by unchecking the
+"Visible" checkbox, then turn on every fourth slice with the "Toggle slices"
+dialog box as follows:
+
+<p><img src="toggle-slices.png" alt="Toggle slices dialog box">
+
+<p>You can also toggle the visibility of individual slices in the stack with
+the "Current slice visible" checkbox.
+
+<p>The yellow box around the current slice can be toggled with the "Highlight
+current slice" checkbox.
+
+<br><h3>Volume rendering</h3>
+
+<p>Lastly, the "Render as a volume" checkbox toggles VisBio's semi-transparent
+volume rendering mode for the selected data object. The box to the right of the
+checkbox controls the cubic resolution of the volume (the default value of 96
+means the volume is a 96x96x96 cube).
+
+<p>Volume rendering uses a lot of memory, so be sure you have enough RAM, and
+that VisBio is configured to use it (see the
+<a href="memory_limit.html">Changing the memory limit</a> topic for
+instructions). We recommend at least 1,024 MB of RAM for the default volume
+rendering settings (96x96x96), and 1.5 GB for maximum resolution (160x160x160).
+
+<p>To adjust the transparency settings of the rendering, click the "Colors"
+button to bring up the <a href="colors.html">Colors dialog box</a>.
 
 <br><h3>See also:</h3>
 

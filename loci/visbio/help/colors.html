@@ -4,7 +4,9 @@
 properties. To access it, select a data object from the list within the
 <a href="data_settings.html">Data</a> controls of a
 <a href="display_windows.html">display window</a>, then click the "Colors"
-button.
+button. A dialog box like the following will appear:
+
+<p><img src="colors.png" alt="Colors dialog box">
 
 <p>The dialog's preview display provides a quick view of the consequences of
 any color changes made. Clicking the OK button will apply those changes to the
@@ -14,6 +16,30 @@ entire dataset.
 
 Image brightness and contrast can be adjusted with the brightness and contrast
 sliders, respectively.
+
+<br><h3>Opacity (transparency)</h3>
+
+The opacity slider controls how opaque the data is. The rightmost value of 256
+is 100% opaque, whereas the leftmost value of 0 is 100% transparent.
+
+<p>The "Constant" transparency model behaves like a layer in Photoshop, with
+the opacity value uniformly defining how opaque each pixel is.
+
+<p>The "Curved" transparency model maps a transparency curve from the minimum
+color value to the maximum color value, with the opacity value defining how
+sharply the curve arcs. An opacity of 128 (the center of the slider) is a
+straight line from min to max, meaning that pixels with the minimum color value
+are completely transparent while pixels with the maximum color value are
+completely opaque, with intermediate values weighted linearly. An opacity of 0
+slants the line so that most pixels are nearly completely transparent unless
+they are at or near the maximum value, while an opacity of 256 slants the line
+so that most pixels are nearly opaque unless they are at or near the minimum
+value. (If it sounds complex, don't worry: just play with it a bit while
+watching the color table on the right and it will make perfect sense.)
+
+<p>The "Curved" model is especially useful when performing volume rendering
+(see the <a href="data_settings.html">Data settings</a> topic for more
+information on volume rendering).
 
 <br><h3>Range components</h3>
 
@@ -84,8 +110,14 @@ table. However, complete control over each color table is available if needed.
 To modify a color table directly, drag the left mouse button across to the
 table to modify the active color component level at different range values.
 Click the right mouse button to cycle through active color components, from
-<i>Red</i> to <i>Green</i> to <i>Blue</i> to <i>Alpha</i> and back to
+<i>Red</i> to <i>Green</i> to <i>Blue</i> to <i>Alpha</i> (opacity) and back to
 <i>Red</i>.
+
+<p>The "Save LUT..." button allows you to preserve the current color table for
+later use, by storing it on disk as a LUT file (compatible with ImageJ). The
+"Load LUT..." button reads these LUT files back in and sets the color table
+accordingly. VisBio also has several preset color tables available from the
+popup menu accessible with the "LUTs &gt;" button.
 
 <br><h3>Color scaling</h3>
 
