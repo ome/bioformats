@@ -1,4 +1,4 @@
-v3.00 beta2 - Tuesday, October 26, 2004
+v3.00 beta2 - Wednesday, October 27, 2004
 
 - ADDED: Preliminary support for Zeiss LSM and ZVI file formats
 - ADDED: Continue work on comprehensive state support in XML format
