@@ -45,17 +45,17 @@ public class LineTool extends OverlayTool {
   // -- OverlayTool API methods --
 
   /** Instructs this tool to respond to a mouse press. */
-  public void mouseDown(float x, float y, int[] pos) {
+  public void mouseDown(float x, float y, int[] pos, int mods) {
     line = new OverlayLine(overlay, x, y, x, y);
     configureOverlay(line);
     overlay.addObject(line, pos);
   }
 
   /** Instructs this tool to respond to a mouse release. */
-  public void mouseUp(float x, float y, int[] pos) { line = null; }
+  public void mouseUp(float x, float y, int[] pos, int mods) { line = null; }
 
   /** Instructs this tool to respond to a mouse drag. */
-  public void mouseDrag(float x, float y, int[] pos) {
+  public void mouseDrag(float x, float y, int[] pos, int mods) {
     if (line != null) {
       line.setCoords2(x, y);
       overlay.notifyListeners(new TransformEvent(overlay));

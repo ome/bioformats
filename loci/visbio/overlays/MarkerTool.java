@@ -45,17 +45,17 @@ public class MarkerTool extends OverlayTool {
   // -- OverlayTool API methods --
 
   /** Instructs this tool to respond to a mouse press. */
-  public void mouseDown(float x, float y, int[] pos) {
+  public void mouseDown(float x, float y, int[] pos, int mods) {
     marker = new OverlayMarker(overlay, x, y);
     configureOverlay(marker);
     overlay.addObject(marker, pos);
   }
 
   /** Instructs this tool to respond to a mouse release. */
-  public void mouseUp(float x, float y, int[] pos) { marker = null; }
+  public void mouseUp(float x, float y, int[] pos, int mods) { marker = null; }
 
   /** Instructs this tool to respond to a mouse drag. */
-  public void mouseDrag(float x, float y, int[] pos) {
+  public void mouseDrag(float x, float y, int[] pos, int mods) {
     if (marker == null) return;
     marker.setCoords(x, y);
     overlay.notifyListeners(new TransformEvent(overlay));

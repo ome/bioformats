@@ -57,13 +57,13 @@ public class OverlayTool {
   // -- OverlayTool API methods --
 
   /** Instructs this tool to respond to a mouse press. */
-  public void mouseDown(float x, float y, int[] pos) { }
+  public void mouseDown(float x, float y, int[] pos, int mods) { }
 
   /** Instructs this tool to respond to a mouse release. */
-  public void mouseUp(float x, float y, int[] pos) { }
+  public void mouseUp(float x, float y, int[] pos, int mods) { }
 
   /** Instructs this tool to respond to a mouse drag. */
-  public void mouseDrag(float x, float y, int[] pos) { }
+  public void mouseDrag(float x, float y, int[] pos, int mods) { }
 
   /** Gets associated overlay transform. */
   public OverlayTransform getTransform() { return overlay; }

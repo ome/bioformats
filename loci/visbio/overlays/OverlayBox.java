@@ -132,4 +132,15 @@ public class OverlayBox extends OverlayObject {
     return field;
   }
 
+  /** Computes the shortest distance from this object to the given point. */
+  public double getDistance(double x, double y) {
+    double xdist = 0;
+    if (x < x1 && x < x2) xdist = Math.min(x1, x2) - x;
+    else if (x > x1 && x > x2) xdist = x - Math.max(x1, x2);
+    double ydist = 0;
+    if (y < y1 && y < y2) ydist = Math.min(y1, y2) - y;
+    else if (y > y1 && y > y2) ydist = y - Math.max(y1, y2);
+    return Math.sqrt(xdist * xdist + ydist * ydist);
+  }
+
 }

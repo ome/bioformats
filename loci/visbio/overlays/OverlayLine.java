@@ -25,6 +25,8 @@ package loci.visbio.overlays;
 
 import java.rmi.RemoteException;
 
+import loci.visbio.util.MathUtil;
+
 import visad.*;
 
 /** OverlayLine is a measurement line overlay. */
@@ -88,6 +90,12 @@ public class OverlayLine extends OverlayObject {
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
     return field;
+  }
+
+  /** Computes the shortest distance from this object to the given point. */
+  public double getDistance(double x, double y) {
+    return MathUtil.getDistance(new double[] {x1, y1},
+      new double[] {x2, y2}, new double[] {x, y}, true);
   }
 
 }

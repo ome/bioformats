@@ -45,7 +45,7 @@ public class BoxTool extends OverlayTool {
   // -- OverlayTool API methods --
 
   /** Instructs this tool to respond to a mouse press. */
-  public void mouseDown(float x, float y, int[] pos) {
+  public void mouseDown(float x, float y, int[] pos, int mods) {
     box = new OverlayBox(overlay, x, y, x, y);
     configureOverlay(box);
     OverlayWidget panel = (OverlayWidget) overlay.getControls();
@@ -54,10 +54,10 @@ public class BoxTool extends OverlayTool {
   }
 
   /** Instructs this tool to respond to a mouse release. */
-  public void mouseUp(float x, float y, int[] pos) { box = null; }
+  public void mouseUp(float x, float y, int[] pos, int mods) { box = null; }
 
   /** Instructs this tool to respond to a mouse drag. */
-  public void mouseDrag(float x, float y, int[] pos) {
+  public void mouseDrag(float x, float y, int[] pos, int mods) {
     if (box == null) return;
     box.setCoords2(x, y);
     overlay.notifyListeners(new TransformEvent(overlay));

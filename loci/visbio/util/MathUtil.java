@@ -46,6 +46,62 @@ public abstract class MathUtil {
     return Math.sqrt(sum);
   }
 
+  /**
+   * Computes the minimum distance between the point v and the line a-b.
+   *
+   * @param a Coordinates of the line's first endpoint
+   * @param b Coordinates of the line's second endpoint
+   * @param v Coordinates of the standalone endpoint
+   * @param segment Whether distance computation should be
+   *                constrained to the given line segment
+   */
+  public static double getDistance(double[] a, double[] b, double[] v,
+    boolean segment)
+  {
+    int len = a.length;
+     
+    // vectors
+    double[] ab = new double[len];
+    double[] va = new double[len];
+    for (int i=0; i<len; i++) {
+      ab[i] = a[i] - b[i];
+      va[i] = v[i] - a[i];
+    }
+
+    // project v onto (a, b)
+    double numer = 0;
+    double denom = 0;
+    for (int i=0; i<len; i++) {
+      numer += va[i] * ab[i];
+      denom += ab[i] * ab[i];
+    }
+    double c = numer / denom;
+    double[] p = new double[len];
+    for (int i=0; i<len; i++) p[i] = c * ab[i] + a[i];
+
+    // determine which point (a, b or p) to use in distance computation
+    int flag = 0;
+    if (segment) {
+      for (int i=0; i<len; i++) {
+        if (p[i] > a[i] && p[i] > b[i]) flag = a[i] > b[i] ? 1 : 2;
+        else if (p[i] < a[i] && p[i] < b[i]) flag = a[i] < b[i] ? 1 : 2;
+        else continue;
+        break;
+      }
+    }
+
+    double sum = 0;
+    for (int i=0; i<len; i++) {
+      double q;
+      if (flag == 0) q = p[i] - v[i]; // use p
+      else if (flag == 1) q = a[i] - v[i]; // use a
+      else q = b[i] - v[i]; // flag == 2, use b
+      sum += q * q;
+    }
+
+    return Math.sqrt(sum);
+  }
+
   /** Rounds the value to nearest value along the given progression. */
   public static int getNearest(double val, int min, int max, int step) {
     int lo = (int) ((val - min) / step);

@@ -25,8 +25,6 @@ package loci.visbio.overlays;
 
 import java.rmi.RemoteException;
 
-import loci.visbio.data.ImageTransform;
-
 import visad.*;
 
 /** OverlayMarker is a marker crosshairs overlay. */
@@ -63,12 +61,7 @@ public class OverlayMarker extends OverlayObject {
   public DataImpl getData() {
     RealTupleType domain = overlay.getDomainType();
     RealTupleType range = overlay.getRangeType();
-
-    ImageTransform it = (ImageTransform) overlay.getParent();
-    int width = it.getImageWidth();
-    int height = it.getImageHeight();
-    int len = width < height ? width : height;
-    float size = 0.02f * len;
+    float size = 0.02f * overlay.getScalingValue();
 
     float[][] setSamples = {
       {x, x, x, x + size, x - size},
@@ -94,6 +87,13 @@ public class OverlayMarker extends OverlayObject {
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
     return field;
+  }
+
+  /** Computes the shortest distance from this object to the given point. */
+  public double getDistance(double x, double y) {
+    double xx = this.x - x;
+    double yy = this.y - y;
+    return Math.sqrt(xx * xx + yy * yy);
   }
 
 }

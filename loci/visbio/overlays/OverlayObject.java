@@ -35,6 +35,9 @@ public abstract class OverlayObject {
   /** Associated overlay transform. */
   protected OverlayTransform overlay;
 
+  /** Flag indicating this overlay is currently selected. */
+  protected boolean selected;
+
   /** Color of this overlay. */
   protected Color color;
 
@@ -55,6 +58,15 @@ public abstract class OverlayObject {
 
   /** Gets VisAD data object representing this overlay. */
   public abstract DataImpl getData();
+
+  /** Computes the shortest distance from this object to the given point. */
+  public abstract double getDistance(double x, double y);
+
+  /** Sets whether this overlay is currently selected. */
+  public void setSelected(boolean selected) { this.selected = selected; }
+
+  /** Gets whether this overlay is currently selected. */
+  public boolean isSelected() { return selected; }
 
   /** Sets color of this overlay. */
   public void setColor(Color c) { color = c; }

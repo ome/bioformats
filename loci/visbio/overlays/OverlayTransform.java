@@ -70,12 +70,21 @@ public class OverlayTransform extends DataTransform
 
   // -- OverlayTransform API methods --
 
-  /** Adds an overlay object to the current frame. */
+  /** Adds an overlay object at the given dimensional position. */
   public void addObject(OverlayObject obj, int[] pos) {
     int ndx = MathUtil.positionToRaster(lengths, pos);
     if (ndx < 0 || ndx >= overlays.length) return;
     overlays[ndx].add(obj);
     notifyListeners(new TransformEvent(this));
+  }
+
+  /** Gets the overlay objects at the given dimensional position. */
+  public OverlayObject[] getObjects(int[] pos) {
+    int ndx = MathUtil.positionToRaster(lengths, pos);
+    if (ndx < 0 || ndx >= overlays.length) return null;
+    OverlayObject[] oo = new OverlayObject[overlays[ndx].size()];
+    overlays[ndx].copyInto(oo);
+    return oo;
   }
 
   /** Gets domain type (XY). */
@@ -98,6 +107,17 @@ public class OverlayTransform extends DataTransform
     }
     catch (VisADException exc) { exc.printStackTrace(); }
     return rtt;
+  }
+
+  /**
+   * Gets a scaling value suitable for computing
+   * an overlay size or picking threshold.
+   */
+  public int getScalingValue() {
+    ImageTransform it = (ImageTransform) parent;
+    int width = it.getImageWidth();
+    int height = it.getImageHeight();
+    return width < height ? width : height;
   }
 
 
@@ -224,7 +244,8 @@ public class OverlayTransform extends DataTransform
         double[] coords = VisUtil.pixelToDomain(display, e.getX(), e.getY());
         DisplayWindow window = DisplayWindow.getDisplayWindow(display);
         int[] pos = window.getTransformHandler().getPos(this);
-        tool.mouseDown((float) coords[0], (float) coords[1], pos);
+        tool.mouseDown((float) coords[0], (float) coords[1], pos,
+          e.getInputEvent().getModifiers());
       }
     }
     else if (eventId == DisplayEvent.MOUSE_RELEASED_LEFT) {
@@ -233,7 +254,8 @@ public class OverlayTransform extends DataTransform
         double[] coords = VisUtil.pixelToDomain(display, e.getX(), e.getY());
         DisplayWindow window = DisplayWindow.getDisplayWindow(display);
         int[] pos = window.getTransformHandler().getPos(this);
-        tool.mouseUp((float) coords[0], (float) coords[1], pos);
+        tool.mouseUp((float) coords[0], (float) coords[1], pos,
+          e.getInputEvent().getModifiers());
       }
     }
     else if (mouseDownLeft && eventId == DisplayEvent.MOUSE_DRAGGED) {
@@ -241,7 +263,8 @@ public class OverlayTransform extends DataTransform
         double[] coords = VisUtil.pixelToDomain(display, e.getX(), e.getY());
         DisplayWindow window = DisplayWindow.getDisplayWindow(display);
         int[] pos = window.getTransformHandler().getPos(this);
-        tool.mouseDrag((float) coords[0], (float) coords[1], pos);
+        tool.mouseDrag((float) coords[0], (float) coords[1], pos,
+          e.getInputEvent().getModifiers());
       }
     }
   }
