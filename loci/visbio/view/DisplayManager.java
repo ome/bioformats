@@ -1,0 +1,225 @@
+//
+// DisplayManager.java
+//
+
+/*
+VisBio application for visualization of multidimensional
+biological image data. Copyright (C) 2002-2004 Curtis Rueden.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+package loci.visbio.view;
+
+import java.util.Vector;
+
+import javax.swing.JOptionPane;
+
+import loci.ome.xml.CAElement;
+import loci.ome.xml.OMEElement;
+
+import loci.visbio.LogicManager;
+import loci.visbio.PanelManager;
+import loci.visbio.VisBioEvent;
+import loci.visbio.VisBioFrame;
+import loci.visbio.WindowManager;
+
+import loci.visbio.help.HelpManager;
+
+import loci.visbio.state.OptionManager;
+import loci.visbio.state.SaveException;
+import loci.visbio.state.StateManager;
+
+/** DisplayManager is the manager encapsulating VisBio's 2D and 3D displays. */
+public class DisplayManager extends LogicManager {
+
+  // -- Constants --
+
+  /** String for ImageJ quit warning. */
+  public static final String WARN_IMAGEJ =
+    "Warn about problem where quitting ImageJ also quits VisBio";
+
+
+  // -- Fields --
+
+  /** Counter for display names. */
+  protected int nextId;
+
+
+  // -- Control panel --
+
+  /** Displays control panel. */
+  protected DisplayControls displayControls;
+
+
+  // -- Constructor --
+
+  /** Constructs a display manager. */
+  public DisplayManager(VisBioFrame bio) { super(bio); }
+
+
+  // -- DisplayManager API methods --
+
+  /** Pops up a dialog allowing the user to create a new display. */
+  public DisplayDialog createDisplay(boolean threeD) {
+    DisplayDialog dialog = null;
+    if (getDisplays().length < 32) {
+      String name = (String) JOptionPane.showInputDialog(null,
+        "Display name:", "Add display", JOptionPane.INFORMATION_MESSAGE,
+        null, null, "display" + ++nextId);
+      if (name != null) {
+        dialog = new DisplayDialog(this, name, threeD);
+        addDisplay(dialog);
+      }
+    }
+    else {
+      JOptionPane.showMessageDialog(null, "Sorry, but there is a limit " +
+        "of 32 displays maximum.\nPlease reuse or delete one of your " +
+        "existing displays.", "Cannot create display",
+        JOptionPane.ERROR_MESSAGE);
+    }
+    return dialog;
+  }
+
+  /** Adds a display to the list of current displays. */
+  public void addDisplay(DisplayDialog d) {
+    displayControls.addDisplay(d);
+    WindowManager wm = (WindowManager) bio.getManager(WindowManager.class);
+    wm.addWindow(d, false);
+    bio.generateEvent(this, "create new display: " + d.getName(), true);
+  }
+
+  /** Removes a display from the list of current displays. */
+  public void removeDisplay(DisplayDialog d) {
+    displayControls.removeDisplay(d);
+    bio.generateEvent(this, "remove display: " + d.getName(), true);
+  }
+
+  /** Gets the current list of displays. */
+  public DisplayDialog[] getDisplays() {
+    return displayControls.getDisplays();
+  }
+
+  /** Gets associated control panel. */
+  public DisplayControls getControls() { return displayControls; }
+
+
+  // -- LogicManager API methods --
+
+  /** Called to notify the logic manager of a VisBio event. */
+  public void doEvent(VisBioEvent evt) {
+    int eventType = evt.getEventType();
+    if (eventType == VisBioEvent.LOGIC_ADDED) {
+      LogicManager lm = (LogicManager) evt.getSource();
+      if (lm == this) doGUI();
+    }
+  }
+
+  /** Gets the number of tasks required to initialize this logic manager. */
+  public int getTasks() { return 3; }
+
+
+  // -- Saveable API methods --
+
+  protected static final String DISPLAY_MANAGER = "VisBio_DisplayManager";
+
+  /** Writes the current state to the given OME-CA XML object. */
+  public void saveState(OMEElement ome) throws SaveException {
+    DisplayDialog[] dialogs = getDisplays();
+
+    // save number of displays
+    CAElement custom = ome.getCustomAttr();
+    custom.createElement(DISPLAY_MANAGER);
+    custom.setAttribute("count", "" + dialogs.length);
+
+    // save all displays
+    for (int i=0; i<dialogs.length; i++) dialogs[i].saveState(ome, i);
+  }
+
+  /** Restores the current state from the given OME-CA XML object. */
+  public void restoreState(OMEElement ome) throws SaveException {
+    CAElement custom = ome.getCustomAttr();
+
+    // read number of displays
+    String[] dCount = custom.getAttributes(DISPLAY_MANAGER, "count");
+    int count = -1;
+    if (dCount != null && dCount.length > 0) {
+      try { count = Integer.parseInt(dCount[0]); }
+      catch (NumberFormatException exc) { }
+    }
+    if (count < 0) {
+      System.err.println("Failed to restore display count.");
+      count = 0;
+    }
+
+    Vector vn = new Vector();
+    for (int i=0; i<count; i++) {
+      // construct display
+      DisplayDialog dialog = new DisplayDialog(this);
+
+      // restore display state
+      dialog.restoreState(ome, i);
+      vn.add(dialog);
+    }
+
+    // merge old and new display lists
+    DisplayDialog[] dialogs = getDisplays();
+    Vector vo = new Vector(dialogs.length);
+    for (int i=0; i<dialogs.length; i++) vo.add(dialogs[i]);
+    StateManager.mergeStates(vo, vn);
+
+    // add new displays to display list
+    int nlen = vn.size();
+    for (int i=0; i<nlen; i++) {
+      DisplayDialog display = (DisplayDialog) vn.elementAt(i);
+      if (vo.indexOf(display) < 0) addDisplay(display);
+    }
+
+    // purge old displays from display list
+    int olen = vo.size();
+    for (int i=0; i<olen; i++) {
+      DisplayDialog display = (DisplayDialog) vo.elementAt(i);
+      if (vn.indexOf(display) < 0) removeDisplay(display);
+    }
+  }
+
+
+  // -- Helper methods --
+
+  /** Adds display-related GUI components to VisBio. */
+  protected void doGUI() {
+    // control panel
+    bio.setStatus("Initializing display logic");
+    displayControls = new DisplayControls(this);
+    PanelManager pm = (PanelManager) bio.getManager(PanelManager.class);
+    pm.addPanel(displayControls);
+
+    // options
+    bio.setStatus(null);
+    OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
+    om.addBooleanOption("Warnings", WARN_IMAGEJ, 'i',
+      "Toggles whether VisBio displays a warning about " +
+      "how quitting ImageJ also quits VisBio", true);
+
+
+    // help topics
+    bio.setStatus(null);
+    HelpManager hm = (HelpManager) bio.getManager(HelpManager.class);
+    hm.addHelpTopic("Displays", "displays.html");
+    hm.addHelpTopic("Colors", "colors.html");
+    hm.addHelpTopic("Capture", "capture.html");
+  }
+
+}

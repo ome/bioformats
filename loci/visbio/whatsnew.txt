@@ -1,0 +1,245 @@
+v3.00 alpha3
+
+- ADDED: More comprehensive save/restore/undo/redo using OME-CA XML
+- ADDED: Dimensional collapse transform
+- ADDED: Weighted multispectral component mapping transform
+
+- FIXED: Tons of bugfixes and improvements
+
+
+v3.00 alpha2 - Friday, June 11, 2004
+
+- ADDED: 3D displays now available
+
+
+v3.00 alpha1 - Friday, May 28, 2004
+
+- First v3.00 alpha release
+
+
+-------------------------------------------------------------------------------
+v2.31 - Thursday, July 1, 2004
+
+- ADDED: "Burn" button to force full-resolution burn-in
+- ADDED: Automation option to delay burn-in until "Burn" button is pressed
+- ADDED: Measurement flags (markers without a fixed dimensional position)
+
+- FIXED: Long delay before first screen dataset is computed
+
+- TWEAK: Switched Windows installer to JSmooth + Inno Setup
+- TWEAK: Switched Linux distribution to a simple script file
+
+- GONE: Eliminated Solaris distribution
+
+
+v2.30d - Monday, June 14, 2004
+
+- FIXED: Bugs when Java3D is not installed
+- FIXED: Greatly improved burn-in function / slider responsiveness
+
+
+v2.30c - Tuesday, April 13, 2004
+
+- FIXED: Issue with "Open file" functionality
+- FIXED: Bug when nothing is mapped to Z-axis
+
+
+v2.30b - Tuesday, March 30, 2004
+
+- FIXED: Number doubling bug in file pattern detection logic
+
+
+v2.30a - Wednesday, February 18, 2004
+
+- FIXED: Minor data import bug
+
+- GONE: Old "import series" dialog box ("Import group" does everything)
+
+
+v2.30 - Monday, February 2, 2004
+
+- ADDED: Support for importing Olympus Fluoview TIFF format
+- ADDED: Improved file group pattern logic
+- ADDED: Yellow bounding box around current slice in 3-D display
+- ADDED: Parallel projection mode for 3-D display
+
+- FIXED: Full-resolution burn-in bug with arrow buttons
+
+- TWEAK: Raised volume rendering limit to 192x192x192 pixels
+
+
+v2.21 - Thursday, January 15, 2004
+
+- ADDED: Capture tab now uses AVI, to avoid Mac OS X QuickTime issues
+- ADDED: Drag and drop support (open files by dropping them onto VisBio)
+- ADDED: Full Windows installer now uses Java 1.4.x instead of 1.3.x
+
+- FIXED: Several serious export bugs fixed
+- FIXED: Full-resolution burn-in bugs finally tackled
+- FIXED: No more garbage when 3-D display is resized on Mac OS X
+- FIXED: Nasty dimensional slider upper bound + step size bug quashed
+- FIXED: Eliminated illegal fixed color range bounds bug
+
+- TWEAK: Better status bar messages
+
+
+v2.20 - Monday, January 5, 2004
+
+- ADDED: New animation code is choppier but saves tons of memory
+- ADDED: Status bar messages indicating current visualization status
+- ADDED: Option for automatically purging old screen datasets
+
+- GONE: Previous/next preview displays
+
+
+v2.10 - Monday, December 15, 2003
+
+- ADDED: Thumbnail disk cache (now data loads more than 20X faster!)
+- ADDED: Ability to view arbitrary slices superimposed in the 3-D display
+
+
+v2.04 - Friday, December 5, 2003
+
+- ADDED: Better movie capturing controls (e.g., adjustable frames per second)
+- ADDED: Better support for datasets with one image per file
+- ADDED: Better support for single images
+- ADDED: Better file group detection
+- ADDED: Menu shortcuts for common tasks
+- ADDED: Option for toggling status bar visibility
+
+- FIXED: Mac OS X Application menu items now work as expected
+
+
+v2.03a - Friday, November 21, 2003
+
+- FIXED: Deal with bugs preventing proper saving of QuickTime movies
+
+- TWEAK: Display positions on Capture tab list can now be given better names
+
+
+v2.03 - Wednesday, November 19, 2003
+
+- ADDED: Separate ij.jar, for upgrading ImageJ independently of VisBio
+
+- FIXED: Better QuickTime for Java detection on Windows XP
+
+- TWEAK: Better error messages when an error occurs during file import
+
+
+v2.02 - Monday, November 17, 2003
+
+- ADDED: Capture 3-D display sequences to QuickTime movie files
+- ADDED: Mac OS X version is now distributed as an application bundle
+
+- FIXED: Volume rendering toggle and resolution bugs fixed
+- FIXED: Direct color table alterations now work again, and are saved
+- FIXED: Potential Z-axis autoscaling issue fixed
+- FIXED: Bunches more save & restore bugs fixed (should be quite robust now)
+- FIXED: Some import/export bugs squashed
+
+
+v2.01 - Friday, September 5, 2003
+
+- ADDED: Undo is back, with multiple undo & redo support
+
+- FIXED: Many save & restore state bugs fixed
+- FIXED: Many measurement bugs fixed
+- FIXED: Various other bugfixes
+
+
+v2.00 - Friday, August 8, 2003
+
+- ADDED: VisBio now handles multidimensional image data with any number of
+         dimensions, not just 4-D across space and time
+- ADDED: Separate treatment of "raw" versus "screen" datasets, including
+         the ability to create multiple data samplings from the same source,
+         and detailed statistics regarding loaded datasets
+- ADDED: Flexible import/export logic handles multidimensional data distributed
+         across a group of files in any orientation
+- ADDED: QuickTime for Java now automatically detected, without the need to
+         muck around with QTJava.zip
+- ADDED: Largely rewritten with a new code architecture offering greater and
+         more flexible extensibility of the system (write your own plugins!)
+- ADDED: Automatic "burn in" of full-resolution images while view is idle
+- ADDED: Separate "Edit Colors" dialog with lightning quick preview pane
+- ADDED: Multiple simultaneous arbitrary slices
+- ADDED: Intelligent automatic data sampling
+- ADDED: Warnings issued before performing memory-intensive operations
+- ADDED: Separate options screen with multiple categories of options
+- ADDED: VisBio startup screen displayed while VisBio loads
+- ADDED: More verbose display indicating what VisBio is doing while it's busy
+- ADDED: "Clean memory" button for forcing a Java garbage collection operation
+- ADDED: VisBio's built-in help updated to provide detail on new features
+- ADDED: Status bar
+
+- FIXED: Tons of bugfixes (and surely many new bugs--please report them!)
+
+- GONE:  Drift correction will be back with the next release
+- GONE:  Undo support will be back with the next release
+
+
+v1.0 beta 3C - Wednesday, October 30, 2002
+
+- FIXED: NullPointerExceptions when running without Java3D (2-D only mode)
+- FIXED: Added "Snap now" button to measurement controls for immediately
+         snapping each measurement endpoint to its nearest slice
+- FIXED: Removed needless restriction on merging standard measurements
+
+
+v1.0 beta 3B - Friday, October 11, 2002
+
+- FIXED: Shift + left drag no longer selects measurements outside its bounds
+- FIXED: Non-selected lines can now be moved when there is a selection
+- FIXED: Eliminated bug where shift + left drag to highlight measurements
+         sometimes changed the color of the newly selected measurements
+- FIXED: Measurements are now added in a reasonable location when the 2-D
+         display is toggled off
+
+
+v1.0 beta 3A - Thursday, October 10, 2002
+
+- FIXED: Arbitrary slice & alignment triangle now always appear properly
+- FIXED: Arbitrary slice now updates correctly
+- FIXED: Alignment triangle no longer exhibits strange behavior after
+         restoring state
+
+- TWEAK: Improved thread usage relating to progress dialog
+
+
+v1.0 beta 3 - Friday, October 4, 2002
+
+- ADDED: Drift correction--a tool for alignment of image stacks
+- ADDED: Now two kinds of standard--"2-D standard" distributes measurement
+         across all slices of all timesteps, whereas "3-D standard" distributes
+         measurement across all timesteps with the current slice values
+- ADDED: More intuitive mouse controls--now left button manipulates
+         measurements, arbitrary slice and alignment triangle, while right
+         button manipulates the display view (rotate, pan and zoom)
+- ADDED: Snapshots of the currently displayed image can now be sent to ImageJ
+         to be manipulated ("File/Send snapshot to ImageJ" option)
+- ADDED: Memory usage information is now displayed in the main window
+- ADDED: Option to disable behavior where measurement endpoints snap to the
+         nearest slice
+- ADDED: Option to have each group of controls displayed in a separate,
+         floating window rather than as a series of tabs
+- ADDED: Color range can now be set separately for each color component
+- ADDED: Old console window eliminated in favor of graphical console window
+         system
+- ADDED: Completed initial version of VisBio's online help
+
+- FIXED: Fixed bug where certain multipage TIFF files were loading incorrectly
+- FIXED: Custom color tables now saved properly to state file
+- FIXED: Import dialog's series detector now works with file series that have
+         leading zeroes (e.g., "AREA0007")
+- FIXED: Import dialog's series detector now works with files that have very
+         long numbering schemes (e.g., "GLASS20006292355.nc")
+- FIXED: Disallow 2-D standard measurement lines spanning multiple slices
+- FIXED: Rightmost value of color widgets can be properly manipulated now
+
+- TWEAK: Quit operation can now be canceled
+
+
+v1.0 beta 2A - Tuesday, August 27, 2002
+
+- FIXED: A single file containing an image stack is now handled properly as a
+         time series if "treat each file as a slice" is selected.

@@ -1,0 +1,68 @@
+<html>
+<body>
+<center>
+<h2>The Data Panel</h2>
+</center>
+<p>
+The Data panel allows you to import data into VisBio, so that you can begin
+visualization and analysis. Importing your data is usually the first step when
+using VisBio.
+<p>
+For an introduction to data import, please read the
+<a href="overview.html">Overview</a> topic first. If you are looking for more
+detailed information about data subsampling, export, OME upload or other l33+
+feecherz, you'll find them below.
+<p>
+<font size="+1"><b>Data subsampling</b></font>
+<p>
+Sometimes, it is desirable to create a version of your data at a lower
+resolution, with fewer dimensional positions or fewer range components, to
+conserve memory or improve rendering time. VisBio refers to this procedure as
+"subsampling." To do it, first import your dataset as described in the
+<a href="overview.html">Overview</a> topic. Select your data from the list,
+then click the "Add &gt;" button and choose "Subsampling" from the popup menu.
+<p>
+Choose a name for the subsampling, and VisBio will create another data object,
+a child of your original dataset, that represents the subsampling. To alter the
+sampling parameters, select the subsampled data object and click the "Edit"
+button. A window similar to the following one will appear:
+<br>
+<center><img src="screen-dialog.png"></center>
+<p>
+You can subsample the image resolution, as well as each dimensional axis. In
+the example above, Time is subsampled to every fourth timestep
+(1, 5, 9, ..., 81, 85), and Slice is subsampled to every second timestep
+(1, 3, 5, ..., 31, 33).
+<p>
+Lastly, you can choose to exclude one or more range components of the data, by
+unchecking those range component checkboxes. In the example above, there is
+only one range component, and you must have at least one range component
+included in the dataset (otherwise there would be no data!). However, if the
+data instead had three components<i>—</i>Red, Green and Blue<i>—</i>you could
+choose to include only the Green component, for example.
+<p>
+When finished, click the "Apply" button to lock in your changes. VisBio will
+recompute thumbnails as necessary for the new sampling parameters.
+<p>
+<font size="+1"><b>Visualizing data</b></font>
+<p>
+To visualize a data object, select it from the list, then click the
+"Display &gt;" button. To view the data in an existing display, choose it from
+the popup menu. To view it in a new display, choose "New 2D display..." or
+"New 3D display..." and type in a name for the new display. In either case, the
+data will be added to the specified display and immediately shown onscreen. See
+the <a href="displays.html">Displays</a> topic for more information on
+controlling visualization parameters within a display.
+<p>
+<font size="+1"><b>Other data functions</b></font>
+<p>
+Lastly, you may have noticed three other buttons relating to data objects. The
+"Export" button lets you export the data object to a group of files on disk
+<i>[Author's note: Sorry, export features are not available in this alpha
+release.]</i>, the "Upload" button allows you to upload the data object to an
+OME database (see the <a href="ome.html">OME</a> topic for more information),
+and the "Remove" button deletes the selected data object. Note that if the data
+object to be removed has children, they will be deleted as well.
+<p>
+</body>
+</html>

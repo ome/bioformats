@@ -1,0 +1,407 @@
+//
+// StackLink.java
+//
+
+/*
+VisBio application for visualization of multidimensional
+biological image data. Copyright (C) 2002-2004 Curtis Rueden.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+package loci.visbio.view;
+
+import java.util.Vector;
+
+import java.rmi.RemoteException;
+
+import loci.visbio.data.DataSampling;
+import loci.visbio.data.DataTransform;
+import loci.visbio.data.ImageTransform;
+import loci.visbio.data.ThumbnailHandler;
+
+import loci.visbio.util.VisUtil;
+
+import visad.*;
+
+public class StackLink extends TransformLink {
+
+  // -- Fields --
+
+  /** Data references linking data to the display. */
+  protected Vector references;
+
+  /** Data renderers for toggling data's visibility and other parameters. */
+  protected Vector renderers;
+
+  /** Dimensional axis to use for image stacks. */
+  protected int stackAxis = -2;
+
+  /** Last known dimensional position of the link. */
+  protected int[] lastPos;
+
+
+  // -- Constructor --
+
+  /**
+   * Creates a link between the given data transform and
+   * the specified stack handler's display.
+   */
+  public StackLink(StackHandler h, DataTransform t) {
+    super(h, t);
+    references = new Vector();
+    renderers = new Vector();
+
+    int axis = -1;
+    String[] dims = t.getDimTypes();
+    if (dims.length > 0) axis = 0;
+    for (int i=0; i<dims.length; i++) {
+      if (dims[i].equals("Slice")) {
+        axis = i;
+        break;
+      }
+    }
+    setStackAxis(axis);
+  }
+
+
+  // -- StackLink API methods --
+
+  /** Gets references corresponding to each plane in the image stack. */
+  public DataReferenceImpl[] getReferences() {
+    DataReferenceImpl[] refs = new DataReferenceImpl[references.size()];
+    references.copyInto(refs);
+    return refs;
+  }
+
+  /** Gets renderers corresponding to each plane in the image stack. */
+  public DataRenderer[] getRenderers() {
+    DataRenderer[] rends = new DataRenderer[renderers.size()];
+    renderers.copyInto(rends);
+    return rends;
+  }
+
+  /** Assigns the given axis as the stack axis. */
+  public void setStackAxis(int axis) {
+    if (axis == stackAxis) return;
+    stackAxis = axis;
+    references.removeAllElements();
+    renderers.removeAllElements();
+    lastPos = null;
+
+    // convert slider axis to stack axis for this transform
+    int[] lengths = trans.getLengths();
+    int len = axis >= 0 && axis < lengths.length ? lengths[axis] : 1;
+
+    // build reference/renderer pairs
+    String name = trans.getName();
+    DisplayRenderer dr = handler.getDialog().getDisplay().getDisplayRenderer();
+    try {
+      for (int i=0; i<len; i++) {
+        references.add(new DataReferenceImpl(name + i));
+        renderers.add(dr.makeDefaultRenderer());
+      }
+    }
+    catch (VisADException exc) { exc.printStackTrace(); }
+  }
+
+  /** Gets the currently assigned stack axis. */
+  public int getStackAxis() { return stackAxis; }
+
+  /** Gets the number of slices, assuming the currently assigned stack axis. */
+  public int getSliceCount() { return references.size(); }
+
+  /**
+   * Gets the current slice index, assuming
+   * the currently assigned stack axis.
+   */
+  public int getCurrentSlice() {
+    int[] pos = handler.getPos(trans);
+    return stackAxis >= 0 && stackAxis < pos.length ? pos[stackAxis] : -1;
+  }
+
+  /** Enables or disables visibility at the specified slice index. */
+  public void setSliceVisible(int slice, boolean vis) {
+    if (slice < 0 || slice >= references.size()) return;
+    ((DataRenderer) renderers.elementAt(slice)).toggle(vis);
+  }
+
+  /** Gets visibility at the specified slice index. */
+  public boolean isSliceVisible(int slice) {
+    if (slice < 0 || slice >= renderers.size()) return false;
+    return ((DataRenderer) renderers.elementAt(slice)).getEnabled();
+  }
+
+  /** Enables or disables visibility of the yellow bounding box. */
+  public void setBoundingBoxVisible(boolean vis) { super.setVisible(vis); }
+
+  /** Gets visibility of the given data transform's yellow bounding box. */
+  public boolean isBoundingBoxVisible() { return super.isVisible(); }
+
+
+  // -- TransformLink API methods --
+
+  /** Links this stack into the display. */
+  public void link() {
+    try {
+      // add image slices
+      int len = references.size();
+      DisplayImpl display = handler.getDialog().getDisplay();
+      if (stackAxis < 0) {
+        display.addReferences((DataRenderer) renderers.elementAt(0),
+          (DataReferenceImpl) references.elementAt(0));
+      }
+      else {
+        for (int i=0; i<len; i++) {
+          double z = len == 1 ? 0.0 : 2.0 * i / (len - 1) - 1;
+          display.addReferences((DataRenderer) renderers.elementAt(i),
+            (DataReferenceImpl) references.elementAt(i),
+            new ConstantMap[] {new ConstantMap(z, Display.ZAxis)});
+        }
+      }
+
+      // add yellow bounding box
+      display.addReferences(rend, ref, new ConstantMap[] {
+        new ConstantMap(1, Display.Red),
+        new ConstantMap(1, Display.Green),
+        new ConstantMap(0, Display.Blue),
+        new ConstantMap(3, Display.LineWidth)
+      });
+    }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
+  }
+
+  /** Toggles visibility of the transform. */
+  public void setVisible(boolean vis) {
+    for (int i=0; i<renderers.size(); i++) {
+      ((DataRenderer) renderers.elementAt(i)).toggle(vis);
+    }
+  }
+
+  /** Gets visibility of the transform. */
+  public boolean isVisible() {
+    boolean vis = false;
+    for (int i=0; i<renderers.size(); i++) {
+      if (((DataRenderer) renderers.elementAt(i)).getEnabled()) {
+        vis = true;
+        break;
+      }
+    }
+    return vis;
+  }
+
+
+  // -- Internal TransformLink API methods --
+
+  /** Updates the currently displayed data for the given transform. */
+  protected void doTransform() {
+    boolean doBox = false, doRefs = false;
+
+    // get dimensional position of this transform
+    int[] pos = handler.getPos(trans);
+
+    // check whether dimensional position has changed
+    if (lastPos == null || lastPos.length != pos.length) doBox = doRefs = true;
+    else {
+      for (int i=0; i<pos.length; i++) {
+        if (lastPos[i] != pos[i]) {
+          if (i == stackAxis) doBox = true;
+          else doRefs = true;
+        }
+      }
+    }
+    lastPos = pos;
+
+    int len = references.size();
+    if (doBox) {
+      // compute yellow bounding box
+      ImageTransform it = (ImageTransform) trans;
+      int xres = it.getImageWidth();
+      int yres = it.getImageHeight();
+      float zval = stackAxis < 0 ? 0 : 2f * pos[stackAxis] / (len - 1) - 1;
+      float[][] samps = {
+        {0, xres, xres, 0, 0},
+        {0, 0, yres, yres, 0},
+        {zval, zval, zval, zval, zval}
+      };
+      RealType xbox = it.getXType();
+      RealType ybox = it.getYType();
+      RealType zbox = ((StackHandler) handler).getZType();
+      try {
+        RealTupleType xyz = new RealTupleType(xbox, ybox, zbox);
+        ref.setData(new Gridded3DSet(xyz, samps, 5));
+      }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
+    }
+
+    if (doRefs) super.doTransform();
+  }
+
+  /**
+   * Computes the reference data at the current position,
+   * utilizing thumbnails as appropriate.
+   */
+  protected void computeData(boolean thumbs) {
+    int[] pos = handler.getPos(trans);
+    ThumbnailHandler th = trans.getThumbHandler();
+    int len = references.size();
+
+    // compute image data at each slice
+    DisplayImpl display = handler.getDialog().getDisplay();
+    VisUtil.setDisplayDisabled(display, true);
+    for (int s=0; s<len; s++) {
+      if (stackAxis >= 0) pos[stackAxis] = s;
+      String current = " (" + (s + 1) + "/" + len + ")";
+
+      Data thumb = th == null ? null : th.getThumb(pos);
+      DataReferenceImpl sliceRef = (DataReferenceImpl) references.elementAt(s);
+      if (thumbs) {
+        try { sliceRef.setData(thumb); }
+        catch (VisADException exc) { exc.printStackTrace(); }
+        catch (RemoteException exc) { exc.printStackTrace(); }
+      }
+      else {
+        setMessage("loading full-resolution data" + current);
+        Data d = getImageData(pos);
+        if (th != null && thumb == null) {
+          // fill in missing thumbnail
+          th.setThumb(pos, th.makeThumb(d));
+        }
+        try { sliceRef.setData(d); }
+        catch (VisADException exc) { exc.printStackTrace(); }
+        catch (RemoteException exc) { exc.printStackTrace(); }
+      }
+    }
+    if (!thumbs) {
+      setMessage("burning in full-resolution data");
+      clearWhenDone = true;
+    }
+    VisUtil.setDisplayDisabled(display, false);
+  }
+
+  /** Gets 2D data from the specified data transform. */
+  protected Data getImageData(int[] pos) {
+    Data d = trans.getData(pos, 2);
+    if (!(d instanceof FlatField)) return d;
+    FlatField ff = (FlatField) d;
+
+    GriddedSet set = (GriddedSet) ff.getDomainSet();
+    int[] len = set.getLengths();
+    int[] res = new int[len.length];
+    boolean same = true;
+    int maxRes = ((StackHandler) handler).getMaximumResolution();
+    for (int i=0; i<len.length; i++) {
+      if (len[i] > maxRes) {
+        same = false;
+        res[i] = maxRes;
+      }
+      else res[i] = len[i];
+    }
+    return same ? ff : DataSampling.resample(ff, res, null);
+  }
+
+  /** Computes range values at the current cursor location. */
+  protected void computeCursor() {
+    // check for active cursor
+    cursor = null;
+    DisplayImpl display = handler.getDialog().getDisplay();
+    DisplayRenderer dr = display.getDisplayRenderer();
+    Vector cursorStringVector = dr.getCursorStringVector();
+    if (cursorStringVector == null || cursorStringVector.size() == 0) return;
+
+    // get cursor value
+    double[] cur = dr.getCursor();
+    if (cur == null || cur.length == 0 || cur[0] != cur[0]) return;
+
+    // get range values at the given cursor location
+    if (!(trans instanceof ImageTransform)) return;
+    ImageTransform it = (ImageTransform) trans;
+
+    // get cursor's domain coordinates
+    RealType xType = it.getXType();
+    RealType yType = it.getYType();
+    RealType zType = ((StackHandler) handler).getZType();
+    double[] domain = VisUtil.cursorToDomain(display,
+      new RealType[] {xType, yType, zType}, cur);
+
+    // determine which slice to probe
+    int index = -1;
+    int len = references.size();
+    if (len > 1) {
+      double zpos = Math.round((domain[2] + 1) * (len - 1) / 2.0);
+      if (zpos >= 0 && zpos < len) index = (int) zpos;
+    }
+    else if (len == 1 && Math.round(domain[2]) == 0.0) index = 0;
+    if (index < 0) return;
+
+    DataReferenceImpl sliceRef =
+      (DataReferenceImpl) references.elementAt(index);
+
+    // get data at appropriate slice
+    Data data = sliceRef.getData();
+    if (!(data instanceof FunctionImpl)) return;
+    FunctionImpl func = (FunctionImpl) data;
+
+    // evaluate function at the cursor location
+    double[] rangeValues = null;
+    try {
+      RealTuple tuple = new RealTuple(new Real[] {
+        new Real(xType, domain[0]),
+        new Real(yType, domain[1])
+      });
+
+      Data result = func.evaluate(tuple,
+        Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
+      if (result instanceof Real) {
+        Real r = (Real) result;
+        rangeValues = new double[] {r.getValue()};
+      }
+      else if (result instanceof RealTuple) {
+        RealTuple rt = (RealTuple) result;
+        int dim = rt.getDimension();
+        rangeValues = new double[dim];
+        for (int j=0; j<dim; j++) {
+          Real r = (Real) rt.getComponent(j);
+          rangeValues[j] = r.getValue();
+        }
+      }
+      else return;
+    }
+    catch (VisADException exc) { return; }
+    catch (RemoteException exc) { return; }
+
+    // compile range value messages
+    if (rangeValues == null) return;
+    RealType[] range = it.getRangeTypes();
+    if (range.length < rangeValues.length) return;
+
+    int num = stackAxis < 0 ? rangeValues.length : rangeValues.length + 1;
+    cursor = new VisADException[num];
+    String prefix = trans.getName() + ": ";
+    for (int i=0; i<rangeValues.length; i++) {
+      cursor[i] = new VisADException(prefix +
+        range[i].getName() + " = " + rangeValues[i]);
+    }
+    if (stackAxis >= 0) {
+      String dimType = trans.getDimTypes()[stackAxis];
+      cursor[rangeValues.length] = new VisADException(prefix +
+        "<" + (stackAxis + 1) + "> " + dimType + " = " +
+        trans.getLabels()[stackAxis][index]);
+    }
+  }
+
+}

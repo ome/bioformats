@@ -1,0 +1,410 @@
+//
+// DisplayDialog.java
+//
+
+/*
+VisBio application for visualization of multidimensional
+biological image data. Copyright (C) 2002-2004 Curtis Rueden.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+package loci.visbio.view;
+
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GraphicsConfiguration;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import loci.ome.xml.CAElement;
+import loci.ome.xml.OMEElement;
+
+import loci.visbio.VisBioFrame;
+import loci.visbio.WindowManager;
+
+import loci.visbio.data.DataTransform;
+
+import loci.visbio.state.Dynamic;
+
+import loci.visbio.util.BreakawayPanel;
+import loci.visbio.util.FormsUtil;
+import loci.visbio.util.ObjectUtil;
+import loci.visbio.util.SwingUtil;
+import loci.visbio.util.VisUtil;
+
+import visad.DisplayImpl;
+
+/**
+ * DisplayDialog is a dialog containing a 2D or 3D
+ * VisAD display and associated controls.
+ */
+public class DisplayDialog extends JDialog implements ActionListener, Dynamic {
+
+  // -- Static fields --
+
+  /** Stereo graphics configuration. */
+  protected static final GraphicsConfiguration STEREO =
+    VisUtil.getStereoConfiguration();
+
+
+  // -- Fields --
+
+  /** Name of this display. */
+  protected String name;
+
+  /** True if this display is 3D, false if 2D. */
+  protected boolean threeD;
+
+
+  // -- Handlers --
+
+  /** Handles logic for controlling the VisAD display's view. */
+  protected ViewHandler viewHandler;
+
+  /** Handles logic for altering the VisAD display's color settings. */
+  protected ColorHandler colorHandler;
+
+  /** Handles logic for capturing the display screenshots and movies. */
+  protected CaptureHandler captureHandler;
+
+  /** Handles logic for linking data transforms to the VisAD display. */
+  protected TransformHandler transformHandler;
+
+
+  // -- GUI components --
+
+  /** Associated display manager. */
+  protected DisplayManager manager;
+
+  /** Associated VisAD display. */
+  protected DisplayImpl display;
+
+  /** Panel containing dimensional slider widgets. */
+  protected JPanel sliders;
+
+  /** Breakaway panel for display controls. */
+  protected BreakawayPanel controls;
+
+
+  // -- Other fields --
+
+  /** String representation of this display. */
+  protected String string;
+
+
+  // -- Constructors --
+
+  /** Creates an uninitialized display object. */
+  public DisplayDialog(DisplayManager dm) {
+    super((JFrame) null);
+    manager = dm;
+  }
+
+  /** Creates a new display object according to the given parameters. */
+  public DisplayDialog(DisplayManager dm, String name, boolean threeD) {
+    super((JFrame) null, name);
+    manager = dm;
+    this.name = name;
+    this.threeD = threeD;
+    initState(null);
+  }
+
+
+  // -- DisplayDialog API methods --
+
+  /**
+   * Enlarges the display to its preferred width and/or height
+   * if it is too small, keeping the display itself square.
+   */
+  public void repack() {
+    sliders.removeAll();
+    sliders.add(transformHandler.getSliderPanel());
+    if (!isVisible()) validate(); // force recomputation of slider panel size
+    Dimension size = SwingUtil.getRepackSize(this);
+    String edge = controls.getEdge();
+    if (edge == BorderLayout.EAST || edge == BorderLayout.WEST) {
+      size.width = controls.getPreferredSize().width + size.height - 20;
+    }
+    else if (edge == BorderLayout.NORTH || edge == BorderLayout.SOUTH) {
+      size.height = controls.getPreferredSize().height + size.width + 20;
+    }
+    else controls.repack();
+    Dimension actualSize = getSize();
+    if (actualSize.width > size.width) size.width = actualSize.width;
+    if (actualSize.height > size.height) size.height = actualSize.height;
+    setSize(size);
+  }
+
+  /** Gets associated VisBio frame. */
+  public VisBioFrame getVisBio() { return manager.getVisBio(); }
+
+  /** Gets the associated VisAD display. */
+  public DisplayImpl getDisplay() { return display; }
+
+  /** Gets the view handler. */
+  public ViewHandler getViewHandler() { return viewHandler; }
+
+  /** Gets the color handler. */
+  public ColorHandler getColorHandler() { return colorHandler; }
+
+  /** Gets the capture handler. */
+  public CaptureHandler getCaptureHandler() { return captureHandler; }
+
+  /** Gets the transform handler. */
+  public TransformHandler getTransformHandler() { return transformHandler; }
+
+  /** Gets the name of this display. */
+  public String getName() { return name; }
+
+  /** Gets whether this view handler's display is 3D. */
+  public boolean is3D() { return threeD; }
+
+  /** Links the given data transform to the display. */
+  public void addTransform(DataTransform trans) {
+    transformHandler.addTransform(trans);
+    viewHandler.guessAspect();
+    colorHandler.initColors();
+    refresh();
+    manager.getVisBio().generateEvent(manager,
+      "add data object to " + name, true);
+  }
+
+  /** Removes the given data transform from the display. */
+  public void removeTransform(DataTransform trans) {
+    transformHandler.removeTransform(trans);
+    refresh();
+    manager.getVisBio().generateEvent(manager,
+      "remove data object from " + name, true);
+  }
+
+  /** Unlinks all data transforms from the display. */
+  public void removeAllTransforms() {
+    transformHandler.removeAllTransforms();
+    refresh();
+    manager.getVisBio().generateEvent(manager,
+      "remove all data objects from " + name, true);
+  }
+
+
+  // -- DisplayDialog API methods - state logic --
+
+  protected static final String DISPLAY_DIALOG = "VisBio_DisplayDialog";
+
+  protected CAElement custom;
+  protected int index;
+
+  /** Writes the current state to the given OME-CA XML object. */
+  public void saveState(OMEElement ome, int id) {
+    custom = ome.getCustomAttr();
+    custom.createElement(DISPLAY_DIALOG);
+    setAttr("id", "" + id);
+    setAttr("name", name);
+    setAttr("threeD", "" + threeD);
+    viewHandler.saveState();
+    colorHandler.saveState();
+    captureHandler.saveState();
+    transformHandler.saveState();
+  }
+
+  /** Restores the current state from the given OME-CA XML object. */
+  public void restoreState(OMEElement ome, int id) {
+    custom = ome.getCustomAttr();
+    String[] idList = custom.getAttributes(DISPLAY_DIALOG, "id");
+
+    // identify transform index
+    index = -1;
+    for (int i=0; i<idList.length; i++) {
+      try {
+        int iid = Integer.parseInt(idList[i]);
+        if (id == iid) {
+          index = i;
+          break;
+        }
+      }
+      catch (NumberFormatException exc) { }
+    }
+    if (index < 0) {
+      System.err.println("Attributes for display #" + id + " not found.");
+      return;
+    }
+
+    name = getAttr("name");
+    threeD = getAttr("threeD").equalsIgnoreCase("true");
+
+    createHandlers();
+    viewHandler.restoreState();
+    colorHandler.restoreState();
+    captureHandler.restoreState();
+    transformHandler.restoreState();
+  }
+
+  /** Sets value for the given attribute. */
+  protected void setAttr(String attr, String value) {
+    custom.setAttribute(attr, value);
+  }
+
+  /** Gets value for the given attribute. */
+  protected String getAttr(String attr) {
+    return custom.getAttributes(DISPLAY_DIALOG, attr)[index];
+  }
+
+
+  // -- Component API methods --
+
+  /** Shows or hides this dialog. */
+  public void setVisible(boolean b) {
+    super.setVisible(b);
+    if (b) controls.reshow();
+  }
+
+
+  // -- Object API methods --
+
+  /** Gets a string representation of this display (just its name). */
+  public String toString() { return string; }
+
+
+  // -- ActionListener API methods --
+
+  /** Handles button presses. */
+  public void actionPerformed(ActionEvent e) {
+    String cmd = e.getActionCommand();
+  }
+
+
+  // -- Dynamic API methods --
+
+  /** Tests whether two dynamic objects are equivalent. */
+  public boolean matches(Dynamic dyn) {
+    if (!isCompatible(dyn)) return false;
+    DisplayDialog dialog = (DisplayDialog) dyn;
+
+    return ObjectUtil.objectsEqual(name, dialog.name) &&
+      viewHandler.matches(dialog.viewHandler) &&
+      colorHandler.matches(dialog.colorHandler) &&
+      captureHandler.matches(dialog.captureHandler) &&
+      transformHandler.matches(dialog.transformHandler);
+  }
+
+  /**
+   * Tests whether the given dynamic object can be used as an argument to
+   * initState, for initializing this dynamic object.
+   */
+  public boolean isCompatible(Dynamic dyn) {
+    if (!(dyn instanceof DisplayDialog)) return false;
+    DisplayDialog dialog = (DisplayDialog) dyn;
+    return threeD == dialog.threeD;
+  }
+
+  /**
+   * Modifies this object's state to match that of the given object.
+   * If the argument is null, the object is initialized according to
+   * its current state instead.
+   */
+  public void initState(Dynamic dyn) {
+    if (dyn != null && !isCompatible(dyn)) return;
+    DisplayDialog dialog = (DisplayDialog) dyn;
+
+    if (dialog != null) {
+      name = dialog.name;
+      threeD = dialog.threeD;
+    }
+    string = name + (threeD ? " (3D)" : " (2D)");
+
+    if (display == null) display = VisUtil.makeDisplay(name, threeD, STEREO);
+    else display.setName(name);
+    setTitle(name);
+
+    // handlers
+    createHandlers();
+    if (dialog == null) {
+      viewHandler.initState(null);
+      colorHandler.initState(null);
+      captureHandler.initState(null);
+      transformHandler.initState(null);
+    }
+    else {
+      // Handlers' initState methods are smart enough to reinitialize
+      // their components only when necessary, to ensure efficiency.
+      viewHandler.initState(dialog.viewHandler);
+      colorHandler.initState(dialog.colorHandler);
+      captureHandler.initState(dialog.captureHandler);
+      transformHandler.initState(dialog.transformHandler);
+    }
+
+    if (controls == null) {
+      // display dialog's content pane
+      Container pane = getContentPane();
+      pane.setLayout(new BorderLayout());
+
+      // panel for dimensional sliders
+      sliders = new JPanel();
+      sliders.setLayout(new BorderLayout());
+
+      // breakaway panel for display controls
+      controls = new BreakawayPanel(pane, "Controls - " + name, true);
+      controls.setEdge(BorderLayout.EAST);
+
+      // add display controls breakaway dialog to window manager
+      WindowManager wm = (WindowManager)
+        manager.getVisBio().getManager(WindowManager.class);
+      wm.addWindow(controls.getDialog());
+
+      // lay out components
+      pane.add(display.getComponent(), BorderLayout.CENTER);
+      controls.setContentPane(FormsUtil.makeColumn(new Object[] {
+        viewHandler.getPanel(),
+        FormsUtil.makeRow(colorHandler.getPanel(), captureHandler.getPanel()),
+        "Data", transformHandler.getPanel(), sliders}, null, true));
+      pack();
+      repack();
+    }
+    else controls.getDialog().setTitle("Controls - " + name);
+  }
+
+  /**
+   * Called when this object is being discarded in favor of
+   * another object with a matching state.
+   */
+  public void discard() { }
+
+
+  // -- Helper methods --
+
+  /** Constructs logic handlers. */
+  protected void createHandlers() {
+    if (viewHandler == null) viewHandler = new ViewHandler(this);
+    if (colorHandler == null) colorHandler = new ColorHandler(this);
+    if (captureHandler == null) captureHandler = new CaptureHandler(this);
+    if (transformHandler == null) {
+      transformHandler = threeD ?
+        new StackHandler(this) : new TransformHandler(this);
+    }
+  }
+
+  /** Refreshes GUI components. */
+  protected void refresh() {
+    if (transformHandler.getTransformCount() == 0) setVisible(false);
+    manager.getControls().refresh();
+  }
+
+}
