@@ -100,7 +100,7 @@ public abstract class OverlayObject {
   }
 
   /** True iff this overlay has an endpoint coordinate pair. */
-  public boolean hasEndpoint1() { return false; }
+  public boolean hasEndpoint() { return false; }
 
   /** True iff this overlay has a second endpoint coordinate pair. */
   public boolean hasEndpoint2() { return false; }
@@ -203,8 +203,23 @@ public abstract class OverlayObject {
     return field;
   }
 
+  /** Changes X coordinate of the overlay's first endpoint. */
+  public void setX(float x1) {
+    if (!hasEndpoint()) return;
+    this.x1 = x1;
+    computeGridParameters();
+  }
+
+  /** Changes Y coordinate of the overlay's first endpoint. */
+  public void setY(float y1) {
+    if (!hasEndpoint()) return;
+    this.y1 = y1;
+    computeGridParameters();
+  }
+
   /** Changes coordinates of the overlay's first endpoint. */
   public void setCoords(float x1, float y1) {
+    if (!hasEndpoint()) return;
     this.x1 = x1;
     this.y1 = y1;
     computeGridParameters();
@@ -216,8 +231,23 @@ public abstract class OverlayObject {
   /** Gets Y coordinate of the overlay's first endpoint. */
   public float getY() { return y1; }
 
+  /** Changes X coordinate of the overlay's second endpoint. */
+  public void setX2(float x2) {
+    if (!hasEndpoint2()) return;
+    this.x2 = x2;
+    computeGridParameters();
+  }
+
+  /** Changes Y coordinate of the overlay's second endpoint. */
+  public void setY2(float y2) {
+    if (!hasEndpoint2()) return;
+    this.y2 = y2;
+    computeGridParameters();
+  }
+
   /** Changes coordinates of the overlay's second endpoint. */
   public void setCoords2(float x2, float y2) {
+    if (!hasEndpoint2()) return;
     this.x2 = x2;
     this.y2 = y2;
     computeGridParameters();
@@ -231,6 +261,7 @@ public abstract class OverlayObject {
 
   /** Changes text to render. */
   public void setText(String text) {
+    if (!hasText()) return;
     this.text = text;
     computeGridParameters();
   }
@@ -245,7 +276,9 @@ public abstract class OverlayObject {
   public Color getColor() { return color; }
 
   /** Sets whether overlay is solid. */
-  public void setFilled(boolean filled) { this.filled = filled; }
+  public void setFilled(boolean filled) {
+    if (canBeFilled()) this.filled = filled;
+  }
 
   /** Gets whether overlay is solid. */
   public boolean isFilled() { return filled; }

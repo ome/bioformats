@@ -25,6 +25,8 @@ package loci.visbio.overlays;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 
+import com.jgoodies.forms.factories.ButtonBarFactory;
+
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -39,18 +41,17 @@ import javax.swing.*;
 
 import javax.swing.border.EtchedBorder;
 
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.*;
+
+import javax.swing.text.Document;
 
 import loci.visbio.data.*;
 
 import loci.visbio.util.*;
 
-import visad.browser.Convert;
-
 /** OverlayWidget is a set of GUI controls for an overlay transform. */
-public class OverlayWidget extends JPanel
-  implements ActionListener, ListSelectionListener, TransformListener
+public class OverlayWidget extends JPanel implements ActionListener,
+  DocumentListener, ListSelectionListener, TransformListener
 {
 
   // -- Fields --
@@ -66,6 +67,18 @@ public class OverlayWidget extends JPanel
 
   /** List of buttons for each overlay tool. */
   protected Vector buttons;
+
+  /** Timer for refreshing widget components 5 times per second. */
+  protected Timer refreshTimer;
+
+  /** Flag indicating widget components need to be refreshed. */
+  protected boolean needRefresh;
+
+  /**
+   * Flag indicating AWT/Swing events should be ignored,
+   * used for programmatic update of GUI components.
+   */
+  protected boolean ignoreEvents;
 
 
   // -- GUI components - global --
@@ -84,6 +97,12 @@ public class OverlayWidget extends JPanel
 
   /** Button for removing selected overlays. */
   protected JButton remove;
+
+  /** Button for loading overlays from disk. */
+  protected JButton load;
+
+  /** Button for saving overlays to disk. */
+  protected JButton save;
 
 
   // -- GUI components - overlay-specific --
@@ -159,21 +178,26 @@ public class OverlayWidget extends JPanel
     overlayList.addListSelectionListener(this);
     JScrollPane overlayScroll = new JScrollPane(overlayList);
     SwingUtil.configureScrollPane(overlayScroll);
-    overlayScroll.setPreferredSize(new Dimension(100, 0));
-
-    // overlay removal button
-    remove = new JButton("Remove");
-    remove.addActionListener(this);
-    if (!LAFUtil.isMacLookAndFeel()) remove.setMnemonic('r');
+    overlayScroll.setPreferredSize(new Dimension(120, 0));
 
     // text fields for (X, Y) coordinate pairs
-    x1 = new JTextField(4);
-    y1 = new JTextField(4);
-    x2 = new JTextField(4);
-    y2 = new JTextField(4);
+    int textWidth = 12;
+    x1 = new JTextField(textWidth);
+    y1 = new JTextField(textWidth);
+    x2 = new JTextField(textWidth);
+    y2 = new JTextField(textWidth);
+    x1.setEnabled(false);
+    y1.setEnabled(false);
+    x2.setEnabled(false);
+    y2.setEnabled(false);
+    x1.getDocument().addDocumentListener(this);
+    y1.getDocument().addDocumentListener(this);
+    x2.getDocument().addDocumentListener(this);
+    y2.getDocument().addDocumentListener(this);
 
     // text text field ;-)
-    text = new JTextField(6);
+    text = new JTextField(2 * textWidth);
+    text.getDocument().addDocumentListener(this);
 
     // color chooser
     color = new JButton();
@@ -182,10 +206,12 @@ public class OverlayWidget extends JPanel
 
     // filled checkbox
     filled = new JCheckBox("Filled");
+    filled.addActionListener(this);
     if (!LAFUtil.isMacLookAndFeel()) filled.setMnemonic('f');
 
     // group selector
     groupList = new JComboBox(new Object[] {"None"});
+    groupList.addActionListener(this);
 
     // new group button
     newGroup = new JButton("New...");
@@ -194,58 +220,91 @@ public class OverlayWidget extends JPanel
     newGroup.setToolTipText("Creates a new overlay group");
 
     // notes text field
-    notes = new JTextField(8);
+    notes = new JTextField(2 * textWidth);
+    notes.getDocument().addDocumentListener(this);
 
     // stats text area
-    stats = new JTextArea(3, 8);
+    stats = new JTextArea(5, 3 * textWidth);
     stats.setEditable(false);
     stats.setBorder(new EtchedBorder());
+
+    // overlay removal button
+    remove = new JButton("Remove");
+    remove.setEnabled(false);
+    remove.addActionListener(this);
+    if (!LAFUtil.isMacLookAndFeel()) remove.setMnemonic('r');
+
+    // overlay loading button
+    load = new JButton("Load overlays...");
+    load.addActionListener(this);
+    if (!LAFUtil.isMacLookAndFeel()) load.setMnemonic('l');
+
+    // overlay saving button
+    save = new JButton("Save overlays...");
+    save.addActionListener(this);
+    if (!LAFUtil.isMacLookAndFeel()) save.setMnemonic('s');
 
     // lay out components
     setLayout(new BorderLayout());
     FormLayout layout = new FormLayout(
       "pref, 5dlu, pref, 3dlu, pref:grow, 5dlu, pref, 3dlu, pref:grow",
       "pref, 3dlu, pref, 9dlu, pref, 3dlu, pref, 9dlu, pref, 3dlu, pref, " +
-      "3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 9dlu, pref, 3dlu, " +
-      "fill:pref:grow");
+      "3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 9dlu, " +
+      "pref, 3dlu, fill:pref:grow");
     PanelBuilder builder = new PanelBuilder(layout);
     CellConstraints cc = new CellConstraints();
 
-    builder.addSeparator("Tools", cc.xyw(1, 1, 9));
-    builder.add(toolsRow, cc.xyw(1, 3, 9));
-
-    builder.addSeparator("Overlays", cc.xyw(1, 5, 9));
-    builder.add(fontRow, cc.xyw(1, 7, 9));
-
-    builder.add(overlayScroll, cc.xywh(1, 9, 1, 9));
-    builder.add(remove, cc.xy(1, 19, "center, center"));
-
-    builder.addLabel("X1", cc.xy(3, 9));
-    builder.add(x1, cc.xy(5, 9));
-    builder.addLabel("Y1", cc.xy(7, 9));
-    builder.add(y1, cc.xy(9, 9));
-    builder.addLabel("X2", cc.xy(3, 11));
-    builder.add(x2, cc.xy(5, 11));
-    builder.addLabel("Y2", cc.xy(7, 11));
-    builder.add(y2, cc.xy(9, 11));
-    builder.addLabel("Text", cc.xy(3, 13));
-    builder.add(text, cc.xyw(5, 13, 5));
-    builder.addLabel("Color", cc.xy(3, 15));
-    builder.add(color, cc.xy(5, 15, "fill, fill"));
-    builder.add(filled, cc.xyw(7, 15, 3));
-    builder.addLabel("Group", cc.xy(3, 17));
-    builder.add(groupList, cc.xy(5, 17));
-    builder.add(newGroup, cc.xyw(7, 17, 3, "left, center"));
-    builder.addLabel("Notes", cc.xy(3, 19));
-    builder.add(notes, cc.xyw(5, 19, 5));
-
-    builder.addSeparator("Statistics", cc.xyw(1, 21, 9));
-    builder.add(stats, cc.xyw(1, 23, 9));
+    int row = 1;
+    builder.addSeparator("Tools", cc.xyw(1, row, 9));
+    row += 2;
+    builder.add(toolsRow, cc.xyw(1, row, 9));
+    row += 2;
+    builder.addSeparator("Overlays", cc.xyw(1, row, 9));
+    row += 2;
+    builder.add(fontRow, cc.xyw(1, row, 9));
+    row += 2;
+    builder.add(overlayScroll, cc.xywh(1, row, 1, 11));
+    builder.addLabel("X1", cc.xy(3, row));
+    builder.add(x1, cc.xy(5, row));
+    builder.addLabel("Y1", cc.xy(7, row));
+    builder.add(y1, cc.xy(9, row));
+    row += 2;
+    builder.addLabel("X2", cc.xy(3, row));
+    builder.add(x2, cc.xy(5, row));
+    builder.addLabel("Y2", cc.xy(7, row));
+    builder.add(y2, cc.xy(9, row));
+    row += 2;
+    builder.addLabel("Text", cc.xy(3, row));
+    builder.add(text, cc.xyw(5, row, 5));
+    row += 2;
+    builder.addLabel("Color", cc.xy(3, row));
+    builder.add(color, cc.xy(5, row, "fill, fill"));
+    builder.add(filled, cc.xyw(7, row, 3));
+    row += 2;
+    builder.addLabel("Group", cc.xy(3, row));
+    builder.add(groupList, cc.xy(5, row));
+    builder.add(newGroup, cc.xyw(7, row, 3, "left, center"));
+    row += 2;
+    builder.addLabel("Notes", cc.xy(3, row));
+    builder.add(notes, cc.xyw(5, row, 5));
+    row += 2;
+    builder.add(ButtonBarFactory.buildCenteredBar(remove),
+      cc.xy(1, row, "center, center"));
+    builder.add(ButtonBarFactory.buildCenteredBar(load, save),
+      cc.xyw(3, row, 7, "center, center"));
+    row += 2;
+    builder.addSeparator("Statistics", cc.xyw(1, row, 9));
+    row += 2;
+    builder.add(stats, cc.xyw(1, row, 9));
 
     layout.setColumnGroups(new int[][] {{5, 9}});
     add(builder.getPanel());
 
     overlay.addTransformListener(this);
+
+    // widget refresh timer
+    refreshTimer = new Timer(200, this);
+    refreshTimer.start();
   }
 
 
@@ -290,17 +349,17 @@ public class OverlayWidget extends JPanel
   public void setActiveColor(Color c) {
     color.setForeground(c);
     color.setBackground(c);
-    // CTR TODO fire overlay parameter change event
+    // user updated Color button
+    Object[] sel = overlayList.getSelectedValues();
+    for (int i=0; i<sel.length; i++) ((OverlayObject) sel[i]).setColor(c);
+    if (sel.length > 0) notifyListeners(false);
   }
 
   /** Gets currently active overlay color. */
   public Color getActiveColor() { return color.getBackground(); }
 
   /** Sets whether current overlay is filled. */
-  public void setFilled(boolean fill) {
-    filled.setSelected(fill);
-    // CTR TODO fire overlay parameter change event
-  }
+  public void setFilled(boolean fill) { filled.setSelected(fill); }
 
   /** Gets whether current overlay is filled. */
   public boolean isFilled() { return filled.isSelected(); }
@@ -310,7 +369,6 @@ public class OverlayWidget extends JPanel
     DefaultComboBoxModel model = (DefaultComboBoxModel) groupList.getModel();
     if (model.getIndexOf(group) < 0) groupList.addItem(group);
     groupList.setSelectedItem(group);
-    // CTR TODO fire overlay parameter change event
   }
 
   /** Gets currently active overlay group. */
@@ -319,19 +377,13 @@ public class OverlayWidget extends JPanel
   }
 
   /** Sets notes for current overlay. */
-  public void setNotes(String text) {
-    notes.setText(text);
-    // CTR TODO fire overlay parameter change event
-  }
+  public void setNotes(String text) { notes.setText(text); }
 
   /** Gets notes for current overlay. */
   public String getNotes() { return notes.getText(); }
 
   /** Sets statistics for current overlay. */
-  public void setStatistics(String text) {
-    stats.setText(text);
-    // CTR TODO fire overlay parameter change event
-  }
+  public void setStatistics(String text) { stats.setText(text); }
 
   /** Gets statistics for current overlay. */
   public String getStatistics() { return stats.getText(); }
@@ -339,11 +391,11 @@ public class OverlayWidget extends JPanel
   /** Updates items on overlay list based on current transform state. */
   public void refreshListObjects() {
     OverlayObject[] obj = overlay.getObjects();
-    overlayList.removeListSelectionListener(this);
+    ignoreEvents = true;
     overlayListModel.clear();
     overlayListModel.ensureCapacity(obj.length);
     for (int i=0; i<obj.length; i++) overlayListModel.addElement(obj[i]);
-    overlayList.addListSelectionListener(this);
+    ignoreEvents = false;
     refreshListSelection();
   }
 
@@ -359,10 +411,11 @@ public class OverlayWidget extends JPanel
     for (int i=0; i<obj.length && c<sel; i++) {
       if (obj[i].isSelected()) indices[c++] = i;
     }
-    overlayList.removeListSelectionListener(this);
+    ignoreEvents = true;
     overlayList.setSelectedIndices(indices);
-    overlayList.addListSelectionListener(this);
-    refreshWidgetComponents();
+    remove.setEnabled(indices.length > 0);
+    ignoreEvents = false;
+    needRefresh = true;
   }
 
   /**
@@ -386,12 +439,10 @@ public class OverlayWidget extends JPanel
       }
       sel = draw;
     }
-    boolean enableX1 = false, enableY1 = false;
-    boolean enableX2 = false, enableY2 = false;
-    boolean enableText = false;
-    String xval1 = "", yval1 = "";
-    String xval2 = "", yval2 = "";
+    boolean enableXY1 = false, enableXY2 = false;
+    String xval1 = "", yval1 = "", xval2 = "", yval2 = "";
     String words = "";
+    boolean enableFill = false;
     boolean fill = true;
     Color col = null;
     String grp = null;
@@ -400,20 +451,18 @@ public class OverlayWidget extends JPanel
     for (int i=0; i<sel.length; i++) {
       OverlayObject obj = (OverlayObject) sel[i];
 
-      // if any selected overlay has text, enable text box
-      if (obj.hasText()) enableText = true;
-
       // if any selected overlay is not filled, clear filled checkbox
+      if (obj.canBeFilled()) enableFill = true;
       if (!obj.isFilled()) fill = false;
 
       if (i == 0) {
         // fill in values based on parameters of first selected overlay
-        enableX1 = enableY1 = obj.hasEndpoint1();
-        enableX2 = enableY2 = obj.hasEndpoint2();
-        if (enableX1) xval1 = Convert.shortString(obj.getX());
-        if (enableY1) yval1 = Convert.shortString(obj.getY());
-        if (enableX2) xval2 = Convert.shortString(obj.getX2());
-        if (enableY2) yval2 = Convert.shortString(obj.getY2());
+        enableXY1 = obj.hasEndpoint();
+        enableXY2 = obj.hasEndpoint2();
+        if (enableXY1) xval1 = "" + obj.getX();
+        if (enableXY1) yval1 = "" + obj.getY();
+        if (enableXY2) xval2 = "" + obj.getX2();
+        if (enableXY2) yval2 = "" + obj.getY2();
         words = obj.getText();
         col = obj.getColor();
         grp = obj.getGroup();
@@ -422,12 +471,8 @@ public class OverlayWidget extends JPanel
       }
       else {
         // multiple overlays selected; disable coordinate boxes
-        enableX1 = enableY1 = false;
-        enableX2 = enableY2 = false;
-        xval1 = "";
-        yval1 = "";
-        xval2 = "";
-        yval2 = "";
+        enableXY1 = enableXY2 = false;
+        xval1 = yval1 = xval2 = yval2 = "";
 
         // if parameters do not match, reset to defaults
         if (!ObjectUtil.objectsEqual(obj.getText(), words)) words = "";
@@ -440,24 +485,26 @@ public class OverlayWidget extends JPanel
     }
 
     // update GUI components based on computed values
-    x1.setEnabled(enableX1);
-    y1.setEnabled(enableY1);
-    x2.setEnabled(enableX2);
-    y2.setEnabled(enableY2);
+    ignoreEvents = true;
+    x1.setEnabled(enableXY1);
+    y1.setEnabled(enableXY1);
+    x2.setEnabled(enableXY2);
+    y2.setEnabled(enableXY2);
     x1.setText(xval1);
     y1.setText(yval1);
     x2.setText(xval2);
     y2.setText(yval2);
-    text.setEnabled(enableText);
     text.setText(words);
     if (sel.length > 0) {
       // leave GUI components alone if nothing is selected
+      filled.setEnabled(enableFill);
       filled.setSelected(fill);
       color.setBackground(col);
       groupList.setSelectedItem(grp);
       notes.setText(note);
     }
     stats.setText(stat);
+    ignoreEvents = false;
   }
 
 
@@ -465,8 +512,17 @@ public class OverlayWidget extends JPanel
 
   /** Handles button presses. */
   public void actionPerformed(ActionEvent e) {
+    if (ignoreEvents) return;
     Object src = e.getSource();
-    if (src == chooseFont) {
+    if (src == refreshTimer) {
+      synchronized (refreshTimer) {
+        if (needRefresh) {
+          refreshWidgetComponents();
+          needRefresh = false;
+        }
+      }
+    }
+    else if (src == chooseFont) {
       FontChooserPane fcp = new FontChooserPane(overlay.getFont());
       int rval = fcp.showDialog(this);
       if (rval == DialogPane.APPROVE_OPTION) {
@@ -474,11 +530,24 @@ public class OverlayWidget extends JPanel
         if (font != null) overlay.setFont(font);
       }
     }
-    else if (src == remove) overlay.removeSelectedObjects();
     else if (src == color) {
       Color c = getActiveColor();
       c = JColorChooser.showDialog(this, "Select a color", c);
       if (c != null) setActiveColor(c);
+    }
+    else if (src == filled) {
+      // user updated Filled checkbox
+      boolean f = filled.isSelected();
+      Object[] sel = overlayList.getSelectedValues();
+      for (int i=0; i<sel.length; i++) ((OverlayObject) sel[i]).setFilled(f);
+      if (sel.length > 0) notifyListeners(false);
+    }
+    else if (src == groupList) {
+      // user updated Group combo box
+      String g = (String) groupList.getSelectedItem();
+      Object[] sel = overlayList.getSelectedValues();
+      for (int i=0; i<sel.length; i++) ((OverlayObject) sel[i]).setGroup(g);
+      if (sel.length > 0) notifyListeners(false);
     }
     else if (src == newGroup) {
       String nextGroup = "group" + groupList.getItemCount();
@@ -487,6 +556,80 @@ public class OverlayWidget extends JPanel
         JOptionPane.INFORMATION_MESSAGE, null, null, nextGroup);
       if (group != null) setActiveGroup(group);
     }
+    else if (src == remove) overlay.removeSelectedObjects();
+    else if (src == load) {
+      /*TEMP*/System.out.println("load overlays");
+    }
+    else if (src == save) {
+      /*TEMP*/System.out.println("save overlays");
+    }
+  }
+
+
+  // -- DocumentListener API methods --
+
+  public void changedUpdate(DocumentEvent e) { documentUpdate(e); }
+  public void insertUpdate(DocumentEvent e) { documentUpdate(e); }
+  public void removeUpdate(DocumentEvent e) { documentUpdate(e); }
+
+  /** Handles text field changes. */
+  public void documentUpdate(DocumentEvent e) {
+    if (ignoreEvents) return;
+    Document src = e.getDocument();
+    if (src == x1.getDocument()) {
+      // user updated X1 text field
+      float v = Float.NaN;
+      try { v = Float.parseFloat(x1.getText()); }
+      catch (NumberFormatException exc) { }
+      if (Float.isNaN(v)) return;
+      Object[] sel = overlayList.getSelectedValues();
+      for (int i=0; i<sel.length; i++) ((OverlayObject) sel[i]).setX(v);
+      if (sel.length > 0) notifyListeners(false);
+    }
+    else if (src == y1.getDocument()) {
+      // user updated Y1 text field
+      float v = Float.NaN;
+      try { v = Float.parseFloat(y1.getText()); }
+      catch (NumberFormatException exc) { }
+      if (Float.isNaN(v)) return;
+      Object[] sel = overlayList.getSelectedValues();
+      for (int i=0; i<sel.length; i++) ((OverlayObject) sel[i]).setY(v);
+      if (sel.length > 0) notifyListeners(false);
+    }
+    else if (src == x2.getDocument()) {
+      // user updated X2 text field
+      float v = Float.NaN;
+      try { v = Float.parseFloat(x2.getText()); }
+      catch (NumberFormatException exc) { }
+      if (Float.isNaN(v)) return;
+      Object[] sel = overlayList.getSelectedValues();
+      for (int i=0; i<sel.length; i++) ((OverlayObject) sel[i]).setX2(v);
+      if (sel.length > 0) notifyListeners(false);
+    }
+    else if (src == y2.getDocument()) {
+      // user updated Y2 text field
+      float v = Float.NaN;
+      try { v = Float.parseFloat(y2.getText()); }
+      catch (NumberFormatException exc) { }
+      if (Float.isNaN(v)) return;
+      Object[] sel = overlayList.getSelectedValues();
+      for (int i=0; i<sel.length; i++) ((OverlayObject) sel[i]).setY2(v);
+      if (sel.length > 0) notifyListeners(false);
+    }
+    else if (src == text.getDocument()) {
+      // user updated Text text field
+      String t = text.getText();
+      Object[] sel = overlayList.getSelectedValues();
+      for (int i=0; i<sel.length; i++) ((OverlayObject) sel[i]).setText(t);
+      if (sel.length > 0) notifyListeners(false);
+    }
+    else if (src == notes.getDocument()) {
+      // user updated Notes text field
+      String n = notes.getText();
+      Object[] sel = overlayList.getSelectedValues();
+      for (int i=0; i<sel.length; i++) ((OverlayObject) sel[i]).setNotes(n);
+      if (sel.length > 0) notifyListeners(false);
+    }
   }
 
 
@@ -494,6 +637,7 @@ public class OverlayWidget extends JPanel
 
   /** Handles list selection changes. */
   public void valueChanged(ListSelectionEvent e) {
+    if (ignoreEvents) return;
     OverlayObject[] obj = overlay.getObjects();
     boolean[] selected = new boolean[obj.length];
 
@@ -516,10 +660,10 @@ public class OverlayWidget extends JPanel
         break;
       }
     }
-    /*TEMP*/System.out.println("widget selection changed (changed=" + changed + ")");
     if (changed) {
-      refreshWidgetComponents();
-      overlay.notifyListeners(new TransformEvent(overlay));
+      needRefresh = true;
+      remove.setEnabled(sel.length > 0);
+      notifyListeners(true);
     }
   }
 
@@ -529,7 +673,9 @@ public class OverlayWidget extends JPanel
   /** Handles font changes. */
   public void transformChanged(TransformEvent e) {
     int id = e.getId();
-    if (id == TransformEvent.DATA_CHANGED) refreshWidgetComponents();
+    if (id == TransformEvent.DATA_CHANGED) {
+      if (!ignoreEvents) needRefresh = true;
+    }
     else if (id == TransformEvent.FONT_CHANGED) refreshCurrentFont();
   }
 
@@ -545,6 +691,13 @@ public class OverlayWidget extends JPanel
     if (font.isBold()) s += " Bold";
     if (font.isItalic()) s += " Italic";
     currentFont.setText(s);
+  }
+
+  /** Sends a TransformEvent to the overlay transform's listeners. */
+  protected void notifyListeners(boolean updateGUI) {
+    if (!updateGUI) ignoreEvents = true;
+    overlay.notifyListeners(new TransformEvent(overlay));
+    if (!updateGUI) ignoreEvents = false;
   }
 
 }
