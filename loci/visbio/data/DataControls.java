@@ -524,7 +524,9 @@ public class DataControls extends ControlPanel
     if (exportItem != null) exportItem.setEnabled(isImage);
     removeData.setEnabled(isData);
     if (display2D != null) display2D.setEnabled(canDisplay2D);
-    if (display3D != null) display3D.setEnabled(canDisplay3D);
+    if (display3D != null) {
+      display3D.setEnabled(VisUtil.canDo3D() && canDisplay3D);
+    }
 
     StateManager sm = (StateManager) bio.getManager(StateManager.class);
     if (sm.isRestoring()) return; // no touching progress bar during restore
