@@ -139,8 +139,9 @@ public class OverlayWidget extends JPanel
     JPanel toolsRow = FormsUtil.makeRow(buttonList);
 
     // current font text field
-    currentFont = new JTextField("Default 11");
+    currentFont = new JTextField();
     currentFont.setEditable(false);
+    updateCurrentFont();
 
     // font chooser button
     chooseFont = new JButton("Change...");
@@ -401,13 +402,21 @@ public class OverlayWidget extends JPanel
   /** Handles font changes. */
   public void transformChanged(TransformEvent e) {
     int id = e.getId();
-    if (id == TransformEvent.FONT_CHANGED) {
-      Font font = overlay.getFont();
-      String s = font.getFamily() + " " + font.getSize();
-      if (font.isBold()) s += " Bold";
-      if (font.isItalic()) s += " Italic";
-      currentFont.setText(s);
-    }
+    if (id == TransformEvent.FONT_CHANGED) updateCurrentFont();
+  }
+
+
+  // -- Helper methods --
+
+  /** Sets the current font text field to reflect the currently chosen font. */
+  protected void updateCurrentFont() {
+    Font font = overlay.getFont();
+    String size = "" + font.getSize2D();
+    if (size.endsWith(".0")) size = size.substring(0, size.length() - 2);
+    String s = font.getFamily() + " " + size;
+    if (font.isBold()) s += " Bold";
+    if (font.isItalic()) s += " Italic";
+    currentFont.setText(s);
   }
 
 }

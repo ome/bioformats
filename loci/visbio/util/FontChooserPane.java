@@ -134,7 +134,7 @@ public class FontChooserPane extends DialogPane implements ChangeListener {
     fontItalic.addActionListener(this);
 
     SpinnerNumberModel fontSizeModel =
-      new SpinnerNumberModel(font.getSize(), 1, 150, 0.5);
+      new SpinnerNumberModel(font.getSize2D(), 1, 150, 0.5);
     fontSize = new JSpinner(fontSizeModel);
     fontSize.addChangeListener(this);
 
