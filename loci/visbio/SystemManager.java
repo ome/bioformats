@@ -179,13 +179,13 @@ public class SystemManager extends LogicManager implements Runnable {
   /** Adds system-related GUI components to VisBio. */
   private void doGUI() {
     // control panel
-    bio.setStatus("Initializing system information logic");
+    bio.setSplashStatus("Initializing system information logic");
     systemControls = new SystemControls(this);
     PanelManager pm = (PanelManager) bio.getManager(PanelManager.class);
     pm.addPanel(systemControls);
 
     // help window
-    bio.setStatus(null);
+    bio.setSplashStatus(null);
     HelpManager hm = (HelpManager) bio.getManager(HelpManager.class);
     hm.addHelpTopic("System", "system.html");
   }

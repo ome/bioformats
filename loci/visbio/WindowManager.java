@@ -255,13 +255,13 @@ public class WindowManager extends LogicManager implements WindowListener {
   /** Adds window-related GUI components to VisBio. */
   protected void doGUI() {
     // window listener
-    bio.setStatus("Initializing windowing logic");
+    bio.setSplashStatus("Initializing windowing logic");
     docker = new Docker();
     docker.addWindow(bio);
     bio.addWindowListener(this);
 
     // options menu
-    bio.setStatus(null);
+    bio.setSplashStatus(null);
     OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
     om.addBooleanOption("General", DOCKING, 'd',
       "Toggles whether window docking features are enabled", true);

@@ -372,13 +372,12 @@ public class OMEManager extends LogicManager implements Runnable {
   /** Adds OME-related GUI components to VisBio. */
   private void doGUI() {
     // upload panel
-    bio.setStatus("Initializing OME logic");
+    bio.setSplashStatus("Initializing OME logic");
     DataManager dm = (DataManager) bio.getManager(DataManager.class);
-    uploadPanel = new OMEUploadPane(this,
-      dm.getControlPanel().getProgressBar());
+    uploadPanel = new OMEUploadPane(this, bio.getProgressBar());
 
     // help window
-    bio.setStatus(null);
+    bio.setSplashStatus(null);
     HelpManager hm = (HelpManager) bio.getManager(HelpManager.class);
     if (hm != null) hm.addHelpTopic("Uploading to OME", "ome.html");
   }

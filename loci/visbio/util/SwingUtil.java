@@ -43,8 +43,6 @@ import javax.swing.*;
 
 import javax.swing.filechooser.FileFilter;
 
-import loci.visbio.VisBioFrame;
-
 import visad.util.ComboFileFilter;
 import visad.util.ExtensionFileFilter;
 import visad.util.GUIFrame;

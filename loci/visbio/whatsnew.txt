@@ -1,6 +1,9 @@
 v3.00 beta2 - ?
 
 - ADDED: Preliminary support for Zeiss ZVI file format
+- ADDED: Comprehensive state support (save/restore/undo/redo) in XML
+
+- FIXED: Mac OS X menu bar behaves much better
 
 
 v3.00 beta1 - Wednesday, September 1, 2004

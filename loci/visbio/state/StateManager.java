@@ -35,6 +35,8 @@ import java.util.Vector;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
 
 import loci.ome.xml.OMEElement;
 
@@ -168,10 +170,24 @@ public class StateManager extends LogicManager {
   public void fileRestore() {
     int rval = stateBox.showOpenDialog(bio);
     if (rval == JFileChooser.APPROVE_OPTION) {
-      WindowManager wm = (WindowManager) bio.getManager(WindowManager.class);
+      final WindowManager wm = (WindowManager)
+        bio.getManager(WindowManager.class);
       wm.setWaitCursor(true);
-      restoreState(stateBox.getSelectedFile());
-      wm.setWaitCursor(false);
+      JProgressBar status = bio.getProgressBar();
+      status.setString("Restoring state...");
+      status.setIndeterminate(true);
+      Thread restoreThread = new Thread(new Runnable() {
+        public void run() {
+          restoreState(stateBox.getSelectedFile());
+          SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+              bio.resetStatus();
+              wm.setWaitCursor(false);
+            }
+          });
+        }
+      });
+      restoreThread.start();
     }
   }
 
@@ -289,13 +305,13 @@ public class StateManager extends LogicManager {
   /** Adds state-related GUI components to VisBio. */
   private void doGUI() {
     // save state file chooser
-    bio.setStatus("Initializing state logic");
+    bio.setSplashStatus("Initializing state logic");
     stateBox = new JFileChooser();
     stateBox.addChoosableFileFilter(new ExtensionFileFilter(
       "txt", "VisBio state files"));
 
     // edit menu
-    bio.setStatus(null);
+    bio.setSplashStatus(null);
     editUndo = bio.addMenuItem("Edit", "Undo",
       "loci.visbio.state.StateManager.editUndo", 'u');
     SwingUtil.setMenuShortcut(bio, "Edit", "Undo", KeyEvent.VK_Z);
@@ -307,7 +323,7 @@ public class StateManager extends LogicManager {
     SwingUtil.setMenuShortcut(bio, "Edit", "Reset", KeyEvent.VK_R);
 
     // undo logic variables
-    bio.setStatus(null);
+    bio.setSplashStatus(null);
     undoStates = new Stack();
     redoStates = new Stack();
   }

@@ -163,7 +163,7 @@ public class PanelManager extends LogicManager implements ActionListener {
 
   /** Adds base control panel GUI components to VisBio. */
   private void doGUI() {
-    bio.setStatus("Initializing control panel logic");
+    bio.setSplashStatus("Initializing control panel logic");
     panels = new Vector();
     floatWindows = new Vector();
 
@@ -176,7 +176,7 @@ public class PanelManager extends LogicManager implements ActionListener {
     buttonPane = new JPanel();
 
     // options menu
-    bio.setStatus(null);
+    bio.setSplashStatus(null);
     OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
     om.addBooleanOption("General", FLOATING, 'f',
       "Toggles whether each control panel has its own window", false);

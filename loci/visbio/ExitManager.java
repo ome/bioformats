@@ -70,12 +70,12 @@ public class ExitManager extends LogicManager implements WindowListener {
   /** Adds shutdown-related GUI components to VisBio. */
   private void doGUI() {
     // close action
-    bio.setStatus("Initializing shutdown logic");
+    bio.setSplashStatus("Initializing shutdown logic");
     bio.setDefaultCloseOperation(VisBioFrame.DO_NOTHING_ON_CLOSE);
     bio.addWindowListener(this);
 
     // file menu
-    bio.setStatus(null);
+    bio.setSplashStatus(null);
     if (!VisBioFrame.MAC_OS_X) {
       bio.addMenuSeparator("File");
       bio.addMenuItem("File", "Exit", "loci.visbio.ExitManager.fileExit", 'x');

@@ -102,14 +102,14 @@ public class HelpManager extends LogicManager {
 
   /** Adds help-related GUI components to VisBio. */
   private void doGUI() {
-    bio.setStatus("Initializing help logic");
+    bio.setSplashStatus("Initializing help logic");
     topics = new Vector();
     help = new HelpWindow();
     WindowManager wm = (WindowManager) bio.getManager(WindowManager.class);
     wm.addWindow(help);
 
     // help menu
-    bio.setStatus(null);
+    bio.setSplashStatus(null);
 
     addHelpTopic("Help", "Overview", "overview.html");
     KeyStroke helpStroke = VisBioFrame.MAC_OS_X ? KeyStroke.getKeyStroke(

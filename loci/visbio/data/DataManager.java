@@ -129,6 +129,13 @@ public class DataManager extends LogicManager {
   /** Gets data control panel. */
   public DataControls getControlPanel() { return dataControls; }
 
+  /** Gets a list of data transforms present in the tree. */
+  public Vector getDataList() {
+    Vector v = new Vector();
+    buildDataList(dataControls.getDataRoot(), v);
+    return v;
+  }
+
 
   // -- LogicManager API methods --
 
@@ -151,7 +158,7 @@ public class DataManager extends LogicManager {
 
   /** Writes the current state to the given OME-CA XML object. */
   public void saveState(OMEElement ome) throws SaveException {
-    Vector v = buildDataList();
+    Vector v = getDataList();
     int len = v.size();
 
     // save number of transforms
@@ -227,7 +234,7 @@ public class DataManager extends LogicManager {
     }
 
     // merge old and new transform lists
-    Vector vo = buildDataList();
+    Vector vo = getDataList();
     StateManager.mergeStates(vo, vn);
 
     // add new transforms to tree structure
@@ -251,13 +258,13 @@ public class DataManager extends LogicManager {
   /** Adds data-related GUI components to VisBio. */
   private void doGUI() {
     // control panel
-    bio.setStatus("Initializing data logic");
+    bio.setSplashStatus("Initializing data logic");
     dataControls = new DataControls(this);
     PanelManager pm = (PanelManager) bio.getManager(PanelManager.class);
     pm.addPanel(dataControls);
 
     // data transform registration
-    bio.setStatus(null);
+    bio.setSplashStatus(null);
     transformTypes = new Vector();
     transformLabels = new Vector();
     registerDataType(Dataset.class, "Dataset");
@@ -268,27 +275,20 @@ public class DataManager extends LogicManager {
     registerDataType(SpectralTransform.class, "Spectral mapping");
 
     // menu items
-    bio.setStatus(null);
+    bio.setSplashStatus(null);
     bio.addMenuItem("File", "Import data...",
       "loci.visbio.data.DataManager.importData", 'i');
     SwingUtil.setMenuShortcut(bio, "File", "Import data...", KeyEvent.VK_O);
 
     // help window
-    bio.setStatus(null);
+    bio.setSplashStatus(null);
     HelpManager hm = (HelpManager) bio.getManager(HelpManager.class);
     hm.addHelpTopic("Data", "data.html");
 
     // load QuickTime now instead of causing a hiccup later
-    bio.setStatus("Initializing QuickTime logic");
+    bio.setSplashStatus("Initializing QuickTime logic");
     try { Class.forName("visad.data.qt.QTForm"); }
     catch (Exception exc) { exc.printStackTrace(); }
-  }
-
-  /** Creates a list of data transforms present in the tree. */
-  private Vector buildDataList() {
-    Vector v = new Vector();
-    buildDataList(dataControls.getDataRoot(), v);
-    return v;
   }
 
   /** Recursively creates a list of data transforms below the given node. */

@@ -113,7 +113,7 @@ public class ConsoleManager extends LogicManager {
 
   /** Adds data-related GUI components to VisBio. */
   private void doGUI() {
-    bio.setStatus("Initializing console logic");
+    bio.setSplashStatus("Initializing console logic");
     out = new OutputConsole("Output Console");
     err = new OutputConsole("Error Console", "errors.log");
 
@@ -130,7 +130,7 @@ public class ConsoleManager extends LogicManager {
     wm.addWindow(err.getWindow());
 
     // options menu
-    bio.setStatus(null);
+    bio.setSplashStatus(null);
     OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
     om.addBooleanOption("General", DEBUG_MODE, 'd',
       "Toggles whether output dumps to the default console", false);

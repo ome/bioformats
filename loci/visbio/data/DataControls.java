@@ -42,19 +42,13 @@ import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.DefaultTreeSelectionModel;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
+import javax.swing.tree.*;
 
-import loci.visbio.BioDropHandler;
-import loci.visbio.ControlPanel;
-import loci.visbio.LogicManager;
-import loci.visbio.VisBioFrame;
-import loci.visbio.WindowManager;
+import loci.visbio.*;
 
 import loci.visbio.ome.OMEManager;
+
+import loci.visbio.state.StateManager;
 
 import loci.visbio.util.LAFUtil;
 import loci.visbio.util.SwingUtil;
@@ -97,12 +91,6 @@ public class DataControls extends ControlPanel
 
   /** Data information display panel. */
   private JEditorPane dataInfo;
-
-  /** Progress bar for reporting thumbnail loading status. */
-  private JProgressBar thumbProgress;
-
-  /** Button for starting and stopping background thumbnail generation. */
-  private JButton thumbGen;
 
   /** New 2D display menu item for Displays popup menu. */
   private JMenuItem display2D;
@@ -186,19 +174,6 @@ public class DataControls extends ControlPanel
     JScrollPane infoPane = new JScrollPane(dataInfo);
     SwingUtil.configureScrollPane(infoPane);
 
-    // data thumbnail progress bar
-    thumbProgress = new JProgressBar();
-    thumbProgress.setString("     Thumbnail generation progress     ");
-    thumbProgress.setStringPainted(true);
-    thumbProgress.setValue(0);
-    thumbProgress.setToolTipText(
-      "Reports status of the selected data's thumbnails");
-
-    // data thumbnail generation button
-    thumbGen = new JButton("Generate");
-    if (!LAFUtil.isMacLookAndFeel()) thumbGen.setMnemonic('g');
-    thumbGen.setToolTipText("Starts or stops background thumbnail generation");
-
     doDataInfo(null);
 
     // new 2D display menu item
@@ -230,14 +205,12 @@ public class DataControls extends ControlPanel
     // lay out components
     PanelBuilder builder = new PanelBuilder(new FormLayout(
       "pref:grow, 3dlu, pref",
-      "fill:pref, 5dlu, fill:150dlu:grow, 3dlu, pref"));
+      "fill:pref, 5dlu, fill:0:grow"));
     builder.setDefaultDialogBorder();
     CellConstraints cc = new CellConstraints();
     builder.add(treePane, cc.xy(1, 1));
     builder.add(buttons, cc.xy(3, 1));
     builder.add(infoPane, cc.xyw(1, 3, 3));
-    builder.add(thumbProgress, cc.xy(1, 5));
-    builder.add(thumbGen, cc.xy(3, 5));
     controls.add(builder.getPanel());
 
     // handle file drag and drop
@@ -337,9 +310,6 @@ public class DataControls extends ControlPanel
       lm.getVisBio().getManager(WindowManager.class);
     wm.showWindow(frame);
   }
-
-  /** Gets progress bar for reporting current progress on operations. */
-  public JProgressBar getProgressBar() { return thumbProgress; }
 
 
   // -- ActionListener API methods --
@@ -528,23 +498,6 @@ public class DataControls extends ControlPanel
     sb.append("\n</body></html>");
     dataInfo.setText(sb.toString());
 
-    // link in thumbnail progress bar and generation button
-    boolean gen = false;
-    if (data != null) {
-      if (thumbHandler != null) thumbHandler.setControls(null, null);
-      ThumbnailHandler th = data.getThumbHandler();
-      if (th == null) {
-        thumbProgress.setValue(0);
-        thumbProgress.setString("No thumbnails.");
-      }
-      else {
-        th.setControls(thumbProgress, thumbGen);
-        gen = true;
-      }
-      thumbHandler = th;
-    }
-    thumbGen.setEnabled(gen);
-
     // toggle button availability
     boolean isData = data != null;
     boolean canDisplay2D = isData && data.isValidDimension(2);
@@ -555,6 +508,26 @@ public class DataControls extends ControlPanel
     editData.setEnabled(hasControls);
     export.setEnabled(data instanceof Dataset);
     removeData.setEnabled(isData);
+
+    VisBioFrame bio = lm.getVisBio();
+    StateManager sm = (StateManager) bio.getManager(StateManager.class);
+    if (sm.isRestoring()) return; // no touching progress bar during restore
+
+    // link in thumbnail progress bar and generation button
+    if (data == null) bio.resetStatus();
+    else {
+      if (thumbHandler != null) thumbHandler.setControls(null, null);
+
+      ThumbnailHandler th = data.getThumbHandler();
+      if (th == null) bio.resetStatus();
+      else {
+        JProgressBar thumbProgress = bio.getProgressBar();
+        JButton thumbGen = bio.getStopButton();
+        th.setControls(thumbProgress, thumbGen);
+        thumbGen.setEnabled(true);
+      }
+      thumbHandler = th;
+    }
   }
 
   /** Creates a new display and adds the selected data object to it. */

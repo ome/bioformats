@@ -246,7 +246,7 @@ public class ThumbnailHandler
             if (!LAFUtil.isMacLookAndFeel()) toggle.setMnemonic('s');
           }
           else {
-            toggle.setText("Generate");
+            toggle.setText("Go");
             if (!LAFUtil.isMacLookAndFeel()) toggle.setMnemonic('g');
           }
         }

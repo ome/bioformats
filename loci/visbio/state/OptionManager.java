@@ -215,7 +215,7 @@ public class OptionManager extends LogicManager {
   /** Adds options-related GUI components to VisBio. */
   private void doGUI() {
     // options menu
-    bio.setStatus("Initializing options logic");
+    bio.setSplashStatus("Initializing options logic");
   }
 
 

@@ -23,6 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio;
 
+import java.awt.BorderLayout;
+import java.awt.Container;
+
 import java.awt.event.ActionEvent;
 
 import java.lang.reflect.InvocationTargetException;
@@ -30,11 +33,18 @@ import java.lang.reflect.Method;
 
 import java.util.Vector;
 
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+
+import javax.swing.border.BevelBorder;
+import javax.swing.border.CompoundBorder;
+
 import loci.visbio.data.DataManager;
 
 import loci.visbio.help.HelpManager;
 
-import loci.visbio.measure.AnnManager;
+//import loci.visbio.measure.AnnManager;
 
 import loci.visbio.ome.OMEManager;
 
@@ -71,6 +81,12 @@ public class VisBioFrame extends GUIFrame {
   /** Associated splash screen. */
   protected SplashScreen ss;
 
+  /** Status bar. */
+  protected JProgressBar status;
+
+  /** Stop button for various operations. */
+  protected JButton stop;
+
 
   // -- Constructor --
 
@@ -93,6 +109,30 @@ public class VisBioFrame extends GUIFrame {
     getMenu("Window");
     getMenu("Help");
 
+    // create status bar
+    status = new JProgressBar();
+    status.setStringPainted(true);
+    status.setToolTipText("Reports status of VisBio operations");
+    status.setBorder(new BevelBorder(BevelBorder.RAISED));
+
+    // create stop button
+    stop = new JButton("Stop");
+    if (!LAFUtil.isMacLookAndFeel()) stop.setMnemonic('s');
+    stop.setToolTipText("Stops the currently reported VisBio operation");
+    stop.setBorder(new CompoundBorder(
+      new BevelBorder(BevelBorder.RAISED), stop.getBorder()));
+    stop.setPreferredSize(stop.getPreferredSize()); // force constant size
+
+    // add status bar and stop button
+    JPanel statusPanel = new JPanel();
+    statusPanel.setLayout(new BorderLayout());
+    statusPanel.add(status, BorderLayout.CENTER);
+    statusPanel.add(stop, BorderLayout.EAST);
+    Container c = getContentPane();
+    c.setLayout(new BorderLayout());
+    c.add(statusPanel, BorderLayout.SOUTH);
+    resetStatus();
+
     // create logic managers
     OptionManager om = new OptionManager(this);
     StateManager sm = new StateManager(this);
@@ -107,7 +147,7 @@ public class VisBioFrame extends GUIFrame {
       new DataManager(this),
       new OMEManager(this),
       new DisplayManager(this),
-      new AnnManager(this),
+      //new AnnManager(this),
       new SystemManager(this),
       new ConsoleManager(this),
       new ExitManager(this)
@@ -118,7 +158,7 @@ public class VisBioFrame extends GUIFrame {
 
     // add logic managers
     for (int i=0; i<lm.length; i++) addManager(lm[i]);
-    setStatus("Finishing");
+    setSplashStatus("Finishing");
 
     // read configuration file
     om.readIni();
@@ -158,7 +198,7 @@ public class VisBioFrame extends GUIFrame {
   // -- VisBioFrame API methods --
 
   /** Updates the splash screen to report the given status message. */
-  public void setStatus(String s) {
+  public void setSplashStatus(String s) {
     if (ss == null) return;
     if (s != null) ss.setText(s + "...");
     ss.nextTask();
@@ -203,7 +243,7 @@ public class VisBioFrame extends GUIFrame {
   /**
    * This method executes action commands of the form
    *
-   *   "loci.visbio.data.DataManager.fileOpenSeries(param)"
+   *   "loci.visbio.data.DataManager.importData(param)"
    *
    * by stripping off the fully qualified class name, checking VisBio's
    * list of logic managers for one of that class, and calling the given
@@ -241,6 +281,21 @@ public class VisBioFrame extends GUIFrame {
       else t.printStackTrace();
     }
     catch (NoSuchMethodException exc) { exc.printStackTrace(); }
+  }
+
+  /** Gets the status bar's progress bar. */
+  public JProgressBar getProgressBar() { return status; }
+
+  /** Gets the status bar's stop button. */
+  public JButton getStopButton() { return stop; }
+
+  /** Resets status bar to an idle state. */
+  public void resetStatus() {
+    status.setString(VisBio.TITLE + " " + VisBio.VERSION);
+    status.setStringPainted(true);
+    status.setIndeterminate(false);
+    status.setValue(0);
+    stop.setEnabled(false);
   }
 
 
