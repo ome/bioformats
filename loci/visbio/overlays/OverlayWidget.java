@@ -47,7 +47,7 @@ public class OverlayWidget extends JPanel implements ActionListener {
   // -- Fields --
 
   /** Associated overlay object. */
-  protected OverlayTransform ann;
+  protected OverlayTransform overlay;
 
   /** Button group ensuring only one tool can be selected at a time. */
   protected ButtonGroup buttonGroup;
@@ -59,16 +59,28 @@ public class OverlayWidget extends JPanel implements ActionListener {
   protected Vector buttons;
 
 
-  // -- GUI components --
+  // -- GUI components - global --
+
+  /** Text field indicating current font. */
+  protected JTextField currentFont;
+
+  /** Button for bringing up font chooser. */
+  protected JButton chooseFont;
+
+  /** List of overlays. */
+  protected JList overlayList;
+
+  /** Button for removing selected overlays. */
+  protected JButton remove;
+
+
+  // -- GUI components - overlay-specific --
 
   /** Text fields for (X, Y) coordinate pairs. */
   protected JTextField x1, y1, x2, y2;
 
   /** Text field for text labels. */
   protected JTextField text;
-
-  /** Button for bringing up font chooser. */
-  protected JButton chooseFont;
 
   /** Button for choosing overlay color. */
   protected JButton color;
@@ -92,20 +104,20 @@ public class OverlayWidget extends JPanel implements ActionListener {
   // -- Constructor --
 
   /** Creates overlay GUI controls. */
-  public OverlayWidget(OverlayTransform ann) {
+  public OverlayWidget(OverlayTransform overlay) {
     super();
-    this.ann = ann;
+    this.overlay = overlay;
     buttonGroup = new ButtonGroup();
 
     // list of tools
     OverlayTool[] toolList = {
-      new PointerTool(ann),
-      new LineTool(ann),
-      new MarkerTool(ann),
-      new TextTool(ann),
-      new OvalTool(ann),
-      new BoxTool(ann),
-      new ArrowTool(ann)
+      new PointerTool(overlay),
+      new LineTool(overlay),
+      new MarkerTool(overlay),
+      new TextTool(overlay),
+      new OvalTool(overlay),
+      new BoxTool(overlay),
+      new ArrowTool(overlay)
     };
     tools = new Vector(toolList.length);
 
@@ -116,6 +128,29 @@ public class OverlayWidget extends JPanel implements ActionListener {
     buttons.copyInto(buttonList);
     JPanel toolsRow = FormsUtil.makeRow(buttonList);
 
+    // current font text field
+    currentFont = new JTextField("Default 11");
+    currentFont.setEditable(false);
+
+    // font chooser button
+    chooseFont = new JButton("Change...");
+    chooseFont.addActionListener(this);
+    if (!LAFUtil.isMacLookAndFeel()) chooseFont.setMnemonic('c');
+    chooseFont.setToolTipText("Configures font used for text overlays");
+    JPanel fontRow = FormsUtil.makeRow(new Object[] {"Font",
+      currentFont, chooseFont}, new boolean[] {false, true, false});
+
+    // overlay list
+    overlayList = new JList();
+    JScrollPane overlayScroll = new JScrollPane(overlayList);
+    SwingUtil.configureScrollPane(overlayScroll);
+    overlayScroll.setPreferredSize(new Dimension(100, 0));
+
+    // overlay removal button
+    remove = new JButton("Remove");
+    remove.addActionListener(this);
+    if (!LAFUtil.isMacLookAndFeel()) remove.setMnemonic('r');
+
     // text fields for (X, Y) coordinate pairs
     x1 = new JTextField(4);
     y1 = new JTextField(4);
@@ -125,16 +160,10 @@ public class OverlayWidget extends JPanel implements ActionListener {
     // text text field ;-)
     text = new JTextField(6);
 
-    // font chooser button
-    chooseFont = new JButton("Choose font...");
-    chooseFont.addActionListener(this);
-    if (!LAFUtil.isMacLookAndFeel()) chooseFont.setMnemonic('c');
-    chooseFont.setToolTipText("Configures font used for text overlays");
-
     // color chooser
     color = new JButton();
-    color.setBackground(Color.white);
     color.addActionListener(this);
+    color.setBackground(Color.white);
 
     // filled checkbox
     filled = new JCheckBox("Filled");
@@ -144,7 +173,7 @@ public class OverlayWidget extends JPanel implements ActionListener {
     groupList = new JComboBox(new Object[] {"None"});
 
     // new group button
-    newGroup = new JButton("New group...");
+    newGroup = new JButton("New...");
     newGroup.addActionListener(this);
     if (!LAFUtil.isMacLookAndFeel()) newGroup.setMnemonic('n');
     newGroup.setToolTipText("Creates a new overlay group");
@@ -160,41 +189,45 @@ public class OverlayWidget extends JPanel implements ActionListener {
     // lay out components
     setLayout(new BorderLayout());
     FormLayout layout = new FormLayout(
-      "pref, 3dlu, pref:grow, 5dlu, pref, 3dlu, pref:grow",
-      "pref, 3dlu, pref, 9dlu, " +
-      "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, " +
-      "pref, 3dlu, pref, 3dlu, pref, 9dlu, pref, 3dlu, fill:pref:grow");
+      "pref, 5dlu, pref, 3dlu, pref:grow, 5dlu, pref, 3dlu, pref:grow",
+      "pref, 3dlu, pref, 9dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, " +
+      "3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 9dlu, pref, 3dlu, " +
+      "fill:pref:grow");
     PanelBuilder builder = new PanelBuilder(layout);
     CellConstraints cc = new CellConstraints();
 
-    builder.addSeparator("Tools", cc.xyw(1, 1, 7));
-    builder.add(toolsRow, cc.xyw(1, 3, 7));
+    builder.addSeparator("Tools", cc.xyw(1, 1, 9));
+    builder.add(toolsRow, cc.xyw(1, 3, 9));
 
-    builder.addSeparator("Controls", cc.xyw(1, 5, 7));
-    builder.addLabel("X1", cc.xy(1, 7));
-    builder.add(x1, cc.xy(3, 7));
-    builder.addLabel("Y1", cc.xy(5, 7));
-    builder.add(y1, cc.xy(7, 7));
-    builder.addLabel("X2", cc.xy(1, 9));
-    builder.add(x2, cc.xy(3, 9));
-    builder.addLabel("Y2", cc.xy(5, 9));
-    builder.add(y2, cc.xy(7, 9));
-    builder.addLabel("Text", cc.xy(1, 11));
-    builder.add(text, cc.xyw(3, 11, 3));
-    builder.add(chooseFont, cc.xy(7, 11, "left, center"));
-    builder.addLabel("Color", cc.xy(1, 15));
-    builder.add(color, cc.xyw(3, 15, 3, "fill, fill"));
-    builder.add(filled, cc.xy(7, 15));
-    builder.addLabel("Group", cc.xy(1, 17));
-    builder.add(groupList, cc.xyw(3, 17, 3));
-    builder.add(newGroup, cc.xy(7, 17, "left, center"));
-    builder.addLabel("Notes", cc.xy(1, 19));
-    builder.add(notes, cc.xyw(3, 19, 5));
+    builder.addSeparator("Overlays", cc.xyw(1, 5, 9));
+    builder.add(fontRow, cc.xyw(1, 7, 9));
 
-    builder.addSeparator("Statistics", cc.xyw(1, 21, 7));
-    builder.add(stats, cc.xyw(1, 23, 7));
+    builder.add(overlayScroll, cc.xywh(1, 9, 1, 9));
+    builder.add(remove, cc.xy(1, 19, "center, center"));
 
-    layout.setColumnGroups(new int[][] {{3, 7}});
+    builder.addLabel("X1", cc.xy(3, 9));
+    builder.add(x1, cc.xy(5, 9));
+    builder.addLabel("Y1", cc.xy(7, 9));
+    builder.add(y1, cc.xy(9, 9));
+    builder.addLabel("X2", cc.xy(3, 11));
+    builder.add(x2, cc.xy(5, 11));
+    builder.addLabel("Y2", cc.xy(7, 11));
+    builder.add(y2, cc.xy(9, 11));
+    builder.addLabel("Text", cc.xy(3, 13));
+    builder.add(text, cc.xyw(5, 13, 5));
+    builder.addLabel("Color", cc.xy(3, 15));
+    builder.add(color, cc.xy(5, 15, "fill, fill"));
+    builder.add(filled, cc.xyw(7, 15, 3));
+    builder.addLabel("Group", cc.xy(3, 17));
+    builder.add(groupList, cc.xy(5, 17));
+    builder.add(newGroup, cc.xyw(7, 17, 3, "left, center"));
+    builder.addLabel("Notes", cc.xy(3, 19));
+    builder.add(notes, cc.xyw(5, 19, 5));
+
+    builder.addSeparator("Statistics", cc.xyw(1, 21, 9));
+    builder.add(stats, cc.xyw(1, 23, 9));
+
+    layout.setColumnGroups(new int[][] {{5, 9}});
     add(builder.getPanel());
   }
 
@@ -290,14 +323,11 @@ public class OverlayWidget extends JPanel implements ActionListener {
     Object src = e.getSource();
     if (src == chooseFont) {
       FontChooserPane fcp = new FontChooserPane();
-      Window w = SwingUtil.getWindow(this);
-      int rval;
-      if (w instanceof Frame) rval = fcp.showDialog((Frame) w);
-      else if (w instanceof Dialog) rval = fcp.showDialog((Dialog) w);
-      else rval = fcp.showDialog((Frame) null);
-      if (rval != DialogPane.APPROVE_OPTION) return;
-      Font font = fcp.getSelectedFont();
-      // CTR TODO actually update font here
+      int rval = fcp.showDialog(this);
+      if (rval == DialogPane.APPROVE_OPTION) {
+        Font font = fcp.getSelectedFont();
+        if (font != null) overlay.setFont(font);
+      }
     }
     else if (src == color) {
       Color c = getActiveColor();

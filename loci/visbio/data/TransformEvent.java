@@ -31,9 +31,42 @@ import java.util.EventObject;
  */
 public class TransformEvent extends EventObject {
 
-  // -- Constructor --
+  // -- Constants --
+
+  /** Transform event indicating transform's data has changed. */
+  public static final int DATA_CHANGED = 1;
+
+  /** Transform event indicating transform's font has changed. */
+  public static final int FONT_CHANGED = 2;
+
+
+  // -- Fields --
+
+  /** The type of transform event. */
+  protected int id;
+
+
+  // -- Constructors --
+
+  /** Constructs a new transform event indicating data has changed. */
+  public TransformEvent(Object source) { this(source, DATA_CHANGED); }
 
   /** Constructs a new data event. */
-  public TransformEvent(Object source) { super(source); }
+  public TransformEvent(Object source, int id) {
+    super(source);
+    this.id = id;
+  }
+
+
+  // -- TransformEvent API methods --
+
+  /**
+   * Gets the type of transform event.
+   *
+   * Possibilities include:
+   * <li>TransformEvent.DATA_CHANGED
+   * <li>TransformEvent.FONT_CHANGED
+   */
+  public int getId() { return id; }
 
 }

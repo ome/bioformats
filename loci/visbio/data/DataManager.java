@@ -149,7 +149,7 @@ public class DataManager extends LogicManager {
   }
 
   /** Gets the number of tasks required to initialize this logic manager. */
-  public int getTasks() { return 5; }
+  public int getTasks() { return 4; }
 
 
   // -- Saveable API methods --
@@ -284,11 +284,6 @@ public class DataManager extends LogicManager {
     bio.setSplashStatus(null);
     HelpManager hm = (HelpManager) bio.getManager(HelpManager.class);
     hm.addHelpTopic("Data", "data.html");
-
-    // load QuickTime now instead of causing a hiccup later
-    bio.setSplashStatus("Initializing QuickTime logic");
-    try { Class.forName("visad.data.qt.QTForm"); }
-    catch (Exception exc) { exc.printStackTrace(); }
   }
 
   /** Recursively creates a list of data transforms below the given node. */

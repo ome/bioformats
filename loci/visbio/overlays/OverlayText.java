@@ -84,8 +84,7 @@ public class OverlayText extends OverlayObject {
       Set fieldSet = new SingletonSet(
         new RealTuple(domain, new double[] {x, y}));
       field = new FieldImpl(fieldType, fieldSet);
-      field.setSample(0,
-        OverlayTransform.getTextRangeValue(text, r, g, b), false);
+      field.setSample(0, overlay.getTextRangeValue(text, r, g, b), false);
     }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }

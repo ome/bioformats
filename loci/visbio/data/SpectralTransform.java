@@ -312,11 +312,14 @@ public class SpectralTransform extends ImageTransform
 
   /** Called when parent data transform's parameters are updated. */
   public void transformChanged(TransformEvent e) {
-    // CTR TODO
-    // depending on how parent changed, recompute weights array size
-    // if it changes size, need to redo spectral widget layout
-    // but always need to notify listeners of spectral transform change
-    notifyListeners(new TransformEvent(this));
+    int id = e.getId();
+    if (id == TransformEvent.DATA_CHANGED) {
+      // CTR TODO
+      // depending on how parent changed, recompute weights array size
+      // if it changes size, need to redo spectral widget layout
+      // but always need to notify listeners of spectral transform change
+      notifyListeners(new TransformEvent(this));
+    }
   }
 
 

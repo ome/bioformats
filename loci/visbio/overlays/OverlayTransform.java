@@ -23,8 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
-import java.awt.Font;
-
 import java.rmi.RemoteException;
 
 import java.util.Vector;
@@ -62,10 +60,6 @@ public class OverlayTransform extends DataTransform
   protected static final RealType BLUE_TYPE =
     RealType.getRealType("overlay_blue");
 
-  /** MathType for Text mappings. */
-  protected static final TextType TEXT_TYPE =
-    TextType.getTextType("overlay_text");
-
   /** Overlay range type. */
   protected static final RealTupleType RANGE_TUPLE = makeRangeTuple();
 
@@ -81,21 +75,6 @@ public class OverlayTransform extends DataTransform
     return rtt;
   }
 
-  /** Overlay range type. */
-  protected static final TupleType TEXT_RANGE_TUPLE = makeTextRangeTuple();
-
-  /** Constructs the overlay range type for text overlays. */
-  protected static TupleType makeTextRangeTuple() {
-    TupleType tt = null;
-    try {
-      tt = new TupleType(new ScalarType[] {
-        TEXT_TYPE, RED_TYPE, GREEN_TYPE, BLUE_TYPE
-      });
-    }
-    catch (VisADException exc) { exc.printStackTrace(); }
-    return tt;
-  }
-
 
   // -- Fields --
 
@@ -104,6 +83,12 @@ public class OverlayTransform extends DataTransform
 
   /** List of overlays for each dimensional position. */
   protected Vector[] overlays;
+
+  /** MathType for Text mappings. */
+  protected TextType textType;
+
+  /** Overlay range type for text overlays. */
+  protected TupleType textRangeTuple;
 
   /** Whether left mouse button is currently being pressed. */
   protected boolean mouseDownLeft;
@@ -114,6 +99,15 @@ public class OverlayTransform extends DataTransform
   /** Creates an overlay object for the given transform. */
   public OverlayTransform(DataTransform parent, String name) {
     super(parent, name);
+    // text type is unique to each transform instance so that
+    // each transform can have its own font settings
+    textType = TextType.getTextType("overlay_text_" + transformId);
+    try {
+      textRangeTuple = new TupleType(new ScalarType[] {
+        textType, RED_TYPE, GREEN_TYPE, BLUE_TYPE
+      });
+    }
+    catch (VisADException exc) { exc.printStackTrace(); }
     initState(null);
     parent.addTransformListener(this);
   }
@@ -138,17 +132,6 @@ public class OverlayTransform extends DataTransform
     return oo;
   }
 
-  /** Sets the font used to render text for these overlays. */
-  public void setFont(Font font) {
-    // CTR START HERE TODO - Improve this so that it doesn't suck.
-    // Somehow need to update font for all textcontrols of all currently
-    // active displays. This is very tricky. Think about it some more.
-    /*
-    TextControl textControl = (TextControl) tMap.getControl();
-    if (textControl != null) textControl.setFont(font);
-    */
-  }
-
   /** Gets domain type (XY). */
   public RealTupleType getDomainType() {
     ImageTransform it = (ImageTransform) parent;
@@ -162,7 +145,25 @@ public class OverlayTransform extends DataTransform
   public TupleType getRangeType() { return RANGE_TUPLE; }
 
   /** Gets range type for text overlays (R, G, B, text). */
-  public TupleType getTextRangeType() { return TEXT_RANGE_TUPLE; }
+  public TupleType getTextRangeType() { return textRangeTuple; }
+
+  /** Constructs a range value with the given component values. */
+  public Tuple getTextRangeValue(String text,
+    float r, float g, float b)
+  {
+    Tuple tuple = null;
+    try {
+      tuple = new Tuple(textRangeTuple, new Data[] {
+        new Text(textType, text),
+        new Real(RED_TYPE, r),
+        new Real(GREEN_TYPE, g),
+        new Real(BLUE_TYPE, b)
+      });
+    }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
+    return tuple;
+  }
 
   /**
    * Gets a scaling value suitable for computing
@@ -220,14 +221,11 @@ public class OverlayTransform extends DataTransform
     try {
       if (size > 0) {
         // compute number of selected objects and number of text objects
-        int txtSize = 0, rgbSel = 0, txtSel = 0;
+        int txtSize = 0, sel = 0;
         for (int i=0; i<size; i++) {
           OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
-          if (obj.isText()) {
-            txtSize++;
-            if (obj.isSelected()) txtSel++;
-          }
-          else if (obj.isSelected()) rgbSel++;
+          if (obj.isText()) txtSize++;
+          if (obj.isSelected()) sel++;
         }
         int rgbSize = size - txtSize;
         RealType index = RealType.getRealType("overlay_index");
@@ -236,24 +234,21 @@ public class OverlayTransform extends DataTransform
         if (rgbSize > 0) {
           FunctionType fieldType = new FunctionType(index,
             new FunctionType(getDomainType(), getRangeType()));
-          GriddedSet fieldSet = new Integer1DSet(rgbSize + rgbSel);
+          GriddedSet fieldSet = new Integer1DSet(rgbSize + sel);
           rgbField = new FieldImpl(fieldType, fieldSet);
           // compute overlay data for each object
           int c = 0;
           for (int i=0; i<size && c<rgbSize; i++) {
             OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
             if (obj.isText()) continue;
-            DataImpl data = obj.getData();
-            rgbField.setSample(c, data, false);
-            c++;
+            rgbField.setSample(c++, obj.getData(), false);
           }
           // compute selection grid for each selected object
           c = 0;
-          for (int i=0; i<size && c<rgbSel; i++) {
+          for (int i=0; i<size && c<sel; i++) {
             OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
-            if (obj.isText() || !obj.isSelected()) continue;
-            rgbField.setSample(rgbSize + c, obj.getSelectionGrid(), false);
-            c++;
+            if (!obj.isSelected()) continue;
+            rgbField.setSample(rgbSize + c++, obj.getSelectionGrid(), false);
           }
         }
 
@@ -261,24 +256,14 @@ public class OverlayTransform extends DataTransform
         if (txtSize > 0) {
           FunctionType fieldType = new FunctionType(index,
             new FunctionType(getDomainType(), getTextRangeType()));
-          GriddedSet fieldSet = new Integer1DSet(txtSize + txtSel);
+          GriddedSet fieldSet = new Integer1DSet(txtSize);
           txtField = new FieldImpl(fieldType, fieldSet);
           // compute overlay data for each object
           int c = 0;
           for (int i=0; i<size && c<txtSize; i++) {
             OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
             if (!obj.isText()) continue;
-            DataImpl data = obj.getData();
-            txtField.setSample(c, data, false);
-            c++;
-          }
-          // compute selection grid for each selected object
-          c = 0;
-          for (int i=0; i<size && c<txtSel; i++) {
-            OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
-            if (!obj.isText() || !obj.isSelected()) continue;
-            txtField.setSample(txtSize + c, obj.getSelectionGrid(), false);
-            c++;
+            txtField.setSample(c++, obj.getData(), false);
           }
         }
       }
@@ -304,21 +289,19 @@ public class OverlayTransform extends DataTransform
     RealType y = ((ImageTransform) parent).getYType();
 
     // We do need new RGB types, so that overlay colors can be
-    // independently manipulated; and a new Text type, for overlaid text.
+    // independently manipulated, and a new Text type, for overlaid text.
     ScalarMap[] maps = null;
     try {
-      ScalarMap tMap = new ScalarMap(TEXT_TYPE, Display.Text);
+      ScalarMap xMap = new ScalarMap(x, Display.XAxis);
+      ScalarMap yMap = new ScalarMap(y, Display.YAxis);
+      ScalarMap tMap = new ScalarMap(textType, Display.Text);
       ScalarMap rMap = new ScalarMap(RED_TYPE, Display.Red);
       ScalarMap gMap = new ScalarMap(GREEN_TYPE, Display.Green);
       ScalarMap bMap = new ScalarMap(BLUE_TYPE, Display.Blue);
       rMap.setRange(0, 1);
       gMap.setRange(0, 1);
       bMap.setRange(0, 1);
-      maps = new ScalarMap[] {
-        new ScalarMap(x, Display.XAxis),
-        new ScalarMap(y, Display.YAxis),
-        tMap, rMap, gMap, bMap
-      };
+      maps = new ScalarMap[] {xMap, yMap, tMap, rMap, gMap, bMap};
     }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
@@ -451,29 +434,11 @@ public class OverlayTransform extends DataTransform
 
   /** Called when parent data transform's parameters are updated. */
   public void transformChanged(TransformEvent e) {
-    initState(null);
-    notifyListeners(new TransformEvent(this));
-  }
-
-
-  // -- Utility methods --
-
-  /** Constructs a range value with the given component values. */
-  public static Tuple getTextRangeValue(String text,
-    float r, float g, float b)
-  {
-    Tuple tuple = null;
-    try {
-      tuple = new Tuple(TEXT_RANGE_TUPLE, new Data[] {
-        new Text(TEXT_TYPE, text),
-        new Real(RED_TYPE, r),
-        new Real(GREEN_TYPE, g),
-        new Real(BLUE_TYPE, b)
-      });
+    int id = e.getId();
+    if (id == TransformEvent.DATA_CHANGED) {
+      initState(null);
+      notifyListeners(new TransformEvent(this));
     }
-    catch (VisADException exc) { exc.printStackTrace(); }
-    catch (RemoteException exc) { exc.printStackTrace(); }
-    return tuple;
   }
 
 }

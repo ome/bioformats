@@ -212,7 +212,10 @@ public class ThumbnailHandler
   // -- TransformListener API methods --
 
   /** Handles data transform parameter changes. */
-  public void transformChanged(TransformEvent e) { clear(); }
+  public void transformChanged(TransformEvent e) {
+    int id = e.getId();
+    if (id == TransformEvent.DATA_CHANGED) clear();
+  }
 
 
   // -- Helper methods --

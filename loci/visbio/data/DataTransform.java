@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.data;
 
+import java.awt.Font;
+
 import java.math.BigInteger;
 
 import java.util.Vector;
@@ -42,6 +44,19 @@ import visad.*;
 /** DataTransform is the superclass of all data transform types. */
 public abstract class DataTransform implements Dynamic {
 
+  // -- Constants --
+
+  /** Default font for text mappings. */
+  protected static final Font DEFAULT_FONT =
+    new Font("Default", 11, Font.PLAIN);
+
+
+  // -- Static fields --
+
+  /** Next free transform id number. */
+  protected static int nextId = 0;
+
+
   // -- Fields --
 
   /** Parent transform from which this transform obtains its data. */
@@ -51,7 +66,7 @@ public abstract class DataTransform implements Dynamic {
   protected String name;
 
   /** ID number for this data transform (for unique MathType numbering). */
-  protected int id;
+  protected int transformId;
 
   // Note: All subclasses must populate "lengths" and "dims" fields,
   //       then call makeLabels to populate dimensional axis labels list.
@@ -71,6 +86,9 @@ public abstract class DataTransform implements Dynamic {
   /** Handles logic for creating thumbnails from transform data. */
   protected ThumbnailHandler thumbs;
 
+  /** Font used for this transform's text mappings. */
+  protected Font font = DEFAULT_FONT;
+
   /** List of transform listeners. */
   protected Vector listeners = new Vector();
 
@@ -84,6 +102,7 @@ public abstract class DataTransform implements Dynamic {
   public DataTransform(DataTransform parent, String name) {
     this.parent = parent;
     this.name = name;
+    transformId = nextId++;
   }
 
 
@@ -135,7 +154,7 @@ public abstract class DataTransform implements Dynamic {
   public String getName() { return name; }
 
   /** Gets the data transform ID (for constructing unique MathTypes). */
-  public int getTransformId() { return id; }
+  public int getTransformId() { return transformId; }
 
   /** Gets length of each dimensional axis. */
   public int[] getLengths() { return ObjectUtil.copy(lengths); }
@@ -248,6 +267,15 @@ public abstract class DataTransform implements Dynamic {
 
   /** Gets label for each dimensional position. */
   public String[][] getLabels() { return labels; }
+
+  /** Sets the font used for this transform's text mappings. */
+  public void setFont(Font font) {
+    this.font = font;
+    notifyListeners(new TransformEvent(this, TransformEvent.FONT_CHANGED));
+  }
+
+  /** Gets the font used for this transform's text mappings. */
+  public Font getFont() { return font; }
 
   /**
    * Whenever a display to which this transform is linked changes, the
