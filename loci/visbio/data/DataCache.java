@@ -121,7 +121,8 @@ public class DataCache {
    */
   protected String getKey(DataTransform trans, int[] pos, String append) {
     if (append == null) append = "";
-    return trans.getCacheId(pos, true) + append;
+    String id = pos == null ? null : trans.getCacheId(pos, true);
+    return id + append;
   }
 
 }

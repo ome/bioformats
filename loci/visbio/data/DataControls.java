@@ -82,6 +82,9 @@ public class DataControls extends ControlPanel
   /** New 3D display menu item for Displays popup menu. */
   private JMenuItem display3D;
 
+  /** Pane for configuring export parameters. */
+  private ExportPane exporter;
+
 
   // -- Other fields --
 
@@ -171,6 +174,9 @@ public class DataControls extends ControlPanel
     display3D.setActionCommand("new3D");
     display3D.addActionListener(this);
     display3D.setEnabled(VisUtil.canDo3D());
+
+    // export pane
+    exporter = new ExportPane();
 
     // lay out buttons
     ButtonStackBuilder bsb = new ButtonStackBuilder();
@@ -386,18 +392,19 @@ public class DataControls extends ControlPanel
     else if (cmd.equals("export")) {
       // build popup menu
       JPopupMenu menu = new JPopupMenu();
+      DataTransform data = getSelectedData();
 
       JMenuItem saveToDisk = new JMenuItem("Save to disk...");
       saveToDisk.setMnemonic('s');
       saveToDisk.setActionCommand("saveToDisk");
       saveToDisk.addActionListener(this);
-      saveToDisk.setEnabled(false); // CTR TEMP disabled for beta release
       menu.add(saveToDisk);
 
       JMenuItem uploadToOME = new JMenuItem("Upload to OME...");
       uploadToOME.setMnemonic('u');
       uploadToOME.setActionCommand("uploadToOME");
       uploadToOME.addActionListener(this);
+      uploadToOME.setEnabled(data instanceof Dataset);
       menu.add(uploadToOME);
 
       // show popup menu
@@ -408,7 +415,9 @@ public class DataControls extends ControlPanel
     else if (cmd.equals("new2D")) doNewDisplay(false);
     else if (cmd.equals("new3D")) doNewDisplay(true);
     else if (cmd.equals("saveToDisk")) {
-      // CTR TODO export to disk
+      exporter.setData((ImageTransform) getSelectedData());
+      int rval = exporter.showDialog(this);
+      if (rval == DialogPane.APPROVE_OPTION) exporter.export();
     }
     else if (cmd.equals("uploadToOME")) {
       OMEManager om = (OMEManager) lm.getVisBio().getManager(OMEManager.class);
@@ -497,7 +506,7 @@ public class DataControls extends ControlPanel
     boolean hasControls = isData && frameTable.get(data) != null;
     display.setEnabled(canDisplay);
     editData.setEnabled(hasControls);
-    export.setEnabled(data instanceof Dataset);
+    export.setEnabled(data instanceof ImageTransform);
     removeData.setEnabled(isData);
 
     VisBioFrame bio = lm.getVisBio();
