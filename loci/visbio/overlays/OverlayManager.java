@@ -25,6 +25,7 @@ package loci.visbio.overlays;
 
 import loci.visbio.*;
 import loci.visbio.data.DataManager;
+import loci.visbio.help.HelpManager;
 
 /** OverlayManager is the manager encapsulating VisBio's overlay logic. */
 public class OverlayManager extends LogicManager {
@@ -47,7 +48,7 @@ public class OverlayManager extends LogicManager {
   }
 
   /** Gets the number of tasks required to initialize this logic manager. */
-  public int getTasks() { return 1; }
+  public int getTasks() { return 2; }
 
 
   // -- Helper methods --
@@ -58,6 +59,11 @@ public class OverlayManager extends LogicManager {
     bio.setSplashStatus("Initializing overlay logic");
     DataManager dm = (DataManager) bio.getManager(DataManager.class);
     dm.registerDataType(OverlayTransform.class, "Overlays");
+
+    // help window
+    bio.setSplashStatus(null);
+    HelpManager hm = (HelpManager) bio.getManager(HelpManager.class);
+    hm.addHelpTopic("Data transforms/Overlays", "overlays.html");
   }
 
 }

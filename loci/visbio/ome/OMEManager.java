@@ -29,6 +29,7 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import loci.visbio.*;
 import loci.visbio.data.*;
+import loci.visbio.help.HelpManager;
 
 /**
  * OMEManager is the manager for interaction between
@@ -115,7 +116,7 @@ public class OMEManager extends LogicManager implements TaskListener {
   }
 
   /** Gets the number of tasks required to initialize this logic manager. */
-  public int getTasks() { return 2; }
+  public int getTasks() { return 3; }
 
 
   // -- TaskListener API methods --
@@ -149,6 +150,11 @@ public class OMEManager extends LogicManager implements TaskListener {
     bio.setSplashStatus(null);
     DataManager dm = (DataManager) bio.getManager(DataManager.class);
     dm.registerDataType(OMEImage.class, "OME image");
+
+    // help window
+    bio.setSplashStatus(null);
+    HelpManager hm = (HelpManager) bio.getManager(HelpManager.class);
+    hm.addHelpTopic("Data transforms/OME images", "ome_image.html");
   }
 
 }

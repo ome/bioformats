@@ -305,14 +305,13 @@ public class DataManager extends LogicManager {
       "other_formats.html");
     s = "Data transforms";
     hm.addHelpTopic(s, "data_transforms.html");
-    hm.addHelpTopic(s + "/Datasets", "datasets.html");
+    hm.addHelpTopic(s + "/Datasets", "dataset.html");
     hm.addHelpTopic(s + "/Subsamplings", "subsampling.html");
     hm.addHelpTopic(s + "/Maximum intensity projections",
       "max_intensity.html");
     hm.addHelpTopic(s + "/Dimensional collapse transforms", "collapse.html");
     hm.addHelpTopic(s + "/Spectral mappings", "spectral.html");
     hm.addHelpTopic(s + "/Arbitrary slices", "arbitrary_slice.html");
-    hm.addHelpTopic(s + "/Overlays", "overlays.html");
     s = "Control panels/Data panel";
     hm.addHelpTopic(s, "data_panel.html");
     hm.addHelpTopic(s + "/Importing a dataset from disk", "import_data.html");
