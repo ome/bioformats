@@ -69,6 +69,9 @@ public class OptionPane extends DialogPane {
     tabPanel.add(c);
   }
 
+  /** Initializes a tab with the given name. */
+  public void addTab(String tab) { getTab(tab); }
+
 
   // -- DialogPane API methods --
 

@@ -68,6 +68,11 @@ public class OptionManager extends LogicManager {
     super(bio);
     options = new OptionPane(this);
     list = new Vector();
+
+    // ensure tabs appear in the right order
+    options.addTab("General");
+    options.addTab("Warnings");
+    options.addTab("Debug");
   }
 
 
