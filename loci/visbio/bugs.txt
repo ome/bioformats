@@ -1,7 +1,5 @@
 Bugfixes and enhancements to address:
 
-  - DataSampling is broken now; figure out why.
-
   - VisAD QT reader is horribly inefficient; clean up code to acceptable
     standards.
 

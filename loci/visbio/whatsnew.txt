@@ -1,3 +1,12 @@
+v3.00 beta4 - In progress
+
+- ADDED: Volume rendering
+
+- FIXED: Broken data transforms (sampling, max intensity, collapse, spectral)
+- FIXED: Several overlay data transform bugs
+- FIXED: Several window centering issues
+
+
 v3.00 beta3 - Wednesday, February 2, 2005
 
 - ADDED: Overlays data transform for creating overlay annotations
