@@ -381,7 +381,13 @@ public class TransformLink
     final long burnDelay = delay;
     new Thread("VisBio-ComputeDataThread-" + append) {
       public void run() {
-        if (immediate) computeData(false);
+        int[] pos = handler.getPos(trans);
+        if (handler.getCache().hasData(trans, pos, null)) {
+          // cache hit; burn in immediately
+          burnTime = System.currentTimeMillis();
+          burnNow = true;
+        }
+        else if (immediate) computeData(false);
         else {
           computeData(true);
           // request a new burn-in in delay milliseconds
