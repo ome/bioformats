@@ -225,52 +225,12 @@ public class OMEDownload{
     criteria.addWantedField("default_pixels","FileSHA1");
     criteria.addWantedField("default_pixels","ImageServerID");
     
-//    criteria.addWantedField("default_pixels","Repository");
-//    criteria.addWantedField("default_pixels","Repository.ImageServerURL");
-    
 		FieldsSpecification repoFieldSpec = new FieldsSpecification();
     repoFieldSpec.addWantedField("Repository");
     repoFieldSpec.addWantedField("Repository", "ImageServerURL");
     criteria.addWantedFields("default_pixels", repoFieldSpec);
   }//end of addImageFields method
-  
-  public static final Criteria IMAGE_FIELDS = makeImageFields();
-  private static Criteria makeImageFields() {
-    Criteria criteria = new Criteria();
-    criteria.addWantedField("id");
-		criteria.addWantedField("name");
-		criteria.addWantedField("created");
-    criteria.addWantedField("description");
-    criteria.addWantedField("owner");
-    criteria.addWantedField("datasets");
-    criteria.addWantedField("all_features");
-    criteria.addWantedField("all_features", "name");
-    criteria.addWantedField("all_features", "tag");
-    criteria.addWantedField("all_features", "children");
-    criteria.addWantedField("all_features", "parent_feature");
-    criteria.addWantedField("owner", "FirstName");
-    criteria.addWantedField("owner", "LastName");
-    criteria.addWantedField("owner", "id");
-    criteria.addWantedField("default_pixels");
-    criteria.addWantedField("default_pixels", "id");
-    criteria.addWantedField("default_pixels", "PixelType");
-    criteria.addWantedField("default_pixels","SizeC");
-    criteria.addWantedField("default_pixels","SizeT");
-    criteria.addWantedField("default_pixels","SizeX");
-    criteria.addWantedField("default_pixels","SizeY");
-    criteria.addWantedField("default_pixels","SizeZ");
-    criteria.addWantedField("default_pixels","FileSHA1");
-    criteria.addWantedField("default_pixels","ImageServerID");
-    //
-    criteria.addWantedField("default_pixels","Repository");
-    criteria.addWantedField("default_pixels","Repository.ImageServerURL");
-//		FieldsSpecification repoFieldSpec = new FieldsSpecification();
-//    repoFieldSpec.addWantedField("Repository");
-//    repoFieldSpec.addWantedField("Repository", "ImageServerURL");
-//    criteria.addWantedFields("default_pixels", repoFieldSpec);
-    return criteria;
-  }//end of makeImageFields method
-  
+
   /**populates the criteria for a certain attribute*/
   public static Criteria makeAttributeFields(String[] attrName) {
     Criteria criteria=new Criteria();
@@ -374,6 +334,7 @@ public class OMEDownload{
     table.put("colorRGB", new Integer(ImagePlus.COLOR_RGB));
     table.put("uint32", new Integer(17));
     table.put("int16", new Integer(ImagePlus.GRAY16));
+    table.put("int8", new Integer(ImagePlus.GRAY8));
     int type=((Integer)table.get(typeS)).intValue();
     if ( sizeC==3) {
       type=ImagePlus.COLOR_RGB;
@@ -418,8 +379,7 @@ public class OMEDownload{
            FloatProcessor ip=new FloatProcessor(sizeX, sizeY, pixeld);
            //adding plane to the ImageStack
            is.addSlice("Z="+z+" T="+t, ip);
-         }
-         if (type==ImagePlus.COLOR_256 ) {
+         }else if (type==ImagePlus.COLOR_256 ) {
            pixelb=pf.getPlane(pix, z, 0, t, true);
            for ( int i=0;i<pixelb.length ;i++ ) {
              pixelb[i]=(byte)(128-pixelb[i]);
@@ -428,19 +388,17 @@ public class OMEDownload{
            ip.setPixels(pixelb);
            //adding plane to the ImageStack
            is.addSlice("Z="+z+" T="+t, ip);
-         }
-         if (type==ImagePlus.COLOR_RGB ) {
-           byte []r=pf.getPlane(pix, z, 0, t, true);
+         }else if (type==ImagePlus.COLOR_RGB ) {
+           byte []r=pf.getPlane(pix, z, 2, t, true);
            byte []g=pf.getPlane(pix, z, 1, t, true);
-           byte []b=pf.getPlane(pix, z, 2, t, true);
+           byte []b=pf.getPlane(pix, z, 0, t, true);
            for (int i=0;i<pixeli.length ;i++ ) {
              pixeli[i]=((r[i] & 0xff)<<16)+((g[i] & 0xff)<<8) + (b[i] & 0xff);
            }
            ColorProcessor ip=new ColorProcessor(sizeX, sizeY, pixeli);
            //adding plane to the ImageStack
            is.addSlice("Z="+z+" T="+t, ip);
-         }
-         if (type==ImagePlus.GRAY16 ) {                     
+         } else if (type==ImagePlus.GRAY16 ) {                     
            byte[] pixs= pf.getPlane(pix, z,0,t, true);
            for ( int i=0; i<pixels.length; i++) {
              pixels[i]=(short)(((pixs[2*i] & 0xff)<<8)+(pixs[2*i+1] & 0xff));
@@ -449,8 +407,7 @@ public class OMEDownload{
            ip.setPixels(pixels);
            //adding plane to the ImageStack
            is.addSlice("Z="+z+" T="+t, ip);
-         }
-         if (type==ImagePlus.GRAY32 ) {            
+         }else if (type==ImagePlus.GRAY32 ) {            
            byte[] pixs=pf.getPlane(pix, z, 0, t, true);
            for ( int i=0; i<pixeli.length; i++) {
              pixeli[i]=((pixs[4*i] & 0xff)<<24) +((pixs[4*i+1] & 0xff)<<16) +
@@ -460,8 +417,7 @@ public class OMEDownload{
            FloatProcessor ip=new FloatProcessor(sizeX, sizeY, pixeld);
            //adding plane to the ImageStack
            is.addSlice("Z="+z+" T="+t, ip);
-         }
-         if (type==ImagePlus.GRAY8 ) {
+         } else if (type==ImagePlus.GRAY8 ) {
            byte[] pixsb = pf.getPlane(pix, z, 0, t, true);
            System.arraycopy(pixsb, 0, pixelb, 0, pixsb.length);
            ByteProcessor ip=new ByteProcessor(sizeX, sizeY);
@@ -482,11 +438,13 @@ public class OMEDownload{
     //Create the ImagePlus in ImageJ and display it
     ImagePlus iPlus=new ImagePlus(image.getName(), is);
     
-    //retrieve metadata to possibly edit
+    //retrieve metadata
+    IJ.showStatus("Retrieving metadata..");
     Object[] metas=new Object[2];
     metas[0]=new Integer(image.getID());
     metas[1]=OMEMetaDataHandler.exportMeta(image, df);
     omesp.hashInImage(iPlus.getID(), metas);
+    IJ.showStatus("Displaying Image");
     iPlus.show();
   }//end of download method
   
@@ -659,6 +617,7 @@ public class OMEDownload{
        }
        //get search results
        images=retrieveImages(df, objects);
+       if(images==null)images=new Image[0];
        if ( images.length==0) {
          OMELoginPanel.infoShow(IJ.getInstance(), "No images matched the specified criteria.",
          "OME Download");

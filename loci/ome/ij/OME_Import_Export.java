@@ -1,5 +1,3 @@
-import java.io.*;
-
 /**
  * OME_Import_Export is the ImageJ Plugin
  * that allows image import and exports from
@@ -12,11 +10,6 @@ public class OME_Import_Export implements ij.plugin.PlugIn{
 
   /**shows and retrieves info from the SidePanel*/
   public void run(java.lang.String arg){
-    // redirect stack traces to error log file
-    try {
-      System.setErr(new PrintStream(new FileOutputStream("ome-errors.log")));
-    }
-    catch (IOException exc) { }
     if ( omeSidePanel == null ) {
       // side panel not initialized; initialize now
       omeSidePanel = new OMESidePanel(ij.IJ.getInstance());

@@ -106,6 +106,7 @@ public class OMEUpload{
   /** Does the work for uploading data to OME. */
   public void run(ImagePlus ip, Object[] metadata) {
     imageP=ip;
+    //implemented in next version
 //    System.out.println(ip.getOriginalFileInfo().fileName+
 //    " is white zero: "+ip.getOriginalFileInfo().whiteIsZero);
     IJ.showProgress(0);
@@ -170,80 +171,20 @@ public class OMEUpload{
       int omeID=((Integer)metadata[0]).intValue();
       if ( omeID!=0) {
         omeImage=OMEDownload.getImagefromID(df, omeID);
-        OMEMetaDataHandler.importMeta((OMEElement)metadata[1],
-          true, omeImage, df);
+        //This is where metadata could be imported into the database
       } else {
         omeImage=null;
-        
       }
-
 
       // start the import process
       IJ.showStatus("OmeUpload: Starting import...");
       im.startImport();
       IJ.showProgress(0.15);
-
-      // create a dataset to contain the images that create
-      //This code was taken out to reduce redundancy where
-      //you have datasets with only one image
-      /*
-      IJ.showStatus("OmeUpload: Creating dataset...");
-      Dataset importDataset = (Dataset) df.createNew(Dataset.class);
-      List images = new ArrayList();
-      importDataset.setName(imageP.getTitle());
-      importDataset.setDescription("Dataset uploaded from " +
-        "ImageJ" + " " + ImageJ.VERSION);
-      importDataset.setOwner(user);
-      df.markForUpdate(importDataset);
-      IJ.showProgress(0.17);
-      */
-
-      //create a features to put metadata into
-/*
-      Feature quan=null;
-      if (metadata!=null) {
-        IJ.showStatus("OmeUpload: Creating image feature...");
-        quan = (Feature) df.createNew(Feature.class);
-        quan.setTag(((String)metadata[2]));
-        quan.setName("Quantity");
-      }
-      Feature qual=null;
-      if (metadata!=null) {
-        IJ.showStatus("OmeUpload: Creating image feature...");
-        qual = (Feature) df.createNew(Feature.class);
-        qual.setTag(((String)metadata[3]));
-        qual.setName("Quality");
-      }
-*/      
-
-      IJ.showProgress(0.17);
-      
-      
-      // create File objects for the files we want to upload
-//      String ids="untitled";
-//      try {
-//         ids = imageP.getOriginalFileInfo().fileName;
-//      }
-//      catch (NullPointerException e) {}
-//      File files = new File(ids);
-//      long bytelen = files.length();
-      
-      // locate a repository object to contain the original files and pixels
-//      IJ.showStatus("OmeUpload: Finding repository...");
+          
+      // locate a repository object to contain the pixels
+      IJ.showStatus("OmeUpload: Finding repository...");
       Repository rep = pf.findRepository(0);
-
-      // ask the ImportManager for a MEX for the original files
-//      ModuleExecution of = im.getOriginalFilesMEX();
-//      IJ.showProgress(0.19);
-
-      // upload each original file into the repository, using the MEX
-//      IJ.showStatus("OmeUpload: Uploading file " + files.getName() + "...");
-//      OriginalFile fileAttr = pf.uploadFile(rep, of, files);
-            
-      // once all of the files are uploaded, mark the MEX as completed
-//      of.setStatus("FINISHED");
-//      df.markForUpdate(of);
-//      System.out.println("module execution marked for update");
+      IJ.showProgress(0.17);
 
       // create a new Image object for the multidimensional image
       IJ.showStatus("OmeUpload: Creating image entry...");
@@ -253,18 +194,12 @@ public class OMEUpload{
         df.markForUpdate(image);
       }else{
         image = (Image) df.createNew(Image.class);
-//        Criteria criteria=new Criteria();
-//        OMEDownload.addImageFields(criteria);
-//        image=(Image)df.load(Image.class, image.getID(), criteria);
         image.setName(imageP.getTitle());
         image.setOwner(user);
         image.setInserted("now");
         image.setCreated("now");
         image.setDescription("This image was uploaded from ImageJ");
-//        OMEMetaDataHandler.importMeta((OMEElement)metadata[1], false, image, df);
         df.markForUpdate(image);
-        //taken out as part of dataset redundancy
-        //images.add(image);
       }
       IJ.showProgress(0.2);
 
@@ -403,16 +338,16 @@ public class OMEUpload{
               if (range==3) {
                 if ( c==2) {
                   logical.setFluor("Red");
-                  logical.setPhotometricInterpretation("red");
+                  logical.setPhotometricInterpretation("RGB");
                 }else if ( c==1) {
                   logical.setFluor("Green");
-                  logical.setPhotometricInterpretation("green");
+                  logical.setPhotometricInterpretation("RGB");
                 }else if ( c==0) {
                   logical.setFluor("Blue");
-                  logical.setPhotometricInterpretation("blue");
+                  logical.setPhotometricInterpretation("RGB");
                 }
               }else{
-                logical.setFluor("Gray 00");
+                logical.setFluor("Gray");
                 logical.setPhotometricInterpretation("monochrome");
               }
               df.markForUpdate(logical);
@@ -432,67 +367,39 @@ public class OMEUpload{
       // close the pixels file on the image server
       IJ.showStatus("OmeUpload: Closing pixels file..");
       pf.finishPixels(pix);
-      System.out.println("finished pixels");
       IJ.showProgress(.55);
 
       // create a default thumbnail for the image
       IJ.showStatus("OmeUpload: Creating PGI thumbnail...");
-      pf.setThumbnail(pix, 
-        CompositingSettings.createDefaultPGISettings(sizeZ, sizeC, sizeT));
-      System.out.println("set thumbnail");
+      CompositingSettings compositingSettings=
+        CompositingSettings.createDefaultPGISettings(sizeZ, sizeC, sizeT);
+      if (sizeC==3){
+        compositingSettings.activateRedChannel(2,0,255,1);
+        compositingSettings.activateGreenChannel(1,0,255,1);
+        compositingSettings.activateBlueChannel(0,0,255,1);
+      }
+      else compositingSettings.activateGrayChannel(0,0,255,1);
+      pf.setThumbnail(pix, compositingSettings);
       IJ.showProgress(.6);
       
       // mark image import MEX as having completed executing
       ii.setStatus("FINISHED");
       df.markForUpdate(ii);
-      System.out.println("mex marked for update");
       IJ.showProgress(.85);
 
       // commit all changes
       IJ.showStatus("OmeUpload: Committing changes...");
       df.updateMarked();
-      System.out.println("datafactory update marked");
       IJ.showProgress(.87);
 
       // set default pixels entry
       image.setDefaultPixels(pix);
-      System.out.println("before datafactory update");
       df.update(image);
-      System.out.println("datafactory updated");
-
-      // add the image to the dataset
-      //part of dataset redundancy
-      /*
-      IJ.showStatus("OmeUpload: Adding image to dataset...");
-      dm.addImagesToDataset(importDataset, images);
-      images.clear();
-      */
-/*      
-      //set the features image
-      if ( quan!=null || qual!=null) {
-        quan.setImage(image);
-        qual.setImage(image);
-        System.out.println("feature image set");
-        df.update(quan);
-        df.update(qual);
-      }
-*/      
-      //set the imageAnnotation image
-/*
-      if ( ia!=null) {
-        ia.setImage(image);
-        System.out.println("Image set");
-        df.update(ia);
-      }
-*/
-          
       IJ.showProgress(.9);
 
       // execute the import analysis chain
       IJ.showStatus("OmeUpload: Executing import chain...");
       AnalysisChain chain = cm.getImportChain();
-      //was taken out as part of dataset redundancy
-      //aem.executeAnalysisChain(chain, importDataset);
       IJ.showProgress(.95);
 
       // log out

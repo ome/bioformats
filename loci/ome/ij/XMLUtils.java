@@ -17,11 +17,11 @@ public class XMLUtils{
     XML in the image description*/
   public static void readTiff(Integer imageID){
     int ijimageID=imageID.intValue();
-    System.out.println("getting imagemetadata from table in sidepanel");
+    //System.out.println("getting imagemetadata from table in sidepanel");
     Object[] meta=null;
     meta=OMESidePanel.getImageMeta(ijimageID);
     FileInfo fi=null;
-    System.out.println("get original fileinfo");
+    //System.out.println("get original fileinfo");
     try {
        fi = WindowManager.getImage(ijimageID).getOriginalFileInfo();
     }
@@ -44,7 +44,7 @@ public class XMLUtils{
     }
     StringReader sbis=new StringReader(fi.description);
     InputSource inputSource=null;
-    System.out.println("starting to transform");
+    IJ.showStatus("Transforming xml code.");
     //this portion is to convert the OME XML to OME CA XML before parsing
     try {
     javax.xml.transform.TransformerFactory tFactory=
@@ -59,7 +59,7 @@ public class XMLUtils{
     String finalResult = stringWriter.toString();
     sbis=new StringReader(finalResult);
     inputSource=new InputSource(sbis);
-    System.out.println(finalResult);
+    //System.out.println(finalResult);
     }
     catch (Exception e){
       IJ.showStatus("Error while converting xml file.");
@@ -75,6 +75,7 @@ public class XMLUtils{
     OMEElement omeElement=new OMEElement();
     try {
       //parse the xml code
+      IJ.showStatus("Parsing meta data code.");
       omeElement.readXML(inputSource);
     }
     catch (SAXException e) {
@@ -87,7 +88,6 @@ public class XMLUtils{
       meta[1]=null;
       OMESidePanel.hashInImage(ijimageID, meta);
       return;
-//      e.printStackTrace();
     }
     catch (IOException f){
       OMEDownPanel.error(IJ.getInstance(),
@@ -103,7 +103,7 @@ public class XMLUtils{
     }
     meta[1]=new DefaultMutableTreeNode(
       new XMLObject("Meta Data"));
-    System.out.println("meta data is being put in the table");
+    IJ.showStatus("Meta data is being put into tree structure.");
     createNodes((DefaultMutableTreeNode)meta[1], omeElement);
     OMESidePanel.hashInImage(ijimageID, meta);
   }//end of readTiff method

@@ -8,10 +8,6 @@ import ij.WindowManager;
 import ij.*;
 import java.util.Hashtable;
 
-
-
-
-
 /**
  * OMESidePanel is the class that handles
  * the window alongside ImageJ.
@@ -117,7 +113,7 @@ public class OMESidePanel implements ActionListener{
       int ijimage=imp[i].getID();
       if (!table.containsKey(new Integer(ijimage))) {
         boolean xalan = false;
-        System.out.println("attempting to find xml class");
+        IJ.showStatus("Attempting to find xml class...");
         try {
           Class c = Class.forName("javax.xml.transform.TransformerFactory");
           if (c != null) xalan = true;
@@ -129,19 +125,19 @@ public class OMESidePanel implements ActionListener{
           try {
             Class myXMLclass = Class.forName("XMLUtils");
             Method m = myXMLclass.getMethod("readTiff", new Class[] {Integer.class});
-            System.out.println("ready to invoke readTiff");
+            IJ.showStatus("Ready to read xml in tiff header.");
             m.invoke(null, new Object[] {new Integer(ijimage)});
             //readTiff(ijimage);
           }
           catch (Exception exc) { 
             exc.printStackTrace();
-            System.out.println("not invoked");
+            IJ.showStatus("Error reading xml code.");
           }
         }else{
           IJ.showStatus("Java 1.4 required to retrieve OME metadata.");
-//          OMELoginPanel.infoShow(IJ.getInstance(),
-//          "Java 1.4 required to retrieve OME metadata.",
-//          "OME Download");
+          //OMELoginPanel.infoShow(IJ.getInstance(),
+          //"Java 1.4 required to retrieve OME metadata.",
+          //"OME Download");
         }
       }
     }

@@ -1,3 +1,7 @@
+
+//only needed to show status, otherwise independent
+import ij.IJ;
+
 import org.openmicroscopy.ds.dto.*;
 import org.openmicroscopy.ds.*;
 import org.openmicroscopy.ds.st.*;
@@ -6,7 +10,7 @@ import java.util.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 /**
  * OMEMetaDataHandler is the class that handles
- * the import and export of metadata
+ * the export of metadata
  * associated with an image and OME.
  * @author Philip Huettl pmhuettl@wisc.edu
  */
@@ -65,14 +69,13 @@ public class OMEMetaDataHandler{
       Criteria criteria= OMEDownload.makeAttributeFields(OMEMetaPanel.IMAGE_ATTRS[i]);
       criteria.addWantedField("image_id");
       criteria.addFilter("image_id", (new Integer(image.getID())).toString());
-      System.out.println("About to retrieve "+OMEMetaPanel.IMAGE_TYPES[i]+"s.");
+      IJ.showStatus("Retrieving "+OMEMetaPanel.IMAGE_TYPES[i]+"s.");
       List customs=null;
       try{
         customs=df.retrieveList(OMEMetaPanel.IMAGE_TYPES[i], criteria);
       }catch(Exception e){
-        //don't tell anyone about it, just keep going
         e.printStackTrace();
-        System.out.println("Retrieving "+OMEMetaPanel.IMAGE_TYPES[i]+"s went bad");
+        System.out.println("Error while retrieving "+OMEMetaPanel.IMAGE_TYPES[i]+"s.");
       }
       if(customs!=null){
         Iterator itCustoms=customs.iterator();
@@ -91,7 +94,6 @@ public class OMEMetaDataHandler{
               (value instanceof Boolean)){
               elementNode.add(new DefaultMutableTreeNode(new XMLObject((String)key,
                 ""+value, XMLObject.ATTRIBUTE)));
-              System.out.println("key=" + key + "; value=" + value);
             }
           }
           if(OMEMetaPanel.IMAGE_TYPES[i].equals("ImageExperiment")){
@@ -155,27 +157,21 @@ public class OMEMetaDataHandler{
       XMLObject.ATTRIBUTE)));
     node.add(new DefaultMutableTreeNode(new XMLObject("BlueChannelOn", ""+element.isBlueChannelOn(),
       XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("Pixels", ""+element.getPixels().getID(),
+      XMLObject.ATTRIBUTE)));
     //get children of this element
-    DefaultMutableTreeNode red=new DefaultMutableTreeNode(new XMLObject(
-                "RedChannel"));
+    DefaultMutableTreeNode red=new DefaultMutableTreeNode(new XMLObject("RedChannel"));
     node.add(red);
-    DefaultMutableTreeNode green=new DefaultMutableTreeNode(new XMLObject(
-                "GreenChannel"));
+    DefaultMutableTreeNode green=new DefaultMutableTreeNode(new XMLObject("GreenChannel"));
     node.add(green);
-    DefaultMutableTreeNode blue=new DefaultMutableTreeNode(new XMLObject(
-                "BlueChannel"));
+    DefaultMutableTreeNode blue=new DefaultMutableTreeNode(new XMLObject("BlueChannel"));
     node.add(blue);
-    DefaultMutableTreeNode grey=new DefaultMutableTreeNode(new XMLObject(
-                "GreyChannel"));
+    DefaultMutableTreeNode grey=new DefaultMutableTreeNode(new XMLObject("GreyChannel"));
     node.add(grey);
     addDisplayChannel(element.getRedChannel(), red, df);
     addDisplayChannel(element.getGreenChannel(), green, df);
     addDisplayChannel(element.getBlueChannel(), blue, df);
     addDisplayChannel(element.getBlueChannel(), grey, df);
-    DefaultMutableTreeNode pixelNode=
-      new DefaultMutableTreeNode(new XMLObject(XMLObject.PIXELHEADING));
-    node.add(pixelNode);
-    exportPixelMeta(element.getPixels(), pixelNode, df);
   }//end of addDisplayOptions method
   
   /**exports DisplayChannel from the database and adds to the tree*/
@@ -208,8 +204,7 @@ public class OMEMetaDataHandler{
     DataFactory df){
     if(element==null)return;
     //setup and load the columns that this element has
-    //** weird that columns that correspond to lists cannot be loaded
-    String [] attrs={/*"PixelChannelComponents",*/ "AuxLightAttenuation", "AuxLightSource", "AuxLightWavelength",
+    String [] attrs={"PixelChannelComponentList", "AuxLightAttenuation", "AuxLightSource", "AuxLightWavelength",
       "AuxTechnique", "ContrastMethod", "Detector", "DetectorGain",
       "DetectorOffset", "EmissionWavelength", "ExcitationWavelength",
       "Filter", "Fluor", "IlluminationType", "LightAttenuation", 
@@ -274,8 +269,7 @@ public class OMEMetaDataHandler{
     DataFactory df){
     if(element==null)return;
     //setup and load the columns that this element has
-    //** weird Local cannot be loaded
-    String [] attrs={"ImageServerURL", "Path"/*, "Local"*/};
+    String [] attrs={"ImageServerURL", "Path", "IsLocal"};
     Criteria criteria=OMEDownload.makeAttributeFields(attrs);
     criteria.addWantedField("id");
     criteria.addFilter("id", (new Integer(element.getID())).toString());
@@ -289,8 +283,8 @@ public class OMEMetaDataHandler{
       XMLObject.ATTRIBUTE)));
     node.add(new DefaultMutableTreeNode(new XMLObject("Path", element.getPath(),
       XMLObject.ATTRIBUTE)));
-   // node.add(new DefaultMutableTreeNode(new XMLObject("Local", ""+element.isLocal(),
-   //   XMLObject.ATTRIBUTE)));
+   node.add(new DefaultMutableTreeNode(new XMLObject("IsLocal", ""+element.isIsLocal(),
+      XMLObject.ATTRIBUTE)));
   }//end of addRepository method
   
   /**exports OTFs from the database and adds to the tree*/
@@ -681,29 +675,39 @@ public class OMEMetaDataHandler{
     addRepository(pixels.getRepository(), pixelNode, df);
     
     //setup and load the columns that this element has
-    String [] attrs={"Pixels", "theC"};
+    String [] attrs={"ColorDomain", "Index", "LogicalChannel", "Pixels"};
     Criteria criteria=OMEDownload.makeAttributeFields(attrs);
     criteria.addWantedField("id");
     criteria.addFilter("Pixels", (new Integer(pixels.getID())).toString());
-//PMH this doesn't work (weird)
-/*    List channeli=df.retrieveList(ChannelIndex.class, criteria);
+    List channeli=df.retrieveList("PixelChannelComponent", criteria);
     Iterator iter=channeli.iterator();
     while (iter.hasNext()){
-      addChannelIndex((ChannelIndex)iter.next(), pixelNode, df);
-    }      
-*/
+      addPixelChannelComponent((PixelChannelComponent)iter.next(), pixelNode, df);
+    }
+    //setup and load the displayOptions related to the default pixels
+    Criteria displayCriteria=new Criteria();
+    displayCriteria.addWantedField("Pixels");
+    displayCriteria.addFilter("Pixels", (new Integer(pixels.getID())).toString());
+    List channeld=df.retrieveList("DisplayOptions", displayCriteria);
+    Iterator iterDis=channeld.iterator();
+    while (iterDis.hasNext()){
+      addDisplayOptions((DisplayOptions)iterDis.next(), pixelNode, df);
+    }
   }//end of exportPixelMeta method
   
   /**exports channelIndexes from the database and adds to the tree*/
-  private static void addChannelIndex(ChannelIndex element, DefaultMutableTreeNode root, 
+  private static void addPixelChannelComponent(PixelChannelComponent element, DefaultMutableTreeNode root, 
     DataFactory df){
     if(element==null)return;
     //add attributes to this element's node
-    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("ChannelIndex",
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("PixelChannelComponent",
       XMLObject.ELEMENT));
     root.add(node);
-    node.add(new DefaultMutableTreeNode(new XMLObject("theC", ""+element.gettheC(),
+    node.add(new DefaultMutableTreeNode(new XMLObject("ColorDomain", ""+element.getColorDomain(),
       XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("Index", ""+element.getIndex(),
+      XMLObject.ATTRIBUTE)));
+    addLogicalChannel(element.getLogicalChannel(), node, df);
   }//end of addChannelIndex method  
   
   /**exports TrajectoryEntries from the database and adds to the tree*/
@@ -765,19 +769,52 @@ public class OMEMetaDataHandler{
     //add trajectory entries
     String [] attrs={"DeltaX","DeltaY", "DeltaZ", "Distance",
       "Order", "Trajectory", "Velocity"};
-    Criteria criteria=OMEDownload.makeAttributeFields(attrs);
-    criteria.addWantedField("feature_id");
-    criteria.addFilter("feature_id", (new Integer(feature.getID())).toString());
+    Criteria trajCriteria=OMEDownload.makeAttributeFields(attrs);
+    trajCriteria.addWantedField("feature_id");
+    trajCriteria.addFilter("feature_id", (new Integer(feature.getID())).toString());
     //retrieve element to add with all columns loaded
-    List trajects=df.retrieveList("TrajectoryEntry", criteria);
+    List trajects=df.retrieveList("TrajectoryEntry", trajCriteria);
     Iterator iterTra=trajects.iterator();
     while (iterTra.hasNext()){
       addTrajectoryEntry((TrajectoryEntry)iterTra.next(), featureNode, df);
     }
     //add attributes to this element's node
-    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("Filter",
-      XMLObject.ELEMENT));
-    root.add(node);
+    for (int i=0; i<OMEMetaPanel.FEATURE_TYPES.length; i++){
+      Criteria criteria= OMEDownload.makeAttributeFields(OMEMetaPanel.FEATURE_ATTRS[i]);
+      criteria.addWantedField("feature_id");
+      criteria.addFilter("feature_id", (new Integer(feature.getID())).toString());
+      IJ.showStatus("Retrieving  "+OMEMetaPanel.FEATURE_TYPES[i]+"s.");
+      List customs=null;
+      try{
+        customs=df.retrieveList(OMEMetaPanel.FEATURE_TYPES[i], criteria);
+      }catch(Exception e){
+        //don't tell anyone about it, just keep going
+        e.printStackTrace();
+        System.out.println("Error while retrieving "+OMEMetaPanel.FEATURE_TYPES[i]+"s.");
+      }
+      if(customs!=null){
+        Iterator itCustoms=customs.iterator();
+        while (itCustoms.hasNext()){
+          AttributeDTO attr=(AttributeDTO)itCustoms.next();
+          DefaultMutableTreeNode elementNode=new DefaultMutableTreeNode(
+            new XMLObject(OMEMetaPanel.FEATURE_TYPES[i], XMLObject.ELEMENT));
+          featureNode.add(elementNode);
+          Map map = attr.getMap();
+          Set set = map.keySet();
+          Iterator iter2 = set.iterator();
+          while (iter2.hasNext()) {
+            Object key = iter2.next();
+            Object value = map.get(key);
+            if((value instanceof String) || (value instanceof Number) || 
+              (value instanceof Boolean)){
+              elementNode.add(new DefaultMutableTreeNode(new XMLObject((String)key,
+                ""+value, XMLObject.ATTRIBUTE)));
+              //System.out.println("key=" + key + "; value=" + value);
+            }
+          }
+        }
+      }
+    }
     //add children features to tree
     List features=feature.getChildren();
     Iterator iter=features.iterator();
@@ -786,128 +823,4 @@ public class OMEMetaDataHandler{
     }
   }//end of exportMeta method
   
-  /**Method that imports metadata from an OMEElement into the OME database*/
-  public static void importMeta(OMEElement omeElement, boolean existing,
-    Image image, DataFactory df){
-    importMeta(omeElement.getImage(), existing, image, df);
-//    importMeta(omeElement.getDataset());
-//    importMeta(omeElement.getProject());
-//    importMeta(omeElement.getCustomAttr());
-  }//end of import method
-/*  
-  private void importMeta(CAElement caElement, Image parent, DataFactory df){
-    int[] ids=caElement.getElementIDs();
-    for (int i=0; i<ids.length; i++) {
-      Criteria criteria=new Criteria();
-      String name=caElement.getElementName(ids[i]);
-      String[] attrNames = caElement.getAttributeNames(ids[i]);
-      int id=null;
-      for (int k=0; k<attrNames.length; k++) { 
-        criteria.addWantedField(attrNames[k]);
-        if (attrNames[k].equals(ID)
-      }
-      Attribute attr=df.retrieve(name, criteria);
-      if (attr!=null && id!=null && attr.getID()==){
-        for (int k=0; k<attrNames.length; k++){
-          String attrValue = caElement.getAttribute(ids[i], attrNames[k]);
-          element.add(new DefaultMutableTreeNode
-          (new XMLObject(attrNames[k], attrValue,caElement, ids[i]), false));
-        }
-      }
-    }
-  }//end of importMeta method
-*/  
-  private static void importMeta(ImageElement imageElement, boolean existing,
-    Image image, DataFactory df){
-    if(!existing){
-      //this info will be handled by the upload 
-      //image.setName(imageElement.getName());
-      //image.setID((new Integer(imageElement.getID())).intValue());
-      //image.setCreated(imageElement.getCreationDate());
-      //image.setDescription(imageElement.getDescription());
-      //no way to add dataset references to images 
-      //it wouldn't make a whole lot of sense to do it anyways
-      //DatasetRefElement[] refs=imageElement.getDatasetRefs();
-      //for (int i=0; i<refs.length; i++){
-      //}
-    }
-    
-    //get the image element custom attributes
-//    importMeta(imageElement.getCustomAttr(), image, df);
-    
-    //get the image element features
-    importMeta(imageElement.getFeatures(), existing, image, df);
-  }//end of importMeta method
-  
-  private static void importMeta(FeatureElement [] featureElements, boolean existing,
-    Image image, DataFactory df){
-    image.getCreated();
-    image.getDefaultPixels();
-    Object[] ob=image.getFeatures().toArray();
-    Feature [] features=new Feature[ob.length];
-    for (int i=0; i<features.length; i++){
-      features[i]=(Feature)ob[i];
-    }
-    for(int i=0; i<featureElements.length; i++){
-      boolean match=false;
-      Feature feature=null;
-      if (featureElements[i].getID().equals(""));
-      else{
-        for (int j=0; j<features.length; j++){
-          if ((new Integer(featureElements[i].getID())).intValue()==features[j].getID()){
-            match=true;
-            feature=features[j];
-            features[j].setTag(featureElements[i].getTag());
-            features[j].setName(featureElements[i].getName());
-             df.update(features[j]);
-            }
-        }
-      }
-      if (!match){
-        feature= (Feature) df.createNew(Feature.class);
-        feature.setTag(featureElements[i].getTag());
-        feature.setName(featureElements[i].getName());
-        feature.setImage(image);
-        df.update(feature);
-      }
-      FeatureElement[] featureList=featureElements[i].getFeatures();
-      importMeta(featureList, feature, df);
-//      importMeta(featureElements[i].getCustomAttr(), feature, df);
-    }
-  }//end of importMeta featureElement version method
-  
-  private static void importMeta(FeatureElement [] featureElements,
-    Feature parent, DataFactory df){
-    
-    Object[] ob=parent.getChildren().toArray();
-    Feature[] features=new Feature[ob.length];
-    for (int i=0; i<features.length; i++){
-      features[i]=(Feature)ob[i];
-    }
-    for(int i=0; i<featureElements.length; i++){
-      boolean match=false;
-      Feature feature=null;
-      for (int j=0; j<features.length; j++){
-        if ((new Integer(featureElements[i].getID())).intValue()==features[j].getID()){
-          match=true;
-          feature=features[j];
-          features[j].setTag(featureElements[i].getTag());
-          features[j].setName(featureElements[i].getName());
-          df.update(features[j]);
-        }
-      }
-      if (!match){
-        feature= (Feature) df.createNew(Feature.class);
-        feature.setTag(featureElements[i].getTag());
-        feature.setName(featureElements[i].getName());
-//        feature.setImage(image);
-        feature.setParentFeature(parent);
-        df.update(feature);
-      }
-      FeatureElement[] featureList=featureElements[i].getFeatures();
-      importMeta(featureList, feature, df);
-//      importMeta(featureElements[i].getCustomAttr(), feature, df);
-    }
-  }//end of importMeta featureElement child version method
-        
 }//end of OMEMetaDataHandler class
