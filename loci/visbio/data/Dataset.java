@@ -23,6 +23,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.data;
 
+import java.awt.Toolkit;
+
+import java.awt.datatransfer.*;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -195,6 +199,25 @@ public class Dataset extends DataTransform implements ImageTransform {
     // create dataset import dialog if it doesn't already exist
     if (datasetImporter == null) {
       datasetImporter = new DatasetPane(SwingUtil.getVisBioFileChooser());
+    }
+
+    // if clipboard contains a file name, use it as the default file pattern
+    if (file == null) {
+      Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
+      if (clip != null) {
+        Transferable t = clip.getContents(null);
+        if (t != null && t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+          String s = null;
+          try { s = (String) t.getTransferData(DataFlavor.stringFlavor); }
+          catch (IOException exc) { exc.printStackTrace(); }
+          catch (UnsupportedFlavorException exc) { exc.printStackTrace(); }
+          if (s != null) {
+            File f = new File(s);
+            File dir = f.getParentFile();
+            if (f.exists() || (dir != null && dir.exists())) file = f;
+          }
+        }
+      }
     }
     datasetImporter.selectFile(file);
 

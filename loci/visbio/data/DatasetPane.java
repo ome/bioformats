@@ -184,6 +184,25 @@ public class DatasetPane extends WizardPane implements DocumentListener {
   public void actionPerformed(ActionEvent e) {
     String command = e.getActionCommand();
     if (command.equals("select")) {
+      // start file chooser in the directory specified in the file pattern
+      String groupText = groupField.getText();
+      if (groupText.startsWith("~")) {
+        String userHome = System.getProperty("user.home");
+        if (userHome != null) {
+          groupText = userHome + File.separator + groupText.substring(1);
+        }
+      }
+      File dir = new File(groupText);
+      if (dir.isDirectory()) {
+        fileBox.setCurrentDirectory(dir);
+        fileBox.setSelectedFile(null);
+      }
+      else {
+        File file = dir;
+        dir = dir = dir.getParentFile();
+        if (dir != null && dir.isDirectory()) fileBox.setCurrentDirectory(dir);
+        if (file.exists()) fileBox.setSelectedFile(file);
+      }
       int returnVal = fileBox.showOpenDialog(this);
       if (returnVal != JFileChooser.APPROVE_OPTION) return;
       selectFile(fileBox.getSelectedFile());
