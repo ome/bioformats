@@ -57,6 +57,9 @@ public class RenderHandler {
 
   // -- Fields - initial state --
 
+  /** Volume rendering flag. */
+  protected boolean renderEnabled;
+
   /** Volume rendering resolution. */
   protected int renderRes;
 
@@ -66,19 +69,33 @@ public class RenderHandler {
   /** Creates a volume rendering handler. */
   public RenderHandler(DisplayWindow dw) {
     window = dw;
+    renderEnabled = false;
     renderRes = DEFAULT_RESOLUTION;
   }
 
 
   // -- RenderHandler API methods --
 
+  /** Sets whether volume rendering is enabled. */
+  public void setRenderEnabled(boolean enabled) {
+    if (panel == null) renderEnabled = enabled;
+    else panel.getRenderWindow().setRenderEnabled(enabled);
+    // CTR TODO toggle rendering
+  }
+
+  /** Gets whether volume rendering is enabled. */
+  public boolean isRenderEnabled() {
+    if (panel == null) return renderEnabled;
+    else return panel.getRenderWindow().isRenderEnabled();
+  }
+
   /** Sets volume rendering resolution. */
   public void setResolution(int res) {
     if (panel == null) renderRes = res;
     else panel.getRenderWindow().setResolution(res);
-
-    //
-
+    if (isRenderEnabled()) {
+      // CTR TODO retrigger rendering
+    }
     VisBioFrame bio = window.getVisBio();
     bio.generateEvent(bio.getManager(DisplayManager.class),
       "volume rendering resolution adjustment for " + window.getName(), true);
