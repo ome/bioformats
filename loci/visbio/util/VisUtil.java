@@ -24,12 +24,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.util;
 
 import java.awt.GraphicsConfiguration;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.rmi.RemoteException;
 import java.util.Hashtable;
 import java.util.Vector;
 import visad.*;
-import visad.java2d.DisplayImplJ2D;
-import visad.java2d.DisplayRendererJ2D;
+import visad.java2d.*;
 import visad.java3d.*;
 import visad.util.ReflectedUniverse;
 import visad.util.Util;
@@ -235,7 +236,7 @@ public abstract class VisUtil {
         else d = new DisplayImplJ2D(name);
       }
 
-      // configure display
+      // configure display events
       //d.disableEvent(DisplayEvent.MOUSE_PRESSED);
       //d.disableEvent(DisplayEvent.MOUSE_PRESSED_LEFT);
       //d.disableEvent(DisplayEvent.MOUSE_PRESSED_CENTER);
@@ -251,6 +252,40 @@ public abstract class VisUtil {
       d.disableEvent(DisplayEvent.DESTROYED);
       d.disableEvent(DisplayEvent.MAP_REMOVED);
       d.enableEvent(DisplayEvent.MOUSE_DRAGGED);
+
+      // configure keyboard behavior
+      KeyboardBehavior kb = null;
+      if (ok3D) {
+        DisplayRendererJ3D dr = (DisplayRendererJ3D) d.getDisplayRenderer();
+        kb = new KeyboardBehaviorJ3D(dr);
+        dr.addKeyboardBehavior((KeyboardBehaviorJ3D) kb);
+        int mods = InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK;
+        kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_X_POS,
+          KeyEvent.VK_DOWN, mods);
+        kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_X_NEG,
+          KeyEvent.VK_UP, mods);
+        kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_Y_POS,
+          KeyEvent.VK_LEFT, mods);
+        kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_Y_NEG,
+          KeyEvent.VK_RIGHT, mods);
+      }
+      else {
+        DisplayRendererJ2D dr = (DisplayRendererJ2D) d.getDisplayRenderer();
+        kb = new KeyboardBehaviorJ2D(dr);
+        dr.addKeyboardBehavior((KeyboardBehaviorJ2D) kb);
+      }
+      if (!threeD) {
+        kb.mapKeyToFunction(KeyboardBehavior.TRANSLATE_UP,
+          KeyEvent.VK_UP, InputEvent.CTRL_MASK);
+        kb.mapKeyToFunction(KeyboardBehavior.TRANSLATE_DOWN,
+          KeyEvent.VK_DOWN, InputEvent.CTRL_MASK);
+        kb.mapKeyToFunction(KeyboardBehavior.TRANSLATE_LEFT,
+          KeyEvent.VK_LEFT, InputEvent.CTRL_MASK);
+        kb.mapKeyToFunction(KeyboardBehavior.TRANSLATE_RIGHT,
+          KeyEvent.VK_RIGHT, InputEvent.CTRL_MASK);
+      }
+
+      // configure mouse behavior
       d.getMouseBehavior().getMouseHelper().setFunctionMap(new int[][][] {
         {{MouseHelper.DIRECT, MouseHelper.DIRECT},
          {MouseHelper.DIRECT, MouseHelper.DIRECT}},
@@ -259,8 +294,10 @@ public abstract class VisUtil {
         {{MouseHelper.ROTATE, MouseHelper.ZOOM},
          {MouseHelper.TRANSLATE, MouseHelper.NONE}}
       });
-      //d.getDisplayRenderer().setPickThreshhold(Float.MAX_VALUE);
+
+      // configure other display parameters
       if (threeD) d.getGraphicsModeControl().setLineWidth(2.0f);
+      //d.getDisplayRenderer().setPickThreshhold(Float.MAX_VALUE);
     }
     catch (VisADException exc) { d = null; }
     catch (RemoteException exc) { d = null; }
