@@ -82,6 +82,7 @@ public class FontChooserPane extends DialogPane implements ChangeListener {
     GraphicsEnvironment e = GraphicsEnvironment.getLocalGraphicsEnvironment();
     String[] fontNames = e.getAvailableFontFamilyNames();
     fontName = new JComboBox(fontNames);
+    fontName.setSelectedItem("Default");
     fontName.addActionListener(this);
 
     fontBold = new JCheckBox("Bold", false);
@@ -110,7 +111,7 @@ public class FontChooserPane extends DialogPane implements ChangeListener {
     // lay out components
     PanelBuilder builder = new PanelBuilder(new FormLayout(
       "pref, 3dlu, pref:grow, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref",
-      "pref, 9dlu, pref, 3dlu, fill:pref:grow"
+      "pref, 9dlu, pref, 3dlu, fill:70:grow"
     ));
     CellConstraints cc = new CellConstraints();
     JLabel fontNameLabel = builder.addLabel("Name", cc.xy(1, 1));
