@@ -95,6 +95,7 @@ public class ClassManager extends LogicManager {
       try { Class.forName(className); }
       catch (ClassNotFoundException exc) { }
     }
+    if (VisBioFrame.DEBUG) System.out.println("DONE PRELOADING CLASSES");
   }
 
 }
