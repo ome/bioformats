@@ -43,7 +43,7 @@ public abstract class LAFUtil {
     Options.setGlobalFontSizeHints(FontSizeHints.MIXED);
     Options.setDefaultIconSize(new Dimension(18, 18));
 
-    UIManager.installLookAndFeel("JGoodies ExtWindows",
+    UIManager.installLookAndFeel("JGoodies Windows",
       "com.jgoodies.plaf.windows.ExtWindowsLookAndFeel");
     UIManager.installLookAndFeel("JGoodies Plastic",
       "com.jgoodies.plaf.plastic.PlasticLookAndFeel");
