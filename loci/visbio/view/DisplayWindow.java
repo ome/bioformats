@@ -418,4 +418,14 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
     manager.getControls().refresh();
   }
 
+
+  // -- Utility methods --
+
+  /** Figures out which DisplayWindow contains the given display, if any. */
+  public static DisplayWindow getDisplayWindow(DisplayImpl d) {
+    Window w = SwingUtil.getWindow(d.getComponent());
+    if (!(w instanceof DisplayWindow)) return null;
+    return (DisplayWindow) w;
+  }
+
 }

@@ -256,7 +256,8 @@ public class ThumbnailHandler
 
   /** Generates thumbnails in a new background thread. */
   private void startGeneration() {
-    loader = new Thread(this);
+    loader = new Thread(this,
+      "VisBio-ThumbnailGenerationThread-" + data.getName());
     loader.setPriority(Thread.MIN_PRIORITY);
     loader.start();
   }

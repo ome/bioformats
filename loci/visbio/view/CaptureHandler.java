@@ -149,20 +149,19 @@ public class CaptureHandler {
     }
 
     // save file in a separate thread
-    Thread t = new Thread(new Runnable() {
+    new Thread("VisBio-SnapshotThread-" + window.getName()) {
       public void run() {
         FileSaver saver = new FileSaver(new ImagePlus("null", getSnapshot()));
         if (tiff) saver.saveAsTiff(file);
         else if (jpeg) saver.saveAsJpeg(file);
         else if (raw) saver.saveAsRaw(file);
       }
-    });
-    t.start();
+    }.start();
   }
 
   /** Sends a snapshot of the display to ImageJ. */
   public void sendToImageJ() {
-    Thread t = new Thread(new Runnable() {
+    new Thread("VisBio-SendToImageJThread-" + window.getName()) {
       public void run() {
         ImageJ ij = IJ.getInstance();
         if (ij == null || (ij != null && !ij.isShowing())) {
@@ -185,8 +184,7 @@ public class CaptureHandler {
         }
         new ImagePlus("VisBio snapshot", getSnapshot()).show();
       }
-    });
-    t.start();
+    }.start();
   }
 
   /** Creates a movie of the given transformation sequence. */
@@ -250,7 +248,7 @@ public class CaptureHandler {
     final int frm = framesPerTrans;
     final boolean doSine = sine;
 
-    Thread t = new Thread(new Runnable() {
+    new Thread("VisBio-CaptureThread-" + window.getName()) {
       public void run() {
         WindowManager wm = (WindowManager)
           window.getVisBio().getManager(WindowManager.class);
@@ -332,8 +330,7 @@ public class CaptureHandler {
         setProgress(0, "");
         wm.setWaitCursor(false);
       }
-    });
-    t.start();
+    }.start();
   }
 
 

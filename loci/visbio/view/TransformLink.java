@@ -274,7 +274,8 @@ public class TransformLink
     trans.addTransformListener(this);
 
     // initialize thread for handling full-resolution burn-in operations
-    burnThread = new Thread(this);
+    burnThread = new Thread(this, "VisBio-BurnThread-" +
+      handler.getWindow().getName() + ":" + trans.getName());
     burnThread.start();
   }
 
@@ -338,13 +339,19 @@ public class TransformLink
 
   /** Updates displayed data based on current dimensional position. */
   protected void doTransform(long delay) {
-    if (trans.isImmediate()) computeData(false);
-    else {
-      computeData(true);
-      // request a new burn-in in delay milliseconds
-      burnTime = System.currentTimeMillis() + delay;
-      if (delay < 100) burnNow = true;
-    }
+    String append = handler.getWindow().getName() + ":" + trans.getName();
+    final long burnDelay = delay;
+    new Thread("VisBio-ComputeDataThread-" + append) {
+      public void run() {
+        if (trans.isImmediate()) computeData(false);
+        else {
+          computeData(true);
+          // request a new burn-in in delay milliseconds
+          burnTime = System.currentTimeMillis() + burnDelay;
+          if (burnDelay < 100) burnNow = true;
+        }
+      }
+    }.start();
   }
 
   /**

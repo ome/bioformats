@@ -500,7 +500,7 @@ public class TransformHandler implements ChangeListener, Runnable  {
       try { animThread.join(); }
       catch (InterruptedException exc) { }
     }
-    animThread = new Thread(this);
+    animThread = new Thread(this, "VisBio-AnimThread-" + window.getName());
     animThread.start();
   }
 

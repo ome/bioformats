@@ -210,21 +210,19 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     else if (command.equals("next")) {
       // lay out page 2 in a separate thread
       pleaseWait("Examining files...");
-      Thread buildThread = new Thread(new Runnable() {
-        public void run() { buildPage(); }
-      });
       super.actionPerformed(e);
       disableButtons();
-      buildThread.start();
+      new Thread("VisBio-CheckDatasetThread") {
+        public void run() { buildPage(); }
+      }.start();
     }
     else if (command.equals("ok")) {
       pleaseWait("Reading files...");
-      Thread finishThread = new Thread(new Runnable() {
-        public void run() { finish(); }
-      });
       disableButtons();
       finishEvent = e;
-      finishThread.start();
+      new Thread("VisBio-FinishDatasetThread") {
+        public void run() { finish(); }
+      }.start();
     }
     else super.actionPerformed(e);
   }
