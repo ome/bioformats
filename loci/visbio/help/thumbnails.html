@@ -1,10 +1,6 @@
 <html><body><h2>Generating thumbnails</h2>
 
-<p>Generating thumbnails TODO
-
-<br><h3>Data thumbnailing (how animation works)</h3>
-
-To save memory, VisBio only keeps one dimensional position of the dataset
+<p>To save memory, VisBio only keeps one dimensional position of the dataset
 (e.g., one timestep) in memory at a time, thus allowing visualization of huge
 datasets quickly. Unfortunately, when switching positions, VisBio needs to load
 the new position into memory from disk, which takes time and slows down
@@ -18,15 +14,20 @@ You can see how far along the computation is from the progress bar in the main
 VisBio window. You can stop the computation process by clicking the "Stop"
 button next the progress bar, if you wish to conserve memory or CPU use.
 
-<p>VisBio has a "lo-res" mode and a "hi-res" mode. In lo-res mode the thumbnail
-is displayed, whereas in hi-res mode the data is loaded from disk. When you
-switch positions, VisBio uses lo-res mode by default to avoid the slowdown of
-going to disk for the data, keeping animation quick.
+<p>When visualizing data, VisBio has a "lo-res" mode and a "hi-res" mode. In
+lo-res mode the thumbnail is displayed, whereas in hi-res mode the data is
+loaded from disk. When you switch positions, VisBio uses lo-res mode by default
+to avoid the slowdown of going to disk for the data, keeping animation quick.
 
 <p>VisBio loads hi-res data for the current dimensional position in the
 background. If it finishes loading the hi-res data, it displays it. Thus, the
 hi-res data will eventually "burn in" if you leave the displays idle for a
 moment.
+
+<p>If there is no thumbnail for an image plane in lo-res mode (e.g., if
+thumbnails are not finished loading, or if you pressed the "Stop" button), the
+plane will be missing. Once the hi-res data for that plane is loaded, its
+thumbnail will be computed automatically and cached on disk.
 
 <br><h3>Controlling thumbnailing</h3>
 
@@ -38,15 +39,31 @@ animation at the expense of an initial thumbnail loading time.
 smaller will result in lo-res mode looking blockier but thumbnails taking less
 memory, whereas larger numbers will require more memory to store the thumbnails
 but look crisper while animating.
-<i>[Author's note: Sorry, options for controlling thumbnailing parameters are
-not included in this beta release.]</i>
+
+<p><i>[Author's note: Options for controlling thumbnailing parameters are not
+included in this beta release.]</i>
 
 <br><h3>Thumbnail disk cache files</h3>
 
 For each dataset you import, VisBio creates a disk cache of computed thumbnails
 in a file with extension ".visbio" in the same directory as your dataset. If
 this file already exists, VisBio reads the thumbnails from it, greatly speeding
-thumbnail generation. To cause VisBio to regenerate thumbnails from the source
-data, just delete the ".visbio" cache file.
+thumbnail generation. You can even include the cache file with your dataset
+when distributing your data to allow others to read in your data more quickly.
+Lastly, if for some reason you want VisBio to regenerate thumbnails from the
+source data, just delete the ".visbio" cache file.
+
+<br><h3>See also:</h3>
+
+<ul>
+  <li><a href="import_data.html">Importing a dataset from disk</a>
+    - to load a dataset into VisBio</li>
+  <li><a href="display_data.html">Displaying a data object</a>
+    - to visualize a dataset that has been loaded</li>
+  <li><a href="data_settings.html">Data settings</a>
+    - to configure hi-res burn-in for a display</a>
+  <li><a href="data_panel.html">Data panel</a>
+    - controls for managing data</li>
+</ul>
 
 <p>&nbsp;<p></body></html>

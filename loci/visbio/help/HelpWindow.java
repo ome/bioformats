@@ -151,14 +151,15 @@ public class HelpWindow extends JFrame
 
   /** Updates help topic based on user selection. */
   public void valueChanged(TreeSelectionEvent e) {
-    HelpTopic node = (HelpTopic)
-      e.getNewLeadSelectionPath().getLastPathComponent();
-    final String source = node.getSource();
+    TreePath path = e.getNewLeadSelectionPath();
+    HelpTopic node = path == null ? null :
+      (HelpTopic) path.getLastPathComponent();
+    final String source = node == null ? null : node.getSource();
     if (source == null) {
-      pane.setText(node.getName());
+      pane.setText(node == null ? "" : node.getName());
       return;
     }
-    pane.setText("Loading " + source + "...");
+    pane.setText("<h2>" + node.getName() + "</h2>");
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         try { pane.setPage(getClass().getResource(source)); }
@@ -170,8 +171,8 @@ public class HelpWindow extends JFrame
         // HACK - JEditorPane.setPage(URL) throws a RuntimeException
         // ("Must insert new content into body element-")
         // when editor pane is successively updated too rapidly.
-        // This 10ms delay seems sufficient to prevent the exception.
-        try { Thread.sleep(10); }
+        // This 50ms delay seems sufficient to prevent the exception.
+        try { Thread.sleep(50); }
         catch (InterruptedException exc) { }
       }
     });
