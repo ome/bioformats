@@ -1,4 +1,4 @@
-v3.00 beta1 - Tuesday, August 31, 2004
+v3.00 beta1 - Wednesday, September 1, 2004
 
 - ADDED: Support for Metamorph STK file format
 - ADDED: Support for Olympus Fluoview file format
