@@ -27,6 +27,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -172,6 +173,13 @@ public class VisBioFrame extends GUIFrame {
 
     // distribute menu bar across all frames
     if (LAFUtil.isMacLookAndFeel()) wm.setDistributedMenus(true);
+
+    // set program icon
+		URL url = getClass().getResource("visbio-icon.gif");
+		if (url != null) {
+  		Image icon = new ImageIcon(url).getImage();
+  		if (icon != null) setIconImage(icon);
+  	}
 
     // show VisBio window onscreen
     pack();
