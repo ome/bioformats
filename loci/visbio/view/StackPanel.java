@@ -27,8 +27,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import loci.visbio.data.DataTransform;
-import loci.visbio.util.FormsUtil;
-import loci.visbio.util.LAFUtil;
+import loci.visbio.util.*;
 
 /** Provides GUI controls for a display stack handler. */
 public class StackPanel extends TransformPanel {
@@ -39,7 +38,7 @@ public class StackPanel extends TransformPanel {
   protected JLabel stackLabel;
 
   /** List of axes for stacking. */
-  protected JComboBox stackBox;
+  protected BioComboBox stackBox;
 
   /** Dialog box for toggling individual slices. */
   protected SliceToggler sliceToggler;
@@ -177,7 +176,7 @@ public class StackPanel extends TransformPanel {
   /** Creates a panel for controls pertaining to the selected data object. */
   protected JPanel doDataProperties() {
     // stack axis combo box
-    stackBox = new JComboBox(new String[] {"None"});
+    stackBox = new BioComboBox(new String[] {"None"});
     stackBox.setToolTipText("The axis over which to stack images in 3D");
     stackBox.setActionCommand("stackBox");
     stackBox.addActionListener(this);

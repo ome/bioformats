@@ -32,8 +32,8 @@ import java.awt.event.ItemListener;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import loci.visbio.util.BioComboBox;
 import loci.visbio.util.FormsUtil;
-import loci.visbio.util.SwingUtil;
 
 /** SliceWidget is a set of GUI controls for an arbitrary slice. */
 public class SliceWidget extends JPanel
@@ -51,7 +51,7 @@ public class SliceWidget extends JPanel
   protected ArbitrarySlice slice;
 
   /** Dropdown combo box listing available dimensions to slice through. */
-  protected JComboBox axes;
+  protected BioComboBox axes;
 
   /** Slider for adjusting yaw. */
   protected JSlider yaw;
@@ -97,8 +97,7 @@ public class SliceWidget extends JPanel
     // create combo box for selecting which axis to slice through
     String[] names = new String[types.length];
     for (int i=0; i<names.length; i++) names[i] = (i + 1) + ": " + types[i];
-    axes = new JComboBox(names);
-    SwingUtil.configureComboBox(axes);
+    axes = new BioComboBox(names);
     axes.setSelectedIndex(slice.getAxis());
     axes.addItemListener(this);
 

@@ -34,8 +34,7 @@ import java.math.BigInteger;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import loci.visbio.util.SwingUtil;
-import loci.visbio.util.WizardPane;
+import loci.visbio.util.*;
 import visad.VisADException;
 import visad.util.Util;
 
@@ -71,13 +70,13 @@ public class DatasetPane extends WizardPane implements DocumentListener {
   private JPanel second;
 
   /** Dimensional widgets. */
-  private JComboBox[] widgets;
+  private BioComboBox[] widgets;
 
   /** Label for dimBox. */
   private JLabel dimLabel;
 
   /** Combo box for selecting each file's dimensional content. */
-  private JComboBox dimBox;
+  private BioComboBox dimBox;
 
 
   // -- Other fields --
@@ -135,8 +134,7 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     nameField = new JTextField(4);
 
     // combo box for dimensional range type within each file
-    dimBox = new JComboBox(DIM_TYPES);
-    SwingUtil.configureComboBox(dimBox);
+    dimBox = new BioComboBox(DIM_TYPES);
     dimBox.setEditable(true);
     dimBox.setSelectedIndex(1);
 
@@ -325,10 +323,9 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     for (int i=2; i<blocks; i++) kind[i] = "Other";
 
     // construct dimensional widgets
-    widgets = new JComboBox[blocks];
+    widgets = new BioComboBox[blocks];
     for (int i=0; i<blocks; i++) {
-      widgets[i] = new JComboBox(DIM_TYPES);
-      SwingUtil.configureComboBox(widgets[i]);
+      widgets[i] = new BioComboBox(DIM_TYPES);
       widgets[i].setEditable(true);
       widgets[i].setSelectedItem(kind[i]);
     }

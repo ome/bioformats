@@ -42,7 +42,7 @@ public class CollapseWidget extends JPanel implements ActionListener {
   protected CollapseTransform collapse;
 
   /** Dropdown combo box listing available dimensions for collapse. */
-  protected JComboBox axes;
+  protected BioComboBox axes;
 
 
   // -- Constructor --
@@ -58,8 +58,7 @@ public class CollapseWidget extends JPanel implements ActionListener {
     // create combo box for selecting which axis to collapse
     String[] names = new String[types.length];
     for (int i=0; i<names.length; i++) names[i] = (i + 1) + ": " + types[i];
-    axes = new JComboBox(names);
-    SwingUtil.configureComboBox(axes);
+    axes = new BioComboBox(names);
 
     // apply button
     JButton apply = new JButton("Apply");

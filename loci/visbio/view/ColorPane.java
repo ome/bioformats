@@ -104,7 +104,7 @@ public class ColorPane extends DialogPane
   protected BioColorWidget red, green, blue;
 
   /** Combo box for choosing color widgets. */
-  protected JComboBox selector;
+  protected BioComboBox selector;
 
   /** Option for fixed color scaling. */
   protected JCheckBox fixed;
@@ -646,7 +646,7 @@ public class ColorPane extends DialogPane
   protected JPanel makeTablesPanel() {
     // color widget selector
     //BaseRGBMap.USE_COLOR_CURSORS = true;
-    selector = new JComboBox();
+    selector = new BioComboBox();
     selector.addActionListener(this);
     selector.setToolTipText("List of color tables for color components");
 

@@ -26,6 +26,7 @@ package loci.visbio.view;
 import java.awt.event.ItemListener;
 import java.util.Vector;
 import javax.swing.*;
+import loci.visbio.util.BioComboBox;
 import loci.visbio.util.ColorUtil;
 import visad.RealType;
 import visad.ScalarType;
@@ -51,7 +52,7 @@ public class BioColorWidget extends JPanel {
   protected JLabel color;
 
   /** Combo box listing available range components. */
-  protected JComboBox box;
+  protected BioComboBox box;
 
   /** List of range component scalars. */
   protected Vector scalars;
@@ -75,7 +76,7 @@ public class BioColorWidget extends JPanel {
 
     // create components
     color = new JLabel(COLOR_NAMES[model][type]);
-    box = new JComboBox();
+    box = new BioComboBox();
     scalars = new Vector();
     addItem("None", ColorUtil.CLEAR);
     addItem("Full", ColorUtil.SOLID);

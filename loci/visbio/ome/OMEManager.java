@@ -95,7 +95,7 @@ public class OMEManager extends LogicManager implements TaskListener {
   }
 
   /** Gets the number of tasks required to initialize this logic manager. */
-  public int getTasks() { return 1; }
+  public int getTasks() { return 2; }
 
 
   // -- TaskListener API methods --
@@ -123,8 +123,12 @@ public class OMEManager extends LogicManager implements TaskListener {
   private void doGUI() {
     // upload pane
     bio.setSplashStatus("Initializing OME logic");
-    DataManager dm = (DataManager) bio.getManager(DataManager.class);
     loginPane = new OMELoginPane();
+
+    // OME image transform registration
+    bio.setSplashStatus(null);
+    DataManager dm = (DataManager) bio.getManager(DataManager.class);
+    dm.registerDataType(OMEImage.class, "OME Image");
   }
 
 }

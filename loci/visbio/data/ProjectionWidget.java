@@ -27,7 +27,8 @@ import com.jgoodies.forms.factories.ButtonBarFactory;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JPanel;
 import loci.visbio.util.*;
 
 /**
@@ -42,7 +43,7 @@ public class ProjectionWidget extends JPanel implements ActionListener {
   protected ProjectionTransform projection;
 
   /** Dropdown combo box listing available dimensions for projection. */
-  protected JComboBox axes;
+  protected BioComboBox axes;
 
 
   // -- Constructor --
@@ -58,8 +59,7 @@ public class ProjectionWidget extends JPanel implements ActionListener {
     // create combo box for selecting which axis to project
     String[] names = new String[types.length];
     for (int i=0; i<names.length; i++) names[i] = (i + 1) + ": " + types[i];
-    axes = new JComboBox(names);
-    SwingUtil.configureComboBox(axes);
+    axes = new BioComboBox(names);
 
     // apply button
     JButton apply = new JButton("Apply");

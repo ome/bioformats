@@ -55,7 +55,7 @@ public class FontChooserPane extends DialogPane implements ChangeListener {
   // -- Fields --
 
   /** Dropdown combo box containing available font names. */
-  protected JComboBox fontName;
+  protected BioComboBox fontName;
 
   /** Checkbox for indicating font should be in bold face. */
   protected JCheckBox fontBold;
@@ -115,8 +115,7 @@ public class FontChooserPane extends DialogPane implements ChangeListener {
         break;
       }
     }
-    fontName = new JComboBox(fontNames);
-    SwingUtil.configureComboBox(fontName);
+    fontName = new BioComboBox(fontNames);
     fontName.setSelectedIndex(ndx);
     fontName.addActionListener(this);
 

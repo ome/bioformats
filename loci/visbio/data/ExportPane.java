@@ -47,7 +47,7 @@ public class ExportPane extends WizardPane {
   private JTextField patternField;
 
   /** File format combo box. */
-  private JComboBox formatBox;
+  private BioComboBox formatBox;
 
 
   // -- GUI components, page 2 --
@@ -62,7 +62,7 @@ public class ExportPane extends WizardPane {
   private JTextField fps;
 
   /** Combo boxes for mapping each star to corresponding dimensional axes. */
-  private JComboBox[] letterBoxes;
+  private BioComboBox[] letterBoxes;
 
 
   // -- GUI components, page 3 --
@@ -117,8 +117,7 @@ public class ExportPane extends WizardPane {
     // format combo box
     String[] formats = saver.canSaveQT() ?
       new String[] {"TIFF", "PIC", "MOV"} : new String[] {"TIFF", "PIC"};
-    formatBox = new JComboBox(formats);
-    SwingUtil.configureComboBox(formatBox);
+    formatBox = new BioComboBox(formats);
 
     // lay out first page
     PanelBuilder builder = new PanelBuilder(new FormLayout(
@@ -357,13 +356,12 @@ public class ExportPane extends WizardPane {
           builder.add(leadingZeroes, cc.xyw(1, row, 3, "right,center"));
           row += 2;
         }
-        letterBoxes = new JComboBox[stars];
+        letterBoxes = new BioComboBox[stars];
         for (int i=0; i<stars; i++) {
           char letter = (char) ('A' + i);
           builder.addLabel("<" + letter + "> =",
             cc.xy(1, row, "right,center"));
-          letterBoxes[i] = new JComboBox(dimChoices);
-          SwingUtil.configureComboBox(letterBoxes[i]);
+          letterBoxes[i] = new BioComboBox(dimChoices);
           letterBoxes[i].setSelectedIndex(i);
           builder.add(letterBoxes[i], cc.xy(3, row));
           row += 2;

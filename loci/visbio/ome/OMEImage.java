@@ -24,9 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.ome;
 
 import java.awt.Component;
+import java.rmi.RemoteException;
 import javax.swing.JOptionPane;
-import loci.visbio.TaskEvent;
-import loci.visbio.TaskListener;
 import loci.visbio.data.*;
 import loci.visbio.state.Dynamic;
 import loci.visbio.util.ObjectUtil;
@@ -35,7 +34,7 @@ import org.openmicroscopy.ds.DataServices;
 import org.openmicroscopy.ds.dto.Image;
 import org.openmicroscopy.ds.st.Pixels;
 import org.openmicroscopy.is.PixelsFactory;
-import visad.Data;
+import visad.*;
 
 /**
  * A OMEImage object encompasses a multidimensional biological image series
@@ -45,7 +44,7 @@ import visad.Data;
  * application, and just downloads data as necessary to return whatever the
  * application requests, according to the DataTransform API.
  */
-public class OMEImage extends ImageTransform implements TaskListener {
+public class OMEImage extends ImageTransform {
 
   // -- Static fields --
 
@@ -102,6 +101,12 @@ public class OMEImage extends ImageTransform implements TaskListener {
 
   /** Number of channels in this image. */
   protected int sizeC;
+
+  /** Index for Slice dimension. */
+  protected int indexZ;
+
+  /** Index for Time dimension. */
+  protected int indexT;
 
 
   // -- Constructors --
@@ -200,71 +205,21 @@ public class OMEImage extends ImageTransform implements TaskListener {
     if (dim != 2) return null;
     if (cache != null) return cache.getData(this, pos, null, dim);
 
-    // CTR START HERE - extract proper Z and T values from pos array
-    //downloader.downloadPixels(pf, pixels, z, t);
+    int z = indexZ < 0 ? 0 : pos[indexZ];
+    int t = indexT < 0 ? 0 : pos[indexT];
+    float[][] samples = downloader.downloadPixels(pf, pixels, z, t);
 
-/* CTR TODO
-    int[] indices = getIndices(pos);
-    int fileIndex = indices[0];
-    if (fileIndex < 0 || fileIndex >= ids.length) {
-      System.err.println("Invalid file number #" + fileIndex);
-      return null;
+    FunctionType fieldType = getType();
+    RealTupleType fieldDomain = fieldType.getDomain();
+    try {
+      Linear2DSet fieldSet = new Linear2DSet(fieldDomain,
+        0, sizeX - 1, sizeX, sizeY - 1, 0, sizeY);
+      FlatField field = new FlatField(fieldType, fieldSet);
+      field.setSamples(samples, false);
+      return field;
     }
-    int imgIndex = indices[1];
-    String filename = "\"" + new File(ids[fileIndex]).getName() + "\"";
-
-    DataImpl d = null;
-
-    int numImg = -1;
-    try { numImg = loaders[fileIndex].getBlockCount(ids[fileIndex]); }
-    catch (IOException exc) { numImg = -1; }
-    catch (VisADException exc) { numImg = -1; }
-    if (numImg < 0) {
-      System.err.println("Could not read file " + filename);
-      return null;
-    }
-    else if (numImg == 0) {
-      System.err.println("File " + filename + " contains no images");
-      return null;
-    }
-    if (imgIndex < 0 || imgIndex >= numImg) {
-      System.err.println("Invalid image number #" + (imgIndex + 1) +
-        " for file " + filename + " (" + numImg + " found)");
-      return null;
-    }
-
-    int tries = 3;
-    while (tries > 0) {
-      boolean again = false;
-      try { d = loaders[fileIndex].open(ids[fileIndex], imgIndex); }
-      catch (IOException exc) {
-        String msg = exc.getMessage();
-        if (msg != null && msg.indexOf("Bad file descriptor") >= 0) {
-          // HACK - trap for catching sporadic exception; try again!
-          if (tries == 0) {
-            System.err.println("Unable to read image #" + (imgIndex + 1) +
-              " from file " + filename);
-            return null;
-          }
-          else again = true;
-        }
-      }
-      catch (VisADException exc) {
-        System.err.println("Unable to read image #" + (imgIndex + 1) +
-          " from file " + filename);
-        return null;
-      }
-      if (again) tries--;
-      else break;
-    }
-    if (!(d instanceof FlatField)) {
-      String className = d == null ? "null" : d.getClass().getName();
-      System.err.println("Data chunk #" + (imgIndex + 1) + " from file " +
-        filename + " is not an image (" + className + ")");
-      return null;
-    }
-    return (FlatField) d;
-*/
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
     return null;
   }
 
@@ -387,7 +342,6 @@ public class OMEImage extends ImageTransform implements TaskListener {
 
     // initialize download helper
     downloader = new ImageDownloader();
-    downloader.addTaskListener(this);
 
     // download image details
     rs = downloader.login(server, user, password);
@@ -402,6 +356,29 @@ public class OMEImage extends ImageTransform implements TaskListener {
     sizeT = pixels.getSizeT().intValue();
     sizeC = pixels.getSizeC().intValue();
 
+    // populate lengths and dims arrays
+    if (sizeZ == 1 && sizeT == 1) {
+      lengths = new int[0];
+      dims = new String[0];
+      indexZ = indexT = -1;
+    }
+    else if (sizeZ == 1) {
+      lengths = new int[] {sizeT};
+      dims = new String[] {"Time"};
+      indexZ = -1; indexT = 0;
+    }
+    else if (sizeT == 1) {
+      lengths = new int[] {sizeZ};
+      dims = new String[] {"Slice"};
+      indexZ = 0; indexT = -1;
+    }
+    else {
+      lengths = new int[] {sizeZ, sizeT};
+      dims = new String[] {"Slice", "Time"};
+      indexZ = 0; indexT = 1;
+    }
+    makeLabels();
+
     // construct thumbnail handler
     thumbs = new ThumbnailHandler(this, "cache.visbio"); // use global cache
   }
@@ -411,13 +388,5 @@ public class OMEImage extends ImageTransform implements TaskListener {
    * another object with a matching state.
    */
   public void discard() { if (rs != null) downloader.logout(rs); }
-
-
-  // -- TaskListener API methods --
-
-  /** Called when a download task progresses. */
-  public void taskUpdated(TaskEvent e) {
-    // CTR TODO taskUpdated
-  }
 
 }

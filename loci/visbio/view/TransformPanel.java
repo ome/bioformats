@@ -74,10 +74,10 @@ public class TransformPanel extends JPanel
   protected JSpinner delayTime;
 
   /** List of axes for left/right arrow mapping. */
-  protected JComboBox leftRightBox;
+  protected BioComboBox leftRightBox;
 
   /** List of axes for up/down arrow mapping. */
-  protected JComboBox upDownBox;
+  protected BioComboBox upDownBox;
 
   /** Button for toggling status of animation. */
   protected JButton animate;
@@ -86,7 +86,7 @@ public class TransformPanel extends JPanel
   protected JSpinner fps;
 
   /** List of axes for animation. */
-  protected JComboBox animBox;
+  protected BioComboBox animBox;
 
 
   // -- Constructor --
@@ -407,14 +407,12 @@ public class TransformPanel extends JPanel
   /** Creates a panel with animation-related components. */
   protected JPanel doAnimationPanel() {
     // left/right combo box
-    leftRightBox = new JComboBox(new String[] {"None"});
-    SwingUtil.configureComboBox(leftRightBox);
+    leftRightBox = new BioComboBox(new String[] {"None"});
     leftRightBox.setToolTipText("The axis " +
       "traversed by the left and right arrow keys");
 
     // up/down combo box
-    upDownBox = new JComboBox(new String[] {"None"});
-    SwingUtil.configureComboBox(upDownBox);
+    upDownBox = new BioComboBox(new String[] {"None"});
     upDownBox.setToolTipText("The axis " +
       "traversed by the up and down arrow keys");
 
@@ -435,8 +433,7 @@ public class TransformPanel extends JPanel
     fps.addChangeListener(this);
 
     // animation axis combo box
-    animBox = new JComboBox(new String[] {"None"});
-    SwingUtil.configureComboBox(animBox);
+    animBox = new BioComboBox(new String[] {"None"});
     animBox.setToolTipText("The axis over which to animate");
     animBox.setActionCommand("animBox");
     animBox.addActionListener(this);
