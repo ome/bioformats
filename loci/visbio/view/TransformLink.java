@@ -165,8 +165,9 @@ public class TransformLink
 
   // -- DisplayListener API methods --
 
-  /** Ensures status messages stay visible. */
+  /** Handles VisAD display events. */
   public void displayChanged(DisplayEvent e) {
+    // ensure status messages stay visible
     int id = e.getId();
     if (id == DisplayEvent.FRAME_DONE) {
       computeCursor();
@@ -179,6 +180,9 @@ public class TransformLink
       }
       else doMessages(false);
     }
+
+    // pass along DisplayEvents to linked transform
+    trans.displayChanged(e);
   }
 
 
