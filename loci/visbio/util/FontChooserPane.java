@@ -93,7 +93,7 @@ public class FontChooserPane extends DialogPane implements ChangeListener {
     if (!LAFUtil.isMacLookAndFeel()) fontItalic.setMnemonic('i');
     fontItalic.addActionListener(this);
 
-    SpinnerNumberModel fontSizeModel = new SpinnerNumberModel(12, 1, 150, 0.5);
+    SpinnerNumberModel fontSizeModel = new SpinnerNumberModel(11, 1, 150, 0.5);
     fontSize = new JSpinner(fontSizeModel);
     fontSize.addChangeListener(this);
 
