@@ -45,7 +45,10 @@ public class HelpWindow extends JFrame
   private static final int DEFAULT_WIDTH = 950;
 
   /** Default height of help window in pixels. */
-  private static final int DEFAULT_HEIGHT = 600;
+  private static final int DEFAULT_HEIGHT = 700;
+
+  /** Minimum width of tree pane. */
+  private static final int MIN_TREE_WIDTH = 250;
 
 
   // -- Fields --
@@ -80,6 +83,7 @@ public class HelpWindow extends JFrame
 
     // lay out components
     JScrollPane topicsScroll = new JScrollPane(topics);
+    topicsScroll.setMinimumSize(new Dimension(MIN_TREE_WIDTH, 0));
     SwingUtil.configureScrollPane(topicsScroll);
     JScrollPane paneScroll = new JScrollPane(pane);
     SwingUtil.configureScrollPane(paneScroll);
