@@ -44,11 +44,7 @@ import loci.visbio.data.DataTransform;
 
 import loci.visbio.state.Dynamic;
 
-import loci.visbio.util.BreakawayPanel;
-import loci.visbio.util.FormsUtil;
-import loci.visbio.util.ObjectUtil;
-import loci.visbio.util.SwingUtil;
-import loci.visbio.util.VisUtil;
+import loci.visbio.util.*;
 
 import visad.DisplayImpl;
 
@@ -143,6 +139,8 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
     String edge = controls.getEdge();
     if (edge == BorderLayout.EAST || edge == BorderLayout.WEST) {
       size.width = controls.getPreferredSize().width + size.height - 20;
+      // HACK - work around a layout issue where panel is slightly too short
+      if ("Linux".equals(System.getProperty("os.name"))) size.height += 10;
     }
     else if (edge == BorderLayout.NORTH || edge == BorderLayout.SOUTH) {
       size.height = controls.getPreferredSize().height + size.width + 20;
