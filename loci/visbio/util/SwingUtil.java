@@ -223,7 +223,7 @@ public abstract class SwingUtil {
 
     // TIFF - tiff/TiffForm, ij/ImageJForm
     FileFilter tiff = new ExtensionFileFilter(
-      new String[] {"tiff", "tif"}, "Multi-page TIFF stacks");
+      new String[] {"tif", "tiff"}, "Multi-page TIFF stacks");
     dialog.addChoosableFileFilter(tiff);
     filters.add(tiff);
 
