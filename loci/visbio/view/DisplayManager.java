@@ -184,14 +184,14 @@ public class DisplayManager extends LogicManager {
     int nlen = vn.size();
     for (int i=0; i<nlen; i++) {
       DisplayWindow display = (DisplayWindow) vn.elementAt(i);
-      if (vo.indexOf(display) < 0) addDisplay(display);
+      if (!vo.contains(display)) addDisplay(display);
     }
 
     // purge old displays from display list
     int olen = vo.size();
     for (int i=0; i<olen; i++) {
       DisplayWindow display = (DisplayWindow) vo.elementAt(i);
-      if (vn.indexOf(display) < 0) removeDisplay(display);
+      if (!vn.contains(display)) removeDisplay(display);
     }
   }
 

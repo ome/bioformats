@@ -140,7 +140,7 @@ public class BioSlideWidget extends JPanel
    * @return true if the transform is compatible and successfully linked
    */
   public boolean addTransform(DataTransform trans, int ndx) {
-    if (transforms.indexOf(trans) >= 0) return false; // already linked
+    if (transforms.contains(trans)) return false; // already linked
 
     String[] types = trans.getDimTypes();
     if (ndx < 0 || ndx >= types.length) return false; // invalid index

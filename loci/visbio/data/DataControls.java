@@ -408,6 +408,7 @@ public class DataControls extends ControlPanel
             wm.showWindow(window);
           }
         });
+        item.setEnabled(!window.hasTransform(data));
         menu.add(item);
       }
       if (dd.length > 0) menu.addSeparator();

@@ -234,14 +234,14 @@ public class DataManager extends LogicManager {
     int nlen = vn.size();
     for (int i=0; i<nlen; i++) {
       DataTransform data = (DataTransform) vn.elementAt(i);
-      if (vo.indexOf(data) < 0) addData(data);
+      if (!vo.contains(data)) addData(data);
     }
 
     // purge old transforms from tree structure
     int olen = vo.size();
     for (int i=0; i<olen; i++) {
       DataTransform data = (DataTransform) vo.elementAt(i);
-      if (vn.indexOf(data) < 0) removeData(data);
+      if (!vn.contains(data)) removeData(data);
     }
   }
 

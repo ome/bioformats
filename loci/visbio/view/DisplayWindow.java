@@ -203,6 +203,11 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
       "remove all data objects from " + name, true);
   }
 
+  /** Gets whether the given transform is currently linked to the display. */
+  public boolean hasTransform(DataTransform trans) {
+    return transformHandler.hasTransform(trans);
+  }
+
 
   // -- DisplayWindow API methods - state logic --
 

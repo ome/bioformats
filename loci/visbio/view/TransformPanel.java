@@ -113,6 +113,11 @@ public class TransformPanel extends JPanel
   /** Unlinks all data transforms from the display. */
   public void removeAllTransforms() { transformModel.removeAllElements(); }
 
+  /** Gets whether the given transform is currently linked to the display. */
+  public boolean hasTransform(DataTransform trans) {
+    return transformModel.contains(trans);
+  }
+
   /** Adds a dimensional axis. */
   public void addAxis(String axis) {
     String s = "<" + animBox.getItemCount() + "> " + axis;
@@ -347,6 +352,7 @@ public class TransformPanel extends JPanel
 
     JMenuItem[] items = new JMenuItem[children == 0 ? 1 : 2];
     items[0] = new JMenuItem(name);
+    items[0].setEnabled(!hasTransform(data));
     items[0].addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handler.getWindow().addTransform(data);

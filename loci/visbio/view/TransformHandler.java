@@ -131,6 +131,11 @@ public class TransformHandler implements ChangeListener, Runnable  {
     rebuild();
   }
 
+  /** Gets whether the given transform is currently linked to the display. */
+  public boolean hasTransform(DataTransform trans) {
+    return panel.hasTransform(trans);
+  }
+
   /** Gets data transforms linked to the display. */
   public DataTransform[] getTransforms() {
     DataTransform[] dt = new DataTransform[links.size()];
@@ -306,7 +311,7 @@ public class TransformHandler implements ChangeListener, Runnable  {
         }
         ScalarMap[] maps = trans.getSuggestedMaps();
         for (int m=0; m<maps.length; m++) {
-          if (mapList.indexOf(maps[m]) < 0) mapList.add(maps[m]);
+          if (!mapList.contains(maps[m])) mapList.add(maps[m]);
         }
       }
 
