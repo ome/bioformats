@@ -85,18 +85,35 @@ public class WizardPane extends DialogPane {
     if (this.page >= 0) pages[this.page].setVisible(false);
     pages[page].setVisible(true);
     this.page = page;
+    enableButtons();
+    repack();
+  }
+
+  /** Resizes and centers dialog based on its contents. */
+  public void repack() {
+    if (dialog == null) return;
+    Dimension ss = Toolkit.getDefaultToolkit().getScreenSize();
+    Dimension w = dialog.getPreferredSize();
+    dialog.setBounds(new Rectangle((ss.width - w.width) / 2,
+      (ss.height - w.height) / 2, w.width, w.height));
+    dialog.validate();
+  }
+
+  /** Enables wizard's buttons. */
+  public void enableButtons() {
     back.setEnabled(page > 0);
     int last = pages.length - 1;
     next.setEnabled(page < last);
     ok.setEnabled(page == last);
-    if (dialog != null) {
-      // resize and center dialog
-      Dimension ss = Toolkit.getDefaultToolkit().getScreenSize();
-      Dimension w = dialog.getPreferredSize();
-      dialog.setBounds(new Rectangle((ss.width - w.width) / 2,
-        (ss.height - w.height) / 2, w.width, w.height));
-      dialog.validate();
-    }
+    cancel.setEnabled(true);
+  }
+
+  /** Disables wizard's buttons. */
+  public void disableButtons() {
+    back.setEnabled(false);
+    next.setEnabled(false);
+    ok.setEnabled(false);
+    cancel.setEnabled(false);
   }
 
 
