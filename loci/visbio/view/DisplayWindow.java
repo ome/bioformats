@@ -108,6 +108,9 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
   // -- Constructors --
 
   /** Creates an uninitialized display object. */
+  public DisplayWindow() { }
+
+  /** Creates an uninitialized display object. */
   public DisplayWindow(DisplayManager dm) {
     super();
     manager = dm;

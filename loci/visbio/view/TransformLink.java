@@ -328,7 +328,19 @@ public class TransformLink
 
   /** Called when a data transform's parameters are updated. */
   public void transformChanged(TransformEvent e) {
-    doTransform(TransformHandler.MINIMUM_BURN_DELAY);
+    int id = e.getId();
+    if (id == TransformEvent.DATA_CHANGED) {
+      doTransform(TransformHandler.MINIMUM_BURN_DELAY);
+    }
+    else if (id == TransformEvent.FONT_CHANGED) {
+      // CTR TODO set the font here
+    /*
+    TextControl textControl = (TextControl) tMap.getControl();
+    if (textControl != null) textControl.setFont(font);
+    */
+      String append = handler.getWindow().getName() + ":" + trans.getName();
+      /*TEMP*/System.out.println(append + ": Font change");
+    }
   }
 
 

@@ -47,9 +47,7 @@ import loci.visbio.state.StateManager;
 
 import loci.visbio.util.VisUtil;
 
-import visad.DisplayImpl;
-import visad.ScalarMap;
-import visad.VisADException;
+import visad.*;
 
 /** Provides logic for linking data transforms to a display. */
 public class TransformHandler implements ChangeListener, Runnable  {
@@ -426,7 +424,7 @@ public class TransformHandler implements ChangeListener, Runnable  {
       panel.removeAllAxes();
 
       // rebuild dimensional sliders and mappings list
-      Vector mapList = new Vector();
+      Vector mapList = new Vector(), mapTrans = new Vector();
       for (int l=0; l<lnk.length; l++) {
         DataTransform trans = lnk[l].getTransform();
         String[] types = trans.getDimTypes();
@@ -447,14 +445,28 @@ public class TransformHandler implements ChangeListener, Runnable  {
         }
         ScalarMap[] maps = trans.getSuggestedMaps();
         for (int m=0; m<maps.length; m++) {
-          if (!mapList.contains(maps[m])) mapList.add(maps[m]);
+          if (!mapList.contains(maps[m])) {
+            mapList.add(maps[m]);
+            mapTrans.add(trans); // save first transform that needs this map
+          }
         }
       }
 
       // reconstruct display mappings
       try {
         for (int i=0; i<mapList.size(); i++) {
+          ScalarMap map = (ScalarMap) mapList.elementAt(i);
           display.addMap((ScalarMap) mapList.elementAt(i));
+
+          // configure map's controls according to transform settings;
+          // if multiple transforms have the same map, but different
+          // settings, the first transform's settings take precedence
+          DataTransform trans = (DataTransform) mapTrans.elementAt(i);
+          if (map.getDisplayScalar().equals(Display.Text)) {
+            // for Text maps, configure font
+            TextControl textControl = (TextControl) map.getControl();
+            if (textControl != null) textControl.setFont(trans.getFont());
+          }
         }
         doCustomMaps();
         doLinks(0, false);
