@@ -80,7 +80,7 @@ public class VisBioFrame extends GUIFrame {
   protected Vector managers;
 
   /** Associated splash screen. */
-  protected SplashScreen ss;
+  protected SplashScreen splash;
 
   /** Status bar. */
   protected JProgressBar status;
@@ -95,11 +95,11 @@ public class VisBioFrame extends GUIFrame {
   public VisBioFrame() { this(null); }
 
   /** Constructs a new VisBio frame with the associated splash screen. */
-  public VisBioFrame(SplashScreen ss) {
+  public VisBioFrame(SplashScreen splash) {
     super(true);
     setTitle(VisBio.TITLE);
     managers = new Vector();
-    this.ss = ss;
+    this.splash = splash;
 
     // initialize Look & Feel parameters
     LAFUtil.initLookAndFeel();
@@ -145,6 +145,7 @@ public class VisBioFrame extends GUIFrame {
     LogicManager[] lm = {
       sm, // StateManager
       om, // OptionManager
+      new ClassManager(this),
       wm, // WindowManager
       new PanelManager(this),
       new HelpManager(this),
@@ -158,7 +159,7 @@ public class VisBioFrame extends GUIFrame {
     };
     int tasks = 1;
     for (int i=0; i<lm.length; i++) tasks += lm[i].getTasks();
-    if (ss != null) ss.setTasks(tasks);
+    if (splash != null) splash.setTasks(tasks);
 
     // add logic managers
     for (int i=0; i<lm.length; i++) addManager(lm[i]);
@@ -188,9 +189,9 @@ public class VisBioFrame extends GUIFrame {
     show();
 
     // hide splash screen
-    if (ss != null) {
-      ss.hide();
-      ss = null;
+    if (splash != null) {
+      splash.hide();
+      splash = null;
     }
 
     // determine if VisBio crashed last time
@@ -203,9 +204,9 @@ public class VisBioFrame extends GUIFrame {
 
   /** Updates the splash screen to report the given status message. */
   public void setSplashStatus(String s) {
-    if (ss == null) return;
-    if (s != null) ss.setText(s + "...");
-    ss.nextTask();
+    if (splash == null) return;
+    if (s != null) splash.setText(s + "...");
+    splash.nextTask();
   }
 
   /** Adds a logic manager to the VisBio interface. */

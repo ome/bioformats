@@ -25,11 +25,7 @@ package loci.visbio;
 
 import com.jgoodies.plaf.LookUtils;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 
 import java.util.Vector;
 
@@ -169,7 +165,7 @@ public class SystemManager extends LogicManager implements Runnable {
   public void run() {
     WindowManager wm = (WindowManager) bio.getManager(WindowManager.class);
     wm.setWaitCursor(true);
-    SystemManager.gc();
+    gc();
     wm.setWaitCursor(false);
   }
 

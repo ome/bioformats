@@ -12,6 +12,8 @@ v3.00 beta3 - Not yet released
 - TWEAK: Dataset chooser displays progress bar while analyzing file pattern
 - TWEAK: Dataset chooser jumps to directory specified in file pattern field
 
+- FIXED: Occasional multiple data transform burn-in deadlock
+
 
 v3.00 beta2 - Wednesday, October 27, 2004
 
