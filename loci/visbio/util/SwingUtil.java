@@ -133,7 +133,7 @@ public abstract class SwingUtil {
   }
 
   /** Key mask for use with keyboard shortcuts on this operating system. */
-  protected static final int MENU_MASK =
+  public static final int MENU_MASK =
     Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
   /** Sets the keyboard shortcut for the given menu item. */
@@ -259,6 +259,11 @@ public abstract class SwingUtil {
     dialog.addChoosableFileFilter(pgm);
     filters.add(pgm);
 
+    // PICT - qt/PictForm
+    FileFilter pict = new ExtensionFileFilter("pict", "PICT images");
+    dialog.addChoosableFileFilter(pict);
+    filters.add(pict);
+
     // combination filter
     FileFilter[] ff = new FileFilter[filters.size()];
     filters.copyInto(ff);
@@ -298,6 +303,8 @@ public abstract class SwingUtil {
     if (dest.getMnemonic() != mnemonic) dest.setMnemonic(mnemonic);
     String text = source.getText();
     if (dest.getText() != text) dest.setText(text);
+    KeyStroke accel = source.getAccelerator();
+    if (dest.getAccelerator() != accel) dest.setAccelerator(accel);
   }
 
 }
