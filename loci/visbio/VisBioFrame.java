@@ -159,7 +159,7 @@ public class VisBioFrame extends GUIFrame {
     };
     int tasks = 1;
     for (int i=0; i<lm.length; i++) tasks += lm[i].getTasks();
-    if (splash != null) splash.setTasks(tasks);
+    if (splash != null) splash.setTaskCount(tasks);
 
     // add logic managers
     for (int i=0; i<lm.length; i++) addManager(lm[i]);
@@ -190,6 +190,11 @@ public class VisBioFrame extends GUIFrame {
 
     // hide splash screen
     if (splash != null) {
+      int task = splash.getTask();
+      if (task != tasks) {
+        System.out.println("Warning: completed " +
+          task + "/" + tasks + " initialization tasks");
+      }
       splash.hide();
       splash = null;
     }

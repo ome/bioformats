@@ -44,6 +44,10 @@ com.jgoodies.forms.util.MacLayoutStyle
 com.jgoodies.forms.util.UnitConverter
 com.jgoodies.forms.util.WindowsLayoutStyle
 com.jgoodies.plaf.BorderStyle
+com.jgoodies.plaf.FontSizeHints
+com.jgoodies.plaf.HeaderStyle
+com.jgoodies.plaf.LookUtils
+com.jgoodies.plaf.Options
 com.jgoodies.plaf.common.ButtonMarginListener
 com.jgoodies.plaf.common.ExtBasicArrowButtonHandler
 com.jgoodies.plaf.common.ExtBasicMenuItemUI
@@ -58,10 +62,6 @@ com.jgoodies.plaf.common.MinimumSizedCheckIcon
 com.jgoodies.plaf.common.MinimumSizedIcon
 com.jgoodies.plaf.common.ShadowPopupBorder
 com.jgoodies.plaf.common.ShadowPopupMenuUtils
-com.jgoodies.plaf.FontSizeHints
-com.jgoodies.plaf.HeaderStyle
-com.jgoodies.plaf.LookUtils
-com.jgoodies.plaf.Options
 com.jgoodies.plaf.plastic.BumpBuffer
 com.jgoodies.plaf.plastic.Plastic3DLookAndFeel
 com.jgoodies.plaf.plastic.PlasticArrowButton

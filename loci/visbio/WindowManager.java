@@ -207,7 +207,7 @@ public class WindowManager extends LogicManager implements WindowListener {
   }
 
   /** Gets the number of tasks required to initialize this logic manager. */
-  public int getTasks() { return 1; }
+  public int getTasks() { return 2; }
 
 
   // -- WindowListener API methods --

@@ -27,25 +27,13 @@ import java.io.*;
 
 import java.util.Vector;
 
-import loci.visbio.state.BooleanOption;
-import loci.visbio.state.OptionManager;
-
 /**
  * ClassManager is the manager for preloading classes
  * to speed VisBio response time later on.
  */
 public class ClassManager extends LogicManager {
 
-  // -- Constants --
-
-  /** String for preload classes option. */
-  public static final String PRELOAD = "Preload classes";
-
-
   // -- Fields --
-
-  /** Whether class preloading is enabled. */
-  protected boolean preload = true;
 
   /** List of classes to preload. */
   protected Vector preloadClasses;
@@ -81,46 +69,33 @@ public class ClassManager extends LogicManager {
       LogicManager lm = (LogicManager) evt.getSource();
       if (lm == this) doGUI();
     }
-    else if (eventType == VisBioEvent.STATE_CHANGED) {
-      Object src = evt.getSource();
-      if (src instanceof OptionManager) {
-        OptionManager om = (OptionManager) src;
-        BooleanOption option = (BooleanOption) om.getOption(PRELOAD);
-        setPreloadClasses(option.getValue());
-      }
-    }
   }
 
   /** Gets the number of tasks required to initialize this logic manager. */
-  public int getTasks() { return 1 + (preload ? preloadClasses.size() : 0); }
+  public int getTasks() { return preloadClasses.size(); }
 
 
   // -- Helper methods --
 
   /** Adds system-related GUI components to VisBio. */
   private void doGUI() {
-    // options menu
-    bio.setSplashStatus(null);
-    OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
-    om.addBooleanOption("Debug", PRELOAD, 'p',
-      "Preloading classes causes VisBio to start more slowly, " +
-      "but respond more quickly once loaded", preload);
-
-    // preload a bunch of classes if option is set
-    if (preload) {
-      int size = preloadClasses.size();
-      for (int i=0; i<size; i++) {
-        String className = (String) preloadClasses.elementAt(i);
-        bio.setSplashStatus(i == 0 ? "Preloading classes" : null);
-        preload(className, false);
+    // preload a bunch of classes
+    int size = preloadClasses.size();
+    String pkg = "";
+    for (int i=0; i<size; i++) {
+      String className = (String) preloadClasses.elementAt(i);
+      int dot = className.lastIndexOf(".");
+      String prefix = className.substring(0, dot);
+      if (!prefix.equals(pkg)) {
+        pkg = prefix;
+        bio.setSplashStatus("Loading " + pkg);
       }
-    }
-  }
+      else bio.setSplashStatus(null);
 
-  /** Sets whether class preloading is enabled. */
-  protected void setPreloadClasses(boolean preload) {
-    if (this.preload == preload) return;
-    this.preload = preload;
+      // preload class, ignoring errors
+      try { Class.forName(className); }
+      catch (ClassNotFoundException exc) { }
+    }
   }
 
 }

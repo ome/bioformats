@@ -8,7 +8,7 @@ v3.00 beta3 - Not yet released
 - ADDED: Controls for altering how long full-resolution burn-in is delayed
 - ADDED: Ability to toggle whether consoles pop up when output is produced
 - ADDED: System button for dumping system properties to output console
-- ADDED: Added option to preload most classes to speed up VisBio response time
+- ADDED: Preload most classes to speed up VisBio response time
 
 - TWEAK: Dataset chooser displays progress bar while analyzing file pattern
 - TWEAK: Dataset chooser jumps to directory specified in file pattern field

@@ -63,16 +63,4 @@ public class LogicManager implements Saveable {
   /** Restores the current state from the given XML object. */
   public void restoreState(OMEElement ome) throws SaveException { }
 
-
-  // -- Helper methods --
-
-  /**
-   * Forces the class loader to load the given class,
-   * so that it is available more quickly later.
-   */
-  protected void preload(String clas, boolean dump) {
-    try { Class.forName(clas); }
-    catch (ClassNotFoundException exc) { if (dump) exc.printStackTrace(); }
-  }
-
 }
