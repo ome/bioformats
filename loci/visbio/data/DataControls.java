@@ -308,6 +308,13 @@ public class DataControls extends ControlPanel
     frame.setVisible(false);
   }
 
+  /** Exports a data object to disk. */
+  public void exportData(ImageTransform data) {
+    exporter.setData(data);
+    int rval = exporter.showDialog(this);
+    if (rval == DialogPane.APPROVE_OPTION) exporter.export();
+  }
+
 
   // -- ActionListener API methods --
 
@@ -414,11 +421,7 @@ public class DataControls extends ControlPanel
     else if (cmd.equals("removeData")) dm.removeData(getSelectedData());
     else if (cmd.equals("new2D")) doNewDisplay(false);
     else if (cmd.equals("new3D")) doNewDisplay(true);
-    else if (cmd.equals("saveToDisk")) {
-      exporter.setData((ImageTransform) getSelectedData());
-      int rval = exporter.showDialog(this);
-      if (rval == DialogPane.APPROVE_OPTION) exporter.export();
-    }
+    else if (cmd.equals("saveToDisk")) dm.exportData();
     else if (cmd.equals("uploadToOME")) {
       OMEManager om = (OMEManager) lm.getVisBio().getManager(OMEManager.class);
       if (om == null) return;
@@ -499,17 +502,20 @@ public class DataControls extends ControlPanel
     dataInfo.setText(sb.toString());
 
     // toggle button availability
+    VisBioFrame bio = lm.getVisBio();
     boolean isData = data != null;
+    boolean isImage = data instanceof ImageTransform;
     boolean canDisplay2D = isData && data.isValidDimension(2);
     boolean canDisplay3D = isData && data.isValidDimension(3);
     boolean canDisplay = canDisplay2D || canDisplay3D;
     boolean hasControls = isData && frameTable.get(data) != null;
     display.setEnabled(canDisplay);
     editData.setEnabled(hasControls);
-    export.setEnabled(data instanceof ImageTransform);
+    export.setEnabled(isImage);
+    JMenuItem exportItem = bio.getMenuItem("File", "Export data...");
+    if (exportItem != null) exportItem.setEnabled(isImage);
     removeData.setEnabled(isData);
 
-    VisBioFrame bio = lm.getVisBio();
     StateManager sm = (StateManager) bio.getManager(StateManager.class);
     if (sm.isRestoring()) return; // no touching progress bar during restore
 

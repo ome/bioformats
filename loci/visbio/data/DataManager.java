@@ -41,16 +41,16 @@ public class DataManager extends LogicManager {
   // -- Control panel --
 
   /** Datasets control panel. */
-  private DataControls dataControls;
+  protected DataControls dataControls;
 
 
   // -- Other fields --
 
   /** List of registered data transform type classes. */
-  private Vector transformTypes;
+  protected Vector transformTypes;
 
   /** List of registered data transform type labels. */
-  private Vector transformLabels;
+  protected Vector transformLabels;
 
 
   // -- Constructor --
@@ -111,6 +111,16 @@ public class DataManager extends LogicManager {
     return labels;
   }
 
+  /** Gets data control panel. */
+  public DataControls getControlPanel() { return dataControls; }
+
+  /** Gets a list of data transforms present in the tree. */
+  public Vector getDataList() {
+    Vector v = new Vector();
+    buildDataList(dataControls.getDataRoot(), v);
+    return v;
+  }
+
   /** Imports a dataset. */
   public void importData() { importData(bio); }
 
@@ -120,14 +130,15 @@ public class DataManager extends LogicManager {
     if (dt != null) addData(dt);
   }
 
-  /** Gets data control panel. */
-  public DataControls getControlPanel() { return dataControls; }
+  /** Exports the selected data object to disk. */
+  public void exportData() {
+    DataTransform data = dataControls.getSelectedData();
+    if (data instanceof ImageTransform) exportData((ImageTransform) data);
+  }
 
-  /** Gets a list of data transforms present in the tree. */
-  public Vector getDataList() {
-    Vector v = new Vector();
-    buildDataList(dataControls.getDataRoot(), v);
-    return v;
+  /** Exports the given data object to disk. */
+  public void exportData(ImageTransform data) {
+    dataControls.exportData(data);
   }
 
 
@@ -273,6 +284,8 @@ public class DataManager extends LogicManager {
     bio.setSplashStatus(null);
     bio.addMenuItem("File", "Import data...",
       "loci.visbio.data.DataManager.importData", 'i');
+    bio.addMenuItem("File", "Export data...",
+      "loci.visbio.data.DataManager.exportData", 'e').setEnabled(false);
     SwingUtil.setMenuShortcut(bio, "File", "Import data...", KeyEvent.VK_O);
 
     // help window
