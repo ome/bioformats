@@ -96,9 +96,9 @@ public class OMEUploadPane extends DialogPane {
     builder.addLabel("&Server", cc.xy(1, 1)).setLabelFor(serv);
     builder.add(serv, cc.xyw(3, 1, 5));
 
-    builder.addLabel("User&name", cc.xy(1, 3)).setLabelFor(user);
+    builder.addLabel("&Username", cc.xy(1, 3)).setLabelFor(user);
     builder.add(user, cc.xy(3, 3));
-    builder.addLabel("Pass&word", cc.xy(5, 3)).setLabelFor(pass);
+    builder.addLabel("&Password", cc.xy(5, 3)).setLabelFor(pass);
     builder.add(pass, cc.xy(7, 3));
 
     add(builder.getPanel());
