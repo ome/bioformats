@@ -1,5 +1,5 @@
 //
-// DisplayDialog.java
+// DisplayWindow.java
 //
 
 /*
@@ -31,7 +31,6 @@ import java.awt.GraphicsConfiguration;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -54,10 +53,10 @@ import loci.visbio.util.VisUtil;
 import visad.DisplayImpl;
 
 /**
- * DisplayDialog is a dialog containing a 2D or 3D
+ * DisplayWindow is a window containing a 2D or 3D
  * VisAD display and associated controls.
  */
-public class DisplayDialog extends JDialog implements ActionListener, Dynamic {
+public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
 
   // -- Static fields --
 
@@ -114,14 +113,14 @@ public class DisplayDialog extends JDialog implements ActionListener, Dynamic {
   // -- Constructors --
 
   /** Creates an uninitialized display object. */
-  public DisplayDialog(DisplayManager dm) {
-    super((JFrame) null);
+  public DisplayWindow(DisplayManager dm) {
+    super();
     manager = dm;
   }
 
   /** Creates a new display object according to the given parameters. */
-  public DisplayDialog(DisplayManager dm, String name, boolean threeD) {
-    super((JFrame) null, name);
+  public DisplayWindow(DisplayManager dm, String name, boolean threeD) {
+    super(name);
     manager = dm;
     this.name = name;
     this.threeD = threeD;
@@ -129,7 +128,7 @@ public class DisplayDialog extends JDialog implements ActionListener, Dynamic {
   }
 
 
-  // -- DisplayDialog API methods --
+  // -- DisplayWindow API methods --
 
   /**
    * Enlarges the display to its preferred width and/or height
@@ -205,9 +204,9 @@ public class DisplayDialog extends JDialog implements ActionListener, Dynamic {
   }
 
 
-  // -- DisplayDialog API methods - state logic --
+  // -- DisplayWindow API methods - state logic --
 
-  protected static final String DISPLAY_DIALOG = "VisBio_DisplayDialog";
+  protected static final String DISPLAY_DIALOG = "VisBio_DisplayWindow";
 
   protected CAElement custom;
   protected int index;
@@ -270,7 +269,7 @@ public class DisplayDialog extends JDialog implements ActionListener, Dynamic {
 
   // -- Component API methods --
 
-  /** Shows or hides this dialog. */
+  /** Shows or hides this window. */
   public void setVisible(boolean b) {
     super.setVisible(b);
     if (b) controls.reshow();
@@ -296,13 +295,13 @@ public class DisplayDialog extends JDialog implements ActionListener, Dynamic {
   /** Tests whether two dynamic objects are equivalent. */
   public boolean matches(Dynamic dyn) {
     if (!isCompatible(dyn)) return false;
-    DisplayDialog dialog = (DisplayDialog) dyn;
+    DisplayWindow window = (DisplayWindow) dyn;
 
-    return ObjectUtil.objectsEqual(name, dialog.name) &&
-      viewHandler.matches(dialog.viewHandler) &&
-      colorHandler.matches(dialog.colorHandler) &&
-      captureHandler.matches(dialog.captureHandler) &&
-      transformHandler.matches(dialog.transformHandler);
+    return ObjectUtil.objectsEqual(name, window.name) &&
+      viewHandler.matches(window.viewHandler) &&
+      colorHandler.matches(window.colorHandler) &&
+      captureHandler.matches(window.captureHandler) &&
+      transformHandler.matches(window.transformHandler);
   }
 
   /**
@@ -310,9 +309,9 @@ public class DisplayDialog extends JDialog implements ActionListener, Dynamic {
    * initState, for initializing this dynamic object.
    */
   public boolean isCompatible(Dynamic dyn) {
-    if (!(dyn instanceof DisplayDialog)) return false;
-    DisplayDialog dialog = (DisplayDialog) dyn;
-    return threeD == dialog.threeD;
+    if (!(dyn instanceof DisplayWindow)) return false;
+    DisplayWindow window = (DisplayWindow) dyn;
+    return threeD == window.threeD;
   }
 
   /**
@@ -322,11 +321,11 @@ public class DisplayDialog extends JDialog implements ActionListener, Dynamic {
    */
   public void initState(Dynamic dyn) {
     if (dyn != null && !isCompatible(dyn)) return;
-    DisplayDialog dialog = (DisplayDialog) dyn;
+    DisplayWindow window = (DisplayWindow) dyn;
 
-    if (dialog != null) {
-      name = dialog.name;
-      threeD = dialog.threeD;
+    if (window != null) {
+      name = window.name;
+      threeD = window.threeD;
     }
     string = name + (threeD ? " (3D)" : " (2D)");
 
@@ -336,7 +335,7 @@ public class DisplayDialog extends JDialog implements ActionListener, Dynamic {
 
     // handlers
     createHandlers();
-    if (dialog == null) {
+    if (window == null) {
       viewHandler.initState(null);
       colorHandler.initState(null);
       captureHandler.initState(null);
@@ -345,14 +344,14 @@ public class DisplayDialog extends JDialog implements ActionListener, Dynamic {
     else {
       // Handlers' initState methods are smart enough to reinitialize
       // their components only when necessary, to ensure efficiency.
-      viewHandler.initState(dialog.viewHandler);
-      colorHandler.initState(dialog.colorHandler);
-      captureHandler.initState(dialog.captureHandler);
-      transformHandler.initState(dialog.transformHandler);
+      viewHandler.initState(window.viewHandler);
+      colorHandler.initState(window.colorHandler);
+      captureHandler.initState(window.captureHandler);
+      transformHandler.initState(window.transformHandler);
     }
 
     if (controls == null) {
-      // display dialog's content pane
+      // display window's content pane
       Container pane = getContentPane();
       pane.setLayout(new BorderLayout());
 
@@ -364,10 +363,10 @@ public class DisplayDialog extends JDialog implements ActionListener, Dynamic {
       controls = new BreakawayPanel(pane, "Controls - " + name, true);
       controls.setEdge(BorderLayout.EAST);
 
-      // add display controls breakaway dialog to window manager
+      // add display controls breakaway window to window manager
       WindowManager wm = (WindowManager)
         manager.getVisBio().getManager(WindowManager.class);
-      wm.addWindow(controls.getDialog());
+      wm.addWindow(controls.getWindow());
 
       // lay out components
       pane.add(display.getComponent(), BorderLayout.CENTER);
@@ -378,7 +377,7 @@ public class DisplayDialog extends JDialog implements ActionListener, Dynamic {
       pack();
       repack();
     }
-    else controls.getDialog().setTitle("Controls - " + name);
+    else controls.getWindow().setTitle("Controls - " + name);
   }
 
   /**

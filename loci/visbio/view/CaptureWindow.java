@@ -1,5 +1,5 @@
 //
-// CaptureDialog.java
+// CaptureWindow.java
 //
 
 /*
@@ -40,7 +40,6 @@ import java.util.Vector;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -70,14 +69,14 @@ import visad.DisplayImpl;
 import visad.ProjectionControl;
 import visad.VisADException;
 
-/** CaptureDialog is a dialog for adjusting color settings. */
-public class CaptureDialog extends JDialog implements ActionListener,
+/** CaptureWindow is a window for adjusting color settings. */
+public class CaptureWindow extends JFrame implements ActionListener,
   ChangeListener, ItemListener, ListSelectionListener
 {
 
   // -- Fields --
 
-  /** Capture handler for this capture dialog. */
+  /** Capture handler for this capture window. */
   protected CaptureHandler handler;
 
   /** Position list. */
@@ -101,9 +100,9 @@ public class CaptureDialog extends JDialog implements ActionListener,
 
   // -- Constructor --
 
-  /** Constructs a dialog for capturing display screenshots and movies. */
-  public CaptureDialog(CaptureHandler h) {
-    super((JFrame) null, "Capture - " + h.getDialog().getTitle());
+  /** Constructs a window for capturing display screenshots and movies. */
+  public CaptureWindow(CaptureHandler h) {
+    super("Capture - " + h.getWindow().getTitle());
     handler = h;
 
     // positions list
@@ -246,7 +245,7 @@ public class CaptureDialog extends JDialog implements ActionListener,
   }
 
 
-  // -- CaptureDialog API methods --
+  // -- CaptureWindow API methods --
 
   /** Sets the progress bar's value. */
   public void setProgressValue(int value) { progress.setValue(value); }
@@ -259,12 +258,12 @@ public class CaptureDialog extends JDialog implements ActionListener,
 
   /** Called when a button is pressed. */
   public void actionPerformed(ActionEvent e) {
-    DisplayDialog dialog = handler.getDialog();
-    VisBioFrame bio = dialog.getVisBio();
+    DisplayWindow display = handler.getWindow();
+    VisBioFrame bio = display.getVisBio();
 
     String cmd = e.getActionCommand();
     if (cmd.equals("Add")) {
-      DisplayImpl d = dialog.getDisplay();
+      DisplayImpl d = display.getDisplay();
       if (d == null) return;
       ProjectionControl pc = d.getProjectionControl();
       double[] matrix = pc.getMatrix();
@@ -275,7 +274,7 @@ public class CaptureDialog extends JDialog implements ActionListener,
       if (value == null) return;
       posListModel.addElement(new DisplayPosition(value, matrix));
       bio.generateEvent(bio.getManager(DisplayManager.class),
-        "position addition for " + dialog.getName(), true);
+        "position addition for " + display.getName(), true);
     }
     else if (cmd.equals("Remove")) {
       int ndx = posList.getSelectedIndex();
@@ -285,7 +284,7 @@ public class CaptureDialog extends JDialog implements ActionListener,
         else if (ndx > 0) posList.setSelectedIndex(ndx - 1);
       }
       bio.generateEvent(bio.getManager(DisplayManager.class),
-        "position removal for " + dialog.getName(), true);
+        "position removal for " + display.getName(), true);
     }
     else if (cmd.equals("Up")) {
       int ndx = posList.getSelectedIndex();
@@ -296,7 +295,7 @@ public class CaptureDialog extends JDialog implements ActionListener,
         posList.setSelectedIndex(ndx - 1);
       }
       bio.generateEvent(bio.getManager(DisplayManager.class),
-        "position list modification for " + dialog.getName(), true);
+        "position list modification for " + display.getName(), true);
     }
     else if (cmd.equals("Down")) {
       int ndx = posList.getSelectedIndex();
@@ -307,7 +306,7 @@ public class CaptureDialog extends JDialog implements ActionListener,
         posList.setSelectedIndex(ndx + 1);
       }
       bio.generateEvent(bio.getManager(DisplayManager.class),
-        "position list modification for " + dialog.getName(), true);
+        "position list modification for " + display.getName(), true);
     }
     else if (cmd.equals("Snapshot")) handler.saveSnapshot();
     else if (cmd.equals("SendImageJ")) handler.sendToImageJ();
@@ -351,19 +350,19 @@ public class CaptureDialog extends JDialog implements ActionListener,
 
   /** Called when slider or spinner is adjusted. */
   public void stateChanged(ChangeEvent e) {
-    DisplayDialog dialog = handler.getDialog();
-    VisBioFrame bio = dialog.getVisBio();
+    DisplayWindow display = handler.getWindow();
+    VisBioFrame bio = display.getVisBio();
 
     Object src = e.getSource();
     if (src == speed) {
       if (!speed.getValueIsAdjusting()) {
         bio.generateEvent(bio.getManager(DisplayManager.class),
-          "transition speed adjustment for " + dialog.getName(), true);
+          "transition speed adjustment for " + display.getName(), true);
       }
     }
     else if (src == fps) {
       bio.generateEvent(bio.getManager(DisplayManager.class),
-        "capture FPS adjustment for " + dialog.getName(), true);
+        "capture FPS adjustment for " + display.getName(), true);
     }
   }
 
@@ -372,11 +371,11 @@ public class CaptureDialog extends JDialog implements ActionListener,
 
   /** Called when check box is toggled. */
   public void itemStateChanged(ItemEvent e) {
-    DisplayDialog dialog = handler.getDialog();
-    VisBioFrame bio = dialog.getVisBio();
+    DisplayWindow display = handler.getWindow();
+    VisBioFrame bio = display.getVisBio();
     bio.generateEvent(bio.getManager(DisplayManager.class),
       (smooth.isSelected() ? "en" : "dis") +
-      "able transition emphasis for " + dialog.getName(), true);
+      "able transition emphasis for " + display.getName(), true);
   }
 
 
@@ -388,9 +387,9 @@ public class CaptureDialog extends JDialog implements ActionListener,
     if (ndx < 0) return;
     DisplayPosition pos = (DisplayPosition) posListModel.getElementAt(ndx);
     double[] matrix = pos.getMatrix();
-    DisplayDialog dialog = handler.getDialog();
-    VisBioFrame bio = dialog.getVisBio();
-    DisplayImpl d = dialog.getDisplay();
+    DisplayWindow display = handler.getWindow();
+    VisBioFrame bio = display.getVisBio();
+    DisplayImpl d = display.getDisplay();
     if (d == null) return;
     ProjectionControl pc = d.getProjectionControl();
     try { pc.setMatrix(matrix); }
