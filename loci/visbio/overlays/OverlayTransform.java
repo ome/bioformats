@@ -163,16 +163,35 @@ public class OverlayTransform extends DataTransform
     int size = overlays[q].size();
     FieldImpl field = null;
     if (size > 0) {
+      // compute number of selected objects
+      int sel = 0;
+      for (int i=0; i<size; i++) {
+        OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
+        if (obj.isSelected()) sel++;
+      }
+
+      // compile objects into one master field
       try {
         RealType index = RealType.getRealType("overlay_index");
         FunctionType ftype = new FunctionType(getDomainType(), getRangeType());
         FunctionType fieldType = new FunctionType(index, ftype);
-        GriddedSet fieldSet = new Integer1DSet(size);
+        GriddedSet fieldSet = new Integer1DSet(size + sel);
         field = new FieldImpl(fieldType, fieldSet);
+        // compute overlay data for each object
         for (int i=0; i<size; i++) {
           OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
           DataImpl data = obj.getData();
           field.setSample(i, data, false);
+        }
+        // compute selection grid for each selected object
+        int c = 0;
+        for (int i=0; i<size && c<sel; i++) {
+          OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
+          if (obj.isSelected()) {
+            DataImpl grid = obj.getSelectionGrid();
+            field.setSample(size + c, grid, false);
+            c++;
+          }
         }
       }
       catch (VisADException exc) { exc.printStackTrace(); }

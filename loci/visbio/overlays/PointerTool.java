@@ -25,6 +25,8 @@ package loci.visbio.overlays;
 
 import java.awt.event.InputEvent;
 
+import loci.visbio.data.TransformEvent;
+
 /** PointerTool is the tool for manipulating existing overlays. */
 public class PointerTool extends OverlayTool {
 
@@ -59,6 +61,7 @@ public class PointerTool extends OverlayTool {
     if (dist < threshold) {
       System.out.println("Picked index #" + ndx);//TEMP
       oo[ndx].setSelected(true);
+      overlay.notifyListeners(new TransformEvent(overlay));
     }
   }
 

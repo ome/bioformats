@@ -85,6 +85,7 @@ public class OverlayOval extends OverlayObject {
     this.y1 = y1;
     this.x2 = x2;
     this.y2 = y2;
+    computeGridParameters();
   }
 
 
@@ -94,12 +95,14 @@ public class OverlayOval extends OverlayObject {
   public void setCoords1(float x1, float y1) {
     this.x1 = x1;
     this.y1 = y1;
+    computeGridParameters();
   }
 
   /** Changes coordinates of the oval's bounding box's lower right corner. */
   public void setCoords2(float x2, float y2) {
     this.x2 = x2;
     this.y2 = y2;
+    computeGridParameters();
   }
 
   /** Sets whether overlay is solid. */
@@ -181,6 +184,26 @@ public class OverlayOval extends OverlayObject {
     if (y < y1 && y < y2) ydist = Math.min(y1, y2) - y;
     else if (y > y1 && y > y2) ydist = y - Math.max(y1, y2);
     return Math.sqrt(xdist * xdist + ydist * ydist);
+  }
+
+
+  // -- Helper methods --
+
+  /** Computes parameters needed for selection grid computation. */
+  protected void computeGridParameters() {
+    float padding = 0.02f * overlay.getScalingValue();
+    boolean flipX = x2 < x1;
+    float xx1 = flipX ? (x1 + padding) : (x1 - padding);
+    float xx2 = flipX ? (x2 - padding) : (x2 + padding);
+    boolean flipY = y2 < y1;
+    float yy1 = flipY ? (y1 + padding) : (y1 - padding);
+    float yy2 = flipY ? (y2 - padding) : (y2 + padding);
+
+    xGrid1 = xx1; yGrid1 = yy1;
+    xGrid2 = xx2; yGrid2 = yy1;
+    xGrid3 = xx1; yGrid3 = yy2;
+    xGrid4 = xx2; yGrid4 = yy2;
+    horizGridCount = 3; vertGridCount = 3;
   }
 
 }

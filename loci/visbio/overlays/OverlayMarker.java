@@ -43,6 +43,7 @@ public class OverlayMarker extends OverlayObject {
     super(overlay);
     this.x = x;
     this.y = y;
+    computeGridParameters();
   }
 
 
@@ -52,6 +53,7 @@ public class OverlayMarker extends OverlayObject {
   public void setCoords(float x, float y) {
     this.x = x;
     this.y = y;
+    computeGridParameters();
   }
 
 
@@ -94,6 +96,24 @@ public class OverlayMarker extends OverlayObject {
     double xx = this.x - x;
     double yy = this.y - y;
     return Math.sqrt(xx * xx + yy * yy);
+  }
+
+
+  // -- Helper methods --
+
+  /** Computes parameters needed for selection grid computation. */
+  protected void computeGridParameters() {
+    float padding = 0.03f * overlay.getScalingValue();
+    float xx1 = x - padding;
+    float xx2 = x + padding;
+    float yy1 = y - padding;
+    float yy2 = y + padding;
+
+    xGrid1 = xx1; yGrid1 = yy1;
+    xGrid2 = xx2; yGrid2 = yy1;
+    xGrid3 = xx1; yGrid3 = yy2;
+    xGrid4 = xx2; yGrid4 = yy2;
+    horizGridCount = 2; vertGridCount = 2;
   }
 
 }
