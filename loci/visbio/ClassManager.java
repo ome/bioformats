@@ -93,7 +93,7 @@ public class ClassManager extends LogicManager {
 
       // preload class, ignoring errors
       try { Class.forName(className); }
-      catch (Exception exc) { }
+      catch (Throwable t) { }
     }
     if (VisBioFrame.DEBUG) System.out.println("DONE PRELOADING CLASSES");
   }
