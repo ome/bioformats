@@ -1,1 +1,1 @@
-*.class errors.log visbio.cache visbio.ini visbio.tmp
+*.class errors.log visbio.cache visbio.ini visbio.tmp *.bat
