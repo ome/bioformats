@@ -94,4 +94,13 @@ public class WindowState {
   /** Gets window height. */
   public int getHeight() { return height; }
 
+
+  // -- Object API methods --
+
+  /** Gets a string representation of this window state. */
+  public String toString() {
+    return name + ": visible=" + visible +
+      ", x=" + x + ", y=" + y + ", width=" + width + ", height=" + height;
+  }
+
 }

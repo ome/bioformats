@@ -56,7 +56,7 @@ public class WindowManager extends LogicManager implements WindowListener {
   // -- Constants --
 
   /** String for window docking option. */
-  public static final String DOCKING = "Enable window docking";
+  public static final String DOCKING = "Window docking";
 
 
   // -- Fields --

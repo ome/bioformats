@@ -1,9 +1,10 @@
-v3.00 beta2 - ?
+v3.00 beta2 - Tuesday, October 26, 2004
 
-- ADDED: Preliminary support for Zeiss ZVI file format
-- ADDED: Comprehensive state support (save/restore/undo/redo) in XML
+- ADDED: Preliminary support for Zeiss LSM and ZVI file formats
+- ADDED: Continue work on comprehensive state support in XML format
 
 - FIXED: Mac OS X menu bar behaves much better
+- FIXED: Various other bugfixes and improvements
 
 
 v3.00 beta1 - Wednesday, September 1, 2004
