@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.help;
 
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.*;
 import java.util.Enumeration;
 import javax.swing.*;
@@ -89,7 +90,11 @@ public class HelpWindow extends JFrame
     SwingUtil.configureScrollPane(paneScroll);
     JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
        topicsScroll, paneScroll);
-    split.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    int width = screenSize.width - 25, height = screenSize.height - 50;
+    if (width > DEFAULT_WIDTH) width = DEFAULT_WIDTH;
+    if (height > DEFAULT_HEIGHT) width = DEFAULT_HEIGHT;
+    split.setPreferredSize(new Dimension(width, height));
     setContentPane(split);
   }
 
