@@ -271,10 +271,10 @@ public abstract class ColorUtil {
   public static final int COMPOSITE_MODEL = 2;
 
   /** RealType for indicating nothing mapped to a color component. */
-  public static final RealType CLEAR = RealType.getRealType("none");
+  public static final RealType CLEAR = RealType.getRealType("bio_clear");
 
   /** RealType for indicating uniformly solid color component. */
-  public static final RealType SOLID = RealType.getRealType("full");
+  public static final RealType SOLID = RealType.getRealType("bio_solid");
 
   /**
    * Computes color tables from the given color settings.
@@ -288,7 +288,7 @@ public abstract class ColorUtil {
    * @param blue RealType to map to blue color component
    */
   public static float[][][] computeColorTables(ScalarMap[] maps,
-    int brightness, int contrast, int model,
+    int brightness, int contrast, int transparency, int model,
     RealType red, RealType green, RealType blue)
   {
     // compute center and slope from brightness and contrast
@@ -330,6 +330,10 @@ public abstract class ColorUtil {
       else if (vals[i] > 1.0f) vals[i] = 1.0f;
     }
 
+    // compute transparency values
+    float[] avals = new float[COLOR_DETAIL];
+    Arrays.fill(avals, (float) transparency / COLOR_DETAIL);
+
     // update color tables and map ranges
     boolean rSolid = red == SOLID;
     boolean gSolid = green == SOLID;
@@ -345,7 +349,8 @@ public abstract class ColorUtil {
         t = new float[][] {
           rt.equals(red) ? rvals : new float[COLOR_DETAIL],
           rt.equals(green) ? gvals : new float[COLOR_DETAIL],
-          rt.equals(blue) ? bvals : new float[COLOR_DETAIL]
+          rt.equals(blue) ? bvals : new float[COLOR_DETAIL],
+          avals
         };
         if (rSolid) Arrays.fill(t[0], 1.0f);
         if (gSolid) Arrays.fill(t[1], 1.0f);

@@ -56,7 +56,6 @@ import visad.java2d.DisplayImplJ2D;
 
 import visad.util.ColorMapWidget;
 import visad.util.ExtensionFileFilter;
-import visad.util.LabeledColorWidget;
 
 /** ColorPane is a dialog pane for adjusting color settings. */
 public class ColorPane extends DialogPane
@@ -104,6 +103,12 @@ public class ColorPane extends DialogPane
 
   /** Label for current contrast value. */
   protected JLabel contrastValue;
+
+  /** Slider for level of transparency. */
+  protected JSlider transparency;
+
+  /** Label for current transparency value. */
+  protected JLabel transparencyValue;
 
   /** Option for RGB color model. */
   protected JRadioButton rgb;
@@ -180,11 +185,13 @@ public class ColorPane extends DialogPane
 
     // lay out left-hand panel
     PanelBuilder builder = new PanelBuilder(new FormLayout(
-      "fill:pref:grow", "pref:grow, 3dlu, pref, 3dlu, pref"));
+      "pref:grow", "pref:grow, 3dlu, pref, 3dlu, " +
+      "pref, 3dlu, pref"));
     CellConstraints cc = new CellConstraints();
-    builder.add(preview.getComponent(), cc.xy(1, 1));
-    builder.add(makeSliderPanel(), cc.xy(1, 3));
-    builder.add(makeMappingsPanel(), cc.xy(1, 5));
+    builder.add(preview.getComponent(), cc.xy(1, 1, "fill, fill"));
+    builder.add(makeSliderPanel(), cc.xy(1, 3, "fill, center"));
+    builder.add(makeModelPanel(), cc.xy(1, 5, "center, center"));
+    builder.add(makeMappingsPanel(), cc.xy(1, 7, "center, center"));
     JPanel left = builder.getPanel();
 
     // lay out right-hand panel
@@ -192,7 +199,7 @@ public class ColorPane extends DialogPane
 
     // lay out main panel
     builder = new PanelBuilder(
-      new FormLayout("pref:grow, 9dlu, pref:grow", "top:pref:grow"));
+      new FormLayout("pref:grow, 9dlu, pref:grow", "fill:pref:grow"));
     builder.add(left, cc.xy(1, 1));
     builder.add(right, cc.xy(3, 1));
     add(builder.getPanel());
@@ -237,8 +244,8 @@ public class ColorPane extends DialogPane
       for (int i=0; i<maps.length; i++) {
         maps[i] = (ScalarMap) sm[i].clone();
         preview.addMap(maps[i]);
-        widgetPane.add(new LabeledColorWidget(new ColorMapWidget(maps[i])));
-        selector.addItem(maps[i].getScalar().getName());
+        widgetPane.add(new ColorMapWidget(maps[i]));
+        selector.addItem("#" + (i + 1));
       }
       //preview.addReferences(new ImageRendererJ3D(), ref);
       preview.addReference(ref);
@@ -288,12 +295,12 @@ public class ColorPane extends DialogPane
 
   /** Sets the currently selected range component's color widget table. */
   public void setWidgetTable(float[][] table) {
-    LabeledColorWidget lcw = (LabeledColorWidget)
+    ColorMapWidget cmw = (ColorMapWidget)
       widgetPane.getComponent(selector.getSelectedIndex());
-    float[][] oldTable = lcw.getTable();
+    float[][] oldTable = cmw.getTableView();
     float[] alpha = oldTable.length > 3 ? oldTable[3] : null;
     table = ColorUtil.adjustColorTable(table, alpha, true);
-    lcw.setTable(table);
+    cmw.setTableView(table);
   }
 
   // -- ColorPane API methods - accessors --
@@ -303,6 +310,8 @@ public class ColorPane extends DialogPane
 
   /** Gets current contrast value. */
   public int getContrast() { return contrast.getValue(); }
+
+  public int getTransparency() { return transparency.getValue(); }
 
   /** Gets current color model. */
   public int getModel() {
@@ -347,8 +356,8 @@ public class ColorPane extends DialogPane
   public float[][][] getTables() {
     float[][][] tables = new float[maps.length][][];
     for (int i=0; i<maps.length; i++) {
-      LabeledColorWidget lcw = (LabeledColorWidget) widgetPane.getComponent(i);
-      tables[i] = lcw.getTable();
+      ColorMapWidget cmw = (ColorMapWidget) widgetPane.getComponent(i);
+      tables[i] = cmw.getTableView();
     }
     return tables;
   }
@@ -360,6 +369,7 @@ public class ColorPane extends DialogPane
   public void resetComponents() {
     int bright = handler.getBrightness();
     int cont = handler.getContrast();
+    int trans = handler.getTransparency();
     int model = handler.getModel();
     RealType rType = handler.getRed();
     RealType gType = handler.getGreen();
@@ -373,6 +383,8 @@ public class ColorPane extends DialogPane
     brightnessValue.setText("" + bright);
     contrast.setValue(cont);
     contrastValue.setText("" + cont);
+    transparency.setValue(trans);
+    transparencyValue.setText("" + trans);
     if (model == ColorUtil.RGB_MODEL) rgb.setSelected(true);
     else if (model == ColorUtil.HSV_MODEL) hsv.setSelected(true);
     else if (model == ColorUtil.COMPOSITE_MODEL) composite.setSelected(true);
@@ -453,9 +465,9 @@ public class ColorPane extends DialogPane
       String s = file.getAbsolutePath();
       if (!s.toLowerCase().endsWith(".lut")) file = new File(s + ".lut");
 
-      LabeledColorWidget lcw = (LabeledColorWidget)
+      ColorMapWidget cmw = (ColorMapWidget)
         widgetPane.getComponent(selector.getSelectedIndex());
-      boolean success = ColorUtil.saveColorTable(lcw.getTable(), file);
+      boolean success = ColorUtil.saveColorTable(cmw.getTableView(), file);
       if (!success) {
         JOptionPane.showMessageDialog(dialog, "Error writing LUT file.",
           "Cannot save color table", JOptionPane.ERROR_MESSAGE);
@@ -510,31 +522,65 @@ public class ColorPane extends DialogPane
 
   // -- Helper methods --
 
-  /** Constructs panel containing brightness and contrast sliders. */
+  /** Constructs panel with brightness, contrast and transparency sliders. */
   protected JPanel makeSliderPanel() {
     // brightness slider
-    brightness = new JSlider(0, 256, 0);
+    brightness = new JSlider(0, ColorUtil.COLOR_DETAIL, 0);
     brightness.addChangeListener(this);
     brightness.setAlignmentY(JSlider.TOP_ALIGNMENT);
-    brightness.setToolTipText("Adjusts the brightness of the display");
+    brightness.setToolTipText("Adjusts the brightness of the data");
 
     // current brightness value
     brightnessValue = new JLabel("999");
     brightnessValue.setToolTipText("Current brightness value");
 
     // contrast slider
-    contrast = new JSlider(0, 256, 0);
+    contrast = new JSlider(0, ColorUtil.COLOR_DETAIL, 0);
     contrast.addChangeListener(this);
     contrast.setAlignmentY(JSlider.TOP_ALIGNMENT);
-    contrast.setMajorTickSpacing(ColorUtil.COLOR_DETAIL / 4);
-    contrast.setMinorTickSpacing(ColorUtil.COLOR_DETAIL / 16);
-    contrast.setPaintTicks(true);
-    contrast.setToolTipText("Adjusts the contrast of the display");
+    contrast.setToolTipText("Adjusts the contrast of the data");
 
     // current contrast value
     contrastValue = new JLabel("999");
     contrastValue.setToolTipText("Current contrast value");
 
+    // transparency slider
+    transparency = new JSlider(0,
+      ColorUtil.COLOR_DETAIL, ColorUtil.COLOR_DETAIL);
+    transparency.addChangeListener(this);
+    transparency.setAlignmentY(JSlider.TOP_ALIGNMENT);
+    transparency.setMajorTickSpacing(ColorUtil.COLOR_DETAIL / 4);
+    transparency.setMinorTickSpacing(ColorUtil.COLOR_DETAIL / 16);
+    transparency.setPaintTicks(true);
+    transparency.setToolTipText("Adjusts the transparency of the data.");
+
+    // current transparency value
+    transparencyValue = new JLabel("999");
+    transparencyValue.setToolTipText("Current transparency value");
+
+    // lay out components
+    PanelBuilder builder = new PanelBuilder(new FormLayout(
+      "pref, 3dlu, pref:grow, 3dlu, pref",
+      "pref, 3dlu, pref, 3dlu, top:pref"));
+    CellConstraints cc = new CellConstraints();
+
+    builder.addLabel("&Brightness", cc.xy(1, 1)).setLabelFor(brightness);
+    builder.add(brightness, cc.xy(3, 1));
+    builder.add(brightnessValue, cc.xy(5, 1));
+
+    builder.addLabel("Contr&ast", cc.xy(1, 3)).setLabelFor(contrast);
+    builder.add(contrast, cc.xy(3, 3));
+    builder.add(contrastValue, cc.xy(5, 3));
+
+    builder.addLabel("Trans&parency", cc.xy(1, 5)).setLabelFor(transparency);
+    builder.add(transparency, cc.xy(3, 5));
+    builder.add(transparencyValue, cc.xy(5, 5));
+
+    return builder.getPanel();
+  }
+
+  /** Constructs panel containing color model radio buttons. */
+  protected JPanel makeModelPanel() {
     // RGB color model option
     rgb = new JRadioButton("RGB", true);
     rgb.addActionListener(this);
@@ -560,25 +606,9 @@ public class ColorPane extends DialogPane
     group.add(hsv);
     group.add(composite);
 
-    // lay out components
-    PanelBuilder builder = new PanelBuilder(new FormLayout(
-      "pref, 3dlu, pref:grow, 3dlu, pref",
-      "pref, 3dlu, pref:grow, 3dlu, pref"
-    ));
-    CellConstraints cc = new CellConstraints();
-
-    builder.addLabel("&Brightness", cc.xy(1, 1)).setLabelFor(brightness);
-    builder.add(brightness, cc.xy(3, 1));
-    builder.add(brightnessValue, cc.xy(5, 1));
-
-    builder.addLabel("Co&ntrast", cc.xy(1, 3)).setLabelFor(contrast);
-    builder.add(contrast, cc.xy(3, 3));
-    builder.add(contrastValue, cc.xy(5, 3));
-
-    builder.addLabel("Color model", cc.xy(1, 5));
-    builder.add(FormsUtil.makeRow(rgb, hsv, composite), cc.xyw(3, 5, 3));
-
-    return builder.getPanel();
+    return FormsUtil.makeRow(new Object[] {
+      "Color model", rgb, hsv, composite
+    });
   }
 
   /** Constructs panel containing color mapping combo boxes. */
@@ -645,7 +675,7 @@ public class ColorPane extends DialogPane
     // save LUT button
     lutSave = new JButton("Save LUT...");
     lutSave.addActionListener(this);
-    if (!LAFUtil.isMacLookAndFeel()) lutSave.setMnemonic('a');
+    if (!LAFUtil.isMacLookAndFeel()) lutSave.setMnemonic('v');
     lutSave.setToolTipText("Saves this color table to disk");
 
     // LUTs popup menu
@@ -667,14 +697,21 @@ public class ColorPane extends DialogPane
     lutPresets.setToolTipText("Selects a LUT from the list of presets");
 
     // lay out components
+    PanelBuilder builder = new PanelBuilder(new FormLayout(
+      "center:pref:grow", "pref, 3dlu, pref, 3dlu, pref:grow, 3dlu, pref"
+    ));
+    builder.setDefaultDialogBorder();
+    CellConstraints cc = new CellConstraints();
+    builder.add(FormsUtil.makeRow("Ran&ge component", selector), cc.xy(1, 1));
+    builder.add(FormsUtil.makeRow(new Object[] {
+      fixed, loVal, toLabel, hiVal}), cc.xy(1, 3));
+    builder.add(widgetPane, cc.xy(1, 5, "fill, fill"));
+    builder.add(ButtonBarFactory.buildCenteredBar(
+      lutLoad, lutSave, lutPresets), cc.xy(1, 7));
     JPanel p = new JPanel();
     p.setLayout(new BorderLayout());
-    p.add(FormsUtil.makeColumn(new Object[] {
-      FormsUtil.makeRow("Ran&ge component", selector),
-      FormsUtil.makeRow(new Object[] {fixed, loVal, toLabel, hiVal}),
-      widgetPane, ButtonBarFactory.buildCenteredBar(lutLoad, lutSave,
-      lutPresets)}, null, true));
     p.setBorder(new TitledBorder("Color tables"));
+    p.add(builder.getPanel());
     return p;
   }
 
@@ -684,6 +721,7 @@ public class ColorPane extends DialogPane
 
     int bright = getBrightness();
     int cont = getContrast();
+    int trans = getTransparency();
     int model = getModel();
     RealType rType = getRed();
     RealType gType = getGreen();
@@ -691,11 +729,12 @@ public class ColorPane extends DialogPane
 
     brightnessValue.setText("" + bright);
     contrastValue.setText("" + cont);
+    transparencyValue.setText("" + trans);
 
     if (maps != null) {
       VisUtil.setDisplayDisabled(preview, true);
       float[][][] tables = ColorUtil.computeColorTables(maps,
-        bright, cont, model, rType, gType, bType);
+        bright, cont, trans, model, rType, gType, bType);
       ColorUtil.setColorMode(preview, model);
       ColorUtil.setColorTables(maps, tables);
       VisUtil.setDisplayDisabled(preview, false);

@@ -50,6 +50,9 @@ public class ColorHandler {
   /** Starting contrast value. */
   protected static final int NORMAL_CONTRAST = 128;
 
+  /** Starting transparency value. */
+  protected static final int NORMAL_TRANSPARENCY = 256;
+
 
   // -- Fields --
 
@@ -59,8 +62,8 @@ public class ColorHandler {
   /** Dialog pane for adjusting color settings. */
   protected ColorPane colorPane;
 
-  /** Brightness and contrast of images. */
-  protected int brightness, contrast;
+  /** Brightness, contrast and transparency of images. */
+  protected int brightness, contrast, transparency;
 
   /** Color model (RGB_MODEL, HSV_MODEL or COMPOSITE_MODEL). */
   protected int model;
@@ -93,6 +96,7 @@ public class ColorHandler {
     // default color settings
     brightness = NORMAL_BRIGHTNESS;
     contrast = NORMAL_CONTRAST;
+    transparency = NORMAL_TRANSPARENCY;
     model = ColorUtil.RGB_MODEL;
     red = green = blue = ColorUtil.CLEAR;
   }
@@ -127,7 +131,8 @@ public class ColorHandler {
     red = colorPane.getRed();
     green = colorPane.getGreen();
     blue = colorPane.getBlue();
-    setParameters(brightness, contrast, model, red, green, blue, true);
+    setParameters(brightness, contrast, transparency,
+      model, red, green, blue, true);
 
     // apply default range scaling behavior
     ScalarMap[] maps = getMaps();
@@ -169,29 +174,29 @@ public class ColorHandler {
     if (colorPane.showDialog(window) == ColorPane.APPROVE_OPTION) {
       DisplayImpl d = window.getDisplay();
       VisUtil.setDisplayDisabled(d, true);
-      setParameters(colorPane.getBrightness(),
-        colorPane.getContrast(), colorPane.getModel(), colorPane.getRed(),
-        colorPane.getGreen(), colorPane.getBlue(), false);
-      setRanges(colorPane.getLo(), colorPane.getHi(),
-        colorPane.getFixed());
+      setParameters(colorPane.getBrightness(), colorPane.getContrast(),
+        colorPane.getTransparency(), colorPane.getModel(),
+        colorPane.getRed(), colorPane.getGreen(), colorPane.getBlue(), false);
+      setRanges(colorPane.getLo(), colorPane.getHi(), colorPane.getFixed());
       setTables(colorPane.getTables());
       VisUtil.setDisplayDisabled(d, false);
     }
   }
 
   /** Updates color settings to those given. */
-  public void setParameters(int brightness, int contrast, int model,
-    RealType red, RealType green, RealType blue, boolean compute)
+  public void setParameters(int brightness, int contrast, int transparency,
+    int model, RealType red, RealType green, RealType blue, boolean compute)
   {
     this.brightness = brightness;
     this.contrast = contrast;
+    this.transparency = transparency;
     this.model = model;
     this.red = red;
     this.green = green;
     this.blue = blue;
     if (compute) {
       setTables(ColorUtil.computeColorTables(getMaps(),
-        brightness, contrast, model, red, green, blue));
+        brightness, contrast, transparency, model, red, green, blue));
     }
   }
 
@@ -226,6 +231,9 @@ public class ColorHandler {
 
   /** Gets contrast value. */
   public int getContrast() { return contrast; }
+
+  /** Gets transparency value. */
+  public int getTransparency() { return transparency; }
 
   /** Gets color model (RGB_MODEL, HSV_MODEL or COMPOSITE_MODEL). */
   public int getModel() { return model; }
@@ -286,6 +294,7 @@ public class ColorHandler {
     DisplayWindow window = getWindow();
     window.setAttr(attrName + "_brightness", "" + brightness);
     window.setAttr(attrName + "_contrast", "" + contrast);
+    window.setAttr(attrName + "_transparency", "" + transparency);
     window.setAttr(attrName + "_colorModel", "" + model);
 
     String r = red == null ? "null" : red.getName();
@@ -331,6 +340,8 @@ public class ColorHandler {
     DisplayWindow window = getWindow();
     brightness = Integer.parseInt(window.getAttr(attrName + "_brightness"));
     contrast = Integer.parseInt(window.getAttr(attrName + "_contrast"));
+    transparency = Integer.parseInt(
+      window.getAttr(attrName + "_transparency"));
     model = Integer.parseInt(window.getAttr(attrName + "_colorModel"));
 
     String r = window.getAttr(attrName + "_red");
@@ -371,6 +382,7 @@ public class ColorHandler {
   public boolean matches(ColorHandler handler) {
     return brightness == handler.brightness &&
       contrast == handler.contrast &&
+      transparency == handler.transparency &&
       model == handler.model &&
       ObjectUtil.objectsEqual(red, handler.red) &&
       ObjectUtil.objectsEqual(green, handler.green) &&
@@ -390,6 +402,7 @@ public class ColorHandler {
     if (handler != null) {
       brightness = handler.brightness;
       contrast = handler.contrast;
+      transparency = handler.transparency;
       model = handler.model;
       red = handler.red;
       green = handler.green;

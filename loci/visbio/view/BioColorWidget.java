@@ -25,15 +25,14 @@ package loci.visbio.view;
 
 import java.awt.event.ItemListener;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import java.util.Vector;
+
+import javax.swing.*;
 
 import loci.visbio.util.ColorUtil;
 
 import visad.RealType;
+import visad.ScalarType;
 
 /**
  * BioColorWidget is a widget for controlling mappings
@@ -56,7 +55,10 @@ public class BioColorWidget extends JPanel {
   protected JLabel color;
 
   /** Combo box listing available range components. */
-  protected JComboBox scalars;
+  protected JComboBox box;
+
+  /** List of range component scalars. */
+  protected Vector scalars;
 
 
   // -- Other fields --
@@ -77,10 +79,11 @@ public class BioColorWidget extends JPanel {
 
     // create components
     color = new JLabel(COLOR_NAMES[model][type]);
-    scalars = new JComboBox();
-    scalars.addItem(ColorUtil.CLEAR);
-    scalars.addItem(ColorUtil.SOLID);
-    color.setLabelFor(scalars);
+    box = new JComboBox();
+    scalars = new Vector();
+    addItem("None", ColorUtil.CLEAR);
+    addItem("Full", ColorUtil.SOLID);
+    color.setLabelFor(box);
 
     // lay out components
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -90,15 +93,21 @@ public class BioColorWidget extends JPanel {
     p.add(color);
     p.add(Box.createHorizontalGlue());
     add(p);
-    add(scalars);
+    add(box);
   }
 
 
-  // -- API methods --
+  // -- BioColorWidget API methods --
+
+  /** Adds a scalar to the list of available choices. */
+  public void addItem(String name, ScalarType type) {
+    box.addItem(name);
+    scalars.add(type);
+  }
 
   /** Gets the currently selected RealType, or null if none. */
   public RealType getSelectedItem() {
-    return (RealType) scalars.getSelectedItem();
+    return (RealType) scalars.elementAt(box.getSelectedIndex());
   }
 
   /** Gets the widget's color model (RGB, HSV or COMPOSITE). */
@@ -106,8 +115,8 @@ public class BioColorWidget extends JPanel {
 
   /** Sets the currently selected RealType. */
   public void setSelectedItem(RealType rt) {
-    if (rt == null) scalars.setSelectedIndex(0);
-    else scalars.setSelectedItem(rt);
+    if (rt == null) box.setSelectedIndex(0);
+    else box.setSelectedIndex(scalars.indexOf(rt));
   }
 
   /** Sets the widget's color model (RGB, HSV or COMPOSITE). */
@@ -116,21 +125,21 @@ public class BioColorWidget extends JPanel {
     if (model == ColorUtil.COMPOSITE_MODEL) {
       color.setText(COLOR_NAMES[ColorUtil.RGB_MODEL][type]);
       color.setEnabled(false);
-      scalars.setEnabled(false);
+      box.setEnabled(false);
     }
     else {
       color.setText(COLOR_NAMES[model][type]);
       color.setEnabled(true);
-      scalars.setEnabled(true);
+      box.setEnabled(true);
     }
   }
 
   /** Adds an item listener to this widget. */
-  public void addItemListener(ItemListener l) { scalars.addItemListener(l); }
+  public void addItemListener(ItemListener l) { box.addItemListener(l); }
 
   /** Removes an item listener from this widget. */
   public void removeItemListener(ItemListener l) {
-    scalars.removeItemListener(l);
+    box.removeItemListener(l);
   }
 
   /** Sets the mnemonic for this widget. */
@@ -139,15 +148,18 @@ public class BioColorWidget extends JPanel {
   /** Sets the tool tip for this widget. */
   public void setToolTipText(String text) {
     color.setToolTipText(text);
-    scalars.setToolTipText(text);
+    box.setToolTipText(text);
   }
 
   /** Chooses most desirable range type for this widget's color. */
   public void guessType(RealType[] rt) {
-    scalars.removeAllItems();
-    scalars.addItem(ColorUtil.CLEAR);
-    scalars.addItem(ColorUtil.SOLID);
-    if (rt != null) for (int i=0; i<rt.length; i++) scalars.addItem(rt[i]);
+    box.removeAllItems();
+    scalars.removeAllElements();
+    addItem("None", ColorUtil.CLEAR);
+    addItem("Full", ColorUtil.SOLID);
+    if (rt != null) {
+      for (int i=0; i<rt.length; i++) addItem("#" + (i + 1), rt[i]);
+    }
 
     // Autodetect types
 
@@ -157,14 +169,14 @@ public class BioColorWidget extends JPanel {
       //   G -> none
       //   B -> none
 
-      if (rt == null || rt.length == 0) scalars.setSelectedIndex(0); // none
+      if (rt == null || rt.length == 0) setSelectedItem(null); // none
 
       // Case 1: rtypes.length == 1
       //   R -> rtypes[0]
       //   G -> rtypes[0]
       //   B -> rtypes[0]
 
-      else if (rt.length == 1) scalars.setSelectedItem(rt[0]);
+      else if (rt.length == 1) setSelectedItem(rt[0]);
 
       // Case 2: rtypes.length == 2
       //   R -> rtypes[0]
@@ -177,10 +189,10 @@ public class BioColorWidget extends JPanel {
       //   B -> rtypes[2]
 
       else {
-        if (type == 0) scalars.setSelectedItem(rt[0]);
-        else if (type == 1) scalars.setSelectedItem(rt[1]);
-        else if (type == 2 && rt.length >= 3) scalars.setSelectedItem(rt[2]);
-        else scalars.setSelectedIndex(0); // none
+        if (type == 0) setSelectedItem(rt[0]);
+        else if (type == 1) setSelectedItem(rt[1]);
+        else if (type == 2 && rt.length >= 3) setSelectedItem(rt[2]);
+        else setSelectedItem(null); // none
       }
     }
     else { // model == ColorUtil.HSV_MODEL
@@ -189,7 +201,7 @@ public class BioColorWidget extends JPanel {
       //   S -> none
       //   V -> none
 
-      if (rt == null || rt.length == 0) scalars.setSelectedIndex(0); // none
+      if (rt == null || rt.length == 0) setSelectedItem(null); // none
 
       // Case 1: rtypes.length >= 1
       //   H -> rtypes[0]
@@ -197,8 +209,8 @@ public class BioColorWidget extends JPanel {
       //   V -> full
 
       else {
-        if (type == 0) scalars.setSelectedItem(rt[0]);
-        else scalars.setSelectedIndex(1); // full
+        if (type == 0) setSelectedItem(rt[0]);
+        else setSelectedItem(ColorUtil.SOLID); // full
       }
     }
   }
