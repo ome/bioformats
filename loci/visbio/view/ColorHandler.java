@@ -146,7 +146,14 @@ public class ColorHandler {
     ThumbnailHandler thumbs = trans.getThumbHandler();
     if (thumbs != null) {
       int[] pos = link.getHandler().getPos(trans);
-      try { colorPane.setPreviewData(thumbs.getThumb(pos)); }
+      FlatField ff = thumbs.getThumb(pos);
+      try {
+        if (trans instanceof ImageTransform) {
+          ImageTransform it = (ImageTransform) trans;
+          ff = VisUtil.switchType(ff, it.getType());
+        }
+        colorPane.setPreviewData(ff);
+      }
       catch (VisADException exc) { exc.printStackTrace(); }
       catch (RemoteException exc) { exc.printStackTrace(); }
     }

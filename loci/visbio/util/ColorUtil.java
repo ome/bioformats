@@ -25,30 +25,239 @@ package loci.visbio.util;
 
 import java.awt.Color;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 import java.rmi.RemoteException;
 
 import java.util.Arrays;
 
-import visad.BaseColorControl;
-import visad.ColorControl;
-import visad.Display;
-import visad.DisplayImpl;
-import visad.GraphicsModeControl;
-import visad.RealType;
-import visad.ScalarMap;
-import visad.VisADException;
+import visad.*;
 
 import loci.visbio.util.ObjectUtil;
 
 /** ColorUtil contains useful color table functions. */
 public abstract class ColorUtil {
+
+  // -- Preset color tables --
+
+  /** Resolution of color tables. */
+  public static final int COLOR_DETAIL = 256;
+
+  /** Zeroed out color table componented used in several presets. */
+  protected static final float[] ZEROED = makeZeroed();
+
+  /** Linear color table component used in several presets. */
+  protected static final float[] LINEAR = makeLinear();
+
+  /** Constructs zero color table component. */
+  private static float[] makeZeroed() {
+    float[] wedge = new float[COLOR_DETAIL];
+    Arrays.fill(wedge, 0f);
+    return wedge;
+  }
+
+  /** Constructs linear color table component. */
+  private static float[] makeLinear() {
+    float[] wedge = new float[COLOR_DETAIL];
+    float max = COLOR_DETAIL - 1;
+    for (int i=0; i<wedge.length; i++) wedge[i] = i / max;
+    return wedge;
+  }
+
+  /** Grayscale color look-up table. */
+  public static final float[][] LUT_GRAY = {LINEAR, LINEAR, LINEAR};
+
+  /** Red color look-up table. */
+  public static final float[][] LUT_RED = {LINEAR, ZEROED, ZEROED};
+
+  /** Green color look-up table. */
+  public static final float[][] LUT_GREEN = {ZEROED, LINEAR, ZEROED};
+
+  /** Blue color look-up table. */
+  public static final float[][] LUT_BLUE = {ZEROED, ZEROED, LINEAR};
+
+  /** Cyan color look-up table. */
+  public static final float[][] LUT_CYAN = {ZEROED, LINEAR, LINEAR};
+
+  /** Magenta color look-up table. */
+  public static final float[][] LUT_MAGENTA = {LINEAR, ZEROED, LINEAR};
+
+  /** Yellow color look-up table. */
+  public static final float[][] LUT_YELLOW = {LINEAR, LINEAR, ZEROED};
+
+  /** HSV color look-up table. */
+  public static final float[][] LUT_HSV =
+    ColorControl.initTableHSV(new float[3][COLOR_DETAIL]);
+
+  /** RGB (pseudocolor) color look-up table. */
+  public static final float[][] LUT_RGB =
+    ColorControl.initTableVis5D(new float[3][COLOR_DETAIL]);
+
+  /** Fire color look-up table. */
+  public static final float[][] LUT_FIRE = {
+    // fire red component
+    {0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0.004f,
+     0.016f, 0.027f, 0.039f, 0.051f, 0.063f, 0.075f, 0.086f, 0.098f, 0.11f,
+     0.122f, 0.133f, 0.145f, 0.157f, 0.169f, 0.18f, 0.192f, 0.204f, 0.216f,
+     0.227f, 0.239f, 0.251f, 0.263f, 0.275f, 0.286f, 0.298f, 0.31f, 0.322f,
+     0.333f, 0.345f, 0.357f, 0.369f, 0.384f, 0.396f, 0.408f, 0.42f, 0.431f,
+     0.443f, 0.455f, 0.467f, 0.478f, 0.49f, 0.502f, 0.514f, 0.525f, 0.537f,
+     0.549f, 0.561f, 0.573f, 0.58f, 0.588f, 0.596f, 0.604f, 0.612f, 0.62f,
+     0.627f, 0.635f, 0.639f, 0.643f, 0.651f, 0.655f, 0.659f, 0.667f, 0.671f,
+     0.678f, 0.682f, 0.686f, 0.694f, 0.698f, 0.702f, 0.71f, 0.714f, 0.722f,
+     0.725f, 0.729f, 0.737f, 0.741f, 0.745f, 0.753f, 0.757f, 0.765f, 0.769f,
+     0.776f, 0.78f, 0.788f, 0.792f, 0.80f, 0.804f, 0.812f, 0.816f, 0.82f,
+     0.824f, 0.831f, 0.835f, 0.839f, 0.843f, 0.851f, 0.855f, 0.863f, 0.867f,
+     0.875f, 0.878f, 0.886f, 0.89f, 0.898f, 0.902f, 0.906f, 0.914f, 0.918f,
+     0.922f, 0.929f, 0.933f, 0.941f, 0.945f, 0.953f, 0.957f, 0.965f, 0.969f,
+     0.976f, 0.98f, 0.988f, 0.988f, 0.988f, 0.992f, 0.992f, 0.992f, 0.996f,
+     0.996f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f,
+     1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f,
+     1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f,
+     1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f,
+     1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f,
+     1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f,
+     1f, 1f, 1f, 1f, 1f, 1f},
+    // fire green component
+    {0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f,
+     0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f,
+     0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f,
+     0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f,
+     0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f,
+     0f, 0f, 0f, 0f, 0f, 0f, 0f, 0.004f, 0.012f, 0.02f, 0.027f, 0.031f, 0.039f,
+     0.047f, 0.055f, 0.063f, 0.075f, 0.082f, 0.094f, 0.106f, 0.114f, 0.125f,
+     0.137f, 0.145f, 0.157f, 0.169f, 0.18f, 0.188f, 0.2f, 0.212f, 0.224f,
+     0.231f, 0.243f, 0.255f, 0.267f, 0.275f, 0.286f, 0.298f, 0.31f, 0.318f,
+     0.329f, 0.341f, 0.353f, 0.361f, 0.373f, 0.384f, 0.396f, 0.404f, 0.412f,
+     0.42f, 0.427f, 0.435f, 0.443f, 0.451f, 0.459f, 0.467f, 0.475f, 0.482f,
+     0.49f, 0.498f, 0.506f, 0.514f, 0.522f, 0.525f, 0.533f, 0.541f, 0.549f,
+     0.553f, 0.561f, 0.569f, 0.576f, 0.58f, 0.588f, 0.596f, 0.604f, 0.608f,
+     0.616f, 0.624f, 0.631f, 0.635f, 0.643f, 0.651f, 0.659f, 0.663f, 0.671f,
+     0.678f, 0.686f, 0.69f, 0.698f, 0.706f, 0.714f, 0.722f, 0.729f, 0.737f,
+     0.745f, 0.749f, 0.757f, 0.765f, 0.773f, 0.78f, 0.788f, 0.796f, 0.804f,
+     0.808f, 0.816f, 0.824f, 0.831f, 0.835f, 0.843f, 0.851f, 0.859f, 0.863f,
+     0.871f, 0.878f, 0.886f, 0.894f, 0.902f, 0.91f, 0.918f, 0.922f, 0.929f,
+     0.937f, 0.945f, 0.949f, 0.957f, 0.965f, 0.973f, 0.973f, 0.976f, 0.98f,
+     0.984f, 0.988f, 0.992f, 0.996f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f,
+     1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f,
+     1f, 1f, 1f, 1f},
+    // fire blue component
+    {0.122f, 0.133f, 0.149f, 0.165f, 0.18f, 0.192f, 0.208f, 0.224f, 0.239f,
+     0.255f, 0.271f, 0.29f, 0.306f, 0.322f, 0.341f, 0.357f, 0.376f, 0.392f,
+     0.408f, 0.424f, 0.443f, 0.459f, 0.475f, 0.49f, 0.51f, 0.525f, 0.541f,
+     0.561f, 0.576f, 0.592f, 0.612f, 0.627f, 0.647f, 0.659f, 0.671f, 0.686f,
+     0.698f, 0.71f, 0.725f, 0.737f, 0.753f, 0.765f, 0.78f, 0.792f, 0.808f,
+     0.82f, 0.835f, 0.847f, 0.863f, 0.863f, 0.867f, 0.871f, 0.875f, 0.878f,
+     0.882f, 0.886f, 0.89f, 0.878f, 0.871f, 0.863f, 0.855f, 0.847f, 0.839f,
+     0.831f, 0.824f, 0.808f, 0.792f, 0.78f, 0.765f, 0.749f, 0.737f, 0.722f,
+     0.71f, 0.694f, 0.678f, 0.663f, 0.651f, 0.635f, 0.62f, 0.604f, 0.592f,
+     0.576f, 0.561f, 0.549f, 0.533f, 0.518f, 0.506f, 0.49f, 0.478f, 0.463f,
+     0.447f, 0.435f, 0.42f, 0.404f, 0.392f, 0.376f, 0.365f, 0.349f, 0.333f,
+     0.322f, 0.306f, 0.29f, 0.278f, 0.263f, 0.251f, 0.235f, 0.22f, 0.208f,
+     0.192f, 0.176f, 0.165f, 0.149f, 0.137f, 0.122f, 0.106f, 0.09f, 0.078f,
+     0.063f, 0.047f, 0.031f, 0.02f, 0.016f, 0.012f, 0.012f, 0.008f, 0.004f,
+     0.004f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f,
+     0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f,
+     0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f,
+     0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f,
+     0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0.016f, 0.031f, 0.051f,
+     0.067f, 0.082f, 0.102f, 0.118f, 0.137f, 0.165f, 0.196f, 0.227f, 0.259f,
+     0.29f, 0.322f, 0.353f, 0.384f, 0.412f, 0.443f, 0.475f, 0.506f, 0.533f,
+     0.565f, 0.596f, 0.627f, 0.655f, 0.686f, 0.718f, 0.749f, 0.78f, 0.812f,
+     0.843f, 0.875f, 0.89f, 0.906f, 0.922f, 0.937f, 0.953f, 0.969f, 0.984f, 1f,
+     1f, 1f, 1f, 1f, 1f, 1f, 1f}
+  };
+
+  /** Ice color look-up table. */
+  public static final float[][] LUT_ICE = {
+    // ice red component
+    {0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f,
+     0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f,
+     0f, 0f, 0f, 0f, 0f, 0.008f, 0.016f, 0.027f, 0.035f, 0.043f, 0.055f,
+     0.063f, 0.075f, 0.078f, 0.082f, 0.086f, 0.094f, 0.098f, 0.102f, 0.106f,
+     0.114f, 0.122f, 0.133f, 0.141f, 0.153f, 0.165f, 0.173f, 0.184f, 0.196f,
+     0.192f, 0.192f, 0.192f, 0.192f, 0.188f, 0.188f, 0.188f, 0.188f, 0.2f,
+     0.216f, 0.231f, 0.247f, 0.263f, 0.278f, 0.294f, 0.31f, 0.325f, 0.341f,
+     0.357f, 0.373f, 0.388f, 0.404f, 0.42f, 0.439f, 0.447f, 0.459f, 0.471f,
+     0.482f, 0.49f, 0.502f, 0.514f, 0.525f, 0.537f, 0.549f, 0.561f, 0.573f,
+     0.584f, 0.596f, 0.608f, 0.62f, 0.631f, 0.647f, 0.659f, 0.675f, 0.686f,
+     0.702f, 0.714f, 0.729f, 0.733f, 0.741f, 0.749f, 0.757f, 0.765f, 0.773f,
+     0.78f, 0.788f, 0.796f, 0.804f, 0.812f, 0.82f, 0.827f, 0.835f, 0.843f,
+     0.851f, 0.855f, 0.863f, 0.867f, 0.875f, 0.878f, 0.886f, 0.89f, 0.898f,
+     0.902f, 0.91f, 0.914f, 0.922f, 0.929f, 0.933f, 0.941f, 0.949f, 0.953f,
+     0.957f, 0.961f, 0.965f, 0.969f, 0.973f, 0.976f, 0.98f, 0.98f, 0.98f,
+     0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f,
+     0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f,
+     0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.984f,
+     0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f,
+     0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f,
+     0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f,
+     0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.984f,
+     0.984f, 0.984f, 0.984f, 0.984f, 0.984f, 0.984f, 0.984f, 0.984f, 0.98f,
+     0.976f, 0.973f, 0.969f, 0.965f, 0.961f, 0.957f, 0.953f, 0.945f, 0.937f,
+     0.933f, 0.925f, 0.918f, 0.914f, 0.906f, 0.902f, 0.902f, 0.902f, 0.902f,
+     0.902f, 0.902f, 0.902f, 0.902f},
+    // ice green component
+    {0.612f, 0.616f, 0.62f, 0.624f, 0.627f, 0.631f, 0.635f, 0.639f, 0.647f,
+     0.651f, 0.655f, 0.663f, 0.667f, 0.671f, 0.678f, 0.682f, 0.69f, 0.694f,
+     0.698f, 0.702f, 0.706f, 0.71f, 0.714f, 0.718f, 0.722f, 0.722f, 0.725f,
+     0.729f, 0.733f, 0.733f, 0.737f, 0.741f, 0.745f, 0.745f, 0.749f, 0.753f,
+     0.757f, 0.757f, 0.761f, 0.765f, 0.769f, 0.765f, 0.765f, 0.761f, 0.761f,
+     0.761f, 0.757f, 0.757f, 0.757f, 0.749f, 0.745f, 0.741f, 0.737f, 0.733f,
+     0.729f, 0.725f, 0.722f, 0.714f, 0.706f, 0.702f, 0.694f, 0.686f, 0.682f,
+     0.675f, 0.671f, 0.663f, 0.659f, 0.655f, 0.651f, 0.647f, 0.643f, 0.639f,
+     0.635f, 0.627f, 0.62f, 0.612f, 0.604f, 0.596f, 0.588f, 0.58f, 0.573f,
+     0.561f, 0.549f, 0.541f, 0.529f, 0.518f, 0.51f, 0.498f, 0.49f, 0.478f,
+     0.471f, 0.463f, 0.455f, 0.443f, 0.435f, 0.427f, 0.42f, 0.412f, 0.404f,
+     0.396f, 0.392f, 0.384f, 0.376f, 0.369f, 0.365f, 0.357f, 0.353f, 0.345f,
+     0.341f, 0.333f, 0.329f, 0.322f, 0.318f, 0.318f, 0.322f, 0.325f, 0.329f,
+     0.329f, 0.333f, 0.337f, 0.341f, 0.341f, 0.345f, 0.345f, 0.349f, 0.353f,
+     0.353f, 0.357f, 0.361f, 0.361f, 0.365f, 0.365f, 0.369f, 0.373f, 0.373f,
+     0.376f, 0.38f, 0.376f, 0.376f, 0.376f, 0.376f, 0.373f, 0.373f, 0.373f,
+     0.373f, 0.369f, 0.369f, 0.369f, 0.369f, 0.365f, 0.365f, 0.365f, 0.365f,
+     0.365f, 0.365f, 0.365f, 0.365f, 0.365f, 0.365f, 0.365f, 0.365f, 0.361f,
+     0.361f, 0.357f, 0.357f, 0.357f, 0.353f, 0.353f, 0.353f, 0.349f, 0.345f,
+     0.345f, 0.341f, 0.337f, 0.337f, 0.333f, 0.333f, 0.325f, 0.318f, 0.31f,
+     0.302f, 0.294f, 0.286f, 0.278f, 0.271f, 0.267f, 0.263f, 0.263f, 0.259f,
+     0.255f, 0.255f, 0.251f, 0.251f, 0.243f, 0.239f, 0.235f, 0.231f, 0.224f,
+     0.22f, 0.216f, 0.212f, 0.208f, 0.204f, 0.2f, 0.196f, 0.192f, 0.188f,
+     0.184f, 0.184f, 0.176f, 0.173f, 0.165f, 0.161f, 0.153f, 0.149f, 0.141f,
+     0.137f, 0.129f, 0.122f, 0.114f, 0.106f, 0.098f, 0.09f, 0.082f, 0.075f,
+     0.063f, 0.055f, 0.043f, 0.035f, 0.027f, 0.016f, 0.008f, 0f, 0f, 0.004f,
+     0.004f, 0.008f, 0.008f, 0.012f, 0.012f, 0.016f, 0.012f, 0.012f, 0.008f,
+     0.008f, 0.004f, 0.004f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f},
+    // ice blue component
+    {0.549f, 0.549f, 0.553f, 0.557f, 0.561f, 0.565f, 0.569f, 0.573f, 0.576f,
+     0.58f, 0.584f, 0.592f, 0.596f, 0.6f, 0.608f, 0.612f, 0.62f, 0.624f,
+     0.627f, 0.631f, 0.635f, 0.639f, 0.643f, 0.647f, 0.651f, 0.651f, 0.655f,
+     0.655f, 0.659f, 0.659f, 0.663f, 0.663f, 0.667f, 0.667f, 0.671f, 0.675f,
+     0.678f, 0.678f, 0.682f, 0.686f, 0.69f, 0.706f, 0.722f, 0.737f, 0.753f,
+     0.769f, 0.784f, 0.8f, 0.82f, 0.824f, 0.827f, 0.835f, 0.839f, 0.843f,
+     0.851f, 0.855f, 0.863f, 0.867f, 0.875f, 0.882f, 0.89f, 0.894f, 0.902f,
+     0.91f, 0.918f, 0.91f, 0.906f, 0.902f, 0.898f, 0.894f, 0.89f, 0.886f,
+     0.882f, 0.886f, 0.89f, 0.898f, 0.902f, 0.906f, 0.914f, 0.918f, 0.925f,
+     0.929f, 0.933f, 0.937f, 0.945f, 0.949f, 0.953f, 0.957f, 0.965f, 0.965f,
+     0.969f, 0.969f, 0.973f, 0.973f, 0.976f, 0.976f, 0.98f, 0.98f, 0.98f,
+     0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.984f, 0.98f, 0.98f, 0.98f, 0.98f,
+     0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f, 0.98f,
+     0.98f, 0.98f, 0.976f, 0.973f, 0.973f, 0.969f, 0.965f, 0.965f, 0.961f,
+     0.961f, 0.953f, 0.945f, 0.937f, 0.929f, 0.922f, 0.914f, 0.906f, 0.902f,
+     0.902f, 0.902f, 0.902f, 0.902f, 0.902f, 0.902f, 0.902f, 0.902f, 0.898f,
+     0.894f, 0.89f, 0.886f, 0.882f, 0.878f, 0.875f, 0.871f, 0.859f, 0.851f,
+     0.839f, 0.831f, 0.82f, 0.812f, 0.8f, 0.792f, 0.78f, 0.769f, 0.757f,
+     0.749f, 0.737f, 0.725f, 0.714f, 0.706f, 0.694f, 0.686f, 0.678f, 0.671f,
+     0.663f, 0.655f, 0.647f, 0.639f, 0.627f, 0.616f, 0.608f, 0.596f, 0.584f,
+     0.576f, 0.565f, 0.557f, 0.545f, 0.537f, 0.525f, 0.518f, 0.51f, 0.498f,
+     0.49f, 0.482f, 0.475f, 0.471f, 0.467f, 0.463f, 0.459f, 0.455f, 0.451f,
+     0.447f, 0.443f, 0.439f, 0.435f, 0.431f, 0.427f, 0.424f, 0.42f, 0.416f,
+     0.408f, 0.404f, 0.396f, 0.392f, 0.384f, 0.38f, 0.373f, 0.369f, 0.361f,
+     0.357f, 0.353f, 0.349f, 0.341f, 0.337f, 0.333f, 0.329f, 0.318f, 0.31f,
+     0.298f, 0.29f, 0.278f, 0.271f, 0.259f, 0.251f, 0.231f, 0.212f, 0.192f,
+     0.176f, 0.157f, 0.137f, 0.118f, 0.102f, 0.102f, 0.102f, 0.102f, 0.102f,
+     0.102f, 0.102f, 0.102f, 0.106f, 0.106f, 0.106f, 0.106f, 0.106f, 0.106f,
+     0.106f, 0.106f}
+  };
+
 
   // -- Color table manipulation --
 
@@ -61,18 +270,11 @@ public abstract class ColorUtil {
   /** Composite RGB color space model. */
   public static final int COMPOSITE_MODEL = 2;
 
-  /** Resolution of color tables. */
-  public static final int COLOR_DETAIL = 256;
-
   /** RealType for indicating nothing mapped to a color component. */
   public static final RealType CLEAR = RealType.getRealType("none");
 
   /** RealType for indicating uniformly solid color component. */
   public static final RealType SOLID = RealType.getRealType("full");
-
-  /** RGB composite color table. */
-  protected static final float[][] RAINBOW =
-    ColorControl.initTableVis5D(new float[3][COLOR_DETAIL]);
 
   /**
    * Computes color tables from the given color settings.
@@ -104,7 +306,7 @@ public abstract class ColorUtil {
       rvals = new float[COLOR_DETAIL];
       gvals = new float[COLOR_DETAIL];
       bvals = new float[COLOR_DETAIL];
-      float[][] comp = RAINBOW;
+      float[][] comp = LUT_RGB;
       for (int i=0; i<COLOR_DETAIL; i++) {
         rvals[i] = (float) (slope * (comp[0][i] - 0.5) + center);
         gvals[i] = (float) (slope * (comp[1][i] - 0.5) + center);

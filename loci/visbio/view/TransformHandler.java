@@ -429,11 +429,10 @@ public class TransformHandler implements ChangeListener, Runnable  {
       // update GUI to reflect new dimensional position
       panel.updateControls();
 
-      if (lnk.length > 0) {
-        //CTR TODO update this:
-        //window.getColorHandler().initColors();
-        window.repack();
-      }
+      // reinitialize colors
+      for (int i=0; i<lnk.length; i++) lnk[i].getColorHandler().initColors();
+
+      if (lnk.length > 0) window.repack();
       else window.setVisible(false);
     }
   }
@@ -447,6 +446,7 @@ public class TransformHandler implements ChangeListener, Runnable  {
     animThread = new Thread(this);
     animThread.start();
   }
+
 
   // -- ChangeListener API methods --
 

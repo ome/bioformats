@@ -23,7 +23,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.util;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+
 import com.jgoodies.forms.factories.ButtonBarFactory;
+
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 import java.awt.Dialog;
 import java.awt.Frame;
@@ -31,10 +36,7 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import visad.util.Util;
 
@@ -90,8 +92,13 @@ public class DialogPane extends JPanel implements ActionListener {
     makeButtons(doCancel);
 
     // lay out components
-    pane = FormsUtil.makeColumn(new Object[]
-      {this, doButtonLayout()}, "pref:grow", true);
+    PanelBuilder builder = new PanelBuilder(new FormLayout(
+      "pref:grow", "fill:pref:grow, 3dlu, pref"));
+    builder.setDefaultDialogBorder();
+    CellConstraints cc = new CellConstraints();
+    builder.add(this, cc.xy(1, 1));
+    builder.add(doButtonLayout(), cc.xy(1, 3));
+    pane = builder.getPanel();
   }
 
 
@@ -109,6 +116,7 @@ public class DialogPane extends JPanel implements ActionListener {
     return showDialog();
   }
 
+  /** Displays a dialog using this dialog pane. */
   public int showDialog(Dialog parent, boolean modal) {
     dialog = new JDialog(parent, title, modal);
     return showDialog();

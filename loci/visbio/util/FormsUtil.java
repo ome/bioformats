@@ -104,11 +104,23 @@ public abstract class FormsUtil {
 
   /** Creates a panel with the given components in one column. */
   public static JPanel makeColumn(Object[] o) {
-    return makeColumn(o, null, false);
+    return makeColumn(o, null, null, false);
+  }
+
+  /** Creates a panel with the given components in one column. */
+  public static JPanel makeColumn(Object[] o, boolean[] grow) {
+    return makeColumn(o, grow, null, false);
   }
 
   /** Creates a panel with the given components in one column. */
   public static JPanel makeColumn(Object[] o, String col, boolean border) {
+    return makeColumn(o, null, col, border);
+  }
+
+  /** Creates a panel with the given components in one column. */
+  public static JPanel makeColumn(Object[] o,
+    boolean[] grow, String col, boolean border)
+  {
     if (o.length < 1) return null;
 
     StringBuffer sb = new StringBuffer("pref");

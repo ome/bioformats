@@ -348,8 +348,7 @@ public class TransformLink
       setMessage("burning in full-resolution data");
       clearWhenDone = true;
       setData(d);
-      // CTR TODO update this:
-      //handler.getWindow().getColorHandler().reAutoScale();
+      colorHandler.reAutoScale();
     }
   }
 

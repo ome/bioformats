@@ -210,8 +210,6 @@ public class TransformPanel extends JPanel
       if (data != null) handler.getWindow().removeTransform(data);
     }
     else if (cmd.equals("dataColors")) {
-      //ColorHandler colorHandler = handler.getWindow().getColorHandler();
-      // CTR START HERE pop up color dialog box
       DataTransform data = (DataTransform) transformList.getSelectedValue();
       if (data != null) {
         TransformLink link = handler.getLink(data);

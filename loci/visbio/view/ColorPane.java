@@ -63,6 +63,25 @@ public class ColorPane extends DialogPane
   implements ChangeListener, DocumentListener, ItemListener
 {
 
+  // -- Constants --
+
+  /** Names for preset color look-up table. */
+  public static final String[] LUT_NAMES = {
+    "Grayscale", "HSV", "RGB", null,
+    "Red", "Green", "Blue", null,
+    "Cyan", "Magenta", "Yellow", null,
+    "Fire", "Ice"
+  };
+
+  /** Preset color look-up tables. */
+  public static final float[][][] LUTS = {
+    ColorUtil.LUT_GRAY, ColorUtil.LUT_HSV, ColorUtil.LUT_RGB, null,
+    ColorUtil.LUT_RED, ColorUtil.LUT_GREEN, ColorUtil.LUT_BLUE, null,
+    ColorUtil.LUT_CYAN, ColorUtil.LUT_MAGENTA, ColorUtil.LUT_YELLOW, null,
+    ColorUtil.LUT_FIRE, ColorUtil.LUT_ICE
+  };
+
+
   // -- GUI components --
 
   /** LUT file chooser. */
@@ -125,6 +144,12 @@ public class ColorPane extends DialogPane
   /** Button for saving color look-up table. */
   protected JButton lutSave;
 
+  /** Popup menu for selecting a preset color look-up table. */
+  protected JPopupMenu lutsMenu;
+
+  /** Button for selecting a color look-up table from a list of presets. */
+  protected JButton lutPresets;
+
 
   // -- Other fields --
 
@@ -153,12 +178,24 @@ public class ColorPane extends DialogPane
     // preview display
     preview = VisUtil.makeDisplay("bio_color_preview", false);
 
-    // lay out components
-    JPanel left = FormsUtil.makeColumn(new Object[] {
-      preview.getComponent(), makeSliderPanel(),
-      makeMappingsPanel()}, "center:pref", false);
-    add(FormsUtil.makeRow(new Object[] {left, makeTablesPanel()},
-      "top:pref", false));
+    // lay out left-hand panel
+    PanelBuilder builder = new PanelBuilder(new FormLayout(
+      "fill:pref:grow", "pref:grow, 3dlu, pref, 3dlu, pref"));
+    CellConstraints cc = new CellConstraints();
+    builder.add(preview.getComponent(), cc.xy(1, 1));
+    builder.add(makeSliderPanel(), cc.xy(1, 3));
+    builder.add(makeMappingsPanel(), cc.xy(1, 5));
+    JPanel left = builder.getPanel();
+
+    // lay out right-hand panel
+    JPanel right = makeTablesPanel();
+
+    // lay out main panel
+    builder = new PanelBuilder(
+      new FormLayout("pref:grow, 9dlu, pref:grow", "top:pref:grow"));
+    builder.add(left, cc.xy(1, 1));
+    builder.add(right, cc.xy(3, 1));
+    add(builder.getPanel());
   }
 
 
@@ -198,11 +235,10 @@ public class ColorPane extends DialogPane
       ScalarMap[] sm = handler.getMaps();
       maps = new ScalarMap[sm.length];
       for (int i=0; i<maps.length; i++) {
-        ScalarType st = sm[i].getScalar();
-        maps[i] = new ScalarMap(st, Display.RGBA);
+        maps[i] = (ScalarMap) sm[i].clone();
         preview.addMap(maps[i]);
         widgetPane.add(new LabeledColorWidget(new ColorMapWidget(maps[i])));
-        selector.addItem(st.getName());
+        selector.addItem(maps[i].getScalar().getName());
       }
       //preview.addReferences(new ImageRendererJ3D(), ref);
       preview.addReference(ref);
@@ -250,6 +286,15 @@ public class ColorPane extends DialogPane
     blue.addItemListener(this);
   }
 
+  /** Sets the currently selected range component's color widget table. */
+  public void setWidgetTable(float[][] table) {
+    LabeledColorWidget lcw = (LabeledColorWidget)
+      widgetPane.getComponent(selector.getSelectedIndex());
+    float[][] oldTable = lcw.getTable();
+    float[] alpha = oldTable.length > 3 ? oldTable[3] : null;
+    table = ColorUtil.adjustColorTable(table, alpha, true);
+    lcw.setTable(table);
+  }
 
   // -- ColorPane API methods - accessors --
 
@@ -398,11 +443,7 @@ public class ColorPane extends DialogPane
         JOptionPane.showMessageDialog(dialog, "Error reading LUT file.",
           "Cannot load color table", JOptionPane.ERROR_MESSAGE);
       }
-      else {
-        LabeledColorWidget lcw = (LabeledColorWidget)
-          widgetPane.getComponent(selector.getSelectedIndex());
-        lcw.setTable(table);
-      }
+      else setWidgetTable(table);
     }
     else if (o == lutSave) {
       // ask user to specify the file
@@ -418,6 +459,16 @@ public class ColorPane extends DialogPane
       if (!success) {
         JOptionPane.showMessageDialog(dialog, "Error writing LUT file.",
           "Cannot save color table", JOptionPane.ERROR_MESSAGE);
+      }
+    }
+    else if (o == lutPresets) {
+      lutsMenu.show(lutPresets, lutPresets.getWidth(), 0);
+    }
+    else {
+      // apply the chosen LUT preset
+      String cmd = e.getActionCommand();
+      if (cmd != null && cmd.startsWith("lut")) {
+        setWidgetTable(LUTS[Integer.parseInt(cmd.substring(3))]);
       }
     }
     super.actionPerformed(e);
@@ -511,8 +562,8 @@ public class ColorPane extends DialogPane
 
     // lay out components
     PanelBuilder builder = new PanelBuilder(new FormLayout(
-      "pref, 3dlu, pref, 3dlu, pref",
-      "pref, 3dlu, pref, 3dlu, pref"
+      "pref, 3dlu, pref:grow, 3dlu, pref",
+      "pref, 3dlu, pref:grow, 3dlu, pref"
     ));
     CellConstraints cc = new CellConstraints();
 
@@ -597,14 +648,32 @@ public class ColorPane extends DialogPane
     if (!LAFUtil.isMacLookAndFeel()) lutSave.setMnemonic('a');
     lutSave.setToolTipText("Saves this color table to disk");
 
+    // LUTs popup menu
+    lutsMenu = new JPopupMenu();
+    for (int i=0; i<LUT_NAMES.length; i++) {
+      if (LUT_NAMES[i] == null) lutsMenu.addSeparator();
+      else {
+        JMenuItem item = new JMenuItem(LUT_NAMES[i]);
+        item.setActionCommand("lut" + i);
+        item.addActionListener(this);
+        lutsMenu.add(item);
+      }
+    }
+
+    // LUTs button
+    lutPresets = new JButton("LUTs >");
+    lutPresets.addActionListener(this);
+    if (!LAFUtil.isMacLookAndFeel()) lutPresets.setMnemonic('t');
+    lutPresets.setToolTipText("Selects a LUT from the list of presets");
+
     // lay out components
     JPanel p = new JPanel();
     p.setLayout(new BorderLayout());
     p.add(FormsUtil.makeColumn(new Object[] {
       FormsUtil.makeRow("Ran&ge component", selector),
       FormsUtil.makeRow(new Object[] {fixed, loVal, toLabel, hiVal}),
-      widgetPane, ButtonBarFactory.buildCenteredBar(lutLoad, lutSave)
-    }, null, true));
+      widgetPane, ButtonBarFactory.buildCenteredBar(lutLoad, lutSave,
+      lutPresets)}, null, true));
     p.setBorder(new TitledBorder("Color tables"));
     return p;
   }

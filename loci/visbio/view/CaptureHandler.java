@@ -177,7 +177,7 @@ public class CaptureHandler {
           OptionManager om = (OptionManager)
             window.getVisBio().getManager(OptionManager.class);
           om.checkWarning(DisplayManager.WARN_IMAGEJ, false,
-            "Quitting ImageJ will also shut down VisBio, with no\n" +
+            "Quitting ImageJ may also shut down VisBio, with no\n" +
             "warning or opportunity to save your work. Similarly,\n" +
             "quitting VisBio will shut down ImageJ without warning.\n" +
             "Please remember to save your work in both programs\n" +
