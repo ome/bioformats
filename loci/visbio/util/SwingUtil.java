@@ -30,6 +30,9 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import java.io.CharArrayWriter;
+import java.io.PrintWriter;
+
 import java.net.URL;
 
 import java.util.Vector;
@@ -290,10 +293,17 @@ public abstract class SwingUtil {
     return dialog;
   }
 
-  /** Pops up a message box, for blocking the current thread. */
+  /** Pops up a message box, blocking the current thread. */
   public static void pause(String msg) {
     JOptionPane.showMessageDialog(null, msg, "VisBio",
       JOptionPane.PLAIN_MESSAGE);
+  }
+
+  /** Pops up a message box, blocking the current thread. */
+  public static void pause(Throwable t) {
+    CharArrayWriter caw = new CharArrayWriter();
+    t.printStackTrace(new PrintWriter(caw));
+    pause(caw.toString());
   }
 
 
