@@ -33,5 +33,12 @@ Bugfixes and enhancements:
   - Add -Dsun.java2d.opengl=true to options, and add option to toggle it
     (Java 1.5+ only)
 
-  - Fix bug in Metamorph, Zeiss and possibly others where open(String, int)
-    isn't thread-safe, resulting in wrong thumbnails
+  - Fix bug in many file readers where ImageLine is numbered upside down so
+    that VisAD displays the image right side up. The numbering should be
+    normal, not an upside down Linear2DSet, and then the range should be set
+    in the display so that the image is displayed properly anyway. This way,
+    using the VisAD cursor actually returns the proper results.
+
+    If this breaks VisAD too much (probably would), then just have VisBio flip
+    the domain sets of all images that get read in, so that the cursor is
+    correct.
