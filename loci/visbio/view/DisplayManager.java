@@ -83,8 +83,8 @@ public class DisplayManager extends LogicManager {
     DisplayWindow window = null;
     if (getDisplays().length < MAX_DISPLAYS) {
       String name = (String) JOptionPane.showInputDialog(parent,
-        "Display name:", "Add display", JOptionPane.INFORMATION_MESSAGE,
-        null, null, defaultName);
+        "Display name:", "Add " + (threeD ? "3D" : "2D") + " display",
+        JOptionPane.INFORMATION_MESSAGE, null, null, defaultName);
       if (name != null) {
         window = new DisplayWindow(this, name, threeD);
         addDisplay(window);

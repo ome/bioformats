@@ -81,13 +81,13 @@ public class DisplayControls extends ControlPanel
     SwingUtil.configureScrollPane(listPane);
 
     // add 2D button
-    add2D = new JButton("Add 2D");
+    add2D = new JButton("Add 2D...");
     add2D.addActionListener(this);
     if (!LAFUtil.isMacLookAndFeel()) add2D.setMnemonic('2');
     add2D.setToolTipText("Creates a new 2D display");
 
     // add 3D button
-    add3D = new JButton("Add 3D");
+    add3D = new JButton("Add 3D...");
     add3D.addActionListener(this);
     if (!LAFUtil.isMacLookAndFeel()) add3D.setMnemonic('3');
     add3D.setToolTipText("Creates a new 3D display");
