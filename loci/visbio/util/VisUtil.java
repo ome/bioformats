@@ -134,20 +134,21 @@ public abstract class VisUtil {
       }
 
       // configure display
-      d.disableEvent(DisplayEvent.MOUSE_PRESSED);
-      d.disableEvent(DisplayEvent.MOUSE_PRESSED_LEFT);
-      d.disableEvent(DisplayEvent.MOUSE_PRESSED_CENTER);
-      d.disableEvent(DisplayEvent.MOUSE_PRESSED_RIGHT);
-      d.disableEvent(DisplayEvent.MOUSE_RELEASED);
-      d.disableEvent(DisplayEvent.MOUSE_RELEASED_LEFT);
-      d.disableEvent(DisplayEvent.MOUSE_RELEASED_CENTER);
-      d.disableEvent(DisplayEvent.MOUSE_RELEASED_RIGHT);
+      //d.disableEvent(DisplayEvent.MOUSE_PRESSED);
+      //d.disableEvent(DisplayEvent.MOUSE_PRESSED_LEFT);
+      //d.disableEvent(DisplayEvent.MOUSE_PRESSED_CENTER);
+      //d.disableEvent(DisplayEvent.MOUSE_PRESSED_RIGHT);
+      //d.disableEvent(DisplayEvent.MOUSE_RELEASED);
+      //d.disableEvent(DisplayEvent.MOUSE_RELEASED_LEFT);
+      //d.disableEvent(DisplayEvent.MOUSE_RELEASED_CENTER);
+      //d.disableEvent(DisplayEvent.MOUSE_RELEASED_RIGHT);
       d.disableEvent(DisplayEvent.MAP_ADDED);
       d.disableEvent(DisplayEvent.MAPS_CLEARED);
       d.disableEvent(DisplayEvent.REFERENCE_ADDED);
       d.disableEvent(DisplayEvent.REFERENCE_REMOVED);
       d.disableEvent(DisplayEvent.DESTROYED);
       d.disableEvent(DisplayEvent.MAP_REMOVED);
+      d.enableEvent(DisplayEvent.MOUSE_DRAGGED);
       d.getMouseBehavior().getMouseHelper().setFunctionMap(new int[][][] {
         {{MouseHelper.DIRECT, MouseHelper.DIRECT},
          {MouseHelper.DIRECT, MouseHelper.DIRECT}},
