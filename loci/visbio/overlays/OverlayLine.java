@@ -25,6 +25,8 @@ package loci.visbio.overlays;
 
 import java.rmi.RemoteException;
 
+import java.util.Arrays;
+
 import loci.visbio.util.MathUtil;
 
 import visad.*;
@@ -74,13 +76,16 @@ public class OverlayLine extends OverlayObject {
   /** Gets VisAD data object representing this overlay. */
   public DataImpl getData() {
     RealTupleType domain = overlay.getDomainType();
-    RealTupleType range = overlay.getRangeType();
+    TupleType range = overlay.getRangeType();
 
     float[][] setSamples = {{x1, x2}, {y1, y2}};
     float r = color.getRed() / 255f;
     float g = color.getGreen() / 255f;
     float b = color.getBlue() / 255f;
-    float[][] fieldSamples = {{r, r}, {g, g}, {b, b}};
+    float[][] rangeSamples = new float[3][setSamples[0].length];
+    Arrays.fill(rangeSamples[0], r);
+    Arrays.fill(rangeSamples[1], g);
+    Arrays.fill(rangeSamples[2], b);
 
     FlatField field = null;
     try {
@@ -88,7 +93,7 @@ public class OverlayLine extends OverlayObject {
         setSamples, setSamples[0].length, null, null, null, false);
       FunctionType fieldType = new FunctionType(domain, range);
       field = new FlatField(fieldType, fieldSet);
-      field.setSamples(fieldSamples, false);
+      field.setSamples(rangeSamples);
     }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }

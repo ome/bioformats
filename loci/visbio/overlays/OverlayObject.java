@@ -79,6 +79,9 @@ public abstract class OverlayObject {
   /** Computes the shortest distance from this object to the given point. */
   public abstract double getDistance(double x, double y);
 
+  /** True iff this overlay object returns text to render. */
+  public boolean isText() { return false; }
+
   /**
    * Computes a grid to be superimposed on this overlay
    * to indicate it is currently selected.
@@ -121,7 +124,7 @@ public abstract class OverlayObject {
     }
 
     RealTupleType domain = overlay.getDomainType();
-    RealTupleType range = overlay.getRangeType();
+    TupleType range = overlay.getRangeType();
 
     // compute zig-zagging grid mesh values
     int count = 2 * (numLR + numTB) - 1;

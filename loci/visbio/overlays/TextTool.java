@@ -23,8 +23,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
+import loci.visbio.data.TransformEvent;
+
 /** TextTool is the tool for creating text overlays. */
 public class TextTool extends OverlayTool {
+
+  // -- Fields --
+
+  /** Text currently being rendered. */
+  protected OverlayText text;
+
 
   // -- Constructor --
 
@@ -37,12 +45,21 @@ public class TextTool extends OverlayTool {
   // -- OverlayTool API methods --
 
   /** Instructs this tool to respond to a mouse press. */
-  public void mouseDown(float x, float y, int[] pos, int mods) { }
+  public void mouseDown(float x, float y, int[] pos, int mods) {
+    OverlayWidget controls = (OverlayWidget) overlay.getControls();
+    text = new OverlayText(overlay, x, y, controls.getText());
+    configureOverlay(text);
+    overlay.addObject(text, pos);
+  }
 
   /** Instructs this tool to respond to a mouse release. */
-  public void mouseUp(float x, float y, int[] pos, int mods) { }
+  public void mouseUp(float x, float y, int[] pos, int mods) { text = null; }
 
   /** Instructs this tool to respond to a mouse drag. */
-  public void mouseDrag(float x, float y, int[] pos, int mods) { }
+  public void mouseDrag(float x, float y, int[] pos, int mods) {
+    if (text == null) return;
+    text.setCoords(x, y);
+    overlay.notifyListeners(new TransformEvent(text));
+  }
 
 }

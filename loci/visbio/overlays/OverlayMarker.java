@@ -25,6 +25,8 @@ package loci.visbio.overlays;
 
 import java.rmi.RemoteException;
 
+import java.util.Arrays;
+
 import visad.*;
 
 /** OverlayMarker is a marker crosshairs overlay. */
@@ -62,7 +64,7 @@ public class OverlayMarker extends OverlayObject {
   /** Gets VisAD data object representing this overlay. */
   public DataImpl getData() {
     RealTupleType domain = overlay.getDomainType();
-    RealTupleType range = overlay.getRangeType();
+    TupleType range = overlay.getRangeType();
     float size = 0.02f * overlay.getScalingValue();
 
     float[][] setSamples = {
@@ -72,19 +74,18 @@ public class OverlayMarker extends OverlayObject {
     float r = color.getRed() / 255f;
     float g = color.getGreen() / 255f;
     float b = color.getBlue() / 255f;
-    float[][] fieldSamples = {
-      {r, r, r, r, r},
-      {g, g, g, g, g},
-      {b, b, b, b, b}
-    };
+    float[][] rangeSamples = new float[3][setSamples[0].length];
+    Arrays.fill(rangeSamples[0], r);
+    Arrays.fill(rangeSamples[1], g);
+    Arrays.fill(rangeSamples[2], b);
 
     FlatField field = null;
     try {
       GriddedSet fieldSet = new Gridded2DSet(domain,
-        setSamples, 5, null, null, null, false);
+        setSamples, setSamples[0].length, null, null, null, false);
       FunctionType fieldType = new FunctionType(domain, range);
       field = new FlatField(fieldType, fieldSet);
-      field.setSamples(fieldSamples, false);
+      field.setSamples(rangeSamples);
     }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }

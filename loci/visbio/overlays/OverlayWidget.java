@@ -28,8 +28,7 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
+import java.awt.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,26 +39,10 @@ import javax.swing.*;
 
 import javax.swing.border.EtchedBorder;
 
-import loci.visbio.util.FormsUtil;
-import loci.visbio.util.SwingUtil;
+import loci.visbio.util.*;
 
 /** OverlayWidget is a set of GUI controls for an overlay transform. */
 public class OverlayWidget extends JPanel implements ActionListener {
-
-  // -- Constants --
-
-  /** List of available fonts. */
-  protected static final String[] FONT_NAMES = {
-    "cursive", "futuram", "rowmans", "timesr", "wmo",
-    "futural", "meteorology", "rowmant", "timesrb"
-  };
-  // CTR START HERE
-  // Get the new widgets below actually working; concentrate on fonts.
-  // More info on Hershey fonts online at: http://batbox.org/font.html
-  // Check out "DisplayTest 69" for code example of using Hershey fonts.
-  //
-  // Also, forgot to add Remove/Delete button. Do that.
-
 
   // -- Fields --
 
@@ -84,11 +67,8 @@ public class OverlayWidget extends JPanel implements ActionListener {
   /** Text field for text labels. */
   protected JTextField text;
 
-  /** Combo box for selecting font name. */
-  protected JComboBox fontName;
-
-  /** Spinner for selecting font size. */
-  protected JSpinner fontSize;
+  /** Button for bringing up font chooser. */
+  protected JButton chooseFont;
 
   /** Button for choosing overlay color. */
   protected JButton color;
@@ -143,31 +123,30 @@ public class OverlayWidget extends JPanel implements ActionListener {
     y2 = new JTextField(4);
 
     // text text field ;-)
-    text = new JTextField(8);
+    text = new JTextField(6);
 
-    // font name selector
-    fontName = new JComboBox(FONT_NAMES);
-
-    // font size selector
-    fontSize = new JSpinner();
+    // font chooser button
+    chooseFont = new JButton("Choose font...");
+    chooseFont.addActionListener(this);
+    if (!LAFUtil.isMacLookAndFeel()) chooseFont.setMnemonic('c');
+    chooseFont.setToolTipText("Configures font used for text overlays");
 
     // color chooser
     color = new JButton();
-    color.setForeground(Color.white);
     color.setBackground(Color.white);
     color.addActionListener(this);
 
     // filled checkbox
     filled = new JCheckBox("Filled");
-    filled.setMnemonic('f');
+    if (!LAFUtil.isMacLookAndFeel()) filled.setMnemonic('f');
 
     // group selector
     groupList = new JComboBox(new Object[] {"None"});
 
     // new group button
-    newGroup = new JButton("New");
+    newGroup = new JButton("New group...");
     newGroup.addActionListener(this);
-    newGroup.setMnemonic('n');
+    if (!LAFUtil.isMacLookAndFeel()) newGroup.setMnemonic('n');
     newGroup.setToolTipText("Creates a new overlay group");
 
     // notes text field
@@ -201,24 +180,21 @@ public class OverlayWidget extends JPanel implements ActionListener {
     builder.addLabel("Y2", cc.xy(5, 9));
     builder.add(y2, cc.xy(7, 9));
     builder.addLabel("Text", cc.xy(1, 11));
-    builder.add(text, cc.xyw(3, 11, 5));
-    builder.addLabel("Font", cc.xy(1, 13));
-    builder.add(fontName, cc.xy(3, 13));
-    builder.addLabel("Size", cc.xy(5, 13));
-    builder.add(fontSize, cc.xy(7, 13));
+    builder.add(text, cc.xyw(3, 11, 3));
+    builder.add(chooseFont, cc.xy(7, 11, "left, center"));
     builder.addLabel("Color", cc.xy(1, 15));
-    builder.add(color, cc.xy(3, 15, "fill, fill"));
-    builder.add(filled, cc.xyw(5, 15, 3));
+    builder.add(color, cc.xyw(3, 15, 3, "fill, fill"));
+    builder.add(filled, cc.xy(7, 15));
     builder.addLabel("Group", cc.xy(1, 17));
-    builder.add(groupList, cc.xy(3, 17));
-    builder.add(newGroup, cc.xyw(5, 17, 3, "left, center"));
+    builder.add(groupList, cc.xyw(3, 17, 3));
+    builder.add(newGroup, cc.xy(7, 17, "left, center"));
     builder.addLabel("Notes", cc.xy(1, 19));
     builder.add(notes, cc.xyw(3, 19, 5));
 
     builder.addSeparator("Statistics", cc.xyw(1, 21, 7));
     builder.add(stats, cc.xyw(1, 23, 7));
 
-    //layout.setColumnGroups(new int[][] {{3, 7}});
+    layout.setColumnGroups(new int[][] {{3, 7}});
     add(builder.getPanel());
   }
 
@@ -244,6 +220,26 @@ public class OverlayWidget extends JPanel implements ActionListener {
     }
     return null;
   }
+
+  // CTR START HERE add more methods corresponding to GUI widgets here
+  // redo font stuff, because we can only have one font per Text mapping.
+  // So, change it to a "Fonts..." button to the right of the text, that
+  // when clicked, brings up a dialog for configuring "the" font for the
+  // text overlays. On the plus side, investigate whether there is a standard
+  // Java font chooser, and use it if there is (VisAD does support
+  // java.awt.Font fonts), and also allow the option to use a Hershey font.
+
+    // Get the new widgets in OverlayWidget working; concentrate on fonts.
+    // More info on Hershey fonts online at: http://batbox.org/font.html
+    // Check out "DisplayTest 69" for code example of using Hershey fonts.
+    //
+    // Also, don't forget to add Remove/Delete button.
+
+  public float getX1() { return Float.NaN; }
+  public float getY1() { return Float.NaN; }
+  public float getX2() { return Float.NaN; }
+  public float getY2() { return Float.NaN; }
+  public String getText() { return text.getText(); }
 
   /** Sets currently active overlay color. */
   public void setActiveColor(Color c) {
@@ -286,12 +282,24 @@ public class OverlayWidget extends JPanel implements ActionListener {
   /** Gets description for current overlay. */
   public String getDescription() { return stats.getText(); }
 
+
   // -- ActionListener API methods --
 
   /** Handles button presses. */
   public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
-    if (src == color) {
+    if (src == chooseFont) {
+      FontChooserPane fcp = new FontChooserPane();
+      Window w = SwingUtil.getWindow(this);
+      int rval;
+      if (w instanceof Frame) rval = fcp.showDialog((Frame) w);
+      else if (w instanceof Dialog) rval = fcp.showDialog((Dialog) w);
+      else rval = fcp.showDialog((Frame) null);
+      if (rval != DialogPane.APPROVE_OPTION) return;
+      Font font = fcp.getSelectedFont();
+      // CTR TODO actually update font here
+    }
+    else if (src == color) {
       Color c = getActiveColor();
       c = JColorChooser.showDialog(this, "Select a color", c);
       if (c != null) setActiveColor(c);

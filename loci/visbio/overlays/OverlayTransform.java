@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
+import java.awt.Font;
+
 import java.rmi.RemoteException;
 
 import java.util.Vector;
@@ -45,6 +47,55 @@ import visad.*;
 public class OverlayTransform extends DataTransform
   implements TransformListener
 {
+
+  // -- Constants --
+
+  /** MathType for blue color mappings. */
+  protected static final RealType RED_TYPE =
+    RealType.getRealType("overlay_red");
+
+  /** MathType for blue color mappings. */
+  protected static final RealType GREEN_TYPE =
+    RealType.getRealType("overlay_green");
+
+  /** MathType for blue color mappings. */
+  protected static final RealType BLUE_TYPE =
+    RealType.getRealType("overlay_blue");
+
+  /** MathType for Text mappings. */
+  protected static final TextType TEXT_TYPE =
+    TextType.getTextType("overlay_text");
+
+  /** Overlay range type. */
+  protected static final RealTupleType RANGE_TUPLE = makeRangeTuple();
+
+  /** Constructs the overlay range type for most overlays. */
+  protected static RealTupleType makeRangeTuple() {
+    RealTupleType rtt = null;
+    try {
+      rtt = new RealTupleType(new RealType[] {
+        RED_TYPE, GREEN_TYPE, BLUE_TYPE
+      });
+    }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    return rtt;
+  }
+
+  /** Overlay range type. */
+  protected static final TupleType TEXT_RANGE_TUPLE = makeTextRangeTuple();
+
+  /** Constructs the overlay range type for text overlays. */
+  protected static TupleType makeTextRangeTuple() {
+    TupleType tt = null;
+    try {
+      tt = new TupleType(new ScalarType[] {
+        TEXT_TYPE, RED_TYPE, GREEN_TYPE, BLUE_TYPE
+      });
+    }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    return tt;
+  }
+
 
   // -- Fields --
 
@@ -87,6 +138,17 @@ public class OverlayTransform extends DataTransform
     return oo;
   }
 
+  /** Sets the font used to render text for these overlays. */
+  public void setFont(Font font) {
+    // CTR START HERE TODO - Improve this so that it doesn't suck.
+    // Somehow need to update font for all textcontrols of all currently
+    // active displays. This is very tricky. Think about it some more.
+    /*
+    TextControl textControl = (TextControl) tMap.getControl();
+    if (textControl != null) textControl.setFont(font);
+    */
+  }
+
   /** Gets domain type (XY). */
   public RealTupleType getDomainType() {
     ImageTransform it = (ImageTransform) parent;
@@ -97,17 +159,10 @@ public class OverlayTransform extends DataTransform
   }
 
   /** Gets range type (RGB). */
-  public RealTupleType getRangeType() {
-    RealTupleType rtt = null;
-    try {
-      rtt = new RealTupleType(
-        RealType.getRealType("overlay_red"),
-        RealType.getRealType("overlay_green"),
-        RealType.getRealType("overlay_blue"));
-    }
-    catch (VisADException exc) { exc.printStackTrace(); }
-    return rtt;
-  }
+  public TupleType getRangeType() { return RANGE_TUPLE; }
+
+  /** Gets range type for text overlays (R, G, B, text). */
+  public TupleType getTextRangeType() { return TEXT_RANGE_TUPLE; }
 
   /**
    * Gets a scaling value suitable for computing
@@ -161,43 +216,83 @@ public class OverlayTransform extends DataTransform
     int q = MathUtil.positionToRaster(lengths, pos);
     if (q < 0 || q >= overlays.length) return null;
     int size = overlays[q].size();
-    FieldImpl field = null;
-    if (size > 0) {
-      // compute number of selected objects
-      int sel = 0;
-      for (int i=0; i<size; i++) {
-        OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
-        if (obj.isSelected()) sel++;
-      }
-
-      // compile objects into one master field
-      try {
-        RealType index = RealType.getRealType("overlay_index");
-        FunctionType ftype = new FunctionType(getDomainType(), getRangeType());
-        FunctionType fieldType = new FunctionType(index, ftype);
-        GriddedSet fieldSet = new Integer1DSet(size + sel);
-        field = new FieldImpl(fieldType, fieldSet);
-        // compute overlay data for each object
+    FieldImpl rgbField = null, txtField = null;
+    try {
+      if (size > 0) {
+        // compute number of selected objects and number of text objects
+        int txt = 0, rgbSel = 0, txtSel = 0;
         for (int i=0; i<size; i++) {
           OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
-          DataImpl data = obj.getData();
-          field.setSample(i, data, false);
+          if (obj.isText()) {
+            txt++;
+            if (obj.isSelected()) txtSel++;
+          }
+          else if (obj.isSelected()) rgbSel++;
         }
-        // compute selection grid for each selected object
-        int c = 0;
-        for (int i=0; i<size && c<sel; i++) {
-          OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
-          if (obj.isSelected()) {
+        int rgbSize = size - txt;
+        RealType index = RealType.getRealType("overlay_index");
+
+        // compile non-text objects into RGB field
+        if (size > txt) {
+          FunctionType ftype =
+            new FunctionType(getDomainType(), getRangeType());
+          FunctionType fieldType = new FunctionType(index, ftype);
+          GriddedSet fieldSet = new Integer1DSet(rgbSize + rgbSel);
+          rgbField = new FieldImpl(fieldType, fieldSet);
+          // compute overlay data for each object
+          int c = 0;
+          for (int i=0; i<size && c<rgbSize; i++) {
+            OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
+            if (obj.isText()) continue;
+            DataImpl data = obj.getData();
+            rgbField.setSample(i, data, false);
+            c++;
+          }
+          // compute selection grid for each selected object
+          c = 0;
+          for (int i=0; i<size && c<rgbSel; i++) {
+            OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
+            if (obj.isText() || !obj.isSelected()) continue;
             DataImpl grid = obj.getSelectionGrid();
-            field.setSample(size + c, grid, false);
+            rgbField.setSample(rgbSize + c, grid, false);
+            c++;
+          }
+        }
+
+        // compile text objects into text field
+        if (txt > 0) {
+          FunctionType ftype =
+            new FunctionType(getDomainType(), getTextRangeType());
+          FunctionType fieldType = new FunctionType(index, ftype);
+          GriddedSet fieldSet = new Integer1DSet(txt + txtSel);
+          txtField = new FieldImpl(fieldType, fieldSet);
+          // compute overlay data for each object
+          int c = 0;
+          for (int i=0; i<size && c<txt; i++) {
+            OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
+            if (!obj.isText()) continue;
+            DataImpl data = obj.getData();
+            txtField.setSample(i, data, false);
+          }
+          // compute selection grid for each selected object
+          c = 0;
+          for (int i=0; i<size && c<txtSel; i++) {
+            OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
+            if (!obj.isText() || !obj.isSelected()) continue;
+            DataImpl grid = obj.getSelectionGrid();
+            txtField.setSample(txt + c, grid, false);
             c++;
           }
         }
       }
-      catch (VisADException exc) { exc.printStackTrace(); }
-      catch (RemoteException exc) { exc.printStackTrace(); }
+      if (rgbField == null && txtField == null) return null;
+      else if (rgbField == null) return txtField;
+      else if (txtField == null) return rgbField;
+      else return new Tuple(new Data[] {rgbField, txtField}, false);
     }
-    return field;
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
+    return null;
   }
 
   /** Gets whether this transform provides data of the given dimensionality. */
@@ -210,24 +305,22 @@ public class OverlayTransform extends DataTransform
     // are placed properly without an extra set of setRange calls).
     RealType x = ((ImageTransform) parent).getXType();
     RealType y = ((ImageTransform) parent).getYType();
-    // We do need new RGB types, so that overlay colors can be
-    // independently manipulated.
-    RealType r = RealType.getRealType("overlay_red");
-    RealType g = RealType.getRealType("overlay_green");
-    RealType b = RealType.getRealType("overlay_blue");
 
+    // We do need new RGB types, so that overlay colors can be
+    // independently manipulated; and a new Text type, for overlaid text.
     ScalarMap[] maps = null;
     try {
-      ScalarMap rMap = new ScalarMap(r, Display.Red);
-      ScalarMap gMap = new ScalarMap(g, Display.Green);
-      ScalarMap bMap = new ScalarMap(b, Display.Blue);
+      ScalarMap tMap = new ScalarMap(TEXT_TYPE, Display.Text);
+      ScalarMap rMap = new ScalarMap(RED_TYPE, Display.Red);
+      ScalarMap gMap = new ScalarMap(GREEN_TYPE, Display.Green);
+      ScalarMap bMap = new ScalarMap(BLUE_TYPE, Display.Blue);
       rMap.setRange(0, 1);
       gMap.setRange(0, 1);
       bMap.setRange(0, 1);
       maps = new ScalarMap[] {
         new ScalarMap(x, Display.XAxis),
         new ScalarMap(y, Display.YAxis),
-        rMap, gMap, bMap
+        tMap, rMap, gMap, bMap
       };
     }
     catch (VisADException exc) { exc.printStackTrace(); }
@@ -363,6 +456,27 @@ public class OverlayTransform extends DataTransform
   public void transformChanged(TransformEvent e) {
     initState(null);
     notifyListeners(new TransformEvent(this));
+  }
+
+
+  // -- Utility methods --
+
+  /** Constructs a range value with the given component values. */
+  public static Tuple getTextRangeValue(String text,
+    float r, float g, float b)
+  {
+    Tuple tuple = null;
+    try {
+      tuple = new Tuple(TEXT_RANGE_TUPLE, new Data[] {
+        new Text(TEXT_TYPE, text),
+        new Real(RED_TYPE, r),
+        new Real(GREEN_TYPE, g),
+        new Real(BLUE_TYPE, b)
+      });
+    }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
+    return tuple;
   }
 
 }

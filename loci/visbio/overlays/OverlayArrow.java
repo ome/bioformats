@@ -93,7 +93,7 @@ public class OverlayArrow extends OverlayObject {
     float qy = (float) (mult * yy);
 
     RealTupleType domain = overlay.getDomainType();
-    RealTupleType range = overlay.getRangeType();
+    TupleType range = overlay.getRangeType();
 
     float[][] setSamples = {
       {x1, x2 - qy, x2 + qy, x1}, {y1, y2 + qx, y2 - qx, y1}
@@ -122,16 +122,16 @@ public class OverlayArrow extends OverlayObject {
     float r = color.getRed() / 255f;
     float g = color.getGreen() / 255f;
     float b = color.getBlue() / 255f;
-    float[][] fieldSamples = new float[3][setSamples[0].length];
-    Arrays.fill(fieldSamples[0], r);
-    Arrays.fill(fieldSamples[1], g);
-    Arrays.fill(fieldSamples[2], b);
+    float[][] rangeSamples = new float[3][setSamples[0].length];
+    Arrays.fill(rangeSamples[0], r);
+    Arrays.fill(rangeSamples[1], g);
+    Arrays.fill(rangeSamples[2], b);
 
     FlatField field = null;
     try {
       FunctionType fieldType = new FunctionType(domain, range);
       field = new FlatField(fieldType, fieldSet);
-      field.setSamples(fieldSamples, false);
+      field.setSamples(rangeSamples);
     }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
