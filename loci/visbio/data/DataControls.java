@@ -564,7 +564,7 @@ public class DataControls extends ControlPanel
     DisplayManager disp = (DisplayManager)
       lm.getVisBio().getManager(DisplayManager.class);
     if (disp == null) return;
-    DisplayWindow window = disp.createDisplay(threeD);
+    DisplayWindow window = disp.createDisplay(data.getName(), threeD);
     if (window == null) return;
     window.addTransform(data);
     WindowManager wm = (WindowManager)
