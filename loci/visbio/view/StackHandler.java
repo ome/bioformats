@@ -50,7 +50,7 @@ public class StackHandler extends TransformHandler {
   public static final int MAX_VOLUME_RESOLUTION = 160;
 
   /** Default length of each volume rendered spatial axis. */
-  public static final int DEFAULT_VOLUME_RESOLUTION = 64;
+  public static final int DEFAULT_VOLUME_RESOLUTION = 96;
 
 
   // -- Fields --
