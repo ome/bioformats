@@ -297,13 +297,13 @@ public abstract class VisUtil {
           r.exec("dr.addKeyboardBehavior(kb)");
           r.setVar("mods", InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK);
           r.exec("kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_X_POS, " +
-            "KeyEvent.VK_DOWN, mods");
+            "KeyEvent.VK_DOWN, mods)");
           r.exec("kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_X_NEG, " +
-            "KeyEvent.VK_UP, mods");
+            "KeyEvent.VK_UP, mods)");
           r.exec("kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_Y_POS, " +
-            "KeyEvent.VK_LEFT, mods");
+            "KeyEvent.VK_LEFT, mods)");
           r.exec("kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_Y_NEG, " +
-            "KeyEvent.VK_RIGHT, mods");
+            "KeyEvent.VK_RIGHT, mods)");
           kb = (KeyboardBehavior) r.getVar("kb");
         }
         catch (VisADException exc) { exc.printStackTrace(); }
