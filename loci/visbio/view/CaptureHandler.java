@@ -73,7 +73,7 @@ public class CaptureHandler {
   protected JFileChooser movieBox;
 
 
-  // -- Fields - state --
+  // -- Fields - initial state --
 
   /** List of positions. */
   protected Vector positions;
@@ -91,7 +91,10 @@ public class CaptureHandler {
   // -- Constructor --
 
   /** Creates a display capture handler. */
-  public CaptureHandler(DisplayWindow dw) { window = dw; }
+  public CaptureHandler(DisplayWindow dw) {
+    window = dw;
+    positions = new Vector();
+  }
 
 
   // -- CaptureHandler API methods --
@@ -361,12 +364,15 @@ public class CaptureHandler {
   /** Restores the current state. */
   public void restoreState() {
     int numPositions = Integer.parseInt(window.getAttr("positions"));
-    positions = new Vector(numPositions);
+    Vector vn = new Vector(numPositions);
     for (int i=0; i<numPositions; i++) {
       DisplayPosition position = new DisplayPosition();
       position.restoreState(window, "position" + i);
-      positions.add(position);
+      vn.add(position);
     }
+    Vector vo = getPositions();
+    if (vo != null) StateManager.mergeStates(vo, vn);
+
     movieSpeed = Integer.parseInt(window.getAttr("movieSpeed"));
     movieFPS = Integer.parseInt(window.getAttr("movieFPS"));
     movieSmooth = window.getAttr("movieSmooth").equalsIgnoreCase("true");

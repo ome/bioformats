@@ -27,11 +27,11 @@ import java.rmi.RemoteException;
 
 import java.util.Vector;
 
-import loci.visbio.data.DataTransform;
-import loci.visbio.data.ImageTransform;
-import loci.visbio.data.ThumbnailHandler;
-import loci.visbio.data.TransformEvent;
-import loci.visbio.data.TransformListener;
+import loci.visbio.VisBioFrame;
+
+import loci.visbio.data.*;
+
+import loci.visbio.state.Dynamic;
 
 import loci.visbio.util.VisUtil;
 
@@ -41,11 +41,12 @@ import visad.util.Util;
 
 /** Represents a link between a data transform and a display. */
 public class TransformLink
-  implements DisplayListener, Runnable, TransformListener
+  implements DisplayListener, Dynamic, Runnable, TransformListener
 {
 
   // -- Constants --
 
+  /** Milliseconds until full-resolution burn-in. */
   protected static final int BURN_DELAY = 3000;
 
 
@@ -62,6 +63,9 @@ public class TransformLink
 
   /** Data renderer for toggling data's visibility and other parameters. */
   protected DataRenderer rend;
+
+  /** Separate thread for managing full-resolution burn-in. */
+  protected Thread burnThread;
 
   /** Next clock time a full-resolution burn-in should occur. */
   protected long burnTime;
@@ -82,7 +86,16 @@ public class TransformLink
   protected boolean clearWhenDone;
 
 
+  // -- Fields - initial state --
+
+  /** Whether data transform is visible onscreen. */
+  protected boolean visible;
+
+
   // -- Constructor --
+
+  /** Constructs an uninitialized transform link. */
+  public TransformLink(TransformHandler h) { handler = h; }
 
   /**
    * Creates a link between the given data transform and
@@ -91,22 +104,8 @@ public class TransformLink
   public TransformLink(TransformHandler h, DataTransform t) {
     handler = h;
     trans = t;
-
-    // build data reference
-    try {
-      ref = new DataReferenceImpl(trans.getName());
-      DisplayImpl display = handler.getWindow().getDisplay();
-      rend = display.getDisplayRenderer().makeDefaultRenderer();
-      display.addDisplayListener(this);
-    }
-    catch (VisADException exc) { exc.printStackTrace(); }
-
-    // listen for changes to this transform
-    t.addTransformListener(this);
-
-    // initialize thread for handling full-resolution burn-in operations
-    Thread burnThread = new Thread(this);
-    burnThread.start();
+    visible = true;
+    initState(null);
   }
 
 
@@ -123,10 +122,7 @@ public class TransformLink
 
   /** Links this transform into the display. */
   public void link() {
-    try {
-      DisplayImpl display = handler.getWindow().getDisplay();
-      display.addReferences(rend, ref);
-    }
+    try { handler.getWindow().getDisplay().addReferences(rend, ref); }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
   }
@@ -138,13 +134,38 @@ public class TransformLink
   public void setVisible(boolean vis) { rend.toggle(vis); }
 
   /** Gets visibility of the transform. */
-  public boolean isVisible() { return rend.getEnabled(); }
+  public boolean isVisible() {
+    return rend == null ? visible : rend.getEnabled();
+  }
 
   /** Sets status messages displayed in display's bottom left-hand corner. */
   public void setMessage(String msg) {
     status = msg == null ? null :
       new VisADException(trans.getName() + ": " + msg);
     doMessages(false);
+  }
+
+
+  // -- TransformLink API methods - state logic --
+
+  /** Writes the current state. */
+  public void saveState(DisplayWindow window, String attrName) {
+    VisBioFrame bio = handler.getWindow().getVisBio();
+    DataManager dm = (DataManager) bio.getManager(DataManager.class);
+    Vector dataList = dm.getDataList();
+    int ndx = dataList.indexOf(trans);
+    window.setAttr(attrName + "_dataIndex", "" + ndx);
+    window.setAttr(attrName + "_visible", "" + isVisible());
+  }
+
+  /** Restores the current state. */
+  public void restoreState(DisplayWindow window, String attrName) {
+    VisBioFrame bio = handler.getWindow().getVisBio();
+    DataManager dm = (DataManager) bio.getManager(DataManager.class);
+    Vector dataList = dm.getDataList();
+    int dataIndex = Integer.parseInt(window.getAttr(attrName + "_dataIndex"));
+    trans = (DataTransform) dataList.elementAt(dataIndex);
+    visible = window.getAttr(attrName + "_visible").equalsIgnoreCase("true");
   }
 
 
@@ -165,6 +186,78 @@ public class TransformLink
       else doMessages(false);
     }
   }
+
+
+  // -- Dynamic API methods --
+
+  /** Tests whether two dynamic objects are equivalent. */
+  public boolean matches(Dynamic dyn) {
+    if (!isCompatible(dyn)) return false;
+    TransformLink link = (TransformLink) dyn;
+    return getTransform().matches(link.getTransform()) &&
+      isVisible() == link.isVisible();
+  }
+
+  /**
+   * Tests whether the given dynamic object can be used as an argument to
+   * initState, for initializing this dynamic object.
+   */
+  public boolean isCompatible(Dynamic dyn) {
+    return dyn instanceof TransformLink;
+  }
+
+  /**
+   * Modifies this object's state to match that of the given object.
+   * If the argument is null, the object is initialized according to
+   * its current state instead.
+   */
+  public void initState(Dynamic dyn) {
+    if (dyn != null && !isCompatible(dyn)) return;
+
+    if (burnThread != null) {
+      alive = false;
+      try { burnThread.join(); }
+      catch (InterruptedException exc) { }
+      alive = true;
+    }
+
+    TransformLink link = (TransformLink) dyn;
+    if (link != null) {
+      if (trans != null) trans.removeTransformListener(this);
+      trans = link.getTransform();
+      visible = link.isVisible();
+    }
+
+    // remove old data reference
+    DisplayImpl display = handler.getWindow().getDisplay();
+    if (ref != null) {
+      try { display.removeReference(ref); }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
+    }
+
+    // build data reference
+    try {
+      ref = new DataReferenceImpl(trans.getName());
+      rend = display.getDisplayRenderer().makeDefaultRenderer();
+      rend.toggle(visible);
+      display.addDisplayListener(this);
+    }
+    catch (VisADException exc) { exc.printStackTrace(); }
+
+    // listen for changes to this transform
+    trans.addTransformListener(this);
+
+    // initialize thread for handling full-resolution burn-in operations
+    burnThread = new Thread(this);
+    burnThread.start();
+  }
+
+  /**
+   * Called when this object is being discarded in favor of
+   * another object with a matching state.
+   */
+  public void discard() { destroy(); }
 
 
   // -- Runnable API methods --

@@ -215,13 +215,13 @@ public class DisplayManager extends LogicManager {
   /** Adds display-related GUI components to VisBio. */
   protected void doGUI() {
     // control panel
-    bio.setStatus("Initializing display logic");
+    bio.setSplashStatus("Initializing display logic");
     displayControls = new DisplayControls(this);
     PanelManager pm = (PanelManager) bio.getManager(PanelManager.class);
     pm.addPanel(displayControls);
 
     // options
-    bio.setStatus(null);
+    bio.setSplashStatus(null);
     OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
     om.addBooleanOption("Warnings", WARN_IMAGEJ, 'i',
       "Toggles whether VisBio displays a warning about " +
@@ -229,7 +229,7 @@ public class DisplayManager extends LogicManager {
 
 
     // help topics
-    bio.setStatus(null);
+    bio.setSplashStatus(null);
     HelpManager hm = (HelpManager) bio.getManager(HelpManager.class);
     hm.addHelpTopic("Displays", "displays.html");
     hm.addHelpTopic("Colors", "colors.html");

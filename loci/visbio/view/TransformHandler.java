@@ -43,6 +43,8 @@ import loci.visbio.VisBioFrame;
 
 import loci.visbio.data.DataTransform;
 
+import loci.visbio.state.StateManager;
+
 import loci.visbio.util.VisUtil;
 
 import visad.DisplayImpl;
@@ -84,11 +86,20 @@ public class TransformHandler implements ChangeListener, Runnable  {
   /** Dimensional axis to use for animation. */
   protected int animAxis;
 
+  /** Thread responsible for animation. */
+  protected Thread animThread;
+
   /** Synchronization object for animation. */
   protected Object animSync = new Object();
 
   /** Earliest time full-resolution burn-in is allowed. */
   protected long burnTime;
+
+
+  // -- Fields - initial state --
+
+  /** List of uninitialized links. */
+  protected Vector newLinks;
 
 
   // -- Constructor --
@@ -178,10 +189,7 @@ public class TransformHandler implements ChangeListener, Runnable  {
     if (animating == on) return;
     animating = on;
     if (!animating) return;
-
-    // start a new thread for animation
-    Thread animThread = new Thread(this);
-    animThread.start();
+    startAnimation();
   }
 
   /** Gets whether display is currently animating. */
@@ -236,18 +244,49 @@ public class TransformHandler implements ChangeListener, Runnable  {
 
   /** Writes the current state. */
   public void saveState() {
-    // CTR TODO TransformHandler saveState
+    // save number of links
+    int len = links.size();
+    window.setAttr("numLinks", "" + len);
+
+    // save all links
+    for (int i=0; i<len; i++) {
+      TransformLink link = (TransformLink) links.elementAt(i);
+      link.saveState(window, "link" + i);
+    }
+
+    // save other parameters
+    window.setAttr("animating", "" + animating);
+    window.setAttr("animFPS", "" + fps);
+    window.setAttr("animAxis", "" + animAxis);
   }
 
   /** Restores the current state. */
   public void restoreState() {
-    // CTR TODO TransformHandler restoreState
+    int len = Integer.parseInt(window.getAttr("numLinks"));
+    newLinks = new Vector();
+    for (int i=0; i<len; i++) {
+      TransformLink link = new TransformLink(this);
+      link.restoreState(window, "link" + i);
+      newLinks.add(link);
+    }
+    animating = window.getAttr("animating").equalsIgnoreCase("true");
+    fps = Integer.parseInt(window.getAttr("animFPS"));
+    animAxis = Integer.parseInt(window.getAttr("animAxis"));
   }
 
   /** Tests whether two objects are in equivalent states. */
   public boolean matches(TransformHandler handler) {
-    // CTR TODO TransformHandler matches
-    return false;
+    if (handler == null) return false;
+    int size = links.size();
+    if (handler.links == null || handler.links.size() != size) return false;
+    for (int i=0; i<size; i++) {
+      TransformLink link = (TransformLink) links.elementAt(i);
+      TransformLink hlink = (TransformLink) handler.links.elementAt(i);
+      if (link == null && hlink == null) continue;
+      if (link == null || hlink == null || !link.matches(hlink)) return false;
+    }
+    return animating == handler.animating &&
+      fps == handler.fps && animAxis == handler.animAxis;
   }
 
   /**
@@ -256,7 +295,33 @@ public class TransformHandler implements ChangeListener, Runnable  {
    * its current state instead.
    */ 
   public void initState(TransformHandler handler) {
-    // CTR TODO TransformHandler initState
+    if (handler == null) {
+      if (newLinks != null) {
+        // initialize new links
+        StateManager.mergeStates(links, newLinks);
+        links = newLinks;
+        newLinks = null;
+      }
+    }
+    else {
+      // merge handler links with current links
+      Vector vn = handler.newLinks == null ? handler.links : handler.newLinks;
+      StateManager.mergeStates(links, vn);
+      links = vn;
+      animating = handler.animating;
+      fps = handler.fps;
+      animAxis = handler.animAxis;
+    }
+
+    panel.removeAllTransforms();
+    int size = links.size();
+    for (int i=0; i<size; i++) {
+      TransformLink link = (TransformLink) links.elementAt(i);
+      panel.addTransform(link.getTransform());
+    }
+
+    rebuild();
+    if (animating) startAnimation();
   }
 
 
@@ -356,6 +421,15 @@ public class TransformHandler implements ChangeListener, Runnable  {
     }
   }
 
+  /** Starts a new thread for animation. */
+  protected void startAnimation() {
+    if (animThread != null) {
+      try { animThread.join(); }
+      catch (InterruptedException exc) { }
+    }
+    animThread = new Thread(this);
+    animThread.start();
+  }
 
   // -- ChangeListener API methods --
 

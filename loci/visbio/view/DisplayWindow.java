@@ -135,6 +135,7 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
    * if it is too small, keeping the display itself square.
    */
   public void repack() {
+    if (sliders == null) return; // not yet fully initialized
     sliders.removeAll();
     sliders.add(transformHandler.getSliderPanel());
     if (!isVisible()) validate(); // force recomputation of slider panel size
@@ -347,8 +348,8 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
       transformHandler.initState(null);
     }
     else {
-      // Handlers' initState methods are smart enough to reinitialize
-      // their components only when necessary, to ensure efficiency.
+      // handlers' initState methods are smart enough to reinitialize
+      // their components only when necessary, to ensure efficiency
       viewHandler.initState(window.viewHandler);
       colorHandler.initState(window.colorHandler);
       captureHandler.initState(window.captureHandler);

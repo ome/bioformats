@@ -49,7 +49,6 @@ public class StackHandler extends TransformHandler {
   public static final RealType ZBOX = RealType.getRealType("zbox");
 
 
-
   // -- Fields --
 
   /** Dimensional positions. */

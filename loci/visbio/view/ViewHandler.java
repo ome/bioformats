@@ -72,12 +72,6 @@ public class ViewHandler {
   /** Associated display window. */
   protected DisplayWindow window;
 
-  /**
-   * Matrix representing current display projection
-   * (for uninitialized view handlers only).
-   */
-  protected double[] matrix;
-
   /** Aspect ratio of the display. */
   protected double xasp, yasp, zasp;
 
@@ -89,6 +83,12 @@ public class ViewHandler {
 
   /** Whether display is in parallel projection mode. */
   protected boolean parallel;
+
+
+  // -- Fields - initial state --
+
+  /** Matrix representing current display projection. */
+  protected double[] matrix;
 
 
   // -- GUI components --
