@@ -261,6 +261,7 @@ public class DataControls extends ControlPanel
     dataModel.removeNodeFromParent(node);
 
     // remove data's controls from table
+    hideControls(data);
     frameTable.remove(data);
 
     return true;
@@ -293,6 +294,13 @@ public class DataControls extends ControlPanel
     WindowManager wm = (WindowManager)
       lm.getVisBio().getManager(WindowManager.class);
     wm.showWindow(frame);
+  }
+
+  /** Hides frame containing controls for the given data object. */
+  public void hideControls(DataTransform data) {
+    JFrame frame = (JFrame) frameTable.get(data);
+    if (frame == null) return;
+    frame.setVisible(false);
   }
 
 
