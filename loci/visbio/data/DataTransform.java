@@ -128,7 +128,7 @@ public abstract class DataTransform implements Dynamic {
    * at full resolution after the usual delay by a separate thread. It is
    * recommended that most transforms not be immediate, unless they are fast
    * to render and require frequent, high-priority updates (see
-   * {@link loci.visbio.measure.AnnTransform} for one such example).
+   * {@link loci.visbio.overlays.OverlayTransform} for one such example).
    */
   public abstract boolean isImmediate();
 
