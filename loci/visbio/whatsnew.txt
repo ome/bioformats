@@ -1,3 +1,10 @@
+v3.00 final - Not yet released
+
+- ADDED: Data export: save a data object to a file series on disk
+
+- FIXED: Lots of little bugfixes
+
+
 v3.00 beta4 - Wednesday, March 16, 2005
 
 - ADDED: Volume rendering

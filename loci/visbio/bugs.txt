@@ -32,9 +32,6 @@ Bugfixes and enhancements to address:
     "rubber band" events down the transform chain so that transforms can react
     (in particular, so OverlayTransform can do multiple selection).
 
-  - Remove, up and down buttons on capture dialog need to be grayed out
-    if they are inapplicable.
-
   - "Displays" button should only allow displays that can properly display the
     data. So, if the data transform is 3D only, only 3D displays should be
     enabled, etc.
@@ -83,3 +80,13 @@ Bugfixes and enhancements to address:
 
     Probably also don't let them create two displays with the same name
     (use same strategy), because otherwise state might not restore correctly.
+
+  - Uploading to OME from VisBio works, but throws this exception:
+
+    class org.apache.xmlrpc.XmlRpcException
+    org.openmicroscopy.ds.RemoteServerErrorException: Can't locate object method "new" via package "OME::Tasks::NotificationManager" (perhaps you forgot to load "OME::Tasks::NotificationManager"?) at /home/bassem/OME/src/perl2//OME/Analysis/Engine.pm line 802.
+        at org.openmicroscopy.ds.XmlRpcCaller.invoke(XmlRpcCaller.java:299)
+        at org.openmicroscopy.ds.XmlRpcCaller.dispatch(XmlRpcCaller.java:442)
+        at org.openmicroscopy.ds.managers.AnalysisEngineManager.executeAnalysisChain(AnalysisEngineManager.java:84)
+        at loci.visbio.ome.OMEManager.run(OMEManager.java:342)
+        at java.lang.Thread.run(Unknown Source)
