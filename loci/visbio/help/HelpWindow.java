@@ -93,7 +93,7 @@ public class HelpWindow extends JFrame
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     int width = screenSize.width - 25, height = screenSize.height - 50;
     if (width > DEFAULT_WIDTH) width = DEFAULT_WIDTH;
-    if (height > DEFAULT_HEIGHT) width = DEFAULT_HEIGHT;
+    if (height > DEFAULT_HEIGHT) height = DEFAULT_HEIGHT;
     split.setPreferredSize(new Dimension(width, height));
     setContentPane(split);
   }

@@ -1,5 +1,32 @@
 <html><body><h2>Datasets</h2>
 
-<p>Datasets TODO
+<p>The dataset is the basic data transform upon which the others operate. Most
+other transforms require a parent transform as input, from which to compute
+their output data. For example, a <a href="subsampling.html">Subsampling</a>
+transform takes an input data object and reduces the image resolution and/or
+the number of total image planes.
+
+<p>A dataset does not have an input data transform. Instead, it gets its input
+from source files on disk in one of the
+<a href="formats.html">supported file formats</a>. For instructions on how to
+create a dataset from files on disk, see the 
+<a href="import_data.html">Importing a dataset from disk</a> topic.
+
+<br><h3>See also:</h3>
+
+<ul>
+  <li><a href="import_data.html">Importing a dataset from disk</a>
+    - to load a dataset into VisBio</li>
+  <li><a href="add_data.html">Add a data object</a>
+    - to create derivative data objects</li>
+  <li><a href="display_data.html">Displaying a data object</a>
+    - to visualize a data object</li>
+  <li><a href="data_transforms.html">Data transforms</a>
+    - for an overview of data objects</li>
+  <li><a href="formats.html">File formats</a>
+    - for information about supported file formats</li>
+  <li><a href="data_panel.html">Data panel</a>
+    - controls for managing data</li>
+</ul>
 
 <p>&nbsp;<p></body></html>
