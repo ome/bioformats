@@ -1,4 +1,4 @@
-v3.00 beta3 - Not yet released
+v3.00 beta3 - Wednesday, February 2, 2005
 
 - ADDED: Overlays data transform for creating overlay annotations
 - ADDED: "Immediate" data transforms that ignore full-resolution burn-in delay
@@ -14,6 +14,7 @@ v3.00 beta3 - Not yet released
 - TWEAK: Dataset chooser jumps to directory specified in file pattern field
 
 - FIXED: Occasional multiple data transform burn-in deadlock
+- FIXED: A bunch more little bugfixes
 
 
 v3.00 beta2 - Wednesday, October 27, 2004

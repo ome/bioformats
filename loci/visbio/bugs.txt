@@ -1,4 +1,12 @@
-Bugfixes and enhancements:
+Bugfixes and enhancements to address:
+
+  - Discovered that VisAD QT and TIFF readers are horribly inefficient; clean
+    up all file form code to acceptable standards. Experiment with ImageIO to
+    see what it is capable of. If necessary, suggest ImageJ hacks to allow for
+    single-plane extraction from multi-image files.
+
+  - Eliminate all XML-based state stuff; switch back to standard vanilla text
+    INI-style files, because they make more sense.
 
   - Overlays need to be fixed to work properly in 3D displays.
 
