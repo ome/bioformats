@@ -180,16 +180,7 @@ public abstract class ColorUtil {
         catch (RemoteException exc) { exc.printStackTrace(); }
       }
     }
-    else if (!map.isAutoScale()) {
-      map.resetAutoScale();
-      display.reAutoScale();
-
-      // HACK - stupid trick to force immediate rescale
-      BaseColorControl cc = (BaseColorControl) map.getControl();
-      try { cc.setTable(cc.getTable()); }
-      catch (VisADException exc) { exc.printStackTrace(); }
-      catch (RemoteException exc) { exc.printStackTrace(); }
-    }
+    else if (!map.isAutoScale()) reAutoScale(display, map);
   }
 
   /** Assigns the given color ranges to the specified display and mappings. */
@@ -204,6 +195,18 @@ public abstract class ColorUtil {
     for (int i=0; i<maps.length; i++) {
       setColorRange(display, maps[i], lo[i], hi[i], fixed[i]);
     }
+  }
+
+  /** Recomputes autoscaled color bounds for the given color map. */
+  public static void reAutoScale(DisplayImpl display, ScalarMap map) {
+    map.resetAutoScale();
+    display.reAutoScale();
+
+    // HACK - stupid trick to force immediate rescale
+    BaseColorControl cc = (BaseColorControl) map.getControl();
+    try { cc.setTable(cc.getTable()); }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
   }
 
   /** Assigns the given color tables to the specified mappings. */
