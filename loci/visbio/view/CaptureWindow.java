@@ -53,6 +53,15 @@ public class CaptureWindow extends JFrame implements ActionListener,
   /** Position list model. */
   protected DefaultListModel posListModel;
 
+  /** Button for removing selected position. */
+  protected JButton remove;
+
+  /** Button for moving selected position upward. */
+  protected JButton moveUp;
+
+  /** Button for moving selected position downward. */
+  protected JButton moveDown;
+
   /** Slider for adjusting movie speed. */
   protected JSlider speed;
 
@@ -89,25 +98,28 @@ public class CaptureWindow extends JFrame implements ActionListener,
     add.setToolTipText("Adds the current display position to the list");
 
     // remove button
-    JButton remove = new JButton("Remove");
+    remove = new JButton("Remove");
     remove.setActionCommand("Remove");
     remove.addActionListener(this);
     if (!LAFUtil.isMacLookAndFeel()) remove.setMnemonic('r');
     remove.setToolTipText("Removes the selected position from the list");
+    remove.setEnabled(false);
 
     // up button
-    JButton up = new JButton("Up");
-    up.setActionCommand("Up");
-    up.addActionListener(this);
-    if (!LAFUtil.isMacLookAndFeel()) up.setMnemonic('u');
-    up.setToolTipText("Moves the selected position up in the list");
+    moveUp = new JButton("Up");
+    moveUp.setActionCommand("Up");
+    moveUp.addActionListener(this);
+    if (!LAFUtil.isMacLookAndFeel()) moveUp.setMnemonic('u');
+    moveUp.setToolTipText("Moves the selected position up in the list");
+    moveUp.setEnabled(false);
 
     // down button
-    JButton down = new JButton("Down");
-    down.setActionCommand("Down");
-    down.addActionListener(this);
-    if (!LAFUtil.isMacLookAndFeel()) down.setMnemonic('d');
-    down.setToolTipText("Moves the selected position down in the list");
+    moveDown = new JButton("Down");
+    moveDown.setActionCommand("Down");
+    moveDown.addActionListener(this);
+    if (!LAFUtil.isMacLookAndFeel()) moveDown.setMnemonic('d');
+    moveDown.setToolTipText("Moves the selected position down in the list");
+    moveDown.setEnabled(false);
 
     // snapshot button
     JButton snapshot = new JButton("Snapshot");
@@ -178,9 +190,9 @@ public class CaptureWindow extends JFrame implements ActionListener,
     bsb.addRelatedGap();
     bsb.addGridded(remove);
     bsb.addUnrelatedGap();
-    bsb.addGridded(up);
+    bsb.addGridded(moveUp);
     bsb.addRelatedGap();
-    bsb.addGridded(down);
+    bsb.addGridded(moveDown);
     JPanel buttons = bsb.getPanel();
 
     // lay out position list
@@ -399,6 +411,9 @@ public class CaptureWindow extends JFrame implements ActionListener,
   /** Called when the a new display position is selected. */
   public void valueChanged(ListSelectionEvent e) {
     int ndx = posList.getSelectedIndex();
+    remove.setEnabled(ndx >= 0);
+    moveUp.setEnabled(ndx > 0);
+    moveDown.setEnabled(ndx < posListModel.getSize() - 1);
     if (ndx < 0) return;
     DisplayPosition pos = (DisplayPosition) posListModel.getElementAt(ndx);
     double[] matrix = pos.getMatrix();
