@@ -63,23 +63,40 @@ public class DataCache {
    * Puts the given data object into the cache for the specified transform
    * at the given dimensional position.
    */
-  public void putData(DataTransform trans, int[] pos, String append, Data d) {
+  public synchronized void putData(DataTransform trans, int[] pos,
+    String append, Data d)
+  {
     putCachedData(getKey(trans, pos, append), d);
+  }
+
+  /**
+   * Gets whether the cache has data for the given transform
+   * at the specified dimensional position.
+   */
+  public synchronized boolean hasData(DataTransform trans, int[] pos,
+    String append)
+  {
+    return getCachedData(getKey(trans, pos, append)) != null;
   }
 
   /**
    * Removes the data object at the specified
    * dimensional position from the cache.
    */
-  public void dump(DataTransform trans, int[] pos, String append) {
+  public synchronized void dump(DataTransform trans, int[] pos,
+    String append)
+  {
     dump(getKey(trans, pos, append));
   }
 
   /** Removes everything from the cache. */
-  public void dumpAll() { hash.clear(); }
+  public synchronized void dumpAll() { hash.clear(); }
+
+
+  // -- Internal DataCache API methods --
 
   /** Gets the data in the cache at the specified key. */
-  public Data getCachedData(String key) {
+  protected Data getCachedData(String key) {
     if (key == null) return null;
     Object o = hash.get(key);
     if (!(o instanceof Data)) return null;
@@ -87,12 +104,12 @@ public class DataCache {
   }
 
   /** Sets the data in the cache at the specified key. */
-  public void putCachedData(String key, Data d) {
+  protected void putCachedData(String key, Data d) {
     if (key != null) hash.put(key, d);
   }
 
   /** Removes the data object at the specified key from the cache. */
-  public void dump(String key) { if (key != null) hash.remove(key); }
+  protected void dump(String key) { if (key != null) hash.remove(key); }
 
 
   // -- Helper methods --
