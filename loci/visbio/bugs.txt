@@ -1,12 +1,5 @@
 Bugfixes and enhancements to address:
 
-  - Add ability download image pixels from OME database for a given image_id
-
-  - Add command line parameter for specifying server/user/password/image_id to
-    automatically download from an OME database upon program startup
-
-  - Get VisBio working with Java Web Start; link latest version from web site
-
   - Finish updating online help to latest beta functionality
   
   - Include new help topics:
@@ -74,12 +67,8 @@ Bugfixes and enhancements to address:
     the domain sets of all images that get read in, so that the cursor is
     correct.
 
-  - Separate OME upload logic into separate static utility method, with a given
-    output stream for displaying the progress. Create a command-line upload
-    utility for use doing generic client-side uploads. Put all of this into the
-    loci.ome package. The only issue is how/whether to handle various file
-    formats. Well, we can handle them easily if this command line utility is
-    simply packaged with VisBio, since visad.jar will be available then.
+  - Create a command-line upload utility for use doing generic client-side
+    uploads--use loci.visbio.ome.ImageUploader.main(String[]) for this.
 
   - Make sure no two data objects can have the same name. If one already does,
     append "2", "3", etc., to the end until we find a new name. If they try to
