@@ -170,29 +170,6 @@ public class SpectralTransform extends ImageTransform
     return dim == 2 && parent.isValidDimension(dim);
   }
 
-  /** Retrieves a set of mappings for displaying this transform effectively. */
-  public ScalarMap[] getSuggestedMaps() {
-    ScalarMap[] pmaps = parent.getSuggestedMaps();
-    Vector v = new Vector();
-
-    // strip off parent range component mappings
-    for (int i=0; i<pmaps.length; i++) {
-      if (!pmaps[i].getDisplayScalar().equals(Display.RGBA)) v.add(pmaps[i]);
-    }
-
-    // append new range component mappings
-    try {
-      for (int i=0; i<range.length; i++) {
-        v.add(new ScalarMap(range[i], Display.RGBA));
-      }
-    }
-    catch (VisADException exc) { exc.printStackTrace(); }
-
-    ScalarMap[] nmaps = new ScalarMap[v.size()];
-    v.copyInto(nmaps);
-    return nmaps;
-  }
-
   /**
    * Gets a string id uniquely describing this data transform at the given
    * dimensional position, for the purposes of thumbnail caching.

@@ -202,21 +202,6 @@ public class DataSampling extends ImageTransform {
     return dim == 2 && parent.isValidDimension(dim);
   }
 
-  /** Retrieves a set of mappings for displaying this sampling effectively. */
-  public ScalarMap[] getSuggestedMaps() {
-    ScalarMap[] pmaps = parent.getSuggestedMaps();
-    ScalarMap[] nmaps = new ScalarMap[pmaps.length - range.length + numRange];
-    int ndx = 0, rng = 0;
-    for (int i=0; i<pmaps.length; i++) {
-      if (pmaps[i].getDisplayScalar().equals(Display.RGBA)) {
-        // filter out range components that are not flagged
-        if (!range[rng++]) continue;
-      }
-      nmaps[ndx++] = pmaps[i];
-    }
-    return nmaps;
-  }
-
   /**
    * Gets a string id uniquely describing this data transform at the given
    * dimensional position, for the purposes of thumbnail caching.

@@ -153,9 +153,6 @@ public class ProjectionTransform extends ImageTransform {
     return dim == 2 && parent.isValidDimension(dim);
   }
 
-  /** Retrieves a set of mappings for displaying this transform effectively. */
-  public ScalarMap[] getSuggestedMaps() { return parent.getSuggestedMaps(); }
-
   /**
    * Gets a string id uniquely describing this data transform at the given
    * dimensional position, for the purposes of thumbnail caching.
