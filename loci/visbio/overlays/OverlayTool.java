@@ -65,6 +65,12 @@ public class OverlayTool {
   /** Instructs this tool to respond to a mouse drag. */
   public void mouseDrag(float x, float y, int[] pos, int mods) { }
 
+  /** Instructs this tool to respond to a key press. */
+  public void keyPressed(int code, int mods) { }
+
+  /** Instructs this tool to respond to a key release. */
+  public void keyReleased(int code, int mods) { }
+
   /** Gets associated overlay transform. */
   public OverlayTransform getTransform() { return overlay; }
 

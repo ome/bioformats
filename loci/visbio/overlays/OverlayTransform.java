@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
+import java.awt.event.KeyEvent;
 import java.io.*;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -396,36 +397,76 @@ public class OverlayTransform extends DataTransform
 
   /** Responds to mouse gestures with appropriate overlay interaction. */
   public void displayChanged(DisplayEvent e) {
-    int eventId = e.getId();
+    int id = e.getId();
     OverlayTool tool = controls.getActiveTool();
     DisplayImpl display = (DisplayImpl) e.getDisplay();
 
-    if (eventId == DisplayEvent.TRANSFORM_DONE) updatePosition(display);
-    else if (eventId == DisplayEvent.MOUSE_PRESSED_LEFT) {
+    if (id == DisplayEvent.TRANSFORM_DONE) updatePosition(display);
+    else if (id == DisplayEvent.MOUSE_PRESSED_LEFT) {
       mouseDownLeft = true;
       updatePosition(display);
       if (tool != null) {
         double[] coords = VisUtil.pixelToDomain(display, e.getX(), e.getY());
-        tool.mouseDown((float) coords[0], (float) coords[1], pos,
-          e.getInputEvent().getModifiers());
+        tool.mouseDown((float) coords[0], (float) coords[1],
+          pos, e.getModifiers());
       }
     }
-    else if (eventId == DisplayEvent.MOUSE_RELEASED_LEFT) {
+    else if (id == DisplayEvent.MOUSE_RELEASED_LEFT) {
       mouseDownLeft = false;
       updatePosition(display);
       if (tool != null) {
         double[] coords = VisUtil.pixelToDomain(display, e.getX(), e.getY());
-        tool.mouseUp((float) coords[0], (float) coords[1], pos,
-          e.getInputEvent().getModifiers());
+        tool.mouseUp((float) coords[0], (float) coords[1],
+          pos, e.getModifiers());
       }
     }
-    else if (mouseDownLeft && eventId == DisplayEvent.MOUSE_DRAGGED) {
+    else if (mouseDownLeft && id == DisplayEvent.MOUSE_DRAGGED) {
       updatePosition(display);
       if (tool != null) {
         double[] coords = VisUtil.pixelToDomain(display, e.getX(), e.getY());
-        tool.mouseDrag((float) coords[0], (float) coords[1], pos,
-          e.getInputEvent().getModifiers());
+        tool.mouseDrag((float) coords[0], (float) coords[1],
+          pos, e.getModifiers());
       }
+    }
+    else if (id == DisplayEvent.KEY_PRESSED) {
+      updatePosition(display);
+      int code = e.getKeyCode();
+      if (code == KeyEvent.VK_DELETE) removeSelectedObjects();
+      else {
+        // update selected text objects
+        int ndx = MathUtil.positionToRaster(lengths, pos);
+        if (ndx < 0 || ndx >= overlays.length) return;
+        Vector objs = overlays[ndx];
+        boolean changed = false;
+        for (int i=0; i<objs.size(); i++) {
+          OverlayObject oo = (OverlayObject) objs.elementAt(i);
+          if (oo.isSelected() && oo.hasText()) {
+            if (code == KeyEvent.VK_BACK_SPACE) {
+              String text = oo.getText();
+              int len = text.length();
+              if (len > 0) {
+                oo.setText(text.substring(0, len - 1));
+                changed = true;
+              }
+            }
+            else {
+              char c = ((KeyEvent) e.getInputEvent()).getKeyChar();
+              if (c != KeyEvent.CHAR_UNDEFINED && c >= ' ') {
+                oo.setText(oo.getText() + c);
+                changed = true;
+              }
+            }
+          }
+        }
+        if (changed) notifyListeners(new TransformEvent(this));
+      }
+      // No tools use keyPressed functionality, so it is disabled for now
+      //if (tool != null) tool.keyPressed(e.getKeyCode(), e.getModifiers());
+    }
+    else if (id == DisplayEvent.KEY_RELEASED) {
+      updatePosition(display);
+      // No tools use keyReleased functionality, so it is disabled for now
+      //if (tool != null) tool.keyReleased(e.getKeyCode(), e.getModifiers());
     }
   }
 
