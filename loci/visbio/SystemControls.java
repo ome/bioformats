@@ -73,17 +73,17 @@ public class SystemControls extends ControlPanel implements ActionListener {
     super(logic, "System", "Reports system information");
     VisBioFrame bio = lm.getVisBio();
 
-    // operating system text field
-    JTextField osField = new JTextField(System.getProperty("os.name") +
-      " (" + System.getProperty("os.arch") + ")");
-    osField.setEditable(false);
-
     // dump properties button
     JButton dump = new JButton("Dump all");
     if (!LAFUtil.isMacLookAndFeel()) dump.setMnemonic('d');
     dump.setToolTipText("Dumps system property values to the output console");
     dump.setActionCommand("dump");
     dump.addActionListener(this);
+
+    // operating system text field
+    JTextField osField = new JTextField(System.getProperty("os.name") +
+      " (" + System.getProperty("os.arch") + ")");
+    osField.setEditable(false);
 
     // java version text field
     JTextField javaField = new JTextField(System.getProperty("java.version") +
@@ -173,11 +173,11 @@ public class SystemControls extends ControlPanel implements ActionListener {
     builder.setDefaultDialogBorder();
     CellConstraints cc = new CellConstraints();
 
-    builder.addSeparator("Properties", cc.xyw(1, 1, 5));
+    builder.addSeparator("Properties", cc.xyw(1, 1, 3));
+    builder.add(dump, cc.xy(5, 1));
 
     builder.addLabel("&Operating system", cc.xy(1, 3)).setLabelFor(osField);
-    builder.add(osField, cc.xy(3, 3));
-    builder.add(dump, cc.xy(5, 3));
+    builder.add(osField, cc.xyw(3, 3, 3));
 
     builder.addLabel("&Java version", cc.xy(1, 5)).setLabelFor(javaField);
     builder.add(javaField, cc.xyw(3, 5, 3));
