@@ -38,11 +38,28 @@ import java.util.Vector;
 
 import javax.swing.*;
 
+import javax.swing.border.EtchedBorder;
+
 import loci.visbio.util.FormsUtil;
 import loci.visbio.util.SwingUtil;
 
 /** OverlayWidget is a set of GUI controls for an overlay transform. */
 public class OverlayWidget extends JPanel implements ActionListener {
+
+  // -- Constants --
+
+  /** List of available fonts. */
+  protected static final String[] FONT_NAMES = {
+    "cursive", "futuram", "rowmans", "timesr", "wmo",
+    "futural", "meteorology", "rowmant", "timesrb"
+  };
+  // CTR START HERE
+  // Get the new widgets below actually working; concentrate on fonts.
+  // More info on Hershey fonts online at: http://batbox.org/font.html
+  // Check out "DisplayTest 69" for code example of using Hershey fonts.
+  //
+  // Also, forgot to add Remove/Delete button. Do that.
+
 
   // -- Fields --
 
@@ -61,6 +78,18 @@ public class OverlayWidget extends JPanel implements ActionListener {
 
   // -- GUI components --
 
+  /** Text fields for (X, Y) coordinate pairs. */
+  protected JTextField x1, y1, x2, y2;
+
+  /** Text field for text labels. */
+  protected JTextField text;
+
+  /** Combo box for selecting font name. */
+  protected JComboBox fontName;
+
+  /** Spinner for selecting font size. */
+  protected JSpinner fontSize;
+
   /** Button for choosing overlay color. */
   protected JButton color;
 
@@ -73,8 +102,11 @@ public class OverlayWidget extends JPanel implements ActionListener {
   /** Button for creating a new overlay group. */
   protected JButton newGroup;
 
-  /** Text area for overlay description. */
-  protected JTextArea descriptionBox;
+  /** Text field for miscellaneous notes. */
+  protected JTextField notes;
+
+  /** Text area for overlay statistics. */
+  protected JTextArea stats;
 
 
   // -- Constructor --
@@ -85,7 +117,7 @@ public class OverlayWidget extends JPanel implements ActionListener {
     this.ann = ann;
     buttonGroup = new ButtonGroup();
 
-    // create list of tools
+    // list of tools
     OverlayTool[] toolList = {
       new PointerTool(ann),
       new LineTool(ann),
@@ -97,53 +129,96 @@ public class OverlayWidget extends JPanel implements ActionListener {
     };
     tools = new Vector(toolList.length);
 
-    // create tool buttons
+    // tool buttons
     buttons = new Vector(toolList.length);
     for (int i=0; i<toolList.length; i++) addTool(toolList[i]);
     Object[] buttonList = new Object[buttons.size()];
     buttons.copyInto(buttonList);
     JPanel toolsRow = FormsUtil.makeRow(buttonList);
 
-    // create color chooser
-    color = new JButton("Color");
+    // text fields for (X, Y) coordinate pairs
+    x1 = new JTextField(4);
+    y1 = new JTextField(4);
+    x2 = new JTextField(4);
+    y2 = new JTextField(4);
+
+    // text text field ;-)
+    text = new JTextField(8);
+
+    // font name selector
+    fontName = new JComboBox(FONT_NAMES);
+
+    // font size selector
+    fontSize = new JSpinner();
+
+    // color chooser
+    color = new JButton();
     color.setForeground(Color.white);
     color.setBackground(Color.white);
     color.addActionListener(this);
+
+    // filled checkbox
     filled = new JCheckBox("Filled");
     filled.setMnemonic('f');
-    JPanel colorRow = FormsUtil.makeRow("&Color", color, filled);
 
-    // create group selector
+    // group selector
     groupList = new JComboBox(new Object[] {"None"});
+
+    // new group button
     newGroup = new JButton("New");
     newGroup.addActionListener(this);
     newGroup.setMnemonic('n');
     newGroup.setToolTipText("Creates a new overlay group");
- 
-    JPanel groupRow = FormsUtil.makeRow("&Group", groupList, newGroup);
 
-    // create description text area
-    descriptionBox = new JTextArea();
-    descriptionBox.setColumns(16);
-    descriptionBox.setRows(4);
-    descriptionBox.setLineWrap(true);
-    descriptionBox.setWrapStyleWord(true);
-    JScrollPane descriptionScroll = new JScrollPane(descriptionBox);
-    SwingUtil.configureScrollPane(descriptionScroll);
+    // notes text field
+    notes = new JTextField(8);
+
+    // stats text area
+    stats = new JTextArea(3, 8);
+    stats.setEditable(false);
+    stats.setBorder(new EtchedBorder());
 
     // lay out components
     setLayout(new BorderLayout());
-    PanelBuilder builder = new PanelBuilder(new FormLayout("pref:grow",
-      "pref, 3dlu, pref, 9dlu, pref, 3dlu, pref, 3dlu, " +
-      "pref, 9dlu, pref, 3dlu, fill:pref:grow"));
+    FormLayout layout = new FormLayout(
+      "pref, 3dlu, pref:grow, 5dlu, pref, 3dlu, pref:grow",
+      "pref, 3dlu, pref, 9dlu, " +
+      "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, " +
+      "pref, 3dlu, pref, 3dlu, pref, 9dlu, pref, 3dlu, fill:pref:grow");
+    PanelBuilder builder = new PanelBuilder(layout);
     CellConstraints cc = new CellConstraints();
-    builder.addSeparator("Tools", cc.xy(1, 1));
-    builder.add(toolsRow, cc.xy(1, 3));
-    builder.addSeparator("Controls", cc.xy(1, 5));
-    builder.add(colorRow, cc.xy(1, 7));
-    builder.add(groupRow, cc.xy(1, 9));
-    builder.addSeparator("Description", cc.xy(1, 11));
-    builder.add(descriptionScroll, cc.xy(1, 13));
+
+    builder.addSeparator("Tools", cc.xyw(1, 1, 7));
+    builder.add(toolsRow, cc.xyw(1, 3, 7));
+
+    builder.addSeparator("Controls", cc.xyw(1, 5, 7));
+    builder.addLabel("X1", cc.xy(1, 7));
+    builder.add(x1, cc.xy(3, 7));
+    builder.addLabel("Y1", cc.xy(5, 7));
+    builder.add(y1, cc.xy(7, 7));
+    builder.addLabel("X2", cc.xy(1, 9));
+    builder.add(x2, cc.xy(3, 9));
+    builder.addLabel("Y2", cc.xy(5, 9));
+    builder.add(y2, cc.xy(7, 9));
+    builder.addLabel("Text", cc.xy(1, 11));
+    builder.add(text, cc.xyw(3, 11, 5));
+    builder.addLabel("Font", cc.xy(1, 13));
+    builder.add(fontName, cc.xy(3, 13));
+    builder.addLabel("Size", cc.xy(5, 13));
+    builder.add(fontSize, cc.xy(7, 13));
+    builder.addLabel("Color", cc.xy(1, 15));
+    builder.add(color, cc.xy(3, 15, "fill, fill"));
+    builder.add(filled, cc.xyw(5, 15, 3));
+    builder.addLabel("Group", cc.xy(1, 17));
+    builder.add(groupList, cc.xy(3, 17));
+    builder.add(newGroup, cc.xyw(5, 17, 3, "left, center"));
+    builder.addLabel("Notes", cc.xy(1, 19));
+    builder.add(notes, cc.xyw(3, 19, 5));
+
+    builder.addSeparator("Statistics", cc.xyw(1, 21, 7));
+    builder.add(stats, cc.xyw(1, 23, 7));
+
+    //layout.setColumnGroups(new int[][] {{3, 7}});
     add(builder.getPanel());
   }
 
@@ -204,12 +279,12 @@ public class OverlayWidget extends JPanel implements ActionListener {
 
   /** Sets description for current overlay. */
   public void setDescription(String text) {
-    descriptionBox.setText(text);
+    stats.setText(text);
     // CTR TODO fire overlay parameter change event
   }
 
   /** Gets description for current overlay. */
-  public String getDescription() { return descriptionBox.getText(); }
+  public String getDescription() { return stats.getText(); }
 
   // -- ActionListener API methods --
 
