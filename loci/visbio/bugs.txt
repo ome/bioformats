@@ -18,7 +18,7 @@ Bugfixes and enhancements:
   - Add transparency controls to left side of color dialog box.
 
   - Change each data object to have its own MathType for better color controls.
-    Unique RealTypes of the form x1, x2, x3, ..., y1, y2, y3, ...,
+    Unique RealTypes of the form x_1, x_2, x_3, ..., y_1, y_2, y_3, ...,
     rgba1_1, rgba1_2, rgba1_3, ..., rgba2_1, rgba2_2, rgba2_3, ...
     This ensures that every dataset has unique RealTypes, for independent
     color and spatial controls.
