@@ -277,7 +277,10 @@ public class OverlayTransform extends DataTransform
    * @return null if the transform does not provide data of that dimensionality
    */
   public Data getData(int[] pos, int dim) {
-    if (dim != 2) return null;
+    if (dim != 2) {
+      System.err.println(name + ": invalid dimensionality (" + dim + ")");
+      return null;
+    }
 
     int q = MathUtil.positionToRaster(lengths, pos);
     if (q < 0 || q >= overlays.length) return null;

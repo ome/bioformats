@@ -88,7 +88,7 @@ public abstract class ImageTransform extends DataTransform {
     if (rangeTypes == null) {
       rangeTypes = new RealType[getRangeCount()];
       for (int i=0; i<rangeTypes.length; i++) {
-        String s = "range" + i;
+        String s = "range" + (i + 1);
         rangeTypes[i] = VisUtil.getRealType(name + "_" + s);
       }
     }

@@ -27,13 +27,15 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import java.awt.BorderLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import loci.visbio.util.FormsUtil;
 
 /** SliceWidget is a set of GUI controls for an arbitrary slice. */
-public class SliceWidget extends JPanel implements ChangeListener {
+public class SliceWidget extends JPanel implements ChangeListener, ItemListener {
 
   // -- Constants --
 
@@ -90,6 +92,7 @@ public class SliceWidget extends JPanel implements ChangeListener {
     String[] names = new String[types.length];
     for (int i=0; i<names.length; i++) names[i] = (i + 1) + ": " + types[i];
     axes = new JComboBox(names);
+    axes.addItemListener(this);
 
     // create yaw slider
     int value = (int) slice.getYaw();
@@ -116,9 +119,9 @@ public class SliceWidget extends JPanel implements ChangeListener {
     locationValue = new JLabel(value + "%");
 
     // create resolution slider
-    int max = 512; // TEMP
+    int min = 128, max = 896;
     value = slice.getResolution();
-    res = new JSlider(0, max, value);
+    res = new JSlider(min, max, value);
     res.setMajorTickSpacing(max / 4);
     res.setMinorTickSpacing(max / 16);
     res.setPaintTicks(true);
@@ -126,8 +129,9 @@ public class SliceWidget extends JPanel implements ChangeListener {
     resValue = new JLabel(value + " x " + value);
 
     // create on-the-fly slice recompution checkbox
-    recompute = new JCheckBox("Recompute slice on the fly", true);
+    recompute = new JCheckBox("Recompute slice on the fly", false);
     recompute.setMnemonic('f');
+    recompute.addChangeListener(this);
 
     // lay out components
     PanelBuilder builder = new PanelBuilder(new FormLayout(
@@ -178,7 +182,7 @@ public class SliceWidget extends JPanel implements ChangeListener {
 
   // -- ChangeListener API methods --
 
-  /** Handles slider updates. */
+  /** Handles slider and check box updates. */
   public void stateChanged(ChangeEvent e) {
     Object src = e.getSource();
     if (src == yaw) {
@@ -201,6 +205,17 @@ public class SliceWidget extends JPanel implements ChangeListener {
       resValue.setText(value + " x " + value);
       slice.setResolution(value);
     }
+    else if (src == recompute) {
+      slice.setSliceComputed(recompute.isSelected());
+    }
+  }
+
+
+  // -- ItemListener API methods --
+
+  /** Handles combo box updates. */
+  public void itemStateChanged(ItemEvent e) {
+    slice.setAxis(axes.getSelectedIndex());
   }
 
 }

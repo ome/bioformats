@@ -315,7 +315,7 @@ public class StackLink extends TransformLink {
     // compute image data at each slice
     DisplayImpl display = handler.getWindow().getDisplay();
     VisUtil.setDisplayDisabled(display, true);
-    Data[] slices = new Data[len];
+    FlatField[] slices = new FlatField[len];
     for (int s=0; s<len; s++) {
       if (stackAxis >= 0) pos[stackAxis] = s;
 
@@ -327,7 +327,7 @@ public class StackLink extends TransformLink {
           // load data from disk, unless collapsed volume is current
           setMessage("loading full-resolution data (" +
             (s + 1) + "/" + len + ")");
-          slices[s] = getImageData(pos);
+          slices[s] = (FlatField) getImageData(pos);
           if (th != null && thumb == null && !volume) {
             // fill in missing thumbnail
             th.setThumb(pos, th.makeThumb(slices[s]));
@@ -355,12 +355,8 @@ public class StackLink extends TransformLink {
             for (int i=0; i<len; i++) {
               slices[i] = VisUtil.switchType((FlatField) slices[i], imageType);
             }
-            // compile slices into a single volume
-            FunctionType volumeType = new FunctionType(zType, imageType);
-            Linear1DSet volumeSet = new Linear1DSet(zType, -1, 1, len);
-            FieldImpl field = new FieldImpl(volumeType, volumeSet);
-            field.setSamples(slices, false);
-            // collapse volume
+            // compile slices into a single volume and collapse
+            FieldImpl field = VisUtil.makeField(slices, zType, -1, 1);
             collapse = VisUtil.collapse(field);
           }
           // resample volume

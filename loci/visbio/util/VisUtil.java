@@ -47,9 +47,36 @@ public abstract class VisUtil {
     throws VisADException, RemoteException
   {
     if (fields == null || zType == null || fields.length == 0) return null;
+    return makeField(fields, zType, new Integer1DSet(zType, fields.length));
+  }
+
+  /**
+   * Creates a field of the form (z -> type) from the given list of fields,
+   * where type is the MathType of each component field.
+   */
+  public static FieldImpl makeField(FlatField[] fields, RealType zType,
+    double min, double max) throws VisADException, RemoteException
+  {
+    if (fields == null || zType == null || fields.length == 0) return null;
+    return makeField(fields, zType,
+      new Linear1DSet(zType, min, max, fields.length));
+  }
+
+  /**
+   * Creates a field of the form (z -> type) from the given list of fields,
+   * where type is the MathType of each component field.
+   */
+  public static FieldImpl makeField(FlatField[] fields, RealType zType,
+    SampledSet fieldSet) throws VisADException, RemoteException
+  {
+    if (fields == null || zType == null ||
+      fields.length == 0 || fields[0] == null)
+    {
+      return null;
+    }
+    if (fields[0] == null) return null;
     FunctionType fieldType = new FunctionType(zType, fields[0].getType());
-    Integer1DSet fieldSet = new Integer1DSet(zType, fields.length);
-    FlatField field = new FlatField(fieldType, fieldSet);
+    FieldImpl field = new FieldImpl(fieldType, fieldSet);
     field.setSamples(fields, false);
     return field;
   }
@@ -63,42 +90,37 @@ public abstract class VisUtil {
   {
     if (f == null) return null;
 
-    FlatField collapse;
-    try { collapse = (FlatField) f.domainMultiply(); }
-    catch (FieldException exc) { collapse = null; }
+    try { return (FlatField) f.domainMultiply(); }
+    catch (FieldException exc) { }
 
-    if (collapse == null) {
-      // images dimensions do not match; resample so that they do
-      GriddedSet set = (GriddedSet) f.getDomainSet();
-      int len = set.getLengths()[0];
-      int resX = 0;
-      int resY = 0;
-      for (int i=0; i<len; i++) {
-        FlatField flat = (FlatField) f.getSample(i);
-        GriddedSet flatSet = (GriddedSet) flat.getDomainSet();
-        int[] l = flatSet.getLengths();
-        if (l[0] > resX) resX = l[0];
-        if (l[1] > resY) resY = l[1];
-      }
-      FieldImpl nf = new FieldImpl((FunctionType) f.getType(), set);
-      for (int i=0; i<len; i++) {
-        FlatField flat = (FlatField) f.getSample(i);
-        GriddedSet flatSet = (GriddedSet) flat.getDomainSet();
-        int[] l = flatSet.getLengths();
-        if (l[0] > resX) resX = l[0];
-        if (l[1] > resY) resY = l[1];
-      }
-      for (int i=0; i<len; i++) {
-        FlatField flat = (FlatField) f.getSample(i);
-        GriddedSet flatSet = (GriddedSet) flat.getDomainSet();
-        nf.setSample(i, flat.resample(
-          new Integer2DSet(flatSet.getType(), resX, resY),
-          Data.WEIGHTED_AVERAGE, Data.NO_ERRORS), false);
-      }
-      collapse = (FlatField) nf.domainMultiply();
+    // images dimensions do not match; resample so that they do
+    GriddedSet set = (GriddedSet) f.getDomainSet();
+    int len = set.getLengths()[0];
+    int resX = 0;
+    int resY = 0;
+    for (int i=0; i<len; i++) {
+      FlatField flat = (FlatField) f.getSample(i);
+      GriddedSet flatSet = (GriddedSet) flat.getDomainSet();
+      int[] l = flatSet.getLengths();
+      if (l[0] > resX) resX = l[0];
+      if (l[1] > resY) resY = l[1];
     }
-
-    return collapse;
+    FieldImpl nf = new FieldImpl((FunctionType) f.getType(), set);
+    for (int i=0; i<len; i++) {
+      FlatField flat = (FlatField) f.getSample(i);
+      GriddedSet flatSet = (GriddedSet) flat.getDomainSet();
+      int[] l = flatSet.getLengths();
+      if (l[0] > resX) resX = l[0];
+      if (l[1] > resY) resY = l[1];
+    }
+    for (int i=0; i<len; i++) {
+      FlatField flat = (FlatField) f.getSample(i);
+      GriddedSet flatSet = (GriddedSet) flat.getDomainSet();
+      nf.setSample(i, flat.resample(
+        new Integer2DSet(flatSet.getType(), resX, resY),
+        Data.WEIGHTED_AVERAGE, Data.NO_ERRORS), false);
+    }
+    return (FlatField) nf.domainMultiply();
   }
 
   /**

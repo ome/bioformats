@@ -27,7 +27,7 @@ import java.rmi.RemoteException;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import loci.visbio.state.Dynamic;
-//import loci.visbio.util.VisUtil;
+import loci.visbio.util.VisUtil;
 import visad.*;
 
 /** A transform for slicing a stack of images in 3D. */
@@ -37,19 +37,20 @@ public class ArbitrarySlice extends DataTransform
 
   // -- Constants --
 
-  private static final double RADIUS = Math.sqrt(3);
-  private static final double THETA1 = Math.PI / 4;
-  private static final double THETA2 = 3 * THETA1;
-  private static final double THETA3 = 7 * THETA1;
-  private static final double THETA4 = 5 * THETA1;
-  private static final float T1COS = (float) (RADIUS * Math.cos(THETA1));
-  private static final float T1SIN = (float) (RADIUS * Math.sin(THETA1));
-  private static final float T2COS = (float) (RADIUS * Math.cos(THETA2));
-  private static final float T2SIN = (float) (RADIUS * Math.sin(THETA2));
-  private static final float T3COS = (float) (RADIUS * Math.cos(THETA3));
-  private static final float T3SIN = (float) (RADIUS * Math.sin(THETA3));
-  private static final float T4COS = (float) (RADIUS * Math.cos(THETA4));
-  private static final float T4SIN = (float) (RADIUS * Math.sin(THETA4));
+  private static final double RADIUS3 = Math.sqrt(3);
+  private static final double RADIUS6 = Math.sqrt(6);
+  private static final double THETA1 = 0;
+  private static final double THETA2 = Math.PI / 2;
+  private static final double THETA3 = 3 * Math.PI / 2;
+  private static final double THETA4 = Math.PI;
+  private static final float T1COS = (float) (RADIUS6 * Math.cos(THETA1));
+  private static final float T1SIN = (float) (RADIUS6 * Math.sin(THETA1));
+  private static final float T2COS = (float) (RADIUS6 * Math.cos(THETA2));
+  private static final float T2SIN = (float) (RADIUS6 * Math.sin(THETA2));
+  private static final float T3COS = (float) (RADIUS6 * Math.cos(THETA3));
+  private static final float T3SIN = (float) (RADIUS6 * Math.sin(THETA3));
+  private static final float T4COS = (float) (RADIUS6 * Math.cos(THETA4));
+  private static final float T4SIN = (float) (RADIUS6 * Math.sin(THETA4));
 
 
   // -- Fields --
@@ -58,16 +59,19 @@ public class ArbitrarySlice extends DataTransform
   protected int axis;
 
   /** Horizontal rotational angle of slicing line. */
-  protected double yaw;
+  protected float yaw;
 
   /** Vertical rotatational angle of slicing line. */
-  protected double pitch;
+  protected float pitch;
 
   /** Arbitrary slice's location along slicing line. */
-  protected double loc = 50;
+  protected float loc = 50;
 
   /** Resolution of arbitrary slice. */
-  protected int res = 64;
+  protected int res = 128;
+
+  /** Flag indicating whether arbitrary slice should actually be computed. */
+  protected boolean compute = false;
 
   /** Controls for the arbitrary slice. */
   protected SliceWidget controls;
@@ -89,58 +93,74 @@ public class ArbitrarySlice extends DataTransform
    * Sets the parameters for the arbitrary slice,
    * recomputing the slice if the recompute flag is set.
    */
-  public void setParameters(int axis, double yaw, double pitch,
-    double loc, int res)
+  public void setParameters(int axis, float yaw, float pitch,
+    float loc, int res, boolean compute)
   {
-    if (this.axis == axis && this.yaw == yaw && this.pitch == pitch &&
-      this.loc == loc && this.res == res)
+    if (this.axis != axis) {
+      this.axis = axis;
+      computeLengths();
+    }
+    if (this.yaw == yaw && this.pitch == pitch &&
+      this.loc == loc && this.res == res && this.compute == compute)
     {
       return;
     }
-    this.axis = axis;
     this.yaw = yaw;
     this.pitch = pitch;
     this.loc = loc;
     this.res = res;
+    this.compute = compute;
     controls.refreshWidget();
     notifyListeners(new TransformEvent(this));
   }
 
   /** Sets the axis through which to slice. */
-  public void setAxis(int axis) { setParameters(axis, yaw, pitch, loc, res); }
+  public void setAxis(int axis) {
+    setParameters(axis, yaw, pitch, loc, res, compute);
+  }
 
   /** Sets the yaw for the slicing line. */
-  public void setYaw(double yaw) { setParameters(axis, yaw, pitch, loc, res); }
+  public void setYaw(float yaw) {
+    setParameters(axis, yaw, pitch, loc, res, compute);
+  }
 
   /** Sets the pitch for the slicing line. */
-  public void setPitch(double pitch) {
-    setParameters(axis, yaw, pitch, loc, res);
+  public void setPitch(float pitch) {
+    setParameters(axis, yaw, pitch, loc, res, compute);
   }
 
   /** Sets the location for the arbitrary slice. */
-  public void setLocation(double loc) {
-    setParameters(axis, yaw, pitch, loc, res);
+  public void setLocation(float loc) {
+    setParameters(axis, yaw, pitch, loc, res, compute);
   }
 
   /** Sets the resolution for the slicing line. */
   public void setResolution(int res) {
-    setParameters(axis, yaw, pitch, loc, res);
+    setParameters(axis, yaw, pitch, loc, res, compute);
+  }
+
+  /** Sets whether arbitrary slice is computed. */
+  public void setSliceComputed(boolean compute) {
+    setParameters(axis, yaw, pitch, loc, res, compute);
   }
 
   /** Gets the axis through which to slice. */
   public int getAxis() { return axis; }
 
   /** Gets the yaw for the slicing line. */
-  public double getYaw() { return yaw; }
+  public float getYaw() { return yaw; }
 
   /** Gets the pitch for the slicing line. */
-  public double getPitch() { return pitch; }
+  public float getPitch() { return pitch; }
 
   /** Gets the location for the arbitrary slice. */
-  public double getLocation() { return loc; }
+  public float getLocation() { return loc; }
 
   /** Gets the resolution for the slicing line. */
   public int getResolution() { return res; }
+
+  /** Gets whether arbitary slice is computed. */
+  public boolean isSliceComputed() { return compute; }
 
 
   // -- Static DataTransform API methods --
@@ -179,30 +199,22 @@ public class ArbitrarySlice extends DataTransform
    * @return null if the transform does not provide data of that dimensionality
    */
   public Data getData(int[] pos, int dim) {
-    if (dim != 3) return null;
-
-    /*
-    int len = parent.getLengths()[axis];
-    FlatField[] fields = new FlatField[len];
-    int[] npos = getParentPos(pos);
-    for (int i=0; i<len; i++) {
-      npos[axis] = i;
-      Data data = parent.getData(npos, dim);
-      if (data == null || !(data instanceof FlatField)) return null;
-      fields[i] = (FlatField) data;
+    if (dim != 3) {
+      System.err.println(name + ": invalid dimensionality (" + dim + ")");
+      return null;
     }
-    */
 
+    // get some info from the parent transform
     ImageTransform it = (ImageTransform) parent;
-    RealType zType = ((ImageTransform) parent).getZType();
-    /*
-    try {
-      FieldImpl field = VisUtil.makeField(fields, zType);
-      // CTR START HERE
-    }
+    int w = it.getImageWidth();
+    int h = it.getImageHeight();
+    RealType xType = it.getXType();
+    RealType yType = it.getYType();
+    RealType zType = it.getZType();
+    FunctionType imageType = it.getType();
+    RealTupleType xyz = null;
+    try { xyz = new RealTupleType(xType, yType, zType); }
     catch (VisADException exc) { exc.printStackTrace(); }
-    catch (RemoteException exc) { exc.printStackTrace(); }
-    */
 
     // convert spherical polar coordinates to cartesian coordinates for line
     double yawRadians = Math.PI * yaw / 180;
@@ -213,9 +225,15 @@ public class ArbitrarySlice extends DataTransform
     double pitchSin = Math.sin(pitchRadians);
 
     // Let P1 = (x, y, z), P2 = -P1
-    float x = (float) (RADIUS * pitchSin * yawCos);
-    float y = (float) (RADIUS * pitchSin * yawSin);
-    float z = (float) (RADIUS * pitchCos);
+    float x = (float) (RADIUS3 * pitchSin * yawCos);
+    float y = (float) (RADIUS3 * pitchSin * yawSin);
+    float z = (float) (RADIUS3 * pitchCos);
+
+    // compute location along P1-P2 line
+    float q = (loc - 50) / 50;
+    float lx = q * x;
+    float ly = q * y;
+    float lz = q * z;
 
     // choose a point P which doesn't lie on the line through P1 and P2
     float px = 1, py = 1, pz = 1;
@@ -246,49 +264,114 @@ public class ArbitrarySlice extends DataTransform
     sx /= slen; sy /= slen; sz /= slen;
     // now R and S are an orthonormal basis for the plane
 
-    // compute plane corners from orthonormal basis
-    float q1x = T1COS * rx + T1SIN * sx;
-    float q1y = T1COS * ry + T1SIN * sy;
-    float q1z = T1COS * rz + T1SIN * sz;
-    float q2x = T2COS * rx + T2SIN * sx;
-    float q2y = T2COS * ry + T2SIN * sy;
-    float q2z = T2COS * rz + T2SIN * sz;
-    float q3x = T3COS * rx + T3SIN * sx;
-    float q3y = T3COS * ry + T3SIN * sy;
-    float q3z = T3COS * rz + T3SIN * sz;
-    float q4x = T4COS * rx + T4SIN * sx;
-    float q4y = T4COS * ry + T4SIN * sy;
-    float q4z = T4COS * rz + T4SIN * sz;
-
     // convert x=[-1,1] y=[-1,1] z=[-1,1] to x=[0,w] y=[0,h] z=[-1,1]
-    int w = it.getImageWidth();
-    int h = it.getImageHeight();
     float[][] lineSamples = {
       {w * (x + 1) / 2, w * (-x + 1) / 2},
       {h * (y + 1) / 2, h * (-y + 1) / 2},
       {z, -z}
     };
-    float[][] planeSamples = {
-      {w*(q1x + 1)/2, w*(q2x + 1)/2, w*(q3x + 1)/2, w*(q4x + 1)/2},
-      {h*(q1y + 1)/2, h*(q2y + 1)/2, h*(q3y + 1)/2, h*(q4y + 1)/2},
-      {q1z, q2z, q3z, q4z}
-    };
 
-    RealType xType = it.getXType();
-    RealType yType = it.getYType();
+    // construct line data object
+    Gridded3DSet line = null;
     try {
-      RealTupleType xyz = new RealTupleType(xType, yType, zType);
-      Gridded3DSet line = new Gridded3DSet(xyz,
-        lineSamples, 2, null, null, null, false);
-      Gridded3DSet plane = new Gridded3DSet(xyz,
-        planeSamples, 2, 2, null, null, null, false);
-
-      return new Tuple(new Data[] {line, plane}, false);
+      line = new Gridded3DSet(xyz, lineSamples, 2, null, null, null, false);
     }
     catch (VisADException exc) { exc.printStackTrace(); }
-    catch (RemoteException exc) { exc.printStackTrace(); }
 
-    return null; // TEMP
+    // compute slice data
+    Data slice = null;
+    if (compute) { // interpolate from parent data
+      // compute plane corners from orthonormal basis
+      float q1x = lx + T1COS * rx + T1SIN * sx;
+      float q1y = ly + T1COS * ry + T1SIN * sy;
+      float q1z = lz + T1COS * rz + T1SIN * sz;
+      float q2x = lx + T2COS * rx + T2SIN * sx;
+      float q2y = ly + T2COS * ry + T2SIN * sy;
+      float q2z = lz + T2COS * rz + T2SIN * sz;
+      float q3x = lx + T3COS * rx + T3SIN * sx;
+      float q3y = ly + T3COS * ry + T3SIN * sy;
+      float q3z = lz + T3COS * rz + T3SIN * sz;
+      float q4x = lx + T4COS * rx + T4SIN * sx;
+      float q4y = ly + T4COS * ry + T4SIN * sy;
+      float q4z = lz + T4COS * rz + T4SIN * sz;
+      float[][] planeSamples = {
+        {w*(q1x + 1)/2, w*(q2x + 1)/2, w*(q3x + 1)/2, w*(q4x + 1)/2},
+        {h*(q1y + 1)/2, h*(q2y + 1)/2, h*(q3y + 1)/2, h*(q4y + 1)/2},
+        {q1z, q2z, q3z, q4z}
+      };
+
+      // compute resampling grid for the current resolution
+      int res1 = res - 1;
+      float[][] grid = new float[2][res * res];
+      for (int j=0; j<res; j++) {
+        for (int i=0; i<res; i++) {
+          int index = j * res + i;
+          grid[0][index] = (float) i / res1;
+          grid[1][index] = (float) j / res1;
+        }
+      }
+
+      // read in parent data
+      int len = parent.getLengths()[axis];
+      FlatField[] fields = new FlatField[len];
+      int[] npos = getParentPos(pos);
+      for (int i=0; i<len; i++) {
+        npos[axis] = i;
+        Data data = parent.getData(npos, 2);
+        if (data == null || !(data instanceof FlatField)) {
+          System.err.println(name +
+            ": parent image plane #" + (i + 1) + " is not valid");
+          return null;
+        }
+        fields[i] = (FlatField) data;
+      }
+
+      // resample combined field onto arbitrary slice
+      try {
+        // use image transform's recommended MathType
+        for (int i=0; i<len; i++) {
+          fields[i] = VisUtil.switchType(fields[i], imageType);
+        }
+        Gridded3DSet planeSet = new Gridded3DSet(xyz,
+          planeSamples, 2, 2, null, null, null, false);
+        Gridded3DSet gridSet = new Gridded3DSet(xyz,
+          planeSet.gridToValue(grid), res, res, null, null, null, false);
+        FieldImpl field = VisUtil.makeField(fields, zType, -1, 1);
+        field = VisUtil.collapse(field);
+        slice = field.resample(gridSet, Data.WEIGHTED_AVERAGE, Data.NO_ERRORS);
+      }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
+    }
+    else { // construct bounding circle
+      // compute circle coordinates from orthonormal basis
+      int num = 32;
+      float[][] samples = new float[3][num];
+      for (int i=0; i<num; i++) {
+        double theta = i * 2 * Math.PI / num;
+        float tcos = (float) (RADIUS3 * Math.cos(theta));
+        float tsin = (float) (RADIUS3 * Math.sin(theta));
+        float qx = lx + tcos * rx + tsin * sx;
+        float qy = ly + tcos * ry + tsin * sy;
+        float qz = lz + tcos * rz + tsin * sz;
+        int ndx = (i < num / 2) ? i : (3 * num / 2 - i - 1);
+        samples[0][ndx] = w * (qx + 1) / 2;
+        samples[1][ndx] = h * (qy + 1) / 2;
+        samples[2][ndx] = qz;
+      }
+
+      // construct bounding circle data object
+      try {
+        slice = new Gridded3DSet(xyz,
+          samples, num / 2, 2, null, null, null, false);
+      }
+      catch (VisADException exc) { exc.printStackTrace(); }
+    }
+
+    try { return new Tuple(new Data[] {slice, line}, false); }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
+    return null;
   }
 
   /** Gets whether this transform provides data of the given dimensionality. */
@@ -356,10 +439,7 @@ public class ArbitrarySlice extends DataTransform
       res = data.res;
     }
 
-    lengths = parent.getLengths();
-    dims = parent.getDimTypes();
-    makeLabels();
-
+    computeLengths();
     controls = new SliceWidget(this);
   }
 
