@@ -33,7 +33,7 @@ import loci.ome.xml.OMEElement;
 
 import loci.visbio.util.FormsUtil;
 
-/** ListOption is an integer option in the VisBio Options dialog. */
+/** ListOption is an option from a list in the VisBio Options dialog. */
 public class ListOption extends BioOption {
 
   // -- Fields --
