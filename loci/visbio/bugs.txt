@@ -46,11 +46,5 @@ Bugfixes and enhancements:
     append "2", "3", etc., to the end until we find a new name. If they try to
     create one with the same name as an existing one, don't let them do it.
 
-    This avoids weird issues with MathType aliasing, as well as general
-    confusion. Probably also don't let them create two displays with the same
-    name (use same strategy), because otherwise state might not restore
-    correctly.
-
-    And actually, we can probably avoid the whole aliasing thing altogether
-    once it is guaranteed that no two data objects will have the same name.
-    We can just use the currently aliased names as the "real" names.
+    Probably also don't let them create two displays with the same name
+    (use same strategy), because otherwise state might not restore correctly.

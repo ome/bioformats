@@ -60,7 +60,7 @@ public class TransformHandler implements ChangeListener, Runnable  {
   public static final long DEFAULT_BURN_DELAY = 3000;
 
   /** Minimum amount of time to delay burn-in. */
-  public static final long MINIMUM_BURN_DELAY = 100;
+  public static final long MINIMUM_BURN_DELAY = 0;
 
   /** Starting FPS for animation. */
   public static final int DEFAULT_ANIMATION_RATE = 10;
@@ -484,7 +484,10 @@ public class TransformHandler implements ChangeListener, Runnable  {
       panel.updateControls();
 
       // reinitialize colors
-      for (int i=0; i<lnk.length; i++) lnk[i].getColorHandler().initColors();
+      for (int i=0; i<lnk.length; i++) {
+        ColorHandler colorHandler = lnk[i].getColorHandler();
+        if (colorHandler != null) colorHandler.initColors();
+      }
 
       if (lnk.length > 0) window.repack();
       else window.setVisible(false);

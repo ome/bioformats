@@ -64,6 +64,9 @@ public class TransformLink
   /** Separate thread for managing full-resolution burn-in. */
   protected Thread burnThread;
 
+  /** Whether a full-resolution burn-in should occur immediately. */
+  protected boolean burnNow;
+
   /** Next clock time a full-resolution burn-in should occur. */
   protected long burnTime;
 
@@ -168,7 +171,7 @@ public class TransformLink
     Vector dataList = dm.getDataList();
     int ndx = dataList.indexOf(trans);
     window.setAttr(attrName + "_dataIndex", "" + ndx);
-    colorHandler.saveState(attrName);
+    if (colorHandler != null) colorHandler.saveState(attrName);
     window.setAttr(attrName + "_visible", "" + isVisible());
   }
 
@@ -179,7 +182,7 @@ public class TransformLink
     Vector dataList = dm.getDataList();
     int dataIndex = Integer.parseInt(window.getAttr(attrName + "_dataIndex"));
     trans = (DataTransform) dataList.elementAt(dataIndex);
-    colorHandler.restoreState(attrName);
+    if (colorHandler != null) colorHandler.restoreState(attrName);
     visible = window.getAttr(attrName + "_visible").equalsIgnoreCase("true");
   }
 
@@ -244,10 +247,10 @@ public class TransformLink
     if (link != null) {
       if (trans != null) trans.removeTransformListener(this);
       trans = link.getTransform();
-      colorHandler.initState(link.getColorHandler());
+      if (colorHandler != null) colorHandler.initState(link.getColorHandler());
       visible = link.isVisible();
     }
-    else colorHandler.initState(null);
+    else if (colorHandler != null) colorHandler.initState(null);
 
     // remove old data reference
     DisplayImpl display = handler.getWindow().getDisplay();
@@ -288,10 +291,11 @@ public class TransformLink
     while (true) {
       // wait until a new burn-in is requested
       if (!alive) break;
-      while (System.currentTimeMillis() > burnTime) {
-        try { Thread.sleep(100); }
+      while (System.currentTimeMillis() > burnTime && !burnNow) {
+        try { Thread.sleep(50); }
         catch (InterruptedException exc) { }
       }
+      burnNow = false;
 
       // wait until appointed burn-in time (which could change during the wait)
       if (!alive) break;
@@ -333,16 +337,18 @@ public class TransformLink
 
   /** Updates displayed data based on current dimensional position. */
   protected void doTransform(long delay) {
+    computeData(true);
     // request a new burn-in in delay milliseconds
     burnTime = System.currentTimeMillis() + delay;
-    computeData(true);
+    if (delay < 100) burnNow = true;
   }
 
   /**
    * Computes the reference data at the current position,
    * utilizing thumbnails as appropriate.
    */
-  protected void computeData(boolean thumbs) {
+  protected synchronized void computeData(boolean thumbs) {
+    /*TEMP*/System.out.println("computeData(" + thumbs + "): start");
     int[] pos = handler.getPos(trans);
     ThumbnailHandler th = trans.getThumbHandler();
     Data thumb = th == null ? null : th.getThumb(pos);
@@ -357,8 +363,9 @@ public class TransformLink
       setMessage("burning in full-resolution data");
       clearWhenDone = true;
       setData(d);
-      colorHandler.reAutoScale();
+      if (colorHandler != null) colorHandler.reAutoScale();
     }
+    /*TEMP*/System.out.println("computeData(" + thumbs + "): end");
   }
 
   /** Gets the transform's data at the given dimensional position. */

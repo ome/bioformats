@@ -189,8 +189,8 @@ public class TransformPanel extends JPanel
     if (cmd.equals("delayBurn")) {
       boolean delay = ((JCheckBox) e.getSource()).isSelected();
       delayTime.setEnabled(delay);
-      handler.setBurnDelay(delay ?
-        1000 * ((Number) delayTime.getValue()).intValue() : 0);
+      handler.setBurnDelay(delay ?  1000 *
+        ((Number) delayTime.getValue()).intValue() : 0);
     }
     else if (cmd.equals("visible")) {
       DataTransform data = (DataTransform) transformList.getSelectedValue();
