@@ -35,7 +35,9 @@ import javax.swing.event.ChangeListener;
 import loci.visbio.util.FormsUtil;
 
 /** SliceWidget is a set of GUI controls for an arbitrary slice. */
-public class SliceWidget extends JPanel implements ChangeListener, ItemListener {
+public class SliceWidget extends JPanel
+  implements ChangeListener, ItemListener
+{
 
   // -- Constants --
 

@@ -59,7 +59,7 @@ public abstract class MathUtil {
     boolean segment)
   {
     int len = a.length;
-     
+
     // vectors
     double[] ab = new double[len];
     double[] va = new double[len];
