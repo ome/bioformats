@@ -8,12 +8,6 @@ Bugfixes and enhancements:
 
   - Page 2 and later of wizards need to be centered around parent, not screen.
 
-  - "Cannot record movie" error needs to be centered around capture dialog,
-    not display window.
-
-  - Record AVI movie and Record image sequence file choosers need to be
-    centered around capture dialog, not display window.
-
   - Remove, up and down buttons on capture dialog need to be grayed out
     if they are inapplicable.
 

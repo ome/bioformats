@@ -115,7 +115,8 @@ public class CaptureHandler {
 
   /** Saves a snapshot of the display to a file specified by the user. */
   public void saveSnapshot() {
-    int rval = imageBox.showSaveDialog(window);
+    CaptureWindow captureWindow = panel.getCaptureWindow();
+    int rval = imageBox.showSaveDialog(captureWindow);
     if (rval != JFileChooser.APPROVE_OPTION) return;
 
     // determine file type
@@ -127,7 +128,7 @@ public class CaptureHandler {
     final boolean jpeg = ext.equals("jpg") || ext.equals("jpeg");
     final boolean raw = ext.equals("raw");
     if (!tiff && !jpeg && !raw) {
-      JOptionPane.showMessageDialog(window, "Invalid filename (" +
+      JOptionPane.showMessageDialog(captureWindow, "Invalid filename (" +
         file + "): extension must be TIFF, JPEG or RAW.",
         "Cannot export snapshot", JOptionPane.ERROR_MESSAGE);
       return;
@@ -176,17 +177,18 @@ public class CaptureHandler {
   public void captureMovie(Vector matrices, double secPerTrans,
     int framesPerSec, boolean sine, boolean movie)
   {
+    CaptureWindow captureWindow = panel.getCaptureWindow();
     final int size = matrices.size();
     if (size < 1) {
-      JOptionPane.showMessageDialog(window, "Must have at least two display " +
-        "positions on the list.", "Cannot record movie",
+      JOptionPane.showMessageDialog(captureWindow, "Must have at least " +
+        "two display positions on the list.", "Cannot record movie",
         JOptionPane.ERROR_MESSAGE);
       return;
     }
 
     final DisplayImpl d = window.getDisplay();
     if (d == null) {
-      JOptionPane.showMessageDialog(window, "Display not found.",
+      JOptionPane.showMessageDialog(captureWindow, "Display not found.",
         "Cannot record movie", JOptionPane.ERROR_MESSAGE);
       return;
     }
@@ -201,13 +203,13 @@ public class CaptureHandler {
     int dot = -1;
     boolean tiff = false, jpeg = false, raw = false;
     if (movie) {
-      int rval = movieBox.showSaveDialog(window);
+      int rval = movieBox.showSaveDialog(captureWindow);
       if (rval != JFileChooser.APPROVE_OPTION) return;
       file = movieBox.getSelectedFile().getPath();
       if (file.indexOf(".") < 0) file = file + ".avi";
     }
     else {
-      int rval = imageBox.showSaveDialog(window);
+      int rval = imageBox.showSaveDialog(captureWindow);
       if (rval != JFileChooser.APPROVE_OPTION) return;
       file = imageBox.getSelectedFile().getPath();
       String ext = "";
@@ -217,7 +219,7 @@ public class CaptureHandler {
       jpeg = ext.equals("jpg") || ext.equals("jpeg");
       raw = ext.equals("raw");
       if (!tiff && !jpeg && !raw) {
-        JOptionPane.showMessageDialog(window, "Invalid filename (" +
+        JOptionPane.showMessageDialog(captureWindow, "Invalid filename (" +
           file + "): extension must be TIFF, JPEG or RAW.",
           "Cannot create image sequence", JOptionPane.ERROR_MESSAGE);
         return;
