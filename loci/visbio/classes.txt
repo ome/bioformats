@@ -2374,7 +2374,6 @@ quicktime.qd.QDColor
 quicktime.qd.QDDimension
 quicktime.qd.QDDrawer
 quicktime.qd.QDException
-quicktime.qd.QDGraphics
 quicktime.qd.QDPoint
 quicktime.qd.QDRect
 quicktime.qd.Region
