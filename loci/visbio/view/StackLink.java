@@ -312,6 +312,23 @@ public class StackLink extends TransformLink {
     ThumbnailHandler th = trans.getThumbHandler();
     int len = references.size();
 
+    // check whether dimensional position has changed
+    if (!thumbs) {
+      if (cachedPos != null && cachedPos.length == pos.length) {
+        for (int i=0; i<pos.length; i++) {
+          if (cachedPos[i] != pos[i] && i != stackAxis) {
+            // for now, simply dump old full-resolution data
+            for (int s=0; s<len; s++) {
+              if (stackAxis >= 0) cachedPos[stackAxis] = s;
+              handler.getCache().dump(trans, cachedPos);
+            }
+            break;
+          }
+        }
+      }
+      cachedPos = pos;
+    }
+
     // compute image data at each slice
     DisplayImpl display = handler.getWindow().getDisplay();
     VisUtil.setDisplayDisabled(display, true);

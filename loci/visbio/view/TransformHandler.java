@@ -34,6 +34,7 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import loci.visbio.VisBioFrame;
+import loci.visbio.data.DataCache;
 import loci.visbio.data.DataTransform;
 import loci.visbio.state.StateManager;
 import loci.visbio.util.VisUtil;
@@ -61,6 +62,9 @@ public class TransformHandler implements ChangeListener, Runnable  {
 
   /** GUI controls for transform handler. */
   protected TransformPanel panel;
+
+  /** Cache of full-resolution data in memory. */
+  protected DataCache cache;
 
   /** Data transform links. */
   protected Vector links;
@@ -101,6 +105,7 @@ public class TransformHandler implements ChangeListener, Runnable  {
   /** Creates a display transform handler. */
   public TransformHandler(DisplayWindow dw) {
     window = dw;
+    cache = new DataCache();
     links = new Vector();
     sliders = new Vector();
     sliderPanel = new JPanel();
@@ -178,6 +183,9 @@ public class TransformHandler implements ChangeListener, Runnable  {
 
   /** Gets number of data transforms linked to the display. */
   public int getTransformCount() { return links.size(); }
+
+  /** Gets cache of full-resolution data in memory. */
+  public DataCache getCache() { return cache; }
 
   /** Gets associated display window. */
   public DisplayWindow getWindow() { return window; }

@@ -29,6 +29,7 @@ import java.util.Vector;
 import loci.visbio.VisBioFrame;
 import loci.visbio.data.*;
 import loci.visbio.state.Dynamic;
+import loci.visbio.util.ObjectUtil;
 import loci.visbio.util.VisUtil;
 import visad.*;
 import visad.util.Util;
@@ -78,6 +79,9 @@ public class TransformLink
 
   /** Whether a TRANSFORM_DONE event should clear the status message. */
   protected boolean clearWhenDone;
+
+  /** Last cached dimensional position of the link. */
+  protected int[] cachedPos;
 
 
   // -- Fields - initial state --
@@ -408,7 +412,13 @@ public class TransformLink
     if (thumbs) setData(thumb);
     else {
       setMessage("loading full-resolution data");
-      Data d = dim == 3 ? trans.getData(pos, 3) : getImageData(pos);
+      if (!ObjectUtil.arraysEqual(pos, cachedPos)) {
+        // for now, simply dump old full-resolution data
+        handler.getCache().dump(trans, cachedPos);
+      }
+      cachedPos = pos;
+      Data d = dim == 3 ?
+        trans.getData(pos, 3, handler.getCache()) : getImageData(pos);
       if (th != null && thumb == null) {
         // fill in missing thumbnail
         th.setThumb(pos, th.makeThumb(d));
@@ -421,7 +431,9 @@ public class TransformLink
   }
 
   /** Gets the transform's data at the given dimensional position. */
-  protected Data getImageData(int[] pos) { return trans.getData(pos, 2); }
+  protected Data getImageData(int[] pos) {
+    return trans.getData(pos, 2, handler.getCache());
+  }
 
   /** Assigns the given data object to the data reference. */
   protected void setData(Data d) { setData(d, ref, true); }
