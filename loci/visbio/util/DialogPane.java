@@ -30,8 +30,7 @@ import com.jgoodies.forms.factories.ButtonBarFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-import java.awt.Dialog;
-import java.awt.Frame;
+import java.awt.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -105,10 +104,21 @@ public class DialogPane extends JPanel implements ActionListener {
   // -- DialogPane API methods --
 
   /** Displays a dialog using this dialog pane. */
+  public int showDialog(Component parent) { return showDialog(parent, true); }
+
+  /** Displays a dialog using this dialog pane. */
   public int showDialog(Frame parent) { return showDialog(parent, true); }
 
   /** Displays a dialog using this dialog pane. */
   public int showDialog(Dialog parent) { return showDialog(parent, true); }
+
+  /** Displays a dialog using this dialog pane. */
+  public int showDialog(Component parent, boolean modal) {
+    Window w = SwingUtil.getWindow(parent);
+    if (w instanceof Frame) return showDialog((Frame) w, modal);
+    else if (w instanceof Dialog) return showDialog((Dialog) w, modal);
+    else return showDialog((Frame) null, modal);
+  }
 
   /** Displays a dialog using this dialog pane. */
   public int showDialog(Frame parent, boolean modal) {
@@ -167,7 +177,9 @@ public class DialogPane extends JPanel implements ActionListener {
     dialog.getRootPane().setDefaultButton(ok);
     resetComponents();
     dialog.pack();
-    Util.centerWindow(dialog);
+    Window owner = dialog.getOwner();
+    if (owner == null) Util.centerWindow(dialog);
+    else Util.centerWindow(owner, dialog);
     rval = CANCEL_OPTION;
     dialog.show();
     return rval;
