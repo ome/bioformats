@@ -113,10 +113,9 @@ public class HelpWindow extends JFrame
         String source = e.getURL().toString();
         HelpTopic node = findTopic(source);
         if (node != null) {
-          TreePath path = new TreePath(node);
+          TreePath path = new TreePath(node.getPath());
           topics.setSelectionPath(path);
           topics.scrollPathToVisible(path);
-          // CTR START HERE figure out why this doesn't visibly select a topic
         }
         else {
           // launch external browser to handle the link
@@ -182,6 +181,10 @@ public class HelpWindow extends JFrame
       HelpTopic node = (HelpTopic) e.nextElement();
       String nodeSource = node.getSource();
       if (nodeSource == null) continue;
+      // HACK - since URL strings have multiple possible structures, this
+      // search just compares the end of the search string. If a link points to
+      // an external URL that happens to end with the same string as one of the
+      // help topics, this method will erroneously flag that topic anyway.
       if (source.endsWith(nodeSource)) return node;
     }
     return null;
