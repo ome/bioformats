@@ -74,7 +74,16 @@ public class WindowInfo implements WindowListener {
 
   /** Displays the window onscreen. */
   public void showWindow() {
-    if (first && pack) window.pack();
+    if (first && pack) {
+      window.pack();
+      // HACK - work around a layout issue where panel is slightly too short
+      // this hack also appears in loci.visbio.view.DisplayWindow.repack()
+      if ("Linux".equals(System.getProperty("os.name"))) {
+        Dimension size = window.getSize();
+        size.height += 10;
+        window.setSize(size);
+      }
+    }
 
     // arrange window in cascade formation
     Dimension ss = Toolkit.getDefaultToolkit().getScreenSize();
