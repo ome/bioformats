@@ -47,6 +47,7 @@ import javax.swing.filechooser.FileFilter;
 import visad.util.ComboFileFilter;
 import visad.util.ExtensionFileFilter;
 import visad.util.GUIFrame;
+import visad.util.OpenlabFileFilter;
 
 /** SwingUtil contains useful Swing functions. */
 public abstract class SwingUtil {
@@ -157,7 +158,12 @@ public abstract class SwingUtil {
     FileFilter metamorph = new ExtensionFileFilter("stk", "Metamorph STK files");
     dialog.addChoosableFileFilter(metamorph);
     filters.add(metamorph);
-    
+
+    // Openlab - bio/OpenlabForm
+    FileFilter openlab = new OpenlabFileFilter();
+    dialog.addChoosableFileFilter(openlab);
+    filters.add(openlab);
+  
     // TIFF - tiff/TiffForm, ij/ImageJForm
     FileFilter tiff = new ExtensionFileFilter(
       new String[] {"tiff", "tif"}, "Multi-page TIFF stacks");
