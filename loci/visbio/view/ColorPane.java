@@ -205,7 +205,7 @@ public class ColorPane extends DialogPane
       maps = new ScalarMap[sm.length];
       for (int i=0; i<maps.length; i++) {
         ScalarType st = sm[i].getScalar();
-        maps[i] = new ScalarMap(st, Display.RGB);
+        maps[i] = new ScalarMap(st, Display.RGBA);
         preview.addMap(maps[i]);
         widgetPane.add(new LabeledColorWidget(new ColorMapWidget(maps[i])));
         selector.addItem(st.getName());

@@ -202,7 +202,7 @@ public class DataSampling extends DataTransform implements ImageTransform {
     ScalarMap[] nmaps = new ScalarMap[pmaps.length - range.length + numRange];
     int ndx = 0, rng = 0;
     for (int i=0; i<pmaps.length; i++) {
-      if (pmaps[i].getDisplayScalar().equals(Display.RGB)) {
+      if (pmaps[i].getDisplayScalar().equals(Display.RGBA)) {
         // filter out range components that are not flagged
         if (!range[rng++]) continue;
       }

@@ -115,7 +115,7 @@ public class Dataset extends DataTransform implements ImageTransform {
   /** Types mapped to spatial components (X, Y). */
   protected RealType[] spatial;
 
-  /** Types mapped to color components (RGB). */
+  /** Types mapped to color components (RGBA). */
   protected RealType[] color;
 
 
@@ -287,7 +287,7 @@ public class Dataset extends DataTransform implements ImageTransform {
       maps[0] = new ScalarMap(spatial[0], Display.XAxis);
       maps[1] = new ScalarMap(spatial[1], Display.YAxis);
       for (int i=0; i<numRange; i++) {
-        maps[i + 2] = new ScalarMap(color[i], Display.RGB);
+        maps[i + 2] = new ScalarMap(color[i], Display.RGBA);
         maps[i + 2].setRange(0, 255);
       }
     }

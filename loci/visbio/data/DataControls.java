@@ -401,16 +401,16 @@ public class DataControls extends ControlPanel
       // build popup menu from display list
       JPopupMenu menu = new JPopupMenu();
       for (int i=0; i<dd.length; i++) {
-        final DisplayWindow display = dd[i];
-        JMenuItem item = new JMenuItem(display.toString());
+        final DisplayWindow window = dd[i];
+        JMenuItem item = new JMenuItem(window.toString());
         item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             // add selected data object to chosen display
             DataTransform data = getSelectedData();
-            if (data != null) display.addTransform(data);
+            if (data != null) window.addTransform(data);
             WindowManager wm = (WindowManager)
               lm.getVisBio().getManager(WindowManager.class);
-            wm.showWindow(display);
+            wm.showWindow(window);
           }
         });
         menu.add(item);
@@ -566,12 +566,12 @@ public class DataControls extends ControlPanel
     DisplayManager disp = (DisplayManager)
       lm.getVisBio().getManager(DisplayManager.class);
     if (disp == null) return;
-    DisplayWindow display = disp.createDisplay(threeD);
-    if (display == null) return;
-    display.addTransform(data);
+    DisplayWindow window = disp.createDisplay(threeD);
+    if (window == null) return;
+    window.addTransform(data);
     WindowManager wm = (WindowManager)
       lm.getVisBio().getManager(WindowManager.class);
-    wm.showWindow(display);
+    wm.showWindow(window);
   }
 
 }

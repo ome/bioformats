@@ -149,13 +149,13 @@ public class CollapseTransform extends DataTransform
 
     // strip off parent range component mappings
     for (int i=0; i<pmaps.length; i++) {
-      if (!pmaps[i].getDisplayScalar().equals(Display.RGB)) v.add(pmaps[i]);
+      if (!pmaps[i].getDisplayScalar().equals(Display.RGBA)) v.add(pmaps[i]);
     }
 
     // append new range component mappings
     try {
       for (int i=0; i<range.length; i++) {
-        v.add(new ScalarMap(range[i], Display.RGB));
+        v.add(new ScalarMap(range[i], Display.RGBA));
       }
     }
     catch (VisADException exc) { exc.printStackTrace(); }
