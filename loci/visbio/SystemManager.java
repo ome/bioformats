@@ -23,13 +23,25 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio;
 
+import com.jgoodies.plaf.LookUtils;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import java.util.Vector;
+
 import loci.visbio.help.HelpManager;
+
+import visad.util.Util;
 
 /**
  * SystemManager is the manager encapsulating
  * VisBio's system information report logic.
  */
-public class SystemManager extends LogicManager {
+public class SystemManager extends LogicManager implements Runnable {
 
   // -- Control panel --
 
@@ -41,6 +53,98 @@ public class SystemManager extends LogicManager {
 
   /** Constructs a system manager. */
   public SystemManager(VisBioFrame bio) { super(bio); }
+
+
+  // -- SystemManager API methods --
+
+  /** Gets maximum amount of memory available to VisBio in megabytes. */
+  public int getMaximumMemory() {
+    return (int) (Runtime.getRuntime().maxMemory() / 1048376);
+  }
+
+  /** Calls the Java garbage collector to free wasted memory. */
+  public void cleanMemory() { Util.invoke(false, this); }
+
+  /**
+   * Updates the VisBio launch script to specify the given
+   * maximum heap and look and feel settings.
+   */
+  public void writeScript(int heap, String laf) {
+    // a platform-dependent mess!
+    String filename;
+    if (LookUtils.IS_OS_WINDOWS) filename = "VisBio.bat";
+    else if (LookUtils.IS_OS_MAC) filename = "VisBio.app/Contents/Info.plist";
+    else filename = "visbio";
+
+    // read in the VisBio startup script
+    Vector lines = new Vector();
+    try {
+      BufferedReader fin = new BufferedReader(new FileReader(filename));
+      while (true) {
+        String line = fin.readLine();
+        if (line == null) break;
+        lines.add(line);
+      }
+      fin.close();
+    }
+    catch (IOException exc) { exc.printStackTrace(); }
+
+    // alter settings in VisBio startup script
+    PrintWriter fout = null;
+    int size = 0;
+    try {
+      fout = new PrintWriter(new FileWriter(filename));
+      size = lines.size();
+    }
+    catch (IOException exc) { exc.printStackTrace(); }
+
+    boolean heapChanged = heap < 0;
+    boolean lafChanged = laf == null;
+
+    for (int i=0; i<size; i++) {
+      String line = (String) lines.elementAt(i);
+
+      if (heap >= 0) {
+        // adjust maximum heap setting
+        String heapString = "mx";
+        int heapPos = line.indexOf(heapString);
+        if (heapPos >= 0) {
+          int space = line.indexOf(" ", heapPos);
+          if (space >= 0) {
+            line = line.substring(0, heapPos + heapString.length()) +
+              heap + "m" + line.substring(space);
+            heapChanged = true;
+          }
+        }
+      }
+
+      if (laf != null) {
+        // check for L&F setting
+        String lafString = "swing.defaultlaf=";
+        int lafPos = line.indexOf(lafString);
+        if (lafPos >= 0) {
+          int space = line.indexOf(" ", lafPos);
+          if (space >= 0) {
+            line = line.substring(0, lafPos + lafString.length()) +
+              laf + line.substring(space);
+            lafChanged = true;
+          }
+        }
+      }
+
+      fout.println(line);
+    }
+    fout.close();
+
+    if (!heapChanged) {
+      System.err.println("Warning: no maximum heap setting found " +
+        "in launch script " + filename + ".");
+    }
+    if (!lafChanged) {
+      System.err.println("Warning: no Look & Feel setting found " +
+        "in launch script " + filename + ".");
+    }
+  }
 
 
   // -- LogicManager API methods --
@@ -56,6 +160,17 @@ public class SystemManager extends LogicManager {
 
   /** Gets the number of tasks required to initialize this logic manager. */
   public int getTasks() { return 2; }
+
+
+  // -- Runnable API methods --
+
+  /** Performs garbage collection, displaying a wait cursor while doing so. */
+  public void run() {
+    WindowManager wm = (WindowManager) bio.getManager(WindowManager.class);
+    wm.setWaitCursor(true);
+    SystemManager.gc();
+    wm.setWaitCursor(false);
+  }
 
 
   // -- Helper methods --

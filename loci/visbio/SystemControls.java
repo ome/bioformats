@@ -28,19 +28,8 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-import com.jgoodies.plaf.LookUtils;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -55,12 +44,9 @@ import visad.VisADException;
 import visad.data.qt.QTForm;
 
 import visad.util.ReflectedUniverse;
-import visad.util.Util;
 
 /** SystemControls is the control panel for reporting system information. */
-public class SystemControls extends ControlPanel
-  implements ActionListener, Runnable
-{
+public class SystemControls extends ControlPanel implements ActionListener {
 
   // -- GUI components --
 
@@ -107,7 +93,8 @@ public class SystemControls extends ControlPanel
     clean.addActionListener(this);
 
     // memory maximum text field
-    JTextField heapField = new JTextField(getMaximumMemory() + " MB maximum");
+    JTextField heapField = new JTextField(
+      ((SystemManager) lm).getMaximumMemory() + " MB maximum");
     heapField.setEditable(false);
 
     // memory maximum alteration button
@@ -226,23 +213,15 @@ public class SystemControls extends ControlPanel
   }
 
 
-  // -- SystemControls API methods --
-
-  /** Gets maximum amount of memory available to VisBio in megabytes. */
-  public int getMaximumMemory() {
-    // HACK: 8 MB seem to be reserved...
-    return (int) (Runtime.getRuntime().maxMemory() / 1048376) + 8;
-  }
-
-
   // -- ActionListener API methods --
 
   /** Handles action events. */
   public void actionPerformed(ActionEvent e) {
     String cmd = e.getActionCommand();
-    if ("clean".equals(cmd)) Util.invoke(false, this);
+    SystemManager sm = (SystemManager) lm;
+    if ("clean".equals(cmd)) sm.cleanMemory();
     else if ("heap".equals(cmd)) {
-      String max = "" + getMaximumMemory();
+      String max = "" + sm.getMaximumMemory();
       String heapSize = (String) JOptionPane.showInputDialog(this,
         "New maximum memory value:", "VisBio", JOptionPane.QUESTION_MESSAGE,
         null, null, "" + max);
@@ -256,7 +235,10 @@ public class SystemControls extends ControlPanel
           "VisBio", JOptionPane.ERROR_MESSAGE);
         return;
       }
-      writeScript(maxHeap, LAFUtil.getLookAndFeel()[1]);
+      sm.writeScript(maxHeap, null);
+      JOptionPane.showMessageDialog(controls,
+        "The change will take effect next time you run VisBio.",
+        "VisBio", JOptionPane.INFORMATION_MESSAGE);
     }
     else if ("laf".equals(cmd)) {
       String[] laf = LAFUtil.getLookAndFeel();
@@ -273,7 +255,10 @@ public class SystemControls extends ControlPanel
         }
       }
       if (ndx < 0 || lafs[1][ndx].equals(laf[1])) return;
-      writeScript(getMaximumMemory(), lafs[1][ndx]);
+      sm.writeScript(-1, lafs[1][ndx]);
+      JOptionPane.showMessageDialog(controls,
+        "The change will take effect next time you run VisBio.",
+        "VisBio", JOptionPane.INFORMATION_MESSAGE);
     }
     else {
       // update system information
@@ -289,18 +274,6 @@ public class SystemControls extends ControlPanel
         memField.setText(umeg + " MB used (" + tmeg + " MB reserved)");
       }
     }
-  }
-
-
-  // -- Runnable API methods --
-
-  /** Performs garbage collection, displaying a wait cursor while doing so. */
-  public void run() {
-    WindowManager wm = (WindowManager)
-      lm.getVisBio().getManager(WindowManager.class);
-    wm.setWaitCursor(true);
-    SystemManager.gc();
-    wm.setWaitCursor(false);
   }
 
 
@@ -325,86 +298,6 @@ public class SystemControls extends ControlPanel
     else if (vendor == null) return version;
     else if (version == null) return vendor;
     else return version + " (" + vendor + ")";
-  }
-
-  /**
-   * Updates the VisBio launch script to specify the given
-   * maximum heap and look and feel settings.
-   */
-  private void writeScript(int heap, String laf) {
-    // a platform-dependent mess!
-    String filename;
-    if (LookUtils.IS_OS_WINDOWS) filename = "VisBio.lnk";
-    else if (LookUtils.IS_OS_MAC) filename = "VisBio.app/Contents/Info.plist";
-    else filename = "visbio";
-
-    // read in the VisBio startup script
-    Vector lines = new Vector();
-    try {
-      BufferedReader fin = new BufferedReader(new FileReader(filename));
-      while (true) {
-        String line = fin.readLine();
-        if (line == null) break;
-        lines.add(line);
-      }
-      fin.close();
-    }
-    catch (IOException exc) { exc.printStackTrace(); }
-
-    // alter settings in VisBio startup script
-    PrintWriter fout = null;
-    int size = 0;
-    try {
-      fout = new PrintWriter(new FileWriter(filename));
-      size = lines.size();
-    }
-    catch (IOException exc) { exc.printStackTrace(); }
-
-    boolean heapChanged = false, lafChanged = false;
-
-    for (int i=0; i<size; i++) {
-      String line = (String) lines.elementAt(i);
-
-      // check for maximum heap setting
-      String heapString = "mx";
-      int heapPos = line.indexOf(heapString);
-      if (heapPos >= 0) {
-        int space = line.indexOf(" ", heapPos);
-        if (space >= 0) {
-          line = line.substring(0, heapPos + heapString.length()) +
-            heap + "m" + line.substring(space);
-          heapChanged = true;
-        }
-      }
-
-      // check for L&F setting
-      String lafString = "swing.defaultlaf=";
-      int lafPos = line.indexOf(lafString);
-      if (lafPos >= 0) {
-        int space = line.indexOf(" ", lafPos);
-        if (space >= 0) {
-          line = line.substring(0, lafPos + lafString.length()) +
-            laf + line.substring(space);
-          lafChanged = true;
-        }
-      }
-
-      fout.println(line);
-    }
-    fout.close();
-
-    if (!heapChanged) {
-      System.err.println("Warning: no maximum heap setting found " +
-        "in launch script " + filename + ".");
-    }
-    if (!lafChanged) {
-      System.err.println("Warning: no Look & Feel setting found " +
-        "in launch script " + filename + ".");
-    }
-
-    JOptionPane.showMessageDialog(this,
-      "The change will take effect next time VisBio is run.",
-      "VisBio", JOptionPane.INFORMATION_MESSAGE);
   }
 
 }

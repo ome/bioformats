@@ -1,2 +1,2 @@
 #!/bin/bash
-java -mx1280m -Dswing.defaultlaf=com.jgoodies.plaf.plastic.Plastic3DLookAndFeel loci.visbio.VisBio
+jre/bin/java -mx1280m -Dswing.defaultlaf=com.jgoodies.plaf.plastic.Plastic3DLookAndFeel loci.visbio.VisBio
