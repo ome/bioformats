@@ -26,3 +26,5 @@ Bugfixes and enhancements:
   - Ensure new WindowManager fixes VisBio windowing issues on Mac OS X
 
   - Change color dialog to include alpha component, for maximum power
+
+  - Make Up and Down buttons in display window's controls actually work
