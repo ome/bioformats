@@ -81,6 +81,7 @@ public class VisBio {
     Constructor con = vb.getConstructor(new Class[] {
       ss.getClass(), String[].class
     });
+    /*TEMP*/args = new String[] {"ome-image=curtis@skyking.microscopy.wisc.edu:12"};
     con.newInstance(new Object[] {ss, args});
   }
 

@@ -32,9 +32,10 @@ import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
 import loci.visbio.data.DataManager;
+import loci.visbio.data.DataTransform;
 import loci.visbio.help.HelpManager;
 import loci.visbio.overlays.OverlayManager;
-import loci.visbio.ome.OMEManager;
+import loci.visbio.ome.*;
 import loci.visbio.state.OptionManager;
 import loci.visbio.state.StateManager;
 import loci.visbio.util.LAFUtil;
@@ -88,12 +89,6 @@ public class VisBioFrame extends GUIFrame {
     setTitle(VisBio.TITLE);
     managers = new Vector();
     this.splash = splash;
-    if (args == null) args = new String[0];
-    if (DEBUG) {
-      for (int i=0; i<args.length; i++) {
-        System.out.println("args[" + i + "] = " + args[i]);
-      }
-    }
 
     // initialize Look & Feel parameters
     LAFUtil.initLookAndFeel();
@@ -196,6 +191,20 @@ public class VisBioFrame extends GUIFrame {
     // determine if VisBio crashed last time
     sm.setRestoring(false);
     sm.checkCrash();
+
+    // process arguments
+    if (args == null) args = new String[0];
+    for (int i=0; i<args.length; i++) {
+      int equals = args[i].indexOf("=");
+      if (equals < 0) continue;
+      String key = args[i].substring(0, equals);
+      String value = args[i].substring(equals + 1);
+      if (DEBUG) {
+        System.out.println("[arg " + i + "] " +
+          (i + 1) + ": " + key + " = " + value);
+      }
+      processArgument(key, value);
+    }
   }
 
 
@@ -241,6 +250,30 @@ public class VisBioFrame extends GUIFrame {
     for (int i=0; i<managers.size(); i++) {
       LogicManager lm = (LogicManager) managers.elementAt(i);
       lm.doEvent(evt);
+    }
+  }
+
+  /** Processes the given argument key/value pair. */
+  public void processArgument(String key, String value) {
+    if (key == null || value == null) return;
+    key = key.toLowerCase();
+    if (key.equals("ome-image")) {
+      // value syntax: user@server:imageId
+      int index = value.indexOf("@");
+      if (index < 0) return;
+      String user = value.substring(0, index);
+      value = value.substring(index + 1);
+      index = value.indexOf(":");
+      String server = value.substring(0, index);
+      int imageId = -1;
+      try { imageId = Integer.parseInt(value.substring(index + 1)); }
+      catch (NumberFormatException exc) { }
+      if (imageId < 0) return;
+
+      // construct OME image object
+      DataManager dm = (DataManager) getManager(DataManager.class);
+      DataTransform data = OMEImage.makeTransform(dm, server, user, imageId);
+      if (data != null) dm.addData(data);
     }
   }
 

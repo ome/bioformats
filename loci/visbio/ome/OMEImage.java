@@ -159,24 +159,37 @@ public class OMEImage extends ImageTransform {
 
   /** Creates a new OME image, with user interaction. */
   public static DataTransform makeTransform(DataManager dm) {
+    return makeTransform(dm, null, null, -1);
+  }
+
+  /**
+   * Creates a new OME image, with user interaction,
+   * using the given defaults.
+   */
+  public static DataTransform makeTransform(DataManager dm,
+    String server, String user, int imageId)
+  {
     // create OME login dialog if it doesn't already exist
     if (login == null) login = new OMELoginPane();
+    if (server != null) login.setServer(server);
+    if (user != null) login.setUser(user);
 
     // get login information from login dialog
     Component parent = dm.getControlPanel();
     int rval = login.showDialog(parent);
     if (rval != OMELoginPane.APPROVE_OPTION) return null;
-    String server = login.getServer();
-    String user = login.getUser();
+    server = login.getServer();
+    user = login.getUser();
     String password = login.getPassword();
 
     // get image ID to download
-    String id = (String) JOptionPane.showInputDialog(parent, "Image ID:",
-      "Download OME image", JOptionPane.INFORMATION_MESSAGE, null, null, "");
-    if (id == null) return null;
-    int imageId = -1;
-    try { imageId = Integer.parseInt(id); }
-    catch (NumberFormatException exc) { }
+    if (imageId < 0) {
+      String id = (String) JOptionPane.showInputDialog(parent, "Image ID:",
+        "Download OME image", JOptionPane.INFORMATION_MESSAGE, null, null, "");
+      if (id == null) return null;
+      try { imageId = Integer.parseInt(id); }
+      catch (NumberFormatException exc) { }
+    }
     if (imageId < 0) return null;
 
     // confirm download before proceeding

@@ -85,19 +85,15 @@ public class OMELoginPane extends DialogPane {
 
   // -- OMELoginPane API methods --
 
+  /** Sets the server specified in the login pane. */
+  public void setServer(String server) { serv.setText(server); }
+
+  /** Sets the user name specified in the login pane. */
+  public void setUser(String username) { user.setText(username); }
+
   /** Gets the server specified in the login pane. */
   public String getServer() {
-    String server = serv.getText();
-    if (server.startsWith("http:")) {
-      server = server.substring(5);
-    }
-    while (server.startsWith("/")) server = server.substring(1);
-    int slash = server.indexOf("/");
-    if (slash >= 0) server = server.substring(0, slash);
-    int colon = server.indexOf(":");
-    if (colon >= 0) server = server.substring(0, colon);
-
-    return "http://" + server + "/shoola/";
+    return OMEManager.getProperServer(serv.getText());
   }
 
   /** Gets the user name specified in the login pane. */

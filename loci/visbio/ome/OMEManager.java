@@ -82,6 +82,26 @@ public class OMEManager extends LogicManager implements TaskListener {
     }).start();
   }
 
+  /** Gets pane for logging into an OME server. */
+  public OMELoginPane getLoginPane() { return loginPane; }
+
+
+  // -- Static OMEManager API methods --
+
+  /** Gets a standardized server string for the given server. */
+  public static String getProperServer(String server) {
+    if (server.startsWith("http:")) {
+      server = server.substring(5);
+    }
+    while (server.startsWith("/")) server = server.substring(1);
+    int slash = server.indexOf("/");
+    if (slash >= 0) server = server.substring(0, slash);
+    int colon = server.indexOf(":");
+    if (colon >= 0) server = server.substring(0, colon);
+
+    return "http://" + server + "/shoola/";
+  }
+
 
   // -- LogicManager API methods --
 
