@@ -175,7 +175,7 @@ public class OptionManager extends LogicManager {
       Object src = evt.getSource();
       if (src == this) doGUI();
       else if (src instanceof ExitManager) {
-        // HACK - make options menu item appears in the proper location
+        // HACK - make options menu item appear in the proper location
 
         if (!VisBioFrame.MAC_OS_X) {
           // file menu

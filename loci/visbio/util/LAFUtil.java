@@ -31,6 +31,7 @@ import java.awt.Dimension;
 
 import java.util.Vector;
 
+import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 
 /** LAFUtil contains useful functions relating to Look and Feel. */
@@ -46,31 +47,21 @@ public abstract class LAFUtil {
       "com.jgoodies.plaf.windows.ExtWindowsLookAndFeel");
     UIManager.installLookAndFeel("JGoodies Plastic",
       "com.jgoodies.plaf.plastic.PlasticLookAndFeel");
-    UIManager.installLookAndFeel("JGoodies Plastic3D",
+    UIManager.installLookAndFeel("JGoodies Plastic 3D",
       "com.jgoodies.plaf.plastic.Plastic3DLookAndFeel");
-    UIManager.installLookAndFeel("JGoodies PlasticXP",
+    UIManager.installLookAndFeel("JGoodies Plastic XP",
       "com.jgoodies.plaf.plastic.PlasticXPLookAndFeel");
   }
 
-  /** Sets the current look and feel. */
-  public static void setLookAndFeel(String lafName) {
-    /*
-    String lafName = LookUtils.IS_OS_WINDOWS_XP
-      ? Options.getCrossPlatformLookAndFeelClassName()
-      : Options.getSystemLookAndFeelClassName();
-    */
-    try { UIManager.setLookAndFeel(lafName); }
-    catch (Exception exc) { exc.printStackTrace(); }
-  }
-
-  /** Gets the name of the current look and feel. */
-  public static String getLookAndFeel() {
-    return UIManager.getLookAndFeel().getName();
+  /** Gets the name and class of the current look and feel. */
+  public static String[] getLookAndFeel() {
+    LookAndFeel laf = UIManager.getLookAndFeel();
+    return new String[] {laf.getName(), laf.getClass().getName()};
   }
 
   /**
-   * Gets list of available look and feels,
-   * taking some OS-specific look and feels into account.
+   * Gets list of available look and feels, taking some OS-specific
+   * look and feels into account.
    * @return An array dimensioned String[2][*], with String[0] being the L&F
    *         names, and String[1] being the fully qualified L&F class names.
    */

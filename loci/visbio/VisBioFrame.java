@@ -41,6 +41,7 @@ import loci.visbio.ome.OMEManager;
 import loci.visbio.state.OptionManager;
 import loci.visbio.state.StateManager;
 
+import loci.visbio.util.LAFUtil;
 import loci.visbio.util.SplashScreen;
 
 import loci.visbio.view.DisplayManager;
@@ -82,6 +83,9 @@ public class VisBioFrame extends GUIFrame {
     setTitle(VisBio.TITLE);
     managers = new Vector();
     this.ss = ss;
+
+    // initialize Look & Feel parameters
+    LAFUtil.initLookAndFeel();
 
     // make menus appear in the right order
     getMenu("File");
