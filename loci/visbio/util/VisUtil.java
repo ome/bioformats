@@ -35,10 +35,7 @@ import visad.*;
 import visad.java2d.DisplayImplJ2D;
 import visad.java2d.DisplayRendererJ2D;
 
-import visad.java3d.DisplayImplJ3D;
-import visad.java3d.DisplayRendererJ3D;
-import visad.java3d.TwoDDisplayRendererJ3D;
-import visad.java3d.VisADCanvasJ3D;
+import visad.java3d.*;
 
 import visad.util.ReflectedUniverse;
 import visad.util.Util;
@@ -95,6 +92,27 @@ public abstract class VisUtil {
     return collapse;
   }
 
+  /**
+   * Gets an array of ScalarMaps from the given display,
+   * corresponding to the specified RealTypes.
+   */
+  public static ScalarMap[] getMaps(DisplayImpl display, RealType[] types) {
+    // Used by: view/ColorManager, view/RenderManager
+    ScalarMap[] maps = new ScalarMap[types.length];
+    Vector v = display.getMapVector();
+    int size = v.size();
+    for (int i=0; i<size; i++) {
+      ScalarMap map = (ScalarMap) v.elementAt(i);
+      ScalarType type = map.getScalar();
+      for (int j=0; j<types.length; j++) {
+        if (type.equals(types[j])) {
+          maps[j] = map;
+          break;
+        }
+      }
+    }
+    return maps;
+  }
   /** Converts a FlatField's MathType into the one given (if compatible). */
   public static FlatField switchType(FlatField field, FunctionType newType)
     throws VisADException, RemoteException

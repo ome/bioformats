@@ -29,13 +29,9 @@ import java.util.Arrays;
 
 import loci.visbio.VisBioFrame;
 
-import loci.visbio.data.DataTransform;
-import loci.visbio.data.ImageTransform;
-import loci.visbio.data.ThumbnailHandler;
+import loci.visbio.data.*;
 
-import loci.visbio.util.ColorUtil;
-import loci.visbio.util.ObjectUtil;
-import loci.visbio.util.VisUtil;
+import loci.visbio.util.*;
 
 import visad.*;
 
