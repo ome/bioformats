@@ -128,7 +128,7 @@ public class OMEManager extends LogicManager implements TaskListener {
     // OME image transform registration
     bio.setSplashStatus(null);
     DataManager dm = (DataManager) bio.getManager(DataManager.class);
-    dm.registerDataType(OMEImage.class, "OME Image");
+    dm.registerDataType(OMEImage.class, "OME image");
   }
 
 }
