@@ -139,6 +139,7 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
     if (edge == BorderLayout.EAST || edge == BorderLayout.WEST) {
       size.width = controls.getPreferredSize().width + size.height - 20;
       // HACK - work around a layout issue where panel is slightly too short
+      // this hack also appears in loci.visbio.WindowInfo.showWindow()
       if ("Linux".equals(System.getProperty("os.name"))) size.height += 10;
     }
     else if (edge == BorderLayout.NORTH || edge == BorderLayout.SOUTH) {
