@@ -32,6 +32,7 @@ import java.rmi.RemoteException;
 import java.util.Vector;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
 import loci.visbio.SystemManager;
 import loci.visbio.WindowManager;
 import loci.visbio.state.OptionManager;
@@ -121,27 +122,41 @@ public class CaptureHandler {
     if (rval != JFileChooser.APPROVE_OPTION) return;
 
     // determine file type
-    final String file = imageBox.getSelectedFile().getPath();
+    String file = imageBox.getSelectedFile().getPath();
     String ext = "";
     int dot = file.lastIndexOf(".");
     if (dot >= 0) ext = file.substring(dot + 1).toLowerCase();
-    final boolean tiff = ext.equals("tif") || ext.equals("tiff");
-    final boolean jpeg = ext.equals("jpg") || ext.equals("jpeg");
-    final boolean raw = ext.equals("raw");
-    if (!tiff && !jpeg && !raw) {
+    boolean tiff = ext.equals("tif") || ext.equals("tiff");
+    boolean jpeg = ext.equals("jpg") || ext.equals("jpeg");
+    FileFilter filter = imageBox.getFileFilter();
+    String desc = filter.getDescription();
+    if (desc.startsWith("JPEG")) {
+      if (!jpeg) {
+        file += ".jpg";
+        jpeg = true;
+      }
+    }
+    else if (desc.startsWith("TIFF")) {
+      if (!tiff) {
+        file += ".tif";
+        tiff = true;
+      }
+    }
+    if (!tiff && !jpeg) {
       JOptionPane.showMessageDialog(captureWindow, "Invalid filename (" +
-        file + "): extension must be TIFF, JPEG or RAW.",
+        file + "): extension must indicate TIFF or JPEG format.",
         "Cannot export snapshot", JOptionPane.ERROR_MESSAGE);
       return;
     }
 
     // save file in a separate thread
+    final String filename = file;
+    final boolean isTiff = tiff, isJpeg = jpeg;
     new Thread("VisBio-SnapshotThread-" + window.getName()) {
       public void run() {
         FileSaver saver = new FileSaver(new ImagePlus("null", getSnapshot()));
-        if (tiff) saver.saveAsTiff(file);
-        else if (jpeg) saver.saveAsJpeg(file);
-        else if (raw) saver.saveAsRaw(file);
+        if (isTiff) saver.saveAsTiff(filename);
+        else if (isJpeg) saver.saveAsJpeg(filename);
       }
     }.start();
   }
@@ -202,7 +217,7 @@ public class CaptureHandler {
     // get output filename(s) from the user
     String file = null;
     int dot = -1;
-    boolean tiff = false, jpeg = false, raw = false;
+    boolean tiff = false, jpeg = false;
     if (movie) {
       int rval = movieBox.showSaveDialog(captureWindow);
       if (rval != JFileChooser.APPROVE_OPTION) return;
@@ -218,10 +233,23 @@ public class CaptureHandler {
       if (dot >= 0) ext = file.substring(dot + 1).toLowerCase();
       tiff = ext.equals("tif") || ext.equals("tiff");
       jpeg = ext.equals("jpg") || ext.equals("jpeg");
-      raw = ext.equals("raw");
-      if (!tiff && !jpeg && !raw) {
+      FileFilter filter = imageBox.getFileFilter();
+      String desc = filter.getDescription();
+      if (desc.startsWith("JPEG")) {
+        if (!jpeg) {
+          file += ".jpg";
+          jpeg = true;
+        }
+      }
+      else if (desc.startsWith("TIFF")) {
+        if (!tiff) {
+          file += ".tif";
+          tiff = true;
+        }
+      }
+      if (!tiff && !jpeg) {
         JOptionPane.showMessageDialog(captureWindow, "Invalid filename (" +
-          file + "): extension must be TIFF, JPEG or RAW.",
+          file + "): extension must be TIFF or JPEG.",
           "Cannot create image sequence", JOptionPane.ERROR_MESSAGE);
         return;
       }
@@ -231,7 +259,7 @@ public class CaptureHandler {
     final boolean aviMovie = movie;
     final String filename = file;
     final int dotIndex = dot;
-    final boolean isTiff = tiff, isJpeg = jpeg, isRaw = raw;
+    final boolean isTiff = tiff, isJpeg = jpeg;
     final Vector pos = matrices;
     final int frm = framesPerTrans;
     final boolean doSine = sine;
@@ -303,7 +331,6 @@ public class CaptureHandler {
             FileSaver saver = new FileSaver(new ImagePlus("null", images[i]));
             if (isTiff) saver.saveAsTiff(s);
             else if (isJpeg) saver.saveAsJpeg(s);
-            else if (isRaw) saver.saveAsRaw(s);
           }
         }
 
@@ -401,8 +428,6 @@ public class CaptureHandler {
       imageBox = new JFileChooser();
       imageBox.addChoosableFileFilter(new ExtensionFileFilter(
         new String[] {"jpg", "jpeg"}, "JPEG files"));
-      imageBox.addChoosableFileFilter(new ExtensionFileFilter(
-        "raw", "RAW files"));
       imageBox.addChoosableFileFilter(new ExtensionFileFilter(
         new String[] {"tif", "tiff"}, "TIFF files"));
 
