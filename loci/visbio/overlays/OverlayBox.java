@@ -32,7 +32,7 @@ public class OverlayBox extends OverlayObject {
 
   // -- Fields --
 
-  /** Endpoint coordinates. */
+  /** Corner coordinates. */
   protected float x1, y1, x2, y2;
 
   /** Flag indicating overlay is solid. */
@@ -55,13 +55,13 @@ public class OverlayBox extends OverlayObject {
 
   // -- OverlayBox API methods --
 
-  /** Changes coordinates of the box's first endpoint. */
+  /** Changes coordinates of the box's upper left corner. */
   public void setCoords1(float x1, float y1) {
     this.x1 = x1;
     this.y1 = y1;
   }
 
-  /** Changes coordinates of the box's second endpoint. */
+  /** Changes coordinates of the box's lower right corner. */
   public void setCoords2(float x2, float y2) {
     this.x2 = x2;
     this.y2 = y2;

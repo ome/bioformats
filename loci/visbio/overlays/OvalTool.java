@@ -23,8 +23,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
+import loci.visbio.data.TransformEvent;
+
 /** OvalTool is the tool for creating oval overlays. */
 public class OvalTool extends OverlayTool {
+
+  // -- Fields --
+
+  /** Oval currently being drawn. */
+  protected OverlayOval oval;
+
 
   // -- Constructor --
 
@@ -37,12 +45,22 @@ public class OvalTool extends OverlayTool {
   // -- OverlayTool API methods --
 
   /** Instructs this tool to respond to a mouse press. */
-  public void mouseDown(float x, float y, int[] pos) { }
+  public void mouseDown(float x, float y, int[] pos) {
+    oval = new OverlayOval(overlay, x, y, x, y);
+    configureOverlay(oval);
+    OverlayWidget panel = (OverlayWidget) overlay.getControls();
+    oval.setFilled(panel.isFilled());
+    overlay.addObject(oval, pos);
+  }
 
   /** Instructs this tool to respond to a mouse release. */
-  public void mouseUp(float x, float y, int[] pos) { }
+  public void mouseUp(float x, float y, int[] pos) { oval = null; }
 
   /** Instructs this tool to respond to a mouse drag. */
-  public void mouseDrag(float x, float y, int[] pos) { }
+  public void mouseDrag(float x, float y, int[] pos) {
+    if (oval == null) return;
+    oval.setCoords2(x, y);
+    overlay.notifyListeners(new TransformEvent(overlay));
+  }
 
 }
