@@ -78,12 +78,11 @@ public class VisBio {
     ss.show();
 
     // toggle window decoration mode via reflection
-    if ("true".equals(System.getProperty("visbio.decorateWindows"))) {
-      Class jf = Class.forName("javax.swing.JFrame");
-      Method m = jf.getMethod("setDefaultLookAndFeelDecorated",
-        new Class[] {boolean.class});
-      m.invoke(null, new Object[] {new Boolean(true)});
-    }
+    boolean b = "true".equals(System.getProperty("visbio.decorateWindows"));
+    Class jf = Class.forName("javax.swing.JFrame");
+    Method m = jf.getMethod("setDefaultLookAndFeelDecorated",
+      new Class[] {boolean.class});
+    m.invoke(null, new Object[] {new Boolean(b)});
 
     // construct VisBio interface via reflection
     Class vb = Class.forName("loci.visbio.VisBioFrame");
