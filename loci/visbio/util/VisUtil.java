@@ -555,11 +555,11 @@ public abstract class VisUtil {
       r.setVar("d", d);
       r.exec("gmc = d.getGraphicsModeControl()");
       if (parallel) {
-        r.exec("gmc.setProjectionPolicy(DisplayImplJ3D.PARALLEL_PROJECTION");
+        r.exec("gmc.setProjectionPolicy(DisplayImplJ3D.PARALLEL_PROJECTION)");
       }
       else {
         r.exec("gmc.setProjectionPolicy(" +
-          "DisplayImplJ3D.PERSPECTIVE_PROJECTION");
+          "DisplayImplJ3D.PERSPECTIVE_PROJECTION)");
       }
     }
     catch (VisADException exc) { exc.printStackTrace(); }
