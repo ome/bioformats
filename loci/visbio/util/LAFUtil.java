@@ -29,13 +29,15 @@ import com.jgoodies.plaf.FontSizeHints;
 
 import java.awt.Dimension;
 
+import java.util.Vector;
+
 import javax.swing.UIManager;
 
 /** LAFUtil contains useful functions relating to Look and Feel. */
 public abstract class LAFUtil {
 
-  /** Initializes the look and feel to a reasonable default. */
-  public static void setLookAndFeel() {
+  /** Initializes some look and feel parameters. */
+  public static void initLookAndFeel() {
     UIManager.put(Options.USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
     Options.setGlobalFontSizeHints(FontSizeHints.MIXED);
     Options.setDefaultIconSize(new Dimension(18, 18));
@@ -48,19 +50,15 @@ public abstract class LAFUtil {
       "com.jgoodies.plaf.plastic.Plastic3DLookAndFeel");
     UIManager.installLookAndFeel("JGoodies PlasticXP",
       "com.jgoodies.plaf.plastic.PlasticXPLookAndFeel");
+  }
 
+  /** Sets the current look and feel. */
+  public static void setLookAndFeel(String lafName) {
     /*
-    UIManager.LookAndFeelInfo[] lafs = UIManager.getInstalledLookAndFeels();
-    for (int i=0; i<lafs.length; i++) {
-      System.out.println(lafs[i].getName() +
-        " (" + lafs[i].getClassName() + ")");
-    }
-    */
-
     String lafName = LookUtils.IS_OS_WINDOWS_XP
       ? Options.getCrossPlatformLookAndFeelClassName()
       : Options.getSystemLookAndFeelClassName();
-
+    */
     try { UIManager.setLookAndFeel(lafName); }
     catch (Exception exc) { exc.printStackTrace(); }
   }
@@ -68,6 +66,33 @@ public abstract class LAFUtil {
   /** Gets the name of the current look and feel. */
   public static String getLookAndFeel() {
     return UIManager.getLookAndFeel().getName();
+  }
+
+  /**
+   * Gets list of available look and feels,
+   * taking some OS-specific look and feels into account.
+   * @return An array dimensioned String[2][*], with String[0] being the L&F
+   *         names, and String[1] being the fully qualified L&F class names.
+   */
+  public static String[][] getAvailableLookAndFeels() {
+    UIManager.LookAndFeelInfo[] lafs = UIManager.getInstalledLookAndFeels();
+    Vector v = new Vector(lafs.length);
+    for (int i=0; i<lafs.length; i++) {
+      String cname = lafs[i].getClassName();
+      if (cname.indexOf("WindowsLookAndFeel") < 0 || LookUtils.IS_OS_WINDOWS) {
+        v.add(lafs[i]);
+      }
+    }
+
+    int size = v.size();
+    String[][] s = new String[2][size];
+    for (int i=0; i<size; i++) {
+      UIManager.LookAndFeelInfo info =
+        (UIManager.LookAndFeelInfo) v.elementAt(i);
+      s[0][i] = info.getName();
+      s[1][i] = info.getClassName();
+    }
+    return s;
   }
 
 }

@@ -26,7 +26,6 @@ package loci.visbio;
 import java.awt.Color;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 
 import loci.visbio.util.SplashScreen;
@@ -75,11 +74,6 @@ public class VisBio {
       VisBio.class.getResource("visbio-logo.png"),
       msg, new Color(255, 255, 220), new Color(255, 50, 50));
     ss.show();
-
-    // set the look & feel
-    Class laf = Class.forName("loci.visbio.util.LAFUtil");
-    Method m = laf.getMethod("setLookAndFeel", null);
-    m.invoke(null, null);
 
     // construct VisBio interface via reflection
     Class vb = Class.forName("loci.visbio.VisBioFrame");

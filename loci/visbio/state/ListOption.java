@@ -1,5 +1,5 @@
 //
-// BooleanOption.java
+// ListOption.java
 //
 
 /*
@@ -23,70 +23,79 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.state;
 
+import java.awt.Component;
+
+import javax.swing.JPanel;
+import javax.swing.JComboBox;
+
 import loci.ome.xml.CAElement;
 import loci.ome.xml.OMEElement;
 
-import java.awt.Component;
+import loci.visbio.util.FormsUtil;
 
-import javax.swing.JCheckBox;
-
-/** BooleanOption is a true-or-false option in the VisBio Options dialog. */
-public class BooleanOption extends BioOption {
+/** ListOption is an integer option in the VisBio Options dialog. */
+public class ListOption extends BioOption {
 
   // -- Fields --
 
-  /** Check box GUI component. */
-  private JCheckBox box;
+  /** Panel containing GUI components. */
+  private JPanel panel;
+
+  /** Text box GUI component. */
+  private JComboBox box;
 
 
   // -- Constructor --
 
   /** Constructs a new option. */
-  public BooleanOption(String text, char mnemonic, String tip, boolean value) {
+  public ListOption(String text, String tip, String[] choices) {
     super(text);
-    box = new JCheckBox(text, value);
-    box.setMnemonic(mnemonic);
+
+    // combo box
+    box = new JComboBox(choices);
     box.setToolTipText(tip);
+    box.setSelectedIndex(0);
+
+    // lay out components
+    panel = FormsUtil.makeRow(text, box);
   }
 
 
-  // -- BooleanOption API methods --
+  // -- ListOption API methods --
 
   /** Gets this option's current setting. */
-  public boolean getValue() { return box.isSelected(); }
+  public String getValue() { return (String) box.getSelectedItem(); }
 
 
   // -- BioOption API methods --
 
   /** Gets a GUI component representing this option. */
-  public Component getComponent() { return box; }
+  public Component getComponent() { return panel; }
 
   /** Sets the GUI component to reflect the given value. */
-  public void setValue(String value) {
-    box.setSelected(value.equalsIgnoreCase("true"));
-  }
+  public void setValue(String value) { box.setSelectedItem(value); }
 
 
   // -- Saveable API methods --
 
-  protected static final String BOOLEAN_OPTION = "VisBio_BooleanOption";
+  protected static final String LIST_OPTION = "VisBio_ListOption";
 
   /** Writes the current state to the given OME-CA XML object. */
   public void saveState(OMEElement ome) throws SaveException {
     CAElement custom = ome.getCustomAttr();
-    custom.createElement(BOOLEAN_OPTION);
+    custom.createElement(LIST_OPTION);
     custom.setAttribute("name", text);
-    custom.setAttribute("value", box.isSelected() ? "true" : "false");
+    custom.setAttribute("value", getValue());
   }
 
   /** Restores the current state from the given OME-CA XML object. */
   public void restoreState(OMEElement ome) throws SaveException {
     CAElement custom = ome.getCustomAttr();
-    String[] names = custom.getAttributes(BOOLEAN_OPTION, "name");
-    String[] values = custom.getAttributes(BOOLEAN_OPTION, "value");
+    String[] names = custom.getAttributes(LIST_OPTION, "name");
+    String[] values = custom.getAttributes(LIST_OPTION, "value");
     for (int i=0; i<names.length; i++) {
       if (names[i].equals(text)) {
-        box.setSelected(values[i].equalsIgnoreCase("true"));
+        setValue(values[i]);
         break;
       }
     }

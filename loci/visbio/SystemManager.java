@@ -25,11 +25,22 @@ package loci.visbio;
 
 import loci.visbio.help.HelpManager;
 
+import loci.visbio.state.ListOption;
+import loci.visbio.state.OptionManager;
+
+import loci.visbio.util.LAFUtil;
+
 /**
  * SystemManager is the manager encapsulating
  * VisBio's system information report logic.
  */
 public class SystemManager extends LogicManager {
+
+  // -- Constants --
+
+  /** String for look and feel option. */
+  public static final String LOOK_AND_FEEL = "Look and Feel";
+
 
   // -- Control panel --
 
@@ -52,18 +63,43 @@ public class SystemManager extends LogicManager {
       LogicManager lm = (LogicManager) evt.getSource();
       if (lm == this) doGUI();
     }
+    else if (eventType == VisBioEvent.STATE_CHANGED) {
+      Object src = evt.getSource();
+      if (src instanceof OptionManager) {
+        OptionManager om = (OptionManager) src;
+        ListOption option = (ListOption) om.getOption(LOOK_AND_FEEL);
+        String name = option.getValue();
+        String[][] lafs = LAFUtil.getAvailableLookAndFeels();
+        int ndx = -1;
+        for (int i=0; i<lafs[0].length; i++) {
+          if (lafs[0][i].equals(name)) {
+            ndx = i;
+            break;
+          }
+        }
+        if (ndx >= 0) LAFUtil.setLookAndFeel(lafs[1][ndx]);
+      }
+    }
   }
 
   /** Gets the number of tasks required to initialize this logic manager. */
-  public int getTasks() { return 2; }
+  public int getTasks() { return 3; }
 
 
   // -- Helper methods --
 
   /** Adds system-related GUI components to VisBio. */
   private void doGUI() {
-    // control panel
+    // look and feel options
     bio.setStatus("Initializing system information logic");
+    LAFUtil.initLookAndFeel();
+    String[][] lafs = LAFUtil.getAvailableLookAndFeels();
+    OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
+    om.addListOption("System", LOOK_AND_FEEL,
+      "Alters VisBio's graphical Look & Feel", lafs[0]);
+
+    // control panel
+    bio.setStatus(null);
     systemControls = new SystemControls(this);
     PanelManager pm = (PanelManager) bio.getManager(PanelManager.class);
     pm.addPanel(systemControls);

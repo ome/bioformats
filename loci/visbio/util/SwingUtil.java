@@ -150,20 +150,21 @@ public abstract class SwingUtil {
     Vector filters = new Vector();
 
     // Bio-Rad PIC - bio/BioRadForm
-    FileFilter biorad = new ExtensionFileFilter("pic", "BioRad PIC files");
+    FileFilter biorad = new ExtensionFileFilter("pic", "Bio-Rad PIC files");
     dialog.addChoosableFileFilter(biorad);
     filters.add(biorad);
 
     // Metamorph STK - bio/MetamorphForm
-    FileFilter metamorph = new ExtensionFileFilter("stk", "Metamorph STK files");
+    FileFilter metamorph = new ExtensionFileFilter("stk",
+      "Metamorph STK files");
     dialog.addChoosableFileFilter(metamorph);
     filters.add(metamorph);
 
-    // Openlab - bio/OpenlabForm
+    // Openlab LIFF - bio/OpenlabForm
     FileFilter openlab = new OpenlabFileFilter();
     dialog.addChoosableFileFilter(openlab);
     filters.add(openlab);
-  
+
     // TIFF - tiff/TiffForm, ij/ImageJForm
     FileFilter tiff = new ExtensionFileFilter(
       new String[] {"tiff", "tif"}, "Multi-page TIFF stacks");
