@@ -1,0 +1,96 @@
+<html><body><h2>Importing a dataset from disk</h2>
+
+<p>This topic describes how to import your multidimensional image data into
+VisBio effectively.
+
+<p>Throughout this explanation, we'll be using an example dataset called "dub."
+The dataset consists of 85 Bio-Rad PIC files, numbered dub01.pic through
+dub85.pic. The data is a time series of image stacks, with each file
+representing one timestep, and each timestep containing 33 images (sampled at
+33 distinct focal planes). Each image is 768 x 512 pixels, and the dataset is
+about 1 GB total on disk. Note that the
+<a href="http://www.loci.wisc.edu/visbio/data.html">"sdub" dataset</a>
+available for download from the
+<a href="http://www.loci.wisc.edu/visbio/">VisBio website</a> is a downsampled
+version of the full "dub" dataset.
+
+<p>From VisBio's perspective, this data is a collection of images with two
+unique dimensional axes: Time and Slice. To most effectively work with this
+data, it is important that you properly specify these dimensions during data
+import.
+
+<br><h3>Defining a dataset</h3>
+
+To import your data into VisBio, choose the "Import data..." item from the
+"File" menu (or click the "Add &gt;" button on the
+<a href="data.html">Data panel</a>, then choose "Dataset" from the popup menu).
+
+<p>A dialog box titled "Open file group" will appear. Click "Select file" and a
+file chooser dialog box will appear. Now, navigate to the proper folder, select
+one of the files in your dataset (in one of the supported
+<a href="formats.html">file formats</a>), and click "Open." VisBio will
+determine the appropriate file pattern for your dataset. For example:
+
+<p><img src="import-dialog1.png">
+
+<p>The above pattern indicates that all files numbered dub01.pic through
+dub85.pic will be included in the dataset.
+
+<p>Click the "Next &gt;" button to continue. You will now see a dialog box that
+looks like:
+
+<p><img src="import-dialog2.png">
+
+<p>The top line (in this case,
+"/home/curtis/data/biorad/billm/dub&lt;01-85&gt;.pic") contains the file
+pattern from the previous screen. Each dimensional range tag (e.g.,
+"&lt;01-85&gt;") represents one of the dataset's dimensional axes. In this
+case, VisBio guesses that the file numbering marked "&lt;01-85&gt;" is a Time
+dimension. Of course, you can use the dropdown list box to change the dimension
+to Slice or some other dimension, if your data is organized that way. You can
+even type in a custom name for the dimensional axis if you wish.
+
+<p>Also, within each file, there are often several images. In the above case,
+the data contains 33 images per file. VisBio has guessed that the image data
+within each file is Slice data, but again, you can change that to Time or some
+other dimension.
+
+<p>After tweaking any necessary settings, click "Finish." The dataset has now
+been imported, and the data information box will contain a bunch of
+information. In our example, it will look like:
+
+<p><table border="1"><tr><td>
+/home/curtis/data/biorad/billm/dub&lt;01-85&gt;.pic
+<p>Dimensionality: 4D
+<ul>
+  <li>85 time points</li>
+  <li>33 focal planes</li>
+  <li>768 x 512 pixels</li>
+  <li>1 range component</li>
+</ul>
+85 Bio-Rad PIC files in dataset.
+<br>2805 images totaling 1.03 gigapixels.
+</td></tr></table>
+
+<p>Now VisBio understands how your data is organized. You can now create a
+display for the dataset to visualize it, or perform some processing by
+constructing one or more derivative data objects first.
+
+<br><h3>See also:</h3>
+
+<ul>
+  <li><a href="display_data.html">Displaying a data object</a>
+    - to visualize the dataset</li>
+  <li><a href="add_data.html">Adding a data object</a>
+    - to create derivative data objects</li>
+  <li><a href="export_data.html">Exporting data to disk</a>
+    - to save a data object to files on disk</li>
+  <li><a href="formats.html">File formats</a>
+    - for information about supported file formats</li>
+  <li><a href="data_panel.html">Data panel</a>
+    - controls for managing data</li>
+  <li><a href="datasets.html">Datasets</a>
+    - overview of "Dataset" data objects</li>
+</ul>
+
+<p>&nbsp;<p></body></html>

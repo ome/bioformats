@@ -1,0 +1,27 @@
+<html><body><h2>Changing the memory limit</h2>
+
+<p>You can change the maximum amount of memory allocated to VisBio. Click the
+"Change" button next to the "Memory maximum" value, and type a new value (in
+megabytes) into the dialog box that appears. This change requires the program
+to be restarted before taking effect. The new value must be at least 16, and
+should be 256 or greater to take advantage of many of VisBio's features. It is
+recommended that you do not specify a value greater than the amount of physical
+RAM your computer has. Also, 32-bit Java has a hard limit of 2048. On many
+systems, specifying a value greater than 1800 or so may not work.
+
+<p>If you change the maximum memory value and VisBio then fails to load, then
+you have probably entered a value that is too large for your computer to
+handle. Reinstalling VisBio will fix the problem. Alternately, if you know what
+you are doing, you can change it back manually by editing the proper
+configuration file (on Windows, change the "-mx###m" value in launcher.cfg; on
+Mac OS X, change the "-Xmx###m" value in VisBio.app/Contents/Info.plist; on
+Linux, change the "-mx###m" value in the visbio launch script).
+
+<br><h3>See also:</h3>
+
+<ul>
+  <li><a href="system_panel.html">System panel</a>
+    - controls for inspecting system information</li>
+</ul>
+
+<p>&nbsp;<p></body></html>
