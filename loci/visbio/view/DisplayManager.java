@@ -30,11 +30,7 @@ import javax.swing.JOptionPane;
 import loci.ome.xml.CAElement;
 import loci.ome.xml.OMEElement;
 
-import loci.visbio.LogicManager;
-import loci.visbio.PanelManager;
-import loci.visbio.VisBioEvent;
-import loci.visbio.VisBioFrame;
-import loci.visbio.WindowManager;
+import loci.visbio.*;
 
 import loci.visbio.help.HelpManager;
 

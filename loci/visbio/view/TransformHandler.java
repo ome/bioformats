@@ -56,6 +56,12 @@ public class TransformHandler implements ChangeListener, Runnable  {
 
   // -- Constant --
 
+  /** Starting burn-in delay in milliseconds. */
+  public static final long DEFAULT_BURN_DELAY = 3000;
+
+  /** Minimum amount of time to delay burn-in. */
+  public static final long MINIMUM_BURN_DELAY = 100;
+
   /** Starting FPS for animation. */
   public static final int DEFAULT_ANIMATION_RATE = 10;
 
@@ -77,6 +83,9 @@ public class TransformHandler implements ChangeListener, Runnable  {
   /** Panel containing dimensional slider widgets. */
   protected JPanel sliderPanel;
 
+  /** Default burn-in delay in milliseconds. */
+  protected long burnDelay;
+
   /** Flag indicating status of animation. */
   protected boolean animating;
 
@@ -91,9 +100,6 @@ public class TransformHandler implements ChangeListener, Runnable  {
 
   /** Synchronization object for animation. */
   protected Object animSync = new Object();
-
-  /** Earliest time full-resolution burn-in is allowed. */
-  protected long burnTime;
 
 
   // -- Fields - initial state --
@@ -110,6 +116,7 @@ public class TransformHandler implements ChangeListener, Runnable  {
     links = new Vector();
     sliders = new Vector();
     sliderPanel = new JPanel();
+    burnDelay = DEFAULT_BURN_DELAY;
     fps = DEFAULT_ANIMATION_RATE;
     makePanel();
   }
@@ -183,6 +190,15 @@ public class TransformHandler implements ChangeListener, Runnable  {
     }
     return pos;
   }
+
+  /** Sets the delay in milliseconds before full-resolution burn-in occurs. */
+  public void setBurnDelay(long delay) {
+    if (delay < MINIMUM_BURN_DELAY) delay = MINIMUM_BURN_DELAY;
+    burnDelay = delay;
+  }
+
+  /** Gets the delay in milliseconds before full-resolution burn-in occurs. */
+  public long getBurnDelay() { return burnDelay; }
 
   /** Toggles animation of the display. */
   public void setAnimating(boolean on) {

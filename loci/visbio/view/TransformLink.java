@@ -44,12 +44,6 @@ public class TransformLink
   implements DisplayListener, Dynamic, Runnable, TransformListener
 {
 
-  // -- Constants --
-
-  /** Milliseconds until full-resolution burn-in. */
-  protected static final int BURN_DELAY = 3000;
-
-
   // -- Fields --
 
   /** Associated transform handler. */
@@ -300,13 +294,15 @@ public class TransformLink
   // -- TransformListener API methods --
 
   /** Called when a data transform's parameters are updated. */
-  public void transformChanged(TransformEvent e) { doTransform(100); }
+  public void transformChanged(TransformEvent e) {
+    doTransform(TransformHandler.MINIMUM_BURN_DELAY);
+  }
 
 
   // -- Internal TransformLink API methods --
 
   /** Updates displayed data based on current dimensional position. */
-  protected void doTransform() { doTransform(BURN_DELAY); }
+  protected void doTransform() { doTransform(handler.getBurnDelay()); }
 
   /** Updates displayed data based on current dimensional position. */
   protected void doTransform(long delay) {
