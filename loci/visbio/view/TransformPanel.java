@@ -208,6 +208,12 @@ public class TransformPanel extends JPanel
       animate.setEnabled(ndx > 0);
       handler.setAnimationAxis(ndx - 1);
     }
+    else if (cmd.equals("moveUp")) {
+      // CTR TODO move up button clicked
+    }
+    else if (cmd.equals("moveDown")) {
+      // CTR TODO move down button clicked
+    }
   }
 
 
