@@ -220,23 +220,22 @@ public class OverlayTransform extends DataTransform
     try {
       if (size > 0) {
         // compute number of selected objects and number of text objects
-        int txt = 0, rgbSel = 0, txtSel = 0;
+        int txtSize = 0, rgbSel = 0, txtSel = 0;
         for (int i=0; i<size; i++) {
           OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
           if (obj.isText()) {
-            txt++;
+            txtSize++;
             if (obj.isSelected()) txtSel++;
           }
           else if (obj.isSelected()) rgbSel++;
         }
-        int rgbSize = size - txt;
+        int rgbSize = size - txtSize;
         RealType index = RealType.getRealType("overlay_index");
 
-        // compile non-text objects into RGB field
-        if (size > txt) {
-          FunctionType ftype =
-            new FunctionType(getDomainType(), getRangeType());
-          FunctionType fieldType = new FunctionType(index, ftype);
+        // compile standard objects into RGB field
+        if (rgbSize > 0) {
+          FunctionType fieldType = new FunctionType(index,
+            new FunctionType(getDomainType(), getRangeType()));
           GriddedSet fieldSet = new Integer1DSet(rgbSize + rgbSel);
           rgbField = new FieldImpl(fieldType, fieldSet);
           // compute overlay data for each object
@@ -245,7 +244,7 @@ public class OverlayTransform extends DataTransform
             OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
             if (obj.isText()) continue;
             DataImpl data = obj.getData();
-            rgbField.setSample(i, data, false);
+            rgbField.setSample(c, data, false);
             c++;
           }
           // compute selection grid for each selected object
@@ -253,34 +252,32 @@ public class OverlayTransform extends DataTransform
           for (int i=0; i<size && c<rgbSel; i++) {
             OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
             if (obj.isText() || !obj.isSelected()) continue;
-            DataImpl grid = obj.getSelectionGrid();
-            rgbField.setSample(rgbSize + c, grid, false);
+            rgbField.setSample(rgbSize + c, obj.getSelectionGrid(), false);
             c++;
           }
         }
 
         // compile text objects into text field
-        if (txt > 0) {
-          FunctionType ftype =
-            new FunctionType(getDomainType(), getTextRangeType());
-          FunctionType fieldType = new FunctionType(index, ftype);
-          GriddedSet fieldSet = new Integer1DSet(txt + txtSel);
+        if (txtSize > 0) {
+          FunctionType fieldType = new FunctionType(index,
+            new FunctionType(getDomainType(), getTextRangeType()));
+          GriddedSet fieldSet = new Integer1DSet(txtSize + txtSel);
           txtField = new FieldImpl(fieldType, fieldSet);
           // compute overlay data for each object
           int c = 0;
-          for (int i=0; i<size && c<txt; i++) {
+          for (int i=0; i<size && c<txtSize; i++) {
             OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
             if (!obj.isText()) continue;
             DataImpl data = obj.getData();
-            txtField.setSample(i, data, false);
+            txtField.setSample(c, data, false);
+            c++;
           }
           // compute selection grid for each selected object
           c = 0;
           for (int i=0; i<size && c<txtSel; i++) {
             OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
             if (!obj.isText() || !obj.isSelected()) continue;
-            DataImpl grid = obj.getSelectionGrid();
-            txtField.setSample(txt + c, grid, false);
+            txtField.setSample(txtSize + c, obj.getSelectionGrid(), false);
             c++;
           }
         }
