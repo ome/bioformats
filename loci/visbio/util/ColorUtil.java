@@ -171,7 +171,6 @@ public abstract class ColorUtil {
     ScalarMap map, double lo, double hi, boolean fixed)
   {
     if (hi <= lo) hi = lo + 1;
-    /*CTR TEMP*/System.out.println("Setting map range for map " + map + ": lo=" + lo + "; hi=" + hi + "; fixed=" + fixed);
 
     if (fixed) {
       double[] range = map.getRange();
@@ -200,7 +199,6 @@ public abstract class ColorUtil {
 
   /** Recomputes autoscaled color bounds for the given color map. */
   public static void reAutoScale(DisplayImpl display, ScalarMap map) {
-    /*CTR TEMP*/System.out.println("Rescaling map " + map);
     map.resetAutoScale();
     display.reAutoScale();
 
