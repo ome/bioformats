@@ -50,6 +50,7 @@ import visad.data.bio.OpenlabForm;
 
 import visad.data.ij.ImageJForm;
 
+import visad.data.qt.PictForm;
 import visad.data.qt.QTForm;
 
 import visad.data.tiff.TiffForm;
@@ -100,7 +101,8 @@ public class ImageFamily extends FormNode implements FormBlockReader,
       new TiffForm(),
       new ImageJForm(),
       new AVIForm(),
-      new QTForm()
+      new QTForm(),
+      new PictForm()
     };
     index = -1;
   }
@@ -171,6 +173,12 @@ public class ImageFamily extends FormNode implements FormBlockReader,
 
   // -- FormBlockReader methods --
 
+  /**
+   * Obtains the specified block from the given file.
+   * @param id The file from which to load data blocks.
+   * @param block_number The block number of the block to load.
+   * @throws VisADException If the block number is invalid.
+   */
   public DataImpl open(String id, int block_number)
     throws IOException, VisADException
   {
@@ -179,12 +187,17 @@ public class ImageFamily extends FormNode implements FormBlockReader,
     return ((FormBlockReader) list[index]).open(id, block_number);
   }
 
+  /**
+   * Determines the number of blocks in the given file.
+   * @param id The file for which to get a block count.
+   */
   public int getBlockCount(String id) throws IOException, VisADException {
     if (!id.equals(lastId)) initId(id);
     if (!(list[index] instanceof FormBlockReader)) return -1;
     return ((FormBlockReader) list[index]).getBlockCount(id);
   }
 
+  /** Closes any open files. */
   public void close() throws IOException, VisADException {
     for (int i=0; i<list.length; i++) {
       if (!(list[i] instanceof FormBlockReader)) continue;
@@ -314,7 +327,11 @@ public class ImageFamily extends FormNode implements FormBlockReader,
         else if (list[i] instanceof ImageJForm) {
           int ndx = id.lastIndexOf(".");
           if (ndx < 0) format = "ImageJ file";
-          else format = id.substring(ndx + 1).toUpperCase() + " image file";
+          else {
+            String ext = id.substring(ndx + 1).toUpperCase();
+            if (ext.equals("JPG")) ext = "JPEG";
+            format = ext + " image file";
+          }
         }
         else if (list[i] instanceof AVIForm) format = "AVI movie";
         else if (list[i] instanceof QTForm) format = "QuickTime movie";
