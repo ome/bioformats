@@ -148,6 +148,9 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
   /** Gets the associated VisAD display. */
   public DisplayImpl getDisplay() { return display; }
 
+  /** Gets associated breakaway control panel. */
+  public BreakawayPanel getControls() { return controls; }
+
   /** Gets the view handler. */
   public ViewHandler getViewHandler() { return viewHandler; }
 

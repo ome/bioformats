@@ -168,18 +168,18 @@ public class ColorHandler {
   public void showColorDialog() {
     refreshPreviewData();
     DisplayWindow window = getWindow();
-    if (colorPane.showDialog(window) == ColorPane.APPROVE_OPTION) {
-      DisplayImpl d = window.getDisplay();
-      VisUtil.setDisplayDisabled(d, true);
-      setColors(colorPane.getBrightness(), colorPane.getContrast(),
-        colorPane.getColorMode(), colorPane.getRed(), colorPane.getGreen(),
-        colorPane.getBlue(), false);
-      setOpacity(colorPane.getOpacityValue(),
-        colorPane.getOpacityModel(), false);
-      setRanges(colorPane.getLo(), colorPane.getHi(), colorPane.getFixed());
-      setTables(colorPane.getTables());
-      VisUtil.setDisplayDisabled(d, false);
-    }
+    int rval = colorPane.showDialog(window.getControls());
+    if (rval != ColorPane.APPROVE_OPTION) return;
+    DisplayImpl d = window.getDisplay();
+    VisUtil.setDisplayDisabled(d, true);
+    setColors(colorPane.getBrightness(), colorPane.getContrast(),
+      colorPane.getColorMode(), colorPane.getRed(), colorPane.getGreen(),
+      colorPane.getBlue(), false);
+    setOpacity(colorPane.getOpacityValue(),
+      colorPane.getOpacityModel(), false);
+    setRanges(colorPane.getLo(), colorPane.getHi(), colorPane.getFixed());
+    setTables(colorPane.getTables());
+    VisUtil.setDisplayDisabled(d, false);
   }
 
   /** Updates color settings to those given. */

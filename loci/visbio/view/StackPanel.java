@@ -133,7 +133,7 @@ public class StackPanel extends TransformPanel {
       DisplayWindow window = handler.getWindow();
       DataTransform trans = (DataTransform) transformList.getSelectedValue();
       sliceToggler.setTransform(trans);
-      int rval = sliceToggler.showDialog(window);
+      int rval = sliceToggler.showDialog(window.getControls());
       if (rval != SliceToggler.APPROVE_OPTION) return;
       updateControls();
     }
