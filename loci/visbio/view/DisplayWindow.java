@@ -24,8 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.view;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import loci.ome.xml.CAElement;
@@ -42,7 +41,7 @@ import visad.*;
  * VisAD display and associated controls.
  */
 public class DisplayWindow extends JFrame
-  implements ActionListener, DisplayListener, Dynamic
+  implements ActionListener, DisplayListener, Dynamic, KeyListener
 {
 
   // -- Static fields --
@@ -287,15 +286,12 @@ public class DisplayWindow extends JFrame
 
   /** Listens for keyboard presses within the display. */
   public void displayChanged(DisplayEvent e) {
-    // CTR TODO
     int id = e.getId();
     if (id == DisplayEvent.KEY_PRESSED) {
-      int code = e.getKeyCode();
-      /*TEMP*/System.out.println("Key pressed: " + code);
+      keyPressed((KeyEvent) e.getInputEvent());
     }
     else if (id == DisplayEvent.KEY_RELEASED) {
-      int code = e.getKeyCode();
-      /*TEMP*/System.out.println("Key released: " + code);
+      keyReleased((KeyEvent) e.getInputEvent());
     }
   }
 
@@ -378,6 +374,16 @@ public class DisplayWindow extends JFrame
         manager.getVisBio().getManager(WindowManager.class);
       wm.addWindow(controls.getWindow());
 
+      // listen for key presses
+      //addKeyListener(this);
+      //controls.addKeyListener(this);
+
+      // Note: adding the KeyListener directly to frames and panels is not
+      // effective, because some child always has the keyboard focus and eats
+      // the event. Better would be to add the keyboard listener to each
+      // component that does not need the arrow keys for its own purposes. For
+      // now, the display itself must have the focus (just click it first).
+
       // lay out components
       pane.add(display.getComponent(), BorderLayout.CENTER);
       controls.setContentPane(FormsUtil.makeColumn(new Object[] {
@@ -395,6 +401,35 @@ public class DisplayWindow extends JFrame
    * another object with a matching state.
    */
   public void discard() { }
+
+
+  // -- KeyListener API methods --
+
+  /** Handles key presses. */
+  public void keyPressed(KeyEvent e) {
+    int code = e.getKeyCode();
+    int mods = e.getModifiers();
+    if (mods != 0) return;
+    if (code == KeyEvent.VK_LEFT || code == KeyEvent.VK_RIGHT) {
+      int axis = transformHandler.getPanel().getLeftRightAxis();
+      BioSlideWidget bsw = transformHandler.getSlider(axis);
+      if (bsw == null) return;
+      if (code == KeyEvent.VK_LEFT) bsw.step(false);
+      else bsw.step(true); // code == KeyEvent.VK_RIGHT
+    }
+    else if (code == KeyEvent.VK_UP || code == KeyEvent.VK_DOWN) {
+      int axis = transformHandler.getPanel().getUpDownAxis();
+      BioSlideWidget bsw = transformHandler.getSlider(axis);
+      if (bsw == null) return;
+      if (code == KeyEvent.VK_DOWN) bsw.step(false);
+      else bsw.step(true); // code == KeyEvent.VK_UP
+    }
+  }
+
+  /** Handles key releases. */
+  public void keyReleased(KeyEvent e) { }
+
+  public void keyTyped(KeyEvent e) { }
 
 
   // -- Helper methods --

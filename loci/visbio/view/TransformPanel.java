@@ -23,7 +23,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.view;
 
+import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.builder.ButtonStackBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,9 +45,6 @@ public class TransformPanel extends JPanel
 
   /** Transform handler upon which GUI controls operate. */
   protected TransformHandler handler;
-
-  /** Spinner for adjusting burn-in delay. */
-  protected JSpinner delayTime;
 
   /** List of linked data transforms. */
   protected JList transformList;
@@ -69,6 +69,15 @@ public class TransformPanel extends JPanel
 
   /** Button for moving data objects downward in the list. */
   protected JButton moveDown;
+
+  /** Spinner for adjusting burn-in delay. */
+  protected JSpinner delayTime;
+
+  /** List of axes for left/right arrow mapping. */
+  protected JComboBox leftRightBox;
+
+  /** List of axes for up/down arrow mapping. */
+  protected JComboBox upDownBox;
 
   /** Button for toggling status of animation. */
   protected JButton animate;
@@ -134,21 +143,39 @@ public class TransformPanel extends JPanel
 
   /** Adds a dimensional axis. */
   public void addAxis(String axis) {
-    String s = "<" + animBox.getItemCount() + "> " + axis;
+    int count = animBox.getItemCount();
+    String s = "<" + count + "> " + axis;
+    leftRightBox.addItem(s);
+    upDownBox.addItem(s);
     animBox.addItem(s);
     if (axis.equals("Time")) {
-      // Time axes are good defaults for animation
+      // time axis is a good default for left/right and animation
+      leftRightBox.setSelectedItem(s);
       animBox.setSelectedItem(s);
+    }
+    else if (axis.equals("Slice")) {
+      // slice axis is a good default for up/down
+      upDownBox.setSelectedItem(s);
     }
   }
 
   /** Removes all dimensional axes. */
   public void removeAllAxes() {
-    while (animBox.getItemCount() > 1) animBox.removeItemAt(1);
+    while (animBox.getItemCount() > 1) {
+      leftRightBox.removeItemAt(1);
+      upDownBox.removeItemAt(1);
+      animBox.removeItemAt(1);
+    }
   }
 
   /** Gets number of registered dimensional axes. */
   public int getAxisCount() { return animBox.getItemCount() - 1; }
+
+  /** Gets axis mapped to left/right arrow keys. */
+  public int getLeftRightAxis() { return leftRightBox.getSelectedIndex() - 1; }
+
+  /** Gets axis mapped to up/down arrow keys. */
+  public int getUpDownAxis() { return upDownBox.getSelectedIndex() - 1; }
 
   /** Updates controls to reflect current handler status. */
   public void updateControls() {
@@ -274,21 +301,6 @@ public class TransformPanel extends JPanel
 
   /** Creates a panel with data transform-related components. */
   protected JPanel doDataPanel() {
-    // burn-in checkbox
-    JCheckBox delayBurn = new JCheckBox("Delay burn-in", true);
-    delayBurn.setActionCommand("delayBurn");
-    delayBurn.addActionListener(this);
-    if (!LAFUtil.isMacLookAndFeel()) delayBurn.setMnemonic('n');
-    delayBurn.setToolTipText(
-      "Toggles whether full-resolution burn-in is delayed");
-
-    // burn-in delay
-    delayTime = new JSpinner(new SpinnerNumberModel(
-      handler.getBurnDelay() / 1000, 1, 99, 1));
-    delayTime.addChangeListener(this);
-    delayTime.setToolTipText(
-      "Adjusts the time before full-resolution burn-in");
-
     // linked data transforms
     transformModel = new DefaultListModel();
     transformList = new JList(transformModel);
@@ -354,6 +366,21 @@ public class TransformPanel extends JPanel
     visible.addActionListener(this);
     visible.setEnabled(false);
 
+    // burn-in checkbox
+    JCheckBox delayBurn = new JCheckBox("Delay burn-in", true);
+    delayBurn.setActionCommand("delayBurn");
+    delayBurn.addActionListener(this);
+    if (!LAFUtil.isMacLookAndFeel()) delayBurn.setMnemonic('n');
+    delayBurn.setToolTipText(
+      "Toggles whether full-resolution burn-in is delayed");
+
+    // burn-in delay
+    delayTime = new JSpinner(new SpinnerNumberModel(
+      handler.getBurnDelay() / 1000, 1, 99, 1));
+    delayTime.addChangeListener(this);
+    delayTime.setToolTipText(
+      "Adjusts the time before full-resolution burn-in");
+
     // lay out buttons
     ButtonStackBuilder bsb = new ButtonStackBuilder();
     bsb.addGridded(addTransform);
@@ -371,14 +398,24 @@ public class TransformPanel extends JPanel
 
     // lay out components
     return FormsUtil.makeColumn(
-      FormsUtil.makeRow(delayBurn, delayTime, "seconds"),
       FormsUtil.makeRow(new Object[] {listPane, buttons,
-        doDataProperties()}, "fill:pref:grow", false)
+        doDataProperties()}, "fill:pref:grow", false),
+      FormsUtil.makeRow(delayBurn, delayTime, "seconds")
     );
   }
 
   /** Creates a panel with animation-related components. */
   protected JPanel doAnimationPanel() {
+    // left/right combo box
+    leftRightBox = new JComboBox(new String[] {"None"});
+    leftRightBox.setToolTipText("The axis " +
+      "traversed by the left and right arrow keys");
+
+    // up/down combo box
+    upDownBox = new JComboBox(new String[] {"None"});
+    upDownBox.setToolTipText("The axis " +
+      "traversed by the up and down arrow keys");
+
     // animate button
     animate = new JButton("Animate");
     if (!LAFUtil.isMacLookAndFeel()) animate.setMnemonic('t');
@@ -402,7 +439,14 @@ public class TransformPanel extends JPanel
     animBox.addActionListener(this);
 
     // lay out components
-    return FormsUtil.makeRow(new Object[] {animate, "&FPS", fps, animBox});
+    PanelBuilder builder = new PanelBuilder(new FormLayout(
+      "pref:grow", "pref, 3dlu, pref, 9dlu"));
+    CellConstraints cc = new CellConstraints();
+    builder.add(FormsUtil.makeRow(new Object[] {"Arrow keys:",
+      "Le&ft/right", leftRightBox, "Up/do&wn", upDownBox}), cc.xy(1, 1));
+    builder.add(FormsUtil.makeRow(new Object[]
+      {animate, "&FPS", fps, animBox}), cc.xy(1, 3));
+    return builder.getPanel();
   }
 
   /** Creates a panel for controls pertaining to the selected data object. */

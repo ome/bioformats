@@ -188,6 +188,12 @@ public class TransformHandler implements ChangeListener, Runnable  {
   /** Gets a panel containing sliders widgets for linked transforms. */
   public JPanel getSliderPanel() { return sliderPanel; }
 
+  /** Gets the slider at the given index, or null if no such slider exists. */
+  public BioSlideWidget getSlider(int index) {
+    if (index < 0 || index >= sliders.size()) return null;
+    return (BioSlideWidget) sliders.elementAt(index);
+  }
+
   /**
    * Gets the dimensional position specified
    * by the given transform's slider widgets.

@@ -207,8 +207,8 @@ public class ViewPanel extends JPanel
 
     // lay out components
     Object[] o = threeD ? new Object[] {
-      "Aspect ratio", "&X", aspectX, "&Y", aspectY, "&Z", aspectZ} :
-      new Object[] {"Aspect ratio", "&X", aspectX, "&Y", aspectY};
+      "Aspect ratio:", "&X", aspectX, "&Y", aspectY, "&Z", aspectZ} :
+      new Object[] {"Aspect ratio:", "&X", aspectX, "&Y", aspectY};
     return FormsUtil.makeRow(o);
   }
 
