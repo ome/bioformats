@@ -34,15 +34,6 @@ import visad.*;
 /** OverlayArrow is an arrow wedge overlay. */
 public class OverlayArrow extends OverlayObject {
 
-  // -- Fields --
-
-  /** Endpoint coordinates. */
-  protected float x1, y1, x2, y2;
-
-  /** Flag indicating overlay is solid. */
-  protected boolean filled;
-
-
   // -- Constructor --
 
   /** Constructs an arrow wedge overlay. */
@@ -56,28 +47,6 @@ public class OverlayArrow extends OverlayObject {
     this.y2 = y2;
     computeGridParameters();
   }
-
-  // -- OverlayArrow API methods --
-
-  /** Changes coordinates of the arrow's first endpoint. */
-  public void setCoords1(float x1, float y1) {
-    this.x1 = x1;
-    this.y1 = y1;
-    computeGridParameters();
-  }
-
-  /** Changes coordinates of the arrow's second endpoint. */
-  public void setCoords2(float x2, float y2) {
-    this.x2 = x2;
-    this.y2 = y2;
-    computeGridParameters();
-  }
-
-  /** Sets whether overlay is solid. */
-  public void setFilled(boolean filled) { this.filled = filled; }
-
-  /** Gets whether overlay is solid. */
-  public boolean isFilled() { return filled; }
 
 
   // -- OverlayObject API methods --
@@ -143,6 +112,28 @@ public class OverlayArrow extends OverlayObject {
     return MathUtil.getDistance(new double[] {x1, y1},
       new double[] {x2, y2}, new double[] {x, y}, true);
   }
+
+  /** Retrieves useful statistics about this overlay. */
+  public String getStatistics() {
+    float xx = x2 - x1;
+    float yy = y2 - y1;
+    float angle = (float) (180 * Math.atan(xx / yy) / Math.PI);
+    if (yy < 0) angle += 180;
+    if (angle < 0) angle += 360;
+    float length = (float) Math.sqrt(xx * xx + yy * yy);
+
+    return "Arrow coordinates = (" + x1 + ", " + y1 + ")\n" +
+      "Angle = " + angle + "; Length = " + length;
+  }
+
+  /** True iff this overlay has an endpoint coordinate pair. */
+  public boolean hasEndpoint1() { return true; }
+
+  /** True iff this overlay has a second endpoint coordinate pair. */
+  public boolean hasEndpoint2() { return true; }
+
+  /** True iff this overlay supports the filled parameter. */
+  public boolean canBeFilled() { return true; }
 
 
   // -- Object API methods --

@@ -65,15 +65,6 @@ public class OverlayOval extends OverlayObject {
   }
 
 
-  // -- Fields --
-
-  /** Endpoint coordinates. */
-  protected float x1, y1, x2, y2;
-
-  /** Flag indicating overlay is solid. */
-  protected boolean filled;
-
-
   // -- Constructor --
 
   /** Constructs an oval. */
@@ -87,29 +78,6 @@ public class OverlayOval extends OverlayObject {
     this.y2 = y2;
     computeGridParameters();
   }
-
-
-  // -- OverlayOval API methods --
-
-  /** Changes coordinates of the oval's bounding box's upper left corner. */
-  public void setCoords1(float x1, float y1) {
-    this.x1 = x1;
-    this.y1 = y1;
-    computeGridParameters();
-  }
-
-  /** Changes coordinates of the oval's bounding box's lower right corner. */
-  public void setCoords2(float x2, float y2) {
-    this.x2 = x2;
-    this.y2 = y2;
-    computeGridParameters();
-  }
-
-  /** Sets whether overlay is solid. */
-  public void setFilled(boolean filled) { this.filled = filled; }
-
-  /** Gets whether overlay is solid. */
-  public boolean isFilled() { return filled; }
 
 
   // -- OverlayObject API methods --
@@ -186,14 +154,45 @@ public class OverlayOval extends OverlayObject {
     return Math.sqrt(xdist * xdist + ydist * ydist);
   }
 
+  /** Retrieves useful statistics about this overlay. */
+  public String getStatistics() {
+    float xx = x2 - x1;
+    float yy = y2 - y1;
+    float centerX = x1 + xx / 2;
+    float centerY = y1 + yy / 2;
+    float radiusX = (xx < 0 ? -xx : xx) / 2;
+    float radiusY = (yy < 0 ? -yy : yy) / 2;
+    float major, minor;
+    if (radiusX > radiusY) {
+      major = radiusX;
+      minor = radiusY;
+    }
+    else {
+      major = radiusY;
+      minor = radiusX;
+    }
+    float eccen = (float) Math.sqrt(1 - (minor * minor) / (major * major));
+    float area = (float) (Math.PI * major * minor);
 
-  // -- Object API methods --
+    return "Oval coordinates = (" + x1 + ", " + y1 +
+      ")-(" + x2 + ", " + y2 + ")\n" +
+      "Center = (" + centerX + ", " + centerY + "), " +
+      "Radius = (" + radiusX + ", " + radiusY + ")\n" +
+      "Major = " + major + "; Minor = " + minor + "\n" +
+      "Area = " + area + "; Eccentricity = " + eccen;
+  }
 
-  /** Gets a short string representation of this overlay oval. */
-  public String toString() { return "Oval"; }
+  /** True iff this overlay has an endpoint coordinate pair. */
+  public boolean hasEndpoint1() { return true; }
+
+  /** True iff this overlay has a second endpoint coordinate pair. */
+  public boolean hasEndpoint2() { return true; }
+
+  /** True iff this overlay supports the filled parameter. */
+  public boolean canBeFilled() { return true; }
 
 
-  // -- Helper methods --
+  // -- Internal OverlayObject API methods --
 
   /** Computes parameters needed for selection grid computation. */
   protected void computeGridParameters() {
@@ -211,5 +210,11 @@ public class OverlayOval extends OverlayObject {
     xGrid4 = xx2; yGrid4 = yy2;
     horizGridCount = 3; vertGridCount = 3;
   }
+
+
+  // -- Object API methods --
+
+  /** Gets a short string representation of this overlay oval. */
+  public String toString() { return "Oval"; }
 
 }

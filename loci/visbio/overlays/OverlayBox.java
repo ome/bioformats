@@ -32,15 +32,6 @@ import visad.*;
 /** OverlayBox is a rectangle overlay. */
 public class OverlayBox extends OverlayObject {
 
-  // -- Fields --
-
-  /** Corner coordinates. */
-  protected float x1, y1, x2, y2;
-
-  /** Flag indicating overlay is solid. */
-  protected boolean filled;
-
-
   // -- Constructor --
 
   /** Constructs a bounding rectangle. */
@@ -54,29 +45,6 @@ public class OverlayBox extends OverlayObject {
     this.y2 = y2;
     computeGridParameters();
   }
-
-
-  // -- OverlayBox API methods --
-
-  /** Changes coordinates of the box's upper left corner. */
-  public void setCoords1(float x1, float y1) {
-    this.x1 = x1;
-    this.y1 = y1;
-    computeGridParameters();
-  }
-
-  /** Changes coordinates of the box's lower right corner. */
-  public void setCoords2(float x2, float y2) {
-    this.x2 = x2;
-    this.y2 = y2;
-    computeGridParameters();
-  }
-
-  /** Sets whether overlay is solid. */
-  public void setFilled(boolean filled) { this.filled = filled; }
-
-  /** Gets whether overlay is solid. */
-  public boolean isFilled() { return filled; }
 
 
   // -- OverlayObject API methods --
@@ -139,14 +107,35 @@ public class OverlayBox extends OverlayObject {
     return Math.sqrt(xdist * xdist + ydist * ydist);
   }
 
+  /** Retrieves useful statistics about this overlay. */
+  public String getStatistics() {
+    float xx = x2 - x1;
+    float yy = y2 - y1;
+    float width = xx < 0 ? -xx : xx;
+    float height = yy < 0 ? -yy : yy;
+    float centerX = x1 + xx / 2;
+    float centerY = y1 + yy / 2;
+    float area = width * height;
+    float perim = width + width + height + height;
 
-  // -- Object API methods --
+    return "Box coordinates = (" + x1 + ", " + y1 +
+      ")-(" + x2 + ", " + y2 + ")\n" +
+      "Center = (" + centerX + ", " + centerY + ")\n" +
+      "Width = " + width + "; Height = " + height + "\n" +
+      "Area = " + area + "; Perimeter = " + perim;
+  }
 
-  /** Gets a short string representation of this overlay box. */
-  public String toString() { return "Box"; }
+  /** True iff this overlay has an endpoint coordinate pair. */
+  public boolean hasEndpoint1() { return true; }
+
+  /** True iff this overlay has a second endpoint coordinate pair. */
+  public boolean hasEndpoint2() { return true; }
+
+  /** True iff this overlay supports the filled parameter. */
+  public boolean canBeFilled() { return true; }
 
 
-  // -- Helper methods --
+  // -- Internal OverlayObject API methods --
 
   /** Computes parameters needed for selection grid computation. */
   protected void computeGridParameters() {
@@ -164,5 +153,12 @@ public class OverlayBox extends OverlayObject {
     xGrid4 = xx2; yGrid4 = yy2;
     horizGridCount = 3; vertGridCount = 3;
   }
+
+
+  // -- Object API methods --
+
+  /** Gets a short string representation of this overlay box. */
+  public String toString() { return "Box"; }
+
 
 }

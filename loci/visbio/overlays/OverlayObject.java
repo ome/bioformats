@@ -37,8 +37,17 @@ public abstract class OverlayObject {
   /** Associated overlay transform. */
   protected OverlayTransform overlay;
 
+  /** Endpoint coordinates. */
+  protected float x1, y1, x2, y2;
+
+  /** Text string to render. */
+  protected String text;
+
   /** Color of this overlay. */
   protected Color color;
+
+  /** Flag indicating overlay is solid. */
+  protected boolean filled;
 
   /** Group to which this overlay belongs. */
   protected String group;
@@ -80,10 +89,24 @@ public abstract class OverlayObject {
   public abstract double getDistance(double x, double y);
 
   /** Retrieves useful statistics about this overlay. */
-  public String getStatistics() { return ""; }
+  public String getStatistics() {
+    String name = getClass().getName();
+    String pack = getClass().getPackage().getName();
+    if (name.startsWith(pack)) name = name.substring(pack.length() + 1);
+    return "No statistics for " + name;
+  }
+
+  /** True iff this overlay has an endpoint coordinate pair. */
+  public boolean hasEndpoint1() { return false; }
+
+  /** True iff this overlay has a second endpoint coordinate pair. */
+  public boolean hasEndpoint2() { return false; }
+
+  /** True iff this overlay supports the filled parameter. */
+  public boolean canBeFilled() { return false; }
 
   /** True iff this overlay returns text to render. */
-  public boolean isText() { return false; }
+  public boolean hasText() { return false; }
 
   /**
    * Computes a grid to be superimposed on this overlay
@@ -177,11 +200,52 @@ public abstract class OverlayObject {
     return field;
   }
 
+  /** Changes coordinates of the overlay's first endpoint. */
+  public void setCoords(float x1, float y1) {
+    this.x1 = x1;
+    this.y1 = y1;
+    computeGridParameters();
+  }
+
+  /** Gets X coordinate of the overlay's first endpoint. */
+  public float getX() { return x1; }
+
+  /** Gets Y coordinate of the overlay's first endpoint. */
+  public float getY() { return y1; }
+
+  /** Changes coordinates of the overlay's second endpoint. */
+  public void setCoords2(float x2, float y2) {
+    this.x2 = x2;
+    this.y2 = y2;
+    computeGridParameters();
+  }
+
+  /** Gets X coordinate of the overlay's second endpoint. */
+  public float getX2() { return x2; }
+
+  /** Gets Y coordinate of the overlay's second endpoint. */
+  public float getY2() { return y2; }
+
+  /** Changes text to render. */
+  public void setText(String text) {
+    this.text = text;
+    computeGridParameters();
+  }
+
+  /** Gets text to render. */
+  public String getText() { return text; }
+
   /** Sets color of this overlay. */
   public void setColor(Color c) { color = c; }
 
   /** Gets color of this overlay. */
   public Color getColor() { return color; }
+
+  /** Sets whether overlay is solid. */
+  public void setFilled(boolean filled) { this.filled = filled; }
+
+  /** Gets whether overlay is solid. */
+  public boolean isFilled() { return filled; }
 
   /** Sets group to which this overlay belongs. */
   public void setGroup(String group) { this.group = group; }
@@ -200,5 +264,11 @@ public abstract class OverlayObject {
 
   /** Gets whether this overlay is currently selected. */
   public boolean isSelected() { return selected; }
+
+
+  // -- Internal OverlayObject API methods --
+
+  /** Computes parameters needed for selection grid computation. */
+  protected abstract void computeGridParameters();
 
 }

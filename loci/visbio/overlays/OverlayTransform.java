@@ -278,7 +278,7 @@ public class OverlayTransform extends DataTransform
         int txtSize = 0, sel = 0;
         for (int i=0; i<size; i++) {
           OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
-          if (obj.isText()) txtSize++;
+          if (obj.hasText()) txtSize++;
           if (obj.isSelected()) sel++;
         }
         int rgbSize = size - txtSize;
@@ -294,7 +294,7 @@ public class OverlayTransform extends DataTransform
           int c = 0;
           for (int i=0; i<size && c<rgbSize; i++) {
             OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
-            if (obj.isText()) continue;
+            if (obj.hasText()) continue;
             rgbField.setSample(c++, obj.getData(), false);
           }
           // compute selection grid for each selected object
@@ -316,7 +316,7 @@ public class OverlayTransform extends DataTransform
           int c = 0;
           for (int i=0; i<size && c<txtSize; i++) {
             OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
-            if (!obj.isText()) continue;
+            if (!obj.hasText()) continue;
             txtField.setSample(c++, obj.getData(), false);
           }
         }

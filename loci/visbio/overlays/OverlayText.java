@@ -30,38 +30,13 @@ import visad.*;
 /** OverlayText is a text string overlay. */
 public class OverlayText extends OverlayObject {
 
-  // -- Fields --
-
-  /** Text coordinates. */
-  protected float x, y;
-
-  /** Text string to render. */
-  protected String text;
-
-
   // -- Constructor --
 
   /** Constructs a text string overlay. */
   public OverlayText(OverlayTransform overlay, float x, float y, String text) {
     super(overlay);
-    this.x = x;
-    this.y = y;
-    this.text = text;
-    computeGridParameters();
-  }
-
-
-  // -- OverlayText API methods --
-
-  /** Changes coordinates of the text string. */
-  public void setCoords(float x, float y) {
-    this.x = x;
-    this.y = y;
-    computeGridParameters();
-  }
-
-  /** Changes text to render. */
-  public void setText(String text) {
+    x1 = x;
+    y1 = y;
     this.text = text;
     computeGridParameters();
   }
@@ -82,7 +57,7 @@ public class OverlayText extends OverlayObject {
     try {
       FunctionType fieldType = new FunctionType(domain, range);
       Set fieldSet = new SingletonSet(
-        new RealTuple(domain, new double[] {x, y}));
+        new RealTuple(domain, new double[] {x1, y1}));
       field = new FieldImpl(fieldType, fieldSet);
       field.setSample(0, overlay.getTextRangeValue(text, r, g, b), false);
     }
@@ -93,30 +68,32 @@ public class OverlayText extends OverlayObject {
 
   /** Computes the shortest distance from this object to the given point. */
   public double getDistance(double x, double y) {
-    double xx = this.x - x;
-    double yy = this.y - y;
+    double xx = x1 - x;
+    double yy = y1 - y;
     return Math.sqrt(xx * xx + yy * yy);
   }
 
+  /** Retrieves useful statistics about this overlay. */
+  public String getStatistics() {
+    return "Text coordinates = (" + x1 + ", " + y1 + ")";
+  }
+
+  /** True iff this overlay has an endpoint coordinate pair. */
+  public boolean hasEndpoint1() { return true; }
+
   /** True iff this overlay object returns text to render. */
-  public boolean isText() { return true; }
+  public boolean hasText() { return true; }
 
 
-  // -- Object API methods --
-
-  /** Gets a short string representation of this overlay text. */
-  public String toString() { return "Text"; }
-
-
-  // -- Helper methods --
+  // -- Internal OverlayObject API methods --
 
   /** Computes parameters needed for selection grid computation. */
   protected void computeGridParameters() {
     float padding = 0.03f * overlay.getScalingValue();
-    float xx1 = x - padding;
-    float xx2 = x + padding;
-    float yy1 = y - padding;
-    float yy2 = y + padding;
+    float xx1 = x1 - padding;
+    float xx2 = x1 + padding;
+    float yy1 = y1 - padding;
+    float yy2 = y1 + padding;
 
     xGrid1 = xx1; yGrid1 = yy1;
     xGrid2 = xx2; yGrid2 = yy1;
@@ -124,5 +101,11 @@ public class OverlayText extends OverlayObject {
     xGrid4 = xx2; yGrid4 = yy2;
     horizGridCount = 2; vertGridCount = 2;
   }
+
+
+  // -- Object API methods --
+
+  /** Gets a short string representation of this overlay text. */
+  public String toString() { return "Text"; }
 
 }

@@ -46,6 +46,8 @@ import loci.visbio.data.*;
 
 import loci.visbio.util.*;
 
+import visad.browser.Convert;
+
 /** OverlayWidget is a set of GUI controls for an overlay transform. */
 public class OverlayWidget extends JPanel
   implements ActionListener, ListSelectionListener, TransformListener
@@ -269,10 +271,19 @@ public class OverlayWidget extends JPanel
     return null;
   }
 
-  public float getX1() { return Float.NaN; }
-  public float getY1() { return Float.NaN; }
-  public float getX2() { return Float.NaN; }
-  public float getY2() { return Float.NaN; }
+  /** Gets X1 coordinate value for current overlay. */
+  public float getX1() { return Float.parseFloat(x1.getText()); }
+
+  /** Gets Y1 coordinate value for current overlay. */
+  public float getY1() { return Float.parseFloat(y1.getText()); }
+
+  /** Gets X2 coordinate value for current overlay. */
+  public float getX2() { return Float.parseFloat(x2.getText()); }
+
+  /** Gets Y2 coordinate value for current overlay. */
+  public float getY2() { return Float.parseFloat(y2.getText()); }
+
+  /** Gets text string for current overlay. */
   public String getText() { return text.getText(); }
 
   /** Sets currently active overlay color. */
@@ -345,7 +356,90 @@ public class OverlayWidget extends JPanel
     for (int i=0; i<obj.length && c<sel; i++) {
       if (obj[i].isSelected()) indices[c++] = i;
     }
+    overlayList.removeListSelectionListener(this);
     overlayList.setSelectedIndices(indices);
+    overlayList.addListSelectionListener(this);
+    refreshWidgetComponents();
+  }
+
+  /**
+   * Updates right-hand widget components to display data
+   * relevant to currently selected overlays.
+   */
+  public void refreshWidgetComponents() {
+    Object[] sel = overlayList.getSelectedValues();
+    boolean enableX1 = false, enableY1 = false;
+    boolean enableX2 = false, enableY2 = false;
+    boolean enableText = false;
+    String xval1 = "", yval1 = "";
+    String xval2 = "", yval2 = "";
+    String words = "";
+    boolean fill = true;
+    Color col = null;
+    String grp = null;
+    String note = null;
+    String stat = "";
+    for (int i=0; i<sel.length; i++) {
+      OverlayObject obj = (OverlayObject) sel[i];
+
+      // if any selected overlay has text, enable text box
+      if (obj.hasText()) enableText = true;
+
+      // if any selected overlay is not filled, clear filled checkbox
+      if (!obj.isFilled()) fill = false;
+
+      if (i == 0) {
+        // fill in values based on parameters of first selected overlay
+        enableX1 = enableY1 = obj.hasEndpoint1();
+        enableX2 = enableY2 = obj.hasEndpoint2();
+        if (enableX1) xval1 = Convert.shortString(obj.getX());
+        if (enableY1) yval1 = Convert.shortString(obj.getY());
+        if (enableX2) xval2 = Convert.shortString(obj.getX2());
+        if (enableY2) yval2 = Convert.shortString(obj.getY2());
+        words = obj.getText();
+        col = obj.getColor();
+        grp = obj.getGroup();
+        note = obj.getNotes();
+        stat = obj.getStatistics();
+      }
+      else {
+        // multiple overlays selected; disable coordinate boxes
+        enableX1 = enableY1 = false;
+        enableX2 = enableY2 = false;
+        xval1 = "";
+        yval1 = "";
+        xval2 = "";
+        yval2 = "";
+
+        // if parameters do not match, reset to defaults
+        if (!ObjectUtil.objectsEqual(obj.getText(), words)) words = "";
+        if (!ObjectUtil.objectsEqual(obj.getColor(), col)) col = Color.white;
+        if (!ObjectUtil.objectsEqual(obj.getGroup(), grp)) grp = "None";
+        if (!ObjectUtil.objectsEqual(obj.getNotes(), note)) note = "";
+
+        stat = "Multiple overlays selected";
+      }
+    }
+
+    // update GUI components based on computed values
+    x1.setEnabled(enableX1);
+    y1.setEnabled(enableY1);
+    x2.setEnabled(enableX2);
+    y2.setEnabled(enableY2);
+    x1.setText(xval1);
+    y1.setText(yval1);
+    x2.setText(xval2);
+    y2.setText(yval2);
+    text.setEnabled(enableText);
+    text.setText(words);
+    if (sel.length > 0) {
+      // leave GUI components alone if nothing is selected
+      filled.setSelected(fill);
+      color.setBackground(col);
+      groupList.setSelectedItem(grp);
+      notes.setText(note);
+    }
+    stats.setText(stat);
   }
 
 
@@ -383,9 +477,13 @@ public class OverlayWidget extends JPanel
   /** Handles list selection changes. */
   public void valueChanged(ListSelectionEvent e) {
     OverlayObject[] obj = overlay.getObjects();
+    boolean[] selected = new boolean[obj.length];
 
     // deselect all previously selected overlays
-    for (int i=0; i<obj.length; i++) obj[i].setSelected(false);
+    for (int i=0; i<obj.length; i++) {
+      selected[i] = obj[i].isSelected();
+      obj[i].setSelected(false);
+    }
 
     // select highlighted overlays
     Object[] sel = overlayList.getSelectedValues();
@@ -393,7 +491,17 @@ public class OverlayWidget extends JPanel
       ((OverlayObject) sel[i]).setSelected(true);
     }
 
-    overlay.notifyListeners(new TransformEvent(overlay));
+    boolean changed = false;
+    for (int i=0; i<obj.length; i++) {
+      if (selected[i] != obj[i].isSelected()) {
+        changed = true;
+        break;
+      }
+    }
+    if (changed) {
+      refreshWidgetComponents();
+      overlay.notifyListeners(new TransformEvent(overlay));
+    }
   }
 
 

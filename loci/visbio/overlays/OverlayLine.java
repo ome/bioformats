@@ -34,12 +34,6 @@ import visad.*;
 /** OverlayLine is a measurement line overlay. */
 public class OverlayLine extends OverlayObject {
 
-  // -- Fields --
-
-  /** Endpoint coordinates. */
-  protected float x1, y1, x2, y2;
-
-
   // -- Constructor --
 
   /** Constructs a measurement line. */
@@ -49,22 +43,6 @@ public class OverlayLine extends OverlayObject {
     super(overlay);
     this.x1 = x1;
     this.y1 = y1;
-    this.x2 = x2;
-    this.y2 = y2;
-    computeGridParameters();
-  }
-
-  // -- OverlayLine API methods --
-
-  /** Changes coordinates of the line's first endpoint. */
-  public void setCoords1(float x1, float y1) {
-    this.x1 = x1;
-    this.y1 = y1;
-    computeGridParameters();
-  }
-
-  /** Changes coordinates of the line's second endpoint. */
-  public void setCoords2(float x2, float y2) {
     this.x2 = x2;
     this.y2 = y2;
     computeGridParameters();
@@ -106,14 +84,25 @@ public class OverlayLine extends OverlayObject {
       new double[] {x2, y2}, new double[] {x, y}, true);
   }
 
+  /** Retrieves useful statistics about this overlay. */
+  public String getStatistics() {
+    float xx = x2 - x1;
+    float yy = y2 - y1;
+    float length = (float) Math.sqrt(xx * xx + yy * yy);
 
-  // -- Object API methods --
+    return "Line coordinates = (" + x1 + ", " + y1 +
+      ")-(" + x2 + ", " + y2 + ")\n" +
+      "Length = " + length;
+  }
 
-  /** Gets a short string representation of this measurement line. */
-  public String toString() { return "Line"; }
+  /** True iff this overlay has an endpoint coordinate pair. */
+  public boolean hasEndpoint1() { return true; }
+
+  /** True iff this overlay has a second endpoint coordinate pair. */
+  public boolean hasEndpoint2() { return true; }
 
 
-  // -- Helper methods --
+  // -- Internal OverlayObject API methods --
 
   /** Computes parameters needed for selection grid computation. */
   protected void computeGridParameters() {
@@ -127,6 +116,15 @@ public class OverlayLine extends OverlayObject {
     xGrid4 = corners2[0]; yGrid4 = corners2[1];
     horizGridCount = 3; vertGridCount = 2;
   }
+
+
+  // -- Object API methods --
+
+  /** Gets a short string representation of this measurement line. */
+  public String toString() { return "Line"; }
+
+
+  // -- Helper methods --
 
   /**
    * Helper method for computing coordinates of two corner points of the

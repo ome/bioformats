@@ -32,29 +32,13 @@ import visad.*;
 /** OverlayMarker is a marker crosshairs overlay. */
 public class OverlayMarker extends OverlayObject {
 
-  // -- Fields --
-
-  /** Endpoint coordinates. */
-  protected float x, y;
-
-
   // -- Constructor --
 
   /** Constructs a measurement marker. */
   public OverlayMarker(OverlayTransform overlay, float x, float y) {
     super(overlay);
-    this.x = x;
-    this.y = y;
-    computeGridParameters();
-  }
-
-
-  // -- OverlayMarker API methods --
-
-  /** Changes coordinates of the marker. */
-  public void setCoords(float x, float y) {
-    this.x = x;
-    this.y = y;
+    x1 = x;
+    y1 = y;
     computeGridParameters();
   }
 
@@ -68,8 +52,8 @@ public class OverlayMarker extends OverlayObject {
     float size = 0.02f * overlay.getScalingValue();
 
     float[][] setSamples = {
-      {x, x, x, x + size, x - size},
-      {y + size, y - size, y, y, y}
+      {x1, x1, x1, x1 + size, x1 - size},
+      {y1 + size, y1 - size, y1, y1, y1}
     };
     float r = color.getRed() / 255f;
     float g = color.getGreen() / 255f;
@@ -94,27 +78,29 @@ public class OverlayMarker extends OverlayObject {
 
   /** Computes the shortest distance from this object to the given point. */
   public double getDistance(double x, double y) {
-    double xx = this.x - x;
-    double yy = this.y - y;
+    double xx = x1 - x;
+    double yy = y1 - y;
     return Math.sqrt(xx * xx + yy * yy);
   }
 
+  /** Retrieves useful statistics about this overlay. */
+  public String getStatistics() {
+    return "Marker coordinates = (" + x1 + ", " + y1 + ")";
+  }
 
-  // -- Object API methods --
-
-  /** Gets a short string representation of this measurement marker. */
-  public String toString() { return "Marker"; }
+  /** True iff this overlay has an endpoint coordinate pair. */
+  public boolean hasEndpoint1() { return true; }
 
 
-  // -- Helper methods --
+  // -- Internal OverlayObject API methods --
 
   /** Computes parameters needed for selection grid computation. */
   protected void computeGridParameters() {
     float padding = 0.03f * overlay.getScalingValue();
-    float xx1 = x - padding;
-    float xx2 = x + padding;
-    float yy1 = y - padding;
-    float yy2 = y + padding;
+    float xx1 = x1 - padding;
+    float xx2 = x1 + padding;
+    float yy1 = y1 - padding;
+    float yy2 = y1 + padding;
 
     xGrid1 = xx1; yGrid1 = yy1;
     xGrid2 = xx2; yGrid2 = yy1;
@@ -122,5 +108,11 @@ public class OverlayMarker extends OverlayObject {
     xGrid4 = xx2; yGrid4 = yy2;
     horizGridCount = 2; vertGridCount = 2;
   }
+
+
+  // -- Object API methods --
+
+  /** Gets a short string representation of this measurement marker. */
+  public String toString() { return "Marker"; }
 
 }
