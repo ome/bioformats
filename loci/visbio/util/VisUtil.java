@@ -215,7 +215,7 @@ public abstract class VisUtil {
   public static DisplayImpl makeDisplay(String name,
     boolean threeD, GraphicsConfiguration config)
   {
-    DisplayImpl d;
+    DisplayImpl d = null;
     try {
       // determine whether Java3D is available
       boolean ok3D = canDo3D();
@@ -235,7 +235,7 @@ public abstract class VisUtil {
           }
           d = (DisplayImpl) r.getVar("d");
         }
-        catch (VisADException exc) { d = null; }
+        catch (VisADException exc) { exc.printStackTrace(); }
         //d = config == null ? new DisplayImplJ3D(name) :
         //  new DisplayImplJ3D(name, config);
       }
@@ -244,6 +244,7 @@ public abstract class VisUtil {
           // keep class loader ignorant of visad.java3d classes
           ReflectedUniverse r = new ReflectedUniverse();
           try {
+            r.exec("import visad.java3d.DisplayImplJ3D");
             r.exec("import visad.java3d.TwoDDisplayRendererJ3D");
             r.setVar("name", name);
             r.exec("renderer = new TwoDDisplayRendererJ3D()");
@@ -256,7 +257,7 @@ public abstract class VisUtil {
             }
             d = (DisplayImpl) r.getVar("d");
           }
-          catch (VisADException exc) { d = null; }
+          catch (VisADException exc) { exc.printStackTrace(); }
           //TwoDDisplayRendererJ3D renderer = new TwoDDisplayRendererJ3D();
           //d = config == null ? new DisplayImplJ3D(name, renderer) :
           //  new DisplayImplJ3D(name, renderer, config);
