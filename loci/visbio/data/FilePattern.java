@@ -141,20 +141,23 @@ public class FilePattern {
     for (int i=0; i<num; i++) {
       String block = pattern.substring(startIndex[i], endIndex[i]);
       int dash = block.indexOf("-");
+      String b, e, s;
       if (dash < 0) {
-        msg = "Malformed numerical block.";
-        return;
-      }
-      int colon = block.indexOf(":");
-      String b = block.substring(1, dash);
-      String e, s;
-      if (colon < 0) {
-        e = block.substring(dash + 1, block.length() - 1);
+        // no range; assume entire block is a single number (e.g., <15>)
+        b = e = block.substring(1, block.length() - 1);
         s = "1";
       }
       else {
-        e = block.substring(dash + 1, colon);
-        s = block.substring(colon + 1, block.length() - 1);
+        int colon = block.indexOf(":");
+        b = block.substring(1, dash);
+        if (colon < 0) {
+          e = block.substring(dash + 1, block.length() - 1);
+          s = "1";
+        }
+        else {
+          e = block.substring(dash + 1, colon);
+          s = block.substring(colon + 1, block.length() - 1);
+        }
       }
       try {
         begin[i] = new BigInteger(b);
