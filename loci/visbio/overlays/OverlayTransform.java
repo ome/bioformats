@@ -26,9 +26,11 @@ package loci.visbio.overlays;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.rmi.RemoteException;
+import java.util.Date;
 import java.util.Vector;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import loci.visbio.VisBio;
 import loci.visbio.data.*;
 import loci.visbio.state.Dynamic;
 import loci.visbio.util.*;
@@ -188,7 +190,22 @@ public class OverlayTransform extends DataTransform
 
   /** Writes the overlays to the given writer. */
   public void saveOverlays(PrintWriter out) {
-    /*TEMP*/
+    out.println("# " + VisBio.TITLE + " " + VisBio.VERSION + " overlay file written " + new Date());
+    out.print("Lengths =");
+    for (int p=0; p<lengths.length; p++) out.print(" " + lengths[p]);
+    out.println();
+    for (int i=0; i<overlays.length; i++) {
+      out.println();
+      int[] position = MathUtil.rasterToPosition(lengths, i);
+      out.print("[");
+      for (int p=0; p<position.length; p++) out.print(" " + position[p]);
+      out.println(" ]");
+      for (int j=0; j<overlays[i].size(); j++) {
+        OverlayObject obj = (OverlayObject) overlays[i].elementAt(j);
+        out.println("[" + obj.getClass().getName() + "]");
+        out.println(obj);
+      }
+    }
   }
 
   /** Gets domain type (XY). */

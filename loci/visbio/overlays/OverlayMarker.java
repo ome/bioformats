@@ -87,7 +87,7 @@ public class OverlayMarker extends OverlayObject {
   }
 
   /** True iff this overlay has an endpoint coordinate pair. */
-  public boolean hasEndpoint1() { return true; }
+  public boolean hasEndpoint() { return true; }
 
 
   // -- Internal OverlayObject API methods --

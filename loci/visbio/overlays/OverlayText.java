@@ -78,7 +78,7 @@ public class OverlayText extends OverlayObject {
   }
 
   /** True iff this overlay has an endpoint coordinate pair. */
-  public boolean hasEndpoint1() { return true; }
+  public boolean hasEndpoint() { return true; }
 
   /** True iff this overlay object returns text to render. */
   public boolean hasText() { return true; }

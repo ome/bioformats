@@ -124,7 +124,7 @@ public class OverlayArrow extends OverlayObject {
   }
 
   /** True iff this overlay has an endpoint coordinate pair. */
-  public boolean hasEndpoint1() { return true; }
+  public boolean hasEndpoint() { return true; }
 
   /** True iff this overlay has a second endpoint coordinate pair. */
   public boolean hasEndpoint2() { return true; }
