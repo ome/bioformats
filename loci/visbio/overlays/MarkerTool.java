@@ -53,6 +53,7 @@ public class MarkerTool extends OverlayTool {
 
   /** Instructs this tool to respond to a mouse release. */
   public void mouseUp(float x, float y, int[] pos, int mods) {
+    if (marker == null) return;
     marker.setDrawing(false);
     marker = null;
     overlay.notifyListeners(new TransformEvent(overlay));

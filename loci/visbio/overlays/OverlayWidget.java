@@ -441,7 +441,6 @@ public class OverlayWidget extends JPanel implements ActionListener,
     boolean enableXY1 = false, enableXY2 = false;
     String xval1 = "", yval1 = "", xval2 = "", yval2 = "";
     String words = "";
-    boolean enableFill = false;
     boolean fill = true;
     Color col = null;
     String grp = null;
@@ -451,7 +450,6 @@ public class OverlayWidget extends JPanel implements ActionListener,
       OverlayObject obj = (OverlayObject) sel[i];
 
       // if any selected overlay is not filled, clear filled checkbox
-      if (obj.canBeFilled()) enableFill = true;
       if (!obj.isFilled()) fill = false;
 
       if (i == 0) {
@@ -496,7 +494,6 @@ public class OverlayWidget extends JPanel implements ActionListener,
     text.setText(words);
     if (sel.length > 0) {
       // leave GUI components alone if nothing is selected
-      filled.setEnabled(enableFill);
       filled.setSelected(fill);
       color.setBackground(col);
       groupList.setSelectedItem(grp);

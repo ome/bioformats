@@ -55,6 +55,7 @@ public class ArrowTool extends OverlayTool {
 
   /** Instructs this tool to respond to a mouse release. */
   public void mouseUp(float x, float y, int[] pos, int mods) {
+    if (arrow == null) return;
     arrow.setDrawing(false);
     arrow = null;
     overlay.notifyListeners(new TransformEvent(overlay));
@@ -62,10 +63,9 @@ public class ArrowTool extends OverlayTool {
 
   /** Instructs this tool to respond to a mouse drag. */
   public void mouseDrag(float x, float y, int[] pos, int mods) {
-    if (arrow != null) {
-      arrow.setCoords2(x, y);
-      overlay.notifyListeners(new TransformEvent(overlay));
-    }
+    if (arrow == null) return;
+    arrow.setCoords2(x, y);
+    overlay.notifyListeners(new TransformEvent(overlay));
   }
 
 }

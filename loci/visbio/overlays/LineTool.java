@@ -53,6 +53,7 @@ public class LineTool extends OverlayTool {
 
   /** Instructs this tool to respond to a mouse release. */
   public void mouseUp(float x, float y, int[] pos, int mods) {
+    if (line == null) return;
     line.setDrawing(false);
     line = null;
     overlay.notifyListeners(new TransformEvent(overlay));
@@ -60,10 +61,9 @@ public class LineTool extends OverlayTool {
 
   /** Instructs this tool to respond to a mouse drag. */
   public void mouseDrag(float x, float y, int[] pos, int mods) {
-    if (line != null) {
-      line.setCoords2(x, y);
-      overlay.notifyListeners(new TransformEvent(overlay));
-    }
+    if (line == null) return;
+    line.setCoords2(x, y);
+    overlay.notifyListeners(new TransformEvent(overlay));
   }
 
 }

@@ -75,12 +75,14 @@ public class PointerTool extends OverlayTool {
   public void mouseUp(float x, float y, int[] pos, int mods) {
     boolean shift = (mods & InputEvent.SHIFT_MASK) != 0;
     boolean ctrl = (mods & InputEvent.CTRL_MASK) != 0;
+    // no action assigned (yet)
   }
 
   /** Instructs this tool to respond to a mouse drag. */
   public void mouseDrag(float x, float y, int[] pos, int mods) {
     boolean shift = (mods & InputEvent.SHIFT_MASK) != 0;
     boolean ctrl = (mods & InputEvent.CTRL_MASK) != 0;
+    // no action assigned (yet)
   }
 
 }

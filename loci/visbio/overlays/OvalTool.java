@@ -55,6 +55,7 @@ public class OvalTool extends OverlayTool {
 
   /** Instructs this tool to respond to a mouse release. */
   public void mouseUp(float x, float y, int[] pos, int mods) {
+    if (oval == null) return;
     oval.setDrawing(false);
     oval = null;
     overlay.notifyListeners(new TransformEvent(overlay));

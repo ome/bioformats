@@ -54,6 +54,7 @@ public class TextTool extends OverlayTool {
 
   /** Instructs this tool to respond to a mouse release. */
   public void mouseUp(float x, float y, int[] pos, int mods) {
+    if (text == null) return;
     text.setDrawing(false);
     text = null;
     overlay.notifyListeners(new TransformEvent(overlay));

@@ -55,6 +55,7 @@ public class BoxTool extends OverlayTool {
 
   /** Instructs this tool to respond to a mouse release. */
   public void mouseUp(float x, float y, int[] pos, int mods) {
+    if (box == null) return;
     box.setDrawing(false);
     box = null;
     overlay.notifyListeners(new TransformEvent(overlay));

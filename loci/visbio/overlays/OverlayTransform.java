@@ -23,11 +23,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
-import java.io.BufferedReader;
-import java.io.PrintWriter;
+import java.awt.Color;
+import java.io.*;
 import java.rmi.RemoteException;
-import java.util.Date;
-import java.util.Vector;
+import java.util.*;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import loci.visbio.VisBio;
@@ -70,6 +69,9 @@ public class OverlayTransform extends DataTransform
     catch (VisADException exc) { exc.printStackTrace(); }
     return rtt;
   }
+
+  /** String indicating a given field is not applicable to an overlay. */
+  protected static final String NOT_APPLICABLE = "N/A";
 
 
   // -- Fields --
@@ -184,26 +186,157 @@ public class OverlayTransform extends DataTransform
   public int[] getPos() { return pos; }
 
   /** Reads the overlays from the given reader. */
-  public void loadOverlays(BufferedReader in) {
-    /*TEMP*/
+  public void loadOverlays(BufferedReader in) throws IOException {
+    boolean foundHeader = false;
+    int lineNum = 0;
+    while (true) {
+      lineNum++;
+      String line = in.readLine();
+      if (line == null) break;
+      String trim = line.trim();
+      if (trim.startsWith("#")) continue; // skip comments
+      if (trim.equals("")) continue; // skip blank lines
+
+      StringTokenizer st = new StringTokenizer("#" + line + "#", "\t");
+      int count = st.countTokens();
+      if (!foundHeader) {
+        // parse table header from first valid line
+        int numDims = count - 10;
+        if (numDims < 0) {
+          JOptionPane.showMessageDialog(controls,
+            "Invalid table header; insufficient column headings.",
+            "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+        st.nextToken(); // skip "Overlay" column heading
+
+        // verify lengths and dims match the parent transform
+        int[] theLengths = new int[numDims];
+        String[] theDims = new String[numDims];
+        for (int i=0; i<numDims; i++) {
+          String s = st.nextToken();
+          int left = s.lastIndexOf(" (");
+          int right = s.lastIndexOf(")");
+          try {
+            theLengths[i] = Integer.parseInt(s.substring(left + 2, right));
+            theDims[i] = s.substring(0, left);
+          }
+          catch (IndexOutOfBoundsException exc) { }
+          catch (NumberFormatException exc) { }
+        }
+        if (!ObjectUtil.arraysEqual(dims, theDims)) {
+          JOptionPane.showMessageDialog(controls,
+            "Invalid table header; dimensional axis types do not match.",
+            "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+        if (!ObjectUtil.arraysEqual(lengths, theLengths)) {
+          JOptionPane.showMessageDialog(controls,
+            "Invalid table header; dimensional axis lengths do not match.",
+            "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+        foundHeader = true;
+      }
+      else {
+        // parse table entry
+        if (count != lengths.length + 10) {
+          System.err.println("Warning: line " + lineNum +
+            " has the incorrect number of columns (" + count +
+            " instead of " + (lengths.length + 10) + ") and will be ignored.");
+          continue;
+        }
+        String type = st.nextToken().substring(1); // remove initial #
+        int[] position = new int[lengths.length];
+        for (int i=0; i<position.length; i++) {
+          try { position[i] = Integer.parseInt(st.nextToken()); }
+          catch (NumberFormatException exc) {
+            position = null;
+            break;
+          }
+        }
+        if (position == null) {
+          System.err.println("Warning: line " + lineNum +
+            " has an invalid dimensional position and will be ignored.");
+          continue;
+        }
+        String sx1 = st.nextToken();
+        String sy1 = st.nextToken();
+        String sx2 = st.nextToken();
+        String sy2 = st.nextToken();
+        float x1, y1, x2, y2;
+        try {
+          x1 = sx1.equals(NOT_APPLICABLE) ? Float.NaN : Float.parseFloat(sx1);
+          y1 = sy1.equals(NOT_APPLICABLE) ? Float.NaN : Float.parseFloat(sy1);
+          x2 = sx2.equals(NOT_APPLICABLE) ? Float.NaN : Float.parseFloat(sx2);
+          y2 = sy2.equals(NOT_APPLICABLE) ? Float.NaN : Float.parseFloat(sy2);
+        }
+        catch (NumberFormatException exc) {
+          System.err.println("Warning: line " + lineNum +
+            " has invalid coordinate values and will be ignored.");
+          continue;
+        }
+        String text = st.nextToken();
+        Color color = ColorUtil.hexToColor(st.nextToken());
+        if (color == null) {
+          System.err.println("Warning: line " + lineNum +
+            " has an invalid color value and will be ignored.");
+          continue;
+        }
+        boolean filled = st.nextToken().equalsIgnoreCase("true");
+        String group = st.nextToken();
+        String notes = st.nextToken();
+        notes = notes.substring(0, notes.length() - 1); // remove trailing #
+        // CTR START HERE
+        /*TEMP*/System.out.print("Successfully parsed overlay on line #" + lineNum + ": type=" + type + "; pos=");
+        /*TEMP*/for (int i=0; i<position.length; i++) System.out.print(pos[i] + " ");
+        /*TEMP*/System.out.println("; p=(" + x1 + "," + y1 + "); p2=(" + x2 + "," + y2 + "); text=" + text + "; color=" + ColorUtil.colorToHex(color) + "; filled=" + filled + "; group=" + group + "; notes=" + notes);
+      }
+    }
   }
 
   /** Writes the overlays to the given writer. */
   public void saveOverlays(PrintWriter out) {
-    out.println("# " + VisBio.TITLE + " " + VisBio.VERSION + " overlay file written " + new Date());
-    out.print("Lengths =");
-    for (int p=0; p<lengths.length; p++) out.print(" " + lengths[p]);
+    // file header
+    out.println("# " + VisBio.TITLE + " " + VisBio.VERSION +
+      " overlay file written " + new Date());
     out.println();
+
+    // table header
+    out.print("Overlay\t");
+    for (int p=0; p<lengths.length; p++) {
+      out.print(dims[p] + " (" + lengths[p] + ")\t");
+    }
+    out.println("x1\ty1\tx2\ty2\ttext\tcolor\tfilled\tgroup\tnotes");
+
+    // overlays table
     for (int i=0; i<overlays.length; i++) {
-      out.println();
       int[] position = MathUtil.rasterToPosition(lengths, i);
-      out.print("[");
-      for (int p=0; p<position.length; p++) out.print(" " + position[p]);
-      out.println(" ]");
+      StringBuffer sb = new StringBuffer();
+      for (int p=0; p<position.length; p++) sb.append(position[p] + "\t");
+      String posString = sb.toString();
       for (int j=0; j<overlays[i].size(); j++) {
         OverlayObject obj = (OverlayObject) overlays[i].elementAt(j);
-        out.println("[" + obj.getClass().getName() + "]");
-        out.println(obj);
+        out.print(obj.toString());
+        out.print("\t");
+        out.print(posString);
+        out.print(obj.hasEndpoint() ? "" + obj.getX() : NOT_APPLICABLE);
+        out.print("\t");
+        out.print(obj.hasEndpoint() ? "" + obj.getY() : NOT_APPLICABLE);
+        out.print("\t");
+        out.print(obj.hasEndpoint2() ? "" + obj.getX2() : NOT_APPLICABLE);
+        out.print("\t");
+        out.print(obj.hasEndpoint2() ? "" + obj.getY2() : NOT_APPLICABLE);
+        out.print("\t");
+        out.print(obj.hasText() ? obj.getText() : NOT_APPLICABLE);
+        out.print("\t");
+        out.print(ColorUtil.colorToHex(obj.getColor()));
+        out.print("\t");
+        out.print(obj.isFilled());
+        out.print("\t");
+        out.print(obj.getGroup().replaceAll("\t", " "));
+        out.print("\t");
+        out.println(obj.getNotes().replaceAll("\t", " "));
       }
     }
   }
