@@ -175,12 +175,20 @@ public class OverlayOval extends OverlayObject {
     float eccen = (float) Math.sqrt(1 - (minor * minor) / (major * major));
     float area = (float) (Math.PI * major * minor);
 
+    // ellipse circumference approximation algorithm due to Ramanujan found at
+    // http://mathforum.org/dr.math/faq/formulas/faq.ellipse.circumference.html
+    float mm = (major - minor) / (major + minor);
+    float q = 3 * mm * mm;
+    float circum = (float) (Math.PI *
+      (major + minor) * (1 + q / (10 + Math.sqrt(4 - q))));
+
     return "Oval coordinates = (" + x1 + ", " + y1 +
       ")-(" + x2 + ", " + y2 + ")\n" +
       "Center = (" + centerX + ", " + centerY + "), " +
       "Radius = (" + radiusX + ", " + radiusY + ")\n" +
       "Major = " + major + "; Minor = " + minor + "\n" +
-      "Area = " + area + "; Eccentricity = " + eccen;
+      "Area = " + area + "; Eccentricity = " + eccen + "\n" +
+      "Circumference = " + circum + " (approximate)";
   }
 
   /** True iff this overlay has an endpoint coordinate pair. */
