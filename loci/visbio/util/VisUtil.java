@@ -115,6 +115,18 @@ public abstract class VisUtil {
     return newField;
   }
 
+  /**
+   * Gets a RealType with the given name, converting
+   * invalid characters within the name to underscores.
+   */
+  public static RealType getRealType(String name) {
+    char[] c = name.toCharArray();
+    for (int i=0; i<c.length; i++) {
+      if (" .()".indexOf(c[i]) >= 0) c[i] = '_';
+    }
+    return RealType.getRealType(new String(c));
+  }
+
 
   // -- Display utility methods --
 

@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.data;
 
+import loci.visbio.util.VisUtil;
+
 import visad.*;
 
 /** ImageTransform is a DataTransform superclass that provides image data. */
@@ -56,9 +58,9 @@ public abstract class ImageTransform extends DataTransform {
     super(parent, name);
 
     // initialize internal MathTypes
-    xType = RealType.getRealType(name + "_X");
-    yType = RealType.getRealType(name + "_Y");
-    zType = RealType.getRealType(name + "_Z");
+    xType = VisUtil.getRealType(name + "_X");
+    yType = VisUtil.getRealType(name + "_Y");
+    zType = VisUtil.getRealType(name + "_Z");
   }
 
 
@@ -88,7 +90,7 @@ public abstract class ImageTransform extends DataTransform {
       rangeTypes = new RealType[getRangeCount()];
       for (int i=0; i<rangeTypes.length; i++) {
         String s = "range" + i;
-        rangeTypes[i] = RealType.getRealType(name + "_" + s);
+        rangeTypes[i] = VisUtil.getRealType(name + "_" + s);
       }
     }
     return rangeTypes;
