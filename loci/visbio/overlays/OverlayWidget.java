@@ -392,8 +392,10 @@ public class OverlayWidget extends JPanel implements ActionListener,
     OverlayObject[] obj = overlay.getObjects();
     ignoreEvents = true;
     overlayListModel.clear();
-    overlayListModel.ensureCapacity(obj.length);
-    for (int i=0; i<obj.length; i++) overlayListModel.addElement(obj[i]);
+    if (obj != null) {
+      overlayListModel.ensureCapacity(obj.length);
+      for (int i=0; i<obj.length; i++) overlayListModel.addElement(obj[i]);
+    }
     ignoreEvents = false;
     refreshListSelection();
   }
@@ -402,12 +404,14 @@ public class OverlayWidget extends JPanel implements ActionListener,
   public void refreshListSelection() {
     OverlayObject[] obj = overlay.getObjects();
     int sel = 0;
-    for (int i=0; i<obj.length; i++) {
-      if (obj[i].isSelected()) sel++;
+    if (obj != null) {
+      for (int i=0; i<obj.length; i++) {
+        if (obj[i].isSelected()) sel++;
+      }
     }
     int[] indices = new int[sel];
     int c = 0;
-    for (int i=0; i<obj.length && c<sel; i++) {
+    for (int i=0; c<sel && i<obj.length; i++) {
       if (obj[i].isSelected()) indices[c++] = i;
     }
     ignoreEvents = true;
@@ -661,12 +665,15 @@ public class OverlayWidget extends JPanel implements ActionListener,
   public void valueChanged(ListSelectionEvent e) {
     if (ignoreEvents) return;
     OverlayObject[] obj = overlay.getObjects();
-    boolean[] selected = new boolean[obj.length];
+    boolean[] selected = null;
+    if (obj != null) {
+      selected = new boolean[obj.length];
 
-    // deselect all previously selected overlays
-    for (int i=0; i<obj.length; i++) {
-      selected[i] = obj[i].isSelected();
-      obj[i].setSelected(false);
+      // deselect all previously selected overlays
+      for (int i=0; i<obj.length; i++) {
+        selected[i] = obj[i].isSelected();
+        obj[i].setSelected(false);
+      }
     }
 
     // select highlighted overlays
@@ -676,10 +683,12 @@ public class OverlayWidget extends JPanel implements ActionListener,
     }
 
     boolean changed = false;
-    for (int i=0; i<obj.length; i++) {
-      if (selected[i] != obj[i].isSelected()) {
-        changed = true;
-        break;
+    if (obj != null) {
+      for (int i=0; i<obj.length; i++) {
+        if (selected[i] != obj[i].isSelected()) {
+          changed = true;
+          break;
+        }
       }
     }
     if (changed) {

@@ -91,7 +91,9 @@ public class OverlayTool {
   /** Deselect all selected overlays. */
   protected void deselectAll() {
     OverlayObject[] obj = overlay.getObjects();
-    for (int i=0; i<obj.length; i++) obj[i].setSelected(false);
+    if (obj != null) {
+      for (int i=0; i<obj.length; i++) obj[i].setSelected(false);
+    }
   }
 
 }
