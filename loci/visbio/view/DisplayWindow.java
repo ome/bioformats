@@ -337,7 +337,7 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
 
     if (display == null) display = VisUtil.makeDisplay(name, threeD, STEREO);
     else display.setName(name);
-    setTitle(name);
+    setTitle("Display - " + name);
 
     // handlers
     createHandlers();
