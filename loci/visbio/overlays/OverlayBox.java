@@ -1,5 +1,5 @@
 //
-// OverlayLine.java
+// OverlayBox.java
 //
 
 /*
@@ -27,19 +27,22 @@ import java.rmi.RemoteException;
 
 import visad.*;
 
-/** OverlayLine is a measurement line overlay. */
-public class OverlayLine extends OverlayObject {
+/** OverlayBox is a rectangle overlay. */
+public class OverlayBox extends OverlayObject {
 
   // -- Fields --
 
   /** Endpoint coordinates. */
   protected float x1, y1, x2, y2;
 
+  /** Flag indicating overlay is solid. */
+  protected boolean filled;
+
 
   // -- Constructor --
 
-  /** Constructs a measurement line. */
-  public OverlayLine(OverlayTransform overlay,
+  /** Constructs a bounding rectangle. */
+  public OverlayBox(OverlayTransform overlay,
     float x1, float y1, float x2, float y2)
   {
     super(overlay);
@@ -49,19 +52,26 @@ public class OverlayLine extends OverlayObject {
     this.y2 = y2;
   }
 
-  // -- OverlayLine API methods --
 
-  /** Changes coordinates of the line's first endpoint. */
+  // -- OverlayBox API methods --
+
+  /** Changes coordinates of the box's first endpoint. */
   public void setCoords1(float x1, float y1) {
     this.x1 = x1;
     this.y1 = y1;
   }
 
-  /** Changes coordinates of the line's second endpoint. */
+  /** Changes coordinates of the box's second endpoint. */
   public void setCoords2(float x2, float y2) {
     this.x2 = x2;
     this.y2 = y2;
   }
+
+  /** Sets whether overlay is solid. */
+  public void setFilled(boolean filled) { this.filled = filled; }
+
+  /** Gets whether overlay is solid. */
+  public boolean isFilled() { return filled; }
 
 
   // -- OverlayObject API methods --
@@ -71,16 +81,48 @@ public class OverlayLine extends OverlayObject {
     RealTupleType domain = overlay.getDomainType();
     RealTupleType range = overlay.getRangeType();
 
-    float[][] setSamples = {{x1, x2}, {y1, y2}};
+    float[][] setSamples = null;
+    float[][] fieldSamples = null;
+    GriddedSet fieldSet = null;
     float r = color.getRed() / 255f;
     float g = color.getGreen() / 255f;
     float b = color.getBlue() / 255f;
-    float[][] fieldSamples = {{r, r}, {g, g}, {b, b}};
+
+    if (filled) {
+      setSamples = new float[][] {
+        {x1, x2, x1, x2},
+        {y1, y1, y2, y2}
+      };
+      fieldSamples = new float[][] {
+        {r, r, r, r},
+        {g, g, g, g},
+        {b, b, b, b}
+      };
+      try {
+        fieldSet = new Gridded2DSet(domain,
+          setSamples, 2, 2, null, null, null, false);
+      }
+      catch (VisADException exc) { exc.printStackTrace(); }
+    }
+    else {
+      setSamples = new float[][] {
+        {x1, x2, x2, x1, x1},
+        {y1, y1, y2, y2, y1}
+      };
+      fieldSamples = new float[][] {
+        {r, r, r, r, r},
+        {g, g, g, g, g},
+        {b, b, b, b, b}
+      };
+      try {
+        fieldSet = new Gridded2DSet(domain,
+          setSamples, setSamples[0].length, null, null, null, false);
+      }
+      catch (VisADException exc) { exc.printStackTrace(); }
+    }
 
     FlatField field = null;
     try {
-      GriddedSet fieldSet = new Gridded2DSet(domain,
-        setSamples, setSamples[0].length, null, null, null, false);
       FunctionType fieldType = new FunctionType(domain, range);
       field = new FlatField(fieldType, fieldSet);
       field.setSamples(fieldSamples, false);

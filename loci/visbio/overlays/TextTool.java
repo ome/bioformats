@@ -37,12 +37,12 @@ public class TextTool extends OverlayTool {
   // -- OverlayTool API methods --
 
   /** Instructs this tool to respond to a mouse press. */
-  public void mouseDown(float x, float y) { }
+  public void mouseDown(float x, float y, int[] pos) { }
 
   /** Instructs this tool to respond to a mouse release. */
-  public void mouseUp(float x, float y) { }
+  public void mouseUp(float x, float y, int[] pos) { }
 
   /** Instructs this tool to respond to a mouse drag. */
-  public void mouseDrag(float x, float y) { }
+  public void mouseDrag(float x, float y, int[] pos) { }
 
 }

@@ -47,10 +47,7 @@ public class LineTool extends OverlayTool {
   /** Instructs this tool to respond to a mouse press. */
   public void mouseDown(float x, float y, int[] pos) {
     line = new OverlayLine(overlay, x, y, x, y);
-    OverlayWidget panel = (OverlayWidget) overlay.getControls();
-    line.setColor(panel.getActiveColor());
-    line.setGroup(panel.getActiveGroup());
-    line.setDescription(panel.getDescription());
+    configureOverlay(line);
     overlay.addObject(line, pos);
   }
 

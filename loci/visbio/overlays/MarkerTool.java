@@ -23,8 +23,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
+import loci.visbio.data.TransformEvent;
+
 /** MarkerTool is the tool for creating measurement markers. */
 public class MarkerTool extends OverlayTool {
+
+  // -- Fields --
+
+  /** Marker currently being drawn. */
+  protected OverlayMarker marker;
+
 
   // -- Constructor --
 
@@ -37,12 +45,20 @@ public class MarkerTool extends OverlayTool {
   // -- OverlayTool API methods --
 
   /** Instructs this tool to respond to a mouse press. */
-  public void mouseDown(float x, float y) { }
+  public void mouseDown(float x, float y, int[] pos) {
+    marker = new OverlayMarker(overlay, x, y);
+    configureOverlay(marker);
+    overlay.addObject(marker, pos);
+  }
 
   /** Instructs this tool to respond to a mouse release. */
-  public void mouseUp(float x, float y) { }
+  public void mouseUp(float x, float y, int[] pos) { marker = null; }
 
   /** Instructs this tool to respond to a mouse drag. */
-  public void mouseDrag(float x, float y) { }
+  public void mouseDrag(float x, float y, int[] pos) {
+    if (marker == null) return;
+    marker.setCoords(x, y);
+    overlay.notifyListeners(new TransformEvent(overlay));
+  }
 
 }

@@ -77,4 +77,15 @@ public class OverlayTool {
   /** Gets path to icon file. */
   public String getIcon() { return icon; }
 
+
+  // -- Utility methods --
+
+  /** Configures the given overlay to match the current settings. */
+  protected void configureOverlay(OverlayObject oo) {
+    OverlayWidget panel = (OverlayWidget) overlay.getControls();
+    oo.setColor(panel.getActiveColor());
+    oo.setGroup(panel.getActiveGroup());
+    oo.setDescription(panel.getDescription());
+  }
+
 }

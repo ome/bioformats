@@ -23,8 +23,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
+import loci.visbio.data.TransformEvent;
+
 /** BoxTool is the tool for creating box overlays. */
 public class BoxTool extends OverlayTool {
+
+  // -- Fields --
+
+  /** Box currently being drawn. */
+  protected OverlayBox box;
+
 
   // -- Constructor --
 
@@ -37,12 +45,22 @@ public class BoxTool extends OverlayTool {
   // -- OverlayTool API methods --
 
   /** Instructs this tool to respond to a mouse press. */
-  public void mouseDown(float x, float y) { }
+  public void mouseDown(float x, float y, int[] pos) {
+    box = new OverlayBox(overlay, x, y, x, y);
+    configureOverlay(box);
+    OverlayWidget panel = (OverlayWidget) overlay.getControls();
+    box.setFilled(panel.isFilled());
+    overlay.addObject(box, pos);
+  }
 
   /** Instructs this tool to respond to a mouse release. */
-  public void mouseUp(float x, float y) { }
+  public void mouseUp(float x, float y, int[] pos) { box = null; }
 
   /** Instructs this tool to respond to a mouse drag. */
-  public void mouseDrag(float x, float y) { }
+  public void mouseDrag(float x, float y, int[] pos) {
+    if (box == null) return;
+    box.setCoords2(x, y);
+    overlay.notifyListeners(new TransformEvent(overlay));
+  }
 
 }

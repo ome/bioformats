@@ -105,12 +105,12 @@ public class OverlayWidget extends JPanel implements ActionListener {
     JPanel toolsRow = FormsUtil.makeRow(buttonList);
 
     // create color chooser
-    color = new JButton(" ");
+    color = new JButton("Color");
+    color.setForeground(Color.white);
     color.setBackground(Color.white);
     color.addActionListener(this);
     filled = new JCheckBox("Filled");
     filled.setMnemonic('f');
-    filled.setEnabled(false);
     JPanel colorRow = FormsUtil.makeRow("&Color", color, filled);
 
     // create group selector
@@ -118,7 +118,7 @@ public class OverlayWidget extends JPanel implements ActionListener {
     newGroup = new JButton("New");
     newGroup.addActionListener(this);
     newGroup.setMnemonic('n');
-    newGroup.setToolTipText("Creates a new measurement group");
+    newGroup.setToolTipText("Creates a new overlay group");
  
     JPanel groupRow = FormsUtil.makeRow("&Group", groupList, newGroup);
 
@@ -172,6 +172,7 @@ public class OverlayWidget extends JPanel implements ActionListener {
 
   /** Sets currently active overlay color. */
   public void setActiveColor(Color c) {
+    color.setForeground(c);
     color.setBackground(c);
     // CTR TODO fire overlay parameter change event
   }
@@ -223,7 +224,7 @@ public class OverlayWidget extends JPanel implements ActionListener {
     else if (src == newGroup) {
       String nextGroup = "group" + groupList.getItemCount();
       String group = (String) JOptionPane.showInputDialog(this,
-        "Group name:", "Create measurement group",
+        "Group name:", "Create overlay group",
         JOptionPane.INFORMATION_MESSAGE, null, null, nextGroup);
       if (group != null) setActiveGroup(group);
     }

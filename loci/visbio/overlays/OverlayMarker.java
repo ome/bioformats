@@ -1,5 +1,5 @@
 //
-// OverlayLine.java
+// OverlayMarker.java
 //
 
 /*
@@ -25,42 +25,35 @@ package loci.visbio.overlays;
 
 import java.rmi.RemoteException;
 
+import loci.visbio.data.ImageTransform;
+
 import visad.*;
 
-/** OverlayLine is a measurement line overlay. */
-public class OverlayLine extends OverlayObject {
+/** OverlayMarker is a marker crosshairs overlay. */
+public class OverlayMarker extends OverlayObject {
 
   // -- Fields --
 
   /** Endpoint coordinates. */
-  protected float x1, y1, x2, y2;
+  protected float x, y;
 
 
   // -- Constructor --
 
-  /** Constructs a measurement line. */
-  public OverlayLine(OverlayTransform overlay,
-    float x1, float y1, float x2, float y2)
-  {
+  /** Constructs a measurement marker. */
+  public OverlayMarker(OverlayTransform overlay, float x, float y) {
     super(overlay);
-    this.x1 = x1;
-    this.y1 = y1;
-    this.x2 = x2;
-    this.y2 = y2;
+    this.x = x;
+    this.y = y;
   }
 
-  // -- OverlayLine API methods --
 
-  /** Changes coordinates of the line's first endpoint. */
-  public void setCoords1(float x1, float y1) {
-    this.x1 = x1;
-    this.y1 = y1;
-  }
+  // -- OverlayMarker API methods --
 
-  /** Changes coordinates of the line's second endpoint. */
-  public void setCoords2(float x2, float y2) {
-    this.x2 = x2;
-    this.y2 = y2;
+  /** Changes coordinates of the marker. */
+  public void setCoords(float x, float y) {
+    this.x = x;
+    this.y = y;
   }
 
 
@@ -71,16 +64,29 @@ public class OverlayLine extends OverlayObject {
     RealTupleType domain = overlay.getDomainType();
     RealTupleType range = overlay.getRangeType();
 
-    float[][] setSamples = {{x1, x2}, {y1, y2}};
+    ImageTransform it = (ImageTransform) overlay.getParent();
+    int width = it.getImageWidth();
+    int height = it.getImageHeight();
+    int len = width < height ? width : height;
+    float size = 0.02f * len;
+
+    float[][] setSamples = {
+      {x, x, x, x + size, x - size},
+      {y + size, y - size, y, y, y}
+    };
     float r = color.getRed() / 255f;
     float g = color.getGreen() / 255f;
     float b = color.getBlue() / 255f;
-    float[][] fieldSamples = {{r, r}, {g, g}, {b, b}};
+    float[][] fieldSamples = {
+      {r, r, r, r, r},
+      {g, g, g, g, g},
+      {b, b, b, b, b}
+    };
 
     FlatField field = null;
     try {
       GriddedSet fieldSet = new Gridded2DSet(domain,
-        setSamples, setSamples[0].length, null, null, null, false);
+        setSamples, 5, null, null, null, false);
       FunctionType fieldType = new FunctionType(domain, range);
       field = new FlatField(fieldType, fieldSet);
       field.setSamples(fieldSamples, false);
