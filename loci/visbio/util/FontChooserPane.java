@@ -116,6 +116,7 @@ public class FontChooserPane extends DialogPane implements ChangeListener {
       }
     }
     fontName = new JComboBox(fontNames);
+    SwingUtil.configureComboBox(fontName);
     fontName.setSelectedIndex(ndx);
     fontName.addActionListener(this);
 

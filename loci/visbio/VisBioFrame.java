@@ -74,14 +74,26 @@ public class VisBioFrame extends GUIFrame {
   // -- Constructor --
 
   /** Constructs a new VisBio frame with no splash screen. */
-  public VisBioFrame() { this(null); }
+  public VisBioFrame() { this(null, null); }
 
   /** Constructs a new VisBio frame with the associated splash screen. */
-  public VisBioFrame(SplashScreen splash) {
+  public VisBioFrame(SplashScreen splash) { this(splash, null); }
+
+  /**
+   * Constructs a new VisBio frame with the associated splash screen
+   * and command line arguments.
+   */
+  public VisBioFrame(SplashScreen splash, String[] args) {
     super(true);
     setTitle(VisBio.TITLE);
     managers = new Vector();
     this.splash = splash;
+    if (args == null) args = new String[0];
+    if (DEBUG) {
+      for (int i=0; i<args.length; i++) {
+        System.out.println("args[" + i + "] = " + args[i]);
+      }
+    }
 
     // initialize Look & Feel parameters
     LAFUtil.initLookAndFeel();

@@ -1,5 +1,12 @@
 Bugfixes and enhancements to address:
 
+  - Add ability download image pixels from OME database for a given image_id
+
+  - Add command line parameter for specifying server/user/password/image_id to
+    automatically download from an OME database upon program startup
+
+  - Get VisBio working with Java Web Start; link latest version from web site
+
   - Finish updating online help to latest beta functionality
   
   - Include new help topics:

@@ -118,6 +118,7 @@ public class ExportPane extends WizardPane {
     String[] formats = saver.canSaveQT() ?
       new String[] {"TIFF", "PIC", "MOV"} : new String[] {"TIFF", "PIC"};
     formatBox = new JComboBox(formats);
+    SwingUtil.configureComboBox(formatBox);
 
     // lay out first page
     PanelBuilder builder = new PanelBuilder(new FormLayout(
@@ -362,6 +363,7 @@ public class ExportPane extends WizardPane {
           builder.addLabel("<" + letter + "> =",
             cc.xy(1, row, "right,center"));
           letterBoxes[i] = new JComboBox(dimChoices);
+          SwingUtil.configureComboBox(letterBoxes[i]);
           letterBoxes[i].setSelectedIndex(i);
           builder.add(letterBoxes[i], cc.xy(3, row));
           row += 2;
@@ -492,6 +494,7 @@ public class ExportPane extends WizardPane {
         int numLines = st.countTokens();
         sb = new StringBuffer("pref, 3dlu");
         for (int i=0; i<numLines; i++) sb.append(", pref");
+        sb.append(", 5dlu");
         PanelBuilder builder = new PanelBuilder(new FormLayout(
           "pref:grow", sb.toString()));
         CellConstraints cc = new CellConstraints();

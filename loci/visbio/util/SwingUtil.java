@@ -190,6 +190,18 @@ public abstract class SwingUtil {
         JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
   }
 
+  /**
+   * Configures a combo box to be a bit wider than normal. This method only
+   * exists to work around a bug in the Windows Look and Feel where combo boxes
+   * are slightly too narrow.
+   */
+  public static void configureComboBox(JComboBox combo) {
+    if (!LAFUtil.isWindowsLookAndFeel()) return;
+    Dimension pref = combo.getPreferredSize();
+    pref.width += 10;
+    combo.setPreferredSize(pref);
+  }
+
   /** Constructs a JFileChooser that recognizes accepted VisBio file types. */
   public static JFileChooser getVisBioFileChooser() {
     JFileChooser dialog = new JFileChooser(System.getProperty("user.dir"));

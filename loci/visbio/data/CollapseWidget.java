@@ -28,8 +28,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
-import loci.visbio.util.FormsUtil;
-import loci.visbio.util.LAFUtil;
+import loci.visbio.util.*;
 
 /**
  * CollapseWidget is a set of GUI controls
@@ -60,6 +59,7 @@ public class CollapseWidget extends JPanel implements ActionListener {
     String[] names = new String[types.length];
     for (int i=0; i<names.length; i++) names[i] = (i + 1) + ": " + types[i];
     axes = new JComboBox(names);
+    SwingUtil.configureComboBox(axes);
 
     // apply button
     JButton apply = new JButton("Apply");

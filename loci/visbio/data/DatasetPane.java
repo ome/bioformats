@@ -136,6 +136,7 @@ public class DatasetPane extends WizardPane implements DocumentListener {
 
     // combo box for dimensional range type within each file
     dimBox = new JComboBox(DIM_TYPES);
+    SwingUtil.configureComboBox(dimBox);
     dimBox.setEditable(true);
     dimBox.setSelectedIndex(1);
 
@@ -327,6 +328,7 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     widgets = new JComboBox[blocks];
     for (int i=0; i<blocks; i++) {
       widgets[i] = new JComboBox(DIM_TYPES);
+      SwingUtil.configureComboBox(widgets[i]);
       widgets[i].setEditable(true);
       widgets[i].setSelectedItem(kind[i]);
     }

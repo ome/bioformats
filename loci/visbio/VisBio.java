@@ -78,8 +78,10 @@ public class VisBio {
 
     // construct VisBio interface via reflection
     Class vb = Class.forName("loci.visbio.VisBioFrame");
-    Constructor con = vb.getConstructor(new Class[] {ss.getClass()});
-    con.newInstance(new Object[] {ss});
+    Constructor con = vb.getConstructor(new Class[] {
+      ss.getClass(), String[].class
+    });
+    con.newInstance(new Object[] {ss, args});
   }
 
 }
