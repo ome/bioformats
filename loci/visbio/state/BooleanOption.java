@@ -73,7 +73,7 @@ public class BooleanOption extends BioOption {
 
   protected static final String BOOLEAN_OPTION = "VisBio_BooleanOption";
 
-  /** Writes the current state to the given OME-CA XML object. */
+  /** Writes the current state to the given XML object. */
   public void saveState(OMEElement ome) throws SaveException {
     CAElement custom = ome.getCustomAttr();
     custom.createElement(BOOLEAN_OPTION);
@@ -81,7 +81,7 @@ public class BooleanOption extends BioOption {
     custom.setAttribute("value", box.isSelected() ? "true" : "false");
   }
 
-  /** Restores the current state from the given OME-CA XML object. */
+  /** Restores the current state from the given XML object. */
   public void restoreState(OMEElement ome) throws SaveException {
     CAElement custom = ome.getCustomAttr();
     String[] names = custom.getAttributes(BOOLEAN_OPTION, "name");

@@ -145,7 +145,7 @@ public class DisplayManager extends LogicManager {
 
   protected static final String DISPLAY_MANAGER = "VisBio_DisplayManager";
 
-  /** Writes the current state to the given OME-CA XML object. */
+  /** Writes the current state to the given XML object. */
   public void saveState(OMEElement ome) throws SaveException {
     DisplayWindow[] windows = getDisplays();
 
@@ -158,7 +158,7 @@ public class DisplayManager extends LogicManager {
     for (int i=0; i<windows.length; i++) windows[i].saveState(ome, i);
   }
 
-  /** Restores the current state from the given OME-CA XML object. */
+  /** Restores the current state from the given XML object. */
   public void restoreState(OMEElement ome) throws SaveException {
     CAElement custom = ome.getCustomAttr();
 

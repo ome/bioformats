@@ -27,10 +27,7 @@ import java.util.Vector;
 
 import java.rmi.RemoteException;
 
-import loci.visbio.data.DataSampling;
-import loci.visbio.data.DataTransform;
-import loci.visbio.data.ImageTransform;
-import loci.visbio.data.ThumbnailHandler;
+import loci.visbio.data.*;
 
 import loci.visbio.util.VisUtil;
 
@@ -239,13 +236,12 @@ public class StackLink extends TransformLink {
       };
       RealType xbox = it.getXType();
       RealType ybox = it.getYType();
-      RealType zbox = ((StackHandler) handler).getZType();
+      RealType zbox = it.getZType();
       try {
         RealTupleType xyz = new RealTupleType(xbox, ybox, zbox);
-        ref.setData(new Gridded3DSet(xyz, samps, 5));
+        setData(new Gridded3DSet(xyz, samps, 5));
       }
       catch (VisADException exc) { exc.printStackTrace(); }
-      catch (RemoteException exc) { exc.printStackTrace(); }
     }
 
     if (doRefs) super.doTransform();
@@ -269,11 +265,7 @@ public class StackLink extends TransformLink {
 
       Data thumb = th == null ? null : th.getThumb(pos);
       DataReferenceImpl sliceRef = (DataReferenceImpl) references.elementAt(s);
-      if (thumbs) {
-        try { sliceRef.setData(thumb); }
-        catch (VisADException exc) { exc.printStackTrace(); }
-        catch (RemoteException exc) { exc.printStackTrace(); }
-      }
+      if (thumbs) setData(thumb, sliceRef);
       else {
         setMessage("loading full-resolution data" + current);
         Data d = getImageData(pos);
@@ -281,9 +273,7 @@ public class StackLink extends TransformLink {
           // fill in missing thumbnail
           th.setThumb(pos, th.makeThumb(d));
         }
-        try { sliceRef.setData(d); }
-        catch (VisADException exc) { exc.printStackTrace(); }
-        catch (RemoteException exc) { exc.printStackTrace(); }
+        setData(d, sliceRef);
       }
     }
     if (!thumbs) {
@@ -295,7 +285,7 @@ public class StackLink extends TransformLink {
 
   /** Gets 2D data from the specified data transform. */
   protected Data getImageData(int[] pos) {
-    Data d = trans.getData(pos, 2);
+    Data d = super.getImageData(pos);
     if (!(d instanceof FlatField)) return d;
     FlatField ff = (FlatField) d;
 
@@ -334,7 +324,7 @@ public class StackLink extends TransformLink {
     // get cursor's domain coordinates
     RealType xType = it.getXType();
     RealType yType = it.getYType();
-    RealType zType = ((StackHandler) handler).getZType();
+    RealType zType = it.getZType();
     double[] domain = VisUtil.cursorToDomain(display,
       new RealType[] {xType, yType, zType}, cur);
 

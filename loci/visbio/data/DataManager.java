@@ -156,7 +156,7 @@ public class DataManager extends LogicManager {
 
   protected static final String DATA_MANAGER = "VisBio_DataManager";
 
-  /** Writes the current state to the given OME-CA XML object. */
+  /** Writes the current state to the given XML object. */
   public void saveState(OMEElement ome) throws SaveException {
     Vector v = getDataList();
     int len = v.size();
@@ -178,7 +178,7 @@ public class DataManager extends LogicManager {
     }
   }
 
-  /** Restores the current state from the given OME-CA XML object. */
+  /** Restores the current state from the given XML object. */
   public void restoreState(OMEElement ome) throws SaveException {
     CAElement custom = ome.getCustomAttr();
 

@@ -80,7 +80,7 @@ public class ListOption extends BioOption {
 
   protected static final String LIST_OPTION = "VisBio_ListOption";
 
-  /** Writes the current state to the given OME-CA XML object. */
+  /** Writes the current state to the given XML object. */
   public void saveState(OMEElement ome) throws SaveException {
     CAElement custom = ome.getCustomAttr();
     custom.createElement(LIST_OPTION);
@@ -88,7 +88,7 @@ public class ListOption extends BioOption {
     custom.setAttribute("value", getValue());
   }
 
-  /** Restores the current state from the given OME-CA XML object. */
+  /** Restores the current state from the given XML object. */
   public void restoreState(OMEElement ome) throws SaveException {
     CAElement custom = ome.getCustomAttr();
     String[] names = custom.getAttributes(LIST_OPTION, "name");

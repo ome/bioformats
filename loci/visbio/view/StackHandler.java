@@ -30,10 +30,7 @@ import java.util.Vector;
 import loci.visbio.data.DataTransform;
 import loci.visbio.data.ImageTransform;
 
-import visad.Display;
-import visad.RealType;
-import visad.ScalarMap;
-import visad.VisADException;
+import visad.*;
 
 /**
  * Provides logic for linking data transforms
@@ -45,8 +42,6 @@ public class StackHandler extends TransformHandler {
 
   /** Starting FPS for animation for image stacks. */
   public static final int STACK_ANIMATION_RATE = 2;
-
-  public static final RealType ZBOX = RealType.getRealType("zbox");
 
 
   // -- Fields --
@@ -83,19 +78,16 @@ public class StackHandler extends TransformHandler {
   /** Gets maximum resolution per axis of stacked images. */
   public int getMaximumResolution() { return maxResolution; }
 
-  /** Gets custom Z axis mapping. */
-  public RealType getZType() { return ZBOX; }
-
 
   // -- TransformHandler API methods --
 
   /** Links the given data transform to the display. */
   public void addTransform(DataTransform trans) {
     TransformLink link;
-    if (trans.isValidDimension(3) || !(trans instanceof ImageTransform)) {
-      link = new TransformLink(this, trans);
+    if (trans instanceof ImageTransform && !trans.isValidDimension(3)) {
+      link = new StackLink(this, trans);
     }
-    else link = new StackLink(this, trans);
+    else link = new TransformLink(this, trans);
     links.add(link);
     rebuild();
     panel.addTransform(trans);
@@ -112,10 +104,18 @@ public class StackHandler extends TransformHandler {
 
   /** Adds any required custom mappings to the display. */
   protected void doCustomMaps() throws VisADException, RemoteException {
-    // create a default Z axis mapping for use with yellow bounding boxes
-    ScalarMap zmap = new ScalarMap(ZBOX, Display.ZAxis);
-    zmap.setRange(-1, 1);
-    window.getDisplay().addMap(zmap);
+    // create default Z axis mappings for use with yellow bounding boxes
+    Display display = window.getDisplay();
+    int size = links.size();
+    for (int i=0; i<size; i++) {
+      TransformLink link = (TransformLink) links.elementAt(i);
+      DataTransform trans = link.getTransform();
+      if (!(trans instanceof ImageTransform)) continue;
+      RealType zType = ((ImageTransform) trans).getZType();
+      ScalarMap zMap = new ScalarMap(zType, Display.ZAxis);
+      zMap.setRange(-1, 1);
+      display.addMap(zMap);
+    }
   }
 
 }

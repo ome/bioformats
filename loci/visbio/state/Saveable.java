@@ -31,10 +31,10 @@ import loci.ome.xml.OMEElement;
  */
 public interface Saveable {
 
-  /** Writes the current state to the given OME-CA XML object. */
+  /** Writes the current state to the given XML object. */
   void saveState(OMEElement ome) throws SaveException;
 
-  /** Restores the current state from the given OME-CA XML object. */
+  /** Restores the current state from the given XML object. */
   void restoreState(OMEElement ome) throws SaveException;
 
 }

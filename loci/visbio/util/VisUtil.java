@@ -95,6 +95,26 @@ public abstract class VisUtil {
     return collapse;
   }
 
+  /** Converts a FlatField's MathType into the one given (if compatible). */
+  public static FlatField switchType(FlatField field, FunctionType newType)
+    throws VisADException, RemoteException
+  {
+    if (!newType.equalsExceptName(field.getType())) return null;
+    Set domainSet = field.getDomainSet();
+    CoordinateSystem rangeCoordSys = field.getRangeCoordinateSystem()[0];
+    Set[] rangeSets = field.getRangeSets();
+    Unit[][] rangeUnits = field.getRangeUnits();
+    Unit[] newRangeUnits = new Unit[rangeUnits.length];
+    for (int i=0; i<rangeUnits.length; i++) {
+      newRangeUnits[i] = rangeUnits[i][0];
+    }
+    float[][] samples = field.getFloats(false);
+    FlatField newField = new FlatField(newType,
+      domainSet, rangeCoordSys, rangeSets, newRangeUnits);
+    newField.setSamples(samples, false);
+    return newField;
+  }
+
 
   // -- Display utility methods --
 
@@ -194,23 +214,39 @@ public abstract class VisUtil {
 
   /**
    * Gets an array of ScalarMaps from the given display,
-   * corresponding to the specified DisplayRealTypes.
+   * matching the specified RealTypes and/or DisplayRealTypes.
    */
   public static ScalarMap[] getMaps(DisplayImpl display,
-    DisplayRealType[] drt)
+    ScalarType[] st, DisplayRealType[] drt)
   {
     Vector v = new Vector();
     Vector maps = display.getMapVector();
     int size = maps.size();
     for (int i=0; i<size; i++) {
       ScalarMap map = (ScalarMap) maps.elementAt(i);
-      DisplayRealType type = map.getDisplayScalar();
-      for (int j=0; j<drt.length; j++) {
-        if (type.equals(drt[j])) {
-          v.add(map);
-          break;
+      if (st != null) {
+        boolean success = false;
+        ScalarType type = map.getScalar();
+        for (int j=0; j<st.length; j++) {
+          if (type.equals(st[j])) {
+            success = true;
+            break;
+          }
         }
+        if (!success) continue;
       }
+      if (drt != null) {
+        boolean success = false;
+        DisplayRealType type = map.getDisplayScalar();
+        for (int j=0; j<drt.length; j++) {
+          if (type.equals(drt[j])) {
+            success = true;
+            break;
+          }
+        }
+        if (!success) continue;
+      }
+      v.add(map);
     }
     ScalarMap[] matches = new ScalarMap[v.size()];
     v.copyInto(matches);

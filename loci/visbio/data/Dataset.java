@@ -32,8 +32,6 @@ import java.io.IOException;
 
 import java.math.BigInteger;
 
-import java.rmi.RemoteException;
-
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -44,9 +42,7 @@ import loci.ome.xml.OMEElement;
 
 import loci.visbio.state.Dynamic;
 
-import loci.visbio.util.MathUtil;
-import loci.visbio.util.ObjectUtil;
-import loci.visbio.util.SwingUtil;
+import loci.visbio.util.*;
 
 import visad.*;
 
@@ -70,7 +66,7 @@ import visad.data.BadFormException;
  * application, and just loads data as necessary to return whatever the
  * application requests, according to the DataTransform API.
  */
-public class Dataset extends DataTransform implements ImageTransform {
+public class Dataset extends ImageTransform {
 
   // -- Static fields --
 
@@ -184,6 +180,18 @@ public class Dataset extends DataTransform implements ImageTransform {
   public Hashtable[] getMetadata() { return metadata; }
 
 
+  // -- ImageTransform API methods --
+
+  /** Gets width of each image. */
+  public int getImageWidth() { return resX; }
+
+  /** Gets height of each image. */
+  public int getImageHeight() { return resY; }
+
+  /** Gets number of range components at each pixel. */
+  public int getRangeCount() { return numRange; }
+
+
   // -- Static DataTransform API methods --
 
   /** Creates a new dataset, with user interaction. */
@@ -231,7 +239,7 @@ public class Dataset extends DataTransform implements ImageTransform {
    * Indicates whether this transform type would accept
    * the given transform as its parent transform.
    */
-  public static boolean isValidParent(DataTransform data) { return true; }
+  public static boolean isValidParent(DataTransform data) { return false; }
 
   /** Indicates whether this transform type requires a parent transform. */
   public static boolean isParentRequired() { return false; }
@@ -275,7 +283,7 @@ public class Dataset extends DataTransform implements ImageTransform {
       catch (IOException exc) {
         String msg = exc.getMessage();
         if (msg != null && msg.indexOf("Bad file descriptor") >= 0) {
-          // trap for catching sporadic exception; try again!
+          // HACK - trap for catching sporadic exception; try again!
           if (tries == 0) {
             System.err.println("Unable to read image #" + (imgIndex + 1) +
               " from file " + filename);
@@ -303,22 +311,6 @@ public class Dataset extends DataTransform implements ImageTransform {
 
   /** Gets whether this transform provides data of the given dimensionality. */
   public boolean isValidDimension(int dim) { return dim == 2; }
-
-  /** Retrieves a set of mappings for displaying this dataset effectively. */
-  public ScalarMap[] getSuggestedMaps() {
-    ScalarMap[] maps = new ScalarMap[2 + numRange];
-    try {
-      maps[0] = new ScalarMap(spatial[0], Display.XAxis);
-      maps[1] = new ScalarMap(spatial[1], Display.YAxis);
-      for (int i=0; i<numRange; i++) {
-        maps[i + 2] = new ScalarMap(color[i], Display.RGBA);
-        maps[i + 2].setRange(0, 255);
-      }
-    }
-    catch (VisADException exc) { exc.printStackTrace(); }
-    catch (RemoteException exc) { exc.printStackTrace(); }
-    return maps;
-  }
 
   /**
    * Gets a string id uniquely describing this data transform at the given
@@ -405,7 +397,7 @@ public class Dataset extends DataTransform implements ImageTransform {
 
   // -- DataTransform API methods - state logic --
 
-  /** Writes the current state to the given OME-CA XML object. */
+  /** Writes the current state to the given XML object. */
   public void saveState(OMEElement ome, int id, Vector list) {
     super.saveState(ome, id, list);
 
@@ -415,7 +407,7 @@ public class Dataset extends DataTransform implements ImageTransform {
     custom.setAttribute("ids", ObjectUtil.arrayToString(ids));
   }
 
-  /** Restores the current state from the given OME-CA XML object. */
+  /** Restores the current state from the given XML object. */
   public int restoreState(OMEElement ome, int id, Vector list) {
     int index = super.restoreState(ome, id, list);
     if (index < 0) return index;
@@ -428,29 +420,6 @@ public class Dataset extends DataTransform implements ImageTransform {
       custom.getAttributes(DATA_TRANSFORM, "ids")[index]);
 
     return index;
-  }
-
-
-  // -- ImageTransform API methods --
-
-  /** Gets width of each image. */
-  public int getImageWidth() { return resX; }
-
-  /** Gets height of each image. */
-  public int getImageHeight() { return resY; }
-
-  /** Gets number of range components at each pixel. */
-  public int getRangeCount() { return numRange; }
-
-  /** Gets type associated with image X component. */
-  public RealType getXType() { return spatial[0]; }
-
-  /** Gets type associated with image Y component. */
-  public RealType getYType() { return spatial[1]; }
-
-  /** Gets types associated with image range components. */
-  public RealType[] getRangeTypes() {
-    return (RealType[]) ObjectUtil.copy(color);
   }
 
 

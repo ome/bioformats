@@ -41,6 +41,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import loci.visbio.data.DataManager;
 import loci.visbio.data.DataTransform;
+import loci.visbio.data.ImageTransform;
 
 import loci.visbio.util.FormsUtil;
 import loci.visbio.util.LAFUtil;
@@ -70,6 +71,9 @@ public class TransformPanel extends JPanel
 
   /** Button for removing selected data transform. */
   protected JButton removeTransform;
+
+  /** Button for editing colors for the selected data transform. */
+  protected JButton dataColors;
 
   /** Button for showing controls for the selected data transform. */
   protected JButton dataControls;
@@ -148,6 +152,7 @@ public class TransformPanel extends JPanel
     int index = transformList.getSelectedIndex();
     boolean b = data != null;
     removeTransform.setEnabled(b);
+    dataColors.setEnabled(b && data instanceof ImageTransform);
     dataControls.setEnabled(b && data.getControls() != null);
     moveUp.setEnabled(b && index > 0);
     moveDown.setEnabled(b && index < transformModel.getSize() - 1);
@@ -203,6 +208,15 @@ public class TransformPanel extends JPanel
     else if (cmd.equals("removeTransform")) {
       DataTransform data = (DataTransform) transformList.getSelectedValue();
       if (data != null) handler.getWindow().removeTransform(data);
+    }
+    else if (cmd.equals("dataColors")) {
+      //ColorHandler colorHandler = handler.getWindow().getColorHandler();
+      // CTR START HERE pop up color dialog box
+      DataTransform data = (DataTransform) transformList.getSelectedValue();
+      if (data != null) {
+        TransformLink link = handler.getLink(data);
+        link.getColorHandler().showColorDialog();
+      }
     }
     else if (cmd.equals("dataControls")) {
       DataManager dm = (DataManager)
@@ -296,11 +310,19 @@ public class TransformPanel extends JPanel
     removeTransform.setToolTipText("Removes data from this display");
     removeTransform.setEnabled(false);
 
+    // button for editing a data transform's colors
+    dataColors = new JButton("Colors");
+    dataColors.setActionCommand("dataColors");
+    dataColors.addActionListener(this);
+    if (!LAFUtil.isMacLookAndFeel()) dataColors.setMnemonic('c');
+    dataColors.setToolTipText("Edits data's color scheme");
+    dataColors.setEnabled(false);
+
     // button for displaying a data transform's controls
     dataControls = new JButton("Controls");
     dataControls.setActionCommand("dataControls");
     dataControls.addActionListener(this);
-    if (!LAFUtil.isMacLookAndFeel()) dataControls.setMnemonic('c');
+    if (!LAFUtil.isMacLookAndFeel()) dataControls.setMnemonic('o');
     dataControls.setToolTipText("Shows data's controls");
     dataControls.setEnabled(false);
 
@@ -333,6 +355,8 @@ public class TransformPanel extends JPanel
     bsb.addGridded(addTransform);
     bsb.addRelatedGap();
     bsb.addGridded(removeTransform);
+    bsb.addRelatedGap();
+    bsb.addGridded(dataColors);
     bsb.addRelatedGap();
     bsb.addGridded(dataControls);
     bsb.addRelatedGap();

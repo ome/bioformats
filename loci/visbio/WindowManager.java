@@ -235,7 +235,7 @@ public class WindowManager extends LogicManager implements WindowListener {
 
   protected static final String WINDOW_PARAMS = "VisBio_WindowParams";
 
-  /** Writes the current state to the given OME-CA XML object. */
+  /** Writes the current state to the given XML object. */
   public void saveState(OMEElement ome) throws SaveException {
     // save window positions
     Enumeration en = windows.keys();
@@ -254,7 +254,7 @@ public class WindowManager extends LogicManager implements WindowListener {
     }
   }
 
-  /** Restores the current state from the given OME-CA XML object. */
+  /** Restores the current state from the given XML object. */
   public void restoreState(OMEElement ome) throws SaveException {
     // restore window positions
     CAElement custom = ome.getCustomAttr();

@@ -193,7 +193,7 @@ public class OptionManager extends LogicManager {
 
   // -- Saveable API methods --
 
-  /** Writes the current state to the given OME-CA XML object. */
+  /** Writes the current state to the given XML object. */
   public void saveState(OMEElement ome) throws SaveException {
     for (int i=0; i<list.size(); i++) {
       BioOption option = (BioOption) list.elementAt(i);
@@ -201,7 +201,7 @@ public class OptionManager extends LogicManager {
     }
   }
 
-  /** Restores the current state from the given OME-CA XML object. */
+  /** Restores the current state from the given XML object. */
   public void restoreState(OMEElement ome) throws SaveException {
     for (int i=0; i<list.size(); i++) {
       BioOption option = (BioOption) list.elementAt(i);

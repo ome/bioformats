@@ -37,12 +37,16 @@ import loci.visbio.state.Dynamic;
 import loci.visbio.util.MathUtil;
 import loci.visbio.util.ObjectUtil;
 
-import visad.Data;
-import visad.DisplayEvent;
-import visad.ScalarMap;
+import visad.*;
 
 /** DataTransform is the superclass of all data transform types. */
 public abstract class DataTransform implements Dynamic {
+
+  // -- Static fields --
+
+  /** Next free data transform ID number (for unique MathType numbering). */
+  private static int nextId = 0;
+
 
   // -- Fields --
 
@@ -51,6 +55,9 @@ public abstract class DataTransform implements Dynamic {
 
   /** Name of this transform. */
   protected String name;
+
+  /** ID number for this data transform (for unique MathType numbering). */
+  protected int id;
 
   // Note: All subclasses must populate "lengths" and "dims" fields,
   //       then call makeLabels to populate dimensional axis labels list.
@@ -83,6 +90,7 @@ public abstract class DataTransform implements Dynamic {
   public DataTransform(DataTransform parent, String name) {
     this.parent = parent;
     this.name = name;
+    id = nextId++;
   }
 
 
@@ -107,7 +115,7 @@ public abstract class DataTransform implements Dynamic {
   /** Gets whether this transform provides data of the given dimensionality. */
   public abstract boolean isValidDimension(int dim);
 
-  /** Retrieves a set of mappings for displaying this data effectively. */
+  /** Retrieves a set of mappings for displaying this transform effectively. */
   public abstract ScalarMap[] getSuggestedMaps();
 
   /**
@@ -123,6 +131,9 @@ public abstract class DataTransform implements Dynamic {
 
   /** Gets the name of this transform. */
   public String getName() { return name; }
+
+  /** Gets the data transform ID (for constructing unique MathTypes). */
+  public int getTransformId() { return id; }
 
   /** Gets length of each dimensional axis. */
   public int[] getLengths() { return ObjectUtil.copy(lengths); }
@@ -268,7 +279,7 @@ public abstract class DataTransform implements Dynamic {
 
   protected static final String DATA_TRANSFORM = "VisBio_DataTransform";
 
-  /** Writes the current state to the given OME-CA XML object. */
+  /** Writes the current state to the given XML object. */
   public void saveState(OMEElement ome, int id, Vector list) {
     CAElement custom = ome.getCustomAttr();
     custom.createElement(DATA_TRANSFORM);
@@ -279,7 +290,7 @@ public abstract class DataTransform implements Dynamic {
     custom.setAttribute("dims", ObjectUtil.arrayToString(dims));
   }
 
-  /** Restores the current state from the given OME-CA XML object. */
+  /** Restores the current state from the given XML object. */
   public int restoreState(OMEElement ome, int id, Vector list) {
     CAElement custom = ome.getCustomAttr();
     String[] idList = custom.getAttributes(DATA_TRANSFORM, "id");

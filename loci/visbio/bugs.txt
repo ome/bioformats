@@ -17,18 +17,6 @@ Bugfixes and enhancements:
   - Change color dialog to include more alpha tools.
   - Add transparency controls to left side of color dialog box.
 
-  - Change each data object to have its own MathType for better color controls.
-    Unique RealTypes of the form x_1, x_2, x_3, ..., y_1, y_2, y_3, ...,
-    rgba1_1, rgba1_2, rgba1_3, ..., rgba2_1, rgba2_2, rgba2_3, ...
-    This ensures that every dataset has unique RealTypes, for independent
-    color and spatial controls.
-
-    This will also allow the getSuggestedMaps method to be eliminated, since
-    what should be mapped is obvious from the type names. However, it requires
-    all data transforms to return data with MathTypes containing RealTypes of
-    the standard form. Each created DataTransform has a unique ID number that
-    is used for choosing the RealType names.
-
   - Make Up and Down buttons in display window's controls actually work.
 
   - Command+? Macintosh Help shortcut does not function.
@@ -56,3 +44,16 @@ Bugfixes and enhancements:
     loci.ome package. The only issue is how/whether to handle various file
     formats. Well, we can handle them easily if this command line utility is
     simply packaged with VisBio, since visad.jar will be available then.
+
+  - Make sure no two data objects can have the same name. If one already does,
+    append "2", "3", etc., to the end until we find a new name. If they try to
+    create one with the same name as an existing one, don't let them do it.
+
+    This avoids weird issues with MathType aliasing, as well as general
+    confusion. Probably also don't let them create two displays with the same
+    name (use same strategy), because otherwise state might not restore
+    correctly.
+
+    And actually, we can probably avoid the whole aliasing thing altogether
+    once it is guaranteed that no two data objects will have the same name.
+    We can just use the currently aliased names as the "real" names.

@@ -52,6 +52,9 @@ public class TransformLink
   /** Data transform linked to the display. */
   protected DataTransform trans;
 
+  /** Associated handler for managing this link's color settings. */
+  protected ColorHandler colorHandler;
+
   /** Data reference linking data to the display. */
   protected DataReferenceImpl ref;
 
@@ -98,6 +101,7 @@ public class TransformLink
   public TransformLink(TransformHandler h, DataTransform t) {
     handler = h;
     trans = t;
+    colorHandler = new ColorHandler(this);
     visible = true;
     initState(null);
   }
@@ -105,8 +109,14 @@ public class TransformLink
 
   // -- TransformLink API methods --
 
+  /** Gets the link's transform handler. */
+  public TransformHandler getHandler() { return handler; }
+
   /** Gets the link's data transform. */
   public DataTransform getTransform() { return trans; }
+
+  /** Gets the link's color handler. */
+  public ColorHandler getColorHandler() { return colorHandler; }
 
   /** Gets the link's reference. */
   public DataReferenceImpl getReference() { return ref; }
@@ -149,6 +159,7 @@ public class TransformLink
     Vector dataList = dm.getDataList();
     int ndx = dataList.indexOf(trans);
     window.setAttr(attrName + "_dataIndex", "" + ndx);
+    colorHandler.saveState(attrName);
     window.setAttr(attrName + "_visible", "" + isVisible());
   }
 
@@ -159,6 +170,7 @@ public class TransformLink
     Vector dataList = dm.getDataList();
     int dataIndex = Integer.parseInt(window.getAttr(attrName + "_dataIndex"));
     trans = (DataTransform) dataList.elementAt(dataIndex);
+    colorHandler.restoreState(attrName);
     visible = window.getAttr(attrName + "_visible").equalsIgnoreCase("true");
   }
 
@@ -223,8 +235,10 @@ public class TransformLink
     if (link != null) {
       if (trans != null) trans.removeTransformListener(this);
       trans = link.getTransform();
+      colorHandler.initState(link.getColorHandler());
       visible = link.isVisible();
     }
+    else colorHandler.initState(null);
 
     // remove old data reference
     DisplayImpl display = handler.getWindow().getDisplay();
@@ -323,11 +337,7 @@ public class TransformLink
     int[] pos = handler.getPos(trans);
     ThumbnailHandler th = trans.getThumbHandler();
     Data thumb = th == null ? null : th.getThumb(pos);
-    if (thumbs) {
-      try { ref.setData(thumb); }
-      catch (VisADException exc) { exc.printStackTrace(); }
-      catch (RemoteException exc) { exc.printStackTrace(); }
-    }
+    if (thumbs) setData(thumb);
     else {
       setMessage("loading full-resolution data");
       Data d = getImageData(pos);
@@ -337,15 +347,32 @@ public class TransformLink
       }
       setMessage("burning in full-resolution data");
       clearWhenDone = true;
-      try { ref.setData(d); }
-      catch (VisADException exc) { exc.printStackTrace(); }
-      catch (RemoteException exc) { exc.printStackTrace(); }
-      handler.getWindow().getColorHandler().reAutoScale();
+      setData(d);
+      // CTR TODO update this:
+      //handler.getWindow().getColorHandler().reAutoScale();
     }
   }
 
   /** Gets the transform's data at the given dimensional position. */
   protected Data getImageData(int[] pos) { return trans.getData(pos, 2); }
+
+  /** Assigns the given data object to the data reference. */
+  protected void setData(Data d) { setData(d, ref); }
+
+  /** Assigns the given data object to the given data reference. */
+  protected void setData(Data d, DataReference dataRef) {
+    if (d instanceof FlatField && trans instanceof ImageTransform) {
+      // special case: use ImageTransform's suggested MathType instead
+      FlatField ff = (FlatField) d;
+      FunctionType ftype = ((ImageTransform) trans).getType();
+      try { d = VisUtil.switchType(ff, ftype); }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
+    }
+    try { dataRef.setData(d); }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
+  }
 
   /** Computes range values at the current cursor location. */
   protected void computeCursor() {

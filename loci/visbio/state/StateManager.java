@@ -244,7 +244,7 @@ public class StateManager extends LogicManager {
 
   // -- Saveable API methods --
 
-  /** Writes the current state to the given OME-CA XML object. */
+  /** Writes the current state to the given XML object. */
   public void saveState(OMEElement ome) throws SaveException {
     LogicManager[] lm = bio.getManagers();
     for (int i=0; i<lm.length; i++) {
@@ -253,7 +253,7 @@ public class StateManager extends LogicManager {
     }
   }
 
-  /** Restores the current state from the given OME-CA XML object. */
+  /** Restores the current state from the given XML object. */
   public void restoreState(OMEElement ome) throws SaveException {
     restoring = true;
     try {
@@ -342,7 +342,7 @@ public class StateManager extends LogicManager {
 
   /** Saves the state to the undo stack and the VisBio state temp file. */
   private void saveState(String msg, boolean init, boolean crashed) {
-    // capture save state results to an OME-CA XML object
+    // capture save state results to an XML object
     OMEElement ome = new OMEElement();
     try { saveState(ome); }
     catch (SaveException exc) { exc.printStackTrace(); }

@@ -33,7 +33,7 @@ public class ProgramState {
   /** Message to be displayed as part of "Undo" and "Redo" menu items. */
   public String msg;
 
-  /** State object (OME-CA XML) for use in state restoration. */
+  /** State object (XML) for use in state restoration. */
   public OMEElement state;
 
 

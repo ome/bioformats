@@ -40,7 +40,7 @@ import loci.visbio.util.ObjectUtil;
 import visad.*;
 
 /** DataSampling is a resampling of another transform. */
-public class DataSampling extends DataTransform implements ImageTransform {
+public class DataSampling extends ImageTransform {
 
   // -- Fields --
 
@@ -127,6 +127,18 @@ public class DataSampling extends DataTransform implements ImageTransform {
 
   /** Gets included range components. */
   public boolean[] getRange() { return range; }
+
+
+  // -- ImageTransform API methods --
+
+  /** Gets width of each image. */
+  public int getImageWidth() { return resX; }
+
+  /** Gets height of each image. */
+  public int getImageHeight() { return resY; }
+
+  /** Gets number of range components at each pixel. */
+  public int getRangeCount() { return numRange; }
 
 
   // -- Static DataTransform API methods --
@@ -238,7 +250,7 @@ public class DataSampling extends DataTransform implements ImageTransform {
 
   // -- DataTransform API methods - state logic --
 
-  /** Writes the current state to the given OME-CA XML object. */
+  /** Writes the current state to the given XML object. */
   public void saveState(OMEElement ome, int id, Vector list) {
     super.saveState(ome, id, list);
 
@@ -251,7 +263,7 @@ public class DataSampling extends DataTransform implements ImageTransform {
     custom.setAttribute("range", ObjectUtil.arrayToString(range));
   }
 
-  /** Restores the current state from the given OME-CA XML object. */
+  /** Restores the current state from the given XML object. */
   public int restoreState(OMEElement ome, int id, Vector list) {
     int index = super.restoreState(ome, id, list);
     if (index < 0) return index;
@@ -343,29 +355,6 @@ public class DataSampling extends DataTransform implements ImageTransform {
    * another object with a matching state.
    */
   public void discard() { }
-
-
-  // -- ImageTransform API methods --
-
-  /** Gets width of each image. */
-  public int getImageWidth() { return resX; }
-
-  /** Gets height of each image. */
-  public int getImageHeight() { return resY; }
-
-  /** Gets number of range components at each pixel. */
-  public int getRangeCount() { return numRange; }
-
-  /** Gets type associated with image X component. */
-  public RealType getXType() { return ((ImageTransform) parent).getXType(); }
-
-  /** Gets type associated with image Y component. */
-  public RealType getYType() { return ((ImageTransform) parent).getYType(); }
-
-  /** Gets types associated with image range components. */
-  public RealType[] getRangeTypes() {
-    return ((ImageTransform) parent).getRangeTypes();
-  }
 
 
   // -- Utility methods --

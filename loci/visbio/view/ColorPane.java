@@ -44,16 +44,9 @@ import javax.swing.*;
 
 import javax.swing.border.TitledBorder;
 
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.event.*;
 
-import loci.visbio.util.ColorUtil;
-import loci.visbio.util.DialogPane;
-import loci.visbio.util.FormsUtil;
-import loci.visbio.util.LAFUtil;
-import loci.visbio.util.VisUtil;
+import loci.visbio.util.*;
 
 import visad.*;
 
@@ -149,7 +142,7 @@ public class ColorPane extends DialogPane
 
   /** Constructs a dialog for adjusting color parameters. */
   public ColorPane(ColorHandler h) {
-    super("Edit colors - " + h.getWindow().getTitle());
+    super("Edit colors - " + h.getWindow().getName());
     handler = h;
 
     // LUT file chooser

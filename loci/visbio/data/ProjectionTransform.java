@@ -41,9 +41,7 @@ import visad.*;
  * ProjectionTransform performs a maximum intensity projection
  * across a given dimensional axis.
  */
-public class ProjectionTransform extends DataTransform
-  implements ImageTransform
-{
+public class ProjectionTransform extends ImageTransform {
 
   // -- Fields --
 
@@ -80,6 +78,24 @@ public class ProjectionTransform extends DataTransform
 
     // signal parameter change to listeners
     notifyListeners(new TransformEvent(this));
+  }
+
+
+  // -- ImageTransform API methods --
+
+  /** Gets width of each image. */
+  public int getImageWidth() {
+    return ((ImageTransform) parent).getImageWidth();
+  }
+
+  /** Gets height of each image. */
+  public int getImageHeight() {
+    return ((ImageTransform) parent).getImageHeight();
+  }
+
+  /** Gets number of range components at each pixel. */
+  public int getRangeCount() {
+    return ((ImageTransform) parent).getRangeCount();
   }
 
 
@@ -167,7 +183,7 @@ public class ProjectionTransform extends DataTransform
 
   // -- DataTransform API methods - state logic --
 
-  /** Writes the current state to the given OME-CA XML object. */
+  /** Writes the current state to the given XML object. */
   public void saveState(OMEElement ome, int id, Vector list) {
     super.saveState(ome, id, list);
 
@@ -175,7 +191,7 @@ public class ProjectionTransform extends DataTransform
     custom.setAttribute("projectAxis", "" + axis);
   }
 
-  /** Restores the current state from the given OME-CA XML object. */
+  /** Restores the current state from the given XML object. */
   public int restoreState(OMEElement ome, int id, Vector list) {
     int index = super.restoreState(ome, id, list);
     if (index < 0) return index;
@@ -231,35 +247,6 @@ public class ProjectionTransform extends DataTransform
    * another object with a matching state.
    */
   public void discard() { }
-
-
-  // -- ImageTransform API methods --
-
-  /** Gets width of each image. */
-  public int getImageWidth() {
-    return ((ImageTransform) parent).getImageWidth();
-  }
-
-  /** Gets height of each image. */
-  public int getImageHeight() {
-    return ((ImageTransform) parent).getImageHeight();
-  }
-
-  /** Gets number of range components at each pixel. */
-  public int getRangeCount() {
-    return ((ImageTransform) parent).getRangeCount();
-  }
-
-  /** Gets type associated with image X component. */
-  public RealType getXType() { return ((ImageTransform) parent).getXType(); }
-
-  /** Gets type associated with image Y component. */
-  public RealType getYType() { return ((ImageTransform) parent).getYType(); }
-
-  /** Gets types associated with image range components. */
-  public RealType[] getRangeTypes() {
-    return ((ImageTransform) parent).getRangeTypes();
-  }
 
 
   // -- Utility methods --

@@ -53,13 +53,13 @@ public class DisplayPosition implements Dynamic {
 
   // -- DisplayPosition API methods - state logic --
 
-  /** Writes the current state to the given OME-CA XML object. */
+  /** Writes the current state to the given XML object. */
   public void saveState(DisplayWindow window, String attrName) {
     window.setAttr(attrName + "_name", name);
     window.setAttr(attrName + "_matrix", ObjectUtil.arrayToString(matrix));
   }
 
-  /** Restores the current state from the given OME-CA XML object. */
+  /** Restores the current state from the given XML object. */
   public void restoreState(DisplayWindow window, String attrName) {
     name = window.getAttr(attrName + "_name");
     matrix = ObjectUtil.stringToDoubleArray(

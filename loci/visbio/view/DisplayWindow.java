@@ -75,9 +75,6 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
   /** Handles logic for controlling the VisAD display's view. */
   protected ViewHandler viewHandler;
 
-  /** Handles logic for altering the VisAD display's color settings. */
-  protected ColorHandler colorHandler;
-
   /** Handles logic for capturing the display screenshots and movies. */
   protected CaptureHandler captureHandler;
 
@@ -161,9 +158,6 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
   /** Gets the view handler. */
   public ViewHandler getViewHandler() { return viewHandler; }
 
-  /** Gets the color handler. */
-  public ColorHandler getColorHandler() { return colorHandler; }
-
   /** Gets the capture handler. */
   public CaptureHandler getCaptureHandler() { return captureHandler; }
 
@@ -180,7 +174,6 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
   public void addTransform(DataTransform trans) {
     transformHandler.addTransform(trans);
     viewHandler.guessAspect();
-    colorHandler.initColors();
     refresh();
     manager.getVisBio().generateEvent(manager,
       "add data object to display", true);
@@ -215,7 +208,7 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
   protected CAElement custom;
   protected int index;
 
-  /** Writes the current state to the given OME-CA XML object. */
+  /** Writes the current state to the given XML object. */
   public void saveState(OMEElement ome, int id) {
     custom = ome.getCustomAttr();
     custom.createElement(DISPLAY_DIALOG);
@@ -223,12 +216,11 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
     setAttr("name", name);
     setAttr("threeD", "" + threeD);
     viewHandler.saveState();
-    colorHandler.saveState();
     captureHandler.saveState();
     transformHandler.saveState();
   }
 
-  /** Restores the current state from the given OME-CA XML object. */
+  /** Restores the current state from the given XML object. */
   public void restoreState(OMEElement ome, int id) {
     custom = ome.getCustomAttr();
     String[] idList = custom.getAttributes(DISPLAY_DIALOG, "id");
@@ -255,7 +247,6 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
 
     createHandlers();
     viewHandler.restoreState();
-    colorHandler.restoreState();
     captureHandler.restoreState();
     transformHandler.restoreState();
   }
@@ -303,7 +294,6 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
 
     return ObjectUtil.objectsEqual(name, window.name) &&
       viewHandler.matches(window.viewHandler) &&
-      colorHandler.matches(window.colorHandler) &&
       captureHandler.matches(window.captureHandler) &&
       transformHandler.matches(window.transformHandler);
   }
@@ -341,7 +331,6 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
     createHandlers();
     if (window == null) {
       viewHandler.initState(null);
-      colorHandler.initState(null);
       captureHandler.initState(null);
       transformHandler.initState(null);
     }
@@ -349,7 +338,6 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
       // handlers' initState methods are smart enough to reinitialize
       // their components only when necessary, to ensure efficiency
       viewHandler.initState(window.viewHandler);
-      colorHandler.initState(window.colorHandler);
       captureHandler.initState(window.captureHandler);
       transformHandler.initState(window.transformHandler);
     }
@@ -376,7 +364,7 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
       pane.add(display.getComponent(), BorderLayout.CENTER);
       controls.setContentPane(FormsUtil.makeColumn(new Object[] {
         viewHandler.getPanel(),
-        FormsUtil.makeRow(colorHandler.getPanel(), captureHandler.getPanel()),
+        captureHandler.getPanel(),
         "Data", transformHandler.getPanel(), sliders}, null, true));
       pack();
       repack();
@@ -396,7 +384,6 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
   /** Constructs logic handlers. */
   protected void createHandlers() {
     if (viewHandler == null) viewHandler = new ViewHandler(this);
-    if (colorHandler == null) colorHandler = new ColorHandler(this);
     if (captureHandler == null) captureHandler = new CaptureHandler(this);
     if (transformHandler == null) {
       transformHandler = threeD ?

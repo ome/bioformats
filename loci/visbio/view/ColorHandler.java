@@ -23,9 +23,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.view;
 
+import java.rmi.RemoteException;
+
 import java.util.Arrays;
 
 import loci.visbio.VisBioFrame;
+
+import loci.visbio.data.DataTransform;
+import loci.visbio.data.ImageTransform;
+import loci.visbio.data.ThumbnailHandler;
 
 import loci.visbio.util.ColorUtil;
 import loci.visbio.util.ObjectUtil;
@@ -33,7 +39,7 @@ import loci.visbio.util.VisUtil;
 
 import visad.*;
 
-/** Provides logic for controlling a VisAD display's color settings. */
+/** Provides logic for controlling a TransformLink's color settings. */
 public class ColorHandler {
 
   // -- Constants --
@@ -47,11 +53,11 @@ public class ColorHandler {
 
   // -- Fields --
 
-  /** Associated display window. */
-  protected DisplayWindow window;
+  /** Associated link between data object and display. */
+  protected TransformLink link;
 
-  /** GUI controls for color handler. */
-  protected ColorPanel panel;
+  /** Dialog pane for adjusting color settings. */
+  protected ColorPane colorPane;
 
   /** Brightness and contrast of images. */
   protected int brightness, contrast;
@@ -80,9 +86,9 @@ public class ColorHandler {
 
   // -- Constructor --
 
-  /** Creates a display color handler. */
-  public ColorHandler(DisplayWindow dw) {
-    window = dw;
+  /** Creates a color handler for the given transform link. */
+  public ColorHandler(TransformLink link) {
+    this.link = link;
 
     // default color settings
     brightness = NORMAL_BRIGHTNESS;
@@ -94,25 +100,30 @@ public class ColorHandler {
 
   // -- ColorHandler API methods --
 
-  /** Gets associated display window. */
-  public DisplayWindow getWindow() { return window; }
+  /** Gets associated transform link. */
+  public TransformLink getLink() { return link; }
 
-  /** Gets GUI controls for this color handler. */
-  public ColorPanel getPanel() { return panel; }
+  /** Gets GUI control pane for this color handler. */
+  public ColorPane getColorPane() { return colorPane; }
 
-  /** Gets color mappings for this color handler's display. */
+  /** Gets the VisBio display window affected by this color handler. */
+  public DisplayWindow getWindow() { return link.getHandler().getWindow(); }
+
+  /** Gets color mappings for this color handler's transform link. */
   public ScalarMap[] getMaps() {
-    DisplayImpl display = window.getDisplay();
-    return display == null ? null : VisUtil.getMaps(display,
+    DisplayImpl display = getWindow().getDisplay();
+    DataTransform trans = link.getTransform();
+    if (!(trans instanceof ImageTransform)) return null;
+    ImageTransform it = (ImageTransform) trans;
+    return VisUtil.getMaps(display, it.getRangeTypes(),
       new DisplayRealType[] {Display.RGB, Display.RGBA});
   }
 
   /** Guesses at good initial color mappings and applies them. */
   public void initColors() {
-    panel.refreshPreviewData();
+    refreshPreviewData();
 
     // apply default color table behavior
-    ColorPane colorPane = panel.getColorPane();
     red = colorPane.getRed();
     green = colorPane.getGreen();
     blue = colorPane.getBlue();
@@ -127,6 +138,38 @@ public class ColorHandler {
     fixed = new boolean[maps.length];
     Arrays.fill(fixed, false);
     setRanges(lo, hi, fixed);
+  }
+
+  /** Refreshes preview data from the transform link. */
+  public void refreshPreviewData() {
+    DataTransform trans = link.getTransform();
+    ThumbnailHandler thumbs = trans.getThumbHandler();
+    if (thumbs != null) {
+      int[] pos = link.getHandler().getPos(trans);
+      try { colorPane.setPreviewData(thumbs.getThumb(pos)); }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
+    }
+  }
+
+  /**
+   * Displays the color dialog pane onscreen and
+   * alters the color scheme as requested.
+   */
+  public void showColorDialog() {
+    refreshPreviewData();
+    DisplayWindow window = getWindow();
+    if (colorPane.showDialog(window) == ColorPane.APPROVE_OPTION) {
+      DisplayImpl d = window.getDisplay();
+      VisUtil.setDisplayDisabled(d, true);
+      setParameters(colorPane.getBrightness(),
+        colorPane.getContrast(), colorPane.getModel(), colorPane.getRed(),
+        colorPane.getGreen(), colorPane.getBlue(), false);
+      setRanges(colorPane.getLo(), colorPane.getHi(),
+        colorPane.getFixed());
+      setTables(colorPane.getTables());
+      VisUtil.setDisplayDisabled(d, false);
+    }
   }
 
   /** Updates color settings to those given. */
@@ -147,11 +190,13 @@ public class ColorHandler {
 
   /** Updates map ranges to those given. */
   public void setRanges(double[] lo, double[] hi, boolean[] fixed) {
-    ColorUtil.setColorRanges(window.getDisplay(), getMaps(), lo, hi, fixed);
+    ColorUtil.setColorRanges(getWindow().getDisplay(),
+      getMaps(), lo, hi, fixed);
   }
 
   /** Updates color tables to those given. */
   public void setTables(float[][][] tables) {
+    DisplayWindow window = getWindow();
     ColorUtil.setColorMode(window.getDisplay(), model);
     ColorUtil.setColorTables(getMaps(), tables);
     VisBioFrame bio = window.getVisBio();
@@ -161,7 +206,7 @@ public class ColorHandler {
 
   /** Recomputes autoscaled color range bounds. */
   public void reAutoScale() {
-    DisplayImpl display = window.getDisplay();
+    DisplayImpl display = getWindow().getDisplay();
     ScalarMap[] maps = getMaps();
     for (int i=0; i<maps.length; i++) {
       if (fixed[i]) continue;
@@ -229,34 +274,43 @@ public class ColorHandler {
 
   // -- ColorHandler API methods - state logic --
 
-  /** Writes the current state to the given OME-CA XML object. */
-  public void saveState() {
-    window.setAttr("brightness", "" + brightness);
-    window.setAttr("contrast", "" + contrast);
-    window.setAttr("colorModel", "" + model);
-    window.setAttr("red", red == null ? "null" : red.getName());
-    window.setAttr("green", green == null ? "null" : green.getName());
-    window.setAttr("blue", blue == null ? "null" : blue.getName());
-    window.setAttr("colorMin", ObjectUtil.arrayToString(getLo()));
-    window.setAttr("colorMax", ObjectUtil.arrayToString(getHi()));
-    window.setAttr("colorFixed", ObjectUtil.arrayToString(getFixed()));
+  /** Writes the current state to the given XML object. */
+  public void saveState(String attrName) {
+    DisplayWindow window = getWindow();
+    window.setAttr(attrName + "_brightness", "" + brightness);
+    window.setAttr(attrName + "_contrast", "" + contrast);
+    window.setAttr(attrName + "_colorModel", "" + model);
+
+    String r = red == null ? "null" : red.getName();
+    String g = green == null ? "null" : green.getName();
+    String b = blue == null ? "null" : blue.getName();
+    window.setAttr(attrName + "_red", r);
+    window.setAttr(attrName + "_green", g);
+    window.setAttr(attrName + "_blue", b);
+
+    String min = ObjectUtil.arrayToString(getLo());
+    String max = ObjectUtil.arrayToString(getHi());
+    String fix = ObjectUtil.arrayToString(getFixed());
+    window.setAttr(attrName + "_colorMin", min);
+    window.setAttr(attrName + "_colorMax", max);
+    window.setAttr(attrName + "_colorFixed", fix);
 
     float[][][] tables = getTables();
     if (tables == null) {
-      window.setAttr("tables", "null");
+      window.setAttr(attrName + "_tables", "null");
     }
     else {
-      window.setAttr("tables", "" + tables.length);
+      window.setAttr(attrName + "_tables", "" + tables.length);
       for (int i=0; i<tables.length; i++) {
-        if (tables[i] == null) window.setAttr("table" + i, "null");
+        if (tables[i] == null) window.setAttr(attrName + "_table" + i, "null");
         else {
-          window.setAttr("table" + i, "" + tables[i].length);
+          window.setAttr(attrName + "_table" + i, "" + tables[i].length);
           for (int j=0; j<tables[i].length; j++) {
             if (tables[i][j] == null) {
-              window.setAttr("table" + i + "-" + j, "null");
+              window.setAttr(attrName + "_table" + i + "-" + j, "null");
             }
             else {
-              window.setAttr("table" + i + "-" + j,
+              window.setAttr(attrName + "_table" + i + "-" + j,
                 ObjectUtil.arrayToString(tables[i][j]));
             }
           }
@@ -265,37 +319,41 @@ public class ColorHandler {
     }
   }
 
-  /** Restores the current state from the given OME-CA XML object. */
-  public void restoreState() {
-    brightness = Integer.parseInt(window.getAttr("brightness"));
-    contrast = Integer.parseInt(window.getAttr("contrast"));
-    model = Integer.parseInt(window.getAttr("colorModel"));
+  /** Restores the current state from the given XML object. */
+  public void restoreState(String attrName) {
+    DisplayWindow window = getWindow();
+    brightness = Integer.parseInt(window.getAttr(attrName + "_brightness"));
+    contrast = Integer.parseInt(window.getAttr(attrName + "_contrast"));
+    model = Integer.parseInt(window.getAttr(attrName + "_colorModel"));
 
-    String r = window.getAttr("red");
-    String g = window.getAttr("green");
-    String b = window.getAttr("blue");
+    String r = window.getAttr(attrName + "_red");
+    String g = window.getAttr(attrName + "_green");
+    String b = window.getAttr(attrName + "_blue");
     red = r.equals("null") ? null : RealType.getRealType(r);
     green = g.equals("null") ? null : RealType.getRealType(g);
     blue = b.equals("null") ? null : RealType.getRealType(b);
 
-    lo = ObjectUtil.stringToDoubleArray(window.getAttr("colorMin"));
-    hi = ObjectUtil.stringToDoubleArray(window.getAttr("colorMax"));
-    fixed = ObjectUtil.stringToBooleanArray(window.getAttr("colorFixed"));
+    String min = window.getAttr(attrName + "_colorMin");
+    String max = window.getAttr(attrName + "_colorMax");
+    String fix = window.getAttr(attrName + "_colorFixed");
+    lo = ObjectUtil.stringToDoubleArray(min);
+    hi = ObjectUtil.stringToDoubleArray(max);
+    fixed = ObjectUtil.stringToBooleanArray(fix);
 
     colorTables = null;
-    String s = window.getAttr("tables");
+    String s = window.getAttr(attrName + "_tables");
     if (!s.equals("null")) {
       int ilen = Integer.parseInt(s);
       colorTables = new float[ilen][][];
       for (int i=0; i<ilen; i++) {
-        s = window.getAttr("table" + i);
+        s = window.getAttr(attrName + "_table" + i);
         if (s.equals("null")) colorTables[i] = null;
         else {
           int jlen = Integer.parseInt(s);
           colorTables[i] = new float[jlen][];
           for (int j=0; j<jlen; j++) {
             colorTables[i][j] = ObjectUtil.stringToFloatArray(
-              window.getAttr("table" + i + "-" + j));
+              window.getAttr(attrName + "_table" + i + "-" + j));
           }
         }
       }
@@ -335,7 +393,7 @@ public class ColorHandler {
       colorTables = handler.getTables();
     }
 
-    if (panel == null) panel = new ColorPanel(this);
+    if (colorPane == null) colorPane = new ColorPane(this);
   }
 
 }

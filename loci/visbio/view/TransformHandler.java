@@ -430,7 +430,8 @@ public class TransformHandler implements ChangeListener, Runnable  {
       panel.updateControls();
 
       if (lnk.length > 0) {
-        window.getColorHandler().initColors();
+        //CTR TODO update this:
+        //window.getColorHandler().initColors();
         window.repack();
       }
       else window.setVisible(false);
