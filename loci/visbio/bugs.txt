@@ -71,7 +71,7 @@ Overlays transform
 
 [H] Overlays should not affect ScalarMap scaling.
 
-[H] Text overlay mesh grid should enclose the entire text overlay.
+[M] Selected overlays should be draggable with the pointer tool.
 
 [L] Add rubber band box renderer to all displays (at least 2D ones) and send
     "rubber band" events down the transform chain so that transforms can react
