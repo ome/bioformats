@@ -102,7 +102,7 @@ public class HelpManager extends LogicManager {
   private void doGUI() {
     bio.setStatus("Initializing help logic");
     topics = new Vector();
-    help = new HelpWindow(bio);
+    help = new HelpWindow();
     WindowManager wm = (WindowManager) bio.getManager(WindowManager.class);
     wm.addWindow(help);
 

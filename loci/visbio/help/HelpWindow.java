@@ -25,7 +25,6 @@ package loci.visbio.help;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Frame;
 
 import java.io.IOException;
 
@@ -33,8 +32,8 @@ import java.net.URL;
 
 import java.util.Vector;
 
-import javax.swing.JDialog;
 import javax.swing.JEditorPane;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -49,7 +48,7 @@ import loci.visbio.util.BrowserLauncher;
 import loci.visbio.util.SwingUtil;
 
 /** HelpWindow details basic VisBio program usage. */
-public class HelpWindow extends JDialog implements HyperlinkListener {
+public class HelpWindow extends JFrame implements HyperlinkListener {
 
   // -- Constants --
 
@@ -72,8 +71,8 @@ public class HelpWindow extends JDialog implements HyperlinkListener {
   // -- Constructor --
 
   /** Creates a VisBio help window. */
-  public HelpWindow(Frame parent) {
-    super(parent, "VisBio Help");
+  public HelpWindow() {
+    super("VisBio Help");
 
     // create components
     tabs = new JTabbedPane(JTabbedPane.LEFT);

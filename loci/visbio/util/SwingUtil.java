@@ -30,6 +30,8 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
 
+import java.awt.event.ActionListener;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -148,24 +150,11 @@ public abstract class SwingUtil {
    * whenever the original menu bar changes.
    */
   public static JMenuBar cloneMenuBar(JMenuBar menubar) {
+    if (menubar == null) return null;
     JMenuBar jmb = new JMenuBar();
     int count = menubar.getMenuCount();
-    for (int i=0; i<count; i++) jmb.add(cloneMenu(menubar.getMenu(i)));
+    for (int i=0; i<count; i++) jmb.add(cloneMenuItem(menubar.getMenu(i)));
     return jmb;
-  }
-
-  /**
-   * Creates a copy of this menu, whose contents update automatically
-   * whenever the original menu changes.
-   */
-  public static JMenu cloneMenu(JMenu menu) {
-    final JMenu jm = new JMenu();
-    jm.addPropertyChangeListener(new PropertyChangeListener() {
-      public void propertyChange(PropertyChangeEvent e) {
-        // CTR TODO
-      }
-    });
-    return jm;
   }
 
   /**
@@ -173,22 +162,38 @@ public abstract class SwingUtil {
    * whenever the original menu item changes.
    */
   public static JMenuItem cloneMenuItem(JMenuItem item) {
-    final JMenuItem jmi = new JMenuItem();
-    jmi.addPropertyChangeListener(new PropertyChangeListener() {
-      public void propertyChange(PropertyChangeEvent e) {
-        // CTR TODO
+    if (item == null) return null;
+    JMenuItem jmi;
+    if (item instanceof JMenu) {
+      JMenu menu = (JMenu) item;
+      JMenu jm = new JMenu();
+      int count = menu.getItemCount();
+      for (int i=0; i<count; i++) {
+        JMenuItem ijmi = cloneMenuItem(menu.getItem(i));
+        if (ijmi == null) jm.addSeparator();
+        else jm.add(ijmi);
       }
-    });
+      jmi = jm;
+    }
+    else jmi = new JMenuItem();
+    ActionListener[] l = item.getActionListeners();
+    for (int i=0; i<l.length; i++) jmi.addActionListener(l[i]);
+    jmi.setActionCommand(item.getActionCommand());
+    syncMenuItem(item, jmi);
+    linkMenuItem(item, jmi);
     return jmi;
   }
 
-  /** Configures a scroll pane's properties. */
+  /**
+   * Configures a scroll pane's properties to always show horizontal and
+   * vertical scroll bars. This method only exists to match the Macintosh
+   * Aqua Look and Feel as closely as possible.
+   */
   public static void configureScrollPane(JScrollPane scroll) {
-    if (LAFUtil.isMacLookAndFeel()) {
-      scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-      scroll.setHorizontalScrollBarPolicy(
+    if (!LAFUtil.isMacLookAndFeel()) return;
+    scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+    scroll.setHorizontalScrollBarPolicy(
         JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-    }
   }
 
   /** Constructs a JFileChooser that recognizes accepted VisBio file types. */
@@ -265,7 +270,34 @@ public abstract class SwingUtil {
 
   /** Pops up a message box, for blocking the current thread. */
   public static void pause(String msg) {
-    JOptionPane.showMessageDialog(null, msg, "VisBio", JOptionPane.PLAIN_MESSAGE);
+    JOptionPane.showMessageDialog(null, msg, "VisBio",
+      JOptionPane.PLAIN_MESSAGE);
+  }
+
+
+  // -- Helper methods --
+
+  /**
+   * Forces slave menu item to reflect master menu item
+   * using a property change listener.
+   */
+  protected static void linkMenuItem(JMenuItem master, JMenuItem slave) {
+    final JMenuItem source = master, dest = slave;
+    source.addPropertyChangeListener(new PropertyChangeListener() {
+      public void propertyChange(PropertyChangeEvent e) {
+        syncMenuItem(source, dest);
+      }
+    });
+  }
+
+  /** Brings the destination menu item into sync with the source item. */
+  protected static void syncMenuItem(JMenuItem source, JMenuItem dest) {
+    boolean enabled = source.isEnabled();
+    if (dest.isEnabled() != enabled) dest.setEnabled(enabled);
+    int mnemonic = source.getMnemonic();
+    if (dest.getMnemonic() != mnemonic) dest.setMnemonic(mnemonic);
+    String text = source.getText();
+    if (dest.getText() != text) dest.setText(text);
   }
 
 }

@@ -96,11 +96,12 @@ public class VisBioFrame extends GUIFrame {
     // create logic managers
     OptionManager om = new OptionManager(this);
     StateManager sm = new StateManager(this);
+    WindowManager wm = new WindowManager(this);
     sm.setRestoring(true);
     LogicManager[] lm = {
       sm, // StateManager
       om, // OptionManager
-      new WindowManager(this),
+      wm, // WindowManager
       new PanelManager(this),
       new HelpManager(this),
       new DataManager(this),
@@ -133,6 +134,9 @@ public class VisBioFrame extends GUIFrame {
       }
       catch (Exception exc) { exc.printStackTrace(); }
     }
+
+    // distribute menu bar across all frames
+    if (LAFUtil.isMacLookAndFeel()) wm.setDistributedMenus(true);
 
     // show VisBio window onscreen
     pack();

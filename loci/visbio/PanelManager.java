@@ -29,7 +29,6 @@ import java.awt.event.ActionListener;
 import java.util.Vector;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -85,7 +84,7 @@ public class PanelManager extends LogicManager implements ActionListener {
     String name = cpl.getName();
 
     // create control panel containers
-    JDialog w = new JDialog((JFrame) null, name);
+    JFrame w = new JFrame(name);
     WindowManager wm = (WindowManager) bio.getManager(WindowManager.class);
     wm.addWindow(w);
     panels.add(cpl);
@@ -114,7 +113,7 @@ public class PanelManager extends LogicManager implements ActionListener {
   public void repack(ControlPanel cpl) {
     int ndx = panels.indexOf(cpl);
     if (ndx < 0) return;
-    SwingUtil.repack((JDialog) floatWindows.elementAt(ndx));
+    SwingUtil.repack((JFrame) floatWindows.elementAt(ndx));
     if (!floating) SwingUtil.repack(bio);
   }
 
@@ -194,7 +193,7 @@ public class PanelManager extends LogicManager implements ActionListener {
       tabs.removeAll();
       for (int i=0; i<panels.size(); i++) {
         ControlPanel cpl = (ControlPanel) panels.elementAt(i);
-        JDialog w = (JDialog) floatWindows.elementAt(i);
+        JFrame w = (JFrame) floatWindows.elementAt(i);
         w.setContentPane(cpl);
       }
       pane.add(buttonPane);
@@ -203,7 +202,7 @@ public class PanelManager extends LogicManager implements ActionListener {
       pane.remove(buttonPane);
       for (int i=0; i<panels.size(); i++) {
         ControlPanel cpl = (ControlPanel) panels.elementAt(i);
-        JDialog w = (JDialog) floatWindows.elementAt(i);
+        JFrame w = (JFrame) floatWindows.elementAt(i);
         w.hide();
         tabs.addTab(cpl.getName(), null, cpl, cpl.getTip());
       }
@@ -221,7 +220,7 @@ public class PanelManager extends LogicManager implements ActionListener {
     int ndx = panels.indexOf(cpl);
     if (floating) {
       WindowManager wm = (WindowManager) bio.getManager(WindowManager.class);
-      wm.showWindow((JDialog) floatWindows.elementAt(ndx));
+      wm.showWindow((JFrame) floatWindows.elementAt(ndx));
     }
     else tabs.setSelectedIndex(ndx);
   }

@@ -37,6 +37,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.JFrame;
+import javax.swing.JMenuBar;
 
 import loci.ome.xml.CAElement;
 import loci.ome.xml.OMEElement;
@@ -77,6 +78,9 @@ public class WindowManager extends LogicManager implements WindowListener {
   /** Whether window docking features are enabled. */
   protected boolean docking;
 
+  /** Whether to distribute the menu bar across all registered frames. */
+  protected boolean distributed;
+
 
   // -- Constructor --
 
@@ -95,16 +99,11 @@ public class WindowManager extends LogicManager implements WindowListener {
    */
   public void addWindow(Window w, boolean pack) {
     windows.put(w, new WindowInfo(w, pack));
-    if (VisBioFrame.MAC_OS_X && w instanceof JFrame) {
-      // CTR TODO make this work on Mac OS X
-      // Need this class (or a separate menu manager class) to manage window
-      // menus. Whenever anything wants to alter a menu, it goes through this
-      // class, so that all copies of the menu can be changed, to preserve
-      // correctness on Mac OS X.
-      /*
+    if (distributed && w instanceof JFrame) {
       JFrame f = (JFrame) w;
-      if (f.getJMenuBar() == null) f.setJMenuBar(SwingUtil.duplicate(bio.getJMenuBar()));
-      */
+      if (f.getJMenuBar() == null) {
+        f.setJMenuBar(SwingUtil.cloneMenuBar(bio.getJMenuBar()));
+      }
     }
     docker.addWindow(w);
   }
@@ -142,6 +141,17 @@ public class WindowManager extends LogicManager implements WindowListener {
     WindowInfo winfo = (WindowInfo) windows.get(w);
     if (winfo == null) return;
     winfo.showWindow();
+  }
+
+  /**
+   * Sets whether all registered frames should have a duplicate of the main
+   * VisBio menu bar. This feature is only here to support the Macintosh
+   * screen menu bar.
+   */
+  public void setDistributedMenus(boolean dist) {
+    if (distributed == dist) return;
+    distributed = dist;
+    doMenuBars(dist ? bio.getJMenuBar() : null);
   }
 
 
@@ -263,6 +273,19 @@ public class WindowManager extends LogicManager implements WindowListener {
     this.docking = docking;
 
     docker.setEnabled(docking);
+  }
+
+  /** Propagates the given menu bar across all registered frames. */
+  protected void doMenuBars(JMenuBar master) {
+    Enumeration en = windows.keys();
+    while (en.hasMoreElements()) {
+      Window w = (Window) en.nextElement();
+      if (!(w instanceof JFrame)) continue;
+      JFrame f = (JFrame) w;
+      if (f.getJMenuBar() != master) {
+        f.setJMenuBar(SwingUtil.cloneMenuBar(master));
+      }
+    }
   }
 
 }
