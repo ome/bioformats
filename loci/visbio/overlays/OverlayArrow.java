@@ -1,5 +1,5 @@
 //
-// OverlayBox.java
+// OverlayArrow.java
 //
 
 /*
@@ -27,14 +27,16 @@ import java.rmi.RemoteException;
 
 import java.util.Arrays;
 
+import loci.visbio.util.MathUtil;
+
 import visad.*;
 
-/** OverlayBox is a rectangle overlay. */
-public class OverlayBox extends OverlayObject {
+/** OverlayArrow is an arrow wedge overlay. */
+public class OverlayArrow extends OverlayObject {
 
   // -- Fields --
 
-  /** Corner coordinates. */
+  /** Endpoint coordinates. */
   protected float x1, y1, x2, y2;
 
   /** Flag indicating overlay is solid. */
@@ -43,8 +45,8 @@ public class OverlayBox extends OverlayObject {
 
   // -- Constructor --
 
-  /** Constructs a bounding rectangle. */
-  public OverlayBox(OverlayTransform overlay,
+  /** Constructs an arrow wedge overlay. */
+  public OverlayArrow(OverlayTransform overlay,
     float x1, float y1, float x2, float y2)
   {
     super(overlay);
@@ -55,17 +57,16 @@ public class OverlayBox extends OverlayObject {
     computeGridParameters();
   }
 
+  // -- OverlayArrow API methods --
 
-  // -- OverlayBox API methods --
-
-  /** Changes coordinates of the box's upper left corner. */
+  /** Changes coordinates of the arrow's first endpoint. */
   public void setCoords1(float x1, float y1) {
     this.x1 = x1;
     this.y1 = y1;
     computeGridParameters();
   }
 
-  /** Changes coordinates of the box's lower right corner. */
+  /** Changes coordinates of the arrow's second endpoint. */
   public void setCoords2(float x2, float y2) {
     this.x2 = x2;
     this.y2 = y2;
@@ -83,26 +84,38 @@ public class OverlayBox extends OverlayObject {
 
   /** Gets VisAD data object representing this overlay. */
   public DataImpl getData() {
+    float padding = 0.02f * overlay.getScalingValue();
+    double xx = x2 - x1;
+    double yy = y2 - y1;
+    double dist = Math.sqrt(xx * xx + yy * yy);
+    double mult = padding / dist;
+    float qx = (float) (mult * xx);
+    float qy = (float) (mult * yy);
+
     RealTupleType domain = overlay.getDomainType();
     RealTupleType range = overlay.getRangeType();
 
-    float[][] setSamples = null;
-    GriddedSet fieldSet = null;
+    float[][] setSamples = {
+      {x1, x2 - qy, x2 + qy, x1}, {y1, y2 + qx, y2 - qx, y1}
+    };
 
+    boolean missing = false;
+    for (int i=0; i<setSamples.length; i++) {
+      for (int j=0; j<setSamples[i].length; j++) {
+        if (Float.isNaN(setSamples[i][j])) missing = true;
+      }
+    }
+
+    GriddedSet fieldSet = null;
     try {
-      if (filled) {
-        setSamples = new float[][] {
-          {x1, x2, x1, x2},
-          {y1, y1, y2, y2}
-        };
+      if (filled && !missing) {
+        // CTR START HERE figure out how to make the friggin' grid valid
+        setSamples[0][0] = (x1 + x2) / 2;
+        setSamples[1][0] = (y1 + y2) / 2;
         fieldSet = new Gridded2DSet(domain,
           setSamples, 2, 2, null, null, null, false);
       }
       else {
-        setSamples = new float[][] {
-          {x1, x2, x2, x1, x1},
-          {y1, y1, y2, y2, y1}
-        };
         fieldSet = new Gridded2DSet(domain,
           setSamples, setSamples[0].length, null, null, null, false);
       }
@@ -130,13 +143,8 @@ public class OverlayBox extends OverlayObject {
 
   /** Computes the shortest distance from this object to the given point. */
   public double getDistance(double x, double y) {
-    double xdist = 0;
-    if (x < x1 && x < x2) xdist = Math.min(x1, x2) - x;
-    else if (x > x1 && x > x2) xdist = x - Math.max(x1, x2);
-    double ydist = 0;
-    if (y < y1 && y < y2) ydist = Math.min(y1, y2) - y;
-    else if (y > y1 && y > y2) ydist = y - Math.max(y1, y2);
-    return Math.sqrt(xdist * xdist + ydist * ydist);
+    return MathUtil.getDistance(new double[] {x1, y1},
+      new double[] {x2, y2}, new double[] {x, y}, true);
   }
 
 
@@ -145,18 +153,14 @@ public class OverlayBox extends OverlayObject {
   /** Computes parameters needed for selection grid computation. */
   protected void computeGridParameters() {
     float padding = 0.02f * overlay.getScalingValue();
-    boolean flipX = x2 < x1;
-    float xx1 = flipX ? (x1 + padding) : (x1 - padding);
-    float xx2 = flipX ? (x2 - padding) : (x2 + padding);
-    boolean flipY = y2 < y1;
-    float yy1 = flipY ? (y1 + padding) : (y1 - padding);
-    float yy2 = flipY ? (y2 - padding) : (y2 + padding);
+    float[] corners1 = OverlayLine.computeCorners(x1, y1, x2, y2, padding, 2);
+    float[] corners2 = OverlayLine.computeCorners(x2, y2, x1, y1, padding, 1);
 
-    xGrid1 = xx1; yGrid1 = yy1;
-    xGrid2 = xx2; yGrid2 = yy1;
-    xGrid3 = xx1; yGrid3 = yy2;
-    xGrid4 = xx2; yGrid4 = yy2;
-    horizGridCount = 3; vertGridCount = 3;
+    xGrid1 = corners1[0]; yGrid1 = corners1[1];
+    xGrid2 = corners1[2]; yGrid2 = corners1[3];
+    xGrid3 = corners2[2]; yGrid3 = corners2[3];
+    xGrid4 = corners2[0]; yGrid4 = corners2[1];
+    horizGridCount = 3; vertGridCount = 2;
   }
 
 }

@@ -44,7 +44,6 @@ public class PointerTool extends OverlayTool {
   public void mouseDown(float x, float y, int[] pos, int mods) {
     boolean shift = (mods & InputEvent.SHIFT_MASK) != 0;
     boolean ctrl = (mods & InputEvent.CTRL_MASK) != 0;
-    System.out.println("PointerTool: mouseDown:" + (shift ? " SHIFT" : "") + (ctrl ? " CTRL" : ""));//TEMP
 
     // pick nearest object
     OverlayObject[] oo = overlay.getObjects(pos);
@@ -57,26 +56,31 @@ public class PointerTool extends OverlayTool {
         ndx = i;
       }
     }
+
+    if (!shift && !ctrl) {
+      // deselect all previously selected objects
+      for (int i=0; i<oo.length; i++) oo[i].setSelected(false);
+    }
+
+    // select (or deselect) newly picked object
     double threshold = 0.02 * overlay.getScalingValue();
     if (dist < threshold) {
-      System.out.println("Picked index #" + ndx);//TEMP
-      oo[ndx].setSelected(true);
-      overlay.notifyListeners(new TransformEvent(overlay));
+      oo[ndx].setSelected(ctrl ? !oo[ndx].isSelected() : true);
     }
+
+    overlay.notifyListeners(new TransformEvent(overlay));
   }
 
   /** Instructs this tool to respond to a mouse release. */
   public void mouseUp(float x, float y, int[] pos, int mods) {
     boolean shift = (mods & InputEvent.SHIFT_MASK) != 0;
     boolean ctrl = (mods & InputEvent.CTRL_MASK) != 0;
-    System.out.println("PointerTool: mouseUp:" + (shift ? " SHIFT" : "") + (ctrl ? " CTRL" : ""));//TEMP
   }
 
   /** Instructs this tool to respond to a mouse drag. */
   public void mouseDrag(float x, float y, int[] pos, int mods) {
     boolean shift = (mods & InputEvent.SHIFT_MASK) != 0;
     boolean ctrl = (mods & InputEvent.CTRL_MASK) != 0;
-    System.out.println("PointerTool: mouseDrag:" + (shift ? " SHIFT" : "") + (ctrl ? " CTRL" : ""));//TEMP
   }
 
 }

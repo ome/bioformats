@@ -107,18 +107,38 @@ public class OverlayLine extends OverlayObject {
   /** Computes parameters needed for selection grid computation. */
   protected void computeGridParameters() {
     float padding = 0.02f * overlay.getScalingValue();
-    boolean flipX = x2 < x1;
-    float xx1 = flipX ? (x1 + padding) : (x1 - padding);
-    float xx2 = flipX ? (x2 - padding) : (x2 + padding);
-    boolean flipY = y2 < y1;
-    float yy1 = flipY ? (y1 + padding) : (y1 - padding);
-    float yy2 = flipY ? (y2 - padding) : (y2 + padding);
+    float[] corners1 = computeCorners(x1, y1, x2, y2, padding, 1);
+    float[] corners2 = computeCorners(x2, y2, x1, y1, padding, 1);
 
-    xGrid1 = xx1; yGrid1 = yy1;
-    xGrid2 = xx2; yGrid2 = yy1;
-    xGrid3 = xx1; yGrid3 = yy2;
-    xGrid4 = xx2; yGrid4 = yy2;
-    horizGridCount = 3; vertGridCount = 3;
+    xGrid1 = corners1[0]; yGrid1 = corners1[1];
+    xGrid2 = corners1[2]; yGrid2 = corners1[3];
+    xGrid3 = corners2[2]; yGrid3 = corners2[3];
+    xGrid4 = corners2[0]; yGrid4 = corners2[1];
+    horizGridCount = 3; vertGridCount = 2;
+  }
+
+  /**
+   * Helper method for computing coordinates of two corner points of the
+   * rectangular selection grid for a line or arrow overlay.
+   */
+  protected static float[] computeCorners(float x1, float y1,
+    float x2, float y2, float padding, float multiplier)
+  {
+    // multiplier is used to widen the distance between corner points
+    // appropriately for the "wide" end of the arrow overlay; for lines,
+    // multiplier is 1 (no widening required)
+
+    double xx = x2 - x1;
+    double yy = y2 - y1;
+    double dist = Math.sqrt(xx * xx + yy * yy);
+    double mult = padding / dist;
+    float qx = (float) (mult * xx);
+    float qy = (float) (mult * yy);
+
+    return new float[] {
+      x2 + qx + multiplier * qy, y2 + qy - multiplier * qx,
+      x2 + qx - multiplier * qy, y2 + qy + multiplier * qx
+    };
   }
 
 }
