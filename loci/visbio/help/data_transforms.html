@@ -1,24 +1,39 @@
 <html><body><h2>Data transforms</h2>
 
-<p>Data transforms TODO
+<p>A data transform is a module that provides a method of generating data. The
+most basic data transform is the <a href="dataset.html">Dataset</a>, which
+retrieves data from files on disk, encapsulating them into a VisBio data
+object which can then be visualized and analyzed.
+
+<p>Most data transforms take a parent data object as input, and produce a child
+data object as output. Such parent/child relationships are represented on the
+<a href="data_panel.html">Data panel</a> using a tree structure. For example,
+an annotated dataset might have a set of overlays represented as a child
+<a href="overlays.html">Overlays</a> data object.
+
+<p>VisBio provides a variety of built-in data transforms that produce data
+objects from a data source or algorithm. For details about a specific
+transform, choose a topic below.
 
 <br><h3>See also:</h3>
 
 <ul>
-  <li><a href="datasets.html">Datasets</a>
-    - for an overview of "Dataset" data objects</li>
+  <li><a href="dataset.html">Datasets</a>
+    - for an overview of datasets</li>
   <li><a href="subsampling.html">Subsamplings</a>
     - to reduce a data object's resolution or number of image planes</li>
   <li><a href="max_intensity.html">Maximum intensity projections</a>
-    - TODO
+    - to compute the maximum intensity projection of an image stack</li>
   <li><a href="collapse.html">Dimensional collapse transforms</a>
-    - TODO
+    - to collapse a dimensional axis into range components</li>
   <li><a href="spectral.html">Spectral mappings</a>
     - to create a spectral mapping for a data object</li>
   <li><a href="arbitrary_slice.html">Arbitrary slices</a>
     - to create an arbitrary slice through a data object in 3D</li>
+  <li><a href="ome_image.html">OME image</a>
+    - to download a data object from an OME database</li>
   <li><a href="overlays.html">Overlays</a>
-    - TODO
+    - to create graphical overlays for annotating a data object</li>
   <li><a href="add_data.html">Adding a data object</a>
     - for instructions on creating a data object</li>
 </ul>
