@@ -339,9 +339,12 @@ public class OverlayWidget extends JPanel
   /** Updates items on overlay list based on current transform state. */
   public void refreshListObjects() {
     OverlayObject[] obj = overlay.getObjects();
+    overlayList.removeListSelectionListener(this);
     overlayListModel.clear();
     overlayListModel.ensureCapacity(obj.length);
     for (int i=0; i<obj.length; i++) overlayListModel.addElement(obj[i]);
+    overlayList.addListSelectionListener(this);
+    refreshListSelection();
   }
 
   /** Updates overlay list's selection based on current transform state. */
@@ -368,6 +371,21 @@ public class OverlayWidget extends JPanel
    */
   public void refreshWidgetComponents() {
     Object[] sel = overlayList.getSelectedValues();
+    int numDraw = 0;
+    for (int i=0; i<sel.length; i++) {
+      OverlayObject obj = (OverlayObject) sel[i];
+      if (obj.isDrawing()) numDraw++;
+    }
+    if (numDraw > 0) {
+      // if any overlays are still being drawn, concentrate on those only
+      Object[] draw = new Object[numDraw];
+      int c = 0;
+      for (int i=0; i<sel.length && c<numDraw; i++) {
+        OverlayObject obj = (OverlayObject) sel[i];
+        if (obj.isDrawing()) draw[c++] = obj;
+      }
+      sel = draw;
+    }
     boolean enableX1 = false, enableY1 = false;
     boolean enableX2 = false, enableY2 = false;
     boolean enableText = false;
@@ -498,6 +516,7 @@ public class OverlayWidget extends JPanel
         break;
       }
     }
+    /*TEMP*/System.out.println("widget selection changed (changed=" + changed + ")");
     if (changed) {
       refreshWidgetComponents();
       overlay.notifyListeners(new TransformEvent(overlay));
@@ -510,7 +529,8 @@ public class OverlayWidget extends JPanel
   /** Handles font changes. */
   public void transformChanged(TransformEvent e) {
     int id = e.getId();
-    if (id == TransformEvent.FONT_CHANGED) refreshCurrentFont();
+    if (id == TransformEvent.DATA_CHANGED) refreshWidgetComponents();
+    else if (id == TransformEvent.FONT_CHANGED) refreshCurrentFont();
   }
 
 

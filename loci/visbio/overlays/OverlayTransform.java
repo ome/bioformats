@@ -279,7 +279,8 @@ public class OverlayTransform extends DataTransform
         for (int i=0; i<size; i++) {
           OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
           if (obj.hasText()) txtSize++;
-          if (obj.isSelected()) sel++;
+          // do not paint grids for objects still in the initial draw phase
+          if (obj.isSelected() && !obj.isDrawing()) sel++;
         }
         int rgbSize = size - txtSize;
         RealType index = RealType.getRealType("overlay_index");
@@ -301,7 +302,7 @@ public class OverlayTransform extends DataTransform
           c = 0;
           for (int i=0; i<size && c<sel; i++) {
             OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
-            if (!obj.isSelected()) continue;
+            if (!obj.isSelected() || obj.isDrawing()) continue;
             rgbField.setSample(rgbSize + c++, obj.getSelectionGrid(), false);
           }
         }

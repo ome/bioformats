@@ -56,7 +56,10 @@ public abstract class OverlayObject {
   protected String notes;
 
   /** Flag indicating this overlay is currently selected. */
-  protected boolean selected;
+  protected boolean selected = true;
+
+  /** Flag indicating this overlay is still being initially drawn. */
+  protected boolean drawing = true;
 
   /** Top-left endpoint of selection grid rectangle. */
   protected float xGrid1, yGrid1;
@@ -264,6 +267,12 @@ public abstract class OverlayObject {
 
   /** Gets whether this overlay is currently selected. */
   public boolean isSelected() { return selected; }
+
+  /** Sets whether this overlay is still being initially drawn. */
+  public void setDrawing(boolean drawing) { this.drawing = drawing; }
+
+  /** Gets whether this overlay is still being initially drawn. */
+  public boolean isDrawing() { return drawing; }
 
 
   // -- Internal OverlayObject API methods --
