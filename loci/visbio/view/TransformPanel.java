@@ -278,7 +278,7 @@ public class TransformPanel extends JPanel
     JCheckBox delayBurn = new JCheckBox("Delay burn-in", true);
     delayBurn.setActionCommand("delayBurn");
     delayBurn.addActionListener(this);
-    if (!LAFUtil.isMacLookAndFeel()) delayBurn.setMnemonic('e');
+    if (!LAFUtil.isMacLookAndFeel()) delayBurn.setMnemonic('n');
     delayBurn.setToolTipText(
       "Toggles whether full-resolution burn-in is delayed");
 
@@ -310,7 +310,7 @@ public class TransformPanel extends JPanel
     removeTransform = new JButton("Remove");
     removeTransform.setActionCommand("removeTransform");
     removeTransform.addActionListener(this);
-    if (!LAFUtil.isMacLookAndFeel()) removeTransform.setMnemonic('r');
+    if (!LAFUtil.isMacLookAndFeel()) removeTransform.setMnemonic('m');
     removeTransform.setToolTipText("Removes data from this display");
     removeTransform.setEnabled(false);
 
@@ -318,7 +318,7 @@ public class TransformPanel extends JPanel
     dataControls = new JButton("Edit");
     dataControls.setActionCommand("dataControls");
     dataControls.addActionListener(this);
-    if (!LAFUtil.isMacLookAndFeel()) dataControls.setMnemonic('i');
+    if (!LAFUtil.isMacLookAndFeel()) dataControls.setMnemonic('e');
     dataControls.setToolTipText("Shows data's controls");
     dataControls.setEnabled(false);
 

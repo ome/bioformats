@@ -56,7 +56,7 @@ public class CapturePanel extends JPanel implements ActionListener {
 
     // capture button
     JButton capture = new JButton("Capture");
-    if (!LAFUtil.isMacLookAndFeel()) capture.setMnemonic('a');
+    if (!LAFUtil.isMacLookAndFeel()) capture.setMnemonic('p');
     capture.setToolTipText("Creates display screenshots or movies");
     capture.addActionListener(this);
 

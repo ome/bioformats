@@ -203,7 +203,7 @@ public class StackPanel extends TransformPanel {
 
     // current slice visible checkbox
     sliceVisible = new JCheckBox("Current slice visible");
-    if (!LAFUtil.isMacLookAndFeel()) sliceVisible.setMnemonic('u');
+    if (!LAFUtil.isMacLookAndFeel()) sliceVisible.setMnemonic('l');
     sliceVisible.setToolTipText("Toggles visibility of the current slice");
     sliceVisible.setActionCommand("sliceVisible");
     sliceVisible.addActionListener(this);
@@ -221,7 +221,7 @@ public class StackPanel extends TransformPanel {
     render = new JCheckBox("Render as a volume");
     render.setActionCommand("render");
     render.addActionListener(this);
-    render.setMnemonic('v');
+    render.setMnemonic('r');
 
     // slider for adjusting volume resolution
     SpinnerNumberModel renderModel = new SpinnerNumberModel(

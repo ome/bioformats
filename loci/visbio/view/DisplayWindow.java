@@ -35,13 +35,15 @@ import loci.visbio.WindowManager;
 import loci.visbio.data.DataTransform;
 import loci.visbio.state.Dynamic;
 import loci.visbio.util.*;
-import visad.DisplayImpl;
+import visad.*;
 
 /**
  * DisplayWindow is a window containing a 2D or 3D
  * VisAD display and associated controls.
  */
-public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
+public class DisplayWindow extends JFrame
+  implements ActionListener, DisplayListener, Dynamic
+{
 
   // -- Static fields --
 
@@ -281,6 +283,23 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
   }
 
 
+  // -- DisplayListener API methods --
+
+  /** Listens for keyboard presses within the display. */
+  public void displayChanged(DisplayEvent e) {
+    // CTR TODO
+    int id = e.getId();
+    if (id == DisplayEvent.KEY_PRESSED) {
+      int code = e.getKeyCode();
+      /*TEMP*/System.out.println("Key pressed: " + code);
+    }
+    else if (id == DisplayEvent.KEY_RELEASED) {
+      int code = e.getKeyCode();
+      /*TEMP*/System.out.println("Key released: " + code);
+    }
+  }
+
+
   // -- Dynamic API methods --
 
   /** Tests whether two dynamic objects are equivalent. */
@@ -319,7 +338,10 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
     }
     string = name + (threeD ? " (3D)" : " (2D)");
 
-    if (display == null) display = VisUtil.makeDisplay(name, threeD, STEREO);
+    if (display == null) {
+      display = VisUtil.makeDisplay(name, threeD, STEREO);
+      display.addDisplayListener(this);
+    }
     else display.setName(name);
     setTitle("Display - " + name);
 

@@ -162,7 +162,7 @@ public class CaptureWindow extends JFrame implements ActionListener,
     JButton record = new JButton("Record >");
     record.setActionCommand("Record");
     record.addActionListener(this);
-    if (!LAFUtil.isMacLookAndFeel()) record.setMnemonic('c');
+    if (!LAFUtil.isMacLookAndFeel()) record.setMnemonic('r');
     record.setToolTipText(
       "Records a movie of transitions between display positions");
 

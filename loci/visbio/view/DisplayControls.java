@@ -111,7 +111,7 @@ public class DisplayControls extends ControlPanel
     // remove data button
     remove = new JButton("Remove");
     remove.addActionListener(this);
-    if (!LAFUtil.isMacLookAndFeel()) remove.setMnemonic('r');
+    if (!LAFUtil.isMacLookAndFeel()) remove.setMnemonic('m');
     remove.setToolTipText("Deletes the selected display");
     remove.setEnabled(false);
 
