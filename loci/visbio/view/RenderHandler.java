@@ -77,7 +77,7 @@ public class RenderHandler {
     if (panel == null) renderRes = res;
     else panel.getRenderWindow().setResolution(res);
 
-    // CTR START HERE actually do something
+    //
 
     VisBioFrame bio = window.getVisBio();
     bio.generateEvent(bio.getManager(DisplayManager.class),

@@ -348,7 +348,7 @@ public class ViewHandler {
    * Modifies this object's state to match that of the given object.
    * If the argument is null, the object is initialized according to
    * its current state instead.
-   */ 
+   */
   public void initState(ViewHandler handler) {
     if (handler != null) {
       matrix = handler.getMatrix();

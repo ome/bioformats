@@ -342,7 +342,7 @@ public class TransformHandler implements ChangeListener, Runnable  {
    * Modifies this object's state to match that of the given object.
    * If the argument is null, the object is initialized according to
    * its current state instead.
-   */ 
+   */
   public void initState(TransformHandler handler) {
     if (handler == null) {
       if (newLinks != null) {

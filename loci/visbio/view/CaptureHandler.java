@@ -397,7 +397,7 @@ public class CaptureHandler {
    * Modifies this object's state to match that of the given object.
    * If the argument is null, the object is initialized according to
    * its current state instead.
-   */ 
+   */
   public void initState(CaptureHandler handler) {
     if (handler != null) {
       // merge old and new position vectors

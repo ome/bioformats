@@ -60,7 +60,7 @@ public class RenderPanel extends JPanel implements ActionListener {
 
     // render button
     JButton render = new JButton("Render");
-    if (!LAFUtil.isMacLookAndFeel()) render.setMnemonic('r');
+    if (!LAFUtil.isMacLookAndFeel()) render.setMnemonic('n');
     render.setToolTipText("Performs volume rendering");
     render.addActionListener(this);
 
