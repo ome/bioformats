@@ -31,39 +31,25 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import java.rmi.RemoteException;
 
 import java.util.Hashtable;
 import java.util.Vector;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JSlider;
-import javax.swing.JSpinner;
-import javax.swing.ListSelectionModel;
-import javax.swing.SpinnerNumberModel;
+import javax.swing.*;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import loci.visbio.VisBioFrame;
 
 import loci.visbio.util.FormsUtil;
+import loci.visbio.util.SwingUtil;
 
 import visad.DisplayImpl;
 import visad.ProjectionControl;
@@ -219,7 +205,9 @@ public class CaptureWindow extends JFrame implements ActionListener,
     PanelBuilder positionList = new PanelBuilder(new FormLayout(
       "default:grow, 3dlu, pref", "fill:pref:grow"));
     CellConstraints cc = new CellConstraints();
-    positionList.add(new JScrollPane(posList), cc.xy(1, 1));
+    JScrollPane posScroll = new JScrollPane(posList);
+    SwingUtil.configureScrollPane(posScroll);
+    positionList.add(posScroll, cc.xy(1, 1));
     positionList.add(buttons, cc.xy(3, 1));
 
     // lay out transition speed slider
@@ -236,12 +224,14 @@ public class CaptureWindow extends JFrame implements ActionListener,
     movieRecord.add(progress, cc.xy(3, 1));
 
     // lay out components
-    setContentPane(new JScrollPane(FormsUtil.makeColumn(new Object[] {
+    JScrollPane pane = new JScrollPane(FormsUtil.makeColumn(new Object[] {
       "Display positions", positionList.getPanel(),
       "Screenshots", FormsUtil.makeRow(snapshot, sendToImageJ),
       "Movies", speedLabel, transitionSpeed.getPanel(),
       FormsUtil.makeRow("&Frames per second", fps), smooth,
-      movieRecord.getPanel()}, "pref:grow", true)));
+      movieRecord.getPanel()}, "pref:grow", true));
+    SwingUtil.configureScrollPane(pane);
+    setContentPane(pane);
   }
 
 

@@ -34,17 +34,11 @@ import java.net.URL;
 
 import java.util.Vector;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JToggleButton;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 
 import javax.swing.filechooser.FileFilter;
+
+import loci.visbio.VisBioFrame;
 
 import visad.util.ComboFileFilter;
 import visad.util.ExtensionFileFilter;
@@ -144,6 +138,15 @@ public abstract class SwingUtil {
     JMenuItem jmi = frame.getMenuItem(menu, item);
     if (jmi == null) return;
     jmi.setAccelerator(KeyStroke.getKeyStroke(keycode, MENU_MASK));
+  }
+
+  /** Configures a scroll pane's properties. */
+  public static void configureScrollPane(JScrollPane scroll) {
+    if (VisBioFrame.MAC_OS_X) {
+      scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+      scroll.setHorizontalScrollBarPolicy(
+        JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+    }
   }
 
   /** Constructs a JFileChooser that recognizes accepted VisBio file types. */

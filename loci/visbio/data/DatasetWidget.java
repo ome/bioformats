@@ -44,6 +44,8 @@ import javax.swing.event.ListSelectionListener;
 
 import javax.swing.table.DefaultTableModel;
 
+import loci.visbio.util.SwingUtil;
+
 /** DatasetWidget is a set of GUI controls for a Dataset transform. */
 public class DatasetWidget extends JPanel implements ListSelectionListener {
 
@@ -106,12 +108,14 @@ public class DatasetWidget extends JPanel implements ListSelectionListener {
     list = new JList(names);
     list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     JScrollPane scrollList = new JScrollPane(list);
+    SwingUtil.configureScrollPane(scrollList);
     list.addListSelectionListener(this);
 
     // metadata table
     tableModel = new DefaultTableModel(COLUMNS, 0);
     table = new JTable(tableModel);
     JScrollPane scrollTable = new JScrollPane(table);
+    SwingUtil.configureScrollPane(scrollTable);
     list.setSelectedIndex(0);
 
     // split pane

@@ -32,13 +32,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -47,6 +41,7 @@ import loci.visbio.ControlPanel;
 import loci.visbio.LogicManager;
 import loci.visbio.WindowManager;
 
+import loci.visbio.util.SwingUtil;
 import loci.visbio.util.VisUtil;
 
 /** DisplayControls is the control panel for managing displays. */
@@ -92,6 +87,7 @@ public class DisplayControls extends ControlPanel
     displayList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     displayList.addListSelectionListener(this);
     JScrollPane listPane = new JScrollPane(displayList);
+    SwingUtil.configureScrollPane(listPane);
 
     // add 2D button
     add2D = new JButton("Add 2D");

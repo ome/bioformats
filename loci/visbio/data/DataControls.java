@@ -37,16 +37,7 @@ import java.awt.event.ActionListener;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JProgressBar;
-import javax.swing.JTree;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -65,6 +56,7 @@ import loci.visbio.WindowManager;
 
 import loci.visbio.ome.OMEManager;
 
+import loci.visbio.util.SwingUtil;
 import loci.visbio.util.VisUtil;
 
 import loci.visbio.view.DisplayWindow;
@@ -145,6 +137,7 @@ public class DataControls extends ControlPanel
     dataTree.setSelectionModel(treeModel);
     dataTree.addTreeSelectionListener(this);
     JScrollPane treePane = new JScrollPane(dataTree);
+    SwingUtil.configureScrollPane(treePane);
 
     // add data button
     JButton addData = new JButton("Add >");
@@ -190,6 +183,7 @@ public class DataControls extends ControlPanel
     dataInfo.setToolTipText(
       "Reports information about the selected data object");
     JScrollPane infoPane = new JScrollPane(dataInfo);
+    SwingUtil.configureScrollPane(infoPane);
 
     // data thumbnail progress bar
     thumbProgress = new JProgressBar();

@@ -46,6 +46,7 @@ import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import javax.swing.text.html.HTMLDocument;
 
 import loci.visbio.util.BrowserLauncher;
+import loci.visbio.util.SwingUtil;
 
 /** HelpWindow details basic VisBio program usage. */
 public class HelpWindow extends JDialog implements HyperlinkListener {
@@ -105,6 +106,7 @@ public class HelpWindow extends JDialog implements HyperlinkListener {
     editor.addHyperlinkListener(this);
     editor.setEditable(false);
     JScrollPane scroll = new JScrollPane(editor);
+    SwingUtil.configureScrollPane(scroll);
     tabs.addTab(title, scroll);
   }
 

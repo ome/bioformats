@@ -97,9 +97,10 @@ public class WindowManager extends LogicManager implements WindowListener {
     windows.put(w, new WindowInfo(w, pack));
     if (VisBioFrame.MAC_OS_X && w instanceof JFrame) {
       // CTR TODO make this work on Mac OS X
-      // Need this class (or a separate menu manager class) to manage window menus.
-      // Whenever anything wants to alter a menu, it goes through this class, so that
-      // all copies of the menu can be changed, to preserve correctness on Mac OS X.
+      // Need this class (or a separate menu manager class) to manage window
+      // menus. Whenever anything wants to alter a menu, it goes through this
+      // class, so that all copies of the menu can be changed, to preserve
+      // correctness on Mac OS X.
       /*
       JFrame f = (JFrame) w;
       if (f.getJMenuBar() == null) f.setJMenuBar(SwingUtil.duplicate(bio.getJMenuBar()));

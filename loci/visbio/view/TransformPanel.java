@@ -30,19 +30,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JList;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.ListSelectionModel;
-import javax.swing.SpinnerNumberModel;
+import javax.swing.*;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -54,6 +42,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import loci.visbio.data.DataManager;
 import loci.visbio.data.DataTransform;
 
+import loci.visbio.util.SwingUtil;
 import loci.visbio.util.FormsUtil;
 
 /** Provides GUI controls for a display transform handler. */
@@ -246,6 +235,7 @@ public class TransformPanel extends JPanel
     transformList.addListSelectionListener(this);
     transformList.setToolTipText("Data linked to this display");
     JScrollPane listPane = new JScrollPane(transformList);
+    SwingUtil.configureScrollPane(listPane);
 
     // button for adding a data transform
     JButton addTransform = new JButton("Add >");

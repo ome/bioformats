@@ -28,6 +28,8 @@ import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import loci.visbio.util.SwingUtil;
+
 /** ControlPanel is the superclass of all control panel types. */
 public class ControlPanel extends JScrollPane {
 
@@ -56,6 +58,7 @@ public class ControlPanel extends JScrollPane {
     this.tip = tip;
     controls = (JPanel) getViewport().getView();
     controls.setLayout(new BorderLayout());
+    SwingUtil.configureScrollPane(this);
   }
 
 

@@ -90,6 +90,7 @@ public class OutputConsole extends OutputStream {
     area.setFont(MONO);
     area.setLineWrap(true);
     JScrollPane scroll = new JScrollPane(area);
+    SwingUtil.configureScrollPane(scroll);
     pane.add(scroll, BorderLayout.CENTER);
     doc = area.getDocument();
 

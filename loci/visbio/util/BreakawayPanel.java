@@ -123,6 +123,7 @@ public class BreakawayPanel extends JPanel implements ActionListener {
     add(right, BorderLayout.EAST);
     if (scroll) {
       scrollPane = new JScrollPane(pane);
+      SwingUtil.configureScrollPane(scrollPane);
       add(scrollPane, BorderLayout.CENTER);
     }
     else add(pane, BorderLayout.CENTER);
