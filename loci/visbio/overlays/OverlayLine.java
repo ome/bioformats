@@ -27,7 +27,7 @@ import java.rmi.RemoteException;
 
 import visad.*;
 
-/** OverlayLine is an overlay tool for drawing measurement lines. */
+/** OverlayLine is a measurement line overlay. */
 public class OverlayLine extends OverlayObject {
 
   // -- Fields --

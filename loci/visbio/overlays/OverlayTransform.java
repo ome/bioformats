@@ -70,6 +70,35 @@ public class OverlayTransform extends DataTransform
 
   /** Adds an overlay object to the current frame. */
   public void addObject(OverlayObject obj) {
+    // CTR START HERE
+    //
+    // We actually want to add object to the current dimensional position of
+    // the parent data, which means this transform has to always know what its
+    // parent's position is. Now, TransformLink passes along DisplayEvents to
+    // the transform, so the overlay link will pass events to this transform,
+    // but from the event we can only glean the VisAD Display, and not the
+    // encapsulating DisplayWindow. Here's some code to get the current
+    // position in the relevant display:
+    //
+    // VisBioFrame bio = ...; // ??? how to get this...
+    // DisplayManager dm = (DisplayManager)
+    //   bio.getManager(DisplayManager.class);
+    // DisplayWindow[] windows = dm.getDisplays();
+    // int[] pos = null;
+    // for (int i=0; i<windows.length; i++) {
+    //   if (windows[i].getDisplay() == display) {
+    //     pos = windows[i].getTransformHandler().getPos(this);
+    //     break;
+    //   }
+    // }
+    // return pos;
+    //
+    // We don't actually want this code in this method, but rather in some
+    // utility method. This method (addObject) should probably take the
+    // position as another argument.
+    //
+    // One way to get the VisBioFrame might be to grab it as the ancestor frame
+    // from some GUI component here.. maybe?
     overlays.add(obj);
     notifyListeners(new TransformEvent(this));
   }

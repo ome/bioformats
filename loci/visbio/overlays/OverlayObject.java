@@ -25,7 +25,7 @@ package loci.visbio.overlays;
 
 import visad.DataImpl;
 
-/** OverlayObject is the superclass of all overlay tools. */
+/** OverlayObject is the superclass of all overlay objects. */
 public abstract class OverlayObject {
 
   // -- Fields --
