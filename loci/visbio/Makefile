@@ -19,18 +19,17 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+# Adapted from VisAD's Makefile
+
 default:
 	@echo ""
 	@echo "Type one of the following:"
-	@echo "	make compile	to compile java files"
+	@echo "	make compile	to compile java files from scratch"
+	@echo "	make recompile	to compile recently altered java files"
 	@echo "	make clean	to remove class files"
 	@echo "	make jar	to create visbio.jar"
 	@echo "	make source	to create visbio_src.jar"
 	@echo "	make docs	to create visbio_docs.jar"
-	@echo ""
-	@echo "You may want to uncomment one or more lines in the"
-	@echo "\"Customizations\" section if you want to use something"
-	@echo "other than the standard JDK tools."
 	@echo ""
 
 ############################################################################
@@ -49,9 +48,11 @@ JFLAGS = -J-mx64m
 JAR = jar
 JARVERBOSE = v
 
-# program used to clean up the results of previous builds
+# programs used to clean up the results of previous builds
 #
 RM = rm -f
+MKDIR = mkdir
+RMDIR = rm -rf
 
 # DOC is the program used to generate the documentation
 # DOC_DIR is the top-level directory where generated documentation is stored
@@ -98,30 +99,89 @@ PACKAGES = \
 	loci.visbio.view
 
 CLASS_FILES = \
-	`echo $(PACKAGES)' ' | sed -e 's/\./\//g' -e 's/ /\/\*\.class /g'` \
+	`echo $(PACKAGES)' ' | sed -e 's/\./\//g' -e 's/ /\/\*\.class /g'`
 
-JAR_FILES = \
-	loci/visbio/visbio.manifest \
-	$(CLASS_FILES) \
+JAVA_FILES = \
+	`echo $(PACKAGES)' ' | sed -e 's/\./\//g' -e 's/ /\/\*\.java /g'` \
+
+RESOURCE_FILES = \
 	loci/visbio/*.png \
 	loci/visbio/help/*.html \
 	loci/visbio/help/*.png \
 	loci/visbio/measure/*.png \
 	loci/visbio/view/*.png
 
-SOURCE_FILES = \
-	`echo $(JAR_FILES)' ' | sed -e 's/\.class/\.java/g'` \
-	loci/visbio/*.txt \
-	loci/visbio/Makefile \
-	loci/visbio/package.html
+JAR_FILES = \
+	loci/visbio/visbio.manifest \
+	$(CLASS_FILES) \
+	$(RESOURCE_FILES)
 
-# CTR TODO: This is unacceptable. Needs work. Remodel after visad/Makefile.
-compile:
-	$(JC) $(JFLAGS) *.java
+SOURCE_FILES = \
+	loci/visbio/visbio.manifest \
+	$(JAVA_FILES) \
+	loci/visbio/package.html \
+	loci/visbio/Makefile \
+	loci/visbio/*.txt \
+	$(RESOURCE_FILES)
+
+recompile:
+	@cd ../.. ; \
+	for i in $(PACKAGES); do \
+	  dir=`echo $$i | sed -e 's/\./\//g'`; \
+	  if [ ! -z "$$dir" ]; then \
+	    if [ ! -d $$dir ]; then \
+	      echo "$$dir does not exist"; \
+	    else \
+	      echo "*** Building in $$dir"; \
+	      (cd $$dir; \
+	      if [ ! -z "$(COMPILE_ALL)" ]; then \
+	        if ls *.java >/dev/null 2>&1; then \
+	          echo $(JC) $(JFLAGS) '*.java'; \
+	          $(JC) $(JFLAGS) *.java; \
+	        fi; \
+	      fi; \
+	      for j in *.java; do \
+	        if [ -f $$j ]; then \
+	          b=`basename $$j .java`; \
+	          if [ -z "$(COMPILE_ALL)" ]; then \
+	            c=$$b.class; \
+	            compile=false; \
+	            if [ ! -f $$c ]; then \
+	              compile=true; \
+	            else \
+	              set `ls -td $$j $$c` X; \
+	              if [ $$c != $$1 ]; then \
+	                compile=true; \
+	              fi; \
+	            fi; \
+	            if $$compile; then \
+	              (echo "$(JC) $(JFLAGS) $$j" && \
+	                $(JC) $(JFLAGS) $$j || true); \
+	            fi; \
+	          fi; \
+	        fi; \
+	      done); \
+	    fi; \
+	  fi; \
+	done
+
+compile: clean
+	@make COMPILE_ALL=true recompile
 
 clean:
 	@cd ../.. ; \
-	$(RM) $(CLASS_FILES)
+	for i in $(PACKAGES); do \
+	  dir=`echo $$i | sed -e 's/\./\//g'`; \
+	  if [ ! -z "$$dir" ]; then \
+	    if [ ! -d $$dir ]; then \
+	      echo "$$dir does not exist"; \
+	    else \
+	      echo "*** Cleaning in $$dir"; \
+	      (cd $$dir; \
+	      $(RM) *.class); \
+	    fi; \
+	  fi; \
+	done
 
 jar:
 	@cd ../.. ; \
@@ -136,9 +196,9 @@ source:
 docs:
 	@cd ../.. ; \
 	if [ -d $(DOC_DIR) ]; then $(RM) $(DOC_DIR); fi ; \
-	mkdir $(DOC_DIR) ; \
+	$(MKDIR) $(DOC_DIR) ; \
 	$(DOC) $(DOCFLAGS) $(PACKAGES) ; \
 	$(JAR) $(JARVERBOSE)cf visbio_docs.jar $(DOC_DIR) ; \
-	$(RM) $(DOC_DIR) ; \
+	$(RMDIR) $(DOC_DIR) ; \
 	ls -l visbio_docs.jar
 
