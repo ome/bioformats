@@ -27,6 +27,7 @@ import java.rmi.RemoteException;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import loci.visbio.state.Dynamic;
+import loci.visbio.util.ObjectUtil;
 import loci.visbio.util.VisUtil;
 import visad.*;
 
@@ -65,16 +66,22 @@ public class ArbitrarySlice extends DataTransform
   protected float pitch;
 
   /** Arbitrary slice's location along slicing line. */
-  protected float loc = 50;
+  protected float loc;
 
   /** Resolution of arbitrary slice. */
-  protected int res = 128;
+  protected int res;
 
   /** Flag indicating whether arbitrary slice should actually be computed. */
-  protected boolean compute = false;
+  protected boolean compute;
 
   /** Controls for the arbitrary slice. */
   protected SliceWidget controls;
+
+  /** Last collapsed image stack computed. */
+  protected FlatField collapse;
+
+  /** Dimensional position of last collapsed image stack computed. */
+  protected int[] oldPos;
 
 
   // -- Constructor --
@@ -93,7 +100,7 @@ public class ArbitrarySlice extends DataTransform
    * Sets the parameters for the arbitrary slice,
    * recomputing the slice if the recompute flag is set.
    */
-  public void setParameters(int axis, float yaw, float pitch,
+  public synchronized void setParameters(int axis, float yaw, float pitch,
     float loc, int res, boolean compute)
   {
     if (this.axis != axis) {
@@ -171,8 +178,7 @@ public class ArbitrarySlice extends DataTransform
     if (!isValidParent(dt)) return null;
     String n = (String) JOptionPane.showInputDialog(dm.getControlPanel(),
       "Title of slice:", "Create arbitrary slice",
-      JOptionPane.INFORMATION_MESSAGE, null, null,
-      dt.getName() + " slice");
+      JOptionPane.INFORMATION_MESSAGE, null, null, dt.getName() + " slice");
     if (n == null) return null;
     return new ArbitrarySlice(dt, n);
   }
@@ -198,11 +204,13 @@ public class ArbitrarySlice extends DataTransform
    *
    * @return null if the transform does not provide data of that dimensionality
    */
-  public Data getData(int[] pos, int dim) {
+  public synchronized Data getData(int[] pos, int dim) {
     if (dim != 3) {
       System.err.println(name + ": invalid dimensionality (" + dim + ")");
       return null;
     }
+    if (!ObjectUtil.arraysEqual(pos, oldPos)) collapse = null;
+    oldPos = pos;
 
     // get some info from the parent transform
     ImageTransform it = (ImageTransform) parent;
@@ -313,32 +321,39 @@ public class ArbitrarySlice extends DataTransform
 
       // read in parent data
       int len = parent.getLengths()[axis];
-      FlatField[] fields = new FlatField[len];
-      int[] npos = getParentPos(pos);
-      for (int i=0; i<len; i++) {
-        npos[axis] = i;
-        Data data = parent.getData(npos, 2);
-        if (data == null || !(data instanceof FlatField)) {
-          System.err.println(name +
-            ": parent image plane #" + (i + 1) + " is not valid");
-          return null;
+      FlatField[] fields = null;
+      if (collapse == null) {
+        fields = new FlatField[len];
+        int[] npos = getParentPos(pos);
+        for (int i=0; i<len; i++) {
+          npos[axis] = i;
+          Data data = parent.getData(npos, 2);
+          if (data == null || !(data instanceof FlatField)) {
+            System.err.println(name +
+              ": parent image plane #" + (i + 1) + " is not valid");
+            return null;
+          }
+          fields[i] = (FlatField) data;
         }
-        fields[i] = (FlatField) data;
       }
 
       // resample combined field onto arbitrary slice
       try {
-        // use image transform's recommended MathType
-        for (int i=0; i<len; i++) {
-          fields[i] = VisUtil.switchType(fields[i], imageType);
+        if (collapse == null) {
+          // use image transform's recommended MathType
+          for (int i=0; i<len; i++) {
+            fields[i] = VisUtil.switchType(fields[i], imageType);
+          }
+          // create collapsed image stack from parent images
+          collapse = VisUtil.collapse(VisUtil.makeField(fields, zType, -1, 1));
         }
+
         Gridded3DSet planeSet = new Gridded3DSet(xyz,
           planeSamples, 2, 2, null, null, null, false);
         Gridded3DSet gridSet = new Gridded3DSet(xyz,
           planeSet.gridToValue(grid), res, res, null, null, null, false);
-        FieldImpl field = VisUtil.makeField(fields, zType, -1, 1);
-        field = VisUtil.collapse(field);
-        slice = field.resample(gridSet, Data.WEIGHTED_AVERAGE, Data.NO_ERRORS);
+        slice = collapse.resample(gridSet,
+          Data.WEIGHTED_AVERAGE, Data.NO_ERRORS);
       }
       catch (VisADException exc) { exc.printStackTrace(); }
       catch (RemoteException exc) { exc.printStackTrace(); }
@@ -432,11 +447,21 @@ public class ArbitrarySlice extends DataTransform
     super.initState(dyn);
     ArbitrarySlice data = (ArbitrarySlice) dyn;
 
-    if (data != null) {
+    if (data == null) {
+      axis = -1;
+      yaw = 0;
+      pitch = 0;
+      loc = 50;
+      res = 64;
+      compute = true;
+    }
+    else {
+      axis = data.axis;
       yaw = data.yaw;
       pitch = data.pitch;
       loc = data.loc;
       res = data.res;
+      compute = data.compute;
     }
 
     computeLengths();
@@ -467,11 +492,22 @@ public class ArbitrarySlice extends DataTransform
   /** Computes lengths and dims based on dimensional axis to be sliced. */
   private void computeLengths() {
     int[] plens = parent.getLengths();
+    String[] pdims = parent.getDimTypes();
+
+    if (axis < 0) {
+      axis = 0;
+      for (int i=0; i<pdims.length; i++) {
+        if (pdims[i].equals("Slice")) {
+          axis = i;
+          break;
+        }
+      }
+    }
+
     lengths = new int[plens.length - 1];
     System.arraycopy(plens, 0, lengths, 0, axis);
     System.arraycopy(plens, axis + 1, lengths, axis, lengths.length - axis);
 
-    String[] pdims = parent.getDimTypes();
     dims = new String[pdims.length - 1];
     System.arraycopy(pdims, 0, dims, 0, axis);
     System.arraycopy(pdims, axis + 1, dims, axis, dims.length - axis);

@@ -92,6 +92,7 @@ public class SliceWidget extends JPanel implements ChangeListener, ItemListener 
     String[] names = new String[types.length];
     for (int i=0; i<names.length; i++) names[i] = (i + 1) + ": " + types[i];
     axes = new JComboBox(names);
+    axes.setSelectedIndex(slice.getAxis());
     axes.addItemListener(this);
 
     // create yaw slider
@@ -119,7 +120,7 @@ public class SliceWidget extends JPanel implements ChangeListener, ItemListener 
     locationValue = new JLabel(value + "%");
 
     // create resolution slider
-    int min = 128, max = 896;
+    int min = 64, max = 896;
     value = slice.getResolution();
     res = new JSlider(min, max, value);
     res.setMajorTickSpacing(max / 4);
@@ -129,7 +130,7 @@ public class SliceWidget extends JPanel implements ChangeListener, ItemListener 
     resValue = new JLabel(value + " x " + value);
 
     // create on-the-fly slice recompution checkbox
-    recompute = new JCheckBox("Recompute slice on the fly", false);
+    recompute = new JCheckBox("Recompute slice on the fly", true);
     recompute.setMnemonic('f');
     recompute.addChangeListener(this);
 
@@ -185,37 +186,42 @@ public class SliceWidget extends JPanel implements ChangeListener, ItemListener 
   /** Handles slider and check box updates. */
   public void stateChanged(ChangeEvent e) {
     Object src = e.getSource();
-    if (src == yaw) {
-      int value = yaw.getValue();
-      yawValue.setText("" + value + DEGREES);
-      slice.setYaw(value);
-    }
-    else if (src == pitch) {
-      int value = pitch.getValue();
-      pitchValue.setText("" + value + DEGREES);
-      slice.setPitch(value);
-    }
-    else if (src == location) {
-      int value = location.getValue();
-      locationValue.setText(value + "%");
-      slice.setLocation(value);
-    }
+    if (src == yaw) yawValue.setText("" + yaw.getValue() + DEGREES);
+    else if (src == pitch) pitchValue.setText("" + pitch.getValue() + DEGREES);
+    else if (src == location) locationValue.setText(location.getValue() + "%");
     else if (src == res) {
       int value = res.getValue();
       resValue.setText(value + " x " + value);
-      slice.setResolution(value);
     }
-    else if (src == recompute) {
-      slice.setSliceComputed(recompute.isSelected());
-    }
+    updateSlice();
   }
 
 
   // -- ItemListener API methods --
 
   /** Handles combo box updates. */
-  public void itemStateChanged(ItemEvent e) {
-    slice.setAxis(axes.getSelectedIndex());
+  public void itemStateChanged(ItemEvent e) { updateSlice(); }
+
+
+  // -- Helper methods --
+
+  /** Updates arbitrary slice to match current user interface settings. */
+  protected void updateSlice() {
+    if (res.getValueIsAdjusting()) return;
+
+    int axis = axes.getSelectedIndex();
+    int yawVal = yaw.getValue();
+    int pitchVal = pitch.getValue();
+    int locVal = location.getValue();
+    int resVal = res.getValue();
+    boolean onTheFly = recompute.isSelected();
+
+    boolean yawAdj = yaw.getValueIsAdjusting();
+    boolean pitchAdj = pitch.getValueIsAdjusting();
+    boolean locAdj = location.getValueIsAdjusting();
+    boolean compute = onTheFly || (!yawAdj && !pitchAdj && !locAdj);
+
+    slice.setParameters(axis, yawVal, pitchVal, locVal, resVal, compute);
   }
 
 }
