@@ -47,7 +47,8 @@ public class ClassManager extends LogicManager {
     // extract classes to preload from data file
     preloadClasses = new Vector();
     try {
-      BufferedReader fin = new BufferedReader(new FileReader("classes.txt"));
+      BufferedReader fin = new BufferedReader(
+        new InputStreamReader(getClass().getResourceAsStream("classes.txt")));
       while (true) {
         String line = fin.readLine();
         if (line == null) break; // eof

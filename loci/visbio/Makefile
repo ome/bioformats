@@ -115,6 +115,7 @@ RESOURCE_FILES = \
 
 JAR_FILES = \
 	loci/visbio/visbio.manifest \
+	loci/visbio/classes.txt \
 	$(CLASS_FILES) \
 	$(RESOURCE_FILES)
 
