@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
 
 import java.awt.event.ActionEvent;
@@ -114,6 +115,9 @@ public class VisBioFrame extends GUIFrame {
     status.setStringPainted(true);
     status.setToolTipText("Reports status of VisBio operations");
     status.setBorder(new BevelBorder(BevelBorder.RAISED));
+
+    // HACK - make progress bar an easier-to-read color for Plastic L&F
+    if (LAFUtil.isPlasticLookAndFeel()) status.setForeground(Color.blue);
 
     // create stop button
     stop = new JButton("Stop");
