@@ -56,6 +56,9 @@ public class TransformPanel extends JPanel
   /** Transform handler upon which GUI controls operate. */
   protected TransformHandler handler;
 
+  /** Spinner for adjusting burn-in delay. */
+  protected JSpinner delayTime;
+
   /** List of linked data transforms. */
   protected JList transformList;
 
@@ -79,6 +82,9 @@ public class TransformPanel extends JPanel
 
   /** Button for toggling status of animation. */
   protected JButton animate;
+
+  /** Spinner for adjusting animation rate. */
+  protected JSpinner fps;
 
   /** List of axes for animation. */
   protected JComboBox animBox;
@@ -160,7 +166,13 @@ public class TransformPanel extends JPanel
   /** Handles button presses and combo box selections. */
   public void actionPerformed(ActionEvent e) {
     String cmd = e.getActionCommand();
-    if (cmd.equals("visible")) {
+    if (cmd.equals("delayBurn")) {
+      boolean delay = ((JCheckBox) e.getSource()).isSelected();
+      delayTime.setEnabled(delay);
+      handler.setBurnDelay(delay ?
+        1000 * ((Number) delayTime.getValue()).intValue() : 0);
+    }
+    else if (cmd.equals("visible")) {
       DataTransform data = (DataTransform) transformList.getSelectedValue();
       if (data != null) {
         JCheckBox vis = (JCheckBox) e.getSource();
@@ -221,8 +233,15 @@ public class TransformPanel extends JPanel
 
   /** Handles spinner changes. */
   public void stateChanged(ChangeEvent e) {
-    JSpinner fps = (JSpinner) e.getSource();
-    handler.setAnimationRate(((Integer) fps.getValue()).intValue());
+    Object src = e.getSource();
+    if (src == fps) {
+      handler.setAnimationRate(((Integer) fps.getValue()).intValue());
+    }
+    else if (src == delayTime) {
+      Object o = delayTime.getValue();
+      System.out.println("o = " + o + " (" + o.getClass().getName() + ")");
+      handler.setBurnDelay(1000 * ((Number) delayTime.getValue()).intValue());
+    }
   }
 
 
@@ -239,6 +258,21 @@ public class TransformPanel extends JPanel
 
   /** Creates a panel with data transform-related components. */
   protected JPanel doDataPanel() {
+    // burn-in checkbox
+    JCheckBox delayBurn = new JCheckBox("Delay burn-in", true);
+    delayBurn.setActionCommand("delayBurn");
+    delayBurn.addActionListener(this);
+    if (!LAFUtil.isMacLookAndFeel()) delayBurn.setMnemonic('e');
+    delayBurn.setToolTipText(
+      "Toggles whether full-resolution burn-in is delayed");
+
+    // burn-in delay
+    delayTime = new JSpinner(new SpinnerNumberModel(
+      handler.getBurnDelay() / 1000, 1, 99, 1));
+    delayTime.addChangeListener(this);
+    delayTime.setToolTipText(
+      "Adjusts the time before full-resolution burn-in");
+
     // linked data transforms
     transformModel = new DefaultListModel();
     transformList = new JList(transformModel);
@@ -310,8 +344,11 @@ public class TransformPanel extends JPanel
     JPanel buttons = bsb.getPanel();
 
     // lay out components
-    return FormsUtil.makeRow(new Object[] {listPane, buttons,
-      doDataProperties()}, "fill:pref:grow", false);
+    return FormsUtil.makeColumn(
+      FormsUtil.makeRow(delayBurn, delayTime, "seconds"),
+      FormsUtil.makeRow(new Object[] {listPane, buttons,
+        doDataProperties()}, "fill:pref:grow", false)
+    );
   }
 
   /** Creates a panel with animation-related components. */
@@ -327,7 +364,7 @@ public class TransformPanel extends JPanel
     animate.setPreferredSize(animate.getPreferredSize());
 
     // FPS adjuster
-    JSpinner fps = new JSpinner(new SpinnerNumberModel(
+    fps = new JSpinner(new SpinnerNumberModel(
       handler.getAnimationRate(), 1, 60, 1));
     fps.setToolTipText("Adjusts the animation speed (frames per second)");
     fps.addChangeListener(this);
