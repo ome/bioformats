@@ -273,7 +273,7 @@ public class ImageFamily extends FormNode implements FormBlockReader,
    * @param field the name associated with the metadata field
    * @return the value, or null should the field not exist
    */
-  public Object getMetadataValue(String id, String field) 
+  public Object getMetadataValue(String id, String field)
     throws BadFormException, IOException, VisADException
   {
     if (!id.equals(lastId)) initId(id);
@@ -287,7 +287,7 @@ public class ImageFamily extends FormNode implements FormBlockReader,
    * @param id the filename
    * @return the hashtable containing all metadata associated with the file
    */
-  public Hashtable getMetadata(String id) 
+  public Hashtable getMetadata(String id)
     throws BadFormException, IOException, VisADException
   {
     if (!id.equals(lastId)) initId(id);
