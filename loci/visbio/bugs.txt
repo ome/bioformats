@@ -14,9 +14,6 @@ Bugfixes and enhancements:
   - Flag indicating whether latest state change should "stack up" or "replace"
     last change (if last change was of the same type as this one)
 
-  - Ensure all modal dialogs are standalone or based on an appropriate parent
-    (i.e., not VisBioFrame)
-
   - Change color dialog to include more alpha tools.
   - Add transparency controls to left side of color dialog box.
 

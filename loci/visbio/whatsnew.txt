@@ -1,5 +1,6 @@
 v3.00 beta3 - Not yet released
 
+- ADDED: Controls for altering how long full-resolution burn-in is delayed
 - ADDED: System button for dumping system properties to output console
 
 - TWEAK: Dataset chooser displays progress bar while analyzing file pattern
