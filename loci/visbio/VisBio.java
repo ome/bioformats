@@ -44,10 +44,13 @@ public class VisBio {
   public static final String TITLE = "VisBio";
 
   /** Application version. */
-  public static final String VERSION = "v3.00 beta3g";
+  public static final String VERSION = "v3.00 beta3h";
 
   /** Application author. */
   public static final String AUTHOR = "Curtis Rueden, LOCI";
+
+  /** Application build date. */
+  public static final String DATE = "7 March 2005";
 
 
   // -- Constructor --
