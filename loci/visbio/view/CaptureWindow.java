@@ -244,6 +244,48 @@ public class CaptureWindow extends JFrame implements ActionListener,
   /** Sets the progress bar's message. */
   public void setProgressMessage(String msg) { progress.setString(msg); }
 
+  /** Sets positions on the list. */
+  public void setPositions(Vector v) {
+    posListModel.removeAllElements();
+    int size = v.size();
+    for (int i=0; i<size; i++) posListModel.addElement(v.elementAt(i));
+  }
+
+  /** Sets movie speed. */
+  public void setSpeed(int speed) {
+    if (speed != getSpeed()) this.speed.setValue(speed);
+  }
+
+  /** Sets movie frames per second. */
+  public void setFPS(int fps) {
+    if (fps != getFPS()) {
+      SpinnerNumberModel fpsModel = (SpinnerNumberModel) this.fps.getModel();
+      fpsModel.setValue(new Integer(fps));
+    }
+  }
+
+  /** Sets whether transitions use a smoothing sine function. */
+  public void setSmooth(boolean smooth) {
+    if (smooth != isSmooth()) this.smooth.setSelected(smooth);
+  }
+
+  /** Gets positions on the list. */
+  public Vector getPositions() {
+    int size = posListModel.size();
+    Vector v = new Vector(size);
+    for (int i=0; i<size; i++) v.add(posListModel.elementAt(i));
+    return v;
+  }
+
+  /** Gets movie speed. */
+  public int getSpeed() { return speed.getValue(); }
+
+  /** Gets movie frames per second. */
+  public int getFPS() { return ((Integer) fps.getValue()).intValue(); }
+
+  /** Gets whether transitions use a smoothing sine function. */
+  public boolean isSmooth() { return smooth.isSelected(); }
+
 
   // -- ActionListener API methods --
 
@@ -323,16 +365,16 @@ public class CaptureWindow extends JFrame implements ActionListener,
     }
     else if (cmd.equals("AviMovie") || cmd.equals("ImageSequence")) {
       int size = posListModel.size();
-      Vector positions = new Vector(size);
+      Vector matrices = new Vector(size);
       for (int i=0; i<size; i++) {
         DisplayPosition pos = (DisplayPosition) posListModel.elementAt(i);
-        positions.add(pos.getMatrix());
+        matrices.add(pos.getMatrix());
       }
       double secPerTrans = Math.pow(2, 2 - speed.getValue() / 4.0);
-      int framesPerSec = ((Integer) fps.getValue()).intValue();
+      int framesPerSec = getFPS();
       boolean sine = smooth.isSelected();
       boolean movie = cmd.equals("AviMovie");
-      handler.captureMovie(positions, secPerTrans, framesPerSec, sine, movie);
+      handler.captureMovie(matrices, secPerTrans, framesPerSec, sine, movie);
     }
   }
 

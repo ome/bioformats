@@ -23,16 +23,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.view;
 
-import loci.ome.xml.OMEElement;
-
 import loci.visbio.state.Dynamic;
-import loci.visbio.state.SaveException;
-import loci.visbio.state.Saveable;
 
 import loci.visbio.util.ObjectUtil;
 
 /** DisplayPosition represents an orientation of VisAD display. */
-public class DisplayPosition implements Dynamic, Saveable {
+public class DisplayPosition implements Dynamic {
 
   // -- Fields --
 
@@ -52,6 +48,22 @@ public class DisplayPosition implements Dynamic, Saveable {
   public DisplayPosition(String name, double[] matrix) {
     this.name = name;
     this.matrix = matrix;
+  }
+
+
+  // -- DisplayPosition API methods - state logic --
+
+  /** Writes the current state to the given OME-CA XML object. */
+  public void saveState(DisplayWindow window, String attrName) {
+    window.setAttr(attrName + "_name", name);
+    window.setAttr(attrName + "_matrix", ObjectUtil.arrayToString(matrix));
+  }
+
+  /** Restores the current state from the given OME-CA XML object. */
+  public void restoreState(DisplayWindow window, String attrName) {
+    name = window.getAttr(attrName + "_name");
+    matrix = ObjectUtil.stringToDoubleArray(
+      window.getAttr(attrName + "_matrix"));
   }
 
 
@@ -90,28 +102,6 @@ public class DisplayPosition implements Dynamic, Saveable {
    * another object with a matching state.
    */
   public void discard() { }
-
-
-  // -- Saveable API methods --
-
-  /** Writes the current state to the given OME-CA XML object. */
-  public void saveState(OMEElement ome) throws SaveException {
-    /*
-    fout.println(name);
-    ObjectUtil.writeArray(matrix, fout);
-    */
-  }
-
-  /** Restores the current state from the given OME-CA XML object. */
-  public void restoreState(OMEElement ome) throws SaveException {
-    /*
-    try {
-      name = fin.readLine();
-      matrix = ObjectUtil.readArray(matrix, fin);
-    }
-    catch (IOException exc) { throw new SaveException(exc); }
-    */
-  }
 
 
   // -- New API methods --

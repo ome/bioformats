@@ -45,6 +45,7 @@ import loci.visbio.SystemManager;
 import loci.visbio.WindowManager;
 
 import loci.visbio.state.OptionManager;
+import loci.visbio.state.StateManager;
 
 import visad.*;
 
@@ -151,10 +152,10 @@ public class CaptureHandler {
   }
 
   /** Creates a movie of the given transformation sequence. */
-  public void captureMovie(Vector positions, double secPerTrans,
+  public void captureMovie(Vector matrices, double secPerTrans,
     int framesPerSec, boolean sine, boolean movie)
   {
-    final int size = positions.size();
+    final int size = matrices.size();
     if (size < 1) {
       JOptionPane.showMessageDialog(window, "Must have at least two display " +
         "positions on the list.", "Cannot record movie",
@@ -207,7 +208,7 @@ public class CaptureHandler {
     final String filename = file;
     final int dotIndex = dot;
     final boolean isTiff = tiff, isJpeg = jpeg, isRaw = raw;
-    final Vector pos = positions;
+    final Vector pos = matrices;
     final int frm = framesPerTrans;
     final boolean doSine = sine;
 
@@ -302,51 +303,58 @@ public class CaptureHandler {
 
   /** Writes the current state. */
   public void saveState() {
-    // CTR START HERE - panel.getCaptureWindow(), extract settings from there
-    // CTR TODO CaptureHandler saveState
-    /*
-    window.setAttr("brightness", "" + brightness);
-    window.setAttr("contrast", "" + contrast);
-    window.setAttr("colorModel", "" + model);
-    window.setAttr("red", red == null ? "null" : red.getName());
-    window.setAttr("green", green == null ? "null" : green.getName());
-    window.setAttr("blue", blue == null ? "null" : blue.getName());
-    window.setAttr("colorMin", ObjectUtil.arrayToString(getLo()));
-    window.setAttr("colorMax", ObjectUtil.arrayToString(getHi()));
-    window.setAttr("colorFixed", ObjectUtil.arrayToString(getFixed()));
+    CaptureWindow captureWindow = panel.getCaptureWindow();
+    Vector positions = captureWindow.getPositions();
+    int speed = captureWindow.getSpeed();
+    int fps = captureWindow.getFPS();
+    boolean smooth = captureWindow.isSmooth();
 
-    float[][][] tables = getTables();
-    if (tables == null) {
-      window.setAttr("tables", "null");
+    // save display positions
+    int numPositions = positions.size();
+    window.setAttr("positions", "" + numPositions);
+    for (int i=0; i<numPositions; i++) {
+      DisplayPosition position = (DisplayPosition) positions.elementAt(i);
+      position.saveState(window, "position" + i);
     }
-    else {
-      window.setAttr("tables", "" + tables.length);
-      for (int i=0; i<tables.length; i++) {
-        if (tables[i] == null) window.setAttr("table" + i, "null");
-        else {
-          window.setAttr("table" + i, "" + tables[i].length);
-          for (int j=0; j<tables[i].length; j++) {
-            if (tables[i][j] == null) {
-              window.setAttr("table" + i + "-" + j, "null");
-            }
-            else {
-              window.setAttr("table" + i + "-" + j,
-                ObjectUtil.arrayToString(tables[i][j]));
-            }
-          }
-        }
-      }
-    }
-    */
+
+    // save other parameters
+    window.setAttr("movieSpeed", "" + speed);
+    window.setAttr("movieFPS", "" + fps);
+    window.setAttr("movieSmooth", "" + smooth);
   }
 
   /** Restores the current state. */
   public void restoreState() {
-    // CTR TODO CaptureHandler restoreState
+    // read in new display position list
+    int numPositions = Integer.parseInt(window.getAttr("positions"));
+    Vector vn = new Vector();
+    for (int i=0; i<numPositions; i++) {
+      DisplayPosition position = new DisplayPosition();
+      position.restoreState(window, "position" + i);
+      vn.add(position);
+    }
+
+    // merge old and new display position lists
+    CaptureWindow captureWindow = panel.getCaptureWindow();
+    Vector vo = captureWindow.getPositions();
+    StateManager.mergeStates(vo, vn);
+
+    // read in other parameters
+    int speed = Integer.parseInt(window.getAttr("movieSpeed"));
+    int fps = Integer.parseInt(window.getAttr("movieFPS"));
+    boolean smooth = window.getAttr("movieSmooth").equalsIgnoreCase("true");
+
+    // restore capture state
+    captureWindow.setPositions(vn);
+    captureWindow.setSpeed(speed);
+    captureWindow.setFPS(fps);
+    captureWindow.setSmooth(smooth);
   }
 
   /** Tests whether two objects are in equivalent states. */
   public boolean matches(CaptureHandler handler) {
+    // CTR START HERE implement matches and initState,
+    // then test this new capture state logic.
     // CTR TODO CaptureHandler matches
     return false;
   }
