@@ -525,7 +525,7 @@ public abstract class BrowserLauncher {
         break;
       case OTHER:
       default:
-        theBrowser = "netscape";
+        theBrowser = "firefox";
         break;
     }
     return theBrowser;

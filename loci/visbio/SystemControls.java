@@ -34,6 +34,7 @@ import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.Timer;
 
+import loci.visbio.util.LAFUtil;
 import loci.visbio.util.VisUtil;
 
 import visad.VisADException;
@@ -124,6 +125,10 @@ public class SystemControls extends ControlPanel
       getVersionString("javax.media.jai.JAI"));
     jaiField.setEditable(false);
 
+    // Look and feel text field
+    JTextField lafField = new JTextField(LAFUtil.getLookAndFeel());
+    lafField.setEditable(false);
+
     // Stereo configuration text field
     JTextField stereoField = new JTextField(
       VisUtil.getStereoConfiguration() == null ? "Not available" : "Enabled");
@@ -134,7 +139,7 @@ public class SystemControls extends ControlPanel
       "right:pref, 3dlu, pref:grow, 3dlu, pref",
       "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 9dlu, pref, 3dlu, " +
       "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 9dlu, " +
-      "pref, 3dlu, pref");
+      "pref, 3dlu, pref, 3dlu, pref");
     PanelBuilder builder = new PanelBuilder(layout);
     builder.setDefaultDialogBorder();
     CellConstraints cc = new CellConstraints();
@@ -170,8 +175,11 @@ public class SystemControls extends ControlPanel
 
     builder.addSeparator("Configuration", cc.xyw(1, 21, 5));
 
-    builder.addLabel("&Stereo", cc.xy(1, 23)).setLabelFor(stereoField);
-    builder.add(stereoField, cc.xyw(3, 23, 3));
+    builder.addLabel("&Look && Feel", cc.xy(1, 23)).setLabelFor(lafField);
+    builder.add(lafField, cc.xyw(3, 23, 3));
+
+    builder.addLabel("&Stereo", cc.xy(1, 25)).setLabelFor(stereoField);
+    builder.add(stereoField, cc.xyw(3, 25, 3));
 
     controls.add(builder.getPanel());
 
