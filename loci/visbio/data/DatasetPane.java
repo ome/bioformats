@@ -104,7 +104,7 @@ public class DatasetPane extends WizardPane implements DocumentListener {
 
   /** Creates a file group import dialog with the given file chooser. */
   public DatasetPane(JFileChooser fileChooser) {
-    super("Open file group");
+    super("Import data");
     fileBox = fileChooser;
 
     // -- Page 1 --
