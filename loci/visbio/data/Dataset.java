@@ -241,8 +241,9 @@ public class Dataset extends ImageTransform {
   // -- DataTransform API methods --
 
   /** Obtains an image from the source(s) at the given dimensional position. */
-  public Data getData(int[] pos, int dim) {
+  public Data getData(int[] pos, int dim, DataCache cache) {
     if (dim != 2) return null;
+    if (cache != null) return cache.getData(this, pos, dim);
 
     int[] indices = getIndices(pos);
     int fileIndex = indices[0];
@@ -316,6 +317,7 @@ public class Dataset extends ImageTransform {
    * global cache file.
    */
   public String getCacheId(int[] pos, boolean global) {
+    if (pos == null) return null;
     int[] indices = getIndices(pos);
     int fileIndex = indices[0];
     int imgIndex = indices[1];

@@ -185,12 +185,12 @@ public class DataSampling extends ImageTransform {
    *
    * @return null if the transform does not provide data of that dimensionality
    */
-  public Data getData(int[] pos, int dim) {
+  public Data getData(int[] pos, int dim, DataCache cache) {
     if (dim != 2) return null;
 
     int[] p = new int[pos.length];
     for (int i=0; i<p.length; i++) p[i] = min[i] + step[i] * pos[i] - 1;
-    Data data = parent.getData(p, dim);
+    Data data = parent.getData(p, dim, cache);
     if (data == null || !(data instanceof FlatField)) return null;
 
     int[] res = resX > 0 && resY > 0 ? new int[] {resX, resY} : null;

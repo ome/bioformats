@@ -154,7 +154,7 @@ public class ThumbnailHandler
    * more efficient thumbnail creation behavior.
    */
   protected FlatField computeThumb(int[] pos) {
-    Data d = data.getData(pos, 2);
+    Data d = data.getData(pos, 2, null);
     return makeThumb(d);
   }
 

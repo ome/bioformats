@@ -133,7 +133,7 @@ public class ProjectionTransform extends ImageTransform {
    *
    * @return null if the transform does not provide data of that dimensionality
    */
-  public Data getData(int[] pos, int dim) {
+  public Data getData(int[] pos, int dim, DataCache cache) {
     if (dim != 2) return null;
 
     int len = parent.getLengths()[axis];
@@ -141,7 +141,7 @@ public class ProjectionTransform extends ImageTransform {
     int[] npos = getParentPos(pos);
     for (int i=0; i<len; i++) {
       npos[axis] = i;
-      Data data = parent.getData(npos, dim);
+      Data data = parent.getData(npos, dim, cache);
       if (data == null || !(data instanceof FlatField)) return null;
       fields[i] = (FlatField) data;
     }

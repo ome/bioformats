@@ -156,10 +156,10 @@ public class SpectralTransform extends ImageTransform
    *
    * @return null if the transform does not provide data of that dimensionality
    */
-  public Data getData(int[] pos, int dim) {
+  public Data getData(int[] pos, int dim, DataCache cache) {
     if (dim != 2) return null;
 
-    Data data = parent.getData(pos, dim);
+    Data data = parent.getData(pos, dim, cache);
     if (data == null || !(data instanceof FlatField)) return null;
 
     return doWeightedMapping((FlatField) data, range, weights);

@@ -107,7 +107,7 @@ public abstract class DataTransform implements Dynamic {
    *
    * @return null if the transform does not provide data of that dimensionality
    */
-  public abstract Data getData(int[] pos, int dim);
+  public abstract Data getData(int[] pos, int dim, DataCache cache);
 
   /** Gets whether this transform provides data of the given dimensionality. */
   public abstract boolean isValidDimension(int dim);

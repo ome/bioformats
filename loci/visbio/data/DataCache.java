@@ -26,12 +26,12 @@ package loci.visbio.data;
 import java.util.Hashtable;
 import visad.Data;
 
-/** Provides a simple caching mechanism for full resolution data in memory. */
+/** Provides a simple caching mechanism for full-resolution data in memory. */
 public class DataCache {
 
   // -- Fields --
 
-  /** Hashtable backing this cache of full resolution data. */
+  /** Hashtable backing this cache of full-resolution data. */
   protected Hashtable hash;
 
 
@@ -49,24 +49,38 @@ public class DataCache {
   {
     Data d = getCachedData(getKey(trans, pos));
     if (d == null) {
-      d = trans.getData(pos, dim);
+      /*TEMP*/System.out.println("Cache miss for " + trans + ", pos=" + loci.visbio.util.ObjectUtil.arrayToString(pos) + " (dim=" + dim + ")");
+      d = trans.getData(pos, dim, null);
       putCachedData(getKey(trans, pos), d);
     }
+    /*TEMP*/else System.out.println("Cache HIT for " + trans + ", pos=" + loci.visbio.util.ObjectUtil.arrayToString(pos) + " (dim=" + dim + ")");
     return d;
   }
 
   /** Gets the data in the cache at the specified key. */
   public Data getCachedData(String key) {
+    if (key == null) return null;
     Object o = hash.get(key);
     if (!(o instanceof Data)) return null;
     return (Data) o;
   }
 
   /** Sets the data in the cache at the specified key. */
-  public void putCachedData(String key, Data d) { hash.put(key, d); }
+  public void putCachedData(String key, Data d) {
+    if (key != null) hash.put(key, d);
+  }
+
+  /**
+   * Removes the data object at the specified
+   * dimensional position from the cache.
+   */
+  public void dump(DataTransform trans, int[] pos) {
+    /*TEMP*/System.out.println("DUMPING cache for " + trans + ", pos=" + loci.visbio.util.ObjectUtil.arrayToString(pos));
+    dump(getKey(trans, pos));
+  }
 
   /** Removes the data object at the specified key from the cache. */
-  public void dump(String key) { hash.remove(key); }
+  public void dump(String key) { if (key != null) hash.remove(key); }
 
   /** Removes everything from the cache. */
   public void dumpAll() { hash.clear(); }

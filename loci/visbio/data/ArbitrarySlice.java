@@ -204,7 +204,7 @@ public class ArbitrarySlice extends DataTransform
    *
    * @return null if the transform does not provide data of that dimensionality
    */
-  public synchronized Data getData(int[] pos, int dim) {
+  public synchronized Data getData(int[] pos, int dim, DataCache cache) {
     if (dim != 3) {
       System.err.println(name + ": invalid dimensionality (" + dim + ")");
       return null;
@@ -327,7 +327,7 @@ public class ArbitrarySlice extends DataTransform
         int[] npos = getParentPos(pos);
         for (int i=0; i<len; i++) {
           npos[axis] = i;
-          Data data = parent.getData(npos, 2);
+          Data data = parent.getData(npos, 2, cache);
           if (data == null || !(data instanceof FlatField)) {
             System.err.println(name +
               ": parent image plane #" + (i + 1) + " is not valid");
