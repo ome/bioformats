@@ -14,10 +14,7 @@ Bugfixes and enhancements:
   - Flag indicating whether latest state change should "stack up" or "replace"
     last change (if last change was of the same type as this one)
 
-  - Change color dialog to include more alpha tools.
-  - Add transparency controls to left side of color dialog box.
-
-  - Make Up and Down buttons in display window's controls actually work.
+  - Add transparency method to color dialog: constant or exponential.
 
   - Command+? Macintosh Help shortcut does not function.
 
@@ -27,6 +24,8 @@ Bugfixes and enhancements:
 
   - Add -Dsun.java2d.opengl=true to options, and add option to toggle it
     (Java 1.5+ only)
+
+  - Ignore Openlab images named "Original Image."
 
   - Fix bug in many file readers where ImageLine is numbered upside down so
     that VisAD displays the image right side up. The numbering should be
