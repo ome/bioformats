@@ -366,12 +366,16 @@ public class TransformLink
   protected void doTransform() { doTransform(handler.getBurnDelay()); }
 
   /** Updates displayed data based on current dimensional position. */
-  protected void doTransform(long delay) {
+  protected void doTransform(long delay) { doTransform(delay, false); }
+
+  /** Updates displayed data based on current dimensional position. */
+  protected void doTransform(long delay, boolean now) {
     String append = handler.getWindow().getName() + ":" + trans.getName();
+    final boolean immediate = now || trans.isImmediate();
     final long burnDelay = delay;
     new Thread("VisBio-ComputeDataThread-" + append) {
       public void run() {
-        if (trans.isImmediate()) computeData(false);
+        if (immediate) computeData(false);
         else {
           computeData(true);
           // request a new burn-in in delay milliseconds

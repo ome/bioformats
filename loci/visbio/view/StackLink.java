@@ -54,6 +54,9 @@ public class StackLink extends TransformLink {
   /** Data reference for volume rendered cube. */
   protected DataReferenceImpl volumeRef;
 
+  /** Collapsed volume at current dimensional position. */
+  protected FlatField collapse;
+
   /** Whether volume rendering is currently enabled. */
   protected boolean volume = false;
 
@@ -164,7 +167,7 @@ public class StackLink extends TransformLink {
   public void setVolumeRendered(boolean volume) {
     if (this.volume == volume) return;
     this.volume = volume;
-    doTransform(TransformHandler.MINIMUM_BURN_DELAY);
+    doTransform(TransformHandler.MINIMUM_BURN_DELAY, true);
   }
 
   /** Gets status of volume rendering. */
@@ -174,7 +177,7 @@ public class StackLink extends TransformLink {
   public void setVolumeResolution(int res) {
     if (volumeRes == res) return;
     volumeRes = res;
-    doTransform(TransformHandler.MINIMUM_BURN_DELAY);
+    if (volume) doTransform(TransformHandler.MINIMUM_BURN_DELAY, true);
   }
 
   /** Gets maximum resolution per axis of rendered volumes. */
@@ -320,18 +323,24 @@ public class StackLink extends TransformLink {
       DataReferenceImpl sliceRef = (DataReferenceImpl) references.elementAt(s);
       if (thumbs) setData(thumb, sliceRef);
       else {
-        setMessage("loading full-resolution data (" +
-          (s + 1) + "/" + len + ")");
-        slices[s] = getImageData(pos);
-        if (th != null && thumb == null && !volume) {
-          // fill in missing thumbnail
-          th.setThumb(pos, th.makeThumb(slices[s]));
+        if (!volume || collapse == null) {
+          // load data from disk, unless collapsed volume is current
+          setMessage("loading full-resolution data (" +
+            (s + 1) + "/" + len + ")");
+          slices[s] = getImageData(pos);
+          if (th != null && thumb == null && !volume) {
+            // fill in missing thumbnail
+            th.setThumb(pos, th.makeThumb(slices[s]));
+          }
         }
         if (volume) setData(DUMMY, sliceRef, false);
         else setData(slices[s], sliceRef);
       }
     }
-    if (thumbs) setData(DUMMY, volumeRef, false);
+    if (thumbs) {
+      setData(DUMMY, volumeRef, false);
+      collapse = null;
+    }
     else {
       if (volume) {
         // render slices as a volume
@@ -341,19 +350,21 @@ public class StackLink extends TransformLink {
         RealType zType = it.getZType();
         FunctionType imageType = it.getType();
         try {
-          // convert slices to proper type
-          for (int i=0; i<len; i++) {
-            slices[i] = VisUtil.switchType((FlatField) slices[i], imageType);
+          if (collapse == null) {
+            // convert slices to proper type
+            for (int i=0; i<len; i++) {
+              slices[i] = VisUtil.switchType((FlatField) slices[i], imageType);
+            }
+            // compile slices into a single volume
+            FunctionType volumeType = new FunctionType(zType, imageType);
+            Linear1DSet volumeSet = new Linear1DSet(zType, -1, 1, len);
+            FieldImpl field = new FieldImpl(volumeType, volumeSet);
+            field.setSamples(slices, false);
+            // collapse volume
+            collapse = VisUtil.collapse(field);
           }
-          // compile slices into a single volume
-          FunctionType volumeType = new FunctionType(zType, imageType);
-          Linear1DSet volumeSet = new Linear1DSet(zType, -1, 1, len);
-          FieldImpl field = new FieldImpl(volumeType, volumeSet);
-          field.setSamples(slices, false);
-          // collapse volume
-          FlatField collapsed = VisUtil.collapse(field);
           // resample volume
-          setData(VisUtil.makeCube(collapsed, volumeRes), volumeRef, false);
+          setData(VisUtil.makeCube(collapse, volumeRes), volumeRef, false);
           setMessage("rendering " + res + " volume");
         }
         catch (VisADException exc) { exc.printStackTrace(); }
@@ -379,8 +390,7 @@ public class StackLink extends TransformLink {
     int[] len = set.getLengths();
     int[] res = new int[len.length];
     boolean same = true;
-    int maxRes = volume ? volumeRes :
-      ((StackHandler) handler).getStackResolution();
+    int maxRes = ((StackHandler) handler).getStackResolution();
     for (int i=0; i<len.length; i++) {
       if (len[i] > maxRes) {
         same = false;
