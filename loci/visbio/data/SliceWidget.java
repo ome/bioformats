@@ -48,14 +48,31 @@ public class SliceWidget extends JPanel implements ChangeListener {
   /** Dropdown combo box listing available dimensions to slice through. */
   protected JComboBox axes;
 
+  /** Slider for adjusting yaw. */
   protected JSlider yaw;
+
+  /** Label for current yaw value. */
   protected JLabel yawValue;
+
+  /** Slider for adjusting pitch. */
   protected JSlider pitch;
+
+  /** Label for current pitch value. */
   protected JLabel pitchValue;
+
+  /** Slider for adjusting location. */
   protected JSlider location;
+
+  /** Label for current location value. */
   protected JLabel locationValue;
+
+  /** Slider for adjusting resolution. */
   protected JSlider res;
+
+  /** Label for current resolution value. */
   protected JLabel resValue;
+
+  /** Check box for whether slice is recomputed on the fly. */
   protected JCheckBox recompute;
 
 
@@ -75,34 +92,38 @@ public class SliceWidget extends JPanel implements ChangeListener {
     axes = new JComboBox(names);
 
     // create yaw slider
-    yaw = new JSlider(-90, 90, 0);
+    int value = (int) slice.getYaw();
+    yaw = new JSlider(-90, 90, value);
     yaw.addChangeListener(this);
-    yawValue = new JLabel("0" + DEGREES);
+    yawValue = new JLabel("" + value + DEGREES);
 
     // create pitch slider
-    pitch = new JSlider(-90, 90, 0);
+    value = (int) slice.getPitch();
+    pitch = new JSlider(-90, 90, value);
     pitch.setMajorTickSpacing(45);
     pitch.setMinorTickSpacing(5);
     pitch.setPaintTicks(true);
     pitch.addChangeListener(this);
-    pitchValue = new JLabel("0°");
+    pitchValue = new JLabel("" + value + DEGREES);
 
     // create location slider
-    location = new JSlider(0, 100, 50);
+    value = (int) slice.getLocation();
+    location = new JSlider(0, 100, value);
     location.setMajorTickSpacing(25);
     location.setMinorTickSpacing(5);
     location.setPaintTicks(true);
     location.addChangeListener(this);
-    locationValue = new JLabel("50%");
+    locationValue = new JLabel(value + "%");
 
     // create resolution slider
     int max = 512; // TEMP
-    res = new JSlider(0, max, 64);
+    value = slice.getResolution();
+    res = new JSlider(0, max, value);
     res.setMajorTickSpacing(max / 4);
     res.setMinorTickSpacing(max / 16);
     res.setPaintTicks(true);
     res.addChangeListener(this);
-    resValue = new JLabel("64 x 64");
+    resValue = new JLabel(value + " x " + value);
 
     // create on-the-fly slice recompution checkbox
     recompute = new JCheckBox("Recompute slice on the fly", true);
@@ -140,23 +161,45 @@ public class SliceWidget extends JPanel implements ChangeListener {
   }
 
 
+  // -- SliceWidget API methods --
+
+  /** Updates the widget to reflect the arbitrary slice's current values. */
+  public void refreshWidget() {
+    int value = (int) slice.getYaw();
+    if (yaw.getValue() != value) yaw.setValue(value);
+    value = (int) slice.getPitch();
+    if (pitch.getValue() != value) pitch.setValue(value);
+    value = (int) slice.getLocation();
+    if (location.getValue() != value) location.setValue(value);
+    value = slice.getResolution();
+    if (res.getValue() != value) res.setValue(value);
+  }
+
+
   // -- ChangeListener API methods --
 
   /** Handles slider updates. */
   public void stateChanged(ChangeEvent e) {
     Object src = e.getSource();
     if (src == yaw) {
-      yawValue.setText("" + yaw.getValue() + DEGREES);
+      int value = yaw.getValue();
+      yawValue.setText("" + value + DEGREES);
+      slice.setYaw(value);
     }
     else if (src == pitch) {
-      pitchValue.setText("" + pitch.getValue() + DEGREES);
+      int value = pitch.getValue();
+      pitchValue.setText("" + value + DEGREES);
+      slice.setPitch(value);
     }
     else if (src == location) {
-      locationValue.setText(location.getValue() + "%");
+      int value = location.getValue();
+      locationValue.setText(value + "%");
+      slice.setLocation(value);
     }
     else if (src == res) {
       int value = res.getValue();
       resValue.setText(value + " x " + value);
+      slice.setResolution(value);
     }
   }
 

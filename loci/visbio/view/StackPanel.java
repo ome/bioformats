@@ -73,7 +73,8 @@ public class StackPanel extends TransformPanel {
     super.updateControls();
 
     DataTransform trans = (DataTransform) transformList.getSelectedValue();
-    boolean b = trans != null;
+    TransformLink tlink = trans == null ? null : handler.getLink(trans);
+    boolean b = tlink instanceof StackLink;
     stackLabel.setEnabled(b);
     stackBox.setEnabled(b);
     toggleSlices.setEnabled(b);
@@ -82,7 +83,7 @@ public class StackPanel extends TransformPanel {
     render.setEnabled(b);
     renderRes.setEnabled(b);
     if (b) {
-      StackLink link = (StackLink) handler.getLink(trans);
+      StackLink link = (StackLink) tlink;
 
       // update "stack axis" combo box
       String[] dims = trans.getDimTypes();

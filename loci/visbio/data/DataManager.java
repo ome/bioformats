@@ -265,9 +265,9 @@ public class DataManager extends LogicManager {
     registerDataType(DataSampling.class, "Subsampling");
     registerDataType(ProjectionTransform.class,
       "Maximum intensity projection");
-    registerDataType(ArbitrarySlice.class, "Arbitrary slice");
     registerDataType(CollapseTransform.class, "Dimensional collapse");
     registerDataType(SpectralTransform.class, "Spectral mapping");
+    registerDataType(ArbitrarySlice.class, "Arbitrary slice");
 
     // menu items
     bio.setSplashStatus(null);

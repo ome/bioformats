@@ -40,6 +40,21 @@ public abstract class VisUtil {
   // -- Data utility methods --
 
   /**
+   * Creates a field of the form (z -> type) from the given list of fields,
+   * where type is the MathType of each component field.
+   */
+  public static FieldImpl makeField(FlatField[] fields, RealType zType)
+    throws VisADException, RemoteException
+  {
+    if (fields == null || zType == null || fields.length == 0) return null;
+    FunctionType fieldType = new FunctionType(zType, fields[0].getType());
+    Integer1DSet fieldSet = new Integer1DSet(zType, fields.length);
+    FlatField field = new FlatField(fieldType, fieldSet);
+    field.setSamples(fields, false);
+    return field;
+  }
+
+  /**
    * Collapses a field from the form <tt>(z -> ((x, y) -> (v1, ..., vn))</tt>
    * into the form <tt>((x, y, z) -> (v1, ..., vn))</tt>.
    */

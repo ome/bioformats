@@ -246,6 +246,10 @@ public class Dataset extends ImageTransform {
 
     int[] indices = getIndices(pos);
     int fileIndex = indices[0];
+    if (fileIndex < 0 || fileIndex >= ids.length) {
+      System.err.println("Invalid file number #" + fileIndex);
+      return null;
+    }
     int imgIndex = indices[1];
     String filename = "\"" + new File(ids[fileIndex]).getName() + "\"";
 

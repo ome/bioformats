@@ -268,9 +268,11 @@ public class TransformLink
     trans.addTransformListener(this);
 
     // initialize thread for handling full-resolution burn-in operations
-    burnThread = new Thread(this, "VisBio-BurnThread-" +
-      handler.getWindow().getName() + ":" + trans.getName());
-    burnThread.start();
+    if (!trans.isImmediate()) {
+      burnThread = new Thread(this, "VisBio-BurnThread-" +
+        handler.getWindow().getName() + ":" + trans.getName());
+      burnThread.start();
+    }
   }
 
   /**
@@ -391,13 +393,22 @@ public class TransformLink
    * utilizing thumbnails as appropriate.
    */
   protected synchronized void computeData(boolean thumbs) {
+    int dim = handler.getWindow().is3D() ? 3 : 2;
+    if (dim == 3 && !trans.isValidDimension(3)) dim = 2;
+    if (!trans.isValidDimension(dim)) {
+      System.err.println("Warning: display \"" +
+        handler.getWindow().getName() +
+        "\" is incapable of showing data \"" + trans.getName() + "\"");
+      return;
+    }
+
     int[] pos = handler.getPos(trans);
     ThumbnailHandler th = trans.getThumbHandler();
     Data thumb = th == null ? null : th.getThumb(pos);
     if (thumbs) setData(thumb);
     else {
       setMessage("loading full-resolution data");
-      Data d = getImageData(pos);
+      Data d = dim == 3 ? trans.getData(pos, 3) : getImageData(pos);
       if (th != null && thumb == null) {
         // fill in missing thumbnail
         th.setThumb(pos, th.makeThumb(d));

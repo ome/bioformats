@@ -36,6 +36,7 @@ import loci.visbio.SystemManager;
 import loci.visbio.WindowManager;
 import loci.visbio.state.OptionManager;
 import loci.visbio.state.StateManager;
+import loci.visbio.util.VisUtil;
 import visad.*;
 import visad.data.avi.AVIForm;
 import visad.util.*;
@@ -279,10 +280,7 @@ public class CaptureHandler {
 
             // compile frames into a single data object
             RealType index = RealType.getRealType("index");
-            FunctionType ftype = new FunctionType(index, ff[0].getType());
-            Integer1DSet fset = new Integer1DSet(total);
-            FieldImpl field = new FieldImpl(ftype, fset);
-            field.setSamples(ff, false);
+            FieldImpl field = VisUtil.makeField(ff, index);
 
             // write data out to AVI file
             AVIForm saver = new AVIForm();
