@@ -54,4 +54,5 @@ Bugfixes and enhancements:
     output stream for displaying the progress. Create a command-line upload
     utility for use doing generic client-side uploads. Put all of this into the
     loci.ome package. The only issue is how/whether to handle various file
-    formats.
+    formats. Well, we can handle them easily if this command line utility is
+    simply packaged with VisBio, since visad.jar will be available then.
