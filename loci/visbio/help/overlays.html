@@ -1,8 +1,125 @@
 <html><body><h2>Overlays</h2>
 
-<p>Overlays TODO
+<p>The overlays transform provides a means for creating graphical
+overlays--such as lines, ovals, rectangles and text--atop another data object. 
+Overlay annotations are useful for many reasons: dividing a complex image into
+scientifically relevant sections, measuring numerical characteristics, and
+demonstrating biological phenomena for instructional purposes, for example.
+
+<br><h3>Creating a set of overlays</h3>
+
+To create a set of overlays, first import your dataset as described in the
+<a href="import_data.html">Importing a dataset from disk</a> topic. Select your
+dataset from the list, then click the "Add &gt;" button and choose "Overlays"
+from the popup menu.
+
+<p>Choose a name for the overlays, and VisBio will create another data
+object, a child of your original dataset, that represents the overlays. To
+access the tools for drawing overlays, select the overlays and click the "Edit"
+button. A window similar to this one will appear:
 
 <p><img src="overlays.png" alt="Parameters for overlays">
+
+<p>To begin drawing overlays, you must first display them in 2D atop the parent
+dataset. First, add your dataset to a 2D display as described in the
+<a href="display_data.html">Displaying a data object</a> topic. Then add the
+overlays to the same 2D display (not a new one). Doing so will overlay them
+atop your image.
+
+<p><i>[Author's note: On some systems, the rendering order of the dataset and
+the overlays may need to be reversed. If you see nothing when drawing overlays,
+select the overlays from the display window's list of linked data objects and
+click the "Up" button to move them up in the rendering order.</i>
+
+<br><h3>Drawing new overlays</h3>
+
+To draw an overlay, choose the appropriate tool from the "Tools" section of the
+overlay controls. The tools shown above (from left to right) are: pointer,
+line, marker, text, oval, rectangle and arrow. In many ways, they behave like
+similar tools available in many image editing programs.
+
+<ul>
+  <li>The <b>pointer tool</b> is for selecting existing overlays.Click an
+    overlay to select it. Use Shift+click to add the clicked overlay to the
+    selection. Use Ctrl+click to add or remove the clicked overlay to or from
+    the selection. Selected overlays have a yellow mesh grid surrounding them.
+    Information about the selected overlays is shown in the "Statistics" area
+    at the bottom of the overlay controls.</li>
+  <li>The <b>line tool</b> draws lines from one point to another. Click and
+    drag across the display to draw a new line.</li>
+  <li>The <b>marker tool</b> draws markers at a given point. Click a point in
+    the display to place a crosshairs there.</li>
+  <li>The <b>text tool</b> draws text at a given point. Click a point in the
+    display to place a new text object there, then type letters for them to
+    appear at that location.</li>
+  <li>The <b>oval tool</b> draws an oval. Click and drag across the display to
+    draw a new oval whose diagonal matches the path you draw.</li>
+  <li>The <b>rectangle tool</b> draws a rectangle. Click and drag across the
+    display to draw a new rectangle whose diagonal matches the path you
+    draw.</li>
+  <li>The <b>arrow tool</b> draws an arrow. Click and drag across the display
+    to draw a new arrow which stretches across the path you draw, with the
+    arrow's tip corresponding to the point at which you press the mouse
+    button.</li>
+</ul>
+
+To use a tool, click the associated tool button.
+
+<br><h3>Altering existing overlays</h3>
+
+You can use the overlays controls to alter the characteristics of selected
+overlays. First use the pointer tool to select the overlays you wish to change,
+or select them from the overlay list on the left side of the "Overlays" section
+of controls. Note that the overlay list only shows overlays for the current
+dimensional position.
+
+<p>To remove an overlay, press click the "Remove" button or press the Delete
+key.
+
+<p>To change an overlay's position, type in new values for the (X1, Y1) or
+(X2, Y2) coordinate values.
+
+<p>To change the text shown for a Text overlay, type new text into the "Text"
+box.
+
+<p>To change the color of the selected overlays, click the button labeled
+"Color" to bring up a dialog box for choosing a new color.
+
+<p>Some overlays--ovals, rectangles and arrows--can be filled in (solid) or
+hollow. To toggle which for the selected overlays, use the "Filled" checkbox.
+
+<p>Each overlay allows you to store one line of miscellaneous notes. To make a
+note for the selected overlays, type your note into the "Notes" text box.
+
+<br><h3>Grouping overlays</h3>
+
+Each overlay has an associated group. This feature is useful if one collection
+of overlays tracks a particular phenomenon, while another collection of
+overlays tracks another phenomenon. In this case, each collection can be
+assigned to a different group to differentiate between the collections.
+
+<p>To choose the group to which the selected overlays belong, choose a group
+from the "Group" dropdown box. New groups can be created by clicking the
+"New..." button next to the "Group" box.
+
+<br><h3>Changing the font</h3>
+
+Each set of overlays uses a particular font to display text overlays. The font
+being used is shown in the "Font" text box. To change it, click the nearby
+"Change..." button. A dialog box will pop up allowing you to select a new font.
+Please note that this setting affects all text overlays in the set, not just
+the selected ones.
+
+<br><h3>Saving your work</h3>
+
+You can save your overlays to a tab-delineated text file on disk (readable by
+spreadsheet applications for further analysis). Click the "Save overlays..."
+button to do so.
+
+<p>You can restore saved overlays by using the "Load overlays..." button and
+choosing a text file saved earlier. Please note that loading an overlay set
+will clear out any current overlays, overwriting them with those saved in the
+text file.
 
 <br><h3>See also:</h3>
 
