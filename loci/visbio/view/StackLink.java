@@ -181,6 +181,23 @@ public class StackLink extends TransformLink {
     catch (RemoteException exc) { exc.printStackTrace(); }
   }
 
+  /** Unlinks this stack from the display. */
+  public void unlink() {
+    try {
+      // remove image slices
+      int len = stackAxis < 0 ? 1 : references.size();
+      DisplayImpl display = handler.getWindow().getDisplay();
+      for (int i=0; i<len; i++) {
+        display.removeReference((DataReferenceImpl) references.elementAt(i));
+      }
+
+      // remove yellow bounding box
+      display.removeReference(ref);
+    }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
+  }
+
   /** Toggles visibility of the transform. */
   public void setVisible(boolean vis) {
     for (int i=0; i<renderers.size(); i++) {

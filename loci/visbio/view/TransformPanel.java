@@ -32,10 +32,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.*;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -110,18 +107,36 @@ public class TransformPanel extends JPanel
 
   // -- TransformPanel API methods --
 
-  /** Links the given data transform to the display. */
+  /** Adds the given data transform to the list. */
   public void addTransform(DataTransform trans) {
     transformModel.addElement(trans);
   }
 
-  /** Removes the given data transform from the display. */
+  /** Removes the given data transform from the list. */
   public void removeTransform(DataTransform trans) {
     transformModel.removeElement(trans);
   }
 
-  /** Unlinks all data transforms from the display. */
+  /** Removes all data transforms from the list. */
   public void removeAllTransforms() { transformModel.removeAllElements(); }
+
+  /** Moves the given transform up in the list. */
+  public void moveTransformUp(DataTransform trans) {
+    int index = transformModel.indexOf(trans);
+    if (index >= 0) {
+      transformModel.removeElementAt(index);
+      transformModel.insertElementAt(trans, index - 1);
+    }
+  }
+
+  /** Moves the given transform down in the list. */
+  public void moveTransformDown(DataTransform trans) {
+    int index = transformModel.indexOf(trans);
+    if (index >= 0) {
+      transformModel.removeElementAt(index);
+      transformModel.insertElementAt(trans, index + 1);
+    }
+  }
 
   /** Gets whether the given transform is currently linked to the display. */
   public boolean hasTransform(DataTransform trans) {
@@ -233,10 +248,12 @@ public class TransformPanel extends JPanel
       handler.setAnimationAxis(ndx - 1);
     }
     else if (cmd.equals("moveUp")) {
-      // CTR TODO move up button clicked
+      DataTransform data = (DataTransform) transformList.getSelectedValue();
+      if (data != null) handler.moveTransformUp(data);
     }
     else if (cmd.equals("moveDown")) {
-      // CTR TODO move down button clicked
+      DataTransform data = (DataTransform) transformList.getSelectedValue();
+      if (data != null) handler.moveTransformDown(data);
     }
   }
 

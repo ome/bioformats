@@ -149,6 +149,30 @@ public class TransformHandler implements ChangeListener, Runnable  {
     rebuild();
   }
 
+  /** Moves the given transform up in the Z-order. */
+  public void moveTransformUp(DataTransform trans) {
+    int index = getLinkIndex(trans);
+    if (index >= 0) {
+      TransformLink link = (TransformLink) links.elementAt(index);
+      links.removeElementAt(index);
+      links.insertElementAt(link, index - 1);
+    }
+    doLinks(index - 1, true);
+    panel.moveTransformUp(trans);
+  }
+
+  /** Moves the given transform down in the Z-order. */
+  public void moveTransformDown(DataTransform trans) {
+    int index = getLinkIndex(trans);
+    if (index >= 0) {
+      TransformLink link = (TransformLink) links.elementAt(index);
+      links.removeElementAt(index);
+      links.insertElementAt(link, index + 1);
+    }
+    doLinks(index, true);
+    panel.moveTransformDown(trans);
+  }
+
   /** Gets whether the given transform is currently linked to the display. */
   public boolean hasTransform(DataTransform trans) {
     return panel.hasTransform(trans);
@@ -240,6 +264,15 @@ public class TransformHandler implements ChangeListener, Runnable  {
       if (link.getTransform() == trans) return link;
     }
     return null;
+  }
+
+  /** Gets the transform link index for the given data transform. */
+  public int getLinkIndex(DataTransform trans) {
+    for (int i=0; i<links.size(); i++) {
+      TransformLink link = (TransformLink) links.elementAt(i);
+      if (link.getTransform() == trans) return i;
+    }
+    return -1;
   }
 
   /**
@@ -352,6 +385,28 @@ public class TransformHandler implements ChangeListener, Runnable  {
   /** Adds any required custom mappings to the display. */
   protected void doCustomMaps() throws VisADException, RemoteException { }
 
+  /** Links in the transform links, starting at the given index. */
+  protected void doLinks(int startIndex, boolean unlinkFirst) {
+    DisplayImpl display = window.getDisplay();
+    VisUtil.setDisplayDisabled(display, true);
+
+    int size = links.size();
+    if (unlinkFirst) {
+      for (int l=startIndex; l<size; l++) {
+        ((TransformLink) links.elementAt(l)).unlink();
+      }
+    }
+
+    for (int l=startIndex; l<size; l++) {
+      ((TransformLink) links.elementAt(l)).link();
+    }
+    for (int l=startIndex; l<size; l++) {
+      ((TransformLink) links.elementAt(l)).doTransform();
+    }
+
+    VisUtil.setDisplayDisabled(display, false);
+  }
+
   /** Rebuilds sliders and display mappings for all linked transforms. */
   protected void rebuild() {
     synchronized (animSync) {
@@ -402,8 +457,7 @@ public class TransformHandler implements ChangeListener, Runnable  {
           display.addMap((ScalarMap) mapList.elementAt(i));
         }
         doCustomMaps();
-        for (int l=0; l<lnk.length; l++) lnk[l].link();
-        for (int l=0; l<lnk.length; l++) lnk[l].doTransform();
+        doLinks(0, false);
         VisUtil.setDisplayDisabled(display, false);
       }
       catch (VisADException exc) { exc.printStackTrace(); }

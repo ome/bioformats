@@ -131,6 +131,13 @@ public class TransformLink
     catch (RemoteException exc) { exc.printStackTrace(); }
   }
 
+  /** Unlinks this transform from the display. */
+  public void unlink() {
+    try { handler.getWindow().getDisplay().removeReference(ref); }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
+  }
+
   /** Frees resources being consumed by this transform link. */
   public void destroy() { alive = false; }
 
