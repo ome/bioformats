@@ -183,7 +183,7 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
     colorHandler.initColors();
     refresh();
     manager.getVisBio().generateEvent(manager,
-      "add data object to " + name, true);
+      "add data object to display", true);
   }
 
   /** Removes the given data transform from the display. */
@@ -191,7 +191,7 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
     transformHandler.removeTransform(trans);
     refresh();
     manager.getVisBio().generateEvent(manager,
-      "remove data object from " + name, true);
+      "remove data object from display", true);
   }
 
   /** Unlinks all data transforms from the display. */
@@ -199,7 +199,7 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
     transformHandler.removeAllTransforms();
     refresh();
     manager.getVisBio().generateEvent(manager,
-      "remove all data objects from " + name, true);
+      "remove all data objects from display", true);
   }
 
   /** Gets whether the given transform is currently linked to the display. */

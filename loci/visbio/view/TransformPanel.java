@@ -238,8 +238,6 @@ public class TransformPanel extends JPanel
       handler.setAnimationRate(((Integer) fps.getValue()).intValue());
     }
     else if (src == delayTime) {
-      Object o = delayTime.getValue();
-      System.out.println("o = " + o + " (" + o.getClass().getName() + ")");
       handler.setBurnDelay(1000 * ((Number) delayTime.getValue()).intValue());
     }
   }
