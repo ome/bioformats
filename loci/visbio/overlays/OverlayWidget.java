@@ -23,6 +23,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 
@@ -119,6 +124,7 @@ public class OverlayWidget extends JPanel implements ActionListener {
 
     // create description text area
     descriptionBox = new JTextArea();
+    descriptionBox.setColumns(16);
     descriptionBox.setRows(4);
     descriptionBox.setLineWrap(true);
     descriptionBox.setWrapStyleWord(true);
@@ -127,8 +133,18 @@ public class OverlayWidget extends JPanel implements ActionListener {
 
     // lay out components
     setLayout(new BorderLayout());
-    add(FormsUtil.makeColumn(new Object[] {"Tools", toolsRow,
-      "Controls", colorRow, groupRow, "Description", descriptionScroll}));
+    PanelBuilder builder = new PanelBuilder(new FormLayout("pref:grow",
+      "pref, 3dlu, pref, 9dlu, pref, 3dlu, pref, 3dlu, " +
+      "pref, 9dlu, pref, 3dlu, fill:pref:grow"));
+    CellConstraints cc = new CellConstraints();
+    builder.addSeparator("Tools", cc.xy(1, 1));
+    builder.add(toolsRow, cc.xy(1, 3));
+    builder.addSeparator("Controls", cc.xy(1, 5));
+    builder.add(colorRow, cc.xy(1, 7));
+    builder.add(groupRow, cc.xy(1, 9));
+    builder.addSeparator("Description", cc.xy(1, 11));
+    builder.add(descriptionScroll, cc.xy(1, 13));
+    add(builder.getPanel());
   }
 
 

@@ -294,10 +294,11 @@ public class OverlayTransform extends DataTransform
       // shifted so that a particular position such as (3, 5) will no longer be
       // (3, 5), even if (3, 5) is still a valid dimensional position. But we
       // cannot guarantee much in the general case, because the number of
-      // dimensional positions could also have shifted. Since it's irritatingly
-      // complex to sniff out exactly how a transform has changed and act
-      // appropriately, we simply preserve as many overlays as possible. If the
-      // dimensional axes have been significantly altered, too bad.
+      // dimensional positions could also have shifted. What we should do is
+      // sniff out exactly how a transform has changed by examining the old and
+      // new lengths arrays, and act appropriately, but for now we simply
+      // preserve as many overlays as possible. If the dimensional axes have
+      // been significantly altered, too bad.
       minLen = overlays.length < len ? overlays.length : len;
       System.arraycopy(overlays, 0, v, 0, minLen);
     }
