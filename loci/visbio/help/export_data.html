@@ -1,6 +1,54 @@
 <html><body><h2>Exporting data to disk</h2>
 
-<p>Exporting data to disk TODO
+<p>VisBio contains powerful features for exporting data to different formats.
+To export the current raw dataset, click the "Export data" button on the Data
+tab (or choose "Export data..." from the File menu). A dialog box will appear:
+
+<p><img src="export-dialog1.png" alt="Export dialog, page 1">
+
+<p>Enter the file pattern that defines how your files will be named. Place
+asterisks (*) where the file numbering should occur. In the example above, the
+pattern indicates that the data will be numbered C:\data\out1.tiff through
+C:\data\outX.tiff, where X is the maximum value of the numbering's associated
+dimensional axis (e.g., time points).
+
+<p>Also, choose the appropriate output format from the dropdown list box on the
+right.
+
+<p>Click the "Next" button to proceed. You will see a dialog like the
+following:
+
+<p><img src="export-dialog2.png" alt="Export dialog, page 2">
+
+<p>The first line (in our example, "C:\data\out&lt;A&gt;.tiff") indicates the
+file pattern, with asterisks replaced by letter tags. For each letter tag,
+you'll notice a dropdown list box allowing you to map that letter to one of the
+data's dimensional axes. In our example, &lt;A&gt; gets mapped to TIME, meaning
+that each file will contain one timestep of the data.
+
+<p>The "Pad file numbering with leading zeroes" checkbox is useful if you want
+the files to be numbered with fixed width integers. For example, if our example
+data contains 85 timesteps, checking the box results in filenames out01.tiff
+through out85.tiff, instead of the default out1.tiff through out85.tiff.
+
+<p>The image resolution text fields allow you to specify each image's width and
+height (the default values correspond to the input data's actual resolution).
+
+<p>Then, for each dimensional axis, you can subsample the data, just as you can
+when creating a screen dataset. In our example, you could choose to export only
+timepoints 5 through 20, subsampling to every third timestep (5, 8, 11, 14, 17,
+20), as well as every second slice from 20 to 28 (20, 22, 24, 26, 28).
+Note, however, that the output filenames in this case will still be out1.tiff
+through out6.tiff, because there are six total timesteps being exported.
+
+<p>Lastly, you can choose to include only a subset of the data's range values.
+As with screen data, you must include at least one range value, otherwise there
+would be no data left to export!
+
+<p>When you have all parameters configured properly, click the "Next" button
+again to continue. You'll see a summary screen like this one:
+
+<p><img src="export-dialog3.png", "Export dialog, page 3">
 
 <br><h3>See also:</h3>
 
