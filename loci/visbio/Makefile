@@ -47,6 +47,7 @@ JFLAGS = -J-mx64m
 #
 JAR = jar
 JARVERBOSE = v
+JAR_DIR = jar
 
 # programs used to clean up the results of previous builds
 #
@@ -185,20 +186,23 @@ clean:
 
 jar:
 	@cd ../.. ; \
-	$(JAR) $(JARVERBOSE)cfm visbio.jar $(JAR_FILES) ; \
-	ls -l visbio.jar
+	if [ ! -d $(JAR_DIR) ]; then $(MKDIR) $(JAR_DIR); fi ; \
+	$(JAR) $(JARVERBOSE)cfm $(JAR_DIR)/visbio.jar $(JAR_FILES) ; \
+	ls -l $(JAR_DIR)/visbio.jar
 
 source:
 	@cd ../.. ; \
-	$(JAR) $(JARVERBOSE)cf visbio_src.jar $(SOURCE_FILES) ; \
-	ls -l visbio_src.jar
+	if [ ! -d $(JAR_DIR) ]; then $(MKDIR) $(JAR_DIR); fi ; \
+	$(JAR) $(JARVERBOSE)cf $(JAR_DIR)/visbio_src.jar $(SOURCE_FILES) ; \
+	ls -l $(JAR_DIR)/visbio_src.jar
 
 docs:
 	@cd ../.. ; \
 	if [ -d $(DOC_DIR) ]; then $(RM) $(DOC_DIR); fi ; \
 	$(MKDIR) $(DOC_DIR) ; \
 	$(DOC) $(DOCFLAGS) $(PACKAGES) ; \
-	$(JAR) $(JARVERBOSE)cf visbio_docs.jar $(DOC_DIR) ; \
+	if [ ! -d $(JAR_DIR) ]; then $(MKDIR) $(JAR_DIR); fi ; \
+	$(JAR) $(JARVERBOSE)cf $(JAR_DIR)/visbio_docs.jar $(DOC_DIR) ; \
 	$(RMDIR) $(DOC_DIR) ; \
-	ls -l visbio_docs.jar
+	ls -l $(JAR_DIR)/visbio_docs.jar
 

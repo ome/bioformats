@@ -66,13 +66,13 @@ public class SystemManager extends LogicManager implements Runnable {
   public void cleanMemory() { Util.invoke(false, this); }
 
   /**
-   * Updates the VisBio launch script to specify the given
+   * Updates the VisBio launch parameters to specify the given
    * maximum heap and look and feel settings.
    */
   public void writeScript(int heap, String laf) {
     // a platform-dependent mess!
     String filename;
-    if (LookUtils.IS_OS_WINDOWS) filename = "VisBio.bat";
+    if (LookUtils.IS_OS_WINDOWS) filename = "launcher.cfg";
     else if (LookUtils.IS_OS_MAC) filename = "VisBio.app/Contents/Info.plist";
     else filename = "visbio";
 
@@ -120,13 +120,14 @@ public class SystemManager extends LogicManager implements Runnable {
 
       if (laf != null) {
         // check for L&F setting
-        String lafString = "swing.defaultlaf=";
+        String lafString = "LookAndFeel";
         int lafPos = line.indexOf(lafString);
         if (lafPos >= 0) {
-          int space = line.indexOf(" ", lafPos);
-          if (space >= 0) {
-            line = line.substring(0, lafPos + lafString.length()) +
-              laf + line.substring(space);
+          int start = line.lastIndexOf(
+            LookUtils.IS_OS_MAC ? ">" : "=", lafPos);
+          if (start >= 0) {
+            line = line.substring(0, start + 1) + laf +
+              line.substring(lafPos + 11);
             lafChanged = true;
           }
         }

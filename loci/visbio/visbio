@@ -1,2 +1,0 @@
-#!/bin/bash
-java -mx1024m -Dswing.defaultlaf=com.jgoodies.plaf.plastic.Plastic3DLookAndFeel loci.visbio.VisBio
