@@ -1,5 +1,9 @@
 Bugfixes and enhancements to address:
 
+  - The burn-in delay should not apply if the full-res data is already in the
+    cache. Tweak display architecture to delay only if there is a cache miss.
+    Checking for cache misses also needs to be thread-safe--think about this.
+
   - Finish updating online help to latest beta functionality
   
   - Include new help topics:
@@ -9,16 +13,8 @@ Bugfixes and enhancements to address:
       - Warnings (Quitting VisBio also quits ImageJ)
       - Debug (Pop up console windows, Dump output to console)
 
-  - Arbitrary slice, volume rendering and high-resolution burn-in all load the
-    high-resolution data separately. This is inefficient. Instead, let the
-    collapsed data object be managed by the data cache.
-
   - Expand DataCache functionality to allow multiple dimensional positions in
     memory at once. This allows crisper, faster animation at full resolution.
-
-  - The burn-in delay should not apply if the full-res data is already in the
-    cache. Tweak display architecture to delay only if there is a cache miss.
-    Checking for cache misses also needs to be thread-safe--think about this.
 
   - Some derivative transforms are designed to be shown only in the same window
     as their parent transform (overlays, arbitrary slices). These transforms
