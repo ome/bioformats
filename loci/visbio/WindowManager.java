@@ -24,8 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio;
 
 import java.awt.Cursor;
-import java.awt.Dialog;
-import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.Window;
 
@@ -63,7 +61,7 @@ public class WindowManager extends LogicManager implements WindowListener {
 
   // -- Fields --
 
-  /** Hashtable for keeping track of registered windows. */
+  /** Table for keeping track of registered windows. */
   protected Hashtable windows = new Hashtable();
 
   /** List of windows that were visible before VisBio was minimized. */
@@ -82,6 +80,12 @@ public class WindowManager extends LogicManager implements WindowListener {
   protected boolean distributed;
 
 
+  // -- Fields - initial state --
+
+  /** Table of window states read during state restore. */
+  protected Hashtable windowStates = new Hashtable();
+
+
   // -- Constructor --
 
   /** Constructs a window manager. */
@@ -98,7 +102,14 @@ public class WindowManager extends LogicManager implements WindowListener {
    * the window should be packed prior to being shown for the first time.
    */
   public void addWindow(Window w, boolean pack) {
-    windows.put(w, new WindowInfo(w, pack));
+    WindowInfo winfo = new WindowInfo(w, pack);
+    String wname = SwingUtil.getWindowTitle(w);
+    WindowState ws = (WindowState) windowStates.get(wname);
+    if (ws != null) {
+      winfo.setState(ws);
+      windowStates.remove(wname);
+    }
+    windows.put(w, winfo);
     if (distributed && w instanceof JFrame) {
       JFrame f = (JFrame) w;
       if (f.getJMenuBar() == null) {
@@ -230,10 +241,7 @@ public class WindowManager extends LogicManager implements WindowListener {
     Enumeration en = windows.keys();
     while (en.hasMoreElements()) {
       Window w = (Window) en.nextElement();
-      String name;
-      if (w instanceof Frame) name = ((Frame) w).getTitle();
-      else if (w instanceof Dialog) name = ((Dialog) w).getTitle();
-      else name = w.getName();
+      String name = SwingUtil.getWindowTitle(w);
       CAElement custom = ome.getCustomAttr();
       custom.createElement(WINDOW_PARAMS);
       custom.setAttribute("name", name);
@@ -256,8 +264,18 @@ public class WindowManager extends LogicManager implements WindowListener {
     String[] y = custom.getAttributes(WINDOW_PARAMS, "y");
     String[] w = custom.getAttributes(WINDOW_PARAMS, "width");
     String[] h = custom.getAttributes(WINDOW_PARAMS, "height");
-    // CTR TODO remember these positions for windows that have not yet
-    // been registered, and apply them when they *are* registered later on
+
+    // remember these positions for windows that have not yet been registered
+    windowStates.clear();
+    for (int i=0; i<names.length; i++) {
+      WindowState ws = new WindowState(names[i],
+        vis[i].equalsIgnoreCase("true"),
+        Integer.parseInt(x[i]), Integer.parseInt(y[i]),
+        Integer.parseInt(w[i]), Integer.parseInt(h[i]));
+      WindowInfo winfo = getWindowByName(names[i]);
+      if (winfo == null) windowStates.put(names[i], ws); // remember position
+      else winfo.setState(ws); // window already exists; set position
+    }
   }
 
 
@@ -297,6 +315,20 @@ public class WindowManager extends LogicManager implements WindowListener {
         f.setJMenuBar(SwingUtil.cloneMenuBar(master));
       }
     }
+  }
+
+  /**
+   * Gets window information about the first window
+   * matching the specified name.
+   */
+  protected WindowInfo getWindowByName(String name) {
+    Enumeration en = windows.elements();
+    while (en.hasMoreElements()) {
+      WindowInfo winfo = (WindowInfo) en.nextElement();
+      Window w = winfo.getWindow();
+      if (w.getName().equals(name)) return winfo;
+    }
+    return null;
   }
 
 }

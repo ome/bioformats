@@ -93,6 +93,13 @@ public class WindowInfo implements WindowListener {
     window.setVisible(true);
   }
 
+  /** Sets the window to match the given state. */
+  public void setState(WindowState ws) {
+    ws.applyTo(window);
+    first = !ws.hasPosition();
+    pack = !ws.hasSize();
+  }
+
   /** Gets the associated window. */
   public Window getWindow() { return window; }
 

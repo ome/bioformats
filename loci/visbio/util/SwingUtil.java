@@ -23,12 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.util;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.awt.Window;
+import java.awt.*;
 
 import java.awt.event.ActionListener;
 
@@ -128,6 +123,20 @@ public abstract class SwingUtil {
     if (size.width >= pref.width && size.height >= pref.height) return size;
     return new Dimension(size.width < pref.width ? pref.width : size.width,
       size.height < pref.height ? pref.height : size.height);
+  }
+
+  /** Sets the title of the given window. */
+  public static void setWindowTitle(Window w, String title) {
+    if (w instanceof Frame) ((Frame) w).setTitle(title);
+    else if (w instanceof Dialog) ((Dialog) w).setTitle(title);
+    else w.setName(title);
+  }
+
+  /** Gets the title of the given window. */
+  public static String getWindowTitle(Window w) {
+    if (w instanceof Frame) return ((Frame) w).getTitle();
+    else if (w instanceof Dialog) return ((Dialog) w).getTitle();
+    else return w.getName();
   }
 
   /** Key mask for use with keyboard shortcuts on this operating system. */
