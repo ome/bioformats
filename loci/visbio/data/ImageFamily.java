@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.data;
 
+import com.jgoodies.plaf.LookUtils;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Hashtable;
@@ -108,6 +109,9 @@ public class ImageFamily extends FormNode implements FormBlockReader,
     }
     return false;
   }
+
+  /** Gets whether QuickTime movies can be saved on this JVM. */
+  public boolean canSaveQT() { return canDoQT() && !LookUtils.IS_OS_MAC; }
 
 
   // -- FormNode methods --

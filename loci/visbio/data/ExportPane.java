@@ -28,10 +28,12 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 import java.util.*;
 import javax.swing.*;
-import loci.visbio.util.SwingUtil;
-import loci.visbio.util.WizardPane;
+import loci.visbio.VisBioFrame;
+import loci.visbio.util.*;
+import visad.*;
 
 /**
  * ExportPane provides a full-featured set of options for exporting a
@@ -74,11 +76,14 @@ public class ExportPane extends WizardPane {
 
   // -- Other fields --
 
+  /** Associated VisBio frame (for displaying export status). */
+  private VisBioFrame bio;
+
   /** File adapter for exporting VisAD data to disk. */
   private ImageFamily saver;
 
   /** Data object from which exportable data will be derived. */
-  private ImageTransform data;
+  private ImageTransform trans;
 
   /** File pattern, divided into tokens. */
   private String[] tokens;
@@ -99,8 +104,9 @@ public class ExportPane extends WizardPane {
   // -- Constructor --
 
   /** Creates a multidimensional data export dialog. */
-  public ExportPane() {
+  public ExportPane(VisBioFrame bio) {
     super("Export data");
+    this.bio = bio;
     saver = new ImageFamily();
 
     // -- Page 1 --
@@ -109,7 +115,9 @@ public class ExportPane extends WizardPane {
     patternField = new JTextField();
 
     // format combo box
-    formatBox = new JComboBox(new String[] {"TIFF", "PIC"});
+    String[] formats = saver.canSaveQT() ?
+      new String[] {"TIFF", "PIC", "MOV"} : new String[] {"TIFF", "PIC"};
+    formatBox = new JComboBox(formats);
 
     // lay out first page
     PanelBuilder builder = new PanelBuilder(new FormLayout(
@@ -155,77 +163,57 @@ public class ExportPane extends WizardPane {
   // -- New API methods --
 
   /** Associates the given data object with the export pane. */
-  public void setData(ImageTransform data) {
-    this.data = data;
-    if (data == null) return;
+  public void setData(ImageTransform trans) {
+    this.trans = trans;
+    if (trans == null) return;
   }
 
   /** Exports the data according to the current input parameters. */
   public void export() {
-    /*
-     * CTR START HERE: make export actually work now! =)
-    //final BioTask task = new BioTask();
-    final int numImages = excl < 0 ? 1 : num[excl];
+    final int[] lengths = trans.getLengths();
+    final int numImages = excl < 0 ? 1 : lengths[excl];
     final int numTotal = numFiles * numImages;
-    //task.addOperation("Exporting data", numTotal + numFiles);
+    final JProgressBar progress = bio.getProgressBar();
+    progress.setString("Exporting data");
+    progress.setValue(0);
+    progress.setMaximum(numTotal + numFiles);
 
     Thread t = new Thread(new Runnable() {
       public void run() {
         try {
           boolean padZeroes = leadingZeroes.isSelected();
-          int[] pnum = new int[stars];
-          for (int i=0; i<stars; i++) pnum[i] = num[maps[i]];
+          int[] plen = new int[stars];
+          for (int i=0; i<stars; i++) plen[i] = lengths[maps[i]];
 
-          FunctionType imageType = (FunctionType) data.getType();
+          RealType indexType = RealType.getRealType("index");
 
-          // purge unused range components
-          RealType[] rt = data.getRangeTypes();
-          Vector rangeTypes = new Vector();
-          for (int j=0; j<rt.length; j++) {
-            if (range[j]) rangeTypes.add(rt[j]);
-          }
-          rt = new RealType[rangeTypes.size()];
-          rangeTypes.copyInto(rt);
-
-          if (rt.length > 1) {
-            imageType = new FunctionType(imageType.getDomain(),
-              new RealTupleType(rt));
-          }
-          else if (rt.length == 1) {
-            imageType = new FunctionType(imageType.getDomain(), rt[0]);
-          }
-          else return;
-
-          int[] lengths = data.getLengths();
+          int[] lengths = trans.getLengths();
           for (int i=0; i<numFiles; i++) {
-            int[] pos = MathUtil.rasterToPosition(pnum, i);
-            int[] index = new int[lengths.length];
-            for (int j=0; j<stars; j++) {
-              int q = maps[j];
-              index[q] = lo[q] + stp[q] * pos[j] - 1;
-            }
+            int[] pos = MathUtil.rasterToPosition(plen, i);
+            int[] npos = new int[lengths.length];
+            for (int j=0; j<stars; j++) npos[maps[j]] = pos[j];
 
             // construct data object
-            FieldImpl data;
+            FieldImpl data = null;
             if (excl < 0) {
-              //task.setMessage("Reading image #" + (i + 1) + "/" + numTotal);
-              data = data.getData(pos, 2, null);
-              data = data.getImage(index, resX, resY, range);
-              //task.advance();
+              progress.setString("Reading image #" + (i + 1) + "/" + numTotal);
+              data = (FlatField) trans.getData(npos, 2, null);
+              progress.setValue(progress.getValue() + 1);
             }
             else {
-              RealType indexType = RealType.getRealType("index");
-              FunctionType ftype = new FunctionType(indexType, imageType);
-              Linear1DSet fset = new Linear1DSet(indexType, lo[excl],
-                lo[excl] + stp[excl] * (num[excl] - 1), num[excl]);
-              data = new FieldImpl(ftype, fset);
-              for (int j=0; j<num[excl]; j++) {
+              Integer1DSet fset = new Integer1DSet(indexType, lengths[excl]);
+              for (int j=0; j<lengths[excl]; j++) {
                 int img = numImages * i + j + 1;
-                //task.setMessage("Reading image #" + img + "/" + numTotal);
-                index[excl] = lo[excl] + stp[excl] * j - 1;
-                FlatField image = data.getImage(index, resX, resY, range);
+                progress.setString("Reading image #" + img + "/" + numTotal);
+                npos[excl] = j;
+                FlatField image = (FlatField) trans.getData(npos, 2, null);
+                if (data == null) {
+                  FunctionType imageType = (FunctionType) image.getType();
+                  FunctionType ftype = new FunctionType(indexType, imageType);
+                  data = new FieldImpl(ftype, fset);
+                }
                 data.setSample(j, image, false);
-                //task.advance();
+                progress.setValue(progress.getValue() + 1);
               }
             }
 
@@ -234,7 +222,7 @@ public class ExportPane extends WizardPane {
             for (int j=0; j<stars; j++) {
               sb.append(tokens[j]);
               if (padZeroes) {
-                int len = ("" + num[maps[j]]).length() -
+                int len = ("" + lengths[maps[j]]).length() -
                   ("" + (pos[j] + 1)).length();
                 for (int k=0; k<len; k++) sb.append("0");
               }
@@ -244,21 +232,21 @@ public class ExportPane extends WizardPane {
 
             // save data to file
             String filename = sb.toString();
-            //task.setMessage("Exporting file " + filename);
+            progress.setString("Exporting file " + filename);
             saver.save(filename, data, false);
-            //task.advance();
+            progress.setValue(progress.getValue() + 1);
           }
-          //task.clear();
+          bio.resetStatus();
         }
         catch (VisADException exc) {
-          //task.clear();
+          bio.resetStatus();
           exc.printStackTrace();
           JOptionPane.showMessageDialog(dialog,
             "Error exporting data: " + exc.getMessage(),
             "VisBio", JOptionPane.ERROR_MESSAGE);
         }
         catch (IOException exc) {
-          //task.clear();
+          bio.resetStatus();
           exc.printStackTrace();
           JOptionPane.showMessageDialog(dialog,
             "Error exporting data: " + exc.getMessage(),
@@ -267,8 +255,6 @@ public class ExportPane extends WizardPane {
       }
     });
     t.start();
-    //task.showProgressDialog(dialog);
-    */
   }
 
 
@@ -303,10 +289,6 @@ public class ExportPane extends WizardPane {
             pattern += ".tif";
           }
         }
-        else if (format.equals("AVI")) {
-          if (!plow.endsWith(".avi")) pattern += ".avi";
-          doFPS = true;
-        }
         else if (format.equals("MOV")) {
           if (!plow.endsWith(".mov")) pattern += ".mov";
           doFPS = true;
@@ -322,7 +304,7 @@ public class ExportPane extends WizardPane {
           tokens[i] = t;
         }
         stars = tokens.length - 1;
-        String[] dims = data.getDimTypes();
+        String[] dims = trans.getDimTypes();
         int q = dims.length - stars;
         if (q < 0 || q > 1) {
           JOptionPane.showMessageDialog(dialog, "Please use either " +
@@ -388,8 +370,8 @@ public class ExportPane extends WizardPane {
         second.add(builder.getPanel());
       }
       else if (page == 1) { // lay out page 3
-        String[] dims = data.getDimTypes();
-        int[] lengths = data.getLengths();
+        String[] dims = trans.getDimTypes();
+        int[] lengths = trans.getLengths();
 
         // file pattern
         StringBuffer sb = new StringBuffer("File pattern: ");
@@ -407,7 +389,6 @@ public class ExportPane extends WizardPane {
         String format = (String) formatBox.getSelectedItem();
         if (format.equals("PIC")) sb.append("Bio-Rad PIC");
         else if (format.equals("TIFF")) sb.append("Multi-page TIFF stack");
-        else if (format.equals("AVI")) sb.append("AVI movie");
         else if (format.equals("MOV")) sb.append("QuickTime movie");
         else sb.append("Unknown");
         sb.append("\n \n");
@@ -458,7 +439,7 @@ public class ExportPane extends WizardPane {
           sb.append("\n \n");
         }
 
-        // verify dimensional axis mappings correctness
+        // verify dimensional axis mappings are acceptable
         if (exclude != q) {
           JOptionPane.showMessageDialog(dialog,
             "Please map each letter to a different dimensional axis.",
@@ -466,8 +447,8 @@ public class ExportPane extends WizardPane {
           return;
         }
 
-        // verify number of range components is workable
-        int rangeCount = data.getRangeCount();
+        // verify number of range components is acceptable
+        int rangeCount = trans.getRangeCount();
         if (format.equals("PIC") && rangeCount != 1) {
           JOptionPane.showMessageDialog(dialog,
             "Bio-Rad PIC format requires a data object with a single " +

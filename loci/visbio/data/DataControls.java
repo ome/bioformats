@@ -176,7 +176,7 @@ public class DataControls extends ControlPanel
     display3D.setEnabled(VisUtil.canDo3D());
 
     // export pane
-    exporter = new ExportPane();
+    exporter = new ExportPane(lm.getVisBio());
 
     // lay out buttons
     ButtonStackBuilder bsb = new ButtonStackBuilder();
