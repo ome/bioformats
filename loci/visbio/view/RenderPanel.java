@@ -1,5 +1,5 @@
 //
-// CapturePanel.java
+// RenderPanel.java
 //
 
 /*
@@ -35,57 +35,57 @@ import loci.visbio.WindowManager;
 
 import loci.visbio.util.LAFUtil;
 
-/** Provides GUI controls for a display capture handler. */
-public class CapturePanel extends JPanel implements ActionListener {
+/** Provides GUI controls for a volume rendering handler. */
+public class RenderPanel extends JPanel implements ActionListener {
 
   // -- Fields --
 
-  /** Capture handler upon which GUI controls operate. */
-  protected CaptureHandler handler;
+  /** Volume rendering handler upon which GUI controls operate. */
+  protected RenderHandler handler;
 
-  /** Capture window. */
-  protected CaptureWindow captureWindow;
+  /** Volume rendering window. */
+  protected RenderWindow renderWindow;
 
 
   // -- Constructor --
 
-  /** Creates a panel containing capture handler GUI controls. */
-  public CapturePanel(CaptureHandler h) {
+  /** Creates a panel containing volume rendering handler GUI controls. */
+  public RenderPanel(RenderHandler h) {
     super();
     handler = h;
-    captureWindow = new CaptureWindow(handler);
+    renderWindow = new RenderWindow(handler);
     WindowManager wm = (WindowManager)
       h.getWindow().getVisBio().getManager(WindowManager.class);
-    wm.addWindow(captureWindow);
+    wm.addWindow(renderWindow);
 
-    // capture button
-    JButton capture = new JButton("Capture");
-    if (!LAFUtil.isMacLookAndFeel()) capture.setMnemonic('a');
-    capture.setToolTipText("Creates display screenshots or movies");
-    capture.addActionListener(this);
+    // render button
+    JButton render = new JButton("Render");
+    if (!LAFUtil.isMacLookAndFeel()) render.setMnemonic('r');
+    render.setToolTipText("Performs volume rendering");
+    render.addActionListener(this);
 
     // lay out components
     setLayout(new BorderLayout());
-    add(capture);
+    add(render);
   }
 
 
-  // -- CapturePanel API methods --
+  // -- RenderPanel API methods --
 
-  /** Displays the capture window pane onscreen. */
-  public void showCaptureWindow() {
+  /** Displays the volume rendering window pane onscreen. */
+  public void showRenderWindow() {
     WindowManager wm = (WindowManager)
       handler.getWindow().getVisBio().getManager(WindowManager.class);
-    wm.showWindow(captureWindow);
+    wm.showWindow(renderWindow);
   }
 
-  /** Gets the capture pane. */
-  public CaptureWindow getCaptureWindow() { return captureWindow; }
+  /** Gets the volume rendering window pane. */
+  public RenderWindow getRenderWindow() { return renderWindow; }
 
 
   // -- ActionListener API methods --
 
   /** Handles button presses and combo box selections. */
-  public void actionPerformed(ActionEvent e) { showCaptureWindow(); }
+  public void actionPerformed(ActionEvent e) { showRenderWindow(); }
 
 }

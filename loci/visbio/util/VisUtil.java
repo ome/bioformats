@@ -97,7 +97,6 @@ public abstract class VisUtil {
    * corresponding to the specified RealTypes.
    */
   public static ScalarMap[] getMaps(DisplayImpl display, RealType[] types) {
-    // Used by: view/ColorManager, view/RenderManager
     ScalarMap[] maps = new ScalarMap[types.length];
     Vector v = display.getMapVector();
     int size = v.size();

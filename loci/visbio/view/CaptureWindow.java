@@ -56,7 +56,7 @@ import visad.DisplayImpl;
 import visad.ProjectionControl;
 import visad.VisADException;
 
-/** CaptureWindow is a window for adjusting color settings. */
+/** CaptureWindow is a window for capturing display image sequences. */
 public class CaptureWindow extends JFrame implements ActionListener,
   ChangeListener, ItemListener, ListSelectionListener
 {

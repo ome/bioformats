@@ -348,7 +348,7 @@ public class TransformLink
    * utilizing thumbnails as appropriate.
    */
   protected synchronized void computeData(boolean thumbs) {
-    /*TEMP*/System.out.println("computeData(" + thumbs + "): start");
+    /*TEMP*///System.out.println("computeData(" + thumbs + "): start");
     int[] pos = handler.getPos(trans);
     ThumbnailHandler th = trans.getThumbHandler();
     Data thumb = th == null ? null : th.getThumb(pos);
@@ -365,7 +365,7 @@ public class TransformLink
       setData(d);
       if (colorHandler != null) colorHandler.reAutoScale();
     }
-    /*TEMP*/System.out.println("computeData(" + thumbs + "): end");
+    /*TEMP*///System.out.println("computeData(" + thumbs + "): end");
   }
 
   /** Gets the transform's data at the given dimensional position. */

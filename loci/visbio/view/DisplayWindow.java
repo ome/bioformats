@@ -23,10 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.view;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GraphicsConfiguration;
+import java.awt.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -77,6 +74,9 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
 
   /** Handles logic for capturing the display screenshots and movies. */
   protected CaptureHandler captureHandler;
+
+  /** Handles logic for volume rendering. */
+  protected RenderHandler renderHandler;
 
   /** Handles logic for linking data transforms to the VisAD display. */
   protected TransformHandler transformHandler;
@@ -161,6 +161,9 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
   /** Gets the capture handler. */
   public CaptureHandler getCaptureHandler() { return captureHandler; }
 
+  /** Gets the volume rendering handler. */
+  public RenderHandler getRenderHandler() { return renderHandler; }
+
   /** Gets the transform handler. */
   public TransformHandler getTransformHandler() { return transformHandler; }
 
@@ -217,6 +220,7 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
     setAttr("threeD", "" + threeD);
     viewHandler.saveState();
     captureHandler.saveState();
+    renderHandler.saveState();
     transformHandler.saveState();
   }
 
@@ -248,6 +252,7 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
     createHandlers();
     viewHandler.restoreState();
     captureHandler.restoreState();
+    renderHandler.saveState();
     transformHandler.restoreState();
   }
 
@@ -295,6 +300,7 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
     return ObjectUtil.objectsEqual(name, window.name) &&
       viewHandler.matches(window.viewHandler) &&
       captureHandler.matches(window.captureHandler) &&
+      renderHandler.matches(window.renderHandler) &&
       transformHandler.matches(window.transformHandler);
   }
 
@@ -332,6 +338,7 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
     if (window == null) {
       viewHandler.initState(null);
       captureHandler.initState(null);
+      renderHandler.initState(null);
       transformHandler.initState(null);
     }
     else {
@@ -339,6 +346,7 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
       // their components only when necessary, to ensure efficiency
       viewHandler.initState(window.viewHandler);
       captureHandler.initState(window.captureHandler);
+      renderHandler.initState(window.renderHandler);
       transformHandler.initState(window.transformHandler);
     }
 
@@ -363,9 +371,9 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
       // lay out components
       pane.add(display.getComponent(), BorderLayout.CENTER);
       controls.setContentPane(FormsUtil.makeColumn(new Object[] {
-        viewHandler.getPanel(),
-        captureHandler.getPanel(),
-        "Data", transformHandler.getPanel(), sliders}, null, true));
+        viewHandler.getPanel(), FormsUtil.makeRow(captureHandler.getPanel(),
+        renderHandler.getPanel()), "Data", transformHandler.getPanel(),
+        sliders}, null, true));
       pack();
       repack();
     }
@@ -385,6 +393,7 @@ public class DisplayWindow extends JFrame implements ActionListener, Dynamic {
   protected void createHandlers() {
     if (viewHandler == null) viewHandler = new ViewHandler(this);
     if (captureHandler == null) captureHandler = new CaptureHandler(this);
+    if (renderHandler == null) renderHandler = new RenderHandler(this);
     if (transformHandler == null) {
       transformHandler = threeD ?
         new StackHandler(this) : new TransformHandler(this);
