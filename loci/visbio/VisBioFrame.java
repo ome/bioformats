@@ -25,6 +25,7 @@ package loci.visbio;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -91,129 +92,150 @@ public class VisBioFrame extends GUIFrame {
    */
   public VisBioFrame(SplashScreen splash, String[] args) {
     super(true);
-    setTitle(VisBio.TITLE);
-    managers = new Vector();
-    this.splash = splash;
+    try {
+      setTitle(VisBio.TITLE);
+      managers = new Vector();
+      this.splash = splash;
 
-    // initialize Look & Feel parameters
-    LAFUtil.initLookAndFeel();
+      // initialize Look & Feel parameters
+      LAFUtil.initLookAndFeel();
 
-    // load program icon
-		URL urlIcon = getClass().getResource("visbio-icon.gif");
-		if (urlIcon != null) icon = new ImageIcon(urlIcon).getImage();
-    if (icon != null) setIconImage(icon);
+      // load program icon
+      URL urlIcon = getClass().getResource("visbio-icon.gif");
+      if (urlIcon != null) icon = new ImageIcon(urlIcon).getImage();
+      if (icon != null) setIconImage(icon);
 
-    // make menus appear in the right order
-    getMenu("File");
-    getMenu("Edit");
-    getMenu("Window");
-    getMenu("Help");
+      // make menus appear in the right order
+      getMenu("File");
+      getMenu("Edit");
+      getMenu("Window");
+      getMenu("Help");
 
-    // create status bar
-    status = new JProgressBar();
-    status.setStringPainted(true);
-    status.setToolTipText("Reports status of VisBio operations");
-    status.setBorder(new BevelBorder(BevelBorder.RAISED));
+      // create status bar
+      status = new JProgressBar();
+      status.setStringPainted(true);
+      status.setToolTipText("Reports status of VisBio operations");
+      status.setBorder(new BevelBorder(BevelBorder.RAISED));
 
-    // HACK - make progress bar an easier-to-read color for Plastic L&F
-    if (LAFUtil.isPlasticLookAndFeel()) status.setForeground(Color.blue);
+      // HACK - make progress bar an easier-to-read color for Plastic L&F
+      if (LAFUtil.isPlasticLookAndFeel()) status.setForeground(Color.blue);
 
-    // create stop button
-    stop = new JButton("Stop");
-    if (!LAFUtil.isMacLookAndFeel()) stop.setMnemonic('s');
-    stop.setToolTipText("Stops the currently reported VisBio operation");
-    stop.setBorder(new CompoundBorder(
-      new BevelBorder(BevelBorder.RAISED), stop.getBorder()));
-    stop.setPreferredSize(stop.getPreferredSize()); // force constant size
+      // create stop button
+      stop = new JButton("Stop");
+      if (!LAFUtil.isMacLookAndFeel()) stop.setMnemonic('s');
+      stop.setToolTipText("Stops the currently reported VisBio operation");
+      stop.setBorder(new CompoundBorder(
+        new BevelBorder(BevelBorder.RAISED), stop.getBorder()));
+      stop.setPreferredSize(stop.getPreferredSize()); // force constant size
 
-    // add status bar and stop button
-    JPanel statusPanel = new JPanel();
-    statusPanel.setLayout(new BorderLayout());
-    statusPanel.add(status, BorderLayout.CENTER);
-    statusPanel.add(stop, BorderLayout.EAST);
-    Container c = getContentPane();
-    c.setLayout(new BorderLayout());
-    c.add(statusPanel, BorderLayout.SOUTH);
-    resetStatus();
+      // add status bar and stop button
+      JPanel statusPanel = new JPanel();
+      statusPanel.setLayout(new BorderLayout());
+      statusPanel.add(status, BorderLayout.CENTER);
+      statusPanel.add(stop, BorderLayout.EAST);
+      Container c = getContentPane();
+      c.setLayout(new BorderLayout());
+      c.add(statusPanel, BorderLayout.SOUTH);
+      resetStatus();
 
-    // create logic managers
-    OptionManager om = new OptionManager(this);
-    StateManager sm = new StateManager(this);
-    WindowManager wm = new WindowManager(this);
-    sm.setRestoring(true);
-    LogicManager[] lm = {
-      sm, // StateManager
-      om, // OptionManager
-      new ClassManager(this),
-      wm, // WindowManager
-      new HelpManager(this),
-      new PanelManager(this),
-      new DataManager(this),
-      new OMEManager(this),
-      new DisplayManager(this),
-      new OverlayManager(this),
-      new SystemManager(this),
-      new ConsoleManager(this),
-      new ExitManager(this)
-    };
-    int tasks = 1;
-    for (int i=0; i<lm.length; i++) tasks += lm[i].getTasks();
-    if (splash != null) splash.setTaskCount(tasks);
+      // create logic managers
+      OptionManager om = new OptionManager(this);
+      StateManager sm = new StateManager(this);
+      WindowManager wm = new WindowManager(this);
+      sm.setRestoring(true);
+      LogicManager[] lm = {
+        sm, // StateManager
+        om, // OptionManager
+        new ClassManager(this),
+        wm, // WindowManager
+        new HelpManager(this),
+        new PanelManager(this),
+        new DataManager(this),
+        new OMEManager(this),
+        new DisplayManager(this),
+        new OverlayManager(this),
+        new SystemManager(this),
+        new ConsoleManager(this),
+        new ExitManager(this)
+      };
+      int tasks = 1;
+      for (int i=0; i<lm.length; i++) tasks += lm[i].getTasks();
+      if (splash != null) splash.setTaskCount(tasks);
 
-    // add logic managers
-    for (int i=0; i<lm.length; i++) addManager(lm[i]);
-    setSplashStatus("Finishing");
+      // add logic managers
+      for (int i=0; i<lm.length; i++) addManager(lm[i]);
+      setSplashStatus("Finishing");
 
-    // read configuration file
-    om.readIni();
+      // read configuration file
+      om.readIni();
 
-    // handle Mac OS X application menu items
-    if (MAC_OS_X) {
-      ReflectedUniverse r = new ReflectedUniverse();
-      r.setDebug(true);
-      try {
+      // handle Mac OS X application menu items
+      if (MAC_OS_X) {
+        ReflectedUniverse r = new ReflectedUniverse();
+        r.setDebug(true);
         r.exec("import loci.visbio.MacAdapter");
         r.setVar("bio", this);
         r.exec("MacAdapter.link(bio)");
       }
-      catch (Exception exc) { exc.printStackTrace(); }
-    }
 
-    // distribute menu bar across all frames
-    if (LAFUtil.isMacLookAndFeel()) wm.setDistributedMenus(true);
+      // distribute menu bar across all frames
+      if (LAFUtil.isMacLookAndFeel()) wm.setDistributedMenus(true);
 
-    // show VisBio window onscreen
-    pack();
-    Util.centerWindow(this);
-    show();
+      // show VisBio window onscreen
+      pack();
+      Util.centerWindow(this);
+      show();
 
-    // hide splash screen
-    if (splash != null) {
-      int task = splash.getTask();
-      if (task != tasks) {
-        System.out.println("Warning: completed " +
-          task + "/" + tasks + " initialization tasks");
+      // hide splash screen
+      if (splash != null) {
+        int task = splash.getTask();
+        if (task != tasks) {
+          System.out.println("Warning: completed " +
+            task + "/" + tasks + " initialization tasks");
+        }
+        splash.hide();
+        splash = null;
       }
-      splash.hide();
-      splash = null;
-    }
 
-    // determine if VisBio crashed last time
-    sm.setRestoring(false);
-    sm.checkCrash();
+      // determine if VisBio crashed last time
+      sm.setRestoring(false);
+      sm.checkCrash();
 
-    // process arguments
-    if (args == null) args = new String[0];
-    for (int i=0; i<args.length; i++) {
-      int equals = args[i].indexOf("=");
-      if (equals < 0) continue;
-      String key = args[i].substring(0, equals);
-      String value = args[i].substring(equals + 1);
-      if (DEBUG) {
-        System.out.println("[arg " + i + "] " +
-          (i + 1) + ": " + key + " = " + value);
+      // process arguments
+      if (args == null) args = new String[0];
+      for (int i=0; i<args.length; i++) {
+        int equals = args[i].indexOf("=");
+        if (equals < 0) continue;
+        String key = args[i].substring(0, equals);
+        String value = args[i].substring(equals + 1);
+        if (DEBUG) {
+          System.out.println("[arg " + i + "] " +
+            (i + 1) + ": " + key + " = " + value);
+        }
+        processArgument(key, value);
       }
-      processArgument(key, value);
+    }
+    catch (Throwable t) {
+      // dump stack trace to a string
+      StringWriter sw = new StringWriter();
+      t.printStackTrace(new PrintWriter(sw));
+
+      // save stack trace to errors.log file
+      try {
+        PrintWriter fout = new PrintWriter(new FileWriter("errors.log"));
+        fout.println(sw.toString());
+        fout.close();
+      }
+      catch (IOException exc) { }
+
+      // apologize to the user
+      if (splash != null) splash.hide();
+      JOptionPane.showMessageDialog(this,
+        "Sorry, there has been a problem launching VisBio.\n\n" +
+        sw.toString() +
+        "\nA copy of this information has been saved to the errors.log file.",
+        "VisBio", JOptionPane.ERROR_MESSAGE);
+      System.exit(0);
     }
   }
 
