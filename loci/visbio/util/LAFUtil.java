@@ -34,6 +34,15 @@ public abstract class LAFUtil {
 
   /** Initializes some look and feel parameters. */
   public static void initLookAndFeel() {
+    if (System.getProperty("swing.defaultlaf") == null) {
+      // use JGoodies Plastic 3D as default if no Look & Feel is set
+      try {
+        UIManager.setLookAndFeel(
+          "com.jgoodies.plaf.plastic.Plastic3DLookAndFeel");
+      }
+      catch (Exception exc) { exc.printStackTrace(); }
+    }
+
     UIManager.put(Options.USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
     Options.setGlobalFontSizeHints(FontSizeHints.MIXED);
     Options.setDefaultIconSize(new Dimension(18, 18));
