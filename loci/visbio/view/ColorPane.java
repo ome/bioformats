@@ -393,7 +393,7 @@ public class ColorPane extends DialogPane
         }
       }
       VisUtil.setDisplayDisabled(preview, false);
-      selector.setSelectedIndex(0);
+      if (selector.getItemCount() > 0) selector.setSelectedIndex(0);
     }
     ignore = false;
   }
