@@ -376,7 +376,16 @@ public abstract class VisUtil {
     if (dr instanceof DisplayRendererJ3D) {
       VisADCanvasJ3D canvas = ((DisplayRendererJ3D) dr).getCanvas();
       canvas.renderField(0);
-      canvas.getGraphicsContext3D().flush(true);
+
+      // CTR: The following line forces the countdown to update immediately,
+      // but causes a strange deadlock problem to occur when there are multiple
+      // data objects in a single display. This deadlock is difficult to
+      // diagnose because it seems to be occurring within a single thread (one
+      // of the burn-in threads locks a GraphicsContext3D within
+      // GraphicsContext3D.flush(), then inexplicably waits for it to be
+      // unlocked within GraphicsContext3D.runMonitor()).
+
+      //canvas.getGraphicsContext3D().flush(true);
     }
     else if (dr instanceof DisplayRendererJ2D) {
       ((DisplayRendererJ2D) dr).getCanvas().repaint();
