@@ -40,8 +40,8 @@ public abstract class VisUtil {
   // -- Data utility methods --
 
   /**
-   * Collapses a field from the form: <tt>(z -> ((x, y) -> (v1, ..., vn))</tt>
-   * into the form: <tt>((x, y, z) -> (v1, ..., vn))</tt>.
+   * Collapses a field from the form <tt>(z -> ((x, y) -> (v1, ..., vn))</tt>
+   * into the form <tt>((x, y, z) -> (v1, ..., vn))</tt>.
    */
   public static FlatField collapse(FieldImpl f)
     throws VisADException, RemoteException
@@ -87,6 +87,26 @@ public abstract class VisUtil {
   }
 
   /**
+   * Resamples a volume of the form <tt>((x, y, z) -> (v1, ..., vn))</tt>
+   * to the given resolution along each of its three spatial axes.
+   */
+  public static FlatField makeCube(FlatField volume, int res)
+    throws VisADException, RemoteException
+  {
+    GriddedSet set = (GriddedSet) volume.getDomainSet();
+    int[] len = set.getLengths();
+    if (len[0] == res && len[1] == res && len[2] == res) return volume;
+    else {
+      float[] lo = set.getLow();
+      float[] hi = set.getHi();
+      Linear3DSet nset = new Linear3DSet(set.getType(),
+        lo[0], hi[0], res, lo[1], hi[1], res, lo[2], hi[2], res);
+      return (FlatField) volume.resample(nset,
+        Data.WEIGHTED_AVERAGE, Data.NO_ERRORS);
+    }
+  }
+
+  /**
    * Gets an array of ScalarMaps from the given display,
    * corresponding to the specified RealTypes.
    */
@@ -110,7 +130,9 @@ public abstract class VisUtil {
   public static FlatField switchType(FlatField field, FunctionType newType)
     throws VisADException, RemoteException
   {
-    if (!newType.equalsExceptName(field.getType())) return null;
+    if (!newType.equalsExceptName(field.getType())) {
+      throw new VisADException("Types do not match");
+    }
     Set domainSet = field.getDomainSet();
     CoordinateSystem rangeCoordSys = field.getRangeCoordinateSystem()[0];
     Set[] rangeSets = field.getRangeSets();
