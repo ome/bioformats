@@ -34,7 +34,10 @@ import loci.visbio.data.*;
 
 import loci.visbio.state.Dynamic;
 
+import loci.visbio.util.MathUtil;
 import loci.visbio.util.VisUtil;
+
+import loci.visbio.view.DisplayWindow;
 
 import visad.*;
 
@@ -48,8 +51,8 @@ public class OverlayTransform extends DataTransform
   /** Controls for creating overlays. */
   protected OverlayWidget controls;
 
-  /** List of overlays. */
-  protected Vector overlays;
+  /** List of overlays for each dimensional position. */
+  protected Vector[] overlays;
 
   /** Whether left mouse button is currently being pressed. */
   protected boolean mouseDownLeft;
@@ -60,7 +63,6 @@ public class OverlayTransform extends DataTransform
   /** Creates an overlay object for the given transform. */
   public OverlayTransform(DataTransform parent, String name) {
     super(parent, name);
-    overlays = new Vector();
     initState(null);
     parent.addTransformListener(this);
   }
@@ -69,37 +71,10 @@ public class OverlayTransform extends DataTransform
   // -- OverlayTransform API methods --
 
   /** Adds an overlay object to the current frame. */
-  public void addObject(OverlayObject obj) {
-    // CTR START HERE
-    //
-    // We actually want to add object to the current dimensional position of
-    // the parent data, which means this transform has to always know what its
-    // parent's position is. Now, TransformLink passes along DisplayEvents to
-    // the transform, so the overlay link will pass events to this transform,
-    // but from the event we can only glean the VisAD Display, and not the
-    // encapsulating DisplayWindow. Here's some code to get the current
-    // position in the relevant display:
-    //
-    // VisBioFrame bio = ...; // ??? how to get this...
-    // DisplayManager dm = (DisplayManager)
-    //   bio.getManager(DisplayManager.class);
-    // DisplayWindow[] windows = dm.getDisplays();
-    // int[] pos = null;
-    // for (int i=0; i<windows.length; i++) {
-    //   if (windows[i].getDisplay() == display) {
-    //     pos = windows[i].getTransformHandler().getPos(this);
-    //     break;
-    //   }
-    // }
-    // return pos;
-    //
-    // We don't actually want this code in this method, but rather in some
-    // utility method. This method (addObject) should probably take the
-    // position as another argument.
-    //
-    // One way to get the VisBioFrame might be to grab it as the ancestor frame
-    // from some GUI component here.. maybe?
-    overlays.add(obj);
+  public void addObject(OverlayObject obj, int[] pos) {
+    int ndx = MathUtil.positionToRaster(lengths, pos);
+    if (ndx < 0 || ndx >= overlays.length) return;
+    overlays[ndx].add(obj);
     notifyListeners(new TransformEvent(this));
   }
 
@@ -163,7 +138,9 @@ public class OverlayTransform extends DataTransform
   public Data getData(int[] pos, int dim) {
     if (dim != 2) return null;
 
-    int size = overlays.size();
+    int q = MathUtil.positionToRaster(lengths, pos);
+    if (q < 0 || q >= overlays.length) return null;
+    int size = overlays[q].size();
     FieldImpl field = null;
     if (size > 0) {
       try {
@@ -173,7 +150,7 @@ public class OverlayTransform extends DataTransform
         GriddedSet fieldSet = new Integer1DSet(size);
         field = new FieldImpl(fieldType, fieldSet);
         for (int i=0; i<size; i++) {
-          OverlayObject obj = (OverlayObject) overlays.elementAt(i);
+          OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
           DataImpl data = obj.getData();
           field.setSample(i, data, false);
         }
@@ -239,55 +216,34 @@ public class OverlayTransform extends DataTransform
   /** Responds to mouse gestures with appropriate overlay interaction. */
   public void displayChanged(DisplayEvent e) {
     int eventId = e.getId();
+    OverlayTool tool = controls.getActiveTool();
     DisplayImpl display = (DisplayImpl) e.getDisplay();
     if (eventId == DisplayEvent.MOUSE_PRESSED_LEFT) {
       mouseDownLeft = true;
-      double[] coords = VisUtil.pixelToDomain(display, e.getX(), e.getY());
-      OverlayTool tool = controls.getActiveTool();
-      if (tool != null) tool.mouseDown((float) coords[0], (float) coords[1]);
+      if (tool != null) {
+        double[] coords = VisUtil.pixelToDomain(display, e.getX(), e.getY());
+        DisplayWindow window = DisplayWindow.getDisplayWindow(display);
+        int[] pos = window.getTransformHandler().getPos(this);
+        tool.mouseDown((float) coords[0], (float) coords[1], pos);
+      }
     }
     else if (eventId == DisplayEvent.MOUSE_RELEASED_LEFT) {
       mouseDownLeft = false;
-      double[] coords = VisUtil.pixelToDomain(display, e.getX(), e.getY());
-      OverlayTool tool = controls.getActiveTool();
-      if (tool != null) tool.mouseUp((float) coords[0], (float) coords[1]);
+      if (tool != null) {
+        double[] coords = VisUtil.pixelToDomain(display, e.getX(), e.getY());
+        DisplayWindow window = DisplayWindow.getDisplayWindow(display);
+        int[] pos = window.getTransformHandler().getPos(this);
+        tool.mouseUp((float) coords[0], (float) coords[1], pos);
+      }
     }
     else if (mouseDownLeft && eventId == DisplayEvent.MOUSE_DRAGGED) {
-      double[] coords = VisUtil.pixelToDomain(display, e.getX(), e.getY());
-      OverlayTool tool = controls.getActiveTool();
-      if (tool != null) tool.mouseDrag((float) coords[0], (float) coords[1]);
+      if (tool != null) {
+        double[] coords = VisUtil.pixelToDomain(display, e.getX(), e.getY());
+        DisplayWindow window = DisplayWindow.getDisplayWindow(display);
+        int[] pos = window.getTransformHandler().getPos(this);
+        tool.mouseDrag((float) coords[0], (float) coords[1], pos);
+      }
     }
-    // CTR START HERE
-    // Each type of overlay needs its own subclass.
-    //
-    // The OverlayTransform has a setTool() method that flags which type of
-    // overlay is active. The OverlayWidget calls setTool whenever the user
-    // changes the tool. Then, when one of the above three events happens, it
-    // gets passed to the active tool. Each tool also provides its own set of
-    // GUI controls, that get set visible when that tool is selected
-    // (filled vs unfilled, endpoints visible vs invisible).
-    //
-    // One of the tools is a selection tool that allows the selection of
-    // existing overlays. Otherwise, reclicking the left button will draw
-    // another overlay.
-    //
-    // I have set up OverlayTool as the base class for these, and begun work on
-    // LineTool. Continue that by implementing the mouse*(int, int) methods.
-    //
-    // Then, each overlay type also needs a class for the actual objects
-    // (made up of VisAD Set constructs, perhaps?).
-    //
-    // Create OverlayObject as the base class for these, and then subclass into
-    // LineObject, etc. OverlayObject covers the basics, including color.
-    //
-    // Color is actually tricky, because the FlatField will need a number of
-    // samples equal to the number of samples in that portion of the UnionSet.
-    // Will need a general-purpose combineSets method to do this, probably.
-    //
-    // One of the buttons on OverlayWidget is a delete button.
-    // Also will be a way to link multiple overlays together, later.
-    //
-    //
   }
 
 
@@ -328,6 +284,26 @@ public class OverlayTransform extends DataTransform
     dims = parent.getDimTypes();
     makeLabels();
 
+    int len = MathUtil.getRasterLength(lengths);
+    Vector[] v = new Vector[len];
+    int minLen = 0;
+    if (overlays != null) {
+      // CTR - This logic is simplistic and will result in erroneous behavior
+      // should a transform with multiple dimensional axes suffer a length
+      // alteration along its axes. That is, the rasterization will probably be
+      // shifted so that a particular position such as (3, 5) will no longer be
+      // (3, 5), even if (3, 5) is still a valid dimensional position. But we
+      // cannot guarantee much in the general case, because the number of
+      // dimensional positions could also have shifted. Since it's irritatingly
+      // complex to sniff out exactly how a transform has changed and act
+      // appropriately, we simply preserve as many overlays as possible. If the
+      // dimensional axes have been significantly altered, too bad.
+      minLen = overlays.length < len ? overlays.length : len;
+      System.arraycopy(overlays, 0, v, 0, minLen);
+    }
+    for (int i=minLen; i<len; i++) v[i] = new Vector();
+    overlays = v;
+
     controls = new OverlayWidget(this);
   }
 
@@ -342,9 +318,7 @@ public class OverlayTransform extends DataTransform
 
   /** Called when parent data transform's parameters are updated. */
   public void transformChanged(TransformEvent e) {
-    // CTR TODO update this transform if parent changes
-    // or do we even need to? Probably...
-    // if we do update, we also need to notify our listeners of a change:
+    initState(null);
     notifyListeners(new TransformEvent(this));
   }
 
