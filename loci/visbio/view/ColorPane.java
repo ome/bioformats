@@ -588,7 +588,7 @@ public class ColorPane extends DialogPane
     builder.add(brightness, cc.xy(3, 1));
     builder.add(brightnessValue, cc.xy(5, 1));
 
-    builder.addLabel("Contr&ast", cc.xy(1, 3)).setLabelFor(contrast);
+    builder.addLabel("Contra&st", cc.xy(1, 3)).setLabelFor(contrast);
     builder.add(contrast, cc.xy(3, 3));
     builder.add(contrastValue, cc.xy(5, 3));
 
@@ -613,7 +613,7 @@ public class ColorPane extends DialogPane
     // HSV color model option
     hsv = new JRadioButton("HSV");
     hsv.addActionListener(this);
-    if (!LAFUtil.isMacLookAndFeel()) hsv.setMnemonic('s');
+    if (!LAFUtil.isMacLookAndFeel()) hsv.setMnemonic('h');
     hsv.setToolTipText("Switches to a Hue-Saturation-Value color model");
 
     // composite color model option
@@ -698,7 +698,7 @@ public class ColorPane extends DialogPane
     // save LUT button
     lutSave = new JButton("Save LUT...");
     lutSave.addActionListener(this);
-    if (!LAFUtil.isMacLookAndFeel()) lutSave.setMnemonic('v');
+    if (!LAFUtil.isMacLookAndFeel()) lutSave.setMnemonic('s');
     lutSave.setToolTipText("Saves this color table to disk");
 
     // LUTs popup menu
