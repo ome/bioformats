@@ -243,7 +243,7 @@ public class Dataset extends ImageTransform {
   /** Obtains an image from the source(s) at the given dimensional position. */
   public Data getData(int[] pos, int dim, DataCache cache) {
     if (dim != 2) return null;
-    if (cache != null) return cache.getData(this, pos, dim);
+    if (cache != null) return cache.getData(this, pos, null, dim);
 
     int[] indices = getIndices(pos);
     int fileIndex = indices[0];

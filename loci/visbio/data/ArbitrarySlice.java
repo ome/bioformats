@@ -27,7 +27,6 @@ import java.rmi.RemoteException;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import loci.visbio.state.Dynamic;
-import loci.visbio.util.ObjectUtil;
 import loci.visbio.util.VisUtil;
 import visad.*;
 
@@ -71,17 +70,14 @@ public class ArbitrarySlice extends DataTransform
   /** Resolution of arbitrary slice. */
   protected int res;
 
+  /** Flag indicating whether slicing line should be shown. */
+  protected boolean showLine;
+
   /** Flag indicating whether arbitrary slice should actually be computed. */
   protected boolean compute;
 
   /** Controls for the arbitrary slice. */
   protected SliceWidget controls;
-
-  /** Last collapsed image stack computed. */
-  protected FlatField collapse;
-
-  /** Dimensional position of last collapsed image stack computed. */
-  protected int[] oldPos;
 
 
   // -- Constructor --
@@ -98,17 +94,17 @@ public class ArbitrarySlice extends DataTransform
 
   /**
    * Sets the parameters for the arbitrary slice,
-   * recomputing the slice if the recompute flag is set.
+   * recomputing the slice if the compute flag is set.
    */
   public synchronized void setParameters(int axis, float yaw, float pitch,
-    float loc, int res, boolean compute)
+    float loc, int res, boolean showLine, boolean compute)
   {
     if (this.axis != axis) {
       this.axis = axis;
       computeLengths();
     }
-    if (this.yaw == yaw && this.pitch == pitch &&
-      this.loc == loc && this.res == res && this.compute == compute)
+    if (this.yaw == yaw && this.pitch == pitch && this.loc == loc &&
+      this.res == res && this.showLine == showLine && this.compute == compute)
     {
       return;
     }
@@ -116,6 +112,7 @@ public class ArbitrarySlice extends DataTransform
     this.pitch = pitch;
     this.loc = loc;
     this.res = res;
+    this.showLine = showLine;
     this.compute = compute;
     controls.refreshWidget();
     notifyListeners(new TransformEvent(this));
@@ -123,32 +120,37 @@ public class ArbitrarySlice extends DataTransform
 
   /** Sets the axis through which to slice. */
   public void setAxis(int axis) {
-    setParameters(axis, yaw, pitch, loc, res, compute);
+    setParameters(axis, yaw, pitch, loc, res, showLine, compute);
   }
 
   /** Sets the yaw for the slicing line. */
   public void setYaw(float yaw) {
-    setParameters(axis, yaw, pitch, loc, res, compute);
+    setParameters(axis, yaw, pitch, loc, res, showLine, compute);
   }
 
   /** Sets the pitch for the slicing line. */
   public void setPitch(float pitch) {
-    setParameters(axis, yaw, pitch, loc, res, compute);
+    setParameters(axis, yaw, pitch, loc, res, showLine, compute);
   }
 
   /** Sets the location for the arbitrary slice. */
   public void setLocation(float loc) {
-    setParameters(axis, yaw, pitch, loc, res, compute);
+    setParameters(axis, yaw, pitch, loc, res, showLine, compute);
   }
 
   /** Sets the resolution for the slicing line. */
   public void setResolution(int res) {
-    setParameters(axis, yaw, pitch, loc, res, compute);
+    setParameters(axis, yaw, pitch, loc, res, showLine, compute);
+  }
+
+  /** Sets whether white line is shown. */
+  public void setLineVisible(boolean showLine) {
+    setParameters(axis, yaw, pitch, loc, res, showLine, compute);
   }
 
   /** Sets whether arbitrary slice is computed. */
   public void setSliceComputed(boolean compute) {
-    setParameters(axis, yaw, pitch, loc, res, compute);
+    setParameters(axis, yaw, pitch, loc, res, showLine, compute);
   }
 
   /** Gets the axis through which to slice. */
@@ -165,6 +167,9 @@ public class ArbitrarySlice extends DataTransform
 
   /** Gets the resolution for the slicing line. */
   public int getResolution() { return res; }
+
+  /** Gets whether slicing line is shown. */
+  public boolean isLineVisible() { return showLine; }
 
   /** Gets whether arbitary slice is computed. */
   public boolean isSliceComputed() { return compute; }
@@ -209,8 +214,6 @@ public class ArbitrarySlice extends DataTransform
       System.err.println(name + ": invalid dimensionality (" + dim + ")");
       return null;
     }
-    if (!ObjectUtil.arraysEqual(pos, oldPos)) collapse = null;
-    oldPos = pos;
 
     // get some info from the parent transform
     ImageTransform it = (ImageTransform) parent;
@@ -272,19 +275,21 @@ public class ArbitrarySlice extends DataTransform
     sx /= slen; sy /= slen; sz /= slen;
     // now R and S are an orthonormal basis for the plane
 
-    // convert x=[-1,1] y=[-1,1] z=[-1,1] to x=[0,w] y=[0,h] z=[-1,1]
-    float[][] lineSamples = {
-      {w * (x + 1) / 2, w * (-x + 1) / 2},
-      {h * (y + 1) / 2, h * (-y + 1) / 2},
-      {z, -z}
-    };
-
-    // construct line data object
     Gridded3DSet line = null;
-    try {
-      line = new Gridded3DSet(xyz, lineSamples, 2, null, null, null, false);
+    if (showLine) {
+      // convert x=[-1,1] y=[-1,1] z=[-1,1] to x=[0,w] y=[0,h] z=[-1,1]
+      float[][] lineSamples = {
+        {w * (x + 1) / 2, w * (-x + 1) / 2},
+        {h * (y + 1) / 2, h * (-y + 1) / 2},
+        {z, -z}
+      };
+
+      // construct line data object
+      try {
+        line = new Gridded3DSet(xyz, lineSamples, 2, null, null, null, false);
+      }
+      catch (VisADException exc) { exc.printStackTrace(); }
     }
-    catch (VisADException exc) { exc.printStackTrace(); }
 
     // compute slice data
     Data slice = null;
@@ -319,12 +324,16 @@ public class ArbitrarySlice extends DataTransform
         }
       }
 
-      // read in parent data
+      // retrieve collapsed image stack from data cache
+      int[] npos = getParentPos(pos);
+      FlatField collapse = (FlatField)
+        cache.getData(parent, npos, "collapse", 3);
+
+      // if necessary, read in parent data
       int len = parent.getLengths()[axis];
       FlatField[] fields = null;
       if (collapse == null) {
         fields = new FlatField[len];
-        int[] npos = getParentPos(pos);
         for (int i=0; i<len; i++) {
           npos[axis] = i;
           Data data = parent.getData(npos, 2, cache);
@@ -335,19 +344,21 @@ public class ArbitrarySlice extends DataTransform
           }
           fields[i] = (FlatField) data;
         }
-      }
-
-      // resample combined field onto arbitrary slice
-      try {
-        if (collapse == null) {
+        try {
           // use image transform's recommended MathType
           for (int i=0; i<len; i++) {
             fields[i] = VisUtil.switchType(fields[i], imageType);
           }
-          // create collapsed image stack from parent images
+          // compile slices into a single volume and collapse
           collapse = VisUtil.collapse(VisUtil.makeField(fields, zType, -1, 1));
+          cache.putData(this, pos, "collapse", collapse);
         }
+        catch (VisADException exc) { exc.printStackTrace(); }
+        catch (RemoteException exc) { exc.printStackTrace(); }
+      }
 
+      // resample combined field onto arbitrary slice
+      try {
         Gridded3DSet planeSet = new Gridded3DSet(xyz,
           planeSamples, 2, 2, null, null, null, false);
         Gridded3DSet gridSet = new Gridded3DSet(xyz,
@@ -383,7 +394,8 @@ public class ArbitrarySlice extends DataTransform
       catch (VisADException exc) { exc.printStackTrace(); }
     }
 
-    try { return new Tuple(new Data[] {slice, line}, false); }
+    Data[] data = showLine ? new Data[] {slice, line} : new Data[] {slice};
+    try { return new Tuple(data, false); }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
     return null;
@@ -450,9 +462,10 @@ public class ArbitrarySlice extends DataTransform
     if (data == null) {
       axis = -1;
       yaw = 0;
-      pitch = 0;
+      pitch = 45;
       loc = 50;
       res = 64;
+      showLine = true;
       compute = true;
     }
     else {
@@ -461,6 +474,7 @@ public class ArbitrarySlice extends DataTransform
       pitch = data.pitch;
       loc = data.loc;
       res = data.res;
+      showLine = data.showLine;
       compute = data.compute;
     }
 

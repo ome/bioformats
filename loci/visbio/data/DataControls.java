@@ -391,7 +391,7 @@ public class DataControls extends ControlPanel
       saveToDisk.setMnemonic('s');
       saveToDisk.setActionCommand("saveToDisk");
       saveToDisk.addActionListener(this);
-      saveToDisk.setEnabled(false); // CTR TEMP for beta3
+      saveToDisk.setEnabled(false); // CTR TEMP disabled for beta release
       menu.add(saveToDisk);
 
       JMenuItem uploadToOME = new JMenuItem("Upload to OME...");

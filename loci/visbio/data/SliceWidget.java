@@ -76,6 +76,9 @@ public class SliceWidget extends JPanel
   /** Label for current resolution value. */
   protected JLabel resValue;
 
+  /** Check box for whether slicing line is shown. */
+  protected JCheckBox showLine;
+
   /** Check box for whether slice is recomputed on the fly. */
   protected JCheckBox recompute;
 
@@ -131,6 +134,11 @@ public class SliceWidget extends JPanel
     res.addChangeListener(this);
     resValue = new JLabel(value + " x " + value);
 
+    // create slicing line visibility checkbox
+    showLine = new JCheckBox("Show white slicing line", true);
+    showLine.setMnemonic('l');
+    showLine.addChangeListener(this);
+
     // create on-the-fly slice recompution checkbox
     recompute = new JCheckBox("Recompute slice on the fly", true);
     recompute.setMnemonic('f');
@@ -138,8 +146,8 @@ public class SliceWidget extends JPanel
 
     // lay out components
     PanelBuilder builder = new PanelBuilder(new FormLayout(
-      "pref, 3dlu, pref:grow, 3dlu, pref",
-      "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"
+      "pref, 3dlu, pref:grow, 3dlu, pref", "pref, 3dlu, pref, 3dlu, " +
+      "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"
     ));
     CellConstraints cc = new CellConstraints();
     builder.add(FormsUtil.makeRow("&Dimension to slice", axes),
@@ -161,7 +169,9 @@ public class SliceWidget extends JPanel
     builder.add(res, cc.xy(3, 9));
     builder.add(resValue, cc.xy(5, 9));
 
-    builder.add(recompute, cc.xyw(1, 11, 3));
+    builder.add(showLine, cc.xyw(1, 11, 3));
+
+    builder.add(recompute, cc.xyw(1, 13, 3));
 
     setLayout(new BorderLayout());
     add(builder.getPanel());
@@ -216,6 +226,7 @@ public class SliceWidget extends JPanel
     int pitchVal = pitch.getValue();
     int locVal = location.getValue();
     int resVal = res.getValue();
+    boolean lineVal = showLine.isSelected();
     boolean onTheFly = recompute.isSelected();
 
     boolean yawAdj = yaw.getValueIsAdjusting();
@@ -223,7 +234,8 @@ public class SliceWidget extends JPanel
     boolean locAdj = location.getValueIsAdjusting();
     boolean compute = onTheFly || (!yawAdj && !pitchAdj && !locAdj);
 
-    slice.setParameters(axis, yawVal, pitchVal, locVal, resVal, compute);
+    slice.setParameters(axis, yawVal, pitchVal,
+      locVal, resVal, lineVal, compute);
   }
 
 }

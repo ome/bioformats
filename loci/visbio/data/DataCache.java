@@ -45,17 +45,38 @@ public class DataCache {
 
   /** Gets the data object from the cache, computing it if the cache misses. */
   public synchronized Data getData(DataTransform trans,
-    int[] pos, int dim)
+    int[] pos, String append, int dim)
   {
-    Data d = getCachedData(getKey(trans, pos));
-    if (d == null) {
-      /*TEMP*/System.out.println("Cache miss for " + trans + ", pos=" + loci.visbio.util.ObjectUtil.arrayToString(pos) + " (dim=" + dim + ")");
-      d = trans.getData(pos, dim, null);
-      putCachedData(getKey(trans, pos), d);
+    String key = getKey(trans, pos, append);
+    Data d = getCachedData(key);
+    if (d == null) { // do not compute for non-null append
+      if (append == null || append.equals("")) {
+        // compute automatically for null append string
+        d = trans.getData(pos, dim, null);
+        putCachedData(key, d);
+      }
     }
-    /*TEMP*/else System.out.println("Cache HIT for " + trans + ", pos=" + loci.visbio.util.ObjectUtil.arrayToString(pos) + " (dim=" + dim + ")");
     return d;
   }
+
+  /**
+   * Puts the given data object into the cache for the specified transform
+   * at the given dimensional position.
+   */
+  public void putData(DataTransform trans, int[] pos, String append, Data d) {
+    putCachedData(getKey(trans, pos, append), d);
+  }
+
+  /**
+   * Removes the data object at the specified
+   * dimensional position from the cache.
+   */
+  public void dump(DataTransform trans, int[] pos, String append) {
+    dump(getKey(trans, pos, append));
+  }
+
+  /** Removes everything from the cache. */
+  public void dumpAll() { hash.clear(); }
 
   /** Gets the data in the cache at the specified key. */
   public Data getCachedData(String key) {
@@ -70,30 +91,20 @@ public class DataCache {
     if (key != null) hash.put(key, d);
   }
 
-  /**
-   * Removes the data object at the specified
-   * dimensional position from the cache.
-   */
-  public void dump(DataTransform trans, int[] pos) {
-    /*TEMP*/System.out.println("DUMPING cache for " + trans + ", pos=" + loci.visbio.util.ObjectUtil.arrayToString(pos));
-    dump(getKey(trans, pos));
-  }
-
   /** Removes the data object at the specified key from the cache. */
   public void dump(String key) { if (key != null) hash.remove(key); }
-
-  /** Removes everything from the cache. */
-  public void dumpAll() { hash.clear(); }
 
 
   // -- Helper methods --
 
   /**
-   * Gets a key string suitable for hashing for the given transform
-   * at the specified position.
+   * Gets a key string suitable for hashing for the given transform at the
+   * specified position. Changing the append string allows storage of multiple
+   * data objects at the same dimensional position for the same transform.
    */
-  protected String getKey(DataTransform trans, int[] pos) {
-    return trans.getCacheId(pos, true);
+  protected String getKey(DataTransform trans, int[] pos, String append) {
+    if (append == null) append = "";
+    return trans.getCacheId(pos, true) + append;
   }
 
 }
