@@ -32,10 +32,6 @@ Bugfixes and enhancements to address:
     "rubber band" events down the transform chain so that transforms can react
     (in particular, so OverlayTransform can do multiple selection).
 
-  - "Displays" button should only allow displays that can properly display the
-    data. So, if the data transform is 3D only, only 3D displays should be
-    enabled, etc.
-
   - Data transforms must have a "destroy" method that is called when they are
     deleted, so that (e.g.) their GUI controls do not remain in memory.
 

@@ -155,6 +155,9 @@ public class SystemManager extends LogicManager
     }
   }
 
+  /** Detects whether VisBio was launched with Java Web Start. */
+  public boolean isJNLP() { return System.getProperty("jnlpx.home") != null; }
+
 
   // -- LogicManager API methods --
 

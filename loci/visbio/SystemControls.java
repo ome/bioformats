@@ -58,6 +58,7 @@ public class SystemControls extends ControlPanel implements ActionListener {
   public SystemControls(LogicManager logic) {
     super(logic, "System", "Reports system information");
     VisBioFrame bio = lm.getVisBio();
+    SystemManager sm = (SystemManager) lm;
 
     // dump properties button
     JButton dump = new JButton("Dump all");
@@ -90,12 +91,13 @@ public class SystemControls extends ControlPanel implements ActionListener {
 
     // memory maximum text field
     JTextField heapField = new JTextField(
-      ((SystemManager) lm).getMaximumMemory() + " MB maximum");
+      sm.getMaximumMemory() + " MB maximum");
     heapField.setEditable(false);
 
     // memory maximum alteration button
     JButton heap = new JButton("Change");
     if (!LAFUtil.isMacLookAndFeel()) heap.setMnemonic('a');
+    if (sm.isJNLP()) heap.setEnabled(false);
     heap.setToolTipText(
       "Edits the maximum amount of memory available to VisBio");
     heap.setActionCommand("heap");
@@ -140,6 +142,7 @@ public class SystemControls extends ControlPanel implements ActionListener {
     // Look & Feel alteration button
     JButton laf = new JButton("Change");
     if (!LAFUtil.isMacLookAndFeel()) laf.setMnemonic('n');
+    if (sm.isJNLP()) laf.setEnabled(false);
     laf.setToolTipText("Edits VisBio's graphical Look & Feel");
     laf.setActionCommand("laf");
     laf.addActionListener(this);
