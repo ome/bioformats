@@ -262,10 +262,11 @@ public class StateManager extends LogicManager {
 
         // file menu
         bio.addMenuSeparator("File");
+        // CTR TEMP menu item disabled for beta release
         bio.addMenuItem("File", "Restore state...",
-          "loci.visbio.state.StateManager.fileRestore", 'r');
+          "loci.visbio.state.StateManager.fileRestore", 'r').setEnabled(false);
         bio.addMenuItem("File", "Save state...",
-          "loci.visbio.state.StateManager.fileSave", 's');
+          "loci.visbio.state.StateManager.fileSave", 's').setEnabled(false);
       }
     }
     else if (eventType == VisBioEvent.STATE_CHANGED) {
@@ -310,6 +311,10 @@ public class StateManager extends LogicManager {
       "loci.visbio.state.StateManager.editReset", 't');
     SwingUtil.setMenuShortcut(bio, "Edit", "Reset", KeyEvent.VK_R);
 
+    // CTR TEMP menu items disabled for beta release
+    editUndo.setEnabled(false);
+    editRedo.setEnabled(false);
+
     // undo logic variables
     bio.setSplashStatus(null);
     undoStates = new Stack();
@@ -352,7 +357,8 @@ public class StateManager extends LogicManager {
     }
     else {
       editUndo.setText("Undo " + currentState.msg);
-      editUndo.setEnabled(true);
+      // CTR TEMP menu item disabled for beta release
+      //editUndo.setEnabled(true);
     }
     if (redoStates.isEmpty()) {
       editRedo.setText("Redo");
@@ -360,7 +366,8 @@ public class StateManager extends LogicManager {
     }
     else {
       editRedo.setText("Redo " + ((ProgramState) redoStates.peek()).msg);
-      editRedo.setEnabled(true);
+      // CTR TEMP menu item disabled for beta release
+      //editRedo.setEnabled(true);
     }
   }
 
