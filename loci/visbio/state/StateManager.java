@@ -55,6 +55,12 @@ import visad.util.ExtensionFileFilter;
 /** StateManager is the manager encapsulating VisBio's state logic. */
 public class StateManager extends LogicManager {
 
+  // -- Constants --
+
+  /** Extension for VisBio state files. */
+  protected static final String STATE_EXTENSION = "xml";
+
+
   // -- Fields --
 
   /** File chooser for state saves. */
@@ -199,7 +205,7 @@ public class StateManager extends LogicManager {
       wm.setWaitCursor(true);
       File file = stateBox.getSelectedFile();
       if (file.getName().indexOf(".") < 0) {
-        file = new File(file.getAbsolutePath() + ".txt");
+        file = new File(file.getAbsolutePath() + "." + STATE_EXTENSION);
       }
       saveState(file);
       wm.setWaitCursor(false);
@@ -308,7 +314,7 @@ public class StateManager extends LogicManager {
     bio.setSplashStatus("Initializing state logic");
     stateBox = new JFileChooser();
     stateBox.addChoosableFileFilter(new ExtensionFileFilter(
-      "txt", "VisBio state files"));
+      STATE_EXTENSION, "VisBio state files"));
 
     // edit menu
     bio.setSplashStatus(null);
