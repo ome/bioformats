@@ -7,7 +7,9 @@ related to the data objects themselves and how they are displayed.
 Clicking a data object selects it, so that its characteristics can be
 configured with the controls to the right.
 
-<p>The "Add &gt;" button links a data object into the display. When clicked, a
+<br><h3>Buttons</h3>
+
+The "Add &gt;" button links a data object into the display. When clicked, a
 popup menu appears allowing you to choose a data object to be visualized. Each
 display can visualize any number of data objects simultaneously, although not
 all combinations of data objects make sense this way.
@@ -31,22 +33,24 @@ list. This order is important because it defines the order in which objects are
 drawn within the display. Some data may be drawn over top other data
 undesirably if the list is not in the correct order.
 
-<p>When checked, the "Delay burn-in" checkbox instructs VisBio to wait some
-number of seconds (configurable with the box to the right of the checkbox)
-before beginning to compute full-resolution data. By default, VisBio waits
-three seconds, giving you extra time to navigate by clicking the dimensional
-position arrow buttons next to the axis sliders, or by using the arrow keys to
-roam through your data. Unchecking the box causes VisBio to always compute
+<br><h3>Other controls</h3>
+
+When checked, the "Delay burn-in" checkbox instructs VisBio to wait some number
+of seconds (configurable with the box to the right of the checkbox) before
+beginning to compute full-resolution data. By default, VisBio waits three
+seconds, giving you extra time to navigate by clicking the dimensional position
+arrow buttons next to the axis sliders, or by using the arrow keys to roam
+through your data. Unchecking the box causes VisBio to always compute
 full-resolution data immediately.
 
 <p>The "Visible" checkbox toggles the visibility of the selected data object.
 If you have many data objects within a single display, it can be useful to
 temporarily hide some of them to get a better view of others.
 
-<br><h3>For 3D displays only</h3>
+<br><h3>For image stacks only</h3>
 
-Many data features are only applicable for 3D displays. These controls are
-outlined below.
+Many data features are only applicable for 3D displays showing a stack of
+images. These controls are outlined below.
 
 <p>First and foremost, the "Stack axis" dropdown box allows you to select which
 dimensional axis to use for the display's Z axis when stacking images. VisBio
@@ -77,8 +81,8 @@ means the volume is a 96x96x96 cube).
 <p>Volume rendering uses a lot of memory, so be sure you have enough RAM, and
 that VisBio is configured to use it (see the
 <a href="memory_limit.html">Changing the memory limit</a> topic for
-instructions). We recommend at least 1,024 MB of RAM for the default volume
-rendering settings (96x96x96), and 1.5 GB for maximum resolution (160x160x160).
+instructions). We recommend 1,024 MB of RAM for the default volume rendering
+settings (96x96x96), and 1,536 MB for maximum resolution (160x160x160).
 
 <p>To adjust the transparency settings of the rendering, click the "Colors"
 button to bring up the <a href="colors.html">Colors dialog box</a>.
