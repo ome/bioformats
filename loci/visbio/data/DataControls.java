@@ -237,7 +237,7 @@ public class DataControls extends ControlPanel
     // create frame for housing data's controls
     JComponent dataControls = data.getControls();
     if (dataControls != null) {
-      JFrame frame = new JFrame(data.getName());
+      JFrame frame = new JFrame("Data - " + data.getName());
       JPanel pane = new JPanel();
       pane.setLayout(new BorderLayout());
       frame.setContentPane(pane);

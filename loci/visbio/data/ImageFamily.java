@@ -33,21 +33,11 @@ import visad.Data;
 import visad.DataImpl;
 import visad.VisADException;
 
-import visad.data.BadFormException;
-import visad.data.DefaultFamily;
-import visad.data.FormBlockReader;
-import visad.data.FormFileInformer;
-import visad.data.FormNode;
-import visad.data.FormProgressInformer;
-import visad.data.MetadataReader;
+import visad.data.*;
 
 import visad.data.avi.AVIForm;
 
-import visad.data.bio.BioRadForm;
-import visad.data.bio.FluoviewTiffForm;
-import visad.data.bio.MetamorphForm;
-import visad.data.bio.OpenlabForm;
-import visad.data.bio.ZVIForm;
+import visad.data.bio.*;
 
 import visad.data.ij.ImageJForm;
 
@@ -99,6 +89,7 @@ public class ImageFamily extends FormNode implements FormBlockReader,
       new MetamorphForm(),
       new OpenlabForm(),
       new FluoviewTiffForm(),
+      new ZeissForm(),
       new ZVIForm(),
       new TiffForm(),
       new ImageJForm(),
@@ -325,6 +316,7 @@ public class ImageFamily extends FormNode implements FormBlockReader,
         else if (list[i] instanceof FluoviewTiffForm) {
           format = "Olympus Fluoview TIFF file";
         }
+        else if (list[i] instanceof ZeissForm) format = "Zeiss LSM file";
         else if (list[i] instanceof ZVIForm) format = "Zeiss ZVI file";
         else if (list[i] instanceof TiffForm) format = "TIFF file";
         else if (list[i] instanceof ImageJForm) {
