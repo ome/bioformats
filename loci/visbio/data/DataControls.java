@@ -56,6 +56,7 @@ import loci.visbio.WindowManager;
 
 import loci.visbio.ome.OMEManager;
 
+import loci.visbio.util.LAFUtil;
 import loci.visbio.util.SwingUtil;
 import loci.visbio.util.VisUtil;
 
@@ -143,21 +144,21 @@ public class DataControls extends ControlPanel
     JButton addData = new JButton("Add >");
     addData.setActionCommand("addData");
     addData.addActionListener(this);
-    addData.setMnemonic('a');
+    if (!LAFUtil.isMacLookAndFeel()) addData.setMnemonic('a');
     addData.setToolTipText("Adds a new data object to the list");
 
     // display button
     display = new JButton("Display >");
     display.setActionCommand("display");
     display.addActionListener(this);
-    display.setMnemonic('d');
+    if (!LAFUtil.isMacLookAndFeel()) display.setMnemonic('d');
     display.setToolTipText("Visualizes the selected data object");
 
     // controls button
     editData = new JButton("Edit");
     editData.setActionCommand("edit");
     editData.addActionListener(this);
-    editData.setMnemonic('i');
+    if (!LAFUtil.isMacLookAndFeel()) editData.setMnemonic('i');
     editData.setToolTipText(
       "Shows controls for editing the selected data object");
 
@@ -165,14 +166,14 @@ public class DataControls extends ControlPanel
     export = new JButton("Export >");
     export.setActionCommand("export");
     export.addActionListener(this);
-    export.setMnemonic('x');
+    if (!LAFUtil.isMacLookAndFeel()) export.setMnemonic('x');
     export.setToolTipText("Exports the selected data object");
 
     // remove data button
     removeData = new JButton("Remove");
     removeData.setActionCommand("removeData");
     removeData.addActionListener(this);
-    removeData.setMnemonic('r');
+    if (!LAFUtil.isMacLookAndFeel()) removeData.setMnemonic('r');
     removeData.setToolTipText(
       "Removes the selected data object from the list");
 
@@ -195,7 +196,7 @@ public class DataControls extends ControlPanel
 
     // data thumbnail generation button
     thumbGen = new JButton("Generate");
-    thumbGen.setMnemonic('g');
+    if (!LAFUtil.isMacLookAndFeel()) thumbGen.setMnemonic('g');
     thumbGen.setToolTipText("Starts or stops background thumbnail generation");
 
     doDataInfo(null);

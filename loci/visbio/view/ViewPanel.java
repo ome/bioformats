@@ -42,6 +42,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import loci.visbio.util.FormsUtil;
+import loci.visbio.util.LAFUtil;
 import loci.visbio.util.SwingUtil;
 
 /** Provides GUI controls for a display view handler. */
@@ -228,7 +229,7 @@ public class ViewPanel extends JPanel
 
     // scale checkbox
     JCheckBox scale = new JCheckBox("Scale", handler.isScale());
-    scale.setMnemonic('s');
+    if (!LAFUtil.isMacLookAndFeel()) scale.setMnemonic('s');
     scale.setToolTipText("Toggles scale");
     scale.setActionCommand("scale");
     scale.addActionListener(this);
@@ -236,7 +237,7 @@ public class ViewPanel extends JPanel
     // bounding box checkbox
     JCheckBox boundingBox =
       new JCheckBox("Bounding box", handler.isBoundingBox());
-    boundingBox.setMnemonic('b');
+    if (!LAFUtil.isMacLookAndFeel()) boundingBox.setMnemonic('b');
     boundingBox.setToolTipText("Toggles display's white bounding box");
     boundingBox.setActionCommand("box");
     boundingBox.addActionListener(this);
@@ -245,7 +246,7 @@ public class ViewPanel extends JPanel
     JCheckBox parallel = null;
     if (threeD) {
       parallel = new JCheckBox("Parallel projection", handler.isParallel());
-      parallel.setMnemonic('p');
+      if (!LAFUtil.isMacLookAndFeel()) parallel.setMnemonic('p');
       parallel.setToolTipText("Toggles whether display uses a parallel " +
         "projection (instead of perspective)");
       parallel.setActionCommand("parallel");

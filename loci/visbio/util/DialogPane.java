@@ -122,14 +122,14 @@ public class DialogPane extends JPanel implements ActionListener {
     // cancel button
     if (doCancel) {
       cancel = new JButton("Cancel");
-      cancel.setMnemonic('c');
+      if (!LAFUtil.isMacLookAndFeel()) cancel.setMnemonic('c');
       cancel.setActionCommand("cancel");
       cancel.addActionListener(this);
     }
 
     // ok button
     ok = new JButton("Ok");
-    ok.setMnemonic('o');
+    if (!LAFUtil.isMacLookAndFeel()) ok.setMnemonic('o');
     ok.setActionCommand("ok");
     ok.addActionListener(this);
   }

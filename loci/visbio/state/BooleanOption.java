@@ -26,6 +26,8 @@ package loci.visbio.state;
 import loci.ome.xml.CAElement;
 import loci.ome.xml.OMEElement;
 
+import loci.visbio.util.LAFUtil;
+
 import java.awt.Component;
 
 import javax.swing.JCheckBox;
@@ -45,7 +47,7 @@ public class BooleanOption extends BioOption {
   public BooleanOption(String text, char mnemonic, String tip, boolean value) {
     super(text);
     box = new JCheckBox(text, value);
-    box.setMnemonic(mnemonic);
+    if (!LAFUtil.isMacLookAndFeel()) box.setMnemonic(mnemonic);
     box.setToolTipText(tip);
   }
 

@@ -48,7 +48,7 @@ public class WarningPane extends DialogPane {
     super("VisBio Warning", allowCancel);
 
     always = new JCheckBox("Always display this warning", true);
-    always.setMnemonic('a');
+    if (!LAFUtil.isMacLookAndFeel()) always.setMnemonic('a');
 
     StringTokenizer st = new StringTokenizer(text, "\n\r");
     int count = st.countTokens();

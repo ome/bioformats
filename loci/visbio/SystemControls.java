@@ -86,7 +86,7 @@ public class SystemControls extends ControlPanel implements ActionListener {
 
     // garbage collection button
     JButton clean = new JButton("Clean");
-    clean.setMnemonic('c');
+    if (!LAFUtil.isMacLookAndFeel()) clean.setMnemonic('c');
     clean.setToolTipText(
       "Calls the Java garbage collector to free wasted memory");
     clean.setActionCommand("clean");
@@ -99,7 +99,7 @@ public class SystemControls extends ControlPanel implements ActionListener {
 
     // memory maximum alteration button
     JButton heap = new JButton("Change");
-    heap.setMnemonic('a');
+    if (!LAFUtil.isMacLookAndFeel()) heap.setMnemonic('a');
     heap.setToolTipText(
       "Edits the maximum amount of memory available to VisBio");
     heap.setActionCommand("heap");
@@ -143,7 +143,7 @@ public class SystemControls extends ControlPanel implements ActionListener {
 
     // Look & Feel alteration button
     JButton laf = new JButton("Change");
-    laf.setMnemonic('n');
+    if (!LAFUtil.isMacLookAndFeel()) laf.setMnemonic('n');
     laf.setToolTipText("Edits VisBio's graphical Look & Feel");
     laf.setActionCommand("laf");
     laf.addActionListener(this);

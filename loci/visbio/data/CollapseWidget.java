@@ -35,6 +35,7 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 import loci.visbio.util.FormsUtil;
+import loci.visbio.util.LAFUtil;
 
 /**
  * CollapseWidget is a set of GUI controls
@@ -68,7 +69,7 @@ public class CollapseWidget extends JPanel implements ActionListener {
 
     // apply button
     JButton apply = new JButton("Apply");
-    apply.setMnemonic('a');
+    if (!LAFUtil.isMacLookAndFeel()) apply.setMnemonic('a');
     apply.addActionListener(this);
 
     // lay out components

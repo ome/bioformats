@@ -34,6 +34,7 @@ import javax.swing.JPanel;
 import loci.visbio.data.DataTransform;
 
 import loci.visbio.util.FormsUtil;
+import loci.visbio.util.LAFUtil;
 
 /** Provides GUI controls for a display stack handler. */
 public class StackPanel extends TransformPanel {
@@ -165,13 +166,13 @@ public class StackPanel extends TransformPanel {
 
     // stack axis label
     stackLabel = new JLabel("Stack axis");
-    stackLabel.setDisplayedMnemonic('k');
+    if (!LAFUtil.isMacLookAndFeel()) stackLabel.setDisplayedMnemonic('k');
     stackLabel.setLabelFor(stackBox);
     stackLabel.setEnabled(false);
 
     // highlight current slice checkbox
     highlight = new JCheckBox("Highlight current slice");
-    highlight.setMnemonic('h');
+    if (!LAFUtil.isMacLookAndFeel()) highlight.setMnemonic('h');
     highlight.setToolTipText("Toggles yellow highlight around current slice");
     highlight.setActionCommand("highlight");
     highlight.addActionListener(this);
@@ -182,7 +183,7 @@ public class StackPanel extends TransformPanel {
 
     // toggle slices button
     toggleSlices = new JButton("Toggle slices");
-    toggleSlices.setMnemonic('g');
+    if (!LAFUtil.isMacLookAndFeel()) toggleSlices.setMnemonic('g');
     toggleSlices.setToolTipText(
       "Provides options to toggle slices in the stack");
     toggleSlices.setActionCommand("toggleSlices");
@@ -191,7 +192,7 @@ public class StackPanel extends TransformPanel {
 
     // current slice visible checkbox
     sliceVisible = new JCheckBox("Current slice visible");
-    sliceVisible.setMnemonic('u');
+    if (!LAFUtil.isMacLookAndFeel()) sliceVisible.setMnemonic('u');
     sliceVisible.setToolTipText("Toggles visibility of the current slice");
     sliceVisible.setActionCommand("sliceVisible");
     sliceVisible.addActionListener(this);

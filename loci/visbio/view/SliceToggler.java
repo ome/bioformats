@@ -33,6 +33,7 @@ import loci.visbio.data.DataTransform;
 
 import loci.visbio.util.DialogPane;
 import loci.visbio.util.FormsUtil;
+import loci.visbio.util.LAFUtil;
 
 /** SliceToggler is a dialog pane for mass toggling stack slices. */
 public class SliceToggler extends DialogPane {
@@ -85,12 +86,12 @@ public class SliceToggler extends DialogPane {
 
     // visible radio button
     visible = new JRadioButton("Visible");
-    visible.setMnemonic('v');
+    if (!LAFUtil.isMacLookAndFeel()) visible.setMnemonic('v');
     visible.setToolTipText("Toggles slices on");
 
     // hidden radio button
     hidden = new JRadioButton("Hidden");
-    hidden.setMnemonic('h');
+    if (!LAFUtil.isMacLookAndFeel()) hidden.setMnemonic('h');
     hidden.setToolTipText("Toggles slices off");
 
     // group radio buttons

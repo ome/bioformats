@@ -45,6 +45,8 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import loci.visbio.util.LAFUtil;
+
 import visad.RealType;
 
 import visad.browser.Convert;
@@ -135,7 +137,7 @@ public class SpectralWidget extends JPanel implements ActionListener {
 
     // apply button
     JButton apply = new JButton("Apply");
-    apply.setMnemonic('a');
+    if (!LAFUtil.isMacLookAndFeel()) apply.setMnemonic('a');
     apply.setActionCommand("apply");
     apply.addActionListener(this);
 

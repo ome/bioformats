@@ -43,6 +43,10 @@ public abstract class LAFUtil {
     Options.setGlobalFontSizeHints(FontSizeHints.MIXED);
     Options.setDefaultIconSize(new Dimension(18, 18));
 
+    if (!isMacLookAndFeel()) {
+      // CTR TODO test this
+      System.setProperty("apple.laf.useScreenMenuBar", "false");
+    }
     UIManager.installLookAndFeel("JGoodies Windows",
       "com.jgoodies.plaf.windows.ExtWindowsLookAndFeel");
     UIManager.installLookAndFeel("JGoodies Plastic",
@@ -57,6 +61,18 @@ public abstract class LAFUtil {
   public static String[] getLookAndFeel() {
     LookAndFeel laf = UIManager.getLookAndFeel();
     return new String[] {laf.getName(), laf.getClass().getName()};
+  }
+
+  /** Gets whether the current look and feel is Mac OS X native. */
+  public static boolean isMacLookAndFeel() {
+    LookAndFeel laf = UIManager.getLookAndFeel();
+    return laf.getClass().getName().equals("apple.laf.AquaLookAndFeel");
+  }
+
+  /** Gets whether the current look and feel is Windows native. */
+  public static boolean isWindowsLookAndFeel() {
+    LookAndFeel laf = UIManager.getLookAndFeel();
+    return laf.getClass().getName().indexOf("Windows") >= 0;
   }
 
   /**

@@ -41,6 +41,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import loci.visbio.util.LAFUtil;
+
 /** SamplingWidget is a set of GUI controls for a DataSampling transform. */
 public class SamplingWidget extends JPanel implements ActionListener {
 
@@ -100,12 +102,14 @@ public class SamplingWidget extends JPanel implements ActionListener {
     rangeBoxes = new JCheckBox[range.length];
     for (int i=0; i<range.length; i++) {
       rangeBoxes[i] = new JCheckBox("" + (i + 1), range[i]);
-      if (i < 9) rangeBoxes[i].setMnemonic('1' + i);
+      if (i < 9 && !LAFUtil.isMacLookAndFeel()) {
+        rangeBoxes[i].setMnemonic('1' + i);
+      }
       rangePanel.add(rangeBoxes[i]);
     }
 
     JButton apply = new JButton("Apply");
-    apply.setMnemonic('a');
+    if (!LAFUtil.isMacLookAndFeel()) apply.setMnemonic('a');
     apply.addActionListener(this);
 
     // lay out components

@@ -25,7 +25,6 @@ package loci.visbio.util;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
-import java.awt.Frame;
 
 import java.io.FileWriter;
 import java.io.IOException;

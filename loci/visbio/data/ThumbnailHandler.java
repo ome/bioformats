@@ -30,6 +30,7 @@ import javax.swing.JButton;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 
+import loci.visbio.util.LAFUtil;
 import loci.visbio.util.MathUtil;
 
 import visad.Data;
@@ -242,11 +243,11 @@ public class ThumbnailHandler
           progress.setValue(count);
           if (on) {
             toggle.setText("Stop");
-            toggle.setMnemonic('s');
+            if (!LAFUtil.isMacLookAndFeel()) toggle.setMnemonic('s');
           }
           else {
             toggle.setText("Generate");
-            toggle.setMnemonic('g');
+            if (!LAFUtil.isMacLookAndFeel()) toggle.setMnemonic('g');
           }
         }
       }

@@ -42,8 +42,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import loci.visbio.data.DataManager;
 import loci.visbio.data.DataTransform;
 
-import loci.visbio.util.SwingUtil;
 import loci.visbio.util.FormsUtil;
+import loci.visbio.util.LAFUtil;
+import loci.visbio.util.SwingUtil;
 
 /** Provides GUI controls for a display transform handler. */
 public class TransformPanel extends JPanel
@@ -241,14 +242,14 @@ public class TransformPanel extends JPanel
     JButton addTransform = new JButton("Add >");
     addTransform.setActionCommand("addTransform");
     addTransform.addActionListener(this);
-    addTransform.setMnemonic('a');
+    if (!LAFUtil.isMacLookAndFeel()) addTransform.setMnemonic('a');
     addTransform.setToolTipText("Links data to this display");
 
     // button for removing a data transform
     removeTransform = new JButton("Remove");
     removeTransform.setActionCommand("removeTransform");
     removeTransform.addActionListener(this);
-    removeTransform.setMnemonic('r');
+    if (!LAFUtil.isMacLookAndFeel()) removeTransform.setMnemonic('r');
     removeTransform.setToolTipText("Removes data from this display");
     removeTransform.setEnabled(false);
 
@@ -256,7 +257,7 @@ public class TransformPanel extends JPanel
     dataControls = new JButton("Controls");
     dataControls.setActionCommand("dataControls");
     dataControls.addActionListener(this);
-    dataControls.setMnemonic('c');
+    if (!LAFUtil.isMacLookAndFeel()) dataControls.setMnemonic('c');
     dataControls.setToolTipText("Shows data's controls");
     dataControls.setEnabled(false);
 
@@ -264,7 +265,7 @@ public class TransformPanel extends JPanel
     moveUp = new JButton("Up");
     moveUp.setActionCommand("moveUp");
     moveUp.addActionListener(this);
-    moveUp.setMnemonic('u');
+    if (!LAFUtil.isMacLookAndFeel()) moveUp.setMnemonic('u');
     moveUp.setToolTipText("Moves selected data up in the list");
     moveUp.setEnabled(false);
 
@@ -272,13 +273,13 @@ public class TransformPanel extends JPanel
     moveDown = new JButton("Down");
     moveDown.setActionCommand("moveDown");
     moveDown.addActionListener(this);
-    moveDown.setMnemonic('d');
+    if (!LAFUtil.isMacLookAndFeel()) moveDown.setMnemonic('d');
     moveDown.setToolTipText("Moves selected data down in the list");
     moveDown.setEnabled(false);
 
     // transform visibility checkbox
     visible = new JCheckBox("Visible");
-    visible.setMnemonic('v');
+    if (!LAFUtil.isMacLookAndFeel()) visible.setMnemonic('v');
     visible.setToolTipText("Toggles visibility of the selected transform");
     visible.setActionCommand("visible");
     visible.addActionListener(this);
@@ -306,7 +307,7 @@ public class TransformPanel extends JPanel
   protected JPanel doAnimationPanel() {
     // animate button
     animate = new JButton("Animate");
-    animate.setMnemonic('t');
+    if (!LAFUtil.isMacLookAndFeel()) animate.setMnemonic('t');
     animate.setToolTipText("Toggles animation across the linked axis");
     animate.setActionCommand("animate");
     animate.addActionListener(this);

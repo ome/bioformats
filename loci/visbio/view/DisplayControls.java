@@ -41,6 +41,7 @@ import loci.visbio.ControlPanel;
 import loci.visbio.LogicManager;
 import loci.visbio.WindowManager;
 
+import loci.visbio.util.LAFUtil;
 import loci.visbio.util.SwingUtil;
 import loci.visbio.util.VisUtil;
 
@@ -92,27 +93,27 @@ public class DisplayControls extends ControlPanel
     // add 2D button
     add2D = new JButton("Add 2D");
     add2D.addActionListener(this);
-    add2D.setMnemonic('2');
+    if (!LAFUtil.isMacLookAndFeel()) add2D.setMnemonic('2');
     add2D.setToolTipText("Creates a new 2D display");
 
     // add 3D button
     add3D = new JButton("Add 3D");
     add3D.addActionListener(this);
-    add3D.setMnemonic('3');
+    if (!LAFUtil.isMacLookAndFeel()) add3D.setMnemonic('3');
     add3D.setToolTipText("Creates a new 3D display");
     add3D.setEnabled(VisUtil.canDo3D());
 
     // show button
     show = new JButton("Show");
     show.addActionListener(this);
-    show.setMnemonic('s');
+    if (!LAFUtil.isMacLookAndFeel()) show.setMnemonic('s');
     show.setToolTipText("Displays the selected display onscreen");
     show.setEnabled(false);
 
     // capture button
     capture = new JButton("Capture");
     capture.addActionListener(this);
-    capture.setMnemonic('p');
+    if (!LAFUtil.isMacLookAndFeel()) capture.setMnemonic('p');
     capture.setToolTipText(
       "Creates screenshots and movies for the selected display");
     capture.setEnabled(false);
@@ -120,7 +121,7 @@ public class DisplayControls extends ControlPanel
     // remove data button
     remove = new JButton("Remove");
     remove.addActionListener(this);
-    remove.setMnemonic('r');
+    if (!LAFUtil.isMacLookAndFeel()) remove.setMnemonic('r');
     remove.setToolTipText("Deletes the selected display");
     remove.setEnabled(false);
 

@@ -49,6 +49,7 @@ import javax.swing.event.ListSelectionListener;
 import loci.visbio.VisBioFrame;
 
 import loci.visbio.util.FormsUtil;
+import loci.visbio.util.LAFUtil;
 import loci.visbio.util.SwingUtil;
 
 import visad.DisplayImpl;
@@ -103,47 +104,47 @@ public class CaptureWindow extends JFrame implements ActionListener,
     JButton add = new JButton("Add");
     add.setActionCommand("Add");
     add.addActionListener(this);
-    add.setMnemonic('a');
+    if (!LAFUtil.isMacLookAndFeel()) add.setMnemonic('a');
     add.setToolTipText("Adds the current display position to the list");
 
     // remove button
     JButton remove = new JButton("Remove");
     remove.setActionCommand("Remove");
     remove.addActionListener(this);
-    remove.setMnemonic('r');
+    if (!LAFUtil.isMacLookAndFeel()) remove.setMnemonic('r');
     remove.setToolTipText("Removes the selected position from the list");
 
     // up button
     JButton up = new JButton("Up");
     up.setActionCommand("Up");
     up.addActionListener(this);
-    up.setMnemonic('u');
+    if (!LAFUtil.isMacLookAndFeel()) up.setMnemonic('u');
     up.setToolTipText("Moves the selected position up in the list");
 
     // down button
     JButton down = new JButton("Down");
     down.setActionCommand("Down");
     down.addActionListener(this);
-    down.setMnemonic('d');
+    if (!LAFUtil.isMacLookAndFeel()) down.setMnemonic('d');
     down.setToolTipText("Moves the selected position down in the list");
 
     // snapshot button
     JButton snapshot = new JButton("Snapshot");
     snapshot.setActionCommand("Snapshot");
     snapshot.addActionListener(this);
-    snapshot.setMnemonic('n');
+    if (!LAFUtil.isMacLookAndFeel()) snapshot.setMnemonic('n');
     snapshot.setToolTipText("Saves display snapshot to an image file");
 
     // send to ImageJ button
     JButton sendToImageJ = new JButton("Send to ImageJ");
     sendToImageJ.setActionCommand("SendImageJ");
     sendToImageJ.addActionListener(this);
-    sendToImageJ.setMnemonic('j');
+    if (!LAFUtil.isMacLookAndFeel()) sendToImageJ.setMnemonic('j');
     sendToImageJ.setToolTipText("Sends display snapshot to ImageJ program");
 
     // speed label
     JLabel speedLabel = new JLabel("Seconds per transition:");
-    speedLabel.setDisplayedMnemonic('s');
+    if (!LAFUtil.isMacLookAndFeel()) speedLabel.setDisplayedMnemonic('s');
 
     // speed slider
     speed = new JSlider(0, 16, 8);
@@ -173,14 +174,14 @@ public class CaptureWindow extends JFrame implements ActionListener,
     smooth = new JCheckBox(
       "Emphasize transition at each display position", true);
     smooth.addItemListener(this);
-    smooth.setMnemonic('e');
+    if (!LAFUtil.isMacLookAndFeel()) smooth.setMnemonic('e');
     smooth.setToolTipText("Use smooth sine function transitions");
 
     // record button
     JButton record = new JButton("Record >");
     record.setActionCommand("Record");
     record.addActionListener(this);
-    record.setMnemonic('c');
+    if (!LAFUtil.isMacLookAndFeel()) record.setMnemonic('c');
     record.setToolTipText(
       "Records a movie of transitions between display positions");
 

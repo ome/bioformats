@@ -30,6 +30,9 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import java.net.URL;
 
 import java.util.Vector;
@@ -140,9 +143,48 @@ public abstract class SwingUtil {
     jmi.setAccelerator(KeyStroke.getKeyStroke(keycode, MENU_MASK));
   }
 
+  /**
+   * Creates a copy of this menu bar, whose contents update automatically
+   * whenever the original menu bar changes.
+   */
+  public static JMenuBar cloneMenuBar(JMenuBar menubar) {
+    JMenuBar jmb = new JMenuBar();
+    int count = menubar.getMenuCount();
+    for (int i=0; i<count; i++) jmb.add(cloneMenu(menubar.getMenu(i)));
+    return jmb;
+  }
+
+  /**
+   * Creates a copy of this menu, whose contents update automatically
+   * whenever the original menu changes.
+   */
+  public static JMenu cloneMenu(JMenu menu) {
+    final JMenu jm = new JMenu();
+    jm.addPropertyChangeListener(new PropertyChangeListener() {
+      public void propertyChange(PropertyChangeEvent e) {
+        // CTR TODO
+      }
+    });
+    return jm;
+  }
+
+  /**
+   * Creates a copy of this menu item, whose contents update automatically
+   * whenever the original menu item changes.
+   */
+  public static JMenuItem cloneMenuItem(JMenuItem item) {
+    final JMenuItem jmi = new JMenuItem();
+    jmi.addPropertyChangeListener(new PropertyChangeListener() {
+      public void propertyChange(PropertyChangeEvent e) {
+        // CTR TODO
+      }
+    });
+    return jmi;
+  }
+
   /** Configures a scroll pane's properties. */
   public static void configureScrollPane(JScrollPane scroll) {
-    if (VisBioFrame.MAC_OS_X) {
+    if (LAFUtil.isMacLookAndFeel()) {
       scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
       scroll.setHorizontalScrollBarPolicy(
         JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);

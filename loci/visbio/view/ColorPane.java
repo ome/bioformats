@@ -52,6 +52,7 @@ import javax.swing.event.DocumentListener;
 import loci.visbio.util.ColorUtil;
 import loci.visbio.util.DialogPane;
 import loci.visbio.util.FormsUtil;
+import loci.visbio.util.LAFUtil;
 import loci.visbio.util.VisUtil;
 
 import visad.*;
@@ -493,19 +494,19 @@ public class ColorPane extends DialogPane
     // RGB color model option
     rgb = new JRadioButton("RGB", true);
     rgb.addActionListener(this);
-    rgb.setMnemonic('r');
+    if (!LAFUtil.isMacLookAndFeel()) rgb.setMnemonic('r');
     rgb.setToolTipText("Switches to a Red-Green-Blue color model");
 
     // HSV color model option
     hsv = new JRadioButton("HSV");
     hsv.addActionListener(this);
-    hsv.setMnemonic('s');
+    if (!LAFUtil.isMacLookAndFeel()) hsv.setMnemonic('s');
     hsv.setToolTipText("Switches to a Hue-Saturation-Value color model");
 
     // composite color model option
     composite = new JRadioButton("Composite");
     composite.addActionListener(this);
-    composite.setMnemonic('i');
+    if (!LAFUtil.isMacLookAndFeel()) composite.setMnemonic('i');
     composite.setToolTipText(
       "Combines range values into a composite RGB color table");
 
@@ -541,19 +542,19 @@ public class ColorPane extends DialogPane
     // red/hue color map widget
     red = new BioColorWidget(0);
     red.addItemListener(this);
-    red.setMnemonic('e');
+    if (!LAFUtil.isMacLookAndFeel()) red.setMnemonic('e');
     red.setToolTipText("Range mapping to Red/Hue color component");
 
     // green/saturation color map widget
     green = new BioColorWidget(1);
     green.addItemListener(this);
-    green.setMnemonic('n');
+    if (!LAFUtil.isMacLookAndFeel()) green.setMnemonic('n');
     green.setToolTipText("Range mapping to Green/Saturation color component");
 
     // blue/value color map widget
     blue = new BioColorWidget(2);
     blue.addItemListener(this);
-    blue.setMnemonic('u');
+    if (!LAFUtil.isMacLookAndFeel()) blue.setMnemonic('u');
     blue.setToolTipText("Range mapping to Blue/Value color component");
 
     // lay out components
@@ -571,7 +572,7 @@ public class ColorPane extends DialogPane
     // fixed color scaling option
     fixed = new JCheckBox("Fixed color range");
     fixed.addItemListener(this);
-    fixed.setMnemonic('f');
+    if (!LAFUtil.isMacLookAndFeel()) fixed.setMnemonic('f');
     fixed.setToolTipText("Fixes color range between the given values");
 
     // low color scale value text field
@@ -594,13 +595,13 @@ public class ColorPane extends DialogPane
     // load LUT button
     lutLoad = new JButton("Load LUT...");
     lutLoad.addActionListener(this);
-    lutLoad.setMnemonic('l');
+    if (!LAFUtil.isMacLookAndFeel()) lutLoad.setMnemonic('l');
     lutLoad.setToolTipText("Loads a color table from disk");
 
     // save LUT button
     lutSave = new JButton("Save LUT...");
     lutSave.addActionListener(this);
-    lutSave.setMnemonic('a');
+    if (!LAFUtil.isMacLookAndFeel()) lutSave.setMnemonic('a');
     lutSave.setToolTipText("Saves this color table to disk");
 
     // lay out components

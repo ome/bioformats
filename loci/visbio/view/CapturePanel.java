@@ -35,6 +35,8 @@ import javax.swing.JPanel;
 
 import loci.visbio.WindowManager;
 
+import loci.visbio.util.LAFUtil;
+
 /** Provides GUI controls for a display capture handler. */
 public class CapturePanel extends JPanel implements ActionListener {
 
@@ -60,7 +62,7 @@ public class CapturePanel extends JPanel implements ActionListener {
 
     // capture button
     JButton capture = new JButton("Capture");
-    capture.setMnemonic('a');
+    if (!LAFUtil.isMacLookAndFeel()) capture.setMnemonic('a');
     capture.setToolTipText("Creates display screenshots or movies");
     capture.addActionListener(this);
 

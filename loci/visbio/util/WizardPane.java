@@ -111,21 +111,21 @@ public class WizardPane extends DialogPane {
 
     // back button
     back = new JButton("< Back");
-    back.setMnemonic('b');
+    if (!LAFUtil.isMacLookAndFeel()) back.setMnemonic('b');
     back.setActionCommand("back");
     back.addActionListener(this);
     back.setEnabled(false);
 
     // next button
     next = new JButton("Next >");
-    next.setMnemonic('n');
+    if (!LAFUtil.isMacLookAndFeel()) next.setMnemonic('n');
     next.setActionCommand("next");
     next.addActionListener(this);
     next.setEnabled(false);
 
     // finish button
     ok.setText("Finish");
-    ok.setMnemonic('f');
+    if (!LAFUtil.isMacLookAndFeel()) ok.setMnemonic('f');
   }
 
   /** Internal method for doing button layout. */

@@ -39,6 +39,7 @@ import loci.visbio.data.DataTransform;
 import loci.visbio.data.ImageTransform;
 import loci.visbio.data.ThumbnailHandler;
 
+import loci.visbio.util.LAFUtil;
 import loci.visbio.util.VisUtil;
 
 import visad.DisplayImpl;
@@ -66,7 +67,7 @@ public class ColorPanel extends JPanel implements ActionListener {
 
     // edit colors button
     JButton colors = new JButton("Colors");
-    colors.setMnemonic('c');
+    if (!LAFUtil.isMacLookAndFeel()) colors.setMnemonic('c');
     colors.setToolTipText("Edits the displayed data's color scheme");
     colors.addActionListener(this);
 
