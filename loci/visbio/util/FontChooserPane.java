@@ -28,6 +28,8 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import com.jgoodies.plaf.LookUtils;
+
 import java.awt.*;
 
 import java.awt.event.ActionEvent;
@@ -44,6 +46,10 @@ import javax.swing.event.ChangeListener;
 public class FontChooserPane extends DialogPane implements ChangeListener {
 
   // -- Constants -
+
+  /** Default font. */
+  public static final Font DEFAULT_FONT =
+    new Font("Default", Font.PLAIN, 11);
 
   /** Default text used in font preview pane. */
   protected static final String DEFAULT_PREVIEW_TEXT =
@@ -73,31 +79,67 @@ public class FontChooserPane extends DialogPane implements ChangeListener {
   // -- Constructors --
 
   /** Creates a new font chooser pane. */
-  public FontChooserPane() { this(DEFAULT_PREVIEW_TEXT); }
+  public FontChooserPane() { this(DEFAULT_FONT, DEFAULT_PREVIEW_TEXT); }
+
+  /** Creates a new font chooser pane with the given initial font. */
+  public FontChooserPane(Font font) { this(font, DEFAULT_PREVIEW_TEXT); }
 
   /** Creates a new font chooser pane with the given preview text. */
-  public FontChooserPane(String preview) {
+  public FontChooserPane(String preview) { this(DEFAULT_FONT, preview); }
+
+  /**
+   * Creates a new font chooser apne with the
+   * given initial font and preview text.
+   */
+  public FontChooserPane(Font font, String preview) {
     super("VisBio Font Chooser", true);
 
     GraphicsEnvironment e = GraphicsEnvironment.getLocalGraphicsEnvironment();
     String[] fontNames = e.getAvailableFontFamilyNames();
+
+    // HACK - do not display "L" style fonts, because
+    // selecting them crashes the JVM, at least on some systems
+    if (LookUtils.IS_OS_LINUX) {
+      int count = 0;
+      for (int i=0; i<fontNames.length; i++) {
+        if (!fontNames[i].endsWith(" L")) count++;
+      }
+      int c = 0;
+      String[] filteredNames = new String[count];
+      for (int i=0; i<fontNames.length && c<count; i++) {
+        if (!fontNames[i].endsWith(" L")) filteredNames[c++] = fontNames[i];
+      }
+      fontNames = filteredNames;
+    }
+
+
+    int ndx = -1;
+    String family = font.getFamily();
+    for (int i=0; i<fontNames.length; i++) {
+      if (fontNames[i].equals(family)) {
+        ndx = i;
+        break;
+      }
+    }
     fontName = new JComboBox(fontNames);
-    fontName.setSelectedItem("Default");
+    fontName.setSelectedIndex(ndx);
     fontName.addActionListener(this);
 
-    fontBold = new JCheckBox("Bold", false);
+    fontBold = new JCheckBox("Bold", font.isBold());
     if (!LAFUtil.isMacLookAndFeel()) fontBold.setMnemonic('b');
     fontBold.addActionListener(this);
 
-    fontItalic = new JCheckBox("Italic", false);
+    fontItalic = new JCheckBox("Italic", font.isItalic());
     if (!LAFUtil.isMacLookAndFeel()) fontItalic.setMnemonic('i');
     fontItalic.addActionListener(this);
 
-    SpinnerNumberModel fontSizeModel = new SpinnerNumberModel(11, 1, 150, 0.5);
+    SpinnerNumberModel fontSizeModel =
+      new SpinnerNumberModel(font.getSize(), 1, 150, 0.5);
     fontSize = new JSpinner(fontSizeModel);
     fontSize.addChangeListener(this);
 
     previewText = new JTextArea(preview, 3, 2);
+    previewText.setFont(font);
     previewText.setWrapStyleWord(true);
     previewText.setLineWrap(true);
 

@@ -42,13 +42,13 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import loci.visbio.data.TransformEvent;
+import loci.visbio.data.*;
 
 import loci.visbio.util.*;
 
 /** OverlayWidget is a set of GUI controls for an overlay transform. */
 public class OverlayWidget extends JPanel
-  implements ActionListener, ListSelectionListener
+  implements ActionListener, ListSelectionListener, TransformListener
 {
 
   // -- Fields --
@@ -241,6 +241,8 @@ public class OverlayWidget extends JPanel
 
     layout.setColumnGroups(new int[][] {{5, 9}});
     add(builder.getPanel());
+
+    overlay.addTransformListener(this);
   }
 
 
@@ -352,7 +354,7 @@ public class OverlayWidget extends JPanel
   public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
     if (src == chooseFont) {
-      FontChooserPane fcp = new FontChooserPane();
+      FontChooserPane fcp = new FontChooserPane(overlay.getFont());
       int rval = fcp.showDialog(this);
       if (rval == DialogPane.APPROVE_OPTION) {
         Font font = fcp.getSelectedFont();
@@ -391,6 +393,21 @@ public class OverlayWidget extends JPanel
     }
 
     overlay.notifyListeners(new TransformEvent(overlay));
+  }
+
+
+  // -- TransformListener API methods --
+
+  /** Handles font changes. */
+  public void transformChanged(TransformEvent e) {
+    int id = e.getId();
+    if (id == TransformEvent.FONT_CHANGED) {
+      Font font = overlay.getFont();
+      String s = font.getFamily() + " " + font.getSize();
+      if (font.isBold()) s += " Bold";
+      if (font.isItalic()) s += " Italic";
+      currentFont.setText(s);
+    }
   }
 
 }

@@ -36,20 +36,12 @@ import loci.ome.xml.OMEElement;
 
 import loci.visbio.state.Dynamic;
 
-import loci.visbio.util.MathUtil;
-import loci.visbio.util.ObjectUtil;
+import loci.visbio.util.*;
 
 import visad.*;
 
 /** DataTransform is the superclass of all data transform types. */
 public abstract class DataTransform implements Dynamic {
-
-  // -- Constants --
-
-  /** Default font for text mappings. */
-  protected static final Font DEFAULT_FONT =
-    new Font("Default", Font.PLAIN, 11);
-
 
   // -- Static fields --
 
@@ -87,7 +79,7 @@ public abstract class DataTransform implements Dynamic {
   protected ThumbnailHandler thumbs;
 
   /** Font used for this transform's text mappings. */
-  protected Font font = DEFAULT_FONT;
+  protected Font font = FontChooserPane.DEFAULT_FONT;
 
   /** List of transform listeners. */
   protected Vector listeners = new Vector();
