@@ -217,6 +217,11 @@ public abstract class SwingUtil {
     dialog.addChoosableFileFilter(openlab);
     filters.add(openlab);
 
+    // Metamorph STK - bio/MetamorphForm
+    FileFilter zvi = new ExtensionFileFilter("zvi", "Zeiss ZVI files");
+    dialog.addChoosableFileFilter(zvi);
+    filters.add(zvi);
+
     // TIFF - tiff/TiffForm, ij/ImageJForm
     FileFilter tiff = new ExtensionFileFilter(
       new String[] {"tiff", "tif"}, "Multi-page TIFF stacks");

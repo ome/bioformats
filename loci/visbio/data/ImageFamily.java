@@ -47,6 +47,7 @@ import visad.data.bio.BioRadForm;
 import visad.data.bio.FluoviewTiffForm;
 import visad.data.bio.MetamorphForm;
 import visad.data.bio.OpenlabForm;
+import visad.data.bio.ZVIForm;
 
 import visad.data.ij.ImageJForm;
 
@@ -98,6 +99,7 @@ public class ImageFamily extends FormNode implements FormBlockReader,
       new MetamorphForm(),
       new OpenlabForm(),
       new FluoviewTiffForm(),
+      new ZVIForm(),
       new TiffForm(),
       new ImageJForm(),
       new AVIForm(),
@@ -314,15 +316,16 @@ public class ImageFamily extends FormNode implements FormBlockReader,
 
         // compute format string
         if (list[i] instanceof BioRadForm) format = "Bio-Rad PIC file";
-        else if (list[i] instanceof FluoviewTiffForm) {
-          format = "Olympus Fluoview TIFF file";
-        }
         else if (list[i] instanceof MetamorphForm) {
           format = "Metamorph STK file";
         }
         else if (list[i] instanceof OpenlabForm) {
           format = "Openlab LIFF file";
         }
+        else if (list[i] instanceof FluoviewTiffForm) {
+          format = "Olympus Fluoview TIFF file";
+        }
+        else if (list[i] instanceof ZVIForm) format = "Zeiss ZVI file";
         else if (list[i] instanceof TiffForm) format = "TIFF file";
         else if (list[i] instanceof ImageJForm) {
           int ndx = id.lastIndexOf(".");
