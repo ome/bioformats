@@ -268,6 +268,11 @@ public abstract class SwingUtil {
     dialog.addChoosableFileFilter(pict);
     filters.add(pict);
 
+    // PNG - ij/ImageJForm
+    FileFilter png = new ExtensionFileFilter("png", "PNG images");
+    dialog.addChoosableFileFilter(png);
+    filters.add(png);
+
     // combination filter
     FileFilter[] ff = new FileFilter[filters.size()];
     filters.copyInto(ff);
