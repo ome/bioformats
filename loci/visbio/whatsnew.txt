@@ -1,9 +1,12 @@
 v3.00 beta3 - Not yet released
 
+- ADDED: Overlays data transform for creating overlay annotations
+- ADDED: "Immediate" data transforms that ignore full-resolution burn-in delay
 - ADDED: Individual control over each data object's color settings
 - ADDED: Transparency settings within data object color settings
 - ADDED: Proper management of multiple data object Z-ordering
 - ADDED: Controls for altering how long full-resolution burn-in is delayed
+- ADDED: Ability to toggle whether consoles pop up when output is produced
 - ADDED: System button for dumping system properties to output console
 
 - TWEAK: Dataset chooser displays progress bar while analyzing file pattern
