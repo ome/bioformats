@@ -109,11 +109,8 @@ public class OverlayArrow extends OverlayObject {
     GriddedSet fieldSet = null;
     try {
       if (filled && !missing) {
-        // CTR START HERE figure out how to make the friggin' grid valid
-        setSamples[0][0] = (x1 + x2) / 2;
-        setSamples[1][0] = (y1 + y2) / 2;
         fieldSet = new Gridded2DSet(domain,
-          setSamples, 2, 2, null, null, null, false);
+          setSamples, 2, 2, null, null, null, false, false);
       }
       else {
         fieldSet = new Gridded2DSet(domain,
