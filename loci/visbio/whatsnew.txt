@@ -1,8 +1,17 @@
 v3.00 beta4 - In progress
 
 - ADDED: Volume rendering
+- ADDED: Arbitrary slice data transform
+- ADDED: Pressing arrow keys on a display cycles through dimensional positions
+- ADDED: Ctrl + arrow keys on a display causes it to pan
+- ADDED: Shift + up/down arrow keys on a display zooms in and out
+- ADDED: Shift + left/right arrow keys on a display rotates around Z axis
+- ADDED: Shift + ctrl + arrow keys on a 3D display rotates around X and Y axes
+- ADDED: Typing characters on a display affects selected text overlays
+- ADDED: Pressing delete on a display removes selected overlays
 
 - FIXED: Broken data transforms (sampling, max intensity, collapse, spectral)
+- FIXED: Upside down ZVI datasets
 - FIXED: Several overlay data transform bugs
 - FIXED: Several window centering issues
 
