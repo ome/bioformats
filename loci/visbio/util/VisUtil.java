@@ -288,7 +288,7 @@ public abstract class VisUtil {
         // keep class loader ignorant of visad.java3d classes
         ReflectedUniverse r = new ReflectedUniverse();
         try {
-          r.exec("import java.awt.KeyEvent");
+          r.exec("import java.awt.event.KeyEvent");
           r.exec("import visad.java3d.DisplayRendererJ3D");
           r.exec("import visad.java3d.KeyboardBehaviorJ3D");
           r.setVar("d", d);
