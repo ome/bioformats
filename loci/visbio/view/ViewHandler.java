@@ -45,7 +45,7 @@ public class ViewHandler {
   public static final double DEFAULT_ZOOM_3D = 0.5;
 
   /** Default rotation factor for 3D displays.  */
-  public static final double DEFAULT_ROTATION = 65;
+  public static final double DEFAULT_ROTATION = 80;
 
   /** How far display zooms in or out each time. */
   public static final double ZOOM_AMOUNT = 1.5;
