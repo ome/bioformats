@@ -451,7 +451,7 @@ public class OverlayTransform extends DataTransform
     super.setFont(font);
 
     // obtain new font metrics
-    // HACK - always use font size 11, since it seems to work well
+    // HACK - always use metrics for font size 11, since it seems to work well
     fontMetrics = controls.getFontMetrics(
       new Font(font.getName(), font.getStyle(), 11));
 
