@@ -209,8 +209,7 @@ public class VisBioFrame extends GUIFrame {
         String key = args[i].substring(0, equals);
         String value = args[i].substring(equals + 1);
         if (DEBUG) {
-          System.out.println("[arg " + i + "] " +
-            (i + 1) + ": " + key + " = " + value);
+          System.out.println("[arg " + (i + 1) + "]: " + key + " = " + value);
         }
         processArgument(key, value);
       }
