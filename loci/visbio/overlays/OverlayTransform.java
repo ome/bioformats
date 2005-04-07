@@ -343,7 +343,6 @@ public class OverlayTransform extends DataTransform
           if (obj.isSelected() && !obj.isDrawing()) sel++;
         }
         RealType index = RealType.getRealType("overlay_index");
-        /*TEMP*/System.out.println("rgbSize=" + rgbSize + "; txtSize=" + txtSize + "; sel=" + sel + "; outline=" + outline);
 
         // compile standard objects into RGB field
         if (rgbSize > 0 || sel > 0 || outline > 0) {
