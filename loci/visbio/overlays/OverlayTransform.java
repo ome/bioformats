@@ -275,10 +275,7 @@ public class OverlayTransform extends DataTransform
    * slow, so some operations temporarily turn off text rendering to speed
    * up onscreen updates.
    */
-  public void setTextDrawn(boolean value) {
-    drawText = value;
-    notifyListeners(new TransformEvent(this));
-  }
+  public void setTextDrawn(boolean value) { drawText = value; }
 
   /** Gets whether text is drawn. */
   public boolean isTextDrawn() { return drawText; }
@@ -454,7 +451,9 @@ public class OverlayTransform extends DataTransform
     super.setFont(font);
 
     // obtain new font metrics
-    fontMetrics = controls.getFontMetrics(font);
+    // HACK - always use font size 11, since it seems to work well
+    fontMetrics = controls.getFontMetrics(
+      new Font(font.getName(), font.getStyle(), 11));
 
     // recompute grid boxes for text overlays
     for (int j=0; j<overlays.length; j++) {

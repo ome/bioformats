@@ -236,6 +236,7 @@ public class OverlayIO {
         "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
       return null;
     }
+    trans.setTextDrawn(true);
     return loadedOverlays;
   }
 

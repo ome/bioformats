@@ -78,7 +78,10 @@ public abstract class OverlayObject {
   // -- Constructor --
 
   /** Constructs an overlay. */
-  public OverlayObject(OverlayTransform overlay) { this.overlay = overlay; }
+  public OverlayObject(OverlayTransform overlay) {
+    this.overlay = overlay;
+    overlay.setTextDrawn(false);
+  }
 
 
   // -- OverlayObject API methods --
@@ -309,7 +312,10 @@ public abstract class OverlayObject {
   public boolean isSelected() { return selected; }
 
   /** Sets whether this overlay is still being initially drawn. */
-  public void setDrawing(boolean drawing) { this.drawing = drawing; }
+  public void setDrawing(boolean drawing) {
+    this.drawing = drawing;
+    overlay.setTextDrawn(!drawing);
+  }
 
   /** Gets whether this overlay is still being initially drawn. */
   public boolean isDrawing() { return drawing; }

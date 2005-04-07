@@ -86,7 +86,7 @@ public class PointerTool extends OverlayTool {
 
     ((OverlayWidget) overlay.getControls()).refreshListSelection();
     if (grabIndex >= 0) overlay.setTextDrawn(false);
-    else overlay.notifyListeners(new TransformEvent(overlay));
+    overlay.notifyListeners(new TransformEvent(overlay));
   }
 
   /** Instructs this tool to respond to a mouse release. */
@@ -98,6 +98,7 @@ public class PointerTool extends OverlayTool {
     if (grabIndex >= 0) {
       grabIndex = -1;
       overlay.setTextDrawn(true);
+      overlay.notifyListeners(new TransformEvent(overlay));
     }
   }
 
