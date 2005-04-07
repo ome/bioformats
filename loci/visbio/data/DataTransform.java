@@ -36,12 +36,6 @@ import visad.*;
 /** DataTransform is the superclass of all data transform types. */
 public abstract class DataTransform implements Dynamic {
 
-  // -- Constants --
-
-  /** Font size to use for the text mappings. */
-  protected static final int FONT_SIZE = 8;
-
-
   // -- Static fields --
 
   /** Next free transform id number. */
@@ -78,7 +72,7 @@ public abstract class DataTransform implements Dynamic {
   protected ThumbnailHandler thumbs;
 
   /** Font used for this transform's text mappings. */
-  protected Font font = new Font("Default", Font.PLAIN, FONT_SIZE);
+  protected Font font = FontChooserPane.DEFAULT_FONT;
 
   /** List of transform listeners. */
   protected Vector listeners = new Vector();
@@ -261,11 +255,6 @@ public abstract class DataTransform implements Dynamic {
 
   /** Sets the font used for this transform's text mappings. */
   public void setFont(Font font) {
-    // HACK - always use the same font size, since small sizes render faster
-    // and do not really affect the size of the rendered text anyway
-    if (font != null) {
-      font = new Font(font.getName(), font.getStyle(), FONT_SIZE);
-    }
     this.font = font;
     notifyListeners(new TransformEvent(this, TransformEvent.FONT_CHANGED));
   }
