@@ -525,12 +525,7 @@ public class OverlayWidget extends JPanel implements ActionListener,
       int rval = fcp.showDialog(this);
       if (rval == DialogPane.APPROVE_OPTION) {
         Font font = fcp.getSelectedFont();
-        if (font != null) {
-          // HACK - always use font size 8, since it renders faster and does
-          // not really affect the size of the rendered text anyway
-          font = new Font(font.getName(), font.getStyle(), 8);
-          overlay.setFont(font);
-        }
+        if (font != null) overlay.setFont(font);
       }
     }
     else if (src == color) {
