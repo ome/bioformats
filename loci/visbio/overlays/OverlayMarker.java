@@ -97,7 +97,7 @@ public class OverlayMarker extends OverlayObject {
 
   /** Computes parameters needed for selection grid computation. */
   protected void computeGridParameters() {
-    float padding = 0.03f * overlay.getScalingValue();
+    float padding = 0.02f * overlay.getScalingValue();
     float xx1 = x1 - padding;
     float xx2 = x1 + padding;
     float yy1 = y1 - padding;

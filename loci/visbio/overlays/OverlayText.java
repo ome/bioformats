@@ -111,8 +111,8 @@ public class OverlayText extends OverlayObject {
     x2 = x1 + mw * fm.stringWidth(text);
     y2 = y1 + mh * fm.getHeight();
 
-    float padx = 0.03f * sx;
-    float pady = 0.03f * sy;
+    float padx = 0.02f * sx;
+    float pady = 0.02f * sy;
     float xx1 = x1 - padx;
     float xx2 = x2 + padx;
     float yy1 = y1 - pady;

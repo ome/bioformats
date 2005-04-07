@@ -114,6 +114,15 @@ public abstract class OverlayObject {
    * to indicate it is currently selected.
    */
   public DataImpl getSelectionGrid() {
+    return getSelectionGrid(false);
+  }
+
+  /**
+   * Computes a grid to be superimposed on this overlay to
+   * indicate it is currently selected.
+   * If the outline flag is set, computes only an outline instead.
+   */
+  public DataImpl getSelectionGrid(boolean outline) {
     // Grid computation relies on parameters:
     //   (xGrid1, yGrid1): top-left endpoint of grid rectangle
     //   (xGrid2, yGrid2): top-right endpoint of grid rectangle
@@ -123,7 +132,7 @@ public abstract class OverlayObject {
     //      vertGridCount: number of vertical dividing lines
 
     // compute (X, Y) values along grid left and right edges
-    int numLR = horizGridCount + 2;
+    int numLR = outline ? 2 : (horizGridCount + 2);
     float[] xl = new float[numLR];
     float[] xr = new float[numLR];
     float[] yl = new float[numLR];
@@ -137,7 +146,7 @@ public abstract class OverlayObject {
     }
 
     // compute (X, Y) values along grid top and bottom edges
-    int numTB = vertGridCount + 2;
+    int numTB = outline ? 2 : (vertGridCount + 2);
     float[] xt = new float[numTB];
     float[] xb = new float[numTB];
     float[] yt = new float[numTB];
@@ -176,7 +185,7 @@ public abstract class OverlayObject {
     }
 
     // populate grid color values
-    Color c = Color.yellow;
+    Color c = outline ? Color.cyan : Color.yellow;
     float r = c.getRed() / 255f;
     float g = c.getGreen() / 255f;
     float b = c.getBlue() / 255f;

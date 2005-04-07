@@ -29,6 +29,15 @@ import loci.visbio.data.TransformEvent;
 /** PointerTool is the tool for manipulating existing overlays. */
 public class PointerTool extends OverlayTool {
 
+  // -- Fields --
+
+  /** Index of object currently being grabbed. */
+  protected int grabIndex = -1;
+
+  /** Location where an object was first "grabbed" with a mouse press. */
+  protected float grabX, grabY;
+
+
   // -- Constructor --
 
   /** Constructs an overlay manipulation tool. */
@@ -56,33 +65,58 @@ public class PointerTool extends OverlayTool {
       }
     }
 
+    double threshold = 0.02 * overlay.getScalingValue();
+    boolean selected = dist < threshold && obj[ndx].isSelected();
+
     if (!shift && !ctrl) {
       // deselect all previously selected objects
       for (int i=0; i<obj.length; i++) obj[i].setSelected(false);
     }
 
-    // select (or deselect) newly picked object
-    double threshold = 0.02 * overlay.getScalingValue();
     if (dist < threshold) {
-      obj[ndx].setSelected(ctrl ? !obj[ndx].isSelected() : true);
+      if (selected && !ctrl && !shift) {
+        // grab object if it is already selected
+        grabIndex = ndx;
+        grabX = x;
+        grabY = y;
+      }
+      // select (or deselect) picked object
+      obj[ndx].setSelected(ctrl ? !selected : true);
     }
 
     ((OverlayWidget) overlay.getControls()).refreshListSelection();
-    overlay.notifyListeners(new TransformEvent(overlay));
+    if (grabIndex >= 0) overlay.setTextDrawn(false);
+    else overlay.notifyListeners(new TransformEvent(overlay));
   }
 
   /** Instructs this tool to respond to a mouse release. */
   public void mouseUp(float x, float y, int[] pos, int mods) {
     boolean shift = (mods & InputEvent.SHIFT_MASK) != 0;
     boolean ctrl = (mods & InputEvent.CTRL_MASK) != 0;
-    // no action assigned (yet)
+
+    // release any grabbed objects
+    if (grabIndex >= 0) {
+      grabIndex = -1;
+      overlay.setTextDrawn(true);
+    }
   }
 
   /** Instructs this tool to respond to a mouse drag. */
   public void mouseDrag(float x, float y, int[] pos, int mods) {
     boolean shift = (mods & InputEvent.SHIFT_MASK) != 0;
     boolean ctrl = (mods & InputEvent.CTRL_MASK) != 0;
-    // no action assigned (yet)
+
+    // move grabbed object, if any
+    if (grabIndex >= 0) {
+      OverlayObject obj = overlay.getObjects(pos)[grabIndex];
+      float moveX = x - grabX;
+      float moveY = y - grabY;
+      obj.setCoords(obj.getX() + moveX, obj.getY() + moveY);
+      obj.setCoords2(obj.getX2() + moveX, obj.getY2() + moveY);
+      grabX = x;
+      grabY = y;
+      overlay.notifyListeners(new TransformEvent(overlay));
+    }
   }
 
 }

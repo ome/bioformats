@@ -98,6 +98,9 @@ public class OverlayTransform extends DataTransform
   /** Font metrics for the current font. */
   protected FontMetrics fontMetrics;
 
+  /** Whether to draw text. */
+  protected boolean drawText = true;
+
 
   // -- Constructor --
 
@@ -267,6 +270,19 @@ public class OverlayTransform extends DataTransform
   /** Gets font metrics for the current font. */
   public FontMetrics getFontMetrics() { return fontMetrics; }
 
+  /**
+   * Whether text is drawn. This toggle exists because drawing text is very
+   * slow, so some operations temporarily turn off text rendering to speed
+   * up onscreen updates.
+   */
+  public void setTextDrawn(boolean value) {
+    drawText = value;
+    notifyListeners(new TransformEvent(this));
+  }
+
+  /** Gets whether text is drawn. */
+  public boolean isTextDrawn() { return drawText; }
+
 
   // -- Static DataTransform API methods --
 
@@ -315,35 +331,44 @@ public class OverlayTransform extends DataTransform
     try {
       if (size > 0) {
         // compute number of selected objects and number of text objects
-        int txtSize = 0, sel = 0;
+        int rgbSize = 0, txtSize = 0, sel = 0, outline = 0;
         for (int i=0; i<size; i++) {
           OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
-          if (obj.hasText()) txtSize++;
+          if (obj.hasText()) {
+            if (drawText || obj.isSelected()) txtSize++;
+            else outline++;
+          }
+          else rgbSize++;
           // do not paint grids for objects still in the initial draw phase
           if (obj.isSelected() && !obj.isDrawing()) sel++;
         }
-        int rgbSize = size - txtSize;
         RealType index = RealType.getRealType("overlay_index");
+        /*TEMP*/System.out.println("rgbSize=" + rgbSize + "; txtSize=" + txtSize + "; sel=" + sel + "; outline=" + outline);
 
         // compile standard objects into RGB field
-        if (rgbSize > 0) {
+        if (rgbSize > 0 || sel > 0 || outline > 0) {
           FunctionType fieldType = new FunctionType(index,
             new FunctionType(getDomainType(), getRangeType()));
-          GriddedSet fieldSet = new Integer1DSet(rgbSize + sel);
+          GriddedSet fieldSet = new Integer1DSet(rgbSize + sel + outline);
           rgbField = new FieldImpl(fieldType, fieldSet);
-          // compute overlay data for each object
-          int c = 0;
-          for (int i=0; i<size && c<rgbSize; i++) {
+          // compute overlay data for each non-text object
+          for (int i=0, c=0; i<size && c<rgbSize; i++) {
             OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
             if (obj.hasText()) continue;
             rgbField.setSample(c++, obj.getData(), false);
           }
           // compute selection grid for each selected object
-          c = 0;
-          for (int i=0; i<size && c<sel; i++) {
+          for (int i=0, c=0; i<size && c<sel; i++) {
             OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
             if (!obj.isSelected() || obj.isDrawing()) continue;
             rgbField.setSample(rgbSize + c++, obj.getSelectionGrid(), false);
+          }
+          // compute outline grid for each invisible text object
+          for (int i=0, c=0; i<size && c<outline; i++) {
+            OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
+            if (!obj.hasText() || obj.isSelected()) continue;
+            rgbField.setSample(rgbSize + sel + c++,
+              obj.getSelectionGrid(true), false);
           }
         }
 
@@ -353,11 +378,12 @@ public class OverlayTransform extends DataTransform
             new FunctionType(getDomainType(), getTextRangeType()));
           GriddedSet fieldSet = new Integer1DSet(txtSize);
           txtField = new FieldImpl(fieldType, fieldSet);
-          // compute overlay data for each object
+          // compute overlay data for each text object
           int c = 0;
           for (int i=0; i<size && c<txtSize; i++) {
             OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
             if (!obj.hasText()) continue;
+            if (!drawText && !obj.isSelected()) continue;
             txtField.setSample(c++, obj.getData(), false);
           }
         }
