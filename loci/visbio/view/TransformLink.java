@@ -335,6 +335,10 @@ public class TransformLink
     else if (id == TransformEvent.FONT_CHANGED) {
       Font font = trans.getFont();
 
+      // HACK - always use font size 8, since it renders faster
+      // and has virtually no effect on rendering size
+      if (font != null) font = new Font(font.getName(), font.getStyle(), 8);
+
       // compile list of potential maps to Display.Text
       Vector textMaps = new Vector();
       ScalarMap[] maps = trans.getSuggestedMaps();

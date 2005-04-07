@@ -26,6 +26,7 @@ package loci.visbio.view;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import java.awt.Font;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Vector;
@@ -467,9 +468,16 @@ public class TransformHandler implements ChangeListener, Runnable  {
           // settings, the first transform's settings take precedence
           DataTransform trans = (DataTransform) mapTrans.elementAt(i);
           if (map.getDisplayScalar().equals(Display.Text)) {
+            // HACK - always use font size 8, since it renders faster
+            // and has virtually no effect on rendering size
+            Font font = trans.getFont();
+            if (font != null) {
+              font = new Font(font.getName(), font.getStyle(), 8);
+            }
+
             // for Text maps, configure font
             TextControl textControl = (TextControl) map.getControl();
-            if (textControl != null) textControl.setFont(trans.getFont());
+            if (textControl != null) textControl.setFont(font);
           }
         }
         doCustomMaps();
