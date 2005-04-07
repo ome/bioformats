@@ -72,7 +72,7 @@ public abstract class DataTransform implements Dynamic {
   protected ThumbnailHandler thumbs;
 
   /** Font used for this transform's text mappings. */
-  protected Font font = FontChooserPane.DEFAULT_FONT;
+  protected Font font = new Font("Default", Font.PLAIN, 8);
 
   /** List of transform listeners. */
   protected Vector listeners = new Vector();
