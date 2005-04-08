@@ -219,7 +219,9 @@ public class ImageDownloader {
   /** Retrieves the Images from the database that match the criteria given. */
   protected static Image[] retrieveImages(DataFactory df, Criteria criteria) {
     if (criteria == null) return null;
-    List l = df.retrieveList(Image.class, criteria);
+    List l = null;
+    try { l = df.retrieveList(Image.class, criteria); }
+    catch (Exception exc) { }
     if (l == null) return null;
     Object[] obj = l.toArray();
     Image[] images = new Image[obj.length];
