@@ -10,6 +10,8 @@ v3.00 final - Not yet released
 
 - TWEAK: VisBio icon is now used instead of default Java cup icon
 - TWEAK: System property for controlling native frame decoration (for L&Fs)
+- TWEAK: Only one VisBio instance allowed to run at a time
+- TWEAK: Secondary instances pass parameters to active instance before quitting
 
 - FIXED: Several overlay bugs eliminated
 - FIXED: More robust behavior when Java3D is not installed
