@@ -41,13 +41,12 @@ import loci.visbio.ome.OMEImage;
 import loci.visbio.ome.OMEManager;
 import loci.visbio.state.OptionManager;
 import loci.visbio.state.StateManager;
-import loci.visbio.util.LAFUtil;
-import loci.visbio.util.SplashScreen;
+import loci.visbio.util.*;
 import loci.visbio.view.DisplayManager;
 import visad.util.*;
 
 /** VisBioFrame is the main GUI frame for VisBio. */
-public class VisBioFrame extends GUIFrame {
+public class VisBioFrame extends GUIFrame implements SpawnListener {
 
   // -- Constants --
 
@@ -93,6 +92,15 @@ public class VisBioFrame extends GUIFrame {
   public VisBioFrame(SplashScreen splash, String[] args) {
     super(true);
     try {
+      // initialize server for responding to newly spawned instances
+      try { new InstanceServer(VisBio.INSTANCE_PORT).addSpawnListener(this); }
+      catch (IOException exc) {
+        System.err.println("Warning: could not initialize instance server " +
+          "on port " + VisBio.INSTANCE_PORT + ". VisBio will not be able " +
+          "to regulate multiple instances of itself. Details follow:");
+        exc.printStackTrace();
+      }
+
       setTitle(VisBio.TITLE);
       managers = new Vector();
       this.splash = splash;
@@ -202,17 +210,7 @@ public class VisBioFrame extends GUIFrame {
       sm.checkCrash();
 
       // process arguments
-      if (args == null) args = new String[0];
-      for (int i=0; i<args.length; i++) {
-        int equals = args[i].indexOf("=");
-        if (equals < 0) continue;
-        String key = args[i].substring(0, equals);
-        String value = args[i].substring(equals + 1);
-        if (DEBUG) {
-          System.out.println("[arg " + (i + 1) + "]: " + key + " = " + value);
-        }
-        processArgument(key, value);
-      }
+      processArguments(args);
     }
     catch (Throwable t) {
       // dump stack trace to a string
@@ -284,9 +282,25 @@ public class VisBioFrame extends GUIFrame {
     }
   }
 
+  /** Processes the given list of arguments. */
+  public void processArguments(String[] args) {
+    if (args == null) args = new String[0];
+    for (int i=0; i<args.length; i++) {
+      if (DEBUG) System.out.println("Argument #" + (i + 1) + "] = " + args[i]);
+      int equals = args[i].indexOf("=");
+      if (equals < 0) continue;
+      String key = args[i].substring(0, equals);
+      String value = args[i].substring(equals + 1);
+      processArgument(key, value);
+    }
+  }
+
   /** Processes the given argument key/value pair. */
   public void processArgument(String key, String value) {
     if (key == null || value == null) return;
+    if (DEBUG) {
+      System.out.println("Processing argument: " + key + " = " + value);
+    }
     key = key.toLowerCase();
     if (key.equals("ome-image")) {
       // value syntax: user@server:imageId
@@ -380,6 +394,14 @@ public class VisBioFrame extends GUIFrame {
     String cmd = e.getActionCommand();
     if (cmd.lastIndexOf(".") < 0) super.actionPerformed(e);
     else call(cmd);
+  }
+
+
+  // -- SpawnListener API methods --
+
+  /** Responds when new instances of VisBio are spawned. */
+  public void instanceSpawned(SpawnEvent e) {
+    processArguments(e.getArguments());
   }
 
 }

@@ -24,9 +24,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio;
 
 import java.awt.Color;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import loci.visbio.util.InstanceServer;
 import loci.visbio.util.SplashScreen;
 
 /**
@@ -53,6 +55,9 @@ public class VisBio {
   /** Application build date. */
   public static final String DATE = "7 April 2005";
 
+  /** Port to use for communicating between application instances. */
+  public static final int INSTANCE_PORT = 0xabcd;
+
 
   // -- Constructor --
 
@@ -67,6 +72,12 @@ public class VisBio {
     throws ClassNotFoundException, IllegalAccessException,
     InstantiationException, InvocationTargetException, NoSuchMethodException
   {
+    // check whether VisBio is already running
+    boolean isRunning = true;
+    try { InstanceServer.sendArguments(args, INSTANCE_PORT); }
+    catch (IOException exc) { isRunning = false; }
+    if (isRunning) System.exit(0);
+
     // display splash screen
     String[] msg = {
       TITLE + " " + VERSION + " - " + AUTHOR,
