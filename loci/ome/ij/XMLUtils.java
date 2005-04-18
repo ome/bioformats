@@ -16,7 +16,7 @@ import org.xml.sax.InputSource;
 public class XMLUtils{
   /** retrieves the metadata from an OME tiff file which contains
     XML in the image description*/
-  public static void readTiff(Integer imageID){
+/*  public static void readTiff(Integer imageID){
     int ijimageID=imageID.intValue();
     Object[] meta=null;
     meta=OMESidePanel.getImageMeta(ijimageID);
@@ -114,9 +114,9 @@ public class XMLUtils{
     createNodes((DefaultMutableTreeNode)meta[1], omeElement);
     OMESidePanel.hashInImage(ijimageID, meta);
   }//end of readTiff method
-  
+*/  
   /**creates nodes for the tree to display from metadata*/
-  private static void createNodes(DefaultMutableTreeNode root, OMEElement omeElement){
+/*  private static void createNodes(DefaultMutableTreeNode root, OMEElement omeElement){
     DefaultMutableTreeNode 
       image=new DefaultMutableTreeNode(
         new XMLObject(XMLObject.IMAGEHEADING)),
@@ -131,9 +131,9 @@ public class XMLUtils{
     if (createNodes(project, omeElement.getProject())) root.add(project);
     if (createNodes(custom, omeElement.getCustomAttr())) root.add(custom);
   }//end of createNodes(TreeNode, OMEElement)
-  
+*/  
   /**creates nodes from the different elements*/
-  private static boolean createNodes(DefaultMutableTreeNode root, CAElement caElement){
+/*  private static boolean createNodes(DefaultMutableTreeNode root, CAElement caElement){
     int[] ids=caElement.getElementIDs();
     //always want the node to show up to allow adding of custom attributes
     if (ids.length==0)return true;
@@ -151,8 +151,8 @@ public class XMLUtils{
     }
     return true;
   }//end of createNodes method
-  
-  private static boolean createNodes(DefaultMutableTreeNode root, ImageElement imageElement){
+*/  
+/*  private static boolean createNodes(DefaultMutableTreeNode root, ImageElement imageElement){
     root.add(new DefaultMutableTreeNode(
       new XMLObject("Name", imageElement.getName(), XMLObject.IMAGE)));
     root.add(new DefaultMutableTreeNode(
@@ -271,5 +271,5 @@ public class XMLUtils{
     if (createNodes(cas, datasetElement.getCustomAttr())) root.add(cas);
     return present;
   }//end of createNodes method
-
+*/
 }//end of XMLUtils class

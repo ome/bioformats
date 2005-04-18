@@ -51,6 +51,7 @@ public class OMELoginPanel implements ActionListener{
     input3.add(passField);    
     in.setContentPane(input1);
     JButton ok= new JButton("OK"), cancels=new JButton("Cancel");
+    ok.setMnemonic(KeyEvent.VK_ENTER);
     ok.setActionCommand("OK");
     cancels.setActionCommand("cancels");
     JPanel paneBut=new JPanel();
