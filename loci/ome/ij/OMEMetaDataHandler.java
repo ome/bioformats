@@ -85,7 +85,7 @@ public class OMEMetaDataHandler{
     List list=omeNode.getImages();
     Iterator iter =list.iterator();
     while (iter.hasNext()){
-      exportMeta((ImageNode)iter.next());
+      exportMeta((ImageNode)iter.next(), meta[1]);
     }
     
     
@@ -95,7 +95,12 @@ public class OMEMetaDataHandler{
   }//end of OME-TIFF xml retrieval exportMeta method
   
   /**method that imports an image node from xml in an OME-TIFF file*/
-  private static void exportMeta(ImageNode imageNode){
+  private static void exportMeta(ImageNode imageNode, ImagePlus imagePlus, DefaultMutableTreeNode rootNode){
+    imageP=imagePlus.getProcessor();
+    isXML=false;
+    omeNode=null;
+    DefaultMutableTreeNode imageNode=addImage(imageNode);
+    rootNode.add(imageNode);
 /*    getDimensions();
     getDisplayROI();
     getImageAnnotation();
@@ -144,11 +149,56 @@ public class OMEMetaDataHandler{
 */
   }//end of FeatureNode exportMeta Method
   
+  /**method that creates the image nodes in the metadata tree*/
+  private static DefaultMutableTreeNode addImage(Image image){
+    //image node
+    DefaultMutableTreeNode imageNode=new DefaultMutableTreeNode(
+        new XMLObject(XMLObject.IMAGEHEADING));
+    root.add(imageNode);
+    //nodes under image
+    imageNode.add(new DefaultMutableTreeNode(
+      new XMLObject("Name", image.getName(), XMLObject.IMAGE)));
+    imageNode.add(new DefaultMutableTreeNode(
+      new XMLObject("ID", ""+image.getID(), XMLObject.IMAGE)));
+    imageNode.add(new DefaultMutableTreeNode(
+      new XMLObject("Creation Date", image.getCreated(), XMLObject.IMAGE)));
+    imageNode.add(new DefaultMutableTreeNode(
+      new XMLObject("Description", image.getDescription(), XMLObject.IMAGE)));
+    //get pixel information
+    DefaultMutableTreeNode pixelNode=new DefaultMutableTreeNode(
+        new XMLObject(XMLObject.PIXELHEADING));
+    imageNode.add(pixelNode);
+    Pixels pixels=image.getDefaultPixels();
+    exportPixelMeta(pixels, pixelNode, df);
+    //get dataset references
+    DefaultMutableTreeNode datasets=new DefaultMutableTreeNode(
+      new XMLObject(XMLObject.DATASETREF));
+    List data=image.getDatasets();
+    Iterator iterator=data.iterator();
+    String s="";
+    while (iterator.hasNext()) {
+      s.concat(((Dataset)iterator.next()).getID()+", ");
+    }
+    if (s.length()!=0 && s.length()!=2){
+      imageNode.add(datasets);
+      datasets.add(new DefaultMutableTreeNode(
+        new XMLObject("Dataset IDs", s.substring(0, s.length()-3),XMLObject.READONLY)));
+    }
+    return imageNode;
+  }//end of addImage method
+  
   /**Method that downloads metadata from the OME database and creates a tree*/
   public static DefaultMutableTreeNode exportMeta(Image image, ImagePlus imagePlus, DataFactory df){
     imageP=imagePlus.getProcessor();
     isXML=false;
     omeNode=null;
+    //create root node of whole tree
+    DefaultMutableTreeNode root=new DefaultMutableTreeNode(
+      new XMLObject("Meta Data"));
+    DefaultMutableTreeNode imageNode=addImage(image);
+    root.add(imageNode);
+    
+/*    
     //create root node of whole tree
     DefaultMutableTreeNode root=new DefaultMutableTreeNode(
       new XMLObject("Meta Data"));
@@ -185,6 +235,10 @@ public class OMEMetaDataHandler{
       datasets.add(new DefaultMutableTreeNode(
         new XMLObject("Dataset IDs", s.substring(0, s.length()-3),XMLObject.READONLY)));
     }
+*/    
+    
+    
+    
     //get the image element features
     List featureList=image.getFeatures();
     Iterator fIter=featureList.iterator();
