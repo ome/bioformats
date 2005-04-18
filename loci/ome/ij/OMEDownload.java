@@ -436,16 +436,17 @@ public class OMEDownload{
       return;
     }
     //Create the ImagePlus in ImageJ and display it
-    ImagePlus iPlus=new ImagePlus(image.getName(), is);
+    imageP=new ImagePlus(image.getName(), is);
     
     //retrieve metadata
     IJ.showStatus("Retrieving metadata..");
     Object[] metas=new Object[2];
     metas[0]=new Integer(image.getID());
-    metas[1]=OMEMetaDataHandler.exportMeta(image, df);
-    omesp.hashInImage(iPlus.getID(), metas);
+    metas[1]=OMEMetaDataHandler.exportMeta(image, imageP, df);
+    omesp.hashInImage(imageP.getID(), metas);
     IJ.showStatus("Displaying Image");
-    iPlus.show();
+    imageP.updateAndDraw();
+    imageP.show();
   }//end of download method
   
   /**method that returns all image IDs in a certain project*/

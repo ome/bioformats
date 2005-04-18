@@ -31,11 +31,11 @@ public class OMELoginPanel implements ActionListener{
     input.add(input2);
     input.add(input3);
     EmptyBorder bord=new EmptyBorder(5,5,5,5);
-    passField = new JPasswordField("",8);
+    passField = new JPasswordField("blahblahblah",8);
     passField.setPreferredSize(passField.getMinimumSize());
-    servField= new JTextField("",8);
+    servField= new JTextField("skyking",8);
     servField.setPreferredSize(servField.getMinimumSize());
-    useField= new JTextField("",8);
+    useField= new JTextField("philip",8);
     useField.setPreferredSize(useField.getMinimumSize());
     JLabel ser=new JLabel("Server: ", JLabel.TRAILING);
     ser.setPreferredSize(ser.getMinimumSize());

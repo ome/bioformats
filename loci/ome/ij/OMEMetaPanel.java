@@ -113,7 +113,7 @@ public class OMEMetaPanel implements ActionListener, TreeSelectionListener{
     {"TheT"}
   };
 
-  private JButton cancel, save, addElement;
+  private JButton cancel;// save, addElement;
   private JDialog dia;
   private JTextField text1, text2;
   
@@ -145,14 +145,20 @@ public class OMEMetaPanel implements ActionListener, TreeSelectionListener{
     JPanel pane=new JPanel();
     pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
     customPane=new JPanel();
-    save=new JButton("Save");
-    customField=new JTextArea(2,10);
+    customField=new JTextArea(2,20);
     customField.setLineWrap(true);
     customField.setWrapStyleWord(true);
     JScrollPane customScroll=new JScrollPane(customField);
+    
+    //try
+    customScroll.setPreferredSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+    
     customPane.add(customScroll);
-//    customPane.add(save);
     splitPane=new JSplitPane(JSplitPane.VERTICAL_SPLIT, treeView, customPane);
+    
+    //try
+    splitPane.setDividerLocation(.8);
+    
     pane.add(splitPane);
     JPanel paneButtons=new JPanel();
     paneButtons.setLayout(new BoxLayout(paneButtons, BoxLayout.X_AXIS));
@@ -162,18 +168,9 @@ public class OMEMetaPanel implements ActionListener, TreeSelectionListener{
     dia.setContentPane(pane);
     cancel=new JButton("Close");
     cancel.setActionCommand("cancel");
-    
-    addElement=new JButton("Add Element");
-    addElement.setActionCommand("addelement");
-//    paneButtons.add(addElement);
     paneButtons.add(cancel);
     cancel.addActionListener(this);
-    save.setActionCommand("save");
-    save.addActionListener(this);
-    save.setEnabled(false);
-    addElement.addActionListener(this);
-    addElement.setEnabled(false);
-    
+
     dia.pack();
     centerWindow(frame, dia);
   }//end of public constructor
@@ -197,29 +194,6 @@ public class OMEMetaPanel implements ActionListener, TreeSelectionListener{
     window.setLocation(x, y);
   }//end of centerWindow method
   
-  //not possible yet
-  /**gets input from user about what type of element to add*/
-/*  private void addNewElement(){
-    JDialog di=new JDialog(dia, "Element Detail", true);
-    JPanel main=new JPanel(), buttons=new JPanel(), elements=new JPanel();
-    main.setLayout(new BoxLayout(main, BoxLayout.Y_AXIS));
-    buttons.setLayout(new BoxLayout(buttons, BoxLayout.X_AXIS));
-    GridLayout grid=new GridLayout(3,2);
-    elements.setLayout(grid);
-    JLabel ele=new JLabel("Element Type:"), attr=new JLabel("Attribute Name:"),
-      val=new JLabel("Value:");
-//    JComboBox
-    elements.add(ele);
-    elements.add
-    di.setContentPane(main);
-    JButton ok=new JButton("OK"), no= new JButton("Cancel");
-    ok.setActionCommand("OK");
-    no.setActionCommand("no");
-    ok.setActionListener(this);
-    no.setActionListener(this);
-    buttons.add(ok);
-    buttons.add(no);
-  }//end of addNewElement method
   
   /**implements the ActionListener actionPerformed method*/
   public void actionPerformed(ActionEvent e){
@@ -227,26 +201,6 @@ public class OMEMetaPanel implements ActionListener, TreeSelectionListener{
         (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
     if("save".equals(e.getActionCommand())){
       ((XMLObject)node.getUserObject()).setValue(customField.getText());
-    }else if("addelement".equals(e.getActionCommand())){
-        if("Add Element".equals(addElement.getText())){
-          String s= JOptionPane.showInputDialog(dia, "Please enter the new Element name.");
-          node.add(new DefaultMutableTreeNode(new XMLObject(s, XMLObject.ELEMENT)));
-        }else if("Add Attribute".equals(addElement.getText())){
-          node.add(new DefaultMutableTreeNode(new XMLObject(
-            JOptionPane.showInputDialog(dia, "Please enter the new Attribute name."),
-            JOptionPane.showInputDialog(dia, "Please enter the Attribute's value."), 
-            XMLObject.ATTRIBUTE)));
-        }else if("Add Feature".equals(addElement.getText())){
-          DefaultMutableTreeNode feature=new DefaultMutableTreeNode(new XMLObject(
-            XMLObject.FEATUREHEADING));
-          node.add(feature);
-          feature.add(new DefaultMutableTreeNode(new XMLObject("Name",
-            JOptionPane.showInputDialog(dia, "Please enter the Feature's name."),
-            XMLObject.FEATURE)));
-          feature.add(new DefaultMutableTreeNode(new XMLObject("Tag",
-            JOptionPane.showInputDialog(dia, "Please enter the Feature's tag."),
-            XMLObject.FEATURE)));
-        }
     }else dia.hide();
   }//end of actionPerformed method
   
@@ -256,29 +210,15 @@ public class OMEMetaPanel implements ActionListener, TreeSelectionListener{
                        tree.getLastSelectedPathComponent();
     if (node == null) {
       customField.setText("");
-      save.setEnabled(false);
-      addElement.setEnabled(false);
       return;
     }
     XMLObject nodeInfo = (XMLObject)node.getUserObject();
     int type=nodeInfo.getType();
     customField.setText("");
-    save.setEnabled(false);
-    addElement.setEnabled(false);
     if (type==XMLObject.ATTRIBUTE||type==XMLObject.FEATURE) {
       customField.setText(nodeInfo.getValue());
-      //save.setEnabled(true);
     }else if (type==XMLObject.READONLY||type==XMLObject.IMAGE||type==XMLObject.PIXELS){
       customField.setText(nodeInfo.getValue());
-    }else if (type==XMLObject.ELEMENT){
-      addElement.setText("Add Attribute");
-      addElement.setEnabled(true);
-    }else if (type==XMLObject.CUSTOMHEADING){
-      addElement.setText("Add Element");
-      addElement.setEnabled(true);
-    }else if (type==XMLObject.IMAGEHEADING || type==XMLObject.FEATUREHEADING){
-      addElement.setText("Add Feature");
-      addElement.setEnabled(true);
     }
   }//end of valueChanged method
 

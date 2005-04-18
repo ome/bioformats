@@ -64,9 +64,9 @@ public class OMEUpload{
     java.awt.Panel curt = new java.awt.Panel();
     java.awt.GridLayout grid=new java.awt.GridLayout(3,2);
     curt.setLayout(grid);
-    TextField passField = new TextField("",8);
-    TextField servField= new TextField("",8);
-    TextField useField= new TextField("",8);
+    TextField passField = new TextField("blahblahblah",8);
+    TextField servField= new TextField("skyking",8);
+    TextField useField= new TextField("philip",8);
     passField.setEchoChar('*');    
     curt.add(new java.awt.Label("Server:"), "1");
     curt.add(servField, "2");    
@@ -106,15 +106,11 @@ public class OMEUpload{
   /** Does the work for uploading data to OME. */
   public void run(ImagePlus ip, Object[] metadata) {
     imageP=ip;
-    //implemented in next version
-//    System.out.println(ip.getOriginalFileInfo().fileName+
-//    " is white zero: "+ip.getOriginalFileInfo().whiteIsZero);
     IJ.showProgress(0);
-
+    
     // This code has been adapted from Doug Creager's TestImport example
     
     try {
-      
       // login to OME
       boolean errorOrNot=false;
       boolean loggedIn=false;
@@ -184,7 +180,7 @@ public class OMEUpload{
       // locate a repository object to contain the pixels
       IJ.showStatus("OmeUpload: Finding repository...");
       Repository rep = pf.findRepository(0);
-      IJ.showProgress(0.17);
+      IJ.showProgress(0.18);
 
       // create a new Image object for the multidimensional image
       IJ.showStatus("OmeUpload: Creating image entry...");
@@ -202,7 +198,7 @@ public class OMEUpload{
         df.markForUpdate(image);
       }
       IJ.showProgress(0.2);
-
+      
       // extract image dimensions
       int sizeX = imageP.getWidth();
       int sizeY = imageP.getHeight();
@@ -213,8 +209,9 @@ public class OMEUpload{
         switch (type)
         {
           case ImagePlus.COLOR_256:
-            bytesPerPix=1;
-            break;
+            //in order to correctly upload you need to convert to an RGB image
+            imageP=new ImagePlus(ip.getTitle(),
+              new ColorProcessor(((ByteProcessor)imageP.getProcessor()).createImage()));
           case ImagePlus.COLOR_RGB:
             bytesPerPix=1;
             range=3;
@@ -266,14 +263,9 @@ public class OMEUpload{
           for (int c=0; c<sizeC; c++) {
             byte[] pixels = new byte[sizeX * sizeY * bytesPerPix];
             IJ.showStatus("OmeUpload: Loading data (t=" + t + ", z=" + z + ", c=" + c + ")...");
+            IJ.showProgress(.25+t/sizeT+z/sizeZ+c/sizeC);
             switch (type) {
               case ImagePlus.COLOR_256:
-                pixels= (byte[])imageP.getStack().getPixels(Math.max(z,t)+1);
-                for ( int i=0;i<pixels.length ;i++ ) {
-                  pixels[i]=(byte)(255-(pixels[i]+127));
-                }
-                break;
-                
               case ImagePlus.COLOR_RGB:
                 ((ColorProcessor)imageP.getStack().getProcessor(Math.max(z,t)+1)).getRGB(r, g, b);
                 switch (c) {
@@ -396,6 +388,74 @@ public class OMEUpload{
       image.setDefaultPixels(pix);
       df.update(image);
       IJ.showProgress(.9);
+      
+      // extract image display options and create display options
+      DisplayOptions disOp=(DisplayOptions)df.createNew("DisplayOptions");
+      disOp.setPixels(pix);
+      disOp.setImage(image);
+      disOp.setTStart(new Integer(0));
+      disOp.setTStop(new Integer(0));
+      disOp.setZStart(new Integer(0));
+      disOp.setZStop(new Integer(0));
+      
+      ImageProcessor proc=imageP.getProcessor();
+      // The white and black level are set as constants because imageJ gives the
+      // pixels truncated if you changed these values, this prevents the min and
+      // max being set twice.
+      Double whiteLevel=new Double(255);//proc.getMax());
+      Double blackLevel=new Double(0);//proc.getMin());
+      if (sizeC==3){
+        disOp.setColorMap("RGB");
+        disOp.setDisplayRGB(new Boolean(true));
+        DisplayChannel red=(DisplayChannelDTO)df.createNew("DisplayChannel");
+        red.setImage(image);
+        red.setGamma(new Float(1));
+        red.setWhiteLevel(whiteLevel);
+        red.setBlackLevel(blackLevel);
+        red.setChannelNumber(new Integer(2));
+        DisplayChannel green=(DisplayChannel)df.createNew("DisplayChannel");
+        green.setImage(image);
+        green.setGamma(new Float(1));
+        green.setWhiteLevel(whiteLevel);
+        green.setBlackLevel(blackLevel);
+        green.setChannelNumber(new Integer(1));
+        DisplayChannel blue=(DisplayChannel)df.createNew("DisplayChannel");
+        blue.setImage(image);
+        blue.setGamma(new Float(1));
+        blue.setWhiteLevel(whiteLevel);
+        blue.setBlackLevel(blackLevel);
+        blue.setChannelNumber(new Integer(0));
+        
+        disOp.setRedChannel(red);
+        disOp.setGreenChannel(green);
+        disOp.setBlueChannel(blue);
+        disOp.setGreyChannel(red);
+        disOp.setRedChannelOn(new Boolean(true));
+        disOp.setGreenChannelOn(new Boolean(true));
+        disOp.setBlueChannelOn(new Boolean(true));
+        df.update(red);
+        df.update(green);
+        df.update(blue);
+      }else {
+        disOp.setColorMap("monochrome");
+        disOp.setDisplayRGB(new Boolean(false));
+        DisplayChannel gray=(DisplayChannel)df.createNew("DisplayChannel");
+        gray.setModuleExecution(ii);
+        gray.setImage(image);
+        gray.setGamma(new Float(1));
+        gray.setWhiteLevel(whiteLevel);
+        gray.setBlackLevel(blackLevel);
+        gray.setChannelNumber(new Integer(0));
+        disOp.setGreyChannel(gray);
+        disOp.setRedChannel(gray);
+        disOp.setGreenChannel(gray);
+        disOp.setBlueChannel(gray);
+        disOp.setRedChannelOn(new Boolean(false));
+        disOp.setGreenChannelOn(new Boolean(false));
+        disOp.setBlueChannelOn(new Boolean(false));
+        df.update(gray);
+      }
+      df.update(disOp);
 
       // execute the import analysis chain
       IJ.showStatus("OmeUpload: Executing import chain...");

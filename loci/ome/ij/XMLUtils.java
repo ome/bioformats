@@ -1,6 +1,7 @@
 import javax.swing.tree.DefaultMutableTreeNode;
 import ij.*;
 import ij.io.FileInfo;
+import ij.process.ImageProcessor;
 import java.io.StringReader;
 import java.io.StringWriter;
 import loci.ome.xml.*;
@@ -17,11 +18,9 @@ public class XMLUtils{
     XML in the image description*/
   public static void readTiff(Integer imageID){
     int ijimageID=imageID.intValue();
-    //System.out.println("getting imagemetadata from table in sidepanel");
     Object[] meta=null;
     meta=OMESidePanel.getImageMeta(ijimageID);
     FileInfo fi=null;
-    //System.out.println("get original fileinfo");
     try {
        fi = WindowManager.getImage(ijimageID).getOriginalFileInfo();
     }
@@ -42,6 +41,14 @@ public class XMLUtils{
       OMESidePanel.hashInImage(ijimageID, meta);
       return;
     }
+    //check if white is zero and if true invert the bits
+    if(fi.whiteIsZero){
+      ImageProcessor iProc=WindowManager.getImage(ijimageID).getProcessor();
+      iProc.invert();
+      iProc.invertLut();
+      fi.whiteIsZero=false;
+    }
+    
     StringReader sbis=new StringReader(fi.description);
     InputSource inputSource=null;
     IJ.showStatus("Transforming xml code.");
@@ -59,11 +66,11 @@ public class XMLUtils{
     String finalResult = stringWriter.toString();
     sbis=new StringReader(finalResult);
     inputSource=new InputSource(sbis);
-    //System.out.println(finalResult);
     }
     catch (Exception e){
-      IJ.showStatus("Error while converting xml file.");
-      e.printStackTrace();
+      IJ.showStatus("Not an OME tiff file.");
+      // Don't print stack trace, this is a legal thing, you don't have to have an OME
+      // tiff file,  its just cooler if you do.
       if ( meta==null) {
         meta=new Object[2];
          meta[0]=new Integer(0);

@@ -1,6 +1,6 @@
 
-//only needed to show status, otherwise independent
-import ij.IJ;
+import ij.*;
+import ij.process.ImageProcessor;
 
 import org.openmicroscopy.ds.dto.*;
 import org.openmicroscopy.ds.*;
@@ -16,8 +16,13 @@ import javax.swing.tree.DefaultMutableTreeNode;
  */
 public class OMEMetaDataHandler{
   
+  //Field
+  //ImageJ image processor that the levels will be set on
+  private static ImageProcessor imageP;
+  
   /**Method that downloads metadata from the OME database and creates a tree*/
-  public static DefaultMutableTreeNode exportMeta(Image image, DataFactory df){
+  public static DefaultMutableTreeNode exportMeta(Image image, ImagePlus imagePlus, DataFactory df){
+    imageP=imagePlus.getProcessor();
     //create root node of whole tree
     DefaultMutableTreeNode root=new DefaultMutableTreeNode(
       new XMLObject("Meta Data"));
@@ -75,7 +80,7 @@ public class OMEMetaDataHandler{
         customs=df.retrieveList(OMEMetaPanel.IMAGE_TYPES[i], criteria);
       }catch(Exception e){
         e.printStackTrace();
-        System.out.println("Error while retrieving "+OMEMetaPanel.IMAGE_TYPES[i]+"s.");
+        IJ.showStatus("Error while retrieving "+OMEMetaPanel.IMAGE_TYPES[i]+"s.");
       }
       if(customs!=null){
         Iterator itCustoms=customs.iterator();
@@ -168,16 +173,36 @@ public class OMEMetaDataHandler{
     node.add(blue);
     DefaultMutableTreeNode grey=new DefaultMutableTreeNode(new XMLObject("GreyChannel"));
     node.add(grey);
-    addDisplayChannel(element.getRedChannel(), red, df);
-    addDisplayChannel(element.getGreenChannel(), green, df);
-    addDisplayChannel(element.getBlueChannel(), blue, df);
-    addDisplayChannel(element.getBlueChannel(), grey, df);
+    double[] redd=addDisplayChannel(element.getRedChannel(), red, df);
+    double[] greend=addDisplayChannel(element.getGreenChannel(), green, df);
+    double[] blued=addDisplayChannel(element.getBlueChannel(), blue, df);
+    double[] greyd=addDisplayChannel(element.getGreyChannel(), grey, df);
+    //set display characteristics in ImageJ from display channel values
+    //setMinAndMax appears to have no effect even though it runs fine "weird"
+    if (greyd!=null){
+      imageP.setMinAndMax(greyd[0],greyd[1]);
+      imageP.gamma(greyd[2]);
+      //System.out.println("set grey values white:"+greyd[1]+" black:"+greyd[0]);
+    }else if(redd!=null){
+      imageP.setMinAndMax(redd[0], redd[1]);
+      imageP.gamma(redd[2]);
+      //System.out.println("set red values"+redd[1]+"  "+redd[0]);
+    }else if(blued!=null){
+      imageP.setMinAndMax(blued[0], blued[1]);
+      imageP.gamma(blued[2]);
+      //System.out.println("set blue values");
+    }else if(greend!=null){
+      imageP.setMinAndMax(greend[0], greend[1]);
+      imageP.gamma(greend[2]);
+      //System.out.println("set green values");
+    }
   }//end of addDisplayOptions method
   
-  /**exports DisplayChannel from the database and adds to the tree*/
-  private static void addDisplayChannel(DisplayChannel element, DefaultMutableTreeNode root, 
+  /**exports DisplayChannel from the database, adds it to the tree and returns the
+  black level, white level, and gamma of the channel*/
+  private static double[] addDisplayChannel(DisplayChannel element, DefaultMutableTreeNode root, 
     DataFactory df){
-    if(element==null)return;
+    if(element==null)return null;
     //setup and load the columns that this element has
     String [] attrs={"BlackLevel", "ChannelNumber", "Gamma", "WhiteLevel"};
     Criteria criteria=OMEDownload.makeAttributeFields(attrs);
@@ -189,14 +214,28 @@ public class OMEMetaDataHandler{
     DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("DisplayChannel",
       XMLObject.ELEMENT));
     root.add(node);
+    //get levels for display in ImageJ
+    Double black=element.getBlackLevel(), white=element.getWhiteLevel();
+    Float gamma=element.getGamma();
+    double [] levels=new double[3];
+    if(black==null||white==null||gamma==null){
+      levels=null;
+    }
+    else{
+      levels[0]=black.doubleValue();
+      levels[1]=white.doubleValue();
+      levels[2]=gamma.doubleValue();
+    }
+    
     node.add(new DefaultMutableTreeNode(new XMLObject("ChannelNumber",
       ""+element.getChannelNumber(), XMLObject.ATTRIBUTE)));
     node.add(new DefaultMutableTreeNode(new XMLObject("Gamma",
-      ""+element.getGamma(), XMLObject.ATTRIBUTE)));
+      ""+gamma, XMLObject.ATTRIBUTE)));
     node.add(new DefaultMutableTreeNode(new XMLObject("WhiteLevel",
-      ""+element.getWhiteLevel(), XMLObject.ATTRIBUTE)));
+      ""+white, XMLObject.ATTRIBUTE)));
     node.add(new DefaultMutableTreeNode(new XMLObject("BlackLevel",
-      ""+element.getBlackLevel(), XMLObject.ATTRIBUTE)));
+      ""+black, XMLObject.ATTRIBUTE)));
+    return levels;
   }//end of addDisplayChannel method
   
   /**exports LogicalChannels from the database and adds to the tree*/
@@ -790,7 +829,7 @@ public class OMEMetaDataHandler{
       }catch(Exception e){
         //don't tell anyone about it, just keep going
         e.printStackTrace();
-        System.out.println("Error while retrieving "+OMEMetaPanel.FEATURE_TYPES[i]+"s.");
+        IJ.showStatus("Error while retrieving "+OMEMetaPanel.FEATURE_TYPES[i]+"s.");
       }
       if(customs!=null){
         Iterator itCustoms=customs.iterator();
@@ -809,7 +848,6 @@ public class OMEMetaDataHandler{
               (value instanceof Boolean)){
               elementNode.add(new DefaultMutableTreeNode(new XMLObject((String)key,
                 ""+value, XMLObject.ATTRIBUTE)));
-              //System.out.println("key=" + key + "; value=" + value);
             }
           }
         }
