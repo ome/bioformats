@@ -1,10 +1,11 @@
 /**
- * OME_Import_Export is the ImageJ Plugin
+ * OME_Plugin is the ImageJ Plugin
  * that allows image import and exports from
- * the OME database.
+ * the OME database.  This plugin also views
+ * OME-XML metadata present in OME-Tiff files.
  * @author Philip Huettl pmhuettl@wisc.edu
  */
-public class OME_Import_Export implements ij.plugin.PlugIn{
+public class OME_Plugin implements ij.plugin.PlugIn{
   private static OMESidePanel omeSidePanel;
   //Methods
 
@@ -17,4 +18,4 @@ public class OME_Import_Export implements ij.plugin.PlugIn{
     omeSidePanel.showIt();
   }//end of run method
       
-}//end of OME_Import_Export class
+}//end of OME_Plugin class
