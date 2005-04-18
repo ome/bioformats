@@ -150,8 +150,8 @@ public class OMEMetaPanel implements ActionListener, TreeSelectionListener{
     customField.setWrapStyleWord(true);
     JScrollPane customScroll=new JScrollPane(customField);
     
-    //try
-    customScroll.setPreferredSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+    //this caused the window to not have anything in it
+//    customScroll.setPreferredSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
     
     customPane.add(customScroll);
     splitPane=new JSplitPane(JSplitPane.VERTICAL_SPLIT, treeView, customPane);
@@ -179,7 +179,6 @@ public class OMEMetaPanel implements ActionListener, TreeSelectionListener{
   /**shows and retrieves info from the DownPanel*/
   public void show(){
     dia.show();
-    //checks and puts results into an array
   }//end of search method
   
   /** Centers the given window within the specified parent window. */

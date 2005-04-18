@@ -1,6 +1,7 @@
 
 import ij.*;
 import ij.process.ImageProcessor;
+import ij.io.FileInfo;
 
 import org.openmicroscopy.ds.dto.*;
 import org.openmicroscopy.ds.*;
@@ -19,10 +20,135 @@ public class OMEMetaDataHandler{
   //Field
   //ImageJ image processor that the levels will be set on
   private static ImageProcessor imageP;
+  private static boolean isXML;
+  private static OMENode omeNode;
+  
+  /**Method that begins the process of getting metadata from an OME_TIFF file*/
+  public static void exportMeta(int ijimageID){
+    isXML=true;
+    //int ijimageID=imageID.intValue();
+    Object[] meta=null;
+    meta=OMESidePanel.getImageMeta(ijimageID);
+    FileInfo fi=null;
+    try {
+       fi = WindowManager.getImage(ijimageID).getOriginalFileInfo();
+    }
+    catch (Exception x) {
+      OMEDownPanel.error(IJ.getInstance(),
+      "An error occurred while retrieving the original file information.",
+      "Error");
+      IJ.showStatus("Error retrieving file information.");
+      x.printStackTrace();
+    }
+    if ( fi==null || fi.description==null) {
+      IJ.showStatus("Not an OME tiff file.");
+      if ( meta==null) {
+        meta=new Object[2];
+        meta[0]=new Integer(0);
+      }
+      meta[1]=null;
+      OMESidePanel.hashInImage(ijimageID, meta);
+      return;
+    }
+    //check if white is zero and if true invert the bits
+    if(fi.whiteIsZero){
+      ImageProcessor iProc=WindowManager.getImage(ijimageID).getProcessor();
+      iProc.invert();
+      iProc.invertLut();
+      fi.whiteIsZero=false;
+    }
+    
+    try {
+      omeNode=new OMENode(fi.description);
+    }
+    catch (Exception e){
+      IJ.showStatus("Error parsing OME-XML metadata, possibly not present.");
+      // Don't print stack trace, this is a legal thing, you don't have to have an OME
+      // tiff file,  its just cooler if you do.
+      if ( meta==null) {
+        meta=new Object[2];
+         meta[0]=new Integer(0);
+      }
+      meta[1]=null;
+      OMESidePanel.hashInImage(ijimageID, meta);
+      return;
+    }
+    if ( meta==null) {
+      meta=new Object[2];
+      meta[0]=new Integer(0);
+    }
+    meta[1]=new DefaultMutableTreeNode(
+      new XMLObject("Meta Data"));
+    OMESidePanel.hashInImage(ijimageID, meta);
+    IJ.showStatus("Meta data is being put into tree structure.");
+//    createNodes((DefaultMutableTreeNode)meta[1]);
+    List list=omeNode.getImages();
+    Iterator iter =list.iterator();
+    while (iter.hasNext()){
+      exportMeta((ImageNode)iter.next());
+    }
+    
+    
+    
+    //stop holding the omeNode
+    omeNode=null;
+  }//end of OME-TIFF xml retrieval exportMeta method
+  
+  /**method that imports an image node from xml in an OME-TIFF file*/
+  private static void exportMeta(ImageNode imageNode){
+/*    getDimensions();
+    getDisplayROI();
+    getImageAnnotation();
+    getImageExperiment();
+    getImageGroup();
+    getImageInstrument();
+    getImagePlate();
+    getImageTestSignature();
+    getImagingEnvironment();  
+    getPixelChannelComponent();
+    getPlaneCentroid();
+    getPlaneGeometricMean();
+    getPlaneGeometricSigma();
+    getPlaneMaximum();
+    getPlaneMean();
+    getPlaneMinimum();
+    getPlaneSigma();
+    getPlaneSum_i();
+    getPlaneSum_i2();
+    getPlaneSum_log_i();
+    getPlaneSum_Xi();
+    getPlaneSum_Yi();
+    getPlaneSum_Zi();
+    getStackCentroid();
+    getStackGeometricMean();
+    getStackGeometricSigma();
+    getStackMaximum();
+    getStackMean();
+    getStackMinimum();
+    getStackSigma();
+    getStageLabel();
+    getThumbnail();
+    getClassification();
+*/
+  }//end of ImageNode exportMeta Method
+  
+  /**method that imports an image node from xml in an OME-TIFF file*/
+  private static void exportMeta(FeatureNode featureNode){
+/*    getBounds();
+    getExtent();
+    getLocation();
+    getRatio();
+    getSignal();
+    getThreshold();
+    getTimepoint();
+*/
+  }//end of FeatureNode exportMeta Method
   
   /**Method that downloads metadata from the OME database and creates a tree*/
   public static DefaultMutableTreeNode exportMeta(Image image, ImagePlus imagePlus, DataFactory df){
     imageP=imagePlus.getProcessor();
+    isXML=false;
+    omeNode=null;
     //create root node of whole tree
     DefaultMutableTreeNode root=new DefaultMutableTreeNode(
       new XMLObject("Meta Data"));
