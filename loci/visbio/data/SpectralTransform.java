@@ -285,7 +285,7 @@ public class SpectralTransform extends ImageTransform
   public void transformChanged(TransformEvent e) {
     int id = e.getId();
     if (id == TransformEvent.DATA_CHANGED) {
-      // CTR TODO
+      // CTR TODO transformChanged DATA_CHANGED
       // depending on how parent changed, recompute weights array size
       // if it changes size, need to redo spectral widget layout
       // but always need to notify listeners of spectral transform change

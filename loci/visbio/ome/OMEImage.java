@@ -198,7 +198,14 @@ public class OMEImage extends ImageTransform {
       "VisBio", JOptionPane.YES_NO_OPTION);
     if (val != JOptionPane.YES_OPTION) return null;
 
-    return new OMEImage(server, user, password, imageId);
+    // make sure everything goes ok
+    try { return new OMEImage(server, user, password, imageId); }
+    catch (Exception exc) {
+      JOptionPane.showMessageDialog(parent, "Sorry, there has been a " +
+        "problem downloading from the server. Please try again.",
+        "VisBio", JOptionPane.ERROR_MESSAGE);
+    }
+    return null;
   }
 
   /**
@@ -253,7 +260,7 @@ public class OMEImage extends ImageTransform {
   /** Gets a description of this dataset, with HTML markup. */
   public String getHTMLDescription() {
     return super.getHTMLDescription();
-/* CTR TODO
+/* CTR TODO getHTMLDescription
     StringBuffer sb = new StringBuffer();
 
     // file pattern
