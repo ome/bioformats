@@ -102,16 +102,8 @@ Open Microscopy Environment
 [L] Create a command-line upload utility for use doing generic client-side
     uploads--use loci.visbio.ome.ImageUploader.main(String[]) for this.
 
-[L] Uploading to OME from VisBio works, but throws this exception:
-
-    class org.apache.xmlrpc.XmlRpcException
-    org.openmicroscopy.ds.RemoteServerErrorException: Can't locate object method "new" via package "OME::Tasks::NotificationManager" (perhaps you forgot to load "OME::Tasks::NotificationManager"?) at /home/bassem/OME/src/perl2//OME/Analysis/Engine.pm line 802.
-        at org.openmicroscopy.ds.XmlRpcCaller.invoke(XmlRpcCaller.java:299)
-        at org.openmicroscopy.ds.XmlRpcCaller.dispatch(XmlRpcCaller.java:442)
-        at org.openmicroscopy.ds.managers.AnalysisEngineManager.executeAnalysisChain(AnalysisEngineManager.java:84)
-        at loci.visbio.ome.OMEManager.run(OMEManager.java:342)
-        at java.lang.Thread.run(Unknown Source)
-
+[L] Upload to OME works, but produces a bunch of annoying messages on the
+    error stream anyway.
 
 Java Web Start
 --------------
