@@ -128,6 +128,7 @@ public class OMESidePanel implements ActionListener{
             //IJ.showStatus("Ready to read xml in tiff header.");
             System.out.println("go get em, don't use that old stuff");
             OMEMetaDataHandler.exportMeta(ijimage);
+            
             //m.invoke(null, new Object[] {new Integer(ijimage)});
             
             
@@ -180,7 +181,7 @@ public class OMESidePanel implements ActionListener{
       }else{
         JOptionPane.showMessageDialog(parentWindow,
         "Please select an image to export to OME.",
-        "OME Import/Export",JOptionPane.INFORMATION_MESSAGE);
+        "OME Plugin",JOptionPane.INFORMATION_MESSAGE);
         showIt();
       }
     }else if("refresh".equals(e.getActionCommand())) {
@@ -194,7 +195,7 @@ public class OMESidePanel implements ActionListener{
       }else {
         JOptionPane.showMessageDialog(parentWindow,
         "Please select an image to edit.",
-        "OME Import/Export",JOptionPane.INFORMATION_MESSAGE);
+        "OME Plugin",JOptionPane.INFORMATION_MESSAGE);
         showIt();
       }
     }else{
@@ -208,7 +209,7 @@ public class OMESidePanel implements ActionListener{
   
   /**pops up Yes no dialog window*/
   private static boolean yesNo(Frame owner, String question){
-    int n= JOptionPane.showConfirmDialog(owner, question,"OME Import/Export",
+    int n= JOptionPane.showConfirmDialog(owner, question,"OME Plugin",
     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
     
     if ( n==JOptionPane.YES_OPTION) {

@@ -26,7 +26,9 @@ public class OMEMetaDataHandler{
   /**Method that begins the process of getting metadata from an OME_TIFF file*/
   public static void exportMeta(int ijimageID){
     isXML=true;
+    imageP=WindowManager.getImage(ijimageID).getProcessor();
     //int ijimageID=imageID.intValue();
+    IJ.showStatus("Retrieving OME-Tiff header.");
     Object[] meta=null;
     meta=OMESidePanel.getImageMeta(ijimageID);
     FileInfo fi=null;
@@ -57,7 +59,7 @@ public class OMEMetaDataHandler{
       iProc.invertLut();
       fi.whiteIsZero=false;
     }
-    
+    IJ.showStatus("Parsing OME-Tiff header.");
     try {
       omeNode=new OMENode(fi.description);
     }
@@ -85,7 +87,7 @@ public class OMEMetaDataHandler{
     List list=omeNode.getImages();
     Iterator iter =list.iterator();
     while (iter.hasNext()){
-      exportMeta((ImageNode)iter.next(), meta[1]);
+      exportMeta((ImageNode)iter.next(), (DefaultMutableTreeNode)meta[1]);
     }
     
     
@@ -95,50 +97,48 @@ public class OMEMetaDataHandler{
   }//end of OME-TIFF xml retrieval exportMeta method
   
   /**method that imports an image node from xml in an OME-TIFF file*/
-  private static void exportMeta(ImageNode imageNode, ImagePlus imagePlus, DefaultMutableTreeNode rootNode){
-    imageP=imagePlus.getProcessor();
-    isXML=false;
-    omeNode=null;
-    DefaultMutableTreeNode imageNode=addImage(imageNode);
+  private static void exportMeta(ImageNode image, DefaultMutableTreeNode rootNode){
+    DefaultMutableTreeNode imageNode=addImage(image, null);
     rootNode.add(imageNode);
-/*    getDimensions();
-    getDisplayROI();
-    getImageAnnotation();
-    getImageExperiment();
-    getImageGroup();
-    getImageInstrument();
-    getImagePlate();
-    getImageTestSignature();
-    getImagingEnvironment();  
-    getPixelChannelComponent();
-    getPlaneCentroid();
-    getPlaneGeometricMean();
-    getPlaneGeometricSigma();
-    getPlaneMaximum();
-    getPlaneMean();
-    getPlaneMinimum();
-    getPlaneSigma();
-    getPlaneSum_i();
-    getPlaneSum_i2();
-    getPlaneSum_log_i();
-    getPlaneSum_Xi();
-    getPlaneSum_Yi();
-    getPlaneSum_Zi();
-    getStackCentroid();
-    getStackGeometricMean();
-    getStackGeometricSigma();
-    getStackMaximum();
-    getStackMean();
-    getStackMinimum();
-    getStackSigma();
-    getStageLabel();
-    getThumbnail();
-    getClassification();
+    //implement when known if list or single
+/*    addDimensions();
+    addDisplayROI();
+    addImageAnnotation();
+    addImageExperiment();
+    addImageGroup();
+    addImageInstrument();
+    addImagePlate();
+    addImaaddestSignature();
+    addImagingEnvironment();  
+    addPixelChannelComponent();
+    addPlaneCentroid();
+    addPlaneGeometricMean();
+    addPlaneGeometricSigma();
+    addPlaneMaximum();
+    addPlaneMean();
+    addPlaneMinimum();
+    addPlaneSigma();
+    addPlaneSum_i();
+    addPlaneSum_i2();
+    addPlaneSum_log_i();
+    addPlaneSum_Xi();
+    addPlaneSum_Yi();
+    addPlaneSum_Zi();
+    addStackCentroid();
+    addStackGeometricMean();
+    addStackGeometricSigma();
+    addStackMaximum();
+    addStackMean();
+    addStackMinimum();
+    addStackSigma();
+    addStageLabel();
+    addThumbnail();
+    addClassification();
 */
   }//end of ImageNode exportMeta Method
   
   /**method that imports an image node from xml in an OME-TIFF file*/
-  private static void exportMeta(FeatureNode featureNode){
+  private static void exportMeta(Feature feature, DefaultMutableTreeNode root){
 /*    getBounds();
     getExtent();
     getLocation();
@@ -150,11 +150,12 @@ public class OMEMetaDataHandler{
   }//end of FeatureNode exportMeta Method
   
   /**method that creates the image nodes in the metadata tree*/
-  private static DefaultMutableTreeNode addImage(Image image){
+  private static DefaultMutableTreeNode addImage(Image image, DataFactory df){
+    IJ.showStatus("Retrieving Image attributes.");
     //image node
     DefaultMutableTreeNode imageNode=new DefaultMutableTreeNode(
         new XMLObject(XMLObject.IMAGEHEADING));
-    root.add(imageNode);
+//    root.add(imageNode);
     //nodes under image
     imageNode.add(new DefaultMutableTreeNode(
       new XMLObject("Name", image.getName(), XMLObject.IMAGE)));
@@ -184,6 +185,15 @@ public class OMEMetaDataHandler{
       datasets.add(new DefaultMutableTreeNode(
         new XMLObject("Dataset IDs", s.substring(0, s.length()-3),XMLObject.READONLY)));
     }
+    //get the image element features
+    List featureList=image.getFeatures();
+    if(featureList==null) System.out.println("Features not implemented yet");
+    else{
+      Iterator fIter=featureList.iterator();
+      while(fIter.hasNext()){
+        exportMeta((Feature)fIter.next(), imageNode, df);
+      }
+    }
     return imageNode;
   }//end of addImage method
   
@@ -195,7 +205,7 @@ public class OMEMetaDataHandler{
     //create root node of whole tree
     DefaultMutableTreeNode root=new DefaultMutableTreeNode(
       new XMLObject("Meta Data"));
-    DefaultMutableTreeNode imageNode=addImage(image);
+    DefaultMutableTreeNode imageNode=addImage(image, df);
     root.add(imageNode);
     
 /*    
@@ -239,12 +249,7 @@ public class OMEMetaDataHandler{
     
     
     
-    //get the image element features
-    List featureList=image.getFeatures();
-    Iterator fIter=featureList.iterator();
-    while(fIter.hasNext()){
-      exportMeta((Feature)fIter.next(), imageNode, df);
-    }
+    
 
     //load custom attributes
     DefaultMutableTreeNode customNode=new DefaultMutableTreeNode(
@@ -308,16 +313,19 @@ public class OMEMetaDataHandler{
   /**exports DisplayOptions from the database and adds to the tree*/
   private static void addDisplayOptions(DisplayOptions element, DefaultMutableTreeNode root, 
     DataFactory df){
+    IJ.showStatus("Retrieving Display Options attributes.");
     if(element==null)return;
-    //setup and load the columns that this element has
-    String [] attrs={"BlueChannel", "ColorMap", "GreenChannel", "GreyChannel",
-      "Pixels", "RedChannel", "TStart", "TStop", "Zoom", "ZStart", "ZStop",
-      "BlueChannelOn", "DisplayRGB", "GreenChannelOn", "RedChannelOn"};
-    Criteria criteria=OMEDownload.makeAttributeFields(attrs);
-    criteria.addWantedField("id");
-    criteria.addFilter("id", (new Integer(element.getID())).toString());
-    //retrieve element to add with all columns loaded
-    element=(DisplayOptions)df.retrieve("DisplayOptions", criteria);
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"BlueChannel", "ColorMap", "GreenChannel", "GreyChannel",
+        "Pixels", "RedChannel", "TStart", "TStop", "Zoom", "ZStart", "ZStop",
+        "BlueChannelOn", "DisplayRGB", "GreenChannelOn", "RedChannelOn"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(DisplayOptions)df.retrieve("DisplayOptions", criteria);
+    }
     //add attributes to this element's node
     DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("DisplayOptions",
       XMLObject.ELEMENT));
@@ -382,14 +390,17 @@ public class OMEMetaDataHandler{
   black level, white level, and gamma of the channel*/
   private static double[] addDisplayChannel(DisplayChannel element, DefaultMutableTreeNode root, 
     DataFactory df){
+    IJ.showStatus("Retrieving Display Channel attributes.");
     if(element==null)return null;
-    //setup and load the columns that this element has
-    String [] attrs={"BlackLevel", "ChannelNumber", "Gamma", "WhiteLevel"};
-    Criteria criteria=OMEDownload.makeAttributeFields(attrs);
-    criteria.addWantedField("id");
-    criteria.addFilter("id", (new Integer(element.getID())).toString());
-    //retrieve element to add with all columns loaded
-    element=(DisplayChannel)df.retrieve("DisplayChannel", criteria);
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"BlackLevel", "ChannelNumber", "Gamma", "WhiteLevel"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(DisplayChannel)df.retrieve("DisplayChannel", criteria);
+    }
     //add attributes to this element's node
     DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("DisplayChannel",
       XMLObject.ELEMENT));
@@ -421,19 +432,22 @@ public class OMEMetaDataHandler{
   /**exports LogicalChannels from the database and adds to the tree*/
   private static void addLogicalChannel(LogicalChannel element, DefaultMutableTreeNode root, 
     DataFactory df){
+    IJ.showStatus("Retrieving LogicalChannel attributes.");
     if(element==null)return;
-    //setup and load the columns that this element has
-    String [] attrs={"PixelChannelComponentList", "AuxLightAttenuation", "AuxLightSource", "AuxLightWavelength",
-      "AuxTechnique", "ContrastMethod", "Detector", "DetectorGain",
-      "DetectorOffset", "EmissionWavelength", "ExcitationWavelength",
-      "Filter", "Fluor", "IlluminationType", "LightAttenuation", 
-      "LightSource", "LightWavelength", "Mode", "Name", "NDFilter", "OTF",
-      "PhotometricInterpretation", "PinholeSize", "SamplesPerPixel"};
-    Criteria criteria=OMEDownload.makeAttributeFields(attrs);
-    criteria.addWantedField("id");
-    criteria.addFilter("id", (new Integer(element.getID())).toString());
-    //retrieve element to add with all columns loaded
-    element=(LogicalChannel)df.retrieve("LogicalChannel", criteria);
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"PixelChannelComponentList", "AuxLightAttenuation", "AuxLightSource", "AuxLightWavelength",
+        "AuxTechnique", "ContrastMethod", "Detector", "DetectorGain",
+        "DetectorOffset", "EmissionWavelength", "ExcitationWavelength",
+        "Filter", "Fluor", "IlluminationType", "LightAttenuation", 
+        "LightSource", "LightWavelength", "Mode", "Name", "NDFilter", "OTF",
+        "PhotometricInterpretation", "PinholeSize", "SamplesPerPixel"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(LogicalChannel)df.retrieve("LogicalChannel", criteria);
+    }
     //add attributes to this element's node
     DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("LogicalChannel",
       XMLObject.ELEMENT));
@@ -486,14 +500,17 @@ public class OMEMetaDataHandler{
   /**exports Repositories from the database and adds to the tree*/
   private static void addRepository(Repository element, DefaultMutableTreeNode root, 
     DataFactory df){
+    IJ.showStatus("Retrieving Repository attributes.");
     if(element==null)return;
-    //setup and load the columns that this element has
-    String [] attrs={"ImageServerURL", "Path", "IsLocal"};
-    Criteria criteria=OMEDownload.makeAttributeFields(attrs);
-    criteria.addWantedField("id");
-    criteria.addFilter("id", (new Integer(element.getID())).toString());
-    //retrieve element to add with all columns loaded
-    element=(Repository)df.retrieve("Repository", criteria);
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"ImageServerURL", "Path", "IsLocal"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(Repository)df.retrieve("Repository", criteria);
+    }
     //add attributes to this element's node
     DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("Repository",
       XMLObject.ELEMENT));
@@ -509,15 +526,18 @@ public class OMEMetaDataHandler{
   /**exports OTFs from the database and adds to the tree*/
   private static void addOTF(OTF element, DefaultMutableTreeNode root, 
     DataFactory df){
+    IJ.showStatus("Retrieving OTF attributes.");
     if(element==null)return;
-    //setup and load the columns that this element has
-    String [] attrs={"Filter","Instrument", "Objective", "Path", "PixelType",
-      "Repository", "SizeX",  "SizeY","OpticalAxisAverage" };
-    Criteria criteria=OMEDownload.makeAttributeFields(attrs);
-    criteria.addWantedField("id");
-    criteria.addFilter("id", (new Integer(element.getID())).toString());
-    //retrieve element to add with all columns loaded
-    element=(OTF)df.retrieve("OTF", criteria);
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Filter","Instrument", "Objective", "Path", "PixelType",
+        "Repository", "SizeX",  "SizeY","OpticalAxisAverage" };
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(OTF)df.retrieve("OTF", criteria);
+    }
     //add attributes to this element's node
     DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("OTF",
       XMLObject.ELEMENT));
@@ -542,14 +562,17 @@ public class OMEMetaDataHandler{
   /**exports Filters from the database and adds to the tree*/
   private static void addFilter(Filter element, DefaultMutableTreeNode root, 
     DataFactory df){
+    IJ.showStatus("Retrieving Filter attributes.");
     if(element==null)return;
-    //setup and load the columns that this element has
-    String [] attrs={"Instrument"};
-    Criteria criteria=OMEDownload.makeAttributeFields(attrs);
-    criteria.addWantedField("id");
-    criteria.addFilter("id", (new Integer(element.getID())).toString());
-    //retrieve element to add with all columns loaded
-    element=(Filter)df.retrieve("Filter", criteria);
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Instrument"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(Filter)df.retrieve("Filter", criteria);
+    }
     //add attributes to this element's node
     DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("Filter",
       XMLObject.ELEMENT));
@@ -561,21 +584,24 @@ public class OMEMetaDataHandler{
   /**exports Detectors from the database and adds to the tree*/
   private static void addDetector(Detector element, DefaultMutableTreeNode root, 
     DataFactory df){
+    IJ.showStatus("Retrieving Detector attributes.");
     if(element==null)return;
-    //setup and load the columns that this element has
-    Criteria criteria=new Criteria();
-    criteria.addWantedField("Instrument");
-    criteria.addWantedField("Manufacturer");
-    criteria.addWantedField("Model");
-    criteria.addWantedField("SerialNumber");
-    criteria.addWantedField("Gain");
-    criteria.addWantedField("Offset");
-    criteria.addWantedField("Type");
-    criteria.addWantedField("Voltage");
-    criteria.addWantedField("id");
-    criteria.addFilter("id", (new Integer(element.getID())).toString());
-    //retrieve element to add with all columns loaded
-    element=(Detector)df.retrieve("Detector", criteria);
+    if(df!=null){
+      //setup and load the columns that this element has
+      Criteria criteria=new Criteria();
+      criteria.addWantedField("Instrument");
+      criteria.addWantedField("Manufacturer");
+      criteria.addWantedField("Model");
+      criteria.addWantedField("SerialNumber");
+      criteria.addWantedField("Gain");
+      criteria.addWantedField("Offset");
+      criteria.addWantedField("Type");
+      criteria.addWantedField("Voltage");
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(Detector)df.retrieve("Detector", criteria);
+    }
     //add attributes to this element's node
     DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("Detector",
       XMLObject.ELEMENT));
@@ -601,17 +627,20 @@ public class OMEMetaDataHandler{
   /**exports Lightsources from the database and adds to the tree*/
   private static void addLightSource(LightSource element, DefaultMutableTreeNode root, 
     DataFactory df){
+    IJ.showStatus("Retrieving Light Source attributes.");
     if(element==null)return;
-    //setup and load the columns that this element has
-    Criteria criteria=new Criteria();
-    criteria.addWantedField("Instrument");
-    criteria.addWantedField("Manufacturer");
-    criteria.addWantedField("Model");
-    criteria.addWantedField("SerialNumber");
-    criteria.addWantedField("id");
-    criteria.addFilter("id", (new Integer(element.getID())).toString());
-    //retrieve element to add with all columns loaded
-    element=(LightSource)df.retrieve("LightSource", criteria);
+    if(df!=null){
+      //setup and load the columns that this element has
+      Criteria criteria=new Criteria();
+      criteria.addWantedField("Instrument");
+      criteria.addWantedField("Manufacturer");
+      criteria.addWantedField("Model");
+      criteria.addWantedField("SerialNumber");
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(LightSource)df.retrieve("LightSource", criteria);
+    }
     //add attributes to this element's node
     DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("LightSource",
       XMLObject.ELEMENT));
@@ -629,16 +658,19 @@ public class OMEMetaDataHandler{
   /**exports Plates from the database and adds to the tree*/
   private static void addPlate(Plate element, DefaultMutableTreeNode root, 
     DataFactory df){
+    IJ.showStatus("Retrieving Plate attributes.");
     if(element==null)return;
-    //setup and load the columns that this element has
-    Criteria criteria=new Criteria();
-    criteria.addWantedField("Name");
-    criteria.addWantedField("ExternalReference");
-    criteria.addWantedField("Screen");
-    criteria.addWantedField("id");
-    criteria.addFilter("id", (new Integer(element.getID())).toString());
-    //retrieve element to add with all columns loaded
-    element=(Plate)df.retrieve("Plate", criteria);
+    if(df!=null){
+      //setup and load the columns that this element has
+      Criteria criteria=new Criteria();
+      criteria.addWantedField("Name");
+      criteria.addWantedField("ExternalReference");
+      criteria.addWantedField("Screen");
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(Plate)df.retrieve("Plate", criteria);
+    }
     //add attributes to this element's node
     DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("Plate",
       XMLObject.ELEMENT));
@@ -654,16 +686,19 @@ public class OMEMetaDataHandler{
   /**exports Screens from the database and adds to the tree*/
   private static void addScreen(Screen element, DefaultMutableTreeNode root, 
     DataFactory df){
+    IJ.showStatus("Retrieving Screen attributes.");
     if(element==null)return;
-    //setup and load the columns that this element has
-    Criteria criteria=new Criteria();
-    criteria.addWantedField("Name");
-    criteria.addWantedField("ExternalReference");
-    criteria.addWantedField("Description");
-    criteria.addWantedField("id");
-    criteria.addFilter("id", (new Integer(element.getID())).toString());
-    //retrieve element to add with all columns loaded
-    element=(Screen)df.retrieve("Screen", criteria);
+    if(df!=null){
+      //setup and load the columns that this element has
+      Criteria criteria=new Criteria();
+      criteria.addWantedField("Name");
+      criteria.addWantedField("ExternalReference");
+      criteria.addWantedField("Description");
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(Screen)df.retrieve("Screen", criteria);
+    }
     //add attributes to this element's node
     DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("Screen",
       XMLObject.ELEMENT));
@@ -679,15 +714,18 @@ public class OMEMetaDataHandler{
   /**exports Objectives from the database and adds to the tree*/
   private static void addObjective(Objective element, DefaultMutableTreeNode root, 
     DataFactory df){
+    IJ.showStatus("Retrieving Objective attributes.");
     if(element==null)return;
-    //setup and load the columns that this element has
-    String [] attrs={"Instrument", "LensNA", "Magnification", "Manufacturer",
-      "Model", "SerialNumber"};
-    Criteria criteria=OMEDownload.makeAttributeFields(attrs);
-    criteria.addWantedField("id");
-    criteria.addFilter("id", (new Integer(element.getID())).toString());
-    //retrieve element to add with all columns loaded
-    element=(Objective)df.retrieve("Objective", criteria);
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Instrument", "LensNA", "Magnification", "Manufacturer",
+        "Model", "SerialNumber"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(Objective)df.retrieve("Objective", criteria);
+    }
     //add attributes to this element's node
     DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("Objective",
       XMLObject.ELEMENT));
@@ -709,17 +747,20 @@ public class OMEMetaDataHandler{
   /**exports Instruments from the database and adds to the tree*/
   private static void addInstrument(Instrument element, DefaultMutableTreeNode root, 
     DataFactory df){
+    IJ.showStatus("Retrieving Instrument attributes.");
     if(element==null)return;
-    //setup and load the columns that this element has
-    Criteria criteria=new Criteria();
-    criteria.addWantedField("Manufacturer");
-    criteria.addWantedField("Model");
-    criteria.addWantedField("SerialNumber");
-    criteria.addWantedField("Type");
-    criteria.addWantedField("id");
-    criteria.addFilter("id", (new Integer(element.getID())).toString());
-    //retrieve element to add with all columns loaded
-    element=(Instrument)df.retrieve("Instrument", criteria);
+    if(df!=null){
+      //setup and load the columns that this element has
+      Criteria criteria=new Criteria();
+      criteria.addWantedField("Manufacturer");
+      criteria.addWantedField("Model");
+      criteria.addWantedField("SerialNumber");
+      criteria.addWantedField("Type");
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(Instrument)df.retrieve("Instrument", criteria);
+    }
     //add attributes to this element's node
     DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("Instrument",
       XMLObject.ELEMENT));
@@ -737,15 +778,17 @@ public class OMEMetaDataHandler{
   /**exports experiments from the database and adds to the tree*/
   private static void addExperiment(Experiment experiment, DefaultMutableTreeNode root,
     DataFactory df){
+    IJ.showStatus("Retrieving Experiment attributes.");
     if(experiment==null)return;
-    Criteria criteria=new Criteria();
-    criteria.addWantedField("Type");
-    criteria.addWantedField("Description");
-    criteria.addWantedField("Experimenter");
-    criteria.addWantedField("id");
-    criteria.addFilter("id", (new Integer(experiment.getID())).toString());
-    experiment=(Experiment)df.retrieve("Experiment", criteria);
-    
+    if(df!=null){
+      Criteria criteria=new Criteria();
+      criteria.addWantedField("Type");
+      criteria.addWantedField("Description");
+      criteria.addWantedField("Experimenter");
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(experiment.getID())).toString());
+      experiment=(Experiment)df.retrieve("Experiment", criteria);
+    }  
     DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("Experiment",
       XMLObject.ELEMENT));
     root.add(node);
@@ -759,19 +802,22 @@ public class OMEMetaDataHandler{
   /**exports Experimenter from the database and adds to the tree*/
   private static void addExperimenter(Experimenter element, DefaultMutableTreeNode root, 
     DataFactory df){
+    IJ.showStatus("Retrieving Experimenter attributes.");
     if(element==null)return;
-    //setup and load the columns that this element has
-    Criteria criteria=new Criteria();
-    criteria.addWantedField("LastName");
-    criteria.addWantedField("FirstName");
-    criteria.addWantedField("Email");
-    criteria.addWantedField("DataDirectory");
-    criteria.addWantedField("Institution");
-    criteria.addWantedField("Group");
-    criteria.addWantedField("id");
-    criteria.addFilter("id", (new Integer(element.getID())).toString());
-    //retrieve element to add with all columns loaded
-    element=(Experimenter)df.retrieve("Experimenter", criteria);
+    if(df!=null){
+      //setup and load the columns that this element has
+      Criteria criteria=new Criteria();
+      criteria.addWantedField("LastName");
+      criteria.addWantedField("FirstName");
+      criteria.addWantedField("Email");
+      criteria.addWantedField("DataDirectory");
+      criteria.addWantedField("Institution");
+      criteria.addWantedField("Group");
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(Experimenter)df.retrieve("Experimenter", criteria);
+    }
     //add attributes to this element's node
     DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("Experimenter",
       XMLObject.ELEMENT));
@@ -793,16 +839,19 @@ public class OMEMetaDataHandler{
   /**exports Groups from the database and adds to the tree*/
   private static void addGroup(Group element,DefaultMutableTreeNode root,
     DataFactory df){
+    IJ.showStatus("Retrieving Group attributes.");
     if(element==null)return;
-    //setup and load the columns that this element has
-    Criteria criteria=new Criteria();
-    criteria.addWantedField("Name");
-    criteria.addWantedField("Contact");
-    criteria.addWantedField("Leader");
-    criteria.addWantedField("id");
-    criteria.addFilter("id", (new Integer(element.getID())).toString());
-    //retrieve element to add with all columns loaded
-    element=(Group)df.retrieve("Group", criteria);
+    if(df!=null){
+      //setup and load the columns that this element has
+      Criteria criteria=new Criteria();
+      criteria.addWantedField("Name");
+      criteria.addWantedField("Contact");
+      criteria.addWantedField("Leader");
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(Group)df.retrieve("Group", criteria);
+    }
     DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("Group",
       XMLObject.ELEMENT));
     root.add(node);
@@ -819,16 +868,19 @@ public class OMEMetaDataHandler{
   /**exports categories from the database and adds to the tree*/
   private static void addCategory(Category element,DefaultMutableTreeNode root,
     DataFactory df){
+    IJ.showStatus("Retrieving Category attributes.");
     if(element==null)return;
-    //setup and load the columns that this element has
-    Criteria criteria=new Criteria();
-    criteria.addWantedField("Name");
-    criteria.addWantedField("Description");
-    criteria.addWantedField("CategoryGroup");
-    criteria.addWantedField("id");
-    criteria.addFilter("id", (new Integer(element.getID())).toString());
-    //retrieve element to add with all columns loaded
-    element=(Category)df.retrieve("Category", criteria);
+    if(df!=null){
+      //setup and load the columns that this element has
+      Criteria criteria=new Criteria();
+      criteria.addWantedField("Name");
+      criteria.addWantedField("Description");
+      criteria.addWantedField("CategoryGroup");
+      criteria.addWantedField("id");
+     criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(Category)df.retrieve("Category", criteria);
+    }
     DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("Category",
       XMLObject.ELEMENT));
     root.add(node);
@@ -843,15 +895,18 @@ public class OMEMetaDataHandler{
   /**exports categoryGroups from the database and adds to the tree*/
   private static void addCategoryGroup(CategoryGroup cg,DefaultMutableTreeNode root,
     DataFactory df){
+    IJ.showStatus("Retrieving Category Group attributes.");
     if(cg==null)return;
-    //setup and load the columns that this element has
-    Criteria criteria=new Criteria();
-    criteria.addWantedField("Name");
-    criteria.addWantedField("Description");
-    criteria.addWantedField("id");
-    criteria.addFilter("id", (new Integer(cg.getID())).toString());
-    //retrieve element to add with all columns loaded
-    cg=(CategoryGroup)df.retrieve("CategoryGroup", criteria);
+    if(df!=null){
+      //setup and load the columns that this element has
+      Criteria criteria=new Criteria();
+      criteria.addWantedField("Name");
+      criteria.addWantedField("Description");
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(cg.getID())).toString());
+      //retrieve element to add with all columns loaded
+      cg=(CategoryGroup)df.retrieve("CategoryGroup", criteria);
+    }
     DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("CategoryGroup",
       XMLObject.ELEMENT));
     root.add(node);
@@ -864,15 +919,18 @@ public class OMEMetaDataHandler{
   /**exports all attributes stemming from the pixels from the ome database*/
   private static void exportPixelMeta(Pixels pixels,
     DefaultMutableTreeNode pixelNode, DataFactory df){
+    IJ.showStatus("Retrieving Pixel attributes.");
     if(pixels==null)return;
-    //setup and load the columns that this element has
-    String [] pixelAttrs={"FileSHA1", "ImageServerID",
-      "PixelType", "Repository", "SizeC", "SizeT", "SizeX", "SizeY", "SizeZ"};
-    Criteria pixelCriteria=OMEDownload.makeAttributeFields(pixelAttrs);
-    pixelCriteria.addWantedField("id");
-    pixelCriteria.addFilter("id", (new Integer(pixels.getID())).toString());
-    //retrieve element to add with all columns loaded
-    pixels=(Pixels)df.retrieve("Pixels", pixelCriteria);
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] pixelAttrs={"FileSHA1", "ImageServerID",
+        "PixelType", "Repository", "SizeC", "SizeT", "SizeX", "SizeY", "SizeZ"};
+      Criteria pixelCriteria=OMEDownload.makeAttributeFields(pixelAttrs);
+      pixelCriteria.addWantedField("id");
+      pixelCriteria.addFilter("id", (new Integer(pixels.getID())).toString());
+      //retrieve element to add with all columns loaded
+      pixels=(Pixels)df.retrieve("Pixels", pixelCriteria);
+    }
     pixelNode.add(new DefaultMutableTreeNode(
       new XMLObject("PixelType", pixels.getPixelType(), XMLObject.PIXELS)));
     pixelNode.add(new DefaultMutableTreeNode(
@@ -893,21 +951,27 @@ public class OMEMetaDataHandler{
       new XMLObject("FileSHA1", pixels.getFileSHA1(), XMLObject.PIXELS)));
     addRepository(pixels.getRepository(), pixelNode, df);
     
-    //setup and load the columns that this element has
-    String [] attrs={"ColorDomain", "Index", "LogicalChannel", "Pixels"};
-    Criteria criteria=OMEDownload.makeAttributeFields(attrs);
-    criteria.addWantedField("id");
-    criteria.addFilter("Pixels", (new Integer(pixels.getID())).toString());
-    List channeli=df.retrieveList("PixelChannelComponent", criteria);
+    List channeli=null;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"ColorDomain", "Index", "LogicalChannel", "Pixels"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("Pixels", (new Integer(pixels.getID())).toString());
+      channeli=df.retrieveList("PixelChannelComponent", criteria);
+    }//else channeli=pixels.getPixelChannelComponents();//WAITING
     Iterator iter=channeli.iterator();
     while (iter.hasNext()){
       addPixelChannelComponent((PixelChannelComponent)iter.next(), pixelNode, df);
     }
     //setup and load the displayOptions related to the default pixels
-    Criteria displayCriteria=new Criteria();
-    displayCriteria.addWantedField("Pixels");
-    displayCriteria.addFilter("Pixels", (new Integer(pixels.getID())).toString());
-    List channeld=df.retrieveList("DisplayOptions", displayCriteria);
+    List channeld=null;
+    if(df!=null){
+      Criteria displayCriteria=new Criteria();
+      displayCriteria.addWantedField("Pixels");
+      displayCriteria.addFilter("Pixels", (new Integer(pixels.getID())).toString());
+      channeld=df.retrieveList("DisplayOptions", displayCriteria);
+    }//else channeld=pixels.getDisplayOptionsList();//WAITING
     Iterator iterDis=channeld.iterator();
     while (iterDis.hasNext()){
       addDisplayOptions((DisplayOptions)iterDis.next(), pixelNode, df);
@@ -917,6 +981,7 @@ public class OMEMetaDataHandler{
   /**exports channelIndexes from the database and adds to the tree*/
   private static void addPixelChannelComponent(PixelChannelComponent element, DefaultMutableTreeNode root, 
     DataFactory df){
+    IJ.showStatus("Retrieving Pixel Channel Component attributes.");
     if(element==null)return;
     //add attributes to this element's node
     DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("PixelChannelComponent",
@@ -932,6 +997,7 @@ public class OMEMetaDataHandler{
   /**exports TrajectoryEntries from the database and adds to the tree*/
   private static void addTrajectoryEntry(TrajectoryEntry element, DefaultMutableTreeNode root, 
     DataFactory df){
+    IJ.showStatus("Retrieving Trajectory Entry attributes.");
     if(element==null)return;
     //add attributes to this element's node
     DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("TrajectoryEntry",
@@ -956,14 +1022,17 @@ public class OMEMetaDataHandler{
   /**exports Trajectories from the database and adds to the tree*/
   private static void addTrajectory(Trajectory element, DefaultMutableTreeNode root, 
     DataFactory df){
+    IJ.showStatus("Retrieving Trajectory attributes.");
     if(element==null)return;
-    //setup and load the columns that this element has
-    String [] attrs={"AverageVelocity","Name", "TotalDistance"};
-    Criteria criteria=OMEDownload.makeAttributeFields(attrs);
-    criteria.addWantedField("id");
-    criteria.addFilter("id", (new Integer(element.getID())).toString());
-    //retrieve element to add with all columns loaded
-    element=(Trajectory)df.retrieve("Trajectory", criteria);
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"AverageVelocity","Name", "TotalDistance"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(Trajectory)df.retrieve("Trajectory", criteria);
+    }
     //add attributes to this element's node
     DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("Trajectory",
       XMLObject.ELEMENT));
@@ -978,6 +1047,7 @@ public class OMEMetaDataHandler{
   
   private static void exportMeta(Feature feature, DefaultMutableTreeNode root,
     DataFactory df){
+    IJ.showStatus("Retrieving Feature attributes.");
     DefaultMutableTreeNode featureNode=new DefaultMutableTreeNode(
       new XMLObject(XMLObject.FEATUREHEADING));
     root.add(featureNode);
@@ -986,53 +1056,58 @@ public class OMEMetaDataHandler{
     featureNode.add(new DefaultMutableTreeNode(
       new XMLObject("Tag", feature.getTag(), XMLObject.FEATURE)));
     //add trajectory entries
-    String [] attrs={"DeltaX","DeltaY", "DeltaZ", "Distance",
-      "Order", "Trajectory", "Velocity"};
-    Criteria trajCriteria=OMEDownload.makeAttributeFields(attrs);
-    trajCriteria.addWantedField("feature_id");
-    trajCriteria.addFilter("feature_id", (new Integer(feature.getID())).toString());
-    //retrieve element to add with all columns loaded
-    List trajects=df.retrieveList("TrajectoryEntry", trajCriteria);
+    List trajects=null;
+    if(df!=null){
+      String [] attrs={"DeltaX","DeltaY", "DeltaZ", "Distance",
+        "Order", "Trajectory", "Velocity"};
+      Criteria trajCriteria=OMEDownload.makeAttributeFields(attrs);
+      trajCriteria.addWantedField("feature_id");
+      trajCriteria.addFilter("feature_id", (new Integer(feature.getID())).toString());
+      //retrieve element to add with all columns loaded
+      trajects=df.retrieveList("TrajectoryEntry", trajCriteria);
+    }//else trajects=feature.getTrajectoryEntryList();//WAITING
     Iterator iterTra=trajects.iterator();
     while (iterTra.hasNext()){
       addTrajectoryEntry((TrajectoryEntry)iterTra.next(), featureNode, df);
     }
     //add attributes to this element's node
-    for (int i=0; i<OMEMetaPanel.FEATURE_TYPES.length; i++){
-      Criteria criteria= OMEDownload.makeAttributeFields(OMEMetaPanel.FEATURE_ATTRS[i]);
-      criteria.addWantedField("feature_id");
-      criteria.addFilter("feature_id", (new Integer(feature.getID())).toString());
-      IJ.showStatus("Retrieving  "+OMEMetaPanel.FEATURE_TYPES[i]+"s.");
-      List customs=null;
-      try{
-        customs=df.retrieveList(OMEMetaPanel.FEATURE_TYPES[i], criteria);
-      }catch(Exception e){
-        //don't tell anyone about it, just keep going
-        e.printStackTrace();
-        IJ.showStatus("Error while retrieving "+OMEMetaPanel.FEATURE_TYPES[i]+"s.");
-      }
-      if(customs!=null){
-        Iterator itCustoms=customs.iterator();
-        while (itCustoms.hasNext()){
-          AttributeDTO attr=(AttributeDTO)itCustoms.next();
-          DefaultMutableTreeNode elementNode=new DefaultMutableTreeNode(
-            new XMLObject(OMEMetaPanel.FEATURE_TYPES[i], XMLObject.ELEMENT));
-          featureNode.add(elementNode);
-          Map map = attr.getMap();
-          Set set = map.keySet();
-          Iterator iter2 = set.iterator();
-          while (iter2.hasNext()) {
-            Object key = iter2.next();
-            Object value = map.get(key);
-            if((value instanceof String) || (value instanceof Number) || 
-              (value instanceof Boolean)){
-              elementNode.add(new DefaultMutableTreeNode(new XMLObject((String)key,
-                ""+value, XMLObject.ATTRIBUTE)));
+    if(df!=null){
+      for (int i=0; i<OMEMetaPanel.FEATURE_TYPES.length; i++){
+        Criteria criteria= OMEDownload.makeAttributeFields(OMEMetaPanel.FEATURE_ATTRS[i]);
+        criteria.addWantedField("feature_id");
+        criteria.addFilter("feature_id", (new Integer(feature.getID())).toString());
+        IJ.showStatus("Retrieving  "+OMEMetaPanel.FEATURE_TYPES[i]+"s.");
+        List customs=null;
+        try{
+          customs=df.retrieveList(OMEMetaPanel.FEATURE_TYPES[i], criteria);
+        }catch(Exception e){
+          //don't tell anyone about it, just keep going
+          e.printStackTrace();
+          IJ.showStatus("Error while retrieving "+OMEMetaPanel.FEATURE_TYPES[i]+"s.");
+        }
+        if(customs!=null){
+          Iterator itCustoms=customs.iterator();
+          while (itCustoms.hasNext()){
+            AttributeDTO attr=(AttributeDTO)itCustoms.next();
+            DefaultMutableTreeNode elementNode=new DefaultMutableTreeNode(
+              new XMLObject(OMEMetaPanel.FEATURE_TYPES[i], XMLObject.ELEMENT));
+            featureNode.add(elementNode);
+            Map map = attr.getMap();
+            Set set = map.keySet();
+            Iterator iter2 = set.iterator();
+            while (iter2.hasNext()) {
+              Object key = iter2.next();
+              Object value = map.get(key);
+              if((value instanceof String) || (value instanceof Number) || 
+                (value instanceof Boolean)){
+                elementNode.add(new DefaultMutableTreeNode(new XMLObject((String)key,
+                  ""+value, XMLObject.ATTRIBUTE)));
+              }
             }
           }
         }
       }
-    }
+    }else exportMeta(feature, root);
     //add children features to tree
     List features=feature.getChildren();
     Iterator iter=features.iterator();
@@ -1040,5 +1115,1080 @@ public class OMEMetaDataHandler{
       exportMeta((Feature)iter.next(), featureNode, df);
     }
   }//end of exportMeta method
+  
+  /**exports Dimensions from the database and adds to the tree*/
+  private static void addDimensions(Dimensions element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving Dimensions attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"PixelSizeC", "PixelSizeT", "PixelSizeX", "PixelSizeY", "PixelSizeZ"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(Dimensions)df.retrieve("Dimensions", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("Dimensions",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("PixelSizeC", ""+element.getPixelSizeC(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("PixelSizeT", ""+element.getPixelSizeT(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("PixelSizeX", ""+element.getPixelSizeX(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("PixelSizeY", ""+element.getPixelSizeY(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("PixelSizeZ", ""+element.getPixelSizeZ(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addDimensions method
+  
+  /**exports DisplayROI from the database and adds to the tree*/
+  private static void addDisplayROI(DisplayROI element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving DisplayROI attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"DisplayOptions", "TO", "T1", "X0", "X1", "Y0", "Y1", "Z0", "Z1"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(DisplayROI)df.retrieve("DisplayROI", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("DisplayROI",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("T0", ""+element.getT0(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("T1", ""+element.getT1(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("X0", ""+element.getX0(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("X1", ""+element.getX1(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("Y0", ""+element.getY0(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("Y1", ""+element.getY1(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("Z0", ""+element.getZ0(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("Z1", ""+element.getZ1(),
+      XMLObject.ATTRIBUTE)));
+    addDisplayOptions(element.getDisplayOptions(), node, df);
+  }//end of addDisplayROI method
+  
+  /**exports ImageAnnotation from the database and adds to the tree*/
+  private static void addImageAnnotation(ImageAnnotation element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving ImageAnnotation attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Content", "Experimenter", "TheC", "TheT", "TheZ","Timestamp", "Valid"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(ImageAnnotation)df.retrieve("ImageAnnotation", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("ImageAnnotation",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("Content", ""+element.getContent(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheC", ""+element.getTheC(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheT", ""+element.getTheT(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("Timestamp", ""+element.getTimestamp(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("Valid", ""+element.isValid(),
+      XMLObject.ATTRIBUTE)));
+    addExperimenter(element.getExperimenter(), node, df);
+  }//end of addImageAnnotation method
+  
+  /**exports ImageExperiment from the database and adds to the tree*/
+  private static void addImageExperiment(ImageExperiment element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving ImageExperiment attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Experiment"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(ImageExperiment)df.retrieve("ImageExperiment", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("ImageExperiment",
+      XMLObject.ELEMENT));
+    root.add(node);
+    addExperiment(element.getExperiment(), node, df);
+  }//end of addImageExperiment method
+  
+  /**exports ImageGroup from the database and adds to the tree*/
+  private static void addImageGroup(ImageGroup element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving ImageGroup attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Group"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(ImageGroup)df.retrieve("ImageGroup", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("ImageGroup",
+      XMLObject.ELEMENT));
+    root.add(node);
+    addGroup(element.getGroup(), node, df);
+  }//end of addImageGroup method
+  
+  /**exports ImageInstrument from the database and adds to the tree*/
+  private static void addImageInstrument(ImageInstrument element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving ImageInstrument attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Instrument", "Objective"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(ImageInstrument)df.retrieve("ImageInstrument", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("ImageInstrument",
+      XMLObject.ELEMENT));
+    root.add(node);
+    addInstrument(element.getInstrument(), node, df);
+    addObjective(element.getObjective(), node, df);
+  }//end of addImageInstrument method
+  
+  /**exports ImagePlate from the database and adds to the tree*/
+  private static void addImagePlate(ImagePlate element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving ImagePlate attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Plate", "Sample", "Well"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(ImagePlate)df.retrieve("ImagePlate", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("ImagePlate",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("Well", ""+element.getWell(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("Sample", ""+element.getSample(),
+      XMLObject.ATTRIBUTE)));
+    addPlate(element.getPlate(), node, df);
+  }//end of addImagePlate method
+  
+  /**exports ImageTestSignature from the database and adds to the tree*/
+  private static void addImageTestSignature(ImageTestSignature element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving ImageTestSignature attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Value"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(ImageTestSignature)df.retrieve("ImageTestSignature", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("ImageTestSignature",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("Value", ""+element.getValue(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addImageTestSignature method
+  
+  /**exports ImagingEnvironment from the database and adds to the tree*/
+  private static void addImagingEnvironment(ImagingEnvironment element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving ImagingEnvironment attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"AirPressure", "CO2Percent", "Humidity", "Temperature"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(ImagingEnvironment)df.retrieve("ImagingEnvironment", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("ImagingEnvironment",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("AirPressure", ""+element.getAirPressure(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("CO2Percent", ""+element.getCO2Percent(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("Humidity", ""+element.getHumidity(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("Temperature", ""+element.getTemperature(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addImagingEnvironment method
+  
+  /**exports PlaneCentroid from the database and adds to the tree*/
+  private static void addPlaneCentroid(PlaneCentroid element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving PlaneCentroid attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"TheC", "TheT", "TheZ", "X", "Y"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(PlaneCentroid)df.retrieve("PlaneCentroid", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("PlaneCentroid",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheC", ""+element.getTheC(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheT", ""+element.getTheT(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheZ", ""+element.getTheZ(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("X", ""+element.getX(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("Y", ""+element.getY(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addPlaneCentroid method
+  
+  /**exports PlaneGeometricMean from the database and adds to the tree*/
+  private static void addPlaneGeometricMean(PlaneGeometricMean element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving PlaneGeometricMean attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"GeometricMean", "TheC", "TheT", "TheZ"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(PlaneGeometricMean)df.retrieve("PlaneGeometricMean", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("PlaneGeometricMean",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("GeometricMean", ""+element.getGeometricMean(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheC", ""+element.getTheC(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheT", ""+element.getTheT(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheZ", ""+element.getTheZ(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addPlaneGeometricMean method
+  
+  /**exports PlaneGeometricSigma from the database and adds to the tree*/
+  private static void addPlaneGeometricSigma(PlaneGeometricSigma element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving PlaneGeometricSigma attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"GeometricSigma", "TheC", "TheT", "TheZ"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(PlaneGeometricSigma)df.retrieve("PlaneGeometricSigma", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("PlaneGeometricSigma",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("GeometricSigma", ""+element.getGeometricSigma(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheC", ""+element.getTheC(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheT", ""+element.getTheT(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheZ", ""+element.getTheZ(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addPlaneGeometricSigma method
+  
+  /**exports PlaneMaximum from the database and adds to the tree*/
+  private static void addPlaneMaximum(PlaneMaximum element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving PlaneMaximum attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Maximum", "TheC", "TheT", "TheZ"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(PlaneMaximum)df.retrieve("PlaneMaximum", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("PlaneMaximum",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("Maximum", ""+element.getMaximum(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheC", ""+element.getTheC(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheT", ""+element.getTheT(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheZ", ""+element.getTheZ(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addPlaneMaximum method
+  
+  /**exports PlaneMean from the database and adds to the tree*/
+  private static void addPlaneMean(PlaneMean element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving PlaneMean attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Mean", "TheC", "TheT", "TheZ"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(PlaneMean)df.retrieve("PlaneMean", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("PlaneMean",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("Mean", ""+element.getMean(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheC", ""+element.getTheC(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheT", ""+element.getTheT(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheZ", ""+element.getTheZ(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addPlaneMean method
+  
+  /**exports PlaneMinimum from the database and adds to the tree*/
+  private static void addPlaneMinimum(PlaneMinimum element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving PlaneMinimum attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Minimum", "TheC", "TheT", "TheZ"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(PlaneMinimum)df.retrieve("PlaneMinimum", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("PlaneMinimum",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("Minimum", ""+element.getMinimum(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheC", ""+element.getTheC(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheT", ""+element.getTheT(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheZ", ""+element.getTheZ(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addPlaneMinimum method
+  
+  /**exports PlaneSigma from the database and adds to the tree*/
+  private static void addPlaneSigma(PlaneSigma element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving PlaneSigma attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Sigma", "TheC", "TheT", "TheZ"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(PlaneSigma)df.retrieve("PlaneSigma", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("PlaneSigma",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("Sigma", ""+element.getSigma(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheC", ""+element.getTheC(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheT", ""+element.getTheT(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheZ", ""+element.getTheZ(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addPlaneSigma method
+  
+  /**exports PlaneSum_i from the database and adds to the tree*/
+  private static void addPlaneSum_i(PlaneSum_i element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving PlaneSum_i attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Sum_i", "TheC", "TheT", "TheZ"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(PlaneSum_i)df.retrieve("PlaneSum_i", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("PlaneSum_i",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("Sum_i", ""+element.getSum_i(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheC", ""+element.getTheC(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheT", ""+element.getTheT(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheZ", ""+element.getTheZ(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addPlaneSum_i method
+  
+  /**exports PlaneSum_i2 from the database and adds to the tree*/
+  private static void addPlaneSum_i2(PlaneSum_i2 element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving PlaneSum_i2 attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Sum_i2", "TheC", "TheT", "TheZ"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(PlaneSum_i2)df.retrieve("PlaneSum_i2", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("PlaneSum_i2",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("Sum_i2", ""+element.getSum_i2(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheC", ""+element.getTheC(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheT", ""+element.getTheT(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheZ", ""+element.getTheZ(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addPlaneSum_i2 method
+  
+  /**exports PlaneSum_log_i from the database and adds to the tree*/
+  private static void addPlaneSum_log_i(PlaneSum_log_i element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving PlaneSum_log_i attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Sum_log_i", "TheC", "TheT", "TheZ"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(PlaneSum_log_i)df.retrieve("PlaneSum_log_i", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("PlaneSum_log_i",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("Sum_log_i", ""+element.getSum_log_i(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheC", ""+element.getTheC(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheT", ""+element.getTheT(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheZ", ""+element.getTheZ(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addPlaneSum_log_i method
+  
+  /**exports PlaneSum_Xi from the database and adds to the tree*/
+  private static void addPlaneSum_Xi(PlaneSum_Xi element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving PlaneSum_Xi attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Sum_Xi", "TheC", "TheT", "TheZ"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(PlaneSum_Xi)df.retrieve("PlaneSum_Xi", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("PlaneSum_Xi",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("Sum_Xi", ""+element.getSum_Xi(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheC", ""+element.getTheC(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheT", ""+element.getTheT(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheZ", ""+element.getTheZ(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addPlaneSum_Xi method
+  
+  /**exports PlaneSum_Yi from the database and adds to the tree*/
+  private static void addPlaneSum_Yi(PlaneSum_Yi element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving PlaneSum_Yi attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Sum_Yi", "TheC", "TheT", "TheZ"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(PlaneSum_Yi)df.retrieve("PlaneSum_Yi", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("PlaneSum_Yi",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("Sum_Yi", ""+element.getSum_Yi(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheC", ""+element.getTheC(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheT", ""+element.getTheT(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheZ", ""+element.getTheZ(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addPlaneSum_Yi method
+  
+  /**exports PlaneSum_Zi from the database and adds to the tree*/
+  private static void addPlaneSum_Zi(PlaneSum_Zi element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving PlaneSum_Zi attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Sum_Zi", "TheC", "TheT", "TheZ"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(PlaneSum_Zi)df.retrieve("PlaneSum_Zi", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("PlaneSum_Zi",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("Sum_Zi", ""+element.getSum_Zi(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheC", ""+element.getTheC(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheT", ""+element.getTheT(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheZ", ""+element.getTheZ(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addPlaneSum_Zi method
+  
+  /**exports StackCentroid from the database and adds to the tree*/
+  private static void addStackCentroid(StackCentroid element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving StackCentroid attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"TheC", "TheT", "X", "Y", "Z"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(StackCentroid)df.retrieve("StackCentroid", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("StackCentroid",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheC", ""+element.getTheC(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheT", ""+element.getTheT(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("X", ""+element.getX(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("Y", ""+element.getY(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("Z", ""+element.getZ(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addStackCentroid method
+  
+  /**exports StackGeometricMean from the database and adds to the tree*/
+  private static void addStackGeometricMean(StackGeometricMean element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving StackGeometricMean attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"GeometricMean","TheC", "TheT"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(StackGeometricMean)df.retrieve("StackGeometricMean", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("StackGeometricMean",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("GeometricMean", ""+element.getGeometricMean(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheC", ""+element.getTheC(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheT", ""+element.getTheT(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addStackGeometricMean method
+  
+  /**exports StackGeometricSigma from the database and adds to the tree*/
+  private static void addStackGeometricSigma(StackGeometricSigma element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving StackGeometricSigma attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"GeometicSigma","TheC", "TheT"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(StackGeometricSigma)df.retrieve("StackGeometricSigma", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("StackGeometricSigma",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("GeometricSigma", ""+element.getGeometricSigma(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheC", ""+element.getTheC(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheT", ""+element.getTheT(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addStackGeometricSigma method
+  
+  /**exports StackMaximum from the database and adds to the tree*/
+  private static void addStackMaximum(StackMaximum element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving StackMaximum attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Maximum","TheC", "TheT"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(StackMaximum)df.retrieve("StackMaximum", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("StackMaximum",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("Maximum", ""+element.getMaximum(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheC", ""+element.getTheC(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheT", ""+element.getTheT(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addStackMaximum method
+  
+  /**exports StackMean from the database and adds to the tree*/
+  private static void addStackMean(StackMean element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving StackMean attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Mean","TheC", "TheT"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(StackMean)df.retrieve("StackMean", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("StackMean",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("Mean", ""+element.getMean(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheC", ""+element.getTheC(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheT", ""+element.getTheT(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addStackMean method
+  
+  /**exports StackMinimum from the database and adds to the tree*/
+  private static void addStackMinimum(StackMinimum element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving StackMinimum attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Minimum","TheC", "TheT"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(StackMinimum)df.retrieve("StackMinimum", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("StackMinimum",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("Minimum", ""+element.getMinimum(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheC", ""+element.getTheC(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheT", ""+element.getTheT(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addStackMinimum method
+  
+  /**exports StackSigma from the database and adds to the tree*/
+  private static void addStackSigma(StackSigma element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving StackSigma attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Sigma","TheC", "TheT"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(StackSigma)df.retrieve("StackSigma", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("StackSigma",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("Sigma", ""+element.getSigma(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheC", ""+element.getTheC(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheT", ""+element.getTheT(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addStackSigma method
+  
+  /**exports StageLabel from the database and adds to the tree*/
+  private static void addStageLabel(StageLabel element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving StageLabel attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Name","X", "Y", "Z"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(StageLabel)df.retrieve("StageLabel", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("StageLabel",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("Name", ""+element.getName(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("X", ""+element.getX(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("Y", ""+element.getY(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("Z", ""+element.getZ(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addStageLabel method
+  
+  /**exports Thumbnail from the database and adds to the tree*/
+  private static void addThumbnail(Thumbnail element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving Thumbnail attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"MimeType","Path", "Repository"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(Thumbnail)df.retrieve("Thumbnail", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("Thumbnail",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("MimeType", ""+element.getMimeType(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("Path", ""+element.getPath(),
+      XMLObject.ATTRIBUTE)));
+    addRepository(element.getRepository(), node, df);
+  }//end of addThumbnail method
+  
+  /**exports Classification from the database and adds to the tree*/
+  private static void addClassification(Classification element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving Classification attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Category", "Confidence", "Valid"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(Classification)df.retrieve("Classification", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("Classification",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("Confidence", ""+element.getConfidence(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("Valid", ""+element.isValid(),
+      XMLObject.ATTRIBUTE)));
+    addCategory(element.getCategory(), node, df);
+  }//end of addClassification method
+  
+  /**exports Bounds from the database and adds to the tree*/
+  private static void addBounds(Bounds element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving Bounds attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Height", "Width", "X", "Y"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(Bounds)df.retrieve("Bounds", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("Bounds",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("Height", ""+element.getHeight(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("Width", ""+element.getWidth(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("X", ""+element.getX(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("Y", ""+element.getY(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addBounds method
+  
+  /**exports Extent from the database and adds to the tree*/
+  private static void addExtent(Extent element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving Extent attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"FormFacter", "MaxX", "MaxY", "MaxZ", "MinX", "MinY", "MinZ", "Perimeter", "SigmaX",
+      "SigmaY", "SigmaZ", "SurfaceArea", "Volume"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(Extent)df.retrieve("Extent", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("Extent",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("FormFactor", ""+element.getFormFactor(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("MaxX", ""+element.getMaxX(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("MaxY", ""+element.getMaxY(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("MaxZ", ""+element.getMaxZ(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("MinX", ""+element.getMinX(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("MinY", ""+element.getMinY(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("MinZ", ""+element.getMinZ(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("Perimeter", ""+element.getPerimeter(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("SigmaX", ""+element.getSigmaX(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("SigmaY", ""+element.getSigmaY(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("SigmaZ", ""+element.getSigmaZ(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("SurfaceArea", ""+element.getSurfaceArea(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("Volume", ""+element.getVolume(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addExtent method
+  
+  /**exports Location from the database and adds to the tree*/
+  private static void addLocation(Location element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving Location attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"TheX", "TheY", "TheZ"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(Location)df.retrieve("Location", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("Location",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheX", ""+element.getTheX(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheY", ""+element.getTheY(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheZ", ""+element.getTheZ(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addLocation method
+  
+  /**exports Ratio from the database and adds to the tree*/
+  private static void addRatio(Ratio element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving Ratio attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Ratio"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(Ratio)df.retrieve("Ratio", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("Ratio",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("Ratio", ""+element.getRatio(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addRatio method
+  
+  /**exports Signal from the database and adds to the tree*/
+  private static void addSignal(Signal element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving Signal attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Background", "CentroidX", "CentroidY", "CentroidZ", "GeometricMean",
+      "GeometricSigma", "Integral", "Mean", "Sigma", "TheC"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(Signal)df.retrieve("Signal", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("Signal",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("Background", ""+element.getBackground(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("CentroidX", ""+element.getCentroidX(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("CentroidY", ""+element.getCentroidY(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("CentroidZ", ""+element.getCentroidZ(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("GeometricMean", ""+element.getGeometricMean(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("GeometricSigma", ""+element.getGeometricSigma(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("Integral", ""+element.getIntegral(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("Mean", ""+element.getMean(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("Sigma", ""+element.getSigma(),
+      XMLObject.ATTRIBUTE)));
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheC", ""+element.getTheC(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addSignal method
+  
+  /**exports Threshold from the database and adds to the tree*/
+  private static void addThreshold(Threshold element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving Threshold attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"Threshold"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(Threshold)df.retrieve("Threshold", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("Threshold",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("Threshold", ""+element.getThreshold(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addThreshold method
+  
+  /**exports Timepoint from the database and adds to the tree*/
+  private static void addTimepoint(Timepoint element, DefaultMutableTreeNode root, 
+    DataFactory df){
+    IJ.showStatus("Retrieving Timepoint attributes.");
+    if(element==null)return;
+    if(df!=null){
+      //setup and load the columns that this element has
+      String [] attrs={"TheT"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(element.getID())).toString());
+      //retrieve element to add with all columns loaded
+      element=(Timepoint)df.retrieve("Timepoint", criteria);
+    }
+    //add attributes to this element's node
+    DefaultMutableTreeNode node=new DefaultMutableTreeNode(new XMLObject("Timepoint",
+      XMLObject.ELEMENT));
+    root.add(node);
+    node.add(new DefaultMutableTreeNode(new XMLObject("TheT", ""+element.getTheT(),
+      XMLObject.ATTRIBUTE)));
+  }//end of addTimepoint method
   
 }//end of OMEMetaDataHandler class
