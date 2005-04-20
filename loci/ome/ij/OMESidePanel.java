@@ -126,7 +126,6 @@ public class OMESidePanel implements ActionListener{
             //Class myXMLclass = Class.forName("XMLUtils");
             //Method m = myXMLclass.getMethod("readTiff", new Class[] {Integer.class});
             //IJ.showStatus("Ready to read xml in tiff header.");
-            System.out.println("go get em, don't use that old stuff");
             OMEMetaDataHandler.exportMeta(ijimage);
             
             //m.invoke(null, new Object[] {new Integer(ijimage)});

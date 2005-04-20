@@ -33,7 +33,33 @@ public class OMETablePanel implements ActionListener {
     paneR.setLayout(new BoxLayout(paneR, BoxLayout.Y_AXIS));
     JPanel paneOwner=new JPanel(), paneType=new JPanel();
     paneThumb=new JPanel();   
-    paneOwner.setLayout(new GridLayout(7,2,5,5));
+    
+    
+    //paneOwner.setLayout(new GridLayout(7,2,5,5));
+    GridBagLayout grid=new GridBagLayout();
+    paneOwner.setLayout(grid);
+    GridBagConstraints e = new GridBagConstraints(), d=new GridBagConstraints();
+    e.weightx = 0;
+    e.weighty=0;
+    e.gridheight=1;
+    e.gridwidth=1;
+    e.gridx=0;
+    e.gridy=0;
+    e.anchor=GridBagConstraints.LINE_END;
+    e.insets=new Insets(2,2,2,2);
+    e.fill=GridBagConstraints.NONE;
+    d.gridwidth=GridBagConstraints.REMAINDER;
+    d.gridheight=1;
+    d.weighty=0;
+    d.weightx=1;
+    d.gridx=1;
+    d.gridy=0;
+    d.fill=GridBagConstraints.HORIZONTAL;
+    d.insets=new Insets(2,2,2,2);
+    
+    
+    
+    
     paneType.setLayout(new GridLayout(1,2,5,5));
     paneR.add(paneThumb);
     paneR.add(paneOwner);
@@ -46,6 +72,14 @@ public class OMETablePanel implements ActionListener {
     y=new JLabel("Size Y: ", JLabel.RIGHT),
     z=new JLabel("Size Z: ", JLabel.RIGHT),
     descrip=new JLabel("Description: ", JLabel.RIGHT);
+    owner.setMaximumSize(new Dimension(10, 2));
+    type.setMaximumSize(new Dimension(10, 2));
+    c.setMaximumSize(new Dimension(10, 2));
+    t.setMaximumSize(new Dimension(10, 2));
+    x.setMaximumSize(new Dimension(10, 2));
+    y.setMaximumSize(new Dimension(10, 2));
+    z.setMaximumSize(new Dimension(10, 2));
+    descrip.setMaximumSize(new Dimension(10, 2));
 
     own=new JTextArea("", 1,6);
     typ=new JTextArea("", 1,6);
@@ -74,22 +108,58 @@ public class OMETablePanel implements ActionListener {
     thumb.setMaximumSize(thsize);
 
     JScrollPane desScroll=new JScrollPane(des);
-    paneOwner.add(owner);
-    paneOwner.add(own);
-    paneOwner.add(type);
-    paneOwner.add(typ);
-    paneOwner.add(c);
-    paneOwner.add(c1);
-    paneOwner.add(t);
-    paneOwner.add(t1);
-    paneOwner.add(x);
-    paneOwner.add(x1);
-    paneOwner.add(y);
-    paneOwner.add(y1);
-    paneOwner.add(z);
-    paneOwner.add(z1);
-    paneType.add(descrip);
-    paneType.add(desScroll);
+    paneOwner.add(owner, e);
+//    grid.addLayoutComponent(owner, e);
+    paneOwner.add(own, d);
+//    grid.addLayoutComponent(own, d);
+    ++e.gridy;
+    ++d.gridy;
+    paneOwner.add(type, e);
+//    grid.addLayoutComponent(type, e);
+    paneOwner.add(typ,d);
+//    grid.addLayoutComponent(typ, d);
+    ++e.gridy;
+    ++d.gridy;
+    paneOwner.add(c,e);
+//    grid.addLayoutComponent(c, e);
+    paneOwner.add(c1,d);
+//    grid.addLayoutComponent(c1, d);
+    ++e.gridy;
+    ++d.gridy;
+    paneOwner.add(t,e);
+//    grid.addLayoutComponent(t, e);
+    paneOwner.add(t1,d);
+//    grid.addLayoutComponent(t1, d);
+    ++e.gridy;
+    ++d.gridy;
+    paneOwner.add(x,e);
+//    grid.addLayoutComponent(x, e);
+    paneOwner.add(x1,d);
+//    grid.addLayoutComponent(x1, d);
+    ++e.gridy;
+    ++d.gridy;
+    paneOwner.add(y,e);
+//    grid.addLayoutComponent(y, e);
+    paneOwner.add(y1,d);
+//    grid.addLayoutComponent(y1, d);
+    ++e.gridy;
+    ++d.gridy;
+    paneOwner.add(z,e);
+//    grid.addLayoutComponent(z, e);
+    paneOwner.add(z1,d);
+//    grid.addLayoutComponent(z1, d);
+    ++e.gridy;
+    ++d.gridy;
+    e.gridheight=2;
+    e.weighty=1;
+    d.gridheight=2;
+    d.weighty=1;
+    e.fill=GridBagConstraints.VERTICAL;
+    d.fill=GridBagConstraints.BOTH;
+    paneType.add(descrip,e);
+//    grid.addLayoutComponent(descrip, e);
+    paneType.add(desScroll,d);
+//    grid.addLayoutComponent(desScroll, d);
     paneThumb.add(thumb);
     
     extra=details;

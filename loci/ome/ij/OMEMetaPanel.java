@@ -138,13 +138,15 @@ public class OMEMetaPanel implements ActionListener, TreeSelectionListener{
     tree.addTreeSelectionListener(this);
     JScrollPane treeView = new JScrollPane(tree);
     treeView.setPreferredSize(new Dimension(200, 200));
-    
+    //treeView.setPreferredSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+    //treeView.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
     
     //creates the dialog box
     dia=new JDialog(frame, "OME Image Attributes", true);
     JPanel pane=new JPanel();
     pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
     customPane=new JPanel();
+    //pane.setPreferredSize(new Dimension(200, 300));
     customField=new JTextArea(2,20);
     customField.setLineWrap(true);
     customField.setWrapStyleWord(true);
@@ -157,7 +159,7 @@ public class OMEMetaPanel implements ActionListener, TreeSelectionListener{
     splitPane=new JSplitPane(JSplitPane.VERTICAL_SPLIT, treeView, customPane);
     
     //try
-    splitPane.setDividerLocation(.8);
+    //splitPane.setDividerLocation(.1);
     
     pane.add(splitPane);
     JPanel paneButtons=new JPanel();

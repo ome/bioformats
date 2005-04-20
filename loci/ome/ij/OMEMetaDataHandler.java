@@ -1,4 +1,3 @@
-
 import ij.*;
 import ij.process.ImageProcessor;
 import ij.io.FileInfo;
@@ -11,8 +10,10 @@ import java.util.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 /**
  * OMEMetaDataHandler is the class that handles
- * the export of metadata
- * associated with an image and OME.
+ * the download of metadata from the database
+ * associated with an image and OME.  It also
+ * handles the sifting of xml meta-data in the
+ * header of an OME-Tiff file.
  * @author Philip Huettl pmhuettl@wisc.edu
  */
 public class OMEMetaDataHandler{
@@ -89,9 +90,7 @@ public class OMEMetaDataHandler{
     while (iter.hasNext()){
       exportMeta((ImageNode)iter.next(), (DefaultMutableTreeNode)meta[1]);
     }
-    
-    
-    
+
     //stop holding the omeNode
     omeNode=null;
   }//end of OME-TIFF xml retrieval exportMeta method
@@ -100,52 +99,56 @@ public class OMEMetaDataHandler{
   private static void exportMeta(ImageNode image, DefaultMutableTreeNode rootNode){
     DefaultMutableTreeNode imageNode=addImage(image, null);
     rootNode.add(imageNode);
+    DefaultMutableTreeNode customNode=new DefaultMutableTreeNode(
+      new XMLObject(XMLObject.CUSTOMHEADING));
     //implement when known if list or single
-/*    addDimensions();
-    addDisplayROI();
-    addImageAnnotation();
-    addImageExperiment();
-    addImageGroup();
-    addImageInstrument();
-    addImagePlate();
-    addImaaddestSignature();
-    addImagingEnvironment();  
-    addPixelChannelComponent();
-    addPlaneCentroid();
-    addPlaneGeometricMean();
-    addPlaneGeometricSigma();
-    addPlaneMaximum();
-    addPlaneMean();
-    addPlaneMinimum();
-    addPlaneSigma();
-    addPlaneSum_i();
-    addPlaneSum_i2();
-    addPlaneSum_log_i();
-    addPlaneSum_Xi();
-    addPlaneSum_Yi();
-    addPlaneSum_Zi();
-    addStackCentroid();
-    addStackGeometricMean();
-    addStackGeometricSigma();
-    addStackMaximum();
-    addStackMean();
-    addStackMinimum();
-    addStackSigma();
-    addStageLabel();
-    addThumbnail();
-    addClassification();
+/*    addDimensions( , customNode, null);
+    addDisplayROI(, customNode, null);
+    addImageAnnotation(, customNode, null);
+    addImageExperiment(, customNode, null);
+    addImageGroup(, customNode, null);
+    addImageInstrument(, customNode, null);
+    addImagePlate(, customNode, null);
+    addImaaddestSignature(, customNode, null);
+    addImagingEnvironment(, customNode, null);  
+    addPixelChannelComponent(, customNode, null);
+    addPlaneCentroid(, customNode, null);
+    addPlaneGeometricMean(, customNode, null);
+    addPlaneGeometricSigma(, customNode, null);
+    addPlaneMaximum(, customNode, null);
+    addPlaneMean(, customNode, null);
+    addPlaneMinimum(, customNode, null);
+    addPlaneSigma(, customNode, null);
+    addPlaneSum_i(, customNode, null);
+    addPlaneSum_i2(, customNode, null);
+    addPlaneSum_log_i(, customNode, null);
+    addPlaneSum_Xi(, customNode, null);
+    addPlaneSum_Yi(, customNode, null);
+    addPlaneSum_Zi(, customNode, null);
+    addStackCentroid(, customNode, null);
+    addStackGeometricMean(, customNode, null);
+    addStackGeometricSigma(, customNode, null);
+    addStackMaximum(, customNode, null);
+    addStackMean(, customNode, null);
+    addStackMinimum(, customNode, null);
+    addStackSigma(, customNode, null);
+    addStageLabel(, customNode, null);
+    addThumbnail(, customNode, null);
+    addClassification(, customNode, null);
 */
+    if(!customNode.isLeaf())imageNode.add(customNode);
+    IJ.showStatus("Finished retrieving image metadata.");
   }//end of ImageNode exportMeta Method
   
   /**method that imports an image node from xml in an OME-TIFF file*/
   private static void exportMeta(Feature feature, DefaultMutableTreeNode root){
-/*    getBounds();
-    getExtent();
-    getLocation();
-    getRatio();
-    getSignal();
-    getThreshold();
-    getTimepoint();
+/*    getBounds(, root, null);
+    getExtent(, root, null);
+    getLocation(, root, null);
+    getRatio(, root, null);
+    getSignal(, root, null);
+    getThreshold(, root, null);
+    getTimepoint(, root, null);
 */
   }//end of FeatureNode exportMeta Method
   
@@ -168,10 +171,11 @@ public class OMEMetaDataHandler{
     //get pixel information
     DefaultMutableTreeNode pixelNode=new DefaultMutableTreeNode(
         new XMLObject(XMLObject.PIXELHEADING));
-    imageNode.add(pixelNode);
     Pixels pixels=image.getDefaultPixels();
     exportPixelMeta(pixels, pixelNode, df);
+    if(!pixelNode.isLeaf())imageNode.add(pixelNode);
     //get dataset references
+    IJ.showStatus("Retrieving Dataset References.");
     DefaultMutableTreeNode datasets=new DefaultMutableTreeNode(
       new XMLObject(XMLObject.DATASETREF));
     List data=image.getDatasets();
@@ -1048,6 +1052,7 @@ public class OMEMetaDataHandler{
   private static void exportMeta(Feature feature, DefaultMutableTreeNode root,
     DataFactory df){
     IJ.showStatus("Retrieving Feature attributes.");
+    System.out.println("feature output");
     DefaultMutableTreeNode featureNode=new DefaultMutableTreeNode(
       new XMLObject(XMLObject.FEATUREHEADING));
     root.add(featureNode);
@@ -1107,7 +1112,7 @@ public class OMEMetaDataHandler{
           }
         }
       }
-    }else exportMeta(feature, root);
+    }else exportMeta(feature, featureNode);
     //add children features to tree
     List features=feature.getChildren();
     Iterator iter=features.iterator();
