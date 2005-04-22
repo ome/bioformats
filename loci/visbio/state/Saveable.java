@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.state;
 
-import loci.ome.xml.OMEElement;
+//import loci.ome.xml.OMEElement;
 
 /**
  * The Saveable interface provides methods for saving and restoring the
@@ -32,9 +32,9 @@ import loci.ome.xml.OMEElement;
 public interface Saveable {
 
   /** Writes the current state to the given XML object. */
-  void saveState(OMEElement ome) throws SaveException;
+  //void saveState(OMEElement ome) throws SaveException;
 
   /** Restores the current state from the given XML object. */
-  void restoreState(OMEElement ome) throws SaveException;
+  //void restoreState(OMEElement ome) throws SaveException;
 
 }

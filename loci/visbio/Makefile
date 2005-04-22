@@ -90,7 +90,6 @@ DOCFLAGS = -source 1.4 $(DOC_LINKS) -d $(DOC_DIR) -J-Xmx$(DOC_MEM) -package \
 	$(JC) $(JFLAGS) $<
 
 PACKAGES = \
-	loci.ome.xml \
 	loci.visbio \
 	loci.visbio.data \
 	loci.visbio.help \

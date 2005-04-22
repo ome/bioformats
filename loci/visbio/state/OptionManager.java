@@ -25,13 +25,13 @@ package loci.visbio.state;
 
 import java.awt.Component;
 import java.io.File;
-import java.io.IOException;
+//import java.io.IOException;
 import java.util.Vector;
 import javax.swing.JCheckBox;
-import loci.ome.xml.OMEElement;
+//import loci.ome.xml.OMEElement;
 import loci.visbio.*;
 import loci.visbio.util.WarningPane;
-import org.xml.sax.SAXException;
+//import org.xml.sax.SAXException;
 
 /** OptionManager is the manager encapsulating VisBio's options. */
 public class OptionManager extends LogicManager {
@@ -120,7 +120,7 @@ public class OptionManager extends LogicManager {
   /** Reads in configuration from configuration file. */
   public void readIni() {
     if (!new File(CONFIG_FILE).exists()) return;
-    OMEElement ome = new OMEElement();
+    /*OMEElement ome = new OMEElement();
     try { ome.readXML(CONFIG_FILE); }
     catch (IOException exc) { exc.printStackTrace(); }
     catch (SAXException exc) { exc.printStackTrace(); }
@@ -128,16 +128,16 @@ public class OptionManager extends LogicManager {
       restoreState(ome);
       bio.generateEvent(this, "read ini file", false);
     }
-    catch (SaveException exc) { exc.printStackTrace(); }
+    catch (SaveException exc) { exc.printStackTrace(); }*/
   }
 
   /** Writes out configuration to configuration file. */
   public void writeIni() {
-    OMEElement ome = new OMEElement();
+    /*OMEElement ome = new OMEElement();
     try { saveState(ome); }
     catch (SaveException exc) { exc.printStackTrace(); }
     try { ome.printXML(CONFIG_FILE); }
-    catch (IOException exc) { exc.printStackTrace(); }
+    catch (IOException exc) { exc.printStackTrace(); }*/
   }
 
   /** Checks whether to display a warning, and does so if necessary. */
@@ -189,20 +189,20 @@ public class OptionManager extends LogicManager {
   // -- Saveable API methods --
 
   /** Writes the current state to the given XML object. */
-  public void saveState(OMEElement ome) throws SaveException {
+  /*public void saveState(OMEElement ome) throws SaveException {
     for (int i=0; i<list.size(); i++) {
       BioOption option = (BioOption) list.elementAt(i);
       option.saveState(ome);
     }
-  }
+  }*/
 
   /** Restores the current state from the given XML object. */
-  public void restoreState(OMEElement ome) throws SaveException {
+  /*public void restoreState(OMEElement ome) throws SaveException {
     for (int i=0; i<list.size(); i++) {
       BioOption option = (BioOption) list.elementAt(i);
       option.restoreState(ome);
     }
-  }
+  }*/
 
 
   // -- Helper methods --

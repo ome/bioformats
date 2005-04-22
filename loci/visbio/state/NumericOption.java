@@ -26,8 +26,8 @@ package loci.visbio.state;
 import java.awt.Component;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import loci.ome.xml.CAElement;
-import loci.ome.xml.OMEElement;
+//import loci.ome.xml.CAElement;
+//import loci.ome.xml.OMEElement;
 import loci.visbio.util.FormsUtil;
 
 /** NumericOption is an integer option in the VisBio Options dialog. */
@@ -83,15 +83,15 @@ public class NumericOption extends BioOption {
   protected static final String NUMERIC_OPTION = "VisBio_NumericOption";
 
   /** Writes the current state to the given XML object. */
-  public void saveState(OMEElement ome) throws SaveException {
+  /*public void saveState(OMEElement ome) throws SaveException {
     CAElement custom = ome.getCustomAttr();
     custom.createElement(NUMERIC_OPTION);
     custom.setAttribute("name", text);
     custom.setAttribute("value", field.getText());
-  }
+  }*/
 
   /** Restores the current state from the given XML object. */
-  public void restoreState(OMEElement ome) throws SaveException {
+  /*public void restoreState(OMEElement ome) throws SaveException {
     CAElement custom = ome.getCustomAttr();
     String[] names = custom.getAttributes(NUMERIC_OPTION, "name");
     String[] values = custom.getAttributes(NUMERIC_OPTION, "value");
@@ -101,6 +101,6 @@ public class NumericOption extends BioOption {
         break;
       }
     }
-  }
+  }*/
 
 }

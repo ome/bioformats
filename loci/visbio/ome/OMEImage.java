@@ -57,6 +57,9 @@ public class OMEImage extends ImageTransform {
   /** Associated OME server. */
   protected String server;
 
+  /** Session key for OME server. */
+  protected String sessionKey;
+
   /** Username for OME server. */
   protected String user;
 
@@ -116,6 +119,18 @@ public class OMEImage extends ImageTransform {
 
   /**
    * Constructs a new multidimensional data object from the given
+   * OME server, session key and image ID.
+   */
+  public OMEImage(String server, String sessionKey, int imageId) {
+    super(null, null);
+    this.server = server;
+    this.sessionKey = sessionKey;
+    this.imageId = imageId;
+    initState(null);
+  }
+
+  /**
+   * Constructs a new multidimensional data object from the given
    * OME server, username, password and image ID.
    */
   public OMEImage(String server, String user, String password, int imageId) {
@@ -132,6 +147,9 @@ public class OMEImage extends ImageTransform {
 
   /** Gets the OME server from which to access the image. */
   public String getServer() { return server; }
+
+  /** Gets the session key to use when accessing the OME server. */
+  public String getSessionKey() { return sessionKey; }
 
   /** Gets the username to use when accessing the OME server. */
   public String getUsername() { return user; }
@@ -159,7 +177,7 @@ public class OMEImage extends ImageTransform {
 
   /** Creates a new OME image, with user interaction. */
   public static DataTransform makeTransform(DataManager dm) {
-    return makeTransform(dm, null, null, -1);
+    return makeTransform(dm, null, null, null, -1);
   }
 
   /**
@@ -167,40 +185,49 @@ public class OMEImage extends ImageTransform {
    * using the given defaults.
    */
   public static DataTransform makeTransform(DataManager dm,
-    String server, String user, int imageId)
+    String server, String sessionKey, String user, int imageId)
   {
-    // create OME login dialog if it doesn't already exist
-    if (login == null) login = new OMELoginPane();
-    if (server != null) login.setServer(server);
-    if (user != null) login.setUser(user);
-
-    // get login information from login dialog
+    String password = null;
     Component parent = dm.getControlPanel();
-    int rval = login.showDialog(parent);
-    if (rval != OMELoginPane.APPROVE_OPTION) return null;
-    server = login.getServer();
-    user = login.getUser();
-    String password = login.getPassword();
 
-    // get image ID to download
-    if (imageId < 0) {
-      String id = (String) JOptionPane.showInputDialog(parent, "Image ID:",
-        "Download OME image", JOptionPane.INFORMATION_MESSAGE, null, null, "");
-      if (id == null) return null;
-      try { imageId = Integer.parseInt(id); }
-      catch (NumberFormatException exc) { }
+    if (sessionKey == null) {
+      // create OME login dialog if it doesn't already exist
+      if (login == null) login = new OMELoginPane();
+      if (server != null) login.setServer(server);
+      if (user != null) login.setUser(user);
+
+      // get login information from login dialog
+      int rval = login.showDialog(parent);
+      if (rval != OMELoginPane.APPROVE_OPTION) return null;
+      server = login.getServer();
+      user = login.getUser();
+      password = login.getPassword();
+
+      // get image ID to download
+      if (imageId < 0) {
+        String id = (String) JOptionPane.showInputDialog(parent, "Image ID:",
+          "Download OME image", JOptionPane.INFORMATION_MESSAGE, null, null, "");
+        if (id == null) return null;
+        try { imageId = Integer.parseInt(id); }
+        catch (NumberFormatException exc) { }
+      }
+      if (imageId < 0) return null;
+
+      // confirm download before proceeding
+      int val = JOptionPane.showConfirmDialog(parent, "Download image #" +
+        imageId + " from server " + server + " as user " + user + "?",
+        "VisBio", JOptionPane.YES_NO_OPTION);
+      if (val != JOptionPane.YES_OPTION) return null;
     }
-    if (imageId < 0) return null;
-
-    // confirm download before proceeding
-    int val = JOptionPane.showConfirmDialog(parent, "Download image #" +
-      imageId + " from server " + server + " as user " + user + "?",
-      "VisBio", JOptionPane.YES_NO_OPTION);
-    if (val != JOptionPane.YES_OPTION) return null;
+    else server = OMEManager.getProperServer(server);
 
     // make sure everything goes ok
-    try { return new OMEImage(server, user, password, imageId); }
+    try {
+      return sessionKey != null ? new OMEImage(server, sessionKey, imageId) :
+        new OMEImage(server, user, password, imageId);
+    }
     catch (Exception exc) {
+      exc.printStackTrace();
       JOptionPane.showMessageDialog(parent, "Sorry, there has been a " +
         "problem downloading from the server. Please try again.",
         "VisBio", JOptionPane.ERROR_MESSAGE);
@@ -235,7 +262,7 @@ public class OMEImage extends ImageTransform {
       Linear2DSet fieldSet = new Linear2DSet(fieldDomain,
         0, sizeX - 1, sizeX, sizeY - 1, 0, sizeY);
       FlatField field = new FlatField(fieldType, fieldSet);
-      field.setSamples(samples, false);
+      if (samples != null) field.setSamples(samples, false);
       return field;
     }
     catch (VisADException exc) { exc.printStackTrace(); }
@@ -353,6 +380,7 @@ public class OMEImage extends ImageTransform {
 
     if (data != null) {
       server = data.server;
+      sessionKey = data.sessionKey;
       user = data.user;
       password = data.password;
       imageId = data.imageId;
@@ -364,7 +392,8 @@ public class OMEImage extends ImageTransform {
     downloader = new ImageDownloader();
 
     // download image details
-    rs = downloader.login(server, user, password);
+    rs = sessionKey == null ? downloader.login(server, user, password) :
+      downloader.getSession(server, sessionKey);
     df = (DataFactory) rs.getService(DataFactory.class);
     pf = (PixelsFactory) rs.getService(PixelsFactory.class);
     image = downloader.downloadImage(df, imageId);

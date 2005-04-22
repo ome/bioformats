@@ -79,7 +79,7 @@ public class BioDropHandler extends TransferHandler {
       // assume file is a VisBio state file
       StateManager sm = (StateManager) bio.getManager(StateManager.class);
       if (sm == null) return false;
-      sm.restoreState(file);
+      /*sm.restoreState(file);*/
     }
     else {
       // assume file is part of a dataset

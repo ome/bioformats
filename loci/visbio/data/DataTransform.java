@@ -27,8 +27,8 @@ import java.awt.Font;
 import java.math.BigInteger;
 import java.util.Vector;
 import javax.swing.JComponent;
-import loci.ome.xml.CAElement;
-import loci.ome.xml.OMEElement;
+//import loci.ome.xml.CAElement;
+//import loci.ome.xml.OMEElement;
 import loci.visbio.state.Dynamic;
 import loci.visbio.util.*;
 import visad.*;
@@ -295,7 +295,7 @@ public abstract class DataTransform implements Dynamic {
   protected static final String DATA_TRANSFORM = "VisBio_DataTransform";
 
   /** Writes the current state to the given XML object. */
-  public void saveState(OMEElement ome, int id, Vector list) {
+  /*public void saveState(OMEElement ome, int id, Vector list) {
     CAElement custom = ome.getCustomAttr();
     custom.createElement(DATA_TRANSFORM);
     custom.setAttribute("id", "" + id);
@@ -303,10 +303,10 @@ public abstract class DataTransform implements Dynamic {
     custom.setAttribute("name", name);
     custom.setAttribute("lengths", ObjectUtil.arrayToString(lengths));
     custom.setAttribute("dims", ObjectUtil.arrayToString(dims));
-  }
+  }*/
 
   /** Restores the current state from the given XML object. */
-  public int restoreState(OMEElement ome, int id, Vector list) {
+  /*public int restoreState(OMEElement ome, int id, Vector list) {
     CAElement custom = ome.getCustomAttr();
     String[] idList = custom.getAttributes(DATA_TRANSFORM, "id");
 
@@ -355,7 +355,7 @@ public abstract class DataTransform implements Dynamic {
       custom.getAttributes(DATA_TRANSFORM, "dims")[index]);
 
     return index;
-  }
+  }*/
 
 
   // -- Internal DataTransform API methods --

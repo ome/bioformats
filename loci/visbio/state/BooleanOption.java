@@ -23,8 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.state;
 
-import loci.ome.xml.CAElement;
-import loci.ome.xml.OMEElement;
+//import loci.ome.xml.CAElement;
+//import loci.ome.xml.OMEElement;
 import loci.visbio.util.LAFUtil;
 import java.awt.Component;
 import javax.swing.JCheckBox;
@@ -71,15 +71,15 @@ public class BooleanOption extends BioOption {
   protected static final String BOOLEAN_OPTION = "VisBio_BooleanOption";
 
   /** Writes the current state to the given XML object. */
-  public void saveState(OMEElement ome) throws SaveException {
+  /*public void saveState(OMEElement ome) throws SaveException {
     CAElement custom = ome.getCustomAttr();
     custom.createElement(BOOLEAN_OPTION);
     custom.setAttribute("name", text);
     custom.setAttribute("value", box.isSelected() ? "true" : "false");
-  }
+  }*/
 
   /** Restores the current state from the given XML object. */
-  public void restoreState(OMEElement ome) throws SaveException {
+  /*public void restoreState(OMEElement ome) throws SaveException {
     CAElement custom = ome.getCustomAttr();
     String[] names = custom.getAttributes(BOOLEAN_OPTION, "name");
     String[] values = custom.getAttributes(BOOLEAN_OPTION, "value");
@@ -89,6 +89,6 @@ public class BooleanOption extends BioOption {
         break;
       }
     }
-  }
+  }*/
 
 }

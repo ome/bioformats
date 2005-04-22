@@ -23,8 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio;
 
-import loci.ome.xml.OMEElement;
-import loci.visbio.state.SaveException;
+//import loci.ome.xml.OMEElement;
+//import loci.visbio.state.SaveException;
 import loci.visbio.state.Saveable;
 
 /** LogicManager is the superclass of all VisBio logic handlers. */
@@ -57,9 +57,9 @@ public class LogicManager implements Saveable {
   // -- Saveable API methods --
 
   /** Writes the current state to the given XML object. */
-  public void saveState(OMEElement ome) throws SaveException { }
+  //public void saveState(OMEElement ome) throws SaveException { }
 
   /** Restores the current state from the given XML object. */
-  public void restoreState(OMEElement ome) throws SaveException { }
+  //public void restoreState(OMEElement ome) throws SaveException { }
 
 }

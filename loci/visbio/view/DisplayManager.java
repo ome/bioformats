@@ -24,10 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.view;
 
 import java.awt.Component;
-import java.util.Vector;
+//import java.util.Vector;
 import javax.swing.JOptionPane;
-import loci.ome.xml.CAElement;
-import loci.ome.xml.OMEElement;
+//import loci.ome.xml.CAElement;
+//import loci.ome.xml.OMEElement;
 import loci.visbio.*;
 import loci.visbio.help.HelpManager;
 import loci.visbio.state.*;
@@ -142,7 +142,7 @@ public class DisplayManager extends LogicManager {
   protected static final String DISPLAY_MANAGER = "VisBio_DisplayManager";
 
   /** Writes the current state to the given XML object. */
-  public void saveState(OMEElement ome) throws SaveException {
+  /*public void saveState(OMEElement ome) throws SaveException {
     DisplayWindow[] windows = getDisplays();
 
     // save number of displays
@@ -152,10 +152,10 @@ public class DisplayManager extends LogicManager {
 
     // save all displays
     for (int i=0; i<windows.length; i++) windows[i].saveState(ome, i);
-  }
+  }*/
 
   /** Restores the current state from the given XML object. */
-  public void restoreState(OMEElement ome) throws SaveException {
+  /*public void restoreState(OMEElement ome) throws SaveException {
     CAElement custom = ome.getCustomAttr();
 
     // read number of displays
@@ -199,7 +199,7 @@ public class DisplayManager extends LogicManager {
       DisplayWindow display = (DisplayWindow) vo.elementAt(i);
       if (!vn.contains(display)) removeDisplay(display);
     }
-  }
+  }*/
 
 
   // -- Helper methods --

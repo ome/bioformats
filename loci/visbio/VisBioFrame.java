@@ -303,10 +303,16 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
     }
     key = key.toLowerCase();
     if (key.equals("ome-image")) {
-      // value syntax: user@server:imageId
-      int index = value.indexOf("@");
+      // value syntax: key:sessionKey@server:imageId
+      //   or:         user:username@server:imageId
+      //   or:         username@server:imageId
+      int index = value.lastIndexOf("@");
       if (index < 0) return;
-      String user = value.substring(0, index);
+      String prefix = value.substring(0, index);
+      String username = null, sessionKey = null;
+      if (prefix.startsWith("key:")) sessionKey = prefix.substring(4);
+      else if (prefix.startsWith("user:")) username = prefix.substring(5);
+      else username = prefix; // assume prefix is a username
       value = value.substring(index + 1);
       index = value.indexOf(":");
       String server = value.substring(0, index);
@@ -317,7 +323,8 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
 
       // construct OME image object
       DataManager dm = (DataManager) getManager(DataManager.class);
-      DataTransform data = OMEImage.makeTransform(dm, server, user, imageId);
+      DataTransform data =
+        OMEImage.makeTransform(dm, server, sessionKey, username, imageId);
       if (data != null) dm.addData(data);
     }
   }

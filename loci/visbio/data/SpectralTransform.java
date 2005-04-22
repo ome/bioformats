@@ -24,11 +24,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.data;
 
 import java.rmi.RemoteException;
-import java.util.Vector;
+//import java.util.Vector;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import loci.ome.xml.CAElement;
-import loci.ome.xml.OMEElement;
+//import loci.ome.xml.CAElement;
+//import loci.ome.xml.OMEElement;
 import loci.visbio.state.Dynamic;
 import loci.visbio.util.ObjectUtil;
 import visad.*;
@@ -193,7 +193,7 @@ public class SpectralTransform extends ImageTransform
   // -- DataTransform API methods - state logic --
 
   /** Writes the current state to the given XML object. */
-  public void saveState(OMEElement ome, int id, Vector list) {
+  /*public void saveState(OMEElement ome, int id, Vector list) {
     super.saveState(ome, id, list);
 
     CAElement custom = ome.getCustomAttr();
@@ -201,10 +201,10 @@ public class SpectralTransform extends ImageTransform
     for (int i=0; i<weights.length; i++) {
       custom.setAttribute("weights" + i, ObjectUtil.arrayToString(weights[i]));
     }
-  }
+  }*/
 
   /** Restores the current state from the given XML object. */
-  public int restoreState(OMEElement ome, int id, Vector list) {
+  /*public int restoreState(OMEElement ome, int id, Vector list) {
     int index = super.restoreState(ome, id, list);
     if (index < 0) return index;
     CAElement custom = ome.getCustomAttr();
@@ -218,7 +218,7 @@ public class SpectralTransform extends ImageTransform
     }
 
     return index;
-  }
+  }*/
 
 
   // -- Dynamic API methods --

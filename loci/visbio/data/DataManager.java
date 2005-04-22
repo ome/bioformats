@@ -27,12 +27,12 @@ import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.util.Vector;
 import javax.swing.tree.DefaultMutableTreeNode;
-import loci.ome.xml.CAElement;
-import loci.ome.xml.OMEElement;
+//import loci.ome.xml.CAElement;
+//import loci.ome.xml.OMEElement;
 import loci.visbio.*;
 import loci.visbio.help.HelpManager;
-import loci.visbio.state.SaveException;
-import loci.visbio.state.StateManager;
+//import loci.visbio.state.SaveException;
+//import loci.visbio.state.StateManager;
 import loci.visbio.util.SwingUtil;
 
 /** DataManager is the manager encapsulating VisBio's data transform logic. */
@@ -162,7 +162,7 @@ public class DataManager extends LogicManager {
   protected static final String DATA_MANAGER = "VisBio_DataManager";
 
   /** Writes the current state to the given XML object. */
-  public void saveState(OMEElement ome) throws SaveException {
+  /*public void saveState(OMEElement ome) throws SaveException {
     Vector v = getDataList();
     int len = v.size();
 
@@ -181,10 +181,10 @@ public class DataManager extends LogicManager {
       DataTransform data = (DataTransform) v.elementAt(i);
       data.saveState(ome, i, v);
     }
-  }
+  }*/
 
   /** Restores the current state from the given XML object. */
-  public void restoreState(OMEElement ome) throws SaveException {
+  /*public void restoreState(OMEElement ome) throws SaveException {
     CAElement custom = ome.getCustomAttr();
 
     // read number of transforms
@@ -255,7 +255,7 @@ public class DataManager extends LogicManager {
       DataTransform data = (DataTransform) vo.elementAt(i);
       if (!vn.contains(data)) removeData(data);
     }
-  }
+  }*/
 
 
   // -- Helper methods --

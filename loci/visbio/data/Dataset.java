@@ -30,10 +30,10 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Hashtable;
-import java.util.Vector;
+//import java.util.Vector;
 import javax.swing.JComponent;
-import loci.ome.xml.CAElement;
-import loci.ome.xml.OMEElement;
+//import loci.ome.xml.CAElement;
+//import loci.ome.xml.OMEElement;
 import loci.visbio.state.Dynamic;
 import loci.visbio.util.*;
 import visad.*;
@@ -397,17 +397,17 @@ public class Dataset extends ImageTransform {
   // -- DataTransform API methods - state logic --
 
   /** Writes the current state to the given XML object. */
-  public void saveState(OMEElement ome, int id, Vector list) {
+  /*public void saveState(OMEElement ome, int id, Vector list) {
     super.saveState(ome, id, list);
 
     CAElement custom = ome.getCustomAttr();
     custom.setAttribute("pattern",
       pattern.replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
     custom.setAttribute("ids", ObjectUtil.arrayToString(ids));
-  }
+  }*/
 
   /** Restores the current state from the given XML object. */
-  public int restoreState(OMEElement ome, int id, Vector list) {
+  /*public int restoreState(OMEElement ome, int id, Vector list) {
     int index = super.restoreState(ome, id, list);
     if (index < 0) return index;
     CAElement custom = ome.getCustomAttr();
@@ -419,7 +419,7 @@ public class Dataset extends ImageTransform {
       custom.getAttributes(DATA_TRANSFORM, "ids")[index]);
 
     return index;
-  }
+  }*/
 
 
   // -- Dynamic API methods --

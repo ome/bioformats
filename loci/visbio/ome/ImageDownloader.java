@@ -52,6 +52,18 @@ public class ImageDownloader {
 
   // -- ImageDownloader API methods --
 
+  /** Connects to the given OME server with the specified session key. */
+  public DataServices getSession(String server, String sessionKey) {
+    DataServices rs = null;
+    try {
+      rs = DataServer.getDefaultServices(server);
+      RemoteCaller rc = rs.getRemoteCaller();
+      rc.setSessionKey(sessionKey);
+    }
+    catch (Exception e) { e.printStackTrace(); }
+    return rs;
+  }
+
   /** Logs in to the given OME server with the specified credentials. */
   public DataServices login(String server, String user, String password) {
     DataServices rs = null;

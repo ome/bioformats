@@ -27,8 +27,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import loci.ome.xml.CAElement;
-import loci.ome.xml.OMEElement;
+//import loci.ome.xml.CAElement;
+//import loci.ome.xml.OMEElement;
 import loci.visbio.VisBioFrame;
 import loci.visbio.WindowManager;
 import loci.visbio.data.DataTransform;
@@ -202,11 +202,11 @@ public class DisplayWindow extends JFrame
 
   protected static final String DISPLAY_DIALOG = "VisBio_DisplayWindow";
 
-  protected CAElement custom;
+  //protected CAElement custom;
   protected int index;
 
   /** Writes the current state to the given XML object. */
-  public void saveState(OMEElement ome, int id) {
+  /*public void saveState(OMEElement ome, int id) {
     custom = ome.getCustomAttr();
     custom.createElement(DISPLAY_DIALOG);
     setAttr("id", "" + id);
@@ -215,10 +215,10 @@ public class DisplayWindow extends JFrame
     viewHandler.saveState();
     captureHandler.saveState();
     transformHandler.saveState();
-  }
+  }*/
 
   /** Restores the current state from the given XML object. */
-  public void restoreState(OMEElement ome, int id) {
+  /*public void restoreState(OMEElement ome, int id) {
     custom = ome.getCustomAttr();
     String[] idList = custom.getAttributes(DISPLAY_DIALOG, "id");
 
@@ -246,16 +246,16 @@ public class DisplayWindow extends JFrame
     viewHandler.restoreState();
     captureHandler.restoreState();
     transformHandler.restoreState();
-  }
+  }*/
 
   /** Sets value for the given attribute. */
   protected void setAttr(String attr, String value) {
-    custom.setAttribute(attr, value);
+    /*custom.setAttribute(attr, value);*/
   }
 
   /** Gets value for the given attribute. */
   protected String getAttr(String attr) {
-    return custom.getAttributes(DISPLAY_DIALOG, attr)[index];
+    return null;/*custom.getAttributes(DISPLAY_DIALOG, attr)[index];*/
   }
 
 
