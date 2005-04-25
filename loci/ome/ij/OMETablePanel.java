@@ -28,14 +28,13 @@ public class OMETablePanel implements ActionListener {
     //Creates the Dialog Box for getting OME login information
     dialog=new JDialog(frame, "Search Results", true);
     JPanel mainpane=new JPanel();
+    mainpane.setMinimumSize(new Dimension(50, 40));
     //sets up the detail panel
     paneR=new JPanel();
     paneR.setLayout(new BoxLayout(paneR, BoxLayout.Y_AXIS));
-    JPanel paneOwner=new JPanel(), paneType=new JPanel();
+    JPanel paneOwner=new JPanel();
     paneThumb=new JPanel();   
-    
-    
-    //paneOwner.setLayout(new GridLayout(7,2,5,5));
+
     GridBagLayout grid=new GridBagLayout();
     paneOwner.setLayout(grid);
     GridBagConstraints e = new GridBagConstraints(), d=new GridBagConstraints();
@@ -45,7 +44,7 @@ public class OMETablePanel implements ActionListener {
     e.gridwidth=1;
     e.gridx=0;
     e.gridy=0;
-    e.anchor=GridBagConstraints.LINE_END;
+    e.anchor=GridBagConstraints.FIRST_LINE_END;
     e.insets=new Insets(2,2,2,2);
     e.fill=GridBagConstraints.NONE;
     d.gridwidth=GridBagConstraints.REMAINDER;
@@ -56,14 +55,10 @@ public class OMETablePanel implements ActionListener {
     d.gridy=0;
     d.fill=GridBagConstraints.HORIZONTAL;
     d.insets=new Insets(2,2,2,2);
+    d.anchor=GridBagConstraints.FIRST_LINE_START;
     
-    
-    
-    
-    paneType.setLayout(new GridLayout(1,2,5,5));
     paneR.add(paneThumb);
     paneR.add(paneOwner);
-    paneR.add(paneType);
     JLabel owner=new JLabel("Owner: ", JLabel.RIGHT),
     type=new JLabel("Image Type: ", JLabel.RIGHT),
     c=new JLabel("Size C: ", JLabel.RIGHT),
@@ -109,57 +104,41 @@ public class OMETablePanel implements ActionListener {
 
     JScrollPane desScroll=new JScrollPane(des);
     paneOwner.add(owner, e);
-//    grid.addLayoutComponent(owner, e);
     paneOwner.add(own, d);
-//    grid.addLayoutComponent(own, d);
     ++e.gridy;
     ++d.gridy;
     paneOwner.add(type, e);
-//    grid.addLayoutComponent(type, e);
     paneOwner.add(typ,d);
-//    grid.addLayoutComponent(typ, d);
     ++e.gridy;
     ++d.gridy;
     paneOwner.add(c,e);
-//    grid.addLayoutComponent(c, e);
     paneOwner.add(c1,d);
-//    grid.addLayoutComponent(c1, d);
     ++e.gridy;
     ++d.gridy;
     paneOwner.add(t,e);
-//    grid.addLayoutComponent(t, e);
     paneOwner.add(t1,d);
-//    grid.addLayoutComponent(t1, d);
     ++e.gridy;
     ++d.gridy;
     paneOwner.add(x,e);
-//    grid.addLayoutComponent(x, e);
     paneOwner.add(x1,d);
-//    grid.addLayoutComponent(x1, d);
     ++e.gridy;
     ++d.gridy;
     paneOwner.add(y,e);
-//    grid.addLayoutComponent(y, e);
     paneOwner.add(y1,d);
-//    grid.addLayoutComponent(y1, d);
     ++e.gridy;
     ++d.gridy;
     paneOwner.add(z,e);
-//    grid.addLayoutComponent(z, e);
     paneOwner.add(z1,d);
-//    grid.addLayoutComponent(z1, d);
     ++e.gridy;
     ++d.gridy;
     e.gridheight=2;
-    e.weighty=1;
+    e.weighty=2;
     d.gridheight=2;
-    d.weighty=1;
+    d.weighty=2;
     e.fill=GridBagConstraints.VERTICAL;
     d.fill=GridBagConstraints.BOTH;
-    paneType.add(descrip,e);
-//    grid.addLayoutComponent(descrip, e);
-    paneType.add(desScroll,d);
-//    grid.addLayoutComponent(desScroll, d);
+    paneOwner.add(descrip,e);
+    paneOwner.add(desScroll,d);
     paneThumb.add(thumb);
     
     extra=details;
@@ -193,7 +172,8 @@ public class OMETablePanel implements ActionListener {
     
     sorter.setTableHeader(table.getTableHeader());
     JScrollPane scrollPane = new JScrollPane(table);
-    table.setPreferredScrollableViewportSize(new Dimension(300, 200));
+    scrollPane.setMinimumSize(new Dimension(50, 30));
+    table.setPreferredScrollableViewportSize(new Dimension(200, 200));
     //size columns
     table.getColumnModel().getColumn(0).setMaxWidth(15);
     table.getColumnModel().getColumn(1).setPreferredWidth(50);
@@ -203,7 +183,8 @@ public class OMETablePanel implements ActionListener {
     //put panel together
     JSplitPane splitPane=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
     scrollPane, paneR);
-    splitPane.setDividerLocation(200);
+    splitPane.setDividerLocation(.5);
+    splitPane.setResizeWeight(.5);
     splitPane.setAlignmentX(JSplitPane.CENTER_ALIGNMENT);
     mainpane.add(splitPane);
     dialog.setContentPane(mainpane);
@@ -219,7 +200,8 @@ public class OMETablePanel implements ActionListener {
     mainpane.add(paneBut);
     cancels.addActionListener(this);
     ok.addActionListener(this);
-    mainpane.setBorder(bord);    
+    mainpane.setBorder(bord);
+    mainpane.setMinimumSize(new Dimension(50,35));
     dialog.pack();
     centerWindow(frame, dialog);
   }//end of public constructor

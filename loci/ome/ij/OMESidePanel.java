@@ -47,7 +47,7 @@ public class OMESidePanel implements ActionListener{
     paneButtons.setBorder(new EmptyBorder(5,5,5,5));
     paneInfo.setAlignmentX(JPanel.CENTER_ALIGNMENT);
     paneButtons.setAlignmentX(JPanel.LEFT_ALIGNMENT);
-    paneUp.setBorder(new EmptyBorder(5,5,5,5));
+    paneUp.setBorder(new EmptyBorder(2,2,2,2));
     pane.add(paneUp);
     pane.add(paneInfo);
     pane.add(paneButtons);
@@ -75,6 +75,7 @@ public class OMESidePanel implements ActionListener{
     refresh.setActionCommand("refresh");
     edit.setActionCommand("edit");
     paneUp.add(upload);
+    paneUp.setMaximumSize(paneUp.getPreferredSize());
     paneButtons.add(refresh);
     paneButtons.add(close);
     paneButtons.setAlignmentX(JPanel.CENTER_ALIGNMENT);

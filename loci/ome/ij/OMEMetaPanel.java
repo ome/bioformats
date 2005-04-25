@@ -14,10 +14,10 @@ import loci.ome.xml.*;
  */
 public class OMEMetaPanel implements ActionListener, TreeSelectionListener{
   //Fields
-  public static final String[] IMAGE_TYPES={"Dimensions", "DisplayROI",
+  public static final String[] IMAGE_TYPES={"Dimensions", "DisplayOptions",
     "ImageAnnotation",  "ImageExperiment", "ImageGroup","ImageInstrument",
     "ImagePlate", "ImageTestSignature", "ImagingEnvironment",  
-    "PixelChannelComponent", "PlaneCentroid", "PlaneGeometricMean", 
+    "PlaneCentroid", "PlaneGeometricMean", 
     "PlaneGeometricSigma", "PlaneMaximum", "PlaneMean",
     "PlaneMinimum", "PlaneSigma", "PlaneSum_i", "PlaneSum_i2", "PlaneSum_log_i",
     "PlaneSum_Xi", "PlaneSum_Yi", "PlaneSum_Zi", "StackCentroid", "StackGeometricMean",
@@ -26,8 +26,10 @@ public class OMEMetaPanel implements ActionListener, TreeSelectionListener{
   public static final String[][] IMAGE_ATTRS={
     //Dimensions
     {"PixelSizeC", "PixelSizeT", "PixelSizeX", "PixelSizeY", "PixelSizeZ"},
-    //DisplayROI
-    {"DisplayOptions", "T0", "T1", "X0", "X1", "Y0", "Y1", "Z0", "Z1"},
+    //DisplayOptions
+    {"BlueChannel", "ColorMap", "DisplayROIs", "GreenChannel", "GreyChannel",
+      "Pixels", "RedChannel", "TStart", "TStop", "Zoom", "ZStart", "ZStop",
+      "BlueChannelOn", "DisplayRGB", "GreenChannelOn", "RedChannelOn"},
     //ImageAnnotation
     {"Content", "Experimenter", "TheC", "TheT", "TheZ","Timestamp", "Valid"},
     //ImageExperiment
@@ -42,8 +44,6 @@ public class OMEMetaPanel implements ActionListener, TreeSelectionListener{
     {"Value"},
     //ImagingEnvironment
     {"AirPressure", "CO2Percent", "Humidity", "Temperature"},
-    //PixelChannelComponent
-    {"ColorDomain", "Index", "LogicalChannel", "Pixels"},
     //PlaneCentroid
     {"TheC", "TheT", "TheZ", "X", "Y"},
     //PlaneGeometricMean
@@ -146,6 +146,13 @@ public class OMEMetaPanel implements ActionListener, TreeSelectionListener{
     JPanel pane=new JPanel();
     pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
     customPane=new JPanel();
+    customPane.setLayout(new GridBagLayout());
+    GridBagConstraints gbl=new GridBagConstraints();
+    gbl.fill=GridBagConstraints.BOTH;
+    gbl.gridwidth=GridBagConstraints.REMAINDER;
+    gbl.gridheight=GridBagConstraints.REMAINDER;
+    gbl.weighty=1;
+    gbl.weightx=1;
     //pane.setPreferredSize(new Dimension(200, 300));
     customField=new JTextArea(2,20);
     customField.setLineWrap(true);
@@ -153,11 +160,11 @@ public class OMEMetaPanel implements ActionListener, TreeSelectionListener{
     JScrollPane customScroll=new JScrollPane(customField);
     
     //this caused the window to not have anything in it
-//    customScroll.setPreferredSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
-    
-    customPane.add(customScroll);
+    //customScroll.setPreferredSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+    treeView.setMinimumSize(new Dimension(50,50));
+    customPane.add(customScroll, gbl);
     splitPane=new JSplitPane(JSplitPane.VERTICAL_SPLIT, treeView, customPane);
-    
+    customPane.setMinimumSize(customPane.getPreferredSize());
     //try
     //splitPane.setDividerLocation(.1);
     

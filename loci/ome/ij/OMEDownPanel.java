@@ -22,15 +22,21 @@ public class OMEDownPanel implements ActionListener{
     cancelPlugin=false;
     //creates the dialog box for searching for images
     dia=new JDialog(frame, "OME Download Search", true);
-    JPanel pane=new JPanel();
+    JPanel pane=new JPanel(), panel=new JPanel();
     pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
+    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
     //labels
-    JLabel enter=new JLabel("Enter the criteria to search");
-    JLabel enter1=new JLabel("for the image you wish to");
+    JLabel enter=new JLabel("Specify search criteria");
+    enter.setAlignmentX(Component.CENTER_ALIGNMENT);
+    JLabel enter1=new JLabel("of the image you wish to");
+    enter1.setAlignmentX(Component.CENTER_ALIGNMENT);
     JLabel enter2=new JLabel("upload into ImageJ.");
-    pane.add(enter);
-    pane.add(enter1);
-    pane.add(enter2);
+    enter2.setAlignmentX(Component.CENTER_ALIGNMENT);
+    pane.add(panel);
+    pane.setMaximumSize(pane.getPreferredSize());
+    panel.add(enter);
+    panel.add(enter1);
+    panel.add(enter2);
     pane.setBorder(new EmptyBorder(5,5,5,5));
     //panels
     JPanel paneL=new JPanel(), paneR=new JPanel(), paneInfo=new JPanel(), paneButtons=
@@ -44,6 +50,8 @@ public class OMEDownPanel implements ActionListener{
     paneInfo.setAlignmentX(JPanel.LEFT_ALIGNMENT);
     paneButtons.setAlignmentX(JPanel.LEFT_ALIGNMENT);
     pane.add(paneInfo);
+    paneInfo.setAlignmentX(Component.CENTER_ALIGNMENT);
+    paneButtons.setAlignmentX(Component.CENTER_ALIGNMENT);
     pane.add(paneButtons);
     paneInfo.add(paneL);
     paneInfo.add(paneR);
@@ -63,6 +71,7 @@ public class OMEDownPanel implements ActionListener{
     }
     cproj = new JComboBox(projectS);
     cproj.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+    cproj.setMaximumSize(cproj.getPreferredSize());
     paneR.add(cproj);
     JLabel lowner=new JLabel("Owner:");
     lowner.setBorder(bordCombo);
@@ -75,6 +84,7 @@ public class OMEDownPanel implements ActionListener{
     }
     cowner = new JComboBox(ownerS);
     cowner.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+    cowner.setMaximumSize(cowner.getPreferredSize());
     paneR.add(cowner);
   
     id = new JTextField(5);
