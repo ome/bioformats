@@ -24,14 +24,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.state;
 
 import java.awt.event.KeyEvent;
-import java.io.File;
-//import java.io.IOException;
+import java.io.*;
+import java.io.IOException;
 import java.util.*;
 import javax.swing.*;
-//import loci.ome.xml.OMEElement;
 import loci.visbio.*;
 import loci.visbio.util.SwingUtil;
-//import org.xml.sax.SAXException;
 import visad.util.ExtensionFileFilter;
 
 /** StateManager is the manager encapsulating VisBio's state logic. */
@@ -61,13 +59,13 @@ public class StateManager extends LogicManager {
   private Stack undoStates;
 
   /** Current program state. */
-  //private ProgramState currentState;
+  private ProgramState currentState;
 
   /** Stack of new states for multiple redo. */
   private Stack redoStates;
 
   /** Initial program state. */
-  //private ProgramState initialState;
+  private ProgramState initialState;
 
   /** Is state currently being restored? */
   private boolean restoring;
@@ -97,31 +95,32 @@ public class StateManager extends LogicManager {
   public boolean isRestoring() { return restoring; }
 
   /** Saves the current state to the given state file. */
-  /*public void saveState(File file) {
-    OMEElement ome = new OMEElement();
-    try { saveState(ome); }
-    catch (SaveException exc) { exc.printStackTrace(); }
-    try { ome.printXML(file.getPath()); }
+  public void saveState(File file) {
+    try {
+      PrintWriter fout = new PrintWriter(new FileWriter(file));
+      saveState(fout);
+    }
     catch (IOException exc) { exc.printStackTrace(); }
-  }*/
+    catch (SaveException exc) { exc.printStackTrace(); }
+  }
 
   /** Restores the current state from the given state file. */
-  /*public void restoreState(File file) {
-    OMEElement ome = new OMEElement();
-    try { ome.readXML(file.getPath()); }
-    catch (SAXException exc) { exc.printStackTrace(); }
+  public void restoreState(File file) {
+    try {
+      BufferedReader fin = new BufferedReader(new FileReader(file));
+      restoreState(fin);
+    }
     catch (IOException exc) { exc.printStackTrace(); }
-    try { restoreState(ome); }
     catch (SaveException exc) { exc.printStackTrace(); }
     bio.generateEvent(this, "restore state", true);
-  }*/
+  }
 
   /**
    * Saves an initial VisBio state, then checks to see if VisBio crashed last
    * time, and if so, asks the user whether to restore the previous state.
    */
   public void checkCrash() {
-    /*boolean crashed = state.exists();
+    boolean crashed = state.exists();
     if (crashed) {
       int ans = JOptionPane.showConfirmDialog(bio,
         "It appears that VisBio crashed last time. " +
@@ -131,7 +130,7 @@ public class StateManager extends LogicManager {
     }
     saveState("", true, crashed); // compute currentState variable
     initialState = currentState;
-    if (crashed) restoreState(state);*/
+    if (crashed) restoreState(state);
   }
 
   /**
@@ -139,12 +138,12 @@ public class StateManager extends LogicManager {
    * and if not, prompts the user to save.
    */
   public boolean checkSave() {
-    /*if (saved) return true;
+    if (saved) return true;
     int ans = JOptionPane.showConfirmDialog(bio,
       "Program state has been changed. Save before exiting?", "VisBio",
       JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
     if (ans == JOptionPane.CANCEL_OPTION) return false;
-    if (ans == JOptionPane.YES_OPTION) fileSave();*/
+    if (ans == JOptionPane.YES_OPTION) fileSave();
     return true;
   }
 
@@ -156,7 +155,7 @@ public class StateManager extends LogicManager {
 
   /** Restores the current state from a text file specified by the user. */
   public void fileRestore() {
-    /*int rval = stateBox.showOpenDialog(bio);
+    int rval = stateBox.showOpenDialog(bio);
     if (rval == JFileChooser.APPROVE_OPTION) {
       final WindowManager wm = (WindowManager)
         bio.getManager(WindowManager.class);
@@ -176,12 +175,12 @@ public class StateManager extends LogicManager {
         }
       });
       restoreThread.start();
-    }*/
+    }
   }
 
   /** Saves the current state to a text file specified by the user. */
   public void fileSave() {
-    /*int rval = stateBox.showSaveDialog(bio);
+    int rval = stateBox.showSaveDialog(bio);
     if (rval == JFileChooser.APPROVE_OPTION) {
       WindowManager wm = (WindowManager) bio.getManager(WindowManager.class);
       wm.setWaitCursor(true);
@@ -192,61 +191,61 @@ public class StateManager extends LogicManager {
       saveState(file);
       wm.setWaitCursor(false);
       saved = true;
-    }*/
+    }
   }
 
   /** Undoes the last action taken. */
   public void editUndo() {
     if (undoStates.isEmpty()) return;
-    /*redoStates.push(currentState);
+    redoStates.push(currentState);
     currentState = (ProgramState) undoStates.pop();
     restoreState(currentState);
-    updateMenuItems();*/
+    updateMenuItems();
   }
 
   /** Redoes the last action undone. */
   public void editRedo() {
     if (redoStates.isEmpty()) return;
-    /*undoStates.push(currentState);
+    undoStates.push(currentState);
     currentState = (ProgramState) redoStates.pop();
     restoreState(currentState);
-    updateMenuItems();*/
+    updateMenuItems();
   }
 
   /** Resets the program to its initial state. */
   public void editReset() {
-    /*int ans = JOptionPane.showConfirmDialog(bio,
+    int ans = JOptionPane.showConfirmDialog(bio,
       "Are you sure you want to reset VisBio to its initial state?", "VisBio",
       JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
     if (ans != JOptionPane.YES_OPTION) return;
     restoreState(initialState);
-    bio.generateEvent(this, "reset state", true);*/
+    bio.generateEvent(this, "reset state", true);
   }
 
 
   // -- Saveable API methods --
 
-  /** Writes the current state to the given XML object. */
-  /*public void saveState(OMEElement ome) throws SaveException {
+  /** Writes the current state to the given writer. */
+  public void saveState(PrintWriter out) throws SaveException {
     LogicManager[] lm = bio.getManagers();
     for (int i=0; i<lm.length; i++) {
       if (lm[i] == this) continue; // bad recursion, no cookie
-      lm[i].saveState(ome);
+      lm[i].saveState(out);
     }
-  }*/
+  }
 
-  /** Restores the current state from the given XML object. */
-  /*public void restoreState(OMEElement ome) throws SaveException {
+  /** Restores the current state from the given reader. */
+  public void restoreState(BufferedReader in) throws SaveException {
     restoring = true;
     try {
       LogicManager[] lm = bio.getManagers();
       for (int i=0; i<lm.length; i++) {
         if (lm[i] == this) continue; // bad recursion, no cookie
-        lm[i].restoreState(ome);
+        lm[i].restoreState(in);
       }
     }
     finally { restoring = false; }
-  }*/
+  }
 
 
   // -- LogicManager API methods --
@@ -278,10 +277,10 @@ public class StateManager extends LogicManager {
         }
         else if (msg.equals("shutdown")) destroy();
       }
-      /*else if (evt.isUndoable() && !restoring) {
+      else if (evt.isUndoable() && !restoring) {
         saved = false;
         saveState(evt.getMessage(), false, false);
-      }*/
+      }
     }
   }
 
@@ -322,21 +321,26 @@ public class StateManager extends LogicManager {
   }
 
   /** Restores the state from the given program state object. */
-  /*private void restoreState(ProgramState ps) {
-    try { restoreState(ps.state); }
+  private void restoreState(ProgramState ps) {
+    try { restoreState(new BufferedReader(new StringReader(ps.state))); }
     catch (SaveException exc) { exc.printStackTrace(); }
-  }*/
+  }
 
   /** Saves the state to the undo stack and the VisBio state temp file. */
-  /*private void saveState(String msg, boolean init, boolean crashed) {
-    // capture save state results to an XML object
-    OMEElement ome = new OMEElement();
-    try { saveState(ome); }
+  private void saveState(String msg, boolean init, boolean crashed) {
+    // capture save state results to a string
+    StringWriter sw = new StringWriter();
+    try { saveState(new PrintWriter(sw)); }
     catch (SaveException exc) { exc.printStackTrace(); }
+    String stateString = sw.toString();
 
     if (!crashed) {
       // write captured results to the state file
-      try { ome.printXML(state.getPath()); }
+      try {
+        PrintWriter fout = new PrintWriter(new FileWriter(state.getPath()));
+        fout.println(stateString);
+        fout.close();
+      }
       catch (IOException exc) { exc.printStackTrace(); }
     }
 
@@ -345,9 +349,9 @@ public class StateManager extends LogicManager {
       undoStates.push(currentState);
       redoStates.removeAllElements();
     }
-    currentState = new ProgramState(msg, ome);
+    currentState = new ProgramState(msg, stateString);
     updateMenuItems();
-  }*/
+  }
 
   /** Updates the Edit menu's Undo and Redo menu items. */
   private void updateMenuItems() {
@@ -355,20 +359,20 @@ public class StateManager extends LogicManager {
       editUndo.setText("Undo");
       editUndo.setEnabled(false);
     }
-    /*else {
+    else {
       editUndo.setText("Undo " + currentState.msg);
       // CTR TEMP menu item disabled for beta release
       //editUndo.setEnabled(true);
-    }*/
+    }
     if (redoStates.isEmpty()) {
       editRedo.setText("Redo");
       editRedo.setEnabled(false);
     }
-    /*else {
+    else {
       editRedo.setText("Redo " + ((ProgramState) redoStates.peek()).msg);
       // CTR TEMP menu item disabled for beta release
       //editRedo.setEnabled(true);
-    }*/
+    }
   }
 
 

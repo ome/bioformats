@@ -23,7 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.state;
 
-//import loci.ome.xml.OMEElement;
+import java.io.BufferedReader;
+import java.io.PrintWriter;
 
 /**
  * The Saveable interface provides methods for saving and restoring the
@@ -31,10 +32,10 @@ package loci.visbio.state;
  */
 public interface Saveable {
 
-  /** Writes the current state to the given XML object. */
-  //void saveState(OMEElement ome) throws SaveException;
+  /** Writes the current state to the given writer. */
+  void saveState(PrintWriter out) throws SaveException;
 
-  /** Restores the current state from the given XML object. */
-  //void restoreState(OMEElement ome) throws SaveException;
+  /** Restores the current state from the given reader. */
+  void restoreState(BufferedReader in) throws SaveException;
 
 }

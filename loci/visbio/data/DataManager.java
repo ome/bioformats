@@ -25,13 +25,13 @@ package loci.visbio.data;
 
 import java.awt.Component;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.PrintWriter;
 import java.util.Vector;
 import javax.swing.tree.DefaultMutableTreeNode;
-//import loci.ome.xml.CAElement;
-//import loci.ome.xml.OMEElement;
 import loci.visbio.*;
 import loci.visbio.help.HelpManager;
-//import loci.visbio.state.SaveException;
+import loci.visbio.state.SaveException;
 //import loci.visbio.state.StateManager;
 import loci.visbio.util.SwingUtil;
 
@@ -161,11 +161,12 @@ public class DataManager extends LogicManager {
 
   protected static final String DATA_MANAGER = "VisBio_DataManager";
 
-  /** Writes the current state to the given XML object. */
-  /*public void saveState(OMEElement ome) throws SaveException {
+  /** Writes the current state to the given writer. */
+  public void saveState(PrintWriter out) throws SaveException {
     Vector v = getDataList();
     int len = v.size();
 
+    /* CTR TODO for v3.00 final
     // save number of transforms
     CAElement custom = ome.getCustomAttr();
     custom.createElement(DATA_MANAGER);
@@ -181,10 +182,12 @@ public class DataManager extends LogicManager {
       DataTransform data = (DataTransform) v.elementAt(i);
       data.saveState(ome, i, v);
     }
-  }*/
+    */
+  }
 
-  /** Restores the current state from the given XML object. */
-  /*public void restoreState(OMEElement ome) throws SaveException {
+  /** Restores the current state from the given reader. */
+  public void restoreState(BufferedReader in) throws SaveException {
+    /* CTR TODO for v3.00 final
     CAElement custom = ome.getCustomAttr();
 
     // read number of transforms
@@ -255,7 +258,8 @@ public class DataManager extends LogicManager {
       DataTransform data = (DataTransform) vo.elementAt(i);
       if (!vn.contains(data)) removeData(data);
     }
-  }*/
+    */
+  }
 
 
   // -- Helper methods --

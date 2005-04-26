@@ -25,10 +25,10 @@ package loci.visbio.view;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedReader;
+import java.io.PrintWriter;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-//import loci.ome.xml.CAElement;
-//import loci.ome.xml.OMEElement;
 import loci.visbio.VisBioFrame;
 import loci.visbio.WindowManager;
 import loci.visbio.data.DataTransform;
@@ -205,8 +205,9 @@ public class DisplayWindow extends JFrame
   //protected CAElement custom;
   protected int index;
 
-  /** Writes the current state to the given XML object. */
-  /*public void saveState(OMEElement ome, int id) {
+  /** Writes the current state to the given writer. */
+  public void saveState(PrintWriter out, int id) {
+    /* CTR TODO for v3.00 final
     custom = ome.getCustomAttr();
     custom.createElement(DISPLAY_DIALOG);
     setAttr("id", "" + id);
@@ -215,10 +216,12 @@ public class DisplayWindow extends JFrame
     viewHandler.saveState();
     captureHandler.saveState();
     transformHandler.saveState();
-  }*/
+    */
+  }
 
-  /** Restores the current state from the given XML object. */
-  /*public void restoreState(OMEElement ome, int id) {
+  /** Restores the current state from the given reader. */
+  public void restoreState(BufferedReader in, int id) {
+    /* CTR TODO for v3.00 final
     custom = ome.getCustomAttr();
     String[] idList = custom.getAttributes(DISPLAY_DIALOG, "id");
 
@@ -246,7 +249,8 @@ public class DisplayWindow extends JFrame
     viewHandler.restoreState();
     captureHandler.restoreState();
     transformHandler.restoreState();
-  }*/
+    */
+  }
 
   /** Sets value for the given attribute. */
   protected void setAttr(String attr, String value) {

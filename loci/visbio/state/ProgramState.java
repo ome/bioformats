@@ -23,8 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.state;
 
-//import loci.ome.xml.OMEElement;
-
 /** A VisBio state wrapper. */
 public class ProgramState {
 
@@ -33,16 +31,16 @@ public class ProgramState {
   /** Message to be displayed as part of "Undo" and "Redo" menu items. */
   public String msg;
 
-  /** State object (XML) for use in state restoration. */
-  //public OMEElement state;
+  /** State object for use in state restoration. */
+  public String state;
 
 
   // -- Constructor --
 
   /** Constructs a VisBio state wrapper. */
-  public ProgramState(String msg/*, OMEElement state*/) {
+  public ProgramState(String msg, String state) {
     this.msg = msg;
-    /*this.state = state;*/
+    this.state = state;
   }
 
 }

@@ -26,11 +26,11 @@ package loci.visbio;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.BufferedReader;
+import java.io.PrintWriter;
 import java.util.*;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
-//import loci.ome.xml.CAElement;
-//import loci.ome.xml.OMEElement;
 import loci.visbio.state.*;
 import loci.visbio.util.Docker;
 import loci.visbio.util.SwingUtil;
@@ -224,8 +224,9 @@ public class WindowManager extends LogicManager implements WindowListener {
 
   protected static final String WINDOW_PARAMS = "VisBio_WindowParams";
 
-  /** Writes the current state to the given XML object. */
-  /*public void saveState(OMEElement ome) throws SaveException {
+  /** Writes the current state to the given writer. */
+  public void saveState(PrintWriter out) throws SaveException {
+    /* CTR TODO for v3.00 final
     // save window positions
     Enumeration en = windows.keys();
     while (en.hasMoreElements()) {
@@ -241,10 +242,12 @@ public class WindowManager extends LogicManager implements WindowListener {
       custom.setAttribute("width", "" + r.width);
       custom.setAttribute("height", "" + r.height);
     }
-  }*/
+    */
+  }
 
-  /** Restores the current state from the given XML object. */
-  /*public void restoreState(OMEElement ome) throws SaveException {
+  /** Restores the current state from the given reader. */
+  public void restoreState(BufferedReader in) throws SaveException {
+    /* CTR TODO for v3.00 final
     // restore window positions
     CAElement custom = ome.getCustomAttr();
     String[] names = custom.getAttributes(WINDOW_PARAMS, "name");
@@ -265,7 +268,8 @@ public class WindowManager extends LogicManager implements WindowListener {
       if (winfo == null) windowStates.put(names[i], ws); // remember position
       else winfo.setState(ws); // window already exists; set position
     }
-  }*/
+    */
+  }
 
 
   // -- Helper methods --

@@ -24,10 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.state;
 
 import java.awt.Component;
+import java.io.BufferedReader;
+import java.io.PrintWriter;
 import javax.swing.JPanel;
 import javax.swing.JComboBox;
-//import loci.ome.xml.CAElement;
-//import loci.ome.xml.OMEElement;
 import loci.visbio.util.FormsUtil;
 
 /** ListOption is an option from a list in the VisBio Options dialog. */
@@ -77,16 +77,19 @@ public class ListOption extends BioOption {
 
   protected static final String LIST_OPTION = "VisBio_ListOption";
 
-  /** Writes the current state to the given XML object. */
-  /*public void saveState(OMEElement ome) throws SaveException {
+  /** Writes the current state to the given writer. */
+  public void saveState(PrintWriter out) throws SaveException {
+    /* CTR TODO for v3.00 final
     CAElement custom = ome.getCustomAttr();
     custom.createElement(LIST_OPTION);
     custom.setAttribute("name", text);
     custom.setAttribute("value", getValue());
-  }*/
+    */
+  }
 
-  /** Restores the current state from the given XML object. */
-  /*public void restoreState(OMEElement ome) throws SaveException {
+  /** Restores the current state from the given reader. */
+  public void restoreState(BufferedReader in) throws SaveException {
+    /* CTR TODO for v3.00 final
     CAElement custom = ome.getCustomAttr();
     String[] names = custom.getAttributes(LIST_OPTION, "name");
     String[] values = custom.getAttributes(LIST_OPTION, "value");
@@ -96,6 +99,7 @@ public class ListOption extends BioOption {
         break;
       }
     }
-  }*/
+    */
+  }
 
 }

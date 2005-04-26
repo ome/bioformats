@@ -24,14 +24,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.state;
 
 import java.awt.Component;
-import java.io.File;
-//import java.io.IOException;
+import java.io.*;
+import java.io.IOException;
 import java.util.Vector;
 import javax.swing.JCheckBox;
-//import loci.ome.xml.OMEElement;
 import loci.visbio.*;
 import loci.visbio.util.WarningPane;
-//import org.xml.sax.SAXException;
 
 /** OptionManager is the manager encapsulating VisBio's options. */
 public class OptionManager extends LogicManager {
@@ -119,25 +117,25 @@ public class OptionManager extends LogicManager {
 
   /** Reads in configuration from configuration file. */
   public void readIni() {
-    if (!new File(CONFIG_FILE).exists()) return;
-    /*OMEElement ome = new OMEElement();
-    try { ome.readXML(CONFIG_FILE); }
-    catch (IOException exc) { exc.printStackTrace(); }
-    catch (SAXException exc) { exc.printStackTrace(); }
+    File configFile = new File(CONFIG_FILE);
+    if (!configFile.exists()) return;
     try {
-      restoreState(ome);
+      BufferedReader fin = new BufferedReader(new FileReader(configFile));
+      restoreState(fin);
       bio.generateEvent(this, "read ini file", false);
     }
-    catch (SaveException exc) { exc.printStackTrace(); }*/
+    catch (IOException exc) { exc.printStackTrace(); }
+    catch (SaveException exc) { exc.printStackTrace(); }
   }
 
   /** Writes out configuration to configuration file. */
   public void writeIni() {
-    /*OMEElement ome = new OMEElement();
-    try { saveState(ome); }
+    try {
+      PrintWriter fout = new PrintWriter(new FileWriter(CONFIG_FILE));
+      saveState(fout);
+    }
+    catch (IOException exc) { exc.printStackTrace(); }
     catch (SaveException exc) { exc.printStackTrace(); }
-    try { ome.printXML(CONFIG_FILE); }
-    catch (IOException exc) { exc.printStackTrace(); }*/
   }
 
   /** Checks whether to display a warning, and does so if necessary. */
@@ -188,21 +186,21 @@ public class OptionManager extends LogicManager {
 
   // -- Saveable API methods --
 
-  /** Writes the current state to the given XML object. */
-  /*public void saveState(OMEElement ome) throws SaveException {
+  /** Writes the current state to the given writer. */
+  public void saveState(PrintWriter out) throws SaveException {
     for (int i=0; i<list.size(); i++) {
       BioOption option = (BioOption) list.elementAt(i);
-      option.saveState(ome);
+      option.saveState(out);
     }
-  }*/
+  }
 
-  /** Restores the current state from the given XML object. */
-  /*public void restoreState(OMEElement ome) throws SaveException {
+  /** Restores the current state from the given reader. */
+  public void restoreState(BufferedReader in) throws SaveException {
     for (int i=0; i<list.size(); i++) {
       BioOption option = (BioOption) list.elementAt(i);
-      option.restoreState(ome);
+      option.restoreState(in);
     }
-  }*/
+  }
 
 
   // -- Helper methods --

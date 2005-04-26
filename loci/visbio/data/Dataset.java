@@ -26,14 +26,11 @@ package loci.visbio.data;
 import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigInteger;
 import java.util.Hashtable;
-//import java.util.Vector;
+import java.util.Vector;
 import javax.swing.JComponent;
-//import loci.ome.xml.CAElement;
-//import loci.ome.xml.OMEElement;
 import loci.visbio.state.Dynamic;
 import loci.visbio.util.*;
 import visad.*;
@@ -396,20 +393,23 @@ public class Dataset extends ImageTransform {
 
   // -- DataTransform API methods - state logic --
 
-  /** Writes the current state to the given XML object. */
-  /*public void saveState(OMEElement ome, int id, Vector list) {
-    super.saveState(ome, id, list);
+  /** Writes the current state to the given writer. */
+  public void saveState(PrintWriter out, int id, Vector list) {
+    super.saveState(out, id, list);
 
+    /* CTR TODO for v3.00 final
     CAElement custom = ome.getCustomAttr();
     custom.setAttribute("pattern",
       pattern.replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
     custom.setAttribute("ids", ObjectUtil.arrayToString(ids));
-  }*/
+    */
+  }
 
-  /** Restores the current state from the given XML object. */
-  /*public int restoreState(OMEElement ome, int id, Vector list) {
-    int index = super.restoreState(ome, id, list);
+  /** Restores the current state from the given reader. */
+  public int restoreState(BufferedReader in, int id, Vector list) {
+    int index = super.restoreState(in, id, list);
     if (index < 0) return index;
+    /* CTR TODO for v3.00 final
     CAElement custom = ome.getCustomAttr();
 
     pattern = custom.getAttributes(DATA_TRANSFORM, "pattern")[index];
@@ -417,9 +417,10 @@ public class Dataset extends ImageTransform {
 
     ids = ObjectUtil.stringToStringArray(
       custom.getAttributes(DATA_TRANSFORM, "ids")[index]);
+    */
 
     return index;
-  }*/
+  }
 
 
   // -- Dynamic API methods --

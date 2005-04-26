@@ -23,12 +23,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.data;
 
+import java.io.BufferedReader;
+import java.io.PrintWriter;
 import java.rmi.RemoteException;
-//import java.util.Vector;
+import java.util.Vector;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-//import loci.ome.xml.CAElement;
-//import loci.ome.xml.OMEElement;
 import loci.visbio.state.Dynamic;
 import visad.*;
 
@@ -175,25 +175,29 @@ public class ProjectionTransform extends ImageTransform {
 
   // -- DataTransform API methods - state logic --
 
-  /** Writes the current state to the given XML object. */
-  /*public void saveState(OMEElement ome, int id, Vector list) {
-    super.saveState(ome, id, list);
+  /** Writes the current state to the given writer. */
+  public void saveState(PrintWriter out, int id, Vector list) {
+    super.saveState(out, id, list);
 
+    /* CTR TODO for v3.00 final
     CAElement custom = ome.getCustomAttr();
     custom.setAttribute("projectAxis", "" + axis);
-  }*/
+    */
+  }
 
-  /** Restores the current state from the given XML object. */
-  /*public int restoreState(OMEElement ome, int id, Vector list) {
-    int index = super.restoreState(ome, id, list);
+  /** Restores the current state from the given reader. */
+  public int restoreState(BufferedReader in, int id, Vector list) {
+    int index = super.restoreState(in, id, list);
     if (index < 0) return index;
+    /* CTR TODO for v3.00 final
     CAElement custom = ome.getCustomAttr();
 
     axis = Integer.parseInt(
       custom.getAttributes(DATA_TRANSFORM, "projectAxis")[index]);
+    */
 
     return index;
-  }*/
+  }
 
 
   // -- Dynamic API methods --
