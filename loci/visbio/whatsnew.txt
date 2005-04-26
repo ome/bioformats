@@ -4,7 +4,7 @@ v3.00 beta5 - Tuesday, April 26, 2005
 - ADDED: Ability to download images from an OME database (OME image transform)
 - ADDED: Dragging selected overlays with the pointer tool moves them
 - ADDED: Support for key/value pair command-line parameters
-- ADDED: Ability launch VisBio through a web browser with Java Web Start
+- ADDED: Ability to launch VisBio through a web browser with Java Web Start
 - ADDED: Support for PNG images
 - ADDED: All online help topics are written
 
