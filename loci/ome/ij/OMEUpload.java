@@ -64,9 +64,9 @@ public class OMEUpload{
     java.awt.Panel curt = new java.awt.Panel();
     java.awt.GridLayout grid=new java.awt.GridLayout(3,2);
     curt.setLayout(grid);
-    TextField passField = new TextField("blahblahblah",8);
-    TextField servField= new TextField("skyking",8);
-    TextField useField= new TextField("philip",8);
+    TextField passField = new TextField("",8);//insert here password
+    TextField servField= new TextField("",8);//insert here server
+    TextField useField= new TextField("",8);//insert here user
     passField.setEchoChar('*');    
     curt.add(new java.awt.Label("Server:"), "1");
     curt.add(servField, "2");    

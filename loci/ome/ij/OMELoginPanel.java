@@ -32,13 +32,13 @@ public class OMELoginPanel implements ActionListener{
     input.add(input2);
     input.add(input3);
     EmptyBorder bord=new EmptyBorder(5,5,5,5);
-    passField = new JPasswordField("blahblahblah",8);
+    passField = new JPasswordField("",8);//insert here password
+    servField= new JTextField("",8);//insert here server
+    useField= new JTextField("",8);//insert here user
     passField.setPreferredSize(passField.getMinimumSize());
     passField.setMaximumSize(new Dimension(passField.getMaximumSize().width,passField.getPreferredSize().height));
-    servField= new JTextField("skyking",8);
     servField.setPreferredSize(servField.getMinimumSize());
     servField.setMaximumSize(new Dimension(servField.getMaximumSize().width,servField.getPreferredSize().height));
-    useField= new JTextField("philip",8);
     useField.setPreferredSize(useField.getMinimumSize());
     useField.setMaximumSize(new Dimension(useField.getMaximumSize().width,useField.getPreferredSize().height));
     JLabel ser=new JLabel("Server: ", JLabel.TRAILING);

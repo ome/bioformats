@@ -23,97 +23,10 @@ public class OMEMetaPanel implements ActionListener, TreeSelectionListener{
     "PlaneSum_Xi", "PlaneSum_Yi", "PlaneSum_Zi", "StackCentroid", "StackGeometricMean",
     "StackGeometricSigma", "StackMaximum", "StackMean", "StackMinimum", "StackSigma",
     "StageLabel",  "Thumbnail", "Classification"};
-  public static final String[][] IMAGE_ATTRS={
-    //Dimensions
-    {"PixelSizeC", "PixelSizeT", "PixelSizeX", "PixelSizeY", "PixelSizeZ"},
-    //DisplayOptions
-    {"BlueChannel", "ColorMap", "DisplayROIs", "GreenChannel", "GreyChannel",
-      "Pixels", "RedChannel", "TStart", "TStop", "Zoom", "ZStart", "ZStop",
-      "BlueChannelOn", "DisplayRGB", "GreenChannelOn", "RedChannelOn"},
-    //ImageAnnotation
-    {"Content", "Experimenter", "TheC", "TheT", "TheZ","Timestamp", "Valid"},
-    //ImageExperiment
-    {"Experiment"},
-    //ImageGroup 
-    {"Group"},
-    //ImageInstrument
-    {"Instrument", "Objective"},
-    //ImagePlate
-    {"Plate", "Sample", "Well"},
-    //ImageTestSignature
-    {"Value"},
-    //ImagingEnvironment
-    {"AirPressure", "CO2Percent", "Humidity", "Temperature"},
-    //PlaneCentroid
-    {"TheC", "TheT", "TheZ", "X", "Y"},
-    //PlaneGeometricMean
-    {"GeometricMean", "TheC", "TheT", "TheZ"},
-    //PlaneGeometricSigma
-    {"GeometricSigma", "TheC", "TheT", "TheZ"},
-    //PlaneMaximum
-    {"Maximum", "TheC", "TheT", "TheZ"},
-    //PlaneMean
-    {"Mean", "TheC", "TheT", "TheZ"},
-    //PlaneMinimum
-    {"Minimum", "TheC", "TheT", "TheZ"},
-    //PlaneSigma
-    {"Sigma", "TheC", "TheT", "TheZ"},
-    //PlaneSum_i
-    {"Sum_i", "TheC", "TheT", "TheZ"},
-    //PlaneSum_i2
-    {"Sum_i2", "TheC", "TheT", "TheZ"},
-    //PlaneSum_log_i
-    {"Sum_log_i", "TheC", "TheT", "TheZ"},
-    //PlaneSum_Xi
-    {"Sum_Xi", "TheC", "TheT", "TheZ"},
-    //PlaneSum_Yi
-    {"Sum_Yi", "TheC", "TheT", "TheZ"},
-    //PlaneSum_Zi
-    {"Sum_Zi", "TheC", "TheT", "TheZ"},
-    //StackCentroid
-    {"TheC", "TheT", "X", "Y", "Z"},
-    //StackGeometricMean
-    {"GeometricMean","TheC", "TheT"},
-    //StackGeometricSigma
-    {"GeometricSigma","TheC", "TheT"},
-    //StackMaximum
-    {"Maximum","TheC", "TheT"},
-    //StackMean
-    {"Mean","TheC", "TheT"},
-    //StackMinimum
-    {"Minimum","TheC", "TheT"},
-    //StackSigma
-    {"Sigma","TheC", "TheT"},
-    //StageLabel
-    {"Name","X", "Y", "Z"},
-    //Thumbnail
-    {"MimeType","Path", "Repository"},
-    //Classification
-    {"Category", "Confidence", "Valid"}
-  };
   public static final String[] FEATURE_TYPES={"Bounds",
      "Extent", "Location", "Ratio","Signal","Threshold", "Timepoint"
   };
-  public static final String[][] FEATURE_ATTRS={
-    //Bounds
-    {"Height", "Width", "X", "Y"},
-    //Extent
-    {"FormFacter", "MaxX", "MaxY", "MaxZ", "MinX", "MinY", "MinZ", "Perimeter", "SigmaX",
-      "SigmaY", "SigmaZ", "SurfaceArea", "Volume"},
-    //Location
-    {"TheX", "TheY", "TheZ"},
-    //Ratio
-    {"Ratio"},
-    //Signal
-    {"Background", "CentroidX", "CentroidY", "CentroidZ", "GeometricMean",
-      "GeometricSigma", "Integral", "Mean", "Sigma", "TheC"},
-    //Threshold
-    {"Threshold"},
-    //Timepoint
-    {"TheT"}
-  };
-
-  private JButton cancel;// save, addElement;
+  private JButton cancel;
   private JDialog dia;
   private JTextField text1, text2;
   
@@ -138,9 +51,6 @@ public class OMEMetaPanel implements ActionListener, TreeSelectionListener{
     tree.addTreeSelectionListener(this);
     JScrollPane treeView = new JScrollPane(tree);
     treeView.setPreferredSize(new Dimension(200, 200));
-    //treeView.setPreferredSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
-    //treeView.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
-    
     //creates the dialog box
     dia=new JDialog(frame, "OME Image Attributes", true);
     JPanel pane=new JPanel();
@@ -153,21 +63,14 @@ public class OMEMetaPanel implements ActionListener, TreeSelectionListener{
     gbl.gridheight=GridBagConstraints.REMAINDER;
     gbl.weighty=1;
     gbl.weightx=1;
-    //pane.setPreferredSize(new Dimension(200, 300));
     customField=new JTextArea(2,20);
     customField.setLineWrap(true);
     customField.setWrapStyleWord(true);
     JScrollPane customScroll=new JScrollPane(customField);
-    
-    //this caused the window to not have anything in it
-    //customScroll.setPreferredSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
     treeView.setMinimumSize(new Dimension(50,50));
     customPane.add(customScroll, gbl);
     splitPane=new JSplitPane(JSplitPane.VERTICAL_SPLIT, treeView, customPane);
     customPane.setMinimumSize(customPane.getPreferredSize());
-    //try
-    //splitPane.setDividerLocation(.1);
-    
     pane.add(splitPane);
     JPanel paneButtons=new JPanel();
     paneButtons.setLayout(new BoxLayout(paneButtons, BoxLayout.X_AXIS));
@@ -179,7 +82,6 @@ public class OMEMetaPanel implements ActionListener, TreeSelectionListener{
     cancel.setActionCommand("cancel");
     paneButtons.add(cancel);
     cancel.addActionListener(this);
-
     dia.pack();
     centerWindow(frame, dia);
   }//end of public constructor
@@ -201,7 +103,6 @@ public class OMEMetaPanel implements ActionListener, TreeSelectionListener{
     if (y < 0) y = 0;
     window.setLocation(x, y);
   }//end of centerWindow method
-  
   
   /**implements the ActionListener actionPerformed method*/
   public void actionPerformed(ActionEvent e){

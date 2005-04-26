@@ -511,9 +511,9 @@ public class OMEDownload{
       details[i][7]=p.getSizeZ().toString();
     }
     String[] columns={"","Name","ID","Date Created"};
-    //The details array has the following contents
-    //"Thumbnail", "Owner", "Pixel Type", "Size C","Size T",
-    //"Size X","Size Y","Size Z","Description"
+    /*The details array has the following contents
+    "Thumbnail", "Owner", "Pixel Type", "Size C","Size T",
+    "Size X","Size Y","Size Z","Description"*/
 
     //create the table
     OMETablePanel tp=new OMETablePanel(IJ.getInstance(), props, columns,
@@ -643,7 +643,6 @@ public class OMEDownload{
         }
       }
        
-      
       // log out
       IJ.showStatus("OmeDownload: Logging out...");
       IJ.showProgress(.99);

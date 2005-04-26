@@ -28,7 +28,6 @@ public class OMEMetaDataHandler{
   public static void exportMeta(int ijimageID){
     isXML=true;
     imageP=WindowManager.getImage(ijimageID).getProcessor();
-    //int ijimageID=imageID.intValue();
     IJ.showStatus("Retrieving OME-Tiff header.");
     Object[] meta=null;
     meta=OMESidePanel.getImageMeta(ijimageID);
@@ -66,8 +65,8 @@ public class OMEMetaDataHandler{
     }
     catch (Exception e){
       IJ.showStatus("Error parsing OME-XML metadata, possibly not present.");
-      // Don't print stack trace, this is a legal thing, you don't have to have an OME
-      // tiff file,  its just cooler if you do.
+      /* Don't print stack trace, this is a legal thing, you don't have to have an OME
+       tiff file,  its just cooler if you do.*/
       if ( meta==null) {
         meta=new Object[2];
          meta[0]=new Integer(0);
@@ -84,13 +83,11 @@ public class OMEMetaDataHandler{
       new XMLObject("Meta Data"));
     OMESidePanel.hashInImage(ijimageID, meta);
     IJ.showStatus("Meta data is being put into tree structure.");
-//    createNodes((DefaultMutableTreeNode)meta[1]);
     List list=omeNode.getImages();
     Iterator iter =list.iterator();
     while (iter.hasNext()){
       exportMeta((ImageNode)iter.next(), (DefaultMutableTreeNode)meta[1]);
     }
-
     //stop holding the omeNode
     omeNode=null;
   }//end of OME-TIFF xml retrieval exportMeta method
@@ -160,7 +157,6 @@ public class OMEMetaDataHandler{
     //image node
     DefaultMutableTreeNode imageNode=new DefaultMutableTreeNode(
         new XMLObject(XMLObject.IMAGEHEADING));
-//    root.add(imageNode);
     //nodes under image
     imageNode.add(new DefaultMutableTreeNode(
       new XMLObject("Name", image.getName(), XMLObject.IMAGE)));
@@ -218,58 +214,14 @@ public class OMEMetaDataHandler{
     DefaultMutableTreeNode imageNode=addImage(image, df);
     root.add(imageNode);
     
-/*    
-    //create root node of whole tree
-    DefaultMutableTreeNode root=new DefaultMutableTreeNode(
-      new XMLObject("Meta Data"));
-    //image node
-    DefaultMutableTreeNode imageNode=new DefaultMutableTreeNode(
-        new XMLObject(XMLObject.IMAGEHEADING));
-    root.add(imageNode);
-    //nodes under image
-    imageNode.add(new DefaultMutableTreeNode(
-      new XMLObject("Name", image.getName(), XMLObject.IMAGE)));
-    imageNode.add(new DefaultMutableTreeNode(
-      new XMLObject("ID", ""+image.getID(), XMLObject.IMAGE)));
-    imageNode.add(new DefaultMutableTreeNode(
-      new XMLObject("Creation Date", image.getCreated(), XMLObject.IMAGE)));
-    imageNode.add(new DefaultMutableTreeNode(
-      new XMLObject("Description", image.getDescription(), XMLObject.IMAGE)));
-    //get pixel information
-    DefaultMutableTreeNode pixelNode=new DefaultMutableTreeNode(
-        new XMLObject(XMLObject.PIXELHEADING));
-    imageNode.add(pixelNode);
-    Pixels pixels=image.getDefaultPixels();
-    exportPixelMeta(pixels, pixelNode, df);
-    //get dataset references
-    DefaultMutableTreeNode datasets=new DefaultMutableTreeNode(
-      new XMLObject(XMLObject.DATASETREF));
-    List data=image.getDatasets();
-    Iterator iterator=data.iterator();
-    String s="";
-    while (iterator.hasNext()) {
-      s.concat(((Dataset)iterator.next()).getID()+", ");
-    }
-    if (s.length()!=0 && s.length()!=2){
-      imageNode.add(datasets);
-      datasets.add(new DefaultMutableTreeNode(
-        new XMLObject("Dataset IDs", s.substring(0, s.length()-3),XMLObject.READONLY)));
-    }
-*/    
-    
-    
-    
-    
-
     //load custom attributes
     DefaultMutableTreeNode customNode=new DefaultMutableTreeNode(
       new XMLObject(XMLObject.CUSTOMHEADING));
     imageNode.add(customNode);
     for (int i=0; i<OMEMetaPanel.IMAGE_TYPES.length; i++){
-      Criteria criteria= OMEDownload.makeAttributeFields(OMEMetaPanel.IMAGE_ATTRS[i]);
+      Criteria criteria=new Criteria();
       criteria.addWantedField("image_id");
       criteria.addFilter("image_id", (new Integer(image.getID())).toString());
-      IJ.showStatus("Retrieving "+OMEMetaPanel.IMAGE_TYPES[i]+"s.");
       List customs=null;
       try{
         customs=df.retrieveList(OMEMetaPanel.IMAGE_TYPES[i], criteria);
@@ -280,41 +232,70 @@ public class OMEMetaDataHandler{
       if(customs!=null){
         Iterator itCustoms=customs.iterator();
         while (itCustoms.hasNext()){
-          AttributeDTO attr=(AttributeDTO)itCustoms.next();
-          DefaultMutableTreeNode elementNode=new DefaultMutableTreeNode(
-            new XMLObject(OMEMetaPanel.IMAGE_TYPES[i], XMLObject.ELEMENT));
-          customNode.add(elementNode);
-          Map map = attr.getMap();
-          Set set = map.keySet();
-          Iterator iter2 = set.iterator();
-          while (iter2.hasNext()) {
-            Object key = iter2.next();
-            Object value = map.get(key);
-            if((value instanceof String) || (value instanceof Number) || 
-              (value instanceof Boolean)){
-              elementNode.add(new DefaultMutableTreeNode(new XMLObject((String)key,
-                ""+value, XMLObject.ATTRIBUTE)));
-            }
-          }
           if(OMEMetaPanel.IMAGE_TYPES[i].equals("ImageExperiment")){
-            addExperiment(((ImageExperiment)attr).getExperiment(), elementNode, df);
+            addImageExperiment((ImageExperiment)itCustoms.next(), customNode, df);
           }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("Classification")){
-            addCategory(((Classification)attr).getCategory(), elementNode, df);
+            addClassification((Classification)itCustoms.next(), customNode, df);
           }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("ImageInstrument")){
-            addInstrument(((ImageInstrument)attr).getInstrument(), elementNode, df);
-            addObjective(((ImageInstrument)attr).getObjective(), elementNode, df);
+            addImageInstrument((ImageInstrument)itCustoms.next(), customNode, df);
           }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("ImageAnnotation")){
-            addExperimenter(((ImageAnnotation)attr).getExperimenter(), elementNode, df);
+            addImageAnnotation((ImageAnnotation)itCustoms.next(), customNode, df);
           }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("ImageGroup")){
-            addGroup(((ImageGroup)attr).getGroup(), elementNode, df);
+            addImageGroup((ImageGroup)itCustoms.next(), customNode, df);
           }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("ImagePlate")){
-            addPlate(((ImagePlate)attr).getPlate(), elementNode, df);
+            addImagePlate((ImagePlate)itCustoms.next(), customNode, df);
           }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("DisplayOptions")){
-            List stuff=((DisplayOptions)attr).getDisplayROIList();
-            Iterator iter5=stuff.iterator();
-            while(iter5.hasNext()){
-              addDisplayROI((DisplayROI)iter5.next(), elementNode, df);
-            }
+            addDisplayOptions((DisplayOptions)itCustoms.next(), customNode, df);
+          }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("Dimensions")){
+            addDimensions((Dimensions)itCustoms.next(), customNode, df);
+          }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("ImageTestSignature")){
+            addImageTestSignature((ImageTestSignature)itCustoms.next(), customNode, df);
+          }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("ImagingEnvironment")){
+            addImagingEnvironment((ImagingEnvironment)itCustoms.next(), customNode, df);
+          }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("PlaneCentroid")){
+            addPlaneCentroid((PlaneCentroid)itCustoms.next(), customNode, df);
+          }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("PlaneGeometricMean")){
+            addPlaneGeometricMean((PlaneGeometricMean)itCustoms.next(), customNode, df);
+          }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("PlaneGeometricSigma")){
+            addPlaneGeometricSigma((PlaneGeometricSigma)itCustoms.next(), customNode, df);
+          }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("PlaneMaximum")){
+            addPlaneMaximum((PlaneMaximum)itCustoms.next(), customNode, df);
+          }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("PlaneMean")){
+            addPlaneMean((PlaneMean)itCustoms.next(), customNode, df);
+          }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("PlaneMinimum")){
+            addPlaneMinimum((PlaneMinimum)itCustoms.next(), customNode, df);
+          }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("PlaneSigma")){
+            addPlaneSigma((PlaneSigma)itCustoms.next(), customNode, df);
+          }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("PlaneSum_i")){
+            addPlaneSum_i((PlaneSum_i)itCustoms.next(), customNode, df);
+          }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("PlaneSum_i2")){
+            addPlaneSum_i2((PlaneSum_i2)itCustoms.next(), customNode, df);
+          }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("PlaneSum_log_i")){
+            addPlaneSum_log_i((PlaneSum_log_i)itCustoms.next(), customNode, df);
+          }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("PlaneSum_Xi")){
+            addPlaneSum_Xi((PlaneSum_Xi)itCustoms.next(), customNode, df);
+          }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("PlaneSum_Yi")){
+            addPlaneSum_Yi((PlaneSum_Yi)itCustoms.next(), customNode, df);
+          }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("PlaneSum_Zi")){
+            addPlaneSum_Zi((PlaneSum_Zi)itCustoms.next(), customNode, df);
+          }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("StackCentroid")){
+            addStackCentroid((StackCentroid)itCustoms.next(), customNode, df);
+          }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("StackGeometricMean")){
+            addStackGeometricMean((StackGeometricMean)itCustoms.next(), customNode, df);
+          }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("StackGeometricSigma")){
+            addStackGeometricSigma((StackGeometricSigma)itCustoms.next(), customNode, df);
+          }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("StackMaximum")){
+            addStackMaximum((StackMaximum)itCustoms.next(), customNode, df);
+          }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("StackMean")){
+            addStackMean((StackMean)itCustoms.next(), customNode, df);
+          }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("StackMinimum")){
+            addStackMinimum((StackMinimum)itCustoms.next(), customNode, df);
+          }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("StackSigma")){
+            addStackSigma((StackSigma)itCustoms.next(), customNode, df);
+          }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("StageLabel")){
+            addStageLabel((StageLabel)itCustoms.next(), customNode, df);
+          }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("Thumbnail")){
+            addThumbnail((Thumbnail)itCustoms.next(), customNode, df);
           }
         }
       }
@@ -329,7 +310,7 @@ public class OMEMetaDataHandler{
     if(element==null)return;
     if(df!=null){
       //setup and load the columns that this element has
-      String [] attrs={"BlueChannel", "ColorMap", "GreenChannel", "GreyChannel",
+      String [] attrs={"BlueChannel", "ColorMap","DisplayROIList", "GreenChannel", "GreyChannel",
         "Pixels", "RedChannel", "TStart", "TStop", "Zoom", "ZStart", "ZStop",
         "BlueChannelOn", "DisplayRGB", "GreenChannelOn", "RedChannelOn"};
       Criteria criteria=OMEDownload.makeAttributeFields(attrs);
@@ -362,41 +343,37 @@ public class OMEMetaDataHandler{
       XMLObject.ATTRIBUTE)));
     node.add(new DefaultMutableTreeNode(new XMLObject("BlueChannelOn", ""+element.isBlueChannelOn(),
       XMLObject.ATTRIBUTE)));
-    if(element.getPixels() instanceof PixelsNode) node.add(new DefaultMutableTreeNode(new XMLObject(
+    if (element.getPixels()==null);
+    else if(element.getPixels() instanceof PixelsNode) node.add(new DefaultMutableTreeNode(new XMLObject(
       "Pixels", ""+((PixelsNode)element.getPixels()).getLSID(), XMLObject.ATTRIBUTE)));
     else node.add(new DefaultMutableTreeNode(new XMLObject(
       "Pixels", ""+element.getPixels().getID(), XMLObject.ATTRIBUTE)));
     //get children of this element
     DefaultMutableTreeNode red=new DefaultMutableTreeNode(new XMLObject("RedChannel"));
-    node.add(red);
     DefaultMutableTreeNode green=new DefaultMutableTreeNode(new XMLObject("GreenChannel"));
-    node.add(green);
     DefaultMutableTreeNode blue=new DefaultMutableTreeNode(new XMLObject("BlueChannel"));
-    node.add(blue);
     DefaultMutableTreeNode grey=new DefaultMutableTreeNode(new XMLObject("GreyChannel"));
-    node.add(grey);
     double[] redd=addDisplayChannel(element.getRedChannel(), red, df);
     double[] greend=addDisplayChannel(element.getGreenChannel(), green, df);
     double[] blued=addDisplayChannel(element.getBlueChannel(), blue, df);
     double[] greyd=addDisplayChannel(element.getGreyChannel(), grey, df);
+    if (!red.isLeaf())node.add(red);
+    if (!green.isLeaf())node.add(green);
+    if (!blue.isLeaf())node.add(blue);
+    if (!grey.isLeaf())node.add(grey);
     //set display characteristics in ImageJ from display channel values
-    //setMinAndMax appears to have no effect even though it runs fine "weird"
     if (greyd!=null){
       imageP.setMinAndMax(greyd[0],greyd[1]);
       imageP.gamma(greyd[2]);
-      //System.out.println("set grey values white:"+greyd[1]+" black:"+greyd[0]);
     }else if(redd!=null){
       imageP.setMinAndMax(redd[0], redd[1]);
       imageP.gamma(redd[2]);
-      //System.out.println("set red values"+redd[1]+"  "+redd[0]);
     }else if(blued!=null){
       imageP.setMinAndMax(blued[0], blued[1]);
       imageP.gamma(blued[2]);
-      //System.out.println("set blue values");
     }else if(greend!=null){
       imageP.setMinAndMax(greend[0], greend[1]);
       imageP.gamma(greend[2]);
-      //System.out.println("set green values");
     }
     List list=element.getDisplayROIList();
     Iterator iter=list.iterator();
@@ -1092,8 +1069,10 @@ public class OMEMetaDataHandler{
     //add trajectory entries
     List trajects=null;
     if(df!=null){
-//      String [] attrs={"DeltaX","DeltaY", "DeltaZ", "Distance",
-//        "Order", "Trajectory", "Velocity"};
+      //These fields don't have to be loaded because
+      //they will be when addTrajectory is called
+      //String [] attrs={"DeltaX","DeltaY", "DeltaZ", "Distance",
+      //"Order", "Trajectory", "Velocity"};
       Criteria trajCriteria=new Criteria();//=OMEDownload.makeAttributeFields(attrs);
       trajCriteria.addWantedField("feature_id");
       trajCriteria.addFilter("feature_id", (new Integer(feature.getID())).toString());
@@ -1107,7 +1086,7 @@ public class OMEMetaDataHandler{
     //add attributes to this element's node
     if(df!=null){
       for (int i=0; i<OMEMetaPanel.FEATURE_TYPES.length; i++){
-        Criteria criteria= OMEDownload.makeAttributeFields(OMEMetaPanel.FEATURE_ATTRS[i]);
+        Criteria criteria=new Criteria();
         criteria.addWantedField("feature_id");
         criteria.addFilter("feature_id", (new Integer(feature.getID())).toString());
         IJ.showStatus("Retrieving  "+OMEMetaPanel.FEATURE_TYPES[i]+"s.");
@@ -1122,21 +1101,20 @@ public class OMEMetaDataHandler{
         if(customs!=null){
           Iterator itCustoms=customs.iterator();
           while (itCustoms.hasNext()){
-            AttributeDTO attr=(AttributeDTO)itCustoms.next();
-            DefaultMutableTreeNode elementNode=new DefaultMutableTreeNode(
-              new XMLObject(OMEMetaPanel.FEATURE_TYPES[i], XMLObject.ELEMENT));
-            featureNode.add(elementNode);
-            Map map = attr.getMap();
-            Set set = map.keySet();
-            Iterator iter2 = set.iterator();
-            while (iter2.hasNext()) {
-              Object key = iter2.next();
-              Object value = map.get(key);
-              if((value instanceof String) || (value instanceof Number) || 
-                (value instanceof Boolean)){
-                elementNode.add(new DefaultMutableTreeNode(new XMLObject((String)key,
-                  ""+value, XMLObject.ATTRIBUTE)));
-              }
+            if(OMEMetaPanel.IMAGE_TYPES[i].equals("Bounds")){
+              addBounds((Bounds)itCustoms.next(), featureNode, df);
+            }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("Extent")){
+              addExtent((Extent)itCustoms.next(), featureNode, df);
+            }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("Location")){
+              addLocation((Location)itCustoms.next(), featureNode, df);
+            }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("Ratio")){
+              addRatio((Ratio)itCustoms.next(), featureNode, df);
+            }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("Signal")){
+              addSignal((Signal)itCustoms.next(), featureNode, df);
+            }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("Threshold")){
+              addThreshold((Threshold)itCustoms.next(), featureNode, df);
+            }else if(OMEMetaPanel.IMAGE_TYPES[i].equals("Timepoint")){
+              addTimepoint((Timepoint)itCustoms.next(), featureNode, df);
             }
           }
         }
@@ -1223,7 +1201,8 @@ public class OMEMetaDataHandler{
     if(element==null)return;
     if(df!=null){
       //setup and load the columns that this element has
-      String [] attrs={"Content", "Experimenter", "TheC", "TheT", "TheZ","Timestamp", "Valid"};
+      //these two columns don't work "WEIRD"
+      String [] attrs={"Content",/* "Experimenter",*/ "TheC", "TheT", "TheZ",/*"Timestamp",*/ "Valid"};
       Criteria criteria=OMEDownload.makeAttributeFields(attrs);
       criteria.addWantedField("id");
       criteria.addFilter("id", (new Integer(element.getID())).toString());
@@ -1240,11 +1219,13 @@ public class OMEMetaDataHandler{
       XMLObject.ATTRIBUTE)));
     node.add(new DefaultMutableTreeNode(new XMLObject("TheT", ""+element.getTheT(),
       XMLObject.ATTRIBUTE)));
-    node.add(new DefaultMutableTreeNode(new XMLObject("Timestamp", ""+element.getTimestamp(),
-      XMLObject.ATTRIBUTE)));
+    //this won't work as long as timestamp above doesn't load "WEIRD"
+//    node.add(new DefaultMutableTreeNode(new XMLObject("Timestamp", ""+element.getTimestamp(),
+//      XMLObject.ATTRIBUTE)));
     node.add(new DefaultMutableTreeNode(new XMLObject("Valid", ""+element.isValid(),
       XMLObject.ATTRIBUTE)));
-    addExperimenter(element.getExperimenter(), node, df);
+    //This will not work as long as Experimenter above won't load "WEIRD"
+//    addExperimenter(element.getExperimenter(), node, df);
   }//end of addImageAnnotation method
   
   /**exports ImageExperiment from the database and adds to the tree*/
@@ -1815,7 +1796,7 @@ public class OMEMetaDataHandler{
     if(element==null)return;
     if(df!=null){
       //setup and load the columns that this element has
-      String [] attrs={"GeometicSigma","TheC", "TheT"};
+      String [] attrs={"GeometricSigma","TheC", "TheT"};
       Criteria criteria=OMEDownload.makeAttributeFields(attrs);
       criteria.addWantedField("id");
       criteria.addFilter("id", (new Integer(element.getID())).toString());
