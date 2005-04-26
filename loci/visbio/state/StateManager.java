@@ -120,6 +120,8 @@ public class StateManager extends LogicManager {
    * time, and if so, asks the user whether to restore the previous state.
    */
   public void checkCrash() {
+    boolean crashed = false;
+    /* CTR TODO for v3.00 final
     boolean crashed = state.exists();
     if (crashed) {
       int ans = JOptionPane.showConfirmDialog(bio,
@@ -128,6 +130,7 @@ public class StateManager extends LogicManager {
         JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
       if (ans != JOptionPane.YES_OPTION) crashed = false;
     }
+    */
     saveState("", true, crashed); // compute currentState variable
     initialState = currentState;
     if (crashed) restoreState(state);
@@ -139,11 +142,13 @@ public class StateManager extends LogicManager {
    */
   public boolean checkSave() {
     if (saved) return true;
+    /* CTR TODO for v3.00 final
     int ans = JOptionPane.showConfirmDialog(bio,
       "Program state has been changed. Save before exiting?", "VisBio",
       JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
     if (ans == JOptionPane.CANCEL_OPTION) return false;
     if (ans == JOptionPane.YES_OPTION) fileSave();
+    */
     return true;
   }
 
