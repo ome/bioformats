@@ -80,8 +80,6 @@ public class NumericOption extends BioOption {
 
   // -- Saveable API methods --
 
-  protected static final String NUMERIC_OPTION = "VisBio_NumericOption";
-
   /** Writes the current state to the given writer. */
   public void saveState(PrintWriter out) throws SaveException {
     /* CTR TODO for v3.00 final

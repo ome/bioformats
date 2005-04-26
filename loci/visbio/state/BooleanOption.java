@@ -68,8 +68,6 @@ public class BooleanOption extends BioOption {
 
   // -- Saveable API methods --
 
-  protected static final String BOOLEAN_OPTION = "VisBio_BooleanOption";
-
   /** Writes the current state to the given writer. */
   public void saveState(PrintWriter out) throws SaveException {
     /* CTR TODO for v3.00 final

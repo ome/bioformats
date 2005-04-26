@@ -75,8 +75,6 @@ public class ListOption extends BioOption {
 
   // -- Saveable API methods --
 
-  protected static final String LIST_OPTION = "VisBio_ListOption";
-
   /** Writes the current state to the given writer. */
   public void saveState(PrintWriter out) throws SaveException {
     /* CTR TODO for v3.00 final
