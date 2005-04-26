@@ -121,10 +121,7 @@ public class SystemControls extends ControlPanel implements ActionListener {
       String qtMinor = r.exec("QTSession.getMinorVersion()").toString();
       qtVersion = qtMajor + "." + qtMinor;
     }
-    catch (VisADException exc) {
-      exc.printStackTrace();
-      qtVersion = "Missing";
-    }
+    catch (VisADException exc) { qtVersion = "Missing"; }
     JTextField qtField = new JTextField(qtVersion);
     qtField.setEditable(false);
 
