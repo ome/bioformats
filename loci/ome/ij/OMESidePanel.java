@@ -16,7 +16,7 @@ import java.util.Hashtable;
 public class OMESidePanel implements ActionListener{
   //Fields
   private static JButton close, upload, download, refresh, edit;
-  private static JDialog dia;
+  public static JDialog dia;
   public static boolean cancelPlugin;
   private static JList list;
   private static Frame parentWindow;
@@ -208,7 +208,7 @@ public class OMESidePanel implements ActionListener{
   }//end of actionPerformed method
   
   /**pops up Yes no dialog window*/
-  private static boolean yesNo(Frame owner, String question){
+  public static boolean yesNo(Frame owner, String question){
     int n= JOptionPane.showConfirmDialog(owner, question,"OME Plugin",
     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
     

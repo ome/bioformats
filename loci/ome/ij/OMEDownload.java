@@ -5,6 +5,7 @@ import ij.process.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Hashtable;
+import javax.swing.JOptionPane;
 
 import org.openmicroscopy.ds.*;
 import org.openmicroscopy.ds.dto.*;
@@ -336,8 +337,45 @@ public class OMEDownload{
     table.put("int16", new Integer(ImagePlus.GRAY16));
     table.put("int8", new Integer(ImagePlus.GRAY8));
     int type=((Integer)table.get(typeS)).intValue();
+    int redChanNum=2;
+    int greenChanNum=1;
+    int blueChanNum=0;
     if ( sizeC==3) {
       type=ImagePlus.COLOR_RGB;
+      IJ.showStatus("Finding color channel numbers.");
+      //code that figures out the display options and what color is what channel number
+      String [] attrs={"BlueChannel", "ColorMap","DisplayROIList", "GreenChannel", "GreyChannel",
+        "Pixels", "RedChannel", "TStart", "TStop", "Zoom", "ZStart", "ZStop",
+        "BlueChannelOn", "DisplayRGB", "GreenChannelOn", "RedChannelOn"};
+      Criteria criteria=OMEDownload.makeAttributeFields(attrs);
+      criteria.addWantedField("image_id");
+      criteria.addFilter("image_id", (new Integer(image.getID())).toString());
+      //retrieve element to add with all columns loaded
+      DisplayOptions element=(DisplayOptions)df.retrieve("DisplayOptions", criteria);
+      DisplayChannel redChannel=element.getRedChannel();
+      DisplayChannel greenChannel=element.getGreenChannel();
+      DisplayChannel blueChannel=element.getBlueChannel();
+      
+      
+      String [] attrsC={"ChannelNumber"};
+      //red
+      criteria=OMEDownload.makeAttributeFields(attrsC);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(redChannel.getID())).toString());
+      redChannel=(DisplayChannel)df.retrieve("DisplayChannel", criteria);
+      redChanNum=redChannel.getChannelNumber().intValue();
+      //green
+      criteria=OMEDownload.makeAttributeFields(attrsC);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(greenChannel.getID())).toString());
+      greenChannel=(DisplayChannel)df.retrieve("DisplayChannel", criteria);
+      greenChanNum=greenChannel.getChannelNumber().intValue();
+      //blue
+      criteria=OMEDownload.makeAttributeFields(attrsC);
+      criteria.addWantedField("id");
+      criteria.addFilter("id", (new Integer(blueChannel.getID())).toString());
+      blueChannel=(DisplayChannel)df.retrieve("DisplayChannel", criteria);
+      blueChanNum=blueChannel.getChannelNumber().intValue();
     }
     //ImageJ can only have one varied axis so if there is more
     //than one varied axis, prompt the user for desired axis
@@ -389,9 +427,9 @@ public class OMEDownload{
            //adding plane to the ImageStack
            is.addSlice("Z="+z+" T="+t, ip);
          }else if (type==ImagePlus.COLOR_RGB ) {
-           byte []r=pf.getPlane(pix, z, 2, t, true);
-           byte []g=pf.getPlane(pix, z, 1, t, true);
-           byte []b=pf.getPlane(pix, z, 0, t, true);
+           byte []r=pf.getPlane(pix, z, redChanNum, t, true);
+           byte []g=pf.getPlane(pix, z, greenChanNum, t, true);
+           byte []b=pf.getPlane(pix, z, blueChanNum, t, true);
            for (int i=0;i<pixeli.length ;i++ ) {
              pixeli[i]=((r[i] & 0xff)<<16)+((g[i] & 0xff)<<8) + (b[i] & 0xff);
            }
@@ -439,10 +477,14 @@ public class OMEDownload{
     imageP=new ImagePlus(image.getName(), is);
     
     //retrieve metadata
-    IJ.showStatus("Retrieving metadata..");
     Object[] metas=new Object[2];
     metas[0]=new Integer(image.getID());
-    metas[1]=OMEMetaDataHandler.exportMeta(image, imageP, df);
+    if (OMESidePanel.yesNo(IJ.getInstance(),"Would you like to download\nmetadata "+
+      "associated with the\nimage "+image.getName()+
+      " along with\nthe pixels?  (It takes a bit longer.)") ){
+      IJ.showStatus("Retrieving metadata..");
+      metas[1]=OMEMetaDataHandler.exportMeta(image, imageP, df);
+    }else metas[1]=null;
     omesp.hashInImage(imageP.getID(), metas);
     IJ.showStatus("Displaying Image");
     imageP.updateAndDraw();
