@@ -378,14 +378,26 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
   /** Gets the status bar's stop button. */
   public JButton getStopButton() { return stop; }
 
-  /** Resets status bar to an idle state. */
-  public void resetStatus() {
-    status.setString(VisBio.TITLE + " " + VisBio.VERSION);
-    status.setStringPainted(true);
-    status.setIndeterminate(false);
-    status.setValue(0);
-    stop.setEnabled(false);
+  /**
+   * Sets the status bar to display the given message,
+   * using the AWT event thread.
+   */
+  public void setStatus(String message) {
+    final String msg = message;
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        status.setString(msg == null ?
+          (VisBio.TITLE + " " + VisBio.VERSION) : msg);
+        status.setStringPainted(true);
+        status.setIndeterminate(false);
+        status.setValue(0);
+        stop.setEnabled(false);
+      }
+    });
   }
+
+  /** Resets status bar to an idle state. */
+  public void resetStatus() { setStatus(null); }
 
   /** Gets VisBio program icon. */
   public Image getIcon() { return icon; }

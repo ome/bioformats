@@ -25,9 +25,11 @@ package loci.visbio.data;
 
 import java.awt.Component;
 import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.PrintWriter;
+import java.io.*;
+import java.net.URL;
 import java.util.Vector;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import javax.swing.tree.DefaultMutableTreeNode;
 import loci.visbio.*;
 import loci.visbio.help.HelpManager;
@@ -37,6 +39,12 @@ import loci.visbio.util.SwingUtil;
 
 /** DataManager is the manager encapsulating VisBio's data transform logic. */
 public class DataManager extends LogicManager {
+
+  // -- Constants --
+
+  /** URL prefix for sample datasets. */
+  protected static final String SAMPLE_PREFIX =
+    "ftp://ftp.loci.wisc.edu/locisoftware/visbio/data/";
 
   // -- Control panel --
 
@@ -139,6 +147,83 @@ public class DataManager extends LogicManager {
   /** Exports the given data object to disk. */
   public void exportData(ImageTransform data) {
     dataControls.exportData(data);
+  }
+
+  /**
+   * Loads the given sample dataset. If one with the given name already exists
+   * in the samples cache, it is used. Otherwise, it is downloaded from the
+   * VisBio site and stored in the cache first.
+   */
+  public void openSampleData(String name) {
+    final String dirName = name;
+    final String zipName = name + ".zip";
+    final String location = SAMPLE_PREFIX + zipName;
+
+    // prepare sample dataset in a separate thread
+    new Thread(new Runnable() {
+      public void run() {
+        // create samples folder if it does not already exist
+        File samplesDir = new File("samples");
+        if (!samplesDir.exists()) samplesDir.mkdir();
+
+        // create samples subdirectory and download data if not already cached
+        File dir = new File(samplesDir, dirName);
+        if (!dir.exists()) {
+          dir.mkdir();
+          try {
+            bio.setStatus("Downloading " + zipName + "...");
+            URL url = new URL(location);
+            ZipInputStream in = new ZipInputStream(url.openStream());
+            byte[] buf = new byte[8192];
+            while (true) {
+              ZipEntry entry = in.getNextEntry();
+              if (entry == null) break; // eof
+              String entryName = entry.getName();
+              bio.setStatus("Extracting " + entryName + "...");
+              FileOutputStream out = new FileOutputStream(
+                new File(dir, entryName));
+              while (true) {
+                int r = in.read(buf);
+                if (r == -1) break; // end of entry
+                out.write(buf, 0, r);
+              }
+              out.close();
+              in.closeEntry();
+            }
+            in.close();
+          }
+          catch (IOException exc) {
+            System.err.println("Cannot download sample data from " + location);
+            exc.printStackTrace();
+          }
+        }
+
+        // create dataset object
+        File[] files = dir.listFiles();
+        String pattern = null;
+        for (int i=0; i<files.length; i++) {
+          if (files[i].getName().endsWith(".visbio")) continue;
+          pattern = FilePattern.findPattern(files[i]);
+          if (pattern == null) pattern = files[i].getAbsolutePath();
+        }
+        if (pattern == null) {
+          System.err.println("Error: no files for sample dataset " + dirName);
+          return;
+        }
+
+        FilePattern fp = new FilePattern(pattern);
+        int[] lengths = fp.getCount();
+
+        // assume first dimension is Time, last is Slice, and others are Other
+        int len = lengths.length;
+        String[] dims = new String[len + 1];
+        dims[0] = "Time";
+        for (int i=1; i<len; i++) dims[i] = "Other";
+        dims[len] = "Slice";
+
+        addData(new Dataset(dirName, pattern, fp.getFiles(), lengths, dims));
+      }
+    }).start();
   }
 
 
@@ -288,9 +373,14 @@ public class DataManager extends LogicManager {
     bio.setSplashStatus(null);
     bio.addMenuItem("File", "Import data...",
       "loci.visbio.data.DataManager.importData", 'i');
+    SwingUtil.setMenuShortcut(bio, "File", "Import data...", KeyEvent.VK_O);
     bio.addMenuItem("File", "Export data...",
       "loci.visbio.data.DataManager.exportData", 'e').setEnabled(false);
-    SwingUtil.setMenuShortcut(bio, "File", "Import data...", KeyEvent.VK_O);
+    bio.addSubMenu("File", "Sample datasets", 'd');
+    bio.addMenuItem("Sample datasets", "sdub",
+      "loci.visbio.data.DataManager.openSampleData(sdub)", 's');
+    bio.addMenuItem("Sample datasets", "TAABA",
+      "loci.visbio.data.DataManager.openSampleData(TAABA)", 't');
 
     // help window
     bio.setSplashStatus(null);

@@ -1,3 +1,9 @@
+v3.00 final - Not yet released
+
+- ADDED: "Sample datasets" menu for automatically downloading sample data
+
+
+
 v3.00 beta5 - Tuesday, April 26, 2005
 
 - ADDED: Data export: save a data object to a file series on disk
