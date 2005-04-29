@@ -163,6 +163,7 @@ public abstract class VisUtil {
     }
     return maps;
   }
+
   /** Converts a FlatField's MathType into the one given (if compatible). */
   public static FlatField switchType(FlatField field, FunctionType newType)
     throws VisADException, RemoteException
