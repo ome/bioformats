@@ -25,11 +25,13 @@ package loci.visbio.state;
 
 import java.awt.Component;
 import java.io.*;
-import java.io.IOException;
 import java.util.Vector;
 import javax.swing.JCheckBox;
 import loci.visbio.*;
 import loci.visbio.util.WarningPane;
+import loci.visbio.util.XMLUtil;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /** OptionManager is the manager encapsulating VisBio's options. */
 public class OptionManager extends LogicManager {
@@ -37,7 +39,7 @@ public class OptionManager extends LogicManager {
   // -- Constants --
 
   /** Configuration file for storing VisBio options. */
-  private static final String CONFIG_FILE = "visbio.ini";
+  private static final File CONFIG_FILE = new File("visbio.ini");
 
 
   // -- Fields --
@@ -117,25 +119,21 @@ public class OptionManager extends LogicManager {
 
   /** Reads in configuration from configuration file. */
   public void readIni() {
-    File configFile = new File(CONFIG_FILE);
-    if (!configFile.exists()) return;
+    if (!CONFIG_FILE.exists()) return;
     try {
-      BufferedReader fin = new BufferedReader(new FileReader(configFile));
-      restoreState(fin);
+      Document doc = XMLUtil.parseXML(CONFIG_FILE);
+      restoreState((Element) doc.getElementsByTagName("Options").item(0));
       bio.generateEvent(this, "read ini file", false);
     }
-    catch (IOException exc) { exc.printStackTrace(); }
     catch (SaveException exc) { exc.printStackTrace(); }
   }
 
   /** Writes out configuration to configuration file. */
   public void writeIni() {
-    try {
-      PrintWriter fout = new PrintWriter(new FileWriter(CONFIG_FILE));
-      saveState(fout);
-    }
-    catch (IOException exc) { exc.printStackTrace(); }
+    Document doc = XMLUtil.createDocument("VisBio");
+    try { saveState(doc.getDocumentElement()); }
     catch (SaveException exc) { exc.printStackTrace(); }
+    XMLUtil.writeXML(CONFIG_FILE, doc);
   }
 
   /** Checks whether to display a warning, and does so if necessary. */
@@ -186,19 +184,21 @@ public class OptionManager extends LogicManager {
 
   // -- Saveable API methods --
 
-  /** Writes the current state to the given writer. */
-  public void saveState(PrintWriter out) throws SaveException {
+  /** Writes the current state to the given DOM element ("VisBio"). */
+  public void saveState(Element el) throws SaveException {
+    Element optionsElement = XMLUtil.createChild(el, "Options");
     for (int i=0; i<list.size(); i++) {
       BioOption option = (BioOption) list.elementAt(i);
-      option.saveState(out);
+      option.saveState(optionsElement);
     }
   }
 
-  /** Restores the current state from the given reader. */
-  public void restoreState(BufferedReader in) throws SaveException {
+  /** Restores the current state from the given DOM element ("VisBio"). */
+  public void restoreState(Element el) throws SaveException {
+    Element optionsElement = XMLUtil.getFirstChild(el, "Options");
     for (int i=0; i<list.size(); i++) {
       BioOption option = (BioOption) list.elementAt(i);
-      option.restoreState(in);
+      option.restoreState(optionsElement);
     }
   }
 

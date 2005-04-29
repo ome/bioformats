@@ -27,13 +27,16 @@ import java.rmi.RemoteException;
 import loci.visbio.VisBioFrame;
 import loci.visbio.data.DataTransform;
 import loci.visbio.data.ImageTransform;
+import loci.visbio.state.Saveable;
+import loci.visbio.state.SaveException;
 import loci.visbio.util.ObjectUtil;
 import loci.visbio.util.VisUtil;
+import org.w3c.dom.Element;
 import visad.*;
 import visad.java2d.DisplayImplJ2D;
 
 /** Provides logic for controlling a VisAD display's view. */
-public class ViewHandler {
+public class ViewHandler implements Saveable {
 
   // -- Constants --
 
@@ -292,28 +295,6 @@ public class ViewHandler {
 
   // -- ViewHandler API methods - state logic --
 
-  /** Writes the current state. */
-  public void saveState() {
-    window.setAttr("matrix", ObjectUtil.arrayToString(getMatrix()));
-    window.setAttr("aspectX", "" + xasp);
-    window.setAttr("aspectY", "" + yasp);
-    window.setAttr("aspectZ", "" + zasp);
-    window.setAttr("showScale", "" + showScale);
-    window.setAttr("boundingBox", "" + boundingBox);
-    window.setAttr("parallel", "" + parallel);
-  }
-
-  /** Restores the current state. */
-  public void restoreState() {
-    matrix = ObjectUtil.stringToDoubleArray(window.getAttr("matrix"));
-    xasp = ObjectUtil.stringToDouble(window.getAttr("aspectX"));
-    yasp = ObjectUtil.stringToDouble(window.getAttr("aspectY"));
-    zasp = ObjectUtil.stringToDouble(window.getAttr("aspectZ"));
-    showScale = window.getAttr("showScale").equalsIgnoreCase("true");
-    boundingBox = window.getAttr("boundingBox").equalsIgnoreCase("true");
-    parallel = window.getAttr("parallel").equalsIgnoreCase("true");
-  }
-
   /** Tests whether two objects are in equivalent states. */
   public boolean matches(ViewHandler handler) {
     return ObjectUtil.arraysEqual(getMatrix(), handler.getMatrix()) &&
@@ -352,6 +333,33 @@ public class ViewHandler {
   }
 
 
+  // -- Saveable API methods --
+
+  /** Writes the current state to the given DOM element ("Display"). */
+  public void saveState(Element el) throws SaveException {
+    /* CTR TODO for v3.00 final
+    window.setAttr("matrix", ObjectUtil.arrayToString(getMatrix()));
+    window.setAttr("aspectX", "" + xasp);
+    window.setAttr("aspectY", "" + yasp);
+    window.setAttr("aspectZ", "" + zasp);
+    window.setAttr("showScale", "" + showScale);
+    window.setAttr("boundingBox", "" + boundingBox);
+    window.setAttr("parallel", "" + parallel);
+    */
+  }
+
+  /** Restores the current state from the given DOM element ("Display"). */
+  public void restoreState(Element el) throws SaveException {
+    /* CTR TODO for v3.00 final
+    matrix = ObjectUtil.stringToDoubleArray(window.getAttr("matrix"));
+    xasp = ObjectUtil.stringToDouble(window.getAttr("aspectX"));
+    yasp = ObjectUtil.stringToDouble(window.getAttr("aspectY"));
+    zasp = ObjectUtil.stringToDouble(window.getAttr("aspectZ"));
+    showScale = window.getAttr("showScale").equalsIgnoreCase("true");
+    boundingBox = window.getAttr("boundingBox").equalsIgnoreCase("true");
+    parallel = window.getAttr("parallel").equalsIgnoreCase("true");
+    */
+  }
   // -- Helper methods --
 
   /** Adjusts the aspect ratio. */

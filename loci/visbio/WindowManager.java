@@ -26,14 +26,13 @@ package loci.visbio;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.BufferedReader;
-import java.io.PrintWriter;
 import java.util.*;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import loci.visbio.state.*;
 import loci.visbio.util.Docker;
 import loci.visbio.util.SwingUtil;
+import org.w3c.dom.Element;
 
 /**
  * WindowManager is the manager encapsulating VisBio's window logic,
@@ -224,8 +223,8 @@ public class WindowManager extends LogicManager implements WindowListener {
 
   protected static final String WINDOW_PARAMS = "VisBio_WindowParams";
 
-  /** Writes the current state to the given writer. */
-  public void saveState(PrintWriter out) throws SaveException {
+  /** Writes the current state to the given DOM element ("VisBio"). */
+  public void saveState(Element el) throws SaveException {
     /* CTR TODO for v3.00 final
     // save window positions
     Enumeration en = windows.keys();
@@ -245,8 +244,8 @@ public class WindowManager extends LogicManager implements WindowListener {
     */
   }
 
-  /** Restores the current state from the given reader. */
-  public void restoreState(BufferedReader in) throws SaveException {
+  /** Restores the current state from the given DOM element ("VisBio"). */
+  public void restoreState(Element el) throws SaveException {
     /* CTR TODO for v3.00 final
     // restore window positions
     CAElement custom = ome.getCustomAttr();

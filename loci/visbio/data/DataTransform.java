@@ -24,17 +24,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.data;
 
 import java.awt.Font;
-import java.io.BufferedReader;
-import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.util.Vector;
 import javax.swing.JComponent;
-import loci.visbio.state.Dynamic;
+import loci.visbio.state.*;
 import loci.visbio.util.*;
+import org.w3c.dom.Element;
 import visad.*;
 
 /** DataTransform is the superclass of all data transform types. */
-public abstract class DataTransform implements Dynamic {
+public abstract class DataTransform implements Dynamic, Saveable {
 
   // -- Static fields --
 
@@ -290,78 +289,6 @@ public abstract class DataTransform implements Dynamic {
   }
 
 
-  // -- DataTransform API methods - state logic --
-
-  protected static final String DATA_TRANSFORM = "VisBio_DataTransform";
-
-  /** Writes the current state to the given writer. */
-  public void saveState(PrintWriter out, int id, Vector list) {
-    /* CTR TODO for v3.00 final
-    CAElement custom = ome.getCustomAttr();
-    custom.createElement(DATA_TRANSFORM);
-    custom.setAttribute("id", "" + id);
-    custom.setAttribute("parent", "" + list.indexOf(parent));
-    custom.setAttribute("name", name);
-    custom.setAttribute("lengths", ObjectUtil.arrayToString(lengths));
-    custom.setAttribute("dims", ObjectUtil.arrayToString(dims));
-    */
-  }
-
-  /** Restores the current state from the given reader. */
-  public int restoreState(BufferedReader in, int id, Vector list) {
-    /* CTR TODO for v3.00 final
-    CAElement custom = ome.getCustomAttr();
-    String[] idList = custom.getAttributes(DATA_TRANSFORM, "id");
-
-    // identify transform index
-    int index = -1;
-    for (int i=0; i<idList.length; i++) {
-      try {
-        int iid = Integer.parseInt(idList[i]);
-        if (id == iid) {
-          index = i;
-          break;
-        }
-      }
-      catch (NumberFormatException exc) { }
-    }
-    if (index < 0) {
-      System.err.println("Attributes for transform #" + id + " not found.");
-      return index;
-    }
-
-    // determine parent transform
-    String parentId = custom.getAttributes(DATA_TRANSFORM, "parent")[index];
-    int pid = -2;
-    try { pid = Integer.parseInt(parentId); }
-    catch (NumberFormatException exc) { }
-    int size = list.size();
-    if (pid < -1 || pid >= size) {
-      System.err.println("Invalid parent id (" +
-        parentId + ") for transform #" + id);
-      return index;
-    }
-    if (pid >= 0 && pid < size) {
-      parent = (DataTransform) list.elementAt(pid);
-    }
-    else parent = null;
-
-    // get transform name
-    name = custom.getAttributes(DATA_TRANSFORM, "name")[index];
-
-    // parse lengths array
-    lengths = ObjectUtil.stringToIntArray(
-      custom.getAttributes(DATA_TRANSFORM, "lengths")[index]);
-
-    // parse dims array
-    dims = ObjectUtil.stringToStringArray(
-      custom.getAttributes(DATA_TRANSFORM, "dims")[index]);
-
-    return index;
-    */ return -1;
-  }
-
-
   // -- Internal DataTransform API methods --
 
   /** Creates labels based on data transform parameters. */
@@ -422,6 +349,78 @@ public abstract class DataTransform implements Dynamic {
    * another object with a matching state.
    */
   public void discard() { }
+
+
+  // -- Saveable API methods --
+
+  /** Writes the current state to the given DOM element ("DataTransforms"). */
+  public void saveState(Element el) throws SaveException {
+    /* CTR TODO for v3.00 final
+    CAElement custom = ome.getCustomAttr();
+    custom.createElement(DATA_TRANSFORM);
+    custom.setAttribute("id", "" + id);
+    custom.setAttribute("parent", "" + list.indexOf(parent));
+    custom.setAttribute("name", name);
+    custom.setAttribute("lengths", ObjectUtil.arrayToString(lengths));
+    custom.setAttribute("dims", ObjectUtil.arrayToString(dims));
+    */
+  }
+
+  /**
+   * Restores the current state from the given DOM element ("DataTransforms").
+   */
+  public void restoreState(Element el) throws SaveException {
+    /* CTR TODO for v3.00 final
+    CAElement custom = ome.getCustomAttr();
+    String[] idList = custom.getAttributes(DATA_TRANSFORM, "id");
+
+    // identify transform index
+    int index = -1;
+    for (int i=0; i<idList.length; i++) {
+      try {
+        int iid = Integer.parseInt(idList[i]);
+        if (id == iid) {
+          index = i;
+          break;
+        }
+      }
+      catch (NumberFormatException exc) { }
+    }
+    if (index < 0) {
+      System.err.println("Attributes for transform #" + id + " not found.");
+      return index;
+    }
+
+    // determine parent transform
+    String parentId = custom.getAttributes(DATA_TRANSFORM, "parent")[index];
+    int pid = -2;
+    try { pid = Integer.parseInt(parentId); }
+    catch (NumberFormatException exc) { }
+    int size = list.size();
+    if (pid < -1 || pid >= size) {
+      System.err.println("Invalid parent id (" +
+        parentId + ") for transform #" + id);
+      return index;
+    }
+    if (pid >= 0 && pid < size) {
+      parent = (DataTransform) list.elementAt(pid);
+    }
+    else parent = null;
+
+    // get transform name
+    name = custom.getAttributes(DATA_TRANSFORM, "name")[index];
+
+    // parse lengths array
+    lengths = ObjectUtil.stringToIntArray(
+      custom.getAttributes(DATA_TRANSFORM, "lengths")[index]);
+
+    // parse dims array
+    dims = ObjectUtil.stringToStringArray(
+      custom.getAttributes(DATA_TRANSFORM, "dims")[index]);
+
+    return index;
+    */
+  }
 
 
   // -- Utility methods --

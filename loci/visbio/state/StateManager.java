@@ -25,11 +25,13 @@ package loci.visbio.state;
 
 import java.awt.event.KeyEvent;
 import java.io.*;
-import java.io.IOException;
 import java.util.*;
 import javax.swing.*;
 import loci.visbio.*;
 import loci.visbio.util.SwingUtil;
+import loci.visbio.util.XMLUtil;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import visad.util.ExtensionFileFilter;
 
 /** StateManager is the manager encapsulating VisBio's state logic. */
@@ -53,7 +55,7 @@ public class StateManager extends LogicManager {
   protected JMenuItem editRedo;
 
   /** Temporary file for storing temporary state information. */
-  private File state;
+  private File stateFile;
 
   /** Stack of old states for multiple undo. */
   private Stack undoStates;
@@ -80,9 +82,9 @@ public class StateManager extends LogicManager {
   public StateManager(VisBioFrame bio) { this(bio, "visbio.tmp"); }
 
   /** Constructs a VisBio state management object. */
-  public StateManager(VisBioFrame bio, String state) {
+  public StateManager(VisBioFrame bio, String stateFile) {
     super(bio);
-    this.state = new File(state);
+    this.stateFile = new File(stateFile);
   }
 
 
@@ -96,23 +98,18 @@ public class StateManager extends LogicManager {
 
   /** Saves the current state to the given state file. */
   public void saveState(File file) {
-    try {
-      PrintWriter fout = new PrintWriter(new FileWriter(file));
-      saveState(fout);
-    }
-    catch (IOException exc) { exc.printStackTrace(); }
-    catch (SaveException exc) { exc.printStackTrace(); }
+    Document doc = saveState();
+    XMLUtil.writeXML(file, doc);
   }
 
   /** Restores the current state from the given state file. */
   public void restoreState(File file) {
     try {
-      BufferedReader fin = new BufferedReader(new FileReader(file));
-      restoreState(fin);
+      Document doc = XMLUtil.parseXML(file);
+      restoreState(doc.getDocumentElement());
+      bio.generateEvent(this, "restore state", true);
     }
-    catch (IOException exc) { exc.printStackTrace(); }
     catch (SaveException exc) { exc.printStackTrace(); }
-    bio.generateEvent(this, "restore state", true);
   }
 
   /**
@@ -120,9 +117,7 @@ public class StateManager extends LogicManager {
    * time, and if so, asks the user whether to restore the previous state.
    */
   public void checkCrash() {
-    boolean crashed = false;
-    /* CTR TODO for v3.00 final
-    boolean crashed = state.exists();
+    boolean crashed = stateFile.exists();
     if (crashed) {
       int ans = JOptionPane.showConfirmDialog(bio,
         "It appears that VisBio crashed last time. " +
@@ -130,10 +125,9 @@ public class StateManager extends LogicManager {
         JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
       if (ans != JOptionPane.YES_OPTION) crashed = false;
     }
-    */
     saveState("", true, crashed); // compute currentState variable
     initialState = currentState;
-    if (crashed) restoreState(state);
+    if (crashed) restoreState(stateFile);
   }
 
   /**
@@ -142,18 +136,16 @@ public class StateManager extends LogicManager {
    */
   public boolean checkSave() {
     if (saved) return true;
-    /* CTR TODO for v3.00 final
     int ans = JOptionPane.showConfirmDialog(bio,
       "Program state has been changed. Save before exiting?", "VisBio",
       JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
     if (ans == JOptionPane.CANCEL_OPTION) return false;
     if (ans == JOptionPane.YES_OPTION) fileSave();
-    */
     return true;
   }
 
   /** Deletes VisBio state temp file. */
-  public void destroy() { if (state.exists()) state.delete(); }
+  public void destroy() { if (stateFile.exists()) stateFile.delete(); }
 
 
   // -- Menu commands --
@@ -230,23 +222,23 @@ public class StateManager extends LogicManager {
 
   // -- Saveable API methods --
 
-  /** Writes the current state to the given writer. */
-  public void saveState(PrintWriter out) throws SaveException {
+  /** Writes the current state to the given DOM element ("VisBio"). */
+  public void saveState(Element el) throws SaveException {
     LogicManager[] lm = bio.getManagers();
     for (int i=0; i<lm.length; i++) {
       if (lm[i] == this) continue; // bad recursion, no cookie
-      lm[i].saveState(out);
+      lm[i].saveState(el);
     }
   }
 
-  /** Restores the current state from the given reader. */
-  public void restoreState(BufferedReader in) throws SaveException {
+  /** Restores the current state from the given DOM element ("VisBio"). */
+  public void restoreState(Element el) throws SaveException {
     restoring = true;
     try {
       LogicManager[] lm = bio.getManagers();
       for (int i=0; i<lm.length; i++) {
         if (lm[i] == this) continue; // bad recursion, no cookie
-        lm[i].restoreState(in);
+        lm[i].restoreState(el);
       }
     }
     finally { restoring = false; }
@@ -266,11 +258,10 @@ public class StateManager extends LogicManager {
 
         // file menu
         bio.addMenuSeparator("File");
-        // CTR TEMP menu item disabled for beta release
         bio.addMenuItem("File", "Restore state...",
-          "loci.visbio.state.StateManager.fileRestore", 'r').setEnabled(false);
+          "loci.visbio.state.StateManager.fileRestore", 'r');
         bio.addMenuItem("File", "Save state...",
-          "loci.visbio.state.StateManager.fileSave", 's').setEnabled(false);
+          "loci.visbio.state.StateManager.fileSave", 's');
       }
     }
     else if (eventType == VisBioEvent.STATE_CHANGED) {
@@ -315,10 +306,6 @@ public class StateManager extends LogicManager {
       "loci.visbio.state.StateManager.editReset", 't');
     SwingUtil.setMenuShortcut(bio, "Edit", "Reset", KeyEvent.VK_R);
 
-    // CTR TEMP menu items disabled for beta release
-    editUndo.setEnabled(false);
-    editRedo.setEnabled(false);
-
     // undo logic variables
     bio.setSplashStatus(null);
     undoStates = new Stack();
@@ -327,26 +314,30 @@ public class StateManager extends LogicManager {
 
   /** Restores the state from the given program state object. */
   private void restoreState(ProgramState ps) {
-    try { restoreState(new BufferedReader(new StringReader(ps.state))); }
+    try { restoreState(ps.state.getDocumentElement()); }
     catch (SaveException exc) { exc.printStackTrace(); }
+  }
+
+  /**
+   * Saves the state to a new DOM object.
+   *
+   * @return The DOM object containing the saved state.
+   */
+  private Document saveState() {
+    Document doc = XMLUtil.createDocument("VisBio");
+    try { saveState(doc.getDocumentElement()); }
+    catch (SaveException exc) { exc.printStackTrace(); }
+    return doc;
   }
 
   /** Saves the state to the undo stack and the VisBio state temp file. */
   private void saveState(String msg, boolean init, boolean crashed) {
-    // capture save state results to a string
-    StringWriter sw = new StringWriter();
-    try { saveState(new PrintWriter(sw)); }
-    catch (SaveException exc) { exc.printStackTrace(); }
-    String stateString = sw.toString();
+    // capture save state results to a DOM
+    Document doc = saveState();
 
     if (!crashed) {
       // write captured results to the state file
-      try {
-        PrintWriter fout = new PrintWriter(new FileWriter(state.getPath()));
-        fout.println(stateString);
-        fout.close();
-      }
-      catch (IOException exc) { exc.printStackTrace(); }
+      XMLUtil.writeXML(stateFile, doc);
     }
 
     if (!init) {
@@ -354,7 +345,7 @@ public class StateManager extends LogicManager {
       undoStates.push(currentState);
       redoStates.removeAllElements();
     }
-    currentState = new ProgramState(msg, stateString);
+    currentState = new ProgramState(msg, doc);
     updateMenuItems();
   }
 
@@ -366,8 +357,7 @@ public class StateManager extends LogicManager {
     }
     else {
       editUndo.setText("Undo " + currentState.msg);
-      // CTR TEMP menu item disabled for beta release
-      //editUndo.setEnabled(true);
+      editUndo.setEnabled(true);
     }
     if (redoStates.isEmpty()) {
       editRedo.setText("Redo");
@@ -375,8 +365,7 @@ public class StateManager extends LogicManager {
     }
     else {
       editRedo.setText("Redo " + ((ProgramState) redoStates.peek()).msg);
-      // CTR TEMP menu item disabled for beta release
-      //editRedo.setEnabled(true);
+      editRedo.setEnabled(true);
     }
   }
 

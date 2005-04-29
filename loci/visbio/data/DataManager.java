@@ -36,6 +36,7 @@ import loci.visbio.help.HelpManager;
 import loci.visbio.state.SaveException;
 //import loci.visbio.state.StateManager;
 import loci.visbio.util.SwingUtil;
+import org.w3c.dom.Element;
 
 /** DataManager is the manager encapsulating VisBio's data transform logic. */
 public class DataManager extends LogicManager {
@@ -45,6 +46,7 @@ public class DataManager extends LogicManager {
   /** URL prefix for sample datasets. */
   protected static final String SAMPLE_PREFIX =
     "ftp://ftp.loci.wisc.edu/locisoftware/visbio/data/";
+
 
   // -- Control panel --
 
@@ -199,6 +201,7 @@ public class DataManager extends LogicManager {
         }
 
         // create dataset object
+        bio.setStatus("Organizing data...");
         File[] files = dir.listFiles();
         String pattern = null;
         for (int i=0; i<files.length; i++) {
@@ -221,6 +224,7 @@ public class DataManager extends LogicManager {
         for (int i=1; i<len; i++) dims[i] = "Other";
         dims[len] = "Slice";
 
+        bio.setStatus("Creating " + dirName + " dataset...");
         addData(new Dataset(dirName, pattern, fp.getFiles(), lengths, dims));
       }
     }).start();
@@ -244,10 +248,8 @@ public class DataManager extends LogicManager {
 
   // -- Saveable API methods --
 
-  protected static final String DATA_MANAGER = "VisBio_DataManager";
-
-  /** Writes the current state to the given writer. */
-  public void saveState(PrintWriter out) throws SaveException {
+  /** Writes the current state to the given DOM element ("VisBio"). */
+  public void saveState(Element el) throws SaveException {
     Vector v = getDataList();
     int len = v.size();
 
@@ -270,8 +272,8 @@ public class DataManager extends LogicManager {
     */
   }
 
-  /** Restores the current state from the given reader. */
-  public void restoreState(BufferedReader in) throws SaveException {
+  /** Restores the current state from the given DOM element ("VisBio"). */
+  public void restoreState(Element el) throws SaveException {
     /* CTR TODO for v3.00 final
     CAElement custom = ome.getCustomAttr();
 

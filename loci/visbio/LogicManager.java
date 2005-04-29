@@ -23,10 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio;
 
-import java.io.BufferedReader;
-import java.io.PrintWriter;
 import loci.visbio.state.SaveException;
 import loci.visbio.state.Saveable;
+import org.w3c.dom.Element;
 
 /** LogicManager is the superclass of all VisBio logic handlers. */
 public class LogicManager implements Saveable {
@@ -57,10 +56,10 @@ public class LogicManager implements Saveable {
 
   // -- Saveable API methods --
 
-  /** Writes the current state to the given writer. */
-  public void saveState(PrintWriter out) throws SaveException { }
+  /** Writes the current state to the given DOM element. */
+  public void saveState(Element el) throws SaveException { }
 
-  /** Restores the current state from the given reader. */
-  public void restoreState(BufferedReader in) throws SaveException { }
+  /** Restores the current state from the given DOM element. */
+  public void restoreState(Element el) throws SaveException { }
 
 }

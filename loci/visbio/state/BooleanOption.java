@@ -25,9 +25,8 @@ package loci.visbio.state;
 
 import loci.visbio.util.LAFUtil;
 import java.awt.Component;
-import java.io.BufferedReader;
-import java.io.PrintWriter;
 import javax.swing.JCheckBox;
+import org.w3c.dom.Element;
 
 /** BooleanOption is a true-or-false option in the VisBio Options dialog. */
 public class BooleanOption extends BioOption {
@@ -68,8 +67,8 @@ public class BooleanOption extends BioOption {
 
   // -- Saveable API methods --
 
-  /** Writes the current state to the given writer. */
-  public void saveState(PrintWriter out) throws SaveException {
+  /** Writes the current state to the given DOM element ("Options"). */
+  public void saveState(Element el) throws SaveException {
     /* CTR TODO for v3.00 final
     CAElement custom = ome.getCustomAttr();
     custom.createElement(BOOLEAN_OPTION);
@@ -78,8 +77,8 @@ public class BooleanOption extends BioOption {
     */
   }
 
-  /** Restores the current state from the given reader. */
-  public void restoreState(BufferedReader in) throws SaveException {
+  /** Restores the current state from the given DOM element ("Options"). */
+  public void restoreState(Element el) throws SaveException {
     /* CTR TODO for v3.00 final
     CAElement custom = ome.getCustomAttr();
     String[] names = custom.getAttributes(BOOLEAN_OPTION, "name");

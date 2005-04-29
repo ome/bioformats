@@ -35,15 +35,15 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import loci.visbio.SystemManager;
 import loci.visbio.WindowManager;
-import loci.visbio.state.OptionManager;
-import loci.visbio.state.StateManager;
+import loci.visbio.state.*;
 import loci.visbio.util.VisUtil;
+import org.w3c.dom.Element;
 import visad.*;
 import visad.data.avi.AVIForm;
 import visad.util.*;
 
 /** Provides logic for capturing display screenshots and movies. */
-public class CaptureHandler {
+public class CaptureHandler implements Saveable {
 
   // -- Fields - GUI components --
 
@@ -348,45 +348,6 @@ public class CaptureHandler {
 
   // -- CaptureHandler API methods - state logic --
 
-  /** Writes the current state. */
-  public void saveState() {
-    CaptureWindow captureWindow = panel.getCaptureWindow();
-    Vector pos = captureWindow.getPositions();
-    int speed = captureWindow.getSpeed();
-    int fps = captureWindow.getFPS();
-    boolean smooth = captureWindow.isSmooth();
-
-    // save display positions
-    int numPositions = pos.size();
-    window.setAttr("positions", "" + numPositions);
-    for (int i=0; i<numPositions; i++) {
-      DisplayPosition position = (DisplayPosition) pos.elementAt(i);
-      position.saveState(window, "position" + i);
-    }
-
-    // save other parameters
-    window.setAttr("movieSpeed", "" + speed);
-    window.setAttr("movieFPS", "" + fps);
-    window.setAttr("movieSmooth", "" + smooth);
-  }
-
-  /** Restores the current state. */
-  public void restoreState() {
-    int numPositions = Integer.parseInt(window.getAttr("positions"));
-    Vector vn = new Vector(numPositions);
-    for (int i=0; i<numPositions; i++) {
-      DisplayPosition position = new DisplayPosition();
-      position.restoreState(window, "position" + i);
-      vn.add(position);
-    }
-    Vector vo = getPositions();
-    if (vo != null) StateManager.mergeStates(vo, vn);
-
-    movieSpeed = Integer.parseInt(window.getAttr("movieSpeed"));
-    movieFPS = Integer.parseInt(window.getAttr("movieFPS"));
-    movieSmooth = window.getAttr("movieSmooth").equalsIgnoreCase("true");
-  }
-
   /** Tests whether two objects are in equivalent states. */
   public boolean matches(CaptureHandler handler) {
     if (handler == null) return false;
@@ -445,6 +406,51 @@ public class CaptureHandler {
     captureWindow.setSmooth(movieSmooth);
   }
 
+
+  // -- Saveable API methods --
+
+  /** Writes the current state to the given DOM element ("Display"). */
+  public void saveState(Element el) throws SaveException {
+    /* CTR TODO for v3.00 final
+    CaptureWindow captureWindow = panel.getCaptureWindow();
+    Vector pos = captureWindow.getPositions();
+    int speed = captureWindow.getSpeed();
+    int fps = captureWindow.getFPS();
+    boolean smooth = captureWindow.isSmooth();
+
+    // save display positions
+    int numPositions = pos.size();
+    window.setAttr("positions", "" + numPositions);
+    for (int i=0; i<numPositions; i++) {
+      DisplayPosition position = (DisplayPosition) pos.elementAt(i);
+      position.saveState(window, "position" + i);
+    }
+
+    // save other parameters
+    window.setAttr("movieSpeed", "" + speed);
+    window.setAttr("movieFPS", "" + fps);
+    window.setAttr("movieSmooth", "" + smooth);
+    */
+  }
+
+  /** Restores the current state from the given DOM element ("Display"). */
+  public void restoreState(Element el) throws SaveException {
+    /* CTR TODO for v3.00 final
+    int numPositions = Integer.parseInt(window.getAttr("positions"));
+    Vector vn = new Vector(numPositions);
+    for (int i=0; i<numPositions; i++) {
+      DisplayPosition position = new DisplayPosition();
+      position.restoreState(window, "position" + i);
+      vn.add(position);
+    }
+    Vector vo = getPositions();
+    if (vo != null) StateManager.mergeStates(vo, vn);
+
+    movieSpeed = Integer.parseInt(window.getAttr("movieSpeed"));
+    movieFPS = Integer.parseInt(window.getAttr("movieFPS"));
+    movieSmooth = window.getAttr("movieSmooth").equalsIgnoreCase("true");
+    */
+  }
 
   // -- Helper methods --
 

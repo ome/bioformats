@@ -23,13 +23,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.data;
 
-import java.io.BufferedReader;
-import java.io.PrintWriter;
 import java.rmi.RemoteException;
-import java.util.Vector;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import loci.visbio.state.Dynamic;
+import loci.visbio.state.SaveException;
+import org.w3c.dom.Element;
 import loci.visbio.util.ObjectUtil;
 import visad.*;
 
@@ -190,41 +189,6 @@ public class SpectralTransform extends ImageTransform
   public JComponent getControls() { return controls; }
 
 
-  // -- DataTransform API methods - state logic --
-
-  /** Writes the current state to the given writer. */
-  public void saveState(PrintWriter out, int id, Vector list) {
-    super.saveState(out, id, list);
-
-    /* CTR TODO for v3.00 final
-    CAElement custom = ome.getCustomAttr();
-    custom.setAttribute("numWeights", "" + weights.length);
-    for (int i=0; i<weights.length; i++) {
-      custom.setAttribute("weights" + i, ObjectUtil.arrayToString(weights[i]));
-    }
-    */
-  }
-
-  /** Restores the current state from the given reader. */
-  public int restoreState(BufferedReader in, int id, Vector list) {
-    int index = super.restoreState(in, id, list);
-    if (index < 0) return index;
-    /* CTR TODO for v3.00 final
-    CAElement custom = ome.getCustomAttr();
-
-    int numRange = Integer.parseInt(
-      custom.getAttributes(DATA_TRANSFORM, "numWeights")[index]);
-    weights = new double[numRange][];
-    for (int i=0; i<numRange; i++) {
-      weights[i] = ObjectUtil.stringToDoubleArray(
-        custom.getAttributes(DATA_TRANSFORM, "weights" + i)[index]);
-    }
-    */
-
-    return index;
-  }
-
-
   // -- Dynamic API methods --
 
   /** Tests whether two dynamic objects are equivalent. */
@@ -281,6 +245,40 @@ public class SpectralTransform extends ImageTransform
    * another object with a matching state.
    */
   public void discard() { }
+
+
+  // -- Saveable API methods --
+
+  /** Writes the current state to the given DOM element ("DataTransforms"). */
+  public void saveState(Element el) throws SaveException {
+    super.saveState(el);
+
+    /* CTR TODO for v3.00 final
+    CAElement custom = ome.getCustomAttr();
+    custom.setAttribute("numWeights", "" + weights.length);
+    for (int i=0; i<weights.length; i++) {
+      custom.setAttribute("weights" + i, ObjectUtil.arrayToString(weights[i]));
+    }
+    */
+  }
+
+  /**
+   * Restores the current state from the given DOM element ("DataTransforms").
+   */
+  public void restoreState(Element el) throws SaveException {
+    super.restoreState(el);
+    /* CTR TODO for v3.00 final
+    CAElement custom = ome.getCustomAttr();
+
+    int numRange = Integer.parseInt(
+      custom.getAttributes(DATA_TRANSFORM, "numWeights")[index]);
+    weights = new double[numRange][];
+    for (int i=0; i<numRange; i++) {
+      weights[i] = ObjectUtil.stringToDoubleArray(
+        custom.getAttributes(DATA_TRANSFORM, "weights" + i)[index]);
+    }
+    */
+  }
 
 
   // -- TransformListener API methods --

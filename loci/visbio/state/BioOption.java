@@ -24,8 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.state;
 
 import java.awt.Component;
-import java.io.BufferedReader;
-import java.io.PrintWriter;
+import org.w3c.dom.Element;
 
 /** BioOption represents an option in the VisBio Options dialog. */
 public abstract class BioOption implements Saveable {
@@ -56,10 +55,10 @@ public abstract class BioOption implements Saveable {
 
   // -- Saveable API methods --
 
-  /** Writes the current state to the given writer. */
-  public void saveState(PrintWriter out) throws SaveException { }
+  /** Writes the current state to the given DOM element ("Options"). */
+  public void saveState(Element el) throws SaveException { }
 
-  /** Restores the current state from the given reader. */
-  public void restoreState(BufferedReader in) throws SaveException { }
+  /** Restores the current state from the given DOM element ("Options"). */
+  public void restoreState(Element el) throws SaveException { }
 
 }

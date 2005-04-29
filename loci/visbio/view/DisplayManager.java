@@ -24,13 +24,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.view;
 
 import java.awt.Component;
-import java.io.BufferedReader;
-import java.io.PrintWriter;
 //import java.util.Vector;
 import javax.swing.JOptionPane;
 import loci.visbio.*;
 import loci.visbio.help.HelpManager;
 import loci.visbio.state.*;
+import org.w3c.dom.Element;
 
 /** DisplayManager is the manager encapsulating VisBio's 2D and 3D displays. */
 public class DisplayManager extends LogicManager {
@@ -139,10 +138,8 @@ public class DisplayManager extends LogicManager {
 
   // -- Saveable API methods --
 
-  protected static final String DISPLAY_MANAGER = "VisBio_DisplayManager";
-
-  /** Writes the current state to the given writer. */
-  public void saveState(PrintWriter out) throws SaveException {
+  /** Writes the current state to the given DOM element ("VisBio"). */
+  public void saveState(Element el) throws SaveException {
     DisplayWindow[] windows = getDisplays();
 
     /* CTR TODO for v3.00 final
@@ -156,8 +153,8 @@ public class DisplayManager extends LogicManager {
     */
   }
 
-  /** Restores the current state from the given reader. */
-  public void restoreState(BufferedReader in) throws SaveException {
+  /** Restores the current state from the given DOM element ("VisBio"). */
+  public void restoreState(Element el) throws SaveException {
     /* CTR TODO for v3.00 final
     CAElement custom = ome.getCustomAttr();
 

@@ -26,11 +26,11 @@ package loci.visbio.view;
 import java.awt.Font;
 import java.rmi.RemoteException;
 import java.util.Vector;
-import loci.visbio.VisBioFrame;
 import loci.visbio.data.*;
-import loci.visbio.state.Dynamic;
+import loci.visbio.state.*;
 import loci.visbio.util.ObjectUtil;
 import loci.visbio.util.VisUtil;
+import org.w3c.dom.Element;
 import visad.*;
 import visad.util.Util;
 
@@ -158,31 +158,6 @@ public class TransformLink
     status = msg == null ? null :
       new VisADException(trans.getName() + ": " + msg);
     doMessages(false);
-  }
-
-
-  // -- TransformLink API methods - state logic --
-
-  /** Writes the current state. */
-  public void saveState(DisplayWindow window, String attrName) {
-    VisBioFrame bio = handler.getWindow().getVisBio();
-    DataManager dm = (DataManager) bio.getManager(DataManager.class);
-    Vector dataList = dm.getDataList();
-    int ndx = dataList.indexOf(trans);
-    window.setAttr(attrName + "_dataIndex", "" + ndx);
-    if (colorHandler != null) colorHandler.saveState(attrName);
-    window.setAttr(attrName + "_visible", "" + isVisible());
-  }
-
-  /** Restores the current state. */
-  public void restoreState(DisplayWindow window, String attrName) {
-    VisBioFrame bio = handler.getWindow().getVisBio();
-    DataManager dm = (DataManager) bio.getManager(DataManager.class);
-    Vector dataList = dm.getDataList();
-    int dataIndex = Integer.parseInt(window.getAttr(attrName + "_dataIndex"));
-    trans = (DataTransform) dataList.elementAt(dataIndex);
-    if (colorHandler != null) colorHandler.restoreState(attrName);
-    visible = window.getAttr(attrName + "_visible").equalsIgnoreCase("true");
   }
 
 
@@ -321,6 +296,35 @@ public class TransformLink
       if (!alive) break;
       computeData(false);
     }
+  }
+
+
+  // -- Saveable API methods --
+
+  /** Writes the current state to the given DOM element ("Display"). */
+  public void saveState(Element el) throws SaveException {
+    /* CTR TODO for v3.00 final
+    VisBioFrame bio = handler.getWindow().getVisBio();
+    DataManager dm = (DataManager) bio.getManager(DataManager.class);
+    Vector dataList = dm.getDataList();
+    int ndx = dataList.indexOf(trans);
+    window.setAttr(attrName + "_dataIndex", "" + ndx);
+    if (colorHandler != null) colorHandler.saveState(attrName);
+    window.setAttr(attrName + "_visible", "" + isVisible());
+    */
+  }
+
+  /** Restores the current state from the given DOM element ("Display"). */
+  public void restoreState(Element el) throws SaveException {
+    /* CTR TODO for 3.00 final
+    VisBioFrame bio = handler.getWindow().getVisBio();
+    DataManager dm = (DataManager) bio.getManager(DataManager.class);
+    Vector dataList = dm.getDataList();
+    int dataIndex = Integer.parseInt(window.getAttr(attrName + "_dataIndex"));
+    trans = (DataTransform) dataList.elementAt(dataIndex);
+    if (colorHandler != null) colorHandler.restoreState(attrName);
+    visible = window.getAttr(attrName + "_visible").equalsIgnoreCase("true");
+    */
   }
 
 

@@ -37,12 +37,13 @@ import javax.swing.event.ChangeListener;
 import loci.visbio.VisBioFrame;
 import loci.visbio.data.DataCache;
 import loci.visbio.data.DataTransform;
-import loci.visbio.state.StateManager;
+import loci.visbio.state.*;
 import loci.visbio.util.VisUtil;
+import org.w3c.dom.Element;
 import visad.*;
 
 /** Provides logic for linking data transforms to a display. */
-public class TransformHandler implements ChangeListener, Runnable  {
+public class TransformHandler implements ChangeListener, Runnable, Saveable {
 
   // -- Constant --
 
@@ -294,38 +295,6 @@ public class TransformHandler implements ChangeListener, Runnable  {
 
   // -- TransformHandler API methods - state logic --
 
-  /** Writes the current state. */
-  public void saveState() {
-    // save number of links
-    int len = links.size();
-    window.setAttr("numLinks", "" + len);
-
-    // save all links
-    for (int i=0; i<len; i++) {
-      TransformLink link = (TransformLink) links.elementAt(i);
-      link.saveState(window, "link" + i);
-    }
-
-    // save other parameters
-    window.setAttr("animating", "" + animating);
-    window.setAttr("animFPS", "" + fps);
-    window.setAttr("animAxis", "" + animAxis);
-  }
-
-  /** Restores the current state. */
-  public void restoreState() {
-    int len = Integer.parseInt(window.getAttr("numLinks"));
-    newLinks = new Vector();
-    for (int i=0; i<len; i++) {
-      TransformLink link = new TransformLink(this);
-      link.restoreState(window, "link" + i);
-      newLinks.add(link);
-    }
-    animating = window.getAttr("animating").equalsIgnoreCase("true");
-    fps = Integer.parseInt(window.getAttr("animFPS"));
-    animAxis = Integer.parseInt(window.getAttr("animAxis"));
-  }
-
   /** Tests whether two objects are in equivalent states. */
   public boolean matches(TransformHandler handler) {
     if (handler == null) return false;
@@ -576,6 +545,45 @@ public class TransformHandler implements ChangeListener, Runnable  {
       TransformLink link = (TransformLink) links.elementAt(l);
       link.doTransform();
     }
+  }
+
+
+  // -- Saveable API methods --
+
+  /** Writes the current state to the given DOM element ("Display"). */
+  public void saveState(Element el) throws SaveException {
+    /* CTR TODO for v3.00 final
+    // save number of links
+    int len = links.size();
+    window.setAttr("numLinks", "" + len);
+
+    // save all links
+    for (int i=0; i<len; i++) {
+      TransformLink link = (TransformLink) links.elementAt(i);
+      link.saveState(window, "link" + i);
+    }
+
+    // save other parameters
+    window.setAttr("animating", "" + animating);
+    window.setAttr("animFPS", "" + fps);
+    window.setAttr("animAxis", "" + animAxis);
+    */
+  }
+
+  /** Restores the current state from the given DOM element ("Display"). */
+  public void restoreState(Element el) throws SaveException {
+    /* CTR TODO for v3.00 final
+    int len = Integer.parseInt(window.getAttr("numLinks"));
+    newLinks = new Vector();
+    for (int i=0; i<len; i++) {
+      TransformLink link = new TransformLink(this);
+      link.restoreState(window, "link" + i);
+      newLinks.add(link);
+    }
+    animating = window.getAttr("animating").equalsIgnoreCase("true");
+    fps = Integer.parseInt(window.getAttr("animFPS"));
+    animAxis = Integer.parseInt(window.getAttr("animAxis"));
+    */
   }
 
 }

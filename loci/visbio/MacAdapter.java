@@ -52,6 +52,16 @@ public class MacAdapter extends ApplicationAdapter {
   public MacAdapter(VisBioFrame bio) { this.bio = bio; }
 
 
+  // -- MacAdapter API methods --
+
+  /** Associates the VisBio frame with a Mac OS X adapter. */
+  public static void link(VisBioFrame bio) {
+    Application app = new Application();
+    app.setEnabledPreferencesMenu(true);
+    app.addApplicationListener(new MacAdapter(bio));
+  }
+
+
   // -- ApplicationAdapter API methods --
 
   /** Handles the About menu item. */
@@ -82,16 +92,6 @@ public class MacAdapter extends ApplicationAdapter {
       evt.setHandled(false);
       em.fileExit();
     }
-  }
-
-
-  // -- New API methods --
-
-  /** Associates the VisBio frame with a Mac OS X adapter. */
-  public static void link(VisBioFrame bio) {
-    Application app = new Application();
-    app.setEnabledPreferencesMenu(true);
-    app.addApplicationListener(new MacAdapter(bio));
   }
 
 }

@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 package loci.visbio.state;
+import org.w3c.dom.Document;
 
 /** A VisBio state wrapper. */
 public class ProgramState {
@@ -32,13 +33,13 @@ public class ProgramState {
   public String msg;
 
   /** State object for use in state restoration. */
-  public String state;
+  public Document state;
 
 
   // -- Constructor --
 
   /** Constructs a VisBio state wrapper. */
-  public ProgramState(String msg, String state) {
+  public ProgramState(String msg, Document state) {
     this.msg = msg;
     this.state = state;
   }

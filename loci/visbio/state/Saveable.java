@@ -23,8 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.state;
 
-import java.io.BufferedReader;
-import java.io.PrintWriter;
+import org.w3c.dom.Element;
 
 /**
  * The Saveable interface provides methods for saving and restoring the
@@ -32,10 +31,10 @@ import java.io.PrintWriter;
  */
 public interface Saveable {
 
-  /** Writes the current state to the given writer. */
-  void saveState(PrintWriter out) throws SaveException;
+  /** Writes the current state to the given DOM element. */
+  void saveState(Element el) throws SaveException;
 
-  /** Restores the current state from the given reader. */
-  void restoreState(BufferedReader in) throws SaveException;
+  /** Restores the current state from the given DOM element. */
+  void restoreState(Element el) throws SaveException;
 
 }

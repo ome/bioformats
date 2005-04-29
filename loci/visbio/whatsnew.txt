@@ -1,7 +1,7 @@
 v3.00 final - Not yet released
 
 - ADDED: "Sample datasets" menu for automatically downloading sample data
-
+- ADDED: Much more robust XML-based program states
 
 
 v3.00 beta5 - Tuesday, April 26, 2005

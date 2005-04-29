@@ -24,11 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.state;
 
 import java.awt.Component;
-import java.io.BufferedReader;
-import java.io.PrintWriter;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import loci.visbio.util.FormsUtil;
+import org.w3c.dom.Element;
 
 /** NumericOption is an integer option in the VisBio Options dialog. */
 public class NumericOption extends BioOption {
@@ -80,8 +79,8 @@ public class NumericOption extends BioOption {
 
   // -- Saveable API methods --
 
-  /** Writes the current state to the given writer. */
-  public void saveState(PrintWriter out) throws SaveException {
+  /** Writes the current state to the given DOM element ("Options"). */
+  public void saveState(Element el) throws SaveException {
     /* CTR TODO for v3.00 final
     CAElement custom = ome.getCustomAttr();
     custom.createElement(NUMERIC_OPTION);
@@ -90,8 +89,8 @@ public class NumericOption extends BioOption {
     */
   }
 
-  /** Restores the current state from the given reader. */
-  public void restoreState(BufferedReader in) throws SaveException {
+  /** Restores the current state from the given DOM element ("Options"). */
+  public void restoreState(Element el) throws SaveException {
     /* CTR TODO for v3.00 final
     CAElement custom = ome.getCustomAttr();
     String[] names = custom.getAttributes(NUMERIC_OPTION, "name");

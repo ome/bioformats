@@ -24,10 +24,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.view;
 
 import loci.visbio.state.Dynamic;
+import loci.visbio.state.Saveable;
+import loci.visbio.state.SaveException;
 import loci.visbio.util.ObjectUtil;
+import org.w3c.dom.Element;
 
 /** DisplayPosition represents an orientation of VisAD display. */
-public class DisplayPosition implements Dynamic {
+public class DisplayPosition implements Dynamic, Saveable {
 
   // -- Fields --
 
@@ -50,20 +53,16 @@ public class DisplayPosition implements Dynamic {
   }
 
 
-  // -- DisplayPosition API methods - state logic --
+  // -- DisplayPosition API methods --
 
-  /** Writes the current state to the given XML object. */
-  public void saveState(DisplayWindow window, String attrName) {
-    window.setAttr(attrName + "_name", name);
-    window.setAttr(attrName + "_matrix", ObjectUtil.arrayToString(matrix));
-  }
+  /** Gets the position's string representation (name). */
+  public String toString() { return name; }
 
-  /** Restores the current state from the given XML object. */
-  public void restoreState(DisplayWindow window, String attrName) {
-    name = window.getAttr(attrName + "_name");
-    matrix = ObjectUtil.stringToDoubleArray(
-      window.getAttr(attrName + "_matrix"));
-  }
+  /** Gets the positions's name. */
+  public String getName() { return name; }
+
+  /** Gets the position's description. */
+  public double[] getMatrix() { return matrix; }
 
 
   // -- Dynamic API methods --
@@ -103,15 +102,23 @@ public class DisplayPosition implements Dynamic {
   public void discard() { }
 
 
-  // -- New API methods --
+  // -- Saveable API methods --
 
-  /** Gets the position's string representation (name). */
-  public String toString() { return name; }
+  /** Writes the current state to the given DOM element ("Capture"). */
+  public void saveState(Element el) throws SaveException {
+    /* CTR TODO for v3.00 final
+    window.setAttr(attrName + "_name", name);
+    window.setAttr(attrName + "_matrix", ObjectUtil.arrayToString(matrix));
+    */
+  }
 
-  /** Gets the positions's name. */
-  public String getName() { return name; }
-
-  /** Gets the position's description. */
-  public double[] getMatrix() { return matrix; }
+  /** Restores the current state from the given DOM element ("Capture"). */
+  public void restoreState(Element el) throws SaveException {
+    /* CTR TODO for v3.00 final
+    name = window.getAttr(attrName + "_name");
+    matrix = ObjectUtil.stringToDoubleArray(
+      window.getAttr(attrName + "_matrix"));
+    */
+  }
 
 }

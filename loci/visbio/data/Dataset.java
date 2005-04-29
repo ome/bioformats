@@ -29,10 +29,11 @@ import java.awt.datatransfer.*;
 import java.io.*;
 import java.math.BigInteger;
 import java.util.Hashtable;
-import java.util.Vector;
 import javax.swing.JComponent;
 import loci.visbio.state.Dynamic;
+import loci.visbio.state.SaveException;
 import loci.visbio.util.*;
+import org.w3c.dom.Element;
 import visad.*;
 import visad.data.BadFormException;
 
@@ -391,38 +392,6 @@ public class Dataset extends ImageTransform {
   public JComponent getControls() { return controls; }
 
 
-  // -- DataTransform API methods - state logic --
-
-  /** Writes the current state to the given writer. */
-  public void saveState(PrintWriter out, int id, Vector list) {
-    super.saveState(out, id, list);
-
-    /* CTR TODO for v3.00 final
-    CAElement custom = ome.getCustomAttr();
-    custom.setAttribute("pattern",
-      pattern.replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
-    custom.setAttribute("ids", ObjectUtil.arrayToString(ids));
-    */
-  }
-
-  /** Restores the current state from the given reader. */
-  public int restoreState(BufferedReader in, int id, Vector list) {
-    int index = super.restoreState(in, id, list);
-    if (index < 0) return index;
-    /* CTR TODO for v3.00 final
-    CAElement custom = ome.getCustomAttr();
-
-    pattern = custom.getAttributes(DATA_TRANSFORM, "pattern")[index];
-    pattern = pattern.replaceAll("&lt;", "<").replaceAll("&gt;", ">");
-
-    ids = ObjectUtil.stringToStringArray(
-      custom.getAttributes(DATA_TRANSFORM, "ids")[index]);
-    */
-
-    return index;
-  }
-
-
   // -- Dynamic API methods --
 
   /** Tests whether two dynamic objects have matching states. */
@@ -599,6 +568,37 @@ public class Dataset extends ImageTransform {
    * another object with a matching state.
    */
   public void discard() { }
+
+
+  // -- Saveable API methods --
+
+  /** Writes the current state to the given DOM element ("DataTransforms"). */
+  public void saveState(Element el) throws SaveException {
+    super.saveState(el);
+
+    /* CTR TODO for v3.00 final
+    CAElement custom = ome.getCustomAttr();
+    custom.setAttribute("pattern",
+      pattern.replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
+    custom.setAttribute("ids", ObjectUtil.arrayToString(ids));
+    */
+  }
+
+  /**
+   * Restores the current state from the given DOM element ("DataTransforms").
+   */
+  public void restoreState(Element el) throws SaveException {
+    super.restoreState(el);
+    /* CTR TODO for v3.00 final
+    CAElement custom = ome.getCustomAttr();
+
+    pattern = custom.getAttributes(DATA_TRANSFORM, "pattern")[index];
+    pattern = pattern.replaceAll("&lt;", "<").replaceAll("&gt;", ">");
+
+    ids = ObjectUtil.stringToStringArray(
+      custom.getAttributes(DATA_TRANSFORM, "ids")[index]);
+    */
+  }
 
 
   // -- Helper methods --

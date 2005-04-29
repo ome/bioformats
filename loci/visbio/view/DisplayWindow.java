@@ -25,15 +25,14 @@ package loci.visbio.view;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.BufferedReader;
-import java.io.PrintWriter;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import loci.visbio.VisBioFrame;
 import loci.visbio.WindowManager;
 import loci.visbio.data.DataTransform;
-import loci.visbio.state.Dynamic;
+import loci.visbio.state.*;
 import loci.visbio.util.*;
+import org.w3c.dom.Element;
 import visad.*;
 
 /**
@@ -41,7 +40,7 @@ import visad.*;
  * VisAD display and associated controls.
  */
 public class DisplayWindow extends JFrame
-  implements ActionListener, DisplayListener, Dynamic, KeyListener
+  implements ActionListener, DisplayListener, Dynamic, KeyListener, Saveable
 {
 
   // -- Static fields --
@@ -195,71 +194,6 @@ public class DisplayWindow extends JFrame
   /** Gets whether the given transform is currently linked to the display. */
   public boolean hasTransform(DataTransform trans) {
     return transformHandler.hasTransform(trans);
-  }
-
-
-  // -- DisplayWindow API methods - state logic --
-
-  protected static final String DISPLAY_DIALOG = "VisBio_DisplayWindow";
-
-  //protected CAElement custom;
-  protected int index;
-
-  /** Writes the current state to the given writer. */
-  public void saveState(PrintWriter out, int id) {
-    /* CTR TODO for v3.00 final
-    custom = ome.getCustomAttr();
-    custom.createElement(DISPLAY_DIALOG);
-    setAttr("id", "" + id);
-    setAttr("name", name);
-    setAttr("threeD", "" + threeD);
-    viewHandler.saveState();
-    captureHandler.saveState();
-    transformHandler.saveState();
-    */
-  }
-
-  /** Restores the current state from the given reader. */
-  public void restoreState(BufferedReader in, int id) {
-    /* CTR TODO for v3.00 final
-    custom = ome.getCustomAttr();
-    String[] idList = custom.getAttributes(DISPLAY_DIALOG, "id");
-
-    // identify transform index
-    index = -1;
-    for (int i=0; i<idList.length; i++) {
-      try {
-        int iid = Integer.parseInt(idList[i]);
-        if (id == iid) {
-          index = i;
-          break;
-        }
-      }
-      catch (NumberFormatException exc) { }
-    }
-    if (index < 0) {
-      System.err.println("Attributes for display #" + id + " not found.");
-      return;
-    }
-
-    name = getAttr("name");
-    threeD = getAttr("threeD").equalsIgnoreCase("true");
-
-    createHandlers();
-    viewHandler.restoreState();
-    captureHandler.restoreState();
-    transformHandler.restoreState();
-    */
-  }
-
-  /** Sets value for the given attribute. */
-  protected void setAttr(String attr, String value) {
-    /*custom.setAttribute(attr, value);*/
-  }
-
-  /** Gets value for the given attribute. */
-  protected String getAttr(String attr) {
-    return null;/*custom.getAttributes(DISPLAY_DIALOG, attr)[index];*/
   }
 
 
@@ -433,7 +367,58 @@ public class DisplayWindow extends JFrame
   /** Handles key releases. */
   public void keyReleased(KeyEvent e) { }
 
+  /** Handles key strokes. */
   public void keyTyped(KeyEvent e) { }
+
+
+  // -- Saveable API methods --
+
+  /** Writes the current state to the given DOM element ("Displays"). */
+  public void saveState(Element el) throws SaveException {
+    /* CTR TODO for v3.00 final
+    custom = ome.getCustomAttr();
+    custom.createElement(DISPLAY_DIALOG);
+    setAttr("id", "" + id);
+    setAttr("name", name);
+    setAttr("threeD", "" + threeD);
+    viewHandler.saveState();
+    captureHandler.saveState();
+    transformHandler.saveState();
+    */
+  }
+
+  /** Restores the current state from the given DOM element ("Displays"). */
+  public void restoreState(Element el) throws SaveException {
+    /* CTR TODO for v3.00 final
+    custom = ome.getCustomAttr();
+    String[] idList = custom.getAttributes(DISPLAY_DIALOG, "id");
+
+    // identify transform index
+    index = -1;
+    for (int i=0; i<idList.length; i++) {
+      try {
+        int iid = Integer.parseInt(idList[i]);
+        if (id == iid) {
+          index = i;
+          break;
+        }
+      }
+      catch (NumberFormatException exc) { }
+    }
+    if (index < 0) {
+      System.err.println("Attributes for display #" + id + " not found.");
+      return;
+    }
+
+    name = getAttr("name");
+    threeD = getAttr("threeD").equalsIgnoreCase("true");
+
+    createHandlers();
+    viewHandler.restoreState();
+    captureHandler.restoreState();
+    transformHandler.restoreState();
+    */
+  }
 
 
   // -- Helper methods --

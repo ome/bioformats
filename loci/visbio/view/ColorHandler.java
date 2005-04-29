@@ -27,7 +27,9 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import loci.visbio.VisBioFrame;
 import loci.visbio.data.*;
+import loci.visbio.state.SaveException;
 import loci.visbio.util.*;
+import org.w3c.dom.Element;
 import visad.*;
 
 /** Provides logic for controlling a TransformLink's color settings. */
@@ -305,8 +307,51 @@ public class ColorHandler {
 
   // -- ColorHandler API methods - state logic --
 
-  /** Writes the current state to the given XML object. */
-  public void saveState(String attrName) {
+  /** Tests whether two objects are in equivalent states. */
+  public boolean matches(ColorHandler handler) {
+    return brightness == handler.brightness &&
+      contrast == handler.contrast &&
+      opacityValue == handler.opacityValue &&
+      opacityModel == handler.opacityModel &&
+      colorModel == handler.colorModel &&
+      ObjectUtil.objectsEqual(red, handler.red) &&
+      ObjectUtil.objectsEqual(green, handler.green) &&
+      ObjectUtil.objectsEqual(blue, handler.blue) &&
+      ObjectUtil.arraysEqual(getLo(), handler.getLo()) &&
+      ObjectUtil.arraysEqual(getHi(), handler.getHi()) &&
+      ObjectUtil.arraysEqual(getFixed(), handler.getFixed()) &&
+      ObjectUtil.arraysEqual(getTables(), handler.getTables());
+  }
+
+  /**
+   * Modifies this object's state to match that of the given object.
+   * If the argument is null, the object is initialized according to
+   * its current state instead.
+   */
+  public void initState(ColorHandler handler) {
+    if (handler != null) {
+      brightness = handler.brightness;
+      contrast = handler.contrast;
+      opacityValue = handler.opacityValue;
+      opacityModel = handler.opacityModel;
+      colorModel = handler.colorModel;
+      red = handler.red;
+      green = handler.green;
+      blue = handler.blue;
+      lo = handler.getLo();
+      hi = handler.getHi();
+      fixed = handler.getFixed();
+      colorTables = handler.getTables();
+    }
+
+    if (colorPane == null) colorPane = new ColorPane(this);
+  }
+
+  // -- Saveable API methods --
+
+  /** Writes the current state to the given DOM element ("Display"). */
+  public void saveState(Element el) throws SaveException {
+    /* CTR TODO for v3.00 final
     DisplayWindow window = getWindow();
     window.setAttr(attrName + "_brightness", "" + brightness);
     window.setAttr(attrName + "_contrast", "" + contrast);
@@ -350,10 +395,12 @@ public class ColorHandler {
         }
       }
     }
+    */
   }
 
-  /** Restores the current state from the given XML object. */
-  public void restoreState(String attrName) {
+  /** Restores the current state from the given DOM element ("Display"). */
+  public void restoreState(Element el) throws SaveException {
+    /* CTR TODO for v3.00 final
     DisplayWindow window = getWindow();
     brightness = Integer.parseInt(window.getAttr(attrName + "_brightness"));
     contrast = Integer.parseInt(window.getAttr(attrName + "_contrast"));
@@ -395,46 +442,7 @@ public class ColorHandler {
         }
       }
     }
-  }
-
-  /** Tests whether two objects are in equivalent states. */
-  public boolean matches(ColorHandler handler) {
-    return brightness == handler.brightness &&
-      contrast == handler.contrast &&
-      opacityValue == handler.opacityValue &&
-      opacityModel == handler.opacityModel &&
-      colorModel == handler.colorModel &&
-      ObjectUtil.objectsEqual(red, handler.red) &&
-      ObjectUtil.objectsEqual(green, handler.green) &&
-      ObjectUtil.objectsEqual(blue, handler.blue) &&
-      ObjectUtil.arraysEqual(getLo(), handler.getLo()) &&
-      ObjectUtil.arraysEqual(getHi(), handler.getHi()) &&
-      ObjectUtil.arraysEqual(getFixed(), handler.getFixed()) &&
-      ObjectUtil.arraysEqual(getTables(), handler.getTables());
-  }
-
-  /**
-   * Modifies this object's state to match that of the given object.
-   * If the argument is null, the object is initialized according to
-   * its current state instead.
-   */
-  public void initState(ColorHandler handler) {
-    if (handler != null) {
-      brightness = handler.brightness;
-      contrast = handler.contrast;
-      opacityValue = handler.opacityValue;
-      opacityModel = handler.opacityModel;
-      colorModel = handler.colorModel;
-      red = handler.red;
-      green = handler.green;
-      blue = handler.blue;
-      lo = handler.getLo();
-      hi = handler.getHi();
-      fixed = handler.getFixed();
-      colorTables = handler.getTables();
-    }
-
-    if (colorPane == null) colorPane = new ColorPane(this);
+    */
   }
 
 }
