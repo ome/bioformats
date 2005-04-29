@@ -139,7 +139,7 @@ public abstract class XMLUtil {
    * Retrieves the given DOM element's child elements
    * with the specified name.
    */
-  public static Vector getChildren(Element el, String name) {
+  public static Element[] getChildren(Element el, String name) {
     Vector v = new Vector();
     NodeList nodes = el.getChildNodes();
     int len = nodes.getLength();
@@ -149,7 +149,9 @@ public abstract class XMLUtil {
       Element e = (Element) node;
       if (e.getTagName().equals(name)) v.add(e);
     }
-    return v;
+    Element[] els = new Element[v.size()];
+    v.copyInto(els);
+    return els;
   }
 
 }

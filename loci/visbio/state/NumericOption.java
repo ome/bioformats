@@ -27,6 +27,7 @@ import java.awt.Component;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import loci.visbio.util.FormsUtil;
+import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Element;
 
 /** NumericOption is an integer option in the VisBio Options dialog. */
@@ -81,27 +82,21 @@ public class NumericOption extends BioOption {
 
   /** Writes the current state to the given DOM element ("Options"). */
   public void saveState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
-    CAElement custom = ome.getCustomAttr();
-    custom.createElement(NUMERIC_OPTION);
-    custom.setAttribute("name", text);
-    custom.setAttribute("value", field.getText());
-    */
+    Element e = XMLUtil.createChild(el, "Number");
+    e.setAttribute("name", text);
+    e.setAttribute("value", field.getText());
   }
 
   /** Restores the current state from the given DOM element ("Options"). */
   public void restoreState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
-    CAElement custom = ome.getCustomAttr();
-    String[] names = custom.getAttributes(NUMERIC_OPTION, "name");
-    String[] values = custom.getAttributes(NUMERIC_OPTION, "value");
-    for (int i=0; i<names.length; i++) {
-      if (names[i].equals(text)) {
-        field.setText(values[i]);
-        break;
-      }
+    Element[] e = XMLUtil.getChildren(el, "Number");
+    for (int i=0; i<e.length; i++) {
+      String name = e[i].getAttribute("name");
+      if (!name.equals(text)) continue;
+      String value = e[i].getAttribute("value");
+      field.setText(value);
+      break;
     }
-    */
   }
 
 }

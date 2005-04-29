@@ -27,6 +27,7 @@ import java.awt.Component;
 import javax.swing.JPanel;
 import javax.swing.JComboBox;
 import loci.visbio.util.FormsUtil;
+import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Element;
 
 /** ListOption is an option from a list in the VisBio Options dialog. */
@@ -76,27 +77,21 @@ public class ListOption extends BioOption {
 
   /** Writes the current state to the given DOM element ("Options"). */
   public void saveState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
-    CAElement custom = ome.getCustomAttr();
-    custom.createElement(LIST_OPTION);
-    custom.setAttribute("name", text);
-    custom.setAttribute("value", getValue());
-    */
+    Element e = XMLUtil.createChild(el, "List");
+    e.setAttribute("name", text);
+    e.setAttribute("value", getValue());
   }
 
   /** Restores the current state from the given DOM element ("Options"). */
   public void restoreState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
-    CAElement custom = ome.getCustomAttr();
-    String[] names = custom.getAttributes(LIST_OPTION, "name");
-    String[] values = custom.getAttributes(LIST_OPTION, "value");
-    for (int i=0; i<names.length; i++) {
-      if (names[i].equals(text)) {
-        setValue(values[i]);
-        break;
-      }
+    Element[] e = XMLUtil.getChildren(el, "List");
+    for (int i=0; i<e.length; i++) {
+      String name = e[i].getAttribute("name");
+      if (!name.equals(text)) continue;
+      String value = e[i].getAttribute("value");
+      setValue(value);
+      break;
     }
-    */
   }
 
 }

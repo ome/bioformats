@@ -30,8 +30,7 @@ import java.util.*;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import loci.visbio.state.*;
-import loci.visbio.util.Docker;
-import loci.visbio.util.SwingUtil;
+import loci.visbio.util.*;
 import org.w3c.dom.Element;
 
 /**
@@ -221,53 +220,42 @@ public class WindowManager extends LogicManager implements WindowListener {
 
   // -- Saveable API methods --
 
-  protected static final String WINDOW_PARAMS = "VisBio_WindowParams";
-
   /** Writes the current state to the given DOM element ("VisBio"). */
   public void saveState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
-    // save window positions
+    Element container = XMLUtil.createChild(el, "Windows");
     Enumeration en = windows.keys();
     while (en.hasMoreElements()) {
       Window w = (Window) en.nextElement();
       String name = SwingUtil.getWindowTitle(w);
-      CAElement custom = ome.getCustomAttr();
-      custom.createElement(WINDOW_PARAMS);
-      custom.setAttribute("name", name);
-      custom.setAttribute("visible", "" + w.isVisible());
+      Element e = XMLUtil.createChild(container, "Window");
+      e.setAttribute("name", name);
+      e.setAttribute("visible", "" + w.isVisible());
       Rectangle r = w.getBounds();
-      custom.setAttribute("x", "" + r.x);
-      custom.setAttribute("y", "" + r.y);
-      custom.setAttribute("width", "" + r.width);
-      custom.setAttribute("height", "" + r.height);
+      e.setAttribute("x", "" + r.x);
+      e.setAttribute("y", "" + r.y);
+      e.setAttribute("width", "" + r.width);
+      e.setAttribute("height", "" + r.height);
     }
-    */
   }
 
   /** Restores the current state from the given DOM element ("VisBio"). */
   public void restoreState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
-    // restore window positions
-    CAElement custom = ome.getCustomAttr();
-    String[] names = custom.getAttributes(WINDOW_PARAMS, "name");
-    String[] vis = custom.getAttributes(WINDOW_PARAMS, "visible");
-    String[] x = custom.getAttributes(WINDOW_PARAMS, "x");
-    String[] y = custom.getAttributes(WINDOW_PARAMS, "y");
-    String[] w = custom.getAttributes(WINDOW_PARAMS, "width");
-    String[] h = custom.getAttributes(WINDOW_PARAMS, "height");
-
-    // remember these positions for windows that have not yet been registered
+    Element container = XMLUtil.getFirstChild(el, "Windows");
     windowStates.clear();
-    for (int i=0; i<names.length; i++) {
-      WindowState ws = new WindowState(names[i],
-        vis[i].equalsIgnoreCase("true"),
-        Integer.parseInt(x[i]), Integer.parseInt(y[i]),
-        Integer.parseInt(w[i]), Integer.parseInt(h[i]));
-      WindowInfo winfo = getWindowByName(names[i]);
-      if (winfo == null) windowStates.put(names[i], ws); // remember position
+    Element[] e = XMLUtil.getChildren(container, "Window");
+    for (int i=0; i<e.length; i++) {
+      String name = e[i].getAttribute("name");
+      String vis = e[i].getAttribute("visible");
+      int x = Integer.parseInt(e[i].getAttribute("x"));
+      int y = Integer.parseInt(e[i].getAttribute("y"));
+      int w = Integer.parseInt(e[i].getAttribute("width"));
+      int h = Integer.parseInt(e[i].getAttribute("height"));
+      WindowState ws = new WindowState(name,
+        vis.equalsIgnoreCase("true"), x, y, w, h);
+      WindowInfo winfo = getWindowByName(name);
+      if (winfo == null) windowStates.put(name, ws); // remember position
       else winfo.setState(ws); // window already exists; set position
     }
-    */
   }
 
 

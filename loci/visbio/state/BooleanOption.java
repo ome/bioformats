@@ -23,9 +23,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.state;
 
-import loci.visbio.util.LAFUtil;
 import java.awt.Component;
 import javax.swing.JCheckBox;
+import loci.visbio.util.LAFUtil;
+import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Element;
 
 /** BooleanOption is a true-or-false option in the VisBio Options dialog. */
@@ -69,27 +70,21 @@ public class BooleanOption extends BioOption {
 
   /** Writes the current state to the given DOM element ("Options"). */
   public void saveState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
-    CAElement custom = ome.getCustomAttr();
-    custom.createElement(BOOLEAN_OPTION);
-    custom.setAttribute("name", text);
-    custom.setAttribute("value", box.isSelected() ? "true" : "false");
-    */
+    Element e = XMLUtil.createChild(el, "Boolean");
+    e.setAttribute("name", text);
+    e.setAttribute("value", box.isSelected() ? "true" : "false");
   }
 
   /** Restores the current state from the given DOM element ("Options"). */
   public void restoreState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
-    CAElement custom = ome.getCustomAttr();
-    String[] names = custom.getAttributes(BOOLEAN_OPTION, "name");
-    String[] values = custom.getAttributes(BOOLEAN_OPTION, "value");
-    for (int i=0; i<names.length; i++) {
-      if (names[i].equals(text)) {
-        box.setSelected(values[i].equalsIgnoreCase("true"));
-        break;
-      }
+    Element[] e = XMLUtil.getChildren(el, "Boolean");
+    for (int i=0; i<e.length; i++) {
+      String name = e[i].getAttribute("name");
+      if (!name.equals(text)) continue;
+      boolean value = e[i].getAttribute("value").equalsIgnoreCase("true");
+      box.setSelected(value);
+      break;
     }
-    */
   }
 
 }

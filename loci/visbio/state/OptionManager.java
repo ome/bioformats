@@ -122,7 +122,7 @@ public class OptionManager extends LogicManager {
     if (!CONFIG_FILE.exists()) return;
     try {
       Document doc = XMLUtil.parseXML(CONFIG_FILE);
-      restoreState((Element) doc.getElementsByTagName("Options").item(0));
+      restoreState(doc.getDocumentElement());
       bio.generateEvent(this, "read ini file", false);
     }
     catch (SaveException exc) { exc.printStackTrace(); }
