@@ -193,7 +193,7 @@ public class DataSampling extends ImageTransform {
     if (data == null || !(data instanceof FlatField)) return null;
 
     int[] res = resX > 0 && resY > 0 ? new int[] {resX, resY} : null;
-    return resample((FlatField) data, res, range);
+    return resample((FlatField) data, res, range, true);
   }
 
   /** Gets whether this transform provides data of the given dimensionality. */
@@ -343,9 +343,55 @@ public class DataSampling extends ImageTransform {
 
   /**
    * Resamples the given FlatField to the specified resolution,
-   * keeping only the flagged range components (or null to keep them all).
+   * keeping only the flagged range components (or null to keep them all),
+   * leaving the domain set's low and high values untouched.
    */
   public static FlatField resample(FlatField f, int[] res, boolean[] range) {
+    return resample(f, res, range, false);
+  }
+
+  /**
+   * Resamples the given FlatField to the specified resolution,
+   * keeping only the flagged range components (or null to keep them all),
+   * forcing the result onto an IntegerSet of appropriate length if the
+   * relevant flag is set.
+   */
+  public static FlatField resample(FlatField f, int[] res, boolean[] range,
+    boolean forceIntegerSet)
+  {
+    int[] min = new int[res.length], max = new int[res.length];
+    if (forceIntegerSet) {
+      // use min and max appropriate for IntegerSet
+      for (int i=0; i<res.length; i++) {
+        min[i] = 0;
+        max[i] = res[i] - 1;
+      }
+    }
+    else {
+      // compute min and max from original set
+      GriddedSet set = (GriddedSet) f.getDomainSet();
+      float[] lo = set.getLow();
+      float[] hi = set.getHi();
+      for (int i=0; i<res.length; i++) {
+        min[i] = (int) lo[i];
+        max[i] = (int) hi[i];
+      }
+    }
+    return resample(f, res, range, min, max);
+  }
+
+  /**
+   * Resamples the given FlatField to the specified resolution,
+   * keeping only the flagged range components (or null to keep them all),
+   * using the given minimum and maximum sampling values for each dimension.
+   *
+   * If min and max have appropriate values (min is all zeroes and max equals
+   * len-1 across all dimensions), an IntegerSet is used, otherwise a LinearSet
+   * is constructed.
+   */
+  public static FlatField resample(FlatField f, int[] res, boolean[] range,
+    int[] min, int[] max)
+  {
     try {
       GriddedSet set = (GriddedSet) f.getDomainSet();
       float[][] samples = f.getFloats(false);
@@ -355,11 +401,13 @@ public class DataSampling extends ImageTransform {
         ((RealTupleType) frange).getRealComponents() :
         new RealType[] {(RealType) frange};
 
+      // count number of range components to keep
       int keep = 0;
       if (range != null) {
         for (int i=0; i<range.length; i++) if (range[i]) keep++;
       }
 
+      // strip out unwanted range components
       FlatField ff;
       if (range == null || keep == range.length) ff = f;
       else {
@@ -380,6 +428,7 @@ public class DataSampling extends ImageTransform {
         ff.setSamples(samps, false);
       }
 
+      // determine whether original resolution matches desired resolution
       int[] len = set.getLengths();
       boolean same = true;
       float[] lo = set.getLow();
@@ -391,8 +440,39 @@ public class DataSampling extends ImageTransform {
         nlo[i] = (double) lo[i];
         nhi[i] = (double) hi[i];
       }
-      return same ? ff : (FlatField) ff.resample(new LinearNDSet(set.getType(),
-        nlo, nhi, res), Data.WEIGHTED_AVERAGE, Data.NO_ERRORS);
+      if (!same) {
+        // resample field to proper resolution
+        ff = (FlatField) ff.resample(new LinearNDSet(set.getType(),
+          nlo, nhi, res), Data.WEIGHTED_AVERAGE, Data.NO_ERRORS);
+      }
+
+      // determine whether original low and high values match desired ones
+      boolean canUseInteger = true;
+      same = true;
+      for (int i=0; i<len.length; i++) {
+        if (min != null) {
+          if (nlo[i] != min[i]) same = false;
+          if (min[i] != 0) canUseInteger = false;
+          nlo[i] = min[i];
+        }
+        if (max != null) {
+          if (nhi[i] != max[i]) same = false;
+          if (min[i] != res[i] - 1) canUseInteger = false;
+          nhi[i] = max[i];
+        }
+      }
+
+      if (canUseInteger || !same) {
+        // adjust field set appropriately
+        FunctionType ffType = (FunctionType) ff.getType();
+        Set ffSet = canUseInteger ?
+          new IntegerNDSet(ffType.getDomain(), res) :
+          new LinearNDSet(ffType.getDomain(), nlo, nhi, res);
+        float[][] ffSamples = ff.getFloats(false);
+        ff = new FlatField(ffType, ffSet);
+        ff.setSamples(ffSamples);
+      }
+      return ff;
     }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
