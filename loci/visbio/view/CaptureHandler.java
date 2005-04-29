@@ -239,12 +239,14 @@ public class CaptureHandler implements Saveable {
         if (!jpeg) {
           file += ".jpg";
           jpeg = true;
+          dot = file.lastIndexOf(".");
         }
       }
       else if (desc.startsWith("TIFF")) {
         if (!tiff) {
           file += ".tif";
           tiff = true;
+          dot = file.lastIndexOf(".");
         }
       }
       if (!tiff && !jpeg) {
