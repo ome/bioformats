@@ -53,7 +53,7 @@ public class VisBio {
   public static final String AUTHOR = "Curtis Rueden, LOCI";
 
   /** Application build date. */
-  public static final String DATE = "30 April 2005";
+  public static final String DATE = "2 May 2005";
 
   /** Port to use for communicating between application instances. */
   public static final int INSTANCE_PORT = 0xabcd;
