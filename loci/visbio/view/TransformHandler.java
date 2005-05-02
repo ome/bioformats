@@ -553,7 +553,7 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
 
   /** Writes the current state to the given DOM element ("Display"). */
   public void saveState(Element el) throws SaveException {
-    Element child = XMLUtil.createChild(el, "Data");
+    Element child = XMLUtil.createChild(el, "LinkedData");
 
     // save all links
     int len = links.size();

@@ -300,7 +300,7 @@ public class TransformLink
 
   // -- Saveable API methods --
 
-  /** Writes the current state to the given DOM element ("Data"). */
+  /** Writes the current state to the given DOM element ("LinkedData"). */
   public void saveState(Element el) throws SaveException {
     Element child = XMLUtil.createChild(el, "TransformLink");
     child.setAttribute("id", "" + trans.getTransformId());

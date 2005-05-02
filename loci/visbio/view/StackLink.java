@@ -259,7 +259,7 @@ public class StackLink extends TransformLink {
 
   // -- Saveable API methods --
 
-  /** Writes the current state to the given DOM element ("Data"). */
+  /** Writes the current state to the given DOM element ("LinkedData"). */
   public void saveState(Element el) throws SaveException {
     super.saveState(el);
     Element child = XMLUtil.getFirstChild(el, "TransformLink");
