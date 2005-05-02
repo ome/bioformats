@@ -37,6 +37,7 @@ import loci.visbio.SystemManager;
 import loci.visbio.WindowManager;
 import loci.visbio.state.*;
 import loci.visbio.util.VisUtil;
+import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Element;
 import visad.*;
 import visad.data.avi.AVIForm;
@@ -413,7 +414,6 @@ public class CaptureHandler implements Saveable {
 
   /** Writes the current state to the given DOM element ("Display"). */
   public void saveState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
     CaptureWindow captureWindow = panel.getCaptureWindow();
     Vector pos = captureWindow.getPositions();
     int speed = captureWindow.getSpeed();
@@ -422,17 +422,17 @@ public class CaptureHandler implements Saveable {
 
     // save display positions
     int numPositions = pos.size();
-    window.setAttr("positions", "" + numPositions);
+    Element child = XMLUtil.createChild(el, "Capture");
+    child.setAttribute("positions", "" + numPositions);
     for (int i=0; i<numPositions; i++) {
       DisplayPosition position = (DisplayPosition) pos.elementAt(i);
-      position.saveState(window, "position" + i);
+      position.saveState(child);
     }
 
     // save other parameters
-    window.setAttr("movieSpeed", "" + speed);
-    window.setAttr("movieFPS", "" + fps);
-    window.setAttr("movieSmooth", "" + smooth);
-    */
+    child.setAttribute("speed", "" + speed);
+    child.setAttribute("FPS", "" + fps);
+    child.setAttribute("smooth", "" + smooth);
   }
 
   /** Restores the current state from the given DOM element ("Display"). */

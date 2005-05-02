@@ -28,8 +28,7 @@ import java.rmi.RemoteException;
 import java.util.Vector;
 import loci.visbio.data.*;
 import loci.visbio.state.*;
-import loci.visbio.util.ObjectUtil;
-import loci.visbio.util.VisUtil;
+import loci.visbio.util.*;
 import org.w3c.dom.Element;
 import visad.*;
 import visad.util.Util;
@@ -301,22 +300,19 @@ public class TransformLink
 
   // -- Saveable API methods --
 
-  /** Writes the current state to the given DOM element ("Display"). */
+  /** Writes the current state to the given DOM element ("Data"). */
   public void saveState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
-    VisBioFrame bio = handler.getWindow().getVisBio();
-    DataManager dm = (DataManager) bio.getManager(DataManager.class);
-    Vector dataList = dm.getDataList();
-    int ndx = dataList.indexOf(trans);
-    window.setAttr(attrName + "_dataIndex", "" + ndx);
-    if (colorHandler != null) colorHandler.saveState(attrName);
-    window.setAttr(attrName + "_visible", "" + isVisible());
-    */
+    Element child = XMLUtil.createChild(el, "TransformLink");
+    child.setAttribute("id", "" + trans.getTransformId());
+    if (colorHandler != null) colorHandler.saveState(child);
+    child.setAttribute("visible", "" + isVisible());
   }
 
-  /** Restores the current state from the given DOM element ("Display"). */
+  /**
+   * Restores the current state from the given DOM element ("TransformLink").
+   */
   public void restoreState(Element el) throws SaveException {
-    /* CTR TODO for 3.00 final
+    /* CTR TODO for v3.00 final
     VisBioFrame bio = handler.getWindow().getVisBio();
     DataManager dm = (DataManager) bio.getManager(DataManager.class);
     Vector dataList = dm.getDataList();

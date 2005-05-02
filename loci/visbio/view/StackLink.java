@@ -26,7 +26,10 @@ package loci.visbio.view;
 import java.util.Vector;
 import java.rmi.RemoteException;
 import loci.visbio.data.*;
+import loci.visbio.state.SaveException;
 import loci.visbio.util.VisUtil;
+import loci.visbio.util.XMLUtil;
+import org.w3c.dom.Element;
 import visad.*;
 
 public class StackLink extends TransformLink {
@@ -251,6 +254,31 @@ public class StackLink extends TransformLink {
       }
     }
     return vis;
+  }
+
+
+  // -- Saveable API methods --
+
+  /** Writes the current state to the given DOM element ("Data"). */
+  public void saveState(Element el) throws SaveException {
+    super.saveState(el);
+    Element child = XMLUtil.getFirstChild(el, "TransformLink");
+    child.setAttribute("axis", "" + getStackAxis());
+    child.setAttribute("slice", "" + getCurrentSlice());
+    int sliceCount = getSliceCount();
+    StringBuffer sb = new StringBuffer(sliceCount);
+    for (int i=0; i<sliceCount; i++) sb.append(isSliceVisible(i) ? "y" : "n");
+    child.setAttribute("visibleSlices", sb.toString());
+    child.setAttribute("boxVisible", "" + isBoundingBoxVisible());
+    child.setAttribute("isVolume", "" + isVolumeRendered());
+    child.setAttribute("volumeResolution", "" + getVolumeResolution());
+  }
+
+  /**
+   * Restores the current state from the given DOM element ("TransformLink").
+   */
+  public void restoreState(Element el) throws SaveException {
+    // CTR TODO for v3.00 final
   }
 
 

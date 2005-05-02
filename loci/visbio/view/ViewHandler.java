@@ -31,6 +31,7 @@ import loci.visbio.state.Saveable;
 import loci.visbio.state.SaveException;
 import loci.visbio.util.ObjectUtil;
 import loci.visbio.util.VisUtil;
+import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Element;
 import visad.*;
 import visad.java2d.DisplayImplJ2D;
@@ -337,15 +338,14 @@ public class ViewHandler implements Saveable {
 
   /** Writes the current state to the given DOM element ("Display"). */
   public void saveState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
-    window.setAttr("matrix", ObjectUtil.arrayToString(getMatrix()));
-    window.setAttr("aspectX", "" + xasp);
-    window.setAttr("aspectY", "" + yasp);
-    window.setAttr("aspectZ", "" + zasp);
-    window.setAttr("showScale", "" + showScale);
-    window.setAttr("boundingBox", "" + boundingBox);
-    window.setAttr("parallel", "" + parallel);
-    */
+    Element child = XMLUtil.createChild(el, "Appearance");
+    child.setAttribute("matrix", ObjectUtil.arrayToString(getMatrix()));
+    child.setAttribute("aspectX", "" + xasp);
+    child.setAttribute("aspectY", "" + yasp);
+    child.setAttribute("aspectZ", "" + zasp);
+    child.setAttribute("showScale", "" + showScale);
+    child.setAttribute("boundingBox", "" + boundingBox);
+    child.setAttribute("parallel", "" + parallel);
   }
 
   /** Restores the current state from the given DOM element ("Display"). */

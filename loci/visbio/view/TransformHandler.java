@@ -39,6 +39,7 @@ import loci.visbio.data.DataCache;
 import loci.visbio.data.DataTransform;
 import loci.visbio.state.*;
 import loci.visbio.util.VisUtil;
+import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Element;
 import visad.*;
 
@@ -552,22 +553,19 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
 
   /** Writes the current state to the given DOM element ("Display"). */
   public void saveState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
-    // save number of links
-    int len = links.size();
-    window.setAttr("numLinks", "" + len);
+    Element child = XMLUtil.createChild(el, "Data");
 
     // save all links
+    int len = links.size();
     for (int i=0; i<len; i++) {
       TransformLink link = (TransformLink) links.elementAt(i);
-      link.saveState(window, "link" + i);
+      link.saveState(child);
     }
 
     // save other parameters
-    window.setAttr("animating", "" + animating);
-    window.setAttr("animFPS", "" + fps);
-    window.setAttr("animAxis", "" + animAxis);
-    */
+    child.setAttribute("animating", "" + animating);
+    child.setAttribute("FPS", "" + fps);
+    child.setAttribute("animationAxis", "" + animAxis);
   }
 
   /** Restores the current state from the given DOM element ("Display"). */

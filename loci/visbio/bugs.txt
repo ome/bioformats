@@ -29,8 +29,8 @@ Data engine
 File formats
 ------------
 
-[H] VisAD QT reader is horribly inefficient; clean up code to acceptable
-    standards.
+[M] VisAD QT reader is horribly inefficient for multi-file datasets; clean up
+    code to acceptable standards.
 
 [L] Fix bug in many file readers where ImageLine is numbered upside down so
     that VisAD displays the image right side up. The numbering should be
@@ -54,8 +54,8 @@ State engine
     30 MB worth of overlays, loading them all back in every time the user wants
     to undo a simple overlay alteration is prohibitively expensive.
 
-[H] Eliminate all XML-based state stuff; switch back to standard vanilla text
-    INI-style files, because they make more sense.
+[H] Eliminate all OME-XML-based state stuff; switch to non-OME XML files,
+    because they make more sense.
 
 [M] Flag indicating whether latest state change should "stack up" or "replace"
     last change (if last change was of the same type as this one).
@@ -70,8 +70,6 @@ Overlays transform
 [H] Overlays need to be fixed to display properly in 3D displays.
 
 [H] Overlays should not affect ScalarMap scaling.
-
-[M] Selected overlays should be draggable with the pointer tool.
 
 [L] Add rubber band box renderer to all displays (at least 2D ones) and send
     "rubber band" events down the transform chain so that transforms can react

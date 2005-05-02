@@ -28,6 +28,7 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import loci.visbio.state.Dynamic;
 import loci.visbio.state.SaveException;
+import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Element;
 import visad.*;
 
@@ -221,20 +222,17 @@ public class ProjectionTransform extends ImageTransform {
 
   /** Writes the current state to the given DOM element ("DataTransforms"). */
   public void saveState(Element el) throws SaveException {
-    super.saveState(el);
-
-    /* CTR TODO for v3.00 final
-    CAElement custom = ome.getCustomAttr();
-    custom.setAttribute("projectAxis", "" + axis);
-    */
+    Element child = XMLUtil.createChild(el, "MaximumIntensityProjection");
+    super.saveState(child);
+    child.setAttribute("axis", "" + axis);
   }
 
   /**
    * Restores the current state from the given DOM element ("DataTransforms").
    */
   public void restoreState(Element el) throws SaveException {
-    super.restoreState(el);
     /* CTR TODO for v3.00 final
+    super.restoreState(el);
     CAElement custom = ome.getCustomAttr();
 
     axis = Integer.parseInt(

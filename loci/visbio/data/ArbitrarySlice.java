@@ -27,7 +27,10 @@ import java.rmi.RemoteException;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import loci.visbio.state.Dynamic;
+import loci.visbio.state.SaveException;
 import loci.visbio.util.VisUtil;
+import loci.visbio.util.XMLUtil;
+import org.w3c.dom.Element;
 import visad.*;
 
 /** A transform for slicing a stack of images in 3D. */
@@ -487,6 +490,29 @@ public class ArbitrarySlice extends DataTransform
    * another object with a matching state.
    */
   public void discard() { }
+
+
+  // -- Saveable API methods --
+
+  /** Writes the current state to the given DOM element ("DataTransforms"). */
+  public void saveState(Element el) throws SaveException {
+    Element child = XMLUtil.createChild(el, "ArbitrarySlice");
+    super.saveState(child);
+    child.setAttribute("axis", "" + axis);
+    child.setAttribute("pitch", "" + pitch);
+    child.setAttribute("location", "" + loc);
+    child.setAttribute("resolution", "" + res);
+    child.setAttribute("showLine", "" + showLine);
+    child.setAttribute("onTheFly", "" + compute);
+  }
+
+  /**
+   * Restores the current state from the given DOM element ("DataTransforms").
+   */
+  public void restoreState(Element el) throws SaveException {
+    super.restoreState(el);
+    // CTR TODO for v3.00 final
+  }
 
 
   // -- TransformListener API methods --

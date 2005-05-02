@@ -27,6 +27,7 @@ import loci.visbio.state.Dynamic;
 import loci.visbio.state.Saveable;
 import loci.visbio.state.SaveException;
 import loci.visbio.util.ObjectUtil;
+import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Element;
 
 /** DisplayPosition represents an orientation of VisAD display. */
@@ -106,19 +107,17 @@ public class DisplayPosition implements Dynamic, Saveable {
 
   /** Writes the current state to the given DOM element ("Capture"). */
   public void saveState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
-    window.setAttr(attrName + "_name", name);
-    window.setAttr(attrName + "_matrix", ObjectUtil.arrayToString(matrix));
-    */
+    Element child = XMLUtil.createChild(el, "DisplayPosition");
+    child.setAttribute("name", name);
+    child.setAttribute("matrix", ObjectUtil.arrayToString(matrix));
   }
 
-  /** Restores the current state from the given DOM element ("Capture"). */
+  /**
+   * Restores the current state from the given DOM element ("DisplayPosition").
+   */
   public void restoreState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
-    name = window.getAttr(attrName + "_name");
-    matrix = ObjectUtil.stringToDoubleArray(
-      window.getAttr(attrName + "_matrix"));
-    */
+    name = el.getAttribute("name");
+    matrix = ObjectUtil.stringToDoubleArray(el.getAttribute("matrix"));
   }
 
 }

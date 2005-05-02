@@ -114,9 +114,19 @@ public abstract class XMLUtil {
    * Appends a child element with the given name to the specified DOM element.
    */
   public static Element createChild(Element el, String name) {
-    Element child = (Element) el.getOwnerDocument().createElement(name);
+    Element child = el.getOwnerDocument().createElement(name);
     el.appendChild(child);
     return child;
+  }
+
+  /**
+   * Appends a text node with the given information
+   * to the specified DOM element.
+   */
+  public static Text createText(Element el, String info) {
+    Text text = el.getOwnerDocument().createTextNode(info);
+    el.appendChild(text);
+    return text;
   }
 
   /**

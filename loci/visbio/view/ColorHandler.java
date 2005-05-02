@@ -349,53 +349,36 @@ public class ColorHandler {
 
   // -- Saveable API methods --
 
-  /** Writes the current state to the given DOM element ("Display"). */
+  /** Writes the current state to the given DOM element ("TransformLink"). */
   public void saveState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
-    DisplayWindow window = getWindow();
-    window.setAttr(attrName + "_brightness", "" + brightness);
-    window.setAttr(attrName + "_contrast", "" + contrast);
-    window.setAttr(attrName + "_opacityValue", "" + opacityValue);
-    window.setAttr(attrName + "_opacityModel", "" + opacityModel);
-    window.setAttr(attrName + "_colorModel", "" + colorModel);
-
-    String r = red == null ? "null" : red.getName();
-    String g = green == null ? "null" : green.getName();
-    String b = blue == null ? "null" : blue.getName();
-    window.setAttr(attrName + "_red", r);
-    window.setAttr(attrName + "_green", g);
-    window.setAttr(attrName + "_blue", b);
-
-    String min = ObjectUtil.arrayToString(getLo());
-    String max = ObjectUtil.arrayToString(getHi());
-    String fix = ObjectUtil.arrayToString(getFixed());
-    window.setAttr(attrName + "_colorMin", min);
-    window.setAttr(attrName + "_colorMax", max);
-    window.setAttr(attrName + "_colorFixed", fix);
-
+    Element child = XMLUtil.createChild(el, "Colors");
+    child.setAttribute("brightness", "" + brightness);
+    child.setAttribute("contrast", "" + contrast);
+    child.setAttribute("opacityValue", "" + opacityValue);
+    child.setAttribute("opacityModel",
+      opacityModel == ColorUtil.CONSTANT_ALPHA ? "constant" : "curved");
+    child.setAttribute("colorModel", colorModel == ColorUtil.RGB_MODEL ?
+      "rgb" : (colorModel == ColorUtil.HSV_MODEL ? "hsv" : "composite"));
+    child.setAttribute("red", red == null ? "null" : red.getName());
+    child.setAttribute("green", green == null ? "null" : green.getName());
+    child.setAttribute("blue", blue == null ? "null" : blue.getName());
+    child.setAttribute("min", ObjectUtil.arrayToString(getLo()));
+    child.setAttribute("max", ObjectUtil.arrayToString(getHi()));
+    child.setAttribute("fixed", ObjectUtil.arrayToString(getFixed()));
     float[][][] tables = getTables();
-    if (tables == null) {
-      window.setAttr(attrName + "_tables", "null");
-    }
-    else {
-      window.setAttr(attrName + "_tables", "" + tables.length);
+    if (tables != null) {
       for (int i=0; i<tables.length; i++) {
-        if (tables[i] == null) window.setAttr(attrName + "_table" + i, "null");
-        else {
-          window.setAttr(attrName + "_table" + i, "" + tables[i].length);
+        Element tel = XMLUtil.createChild(child, "ColorTable");
+        if (tables[i] != null) {
           for (int j=0; j<tables[i].length; j++) {
-            if (tables[i][j] == null) {
-              window.setAttr(attrName + "_table" + i + "-" + j, "null");
-            }
-            else {
-              window.setAttr(attrName + "_table" + i + "-" + j,
-                ObjectUtil.arrayToString(tables[i][j]));
+            Element cel = XMLUtil.createChild(tel, "ColorChannel");
+            if (tables[i][j] != null) {
+              XMLUtil.createText(cel, ObjectUtil.arrayToString(tables[i][j]));
             }
           }
         }
       }
     }
-    */
   }
 
   /** Restores the current state from the given DOM element ("Display"). */

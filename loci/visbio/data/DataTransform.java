@@ -49,7 +49,7 @@ public abstract class DataTransform implements Dynamic, Saveable {
   /** Name of this transform. */
   protected String name;
 
-  /** ID number for this data transform (for unique MathType numbering). */
+  /** ID number for this data transform. */
   protected int transformId;
 
   // Note: All subclasses must populate "lengths" and "dims" fields,
@@ -137,7 +137,7 @@ public abstract class DataTransform implements Dynamic, Saveable {
   /** Gets the name of this transform. */
   public String getName() { return name; }
 
-  /** Gets the data transform ID (for constructing unique MathTypes). */
+  /** Gets the data transform ID. */
   public int getTransformId() { return transformId; }
 
   /** Gets length of each dimensional axis. */
@@ -353,21 +353,21 @@ public abstract class DataTransform implements Dynamic, Saveable {
 
   // -- Saveable API methods --
 
-  /** Writes the current state to the given DOM element ("DataTransforms"). */
+  /**
+   * Writes the current state to the given DOM element
+   * (a child of "DataTransforms").
+   */
   public void saveState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
-    CAElement custom = ome.getCustomAttr();
-    custom.createElement(DATA_TRANSFORM);
-    custom.setAttribute("id", "" + id);
-    custom.setAttribute("parent", "" + list.indexOf(parent));
-    custom.setAttribute("name", name);
-    custom.setAttribute("lengths", ObjectUtil.arrayToString(lengths));
-    custom.setAttribute("dims", ObjectUtil.arrayToString(dims));
-    */
+    el.setAttribute("id", "" + transformId);
+    if (parent != null) el.setAttribute("parent", "" + parent.transformId);
+    el.setAttribute("name", name);
+    el.setAttribute("lengths", ObjectUtil.arrayToString(lengths));
+    el.setAttribute("dims", ObjectUtil.arrayToString(dims));
   }
 
   /**
-   * Restores the current state from the given DOM element ("DataTransforms").
+   * Restores the current state from the given DOM element
+   * (a child of "DataTransforms").
    */
   public void restoreState(Element el) throws SaveException {
     /* CTR TODO for v3.00 final

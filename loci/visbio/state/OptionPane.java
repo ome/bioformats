@@ -25,6 +25,7 @@ package loci.visbio.state;
 
 import java.awt.Component;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import loci.visbio.util.DialogPane;
 
 /** OptionPane provides a dialog box for adjusting VisBio's options. */
@@ -56,7 +57,6 @@ public class OptionPane extends DialogPane {
   public void addOption(String tab, BioOption option) {
     JPanel tabPanel = getTab(tab);
     Component c = option.getComponent();
-    // CTR TODO options layout needs to be standardized to use FormLayout
     if (c instanceof JComponent) {
       JComponent jc = (JComponent) c;
       jc.setAlignmentX(JComponent.LEFT_ALIGNMENT);
@@ -82,6 +82,7 @@ public class OptionPane extends DialogPane {
     if (ndx < 0) {
       JPanel p = new JPanel();
       p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
+      p.setBorder(new EmptyBorder(5, 5, 5, 5));
       tabs.addTab(tab, p);
       ndx = tabs.getTabCount() - 1;
     }

@@ -375,16 +375,12 @@ public class DisplayWindow extends JFrame
 
   /** Writes the current state to the given DOM element ("Displays"). */
   public void saveState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
-    custom = ome.getCustomAttr();
-    custom.createElement(DISPLAY_DIALOG);
-    setAttr("id", "" + id);
-    setAttr("name", name);
-    setAttr("threeD", "" + threeD);
-    viewHandler.saveState();
-    captureHandler.saveState();
-    transformHandler.saveState();
-    */
+    Element child = XMLUtil.createChild(el, "Display");
+    child.setAttribute("name", name);
+    child.setAttribute("threeD", "" + threeD);
+    viewHandler.saveState(child);
+    captureHandler.saveState(child);
+    transformHandler.saveState(child);
   }
 
   /** Restores the current state from the given DOM element ("Displays"). */

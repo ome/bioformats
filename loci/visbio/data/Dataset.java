@@ -574,22 +574,22 @@ public class Dataset extends ImageTransform {
 
   /** Writes the current state to the given DOM element ("DataTransforms"). */
   public void saveState(Element el) throws SaveException {
-    super.saveState(el);
-
-    /* CTR TODO for v3.00 final
-    CAElement custom = ome.getCustomAttr();
-    custom.setAttribute("pattern",
+    Element child = XMLUtil.createChild(el, "Dataset");
+    super.saveState(child);
+    child.setAttribute("pattern",
       pattern.replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
-    custom.setAttribute("ids", ObjectUtil.arrayToString(ids));
-    */
+    for (int i=0; i<ids.length; i++) {
+      Element fel = XMLUtil.createChild(child, "Filename");
+      XMLUtil.createText(fel, ids[i]);
+    }
   }
 
   /**
    * Restores the current state from the given DOM element ("DataTransforms").
    */
   public void restoreState(Element el) throws SaveException {
-    super.restoreState(el);
     /* CTR TODO for v3.00 final
+    super.restoreState(el);
     CAElement custom = ome.getCustomAttr();
 
     pattern = custom.getAttributes(DATA_TRANSFORM, "pattern")[index];

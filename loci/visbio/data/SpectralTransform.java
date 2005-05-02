@@ -30,6 +30,7 @@ import loci.visbio.state.Dynamic;
 import loci.visbio.state.SaveException;
 import org.w3c.dom.Element;
 import loci.visbio.util.ObjectUtil;
+import loci.visbio.util.XMLUtil;
 import visad.*;
 
 /**
@@ -251,23 +252,20 @@ public class SpectralTransform extends ImageTransform
 
   /** Writes the current state to the given DOM element ("DataTransforms"). */
   public void saveState(Element el) throws SaveException {
-    super.saveState(el);
-
-    /* CTR TODO for v3.00 final
-    CAElement custom = ome.getCustomAttr();
-    custom.setAttribute("numWeights", "" + weights.length);
+    Element child = XMLUtil.createChild(el, "SpectralMapping");
+    super.saveState(child);
     for (int i=0; i<weights.length; i++) {
-      custom.setAttribute("weights" + i, ObjectUtil.arrayToString(weights[i]));
+      Element wel = XMLUtil.createChild(child, "Weights");
+      XMLUtil.createText(wel, ObjectUtil.arrayToString(weights[i]));
     }
-    */
   }
 
   /**
    * Restores the current state from the given DOM element ("DataTransforms").
    */
   public void restoreState(Element el) throws SaveException {
-    super.restoreState(el);
     /* CTR TODO for v3.00 final
+    super.restoreState(el);
     CAElement custom = ome.getCustomAttr();
 
     int numRange = Integer.parseInt(

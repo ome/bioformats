@@ -36,6 +36,7 @@ import loci.visbio.help.HelpManager;
 import loci.visbio.state.SaveException;
 //import loci.visbio.state.StateManager;
 import loci.visbio.util.SwingUtil;
+import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Element;
 
 /** DataManager is the manager encapsulating VisBio's data transform logic. */
@@ -252,24 +253,11 @@ public class DataManager extends LogicManager {
   public void saveState(Element el) throws SaveException {
     Vector v = getDataList();
     int len = v.size();
-
-    /* CTR TODO for v3.00 final
-    // save number of transforms
-    CAElement custom = ome.getCustomAttr();
-    custom.createElement(DATA_MANAGER);
-    custom.setAttribute("count", "" + len);
-
-    // save transform class names
-    for (int i=0; i<len; i++) {
-      custom.setAttribute("class" + i, v.elementAt(i).getClass().getName());
-    }
-
-    // save all transforms
+    Element dataTransforms = XMLUtil.createChild(el, "DataTransforms");
     for (int i=0; i<len; i++) {
       DataTransform data = (DataTransform) v.elementAt(i);
-      data.saveState(ome, i, v);
+      data.saveState(dataTransforms);
     }
-    */
   }
 
   /** Restores the current state from the given DOM element ("VisBio"). */
