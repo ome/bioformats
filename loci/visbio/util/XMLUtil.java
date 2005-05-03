@@ -71,7 +71,7 @@ public abstract class XMLUtil {
     try {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       DocumentBuilder db = dbf.newDocumentBuilder();
-      return db.parse(is);
+      return db == null ? null : db.parse(is);
     }
     catch (IOException exc) { exc.printStackTrace(); }
     catch (ParserConfigurationException exc) { exc.printStackTrace(); }
