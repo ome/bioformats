@@ -2,8 +2,6 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.lang.reflect.Method;
-import org.openmicroscopy.ds.dto.*;
 import ij.WindowManager;
 import ij.*;
 import java.util.Hashtable;

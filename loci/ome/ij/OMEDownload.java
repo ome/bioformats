@@ -1,11 +1,9 @@
 import ij.*;
-import ij.plugin.filter.PlugInFilter;
 import ij.process.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Hashtable;
-import javax.swing.JOptionPane;
 
 import org.openmicroscopy.ds.*;
 import org.openmicroscopy.ds.dto.*;

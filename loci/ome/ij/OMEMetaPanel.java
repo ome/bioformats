@@ -4,8 +4,7 @@ import javax.swing.border.*;
 import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.*;
-import org.openmicroscopy.ds.dto.*;
-import loci.ome.xml.*;
+
 /**
  * OMEMetaPanel is the class that handles
  * the window used to view attributes

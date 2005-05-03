@@ -515,7 +515,7 @@ public class OMEMetaDataHandler{
       XMLObject.ATTRIBUTE)));
     node.add(new DefaultMutableTreeNode(new XMLObject("Path", element.getPath(),
       XMLObject.ATTRIBUTE)));
-   node.add(new DefaultMutableTreeNode(new XMLObject("IsLocal", ""+element.isIsLocal(),
+   node.add(new DefaultMutableTreeNode(new XMLObject("IsLocal", ""+element.isLocal(),
       XMLObject.ATTRIBUTE)));
   }//end of addRepository method
   

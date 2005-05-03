@@ -1,23 +1,14 @@
 import ij.*;
-import ij.plugin.filter.PlugInFilter;
 import ij.process.*;
 import ij.gui.GenericDialog;
 
 import java.awt.TextField;
-
-import java.io.File;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.openmicroscopy.ds.*;
 import org.openmicroscopy.ds.dto.*;
 import org.openmicroscopy.ds.managers.*;
 import org.openmicroscopy.ds.st.*;
 import org.openmicroscopy.is.*;
-
-import loci.ome.xml.*;
-
 
 /**
  * OMEUpload handles importing images into
