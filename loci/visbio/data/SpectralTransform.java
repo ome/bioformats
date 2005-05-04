@@ -261,21 +261,15 @@ public class SpectralTransform extends ImageTransform
   }
 
   /**
-   * Restores the current state from the given DOM element ("DataTransforms").
+   * Restores the current state from the given DOM element ("SpectralMapping").
    */
   public void restoreState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
     super.restoreState(el);
-    CAElement custom = ome.getCustomAttr();
-
-    int numRange = Integer.parseInt(
-      custom.getAttributes(DATA_TRANSFORM, "numWeights")[index]);
-    weights = new double[numRange][];
-    for (int i=0; i<numRange; i++) {
-      weights[i] = ObjectUtil.stringToDoubleArray(
-        custom.getAttributes(DATA_TRANSFORM, "weights" + i)[index]);
+    Element[] els = XMLUtil.getChildren(el, "Weights");
+    weights = new double[els.length][];
+    for (int i=0; i<weights.length; i++) {
+      weights[i] = ObjectUtil.stringToDoubleArray(XMLUtil.getText(el));
     }
-    */
   }
 
 

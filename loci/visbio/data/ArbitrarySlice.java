@@ -499,6 +499,7 @@ public class ArbitrarySlice extends DataTransform
     Element child = XMLUtil.createChild(el, "ArbitrarySlice");
     super.saveState(child);
     child.setAttribute("axis", "" + axis);
+    child.setAttribute("yaw", "" + yaw);
     child.setAttribute("pitch", "" + pitch);
     child.setAttribute("location", "" + loc);
     child.setAttribute("resolution", "" + res);
@@ -507,11 +508,17 @@ public class ArbitrarySlice extends DataTransform
   }
 
   /**
-   * Restores the current state from the given DOM element ("DataTransforms").
+   * Restores the current state from the given DOM element ("ArbitrarySlice").
    */
   public void restoreState(Element el) throws SaveException {
     super.restoreState(el);
-    // CTR TODO for v3.00 final
+    axis = Integer.parseInt(el.getAttribute("axis"));
+    yaw = Float.parseFloat(el.getAttribute("yaw"));
+    pitch = Float.parseFloat(el.getAttribute("pitch"));
+    loc = Float.parseFloat(el.getAttribute("location"));
+    res = Integer.parseInt(el.getAttribute("resolution"));
+    showLine = "true".equals(el.getAttribute("showLine"));
+    compute = "true".equals(el.getAttribute("onTheFly"));
   }
 
 

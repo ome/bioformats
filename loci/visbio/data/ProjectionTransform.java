@@ -228,16 +228,12 @@ public class ProjectionTransform extends ImageTransform {
   }
 
   /**
-   * Restores the current state from the given DOM element ("DataTransforms").
+   * Restores the current state from the given DOM element
+   * ("MaximumIntensityProjection").
    */
   public void restoreState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
     super.restoreState(el);
-    CAElement custom = ome.getCustomAttr();
-
-    axis = Integer.parseInt(
-      custom.getAttributes(DATA_TRANSFORM, "projectAxis")[index]);
-    */
+    axis = Integer.parseInt(el.getAttribute("axis"));
   }
 
 

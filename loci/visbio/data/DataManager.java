@@ -34,7 +34,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import loci.visbio.*;
 import loci.visbio.help.HelpManager;
 import loci.visbio.state.SaveException;
-//import loci.visbio.state.StateManager;
+import loci.visbio.state.StateManager;
 import loci.visbio.util.SwingUtil;
 import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Element;
@@ -130,6 +130,11 @@ public class DataManager extends LogicManager {
     Vector v = new Vector();
     buildDataList(dataControls.getDataRoot(), v);
     return v;
+  }
+
+  /** Gets the data transform with the associated ID. */
+  public DataTransform getDataById(int id) {
+    return getDataById(dataControls.getDataRoot(), id);
   }
 
   /** Imports a dataset. */
@@ -262,36 +267,24 @@ public class DataManager extends LogicManager {
 
   /** Restores the current state from the given DOM element ("VisBio"). */
   public void restoreState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
-    CAElement custom = ome.getCustomAttr();
-
-    // read number of transforms
-    String[] dtCount = custom.getAttributes(DATA_MANAGER, "count");
-    int count = -1;
-    if (dtCount != null && dtCount.length > 0) {
-      try { count = Integer.parseInt(dtCount[0]); }
-      catch (NumberFormatException exc) { }
-    }
-    if (count < 0) {
-      System.err.println("Failed to restore transform count.");
-      count = 0;
-    }
-
+    Element dataTransforms = XMLUtil.getFirstChild(el, "DataTransforms");
+    Element[] els = XMLUtil.getChildren(dataTransforms, null);
     Vector vn = new Vector();
-    for (int i=0; i<count; i++) {
+    for (int i=0; i<els.length; i++) {
       // read transform class name
-      String[] dtClass = custom.getAttributes(DATA_MANAGER, "class" + i);
-      if (dtClass == null || dtClass.length == 0) {
+      String className = els[i].getAttribute("class");
+      if (className == null) {
         System.err.println("Failed to read transform #" + i + " class");
         continue;
       }
 
       // locate transform class
       Class c = null;
-      try { c = Class.forName(dtClass[0]); }
+      try { c = Class.forName(className); }
       catch (ClassNotFoundException exc) { }
       if (c == null) {
-        System.err.println("Failed to identify transform #" + i + " class");
+        System.err.println("Failed to identify transform #" + i +
+          " class: " + className);
         continue;
       }
 
@@ -312,8 +305,22 @@ public class DataManager extends LogicManager {
 
       // restore transform state
       DataTransform data = (DataTransform) o;
-      data.restoreState(ome, i, vn);
+      data.restoreState(els[i]);
       vn.add(data);
+
+      // restore parent transform reference
+      String parentId = els[i].getAttribute("parent");
+      if (parentId == null) data.parent = null;
+      else {
+        int pid = -1;
+        try { pid = Integer.parseInt(parentId); }
+        catch (NumberFormatException exc) { }
+        data.parent = getDataById(pid);
+        if (data.parent == null) {
+          System.err.println("Invalid parent id (" +
+            parentId + ") for transform #" + i);
+        }
+      }
     }
 
     // merge old and new transform lists
@@ -333,7 +340,6 @@ public class DataManager extends LogicManager {
       DataTransform data = (DataTransform) vo.elementAt(i);
       if (!vn.contains(data)) removeData(data);
     }
-    */
   }
 
 
@@ -417,6 +423,23 @@ public class DataManager extends LogicManager {
         node.getChildAt(i);
       buildDataList(child, v);
     }
+  }
+
+  /** Recursively searches data tree for a transform with the given ID. */
+  private DataTransform getDataById(DefaultMutableTreeNode node, int id) {
+    Object o = node.getUserObject();
+    if (o instanceof DataTransform) {
+      DataTransform data = (DataTransform) o;
+      if (data.getTransformId() == id) return data;
+    }
+    int count = node.getChildCount();
+    for (int i=0; i<count; i++) {
+      DefaultMutableTreeNode child = (DefaultMutableTreeNode)
+        node.getChildAt(i);
+      DataTransform data = getDataById(child, id);
+      if (data != null) return data;
+    }
+    return null;
   }
 
 }

@@ -358,6 +358,7 @@ public abstract class DataTransform implements Dynamic, Saveable {
    * (a child of "DataTransforms").
    */
   public void saveState(Element el) throws SaveException {
+    el.setAttribute("class", getClass().getName());
     el.setAttribute("id", "" + transformId);
     if (parent != null) el.setAttribute("parent", "" + parent.transformId);
     el.setAttribute("name", name);
@@ -370,56 +371,12 @@ public abstract class DataTransform implements Dynamic, Saveable {
    * (a child of "DataTransforms").
    */
   public void restoreState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
-    CAElement custom = ome.getCustomAttr();
-    String[] idList = custom.getAttributes(DATA_TRANSFORM, "id");
-
-    // identify transform index
-    int index = -1;
-    for (int i=0; i<idList.length; i++) {
-      try {
-        int iid = Integer.parseInt(idList[i]);
-        if (id == iid) {
-          index = i;
-          break;
-        }
-      }
-      catch (NumberFormatException exc) { }
-    }
-    if (index < 0) {
-      System.err.println("Attributes for transform #" + id + " not found.");
-      return index;
-    }
-
-    // determine parent transform
-    String parentId = custom.getAttributes(DATA_TRANSFORM, "parent")[index];
-    int pid = -2;
-    try { pid = Integer.parseInt(parentId); }
-    catch (NumberFormatException exc) { }
-    int size = list.size();
-    if (pid < -1 || pid >= size) {
-      System.err.println("Invalid parent id (" +
-        parentId + ") for transform #" + id);
-      return index;
-    }
-    if (pid >= 0 && pid < size) {
-      parent = (DataTransform) list.elementAt(pid);
-    }
-    else parent = null;
-
-    // get transform name
-    name = custom.getAttributes(DATA_TRANSFORM, "name")[index];
-
-    // parse lengths array
-    lengths = ObjectUtil.stringToIntArray(
-      custom.getAttributes(DATA_TRANSFORM, "lengths")[index]);
-
-    // parse dims array
-    dims = ObjectUtil.stringToStringArray(
-      custom.getAttributes(DATA_TRANSFORM, "dims")[index]);
-
-    return index;
-    */
+    transformId = Integer.parseInt(el.getAttribute("id"));
+    name = el.getAttribute("name");
+    // NB: parent reference is restored in DataManager.restoreState,
+    // since individual DataTransforms are not aware of each other
+    lengths = ObjectUtil.stringToIntArray(el.getAttribute("lengths"));
+    dims = ObjectUtil.stringToStringArray(el.getAttribute("dims"));
   }
 
 

@@ -584,20 +584,12 @@ public class Dataset extends ImageTransform {
     }
   }
 
-  /**
-   * Restores the current state from the given DOM element ("DataTransforms").
-   */
+  /** Restores the current state from the given DOM element ("Dataset"). */
   public void restoreState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
     super.restoreState(el);
-    CAElement custom = ome.getCustomAttr();
-
-    pattern = custom.getAttributes(DATA_TRANSFORM, "pattern")[index];
-    pattern = pattern.replaceAll("&lt;", "<").replaceAll("&gt;", ">");
-
-    ids = ObjectUtil.stringToStringArray(
-      custom.getAttributes(DATA_TRANSFORM, "ids")[index]);
-    */
+    pattern = el.getAttribute("pattern").replaceAll(
+      "&lt;", "<").replaceAll("&gt;", ">");
+    ids = ObjectUtil.stringToStringArray(el.getAttribute("ids"));
   }
 
 

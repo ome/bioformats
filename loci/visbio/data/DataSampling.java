@@ -313,28 +313,16 @@ public class DataSampling extends ImageTransform {
   }
 
   /**
-   * Restores the current state from the given DOM element ("DataTransforms").
+   * Restores the current state from the given DOM element ("DataSampling").
    */
   public void restoreState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
     super.restoreState(el);
-    CAElement custom = ome.getCustomAttr();
-
-    min = ObjectUtil.stringToIntArray(
-      custom.getAttributes(DATA_TRANSFORM, "min")[index]);
-    max = ObjectUtil.stringToIntArray(
-      custom.getAttributes(DATA_TRANSFORM, "max")[index]);
-    step = ObjectUtil.stringToIntArray(
-      custom.getAttributes(DATA_TRANSFORM, "step")[index]);
-    resX = Integer.parseInt(
-      custom.getAttributes(DATA_TRANSFORM, "resX")[index]);
-    resY = Integer.parseInt(
-      custom.getAttributes(DATA_TRANSFORM, "resY")[index]);
-    range = ObjectUtil.stringToBooleanArray(
-      custom.getAttributes(DATA_TRANSFORM, "range")[index]);
-
-    return index;
-    */
+    min = ObjectUtil.stringToIntArray(el.getAttribute("min"));
+    max = ObjectUtil.stringToIntArray(el.getAttribute("max"));
+    step = ObjectUtil.stringToIntArray(el.getAttribute("step"));
+    resX = Integer.parseInt(el.getAttribute("resX"));
+    resY = Integer.parseInt(el.getAttribute("resY"));
+    range = ObjectUtil.stringToBooleanArray(el.getAttribute("range"));
   }
 
 
