@@ -555,7 +555,7 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
   public void saveState(Element el) throws SaveException {
     Element child = XMLUtil.createChild(el, "LinkedData");
 
-    // save all links
+    // save links
     int len = links.size();
     for (int i=0; i<len; i++) {
       TransformLink link = (TransformLink) links.elementAt(i);
@@ -570,18 +570,21 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
 
   /** Restores the current state from the given DOM element ("Display"). */
   public void restoreState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
-    int len = Integer.parseInt(window.getAttr("numLinks"));
+    Element child = XMLUtil.getFirstChild(el, "LinkedData");
+
+    // restore links
+    Element[] els = XMLUtil.getChildren(child, "TransformLink");
     newLinks = new Vector();
-    for (int i=0; i<len; i++) {
+    for (int i=0; i<els.length; i++) {
       TransformLink link = new TransformLink(this);
-      link.restoreState(window, "link" + i);
+      link.restoreState(els[i]);
       newLinks.add(link);
     }
-    animating = window.getAttr("animating").equalsIgnoreCase("true");
-    fps = Integer.parseInt(window.getAttr("animFPS"));
-    animAxis = Integer.parseInt(window.getAttr("animAxis"));
-    */
+
+    // restore other parameters
+    animating = child.getAttribute("animating").equalsIgnoreCase("true");
+    fps = Integer.parseInt(child.getAttribute("FPS"));
+    animAxis = Integer.parseInt(child.getAttribute("animationAxis"));
   }
 
 }

@@ -383,37 +383,15 @@ public class DisplayWindow extends JFrame
     transformHandler.saveState(child);
   }
 
-  /** Restores the current state from the given DOM element ("Displays"). */
+  /** Restores the current state from the given DOM element ("Display"). */
   public void restoreState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
-    custom = ome.getCustomAttr();
-    String[] idList = custom.getAttributes(DISPLAY_DIALOG, "id");
-
-    // identify transform index
-    index = -1;
-    for (int i=0; i<idList.length; i++) {
-      try {
-        int iid = Integer.parseInt(idList[i]);
-        if (id == iid) {
-          index = i;
-          break;
-        }
-      }
-      catch (NumberFormatException exc) { }
-    }
-    if (index < 0) {
-      System.err.println("Attributes for display #" + id + " not found.");
-      return;
-    }
-
-    name = getAttr("name");
-    threeD = getAttr("threeD").equalsIgnoreCase("true");
+    name = el.getAttribute("name");
+    threeD = el.getAttribute("threeD").equalsIgnoreCase("true");
 
     createHandlers();
-    viewHandler.restoreState();
-    captureHandler.restoreState();
-    transformHandler.restoreState();
-    */
+    viewHandler.restoreState(el);
+    captureHandler.restoreState(el);
+    transformHandler.restoreState(el);
   }
 
 

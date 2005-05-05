@@ -350,16 +350,17 @@ public class ViewHandler implements Saveable {
 
   /** Restores the current state from the given DOM element ("Display"). */
   public void restoreState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
-    matrix = ObjectUtil.stringToDoubleArray(window.getAttr("matrix"));
-    xasp = ObjectUtil.stringToDouble(window.getAttr("aspectX"));
-    yasp = ObjectUtil.stringToDouble(window.getAttr("aspectY"));
-    zasp = ObjectUtil.stringToDouble(window.getAttr("aspectZ"));
-    showScale = window.getAttr("showScale").equalsIgnoreCase("true");
-    boundingBox = window.getAttr("boundingBox").equalsIgnoreCase("true");
-    parallel = window.getAttr("parallel").equalsIgnoreCase("true");
-    */
+    Element child = XMLUtil.getFirstChild(el, "Appearance");
+    matrix = ObjectUtil.stringToDoubleArray(child.getAttribute("matrix"));
+    xasp = ObjectUtil.stringToDouble(child.getAttribute("aspectX"));
+    yasp = ObjectUtil.stringToDouble(child.getAttribute("aspectY"));
+    zasp = ObjectUtil.stringToDouble(child.getAttribute("aspectZ"));
+    showScale = child.getAttribute("showScale").equalsIgnoreCase("true");
+    boundingBox = child.getAttribute("boundingBox").equalsIgnoreCase("true");
+    parallel = child.getAttribute("parallel").equalsIgnoreCase("true");
   }
+
+
   // -- Helper methods --
 
   /** Adjusts the aspect ratio. */

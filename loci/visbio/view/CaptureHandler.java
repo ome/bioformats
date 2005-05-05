@@ -423,7 +423,6 @@ public class CaptureHandler implements Saveable {
     // save display positions
     int numPositions = pos.size();
     Element child = XMLUtil.createChild(el, "Capture");
-    child.setAttribute("positions", "" + numPositions);
     for (int i=0; i<numPositions; i++) {
       DisplayPosition position = (DisplayPosition) pos.elementAt(i);
       position.saveState(child);
@@ -437,21 +436,23 @@ public class CaptureHandler implements Saveable {
 
   /** Restores the current state from the given DOM element ("Display"). */
   public void restoreState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
-    int numPositions = Integer.parseInt(window.getAttr("positions"));
-    Vector vn = new Vector(numPositions);
-    for (int i=0; i<numPositions; i++) {
+    Element child = XMLUtil.getFirstChild(el, "Capture");
+
+    // restore display positions
+    Element[] els = XMLUtil.getChildren(child, "DisplayPosition");
+    Vector vn = new Vector(els.length);
+    for (int i=0; i<els.length; i++) {
       DisplayPosition position = new DisplayPosition();
-      position.restoreState(window, "position" + i);
+      position.restoreState(els[i]);
       vn.add(position);
     }
     Vector vo = getPositions();
     if (vo != null) StateManager.mergeStates(vo, vn);
 
-    movieSpeed = Integer.parseInt(window.getAttr("movieSpeed"));
-    movieFPS = Integer.parseInt(window.getAttr("movieFPS"));
-    movieSmooth = window.getAttr("movieSmooth").equalsIgnoreCase("true");
-    */
+    // restore other parameters
+    movieSpeed = Integer.parseInt(child.getAttribute("movieSpeed"));
+    movieFPS = Integer.parseInt(child.getAttribute("movieFPS"));
+    movieSmooth = child.getAttribute("movieSmooth").equalsIgnoreCase("true");
   }
 
   // -- Helper methods --

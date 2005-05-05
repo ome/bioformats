@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.view;
 
 import java.awt.Component;
+import java.util.Vector;
 import javax.swing.JOptionPane;
 import loci.visbio.*;
 import loci.visbio.help.HelpManager;
@@ -147,28 +148,17 @@ public class DisplayManager extends LogicManager {
 
   /** Restores the current state from the given DOM element ("VisBio"). */
   public void restoreState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
-    CAElement custom = ome.getCustomAttr();
+    Element child = XMLUtil.getFirstChild(el, "Displays");
+    Element[] els = XMLUtil.getChildren(child, "Display");
 
-    // read number of displays
-    String[] dCount = custom.getAttributes(DISPLAY_MANAGER, "count");
-    int count = -1;
-    if (dCount != null && dCount.length > 0) {
-      try { count = Integer.parseInt(dCount[0]); }
-      catch (NumberFormatException exc) { }
-    }
-    if (count < 0) {
-      System.err.println("Failed to restore display count.");
-      count = 0;
-    }
-
+    // create new display list
     Vector vn = new Vector();
-    for (int i=0; i<count; i++) {
+    for (int i=0; i<els.length; i++) {
       // construct display
       DisplayWindow window = new DisplayWindow(this);
 
       // restore display state
-      window.restoreState(ome, i);
+      window.restoreState(els[i]);
       vn.add(window);
     }
 
@@ -191,7 +181,6 @@ public class DisplayManager extends LogicManager {
       DisplayWindow display = (DisplayWindow) vo.elementAt(i);
       if (!vn.contains(display)) removeDisplay(display);
     }
-    */
   }
 
 

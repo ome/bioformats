@@ -132,6 +132,11 @@ public class DataManager extends LogicManager {
     return v;
   }
 
+  /** Gets the data transform with the associated ID. */
+  public DataTransform getDataById(int id) {
+    return getDataById(dataControls.getDataRoot(), id);
+  }
+
   /** Imports a dataset. */
   public void importData() { importData(bio); }
 
@@ -253,17 +258,17 @@ public class DataManager extends LogicManager {
   public void saveState(Element el) throws SaveException {
     Vector v = getDataList();
     int len = v.size();
-    Element dataTransforms = XMLUtil.createChild(el, "DataTransforms");
+    Element child = XMLUtil.createChild(el, "DataTransforms");
     for (int i=0; i<len; i++) {
       DataTransform data = (DataTransform) v.elementAt(i);
-      data.saveState(dataTransforms);
+      data.saveState(child);
     }
   }
 
   /** Restores the current state from the given DOM element ("VisBio"). */
   public void restoreState(Element el) throws SaveException {
-    Element dataTransforms = XMLUtil.getFirstChild(el, "DataTransforms");
-    Element[] els = XMLUtil.getChildren(dataTransforms, null);
+    Element child = XMLUtil.getFirstChild(el, "DataTransforms");
+    Element[] els = XMLUtil.getChildren(child, null);
     Vector vn = new Vector();
     for (int i=0; i<els.length; i++) {
       // read transform class name
@@ -426,6 +431,23 @@ public class DataManager extends LogicManager {
         node.getChildAt(i);
       buildDataList(child, v);
     }
+  }
+
+  /** Recursively searches data tree for a transform with the given ID. */
+  private DataTransform getDataById(DefaultMutableTreeNode node, int id) {
+    Object o = node.getUserObject();
+    if (o instanceof DataTransform) {
+      DataTransform data = (DataTransform) o;
+      if (data.getTransformId() == id) return data;
+    }
+    int count = node.getChildCount();
+    for (int i=0; i<count; i++) {
+      DefaultMutableTreeNode child = (DefaultMutableTreeNode)
+        node.getChildAt(i);
+      DataTransform data = getDataById(child, id);
+      if (data != null) return data;
+    }
+    return null;
   }
 
 }

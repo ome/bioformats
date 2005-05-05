@@ -27,6 +27,9 @@ import java.rmi.RemoteException;
 import java.util.Vector;
 import loci.visbio.data.DataTransform;
 import loci.visbio.data.ImageTransform;
+import loci.visbio.state.SaveException;
+import loci.visbio.util.XMLUtil;
+import org.w3c.dom.Element;
 import visad.*;
 
 /**
@@ -58,12 +61,6 @@ public class StackHandler extends TransformHandler {
   /** Dimensional positions. */
   protected Vector positions;
 
-  /**
-   * Whether each transform is currently displaying thumbnails
-   * vs full-resolution data.
-   */
-  protected Vector thumbnails;
-
   /** Resolution of stack images. */
   protected int stackRes;
 
@@ -74,7 +71,6 @@ public class StackHandler extends TransformHandler {
   public StackHandler(DisplayWindow dw) {
     super(dw);
     positions = new Vector();
-    thumbnails = new Vector();
     stackRes = DEFAULT_STACK_RESOLUTION;
   }
 
@@ -125,6 +121,46 @@ public class StackHandler extends TransformHandler {
       zMap.setRange(-1, 1);
       display.addMap(zMap);
     }
+  }
+
+
+  // -- Saveable API methods --
+
+  /** Writes the current state to the given DOM element ("Display"). */
+  public void saveState(Element el) throws SaveException {
+    super.saveState(el);
+    Element child = XMLUtil.getFirstChild(el, "LinkedData");
+
+    // save other parameters
+    child.setAttribute("stackRes", "" + stackRes);
+  }
+
+  /** Restores the current state from the given DOM element ("Display"). */
+  public void restoreState(Element el) throws SaveException {
+    Element child = XMLUtil.getFirstChild(el, "LinkedData");
+
+    // restore links
+    Element[] els = XMLUtil.getChildren(child, null);
+    newLinks = new Vector();
+    for (int i=0; i<els.length; i++) {
+      String linkType = els[i].getTagName();
+      TransformLink link = null;
+      if (linkType.equals("TransformLink")) link = new TransformLink(this);
+      else if (linkType.equals("StackLink")) link = new StackLink(this);
+      if (link == null) {
+        System.err.println("Warning: cannot restore linked data of " +
+          "unknown type (" + linkType + ")");
+        continue;
+      }
+      link.restoreState(els[i]);
+      newLinks.add(link);
+    }
+
+    // restore other parameters
+    animating = child.getAttribute("animating").equalsIgnoreCase("true");
+    fps = Integer.parseInt(child.getAttribute("FPS"));
+    animAxis = Integer.parseInt(child.getAttribute("animationAxis"));
+    stackRes = Integer.parseInt(child.getAttribute("stackRes"));
   }
 
 }

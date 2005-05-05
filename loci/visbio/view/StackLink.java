@@ -32,6 +32,10 @@ import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Element;
 import visad.*;
 
+/**
+ * Represents a link between a data transform and a display
+ * that produces an image stack.
+ */
 public class StackLink extends TransformLink {
 
   // -- Constants --
@@ -64,7 +68,19 @@ public class StackLink extends TransformLink {
   protected int volumeRes = StackHandler.DEFAULT_VOLUME_RESOLUTION;
 
 
+  // -- Fields - initial state --
+
+  /** Data transform's current slice. */
+  protected int currentSlice;
+
+  /** Flags indicating visibility of each slice of the stack. */
+  protected boolean[] visSlices;
+
+
   // -- Constructor --
+
+  /** Constructs an uninitialized stack link. */
+  public StackLink(StackHandler h) { super(h); }
 
   /**
    * Creates a link between the given data transform and
@@ -141,6 +157,7 @@ public class StackLink extends TransformLink {
    * the currently assigned stack axis.
    */
   public int getCurrentSlice() {
+    if (handler == null) return currentSlice;
     int[] pos = handler.getPos(trans);
     return stackAxis >= 0 && stackAxis < pos.length ? pos[stackAxis] : -1;
   }
@@ -153,6 +170,10 @@ public class StackLink extends TransformLink {
 
   /** Gets visibility at the specified slice index. */
   public boolean isSliceVisible(int slice) {
+    if (renderers == null) {
+      return visSlices != null && slice >= 0 && slice < visSlices.length ?
+        visSlices[slice] : false;
+    }
     if (slice < 0 || slice >= renderers.size()) return false;
     return ((DataRenderer) renderers.elementAt(slice)).getEnabled();
   }
@@ -262,23 +283,41 @@ public class StackLink extends TransformLink {
   /** Writes the current state to the given DOM element ("LinkedData"). */
   public void saveState(Element el) throws SaveException {
     super.saveState(el);
-    Element child = XMLUtil.getFirstChild(el, "TransformLink");
-    child.setAttribute("axis", "" + getStackAxis());
+
+    // find appropriate TransformLink
+    Element child = null;
+    Element[] els = XMLUtil.getChildren(el, "TransformLink");
+    String id = "" + trans.getTransformId();
+    for (int i=0; i<els.length; i++) {
+      if (id.equals(els[i].getAttribute("id"))) {
+        child = els[i];
+        break;
+      }
+    }
+
+    // save stack parameters
+    child.setAttribute("axis", "" + stackAxis);
     child.setAttribute("slice", "" + getCurrentSlice());
     int sliceCount = getSliceCount();
     StringBuffer sb = new StringBuffer(sliceCount);
     for (int i=0; i<sliceCount; i++) sb.append(isSliceVisible(i) ? "y" : "n");
     child.setAttribute("visibleSlices", sb.toString());
-    child.setAttribute("boxVisible", "" + isBoundingBoxVisible());
     child.setAttribute("isVolume", "" + isVolumeRendered());
     child.setAttribute("volumeResolution", "" + getVolumeResolution());
   }
 
-  /**
-   * Restores the current state from the given DOM element ("TransformLink").
-   */
+  /** Restores the current state from the given DOM element ("StackLink"). */
   public void restoreState(Element el) throws SaveException {
-    // CTR TODO for v3.00 final
+    super.restoreState(el);
+
+    // restore stack parameters
+    stackAxis = Integer.parseInt(el.getAttribute("axis"));
+    currentSlice = Integer.parseInt(el.getAttribute("slice"));
+    String s = el.getAttribute("visibleSlices");
+    visSlices = new boolean[s.length()];
+    for (int i=0; i<visSlices.length; i++) visSlices[i] = s.charAt(i) == 'y';
+    volume = el.getAttribute("isVolume").equalsIgnoreCase("true");
+    volumeRes = Integer.parseInt(el.getAttribute("volumeResolution"));
   }
 
 

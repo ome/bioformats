@@ -352,6 +352,8 @@ public class ColorHandler {
   /** Writes the current state to the given DOM element ("TransformLink"). */
   public void saveState(Element el) throws SaveException {
     Element child = XMLUtil.createChild(el, "Colors");
+
+    // save attributes
     child.setAttribute("brightness", "" + brightness);
     child.setAttribute("contrast", "" + contrast);
     child.setAttribute("opacityValue", "" + opacityValue);
@@ -365,6 +367,8 @@ public class ColorHandler {
     child.setAttribute("min", ObjectUtil.arrayToString(getLo()));
     child.setAttribute("max", ObjectUtil.arrayToString(getHi()));
     child.setAttribute("fixed", ObjectUtil.arrayToString(getFixed()));
+
+    // save color tables
     float[][][] tables = getTables();
     if (tables != null) {
       for (int i=0; i<tables.length; i++) {
@@ -381,51 +385,57 @@ public class ColorHandler {
     }
   }
 
-  /** Restores the current state from the given DOM element ("Display"). */
+  /**
+   * Restores the current state from the given DOM element ("TransformLink").
+   */
   public void restoreState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
-    DisplayWindow window = getWindow();
-    brightness = Integer.parseInt(window.getAttr(attrName + "_brightness"));
-    contrast = Integer.parseInt(window.getAttr(attrName + "_contrast"));
-    opacityValue = Integer.parseInt(
-      window.getAttr(attrName + "_opacityValue"));
-    opacityModel = Integer.parseInt(
-      window.getAttr(attrName + "_opacityModel"));
-    colorModel = Integer.parseInt(window.getAttr(attrName + "_colorModel"));
+    Element child = XMLUtil.getFirstChild(el, "Colors");
 
-    String r = window.getAttr(attrName + "_red");
-    String g = window.getAttr(attrName + "_green");
-    String b = window.getAttr(attrName + "_blue");
+    // restore attributes
+    brightness = Integer.parseInt(child.getAttribute("brightness"));
+    contrast = Integer.parseInt(child.getAttribute("contrast"));
+    opacityValue = Integer.parseInt(child.getAttribute("opacityValue"));
+    String om = child.getAttribute("opacityModel");
+    if ("constant".equals(om)) opacityModel = ColorUtil.CONSTANT_ALPHA;
+    else if ("curved".equals(om)) opacityModel = ColorUtil.CURVED_ALPHA;
+    else {
+      System.err.println("Warning: invalid opacity model (" + om + ")");
+      opacityModel = -1;
+    }
+    String cm = child.getAttribute("colorModel");
+    if ("rgb".equals(cm)) colorModel = ColorUtil.RGB_MODEL;
+    else if ("hsv".equals(cm)) colorModel = ColorUtil.HSV_MODEL;
+    else if ("composite".equals(cm)) colorModel = ColorUtil.COMPOSITE_MODEL;
+    else {
+      System.err.println("Warning: invalid color model (" + cm + ")");
+      colorModel = -1;
+    }
+    String r = child.getAttribute("red");
     red = r.equals("null") ? null : RealType.getRealType(r);
+    String g = child.getAttribute("green");
     green = g.equals("null") ? null : RealType.getRealType(g);
+    String b = child.getAttribute("blue");
     blue = b.equals("null") ? null : RealType.getRealType(b);
+    lo = ObjectUtil.stringToDoubleArray(child.getAttribute("min"));
+    hi = ObjectUtil.stringToDoubleArray(child.getAttribute("max"));
+    fixed = ObjectUtil.stringToBooleanArray(child.getAttribute("fixed"));
 
-    String min = window.getAttr(attrName + "_colorMin");
-    String max = window.getAttr(attrName + "_colorMax");
-    String fix = window.getAttr(attrName + "_colorFixed");
-    lo = ObjectUtil.stringToDoubleArray(min);
-    hi = ObjectUtil.stringToDoubleArray(max);
-    fixed = ObjectUtil.stringToBooleanArray(fix);
-
+    // restore attributes
     colorTables = null;
-    String s = window.getAttr(attrName + "_tables");
-    if (!s.equals("null")) {
-      int ilen = Integer.parseInt(s);
-      colorTables = new float[ilen][][];
-      for (int i=0; i<ilen; i++) {
-        s = window.getAttr(attrName + "_table" + i);
-        if (s.equals("null")) colorTables[i] = null;
-        else {
-          int jlen = Integer.parseInt(s);
-          colorTables[i] = new float[jlen][];
-          for (int j=0; j<jlen; j++) {
-            colorTables[i][j] = ObjectUtil.stringToFloatArray(
-              window.getAttr(attrName + "_table" + i + "-" + j));
+    Element[] tels = XMLUtil.getChildren(child, "ColorTable");
+    if (tels != null) {
+      colorTables = new float[tels.length][][];
+      for (int i=0; i<tels.length; i++) {
+        Element[] cels = XMLUtil.getChildren(tels[i], "ColorChannel");
+        if (cels != null) {
+          colorTables[i] = new float[cels.length][];
+          for (int j=0; j<cels.length; j++) {
+            colorTables[i][j] =
+              ObjectUtil.stringToFloatArray(XMLUtil.getText(cels[j]));
           }
         }
       }
     }
-    */
   }
 
 }

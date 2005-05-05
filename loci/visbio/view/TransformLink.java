@@ -26,6 +26,7 @@ package loci.visbio.view;
 import java.awt.Font;
 import java.rmi.RemoteException;
 import java.util.Vector;
+import loci.visbio.VisBioFrame;
 import loci.visbio.data.*;
 import loci.visbio.state.*;
 import loci.visbio.util.*;
@@ -33,7 +34,10 @@ import org.w3c.dom.Element;
 import visad.*;
 import visad.util.Util;
 
-/** Represents a link between a data transform and a display. */
+/**
+ * Represents a link between a data transform and a display
+ * that produces a single image.
+ */
 public class TransformLink
   implements DisplayListener, Dynamic, Runnable, TransformListener
 {
@@ -312,15 +316,11 @@ public class TransformLink
    * Restores the current state from the given DOM element ("TransformLink").
    */
   public void restoreState(Element el) throws SaveException {
-    /* CTR TODO for v3.00 final
     VisBioFrame bio = handler.getWindow().getVisBio();
     DataManager dm = (DataManager) bio.getManager(DataManager.class);
-    Vector dataList = dm.getDataList();
-    int dataIndex = Integer.parseInt(window.getAttr(attrName + "_dataIndex"));
-    trans = (DataTransform) dataList.elementAt(dataIndex);
-    if (colorHandler != null) colorHandler.restoreState(attrName);
-    visible = window.getAttr(attrName + "_visible").equalsIgnoreCase("true");
-    */
+    trans = dm.getDataById(Integer.parseInt(el.getAttribute("id")));
+    if (colorHandler != null) colorHandler.restoreState(el);
+    visible = el.getAttribute("visible").equalsIgnoreCase("true");
   }
 
 
