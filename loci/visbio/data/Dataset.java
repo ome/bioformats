@@ -589,7 +589,9 @@ public class Dataset extends ImageTransform {
     super.restoreState(el);
     pattern = el.getAttribute("pattern").replaceAll(
       "&lt;", "<").replaceAll("&gt;", ">");
-    ids = ObjectUtil.stringToStringArray(el.getAttribute("ids"));
+    Element[] els = XMLUtil.getChildren(el, "Filename");
+    ids = new String[els.length];
+    for (int i=0; i<ids.length; i++) ids[i] = XMLUtil.getText(els[i]);
   }
 
 

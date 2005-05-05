@@ -132,11 +132,6 @@ public class DataManager extends LogicManager {
     return v;
   }
 
-  /** Gets the data transform with the associated ID. */
-  public DataTransform getDataById(int id) {
-    return getDataById(dataControls.getDataRoot(), id);
-  }
-
   /** Imports a dataset. */
   public void importData() { importData(bio); }
 
@@ -307,15 +302,24 @@ public class DataManager extends LogicManager {
       DataTransform data = (DataTransform) o;
       data.restoreState(els[i]);
       vn.add(data);
+    }
 
-      // restore parent transform reference
+    // restore parent transform references
+    int nlen = vn.size();
+    for (int i=0; i<nlen; i++) {
+      DataTransform data = (DataTransform) vn.elementAt(i);
       String parentId = els[i].getAttribute("parent");
-      if (parentId == null) data.parent = null;
+      if (parentId == null || parentId.equals("")) data.parent = null;
       else {
         int pid = -1;
         try { pid = Integer.parseInt(parentId); }
-        catch (NumberFormatException exc) { }
-        data.parent = getDataById(pid);
+        catch (NumberFormatException exc) { exc.printStackTrace(); }
+        // search for transform with matching ID
+        for (int j=0; j<nlen; j++) {
+          DataTransform dt = (DataTransform) vn.elementAt(j);
+          int id = dt.getTransformId();
+          if (dt.getTransformId() == pid) data.parent = dt;
+        }
         if (data.parent == null) {
           System.err.println("Invalid parent id (" +
             parentId + ") for transform #" + i);
@@ -328,7 +332,6 @@ public class DataManager extends LogicManager {
     StateManager.mergeStates(vo, vn);
 
     // add new transforms to tree structure
-    int nlen = vn.size();
     for (int i=0; i<nlen; i++) {
       DataTransform data = (DataTransform) vn.elementAt(i);
       if (!vo.contains(data)) addData(data);
@@ -423,23 +426,6 @@ public class DataManager extends LogicManager {
         node.getChildAt(i);
       buildDataList(child, v);
     }
-  }
-
-  /** Recursively searches data tree for a transform with the given ID. */
-  private DataTransform getDataById(DefaultMutableTreeNode node, int id) {
-    Object o = node.getUserObject();
-    if (o instanceof DataTransform) {
-      DataTransform data = (DataTransform) o;
-      if (data.getTransformId() == id) return data;
-    }
-    int count = node.getChildCount();
-    for (int i=0; i<count; i++) {
-      DefaultMutableTreeNode child = (DefaultMutableTreeNode)
-        node.getChildAt(i);
-      DataTransform data = getDataById(child, id);
-      if (data != null) return data;
-    }
-    return null;
   }
 
 }

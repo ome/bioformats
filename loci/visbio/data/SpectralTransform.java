@@ -268,7 +268,7 @@ public class SpectralTransform extends ImageTransform
     Element[] els = XMLUtil.getChildren(el, "Weights");
     weights = new double[els.length][];
     for (int i=0; i<weights.length; i++) {
-      weights[i] = ObjectUtil.stringToDoubleArray(XMLUtil.getText(el));
+      weights[i] = ObjectUtil.stringToDoubleArray(XMLUtil.getText(els[i]));
     }
   }
 

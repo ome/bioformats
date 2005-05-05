@@ -85,6 +85,9 @@ public class ArbitrarySlice extends DataTransform
 
   // -- Constructor --
 
+  /** Creates an uninitialized arbitrary slice. */
+  public ArbitrarySlice() { }
+
   /** Creates an overlay object for the given transform. */
   public ArbitrarySlice(DataTransform parent, String name) {
     super(parent, name);
