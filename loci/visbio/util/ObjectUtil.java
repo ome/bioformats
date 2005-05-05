@@ -159,7 +159,7 @@ public abstract class ObjectUtil {
 
   /** Converts the given String into an array of Strings. */
   public static String[] stringToStringArray(String s) {
-    if (s.equals("null")) return null;
+    if (s == null || s.equals("null")) return null;
     StringTokenizer st = new StringTokenizer(s, ",");
     int len = st.countTokens();
     String[] a = new String[len];
@@ -169,7 +169,7 @@ public abstract class ObjectUtil {
 
   /** Converts the given String into an array of booleans. */
   public static boolean[] stringToBooleanArray(String s) {
-    if (s.equals("null")) return null;
+    if (s == null || s.equals("null")) return null;
     StringTokenizer st = new StringTokenizer(s, ",");
     int len = st.countTokens();
     boolean[] a = new boolean[len];
@@ -179,7 +179,7 @@ public abstract class ObjectUtil {
 
   /** Converts the given String into an array of bytes. */
   public static byte[] stringToByteArray(String s) {
-    if (s.equals("null")) return null;
+    if (s == null || s.equals("null")) return null;
     StringTokenizer st = new StringTokenizer(s, ",");
     int len = st.countTokens();
     byte[] a = new byte[len];
@@ -189,7 +189,7 @@ public abstract class ObjectUtil {
 
   /** Converts the given String into an array of chars. */
   public static char[] stringToCharArray(String s) {
-    if (s.equals("null")) return null;
+    if (s == null || s.equals("null")) return null;
     StringTokenizer st = new StringTokenizer(s, ",");
     int len = st.countTokens();
     char[] a = new char[len];
@@ -199,7 +199,7 @@ public abstract class ObjectUtil {
 
   /** Converts the given String into an array of doubles. */
   public static double[] stringToDoubleArray(String s) {
-    if (s.equals("null")) return null;
+    if (s == null || s.equals("null")) return null;
     StringTokenizer st = new StringTokenizer(s, ",");
     int len = st.countTokens();
     double[] a = new double[len];
@@ -209,7 +209,7 @@ public abstract class ObjectUtil {
 
   /** Converts the given String into an array of floats. */
   public static float[] stringToFloatArray(String s) {
-    if (s.equals("null")) return null;
+    if (s == null || s.equals("null")) return null;
     StringTokenizer st = new StringTokenizer(s, ",");
     int len = st.countTokens();
     float[] a = new float[len];
@@ -219,7 +219,7 @@ public abstract class ObjectUtil {
 
   /** Converts the given String into an array of ints. */
   public static int[] stringToIntArray(String s) {
-    if (s.equals("null")) return null;
+    if (s == null || s.equals("null")) return null;
     StringTokenizer st = new StringTokenizer(s, ",");
     int len = st.countTokens();
     int[] a = new int[len];
@@ -229,7 +229,7 @@ public abstract class ObjectUtil {
 
   /** Converts the given String into an array of longs. */
   public static long[] stringToLongArray(String s) {
-    if (s.equals("null")) return null;
+    if (s == null || s.equals("null")) return null;
     StringTokenizer st = new StringTokenizer(s, ",");
     int len = st.countTokens();
     long[] a = new long[len];
@@ -239,7 +239,7 @@ public abstract class ObjectUtil {
 
   /** Converts the given String into an array of shorts. */
   public static short[] stringToShortArray(String s) {
-    if (s.equals("null")) return null;
+    if (s == null || s.equals("null")) return null;
     StringTokenizer st = new StringTokenizer(s, ",");
     int len = st.countTokens();
     short[] a = new short[len];
@@ -253,7 +253,7 @@ public abstract class ObjectUtil {
   /** Converts the given string into a double value. */
   public static double stringToDouble(String s) {
     double d;
-    if (s.equals("NaN")) d = Double.NaN;
+    if (s == null || s.equals("NaN")) d = Double.NaN;
     else d = Double.parseDouble(s);
     return d;
   }
@@ -261,14 +261,14 @@ public abstract class ObjectUtil {
   /** Converts the given string into a float value. */
   public static float stringToFloat(String s) {
     float f;
-    if (s.equals("NaN")) f = Float.NaN;
+    if (s == null || s.equals("NaN")) f = Float.NaN;
     else f = Float.parseFloat(s);
     return f;
   }
 
   /** Converts the given string into a Color object. */
   public static Color stringToColor(String s) {
-    int[] a = stringToIntArray(s);
+    int[] a = s == null ? null : stringToIntArray(s);
     if (a == null || a.length < 3) return null;
     if (a.length == 3) return new Color(a[0], a[1], a[2]);
     else return new Color(a[0], a[1], a[2], a[3]);
