@@ -130,8 +130,8 @@ public abstract class XMLUtil {
   }
 
   /**
-   * Retrieves the given DOM element's first child element
-   * with the specified name.
+   * Retrieves the given DOM element's first child element with the specified
+   * name. If name is null, the first child of any type is returned.
    */
   public static Element getFirstChild(Element el, String name) {
     NodeList nodes = el.getChildNodes();
@@ -140,14 +140,14 @@ public abstract class XMLUtil {
       Node node = nodes.item(i);
       if (!(node instanceof Element)) continue;
       Element e = (Element) node;
-      if (e.getTagName().equals(name)) return e;
+      if (name == null || e.getTagName().equals(name)) return e;
     }
     return null;
   }
 
   /**
-   * Retrieves the given DOM element's child elements
-   * with the specified name.
+   * Retrieves the given DOM element's child elements with the specified name.
+   * If name is null, all children are retrieved.
    */
   public static Element[] getChildren(Element el, String name) {
     Vector v = new Vector();
@@ -157,11 +157,22 @@ public abstract class XMLUtil {
       Node node = nodes.item(i);
       if (!(node instanceof Element)) continue;
       Element e = (Element) node;
-      if (e.getTagName().equals(name)) v.add(e);
+      if (name == null || e.getTagName().equals(name)) v.add(e);
     }
     Element[] els = new Element[v.size()];
     v.copyInto(els);
     return els;
+  }
+
+  /** Gets the text information associated with the given DOM element. */
+  public static String getText(Element el) {
+    NodeList nodes = el.getChildNodes();
+    int len = nodes.getLength();
+    for (int i=0; i<len; i++) {
+      Node node = nodes.item(i);
+      if ("#text".equals(node.getNodeName())) return node.getNodeValue();
+    }
+    return null;
   }
 
 }
