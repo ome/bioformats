@@ -450,10 +450,11 @@ public class CaptureHandler implements Saveable {
     if (vo != null) StateManager.mergeStates(vo, vn);
 
     // restore other parameters
-    movieSpeed = Integer.parseInt(child.getAttribute("movieSpeed"));
-    movieFPS = Integer.parseInt(child.getAttribute("movieFPS"));
-    movieSmooth = child.getAttribute("movieSmooth").equalsIgnoreCase("true");
+    movieSpeed = Integer.parseInt(child.getAttribute("speed"));
+    movieFPS = Integer.parseInt(child.getAttribute("FPS"));
+    movieSmooth = child.getAttribute("smooth").equalsIgnoreCase("true");
   }
+
 
   // -- Helper methods --
 
