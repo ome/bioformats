@@ -96,7 +96,6 @@ public class WindowManager extends LogicManager implements WindowListener {
       winfo.setState(ws);
       windowStates.remove(wname);
     }
-    windows.put(w, winfo);
     if (distributed && w instanceof JFrame) {
       JFrame f = (JFrame) w;
       if (f.getJMenuBar() == null) {
@@ -252,7 +251,7 @@ public class WindowManager extends LogicManager implements WindowListener {
       int h = Integer.parseInt(e[i].getAttribute("height"));
       WindowState ws = new WindowState(name,
         vis.equalsIgnoreCase("true"), x, y, w, h);
-      WindowInfo winfo = getWindowByName(name);
+      WindowInfo winfo = getWindowByTitle(name);
       if (winfo == null) windowStates.put(name, ws); // remember position
       else winfo.setState(ws); // window already exists; set position
     }
@@ -300,14 +299,14 @@ public class WindowManager extends LogicManager implements WindowListener {
 
   /**
    * Gets window information about the first window
-   * matching the specified name.
+   * matching the specified window title.
    */
-  protected WindowInfo getWindowByName(String name) {
+  protected WindowInfo getWindowByTitle(String name) {
     Enumeration en = windows.elements();
     while (en.hasMoreElements()) {
       WindowInfo winfo = (WindowInfo) en.nextElement();
       Window w = winfo.getWindow();
-      if (w.getName().equals(name)) return winfo;
+      if (name.equals(SwingUtil.getWindowTitle(w))) return winfo;
     }
     return null;
   }
