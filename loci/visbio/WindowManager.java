@@ -148,18 +148,6 @@ public class WindowManager extends LogicManager implements WindowListener {
     winfo.showWindow();
   }
 
-  /** Hides all visible windows. */
-  public void hideWindows() {
-    Enumeration en = windows.keys();
-    while (en.hasMoreElements()) {
-      Window w = (Window) en.nextElement();
-      if (w.isVisible() && w != bio) {
-        visible.add(w);
-        w.setVisible(false);
-      }
-    }
-  }
-
   /** Disposes all windows, prior to program exit. */
   public void disposeWindows() {
     Enumeration en = windows.keys();
@@ -215,12 +203,24 @@ public class WindowManager extends LogicManager implements WindowListener {
         Window w = (Window) visible.elementAt(i);
         w.setVisible(true);
       }
-      visible.removeAllElements();
       bio.toFront();
     }
+    visible.removeAllElements();
   }
 
-  public void windowIconified(WindowEvent e) { if (hideAll) hideWindows(); }
+  public void windowIconified(WindowEvent e) {
+    if (hideAll) {
+      // program has been minimized; hide currently visible windows
+      Enumeration en = windows.keys();
+      while (en.hasMoreElements()) {
+        Window w = (Window) en.nextElement();
+        if (w.isVisible() && w != bio) {
+          visible.add(w);
+          w.setVisible(false);
+        }
+      }
+    }
+  }
 
   public void windowActivated(WindowEvent e) { }
   public void windowClosed(WindowEvent e) { }

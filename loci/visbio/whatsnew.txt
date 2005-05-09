@@ -3,6 +3,8 @@ v3.00 final - Not yet released
 - ADDED: "Sample datasets" menu for automatically downloading sample data
 - ADDED: Much more robust XML-based program states
 
+- TWEAK: Option to toggle hiding of all windows when main window is minimized
+
 - FIXED: Subsampling image scaling bugs (relating to improper domain sets)
 - FIXED: Bug in image sequence capture when no file extension is given
 
