@@ -500,7 +500,7 @@ public class OMEMetaDataHandler{
     if(element==null)return;
     if(df!=null){
       //setup and load the columns that this element has
-      String [] attrs={"ImageServerURL", "Path", "IsLocal"};
+      String [] attrs={"ImageServerURL", "Path", "Local"};
       Criteria criteria=OMEDownload.makeAttributeFields(attrs);
       criteria.addWantedField("id");
       criteria.addFilter("id", (new Integer(element.getID())).toString());
@@ -515,7 +515,7 @@ public class OMEMetaDataHandler{
       XMLObject.ATTRIBUTE)));
     node.add(new DefaultMutableTreeNode(new XMLObject("Path", element.getPath(),
       XMLObject.ATTRIBUTE)));
-   node.add(new DefaultMutableTreeNode(new XMLObject("IsLocal", ""+element.isLocal(),
+   node.add(new DefaultMutableTreeNode(new XMLObject("Local", ""+element.isLocal(),
       XMLObject.ATTRIBUTE)));
   }//end of addRepository method
   
