@@ -44,6 +44,10 @@ public class WindowManager extends LogicManager implements WindowListener {
   /** String for window docking option. */
   public static final String DOCKING = "Window docking (buggy)";
 
+  /** String for global minimization option. */
+  public static final String HIDE_ALL =
+    "Hide VisBio windows when main window is minimized";
+
 
   // -- Fields --
 
@@ -61,6 +65,9 @@ public class WindowManager extends LogicManager implements WindowListener {
 
   /** Whether window docking features are enabled. */
   protected boolean docking = false;
+
+  /** Whether minimizing main VisBio window hides all other windows. */
+  protected boolean hideAll = false;
 
   /** Whether to distribute the menu bar across all registered frames. */
   protected boolean distributed;
@@ -96,6 +103,7 @@ public class WindowManager extends LogicManager implements WindowListener {
       winfo.setState(ws);
       windowStates.remove(wname);
     }
+    windows.put(w, winfo);
     if (distributed && w instanceof JFrame) {
       JFrame f = (JFrame) w;
       if (f.getJMenuBar() == null) {
@@ -145,7 +153,7 @@ public class WindowManager extends LogicManager implements WindowListener {
     Enumeration en = windows.keys();
     while (en.hasMoreElements()) {
       Window w = (Window) en.nextElement();
-      if (w.isVisible()) {
+      if (w.isVisible() && w != bio) {
         visible.add(w);
         w.setVisible(false);
       }
@@ -187,7 +195,9 @@ public class WindowManager extends LogicManager implements WindowListener {
       if (src instanceof OptionManager) {
         OptionManager om = (OptionManager) src;
         BooleanOption option = (BooleanOption) om.getOption(DOCKING);
-        setDocking(option.getValue());
+        if (option != null) setDocking(option.getValue());
+        option = (BooleanOption) om.getOption(HIDE_ALL);
+        if (option != null) setHideAll(option.getValue());
       }
     }
   }
@@ -199,16 +209,18 @@ public class WindowManager extends LogicManager implements WindowListener {
   // -- WindowListener API methods --
 
   public void windowDeiconified(WindowEvent e) {
-    // program has been restored; show all previously visible windows
-    for (int i=0; i<visible.size(); i++) {
-      Window w = (Window) visible.elementAt(i);
-      w.setVisible(true);
+    if (hideAll) {
+      // program has been restored; show all previously visible windows
+      for (int i=0; i<visible.size(); i++) {
+        Window w = (Window) visible.elementAt(i);
+        w.setVisible(true);
+      }
+      visible.removeAllElements();
+      bio.toFront();
     }
-    visible.removeAllElements();
-    bio.toFront();
   }
 
-  public void windowIconified(WindowEvent e) { hideWindows(); }
+  public void windowIconified(WindowEvent e) { if (hideAll) hideWindows(); }
 
   public void windowActivated(WindowEvent e) { }
   public void windowClosed(WindowEvent e) { }
@@ -266,7 +278,7 @@ public class WindowManager extends LogicManager implements WindowListener {
     bio.setSplashStatus("Initializing windowing logic");
     docker = new Docker();
     docker.setEnabled(docking);
-    docker.addWindow(bio);
+    addWindow(bio);
     bio.addWindowListener(this);
 
     // options menu
@@ -274,14 +286,24 @@ public class WindowManager extends LogicManager implements WindowListener {
     OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
     om.addBooleanOption("General", DOCKING, 'd',
       "Toggles whether window docking features are enabled", docking);
+    om.addBooleanOption("General", HIDE_ALL, 'h', "Toggles whether all " +
+      "VisBio windows disappear when main window is minimized", hideAll);
   }
 
   /** Sets whether window docking features are enabled. */
   protected void setDocking(boolean docking) {
     if (this.docking == docking) return;
     this.docking = docking;
-
     docker.setEnabled(docking);
+  }
+
+  /**
+   * Sets whether minimizing the main VisBio window
+   * hides the other VisBio windows.
+   */
+  protected void setHideAll(boolean hideAll) {
+    if (this.hideAll == hideAll) return;
+    this.hideAll = hideAll;
   }
 
   /** Propagates the given menu bar across all registered frames. */
