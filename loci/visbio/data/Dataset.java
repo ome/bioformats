@@ -576,8 +576,7 @@ public class Dataset extends ImageTransform {
   public void saveState(Element el) throws SaveException {
     Element child = XMLUtil.createChild(el, "Dataset");
     super.saveState(child);
-    child.setAttribute("pattern",
-      pattern.replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
+    child.setAttribute("pattern", pattern);
     for (int i=0; i<ids.length; i++) {
       Element fel = XMLUtil.createChild(child, "Filename");
       XMLUtil.createText(fel, ids[i]);
@@ -587,8 +586,7 @@ public class Dataset extends ImageTransform {
   /** Restores the current state from the given DOM element ("Dataset"). */
   public void restoreState(Element el) throws SaveException {
     super.restoreState(el);
-    pattern = el.getAttribute("pattern").replaceAll(
-      "&lt;", "<").replaceAll("&gt;", ">");
+    pattern = el.getAttribute("pattern");
     Element[] els = XMLUtil.getChildren(el, "Filename");
     ids = new String[els.length];
     for (int i=0; i<ids.length; i++) ids[i] = XMLUtil.getText(els[i]);
