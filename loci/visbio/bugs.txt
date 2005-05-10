@@ -29,7 +29,7 @@ Data engine
 File formats
 ------------
 
-[M] VisAD QT reader is horribly inefficient for multi-file datasets; clean up
+[L] VisAD QT reader is horribly inefficient for multi-file datasets; clean up
     code to acceptable standards.
 
 [L] Fix bug in many file readers where ImageLine is numbered upside down so
@@ -54,11 +54,22 @@ State engine
     30 MB worth of overlays, loading them all back in every time the user wants
     to undo a simple overlay alteration is prohibitively expensive.
 
-[H] Eliminate all OME-XML-based state stuff; switch to non-OME XML files,
-    because they make more sense.
+[H] Fix improper restoration of 3D displays.
 
-[M] Flag indicating whether latest state change should "stack up" or "replace"
+[H] Fix improper restoration of display color settings.
+
+[H] Fix improper restoration of display positions on Capture panel.
+
+[M] Save and restore breakaway control panel properly.
+
+[M] Fix improper restoration of "Floating control windows" state.
+
+[L] Flag indicating whether latest state change should "stack up" or "replace"
     last change (if last change was of the same type as this one).
+
+[L] When state file path is the same folder or an ancestor folder of a dataset
+    path, use relative paths to describe that dataset in the XML, to improve
+    portability of state files between machines.
 
 [L] Set "Window Modified Indicator" when content has changed since last state
     save?
