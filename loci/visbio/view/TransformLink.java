@@ -224,6 +224,9 @@ public class TransformLink
     if (link != null) {
       if (trans != null) trans.removeTransformListener(this);
       trans = link.getTransform();
+      if (trans instanceof ImageTransform && colorHandler == null) {
+        colorHandler = new ColorHandler(this);
+      }
       if (colorHandler != null) colorHandler.initState(link.getColorHandler());
       visible = link.isVisible();
     }
@@ -319,6 +322,9 @@ public class TransformLink
     VisBioFrame bio = handler.getWindow().getVisBio();
     DataManager dm = (DataManager) bio.getManager(DataManager.class);
     trans = dm.getDataById(Integer.parseInt(el.getAttribute("id")));
+    if (trans instanceof ImageTransform && colorHandler == null) {
+      colorHandler = new ColorHandler(this);
+    }
     if (colorHandler != null) colorHandler.restoreState(el);
     visible = el.getAttribute("visible").equalsIgnoreCase("true");
   }

@@ -278,6 +278,7 @@ public class ColorPane extends DialogPane
     cmw.setTableView(table);
   }
 
+
   // -- ColorPane API methods - accessors --
 
   /** Gets current brightness value. */
@@ -310,18 +311,16 @@ public class ColorPane extends DialogPane
   /** Gets current blue RealType. */
   public RealType getBlue() { return (RealType) blue.getSelectedItem(); }
 
-  /** Gets current color table range minimums. */
+  /** Gets color table range minimums. */
   public double[] getLo() {
     double[] lo = new double[maps.length];
-    int ndx = selector.getSelectedIndex();
     for (int i=0; i<maps.length; i++) lo[i] = maps[i].getRange()[0];
     return lo;
   }
 
-  /** Gets current color table range maximums. */
+  /** Gets color table range maximums. */
   public double[] getHi() {
     double[] hi = new double[maps.length];
-    int ndx = selector.getSelectedIndex();
     for (int i=0; i<maps.length; i++) hi[i] = maps[i].getRange()[1];
     return hi;
   }
@@ -334,7 +333,7 @@ public class ColorPane extends DialogPane
     return fix;
   }
 
-  /** Gets current color table values. */
+  /** Gets color table values. */
   public float[][][] getTables() {
     float[][][] tables = new float[maps.length][][];
     for (int i=0; i<maps.length; i++) {

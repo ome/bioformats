@@ -70,19 +70,16 @@ public class ColorHandler {
   /** Red, green and blue components of images. */
   protected RealType red, green, blue;
 
-  /**
-   * Minimum and maximum color range values
-   * (for uninitialized color handlers only).
-   */
+
+  // -- Fields - initial state --
+
+  /** Minimum and maximum color range values. */
   protected double[] lo, hi;
 
-  /**
-   * Flags indicating color ranges should not be auto-scaled
-   * (for uninitialized color handlers only).
-   */
+  /** Flags indicating color ranges should not be auto-scaled. */
   protected boolean[] fixed;
 
-  /** Color tables (for uninitialized color handlers only). */
+  /** Color tables. */
   protected float[][][] colorTables;
 
 
@@ -343,6 +340,8 @@ public class ColorHandler {
       fixed = handler.getFixed();
       colorTables = handler.getTables();
     }
+
+    // CTR TODO set stuff according to initial state variables
 
     if (colorPane == null) colorPane = new ColorPane(this);
   }
