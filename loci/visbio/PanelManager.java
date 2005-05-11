@@ -95,7 +95,7 @@ public class PanelManager extends LogicManager {
   }
 
   /** Gets the number of tasks required to initialize this logic manager. */
-  public int getTasks() { return 3; }
+  public int getTasks() { return 2; }
 
 
   // -- Helper methods --
