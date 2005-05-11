@@ -488,12 +488,6 @@ public class ArbitrarySlice extends DataTransform
     controls = new SliceWidget(this);
   }
 
-  /**
-   * Called when this object is being discarded in favor of
-   * another object with a matching state.
-   */
-  public void discard() { }
-
 
   // -- Saveable API methods --
 

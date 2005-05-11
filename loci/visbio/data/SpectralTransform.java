@@ -241,12 +241,6 @@ public class SpectralTransform extends ImageTransform
     thumbs = new ThumbnailHandler(this, getCacheFilename());
   }
 
-  /**
-   * Called when this object is being discarded in favor of
-   * another object with a matching state.
-   */
-  public void discard() { }
-
 
   // -- Saveable API methods --
 

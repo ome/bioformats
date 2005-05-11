@@ -265,9 +265,15 @@ public class DataControls extends ControlPanel
     }
     dataModel.removeNodeFromParent(node);
 
-    // remove data's controls from table
-    hideControls(data);
+    // remove data's controls from window manager and frame table
+    WindowManager wm = (WindowManager)
+      lm.getVisBio().getManager(WindowManager.class);
+    JFrame frame = (JFrame) frameTable.get(data);
     frameTable.remove(data);
+    wm.disposeWindow(frame);
+
+    // discard data object
+    data.discard();
 
     return true;
   }
