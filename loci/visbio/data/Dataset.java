@@ -562,12 +562,6 @@ public class Dataset extends ImageTransform {
     thumbs = new ThumbnailHandler(this,
       path + File.separator + name + ".visbio");
   }
-  /*TEMP*/public void discard() {
-    /*TEMP*/System.out.println("Discarding Dataset...");
-    /*TEMP*/super.discard();
-    /*TEMP*/controls = null;
-    /*TEMP*/thumbs = null;
-  /*TEMP*/}
 
 
   // -- Saveable API methods --
