@@ -46,7 +46,7 @@ public class WindowManager extends LogicManager implements WindowListener {
 
   /** String for global minimization option. */
   public static final String HIDE_ALL =
-    "Hide VisBio windows when main window is minimized";
+    "Hide all windows when main window is minimized";
 
 
   // -- Fields --
@@ -182,9 +182,10 @@ public class WindowManager extends LogicManager implements WindowListener {
       Object src = evt.getSource();
       if (src instanceof OptionManager) {
         OptionManager om = (OptionManager) src;
-        BooleanOption option = (BooleanOption) om.getOption(DOCKING);
-        if (option != null) setDocking(option.getValue());
-        option = (BooleanOption) om.getOption(HIDE_ALL);
+// Window docking is too buggy; disable it
+//        BooleanOption option = (BooleanOption) om.getOption(DOCKING);
+//        if (option != null) setDocking(option.getValue());
+        BooleanOption option = (BooleanOption) om.getOption(HIDE_ALL);
         if (option != null) setHideAll(option.getValue());
       }
     }
@@ -284,8 +285,9 @@ public class WindowManager extends LogicManager implements WindowListener {
     // options menu
     bio.setSplashStatus(null);
     OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
-    om.addBooleanOption("General", DOCKING, 'd',
-      "Toggles whether window docking features are enabled", docking);
+// Window docking is too buggy; disable it
+//    om.addBooleanOption("General", DOCKING, 'd',
+//      "Toggles whether window docking features are enabled", docking);
     om.addBooleanOption("General", HIDE_ALL, 'h', "Toggles whether all " +
       "VisBio windows disappear when main window is minimized", hideAll);
   }
