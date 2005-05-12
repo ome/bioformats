@@ -94,6 +94,9 @@ User interface
     Probably also don't let them create two displays with the same name
     (use same strategy), because otherwise state might not restore correctly.
 
+[L] Eliminate obsolete control panel logic in favor of one master VisBio window
+    with data, displays and tasks information.
+
 [L] Command+? Macintosh Help shortcut does not function.
 
 [L] Use java.awt.FileDialog on Mac OS X?
