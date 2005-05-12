@@ -5,9 +5,6 @@ Priority is ranked H (high), N (normal) or L (low).
 Data engine
 -----------
 
-[H] Data transforms must have a "destroy" method that is called when they are
-    deleted, so that (e.g.) their GUI controls do not remain in memory.
-
 [M] Data transforms have an event they generate when their parameters change.
     Children transforms must listen to this event and react to it.
     Also update HTML description panel when data transform's parameters change.
@@ -62,8 +59,6 @@ State engine
 
 [M] Save and restore breakaway control panel properly.
 
-[M] Fix improper restoration of "Floating control windows" state.
-
 [L] Flag indicating whether latest state change should "stack up" or "replace"
     last change (if last change was of the same type as this one).
 
@@ -86,6 +81,8 @@ Overlays transform
     "rubber band" events down the transform chain so that transforms can react
     (in particular, so OverlayTransform can do multiple selection).
 
+[L] Loading a large number of overlays causes a hiccup; at the least, put up an
+    hourglass while this is happening.
 
 User interface
 --------------
