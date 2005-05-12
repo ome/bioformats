@@ -52,8 +52,8 @@ public abstract class DataTransform implements Dynamic, Saveable {
   /** ID number for this data transform. */
   protected int transformId;
 
-  // Note: All subclasses must populate "lengths" and "dims" fields,
-  //       then call makeLabels to populate dimensional axis labels list.
+  // NB: All subclasses must populate "lengths" and "dims" fields,
+  // then call makeLabels to populate dimensional axis labels list.
 
   /** Length of each dimension in the multidimensional structure. */
   protected int[] lengths;
@@ -92,7 +92,7 @@ public abstract class DataTransform implements Dynamic, Saveable {
 
   // -- DataTransform API methods --
 
-  // Note: all subclasses should implement:
+  // NB: all subclasses should implement:
   //
   //   public static DataTransform makeTransform(DataManager dm)
   //   public static boolean isValidParent(DataTransform data)
@@ -376,8 +376,8 @@ public abstract class DataTransform implements Dynamic, Saveable {
   public void restoreState(Element el) throws SaveException {
     transformId = Integer.parseInt(el.getAttribute("id"));
     name = el.getAttribute("name");
-    // NB: parent reference is restored in DataManager.restoreState,
-    // since individual DataTransforms are not aware of each other
+    // NB: Parent reference is restored in DataManager.restoreState,
+    // since individual DataTransforms are not aware of each other.
     lengths = ObjectUtil.stringToIntArray(el.getAttribute("lengths"));
     dims = ObjectUtil.stringToStringArray(el.getAttribute("dims"));
   }

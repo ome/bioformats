@@ -32,7 +32,7 @@ import loci.visbio.state.OptionManager;
 /** An adapter for handling the Mac OS X application menu items. */
 public class MacAdapter extends ApplicationAdapter {
 
-  // Note: This class will only compile on Macintosh systems. However, since
+  // NB: This class will only compile on Macintosh systems. However, since
   // no other classes depend on it directly (i.e., they reference it via
   // reflection), the rest of VisBio should still compile on non-Macintoshes.
 
