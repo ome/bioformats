@@ -538,10 +538,12 @@ public class DataControls extends ControlPanel
     if (sm.isRestoring()) return; // no touching progress bar during restore
 
     // link in thumbnail progress bar and generation button
-    if (data == null) bio.resetStatus();
+    if (thumbHandler != null) thumbHandler.setControls(null, null);
+    if (data == null) {
+      bio.resetStatus();
+      thumbHandler = null;
+    }
     else {
-      if (thumbHandler != null) thumbHandler.setControls(null, null);
-
       ThumbnailHandler th = data.getThumbHandler();
       if (th == null) bio.resetStatus();
       else {
