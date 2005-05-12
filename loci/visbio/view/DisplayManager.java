@@ -42,7 +42,7 @@ public class DisplayManager extends LogicManager {
 
   /** String for ImageJ quit warning. */
   public static final String WARN_IMAGEJ =
-    "Warn about problem where quitting ImageJ also quits VisBio";
+    "Warn about problem where quitting VisBio also quits ImageJ";
 
 
   // -- Fields --
@@ -199,7 +199,7 @@ public class DisplayManager extends LogicManager {
     OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
     om.addBooleanOption("Warnings", WARN_IMAGEJ, 'i',
       "Toggles whether VisBio displays a warning about " +
-      "how quitting ImageJ also quits VisBio", true);
+      "how quitting VisBio also quits ImageJ", true);
 
 
     // help topics

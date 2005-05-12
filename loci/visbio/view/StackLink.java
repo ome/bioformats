@@ -282,18 +282,10 @@ public class StackLink extends TransformLink {
 
   /** Writes the current state to the given DOM element ("LinkedData"). */
   public void saveState(Element el) throws SaveException {
-    super.saveState(el);
-
-    // find appropriate TransformLink
-    Element child = null;
-    Element[] els = XMLUtil.getChildren(el, "TransformLink");
-    String id = "" + trans.getTransformId();
-    for (int i=0; i<els.length; i++) {
-      if (id.equals(els[i].getAttribute("id"))) {
-        child = els[i];
-        break;
-      }
-    }
+    Element child = XMLUtil.createChild(el, "StackLink");
+    child.setAttribute("id", "" + trans.getTransformId());
+    if (colorHandler != null) colorHandler.saveState(child);
+    child.setAttribute("visible", "" + isVisible());
 
     // save stack parameters
     child.setAttribute("axis", "" + stackAxis);
