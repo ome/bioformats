@@ -113,6 +113,16 @@ public class WindowManager extends LogicManager implements WindowListener {
     docker.addWindow(w);
   }
 
+  /** Removes the window from the window manager and disposes of it. */
+  public void disposeWindow(Window w) {
+    w.setVisible(false);
+    String wname = SwingUtil.getWindowTitle(w);
+    windowStates.remove(wname);
+    windows.remove(w);
+    docker.removeWindow(w);
+    w.dispose();
+  }
+
   /** Toggles the cursor between hourglass and normal pointer mode. */
   public void setWaitCursor(boolean wait) {
     boolean doCursor = false;

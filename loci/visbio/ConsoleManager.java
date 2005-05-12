@@ -170,7 +170,6 @@ public class ConsoleManager extends LogicManager implements OutputListener {
       "Toggles whether output dumps to the default console", debug);
 
     // window menu
-    bio.addMenuSeparator("Window");
     bio.addMenuItem("Window", "Output console",
       "loci.visbio.ConsoleManager.windowConsole(out)", 'o');
     bio.addMenuItem("Window", "Error console",

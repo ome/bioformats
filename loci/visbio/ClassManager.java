@@ -47,14 +47,16 @@ public class ClassManager extends LogicManager {
     // extract classes to preload from data file
     preloadClasses = new Vector();
     try {
-      BufferedReader fin = new BufferedReader(
-        new InputStreamReader(getClass().getResourceAsStream("classes.txt")));
-      while (true) {
-        String line = fin.readLine();
-        if (line == null) break; // eof
-        preloadClasses.add(line);
+      InputStream rc = getClass().getResourceAsStream("classes.txt");
+      if (rc != null) {
+        BufferedReader fin = new BufferedReader(new InputStreamReader(rc));
+        while (true) {
+          String line = fin.readLine();
+          if (line == null) break; // eof
+          preloadClasses.add(line);
+        }
+        fin.close();
       }
-      fin.close();
     }
     catch (IOException exc) { } // ignore data file I/O errors
   }
