@@ -152,8 +152,14 @@ public class DisplayControls extends ControlPanel
   public void removeDisplay(DisplayWindow d) {
     if (d == null) return;
     listModel.removeElement(d);
-    d.setVisible(false);
-    d.dispose();
+
+    // remove display window from window manager
+    WindowManager wm = (WindowManager)
+      lm.getVisBio().getManager(WindowManager.class);
+    wm.disposeWindow(d);
+
+    // discard object
+    d.discard();
   }
 
   /** Gets the current list of displays. */

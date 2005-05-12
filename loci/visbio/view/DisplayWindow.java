@@ -25,6 +25,7 @@ package loci.visbio.view;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.rmi.RemoteException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import loci.visbio.VisBioFrame;
@@ -316,7 +317,7 @@ public class DisplayWindow extends JFrame
       //addKeyListener(this);
       //controls.addKeyListener(this);
 
-      // Note: adding the KeyListener directly to frames and panels is not
+      // NB: Adding the KeyListener directly to frames and panels is not
       // effective, because some child always has the keyboard focus and eats
       // the event. Better would be to add the keyboard listener to each
       // component that does not need the arrow keys for its own purposes. For
@@ -338,7 +339,34 @@ public class DisplayWindow extends JFrame
    * Called when this object is being discarded in favor of
    * another object with a matching state.
    */
-  public void discard() { }
+  public void discard() {
+    getContentPane().removeAll();
+
+    // sever ties with un-GC-able display object
+    if (display != null) {
+      display.removeDisplayListener(this);
+      try { display.destroy(); }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
+      display = null;
+    }
+
+    // NB: Despite all of the above, ties are still not completely severed.
+    // VisADCanvasJ3D maintains a parent field (from the Canvas3D superclass)
+    // that points to this DisplayWindow. I am uncertain how to kill that
+    // reference, so instead we cut ties to a number of objects below. That
+    // way, though this DisplayWindow is not GCed, at least its constituent
+    // handlers are.
+    viewHandler = null;
+    captureHandler = null;
+    transformHandler = null;
+    sliders = null;
+    controls = null;
+    string = null;
+
+    // NB: And despite all of the fields nulled above, the handlers are also
+    // still not GCed. I do not understand why not. Frustrating.
+  }
 
 
   // -- KeyListener API methods --
