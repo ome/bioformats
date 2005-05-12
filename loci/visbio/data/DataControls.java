@@ -258,7 +258,7 @@ public class DataControls extends ControlPanel
    * @return true if the data object was successfully removed
    */
   public boolean removeData(DataTransform data) {
-    return removeData(data, true);
+    return removeData(data, false);
   }
 
   /**
@@ -456,7 +456,7 @@ public class DataControls extends ControlPanel
       JButton source = (JButton) e.getSource();
       menu.show(source, source.getWidth(), 0);
     }
-    else if (cmd.equals("removeData")) dm.removeData(getSelectedData());
+    else if (cmd.equals("removeData")) dm.removeData(getSelectedData(), true);
     else if (cmd.equals("new2D")) doNewDisplay(false);
     else if (cmd.equals("new3D")) doNewDisplay(true);
     else if (cmd.equals("saveToDisk")) dm.exportData();
@@ -559,15 +559,14 @@ public class DataControls extends ControlPanel
       display3D.setEnabled(VisUtil.canDo3D() && canDisplay3D);
     }
 
+    if (thumbHandler != null) thumbHandler.setControls(null, null);
+    thumbHandler = null;
+
     StateManager sm = (StateManager) bio.getManager(StateManager.class);
     if (sm.isRestoring()) return; // no touching progress bar during restore
 
     // link in thumbnail progress bar and generation button
-    if (thumbHandler != null) thumbHandler.setControls(null, null);
-    if (data == null) {
-      bio.resetStatus();
-      thumbHandler = null;
-    }
+    if (data == null) bio.resetStatus();
     else {
       ThumbnailHandler th = data.getThumbHandler();
       if (th == null) bio.resetStatus();

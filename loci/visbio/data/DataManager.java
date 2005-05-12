@@ -79,9 +79,12 @@ public class DataManager extends LogicManager {
   }
 
   /** Removes a data object from the list. */
-  public void removeData(DataTransform data) {
-    dataControls.removeData(data);
-    bio.generateEvent(this, "remove data", true);
+  public void removeData(DataTransform data) { removeData(data, false); }
+
+  /** Removes a data object from the list. */
+  public void removeData(DataTransform data, boolean confirm) {
+    boolean success = dataControls.removeData(data, confirm);
+    if (success) bio.generateEvent(this, "remove data", true);
   }
 
   /** Gets the root node of the data object tree. */
