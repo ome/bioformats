@@ -348,7 +348,10 @@ public abstract class DataTransform implements Dynamic, Saveable {
    * Called when this object is being discarded in favor of
    * another object with a matching state.
    */
-  public void discard() { listeners.removeAllElements(); }
+  public void discard() {
+    notifyListeners(new TransformEvent(this, TransformEvent.DATA_REMOVED));
+    listeners.removeAllElements();
+  }
 
 
   // -- Saveable API methods --

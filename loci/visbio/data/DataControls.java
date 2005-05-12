@@ -258,11 +258,36 @@ public class DataControls extends ControlPanel
    * @return true if the data object was successfully removed
    */
   public boolean removeData(DataTransform data) {
+    return removeData(data, true);
+  }
+
+  /**
+   * Removes a data object from the data object tree, confirming with the user
+   * first if confirm flag is set and the object has derivative objects.
+   *
+   * @return true if the data object was successfully removed
+   */
+  public boolean removeData(DataTransform data, boolean confirm) {
     DefaultMutableTreeNode node = findNode(data);
     if (node == null) return false;
-    if (!node.isLeaf()) {
-      // CTR TODO ask user for confirmation first? maybe add confirm flag...
+    if (confirm && !node.isLeaf()) {
+      VisBioFrame bio = lm.getVisBio();
+      int ans = JOptionPane.showConfirmDialog(this,
+        "The derivative data objects depending on this one " +
+        "will also be removed. Are you sure?", "VisBio",
+        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+      if (ans != JOptionPane.YES_OPTION) return false;
     }
+
+    // recursively remove derivative data objects first
+    int count = node.getChildCount();
+    for (int i=0; i<count; i++) {
+      DefaultMutableTreeNode child =
+        (DefaultMutableTreeNode) node.getChildAt(i);
+      if (child == null) continue;
+      removeData((DataTransform) child.getUserObject(), false);
+    }
+
     dataModel.removeNodeFromParent(node);
 
     // remove data's controls from window manager and frame table

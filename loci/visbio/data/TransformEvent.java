@@ -39,6 +39,9 @@ public class TransformEvent extends EventObject {
   /** Transform event indicating transform's font has changed. */
   public static final int FONT_CHANGED = 2;
 
+  /** Transform event indicating transform is being deleted. */
+  public static final int DATA_REMOVED = 3;
+
 
   // -- Fields --
 
