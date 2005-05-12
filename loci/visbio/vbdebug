@@ -1,2 +1,2 @@
 #!/bin/bash
-java -mx1024m -Dvisbio.debug=true -Dswing.defaultlaf=com.jgoodies.plaf.plastic.Plastic3DLookAndFeel -verbose loci.visbio.VisBio $* > debug.txt
+java -mx1024m -Dvisbio.debug=true -verbose loci.visbio.VisBio $* > debug.txt

@@ -1,0 +1,4 @@
+#!/bin/bash
+mv classes.txt classes.ctr
+java -mx1024m -Xrunjmp loci.visbio.VisBio $*
+mv classes.ctr classes.txt

@@ -1,0 +1,2 @@
+#!/bin/bash
+java -mx1024m -Xrunhprof loci.visbio.VisBio $*
