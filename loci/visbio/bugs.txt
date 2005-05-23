@@ -1,5 +1,5 @@
 This file lists bugfixes and enhancements to address.
-Priority is ranked H (high), N (normal) or L (low).
+Priority is ranked H (high), M (medium) or L (low).
 
 
 Data engine
@@ -23,23 +23,10 @@ Data engine
     the parent is automatically added first.
 
 
-File formats
-------------
+Display engine
+--------------
 
-[L] VisAD QT reader is horribly inefficient for multi-file datasets; clean up
-    code to acceptable standards.
-
-[L] Fix bug in many file readers where ImageLine is numbered upside down so
-    that VisAD displays the image right side up. The numbering should be
-    normal, not an upside down Linear2DSet, and then the range should be set
-    in the display so that the image is displayed properly anyway. This way,
-    using the VisAD cursor actually returns the proper results.
-
-    If this breaks VisAD too much (probably would), then just have VisBio flip
-    the domain sets of all images that get read in, so that the cursor is
-    correct.
-
-[L] Ignore Openlab images named "Original Image."
+[M] Displays are never garbage collected, nor is any data ever linked to them.
 
 
 State engine
@@ -68,6 +55,25 @@ State engine
 
 [L] Set "Window Modified Indicator" when content has changed since last state
     save?
+
+
+File formats
+------------
+
+[L] VisAD QT reader is horribly inefficient for multi-file datasets; clean up
+    code to acceptable standards.
+
+[L] Fix bug in many file readers where ImageLine is numbered upside down so
+    that VisAD displays the image right side up. The numbering should be
+    normal, not an upside down Linear2DSet, and then the range should be set
+    in the display so that the image is displayed properly anyway. This way,
+    using the VisAD cursor actually returns the proper results.
+
+    If this breaks VisAD too much (probably would), then just have VisBio flip
+    the domain sets of all images that get read in, so that the cursor is
+    correct.
+
+[L] Ignore Openlab images named "Original Image."
 
 
 Overlays transform
