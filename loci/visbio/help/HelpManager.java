@@ -26,10 +26,20 @@ package loci.visbio.help;
 import java.awt.event.KeyEvent;
 import javax.swing.*;
 import loci.visbio.*;
+import loci.visbio.data.*;
+import loci.visbio.state.BooleanOption;
+import loci.visbio.state.OptionManager;
 import loci.visbio.util.SwingUtil;
 
 /** HelpManager is the manager encapsulating VisBio's help window logic. */
 public class HelpManager extends LogicManager {
+
+  // -- Constants --
+
+  /** String for displaying new data. */
+  public static final String DISPLAY_DATA =
+    "Ask about displaying new data objects";
+
 
   // -- Fields --
 
@@ -60,10 +70,44 @@ public class HelpManager extends LogicManager {
       LogicManager lm = (LogicManager) evt.getSource();
       if (lm == this) doGUI();
     }
+    else if (eventType == VisBioEvent.STATE_CHANGED) {
+      String msg = evt.getMessage();
+      if ("add data".equals(msg)) {
+        OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
+        BooleanOption option = (BooleanOption) om.getOption(DISPLAY_DATA);
+        if (option.getValue()) { // ask about displaying new data objects
+          DataManager dm = (DataManager) bio.getManager(DataManager.class);
+          DataTransform data = (DataTransform) dm.getSelectedData();
+
+          // determine whether data can be displayed in 2D and/or 3D
+          boolean isData = data != null;
+          boolean canDisplay2D = data != null && data.canDisplay2D();
+          boolean canDisplay3D = data != null && data.canDisplay3D();
+          boolean canDisplay = canDisplay2D || canDisplay3D;
+
+          if (canDisplay) {
+            DataControls dc = dm.getControlPanel();
+            String twoD = "Visualize in 2D", threeD = "Visualize in 3D";
+            String no = "Do not visualize now";
+            String[] options = canDisplay2D && canDisplay3D ?
+              new String[] {twoD, threeD, no} :
+              new String[] {canDisplay2D ? twoD : threeD, no};
+            String initial = canDisplay3D ? threeD : twoD;
+            String rval = (String) JOptionPane.showInputDialog(dc,
+              "Would you like to visualize the \"" + data +
+              "\" object immediately?", "VisBio", JOptionPane.QUESTION_MESSAGE,
+              null, options, initial);
+            if (rval != null && !rval.equals(no)) {
+              dc.doNewDisplay(rval.equals(threeD));
+            }
+          }
+        }
+      }
+    }
   }
 
   /** Gets the number of tasks required to initialize this logic manager. */
-  public int getTasks() { return 3; }
+  public int getTasks() { return 4; }
 
 
   // -- Helper methods --
@@ -90,6 +134,13 @@ public class HelpManager extends LogicManager {
       bio.addMenuItem("Help", "About",
         "loci.visbio.help.HelpManager.helpAbout", 'a');
     }
+
+    // options
+    bio.setSplashStatus(null);
+    OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
+    om.addBooleanOption("General", DISPLAY_DATA, 'd',
+      "Toggles whether VisBio asks about automatically " +
+      "displaying new data objects", true);
 
     // help topics
     bio.setSplashStatus(null);
