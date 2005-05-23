@@ -346,6 +346,21 @@ public class DataControls extends ControlPanel
     if (rval == DialogPane.APPROVE_OPTION) exporter.export();
   }
 
+  /** Creates a new display and adds the selected data object to it. */
+  public void doNewDisplay(boolean threeD) {
+    DataTransform data = getSelectedData();
+    if (data == null) return;
+    DisplayManager disp = (DisplayManager)
+      lm.getVisBio().getManager(DisplayManager.class);
+    if (disp == null) return;
+    DisplayWindow window = disp.createDisplay(this, data.getName(), threeD);
+    if (window == null) return;
+    window.addTransform(data);
+    WindowManager wm = (WindowManager)
+      lm.getVisBio().getManager(WindowManager.class);
+    wm.showWindow(window);
+  }
+
 
   // -- ActionListener API methods --
 
@@ -399,11 +414,9 @@ public class DataControls extends ControlPanel
         lm.getVisBio().getManager(DisplayManager.class);
       if (disp == null) return;
       DisplayWindow[] dd = disp.getDisplays();
-
-      boolean isImage = data instanceof ImageTransform;
-      boolean canDisplay2D = data.isValidDimension(2);
-      boolean canDisplay3D =
-        (data.isValidDimension(3) || (isImage && canDisplay2D));
+ 
+      boolean canDisplay2D = data.canDisplay2D();
+      boolean canDisplay3D = data.canDisplay3D();
 
       // build popup menu from display list
       JPopupMenu menu = new JPopupMenu();
@@ -543,9 +556,8 @@ public class DataControls extends ControlPanel
     VisBioFrame bio = lm.getVisBio();
     boolean isData = data != null;
     boolean isImage = data instanceof ImageTransform;
-    boolean canDisplay2D = isData && data.isValidDimension(2);
-    boolean canDisplay3D = isData &&
-      (data.isValidDimension(3) || (isImage && canDisplay2D));
+    boolean canDisplay2D = isData && data.canDisplay2D();
+    boolean canDisplay3D = isData && data.canDisplay3D();
     boolean canDisplay = canDisplay2D || canDisplay3D;
     boolean hasControls = isData && frameTable.get(data) != null;
     display.setEnabled(canDisplay);
@@ -578,21 +590,6 @@ public class DataControls extends ControlPanel
       }
       thumbHandler = th;
     }
-  }
-
-  /** Creates a new display and adds the selected data object to it. */
-  protected void doNewDisplay(boolean threeD) {
-    DataTransform data = getSelectedData();
-    if (data == null) return;
-    DisplayManager disp = (DisplayManager)
-      lm.getVisBio().getManager(DisplayManager.class);
-    if (disp == null) return;
-    DisplayWindow window = disp.createDisplay(this, data.getName(), threeD);
-    if (window == null) return;
-    window.addTransform(data);
-    WindowManager wm = (WindowManager)
-      lm.getVisBio().getManager(WindowManager.class);
-    wm.showWindow(window);
   }
 
 }

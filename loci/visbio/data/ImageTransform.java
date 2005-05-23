@@ -129,4 +129,9 @@ public abstract class ImageTransform extends DataTransform {
   /** Most image transforms are not rendered immediately. */
   public boolean isImmediate() { return false; }
 
+  /** Gets whether this data object can be displayed in 3D. */
+  public boolean canDisplay3D() {
+    return super.canDisplay3D() || canDisplay2D();
+  }
+
 }

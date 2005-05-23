@@ -149,6 +149,12 @@ public abstract class DataTransform implements Dynamic, Saveable {
    */
   public String[] getDimTypes() { return (String[]) ObjectUtil.copy(dims); }
 
+  /** Gets whether this data object can be displayed in 2D. */
+  public boolean canDisplay2D() { return isValidDimension(2); }
+
+  /** Gets whether this data object can be displayed in 3D. */
+  public boolean canDisplay3D() { return isValidDimension(3); }
+
   /** Gets thumbnail handler for thumbnail-related operations. */
   public ThumbnailHandler getThumbHandler() { return thumbs; }
 
