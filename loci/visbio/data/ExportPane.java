@@ -307,10 +307,22 @@ public class ExportPane extends WizardPane {
         String[] dims = trans.getDimTypes();
         int q = dims.length - stars;
         if (q < 0 || q > 1) {
-          JOptionPane.showMessageDialog(dialog, "Please use either " +
-            (dims.length - 1) + " or " + dims.length + " asterisks in the " +
-            "file pattern to\nindicate where the dimensional axes should be " +
-            "numbered.", "VisBio", JOptionPane.ERROR_MESSAGE);
+          String msg;
+          if (dims.length == 0) {
+            msg = "Please specify a single filename (no asterisks).";
+          }
+          else if (dims.length == 1) {
+            msg = "Please specify either a single filename (no asterisks) " +
+              "or a file pattern with\none asterisk to indicate where the " +
+              "dimensional axes should be numbered.";
+          }
+          else {
+            msg = "Please specify either " + (dims.length - 1) + " or " +
+              dims.length + " asterisks in the file pattern to\nindicate " +
+              "where the dimensional axes should be numbered.";
+          }
+          JOptionPane.showMessageDialog(dialog, msg, "VisBio",
+            JOptionPane.ERROR_MESSAGE);
           return;
         }
 
@@ -387,8 +399,11 @@ public class ExportPane extends WizardPane {
         // file format
         sb.append("\nFormat: ");
         String format = (String) formatBox.getSelectedItem();
-        if (format.equals("PIC")) sb.append("Bio-Rad PIC");
-        else if (format.equals("TIFF")) sb.append("Multi-page TIFF stack");
+        if (format.equals("PIC")) sb.append("Bio-Rad PIC file");
+        else if (format.equals("TIFF")) {
+          if (dims.length == stars) sb.append("TIFF image");
+          else sb.append("Multi-page TIFF stack");
+        }
         else if (format.equals("MOV")) sb.append("QuickTime movie");
         else sb.append("Unknown");
         sb.append("\n \n");
