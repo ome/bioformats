@@ -1,5 +1,5 @@
 //
-// WarningPane.java
+// MessagePane.java
 //
 
 /*
@@ -26,35 +26,44 @@ package loci.visbio.util;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import java.util.StringTokenizer;
+import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
-/** WarningPane provides a dialog box for displaying a warning to the user. */
-public class WarningPane extends MessagePane {
+/**
+ * MessagePane provides a dialog box for displaying a dialog to the user with
+ * an "Always display this dialog" checkbox for toggling its appearance.
+ */
+public class MessagePane extends DialogPane {
+
+  // -- Fields --
+
+  /** Checkbox within dialog. */
+  protected JCheckBox always;
+
 
   // -- Constructor --
 
-  /** Creates a new warning pane linked to the given warning checkbox. */
-  public WarningPane(String text, boolean allowCancel) {
-    super("VisBio Warning", makePanel(text), allowCancel);
-  }
+  /** Creates a new message pane linked to the given checkbox. */
+  public MessagePane(String title, JPanel panel, boolean allowCancel) {
+    super(title, allowCancel);
 
-
-  // -- Helper methods --
-
-  /** Creates a panel containing the given text. */
-  private static JPanel makePanel(String text) {
-    StringTokenizer st = new StringTokenizer(text, "\n\r");
-    int count = st.countTokens();
-    StringBuffer sb = new StringBuffer("pref");
-    for (int i=1; i<count; i++) sb.append(", pref");
+    // create checkbox
+    always = new JCheckBox("Always display this dialog", true);
+    if (!LAFUtil.isMacLookAndFeel()) always.setMnemonic('a');
 
     // lay out components
-    PanelBuilder builder = new PanelBuilder(
-      new FormLayout("pref", sb.toString()));
+    PanelBuilder builder = new PanelBuilder(new FormLayout(
+      "fill:pref:grow", "fill:pref:grow, 3dlu, pref"));
     CellConstraints cc = new CellConstraints();
-    for (int y=1; y<=count; y++) builder.addLabel(st.nextToken(), cc.xy(1, y));
-    return builder.getPanel();
+    builder.add(panel, cc.xy(1, 1));
+    builder.add(always, cc.xy(1, 3));
+    add(builder.getPanel());
   }
+
+
+  // -- MessagePane API methods --
+
+  /** Gets whether this warning pane should always be displayed. */
+  public boolean isAlwaysDisplayed() { return always.isSelected(); }
 
 }

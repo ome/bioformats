@@ -27,9 +27,9 @@ import java.awt.Component;
 import java.io.*;
 import java.util.Vector;
 import javax.swing.JCheckBox;
+import javax.swing.JPanel;
 import loci.visbio.*;
-import loci.visbio.util.WarningPane;
-import loci.visbio.util.XMLUtil;
+import loci.visbio.util.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -136,16 +136,42 @@ public class OptionManager extends LogicManager {
     XMLUtil.writeXML(CONFIG_FILE, doc);
   }
 
-  /** Checks whether to display a warning, and does so if necessary. */
-  public boolean checkWarning(String warn, boolean allowCancel, String text) {
-    BioOption option = getOption(warn);
+  /**
+   * Checks whether to display a message using the given panel, and does so if
+   * necessary. Message is displayed if the option corresponding to the
+   * specified text (opt) is enabled.
+   */
+  public boolean checkMessage(Component parent, String opt,
+    boolean allowCancel, JPanel panel, String title)
+  {
+    return checkMessage(parent, opt,
+      new MessagePane(title, panel, allowCancel));
+  }
+
+  /**
+   * Checks whether to display a warning with the given text, and does so if
+   * necessary. Warning is displayed if the option corresponding to the
+   * specified text (opt) is enabled.
+   */
+  public boolean checkWarning(Component parent, String opt,
+    boolean allowCancel, String text)
+  {
+    return checkMessage(parent, opt, new WarningPane(text, allowCancel));
+  }
+
+  /**
+   * Checks whether to display a message using the given message pane, and does
+   * so if necessary. Message is displayed if the option corresponding to the
+   * specified text (opt) is enabled.
+   */
+  public boolean checkMessage(Component parent, String opt, MessagePane pane) {
+    BioOption option = getOption(opt);
     if (!(option instanceof BooleanOption)) return true;
     BooleanOption alwaysOption = (BooleanOption) option;
     if (!alwaysOption.getValue()) return true;
     JCheckBox alwaysBox = (JCheckBox) alwaysOption.getComponent();
 
-    WarningPane pane = new WarningPane(text, allowCancel);
-    boolean success = pane.showDialog(bio) == WarningPane.APPROVE_OPTION;
+    boolean success = pane.showDialog(parent) == MessagePane.APPROVE_OPTION;
 
     boolean always = pane.isAlwaysDisplayed();
     if (alwaysBox.isSelected() != always) {

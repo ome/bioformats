@@ -23,12 +23,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.help;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 import java.awt.event.KeyEvent;
 import javax.swing.*;
 import loci.visbio.*;
 import loci.visbio.data.*;
 import loci.visbio.state.BooleanOption;
 import loci.visbio.state.OptionManager;
+import loci.visbio.util.LAFUtil;
 import loci.visbio.util.SwingUtil;
 
 /** HelpManager is the manager encapsulating VisBio's help window logic. */
@@ -44,7 +48,7 @@ public class HelpManager extends LogicManager {
   // -- Fields --
 
   /** Help dialog for detailing basic program usage. */
-  private HelpWindow helpWindow;
+  protected HelpWindow helpWindow;
 
 
   // -- Constructor --
@@ -58,6 +62,61 @@ public class HelpManager extends LogicManager {
   /** Adds a new help topic. */
   public void addHelpTopic(String name, String source) {
     helpWindow.addTopic(name, source);
+  }
+
+  /**
+   * Prompts user for whether to visualize
+   * the currently selected data object.
+   */
+  public void checkVisualization() {
+    DataManager dm = (DataManager) bio.getManager(DataManager.class);
+    DataTransform data = (DataTransform) dm.getSelectedData();
+
+    // determine whether data can be displayed in 2D and/or 3D
+    boolean isData = data != null;
+    boolean canDisplay2D = data != null && data.canDisplay2D();
+    boolean canDisplay3D = data != null && data.canDisplay3D();
+    boolean canDisplay = canDisplay2D || canDisplay3D;
+
+    if (canDisplay) {
+      // create option for 3D visualization
+      ButtonGroup buttons = new ButtonGroup();
+      JRadioButton vis3D = new JRadioButton("In 3D", canDisplay3D);
+      vis3D.setEnabled(canDisplay3D);
+      if (!LAFUtil.isMacLookAndFeel()) vis3D.setMnemonic('3');
+      buttons.add(vis3D);
+
+      // create option for 2D visualization
+      JRadioButton vis2D = new JRadioButton("In 2D", !canDisplay3D);
+      vis2D.setEnabled(canDisplay2D);
+      if (!LAFUtil.isMacLookAndFeel()) vis2D.setMnemonic('2');
+      buttons.add(vis2D);
+
+      // create option for no visualization
+      JRadioButton visNot = new JRadioButton("Not now");
+      if (!LAFUtil.isMacLookAndFeel()) visNot.setMnemonic('n');
+      buttons.add(visNot);
+
+      // create panel for asking user about immediate visualization
+      PanelBuilder builder = new PanelBuilder(new FormLayout(
+        "pref, 3dlu, pref, 3dlu, pref:grow", "pref, 3dlu, pref"
+      ));
+      CellConstraints cc = new CellConstraints();
+      builder.addLabel("Would you like the visualize the \"" +
+        data + "\" object now?", cc.xyw(1, 1, 5));
+      builder.add(vis3D, cc.xy(1, 3));
+      builder.add(vis2D, cc.xy(3, 3));
+      builder.add(visNot, cc.xy(5, 3));
+      JPanel visPanel = builder.getPanel();
+
+      // display message pane
+      DataControls dc = dm.getControlPanel();
+      OptionManager om = (OptionManager)
+        bio.getManager(OptionManager.class);
+      boolean success = om.checkMessage(dc,
+        DISPLAY_DATA, false, visPanel, "VisBio");
+      if (success && !visNot.isSelected()) dc.doNewDisplay(vis3D.isSelected());
+    }
   }
 
 
@@ -76,31 +135,7 @@ public class HelpManager extends LogicManager {
         OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
         BooleanOption option = (BooleanOption) om.getOption(DISPLAY_DATA);
         if (option.getValue()) { // ask about displaying new data objects
-          DataManager dm = (DataManager) bio.getManager(DataManager.class);
-          DataTransform data = (DataTransform) dm.getSelectedData();
-
-          // determine whether data can be displayed in 2D and/or 3D
-          boolean isData = data != null;
-          boolean canDisplay2D = data != null && data.canDisplay2D();
-          boolean canDisplay3D = data != null && data.canDisplay3D();
-          boolean canDisplay = canDisplay2D || canDisplay3D;
-
-          if (canDisplay) {
-            DataControls dc = dm.getControlPanel();
-            String twoD = "Visualize in 2D", threeD = "Visualize in 3D";
-            String no = "Do not visualize now";
-            String[] options = canDisplay2D && canDisplay3D ?
-              new String[] {twoD, threeD, no} :
-              new String[] {canDisplay2D ? twoD : threeD, no};
-            String initial = canDisplay3D ? threeD : twoD;
-            String rval = (String) JOptionPane.showInputDialog(dc,
-              "Would you like to visualize the \"" + data +
-              "\" object immediately?", "VisBio", JOptionPane.QUESTION_MESSAGE,
-              null, options, initial);
-            if (rval != null && !rval.equals(no)) {
-              dc.doNewDisplay(rval.equals(threeD));
-            }
-          }
+          checkVisualization();
         }
       }
     }
@@ -145,6 +180,9 @@ public class HelpManager extends LogicManager {
     // help topics
     bio.setSplashStatus(null);
     addHelpTopic("Introduction", "introduction.html");
+  }
+
+  private void makeVisPanel() {
   }
 
 

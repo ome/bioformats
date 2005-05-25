@@ -178,7 +178,7 @@ public class CaptureHandler implements Saveable {
           // display ImageJ warning
           OptionManager om = (OptionManager)
             window.getVisBio().getManager(OptionManager.class);
-          om.checkWarning(DisplayManager.WARN_IMAGEJ, false,
+          om.checkWarning(panel, DisplayManager.WARN_IMAGEJ, false,
             "Quitting VisBio will also shut down ImageJ, with no\n" +
             "warning or opportunity to save your work. Please remember\n" +
             "remember to save your work in ImageJ before closing VisBio.");
