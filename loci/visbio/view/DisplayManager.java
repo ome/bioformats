@@ -40,6 +40,9 @@ public class DisplayManager extends LogicManager {
   /** Maximum number of simultaneous displays. */
   public static final int MAX_DISPLAYS = 32;
 
+  /** Default maximum resolution for images in a stack. */
+  public static final int DEFAULT_STACK_RESOLUTION = 192;
+
   /** String for image stack resolution limit option. */
   public static final String STACK_LIMIT = "Limit image stack resolution";
 
@@ -121,9 +124,6 @@ public class DisplayManager extends LogicManager {
     return displayControls.getDisplays();
   }
 
-  /** Gets associated control panel. */
-  public DisplayControls getControls() { return displayControls; }
-
   /** Gets maximum resolution of stacked images from VisBio options. */
   public int[] getStackResolution() {
     OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
@@ -132,6 +132,9 @@ public class DisplayManager extends LogicManager {
     if (opt.getValue()) return new int[] {opt.getValueX(), opt.getValueY()};
     else return new int[] {Integer.MAX_VALUE, Integer.MAX_VALUE};
   }
+
+  /** Gets associated control panel. */
+  public DisplayControls getControls() { return displayControls; }
 
 
   // -- LogicManager API methods --
@@ -209,7 +212,7 @@ public class DisplayManager extends LogicManager {
     // options
     bio.setSplashStatus(null);
     OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
-    int stackRes = StackHandler.DEFAULT_STACK_RESOLUTION;
+    int stackRes = DEFAULT_STACK_RESOLUTION;
     om.addOption("Visualization", new ResolutionToggleOption(STACK_LIMIT, 'l',
       "Adjusts resolution limit of image stacks", true, stackRes, stackRes));
     om.addBooleanOption("Warnings", WARN_IMAGEJ, 'i',

@@ -98,7 +98,7 @@ public class CollapseTransform extends ImageTransform {
   public static DataTransform makeTransform(DataManager dm) {
     DataTransform data = dm.getSelectedData();
     if (!isValidParent(data)) return null;
-    String n = (String) JOptionPane.showInputDialog(dm.getControlPanel(),
+    String n = (String) JOptionPane.showInputDialog(dm.getControls(),
       "Collapse name:", "Create dimensional collapse",
       JOptionPane.INFORMATION_MESSAGE, null, null,
       data.getName() + " collapse");

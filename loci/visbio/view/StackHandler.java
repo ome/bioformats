@@ -40,9 +40,6 @@ public class StackHandler extends TransformHandler {
 
   // -- Constants --
 
-  /** Default maximum resolution for images in a stack. */
-  public static final int DEFAULT_STACK_RESOLUTION = 192;
-
   /** Starting FPS for animation for image stacks. */
   public static final int STACK_ANIMATION_RATE = 2;
 

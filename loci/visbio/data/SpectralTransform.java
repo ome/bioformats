@@ -124,7 +124,7 @@ public class SpectralTransform extends ImageTransform
   public static DataTransform makeTransform(DataManager dm) {
     DataTransform data = dm.getSelectedData();
     if (!isValidParent(data)) return null;
-    String n = (String) JOptionPane.showInputDialog(dm.getControlPanel(),
+    String n = (String) JOptionPane.showInputDialog(dm.getControls(),
       "Mapping name:", "Create spectral mapping",
       JOptionPane.INFORMATION_MESSAGE, null, null,
       data.getName() + " mapping");

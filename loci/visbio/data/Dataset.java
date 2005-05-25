@@ -185,7 +185,7 @@ public class Dataset extends ImageTransform {
 
   /** Creates a new dataset, with user interaction. */
   public static DataTransform makeTransform(DataManager dm) {
-    return makeTransform(dm, null, dm.getControlPanel());
+    return makeTransform(dm, null, dm.getControls());
   }
 
   /**

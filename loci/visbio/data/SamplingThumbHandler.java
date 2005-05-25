@@ -57,10 +57,9 @@ public class SamplingThumbHandler extends ThumbnailHandler {
     FlatField ff = th.getThumb(p);
     if (ff == null) return super.computeThumb(pos);
 
-    int[] res = new int[] {resolution, resolution};
     int[] smin = {0, 0};
     int[] smax = {samp.getImageWidth() - 1, samp.getImageHeight() - 1};
-    return DataSampling.resample(ff, res, range, smin, smax);
+    return DataSampling.resample(ff, resolution, range, smin, smax);
   }
 
 }

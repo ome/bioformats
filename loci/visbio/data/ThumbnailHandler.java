@@ -41,7 +41,10 @@ public class ThumbnailHandler
   protected DataTransform data;
 
   /** Resolution of each thumbnail dimension. */
-  protected int resolution = 96;
+  protected int[] resolution = {
+    DataManager.DEFAULT_THUMBNAIL_RESOLUTION,
+    DataManager.DEFAULT_THUMBNAIL_RESOLUTION
+  };
 
   /** Thumbnail data computed from data transform. */
   protected FlatField[] thumbs;
@@ -65,13 +68,15 @@ public class ThumbnailHandler
   protected int count;
 
   /** Flag indicating background thumbnail generation is enabled. */
-  protected boolean on = true;
+  protected boolean on = false;
 
 
   // -- Constructor --
 
   /** Creates a thumbnail handler. */
-  public ThumbnailHandler(DataTransform data, String filename) {
+  public ThumbnailHandler(DataTransform data,
+    String filename)
+  {
     this.data = data;
     data.addTransformListener(this);
     if (filename != null) {
@@ -96,6 +101,9 @@ public class ThumbnailHandler
     if (ndx >= 0 && ndx < thumbs.length) thumbs[ndx] = thumb;
   }
 
+  /** Sets resolution of computed thumbnails. */
+  public void setResolution(int[] res) { resolution = res; }
+
   /** Creates an image thumbnail from the given data. */
   public FlatField makeThumb(Data d) {
     if (d == null || !(d instanceof FlatField)) return null;
@@ -103,7 +111,7 @@ public class ThumbnailHandler
     FunctionType ftype = (FunctionType) ff.getType();
     RealTupleType rtt = ftype.getDomain();
     int[] res = new int[rtt.getDimension()];
-    for (int i=0; i<res.length; i++) res[i] = resolution;
+    for (int i=0; i<res.length; i++) res[i] = resolution[i];
     return DataSampling.resample(ff, res, null);
   }
 
@@ -115,21 +123,22 @@ public class ThumbnailHandler
     }
   }
 
-  /** Clears thumbnails from memory and restarts background generation. */
+  /**
+   * Clears thumbnails from memory, restarting background
+   * generation if auto-generation is enabled.
+   */
   public void clear() {
     if (loader != null) {
+      boolean oldOn = on;
       on = false;
       try { loader.join(); }
       catch (InterruptedException exc) { exc.printStackTrace(); }
-      on = true;
+      on = oldOn;
     }
     thumbs = new FlatField[MathUtil.getRasterLength(data.getLengths())];
     count = 0;
     if (on) startGeneration();
   }
-
-  /** Sets the resolution of generated thumbnails. */
-  public void setResolution(int res) { resolution = res; }
 
   /** Sets the progress bar for reporting thumbnail generation progress. */
   public void setControls(JProgressBar bar, JButton button) {

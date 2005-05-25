@@ -99,18 +99,18 @@ public class HelpManager extends LogicManager {
 
       // create panel for asking user about immediate visualization
       PanelBuilder builder = new PanelBuilder(new FormLayout(
-        "pref, 3dlu, pref, 3dlu, pref:grow", "pref, 3dlu, pref"
+        "15dlu, pref, 3dlu, pref, 3dlu, pref:grow", "pref, 3dlu, pref"
       ));
       CellConstraints cc = new CellConstraints();
       builder.addLabel("Would you like the visualize the \"" +
-        data + "\" object now?", cc.xyw(1, 1, 5));
-      builder.add(vis3D, cc.xy(1, 3));
-      builder.add(vis2D, cc.xy(3, 3));
-      builder.add(visNot, cc.xy(5, 3));
+        data + "\" object now?", cc.xyw(1, 1, 6));
+      builder.add(vis3D, cc.xy(2, 3));
+      builder.add(vis2D, cc.xy(4, 3));
+      builder.add(visNot, cc.xy(6, 3));
       JPanel visPanel = builder.getPanel();
 
       // display message pane
-      DataControls dc = dm.getControlPanel();
+      DataControls dc = dm.getControls();
       OptionManager om = (OptionManager)
         bio.getManager(OptionManager.class);
       boolean success = om.checkMessage(dc,

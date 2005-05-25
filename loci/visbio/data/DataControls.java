@@ -248,6 +248,14 @@ public class DataControls extends ControlPanel
       frameTable.put(data, frame);
     }
 
+    // start thumbnail auto-generation, if applicable
+    ThumbnailHandler th = data.getThumbHandler();
+    if (th != null) {
+      DataManager dm = (DataManager) lm;
+      th.setResolution(dm.getThumbnailResolution());
+      if (dm.getAutoThumbGen()) th.toggleGeneration(true);
+    }
+
     selectNode(node);
     repack();
   }

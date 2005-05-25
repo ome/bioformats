@@ -187,7 +187,7 @@ public class ArbitrarySlice extends DataTransform
   public static DataTransform makeTransform(DataManager dm) {
     DataTransform dt = dm.getSelectedData();
     if (!isValidParent(dt)) return null;
-    String n = (String) JOptionPane.showInputDialog(dm.getControlPanel(),
+    String n = (String) JOptionPane.showInputDialog(dm.getControls(),
       "Title of slice:", "Create arbitrary slice",
       JOptionPane.INFORMATION_MESSAGE, null, null, dt.getName() + " slice");
     if (n == null) return null;

@@ -33,8 +33,7 @@ import java.util.zip.ZipInputStream;
 import javax.swing.tree.DefaultMutableTreeNode;
 import loci.visbio.*;
 import loci.visbio.help.HelpManager;
-import loci.visbio.state.SaveException;
-import loci.visbio.state.StateManager;
+import loci.visbio.state.*;
 import loci.visbio.util.SwingUtil;
 import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Element;
@@ -47,6 +46,15 @@ public class DataManager extends LogicManager {
   /** URL prefix for sample datasets. */
   protected static final String SAMPLE_PREFIX =
     "ftp://ftp.loci.wisc.edu/locisoftware/visbio/data/";
+
+  /** Default resolution for low-resolution thumbnails. */
+  protected static final int DEFAULT_THUMBNAIL_RESOLUTION = 96;
+
+  /** String for thumbnail auto-generation option. */
+  public static final String AUTO_THUMBS = "Automatically generate thumbnails";
+
+  /** String for thumbnail resolution option. */
+  public static final String THUMB_RES = "Thumbnail resolution";
 
 
   // -- Control panel --
@@ -124,9 +132,6 @@ public class DataManager extends LogicManager {
     transformLabels.copyInto(labels);
     return labels;
   }
-
-  /** Gets data control panel. */
-  public DataControls getControlPanel() { return dataControls; }
 
   /** Gets a list of data transforms present in the tree. */
   public Vector getDataList() {
@@ -239,6 +244,26 @@ public class DataManager extends LogicManager {
     }).start();
   }
 
+  /**
+   * Gets whether low-resolution thumbnails should be
+   * automatically generated from VisBio options.
+   */
+  public boolean getAutoThumbGen() {
+    OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
+    BooleanOption opt = (BooleanOption) om.getOption(AUTO_THUMBS);
+    return opt.getValue();
+  }
+
+  /** Gets resolution of low-resolution thumbnails from VisBio options. */
+  public int[] getThumbnailResolution() {
+    OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
+    ResolutionOption opt = (ResolutionOption) om.getOption(THUMB_RES);
+    return new int[] {opt.getValueX(), opt.getValueY()};
+  }
+
+  /** Gets associated control panel. */
+  public DataControls getControls() { return dataControls; }
+
 
   // -- LogicManager API methods --
 
@@ -252,7 +277,7 @@ public class DataManager extends LogicManager {
   }
 
   /** Gets the number of tasks required to initialize this logic manager. */
-  public int getTasks() { return 4; }
+  public int getTasks() { return 5; }
 
 
   // -- Saveable API methods --
@@ -388,6 +413,15 @@ public class DataManager extends LogicManager {
       "loci.visbio.data.DataManager.openSampleData(sdub)", 's');
     bio.addMenuItem("Sample datasets", "TAABA",
       "loci.visbio.data.DataManager.openSampleData(TAABA)", 't');
+
+    // options
+    bio.setSplashStatus(null);
+    OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
+    om.addBooleanOption("Thumbnails", AUTO_THUMBS, 'a',
+      "Toggles whether thumbnails are automatically generated", true);
+    int thumbRes = DEFAULT_THUMBNAIL_RESOLUTION;
+    om.addOption("Thumbnails", new ResolutionOption(THUMB_RES,
+      "Adjusts resolution of low-resolution thumbnails", thumbRes, thumbRes));
 
     // help window
     bio.setSplashStatus(null);

@@ -188,7 +188,7 @@ public class OMEImage extends ImageTransform {
     String server, String sessionKey, String user, int imageId)
   {
     String password = null;
-    Component parent = dm.getControlPanel();
+    Component parent = dm.getControls();
 
     if (sessionKey == null) {
       // create OME login dialog if it doesn't already exist
