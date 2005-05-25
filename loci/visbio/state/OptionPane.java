@@ -31,13 +31,22 @@ import loci.visbio.util.DialogPane;
 /** OptionPane provides a dialog box for adjusting VisBio's options. */
 public class OptionPane extends DialogPane {
 
+  // -- Constants --
+
+  /** Flag indicating options should be divided into separate tabs. */
+  protected static final boolean USE_TABS = false;
+
+
   // -- Fields --
 
   /** Options manager. */
-  private OptionManager om;
+  protected OptionManager om;
 
   /** Tabbed pane. */
-  private JTabbedPane tabs;
+  protected JTabbedPane tabs;
+
+  /** Non-tabbed pane. */
+  protected JPanel noTabs;
 
 
   // -- Constructor --
@@ -46,8 +55,15 @@ public class OptionPane extends DialogPane {
   public OptionPane(OptionManager om) {
     super("VisBio Options");
     this.om = om;
-    tabs = new JTabbedPane();
-    add(tabs);
+    if (USE_TABS) {
+      tabs = new JTabbedPane();
+      add(tabs);
+    }
+    else {
+      noTabs = new JPanel();
+      noTabs.setLayout(new BoxLayout(noTabs, BoxLayout.Y_AXIS));
+      add(noTabs);
+    }
   }
 
 
@@ -55,7 +71,7 @@ public class OptionPane extends DialogPane {
 
   /** Adds an option with a boolean value to the specified tab. */
   public void addOption(String tab, BioOption option) {
-    JPanel tabPanel = getTab(tab);
+    JPanel tabPanel = USE_TABS ? getTab(tab) : noTabs;
     Component c = option.getComponent();
     if (c instanceof JComponent) {
       JComponent jc = (JComponent) c;
@@ -65,13 +81,13 @@ public class OptionPane extends DialogPane {
   }
 
   /** Initializes a tab with the given name. */
-  public void addTab(String tab) { getTab(tab); }
+  public void addTab(String tab) { if (USE_TABS) getTab(tab); }
 
 
   // -- DialogPane API methods --
 
   /** Resets the dialog pane's components to their default states. */
-  public void resetComponents() { tabs.setSelectedIndex(0); }
+  public void resetComponents() { if (USE_TABS) tabs.setSelectedIndex(0); }
 
 
   // -- Helper methods --
