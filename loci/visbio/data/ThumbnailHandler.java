@@ -157,6 +157,33 @@ public class ThumbnailHandler
 
   // -- Internal ThumbnailHandler API methods --
 
+  /** Computes the ith thumbnail. */
+  protected void loadThumb(int i) {
+    if (thumbs[i] != null) return;
+
+    int[] lengths = data.getLengths();
+    String id = data.getCacheId(
+      MathUtil.rasterToPosition(lengths, i), global);
+
+    // attempt to grab thumbnail from the disk cache
+    boolean cached = false;
+    if (cache != null) {
+      FlatField ff = cache.retrieve(id);
+      if (ff != null) {
+        thumbs[i] = ff;
+        cached = true;
+      }
+    }
+
+    if (!cached) {
+      // compute thumbnail from data object
+      thumbs[i] = computeThumb(MathUtil.rasterToPosition(lengths, i));
+      if (cache != null && thumbs[i] != null) cache.store(id, thumbs[i]);
+    }
+
+    count++;
+  }
+
   /**
    * Computes a thumbnail for the given dimensional position.
    * Subclasses may override this method to provide custom or
@@ -178,32 +205,9 @@ public class ThumbnailHandler
 
   /** Loads all thumbnails in the background. */
   public void run() {
-    int[] lengths = data.getLengths();
     for (int i=count; i<thumbs.length; i++) {
       updateControls();
-      if (thumbs[i] != null) {
-        count++;
-        continue;
-      }
-      String id = data.getCacheId(
-        MathUtil.rasterToPosition(lengths, i), global);
-
-      // attempt to grab thumbnail from the disk cache
-      boolean cached = false;
-      if (cache != null) {
-        FlatField ff = cache.retrieve(id);
-        if (ff != null) {
-          thumbs[i] = ff;
-          cached = true;
-        }
-      }
-
-      if (!cached) {
-        // compute thumbnail from data object
-        thumbs[i] = computeThumb(MathUtil.rasterToPosition(lengths, i));
-        if (cache != null && thumbs[i] != null) cache.store(id, thumbs[i]);
-      }
-      count++;
+      loadThumb(i);
       if (!on) break;
     }
     updateControls();

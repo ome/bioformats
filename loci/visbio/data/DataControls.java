@@ -254,6 +254,7 @@ public class DataControls extends ControlPanel
       DataManager dm = (DataManager) lm;
       th.setResolution(dm.getThumbnailResolution());
       if (dm.getAutoThumbGen()) th.toggleGeneration(true);
+      else th.loadThumb(0); // HACK - need first thumbnail for proper colors
     }
 
     selectNode(node);

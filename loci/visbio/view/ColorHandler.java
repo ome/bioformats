@@ -151,7 +151,7 @@ public class ColorHandler {
       try {
         if (trans instanceof ImageTransform) {
           ImageTransform it = (ImageTransform) trans;
-          ff = VisUtil.switchType(ff, it.getType());
+          if (ff != null) ff = VisUtil.switchType(ff, it.getType());
         }
         colorPane.setPreviewData(ff);
       }

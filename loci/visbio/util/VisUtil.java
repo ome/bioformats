@@ -168,6 +168,8 @@ public abstract class VisUtil {
   public static FlatField switchType(FlatField field, FunctionType newType)
     throws VisADException, RemoteException
   {
+    if (field == null) throw new VisADException("field cannot be null");
+    if (newType == null) throw new VisADException("newType cannot be null");
     if (!newType.equalsExceptName(field.getType())) {
       throw new VisADException("Types do not match");
     }
