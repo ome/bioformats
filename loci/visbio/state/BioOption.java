@@ -49,9 +49,6 @@ public abstract class BioOption implements Saveable {
   /** Gets a GUI component representing this option. */
   public abstract Component getComponent();
 
-  /** Sets the GUI component to reflect the given value. */
-  public abstract void setValue(String value);
-
 
   // -- Saveable API methods --
 

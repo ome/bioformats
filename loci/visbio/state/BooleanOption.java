@@ -60,11 +60,6 @@ public class BooleanOption extends BioOption {
   /** Gets a GUI component representing this option. */
   public Component getComponent() { return box; }
 
-  /** Sets the GUI component to reflect the given value. */
-  public void setValue(String value) {
-    box.setSelected(value.equalsIgnoreCase("true"));
-  }
-
 
   // -- Saveable API methods --
 

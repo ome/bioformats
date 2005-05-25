@@ -146,6 +146,9 @@ public class DisplayWindow extends JFrame
   /** Gets associated VisBio frame. */
   public VisBioFrame getVisBio() { return manager.getVisBio(); }
 
+  /** Gets associated display manager. */
+  public DisplayManager getManager() { return manager; }
+
   /** Gets the associated VisAD display. */
   public DisplayImpl getDisplay() { return display; }
 

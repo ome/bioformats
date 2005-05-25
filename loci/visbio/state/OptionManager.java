@@ -59,8 +59,9 @@ public class OptionManager extends LogicManager {
     options = new OptionPane(this);
     list = new Vector();
 
-    // ensure tabs appear in the right order
+    // HACK - ensure tabs appear in the right order
     options.addTab("General");
+    options.addTab("Thumbnails");
     options.addTab("Warnings");
     options.addTab("Debug");
   }
@@ -68,34 +69,25 @@ public class OptionManager extends LogicManager {
 
   // -- OptionManager API methods --
 
-  /** Adds an option to VisBio's options dialog. */
+  /** Adds an option allowing the user to toggle a check box. */
   public void addBooleanOption(String tab,
     String text, char mnemonic, String tip, boolean value)
   {
-    BooleanOption option = new BooleanOption(text, mnemonic, tip, value);
-    options.addOption(tab, option);
-    list.add(option);
-    bio.generateEvent(this, "add option", false);
+    addOption(tab, new BooleanOption(text, mnemonic, tip, value));
   }
 
   /** Adds an option allowing the user to enter a numerical value. */
   public void addNumericOption(String tab,
     String text, String unit, String tip, int value)
   {
-    NumericOption option = new NumericOption(text, unit, tip, value);
-    options.addOption(tab, option);
-    list.add(option);
-    bio.generateEvent(this, "add option", false);
+    addOption(tab, new NumericOption(text, unit, tip, value));
   }
 
   /** Adds an option allowing the user to select from a dropdown list. */
   public void addListOption(String tab,
     String text, String tip, String[] choices)
   {
-    ListOption option = new ListOption(text, tip, choices);
-    options.addOption(tab, option);
-    list.add(option);
-    bio.generateEvent(this, "add option", false);
+    addOption(tab, new ListOption(text, tip, choices));
   }
 
   /**
@@ -103,8 +95,13 @@ public class OptionManager extends LogicManager {
    * Such options will not be saved in the INI file automatically.
    */
   public void addCustomOption(String tab, Component c) {
-    CustomOption option = new CustomOption(c);
+    addOption(tab, new CustomOption(c));
+  }
+
+  /** Adds an option to VisBio's options dialog. */
+  public void addOption(String tab, BioOption option) {
     options.addOption(tab, option);
+    list.add(option);
     bio.generateEvent(this, "add option", false);
   }
 

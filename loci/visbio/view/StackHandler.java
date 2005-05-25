@@ -27,7 +27,7 @@ import java.rmi.RemoteException;
 import java.util.Vector;
 import loci.visbio.data.DataTransform;
 import loci.visbio.data.ImageTransform;
-import loci.visbio.state.SaveException;
+import loci.visbio.state.*;
 import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Element;
 import visad.*;
@@ -61,9 +61,6 @@ public class StackHandler extends TransformHandler {
   /** Dimensional positions. */
   protected Vector positions;
 
-  /** Resolution of stack images. */
-  protected int stackRes;
-
 
   // -- Constructor --
 
@@ -71,17 +68,7 @@ public class StackHandler extends TransformHandler {
   public StackHandler(DisplayWindow dw) {
     super(dw);
     positions = new Vector();
-    stackRes = DEFAULT_STACK_RESOLUTION;
   }
-
-
-  // -- StackHandler API methods --
-
-  /** Sets maximum resolution per axis of stacked images. */
-  public void setStackResolution(int res) { stackRes = res; }
-
-  /** Gets maximum resolution per axis of stacked images. */
-  public int getStackResolution() { return stackRes; }
 
 
   // -- TransformHandler API methods --
@@ -126,15 +113,6 @@ public class StackHandler extends TransformHandler {
 
   // -- Saveable API methods --
 
-  /** Writes the current state to the given DOM element ("Display"). */
-  public void saveState(Element el) throws SaveException {
-    super.saveState(el);
-    Element child = XMLUtil.getFirstChild(el, "LinkedData");
-
-    // save other parameters
-    child.setAttribute("stackRes", "" + stackRes);
-  }
-
   /** Restores the current state from the given DOM element ("Display"). */
   public void restoreState(Element el) throws SaveException {
     Element child = XMLUtil.getFirstChild(el, "LinkedData");
@@ -160,7 +138,6 @@ public class StackHandler extends TransformHandler {
     animating = child.getAttribute("animating").equalsIgnoreCase("true");
     fps = Integer.parseInt(child.getAttribute("FPS"));
     animAxis = Integer.parseInt(child.getAttribute("animationAxis"));
-    stackRes = Integer.parseInt(child.getAttribute("stackRes"));
   }
 
 }

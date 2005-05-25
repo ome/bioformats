@@ -40,6 +40,9 @@ public class DisplayManager extends LogicManager {
   /** Maximum number of simultaneous displays. */
   public static final int MAX_DISPLAYS = 32;
 
+  /** String for image stack resolution limit option. */
+  public static final String STACK_LIMIT = "Limit image stack resolution";
+
   /** String for ImageJ quit warning. */
   public static final String WARN_IMAGEJ =
     "Warn about problem where quitting VisBio also quits ImageJ";
@@ -121,6 +124,15 @@ public class DisplayManager extends LogicManager {
   /** Gets associated control panel. */
   public DisplayControls getControls() { return displayControls; }
 
+  /** Gets maximum resolution of stacked images from VisBio options. */
+  public int[] getStackResolution() {
+    OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
+    ResolutionToggleOption opt = (ResolutionToggleOption)
+      om.getOption(STACK_LIMIT);
+    if (opt.getValue()) return new int[] {opt.getValueX(), opt.getValueY()};
+    else return new int[] {Integer.MAX_VALUE, Integer.MAX_VALUE};
+  }
+
 
   // -- LogicManager API methods --
 
@@ -197,6 +209,9 @@ public class DisplayManager extends LogicManager {
     // options
     bio.setSplashStatus(null);
     OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
+    int stackRes = StackHandler.DEFAULT_STACK_RESOLUTION;
+    om.addOption("Visualization", new ResolutionToggleOption(STACK_LIMIT, 'l',
+      "Adjusts resolution limit of image stacks", true, stackRes, stackRes));
     om.addBooleanOption("Warnings", WARN_IMAGEJ, 'i',
       "Toggles whether VisBio displays a warning about " +
       "how quitting VisBio also quits ImageJ", true);

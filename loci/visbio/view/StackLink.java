@@ -465,11 +465,11 @@ public class StackLink extends TransformLink {
     int[] len = set.getLengths();
     int[] res = new int[len.length];
     boolean same = true;
-    int maxRes = ((StackHandler) handler).getStackResolution();
+    int[] maxRes = handler.getWindow().getManager().getStackResolution();
     for (int i=0; i<len.length; i++) {
-      if (len[i] > maxRes) {
+      if (len[i] > maxRes[i]) {
         same = false;
-        res[i] = maxRes;
+        res[i] = maxRes[i];
       }
       else res[i] = len[i];
     }

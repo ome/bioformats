@@ -1,5 +1,5 @@
 //
-// ListOption.java
+// ResolutionOption.java
 //
 
 /*
@@ -24,44 +24,68 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.state;
 
 import java.awt.Component;
-import javax.swing.JPanel;
-import javax.swing.JComboBox;
+import javax.swing.*;
 import loci.visbio.util.FormsUtil;
 import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Element;
 
-/** ListOption is an option from a list in the VisBio Options dialog. */
-public class ListOption extends BioOption {
+/**
+ * ResolutionOption is an option for changing image resolution
+ * (two positive integers) in the VisBio Options dialog.
+ */
+public class ResolutionOption extends BioOption {
 
   // -- Fields --
 
   /** Panel containing GUI components. */
   private JPanel panel;
 
-  /** Text box GUI component. */
-  private JComboBox box;
+  /** X resolution text field GUI component. */
+  private JTextField resX;
+
+  /** Y resolution text field GUI component. */
+  private JTextField resY;
 
 
   // -- Constructor --
 
   /** Constructs a new option. */
-  public ListOption(String text, String tip, String[] choices) {
+  public ResolutionOption(String text, String tip, int valueX, int valueY) {
     super(text);
 
-    // combo box
-    box = new JComboBox(choices);
-    box.setToolTipText(tip);
-    box.setSelectedIndex(0);
+    // X resolution text field
+    resX = new JTextField(4);
+    resX.setText("" + valueX);
+    resX.setToolTipText(tip);
+
+    // Y resolution text field
+    resY = new JTextField(4);
+    resY.setText("" + valueY);
+    resY.setToolTipText(tip);
 
     // lay out components
-    panel = FormsUtil.makeRow(text, box);
+    panel = FormsUtil.makeRow(new Object[]
+      {text + ":", resX, new JLabel("x"), resY});
   }
 
 
-  // -- ListOption API methods --
+  // -- ResolutionOption API methods --
 
-  /** Gets this option's current setting. */
-  public String getValue() { return (String) box.getSelectedItem(); }
+  /** Gets this option's current X resolution. */
+  public int getValueX() {
+    int valueX;
+    try { valueX = Integer.parseInt(resX.getText()); }
+    catch (NumberFormatException exc) { valueX = -1; }
+    return valueX;
+  }
+
+  /** Gets this option's current Y resolution. */
+  public int getValueY() {
+    int valueY;
+    try { valueY = Integer.parseInt(resY.getText()); }
+    catch (NumberFormatException exc) { valueY = -1; }
+    return valueY;
+  }
 
 
   // -- BioOption API methods --
@@ -74,19 +98,22 @@ public class ListOption extends BioOption {
 
   /** Writes the current state to the given DOM element ("Options"). */
   public void saveState(Element el) throws SaveException {
-    Element e = XMLUtil.createChild(el, "List");
+    Element e = XMLUtil.createChild(el, "Resolution");
     e.setAttribute("name", text);
-    e.setAttribute("value", getValue());
+    e.setAttribute("resX", "" + getValueX());
+    e.setAttribute("resY", "" + getValueY());
   }
 
   /** Restores the current state from the given DOM element ("Options"). */
   public void restoreState(Element el) throws SaveException {
-    Element[] e = XMLUtil.getChildren(el, "List");
+    Element[] e = XMLUtil.getChildren(el, "Resolution");
     for (int i=0; i<e.length; i++) {
       String name = e[i].getAttribute("name");
       if (!name.equals(text)) continue;
-      String value = e[i].getAttribute("value");
-      box.setSelectedItem(value);
+      String valueX = e[i].getAttribute("resX");
+      resX.setText(valueX);
+      String valueY = e[i].getAttribute("resY");
+      resY.setText(valueY);
       break;
     }
   }
