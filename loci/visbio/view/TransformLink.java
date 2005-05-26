@@ -39,7 +39,7 @@ import visad.util.Util;
  * that produces a single image.
  */
 public class TransformLink
-  implements DisplayListener, Dynamic, Runnable, TransformListener
+  implements DisplayListener, Dynamic, Runnable, Saveable, TransformListener
 {
 
   // -- Fields --
@@ -105,9 +105,7 @@ public class TransformLink
   public TransformLink(TransformHandler h, DataTransform t) {
     handler = h;
     trans = t;
-    if (trans instanceof ImageTransform) {
-      colorHandler = new ColorHandler(this);
-    }
+    if (trans instanceof ImageTransform) colorHandler = new ColorHandler(this);
     visible = true;
     initState(null);
   }

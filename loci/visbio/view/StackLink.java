@@ -26,6 +26,7 @@ package loci.visbio.view;
 import java.util.Vector;
 import java.rmi.RemoteException;
 import loci.visbio.data.*;
+import loci.visbio.state.Dynamic;
 import loci.visbio.state.SaveException;
 import loci.visbio.util.VisUtil;
 import loci.visbio.util.XMLUtil;
@@ -53,7 +54,15 @@ public class StackLink extends TransformLink {
   protected Vector renderers;
 
   /** Dimensional axis to use for image stacks. */
-  protected int stackAxis = -2;
+  protected int stackAxis;
+
+  /**
+   * Flag indicating whether stackAxis is valid. If it is not, it will be
+   * autodetected when initState is called. Also, if it is valid, then
+   * setStackAxis will not rebuild display references unless the new axis value
+   * is different from the old one.
+   */
+  protected boolean axisValid;
 
   /** Last known dimensional position of the link. */
   protected int[] lastPos;
@@ -62,7 +71,7 @@ public class StackLink extends TransformLink {
   protected DataReferenceImpl volumeRef;
 
   /** Whether volume rendering is currently enabled. */
-  protected boolean volume = false;
+  protected boolean volume;
 
   /** Resolution of rendered volumes. */
   protected int volumeRes = StackHandler.DEFAULT_VOLUME_RESOLUTION;
@@ -86,24 +95,7 @@ public class StackLink extends TransformLink {
    * Creates a link between the given data transform and
    * the specified stack handler's display.
    */
-  public StackLink(StackHandler h, DataTransform t) {
-    super(h, t);
-    references = new Vector();
-    renderers = new Vector();
-    try { volumeRef = new DataReferenceImpl(trans.getName() + "_volume"); }
-    catch (VisADException exc) { exc.printStackTrace(); }
-
-    int axis = -1;
-    String[] dims = t.getDimTypes();
-    if (dims.length > 0) axis = 0;
-    for (int i=0; i<dims.length; i++) {
-      if (dims[i].equals("Slice")) {
-        axis = i;
-        break;
-      }
-    }
-    setStackAxis(axis);
-  }
+  public StackLink(StackHandler h, DataTransform t) { super(h, t); }
 
 
   // -- StackLink API methods --
@@ -124,7 +116,7 @@ public class StackLink extends TransformLink {
 
   /** Assigns the given axis as the stack axis. */
   public void setStackAxis(int axis) {
-    if (axis == stackAxis) return;
+    if (axisValid && axis == stackAxis) return; // no change
     stackAxis = axis;
     references.removeAllElements();
     renderers.removeAllElements();
@@ -144,6 +136,7 @@ public class StackLink extends TransformLink {
       }
     }
     catch (VisADException exc) { exc.printStackTrace(); }
+    axisValid = true;
   }
 
   /** Gets the currently assigned stack axis. */
@@ -278,6 +271,63 @@ public class StackLink extends TransformLink {
   }
 
 
+  // -- Dynamic API methods --
+
+  /** Tests whether two dynamic objects are equivalent. */
+  public boolean matches(Dynamic dyn) {
+    if (!isCompatible(dyn)) return false;
+    StackLink link = (StackLink) dyn;
+
+    int num = getSliceCount();
+    if (num != link.getSliceCount()) return false;
+    for (int i=0; i<num; i++) {
+      if (isSliceVisible(i) != link.isSliceVisible(i)) return false;
+    }
+
+    return super.matches(link) && 
+      getStackAxis() == link.getStackAxis() &&
+      getCurrentSlice() == link.getCurrentSlice() && 
+      isVolumeRendered() == link.isVolumeRendered() &&
+      getVolumeResolution() == link.getVolumeResolution();
+  }
+
+  /**
+   * Tests whether the given dynamic object can be used as an argument to
+   * initState, for initializing this dynamic object.
+   */
+  public boolean isCompatible(Dynamic dyn) { return dyn instanceof StackLink; }
+
+  /**
+   * Modifies this object's state to match that of the given object.
+   * If the argument is null, the object is initialized according to
+   * its current state instead.
+   */
+  public void initState(Dynamic dyn) {
+    if (dyn != null && !isCompatible(dyn)) return;
+    super.initState(dyn);
+
+    references = new Vector();
+    renderers = new Vector();
+    try { volumeRef = new DataReferenceImpl(trans.getName() + "_volume"); }
+    catch (VisADException exc) { exc.printStackTrace(); }
+
+    if (!axisValid) {
+      // auto-detect stack axis
+      stackAxis = -1;
+      String[] dims = trans.getDimTypes();
+      if (dims.length > 0) stackAxis = 0;
+      for (int i=0; i<dims.length; i++) {
+        if (dims[i].equals("Slice")) {
+          stackAxis = i;
+          break;
+        }
+      }
+    }
+    axisValid = false; // make sure display references get rebuilt
+    setStackAxis(stackAxis);
+  }
+
+
   // -- Saveable API methods --
 
   /** Writes the current state to the given DOM element ("LinkedData"). */
@@ -304,6 +354,7 @@ public class StackLink extends TransformLink {
 
     // restore stack parameters
     stackAxis = Integer.parseInt(el.getAttribute("axis"));
+    axisValid = true; // do not detect axis if this link is later initialized
     currentSlice = Integer.parseInt(el.getAttribute("slice"));
     String s = el.getAttribute("visibleSlices");
     visSlices = new boolean[s.length()];
