@@ -30,8 +30,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.*;
 import loci.visbio.*;
 import loci.visbio.data.*;
-import loci.visbio.state.BooleanOption;
-import loci.visbio.state.OptionManager;
+import loci.visbio.state.*;
 import loci.visbio.util.LAFUtil;
 import loci.visbio.util.SwingUtil;
 
@@ -133,8 +132,10 @@ public class HelpManager extends LogicManager {
       String msg = evt.getMessage();
       if ("add data".equals(msg)) {
         OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
+        StateManager sm = (StateManager) bio.getManager(StateManager.class);
         BooleanOption option = (BooleanOption) om.getOption(DISPLAY_DATA);
-        if (option.getValue()) { // ask about displaying new data objects
+        if (option.getValue() && !sm.isRestoring()) {
+          // ask about displaying new data objects
           checkVisualization();
         }
       }
