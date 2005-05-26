@@ -73,17 +73,19 @@ public class StackPanel extends TransformPanel {
 
     DataTransform trans = (DataTransform) transformList.getSelectedValue();
     TransformLink tlink = trans == null ? null : handler.getLink(trans);
-    boolean b = tlink instanceof StackLink;
-    stackLabel.setEnabled(b);
-    stackBox.setEnabled(b);
-    toggleSlices.setEnabled(b);
-    sliceVisible.setEnabled(b);
-    highlight.setEnabled(b);
-    render.setEnabled(b);
-    renderRes.setEnabled(b);
-    if (b) {
-      StackLink link = (StackLink) tlink;
-
+    boolean isStack = tlink instanceof StackLink;
+    StackLink slink = isStack ? (StackLink) tlink : null;
+    boolean hasAxis = isStack && slink.getStackAxis() >= 0;
+    boolean isRendered = isStack && slink.isVolumeRendered();
+    if (visible.isEnabled()) visible.setEnabled(!isRendered);
+    stackLabel.setEnabled(isStack && !isRendered);
+    stackBox.setEnabled(isStack && !isRendered);
+    toggleSlices.setEnabled(isStack && hasAxis && !isRendered);
+    sliceVisible.setEnabled(isStack && hasAxis && !isRendered);
+    highlight.setEnabled(isStack);
+    render.setEnabled(isStack && hasAxis);
+    renderRes.setEnabled(isStack && hasAxis);
+    if (isStack) {
       // update "stack axis" combo box
       String[] dims = trans.getDimTypes();
       stackBox.removeActionListener(this);
@@ -100,20 +102,20 @@ public class StackPanel extends TransformPanel {
         stackBox.removeAllItems();
         for (int i=0; i<items.length; i++) stackBox.addItem(items[i]);
       }
-      int stackAxis = link.getStackAxis();
+      int stackAxis = slink.getStackAxis();
       stackBox.setSelectedIndex(stackAxis + 1);
       stackBox.addActionListener(this);
 
       // update "current slice visible" checkbox
-      int slice = link.getCurrentSlice();
-      sliceVisible.setSelected(link.isSliceVisible(slice));
+      int slice = slink.getCurrentSlice();
+      sliceVisible.setSelected(slink.isSliceVisible(slice));
 
       // update "highlight current slice" checkbox
-      highlight.setSelected(link.isBoundingBoxVisible());
+      highlight.setSelected(slink.isBoundingBoxVisible());
 
       // update "render as a volume" checkbox and spinner
-      render.setSelected(link.isVolumeRendered());
-      renderRes.setValue(new Integer(link.getVolumeResolution()));
+      render.setSelected(slink.isVolumeRendered());
+      renderRes.setValue(new Integer(slink.getVolumeResolution()));
     }
   }
 
@@ -152,6 +154,7 @@ public class StackPanel extends TransformPanel {
       DataTransform trans = (DataTransform) transformList.getSelectedValue();
       StackLink link = (StackLink) handler.getLink(trans);
       link.setVolumeRendered(render.isSelected());
+      updateControls();
     }
     else super.actionPerformed(e);
   }
