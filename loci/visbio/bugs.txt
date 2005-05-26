@@ -26,7 +26,8 @@ Data engine
 Display engine
 --------------
 
-[M] Displays are never garbage collected, nor is any data ever linked to them.
+[M] Displays are never garbage collected. Neither are the
+    linked data objects (even if they are removed first).
 
 
 State engine
