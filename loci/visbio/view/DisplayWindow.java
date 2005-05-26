@@ -60,7 +60,7 @@ public class DisplayWindow extends JFrame
   protected boolean threeD;
 
 
-  // -- Handlers --
+  // -- Fields - handlers --
 
   /** Handles logic for controlling the VisAD display's view. */
   protected ViewHandler viewHandler;
@@ -72,7 +72,7 @@ public class DisplayWindow extends JFrame
   protected TransformHandler transformHandler;
 
 
-  // -- GUI components --
+  // -- Fields - GUI components --
 
   /** Associated display manager. */
   protected DisplayManager manager;
@@ -87,7 +87,13 @@ public class DisplayWindow extends JFrame
   protected BreakawayPanel controls;
 
 
-  // -- Other fields --
+  // -- Fields - initial state --
+
+  /** Initial edge of breakaway panel. */
+  protected String initialEdge;
+
+
+  // -- Fields - other --
 
   /** String representation of this display. */
   protected String string;
@@ -309,7 +315,9 @@ public class DisplayWindow extends JFrame
 
       // breakaway panel for display controls
       controls = new BreakawayPanel(pane, "Controls - " + name, true);
-      controls.setEdge(BorderLayout.EAST);
+      if (initialEdge == null) initialEdge = BorderLayout.EAST;
+      else if (initialEdge.equals("null")) initialEdge = null;
+      controls.setEdge(initialEdge);
 
       // add display controls breakaway window to window manager
       WindowManager wm = (WindowManager)
@@ -409,6 +417,8 @@ public class DisplayWindow extends JFrame
     Element child = XMLUtil.createChild(el, "Display");
     child.setAttribute("name", name);
     child.setAttribute("threeD", "" + threeD);
+    child.setAttribute("edge", "" +
+      (controls == null ? initialEdge : controls.getEdge()));
     viewHandler.saveState(child);
     captureHandler.saveState(child);
     transformHandler.saveState(child);
@@ -418,6 +428,7 @@ public class DisplayWindow extends JFrame
   public void restoreState(Element el) throws SaveException {
     name = el.getAttribute("name");
     threeD = el.getAttribute("threeD").equalsIgnoreCase("true");
+    initialEdge = el.getAttribute("edge");
 
     createHandlers();
     viewHandler.restoreState(el);
