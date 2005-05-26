@@ -446,6 +446,7 @@ public class CaptureHandler implements Saveable {
     }
     Vector vo = getPositions();
     if (vo != null) StateManager.mergeStates(vo, vn);
+    positions = vn;
 
     // restore other parameters
     movieSpeed = Integer.parseInt(child.getAttribute("speed"));
