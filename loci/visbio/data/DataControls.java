@@ -153,6 +153,7 @@ public class DataControls extends ControlPanel
 
     // data information display panel
     dataInfo = new JEditorPane();
+    dataInfo.setPreferredSize(new java.awt.Dimension(0, 0));
     dataInfo.setEditable(false);
     dataInfo.setContentType("text/html");
     dataInfo.setToolTipText(
@@ -194,7 +195,7 @@ public class DataControls extends ControlPanel
     // lay out components
     PanelBuilder builder = new PanelBuilder(new FormLayout(
       "pref:grow, 3dlu, pref",
-      "fill:pref, 5dlu, fill:200:grow"));
+      "fill:pref, 5dlu, fill:50:grow"));
     builder.setDefaultDialogBorder();
     CellConstraints cc = new CellConstraints();
     builder.add(treePane, cc.xy(1, 1));
