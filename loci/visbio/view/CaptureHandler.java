@@ -64,25 +64,22 @@ public class CaptureHandler implements Saveable {
   // -- Fields - initial state --
 
   /** List of positions. */
-  protected Vector positions;
+  protected Vector positions = new Vector();
 
   /** Movie speed. */
-  protected int movieSpeed;
+  protected int movieSpeed = 8;
 
   /** Movie frames per second. */
-  protected int movieFPS;
+  protected int movieFPS = 10;
 
   /** Whether transitions use a smoothing sine function. */
-  protected boolean movieSmooth;
+  protected boolean movieSmooth = true;
 
 
   // -- Constructor --
 
   /** Creates a display capture handler. */
-  public CaptureHandler(DisplayWindow dw) {
-    window = dw;
-    positions = new Vector();
-  }
+  public CaptureHandler(DisplayWindow dw) { window = dw; }
 
 
   // -- CaptureHandler API methods --
