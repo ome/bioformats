@@ -120,25 +120,48 @@ public class ColorHandler {
       new DisplayRealType[] {Display.RGB, Display.RGBA});
   }
 
-  /** Guesses at good initial color mappings and applies them. */
-  public void initColors() {
+  /**
+   * Applies color settings to the latest linked data object.
+   * If the reset flag is set, guesses at good initial color mappings.
+   */
+  public void initColors(boolean reset) {
     refreshPreviewData();
 
-    // apply default color table behavior
-    red = colorPane.getRed();
-    green = colorPane.getGreen();
-    blue = colorPane.getBlue();
-    setColors(brightness, contrast, colorModel, red, green, blue, true);
-
-    // apply default range scaling behavior
+    if (reset) { // reset to the default color settings
+      brightness = NORMAL_BRIGHTNESS;
+      contrast = NORMAL_CONTRAST;
+      opacityValue = NORMAL_OPACITY;
+      opacityModel = ColorUtil.CONSTANT_ALPHA;
+      colorModel = ColorUtil.RGB_MODEL;
+      red = colorPane.getRed();
+      green = colorPane.getGreen();
+      blue = colorPane.getBlue();
+    }
     ScalarMap[] maps = getMaps();
-    lo = new double[maps.length];
-    Arrays.fill(lo, 0.0);
-    hi = new double[maps.length];
-    Arrays.fill(hi, 255.0);
-    fixed = new boolean[maps.length];
-    Arrays.fill(fixed, false);
+    if (reset || lo == null) {
+      lo = new double[maps.length];
+      Arrays.fill(lo, 0.0);
+    }
+    if (reset || hi == null) {
+      hi = new double[maps.length];
+      Arrays.fill(hi, 255.0);
+    }
+    if (reset || fixed == null) {
+      fixed = new boolean[maps.length];
+      Arrays.fill(fixed, false);
+    }
+    if (reset || colorTables == null) {
+      colorTables = ColorUtil.computeColorTables(maps,
+        brightness, contrast, colorModel, red, green, blue);
+    }
+
+    DisplayImpl display = getWindow().getDisplay();
+    VisUtil.setDisplayDisabled(display, true);
+    setColors(brightness, contrast, colorModel, red, green, blue, false);
+    setOpacity(opacityValue, opacityModel, false);
     setRanges(lo, hi, fixed);
+    setTables(colorTables);
+    VisUtil.setDisplayDisabled(display, false);
   }
 
   /** Refreshes preview data from the transform link. */
@@ -169,8 +192,8 @@ public class ColorHandler {
     DisplayWindow window = getWindow();
     int rval = colorPane.showDialog(window.getControls());
     if (rval != ColorPane.APPROVE_OPTION) return;
-    DisplayImpl d = window.getDisplay();
-    VisUtil.setDisplayDisabled(d, true);
+    DisplayImpl display = window.getDisplay();
+    VisUtil.setDisplayDisabled(display, true);
     setColors(colorPane.getBrightness(), colorPane.getContrast(),
       colorPane.getColorMode(), colorPane.getRed(), colorPane.getGreen(),
       colorPane.getBlue(), false);
@@ -178,7 +201,7 @@ public class ColorHandler {
       colorPane.getOpacityModel(), false);
     setRanges(colorPane.getLo(), colorPane.getHi(), colorPane.getFixed());
     setTables(colorPane.getTables());
-    VisUtil.setDisplayDisabled(d, false);
+    VisUtil.setDisplayDisabled(display, false);
   }
 
   /** Updates color settings to those given. */
@@ -340,8 +363,6 @@ public class ColorHandler {
       fixed = handler.getFixed();
       colorTables = handler.getTables();
     }
-
-    // CTR TODO set stuff according to initial state variables
 
     if (colorPane == null) colorPane = new ColorPane(this);
   }

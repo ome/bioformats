@@ -478,9 +478,12 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
       panel.updateControls();
 
       // reinitialize colors
+      StateManager sm = (StateManager)
+        window.getVisBio().getManager(StateManager.class);
+      boolean reset = !sm.isRestoring();
       for (int i=0; i<lnk.length; i++) {
         ColorHandler colorHandler = lnk[i].getColorHandler();
-        if (colorHandler != null) colorHandler.initColors();
+        if (colorHandler != null) colorHandler.initColors(reset);
       }
 
       if (lnk.length > 0) window.repack();

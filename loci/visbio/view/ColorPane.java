@@ -367,6 +367,8 @@ public class ColorPane extends DialogPane
     contrastValue.setText("" + cont);
     opacity.setValue(opac);
     opacityValue.setText("" + opac);
+    if (om == ColorUtil.CONSTANT_ALPHA) constant.setSelected(true);
+    else if (om == ColorUtil.CURVED_ALPHA) curved.setSelected(true);
     if (cm == ColorUtil.RGB_MODEL) rgb.setSelected(true);
     else if (cm == ColorUtil.HSV_MODEL) hsv.setSelected(true);
     else if (cm == ColorUtil.COMPOSITE_MODEL) composite.setSelected(true);
