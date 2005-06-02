@@ -114,6 +114,16 @@ public class Dataset extends ImageTransform {
   public Dataset() { super(); }
 
   /**
+   * Constructs a multidimensional data object.
+   * See the complete constructor for more information.
+   */
+  public Dataset(String name, String pattern,
+    String[] ids, int[] lengths, String[] dims)
+  {
+    this(name, pattern, ids, lengths, dims, Float.NaN, Float.NaN, Float.NaN);
+  }
+
+  /**
    * Constructs a new multidimensional data object from the given list of
    * source files. Any multidimensional file organization can be specified,
    * rasterized, using the ids source file list coupled with the lengths
@@ -133,11 +143,14 @@ public class Dataset extends ImageTransform {
    * @param ids List of source files, with dimensions rasterized.
    * @param lengths List of dimension lengths.
    * @param dims List of each dimension's meaning (Time, Slice, etc.).
+   * @param width Physical width of each image, in microns.
+   * @param height Physical height of each image, in microns.
+   * @param step Physical distance between image slices, in microns.
    */
-  public Dataset(String name, String pattern,
-    String[] ids, int[] lengths, String[] dims)
+  public Dataset(String name, String pattern, String[] ids,
+    int[] lengths, String[] dims, float width, float height, float step)
   {
-    super(null, name);
+    super(null, name, width, height, step);
     this.pattern = pattern;
     this.ids = ids;
     this.lengths = lengths;

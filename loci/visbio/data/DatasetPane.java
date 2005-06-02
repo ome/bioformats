@@ -78,6 +78,21 @@ public class DatasetPane extends WizardPane implements DocumentListener {
   /** Combo box for selecting each file's dimensional content. */
   private BioComboBox dimBox;
 
+  /** Checkbox for whether to use micron information. */
+  private JCheckBox useMicrons;
+
+  /** Text field for width in microns. */
+  private JTextField micronWidth;
+
+  /** Text field for height in microns. */
+  private JTextField micronHeight;
+
+  /** Text field for step size in microns. */
+  private JTextField micronStep;
+
+  /** Panel containing micron-related widgets. */
+  private JPanel micronPanel;
+
 
   // -- Other fields --
 
@@ -138,6 +153,29 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     dimBox.setEditable(true);
     dimBox.setSelectedIndex(1);
 
+    // microns checkbox
+    useMicrons = new JCheckBox("Use microns instead of pixels");
+    if (!LAFUtil.isMacLookAndFeel()) useMicrons.setMnemonic('u');
+    useMicrons.setActionCommand("microns");
+    useMicrons.addActionListener(this);
+
+    // width in microns field
+    micronWidth = new JTextField(4);
+    micronWidth.setToolTipText("Width of each image in microns");
+
+    // height in microns field
+    micronHeight = new JTextField(4);
+    micronHeight.setToolTipText("Height of each image in microns");
+
+    // micron step size field
+    micronStep = new JTextField(4);
+    micronStep.setToolTipText("Distance between slices in microns");
+
+    // panel with micron-related widgets
+    micronPanel = FormsUtil.makeRow(new Object[]
+      {useMicrons, micronWidth, "x", micronHeight, "step", micronStep},
+      new boolean[] {false, true, false, true, false, true});
+
     // lay out second page
     second = new JPanel();
     second.setLayout(new BorderLayout());
@@ -195,6 +233,9 @@ public class DatasetPane extends WizardPane implements DocumentListener {
       int returnVal = fileBox.showOpenDialog(this);
       if (returnVal != JFileChooser.APPROVE_OPTION) return;
       selectFile(fileBox.getSelectedFile());
+    }
+    else if (command.equals("microns")) {
+      toggleMicronPanel(useMicrons.isSelected());
     }
     else if (command.equals("next")) {
       // lay out page 2 in a separate thread
@@ -334,35 +375,43 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     StringBuffer sb = new StringBuffer();
     sb.append("pref, 3dlu, pref");
     for (int i=0; i<blocks; i++) sb.append(", 3dlu, pref");
-    sb.append(", 3dlu, pref");
+    sb.append(", 3dlu, pref, 3dlu, pref");
 
     final PanelBuilder builder = new PanelBuilder(new FormLayout(
-      "pref, 3dlu, pref:grow, 3dlu, pref", sb.toString()));
+      "pref, 3dlu, pref:grow", sb.toString()));
     CellConstraints cc = new CellConstraints();
-    builder.addSeparator(pattern, cc.xyw(1, 1, 5));
-    builder.addLabel("Dataset &name", cc.xy(1, 3)).setLabelFor(nameField);
-    builder.add(nameField, cc.xyw(3, 3, 3));
+    builder.addSeparator(pattern, cc.xyw(1, 1, 3));
+    builder.addLabel("Dataset &name",
+      cc.xy(1, 3, "right, center")).setLabelFor(nameField);
+    builder.add(nameField, cc.xy(3, 3));
 
-    for (int i=0; i<blocks; i++) {
+    int y = 5;
+    for (int i=0; i<blocks; i++, y+=2) {
       String s = (i + 1) + " - [min=" + min[i] +
         "; max=" + max[i] + "; step=" + step[i] + "]";
       if (i < 9) s = "&" + s;
-      int y = 2 * i + 5;
-      JLabel label = builder.addLabel(s, cc.xyw(1, y, 3));
-      label.setLabelFor(widgets[i]);
-      label.setHorizontalAlignment(JLabel.RIGHT);
-      builder.add(widgets[i], cc.xy(5, y));
+      builder.addLabel(s,
+        cc.xy(1, y, "right, center")).setLabelFor(widgets[i]);
+      builder.add(widgets[i], cc.xy(3, y));
     }
 
     dimLabel = builder.addLabel("File's images &define a new dimension",
-      cc.xyw(1, 2 * blocks + 5, 3));
+      cc.xy(1, y, "right, center"));
     dimLabel.setLabelFor(dimBox);
-    dimLabel.setHorizontalAlignment(JLabel.RIGHT);
-    builder.add(dimBox, cc.xy(5, 2 * blocks + 5));
+    builder.add(dimBox, cc.xy(3, y));
+    y += 2;
+    builder.add(micronPanel, cc.xyw(1, y, 3));
 
     // enable/disable dimensional combo box
     final boolean b = numImages > 1;
     dimLabel.setEnabled(b);
+
+    // clear out micron information
+    micronWidth.setText("");
+    micronHeight.setText("");
+    micronStep.setText("");
+    useMicrons.setSelected(false);
+    toggleMicronPanel(false);
 
     Util.invoke(false, new Runnable() {
       public void run() {
@@ -390,9 +439,15 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     }
     if (b) dims[len] = (String) dimBox.getSelectedItem();
 
+    // compile micron information
+    boolean use = useMicrons.isEnabled();
+    float width = use ? Float.parseFloat(micronWidth.getText()) : Float.NaN;
+    float height = use ? Float.parseFloat(micronHeight.getText()) : Float.NaN;
+    float step = use ? Float.parseFloat(micronStep.getText()) : Float.NaN;
+
     // construct data object
-    data = new Dataset(nameField.getText(),
-      groupField.getText(), files, lengths, dims);
+    data = new Dataset(nameField.getText(), groupField.getText(),
+      files, lengths, dims, width, height, step);
 
     Util.invoke(false, new Runnable() {
       public void run() { sendFinishEvent(); }
@@ -400,5 +455,11 @@ public class DatasetPane extends WizardPane implements DocumentListener {
   }
 
   protected void sendFinishEvent() { super.actionPerformed(finishEvent); }
+
+  /** Toggles availability of micron-related widgets. */
+  protected void toggleMicronPanel(boolean on) {
+    int count = micronPanel.getComponentCount();
+    for (int i=1; i<count; i++) micronPanel.getComponent(i).setEnabled(on);
+  }
 
 }

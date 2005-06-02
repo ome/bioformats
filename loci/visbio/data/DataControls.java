@@ -424,7 +424,7 @@ public class DataControls extends ControlPanel
         lm.getVisBio().getManager(DisplayManager.class);
       if (disp == null) return;
       DisplayWindow[] dd = disp.getDisplays();
- 
+
       boolean canDisplay2D = data.canDisplay2D();
       boolean canDisplay3D = data.canDisplay3D();
 

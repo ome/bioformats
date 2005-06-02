@@ -29,7 +29,17 @@ import visad.*;
 /** ImageTransform is a DataTransform superclass that provides image data. */
 public abstract class ImageTransform extends DataTransform {
 
+  // -- Constants --
+
+  /** Micron unit. */
+  public static final ScaledUnit MICRON =
+    new ScaledUnit(1e-6, SI.meter, "mu"); // VisAD font does not display "µ"
+
+
   // -- Fields --
+
+  /** Physical image dimensions in microns. */
+  protected double micronWidth, micronHeight, micronStep;
 
   /** X-axis type. */
   protected RealType xType;
@@ -54,12 +64,34 @@ public abstract class ImageTransform extends DataTransform {
 
   /** Creates an image transform with the given transform as its parent. */
   public ImageTransform(DataTransform parent, String name) {
+    this(parent, name, Double.NaN, Double.NaN, Double.NaN);
+  }
+
+  /**
+   * Creates an image transform with the given transform as its parent,
+   * that is dimensioned according to the specified values in microns.
+   */
+  public ImageTransform(DataTransform parent, String name,
+    double width, double height, double step)
+  {
     super(parent, name);
 
+    // initialize physical dimensions
+    if (parent instanceof ImageTransform) {
+      ImageTransform it = (ImageTransform) parent;
+      // use parent values for physical dimensions if none specified
+      if (width != width) width = it.getMicronWidth();
+      if (height != height) height = it.getMicronHeight();
+      if (step != step) step = it.getMicronStep();
+    }
+    micronWidth = width;
+    micronHeight = height;
+    micronStep = step;
+
     // initialize internal MathTypes
-    xType = VisUtil.getRealType(name + "_X");
-    yType = VisUtil.getRealType(name + "_Y");
-    zType = VisUtil.getRealType(name + "_Z");
+    xType = VisUtil.getRealType(name + "_X", MICRON);
+    yType = VisUtil.getRealType(name + "_Y", MICRON);
+    zType = VisUtil.getRealType(name + "_Z", MICRON);
   }
 
 
@@ -73,6 +105,15 @@ public abstract class ImageTransform extends DataTransform {
 
   /** Gets number of range components at each pixel. */
   public abstract int getRangeCount();
+
+  /** Gets physical image width in microns. */
+  public double getMicronWidth() { return micronWidth; }
+
+  /** Gets physical image height in microns. */
+  public double getMicronHeight() { return micronHeight; }
+
+  /** Gets physical distance between image slices in microns. */
+  public double getMicronStep() { return micronStep; }
 
   /** Gets the RealType used for the X-axis. */
   public RealType getXType() { return xType; }
@@ -106,6 +147,21 @@ public abstract class ImageTransform extends DataTransform {
       catch (VisADException exc) { exc.printStackTrace(); }
     }
     return functionType;
+  }
+
+  /**
+   * Gets units for use with the domain sets, computed from pixel and micron
+   * information. Pixel range is assumed to be from 0 to width-1 (X),
+   * 0 to height-1 (Y), and -1 to 1 (Z).
+   */
+  public Unit[] getSetUnits(int stackAxis) {
+    ScaledUnit xu = new ScaledUnit(width / xlen, MICRON);
+    ScaledUnit yu = new ScaledUnit(height / ylen, MICRON);
+    // CTR START HERE
+    // this method will aid in the grabbing of units for use in domain set
+    // construction in the various subclasses and resampling spots. base this
+    // on test/SetUnitTest.java, but the Z axis is tricky because of the
+    // -1 to 1 range... maybe we will need an OffsetUnit here?
   }
 
 
