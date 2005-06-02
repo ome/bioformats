@@ -193,11 +193,19 @@ public abstract class VisUtil {
    * invalid characters within the name to underscores.
    */
   public static RealType getRealType(String name) {
+    return getRealType(name, null);
+  }
+
+  /**
+   * Gets a RealType with the given name and unit, converting
+   * invalid characters within the name to underscores.
+   */
+  public static RealType getRealType(String name, Unit unit) {
     char[] c = name.toCharArray();
     for (int i=0; i<c.length; i++) {
       if (" .()".indexOf(c[i]) >= 0) c[i] = '_';
     }
-    return RealType.getRealType(new String(c));
+    return RealType.getRealType(new String(c), unit);
   }
 
 
