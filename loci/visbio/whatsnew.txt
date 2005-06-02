@@ -1,9 +1,10 @@
 v3.00 final - Not yet released
 
 - ADDED: "Sample datasets" menu for automatically downloading sample data
-- ADDED: Much more robust XML-based program states
+- ADDED: More robust XML-based program states
 - ADDED: Options for controlling thumbnailing parameters
 - ADDED: Options for controlling image stack parameters
+- ADDED: Ability to specify dataset's physical dimensions in microns
 
 - TWEAK: Option to toggle hiding of all windows when main window is minimized
 
