@@ -247,6 +247,34 @@ public class DatasetPane extends WizardPane implements DocumentListener {
       }.start();
     }
     else if (command.equals("ok")) {
+      // check parameters
+      boolean use = useMicrons.isEnabled();
+      float width = Float.NaN, height = Float.NaN, step = Float.NaN;
+      try {
+        width = use ? Float.parseFloat(micronWidth.getText()) : Float.NaN;
+        height = use ? Float.parseFloat(micronHeight.getText()) : Float.NaN;
+        step = use ? Float.parseFloat(micronStep.getText()) : Float.NaN;
+      }
+      catch (NumberFormatException exc) { }
+      if (use) {
+        String msg = null;
+        if (width != width || width <= 0) {
+          msg = "Invalid physical image width.";
+        }
+        else if (height != height || height <= 0) {
+          msg = "Invalid physical image height.";
+        }
+        else if (step != step || step <= 0) {
+          msg = "Invalid physical slice distance.";
+        }
+        if (msg != null) {
+          JOptionPane.showMessageDialog(dialog,
+            msg, "VisBio", JOptionPane.ERROR_MESSAGE);
+          return;
+        }
+      }
+
+      // finish up
       pleaseWait("Reading files...");
       disableButtons();
       finishEvent = e;
@@ -441,9 +469,13 @@ public class DatasetPane extends WizardPane implements DocumentListener {
 
     // compile micron information
     boolean use = useMicrons.isEnabled();
-    float width = use ? Float.parseFloat(micronWidth.getText()) : Float.NaN;
-    float height = use ? Float.parseFloat(micronHeight.getText()) : Float.NaN;
-    float step = use ? Float.parseFloat(micronStep.getText()) : Float.NaN;
+    float width = Float.NaN, height = Float.NaN, step = Float.NaN;
+    try {
+      width = use ? Float.parseFloat(micronWidth.getText()) : Float.NaN;
+      height = use ? Float.parseFloat(micronHeight.getText()) : Float.NaN;
+      step = use ? Float.parseFloat(micronStep.getText()) : Float.NaN;
+    }
+    catch (NumberFormatException exc) { }
 
     // construct data object
     data = new Dataset(nameField.getText(), groupField.getText(),
