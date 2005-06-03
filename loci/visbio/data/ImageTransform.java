@@ -89,9 +89,9 @@ public abstract class ImageTransform extends DataTransform {
     micronStep = step;
 
     // initialize internal MathTypes
-    xType = VisUtil.getRealType(name + "_X", MICRON);
-    yType = VisUtil.getRealType(name + "_Y", MICRON);
-    zType = VisUtil.getRealType(name + "_Z", MICRON);
+    xType = VisUtil.getRealType(name + "_X", width == width ? MICRON : null);
+    yType = VisUtil.getRealType(name + "_Y", height == height ? MICRON : null);
+    zType = VisUtil.getRealType(name + "_Z", step == step ? MICRON : null);
   }
 
 
@@ -155,8 +155,10 @@ public abstract class ImageTransform extends DataTransform {
    * 0 to height-1 (Y).
    */
   public Unit[] getImageUnits() {
-    Unit xu = new ScaledUnit(micronWidth / getImageWidth(), MICRON);
-    Unit yu = new ScaledUnit(micronHeight / getImageHeight(), MICRON);
+    Unit xu = micronWidth == micronWidth ?
+      new ScaledUnit(micronWidth / getImageWidth(), MICRON) : null;
+    Unit yu = micronHeight == micronHeight ?
+      new ScaledUnit(micronHeight / getImageHeight(), MICRON) : null;
     return new Unit[] {xu, yu};
   }
 
@@ -166,6 +168,7 @@ public abstract class ImageTransform extends DataTransform {
    */
   public Unit getZUnit(int zAxis) {
     if (zAxis < 0 || zAxis >= lengths.length) return null;
+    if (micronStep != micronStep) return null;
     double q = micronStep * lengths[zAxis] / 2;
     return new OffsetUnit(q, new ScaledUnit(q, MICRON));
   }
