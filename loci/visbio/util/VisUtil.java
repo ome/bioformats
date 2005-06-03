@@ -168,12 +168,42 @@ public abstract class VisUtil {
   public static FlatField switchType(FlatField field, FunctionType newType)
     throws VisADException, RemoteException
   {
+    return switchType(field, newType, null);
+  }
+
+  /**
+   * Converts a FlatField's MathType into the one given (if compatible),
+   * and uses the specified domain set units.
+   */
+  public static FlatField switchType(FlatField field, FunctionType newType,
+    Unit[] units) throws VisADException, RemoteException
+  {
     if (field == null) throw new VisADException("field cannot be null");
     if (newType == null) throw new VisADException("newType cannot be null");
     if (!newType.equalsExceptName(field.getType())) {
       throw new VisADException("Types do not match");
     }
+
+    // there is no way to alter a domain set's units, so we are forced to
+    // reconstruct the domain set to set the units properly
     Set domainSet = field.getDomainSet();
+    if (domainSet instanceof LinearSet) {
+      LinearSet set = (LinearSet) domainSet;
+      int dim = domainSet.getDimension();
+      double[] first = new double[dim];
+      double[] last = new double[dim];
+      int[] lengths = new int[dim];
+      for (int i=0; i<dim; i++) {
+        Linear1DSet iset = set.getLinear1DComponent(i);
+        first[i] = iset.getFirst();
+        last[i] = iset.getLast();
+        lengths[i] = iset.getLength();
+      }
+      domainSet = (Set) LinearNDSet.create(newType.getDomain(),
+        first, last, lengths, null, units, null);
+    }
+    else throw new VisADException("domain set not linear");
+
     CoordinateSystem rangeCoordSys = field.getRangeCoordinateSystem()[0];
     Set[] rangeSets = field.getRangeSets();
     Unit[][] rangeUnits = field.getRangeUnits();
