@@ -39,14 +39,6 @@ State engine
     30 MB worth of overlays, loading them all back in every time the user wants
     to undo a simple overlay alteration is prohibitively expensive.
 
-[H] Fix improper restoration of 3D displays.
-
-[H] Fix improper restoration of display color settings.
-
-[H] Fix improper restoration of display positions on Capture panel.
-
-[M] Save and restore breakaway control panel properly.
-
 [L] Flag indicating whether latest state change should "stack up" or "replace"
     last change (if last change was of the same type as this one).
 
