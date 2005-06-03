@@ -400,9 +400,13 @@ public class StackLink extends TransformLink {
       RealType xbox = it.getXType();
       RealType ybox = it.getYType();
       RealType zbox = it.getZType();
+      Unit[] imageUnits = it.getImageUnits();
+      Unit[] xyzUnits = {imageUnits[0], imageUnits[1], it.getZUnit(stackAxis)};
+      // CTR START HERE:
+      //why isn't this unit assignment orienting the bounding box properly?
       try {
         RealTupleType xyz = new RealTupleType(xbox, ybox, zbox);
-        setData(new Gridded3DSet(xyz, samps, 5));
+        setData(new Gridded3DSet(xyz, samps, 5, null, xyzUnits, null, false));
       }
       catch (VisADException exc) { exc.printStackTrace(); }
     }
@@ -469,6 +473,7 @@ public class StackLink extends TransformLink {
     }
     if (stackAxis >= 0) pos[stackAxis] = 0;
 
+    // compute volume data
     if (thumbs) setData(DUMMY, volumeRef, false);
     else {
       if (volume) {
@@ -478,11 +483,13 @@ public class StackLink extends TransformLink {
         ImageTransform it = (ImageTransform) trans;
         RealType zType = it.getZType();
         FunctionType imageType = it.getType();
+        Unit[] units = it.getImageUnits();
         try {
           if (collapse == null) {
             // use image transform's recommended MathType
             for (int i=0; i<len; i++) {
-              slices[i] = VisUtil.switchType((FlatField) slices[i], imageType);
+              slices[i] =
+                VisUtil.switchType((FlatField) slices[i], imageType, units);
             }
             // compile slices into a single volume and collapse
             collapse = VisUtil.collapse(

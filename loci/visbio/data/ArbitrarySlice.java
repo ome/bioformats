@@ -229,6 +229,7 @@ public class ArbitrarySlice extends DataTransform
     RealType yType = it.getYType();
     RealType zType = it.getZType();
     FunctionType imageType = it.getType();
+    Unit[] imageUnits = it.getImageUnits();
     RealTupleType xyz = null;
     try { xyz = new RealTupleType(xType, yType, zType); }
     catch (VisADException exc) { exc.printStackTrace(); }
@@ -351,9 +352,9 @@ public class ArbitrarySlice extends DataTransform
           fields[i] = (FlatField) data;
         }
         try {
-          // use image transform's recommended MathType
+          // use image transform's recommended MathType and Units
           for (int i=0; i<len; i++) {
-            fields[i] = VisUtil.switchType(fields[i], imageType);
+            fields[i] = VisUtil.switchType(fields[i], imageType, imageUnits);
           }
           // compile slices into a single volume and collapse
           collapse = VisUtil.collapse(VisUtil.makeField(fields, zType, -1, 1));

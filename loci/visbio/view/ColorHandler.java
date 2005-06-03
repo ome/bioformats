@@ -174,7 +174,9 @@ public class ColorHandler {
       try {
         if (trans instanceof ImageTransform) {
           ImageTransform it = (ImageTransform) trans;
-          if (ff != null) ff = VisUtil.switchType(ff, it.getType());
+          if (ff != null) {
+            ff = VisUtil.switchType(ff, it.getType(), it.getImageUnits());
+          }
         }
         colorPane.setPreviewData(ff);
       }

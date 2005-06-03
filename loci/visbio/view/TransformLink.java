@@ -475,8 +475,10 @@ public class TransformLink
     {
       // special case: use ImageTransform's suggested MathType instead
       FlatField ff = (FlatField) d;
-      FunctionType ftype = ((ImageTransform) trans).getType();
-      try { d = VisUtil.switchType(ff, ftype); }
+      ImageTransform it = (ImageTransform) trans;
+      FunctionType ftype = it.getType();
+      Unit[] units = it.getImageUnits();
+      try { d = VisUtil.switchType(ff, ftype, units); }
       catch (VisADException exc) { exc.printStackTrace(); }
       catch (RemoteException exc) { exc.printStackTrace(); }
     }

@@ -423,7 +423,7 @@ public class DataSampling extends ImageTransform {
       }
       if (!same) {
         // resample field to proper resolution
-        ff = (FlatField) ff.resample(new LinearNDSet(set.getType(),
+        ff = (FlatField) ff.resample((Set) LinearNDSet.create(set.getType(),
           nlo, nhi, res), Data.WEIGHTED_AVERAGE, Data.NO_ERRORS);
       }
 
@@ -447,8 +447,8 @@ public class DataSampling extends ImageTransform {
         // adjust field set appropriately
         FunctionType ffType = (FunctionType) ff.getType();
         Set ffSet = canUseInteger ?
-          new IntegerNDSet(ffType.getDomain(), res) :
-          new LinearNDSet(ffType.getDomain(), nlo, nhi, res);
+          (Set) IntegerNDSet.create(ffType.getDomain(), res) :
+          (Set) LinearNDSet.create(ffType.getDomain(), nlo, nhi, res);
         float[][] ffSamples = ff.getFloats(false);
         ff = new FlatField(ffType, ffSet);
         ff.setSamples(ffSamples);

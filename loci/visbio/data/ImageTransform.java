@@ -150,18 +150,24 @@ public abstract class ImageTransform extends DataTransform {
   }
 
   /**
-   * Gets units for use with the domain sets, computed from pixel and micron
-   * information. Pixel range is assumed to be from 0 to width-1 (X),
-   * 0 to height-1 (Y), and -1 to 1 (Z).
+   * Gets X and Y units for use with image domain sets, computed from micron
+   * information. Pixel range is assumed to be from 0 to width-1 (X) and
+   * 0 to height-1 (Y).
    */
-  public Unit[] getSetUnits(int stackAxis) {
-    ScaledUnit xu = new ScaledUnit(width / xlen, MICRON);
-    ScaledUnit yu = new ScaledUnit(height / ylen, MICRON);
-    // CTR START HERE
-    // this method will aid in the grabbing of units for use in domain set
-    // construction in the various subclasses and resampling spots. base this
-    // on test/SetUnitTest.java, but the Z axis is tricky because of the
-    // -1 to 1 range... maybe we will need an OffsetUnit here?
+  public Unit[] getImageUnits() {
+    Unit xu = new ScaledUnit(micronWidth / getImageWidth(), MICRON);
+    Unit yu = new ScaledUnit(micronHeight / getImageHeight(), MICRON);
+    return new Unit[] {xu, yu};
+  }
+
+  /**
+   * Gets Z unit for use with image stack domain sets, computed from
+   * micron information. Z range is assumed to be from -1 to 1.
+   */
+  public Unit getZUnit(int zAxis) {
+    if (zAxis < 0 || zAxis >= lengths.length) return null;
+    double q = micronStep * lengths[zAxis] / 2;
+    return new OffsetUnit(q, new ScaledUnit(q, MICRON));
   }
 
 
