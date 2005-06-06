@@ -212,10 +212,8 @@ public class StackLink extends TransformLink {
       }
       else {
         for (int i=0; i<len; i++) {
-          double z = len == 1 ? 0.0 : 2.0 * i / (len - 1) - 1;
           display.addReferences((DataRenderer) renderers.elementAt(i),
-            (DataReferenceImpl) references.elementAt(i),
-            new ConstantMap[] {new ConstantMap(z, Display.ZAxis)});
+            (DataReferenceImpl) references.elementAt(i));
         }
       }
 
@@ -364,6 +362,44 @@ public class StackLink extends TransformLink {
   }
 
 
+  // -- Internal StackLink API methods
+
+  /**
+   * Assigns the given data object to the given data reference,
+   * switching to the proper types if the flag is set.
+   */
+  protected void setData(Data d, DataReference dataRef,
+    boolean autoSwitch, double zval)
+  {
+    if (autoSwitch && d instanceof FlatField &&
+      trans instanceof ImageTransform)
+    {
+      // special case: use ImageTransform's suggested MathType instead
+      FlatField ff = (FlatField) d;
+      ImageTransform it = (ImageTransform) trans;
+      FunctionType ftype = it.getType();
+      Unit[] units = it.getImageUnits();
+      try {
+        d = VisUtil.switchType(ff, ftype, units); 
+
+        // wrap image in another field, to assign proper Z value
+        RealType zbox = it.getZType();
+        Unit zunit = it.getZUnit(stackAxis);
+        Set set = new SingletonSet(new RealTupleType(zbox),
+          new double[] {zval}, null, new Unit[] {zunit}, null);
+        FieldImpl field = new FieldImpl(new FunctionType(zbox, ftype), set);
+        field.setSample(0, d, false);
+        d = field;
+      }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
+    }
+    try { dataRef.setData(d); }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
+  }
+
+
   // -- Internal TransformLink API methods --
 
   /** Updates the currently displayed data for the given transform. */
@@ -391,7 +427,7 @@ public class StackLink extends TransformLink {
       ImageTransform it = (ImageTransform) trans;
       int xres = it.getImageWidth();
       int yres = it.getImageHeight();
-      float zval = stackAxis < 0 ? 0 : 2f * pos[stackAxis] / (len - 1) - 1;
+      float zval = stackAxis < 0 ? 0.0f : (float) pos[stackAxis];
       float[][] samps = {
         {0, xres, xres, 0, 0},
         {0, 0, yres, yres, 0},
@@ -402,8 +438,6 @@ public class StackLink extends TransformLink {
       RealType zbox = it.getZType();
       Unit[] imageUnits = it.getImageUnits();
       Unit[] xyzUnits = {imageUnits[0], imageUnits[1], it.getZUnit(stackAxis)};
-      // CTR START HERE:
-      //why isn't this unit assignment orienting the bounding box properly?
       try {
         RealTupleType xyz = new RealTupleType(xbox, ybox, zbox);
         setData(new Gridded3DSet(xyz, samps, 5, null, xyzUnits, null, false));
@@ -455,7 +489,7 @@ public class StackLink extends TransformLink {
 
       Data thumb = th == null ? null : th.getThumb(pos);
       DataReferenceImpl sliceRef = (DataReferenceImpl) references.elementAt(s);
-      if (thumbs) setData(thumb, sliceRef);
+      if (thumbs) setData(thumb, sliceRef, true, s);
       else {
         if (!volume || collapse == null) {
           // load data from disk, unless collapsed volume is current
@@ -468,7 +502,7 @@ public class StackLink extends TransformLink {
           }
         }
         if (volume) setData(DUMMY, sliceRef, false);
-        else setData(slices[s], sliceRef);
+        else setData(slices[s], sliceRef, true, s);
       }
     }
     if (stackAxis >= 0) pos[stackAxis] = 0;
@@ -493,7 +527,7 @@ public class StackLink extends TransformLink {
             }
             // compile slices into a single volume and collapse
             collapse = VisUtil.collapse(
-              VisUtil.makeField(slices, zType, -1, 1));
+              VisUtil.makeField(slices, zType, 0, len - 1));
             cache.putData(trans, pos, "collapse", collapse);
           }
           // resample volume
@@ -557,15 +591,18 @@ public class StackLink extends TransformLink {
     RealType zType = it.getZType();
     double[] domain = VisUtil.cursorToDomain(display,
       new RealType[] {xType, yType, zType}, cur);
+    // CTR START HERE -
+    // 1) This cursor probe is wrong when micron values are specified.
+    // 2) Then, make aspect ratio automatically match micron values if present. 
+    // 3) Fix derivative data objects (arbitrary slice, etc.) to work properly.
+    // 4) Test state logic a bit more.
+    // 5) Release!
 
     // determine which slice to probe
     int index = -1;
     int len = references.size();
-    if (len > 1) {
-      double zpos = Math.round((domain[2] + 1) * (len - 1) / 2.0);
-      if (zpos >= 0 && zpos < len) index = (int) zpos;
-    }
-    else if (len == 1 && Math.round(domain[2]) == 0.0) index = 0;
+    double zpos = Math.round(domain[2]);
+    if (zpos >= 0 && zpos < len) index = (int) zpos;
     if (index < 0) return;
 
     DataReferenceImpl sliceRef =
@@ -573,6 +610,13 @@ public class StackLink extends TransformLink {
 
     // get data at appropriate slice
     Data data = sliceRef.getData();
+
+    // unwrap data
+    if (data instanceof FieldImpl) {
+      try { data = ((FieldImpl) data).getSample(0); }
+      catch (VisADException exc) { return; }
+      catch (RemoteException exc) { return; }
+    }
     if (!(data instanceof FunctionImpl)) return;
     FunctionImpl func = (FunctionImpl) data;
 

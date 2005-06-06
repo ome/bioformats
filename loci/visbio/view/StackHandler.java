@@ -102,7 +102,6 @@ public class StackHandler extends TransformHandler {
       if (!(trans instanceof ImageTransform)) continue;
       RealType zType = ((ImageTransform) trans).getZType();
       ScalarMap zMap = new ScalarMap(zType, Display.ZAxis);
-      zMap.setRange(-1, 1);
       display.addMap(zMap);
     }
   }
