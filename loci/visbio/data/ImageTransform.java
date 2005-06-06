@@ -23,7 +23,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.data;
 
+import loci.visbio.state.SaveException;
+import loci.visbio.util.ObjectUtil;
 import loci.visbio.util.VisUtil;
+import org.w3c.dom.Element;
 import visad.*;
 
 /** ImageTransform is a DataTransform superclass that provides image data. */
@@ -169,8 +172,7 @@ public abstract class ImageTransform extends DataTransform {
   public Unit getZUnit(int zAxis) {
     if (zAxis < 0 || zAxis >= lengths.length) return null;
     if (micronStep != micronStep) return null;
-    double q = micronStep * lengths[zAxis] / 2;
-    return new OffsetUnit(q, new ScaledUnit(q, MICRON));
+    return new ScaledUnit(micronStep, MICRON);
   }
 
 
@@ -197,6 +199,31 @@ public abstract class ImageTransform extends DataTransform {
   /** Gets whether this data object can be displayed in 3D. */
   public boolean canDisplay3D() {
     return super.canDisplay3D() || canDisplay2D();
+  }
+
+
+  // -- Saveable API methods --
+
+  /**
+   * Writes the current state to the given DOM element
+   * (a child of "DataTransforms").
+   */
+  public void saveState(Element el) throws SaveException {
+    super.saveState(el);
+    el.setAttribute("width", "" + micronWidth);
+    el.setAttribute("height", "" + micronHeight);
+    el.setAttribute("step", "" + micronStep);
+  }
+
+  /**
+   * Restores the current state from the given DOM element
+   * (a child of "DataTransforms").
+   */
+  public void restoreState(Element el) throws SaveException {
+    super.restoreState(el);
+    micronWidth = ObjectUtil.stringToDouble(el.getAttribute("width"));
+    micronHeight = ObjectUtil.stringToDouble(el.getAttribute("height"));
+    micronStep = ObjectUtil.stringToDouble(el.getAttribute("step"));
   }
 
 }
