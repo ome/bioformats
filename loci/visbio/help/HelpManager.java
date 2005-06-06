@@ -70,6 +70,7 @@ public class HelpManager extends LogicManager {
   public void checkVisualization() {
     DataManager dm = (DataManager) bio.getManager(DataManager.class);
     DataTransform data = (DataTransform) dm.getSelectedData();
+    if (!(data instanceof Dataset)) return; // only ask for datasets, for now
 
     // determine whether data can be displayed in 2D and/or 3D
     boolean isData = data != null;
