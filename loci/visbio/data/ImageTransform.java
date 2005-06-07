@@ -92,9 +92,12 @@ public abstract class ImageTransform extends DataTransform {
     micronStep = step;
 
     // initialize internal MathTypes
-    xType = VisUtil.getRealType(name + "_X", width == width ? MICRON : null);
-    yType = VisUtil.getRealType(name + "_Y", height == height ? MICRON : null);
-    zType = VisUtil.getRealType(name + "_Z", step == step ? MICRON : null);
+    if (width == width) xType = VisUtil.getRealType(name + "_Xm", MICRON);
+    else xType = VisUtil.getRealType(name + "_X", null);
+    if (height == height) yType = VisUtil.getRealType(name + "_Ym", MICRON);
+    else yType = VisUtil.getRealType(name + "_Y", null);
+    if (step == step) zType = VisUtil.getRealType(name + "_Zm", MICRON);
+    else yType = VisUtil.getRealType(name + "_Z", null);
   }
 
 
