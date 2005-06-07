@@ -72,9 +72,16 @@ public class ViewPanel extends JPanel
 
   /** Updates aspect ratio GUI controls. */
   public void setAspect(double dx, double dy, double dz) {
+    aspectX.getDocument().removeDocumentListener(this);
+    aspectY.getDocument().removeDocumentListener(this);
+    if (aspectZ != null) aspectZ.getDocument().removeDocumentListener(this);
     aspectX.setText("" + dx);
     aspectY.setText("" + dy);
     if (aspectZ != null) aspectZ.setText("" + dz);
+    aspectX.getDocument().addDocumentListener(this);
+    aspectY.getDocument().addDocumentListener(this);
+    if (aspectZ != null) aspectZ.getDocument().addDocumentListener(this);
+    doAspect();
   }
 
 

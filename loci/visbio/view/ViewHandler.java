@@ -200,22 +200,29 @@ public class ViewHandler implements Saveable {
       "reset orientation for " + window.getName(), true);
   }
 
-  /** Guesses aspect ratio based on linked data transforms. */
+  /** Guesses aspect ratio based on first linked data transform. */
   public void guessAspect() {
     TransformHandler transformHandler = window.getTransformHandler();
     DataTransform[] trans = transformHandler.getTransforms();
-    int x = 0, y = 0;
+    double x = 1, y = 1, z = 1;
     for (int i=0; i<trans.length; i++) {
       if (!(trans[i] instanceof ImageTransform)) continue;
       ImageTransform it = (ImageTransform) trans[i];
-      x += it.getImageWidth();
-      y += it.getImageHeight();
+      int w = it.getImageWidth();
+      int h = it.getImageHeight();
+      TransformLink link = (TransformLink) transformHandler.getLink(it);
+      int axis = link instanceof StackLink ?
+        ((StackLink) link).getStackAxis() : -1;
+      int numSlices = axis < 0 ? 1 : it.getLengths()[axis];
+      double mw = it.getMicronWidth();
+      double mh = it.getMicronHeight();
+      double ms = it.getMicronStep();
+      x = mw == mw ? mw : w;
+      y = mh == mh ? mh : h;
+      z = ms == ms ? (ms * (numSlices - 1)) : (x < y ? x : y);
+      break;
     }
-    if (x == 0) x = 1;
-    if (y == 0) y = 1;
-    double dx = x > y ? (double) x / y : 1.0;
-    double dy = y > x ? (double) y / x : 1.0;
-    panel.setAspect(dx, dy, 1.0);
+    panel.setAspect(x, y, z);
   }
 
   /** Adjusts the aspect ratio. */

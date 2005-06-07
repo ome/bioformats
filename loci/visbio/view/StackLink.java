@@ -591,17 +591,13 @@ public class StackLink extends TransformLink {
     RealType zType = it.getZType();
     double[] domain = VisUtil.cursorToDomain(display,
       new RealType[] {xType, yType, zType}, cur);
-    // CTR START HERE -
-    // 1) This cursor probe is wrong when micron values are specified.
-    // 2) Then, make aspect ratio automatically match micron values if present. 
-    // 3) Fix derivative data objects (arbitrary slice, etc.) to work properly.
-    // 4) Test state logic a bit more.
-    // 5) Release!
 
     // determine which slice to probe
     int index = -1;
     int len = references.size();
-    double zpos = Math.round(domain[2]);
+    double step = it.getMicronStep();
+    if (step != step) step = 1;
+    double zpos = Math.round(domain[2] / step);
     if (zpos >= 0 && zpos < len) index = (int) zpos;
     if (index < 0) return;
 
