@@ -29,11 +29,14 @@ Display engine
 [M] Displays are never garbage collected. Neither are the
     linked data objects (even if they are removed first).
 
+[L] When stack axis is switched, colors are reset, but only mostly. If HSV is
+    selected, for example, the mappings of Red->#1, Green->Full, Blue->Full
+    are not reset, but the mode does reset to RGB, resulting in lots of cyan.
 
 State engine
 ------------
 
-[H] Redo multiple undo/redo support to save an inverse command that undoes the
+[M] Redo multiple undo/redo support to save an inverse command that undoes the
     action that was just done, instead of loading state files. This is required
     because loading state files is simply too slow. For example, if there are
     30 MB worth of overlays, loading them all back in every time the user wants
@@ -72,9 +75,9 @@ File formats
 Overlays transform
 ------------------
 
-[H] Overlays need to be fixed to display properly in 3D displays.
+[M] Overlays need to be fixed to display properly in 3D displays.
 
-[H] Overlays should not affect ScalarMap scaling.
+[M] Overlays should not affect ScalarMap scaling.
 
 [L] Add rubber band box renderer to all displays (at least 2D ones) and send
     "rubber band" events down the transform chain so that transforms can react
@@ -87,14 +90,14 @@ User interface
 --------------
 
 [M] Make sure no two data objects can have the same name. If one already does,
-    append "2", "3", etc., to the end until we find a new name. If they try to
-    create one with the same name as an existing one, don't let them do it.
+    append "-2", "-3", etc., to the end until we find a new name. If they try
+    to create one with the same name as an existing one, don't let them do it.
 
     Probably also don't let them create two displays with the same name
     (use same strategy), because otherwise state might not restore correctly.
 
-[L] Eliminate obsolete control panel logic in favor of one master VisBio window
-    with data, displays and tasks information.
+[M] Eliminate obsolete control panel logic in favor of one master VisBio window
+    with data, displays and tasks information (for v3.10).
 
 [L] Command+? Macintosh Help shortcut does not function.
 
@@ -107,7 +110,7 @@ User interface
 Open Microscopy Environment
 ---------------------------
 
-[L] Create a command-line upload utility for use doing generic client-side
+[M] Create a command-line upload utility for use doing generic client-side
     uploads--use loci.visbio.ome.ImageUploader.main(String[]) for this.
 
 [L] Upload to OME works, but produces a bunch of annoying messages on the
