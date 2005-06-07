@@ -28,7 +28,8 @@ import java.math.BigInteger;
 import java.util.Vector;
 import javax.swing.JComponent;
 import loci.visbio.state.*;
-import loci.visbio.util.*;
+import loci.visbio.util.FontChooserPane;
+import loci.visbio.util.ObjectUtil;
 import org.w3c.dom.Element;
 import visad.*;
 
@@ -171,86 +172,30 @@ public abstract class DataTransform implements Dynamic, Saveable {
     sb.append(getName());
     sb.append("<p>\n\n");
 
-    if (this instanceof ImageTransform) {
-      ImageTransform it = (ImageTransform) this;
-      int width = it.getImageWidth();
-      int height = it.getImageHeight();
-      int rangeCount = it.getRangeCount();
-
-      // list of dimensional axes
-      sb.append("Dimensionality: ");
-      sb.append(len.length + 2);
-      sb.append("D\n");
-      sb.append("<ul>\n");
-      BigInteger images = BigInteger.ONE;
-      if (len.length > 0) {
-        for (int i=0; i<len.length; i++) {
-          images = images.multiply(new BigInteger("" + len[i]));
-          sb.append("<li>");
-          sb.append(len[i]);
-          sb.append(" ");
-          sb.append(getUnitDescription(dimTypes[i]));
-          if (len[i] != 1) sb.append("s");
-          sb.append("</li>\n");
-        }
+    // list of dimensional axes
+    sb.append("Dimensional axes: ");
+    sb.append(len.length);
+    sb.append("\n");
+    sb.append("<ul>\n");
+    BigInteger count = BigInteger.ONE;
+    if (len.length > 0) {
+      for (int i=0; i<len.length; i++) {
+        count = count.multiply(new BigInteger("" + len[i]));
+        sb.append("<li>");
+        sb.append(len[i]);
+        sb.append(" ");
+        sb.append(getUnitDescription(dimTypes[i]));
+        if (len[i] != 1) sb.append("s");
+        sb.append("</li>\n");
       }
-
-      // image resolution
-      sb.append("<li>");
-      sb.append(width);
-      sb.append(" x ");
-      sb.append(height);
-      sb.append(" pixel");
-      if (width * height != 1) sb.append("s");
-      sb.append("</li>\n");
-
-      // range component count
-      sb.append("<li>");
-      sb.append(rangeCount);
-      sb.append(" range component");
-      if (rangeCount != 1) sb.append("s");
-      sb.append("</li>\n");
-      sb.append("</ul>\n");
-
-      // image and pixel counts
-      BigInteger pixels = images.multiply(new BigInteger("" + width));
-      pixels = pixels.multiply(new BigInteger("" + height));
-      pixels = pixels.multiply(new BigInteger("" + rangeCount));
-      sb.append(images);
-      sb.append(" image");
-      if (!images.equals(BigInteger.ONE)) sb.append("s");
-      sb.append(" totaling ");
-      sb.append(MathUtil.getValueWithUnit(pixels, 2));
-      sb.append("pixel");
-      if (!pixels.equals(BigInteger.ONE)) sb.append("s");
-      sb.append(".<p>\n");
     }
-    else {
-      // list of dimensional axes
-      sb.append("Dimensional axes: ");
-      sb.append(len.length);
-      sb.append("\n");
-      sb.append("<ul>\n");
-      BigInteger count = BigInteger.ONE;
-      if (len.length > 0) {
-        for (int i=0; i<len.length; i++) {
-          count = count.multiply(new BigInteger("" + len[i]));
-          sb.append("<li>");
-          sb.append(len[i]);
-          sb.append(" ");
-          sb.append(getUnitDescription(dimTypes[i]));
-          if (len[i] != 1) sb.append("s");
-          sb.append("</li>\n");
-        }
-      }
-      sb.append("</ul>\n");
+    sb.append("</ul>\n");
 
-      // data count
-      sb.append(count.toString());
-      sb.append(" dimensional position");
-      if (!count.equals(BigInteger.ONE)) sb.append("s");
-      sb.append(" total.<p>\n");
-    }
+    // data count
+    sb.append(count.toString());
+    sb.append(" dimensional position");
+    if (!count.equals(BigInteger.ONE)) sb.append("s");
+    sb.append(" total.<p>\n");
 
     return sb.toString();
   }

@@ -369,7 +369,23 @@ public class Dataset extends ImageTransform {
     sb.append(resY);
     sb.append(" pixel");
     if (resX * resY != 1) sb.append("s");
+
+    // physical width and height in microns
+    if (micronWidth == micronWidth && micronHeight == micronHeight) {
+      sb.append(" (");
+      sb.append(micronWidth);
+      sb.append(" x ");
+      sb.append(micronHeight);
+      sb.append(" µ)");
+    }
     sb.append("</li>\n");
+
+    // physical distance between slices in microns
+    if (micronStep == micronStep) {
+      sb.append("<li>");
+      sb.append(micronStep);
+      sb.append(" µ between slices</li>\n");
+    }
 
     // range component count
     sb.append("<li>");

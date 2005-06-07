@@ -23,9 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.data;
 
+import java.math.BigInteger;
 import loci.visbio.state.SaveException;
-import loci.visbio.util.ObjectUtil;
-import loci.visbio.util.VisUtil;
+import loci.visbio.util.*;
 import org.w3c.dom.Element;
 import visad.*;
 
@@ -201,6 +201,86 @@ public abstract class ImageTransform extends DataTransform {
     return super.canDisplay3D() || canDisplay2D();
   }
 
+  /** Gets a description of this transform, with HTML markup. */
+  public String getHTMLDescription() {
+    StringBuffer sb = new StringBuffer();
+    int[] len = getLengths();
+    String[] dimTypes = getDimTypes();
+
+    int width = getImageWidth();
+    int height = getImageHeight();
+    int rangeCount = getRangeCount();
+
+    // name
+    sb.append(getName());
+    sb.append("<p>\n\n");
+
+    // list of dimensional axes
+    sb.append("Dimensionality: ");
+    sb.append(len.length + 2);
+    sb.append("D\n");
+    sb.append("<ul>\n");
+    BigInteger images = BigInteger.ONE;
+    if (len.length > 0) {
+      for (int i=0; i<len.length; i++) {
+        images = images.multiply(new BigInteger("" + len[i]));
+        sb.append("<li>");
+        sb.append(len[i]);
+        sb.append(" ");
+        sb.append(getUnitDescription(dimTypes[i]));
+        if (len[i] != 1) sb.append("s");
+        sb.append("</li>\n");
+      }
+    }
+
+    // image resolution
+    sb.append("<li>");
+    sb.append(width);
+    sb.append(" x ");
+    sb.append(height);
+    sb.append(" pixel");
+    if (width * height != 1) sb.append("s");
+
+    // physical width and height in microns
+    if (micronWidth == micronWidth && micronHeight == micronHeight) {
+      sb.append(" (");
+      sb.append(micronWidth);
+      sb.append(" x ");
+      sb.append(micronHeight);
+      sb.append(" µ)");
+    }
+    sb.append("</li>\n");
+
+    // physical distance between slices in microns
+    if (micronStep == micronStep) {
+      sb.append("<li>");
+      sb.append(micronStep);
+      sb.append(" µ between slices</li>\n");
+    }
+
+    // range component count
+    sb.append("<li>");
+    sb.append(rangeCount);
+    sb.append(" range component");
+    if (rangeCount != 1) sb.append("s");
+    sb.append("</li>\n");
+    sb.append("</ul>\n");
+
+    // image and pixel counts
+    BigInteger pixels = images.multiply(new BigInteger("" + width));
+    pixels = pixels.multiply(new BigInteger("" + height));
+    pixels = pixels.multiply(new BigInteger("" + rangeCount));
+    sb.append(images);
+    sb.append(" image");
+    if (!images.equals(BigInteger.ONE)) sb.append("s");
+    sb.append(" totaling ");
+    sb.append(MathUtil.getValueWithUnit(pixels, 2));
+    sb.append("pixel");
+    if (!pixels.equals(BigInteger.ONE)) sb.append("s");
+    sb.append(".<p>\n");
+
+    return sb.toString();
+  }
 
   // -- Saveable API methods --
 
