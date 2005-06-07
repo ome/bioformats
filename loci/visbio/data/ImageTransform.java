@@ -97,7 +97,7 @@ public abstract class ImageTransform extends DataTransform {
     if (height == height) yType = VisUtil.getRealType(name + "_Ym", MICRON);
     else yType = VisUtil.getRealType(name + "_Y", null);
     if (step == step) zType = VisUtil.getRealType(name + "_Zm", MICRON);
-    else yType = VisUtil.getRealType(name + "_Z", null);
+    else zType = VisUtil.getRealType(name + "_Z", null);
   }
 
 
