@@ -36,7 +36,7 @@ Display engine
 State engine
 ------------
 
-[M] Restored states use improper MathType names
+[M] Restored states use improper RealType names
     (e.g., "null_X" instead of "sdub_X").
 
 [M] Redo multiple undo/redo support to save an inverse command that undoes the
