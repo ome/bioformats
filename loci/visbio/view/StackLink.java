@@ -378,9 +378,9 @@ public class StackLink extends TransformLink {
       FlatField ff = (FlatField) d;
       ImageTransform it = (ImageTransform) trans;
       FunctionType ftype = it.getType();
-      Unit[] units = it.getImageUnits();
+      Unit[] imageUnits = it.getImageUnits();
       try {
-        d = VisUtil.switchType(ff, ftype, units); 
+        d = VisUtil.switchType(ff, ftype, imageUnits); 
 
         // wrap image in another field, to assign proper Z value
         RealType zbox = it.getZType();
@@ -517,13 +517,13 @@ public class StackLink extends TransformLink {
         ImageTransform it = (ImageTransform) trans;
         RealType zType = it.getZType();
         FunctionType imageType = it.getType();
-        Unit[] units = it.getImageUnits();
+        Unit[] imageUnits = it.getImageUnits();
         try {
           if (collapse == null) {
             // use image transform's recommended MathType
             for (int i=0; i<len; i++) {
-              slices[i] =
-                VisUtil.switchType((FlatField) slices[i], imageType, units);
+              slices[i] = VisUtil.switchType((FlatField) slices[i],
+                imageType, imageUnits);
             }
             // compile slices into a single volume and collapse
             collapse = VisUtil.collapse(

@@ -116,9 +116,10 @@ public abstract class VisUtil {
     for (int i=0; i<len; i++) {
       FlatField flat = (FlatField) f.getSample(i);
       GriddedSet flatSet = (GriddedSet) flat.getDomainSet();
-      nf.setSample(i, flat.resample(
-        new Integer2DSet(flatSet.getType(), resX, resY),
-        Data.WEIGHTED_AVERAGE, Data.NO_ERRORS), false);
+      nf.setSample(i, flat.resample(new Integer2DSet(flatSet.getType(),
+        resX, resY, flatSet.getCoordinateSystem(), flatSet.getSetUnits(),
+        flatSet.getSetErrors()), Data.WEIGHTED_AVERAGE, Data.NO_ERRORS),
+        false);
     }
     return (FlatField) nf.domainMultiply();
   }

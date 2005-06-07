@@ -58,7 +58,7 @@ public class ArbitrarySlice extends DataTransform
 
   // -- Fields --
 
-  /** Dimensional axis to collapse. */
+  /** Dimensional axis to slice through. */
   protected int axis;
 
   /** Horizontal rotational angle of slicing line. */
@@ -225,11 +225,14 @@ public class ArbitrarySlice extends DataTransform
     ImageTransform it = (ImageTransform) parent;
     int w = it.getImageWidth();
     int h = it.getImageHeight();
+    int n = parent.getLengths()[axis];
     RealType xType = it.getXType();
     RealType yType = it.getYType();
     RealType zType = it.getZType();
     FunctionType imageType = it.getType();
     Unit[] imageUnits = it.getImageUnits();
+    Unit zUnit = it.getZUnit(axis);
+    Unit[] xyzUnits = {imageUnits[0], imageUnits[1], zUnit};
     RealTupleType xyz = null;
     try { xyz = new RealTupleType(xType, yType, zType); }
     catch (VisADException exc) { exc.printStackTrace(); }
@@ -284,16 +287,17 @@ public class ArbitrarySlice extends DataTransform
 
     Gridded3DSet line = null;
     if (showLine) {
-      // convert x=[-1,1] y=[-1,1] z=[-1,1] to x=[0,w] y=[0,h] z=[-1,1]
+      // convert x=[-1,1] y=[-1,1] z=[-1,1] to x=[0,w] y=[0,h] z=[0,n]
       float[][] lineSamples = {
         {w * (x + 1) / 2, w * (-x + 1) / 2},
         {h * (y + 1) / 2, h * (-y + 1) / 2},
-        {z, -z}
+        {n * (z + 1) / 2, n * (-z + 1) / 2}
       };
 
       // construct line data object
       try {
-        line = new Gridded3DSet(xyz, lineSamples, 2, null, null, null, false);
+        line = new Gridded3DSet(xyz, lineSamples,
+          2, null, xyzUnits, null, false);
       }
       catch (VisADException exc) { exc.printStackTrace(); }
     }
@@ -317,7 +321,7 @@ public class ArbitrarySlice extends DataTransform
       float[][] planeSamples = {
         {w*(q1x + 1)/2, w*(q2x + 1)/2, w*(q3x + 1)/2, w*(q4x + 1)/2},
         {h*(q1y + 1)/2, h*(q2y + 1)/2, h*(q3y + 1)/2, h*(q4y + 1)/2},
-        {q1z, q2z, q3z, q4z}
+        {n*(q1z + 1)/2, n*(q2z + 1)/2, n*(q3z + 1)/2, n*(q4z + 1)/2}
       };
 
       // compute resampling grid for the current resolution
@@ -336,12 +340,22 @@ public class ArbitrarySlice extends DataTransform
       FlatField collapse = (FlatField)
         cache.getData(parent, npos, "collapse", 3);
 
+      // CTR START HERE
+      //
+      // The slicing algorithm produces incorrectly scaled data when micron
+      // units exist. Maybe I should just take this as an opportunity to recode
+      // the slicing algorithm to be more efficient anyway, since I think the
+      // problem may have something to do with the collapse.resample call.
+      //
+      // The overlay stuff should also use the micron values where applicable.
+      //
+      // Then do some more testing, and finally release v3.00.
+
       // if necessary, read in parent data
-      int len = parent.getLengths()[axis];
       FlatField[] fields = null;
       if (collapse == null) {
-        fields = new FlatField[len];
-        for (int i=0; i<len; i++) {
+        fields = new FlatField[n];
+        for (int i=0; i<n; i++) {
           npos[axis] = i;
           Data data = parent.getData(npos, 2, cache);
           if (data == null || !(data instanceof FlatField)) {
@@ -353,11 +367,12 @@ public class ArbitrarySlice extends DataTransform
         }
         try {
           // use image transform's recommended MathType and Units
-          for (int i=0; i<len; i++) {
+          for (int i=0; i<n; i++) {
             fields[i] = VisUtil.switchType(fields[i], imageType, imageUnits);
           }
           // compile slices into a single volume and collapse
-          collapse = VisUtil.collapse(VisUtil.makeField(fields, zType, -1, 1));
+          collapse = VisUtil.collapse(
+            VisUtil.makeField(fields, zType, 0, n - 1));
           cache.putData(this, pos, "collapse", collapse);
         }
         catch (VisADException exc) { exc.printStackTrace(); }
@@ -367,11 +382,13 @@ public class ArbitrarySlice extends DataTransform
       // resample combined field onto arbitrary slice
       try {
         Gridded3DSet planeSet = new Gridded3DSet(xyz,
-          planeSamples, 2, 2, null, null, null, false);
+          planeSamples, 2, 2, null, xyzUnits, null, false);
         Gridded3DSet gridSet = new Gridded3DSet(xyz,
-          planeSet.gridToValue(grid), res, res, null, null, null, false);
+          planeSet.gridToValue(grid), res, res, null, xyzUnits, null, false);
         slice = collapse.resample(gridSet,
           Data.WEIGHTED_AVERAGE, Data.NO_ERRORS);
+        /*TEMP*/System.out.println("slice units[0] = " + ((FieldImpl) slice).getDomainSet().getSetUnits()[0]);
+        slice = gridSet;//TEMP
       }
       catch (VisADException exc) { exc.printStackTrace(); }
       catch (RemoteException exc) { exc.printStackTrace(); }
@@ -390,13 +407,13 @@ public class ArbitrarySlice extends DataTransform
         int ndx = (i < num / 2) ? i : (3 * num / 2 - i - 1);
         samples[0][ndx] = w * (qx + 1) / 2;
         samples[1][ndx] = h * (qy + 1) / 2;
-        samples[2][ndx] = qz;
+        samples[2][ndx] = n * (qz + 1) / 2;
       }
 
       // construct bounding circle data object
       try {
         slice = new Gridded3DSet(xyz,
-          samples, num / 2, 2, null, null, null, false);
+          samples, num / 2, 2, null, xyzUnits, null, false);
       }
       catch (VisADException exc) { exc.printStackTrace(); }
     }
