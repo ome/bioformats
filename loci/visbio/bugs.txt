@@ -36,6 +36,9 @@ Display engine
 State engine
 ------------
 
+[M] Restored states use improper MathType names
+    (e.g., "null_X" instead of "sdub_X").
+
 [M] Redo multiple undo/redo support to save an inverse command that undoes the
     action that was just done, instead of loading state files. This is required
     because loading state files is simply too slow. For example, if there are
