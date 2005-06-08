@@ -163,7 +163,8 @@ public abstract class VisUtil {
       float[] lo = set.getLow();
       float[] hi = set.getHi();
       Linear3DSet nset = new Linear3DSet(set.getType(),
-        lo[0], hi[0], res, lo[1], hi[1], res, lo[2], hi[2], res);
+        lo[0], hi[0], res, lo[1], hi[1], res, lo[2], hi[2], res,
+        set.getCoordinateSystem(), set.getSetUnits(), set.getSetErrors());
       return (FlatField) volume.resample(nset,
         Data.WEIGHTED_AVERAGE, Data.NO_ERRORS);
     }
