@@ -7,7 +7,6 @@ Data engine
 
 [M] Data transforms have an event they generate when their parameters change.
     Children transforms must listen to this event and react to it.
-    Also update HTML description panel when data transform's parameters change.
 
 [M] Add hooks to the data transform model to allow alternative thumbnail
     computation implementation on a per-transform basis, rather than always
