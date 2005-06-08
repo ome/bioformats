@@ -340,17 +340,6 @@ public class ArbitrarySlice extends DataTransform
       FlatField collapse = (FlatField)
         cache.getData(parent, npos, "collapse", 3);
 
-      // CTR START HERE
-      //
-      // The slicing algorithm produces incorrectly scaled data when micron
-      // units exist. Maybe I should just take this as an opportunity to recode
-      // the slicing algorithm to be more efficient anyway, since I think the
-      // problem may have something to do with the collapse.resample call.
-      //
-      // The overlay stuff should also use the micron values where applicable.
-      //
-      // Then do some more testing, and finally release v3.00.
-
       // if necessary, read in parent data
       FlatField[] fields = null;
       if (collapse == null) {
@@ -372,7 +361,7 @@ public class ArbitrarySlice extends DataTransform
           }
           // compile slices into a single volume and collapse
           collapse = VisUtil.collapse(
-            VisUtil.makeField(fields, zType, 0, n - 1));
+            VisUtil.makeField(fields, zType, 0, n - 1, zUnit));
           cache.putData(this, pos, "collapse", collapse);
         }
         catch (VisADException exc) { exc.printStackTrace(); }
