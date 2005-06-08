@@ -11,6 +11,7 @@ v3.00 final - Not yet released
 - FIXED: Subsampling image scaling bugs (relating to improper domain sets)
 - FIXED: Bug in image sequence capture when no file extension is given
 - FIXED: Disallow invalid combinations of stack settings
+- FIXED: Better subsampling error checking
 
 
 v3.00 beta5 - Tuesday, April 26, 2005
