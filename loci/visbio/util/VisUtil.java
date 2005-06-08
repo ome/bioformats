@@ -55,11 +55,36 @@ public abstract class VisUtil {
    * where type is the MathType of each component field.
    */
   public static FieldImpl makeField(FlatField[] fields, RealType zType,
+    Unit setUnit) throws VisADException, RemoteException
+  {
+    if (fields == null || zType == null || fields.length == 0) return null;
+    return makeField(fields, zType, new Integer1DSet(zType,
+      fields.length, null, new Unit[] {setUnit}, null));
+  }
+
+  /**
+   * Creates a field of the form (z -> type) from the given list of fields,
+   * where type is the MathType of each component field.
+   */
+  public static FieldImpl makeField(FlatField[] fields, RealType zType,
     double min, double max) throws VisADException, RemoteException
   {
     if (fields == null || zType == null || fields.length == 0) return null;
     return makeField(fields, zType,
       new Linear1DSet(zType, min, max, fields.length));
+  }
+
+  /**
+   * Creates a field of the form (z -> type) from the given list of fields,
+   * where type is the MathType of each component field.
+   */
+  public static FieldImpl makeField(FlatField[] fields, RealType zType,
+    double min, double max, Unit setUnit)
+    throws VisADException, RemoteException
+  {
+    if (fields == null || zType == null || fields.length == 0) return null;
+    return makeField(fields, zType, new Linear1DSet(zType,
+      min, max, fields.length, null, new Unit[] {setUnit}, null));
   }
 
   /**
