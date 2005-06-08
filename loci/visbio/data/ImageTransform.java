@@ -92,11 +92,11 @@ public abstract class ImageTransform extends DataTransform {
     micronStep = step;
 
     // initialize internal MathTypes
-    if (width == width) xType = VisUtil.getRealType(name + "_Xm", MICRON);
+    if (width == width) xType = VisUtil.getRealType(name + "_X_mu", MICRON);
     else xType = VisUtil.getRealType(name + "_X", null);
-    if (height == height) yType = VisUtil.getRealType(name + "_Ym", MICRON);
+    if (height == height) yType = VisUtil.getRealType(name + "_Y_mu", MICRON);
     else yType = VisUtil.getRealType(name + "_Y", null);
-    if (step == step) zType = VisUtil.getRealType(name + "_Zm", MICRON);
+    if (step == step) zType = VisUtil.getRealType(name + "_Z_mu", MICRON);
     else zType = VisUtil.getRealType(name + "_Z", null);
   }
 
@@ -120,6 +120,14 @@ public abstract class ImageTransform extends DataTransform {
 
   /** Gets physical distance between image slices in microns. */
   public double getMicronStep() { return micronStep; }
+
+  /**
+   * Gets physical distance between image slices in microns for the given axis.
+   * The default implementation simply returns the default step value. This
+   * method matters because derivative data objects such as DataSamplings could
+   * have a different distance between slices depending on the stack axis.
+   */
+  public double getMicronStep(int axis) { return getMicronStep(); }
 
   /** Gets the RealType used for the X-axis. */
   public RealType getXType() { return xType; }
@@ -170,12 +178,12 @@ public abstract class ImageTransform extends DataTransform {
 
   /**
    * Gets Z unit for use with image stack domain sets, computed from
-   * micron information. Z range is assumed to be from -1 to 1.
+   * micron information. Z range is assumed to be from 0 to numSlices-1.
    */
-  public Unit getZUnit(int zAxis) {
-    if (zAxis < 0 || zAxis >= lengths.length) return null;
+  public Unit getZUnit(int axis) {
+    if (axis < 0 || axis >= lengths.length) return null;
     if (micronStep != micronStep) return null;
-    return new ScaledUnit(micronStep, MICRON);
+    return new ScaledUnit(getMicronStep(axis), MICRON);
   }
 
 

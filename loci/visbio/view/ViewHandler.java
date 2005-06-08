@@ -216,7 +216,7 @@ public class ViewHandler implements Saveable {
       int numSlices = axis < 0 ? 1 : it.getLengths()[axis];
       double mw = it.getMicronWidth();
       double mh = it.getMicronHeight();
-      double ms = it.getMicronStep();
+      double ms = it.getMicronStep(axis);
       x = mw == mw ? mw : w;
       y = mh == mh ? mh : h;
       z = ms == ms ? (ms * (numSlices - 1)) : (x < y ? x : y);

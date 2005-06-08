@@ -23,7 +23,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.data;
 
+import java.rmi.RemoteException;
+import loci.visbio.util.VisUtil;
 import visad.FlatField;
+import visad.VisADException;
 
 /** Provides logic for handling data sampling thumbnails. */
 public class SamplingThumbHandler extends ThumbnailHandler {
@@ -57,9 +60,12 @@ public class SamplingThumbHandler extends ThumbnailHandler {
     FlatField ff = th.getThumb(p);
     if (ff == null) return super.computeThumb(pos);
 
-    int[] smin = {0, 0};
-    int[] smax = {samp.getImageWidth() - 1, samp.getImageHeight() - 1};
-    return DataSampling.resample(ff, resolution, range, smin, smax);
+    float[] smin = {0, 0};
+    float[] smax = {samp.getImageWidth() - 1, samp.getImageHeight() - 1};
+    try { return VisUtil.resample(ff, resolution, range, smin, smax); }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
+    return null;
   }
 
 }

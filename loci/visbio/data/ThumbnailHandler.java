@@ -25,9 +25,9 @@ package loci.visbio.data;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 import javax.swing.*;
-import loci.visbio.util.LAFUtil;
-import loci.visbio.util.MathUtil;
+import loci.visbio.util.*;
 import visad.*;
 
 /** Provides logic for handling data transform thumbnails. */
@@ -112,7 +112,10 @@ public class ThumbnailHandler
     RealTupleType rtt = ftype.getDomain();
     int[] res = new int[rtt.getDimension()];
     for (int i=0; i<res.length; i++) res[i] = resolution[i];
-    return DataSampling.resample(ff, res, null);
+    try { return VisUtil.resample(ff, res, null); }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
+    return null;
   }
 
   /** Starts or stops background thumbnail generation. */

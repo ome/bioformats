@@ -137,19 +137,54 @@ public class SamplingWidget extends JPanel implements ActionListener {
 
   /** Applies changes to this data sampling's parameters. */
   public void actionPerformed(ActionEvent e) {
+    String msg = null;
+    int resX = -1, resY = -1;
+    int[] min = null, max = null, step = null;
     try {
-      int resX = Integer.parseInt(widthField.getText());
-      int resY = Integer.parseInt(heightField.getText());
-      int[] min = parseInts(minFields);
-      int[] max = parseInts(maxFields);
-      int[] step = parseInts(stepFields);
-      boolean[] range = new boolean[rangeBoxes.length];
-      for (int i=0; i<rangeBoxes.length; i++) {
-        range[i] = rangeBoxes[i].isSelected();
-      }
-      sampling.setParameters(min, max, step, resX, resY, range);
+      resX = Integer.parseInt(widthField.getText());
+      resY = Integer.parseInt(heightField.getText());
+      min = parseInts(minFields);
+      max = parseInts(maxFields);
+      step = parseInts(stepFields);
     }
     catch (NumberFormatException exc) { }
+    boolean[] range = new boolean[rangeBoxes.length];
+    int numRange = 0;
+    for (int i=0; i<rangeBoxes.length; i++) {
+      range[i] = rangeBoxes[i].isSelected();
+      if (range[i]) numRange++;
+    }
+
+    // check parameters for validity
+    if (resX <= 0 || resY <= 0) msg = "Invalid image resolution.";
+    else {
+      DataTransform parent = sampling.getParent();
+      int[] len = parent.getLengths();
+      String[] types = parent.getDimTypes();
+      for (int i=0; i<minFields.length; i++) {
+        String dim = "<" + (i + 1) + "> " + types[i];
+        if (min[i] < 1 || min[i] > len[i]) msg = "Invalid minimum for " + dim;
+        else if (max[i] < 1 || max[i] > len[i]) {
+          msg = "Invalid maximum for " + dim;
+        }
+        else if (step[i] < 1) msg = "Invalid step size for " + dim;
+        else if (min[i] > max[i]) {
+          msg = "Minimum cannot be greater than maximum for " + dim;
+        }
+        if (msg != null) break;
+      }
+    }
+    if (numRange == 0) {
+      msg = "Sampling must include at least one range component.";
+    }
+
+    if (msg != null) {
+      JOptionPane.showMessageDialog(this, msg, "VisBio",
+        JOptionPane.ERROR_MESSAGE);
+      return;
+    }
+
+    sampling.setParameters(min, max, step, resX, resY, range);
   }
 
 

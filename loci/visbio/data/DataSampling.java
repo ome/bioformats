@@ -23,13 +23,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.data;
 
+import java.math.BigInteger;
 import java.rmi.RemoteException;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import loci.visbio.state.Dynamic;
 import loci.visbio.state.SaveException;
-import loci.visbio.util.ObjectUtil;
-import loci.visbio.util.XMLUtil;
+import loci.visbio.util.*;
 import org.w3c.dom.Element;
 import visad.*;
 
@@ -72,7 +72,10 @@ public class DataSampling extends ImageTransform {
   public DataSampling(DataTransform parent, String name, int[] min,
     int[] max, int[] step, int resX, int resY, boolean[] range)
   {
-    super(parent, name);
+    super(parent, name,
+      ((ImageTransform) parent).getMicronWidth(),
+      ((ImageTransform) parent).getMicronHeight(),
+      ((ImageTransform) parent).getMicronStep());
     this.min = min;
     this.max = max;
     this.step = step;
@@ -134,6 +137,14 @@ public class DataSampling extends ImageTransform {
   /** Gets number of range components at each pixel. */
   public int getRangeCount() { return numRange; }
 
+  /**
+   * Gets physical distance between image slices in microns for the given axis.
+   */
+  public double getMicronStep(int axis) {
+    int q = axis < 0 ? 1 : step[axis];
+    return q * super.getMicronStep(axis);
+  }
+
 
   // -- Static DataTransform API methods --
 
@@ -194,7 +205,10 @@ public class DataSampling extends ImageTransform {
     if (data == null || !(data instanceof FlatField)) return null;
 
     int[] res = resX > 0 && resY > 0 ? new int[] {resX, resY} : null;
-    return resample((FlatField) data, res, range, true);
+    try { return VisUtil.resample((FlatField) data, res, range, true); }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
+    return null;
   }
 
   /** Gets whether this transform provides data of the given dimensionality. */
@@ -225,6 +239,97 @@ public class DataSampling extends ImageTransform {
 
   /** Gets associated GUI controls for this transform. */
   public JComponent getControls() { return controls; }
+
+  /** Gets a description of this transform, with HTML markup. */
+  public String getHTMLDescription() {
+    StringBuffer sb = new StringBuffer();
+    int[] len = getLengths();
+    String[] dimTypes = getDimTypes();
+
+    int width = getImageWidth();
+    int height = getImageHeight();
+    int rangeCount = getRangeCount();
+
+    // name
+    sb.append(getName());
+    sb.append("<p>\n\n");
+
+    // list of dimensional axes
+    sb.append("Dimensionality: ");
+    sb.append(len.length + 2);
+    sb.append("D\n");
+    sb.append("<ul>\n");
+    BigInteger images = BigInteger.ONE;
+    if (len.length > 0) {
+      for (int i=0; i<len.length; i++) {
+        images = images.multiply(new BigInteger("" + len[i]));
+        sb.append("<li>");
+        sb.append(len[i]);
+        sb.append(" ");
+        sb.append(getUnitDescription(dimTypes[i]));
+        if (len[i] != 1) sb.append("s");
+        sb.append(" (");
+        sb.append(min[i]);
+        sb.append(" to ");
+        sb.append(max[i]);
+        if (step[i] != 1) {
+          sb.append(" step ");
+          sb.append(step[i]);
+        }
+        sb.append(")</li>\n");
+      }
+    }
+
+    // image resolution
+    sb.append("<li>");
+    sb.append(width);
+    sb.append(" x ");
+    sb.append(height);
+    sb.append(" pixel");
+    if (width * height != 1) sb.append("s");
+
+    // physical width and height in microns
+    if (micronWidth == micronWidth && micronHeight == micronHeight) {
+      sb.append(" (");
+      sb.append(micronWidth);
+      sb.append(" x ");
+      sb.append(micronHeight);
+      sb.append(" µ)");
+    }
+    sb.append("</li>\n");
+
+    // physical distance between slices in microns
+    if (micronStep == micronStep) {
+      sb.append("<li>");
+      sb.append(micronStep);
+      sb.append(" µ between slices</li>\n");
+    }
+
+    // range component count
+    sb.append("<li>");
+    sb.append(rangeCount);
+    sb.append(" of ");
+    sb.append(range.length);
+    sb.append(" range component");
+    if (range.length != 1) sb.append("s");
+    sb.append("</li>\n");
+    sb.append("</ul>\n");
+
+    // image and pixel counts
+    BigInteger pixels = images.multiply(new BigInteger("" + width));
+    pixels = pixels.multiply(new BigInteger("" + height));
+    pixels = pixels.multiply(new BigInteger("" + rangeCount));
+    sb.append(images);
+    sb.append(" image");
+    if (!images.equals(BigInteger.ONE)) sb.append("s");
+    sb.append(" totaling ");
+    sb.append(MathUtil.getValueWithUnit(pixels, 2));
+    sb.append("pixel");
+    if (!pixels.equals(BigInteger.ONE)) sb.append("s");
+    sb.append(".<p>\n");
+
+    return sb.toString();
+  }
 
 
   // -- Internal DataTransform API methods --
@@ -317,147 +422,6 @@ public class DataSampling extends ImageTransform {
     resX = Integer.parseInt(el.getAttribute("resX"));
     resY = Integer.parseInt(el.getAttribute("resY"));
     range = ObjectUtil.stringToBooleanArray(el.getAttribute("range"));
-  }
-
-
-  // -- Utility methods --
-
-  /**
-   * Resamples the given FlatField to the specified resolution,
-   * keeping only the flagged range components (or null to keep them all),
-   * leaving the domain set's low and high values untouched.
-   */
-  public static FlatField resample(FlatField f, int[] res, boolean[] range) {
-    return resample(f, res, range, false);
-  }
-
-  /**
-   * Resamples the given FlatField to the specified resolution,
-   * keeping only the flagged range components (or null to keep them all),
-   * forcing the result onto an IntegerSet of appropriate length if the
-   * relevant flag is set.
-   */
-  public static FlatField resample(FlatField f, int[] res, boolean[] range,
-    boolean forceIntegerSet)
-  {
-    int[] min = new int[res.length], max = new int[res.length];
-    if (forceIntegerSet) {
-      // use min and max appropriate for IntegerSet
-      for (int i=0; i<res.length; i++) {
-        min[i] = 0;
-        max[i] = res[i] - 1;
-      }
-    }
-    else {
-      // compute min and max from original set
-      GriddedSet set = (GriddedSet) f.getDomainSet();
-      float[] lo = set.getLow();
-      float[] hi = set.getHi();
-      for (int i=0; i<res.length; i++) {
-        min[i] = (int) lo[i];
-        max[i] = (int) hi[i];
-      }
-    }
-    return resample(f, res, range, min, max);
-  }
-
-  /**
-   * Resamples the given FlatField to the specified resolution,
-   * keeping only the flagged range components (or null to keep them all),
-   * using the given minimum and maximum sampling values for each dimension.
-   *
-   * If min and max have appropriate values (min is all zeroes and max equals
-   * len-1 across all dimensions), an IntegerSet is used, otherwise a LinearSet
-   * is constructed.
-   */
-  public static FlatField resample(FlatField f, int[] res, boolean[] range,
-    int[] min, int[] max)
-  {
-    try {
-      GriddedSet set = (GriddedSet) f.getDomainSet();
-      float[][] samples = f.getFloats(false);
-      FunctionType function = (FunctionType) f.getType();
-      MathType frange = function.getRange();
-      RealType[] rt = frange instanceof RealTupleType ?
-        ((RealTupleType) frange).getRealComponents() :
-        new RealType[] {(RealType) frange};
-
-      // count number of range components to keep
-      int keep = 0;
-      if (range != null) {
-        for (int i=0; i<range.length; i++) if (range[i]) keep++;
-      }
-
-      // strip out unwanted range components
-      FlatField ff;
-      if (range == null || keep == range.length) ff = f;
-      else {
-        float[][] samps = new float[keep][];
-        RealType[] reals = new RealType[keep];
-        int count = 0;
-        for (int i=0; i<range.length; i++) {
-          if (range[i]) {
-            samps[count] = samples[i];
-            reals[count] = rt[i];
-            count++;
-          }
-        }
-        MathType funcRange = count == 1 ?
-          (MathType) reals[0] : (MathType) new RealTupleType(reals);
-        FunctionType func = new FunctionType(function.getDomain(), funcRange);
-        ff = new FlatField(func, set);
-        ff.setSamples(samps, false);
-      }
-
-      // determine whether original resolution matches desired resolution
-      int[] len = set.getLengths();
-      boolean same = true;
-      float[] lo = set.getLow();
-      float[] hi = set.getHi();
-      double[] nlo = new double[len.length];
-      double[] nhi = new double[len.length];
-      for (int i=0; i<len.length; i++) {
-        if (res != null && len[i] != res[i]) same = false;
-        nlo[i] = (double) lo[i];
-        nhi[i] = (double) hi[i];
-      }
-      if (!same) {
-        // resample field to proper resolution
-        ff = (FlatField) ff.resample((Set) LinearNDSet.create(set.getType(),
-          nlo, nhi, res), Data.WEIGHTED_AVERAGE, Data.NO_ERRORS);
-      }
-
-      // determine whether original low and high values match desired ones
-      boolean canUseInteger = true;
-      same = true;
-      for (int i=0; i<len.length; i++) {
-        if (min != null) {
-          if (nlo[i] != min[i]) same = false;
-          if (min[i] != 0) canUseInteger = false;
-          nlo[i] = min[i];
-        }
-        if (max != null) {
-          if (nhi[i] != max[i]) same = false;
-          if (min[i] != res[i] - 1) canUseInteger = false;
-          nhi[i] = max[i];
-        }
-      }
-
-      if (canUseInteger || !same) {
-        // adjust field set appropriately
-        FunctionType ffType = (FunctionType) ff.getType();
-        Set ffSet = canUseInteger ?
-          (Set) IntegerNDSet.create(ffType.getDomain(), res) :
-          (Set) LinearNDSet.create(ffType.getDomain(), nlo, nhi, res);
-        float[][] ffSamples = ff.getFloats(false);
-        ff = new FlatField(ffType, ffSet);
-        ff.setSamples(ffSamples);
-      }
-      return ff;
-    }
-    catch (VisADException exc) { exc.printStackTrace(); }
-    catch (RemoteException exc) { exc.printStackTrace(); }
-    return null;
   }
 
 

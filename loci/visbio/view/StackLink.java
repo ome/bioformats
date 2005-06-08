@@ -429,8 +429,8 @@ public class StackLink extends TransformLink {
       int yres = it.getImageHeight();
       float zval = stackAxis < 0 ? 0.0f : (float) pos[stackAxis];
       float[][] samps = {
-        {0, xres, xres, 0, 0},
-        {0, 0, yres, yres, 0},
+        {0, xres - 1, xres - 1, 0, 0},
+        {0, 0, yres - 1, yres - 1, 0},
         {zval, zval, zval, zval, zval}
       };
       RealType xbox = it.getXType();
@@ -557,16 +557,15 @@ public class StackLink extends TransformLink {
     GriddedSet set = (GriddedSet) ff.getDomainSet();
     int[] len = set.getLengths();
     int[] res = new int[len.length];
-    boolean same = true;
     int[] maxRes = handler.getWindow().getManager().getStackResolution();
     for (int i=0; i<len.length; i++) {
-      if (len[i] > maxRes[i]) {
-        same = false;
-        res[i] = maxRes[i];
-      }
+      if (len[i] > maxRes[i]) res[i] = maxRes[i];
       else res[i] = len[i];
     }
-    return same ? ff : DataSampling.resample(ff, res, null);
+    try { return VisUtil.resample(ff, res, null); }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
+    return null;
   }
 
   /** Computes range values at the current cursor location. */
@@ -596,7 +595,7 @@ public class StackLink extends TransformLink {
     // determine which slice to probe
     int index = -1;
     int len = references.size();
-    double step = it.getMicronStep();
+    double step = it.getMicronStep(stackAxis);
     if (step != step) step = 1;
     double zpos = Math.round(domain[2] / step);
     if (zpos >= 0 && zpos < len) index = (int) zpos;
