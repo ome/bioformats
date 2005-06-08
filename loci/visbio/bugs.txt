@@ -96,6 +96,7 @@ Overlays transform
 [L] Loading a large number of overlays causes a hiccup; at the least, put up an
     hourglass while this is happening.
 
+
 User interface
 --------------
 
@@ -125,6 +126,7 @@ Open Microscopy Environment
 
 [L] Upload to OME works, but produces a bunch of annoying messages on the
     error stream anyway.
+
 
 Java Web Start
 --------------
