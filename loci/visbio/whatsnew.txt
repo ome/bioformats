@@ -1,4 +1,4 @@
-v3.00 final - Not yet released
+v3.00 final - Wednesday, June 8, 2005
 
 - ADDED: "Sample datasets" menu for automatically downloading sample data
 - ADDED: Ability to specify dataset's physical dimensions in microns
