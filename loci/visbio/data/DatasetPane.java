@@ -248,7 +248,7 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     }
     else if (command.equals("ok")) {
       // check parameters
-      boolean use = useMicrons.isEnabled();
+      boolean use = useMicrons.isSelected();
       float width = Float.NaN, height = Float.NaN, step = Float.NaN;
       try {
         width = use ? Float.parseFloat(micronWidth.getText()) : Float.NaN;
