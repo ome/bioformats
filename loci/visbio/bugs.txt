@@ -5,6 +5,10 @@ Priority is ranked H (high), M (medium) or L (low).
 Data engine
 -----------
 
+[H] Rewrite arbitrary slicing logic to be more efficient, using a series of
+    stitched together 1D-manifold resampling calls, instead of one big 2D plane
+    requiring the construction of a collapsed 3D data block.
+
 [M] Derivatives of data samplings do not preserve labeling correctly, and thus
     create confusing extra sliders. For example, an arbitrary slice of a data
     sampling of sdub creates an extra Time slider.
