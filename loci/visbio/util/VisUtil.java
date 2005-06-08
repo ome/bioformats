@@ -40,6 +40,137 @@ public abstract class VisUtil {
   // -- Data utility methods --
 
   /**
+   * Resamples the given FlatField to the specified resolution,
+   * keeping only the flagged range components (or null to keep them all),
+   * leaving the domain set's low and high values untouched.
+   */
+  public static FlatField resample(FlatField f, int[] res, boolean[] range)
+    throws VisADException, RemoteException
+  {
+    return resample(f, res, range, false);
+  }
+
+  /**
+   * Resamples the given FlatField to the specified resolution,
+   * keeping only the flagged range components (or null to keep them all),
+   * forcing the result onto an IntegerSet of appropriate length if the
+   * relevant flag is set.
+   */
+  public static FlatField resample(FlatField f, int[] res, boolean[] range,
+    boolean forceIntegerSet) throws VisADException, RemoteException
+  {
+    float[] min = new float[res.length], max = new float[res.length];
+
+    if (forceIntegerSet) {
+      // use min and max appropriate for IntegerSet
+      for (int i=0; i<res.length; i++) {
+        min[i] = 0;
+        max[i] = res[i] - 1;
+      }
+    }
+    else {
+      // compute min and max from original set
+      GriddedSet set = (GriddedSet) f.getDomainSet();
+      min = set.getLow();
+      max = set.getHi();
+    }
+
+    return resample(f, res, range, min, max);
+  }
+
+  /**
+   * Resamples the given FlatField to the specified resolution,
+   * keeping only the flagged range components (or null to keep them all),
+   * and using the given minimum and maximum domain set values.
+   */
+  public static FlatField resample(FlatField f, int[] res, boolean[] range,
+    float[] min, float[] max) throws VisADException, RemoteException
+  {
+    GriddedSet set = (GriddedSet) f.getDomainSet();
+    float[][] samples = f.getFloats(false);
+    FunctionType function = (FunctionType) f.getType();
+    MathType frange = function.getRange();
+    RealType[] rt = frange instanceof RealTupleType ?
+      ((RealTupleType) frange).getRealComponents() :
+      new RealType[] {(RealType) frange};
+
+    // count number of range components to keep
+    int keep = 0;
+    if (range != null) {
+      for (int i=0; i<range.length; i++) if (range[i]) keep++;
+    }
+
+    // strip out unwanted range components
+    FlatField ff;
+    if (range == null || keep == range.length) ff = f;
+    else {
+      float[][] samps = new float[keep][];
+      RealType[] reals = new RealType[keep];
+      int count = 0;
+      for (int i=0; i<range.length; i++) {
+        if (range[i]) {
+          samps[count] = samples[i];
+          reals[count] = rt[i];
+          count++;
+        }
+      }
+      MathType funcRange = count == 1 ?
+        (MathType) reals[0] : (MathType) new RealTupleType(reals);
+      FunctionType func = new FunctionType(function.getDomain(), funcRange);
+      ff = new FlatField(func, set);
+      ff.setSamples(samps, false);
+    }
+
+    // determine whether original resolution matches desired resolution
+    int[] len = set.getLengths();
+    boolean same = true;
+    float[] lo = set.getLow();
+    float[] hi = set.getHi();
+    double[] nlo = new double[len.length];
+    double[] nhi = new double[len.length];
+    for (int i=0; i<len.length; i++) {
+      if (res != null && len[i] != res[i]) same = false;
+      nlo[i] = (double) lo[i];
+      nhi[i] = (double) hi[i];
+    }
+    if (!same) {
+      // resample field to proper resolution
+      ff = (FlatField) ff.resample((Set) LinearNDSet.create(set.getType(),
+        nlo, nhi, res, set.getCoordinateSystem(), set.getSetUnits(),
+        set.getSetErrors()), Data.WEIGHTED_AVERAGE, Data.NO_ERRORS);
+    }
+
+    // determine whether original low and high values match desired ones
+    boolean canUseInteger = true;
+    same = true;
+    for (int i=0; i<len.length; i++) {
+      if (min != null) {
+        if (nlo[i] != min[i]) same = false;
+        if (min[i] != 0) canUseInteger = false;
+        nlo[i] = min[i];
+      }
+      if (max != null) {
+        if (nhi[i] != max[i]) same = false;
+        if (min[i] != res[i] - 1) canUseInteger = false;
+        nhi[i] = max[i];
+      }
+    }
+
+    if (canUseInteger || !same) {
+      // adjust field set appropriately
+      FunctionType ffType = (FunctionType) ff.getType();
+      Set ffSet = canUseInteger ?
+        (Set) IntegerNDSet.create(ffType.getDomain(), res) :
+        (Set) LinearNDSet.create(ffType.getDomain(), nlo, nhi, res);
+      float[][] ffSamples = ff.getFloats(false);
+      ff = new FlatField(ffType, ffSet);
+      ff.setSamples(ffSamples);
+    }
+    return ff;
+  }
+
+
+  /**
    * Creates a field of the form (z -> type) from the given list of fields,
    * where type is the MathType of each component field.
    */
