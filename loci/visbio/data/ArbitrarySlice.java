@@ -376,8 +376,6 @@ public class ArbitrarySlice extends DataTransform
           planeSet.gridToValue(grid), res, res, null, xyzUnits, null, false);
         slice = collapse.resample(gridSet,
           Data.WEIGHTED_AVERAGE, Data.NO_ERRORS);
-        /*TEMP*/System.out.println("slice units[0] = " + ((FieldImpl) slice).getDomainSet().getSetUnits()[0]);
-        slice = gridSet;//TEMP
       }
       catch (VisADException exc) { exc.printStackTrace(); }
       catch (RemoteException exc) { exc.printStackTrace(); }
