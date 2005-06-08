@@ -518,6 +518,7 @@ public class StackLink extends TransformLink {
         RealType zType = it.getZType();
         FunctionType imageType = it.getType();
         Unit[] imageUnits = it.getImageUnits();
+        Unit zUnit = it.getZUnit(stackAxis);
         try {
           if (collapse == null) {
             // use image transform's recommended MathType
@@ -527,7 +528,7 @@ public class StackLink extends TransformLink {
             }
             // compile slices into a single volume and collapse
             collapse = VisUtil.collapse(
-              VisUtil.makeField(slices, zType, 0, len - 1));
+              VisUtil.makeField(slices, zType, 0, len - 1, zUnit));
             cache.putData(trans, pos, "collapse", collapse);
           }
           // resample volume
