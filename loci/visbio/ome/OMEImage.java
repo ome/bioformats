@@ -145,8 +145,20 @@ public class OMEImage extends ImageTransform {
 
   // -- OMEImage API methods --
 
-  /** Gets the OME server from which to access the image. */
+  /** Gets the full URL of the OME server from which to access the image. */
   public String getServer() { return server; }
+
+  /**
+   * Gets the name of the OME server (i.e., without
+   * any trimmings such as the http:// prefix).
+   */
+  public String getServerName() {
+    String s = server;
+    if (s.startsWith("http://")) s = s.substring(7);
+    int slash = s.indexOf("/");
+    if (slash >= 0) s = s.substring(0, slash);
+    return s;
+  }
 
   /** Gets the session key to use when accessing the OME server. */
   public String getSessionKey() { return sessionKey; }
@@ -286,70 +298,14 @@ public class OMEImage extends ImageTransform {
 
   /** Gets a description of this dataset, with HTML markup. */
   public String getHTMLDescription() {
-    return super.getHTMLDescription();
-/* CTR TODO getHTMLDescription
     StringBuffer sb = new StringBuffer();
-
-    // file pattern
-    sb.append(pattern.replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
-    sb.append("<p>\n\n");
-
-    // list of dimensional axes
-    sb.append("Dimensionality: ");
-    sb.append(lengths.length + 2);
-    sb.append("D\n");
-    sb.append("<ul>\n");
-    BigInteger images = BigInteger.ONE;
-    if (lengths.length > 0) {
-      for (int i=0; i<lengths.length; i++) {
-        images = images.multiply(new BigInteger("" + lengths[i]));
-        sb.append("<li>");
-        sb.append(lengths[i]);
-        sb.append(" ");
-        sb.append(getUnitDescription(dims[i]));
-        if (lengths[i] != 1) sb.append("s");
-        sb.append("</li>\n");
-      }
-    }
-
-    // image resolution
-    sb.append("<li>");
-    sb.append(resX);
-    sb.append(" x ");
-    sb.append(resY);
-    sb.append(" pixel");
-    if (resX * resY != 1) sb.append("s");
-    sb.append("</li>\n");
-
-    // range component count
-    sb.append("<li>");
-    sb.append(numRange);
-    sb.append(" range component");
-    if (numRange != 1) sb.append("s");
-    sb.append("</li>\n");
-    sb.append("</ul>\n");
-
-    // file count
-    sb.append(ids.length);
-    sb.append(" ");
-    sb.append(format);
-    sb.append(" in dataset.<br>\n");
-
-    // image and pixel counts
-    BigInteger pixels = images.multiply(new BigInteger("" + resX));
-    pixels = pixels.multiply(new BigInteger("" + resY));
-    pixels = pixels.multiply(new BigInteger("" + numRange));
-    sb.append(images);
-    sb.append(" image");
-    if (!images.equals(BigInteger.ONE)) sb.append("s");
-    sb.append(" totaling ");
-    sb.append(MathUtil.getValueWithUnit(pixels, 2));
-    sb.append("pixel");
-    if (!pixels.equals(BigInteger.ONE)) sb.append("s");
-    sb.append(".<p>\n");
-
+    sb.append("OME server: ");
+    sb.append(getServerName());
+    sb.append("<br>\nImage ID: ");
+    sb.append(imageId);
+    sb.append("<br>\n");
+    sb.append(super.getHTMLDescription());
     return sb.toString();
-*/
   }
 
 
