@@ -5,6 +5,10 @@ Priority is ranked H (high), M (medium) or L (low).
 Data engine
 -----------
 
+[M] Derivatives of data samplings do not preserve labeling correctly, and thus
+    create confusing extra sliders. For example, an arbitrary slice of a data
+    sampling of sdub creates an extra Time slider.
+
 [M] Data transforms have an event they generate when their parameters change.
     Children transforms must listen to this event and react to it.
 
