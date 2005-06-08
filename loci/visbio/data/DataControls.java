@@ -47,7 +47,7 @@ import visad.util.ReflectedUniverse;
 
 /** DataControls is the control panel for managing data. */
 public class DataControls extends ControlPanel
-  implements ActionListener, TreeSelectionListener
+  implements ActionListener, TransformListener, TreeSelectionListener
 {
 
   // -- GUI components --
@@ -257,6 +257,8 @@ public class DataControls extends ControlPanel
       if (dm.getAutoThumbGen()) th.toggleGeneration(true);
       else th.loadThumb(0); // HACK - need first thumbnail for proper colors
     }
+
+    data.addTransformListener(this);
 
     selectNode(node);
     repack();
@@ -503,6 +505,18 @@ public class DataControls extends ControlPanel
       catch (VisADException exc) { exc.printStackTrace(); }
       if (data != null) dm.addData(data);
     }
+  }
+
+
+  // -- TransformListener API methods --
+
+  /** Updates data info panel if a data transform changes while selected. */
+  public void transformChanged(TransformEvent e) {
+    int id = e.getId();
+    if (id != TransformEvent.DATA_CHANGED) return;
+    DataTransform data = (DataTransform) e.getSource();
+    if (data != getSelectedData()) return;
+    doDataInfo(data);
   }
 
 
