@@ -92,6 +92,18 @@ public class OverlayWidget extends JPanel implements ActionListener,
   /** Button for removing selected overlays. */
   protected JButton remove;
 
+  /** Button for copying selected overlays to the clipboard. */
+  protected JButton copy;
+
+  /** Button for pasting copied overlays onto the current position. */
+  protected JButton paste;
+
+  /**
+   * Button for distributing an overlay across all positions
+   * between the copied position and the one selected.
+   */
+  protected JButton dist;
+
   /** Button for loading overlays from disk. */
   protected JButton load;
 
@@ -161,12 +173,13 @@ public class OverlayWidget extends JPanel implements ActionListener,
     // current font text field
     currentFont = new JTextField();
     currentFont.setEditable(false);
+    currentFont.setToolTipText("Font used for text overlays");
     refreshCurrentFont();
 
     // font chooser button
     chooseFont = new JButton("Change...");
     chooseFont.addActionListener(this);
-    if (!LAFUtil.isMacLookAndFeel()) chooseFont.setMnemonic('c');
+    if (!LAFUtil.isMacLookAndFeel()) chooseFont.setMnemonic('h');
     chooseFont.setToolTipText("Configures font used for text overlays");
     JPanel fontRow = FormsUtil.makeRow(new Object[] {"Font",
       currentFont, chooseFont}, new boolean[] {false, true, false});
@@ -175,6 +188,7 @@ public class OverlayWidget extends JPanel implements ActionListener,
     overlayListModel = new DefaultListModel();
     overlayList = new JList(overlayListModel);
     overlayList.addListSelectionListener(this);
+    overlayList.setToolTipText("Overlays at the current dimensional position");
     JScrollPane overlayScroll = new JScrollPane(overlayList);
     SwingUtil.configureScrollPane(overlayScroll);
     overlayScroll.setPreferredSize(new Dimension(120, 0));
@@ -193,24 +207,34 @@ public class OverlayWidget extends JPanel implements ActionListener,
     y1.getDocument().addDocumentListener(this);
     x2.getDocument().addDocumentListener(this);
     y2.getDocument().addDocumentListener(this);
+    x1.setToolTipText("First X coordinate of selected overlays");
+    y1.setToolTipText("First Y coordinate of selected overlays");
+    x2.setToolTipText("Second X coordinate of selected overlays");
+    y2.setToolTipText("Second Y coordinate of selected overlays");
 
     // text text field ;-)
     text = new JTextField(2 * textWidth);
     text.getDocument().addDocumentListener(this);
+    text.setToolTipText("Text displayed for the selected text overlays");
 
     // color chooser
     color = new JButton();
     color.addActionListener(this);
     color.setBackground(Color.white);
+    color.setToolTipText("The color of the selected overlays");
 
     // filled checkbox
     filled = new JCheckBox("Filled");
     filled.addActionListener(this);
     if (!LAFUtil.isMacLookAndFeel()) filled.setMnemonic('f');
+    filled.setToolTipText(
+      "Whether the selected overlays are filled in or outlined");
 
     // group selector
     groupList = new JComboBox(new Object[] {"None"});
     groupList.addActionListener(this);
+    groupList.setToolTipText(
+      "The overlay group to which the selected overlays belong");
 
     // new group button
     newGroup = new JButton("New...");
@@ -221,27 +245,54 @@ public class OverlayWidget extends JPanel implements ActionListener,
     // notes text field
     notes = new JTextField(2 * textWidth);
     notes.getDocument().addDocumentListener(this);
+    notes.setToolTipText(
+      "Miscellaneous notes associated with the selected overlays");
 
     // stats text area
     stats = new JTextArea(5, 3 * textWidth);
     stats.setEditable(false);
     stats.setBorder(new EtchedBorder());
+    stats.setToolTipText("Statistics for the selected overlay");
 
     // overlay removal button
     remove = new JButton("Remove");
     remove.setEnabled(false);
     remove.addActionListener(this);
     if (!LAFUtil.isMacLookAndFeel()) remove.setMnemonic('r');
+    remove.setToolTipText("Deletes the selected overlays");
+
+    // overlay copy button
+    copy = new JButton("Copy");
+    copy.setEnabled(false);
+    copy.addActionListener(this);
+    if (!LAFUtil.isMacLookAndFeel()) copy.setMnemonic('c');
+    copy.setToolTipText("Copies selected overlays to the clipboard");
+
+    // overlay paste button
+    paste = new JButton("Paste");
+    paste.setEnabled(false);
+    paste.addActionListener(this);
+    if (!LAFUtil.isMacLookAndFeel()) paste.setMnemonic('p');
+    paste.setToolTipText("Pastes overlays from the clipboard");
+
+    // overlay distribution button
+    dist = new JButton("Distribute");
+    dist.addActionListener(this);
+    if (!LAFUtil.isMacLookAndFeel()) dist.setMnemonic('d');
+    dist.setToolTipText("Distributes an overlay evenly between " +
+      "copied location and selected location");
 
     // overlay loading button
     load = new JButton("Load overlays...");
     load.addActionListener(this);
     if (!LAFUtil.isMacLookAndFeel()) load.setMnemonic('l');
+    load.setToolTipText("Loads overlays from a text file on disk");
 
     // overlay saving button
     save = new JButton("Save overlays...");
     save.addActionListener(this);
     if (!LAFUtil.isMacLookAndFeel()) save.setMnemonic('s');
+    save.setToolTipText("Saves overlays to a text file on disk");
 
     // lay out components
     setLayout(new BorderLayout());
@@ -287,10 +338,9 @@ public class OverlayWidget extends JPanel implements ActionListener,
     builder.addLabel("Notes", cc.xy(3, row));
     builder.add(notes, cc.xyw(5, row, 5));
     row += 2;
-    builder.add(ButtonBarFactory.buildCenteredBar(remove),
-      cc.xy(1, row, "center, center"));
-    builder.add(ButtonBarFactory.buildCenteredBar(load, save),
-      cc.xyw(3, row, 7, "center, center"));
+    builder.add(ButtonBarFactory.buildCenteredBar(new JButton[] {
+      remove, copy, paste, dist, load, save}),
+      cc.xyw(1, row, 9, "center, center"));
     row += 2;
     builder.addSeparator("Statistics", cc.xyw(1, row, 9));
     row += 2;
@@ -416,7 +466,9 @@ public class OverlayWidget extends JPanel implements ActionListener,
     }
     ignoreEvents = true;
     overlayList.setSelectedIndices(indices);
-    remove.setEnabled(indices.length > 0);
+    boolean hasSelection = sel > 0;
+    remove.setEnabled(hasSelection);
+    copy.setEnabled(hasSelection);
     ignoreEvents = false;
     needRefresh = true;
   }
@@ -507,6 +559,14 @@ public class OverlayWidget extends JPanel implements ActionListener,
     ignoreEvents = false;
   }
 
+  /**
+   * Updates copy and paste widget components to display data
+   * relevant to currently selected overlays.
+   */
+  public void refreshPasteComponent(boolean enabled) {
+    paste.setEnabled(enabled);
+  }
+
 
   // -- ActionListener API methods --
 
@@ -555,9 +615,17 @@ public class OverlayWidget extends JPanel implements ActionListener,
       if (group != null) setActiveGroup(group);
     }
     else if (src == remove) overlay.removeSelectedObjects();
+    else if (src == copy) overlay.copySelectedObjects();
+    else if (src == paste) overlay.pasteObjects();
+    else if (src == dist) {
+      String err = overlay.distributeObjects();
+      if (err != null) {
+        JOptionPane.showMessageDialog(this, err, "Cannot distribute overlays",
+          JOptionPane.ERROR_MESSAGE);
+      }
+    }
     else if (src == load) {
-      Window w = SwingUtil.getWindow(this);
-      int rval = overlayBox.showOpenDialog(w);
+      int rval = overlayBox.showOpenDialog(this);
       if (rval != JFileChooser.APPROVE_OPTION) return;
       File file = overlayBox.getSelectedFile();
       try {
@@ -566,14 +634,13 @@ public class OverlayWidget extends JPanel implements ActionListener,
         fin.close();
       }
       catch (IOException exc) {
-        JOptionPane.showMessageDialog(w, "Error loading overlay file " +
+        JOptionPane.showMessageDialog(this, "Error loading overlay file " +
           file + "): " + exc.getMessage(), "Cannot load overlays",
           JOptionPane.ERROR_MESSAGE);
       }
     }
     else if (src == save) {
-      Window w = SwingUtil.getWindow(this);
-      int rval = overlayBox.showSaveDialog(w);
+      int rval = overlayBox.showSaveDialog(this);
       if (rval != JFileChooser.APPROVE_OPTION) return;
       File file = overlayBox.getSelectedFile();
       try {
@@ -582,7 +649,7 @@ public class OverlayWidget extends JPanel implements ActionListener,
         fout.close();
       }
       catch (IOException exc) {
-        JOptionPane.showMessageDialog(w, "Error saving overlay file " +
+        JOptionPane.showMessageDialog(this, "Error saving overlay file " +
           file + "): " + exc.getMessage(), "Cannot save overlays",
           JOptionPane.ERROR_MESSAGE);
       }

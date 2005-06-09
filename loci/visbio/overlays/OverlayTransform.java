@@ -25,6 +25,7 @@ package loci.visbio.overlays;
 
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.*;
 import java.rmi.RemoteException;
@@ -101,6 +102,12 @@ public class OverlayTransform extends DataTransform
   /** Whether to draw text. */
   protected boolean drawText = true;
 
+  /** Clipboard stores overlays grabbed with the copy function. */
+  protected Vector clipboard = new Vector();
+
+  /** Dimensional position of overlays stored in the clipboard. */
+  protected int[] clipboardPos = null;
+
 
   // -- Constructor --
 
@@ -152,22 +159,197 @@ public class OverlayTransform extends DataTransform
 
   /** Removes selected overlay objects at the given dimensional position. */
   public void removeSelectedObjects(int[] pos) {
+    int ndx = MathUtil.positionToRaster(lengths, pos);
+    if (ndx < 0 || ndx >= overlays.length) return;
     boolean anyRemoved = false;
-    for (int j=0; j<overlays.length; j++) {
-      int i = 0;
-      while (i < overlays[j].size()) {
-        OverlayObject obj = (OverlayObject) overlays[j].elementAt(i);
-        if (obj.isSelected()) {
-          overlays[j].removeElementAt(i);
-          anyRemoved = true;
-        }
-        else i++;
+    int i = 0;
+    while (i < overlays[ndx].size()) {
+      OverlayObject obj = (OverlayObject) overlays[ndx].elementAt(i);
+      if (obj.isSelected()) {
+        overlays[ndx].removeElementAt(i);
+        anyRemoved = true;
       }
+      else i++;
     }
     if (anyRemoved) {
       if (ObjectUtil.arraysEqual(pos, this.pos)) controls.refreshListObjects();
       notifyListeners(new TransformEvent(this));
     }
+  }
+
+  /**
+   * Copies selected overlay objects at the current dimensional position
+   * to the clipboard.
+   */
+  public void copySelectedObjects() { copySelectedObjects(pos); }
+
+  /**
+   * Copies selected overlay objects at the given dimensional position
+   * to the clipboard.
+   */
+  public void copySelectedObjects(int[] pos) {
+    int ndx = MathUtil.positionToRaster(lengths, pos);
+    if (ndx < 0 || ndx >= overlays.length) return;
+    clipboard.removeAllElements();
+    clipboardPos = pos;
+    for (int i=0; i<overlays[ndx].size(); i++) {
+      OverlayObject obj = (OverlayObject) overlays[ndx].elementAt(i);
+      if (obj.isSelected()) clipboard.add(obj);
+    }
+    controls.refreshPasteComponent(!clipboard.isEmpty());
+  }
+
+  /** Pastes copied objects at the current dimensional position. */
+  public void pasteObjects() { pasteObjects(pos); }
+
+  /** Pastes copied objects at the given dimensional position. */
+  public void pasteObjects(int[] pos) {
+    if (clipboard.isEmpty()) return;
+    int ndx = MathUtil.positionToRaster(lengths, pos);
+    if (ndx < 0 || ndx >= overlays.length) return;
+    for (int i=0; i<clipboard.size(); i++) {
+      OverlayObject orig = (OverlayObject) clipboard.elementAt(i);
+      OverlayObject obj =
+        OverlayIO.createOverlay(orig.getClass().getName(), this);
+      obj.x1 = orig.x1;
+      obj.y1 = orig.y1;
+      obj.x2 = orig.x2;
+      obj.y2 = orig.y2;
+      obj.text = orig.text;
+      obj.color = orig.color;
+      obj.filled = orig.filled;
+      obj.group = orig.group;
+      obj.notes = orig.notes;
+      obj.drawing = false;
+      obj.selected = true;
+      obj.computeGridParameters();
+      overlays[ndx].add(obj);
+    }
+    controls.refreshListObjects();
+    notifyListeners(new TransformEvent(this));
+  }
+
+  /**
+   * Distributes one object per dimensional position linearly between the
+   * position of the overlay currently on the clipboard, and the one selected
+   * at the current dimensional position.
+   *
+   * Since there are a number of criteria necessary to perform this task
+   * properly, it returns an error string if there was a problem, or null if
+   * the operation was successful.
+   */
+  public String distributeObjects() { return distributeObjects(pos); }
+
+  /**
+   * Distributes one object per dimensional position linearly between the
+   * position of the overlay currently on the clipboard, and the one selected
+   * at the given dimensional position.
+   *
+   * Since there are a number of criteria necessary to perform this task
+   * properly, it returns an error string if there was a problem, or null if
+   * the operation was successful.
+   */
+  public String distributeObjects(int[] pos) {
+    int ndx = MathUtil.positionToRaster(lengths, pos);
+    if (ndx < 0 || ndx >= overlays.length) {
+      return "Invalid dimensional position.";
+    }
+
+    // grab overlay from the clipboard
+    int size = clipboard.size();
+    if (size == 0) {
+      return "You must first copy an overlay to the clipboard.";
+    }
+    else if (size > 1) {
+      return "There must not be multiple overlays on the clipboard.";
+    }
+    OverlayObject clip = (OverlayObject) clipboard.firstElement();
+
+    // grab currently selected overlay
+    OverlayObject sel = null;
+    for (int i=0; i<overlays[ndx].size(); i++) {
+      OverlayObject obj = (OverlayObject) overlays[ndx].elementAt(i);
+      if (obj.isSelected()) {
+        if (sel != null) {
+          return "There must not be multiple overlays selected.";
+        }
+        sel = obj;
+      }
+    }
+    if (sel == null) return "There must be an overlay selected.";
+
+    // ensure matching types
+    if (!clip.getClass().equals(sel.getClass())) {
+      return "The overlay on the clipboard must " +
+        "be the same kind as the selected overlay.";
+    }
+
+    // check dimensional positions
+    if (pos.length != clipboardPos.length) return "Incompatible overlays.";
+    int diffIndex = -1;
+    for (int i=0; i<pos.length; i++) {
+      if (pos[i] != clipboardPos[i]) {
+        if (diffIndex != -1) {
+          return "Dimensional positions of copied overlay and selected " +
+            "overlay must not vary across multiple axes.";
+        }
+        diffIndex = i;
+      }
+    }
+    if (diffIndex == -1) {
+      return "Nothing to distribute -- copied overlay and selected overlay " +
+        "have identical dimensional positions.";
+    }
+    int distance = pos[diffIndex] - clipboardPos[diffIndex];
+    boolean reverse = distance < 0;
+    if (reverse) distance = -distance;
+    if (distance < 2) {
+      return "Nothing to distribute -- there are no frames between copied " +
+        "overlay and selected overlay.";
+    }
+
+    // compile some information about the overlays
+    String className = sel.getClass().getName();
+
+    // loop through intermediate dimensional positions
+    int inc = reverse ? 1 : -1;
+    int[] p = new int[pos.length];
+    System.arraycopy(pos, 0, p, 0, pos.length);
+    for (int i=1; i<distance; i++) {
+      p[diffIndex] = pos[diffIndex] + i * inc;
+      ndx = MathUtil.positionToRaster(lengths, p);
+      /*TEMP*/System.out.println("distribute: ndx = " + ndx);
+
+      OverlayObject obj = OverlayIO.createOverlay(className, this);
+
+      float q = (float) i / distance;
+      obj.x1 = q * sel.x1 + (1 - q) * clip.x1;
+      obj.y1 = q * sel.y1 + (1 - q) * clip.y1;
+      obj.x2 = q * sel.x2 + (1 - q) * clip.x2;
+      obj.y2 = q * sel.y2 + (1 - q) * clip.y2;
+
+      // CTR START HERE this is almost done.
+      // Just follow the pattern above to populate the rest of the fields
+
+      /*
+      obj.x1 = orig.x1;
+      obj.y1 = orig.y1;
+      obj.x2 = orig.x2;
+      obj.y2 = orig.y2;
+      obj.text = orig.text;
+      obj.color = orig.color;
+      obj.filled = orig.filled;
+      obj.group = orig.group;
+      obj.notes = orig.notes;
+      obj.drawing = false;
+      obj.selected = true;
+      obj.computeGridParameters();
+      */
+      overlays[ndx].add(obj);
+    }
+
+    notifyListeners(new TransformEvent(this));
+    return null;
   }
 
   /** Gets the overlay objects at the current dimensional position. */
@@ -502,7 +684,10 @@ public class OverlayTransform extends DataTransform
     else if (id == DisplayEvent.KEY_PRESSED) {
       updatePosition(display);
       int code = e.getKeyCode();
+      boolean ctrl = (e.getModifiers() & InputEvent.CTRL_MASK) != 0;
       if (code == KeyEvent.VK_DELETE) removeSelectedObjects();
+      else if (ctrl && code == KeyEvent.VK_C) copySelectedObjects();
+      else if (ctrl && code == KeyEvent.VK_V) pasteObjects();
       else {
         // update selected text objects
         int ndx = MathUtil.positionToRaster(lengths, pos);

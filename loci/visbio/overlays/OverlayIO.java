@@ -159,57 +159,16 @@ public class OverlayIO {
         String notes = st.nextToken();
         notes = notes.substring(0, notes.length() - 1); // remove trailing #
 
-        // instantiate overlay object
         String className = "loci.visbio.overlays.Overlay" + type;
-        String classError = "Warning: could not reconstruct overlay " +
-          "of type " + type + " defined on line " + lineNum + ": ";
-        OverlayObject obj = null;
-        try {
-          Class c = Class.forName(className);
-          Constructor con = c.getConstructor(
-            new Class[] {OverlayTransform.class});
-          obj = (OverlayObject) con.newInstance(new Object[] {trans});
-        }
-        catch (ClassCastException exc) {
-          System.err.println(classError +
-            "class " + className + " does not extend OverlayObject.");
-          continue;
-        }
-        catch (ClassNotFoundException exc) {
-          System.err.println(classError +
-            "class " + className + " not found.");
-          continue;
-        }
-        catch (IllegalAccessException exc) {
-          System.err.println(classError +
-            "cannot access constructor for class " + className + ".");
-          continue;
-        }
-        catch (InstantiationException exc) {
-          System.err.println(classError +
-            "cannot instantiate class " + className + ".");
-          continue;
-        }
-        catch (InvocationTargetException exc) {
-          System.err.println(classError +
-            "error invoking constructor for class " + className + ".");
-          continue;
-        }
-        catch (NoSuchMethodException exc) {
-          System.err.println(classError +
-            "no appropriate constructor for class " + className + ".");
-          continue;
-        }
-        if (obj == null) {
-          System.err.println(classError +
-            "constructor for class " + className + " returned null object.");
-          continue;
-        }
+        OverlayObject obj = createOverlay(className, trans, lineNum);
+        if (obj == null) continue;
 
         // assign overlay parameters
         int r = MathUtil.positionToRaster(lengths, pos);
         if (r < 0 || r >= loadedOverlays.length) {
-          System.err.println(classError + "invalid dimensional position.");
+          System.err.println("Warning: could not reconstruct " + type +
+            "overlay defined on line " + lineNum +
+            ": invalid dimensional position.");
           continue;
         }
         obj.x1 = x1;
@@ -288,6 +247,59 @@ public class OverlayIO {
         out.println(obj.notes.replaceAll("\t", " "));
       }
     }
+  }
+
+  /** Instantiates an overlay object of the given class. */
+  public static OverlayObject createOverlay(String className,
+    OverlayTransform trans)
+  {
+    return createOverlay(className, trans, 0);
+  }
+
+  /** Instantiates an overlay object of the given class. */
+  public static OverlayObject createOverlay(String className,
+    OverlayTransform trans, int lineNum)
+  {
+    String classError = "Warning: could not reconstruct overlay " +
+      "of class " + className;
+    if (lineNum > 0) classError += " defined on line " + lineNum;
+    classError += ": ";
+    OverlayObject obj = null;
+    try {
+      Class c = Class.forName(className);
+      Constructor con = c.getConstructor(
+        new Class[] {OverlayTransform.class});
+      obj = (OverlayObject) con.newInstance(new Object[] {trans});
+      if (obj == null) {
+        System.err.println(classError +
+          "constructor for class " + className + " returned null object.");
+      }
+    }
+    catch (ClassCastException exc) {
+      System.err.println(classError +
+        "class " + className + " does not extend OverlayObject.");
+    }
+    catch (ClassNotFoundException exc) {
+      System.err.println(classError +
+        "class " + className + " not found.");
+    }
+    catch (IllegalAccessException exc) {
+      System.err.println(classError +
+        "cannot access constructor for class " + className + ".");
+    }
+    catch (InstantiationException exc) {
+      System.err.println(classError +
+        "cannot instantiate class " + className + ".");
+    }
+    catch (InvocationTargetException exc) {
+      System.err.println(classError +
+        "error invoking constructor for class " + className + ".");
+    }
+    catch (NoSuchMethodException exc) {
+      System.err.println(classError +
+        "no appropriate constructor for class " + className + ".");
+    }
+    return obj;
   }
 
 }
