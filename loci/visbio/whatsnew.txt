@@ -1,3 +1,10 @@
+v3.01 - Not yet released
+
+- ADDED: Copy, paste and mass distribution overlay functions
+
+- FIXED: Remove selected overlays only affects the current dimensional position
+
+
 v3.00 final - Wednesday, June 8, 2005
 
 - ADDED: "Sample datasets" menu for automatically downloading sample data
