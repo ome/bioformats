@@ -326,14 +326,14 @@ public class OverlayTransform extends DataTransform
       OverlayObject obj = OverlayIO.createOverlay(className, this);
 
       float q = (float) i / distance;
-      obj.x1 = q * sel.x1 + (1 - q) * clip.x1;
-      obj.y1 = q * sel.y1 + (1 - q) * clip.y1;
-      obj.x2 = q * sel.x2 + (1 - q) * clip.x2;
-      obj.y2 = q * sel.y2 + (1 - q) * clip.y2;
+      obj.x1 = q * clip.x1 + (1 - q) * sel.x1;
+      obj.y1 = q * clip.y1 + (1 - q) * sel.y1;
+      obj.x2 = q * clip.x2 + (1 - q) * sel.x2;
+      obj.y2 = q * clip.y2 + (1 - q) * sel.y2;
       obj.color = new Color(
-        (int) (q * sel.color.getRed() + (1 - q) * clip.color.getRed()),
-        (int) (q * sel.color.getGreen() + (1 - q) * clip.color.getGreen()),
-        (int) (q * sel.color.getBlue() + (1 - q) * clip.color.getBlue()));
+        (int) (q * clip.color.getRed() + (1 - q) * sel.color.getRed()),
+        (int) (q * clip.color.getGreen() + (1 - q) * sel.color.getGreen()),
+        (int) (q * clip.color.getBlue() + (1 - q) * sel.color.getBlue()));
       obj.filled = filled;
       obj.group = group;
       obj.notes = notes;
