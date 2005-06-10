@@ -23,8 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.overlays;
 
-import java.awt.Font;
-import java.awt.FontMetrics;
+import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.*;
@@ -310,6 +309,11 @@ public class OverlayTransform extends DataTransform
 
     // compile some information about the overlays
     String className = sel.getClass().getName();
+    boolean filled = clip.filled && sel.filled;
+    String group = ObjectUtil.objectsEqual(clip.group, sel.group) ?
+      clip.group : null;
+    String notes = ObjectUtil.objectsEqual(clip.notes, sel.notes) ?
+      clip.notes : null;
 
     // loop through intermediate dimensional positions
     int inc = reverse ? 1 : -1;
@@ -318,7 +322,6 @@ public class OverlayTransform extends DataTransform
     for (int i=1; i<distance; i++) {
       p[diffIndex] = pos[diffIndex] + i * inc;
       ndx = MathUtil.positionToRaster(lengths, p);
-      /*TEMP*/System.out.println("distribute: ndx = " + ndx);
 
       OverlayObject obj = OverlayIO.createOverlay(className, this);
 
@@ -327,24 +330,17 @@ public class OverlayTransform extends DataTransform
       obj.y1 = q * sel.y1 + (1 - q) * clip.y1;
       obj.x2 = q * sel.x2 + (1 - q) * clip.x2;
       obj.y2 = q * sel.y2 + (1 - q) * clip.y2;
-
-      // CTR START HERE this is almost done.
-      // Just follow the pattern above to populate the rest of the fields
-
-      /*
-      obj.x1 = orig.x1;
-      obj.y1 = orig.y1;
-      obj.x2 = orig.x2;
-      obj.y2 = orig.y2;
-      obj.text = orig.text;
-      obj.color = orig.color;
-      obj.filled = orig.filled;
-      obj.group = orig.group;
-      obj.notes = orig.notes;
+      obj.color = new Color(
+        (int) (q * sel.color.getRed() + (1 - q) * clip.color.getRed()),
+        (int) (q * sel.color.getGreen() + (1 - q) * clip.color.getGreen()),
+        (int) (q * sel.color.getBlue() + (1 - q) * clip.color.getBlue()));
+      obj.filled = filled;
+      obj.group = group;
+      obj.notes = notes;
       obj.drawing = false;
-      obj.selected = true;
+      obj.selected = false;
       obj.computeGridParameters();
-      */
+
       overlays[ndx].add(obj);
     }
 
