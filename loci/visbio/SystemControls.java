@@ -4,7 +4,7 @@
 
 /*
 VisBio application for visualization of multidimensional
-biological image data. Copyright (C) 2002-2004 Curtis Rueden.
+biological image data. Copyright (C) 2002-2005 Curtis Rueden.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -31,8 +31,7 @@ import java.awt.event.ActionListener;
 import java.util.Enumeration;
 import java.util.Properties;
 import javax.swing.*;
-import loci.visbio.util.LAFUtil;
-import loci.visbio.util.VisUtil;
+import loci.visbio.util.*;
 import visad.VisADException;
 import visad.data.qt.QTForm;
 import visad.util.ReflectedUniverse;
@@ -130,6 +129,18 @@ public class SystemControls extends ControlPanel implements ActionListener {
       getVersionString("org.python.util.PythonInterpreter"));
     pythonField.setEditable(false);
 
+    // MATLAB library text field
+    String matlabVersion = MatlabUtil.getMatlabVersion();
+    JTextField matlabField = new JTextField(
+      matlabVersion == null ? "Missing" : matlabVersion);
+    matlabField.setEditable(false);
+
+    // Octave library text field
+    String octaveVersion = MatlabUtil.getOctaveVersion();
+    JTextField octaveField = new JTextField(
+      octaveVersion == null ? "Missing" : octaveVersion);
+    octaveField.setEditable(false);
+
     // JAI library text field
     JTextField jaiField = new JTextField(
       getVersionString("javax.media.jai.JAI"));
@@ -157,54 +168,61 @@ public class SystemControls extends ControlPanel implements ActionListener {
       "right:pref, 3dlu, pref:grow, 3dlu, pref",
       "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 9dlu, " +
       "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, " +
-      "pref, 9dlu, pref, 3dlu, pref, 3dlu, pref");
+      "pref, 3dlu, pref, 3dlu, pref, 9dlu, pref, 3dlu, pref, 3dlu, pref");
     PanelBuilder builder = new PanelBuilder(layout);
     builder.setDefaultDialogBorder();
     CellConstraints cc = new CellConstraints();
+    int row = 1;
 
-    builder.addSeparator("Properties", cc.xyw(1, 1, 3));
-    builder.add(dump, cc.xy(5, 1));
-
-    builder.addLabel("&Operating system", cc.xy(1, 3)).setLabelFor(osField);
-    builder.add(osField, cc.xyw(3, 3, 3));
-
-    builder.addLabel("&Java version", cc.xy(1, 5)).setLabelFor(javaField);
-    builder.add(javaField, cc.xyw(3, 5, 3));
-
-    builder.addLabel("&Memory usage", cc.xy(1, 7)).setLabelFor(memField);
-    builder.add(memField, cc.xy(3, 7));
-    builder.add(clean, cc.xy(5, 7));
-
-    builder.addLabel("&Memory maximum", cc.xy(1, 9)).setLabelFor(heapField);
-    builder.add(heapField, cc.xy(3, 9));
-    builder.add(heap, cc.xy(5, 9));
-
-    builder.addSeparator("Libraries", cc.xyw(1, 11, 5));
-
-    builder.addLabel("Java&3D", cc.xy(1, 13)).setLabelFor(java3dField);
-    builder.add(java3dField, cc.xyw(3, 13, 3));
-
-    builder.addLabel("JPE&G", cc.xy(1, 15)).setLabelFor(jpegField);
-    builder.add(jpegField, cc.xyw(3, 15, 3));
-
-    builder.addLabel("&QuickTime", cc.xy(1, 17)).setLabelFor(qtField);
-    builder.add(qtField, cc.xyw(3, 17, 3));
-
-    builder.addLabel("&Python", cc.xy(1, 19)).setLabelFor(pythonField);
-    builder.add(pythonField, cc.xyw(3, 19, 3));
-
-    builder.addLabel("JA&I", cc.xy(1, 21)).setLabelFor(jaiField);
-    builder.add(jaiField, cc.xyw(3, 21, 3));
-
-    builder.addSeparator("Configuration", cc.xyw(1, 23, 5));
-
-    builder.addLabel("&Look && Feel", cc.xy(1, 25)).setLabelFor(lafField);
-    builder.add(lafField, cc.xy(3, 25));
-    builder.add(laf, cc.xy(5, 25));
-
-    builder.addLabel("&Stereo", cc.xy(1, 27)).setLabelFor(stereoField);
-    builder.add(stereoField, cc.xyw(3, 27, 3));
-
+    builder.addSeparator("Properties", cc.xyw(1, row, 3));
+    builder.add(dump, cc.xy(5, row));
+    row += 2;
+    builder.addLabel("&Operating system", cc.xy(1, row)).setLabelFor(osField);
+    builder.add(osField, cc.xyw(3, row, 3));
+    row += 2;
+    builder.addLabel("&Java version", cc.xy(1, row)).setLabelFor(javaField);
+    builder.add(javaField, cc.xyw(3, row, 3));
+    row += 2;
+    builder.addLabel("Memory &usage", cc.xy(1, row)).setLabelFor(memField);
+    builder.add(memField, cc.xy(3, row));
+    builder.add(clean, cc.xy(5, row));
+    row += 2;
+    builder.addLabel("Memory ma&ximum", cc.xy(1, row)).setLabelFor(heapField);
+    builder.add(heapField, cc.xy(3, row));
+    builder.add(heap, cc.xy(5, row));
+    row += 2;
+    builder.addSeparator("Libraries", cc.xyw(1, row, 5));
+    row += 2;
+    builder.addLabel("Java&3D", cc.xy(1, row)).setLabelFor(java3dField);
+    builder.add(java3dField, cc.xyw(3, row, 3));
+    row += 2;
+    builder.addLabel("JPE&G", cc.xy(1, row)).setLabelFor(jpegField);
+    builder.add(jpegField, cc.xyw(3, row, 3));
+    row += 2;
+    builder.addLabel("&QuickTime", cc.xy(1, row)).setLabelFor(qtField);
+    builder.add(qtField, cc.xyw(3, row, 3));
+    row += 2;
+    builder.addLabel("&Python", cc.xy(1, row)).setLabelFor(pythonField);
+    builder.add(pythonField, cc.xyw(3, row, 3));
+    row += 2;
+    builder.addLabel("&MATLAB", cc.xy(1, row)).setLabelFor(matlabField);
+    builder.add(matlabField, cc.xyw(3, row, 3));
+    row += 2;
+    builder.addLabel("Octa&ve", cc.xy(1, row)).setLabelFor(octaveField);
+    builder.add(octaveField, cc.xyw(3, row, 3));
+    row += 2;
+    builder.addLabel("JA&I", cc.xy(1, row)).setLabelFor(jaiField);
+    builder.add(jaiField, cc.xyw(3, row, 3));
+    row += 2;
+    builder.addSeparator("Configuration", cc.xyw(1, row, 5));
+    row += 2;
+    builder.addLabel("&Look && Feel", cc.xy(1, row)).setLabelFor(lafField);
+    builder.add(lafField, cc.xy(3, row));
+    builder.add(laf, cc.xy(5, row));
+    row += 2;
+    builder.addLabel("&Stereo", cc.xy(1, row)).setLabelFor(stereoField);
+    builder.add(stereoField, cc.xyw(3, row, 3));
+    row += 2;
     controls.add(builder.getPanel());
 
     // update system information twice per second
