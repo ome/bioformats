@@ -26,8 +26,9 @@ dataset. First, add your dataset to a 2D display as described in the
 overlays to the same 2D display (not a new one). Doing so will overlay them
 atop your image.
 
-<p><i>[Author's note: On some systems, the rendering order of the dataset and
-the overlays may need to be reversed. If you see nothing when drawing overlays,
+<p><i>[Author's note: On some systems (in particular, if VisBio is using Java2D
+because Java3D is not installed), the rendering order of the dataset and the
+overlays may need to be reversed. If you see nothing when drawing overlays,
 select the overlays from the display window's list of linked data objects and
 click the "Up" button to move them up in the rendering order.</i>
 
@@ -115,7 +116,24 @@ across many consecutive image planes. By identifying starting and ending
 overlays, you can instruct the software to create a series of intermediate
 overlays between the starting and ending image planes.
 
-<p>CTR START HERE finish this!
+<p>First, decide on a series of image planes across which you wish to
+distribute an overlay. For example, you could decide you want an oval overlay
+on slice #5, from timepoints #3 through #57.
+
+<p>Navigate to the first image plane and draw the overlay. In our example,
+create the oval at slice #5, timepoint #3.
+
+<p>Copy the overlay to the clipboard by clicking the "Copy" button (or by
+pressing the Ctrl+C key combination).
+
+<p>Navigate to the last image plane and draw the same type of overlay (or paste
+the copied overlay onto the exact same coordinates using the "Paste" button, or
+by pressing the Ctrl+V key combination). In our example, create or paste the
+oval at slice #5, timepoint #57.
+
+<p>Finally, click the "Distribute" button. To see what VisBio has done,
+navigate through the intermediate frames. In our example, move the Time slider
+between #3 and #57 to see how VisBio has distributed oval overlays.
 
 <br><h3>Changing the font</h3>
 
