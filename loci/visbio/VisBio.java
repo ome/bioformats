@@ -25,9 +25,7 @@ package loci.visbio;
 
 import java.awt.Color;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.*;
 import loci.visbio.util.InstanceServer;
 import loci.visbio.util.SplashScreen;
 
@@ -101,6 +99,16 @@ public class VisBio {
       ss.getClass(), String[].class
     });
     con.newInstance(new Object[] {ss, args});
+  }
+
+  /** Launches the VisBio GUI with no arguments, in a separate thread. */
+  public static void go() {
+    new Thread() {
+      public void run() {
+        try { main(new String[0]); }
+        catch (Exception exc) { exc.printStackTrace(); }
+      }
+    }.start();
   }
 
 }
