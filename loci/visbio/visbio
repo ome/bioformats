@@ -1,2 +1,7 @@
 #!/bin/bash
+if [ `which octave` ]; then
+  OCTAVE_VERSION=`octave -v | head -n 1 | sed -e 's/^[^0-9]*//g' -e 's/[^0-9.].*//g'`
+  echo "Detected octave v$OCTAVE_VERSION"
+  export LD_LIBRARY_PATH=/usr/lib/octave-$OCTAVE_VERSION:math/octavej
+fi
 java -mx896m -Dswing.defaultlaf=com.jgoodies.plaf.plastic.Plastic3DLookAndFeel loci.visbio.VisBio $*
