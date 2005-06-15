@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.util;
 
 import loci.visbio.math.*;
+import visad.*;
 
 /** MatlabUtil contains useful MATLAB and Octave functions. */
 public abstract class MatlabUtil {
@@ -67,6 +68,46 @@ public abstract class MatlabUtil {
     if (cx == null) return null;
     OctaveValueList ovl = cx.evalString("version");
     return ovl.get(0).stringValue();
+  }
+
+
+  // -- FlatField methods --
+
+  /**
+   * Converts FlatField samples to a series of
+   * 2D image planes (one per range component).
+   */
+  public static double[][][] samplesToDoubles(double[][] samples,
+    int xLen, int yLen)
+  {
+    double[][][] d = new double[samples.length][][];
+    for (int i=0; i<samples.length; i++) {
+      d[i] = unrasterize(samples[i], xLen, yLen);
+    }
+    return d;
+  }
+
+  /** Converts a series of 2D image planes to a FlatField samples array. */
+  public static double[][] doublesToSamples(double[][][] d) {
+    double[][] samples = new double[d.length][];
+    for (int i=0; i<d.length; i++) samples[i] = rasterize(d[i]);
+    return samples;
+  }
+
+  /** Converts a rasterized 1D array into a properly dimensioned 2D array. */
+  public static double[][] unrasterize(double[] arr, int xLen, int yLen) {
+    double[][] d = new double[yLen][xLen];
+    for (int y=0; y<yLen; y++) System.arraycopy(arr, y * xLen, d[y], 0, xLen);
+    return d;
+  }
+
+  /** Converts a 2D array into a rasterized 1D array. */
+  public static double[] rasterize(double[][] arr) {
+    int xLen = arr[0].length;
+    int yLen = arr.length;
+    double[] d = new double[xLen * yLen];
+    for (int y=0; y<yLen; y++) System.arraycopy(arr[y], 0, d, y * xLen, xLen);
+    return d;
   }
 
 }
