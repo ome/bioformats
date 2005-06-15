@@ -36,6 +36,7 @@ import javax.swing.border.CompoundBorder;
 import loci.visbio.data.DataManager;
 import loci.visbio.data.DataTransform;
 import loci.visbio.help.HelpManager;
+import loci.visbio.math.MathManager;
 import loci.visbio.overlays.OverlayManager;
 import loci.visbio.ome.OMEImage;
 import loci.visbio.ome.OMEManager;
@@ -159,6 +160,7 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
         new HelpManager(this),
         new PanelManager(this),
         new DataManager(this),
+        new MathManager(this),
         new OMEManager(this),
         new DisplayManager(this),
         new OverlayManager(this),
