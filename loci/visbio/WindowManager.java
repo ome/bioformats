@@ -115,6 +115,7 @@ public class WindowManager extends LogicManager implements WindowListener {
 
   /** Removes the window from the window manager and disposes of it. */
   public void disposeWindow(Window w) {
+    if (w == null) return;
     w.setVisible(false);
     String wname = SwingUtil.getWindowTitle(w);
     windowStates.remove(wname);
