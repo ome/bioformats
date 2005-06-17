@@ -120,7 +120,6 @@ public abstract class MatlabUtil {
     }
     sb.append(")");
     String command = sb.toString();
-    /*TEMP*/System.out.println("Octave/MATLAB command = " + command);
 
     double[][] samps = null;
 
@@ -175,7 +174,7 @@ public abstract class MatlabUtil {
 
           String eq = st.hasMoreTokens() ? st.nextToken() : "";
 
-          if (n != v + 2 || !eq.equals("=")) {
+          if (n != v + 1 || !eq.equals("=")) {
             System.err.println(matlabError + "variable assignment");
             return null;
           }
@@ -191,17 +190,20 @@ public abstract class MatlabUtil {
           String last = st.hasMoreTokens() ? st.nextToken() : "";
 
           clo = -1;
-          try { clo = Integer.parseInt(first); }
+          try { clo = Integer.parseInt(first) - 1; }
           catch (NumberFormatException exc) { }
 
           chi = -1;
-          try { chi = Integer.parseInt(last); }
+          try { chi = Integer.parseInt(last) - 1; }
           catch (NumberFormatException exc) { }
 
-          if (clo != c + 1 || clo < chi || !through.equals("through")) {
+          if (chi < clo || !through.equals("through")) {
             System.err.println(matlabError + "columns range");
             return null;
           }
+
+          c = clo;
+          r = 0;
         }
         else if (v < 0) {
           System.err.println(matlabError + "variable assignment");
