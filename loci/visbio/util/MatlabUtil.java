@@ -123,10 +123,10 @@ public abstract class MatlabUtil {
 
     double[][] samps = null;
 
-    OctaveContext octave = getOctave();
-    if (octave != null) { // try Octave
+    OctaveContext oc = getOctave();
+    if (oc != null) { // try Octave
       // execute command
-      OctaveValueList ovl = octave.evalString(command);
+      OctaveValueList ovl = oc.evalString(command);
 
       // convert result to samples array
       samps = new double[ovl.size()][];
@@ -136,8 +136,8 @@ public abstract class MatlabUtil {
       }
     }
 
-    MatlabControl matlab = getMatlab();
-    if (samps == null && matlab != null) { // try MATLAB
+    MatlabControl mc = getMatlab();
+    if (samps == null && mc != null) { // try MATLAB
       // prepend return value variables
       sb = new StringBuffer();
       sb.append("[");
@@ -152,7 +152,7 @@ public abstract class MatlabUtil {
 
       // execute command
       String ans = null;
-      try { ans = matlab.blockingEval(command); }
+      try { ans = mc.blockingEval(command); }
       catch (InterruptedException exc) {
         exc.printStackTrace();
         return null;
