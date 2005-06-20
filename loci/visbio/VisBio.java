@@ -102,7 +102,7 @@ public class VisBio {
   }
 
   /** Launches the VisBio GUI with no arguments, in a separate thread. */
-  public static void go() {
+  public static void startProgram() {
     new Thread() {
       public void run() {
         try { main(new String[0]); }
