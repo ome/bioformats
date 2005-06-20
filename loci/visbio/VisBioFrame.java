@@ -36,7 +36,7 @@ import javax.swing.border.CompoundBorder;
 import loci.visbio.data.DataManager;
 import loci.visbio.data.DataTransform;
 import loci.visbio.help.HelpManager;
-import loci.visbio.math.MathManager;
+import loci.visbio.matlab.MathManager;
 import loci.visbio.overlays.OverlayManager;
 import loci.visbio.ome.OMEImage;
 import loci.visbio.ome.OMEManager;

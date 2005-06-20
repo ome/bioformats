@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.util.Enumeration;
 import java.util.Properties;
 import javax.swing.*;
+import loci.visbio.matlab.MatlabUtil;
 import loci.visbio.util.*;
 import visad.VisADException;
 import visad.data.qt.QTForm;
@@ -135,12 +136,6 @@ public class SystemControls extends ControlPanel implements ActionListener {
       matlabVersion == null ? "Missing" : matlabVersion);
     matlabField.setEditable(false);
 
-    // Octave library text field
-    String octaveVersion = MatlabUtil.getOctaveVersion();
-    JTextField octaveField = new JTextField(
-      octaveVersion == null ? "Missing" : octaveVersion);
-    octaveField.setEditable(false);
-
     // JAI library text field
     JTextField jaiField = new JTextField(
       getVersionString("javax.media.jai.JAI"));
@@ -168,7 +163,7 @@ public class SystemControls extends ControlPanel implements ActionListener {
       "right:pref, 3dlu, pref:grow, 3dlu, pref",
       "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 9dlu, " +
       "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, " +
-      "pref, 3dlu, pref, 3dlu, pref, 9dlu, pref, 3dlu, pref, 3dlu, pref");
+      "pref, 3dlu, pref, 9dlu, pref, 3dlu, pref, 3dlu, pref");
     PanelBuilder builder = new PanelBuilder(layout);
     builder.setDefaultDialogBorder();
     CellConstraints cc = new CellConstraints();
@@ -207,9 +202,6 @@ public class SystemControls extends ControlPanel implements ActionListener {
     row += 2;
     builder.addLabel("&MATLAB", cc.xy(1, row)).setLabelFor(matlabField);
     builder.add(matlabField, cc.xyw(3, row, 3));
-    row += 2;
-    builder.addLabel("Octa&ve", cc.xy(1, row)).setLabelFor(octaveField);
-    builder.add(octaveField, cc.xyw(3, row, 3));
     row += 2;
     builder.addLabel("JA&I", cc.xy(1, row)).setLabelFor(jaiField);
     builder.add(jaiField, cc.xyw(3, row, 3));

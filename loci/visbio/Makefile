@@ -93,7 +93,7 @@ PACKAGES = \
 	loci.visbio \
 	loci.visbio.data \
 	loci.visbio.help \
-	loci.visbio.math \
+	loci.visbio.matlab \
 	loci.visbio.ome \
 	loci.visbio.overlays \
 	loci.visbio.state \
