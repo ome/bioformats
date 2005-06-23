@@ -5,13 +5,13 @@ written in MATLAB, you can set up a MATLAB function data object that takes an
 existing data object as input and generates output data by calling its
 associated MATLAB function for each image plane.
 
-<h3>Configuring MATLAB for use with VisBio</h3>
+<br><h3>Configuring MATLAB for use with VisBio</h3>
 
-<p>To connect to MATLAB, VisBio must be launched from within the MATLAB
+To connect to MATLAB, VisBio must be launched from within the MATLAB
 environment. To make this possible, follow these steps:
 
 <ol>
-  <li>Start MATLAB.</li><br>
+  <li>Start MATLAB.</li>
 
   <li>At the prompt, type:
   <blockquote><code>
@@ -40,14 +40,16 @@ environment. To make this possible, follow these steps:
   </code></blockquote>
   </li>
 
-  <li>Save the file and close the editor.</li><br>
+  <li>Save the file and close the editor.</li>
 
   <li>Restart MATLAB to apply the classpath changes.</li>
 </ol>
 
-<h3>Launching VisBio from within MATLAB</h3>
+The above steps need only be performed once.
 
-<p>Once you have configured the classpath as described above, change the MATLAB
+<br><h3>Launching VisBio from within MATLAB</h3>
+
+Once you have configured the classpath as described above, change the MATLAB
 working directory to your VisBio folder, then type "<code>visbio</code>" to
 launch VisBio. For example, if you are running Windows and installed VisBio to
 "<code>C:\Program Files\VisBio</code>" you could type the following at the
@@ -63,9 +65,9 @@ a version number (if it says "Missing" then something went wrong). You should
 also see "MATLAB function" listed as an option beneath the "Add &gt;" button
 on the <a href="data_panel.html">Data panel</a>.
 
-<h3>Writing a MATLAB function for use in VisBio</h3>
+<br><h3>Writing a MATLAB function for use in VisBio</h3>
 
-<p>VisBio expects MATLAB functions to be declared in a specific way. Your
+VisBio expects MATLAB functions to be declared in a specific way. Your
 function's declaration should be as follows:
 <blockquote><code>
   function [result] = fname(pix, params)
@@ -83,9 +85,9 @@ that of the input images. However, the number of range components in the result
 may differ from the number of input range components. Hence, a MATLAB function
 for resampling is not supported, but one for intensity projection is ok.]</em>
 
-<h3>Calling a MATLAB function from VisBio</h3>
+<br><h3>Calling a MATLAB function from VisBio</h3>
 
-<p>First, import your dataset as described in the
+First, import your dataset as described in the
 <a href="import_data.html">Importing a dataset from disk</a> topic. Select your
 data from the list, then click the "Add &gt;" button and choose "MATLAB
 function" from the popup menu.
