@@ -49,6 +49,9 @@ public class InstanceServer implements Runnable {
   /** List of application instance spawn listeners. */
   protected Vector listeners;
 
+  /** Whether this instance server is still listening for spawn events. */
+  protected boolean alive = true;
+
 
   // -- Static InstanceServer API methods --
 
@@ -100,6 +103,13 @@ public class InstanceServer implements Runnable {
     synchronized (listeners) { listeners.removeAllElements(); }
   }
 
+  /** Stops this instance server's thread. */
+  public void stop() {
+    alive = false;
+    try { serverSocket.close(); }
+    catch (IOException exc) { exc.printStackTrace(); }
+  }
+
 
   // -- Runnable API methods --
 
@@ -108,7 +118,7 @@ public class InstanceServer implements Runnable {
    * passes their arguments to all registered listeners.
    */
   public void run() {
-    while (true) {
+    while (alive) {
       try {
         Socket socket = serverSocket.accept();
         BufferedReader in = new BufferedReader(
@@ -125,7 +135,7 @@ public class InstanceServer implements Runnable {
         socket.close();
         notifyListeners(new SpawnEvent(args));
       }
-      catch (IOException exc) { exc.printStackTrace(); }
+      catch (IOException exc) { if (alive) exc.printStackTrace(); }
     }
   }
 

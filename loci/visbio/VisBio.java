@@ -74,7 +74,7 @@ public class VisBio {
     boolean isRunning = true;
     try { InstanceServer.sendArguments(args, INSTANCE_PORT); }
     catch (IOException exc) { isRunning = false; }
-    if (isRunning) System.exit(0);
+    if (isRunning) return;
 
     // display splash screen
     String[] msg = {

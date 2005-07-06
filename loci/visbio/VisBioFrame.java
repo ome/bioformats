@@ -77,6 +77,9 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
   /** VisBio program icon. */
   protected Image icon;
 
+  /** Instance server for this instance of VisBio. */
+  protected InstanceServer instanceServer;
+
 
   // -- Constructor --
 
@@ -94,7 +97,10 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
     super(true);
     try {
       // initialize server for responding to newly spawned instances
-      try { new InstanceServer(VisBio.INSTANCE_PORT).addSpawnListener(this); }
+      try {
+        instanceServer = new InstanceServer(VisBio.INSTANCE_PORT);
+        instanceServer.addSpawnListener(this);
+      }
       catch (IOException exc) {
         System.err.println("Warning: could not initialize instance server " +
           "on port " + VisBio.INSTANCE_PORT + ". VisBio will not be able " +
@@ -234,7 +240,11 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
         sw.toString() +
         "\nA copy of this information has been saved to the errors.log file.",
         "VisBio", JOptionPane.ERROR_MESSAGE);
-      System.exit(0);
+
+      // quit program
+      ExitManager xm = (ExitManager) getManager(ExitManager.class);
+      if (xm != null) xm.fileExit();
+      else System.exit(0);
     }
   }
 
@@ -403,6 +413,15 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
 
   /** Gets VisBio program icon. */
   public Image getIcon() { return icon; }
+
+
+  // -- Window API methods --
+
+  /** Disposes of this frame, releasing native screen resources. */
+  public void dispose() {
+    instanceServer.stop();
+    super.dispose();
+  }
 
 
   // -- ActionListener API methods --
