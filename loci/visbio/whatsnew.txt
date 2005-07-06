@@ -1,9 +1,10 @@
-v3.01 - Not yet released
+v3.05 - Wednesday, July 6, 2005
 
 - ADDED: Copy, paste and mass distribution overlay functions
 - ADDED: Initial implementation of MATLAB-VisBio interface
 
 - FIXED: Remove selected overlays only affects the current dimensional position
+- FIXED: Improper color summing when Java3D not present
 - FIXED: Add loci-ome-xml.jar to launch scripts
 
 
