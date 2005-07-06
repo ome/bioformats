@@ -65,26 +65,6 @@ a version number (if it says "Missing" then something went wrong). You should
 also see "MATLAB function" listed as an option beneath the "Add &gt;" button
 on the <a href="data_panel.html">Data panel</a>.
 
-<br><h3>Writing a MATLAB function for use in VisBio</h3>
-
-VisBio expects MATLAB functions to be declared in a specific way. Your
-function's declaration should be as follows:
-<blockquote><code>
-  function [result] = fname(pix, params)
-</code></blockquote>
-where "<code>fname</code>" is the name of your function, "<code>pix</code>" is
-a 3D array of pixels dimensioned (Y, X, N), and "<code>params</code>" is a
-vector of any additional numeric parameters needed for your algorithm.
-
-<p>VisBio comes with several example functions (files with extension .m, other
-than visbio.m and vbget.m), which should serve to illustrate the proper
-organization.
-
-<p><em>[Author's note: For now, the resolution of the output images must match
-that of the input images. However, the number of range components in the result
-may differ from the number of input range components. Hence, a MATLAB function
-for resampling is not supported, but one for intensity projection is ok.]</em>
-
 <br><h3>Calling a MATLAB function from VisBio</h3>
 
 First, import your dataset as described in the
@@ -96,6 +76,43 @@ function" from the popup menu.
 VisBio will create another data object, a child of your original dataset, that
 represents the results of the function. VisBio will call your MATLAB function
 for each image plane of the parent data object.
+
+<br><h3>Writing a MATLAB function for use in VisBio</h3>
+
+VisBio expects MATLAB functions to be declared in a specific way. Your
+function's declaration should be as follows:
+<blockquote><code>
+  function [result] = fname(pix, params)
+</code></blockquote>
+where "<code>fname</code>" is the name of your function, "<code>pix</code>" is
+a 3D array of pixels dimensioned (Y, X, N), and "<code>params</code>" is a
+vector of any additional numeric parameters needed for your algorithm.
+
+<p>VisBio calls the function in three distinct ways. First, it calls
+<code>fname([], [])</code> to retrieve a list of parameters and their default
+values. It expects to get back a cell array of 1x2 cell arrays, with the first
+element containing a string indicating the parameter's name, and the second
+element containing a double-precision floating point value indicating its
+default value. See the convert.m example script for an illustration.
+
+<p>Secondly, VisBio will call <code>fname([], [Y X N A B C ...])</code>, where
+Y, X and N represent the dimensions of an input image (X by Y resolution with N
+range components) and A, B, C, etc., are parameter values for the function.
+VisBio expects to get back a vector of length 3 containing the Y, X and N
+dimension of the output image that would be produced were an actual image to be
+passed in with the specified parameters. The purpose of requiring this
+functionality is to provide VisBio with a way to predict how big the output
+images will be for a given set of input images with certain parameter values.
+Note that VisBio requires that all output images be dimensioned the same for
+each given set of image dimensions and parameters.
+
+<p>Lastly, VisBio make the actual call of <code>fname(pix, params)</code> to
+obtain the result for a given image plane with the specified parameters.
+
+<p>VisBio comes with several example functions (files with extension .m, other
+than visbio.m and vbget.m), which should serve to illustrate the proper
+structure. It is probably easiest to begin with one of them, edit as desired,
+and save to a new file.
 
 <br><h3>See also:</h3>
 
