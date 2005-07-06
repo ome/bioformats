@@ -116,14 +116,7 @@ public class ExitManager extends LogicManager implements WindowListener {
     bio.generateEvent(this, "shutdown request", false);
     if (!exitOk) return;
     bio.generateEvent(this, "shutdown", false);
-
-    // the following doesn't fully clean up (maybe because of Java3D?)
-    WindowManager wm = (WindowManager) bio.getManager(WindowManager.class);
-    wm.hideWindows();
-    wm.disposeWindows();
-    //visad.ActionImpl.stopThreadPool();
-    bio.setVisible(false);
-    bio.dispose();
+    bio.destroy();
 
     // HACK - don't force exit if VisBio was launched from within MATLAB
     boolean force = loci.visbio.matlab.MatlabUtil.getMatlabVersion() == null;

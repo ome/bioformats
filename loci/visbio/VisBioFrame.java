@@ -358,7 +358,7 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
 
       // determine if action command has an argument
       Class[] param = null;
-      String[] s = null;
+      Object[] s = null;
       int paren = cmd.indexOf("(");
       if (paren >= 0) {
         param = new Class[] {String.class};
@@ -414,13 +414,20 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
   /** Gets VisBio program icon. */
   public Image getIcon() { return icon; }
 
-
-  // -- Window API methods --
-
-  /** Disposes of this frame, releasing native screen resources. */
-  public void dispose() {
+  /**
+   * Cleans up and releases resources before
+   * abandoning this instance of VisBio.
+   */
+  public void destroy() {
+    // the following doesn't fully clean up (maybe because of Java3D?)
+    WindowManager wm = (WindowManager) getManager(WindowManager.class);
+    wm.hideWindows();
+    wm.disposeWindows();
+    setVisible(false);
+    StateManager sm = (StateManager) getManager(StateManager.class);
+    sm.destroy();
     instanceServer.stop();
-    super.dispose();
+    dispose();
   }
 
 
