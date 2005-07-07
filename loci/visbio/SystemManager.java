@@ -117,10 +117,10 @@ public class SystemManager extends LogicManager
         String heapString = "mx";
         int heapPos = line.indexOf(heapString);
         if (heapPos >= 0) {
-          int space = line.indexOf(" ", heapPos);
-          if (space >= 0) {
+          int end = line.indexOf("m", heapPos + 1);
+          if (end >= 0) {
             line = line.substring(0, heapPos + heapString.length()) +
-              heap + "m" + line.substring(space);
+              heap + line.substring(end);
             heapChanged = true;
           }
         }
