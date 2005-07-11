@@ -1,4 +1,9 @@
-v3.05 - Not yet released
+v3.06 - Not yet released
+
+- FIXED: Fixed bug in MATLAB transform for data with only one range component
+
+
+v3.05 - Friday, July 8, 2005
 
 - ADDED: Copy, paste and mass distribution overlay functions
 - ADDED: Initial implementation of MATLAB-VisBio interface
