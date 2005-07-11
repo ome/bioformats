@@ -67,7 +67,7 @@ public class CollapseTransform extends ImageTransform {
 
   /** Assigns the parameters for this dimensional collapse. */
   public void setParameters(int axis) {
-    if (axis < 0 || axis >= lengths.length) return;
+    if (axis < 0 || axis >= parent.lengths.length) return;
     this.axis = axis;
     computeLengths();
 
