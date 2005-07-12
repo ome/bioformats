@@ -92,7 +92,7 @@ public class ImageUploader {
 
       // start the import process
       notifyListeners(new TaskEvent(0, 1, "Starting import..."));
-      im.startImport();
+      im.startImport(user);
 
       // create a dataset to contain the images that create
       notifyListeners(new TaskEvent(0, 1, "Creating dataset..."));
@@ -176,6 +176,7 @@ public class ImageUploader {
       // get a MEX for the image's metadata
       notifyListeners(new TaskEvent(0, 1, "Creating pixels file..."));
       ModuleExecution ii = im.getImageImportMEX(image);
+      ii.setExperimenter(user);
 
       // create a new pixels file on the image server to contain image pixels
       Pixels pix = pf.newPixels(rep, image, ii,
@@ -266,6 +267,7 @@ public class ImageUploader {
       physical.setPixels(pix);
       physical.setIndex(new Integer(0));
       physical.setLogicalChannel(logical);
+      physical.setModuleExecution(ii);
       df.markForUpdate(physical);
 
       // mark image import MEX as having completed executing

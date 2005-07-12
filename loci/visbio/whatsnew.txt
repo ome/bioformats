@@ -1,7 +1,11 @@
-v3.06 - Not yet released
+v3.06 - Tuesday, July 12, 2005
 
 - FIXED: Bug in MATLAB transform for data with only one range component
 - FIXED: Bug in collapse and projection transforms where some axes don't work
+- FIXED: Problem uploading datasets to an OME database; due to updated XML-RPC
+         processing logic on the OME backend, please use the latest version of
+         OME from CVS for now if you want to take advantage of VisBio's OME
+         upload capabilities
 
 
 v3.05 - Friday, July 8, 2005

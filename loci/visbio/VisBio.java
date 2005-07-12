@@ -45,13 +45,13 @@ public class VisBio {
   public static final String TITLE = "VisBio";
 
   /** Application version. */
-  public static final String VERSION = "v3.05a";
+  public static final String VERSION = "v3.06";
 
   /** Application author. */
   public static final String AUTHOR = "Curtis Rueden, LOCI";
 
   /** Application build date. */
-  public static final String DATE = "11 July 2005";
+  public static final String DATE = "12 July 2005";
 
   /** Port to use for communicating between application instances. */
   public static final int INSTANCE_PORT = 0xabcd;
