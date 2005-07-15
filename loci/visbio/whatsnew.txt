@@ -1,5 +1,8 @@
-v3.07 - Not yet released
+v3.07 - Friday, July 15, 2005
 
+- ADDED: Ability to export 8-bit grayscale, 16-bit grayscale, and 32-bit
+         floating point TIFFs (in addition to 24-bit color TIFFs); which format
+         to use is auto-detected
 - ADDED: Option to configure eye separation distance
 
 - FIXED: Problem with eye separation in stereo mode
