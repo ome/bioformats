@@ -46,25 +46,47 @@ public class NumericOption extends BioOption {
 
   /** Constructs a new option. */
   public NumericOption(String text, String unit, String tip, int value) {
+    this(text, unit, tip, "" + value);
+  }
+
+  /** Constructs a new option. */
+  public NumericOption(String text, String unit, String tip, double value) {
+    this(text, unit, tip, "" + value);
+  }
+
+  /** Constructs a new option. */
+  public NumericOption(String text, String unit, String tip, String value) {
     super(text);
 
     // text field
     field = new JTextField(4);
-    field.setText("" + value);
+    field.setText(value);
     field.setToolTipText(tip);
 
     // lay out components
-    panel = FormsUtil.makeRow(text, field, unit);
+    panel = unit == null ? FormsUtil.makeRow(text, field) :
+      FormsUtil.makeRow(text, field, unit);
   }
 
 
   // -- NumericOption API methods --
 
-  /** Gets this option's current setting. */
-  public int getValue() {
+  /** Gets this option's current setting as an integer value. */
+  public int getIntegerValue() {
     int value;
     try { value = Integer.parseInt(field.getText()); }
     catch (NumberFormatException exc) { value = -1; }
+    return value;
+  }
+
+  /**
+   * Gets this option's current setting as a
+   * double-precision floating point value.
+   */
+  public double getFloatingValue() {
+    double value;
+    try { value = Double.parseDouble(field.getText()); }
+    catch (NumberFormatException exc) { value = Double.NaN; }
     return value;
   }
 

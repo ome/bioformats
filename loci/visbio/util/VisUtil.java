@@ -554,6 +554,29 @@ public abstract class VisUtil {
     return d;
   }
 
+  /**
+   * Sets the eye separation for a stereo 3D display.
+   * Does nothing for other types of displays.
+   */
+  public static void setEyeSeparation(DisplayImpl d, double position) {
+    ReflectedUniverse r = new ReflectedUniverse();
+    try {
+      // set eye separation (from Dan Bramer and Don Murray)
+      r.exec("import javax.vecmath.Point3d");
+      r.setVar("renderer", d.getDisplayRenderer());
+      r.exec("view = renderer.getView()");
+      r.exec("body = view.getPhysicalBody()");
+      r.setVar("lpos", -position);
+      r.setVar("rpos", +position);
+      r.setVar("zero", 0.0);
+      r.exec("left = new Point3d(lpos, zero, zero)");
+      r.exec("right = new Point3d(rpos, zero, zero)");
+      r.exec("body.setLeftEyePosition(lpos)");
+      r.exec("body.setRightEyePosition(rpos)");
+    }
+    catch (VisADException exc) { } // fails for non-stereo displays
+  }
+
   /** Gets a graphics configuration for use with stereo displays. */
   public static GraphicsConfiguration getStereoConfiguration() {
     GraphicsConfiguration config;
@@ -562,7 +585,6 @@ public abstract class VisUtil {
       r.exec("import java.awt.GraphicsDevice");
       r.exec("import java.awt.GraphicsEnvironment");
       r.exec("import javax.media.j3d.GraphicsConfigTemplate3D");
-
       r.exec("ge = GraphicsEnvironment.getLocalGraphicsEnvironment()");
       r.exec("gd = ge.getDefaultScreenDevice()");
       r.exec("gct3d = new GraphicsConfigTemplate3D()");

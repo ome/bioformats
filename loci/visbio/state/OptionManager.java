@@ -83,6 +83,13 @@ public class OptionManager extends LogicManager {
     addOption(tab, new NumericOption(text, unit, tip, value));
   }
 
+  /** Adds an option allowing the user to enter a numerical value. */
+  public void addNumericOption(String tab,
+    String text, String unit, String tip, double value)
+  {
+    addOption(tab, new NumericOption(text, unit, tip, value));
+  }
+
   /** Adds an option allowing the user to select from a dropdown list. */
   public void addListOption(String tab,
     String text, String tip, String[] choices)

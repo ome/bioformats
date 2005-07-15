@@ -43,8 +43,14 @@ public class DisplayManager extends LogicManager {
   /** Default maximum resolution for images in a stack. */
   public static final int DEFAULT_STACK_RESOLUTION = 192;
 
+  /** Default eye separation distance for stereo displays. */
+  public static final double DEFAULT_EYE_SEPARATION = 0.002;
+
   /** String for image stack resolution limit option. */
   public static final String STACK_LIMIT = "Limit image stack resolution";
+
+  /** String for eye separation setting. */
+  public static final String EYE_DISTANCE = "Stereo eye separation";
 
   /** String for ImageJ quit warning. */
   public static final String WARN_IMAGEJ =
@@ -215,6 +221,8 @@ public class DisplayManager extends LogicManager {
     int stackRes = DEFAULT_STACK_RESOLUTION;
     om.addOption("Visualization", new ResolutionToggleOption(STACK_LIMIT, 'l',
       "Adjusts resolution limit of image stacks", true, stackRes, stackRes));
+    om.addNumericOption("Visualization", EYE_DISTANCE, null,
+      "Adjusts eye separation for stereo displays", DEFAULT_EYE_SEPARATION);
     om.addBooleanOption("Warnings", WARN_IMAGEJ, 'i',
       "Toggles whether VisBio displays a warning about " +
       "how quitting VisBio also quits ImageJ", true);

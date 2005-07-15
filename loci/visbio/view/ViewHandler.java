@@ -27,11 +27,8 @@ import java.rmi.RemoteException;
 import loci.visbio.VisBioFrame;
 import loci.visbio.data.DataTransform;
 import loci.visbio.data.ImageTransform;
-import loci.visbio.state.Saveable;
-import loci.visbio.state.SaveException;
-import loci.visbio.util.ObjectUtil;
-import loci.visbio.util.VisUtil;
-import loci.visbio.util.XMLUtil;
+import loci.visbio.state.*;
+import loci.visbio.util.*;
 import org.w3c.dom.Element;
 import visad.*;
 import visad.java2d.DisplayImplJ2D;
@@ -336,6 +333,14 @@ public class ViewHandler implements Saveable {
     toggleScale(showScale);
     toggleBoundingBox(boundingBox);
     toggleParallel(parallel);
+
+    // configure eye separation distance
+    OptionManager om = (OptionManager)
+      window.getVisBio().getManager(OptionManager.class);
+    NumericOption eye = (NumericOption)
+      om.getOption(DisplayManager.EYE_DISTANCE);
+    double position = eye.getFloatingValue();
+    VisUtil.setEyeSeparation(window.getDisplay(), position);
 
     if (panel == null) panel = new ViewPanel(this);
   }
