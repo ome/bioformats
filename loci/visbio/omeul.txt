@@ -1,0 +1,56 @@
+This file describes VisBio's command-line client-side import tool for OME.
+
+omeul is useful for programmatically uploading and importing many datasets (OME
+images) into an OME system. It uses the OME Java Remote Framework to accomplish
+this task. Since VisBio parses the files and extracts pixels and metadata on
+the client side, any format supported by VisBio can be uploaded through this
+interface, even if it is not supported directly by the OME backend.
+
+The only trick is constructing a "patterns file" telling VisBio about the
+structure of your datasets. Here is an example pattern file:
+
+    # this file contains two file patterns
+
+    [sdub]
+    pattern = samples/sdub/sdub<1-12>.pic
+    dims = Time, Slice
+    type = int8
+
+    [m51]
+    pattern = /home/curtis/data/misc/m51.tif
+    type = int16
+
+Comments start with the "#" symbol. Each pattern begins with a line enclosed in
+brackets identifying that dataset's name. The lines following that should
+identify the file pattern, the type of each dimensional axis (if any), and the
+pixel type (int8, int16, int32, or float32).
+
+A file pattern is just a relative path to your files, with each numbering
+scheme identified within a block enclosed in <> symbols. In the example above,
+sdub<1-12>.pic means files sdub1.pic, sdub2.pic, sdub3.pic, etc., through
+sdub12.pic. If the files were numbered with leading zeroes, the block "<01-12>"
+should be used instead.
+
+The dims parameter is important because it tells the uploader how to arrange
+the data across OME's Z, T and C dimensions. The first dimension labeled "Time"
+is distributed across T, and the first "Slice" dimension across Z. Anything
+else (including multiple range components such as with RGB data) is rasterized
+into the C dimension.
+
+In the example above, the "Time" axis labels the corresponding <1-12> block
+from the file pattern, and the Slice axis labels the axis defined internally
+within each file, since each sdub file contains multiple image planes -- this
+internal dimension is always the last axis listed, and can be left off if your
+dataset only contains one image plane per source file. If you are only
+uploading a single image plane (i.e., no dimensional axes) like the m51 example
+above, then dims need not be specified.
+
+The type parameter defines the pixel type of the pixel data:
+  * int8 = 8-bit unsigned integer values (0 - 255)
+  * int16 = 16-bit unsigned integer values (0 - 65535)
+  * int32 = 32-bit unsigned integer values (0 - 4294967295)
+  * float32 = 32-bit floating point values
+
+Note that the bit depth applies individually to each range component. E.g.,
+int8 should be used for 24-bit color data, since the red, green and blue color
+channels are each 8-bit integer data, for a total of 24 bits.

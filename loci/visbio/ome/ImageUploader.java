@@ -23,16 +23,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.ome;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
+import java.io.*;
+import java.util.*;
 import org.openmicroscopy.ds.*;
 import org.openmicroscopy.ds.dto.*;
 import org.openmicroscopy.ds.managers.*;
 import org.openmicroscopy.ds.st.*;
 import org.openmicroscopy.is.*;
 import loci.visbio.*;
+import loci.visbio.data.DataTransform;
+import loci.visbio.data.FilePattern;
 import loci.visbio.util.MathUtil;
 import visad.FlatField;
 
@@ -62,6 +62,18 @@ public class ImageUploader {
    */
   public void upload(loci.visbio.data.Dataset data,
     String server, String username, String password)
+  {
+    upload(data, server, username, password, 4, false);
+  }
+
+  /**
+   * Uploads the given VisBio dataset (OME image) to the specified
+   * OME server, using the given username and password, using the
+   * given bytes per pixel and floating point parameter.
+   */
+  public void upload(loci.visbio.data.Dataset data,
+    String server, String username, String password,
+    int bpp, boolean isFloat)
   {
     // This code has been adapted from Doug Creager's TestImport example
     try {
@@ -123,7 +135,7 @@ public class ImageUploader {
       // upload each original file into the repository, using the MEX
       for (int i=0; i<files.length; i++) {
         notifyListeners(new TaskEvent(i, files.length,
-          "Uploading file " + files[i].getName() + "..."));
+          "Uploading file '" + files[i].getName() + "'..."));
         OriginalFile fileAttr = pf.uploadFile(rep, of, files[i]);
       }
 
@@ -155,7 +167,7 @@ public class ImageUploader {
       }
       int sizeZ = zIndex < 0 ? 1 : lengths[zIndex];
       int sizeT = tIndex < 0 ? 1 : lengths[tIndex];
-      int bytesPerPix = 4;
+      if (isFloat || (bpp != 1 && bpp != 2)) bpp = 4;
 
       int sizeC = range;
       int numC = lengths.length + 1;
@@ -180,17 +192,18 @@ public class ImageUploader {
 
       // create a new pixels file on the image server to contain image pixels
       Pixels pix = pf.newPixels(rep, image, ii,
-        sizeX, sizeY, sizeZ, sizeC, sizeT, bytesPerPix, false, false);
+        sizeX, sizeY, sizeZ, sizeC, sizeT, bpp, false, isFloat);
 
       // extract image pixels from each plane
       int count = 0;
       int numImages = sizeZ * sizeC * sizeT;
-      byte[] buf = new byte[sizeX * sizeY * bytesPerPix];
+      byte[] buf = new byte[sizeX * sizeY * bpp];
       for (int t=0; t<sizeT; t++) {
         for (int z=0; z<sizeZ; z++) {
           for (int c=0; c<sizeC; c+=range) {
             notifyListeners(new TaskEvent(count, numImages,
-              "Loading data (t=" + t + ", z=" + z + ", c=" + c + ")..."));
+              "Uploading image " + (count + 1) + "/" + numImages +
+              " (t=" + t + ", z=" + z + ", c=" + c + ")..."));
 
             // convert rasterized C value to multidimensional position
             int[] cPos = MathUtil.rasterToPosition(cLen, c);
@@ -205,17 +218,21 @@ public class ImageUploader {
 
             // upload an image plane for each range component
             for (int r=0; r<range; r++) {
-              notifyListeners(new TaskEvent(count, numImages,
-                "Uploading image " + (count + 1) + " / " + numImages + "..."));
+              if (r > 0) {
+                notifyListeners(new TaskEvent(count, numImages,
+                  "Uploading image " + (count + 1) + "/" + numImages +
+                  " (t=" + t + ", z=" + z + ", c=" + c + ")..."));
+              }
               count++;
 
               // convert samples float array into big-endian byte buffer
               for (int q=0; q<sizeX*sizeY; q++) {
-                int s = (int) samples[r][q];
-                int qBase = bytesPerPix * q;
-                for (int b=0; b<bytesPerPix; b++) {
-                  int shift = 8 * (bytesPerPix - b - 1);
-                  buf[qBase + b] = (byte) ((s << shift) % 256);
+                int s = isFloat ? Float.floatToRawIntBits(samples[r][q]) :
+                  (int) samples[r][q];
+                int base = bpp * q;
+                for (int b=0; b<bpp; b++) {
+                  int shift = 8 * (bpp - b - 1);
+                  buf[base + b] = (byte) ((s >>> shift) & 0x0000ff);
                 }
               }
 
@@ -326,6 +343,199 @@ public class ImageUploader {
       for (int i=0; i<listeners.size(); i++) {
         TaskListener l = (TaskListener) listeners.elementAt(i);
         l.taskUpdated(e);
+      }
+    }
+  }
+
+
+  // -- Main method --
+
+  /**
+   * A command-line tool for uploading data to an
+   * OME server using client-side Java tools.
+   */
+  public static void main(String[] args) {
+    String server = null, user = null, pass = null;
+    Vector files = new Vector();
+
+    // parse command-line arguments
+    boolean doUsage = false;
+    if (args.length == 0) doUsage = true;
+    for (int i=0; i<args.length; i++) {
+      if (args[i].startsWith("-")) {
+        // argument is a command line flag
+        String param = args[i];
+        try {
+          if (param.equalsIgnoreCase("-s")) server = args[++i];
+          else if (param.equalsIgnoreCase("-u")) user = args[++i];
+          else if (param.equalsIgnoreCase("-p")) pass = args[++i];
+          else if (param.equalsIgnoreCase("-h") ||
+            param.equalsIgnoreCase("-?"))
+          {
+            doUsage = true;
+          }
+          else {
+            System.out.println("Error: unknown flag: " + param);
+            System.out.println();
+            doUsage = true;
+            break;
+          }
+        }
+        catch (ArrayIndexOutOfBoundsException exc) {
+          if (i == args.length - 1) {
+            System.out.println("Error: flag " + param +
+              " must be followed by a parameter value.");
+            System.out.println();
+            doUsage = true;
+            break;
+          }
+          else throw exc;
+        }
+      }
+      else {
+        // argument is path to a file patterns text file
+        File f = new File(args[i]);
+        if (!f.exists()) {
+          System.out.println("Error: file patterns file " +
+            args[i] + " does not exist.");
+          System.out.println();
+          doUsage = true;
+          break;
+        }
+        files.add(f);
+      }
+    }
+    if (doUsage) {
+      System.out.println("Usage: omeul [-s server.address] " +
+        "[-u username] [-p password] patterns.txt");
+      System.out.println("See omeul.txt for instructions " +
+        "on how to construct a file patterns text file.");
+      System.out.println();
+      System.exit(1);
+    }
+
+    // ask for information if necessary
+    BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
+    if (server == null) {
+      System.out.print("Server address? ");
+      try { server = cin.readLine(); }
+      catch (IOException exc) { }
+    }
+    if (user == null) {
+      System.out.print("Username? ");
+      try { user = cin.readLine(); }
+      catch (IOException exc) { }
+    }
+    if (pass == null) {
+      System.out.print("Password? ");
+      try { pass = cin.readLine(); }
+      catch (IOException exc) { }
+    }
+
+    if (server == null || user == null || pass == null) {
+      System.out.println("Error: could not obtain server login information");
+      System.exit(2);
+    }
+    server = OMEManager.getProperServer(server);
+    System.out.println("Using server " + server + " as user " + user);
+
+    // create image uploader
+    ImageUploader uploader = new ImageUploader();
+    uploader.addTaskListener(new TaskListener() {
+      public void taskUpdated(TaskEvent e) {
+        System.out.println(e.getStatusMessage());
+      }
+    });
+
+    // upload file patterns defined in each pattern file
+    for (int i=0; i<files.size(); i++) {
+      File f = (File) files.elementAt(i);
+      BufferedReader fin = null;
+      try { fin = new BufferedReader(new FileReader(f)); }
+      catch (IOException exc) {
+        System.out.println("Warning: could not open file '" + f + "':");
+        exc.printStackTrace(System.out);
+        continue;
+      }
+      String name = null;
+      String pattern = null;
+      String[] dims = new String[0];
+      String type = null;
+      int bpp = -1;
+      boolean isFloat = false;
+      while (true) {
+        String line = null;
+        try { line = fin.readLine(); }
+        catch (IOException exc) {
+          System.out.println("Warning: exception reading file '" + f + "':");
+          exc.printStackTrace(System.out);
+        }
+        if (line == null || line.startsWith("[")) {
+          if (pattern != null && bpp != -1) {
+            // create dataset defined by the most recently parsed pattern
+            System.out.println("Reading " + pattern + ":");
+            FilePattern fp = new FilePattern(pattern);
+            int[] lengths = fp.getCount();
+            loci.visbio.data.Dataset data = new loci.visbio.data.Dataset(
+              name, pattern, fp.getFiles(), lengths, dims);
+
+            // print dimensional axes for user verification
+            lengths = data.getLengths();
+            for (int j=0; j<dims.length; j++) {
+              System.out.println("\t<" + (j + 1) + "> " + dims[j] + " = " +
+                lengths[j] + " " + DataTransform.getUnitDescription(dims[j]) +
+                (lengths[j] == 1 ? "" : "s"));
+            }
+
+            // upload dataset to OME server
+            System.out.println("Uploading " + pattern + "...");
+            uploader.upload(data, server, user, pass, bpp, isFloat);
+            System.out.println();
+          }
+          if (line == null) break; // EOF
+          name = line.substring(1, line.lastIndexOf("]"));
+          pattern = null;
+          dims = new String[0];
+          bpp = -1;
+        }
+        else {
+          // skip comments
+          if (line.startsWith("#")) continue;
+
+          // skip blank lines
+          if (line.trim().equals("")) continue;
+
+          // line is expected to be a keyword/value pair
+          int equals = line.indexOf("=");
+          if (equals < 0) {
+            System.out.println("Warning: invalid line: " + line);
+            continue;
+          }
+          String key = line.substring(0, equals).trim().toLowerCase();
+          String value = line.substring(equals + 1).trim();
+          if (key.equals("pattern")) pattern = value;
+          else if (key.equals("dims")) {
+            StringTokenizer st = new StringTokenizer(value, ",");
+            dims = new String[st.countTokens()];
+            for (int j=0; j<dims.length; j++) dims[j] = st.nextToken().trim();
+          }
+          else if (key.equals("type")) {
+            value = value.toLowerCase();
+            if (value.equals("int8")) { bpp = 1; isFloat = false; }
+            else if (value.equals("int16")) { bpp = 2; isFloat = false; }
+            else if (value.equals("int32")) { bpp = 4; isFloat = false; }
+            else if (value.equals("float32")) { bpp = 4; isFloat = true; }
+            else {
+              System.out.println("Warning: invalid type: " + value);
+              continue;
+            }
+          }
+        }
+      }
+      try { fin.close(); }
+      catch (IOException exc) {
+        System.out.println("Warning: exception closing file '" + f + "':");
+        exc.printStackTrace(System.out);
       }
     }
   }

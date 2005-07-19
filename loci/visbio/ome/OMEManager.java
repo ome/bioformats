@@ -70,16 +70,34 @@ public class OMEManager extends LogicManager implements TaskListener {
     final String user = loginPane.getUser();
     final String password = loginPane.getPassword();
 
+    // get pixel type
+    String int8 = "8-bit integer";
+    String int16 = "16-bit integer";
+    String int32 = "32-bit integer";
+    String float32 = "32-bit floating point";
+    String pixelType = (String) JOptionPane.showInputDialog(bio,
+      "Please specify pixel type", "VisBio", JOptionPane.INFORMATION_MESSAGE,
+      null, new Object[] {int8, int16, int32, float32}, int32);
+    if (pixelType == null) pixelType = int32;
+    final int bytesPerPix;
+    final boolean isFloat;
+    if (pixelType == int8) { bytesPerPix = 1; isFloat = false; }
+    else if (pixelType == int16) { bytesPerPix = 2; isFloat = false; }
+    else if (pixelType == float32) { bytesPerPix = 4; isFloat = true; }
+    else { bytesPerPix = 4; isFloat = false; } // pixelType == int32
+
     int val = JOptionPane.showConfirmDialog(c, "Upload " +
-      data.getName() + " to server " + server + " as user " +
-      user + "?", "VisBio", JOptionPane.YES_NO_OPTION);
+      data.getName() + " as " + pixelType + " data to server " + server +
+      " as user " + user + "?", "VisBio", JOptionPane.YES_NO_OPTION);
     if (val != JOptionPane.YES_OPTION) return;
 
     // upload data to OME in a new thread
     final ImageUploader uploader = new ImageUploader();
     uploader.addTaskListener(this);
     new Thread(new Runnable() {
-      public void run() { uploader.upload(data, server, user, password); }
+      public void run() {
+        uploader.upload(data, server, user, password, bytesPerPix, isFloat);
+      }
     }).start();
   }
 
@@ -142,7 +160,7 @@ public class OMEManager extends LogicManager implements TaskListener {
 
   /** Adds OME-related GUI components to VisBio. */
   private void doGUI() {
-    // upload pane
+    // login pane
     bio.setSplashStatus("Initializing OME logic");
     loginPane = new OMELoginPane();
 

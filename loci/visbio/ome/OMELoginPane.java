@@ -55,11 +55,11 @@ public class OMELoginPane extends DialogPane {
 
     // server URL
     serv = new JTextField(20);
-    serv.setToolTipText("The OME server address for data upload");
+    serv.setToolTipText("The OME server address");
 
     // username
     user = new JTextField(8);
-    user.setToolTipText("The OME username under which to upload");
+    user.setToolTipText("The OME username");
 
     // password
     pass = new JPasswordField(8);
