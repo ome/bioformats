@@ -148,7 +148,7 @@ public class StateManager extends LogicManager {
   public void destroy() {
     if (stateFile.exists()) {
       if (!stateFile.delete()) {
-        System.out.println("Warning: unable to delete " + stateFile.getName());
+        System.err.println("Warning: unable to delete " + stateFile.getName());
       }
     }
   }
