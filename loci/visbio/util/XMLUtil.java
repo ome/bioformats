@@ -81,8 +81,12 @@ public abstract class XMLUtil {
 
   /** Writes the given DOM to the specified file on disk. */
   public static void writeXML(File file, Document doc) {
-    try { writeXML(new FileOutputStream(file), doc); }
-    catch (FileNotFoundException exc) { exc.printStackTrace(); }
+    try {
+      FileOutputStream out = new FileOutputStream(file);
+      writeXML(out, doc);
+      out.close();
+    }
+    catch (IOException exc) { exc.printStackTrace(); }
   }
 
   /**

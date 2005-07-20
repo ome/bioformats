@@ -147,9 +147,8 @@ public class StateManager extends LogicManager {
   /** Deletes VisBio state temp file. */
   public void destroy() {
     if (stateFile.exists()) {
-      while (!stateFile.delete()) {
-        try { Thread.sleep(100); }
-        catch (InterruptedException exc) { }
+      if (!stateFile.delete()) {
+        System.out.println("Warning: unable to delete " + stateFile.getName());
       }
     }
   }
