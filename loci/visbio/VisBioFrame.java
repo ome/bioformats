@@ -422,8 +422,8 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
     // the following doesn't fully clean up (maybe because of Java3D?)
     WindowManager wm = (WindowManager) getManager(WindowManager.class);
     wm.hideWindows();
-    wm.disposeWindows();
     setVisible(false);
+    wm.disposeWindows();
     StateManager sm = (StateManager) getManager(StateManager.class);
     sm.destroy();
     instanceServer.stop();
