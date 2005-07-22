@@ -28,6 +28,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import javax.swing.*;
@@ -42,6 +43,12 @@ import visad.*;
 public class ExportPane extends WizardPane {
 
   // -- GUI components, page 1 --
+
+  /** Folder on disk text field. */
+  private JTextField folderField;
+
+  /** Button for choosing output folder. */
+  private JButton chooseButton;
 
   /** File pattern text field. */
   private JTextField patternField;
@@ -111,7 +118,14 @@ public class ExportPane extends WizardPane {
 
     // -- Page 1 --
 
-    // pattern field
+    // folder widgets
+    folderField = new JTextField(System.getProperty("user.dir"));
+    chooseButton = new JButton("Choose...");
+    chooseButton.setMnemonic('h');
+    chooseButton.setActionCommand("folder");
+    chooseButton.addActionListener(this);
+
+    // pattern fields
     patternField = new JTextField();
 
     // format combo box
@@ -121,12 +135,16 @@ public class ExportPane extends WizardPane {
 
     // lay out first page
     PanelBuilder builder = new PanelBuilder(new FormLayout(
-      "pref, 3dlu, pref:grow, 3dlu, pref, 3dlu, pref", "pref"));
+      "pref, 3dlu, pref:grow, 3dlu, pref, 3dlu, pref", "pref, 3dlu, pref"));
     CellConstraints cc = new CellConstraints();
-    builder.addLabel("File &pattern", cc.xy(1, 1)).setLabelFor(patternField);
-    builder.add(patternField, cc.xy(3, 1));
-    builder.addLabel("&Format", cc.xy(5, 1)).setLabelFor(formatBox);
-    builder.add(formatBox, cc.xy(7, 1));
+    builder.addLabel("F&older", cc.xy(1, 1)).setLabelFor(folderField);
+    builder.add(folderField, cc.xyw(3, 1, 3));
+    builder.add(chooseButton, cc.xy(7, 1));
+
+    builder.addLabel("File &pattern", cc.xy(1, 3)).setLabelFor(patternField);
+    builder.add(patternField, cc.xy(3, 3));
+    builder.addLabel("&Format", cc.xy(5, 3)).setLabelFor(formatBox);
+    builder.add(formatBox, cc.xy(7, 3));
     JPanel first = builder.getPanel();
 
     // -- Page 2 --
@@ -277,7 +295,8 @@ public class ExportPane extends WizardPane {
       if (page == 0) { // lay out page 2
         // ensure file pattern ends with appropriate format extension
         // also determine visibility of "frames per second" text field
-        String pattern = patternField.getText();
+        String pattern = folderField.getText() +
+          File.separator + patternField.getText();
         String format = (String) formatBox.getSelectedItem();
         String plow = pattern.toLowerCase();
         boolean doFPS = false;
@@ -520,6 +539,17 @@ public class ExportPane extends WizardPane {
       }
 
       super.actionPerformed(e);
+    }
+    else if (command.equals("folder")) {
+      // pop up folder chooser
+      File dir = new File(folderField.getText());
+      JFileChooser chooser = dir.isDirectory() ?
+        new JFileChooser(dir) : new JFileChooser();
+      chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+      if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+        dir = chooser.getSelectedFile();
+        if (dir != null) folderField.setText(dir.getPath());
+      }
     }
     else super.actionPerformed(e);
   }
