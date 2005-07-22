@@ -63,10 +63,20 @@ public class VisBio {
   private VisBio() { }
 
 
-  // -- Main --
+  // -- VisBio API methods --
 
-  /** Launches the VisBio GUI. */
-  public static void main(String[] args)
+  /** Launches the VisBio GUI with no arguments, in a separate thread. */
+  public static void startProgram() {
+    new Thread() {
+      public void run() {
+        try { launch(new String[0]); }
+        catch (Exception exc) { exc.printStackTrace(); }
+      }
+    }.start();
+  }
+
+  /** Launches VisBio, returning the newly constructed VisBioFrame object. */
+  public static Object launch(String[] args)
     throws ClassNotFoundException, IllegalAccessException,
     InstantiationException, InvocationTargetException, NoSuchMethodException
   {
@@ -74,7 +84,7 @@ public class VisBio {
     boolean isRunning = true;
     try { InstanceServer.sendArguments(args, INSTANCE_PORT); }
     catch (IOException exc) { isRunning = false; }
-    if (isRunning) return;
+    if (isRunning) return null;
 
     // display splash screen
     String[] msg = {
@@ -98,17 +108,19 @@ public class VisBio {
     Constructor con = vb.getConstructor(new Class[] {
       ss.getClass(), String[].class
     });
-    con.newInstance(new Object[] {ss, args});
+    return con.newInstance(new Object[] {ss, args});
   }
 
-  /** Launches the VisBio GUI with no arguments, in a separate thread. */
-  public static void startProgram() {
-    new Thread() {
-      public void run() {
-        try { main(new String[0]); }
-        catch (Exception exc) { exc.printStackTrace(); }
-      }
-    }.start();
+
+  // -- Main --
+
+  /** Launches the VisBio GUI. */
+  public static void main(String[] args)
+    throws ClassNotFoundException, IllegalAccessException,
+    InstantiationException, InvocationTargetException, NoSuchMethodException
+  {
+    Object o = launch(args);
+    if (o == null) System.out.println("VisBio is already running.");
   }
 
 }

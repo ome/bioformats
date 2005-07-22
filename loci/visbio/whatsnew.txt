@@ -1,3 +1,8 @@
+v3.09 - Not yet released
+
+- FIXED: Ignore first image (pure white RGB) of Openlab datasets
+
+
 v3.08 - Tuesday, July 19, 2005
 
 - ADDED: Ability to specify pixel type for datasets uploaded to OME

@@ -79,8 +79,6 @@ File formats
     the domain sets of all images that get read in, so that the cursor is
     correct.
 
-[L] Ignore Openlab images named "Original Image."
-
 
 Overlays transform
 ------------------
