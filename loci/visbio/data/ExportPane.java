@@ -178,7 +178,7 @@ public class ExportPane extends WizardPane {
   }
 
 
-  // -- New API methods --
+  // -- ExportPane API methods --
 
   /** Associates the given data object with the export pane. */
   public void setData(ImageTransform trans) {

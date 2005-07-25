@@ -36,7 +36,7 @@ import javax.swing.filechooser.FileFilter;
 import loci.visbio.SystemManager;
 import loci.visbio.WindowManager;
 import loci.visbio.state.*;
-import loci.visbio.util.VisUtil;
+import loci.visbio.util.DataUtil;
 import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Element;
 import visad.*;
@@ -306,7 +306,7 @@ public class CaptureHandler implements Saveable {
 
             // compile frames into a single data object
             RealType index = RealType.getRealType("index");
-            FieldImpl field = VisUtil.makeField(ff, index);
+            FieldImpl field = DataUtil.makeField(ff, index);
 
             // write data out to AVI file
             AVIForm saver = new AVIForm();

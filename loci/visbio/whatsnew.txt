@@ -1,5 +1,7 @@
 v3.09 - Not yet released
 
+- ADDED: Folder chooser to export dialog for specifying which folder to use
+
 - FIXED: Ignore first image (pure white RGB) of Openlab datasets
 
 

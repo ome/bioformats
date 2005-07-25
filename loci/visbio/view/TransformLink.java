@@ -478,7 +478,7 @@ public class TransformLink
       ImageTransform it = (ImageTransform) trans;
       FunctionType ftype = it.getType();
       Unit[] units = it.getImageUnits();
-      try { d = VisUtil.switchType(ff, ftype, units); }
+      try { d = DataUtil.switchType(ff, ftype, units); }
       catch (VisADException exc) { exc.printStackTrace(); }
       catch (RemoteException exc) { exc.printStackTrace(); }
     }
@@ -512,7 +512,7 @@ public class TransformLink
     // get cursor's domain coordinates
     RealType xType = it.getXType();
     RealType yType = it.getYType();
-    double[] domain = VisUtil.cursorToDomain(display,
+    double[] domain = DisplayUtil.cursorToDomain(display,
       new RealType[] {xType, yType, null}, cur);
 
     // evaluate function at the cursor location
@@ -598,11 +598,11 @@ public class TransformLink
     if (swing) {
       Util.invoke(false, new Runnable() {
         public void run() {
-          VisUtil.redrawMessages(handler.getWindow().getDisplay());
+          DisplayUtil.redrawMessages(handler.getWindow().getDisplay());
         }
       });
     }
-    else VisUtil.redrawMessages(handler.getWindow().getDisplay());
+    else DisplayUtil.redrawMessages(handler.getWindow().getDisplay());
   }
 
 }

@@ -92,12 +92,12 @@ public abstract class ImageTransform extends DataTransform {
     micronStep = step;
 
     // initialize internal MathTypes
-    if (width == width) xType = VisUtil.getRealType(name + "_X_mu", MICRON);
-    else xType = VisUtil.getRealType(name + "_X", null);
-    if (height == height) yType = VisUtil.getRealType(name + "_Y_mu", MICRON);
-    else yType = VisUtil.getRealType(name + "_Y", null);
-    if (step == step) zType = VisUtil.getRealType(name + "_Z_mu", MICRON);
-    else zType = VisUtil.getRealType(name + "_Z", null);
+    if (width == width) xType = DataUtil.getRealType(name + "_X_mu", MICRON);
+    else xType = DataUtil.getRealType(name + "_X", null);
+    if (height == height) yType = DataUtil.getRealType(name + "_Y_mu", MICRON);
+    else yType = DataUtil.getRealType(name + "_Y", null);
+    if (step == step) zType = DataUtil.getRealType(name + "_Z_mu", MICRON);
+    else zType = DataUtil.getRealType(name + "_Z", null);
   }
 
 
@@ -144,7 +144,7 @@ public abstract class ImageTransform extends DataTransform {
       rangeTypes = new RealType[getRangeCount()];
       for (int i=0; i<rangeTypes.length; i++) {
         String s = "range" + (i + 1);
-        rangeTypes[i] = VisUtil.getRealType(name + "_" + s);
+        rangeTypes[i] = DataUtil.getRealType(name + "_" + s);
       }
     }
     return rangeTypes;

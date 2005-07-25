@@ -82,8 +82,11 @@ public class DataControls extends ControlPanel
   /** New 3D display menu item for Displays popup menu. */
   private JMenuItem display3D;
 
-  /** Pane for configuring export parameters. */
+  /** Pane for configuring disk export parameters. */
   private ExportPane exporter;
+
+  /** Pane for configuring ImageJ export parameters. */
+  private SendToIJPane sender;
 
 
   // -- Other fields --
@@ -174,10 +177,12 @@ public class DataControls extends ControlPanel
     display3D.setMnemonic('3');
     display3D.setActionCommand("new3D");
     display3D.addActionListener(this);
-    display3D.setEnabled(VisUtil.canDo3D());
+    display3D.setEnabled(DisplayUtil.canDo3D());
 
-    // export pane
-    exporter = new ExportPane(lm.getVisBio());
+    // export panes
+    VisBioFrame bio = lm.getVisBio();
+    exporter = new ExportPane(bio);
+    sender = new SendToIJPane(bio);
 
     // lay out buttons
     ButtonStackBuilder bsb = new ButtonStackBuilder();
@@ -204,7 +209,6 @@ public class DataControls extends ControlPanel
     controls.add(builder.getPanel());
 
     // handle file drag and drop
-    VisBioFrame bio = lm.getVisBio();
     BioDropHandler dropHandler = new BioDropHandler(bio);
     ((JComponent) bio.getContentPane()).setTransferHandler(dropHandler);
     dataTree.setTransferHandler(dropHandler);
@@ -358,6 +362,13 @@ public class DataControls extends ControlPanel
     if (rval == DialogPane.APPROVE_OPTION) exporter.export();
   }
 
+  /** Sends part of a data object to an instance of ImageJ. */
+  public void sendDataToImageJ(ImageTransform data) {
+    sender.setData(data);
+    int rval = sender.showDialog(this);
+    if (rval == DialogPane.APPROVE_OPTION) sender.send();
+  }
+
   /** Creates a new display and adds the selected data object to it. */
   public void doNewDisplay(boolean threeD) {
     DataTransform data = getSelectedData();
@@ -470,6 +481,12 @@ public class DataControls extends ControlPanel
       saveToDisk.addActionListener(this);
       menu.add(saveToDisk);
 
+      JMenuItem sendToIJ = new JMenuItem("Send to ImageJ...");
+      sendToIJ.setMnemonic('i');
+      sendToIJ.setActionCommand("sendToIJ");
+      sendToIJ.addActionListener(this);
+      menu.add(sendToIJ);
+
       JMenuItem uploadToOME = new JMenuItem("Upload to OME...");
       uploadToOME.setMnemonic('u');
       uploadToOME.setActionCommand("uploadToOME");
@@ -485,6 +502,7 @@ public class DataControls extends ControlPanel
     else if (cmd.equals("new2D")) doNewDisplay(false);
     else if (cmd.equals("new3D")) doNewDisplay(true);
     else if (cmd.equals("saveToDisk")) dm.exportData();
+    else if (cmd.equals("sendToIJ")) dm.sendDataToImageJ();
     else if (cmd.equals("uploadToOME")) {
       OMEManager om = (OMEManager) lm.getVisBio().getManager(OMEManager.class);
       if (om == null) return;
@@ -592,7 +610,7 @@ public class DataControls extends ControlPanel
     removeData.setEnabled(isData);
     if (display2D != null) display2D.setEnabled(canDisplay2D);
     if (display3D != null) {
-      display3D.setEnabled(VisUtil.canDo3D() && canDisplay3D);
+      display3D.setEnabled(DisplayUtil.canDo3D() && canDisplay3D);
     }
 
     if (thumbHandler != null) thumbHandler.setControls(null, null);

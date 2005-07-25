@@ -156,7 +156,7 @@ public class ColorPane extends DialogPane
       new ExtensionFileFilter("lut", "Binary color table files"));
 
     // preview display
-    preview = VisUtil.makeDisplay("bio_color_preview", false);
+    preview = DisplayUtil.makeDisplay("bio_color_preview", false);
 
     // lay out left-hand panel
     PanelBuilder builder = new PanelBuilder(new FormLayout(
@@ -187,7 +187,7 @@ public class ColorPane extends DialogPane
   public void setPreviewData(FlatField ff)
     throws VisADException, RemoteException
   {
-    VisUtil.setDisplayDisabled(preview, true);
+    DisplayUtil.setDisplayDisabled(preview, true);
 
     // clear old preview data
     preview.removeAllReferences();
@@ -247,7 +247,7 @@ public class ColorPane extends DialogPane
     }
     selector.addActionListener(this);
 
-    VisUtil.setDisplayDisabled(preview, false);
+    DisplayUtil.setDisplayDisabled(preview, false);
   }
 
   /** Guesses reasonable mappings from range RealTypes to color components. */
@@ -377,7 +377,7 @@ public class ColorPane extends DialogPane
     blue.setSelectedItem(bType);
     float[][][] tables = handler.getTables();
     if (maps != null) {
-      VisUtil.setDisplayDisabled(preview, true);
+      DisplayUtil.setDisplayDisabled(preview, true);
       ColorUtil.setColorMode(preview, cm);
       for (int i=0; i<maps.length; i++) {
         if (fix[i]) {
@@ -393,7 +393,7 @@ public class ColorPane extends DialogPane
           catch (RemoteException exc) { exc.printStackTrace(); }
         }
       }
-      VisUtil.setDisplayDisabled(preview, false);
+      DisplayUtil.setDisplayDisabled(preview, false);
       if (selector.getItemCount() > 0) selector.setSelectedIndex(0);
     }
     ignore = false;
@@ -738,12 +738,12 @@ public class ColorPane extends DialogPane
     contrastValue.setText("" + cont);
 
     if (maps != null) {
-      VisUtil.setDisplayDisabled(preview, true);
+      DisplayUtil.setDisplayDisabled(preview, true);
       float[][][] tables = ColorUtil.computeColorTables(maps,
         bright, cont, cm, rType, gType, bType);
       ColorUtil.setColorMode(preview, cm);
       ColorUtil.setColorTables(maps, tables);
-      VisUtil.setDisplayDisabled(preview, false);
+      DisplayUtil.setDisplayDisabled(preview, false);
     }
   }
 
@@ -757,10 +757,10 @@ public class ColorPane extends DialogPane
     opacityValue.setText("" + opac);
 
     if (maps != null) {
-      VisUtil.setDisplayDisabled(preview, true);
+      DisplayUtil.setDisplayDisabled(preview, true);
       float[] alpha = ColorUtil.computeAlphaTable(opac, om);
       ColorUtil.setAlphaTable(maps, alpha);
-      VisUtil.setDisplayDisabled(preview, false);
+      DisplayUtil.setDisplayDisabled(preview, false);
     }
   }
 
@@ -768,7 +768,7 @@ public class ColorPane extends DialogPane
   protected void doColorRanges() {
     if (ignore) return;
 
-    VisUtil.setDisplayDisabled(preview, true);
+    DisplayUtil.setDisplayDisabled(preview, true);
 
     int ndx = selector.getSelectedIndex();
     if (ndx < 0) return;
@@ -782,7 +782,7 @@ public class ColorPane extends DialogPane
     boolean fix = fixed.isSelected();
     ColorUtil.setColorRange(preview, maps[ndx], lo, hi, fix);
 
-    VisUtil.setDisplayDisabled(preview, false);
+    DisplayUtil.setDisplayDisabled(preview, false);
   }
 
 }

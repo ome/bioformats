@@ -48,7 +48,7 @@ public class DisplayWindow extends JFrame
 
   /** Stereo graphics configuration. */
   protected static final GraphicsConfiguration STEREO =
-    VisUtil.getStereoConfiguration();
+    DisplayUtil.getStereoConfiguration();
 
 
   // -- Fields --
@@ -283,7 +283,7 @@ public class DisplayWindow extends JFrame
     string = name + (threeD ? " (3D)" : " (2D)");
 
     if (display == null) {
-      display = VisUtil.makeDisplay(name, threeD, STEREO);
+      display = DisplayUtil.makeDisplay(name, threeD, STEREO);
       display.addDisplayListener(this);
     }
     else display.setName(name);

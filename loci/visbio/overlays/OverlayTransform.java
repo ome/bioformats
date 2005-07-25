@@ -655,7 +655,8 @@ public class OverlayTransform extends DataTransform
       mouseDownLeft = true;
       updatePosition(display);
       if (tool != null) {
-        double[] coords = VisUtil.pixelToDomain(display, e.getX(), e.getY());
+        double[] coords =
+          DisplayUtil.pixelToDomain(display, e.getX(), e.getY());
         tool.mouseDown((float) coords[0], (float) coords[1],
           pos, e.getModifiers());
       }
@@ -664,7 +665,8 @@ public class OverlayTransform extends DataTransform
       mouseDownLeft = false;
       updatePosition(display);
       if (tool != null) {
-        double[] coords = VisUtil.pixelToDomain(display, e.getX(), e.getY());
+        double[] coords =
+          DisplayUtil.pixelToDomain(display, e.getX(), e.getY());
         tool.mouseUp((float) coords[0], (float) coords[1],
           pos, e.getModifiers());
       }
@@ -672,7 +674,8 @@ public class OverlayTransform extends DataTransform
     else if (mouseDownLeft && id == DisplayEvent.MOUSE_DRAGGED) {
       updatePosition(display);
       if (tool != null) {
-        double[] coords = VisUtil.pixelToDomain(display, e.getX(), e.getY());
+        double[] coords =
+          DisplayUtil.pixelToDomain(display, e.getX(), e.getY());
         tool.mouseDrag((float) coords[0], (float) coords[1],
           pos, e.getModifiers());
       }

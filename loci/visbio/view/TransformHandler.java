@@ -38,7 +38,7 @@ import loci.visbio.VisBioFrame;
 import loci.visbio.data.DataCache;
 import loci.visbio.data.DataTransform;
 import loci.visbio.state.*;
-import loci.visbio.util.VisUtil;
+import loci.visbio.util.DisplayUtil;
 import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Element;
 import visad.*;
@@ -361,7 +361,7 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
   /** Links in the transform links, starting at the given index. */
   protected void doLinks(int startIndex, boolean unlinkFirst) {
     DisplayImpl display = window.getDisplay();
-    VisUtil.setDisplayDisabled(display, true);
+    DisplayUtil.setDisplayDisabled(display, true);
 
     int size = links.size();
     if (unlinkFirst) {
@@ -377,7 +377,7 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
       ((TransformLink) links.elementAt(l)).doTransform();
     }
 
-    VisUtil.setDisplayDisabled(display, false);
+    DisplayUtil.setDisplayDisabled(display, false);
   }
 
   /** Rebuilds sliders and display mappings for all linked transforms. */
@@ -389,7 +389,7 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
       // clear old transforms
       DisplayImpl display = window.getDisplay();
       try {
-        VisUtil.setDisplayDisabled(display, true);
+        DisplayUtil.setDisplayDisabled(display, true);
         display.removeAllReferences();
         display.clearMaps();
       }
@@ -452,7 +452,7 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
         }
         doCustomMaps();
         doLinks(0, false);
-        VisUtil.setDisplayDisabled(display, false);
+        DisplayUtil.setDisplayDisabled(display, false);
       }
       catch (VisADException exc) { exc.printStackTrace(); }
       catch (RemoteException exc) { exc.printStackTrace(); }

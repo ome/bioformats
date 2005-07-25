@@ -155,7 +155,8 @@ public class SystemControls extends ControlPanel implements ActionListener {
 
     // Stereo configuration text field
     JTextField stereoField = new JTextField(
-      VisUtil.getStereoConfiguration() == null ? "Not available" : "Enabled");
+      DisplayUtil.getStereoConfiguration() == null ?
+      "Not available" : "Enabled");
     stereoField.setEditable(false);
 
     // lay out components

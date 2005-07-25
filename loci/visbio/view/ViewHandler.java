@@ -287,7 +287,7 @@ public class ViewHandler implements Saveable {
     if (!window.is3D()) return;
     parallel = value;
 
-    VisUtil.setParallelProjection(window.getDisplay(), parallel);
+    DisplayUtil.setParallelProjection(window.getDisplay(), parallel);
     VisBioFrame bio = window.getVisBio();
     String endis = value ? "enable" : "disable";
     bio.generateEvent(bio.getManager(DisplayManager.class),
@@ -340,7 +340,7 @@ public class ViewHandler implements Saveable {
     NumericOption eye = (NumericOption)
       om.getOption(DisplayManager.EYE_DISTANCE);
     double position = eye.getFloatingValue();
-    VisUtil.setEyeSeparation(window.getDisplay(), position);
+    DisplayUtil.setEyeSeparation(window.getDisplay(), position);
 
     if (panel == null) panel = new ViewPanel(this);
   }

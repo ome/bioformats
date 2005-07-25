@@ -28,7 +28,7 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import loci.visbio.state.Dynamic;
 import loci.visbio.state.SaveException;
-import loci.visbio.util.VisUtil;
+import loci.visbio.util.DataUtil;
 import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Element;
 import visad.*;
@@ -357,11 +357,11 @@ public class ArbitrarySlice extends DataTransform
         try {
           // use image transform's recommended MathType and Units
           for (int i=0; i<n; i++) {
-            fields[i] = VisUtil.switchType(fields[i], imageType, imageUnits);
+            fields[i] = DataUtil.switchType(fields[i], imageType, imageUnits);
           }
           // compile slices into a single volume and collapse
-          collapse = VisUtil.collapse(
-            VisUtil.makeField(fields, zType, 0, n - 1, zUnit));
+          collapse = DataUtil.collapse(
+            DataUtil.makeField(fields, zType, 0, n - 1, zUnit));
           cache.putData(this, pos, "collapse", collapse);
         }
         catch (VisADException exc) { exc.printStackTrace(); }

@@ -112,7 +112,7 @@ public class ThumbnailHandler
     RealTupleType rtt = ftype.getDomain();
     int[] res = new int[rtt.getDimension()];
     for (int i=0; i<res.length; i++) res[i] = resolution[i];
-    try { return VisUtil.resample(ff, res, null); }
+    try { return DataUtil.resample(ff, res, null); }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
     return null;

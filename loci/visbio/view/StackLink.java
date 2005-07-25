@@ -28,8 +28,7 @@ import java.rmi.RemoteException;
 import loci.visbio.data.*;
 import loci.visbio.state.Dynamic;
 import loci.visbio.state.SaveException;
-import loci.visbio.util.VisUtil;
-import loci.visbio.util.XMLUtil;
+import loci.visbio.util.*;
 import org.w3c.dom.Element;
 import visad.*;
 
@@ -380,7 +379,7 @@ public class StackLink extends TransformLink {
       FunctionType ftype = it.getType();
       Unit[] imageUnits = it.getImageUnits();
       try {
-        d = VisUtil.switchType(ff, ftype, imageUnits); 
+        d = DataUtil.switchType(ff, ftype, imageUnits); 
 
         // wrap image in another field, to assign proper Z value
         RealType zbox = it.getZType();
@@ -482,7 +481,7 @@ public class StackLink extends TransformLink {
 
     // compute image data at each slice
     DisplayImpl display = handler.getWindow().getDisplay();
-    VisUtil.setDisplayDisabled(display, true);
+    DisplayUtil.setDisplayDisabled(display, true);
     FlatField[] slices = new FlatField[len];
     for (int s=0; s<len; s++) {
       if (stackAxis >= 0) pos[stackAxis] = s;
@@ -523,16 +522,16 @@ public class StackLink extends TransformLink {
           if (collapse == null) {
             // use image transform's recommended MathType
             for (int i=0; i<len; i++) {
-              slices[i] = VisUtil.switchType((FlatField) slices[i],
+              slices[i] = DataUtil.switchType((FlatField) slices[i],
                 imageType, imageUnits);
             }
             // compile slices into a single volume and collapse
-            collapse = VisUtil.collapse(
-              VisUtil.makeField(slices, zType, 0, len - 1, zUnit));
+            collapse = DataUtil.collapse(
+              DataUtil.makeField(slices, zType, 0, len - 1, zUnit));
             cache.putData(trans, pos, "collapse", collapse);
           }
           // resample volume
-          setData(VisUtil.makeCube(collapse, volumeRes), volumeRef, false);
+          setData(DataUtil.makeCube(collapse, volumeRes), volumeRef, false);
           setMessage("rendering " + res + " volume");
         }
         catch (VisADException exc) { exc.printStackTrace(); }
@@ -545,7 +544,7 @@ public class StackLink extends TransformLink {
       }
       clearWhenDone = true;
     }
-    VisUtil.setDisplayDisabled(display, false);
+    DisplayUtil.setDisplayDisabled(display, false);
   }
 
   /** Gets 2D data from the specified data transform. */
@@ -562,7 +561,7 @@ public class StackLink extends TransformLink {
       if (len[i] > maxRes[i]) res[i] = maxRes[i];
       else res[i] = len[i];
     }
-    try { return VisUtil.resample(ff, res, null); }
+    try { return DataUtil.resample(ff, res, null); }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
     return null;
@@ -589,7 +588,7 @@ public class StackLink extends TransformLink {
     RealType xType = it.getXType();
     RealType yType = it.getYType();
     RealType zType = it.getZType();
-    double[] domain = VisUtil.cursorToDomain(display,
+    double[] domain = DisplayUtil.cursorToDomain(display,
       new RealType[] {xType, yType, zType}, cur);
 
     // determine which slice to probe

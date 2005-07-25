@@ -165,6 +165,17 @@ public class DataManager extends LogicManager {
     dataControls.exportData(data);
   }
 
+  /** Sends the selected data object to an instance of ImageJ. */
+  public void sendDataToImageJ() {
+    DataTransform data = dataControls.getSelectedData();
+    if (data instanceof ImageTransform) exportData((ImageTransform) data);
+  }
+
+  /** Sends the given data object to an instance of ImageJ. */
+  public void sendDataToImageJ(ImageTransform data) {
+    dataControls.sendDataToImageJ(data);
+  }
+
   /**
    * Loads the given sample dataset. If one with the given name already exists
    * in the samples cache, it is used. Otherwise, it is downloaded from the

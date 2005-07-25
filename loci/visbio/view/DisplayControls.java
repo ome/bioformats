@@ -91,7 +91,7 @@ public class DisplayControls extends ControlPanel
     add3D.addActionListener(this);
     if (!LAFUtil.isMacLookAndFeel()) add3D.setMnemonic('3');
     add3D.setToolTipText("Creates a new 3D display");
-    add3D.setEnabled(VisUtil.canDo3D());
+    add3D.setEnabled(DisplayUtil.canDo3D());
 
     // show button
     show = new JButton("Show");

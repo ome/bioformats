@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.data;
 
 import java.rmi.RemoteException;
-import loci.visbio.util.VisUtil;
+import loci.visbio.util.DataUtil;
 import visad.FlatField;
 import visad.VisADException;
 
@@ -62,7 +62,7 @@ public class SamplingThumbHandler extends ThumbnailHandler {
 
     float[] smin = {0, 0};
     float[] smax = {samp.getImageWidth() - 1, samp.getImageHeight() - 1};
-    try { return VisUtil.resample(ff, resolution, range, smin, smax); }
+    try { return DataUtil.resample(ff, resolution, range, smin, smax); }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
     return null;

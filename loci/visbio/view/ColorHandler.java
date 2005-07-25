@@ -116,7 +116,7 @@ public class ColorHandler {
     DataTransform trans = link.getTransform();
     if (!(trans instanceof ImageTransform)) return null;
     ImageTransform it = (ImageTransform) trans;
-    return VisUtil.getMaps(display, it.getRangeTypes(),
+    return DisplayUtil.getMaps(display, it.getRangeTypes(),
       new DisplayRealType[] {Display.RGB, Display.RGBA});
   }
 
@@ -156,12 +156,12 @@ public class ColorHandler {
     }
 
     DisplayImpl display = getWindow().getDisplay();
-    VisUtil.setDisplayDisabled(display, true);
+    DisplayUtil.setDisplayDisabled(display, true);
     setColors(brightness, contrast, colorModel, red, green, blue, false);
     setOpacity(opacityValue, opacityModel, false);
     setRanges(lo, hi, fixed);
     setTables(colorTables);
-    VisUtil.setDisplayDisabled(display, false);
+    DisplayUtil.setDisplayDisabled(display, false);
   }
 
   /** Refreshes preview data from the transform link. */
@@ -175,7 +175,7 @@ public class ColorHandler {
         if (trans instanceof ImageTransform) {
           ImageTransform it = (ImageTransform) trans;
           if (ff != null) {
-            ff = VisUtil.switchType(ff, it.getType(), it.getImageUnits());
+            ff = DataUtil.switchType(ff, it.getType(), it.getImageUnits());
           }
         }
         colorPane.setPreviewData(ff);
@@ -195,7 +195,7 @@ public class ColorHandler {
     int rval = colorPane.showDialog(window.getControls());
     if (rval != ColorPane.APPROVE_OPTION) return;
     DisplayImpl display = window.getDisplay();
-    VisUtil.setDisplayDisabled(display, true);
+    DisplayUtil.setDisplayDisabled(display, true);
     setColors(colorPane.getBrightness(), colorPane.getContrast(),
       colorPane.getColorMode(), colorPane.getRed(), colorPane.getGreen(),
       colorPane.getBlue(), false);
@@ -203,7 +203,7 @@ public class ColorHandler {
       colorPane.getOpacityModel(), false);
     setRanges(colorPane.getLo(), colorPane.getHi(), colorPane.getFixed());
     setTables(colorPane.getTables());
-    VisUtil.setDisplayDisabled(display, false);
+    DisplayUtil.setDisplayDisabled(display, false);
   }
 
   /** Updates color settings to those given. */

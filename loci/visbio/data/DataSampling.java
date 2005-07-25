@@ -205,7 +205,7 @@ public class DataSampling extends ImageTransform {
     if (data == null || !(data instanceof FlatField)) return null;
 
     int[] res = resX > 0 && resY > 0 ? new int[] {resX, resY} : null;
-    try { return VisUtil.resample((FlatField) data, res, range, true); }
+    try { return DataUtil.resample((FlatField) data, res, range, true); }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
     return null;
