@@ -3,6 +3,8 @@ v3.09 - Monday, July 25, 2005
 - ADDED: Ability to export data objects directly to ImageJ
 - ADDED: Folder chooser to export dialog for specifying which folder to use
 
+- TWEAK: Warn user if export to 24-bit RGB will truncate data values
+
 - FIXED: Ignore first image (pure white RGB) of Openlab datasets
 
 
