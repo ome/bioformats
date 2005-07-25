@@ -467,6 +467,8 @@ public class DataManager extends LogicManager {
     hm.addHelpTopic(s + "/Generating thumbnails", "thumbnails.html");
     hm.addHelpTopic(s + "/Displaying a data object", "display_data.html");
     hm.addHelpTopic(s + "/Exporting data to disk", "export_data.html");
+    hm.addHelpTopic(s + "/Exporting data directly to ImageJ",
+      "export_imagej.html");
     hm.addHelpTopic(s + "/Uploading to an OME database", "upload_ome.html");
   }
 
