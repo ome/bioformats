@@ -365,8 +365,11 @@ public class DataControls extends ControlPanel
   /** Sends part of a data object to an instance of ImageJ. */
   public void sendDataToImageJ(ImageTransform data) {
     sender.setData(data);
-    int rval = sender.showDialog(this);
-    if (rval == DialogPane.APPROVE_OPTION) sender.send();
+    if (data.getLengths().length > 0) {
+      int rval = sender.showDialog(this);
+      if (rval != DialogPane.APPROVE_OPTION) return;
+    }
+    sender.send();
   }
 
   /** Creates a new display and adds the selected data object to it. */

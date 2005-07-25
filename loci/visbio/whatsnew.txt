@@ -1,5 +1,6 @@
-v3.09 - Not yet released
+v3.09 - Monday, July 25, 2005
 
+- ADDED: Ability to export data objects directly to ImageJ
 - ADDED: Folder chooser to export dialog for specifying which folder to use
 
 - FIXED: Ignore first image (pure white RGB) of Openlab datasets

@@ -31,10 +31,10 @@ import ij.ImageStack;
 import ij.process.ImageProcessor;
 import loci.visbio.VisBioFrame;
 import loci.visbio.view.BioSlideWidget;
-import loci.visbio.util.ImageJUtil;
-import loci.visbio.util.DialogPane;
-import javax.swing.JProgressBar;
+import loci.visbio.util.*;
+import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 import visad.FlatField;
 import visad.VisADException;
 
@@ -55,6 +55,9 @@ public class SendToIJPane extends DialogPane {
   /** Slider widgets specifying which dimensional position to send. */
   private BioSlideWidget[] bsw;
 
+  /** Axis to use for ImageJ stack. */
+  private BioComboBox stackAxis;
+
 
   // -- Constructor --
 
@@ -63,6 +66,8 @@ public class SendToIJPane extends DialogPane {
     super("Send data to ImageJ");
     this.bio = bio;
     bsw = new BioSlideWidget[0];
+    stackAxis = new BioComboBox();
+    stackAxis.setActionCommand("stackAxis");
   }
 
 
@@ -79,15 +84,35 @@ public class SendToIJPane extends DialogPane {
     final JProgressBar progress = bio.getProgressBar();
     progress.setString("Sending data to ImageJ");
     progress.setValue(0);
-    progress.setMaximum(1);
 
     Thread t = new Thread(new Runnable() {
       public void run() {
         try {
-          progress.setString("Reading image #1/1");
-          FlatField[] data = new FlatField[1];
-          data[0] = (FlatField) trans.getData(pos, 2, null);
-          progress.setValue(1);
+          // collect images to send to ImageJ
+          progress.setMaximum(1);
+          int axis = stackAxis.getSelectedIndex() - 1;
+          FlatField[] data;
+          if (axis < 0) {
+            progress.setString("Reading image");
+            data = new FlatField[1];
+            data[0] = (FlatField) trans.getData(pos, 2, null);
+            progress.setValue(1);
+          }
+          else {
+            int len = lengths[axis];
+            progress.setMaximum(len);
+            data = new FlatField[len];
+            for (int i=0; i<len; i++) {
+              progress.setValue(i);
+              progress.setString("Reading image #" + (i + 1) + "/" + len);
+              pos[axis] = i;
+              data[i] = (FlatField) trans.getData(pos, 2, null);
+            }
+            progress.setValue(len);
+          }
+
+          // convert FlatFields into ImagePlus object
+          progress.setString("Sending data to ImageJ");
           ImagePlus image;
           String name = trans.getName() + " (from VisBio)";
           if (data.length > 1) {
@@ -107,6 +132,8 @@ public class SendToIJPane extends DialogPane {
             // create single image
             image = new ImagePlus(name, ImageJUtil.extractImage(data[0]));
           }
+
+          // send ImagePlus object to ImageJ
           ImageJUtil.sendToImageJ(image, bio);
           bio.resetStatus();
         }
@@ -127,26 +154,49 @@ public class SendToIJPane extends DialogPane {
 
   /** Lays out components before displaying the dialog. */
   protected int showDialog() {
-    pane.removeAll();
     if (trans == null) return DialogPane.CANCEL_OPTION;
+    removeAll();
+    stackAxis.removeActionListener(this);
+    stackAxis.removeAllItems();
+    stackAxis.addItem("None");
     int[] lengths = trans.getLengths();
+    String[] dims = trans.getDimTypes();
     bsw = new BioSlideWidget[lengths.length];
-    StringBuffer sb = new StringBuffer();
-    for (int i=0; i<lengths.length; i++) {
-      bsw[i] = new BioSlideWidget(trans, i);
-      if (i > 0) sb.append(", 3dlu, ");
-      sb.append("pref");
-    }
     if (bsw.length > 0) {
+      StringBuffer sb = new StringBuffer();
+      for (int i=0; i<bsw.length; i++) {
+        bsw[i] = new BioSlideWidget(trans, i);
+        stackAxis.addItem("<" + (i + 1) + "> " + dims[i]);
+        if (i > 0) sb.append(", 3dlu, ");
+        sb.append("pref");
+      }
+      stackAxis.addActionListener(this);
+      sb.append(", 3dlu, pref");
       PanelBuilder builder = new PanelBuilder(new FormLayout(
-        "pref", sb.toString()));
+        "pref:grow, 3dlu, pref", sb.toString()));
       CellConstraints cc = new CellConstraints();
       for (int i=0; i<bsw.length; i++) {
-        builder.add(bsw[i], cc.xy(1, 2 * i + 1));
+        builder.add(bsw[i], cc.xyw(1, 2 * i + 1, 3));
       }
-      pane.add(builder.getPanel());
+      int row = 2 * bsw.length + 1;
+      builder.addLabel("Stack &axis",
+        cc.xy(1, row, "right, center")).setLabelFor(stackAxis);
+      builder.add(stackAxis, cc.xy(3, row));
+      add(builder.getPanel());
     }
     return super.showDialog();
+  }
+
+
+  // -- ActionListener API methods --
+
+  public void actionPerformed(ActionEvent e) {
+    String cmd = e.getActionCommand();
+    if (cmd.equals("stackAxis")) {
+      int axis = stackAxis.getSelectedIndex() - 1;
+      for (int i=0; i<bsw.length; i++) bsw[i].setEnabled(i != axis);
+    }
+    else super.actionPerformed(e);
   }
 
 }
