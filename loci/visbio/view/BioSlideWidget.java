@@ -189,6 +189,18 @@ public class BioSlideWidget extends JPanel
   public JSlider getSlider() { return slider; }
 
 
+  // -- Component API methods --
+
+  /** Enables or disables this dimensional slider widget. */
+  public void setEnabled(boolean enabled) {
+    super.setEnabled(enabled);
+    current.setEnabled(enabled);
+    slider.setEnabled(enabled);
+    previous.setEnabled(enabled);
+    next.setEnabled(enabled);
+  }
+
+
   // -- ActionListener API methods --
 
   /** Called when previous or next button is pushed. */
