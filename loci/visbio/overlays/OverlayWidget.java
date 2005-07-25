@@ -126,7 +126,7 @@ public class OverlayWidget extends JPanel implements ActionListener,
   protected JCheckBox filled;
 
   /** Combo box for selecting an overlay group. */
-  protected JComboBox groupList;
+  protected BioComboBox groupList;
 
   /** Button for creating a new overlay group. */
   protected JButton newGroup;
@@ -231,7 +231,8 @@ public class OverlayWidget extends JPanel implements ActionListener,
       "Whether the selected overlays are filled in or outlined");
 
     // group selector
-    groupList = new JComboBox(new Object[] {"None"});
+    groupList = new BioComboBox();
+    groupList.addItem("None");
     groupList.addActionListener(this);
     groupList.setToolTipText(
       "The overlay group to which the selected overlays belong");

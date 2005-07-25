@@ -25,9 +25,7 @@ package loci.visbio.state;
 
 import java.awt.Component;
 import javax.swing.JPanel;
-import javax.swing.JComboBox;
-import loci.visbio.util.FormsUtil;
-import loci.visbio.util.XMLUtil;
+import loci.visbio.util.*;
 import org.w3c.dom.Element;
 
 /** ListOption is an option from a list in the VisBio Options dialog. */
@@ -39,7 +37,7 @@ public class ListOption extends BioOption {
   private JPanel panel;
 
   /** Text box GUI component. */
-  private JComboBox box;
+  private BioComboBox box;
 
 
   // -- Constructor --
@@ -49,7 +47,7 @@ public class ListOption extends BioOption {
     super(text);
 
     // combo box
-    box = new JComboBox(choices);
+    box = new BioComboBox(choices);
     box.setToolTipText(tip);
     box.setSelectedIndex(0);
 
