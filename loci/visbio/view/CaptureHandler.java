@@ -36,8 +36,7 @@ import javax.swing.filechooser.FileFilter;
 import loci.visbio.SystemManager;
 import loci.visbio.WindowManager;
 import loci.visbio.state.*;
-import loci.visbio.util.DataUtil;
-import loci.visbio.util.XMLUtil;
+import loci.visbio.util.*;
 import org.w3c.dom.Element;
 import visad.*;
 import visad.data.avi.AVIForm;
@@ -163,24 +162,8 @@ public class CaptureHandler implements Saveable {
   public void sendToImageJ() {
     new Thread("VisBio-SendToImageJThread-" + window.getName()) {
       public void run() {
-        ImageJ ij = IJ.getInstance();
-        if (ij == null || (ij != null && !ij.isShowing())) {
-          // create new ImageJ instance
-          File dir = new File(System.getProperty("user.dir"));
-          File newDir = new File(dir.getParentFile().getParentFile(), "ij");
-          System.setProperty("user.dir", newDir.getPath());
-          new ImageJ(null);
-          System.setProperty("user.dir", dir.getPath());
-
-          // display ImageJ warning
-          OptionManager om = (OptionManager)
-            window.getVisBio().getManager(OptionManager.class);
-          om.checkWarning(panel, DisplayManager.WARN_IMAGEJ, false,
-            "Quitting VisBio will also shut down ImageJ, with no\n" +
-            "warning or opportunity to save your work. Please remember\n" +
-            "remember to save your work in ImageJ before closing VisBio.");
-        }
-        new ImagePlus("VisBio snapshot", getSnapshot()).show();
+        ImageJUtil.sendToImageJ(new ImagePlus(
+          window.getName() + " snapshot", getSnapshot()), window.getVisBio());
       }
     }.start();
   }

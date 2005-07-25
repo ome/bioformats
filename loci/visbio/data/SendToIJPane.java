@@ -31,7 +31,7 @@ import ij.ImageStack;
 import ij.process.ImageProcessor;
 import loci.visbio.VisBioFrame;
 import loci.visbio.view.BioSlideWidget;
-import loci.visbio.util.DataUtil;
+import loci.visbio.util.ImageJUtil;
 import loci.visbio.util.DialogPane;
 import javax.swing.JProgressBar;
 import javax.swing.JOptionPane;
@@ -89,24 +89,25 @@ public class SendToIJPane extends DialogPane {
           data[0] = (FlatField) trans.getData(pos, 2, null);
           progress.setValue(1);
           ImagePlus image;
+          String name = trans.getName() + " (from VisBio)";
           if (data.length > 1) {
             // create image stack
             ImageStack is = null;
             for (int i=0; i<data.length; i++) {
-              ImageProcessor ips = DataUtil.extractImage(data[i]);
+              ImageProcessor ips = ImageJUtil.extractImage(data[i]);
               if (is == null) {
                 is = new ImageStack(ips.getWidth(), ips.getHeight(),
                   ips.getColorModel());
               }
               is.addSlice("" + i, ips);
             }
-            image = new ImagePlus(trans.getName(), is);
+            image = new ImagePlus(name, is);
           }
           else {
             // create single image
-            image = new ImagePlus(trans.getName(), DataUtil.extractImage(data[0]));
+            image = new ImagePlus(name, ImageJUtil.extractImage(data[0]));
           }
-          // CTR TODO send image to ImageJ
+          ImageJUtil.sendToImageJ(image, bio);
           bio.resetStatus();
         }
         catch (VisADException exc) {

@@ -168,7 +168,9 @@ public class DataManager extends LogicManager {
   /** Sends the selected data object to an instance of ImageJ. */
   public void sendDataToImageJ() {
     DataTransform data = dataControls.getSelectedData();
-    if (data instanceof ImageTransform) exportData((ImageTransform) data);
+    if (data instanceof ImageTransform) {
+      sendDataToImageJ((ImageTransform) data);
+    }
   }
 
   /** Sends the given data object to an instance of ImageJ. */
