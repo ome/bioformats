@@ -25,7 +25,9 @@ package loci.visbio.util;
 
 import ij.*;
 import ij.process.*;
+import java.awt.Component;
 import java.io.File;
+import javax.swing.JOptionPane;
 import loci.visbio.VisBioFrame;
 import loci.visbio.view.DisplayManager;
 import loci.visbio.state.OptionManager;
@@ -41,6 +43,16 @@ public abstract class ImageJUtil {
   public static ImageProcessor extractImage(FlatField field)
     throws VisADException
   {
+    return extractImage(field, null);
+  }
+
+  /**
+   * Converts a VisAD FlatField of the form
+   * <tt>((x, y) -&gt; (r1, ..., rn))</tt> to an ImageJ ImageProcessor object.
+   */
+  public static ImageProcessor extractImage(FlatField field, Component c)
+    throws VisADException
+  {
     ImageProcessor proc = null;
     GriddedSet set = (GriddedSet) field.getDomainSet();
     int[] wh = set.getLengths();
@@ -49,12 +61,26 @@ public abstract class ImageJUtil {
     float[][] samples = field.getFloats(false);
     if (samples.length == 3) {
       // 24-bit color is the best we can do
+      boolean mangling = false;
       int[] pixels = new int[samples[0].length];
       for (int i=0; i<pixels.length; i++) {
-        int red = (int) samples[0][i] & 0x000000ff;
-        int green = (int) samples[1][i] & 0x000000ff;
-        int blue = (int) samples[2][i] & 0x000000ff;
-        pixels[i] = red << 16 | green << 8 | blue;
+        int r = (int) samples[0][i];
+        int g = (int) samples[1][i];
+        int b = (int) samples[2][i];
+
+        // check whether data mangling will occur
+        if (r < 0 || r > 255) { r &= 0x000000ff; mangling = true; }
+        if (g < 0 || g > 255) { g &= 0x000000ff; mangling = true; }
+        if (b < 0 || b > 255) { b &= 0x000000ff; mangling = true; }
+        pixels[i] = r << 16 | g << 8 | b;
+      }
+      if (mangling) {
+        // warn user
+        int ans = JOptionPane.showConfirmDialog(c,
+          "Some data values will be truncated when VisBio converts " +
+          "this data to 24-bit RGB format. Are you sure you wish to proceed?",
+          "VisBio", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (ans != JOptionPane.YES_OPTION) return null;
       }
       proc = new ColorProcessor(w, h, pixels);
     }
@@ -131,7 +157,7 @@ public abstract class ImageJUtil {
         om.checkWarning(ij, DisplayManager.WARN_IMAGEJ, false,
           "Quitting VisBio will also shut down ImageJ, with no\n" +
           "warning or opportunity to save your work. Please remember\n" +
-          "remember to save your work in ImageJ before closing VisBio.");
+          "to save your work in ImageJ before closing VisBio.");
       }
     }
     image.show();
