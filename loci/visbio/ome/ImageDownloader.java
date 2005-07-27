@@ -37,13 +37,13 @@ import org.openmicroscopy.is.*;
  * OME images from the Open Microscopy Environment.
  */
 public class ImageDownloader {
-  
+
   // -- Fields --
 
   /** List of objects listening for updates to download tasks. */
   protected Vector listeners;
 
- 
+
   // -- Constructor --
 
   /** Constructs a new OME image downloader. */
@@ -227,7 +227,7 @@ public class ImageDownloader {
     repoFieldSpec.addWantedField("Repository", "ImageServerURL");
     criteria.addWantedFields("default_pixels", repoFieldSpec);
   }
-  
+
   /** Retrieves the Images from the database that match the criteria given. */
   protected static Image[] retrieveImages(DataFactory df, Criteria criteria) {
     if (criteria == null) return null;

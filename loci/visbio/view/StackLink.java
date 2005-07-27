@@ -281,9 +281,9 @@ public class StackLink extends TransformLink {
       if (isSliceVisible(i) != link.isSliceVisible(i)) return false;
     }
 
-    return super.matches(link) && 
+    return super.matches(link) &&
       getStackAxis() == link.getStackAxis() &&
-      getCurrentSlice() == link.getCurrentSlice() && 
+      getCurrentSlice() == link.getCurrentSlice() &&
       isVolumeRendered() == link.isVolumeRendered() &&
       getVolumeResolution() == link.getVolumeResolution();
   }
@@ -379,7 +379,7 @@ public class StackLink extends TransformLink {
       FunctionType ftype = it.getType();
       Unit[] imageUnits = it.getImageUnits();
       try {
-        d = DataUtil.switchType(ff, ftype, imageUnits); 
+        d = DataUtil.switchType(ff, ftype, imageUnits);
 
         // wrap image in another field, to assign proper Z value
         RealType zbox = it.getZType();

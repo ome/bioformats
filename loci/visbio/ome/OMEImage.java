@@ -218,7 +218,8 @@ public class OMEImage extends ImageTransform {
       // get image ID to download
       if (imageId < 0) {
         String id = (String) JOptionPane.showInputDialog(parent, "Image ID:",
-          "Download OME image", JOptionPane.INFORMATION_MESSAGE, null, null, "");
+          "Download OME image", JOptionPane.INFORMATION_MESSAGE,
+          null, null, "");
         if (id == null) return null;
         try { imageId = Integer.parseInt(id); }
         catch (NumberFormatException exc) { }
