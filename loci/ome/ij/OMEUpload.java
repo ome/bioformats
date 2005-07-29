@@ -165,7 +165,7 @@ public class OMEUpload{
 
       // start the import process
       IJ.showStatus("OmeUpload: Starting import...");
-      im.startImport();
+      im.startImport(user);
       IJ.showProgress(0.15);
           
       // locate a repository object to contain the pixels
@@ -201,8 +201,8 @@ public class OMEUpload{
         {
           case ImagePlus.COLOR_256:
             //in order to correctly upload you need to convert to an RGB image
-            imageP=new ImagePlus(ip.getTitle(),
-              new ColorProcessor(((ByteProcessor)imageP.getProcessor()).createImage()));
+            imageP=new ImagePlus(ip.getTitle(), new ColorProcessor(
+              ((ByteProcessor) imageP.getProcessor()).createImage()));
           case ImagePlus.COLOR_RGB:
             bytesPerPix=1;
             range=3;

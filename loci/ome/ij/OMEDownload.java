@@ -483,7 +483,7 @@ public class OMEDownload{
       IJ.showStatus("Retrieving metadata..");
       metas[1]=OMEMetaDataHandler.exportMeta(image, imageP, df);
     }else metas[1]=null;
-    omesp.hashInImage(imageP.getID(), metas);
+    OMESidePanel.hashInImage(imageP.getID(), metas);
     IJ.showStatus("Displaying Image");
     imageP.updateAndDraw();
     imageP.show();
@@ -621,17 +621,12 @@ public class OMEDownload{
       IJ.showStatus("OmeDownload: Getting image information...");
       IJ.showProgress(.1);
       DataFactory df = (DataFactory) rs.getService(DataFactory.class);
-      ImportManager im = (ImportManager) rs.getService(ImportManager.class);
       PixelsFactory pf = (PixelsFactory) rs.getService(PixelsFactory.class);
       DatasetManager dm = (DatasetManager) rs.getService(DatasetManager.class);
       ConfigurationManager cm = (ConfigurationManager)
       rs.getService(ConfigurationManager.class);
       AnalysisEngineManager aem = (AnalysisEngineManager)
       rs.getService(AnalysisEngineManager.class);
-      // start the import process
-      IJ.showStatus("OmeDownload: Starting import...");
-      im.startImport();
-      IJ.showProgress(0.15);
   
       if ( cancelPlugin) {
         IJ.showProgress(1);
