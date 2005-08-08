@@ -13,7 +13,7 @@ v3.08 - Tuesday, July 19, 2005
 - ADDED: Ability to specify pixel type for datasets uploaded to OME
 - ADDED: A command-line tool for uploading datasets to OME: "omeul"
 
-- FIXED: More robust visbio.tmp deletion on program exit.
+- FIXED: More robust visbio.tmp deletion on program exit
 
 
 v3.07 - Friday, July 15, 2005
