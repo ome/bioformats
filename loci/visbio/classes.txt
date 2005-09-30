@@ -3094,6 +3094,7 @@ visad.VisADRay
 visad.VisADSceneGraphObject
 visad.VisADTriangleArray
 visad.VisADTriangleStripArray
+visad.bom.ImageRendererJ3D
 visad.browser.Convert
 visad.browser.Divider
 visad.browser.RangeSlider
