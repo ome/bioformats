@@ -31,8 +31,7 @@ import javax.swing.*;
 import loci.visbio.*;
 import loci.visbio.data.*;
 import loci.visbio.state.*;
-import loci.visbio.util.LAFUtil;
-import loci.visbio.util.SwingUtil;
+import loci.visbio.util.*;
 
 /** HelpManager is the manager encapsulating VisBio's help window logic. */
 public class HelpManager extends LogicManager {
@@ -75,7 +74,8 @@ public class HelpManager extends LogicManager {
     // determine whether data can be displayed in 2D and/or 3D
     boolean isData = data != null;
     boolean canDisplay2D = data != null && data.canDisplay2D();
-    boolean canDisplay3D = data != null && data.canDisplay3D();
+    boolean canDisplay3D = data != null &&
+      data.canDisplay3D() && DisplayUtil.canDo3D();
     boolean canDisplay = canDisplay2D || canDisplay3D;
 
     if (canDisplay) {
