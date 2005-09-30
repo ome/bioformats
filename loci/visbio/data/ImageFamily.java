@@ -36,11 +36,7 @@ import visad.data.qt.PictForm;
 import visad.data.qt.QTForm;
 import visad.data.tiff.TiffForm;
 
-/**
- * A container for VisAD data types that provide data as image planes.
- * These formats currently include Bio-Rad PIC, TIFF, Fluoview TIFF,
- * QuickTime, AVI and ImageJ formats.
- */
+/** A container for VisAD data types that provide data as image planes. */
 public class ImageFamily extends FormNode implements FormBlockReader,
   FormFileInformer, FormProgressInformer, MetadataReader
 {
@@ -49,6 +45,9 @@ public class ImageFamily extends FormNode implements FormBlockReader,
 
   /** Form id count. */
   private static int id = 0;
+
+  /** Index of form with last successful isThisType identification. */
+  private static int lastGood = -1;
 
 
   // -- Fields --
@@ -75,17 +74,18 @@ public class ImageFamily extends FormNode implements FormBlockReader,
   public ImageFamily() {
     super("ImageFamily" + id++);
     list = new FormNode[] {
-      new BioRadForm(),
-      new MetamorphForm(),
-      new OpenlabForm(),
-      new FluoviewTiffForm(),
-      new ZeissForm(),
-      new ZVIForm(),
+      new IPLabForm(), // proprietary
+      new ZVIForm(), // proprietary
+      new BioRadForm(), // proprietary
+      new MetamorphForm(), // TIFF variant
+      new ZeissForm(), // TIFF variant
+      new FluoviewTiffForm(), // TIFF variant; isThisType(String) is slow
       new TiffForm(),
-      new ImageJForm(),
       new AVIForm(),
-      new QTForm(),
-      new PictForm()
+      new ImageJForm(),
+      new QTForm(), // needs QTJ
+      new PictForm(), // needs QTJ
+      new OpenlabForm() // needs QTJ; isThisType(String) is slow
     };
     index = -1;
   }
@@ -292,27 +292,31 @@ public class ImageFamily extends FormNode implements FormBlockReader,
   // -- Helper methods --
 
   private void initId(String id) throws BadFormException {
-    for (int i=0; i<list.length; i++) {
-      FormFileInformer ffi = (FormFileInformer) list[i];
+    // HACK - try last known good type first, for efficiency
+    for (int i=-1; i<list.length; i++) {
+      if (i == lastGood) continue;
+      int ii = i < 0 ? lastGood : i;
+      FormFileInformer ffi = (FormFileInformer) list[ii];
       if (ffi.isThisType(id)) {
-        index = i;
+        index = ii;
+        lastGood = ii;
         lastId = id;
 
         // compute format string
-        if (list[i] instanceof BioRadForm) format = "Bio-Rad PIC file";
-        else if (list[i] instanceof MetamorphForm) {
+        if (list[ii] instanceof BioRadForm) format = "Bio-Rad PIC file";
+        else if (list[ii] instanceof MetamorphForm) {
           format = "Metamorph STK file";
         }
-        else if (list[i] instanceof OpenlabForm) {
+        else if (list[ii] instanceof OpenlabForm) {
           format = "Openlab LIFF file";
         }
-        else if (list[i] instanceof FluoviewTiffForm) {
+        else if (list[ii] instanceof FluoviewTiffForm) {
           format = "Olympus Fluoview TIFF file";
         }
-        else if (list[i] instanceof ZeissForm) format = "Zeiss LSM file";
-        else if (list[i] instanceof ZVIForm) format = "Zeiss ZVI file";
-        else if (list[i] instanceof TiffForm) format = "TIFF file";
-        else if (list[i] instanceof ImageJForm) {
+        else if (list[ii] instanceof ZeissForm) format = "Zeiss LSM file";
+        else if (list[ii] instanceof ZVIForm) format = "Zeiss ZVI file";
+        else if (list[ii] instanceof TiffForm) format = "TIFF file";
+        else if (list[ii] instanceof ImageJForm) {
           int ndx = id.lastIndexOf(".");
           if (ndx < 0) format = "ImageJ file";
           else {
@@ -321,8 +325,8 @@ public class ImageFamily extends FormNode implements FormBlockReader,
             format = ext + " image file";
           }
         }
-        else if (list[i] instanceof AVIForm) format = "AVI movie";
-        else if (list[i] instanceof QTForm) format = "QuickTime movie";
+        else if (list[ii] instanceof AVIForm) format = "AVI movie";
+        else if (list[ii] instanceof QTForm) format = "QuickTime movie";
         else format = "Unknown format";
 
         return;
