@@ -222,8 +222,23 @@ public class ColorPane extends DialogPane
         widgetPane.add(new ColorMapWidget(maps[i]));
         selector.addItem("#" + (i + 1));
       }
-      //preview.addReferences(new ImageRendererJ3D(), ref);
-      preview.addReference(ref);
+      DataRenderer dr = null;
+      if (sm.length == 1) {
+        // use ImageRendererJ3D when possible
+        try {
+          Class c = Class.forName("visad.bom.ImageRendererJ3D");
+          dr = (DataRenderer) c.newInstance();
+        }
+        catch (NoClassDefFoundError err) { }
+        catch (ClassNotFoundException exc) { exc.printStackTrace(); }
+        catch (IllegalAccessException exc) { exc.printStackTrace(); }
+        catch (InstantiationException exc) { exc.printStackTrace(); }
+      }
+      if (dr == null) {
+        // ImageRendererJ3D does not support multiple Display.RGBA mappings
+        preview.addReference(ref);
+      }
+      else preview.addReferences(dr, ref);
 
       // set aspect ratio
       GriddedSet set = (GriddedSet) ff.getDomainSet();

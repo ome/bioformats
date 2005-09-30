@@ -100,8 +100,15 @@ public class StackHandler extends TransformHandler {
       TransformLink link = (TransformLink) links.elementAt(i);
       DataTransform trans = link.getTransform();
       if (!(trans instanceof ImageTransform)) continue;
-      RealType zType = ((ImageTransform) trans).getZType();
+      ImageTransform it = (ImageTransform) trans;
+      RealType zType = it.getZType();
       ScalarMap zMap = new ScalarMap(zType, Display.ZAxis);
+      if (link instanceof StackLink) {
+        StackLink stackLink = (StackLink) link;
+        double step = it.getMicronStep();
+        if (step != step) step = 1;
+        zMap.setRange(0, (stackLink.getSliceCount() - 1) * step);
+      }
       display.addMap(zMap);
     }
   }

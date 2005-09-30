@@ -130,6 +130,35 @@ public class TransformLink
 
   /** Links this transform into the display. */
   public void link() {
+    // rebuild renderer if necessary
+    int numMaps = colorHandler.getMaps().length;
+    String imageRenderer = "visad.bom.ImageRendererJ3D";
+    boolean isImageRend = rend != null &&
+      rend.getClass().getName().equals(imageRenderer);
+    if (numMaps == 1 && !isImageRend) {
+      // use ImageRendererJ3D when possible
+      rend = null;
+      try {
+        Class c = Class.forName(imageRenderer);
+        rend = (DataRenderer) c.newInstance();
+        rend.toggle(visible);
+      }
+      catch (NoClassDefFoundError err) { }
+      catch (ClassNotFoundException exc) { exc.printStackTrace(); }
+      catch (IllegalAccessException exc) { exc.printStackTrace(); }
+      catch (InstantiationException exc) { exc.printStackTrace(); }
+    }
+    else if (numMaps > 1 && isImageRend) {
+      // ImageRendererJ3D does not allow multiple mappings to Display.RGBA
+      rend = null;
+    }
+    if (rend == null) {
+      DisplayImpl display = handler.getWindow().getDisplay();
+      rend = display.getDisplayRenderer().makeDefaultRenderer();
+      rend.toggle(visible);
+    }
+
+    // link in the transform
     try { handler.getWindow().getDisplay().addReferences(rend, ref); }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
@@ -241,8 +270,6 @@ public class TransformLink
     // build data reference
     try {
       ref = new DataReferenceImpl(trans.getName());
-      rend = display.getDisplayRenderer().makeDefaultRenderer();
-      rend.toggle(visible);
       display.addDisplayListener(this);
     }
     catch (VisADException exc) { exc.printStackTrace(); }
@@ -564,6 +591,7 @@ public class TransformLink
    * and redraws the display, optionally using the Swing event thread.
    */
   private void doMessages(boolean swing) {
+    if (rend == null) return;
     Vector oldList = rend.getExceptionVector();
     Vector newList = new Vector();
     if (cursor != null) {

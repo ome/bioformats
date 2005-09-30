@@ -255,6 +255,7 @@ public class ColorHandler {
 
   /** Recomputes autoscaled color range bounds. */
   public void reAutoScale() {
+    if (fixed == null) return;
     DisplayImpl display = getWindow().getDisplay();
     ScalarMap[] maps = getMaps();
     for (int i=0; i<maps.length; i++) {

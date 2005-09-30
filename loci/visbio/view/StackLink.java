@@ -131,7 +131,6 @@ public class StackLink extends TransformLink {
     try {
       for (int i=0; i<len; i++) {
         references.add(new DataReferenceImpl(name + i));
-        renderers.add(dr.makeDefaultRenderer());
       }
     }
     catch (VisADException exc) { exc.printStackTrace(); }
@@ -201,10 +200,53 @@ public class StackLink extends TransformLink {
 
   /** Links this stack into the display. */
   public void link() {
+    int len = references.size();
+    DisplayImpl display = handler.getWindow().getDisplay();
+
+    // rebuild renderers if necessary
+    int numMaps = colorHandler.getMaps().length;
+    String imageRenderer = "visad.bom.ImageRendererJ3D";
+    boolean isImageRend = renderers.size() > 0 &&
+      renderers.firstElement().getClass().getName().equals(imageRenderer);
+    boolean[] vis = new boolean[renderers.size()];
+    for (int i=0; i<vis.length; i++) {
+      vis[i] = ((DataRenderer) renderers.elementAt(i)).getEnabled();
+    }
+    if (numMaps == 1 && !isImageRend) {
+      // use ImageRendererJ3D when possible
+      renderers.removeAllElements();
+      try {
+        Class c = Class.forName(imageRenderer);
+        for (int i=0; i<len; i++) {
+          DataRenderer dr = (DataRenderer) c.newInstance();
+          renderers.addElement(dr);
+          if (vis.length > i) dr.toggle(vis[i]);
+        }
+      }
+      catch (NoClassDefFoundError err) { }
+      catch (ClassNotFoundException exc) { exc.printStackTrace(); }
+      catch (IllegalAccessException exc) { exc.printStackTrace(); }
+      catch (InstantiationException exc) { exc.printStackTrace(); }
+    }
+    else if (numMaps > 1 && isImageRend) {
+      // ImageRendererJ3D does not allow multiple mappings to Display.RGBA
+      renderers.removeAllElements();
+    }
+    if (renderers.size() == 0) {
+      for (int i=0; i<len; i++) {
+        DataRenderer dr = display.getDisplayRenderer().makeDefaultRenderer();
+        renderers.addElement(dr);
+        if (vis.length > i) dr.toggle(vis[i]);
+      }
+    }
+    if (rend == null) {
+      rend = display.getDisplayRenderer().makeDefaultRenderer();
+      rend.toggle(visible);
+    }
+
+    // link in the transform
     try {
       // add image slices
-      int len = references.size();
-      DisplayImpl display = handler.getWindow().getDisplay();
       if (stackAxis < 0) {
         display.addReferences((DataRenderer) renderers.elementAt(0),
           (DataReferenceImpl) references.elementAt(0));
@@ -368,7 +410,7 @@ public class StackLink extends TransformLink {
    * switching to the proper types if the flag is set.
    */
   protected void setData(Data d, DataReference dataRef,
-    boolean autoSwitch, double zval)
+    DataRenderer dataRend, boolean autoSwitch, double zval)
   {
     if (autoSwitch && d instanceof FlatField &&
       trans instanceof ImageTransform)
@@ -381,14 +423,19 @@ public class StackLink extends TransformLink {
       try {
         d = DataUtil.switchType(ff, ftype, imageUnits);
 
-        // wrap image in another field, to assign proper Z value
+        // assign proper Z value
         RealType zbox = it.getZType();
         Unit zunit = it.getZUnit(stackAxis);
-        Set set = new SingletonSet(new RealTupleType(zbox),
-          new double[] {zval}, null, new Unit[] {zunit}, null);
-        FieldImpl field = new FieldImpl(new FunctionType(zbox, ftype), set);
-        field.setSample(0, d, false);
-        d = field;
+        //Set set = new SingletonSet(new RealTupleType(zbox),
+        //  new double[] {zval}, null, new Unit[] {zunit}, null);
+        //FieldImpl field = new FieldImpl(new FunctionType(zbox, ftype), set);
+        //field.setSample(0, d, false);
+        //d = field;
+
+        //Real zreal = new Real(zbox, zval, zunit, null);
+        zval = 2 * zval / (getSliceCount() - 1) - 1;
+        ConstantMap zmap = new ConstantMap(zval, Display.ZAxis);
+        dataRend.getLinks()[0].setConstantMaps(new ConstantMap[] {zmap});
       }
       catch (VisADException exc) { exc.printStackTrace(); }
       catch (RemoteException exc) { exc.printStackTrace(); }
@@ -488,7 +535,8 @@ public class StackLink extends TransformLink {
 
       Data thumb = th == null ? null : th.getThumb(pos);
       DataReferenceImpl sliceRef = (DataReferenceImpl) references.elementAt(s);
-      if (thumbs) setData(thumb, sliceRef, true, s);
+      DataRenderer sliceRend = (DataRenderer) renderers.elementAt(s);
+      if (thumbs) setData(thumb, sliceRef, sliceRend, true, s);
       else {
         if (!volume || collapse == null) {
           // load data from disk, unless collapsed volume is current
@@ -501,7 +549,7 @@ public class StackLink extends TransformLink {
           }
         }
         if (volume) setData(DUMMY, sliceRef, false);
-        else setData(slices[s], sliceRef, true, s);
+        else setData(slices[s], sliceRef, sliceRend, true, s);
       }
     }
     if (stackAxis >= 0) pos[stackAxis] = 0;
@@ -606,16 +654,9 @@ public class StackLink extends TransformLink {
     // get data at appropriate slice
     Data data = sliceRef.getData();
 
-    // unwrap data
-    if (data instanceof FieldImpl) {
-      try { data = ((FieldImpl) data).getSample(0); }
-      catch (VisADException exc) { return; }
-      catch (RemoteException exc) { return; }
-    }
+    // evaluate function at the cursor location
     if (!(data instanceof FunctionImpl)) return;
     FunctionImpl func = (FunctionImpl) data;
-
-    // evaluate function at the cursor location
     double[] rangeValues = null;
     try {
       RealTuple tuple = new RealTuple(new Real[] {
