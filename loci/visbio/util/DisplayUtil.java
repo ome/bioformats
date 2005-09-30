@@ -395,7 +395,7 @@ public abstract class DisplayUtil {
       //VisADCanvasJ3D canvas = ((DisplayRendererJ3D) dr).getCanvas();
       //canvas.renderField(0);
 
-      // CTR: The following line forces the countdown to update immediately,
+      // NB: The following line forces the countdown to update immediately,
       // but causes a strange deadlock problem to occur when there are multiple
       // data objects in a single display. This deadlock is difficult to
       // diagnose because it seems to be occurring within a single thread (one
