@@ -1,3 +1,14 @@
+v3.10 - Monday, October 3, 2005
+
+- ADDED: Support for IPLab file format
+- ADDED: Improved support for Zeiss LSM, Metamorph STK and Fluoview TIFF
+
+- TWEAK: Quicker initial processing of multi-file datasets
+- TWEAK: More efficient image display in many cases (using ImageRendererJ3D)
+
+- FIXED: Disallow "In 3D" display option when Java3D is not installed
+
+
 v3.09 - Monday, July 25, 2005
 
 - ADDED: Ability to export data objects directly to ImageJ
@@ -313,7 +324,7 @@ v2.00 - Friday, August 8, 2003
 - GONE:  Drift correction will be back with the next release
 - GONE:  Undo support will be back with the next release
 
-
+-------------------------------------------------------------------------------
 v1.0 beta 3C - Wednesday, October 30, 2002
 
 - FIXED: NullPointerExceptions when running without Java3D (2-D only mode)
