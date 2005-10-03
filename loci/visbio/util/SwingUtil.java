@@ -195,10 +195,21 @@ public abstract class SwingUtil {
     JFileChooser dialog = new JFileChooser(System.getProperty("user.dir"));
     Vector filters = new Vector();
 
+    // TIFF - tiff/TiffForm, ij/ImageJForm
+    FileFilter tiff = new ExtensionFileFilter(
+      new String[] {"tif", "tiff"}, "Multi-page TIFF stacks");
+    dialog.addChoosableFileFilter(tiff);
+    filters.add(tiff);
+
     // Bio-Rad PIC - bio/BioRadForm
     FileFilter biorad = new ExtensionFileFilter("pic", "Bio-Rad PIC files");
     dialog.addChoosableFileFilter(biorad);
     filters.add(biorad);
+
+    // IPLab - bio/IPLabForm
+    FileFilter iplab = new ExtensionFileFilter("ipl", "IPLab files");
+    dialog.addChoosableFileFilter(iplab);
+    filters.add(iplab);
 
     // Metamorph STK - bio/MetamorphForm
     FileFilter metamorph = new ExtensionFileFilter("stk",
@@ -211,6 +222,11 @@ public abstract class SwingUtil {
     dialog.addChoosableFileFilter(openlab);
     filters.add(openlab);
 
+    // QuickTime - qt/QTForm
+    FileFilter qt = new ExtensionFileFilter("mov", "QuickTime movies");
+    dialog.addChoosableFileFilter(qt);
+    filters.add(qt);
+
     // Zeiss LSM - bio/ZeissForm
     FileFilter lsm = new ExtensionFileFilter("lsm", "Zeiss LSM files");
     dialog.addChoosableFileFilter(lsm);
@@ -220,17 +236,6 @@ public abstract class SwingUtil {
     FileFilter zvi = new ExtensionFileFilter("zvi", "Zeiss ZVI files");
     dialog.addChoosableFileFilter(zvi);
     filters.add(zvi);
-
-    // TIFF - tiff/TiffForm, ij/ImageJForm
-    FileFilter tiff = new ExtensionFileFilter(
-      new String[] {"tif", "tiff"}, "Multi-page TIFF stacks");
-    dialog.addChoosableFileFilter(tiff);
-    filters.add(tiff);
-
-    // QuickTime - qt/QTForm
-    FileFilter qt = new ExtensionFileFilter("mov", "QuickTime movies");
-    dialog.addChoosableFileFilter(qt);
-    filters.add(qt);
 
     // BMP - ij/ImageJForm
     FileFilter bmp = new ExtensionFileFilter("bmp", "BMP images");

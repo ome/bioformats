@@ -74,9 +74,9 @@ public class ImageFamily extends FormNode implements FormBlockReader,
   public ImageFamily() {
     super("ImageFamily" + id++);
     list = new FormNode[] {
+      new BioRadForm(), // proprietary
       new IPLabForm(), // proprietary
       new ZVIForm(), // proprietary
-      new BioRadForm(), // proprietary
       new MetamorphForm(), // TIFF variant
       new ZeissForm(), // TIFF variant
       new FluoviewTiffForm(), // TIFF variant; isThisType(String) is slow
@@ -304,30 +304,32 @@ public class ImageFamily extends FormNode implements FormBlockReader,
 
         // compute format string
         if (list[ii] instanceof BioRadForm) format = "Bio-Rad PIC file";
+        else if (list[ii] instanceof IPLabForm) format = "IPLab file";
+        else if (list[ii] instanceof ZVIForm) format = "Zeiss ZVI file";
         else if (list[ii] instanceof MetamorphForm) {
           format = "Metamorph STK file";
         }
-        else if (list[ii] instanceof OpenlabForm) {
-          format = "Openlab LIFF file";
-        }
+        else if (list[ii] instanceof ZeissForm) format = "Zeiss LSM file";
         else if (list[ii] instanceof FluoviewTiffForm) {
           format = "Olympus Fluoview TIFF file";
         }
-        else if (list[ii] instanceof ZeissForm) format = "Zeiss LSM file";
-        else if (list[ii] instanceof ZVIForm) format = "Zeiss ZVI file";
         else if (list[ii] instanceof TiffForm) format = "TIFF file";
+        else if (list[ii] instanceof AVIForm) format = "AVI movie";
         else if (list[ii] instanceof ImageJForm) {
           int ndx = id.lastIndexOf(".");
           if (ndx < 0) format = "ImageJ file";
           else {
             String ext = id.substring(ndx + 1).toUpperCase();
             if (ext.equals("JPG")) ext = "JPEG";
-            format = ext + " image file";
+            format = ext + " image";
           }
         }
-        else if (list[ii] instanceof AVIForm) format = "AVI movie";
         else if (list[ii] instanceof QTForm) format = "QuickTime movie";
-        else format = "Unknown format";
+        else if (list[ii] instanceof PictForm) format = "PICT image";
+        else if (list[ii] instanceof OpenlabForm) {
+          format = "Openlab LIFF file";
+        }
+        else format = "Unknown file";
 
         return;
       }
