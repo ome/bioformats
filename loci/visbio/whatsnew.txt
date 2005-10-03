@@ -1,7 +1,7 @@
 v3.10 - Monday, October 3, 2005
 
 - ADDED: Support for IPLab file format
-- ADDED: Improved support for Zeiss LSM, Metamorph STK and Fluoview TIFF
+- ADDED: Better support for Zeiss LSM, Metamorph STK and Fluoview TIFF
 
 - TWEAK: Quicker initial processing of multi-file datasets
 - TWEAK: More efficient image display in many cases (using ImageRendererJ3D)
