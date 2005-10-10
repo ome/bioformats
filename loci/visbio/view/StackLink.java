@@ -40,9 +40,9 @@ public class StackLink extends TransformLink {
 
   // -- Constants --
 
-  /** Dummy data to avoid "Data is null" status messages. */
-  protected static final Real DUMMY = new Real(0);
-
+  /** Dummy data to avoid "Data is null" message for volume reference. */
+  protected static final Data DUMMY = new Real(0);
+  
 
   // -- Fields --
 
@@ -81,7 +81,10 @@ public class StackLink extends TransformLink {
   /** Data transform's current slice. */
   protected int currentSlice;
 
-  /** Flags indicating visibility of each slice of the stack. */
+  /**
+   * Flags indicating visibility of each slice of the stack.
+   * Used for both initial state and temporary storage while volume rendering.
+   */
   protected boolean[] visSlices;
 
 
@@ -179,6 +182,25 @@ public class StackLink extends TransformLink {
   public void setVolumeRendered(boolean volume) {
     if (this.volume == volume) return;
     this.volume = volume;
+    if (volume) {
+      // save slice visibility settings and hide slice data
+      int len = renderers.size();
+      visSlices = new boolean[len];
+      for (int s=0; s<len; s++) {
+        DataRenderer sliceRend = (DataRenderer) renderers.elementAt(s);
+        visSlices[s] = sliceRend.getEnabled();
+        sliceRend.toggle(false);
+      }
+    }
+    else {
+      // restore slice visibility settings
+      int len = renderers.size();
+      boolean all = visSlices == null || visSlices.length != len;
+      for (int s=0; s<len; s++) {
+        DataRenderer sliceRend = (DataRenderer) renderers.elementAt(s);
+        sliceRend.toggle(all ? true : visSlices[s]);
+      }
+    }
     doTransform(TransformHandler.MINIMUM_BURN_DELAY, true);
   }
 
@@ -433,9 +455,12 @@ public class StackLink extends TransformLink {
         //d = field;
 
         //Real zreal = new Real(zbox, zval, zunit, null);
-        zval = 2 * zval / (getSliceCount() - 1) - 1;
-        ConstantMap zmap = new ConstantMap(zval, Display.ZAxis);
-        dataRend.getLinks()[0].setConstantMaps(new ConstantMap[] {zmap});
+        int numSlices = getSliceCount();
+        if (numSlices > 1) {
+          zval = 2 * zval / (getSliceCount() - 1) - 1;
+          ConstantMap zmap = new ConstantMap(zval, Display.ZAxis);
+          dataRend.getLinks()[0].setConstantMaps(new ConstantMap[] {zmap});
+        }
       }
       catch (VisADException exc) { exc.printStackTrace(); }
       catch (RemoteException exc) { exc.printStackTrace(); }
@@ -548,8 +573,7 @@ public class StackLink extends TransformLink {
             th.setThumb(pos, th.makeThumb(slices[s]));
           }
         }
-        if (volume) setData(DUMMY, sliceRef, false);
-        else setData(slices[s], sliceRef, sliceRend, true, s);
+        if (!volume) setData(slices[s], sliceRef, sliceRend, true, s);
       }
     }
     if (stackAxis >= 0) pos[stackAxis] = 0;
