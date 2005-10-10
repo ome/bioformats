@@ -1,4 +1,4 @@
-v3.11 - Tuesday, October 11, 2005
+v3.11 - Monday, October 10, 2005
 
 - FIXED: Bug in Zeiss LSM reader
 - FIXED: Bug in Metamorph STK reader with multi-image files
