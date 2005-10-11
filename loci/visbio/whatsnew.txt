@@ -1,6 +1,7 @@
 v3.12 - Not yet released
 
 - TWEAK: Report more information during initial dataset creation
+- TWEAK: Don't create errors.log unless necessary
 
 
 v3.11 - Monday, October 10, 2005

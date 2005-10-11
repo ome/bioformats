@@ -65,10 +65,17 @@ public class OutputConsole extends OutputStream {
   public OutputConsole(String title, String logFile) {
     super();
     log = logFile;
-    if (log != null) {
+    if (log != null && new File(log).exists()) {
       // clear log file content
-      try { new FileWriter(log).close(); }
-      catch (IOException exc) { }
+      File f = new File(log);
+      if (f.exists()) {
+        try { f.delete(); }
+        catch (SecurityException exc) {
+          // delete access is denied; try clearing file contents
+          try { new FileWriter(log).close(); }
+          catch (IOException exc2) { }
+        }
+      }
     }
     frame = new JFrame(title);
 
