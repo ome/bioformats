@@ -30,6 +30,8 @@ import java.io.*;
 import java.math.BigInteger;
 import java.util.Hashtable;
 import javax.swing.JComponent;
+import loci.visbio.TaskEvent;
+import loci.visbio.TaskListener;
 import loci.visbio.state.Dynamic;
 import loci.visbio.state.SaveException;
 import loci.visbio.util.*;
@@ -70,6 +72,9 @@ public class Dataset extends ImageTransform {
 
   /** Source file array. */
   protected String[] ids;
+
+  /** Optional listener for constructor progress. */
+  protected TaskListener listener;
 
 
   // -- Computed fields --
@@ -120,7 +125,18 @@ public class Dataset extends ImageTransform {
   public Dataset(String name, String pattern,
     String[] ids, int[] lengths, String[] dims)
   {
-    this(name, pattern, ids, lengths, dims, Float.NaN, Float.NaN, Float.NaN);
+    this(name, pattern, ids, lengths, dims,
+      Float.NaN, Float.NaN, Float.NaN, null);
+  }
+
+  /**
+   * Constructs a multidimensional data object.
+   * See the complete constructor for more information.
+   */
+  public Dataset(String name, String pattern, String[] ids,
+    int[] lengths, String[] dims, float width, float height, float step)
+  {
+    this(name, pattern, ids, lengths, dims, width, height, step, null);
   }
 
   /**
@@ -146,15 +162,18 @@ public class Dataset extends ImageTransform {
    * @param width Physical width of each image, in microns.
    * @param height Physical height of each image, in microns.
    * @param step Physical distance between image slices, in microns.
+   * @param listener Listener object to be informed of construction progress.
    */
   public Dataset(String name, String pattern, String[] ids,
-    int[] lengths, String[] dims, float width, float height, float step)
+    int[] lengths, String[] dims, float width, float height, float step,
+    TaskListener listener)
   {
     super(null, name, width, height, step);
     this.pattern = pattern;
     this.ids = ids;
     this.lengths = lengths;
     this.dims = dims;
+    this.listener = listener;
     initState(null);
   }
 
@@ -450,8 +469,10 @@ public class Dataset extends ImageTransform {
     }
 
     metadata = new Hashtable[ids.length];
+    int numTasks = ids.length + 3;
 
     // make sure each file exists
+    status(0, numTasks, "Reading files...");
     for (int i=0; i<ids.length; i++) {
       File file = new File(ids[i]);
       if (!file.exists()) {
@@ -462,7 +483,9 @@ public class Dataset extends ImageTransform {
 
     // initialize data loaders
     loaders = new ImageFamily[ids.length];
-    for (int i=0; i<ids.length; i++) loaders[i] = new ImageFamily();
+    for (int i=0; i<ids.length; i++) {
+      loaders[i] = new ImageFamily();
+    }
 
     // determine number of images per source file
     String filename = "\"" + new File(ids[0]).getName() + "\"";
@@ -571,6 +594,7 @@ public class Dataset extends ImageTransform {
 
     // load metadata for each source file
     for (int i=0; i<ids.length; i++) {
+      status(i + 1, numTasks, "Reading metadata for " + ids[i] + "...");
       String fname = new File(ids[i]).getName();
       try { metadata[i] = loaders[i].getMetadata(ids[i]); }
       catch (IOException exc) { metadata[i] = null; }
@@ -583,6 +607,7 @@ public class Dataset extends ImageTransform {
     }
 
     // construct metadata controls
+    status(ids.length + 2, numTasks, "Finishing...");
     controls = new DatasetWidget(this);
 
     // construct thumbnail handler
@@ -590,6 +615,7 @@ public class Dataset extends ImageTransform {
     if (path == null) path = "";
     thumbs = new ThumbnailHandler(this,
       path + File.separator + name + ".visbio");
+    status(ids.length + 3, numTasks, "Done");
   }
 
 
@@ -636,6 +662,12 @@ public class Dataset extends ImageTransform {
       imgIndex = 0;
     }
     return new int[] {fileIndex, imgIndex};
+  }
+
+  /** Notifies constructor task listener of a status update. */
+  private void status(int current, int max, String message) {
+    if (listener == null) return;
+    listener.taskUpdated(new TaskEvent(current, max, message));
   }
 
 }

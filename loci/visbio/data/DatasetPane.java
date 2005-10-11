@@ -34,6 +34,8 @@ import java.math.BigInteger;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import loci.visbio.TaskEvent;
+import loci.visbio.TaskListener;
 import loci.visbio.util.*;
 import visad.VisADException;
 import visad.util.Util;
@@ -42,7 +44,9 @@ import visad.util.Util;
  * DatasetPane provides a full-featured set of options
  * for importing a multidimensional data series into VisBio.
  */
-public class DatasetPane extends WizardPane implements DocumentListener {
+public class DatasetPane extends WizardPane
+  implements DocumentListener, TaskListener
+{
 
   // -- Constants --
 
@@ -298,18 +302,41 @@ public class DatasetPane extends WizardPane implements DocumentListener {
   public void removeUpdate(DocumentEvent e) { checkText(); }
 
 
+  // -- TaskListener API methods --
+
+  /** Updates progress bar to match status of dataset construction. */
+  public void taskUpdated(TaskEvent e) {
+    final int value = e.getProgressValue();
+    final int maximum = e.getProgressMaximum();
+    final String message = e.getStatusMessage();
+    Util.invoke(false, new Runnable() {
+      public void run() {
+        waitLabel.setText(message);
+        progress.setIndeterminate(false);
+        progress.setMaximum(maximum);
+        progress.setValue(value);
+      }
+    });
+  }
+
+
   // -- Helper methods --
 
+  /** Helper method for DocumentListener methods. */
   protected void checkText() {
     next.setEnabled(!groupField.getText().trim().equals(""));
   }
+
+  protected JLabel waitLabel = null;
+  protected JProgressBar progress = null;
 
   /** Displays a "please wait" message on the dataset pane's second page. */
   protected void pleaseWait(String message) {
     final JPanel wait = new JPanel();
     wait.setLayout(new BorderLayout());
-    wait.add(new JLabel(message), BorderLayout.NORTH);
-    JProgressBar progress = new JProgressBar();
+    waitLabel = new JLabel(message);
+    wait.add(waitLabel, BorderLayout.NORTH);
+    progress = new JProgressBar();
     progress.setIndeterminate(true);
     wait.add(progress, BorderLayout.CENTER);
     Util.invoke(false, new Runnable() {
@@ -319,6 +346,10 @@ public class DatasetPane extends WizardPane implements DocumentListener {
         if (second.isVisible()) repack();
       }
     });
+  }
+
+  /** Updates the "please wait" message and progress bar. */
+  protected void setWaitProgress() {
   }
 
   /** Builds the dataset pane's second page. */
@@ -479,7 +510,7 @@ public class DatasetPane extends WizardPane implements DocumentListener {
 
     // construct data object
     data = new Dataset(nameField.getText(), groupField.getText(),
-      files, lengths, dims, width, height, step);
+      files, lengths, dims, width, height, step, this);
 
     Util.invoke(false, new Runnable() {
       public void run() { sendFinishEvent(); }
