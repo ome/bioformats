@@ -40,6 +40,7 @@ Display engine
     selected, for example, the mappings of Red->#1, Green->Full, Blue->Full
     are not reset, but the mode does reset to RGB, resulting in lots of cyan.
 
+
 State engine
 ------------
 
@@ -105,25 +106,12 @@ User interface
     Probably also don't let them create two displays with the same name
     (use same strategy), because otherwise state might not restore correctly.
 
-[M] Eliminate obsolete control panel logic in favor of one master VisBio window
-    with data, displays and tasks information (for v3.10).
-
 [L] Command+? Macintosh Help shortcut does not function.
 
 [L] Use java.awt.FileDialog on Mac OS X?
 
 [L] Add -Dsun.java2d.opengl=true to options, and add option to toggle it
     (Java 1.5+ only)
-
-
-Open Microscopy Environment
----------------------------
-
-[M] Create a command-line upload utility for use doing generic client-side
-    uploads--use loci.visbio.ome.ImageUploader.main(String[]) for this.
-
-[L] Upload to OME works, but produces a bunch of annoying messages on the
-    error stream anyway.
 
 
 Java Web Start

@@ -251,7 +251,8 @@ public class ExportPane extends WizardPane {
 
             // save data to file
             String filename = sb.toString();
-            task.setStatus(count++, max, "Exporting file " + filename);
+            String fname = new File(filename).getName();
+            task.setStatus(count++, max, "Exporting " + fname);
             saver.save(filename, data, false);
           }
           task.setCompleted();

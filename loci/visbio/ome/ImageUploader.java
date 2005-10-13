@@ -134,8 +134,8 @@ public class ImageUploader {
 
       // upload each original file into the repository, using the MEX
       for (int i=0; i<files.length; i++) {
-        notifyListeners(new TaskEvent(i, files.length,
-          "Uploading file '" + files[i].getName() + "'..."));
+        notifyListeners(new TaskEvent(i, 2 * files.length,
+          "Uploading '" + files[i].getName() + "'..."));
         OriginalFile fileAttr = pf.uploadFile(rep, of, files[i]);
       }
 
@@ -144,7 +144,7 @@ public class ImageUploader {
       df.markForUpdate(of);
 
       // create a new Image object for the multidimensional image
-      notifyListeners(new TaskEvent(0, 1, "Creating image entry..."));
+      notifyListeners(new TaskEvent(1, 2, "Creating image entry..."));
       Image image = (Image) df.createNew(Image.class);
       image.setName(data.getName());
       image.setOwner(user);
@@ -186,7 +186,7 @@ public class ImageUploader {
       }
 
       // get a MEX for the image's metadata
-      notifyListeners(new TaskEvent(0, 1, "Creating pixels file..."));
+      notifyListeners(new TaskEvent(1, 2, "Creating pixels file..."));
       ModuleExecution ii = im.getImageImportMEX(image);
       ii.setExperimenter(user);
 
@@ -195,15 +195,14 @@ public class ImageUploader {
         sizeX, sizeY, sizeZ, sizeC, sizeT, bpp, false, isFloat);
 
       // extract image pixels from each plane
-      int count = 0;
       int numImages = sizeZ * sizeC * sizeT;
+      int count = numImages;
       byte[] buf = new byte[sizeX * sizeY * bpp];
       for (int t=0; t<sizeT; t++) {
         for (int z=0; z<sizeZ; z++) {
           for (int c=0; c<sizeC; c+=range) {
-            notifyListeners(new TaskEvent(count, numImages,
-              "Uploading image " + (count + 1) + "/" + numImages +
-              " (t=" + t + ", z=" + z + ", c=" + c + ")..."));
+            notifyListeners(new TaskEvent(count, 2 * numImages,
+              "Uploading T" + t + " Z" + z + " C" + c + "..."));
 
             // convert rasterized C value to multidimensional position
             int[] cPos = MathUtil.rasterToPosition(cLen, c);
@@ -219,9 +218,8 @@ public class ImageUploader {
             // upload an image plane for each range component
             for (int r=0; r<range; r++) {
               if (r > 0) {
-                notifyListeners(new TaskEvent(count, numImages,
-                  "Uploading image " + (count + 1) + "/" + numImages +
-                  " (t=" + t + ", z=" + z + ", c=" + c + ")..."));
+                notifyListeners(new TaskEvent(count, 2 * numImages,
+                  "Uploading T" + t + " Z" + z + " C" + (c + r) + "..."));
               }
               count++;
 

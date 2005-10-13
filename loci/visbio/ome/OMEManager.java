@@ -106,6 +106,7 @@ public class OMEManager extends LogicManager {
     new Thread(new Runnable() {
       public void run() {
         uploader.upload(data, server, user, password, bytesPerPix, isFloat);
+        task.setCompleted();
       }
     }).start();
   }
