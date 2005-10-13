@@ -29,12 +29,11 @@ import com.jgoodies.forms.layout.FormLayout;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ImageProcessor;
-import loci.visbio.VisBioFrame;
+import loci.visbio.*;
 import loci.visbio.view.BioSlideWidget;
 import loci.visbio.util.*;
 import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
 import visad.FlatField;
 import visad.VisADException;
 
@@ -81,38 +80,36 @@ public class SendToIJPane extends DialogPane {
     final int[] lengths = trans.getLengths();
     final int[] pos = new int[bsw.length];
     for (int i=0; i<bsw.length; i++) pos[i] = bsw[i].getValue();
-    final JProgressBar progress = bio.getProgressBar();
-    progress.setString("Sending data to ImageJ");
-    progress.setValue(0);
+    TaskManager tm = (TaskManager) bio.getManager(TaskManager.class);
+    final BioTask task = tm.createTask("Export " +
+      trans.getName() + " to ImageJ");
 
-    Thread t = new Thread(new Runnable() {
+    new Thread() {
       public void run() {
         try {
           // collect images to send to ImageJ
-          progress.setMaximum(1);
+          task.setStatus(0, 1, "Sending data to ImageJ");
           int axis = stackAxis.getSelectedIndex() - 1;
           FlatField[] data;
           if (axis < 0) {
-            progress.setString("Reading image");
+            task.setStatus("Reading image");
             data = new FlatField[1];
             data[0] = (FlatField) trans.getData(pos, 2, null);
-            progress.setValue(1);
+            task.setStatus(1, 1);
           }
           else {
             int len = lengths[axis];
-            progress.setMaximum(len);
             data = new FlatField[len];
             for (int i=0; i<len; i++) {
-              progress.setValue(i);
-              progress.setString("Reading image #" + (i + 1) + "/" + len);
+              task.setStatus(i, len, "Reading image #" + (i + 1) + "/" + len);
               pos[axis] = i;
               data[i] = (FlatField) trans.getData(pos, 2, null);
             }
-            progress.setValue(len);
+            task.setStatus(len, len);
           }
 
           // convert FlatFields into ImagePlus object
-          progress.setString("Sending data to ImageJ");
+          task.setStatus("Sending data to ImageJ");
           ImagePlus image;
           String name = trans.getName() + " (from VisBio)";
           if (data.length > 1) {
@@ -134,19 +131,17 @@ public class SendToIJPane extends DialogPane {
           }
 
           // send ImagePlus object to ImageJ
+          task.setCompleted();
           ImageJUtil.sendToImageJ(image, bio);
-          bio.resetStatus();
         }
         catch (VisADException exc) {
-          bio.resetStatus();
           exc.printStackTrace();
           JOptionPane.showMessageDialog(dialog,
             "Error sending data to ImageJ: " + exc.getMessage(),
             "VisBio", JOptionPane.ERROR_MESSAGE);
         }
       }
-    });
-    t.start();
+    }.start();
   }
 
 

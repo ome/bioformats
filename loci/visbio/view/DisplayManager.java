@@ -213,7 +213,7 @@ public class DisplayManager extends LogicManager {
     bio.setSplashStatus("Initializing display logic");
     displayControls = new DisplayControls(this);
     PanelManager pm = (PanelManager) bio.getManager(PanelManager.class);
-    pm.addPanel(displayControls);
+    pm.addPanel(displayControls, 1, 0, 1, 1, "350", null);
 
     // options
     bio.setSplashStatus(null);

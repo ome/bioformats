@@ -25,8 +25,6 @@ package loci.visbio.ome;
 
 import java.awt.Component;
 import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
-import javax.swing.SwingUtilities;
 import loci.visbio.*;
 import loci.visbio.data.*;
 import loci.visbio.help.HelpManager;
@@ -35,7 +33,7 @@ import loci.visbio.help.HelpManager;
  * OMEManager is the manager for interaction between
  * VisBio and the Open Microscopy Environment.
  */
-public class OMEManager extends LogicManager implements TaskListener {
+public class OMEManager extends LogicManager {
 
   // -- Fields --
 
@@ -93,7 +91,18 @@ public class OMEManager extends LogicManager implements TaskListener {
 
     // upload data to OME in a new thread
     final ImageUploader uploader = new ImageUploader();
-    uploader.addTaskListener(this);
+    TaskManager tm = (TaskManager) bio.getManager(TaskManager.class);
+    final BioTask task = tm.createTask("Upload " + dt.getName() + " to OME");
+    uploader.addTaskListener(new TaskListener() {
+      public void taskUpdated(TaskEvent e) {
+        // update task with latest database communication status
+        int value = e.getProgressValue();
+        int max = e.getProgressMaximum();
+        String msg = e.getStatusMessage();
+        if (msg.endsWith("...")) msg = msg.substring(0, msg.length() - 3);
+        task.setStatus(value, max, msg);
+      }
+    });
     new Thread(new Runnable() {
       public void run() {
         uploader.upload(data, server, user, password, bytesPerPix, isFloat);
@@ -135,25 +144,6 @@ public class OMEManager extends LogicManager implements TaskListener {
 
   /** Gets the number of tasks required to initialize this logic manager. */
   public int getTasks() { return 3; }
-
-
-  // -- TaskListener API methods --
-
-  /** Called when an OME-related task is updated. */
-  public void taskUpdated(TaskEvent e) {
-    // update VisBio progress bar with latest database communication status
-    final JProgressBar progress = bio.getProgressBar();
-    final int value = e.getProgressValue();
-    final int max = e.getProgressMaximum();
-    final String message = e.getStatusMessage();
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        progress.setMaximum(max);
-        progress.setValue(value);
-        progress.setString(message);
-      }
-    });
-  }
 
 
   // -- Helper methods --

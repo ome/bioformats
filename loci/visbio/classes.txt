@@ -2117,6 +2117,7 @@ javax.vecmath.Vector3f
 javax.vecmath.Vector4d
 javax.vecmath.Vector4f
 loci.visbio.BioDropHandler
+loci.visbio.BioTask
 loci.visbio.ClassManager
 loci.visbio.ConsoleManager
 loci.visbio.ControlPanel
@@ -2125,6 +2126,8 @@ loci.visbio.LogicManager
 loci.visbio.PanelManager
 loci.visbio.SystemControls
 loci.visbio.SystemManager
+loci.visbio.TaskControls
+loci.visbio.TaskManager
 loci.visbio.VisBio
 loci.visbio.VisBioEvent
 loci.visbio.VisBioFrame

@@ -163,21 +163,14 @@ public class StateManager extends LogicManager {
       final WindowManager wm = (WindowManager)
         bio.getManager(WindowManager.class);
       wm.setWaitCursor(true);
-      JProgressBar status = bio.getProgressBar();
-      status.setString("Restoring state...");
-      status.setIndeterminate(true);
-      Thread restoreThread = new Thread(new Runnable() {
+      new Thread(new Runnable() {
         public void run() {
           restoreState(stateBox.getSelectedFile());
           SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-              bio.resetStatus();
-              wm.setWaitCursor(false);
-            }
+            public void run() { wm.setWaitCursor(false); }
           });
         }
-      });
-      restoreThread.start();
+      }).start();
     }
   }
 

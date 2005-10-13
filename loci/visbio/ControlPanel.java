@@ -25,11 +25,9 @@ package loci.visbio;
 
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import loci.visbio.util.SwingUtil;
 
 /** ControlPanel is the superclass of all control panel types. */
-public class ControlPanel extends JScrollPane {
+public class ControlPanel extends JPanel {
 
   // -- Fields --
 
@@ -42,35 +40,20 @@ public class ControlPanel extends JScrollPane {
   /** Tip for this control panel. */
   protected String tip;
 
-  /** Panel for placing controls. */
-  protected JPanel controls;
-
 
   // -- Constructor --
 
   /** Constructs a control panel. */
   public ControlPanel(LogicManager logic, String name, String tip) {
-    super(new JPanel());
+    super();
     lm = logic;
     this.name = name;
     this.tip = tip;
-    controls = (JPanel) getViewport().getView();
-    controls.setLayout(new BorderLayout());
-    SwingUtil.configureScrollPane(this);
+    setLayout(new BorderLayout());
   }
 
 
   // -- ControlPanel API methods --
-
-  /**
-   * Enlarges this control panel to its preferred
-   * width and/or height if it is too small.
-   */
-  public void repack() {
-    PanelManager pm = (PanelManager)
-      lm.getVisBio().getManager(PanelManager.class);
-    pm.repack(this);
-  }
 
   /** Gets control panel's logic manager. */
   public LogicManager getManager() { return lm; }

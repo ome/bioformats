@@ -83,6 +83,12 @@ public class DataManager extends LogicManager {
   /** Adds a data object to the list. */
   public void addData(DataTransform data) {
     dataControls.addData(data);
+    ThumbnailHandler thumbHandler = data.getThumbHandler();
+    if (thumbHandler != null) {
+      // register at task for thumbnail generation
+      TaskManager tm = (TaskManager) bio.getManager(TaskManager.class);
+      thumbHandler.setTask(tm.createTask(data.getName() + " thumbnails"));
+    }
     bio.generateEvent(this, "add data", true);
   }
 
@@ -187,9 +193,10 @@ public class DataManager extends LogicManager {
     final String dirName = name;
     final String zipName = name + ".zip";
     final String location = SAMPLE_PREFIX + zipName;
-
-    // prepare sample dataset in a separate thread
-    new Thread(new Runnable() {
+    TaskManager tm = (TaskManager) bio.getManager(TaskManager.class);
+    final BioTask task = tm.createTask(name + " sample");
+    task.setStoppable(true);
+    new Thread() {
       public void run() {
         // create samples folder if it does not already exist
         File samplesDir = new File("samples");
@@ -200,15 +207,16 @@ public class DataManager extends LogicManager {
         if (!dir.exists()) {
           dir.mkdir();
           try {
-            bio.setStatus("Downloading " + zipName + "...");
+            task.setStatus("Downloading " + zipName);
             URL url = new URL(location);
             ZipInputStream in = new ZipInputStream(url.openStream());
             byte[] buf = new byte[8192];
             while (true) {
+              if (task.isStopped()) break;
               ZipEntry entry = in.getNextEntry();
               if (entry == null) break; // eof
               String entryName = entry.getName();
-              bio.setStatus("Extracting " + entryName + "...");
+              task.setStatus("Extracting " + entryName);
               FileOutputStream out = new FileOutputStream(
                 new File(dir, entryName));
               while (true) {
@@ -226,15 +234,24 @@ public class DataManager extends LogicManager {
             exc.printStackTrace();
           }
         }
+        if (task.isStopped()) {
+          task.setCompleted();
+          return;
+        }
 
         // create dataset object
-        bio.setStatus("Organizing data...");
+        task.setStatus("Organizing data");
         File[] files = dir.listFiles();
         String pattern = null;
         for (int i=0; i<files.length; i++) {
+          if (task.isStopped()) break;
           if (files[i].getName().endsWith(".visbio")) continue;
           pattern = FilePattern.findPattern(files[i]);
           if (pattern == null) pattern = files[i].getAbsolutePath();
+        }
+        if (task.isStopped()) {
+          task.setCompleted();
+          return;
         }
         if (pattern == null) {
           System.err.println("Error: no files for sample dataset " + dirName);
@@ -251,10 +268,26 @@ public class DataManager extends LogicManager {
         for (int i=1; i<len; i++) dims[i] = "Other";
         dims[len] = "Slice";
 
-        bio.setStatus("Creating " + dirName + " dataset...");
-        addData(new Dataset(dirName, pattern, fp.getFiles(), lengths, dims));
+        if (task.isStopped()) {
+          task.setCompleted();
+          return;
+        }
+        task.setStoppable(false);
+        task.setStatus("Creating dataset");
+        TaskListener tl = new TaskListener() {
+          public void taskUpdated(TaskEvent e) {
+            int val = e.getProgressValue();
+            int max = e.getProgressMaximum();
+            String msg = e.getStatusMessage();
+            task.setStatus(val, max, msg);
+          }
+        };
+        Dataset dataset = new Dataset(dirName, pattern,
+          fp.getFiles(), lengths, dims, Float.NaN, Float.NaN, Float.NaN, tl);
+        task.setCompleted();
+        addData(dataset);
       }
-    }).start();
+    }.start();
   }
 
   /**
@@ -400,7 +433,7 @@ public class DataManager extends LogicManager {
     bio.setSplashStatus("Initializing data logic");
     dataControls = new DataControls(this);
     PanelManager pm = (PanelManager) bio.getManager(PanelManager.class);
-    pm.addPanel(dataControls);
+    pm.addPanel(dataControls, 0, 0, 1, 2, "350:grow", null);
 
     // data transform registration
     bio.setSplashStatus(null);

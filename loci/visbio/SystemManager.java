@@ -203,8 +203,8 @@ public class SystemManager extends LogicManager
     // control panel
     bio.setSplashStatus("Initializing system information logic");
     systemControls = new SystemControls(this);
-    PanelManager pm = (PanelManager) bio.getManager(PanelManager.class);
-    pm.addPanel(systemControls);
+//    PanelManager pm = (PanelManager) bio.getManager(PanelManager.class);
+//    pm.addPanel(systemControls);
 
     // help window
     bio.setSplashStatus(null);

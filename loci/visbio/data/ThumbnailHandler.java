@@ -23,17 +23,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.data;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
-import javax.swing.*;
+import loci.visbio.BioTask;
 import loci.visbio.util.*;
 import visad.*;
 
 /** Provides logic for handling data transform thumbnails. */
-public class ThumbnailHandler
-  implements ActionListener, Runnable, TransformListener
-{
+public class ThumbnailHandler implements Runnable, TransformListener {
 
   // -- Fields --
 
@@ -55,11 +51,8 @@ public class ThumbnailHandler
   /** Flag indicating cache string ids are for use in default, global cache. */
   protected boolean global = false;
 
-  /** Progress bar reporting background thumbnail generation progress. */
-  protected JProgressBar progress;
-
-  /** Button for toggling background thumbnail generation. */
-  protected JButton toggle;
+  /** Task used for reporting background thumbnail generation progress. */
+  protected BioTask task;
 
   /** Background thumbnail generation thread. */
   protected Thread loader;
@@ -74,9 +67,7 @@ public class ThumbnailHandler
   // -- Constructor --
 
   /** Creates a thumbnail handler. */
-  public ThumbnailHandler(DataTransform data,
-    String filename)
-  {
+  public ThumbnailHandler(DataTransform data, String filename) {
     this.data = data;
     data.addTransformListener(this);
     if (filename != null) {
@@ -143,15 +134,10 @@ public class ThumbnailHandler
     if (on) startGeneration();
   }
 
-  /** Sets the progress bar for reporting thumbnail generation progress. */
-  public void setControls(JProgressBar bar, JButton button) {
-    synchronized (data) {
-      progress = bar;
-      if (toggle != null) toggle.removeActionListener(this);
-      toggle = button;
-      if (toggle != null) toggle.addActionListener(this);
-    }
-    updateControls();
+  /** Sets the task for reporting thumbnail generation progress. */
+  public void setTask(BioTask task) {
+    this.task = task;
+    task.setStoppable(true);
   }
 
   /** Gets the associated thumbnail disk cache object. */
@@ -198,22 +184,25 @@ public class ThumbnailHandler
   }
 
 
-  // -- ActionListener API methods --
-
-  /** Handles toggling of background generation. */
-  public void actionPerformed(ActionEvent e) { toggleGeneration(!on); }
-
-
   // -- Runnable API methods --
 
   /** Loads all thumbnails in the background. */
   public void run() {
     for (int i=count; i<thumbs.length; i++) {
-      updateControls();
+      if (task != null) {
+        if (task.isStopped()) break;
+        String message = on && count < thumbs.length ?
+          ("Generating " + (count + 1) + " of " + thumbs.length) :
+          (count + " of " + thumbs.length + " generated");
+        task.setStatus(count, thumbs.length, message);
+      }
       loadThumb(i);
       if (!on) break;
     }
-    updateControls();
+    if (task != null) {
+      task.setCompleted();
+      task = null;
+    }
   }
 
 
@@ -227,43 +216,6 @@ public class ThumbnailHandler
 
 
   // -- Helper methods --
-
-  /** Updates the linked progress bar to match thumbnail generation status. */
-  private void updateControls() {
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        synchronized (data) {
-          if (progress == null || toggle == null) return;
-          progress.setMaximum(thumbs.length);
-          if (count < thumbs.length) {
-            if (on) {
-              progress.setString("Generating thumbnail " +
-                (count + 1) + " of " + thumbs.length);
-            }
-            else {
-              progress.setString(count + " of " + thumbs.length +
-                " thumbnails generated");
-            }
-            toggle.setEnabled(true);
-          }
-          else {
-            progress.setString(count + " thumbnail" +
-              (count == 1 ? "" : "s") + " generated");
-            toggle.setEnabled(false);
-          }
-          progress.setValue(count);
-          if (on) {
-            toggle.setText("Stop");
-            if (!LAFUtil.isMacLookAndFeel()) toggle.setMnemonic('s');
-          }
-          else {
-            toggle.setText("Go");
-            if (!LAFUtil.isMacLookAndFeel()) toggle.setMnemonic('g');
-          }
-        }
-      }
-    });
-  }
 
   /** Generates thumbnails in a new background thread. */
   private void startGeneration() {

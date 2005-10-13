@@ -216,7 +216,7 @@ public class SystemControls extends ControlPanel implements ActionListener {
     builder.addLabel("&Stereo", cc.xy(1, row)).setLabelFor(stereoField);
     builder.add(stereoField, cc.xyw(3, row, 3));
     row += 2;
-    controls.add(builder.getPanel());
+    add(builder.getPanel());
 
     // update system information twice per second
     Timer t = new Timer(500, this);
@@ -259,7 +259,7 @@ public class SystemControls extends ControlPanel implements ActionListener {
         return;
       }
       sm.writeScript(maxHeap, null);
-      JOptionPane.showMessageDialog(controls,
+      JOptionPane.showMessageDialog(this,
         "The change will take effect next time you run VisBio.",
         "VisBio", JOptionPane.INFORMATION_MESSAGE);
     }
@@ -279,7 +279,7 @@ public class SystemControls extends ControlPanel implements ActionListener {
       }
       if (ndx < 0 || lafs[1][ndx].equals(laf[1])) return;
       sm.writeScript(-1, lafs[1][ndx]);
-      JOptionPane.showMessageDialog(controls,
+      JOptionPane.showMessageDialog(this,
         "The change will take effect next time you run VisBio.",
         "VisBio", JOptionPane.INFORMATION_MESSAGE);
     }

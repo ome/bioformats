@@ -38,7 +38,6 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.*;
 import loci.visbio.*;
 import loci.visbio.ome.OMEManager;
-import loci.visbio.state.StateManager;
 import loci.visbio.util.*;
 import loci.visbio.view.DisplayWindow;
 import loci.visbio.view.DisplayManager;
@@ -93,9 +92,6 @@ public class DataControls extends ControlPanel
 
   /** Table of control frames corresponding to each data transform. */
   private Hashtable frameTable;
-
-  /** Thumbnail handler for selected data object. */
-  private ThumbnailHandler thumbHandler;
 
 
   // -- Constructor --
@@ -201,12 +197,11 @@ public class DataControls extends ControlPanel
     PanelBuilder builder = new PanelBuilder(new FormLayout(
       "pref:grow, 3dlu, pref",
       "fill:pref, 5dlu, fill:50:grow"));
-    builder.setDefaultDialogBorder();
     CellConstraints cc = new CellConstraints();
     builder.add(treePane, cc.xy(1, 1));
     builder.add(buttons, cc.xy(3, 1));
     builder.add(infoPane, cc.xyw(1, 3, 3));
-    controls.add(builder.getPanel());
+    add(builder.getPanel());
 
     // handle file drag and drop
     BioDropHandler dropHandler = new BioDropHandler(bio);
@@ -265,7 +260,6 @@ public class DataControls extends ControlPanel
     data.addTransformListener(this);
 
     selectNode(node);
-    repack();
   }
 
   /**
@@ -614,26 +608,6 @@ public class DataControls extends ControlPanel
     if (display2D != null) display2D.setEnabled(canDisplay2D);
     if (display3D != null) {
       display3D.setEnabled(DisplayUtil.canDo3D() && canDisplay3D);
-    }
-
-    if (thumbHandler != null) thumbHandler.setControls(null, null);
-    thumbHandler = null;
-
-    StateManager sm = (StateManager) bio.getManager(StateManager.class);
-    if (sm.isRestoring()) return; // no touching progress bar during restore
-
-    // link in thumbnail progress bar and generation button
-    if (data == null) bio.resetStatus();
-    else {
-      ThumbnailHandler th = data.getThumbHandler();
-      if (th == null) bio.resetStatus();
-      else {
-        JProgressBar thumbProgress = bio.getProgressBar();
-        JButton thumbGen = bio.getStopButton();
-        th.setControls(thumbProgress, thumbGen);
-        thumbGen.setEnabled(true);
-      }
-      thumbHandler = th;
     }
   }
 

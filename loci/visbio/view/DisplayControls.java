@@ -69,12 +69,11 @@ public class DisplayControls extends ControlPanel
   /** Constructs a tool panel for adjusting data parameters. */
   public DisplayControls(LogicManager logic) {
     super(logic, "Displays", "Controls for managing displays");
-    controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
 
     // list of displays
     listModel = new DefaultListModel();
     displayList = new JList(listModel);
-    displayList.setFixedCellWidth(120);
+    displayList.setFixedCellWidth(250);
     displayList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     displayList.addListSelectionListener(this);
     JScrollPane listPane = new JScrollPane(displayList);
@@ -130,13 +129,11 @@ public class DisplayControls extends ControlPanel
 
     // lay out components
     PanelBuilder builder = new PanelBuilder(new FormLayout(
-      "default:grow, 3dlu, pref",
-      "fill:pref:grow"));
-    builder.setDefaultDialogBorder();
+      "default, 3dlu, pref", "fill:pref:grow"));
     CellConstraints cc = new CellConstraints();
     builder.add(listPane, cc.xy(1, 1));
     builder.add(buttons, cc.xy(3, 1));
-    controls.add(builder.getPanel());
+    add(builder.getPanel());
   }
 
 

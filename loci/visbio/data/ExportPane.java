@@ -32,7 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import javax.swing.*;
-import loci.visbio.VisBioFrame;
+import loci.visbio.*;
 import loci.visbio.util.*;
 import visad.*;
 
@@ -191,14 +191,15 @@ public class ExportPane extends WizardPane {
     final int[] lengths = trans.getLengths();
     final int numImages = excl < 0 ? 1 : lengths[excl];
     final int numTotal = numFiles * numImages;
-    final JProgressBar progress = bio.getProgressBar();
-    progress.setString("Exporting data");
-    progress.setValue(0);
-    progress.setMaximum(numTotal + numFiles);
-
-    Thread t = new Thread(new Runnable() {
+    TaskManager tm = (TaskManager) bio.getManager(TaskManager.class);
+    final BioTask task = tm.createTask("Export " +
+      trans.getName() + " to disk");
+    new Thread() {
       public void run() {
         try {
+          int count = 0;
+          int max = numTotal + numFiles;
+          task.setStatus(0, max, "Exporting data");
           boolean padZeroes = leadingZeroes.isSelected();
           int[] plen = new int[stars];
           for (int i=0; i<stars; i++) plen[i] = lengths[maps[i]];
@@ -214,15 +215,16 @@ public class ExportPane extends WizardPane {
             // construct data object
             FieldImpl data = null;
             if (excl < 0) {
-              progress.setString("Reading image #" + (i + 1) + "/" + numTotal);
+              task.setStatus(count++, max,
+                "Reading image #" + (i + 1) + "/" + numTotal);
               data = (FlatField) trans.getData(npos, 2, null);
-              progress.setValue(progress.getValue() + 1);
             }
             else {
               Integer1DSet fset = new Integer1DSet(indexType, lengths[excl]);
               for (int j=0; j<lengths[excl]; j++) {
                 int img = numImages * i + j + 1;
-                progress.setString("Reading image #" + img + "/" + numTotal);
+                task.setStatus(count++, max,
+                  "Reading image #" + img + "/" + numTotal);
                 npos[excl] = j;
                 FlatField image = (FlatField) trans.getData(npos, 2, null);
                 if (data == null) {
@@ -231,7 +233,6 @@ public class ExportPane extends WizardPane {
                   data = new FieldImpl(ftype, fset);
                 }
                 data.setSample(j, image, false);
-                progress.setValue(progress.getValue() + 1);
               }
             }
 
@@ -250,29 +251,25 @@ public class ExportPane extends WizardPane {
 
             // save data to file
             String filename = sb.toString();
-            progress.setString("Exporting file " + filename);
+            task.setStatus(count++, max, "Exporting file " + filename);
             saver.save(filename, data, false);
-            progress.setValue(progress.getValue() + 1);
           }
-          bio.resetStatus();
+          task.setCompleted();
         }
         catch (VisADException exc) {
-          bio.resetStatus();
           exc.printStackTrace();
           JOptionPane.showMessageDialog(dialog,
             "Error exporting data: " + exc.getMessage(),
             "VisBio", JOptionPane.ERROR_MESSAGE);
         }
         catch (IOException exc) {
-          bio.resetStatus();
           exc.printStackTrace();
           JOptionPane.showMessageDialog(dialog,
             "Error exporting data: " + exc.getMessage(),
             "VisBio", JOptionPane.ERROR_MESSAGE);
         }
       }
-    });
-    t.start();
+    }.start();
   }
 
 

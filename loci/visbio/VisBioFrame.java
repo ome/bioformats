@@ -31,8 +31,6 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Vector;
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.CompoundBorder;
 import loci.visbio.data.DataManager;
 import loci.visbio.data.DataTransform;
 import loci.visbio.help.HelpManager;
@@ -67,12 +65,6 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
 
   /** Associated splash screen. */
   protected SplashScreen splash;
-
-  /** Status bar. */
-  protected JProgressBar status;
-
-  /** Stop button for various operations. */
-  protected JButton stop;
 
   /** VisBio program icon. */
   protected Image icon;
@@ -126,33 +118,6 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
       getMenu("Window");
       getMenu("Help");
 
-      // create status bar
-      status = new JProgressBar();
-      status.setStringPainted(true);
-      status.setToolTipText("Reports status of VisBio operations");
-      status.setBorder(new BevelBorder(BevelBorder.RAISED));
-
-      // HACK - make progress bar an easier-to-read color for Plastic L&F
-      if (LAFUtil.isPlasticLookAndFeel()) status.setForeground(Color.blue);
-
-      // create stop button
-      stop = new JButton("Stop");
-      if (!LAFUtil.isMacLookAndFeel()) stop.setMnemonic('s');
-      stop.setToolTipText("Stops the currently reported VisBio operation");
-      stop.setBorder(new CompoundBorder(
-        new BevelBorder(BevelBorder.RAISED), stop.getBorder()));
-      stop.setPreferredSize(stop.getPreferredSize()); // force constant size
-
-      // add status bar and stop button
-      JPanel statusPanel = new JPanel();
-      statusPanel.setLayout(new BorderLayout());
-      statusPanel.add(status, BorderLayout.CENTER);
-      statusPanel.add(stop, BorderLayout.EAST);
-      Container c = getContentPane();
-      c.setLayout(new BorderLayout());
-      c.add(statusPanel, BorderLayout.SOUTH);
-      resetStatus();
-
       // create logic managers
       OptionManager om = new OptionManager(this);
       StateManager sm = new StateManager(this);
@@ -165,6 +130,7 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
         wm, // WindowManager
         new HelpManager(this),
         new PanelManager(this),
+        new TaskManager(this),
         new DataManager(this),
         new MathManager(this),
         new OMEManager(this),
@@ -383,33 +349,6 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
     }
     catch (NoSuchMethodException exc) { exc.printStackTrace(); }
   }
-
-  /** Gets the status bar's progress bar. */
-  public JProgressBar getProgressBar() { return status; }
-
-  /** Gets the status bar's stop button. */
-  public JButton getStopButton() { return stop; }
-
-  /**
-   * Sets the status bar to display the given message,
-   * using the AWT event thread.
-   */
-  public void setStatus(String message) {
-    final String msg = message;
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        status.setString(msg == null ?
-          (VisBio.TITLE + " " + VisBio.VERSION) : msg);
-        status.setStringPainted(true);
-        status.setIndeterminate(false);
-        status.setValue(0);
-        stop.setEnabled(false);
-      }
-    });
-  }
-
-  /** Resets status bar to an idle state. */
-  public void resetStatus() { setStatus(null); }
 
   /** Gets VisBio program icon. */
   public Image getIcon() { return icon; }

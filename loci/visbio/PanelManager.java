@@ -23,10 +23,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.util.Arrays;
 import java.util.Vector;
 import javax.swing.*;
 import loci.visbio.help.HelpManager;
-import loci.visbio.util.SwingUtil;
 
 /** PanelManager is the manager encapsulating VisBio's control panel logic. */
 public class PanelManager extends LogicManager {
@@ -34,10 +39,28 @@ public class PanelManager extends LogicManager {
   // -- GUI components --
 
   /** Control panels. */
-  private Vector panels;
+  private Vector panels = new Vector();
 
-  /** Tabbed pane containing control panels. */
-  private JTabbedPane tabs;
+  /** (X, Y) coordinates for each control panel. */
+  private Vector coords = new Vector();
+
+  /** Width and height for each control panel. */
+  private Vector sizes = new Vector();
+
+  /** Column string for each control panel. */
+  private Vector colStrings = new Vector();
+
+  /** Row string for each control panel. */
+  private Vector rowStrings = new Vector();
+
+  /** Number of rows in panel layout. */
+  private int numRows = 0;
+
+  /** Number of columns in panel layout. */
+  private int numCols = 0;
+
+  /** Pane containing control panels. */
+  private JPanel pane;
 
 
   // -- Constructor --
@@ -49,28 +72,26 @@ public class PanelManager extends LogicManager {
   // -- PanelManager API methods --
 
   /** Adds a new control panel. */
-  public void addPanel(ControlPanel cpl) {
-    String name = cpl.getName();
-
-    // create control panel containers
-    JFrame w = new JFrame(name);
-    WindowManager wm = (WindowManager) bio.getManager(WindowManager.class);
-    wm.addWindow(w);
-    panels.add(cpl);
-
-    tabs.addTab(name, null, cpl, cpl.getTip());
-
-    bio.generateEvent(this, "add " + name + " panel", false);
+  public void addPanel(ControlPanel cpl, int x, int y, int w, int h) {
+    addPanel(cpl, x, y, w, h, null, null);
   }
 
-  /**
-   * Enlarges a control panel to its preferred width
-   * and/or height if it is too small.
-   */
-  public void repack(ControlPanel cpl) {
-    int ndx = panels.indexOf(cpl);
-    if (ndx < 0) return;
-    SwingUtil.repack(bio);
+  /** Adds a new control panel. */
+  public void addPanel(ControlPanel cpl, int x, int y, int w, int h,
+    String colString, String rowString)
+  {
+    panels.add(cpl);
+    int xx = 2 * x + 1;
+    int yy = 4 * y + 1;
+    int ww = w;
+    int hh = 4 * h - 3;
+    if (xx + ww - 1 > numCols) numCols = xx + ww - 1;
+    if (yy + hh + 1 > numRows) numRows = yy + hh + 1;
+    coords.add(new Point(xx, yy));
+    sizes.add(new Dimension(ww, hh));
+    colStrings.add(colString == null ? "pref:grow" : colString);
+    rowStrings.add(rowString == null ? "pref:grow" : rowString);
+    bio.generateEvent(this, "add " + cpl.getName() + " panel", false);
   }
 
   /** Gets the control panel with the given name. */
@@ -91,6 +112,58 @@ public class PanelManager extends LogicManager {
     if (eventType == VisBioEvent.LOGIC_ADDED) {
       Object src = evt.getSource();
       if (src == this) doGUI();
+      else if (src instanceof ExitManager) {
+        // HACK - finalize control panel layout
+        bio.setSplashStatus("Initializing control panels");
+
+        // lay out control panels
+        String pad = "9dlu";
+        String[] cols = new String[numCols];
+        String[] rows = new String[numRows];
+        Arrays.fill(cols, pad);
+        Arrays.fill(rows, pad);
+        for (int i=0; i<panels.size(); i++) {
+          ControlPanel cpl = (ControlPanel) panels.elementAt(i);
+          Point p = (Point) coords.elementAt(i);
+          Dimension d = (Dimension) sizes.elementAt(i);
+          int xx = p.x;
+          int yy = p.y;
+          int ww = d.width;
+          int hh = d.height;
+          String colString = (String) colStrings.elementAt(i);
+          String rowString = (String) rowStrings.elementAt(i);
+          cols[xx - 1] = colString;
+          rows[yy - 1] = "pref";
+          rows[yy] = "3dlu";
+          rows[yy + 1] = rowString;
+        }
+        StringBuffer cbuf = new StringBuffer(cols[0]);
+        for (int i=1; i<cols.length; i++) {
+          cbuf.append(",");
+          cbuf.append(cols[i]);
+        }
+        StringBuffer rbuf = new StringBuffer(rows[0]);
+        for (int i=1; i<rows.length; i++) {
+          rbuf.append(",");
+          rbuf.append(rows[i]);
+        }
+        PanelBuilder builder = new PanelBuilder(
+          new FormLayout(cbuf.toString(), rbuf.toString()));
+        builder.setDefaultDialogBorder();
+        CellConstraints cc = new CellConstraints();
+        for (int i=0; i<panels.size(); i++) {
+          ControlPanel cpl = (ControlPanel) panels.elementAt(i);
+          Point p = (Point) coords.elementAt(i);
+          Dimension d = (Dimension) sizes.elementAt(i);
+          int xx = p.x;
+          int yy = p.y;
+          int ww = d.width;
+          int hh = d.height;
+          builder.addSeparator(cpl.getName(), cc.xyw(xx, yy, ww));
+          builder.add(cpl, cc.xywh(xx, yy + 2, ww, hh, "fill,fill"));
+        }
+        bio.setContentPane(builder.getPanel());
+      }
     }
   }
 
@@ -102,13 +175,6 @@ public class PanelManager extends LogicManager {
 
   /** Adds base control panel GUI components to VisBio. */
   private void doGUI() {
-    bio.setSplashStatus("Initializing control panel logic");
-    panels = new Vector();
-
-    // control panel containers
-    tabs = new JTabbedPane();
-    bio.getContentPane().add(tabs);
-
     // help window
     bio.setSplashStatus(null);
     HelpManager hm = (HelpManager) bio.getManager(HelpManager.class);

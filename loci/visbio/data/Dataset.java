@@ -472,7 +472,7 @@ public class Dataset extends ImageTransform {
     int numTasks = ids.length + 3;
 
     // make sure each file exists
-    status(0, numTasks, "Reading files...");
+    status(0, numTasks, "Reading files");
     for (int i=0; i<ids.length; i++) {
       File file = new File(ids[i]);
       if (!file.exists()) {
@@ -594,8 +594,8 @@ public class Dataset extends ImageTransform {
 
     // load metadata for each source file
     for (int i=0; i<ids.length; i++) {
-      status(i + 1, numTasks, "Reading metadata for " + ids[i] + "...");
       String fname = new File(ids[i]).getName();
+      status(i + 1, numTasks, "Reading " + fname + " metadata");
       try { metadata[i] = loaders[i].getMetadata(ids[i]); }
       catch (IOException exc) { metadata[i] = null; }
       catch (VisADException exc) { metadata[i] = null; }
@@ -607,7 +607,7 @@ public class Dataset extends ImageTransform {
     }
 
     // construct metadata controls
-    status(ids.length + 2, numTasks, "Finishing...");
+    status(ids.length + 2, numTasks, "Finishing");
     controls = new DatasetWidget(this);
 
     // construct thumbnail handler
