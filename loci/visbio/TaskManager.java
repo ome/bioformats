@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio;
 
+import loci.visbio.help.HelpManager;
+
 /** TaskManager is the manager encapsulating VisBio's data transform logic. */
 public class TaskManager extends LogicManager {
 
@@ -66,7 +68,7 @@ public class TaskManager extends LogicManager {
   }
 
   /** Gets the number of tasks required to initialize this logic manager. */
-  public int getTasks() { return 1; }
+  public int getTasks() { return 2; }
 
 
   // -- Helper methods --
@@ -74,10 +76,15 @@ public class TaskManager extends LogicManager {
   /** Adds data-related GUI components to VisBio. */
   private void doGUI() {
     // control panel
-    bio.setSplashStatus("Initializing task management logic");
+    bio.setSplashStatus("Initializing task management");
     taskControls = new TaskControls(this);
     PanelManager pm = (PanelManager) bio.getManager(PanelManager.class);
     pm.addPanel(taskControls, 1, 1, 1, 1, "350", "200:grow");
+
+    // help topics
+    bio.setSplashStatus(null);
+    HelpManager hm = (HelpManager) bio.getManager(HelpManager.class);
+    hm.addHelpTopic("Control panels/Tasks panel", "tasks_panel.html");
   }
 
 }

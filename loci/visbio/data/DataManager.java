@@ -272,22 +272,39 @@ public class DataManager extends LogicManager {
           task.setCompleted();
           return;
         }
-        task.setStoppable(false);
-        task.setStatus("Creating dataset");
-        TaskListener tl = new TaskListener() {
-          public void taskUpdated(TaskEvent e) {
-            int val = e.getProgressValue();
-            int max = e.getProgressMaximum();
-            String msg = e.getStatusMessage();
-            task.setStatus(val, max, msg);
-          }
-        };
-        Dataset dataset = new Dataset(dirName, pattern,
-          fp.getFiles(), lengths, dims, Float.NaN, Float.NaN, Float.NaN, tl);
-        task.setCompleted();
-        addData(dataset);
+        createDataset(dirName, pattern, fp.getFiles(),
+          lengths, dims, Float.NaN, Float.NaN, Float.NaN, task);
       }
     }.start();
+  }
+
+  /**
+   * Creates a dataset, updating the given task object as things progress.
+   * If no task object is given, a new one is created to use.
+   */
+  public void createDataset(String name, String pattern,
+    String[] ids, int[] lengths, String[] dims,
+    float width, float height, float step, BioTask bioTask)
+  {
+    if (bioTask == null) {
+      TaskManager tm = (TaskManager) bio.getManager(TaskManager.class);
+      bioTask = tm.createTask(name + " dataset");
+    }
+    final BioTask task = bioTask;
+    task.setStoppable(false);
+    task.setStatus("Creating dataset");
+    TaskListener tl = new TaskListener() {
+      public void taskUpdated(TaskEvent e) {
+        int val = e.getProgressValue();
+        int max = e.getProgressMaximum();
+        String msg = e.getStatusMessage();
+        task.setStatus(val, max, msg);
+      }
+    };
+    Dataset dataset = new Dataset(name, pattern,
+      ids, lengths, dims, width, height, step, tl);
+    task.setCompleted();
+    addData(dataset);
   }
 
   /**

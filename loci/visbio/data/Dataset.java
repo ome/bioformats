@@ -229,7 +229,7 @@ public class Dataset extends ImageTransform {
   {
     // create dataset import dialog if it doesn't already exist
     if (datasetImporter == null) {
-      datasetImporter = new DatasetPane(SwingUtil.getVisBioFileChooser());
+      datasetImporter = new DatasetPane(dm, SwingUtil.getVisBioFileChooser());
     }
 
     // if clipboard contains a file name, use it as the default file pattern
@@ -253,9 +253,10 @@ public class Dataset extends ImageTransform {
     datasetImporter.selectFile(file);
 
     // get file pattern from dataset import dialog
-    int rval = datasetImporter.showDialog(parent);
-    return rval == DatasetPane.APPROVE_OPTION ?
-      datasetImporter.getDataset() : null;
+    datasetImporter.showDialog(parent);
+
+    // dataset import dialog will add the resultant dataset to the Data panel
+    return null; 
   }
 
   /**

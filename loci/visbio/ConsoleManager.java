@@ -99,6 +99,16 @@ public class ConsoleManager extends LogicManager implements OutputListener {
   public boolean isDebug() { return debug; }
 
 
+  // -- Menu commands --
+
+  /** Displays the given output console window. */
+  public void windowConsole(String console) {
+    WindowManager wm = (WindowManager) bio.getManager(WindowManager.class);
+    if (console.equals("err")) wm.showWindow(err.getWindow());
+    else if (console.equals("out")) wm.showWindow(out.getWindow());
+  }
+
+
   // -- LogicManager API methods --
 
   /** Called to notify the logic manager of a VisBio event. */
@@ -133,7 +143,10 @@ public class ConsoleManager extends LogicManager implements OutputListener {
     JFrame frame = null;
     if (src == out) frame = out.getWindow();
     else if (src == err) frame = err.getWindow();
-    if (frame != null && !frame.isVisible()) frame.show();
+    if (frame != null && !frame.isVisible()) {
+      WindowManager wm = (WindowManager) bio.getManager(WindowManager.class);
+      wm.showWindow(frame);
+    }
   }
 
 
@@ -141,7 +154,7 @@ public class ConsoleManager extends LogicManager implements OutputListener {
 
   /** Adds data-related GUI components to VisBio. */
   private void doGUI() {
-    bio.setSplashStatus("Initializing console logic");
+    bio.setSplashStatus("Initializing console windows");
     out = new OutputConsole("Output Console");
     err = new OutputConsole("Error Console", "errors.log");
 
@@ -174,15 +187,6 @@ public class ConsoleManager extends LogicManager implements OutputListener {
       "loci.visbio.ConsoleManager.windowConsole(out)", 'o');
     bio.addMenuItem("Window", "Error console",
       "loci.visbio.ConsoleManager.windowConsole(err)", 'e');
-  }
-
-
-  // -- Menu commands --
-
-  /** Displays the given output console window. */
-  public void windowConsole(String console) {
-    if (console.equals("err")) err.show();
-    else if (console.equals("out")) out.show();
   }
 
 }

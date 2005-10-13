@@ -34,8 +34,6 @@ import java.math.BigInteger;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import loci.visbio.TaskEvent;
-import loci.visbio.TaskListener;
 import loci.visbio.util.*;
 import visad.VisADException;
 import visad.util.Util;
@@ -44,9 +42,7 @@ import visad.util.Util;
  * DatasetPane provides a full-featured set of options
  * for importing a multidimensional data series into VisBio.
  */
-public class DatasetPane extends WizardPane
-  implements DocumentListener, TaskListener
-{
+public class DatasetPane extends WizardPane implements DocumentListener {
 
   // -- Constants --
 
@@ -100,6 +96,9 @@ public class DatasetPane extends WizardPane
 
   // -- Other fields --
 
+  /** Associate data manager. */
+  private DataManager dm;
+
   /** File pattern. */
   private FilePattern fp;
 
@@ -112,18 +111,18 @@ public class DatasetPane extends WizardPane
   /** Next free id number for dataset naming scheme. */
   private int nameId;
 
-  /** Saved event when Finish button is clicked. */
-  private ActionEvent finishEvent;
-
 
   // -- Constructor --
 
   /** Creates a file group import dialog. */
-  public DatasetPane() { this(SwingUtil.getVisBioFileChooser()); }
+  public DatasetPane(DataManager dm) {
+    this(dm, SwingUtil.getVisBioFileChooser());
+  }
 
   /** Creates a file group import dialog with the given file chooser. */
-  public DatasetPane(JFileChooser fileChooser) {
+  public DatasetPane(DataManager dm, JFileChooser fileChooser) {
     super("Import data");
+    this.dm = dm;
     fileBox = fileChooser;
 
     // -- Page 1 --
@@ -250,8 +249,13 @@ public class DatasetPane extends WizardPane
         public void run() { buildPage(); }
       }.start();
     }
-    else if (command.equals("ok")) {
+    else if (command.equals("ok")) { // Finish
       // check parameters
+      final String name = nameField.getText();
+      final String pattern = groupField.getText();
+      final int[] lengths = fp.getCount();
+      final String[] files = fp.getFiles();
+      int len = lengths.length;
       boolean use = useMicrons.isSelected();
       float width = Float.NaN, height = Float.NaN, step = Float.NaN;
       try {
@@ -277,13 +281,25 @@ public class DatasetPane extends WizardPane
           return;
         }
       }
+      final float mw = width;
+      final float mh = height;
+      final float sd = step;
 
-      // finish up
-      pleaseWait("Reading files...");
-      disableButtons();
-      finishEvent = e;
+      // compile information on dimensional types
+      boolean b = dimBox.isEnabled();
+      final String[] dims = new String[b ? len + 1 : len];
+      for (int i=0; i<len; i++) {
+        dims[i] = (String) widgets[i].getSelectedItem();
+      }
+      if (b) dims[len] = (String) dimBox.getSelectedItem();
+
+      // construct data object
+      super.actionPerformed(e);
       new Thread("VisBio-FinishDatasetThread") {
-        public void run() { finish(); }
+        public void run() {
+          dm.createDataset(name, pattern,
+            files, lengths, dims, mw, mh, sd, null);
+        }
       }.start();
     }
     else super.actionPerformed(e);
@@ -300,24 +316,6 @@ public class DatasetPane extends WizardPane
 
   /** Gives notification that a portion of the document has been removed. */
   public void removeUpdate(DocumentEvent e) { checkText(); }
-
-
-  // -- TaskListener API methods --
-
-  /** Updates progress bar to match status of dataset construction. */
-  public void taskUpdated(TaskEvent e) {
-    final int value = e.getProgressValue();
-    final int maximum = e.getProgressMaximum();
-    final String message = e.getStatusMessage();
-    Util.invoke(false, new Runnable() {
-      public void run() {
-        waitLabel.setText(message);
-        progress.setIndeterminate(false);
-        progress.setMaximum(maximum);
-        progress.setValue(value);
-      }
-    });
-  }
 
 
   // -- Helper methods --
@@ -346,10 +344,6 @@ public class DatasetPane extends WizardPane
         if (second.isVisible()) repack();
       }
     });
-  }
-
-  /** Updates the "please wait" message and progress bar. */
-  protected void setWaitProgress() {
   }
 
   /** Builds the dataset pane's second page. */
@@ -482,42 +476,6 @@ public class DatasetPane extends WizardPane
       }
     });
   }
-
-  /** Constructs a dataset based on the dataset pane's settings. */
-  protected void finish() {
-    String pattern = groupField.getText();
-    int[] lengths = fp.getCount();
-    String[] files = fp.getFiles();
-    int len = lengths.length;
-
-    // compile information on dimensional types
-    boolean b = dimBox.isEnabled();
-    String[] dims = new String[b ? len + 1 : len];
-    for (int i=0; i<len; i++) {
-      dims[i] = (String) widgets[i].getSelectedItem();
-    }
-    if (b) dims[len] = (String) dimBox.getSelectedItem();
-
-    // compile micron information
-    boolean use = useMicrons.isEnabled();
-    float width = Float.NaN, height = Float.NaN, step = Float.NaN;
-    try {
-      width = use ? Float.parseFloat(micronWidth.getText()) : Float.NaN;
-      height = use ? Float.parseFloat(micronHeight.getText()) : Float.NaN;
-      step = use ? Float.parseFloat(micronStep.getText()) : Float.NaN;
-    }
-    catch (NumberFormatException exc) { }
-
-    // construct data object
-    data = new Dataset(nameField.getText(), groupField.getText(),
-      files, lengths, dims, width, height, step, this);
-
-    Util.invoke(false, new Runnable() {
-      public void run() { sendFinishEvent(); }
-    });
-  }
-
-  protected void sendFinishEvent() { super.actionPerformed(finishEvent); }
 
   /** Toggles availability of micron-related widgets. */
   protected void toggleMicronPanel(boolean on) {

@@ -24,11 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio;
 
 import com.jgoodies.plaf.LookUtils;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.io.*;
 import java.util.Vector;
-import javax.swing.Timer;
+import javax.swing.*;
 import loci.visbio.help.HelpManager;
 import visad.util.Util;
 
@@ -42,8 +41,11 @@ public class SystemManager extends LogicManager
 
   // -- Control panel --
 
-  /** System control panel. */
+  /** System information control panel. */
   private SystemControls systemControls;
+
+  /** JFrame containing system information control panel. */
+  private JFrame systemFrame;
 
 
   // -- Constructor --
@@ -162,6 +164,15 @@ public class SystemManager extends LogicManager
   public SystemControls getControls() { return systemControls; }
 
 
+  // -- Menu commands --
+
+  /** Displays the system information window. */
+  public void showSystemInfo() {
+    WindowManager wm = (WindowManager) bio.getManager(WindowManager.class);
+    wm.showWindow(systemFrame);
+  }
+
+
   // -- LogicManager API methods --
 
   /** Called to notify the logic manager of a VisBio event. */
@@ -174,7 +185,7 @@ public class SystemManager extends LogicManager
   }
 
   /** Gets the number of tasks required to initialize this logic manager. */
-  public int getTasks() { return 2; }
+  public int getTasks() { return 3; }
 
 
   // -- ActionListener API methods --
@@ -201,10 +212,21 @@ public class SystemManager extends LogicManager
   /** Adds system-related GUI components to VisBio. */
   private void doGUI() {
     // control panel
-    bio.setSplashStatus("Initializing system information logic");
+    bio.setSplashStatus("Initializing system information window");
     systemControls = new SystemControls(this);
-//    PanelManager pm = (PanelManager) bio.getManager(PanelManager.class);
-//    pm.addPanel(systemControls);
+    systemFrame = new JFrame("System Information");
+    systemFrame.getContentPane().add(systemControls);
+
+    // register system information window with window manager
+    WindowManager wm = (WindowManager) bio.getManager(WindowManager.class);
+    wm.addWindow(systemFrame);
+
+    // menu items
+    bio.setSplashStatus(null);
+    JMenuItem system = bio.addMenuItem("Window", "System information",
+      "loci.visbio.SystemManager.showSystemInfo", 'i');
+    system.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0));
+    bio.addMenuSeparator("Window");
 
     // help window
     bio.setSplashStatus(null);
@@ -224,14 +246,12 @@ public class SystemManager extends LogicManager
   /** Does some garbage collection, to free up memory. */
   public static void gc() {
     try {
-      System.gc();
-      Thread.sleep(100);
-      System.runFinalization();
-      Thread.sleep(100);
-      System.gc();
-      Thread.sleep(100);
-      System.runFinalization();
-      Thread.sleep(100);
+      for (int i=0; i<2; i++) {
+        System.gc();
+        Thread.sleep(100);
+        System.runFinalization();
+        Thread.sleep(100);
+      }
     }
     catch (InterruptedException exc) { exc.printStackTrace(); }
   }

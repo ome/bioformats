@@ -49,6 +49,7 @@ public class TaskControls extends ControlPanel {
     pane = new JPanel();
     pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
     pane.setBorder(new EmptyBorder(5, 5, 5, 5));
+    pane.add(Box.createVerticalGlue());
 
     // scroll pane
     scroll = new JScrollPane(pane);
@@ -61,7 +62,7 @@ public class TaskControls extends ControlPanel {
   // -- TaskControls API methods --
 
   /** Adds a task to the tasks pane. */
-  public void addTask(BioTask task) { pane.add(task); }
+  public void addTask(BioTask task) { pane.add(task, 0); }
 
   /** Removes a task from the tasks pane. */
   public void removeTask(BioTask task) {

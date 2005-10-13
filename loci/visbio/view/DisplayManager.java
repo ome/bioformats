@@ -227,7 +227,6 @@ public class DisplayManager extends LogicManager {
       "Toggles whether VisBio displays a warning about " +
       "how quitting VisBio also quits ImageJ", true);
 
-
     // help topics
     bio.setSplashStatus(null);
     HelpManager hm = (HelpManager) bio.getManager(HelpManager.class);

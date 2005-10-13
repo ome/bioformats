@@ -1,4 +1,4 @@
-v3.12 - Not yet released
+v3.15 - Not yet released
 
 - ADDED: Separate task tracking for each background task VisBio is performing
 - ADDED: Rearrange main VisBio window to be more streamlined

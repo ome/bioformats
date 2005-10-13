@@ -26,11 +26,11 @@ package loci.visbio;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import java.awt.BorderLayout;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 /** BioTask is a panel representing a particular VisBio task. */
 public class BioTask extends JPanel implements ActionListener {
@@ -73,6 +73,7 @@ public class BioTask extends JPanel implements ActionListener {
     stop.addActionListener(this);
     stop.setEnabled(false);
     setLayout(new BorderLayout());
+    setBorder(new EmptyBorder(0, 0, 5, 0));
     PanelBuilder builder = new PanelBuilder(new FormLayout(
       "pref:grow, 3dlu, pref:grow, 3dlu, pref", "pref, pref"
     ));
@@ -120,6 +121,15 @@ public class BioTask extends JPanel implements ActionListener {
 
   /** Gets whether the task has been stopped. */
   public boolean isStopped() { return stopped; }
+
+
+  // -- Component API methods --
+
+  public Dimension getMaximumSize() {
+    Dimension max = super.getMaximumSize();
+    Dimension pref = super.getPreferredSize();
+    return new Dimension(max.width, pref.height);
+  }
 
 
   // -- ActionListener methods --

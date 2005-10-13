@@ -130,12 +130,12 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
         wm, // WindowManager
         new HelpManager(this),
         new PanelManager(this),
-        new TaskManager(this),
         new DataManager(this),
         new MathManager(this),
         new OMEManager(this),
         new DisplayManager(this),
         new OverlayManager(this),
+        new TaskManager(this),
         new SystemManager(this),
         new ConsoleManager(this),
         new ExitManager(this)
