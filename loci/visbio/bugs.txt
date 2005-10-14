@@ -93,7 +93,7 @@ Overlays transform
     (in particular, so OverlayTransform can do multiple selection).
 
 [L] Loading a large number of overlays causes a hiccup; at the least, put up an
-    hourglass while this is happening.
+    hourglass while this is happening. Better, register a task for it.
 
 
 User interface
