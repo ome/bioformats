@@ -1,4 +1,4 @@
-v3.15 - Not yet released
+v3.15 - Friday, October 14, 2005
 
 - ADDED: Separate task tracking for each background task VisBio is performing
 - ADDED: Rearrange main VisBio window to be more streamlined
@@ -6,10 +6,12 @@ v3.15 - Not yet released
 - TWEAK: Report more information during initial dataset creation
 - TWEAK: Don't create errors.log unless necessary
 - TWEAK: Eliminate some debugging messages from the output console
+- TWEAK: Better error messages when QuickTime is not installed
 
 - FIXED: Bug in non-image data objects (arbitrary slices, overlays)
 - FIXED: Ignore thumbnails in Zeiss LSM images
 - FIXED: Better detection of QuickTime v7.0 for Windows
+- FIXED: Ignore first image of an Openlab file only if it is "Original Image"
 
 
 v3.11 - Monday, October 10, 2005
