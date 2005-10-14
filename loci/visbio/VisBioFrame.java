@@ -112,6 +112,9 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
       if (urlIcon != null) icon = new ImageIcon(urlIcon).getImage();
       if (icon != null) setIconImage(icon);
 
+      // set system properties
+      System.setProperty("plugins.dir", ".");
+
       // make menus appear in the right order
       getMenu("File");
       getMenu("Edit");
