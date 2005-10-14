@@ -76,7 +76,7 @@ public class OMEManager extends LogicManager {
     String pixelType = (String) JOptionPane.showInputDialog(bio,
       "Please specify pixel type", "VisBio", JOptionPane.INFORMATION_MESSAGE,
       null, new Object[] {int8, int16, int32, float32}, int32);
-    if (pixelType == null) pixelType = int32;
+    if (pixelType == null) return;
     final int bytesPerPix;
     final boolean isFloat;
     if (pixelType == int8) { bytesPerPix = 1; isFloat = false; }
