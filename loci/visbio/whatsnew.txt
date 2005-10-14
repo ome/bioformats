@@ -7,6 +7,10 @@ v3.15 - Not yet released
 - TWEAK: Don't create errors.log unless necessary
 - TWEAK: Eliminate some debugging messages from the output console
 
+- FIXED: Bug in non-image data objects (arbitrary slices, overlays)
+- FIXED: Ignore thumbnails in Zeiss LSM images
+- FIXED: Better detection of QuickTime v7.0 for Windows
+
 
 v3.11 - Monday, October 10, 2005
 

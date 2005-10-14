@@ -34,6 +34,7 @@ import visad.data.bio.*;
 import visad.data.ij.ImageJForm;
 import visad.data.qt.PictForm;
 import visad.data.qt.QTForm;
+import visad.data.tiff.BaseTiffForm;
 import visad.data.tiff.TiffForm;
 
 /** A container for VisAD data types that provide data as image planes. */
@@ -170,7 +171,8 @@ public class ImageFamily extends FormNode implements FormBlockReader,
   {
     if (!id.equals(lastId)) initId(id);
     if (!(list[index] instanceof FormBlockReader)) return null;
-    return ((FormBlockReader) list[index]).open(id, block_number);
+    try { return ((FormBlockReader) list[index]).open(id, block_number); }
+    catch (BadFormException exc) { checkLibraryException(exc); throw exc; }
   }
 
   /**
@@ -180,7 +182,8 @@ public class ImageFamily extends FormNode implements FormBlockReader,
   public int getBlockCount(String id) throws IOException, VisADException {
     if (!id.equals(lastId)) initId(id);
     if (!(list[index] instanceof FormBlockReader)) return -1;
-    return ((FormBlockReader) list[index]).getBlockCount(id);
+    try { return ((FormBlockReader) list[index]).getBlockCount(id); }
+    catch (BadFormException exc) { checkLibraryException(exc); throw exc; }
   }
 
   /** Closes any open files. */
@@ -337,42 +340,25 @@ public class ImageFamily extends FormNode implements FormBlockReader,
     throw new BadFormException("Unknown file format: " + id);
   }
 
+  /** Prints an error message if the exception indicates a missing library. */
+  private void checkLibraryException(BadFormException exc) {
+    if (exc.getMessage().equals(QTForm.NO_QT_MSG)) {
+      System.err.println("VisBio requires the QuickTime for Java library " +
+        "to read this dataset, but QuickTime does not appear to be " +
+        "installed. Please install QuickTime from: " +
+        "http://www.apple.com/quicktime/download/");
+    }
+  }
+
 
   // -- Main method --
 
   /**
-   * Run 'java loci.visbio.ImageFamily in_file out_file' to convert
-   * in_file to out_file in any of the supported formats.
+   * Run 'java loci.visbio.data.ImageFamily in_file'
+   * to test read a data files in any format VisBio supports.
    */
   public static void main(String[] args) throws VisADException, IOException {
-    if (args == null || args.length < 1 || args.length > 2) {
-      System.out.println("To convert a file, run:");
-      System.out.println(
-        "  java loci.visbio.ImageFamily in_file out_file");
-      System.out.println("To test read an image file, run:");
-      System.out.println("  java loci.visbio.ImageFamily in_file");
-      System.exit(2);
-    }
-
-    if (args.length == 1) {
-      // Test read image file
-      ImageFamily form = new ImageFamily();
-      System.out.print("Reading " + args[0] + " ");
-      Data data = form.open(args[0]);
-      System.out.println("[done]");
-      System.out.println("MathType =\n" + data.getType().prettyString());
-    }
-    else if (args.length == 2) {
-      // Convert file
-      System.out.print(args[0] + " -> " + args[1] + " ");
-      DefaultFamily loader = new DefaultFamily("loader");
-      DataImpl data = loader.open(args[0]);
-      loader = null;
-      ImageFamily form = new ImageFamily();
-      form.save(args[1], data, true);
-      System.out.println("[done]");
-    }
-    System.exit(0);
+    BaseTiffForm.testRead(new ImageFamily(), "VisBio", args);
   }
 
 }

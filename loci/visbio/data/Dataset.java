@@ -37,7 +37,6 @@ import loci.visbio.state.SaveException;
 import loci.visbio.util.*;
 import org.w3c.dom.Element;
 import visad.*;
-import visad.data.BadFormException;
 
 /**
  * A Dataset object encompasses a multidimensional biological image series.
@@ -498,32 +497,7 @@ public class Dataset extends ImageTransform {
       }
       if (ids.length > 1) format += "s";
     }
-    catch (BadFormException exc) {
-      if (ids[0].toLowerCase().endsWith(".mov")) {
-        if (loaders[0].canDoQT()) {
-          System.err.println("The file seems to be in QuickTime format, " +
-            "but the data appears corrupt or invalid. It may use an " +
-            "unsupported codec or other feature.");
-        }
-        else {
-          System.err.println("The file seems to be in QuickTime format, " +
-            "but QuickTime for Java does not appear to be installed. " +
-            "Please install QuickTime for Java from: " +
-            "http://www.apple.com/quicktime/download/");
-        }
-      }
-      else {
-        System.err.println("The file format is not supported, " +
-          "or the file data is corrupt or invalid.");
-      }
-      return;
-    }
-    catch (IOException exc) {
-      System.err.println("Could not determine number of images per file. " +
-        filename + " may be corrupt or invalid.");
-      return;
-    }
-    catch (VisADException exc) {
+    catch (Exception exc) {
       System.err.println("Could not determine number of images per file. " +
         filename + " may be corrupt or invalid.");
       return;
