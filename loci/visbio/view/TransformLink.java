@@ -131,7 +131,7 @@ public class TransformLink
   /** Links this transform into the display. */
   public void link() {
     // rebuild renderer if necessary
-    int numMaps = colorHandler.getMaps().length;
+    int numMaps = colorHandler == null ? -1 : colorHandler.getMaps().length;
     String imageRenderer = "visad.bom.ImageRendererJ3D";
     boolean isImageRend = rend != null &&
       rend.getClass().getName().equals(imageRenderer);
