@@ -342,11 +342,25 @@ public class ImageFamily extends FormNode implements FormBlockReader,
 
   /** Prints an error message if the exception indicates a missing library. */
   private void checkLibraryException(BadFormException exc) {
-    if (exc.getMessage().equals(QTForm.NO_QT_MSG)) {
+    String msg = exc.getMessage();
+    if (msg.equals(QTForm.NO_QT_MSG)) {
       System.err.println("VisBio requires the QuickTime for Java library " +
         "to read this dataset, but QuickTime does not appear to be " +
-        "installed. Please install QuickTime from: " +
-        "http://www.apple.com/quicktime/download/");
+        "installed. Please install QuickTime from:");
+      System.err.println("    http://www.apple.com/quicktime/download/");
+    }
+    else if (msg.equals(QTForm.EXPIRED_QT_MSG)) {
+      System.err.println("Your version of the QuickTime for Java library " +
+        "appears to be expired. As of 2005 October 17, QuickTime v7.0 for " +
+        "Windows was shipped with an expired version of QTJava. Until this " +
+        "situation is resolved, you can try downgrading to QuickTime v6.5 " +
+        "available at:");
+      System.err.println("    http://www.apple.com/support/downloads/" +
+        "quicktime652forwindows.html");
+      System.err.println("Be sure to perform a Custom installation and " +
+        "check the QuickTime for Java component.");
+      System.err.println("Alternately, you could try launching the " +
+        "QuickTime v7.0's Player and checking for software updates.");
     }
   }
 

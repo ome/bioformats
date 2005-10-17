@@ -25,6 +25,7 @@ package loci.visbio.data;
 
 import java.rmi.RemoteException;
 import loci.visbio.BioTask;
+import loci.visbio.TaskManager;
 import loci.visbio.util.*;
 import visad.*;
 
@@ -51,8 +52,10 @@ public class ThumbnailHandler implements Runnable, TransformListener {
   /** Flag indicating cache string ids are for use in default, global cache. */
   protected boolean global = false;
 
-  /** Task used for reporting background thumbnail generation progress. */
-  protected BioTask task;
+  /**
+   * Task manager used for reporting background thumbnail generation progress.
+   */
+  protected TaskManager tm;
 
   /** Background thumbnail generation thread. */
   protected Thread loader;
@@ -134,10 +137,11 @@ public class ThumbnailHandler implements Runnable, TransformListener {
     if (on) startGeneration();
   }
 
-  /** Sets the task for reporting thumbnail generation progress. */
-  public void setTask(BioTask task) {
-    this.task = task;
-    task.setStoppable(true);
+  /**
+   * Sets the task manager to use for reporting thumbnail generation progress.
+   */
+  public void setTaskManager(TaskManager tm) {
+    this.tm = tm;
   }
 
   /** Gets the associated thumbnail disk cache object. */
@@ -188,7 +192,12 @@ public class ThumbnailHandler implements Runnable, TransformListener {
 
   /** Loads all thumbnails in the background. */
   public void run() {
+    BioTask task = null;
     for (int i=count; i<thumbs.length; i++) {
+      if (task == null && tm != null) {
+        // register a task for thumbnail generation
+        task = tm.createTask(data.getName() + " thumbnails");
+      }
       if (task != null) {
         if (task.isStopped()) break;
         String message = on && count < thumbs.length ?

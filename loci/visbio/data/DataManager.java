@@ -85,9 +85,8 @@ public class DataManager extends LogicManager {
     dataControls.addData(data);
     ThumbnailHandler thumbHandler = data.getThumbHandler();
     if (thumbHandler != null) {
-      // register at task for thumbnail generation
       TaskManager tm = (TaskManager) bio.getManager(TaskManager.class);
-      thumbHandler.setTask(tm.createTask(data.getName() + " thumbnails"));
+      thumbHandler.setTaskManager(tm);
     }
     bio.generateEvent(this, "add data", true);
   }
