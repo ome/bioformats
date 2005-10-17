@@ -1,9 +1,16 @@
+v3.16 - Monday, October 17, 2005
+
+- TWEAK: Differentiate between QuickTime for Java missing versus expired
+
+- FIXED: Report thumbnail recomputation properly when data objects are altered
+
+
 v3.15 - Friday, October 14, 2005
 
 - ADDED: Separate task tracking for each background task VisBio is performing
 - ADDED: Rearrange main VisBio window to be more streamlined
 
-- ADDED: Added plugins folder for use with ImageJ from within VisBio
+- TWEAK: Added plugins folder for use with ImageJ from within VisBio
 - TWEAK: Report more information during initial dataset creation
 - TWEAK: Don't create errors.log unless necessary
 - TWEAK: Eliminate some debugging messages from the output console
