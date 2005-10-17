@@ -116,10 +116,15 @@ public class SystemControls extends ControlPanel implements ActionListener {
     // QuickTime library text field
     String qtVersion = null;
     try {
-      ReflectedUniverse r = new QTForm().getUniverse();
-      String qtMajor = r.exec("QTSession.getMajorVersion()").toString();
-      String qtMinor = r.exec("QTSession.getMinorVersion()").toString();
-      qtVersion = qtMajor + "." + qtMinor;
+      System.out.println("Constructing QT form");
+      QTForm qtForm = new QTForm();
+      if (qtForm.isQTExpired()) qtVersion = "Expired";
+      else {
+        ReflectedUniverse r = qtForm.getUniverse();
+        String qtMajor = r.exec("QTSession.getMajorVersion()").toString();
+        String qtMinor = r.exec("QTSession.getMinorVersion()").toString();
+        qtVersion = qtMajor + "." + qtMinor;
+      }
     }
     catch (VisADException exc) { qtVersion = "Missing"; }
     JTextField qtField = new JTextField(qtVersion);
