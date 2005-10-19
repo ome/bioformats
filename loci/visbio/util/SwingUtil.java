@@ -30,9 +30,12 @@ import java.beans.PropertyChangeListener;
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 import visad.util.*;
 
 /** SwingUtil contains useful Swing functions. */
@@ -70,6 +73,16 @@ public abstract class SwingUtil {
         icon.getIconWidth() + wpad, icon.getIconHeight() + hpad));
     }
     return button;
+  }
+
+  /** Fully expands the given JTree from the specified node. */
+  public static void expandTree(JTree tree, DefaultMutableTreeNode node) {
+    if (node.isLeaf()) return;
+    tree.expandPath(new TreePath(node.getPath()));
+    Enumeration e = node.children();
+    while (e.hasMoreElements()) {
+      expandTree(tree, (DefaultMutableTreeNode) e.nextElement());
+    }
   }
 
   /**

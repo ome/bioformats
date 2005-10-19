@@ -1,3 +1,9 @@
+v3.17 - Not yet released
+
+- ADDED: Zeiss ZVI reader parses metadata
+- ADDED: Ability to view OME-XML/OME-TIFF metadata in dataset metadata viewer
+
+
 v3.16 - Monday, October 17, 2005
 
 - TWEAK: Differentiate between QuickTime for Java missing versus expired

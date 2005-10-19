@@ -39,7 +39,7 @@ import visad.data.tiff.TiffForm;
 
 /** A container for VisAD data types that provide data as image planes. */
 public class ImageFamily extends FormNode implements FormBlockReader,
-  FormFileInformer, FormProgressInformer, MetadataReader
+  FormFileInformer, FormProgressInformer, MetadataReader, OMEReader
 {
 
   // -- Static fields --
@@ -289,6 +289,23 @@ public class ImageFamily extends FormNode implements FormBlockReader,
     if (!id.equals(lastId)) initId(id);
     if (!(list[index] instanceof MetadataReader)) return EMPTY_TABLE;
     return ((MetadataReader) list[index]).getMetadata(id);
+  }
+
+
+  // -- OMEReader methods --
+
+  /**
+   * Obtains a loci.ome.xml.OMENode object representing the
+   * file's metadata as an OME-XML DOM structure.
+   *
+   * @throws BadFormException if the loci.ome.xml package is not present
+   */
+  public Object getOMENode(String id)
+    throws BadFormException, IOException, VisADException
+  {
+    if (!id.equals(lastId)) initId(id);
+    if (!(list[index] instanceof OMEReader)) return null;
+    return ((OMEReader) list[index]).getOMENode(id);
   }
 
 

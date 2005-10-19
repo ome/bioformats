@@ -30,6 +30,7 @@ import java.io.*;
 import java.math.BigInteger;
 import java.util.Hashtable;
 import javax.swing.JComponent;
+import loci.ome.xml.OMENode;
 import loci.visbio.TaskEvent;
 import loci.visbio.TaskListener;
 import loci.visbio.state.Dynamic;
@@ -92,6 +93,9 @@ public class Dataset extends ImageTransform {
 
   /** Metadata associated with each source file. */
   protected Hashtable[] metadata;
+
+  /** OME node associated with each source file. */
+  protected OMENode[] ome;
 
   /** Range component count for each image. */
   protected int numRange;
@@ -198,6 +202,9 @@ public class Dataset extends ImageTransform {
 
   /** Gets metadata associated with each source file. */
   public Hashtable[] getMetadata() { return metadata; }
+
+  /** Gets the OME node associated with each source file. */
+  public OMENode[] getOMENodes() { return ome; }
 
 
   // -- ImageTransform API methods --
@@ -469,6 +476,7 @@ public class Dataset extends ImageTransform {
     }
 
     metadata = new Hashtable[ids.length];
+    ome = new OMENode[ids.length];
     int numTasks = ids.length + 3;
 
     // make sure each file exists
@@ -483,9 +491,7 @@ public class Dataset extends ImageTransform {
 
     // initialize data loaders
     loaders = new ImageFamily[ids.length];
-    for (int i=0; i<ids.length; i++) {
-      loaders[i] = new ImageFamily();
-    }
+    for (int i=0; i<ids.length; i++) loaders[i] = new ImageFamily();
 
     // determine number of images per source file
     String filename = "\"" + new File(ids[0]).getName() + "\"";
@@ -579,6 +585,9 @@ public class Dataset extends ImageTransform {
           fname + ". The file may be corrupt or invalid.");
         return;
       }
+      try { ome[i] = (OMENode) loaders[i].getOMENode(ids[i]); }
+      catch (IOException exc) { ome[i] = null; }
+      catch (VisADException exc) { ome[i] = null; }
     }
 
     // construct metadata controls

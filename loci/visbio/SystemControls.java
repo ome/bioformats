@@ -116,7 +116,6 @@ public class SystemControls extends ControlPanel implements ActionListener {
     // QuickTime library text field
     String qtVersion = null;
     try {
-      System.out.println("Constructing QT form");
       QTForm qtForm = new QTForm();
       if (qtForm.isQTExpired()) qtVersion = "Expired";
       else {
