@@ -1,5 +1,6 @@
-v3.17 - Not yet released
+v3.17 - Friday, October 21, 2005
 
+- ADDED: Support for Deltavision file format
 - ADDED: Zeiss ZVI reader parses metadata
 - ADDED: Ability to view OME-XML/OME-TIFF metadata in dataset metadata viewer
 
