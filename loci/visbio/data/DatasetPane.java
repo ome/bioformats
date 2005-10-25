@@ -48,7 +48,7 @@ public class DatasetPane extends WizardPane implements DocumentListener {
 
   /** Common dimensional types. */
   private static final String[] DIM_TYPES = {
-    "Time", "Slice", "Channel", "Lifetime"
+    "Time", "Slice", "Channel", "Spectra", "Lifetime"
   };
 
 

@@ -61,7 +61,7 @@ public abstract class DataTransform implements Dynamic, Saveable {
 
   /**
    * A list of what each dimension in the multidimensional structure means.
-   * Common values include Time, Slice, Channel and Lifetime.
+   * Common values include Time, Slice, Channel, Spectra and Lifetime.
    */
   protected String[] dims;
 
@@ -146,7 +146,7 @@ public abstract class DataTransform implements Dynamic, Saveable {
 
   /**
    * Gets string descriptors for each dimensional axis type.
-   * Common values include Time, Slice, Channel and Lifetime.
+   * Common values include Time, Slice, Channel, Spectra and Lifetime.
    */
   public String[] getDimTypes() { return (String[]) ObjectUtil.copy(dims); }
 
@@ -344,7 +344,8 @@ public abstract class DataTransform implements Dynamic, Saveable {
   public static String getUnitDescription(String dimType) {
     if (dimType.equals("Time")) return "time point";
     else if (dimType.equals("Slice")) return "focal plane";
-    else if (dimType.equals("Channel")) return "spectral channel";
+    else if (dimType.equals("Channel")) return "channel";
+    else if (dimType.equals("Spectra")) return "spectral channel";
     else if (dimType.equals("Lifetime")) return "lifetime bin";
     else return "sample";
   }
