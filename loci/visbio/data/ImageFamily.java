@@ -77,6 +77,7 @@ public class ImageFamily extends FormNode implements FormBlockReader,
     list = new FormNode[] {
       new BioRadForm(), // proprietary
       new IPLabForm(), // proprietary
+      new DeltavisionForm(), // proprietary
       new ZVIForm(), // proprietary
       new MetamorphForm(), // TIFF variant
       new ZeissForm(), // TIFF variant
@@ -325,6 +326,9 @@ public class ImageFamily extends FormNode implements FormBlockReader,
         // compute format string
         if (list[ii] instanceof BioRadForm) format = "Bio-Rad PIC file";
         else if (list[ii] instanceof IPLabForm) format = "IPLab file";
+        else if (list[ii] instanceof DeltavisionForm) {
+          format = "Deltavision file";
+        }
         else if (list[ii] instanceof ZVIForm) format = "Zeiss ZVI file";
         else if (list[ii] instanceof MetamorphForm) {
           format = "Metamorph STK file";
@@ -368,16 +372,8 @@ public class ImageFamily extends FormNode implements FormBlockReader,
     }
     else if (msg.equals(QTForm.EXPIRED_QT_MSG)) {
       System.err.println("Your version of the QuickTime for Java library " +
-        "appears to be expired. As of 2005 October 17, QuickTime v7.0 for " +
-        "Windows was shipped with an expired version of QTJava. Until this " +
-        "situation is resolved, you can try downgrading to QuickTime v6.5 " +
-        "available at:");
-      System.err.println("    http://www.apple.com/support/downloads/" +
-        "quicktime652forwindows.html");
-      System.err.println("Be sure to perform a Custom installation and " +
-        "check the QuickTime for Java component.");
-      System.err.println("Alternately, you could try launching the " +
-        "QuickTime v7.0's Player and checking for software updates.");
+        "appears to be expired. Please reinstall QuickTime from:");
+      System.err.println("    http://www.apple.com/quicktime/download/");
     }
   }
 
