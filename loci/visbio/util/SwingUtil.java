@@ -208,7 +208,7 @@ public abstract class SwingUtil {
     JFileChooser dialog = new JFileChooser(System.getProperty("user.dir"));
     Vector filters = new Vector();
 
-    // TIFF - tiff/TiffForm, ij/ImageJForm
+    // TIFF - tiff/TiffForm, bio/FluoviewTiffForm, ij/ImageJForm
     FileFilter tiff = new ExtensionFileFilter(
       new String[] {"tif", "tiff"}, "Multi-page TIFF stacks");
     dialog.addChoosableFileFilter(tiff);
@@ -219,10 +219,21 @@ public abstract class SwingUtil {
     dialog.addChoosableFileFilter(biorad);
     filters.add(biorad);
 
+    // Deltavision - bio/DeltavisionForm
+    FileFilter deltavision = new ExtensionFileFilter("dv",
+      "Deltavision files");
+    dialog.addChoosableFileFilter(deltavision);
+    filters.add(deltavision);
+
     // IPLab - bio/IPLabForm
     FileFilter iplab = new ExtensionFileFilter("ipl", "IPLab files");
     dialog.addChoosableFileFilter(iplab);
     filters.add(iplab);
+
+    // Leica - bio/LeicaForm
+    FileFilter leica = new ExtensionFileFilter("lei", "Leica files");
+    dialog.addChoosableFileFilter(leica);
+    filters.add(leica);
 
     // Metamorph STK - bio/MetamorphForm
     FileFilter metamorph = new ExtensionFileFilter("stk",

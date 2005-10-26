@@ -78,7 +78,8 @@ public class ImageFamily extends FormNode implements FormBlockReader,
       new BioRadForm(), // proprietary
       new IPLabForm(), // proprietary
       new DeltavisionForm(), // proprietary
-      new ZVIForm(), // proprietary
+      new LeicaForm(), // proprietary (companion file)
+      new ZVIForm(), // proprietary (needs POIFS)
       new MetamorphForm(), // TIFF variant
       new ZeissForm(), // TIFF variant
       new FluoviewTiffForm(), // TIFF variant; isThisType(String) is slow
