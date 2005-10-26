@@ -223,6 +223,15 @@ public class FilePattern {
     return s <= e ? pattern.substring(s, e) : "";
   }
 
+  /** Gets the pattern's text string before the given numerical block. */
+  public String getPrefix(int i) {
+    if (i < 0 || i >= startIndex.length) return null;
+    int s = (i > 0 ? endIndex[i - 1] :
+      pattern.lastIndexOf(File.separator)) + 1;
+    int e = startIndex[i];
+    return s <= e ? pattern.substring(s, e) : null;
+  }
+
 
   // -- Utility methods --
 
