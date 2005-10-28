@@ -127,6 +127,7 @@ public abstract class DisplayUtil {
         // keep class loader ignorant of visad.java3d classes
         ReflectedUniverse r = new ReflectedUniverse();
         try {
+          r.exec("import java.awt.event.InputEvent");
           r.exec("import java.awt.event.KeyEvent");
           r.exec("import visad.java3d.DisplayRendererJ3D");
           r.exec("import visad.java3d.KeyboardBehaviorJ3D");
@@ -134,15 +135,23 @@ public abstract class DisplayUtil {
           r.exec("dr = d.getDisplayRenderer()");
           r.exec("kb = new KeyboardBehaviorJ3D(dr)");
           r.exec("dr.addKeyboardBehavior(kb)");
-          r.setVar("mods", InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK);
-          r.exec("kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_X_POS, " +
-            "KeyEvent.VK_DOWN, mods)");
-          r.exec("kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_X_NEG, " +
-            "KeyEvent.VK_UP, mods)");
-          r.exec("kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_Y_POS, " +
-            "KeyEvent.VK_LEFT, mods)");
-          r.exec("kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_Y_NEG, " +
-            "KeyEvent.VK_RIGHT, mods)");
+          if (threeD) {
+            r.setVar("mods", InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK);
+            r.exec("kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_X_POS, " +
+              "KeyEvent.VK_DOWN, mods)");
+            r.exec("kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_X_NEG, " +
+              "KeyEvent.VK_UP, mods)");
+            r.exec("kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_Y_POS, " +
+              "KeyEvent.VK_LEFT, mods)");
+            r.exec("kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_Y_NEG, " +
+              "KeyEvent.VK_RIGHT, mods)");
+          }
+          else {
+            r.exec("kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_Z_POS, " +
+              "KeyEvent.VK_LEFT, InputEvent.SHIFT_MASK)");
+            r.exec("kb.mapKeyToFunction(KeyboardBehaviorJ3D.ROTATE_Z_NEG, " +
+              "KeyEvent.VK_RIGHT, InputEvent.SHIFT_MASK)");
+          }
           kb = (KeyboardBehavior) r.getVar("kb");
         }
         catch (VisADException exc) { exc.printStackTrace(); }
@@ -163,6 +172,10 @@ public abstract class DisplayUtil {
         DisplayRendererJ2D dr = (DisplayRendererJ2D) d.getDisplayRenderer();
         kb = new KeyboardBehaviorJ2D(dr);
         dr.addKeyboardBehavior((KeyboardBehaviorJ2D) kb);
+        kb.mapKeyToFunction(KeyboardBehaviorJ2D.ROTATE_Z_POS,
+          KeyEvent.VK_LEFT, InputEvent.SHIFT_MASK);
+        kb.mapKeyToFunction(KeyboardBehaviorJ2D.ROTATE_Z_NEG,
+          KeyEvent.VK_RIGHT, InputEvent.SHIFT_MASK);
       }
       if (!threeD) {
         kb.mapKeyToFunction(KeyboardBehavior.TRANSLATE_UP,
