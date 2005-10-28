@@ -37,6 +37,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import loci.ome.xml.OMENode;
 import loci.ome.xml.DOMUtil;
+import loci.visbio.VisBioFrame;
 import loci.visbio.util.*;
 import org.w3c.dom.Element;
 import visad.VisADException;
@@ -382,8 +383,12 @@ public class DatasetPane extends WizardPane implements DocumentListener {
       numImages = loader.getBlockCount(ids[0]);
       ome = (OMENode) loader.getOMENode(ids[0]);
     }
-    catch (IOException exc) { exc.printStackTrace(); }
-    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (IOException exc) {
+      if (VisBioFrame.DEBUG) exc.printStackTrace();
+    }
+    catch (VisADException exc) {
+      if (VisBioFrame.DEBUG) exc.printStackTrace();
+    }
     if (numImages < 1) {
       SwingUtil.setWaitCursor(dialog, false);
       JOptionPane.showMessageDialog(dialog,
@@ -406,7 +411,9 @@ public class DatasetPane extends WizardPane implements DocumentListener {
         if (c != null && !c.equals("")) sizeC = Integer.parseInt(c);
         dimOrder = DOMUtil.getAttribute("DimensionOrder", pix);
       }
-      catch (Exception exc) { exc.printStackTrace(); }
+      catch (Exception exc) {
+        if (VisBioFrame.DEBUG) exc.printStackTrace();
+      }
     }
 
     // autodetect dimensional types

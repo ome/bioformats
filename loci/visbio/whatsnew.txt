@@ -1,4 +1,4 @@
-v3.20 - Not yet released
+v3.17 - Friday, October 28, 2005
 
 - ADDED: Support for Deltavision file format
 - ADDED: Support for Leica file format
