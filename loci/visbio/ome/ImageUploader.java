@@ -480,9 +480,9 @@ public class ImageUploader {
             // print dimensional axes for user verification
             lengths = data.getLengths();
             for (int j=0; j<dims.length; j++) {
-              System.out.println("\t<" + (j + 1) + "> " + dims[j] + " = " +
-                lengths[j] + " " + DataTransform.getUnitDescription(dims[j]) +
-                (lengths[j] == 1 ? "" : "s"));
+              System.out.println("\t<" + (j + 1) + "> " +
+                dims[j] + " = " + lengths[j] + " " +
+                DataTransform.getUnitDescription(dims[j], lengths[j]));
             }
 
             // upload dataset to OME server

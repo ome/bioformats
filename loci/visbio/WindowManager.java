@@ -139,11 +139,10 @@ public class WindowManager extends LogicManager implements WindowListener {
     }
     if (doCursor) {
       // apply cursor to all windows
-      Cursor c = wait ? Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) : null;
       Enumeration en = windows.keys();
       while (en.hasMoreElements()) {
         Window w = (Window) en.nextElement();
-        SwingUtil.setWaitCursor(w, c);
+        SwingUtil.setWaitCursor(w, wait);
       }
     }
   }

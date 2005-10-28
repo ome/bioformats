@@ -238,8 +238,7 @@ public abstract class ImageTransform extends DataTransform {
         sb.append("<li>");
         sb.append(len[i]);
         sb.append(" ");
-        sb.append(getUnitDescription(dimTypes[i]));
-        if (len[i] != 1) sb.append("s");
+        sb.append(getUnitDescription(dimTypes[i], len[i]));
         sb.append("</li>\n");
       }
     }

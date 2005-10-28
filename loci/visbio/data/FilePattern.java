@@ -211,6 +211,12 @@ public class FilePattern {
   /** Gets a listing of all files matching the given file pattern. */
   public String[] getFiles() { return files; }
 
+  /** Gets the specified numerical block. */
+  public String getBlock(int i) {
+    if (i < 0 || i >= startIndex.length) return null;
+    return pattern.substring(startIndex[i], endIndex[i]);
+  }
+
   /** Gets the pattern's text string before any numerical ranges. */
   public String getPrefix() {
     int s = pattern.lastIndexOf(File.separator) + 1;

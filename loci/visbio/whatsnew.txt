@@ -1,8 +1,12 @@
-v3.17 - Friday, October 21, 2005
+v3.20 - Not yet released
 
 - ADDED: Support for Deltavision file format
-- ADDED: Zeiss ZVI reader parses metadata
+- ADDED: Support for Leica file format
+- ADDED: Zeiss ZVI reader metadata parsing
+- ADDED: Partial support for multiple dimensional axes per file
 - ADDED: Ability to view OME-XML/OME-TIFF metadata in dataset metadata viewer
+
+- TWEAK: Smarter autodetection of dimensional axis types
 
 
 v3.16 - Monday, October 17, 2005

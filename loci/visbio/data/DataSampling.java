@@ -266,8 +266,7 @@ public class DataSampling extends ImageTransform {
         sb.append("<li>");
         sb.append(len[i]);
         sb.append(" ");
-        sb.append(getUnitDescription(dimTypes[i]));
-        if (len[i] != 1) sb.append("s");
+        sb.append(getUnitDescription(dimTypes[i], len[i]));
         sb.append(" (");
         sb.append(min[i]);
         sb.append(" to ");

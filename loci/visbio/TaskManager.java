@@ -79,7 +79,7 @@ public class TaskManager extends LogicManager {
     bio.setSplashStatus("Initializing task management");
     taskControls = new TaskControls(this);
     PanelManager pm = (PanelManager) bio.getManager(PanelManager.class);
-    pm.addPanel(taskControls, 1, 1, 1, 1, "350", "200:grow");
+    pm.addPanel(taskControls, 1, 1, 1, 1, "350:grow", "200:grow");
 
     // help topics
     bio.setSplashStatus(null);

@@ -193,7 +193,7 @@ public class DataManager extends LogicManager {
     final String zipName = name + ".zip";
     final String location = SAMPLE_PREFIX + zipName;
     TaskManager tm = (TaskManager) bio.getManager(TaskManager.class);
-    final BioTask task = tm.createTask(name + " sample");
+    final BioTask task = tm.createTask(name);
     task.setStoppable(true);
     new Thread() {
       public void run() {
@@ -287,7 +287,7 @@ public class DataManager extends LogicManager {
   {
     if (bioTask == null) {
       TaskManager tm = (TaskManager) bio.getManager(TaskManager.class);
-      bioTask = tm.createTask(name + " dataset");
+      bioTask = tm.createTask(name);
     }
     final BioTask task = bioTask;
     task.setStoppable(false);

@@ -382,8 +382,7 @@ public class Dataset extends ImageTransform {
         sb.append("<li>");
         sb.append(lengths[i]);
         sb.append(" ");
-        sb.append(getUnitDescription(dims[i]));
-        if (lengths[i] != 1) sb.append("s");
+        sb.append(getUnitDescription(dims[i], lengths[i]));
         sb.append("</li>\n");
       }
     }
@@ -477,10 +476,10 @@ public class Dataset extends ImageTransform {
 
     metadata = new Hashtable[ids.length];
     ome = new OMENode[ids.length];
-    int numTasks = ids.length + 3;
+    int numTasks = ids.length + 4;
 
     // make sure each file exists
-    status(0, numTasks, "Reading files");
+    status(0, numTasks, "Checking files");
     for (int i=0; i<ids.length; i++) {
       File file = new File(ids[i]);
       if (!file.exists()) {
@@ -494,6 +493,7 @@ public class Dataset extends ImageTransform {
     for (int i=0; i<ids.length; i++) loaders[i] = new ImageFamily();
 
     // determine number of images per source file
+    status(1, numTasks, "Determining image count");
     String filename = "\"" + new File(ids[0]).getName() + "\"";
     try {
       numImages = loaders[0].getBlockCount(ids[0]);
@@ -525,6 +525,7 @@ public class Dataset extends ImageTransform {
     }
 
     // load first image for analysis
+    status(2, numTasks, "Reading first image");
     Data d = null;
     try { d = loaders[0].open(ids[0], 0); }
     catch (IOException exc) { d = null; }
@@ -576,7 +577,7 @@ public class Dataset extends ImageTransform {
     // load metadata for each source file
     for (int i=0; i<ids.length; i++) {
       String fname = new File(ids[i]).getName();
-      status(i + 1, numTasks, "Reading " + fname + " metadata");
+      status(i + 3, numTasks, "Reading " + fname + " metadata");
       try { metadata[i] = loaders[i].getMetadata(ids[i]); }
       catch (IOException exc) { metadata[i] = null; }
       catch (VisADException exc) { metadata[i] = null; }
@@ -591,7 +592,7 @@ public class Dataset extends ImageTransform {
     }
 
     // construct metadata controls
-    status(ids.length + 2, numTasks, "Finishing");
+    status(ids.length + 3, numTasks, "Finishing");
     controls = new DatasetWidget(this);
 
     // construct thumbnail handler
@@ -599,7 +600,7 @@ public class Dataset extends ImageTransform {
     if (path == null) path = "";
     thumbs = new ThumbnailHandler(this,
       path + File.separator + name + ".visbio");
-    status(ids.length + 3, numTasks, "Done");
+    status(ids.length + 4, numTasks, "Done");
   }
 
 

@@ -184,8 +184,7 @@ public abstract class DataTransform implements Dynamic, Saveable {
         sb.append("<li>");
         sb.append(len[i]);
         sb.append(" ");
-        sb.append(getUnitDescription(dimTypes[i]));
-        if (len[i] != 1) sb.append("s");
+        sb.append(getUnitDescription(dimTypes[i], len[i]));
         sb.append("</li>\n");
       }
     }
@@ -341,13 +340,21 @@ public abstract class DataTransform implements Dynamic, Saveable {
    * for dimensional type "Slice" the unit would be "focal plane,"
    * and for type "Channel" the unit would be "spectral channel."
    */
-  public static String getUnitDescription(String dimType) {
-    if (dimType.equals("Time")) return "time point";
-    else if (dimType.equals("Slice")) return "focal plane";
-    else if (dimType.equals("Channel")) return "channel";
-    else if (dimType.equals("Spectra")) return "spectral channel";
-    else if (dimType.equals("Lifetime")) return "lifetime bin";
-    else return "sample";
+  public static String getUnitDescription(String dimType, int len) {
+    StringBuffer sb = new StringBuffer();
+    if (dimType.equals("Time")) sb.append("time point");
+    else if (dimType.equals("Slice")) sb.append("focal plane");
+    else if (dimType.equals("Channel")) sb.append("channel");
+    else if (dimType.equals("Spectra")) sb.append("spectral channel");
+    else if (dimType.equals("Lifetime")) sb.append("lifetime bin");
+    else sb.append("sample");
+    if (len != 1) sb.append("s");
+    if (sb.toString().startsWith("sample")) {
+      sb.append(" (");
+      sb.append(dimType);
+      sb.append(")");
+    }
+    return sb.toString();
   }
 
 }

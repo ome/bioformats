@@ -108,11 +108,6 @@ public class SystemControls extends ControlPanel implements ActionListener {
       getVersionString("javax.vecmath.Point3d"));
     java3dField.setEditable(false);
 
-    // JPEG library text field
-    JTextField jpegField = new JTextField(
-      getVersionString("com.sun.image.codec.jpeg.JPEGCodec"));
-    jpegField.setEditable(false);
-
     // QuickTime library text field
     String qtVersion = null;
     try {
@@ -145,6 +140,16 @@ public class SystemControls extends ControlPanel implements ActionListener {
       getVersionString("javax.media.jai.JAI"));
     jaiField.setEditable(false);
 
+    // JPEG library text field
+    JTextField jpegField = new JTextField(
+      getVersionString("com.sun.image.codec.jpeg.JPEGCodec"));
+    jpegField.setEditable(false);
+
+    // POIFS library text field
+    JTextField poifsField = new JTextField(
+      getVersionString("org.apache.poi.poifs.filesystem.POIFSFileSystem"));
+    poifsField.setEditable(false);
+
     // Look & Feel text field
     JTextField lafField = new JTextField(LAFUtil.getLookAndFeel()[0]);
     lafField.setEditable(false);
@@ -168,7 +173,7 @@ public class SystemControls extends ControlPanel implements ActionListener {
       "right:pref, 3dlu, pref:grow, 3dlu, pref",
       "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 9dlu, " +
       "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, " +
-      "pref, 3dlu, pref, 9dlu, pref, 3dlu, pref, 3dlu, pref");
+      "pref, 3dlu, pref, 3dlu, pref, 9dlu, pref, 3dlu, pref, 3dlu, pref");
     PanelBuilder builder = new PanelBuilder(layout);
     builder.setDefaultDialogBorder();
     CellConstraints cc = new CellConstraints();
@@ -196,9 +201,6 @@ public class SystemControls extends ControlPanel implements ActionListener {
     builder.addLabel("Java&3D", cc.xy(1, row)).setLabelFor(java3dField);
     builder.add(java3dField, cc.xyw(3, row, 3));
     row += 2;
-    builder.addLabel("JPE&G", cc.xy(1, row)).setLabelFor(jpegField);
-    builder.add(jpegField, cc.xyw(3, row, 3));
-    row += 2;
     builder.addLabel("&QuickTime", cc.xy(1, row)).setLabelFor(qtField);
     builder.add(qtField, cc.xyw(3, row, 3));
     row += 2;
@@ -210,6 +212,12 @@ public class SystemControls extends ControlPanel implements ActionListener {
     row += 2;
     builder.addLabel("JA&I", cc.xy(1, row)).setLabelFor(jaiField);
     builder.add(jaiField, cc.xyw(3, row, 3));
+    row += 2;
+    builder.addLabel("JPE&G", cc.xy(1, row)).setLabelFor(jpegField);
+    builder.add(jpegField, cc.xyw(3, row, 3));
+    row += 2;
+    builder.addLabel("POI&FS", cc.xy(1, row)).setLabelFor(poifsField);
+    builder.add(poifsField, cc.xyw(3, row, 3));
     row += 2;
     builder.addSeparator("Configuration", cc.xyw(1, row, 5));
     row += 2;
@@ -316,7 +324,7 @@ public class SystemControls extends ControlPanel implements ActionListener {
     if (p == null) return "No package";
     String vendor = p.getImplementationVendor();
     String version = p.getImplementationVersion();
-    if (vendor == null && version == null) return "Installed";
+    if (vendor == null && version == null) return "Available";
     else if (vendor == null) return version;
     else if (version == null) return vendor;
     else return version + " (" + vendor + ")";

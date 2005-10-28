@@ -86,15 +86,23 @@ public abstract class SwingUtil {
   }
 
   /**
+   * Toggles the cursor for the given component and all child components
+   * between the wait cursor and the normal one.
+   */
+  public static void setWaitCursor(Component c, boolean wait) {
+    setCursor(c, wait ? Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) : null);
+  }
+
+  /**
    * Sets the cursor for the given component and
    * all child components to the given cursor.
    */
-  public static void setWaitCursor(Component c, Cursor cursor) {
+  public static void setCursor(Component c, Cursor cursor) {
     c.setCursor(cursor);
     if (c instanceof Container) {
       Container contain = (Container) c;
       Component[] sub = contain.getComponents();
-      for (int i=0; i<sub.length; i++) setWaitCursor(sub[i], cursor);
+      for (int i=0; i<sub.length; i++) setCursor(sub[i], cursor);
     }
   }
 

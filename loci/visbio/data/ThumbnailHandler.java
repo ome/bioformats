@@ -196,13 +196,13 @@ public class ThumbnailHandler implements Runnable, TransformListener {
     for (int i=count; i<thumbs.length; i++) {
       if (task == null && tm != null) {
         // register a task for thumbnail generation
-        task = tm.createTask(data.getName() + " thumbnails");
+        task = tm.createTask(data.getName());
       }
       if (task != null) {
         if (task.isStopped()) break;
         String message = on && count < thumbs.length ?
-          ("Generating " + (count + 1) + " of " + thumbs.length) :
-          (count + " of " + thumbs.length + " generated");
+          ("Thumbnail " + (count + 1) + " of " + thumbs.length) :
+          (count + " of " + thumbs.length + " thumbnails");
         task.setStatus(count, thumbs.length, message);
       }
       loadThumb(i);

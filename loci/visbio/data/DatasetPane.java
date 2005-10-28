@@ -27,6 +27,7 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +35,10 @@ import java.math.BigInteger;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import loci.ome.xml.OMENode;
+import loci.ome.xml.DOMUtil;
 import loci.visbio.util.*;
+import org.w3c.dom.Element;
 import visad.VisADException;
 import visad.util.Util;
 
@@ -71,9 +75,6 @@ public class DatasetPane extends WizardPane implements DocumentListener {
 
   /** Dimensional widgets. */
   private BioComboBox[] widgets;
-
-  /** Label for dimBox. */
-  private JLabel dimLabel;
 
   /** Combo box for selecting each file's dimensional content. */
   private BioComboBox dimBox;
@@ -139,7 +140,7 @@ public class DatasetPane extends WizardPane implements DocumentListener {
 
     // lay out first page
     PanelBuilder builder = new PanelBuilder(new FormLayout(
-      "pref, 3dlu, pref:grow, 3dlu, pref", "pref"));
+      "pref, 3dlu, pref:grow, 3dlu, pref", "pref, 3dlu, pref"));
     CellConstraints cc = new CellConstraints();
     builder.addLabel("File &pattern", cc.xy(1, 1)).setLabelFor(groupField);
     builder.add(groupField, cc.xy(3, 1));
@@ -154,7 +155,6 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     // combo box for dimensional range type within each file
     dimBox = new BioComboBox(DIM_TYPES);
     dimBox.setEditable(true);
-    dimBox.setSelectedIndex(1);
 
     // microns checkbox
     useMicrons = new JCheckBox("Use microns instead of pixels");
@@ -189,9 +189,6 @@ public class DatasetPane extends WizardPane implements DocumentListener {
 
 
   // -- DatasetPane API methods --
-
-  /** Gets the Dataset object created from the import pane state. */
-  public Dataset getDataset() { return data; }
 
   /** Examines the given file to determine if it is part of a file group. */
   public void selectFile(File file) {
@@ -242,8 +239,7 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     }
     else if (command.equals("next")) {
       // lay out page 2 in a separate thread
-      pleaseWait("Examining files...");
-      super.actionPerformed(e);
+      SwingUtil.setWaitCursor(this, true);
       disableButtons();
       new Thread("VisBio-CheckDatasetThread") {
         public void run() { buildPage(); }
@@ -325,27 +321,6 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     next.setEnabled(!groupField.getText().trim().equals(""));
   }
 
-  protected JLabel waitLabel = null;
-  protected JProgressBar progress = null;
-
-  /** Displays a "please wait" message on the dataset pane's second page. */
-  protected void pleaseWait(String message) {
-    final JPanel wait = new JPanel();
-    wait.setLayout(new BorderLayout());
-    waitLabel = new JLabel(message);
-    wait.add(waitLabel, BorderLayout.NORTH);
-    progress = new JProgressBar();
-    progress.setIndeterminate(true);
-    wait.add(progress, BorderLayout.CENTER);
-    Util.invoke(false, new Runnable() {
-      public void run() {
-        second.removeAll();
-        second.add(wait);
-        if (second.isVisible()) repack();
-      }
-    });
-  }
-
   /** Builds the dataset pane's second page. */
   protected void buildPage() {
     // lay out page 2
@@ -354,11 +329,14 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     // parse file pattern
     fp = new FilePattern(pattern);
     if (!fp.isValid()) {
-      setPage(0);
+      SwingUtil.setWaitCursor(dialog, false);
       JOptionPane.showMessageDialog(dialog, fp.getErrorMessage(),
         "VisBio", JOptionPane.ERROR_MESSAGE);
       return;
     }
+    int index = pattern.lastIndexOf(File.separator);
+    String path = index < 0 ? "" : pattern.substring(0, index);
+    pattern = pattern.substring(index + 1);
 
     // guess at a good name for the dataset
     String prefix = fp.getPrefix();
@@ -370,7 +348,7 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     BigInteger[] step = fp.getStep();
     ids = fp.getFiles();
     if (ids.length < 1) {
-      setPage(0);
+      SwingUtil.setWaitCursor(dialog, false);
       JOptionPane.showMessageDialog(dialog, "No files match the pattern.",
         "VisBio", JOptionPane.ERROR_MESSAGE);
       return;
@@ -379,7 +357,7 @@ public class DatasetPane extends WizardPane implements DocumentListener {
 
     // check that pattern is not empty
     if (ids[0].trim().equals("")) {
-      setPage(0);
+      SwingUtil.setWaitCursor(dialog, false);
       JOptionPane.showMessageDialog(dialog, "Please enter a file pattern, " +
         "or click \"Select file\" to choose a file.", "VisBio",
         JOptionPane.INFORMATION_MESSAGE);
@@ -390,31 +368,110 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     File file = new File(ids[0]);
     String filename = "\"" + file.getName() + "\"";
     if (!file.exists()) {
-      setPage(0);
+      SwingUtil.setWaitCursor(dialog, false);
       JOptionPane.showMessageDialog(dialog, "File " + filename +
         " does not exist.", "VisBio", JOptionPane.ERROR_MESSAGE);
       return;
     }
 
-    // determine number of images per file
-    int numImages;
+    // get number of images and OME-XML metadata from the first file
+    OMENode ome = null;
+    int numImages = 0;
     ImageFamily loader = new ImageFamily();
-    try { numImages = loader.getBlockCount(ids[0]); }
-    catch (IOException exc) { numImages = 0; }
-    catch (VisADException exc) { numImages = 0; }
+    try {
+      numImages = loader.getBlockCount(ids[0]);
+      ome = (OMENode) loader.getOMENode(ids[0]);
+    }
+    catch (IOException exc) { exc.printStackTrace(); }
+    catch (VisADException exc) { exc.printStackTrace(); }
     if (numImages < 1) {
-      setPage(0);
+      SwingUtil.setWaitCursor(dialog, false);
       JOptionPane.showMessageDialog(dialog,
         "Cannot determine number of images per file.\n" + filename +
         " may be corrupt or invalid.", "VisBio", JOptionPane.ERROR_MESSAGE);
       return;
     }
 
-    // autodetect each dimension's type
+    // extract dimensional axis counts from OME-XML metadata
+    String dimOrder = null;
+    int sizeZ = 1, sizeT = 1, sizeC = 1;
+    if (ome != null) {
+      try {
+        Element pix = DOMUtil.findElement("Pixels", ome.getOMEDocument(true));
+        String z = DOMUtil.getAttribute("SizeZ", pix);
+        if (z != null && !z.equals("")) sizeZ = Integer.parseInt(z);
+        String t = DOMUtil.getAttribute("SizeT", pix);
+        if (t != null && !t.equals("")) sizeT = Integer.parseInt(t);
+        String c = DOMUtil.getAttribute("SizeC", pix);
+        if (c != null && !c.equals("")) sizeC = Integer.parseInt(c);
+        dimOrder = DOMUtil.getAttribute("DimensionOrder", pix);
+      }
+      catch (Exception exc) { exc.printStackTrace(); }
+    }
+
+    // autodetect dimensional types
     String[] kind = new String[blocks];
-    if (blocks > 0) kind[0] = "Time";
-    if (blocks > 1) kind[1] = "Slice";
-    for (int i=2; i<blocks; i++) kind[i] = "Other";
+    int other = 1;
+    boolean timeOk = true, sliceOk = true, channelOk = true, otherOk = true;
+    for (int i=0; i<blocks; i++) {
+      String p = fp.getPrefix(i).toLowerCase();
+
+      // look for labels indicating dimensional type
+      if (sliceOk && p.endsWith("focalplane")) {
+        kind[i] = "Slice";
+        sliceOk = false;
+        continue;
+      }
+
+      // strip off trailing non-letters
+      int q;
+      char[] c = p.toCharArray();
+      for (q=c.length; q>0; q--) if (c[q-1] >= 'a' && c[q-1] <= 'z') break;
+      p = p.substring(0, q);
+
+      // strip off leading letters
+      c = p.toCharArray();
+      for (q=c.length; q>0; q--) if (c[q-1] < 'a' || c[q-1] > 'z') break;
+      p = p.substring(q);
+
+      // look for short letter code indicating dimensional type
+      if (timeOk && (p.equals("t") || p.equals("tp") || p.equals("tl"))) {
+        kind[i] = "Time";
+        timeOk = false;
+      }
+      else if (sliceOk &&
+        (p.equals("z") || p.equals("zs") || p.equals("fp")))
+      {
+        kind[i] = "Slice";
+        sliceOk = false;
+      }
+      else if (channelOk && p.equals("c")) {
+        kind[i] = "Channel";
+        channelOk = false;
+      }
+      else if (timeOk) {
+        kind[i] = "Time";
+        timeOk = false;
+      }
+      else if (sliceOk) {
+        kind[i] = "Slice";
+        sliceOk = false;
+      }
+      else if (channelOk) {
+        kind[i] = "Channel";
+        channelOk = false;
+      }
+      else if (otherOk) {
+        kind[i] = "Other";
+        otherOk = false;
+      }
+      else kind[i] = "Other" + ++other;
+    }
+    if (timeOk) dimBox.setSelectedIndex(0);
+    else if (sliceOk) dimBox.setSelectedIndex(1);
+    else if (channelOk) dimBox.setSelectedIndex(2);
+    else if (otherOk) dimBox.setSelectedItem("Other");
+    else dimBox.setSelectedItem("Other" + ++other);
 
     // construct dimensional widgets
     widgets = new BioComboBox[blocks];
@@ -424,40 +481,130 @@ public class DatasetPane extends WizardPane implements DocumentListener {
       widgets[i].setSelectedItem(kind[i]);
     }
 
-    // lay out widget panel
-    StringBuffer sb = new StringBuffer();
-    sb.append("pref, 3dlu, pref");
-    for (int i=0; i<blocks; i++) sb.append(", 3dlu, pref");
-    sb.append(", 3dlu, pref, 3dlu, pref");
+    // HACK - ignore buggy dimensional axis counts
+    if (sizeZ * sizeT * sizeC != numImages) dimOrder = null;
 
-    final PanelBuilder builder = new PanelBuilder(new FormLayout(
-      "pref, 3dlu, pref:grow", sb.toString()));
-    CellConstraints cc = new CellConstraints();
-    builder.addSeparator(pattern, cc.xyw(1, 1, 3));
-    builder.addLabel("Dataset &name",
-      cc.xy(1, 3, "right, center")).setLabelFor(nameField);
-    builder.add(nameField, cc.xy(3, 3));
-
-    int y = 5;
-    for (int i=0; i<blocks; i++, y+=2) {
-      String s = (i + 1) + " - [min=" + min[i] +
-        "; max=" + max[i] + "; step=" + step[i] + "]";
-      if (i < 9) s = "&" + s;
-      builder.addLabel(s,
-        cc.xy(1, y, "right, center")).setLabelFor(widgets[i]);
-      builder.add(widgets[i], cc.xy(3, y));
+    // lay out dimensions panel
+    JPanel dimPanel = null;
+    boolean multiFiles = dimOrder != null &&
+      (sizeZ > 1 || sizeT > 1 || sizeC > 1);
+    if (multiFiles || numImages > 1 || blocks > 0) {
+      StringBuffer sb = new StringBuffer("pref");
+      if (multiFiles) {
+        if (sizeZ > 1) sb.append(", 3dlu, pref");
+        if (sizeT > 1) sb.append(", 3dlu, pref");
+        if (sizeC > 1) sb.append(", 3dlu, pref");
+      }
+      else if (numImages > 1) sb.append(", 3dlu, pref");
+      for (int i=0; i<blocks; i++) sb.append(", 3dlu, pref");
+      sb.append(", 9dlu");
+      PanelBuilder builder = new PanelBuilder(new FormLayout(
+        "pref, 12dlu, pref, 12dlu, pref:grow", sb.toString()));
+      CellConstraints cc = new CellConstraints();
+      builder.addSeparator("Dimensions", cc.xyw(1, 1, 5));
+      int count = 0;
+      if (multiFiles) {
+        StringBuffer dimCross = new StringBuffer();
+        for (int i=2; i<5; i++) {
+          char c = dimOrder.charAt(i);
+          switch (c) {
+            case 'Z':
+              if (sizeZ > 1) {
+                int y = 2 * count + 3;
+                builder.addLabel((count + 1) + ".",
+                  cc.xy(1, y, "right, center"));
+                builder.addLabel("Slice", cc.xy(3, y, "left, center"));
+                builder.addLabel(sizeZ + " focal planes per file",
+                  cc.xy(5, y, "left, center"));
+                if (dimCross.length() > 0) dimCross.append(" x ");
+                dimCross.append("Slice");
+                count++;
+              }
+              break;
+            case 'T':
+              if (sizeT > 1) {
+                int y = 2 * count + 3;
+                builder.addLabel((count + 1) + ".",
+                  cc.xy(1, y, "right, center"));
+                builder.addLabel("Time", cc.xy(3, y, "left, center"));
+                builder.addLabel(sizeT + " time points per file",
+                  cc.xy(5, y, "left, center"));
+                if (dimCross.length() > 0) dimCross.append(" x ");
+                dimCross.append("Time");
+                count++;
+              }
+              break;
+            case 'C':
+              if (sizeC > 1) {
+                int y = 2 * count + 3;
+                builder.addLabel((count + 1) + ".",
+                  cc.xy(1, y, "right, center"));
+                builder.addLabel("Channel", cc.xy(3, y, "left, center"));
+                builder.addLabel(sizeC + " pixel channels per file",
+                  cc.xy(5, y, "left, center"));
+                if (dimCross.length() > 0) dimCross.append(" x ");
+                dimCross.append("Channel");
+                count++;
+              }
+              break;
+          }
+        }
+        dimBox.setEnabled(true);
+        dimBox.setSelectedItem(dimCross.toString());
+      }
+      else if (numImages > 1) {
+        String num = (count + 1) + ".";
+        if (count < 9) num = "&" + num;
+        int y = 2 * count + 3;
+        builder.addLabel(num,
+          cc.xy(1, y, "right, center")).setLabelFor(dimBox);
+        dimBox.setEnabled(true);
+        builder.add(dimBox, cc.xy(3, y, "left, center"));
+        builder.addLabel(numImages + " images per file",
+          cc.xy(5, y, "left, center"));
+        count++;
+      }
+      else dimBox.setEnabled(false);
+      for (int i=0; i<blocks; i++) {
+        String num = (count + 1) + ".";
+        if (count < 9) num = "&" + num;
+        int y = 2 * count + 3;
+        builder.addLabel(num,
+          cc.xy(1, y, "right, center")).setLabelFor(widgets[i]);
+        builder.add(widgets[i], cc.xy(3, y, "left, center"));
+        builder.addLabel(fp.getBlock(i), cc.xy(5, y, "left, center"));
+        count++;
+      }
+      dimPanel = builder.getPanel();
     }
 
-    dimLabel = builder.addLabel("File's images &define a new dimension",
-      cc.xy(1, y, "right, center"));
-    dimLabel.setLabelFor(dimBox);
-    builder.add(dimBox, cc.xy(3, y));
-    y += 2;
-    builder.add(micronPanel, cc.xyw(1, y, 3));
+    // lay out widget panel
+    StringBuffer sb = new StringBuffer();
+    sb.append("pref, 3dlu, pref, 3dlu, pref, 3dlu, pref");
+    if (dimPanel != null) sb.append(", 9dlu, pref");
 
-    // enable/disable dimensional combo box
-    final boolean b = numImages > 1;
-    dimLabel.setEnabled(b);
+    PanelBuilder builder = new PanelBuilder(new FormLayout(
+      "pref, 3dlu, pref:grow", sb.toString()));
+    CellConstraints cc = new CellConstraints();
+    JLabel pathLabel = new JLabel("File path");
+    pathLabel.setFont(pathLabel.getFont().deriveFont(Font.BOLD));
+    builder.add(pathLabel, cc.xy(1, 1, "right, center"));
+    builder.addLabel(path, cc.xy(3, 1, "left, center"));
+    JLabel patternLabel = new JLabel("File pattern");
+    patternLabel.setFont(patternLabel.getFont().deriveFont(Font.BOLD));
+    builder.add(patternLabel, cc.xy(1, 3, "right, center"));
+    builder.addLabel(pattern, cc.xy(3, 3, "left, center"));
+    JLabel nameLabel = new JLabel("Dataset name");
+    nameLabel.setFont(nameLabel.getFont().deriveFont(Font.BOLD));
+    nameLabel.setDisplayedMnemonic('n');
+    nameLabel.setLabelFor(nameField);
+    builder.add(nameLabel, cc.xy(1, 5, "right, center"));
+    builder.add(nameField, cc.xy(3, 5));
+    builder.add(micronPanel, cc.xyw(1, 7, 3));
+    if (dimPanel != null) builder.add(dimPanel, cc.xyw(1, 9, 3));
+
+    second.removeAll();
+    second.add(builder.getPanel());
 
     // clear out micron information
     micronWidth.setText("");
@@ -468,10 +615,9 @@ public class DatasetPane extends WizardPane implements DocumentListener {
 
     Util.invoke(false, new Runnable() {
       public void run() {
-        dimBox.setEnabled(b);
-        second.removeAll();
-        second.add(builder.getPanel());
-        if (second.isVisible()) repack();
+        setPage(1);
+        repack();
+        SwingUtil.setWaitCursor(dialog, false);
         enableButtons();
       }
     });

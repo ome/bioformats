@@ -129,7 +129,7 @@ public class DisplayControls extends ControlPanel
 
     // lay out components
     PanelBuilder builder = new PanelBuilder(new FormLayout(
-      "default, 3dlu, pref", "fill:pref:grow"));
+      "pref:grow, 3dlu, pref", "pref"));
     CellConstraints cc = new CellConstraints();
     builder.add(listPane, cc.xy(1, 1));
     builder.add(buttons, cc.xy(3, 1));

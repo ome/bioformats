@@ -195,8 +195,7 @@ public class DataControls extends ControlPanel
 
     // lay out components
     PanelBuilder builder = new PanelBuilder(new FormLayout(
-      "pref:grow, 3dlu, pref",
-      "fill:pref, 5dlu, fill:50:grow"));
+      "pref:grow, 3dlu, pref", "pref, 5dlu, fill:200:grow"));
     CellConstraints cc = new CellConstraints();
     builder.add(treePane, cc.xy(1, 1));
     builder.add(buttons, cc.xy(3, 1));
