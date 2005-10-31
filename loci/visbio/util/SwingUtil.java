@@ -323,6 +323,7 @@ public abstract class SwingUtil {
     dialog.addChoosableFileFilter(pgm);
     dialog.addChoosableFileFilter(pict);
     dialog.addChoosableFileFilter(png);
+    dialog.setFileFilter(combo);
 
     return dialog;
   }
