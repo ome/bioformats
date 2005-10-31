@@ -244,7 +244,8 @@ public abstract class SwingUtil {
     filters.add(metamorph);
 
     // Openlab LIFF - bio/OpenlabForm
-    FileFilter openlab = new OpenlabFileFilter();
+    FileFilter openlab = new ExtensionFileFilter(new String[]
+      {"lif", "liff", ""}, "Openlab LIFF files");
     filters.add(openlab);
 
     // PerkinElmer - bio/PerkinElmerForm
@@ -304,25 +305,7 @@ public abstract class SwingUtil {
 
     // add filters to dialog
     dialog.addChoosableFileFilter(combo);
-    dialog.addChoosableFileFilter(tiff);
-    dialog.addChoosableFileFilter(biorad);
-    dialog.addChoosableFileFilter(deltavision);
-    dialog.addChoosableFileFilter(iplab);
-    dialog.addChoosableFileFilter(leica);
-    dialog.addChoosableFileFilter(metamorph);
-    dialog.addChoosableFileFilter(openlab);
-    dialog.addChoosableFileFilter(perkinElmer);
-    dialog.addChoosableFileFilter(qt);
-    dialog.addChoosableFileFilter(lsm);
-    dialog.addChoosableFileFilter(zvi);
-    dialog.addChoosableFileFilter(bmp);
-    dialog.addChoosableFileFilter(dicom);
-    dialog.addChoosableFileFilter(fits);
-    dialog.addChoosableFileFilter(gif);
-    dialog.addChoosableFileFilter(jpeg);
-    dialog.addChoosableFileFilter(pgm);
-    dialog.addChoosableFileFilter(pict);
-    dialog.addChoosableFileFilter(png);
+    for (int i=0; i<ff.length; i++) dialog.addChoosableFileFilter(ff[i]);
     dialog.setFileFilter(combo);
 
     return dialog;
