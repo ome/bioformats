@@ -79,6 +79,7 @@ public class ImageFamily extends FormNode implements FormBlockReader,
       new IPLabForm(), // proprietary
       new DeltavisionForm(), // proprietary
       new LeicaForm(), // proprietary (companion file)
+      new PerkinElmerForm(), // proprietary (companion files)
       new ZVIForm(), // proprietary (needs POIFS)
       new MetamorphForm(), // TIFF variant
       new ZeissForm(), // TIFF variant
@@ -330,6 +331,10 @@ public class ImageFamily extends FormNode implements FormBlockReader,
         else if (list[ii] instanceof DeltavisionForm) {
           format = "Deltavision file";
         }
+        else if (list[ii] instanceof LeicaForm) format = "Leica file";
+        else if (list[ii] instanceof PerkinElmerForm) {
+          format = "PerkinElmer file";
+        }
         else if (list[ii] instanceof ZVIForm) format = "Zeiss ZVI file";
         else if (list[ii] instanceof MetamorphForm) {
           format = "Metamorph STK file";
@@ -354,7 +359,12 @@ public class ImageFamily extends FormNode implements FormBlockReader,
         else if (list[ii] instanceof OpenlabForm) {
           format = "Openlab LIFF file";
         }
-        else format = "Unknown file";
+        else {
+          String s = list[ii].getClass().getName();
+          int dot = s.lastIndexOf(".");
+          if (dot >= 0) s = s.substring(dot + 1);
+          format = "Unknown file (" + s + ")";
+        }
 
         return;
       }

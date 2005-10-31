@@ -219,102 +219,110 @@ public abstract class SwingUtil {
     // TIFF - tiff/TiffForm, bio/FluoviewTiffForm, ij/ImageJForm
     FileFilter tiff = new ExtensionFileFilter(
       new String[] {"tif", "tiff"}, "Multi-page TIFF stacks");
-    dialog.addChoosableFileFilter(tiff);
     filters.add(tiff);
 
     // Bio-Rad PIC - bio/BioRadForm
     FileFilter biorad = new ExtensionFileFilter("pic", "Bio-Rad PIC files");
-    dialog.addChoosableFileFilter(biorad);
     filters.add(biorad);
 
     // Deltavision - bio/DeltavisionForm
     FileFilter deltavision = new ExtensionFileFilter("dv",
       "Deltavision files");
-    dialog.addChoosableFileFilter(deltavision);
     filters.add(deltavision);
 
     // IPLab - bio/IPLabForm
     FileFilter iplab = new ExtensionFileFilter("ipl", "IPLab files");
-    dialog.addChoosableFileFilter(iplab);
     filters.add(iplab);
 
     // Leica - bio/LeicaForm
     FileFilter leica = new ExtensionFileFilter("lei", "Leica files");
-    dialog.addChoosableFileFilter(leica);
     filters.add(leica);
 
     // Metamorph STK - bio/MetamorphForm
     FileFilter metamorph = new ExtensionFileFilter("stk",
       "Metamorph STK files");
-    dialog.addChoosableFileFilter(metamorph);
     filters.add(metamorph);
 
     // Openlab LIFF - bio/OpenlabForm
     FileFilter openlab = new OpenlabFileFilter();
-    dialog.addChoosableFileFilter(openlab);
     filters.add(openlab);
+
+    // PerkinElmer - bio/PerkinElmerForm
+    FileFilter perkinElmer = new ExtensionFileFilter(new String[]
+      {"tim", "zpo", "csv", "htm"}, "PerkinElmer files");
+    filters.add(perkinElmer);
 
     // QuickTime - qt/QTForm
     FileFilter qt = new ExtensionFileFilter("mov", "QuickTime movies");
-    dialog.addChoosableFileFilter(qt);
     filters.add(qt);
 
     // Zeiss LSM - bio/ZeissForm
     FileFilter lsm = new ExtensionFileFilter("lsm", "Zeiss LSM files");
-    dialog.addChoosableFileFilter(lsm);
     filters.add(lsm);
 
     // Zeiss ZVI - bio/ZVIForm
     FileFilter zvi = new ExtensionFileFilter("zvi", "Zeiss ZVI files");
-    dialog.addChoosableFileFilter(zvi);
     filters.add(zvi);
 
     // BMP - ij/ImageJForm
     FileFilter bmp = new ExtensionFileFilter("bmp", "BMP images");
-    dialog.addChoosableFileFilter(bmp);
     filters.add(bmp);
 
     // DICOM - ij/ImageJForm
     FileFilter dicom = new ExtensionFileFilter("dicom", "DICOM images");
-    dialog.addChoosableFileFilter(dicom);
     filters.add(dicom);
 
     // FITS - ij/ImageJForm
     FileFilter fits = new ExtensionFileFilter("fits", "FITS images");
-    dialog.addChoosableFileFilter(fits);
     filters.add(fits);
 
     // GIF - ij/ImageJForm
     FileFilter gif = new ExtensionFileFilter("gif", "GIF images");
-    dialog.addChoosableFileFilter(gif);
     filters.add(gif);
 
     // JPEG - ij/ImageJForm
     FileFilter jpeg = new ExtensionFileFilter(
       new String[] {"jpg", "jpeg", "jpe"}, "JPEG images");
-    dialog.addChoosableFileFilter(jpeg);
     filters.add(jpeg);
 
     // PGM - ij/ImageJForm
     FileFilter pgm = new ExtensionFileFilter("pgm", "PGM images");
-    dialog.addChoosableFileFilter(pgm);
     filters.add(pgm);
 
     // PICT - qt/PictForm
     FileFilter pict = new ExtensionFileFilter("pict", "PICT images");
-    dialog.addChoosableFileFilter(pict);
     filters.add(pict);
 
     // PNG - ij/ImageJForm
     FileFilter png = new ExtensionFileFilter("png", "PNG images");
-    dialog.addChoosableFileFilter(png);
     filters.add(png);
 
     // combination filter
     FileFilter[] ff = new FileFilter[filters.size()];
     filters.copyInto(ff);
     FileFilter combo = new ComboFileFilter(ff, "All VisBio file types");
+
+    // add filters to dialog
     dialog.addChoosableFileFilter(combo);
+    dialog.addChoosableFileFilter(tiff);
+    dialog.addChoosableFileFilter(biorad);
+    dialog.addChoosableFileFilter(deltavision);
+    dialog.addChoosableFileFilter(iplab);
+    dialog.addChoosableFileFilter(leica);
+    dialog.addChoosableFileFilter(metamorph);
+    dialog.addChoosableFileFilter(openlab);
+    dialog.addChoosableFileFilter(perkinElmer);
+    dialog.addChoosableFileFilter(qt);
+    dialog.addChoosableFileFilter(lsm);
+    dialog.addChoosableFileFilter(zvi);
+    dialog.addChoosableFileFilter(bmp);
+    dialog.addChoosableFileFilter(dicom);
+    dialog.addChoosableFileFilter(fits);
+    dialog.addChoosableFileFilter(gif);
+    dialog.addChoosableFileFilter(jpeg);
+    dialog.addChoosableFileFilter(pgm);
+    dialog.addChoosableFileFilter(pict);
+    dialog.addChoosableFileFilter(png);
 
     return dialog;
   }
