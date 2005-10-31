@@ -170,6 +170,7 @@ public class HelpManager extends LogicManager {
       bio.addMenuSeparator("Help");
       bio.addMenuItem("Help", "About",
         "loci.visbio.help.HelpManager.helpAbout", 'a');
+      SwingUtil.setMenuShortcut(bio, "Help", "About", KeyEvent.VK_A);
     }
 
     // options

@@ -470,6 +470,7 @@ public class DataManager extends LogicManager {
     SwingUtil.setMenuShortcut(bio, "File", "Import data...", KeyEvent.VK_O);
     bio.addMenuItem("File", "Export data...",
       "loci.visbio.data.DataManager.exportData", 'e').setEnabled(false);
+    SwingUtil.setMenuShortcut(bio, "File", "Export data...", KeyEvent.VK_X);
     bio.addSubMenu("File", "Sample datasets", 'd');
     bio.addMenuItem("Sample datasets", "sdub",
       "loci.visbio.data.DataManager.openSampleData(sdub)", 's');

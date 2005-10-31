@@ -23,8 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio;
 
+import java.awt.event.KeyEvent;
 import java.io.PrintStream;
-import javax.swing.JFrame;
+import javax.swing.*;
 import loci.visbio.state.BooleanOption;
 import loci.visbio.state.OptionManager;
 import loci.visbio.util.*;
@@ -183,10 +184,12 @@ public class ConsoleManager extends LogicManager implements OutputListener {
       "Toggles whether output dumps to the default console", debug);
 
     // window menu
-    bio.addMenuItem("Window", "Output console",
+    JMenuItem output = bio.addMenuItem("Window", "Output console",
       "loci.visbio.ConsoleManager.windowConsole(out)", 'o');
-    bio.addMenuItem("Window", "Error console",
+    output.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F7, 0));
+    JMenuItem error = bio.addMenuItem("Window", "Error console",
       "loci.visbio.ConsoleManager.windowConsole(err)", 'e');
+    error.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F8, 0));
   }
 
 }

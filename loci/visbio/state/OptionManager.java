@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.state;
 
 import java.awt.Component;
+import java.awt.event.KeyEvent;
 import java.io.*;
 import java.util.Vector;
 import javax.swing.JCheckBox;
@@ -203,6 +204,7 @@ public class OptionManager extends LogicManager {
           bio.addMenuSeparator("File");
           bio.addMenuItem("File", "Options...",
             "loci.visbio.state.OptionManager.fileOptions", 'o');
+          SwingUtil.setMenuShortcut(bio, "File", "Options...", KeyEvent.VK_P);
         }
       }
     }
