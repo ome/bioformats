@@ -262,7 +262,7 @@ public class Dataset extends ImageTransform {
     datasetImporter.showDialog(parent);
 
     // dataset import dialog will add the resultant dataset to the Data panel
-    return null; 
+    return null;
   }
 
   /**

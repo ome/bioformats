@@ -42,7 +42,7 @@ public class StackLink extends TransformLink {
 
   /** Dummy data to avoid "Data is null" message for volume reference. */
   protected static final Data DUMMY = new Real(0);
-  
+
 
   // -- Fields --
 
