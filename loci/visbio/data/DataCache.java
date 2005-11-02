@@ -30,6 +30,12 @@ import visad.Data;
 /** Provides a simple caching mechanism for full-resolution data in memory. */
 public class DataCache {
 
+  // -- Constants --
+
+  /** Debugging flag. */
+  protected static final boolean DEBUG = false;
+
+
   // -- Fields --
 
   /** Hashtable backing this cache of full-resolution data. */
@@ -56,7 +62,9 @@ public class DataCache {
         d = trans.getData(pos, dim, null);
         putCachedData(key, d);
       }
+      if (DEBUG) System.out.println("DataCache: cache miss for " + key);
     }
+    else if (DEBUG) System.out.println("DataCache: cache hit for " + key);
     return d;
   }
 
@@ -123,7 +131,12 @@ public class DataCache {
   }
 
   /** Removes the data object at the specified key from the cache. */
-  protected void dump(String key) { if (key != null) hash.remove(key); }
+  protected void dump(String key) {
+    if (key != null) {
+      hash.remove(key);
+      if (DEBUG) System.out.println("DataCache: dumped " + key);
+    }
+  }
 
 
   // -- Helper methods --

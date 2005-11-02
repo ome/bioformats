@@ -4,6 +4,8 @@ v3.18 - Not yet released
 
 - TWEAK: Additional menu shortcuts
 
+- FIXED: Rewrote arbitrary slicing logic to be more efficient
+
 
 v3.17 - Friday, October 28, 2005
 

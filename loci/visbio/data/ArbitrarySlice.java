@@ -229,12 +229,16 @@ public class ArbitrarySlice extends DataTransform
     RealType xType = it.getXType();
     RealType yType = it.getYType();
     RealType zType = it.getZType();
+    RealType[] range = it.getRangeTypes();
     FunctionType imageType = it.getType();
     Unit[] imageUnits = it.getImageUnits();
     Unit zUnit = it.getZUnit(axis);
     Unit[] xyzUnits = {imageUnits[0], imageUnits[1], zUnit};
-    RealTupleType xyz = null;
-    try { xyz = new RealTupleType(xType, yType, zType); }
+    RealTupleType xy = null, xyz = null;
+    try {
+      xy = new RealTupleType(xType, yType);
+      xyz = new RealTupleType(xType, yType, zType);
+    }
     catch (VisADException exc) { exc.printStackTrace(); }
 
     // convert spherical polar coordinates to cartesian coordinates for line
@@ -306,76 +310,119 @@ public class ArbitrarySlice extends DataTransform
     Data slice = null;
     if (compute) { // interpolate from parent data
       // compute plane corners from orthonormal basis
-      float q1x = lx + T1COS * rx + T1SIN * sx;
-      float q1y = ly + T1COS * ry + T1SIN * sy;
-      float q1z = lz + T1COS * rz + T1SIN * sz;
-      float q2x = lx + T2COS * rx + T2SIN * sx;
-      float q2y = ly + T2COS * ry + T2SIN * sy;
-      float q2z = lz + T2COS * rz + T2SIN * sz;
-      float q3x = lx + T3COS * rx + T3SIN * sx;
-      float q3y = ly + T3COS * ry + T3SIN * sy;
-      float q3z = lz + T3COS * rz + T3SIN * sz;
-      float q4x = lx + T4COS * rx + T4SIN * sx;
-      float q4y = ly + T4COS * ry + T4SIN * sy;
-      float q4z = lz + T4COS * rz + T4SIN * sz;
-      float[][] planeSamples = {
-        {w*(q1x + 1)/2, w*(q2x + 1)/2, w*(q3x + 1)/2, w*(q4x + 1)/2},
-        {h*(q1y + 1)/2, h*(q2y + 1)/2, h*(q3y + 1)/2, h*(q4y + 1)/2},
-        {n*(q1z + 1)/2, n*(q2z + 1)/2, n*(q3z + 1)/2, n*(q4z + 1)/2}
-      };
+      float q1x = w * (lx + T1COS * rx + T1SIN * sx + 1) / 2;
+      float q1y = h * (ly + T1COS * ry + T1SIN * sy + 1) / 2;
+      float q1z = n * (lz + T1COS * rz + T1SIN * sz + 1) / 2;
+      float q2x = w * (lx + T2COS * rx + T2SIN * sx + 1) / 2;
+      float q2y = h * (ly + T2COS * ry + T2SIN * sy + 1) / 2;
+      float q2z = n * (lz + T2COS * rz + T2SIN * sz + 1) / 2;
+      float q3x = w * (lx + T3COS * rx + T3SIN * sx + 1) / 2;
+      float q3y = h * (ly + T3COS * ry + T3SIN * sy + 1) / 2;
+      float q3z = n * (lz + T3COS * rz + T3SIN * sz + 1) / 2;
+      float q4x = w * (lx + T4COS * rx + T4SIN * sx + 1) / 2;
+      float q4y = h * (ly + T4COS * ry + T4SIN * sy + 1) / 2;
+      float q4z = n * (lz + T4COS * rz + T4SIN * sz + 1) / 2;
 
-      // compute resampling grid for the current resolution
-      int res1 = res - 1;
-      float[][] grid = new float[2][res * res];
-      for (int j=0; j<res; j++) {
-        for (int i=0; i<res; i++) {
-          int index = j * res + i;
-          grid[0][index] = (float) i / res1;
-          grid[1][index] = (float) j / res1;
-        }
-      }
-
-      // retrieve collapsed image stack from data cache
+      // retrieve parent data from data cache
       int[] npos = getParentPos(pos);
-      FlatField collapse = (FlatField)
-        cache.getData(parent, npos, "collapse", 3);
-
-      // if necessary, read in parent data
-      FlatField[] fields = null;
-      if (collapse == null) {
-        fields = new FlatField[n];
-        for (int i=0; i<n; i++) {
-          npos[axis] = i;
-          Data data = parent.getData(npos, 2, cache);
-          if (data == null || !(data instanceof FlatField)) {
-            System.err.println(name +
-              ": parent image plane #" + (i + 1) + " is not valid");
-            return null;
-          }
-          fields[i] = (FlatField) data;
+      FlatField[] fields = new FlatField[n];
+      for (int i=0; i<n; i++) {
+        npos[axis] = i;
+        Data data = parent.getData(npos, 2, cache);
+        if (data == null || !(data instanceof FlatField)) {
+          System.err.println(name +
+            ": parent image plane #" + (i + 1) + " is not valid");
+          return null;
         }
-        try {
-          // use image transform's recommended MathType and Units
-          for (int i=0; i<n; i++) {
-            fields[i] = DataUtil.switchType(fields[i], imageType, imageUnits);
-          }
-          // compile slices into a single volume and collapse
-          collapse = DataUtil.collapse(
-            DataUtil.makeField(fields, zType, 0, n - 1, zUnit));
-          cache.putData(this, pos, "collapse", collapse);
-        }
-        catch (VisADException exc) { exc.printStackTrace(); }
-        catch (RemoteException exc) { exc.printStackTrace(); }
+        fields[i] = (FlatField) data;
       }
-
-      // resample combined field onto arbitrary slice
       try {
+        // use image transform's recommended MathType and Units
+        for (int i=0; i<n; i++) {
+          fields[i] = DataUtil.switchType(fields[i], imageType, imageUnits);
+        }
+      }
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
+
+      // generate planar domain samples and corresponding interpolated values
+      int res1 = res - 1;
+      float[][] planeSamples = new float[3][res * res];
+      float[][] planeValues = new float[range.length][res * res];
+      for (int r=0; r<res; r++) {
+        float rr = (float) r / res1;
+        float xmin = (1 - rr) * q1x + rr * q3x;
+        float ymin = (1 - rr) * q1y + rr * q3y;
+        float zmin = (1 - rr) * q1z + rr * q3z;
+        float xmax = (1 - rr) * q2x + rr * q4x;
+        float ymax = (1 - rr) * q2y + rr * q4y;
+        float zmax = (1 - rr) * q2z + rr * q4z;
+        for (int c=0; c<res; c++) {
+          float cc = (float) c / res1;
+          int ndx = r * res + c;
+          float xs = planeSamples[0][ndx] = (1 - cc) * xmin + cc * xmax;
+          float ys = planeSamples[1][ndx] = (1 - cc) * ymin + cc * ymax;
+          float zs = planeSamples[2][ndx] = (1 - cc) * zmin + cc * zmax;
+          if (xs < 0 || ys < 0 || zs < 0 ||
+            xs > w - 1 || ys > h - 1 || zs > n - 1)
+          {
+            // this pixel is outside the range of the data (missing)
+            for (int k=0; k<planeValues.length; k++) {
+              planeValues[k][ndx] = Float.NaN;
+            }
+          }
+          else {
+            // interpolate the value of this pixel for each range component
+            int xx = (int) xs, yy = (int) ys, zz = (int) zs;
+            float wx = xs - xx, wy = ys - yy, wz = zs - zz;
+            float[][] values0 = null, values1 = null;
+            FlatField field0, field1;
+            if (wz == 0) {
+              // interpolate from a single field (z0 == z1)
+              try { values0 = values1 = fields[zz].getFloats(false); }
+              catch (VisADException exc) { exc.printStackTrace(); }
+            }
+            else {
+              // interpolate between two fields
+              try {
+                values0 = fields[zz].getFloats(false);
+                values1 = fields[zz + 1].getFloats(false);
+              }
+              catch (VisADException exc) { exc.printStackTrace(); }
+            }
+            int ndx00 = w * yy + xx;
+            int ndx10 = w * yy + xx + 1;
+            int ndx01 = w * (yy + 1) + xx;
+            int ndx11 = w * (yy + 1) + xx + 1;
+            for (int k=0; k<range.length; k++) {
+              // tri-linear interpolation (x, then y, then z)
+              float v000 = values0[k][ndx00];
+              float v100 = values0[k][ndx10];
+              float v010 = values0[k][ndx01];
+              float v110 = values0[k][ndx11];
+              float v001 = values1[k][ndx00];
+              float v101 = values1[k][ndx10];
+              float v011 = values1[k][ndx01];
+              float v111 = values1[k][ndx11];
+              float vx00 = (1 - wx) * v000 + wx * v100;
+              float vx10 = (1 - wx) * v010 + wx * v110;
+              float vx01 = (1 - wx) * v001 + wx * v101;
+              float vx11 = (1 - wx) * v011 + wx * v111;
+              float vxy0 = (1 - wy) * vx00 + wy * vx10;
+              float vxy1 = (1 - wy) * vx01 + wy * vx11;
+              float vxyz = (1 - wz) * vxy0 + wz * vxy1;
+              planeValues[k][ndx] = vxyz;
+            }
+          }
+        }
+      }
+      try {
+        FunctionType planeType = new FunctionType(xyz, imageType.getRange());
         Gridded3DSet planeSet = new Gridded3DSet(xyz,
-          planeSamples, 2, 2, null, xyzUnits, null, false);
-        Gridded3DSet gridSet = new Gridded3DSet(xyz,
-          planeSet.gridToValue(grid), res, res, null, xyzUnits, null, false);
-        slice = collapse.resample(gridSet,
-          Data.WEIGHTED_AVERAGE, Data.NO_ERRORS);
+          planeSamples, res, res, null, xyzUnits, null, false);
+        FlatField ff = new FlatField(planeType, planeSet);
+        ff.setSamples(planeValues, false);
+        slice = ff;
       }
       catch (VisADException exc) { exc.printStackTrace(); }
       catch (RemoteException exc) { exc.printStackTrace(); }
