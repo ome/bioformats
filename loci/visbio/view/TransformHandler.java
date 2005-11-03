@@ -35,8 +35,7 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import loci.visbio.VisBioFrame;
-import loci.visbio.data.DataCache;
-import loci.visbio.data.DataTransform;
+import loci.visbio.data.*;
 import loci.visbio.state.*;
 import loci.visbio.util.DisplayUtil;
 import loci.visbio.util.XMLUtil;
@@ -448,6 +447,20 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
             // for Text maps, configure font
             TextControl textControl = (TextControl) map.getControl();
             if (textControl != null) textControl.setFont(font);
+          }
+          else if (map.getDisplayScalar().equals(Display.XAxis)) {
+            // fix X range according to first transform (if it is an image)
+            if (trans instanceof ImageTransform) {
+              ImageTransform it = (ImageTransform) trans;
+              map.setRange(0, it.getImageWidth() - 1);
+            }
+          }
+          else if (map.getDisplayScalar().equals(Display.YAxis)) {
+            // fix Y range according to first transform (if it is an image)
+            if (trans instanceof ImageTransform) {
+              ImageTransform it = (ImageTransform) trans;
+              map.setRange(0, it.getImageHeight() - 1);
+            }
           }
         }
         doCustomMaps();
