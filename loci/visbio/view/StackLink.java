@@ -307,6 +307,9 @@ public class StackLink extends TransformLink {
 
       // remove yellow bounding box
       display.removeReference(ref);
+
+      // remove volume reference
+      display.removeReference(volumeRef);
     }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
