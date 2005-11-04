@@ -8,6 +8,7 @@ v3.18 - Friday, November 4, 2005
 - FIXED: Z axis bug with multiple data objects in a single 3D window
 - FIXED: Scaling bug with arbitrary slicing of some data
 - FIXED: Data object reordering in 3D displays (Up/Down buttons)
+- FIXED: Dataset importer buttons staying greyed out after an error occurs
 
 
 v3.17 - Friday, October 28, 2005
