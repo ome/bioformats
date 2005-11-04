@@ -492,11 +492,13 @@ public class DataManager extends LogicManager {
     String s = "File formats";
     hm.addHelpTopic(s, "formats.html");
     hm.addHelpTopic(s + "/TIFF stacks", "tiff.html");
-    hm.addHelpTopic(s + "/Olympus Fluoview TIFF", "fluoview.html");
     hm.addHelpTopic(s + "/Bio-Rad PIC", "biorad.html");
     hm.addHelpTopic(s + "/IPLab", "iplab.html");
+    hm.addHelpTopic(s + "/Leica", "leica.html");
     hm.addHelpTopic(s + "/Metamorph STK", "metamorph.html");
+    hm.addHelpTopic(s + "/Olympus Fluoview TIFF", "fluoview.html");
     hm.addHelpTopic(s + "/Openlab LIFF", "openlab.html");
+    hm.addHelpTopic(s + "/PerkinElmer", "perkinelmer.html");
     hm.addHelpTopic(s + "/QuickTime movies", "quicktime.html");
     hm.addHelpTopic(s + "/Zeiss LSM", "zeiss_lsm.html");
     hm.addHelpTopic(s + "/Zeiss ZVI (Axiovision)", "zeiss_zvi.html");
