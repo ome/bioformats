@@ -1,10 +1,13 @@
-v3.18 - Not yet released
+v3.18 - Friday, November 4, 2005
 
 - ADDED: Support for PerkinElmer file format
 
 - TWEAK: Additional menu shortcuts
 
 - FIXED: Rewrote arbitrary slicing logic to be more efficient
+- FIXED: Z axis bug with multiple data objects in a single 3D window
+- FIXED: Scaling bug with arbitrary slicing of some data
+- FIXED: Data object reordering in 3D displays (Up/Down buttons)
 
 
 v3.17 - Friday, October 28, 2005
