@@ -275,8 +275,10 @@ public class StackLink extends TransformLink {
       }
       else {
         for (int i=0; i<len; i++) {
-          display.addReferences((DataRenderer) renderers.elementAt(i),
-            (DataReferenceImpl) references.elementAt(i));
+          DataRenderer dataRend = (DataRenderer) renderers.elementAt(i);
+          DataReference dataRef = (DataReferenceImpl) references.elementAt(i);
+          display.addReferences(dataRend, dataRef);
+          setZLevel(dataRend, i, len);
         }
       }
 
@@ -431,7 +433,7 @@ public class StackLink extends TransformLink {
   // -- Internal StackLink API methods
 
   /**
-   * Assigns the given data object to the given data reference,
+   * Assigns the given data object to the specified data reference,
    * switching to the proper types if the flag is set.
    */
   protected void setData(Data d, DataReference dataRef,
@@ -445,30 +447,25 @@ public class StackLink extends TransformLink {
       ImageTransform it = (ImageTransform) trans;
       FunctionType ftype = it.getType();
       Unit[] imageUnits = it.getImageUnits();
-      try {
-        d = DataUtil.switchType(ff, ftype, imageUnits);
-
-        // assign proper Z value
-        RealType zbox = it.getZType();
-        Unit zunit = it.getZUnit(stackAxis);
-        //Set set = new SingletonSet(new RealTupleType(zbox),
-        //  new double[] {zval}, null, new Unit[] {zunit}, null);
-        //FieldImpl field = new FieldImpl(new FunctionType(zbox, ftype), set);
-        //field.setSample(0, d, false);
-        //d = field;
-
-        //Real zreal = new Real(zbox, zval, zunit, null);
-        int numSlices = getSliceCount();
-        if (numSlices > 1) {
-          zval = 2 * zval / (getSliceCount() - 1) - 1;
-          ConstantMap zmap = new ConstantMap(zval, Display.ZAxis);
-          dataRend.getLinks()[0].setConstantMaps(new ConstantMap[] {zmap});
-        }
-      }
+      try { d = DataUtil.switchType(ff, ftype, imageUnits); }
       catch (VisADException exc) { exc.printStackTrace(); }
       catch (RemoteException exc) { exc.printStackTrace(); }
     }
     try { dataRef.setData(d); }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
+  }
+
+  /**
+   * Assigns the given value to the specified
+   * data renderer's ConstantMap to the Z axis.
+   */
+  protected void setZLevel(DataRenderer rend, double zval, int len) {
+    zval = 2 * zval / (len - 1) - 1;
+    try {
+      ConstantMap zmap = new ConstantMap(zval, Display.ZAxis);
+      rend.getLinks()[0].setConstantMaps(new ConstantMap[] {zmap});
+    }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
   }
