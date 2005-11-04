@@ -331,6 +331,7 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     fp = new FilePattern(pattern);
     if (!fp.isValid()) {
       SwingUtil.setWaitCursor(dialog, false);
+      enableButtons();
       JOptionPane.showMessageDialog(dialog, fp.getErrorMessage(),
         "VisBio", JOptionPane.ERROR_MESSAGE);
       return;
@@ -350,6 +351,7 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     ids = fp.getFiles();
     if (ids.length < 1) {
       SwingUtil.setWaitCursor(dialog, false);
+      enableButtons();
       JOptionPane.showMessageDialog(dialog, "No files match the pattern.",
         "VisBio", JOptionPane.ERROR_MESSAGE);
       return;
@@ -359,6 +361,7 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     // check that pattern is not empty
     if (ids[0].trim().equals("")) {
       SwingUtil.setWaitCursor(dialog, false);
+      enableButtons();
       JOptionPane.showMessageDialog(dialog, "Please enter a file pattern, " +
         "or click \"Select file\" to choose a file.", "VisBio",
         JOptionPane.INFORMATION_MESSAGE);
@@ -370,6 +373,7 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     String filename = "\"" + file.getName() + "\"";
     if (!file.exists()) {
       SwingUtil.setWaitCursor(dialog, false);
+      enableButtons();
       JOptionPane.showMessageDialog(dialog, "File " + filename +
         " does not exist.", "VisBio", JOptionPane.ERROR_MESSAGE);
       return;
@@ -391,6 +395,7 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     }
     if (numImages < 1) {
       SwingUtil.setWaitCursor(dialog, false);
+      enableButtons();
       JOptionPane.showMessageDialog(dialog,
         "Cannot determine number of images per file.\n" + filename +
         " may be corrupt or invalid.", "VisBio", JOptionPane.ERROR_MESSAGE);
