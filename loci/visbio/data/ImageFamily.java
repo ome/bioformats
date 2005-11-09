@@ -78,6 +78,7 @@ public class ImageFamily extends FormNode implements FormBlockReader,
       new BioRadForm(), // proprietary
       new IPLabForm(), // proprietary
       new DeltavisionForm(), // proprietary
+      new GatanForm(), // proprietary
       new LeicaForm(), // proprietary (companion file)
       new PerkinElmerForm(), // proprietary (companion files)
       new ZVIForm(), // proprietary (needs POIFS)
@@ -331,6 +332,7 @@ public class ImageFamily extends FormNode implements FormBlockReader,
         else if (list[ii] instanceof DeltavisionForm) {
           format = "Deltavision file";
         }
+        else if (list[ii] instanceof GatanForm) format = "Gatan DM3 file";
         else if (list[ii] instanceof LeicaForm) format = "Leica file";
         else if (list[ii] instanceof PerkinElmerForm) {
           format = "PerkinElmer file";

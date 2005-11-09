@@ -589,6 +589,7 @@ public class DatasetPane extends WizardPane implements DocumentListener {
       }
       dimPanel = builder.getPanel();
     }
+    else dimBox.setEnabled(false);
 
     // lay out widget panel
     StringBuffer sb = new StringBuffer();

@@ -46,7 +46,7 @@ public class HelpWindow extends JFrame
   private static final int DEFAULT_WIDTH = 950;
 
   /** Default height of help window in pixels. */
-  private static final int DEFAULT_HEIGHT = 738;
+  private static final int DEFAULT_HEIGHT = 700;
 
   /** Minimum width of tree pane. */
   private static final int MIN_TREE_WIDTH = 300;

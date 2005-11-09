@@ -98,8 +98,13 @@ public abstract class SwingUtil {
    * all child components to the given cursor.
    */
   public static void setCursor(Component c, Cursor cursor) {
+    if (c == null) return;
     c.setCursor(cursor);
-    if (c instanceof Container) {
+    if (c instanceof JFrame) setCursor(((JFrame) c).getContentPane(), cursor);
+    else if (c instanceof JDialog) {
+      setCursor(((JDialog) c).getContentPane(), cursor);
+    }
+    else if (c instanceof Container) {
       Container contain = (Container) c;
       Component[] sub = contain.getComponents();
       for (int i=0; i<sub.length; i++) setCursor(sub[i], cursor);
@@ -229,6 +234,11 @@ public abstract class SwingUtil {
     FileFilter deltavision = new ExtensionFileFilter("dv",
       "Deltavision files");
     filters.add(deltavision);
+
+    // Gatan Digital Micrograph - bio/GatanForm
+    FileFilter gatan = new ExtensionFileFilter("dm3",
+      "Gatan Digital Micrograph images");
+    filters.add(gatan);
 
     // IPLab - bio/IPLabForm
     FileFilter iplab = new ExtensionFileFilter("ipl", "IPLab files");
