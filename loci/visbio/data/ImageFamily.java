@@ -84,6 +84,7 @@ public class ImageFamily extends FormNode implements FormBlockReader,
       new ZVIForm(), // proprietary (needs POIFS)
       new MetamorphForm(), // TIFF variant
       new ZeissForm(), // TIFF variant
+      new ImageProSeqForm(), // TIFF variant
       new FluoviewTiffForm(), // TIFF variant; isThisType(String) is slow
       new TiffForm(),
       new AVIForm(),
@@ -332,7 +333,9 @@ public class ImageFamily extends FormNode implements FormBlockReader,
         else if (list[ii] instanceof DeltavisionForm) {
           format = "Deltavision file";
         }
-        else if (list[ii] instanceof GatanForm) format = "Gatan DM3 file";
+        else if (list[ii] instanceof GatanForm) {
+          format = "Gatan Digital Micrograph image";
+        }
         else if (list[ii] instanceof LeicaForm) format = "Leica file";
         else if (list[ii] instanceof PerkinElmerForm) {
           format = "PerkinElmer file";
@@ -342,6 +345,9 @@ public class ImageFamily extends FormNode implements FormBlockReader,
           format = "Metamorph STK file";
         }
         else if (list[ii] instanceof ZeissForm) format = "Zeiss LSM file";
+        else if (list[ii] instanceof ImageProSeqForm) {
+          format = "Image-Pro Sequence file";
+        }
         else if (list[ii] instanceof FluoviewTiffForm) {
           format = "Olympus Fluoview TIFF file";
         }

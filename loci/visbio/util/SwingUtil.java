@@ -240,6 +240,11 @@ public abstract class SwingUtil {
       "Gatan Digital Micrograph images");
     filters.add(gatan);
 
+    // Image-Pro SEQ - bio/ImageProSeqForm
+    FileFilter seq = new ExtensionFileFilter("seq",
+      "Image-Pro SEQ files");
+    filters.add(seq);
+
     // IPLab - bio/IPLabForm
     FileFilter iplab = new ExtensionFileFilter("ipl", "IPLab files");
     filters.add(iplab);

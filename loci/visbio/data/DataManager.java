@@ -493,7 +493,9 @@ public class DataManager extends LogicManager {
     hm.addHelpTopic(s, "formats.html");
     hm.addHelpTopic(s + "/TIFF stacks", "tiff.html");
     hm.addHelpTopic(s + "/Bio-Rad PIC", "biorad.html");
+    hm.addHelpTopic(s + "/Deltavision", "deltavision.html");
     hm.addHelpTopic(s + "/Gatan Digital Micrograph", "gatan.html");
+    hm.addHelpTopic(s + "/Image-Pro Sequence", "imagepro_seq.html");
     hm.addHelpTopic(s + "/IPLab", "iplab.html");
     hm.addHelpTopic(s + "/Leica", "leica.html");
     hm.addHelpTopic(s + "/Metamorph STK", "metamorph.html");
