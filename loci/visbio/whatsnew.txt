@@ -1,3 +1,8 @@
+v3.20 - Not yet released
+
+- ADDED: Support for Image-Pro Sequence (SEQ) format
+
+
 v3.19 - Wednesday, November 9, 2005
 
 - ADDED: Support for Gatan Digital Micrograph DM3 format
