@@ -1,6 +1,9 @@
 v3.20 - Not yet released
 
 - ADDED: Support for Image-Pro Sequence (SEQ) format
+- ADDED: Rewrote TIFF export to save incrementally (uses much less memory)
+
+- FIXED: Grayed out thumbnail generation stop button
 
 
 v3.19 - Wednesday, November 9, 2005
