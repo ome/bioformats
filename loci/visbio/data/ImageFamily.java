@@ -119,6 +119,14 @@ public class ImageFamily extends FormNode implements FormBlockReader,
   /** Gets whether QuickTime movies can be saved on this JVM. */
   public boolean canSaveQT() { return canDoQT() && !LookUtils.IS_OS_MAC; }
 
+  /** Gets the form matching the given class. */
+  public FormNode getForm(Class c) {
+    for (int i=0; i<list.length; i++) {
+      if (list[i].getClass().equals(c)) return list[i];
+    }
+    return null;
+  }
+
 
   // -- FormNode methods --
 

@@ -35,6 +35,8 @@ import javax.swing.*;
 import loci.visbio.*;
 import loci.visbio.util.*;
 import visad.*;
+import visad.data.tiff.TiffForm;
+import visad.data.tiff.TiffTools;
 
 /**
  * ExportPane provides a full-featured set of options for exporting a
@@ -191,50 +193,32 @@ public class ExportPane extends WizardPane {
     final int[] lengths = trans.getLengths();
     final int numImages = excl < 0 ? 1 : lengths[excl];
     final int numTotal = numFiles * numImages;
+    final String format = (String) formatBox.getSelectedItem();
     TaskManager tm = (TaskManager) bio.getManager(TaskManager.class);
     final BioTask task = tm.createTask("Export " +
       trans.getName() + " to disk");
     new Thread() {
       public void run() {
         try {
+          TiffForm tiffSaver = null;
+          if (format.equals("TIFF")) {
+            tiffSaver = (TiffForm) saver.getForm(TiffForm.class);
+          }
           int count = 0;
-          int max = numTotal + numFiles;
+          int max = tiffSaver == null ? (numTotal + numFiles) : (2 * numTotal);
           task.setStatus(0, max, "Exporting data");
           boolean padZeroes = leadingZeroes.isSelected();
           int[] plen = new int[stars];
           for (int i=0; i<stars; i++) plen[i] = lengths[maps[i]];
 
-          RealType indexType = RealType.getRealType("index");
+          RealType indexType = null;
+          if (tiffSaver == null) indexType = RealType.getRealType("index");
 
           int[] lengths = trans.getLengths();
           for (int i=0; i<numFiles; i++) {
             int[] pos = MathUtil.rasterToPosition(plen, i);
             int[] npos = new int[lengths.length];
             for (int j=0; j<stars; j++) npos[maps[j]] = pos[j];
-
-            // construct data object
-            FieldImpl data = null;
-            if (excl < 0) {
-              task.setStatus(count++, max,
-                "Reading image #" + (i + 1) + "/" + numTotal);
-              data = (FlatField) trans.getData(npos, 2, null);
-            }
-            else {
-              Integer1DSet fset = new Integer1DSet(indexType, lengths[excl]);
-              for (int j=0; j<lengths[excl]; j++) {
-                int img = numImages * i + j + 1;
-                task.setStatus(count++, max,
-                  "Reading image #" + img + "/" + numTotal);
-                npos[excl] = j;
-                FlatField image = (FlatField) trans.getData(npos, 2, null);
-                if (data == null) {
-                  FunctionType imageType = (FunctionType) image.getType();
-                  FunctionType ftype = new FunctionType(indexType, imageType);
-                  data = new FieldImpl(ftype, fset);
-                }
-                data.setSample(j, image, false);
-              }
-            }
 
             // construct filename
             StringBuffer sb = new StringBuffer();
@@ -248,12 +232,65 @@ public class ExportPane extends WizardPane {
               sb.append(pos[j] + 1);
             }
             sb.append(tokens[stars]);
-
-            // save data to file
             String filename = sb.toString();
-            String fname = new File(filename).getName();
-            task.setStatus(count++, max, "Exporting " + fname);
-            saver.save(filename, data, false);
+
+            // construct data object
+            FieldImpl data = null;
+            if (excl < 0) {
+              task.setStatus(count++, max,
+                "Reading image #" + (i + 1) + "/" + numTotal);
+              FlatField image = (FlatField) trans.getData(npos, 2, null);
+              if (tiffSaver == null) data = image;
+              else {
+                // save image to TIFF file
+                task.setStatus(count++, max,
+                  "Writing image #" + (i + 1) + "/" + numTotal);
+                Hashtable ifd = new Hashtable();
+                TiffTools.putIFDValue(ifd,
+                  TiffTools.SOFTWARE, VisBio.TITLE + " " + VisBio.VERSION);
+                tiffSaver.saveImage(filename, image, ifd, true);
+              }
+            }
+            else {
+              Integer1DSet fset = null;
+              if (tiffSaver == null) {
+                fset = new Integer1DSet(indexType, lengths[excl]);
+              }
+              for (int j=0; j<lengths[excl]; j++) {
+                int img = numImages * i + j + 1;
+                task.setStatus(count++, max,
+                  "Reading image #" + img + "/" + numTotal);
+                npos[excl] = j;
+                FlatField image = (FlatField) trans.getData(npos, 2, null);
+                if (tiffSaver == null) {
+                  // compile single images into image stack data object
+                  if (data == null) {
+                    FunctionType imageType = (FunctionType) image.getType();
+                    FunctionType stackType =
+                      new FunctionType(indexType, imageType);
+                    data = new FieldImpl(stackType, fset);
+                  }
+                  data.setSample(j, image, false);
+                }
+                else {
+                  // save image to TIFF file
+                  task.setStatus(count++, max,
+                    "Writing image #" + img + "/" + numTotal);
+                  Hashtable ifd = new Hashtable();
+                  TiffTools.putIFDValue(ifd,
+                    TiffTools.SOFTWARE, VisBio.TITLE + " " + VisBio.VERSION);
+                  tiffSaver.saveImage(filename,
+                    image, ifd, j == lengths[excl] - 1);
+                }
+              }
+            }
+
+            // save data to file (non-TIFF)
+            if (tiffSaver == null) {
+              String fname = new File(filename).getName();
+              task.setStatus(count++, max, "Exporting " + fname);
+              saver.save(filename, data, false);
+            }
           }
           task.setCompleted();
         }
