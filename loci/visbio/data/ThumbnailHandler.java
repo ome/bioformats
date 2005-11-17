@@ -197,6 +197,7 @@ public class ThumbnailHandler implements Runnable, TransformListener {
       if (task == null && tm != null) {
         // register a task for thumbnail generation
         task = tm.createTask(data.getName());
+        task.setStoppable(true);
       }
       if (task != null) {
         if (task.isStopped()) break;
