@@ -140,6 +140,7 @@ VISAD_PACKAGES = \
 	visad.data.gif \
 	visad.data.ij \
 	visad.data.jai \
+	visad.data.mcidas \
 	visad.data.netcdf \
 	visad.data.qt \
 	visad.data.tiff \
