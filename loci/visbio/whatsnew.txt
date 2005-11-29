@@ -1,7 +1,9 @@
-v3.20 - Not yet released
+v3.20 - Tuesday, November 29, 2005
 
-- ADDED: Support for Image-Pro Sequence (SEQ) format
 - ADDED: Rewrote TIFF export to save incrementally (uses much less memory)
+- ADDED: Option to use LZW compression when exporting TIFF files
+- ADDED: Support for Image-Pro Sequence (SEQ) format
+- ADDED: Support for Image-Pro Workspace (IPW) format
 
 - FIXED: Grayed out thumbnail generation stop button
 

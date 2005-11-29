@@ -4,11 +4,15 @@
 including metadata. Support is completely native, with no additional libraries
 required.
 
-<p>VisBio also supports writing TIFF stacks using ImageJ (which comes packaged
-with VisBio). In addition, VisBio can take advantage of the
+<p>For certain kinds of TIFF, VisBio utilizes the
+<a href="http://rsb.info.nih.gov/ij/">ImageJ</a> library (packaged with
+VisBio). In addition, VisBio can take advantage of the
 <a href="http://java.sun.com/products/java-media/jai/">Java Advanced
-Imaging</a> package should it be installed, enabling support for a wider
-variety of TIFF features.
+Imaging</a> package should it be installed, enabling support for reading a
+wider variety of TIFF features.
+
+<p>VisBio also supports writing uncompressed and LZW-compressed TIFF stacks
+natively plane by plane, to minimize memory usage.
 
 <br><h3>See also:</h3>
 

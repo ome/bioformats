@@ -70,6 +70,9 @@ public class ExportPane extends WizardPane {
   /** Frames per second for movie formats. */
   private JTextField fps;
 
+  /** Checkbox for LZW compression (TIFF only). */
+  private JCheckBox lzw;
+
   /** Combo boxes for mapping each star to corresponding dimensional axes. */
   private BioComboBox[] letterBoxes;
 
@@ -158,6 +161,10 @@ public class ExportPane extends WizardPane {
     // frames per second text field
     fps = new JTextField(4);
 
+    // LZW compression checkbox
+    lzw = new JCheckBox("LZW compression");
+    lzw.setMnemonic('c');
+
     // lay out second page
     second = new JPanel();
     second.setLayout(new BorderLayout());
@@ -207,6 +214,7 @@ public class ExportPane extends WizardPane {
           int count = 0;
           int max = tiffSaver == null ? (numTotal + numFiles) : (2 * numTotal);
           task.setStatus(0, max, "Exporting data");
+          boolean doLZW = lzw.isSelected();
           boolean padZeroes = leadingZeroes.isSelected();
           int[] plen = new int[stars];
           for (int i=0; i<stars; i++) plen[i] = lengths[maps[i]];
@@ -248,6 +256,10 @@ public class ExportPane extends WizardPane {
                 Hashtable ifd = new Hashtable();
                 TiffTools.putIFDValue(ifd,
                   TiffTools.SOFTWARE, VisBio.TITLE + " " + VisBio.VERSION);
+                if (doLZW) {
+                  TiffTools.putIFDValue(ifd,
+                    TiffTools.COMPRESSION, TiffTools.LZW);
+                }
                 tiffSaver.saveImage(filename, image, ifd, true);
               }
             }
@@ -279,6 +291,10 @@ public class ExportPane extends WizardPane {
                   Hashtable ifd = new Hashtable();
                   TiffTools.putIFDValue(ifd,
                     TiffTools.SOFTWARE, VisBio.TITLE + " " + VisBio.VERSION);
+                  if (doLZW) {
+                    TiffTools.putIFDValue(ifd,
+                      TiffTools.COMPRESSION, TiffTools.LZW);
+                  }
                   tiffSaver.saveImage(filename,
                     image, ifd, j == lengths[excl] - 1);
                 }
@@ -334,13 +350,14 @@ public class ExportPane extends WizardPane {
           File.separator + patternField.getText();
         String format = (String) formatBox.getSelectedItem();
         String plow = pattern.toLowerCase();
-        boolean doFPS = false;
+        boolean doFPS = false, doLZW = false;
         if (format.equals("PIC")) {
           if (!plow.endsWith(".pic")) pattern += ".pic";
         }
         else if (format.equals("TIFF")) {
           if (!plow.endsWith(".tiff") && !plow.endsWith(".tif")) {
             pattern += ".tif";
+            doLZW = true;
           }
         }
         else if (format.equals("MOV")) {
@@ -403,6 +420,7 @@ public class ExportPane extends WizardPane {
         // construct second page panel
         sb = new StringBuffer("pref");
         if (doFPS) sb.append(", 3dlu, pref");
+        if (doLZW) sb.append(", 3dlu, pref");
         if (doZeroes) sb.append(", 3dlu, pref");
         for (int i=0; i<stars; i++) {
           sb.append(", 3dlu, pref");
@@ -416,6 +434,10 @@ public class ExportPane extends WizardPane {
           builder.addLabel("&Frames per second",
             cc.xy(1, row, "right,center")).setLabelFor(fps);
           builder.add(fps, cc.xy(3, row));
+          row += 2;
+        }
+        if (doLZW) {
+          builder.add(lzw, cc.xyw(1, row, 3, "right, center"));
           row += 2;
         }
         if (doZeroes) {
@@ -457,6 +479,7 @@ public class ExportPane extends WizardPane {
         else if (format.equals("TIFF")) {
           if (dims.length == stars) sb.append("TIFF image");
           else sb.append("Multi-page TIFF stack");
+          if (lzw.isSelected()) sb.append(" (LZW)");
         }
         else if (format.equals("MOV")) sb.append("QuickTime movie");
         else sb.append("Unknown");
