@@ -28,8 +28,9 @@ default:
 	@echo "	make recompile	to compile recently altered java files"
 	@echo "	make clean	to remove class files"
 	@echo "	make jar	to create visbio.jar"
-	@echo "	make source	to create visbio_src.jar"
-	@echo "	make docs	to create visbio_docs.jar"
+	@echo "	make source	 to create visbio_src.jar"
+	@echo "	make docs	 to create visbio_docs.jar"
+	@echo " make visad  to create VisBio's visad.jar from VisAD source"
 	@echo "	make all	compiles from scratch, then does jar, source and docs"
 	@echo ""
 
@@ -128,6 +129,39 @@ SOURCE_FILES = \
 	loci/visbio/*.txt \
 	$(RESOURCE_FILES)
 
+VISAD_PACKAGES = \
+	visad \
+	visad.collab \
+	visad.java3d \
+	visad.java2d \
+	visad.browser \
+	visad.util \
+	HTTPClient \
+	gnu.regexp \
+	visad.data \
+	nom.tam.fits \
+	nom.tam.util \
+	nom.tam.test \
+	visad.data.fits \
+	visad.data.vis5d \
+	visad.data.avi \
+	visad.data.bio \
+	visad.data.ij \
+	visad.data.jai \
+	visad.data.qt \
+	visad.data.gif \
+	visad.data.gis \
+	visad.data.text \
+	visad.data.tiff \
+	visad.data.visad \
+	visad.data.visad.object \
+	visad.bom
+
+VISAD_FILES= \
+	DATE \
+	`echo $(VISAD_PACKAGES)' ' | sed -e 's/\./\//g' -e 's/ /\/\*\.class /g'` \
+	visad/util/*.jhf
+
 recompile:
 	@cd ../.. ; \
 	for i in $(PACKAGES); do \
@@ -208,5 +242,12 @@ docs:
 	$(JAR) $(JARVERBOSE)cf $(JAR_DIR)/visbio_docs.jar $(DOC_DIR) ; \
 	$(RMDIR) $(DOC_DIR) ; \
 	ls -l $(JAR_DIR)/visbio_docs.jar
+
+visad:
+	@cd ../.. ; \
+	date > DATE ; \
+	${JAR} ${JARVERBOSE}cfm $(JAR_DIR)/visad.jar \
+		visad/VisAD.Manifest $(VISAD_FILES) ; \
+	ls -l $(JAR_DIR)/visad.jar
 
 all: compile jar source docs
