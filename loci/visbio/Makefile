@@ -131,31 +131,24 @@ SOURCE_FILES = \
 
 VISAD_PACKAGES = \
 	visad \
-	visad.collab \
-	visad.java3d \
-	visad.java2d \
+	visad.bom \
 	visad.browser \
-	visad.util \
-	HTTPClient \
-	gnu.regexp \
+	visad.collab \
 	visad.data \
-	nom.tam.fits \
-	nom.tam.util \
-	nom.tam.test \
-	visad.data.fits \
-	visad.data.vis5d \
 	visad.data.avi \
 	visad.data.bio \
+	visad.data.gif \
 	visad.data.ij \
 	visad.data.jai \
+	visad.data.netcdf \
 	visad.data.qt \
-	visad.data.gif \
-	visad.data.gis \
-	visad.data.text \
 	visad.data.tiff \
+	visad.data.units \
 	visad.data.visad \
 	visad.data.visad.object \
-	visad.bom
+	visad.java2d \
+	visad.java3d \
+	visad.util \
 
 VISAD_FILES= \
 	DATE \
