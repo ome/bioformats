@@ -5,6 +5,8 @@ v3.20 - Tuesday, November 29, 2005
 - ADDED: Support for Image-Pro Sequence (SEQ) format
 - ADDED: Support for Image-Pro Workspace (IPW) format
 
+- TWEAK: Smaller download size
+
 - FIXED: Grayed out thumbnail generation stop button
 
 
