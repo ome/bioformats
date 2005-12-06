@@ -259,6 +259,8 @@ public class ExportPane extends WizardPane {
                 if (doLZW) {
                   TiffTools.putIFDValue(ifd,
                     TiffTools.COMPRESSION, TiffTools.LZW);
+                  // do horizontal differencing
+                  TiffTools.putIFDValue(ifd, TiffTools.PREDICTOR, 2);
                 }
                 tiffSaver.saveImage(filename, image, ifd, true);
               }
@@ -294,6 +296,8 @@ public class ExportPane extends WizardPane {
                   if (doLZW) {
                     TiffTools.putIFDValue(ifd,
                       TiffTools.COMPRESSION, TiffTools.LZW);
+                    // do horizontal differencing
+                    TiffTools.putIFDValue(ifd, TiffTools.PREDICTOR, 2);
                   }
                   tiffSaver.saveImage(filename,
                     image, ifd, j == lengths[excl] - 1);
