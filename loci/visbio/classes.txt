@@ -3695,7 +3695,9 @@ visad.data.bio.BioRadForm
 visad.data.bio.BioRadNote
 visad.data.bio.DeltavisionForm
 visad.data.bio.FluoviewTiffForm
+visad.data.bio.ICSForm
 visad.data.bio.IPLabForm
+visad.data.bio.IPWForm
 visad.data.bio.LegacyZVIForm
 visad.data.bio.LegacyZVIForm$ZVIBlock
 visad.data.bio.LeicaForm
