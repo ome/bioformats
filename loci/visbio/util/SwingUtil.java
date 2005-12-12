@@ -240,6 +240,11 @@ public abstract class SwingUtil {
       "Gatan Digital Micrograph images");
     filters.add(gatan);
 
+    // Image Cytometry Standard - bio/ICSForm
+    FileFilter ics = new ExtensionFileFilter("ics",
+      "Image Cytometry Standard images");
+    filters.add(ics);
+
     // Image-Pro Sequence - bio/ImageProSeqForm
     FileFilter seq = new ExtensionFileFilter("seq",
       "Image-Pro Sequence files");

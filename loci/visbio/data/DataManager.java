@@ -495,6 +495,7 @@ public class DataManager extends LogicManager {
     hm.addHelpTopic(s + "/Bio-Rad PIC", "biorad.html");
     hm.addHelpTopic(s + "/Deltavision", "deltavision.html");
     hm.addHelpTopic(s + "/Gatan Digital Micrograph", "gatan.html");
+    hm.addHelpTopic(s + "/Image Cytometry Standard", "ics.html");
     hm.addHelpTopic(s + "/Image-Pro Sequence", "imagepro_seq.html");
     hm.addHelpTopic(s + "/Image-Pro Workspace", "imagepro_ipw.html");
     hm.addHelpTopic(s + "/IPLab", "iplab.html");

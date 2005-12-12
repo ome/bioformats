@@ -233,7 +233,7 @@ public class ImageDownloader {
     if (criteria == null) return null;
     List l = null;
     try { l = df.retrieveList(Image.class, criteria); }
-    catch (Exception exc) { }
+    catch (Exception exc) { exc.printStackTrace(); }
     if (l == null) return null;
     Object[] obj = l.toArray();
     Image[] images = new Image[obj.length];

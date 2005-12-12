@@ -1,5 +1,7 @@
 v3.21 - Not yet released
 
+- ADDED: Support for Image Cytometry Standard (ICS) format
+
 - FIXED: LZW compression now uses horizontal differencing
 
 

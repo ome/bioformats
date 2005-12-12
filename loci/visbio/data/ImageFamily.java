@@ -79,6 +79,7 @@ public class ImageFamily extends FormNode implements FormBlockReader,
       new IPLabForm(), // proprietary
       new DeltavisionForm(), // proprietary
       new GatanForm(), // proprietary
+      new ICSForm(), // proprietary
       new LeicaForm(), // proprietary (companion file)
       new PerkinElmerForm(), // proprietary (companion files)
       new MetamorphForm(), // TIFF variant
@@ -344,6 +345,9 @@ public class ImageFamily extends FormNode implements FormBlockReader,
         }
         else if (list[ii] instanceof GatanForm) {
           format = "Gatan Digital Micrograph image";
+        }
+        else if (list[ii] instanceof ICSForm) {
+          format = "Image Cytometry Standard image";
         }
         else if (list[ii] instanceof LeicaForm) format = "Leica file";
         else if (list[ii] instanceof PerkinElmerForm) {
