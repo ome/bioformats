@@ -241,8 +241,8 @@ public abstract class SwingUtil {
     filters.add(gatan);
 
     // Image Cytometry Standard - bio/ICSForm
-    FileFilter ics = new ExtensionFileFilter("ics",
-      "Image Cytometry Standard images");
+    FileFilter ics = new ExtensionFileFilter(
+      new String[] {"ics", "ids"}, "Image Cytometry Standard images");
     filters.add(ics);
 
     // Image-Pro Sequence - bio/ImageProSeqForm
