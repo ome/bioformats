@@ -1,4 +1,9 @@
-v3.21 - Not yet released
+v3.22 - Not yet released
+
+- ADDED: Interface for computing transform results with external system calls
+
+
+v3.21 - Monday, December 12, 2005
 
 - ADDED: Support for Image Cytometry Standard (ICS) format
 

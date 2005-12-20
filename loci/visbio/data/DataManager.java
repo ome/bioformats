@@ -462,6 +462,7 @@ public class DataManager extends LogicManager {
     registerDataType(CollapseTransform.class, "Dimensional collapse");
     registerDataType(SpectralTransform.class, "Spectral mapping");
     registerDataType(ArbitrarySlice.class, "Arbitrary slice");
+    /*TEMP*/registerDataType(loci.visbio.ext.ExternalProgram.class, "External program");
 
     // menu items
     bio.setSplashStatus(null);
