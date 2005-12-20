@@ -28,9 +28,9 @@ default:
 	@echo "	make recompile	to compile recently altered java files"
 	@echo "	make clean	to remove class files"
 	@echo "	make jar	to create visbio.jar"
-	@echo "	make source	 to create visbio_src.jar"
-	@echo "	make docs	 to create visbio_docs.jar"
-	@echo " make visad  to create VisBio's visad.jar from VisAD source"
+	@echo "	make source	to create visbio_src.jar"
+	@echo "	make docs	to create visbio_docs.jar"
+	@echo "	make visad	to create VisBio's visad.jar from VisAD source"
 	@echo "	make all	compiles from scratch, then does jar, source and docs"
 	@echo ""
 
