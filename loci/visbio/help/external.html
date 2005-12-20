@@ -1,0 +1,74 @@
+<html><body><h2>External programs</h2>
+
+<p>VisBio has the ability to interface with certain external programs. If you
+have a routine written in C, C++ or some other language, you can set up an
+external program data object that takes an existing data object as input and
+generates output data by calling its associated external program for each image
+plane.
+
+<br><h3>Calling an external program from VisBio</h3>
+
+First, import your dataset as described in the
+<a href="import_data.html">Importing a dataset from disk</a> topic. Select your
+data from the list, then click the "Add &gt;" button and choose "External
+program" from the popup menu.
+
+<p>Type in the path to your program (relative or absolute; if it works
+from the command line, it should work within VisBio), then choose a name for
+the new object. VisBio will create another data object, a child of your
+original dataset, that represents the results of the program. VisBio will make
+a system call to your program for each image plane of the parent data object.
+
+<br><h3>Writing an external program for use in VisBio</h3>
+
+VisBio does not care how an external program is constructed (e.g., the language
+in which it is written, the libraries it uses, etc.), but it does expect the
+program to conform to certain rules. Your program must provide support for the
+three distinct scenarios in which it will be called:
+
+<p>First, VisBio calls "<code>/path/to/program --params</code>" to retrieve a
+list of parameters and their default values. It expects to see a series of
+lines on stdout, with the first line corresponding to the first parameter's
+name, the second to its default value, the third to the second parameter's
+name, and so on. Note that for maximum flexibility, all parameters are strings,
+but of course your program is free to parse the strings into some other format
+(the scale.cpp example program treats its two parameters as integers).
+
+<p>Secondly, VisBio calls "<code>/path/to/program --predict --width X --height
+Y --planes N A B C ...</code>" where X, Y and N represent the dimensions of an
+input image (X by Y resolution with N range components) and A, B, C, etc., are
+parameter values for the function. VisBio expects to see three lines on stdout
+corresponding to the X, Y and N dimensions of the output image that would be
+produced were an actual image to be passed in with the specified parameters.
+The purpose of requiring this functionality is to provide VisBio with a way to
+predict how big the output images will be for a given set of input images with
+certain parameter values. Note that VisBio requires that all output images be
+dimensioned the same for each given set of image dimensions and parameters.
+
+<p>Lastly, VisBio makes the actual call of "<code>/path/to/program --predict
+--width X --height Y --planes N A B C ...</code>" (the same as the second call,
+but without the "<code>--predict</code>" flag). With this syntax, your program
+should begin accepting little-endian binary floating point data on stdin,
+dimensioned according to the specified image dimensions, rasterized in NYX
+order. After performing its intended function on the input data, it should
+output the results to stdout in the same format.
+
+<p>VisBio comes with an example program written in C++, scale.cpp, that
+illustrates the above features.
+
+<br><h3>See also:</h3>
+
+<ul>
+  <li><a href="system_panel.html">System panel</a>
+    - controls for inspecting system information</li>
+  <li><a href="import_data.html">Importing a dataset from disk</a>
+    - to load a dataset into VisBio</li>
+  <li><a href="add_data.html">Add a data object</a>
+    - to create derivative data objects</li>
+  <li><a href="data_transforms.html">Data transforms</a>
+    - for an overview of data objects</li>
+  <li><a href="data_panel.html">Data panel</a>
+    - controls for managing data</li>
+</ul>
+
+<p>&nbsp;<p></body></html>
