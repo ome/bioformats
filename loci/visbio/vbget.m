@@ -7,5 +7,5 @@ function [result] = vbget(func, field, params)
 %  field  - VisAD FlatField from which to extract pixels for evaluation
 %
 %  params - vector (1D) with any extra parameters to pass to the function
-pix = loci.visbio.matlab.MatlabUtil.getImagePixels(field);
+pix = loci.visbio.ext.MatlabUtil.getImagePixels(field);
 result = feval(func, pix, params);
