@@ -33,8 +33,8 @@ import java.util.Vector;
 import javax.swing.*;
 import loci.visbio.data.DataManager;
 import loci.visbio.data.DataTransform;
+import loci.visbio.ext.ExtManager;
 import loci.visbio.help.HelpManager;
-import loci.visbio.matlab.MathManager;
 import loci.visbio.overlays.OverlayManager;
 import loci.visbio.ome.OMEImage;
 import loci.visbio.ome.OMEManager;
@@ -134,7 +134,7 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
         new HelpManager(this),
         new PanelManager(this),
         new DataManager(this),
-        new MathManager(this),
+        new ExtManager(this),
         new OMEManager(this),
         new DisplayManager(this),
         new OverlayManager(this),

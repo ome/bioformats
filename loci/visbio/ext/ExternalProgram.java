@@ -78,6 +78,11 @@ public class ExternalProgram extends ExternalFunction {
       String w = stdout.readLine();
       String h = stdout.readLine();
       String n = stdout.readLine();
+      try { p.waitFor(); }
+      catch (InterruptedException exc) { exc.printStackTrace(); }
+      int rval = p.exitValue();
+      if (rval != 0) {
+      }
       return new int[] {
         Integer.parseInt(w), Integer.parseInt(h), Integer.parseInt(n)
       };
@@ -111,14 +116,19 @@ public class ExternalProgram extends ExternalFunction {
 
   /** Evaluates the function for the given input data and parameter values. */
   public FlatField evaluate(FlatField input, String[] params) {
+    ImageTransform it = (ImageTransform) parent;
+    final int width = it.getImageWidth();
+    final int height = it.getImageHeight();
+    final int num = it.getRangeCount();
+
     String[] args = new String[7 + params.length];
     args[0] = function;
     args[1] = "--width";
-    args[2] = "" + resX;
+    args[2] = "" + width;
     args[3] = "--height";
-    args[4] = "" + resY;
+    args[4] = "" + height;
     args[5] = "--planes";
-    args[6] = "" + numRange;
+    args[6] = "" + num;
     System.arraycopy(params, 0, args, 7, params.length);
     try {
       Process p = rt.exec(args);
@@ -131,7 +141,6 @@ public class ExternalProgram extends ExternalFunction {
           try {
             while (true) {
               String line = stderr.readLine();
-              if (line == null) System.err.println("<END OF STDERR>");//TEMP
               if (line == null) break;
               System.err.println(line);
             }
@@ -147,11 +156,11 @@ public class ExternalProgram extends ExternalFunction {
         public void run() {
           try {
             // convert floats to byte array
-            System.err.println("Writing to stdin");//TEMP
-            byte[] bytes = new byte[4 * inVals.length * inVals[0].length];
+            int size = width * height;
+            byte[] bytes = new byte[4 * num * size];
             int c = 0;
-            for (int n=0; n<inVals.length; n++) {
-              for (int i=0; i<inVals[n].length; i++) {
+            for (int n=0; n<num; n++) {
+              for (int i=0; i<size; i++) {
                 int bits = Float.floatToRawIntBits(inVals[n][i]);
                 bytes[c++] = (byte) (bits & 0xff);
                 bytes[c++] = (byte) ((bits >> 8) & 0xff);
@@ -167,26 +176,35 @@ public class ExternalProgram extends ExternalFunction {
       }.start();
 
       // read results from stdout using a separate thread
+      final Object stdoutLock = new Object();
       final InputStream stdout = p.getInputStream();
       final byte[] results = new byte[4 * numRange * resY * resX];
-      new Thread("VisBio-" + name + "-stdout") {
+      Thread stdoutThread = new Thread("VisBio-" + name + "-stdout") {
         public void run() {
-          try {
-            int ndx = 0;
-            while (ndx < results.length) {
-              int r = stdout.read(results, ndx, results.length - ndx);
-              ndx += r;
+          synchronized (stdoutLock) {
+            try {
+              int ndx = 0;
+              while (ndx < results.length) {
+                ndx += stdout.read(results, ndx, results.length - ndx);
+              }
             }
+            catch (IOException exc) { exc.printStackTrace(); }
+            stdoutLock.notifyAll();
           }
-          catch (IOException exc) { exc.printStackTrace(); }
         }
-      }.start();
+      };
+
+      // wait for stdout results to finish
+      synchronized (stdoutLock) {
+        stdoutThread.start();
+        try { stdoutLock.wait(); }
+        catch (InterruptedException exc) { exc.printStackTrace(); }
+      }
 
       // wait for process to finish
-      try { p.waitFor(); }
-      catch (InterruptedException exc) { exc.printStackTrace(); }
-      int rval = p.exitValue();
-      System.err.println("EXIT VALUE IS " + rval);//TEMP
+      //try { p.waitFor(); }
+      //catch (InterruptedException exc) { exc.printStackTrace(); }
+      //int rval = p.exitValue();
 
       // convert results to floats
       float[][] outVals = new float[numRange][resY * resX];
@@ -212,9 +230,9 @@ public class ExternalProgram extends ExternalFunction {
       // wrap results in a flat field
       Set fset = input.getDomainSet();
       if (fset instanceof SampledSet) {
-        SampledSet ss = (SampledSet) fset;
-        float[] lo = ss.getLow();
-        float[] hi = ss.getHi();
+        //SampledSet ss = (SampledSet) fset;
+        float[] lo = {0, 0}; //ss.getLow();
+        float[] hi = {width - 1, height - 1}; //ss.getHi();
         fset = new Linear2DSet(fset.getType(), lo[0], hi[0], resX,
           hi[1], lo[1], resY, fset.getCoordinateSystem(),
           fset.getSetUnits(), fset.getSetErrors());
@@ -244,7 +262,7 @@ public class ExternalProgram extends ExternalFunction {
     String n = (String) JOptionPane.showInputDialog(dm.getControls(),
       "Transform name:", "Create external program transform",
       JOptionPane.INFORMATION_MESSAGE, null, null,
-      data.getName() + " " + func + " function");
+      data.getName() + " " + func + " external");
     if (n == null) return null;
 
     return new ExternalProgram(data, n, func);

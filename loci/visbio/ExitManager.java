@@ -119,7 +119,7 @@ public class ExitManager extends LogicManager implements WindowListener {
     bio.destroy();
 
     // HACK - don't force exit if VisBio was launched from within MATLAB
-    boolean force = loci.visbio.matlab.MatlabUtil.getMatlabVersion() == null;
+    boolean force = loci.visbio.ext.MatlabUtil.getMatlabVersion() == null;
     if (force) System.exit(0);
   }
 

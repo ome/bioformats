@@ -31,7 +31,7 @@ import java.awt.event.ActionListener;
 import java.util.Enumeration;
 import java.util.Properties;
 import javax.swing.*;
-import loci.visbio.matlab.MatlabUtil;
+import loci.visbio.ext.MatlabUtil;
 import loci.visbio.util.*;
 import visad.VisADException;
 import visad.data.qt.QTForm;

@@ -105,8 +105,8 @@ public abstract class ExternalFunction extends ImageTransform {
     int h = it.getImageHeight();
     int n = it.getRangeCount();
     int[] outDims = predict(w, h, n, params);
-    resY = outDims[0];
-    resX = outDims[1];
+    resX = outDims[0];
+    resY = outDims[1];
     numRange = outDims[2];
 
     // signal parameter change to listeners
