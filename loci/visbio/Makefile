@@ -93,8 +93,8 @@ DOCFLAGS = -source 1.4 $(DOC_LINKS) -d $(DOC_DIR) -J-Xmx$(DOC_MEM) -package \
 PACKAGES = \
 	loci.visbio \
 	loci.visbio.data \
+	loci.visbio.ext \
 	loci.visbio.help \
-	loci.visbio.matlab \
 	loci.visbio.ome \
 	loci.visbio.overlays \
 	loci.visbio.state \
@@ -127,6 +127,8 @@ SOURCE_FILES = \
 	loci/visbio/package.html \
 	loci/visbio/Makefile \
 	loci/visbio/*.txt \
+	loci/visbio/*.cpp \
+	loci/visbio/*.m \
 	$(RESOURCE_FILES)
 
 VISAD_PACKAGES = \
