@@ -9,10 +9,15 @@ import java.util.Hashtable;
 /**
  * OMESidePanel is the class that handles
  * the window alongside ImageJ.
+ *
  * @author Philip Huettl pmhuettl@wisc.edu
+ * @author Melissa Linkert, linkert at cs.wisc.edu
  */
-public class OMESidePanel implements ActionListener{
-  //Fields
+
+public class OMESidePanel implements ActionListener {
+  
+  // -- Fields --
+	
   private static JButton close, upload, download, refresh, edit;
   public static JDialog dia;
   public static boolean cancelPlugin;
@@ -20,27 +25,35 @@ public class OMESidePanel implements ActionListener{
   private static Frame parentWindow;
   private static ImagePlus[] imp;
   private static Hashtable table;
+
+  private static String serverName;
+  private static String username;
   
   //Constructor, sets up the dialog box
-  public OMESidePanel(Frame frame){
-    table=new Hashtable();
+  public OMESidePanel(Frame frame) {
+    table = new Hashtable();
+    // parent is ImageJ
+    parentWindow = frame;
+    cancelPlugin = false;
     
-    parentWindow=frame;
-    cancelPlugin=false;
     //creates the dialog box for searching for images
-    dia=new JDialog(frame, "OME Plugin", false);
-    JPanel pane=new JPanel();
+    dia = new JDialog(frame, "OME Plugin", false);
+    JPanel pane = new JPanel();
     pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
-
     pane.setBorder(new EmptyBorder(5,5,5,5));
+    
     //panels
-    JPanel paneR=new JPanel(), paneInfo=new JPanel(), paneButtons=
-    new JPanel(), paneUp=new JPanel(), paneTwo=new JPanel();
+    JPanel paneR = new JPanel();
+    JPanel paneInfo = new JPanel();
+    JPanel paneButtons = new JPanel();
+    JPanel paneUp = new JPanel();
+    JPanel paneTwo = new JPanel();
     paneTwo.setLayout(new BoxLayout(paneTwo, BoxLayout.X_AXIS));
     paneR.setLayout(new BoxLayout(paneR, BoxLayout.Y_AXIS));
     paneR.setAlignmentX(JPanel.CENTER_ALIGNMENT);
     paneInfo.setLayout(new BoxLayout(paneInfo, BoxLayout.X_AXIS));
-    paneInfo.setBorder(new CompoundBorder(new EtchedBorder(EtchedBorder.RAISED),new EmptyBorder(5,5,5,5)));
+    paneInfo.setBorder(new CompoundBorder(new EtchedBorder(
+      EtchedBorder.RAISED),new EmptyBorder(5,5,5,5)));
     paneButtons.setLayout(new BoxLayout(paneButtons, BoxLayout.X_AXIS));
     paneButtons.setBorder(new EmptyBorder(5,5,5,5));
     paneInfo.setAlignmentX(JPanel.CENTER_ALIGNMENT);
@@ -51,20 +64,20 @@ public class OMESidePanel implements ActionListener{
     pane.add(paneButtons);
     paneInfo.add(paneR);
     dia.setContentPane(pane);
+    
     //borders
-    EmptyBorder bordCombo=new EmptyBorder(1,0,4,0);
-    EmptyBorder bordText=new EmptyBorder(3,0,2,0);
+    EmptyBorder bordCombo = new EmptyBorder(1,0,4,0);
+    EmptyBorder bordText = new EmptyBorder(3,0,2,0);
 
-    close= new JButton("Close");
-    refresh=new JButton("Refresh");
+    close = new JButton("Close");
+    refresh = new JButton("Refresh");
     refresh.setAlignmentX(JButton.RIGHT_ALIGNMENT);
-    upload=new JButton("Download");
+    upload = new JButton("Download");
     upload.setAlignmentX(JButton.CENTER_ALIGNMENT);
-    download=new JButton("Upload");
+    download = new JButton("Upload");
     download.setAlignmentX(JButton.CENTER_ALIGNMENT);
-    edit=new JButton("Edit");
+    edit = new JButton("Edit");
     edit.setAlignmentX(JButton.CENTER_ALIGNMENT);
-//    edit.setEnabled(false);
     upload.setMinimumSize(download.getPreferredSize());
     close.setActionCommand("close");
     close.setAlignmentX(JPanel.CENTER_ALIGNMENT);
@@ -82,157 +95,170 @@ public class OMESidePanel implements ActionListener{
     download.addActionListener(this);
     refresh.addActionListener(this);
     edit.addActionListener(this);
+    
     //List
-    list=new JList();
+    list = new JList();
     list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     JScrollPane sp = new JScrollPane(list);
     sp.setAlignmentX(JScrollPane.CENTER_ALIGNMENT);
-    sp.setMinimumSize(new Dimension(150,125)); 
+    sp.setMinimumSize(new Dimension(500, 500)); 
     sp.setPreferredSize(sp.getMinimumSize());
     paneR.add(sp);
     paneR.add(paneTwo);
     paneTwo.add(download);
     paneTwo.add(edit);
     dia.pack();
-    edgeWindow(frame, dia);
-  }//end of public constructor
-  
-  //Methods
-  /**shows and retrieves info from the SidePanel*/
-  public void showIt(){
-    int[] openpics=WindowManager.getIDList();
-    if ( openpics==null) {
-      openpics=new int[0];
+    centerWindow(frame, dia);
+  }
+ 
+  /** shows and retrieves info from the SidePanel */
+  public void showIt() {
+    int[] openpics = WindowManager.getIDList();
+
+    if (openpics == null) {
+      openpics = new int[0];
     }
-    imp=new ImagePlus[openpics.length];
-    String[] titles=new String[openpics.length];
-    for ( int i=0;i<openpics.length ;i++ ) {
-      imp[i]=WindowManager.getImage(openpics[i]);
-      titles[i]=imp[i].getTitle();
-      int ijimage=imp[i].getID();
+    
+    imp = new ImagePlus[openpics.length];
+    String[] titles = new String[openpics.length];
+    for (int i=0; i<openpics.length; i++) {
+      imp[i] = WindowManager.getImage(openpics[i]);
+      titles[i] = imp[i].getTitle();
+      int ijimage = imp[i].getID();
+  
       if (!table.containsKey(new Integer(ijimage))) {
         boolean xalan = false;
         IJ.showStatus("Attempting to find xml class...");
         try {
-          Class c = Class.forName("javax.xml.transform.TransformerFactory");
-          if (c != null) xalan = true;
-        }
-        catch (NoClassDefFoundError exc) { }
-        catch (ClassNotFoundException ex){}
-        if ( xalan) {
-          // this works when readTiff is a static method of XMLUtils
+         Class c = Class.forName("javax.xml.transform.TransformerFactory");
+         if (c != null) xalan = true;
+       }
+       catch (NoClassDefFoundError exc) { }
+       catch (ClassNotFoundException ex) { }
+       if (xalan) {
           try {
-            //Class myXMLclass = Class.forName("XMLUtils");
-            //Method m = myXMLclass.getMethod("readTiff", new Class[] {Integer.class});
-            //IJ.showStatus("Ready to read xml in tiff header.");
-            OMEMetaDataHandler.exportMeta(ijimage);
-            
-            //m.invoke(null, new Object[] {new Integer(ijimage)});
-            
-            
-            //old method
-            //readTiff(ijimage);
+	    OMEMetaDataHandler.exportMeta(ijimage); 
           }
           catch (Exception exc) { 
             exc.printStackTrace();
             IJ.showStatus("Error reading xml code.");
           }
-        }else{
+        }
+	else{
           IJ.showStatus("Java 1.4 required to retrieve OME metadata.");
-          //OMELoginPanel.infoShow(IJ.getInstance(),
-          //"Java 1.4 required to retrieve OME metadata.",
-          //"OME Download");
         }
       }
     }
     list.setListData(titles);
     dia.show();
-    if ( cancelPlugin) return;
-  }//end of showIt method
-  
+    if (cancelPlugin) return;
+  }
    
   /** puts the given window at the edge of the specified parent window. */
-  private void edgeWindow(Window parent, Window window) {
+  public static void centerWindow(Window parent, Window window) {
     Point loc = parent.getLocation();
     Dimension p = parent.getSize();
     Dimension w = window.getSize();
-    int x = loc.x + p.width;
-    int y = loc.y + p.height;
+    int x = loc.x + (p.width - w.width) / 2;
+    int y = loc.y + (p.height - w.height) / 2;
     if (x < 0) x = 0;
     if (y < 0) y = 0;
     window.setLocation(x, y);
-  }//end of centerWindow method
+  }
   
-  /**implements the ActionListener actionPerformed method*/
-  public void actionPerformed(ActionEvent e){
-    if ( "upload".equals(e.getActionCommand())) {
-      OMEDownload omed=new OMEDownload();
+  /** implements the ActionListener actionPerformed method */
+  public void actionPerformed(ActionEvent e) {
+    if ("upload".equals(e.getActionCommand())) {
+      OMEDownload omed = new OMEDownload();
       omed.run(this);
       showIt();
-    }else if ("download".equals(e.getActionCommand()) ) {
-      if ( list.getSelectedIndex()!=-1) {
-        OMEUpload omeu=new OMEUpload();
-        int x=list.getSelectedIndex();
-        if ( table.containsKey(new Integer(imp[x].getID()))) {
+    }
+    else if ("download".equals(e.getActionCommand())) {
+      if (list.getSelectedIndex() != -1) {
+        OMEUpload omeu = new OMEUpload();
+        int x = list.getSelectedIndex();
+        if (table.containsKey(new Integer(imp[x].getID()))) {
           omeu.run(imp[x], getImageMeta(imp[x].getID()));
-        }else omeu.run(imp[x], null);
-      }else{
+        }
+	else omeu.run(imp[x], null);
+      }
+      else {
         JOptionPane.showMessageDialog(parentWindow,
-        "Please select an image to export to OME.",
-        "OME Plugin",JOptionPane.INFORMATION_MESSAGE);
+          "Please select an image to export to OME.",
+          "OME Plugin",JOptionPane.INFORMATION_MESSAGE);
         showIt();
       }
-    }else if("refresh".equals(e.getActionCommand())) {
+    }
+    else if("refresh".equals(e.getActionCommand())) {
       showIt();
-    }else if ("edit".equals(e.getActionCommand())) {
-      int z=list.getSelectedIndex();
-      if ( z!=-1) {
-        int y= imp[z].getID();
-        OMEMetaPanel meta=new OMEMetaPanel(parentWindow, y, (Object[])getImageMeta(y));
+    }
+    else if ("edit".equals(e.getActionCommand())) {
+      int z = list.getSelectedIndex();
+      if (z != -1) {
+        int y = imp[z].getID();
+        OMEMetaPanel meta = new OMEMetaPanel(parentWindow, y, 
+	  (Object[]) getImageMeta(y));
         meta.show();
-      }else {
+      }
+      else {
         JOptionPane.showMessageDialog(parentWindow,
-        "Please select an image to edit.",
-        "OME Plugin",JOptionPane.INFORMATION_MESSAGE);
+          "Please select an image to edit.",
+          "OME Plugin",JOptionPane.INFORMATION_MESSAGE);
         showIt();
       }
-    }else{
-      boolean bol=yesNo(parentWindow, "Are you sure you want to exit?");
-      if ( bol) {
-        cancelPlugin=true;
+    }
+    else{
+      boolean bol = yesNo(parentWindow, "Are you sure you want to exit?");
+      if (bol) {
+        cancelPlugin = true;
         dia.dispose();
-      }else showIt();
+      }
+      else showIt();
     }
-  }//end of actionPerformed method
+  }
   
-  /**pops up Yes no dialog window*/
-  public static boolean yesNo(Frame owner, String question){
-    int n= JOptionPane.showConfirmDialog(owner, question,"OME Plugin",
-    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-    
-    if ( n==JOptionPane.YES_OPTION) {
-      return true;
-    }else return false;
-  }//end of yesNo method
+  /** pops up Yes no dialog window */
+  public static boolean yesNo(Frame owner, String question) {
+    int n = JOptionPane.showConfirmDialog(owner, question, "OME Plugin",
+      JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+    return (n == JOptionPane.YES_OPTION);
+  }
   
-  /**adds the information to the table to upload the image back to OME*/
-  public static void hashInImage(int ijid, Object[] ob){
+  /** adds the information to the table to upload the image back to OME */
+  public static void hashInImage(int ijid, Object[] ob) {
     table.put(new Integer(ijid), ob);
-  }//end of hashInImage method
+  }
   
-  /**gets the OME image ID from the corresponding imagePlus ID from imageJ*/
-  private int getOmeID(int ijID){
-    Object[] ob=(Object[])table.get(new Integer(ijID));
-    if ( ob[0]!=null) {
+  /** gets the OME image ID from the corresponding imagePlus ID from imageJ */
+  private int getOmeID(int ijID) {
+    Object[] ob = (Object[]) table.get(new Integer(ijID));
+    if (ob[0] != null) {
       return ((Integer)ob[0]).intValue();
-    }else{
-      return 0;
     }
-  }//end of getOmeID method
+    else return 0; 
+  }
   
-  /**returns the metadata array for an imagePlus ID*/
-  public static Object[] getImageMeta(int ijID){
-    return (Object[])table.get(new Integer(ijID));
-  }//end of getImageMeta method
+  /** returns the metadata array for an imagePlus ID */
+  public static Object[] getImageMeta(int ijID) {
+    return (Object[]) table.get(new Integer(ijID));
+  }
 
-}//end of OMESidePanel class
+  // -- Utility methods --
+  
+  public static String getServer() {
+    return serverName;
+  }
+
+  public static String getUser() {
+    return username;
+  }
+
+  public static void setServer(String newServer) {
+    serverName = newServer;
+  }
+
+  public static void setUser(String newUser) {
+    username = newUser;
+  }  
+  
+}

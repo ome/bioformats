@@ -2,13 +2,16 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
+
 /**
  * OMELoginPanel is the class that handles
  * the window used to obtain the information
  * needed to log into the OME database.
  * @author Philip Huettl pmhuettl@wisc.edu
+ * @author Melissa Linkert linkert at cs.wisc.edu
  */
-public class OMELoginPanel implements ActionListener{
+
+public class OMELoginPanel implements ActionListener {
   //Fields
   private JButton ok, cancels;
   private JDialog in;
@@ -16,46 +19,49 @@ public class OMELoginPanel implements ActionListener{
   private JPasswordField passField;
   public boolean cancelPlugin;
   
-  /**Constructor, sets up the dialog box*/
-  public OMELoginPanel(Frame frame){
-    cancelPlugin=false;
+  /** Constructor, sets up the dialog box */
+  public OMELoginPanel(Frame frame) {
+    cancelPlugin = false;
     //Creates the Dialog Box for getting OME login information
-    in=new JDialog(frame, "OME Login", true);
-    JPanel input1=new JPanel(), input=new JPanel(), input2=new JPanel(),
-    input3=new JPanel();
+    in = new JDialog(frame, "OME Login", true);
+    JPanel input1 = new JPanel();
+    JPanel input = new JPanel();
+    JPanel input2 = new JPanel();
+    JPanel input3 = new JPanel();
     input1.setLayout(new BoxLayout(input1, BoxLayout.Y_AXIS));
-    //GridBagLayout gbl=new GridBagLayout();
     input.setLayout(new BoxLayout(input, BoxLayout.X_AXIS));
     input2.setLayout(new BoxLayout(input2, BoxLayout.Y_AXIS));
     input3.setLayout(new BoxLayout(input3, BoxLayout.Y_AXIS));
     input1.add(input);
     input.add(input2);
     input.add(input3);
-    EmptyBorder bord=new EmptyBorder(5,5,5,5);
-    passField = new JPasswordField("",8);//insert here password
-    servField= new JTextField("",8);//insert here server
-    useField= new JTextField("",8);//insert here user
+    EmptyBorder bord = new EmptyBorder(5,5,5,5);
+    passField = new JPasswordField("",30);  // insert password here
+    servField = new JTextField(OMESidePanel.getServer(), 30); 
+    useField = new JTextField(OMESidePanel.getUser(), 30);  // insert user here
     passField.setPreferredSize(passField.getMinimumSize());
-    passField.setMaximumSize(new Dimension(passField.getMaximumSize().width,passField.getPreferredSize().height));
+    passField.setMaximumSize(new Dimension(passField.getMaximumSize().width, 
+      passField.getPreferredSize().height));
     servField.setPreferredSize(servField.getMinimumSize());
-    servField.setMaximumSize(new Dimension(servField.getMaximumSize().width,servField.getPreferredSize().height));
+    servField.setMaximumSize(new Dimension(servField.getMaximumSize().width,
+      servField.getPreferredSize().height));
     useField.setPreferredSize(useField.getMinimumSize());
-    useField.setMaximumSize(new Dimension(useField.getMaximumSize().width,useField.getPreferredSize().height));
-    JLabel ser=new JLabel("Server: ", JLabel.TRAILING);
+    useField.setMaximumSize(new Dimension(useField.getMaximumSize().width,
+      useField.getPreferredSize().height));
+    JLabel ser = new JLabel("Server: ", JLabel.TRAILING);
     ser.setAlignmentX(JLabel.RIGHT);
     ser.setAlignmentY(JLabel.TOP);
-    //ser.setBorder(new EmptyBorder(2,2,1,1));
     ser.setPreferredSize(ser.getMinimumSize());
     input2.add(ser);
     input3.add(servField);
-    JLabel use=new JLabel("Username: ", JLabel.TRAILING);
+    JLabel use = new JLabel("Username: ", JLabel.TRAILING);
     use.setAlignmentX(JLabel.RIGHT);
     use.setAlignmentY(JLabel.TOP);
     use.setBorder(new EmptyBorder(2,2,1,1));
     use.setPreferredSize(use.getMinimumSize());
     input2.add(use);
     input3.add(useField);    
-    JLabel pas=new JLabel("Password: ", JLabel.TRAILING);
+    JLabel pas = new JLabel("Password: ", JLabel.TRAILING);
     pas.setAlignmentX(JLabel.RIGHT);
     pas.setAlignmentY(JLabel.TOP);
     pas.setBorder(new EmptyBorder(2,1,1,1));
@@ -63,11 +69,12 @@ public class OMELoginPanel implements ActionListener{
     input2.add(pas);
     input3.add(passField);    
     in.setContentPane(input1);
-    JButton ok= new JButton("OK"), cancels=new JButton("Cancel");
+    ok = new JButton("OK");
+    cancels = new JButton("Cancel");
     ok.setMnemonic(KeyEvent.VK_ENTER);
     ok.setActionCommand("OK");
     cancels.setActionCommand("cancels");
-    JPanel paneBut=new JPanel();
+    JPanel paneBut = new JPanel();
     paneBut.setLayout(new BoxLayout(paneBut,BoxLayout.X_AXIS));
     paneBut.add(ok);
     paneBut.add(cancels);
@@ -76,55 +83,46 @@ public class OMELoginPanel implements ActionListener{
     ok.addActionListener(this);
     input1.setBorder(bord);    
     in.pack();
-    centerWindow(frame, in);
-  }//end of public constructor
+    OMESidePanel.centerWindow(frame, in);
+  }
   
-  //Methods
-  /** Centers the given window within the specified parent window. */
-  private void centerWindow(Window parent, Window window) {
-    Point loc = parent.getLocation();
-    Dimension p = parent.getSize();
-    Dimension w = window.getSize();
-    int x = loc.x + (p.width - w.width) / 2;
-    int y = loc.y + (p.height - w.height) / 2;
-    if (x < 0) x = 0;
-    if (y < 0) y = 0;
-    window.setLocation(x, y);
-  }//end of centerWindow method
-  
-  /**implements the ActionListener actionPerformed method*/
-  public void actionPerformed(ActionEvent e){
+  /** implements the ActionListener actionPerformed method */
+  public void actionPerformed(ActionEvent e) {
     if ("OK".equals(e.getActionCommand())) {
-      cancelPlugin=false;
+      cancelPlugin = false;
       in.hide();
-    }else{
-      cancelPlugin=true;
+    }
+    else{
+      cancelPlugin = true;
       in.dispose();
     }
-  }//end of actionPerformed method
+  }
   
-  /**produces an error notification popup with the inputted text*/
-  public static void infoShow(Frame frame, String s, String x){
+  /** produces an error notification popup with the inputted text */
+  public static void infoShow(Frame frame, String s, String x) {
     JOptionPane.showMessageDialog(frame,s,x,JOptionPane.INFORMATION_MESSAGE);
-  }//end of error method
+  }
   
-  /**Method that retrieves the information to log onto the OME server*/
-  public String[] getInput(boolean b){
-    boolean error=false;
-    if ( b) {
-      OMEDownPanel.error((Frame)in.getOwner(),"The login information is not valid.",
-      "Input Error");
+  /** Method that retrieves the information to log onto the OME server */
+  public String[] getInput(boolean b) {
+    boolean error = false;
+    if (b) {
+      OMEDownPanel.error((Frame)in.getOwner(),
+        "The login information is not valid.", "Input Error");
     }
-    cancelPlugin=true;
+    cancelPlugin = true;
     in.show();
-    if ( cancelPlugin) return null;
+    if (cancelPlugin) return null;
     //checks and puts results into an array
-    String[] results=new String[3];
+    String[] results = new String[3];
     try {
-       String server=servField.getText(), f=new String(passField.getPassword()),
-       x=useField.getText();
-       if ( server.equals("")||f.equals("")||x.equals("")) {
-         error=true;
+       OMESidePanel.setServer(servField.getText());
+       OMESidePanel.setUser(useField.getText());
+       String server = servField.getText();
+       String f = new String(passField.getPassword());
+       String x = useField.getText();
+       if (server.equals("") || f.equals("") || x.equals("")) {
+         error = true;
        }
        if (server.startsWith("http:")) {
         server = server.substring(5);
@@ -135,17 +133,17 @@ public class OMELoginPanel implements ActionListener{
        int colon = server.indexOf(":");
        if (colon >= 0) server = server.substring(0, colon);
        server = "http://" + server + "/shoola/";
-       results[0]=server;
-       results[1]=x;
-       results[2]=f;
+       results[0] = server;
+       results[1] = x;
+       results[2] = f;
     }
     catch (NullPointerException e) {
-      error=true;
+      error = true;
     }
-    if ( error) {
+    if (error) {
       return getInput(true);
     }
     return results;
-  }//end of getInput method
+  }
   
-}//end of OMEDownPanel class
+}
