@@ -9,7 +9,7 @@ import loci.ome.xml.*;
 import org.w3c.dom.*;
 import java.util.*;
 import javax.swing.tree.DefaultMutableTreeNode;
-import java.lang.reflect.Constructor;
+import java.lang.reflect.*;
 
 /**
  * OMEMetaDataHandler is the class that handles the download of metadata 
@@ -25,10 +25,9 @@ public class OMEMetaDataHandler {
   private static ImageProcessor imageP;
   private static boolean isXML;
   private static OMENode omeNode;
-
+  private static DefaultMutableTreeNode defaultNode;
    
   /**Method that begins the process of getting metadata from an OME_TIFF file*/
-  /*
   public static DefaultMutableTreeNode exportMeta(Image image, 
       ImagePlus imagePlus, DataFactory df) {
 
@@ -36,45 +35,16 @@ public class OMEMetaDataHandler {
     isXML = false;
     omeNode = null;
 
+    IJ.showStatus("Metadata is being put into tree structure.");
     DefaultMutableTreeNode root = 
       new DefaultMutableTreeNode(new XMLObject("OME-XML"));
-    DefaultMutableTreeNode imageNode = addImage(image, df);
-    root.add(imageNode);
-
-    DefaultMutableTreeNode customNode = 
-      new DefaultMutableTreeNode(new XMLObject(XMLObject.CUSTOMHEADING));
-    imageNode.add(customNode);
-
-    for(int i=0; i<OMEMetaPanel.IMAGE_TYPES.length; i++) {
-      Criteria criteria = new Criteria();
-      criteria.addWantedField("image_id");
-      criteria.addFilter("image_id", (new Integer(image.getID())).toString());
-      List customs = null;
-      try {
-        customs = df.retrieveList(OMEMetaPanel.IMAGE_TYPES[i], criteria);
-      }
-      catch(Exception e) { 
-        e.printStackTrace();
-	IJ.showStatus("Error while retrieving " + 
-	  OMEMetaPanel.IMAGE_TYPES[i] + "s.");
-      }
-
-      if(customs != null) {
-        Iterator itCustoms = customs.iterator();
-	while(itCustoms.hasNext()) {
-	  addSomething(itCustoms.next(), customNode, df, 
-	    OMEMetaPanel.IMAGE_TYPES[i]);
-	}
-      }
-    }
+    addDb(image, root, df, "Image"); 
+    defaultNode = root;
     return root;
   } 
-  */
    
   /**Method that begins the process of getting metadata from an OME_TIFF file*/
   public static void exportMeta(int ijimageID) {
-    // TODO: rewrite this method to parse metadata from the OME database
-
     isXML = true;
     imageP = WindowManager.getImage(ijimageID).getProcessor();
     IJ.showStatus("Retrieving OME-TIFF header.");
@@ -97,7 +67,7 @@ public class OMEMetaDataHandler {
         meta = new Object[2];
         meta[0] = new Integer(0);
       }
-      meta[1] = null;
+      meta[1] = defaultNode;
       OMESidePanel.hashInImage(ijimageID, meta);
       return;
     }
@@ -134,149 +104,7 @@ public class OMEMetaDataHandler {
       new XMLObject("OME-XML"));
     OMESidePanel.hashInImage(ijimageID, meta);
     IJ.showStatus("Metadata is being put into tree structure.");
-    addSomething(omeNode, (DefaultMutableTreeNode) meta[1], null, "OME");
-  }
-  
-  /** method that creates the image nodes in the metadata tree */
-  private static DefaultMutableTreeNode addImage(Image image, DataFactory df) {
-    DefaultMutableTreeNode imageNode = new DefaultMutableTreeNode(
-      new XMLObject(XMLObject.IMAGEHEADING));
-    addSomething(image, imageNode, df, "Image");
-    return imageNode;
-  }
-  
-  /** exports DisplayOptions from the database and adds to the tree */
-  private static void addDisplayOptions(DisplayOptions element, 
-      DefaultMutableTreeNode root, DataFactory df) {
-  
-    IJ.showStatus("Retrieving Display Options attributes.");
-    if(element == null) return;
-    if(df != null) {
-      //setup and load the columns that this element has
-      String [] attrs = {"BlueChannel", "ColorMap","DisplayROIList",
-        "GreenChannel", "GreyChannel", "Pixels", "RedChannel", "TStart",
-        "TStop", "Zoom", "ZStart", "ZStop", "BlueChannelOn", "DisplayRGB",
-        "GreenChannelOn", "RedChannelOn"};
-      Criteria criteria = OMEDownload.makeAttributeFields(attrs);
-      criteria.addWantedField("id");
-      criteria.addFilter("id", (new Integer(element.getID())).toString());
-      //retrieve element to add with all columns loaded
-      element = (DisplayOptions)df.retrieve("DisplayOptions", criteria);
-    }
-    //add attributes to this element's node
-    DefaultMutableTreeNode node = new DefaultMutableTreeNode(
-      new XMLObject("DisplayOptions", XMLObject.ELEMENT));
-    root.add(node);
-    node.add(new DefaultMutableTreeNode(new XMLObject("ColorMap",
-      element.getColorMap(), XMLObject.ATTRIBUTE)));
-    node.add(new DefaultMutableTreeNode(new XMLObject("TStart",
-      "" + element.getTStart(), XMLObject.ATTRIBUTE)));
-    node.add(new DefaultMutableTreeNode(new XMLObject("TStop",
-      "" + element.getTStop(), XMLObject.ATTRIBUTE)));
-    node.add(new DefaultMutableTreeNode(new XMLObject("Zoom",
-      "" + element.getZoom(), XMLObject.ATTRIBUTE)));
-    node.add(new DefaultMutableTreeNode(new XMLObject("ZStart",
-      "" + element.getZStart(), XMLObject.ATTRIBUTE)));
-    node.add(new DefaultMutableTreeNode(new XMLObject("ZStop",
-      "" + element.getZStop(), XMLObject.ATTRIBUTE)));
-    node.add(new DefaultMutableTreeNode(new XMLObject("DisplayRGB",
-      "" + element.isDisplayRGB(), XMLObject.ATTRIBUTE)));
-    node.add(new DefaultMutableTreeNode(new XMLObject("RedChannelOn",
-      "" + element.isRedChannelOn(), XMLObject.ATTRIBUTE)));
-    node.add(new DefaultMutableTreeNode(new XMLObject("GreenChannelOn",
-      "" + element.isGreenChannelOn(), XMLObject.ATTRIBUTE)));
-    node.add(new DefaultMutableTreeNode(new XMLObject("BlueChannelOn",
-      "" + element.isBlueChannelOn(), XMLObject.ATTRIBUTE)));
-    if (element.getPixels() == null);
-    else if(element.getPixels() instanceof Pixels) {
-      node.add(new DefaultMutableTreeNode(new XMLObject(
-        "Pixels", "" + ((Pixels)element.getPixels()).getID(),
-        XMLObject.ATTRIBUTE)));
-    }
-    else {
-      node.add(new DefaultMutableTreeNode(new XMLObject(
-        "Pixels", "" + element.getPixels().getID(), XMLObject.ATTRIBUTE)));
-    }
-    //get children of this element
-    DefaultMutableTreeNode red = new DefaultMutableTreeNode(
-      new XMLObject("RedChannel"));
-    DefaultMutableTreeNode green = new DefaultMutableTreeNode(
-      new XMLObject("GreenChannel"));
-    DefaultMutableTreeNode blue = new DefaultMutableTreeNode(
-      new XMLObject("BlueChannel"));
-    DefaultMutableTreeNode grey = new DefaultMutableTreeNode(
-      new XMLObject("GreyChannel"));
-    
-    double[] redd = addDisplayChannel(element.getRedChannel(), red, df);
-    double[] greend = addDisplayChannel(element.getGreenChannel(), green, df);
-    double[] blued = addDisplayChannel(element.getBlueChannel(), blue, df);
-    double[] greyd = addDisplayChannel(element.getGreyChannel(), grey, df);
-    if (!red.isLeaf()) node.add(red);
-    if (!green.isLeaf()) node.add(green);
-    if (!blue.isLeaf()) node.add(blue);
-    if (!grey.isLeaf()) node.add(grey);
-    //set display characteristics in ImageJ from display channel values
-    if (greyd != null) {
-      imageP.setMinAndMax(greyd[0], greyd[1]);
-      imageP.gamma(greyd[2]);
-    }
-    else if(redd!=null) {
-      imageP.setMinAndMax(redd[0], redd[1]);
-      imageP.gamma(redd[2]);
-    }
-    else if(blued != null) {
-      imageP.setMinAndMax(blued[0], blued[1]);
-      imageP.gamma(blued[2]);
-    }
-    else if(greend != null) {
-      imageP.setMinAndMax(greend[0], greend[1]);
-      imageP.gamma(greend[2]);
-    }
-  }
-  
-  /**
-   * exports DisplayChannel from the database, adds it to the tree and 
-   * returns the black level, white level, and gamma of the channel
-   */
-  private static double[] addDisplayChannel(DisplayChannel element, 
-      DefaultMutableTreeNode root, DataFactory df) {
-    IJ.showStatus("Retrieving Display Channel attributes.");
-    if(element == null) return null;
-    if(df != null) {
-      //setup and load the columns that this element has
-      String [] attrs = {"BlackLevel", "ChannelNumber", "Gamma", "WhiteLevel"};
-      Criteria criteria = OMEDownload.makeAttributeFields(attrs);
-      criteria.addWantedField("id");
-      criteria.addFilter("id", (new Integer(element.getID())).toString());
-      //retrieve element to add with all columns loaded
-      element = (DisplayChannel)df.retrieve("DisplayChannel", criteria);
-    }
-    //add attributes to this element's node
-    DefaultMutableTreeNode node = new DefaultMutableTreeNode(
-      new XMLObject("DisplayChannel", XMLObject.ELEMENT));
-    root.add(node);
-    //get levels for display in ImageJ
-    Double black = element.getBlackLevel(), white = element.getWhiteLevel();
-    Float gamma = element.getGamma();
-    double [] levels = new double[3];
-    if(black == null || white == null || gamma == null) {
-      levels = null;
-    }
-    else {
-      levels[0] = black.doubleValue();
-      levels[1] = white.doubleValue();
-      levels[2] = gamma.doubleValue();
-    }
-    
-    node.add(new DefaultMutableTreeNode(new XMLObject("ChannelNumber",
-      "" + element.getChannelNumber(), XMLObject.ATTRIBUTE)));
-    node.add(new DefaultMutableTreeNode(new XMLObject("Gamma",
-      "" + gamma, XMLObject.ATTRIBUTE)));
-    node.add(new DefaultMutableTreeNode(new XMLObject("WhiteLevel",
-      "" + white, XMLObject.ATTRIBUTE)));
-    node.add(new DefaultMutableTreeNode(new XMLObject("BlackLevel",
-      "" + black, XMLObject.ATTRIBUTE)));
-    return levels;
+    addDisk(omeNode, (DefaultMutableTreeNode) meta[1], null, "OME");
   }
   
   private static void exportMeta(Feature feature, DefaultMutableTreeNode root,
@@ -304,7 +132,7 @@ public class OMEMetaDataHandler {
     
     Iterator iterTra = trajects.iterator();
     while (iterTra.hasNext()) {
-      addSomething((Trajectory)iterTra.next(), featureNode, df, "Trajectory");
+      addDisk((Trajectory)iterTra.next(), featureNode, df, "Trajectory");
     }
     //add attributes to this element's node
     if(df != null) {
@@ -326,13 +154,13 @@ public class OMEMetaDataHandler {
         if(customs != null) {
           Iterator itCustoms = customs.iterator();
           while (itCustoms.hasNext()) {
-	    addSomething(itCustoms.next(), featureNode, df, 
+	    addDisk(itCustoms.next(), featureNode, df, 
 	      OMEMetaPanel.FEATURE_TYPES[i]);
           }
         }
       }
     }
-    else addSomething(feature, featureNode, df, "Feature");
+    else addDisk(feature, featureNode, df, "Feature");
     //add child features to tree
     List features = feature.getChildren();
     Iterator iter = features.iterator();
@@ -340,10 +168,107 @@ public class OMEMetaDataHandler {
       exportMeta((Feature)iter.next(), featureNode, df);
     }
   }
- 
-  private static void addSomething(Object element, DefaultMutableTreeNode root,
-    DataFactory df, String identifier) {
 
+
+  private static void addDb(Object element, DefaultMutableTreeNode root,
+      DataFactory df, String identifier) {
+    IJ.showStatus("Retrieving " + identifier + " attributes.");
+    if(element == null) return;
+
+    try {
+      Class elementClass = element.getClass();
+      Method[] methods = elementClass.getDeclaredMethods();
+      Vector newMethods = new Vector();
+     
+      for(int i=0; i<methods.length; i++) {
+	String name = methods[i].getName();
+	if((name.indexOf("get") != -1) && (name.indexOf("DTO") == -1) &&
+	  (name.indexOf("Inserted") == -1) && 
+	  (name.indexOf("DataDirectory") == -1) && 
+	  (name.indexOf("Institution") == -1) && 
+	  (name.indexOf("Email") == -1) && 
+	  (!name.substring(3).equals("Group")) &&
+	  (name.indexOf("Chars") == -1) && (name.indexOf("Long") == -1)) {
+          newMethods.add(methods[i]);
+        }
+      }
+
+      Method[] getMethods = new Method[newMethods.size()];
+      newMethods.copyInto(getMethods);
+
+      Vector getChildMethods = new Vector();
+      Vector getAttrMethods = new Vector();
+
+      for(int i=0; i<getMethods.length; i++) {
+        if(isChildMethod(getMethods[i])) {
+          getChildMethods.add(getMethods[i]);
+        }
+        else {
+          getAttrMethods.add(getMethods[i]);
+        }
+      }
+
+      // get the attribute values
+
+      String[] values = new String[getAttrMethods.size()];
+      for(int i=0; i<values.length; i++) {
+        try {
+          values[i] = "" + 
+	    ((Method) getAttrMethods.get(i)).invoke(element, new Object[0]);
+      
+	}
+	catch(Throwable e) { }  
+      }	
+
+      String[] attrs = new String[getAttrMethods.size()];
+      for(int i=0; i<attrs.length; i++) {
+        String name = ((Method) getAttrMethods.get(i)).getName();
+        attrs[i] = name.substring(3);
+      }
+      
+      DefaultMutableTreeNode node = new DefaultMutableTreeNode(new XMLObject(
+        identifier, XMLObject.ELEMENT));
+      root.add(node);
+
+      if(getAttrMethods.size() > 0) {
+        for(int i=0; i<attrs.length; i++) {
+          node.add(new DefaultMutableTreeNode(new XMLObject(attrs[i],
+            values[i], XMLObject.ATTRIBUTE)));
+        }
+      }
+
+      // process child nodes
+
+      for(int i=0; i<getChildMethods.size(); i++) {
+	String name = ((Method) getChildMethods.get(i)).getName();
+	name = name.substring(3);
+	try {
+          addDb(((Method) getChildMethods.get(i)).invoke(
+	    element, new Object[0]), node, df, name);	    
+	}
+	catch(InvocationTargetException e) { }
+      }
+    }
+    catch(Throwable t) { }
+  }
+  
+
+  /**
+   * Determine whether a method will return an attribute value or a child node.
+   * If the method returns a String or primitive type, then we assume it returns
+   * an attribute value; else it returns a child node.
+   */
+
+  private static boolean isChildMethod(Method method) {
+    Class rtn = method.getReturnType();
+    String name = method.getName(); 
+    return !(rtn.isPrimitive() || rtn.isInstance(new String("test")) || 
+      name.substring(3).startsWith("Size"));
+  }
+ 
+
+  private static void addDisk(Object element, DefaultMutableTreeNode root,
+    DataFactory df, String identifier) {
     IJ.showStatus("Retrieving " + identifier + " attributes.");
     if(element == null) return;
 
@@ -427,7 +352,7 @@ public class OMEMetaDataHandler {
     
     if(tempChilds != null) {
       for(int i=0; i<childs.length; i++) {
-        addSomething(childs[i], node, df, names[i]);
+        addDisk(childs[i], node, df, names[i]);
       }
     }  
   }

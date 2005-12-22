@@ -61,7 +61,7 @@ public class OMEUpload {
     // choose the 4th dimension
     GenericDialog gc = new GenericDialog("OME image export");
     Panel p = new Panel();
-    String[] domains = new String[] {"Time", "Space"};
+    String[] domains = {"Time", "Space"};
     gc.addChoice("Stack Domain:", domains, "Time");
     gc.showDialog();
     cancelPlugin = gc.wasCanceled();

@@ -491,7 +491,7 @@ public class OMEDownload {
     }
     catch(ImageServerException e) {
       OMEDownPanel.error(IJ.getInstance(),
-      "There was an error downloading the image.\n" + e.toString(), 
+        "There was an error downloading the image.\n" + e.toString(), 
         "Download Error");
       cancelPlugin = true;
       e.printStackTrace();
@@ -504,13 +504,13 @@ public class OMEDownload {
     //retrieve metadata
     Object[] metas = new Object[2];
     metas[0] = new Integer(image.getID());
-//    if (OMESidePanel.yesNo(IJ.getInstance(),
-//        "Would you like to download\nmetadata associated with the\n" + 
-//        "image " + image.getName() + " along with\n" + 
-//        "the pixels?  (It takes a bit longer.)")) {
-//      IJ.showStatus("Retrieving metadata...");
-//      metas[1]=OMEMetaDataHandler.exportMeta(image, imageP, df);
-//    }
+    if (OMESidePanel.yesNo(IJ.getInstance(),
+        "Would you like to download\nmetadata associated with the\n" + 
+        "image " + image.getName() + " along with\n" + 
+        "the pixels?  (It takes a bit longer.)")) {
+      IJ.showStatus("Retrieving metadata...");
+      metas[1] = OMEMetaDataHandler.exportMeta(image, imageP, df);
+    }
     OMESidePanel.hashInImage(image.getID(), metas);
     IJ.showStatus("Displaying Image");
     imageP.updateAndDraw();
