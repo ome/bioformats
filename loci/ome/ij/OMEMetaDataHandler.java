@@ -78,6 +78,7 @@ public class OMEMetaDataHandler {
       }
       meta[1] = defaultNode;
       OMESidePanel.hashInImage(ijimageID, meta);
+      defaultNode = null;
       return;
     }
     // check if white is zero and if true invert the bits
@@ -99,6 +100,7 @@ public class OMEMetaDataHandler {
       }
       meta[1] = null;
       OMESidePanel.hashInImage(ijimageID, meta);
+      defaultNode = null;
       return;
     }
     if (meta == null) {
