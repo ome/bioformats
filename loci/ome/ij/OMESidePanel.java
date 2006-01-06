@@ -56,8 +56,6 @@ public class OMESidePanel implements ActionListener {
       EtchedBorder.RAISED),new EmptyBorder(5,5,5,5)));
     paneButtons.setLayout(new BoxLayout(paneButtons, BoxLayout.X_AXIS));
     paneButtons.setBorder(new EmptyBorder(5,5,5,5));
-    paneInfo.setAlignmentX(JPanel.CENTER_ALIGNMENT);
-    paneButtons.setAlignmentX(JPanel.LEFT_ALIGNMENT);
     paneUp.setBorder(new EmptyBorder(2,2,2,2));
     pane.add(paneUp);
     pane.add(paneInfo);
@@ -71,16 +69,11 @@ public class OMESidePanel implements ActionListener {
 
     close = new JButton("Close");
     refresh = new JButton("Refresh");
-    refresh.setAlignmentX(JButton.RIGHT_ALIGNMENT);
     upload = new JButton("Download");
-    upload.setAlignmentX(JButton.CENTER_ALIGNMENT);
     download = new JButton("Upload");
-    download.setAlignmentX(JButton.CENTER_ALIGNMENT);
     edit = new JButton("Edit");
-    edit.setAlignmentX(JButton.CENTER_ALIGNMENT);
     upload.setMinimumSize(download.getPreferredSize());
     close.setActionCommand("close");
-    close.setAlignmentX(JPanel.CENTER_ALIGNMENT);
     upload.setActionCommand("upload");
     download.setActionCommand("download");
     refresh.setActionCommand("refresh");
@@ -89,7 +82,6 @@ public class OMESidePanel implements ActionListener {
     paneUp.setMaximumSize(paneUp.getPreferredSize());
     paneButtons.add(refresh);
     paneButtons.add(close);
-    paneButtons.setAlignmentX(JPanel.CENTER_ALIGNMENT);
     close.addActionListener(this);
     upload.addActionListener(this);
     download.addActionListener(this);
@@ -100,7 +92,6 @@ public class OMESidePanel implements ActionListener {
     list = new JList();
     list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     JScrollPane sp = new JScrollPane(list);
-    sp.setAlignmentX(JScrollPane.CENTER_ALIGNMENT);
     sp.setMinimumSize(new Dimension(500, 500)); 
     sp.setPreferredSize(sp.getMinimumSize());
     paneR.add(sp);
@@ -169,13 +160,13 @@ public class OMESidePanel implements ActionListener {
   /** implements the ActionListener actionPerformed method */
   public void actionPerformed(ActionEvent e) {
     if ("upload".equals(e.getActionCommand())) {
-      OMEDownload omed = new OMEDownload();
+      OMETools omed = new OMETools();
       omed.run(this);
       showIt();
     }
     else if ("download".equals(e.getActionCommand())) {
       if (list.getSelectedIndex() != -1) {
-        OMEUpload omeu = new OMEUpload();
+        OMETools omeu = new OMETools();
         int x = list.getSelectedIndex();
         if (table.containsKey(new Integer(imp[x].getID()))) {
           omeu.run(imp[x], getImageMeta(imp[x].getID()));
@@ -235,7 +226,7 @@ public class OMESidePanel implements ActionListener {
     if (ob[0] != null) {
       return ((Integer)ob[0]).intValue();
     }
-    else return 0; 
+    return 0; 
   }
   
   /** returns the metadata array for an imagePlus ID */

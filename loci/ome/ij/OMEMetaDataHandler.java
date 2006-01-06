@@ -14,19 +14,27 @@ import java.lang.reflect.*;
 /**
  * OMEMetaDataHandler is the class that handles the download of metadata 
  * from the database associated with an image and OME.  It also handles the 
- * sifting of XML meta-data in the header of an OME-TIFF file.
+ * sifting of XML metadata in the header of an OME-TIFF file.
  *
  * @author Philip Huettl pmhuettl@wisc.edu
  * @author Melissa Linkert, linkert at cs.wisc.edu
  */
 
 public class OMEMetaDataHandler {
-  
+ 
+  // -- Constants --
+
+  public static final String[] FEATURE_TYPES = {"Bounds", "Extent", "Location",
+    "Ratio","Signal","Threshold", "Timepoint"};
+
+  // -- Fields --
+	
   private static ImageProcessor imageP;
   private static boolean isXML;
   private static OMENode omeNode;
   private static DefaultMutableTreeNode defaultNode;
-   
+  private static int omeID; 
+  
   /**Method that begins the process of getting metadata from an OME_TIFF file*/
   public static DefaultMutableTreeNode exportMeta(Image image, 
       ImagePlus imagePlus, DataFactory df) {
@@ -34,6 +42,7 @@ public class OMEMetaDataHandler {
     imageP = imagePlus.getProcessor();
     isXML = false;
     omeNode = null;
+    omeID = image.getID();
 
     IJ.showStatus("Metadata is being put into tree structure.");
     DefaultMutableTreeNode root = 
@@ -84,10 +93,6 @@ public class OMEMetaDataHandler {
     }
     catch (Exception e) {
       IJ.showStatus("Error parsing OME-XML metadata, possibly not present.");
-      /* 
-       * Don't print stack trace, this is a legal thing, 
-       * you don't have to have an OME tiff file,  its just cooler if you do.
-       */
       if (meta == null) {
         meta = new Object[2];
          meta[0] = new Integer(0);
@@ -136,26 +141,24 @@ public class OMEMetaDataHandler {
     }
     //add attributes to this element's node
     if(df != null) {
-      for (int i=0; i<OMEMetaPanel.FEATURE_TYPES.length; i++) {
+      for (int i=0; i<FEATURE_TYPES.length; i++) {
         Criteria criteria = new Criteria();
         criteria.addWantedField("feature_id");
         criteria.addFilter("feature_id", (new Integer(
 	  feature.getID())).toString());
-        IJ.showStatus("Retrieving " + OMEMetaPanel.FEATURE_TYPES[i] + "s.");
+        IJ.showStatus("Retrieving " + FEATURE_TYPES[i] + "s.");
         List customs = null;
         try {
-          customs = df.retrieveList(OMEMetaPanel.FEATURE_TYPES[i], criteria);
+          customs = df.retrieveList(FEATURE_TYPES[i], criteria);
         }
 	catch(Exception e) {
           e.printStackTrace();
-          IJ.showStatus("Error while retrieving " + 
-	    OMEMetaPanel.FEATURE_TYPES[i] + "s.");
+          IJ.showStatus("Error while retrieving " + FEATURE_TYPES[i] + "s.");
         }
         if(customs != null) {
           Iterator itCustoms = customs.iterator();
           while (itCustoms.hasNext()) {
-	    addDisk(itCustoms.next(), featureNode, df, 
-	      OMEMetaPanel.FEATURE_TYPES[i]);
+	    addDisk(itCustoms.next(), featureNode, df, FEATURE_TYPES[i]);
           }
         }
       }
@@ -169,30 +172,40 @@ public class OMEMetaDataHandler {
     }
   }
 
-
+  /**
+   * Add an element's attributes and children to the metadata tree.
+   * This method is only called if we are working with an image from the OME
+   * database (requires OME-Java).
+   */
   private static void addDb(Object element, DefaultMutableTreeNode root,
       DataFactory df, String identifier) {
     IJ.showStatus("Retrieving " + identifier + " attributes.");
     if(element == null) return;
-
+    if(identifier.equals("DTOType")) return;
     try {
       Class elementClass = element.getClass();
       Method[] methods = elementClass.getDeclaredMethods();
       Vector newMethods = new Vector();
-     
+      Vector attrNames = new Vector();
+      
       for(int i=0; i<methods.length; i++) {
 	String name = methods[i].getName();
-	if((name.indexOf("get") != -1) && (name.indexOf("DTO") == -1) &&
-	  (name.indexOf("Inserted") == -1) && 
-	  (name.indexOf("DataDirectory") == -1) && 
-	  (name.indexOf("Institution") == -1) && 
-	  (name.indexOf("Email") == -1) && 
-	  (!name.substring(3).equals("Group")) &&
-	  (name.indexOf("Chars") == -1) && (name.indexOf("Long") == -1)) {
-          newMethods.add(methods[i]);
-        }
+	// if this is an attribute method, we get the name right away
+	if((name.indexOf("get") != -1)) {
+	  newMethods.add(methods[i]);
+	  if(!isChildMethod(methods[i])) {
+            attrNames.add(name.substring(3));
+	  }
+	}	
       }
 
+      String[] attrs = new String[attrNames.size()];
+      attrNames.copyInto(attrs);
+      Criteria c = OMERetrieve.makeAttributeFields(attrs);
+      c.addWantedField("id");
+      c.addFilter("id", (new Integer(omeID)).toString());
+      if(!inBanList(identifier)) element = df.retrieve(identifier, c);
+      
       Method[] getMethods = new Method[newMethods.size()];
       newMethods.copyInto(getMethods);
 
@@ -220,11 +233,7 @@ public class OMEMetaDataHandler {
 	catch(Throwable e) { }  
       }	
 
-      String[] attrs = new String[getAttrMethods.size()];
-      for(int i=0; i<attrs.length; i++) {
-        String name = ((Method) getAttrMethods.get(i)).getName();
-        attrs[i] = name.substring(3);
-      }
+      // add each attribute to the root node
       
       DefaultMutableTreeNode node = new DefaultMutableTreeNode(new XMLObject(
         identifier, XMLObject.ELEMENT));
@@ -232,8 +241,10 @@ public class OMEMetaDataHandler {
 
       if(getAttrMethods.size() > 0) {
         for(int i=0; i<attrs.length; i++) {
-          node.add(new DefaultMutableTreeNode(new XMLObject(attrs[i],
-            values[i], XMLObject.ATTRIBUTE)));
+          if(!inBanList(attrs[i])) {    
+            node.add(new DefaultMutableTreeNode(new XMLObject(attrs[i],
+              values[i], XMLObject.ATTRIBUTE)));
+	  }  
         }
       }
 
@@ -251,7 +262,6 @@ public class OMEMetaDataHandler {
     }
     catch(Throwable t) { }
   }
-  
 
   /**
    * Determine whether a method will return an attribute value or a child node.
@@ -265,13 +275,29 @@ public class OMEMetaDataHandler {
     return !(rtn.isPrimitive() || rtn.isInstance(new String("test")) || 
       name.substring(3).startsWith("Size"));
   }
- 
 
+  /**
+   * Make sure that the object type is valid.
+   */
+  private static boolean inBanList(String id) {
+    String[] ban = {"Image", "DTOType", "Datasets", "Features", "Owner", 
+      "DefaultPixels", "ClassLoader", "DTOTypeName"};
+    for(int i=0; i<ban.length; i++) {
+      if(id.equals(ban[i])) return true;
+    }  
+    return false;
+  }	  
+
+  /**
+   * Add an element's attributes and children to the metadata tree.
+   * This method is only called if we are working with an image stored on 
+   * disk (requires LOCI's OME-XML package).
+   */
   private static void addDisk(Object element, DefaultMutableTreeNode root,
     DataFactory df, String identifier) {
     IJ.showStatus("Retrieving " + identifier + " attributes.");
     if(element == null) return;
-
+    
     OMEXMLNode xml = null;
     if(!element.toString().startsWith("[")) {
       xml = (OMEXMLNode) element;
@@ -332,7 +358,7 @@ public class OMEMetaDataHandler {
     catch(Throwable t) { }
 
     if(df != null && tempAttrs != null) {
-      Criteria criteria = OMEDownload.makeAttributeFields(tempAttrs);
+      Criteria criteria = OMERetrieve.makeAttributeFields(tempAttrs);
       criteria.addWantedField("id");
       criteria.addFilter("id", (new Integer(
         ((ImageGroup) element).getID())).toString());

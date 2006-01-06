@@ -15,21 +15,6 @@ import java.awt.event.*;
  */
 public class OMEMetaPanel implements ActionListener, TreeSelectionListener {
   
-  // -- Constants --
-	
-  public static final String[] IMAGE_TYPES = {"Dimensions", "DisplayOptions",
-    "ImageAnnotation",  "ImageExperiment", "ImageGroup", "ImageInstrument",
-    "ImagePlate", "ImageTestSignature", "ImagingEnvironment",  
-    "PlaneCentroid", "PlaneGeometricMean", "PlaneGeometricSigma", 
-    "PlaneMaximum", "PlaneMean", "PlaneMinimum", "PlaneSigma", "PlaneSum_i", 
-    "PlaneSum_i2", "PlaneSum_log_i", "PlaneSum_Xi", "PlaneSum_Yi", 
-    "PlaneSum_Zi", "StackCentroid", "StackGeometricMean", "StackGeometricSigma",
-    "StackMaximum", "StackMean", "StackMinimum", "StackSigma", "StageLabel",  
-    "Thumbnail", "Classification"};
-  
-  public static final String[] FEATURE_TYPES = {"Bounds", "Extent", "Location", 
-    "Ratio","Signal","Threshold", "Timepoint"};
-
   // -- Fields --
   
   private JButton cancel;
@@ -56,7 +41,7 @@ public class OMEMetaPanel implements ActionListener, TreeSelectionListener {
     
     tree = new JTree(root);
     tree.getSelectionModel().setSelectionMode
-            (TreeSelectionModel.SINGLE_TREE_SELECTION);
+      (TreeSelectionModel.SINGLE_TREE_SELECTION);
     tree.addTreeSelectionListener(this);
     JScrollPane treeView = new JScrollPane(tree);
     treeView.setPreferredSize(new Dimension(400, 400));

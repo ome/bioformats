@@ -36,16 +36,13 @@ public class OMELoginPanel implements ActionListener {
     input.add(input2);
     input.add(input3);
     EmptyBorder bord = new EmptyBorder(5,5,5,5);
-    passField = new JPasswordField("",30);  // insert password here
+    passField = new JPasswordField("", 30);  // insert password here
     servField = new JTextField(OMESidePanel.getServer(), 30); 
     useField = new JTextField(OMESidePanel.getUser(), 30);  // insert user here
-    passField.setPreferredSize(passField.getMinimumSize());
     passField.setMaximumSize(new Dimension(passField.getMaximumSize().width, 
       passField.getPreferredSize().height));
-    servField.setPreferredSize(servField.getMinimumSize());
     servField.setMaximumSize(new Dimension(servField.getMaximumSize().width,
       servField.getPreferredSize().height));
-    useField.setPreferredSize(useField.getMinimumSize());
     useField.setMaximumSize(new Dimension(useField.getMaximumSize().width,
       useField.getPreferredSize().height));
     JLabel ser = new JLabel("Server: ", JLabel.TRAILING);

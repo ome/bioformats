@@ -10,7 +10,9 @@ import java.util.ArrayList;
  * OMETablePanel is the class that handles
  * the table used in displaying the images
  * selectable for download.
+ * 
  * @author Philip Huettl pmhuettl@wisc.edu
+ * @author Melissa Linkert, linkert at cs.wisc.edu
  */
 public class OMETablePanel implements ActionListener {
   
@@ -23,7 +25,8 @@ public class OMETablePanel implements ActionListener {
   private JPanel paneR, paneThumb;
   private Object[][] extra;
   private JTextArea own, typ, c1, t1, x1, y1, z1, des, thumb;
-
+  private JTextArea[] areas;
+  
   // -- Constructor --
 
   public OMETablePanel(Frame frame, Object[][] tableData, String[] columnNames,
@@ -65,14 +68,14 @@ public class OMETablePanel implements ActionListener {
     
     paneR.add(paneThumb);
     paneR.add(paneOwner);
-    JLabel owner = new JLabel("Owner: ", JLabel.RIGHT),
-    type = new JLabel("Image Type: ", JLabel.RIGHT),
-    c = new JLabel("Size C: ", JLabel.RIGHT),
-    t = new JLabel("Size T: ", JLabel.RIGHT),
-    x = new JLabel("Size X: ", JLabel.RIGHT),
-    y = new JLabel("Size Y: ", JLabel.RIGHT),
-    z = new JLabel("Size Z: ", JLabel.RIGHT),
-    descrip = new JLabel("Description: ", JLabel.RIGHT);
+    JLabel owner = new JLabel("Owner: ", JLabel.RIGHT);
+    JLabel type = new JLabel("Image Type: ", JLabel.RIGHT);
+    JLabel c = new JLabel("Size C: ", JLabel.RIGHT);
+    JLabel t = new JLabel("Size T: ", JLabel.RIGHT);
+    JLabel x = new JLabel("Size X: ", JLabel.RIGHT);
+    JLabel y = new JLabel("Size Y: ", JLabel.RIGHT);
+    JLabel z = new JLabel("Size Z: ", JLabel.RIGHT);
+    JLabel descrip = new JLabel("Description: ", JLabel.RIGHT);
     owner.setMinimumSize(new Dimension(15, 2));
     type.setMinimumSize(new Dimension(15, 2));
     c.setMinimumSize(new Dimension(10, 2));
@@ -82,61 +85,33 @@ public class OMETablePanel implements ActionListener {
     z.setMinimumSize(new Dimension(10, 2));
     descrip.setMinimumSize(new Dimension(20, 2));
 
-    own = new JTextArea("", 1,6);
-    typ = new JTextArea("", 1,6);
-    c1 = new JTextArea("", 1,6);
-    t1 = new JTextArea("", 1,6);
-    x1 = new JTextArea("", 1,6);
-    y1 = new JTextArea("", 1,6);
-    z1 = new JTextArea("",1,6);
-    des = new JTextArea("", 2, 6);
+    areas = new JTextArea[] {own, typ, c1, t1, x1, y1, z1, des};
+    for(int i=0; i<areas.length; i++) {
+      areas[i] = new JTextArea("", 1, 6);
+      areas[i].setEditable(false);
+    }
+
     thumb = new JTextArea(2,15);
-    des.setLineWrap(true);
+    areas[areas.length-1].setLineWrap(true);
     thumb.setLineWrap(true);
-    des.setWrapStyleWord(true);
+    areas[areas.length-1].setWrapStyleWord(true);
     thumb.setWrapStyleWord(true);
-    own.setEditable(false);
-    typ.setEditable(false);
-    c1.setEditable(false);
-    t1.setEditable(false);
-    x1.setEditable(false);
-    y1.setEditable(false);
-    z1.setEditable(false);
-    des.setEditable(false);
     thumb.setEditable(false);
+	    
     Dimension thsize = new Dimension(300,100);
     thumb.setMinimumSize(thsize);
     thumb.setMaximumSize(thsize);
 
     JScrollPane desScroll = new JScrollPane(des);
-    paneOwner.add(owner, e);
-    paneOwner.add(own, d);
-    e.gridy++;
-    d.gridy++;
-    paneOwner.add(type, e);
-    paneOwner.add(typ,d);
-    e.gridy++;
-    d.gridy++;
-    paneOwner.add(c,e);
-    paneOwner.add(c1,d);
-    e.gridy++;
-    d.gridy++;
-    paneOwner.add(t,e);
-    paneOwner.add(t1,d);
-    e.gridy++;
-    d.gridy++;
-    paneOwner.add(x,e);
-    paneOwner.add(x1,d);
-    e.gridy++;
-    d.gridy++;
-    paneOwner.add(y,e);
-    paneOwner.add(y1,d);
-    e.gridy++;
-    d.gridy++;
-    paneOwner.add(z,e);
-    paneOwner.add(z1,d);
-    e.gridy++;
-    d.gridy++;
+   
+    JLabel[] labels = {owner, type, c, t, x, y, z};
+    for(int i=0; i<labels.length; i++) {
+      paneOwner.add(labels[i], e);
+      paneOwner.add(areas[i], d);
+      e.gridy++;
+      d.gridy++;
+    }	    
+    
     e.gridheight = 2;
     e.weighty = 2;
     d.gridheight = 2;
@@ -252,27 +227,17 @@ public class OMETablePanel implements ActionListener {
         paneThumb.add(thumb);
         thumb.setText("Java 1.4 required to display thumbnail.");
       }
-      own.setText((String) extra[row][1]); 
-      typ.setText((String) extra[row][2]);
-      c1.setText((String) extra[row][3]);
-      t1.setText((String) extra[row][4]);
-      x1.setText((String) extra[row][5]);
-      y1.setText((String) extra[row][6]);
-      z1.setText((String) extra[row][7]);
-      des.setText((String) extra[row][8]);
+      for(int i=0; i<areas.length; i++) {
+        areas[i].setText((String) extra[row][i+1]);
+      }	
     }
     else {
       paneThumb.add(thumb);
       thumb.setText("");
-      own.setText(""); 
-      typ.setText("");
-      c1.setText("");
-      t1.setText("");
-      x1.setText("");
-      y1.setText("");
-      z1.setText("");
-      des.setText("");
-    }
+      for(int i=0; i<areas.length; i++) {
+        areas[i].setText(""); 
+      }
+    }  
   }
   
   /** Method that gets the images checked in the table to download to ImageJ */

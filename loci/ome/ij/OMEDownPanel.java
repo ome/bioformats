@@ -29,19 +29,17 @@ public class OMEDownPanel implements ActionListener {
     pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
     panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
     //labels
-    JLabel enter = new JLabel("Specify search criteria");
-    enter.setAlignmentX(Component.CENTER_ALIGNMENT);
-    JLabel enter1 = new JLabel("of the image you wish to");
-    enter1.setAlignmentX(Component.CENTER_ALIGNMENT);
-    JLabel enter2 = new JLabel("upload into ImageJ.");
-    enter2.setAlignmentX(Component.CENTER_ALIGNMENT);
+    JLabel enter = new JLabel("Specify search criteria", SwingConstants.CENTER);
+    JLabel enter1 = new JLabel("of the image you wish to", 
+      SwingConstants.CENTER);
+    JLabel enter2 = new JLabel("download into ImageJ.", SwingConstants.CENTER);
     panel.setMinimumSize(new Dimension(500, 500));
     pane.add(panel);
     pane.setMinimumSize(new Dimension(500, 500));
     panel.add(enter);
     panel.add(enter1);
     panel.add(enter2);
-    pane.setBorder(new EmptyBorder(5,5,5,5));
+    pane.setBorder(new EmptyBorder(3,3,3,3));
     //panels
     JPanel paneL = new JPanel();
     JPanel paneR = new JPanel();
@@ -51,14 +49,11 @@ public class OMEDownPanel implements ActionListener {
     paneR.setLayout(new BoxLayout(paneR, BoxLayout.Y_AXIS));
     paneInfo.setLayout(new BoxLayout(paneInfo, BoxLayout.X_AXIS));
     paneInfo.setBorder(new CompoundBorder(new EtchedBorder(EtchedBorder.RAISED),
-      new EmptyBorder(5,5,5,5)));
-    paneButtons.setLayout(new BoxLayout(paneButtons, BoxLayout.X_AXIS));
-    paneButtons.setBorder(new EmptyBorder(5,5,5,5));
+      new EmptyBorder(3,3,3,3)));
+    paneButtons.setBorder(new EmptyBorder(3,3,3,3));
     paneInfo.setAlignmentX(JPanel.LEFT_ALIGNMENT);
     paneButtons.setAlignmentX(JPanel.LEFT_ALIGNMENT);
     pane.add(paneInfo);
-    paneInfo.setAlignmentX(Component.CENTER_ALIGNMENT);
-    paneButtons.setAlignmentX(Component.CENTER_ALIGNMENT);
     pane.add(paneButtons);
     paneInfo.add(paneL);
     paneInfo.add(paneR);
@@ -67,9 +62,8 @@ public class OMEDownPanel implements ActionListener {
     EmptyBorder bordCombo = new EmptyBorder(1,0,4,0);
     EmptyBorder bordText = new EmptyBorder(3,0,2,0);
     //more components
-    JLabel lproj = new JLabel("Project:");
+    JLabel lproj = new JLabel("Project:", SwingConstants.RIGHT);
     lproj.setBorder(bordCombo);
-    lproj.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
     paneL.add(lproj);
     String[] projectS = new String[projects.length+1];
     projectS[0]="All";
@@ -80,9 +74,8 @@ public class OMEDownPanel implements ActionListener {
     cproj.setAlignmentX(JComponent.LEFT_ALIGNMENT);
     cproj.setMinimumSize(new Dimension(50, 10));
     paneR.add(cproj);
-    JLabel lowner = new JLabel("Owner:");
+    JLabel lowner = new JLabel("Owner:", SwingConstants.RIGHT);
     lowner.setBorder(bordCombo);
-    lowner.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
     paneL.add(lowner);
     String[] ownerS = new String[owners[0].length+1];
     ownerS[0] = "All";
@@ -97,9 +90,8 @@ public class OMEDownPanel implements ActionListener {
     id = new JTextField(5);
     id.setMinimumSize(new Dimension(50, 10));
     id.setAlignmentX(JComponent.LEFT_ALIGNMENT);
-    JLabel label = new JLabel("Image ID:");
+    JLabel label = new JLabel("Image ID:", SwingConstants.RIGHT);
     label.setBorder(bordText);
-    label.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
     paneL.add(label);
     paneL.setBorder(new EmptyBorder(5,5,5,5));
     paneR.add(id);
@@ -108,9 +100,8 @@ public class OMEDownPanel implements ActionListener {
     name.setMinimumSize(new Dimension(50, 10));
     name.setAlignmentX(JComponent.LEFT_ALIGNMENT);
     paneR.add(name);
-    JLabel lname = new JLabel("Image Name:");
+    JLabel lname = new JLabel("Image Name:", SwingConstants.RIGHT);
     lname.setBorder(bordText);
-    lname.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
     paneL.add(lname);
     
     search = new JButton("Search");
