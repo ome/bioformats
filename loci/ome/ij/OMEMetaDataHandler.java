@@ -113,10 +113,9 @@ public class OMEMetaDataHandler {
     IJ.showStatus("Metadata is being put into tree structure.");
     addDisk(omeNode, (DefaultMutableTreeNode) meta[1], null, "OME");
   }
-  
+ 
   private static void exportMeta(Feature feature, DefaultMutableTreeNode root,
     DataFactory df) {
-    
     IJ.showStatus("Retrieving Feature attributes.");
     DefaultMutableTreeNode featureNode = new DefaultMutableTreeNode(
       new XMLObject(XMLObject.FEATUREHEADING));

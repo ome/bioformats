@@ -57,7 +57,7 @@ import javax.swing.table.*;
  * @author Brendon McLean 
  * @author Dan van Enckevort
  * @author Parwinder Sekhon
- * @version 2.0 02/27/04
+ * @author Melissa Linkert
  */
 
 public class TableSorter extends AbstractTableModel {
@@ -78,6 +78,16 @@ public class TableSorter extends AbstractTableModel {
     }
   };
 
+  public static final Comparator NUMERIC_COMPARATOR = new Comparator() {
+    public int compare(Object o1, Object o2) {
+      int one = Integer.parseInt(o1.toString());
+      int two = Integer.parseInt(o2.toString());
+      if(one < two) return -1;
+      else if(one == two) return 0;
+      return 1;
+    }
+  };  
+  
   private static final Directive EMPTY_DIRECTIVE = 
     new Directive(DESCENDING, NOT_SORTED);
 
@@ -93,6 +103,8 @@ public class TableSorter extends AbstractTableModel {
   private Map columnComparators = new HashMap();
   private List sortingColumns = new ArrayList();
 
+  private boolean[] isNumeric;
+  
   // -- Constructors --
   
   public TableSorter() {
@@ -112,6 +124,14 @@ public class TableSorter extends AbstractTableModel {
   }
 
   // -- TableSorter API methods --
+ 
+  public void setNumeric(boolean[] numeric) {
+    isNumeric = numeric;
+  }	 
+
+  public boolean[] getNumeric() {
+    return isNumeric;
+  }     
   
   private void clearSortingState() {
     viewToModel = null;
@@ -223,6 +243,7 @@ public class TableSorter extends AbstractTableModel {
     if (comparator != null) {
       return comparator;
     }
+    if(isNumeric[column]) return NUMERIC_COMPARATOR;
     if (Comparable.class.isAssignableFrom(columnType)) {
       return COMPARABLE_COMPARATOR;
     }
@@ -346,8 +367,9 @@ public class TableSorter extends AbstractTableModel {
       
       if (e.getFirstRow() == TableModelEvent.HEADER_ROW) {
         cancelSorting();
+	fireTableDataChanged();
         fireTableChanged(e);
-         return;
+        return;
       }
 
       // We can map a cell event through to the view without widening      
@@ -371,13 +393,15 @@ public class TableSorter extends AbstractTableModel {
       // it this class can end up re-sorting on alternate cell updates - 
       // which can be a performance problem for large tables. The last 
       // clause avoids this problem. 
-     
+    
       int column = e.getColumn();
+
       if (e.getFirstRow() == e.getLastRow()
           && column != TableModelEvent.ALL_COLUMNS
           && getSortingStatus(column) == NOT_SORTED
           && modelToView != null) {
         int viewIndex = getModelToView()[e.getFirstRow()];
+	fireTableDataChanged();
         fireTableChanged(new TableModelEvent(TableSorter.this, 
           viewIndex, viewIndex, column, e.getType()));
         return;

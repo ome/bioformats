@@ -681,7 +681,7 @@ public class OMETools {
     //table array
     Object[][] props = new Object[ima.length][4];
     //details array
-    Object[][] details = new Object[ima.length][9];
+    Object[][] details = new Object[ima.length][10];
     //build a hashtable of experimenters to display names
     String[][] expers = OMERetrieve.retrieveExperimenters(df);
     Hashtable hm = new Hashtable(expers.length);
@@ -719,6 +719,7 @@ public class OMETools {
       details[i][5] = p.getSizeX().toString();
       details[i][6] = p.getSizeY().toString();
       details[i][7] = p.getSizeZ().toString();
+      details[i][9] = String.valueOf(ima[i].getID());
     }
     String[] columns = {"","Name","ID","Date Created"};
 

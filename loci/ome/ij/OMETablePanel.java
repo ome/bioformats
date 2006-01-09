@@ -26,12 +26,14 @@ public class OMETablePanel implements ActionListener {
   private Object[][] extra;
   private JTextArea own, typ, c1, t1, x1, y1, z1, des, thumb;
   private JTextArea[] areas;
+  private String[] columns;
   
   // -- Constructor --
 
   public OMETablePanel(Frame frame, Object[][] tableData, String[] columnNames,
       Object[][] details) {
-	  
+	 
+    columns = columnNames;	  
     cancelPlugin = false;
     //Creates the Dialog Box for getting OME login information
     dialog = new JDialog(frame, "Search Results", true);
@@ -85,16 +87,18 @@ public class OMETablePanel implements ActionListener {
     z.setMinimumSize(new Dimension(10, 2));
     descrip.setMinimumSize(new Dimension(20, 2));
 
-    areas = new JTextArea[] {own, typ, c1, t1, x1, y1, z1, des};
+    areas = new JTextArea[] {own, typ, c1, t1, x1, y1, z1};
     for(int i=0; i<areas.length; i++) {
       areas[i] = new JTextArea("", 1, 6);
       areas[i].setEditable(false);
     }
 
     thumb = new JTextArea(2,15);
-    areas[areas.length-1].setLineWrap(true);
+    des = new JTextArea("", 2, 6);
+    des.setEditable(false);
+    des.setLineWrap(true);
     thumb.setLineWrap(true);
-    areas[areas.length-1].setWrapStyleWord(true);
+    des.setWrapStyleWord(true);
     thumb.setWrapStyleWord(true);
     thumb.setEditable(false);
 	    
@@ -127,9 +131,19 @@ public class OMETablePanel implements ActionListener {
     JLabel label = new JLabel("Select which image(s) to download to ImageJ.");
     label.setAlignmentX(JLabel.CENTER_ALIGNMENT);
     mainpane.add(label);
+    
     //create table
-    MyTableModel tableModel = new MyTableModel(tableData, columnNames);
-    sorter = new TableSorter(tableModel); 
+    MyTableModel tableModel = new MyTableModel(tableData, columns);
+    sorter = new TableSorter(tableModel);
+    
+    // set whether each column is numerically sorted
+    boolean[] isNumeric = new boolean[columns.length];
+    for(int i=0; i<isNumeric.length; i++) {
+      if(columns[i].equals("ID")) isNumeric[i] = true;
+      else isNumeric[i] = false;
+    }	   
+    sorter.setNumeric(isNumeric);
+   
     table = new JTable(sorter);
     table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     
@@ -141,11 +155,17 @@ public class OMETablePanel implements ActionListener {
 
         ListSelectionModel lsm = (ListSelectionModel)e.getSource();
         if (lsm.isSelectionEmpty()) {
-          setPane(-1);
+          setPane("-1");
         } 
         else {
           int selectedRow = lsm.getMinSelectionIndex();
-          setPane(selectedRow);
+	  String row = "-1";
+	  for(int i=0; i<columns.length; i++) {
+	    if(columns[i].equals("ID")) {
+	      row = (String) sorter.getValueAt(selectedRow, i);	  
+	    }
+	  }  
+          setPane(row);
         }
       }  
     });
@@ -202,11 +222,20 @@ public class OMETablePanel implements ActionListener {
   }
   
   /** method that builds the details pane for the selected image */
-  private void setPane(int row) {
+  private void setPane(String id) {
     paneThumb.removeAll();
-    if (row != -1) {
-      if (extra[row][0] != null) {
-        final BufferedImage img = (BufferedImage)extra[row][0];
+   
+    // calculate the row index
+    // extra[index][9] should match id
+
+    int index = 0;
+    for(int i=0; i<extra.length; i++) {
+      if(extra[i][9].equals(id)) index = i;
+    }	    
+    
+    if (!id.equals("-1")) {
+      if (extra[index][0] != null) {
+        final BufferedImage img = (BufferedImage) extra[index][0];
 	JPanel imagePanel = new JPanel() {
           public void paint(Graphics g) {
             g.drawImage(img, 0, 0, this);
@@ -228,8 +257,9 @@ public class OMETablePanel implements ActionListener {
         thumb.setText("Java 1.4 required to display thumbnail.");
       }
       for(int i=0; i<areas.length; i++) {
-        areas[i].setText((String) extra[row][i+1]);
-      }	
+        areas[i].setText((String) extra[index][i+1]);
+      }
+      des.setText((String) extra[index][areas.length+1]);
     }
     else {
       paneThumb.add(thumb);
@@ -237,6 +267,7 @@ public class OMETablePanel implements ActionListener {
       for(int i=0; i<areas.length; i++) {
         areas[i].setText(""); 
       }
+      des.setText("");
     }  
   }
   
