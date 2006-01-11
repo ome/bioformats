@@ -62,11 +62,11 @@ public abstract class DataTools {
    */
   public static BufferedImage makeImage(short[] data, int w, int h, int c) {
     int[] bandOffsets = new int[c];
-    for (int i=0; i<c; i++) bandOffsets[i] = i * w * h;
+    for (int i=0; i<c; i++) bandOffsets[i] = i;
     BufferedImage image = new BufferedImage(w, h,
       BufferedImage.TYPE_USHORT_GRAY);
     SampleModel model = new ComponentSampleModel(DataBuffer.TYPE_USHORT,
-      w, h, 1, w, bandOffsets);
+      w, h, c, w, bandOffsets);
     DataBuffer buffer = new DataBufferUShort(data, c * w * h);
     image.setData(Raster.createWritableRaster(model, buffer, null));
     return image;
