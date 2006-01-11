@@ -1,10 +1,10 @@
 //
-// FileFormat.java
+// FormatReader.java
 //
 
 /*
 LOCI Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-2006 Melissa Linkert and Curtis Rueden.
+Copyright (C) 2005-2006 Melissa Linkert, Curtis Rueden and Eric Kjellman.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,8 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Hashtable;
 import javax.swing.*;
@@ -33,7 +35,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 /** Abstract superclass of all supported biological file formats. */
-public abstract class FileFormat {
+public abstract class FormatReader {
 
   /** Name of this file format. */
   protected String format;
@@ -57,41 +59,53 @@ public abstract class FileFormat {
   // -- Constructors --
 
   /** Constructs a file format with the given name and default suffix. */
-  public FileFormat(String format, String suffix) {
+  public FormatReader(String format, String suffix) {
     this(format, suffix == null ? null : new String[] {suffix});
   }
 
   /** Constructs a file format with the given name and default suffixes. */
-  public FileFormat(String format, String[] suffixes) {
+  public FormatReader(String format, String[] suffixes) {
     this.format = format;
     this.suffixes = suffixes == null ? new String[0] : suffixes;
   }
 
 
-  // -- Abstract FileFormat API methods --
-
-  /** Determines the number of images in the given file. */
-  public abstract int getImageCount(String id) throws FormatException;
-
-  /** Obtains the specified image from the given file. */
-  public abstract Image open(String id, int block_number)
-    throws FormatException;
-
-  /** Closes the currently open file. */
-  public abstract void close() throws FormatException;
+  // -- Abstract FormatReader API methods --
 
   /** Checks if the given block is a valid header for this file format. */
   public abstract boolean isThisType(byte[] block);
 
+  /** Determines the number of images in the given file. */
+  public abstract int getImageCount(String id)
+    throws FormatException, IOException;
 
-  // -- FileFormat API methods --
+  /** Obtains the specified image from the given file. */
+  public abstract Image open(String id, int no)
+    throws FormatException, IOException;
+
+  /** Closes the currently open file. */
+  public abstract void close() throws FormatException, IOException;
+
+
+  // -- FormatReader API methods --
+
+  /**
+   * Initializes the given file (parsing header information, etc.).
+   * Most subclasses should override this method to perform
+   * initialization operations such as parsing metadata.
+   */
+  protected void initFile(String id) throws FormatException, IOException {
+    close();
+    currentId = id;
+    metadata = new Hashtable();
+  }
 
   /**
    * Opens an existing file from the given filename.
    *
    * @return Java Images containing pixel data
    */
-  public Image[] open(String id) throws FormatException {
+  public Image[] open(String id) throws FormatException, IOException {
     percent = 0;
     int nImages = getImageCount(id);
     Image[] images = new Image[nImages];
@@ -118,7 +132,7 @@ public abstract class FileFormat {
   }
 
   /** Returns the default file suffixes for this file format. */
-  public String[] getDefaultSuffixes() { return suffixes; }
+  public String[] getSuffixes() { return suffixes; }
 
   /** Gets the percentage complete of the form's current operation. */
   public double getPercentComplete() { return percent; }
@@ -129,7 +143,7 @@ public abstract class FileFormat {
    *
    * @return null if the loci.ome.xml package is not present.
    */
-  public Object getOMENode(String id) throws FormatException {
+  public Object getOMENode(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return ome;
   }
@@ -141,7 +155,7 @@ public abstract class FileFormat {
    * @return the value, or null if the field doesn't exist
    */
   public Object getMetadataValue(String id, String field)
-    throws FormatException
+    throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
     return metadata.get(field);
@@ -154,19 +168,9 @@ public abstract class FileFormat {
    * @param id the filename
    * @return the hashtable containing all metadata from the file
    */
-  public Hashtable getMetadata(String id) throws FormatException {
+  public Hashtable getMetadata(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return metadata;
-  }
-
-  /**
-   * Initializes the given file (parsing header information, etc.).
-   * Most subclasses should override this method to perform
-   * initialization operations such as parsing metadata.
-   */
-  protected void initFile(String id) throws FormatException {
-    currentId = id;
-    metadata = new Hashtable();
   }
 
 
@@ -176,7 +180,7 @@ public abstract class FileFormat {
    * A utility method for test reading a file from the command line,
    * and displaying the results in a simple display.
    */
-  public void testRead(String[] args) throws FormatException {
+  public void testRead(String[] args) throws FormatException, IOException {
     String className = getClass().getName();
     if (args == null || args.length < 1) {
       System.out.println("To test read a file in " + format + " format, run:");
@@ -210,7 +214,7 @@ public abstract class FileFormat {
     System.out.println(sec + "s elapsed (" +
       avg + "ms per image, " + initial + "ms overhead)");
 
-    // pop up frame
+    // display pixels in pop-up window
     JFrame frame = new JFrame(format + " - " + id);
     frame.addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) { System.exit(0); }
@@ -224,8 +228,58 @@ public abstract class FileFormat {
         int ndx = slider == null ? 0 : (slider.getValue() - 1);
         g.drawImage(images[ndx], 0, 0, this);
       }
+      public Dimension getPreferredSize() {
+        int w = images[0].getWidth(this);
+        int h = images[0].getHeight(this);
+        return new Dimension(w, h);
+      }
     };
+
+    // cursor probe
+    final JLabel mouseLabel = new JLabel(" ");
+    imagePane.addMouseMotionListener(new MouseMotionAdapter() {
+      private StringBuffer sb = new StringBuffer();
+      public void mouseMoved(MouseEvent e) {
+        int ndx = slider == null ? 0 : (slider.getValue() - 1);
+        int x = e.getX();
+        int y = e.getY();
+        sb.setLength(0);
+        if (images.length > 1) {
+          sb.append("N=");
+          sb.append(ndx);
+          sb.append("; ");
+        }
+        BufferedImage image = null;
+        if (images[ndx] instanceof BufferedImage) {
+          image = (BufferedImage) images[ndx];
+          int w = image.getWidth(), h = image.getHeight();
+          if (x < 0) x = 0;
+          if (x >= w) x = w - 1;
+          if (y < 0) y = 0;
+          if (y >= h) y = h - 1;
+        }
+        sb.append("X=");
+        sb.append(x);
+        sb.append("; Y=");
+        sb.append(y);
+        if (image != null) {
+          Raster r = image.getRaster();
+          double[] pix = r.getPixel(x, y, (double[]) null);
+          sb.append("; value");
+          sb.append(pix.length > 1 ? "s=(" : "=");
+          for (int i=0; i<pix.length; i++) {
+            if (i > 0) sb.append(", ");
+            sb.append(pix[i]);
+          }
+          if (pix.length > 1) sb.append(")");
+        }
+        mouseLabel.setText(sb.toString());
+      }
+    });
+    p.add(BorderLayout.NORTH, mouseLabel);
     p.add(imagePane);
+
+    // slider for navigating across multiple images
     if (slider != null) {
       slider.addChangeListener(new ChangeListener() {
         public void stateChanged(ChangeEvent e) {
@@ -234,6 +288,8 @@ public abstract class FileFormat {
       });
       p.add(BorderLayout.SOUTH, slider);
     }
+
+    // show frame onscreen
     frame.pack();
     frame.setLocation(300, 300);
     frame.show();
