@@ -15,4 +15,4 @@ fi
 
 file="$2"
 
-java -mx512m $format $file
+java -mx512m $format "$file"
