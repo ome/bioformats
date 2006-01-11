@@ -1,0 +1,18 @@
+#!/bin/bash
+if [ ! -n "$1" ]
+then
+  echo "Specify file format (e.g., Zeiss)"
+  exit 65
+fi
+
+format=loci.formats."$1"Reader
+
+if [ ! -n "$2" ]
+then
+  echo "Specify file to read (e.g., /home/curtis/data/zeiss/samples/2ChZ.lsm)"
+  exit 65
+fi
+
+file="$2"
+
+java -mx512m $format $file
