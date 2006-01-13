@@ -2,6 +2,8 @@ import ij.*;
 import ij.process.*;
 import ij.gui.GenericDialog;
 
+import java.util.Vector;
+
 import java.awt.Panel;
 import java.util.Hashtable;
 
@@ -58,6 +60,8 @@ public class OMETools {
   private ImportManager im;
   private RemoteCaller rc;
   private DataServices rs; 
+ 
+  private WiscScan viewer;
   
   // -- Runnable API methods --
    
@@ -565,25 +569,10 @@ public class OMETools {
       greenChanNum = channelNum[1];
       blueChanNum = channelNum[2];
     }
-    //ImageJ can only have one varied axis so if there is more
-    //than one varied axis, prompt the user for desired axis
+   
     int z1 = 0;
     int t1 = 0;
-    if (sizeZ != 1 && sizeT != 1) {
-      OMEDomainPanel domainPane =
-        new OMEDomainPanel(IJ.getInstance(), sizeZ, sizeT);
-      int[] results = domainPane.getInput();
-      if (results == null) {
-        cancelPlugin = true;
-	pluginCancelled();
-        return;
-      }
-      results = setDomain(results);
-      sizeZ = results[0] + 1;
-      z1 = sizeZ - 1;
-      sizeT = results[1] + 1;
-      t1 = sizeT - 1;
-    }
+    
     //Create Stack to add planes to in ImageJ
 
     ImageStack is = new ImageStack(sizeX, sizeY);
@@ -672,8 +661,13 @@ public class OMETools {
     }
     OMESidePanel.hashInImage(image.getID(), metas);
     IJ.showStatus("Displaying Image");
-    imageP.updateAndDraw();
-    imageP.show();
+    //WiscScan.addName(image.getName());
+    if(viewer == null) {
+      viewer = new WiscScan();
+    }  
+    viewer.twoDimView(imageP);	// use the WiscScan viewer
+    //imageP.updateAndDraw();
+    //imageP.show();
   }
 
   /** returns a list of images that the user chooses */
@@ -740,6 +734,7 @@ public class OMETools {
         }
       }
     }
+
     return returns;
   }
 

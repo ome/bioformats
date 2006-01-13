@@ -38,7 +38,6 @@ public class OMEMetaDataHandler {
   /**Method that begins the process of getting metadata from an OME_TIFF file*/
   public static DefaultMutableTreeNode exportMeta(Image image, 
       ImagePlus imagePlus, DataFactory df) {
-
     imageP = imagePlus.getProcessor();
     isXML = false;
     omeNode = null;
@@ -53,24 +52,12 @@ public class OMEMetaDataHandler {
   } 
    
   /**Method that begins the process of getting metadata from an OME_TIFF file*/
-  public static void exportMeta(int ijimageID) {
+  public static void exportMeta(String descr, int ijimageID) {
     isXML = true;
-    imageP = WindowManager.getImage(ijimageID).getProcessor();
     IJ.showStatus("Retrieving OME-TIFF header.");
     Object[] meta = null;
-    meta = OMESidePanel.getImageMeta(ijimageID);
-    FileInfo fi = null;
-    try {
-       fi = WindowManager.getImage(ijimageID).getOriginalFileInfo();
-    }
-    catch (Exception x) {
-      OMEDownPanel.error(IJ.getInstance(),
-        "An error occurred while retrieving the original file information.",
-        "Error");
-      IJ.showStatus("Error retrieving file information.");
-      x.printStackTrace();
-    }
-    if (fi == null || fi.description == null) {
+
+    if(descr == null) {
       IJ.showStatus("Not an OME-TIFF file.");
       if (meta == null) {
         meta = new Object[2];
@@ -81,16 +68,10 @@ public class OMEMetaDataHandler {
       defaultNode = null;
       return;
     }
-    // check if white is zero and if true invert the bits
-    if(fi.whiteIsZero) {
-      ImageProcessor iProc = WindowManager.getImage(ijimageID).getProcessor();
-      iProc.invert();
-      iProc.invertLut();
-      fi.whiteIsZero = false;
-    }
+      
     IJ.showStatus("Parsing OME-TIFF header.");
     try {
-      omeNode = new OMENode(fi.description);
+      omeNode = new OMENode(descr);
     }
     catch (Exception e) {
       IJ.showStatus("Error parsing OME-XML metadata, possibly not present.");

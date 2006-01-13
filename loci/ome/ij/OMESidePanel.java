@@ -5,6 +5,7 @@ import java.awt.event.*;
 import ij.WindowManager;
 import ij.*;
 import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * OMESidePanel is the class that handles
@@ -18,7 +19,7 @@ public class OMESidePanel implements ActionListener {
   
   // -- Fields --
 	
-  private static JButton close, upload, download, refresh, edit;
+  private static JButton close, upload, download, edit, open;
   public static JDialog dia;
   public static boolean cancelPlugin;
   private static JList list;
@@ -28,6 +29,8 @@ public class OMESidePanel implements ActionListener {
 
   private static String serverName;
   private static String username;
+ 
+  private static int[] imageIds;
   
   //Constructor, sets up the dialog box
   public OMESidePanel(Frame frame) {
@@ -67,25 +70,25 @@ public class OMESidePanel implements ActionListener {
     EmptyBorder bordCombo = new EmptyBorder(1,0,4,0);
     EmptyBorder bordText = new EmptyBorder(3,0,2,0);
 
+    open = new JButton("Open");
     close = new JButton("Close");
-    refresh = new JButton("Refresh");
     upload = new JButton("Download");
     download = new JButton("Upload");
     edit = new JButton("Edit");
     upload.setMinimumSize(download.getPreferredSize());
+    open.setActionCommand("open");
     close.setActionCommand("close");
     upload.setActionCommand("upload");
     download.setActionCommand("download");
-    refresh.setActionCommand("refresh");
     edit.setActionCommand("edit");
     paneUp.add(upload);
     paneUp.setMaximumSize(paneUp.getPreferredSize());
-    paneButtons.add(refresh);
+    paneButtons.add(open);
     paneButtons.add(close);
+    open.addActionListener(this);
     close.addActionListener(this);
     upload.addActionListener(this);
     download.addActionListener(this);
-    refresh.addActionListener(this);
     edit.addActionListener(this);
     
     //List
@@ -103,20 +106,30 @@ public class OMESidePanel implements ActionListener {
   }
  
   /** shows and retrieves info from the SidePanel */
-  public void showIt() {
-    int[] openpics = WindowManager.getIDList();
-
-    if (openpics == null) {
-      openpics = new int[0];
+  public static void showIt() {
+    Vector imgs = WiscScan.getIDs();
+    int[] openpics;
+    if(imgs != null) {
+      openpics = new int[imgs.size()];
+      for(int i=0; i<imgs.size(); i++) {
+        openpics[i] = ((Integer) imgs.get(i)).intValue();
+      }
     }
-    
+    else {
+      openpics = new int[0];
+    }  
+  
+    imageIds = openpics;
+    Vector names = WiscScan.getNames();
+      
     imp = new ImagePlus[openpics.length];
     String[] titles = new String[openpics.length];
+    Vector descr = WiscScan.getDescription();
     for (int i=0; i<openpics.length; i++) {
       imp[i] = WindowManager.getImage(openpics[i]);
-      titles[i] = imp[i].getTitle();
-      int ijimage = imp[i].getID();
-  
+      titles[i] = (String) names.get(i); 
+      int ijimage = openpics[i]; 
+
       if (!table.containsKey(new Integer(ijimage))) {
         boolean xalan = false;
         IJ.showStatus("Attempting to find xml class...");
@@ -128,7 +141,7 @@ public class OMESidePanel implements ActionListener {
        catch (ClassNotFoundException ex) { }
        if (xalan) {
           try {
-	    OMEMetaDataHandler.exportMeta(ijimage); 
+	    OMEMetaDataHandler.exportMeta((String) descr.get(i), ijimage); 
           }
           catch (Exception exc) { 
             exc.printStackTrace();
@@ -180,13 +193,10 @@ public class OMESidePanel implements ActionListener {
         showIt();
       }
     }
-    else if("refresh".equals(e.getActionCommand())) {
-      showIt();
-    }
     else if ("edit".equals(e.getActionCommand())) {
       int z = list.getSelectedIndex();
       if (z != -1) {
-        int y = imp[z].getID();
+        int y = imageIds[z]; 
         OMEMetaPanel meta = new OMEMetaPanel(parentWindow, y, 
 	  (Object[]) getImageMeta(y));
         meta.show();
@@ -198,7 +208,10 @@ public class OMESidePanel implements ActionListener {
         showIt();
       }
     }
-    else{
+    else if("open".equals(e.getActionCommand())) {
+      IJ.runPlugIn("WiscScan", "");
+    }	    
+    else {
       boolean bol = yesNo(parentWindow, "Are you sure you want to exit?");
       if (bol) {
         cancelPlugin = true;
