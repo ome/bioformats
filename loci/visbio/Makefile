@@ -151,7 +151,7 @@ VISAD_PACKAGES = \
 	visad.data.visad.object \
 	visad.java2d \
 	visad.java3d \
-	visad.util \
+	visad.util
 
 VISAD_FILES= \
 	DATE \
