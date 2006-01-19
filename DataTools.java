@@ -39,18 +39,23 @@ public abstract class DataTools {
 
   /**
    * Creates an image from the given unsigned byte data.
-   * It is assumed that the channels are interleaved rather than sequential.
-   * For example, for RGB data, the pattern is "RGBRGBRGB..." rather than
-   * "RRR...GGG...BBB..."
+   * If the interleaved flag is set, the channels are assumed to be
+   * interleaved; otherwise they are assumed to be sequential.
+   * For example, for RGB data, the pattern "RGBRGBRGB..." is interleaved,
+   * while "RRR...GGG...BBB..." is sequential.
    */
-  public static BufferedImage makeImage(byte[] data, int w, int h, int c) {
+  public static BufferedImage makeImage(byte[] data,
+    int w, int h, int c, boolean interleaved)
+  {
     int dataType = DataBuffer.TYPE_BYTE;
     ColorModel colorModel = makeColorModel(c, dataType);
     if (colorModel == null) return null;
+    int pixelStride = interleaved ? c : 1;
+    int scanlineStride = interleaved ? (c * w) : w;
     int[] bandOffsets = new int[c];
-    for (int i=0; i<c; i++) bandOffsets[i] = i;
+    for (int i=0; i<c; i++) bandOffsets[i] = interleaved ? i : (i * w * h);
     SampleModel model = new ComponentSampleModel(dataType,
-      w, h, c, c * w, bandOffsets);
+      w, h, pixelStride, scanlineStride, bandOffsets);
     DataBuffer buffer = new DataBufferByte(data, c * w * h);
     WritableRaster raster = Raster.createWritableRaster(model, buffer, null);
     return new BufferedImage(colorModel, raster, false, null);
@@ -58,18 +63,23 @@ public abstract class DataTools {
 
   /**
    * Creates an image from the given unsigned short data.
-   * It is assumed that the channels are interleaved rather than sequential.
-   * For example, for RGB data, the pattern is "RGBRGBRGB..." rather than
-   * "RRR...GGG...BBB..."
+   * If the interleaved flag is set, the channels are assumed to be
+   * interleaved; otherwise they are assumed to be sequential.
+   * For example, for RGB data, the pattern "RGBRGBRGB..." is interleaved,
+   * while "RRR...GGG...BBB..." is sequential.
    */
-  public static BufferedImage makeImage(short[] data, int w, int h, int c) {
+  public static BufferedImage makeImage(short[] data,
+    int w, int h, int c, boolean interleaved)
+  {
     int dataType = DataBuffer.TYPE_USHORT;
     ColorModel colorModel = makeColorModel(c, dataType);
     if (colorModel == null) return null;
+    int pixelStride = interleaved ? c : 1;
+    int scanlineStride = interleaved ? (c * w) : w;
     int[] bandOffsets = new int[c];
-    for (int i=0; i<c; i++) bandOffsets[i] = i;
+    for (int i=0; i<c; i++) bandOffsets[i] = interleaved ? i : (i * w * h);
     SampleModel model = new ComponentSampleModel(dataType,
-      w, h, c, c * w, bandOffsets);
+      w, h, pixelStride, scanlineStride, bandOffsets);
     DataBuffer buffer = new DataBufferUShort(data, c * w * h);
     WritableRaster raster = Raster.createWritableRaster(model, buffer, null);
     return new BufferedImage(colorModel, raster, false, null);
