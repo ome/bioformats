@@ -123,7 +123,7 @@ public class IPLabReader extends FormatReader {
 
     if (bitsPerSample[0] == 8) {
       // case for 8 bit data
-      image = DataTools.makeImage(rawData, w, h, c);
+      image = DataTools.makeImage(rawData, w, h, c, false);
     }
 
     else if (bitsPerSample[0] == 16) {
@@ -132,7 +132,7 @@ public class IPLabReader extends FormatReader {
       for (int i=0; i<data.length; i++) {
         data[i] = DataTools.bytesToShort(rawData, 2 * i, littleEndian);
       }
-      image = DataTools.makeImage(data, w, h, c);
+      image = DataTools.makeImage(data, w, h, c, false);
     }
 
     else throw new FormatException("Sorry, " +
