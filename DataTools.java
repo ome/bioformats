@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import java.awt.color.ColorSpace;
 import java.awt.image.*;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -43,33 +44,35 @@ public abstract class DataTools {
    * "RRR...GGG...BBB..."
    */
   public static BufferedImage makeImage(byte[] data, int w, int h, int c) {
+    int dataType = DataBuffer.TYPE_BYTE;
+    ColorModel colorModel = makeColorModel(c, dataType);
+    if (colorModel == null) return null;
     int[] bandOffsets = new int[c];
     for (int i=0; i<c; i++) bandOffsets[i] = i;
-    BufferedImage image = new BufferedImage(w, h,
-      BufferedImage.TYPE_BYTE_GRAY);
-    SampleModel model = new ComponentSampleModel(DataBuffer.TYPE_BYTE,
-      w, h, c, w, bandOffsets);
+    SampleModel model = new ComponentSampleModel(dataType,
+      w, h, c, c * w, bandOffsets);
     DataBuffer buffer = new DataBufferByte(data, c * w * h);
-    image.setData(Raster.createWritableRaster(model, buffer, null));
-    return image;
+    WritableRaster raster = Raster.createWritableRaster(model, buffer, null);
+    return new BufferedImage(colorModel, raster, false, null);
   }
 
   /**
    * Creates an image from the given unsigned short data.
-   * It is assumed that the channels are sequential rather than interleaved.
-   * For example, for RGB data, the pattern is "RRR...GGG...BBB..." rather than
-   * "RGBRGBRGB..."
+   * It is assumed that the channels are interleaved rather than sequential.
+   * For example, for RGB data, the pattern is "RGBRGBRGB..." rather than
+   * "RRR...GGG...BBB..."
    */
   public static BufferedImage makeImage(short[] data, int w, int h, int c) {
+    int dataType = DataBuffer.TYPE_USHORT;
+    ColorModel colorModel = makeColorModel(c, dataType);
+    if (colorModel == null) return null;
     int[] bandOffsets = new int[c];
     for (int i=0; i<c; i++) bandOffsets[i] = i;
-    BufferedImage image = new BufferedImage(w, h,
-      BufferedImage.TYPE_USHORT_GRAY);
-    SampleModel model = new ComponentSampleModel(DataBuffer.TYPE_USHORT,
-      w, h, c, w, bandOffsets);
+    SampleModel model = new ComponentSampleModel(dataType,
+      w, h, c, c * w, bandOffsets);
     DataBuffer buffer = new DataBufferUShort(data, c * w * h);
-    image.setData(Raster.createWritableRaster(model, buffer, null));
-    return image;
+    WritableRaster raster = Raster.createWritableRaster(model, buffer, null);
+    return new BufferedImage(colorModel, raster, false, null);
   }
 
   /**
@@ -78,13 +81,13 @@ public abstract class DataTools {
    * For example, for RGB data, data[0] is R, data[1] is G, and data[2] is B.
    */
   public static BufferedImage makeImage(byte[][] data, int w, int h) {
-    BufferedImage image = new BufferedImage(w, h,
-      BufferedImage.TYPE_BYTE_GRAY);
-    SampleModel model = new BandedSampleModel(DataBuffer.TYPE_BYTE,
-      w, h, data.length);
+    int dataType = DataBuffer.TYPE_BYTE;
+    ColorModel colorModel = makeColorModel(data.length, dataType);
+    if (colorModel == null) return null;
+    SampleModel model = new BandedSampleModel(dataType, w, h, data.length);
     DataBuffer buffer = new DataBufferByte(data, data[0].length);
-    image.setData(Raster.createWritableRaster(model, buffer, null));
-    return image;
+    WritableRaster raster = Raster.createWritableRaster(model, buffer, null);
+    return new BufferedImage(colorModel, raster, false, null);
   }
 
   /**
@@ -93,13 +96,26 @@ public abstract class DataTools {
    * For example, for RGB data, data[0] is R, data[1] is G, and data[2] is B.
    */
   public static BufferedImage makeImage(short[][] data, int w, int h) {
-    BufferedImage image = new BufferedImage(w, h,
-      BufferedImage.TYPE_USHORT_GRAY);
-    SampleModel model = new BandedSampleModel(DataBuffer.TYPE_USHORT,
-      w, h, data.length);
+    int dataType = DataBuffer.TYPE_USHORT;
+    ColorModel colorModel = makeColorModel(data.length, dataType);
+    if (colorModel == null) return null;
+    SampleModel model = new BandedSampleModel(dataType, w, h, data.length);
     DataBuffer buffer = new DataBufferUShort(data, data[0].length);
-    image.setData(Raster.createWritableRaster(model, buffer, null));
-    return image;
+    WritableRaster raster = Raster.createWritableRaster(model, buffer, null);
+    return new BufferedImage(colorModel, raster, false, null);
+  }
+
+  /** Gets a color space for the given number of color components. */
+  public static ColorModel makeColorModel(int c, int dataType) {
+    int type;
+    switch (c) {
+      case 1: type = ColorSpace.CS_GRAY; break;
+      case 3: type = ColorSpace.CS_sRGB; break;
+      case 4: type = ColorSpace.CS_sRGB; break;
+      default: return null;
+    }
+    return new ComponentColorModel(ColorSpace.getInstance(type),
+      c == 4, false, ColorModel.TRANSLUCENT, dataType);
   }
 
 
