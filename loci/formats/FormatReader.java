@@ -226,6 +226,9 @@ public abstract class FormatReader {
     final JPanel imagePane = new JPanel() {
       public void paint(Graphics g) {
         int ndx = slider == null ? 0 : (slider.getValue() - 1);
+        Dimension size = getSize();
+        g.setColor(Color.white);
+        g.fillRect(0, 0, size.width, size.height);
         g.drawImage(images[ndx], 0, 0, this);
       }
       public Dimension getPreferredSize() {
