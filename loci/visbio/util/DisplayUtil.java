@@ -333,6 +333,8 @@ public abstract class DisplayUtil {
   public static double[] cursorToDomain(DisplayImpl d,
     RealType[] types, double[] cursor)
   {
+    if (d == null) return null;
+
     // locate x, y and z mappings
     Vector maps = d.getMapVector();
     int numMaps = maps.size();
@@ -379,6 +381,7 @@ public abstract class DisplayUtil {
 
   /** Converts the given pixel coordinates to cursor coordinates. */
   public static double[] pixelToCursor(DisplayImpl d, int x, int y) {
+    if (d == null) return null;
     MouseBehavior mb = d.getDisplayRenderer().getMouseBehavior();
     VisADRay ray = mb.findRay(x, y);
     return ray.position;
@@ -391,6 +394,8 @@ public abstract class DisplayUtil {
 
   /** Redraws exception messages in a display's bottom left-hand corner. */
   public static void redrawMessages(DisplayImpl d) {
+    if (d == null) return;
+
     // HACK - awful, awful code to force quick redraw of exception strings
     DisplayRenderer dr = d.getDisplayRenderer();
     if (dr instanceof DisplayRendererJ2D) {
