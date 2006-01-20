@@ -26,6 +26,7 @@ package loci.visbio.help;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.plaf.LookUtils;
 import java.awt.event.KeyEvent;
 import javax.swing.*;
 import loci.visbio.*;
@@ -161,12 +162,12 @@ public class HelpManager extends LogicManager {
 
     JMenuItem help = bio.addMenuItem("Help", "VisBio Help",
       "loci.visbio.help.HelpManager.helpHelp", 'h');
-    KeyStroke helpStroke = VisBioFrame.MAC_OS_X ? KeyStroke.getKeyStroke(
+    KeyStroke helpStroke = LookUtils.IS_OS_MAC ? KeyStroke.getKeyStroke(
       new Character('?'), SwingUtil.MENU_MASK) :
       KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0);
     help.setAccelerator(helpStroke);
 
-    if (!VisBioFrame.MAC_OS_X) {
+    if (!LookUtils.IS_OS_MAC) {
       bio.addMenuSeparator("Help");
       bio.addMenuItem("Help", "About",
         "loci.visbio.help.HelpManager.helpAbout", 'a');

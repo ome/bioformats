@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio;
 
+import com.jgoodies.plaf.LookUtils;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.*;
@@ -52,10 +53,6 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
   /** Debugging flag for event logic. */
   public static final boolean DEBUG =
     "true".equalsIgnoreCase(System.getProperty("visbio.debug"));
-
-  /** Flag indicating operating system is Mac OS X. */
-  public static final boolean MAC_OS_X =
-    System.getProperty("os.name").indexOf("Mac OS X") >= 0;
 
 
   // -- Fields --
@@ -155,7 +152,7 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
       om.readIni();
 
       // handle Mac OS X application menu items
-      if (MAC_OS_X) {
+      if (LookUtils.IS_OS_MAC) {
         ReflectedUniverse r = new ReflectedUniverse();
         r.setDebug(true);
         r.exec("import loci.visbio.MacAdapter");

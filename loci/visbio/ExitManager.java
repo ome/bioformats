@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio;
 
+import com.jgoodies.plaf.LookUtils;
 import java.awt.event.*;
 import loci.visbio.util.SwingUtil;
 
@@ -73,7 +74,7 @@ public class ExitManager extends LogicManager implements WindowListener {
 
     // file menu
     bio.setSplashStatus(null);
-    if (!VisBioFrame.MAC_OS_X) {
+    if (!LookUtils.IS_OS_MAC) {
       bio.addMenuSeparator("File");
       bio.addMenuItem("File", "Exit", "loci.visbio.ExitManager.fileExit", 'x');
       SwingUtil.setMenuShortcut(bio, "File", "Exit", KeyEvent.VK_Q);

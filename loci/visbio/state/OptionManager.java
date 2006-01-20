@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.state;
 
+import com.jgoodies.plaf.LookUtils;
 import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.io.*;
@@ -71,39 +72,49 @@ public class OptionManager extends LogicManager {
   // -- OptionManager API methods --
 
   /** Adds an option allowing the user to toggle a check box. */
-  public void addBooleanOption(String tab,
+  public BooleanOption addBooleanOption(String tab,
     String text, char mnemonic, String tip, boolean value)
   {
-    addOption(tab, new BooleanOption(text, mnemonic, tip, value));
+    BooleanOption option = new BooleanOption(text, mnemonic, tip, value);
+    addOption(tab, option);
+    return option;
   }
 
   /** Adds an option allowing the user to enter a numerical value. */
-  public void addNumericOption(String tab,
+  public NumericOption addNumericOption(String tab,
     String text, String unit, String tip, int value)
   {
-    addOption(tab, new NumericOption(text, unit, tip, value));
+    NumericOption option = new NumericOption(text, unit, tip, value);
+    addOption(tab, option);
+    return option;
   }
 
   /** Adds an option allowing the user to enter a numerical value. */
-  public void addNumericOption(String tab,
+  public NumericOption addNumericOption(String tab,
     String text, String unit, String tip, double value)
   {
-    addOption(tab, new NumericOption(text, unit, tip, value));
+    NumericOption option = new NumericOption(text, unit, tip, value);
+    addOption(tab, option);
+    return option;
   }
 
   /** Adds an option allowing the user to select from a dropdown list. */
-  public void addListOption(String tab,
+  public ListOption addListOption(String tab,
     String text, String tip, String[] choices)
   {
-    addOption(tab, new ListOption(text, tip, choices));
+    ListOption option = new ListOption(text, tip, choices);
+    addOption(tab, option);
+    return option;
   }
 
   /**
    * Adds a custom GUI component to VisBio's options dialog.
    * Such options will not be saved in the INI file automatically.
    */
-  public void addCustomOption(String tab, Component c) {
-    addOption(tab, new CustomOption(c));
+  public CustomOption addCustomOption(String tab, Component c) {
+    CustomOption option = new CustomOption(c);
+    addOption(tab, option);
+    return option;
   }
 
   /** Adds an option to VisBio's options dialog. */
@@ -199,7 +210,7 @@ public class OptionManager extends LogicManager {
       else if (src instanceof ExitManager) {
         // HACK - make options menu item appear in the proper location
 
-        if (!VisBioFrame.MAC_OS_X) {
+        if (!LookUtils.IS_OS_MAC) {
           // file menu
           bio.addMenuSeparator("File");
           bio.addMenuItem("File", "Options...",
