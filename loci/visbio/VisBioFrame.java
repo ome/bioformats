@@ -169,7 +169,7 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
       // show VisBio window onscreen
       pack();
       Util.centerWindow(this);
-      show();
+      setVisible(true);
 
       // hide splash screen
       if (splash != null) {
@@ -178,7 +178,7 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
           System.out.println("Warning: completed " +
             task + "/" + tasks + " initialization tasks");
         }
-        splash.hide();
+        splash.setVisible(false);
         splash = null;
       }
 
@@ -203,7 +203,7 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
       catch (IOException exc) { }
 
       // apologize to the user
-      if (splash != null) splash.hide();
+      if (splash != null) splash.setVisible(false);
       JOptionPane.showMessageDialog(this,
         "Sorry, there has been a problem launching VisBio.\n\n" +
         sw.toString() +

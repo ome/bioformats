@@ -358,7 +358,7 @@ public class Docker implements ComponentListener {
       frame.setBounds(300, 80 * i + 200, 200, 60);
       if (i == 0) docker.addWindow(frame, HIGH_PRIORITY);
       else docker.addWindow(frame);
-      frame.show();
+      frame.setVisible(true);
     }
   }
 

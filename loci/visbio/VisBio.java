@@ -94,7 +94,7 @@ public class VisBio {
     SplashScreen ss = new SplashScreen(
       VisBio.class.getResource("visbio-logo.png"),
       msg, new Color(255, 255, 220), new Color(255, 50, 50));
-    ss.show();
+    ss.setVisible(true);
 
     // toggle window decoration mode via reflection
     boolean b = "true".equals(System.getProperty("visbio.decorateWindows"));

@@ -154,11 +154,11 @@ public class DialogPane extends JPanel implements ActionListener {
     String command = e.getActionCommand();
     if (command.equals("ok")) {
       rval = APPROVE_OPTION;
-      dialog.hide();
+      dialog.setVisible(false);
     }
     else if (command.equals("cancel")) {
       rval = CANCEL_OPTION;
-      dialog.hide();
+      dialog.setVisible(false);
     }
   }
 
@@ -175,7 +175,7 @@ public class DialogPane extends JPanel implements ActionListener {
     if (owner == null) Util.centerWindow(dialog);
     else Util.centerWindow(owner, dialog);
     rval = CANCEL_OPTION;
-    dialog.show();
+    dialog.setVisible(true);
     return rval;
   }
 
