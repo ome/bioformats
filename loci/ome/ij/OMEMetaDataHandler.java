@@ -32,9 +32,11 @@ public class OMEMetaDataHandler {
   private static ImageProcessor imageP;
   private static boolean isXML;
   private static OMENode omeNode;
-  private static DefaultMutableTreeNode defaultNode;
+  public static Vector defaultNode = new Vector();
+  public static int pt = 0;  // next index
+  public static int index = 0;  // current index
   private static int omeID; 
-  
+ 
   /**Method that begins the process of getting metadata from an OME_TIFF file*/
   public static DefaultMutableTreeNode exportMeta(Image image, 
       ImagePlus imagePlus, DataFactory df) {
@@ -46,8 +48,9 @@ public class OMEMetaDataHandler {
     IJ.showStatus("Metadata is being put into tree structure.");
     DefaultMutableTreeNode root = 
       new DefaultMutableTreeNode(new XMLObject("OME-XML"));
-    addDb(image, root, df, "Image"); 
-    defaultNode = root;
+    addDb(image, root, df, "Image");
+    defaultNode.add(root);
+    pt++;
     return root;
   } 
    
@@ -56,16 +59,16 @@ public class OMEMetaDataHandler {
     isXML = true;
     IJ.showStatus("Retrieving OME-TIFF header.");
     Object[] meta = null;
-
+    
     if(descr == null) {
       IJ.showStatus("Not an OME-TIFF file.");
       if (meta == null) {
         meta = new Object[2];
         meta[0] = new Integer(0);
       }
-      meta[1] = defaultNode;
+      meta[1] = defaultNode.get(index);
+      index++;
       OMESidePanel.hashInImage(ijimageID, meta);
-      defaultNode = null;
       return;
     }
       
@@ -81,7 +84,6 @@ public class OMEMetaDataHandler {
       }
       meta[1] = null;
       OMESidePanel.hashInImage(ijimageID, meta);
-      defaultNode = null;
       return;
     }
     if (meta == null) {
@@ -360,7 +362,10 @@ public class OMEMetaDataHandler {
     
     if(tempChilds != null) {
       for(int i=0; i<childs.length; i++) {
-        addDisk(childs[i], node, df, names[i]);
+	try {      
+          addDisk(childs[i], node, df, names[i]);
+	}  
+	catch(NullPointerException e) { }  
       }
     }  
   }

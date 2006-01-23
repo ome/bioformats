@@ -16,6 +16,8 @@ public class OME_Plugin implements PlugIn {
     if (omeSidePanel == null) {
       omeSidePanel = new OMESidePanel(ij.IJ.getInstance());
     }
+    WindowMonitor monitor = new WindowMonitor();
+    monitor.start();
     omeSidePanel.showIt();
   }
       

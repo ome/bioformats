@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 // YTW: Symbolic link problem when accessing data (because of getParentFile())
 
-
 import java.io.File;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -321,7 +320,7 @@ public class FilePattern {
       String post = name.substring(endList[i]);
       
       // YTW: added multichannel support
-      if(pre.length() > 0) {
+      if(pre.length() > 1) {
         if (pre.substring(pre.length()-2).equals("_C")) {
       	  multichannel = true;
 	}

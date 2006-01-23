@@ -1,6 +1,7 @@
 import ij.*;
 import ij.process.*;
 import ij.gui.GenericDialog;
+import ij.gui.ImageWindow;
 
 import java.util.Vector;
 
@@ -661,13 +662,9 @@ public class OMETools {
     }
     OMESidePanel.hashInImage(image.getID(), metas);
     IJ.showStatus("Displaying Image");
-    //WiscScan.addName(image.getName());
-    if(viewer == null) {
-      viewer = new WiscScan();
-    }  
-    viewer.twoDimView(imageP);	// use the WiscScan viewer
-    //imageP.updateAndDraw();
-    //imageP.show();
+    viewer = new WiscScan();
+    boolean tp = (sizeT > 1);
+    viewer.twoDimView(imageP, sizeZ, tp);	// use the WiscScan viewer
   }
 
   /** returns a list of images that the user chooses */

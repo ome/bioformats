@@ -18,7 +18,9 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.BoxLayout;
+import javax.swing.JPanel;
 
+import javax.swing.JSlider;
 import javax.swing.JScrollBar;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerModel;
@@ -43,6 +45,8 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.ColorModel;
 import java.io.File;
 
@@ -85,11 +89,18 @@ public class WiscScan implements PlugIn {
   private String directory;
   private String name;
   private OpenDialog od;
-  public Vector window;
-
+  private static Vector window;
+  private static Vector numImages;  // number of files in each window
+  
   private boolean disk = false; // true if we are opening a stack from disk
   
   private int currentId = 0; // the ID of the next database image
+
+  public static boolean firstTime = true;
+  
+  public static Vector getNumImages() {
+    return numImages;
+  }  
   
   public static Vector getDescription() {
     return description;
@@ -119,10 +130,11 @@ public class WiscScan implements PlugIn {
     disk = true;
     if (name == null) return;
 
-    description = new Vector();
-    ids = new Vector();
-    names = new Vector();
-    window = new Vector();
+    if(description == null) description = new Vector();
+    if(ids == null) ids = new Vector();
+    if(names == null) names = new Vector();
+    if(window == null) window = new Vector();
+    if(numImages == null) numImages = new Vector();
     
     // Find all the files having similar names (Using FilePattern class)
     String pattern = FilePattern.findPattern(new File(name), directory);
@@ -158,7 +170,8 @@ public class WiscScan implements PlugIn {
     // Multichannel support
     if (fp.getMultichannel()) hasTrans = true;
     numFiles = list.length;
-
+    numImages.add(new Integer(numFiles));
+    
     list_tp = new int[numFiles];
     list_c  = new int[numFiles];
     for (int i=0; i<numFiles; i++) {
@@ -360,7 +373,6 @@ public class WiscScan implements PlugIn {
 	  }					
 	}
 	if (count >= n) break;
-	//System.gc();
       }
     }
     catch(OutOfMemoryError e) {
@@ -380,18 +392,20 @@ public class WiscScan implements PlugIn {
       imp2.show();
     }
     IJ.showProgress(1.0);
-    twoDimView(null);
-    OMESidePanel.showIt();
+    twoDimView(null, depth, hasTP);
   }
     
-  public void twoDimView(ImagePlus ip) {
+  public void twoDimView(ImagePlus ip, int width, boolean tp) {
     String imageName;
     imp1 = ip;
     if(imp1 == null) imp1 = WindowManager.getCurrentImage();
     stack1 = imp1.getStack();
     stackSize = stack1.getSize();
     imageName = imp1.getTitle();
-    if(depth == 0) depth = stackSize; 
+    if(depth == 0) depth = width;
+    hasTP = tp;
+    if(numImages == null) numImages = new Vector();
+    numImages.add(new Integer(1));
     
     // is it a right assumption that each image has the same number of slices?
     // yes :-)
@@ -409,7 +423,6 @@ public class WiscScan implements PlugIn {
       currentId--;
       description.add(null);
     }  
-    OMESidePanel.showIt();
   }
     
   void initFrame() {
@@ -424,7 +437,9 @@ public class WiscScan implements PlugIn {
       ImageProcessor ip;
       ImagePlus imp2 = new ImagePlus(imp1.getTitle(), stack2);
       ImageCanvas ic = new ImageCanvas(imp2);
-      if(window == null) window = new Vector();
+      if(window == null) {
+        window = new Vector();
+      }	
       window.add(new CustomWindow(imp2, ic, hasTrans, first_prefix));
       imp1.hide();
     }
@@ -432,7 +447,7 @@ public class WiscScan implements PlugIn {
 		
   /* CustomWindow class begin*/
   private class CustomWindow extends ImageWindow
-    implements ActionListener, AdjustmentListener, ItemListener
+    implements ActionListener, AdjustmentListener, ItemListener, WindowListener
   {
     // animation frame rate
     private int FPS = 10;
@@ -445,12 +460,19 @@ public class WiscScan implements PlugIn {
     private boolean trans = false;
     private javax.swing.Timer animationTimer;
     private JSpinner frame_rate;
+    private boolean resized = false;
     
     /* CustomWindow constructors, initialisation*/
     CustomWindow(ImagePlus imp, ImageCanvas ic, boolean hasTrans, String prefix)    {
       super(imp, ic);
+      // resize the window so that the scrollbars show up properly
+      if(ic.getWidth() < 512) {
+        ic.setBounds(ic.getX(), ic.getY(), 512, ic.getHeight());
+	resized = true;
+      }	 
       this.hasTrans = hasTrans;
-      this.setTitle(prefix);
+      //this.setTitle(prefix);
+      this.setTitle(imp.getTitle());
       addPanel();
     }
 
@@ -458,8 +480,8 @@ public class WiscScan implements PlugIn {
     void addPanel() {
       depth2 = stackSize / depth;
       if(hasTrans) depth2 = depth2 / 2;
-      
-      if (!hasTP) { 
+     
+      if (!hasTP) {
         sliceSel1 = new JScrollBar(JScrollBar.HORIZONTAL, 1, 1, 1, depth2+1);
         sliceSel2 = new JScrollBar(JScrollBar.HORIZONTAL, 1, 1, 1, depth+1);
       } 
@@ -484,18 +506,21 @@ public class WiscScan implements PlugIn {
       // CTR 11 Feb 2005
       add(sliceSel1);
       add(sliceSel2);
-      
-      Panel bottom = new Panel();
-      Panel bottom2 = new Panel();
-      Panel bottom3 = new Panel();
-      Panel bottom4 = new Panel();
-      
+      Panel bottom = new Panel() {
+	public Dimension getPreferredSize() {      
+          // panel is always the same width as the image canvas
+  	  Dimension d = super.getPreferredSize();
+	  d.width = ic.getWidth();
+	  if(ic.getWidth() < 512) {
+            d.width = ((512 - ic.getWidth()) / 2) + ic.getWidth();	
+	  }  
+	  return d;
+        }	  
+      };	
+  
       GridBagLayout gridbag = new GridBagLayout();
       GridBagConstraints c = new GridBagConstraints();
       bottom.setLayout(gridbag);
-      bottom2.setLayout(gridbag);
-      bottom3.setLayout(gridbag);
-      bottom4.setLayout(gridbag);
       JLabel label1 = new JLabel(lab_3D);
       JLabel label2 = new JLabel(lab_4D);
       JCheckBox channel2 = new JCheckBox("Transmitted");
@@ -504,12 +529,6 @@ public class WiscScan implements PlugIn {
       else channel2.addItemListener(this);
       JButton animate = new JButton("Animate");
       
-      // add a button to close the viewer
-
-      JButton close = new JButton("Close");
-      close.addActionListener(this);
-      close.setActionCommand("close");
-     
       SpinnerModel model = new SpinnerNumberModel(10,1,99,1);
       frame_rate = new JSpinner(model);
 
@@ -521,25 +540,77 @@ public class WiscScan implements PlugIn {
         animate.addActionListener(this);
         frame_rate.addChangeListener(new FrameRateListener());	
       }
-      
+     
       bottom.add(label1);
       bottom.add(sliceSel1);
-      bottom4.add(channel2);
-      bottom2.add(label2);
-      bottom2.add(sliceSel2);
-      bottom2.add(frame_rate);
-      bottom3.add(animate);
-      bottom3.add(close);
-      
+      bottom.add(channel2);
+      bottom.add(label2);
+      bottom.add(sliceSel2);
+      bottom.add(animate);
+      bottom.add(frame_rate);
+     
+      c.insets = new Insets(0, 5, 0, 5);
+	
       if (!hasTP)  sliceSel1.setEnabled(false);
       if (!hasTP && depth == 1) sliceSel2.setEnabled(false);
-      bottom4.add(new JLabel("fps"));
-      bottom4.add(frame_rate);
-      add(bottom);
-      add(bottom2);
-      add(bottom4);
-      add(bottom3);
+ 
+      c.gridx = 0;
+      c.gridy = 0;
       
+      c.fill = GridBagConstraints.NONE;
+      c.weightx = 0.0;
+      gridbag.setConstraints(label1, c);
+      c.gridx = 1;
+      c.gridy = 0;
+      c.gridwidth = 5;
+      c.fill = GridBagConstraints.HORIZONTAL;
+      c.weightx = 1.0;
+      gridbag.setConstraints(sliceSel1, c);
+      
+      c.gridx = 6;
+      c.gridy = 0;
+      c.fill = GridBagConstraints.NONE;
+      c.weightx = 0.0;
+      c.gridwidth = 2; // end row
+      gridbag.setConstraints(channel2, c);
+      
+      // next row
+      c.gridx = 0;
+      c.gridy = 2;
+      c.gridwidth = 1;
+      gridbag.setConstraints(label2, c);
+      c.gridx = 1;
+      c.gridy = 2;
+      c.gridwidth = 5;
+      c.fill = GridBagConstraints.HORIZONTAL;
+      c.weightx = 1.0;
+      gridbag.setConstraints(sliceSel2, c);
+      
+      c.fill = GridBagConstraints.NONE;
+      c.weightx = 0.0;
+      c.gridheight = 1;
+      c.gridx = 6;
+      c.gridy = 3;
+      c.insets = new Insets(3, 5, 3, 5);
+      gridbag.setConstraints(animate, c);
+ 
+      // next row
+      c.gridx = 6;
+      c.gridy = 2;
+      c.gridwidth = 1;
+      c.fill = GridBagConstraints.REMAINDER;
+      c.weightx = 0.0;
+      
+      bottom.add(new JLabel("fps"), c);
+     
+      c.gridx = 7;
+      c.gridy = 2;
+      c.gridwidth = GridBagConstraints.REMAINDER; // end row
+      c.ipadx = 20;
+      gridbag.setConstraints(frame_rate, c);
+     
+      add(bottom);
+
       pack();
       setVisible(true);
       int previousSlice = imp.getCurrentSlice();
@@ -549,8 +620,9 @@ public class WiscScan implements PlugIn {
       if (previousSlice > 1 && previousSlice <= imp.getStackSize()) {
         imp.setSlice(previousSlice);
       }
+      
     }
-		 
+
    class FrameRateListener implements ChangeListener {
      public void stateChanged(ChangeEvent e) {
        JSpinner source = (JSpinner) e.getSource();
@@ -576,39 +648,25 @@ public class WiscScan implements PlugIn {
        boolean changed = false;
        if (lab_3D.equals("time")) {
          z = sliceSel1.getValue() + 1;
-         if (z >= sliceSel1.getMaximum()) z = sliceSel1.getMinimum();
+         if (z >= sliceSel1.getMaximum()) {
+           z = sliceSel1.getMinimum();
+	 }  
          sliceSel1.setValue(z);
          changed = true;
        }
        if (lab_4D.equals("time")) {
          t = sliceSel2.getValue() + 1;
-         if (z >= sliceSel1.getMaximum()) z = sliceSel1.getMinimum();
-         if (t >= sliceSel2.getMaximum()) t = sliceSel2.getMinimum();
+         if (z >= sliceSel1.getMaximum()) {
+           z = sliceSel1.getMinimum();
+	 }  
+         if (t >= sliceSel2.getMaximum()) {
+           t = sliceSel2.getMinimum();
+	 }  
          sliceSel2.setValue(t);
          changed = true;
        }
        if (changed) showSlice(z, t, trans);
      }
-     else if("close".equals(e.getActionCommand())) {
-       for(int i=0; i<window.size(); i++) {
-         if(((Container) window.get(i)).isAncestorOf((Component) e.getSource()))
-	 {	
-	   if(window.size() == 1) {
-             if(description != null) description.clear();
-	     if(ids != null) ids.clear();
-	     if(names != null) names.clear();
-	   }
-	   else {
-  	     if(description != null) description.remove(i);
-             if(ids != null) ids.remove(i);
-             if(names != null) names.remove(i);
-	   }  
-           ((CustomWindow) window.get(i)).hide();
-           window.remove(i);
-	 }  
-       }
-       OMESidePanel.showIt();
-     }	     
      else if (src instanceof JButton) {
        JButton animate = (JButton) src;
        if (animate.getText().equals("Animate")) {
@@ -626,6 +684,76 @@ public class WiscScan implements PlugIn {
      }
    }
 
+   /** WindowListener API methods */
+   public void windowActivated(WindowEvent e) {
+     // do nothing
+   }
+
+   public void windowClosed(WindowEvent e) {
+     // do nothing
+   }
+
+   public void windowClosing(WindowEvent e) {
+     // remove the name, description, and ID from appropriate Vectors
+
+     int prevSize = window.size();
+	   
+     CustomWindow w = (CustomWindow) e.getWindow();	   
+     CustomWindow current;
+     int n = 0;
+     if(window != null) {
+       for(int i=0; i<window.size(); i++) {
+	 current = (CustomWindow) window.get(i);    
+         if((w == current) && (w.getTitle().equals(current.getTitle()))) {
+           window.remove(i);
+	   n = i;
+	 }  
+       }	       
+     }
+
+     if((prevSize < ids.size()) && firstTime) {
+       n++;
+       firstTime = false;
+     }  
+     
+     int numPlanes = 1;
+     if(numImages != null) numPlanes = ((Integer) numImages.get(n)).intValue(); 
+     if(ids != null) {
+       for(int i=0; i<numPlanes; i++) {	     
+         if(n < ids.size()) ids.remove(n);
+       }
+     }  
+     if(description != null) {
+       for(int i=0; i<numPlanes; i++) {	     
+         if(n < description.size()) description.remove(n);
+       }	     
+     }	     
+     if(names != null) {
+       for(int i=0; i<numPlanes; i++) {	     
+         if(n < names.size()) names.remove(n);
+       }	     
+     }	     
+ 
+     w.dispose();
+     OMESidePanel.showIt();
+   }
+
+   public void windowDeactivated(WindowEvent e) {
+     // do nothing
+   }
+
+   public void windowDeiconified(WindowEvent e) {
+     // do nothing
+   }
+
+   public void windowIconified(WindowEvent e) {
+     // do nothing
+   }
+
+   public void windowOpened(WindowEvent e) {
+     // do nothing
+   }
+   
    /* Checkbox Listener*/
    public void itemStateChanged(ItemEvent e) {
      Object src = e.getSource();
@@ -650,20 +778,27 @@ public class WiscScan implements PlugIn {
    /* selects and shows slice defined by z, t and trans */
    public void showSlice(int z, int t, boolean trans) {
      int c = trans ? 1 : 2;
-     if (dim == 2) showSlice(t + depth*(c-1));
+     if (dim == 2) {
+       showSlice(t + depth*(c-1));
+     }  
      for (int i=0; i<numFiles;i++) { 
        if ((list_tp[i] == t || list_tp[i] == 0) && 
 	  (list_c[i] == c || list_c[i] == 0)) 
        {
-         if (!hasTP) showSlice(t + depth*i);
-         else showSlice(z + depth*i);
+         if (!hasTP) {
+           showSlice(t + depth*i);
+	 }  
+         else {
+           showSlice(z + depth*i);
+	 }  
        }
      }
  
      // database stack
      if(!disk) {
-       if(!hasTP) showSlice(t);
-       else showSlice(z);
+       // z = 1, t = 1 -> slice = 1	     
+       if(!hasTP) showSlice(z);  // this could be broken 
+       else showSlice(z + depth*(t-1));
      } 
    }
 		   
