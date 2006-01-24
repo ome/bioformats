@@ -250,6 +250,7 @@ public class SystemManager extends LogicManager
     hm.addHelpTopic(s, "system_panel.html");
     hm.addHelpTopic(s + "/Changing the memory limit", "memory_limit.html");
     hm.addHelpTopic(s + "/Changing VisBio's appearance", "look_and_feel.html");
+    hm.addHelpTopic(s + "/Changing the renderer", "renderer.html");
 
     // RAM usage debugging output
     if (VisBioFrame.DEBUG) new Timer(500, this).start();
