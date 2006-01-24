@@ -79,7 +79,7 @@ public class SystemManager extends LogicManager
    * Updates the VisBio launch parameters to specify the given
    * maximum heap and look and feel settings.
    */
-  public void writeScript(int heap, String laf) {
+  public void writeScript(int heap, String laf, String j3d) {
     // a platform-dependent mess!
     String filename;
     if (LookUtils.IS_OS_WINDOWS) filename = "launcher.cfg";
@@ -110,6 +110,7 @@ public class SystemManager extends LogicManager
 
     boolean heapChanged = heap < 0;
     boolean lafChanged = laf == null;
+    boolean j3dChanged = j3d == null;
 
     for (int i=0; i<size; i++) {
       String line = (String) lines.elementAt(i);
@@ -139,6 +140,20 @@ public class SystemManager extends LogicManager
             line = line.substring(0, start + 1) + laf +
               line.substring(lafPos + 11);
             lafChanged = true;
+          }
+        }
+      }
+
+      if (j3d != null) {
+        // check for J3D renderer setting
+        String j3dString = "j3d.rend";
+        int j3dPos = line.indexOf(j3dString);
+        if (j3dPos >= 0) {
+          int start = line.indexOf("=", j3dPos);
+          int end = line.indexOf(" ", start);
+          if (start >= 0) {
+            line = line.substring(0, start + 1) + j3d + line.substring(end);
+            j3dChanged = true;
           }
         }
       }

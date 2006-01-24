@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio;
 
+import com.jgoodies.plaf.LookUtils;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -36,6 +37,7 @@ import loci.visbio.util.*;
 import visad.VisADException;
 import visad.data.qt.QTForm;
 import visad.util.ReflectedUniverse;
+import visad.util.Util;
 
 /** SystemControls is the control panel for reporting system information. */
 public class SystemControls extends ControlPanel implements ActionListener {
@@ -104,8 +106,8 @@ public class SystemControls extends ControlPanel implements ActionListener {
     heap.addActionListener(this);
 
     // Java3D library text field
-    JTextField java3dField = new JTextField(
-      getVersionString("javax.vecmath.Point3d"));
+    String j3dVersion = getVersionString("javax.vecmath.Point3d");
+    JTextField java3dField = new JTextField(j3dVersion);
     java3dField.setEditable(false);
 
     // QuickTime library text field
@@ -162,6 +164,21 @@ public class SystemControls extends ControlPanel implements ActionListener {
     laf.setActionCommand("laf");
     laf.addActionListener(this);
 
+    // Renderer text field
+    boolean j3d = j3dVersion != null && !j3dVersion.equals("Missing");
+    boolean j3dWin132 = LookUtils.IS_OS_WINDOWS && Util.canDoJava3D("1.3.2");
+    String rend = j3d ?  (j3dWin132 ? getJ3DString() : "Java3D") : "Java2D";
+    JTextField renderField = new JTextField(rend);
+    renderField.setEditable(false);
+
+    // Renderer alteration button
+    JButton render = new JButton("Change...");
+    if (!LAFUtil.isMacLookAndFeel()) render.setMnemonic('g');
+    if (!j3dWin132) render.setEnabled(false);
+    render.setToolTipText("Changes the renderer used for visualization");
+    render.setActionCommand("render");
+    render.addActionListener(this);
+
     // Stereo configuration text field
     JTextField stereoField = new JTextField(
       DisplayUtil.getStereoConfiguration() == null ?
@@ -173,7 +190,8 @@ public class SystemControls extends ControlPanel implements ActionListener {
       "right:pref, 3dlu, pref:grow, 3dlu, pref",
       "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 9dlu, " +
       "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, " +
-      "pref, 3dlu, pref, 3dlu, pref, 9dlu, pref, 3dlu, pref, 3dlu, pref");
+      "pref, 3dlu, pref, 3dlu, pref, 9dlu, " +
+      "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref");
     PanelBuilder builder = new PanelBuilder(layout);
     builder.setDefaultDialogBorder();
     CellConstraints cc = new CellConstraints();
@@ -225,6 +243,10 @@ public class SystemControls extends ControlPanel implements ActionListener {
     builder.add(lafField, cc.xy(3, row));
     builder.add(laf, cc.xy(5, row));
     row += 2;
+    builder.addLabel("&Renderer", cc.xy(1, row)).setLabelFor(renderField);
+    builder.add(renderField, cc.xy(3, row));
+    builder.add(render, cc.xy(5, row));
+    row += 2;
     builder.addLabel("&Stereo", cc.xy(1, row)).setLabelFor(stereoField);
     builder.add(stereoField, cc.xyw(3, row, 3));
     row += 2;
@@ -270,14 +292,14 @@ public class SystemControls extends ControlPanel implements ActionListener {
           "VisBio", JOptionPane.ERROR_MESSAGE);
         return;
       }
-      sm.writeScript(maxHeap, null);
+      sm.writeScript(maxHeap, null, null);
       JOptionPane.showMessageDialog(this,
         "The change will take effect next time you run VisBio.",
         "VisBio", JOptionPane.INFORMATION_MESSAGE);
     }
     else if ("laf".equals(cmd)) {
       String[] laf = LAFUtil.getLookAndFeel();
-      final String[][] lafs = LAFUtil.getAvailableLookAndFeels();
+      String[][] lafs = LAFUtil.getAvailableLookAndFeels();
       String lafName = (String) JOptionPane.showInputDialog(this,
         "New Look & Feel:", "VisBio", JOptionPane.QUESTION_MESSAGE,
         null, lafs[0], laf[0]);
@@ -289,11 +311,29 @@ public class SystemControls extends ControlPanel implements ActionListener {
           break;
         }
       }
-      if (ndx < 0 || lafs[1][ndx].equals(laf[1])) return;
-      sm.writeScript(-1, lafs[1][ndx]);
+      if (ndx < 0 || lafs[1][ndx].equals(laf[1])) return; // cancel or same
+      sm.writeScript(-1, lafs[1][ndx], null);
       JOptionPane.showMessageDialog(this,
         "The change will take effect next time you run VisBio.",
         "VisBio", JOptionPane.INFORMATION_MESSAGE);
+    }
+    else if ("render".equals(cmd)) {
+      String rend = getJ3DString();
+      String[] renderers = {"Java3D (OpenGL)", "Java3D (Direct3D)"};
+      String[] renderFlags = {"ogl", "d3d"};
+      String renderName = (String) JOptionPane.showInputDialog(this,
+        "New renderer:", "VisBio", JOptionPane.QUESTION_MESSAGE,
+        null, renderers, renderers[0]);
+      if (renderName == null) return;
+      int ndx = -1;
+      for (int i=0; i<renderers.length; i++) {
+        if (renderers[i].equals(renderName)) {
+          ndx = i;
+          break;
+        }
+      }
+      if (ndx < 0 || renderers[ndx].equals(rend)) return; // cancel or same
+      sm.writeScript(-1, null, renderFlags[ndx]);
     }
     else {
       // update system information
@@ -307,10 +347,10 @@ public class SystemControls extends ControlPanel implements ActionListener {
   }
 
 
-  // -- Helper methods --
+  // -- Utility methods --
 
   /** Gets version information for the specified class. */
-  private String getVersionString(String clas) {
+  private static String getVersionString(String clas) {
     Class c = null;
     try { c = Class.forName(clas); }
     catch (ClassNotFoundException exc) { c = null; }
@@ -318,7 +358,7 @@ public class SystemControls extends ControlPanel implements ActionListener {
   }
 
   /** Gets version information for the specified class. */
-  private String getVersionString(Class c) {
+  private static String getVersionString(Class c) {
     if (c == null) return "Missing";
     Package p = c.getPackage();
     if (p == null) return "No package";
@@ -329,5 +369,13 @@ public class SystemControls extends ControlPanel implements ActionListener {
     else if (version == null) return vendor;
     else return version + " (" + vendor + ")";
   }
+
+  /** Gets a string representing the Java3D renderer currently in use. */
+  private static String getJ3DString() {
+    String rend = System.getProperty("j3d.rend");
+    return (rend == null || rend.equals("ogl")) ? "Java3D (OpenGL)" :
+      (rend.equals("d3d") ? "Java3D (Direct3D)" : "Java3D (" + rend + ")");
+  }
+
 
 }
