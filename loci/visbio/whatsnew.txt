@@ -1,6 +1,9 @@
-v3.22 - Not yet released
+v3.22 - Tuesday, January 24, 2006
 
 - ADDED: Interface for computing transform results with external system calls
+- ADDED: Ability to switch between OpenGL and Direct3D modes on Windows
+
+- FIXED: A few minor bugfixes
 
 
 v3.21 - Monday, December 12, 2005
