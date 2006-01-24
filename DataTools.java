@@ -86,6 +86,30 @@ public abstract class DataTools {
   }
 
   /**
+   * Creates an image from the given unsigned int data.
+   * If the interleaved flag is set, the channels are assumed to be
+   * interleaved; otherwise they are assumed to be sequential.
+   * For example, for RGB data, the pattern "RGBRGBRGB..." is interleaved,
+   * while "RRR...GGG...BBB..." is sequential.
+   */
+  public static BufferedImage makeImage(int[] data,
+    int w, int h, int c, boolean interleaved) 
+  {
+    int dataType = DataBuffer.TYPE_INT;
+    ColorModel colorModel = makeColorModel(c, dataType);
+    if (colorModel == null) return null;
+    int pixelStride = interleaved ? c : 1;
+    int scanlineStride = interleaved ? (c * w) : w;
+    int[] bandOffsets = new int[c];
+    for (int i=0; i<c; i++) bandOffsets[i] = interleaved ? i : (i * w * h);
+    SampleModel model = new ComponentSampleModel(dataType,
+      w, h, pixelStride, scanlineStride, bandOffsets);
+    DataBuffer buffer = new DataBufferInt(data, c * w * h);
+    WritableRaster raster = Raster.createWritableRaster(model, buffer, null);
+    return new BufferedImage(colorModel, raster, false, null);
+  }	  
+  
+  /**
    * Creates an image from the given unsigned byte data.
    * It is assumed that each channel corresponds to one element of the array.
    * For example, for RGB data, data[0] is R, data[1] is G, and data[2] is B.

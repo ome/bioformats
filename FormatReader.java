@@ -98,6 +98,7 @@ public abstract class FormatReader {
     close();
     currentId = id;
     metadata = new Hashtable();
+    ome = OMETools.createRoot();
   }
 
   /**
