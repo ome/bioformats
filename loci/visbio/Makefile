@@ -156,7 +156,7 @@ VISAD_PACKAGES = \
 VISAD_FILES= \
 	DATE \
 	`echo $(VISAD_PACKAGES)' ' | sed -e 's/\./\//g' -e 's/ /\/\*\.class /g'` \
-	visad/util/*.jhf
+	visad/util/*.jhf ucar/netcdf/RandomAccessFile.class
 
 recompile:
 	@cd ../.. ; \
