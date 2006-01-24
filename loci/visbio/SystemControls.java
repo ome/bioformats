@@ -166,7 +166,13 @@ public class SystemControls extends ControlPanel implements ActionListener {
 
     // Renderer text field
     boolean j3d = j3dVersion != null && !j3dVersion.equals("Missing");
-    boolean j3dWin132 = LookUtils.IS_OS_WINDOWS && Util.canDoJava3D("1.3.2");
+    // HACK - Util.canDoJava3D("1.3.2") does not work as expected
+    //boolean j3d132 = Util.canDoJava3D("1.3.2");
+    int ndx = j3dVersion.indexOf(" ");
+    if (ndx < 0) ndx = j3dVersion.length();
+    boolean j3d132 = Util.canDoJava3D("1.4") ||
+      j3dVersion.substring(0, ndx).equals("1.3.2");
+    boolean j3dWin132 = LookUtils.IS_OS_WINDOWS && j3d132;
     String rend = j3d ?  (j3dWin132 ? getJ3DString() : "Java3D") : "Java2D";
     JTextField renderField = new JTextField(rend);
     renderField.setEditable(false);
@@ -334,6 +340,9 @@ public class SystemControls extends ControlPanel implements ActionListener {
       }
       if (ndx < 0 || renderers[ndx].equals(rend)) return; // cancel or same
       sm.writeScript(-1, null, renderFlags[ndx]);
+      JOptionPane.showMessageDialog(this,
+        "The change will take effect next time you run VisBio.",
+        "VisBio", JOptionPane.INFORMATION_MESSAGE);
     }
     else {
       // update system information
@@ -376,6 +385,5 @@ public class SystemControls extends ControlPanel implements ActionListener {
     return (rend == null || rend.equals("ogl")) ? "Java3D (OpenGL)" :
       (rend.equals("d3d") ? "Java3D (Direct3D)" : "Java3D (" + rend + ")");
   }
-
 
 }
