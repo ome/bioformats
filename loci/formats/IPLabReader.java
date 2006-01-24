@@ -158,7 +158,6 @@ public class IPLabReader extends FormatReader {
     littleEndian = new String(fourBytes).equals("iiii");
 
     // populate standard metadata hashtable and OME root node
-    metadata = new Hashtable();
     in.seek(0);
     in.skipBytes(16);
 
@@ -193,7 +192,6 @@ public class IPLabReader extends FormatReader {
     metadata.put("PixelType", ptype);
     in.skipBytes((int) dataSize);
 
-    ome = OMETools.createRoot();
     if (ome != null) {
       OMETools.setAttribute(ome, "Pixels", "SizeX", "" + width);
       OMETools.setAttribute(ome, "Pixels", "SizeY", "" + height);
