@@ -24,11 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Hashtable;
-import java.util.StringTokenizer;
-import java.util.NoSuchElementException;
 
 /**
  * BioRadReader is the file format reader for Bio-Rad PIC files.
