@@ -101,7 +101,7 @@ public class ImageTester extends JPanel implements WindowListener {
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     int wpad = 50, hpad = 100;
     int w = (screen.width - wpad) / chan.length;
-    int h = (screen.height - hpad) / 6;
+    int h = (screen.height - hpad) / 6;//9;
     System.out.println("Using images of size " + w + " x " + h);
     int size = w * h;
     BufferedImage[] bimg1 = new BufferedImage[chan.length];
@@ -110,6 +110,9 @@ public class ImageTester extends JPanel implements WindowListener {
     BufferedImage[] simg1 = new BufferedImage[chan.length];
     BufferedImage[] simg2 = new BufferedImage[chan.length];
     BufferedImage[] simg3 = new BufferedImage[chan.length];
+//    BufferedImage[] iimg1 = new BufferedImage[chan.length];
+//    BufferedImage[] iimg2 = new BufferedImage[chan.length];
+//    BufferedImage[] iimg3 = new BufferedImage[chan.length];
     for (int q=0; q<chan.length; q++) {
       int c = chan[q];
       System.out.println("Building c=" + c + " images");
@@ -119,6 +122,9 @@ public class ImageTester extends JPanel implements WindowListener {
       short[][] sdata1 = new short[c][size];
       short[] sdata2 = new short[c * size];
       short[] sdata3 = new short[c * size];
+//      int[][] idata1 = new int[c][size];
+//      int[] idata2 = new int[c * size];
+//      int[] idata3 = new int[c * size];
       for (int i=0; i<c; i++) {
         for (int y=0; y<h; y++) {
           for (int x=0; x<w; x++) {
@@ -133,12 +139,16 @@ public class ImageTester extends JPanel implements WindowListener {
             else val = (float) Math.random();
             int bval = (int) (256 * val);
             int sval = (int) (65536 * val);
+//            long ival = (long) (4294967296L * val - 2147483648L);
             bdata1[i][ndx1] = (byte) bval;
             bdata2[ndx2] = (byte) bval;
             bdata3[ndx3] = (byte) bval;
             sdata1[i][ndx1] = (short) sval;
             sdata2[ndx2] = (short) sval;
             sdata3[ndx3] = (short) sval;
+//            idata1[i][ndx1] = (int) ival;
+//            idata2[ndx2] = (int) ival;
+//            idata3[ndx3] = (int) ival;
           }
         }
       }
@@ -148,12 +158,16 @@ public class ImageTester extends JPanel implements WindowListener {
       simg1[q] = DataTools.makeImage(sdata1, w, h);
       simg2[q] = DataTools.makeImage(sdata2, w, h, c, true);
       simg3[q] = DataTools.makeImage(sdata3, w, h, c, false);
+//      iimg1[q] = DataTools.makeImage(idata1, w, h);
+//      iimg2[q] = DataTools.makeImage(idata2, w, h, c, true);
+//      iimg3[q] = DataTools.makeImage(idata3, w, h, c, false);
     }
 
     System.out.println("Rows are: byte[][], byte[] (interleaved), " +
       "byte[] (sequential)");
     System.out.println("  short[][], short[] (interleaved), " +
       "short[] (sequential)");
+//    System.out.println("  int[][], int[] (interleaved), int[] (sequential)");
     System.out.print("Columns are:");
     for (int q=0; q<chan.length; q++) {
       if (q > 0) System.out.print(",");
@@ -162,7 +176,11 @@ public class ImageTester extends JPanel implements WindowListener {
     System.out.println();
 
     JFrame frame = new JFrame("ImageTester");
-    BufferedImage[][] img = {bimg1, bimg2, bimg3, simg1, simg2, simg3};
+    BufferedImage[][] img = {
+      bimg1, bimg2, bimg3,
+      simg1, simg2, simg3,
+//      iimg1, iimg2, iimg3
+    };
     ImageTester pane = new ImageTester(img);
     frame.addWindowListener(pane);
     frame.setContentPane(pane);
