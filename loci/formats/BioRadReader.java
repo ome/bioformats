@@ -48,9 +48,9 @@ public class BioRadReader extends FormatReader {
 
   /** Always little endian. */
   private static final boolean LITTLE_ENDIAN = true;
-  
+
   // Merge types
-  
+
   /** Image is not merged. */
   private static final int MERGE_OFF = 0;
 
@@ -111,7 +111,7 @@ public class BioRadReader extends FormatReader {
     "16", "17", "18", "19", "VARIABLE", "STRUCTURE", "4D SERIES"
   };
 
-  
+
   // -- Fields --
 
   /** Input stream for current Bio-Rad PIC. */
@@ -130,7 +130,7 @@ public class BioRadReader extends FormatReader {
 
   /** Constructs a new BioRadReader. */
   public BioRadReader() { super("BioRad", "pic"); }
-  
+
   // -- FormatReader API methods --
 
   /** Checks if the given block is a valid header for an ICS file. */
@@ -138,7 +138,7 @@ public class BioRadReader extends FormatReader {
     if (block.length < 56) return false;
     return DataTools.bytesToShort(block, 54, 2, LITTLE_ENDIAN) == PIC_FILE_ID;
   }
-    
+
   /** Determines the number of images in the given ICS file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
@@ -163,7 +163,7 @@ public class BioRadReader extends FormatReader {
       in.readFully(data);
 
       // each pixel is 8 bits
-      return DataTools.makeImage(data, nx, ny, 1, false);    
+      return DataTools.makeImage(data, nx, ny, 1, false);
     }
     else {
       // jump to proper image number
@@ -177,7 +177,7 @@ public class BioRadReader extends FormatReader {
       short[] pixs = new short[imageLen];
       for(int i=0; i<pixs.length; i++) {
         pixs[i] = DataTools.bytesToShort(data, 2 * i, LITTLE_ENDIAN);
-      }	      
+      }
       return DataTools.makeImage(pixs, nx, ny, 1, false);
     }
   }
@@ -218,14 +218,14 @@ public class BioRadReader extends FormatReader {
     int color2 = DataTools.bytesToInt(header, 60, 2, LITTLE_ENDIAN);
     int edited = DataTools.bytesToInt(header, 62, 2, LITTLE_ENDIAN);
     int lens = DataTools.bytesToInt(header, 64, 2, LITTLE_ENDIAN);
-    float magFactor = 
+    float magFactor =
       Float.intBitsToFloat(DataTools.bytesToInt(header, 66, 4, LITTLE_ENDIAN));
-    
+
     // check validity of header
     if (fileId != PIC_FILE_ID) {
       throw new FormatException("Invalid file header : " + fileId);
-    }	    
-    
+    }
+
     // populate metadata fields
     metadata.put("nx", new Integer(nx));
     metadata.put("ny", new Integer(ny));
@@ -247,7 +247,6 @@ public class BioRadReader extends FormatReader {
     metadata.put("mag_factor", new Float(magFactor));
 
     // skip image data
-
     int imageLen = nx * ny;
     int bpp = byteFormat ? 1 : 2;
     in.skipBytes(bpp * npic * imageLen);
@@ -269,8 +268,8 @@ public class BioRadReader extends FormatReader {
 
       // add note to list
       noteCount++;
-      metadata.put("note" + noteCount, 
-        noteString(noteCount, level, status, type, x, y, text));
+      metadata.put("note" + noteCount,
+        noteString(num, level, status, type, x, y, text));
     }
 
     // read color tables
@@ -280,16 +279,16 @@ public class BioRadReader extends FormatReader {
     while (!eof && numLuts < 3) {
       try {
         in.readFully(lut[numLuts]);
-	numLuts++;
-      }	    
+        numLuts++;
+      }
       catch (IOException exc) {
         eof = true;
-	if (DEBUG) exc.printStackTrace();
-      } 	      
+        if (DEBUG) exc.printStackTrace();
+      }
     }
 
     if (DEBUG && DEBUG_LEVEL >= 2) {
-      System.out.println(numLuts + " color table" + 
+      System.out.println(numLuts + " color table" +
         (numLuts == 1 ? "" : "s") + " present.");
     }
 
@@ -298,11 +297,11 @@ public class BioRadReader extends FormatReader {
     for (int i=0; i<numLuts; i++) {
       for (int l=0; l<256; l++) {
         int qr = 0x000000ff & lut[i][l];
-	int qg = 0x000000ff & lut[i][l + 256];
-	int qb = 0x000000ff & lut[i][l + 512];
-	colors[i][0][l] = (float) qr;
-	colors[i][1][l] = (float) qg;
-	colors[i][2][l] = (float) qb;
+        int qg = 0x000000ff & lut[i][l + 256];
+        int qb = 0x000000ff & lut[i][l + 512];
+        colors[i][0][l] = (float) qr;
+        colors[i][1][l] = (float) qg;
+        colors[i][2][l] = (float) qb;
       }
     }
     metadata.put("luts", colors);
@@ -323,14 +322,15 @@ public class BioRadReader extends FormatReader {
     OMETools.setAttribute(ome, "Image", "PixelType", fmt);
   }
 
-  public String noteString(int n, int l, int s, int t, int x, int y, String p) {
+  public String noteString(int n, int l, int s, int t, int x, int y, String p)
+  {
     StringBuffer sb = new StringBuffer(100);
     sb.append("level=");
     sb.append(l);
     sb.append("; num=");
     sb.append(n);
     sb.append("; status=");
-    sb.append(s);					    
+    sb.append(s);
     sb.append("; type=");
     sb.append(NOTE_NAMES[t]);
     sb.append("; x=");
@@ -340,8 +340,8 @@ public class BioRadReader extends FormatReader {
     sb.append("; text=");
     sb.append(p == null ? "null" : p.trim());
     return sb.toString();
-  }	  
-  
+  }
+
 
   // -- Main method --
 
