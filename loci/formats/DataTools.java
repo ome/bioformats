@@ -86,7 +86,7 @@ public abstract class DataTools {
   }
 
   /**
-   * Creates an image from the given unsigned int data.
+   * Creates an image from the given signed int data.
    * If the interleaved flag is set, the channels are assumed to be
    * interleaved; otherwise they are assumed to be sequential.
    * For example, for RGB data, the pattern "RGBRGBRGB..." is interleaved,
@@ -135,6 +135,21 @@ public abstract class DataTools {
     if (colorModel == null) return null;
     SampleModel model = new BandedSampleModel(dataType, w, h, data.length);
     DataBuffer buffer = new DataBufferUShort(data, data[0].length);
+    WritableRaster raster = Raster.createWritableRaster(model, buffer, null);
+    return new BufferedImage(colorModel, raster, false, null);
+  }
+
+  /**
+   * Creates an image from the given signed int data.
+   * It is assumed that each channel corresponds to one element of the array.
+   * For example, for RGB data, data[0] is R, data[1] is G, and data[2] is B.
+   */
+  public static BufferedImage makeImage(int[][] data, int w, int h) {
+    int dataType = DataBuffer.TYPE_INT;
+    ColorModel colorModel = makeColorModel(data.length, dataType);
+    if (colorModel == null) return null;
+    SampleModel model = new BandedSampleModel(dataType, w, h, data.length);
+    DataBuffer buffer = new DataBufferInt(data, data[0].length);
     WritableRaster raster = Raster.createWritableRaster(model, buffer, null);
     return new BufferedImage(colorModel, raster, false, null);
   }
