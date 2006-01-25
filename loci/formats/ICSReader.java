@@ -27,7 +27,6 @@ package loci.formats;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.NoSuchElementException;
 
