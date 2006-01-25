@@ -31,8 +31,8 @@ import java.util.StringTokenizer;
 import java.util.NoSuchElementException;
 
 /**
- * ICSReader is the file format reader for ICS (Image Cytometry Standard) files.
- * More information on ICS can be found at http://libics.sourceforge.net
+ * ICSReader is the file format reader for ICS (Image Cytometry Standard)
+ * files. More information on ICS can be found at http://libics.sourceforge.net
  *
  * @author Melissa Linkert linkert at cs.wisc.edu
  */
@@ -40,7 +40,7 @@ import java.util.NoSuchElementException;
 public class ICSReader extends FormatReader {
 
   // -- Fields --
-	
+
   /** Current filename. */
   protected String currentIcsId;
   protected String currentIdsId;
@@ -51,11 +51,11 @@ public class ICSReader extends FormatReader {
 
   /** Flag indicating whether current file is little endian. */
   protected boolean littleEndian;
- 
+
   /** Number of images. */
   protected int numImages;
 
-  /** 
+  /**
    * Dimensions in the following order:
    * 1) bits per pixel
    * 2) width
@@ -66,11 +66,13 @@ public class ICSReader extends FormatReader {
    */
   protected int[] dimensions = new int[6];
 
+
   // -- Constructor --
-  
+
   /** Constructs a new ICSReader. */
   public ICSReader() { super("ICS", new String[] {"ics", "ids"}); }
-  
+
+
   // -- FormatReader API methods --
 
   /** Checks if the given block is a valid header for an ICS file. */
@@ -98,7 +100,7 @@ public class ICSReader extends FormatReader {
     int channels = 1;
 
     BufferedImage image = null;
-    
+
     if(dimensions[0] == 8) {
       // case for 8 bit data
       image = DataTools.makeImage(data, width, height, channels, false);
@@ -112,17 +114,17 @@ public class ICSReader extends FormatReader {
       image = DataTools.makeImage(rawData, width, height, channels, false);
     }
     else if(dimensions[0] == 32) {
-      // case for 32 bit data -- could be broken	    
+      // case for 32 bit data -- could be broken
       int[] rawData = new int[channels * numSamples];
       for (int i=0; i<rawData.length; i++) {
         rawData[i] = DataTools.bytesToInt(data, 4 * i, littleEndian);
-      }	      
+      }
       image = DataTools.makeImage(rawData, width, height, channels, false);
-    }	   
-    else throw new FormatException("Sorry, " + 
+    }
+    else throw new FormatException("Sorry, " +
       dimensions[0] + " bits per sample is not supported");
 
-    return image;	  
+    return image;
   }
 
   /** Closes any open files. */
@@ -137,7 +139,7 @@ public class ICSReader extends FormatReader {
   /** Initializes the given IPLab file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    
+
     String icsId = id, idsId = id;
     int dot = id.lastIndexOf(".");
     String ext = dot < 0 ? "" : id.substring(dot + 1).toLowerCase();
@@ -146,14 +148,14 @@ public class ICSReader extends FormatReader {
       char[] c = idsId.toCharArray();
       c[c.length - 2]++;
       idsId = new String(c);
-    }	    
+    }
     else if(ext.equals("ids")) {
       // convert D to C regardless of case
       char[] c = icsId.toCharArray();
       c[c.length - 2]--;
       id = icsId = new String(c);
-    }	    
-	  
+    }
+
     if (icsId == null) throw new FormatException("No ICS file found.");
     File icsFile = new File(icsId);
     if (!icsFile.exists()) throw new FormatException("ICS file not found.");
@@ -174,28 +176,28 @@ public class ICSReader extends FormatReader {
       t = new StringTokenizer(line);
       while(t.hasMoreTokens()) {
         token = t.nextToken();
-	if (!token.equals("layout") && !token.equals("representation") && 
-	  !token.equals("parameter") && !token.equals("history") &&
-	  !token.equals("sensor"))
-	{
+        if (!token.equals("layout") && !token.equals("representation") &&
+          !token.equals("parameter") && !token.equals("history") &&
+          !token.equals("sensor"))
+        {
           if (t.countTokens() < 3) {
-	    try {
+            try {
               metadata.put(token, t.nextToken());
-	    }	    
-	    catch (NoSuchElementException e) { }
+            }
+            catch (NoSuchElementException e) { }
           }
-	  else {
+          else {
             String meta = t.nextToken();
-	    while (t.hasMoreTokens()) {
+            while (t.hasMoreTokens()) {
               meta = meta + " " + t.nextToken();
-	    }	    
-	    metadata.put(token, meta);
-	  }	  
-	}	
+            }
+            metadata.put(token, meta);
+          }
+        }
       }
       line = reader.readLine();
-    } 
-    
+    }
+
     String images = (String) metadata.get("sizes");
     String order = (String) metadata.get("order");
     // bpp, width, height, z, channels
@@ -213,24 +215,24 @@ public class ICSReader extends FormatReader {
       orderToken = t2.nextToken();
       if (orderToken.equals("bits")) {
         dimensions[0] = Integer.parseInt(imageToken);
-      }	       
+      }
       else if(orderToken.equals("x")) {
         dimensions[1] = Integer.parseInt(imageToken);
       }
       else if(orderToken.equals("y")) {
-	dimensions[2] = Integer.parseInt(imageToken);
+        dimensions[2] = Integer.parseInt(imageToken);
       }
       else if(orderToken.equals("z")) {
-	dimensions[3] = Integer.parseInt(imageToken);
+        dimensions[3] = Integer.parseInt(imageToken);
       }
       else if(orderToken.equals("ch")) {
         dimensions[4] = Integer.parseInt(imageToken);
       }
       else {
         dimensions[5] = Integer.parseInt(imageToken);
-      }	      
+      }
     }
-   
+
     numImages = dimensions[3] * dimensions[4] * dimensions[5];
 
     String endian = (String) metadata.get("byte_order");
@@ -242,12 +244,12 @@ public class ICSReader extends FormatReader {
       int lastByte = 0;
 
       for(int i=0; i<endianness.countTokens(); i++) {
-        if (i == 0) firstByte = Integer.parseInt(endianness.nextToken()); 
-	else lastByte = Integer.parseInt(endianness.nextToken());
-      }	      
+        if (i == 0) firstByte = Integer.parseInt(endianness.nextToken());
+        else lastByte = Integer.parseInt(endianness.nextToken());
+      }
       if (lastByte < firstByte) littleEndian = false;
-    }	    
-    
+    }
+
     // initialize OME metadata
 
     if (ome != null) {
@@ -257,7 +259,8 @@ public class ICSReader extends FormatReader {
       OMETools.setAttribute(ome, "Pixels", "SizeC", "" + dimensions[4]);
       OMETools.setAttribute(ome, "Pixels", "SizeT", "" + dimensions[5]);
       OMETools.setAttribute(ome, "Pixels", "BigEndian", "" + !littleEndian);
-      OMETools.setAttribute(ome, "Image", "Name", ""+ metadata.get("filename"));
+      OMETools.setAttribute(ome, "Image", "Name",
+        "" + metadata.get("filename"));
 
       String ord = (String) metadata.get("order");
       ord = ord.substring(ord.indexOf("x"));
@@ -265,7 +268,7 @@ public class ICSReader extends FormatReader {
       int pt = 0;
       for (int i=0; i<ord.length(); i+=2) {
         tempOrder[pt] = ord.charAt(i);
-	pt++;
+        pt++;
       }
       ord = new String(tempOrder);
       ord = order.toUpperCase();
@@ -274,7 +277,7 @@ public class ICSReader extends FormatReader {
       if (ord.indexOf("T") == -1) ord = ord + "T";
       if (ord.indexOf("C") == -1) ord = ord + "C";
       OMETools.setAttribute(ome, "Pixels", "DimensionOrder", ord);
-      
+
       String bits = (String) metadata.get("significant_bits");
       String fmt = (String) metadata.get("format");
       String sign = (String) metadata.get("sign");
@@ -286,14 +289,16 @@ public class ICSReader extends FormatReader {
       if (fmt.equals("real")) type = "float";
       else if (fmt.equals("integer")) {
         type = type + "int" + bits;
-      }	      
+      }
       OMETools.setAttribute(ome, "Pixels", "PixelType", type);
     }
   }
 
+
   // -- Main method --
-  
+
   public static void main(String[] args) throws FormatException, IOException {
     new ICSReader().testRead(args);
   }
+
 }

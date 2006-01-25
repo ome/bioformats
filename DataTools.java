@@ -93,7 +93,7 @@ public abstract class DataTools {
    * while "RRR...GGG...BBB..." is sequential.
    */
   public static BufferedImage makeImage(int[] data,
-    int w, int h, int c, boolean interleaved) 
+    int w, int h, int c, boolean interleaved)
   {
     int dataType = DataBuffer.TYPE_INT;
     ColorModel colorModel = makeColorModel(c, dataType);
@@ -107,8 +107,8 @@ public abstract class DataTools {
     DataBuffer buffer = new DataBufferInt(data, c * w * h);
     WritableRaster raster = Raster.createWritableRaster(model, buffer, null);
     return new BufferedImage(colorModel, raster, false, null);
-  }	  
-  
+  }
+
   /**
    * Creates an image from the given unsigned byte data.
    * It is assumed that each channel corresponds to one element of the array.
