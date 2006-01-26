@@ -45,9 +45,9 @@ predict how big the output images will be for a given set of input images with
 certain parameter values. Note that VisBio requires that all output images be
 dimensioned the same for each given set of image dimensions and parameters.
 
-<p>Lastly, VisBio makes the actual call of "<code>/path/to/program --predict
---width X --height Y --planes N A B C ...</code>" (the same as the second call,
-but without the "<code>--predict</code>" flag). With this syntax, your program
+<p>Lastly, VisBio makes the actual call of "<code>/path/to/program --width X
+--height Y --planes N A B C ...</code>" (the same as the second call, but
+without the "<code>--predict</code>" flag). With this syntax, your program
 should begin accepting little-endian binary floating point data on stdin,
 dimensioned according to the specified image dimensions, rasterized in NYX
 order. After performing its intended function on the input data, it should
