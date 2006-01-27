@@ -39,7 +39,7 @@ public abstract class TiffTools {
 
   // -- Constants --
 
-  public static final boolean DEBUG = false;
+  public static final boolean DEBUG = true;
 
   // non-IFD tags (for internal use)
   public static final int LITTLE_ENDIAN = 0;
@@ -771,17 +771,9 @@ public abstract class TiffTools {
         bitsPerSample.length + ") does not match SamplesPerPixel (" +
         samplesPerPixel + ")");
     }
-    if (photoInterp == RGB_PALETTE) {
-      throw new FormatException(
-        "Sorry, Palette color PhotometricInterpretation is not supported");
-    }
     else if (photoInterp == TRANSPARENCY_MASK) {
       throw new FormatException(
         "Sorry, Transparency Mask PhotometricInterpretation is not supported");
-    }
-    else if (photoInterp == CMYK) {
-      throw new FormatException(
-        "Sorry, CMYK PhotometricInterpretation is not supported");
     }
     else if (photoInterp == Y_CB_CR) {
       throw new FormatException(
@@ -792,7 +784,8 @@ public abstract class TiffTools {
         "Sorry, CIELAB PhotometricInterpretation is not supported");
     }
     else if (photoInterp != WHITE_IS_ZERO &&
-      photoInterp != BLACK_IS_ZERO && photoInterp != RGB)
+      photoInterp != BLACK_IS_ZERO && photoInterp != RGB && 
+      photoInterp != RGB_PALETTE && photoInterp != CMYK)
     {
       throw new FormatException("Unknown PhotometricInterpretation (" +
         photoInterp + ")");
@@ -840,46 +833,56 @@ public abstract class TiffTools {
       debug("reading image data (samplesPerPixel=" +
         samplesPerPixel + "; numSamples=" + numSamples + ")");
     }
-    float[][] samples = new float[samplesPerPixel][numSamples];
+
+    if((samplesPerPixel == 1) && (photoInterp == RGB_PALETTE)) {
+      samplesPerPixel = 3;
+    }	    
+    
+    byte[][] samples = 
+      new byte[samplesPerPixel][numSamples*bitsPerSample[0] / 8];
+    byte[] altBytes = new byte[0];
+    
     for (int strip=0, row=0; strip<numStrips; strip++, row+=rowsPerStrip) {
       if (DEBUG) debug("reading image strip #" + strip);
       long actualRows = (row + rowsPerStrip > imageLength) ?
         imageLength - row : rowsPerStrip;
       in.seek(globalOffset + stripOffsets[strip]);
       if (stripByteCounts[strip] > Integer.MAX_VALUE) {
-        throw new FormatException("Sorry, StripByteCounts > " +
-          Integer.MAX_VALUE + " is not supported");
-      }
+        throw new FormatException("Sorry, StripByteCounts > " + 
+	  Integer.MAX_VALUE + " is not supported");
+      }	      
       byte[] bytes = new byte[(int) stripByteCounts[strip]];
       in.read(bytes);
-      bytes = uncompress(bytes, compression);
-      undifference(bytes, bitsPerSample, imageWidth, planarConfig, predictor);
-      unpackBytes(samples, (int) (imageWidth * row), bytes,
-        bitsPerSample, photoInterp, colorMap, littleEndian);
+      if(compression != PACK_BITS) {
+        bytes = uncompress(bytes, compression);
+        undifference(bytes, bitsPerSample, imageWidth, planarConfig, predictor);
+        unpackBytes(samples, (int) (imageWidth * row), bytes, bitsPerSample, 
+          photoInterp, colorMap, littleEndian);
+      }
+      else {
+        // concatenate contents of bytes to altBytes
+	byte[] tempPackBits = new byte[altBytes.length];
+	System.arraycopy(altBytes, 0, tempPackBits, 0, altBytes.length);
+	altBytes = new byte[altBytes.length + bytes.length];
+	System.arraycopy(tempPackBits, 0, altBytes, 0, tempPackBits.length);
+	System.arraycopy(bytes, 0, altBytes, tempPackBits.length, bytes.length);
+      }	      
     }
+   
+    // right now, only do this if the image uses PackBits compression
+    if(altBytes.length != 0) {
+      altBytes = uncompress(altBytes, compression);
+      undifference(altBytes, bitsPerSample, imageWidth, 
+        planarConfig, predictor);
+      unpackBytes(samples, (int) imageWidth, altBytes, bitsPerSample,
+        photoInterp, colorMap, littleEndian);		      
+    }	    
+    
 
     // construct field
     if (DEBUG) debug("constructing image");
-    /* CTR TODO
-    RealType x = RealType.getRealType("ImageElement");
-    RealType y = RealType.getRealType("ImageLine");
-    RealType[] v = new RealType[samplesPerPixel];
-    for (int i=0; i<samplesPerPixel; i++) {
-      v[i] = RealType.getRealType("value" + i);
-    }
-    FlatField field = null;
-    try {
-      RealTupleType domain = new RealTupleType(x, y);
-      RealTupleType range = new RealTupleType(v);
-      FunctionType fieldType = new FunctionType(domain, range);
-      Linear2DSet fieldSet = new Linear2DSet(domain, 0.0, imageWidth - 1.0,
-        (int) imageWidth, imageLength - 1.0, 0.0, (int) imageLength);
-      field = new FlatField(fieldType, fieldSet);
-      field.setSamples(samples, false);
-    }
-    catch (VisADException exc) { exc.printStackTrace(); }
-    return field;
-    */ return null;
+    
+    return DataTools.makeImage(samples, (int) imageWidth, (int) imageLength);
   }
 
   /**
@@ -888,10 +891,11 @@ public abstract class TiffTools {
    * entry values, and the specified byte ordering.
    * No error checking is performed.
    */
-  public static void unpackBytes(float[][] samples, int startIndex,
+  public static void unpackBytes(byte[][] samples, int startIndex,
     byte[] bytes, int[] bitsPerSample, int photoInterp, int[] colorMap,
     boolean littleEndian) throws FormatException
   {
+
     int totalBits = 0;
     for (int i=0; i<bitsPerSample.length; i++) totalBits += bitsPerSample[i];
     int sampleCount = 8 * bytes.length / totalBits;
@@ -907,30 +911,78 @@ public abstract class TiffTools {
     }
     int index = 0;
     for (int j=0; j<sampleCount; j++) {
-      for (int i=0; i<bitsPerSample.length; i++) {
-        int numBytes = bitsPerSample[i] / 8;
-        if (numBytes == 1) {
-          // special case handles 8-bit data more quickly
-          byte b = bytes[index++];
+      for (int i=0; i<samples.length; i++) {
+        int numBytes = bitsPerSample[0] / 8;
+
+        if (numBytes == 0) {
+	  // MELISSA TODO
+	  byte b = bytes[index++];	
           int ndx = startIndex + j;
-          samples[i][ndx] = b < 0 ? 256 + b : b;
+	  // cut off bitsPerSample[i] bits and pad with 0s
+	  //System.out.println("num bits : " + bitsPerSample[i]);
+	  //System.out.println("offset : " + (i*bitsPerSample[i]));
+          samples[i][ndx] = 
+	    DataTools.getBits(b, i*bitsPerSample[i], bitsPerSample[i]);
+        }
+	else if (numBytes == 1) {
+          // special case handles 8-bit data more quickly
+          byte b = bytes[index];
+	  index++;
+          int ndx = startIndex + j;
+	  samples[i][ndx] = (byte) (b < 0 ? 256 + b : b);
           if (photoInterp == WHITE_IS_ZERO) { // invert color value
-            samples[i][ndx] = 256 - samples[i][ndx];
+	    samples[i][ndx] = (byte) (255 - samples[i][ndx]);
           }
+	  else if (photoInterp == RGB_PALETTE) {
+	    index--;	  
+            int x = b < 0 ? 256 + b : b;
+	    int red = colorMap[x];
+	    int green = colorMap[x + (int) Math.pow(2, bitsPerSample[0])];
+	    int blue = colorMap[x + 2*((int) Math.pow(2, bitsPerSample[0]))];
+	    int[] components = {red, green, blue};
+	  
+	    samples[i][ndx] = (byte) components[i]; 
+	    if(samples[i][ndx] == 0) {
+	      samples[i][ndx] = (byte) (components[i] % 255);
+	    }  
+		    
+          }
+	  else if (photoInterp == CMYK) {
+            samples[i][ndx] = (byte) (255 - samples[i][ndx]);
+	  }	  
         }
         else {
           byte[] b = new byte[numBytes];
           System.arraycopy(bytes, index, b, 0, numBytes);
           index += numBytes;
           int ndx = startIndex + j;
-          samples[i][ndx] = DataTools.bytesToLong(b, littleEndian);
+          samples[i][ndx] = (byte) DataTools.bytesToLong(b, littleEndian);
           if (photoInterp == WHITE_IS_ZERO) { // invert color value
             long maxValue = 1;
             for (int q=0; q<numBytes; q++) maxValue *= 8;
-            samples[i][ndx] = maxValue - samples[i][ndx];
+            samples[i][ndx] = (byte) (maxValue - samples[i][ndx]);
           }
+          if (photoInterp == BLACK_IS_ZERO) {
+	    // currently broken 
+	    samples[i][ndx] = (byte) (255 - samples[i][ndx]);
+	  } 
+          else if (photoInterp == RGB_PALETTE) {
+	    int x = DataTools.bytesToInt(b, littleEndian);
+	    int red = colorMap[x];
+	    int green = colorMap[x + (int) Math.pow(2, bitsPerSample[0])];
+	    int blue = colorMap[x + 2*((int) Math.pow(2, bitsPerSample[0]))];
+	    int[] components = {red, green, blue};
+	    samples[i][ndx] = (byte) components[i];
+	    if(samples[i][ndx] == 0) {
+	      samples[i][ndx] = (byte) (components[i] % 255);
+	    }  
+	  } 
+	  else if (photoInterp == CMYK) {
+            samples[i][ndx] = (byte) (255 - samples[i][ndx]);
+	  }
         }
       }
+      if ((photoInterp == RGB_PALETTE) && (bitsPerSample[0] == 8)) index++;
     }
   }
 
@@ -960,10 +1012,7 @@ public abstract class TiffTools {
       throw new FormatException(
         "Sorry, JPEG compression mode is not supported");
     }
-    else if (compression == PACK_BITS) {
-      throw new FormatException(
-        "Sorry, PackBits compression mode is not supported");
-    }
+    else if (compression == PACK_BITS) return packBitsUncompress(input); 
     else {
       throw new FormatException(
         "Unknown Compression type (" + compression + ")");
@@ -986,6 +1035,45 @@ public abstract class TiffTools {
     }
   }
 
+  /**
+   * Decodes a PackBits (Macintosh RLE) compressed image.
+   * Adapted from the TIFF 6.0 specification, page 42.
+   * @author Melissa Linkert, linkert at cs.wisc.edu
+   */
+  public static byte[] packBitsUncompress(byte[] input) {
+    Vector output = new Vector();
+    int pt = 0;
+    byte n;
+    while (pt < input.length) {
+      n = input[pt];
+      pt++;
+      if((0 <= n) && (n <= 127)) {
+        for(int i=0; i<(int) n+1; i++) {
+          if(pt < input.length) {
+            output.add(new Byte(input[pt]));
+	    pt++;
+	  }	  
+        }		
+      }	      
+      else if((-127 <= n) || (n <= -1)) {
+        for(int i=0; i<(int) (-n+1); i++) {
+          if(pt < input.length) {
+            output.add(new Byte(input[pt]));
+	  }	  
+        }		
+	pt++;
+      }	     
+      else { pt++; }
+    }
+    byte[] toRtn = new byte[output.size()];
+    for(int i=0; i<toRtn.length; i++) {
+      toRtn[i] = ((Byte) output.get(i)).byteValue();	    
+    }
+    return toRtn;
+  }
+  
+
+  
   /**
    * Decodes an LZW-compressed image strip.
    * Adapted from the TIFF 6.0 Specification:
