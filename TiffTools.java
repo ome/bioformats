@@ -921,8 +921,8 @@ public abstract class TiffTools {
 	  // cut off bitsPerSample[i] bits and pad with 0s
 	  //System.out.println("num bits : " + bitsPerSample[i]);
 	  //System.out.println("offset : " + (i*bitsPerSample[i]));
-          samples[i][ndx] = 
-	    DataTools.getBits(b, i*bitsPerSample[i], bitsPerSample[i]);
+          //samples[i][ndx] = 
+	    //DataTools.getBits(b, i*bitsPerSample[i], bitsPerSample[i]);
         }
 	else if (numBytes == 1) {
           // special case handles 8-bit data more quickly
