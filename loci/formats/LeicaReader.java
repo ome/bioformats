@@ -53,13 +53,13 @@ public class LeicaReader extends FormatReader {
 
   /** Array of image file names. */
   protected String[] files;
-  
+
 
   // -- Constructor --
 
   /** Constructs a new Leica reader. */
-  public LeicaReader() { 
-    super("Leica", "lei"); 
+  public LeicaReader() {
+    super("Leica", "lei");
     tiff = new TiffReader();
   }
 
@@ -69,7 +69,7 @@ public class LeicaReader extends FormatReader {
   /** Checks if the given block is a valid header for a Leica file. */
   public boolean isThisType(byte[] block) {
     // check that the block has value of 0x016033F0
-    return (block[0] == 0x01 && block[1] == 0x60 && block[2] == 0x33 && 
+    return (block[0] == 0x01 && block[1] == 0x60 && block[2] == 0x33 &&
       block[3] == 0xF0) || (block[0] == 0xF0 && block[1] == 0x33 &&
       block[2] == 0x60 && block[3] == 0x01);
   }
@@ -181,7 +181,6 @@ public class LeicaReader extends FormatReader {
      if (temp != null) {
        // the series data
        // ID_SERIES
- 
         metadata.put("Version",
           new Integer(DataTools.bytesToInt(temp, 0, 4, littleEndian)));
         metadata.put("Number of Series",
@@ -198,8 +197,7 @@ public class LeicaReader extends FormatReader {
       if (temp != null) {
         // the image data
         // ID_IMAGES
-
-	metadata.put("Number of images", new Integer(
+        metadata.put("Number of images", new Integer(
           DataTools.bytesToInt(temp, 0, 4, littleEndian)));
         metadata.put("Image width", new Integer(
           DataTools.bytesToInt(temp, 4, 4, littleEndian)));
@@ -215,8 +213,7 @@ public class LeicaReader extends FormatReader {
       if (temp != null) {
         // dimension description
         // ID_DIMDESCR
-	     
-	int pt = 0;
+        int pt = 0;
         metadata.put("Voxel Version", new Integer(
           DataTools.bytesToInt(temp, 0, 4, littleEndian)));
         int voxelType = DataTools.bytesToInt(temp, 4, 4, littleEndian);
@@ -277,15 +274,15 @@ public class LeicaReader extends FormatReader {
             case 5832782: dimType = "logical y-wide"; break;
             case 5898318: dimType = "logical z-wide"; break;
           }
-	  
-	  metadata.put("Dim" + j + " type", dimType);
+
+          metadata.put("Dim" + j + " type", dimType);
           pt += 4;
-	  metadata.put("Dim" + j + " size", new Integer(
-	    DataTools.bytesToInt(temp, pt, 4, littleEndian)));
-	  pt += 4;
-	  metadata.put("Dim" + j + " distance between sub-dimensions",
-	    new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
-	  pt += 4;
+          metadata.put("Dim" + j + " size", new Integer(
+            DataTools.bytesToInt(temp, pt, 4, littleEndian)));
+          pt += 4;
+          metadata.put("Dim" + j + " distance between sub-dimensions",
+            new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
+          pt += 4;
 
           int len = DataTools.bytesToInt(temp, pt, 4, littleEndian);
           pt += 4;
@@ -324,8 +321,7 @@ public class LeicaReader extends FormatReader {
       if (temp != null) {
         // time data
         // ID_TIMEINFO
-
-	try {
+        try {
           metadata.put("Number of time-stamped dimensions",
             new Integer(DataTools.bytesToInt(temp, 0, 4, littleEndian)));
           int nDims = DataTools.bytesToInt(temp, 4, 4, littleEndian);
@@ -347,9 +343,9 @@ public class LeicaReader extends FormatReader {
 
           int numStamps = DataTools.bytesToInt(temp, pt, 4, littleEndian);
           pt += 4;
-	  metadata.put("Number of time-stamps", new Integer(numStamps));
-	  for (int j=0; j<numStamps; j++) {
-	    metadata.put("Timestamp " + j,
+          metadata.put("Number of time-stamps", new Integer(numStamps));
+          for (int j=0; j<numStamps; j++) {
+            metadata.put("Timestamp " + j,
               stripString(new String(temp, pt, 64)));
             pt += 64;
           }
@@ -380,15 +376,14 @@ public class LeicaReader extends FormatReader {
         // scanner data
         // ID_SCANNERSET
 
-	// not currently used
+        // not currently used
       }
 
       temp = (byte[]) headerIFDs[i].get(new Integer(60));
       if (temp != null) {
         // experiment data
         // ID_EXPERIMENT
-
-	int pt = 8;
+        int pt = 8;
         int len = DataTools.bytesToInt(temp, pt, 4, littleEndian);
         pt += 4;
 
@@ -418,8 +413,7 @@ public class LeicaReader extends FormatReader {
       if (temp != null) {
         // LUT data
         // ID_LUTDESC
-
-	int pt = 0;
+        int pt = 0;
         int numChannels = DataTools.bytesToInt(temp, pt, 4, littleEndian);
         pt += 4;
         metadata.put("Number of LUT channels", new Integer(numChannels));

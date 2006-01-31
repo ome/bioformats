@@ -1,4 +1,4 @@
-// 
+//
 // BaseTiffReader.java
 //
 
@@ -48,20 +48,20 @@ public abstract class BaseTiffReader extends FormatReader {
   /** Number of images in the current TIFF stack. */
   protected int numImages;
 
-  
+
   // -- Constructors --
 
   /** Constructs a new BaseTiffReader. */
   public BaseTiffReader(String name, String suffix) { super(name, suffix); }
-  public BaseTiffReader(String name, String[] suffixes) { 
-    super(name, suffixes); 
+  public BaseTiffReader(String name, String[] suffixes) {
+    super(name, suffixes);
   }
 
   // -- BaseTiffReader API methods --
 
   /** Gets the dimensions of the given (possibly multi-page) TIFF file. */
-  public int[] getTiffDimensions(String id) 
-    throws FormatException, IOException 
+  public int[] getTiffDimensions(String id)
+    throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
     if (ifds == null || ifds.length == 0) return null;
@@ -69,17 +69,17 @@ public abstract class BaseTiffReader extends FormatReader {
       TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_WIDTH, false, -1),
       TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_LENGTH, false, -1),
       numImages
-    };	      
+    };
   }
-  
+
   // -- Internal BaseTiffReader API methods --
 
   /** Populates the metadata hashtable and OME root node. */
   protected void initMetadata() {
     initStandardMetadata();
     initOMEMetadata();
-  }	  
- 
+  }
+
   /** Parses standard metadata. */
   protected void initStandardMetadata() {
     Hashtable ifd = ifds[0];
@@ -93,7 +93,7 @@ public abstract class BaseTiffReader extends FormatReader {
       case TiffTools.UNCOMPRESSED:
         compression = "None"; break;
       case TiffTools.CCITT_1D:
-	compression = "CCITT Group 3 1-Dimensional Modified Huffman"; break;
+        compression = "CCITT Group 3 1-Dimensional Modified Huffman"; break;
       case TiffTools.GROUP_3_FAX:
         compression = "CCITT T.4 bilevel encoding"; break;
       case TiffTools.GROUP_4_FAX:
@@ -302,8 +302,8 @@ public abstract class BaseTiffReader extends FormatReader {
 
     putInt("YCbCrPositioning", ifd, TiffTools.Y_CB_CR_POSITIONING);
     putInt("ReferenceBlackWhite", ifd, TiffTools.REFERENCE_BLACK_WHITE);
-  }	  
-  
+  }
+
   /** Parses OME-XML metadata. */
   protected void initOMEMetadata() {
     final String unknown = "unknown";
@@ -390,8 +390,8 @@ public abstract class BaseTiffReader extends FormatReader {
         TiffTools.getIFDIntValue(ifd, TiffTools.MAKE));
     }
     catch (FormatException exc) { exc.printStackTrace(); }
-  }	  
-  
+  }
+
   // -- FormatReader API methods --
 
   /** Checks if the given block is a valid header for an IPLab file. */
@@ -401,7 +401,7 @@ public abstract class BaseTiffReader extends FormatReader {
 
   /** Determines the number of images in the given IPLab file. */
   public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);	  
+    if (!id.equals(currentId)) initFile(id);
     return numImages;
   }
 

@@ -36,7 +36,7 @@ public class TiffReader extends BaseTiffReader {
 
   // -- Constructor --
 
-  /** Constructs a new Tiff reader. */	
+  /** Constructs a new Tiff reader. */
   public TiffReader() { super("Tiff", new String[] {"tif", "tiff"}); }
 
   // -- Internal BaseTiffForm API methods --
@@ -49,11 +49,11 @@ public class TiffReader extends BaseTiffReader {
     metadata.put("OME-TIFF", root == null ? "no" : "yes");
     if (root == null) super.initOMEMetadata();
     else ome = root;
-  }	  
-  
-  
+  }
+
+
   // -- Main method --
   public static void main(String[] args) throws FormatException, IOException {
-    new TiffReader().testRead(args);  
-  }	  
+    new TiffReader().testRead(args);
+  }
 }

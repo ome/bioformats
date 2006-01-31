@@ -34,7 +34,7 @@ import java.util.Hashtable;
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class MetamorphReader extends BaseTiffReader {
- 
+
   // -- Constants --
 
   // IFD tag numbers of important fields
@@ -48,7 +48,7 @@ public class MetamorphReader extends BaseTiffReader {
 
   private int numPlanes;
 
-  
+
   // -- Constructor --
 
   /** Constructs a new Metamorph reader. */
@@ -102,7 +102,7 @@ public class MetamorphReader extends BaseTiffReader {
 
     // copy ifds into a new array of Hashtables that will accomodate the
     // additional image planes
-   
+
     Hashtable[] tempIFDs = new Hashtable[ifds.length + numImages];
     System.arraycopy(ifds, 0, tempIFDs, 0, ifds.length);
     int pointer = ifds.length;
@@ -116,7 +116,7 @@ public class MetamorphReader extends BaseTiffReader {
     int stripsPerImage = oldOffsets.length;
 
     // for each image plane, construct an IFD hashtable
- 
+
     Hashtable temp;
     for(int i=1; i<numImages; i++) {
       temp = new Hashtable();
@@ -148,7 +148,7 @@ public class MetamorphReader extends BaseTiffReader {
         new Integer(TiffTools.PREDICTOR)));
 
       // now we need a StripOffsets entry
-      
+
       long planeOffset = i*(oldOffsets[stripsPerImage - 1] +
         stripByteCounts[stripsPerImage - 1] - oldOffsets[0]);
 
@@ -172,14 +172,14 @@ public class MetamorphReader extends BaseTiffReader {
   protected void initOMEMetadata() {
     super.initOMEMetadata();
     if (ome != null) {
-      try {	    
-        OMETools.setAttribute(ome, "Pixels", "SizeZ", 
+      try {
+        OMETools.setAttribute(ome, "Pixels", "SizeZ",
           "" + TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true).length);
       }
       catch(FormatException f) { f.printStackTrace(); }
-    }	  
+    }
   }
-  
+
   /** Populates the metadata hashtable. */
   protected void initStandardMetadata() {
     try {
@@ -224,13 +224,13 @@ public class MetamorphReader extends BaseTiffReader {
 
         // variable declarations, because switch is dumb
         int num, denom;
-	int xnum, xdenom, ynum, ydenom;
-	double xpos, ypos;
-	String thedate, thetime;
-	switch (currentcode) {
-	  case 0:
-	    String autoscale = DataTools.read4SignedBytes(in, little) == 0 ?
-	      "no auto-scaling" : "16-bit to 8-bit scaling";
+        int xnum, xdenom, ynum, ydenom;
+        double xpos, ypos;
+        String thedate, thetime;
+        switch (currentcode) {
+          case 0:
+            String autoscale = DataTools.read4SignedBytes(in, little) == 0 ?
+              "no auto-scaling" : "16-bit to 8-bit scaling";
             put("AutoScale", autoscale);
             break;
           case 1:
@@ -250,9 +250,9 @@ public class MetamorphReader extends BaseTiffReader {
             put("XCalibration", new TiffRational(num, denom));
             break;
           case 5:
-	    num = DataTools.read4SignedBytes(in, little);
-	    denom = DataTools.read4SignedBytes(in, little);
-	    put("YCalibration", new TiffRational(num, denom));
+            num = DataTools.read4SignedBytes(in, little);
+            denom = DataTools.read4SignedBytes(in, little);
+            put("YCalibration", new TiffRational(num, denom));
             break;
           case 6:
             num = DataTools.read4SignedBytes(in, little);
@@ -262,7 +262,7 @@ public class MetamorphReader extends BaseTiffReader {
             break;
           case 7:
             num = DataTools.read4SignedBytes(in, little);
-	    toread = new byte[num];
+            toread = new byte[num];
             in.read(toread);
             String name = new String(toread);
             put("Name", name);
@@ -280,7 +280,7 @@ public class MetamorphReader extends BaseTiffReader {
             break;
           // there is no 10
           case 11:
-	    put("ThreshStateGreen", DataTools.read4SignedBytes(in, little));
+            put("ThreshStateGreen", DataTools.read4SignedBytes(in, little));
             break;
           case 12:
             put("ThreshStateBlue", DataTools.read4SignedBytes(in, little));
@@ -456,8 +456,8 @@ public class MetamorphReader extends BaseTiffReader {
     catch (NullPointerException n) { }
     catch (IOException e) { e.printStackTrace(); }
     catch (FormatException e) { e.printStackTrace(); }
-    
-    
+
+
     try {
       super.initStandardMetadata();
     }

@@ -636,13 +636,13 @@ public abstract class TiffTools {
     long[] stripOffsets = getIFDLongArray(ifd, STRIP_OFFSETS, false);
     long[] stripByteCounts = getIFDLongArray(ifd, STRIP_BYTE_COUNTS, false);
     long[] rowsPerStripArray = getIFDLongArray(ifd, ROWS_PER_STRIP, false);
-    
+
     boolean fakeByteCounts = stripByteCounts == null;
     boolean fakeRPS = rowsPerStripArray == null;
     boolean isTiled = stripOffsets == null;
 
     long maxValue = 0;
-    
+
     if (isTiled) {
     //  long tileWidth = getIFDLongValue(ifd, TILE_WIDTH, true, 0);
     //  long tileLength = getIFDLongValue(ifd, TILE_LENGTH, true, 0);
@@ -650,20 +650,20 @@ public abstract class TiffTools {
       stripByteCounts = getIFDLongArray(ifd, TILE_BYTE_COUNTS, true);
       // TODO
       throw new FormatException("Sorry, tiled images are not supported");
-    }	    
+    }
     else if (fakeByteCounts) {
       // technically speaking, this shouldn't happen (since TIFF writers are
-      // required to write the StripByteCounts tag), but we'll support it 
+      // required to write the StripByteCounts tag), but we'll support it
       // anyway
 
       // don't rely on RowsPerStrip, since it's likely that if the file doesn't
       // have the StripByteCounts tag, it also won't have the RowsPerStrip tag
       stripByteCounts = new long[stripOffsets.length];
       stripByteCounts[0] = stripOffsets[0];
-      for(int i=1; i<stripByteCounts.length; i++) {
+      for (int i=1; i<stripByteCounts.length; i++) {
         stripByteCounts[i] = stripOffsets[i] - stripByteCounts[i-1];
       }
-    }	    
+    }
 
     if (fakeRPS && !isTiled) {
       // create a false rowsPerStripArray if one is not present
@@ -730,7 +730,7 @@ public abstract class TiffTools {
       System.arraycopy(refBlackWhite, 0, colorMap, tempColorMap.length,
         refBlackWhite.length);
     }
-    
+
     if (DEBUG) {
       StringBuffer sb = new StringBuffer();
       sb.append("IFD directory entry values:");
@@ -821,7 +821,7 @@ public abstract class TiffTools {
         "Sorry, CIELAB PhotometricInterpretation is not supported");
     }
     else if (photoInterp != WHITE_IS_ZERO &&
-      photoInterp != BLACK_IS_ZERO && photoInterp != RGB && 
+      photoInterp != BLACK_IS_ZERO && photoInterp != RGB &&
       photoInterp != RGB_PALETTE && photoInterp != CMYK &&
       photoInterp != Y_CB_CR)
     {
@@ -838,10 +838,10 @@ public abstract class TiffTools {
     }
 
     long numStrips = (imageLength + rowsPerStrip - 1) / rowsPerStrip;
-    
-    if (isTiled) numStrips = stripOffsets.length; 
+
+    if (isTiled) numStrips = stripOffsets.length;
     if (planarConfig == 2) numStrips *= samplesPerPixel;
-    
+
     if (stripOffsets.length != numStrips) {
         throw new FormatException("StripOffsets length (" +
           stripOffsets.length + ") does not match expected " +
@@ -874,54 +874,56 @@ public abstract class TiffTools {
         samplesPerPixel + "; numSamples=" + numSamples + ")");
     }
 
-    if((samplesPerPixel == 1) && (photoInterp == RGB_PALETTE)) {
+    if (samplesPerPixel == 1 && photoInterp == RGB_PALETTE) {
       samplesPerPixel = 3;
-    }	    
-    
-    byte[][] samples = 
+    }
+
+    byte[][] samples =
       new byte[samplesPerPixel][numSamples*bitsPerSample[0] / 8];
     byte[] altBytes = new byte[0];
-    
+
     for (int strip=0, row=0; strip<numStrips; strip++, row+=rowsPerStrip) {
       if (DEBUG) debug("reading image strip #" + strip);
       long actualRows = (row + rowsPerStrip > imageLength) ?
         imageLength - row : rowsPerStrip;
       in.seek(globalOffset + stripOffsets[strip]);
       if (stripByteCounts[strip] > Integer.MAX_VALUE) {
-        throw new FormatException("Sorry, StripByteCounts > " + 
-	  Integer.MAX_VALUE + " is not supported");
-      }	      
+        throw new FormatException("Sorry, StripByteCounts > " +
+          Integer.MAX_VALUE + " is not supported");
+      }
       byte[] bytes = new byte[(int) stripByteCounts[strip]];
       in.read(bytes);
-      if(compression != PACK_BITS) {
+      if (compression != PACK_BITS) {
         bytes = uncompress(bytes, compression);
-        undifference(bytes, bitsPerSample, imageWidth, planarConfig, predictor);
-        unpackBytes(samples, (int) (imageWidth * row), bytes, bitsPerSample, 
+        undifference(bytes, bitsPerSample,
+          imageWidth, planarConfig, predictor);
+        unpackBytes(samples, (int) (imageWidth * row), bytes, bitsPerSample,
           photoInterp, colorMap, littleEndian, maxValue);
       }
       else {
         // concatenate contents of bytes to altBytes
-	byte[] tempPackBits = new byte[altBytes.length];
-	System.arraycopy(altBytes, 0, tempPackBits, 0, altBytes.length);
-	altBytes = new byte[altBytes.length + bytes.length];
-	System.arraycopy(tempPackBits, 0, altBytes, 0, tempPackBits.length);
-	System.arraycopy(bytes, 0, altBytes, tempPackBits.length, bytes.length);
-      }	      
+        byte[] tempPackBits = new byte[altBytes.length];
+        System.arraycopy(altBytes, 0, tempPackBits, 0, altBytes.length);
+        altBytes = new byte[altBytes.length + bytes.length];
+        System.arraycopy(tempPackBits, 0, altBytes, 0, tempPackBits.length);
+        System.arraycopy(bytes, 0, altBytes,
+          tempPackBits.length, bytes.length);
+      }
     }
-   
+
     // right now, only do this if the image uses PackBits compression
-    if(altBytes.length != 0) {
+    if (altBytes.length != 0) {
       altBytes = uncompress(altBytes, compression);
-      undifference(altBytes, bitsPerSample, imageWidth, 
-        planarConfig, predictor);
+      undifference(altBytes, bitsPerSample,
+        imageWidth, planarConfig, predictor);
       unpackBytes(samples, (int) imageWidth, altBytes, bitsPerSample,
-        photoInterp, colorMap, littleEndian, maxValue);		      
-    }	    
-    
+        photoInterp, colorMap, littleEndian, maxValue);
+    }
+
 
     // construct field
     if (DEBUG) debug("constructing image");
-    
+
     return DataTools.makeImage(samples, (int) imageWidth, (int) imageLength);
   }
 
@@ -949,76 +951,75 @@ public abstract class TiffTools {
       sampleCount -= trunc;
     }
     BitBuffer buffer;
-    
+
     int index = 0;
     for (int j=0; j<sampleCount; j++) {
       for (int i=0; i<samples.length; i++) {
         int numBytes = bitsPerSample[0] / 8;
 
         if (numBytes == 0) {
-	  // MELISSA TODO
-	  // bits per sample is less than 8, which should mean 1, 2, 4, or 6
-	  throw new FormatException("Sorry, unsupported bits per sample");
-	  /*
-	  byte b = bytes[index];
+          // MELISSA TODO
+          // bits per sample is less than 8, which should mean 1, 2, 4, or 6
+          throw new FormatException("Sorry, unsupported bits per sample");
+          /*
+          byte b = bytes[index];
           int offset = (bitsPerSample[i] * (i + j)) % 8;
-	  if (offset >= (8 - bitsPerSample[i])) {
-	    index++;
-	  }
+          if (offset >= (8 - bitsPerSample[i])) {
+            index++;
+          }
           buffer = new BitBuffer(new byte[] {b});
-	  
-	  int ndx = startIndex + j;
-	  samples[i][ndx] = (byte) buffer.getBits(bitsPerSample[i]);
-	  */
+
+          int ndx = startIndex + j;
+          samples[i][ndx] = (byte) buffer.getBits(bitsPerSample[i]);
+          */
         }
-	else if (bitsPerSample[0] == 8) {
+        else if (bitsPerSample[0] == 8) {
           // special case handles 8-bit data more quickly
           byte b = bytes[index];
-	  index++;
+          index++;
           int ndx = startIndex + j;
-	  samples[i][ndx] = (byte) (b < 0 ? 256 + b : b);
+          samples[i][ndx] = (byte) (b < 0 ? 256 + b : b);
           if (photoInterp == WHITE_IS_ZERO) { // invert color value
-	    samples[i][ndx] = (byte) (255 - samples[i][ndx]);
-          }
-	  else if (photoInterp == RGB_PALETTE) {
-	    index--;	  
-            int x = b < 0 ? 256 + b : b;
-	    int red = colorMap[x];
-	    int green = colorMap[x + (int) Math.pow(2, bitsPerSample[0])];
-	    int blue = colorMap[x + 2*((int) Math.pow(2, bitsPerSample[0]))];
-	    int[] components = {red, green, blue};
-	  
-	    samples[i][ndx] = (byte) components[i];
-	    if (maxValue == 0) samples[i][ndx] = (byte) (components[i] % 255);
-          }
-	  else if (photoInterp == CMYK) {
             samples[i][ndx] = (byte) (255 - samples[i][ndx]);
-	  }	
-	  else if (photoInterp == Y_CB_CR) {
-	    // 1) YCbCrSubSampling -- deal with varying chroma/luma dims
-	    // 2) YCbCrPositioning
-	    if (i == bitsPerSample.length - 1) {
+          }
+          else if (photoInterp == RGB_PALETTE) {
+            index--;
+            int x = b < 0 ? 256 + b : b;
+            int red = colorMap[x];
+            int green = colorMap[x + (int) Math.pow(2, bitsPerSample[0])];
+            int blue = colorMap[x + 2*((int) Math.pow(2, bitsPerSample[0]))];
+            int[] components = {red, green, blue};
+
+            samples[i][ndx] = (byte) components[i];
+            if (maxValue == 0) samples[i][ndx] = (byte) (components[i] % 255);
+          }
+          else if (photoInterp == CMYK) {
+            samples[i][ndx] = (byte) (255 - samples[i][ndx]);
+          }
+          else if (photoInterp == Y_CB_CR) {
+            // 1) YCbCrSubSampling -- deal with varying chroma/luma dims
+            // 2) YCbCrPositioning
+            if (i == bitsPerSample.length - 1) {
               int lumaRed = colorMap[0];
-	      int lumaGreen = colorMap[1];
-	      int lumaBlue = colorMap[2];
-              int red =
-	        (int) (samples[2][ndx]*(2 - 2*lumaRed) + samples[0][ndx]);
-	      int blue =
-		(int) (samples[1][ndx]*(2 - 2*lumaBlue) + samples[0][ndx]);
-	      int green = (int) (samples[0][ndx] - lumaBlue*blue - lumaRed*red);
-	      if (lumaGreen != 0) {
-	        green = (int) (green / lumaGreen);
-	      }	     
-	      samples[0][ndx] = (byte) (red - colorMap[4]);
-	      samples[1][ndx] = (byte) (green - colorMap[6]);
-	      samples[2][ndx] = (byte) (blue - colorMap[8]);
-	    }	    
-	  }	  
+              int lumaGreen = colorMap[1];
+              int lumaBlue = colorMap[2];
+              int red = (int)
+                (samples[2][ndx]*(2 - 2*lumaRed) + samples[0][ndx]);
+              int blue = (int)
+                (samples[1][ndx]*(2 - 2*lumaBlue) + samples[0][ndx]);
+              int green = (int)
+                (samples[0][ndx] - lumaBlue*blue - lumaRed*red);
+              if (lumaGreen != 0) green = (int) (green / lumaGreen);
+              samples[0][ndx] = (byte) (red - colorMap[4]);
+              samples[1][ndx] = (byte) (green - colorMap[6]);
+              samples[2][ndx] = (byte) (blue - colorMap[8]);
+            }
+          }
         }
-	else if (numBytes == 1) {
-	  // TODO	
+        else if (numBytes == 1) {
+          // TODO
           // bits per sample is 10, 12 or 14
-	}	
+        }
         else {
           byte[] b = new byte[numBytes];
           System.arraycopy(bytes, index, b, 0, numBytes);
@@ -1031,19 +1032,19 @@ public abstract class TiffTools {
             samples[i][ndx] = (byte) (max - samples[i][ndx]);
           }
           else if (photoInterp == RGB_PALETTE) {
-	    int x = DataTools.bytesToInt(b, littleEndian);
-	    int red = colorMap[x];
-	    int green = colorMap[x + (int) Math.pow(2, bitsPerSample[0])];
-	    int blue = colorMap[x + 2*((int) Math.pow(2, bitsPerSample[0]))];
-	    int[] components = {red, green, blue};
-	    samples[i][ndx] = (byte) components[i];
-	    if(samples[i][ndx] == 0) {
-	      samples[i][ndx] = (byte) (components[i] % 255);
-	    }  
-	  } 
-	  else if (photoInterp == CMYK) {
+            int x = DataTools.bytesToInt(b, littleEndian);
+            int red = colorMap[x];
+            int green = colorMap[x + (int) Math.pow(2, bitsPerSample[0])];
+            int blue = colorMap[x + 2*((int) Math.pow(2, bitsPerSample[0]))];
+            int[] components = {red, green, blue};
+            samples[i][ndx] = (byte) components[i];
+            if (samples[i][ndx] == 0) {
+              samples[i][ndx] = (byte) (components[i] % 255);
+            }
+          }
+          else if (photoInterp == CMYK) {
             samples[i][ndx] = (byte) (255 - samples[i][ndx]);
-	  }
+          }
         }
       }
       if ((photoInterp == RGB_PALETTE) && (bitsPerSample[0] == 8)) index++;
@@ -1076,7 +1077,7 @@ public abstract class TiffTools {
       throw new FormatException(
         "Sorry, JPEG compression mode is not supported");
     }
-    else if (compression == PACK_BITS) return packBitsUncompress(input); 
+    else if (compression == PACK_BITS) return packBitsUncompress(input);
     else {
       throw new FormatException(
         "Unknown Compression type (" + compression + ")");
@@ -1111,33 +1112,31 @@ public abstract class TiffTools {
     while (pt < input.length) {
       n = input[pt];
       pt++;
-      if((0 <= n) && (n <= 127)) {
-        for(int i=0; i<(int) n+1; i++) {
-          if(pt < input.length) {
+      if ((0 <= n) && (n <= 127)) {
+        for (int i=0; i<(int) n+1; i++) {
+          if (pt < input.length) {
             output.add(new Byte(input[pt]));
-	    pt++;
-	  }	  
-        }		
-      }	      
-      else if((-127 <= n) || (n <= -1)) {
-        for(int i=0; i<(int) (-n+1); i++) {
-          if(pt < input.length) {
+            pt++;
+          }
+        }
+      }
+      else if ((-127 <= n) || (n <= -1)) {
+        for (int i=0; i<(int) (-n+1); i++) {
+          if (pt < input.length) {
             output.add(new Byte(input[pt]));
-	  }	  
-        }		
-	pt++;
-      }	     
+          }
+        }
+        pt++;
+      }
       else { pt++; }
     }
     byte[] toRtn = new byte[output.size()];
-    for(int i=0; i<toRtn.length; i++) {
-      toRtn[i] = ((Byte) output.get(i)).byteValue();	    
+    for (int i=0; i<toRtn.length; i++) {
+      toRtn[i] = ((Byte) output.get(i)).byteValue();
     }
     return toRtn;
   }
-  
 
-  
   /**
    * Decodes an LZW-compressed image strip.
    * Adapted from the TIFF 6.0 Specification:
