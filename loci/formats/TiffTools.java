@@ -39,7 +39,7 @@ public abstract class TiffTools {
 
   // -- Constants --
 
-  public static final boolean DEBUG = true;
+  public static final boolean DEBUG = false;
 
   // non-IFD tags (for internal use)
   public static final int LITTLE_ENDIAN = 0;
@@ -633,12 +633,39 @@ public abstract class TiffTools {
     int samplesPerPixel = getIFDIntValue(ifd, SAMPLES_PER_PIXEL, false, 1);
     int compression = getIFDIntValue(ifd, COMPRESSION, false, UNCOMPRESSED);
     int photoInterp = getIFDIntValue(ifd, PHOTOMETRIC_INTERPRETATION, true, 0);
-    long[] stripOffsets = getIFDLongArray(ifd, STRIP_OFFSETS, true);
-    long[] stripByteCounts = getIFDLongArray(ifd, STRIP_BYTE_COUNTS, true);
+    long[] stripOffsets = getIFDLongArray(ifd, STRIP_OFFSETS, false);
+    long[] stripByteCounts = getIFDLongArray(ifd, STRIP_BYTE_COUNTS, false);
     long[] rowsPerStripArray = getIFDLongArray(ifd, ROWS_PER_STRIP, false);
-
+    
+    boolean fakeByteCounts = stripByteCounts == null;
     boolean fakeRPS = rowsPerStripArray == null;
-    if (fakeRPS) {
+    boolean isTiled = stripOffsets == null;
+
+    long maxValue = 0;
+    
+    if (isTiled) {
+    //  long tileWidth = getIFDLongValue(ifd, TILE_WIDTH, true, 0);
+    //  long tileLength = getIFDLongValue(ifd, TILE_LENGTH, true, 0);
+      stripOffsets = getIFDLongArray(ifd, TILE_OFFSETS, true);
+      stripByteCounts = getIFDLongArray(ifd, TILE_BYTE_COUNTS, true);
+      // TODO
+      throw new FormatException("Sorry, tiled images are not supported");
+    }	    
+    else if (fakeByteCounts) {
+      // technically speaking, this shouldn't happen (since TIFF writers are
+      // required to write the StripByteCounts tag), but we'll support it 
+      // anyway
+
+      // don't rely on RowsPerStrip, since it's likely that if the file doesn't
+      // have the StripByteCounts tag, it also won't have the RowsPerStrip tag
+      stripByteCounts = new long[stripOffsets.length];
+      stripByteCounts[0] = stripOffsets[0];
+      for(int i=1; i<stripByteCounts.length; i++) {
+        stripByteCounts[i] = stripOffsets[i] - stripByteCounts[i-1];
+      }
+    }	    
+
+    if (fakeRPS && !isTiled) {
       // create a false rowsPerStripArray if one is not present
       // it's sort of a cheap hack, but here's how it's done:
       // RowsPerStrip = stripByteCounts / (imageLength * bitsPerSample)
@@ -666,11 +693,11 @@ public abstract class TiffTools {
           // remember that the universe collapses when we divide by 0
           if (bitsPerSample[i] != 0) {
             rowsPerStripArray[i] = (long) stripByteCounts[i] /
-              (imageWidth * (bitsPerSample[i] / 8));
+              (imageLength * (bitsPerSample[i] / 8));
           }
           else if (bitsPerSample[i] == 0 && i > 0) {
             rowsPerStripArray[i] = (long) stripByteCounts[i] /
-              (imageWidth * (bitsPerSample[i - 1] / 8));
+              (imageLength * (bitsPerSample[i - 1] / 8));
           }
           else {
             throw new FormatException("BitsPerSample is 0");
@@ -694,6 +721,16 @@ public abstract class TiffTools {
     int[] colorMap = getIFDIntArray(ifd, COLOR_MAP, false);
     int predictor = getIFDIntValue(ifd, PREDICTOR, false, 1);
 
+    // use special color map for YCbCr
+    if (photoInterp == Y_CB_CR) {
+      int[] tempColorMap = getIFDIntArray(ifd, Y_CB_CR_COEFFICIENTS, false);
+      int[] refBlackWhite = getIFDIntArray(ifd, REFERENCE_BLACK_WHITE, false);
+      colorMap = new int[tempColorMap.length + refBlackWhite.length];
+      System.arraycopy(tempColorMap, 0, colorMap, 0, tempColorMap.length);
+      System.arraycopy(refBlackWhite, 0, colorMap, tempColorMap.length,
+        refBlackWhite.length);
+    }
+    
     if (DEBUG) {
       StringBuffer sb = new StringBuffer();
       sb.append("IFD directory entry values:");
@@ -766,7 +803,7 @@ public abstract class TiffTools {
       }
     }
 
-    if (bitsPerSample.length != samplesPerPixel) {
+    if (bitsPerSample.length < samplesPerPixel) {
       throw new FormatException("BitsPerSample length (" +
         bitsPerSample.length + ") does not match SamplesPerPixel (" +
         samplesPerPixel + ")");
@@ -785,7 +822,8 @@ public abstract class TiffTools {
     }
     else if (photoInterp != WHITE_IS_ZERO &&
       photoInterp != BLACK_IS_ZERO && photoInterp != RGB && 
-      photoInterp != RGB_PALETTE && photoInterp != CMYK)
+      photoInterp != RGB_PALETTE && photoInterp != CMYK &&
+      photoInterp != Y_CB_CR)
     {
       throw new FormatException("Unknown PhotometricInterpretation (" +
         photoInterp + ")");
@@ -800,13 +838,15 @@ public abstract class TiffTools {
     }
 
     long numStrips = (imageLength + rowsPerStrip - 1) / rowsPerStrip;
+    
+    if (isTiled) numStrips = stripOffsets.length; 
     if (planarConfig == 2) numStrips *= samplesPerPixel;
-
+    
     if (stripOffsets.length != numStrips) {
         throw new FormatException("StripOffsets length (" +
           stripOffsets.length + ") does not match expected " +
           "number of strips (" + numStrips + ")");
-      }
+    }
 
     if (stripByteCounts.length != numStrips) {
       throw new FormatException("StripByteCounts length (" +
@@ -857,7 +897,7 @@ public abstract class TiffTools {
         bytes = uncompress(bytes, compression);
         undifference(bytes, bitsPerSample, imageWidth, planarConfig, predictor);
         unpackBytes(samples, (int) (imageWidth * row), bytes, bitsPerSample, 
-          photoInterp, colorMap, littleEndian);
+          photoInterp, colorMap, littleEndian, maxValue);
       }
       else {
         // concatenate contents of bytes to altBytes
@@ -875,7 +915,7 @@ public abstract class TiffTools {
       undifference(altBytes, bitsPerSample, imageWidth, 
         planarConfig, predictor);
       unpackBytes(samples, (int) imageWidth, altBytes, bitsPerSample,
-        photoInterp, colorMap, littleEndian);		      
+        photoInterp, colorMap, littleEndian, maxValue);		      
     }	    
     
 
@@ -893,9 +933,8 @@ public abstract class TiffTools {
    */
   public static void unpackBytes(byte[][] samples, int startIndex,
     byte[] bytes, int[] bitsPerSample, int photoInterp, int[] colorMap,
-    boolean littleEndian) throws FormatException
+    boolean littleEndian, long maxValue) throws FormatException
   {
-
     int totalBits = 0;
     for (int i=0; i<bitsPerSample.length; i++) totalBits += bitsPerSample[i];
     int sampleCount = 8 * bytes.length / totalBits;
@@ -909,6 +948,8 @@ public abstract class TiffTools {
       if (DEBUG) debug("WARNING: truncated " + trunc + " extra samples");
       sampleCount -= trunc;
     }
+    BitBuffer buffer;
+    
     int index = 0;
     for (int j=0; j<sampleCount; j++) {
       for (int i=0; i<samples.length; i++) {
@@ -916,15 +957,21 @@ public abstract class TiffTools {
 
         if (numBytes == 0) {
 	  // MELISSA TODO
-	  byte b = bytes[index++];	
-          int ndx = startIndex + j;
-	  // cut off bitsPerSample[i] bits and pad with 0s
-	  //System.out.println("num bits : " + bitsPerSample[i]);
-	  //System.out.println("offset : " + (i*bitsPerSample[i]));
-          //samples[i][ndx] = 
-	    //DataTools.getBits(b, i*bitsPerSample[i], bitsPerSample[i]);
+	  // bits per sample is less than 8, which should mean 1, 2, 4, or 6
+	  throw new FormatException("Sorry, unsupported bits per sample");
+	  /*
+	  byte b = bytes[index];
+          int offset = (bitsPerSample[i] * (i + j)) % 8;
+	  if (offset >= (8 - bitsPerSample[i])) {
+	    index++;
+	  }
+          buffer = new BitBuffer(new byte[] {b});
+	  
+	  int ndx = startIndex + j;
+	  samples[i][ndx] = (byte) buffer.getBits(bitsPerSample[i]);
+	  */
         }
-	else if (numBytes == 1) {
+	else if (bitsPerSample[0] == 8) {
           // special case handles 8-bit data more quickly
           byte b = bytes[index];
 	  index++;
@@ -941,31 +988,48 @@ public abstract class TiffTools {
 	    int blue = colorMap[x + 2*((int) Math.pow(2, bitsPerSample[0]))];
 	    int[] components = {red, green, blue};
 	  
-	    samples[i][ndx] = (byte) components[i]; 
-	    if(samples[i][ndx] == 0) {
-	      samples[i][ndx] = (byte) (components[i] % 255);
-	    }  
-		    
+	    samples[i][ndx] = (byte) components[i];
+	    if (maxValue == 0) samples[i][ndx] = (byte) (components[i] % 255);
           }
 	  else if (photoInterp == CMYK) {
             samples[i][ndx] = (byte) (255 - samples[i][ndx]);
+	  }	
+	  else if (photoInterp == Y_CB_CR) {
+	    // 1) YCbCrSubSampling -- deal with varying chroma/luma dims
+	    // 2) YCbCrPositioning
+	    if (i == bitsPerSample.length - 1) {
+              int lumaRed = colorMap[0];
+	      int lumaGreen = colorMap[1];
+	      int lumaBlue = colorMap[2];
+              int red =
+	        (int) (samples[2][ndx]*(2 - 2*lumaRed) + samples[0][ndx]);
+	      int blue =
+		(int) (samples[1][ndx]*(2 - 2*lumaBlue) + samples[0][ndx]);
+	      int green = (int) (samples[0][ndx] - lumaBlue*blue - lumaRed*red);
+	      if (lumaGreen != 0) {
+	        green = (int) (green / lumaGreen);
+	      }	     
+	      samples[0][ndx] = (byte) (red - colorMap[4]);
+	      samples[1][ndx] = (byte) (green - colorMap[6]);
+	      samples[2][ndx] = (byte) (blue - colorMap[8]);
+	    }	    
 	  }	  
         }
+	else if (numBytes == 1) {
+	  // TODO	
+          // bits per sample is 10, 12 or 14
+	}	
         else {
           byte[] b = new byte[numBytes];
           System.arraycopy(bytes, index, b, 0, numBytes);
           index += numBytes;
           int ndx = startIndex + j;
-          samples[i][ndx] = (byte) DataTools.bytesToLong(b, littleEndian);
+          samples[i][ndx] = (byte) DataTools.bytesToLong(b, !littleEndian);
           if (photoInterp == WHITE_IS_ZERO) { // invert color value
-            long maxValue = 1;
-            for (int q=0; q<numBytes; q++) maxValue *= 8;
-            samples[i][ndx] = (byte) (maxValue - samples[i][ndx]);
+            long max = 1;
+            for (int q=0; q<numBytes; q++) max *= 8;
+            samples[i][ndx] = (byte) (max - samples[i][ndx]);
           }
-          if (photoInterp == BLACK_IS_ZERO) {
-	    // currently broken 
-	    samples[i][ndx] = (byte) (255 - samples[i][ndx]);
-	  } 
           else if (photoInterp == RGB_PALETTE) {
 	    int x = DataTools.bytesToInt(b, littleEndian);
 	    int red = colorMap[x];
