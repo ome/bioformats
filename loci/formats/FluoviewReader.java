@@ -1,5 +1,5 @@
 //
-// FluoviewTiffReader.java
+// FluoviewReader.java
 //
 
 /*
@@ -27,14 +27,14 @@ import java.io.*;
 import java.util.Hashtable;
 
 /**
- * FluoviewTiffReader is the file format reader for
+ * FluoviewReader is the file format reader for
  * Olympus Fluoview TIFF files.
  *
  * @author Eric Kjellman egkjellman at wisc.edu
  * @author Melissa Linkert linkert at cs.wisc.edu
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class FluoviewTiffReader extends BaseTiffReader {
+public class FluoviewReader extends BaseTiffReader {
 
   // -- Constants --
 
@@ -53,8 +53,8 @@ public class FluoviewTiffReader extends BaseTiffReader {
   // -- Constructor --
 
   /** Constructs a new Fluoview TIFF reader. */
-  public FluoviewTiffReader() {
-    super("FluoviewTiff", new String[] {"tif", "tiff"});
+  public FluoviewReader() {
+    super("Fluoview", new String[] {"tif", "tiff"});
   }
 
 
@@ -227,7 +227,7 @@ public class FluoviewTiffReader extends BaseTiffReader {
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {
-    new FluoviewTiffReader().testRead(args);
+    new FluoviewReader().testRead(args);
   }
 
 }
