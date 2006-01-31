@@ -108,8 +108,8 @@ public class ImageProSeqReader extends BaseTiffReader {
     if (ome != null) {
       OMETools.setAttribute(ome, "Pixels", "SizeZ",
         "" + metadata.get("slices"));
-      OMETools.setAttribute(ome, "Pixels", "SizeC",
-        "" + metadata.get("channels"));
+//      OMETools.setAttribute(ome, "Pixels", "SizeC",
+//        "" + metadata.get("channels"));
       OMETools.setAttribute(ome, "Pixels", "SizeT",
         "" + metadata.get("frames"));
     }

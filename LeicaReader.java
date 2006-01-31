@@ -467,7 +467,7 @@ public class LeicaReader extends FormatReader {
         littleEndian ? "false" : "true");
       OMETools.setAttribute(ome, "Group", "Name", "OME");
       OMETools.setAttribute(ome, "Image", "CreationDate",
-        metadata.get("Timestamp 1").toString());
+        metadata.get("Timestamp 1").toString().substring(3));
       OMETools.setAttribute(ome, "Image", "Description",
         metadata.get("Image Description").toString());
 
