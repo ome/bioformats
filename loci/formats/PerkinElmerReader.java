@@ -285,8 +285,9 @@ public class PerkinElmerReader extends FormatReader {
          metadata.get("Pixel Size X"));
        OMETools.setAttribute(ome, "Image", "PixelSizeY", "" +
          metadata.get("Pixel Size Y"));
-       OMETools.setAttribute(ome, "Image", "CreationDate", "" +
-         metadata.get("Finish Time:"));
+       String time = (String) metadata.get("Finish Time:");
+       time = time.substring(1).trim();
+       OMETools.setAttribute(ome, "Image", "CreationDate", time);
        OMETools.setAttribute(ome, "Pixels", "SizeX", "" +
          metadata.get("Image Width"));
        OMETools.setAttribute(ome, "Pixels", "SizeY", "" +
