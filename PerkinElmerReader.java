@@ -45,12 +45,12 @@ public class PerkinElmerReader extends FormatReader {
 
   /** Tiff files to open. */
   protected String[] files;
-	
+
 
   // -- Constructor --
 
   /** Constructs a new PerkinElmer reader. */
-  public PerkinElmerReader() { 
+  public PerkinElmerReader() {
     super("PerkinElmer", new String[] {"csv", "htm", "tim", "zpo"});
     tiff = new TiffReader();
   }
@@ -97,7 +97,7 @@ public class PerkinElmerReader extends FormatReader {
     String[] ls = workingDir.list();
 
     // check if we have any of the required header file types
-     
+
     int timPos = -1;
     int csvPos = -1;
     int zpoPos = -1;
@@ -147,7 +147,7 @@ public class PerkinElmerReader extends FormatReader {
      StringTokenizer t;
 
      // highly questionable metadata parsing
-   
+
      // we always parse the .tim and .htm files if they exist, along with
      // either the .csv file or the .zpo file
 
@@ -216,7 +216,7 @@ public class PerkinElmerReader extends FormatReader {
 
      // be aggressive about parsing the HTML file, since it's the only one that
      // explicitly defines the number of wavelengths and timepoints
-    
+
      if (htmPos != -1) {
        // ooh, pretty HTML
 
@@ -227,7 +227,7 @@ public class PerkinElmerReader extends FormatReader {
 
        String regex = "<p>|</p>|<br>|<hr>|<b>|</b>|<HTML>|<HEAD>|</HTML>|" +
          "</HEAD>|<h1>|</h1>|<HR>|</body>";
-		    
+
        // use reflection to avoid dependency on Java 1.4-specific split method
        Class c = String.class;
        String[] tokens = new String[0];

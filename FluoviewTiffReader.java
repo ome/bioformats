@@ -27,7 +27,8 @@ import java.io.*;
 import java.util.Hashtable;
 
 /**
- * FluoviewTiffReader is the file format reader for Olympus Fluoview TIFF files.
+ * FluoviewTiffReader is the file format reader for
+ * Olympus Fluoview TIFF files.
  *
  * @author Eric Kjellman egkjellman at wisc.edu
  * @author Melissa Linkert linkert at cs.wisc.edu
@@ -47,13 +48,13 @@ public class FluoviewTiffReader extends BaseTiffReader {
   private static final int MMHEADER = 34361;
   private static final int MMSTAMP = 34362;
   private static final int MMUSERBLOCK = 34386;
-	
+
 
   // -- Constructor --
 
   /** Constructs a new Fluoview TIFF reader. */
-  public FluoviewTiffReader() { 
-    super("FluoviewTiff", new String[] {"tif", "tiff"}); 
+  public FluoviewTiffReader() {
+    super("FluoviewTiff", new String[] {"tif", "tiff"});
   }
 
 
@@ -63,7 +64,7 @@ public class FluoviewTiffReader extends BaseTiffReader {
   public boolean isThisType(byte[] block) {
     if (!TiffTools.isValidHeader(block)) return false;
 
-    // if this file is a Fluoview TIFF file, it should have 42 
+    // if this file is a Fluoview TIFF file, it should have 42
     // for the 3rd byte, and contain the text "FLUOVIEW"
     String test = new String(block);
     return test.indexOf(FLUOVIEW_MAGIC_STRING) != -1;
@@ -85,7 +86,7 @@ public class FluoviewTiffReader extends BaseTiffReader {
       // set file pointer to start reading MM_HEAD metadata
       short[] mmHead = TiffTools.getIFDShortArray(ifd, MMHEADER, true);
       int p = 0; // pointer to next byte in mmHead
-      
+
       // -- Parse standard metadata --
 
       put("HeaderSize", DataTools.bytesToInt(mmHead, p, 2, little));
@@ -96,7 +97,7 @@ public class FluoviewTiffReader extends BaseTiffReader {
       // change from the specs: using 257 bytes instead of 256
       put("ImageName", DataTools.bytesToString(mmHead, p, 257));
       p += 257 + 4; // there are 4 bytes that we don't need
-     
+
       put("NumberOfColors", DataTools.bytesToLong(mmHead, p, 4, little));
       p += 4 + 8; // again, 8 bytes we don't need
 
@@ -107,7 +108,7 @@ public class FluoviewTiffReader extends BaseTiffReader {
       p += 4;
       long commentOffset = DataTools.bytesToLong(mmHead, p, 4, little);
       p += 4;
-	   
+
       // dimensions info
       // there are 10 blocks of dimension info to be read,
       // each with the same structure
@@ -147,7 +148,7 @@ public class FluoviewTiffReader extends BaseTiffReader {
       put("Offset", Double.longBitsToDouble(
         DataTools.bytesToLong(mmHead, p, little)));
       p += 8;
-   
+
       // get Gray dimension info
 
       put("DimName11", DataTools.bytesToString(mmHead, p, 16));
@@ -162,22 +163,22 @@ public class FluoviewTiffReader extends BaseTiffReader {
 
       // read in comments field
       if (commentSize > 0) {
-	in.seek(commentOffset);
-	byte[] comments = new byte[(int) commentSize];
-	in.read(comments);
-	put("Comments", new String(comments));
+        in.seek(commentOffset);
+        byte[] comments = new byte[(int) commentSize];
+        in.read(comments);
+        put("Comments", new String(comments));
       }
 
 
       // -- Parse OME-XML metadata --
-     
+
       Object off;
       String data;
       long newNum = 0;
       Object obj = new Object();
       double origin = 0;
 
-      
+
       // set file to the right place
       off = (Object) ifd.get(new Integer(MMHEADER));
       if (off != null) {
@@ -220,8 +221,8 @@ public class FluoviewTiffReader extends BaseTiffReader {
     }
     catch (IOException e) { e.printStackTrace(); }
     catch (FormatException e) { e.printStackTrace(); }
-  } 
-  
+  }
+
 
   // -- Main method --
 

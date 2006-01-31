@@ -36,8 +36,8 @@ public class ImageProSeqReader extends BaseTiffReader {
   // -- Constants --
 
   /**
-   * An array of shorts (length 12) with identical values in all of our samples;
-   * assuming this is some sort of format identifier.
+   * An array of shorts (length 12) with identical values in all of our
+   * samples; assuming this is some sort of format identifier.
    */
   private static final int IMAGE_PRO_TAG_1 = 50288;
 
@@ -46,7 +46,7 @@ public class ImageProSeqReader extends BaseTiffReader {
 
   /** Guessing this is thumbnail pixel data. */
   private static final int IMAGE_PRO_TAG_3 = 40106;
-	
+
   // -- Constructor --
 
   /** Constructs a new Image-Pro SEQ reader. */
@@ -64,25 +64,25 @@ public class ImageProSeqReader extends BaseTiffReader {
 
       if (tag1 != null) {
         String seqId = "";
-	for (int i=0; i<tag1.length; i++) seqId = seqId + tag1[i];
-	metadata.put("Image-Pro SEQ ID", seqId);
-      }	      
-	   
+        for (int i=0; i<tag1.length; i++) seqId = seqId + tag1[i];
+        metadata.put("Image-Pro SEQ ID", seqId);
+      }
+
       int tag2 = TiffTools.getIFDIntValue(ifds[0], IMAGE_PRO_TAG_2);
 
       if (tag2 != -1) {
         // should be one of these for every image plane
-	imageCount++;
-	metadata.put("Frame Rate", new Integer(tag2));
-      }	     
+        imageCount++;
+        metadata.put("Frame Rate", new Integer(tag2));
+      }
       else {
         imageCount = 1;
       }
       metadata.put("Number of images", new Integer(imageCount));
     }
 
-    String description = 
-      (String) TiffTools.getIFDValue(ifds[0], TiffTools.IMAGE_DESCRIPTION);  
+    String description =
+      (String) TiffTools.getIFDValue(ifds[0], TiffTools.IMAGE_DESCRIPTION);
 
     // default values
     metadata.put("slices", "1");
@@ -94,27 +94,27 @@ public class ImageProSeqReader extends BaseTiffReader {
       StringTokenizer tokenizer = new StringTokenizer(description, "\n");
       while (tokenizer.hasMoreTokens()) {
         String token = tokenizer.nextToken();
-	String label = token.substring(0, token.indexOf("="));
-	String data = token.substring(token.indexOf("=") + 1);
-	metadata.put(label, data);
-      }	    
+        String label = token.substring(0, token.indexOf("="));
+        String data = token.substring(token.indexOf("=") + 1);
+        metadata.put(label, data);
+      }
     }
   }
-  
+
   /** Overriden to include the three SEQ-specific tags. */
   protected void initOMEMetadata() {
     super.initOMEMetadata();
 
     if (ome != null) {
-      OMETools.setAttribute(ome, "Pixels", "SizeZ", 
+      OMETools.setAttribute(ome, "Pixels", "SizeZ",
         "" + metadata.get("slices"));
       OMETools.setAttribute(ome, "Pixels", "SizeC",
-	"" + metadata.get("channels"));
+        "" + metadata.get("channels"));
       OMETools.setAttribute(ome, "Pixels", "SizeT",
-	"" + metadata.get("frames"));	      
-    }	    
+        "" + metadata.get("frames"));
+    }
   }
-  
+
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {

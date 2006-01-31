@@ -33,11 +33,11 @@ import java.io.*;
 public class AndorReader extends BaseTiffReader {
 
   // -- Constants --
-  
+
   /** Andor TIFF private IFD tags. */
   private static final int MMHEADER = 317;
   private static final int MMSTAMP = 34362;
-	
+
 
   // -- Constructor --
 
@@ -52,39 +52,40 @@ public class AndorReader extends BaseTiffReader {
 
     if (block.length < 3) return false;
     if (block.length < 8) return true; // we have no way of verifying further
-    
+
     int ifdlocation = DataTools.bytesToInt(block, 4 , true);
     if (ifdlocation + 1 > block.length) { return true; }
-    else {  
+    else {
       int ifdnumber = DataTools.bytesToInt(block, ifdlocation, 2, true);
       for (int i=0; i<ifdnumber; i++) {
         if (ifdlocation + 3 + (i*12) > block.length) return true;
         else {
-          int ifdtag = DataTools.bytesToInt(block, 
-  	    ifdlocation + 2 + (i*12), 2, true);
- 	  if (ifdtag == MMHEADER || ifdtag == MMSTAMP) return true;
-        } 	    
-      } 	  
+          int ifdtag = DataTools.bytesToInt(block,
+          ifdlocation + 2 + (i*12), 2, true);
+          if (ifdtag == MMHEADER || ifdtag == MMSTAMP) return true;
+        }
+      }
       return false;
-    }  
-  }	  
-  
+    }
+  }
+
   // -- Internal BaseTiffReader API methods --
 
   /** Populate the metadata hashtable. */
   protected void initMetadata() {
     super.initMetadata();
 
-    metadata.put("Andor TIFF identifier", "" + TiffTools.getIFDIntValue(ifds[0], MMHEADER));
+    metadata.put("Andor TIFF identifier",
+      "" + TiffTools.getIFDIntValue(ifds[0], MMHEADER));
     short[] stamp = (short[]) TiffTools.getIFDValue(ifds[0], MMSTAMP);
     String dataStamp = "";
     for(int i=0; i<stamp.length; i++) {
       dataStamp += stamp[i];
       if (i < stamp.length - 1) {
         dataStamp += ", ";
-      }	      
+      }
     }
-    
+
     metadata.put("Data Stamp for the first plane", dataStamp);
   }
 

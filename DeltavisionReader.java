@@ -34,9 +34,9 @@ import java.io.*;
 public class DeltavisionReader extends FormatReader {
 
   // -- Constants --
-  
+
   private static final short LITTLE_ENDIAN = -16224;
-	
+
   // -- Fields --
 
   /** Current file. */
@@ -54,7 +54,7 @@ public class DeltavisionReader extends FormatReader {
   /** Byte array containing extended header data. */
   protected byte[] extHeader;
 
-  
+
   // -- Constructor --
 
   /** Constructs a new Deltavision reader. */
@@ -97,11 +97,11 @@ public class DeltavisionReader extends FormatReader {
     switch (pixelType) {
       case 0: bytesPerPixel = 1; break;
       case 1: bytesPerPixel = 2; break;
-      case 2: bytesPerPixel = 4; break;	      
-      case 3: bytesPerPixel = 4; break;  // not well supported
-      case 4: bytesPerPixel = 8; break;	 // not supported     
+      case 2: bytesPerPixel = 4; break;
+      case 3: bytesPerPixel = 4; break; // not well supported
+      case 4: bytesPerPixel = 8; break; // not supported
       case 6: bytesPerPixel = 2; break;
-    }	    
+    }
 
     // read the image plane's pixel data
 
@@ -113,17 +113,17 @@ public class DeltavisionReader extends FormatReader {
     byte[] rawData = new byte[width * height * bytesPerPixel];
     in.seek(offset);
     in.read(rawData);
-    
+
     if (bytesPerPixel == 1) {
       return DataTools.makeImage(rawData, width, height, channels, false);
-    }	    
+    }
     else if (bytesPerPixel == 2) {
       short[] data = new short[numSamples];
-      short q;  
+      short q;
       for (int i=0; i<rawData.length; i+=2) {
         q = DataTools.bytesToShort(rawData, i, 2, little);
-	data[i/2] = q;
-      }	     
+        data[i/2] = q;
+      }
       return DataTools.makeImage(data, width, height, channels, false);
     }
     else if (bytesPerPixel == 4) {
@@ -131,8 +131,8 @@ public class DeltavisionReader extends FormatReader {
       int q;
       for (int i=0; i<rawData.length; i+=4) {
         q = DataTools.bytesToInt(rawData, i, little);
-	data[i/4] = q;
-      }	      
+        data[i/4] = q;
+      }
       return DataTools.makeImage(data, width, height, channels, false);
     }
     else if (bytesPerPixel == 8) {
@@ -142,9 +142,9 @@ public class DeltavisionReader extends FormatReader {
     }
     else {
       // this should never happen
-      throw new FormatException("Unknown pixel depth : " + bytesPerPixel + 
+      throw new FormatException("Unknown pixel depth : " + bytesPerPixel +
         " bytes per pixel.");
-    }	    
+    }
   }
 
   /** Closes any open files. */
@@ -170,36 +170,36 @@ public class DeltavisionReader extends FormatReader {
     int extSize = DataTools.bytesToInt(header, 92, 4, little);
     extHeader = new byte[extSize];
     in.read(extHeader);
-    
+
     metadata.put("ImageWidth", new Integer(DataTools.bytesToInt(header, 0, 4,
       little)));
-    metadata.put("ImageHeight", new Integer(DataTools.bytesToInt(header, 
+    metadata.put("ImageHeight", new Integer(DataTools.bytesToInt(header,
       4, 4, little)));
     metadata.put("NumberOfImages", new Integer(DataTools.bytesToInt(header,
       8, 4, little)));
     int pixelType = DataTools.bytesToInt(header, 12, 4, little);
     String pixel;
     String omePixel;
-    
+
     switch (pixelType) {
       case 0: pixel = "8 bit unsigned integer"; omePixel = "Uint8"; break;
       case 1: pixel = "16 bit signed integer"; omePixel = "int16"; break;
       case 2: pixel = "32 bit floating point"; omePixel = "float"; break;
-      case 3: pixel = "32 bit complex"; omePixel = "Uint32"; break;	      
+      case 3: pixel = "32 bit complex"; omePixel = "Uint32"; break;
       case 4: pixel = "64 bit complex"; omePixel = "float"; break;
       case 6: pixel = "16 bit unsigned integer"; omePixel = "Uint16"; break;
-      default: pixel = "unknown"; omePixel = "Uint8";	      
-    }	    
+      default: pixel = "unknown"; omePixel = "Uint8";
+    }
 
     if (ome != null) {
-      OMETools.setAttribute(ome, "Pixels", "SizeX", 
+      OMETools.setAttribute(ome, "Pixels", "SizeX",
         "" + metadata.get("ImageWidth"));
       OMETools.setAttribute(ome, "Pixels", "SizeY",
-	"" + metadata.get("ImageHeight"));
+        "" + metadata.get("ImageHeight"));
       OMETools.setAttribute(ome, "Pixels", "PixelType", "" + omePixel);
       OMETools.setAttribute(ome, "Pixels", "BigEndian", "" + !little);
     }
-    
+
     metadata.put("PixelType", pixel);
     metadata.put("Sub-image starting point (X)", new Integer(
       DataTools.bytesToInt(header, 16, 4, little)));
@@ -264,7 +264,7 @@ public class DeltavisionReader extends FormatReader {
       case 2: imageType = "Stereo tilt-series"; break;
       case 3: imageType = "Averaged images"; break;
       case 4: imageType = "Averaged stereo pairs"; break;
-      default: imageType = "unknown";	      
+      default: imageType = "unknown";
     }
 
     metadata.put("Image Type", imageType);
@@ -287,12 +287,12 @@ public class DeltavisionReader extends FormatReader {
       case 1: imageSequence = "WZT"; dimOrder = "XYCZT"; break;
       case 2: imageSequence = "ZWT"; dimOrder = "XYZCT"; break;
       default: imageSequence = "unknown"; dimOrder = "XYZTC";
-    }	   
+    }
     metadata.put("Image sequence", imageSequence);
     if (ome != null) {
-      OMETools.setAttribute(ome, "Pixels", "DimensionOrder", dimOrder);	    
+      OMETools.setAttribute(ome, "Pixels", "DimensionOrder", dimOrder);
     }
-    
+
     metadata.put("X axis tilt angle", new Float(Float.intBitsToFloat(
       DataTools.bytesToInt(header, 184, 4, little))));
     metadata.put("Y axis tilt angle", new Float(Float.intBitsToFloat(
@@ -332,13 +332,13 @@ public class DeltavisionReader extends FormatReader {
         "" + metadata.get("Y origin (in um)"));
       OMETools.setAttribute(ome, "StageLabel", "Z",
         "" + metadata.get("Z origin (in um)"));
-    }	    
-   
+    }
+
     for (int i=1; i<=10; i++) {
       metadata.put("Title " + i, new String(header, 224 + 80*(i-1), 80));
       if (i == 1 && ome != null) {
-        OMETools.setAttribute(ome, "Image", "Description", 
-	  "" + metadata.get("Title 1"));	      
+        OMETools.setAttribute(ome, "Image", "Description",
+          "" + metadata.get("Title 1"));
       }
     }
   }
