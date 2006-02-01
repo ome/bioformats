@@ -1016,13 +1016,14 @@ public abstract class TiffTools {
             }
           }
         }
-        else if (numBytes == 1) {
-          // TODO
-          // bits per sample is 10, 12 or 14
-        }
         else {
           byte[] b = new byte[numBytes];
-          System.arraycopy(bytes, index, b, 0, numBytes);
+          if (numBytes + index < bytes.length) {
+            System.arraycopy(bytes, index, b, 0, numBytes);
+          }
+          else {
+            System.arraycopy(bytes, bytes.length - numBytes, b, 0, numBytes);
+          }
           index += numBytes;
           int ndx = startIndex + j;
           samples[i][ndx] = (byte) DataTools.bytesToLong(b, !littleEndian);
@@ -1032,15 +1033,21 @@ public abstract class TiffTools {
             samples[i][ndx] = (byte) (max - samples[i][ndx]);
           }
           else if (photoInterp == RGB_PALETTE) {
-            int x = DataTools.bytesToInt(b, littleEndian);
+            // will fix this later
+            throw new FormatException("16 bit RGB palette not supported");
+            /*
+            int x = DataTools.bytesToInt(b, littleEndian) % colorMap.length;
             int red = colorMap[x];
-            int green = colorMap[x + (int) Math.pow(2, bitsPerSample[0])];
-            int blue = colorMap[x + 2*((int) Math.pow(2, bitsPerSample[0]))];
+            int green = colorMap[(x +
+              (int) Math.pow(2, bitsPerSample[0])) % colorMap.length];
+            int blue = colorMap[(x +
+              2*((int) Math.pow(2, bitsPerSample[0]))) % colorMap.length];
             int[] components = {red, green, blue};
             samples[i][ndx] = (byte) components[i];
             if (samples[i][ndx] == 0) {
               samples[i][ndx] = (byte) (components[i] % 255);
             }
+            */
           }
           else if (photoInterp == CMYK) {
             samples[i][ndx] = (byte) (255 - samples[i][ndx]);

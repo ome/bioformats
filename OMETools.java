@@ -106,6 +106,7 @@ public abstract class OMETools {
   public static boolean setAttribute(Object root,
     String nodeName, String name, String value)
   {
+    if (value == null || value.equals("null")) value = "";
     if (R == null || root == null) return false;
     R.setVar("root", root);
     try {
