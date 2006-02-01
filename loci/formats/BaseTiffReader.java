@@ -34,7 +34,6 @@ import java.util.Hashtable;
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at cs.wisc.edu
  */
-
 public abstract class BaseTiffReader extends FormatReader {
 
   // -- Fields --
@@ -53,9 +52,12 @@ public abstract class BaseTiffReader extends FormatReader {
 
   /** Constructs a new BaseTiffReader. */
   public BaseTiffReader(String name, String suffix) { super(name, suffix); }
+
+  /** Constructs a new BaseTiffReader. */
   public BaseTiffReader(String name, String[] suffixes) {
     super(name, suffixes);
   }
+
 
   // -- BaseTiffReader API methods --
 
@@ -71,6 +73,7 @@ public abstract class BaseTiffReader extends FormatReader {
       numImages
     };
   }
+
 
   // -- Internal BaseTiffReader API methods --
 
@@ -408,6 +411,7 @@ public abstract class BaseTiffReader extends FormatReader {
     catch (FormatException exc) { exc.printStackTrace(); }
   }
 
+
   // -- FormatReader API methods --
 
   /** Checks if the given block is a valid header for an IPLab file. */
@@ -448,6 +452,7 @@ public abstract class BaseTiffReader extends FormatReader {
     numImages = ifds.length;
     initMetadata();
   }
+
 
   // -- Helper methods --
 

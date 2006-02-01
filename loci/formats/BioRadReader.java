@@ -129,7 +129,7 @@ public class BioRadReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new BioRadReader. */
-  public BioRadReader() { super("BioRad", "pic"); }
+  public BioRadReader() { super("Bio-Rad PIC", "pic"); }
 
   // -- FormatReader API methods --
 
