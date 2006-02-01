@@ -1,5 +1,5 @@
 //
-// ImageProSeqReader.java
+// SEQReader.java
 //
 
 /*
@@ -27,11 +27,11 @@ import java.io.*;
 import java.util.StringTokenizer;
 
 /**
- * ImageProSeqReader is the file format reader for Image-Pro SEQ files.
+ * SEQReader is the file format reader for Image-Pro SEQ files.
  *
  * @author Melissa Linkert linkert at cs.wisc.edu
  */
-public class ImageProSeqReader extends BaseTiffReader {
+public class SEQReader extends BaseTiffReader {
 
   // -- Constants --
 
@@ -50,7 +50,7 @@ public class ImageProSeqReader extends BaseTiffReader {
   // -- Constructor --
 
   /** Constructs a new Image-Pro SEQ reader. */
-  public ImageProSeqReader() { super("Image-Pro SEQ", "seq"); }
+  public SEQReader() { super("Image-Pro SEQ", "seq"); }
 
   // -- Internal BaseTiffReader API methods --
 
@@ -118,7 +118,7 @@ public class ImageProSeqReader extends BaseTiffReader {
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {
-    new ImageProSeqReader().testRead(args);
+    new SEQReader().testRead(args);
   }
 
 }

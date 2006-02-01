@@ -35,9 +35,11 @@ public class AndorReader extends BaseTiffReader {
   // -- Constants --
 
   /** Andor TIFF private IFD tags. */
-  private static final int MMHEADER = 317;
+  private static final int MMHEADER = 34361;
   private static final int MMSTAMP = 34362;
 
+  /** Debugging flag. */
+  private static final boolean DEBUG = true;
 
   // -- Constructor --
 
@@ -46,7 +48,7 @@ public class AndorReader extends BaseTiffReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for a Metamorph file. */
+  /** Checks if the given block is a valid header for an Andor TIFF file. */
   public boolean isThisType(byte[] block) {
     // adapted from MetamorphReader.isThisType(byte[])
 
@@ -74,9 +76,85 @@ public class AndorReader extends BaseTiffReader {
   /** Populate the metadata hashtable. */
   protected void initMetadata() {
     super.initMetadata();
+    boolean little = true;
+    try {
+      little= TiffTools.isLittleEndian(ifds[0]);
+    }
+    catch (FormatException e) { }
 
-    metadata.put("Andor TIFF identifier",
-      "" + TiffTools.getIFDIntValue(ifds[0], MMHEADER));
+    // look for MMHEADER
+    short[] header = (short[]) TiffTools.getIFDValue(ifds[0], MMHEADER);
+
+    if (header != null) {
+      int pos = 3;
+      metadata.put("Name", DataTools.bytesToString(header, pos, 256));
+      pos += 256;
+      metadata.put("Data flag",
+        "" + DataTools.bytesToInt(header, pos, 4, little));
+      pos += 4;  // data flag
+      metadata.put("Number of colors",
+        "" + DataTools.bytesToInt(header, pos, 4, little));
+      if (DEBUG) {
+        System.out.println("bytes for 'number of colors'");
+        for(int i=pos; i<pos+4; i++) { System.out.print(header[i] + " "); }
+        System.out.println();
+      }
+      pos += 4;
+      if (DEBUG) {
+        System.out.println("bytes for color and comment flags");
+        for(int i=pos; i<pos+16; i++) { System.out.print(header[i] + " "); }
+        System.out.println();
+      }
+      pos += 8;  // color flags
+      pos += 8;  // comment flags
+      int type = (int) header[pos];
+      pos++;
+      String imgType;
+      switch (type) {
+        case 1: imgType = "1 bit binary"; break;
+        case 2: imgType = "4 bit binary"; break;
+        case 3: imgType = "8 bit binary"; break;
+        case 4: imgType = "8 bit greyscale"; break;
+        case 5: imgType = "12 bit greyscale"; break;
+        case 6: imgType = "16 bit greyscale"; break;
+        case 7: imgType = "32 bit greyscale"; break;
+        case 8: imgType = "64 bit greyscale"; break;
+        case 9: imgType = "24 bit color"; break;
+        case 10: imgType = "32 bit float"; break;
+        case 11: imgType = "64 bit float"; break;
+        default: imgType = "unknown";
+      }
+      metadata.put("Image type", imgType);
+
+      for (int i=1; i<11; i++) {
+        if (DEBUG) {
+          System.out.println("bytes for dimension " + i + " name");
+          for(int j=pos; j<pos+64; j++) { System.out.print(header[j] + " "); }
+          System.out.println();
+          System.out.println("remainder of MM_DIM_INFO bytes for dim. " +i);
+          for(int j=pos+64; j<pos+100; j++) {
+            System.out.print(header[j] + " ");
+          }
+          System.out.println();
+        }
+
+        String dimName = DataTools.bytesToString(header, pos, 64);
+        pos += 64;
+        metadata.put("Dimension " + i, dimName);
+        // TODO -- size is wrong
+        metadata.put("Dimension " + i + " Size",
+          "" + DataTools.bytesToInt(header, pos, 4, little));
+        pos += 4;
+        metadata.put("Dimension " + i + " Origin",
+          "" + DataTools.bytesToLong(header, pos, 8, little));
+        pos += 8;
+        pos += 8;
+        metadata.put("Dimension " + i + " Calibration units",
+          "" + DataTools.bytesToString(header, pos, 16));
+        pos += 16;
+      }
+    }
+
     short[] stamp = (short[]) TiffTools.getIFDValue(ifds[0], MMSTAMP);
     String dataStamp = "";
     for(int i=0; i<stamp.length; i++) {
