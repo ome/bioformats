@@ -232,6 +232,19 @@ public class ImageReader extends FormatReader {
     return readers[index].getMetadata(id);
   }
 
+  /**
+   * A utility method for test reading a file from the command line,
+   * and displaying the results in a simple display.
+   */
+  public void testRead(String[] args) throws FormatException, IOException {
+    if (args.length > 0) {
+      // check file format
+      System.out.print("Checking file format ");
+      System.out.println("[" + getFormat(args[0]) + "]");
+    }
+    super.testRead(args);
+  }
+
 
   // -- Main method --
 

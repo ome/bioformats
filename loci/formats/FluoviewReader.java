@@ -61,6 +61,16 @@ public class FluoviewReader extends BaseTiffReader {
 
   // -- FormatReader API methods --
 
+  /** Checks if the given block is a valid header for a Fluoview TIFF file. */
+  public boolean isThisType(byte[] block) {
+    if (!TiffTools.isValidHeader(block)) return false;
+
+    // if this file is a Fluoview TIFF file, it should have 42
+    // for the 3rd byte, and contain the text "FLUOVIEW"
+    String test = new String(block);
+    return test.indexOf(FLUOVIEW_MAGIC_STRING) != -1;
+  }
+
   /**
    * Checks if the given string is a valid filename for a Fluoview TIFF file.
    */
@@ -77,19 +87,7 @@ public class FluoviewReader extends BaseTiffReader {
       fin.close();
       return isThisType(buf);
     }
-    catch (IOException e) {
-      return false;
-    }
-  }
-
-  /** Checks if the given block is a valid header for a Fluoview TIFF file. */
-  public boolean isThisType(byte[] block) {
-    if (!TiffTools.isValidHeader(block)) return false;
-
-    // if this file is a Fluoview TIFF file, it should have 42
-    // for the 3rd byte, and contain the text "FLUOVIEW"
-    String test = new String(block);
-    return test.indexOf(FLUOVIEW_MAGIC_STRING) != -1;
+    catch (IOException e) { return false; }
   }
 
 

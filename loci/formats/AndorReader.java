@@ -34,17 +34,22 @@ public class AndorReader extends BaseTiffReader {
 
   // -- Constants --
 
+  /** Maximum number of bytes to check for Andor header information. */
+  private static final int BLOCK_CHECK_LEN = 16384;
+
   /** Andor TIFF private IFD tags. */
   private static final int MMHEADER = 34361;
   private static final int MMSTAMP = 34362;
 
   /** Debugging flag. */
-  private static final boolean DEBUG = true;
+  private static final boolean DEBUG = false;
+
 
   // -- Constructor --
 
   /** Constructs a new Andor reader. */
   public AndorReader() { super("Andor", new String[] {"tif", "tiff"}); }
+
 
   // -- FormatReader API methods --
 
@@ -56,20 +61,38 @@ public class AndorReader extends BaseTiffReader {
     if (block.length < 8) return true; // we have no way of verifying further
 
     int ifdlocation = DataTools.bytesToInt(block, 4 , true);
-    if (ifdlocation + 1 > block.length) { return true; }
+    if (ifdlocation + 1 > block.length) { return false; }
     else {
       int ifdnumber = DataTools.bytesToInt(block, ifdlocation, 2, true);
       for (int i=0; i<ifdnumber; i++) {
-        if (ifdlocation + 3 + (i*12) > block.length) return true;
+        if (ifdlocation + 3 + (i*12) > block.length) return false;
         else {
           int ifdtag = DataTools.bytesToInt(block,
-          ifdlocation + 2 + (i*12), 2, true);
+            ifdlocation + 2 + (i*12), 2, true);
           if (ifdtag == MMHEADER || ifdtag == MMSTAMP) return true;
         }
       }
       return false;
     }
   }
+
+  /** Checks if the given string is a valid filename for an Andor TIFF file. */
+  public boolean isThisType(String name) {
+    // just checking the filename isn't enough to differentiate between
+    // Andor and regular TIFF; open the file and check more thoroughly
+    long len = new File(name).length();
+    int size = len < BLOCK_CHECK_LEN ? (int) len : BLOCK_CHECK_LEN;
+    byte[] buf = new byte[size];
+    try {
+      FileInputStream fin = new FileInputStream(name);
+      int r = 0;
+      while (r < size) r += fin.read(buf, r, size - r);
+      fin.close();
+      return isThisType(buf);
+    }
+    catch (IOException e) { return false; }
+  }
+
 
   // -- Internal BaseTiffReader API methods --
 
