@@ -132,10 +132,13 @@ public abstract class FormatReader {
     return false;
   }
 
-  /** Returns the default file suffixes for this file format. */
+  /** Gets the name of this file format. */
+  public String getFormat() { return format; }
+
+  /** Gets the default file suffixes for this file format. */
   public String[] getSuffixes() { return suffixes; }
 
-  /** Gets the percentage complete of the form's current operation. */
+  /** Gets the percentage complete of the reader's current operation. */
   public double getPercentComplete() { return percent; }
 
   /**
@@ -173,9 +176,6 @@ public abstract class FormatReader {
     if (!id.equals(currentId)) initFile(id);
     return metadata;
   }
-
-
-  // -- Utility methods --
 
   /**
    * A utility method for test reading a file from the command line,

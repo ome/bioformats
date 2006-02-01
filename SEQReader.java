@@ -27,7 +27,7 @@ import java.io.*;
 import java.util.StringTokenizer;
 
 /**
- * SEQReader is the file format reader for Image-Pro SEQ files.
+ * SEQReader is the file format reader for Image-Pro Sequence files.
  *
  * @author Melissa Linkert linkert at cs.wisc.edu
  */
@@ -47,14 +47,16 @@ public class SEQReader extends BaseTiffReader {
   /** Guessing this is thumbnail pixel data. */
   private static final int IMAGE_PRO_TAG_3 = 40106;
 
+
   // -- Constructor --
 
   /** Constructs a new Image-Pro SEQ reader. */
-  public SEQReader() { super("Image-Pro SEQ", "seq"); }
+  public SEQReader() { super("Image-Pro Sequence", "seq"); }
+
 
   // -- Internal BaseTiffReader API methods --
 
-  /** Overriden to include the three SEQ-specific tags. */
+  /** Overridden to include the three SEQ-specific tags. */
   protected void initStandardMetadata() {
     super.initStandardMetadata();
 
@@ -101,7 +103,7 @@ public class SEQReader extends BaseTiffReader {
     }
   }
 
-  /** Overriden to include the three SEQ-specific tags. */
+  /** Overridden to include the three SEQ-specific tags. */
   protected void initOMEMetadata() {
     super.initOMEMetadata();
 
@@ -114,6 +116,7 @@ public class SEQReader extends BaseTiffReader {
         "" + metadata.get("frames"));
     }
   }
+
 
   // -- Main method --
 

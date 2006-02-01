@@ -70,7 +70,9 @@ public class ICSReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new ICSReader. */
-  public ICSReader() { super("ICS", new String[] {"ics", "ids"}); }
+  public ICSReader() {
+    super("Image Cytometry Standard", new String[] {"ics", "ids"});
+  }
 
 
   // -- FormatReader API methods --
