@@ -462,7 +462,7 @@ public abstract class DataTools {
     return bytesToLong(bytes, 0, 8, little);
   }
 
-  /** Converts bytes from the given array into a string. */
+  /** Translates bytes from the given array into a string. */
   public static String bytesToString(short[] bytes, int off, int len) {
     if (bytes.length - off < len) len = bytes.length - off;
     for (int i=0; i<len; i++) {
@@ -474,6 +474,16 @@ public abstract class DataTools {
     byte[] b = new byte[len];
     for (int i=0; i<b.length; i++) b[i] = (byte) bytes[off + i];
     return new String(b);
+  }
+
+  /** Translates bytes from the given array into a string. */
+  public static String bytesToString(short[] bytes, int off) {
+    return bytesToString(bytes, off, bytes.length - off);
+  }
+
+  /** Translates bytes from the given array into a string. */
+  public static String bytesToString(short[] bytes) {
+    return bytesToString(bytes, 0, bytes.length);
   }
 
 }

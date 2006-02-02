@@ -120,13 +120,13 @@ public class AndorReader extends BaseTiffReader {
         "" + DataTools.bytesToInt(header, pos, 4, little));
       if (DEBUG) {
         System.out.println("bytes for 'number of colors'");
-        for(int i=pos; i<pos+4; i++) { System.out.print(header[i] + " "); }
+        for (int i=pos; i<pos+4; i++) { System.out.print(header[i] + " "); }
         System.out.println();
       }
       pos += 4;
       if (DEBUG) {
         System.out.println("bytes for color and comment flags");
-        for(int i=pos; i<pos+16; i++) { System.out.print(header[i] + " "); }
+        for (int i=pos; i<pos+16; i++) { System.out.print(header[i] + " "); }
         System.out.println();
       }
       pos += 8;  // color flags
@@ -150,45 +150,51 @@ public class AndorReader extends BaseTiffReader {
       }
       metadata.put("Image type", imgType);
 
-      for (int i=1; i<11; i++) {
+      for (int i=1; i<=10; i++) {
         if (DEBUG) {
           System.out.println("bytes for dimension " + i + " name");
-          for(int j=pos; j<pos+64; j++) { System.out.print(header[j] + " "); }
+          for (int j=pos; j<pos+64; j++) { System.out.print(header[j] + " "); }
           System.out.println();
           System.out.println("remainder of MM_DIM_INFO bytes for dim. " +i);
-          for(int j=pos+64; j<pos+100; j++) {
+          for (int j=pos+64; j<pos+100; j++) {
             System.out.print(header[j] + " ");
           }
           System.out.println();
         }
 
-        String dimName = DataTools.bytesToString(header, pos, 64);
-        pos += 64;
-        metadata.put("Dimension " + i, dimName);
-        // TODO -- size is wrong
+        // name is supposed to be 64 bytes but in practice appears to be 16
+        metadata.put("Dimension " + i + " Name",
+          "" + DataTools.bytesToString(header, pos, 16));
+        pos += 16;
         metadata.put("Dimension " + i + " Size",
           "" + DataTools.bytesToInt(header, pos, 4, little));
         pos += 4;
         metadata.put("Dimension " + i + " Origin",
-          "" + DataTools.bytesToLong(header, pos, 8, little));
+          "" + Double.longBitsToDouble(
+          DataTools.bytesToLong(header, pos, 8, little)));
         pos += 8;
+        metadata.put("Dimension " + i + " Resolution",
+          "" + Double.longBitsToDouble(
+          DataTools.bytesToLong(header, pos, 8, little)));
         pos += 8;
         metadata.put("Dimension " + i + " Calibration units",
           "" + DataTools.bytesToString(header, pos, 16));
         pos += 16;
+        // skip last 48 bytes (adjust for name discrepancy)
+        pos += 48;
       }
     }
 
-    short[] stamp = (short[]) TiffTools.getIFDValue(ifds[0], MMSTAMP);
-    String dataStamp = "";
-    for(int i=0; i<stamp.length; i++) {
-      dataStamp += stamp[i];
-      if (i < stamp.length - 1) {
-        dataStamp += ", ";
-      }
-    }
-
-    metadata.put("Data Stamp for the first plane", dataStamp);
+//    for (int j=0; j<ifds.length; j++) {
+//      short[] stamp = (short[]) TiffTools.getIFDValue(ifds[j], MMSTAMP);
+//      if (stamp == null) continue;
+//      String dataStamp = "";
+//      for (int i=0; i<stamp.length; i++) {
+//        dataStamp += stamp[i];
+//        if (i < stamp.length - 1) dataStamp += ", ";
+//      }
+//      metadata.put("Data Stamp for plane #" + j, dataStamp);
+//    }
   }
 
   // -- Main method --
