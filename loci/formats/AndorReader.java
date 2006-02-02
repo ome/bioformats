@@ -167,15 +167,15 @@ public class AndorReader extends BaseTiffReader {
           "" + DataTools.bytesToString(header, pos, 16));
         pos += 16;
         metadata.put("Dimension " + i + " Size",
-          "" + DataTools.bytesToInt(header, pos, 4, little));
+          "" + DataTools.bytesToInt(header, pos, little));
         pos += 4;
         metadata.put("Dimension " + i + " Origin",
           "" + Double.longBitsToDouble(
-          DataTools.bytesToLong(header, pos, 8, little)));
+          DataTools.bytesToLong(header, pos, little)));
         pos += 8;
         metadata.put("Dimension " + i + " Resolution",
           "" + Double.longBitsToDouble(
-          DataTools.bytesToLong(header, pos, 8, little)));
+          DataTools.bytesToLong(header, pos, little)));
         pos += 8;
         metadata.put("Dimension " + i + " Calibration units",
           "" + DataTools.bytesToString(header, pos, 16));
@@ -185,17 +185,25 @@ public class AndorReader extends BaseTiffReader {
       }
     }
 
-//    for (int j=0; j<ifds.length; j++) {
-//      short[] stamp = (short[]) TiffTools.getIFDValue(ifds[j], MMSTAMP);
-//      if (stamp == null) continue;
-//      String dataStamp = "";
-//      for (int i=0; i<stamp.length; i++) {
-//        dataStamp += stamp[i];
-//        if (i < stamp.length - 1) dataStamp += ", ";
-//      }
-//      metadata.put("Data Stamp for plane #" + j, dataStamp);
-//    }
+    // parse stamp value, a sequence of 8 doubles representing the
+    // spatial position (3rd to 10th dimension) of the image plane
+    for (int j=0; j<ifds.length; j++) {
+      short[] stamp = (short[]) TiffTools.getIFDValue(ifds[j], MMSTAMP);
+      if (stamp == null || stamp.length != 64) continue;
+      StringBuffer dataStamp = new StringBuffer();
+      for (int i=0; i<8; i++) {
+        if (i > 0) dataStamp.append(", ");
+        String name = (String) metadata.get("Dimension " + (i + 3) + " Name");
+        if (name == null || name.equals("")) break; // no more dimensions
+        dataStamp.append(name);
+        dataStamp.append("=");
+        dataStamp.append(Double.longBitsToDouble(
+          DataTools.bytesToLong(stamp, 8*i, little)));
+      }
+      metadata.put("Data Stamp for plane #" + (j + 1), dataStamp.toString());
+    }
   }
+
 
   // -- Main method --
 
