@@ -43,6 +43,7 @@ public class IPWReader extends BaseTiffReader {
   private static final String NO_POI_MSG = "You need to install Jakarta POI " +
     "from http://jakarta.apache.org/poi/";
 
+
   // -- Static fields --
 
   private static boolean noPOI = false;
@@ -61,6 +62,7 @@ public class IPWReader extends BaseTiffReader {
     catch (Throwable exc) { noPOI = true; }
     return r;
   }
+
 
   // -- Fields --
 
@@ -147,6 +149,7 @@ public class IPWReader extends BaseTiffReader {
     }
   }
 
+
   // -- Internal BaseTiffReader API methods --
 
   /** Initialize metadata hashtable and OME-XML structure. */
@@ -198,6 +201,7 @@ public class IPWReader extends BaseTiffReader {
         metadata.get("Version"));
     }
   }
+
 
   // -- Helper methods --
 

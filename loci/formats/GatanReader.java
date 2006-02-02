@@ -37,6 +37,7 @@ public class GatanReader extends FormatReader {
 
   private static final byte[] GATAN_MAGIC_BLOCK_1 = {0, 0, 0, 3};
 
+
   // -- Fields --
 
   /** Current file. */
@@ -373,6 +374,7 @@ public class GatanReader extends FormatReader {
       }
     }
   }
+
 
   // -- Main method --
 

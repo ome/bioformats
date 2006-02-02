@@ -40,6 +40,7 @@ public class ZeissLSMReader extends BaseTiffReader {
   /** Tag identifying a Zeiss LSM file. */
   private static final int ZEISS_ID = 34412;
 
+
   // -- Constructor --
 
   /** Constructs a new Zeiss LSM reader. */

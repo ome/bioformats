@@ -1,3 +1,6 @@
+loci.formats.PNGReader # javax.imageio
+loci.formats.JPEGReader # javax.imageio
+loci.formats.GIFReader # javax.imageio
 loci.formats.BioRadReader # proprietary
 loci.formats.IPLabReader # proprietary
 loci.formats.DeltavisionReader # proprietary

@@ -26,7 +26,8 @@ package loci.formats;
 import java.io.*;
 
 /**
- * Reader is the file format reader for Andor TIFF files.
+ * Reader is the file format reader for
+ * Andor Bio-imaging Division (ABD) TIFF files.
  *
  * @author Melissa Linkert linkert at cs.wisc.edu
  */
@@ -48,7 +49,7 @@ public class AndorReader extends BaseTiffReader {
   // -- Constructor --
 
   /** Constructs a new Andor reader. */
-  public AndorReader() { super("Andor", new String[] {"tif", "tiff"}); }
+  public AndorReader() { super("ABD TIFF", new String[] {"tif", "tiff"}); }
 
 
   // -- FormatReader API methods --
