@@ -246,7 +246,6 @@ public class FluoviewReader extends BaseTiffReader {
       String d = (String) TiffTools.getIFDValue(ifds[0], TiffTools.PAGE_NAME);
       int strPos = d.indexOf("[Higher Dimensions]") + 19;
       d = d.substring(strPos);
-      /* debug */ System.out.println(d);
 
       String names = d.substring(5, d.indexOf("Spatial Position"));
       String positions = d.substring(d.indexOf("Number Of Positions") + 19);

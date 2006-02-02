@@ -414,18 +414,18 @@ public abstract class BaseTiffReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for an IPLab file. */
+  /** Checks if the given block is a valid header for a TIFF file. */
   public boolean isThisType(byte[] block) {
     return TiffTools.isValidHeader(block);
   }
 
-  /** Determines the number of images in the given IPLab file. */
+  /** Determines the number of images in the given TIFF file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return numImages;
   }
 
-  /** Obtains the specified image from the given IPLab file. */
+  /** Obtains the specified image from the given TIFF file. */
   public Image open(String id, int no) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
 
@@ -443,7 +443,7 @@ public abstract class BaseTiffReader extends FormatReader {
     currentId = null;
   }
 
-  /** Initializes the given IPLab file. */
+  /** Initializes the given TIFF file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessFile(id, "r");
