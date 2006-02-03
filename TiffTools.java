@@ -126,7 +126,8 @@ public abstract class TiffTools {
   public static final int GROUP_3_FAX = 3;
   public static final int GROUP_4_FAX = 4;
   public static final int LZW = 5;
-  public static final int JPEG = 6;
+  //public static final int JPEG = 6;
+  public static final int JPEG = 7;
   public static final int PACK_BITS = 32773;
 
   // photometric interpretation types
@@ -162,6 +163,13 @@ public abstract class TiffTools {
   public static final int LITTLE = 0x49;
   public static final int BIG = 0x4d;
 
+  // JPEG tables
+
+  public static int[][] quantizationTables;
+  public static short[][] acTableLengths;
+  public static short[][] acTableValues;
+  public static short[][] dcTableLengths;
+  public static short[][] dcTableValues;
 
   // -- TiffTools API methods --
 
@@ -927,6 +935,7 @@ public abstract class TiffTools {
     return DataTools.makeImage(samples, (int) imageWidth, (int) imageLength);
   }
 
+
   /**
    * Extracts pixel information from the given byte array according to the
    * bits per sample, photometric interpretation and color map IFD directory
@@ -967,10 +976,11 @@ public abstract class TiffTools {
           if (offset >= (8 - bitsPerSample[i])) {
             index++;
           }
-          buffer = new BitBuffer(new byte[] {b});
+          //buffer = new BitBuffer(new byte[] {b});
 
           int ndx = startIndex + j;
-          samples[i][ndx] = (byte) buffer.getBits(bitsPerSample[i]);
+          samples[i][ndx] = (byte) (b < 0 ? 256 + b : b);
+          //samples[i][ndx] = (byte) buffer.getBits(bitsPerSample[i]);
           */
         }
         else if (bitsPerSample[0] == 8) {
@@ -1027,6 +1037,7 @@ public abstract class TiffTools {
           index += numBytes;
           int ndx = startIndex + j;
           samples[i][ndx] = (byte) DataTools.bytesToLong(b, !littleEndian);
+
           if (photoInterp == WHITE_IS_ZERO) { // invert color value
             long max = 1;
             for (int q=0; q<numBytes; q++) max *= 8;

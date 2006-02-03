@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.io.*;
+import java.util.Vector;
 
 /**
  * Reader is the file format reader for
@@ -150,6 +151,13 @@ public class AndorReader extends BaseTiffReader {
       }
       metadata.put("Image type", imgType);
 
+      // clear OME-XML dimension info for Z, C and T axes
+      OMETools.setAttribute(ome, "Pixels", "SizeZ", "1");
+      OMETools.setAttribute(ome, "Pixels", "SizeC", "1");
+      OMETools.setAttribute(ome, "Pixels", "SizeT", "1");
+
+      int sizeC = 1;
+
       for (int i=1; i<=10; i++) {
         if (DEBUG) {
           System.out.println("bytes for dimension " + i + " name");
@@ -163,11 +171,11 @@ public class AndorReader extends BaseTiffReader {
         }
 
         // name is supposed to be 64 bytes but in practice appears to be 16
-        metadata.put("Dimension " + i + " Name",
-          "" + DataTools.bytesToString(header, pos, 16));
+        String name = DataTools.bytesToString(header, pos, 16);
+        metadata.put("Dimension " + i + " Name", name);
         pos += 16;
-        metadata.put("Dimension " + i + " Size",
-          "" + DataTools.bytesToInt(header, pos, little));
+        int size = DataTools.bytesToInt(header, pos, little);
+        metadata.put("Dimension " + i + " Size", "" + size);
         pos += 4;
         metadata.put("Dimension " + i + " Origin",
           "" + Double.longBitsToDouble(
@@ -182,7 +190,22 @@ public class AndorReader extends BaseTiffReader {
         pos += 16;
         // skip last 48 bytes (adjust for name discrepancy)
         pos += 48;
+
+        // set OME-XML dimensions appropriately
+
+        if (name.equals("Z")) {
+          OMETools.setAttribute(ome, "Pixels", "SizeZ", "" + size);
+        }
+        else if (name.equals("Time")) {
+          OMETools.setAttribute(ome, "Pixels", "SizeT", "" + size);
+        }
+        else if (!name.trim().equals("") && !name.equals("x") &&
+          !name.equals("y"))
+        {
+          sizeC *= size;
+        }
       }
+      OMETools.setAttribute(ome, "Pixels", "SizeC", "" + sizeC);
     }
 
     // parse stamp value, a sequence of 8 doubles representing the
@@ -202,6 +225,81 @@ public class AndorReader extends BaseTiffReader {
       }
       metadata.put("Data Stamp for plane #" + (j + 1), dataStamp.toString());
     }
+
+    // compute the dimension order from the data stamps
+
+    // we should be able to get a pretty accurate result by looking at no more
+    // than the first 10 planes
+
+    int numPlanes = 10;
+    if (ifds.length < 10) numPlanes = ifds.length;
+    String[] values = new String[numPlanes];
+    for (int i=0; i<numPlanes; i++) {
+      values[i] = (String) metadata.get("Data Stamp for plane #" + (i+1));
+    }
+
+    // determine the number of '=' characters in a data stamp
+    int numDimensions = 0;
+    for (int i=0; i<values[0].length(); i++) {
+      if(values[0].charAt(i) == '=') numDimensions++;
+    }
+
+    float[][] dims = new float[numPlanes][numDimensions];
+    String[] names = new String[numDimensions];
+    String val = "";
+    // parse the dimension coordinates for each plane
+    for (int i=0; i<numPlanes; i++) {
+      for (int j=0; j<numDimensions; j++) {
+        if(i==0) names[j] = values[i].substring(0, values[i].indexOf("="));
+        val =
+          values[i].substring(values[i].indexOf("=")+1, values[i].indexOf(","));
+        dims[i][j] = Float.parseFloat(val);
+        values[i] = values[i].substring(values[i].indexOf(",") + 1);
+      }
+    }
+
+    // determine the average difference in each dimension's coordinates
+    Vector diff = new Vector();
+    for (int i=0; i<numDimensions-1; i++) {
+      float differences = 0;
+      for (int j=0; j<numPlanes; j++) {
+        differences += (dims[j][i+1] - dims[j][i]);
+      }
+      diff.add(new Float(differences / numPlanes));
+    }
+
+    String order = "XY";
+    int[] dimOrder = new int[diff.size()];
+    boolean[] added = new boolean[diff.size()];
+    for (int i=0; i<dimOrder.length; i++) {
+      float min = 0;
+      int index = 0;
+      for (int j=0; j<diff.size(); j++) {
+        // find the minimum non-zero difference
+        float difference = ((Float) diff.get(i)).floatValue();
+        if (difference != 0 && difference < min && added[i] == false) {
+          min = difference;
+          index = i;
+        }
+      }
+      dimOrder[i] = index;
+      added[index] = true;
+    }
+
+    for (int i=0; i<dimOrder.length; i++) {
+      String name = names[dimOrder[i]].trim();
+      if (name.equals("Z") && order.indexOf("Z") == -1) order = order + "Z";
+      else if (name.equals("Time") && order.indexOf("T") == -1) order=order+"T";
+      else if (order.indexOf("C") == -1) order = order + "C";
+    }
+
+    if (order.length() == 4) {
+      if (order.indexOf("Z") == -1) order = order + "Z";
+      else if (order.indexOf("T") == -1) order = order + "T";
+      else if (order.indexOf("C") == -1) order = order + "C";
+    }
+
+    OMETools.setAttribute(ome, "Pixels", "DimensionOrder", order);
   }
 
 
