@@ -129,7 +129,9 @@ public abstract class TiffTools {
   //public static final int JPEG = 6;
   public static final int JPEG = 7;
   public static final int PACK_BITS = 32773;
-
+  public static final int PROPRIETARY_DEFLATE = 32946;
+  public static final int DEFLATE = 8;
+  
   // photometric interpretation types
   public static final int WHITE_IS_ZERO = 0;
   public static final int BLACK_IS_ZERO = 1;
@@ -805,7 +807,8 @@ public abstract class TiffTools {
         throw new FormatException("Illegal BitsPerSample (" +
           bitsPerSample[i] + ")");
       }
-      else if (bitsPerSample[i] > 8 && bitsPerSample[i] % 8 != 0) {
+      // don't support odd numbers of bits (except for 1)
+      else if (bitsPerSample[i] % 2 != 0 && bitsPerSample[i] != 1) {
         throw new FormatException("Sorry, unsupported BitsPerSample (" +
           bitsPerSample[i] + ")");
       }
@@ -886,10 +889,15 @@ public abstract class TiffTools {
       samplesPerPixel = 3;
     }
 
+    
     byte[][] samples =
       new byte[samplesPerPixel][numSamples*bitsPerSample[0] / 8];
     byte[] altBytes = new byte[0];
 
+    if (bitsPerSample[0] < 8) {
+      samples = new byte[samplesPerPixel][numSamples];
+    }
+   
     for (int strip=0, row=0; strip<numStrips; strip++, row+=rowsPerStrip) {
       if (DEBUG) debug("reading image strip #" + strip);
       long actualRows = (row + rowsPerStrip > imageLength) ?
@@ -901,7 +909,9 @@ public abstract class TiffTools {
       }
       byte[] bytes = new byte[(int) stripByteCounts[strip]];
       in.read(bytes);
-      if (compression != PACK_BITS) {
+      if (compression != PACK_BITS && compression != DEFLATE && 
+        compression != PROPRIETARY_DEFLATE) 
+      {
         bytes = uncompress(bytes, compression);
         undifference(bytes, bitsPerSample,
           imageWidth, planarConfig, predictor);
@@ -959,29 +969,58 @@ public abstract class TiffTools {
       if (DEBUG) debug("WARNING: truncated " + trunc + " extra samples");
       sampleCount -= trunc;
     }
-    BitBuffer buffer;
 
+    int counter = 0;
+    
     int index = 0;
     for (int j=0; j<sampleCount; j++) {
       for (int i=0; i<samples.length; i++) {
         int numBytes = bitsPerSample[0] / 8;
 
-        if (numBytes == 0) {
-          // MELISSA TODO
-          // bits per sample is less than 8, which should mean 1, 2, 4, or 6
-          throw new FormatException("Sorry, unsupported bits per sample");
-          /*
+        if (bitsPerSample[0] % 8 != 0) {
+          // bits per sample is not a multiple of 8
+          // 
+          // while images in this category are not in violation of baseline TIFF
+          // specs, it's a bad idea to write bits per sample values that aren't
+          // divisible by 8
+          
+          // -- MELISSA TODO -- improve this as time permits      
+          if (index == bytes.length) {
+            throw new FormatException("bad index : i = " + i + ", j = " + j);
+          }
+          
           byte b = bytes[index];
-          int offset = (bitsPerSample[i] * (i + j)) % 8;
-          if (offset >= (8 - bitsPerSample[i])) {
+          index++;
+
+          // index computed mod bitsPerSample.length to avoid problems with
+          // RGB palette
+          
+          int offset = (bitsPerSample[0] * (samples.length*j + i)) % 8;
+          if (offset <= (8 - bitsPerSample[0])) {
+            index--;
+          }
+
+          if (i == 0) counter++;
+          if (counter % 4 == 0 && i == 0) {
             index++;
           }
-          //buffer = new BitBuffer(new byte[] {b});
 
           int ndx = startIndex + j;
           samples[i][ndx] = (byte) (b < 0 ? 256 + b : b);
-          //samples[i][ndx] = (byte) buffer.getBits(bitsPerSample[i]);
-          */
+
+          if (photoInterp == WHITE_IS_ZERO || photoInterp == CMYK) {
+             samples[i][ndx] = (byte) (255 - samples[i][ndx]); // invert colors 
+          }
+          else if (photoInterp == RGB_PALETTE) {
+            int x = b < 0 ? 256 + b : b;
+            int red = colorMap[x % colorMap.length];
+            int green = colorMap[(x + (int) Math.pow(2, bitsPerSample[0])) % 
+              colorMap.length];
+            int blue = colorMap[(x + 2*((int) Math.pow(2, bitsPerSample[0]))) %
+              colorMap.length];
+            int[] components = {red, green, blue};
+            samples[i][ndx] = (byte) components[i];
+          }
         }
         else if (bitsPerSample[0] == 8) {
           // special case handles 8-bit data more quickly
@@ -1096,6 +1135,9 @@ public abstract class TiffTools {
         "Sorry, JPEG compression mode is not supported");
     }
     else if (compression == PACK_BITS) return packBitsUncompress(input);
+    else if (compression == PROPRIETARY_DEFLATE || compression == DEFLATE) {
+      return deflateUncompress(input);
+    }        
     else {
       throw new FormatException(
         "Unknown Compression type (" + compression + ")");
@@ -1118,6 +1160,13 @@ public abstract class TiffTools {
     }
   }
 
+  /** Decodes an Adobe Deflate compressed image strip. */
+  public static byte[] deflateUncompress(byte[] input) throws FormatException {
+    // -- MELISSA TODO --
+    throw new FormatException("Sorry, Deflate compression is not currently " +
+      "supported.  It will be added in the near future.");                
+  }        
+  
   /**
    * Decodes a PackBits (Macintosh RLE) compressed image.
    * Adapted from the TIFF 6.0 specification, page 42.
@@ -1162,7 +1211,7 @@ public abstract class TiffTools {
    * @author Eric Kjellman egkjellman at wisc.edu
    * @author Wayne Rasband wsr at nih.gov
    */
-  public static byte[] lzwUncompress(byte[] input) {
+  public static byte[] lzwUncompress(byte[] input) throws FormatException {
     if (input == null || input.length == 0) return input;
     if (DEBUG) debug("decompressing " + input.length + " bytes of LZW data");
 
@@ -1195,7 +1244,12 @@ public abstract class TiffTools {
           out.add(symbolTable[code]);
           // add string to table
           ByteVector symbol = new ByteVector(byteBuffer1);
-          symbol.add(symbolTable[oldCode]);
+          try {
+            symbol.add(symbolTable[oldCode]);
+          }
+          catch (ArrayIndexOutOfBoundsException a) {
+            throw new FormatException("Sorry, old LZW codes not supported");
+          }        
           symbol.add(symbolTable[code][0]);
           symbolTable[nextSymbol] = symbol.toByteArray(); //**
           oldCode = code;
