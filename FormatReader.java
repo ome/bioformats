@@ -34,7 +34,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-/** Abstract superclass of all supported biological file formats. */
+/** Abstract superclass of all supported biological file format readers. */
 public abstract class FormatReader {
 
   /** Name of this file format. */
@@ -58,12 +58,12 @@ public abstract class FormatReader {
 
   // -- Constructors --
 
-  /** Constructs a file format with the given name and default suffix. */
+  /** Constructs a format reader with the given name and default suffix. */
   public FormatReader(String format, String suffix) {
     this(format, suffix == null ? null : new String[] {suffix});
   }
 
-  /** Constructs a file format with the given name and default suffixes. */
+  /** Constructs a format reader with the given name and default suffixes. */
   public FormatReader(String format, String[] suffixes) {
     this.format = format;
     this.suffixes = suffixes == null ? new String[0] : suffixes;
