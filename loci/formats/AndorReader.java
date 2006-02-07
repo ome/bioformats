@@ -251,8 +251,8 @@ public class AndorReader extends BaseTiffReader {
     for (int i=0; i<numPlanes; i++) {
       for (int j=0; j<numDimensions; j++) {
         if(i==0) names[j] = values[i].substring(0, values[i].indexOf("="));
-        val =
-          values[i].substring(values[i].indexOf("=")+1, values[i].indexOf(","));
+        val = values[i].substring(values[i].indexOf("=")+1,
+          values[i].indexOf(","));
         dims[i][j] = Float.parseFloat(val);
         values[i] = values[i].substring(values[i].indexOf(",") + 1);
       }
@@ -288,15 +288,15 @@ public class AndorReader extends BaseTiffReader {
 
     for (int i=0; i<dimOrder.length; i++) {
       String name = names[dimOrder[i]].trim();
-      if (name.equals("Z") && order.indexOf("Z") == -1) order = order + "Z";
-      else if (name.equals("Time") && order.indexOf("T") == -1) order=order+"T";
-      else if (order.indexOf("C") == -1) order = order + "C";
+      if (name.equals("Z") && order.indexOf("Z") < 0) order = order + "Z";
+      else if (name.equals("Time") && order.indexOf("T") < 0) order=order+"T";
+      else if (order.indexOf("C") < 0) order = order + "C";
     }
 
     if (order.length() == 4) {
-      if (order.indexOf("Z") == -1) order = order + "Z";
-      else if (order.indexOf("T") == -1) order = order + "T";
-      else if (order.indexOf("C") == -1) order = order + "C";
+      if (order.indexOf("Z") < 0) order = order + "Z";
+      else if (order.indexOf("T") < 0) order = order + "T";
+      else if (order.indexOf("C") < 0) order = order + "C";
     }
 
     OMETools.setAttribute(ome, "Pixels", "DimensionOrder", order);
