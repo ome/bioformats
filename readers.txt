@@ -12,7 +12,8 @@ loci.formats.MetamorphReader # TIFF variant
 loci.formats.ZeissLSMReader # TIFF variant
 loci.formats.SEQReader # TIFF variant
 loci.formats.IPWReader # proprietary (needs POIFS)
-#loci.formats.ZeissZVIReader # proprietary (needs POIFS)
+loci.formats.LegacyZVIReader # proprietary
+loci.formats.ZeissZVIReader # proprietary (needs POIFS)
 loci.formats.FluoviewReader # TIFF variant; isThisType(String) is slow
 loci.formats.AndorReader # TIFF variant; isThisType(String) is slow
 loci.formats.TiffReader
@@ -20,3 +21,5 @@ loci.formats.TiffReader
 #loci.formats.QTReader # needs QTJ
 loci.formats.PictReader # needs QTJ
 #loci.formats.OpenlabReader # needs QTJ; isThisType(String) is slow
+#loci.formats.NativePictReader
+#loci.formats.NativeQTReader
