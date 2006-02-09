@@ -31,7 +31,7 @@ import java.io.*;
  * To use it, QuickTime for Java must be installed.
  */
 public class PictReader extends FormatReader {
- 
+
   // -- Static fields --
 
   /** Helper reader for reading PICT data with QTJava library. */
@@ -64,7 +64,7 @@ public class PictReader extends FormatReader {
     if (no != 0) {
       throw new FormatException("Invalid image number: " + no);
     }
-    
+
     // read in PICT data
     File file = new File(id);
     int len = (int) (file.length() - 512);
