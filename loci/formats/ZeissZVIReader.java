@@ -42,9 +42,9 @@ public class ZeissZVIReader extends FormatReader {
   private static final String NO_POI_MSG = "You need to install " +
     "Jakarta POI from http://jakarta.apache.org/poi/";
   private static final boolean DEBUG = false;
-        
+
   // -- Static fields --
-  
+
   private static boolean noPOI = false;
 
   private static ReflectedUniverse r = createReflectedUniverse();
@@ -61,7 +61,7 @@ public class ZeissZVIReader extends FormatReader {
     catch (Throwable exc) { noPOI = true; }
     return r;
   }
-  
+
   // -- Fields --
 
   /** An instance of the old ZVI reader, for use if this one fails. */
@@ -231,7 +231,7 @@ public class ZeissZVIReader extends FormatReader {
         }
       }
     }
-    return DataTools.makeImage(samples, width, height); 
+    return DataTools.makeImage(samples, width, height);
   }
 
   /** Closes any open files. */
@@ -244,7 +244,7 @@ public class ZeissZVIReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (noPOI) throw new FormatException(NO_POI_MSG);
     super.initFile(id);
-    
+
     try {
       r.setVar("fis", new FileInputStream(id));
       r.exec("fs = new POIFSFileSystem(fis)");
@@ -270,7 +270,7 @@ public class ZeissZVIReader extends FormatReader {
     sb.append(s);
     System.out.println(sb.toString());
   }
- 
+
   /** Populates the metadata hashtable. */
   protected void initMetadata() {
     metadata.put("Legacy", needLegacy ? "yes" : "no");
@@ -1033,7 +1033,7 @@ public class ZeissZVIReader extends FormatReader {
 
   /** Parse the OLE document structure using Jakarta POI */
   protected void parseDir(int depth, Object dir)
-    throws IOException, FormatException, ReflectException 
+    throws IOException, FormatException, ReflectException
   {
     r.setVar("dir", dir);
     r.exec("dirName = dir.getName()");

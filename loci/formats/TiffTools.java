@@ -132,8 +132,8 @@ public abstract class TiffTools {
   public static final int PACK_BITS = 32773;
   public static final int PROPRIETARY_DEFLATE = 32946;
   public static final int DEFLATE = 8;
-  public static final int THUNDERSCAN = 32809; 
-  
+  public static final int THUNDERSCAN = 32809;
+
   // photometric interpretation types
   public static final int WHITE_IS_ZERO = 0;
   public static final int BLACK_IS_ZERO = 1;
@@ -173,7 +173,7 @@ public abstract class TiffTools {
   protected static final int SKIP_THREE = 4;
   protected static final int RAW = 0xc0;
 
-  
+
   // TIFF header constants
   public static final int MAGIC_NUMBER = 42;
   public static final int LITTLE = 0x49;
@@ -904,7 +904,7 @@ public abstract class TiffTools {
     }
 
     //if (planarConfig == 2) numSamples *= samplesPerPixel;
-    
+
     byte[][] samples =
       new byte[samplesPerPixel][numSamples*bitsPerSample[0] / 8];
     byte[] altBytes = new byte[0];
@@ -912,7 +912,7 @@ public abstract class TiffTools {
     if (bitsPerSample[0] < 8) {
       samples = new byte[samplesPerPixel][numSamples];
     }
- 
+
     int overallOffset = 0;
     for (int strip=0, row=0; strip<numStrips; strip++, row+=rowsPerStrip) {
       if (DEBUG) debug("reading image strip #" + strip);
@@ -932,9 +932,9 @@ public abstract class TiffTools {
         int offset = (int) (imageWidth * row);
         if (planarConfig == 2) {
           offset = overallOffset / samplesPerPixel;
-        } 
+        }
         unpackBytes(samples, offset, bytes, bitsPerSample,
-          photoInterp, colorMap, littleEndian, maxValue, planarConfig, strip, 
+          photoInterp, colorMap, littleEndian, maxValue, planarConfig, strip,
           (int) numStrips);
         overallOffset += bytes.length / bitsPerSample.length;
       }
@@ -955,7 +955,7 @@ public abstract class TiffTools {
       undifference(altBytes, bitsPerSample,
         imageWidth, planarConfig, predictor);
       unpackBytes(samples, (int) imageWidth, altBytes, bitsPerSample,
-        photoInterp, colorMap, littleEndian, maxValue, planarConfig, 0, 
+        photoInterp, colorMap, littleEndian, maxValue, planarConfig, 0,
         1);
     }
 
@@ -964,30 +964,30 @@ public abstract class TiffTools {
     if (DEBUG) debug("constructing image");
 
     return DataTools.makeImage(samples, (int) imageWidth, (int) imageLength);
-  }  
+  }
 
   /**
    * Extracts pixel information from the given byte array according to the
-   * bits per sample, photometric interpretation, and the specified byte 
+   * bits per sample, photometric interpretation, and the specified byte
    * ordering.
    * No error checking is performed.
    * This method is tailored specifically for planar (separated) images.
    */
   public static void planarUnpack(byte[][] samples, int startIndex,
-    byte[] bytes, int[] bitsPerSample, int photoInterp, boolean littleEndian, 
+    byte[] bytes, int[] bitsPerSample, int photoInterp, boolean littleEndian,
     int strip, int numStrips) throws FormatException
-  {  
+  {
     int numChannels = bitsPerSample.length;  // this should always be 3
 
     // determine which channel the strip belongs to
 
     int channelNum = strip % numChannels;
-  
+
     if (channelNum > 0) {
-      startIndex = (strip % numChannels) * (strip / numChannels) * 
-        bytes.length / numChannels;      
-    } 
-      
+      startIndex = (strip % numChannels) * (strip / numChannels) *
+        bytes.length / numChannels;
+    }
+
     int index = 0;
     int counter = 0;
     for (int j=0; j<bytes.length; j++) {
@@ -995,20 +995,20 @@ public abstract class TiffTools {
 
       if (bitsPerSample[0] % 8 != 0) {
         // bits per sample is not a multiple of 8
-        // 
+        //
         // while images in this category are not in violation of baseline TIFF
         // specs, it's a bad idea to write bits per sample values that aren't
         // divisible by 8
-          
-        // -- MELISSA TODO -- improve this as time permits      
+
+        // -- MELISSA TODO -- improve this as time permits
         if (index == bytes.length) {
           //throw new FormatException("bad index : i = " + i + ", j = " + j);
           index--;
         }
-          
+
         byte b = bytes[index];
         index++;
-          
+
         int offset = (bitsPerSample[0] * (samples.length*j + channelNum)) % 8;
         if (offset <= (8 - (bitsPerSample[0] % 8))) {
           index--;
@@ -1022,7 +1022,7 @@ public abstract class TiffTools {
         int ndx = startIndex + j;
         if (ndx >= samples[channelNum].length) {
           ndx = samples[channelNum].length - 1;
-        }  
+        }
         samples[channelNum][ndx] = (byte) (b < 0 ? 256 + b : b);
 
         if (photoInterp == WHITE_IS_ZERO || photoInterp == CMYK) {
@@ -1032,10 +1032,10 @@ public abstract class TiffTools {
       else if (numBytes == 1) {
         byte b = bytes[index];
         index++;
-          
+
         int ndx = startIndex + j;
         samples[channelNum][ndx] = (byte) (b < 0 ? 256 + b : b);
-         
+
         if (photoInterp == WHITE_IS_ZERO) { // invert color value
           samples[channelNum][ndx] = (byte) (255 - samples[channelNum][ndx]);
         }
@@ -1054,7 +1054,7 @@ public abstract class TiffTools {
         index += numBytes;
         int ndx = startIndex + j;
         if (ndx >= samples[0].length) ndx = samples[0].length - 1;
-        samples[channelNum][ndx] = 
+        samples[channelNum][ndx] =
           (byte) DataTools.bytesToLong(b, !littleEndian);
 
         if (photoInterp == WHITE_IS_ZERO) { // invert color value
@@ -1077,15 +1077,15 @@ public abstract class TiffTools {
    */
   public static void unpackBytes(byte[][] samples, int startIndex,
     byte[] bytes, int[] bitsPerSample, int photoInterp, int[] colorMap,
-    boolean littleEndian, long maxValue, int planar, int strip, int numStrips) 
+    boolean littleEndian, long maxValue, int planar, int strip, int numStrips)
     throws FormatException
   {
     if (planar == 2) {
       planarUnpack(samples, startIndex, bytes, bitsPerSample, photoInterp,
         littleEndian, strip, numStrips);
-      return;      
-    }      
-          
+      return;
+    }
+
     int totalBits = 0;
     for (int i=0; i<bitsPerSample.length; i++) totalBits += bitsPerSample[i];
     int sampleCount = 8 * bytes.length / totalBits;
@@ -1101,14 +1101,14 @@ public abstract class TiffTools {
     }
 
     int counter = 0;
-   
+
     // rules on incrementing the index:
     // 1) if the planar configuration is set to 1 (interleaved), then add one to
     //    the index
     // 2) if the planar configuration is set to 2 (separated), then go to
     //    j + (i*(bytes.length / sampleCount))
 
-   
+
     int index = 0;
     for (int j=0; j<sampleCount; j++) {
       for (int i=0; i<samples.length; i++) {
@@ -1116,24 +1116,24 @@ public abstract class TiffTools {
 
         if (bitsPerSample[0] % 8 != 0) {
           // bits per sample is not a multiple of 8
-          // 
+          //
           // while images in this category are not in violation of baseline TIFF
           // specs, it's a bad idea to write bits per sample values that aren't
           // divisible by 8
-          
-          // -- MELISSA TODO -- improve this as time permits      
+
+          // -- MELISSA TODO -- improve this as time permits
           if (index == bytes.length) {
             //throw new FormatException("bad index : i = " + i + ", j = " + j);
             index--;
           }
-          
+
           byte b = bytes[index];
           index++;
     //      if (planar == 2) index = j + (i*(bytes.length / samples.length));
-          
+
           // index computed mod bitsPerSample.length to avoid problems with
           // RGB palette
-          
+
           int offset = (bitsPerSample[0] * (samples.length*j + i)) % 8;
           if (offset <= (8 - (bitsPerSample[0] % 8))) {
             index--;
@@ -1148,12 +1148,12 @@ public abstract class TiffTools {
           samples[i][ndx] = (byte) (b < 0 ? 256 + b : b);
 
           if (photoInterp == WHITE_IS_ZERO || photoInterp == CMYK) {
-             samples[i][ndx] = (byte) (255 - samples[i][ndx]); // invert colors 
+             samples[i][ndx] = (byte) (255 - samples[i][ndx]); // invert colors
           }
           else if (photoInterp == RGB_PALETTE) {
             int x = b < 0 ? 256 + b : b;
             int red = colorMap[x % colorMap.length];
-            int green = colorMap[(x + (int) Math.pow(2, bitsPerSample[0])) % 
+            int green = colorMap[(x + (int) Math.pow(2, bitsPerSample[0])) %
               colorMap.length];
             int blue = colorMap[(x + 2*((int) Math.pow(2, bitsPerSample[0]))) %
               colorMap.length];
@@ -1166,10 +1166,10 @@ public abstract class TiffTools {
           //if (planar == 2) { index = j+(i*(bytes.length / samples.length)); }
           byte b = bytes[index];
           index++;
-          
+
           int ndx = startIndex + j;
           samples[i][ndx] = (byte) (b < 0 ? 256 + b : b);
-          
+
           if (photoInterp == WHITE_IS_ZERO) { // invert color value
             samples[i][ndx] = (byte) (255 - samples[i][ndx]);
           }
@@ -1216,7 +1216,6 @@ public abstract class TiffTools {
             System.arraycopy(bytes, bytes.length - numBytes, b, 0, numBytes);
           }
           index += numBytes;
-        //  if (planar == 2) { index = j + (i*(bytes.length / samples.length)); }
           int ndx = startIndex + j;
           samples[i][ndx] = (byte) DataTools.bytesToLong(b, !littleEndian);
 
@@ -1280,7 +1279,7 @@ public abstract class TiffTools {
     else if (compression == PACK_BITS) return packBitsUncompress(input);
     else if (compression == PROPRIETARY_DEFLATE || compression == DEFLATE) {
       return deflateUncompress(input);
-    }       
+    }
     else if (compression == THUNDERSCAN) {
       return thunderScanUncompress(input);
     }
@@ -1306,22 +1305,22 @@ public abstract class TiffTools {
     }
   }
 
-  
+
   /**
    * Decodes a ThunderScan compressed image.
    * Much of this code was adapted from the LibTIFF library (source available at
    * ftp://ftp.sgi.com/graphics/tiff/tiff-v3.4beta037.tar.gz)
    *
-   * Note that this method may be broken, since we have just one sample, and 
+   * Note that this method may be broken, since we have just one sample, and
    * there is little information available on the ThunderScan compression type.
    */
   public static byte[] thunderScanUncompress(byte[] input)
-    throws FormatException 
+    throws FormatException
   {
     // -- MELISSA TODO -- this is broken
     // cross our fingers that this works, since I can't read C code
 
-    /*      
+    /*
     int[] twoBit = new int[] {0, 1, 0, -1};
     int[] threeBit = new int[] {0, 1, 2, 3, 0, -3, -2, -1};
 
@@ -1349,20 +1348,20 @@ public abstract class TiffTools {
             pt = 1;
             lastPixel = input[pt]; nPixels++; n--;
             pt++;
-          }    
+          }
           else {
-            lastPixel |= lastPixel << 4;        
+            lastPixel |= lastPixel << 4;
           }
           nPixels += n;
           for (; n > 0; n -= 2) {
             //bytes.insertElementAt(new Byte((byte) lastPixel), pt);
             bytes.add(new Byte((byte) lastPixel));
             pt++;
-          }  
+          }
           if (n == -1) {
             pt--;
             bytes.insertElementAt(new Byte((byte) (input[pt] & 0xf0)), pt);
-          }        
+          }
           lastPixel &= 0xf;
           break;
         case TWO_BIT_DELTAS:
@@ -1375,7 +1374,7 @@ public abstract class TiffTools {
             }
             else {
               bytes.insertElementAt(new Byte((byte) (lastPixel << 4)), 0);
-            }        
+            }
           }
           if ((delta = ((n >> 2) & 3)) != SKIP_TWO) {
             lastPixel = (lastPixel + twoBit[delta]) & 0xf;
@@ -1386,7 +1385,7 @@ public abstract class TiffTools {
             }
             else {
               bytes.insertElementAt(new Byte((byte) (lastPixel << 4)), 0);
-            }        
+            }
           }
           if ((delta = (n & 3)) != SKIP_TWO) {
             lastPixel = (lastPixel + twoBit[delta]) & 0xf;
@@ -1397,7 +1396,7 @@ public abstract class TiffTools {
             }
             else {
               bytes.insertElementAt(new Byte((byte) (lastPixel << 4)), 0);
-            }        
+            }
           }
           break;
         case THREE_BIT_DELTAS:
@@ -1409,8 +1408,8 @@ public abstract class TiffTools {
             }
             else {
               bytes.insertElementAt(new Byte((byte) (lastPixel << 4)), 0);
-            }        
-          }        
+            }
+          }
           if ((delta = (n & 7)) != SKIP_THREE) {
             lastPixel = (lastPixel + threeBit[delta]) & 0xf;
             if (nPixels++ != 0) {
@@ -1419,7 +1418,7 @@ public abstract class TiffTools {
             }
             else {
               bytes.insertElementAt(new Byte((byte) (lastPixel << 4)), 0);
-            }        
+            }
           }
           break;
         case RAW:
@@ -1430,15 +1429,15 @@ public abstract class TiffTools {
           }
           else {
             bytes.insertElementAt(new Byte((byte) (lastPixel << 4)), 0);
-          }        
+          }
           break;
-      }      
+      }
     }
     input = new byte[bytes.size()];
     for (int i=0; i<input.length; i++) {
       input[i] = ((Byte) bytes.get(i)).byteValue();
     }
-    
+
     return input;
     */
     throw new FormatException("Sorry, Thunderscan compression is not " +
@@ -1452,12 +1451,12 @@ public abstract class TiffTools {
     try {
       Inflater inf = new Inflater(false);
       inf.setInput(input);
-      InflaterInputStream i = 
-        new InflaterInputStream(new PipedInputStream() , inf); 
+      InflaterInputStream i =
+        new InflaterInputStream(new PipedInputStream() , inf);
       int avail = i.available();
       Vector bytes = new Vector();
       while (avail != 0) {
-        bytes.add(new Byte((byte) i.read())); 
+        bytes.add(new Byte((byte) i.read()));
         avail = i.available();
       }
 
@@ -1471,10 +1470,10 @@ public abstract class TiffTools {
     }
     catch (Exception e) {
       throw new FormatException("Error uncompressing Adobe Deflate (ZLIB) " +
-        "compressed image strip.");                
-    } 
-  }        
-  
+        "compressed image strip.");
+    }
+  }
+
   /**
    * Decodes a PackBits (Macintosh RLE) compressed image.
    * Adapted from the TIFF 6.0 specification, page 42.
@@ -1557,7 +1556,7 @@ public abstract class TiffTools {
           }
           catch (ArrayIndexOutOfBoundsException a) {
             throw new FormatException("Sorry, old LZW codes not supported");
-          }        
+          }
           symbol.add(symbolTable[code][0]);
           symbolTable[nextSymbol] = symbol.toByteArray(); //**
           oldCode = code;

@@ -43,7 +43,7 @@ public class LegacyZVIReader extends FormatReader {
   };
 
   /** Block identifying start of useful header information. */
-  private static final byte[] ZVI_MAGIC_BLOCK_1	= { // 41 00 10
+  private static final byte[] ZVI_MAGIC_BLOCK_1 = { // 41 00 10
     65, 0, 16
   };
 
@@ -67,7 +67,7 @@ public class LegacyZVIReader extends FormatReader {
   /** Debugging flag. */
   private static final boolean DEBUG = false;
 
-	
+
   // -- Fields --
 
   /** Current file. */
@@ -75,8 +75,8 @@ public class LegacyZVIReader extends FormatReader {
 
   /** List of image blocks. */
   private Vector blockList;
-  
-  
+
+
   // -- Constructor --
 
   /** Constructs a new legacy ZVI reader. */
@@ -91,7 +91,7 @@ public class LegacyZVIReader extends FormatReader {
     int len = block.length < ZVI_SIG.length ? block.length : ZVI_SIG.length;
     for (int i=0; i<len; i++) {
       if (block[i] != ZVI_SIG[i]) return false;
-    }	    
+    }
     return true;
   }
 
@@ -128,7 +128,7 @@ public class LegacyZVIReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessFile(id, "r");
-  
+
     // Highly questionable decoding strategy:
     //
     // Note that all byte ordering is little endian, includeing 4-byte header
@@ -175,8 +175,8 @@ public class LegacyZVIReader extends FormatReader {
 
       if (header < 0) {
         // no more potential headers found; we're done
-	break;
-      }	      
+        break;
+      }
       pos = header + ZVI_MAGIC_BLOCK_1.length;
 
       if (DEBUG) System.err.println("Found potential image block: " + header);
@@ -192,10 +192,10 @@ public class LegacyZVIReader extends FormatReader {
       for (int i=0; i<b.length; i++) {
         if (b[i] != ZVI_MAGIC_BLOCK_2[i]) {
           ok = false;
-	  break;
-	}
-	pos++;
-      }	      
+          break;
+        }
+        pos++;
+      }
       if (!ok) continue;
 
       // these bytes should be 00
@@ -204,10 +204,10 @@ public class LegacyZVIReader extends FormatReader {
       for (int i=0; i<b.length; i++) {
         if (b[i] != 0) {
           ok = false;
-	  break;
-	}	
-	pos++;
-      }	      
+          break;
+        }
+        pos++;
+      }
       if (!ok) continue;
 
       // read potential header information
@@ -222,17 +222,17 @@ public class LegacyZVIReader extends FormatReader {
       for (int i=0; i<b.length; i++) {
         if (b[i] != 0) {
           ok = false;
-	  break;
-	}	
-	pos++;
-      }	      
+          break;
+        }
+        pos++;
+      }
       if (!ok) continue;
 
       // everything checks out; looks like an image header to me
       long magic3 = findBlock(in, ZVI_MAGIC_BLOCK_3, pos);
       if (magic3 < 0) {
         throw new FormatException("Error parsing image header. " + WHINING);
-      }	      
+      }
       pos = magic3 + ZVI_MAGIC_BLOCK_3.length;
 
       // read more header information
@@ -246,27 +246,27 @@ public class LegacyZVIReader extends FormatReader {
       // doesn't always equal bytesPerPixel * 8
       int bitDepth = (int) DataTools.read4UnsignedBytes(in, true);
       pos += 24;
-     
+
       String type = "";
       switch (pixelType) {
         case 1: type = "8 bit rgb tuple, 24 bpp"; break;
-	case 2: type = "8 bit rgb quad, 32 bpp"; break;
-	case 3: type = "8 bit grayscale"; break;
-	case 4: type = "16 bit signed int, 8 bpp"; break;
-	case 5: type = "32 bit int, 32 bpp"; break;
-	case 6: type = "32 bit float, 32 bpp"; break;
-	case 7: type = "64 bit float, 64 bpp"; break;
-	case 8: type = "16 bit unsigned short triple, 48 bpp"; break;
-	case 9: type = "32 bit int triple, 96 bpp"; break;	
-	default: type = "undefined pixel type (" + pixelType + ")";      
+        case 2: type = "8 bit rgb quad, 32 bpp"; break;
+        case 3: type = "8 bit grayscale"; break;
+        case 4: type = "16 bit signed int, 8 bpp"; break;
+        case 5: type = "32 bit int, 32 bpp"; break;
+        case 6: type = "32 bit float, 32 bpp"; break;
+        case 7: type = "64 bit float, 64 bpp"; break;
+        case 8: type = "16 bit unsigned short triple, 48 bpp"; break;
+        case 9: type = "32 bit int triple, 96 bpp"; break;
+        default: type = "undefined pixel type (" + pixelType + ")";
       }
 
       metadata.put("Width", new Integer(width));
       metadata.put("Height", new Integer(height));
       metadata.put("PixelType", type);
       metadata.put("BPP", new Integer(bytesPerPixel));
-      
-      
+
+
       ZVIBlock zviBlock = new ZVIBlock(theZ, theC, theT, width, height,
         alwaysOne, bytesPerPixel, pixelType, bitDepth, pos);
       if (DEBUG) System.out.println(zviBlock);
@@ -281,24 +281,24 @@ public class LegacyZVIReader extends FormatReader {
       pos += width * height * bytesPerPixel;
 
       // initialize the OME-XML tree
-      
+
       if (ome != null) {
         OMETools.setAttribute(ome, "Pixels", "SizeX", "" + width);
-	OMETools.setAttribute(ome, "Pixels", "SizeY", "" + height);
-	OMETools.setAttribute(ome, "Pixels", "SizeZ", "" + numZ);
-	OMETools.setAttribute(ome, "Pixels", "SizeT", "" + numT);
-	OMETools.setAttribute(ome, "Pixels", "SizeC", "" + numC);
-	OMETools.setAttribute(ome, "Pixels", "BigEndian", "false");
+        OMETools.setAttribute(ome, "Pixels", "SizeY", "" + height);
+        OMETools.setAttribute(ome, "Pixels", "SizeZ", "" + numZ);
+        OMETools.setAttribute(ome, "Pixels", "SizeT", "" + numT);
+        OMETools.setAttribute(ome, "Pixels", "SizeC", "" + numC);
+        OMETools.setAttribute(ome, "Pixels", "BigEndian", "false");
         // TODO -- add pixel type
-      }	      
-    }	    
+      }
+    }
 
     if (blockList.isEmpty()) {
       throw new FormatException("No image data found." + WHINING);
     }
     if (numZ * numC * numT != blockList.size()) {
       System.err.println("Warning: image counts do not match. " + WHINING);
-    }	    
+    }
   }
 
   // -- Utility methods --
@@ -317,7 +317,7 @@ public class LegacyZVIReader extends FormatReader {
     int step = 0;
     boolean found = false;
     in.seek(start);
-	  
+
     while (true) {
       int len = (int) (fileSize - filePos);
       if (len < 0) break;
@@ -325,35 +325,35 @@ public class LegacyZVIReader extends FormatReader {
       in.readFully(buf, 0, len);
 
       for(int i=0; i<len; i++) {
-        if (buf[i] == block[step]) {	      
+        if (buf[i] == block[step]) {
           if (step == 0) {
-	    // could be a match; flag this spot
-	    spot = filePos + i;
-	  }
-	  step++;
-	  if (step == block.length) {
+            // could be a match; flag this spot
+            spot = filePos + i;
+          }
+          step++;
+          if (step == block.length) {
             // found complete match; done searching
-	    found = true;
-	    break;
-	  }	  
+            found = true;
+            break;
+          }
         }
-	else {
+        else {
           // no match; reset step indicator
           spot = -1;
-	  step = 0;
-	}	
-      }	    
+          step = 0;
+        }
+      }
       if (found) break;  // found a match; we're done
       if (len < buf.length) break;  // EOF reached; we're done
 
       filePos += len;
     }
-    
+
     // set file pointer to byte immediately following pattern
     if (spot >= 0) in.seek(spot + block.length);
     return spot;
   }
- 
+
 
   // -- Helper classes --
 
@@ -392,24 +392,24 @@ public class LegacyZVIReader extends FormatReader {
       numChannels = pixelType == 1 ? 3 : 1;  // a total shot in the dark
       if (bytesPerPixel % numChannels != 0) {
         System.err.println("Warning: incompatible bytesPerPixel (" +
-	  bytesPerPixel + ") and numChannels (" + numChannels +
-	  "). Assuming grayscale data. " + WHINING);
-	numChannels = 1;
+          bytesPerPixel + ") and numChannels (" + numChannels +
+          "). Assuming grayscale data. " + WHINING);
+        numChannels = 1;
       }
       bytesPerChannel = bytesPerPixel / numChannels;
-    }	    
+    }
 
     /** Reads in this block's image data from the given file. */
-    public Image readImage(RandomAccessFile in) 
-      throws IOException, FormatException 
+    public Image readImage(RandomAccessFile in)
+      throws IOException, FormatException
     {
       long fileSize = in.length();
       if (imagePos + imageSize > fileSize) {
         throw new FormatException("File is not big enough to contain the " +
-	  "pixels (width=" + width + "; height=" + height + 
-	  "; bytesPerPixel=" + bytesPerPixel + "; imagePos=" + imagePos +
-	  "; fileSize=" + fileSize + "). " + WHINING);
-      }	      
+          "pixels (width=" + width + "; height=" + height +
+          "; bytesPerPixel=" + bytesPerPixel + "; imagePos=" + imagePos +
+          "; fileSize=" + fileSize + "). " + WHINING);
+      }
 
       // read image
       byte[] imageBytes = new byte[imageSize];
@@ -422,10 +422,10 @@ public class LegacyZVIReader extends FormatReader {
       for (int i=0; i<numPixels; i++) {
         for (int c=numChannels-1; c>=0; c--) {
           byte[] b = new byte[bytesPerChannel];
-	  System.arraycopy(imageBytes, index, b, 0, bytesPerChannel);
-	  index += bytesPerChannel;
-	  samples[c][i] = DataTools.bytesToShort(b, true);
-	}      
+          System.arraycopy(imageBytes, index, b, 0, bytesPerChannel);
+          index += bytesPerChannel;
+          samples[c][i] = DataTools.bytesToShort(b, true);
+        }
       }
       return DataTools.makeImage(samples, width, height);
     }
@@ -433,14 +433,14 @@ public class LegacyZVIReader extends FormatReader {
     public String toString() {
       return "Image header block:\n" +
         "  theZ = " + theZ + "\n" + "  theC = " + theC + "\n" +
-	"  theT = " + theT + "\n" + "  width = " + width + "\n" +
-	"  height = " + height + "\n" + "  alwaysOne = " + alwaysOne + "\n" +
-	"  bytesPerPixel = " + bytesPerPixel + "\n" + 
-	"  pixelType = " + pixelType + "\n" + "  bitDepth = " + bitDepth;
-    }  
-  }	  
+        "  theT = " + theT + "\n" + "  width = " + width + "\n" +
+        "  height = " + height + "\n" + "  alwaysOne = " + alwaysOne + "\n" +
+        "  bytesPerPixel = " + bytesPerPixel + "\n" +
+        "  pixelType = " + pixelType + "\n" + "  bitDepth = " + bitDepth;
+    }
+  }
 
-  
+
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {
