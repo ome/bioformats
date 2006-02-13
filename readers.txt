@@ -22,4 +22,4 @@ loci.formats.QTReader # needs QTJ
 loci.formats.PictReader # needs QTJ
 loci.formats.OpenlabReader # needs QTJ; isThisType(String) is slow
 #loci.formats.NativePictReader
-#loci.formats.NativeQTReader
+loci.formats.NativeQTReader
