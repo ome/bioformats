@@ -46,9 +46,6 @@ public abstract class FormatReader {
   /** Name of current file. */
   protected String currentId;
 
-  /** Percent complete with current operation. */
-  protected double percent;
-
   /** Hashtable containing metadata key/value pairs. */
   protected Hashtable metadata;
 
@@ -107,15 +104,10 @@ public abstract class FormatReader {
    * @return Java Images containing pixel data
    */
   public Image[] open(String id) throws FormatException, IOException {
-    percent = 0;
     int nImages = getImageCount(id);
     Image[] images = new Image[nImages];
-    for (int i=0; i<nImages; i++) {
-      images[i] = open(id, i);
-      percent = (double) (i+1) / nImages;
-    }
+    for (int i=0; i<nImages; i++) images[i] = open(id, i);
     close();
-    percent = Double.NaN;
     return images;
   }
 
@@ -137,9 +129,6 @@ public abstract class FormatReader {
 
   /** Gets the default file suffixes for this file format. */
   public String[] getSuffixes() { return suffixes; }
-
-  /** Gets the percentage complete of the reader's current operation. */
-  public double getPercentComplete() { return percent; }
 
   /**
    * Obtains a loci.ome.xml.OMENode object representing the

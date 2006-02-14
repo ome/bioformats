@@ -38,9 +38,6 @@ public abstract class FormatWriter {
   /** Name of current file. */
   protected String currentId;
 
-  /** Percent complete with current operation. */
-  protected double percent;
-
   /** Frame rate to use when writing in frames per second, if applicable. */
   protected int fps;
 
@@ -75,12 +72,9 @@ public abstract class FormatWriter {
   public void save(String id, Image[] images)
     throws FormatException, IOException
   {
-    percent = 0;
     for (int i=0; i<images.length; i++) {
       save(id, images[i], i < images.length - 1);
-      percent = (double) (i+1) / images.length;
     }
-    percent = Double.NaN;
   }
 
   /** Gets the name of this file format. */
@@ -88,9 +82,6 @@ public abstract class FormatWriter {
 
   /** Gets the default file suffixes for this file format. */
   public String[] getSuffixes() { return suffixes; }
-
-  /** Gets the percentage complete of the writer's current operation. */
-  public double getPercentComplete() { return percent; }
 
   /** Sets the frames per second to use when writing. */
   public void setFramesPerSecond(int fps) { this.fps = fps; }
