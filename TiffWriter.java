@@ -40,12 +40,14 @@ public class TiffWriter extends FormatWriter {
   /** Current file output stream. */
   private FileOutputStream out;
 
+
   // -- Constructor --
 
   public TiffWriter() {
     super("TIFF", new String[] {"tiff", "tif"});
     lastOffset = 0;
   }
+
 
   // -- FormatWriter API methods --
 
@@ -58,6 +60,7 @@ public class TiffWriter extends FormatWriter {
   {
     saveImage(id, image, null, last);
   }
+
 
   // -- TiffWriter API methods --
 
@@ -93,25 +96,11 @@ public class TiffWriter extends FormatWriter {
     }
   }
 
+
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {
-
-    // attempt to test the writer
-
-    TiffWriter writer = new TiffWriter();
-
-    if (args.length < 4) {
-      throw new FormatException("Usage : java loci.formats.TiffWriter " +
-        "<outfile> <infile> <width> <height>");
-    }
-
-    RandomAccessFile in = new RandomAccessFile(args[1], "r");
-    byte[][] data = new byte[1][(int) in.length()];
-    in.read(data[0]);
-    Image img = DataTools.makeImage(data, Integer.parseInt(args[2]),
-      Integer.parseInt(args[3]));
-
-    writer.save(args[0], img, true);
+    new TiffWriter().testConvert(args);
   }
+
 }

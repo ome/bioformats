@@ -98,4 +98,43 @@ public abstract class FormatWriter {
   /** Gets the frames per second to use when writing. */
   public int getFramesPerSecond() { return fps; }
 
+  /** A utility method for converting a file from the command line. */
+  public void testConvert(String[] args) throws FormatException, IOException {
+    String className = getClass().getName();
+    if (args == null || args.length < 2) {
+      System.out.println("To convert a file to " + format + " format, run:");
+      System.out.println("  java " + className + " in_file out_file");
+      return;
+    }
+    String in = args[0];
+    String out = args[1];
+    System.out.print(in + " -> " + out + " ");
+
+    ImageReader reader = new ImageReader();
+    long start = System.currentTimeMillis();
+    int num = reader.getImageCount(in);
+    long mid = System.currentTimeMillis();
+    long read = 0, write = 0;
+    for (int i=0; i<num; i++) {
+      long s = System.currentTimeMillis();
+      Image image = reader.open(in, i);
+      long m = System.currentTimeMillis();
+      save(out, image, i == num - 1);
+      long e = System.currentTimeMillis();
+      System.out.print(".");
+      read += m - s;
+      write += e - m;
+    }
+    long end = System.currentTimeMillis();
+    System.out.println(" [done]");
+
+    // output timing results
+    float sec = (end - start) / 1000f;
+    long initial = mid - start;
+    float readAvg = (float) read / num;
+    float writeAvg = (float) write / num;
+    System.out.println(sec + "s elapsed (" +
+      readAvg + "+" + writeAvg + "ms per image, " + initial + "ms overhead)");
+  }
+
 }
