@@ -54,6 +54,7 @@ public class TiffReader extends BaseTiffReader {
 
 
   // -- Main method --
+
   public static void main(String[] args) throws FormatException, IOException {
     new TiffReader().testRead(args);
   }
