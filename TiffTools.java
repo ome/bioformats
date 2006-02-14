@@ -1104,8 +1104,8 @@ public abstract class TiffTools {
     int counter = 0;
 
     // rules on incrementing the index:
-    // 1) if the planar configuration is set to 1 (interleaved), then add one to
-    //    the index
+    // 1) if the planar configuration is set to 1 (interleaved), then add one
+    //    to the index
     // 2) if the planar configuration is set to 2 (separated), then go to
     //    j + (i*(bytes.length / sampleCount))
 
@@ -1118,9 +1118,9 @@ public abstract class TiffTools {
         if (bitsPerSample[0] % 8 != 0) {
           // bits per sample is not a multiple of 8
           //
-          // while images in this category are not in violation of baseline TIFF
-          // specs, it's a bad idea to write bits per sample values that aren't
-          // divisible by 8
+          // while images in this category are not in violation of baseline
+          // TIFF specs, it's a bad idea to write bits per sample values that
+          // aren't divisible by 8
 
           // -- MELISSA TODO -- improve this as time permits
           if (index == bytes.length) {
@@ -1309,8 +1309,8 @@ public abstract class TiffTools {
 
   /**
    * Decodes a ThunderScan compressed image.
-   * Much of this code was adapted from the LibTIFF library (source available at
-   * ftp://ftp.sgi.com/graphics/tiff/tiff-v3.4beta037.tar.gz)
+   * Much of this code was adapted from the LibTIFF library (source available
+   * at ftp://ftp.sgi.com/graphics/tiff/tiff-v3.4beta037.tar.gz)
    *
    * Note that this method may be broken, since we have just one sample, and
    * there is little information available on the ThunderScan compression type.
@@ -1447,8 +1447,8 @@ public abstract class TiffTools {
 
   /** Decodes an Adobe Deflate (Zip) compressed image strip. */
   public static byte[] deflateUncompress(byte[] input) throws FormatException {
-    // could have written this from scratch, but using the java.util.zip package
-    // is much easier
+    // could have written this from scratch, but using the java.util.zip
+    // package is much easier
     try {
       Inflater inf = new Inflater(false);
       inf.setInput(input);

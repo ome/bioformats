@@ -30,8 +30,8 @@ import java.util.Vector;
 /**
  * AVIReader is the file format reader for uncompressed AVI files.
  *
- * Much of this form's code was adapted from Wayne Rasband's
- * AVI Movie Reader plugin for ImageJ (available at http://rsb.info.nih.gov/ij).
+ * Much of this form's code was adapted from Wayne Rasband's AVI Movie Reader
+ * plugin for ImageJ (available at http://rsb.info.nih.gov/ij).
  */
 public class AVIReader extends FormatReader {
 

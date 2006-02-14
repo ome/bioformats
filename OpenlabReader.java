@@ -59,7 +59,7 @@ public class OpenlabReader extends FormatReader {
   /** Image type for each block of current Openlab LIFF file. */
   private int[] imageType;
 
-  /** Indicates whether there is any color data in current Openlab LIFF file. */
+  /** Whether there is any color data in current Openlab LIFF file. */
   private boolean isColor;
 
   /** Flag indicating whether current file is little endian. */
@@ -99,8 +99,9 @@ public class OpenlabReader extends FormatReader {
 
   /** Checks if the given block is a valid header for an Openlab file. */
   public boolean isThisType(byte[] block) {
-    return block[0] == 0 && block[1] == 0 && block[2] == -1 && block[3] == -1 &&
-      block[4] == 105 && block[5] == 109 && block[6] == 112 && block[7] == 114;
+    return block[0] == 0 && block[1] == 0 && block[2] == -1 &&
+      block[3] == -1 && block[4] == 105 && block[5] == 109 &&
+      block[6] == 112 && block[7] == 114;
   }
 
   /** Determines the number of images in the given Openlab file. */
