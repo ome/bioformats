@@ -189,12 +189,6 @@ public class ImageReader extends FormatReader {
     return false;
   }
 
-  /** Gets the percentage complete of the reader's current operation. */
-  public double getPercentComplete() {
-    return index < 0 ? Double.NaN : readers[index].getPercentComplete();
-  }
-
-
   /**
    * Obtains a loci.ome.xml.OMENode object representing the
    * file's metadata as an OME-XML DOM structure.
