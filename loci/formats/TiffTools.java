@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.Image;
+import java.awt.image.*;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -40,7 +41,7 @@ public abstract class TiffTools {
 
   // -- Constants --
 
-  public static final boolean DEBUG = true;
+  public static final boolean DEBUG = false;
 
   // non-IFD tags (for internal use)
   public static final int LITTLE_ENDIAN = 0;
@@ -1620,33 +1621,55 @@ public abstract class TiffTools {
    * @param last Whether this image is the final IFD entry of the TIFF data
    * @return total number of bytes written
    */
-  public static long writeImage(Image image, Hashtable ifd, OutputStream out,
-    int offset, boolean last) throws FormatException, IOException
+  public static long writeImage(Image image, Hashtable ifd,
+    OutputStream out, int offset, boolean last)
+    throws FormatException, IOException
   {
     if (image == null) throw new FormatException("Image is null");
     if (DEBUG) debug("writeImage (offset=" + offset + "; last=" + last + ")");
 
-    /* CTR TODO
-    // get width and height
-    visad.Set set = image.getDomainSet();
-    if (!(set instanceof Gridded2DSet)) {
-      throw new FormatException("Image has an " +
-        "incompatible domain set (" + set.getClass().getName() + ")");
-    }
-    Gridded2DSet gset = (Gridded2DSet) set;
-    int width = gset.getLength(0);
-    int height = gset.getLength(1);
+    DataBuffer buf = ((BufferedImage) image).getRaster().getDataBuffer();
 
     // get pixels
-    float[][] values = image.getFloats(false);
+    int[][] values = new int[0][0];
+
+    if (buf instanceof DataBufferByte) {
+      // originally 8 bit data
+      byte[][] data = ((DataBufferByte) buf).getBankData();
+      values = new int[data.length][data[0].length];
+      for (int i=0; i<data.length; i++) {
+        for (int j=0; j<data[i].length; j++) {
+          values[i][j] = (int) data[i][j];
+        }
+      }
+    }
+    else if (buf instanceof DataBufferUShort)
+    {
+      // originally 16 bit data
+      short[][] data = ((DataBufferUShort) buf).getBankData();
+      values = new int[data.length][data[0].length];
+      for (int i=0; i<data.length; i++) {
+        for (int j=0; j<data[i].length; j++) {
+          values[i][j] = (int) data[i][j];
+        }
+      }
+    }
+    else if (buf instanceof DataBufferInt) {
+      // originally 32 bit data
+      values = ((DataBufferInt) buf).getBankData();
+    }
+
+    int width = ((BufferedImage) image).getWidth();
+    int height = ((BufferedImage) image).getHeight();
+
     if (values.length < 1 || values.length > 3) {
       throw new FormatException("Image has an unsupported " +
         "number of range components (" + values.length + ")");
     }
     if (values.length == 2) {
       // pad values with extra set of zeroes
-      values = new float[][] {
-        values[0], values[1], new float[values[0].length]
+      values = new int[][] {
+        values[0], values[1], new int[values[0].length]
       };
     }
 
@@ -1658,13 +1681,9 @@ public abstract class TiffTools {
       int max = 0;
       for (int c=0; c<values.length; c++) {
         for (int ndx=0; ndx<values[c].length; ndx++) {
-          float v = values[c][ndx];
-          int iv = (int) v;
-          if (v < 0) {
-            throw new FormatException("Sample #" + ndx +
-              " of range component #" + c + " has negative value (" + v + ")");
-          }
-          else if (v != iv) {
+          int v = values[c][ndx];
+          int iv = v;
+          if (v != iv) {
             throw new FormatException("Sample #" + ndx +
               " of range component #" + c + " is not an integer (" + v + ")");
           }
@@ -1695,7 +1714,7 @@ public abstract class TiffTools {
       putIFDValue(ifd, RESOLUTION_UNIT, 1); // no unit
     }
     if (getIFDValue(ifd, SOFTWARE) == null) {
-      putIFDValue(ifd, SOFTWARE, "VisAD");
+      putIFDValue(ifd, SOFTWARE, "LOCI Bio-formats");
     }
 
     // create pixel output buffers
@@ -1717,7 +1736,7 @@ public abstract class TiffTools {
       for (int x=0; x<width; x++) {
         int ndx = y * width + x;
         for (int c=0; c<values.length; c++) {
-          int q = (int) values[c][ndx];
+          int q = values[c][ndx];
           if (bps[c] == 8) stripOut[strip].writeByte(q);
           else if (bps[c] == 16) stripOut[strip].writeShort(q);
           else if (bps[c] == 32) stripOut[strip].writeInt(q);
@@ -1905,7 +1924,6 @@ public abstract class TiffTools {
     }
     out.write(extraArray);
     return numBytes;
-    */ return 0;
   }
 
 
