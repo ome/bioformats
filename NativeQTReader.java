@@ -82,6 +82,9 @@ public class NativeQTReader extends FormatReader {
   /** Video codec used by this movie. */
   private String codec;
 
+  /** An instance of the non-native QuickTime reader, in case this one fails. */
+  private QTReader legacy = new QTReader();
+  
   // -- Constructor --
 
   /** Constructs a new QuickTime reader. */
@@ -107,6 +110,8 @@ public class NativeQTReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
+    if (!codec.equals("raw ")) return legacy.open(id, no);
+    
     int offset = ((Integer) offsets.get(no)).intValue();
     int nextOffset = pixels.length;
     if (no < offsets.size() - 1) {
@@ -139,8 +144,7 @@ public class NativeQTReader extends FormatReader {
       return DataTools.makeImage(newPix, width, height, 1, false);
     }
     else {
-      throw new FormatException("Sorry, " + bitsPerPixel + " bits per pixel" +
-        " not supported.");
+      return legacy.open(id, no);
     }
   }
 
