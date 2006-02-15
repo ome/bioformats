@@ -65,10 +65,10 @@ public class ZeissZVIReader extends FormatReader {
   // -- Fields --
 
   /** An instance of the old ZVI reader, for use if this one fails. */
-  private LegacyZVIReader legacy;
+  private LegacyZVIReader legacy = new LegacyZVIReader();
 
   /** Flag indicating the current file requires the legacy ZVI reader. */
-  private boolean needLegacy;
+  private boolean needLegacy = true;
 
   private Hashtable pixelData = new Hashtable();
   private Hashtable headerData = new Hashtable();

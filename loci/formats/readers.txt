@@ -18,8 +18,9 @@ loci.formats.FluoviewReader # TIFF variant; isThisType(String) is slow
 loci.formats.AndorReader # TIFF variant; isThisType(String) is slow
 loci.formats.TiffReader
 loci.formats.AVIReader
+loci.formats.ImageJReader # needs ImageJ
+loci.formats.NativeQTReader
 loci.formats.QTReader # needs QTJ
+#loci.formats.NativePictReader
 loci.formats.PictReader # needs QTJ
 loci.formats.OpenlabReader # needs QTJ; isThisType(String) is slow
-#loci.formats.NativePictReader
-loci.formats.NativeQTReader
