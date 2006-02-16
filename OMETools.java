@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.lang.reflect.Method;
+import java.util.Vector;
 
 /**
  * A utility class for constructing and manipulating OME-XML DOMs. It uses
@@ -99,6 +100,76 @@ public abstract class OMETools {
     return null;
   }
 
+  /** Get number of nodes with the specified name. */
+  public static int getNumNodes(Object root, String nodeName)
+  {
+    if (R == null || root == null || nodeName == null) return 0;
+    try {
+      R.setVar("root", root);
+      R.setVar("name", nodeName);
+      R.exec("rel = root.getDOMElement()");
+
+      // HACK - We cannot call getOwnerDocument even though it is public:
+      //
+      //  java.lang.IllegalAccessException: Class loci.formats.ReflectedUniverse
+      //  can not access a member of class org.apache.crimson.tree.NodeBase with
+      //  modifiers "public"
+      //
+      // It seems the getOwnerDocument method of
+      // org.apache.crimson.tree.NodeBase, which implements org.w3c.dom.Element,
+      // is not accessible for some reason. So we have to grab the method
+      // directly from org.w3c.dom.Element using reflection the hard way.
+      Object rel = R.getVar("rel");
+      Class c = Class.forName("org.w3c.dom.Element");
+      Method m = c.getMethod("getOwnerDocument", null);
+      R.setVar("doc", m.invoke(rel, null));
+
+      R.exec("el = DOMUtil.findElementList(name, doc)");
+      Vector el = ((Vector) R.getVar("el"));
+      if (el != null) return el.size();
+      return 0;
+    }
+    catch (Exception exc) {
+      exc.printStackTrace();
+    }
+    return 0;
+  }
+
+  /**
+   * Gets the value of the specified attribute in the first occurence of the
+   * specified node.
+   * @return the value of the attribute.
+   */
+  public static String getAttribute(Object root, String nodeName, String name) {
+    return getAttribute(root, nodeName, name, 0);
+  }
+
+  /**
+   * Gets the value of the specified attribute in the specified node, where n
+   * specifies which occurence of the node to look at.
+   * @return the value of the attribute.
+   */
+  public static String getAttribute(Object root, String nodeName,
+    String name, int n)
+  {
+    if (R == null || root == null) return null;
+    R.setVar("root", root);
+    try {
+      // get the node
+      Object node = findNode(root, nodeName, n);
+      if (node == null) return null;
+
+      // get the attribute
+      R.setVar("node", node);
+      R.setVar("name", name);
+      R.exec("attr = node.getAttribute(name)");
+      String attr = ((String) R.getVar("attr"));
+      return attr;
+    }
+    catch (ReflectException exc) { exc.printStackTrace(); }
+    return null;
+  }
+
   /**
    * Sets the value of the specified attribute in the specified node.
    * @return True if the operation was successful.
@@ -149,6 +220,13 @@ public abstract class OMETools {
   private static Object findNode(Object root, String name)
     throws ReflectException
   {
+    return findNode(root, name, 0);
+  }
+
+  /** Retrieves the nth node associated with the given DOM element name. */
+  private static Object findNode(Object root, String name, int n)
+    throws ReflectException
+  {
     if (R == null || root == null || name == null) return null;
     R.setVar("root", root);
     R.setVar("name", name);
@@ -171,11 +249,11 @@ public abstract class OMETools {
       R.setVar("doc", m.invoke(rel, null));
     }
     catch (Exception exc) { exc.printStackTrace(); }
-    //R.exec("doc = rel.getOwnerDocument()");
 
-    R.exec("el = DOMUtil.findElement(name, doc)");
-    if (R.getVar("el") == null) return null;
+    R.exec("el = DOMUtil.findElementList(name, doc)");
+    Vector el = ((Vector) R.getVar("el"));
+    if (el == null || n >= el.size()) return null;
+    R.setVar("el", el.get(n));
     return R.exec("OMEXMLNode.createNode(el)");
   }
-
 }
