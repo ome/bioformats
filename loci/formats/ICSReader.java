@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.StringTokenizer;
 import java.util.NoSuchElementException;
@@ -87,45 +86,58 @@ public class ICSReader extends FormatReader {
     return numImages;
   }
 
-  /** Obtains the specified image from the given ICS file. */
-  public Image open(String id, int no) throws FormatException, IOException {
-    if(!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
+  /**
+   * Obtains the bytes for the specified image from the given ICS file.
+   * Note : this method will be added to the FormatReader API.
+   */
+  public byte[] openBytes(String id, int no) throws FormatException, IOException
+  {
+    if (!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
 
     int width = dimensions[1];
     int height = dimensions[2];
+    int numSamples = width * height;
+    int channels = 1;
 
     idsIn.seek((dimensions[0]/8) * width * height * no);
     byte[] data = new byte[(dimensions[0]/8) * width * height];
     idsIn.readFully(data);
-    int numSamples = width * height;
-    int channels = 1;
-
-    BufferedImage image = null;
-
+ 
     if(dimensions[0] == 8) {
       // case for 8 bit data
-      image = DataTools.makeImage(data, width, height, channels, false);
+      return data;
     }
     else if(dimensions[0] == 16) {
       // case for 16 bit data
-      short[] rawData = new short[channels * numSamples];
+      byte[] rawData = new byte[channels * numSamples];
       for (int i=0; i<rawData.length; i++) {
-        rawData[i] = DataTools.bytesToShort(data, 2 * i, littleEndian);
+        rawData[i] = (byte) DataTools.bytesToShort(data, 2 * i, littleEndian);
       }
-      image = DataTools.makeImage(rawData, width, height, channels, false);
+      return rawData;
     }
     else if(dimensions[0] == 32) {
       // case for 32 bit data -- could be broken
-      int[] rawData = new int[channels * numSamples];
+      byte[] rawData = new byte[channels * numSamples];
       for (int i=0; i<rawData.length; i++) {
-        rawData[i] = DataTools.bytesToInt(data, 4 * i, littleEndian);
+        rawData[i] = (byte) DataTools.bytesToInt(data, 4 * i, littleEndian);
       }
-      image = DataTools.makeImage(rawData, width, height, channels, false);
+      return rawData;
     }
     else throw new FormatException("Sorry, " +
       dimensions[0] + " bits per sample is not supported");
+  }
+  
+  /** Obtains the specified image from the given ICS file. */
+  public Image open(String id, int no) throws FormatException, IOException {
+    if(!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
 
-    return image;
+    byte[] data = openBytes(id, no);
+    int width = dimensions[1];
+    int height = dimensions[2];
+    int numSamples = width * height;
+    int channels = 1;
+
+    return DataTools.makeImage(data, width, height, channels, false);
   }
 
   /** Closes any open files. */
