@@ -105,27 +105,7 @@ public abstract class OMETools {
   {
     if (R == null || root == null || nodeName == null) return 0;
     try {
-      R.setVar("root", root);
-      R.setVar("name", nodeName);
-      R.exec("rel = root.getDOMElement()");
-
-      // HACK - We cannot call getOwnerDocument even though it is public:
-      //
-      //  java.lang.IllegalAccessException: Class loci.formats.ReflectedUniverse
-      //  can not access a member of class org.apache.crimson.tree.NodeBase with
-      //  modifiers "public"
-      //
-      // It seems the getOwnerDocument method of
-      // org.apache.crimson.tree.NodeBase, which implements org.w3c.dom.Element,
-      // is not accessible for some reason. So we have to grab the method
-      // directly from org.w3c.dom.Element using reflection the hard way.
-      Object rel = R.getVar("rel");
-      Class c = Class.forName("org.w3c.dom.Element");
-      Method m = c.getMethod("getOwnerDocument", null);
-      R.setVar("doc", m.invoke(rel, null));
-
-      R.exec("el = DOMUtil.findElementList(name, doc)");
-      Vector el = ((Vector) R.getVar("el"));
+      Vector el = getNodes(root, nodeName);
       if (el != null) return el.size();
       return 0;
     }
@@ -227,6 +207,16 @@ public abstract class OMETools {
   private static Object findNode(Object root, String name, int n)
     throws ReflectException
   {
+    Vector el = getNodes(root, name);
+    if (el == null || n >= el.size()) return null;
+    R.setVar("el", el.get(n));
+    return R.exec("OMEXMLNode.createNode(el)");
+  }
+
+  /** Retrieves a Vector of nodes associated with the given DOM element name. */
+  private static Vector getNodes(Object root, String name) 
+    throws ReflectException 
+  {
     if (R == null || root == null || name == null) return null;
     R.setVar("root", root);
     R.setVar("name", name);
@@ -251,9 +241,6 @@ public abstract class OMETools {
     catch (Exception exc) { exc.printStackTrace(); }
 
     R.exec("el = DOMUtil.findElementList(name, doc)");
-    Vector el = ((Vector) R.getVar("el"));
-    if (el == null || n >= el.size()) return null;
-    R.setVar("el", el.get(n));
-    return R.exec("OMEXMLNode.createNode(el)");
+    return ((Vector) R.getVar("el"));
   }
 }

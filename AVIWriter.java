@@ -26,6 +26,7 @@ package loci.formats;
 import java.awt.Image;
 import java.io.*;
 import java.awt.image.*;
+import java.util.Vector;
 
 /**
  * AVIWriter is the file format writer for AVI files.
@@ -82,7 +83,7 @@ public class AVIWriter extends FormatWriter {
   private long saveLIST2Size;
   private byte[] dataSignature;
   private byte[] idx1Signature;
-  private long savedbLength[];
+  private Vector savedbLength;
   private long savedcLength[];
   private long idx1Pos;
   private long endPos;
@@ -128,6 +129,7 @@ public class AVIWriter extends FormatWriter {
     }
 
     if (!id.equals(currentId)) {
+      currentId = id;
       bytesPerPixel = 1;
 
       file = new File(id);
@@ -181,8 +183,9 @@ public class AVIWriter extends FormatWriter {
 
       tDim = 1;
       zDim = 1;
-      yDim = ((BufferedImage) image).getRaster().getWidth();
-      xDim = ((BufferedImage) image).getRaster().getHeight();
+      yDim = ((BufferedImage) image).getRaster().getHeight();
+      xDim = ((BufferedImage) image).getRaster().getWidth();
+      
       xPad = 0;
       xMod = xDim % 4;
       if (xMod != 0) {
@@ -324,7 +327,7 @@ public class AVIWriter extends FormatWriter {
       // This must be set to 1.
       writeShort(1);
 
-      int bitsPerPixel = bytesPerPixel * 8;
+      int bitsPerPixel = (bytesPerPixel == 3) ? 24 : 8;
 
       // biBitCount - number of bits per pixel #
       // 0L for BI_RGB, uncompressed data as bitmap
@@ -335,8 +338,10 @@ public class AVIWriter extends FormatWriter {
       writeInt(0); // biCompression - type of compression used
       writeInt(0); // biXPelsPerMeter - horizontal resolution in pixels
       writeInt(0); // biYPelsPerMeter - vertical resolution in pixels per meter
-      if (bitsPerPixel == 8) writeInt(256); // biClrUsed
-      else writeInt(0); // biClrUsed
+      if (bitsPerPixel == 8) 
+        writeInt(256); // biClrUsed
+      else 
+        writeInt(0); // biClrUsed
 
       // biClrImportant - specifies that the first x colors of the color table
       // are important to the DIB. If the rest of the colors are not available,
@@ -394,7 +399,7 @@ public class AVIWriter extends FormatWriter {
       writeString("JUNK");
       paddingBytes = (int)(4084 - (saveJUNKsignature + 8));
       writeInt(paddingBytes);
-      for (int i=0; i<(paddingBytes/2); i++) writeShort(0);
+      for (int i=0; i<(paddingBytes/2); i++) writeShort((short) 0);
 
       // Write the second LIST chunk, which contains the actual data
       writeString("LIST");
@@ -406,7 +411,7 @@ public class AVIWriter extends FormatWriter {
       writeInt(0);  // For now write 0
       savemovi = raFile.getFilePointer();
       writeString("movi"); // Write CHUNK type 'movi'
-      savedbLength = new long[tDim * zDim];
+      savedbLength = new Vector();
       savedcLength = new long[tDim * zDim];
       dcLength = new int[tDim * zDim];
 
@@ -416,7 +421,7 @@ public class AVIWriter extends FormatWriter {
       dataSignature[2] = 100; // d
       dataSignature[3] = 98; // b
     }
-
+      
     // Write the data. Each 3-byte triplet in the bitmap array represents the
     // relative intensities of blue, green, and red, respectively, for a pixel.
     // The color bytes are in reverse order from the Windows convention.
@@ -425,9 +430,9 @@ public class AVIWriter extends FormatWriter {
     int width = xDim - xPad;
 
     raFile.write(dataSignature);
-    savedbLength[planesWritten] = raFile.getFilePointer();
+    savedbLength.add(new Long(raFile.getFilePointer()));
     writeInt(bytesPerPixel * xDim * yDim); // Write the data length
-
+    
     int[][] values = new int[0][0];
 
     // get pixels
@@ -460,16 +465,18 @@ public class AVIWriter extends FormatWriter {
     }
 
     int index = 0;
+    int offset = 0;
+ 
     for (int y=yDim-1; y>=0; y--) {
+      offset = y*width;
       for (int x=0; x<width; x++) {
-        int ndx = width * y + x;
-        for (int q=bytesPerPixel-1; q>=0; q--) {
-          buf[index++] = (byte) values[q][ndx];
-        }
+        buf[index++] = (byte) values[0][offset++]; 
       }
-      int pad = (bytesPerPixel * xPad) % 4;
-      for (int i=0; i<pad; i++) buf[index++] = 0;
-    }
+      for (int i=0; i<xPad; i++) {
+        buf[index++ % buf.length] = (byte) 0;
+      } 
+    }        
+    
     raFile.write(buf);
 
     planesWritten++;
@@ -488,7 +495,7 @@ public class AVIWriter extends FormatWriter {
       saveidx1Length = raFile.getFilePointer();
       writeInt(0);
 
-      for (z=0; z<zDim; z++) {
+      for (z=0; z<planesWritten; z++) {
         // In the ckid field write the 4 character code to identify the chunk
         // 00db or 00dc
         raFile.write(dataSignature);
@@ -503,7 +510,7 @@ public class AVIWriter extends FormatWriter {
         // AVIIF_LIST 0x00000001L Marks a LIST CHUNK.
         // AVIIF_TWOCC 2L
         // AVIIF_COMPUSE 0x0FFF0000L These bits are for compressor use.
-        writeInt((int)(savedbLength[z]- 4 - savemovi));
+        writeInt((int)(((Long) savedbLength.get(z)).longValue()- 4 - savemovi));
 
         // Write the offset (relative to the 'movi' field) to the relevant CHUNK
         // Write the length of the relevant CHUNK. Note that this length is also
@@ -517,6 +524,7 @@ public class AVIWriter extends FormatWriter {
       writeInt((int)(endPos - (saveidx1Length+4)));
       raFile.close();
     }
+
   }
 
 
@@ -541,9 +549,7 @@ public class AVIWriter extends FormatWriter {
 
   // -- Main method --
 
-  public static void main(String[] args) {
-
-    // do something to test the writer
-
+  public static void main(String[] args) throws IOException, FormatException {
+    new AVIWriter().testConvert(args);
   }
 }
