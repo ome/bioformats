@@ -90,7 +90,8 @@ public class ICSReader extends FormatReader {
    * Obtains the bytes for the specified image from the given ICS file.
    * Note : this method will be added to the FormatReader API.
    */
-  public byte[] openBytes(String id, int no) throws FormatException, IOException
+  public byte[] openBytes(String id, int no)
+    throws FormatException, IOException
   {
     if (!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
 
@@ -102,7 +103,7 @@ public class ICSReader extends FormatReader {
     idsIn.seek((dimensions[0]/8) * width * height * no);
     byte[] data = new byte[(dimensions[0]/8) * width * height];
     idsIn.readFully(data);
- 
+
     if(dimensions[0] == 8) {
       // case for 8 bit data
       return data;
@@ -126,7 +127,7 @@ public class ICSReader extends FormatReader {
     else throw new FormatException("Sorry, " +
       dimensions[0] + " bits per sample is not supported");
   }
-  
+
   /** Obtains the specified image from the given ICS file. */
   public Image open(String id, int no) throws FormatException, IOException {
     if(!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);

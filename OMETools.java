@@ -120,7 +120,9 @@ public abstract class OMETools {
    * specified node.
    * @return the value of the attribute.
    */
-  public static String getAttribute(Object root, String nodeName, String name) {
+  public static String getAttribute(Object root,
+    String nodeName, String name)
+  {
     return getAttribute(root, nodeName, name, 0);
   }
 
@@ -213,9 +215,11 @@ public abstract class OMETools {
     return R.exec("OMEXMLNode.createNode(el)");
   }
 
-  /** Retrieves a Vector of nodes associated with the given DOM element name. */
-  private static Vector getNodes(Object root, String name) 
-    throws ReflectException 
+  /**
+   * Retrieves a Vector of nodes associated with the given DOM element name.
+   */
+  private static Vector getNodes(Object root, String name)
+    throws ReflectException
   {
     if (R == null || root == null || name == null) return null;
     R.setVar("root", root);
