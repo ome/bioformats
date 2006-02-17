@@ -77,6 +77,19 @@ public abstract class FormatWriter {
     }
   }
 
+  /**
+   * Checks if the given string is a valid filename for this file format.
+   * The default implementation checks filename suffixes against those known
+   * for this format.
+   */
+  public boolean isThisType(String name) {
+    String lname = name.toLowerCase();
+    for (int i=0; i<suffixes.length; i++) {
+      if (lname.endsWith("." + suffixes[i])) return true;
+    }
+    return false;
+  }
+
   /** Gets the name of this file format. */
   public String getFormat() { return format; }
 
