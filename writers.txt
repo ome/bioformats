@@ -1,4 +1,5 @@
 loci.formats.TiffWriter
+loci.formats.JPEGWriter
 loci.formats.AVIWriter
 #loci.formats.QTWriter # needs QT Java
 #loci.formats.NativeQTWriter
