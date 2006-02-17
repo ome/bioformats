@@ -73,7 +73,7 @@ public abstract class FormatWriter {
     throws FormatException, IOException
   {
     for (int i=0; i<images.length; i++) {
-      save(id, images[i], i < images.length - 1);
+      save(id, images[i], i == images.length - 1);
     }
   }
 

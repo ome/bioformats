@@ -100,20 +100,6 @@ public class AVIWriter extends FormatWriter {
     setFramesPerSecond(10);
   }
 
-  // -- AVIWriter API methods --
-
-  public void save(String id, Image[] image)
-    throws FormatException, IOException
-  {
-    for (int i=0; i<image.length; i++) {
-      if (i == image.length - 1) {
-        save(id, image[i], true);
-      }
-      else {
-        save(id, image[i], false);
-      }
-    }
-  }
 
   // -- FormatWriter API methods --
 
