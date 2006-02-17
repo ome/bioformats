@@ -27,6 +27,7 @@ import java.awt.*;
 import java.util.Hashtable;
 import java.io.*;
 
+/** TiffWriter is the file format writer for TIFF files. */
 public class TiffWriter extends FormatWriter {
 
   // -- Fields --
