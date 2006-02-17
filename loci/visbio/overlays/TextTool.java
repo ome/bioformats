@@ -65,7 +65,7 @@ public class TextTool extends OverlayTool {
   public void mouseDrag(float x, float y, int[] pos, int mods) {
     if (text == null) return;
     text.setCoords(x, y);
-    overlay.notifyListeners(new TransformEvent(text));
+    overlay.notifyListeners(new TransformEvent(overlay));
   }
 
 }
