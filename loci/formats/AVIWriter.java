@@ -141,10 +141,12 @@ public class AVIWriter extends FormatWriter {
       // not include bytes 0 thru 7.
       writeInt(0); // for now write 0 in the file size location
       writeString("AVI "); // RIFF type
-      // Write the first LIST chunk, which contains information on data decoding
+      // Write the first LIST chunk, which contains
+      // information on data decoding
       writeString("LIST"); // CHUNK signature
-      // Write the length of the LIST CHUNK not including the first 8 bytes with
-      // LIST and size. Note that the end of the LIST CHUNK is followed by JUNK.
+      // Write the length of the LIST CHUNK not including the first 8 bytes
+      // with LIST and size. Note that the end of the LIST CHUNK is followed
+      // by JUNK.
       saveLIST1Size = raFile.getFilePointer();
       writeInt(0); // for now write 0 in avih sub-CHUNK size location
       writeString("hdrl"); // CHUNK type
@@ -185,7 +187,7 @@ public class AVIWriter extends FormatWriter {
       zDim = 1;
       yDim = ((BufferedImage) image).getRaster().getHeight();
       xDim = ((BufferedImage) image).getRaster().getWidth();
-      
+
       xPad = 0;
       xMod = xDim % 4;
       if (xMod != 0) {
@@ -223,9 +225,9 @@ public class AVIWriter extends FormatWriter {
 
       // Write the size of the first LIST subCHUNK not including the first 8
       // bytes with LIST and size. Note that saveLIST1subSize = saveLIST1Size +
-      // 76, and that the length written to saveLIST1subSize is 76 less than the
-      // length written to saveLIST1Size. The end of the first LIST subCHUNK is
-      // followed by JUNK.
+      // 76, and that the length written to saveLIST1subSize is 76 less than
+      // the length written to saveLIST1Size. The end of the first LIST
+      // subCHUNK is followed by JUNK.
       saveLIST1subSize = raFile.getFilePointer();
 
       writeInt(0); // for now write 0 in CHUNK size location
@@ -236,9 +238,9 @@ public class AVIWriter extends FormatWriter {
       // fccType - Write the type of data stream - here vids for video stream
       writeString("vids");
 
-      // Write DIB for Microsoft Device Independent Bitmap. Note: Unfortunately,
-      // at least 3 other four character codes are sometimes used for
-      // uncompressed AVI videos: 'RGB ', 'RAW ', 0x00000000
+      // Write DIB for Microsoft Device Independent Bitmap.
+      // Note: Unfortunately, at least 3 other four character codes are
+      // sometimes used for uncompressed AVI videos: 'RGB ', 'RAW ', 0x00000000
       writeString("DIB ");
 
       writeInt(0); // dwFlags
@@ -246,18 +248,18 @@ public class AVIWriter extends FormatWriter {
       // 0x00000001 AVISF_DISABLED The stram data should be rendered only when
       // explicitly enabled.
       // 0x00010000 AVISF_VIDEO_PALCHANGES Indicates that a palette change is
-      // included in the AVI file. This flag warns the playback software that it
-      // will need to animate the palette.
+      // included in the AVI file. This flag warns the playback software that
+      // it will need to animate the palette.
 
       // dwPriority - priority of a stream type. For example, in a file with
       // multiple audio streams, the one with the highest priority might be the
       // default one.
       writeInt(0);
 
-      // dwInitialFrames - Specifies how far audio data is skewed ahead of video
-      // frames in interleaved files. Typically, this is about 0.75 seconds. In
-      // interleaved files specify the number of frames in the file prior
-      // to the initial frame of the AVI sequence.
+      // dwInitialFrames - Specifies how far audio data is skewed ahead of
+      // video frames in interleaved files. Typically, this is about 0.75
+      // seconds. In interleaved files specify the number of frames in the file
+      // prior to the initial frame of the AVI sequence.
       // Noninterleaved files should use zero.
       writeInt(0);
 
@@ -290,9 +292,9 @@ public class AVIWriter extends FormatWriter {
       writeInt(0);
 
       // rcFrame - Specifies the destination rectangle for a text or video
-      // stream within the movie rectangle specified by the dwWidth and dwHeight
-      // members of the AVI main header structure. The rcFrame member is
-      // typically used in support of multiple video streams. Set this
+      // stream within the movie rectangle specified by the dwWidth and
+      // dwHeight members of the AVI main header structure. The rcFrame member
+      // is typically used in support of multiple video streams. Set this
       // rectangle to the coordinates corresponding to the movie rectangle to
       // update the whole movie rectangle. Units for this member are pixels.
       // The upper-left corner of the destination rectangle is relative to the
@@ -312,15 +314,15 @@ public class AVIWriter extends FormatWriter {
 
       // Applications should use this size to determine which BITMAPINFO header
       // structure is being used. This size includes this biSize field.
-      writeInt(40); // biSize - Write header size of BITMAPINFO header structure
+      writeInt(40); // biSize- Write header size of BITMAPINFO header structure
 
       writeInt(xDim - xPad);  // biWidth - image width in pixels
 
-      // biHeight - image height in pixels. If height is positive, the bitmap is
-      // a bottom up DIB and its origin is in the lower left corner. If height
-      // is negative, the bitmap is a top-down DIB and its origin is the upper
-      // left corner. This negative sign feature is supported by the Windows
-      // Media Player, but it is not supported by PowerPoint.
+      // biHeight - image height in pixels. If height is positive, the bitmap
+      // is a bottom up DIB and its origin is in the lower left corner. If
+      // height is negative, the bitmap is a top-down DIB and its origin is the
+      // upper left corner. This negative sign feature is supported by the
+      // Windows Media Player, but it is not supported by PowerPoint.
       writeInt(yDim);
 
       // biPlanes - number of color planes in which the data is stored
@@ -338,9 +340,9 @@ public class AVIWriter extends FormatWriter {
       writeInt(0); // biCompression - type of compression used
       writeInt(0); // biXPelsPerMeter - horizontal resolution in pixels
       writeInt(0); // biYPelsPerMeter - vertical resolution in pixels per meter
-      if (bitsPerPixel == 8) 
+      if (bitsPerPixel == 8)
         writeInt(256); // biClrUsed
-      else 
+      else
         writeInt(0); // biClrUsed
 
       // biClrImportant - specifies that the first x colors of the color table
@@ -363,7 +365,7 @@ public class AVIWriter extends FormatWriter {
         raFile.write(lutWrite);
       }
 
-      // Use strn to provide a zero terminated text string describing the stream
+      // Use strn to provide zero terminated text string describing the stream
       savestrnPos = raFile.getFilePointer();
       raFile.seek(savestrfSize);
       writeInt((int)(savestrnPos - (savestrfSize+4)));
@@ -404,8 +406,9 @@ public class AVIWriter extends FormatWriter {
       // Write the second LIST chunk, which contains the actual data
       writeString("LIST");
 
-      // Write the length of the LIST CHUNK not including the first 8 bytes with
-      // LIST and size. The end of the second LIST CHUNK is followed by idx1.
+      // Write the length of the LIST CHUNK not including the first 8 bytes
+      // with LIST and size. The end of the second LIST CHUNK is followed by
+      // idx1.
       saveLIST2Size = raFile.getFilePointer();
 
       writeInt(0);  // For now write 0
@@ -421,7 +424,7 @@ public class AVIWriter extends FormatWriter {
       dataSignature[2] = 100; // d
       dataSignature[3] = 98; // b
     }
-      
+
     // Write the data. Each 3-byte triplet in the bitmap array represents the
     // relative intensities of blue, green, and red, respectively, for a pixel.
     // The color bytes are in reverse order from the Windows convention.
@@ -432,7 +435,7 @@ public class AVIWriter extends FormatWriter {
     raFile.write(dataSignature);
     savedbLength.add(new Long(raFile.getFilePointer()));
     writeInt(bytesPerPixel * xDim * yDim); // Write the data length
-    
+
     int[][] values = new int[0][0];
 
     // get pixels
@@ -466,17 +469,17 @@ public class AVIWriter extends FormatWriter {
 
     int index = 0;
     int offset = 0;
- 
+
     for (int y=yDim-1; y>=0; y--) {
       offset = y*width;
       for (int x=0; x<width; x++) {
-        buf[index++] = (byte) values[0][offset++]; 
+        buf[index++] = (byte) values[0][offset++];
       }
       for (int i=0; i<xPad; i++) {
         buf[index++ % buf.length] = (byte) 0;
-      } 
-    }        
-    
+      }
+    }
+
     raFile.write(buf);
 
     planesWritten++;
@@ -490,8 +493,8 @@ public class AVIWriter extends FormatWriter {
       raFile.seek(idx1Pos);
       writeString("idx1");
 
-      // Write the length of the idx1 CHUNK not including the idx1 signature and
-      // the 4 length bytes. Write 0 for now.
+      // Write the length of the idx1 CHUNK not including the idx1 signature
+      // and the 4 length bytes. Write 0 for now.
       saveidx1Length = raFile.getFilePointer();
       writeInt(0);
 
@@ -504,17 +507,19 @@ public class AVIWriter extends FormatWriter {
 
         // AVIIF_KEYFRAME 0x00000010L
         // The flag indicates key frames in the video sequence.
-        // Key frames do not need previous video information to be decompressed.
+        // Key frames do not need previous video information to be
+        // decompressed.
         // AVIIF_NOTIME 0x00000100L The CHUNK does not influence video timing
         // (for example a palette change CHUNK).
         // AVIIF_LIST 0x00000001L Marks a LIST CHUNK.
         // AVIIF_TWOCC 2L
         // AVIIF_COMPUSE 0x0FFF0000L These bits are for compressor use.
-        writeInt((int)(((Long) savedbLength.get(z)).longValue()- 4 - savemovi));
+        writeInt((int) (((Long)
+          savedbLength.get(z)).longValue() - 4 - savemovi));
 
-        // Write the offset (relative to the 'movi' field) to the relevant CHUNK
-        // Write the length of the relevant CHUNK. Note that this length is also
-        // written at savedbLength
+        // Write the offset (relative to the 'movi' field) to the relevant
+        // CHUNK. Write the length of the relevant CHUNK. Note that this length
+        // is also written at savedbLength
         writeInt(bytesPerPixel*xDim*yDim);
       }
       endPos = raFile.getFilePointer();

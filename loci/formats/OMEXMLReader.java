@@ -36,7 +36,7 @@ public class OMEXMLReader extends FormatReader {
   // 1) when root node is created, all pixel data is lost
   // 2) don't know what the possible pixel compression types are
   // 3) Pixels/BigEndian attribute value not available (see OME2OME-CA.xslt)
-        
+
   // -- Fields --
 
   /** Current file. */
@@ -50,7 +50,7 @@ public class OMEXMLReader extends FormatReader {
 
   /** Number of bits per pixel. */
   protected int bpp = 1;
-  
+
   // -- Constructor --
 
   /** Constructs a new OME-XML reader. */
@@ -80,24 +80,23 @@ public class OMEXMLReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    int width = Integer.parseInt(OMETools.getAttribute(ome, "Pixels", "SizeX"));
-    int height = 
-      Integer.parseInt(OMETools.getAttribute(ome, "Pixels", "SizeY"));
-    int channels = 1;  
-  
+    int w = Integer.parseInt(OMETools.getAttribute(ome, "Pixels", "SizeX"));
+    int h = Integer.parseInt(OMETools.getAttribute(ome, "Pixels", "SizeY"));
+    int channels = 1;
+
     // should grab data from next "BinData" element
     String binData = OMETools.getAttribute(ome, "Pixels", "Bin:BinData", no);
     byte[] data = binData.getBytes();
-    
-    String compression = 
-      OMETools.getAttribute(ome, "Bin:BinData", "Compression");    
+
+    String compression =
+      OMETools.getAttribute(ome, "Bin:BinData", "Compression");
     byte[] pixels = new byte[0];
 
     if (compression.equals("zlib")) {
       pixels = TiffTools.deflateUncompress(data);
-    }        
-    
-    return DataTools.makeImage(pixels, width, height, channels, false);
+    }
+
+    return DataTools.makeImage(pixels, w, h, channels, false);
   }
 
   /** Closes any open files. */
@@ -120,21 +119,21 @@ public class OMEXMLReader extends FormatReader {
 
     /* debug */
     System.out.println(OMETools.dumpXML(ome));
-    
+
     if (ome != null) {
       // can't calculate numImages from Z/T/C dimensions, since SizeC can be
       // greater than 1 when there is only 1 plane (in the case of RGB data)
-            
-      numImages = OMETools.getNumNodes(ome, "Bin:BinData");     
-     
+
+      numImages = OMETools.getNumNodes(ome, "Bin:BinData");
+
       // can't retrieve the Pixels/BigEndian attribute value right now
       littleEndian = false;
-      
+
       String type = OMETools.getAttribute(ome, "Pixels", "PixelType");
       if (type.endsWith("16")) bpp = 2;
       else if (type.endsWith("32")) bpp = 4;
       else if (type.equals("float")) bpp = 8;
-      
+
       // set up a simple metadata hash table
       // this isn't really necessary for preserving metadata, but it
       // might be useful for displaying stuff
@@ -143,7 +142,7 @@ public class OMEXMLReader extends FormatReader {
     else {
       throw new FormatException("To use this feature, please install the " +
        "loci.ome.xml package, available from http://www.loci.wisc.edu/ome/");
-    } 
+    }
   }
 
 
