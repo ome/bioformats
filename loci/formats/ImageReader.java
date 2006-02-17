@@ -106,7 +106,7 @@ public class ImageReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new ImageReader. */
-  public ImageReader() { super("image", suffixList); }
+  public ImageReader() { super("any image", suffixList); }
 
 
   // -- ImageReader API methods --
