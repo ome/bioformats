@@ -26,7 +26,6 @@ package loci.formats;
 import java.awt.Image;
 import java.io.*;
 import java.util.Vector;
-import java.util.Hashtable;
 import java.util.zip.*;
 
 /**
