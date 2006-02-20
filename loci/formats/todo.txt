@@ -5,8 +5,6 @@ Implement readers for file formats listed at
 
 Implement robust native writers for AVI and QT formats.
 
-Implement ImageWriter class.
-
 Possibly implement an alternative method for pixel extraction, other than the
 BufferedImage one (such "byte[] openBytes(String, int)" in addition to
 "BufferedImage openImage(String, int)"), for use with OMERO.
