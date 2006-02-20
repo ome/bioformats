@@ -118,8 +118,8 @@ public class GatanReader extends FormatReader {
       return DataTools.makeImage(data, width, height, channels, false);
     }
     else {
-      throw new FormatException("Sorry, " + dims[2] + " bytes per pixel is " +
-        "unsupported.");
+      throw new FormatException("Sorry, " + dims[2] +
+        " bytes per pixel is unsupported.");
     }
   }
 
@@ -188,6 +188,7 @@ public class GatanReader extends FormatReader {
       OMETools.setAttribute(ome, "Pixels", "DimensionOrder", "XYZTC");
     }
   }
+
 
   // -- Helper method --
 
