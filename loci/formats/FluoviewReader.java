@@ -55,7 +55,7 @@ public class FluoviewReader extends BaseTiffReader {
 
   /** Constructs a new Fluoview TIFF reader. */
   public FluoviewReader() {
-    super("Olympus Fluoview", new String[] {"tif", "tiff"});
+    super("Olympus Fluoview TIFF", new String[] {"tif", "tiff"});
   }
 
 

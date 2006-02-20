@@ -101,8 +101,7 @@ public abstract class OMETools {
   }
 
   /** Get number of nodes with the specified name. */
-  public static int getNumNodes(Object root, String nodeName)
-  {
+  public static int getNumNodes(Object root, String nodeName) {
     if (R == null || root == null || nodeName == null) return 0;
     try {
       Vector el = getNodes(root, nodeName);

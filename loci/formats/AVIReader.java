@@ -89,7 +89,7 @@ public class AVIReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new AVI reader. */
-  public AVIReader() { super("AVI", "avi"); }
+  public AVIReader() { super("Audio Video Interleave", "avi"); }
 
 
   // -- FormatReader API methods --

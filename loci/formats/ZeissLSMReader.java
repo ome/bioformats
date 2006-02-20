@@ -44,7 +44,7 @@ public class ZeissLSMReader extends BaseTiffReader {
   // -- Constructor --
 
   /** Constructs a new Zeiss LSM reader. */
-  public ZeissLSMReader() { super("Zeiss LSM", "lsm"); }
+  public ZeissLSMReader() { super("Zeiss Laser-Scanning Microscopy", "lsm"); }
 
 
   // -- FormatReader API methods --

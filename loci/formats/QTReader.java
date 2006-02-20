@@ -114,7 +114,7 @@ public class QTReader extends FormatReader {
 
   /** Constructs a new QT reader. */
   public QTReader() {
-    super("Quicktime", "mov");
+    super("QuickTime", "mov");
 
     // create reflected universe
     boolean needClose = false;
@@ -179,18 +179,18 @@ public class QTReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for a Quicktime file. */
+  /** Checks if the given block is a valid header for a QuickTime file. */
   public boolean isThisType(byte[] block) {
     return false;
   }
 
-  /** Determines the number of images in the given Quicktime file. */
+  /** Determines the number of images in the given QuickTime file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return numImages;
   }
 
-  /** Obtains the specified image from the given Quicktime file. */
+  /** Obtains the specified image from the given QuickTime file. */
   public Image open(String id, int no)
     throws FormatException, IOException
   {
@@ -234,7 +234,7 @@ public class QTReader extends FormatReader {
     currentId = null;
   }
 
-  /** Initializes the given Quicktime file. */
+  /** Initializes the given QuickTime file. */
   protected void initFile(String id)
     throws FormatException, IOException
   {
