@@ -78,7 +78,7 @@ public class IPWReader extends BaseTiffReader {
   // -- Constructor --
 
   /** Constructs a new IPW reader. */
-  public IPWReader() { super("IPW", "ipw"); }
+  public IPWReader() { super("Image-Pro Workspace", "ipw"); }
 
 
   // -- FormatReader API methods --
