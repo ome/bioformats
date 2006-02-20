@@ -112,7 +112,8 @@ public class OMEXMLReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    int width = Integer.parseInt(OMETools.getAttribute(ome, "Pixels", "SizeX"));
+    int width =
+      Integer.parseInt(OMETools.getAttribute(ome, "Pixels", "SizeX"));
     int height =
       Integer.parseInt(OMETools.getAttribute(ome, "Pixels", "SizeY"));
     int channels = 1;
