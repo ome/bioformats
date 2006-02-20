@@ -25,6 +25,7 @@ package loci.formats;
 
 import java.awt.Image;
 import java.io.*;
+import java.util.Hashtable;
 import java.util.Vector;
 import java.util.zip.*;
 
@@ -59,6 +60,7 @@ public class OMEXMLReader extends FormatReader {
    base64Alphabet['+'] = 62;
    base64Alphabet['/'] = 63;
   }
+
 
   // -- Fields --
 
@@ -195,6 +197,7 @@ public class OMEXMLReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     close();
     currentId = id;
+    metadata = new Hashtable();
     in = new RandomAccessFile(id, "r");
     offsets = new Vector();
 
@@ -311,6 +314,7 @@ public class OMEXMLReader extends FormatReader {
     numImages = offsets.size();
   }
 
+
   // -- Helper methods --
 
   /**
@@ -368,6 +372,7 @@ public class OMEXMLReader extends FormatReader {
     }
     return decodedData;
   }
+
 
   // -- Main method --
 
