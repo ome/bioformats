@@ -38,8 +38,8 @@ public class ImageJReader extends FormatReader {
 
   /** Legal ImageJ suffixes. */
   private static final String[] SUFFIXES = {
-    "tif", "tiff", "dicom", "fits", "pgm", "jpg", "jpeg", "gif", "png", "lut",
-    "bmp", "zip", "roi"
+    "tif", "tiff", "dicom", "fits", "pgm", "jpg", "jpeg",
+    "gif", "png", "lut", "bmp", "zip", "roi"
   };
 
   /** Message produced when attempting to use ImageJ without it installed. */
@@ -76,9 +76,7 @@ public class ImageJReader extends FormatReader {
   // -- FormatReader API methods --
 
   /** Checks if the given block is a valid header. */
-  public boolean isThisType(byte[] block) {
-    return false;
-  }
+  public boolean isThisType(byte[] block) { return false; }
 
   /** Determines the number of images in the given file. */
   public int getImageCount(String id) throws FormatException, IOException {
@@ -118,10 +116,6 @@ public class ImageJReader extends FormatReader {
     currentId = null;
   }
 
-  /** Initializes the given file. */
-  protected void initFile(String id) throws FormatException, IOException {
-    super.initFile(id);
-  }
 
   // -- Main method --
 
