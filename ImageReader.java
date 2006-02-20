@@ -26,6 +26,7 @@ package loci.formats;
 import java.awt.Image;
 import java.io.*;
 import java.util.*;
+import javax.swing.JFileChooser;
 
 /**
  * ImageReader is master file format reader for all supported formats.
@@ -106,7 +107,14 @@ public class ImageReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new ImageReader. */
-  public ImageReader() { super("any image", suffixList); }
+  public ImageReader() {
+    super("any image", suffixList);
+    filters = new FormatFilter[readers.length];
+    for (int i=0; i<readers.length; i++) {
+      filters[i] = readers[i].getFileFilters()[0];
+    }
+    Arrays.sort(filters);
+  }
 
 
   // -- ImageReader API methods --
@@ -229,20 +237,32 @@ public class ImageReader extends FormatReader {
    * A utility method for test reading a file from the command line,
    * and displaying the results in a simple display.
    */
-  public void testRead(String[] args) throws FormatException, IOException {
+  public boolean testRead(String[] args) throws FormatException, IOException {
+    if (args.length == 0) {
+      // pop up JFileChooser to test FileFilter logic
+      JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
+      for (int i=0; i<filters.length; i++) {
+        chooser.addChoosableFileFilter(filters[i]);
+      }
+      int rval = chooser.showOpenDialog(null);
+      if (rval == JFileChooser.APPROVE_OPTION) {
+        File f = chooser.getSelectedFile();
+        if (f != null) args = new String[] {f.getPath()};
+      }
+    }
     if (args.length > 0) {
       // check file format
       System.out.print("Checking file format ");
       System.out.println("[" + getFormat(args[0]) + "]");
     }
-    super.testRead(args);
+    return super.testRead(args);
   }
 
 
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {
-    new ImageReader().testRead(args);
+    if (!new ImageReader().testRead(args)) System.exit(1);
   }
 
 }

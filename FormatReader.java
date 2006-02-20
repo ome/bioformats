@@ -40,8 +40,11 @@ public abstract class FormatReader {
   /** Name of this file format. */
   protected String format;
 
-  /** List of valid suffixes for this file format. */
+  /** Valid suffixes for this file format. */
   protected String[] suffixes;
+
+  /** File filters for this file format, for use with a JFileChooser. */
+  protected FormatFilter[] filters;
 
   /** Name of current file. */
   protected String currentId;
@@ -64,6 +67,7 @@ public abstract class FormatReader {
   public FormatReader(String format, String[] suffixes) {
     this.format = format;
     this.suffixes = suffixes == null ? new String[0] : suffixes;
+    filters = new FormatFilter[] { new FormatFilter(this) };
   }
 
 
@@ -130,6 +134,9 @@ public abstract class FormatReader {
   /** Gets the default file suffixes for this file format. */
   public String[] getSuffixes() { return suffixes; }
 
+  /** Gets file filters for this file format, for use with a JFileChooser. */
+  public FormatFilter[] getFileFilters() { return filters; }
+
   /**
    * Obtains a loci.ome.xml.OMENode object representing the
    * file's metadata as an OME-XML DOM structure.
@@ -170,12 +177,12 @@ public abstract class FormatReader {
    * A utility method for test reading a file from the command line,
    * and displaying the results in a simple display.
    */
-  public void testRead(String[] args) throws FormatException, IOException {
+  public boolean testRead(String[] args) throws FormatException, IOException {
     String className = getClass().getName();
     if (args == null || args.length < 1) {
       System.out.println("To test read a file in " + format + " format, run:");
       System.out.println("  java " + className + " in_file");
-      return;
+      return false;
     }
     String id = args[0];
 
@@ -314,6 +321,7 @@ public abstract class FormatReader {
       System.out.println(OMETools.dumpXML(root));
       System.out.println();
     }
+    return true;
   }
 
 }
