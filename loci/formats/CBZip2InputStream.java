@@ -463,7 +463,7 @@ public class CBZip2InputStream extends InputStream implements BZip2Constants {
         int q, j, nextSym, limitLast;
         int eob, groupNo, groupPos;
 
-        limitLast = baseBlockSize * blockSize100k;
+        limitLast = BASE_BLOCK_SIZE * blockSize100k;
         origPtr = bsGetIntVS(24);
 
         recvDecodingTables();
@@ -704,7 +704,7 @@ public class CBZip2InputStream extends InputStream implements BZip2Constants {
             ch2 = ll8[tPos];
             tPos = tt[tPos];
             if (rNToGo == 0) {
-                rNToGo = rNums[rTPos];
+                rNToGo = R_NUMS[rTPos];
                 rTPos++;
                 if (rTPos == 512) {
                     rTPos = 0;
@@ -752,7 +752,7 @@ public class CBZip2InputStream extends InputStream implements BZip2Constants {
                 z = ll8[tPos];
                 tPos = tt[tPos];
                 if (rNToGo == 0) {
-                    rNToGo = rNums[rTPos];
+                    rNToGo = R_NUMS[rTPos];
                     rTPos++;
                     if (rTPos == 512) {
                         rTPos = 0;
@@ -828,7 +828,7 @@ public class CBZip2InputStream extends InputStream implements BZip2Constants {
             return;
         }
 
-        int n = baseBlockSize * newSize100k;
+        int n = BASE_BLOCK_SIZE * newSize100k;
         ll8 = new char[n];
         tt = new int[n];
     }
