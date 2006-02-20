@@ -214,7 +214,7 @@ public class QTReader extends FormatReader {
       r.exec("qtip2.redraw(null)");
     }
     catch (ReflectException re) {
-      throw new FormatException("Open movie failed: " + re.getMessage());
+      throw new FormatException("Open movie failed", re);
     }
 
     return image;
@@ -228,8 +228,8 @@ public class QTReader extends FormatReader {
       r.exec("openMovieFile.close()");
       r.exec("QTSession.close()");
     }
-    catch (Exception e) {
-      throw new FormatException("Close movie failed: " + e.getMessage());
+    catch (ReflectException e) {
+      throw new FormatException("Close movie failed", e);
     }
     currentId = null;
   }
@@ -299,13 +299,10 @@ public class QTReader extends FormatReader {
         numImages = ((Integer) r.exec("seq.size()")).intValue();
       }
 
-
-
-
       timeStep = maxTime / numImages;
     }
     catch (Exception e) {
-      throw new FormatException("Open movie failed: " + e.getMessage());
+      throw new FormatException("Open movie failed", e);
     }
   }
 
@@ -326,15 +323,6 @@ public class QTReader extends FormatReader {
   /** Gets QuickTime for Java reflected universe. */
   public ReflectedUniverse getUniverse() { return r; }
 
-  /** Converts the given byte array in PICT format to a BufferedImage. */
-  public synchronized Image pictToField(byte[] bytes) {
-    try {
-      return pictToImage(bytes);
-    }
-    catch (FormatException exc) { return null; }
-    catch (ReflectException ex) { return null; }
-  }
-
   /** Gets width and height for the given PICT bytes. */
   public Dimension getPictDimensions(byte[] bytes)
     throws FormatException, ReflectException
@@ -354,14 +342,13 @@ public class QTReader extends FormatReader {
     }
     catch (Exception e) {
       r.exec("QTSession.close()");
-      throw new FormatException("PICT height determination failed: " +
-        e.getMessage());
+      throw new FormatException("PICT height determination failed", e);
     }
   }
 
   /** Converts the given byte array in PICT format to a Java image. */
-  public Image pictToImage(byte[] bytes)
-    throws FormatException, ReflectException
+  public synchronized Image pictToImage(byte[] bytes)
+    throws FormatException
   {
     if (expiredQT) throw new FormatException(EXPIRED_QT_MSG);
     if (noQT) throw new FormatException(NO_QT_MSG);
@@ -408,8 +395,9 @@ public class QTReader extends FormatReader {
         width, height, colorModel, pixels, 0, intsPerRow));
     }
     catch (Exception e) {
-      r.exec("QTSession.close()");
-      throw new FormatException("PICT extraction failed: " + e.getMessage());
+      try { r.exec("QTSession.close()"); }
+      catch (ReflectException exc) { exc.printStackTrace(); }
+      throw new FormatException("PICT extraction failed", e);
     }
   }
 

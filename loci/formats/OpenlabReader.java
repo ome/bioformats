@@ -190,10 +190,10 @@ public class OpenlabReader extends FormatReader {
           try {
             // This never actually throws an exception, to my knowledge,
             // but we can always hope.
-            return qtForm.pictToField(toRead);
+            return qtForm.pictToImage(toRead);
           }
           catch (Exception e) {
-            throw new FormatException("No iPic comment block found");
+            throw new FormatException("No iPic comment block found", e);
           }
         }
         else {

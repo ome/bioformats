@@ -79,7 +79,7 @@ public class PictReader extends FormatReader {
       left -= r;
     }
     fin.close();
-    return qtReader.pictToField(bytes);
+    return qtReader.pictToImage(bytes);
   }
 
   /** Closes any open files. */
