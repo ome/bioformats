@@ -50,7 +50,9 @@ public class AndorReader extends BaseTiffReader {
   // -- Constructor --
 
   /** Constructs a new Andor reader. */
-  public AndorReader() { super("ABD TIFF", new String[] {"tif", "tiff"}); }
+  public AndorReader() {
+    super("Andor Bio-imaging Division TIFF", new String[] {"tif", "tiff"});
+  }
 
 
   // -- FormatReader API methods --

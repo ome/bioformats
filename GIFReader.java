@@ -36,7 +36,7 @@ public class GIFReader extends ImageIOReader {
   // -- Constructor --
 
   /** Constructs a new GIFReader. */
-  public GIFReader() { super("GIF", "gif"); }
+  public GIFReader() { super("Graphics Interchange Format", "gif"); }
 
 
   // -- Main method --

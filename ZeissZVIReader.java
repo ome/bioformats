@@ -41,7 +41,9 @@ public class ZeissZVIReader extends FormatReader {
 
   private static final String NO_POI_MSG = "You need to install " +
     "Jakarta POI from http://jakarta.apache.org/poi/";
+
   private static final boolean DEBUG = false;
+
 
   // -- Static fields --
 
@@ -61,6 +63,7 @@ public class ZeissZVIReader extends FormatReader {
     catch (Throwable exc) { noPOI = true; }
     return r;
   }
+
 
   // -- Fields --
 
@@ -82,10 +85,11 @@ public class ZeissZVIReader extends FormatReader {
   private int imageHeight = 0;
   private int bytesPerPixel = 0;
 
+
   // -- Constructor --
 
   /** Constructs a new Zeiss ZVI reader. */
-  public ZeissZVIReader() { super("Zeiss ZVI", "zvi"); }
+  public ZeissZVIReader() { super("Zeiss Vision Image", "zvi"); }
 
 
   // -- FormatReader API methods --
@@ -261,6 +265,7 @@ public class ZeissZVIReader extends FormatReader {
     }
     initMetadata();
   }
+
 
   // -- Helper methods --
 
@@ -1206,6 +1211,7 @@ public class ZeissZVIReader extends FormatReader {
       }
     }
   }
+
 
   // -- Main method --
 

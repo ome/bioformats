@@ -37,7 +37,9 @@ public class TiffReader extends BaseTiffReader {
   // -- Constructor --
 
   /** Constructs a new Tiff reader. */
-  public TiffReader() { super("TIFF", new String[] {"tif", "tiff"}); }
+  public TiffReader() {
+    super("Tagged Image File Format", new String[] {"tif", "tiff"});
+  }
 
 
   // -- Internal BaseTiffForm API methods --

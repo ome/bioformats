@@ -58,7 +58,7 @@ public class GatanReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new Gatan reader. */
-  public GatanReader() { super("Gatan", "dm3"); }
+  public GatanReader() { super("Gatan Digital Micrograph", "dm3"); }
 
 
   // -- FormatReader API methods --
