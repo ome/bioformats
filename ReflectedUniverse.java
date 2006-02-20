@@ -113,7 +113,7 @@ public class ReflectedUniverse {
       }
       catch (ClassNotFoundException exc) {
         if (debug) exc.printStackTrace();
-        throw new ReflectException("No such class: " + command);
+        throw new ReflectException("No such class: " + command, exc);
       }
       setVar(varName, c);
       return null;
@@ -189,7 +189,7 @@ public class ReflectedUniverse {
       }
       catch (Exception exc) {
         if (debug) exc.printStackTrace();
-        throw new ReflectException("Cannot instantiate object");
+        throw new ReflectException("Cannot instantiate object", exc);
       }
     }
     else {
@@ -239,7 +239,8 @@ public class ReflectedUniverse {
       }
       catch (Exception exc) {
         if (debug) exc.printStackTrace();
-        throw new ReflectException("Cannot execute method: " + methodName);
+        throw new ReflectException("Cannot execute method: " +
+          methodName, exc);
       }
     }
 
@@ -311,7 +312,7 @@ public class ReflectedUniverse {
       }
       catch (NoSuchFieldException exc) {
         if (debug) exc.printStackTrace();
-        throw new ReflectException("No such field: " + varName);
+        throw new ReflectException("No such field: " + varName, exc);
       }
       Object fieldVal;
       try {
@@ -319,7 +320,7 @@ public class ReflectedUniverse {
       }
       catch (Exception exc) {
         if (debug) exc.printStackTrace();
-        throw new ReflectException("Cannot get field value: " + varName);
+        throw new ReflectException("Cannot get field value: " + varName, exc);
       }
       return fieldVal;
     }
