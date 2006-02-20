@@ -1470,6 +1470,7 @@ public abstract class TiffTools {
       return toRtn;
     }
     catch (Exception e) {
+      /* debug */ e.printStackTrace();
       throw new FormatException("Error uncompressing Adobe Deflate (ZLIB) " +
         "compressed image strip.");
     }
