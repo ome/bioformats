@@ -196,7 +196,6 @@ public class OMEXMLReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     close();
     currentId = id;
-    metadata = new Hashtable();
     in = new RandomAccessFile(id, "r");
     offsets = new Vector();
 
@@ -261,13 +260,6 @@ public class OMEXMLReader extends FormatReader {
 
       sizeX = Integer.parseInt(OMETools.getAttribute(ome, "Pixels", "SizeX"));
       sizeY = Integer.parseInt(OMETools.getAttribute(ome, "Pixels", "SizeY"));
-
-
-      // -- TODO --
-      // set up a simple metadata hash table
-      // this isn't really necessary for preserving metadata, but it
-      // might be useful for displaying stuff
-
     }
     else {
       throw new FormatException("To use this feature, please install the " +
