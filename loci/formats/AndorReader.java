@@ -65,7 +65,7 @@ public class AndorReader extends BaseTiffReader {
     if (block.length < 8) return true; // we have no way of verifying further
 
     int ifdlocation = DataTools.bytesToInt(block, 4 , true);
-    if (ifdlocation + 1 > block.length) { return false; }
+    if (ifdlocation < 0 || ifdlocation + 1 > block.length) { return false; }
     else {
       int ifdnumber = DataTools.bytesToInt(block, ifdlocation, 2, true);
       for (int i=0; i<ifdnumber; i++) {
