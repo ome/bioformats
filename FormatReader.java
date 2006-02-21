@@ -33,6 +33,7 @@ import java.util.Hashtable;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileFilter;
 
 /** Abstract superclass of all supported biological file format readers. */
 public abstract class FormatReader {
@@ -44,7 +45,7 @@ public abstract class FormatReader {
   protected String[] suffixes;
 
   /** File filters for this file format, for use with a JFileChooser. */
-  protected FormatFilter[] filters;
+  protected FileFilter[] filters;
 
   /** Name of current file. */
   protected String currentId;
@@ -67,7 +68,6 @@ public abstract class FormatReader {
   public FormatReader(String format, String[] suffixes) {
     this.format = format;
     this.suffixes = suffixes == null ? new String[0] : suffixes;
-    filters = new FormatFilter[] { new FormatFilter(this) };
   }
 
 
@@ -100,6 +100,11 @@ public abstract class FormatReader {
     currentId = id;
     metadata = new Hashtable();
     ome = OMETools.createRoot();
+  }
+
+  /** Creates JFileChooser file filters for this file format. */
+  protected void createFilters() {
+    filters = new FormatFilter[] { new FormatFilter(this) };
   }
 
   /**
@@ -135,7 +140,10 @@ public abstract class FormatReader {
   public String[] getSuffixes() { return suffixes; }
 
   /** Gets file filters for this file format, for use with a JFileChooser. */
-  public FormatFilter[] getFileFilters() { return filters; }
+  public FileFilter[] getFileFilters() {
+    if (filters == null) createFilters();
+    return filters;
+  }
 
   /**
    * Obtains a loci.ome.xml.OMENode object representing the

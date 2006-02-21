@@ -1,5 +1,5 @@
 //
-// FormatFilter.java
+// ExtensionFileFilter.java
 //
 
 /*
@@ -26,28 +26,36 @@ package loci.formats;
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
-/** A file filter for a biological file format, for use with a JFileChooser. */
-public class FormatFilter extends FileFilter
+/** A file filter based on file extensions, for use with a JFileChooser. */
+public class ExtensionFileFilter extends FileFilter
   implements java.io.FileFilter, Comparable
 {
 
-  /** Associated file format reader. */
-  private FormatReader reader;
+  // -- Fields --
+
+  /** List of valid extensions. */
+  private String[] exts;
 
   /** Description. */
   private String desc;
 
 
-  // -- Constructor --
+  // -- Constructors --
 
   /** Constructs a new filter that accepts the given extension. */
-  public FormatFilter(FormatReader reader) {
-    this.reader = reader;
-    StringBuffer sb = new StringBuffer(reader.getFormat());
-    String[] exts = reader.getSuffixes();
+  public ExtensionFileFilter(String extension, String description) {
+    this(new String[] {extension}, description);
+  }
+
+  /** Constructs a new filter that accepts the given extensions. */
+  public ExtensionFileFilter(String[] extensions, String description) {
+    exts = new String[extensions.length];
+    System.arraycopy(extensions, 0, exts, 0, extensions.length);
+    StringBuffer sb = new StringBuffer(description);
     boolean first = true;
     for (int i=0; i<exts.length; i++) {
-      if (exts[i] == null || exts[i].equals("")) continue;
+      if (exts[i] == null) exts[i] = "";
+      if (exts[i].equals("")) continue;
       if (first) {
         sb.append(" (");
         first = false;
@@ -63,13 +71,22 @@ public class FormatFilter extends FileFilter
 
   // -- FileFilter API methods --
 
-  /** Accepts files in accordance with the file format reader. */
+  /** Accepts files with the proper extensions. */
   public boolean accept(File f) {
     if (f.isDirectory()) return true;
-    return reader.isThisType(f.getPath());
+
+    String name = f.getName();
+    int index = name.lastIndexOf('.');
+    String ext = index < 0 ? "" : name.substring(index + 1);
+
+    for (int i=0; i<exts.length; i++) {
+      if (ext.equalsIgnoreCase(exts[i])) return true;
+    }
+
+    return false;
   }
 
-  /** Gets the filter's description. */
+  /** return the filter's description */
   public String getDescription() { return desc; }
 
 
