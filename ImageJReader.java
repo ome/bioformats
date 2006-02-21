@@ -134,7 +134,7 @@ public class ImageJReader extends FormatReader {
       new ExtensionFileFilter("png", "Portable Network Graphics"),
       new ExtensionFileFilter("lut", "ImageJ Lookup Table"),
       new ExtensionFileFilter("bmp", "Windows Bitmap"),
-      new ExtensionFileFilter("zip", "Zip archive"),
+      new ExtensionFileFilter("zip", "Zip-compressed TIFF"),
       new ExtensionFileFilter("roi", "ImageJ Region of Interest")
     };
   }

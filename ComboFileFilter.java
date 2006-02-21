@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.io.File;
+import java.util.*;
 import javax.swing.filechooser.FileFilter;
 
 /** A file filter that recognizes files from a union of other filters. */
@@ -50,6 +51,55 @@ public class ComboFileFilter extends FileFilter
   }
 
 
+  // -- Static ComboFileFilter API methods --
+
+
+  /**
+   * Sorts the given list of file filters, and combines filters with identical
+   * descriptions into a combination filter that accepts anything any of its
+   * constituant filters do.
+   */
+  public static FileFilter[] sortFilters(FileFilter[] filters) {
+    return sortFilters(new Vector(Arrays.asList(filters)));
+  }
+
+  /**
+   * Sorts the given list of file filters, and combines filters with identical
+   * descriptions into a combination filter that accepts anything any of its
+   * constituant filters do.
+   */
+  public static FileFilter[] sortFilters(Vector filters) {
+    // sort filters alphanumerically
+    Collections.sort(filters);
+
+    // combine matching filters
+    int len = filters.size();
+    Vector v = new Vector(len);
+    for (int i=0; i<len; i++) {
+      FileFilter ffi = (FileFilter) filters.elementAt(i);
+      int ndx = i + 1;
+      while (ndx < len) {
+        FileFilter ff = (FileFilter) filters.elementAt(ndx);
+        if (!ffi.getDescription().equals(ff.getDescription())) break;
+        ndx++;
+      }
+      if (ndx > i + 1) {
+        // create combination filter for matching filters
+        FileFilter[] temp = new FileFilter[ndx - i];
+        for (int j=0; j<temp.length; j++) {
+          temp[j] = (FileFilter) filters.elementAt(i + j);
+        }
+        v.add(new ComboFileFilter(temp, temp[0].getDescription()));
+        i += temp.length - 1; // skip next temp-1 filters
+      }
+      else v.add(ffi);
+    }
+    FileFilter[] result = new FileFilter[v.size()];
+    v.copyInto(result);
+    return result;
+  }
+
+
   // -- FileFilter API methods --
 
   /** accept files with the proper filename prefix */
@@ -68,7 +118,7 @@ public class ComboFileFilter extends FileFilter
 
   /** Compares two FileFilter objects alphanumerically. */
   public int compareTo(Object o) {
-    return desc.compareTo(((FileFilter) o).getDescription());
+    return desc.compareToIgnoreCase(((FileFilter) o).getDescription());
   }
 
 }
