@@ -36,7 +36,8 @@ public class JPEGReader extends ImageIOReader {
 
   /** Constructs a new JPEGReader. */
   public JPEGReader() {
-    super("Joint Photographic Experts Group", new String[] {"jpg", "jpeg"});
+    super("Joint Photographic Experts Group",
+      new String[] {"jpg", "jpeg", "jpe"});
   }
 
 
