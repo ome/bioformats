@@ -49,9 +49,9 @@ public class QTReader extends FormatReader {
   public static final String EXPIRED_QT_MSG = "Your version of " +
     "QuickTime for Java has expired";
 
-  private static final String[] SUFFIXES = { "mov" };
+  protected static final String[] SUFFIXES = { "mov" };
 
-  private static final boolean MAC_OS_X =
+  protected static final boolean MAC_OS_X =
     System.getProperty("os.name").equals("Mac OS X");
 
   // -- Static fields --
@@ -63,9 +63,9 @@ public class QTReader extends FormatReader {
    * shared by all QTForms, or else an UnsatisfiedLinkError is thrown when
    * attempting to initialize QTJava within multiple QTForms.
    */
-  private static final ClassLoader LOADER = constructLoader();
+  protected static final ClassLoader LOADER = constructLoader();
 
-  private static ClassLoader constructLoader() {
+  protected static ClassLoader constructLoader() {
     // set up additional QuickTime for Java paths
     URL[] paths = null;
     try {
@@ -83,40 +83,45 @@ public class QTReader extends FormatReader {
     return paths == null ? null : new URLClassLoader(paths);
   }
 
+
   // -- Fields --
 
+  /** Flag indicating this reader has been initialized. */
+  protected boolean initialized = false;
+
   /** Flag indicating QuickTime for Java is not installed. */
-  private boolean noQT = false;
+  protected boolean noQT = false;
 
   /** Flag indicating QuickTime for Java has expired. */
-  private boolean expiredQT = false;
+  protected boolean expiredQT = false;
 
   /** Reflection tool for QuickTime for Java calls. */
-  private ReflectedUniverse r;
+  protected ReflectedUniverse r;
 
   /** Number of images in current QuickTime movie. */
-  private int numImages;
+  protected int numImages;
 
   /** Time increment between frames. */
-  private int timeStep;
+  protected int timeStep;
 
   /** Flag indicating QuickTime frame needs to be redrawn. */
-  private boolean needsRedrawing;
-
-  /** Time between each frame, in 600ths of a second. */
-  private int frameRate;
+  protected boolean needsRedrawing;
 
   /** Image containing current frame. */
-  private Image image;
+  protected Image image;
 
 
   // -- Constructor --
 
   /** Constructs a new QT reader. */
-  public QTReader() {
-    super("QuickTime", "mov");
+  public QTReader() { super("QuickTime", "mov"); }
 
-    // create reflected universe
+
+  // -- QTReader API methods --
+
+  /** Initializes the QuickTime reader. */
+  protected void initReader() {
+    if (initialized) return;
     boolean needClose = false;
     r = new ReflectedUniverse(LOADER);
     try {
@@ -163,26 +168,21 @@ public class QTReader extends FormatReader {
         if (exc.getMessage().indexOf("expired") >= 0) expiredQT = true;
       }
     }
-    catch (Throwable t) {
-      noQT = true;
-    }
+    catch (Throwable t) { noQT = true; }
     finally {
       if (needClose) {
         try { r.exec("QTSession.close()"); }
         catch (Throwable t) { }
       }
+      initialized = true;
     }
-
-    setFrameRate(10); // default to 10 fps
   }
 
 
   // -- FormatReader API methods --
 
   /** Checks if the given block is a valid header for a QuickTime file. */
-  public boolean isThisType(byte[] block) {
-    return false;
-  }
+  public boolean isThisType(byte[] block) { return false; }
 
   /** Determines the number of images in the given QuickTime file. */
   public int getImageCount(String id) throws FormatException, IOException {
@@ -223,6 +223,7 @@ public class QTReader extends FormatReader {
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
     if (currentId == null) return;
+    if (!initialized) initReader();
 
     try {
       r.exec("openMovieFile.close()");
@@ -238,6 +239,7 @@ public class QTReader extends FormatReader {
   protected void initFile(String id)
     throws FormatException, IOException
   {
+    if (!initialized) initReader();
     if (expiredQT) throw new FormatException(EXPIRED_QT_MSG);
     if (noQT) throw new FormatException(NO_QT_MSG);
 
@@ -309,24 +311,28 @@ public class QTReader extends FormatReader {
   // -- QTReader API methods --
 
   /** Whether QuickTime is available to this JVM. */
-  public boolean canDoQT() { return !noQT; }
+  public boolean canDoQT() {
+    if (!initialized) initReader();
+    return !noQT;
+  }
 
   /** Whether QuickTime for Java has expired. */
-  public boolean isQTExpired() { return expiredQT; }
-
-  /** Sets the frame rate of output movies in frames per second. */
-  public void setFrameRate(int fps) { frameRate = 600 / fps; }
-
-  /** Gets the frame rate of output movies in frames per second. */
-  public int getFrameRate() { return 600 / frameRate; }
+  public boolean isQTExpired() {
+    if (!initialized) initReader();
+    return expiredQT;
+  }
 
   /** Gets QuickTime for Java reflected universe. */
-  public ReflectedUniverse getUniverse() { return r; }
+  public ReflectedUniverse getUniverse() {
+    if (!initialized) initReader();
+    return r;
+  }
 
   /** Gets width and height for the given PICT bytes. */
   public Dimension getPictDimensions(byte[] bytes)
     throws FormatException, ReflectException
   {
+    if (!initialized) initReader();
     if (expiredQT) throw new FormatException(EXPIRED_QT_MSG);
     if (noQT) throw new FormatException(NO_QT_MSG);
 
@@ -350,6 +356,7 @@ public class QTReader extends FormatReader {
   public synchronized Image pictToImage(byte[] bytes)
     throws FormatException
   {
+    if (!initialized) initReader();
     if (expiredQT) throw new FormatException(EXPIRED_QT_MSG);
     if (noQT) throw new FormatException(NO_QT_MSG);
 
@@ -400,6 +407,7 @@ public class QTReader extends FormatReader {
       throw new FormatException("PICT extraction failed", e);
     }
   }
+
 
   // -- Main method --
 
