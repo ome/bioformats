@@ -43,9 +43,6 @@ public class AVIReader extends FormatReader {
   /** Number of images in current AVI movie. */
   private int numImages;
 
-  /** Frames per second of output movies. */
-  private int frameRate = 10;
-
   /** Vector of Images. */
   private Vector imgs;
 
@@ -474,12 +471,6 @@ public class AVIReader extends FormatReader {
       OMETools.setAttribute(ome, "Pixels", "DimensionOrder", "XYTCZ");
     }
   }
-
-  /** Sets the frame rate of output movies in frames per second. */
-  public void setFrameRate(int fps) { frameRate = fps; }
-
-  /** Gets the frame rate of output movies in frames per second. */
-  public int getFrameRate() { return frameRate; }
 
   /** Unpacks a byte array into an int array. */
   public void unpack(byte[] rawData, int rawOffset, short[] intData,
