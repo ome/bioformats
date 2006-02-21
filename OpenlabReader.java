@@ -99,9 +99,9 @@ public class OpenlabReader extends FormatReader {
 
   /** Checks if the given block is a valid header for an Openlab file. */
   public boolean isThisType(byte[] block) {
-    return block[0] == 0 && block[1] == 0 && block[2] == -1 &&
-      block[3] == -1 && block[4] == 105 && block[5] == 109 &&
-      block[6] == 112 && block[7] == 114;
+    return block.length >= 8 && block[0] == 0 && block[1] == 0 &&
+      block[2] == -1 && block[3] == -1 && block[4] == 105 &&
+      block[5] == 109 && block[6] == 112 && block[7] == 114;
   }
 
   /** Determines the number of images in the given Openlab file. */
