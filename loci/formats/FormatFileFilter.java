@@ -1,5 +1,5 @@
 //
-// FormatFilter.java
+// FormatFileFilter.java
 //
 
 /*
@@ -27,7 +27,7 @@ import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
 /** A file filter for a biological file format, for use with a JFileChooser. */
-public class FormatFilter extends FileFilter
+public class FormatFileFilter extends FileFilter
   implements java.io.FileFilter, Comparable
 {
 
@@ -41,7 +41,7 @@ public class FormatFilter extends FileFilter
   // -- Constructor --
 
   /** Constructs a new filter that accepts the given extension. */
-  public FormatFilter(FormatReader reader) {
+  public FormatFileFilter(FormatReader reader) {
     this.reader = reader;
     StringBuffer sb = new StringBuffer(reader.getFormat());
     String[] exts = reader.getSuffixes();

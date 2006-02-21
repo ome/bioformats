@@ -94,7 +94,7 @@ public class ExtensionFileFilter extends FileFilter
 
   /** Compares two FileFilter objects alphanumerically. */
   public int compareTo(Object o) {
-    return desc.compareTo(((FileFilter) o).getDescription());
+    return desc.compareToIgnoreCase(((FileFilter) o).getDescription());
   }
 
 }

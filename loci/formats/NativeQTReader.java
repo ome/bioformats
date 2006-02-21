@@ -88,7 +88,7 @@ public class NativeQTReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new QuickTime reader. */
-  public NativeQTReader() { super("Native QuickTime", "mov"); }
+  public NativeQTReader() { super("QuickTime", "mov"); }
 
 
   // -- FormatReader API methods --

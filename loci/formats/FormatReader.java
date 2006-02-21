@@ -104,7 +104,7 @@ public abstract class FormatReader {
 
   /** Creates JFileChooser file filters for this file format. */
   protected void createFilters() {
-    filters = new FormatFilter[] { new FormatFilter(this) };
+    filters = new FileFilter[] { new FormatFileFilter(this) };
   }
 
   /**

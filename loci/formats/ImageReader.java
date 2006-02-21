@@ -175,11 +175,12 @@ public class ImageReader extends FormatReader {
 
   /** Creates JFileChooser file filters for this file format. */
   protected void createFilters() {
-    filters = new FileFilter[readers.length];
+    Vector v = new Vector();
     for (int i=0; i<readers.length; i++) {
-      filters[i] = readers[i].getFileFilters()[0];
+      FileFilter[] ff = readers[i].getFileFilters();
+      for (int j=0; j<ff.length; j++) v.add(ff[j]);
     }
-    Arrays.sort(filters);
+    filters = ComboFileFilter.sortFilters(v);
   }
 
   /**
@@ -247,9 +248,12 @@ public class ImageReader extends FormatReader {
       // pop up JFileChooser to test FileFilter logic
       JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
       FileFilter[] filt = getFileFilters();
+      FileFilter combo = new ComboFileFilter(filt, "All supported file types");
+      chooser.addChoosableFileFilter(combo);
       for (int i=0; i<filt.length; i++) {
         chooser.addChoosableFileFilter(filt[i]);
       }
+      chooser.setFileFilter(combo);
       int rval = chooser.showOpenDialog(null);
       if (rval == JFileChooser.APPROVE_OPTION) {
         File file = chooser.getSelectedFile();

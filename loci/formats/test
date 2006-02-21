@@ -9,8 +9,14 @@ format=loci.formats."$1"Reader
 
 if [ ! -n "$2" ]
 then
-  echo "Specify file to read (e.g., /home/curtis/data/zeiss/samples/2ChZ.lsm)"
-  exit 65
+  if [ "$1" != "Image" ]
+  then
+    echo "Specify file to read (e.g., /home/curtis/data/zeiss/samples/2ChZ.lsm)"
+    exit 65
+  else
+    java -mx512m $format
+    exit 0
+  fi
 fi
 
 file="$2"
