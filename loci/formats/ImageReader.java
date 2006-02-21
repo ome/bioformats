@@ -27,6 +27,7 @@ import java.awt.Image;
 import java.io.*;
 import java.util.*;
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
 
 /**
  * ImageReader is master file format reader for all supported formats.
@@ -109,11 +110,6 @@ public class ImageReader extends FormatReader {
   /** Constructs a new ImageReader. */
   public ImageReader() {
     super("any image", suffixList);
-    filters = new FormatFilter[readers.length];
-    for (int i=0; i<readers.length; i++) {
-      filters[i] = readers[i].getFileFilters()[0];
-    }
-    Arrays.sort(filters);
   }
 
 
@@ -175,6 +171,15 @@ public class ImageReader extends FormatReader {
       }
     }
     throw new FormatException("Unknown file format: " + id);
+  }
+
+  /** Creates JFileChooser file filters for this file format. */
+  protected void createFilters() {
+    filters = new FileFilter[readers.length];
+    for (int i=0; i<readers.length; i++) {
+      filters[i] = readers[i].getFileFilters()[0];
+    }
+    Arrays.sort(filters);
   }
 
   /**
@@ -241,13 +246,14 @@ public class ImageReader extends FormatReader {
     if (args.length == 0) {
       // pop up JFileChooser to test FileFilter logic
       JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
-      for (int i=0; i<filters.length; i++) {
-        chooser.addChoosableFileFilter(filters[i]);
+      FileFilter[] filt = getFileFilters();
+      for (int i=0; i<filt.length; i++) {
+        chooser.addChoosableFileFilter(filt[i]);
       }
       int rval = chooser.showOpenDialog(null);
       if (rval == JFileChooser.APPROVE_OPTION) {
-        File f = chooser.getSelectedFile();
-        if (f != null) args = new String[] {f.getPath()};
+        File file = chooser.getSelectedFile();
+        if (file != null) args = new String[] {file.getPath()};
       }
     }
     if (args.length > 0) {

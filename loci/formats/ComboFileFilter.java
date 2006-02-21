@@ -1,5 +1,5 @@
 //
-// FormatFilter.java
+// ComboFileFilter.java
 //
 
 /*
@@ -26,50 +26,41 @@ package loci.formats;
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
-/** A file filter for a biological file format, for use with a JFileChooser. */
-public class FormatFilter extends FileFilter
+/** A file filter that recognizes files from a union of other filters. */
+public class ComboFileFilter extends FileFilter
   implements java.io.FileFilter, Comparable
 {
+  
+  // -- Fields --
 
-  /** Associated file format reader. */
-  private FormatReader reader;
+  /** list of filters to be combined */
+  private FileFilter[] filts;
 
-  /** Description. */
+  /** description */
   private String desc;
 
 
   // -- Constructor --
 
-  /** Constructs a new filter that accepts the given extension. */
-  public FormatFilter(FormatReader reader) {
-    this.reader = reader;
-    StringBuffer sb = new StringBuffer(reader.getFormat());
-    String[] exts = reader.getSuffixes();
-    boolean first = true;
-    for (int i=0; i<exts.length; i++) {
-      if (exts[i] == null || exts[i].equals("")) continue;
-      if (first) {
-        sb.append(" (");
-        first = false;
-      }
-      else sb.append(", ");
-      sb.append("*.");
-      sb.append(exts[i]);
-    }
-    sb.append(")");
-    desc = sb.toString();
+  /** construct a new filter from a list of other filters */
+  public ComboFileFilter(FileFilter[] filters, String description) {
+    filts = new FileFilter[filters.length];
+    System.arraycopy(filters, 0, filts, 0, filters.length);
+    desc = description;
   }
 
 
   // -- FileFilter API methods --
 
-  /** Accepts files in accordance with the file format reader. */
+  /** accept files with the proper filename prefix */
   public boolean accept(File f) {
-    if (f.isDirectory()) return true;
-    return reader.isThisType(f.getPath());
+    for (int i=0; i<filts.length; i++) {
+      if (filts[i].accept(f)) return true;
+    }
+    return false;
   }
-
-  /** Gets the filter's description. */
+    
+  /** return the filter's description */
   public String getDescription() { return desc; }
 
 

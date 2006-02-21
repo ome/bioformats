@@ -24,7 +24,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.Image;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import javax.swing.filechooser.FileFilter;
 
 /**
  * ImageJReader is the file format reader for the image formats supported
@@ -38,7 +40,7 @@ public class ImageJReader extends FormatReader {
 
   /** Legal ImageJ suffixes. */
   private static final String[] SUFFIXES = {
-    "tif", "tiff", "dicom", "fits", "pgm", "jpg", "jpeg",
+    "tif", "tiff", "dicom", "fits", "pgm", "jpg", "jpeg", "jpe",
     "gif", "png", "lut", "bmp", "zip", "roi"
   };
 
@@ -114,6 +116,27 @@ public class ImageJReader extends FormatReader {
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
     currentId = null;
+  }
+
+  /** Creates JFileChooser file filters for this file format. */
+  protected void createFilters() {
+    filters = new FileFilter[] {
+      new ExtensionFileFilter(new String[] {"tif", "tiff"},
+        "Tagged Image File Format"),
+      new ExtensionFileFilter("dicom",
+        "Digital Imaging and Communications in Medicine"),
+      new ExtensionFileFilter("fits",
+        "Flexible Image Transport System"),
+      new ExtensionFileFilter("pgm", "PGM"),
+      new ExtensionFileFilter(new String[] {"jpg", "jpeg", "jpe"},
+        "Joint Photographic Experts Group"),
+      new ExtensionFileFilter("gif", "Graphics Interchange Format"),
+      new ExtensionFileFilter("png", "Portable Network Graphics"),
+      new ExtensionFileFilter("lut", "ImageJ Lookup Table"),
+      new ExtensionFileFilter("bmp", "Windows Bitmap"),
+      new ExtensionFileFilter("zip", "Zip archive"),
+      new ExtensionFileFilter("roi", "ImageJ Region of Interest")
+    };
   }
 
 
