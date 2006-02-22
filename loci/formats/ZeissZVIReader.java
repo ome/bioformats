@@ -235,7 +235,7 @@ public class ZeissZVIReader extends FormatReader {
         }
       }
     }
-    return DataTools.makeImage(samples, width, height);
+    return ImageTools.makeImage(samples, width, height);
   }
 
   /** Closes any open files. */

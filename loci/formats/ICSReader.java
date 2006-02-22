@@ -138,7 +138,7 @@ public class ICSReader extends FormatReader {
     int numSamples = width * height;
     int channels = 1;
 
-    return DataTools.makeImage(data, width, height, channels, false);
+    return ImageTools.makeImage(data, width, height, channels, false);
   }
 
   /** Closes any open files. */

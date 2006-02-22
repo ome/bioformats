@@ -48,10 +48,7 @@ public class JPEGWriter extends FormatWriter {
   public void save(String id, Image image, boolean last)
     throws FormatException, IOException
   {
-    if (!(image instanceof BufferedImage)) {
-      throw new FormatException("Only BufferedImages are supported");
-    }
-    BufferedImage img = (BufferedImage) image;
+    BufferedImage img = ImageTools.makeImage(image);
     JPEGEncodeParam param = JPEGCodec.getDefaultJPEGEncodeParam(img);
     param.setQuality(1.0f, true);
     FileOutputStream fout = new FileOutputStream(id);

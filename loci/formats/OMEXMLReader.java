@@ -177,7 +177,7 @@ public class OMEXMLReader extends FormatReader {
           bytes[i/2] = DataTools.bytesToShort(pixels, i, littleEndian);
         }
       }
-      return DataTools.makeImage(bytes, width, height, channels, false);
+      return ImageTools.makeImage(bytes, width, height, channels, false);
     }
     else if (bpp == 4) {
       int[] bytes = new int[pixels.length / 4];
@@ -186,7 +186,7 @@ public class OMEXMLReader extends FormatReader {
       }
     }
 
-    return DataTools.makeImage(pixels, width, height, channels, false);
+    return ImageTools.makeImage(pixels, width, height, channels, false);
   }
 
   /** Closes any open files. */

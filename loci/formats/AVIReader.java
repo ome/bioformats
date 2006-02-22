@@ -411,11 +411,11 @@ public class AVIReader extends FormatReader {
                   }
 
                   if (bmpBitsPerPixel > 8) {
-                    imgs.add(DataTools.makeImage(intData, dwWidth, bmpHeight,
+                    imgs.add(ImageTools.makeImage(intData, dwWidth, bmpHeight,
                       1, false));
                   }
                   else {
-                    imgs.add(DataTools.makeImage(byteData, dwWidth, bmpHeight,
+                    imgs.add(ImageTools.makeImage(byteData, dwWidth, bmpHeight,
                       1, false));
                   }
                 }
