@@ -118,14 +118,13 @@ public class OMEXMLReader extends FormatReader {
       Integer.parseInt(OMETools.getAttribute(ome, "Pixels", "SizeY"));
     int channels = 1;
 
-    if (no == 0) {
-      in.seek(((Integer) offsets.get(no)).intValue());
-    }
+    in.seek(((Integer) offsets.get(no)).intValue());
 
     byte[] buf;
     if (no < getImageCount(id) - 1) {
+
       buf = new byte[((Integer) offsets.get(no+1)).intValue() -
-        (int) in.getFilePointer()];
+        ((Integer) offsets.get(no)).intValue()];
     }
     else {
       buf = new byte[(int) (in.length() - in.getFilePointer())];
@@ -137,7 +136,9 @@ public class OMEXMLReader extends FormatReader {
 
     int dataStart = data.indexOf(">") + 1;
     String pix = data.substring(dataStart);
-    pix = pix.substring(0, pix.indexOf("<"));
+    if (pix.indexOf("<") > 0) {
+      pix = pix.substring(0, pix.indexOf("<"));
+    }
 
     byte[] pixels = decode(pix);
 
@@ -167,6 +168,7 @@ public class OMEXMLReader extends FormatReader {
     }
 
     // handle varying bytes per pixel
+
 
     if (bpp == 2) {
       short[] bytes = new short[pixels.length / 2];
@@ -202,46 +204,54 @@ public class OMEXMLReader extends FormatReader {
     in = new RandomAccessFile(id, "r");
     offsets = new Vector();
 
-    in.seek(500);
+    in.seek(200);
 
-    // read a block of 100 characters, looking for the "BigEndian" pattern
-    byte[] buf;
+    // read a block of 8192 characters, looking for the "BigEndian" pattern
+    byte[] buf = new byte[8192];
     boolean found = false;
     while (!found) {
-      buf = new byte[100];
-      in.read(buf);
-      String test = new String(buf);
+      if (in.getFilePointer() < in.length()) {
+        in.read(buf, 9, 8183);
+        String test = new String(buf);
 
-      int ndx = test.indexOf("BigEndian");
-      if (ndx != -1) {
-        found = true;
-        String endian = test.substring(ndx + 11);
-        if (endian.toLowerCase().endsWith("t")) littleEndian = false;
-        else littleEndian = true;
+        int ndx = test.indexOf("BigEndian");
+        if (ndx != -1) {
+          found = true;
+          String endian = test.substring(ndx + 11);
+          if (endian.toLowerCase().startsWith("t")) littleEndian = false;
+          else littleEndian = true;
+        }
+      }
+      else {
+        throw new FormatException("Pixel data not found.");
       }
     }
 
-    in.seek(500);
+    //in.seek(200);
+    in.seek(0);
 
     // look for the first BinData element
 
     found = false;
-    while (!found && in.getFilePointer() < in.length()) {
-      buf = new byte[100];
-      in.read(buf);
-      String test = new String(buf);
+    buf = new byte[8192];
+    in.read(buf, 0, 14);
+    while (!found) {
+      if (in.getFilePointer() < in.length()) {
+        in.read(buf, 14, 8192-14);
 
-      int ndx = test.indexOf("<Bin");
-      if (ndx != -1) {
-        if (ndx != test.indexOf("<Bin:External")) {
-          found = true;
-          offsets.add(new Integer((int) in.getFilePointer() - (100 - ndx)));
+        String test = new String(buf);
+
+        int ndx = test.indexOf("<Bin");
+        if (ndx == -1) throw new FormatException("Pixel data not found");
+        while (!((ndx != -1) && (ndx != test.indexOf("<Bin:External")))) {
+          ndx = test.indexOf("<Bin", ndx+1);
         }
+        found = true;
+        offsets.add(new Integer((int) in.getFilePointer() - (8192 - ndx)));
       }
-    }
-
-    if (!found) {
-      throw new FormatException("Pixel data not found");
+      else {
+        throw new FormatException("Pixel data not found");
+      }
     }
 
     in.seek(0);
@@ -254,6 +264,9 @@ public class OMEXMLReader extends FormatReader {
 
     int sizeX = 0;
     int sizeY = 0;
+    int sizeZ = 0;
+    int sizeT = 0;
+    int sizeC = 0;
 
     if (ome != null) {
       String type = OMETools.getAttribute(ome, "Pixels", "PixelType");
@@ -263,6 +276,9 @@ public class OMEXMLReader extends FormatReader {
 
       sizeX = Integer.parseInt(OMETools.getAttribute(ome, "Pixels", "SizeX"));
       sizeY = Integer.parseInt(OMETools.getAttribute(ome, "Pixels", "SizeY"));
+      sizeZ = Integer.parseInt(OMETools.getAttribute(ome, "Pixels", "SizeZ"));
+      sizeT = Integer.parseInt(OMETools.getAttribute(ome, "Pixels", "SizeT"));
+      sizeC = Integer.parseInt(OMETools.getAttribute(ome, "Pixels", "SizeC"));
     }
     else {
       throw new FormatException("To use this feature, please install the " +
@@ -276,7 +292,7 @@ public class OMEXMLReader extends FormatReader {
     // find the compression type and adjust 'expected' accordingly
 
     in.seek(((Integer) offsets.get(0)).intValue());
-    buf = new byte[400];
+    buf = new byte[256];
     in.read(buf);
     String data = new String(buf);
 
@@ -287,36 +303,58 @@ public class OMEXMLReader extends FormatReader {
     }
     else compression = "none";
 
-    if (!compression.equals("none")) {
-      expected /= 2;
+    expected /= 2;
+    searchForData(expected);
+    numImages = offsets.size();
+    if (numImages < (sizeZ * sizeT * sizeC)) {
+      searchForData(0);  // hope this doesn't happen too often
+      numImages = offsets.size();
     }
+  }
 
+
+  // -- Helper methods --
+
+  /** Searches for BinData elements, skipping 'safe' bytes in between. */
+  private void searchForData(int safe) throws IOException {
     int iteration = 0;
+    boolean found = false;
+    if (offsets.size() > 1) {
+      Object zeroth = offsets.get(0);
+      offsets.clear();
+      offsets.add(zeroth);
+    }
+    in.seek(((Integer) offsets.get(0)).intValue() + 1);
     while (in.getFilePointer() < in.length()) {
-      in.skipBytes(expected);
+      in.skipBytes(safe);
 
       // look for next BinData element
       found = false;
-      buf = new byte[100];
-      while (!found && in.getFilePointer() < in.length()) {
-        in.read(buf);
-        String test = new String(buf);
+      byte[] buf = new byte[4096];
+      while (!found) {
+        if (in.getFilePointer() < in.length()) {
+          int numRead = in.read(buf, 20, buf.length - 20);
+          String test = new String(buf);
 
-        int ndx = test.indexOf("<Bin");
-        if (ndx != -1) {
+          // datasets with small planes could have multiple sets of pixel data
+          // in this block
+          int ndx = test.indexOf("<Bin");
+          while (ndx != -1) {
+            found = true;
+            if (numRead == buf.length - 20) numRead = buf.length;
+            offsets.add(new Integer(
+              (int) in.getFilePointer() - (numRead - ndx)));
+            ndx = test.indexOf("<Bin", ndx+1);
+          }
+        }
+        else {
           found = true;
-          offsets.add(new Integer((int) in.getFilePointer() - (100 - ndx)));
         }
       }
 
       iteration++;
     }
-
-    numImages = offsets.size();
   }
-
-
-  // -- Helper methods --
 
   /**
    * Decodes a Base64 encoded String.
