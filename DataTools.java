@@ -35,7 +35,7 @@ import java.io.RandomAccessFile;
  */
 public abstract class DataTools {
 
-  // -- Image construction methods --
+  // -- Image construction --
 
   /**
    * Creates an image from the given unsigned byte data.
@@ -168,7 +168,7 @@ public abstract class DataTools {
   }
 
 
-  // -- Word-decoding convenience methods --
+  // -- Data reading --
 
   /** Reads bytes from the given random access file or array. */
   public static void readFully(RandomAccessFile in, byte[] bytes)
@@ -254,6 +254,44 @@ public abstract class DataTools {
   {
     return Double.longBitsToDouble(read8SignedBytes(in, little));
   }
+
+
+  // -- Data writing --
+  
+  /** Writes a string to the given random access file. */
+  public static void writeString(RandomAccessFile out, String s) 
+    throws IOException
+  {
+    byte[] bytes =  s.getBytes("UTF-8");
+    out.write(bytes);
+  }
+
+  /**
+   * Writes an integer to the given random access file
+   * in little-endian format.
+   */
+  public static void writeInt(RandomAccessFile out, int v) 
+    throws IOException
+  {
+    out.write(v & 0xFF);
+    out.write((v >>> 8) & 0xFF);
+    out.write((v >>> 16) & 0xFF);
+    out.write((v >>> 24) & 0xFF);
+  }
+
+  /**
+   * Writes a short to the given random access file
+   * in little-endian format.
+   */
+  public static void writeShort(RandomAccessFile out, int v) 
+    throws IOException
+  {        
+    out.write(v & 0xFF);
+    out.write((v >>> 8) & 0xFF);
+  }
+
+
+  // -- Word decoding --
 
   /**
    * Translates up to the first len bytes of a byte array beyond the given
@@ -484,32 +522,6 @@ public abstract class DataTools {
   /** Translates bytes from the given array into a string. */
   public static String bytesToString(short[] bytes) {
     return bytesToString(bytes, 0, bytes.length);
-  }
-
-  // -- Data writing convenience methods --
-
-  
-  public static void writeString(RandomAccessFile out, String s) 
-    throws IOException
-  {
-    byte[] bytes =  s.getBytes("UTF-8");
-    out.write(bytes);
-  }
-
-  public static void writeInt(RandomAccessFile out, int v) 
-    throws IOException
-  {
-    out.write(v & 0xFF);
-    out.write((v >>>  8) & 0xFF);
-    out.write((v >>> 16) & 0xFF);
-    out.write((v >>> 24) & 0xFF);
-  }
-
-  public static void writeShort(RandomAccessFile out, int v) 
-    throws IOException
-  {        
-    out.write(v& 0xFF);
-    out.write((v >>> 8) & 0xFF);
   }
   
 }
