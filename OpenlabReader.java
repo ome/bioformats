@@ -259,11 +259,11 @@ public class OpenlabReader extends FormatReader {
         if (isColor) {
           int[][] flatSamp = new int[3][];
           flatSamp[0] = flatSamp[1] = flatSamp[2] = flatSamples[0];
-          return DataTools.makeImage(flatSamp, dim.width, dim.height);
+          return ImageTools.makeImage(flatSamp, dim.width, dim.height);
 
         }
         else {  // it's all grayscale
-          return DataTools.makeImage(flatSamples[0], dim.width, dim.height,
+          return ImageTools.makeImage(flatSamples[0], dim.width, dim.height,
             1, false);
         }
       }

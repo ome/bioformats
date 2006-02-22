@@ -113,6 +113,7 @@ public class AVIWriter extends FormatWriter {
     if (image == null) {
       throw new FormatException("Image is null");
     }
+    BufferedImage img = ImageTools.makeImage(image);
 
     if (!id.equals(currentId)) {
       currentId = id;
@@ -174,8 +175,8 @@ public class AVIWriter extends FormatWriter {
 
       tDim = 1;
       zDim = 1;
-      yDim = ((BufferedImage) image).getRaster().getHeight();
-      xDim = ((BufferedImage) image).getRaster().getWidth();
+      yDim = img.getHeight();
+      xDim = img.getWidth();
 
       xPad = 0;
       xMod = xDim % 4;
@@ -442,7 +443,7 @@ public class AVIWriter extends FormatWriter {
 
     // get pixels
 
-    DataBuffer dbuf = ((BufferedImage) image).getRaster().getDataBuffer();
+    DataBuffer dbuf = img.getRaster().getDataBuffer();
 
     if (dbuf instanceof DataBufferByte) {
       // originally 8 bit data

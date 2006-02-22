@@ -178,7 +178,7 @@ public class BMPReader extends FormatReader {
       }
     }
 
-    return DataTools.makeImage(tempPx, width, height);
+    return ImageTools.makeImage(tempPx, width, height);
   }
 
   /** Closes any open files. */

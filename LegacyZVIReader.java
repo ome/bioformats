@@ -427,7 +427,7 @@ public class LegacyZVIReader extends FormatReader {
           samples[c][i] = DataTools.bytesToShort(b, true);
         }
       }
-      return DataTools.makeImage(samples, width, height);
+      return ImageTools.makeImage(samples, width, height);
     }
 
     public String toString() {

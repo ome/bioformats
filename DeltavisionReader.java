@@ -115,7 +115,7 @@ public class DeltavisionReader extends FormatReader {
     in.read(rawData);
 
     if (bytesPerPixel == 1) {
-      return DataTools.makeImage(rawData, width, height, channels, false);
+      return ImageTools.makeImage(rawData, width, height, channels, false);
     }
     else if (bytesPerPixel == 2) {
       short[] data = new short[numSamples];
@@ -124,7 +124,7 @@ public class DeltavisionReader extends FormatReader {
         q = DataTools.bytesToShort(rawData, i, 2, little);
         data[i/2] = q;
       }
-      return DataTools.makeImage(data, width, height, channels, false);
+      return ImageTools.makeImage(data, width, height, channels, false);
     }
     else if (bytesPerPixel == 4) {
       int[] data = new int[numSamples];
@@ -133,7 +133,7 @@ public class DeltavisionReader extends FormatReader {
         q = DataTools.bytesToInt(rawData, i, little);
         data[i/4] = q;
       }
-      return DataTools.makeImage(data, width, height, channels, false);
+      return ImageTools.makeImage(data, width, height, channels, false);
     }
     else if (bytesPerPixel == 8) {
       // Applied Precision doesn't provide support for 64 bit data,

@@ -163,7 +163,7 @@ public class BioRadReader extends FormatReader {
       in.readFully(data);
 
       // each pixel is 8 bits
-      return DataTools.makeImage(data, nx, ny, 1, false);
+      return ImageTools.makeImage(data, nx, ny, 1, false);
     }
     else {
       // jump to proper image number
@@ -178,7 +178,7 @@ public class BioRadReader extends FormatReader {
       for(int i=0; i<pixs.length; i++) {
         pixs[i] = DataTools.bytesToShort(data, 2 * i, LITTLE_ENDIAN);
       }
-      return DataTools.makeImage(pixs, nx, ny, 1, false);
+      return ImageTools.makeImage(pixs, nx, ny, 1, false);
     }
   }
 

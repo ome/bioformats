@@ -130,21 +130,21 @@ public class NativeQTReader extends FormatReader {
     prevPixels = bytes;
 
     if (bitsPerPixel <= 8) {
-      return DataTools.makeImage(bytes, width, height, 1, false);
+      return ImageTools.makeImage(bytes, width, height, 1, false);
     }
     else if (bitsPerPixel == 16) {
       short[] newPix = new short[bytes.length / 2 + 1];
       for (int i=0; i<bytes.length; i+=2) {
         newPix[i/2] = DataTools.bytesToShort(bytes, i, little);
       }
-      return DataTools.makeImage(newPix, width, height, 1, false);
+      return ImageTools.makeImage(newPix, width, height, 1, false);
     }
     else if (bitsPerPixel == 32) {
       int[] newPix = new int[bytes.length / 4];
       for (int i=0; i<bytes.length; i+=4) {
         newPix[i/4] = DataTools.bytesToInt(bytes, i, little);
       }
-      return DataTools.makeImage(newPix, width, height, 1, false);
+      return ImageTools.makeImage(newPix, width, height, 1, false);
     }
     else {
       if (legacy == null) legacy = new QTReader();

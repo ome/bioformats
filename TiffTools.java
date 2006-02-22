@@ -964,7 +964,7 @@ public abstract class TiffTools {
     // construct field
     if (DEBUG) debug("constructing image");
 
-    return DataTools.makeImage(samples, (int) imageWidth, (int) imageLength);
+    return ImageTools.makeImage(samples, (int) imageWidth, (int) imageLength);
   }
 
   /**
@@ -1629,7 +1629,8 @@ public abstract class TiffTools {
     if (image == null) throw new FormatException("Image is null");
     if (DEBUG) debug("writeImage (offset=" + offset + "; last=" + last + ")");
 
-    DataBuffer buf = ((BufferedImage) image).getRaster().getDataBuffer();
+    BufferedImage img = ImageTools.makeImage(image);
+    DataBuffer buf = img.getRaster().getDataBuffer();
 
     // get pixels
     int[][] values = new int[0][0];
@@ -1660,8 +1661,8 @@ public abstract class TiffTools {
       values = ((DataBufferInt) buf).getBankData();
     }
 
-    int width = ((BufferedImage) image).getWidth();
-    int height = ((BufferedImage) image).getHeight();
+    int width = img.getWidth();
+    int height = img.getHeight();
 
     if (values.length < 1 || values.length > 3) {
       throw new FormatException("Image has an unsupported " +

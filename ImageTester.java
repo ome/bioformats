@@ -30,7 +30,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.*;
 
 /**
- * A class for testing the DataTools.makeImage methods.
+ * A class for testing the ImageTools.makeImage methods.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -152,15 +152,15 @@ public class ImageTester extends JPanel implements WindowListener {
           }
         }
       }
-      bimg1[q] = DataTools.makeImage(bdata1, w, h);
-      bimg2[q] = DataTools.makeImage(bdata2, w, h, c, true);
-      bimg3[q] = DataTools.makeImage(bdata3, w, h, c, false);
-      simg1[q] = DataTools.makeImage(sdata1, w, h);
-      simg2[q] = DataTools.makeImage(sdata2, w, h, c, true);
-      simg3[q] = DataTools.makeImage(sdata3, w, h, c, false);
-//      iimg1[q] = DataTools.makeImage(idata1, w, h);
-//      iimg2[q] = DataTools.makeImage(idata2, w, h, c, true);
-//      iimg3[q] = DataTools.makeImage(idata3, w, h, c, false);
+      bimg1[q] = ImageTools.makeImage(bdata1, w, h);
+      bimg2[q] = ImageTools.makeImage(bdata2, w, h, c, true);
+      bimg3[q] = ImageTools.makeImage(bdata3, w, h, c, false);
+      simg1[q] = ImageTools.makeImage(sdata1, w, h);
+      simg2[q] = ImageTools.makeImage(sdata2, w, h, c, true);
+      simg3[q] = ImageTools.makeImage(sdata3, w, h, c, false);
+//      iimg1[q] = ImageTools.makeImage(idata1, w, h);
+//      iimg2[q] = ImageTools.makeImage(idata2, w, h, c, true);
+//      iimg3[q] = ImageTools.makeImage(idata3, w, h, c, false);
     }
 
     System.out.println("Rows are: byte[][], byte[] (interleaved), " +
