@@ -237,7 +237,7 @@ public class OMEXMLReader extends FormatReader {
     in.read(buf, 0, 14);
     while (!found) {
       if (in.getFilePointer() < in.length()) {
-        in.read(buf, 14, 8192-14);
+        int numRead = in.read(buf, 14, 8192-14);
 
         String test = new String(buf);
 
@@ -247,7 +247,8 @@ public class OMEXMLReader extends FormatReader {
           ndx = test.indexOf("<Bin", ndx+1);
         }
         found = true;
-        offsets.add(new Integer((int) in.getFilePointer() - (8192 - ndx)));
+        numRead += 14;
+        offsets.add(new Integer((int) in.getFilePointer() - (numRead - ndx)));
       }
       else {
         throw new FormatException("Pixel data not found");
