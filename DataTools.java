@@ -486,4 +486,30 @@ public abstract class DataTools {
     return bytesToString(bytes, 0, bytes.length);
   }
 
+  // -- Data writing convenience methods --
+
+  
+  public static void writeString(RandomAccessFile out, String s) 
+    throws IOException
+  {
+    byte[] bytes =  s.getBytes("UTF-8");
+    out.write(bytes);
+  }
+
+  public static void writeInt(RandomAccessFile out, int v) 
+    throws IOException
+  {
+    out.write(v & 0xFF);
+    out.write((v >>>  8) & 0xFF);
+    out.write((v >>> 16) & 0xFF);
+    out.write((v >>> 24) & 0xFF);
+  }
+
+  public static void writeShort(RandomAccessFile out, int v) 
+    throws IOException
+  {        
+    out.write(v& 0xFF);
+    out.write((v >>> 8) & 0xFF);
+  }
+  
 }
