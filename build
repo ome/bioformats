@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # LOCI Bio-Formats package for reading and converting biological file formats.
 # Copyright (C) 2005-2006 Melissa Linkert, Curtis Rueden and Eric Kjellman.
@@ -17,28 +17,18 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-# test: a script to simplify testing of file format readers
+# build: a script for building the LOCI Bio-Formats plugin for ImageJ
 
-if [ ! -n "$1" ]
-then
-  echo "Specify file format (e.g., Zeiss)"
-  exit 65
-fi
+cd ../..
 
-format=loci.formats."$1"Reader
+# build bio_formats_src.jar
+jar cvfM loci/formats/bio_formats_src.jar loci/formats/plugins.config loci/formats/*.java loci/formats/*.txt loci/formats/test loci/formats/build
 
-if [ ! -n "$2" ]
-then
-  if [ "$1" != "Image" ]
-  then
-    echo "Specify file to read (e.g., /home/curtis/data/zeiss/samples/2ChZ.lsm)"
-    exit 65
-  else
-    java -mx512m $format
-    exit 0
-  fi
-fi
+# build bio_formats.jar
+mv loci/formats/plugins.config loci/formats/LociPlugin.class .
+jar cvfM loci/formats/bio_formats.jar plugins.config LociPlugin.class loci/formats/readers.txt loci/formats/writers.txt loci/formats/*.class
+mv plugins.config LociPlugin.class loci/formats
 
-file="$2"
-
-java -mx512m $format "$file"
+cd loci/formats
+ls -l *.jar
+cp bio_formats.jar ~/Desktop/ImageJ/plugins/
