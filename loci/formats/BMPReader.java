@@ -67,6 +67,7 @@ public class BMPReader extends FormatReader {
    */
   protected int compression;
 
+
   // -- Constructor --
 
   /** Constructs a new BMP reader. */
@@ -247,9 +248,11 @@ public class BMPReader extends FormatReader {
     in.skipBytes(4);
 
     in.read(four);
-    metadata.put("X resolution", "" + DataTools.bytesToInt(four, littleEndian));
+    metadata.put("X resolution", "" +
+      DataTools.bytesToInt(four, littleEndian));
     in.read(four);
-    metadata.put("Y resolution", "" + DataTools.bytesToInt(four, littleEndian));
+    metadata.put("Y resolution", "" +
+      DataTools.bytesToInt(four, littleEndian));
 
     in.read(four);
     int nColors = DataTools.bytesToInt(four, littleEndian);
