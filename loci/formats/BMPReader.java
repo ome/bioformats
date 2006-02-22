@@ -70,7 +70,7 @@ public class BMPReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new BMP reader. */
-  public BMPReader() { super("BMP", "bmp"); }
+  public BMPReader() { super("Windows Bitmap", "bmp"); }
 
 
   // -- FormatReader API methods --
