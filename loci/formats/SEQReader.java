@@ -107,8 +107,8 @@ public class SEQReader extends BaseTiffReader {
   protected void initOMEMetadata() {
     super.initOMEMetadata();
 
-    if ((ome != null) && 
-      ((Integer) metadata.get("Number of images")).intValue() != 1) 
+    if ((ome != null) &&
+      ((Integer) metadata.get("Number of images")).intValue() != 1)
     {
       OMETools.setAttribute(ome, "Pixels", "SizeZ",
         "" + metadata.get("slices"));
