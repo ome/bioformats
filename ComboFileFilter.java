@@ -31,7 +31,7 @@ import javax.swing.filechooser.FileFilter;
 public class ComboFileFilter extends FileFilter
   implements java.io.FileFilter, Comparable
 {
-  
+
   // -- Fields --
 
   /** list of filters to be combined */
@@ -109,7 +109,7 @@ public class ComboFileFilter extends FileFilter
     }
     return false;
   }
-    
+
   /** return the filter's description */
   public String getDescription() { return desc; }
 

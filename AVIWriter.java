@@ -120,7 +120,7 @@ public class AVIWriter extends FormatWriter {
 
       file = new File(id);
       raFile = new RandomAccessFile(file, "rw");
-      
+
       DataTools.writeString(raFile, "RIFF"); // signature
       saveFileSize = raFile.getFilePointer();
       saveFileSize = raFile.getFilePointer();
@@ -136,7 +136,7 @@ public class AVIWriter extends FormatWriter {
       // by JUNK.
       saveLIST1Size = raFile.getFilePointer();
       // for now write 0 in avih sub-CHUNK size location
-      DataTools.writeInt(raFile, 0); 
+      DataTools.writeInt(raFile, 0);
       DataTools.writeString(raFile, "hdrl"); // CHUNK type
       DataTools.writeString(raFile, "avih"); // Write the avih sub-CHUNK
 
@@ -151,9 +151,9 @@ public class AVIWriter extends FormatWriter {
       // Write the maximum data rate of the file in bytes per second
       DataTools.writeInt(raFile, 0); // dwMaxBytesPerSec
 
-      DataTools.writeInt(raFile, 0); // dwReserved1 - Reserved1 field set to 0 
+      DataTools.writeInt(raFile, 0); // dwReserved1 - Reserved1 field set to 0
       // dwFlags - just set the bit for AVIF_HASINDEX
-      DataTools.writeInt(raFile, 0x10); 
+      DataTools.writeInt(raFile, 0x10);
 
       // 10H AVIF_HASINDEX: The AVI file has an idx1 chunk containing
       //   an index at the end of the file. For good performance, all
@@ -260,7 +260,7 @@ public class AVIWriter extends FormatWriter {
       DataTools.writeInt(raFile, fps);
 
       // dwStart - this field is usually set to zero
-      DataTools.writeInt(raFile, 0); 
+      DataTools.writeInt(raFile, 0);
 
       // dwLength - playing time of AVI file as defined by scale and rate
       // Set equal to the number of frames
@@ -302,16 +302,16 @@ public class AVIWriter extends FormatWriter {
 
       savestrfSize = raFile.getFilePointer();
       // for now write 0 in the strf CHUNK size location
-      DataTools.writeInt(raFile, 0); 
+      DataTools.writeInt(raFile, 0);
 
       // Applications should use this size to determine which BITMAPINFO header
       // structure is being used. This size includes this biSize field.
       // biSize- Write header size of BITMAPINFO header structure
-      
-      DataTools.writeInt(raFile, 40); 
+
+      DataTools.writeInt(raFile, 40);
 
       // biWidth - image width in pixels
-      DataTools.writeInt(raFile, xDim - xPad);  
+      DataTools.writeInt(raFile, xDim - xPad);
 
       // biHeight - image height in pixels. If height is positive, the bitmap
       // is a bottom up DIB and its origin is in the lower left corner. If
@@ -332,11 +332,11 @@ public class AVIWriter extends FormatWriter {
 
       //writeInt(bytesPerPixel * xDim * yDim * zDim * tDim); // biSizeImage #
       DataTools.writeInt(raFile, 0); // biSizeImage #
-      DataTools.writeInt(raFile, 0); // biCompression - type of compression used
+      DataTools.writeInt(raFile, 0); // biCompression- type of compression used
       // biXPelsPerMeter - horizontal resolution in pixels
-      DataTools.writeInt(raFile, 0); 
+      DataTools.writeInt(raFile, 0);
       // biYPelsPerMeter - vertical resolution in pixels per meter
-      DataTools.writeInt(raFile, 0); 
+      DataTools.writeInt(raFile, 0);
       if (bitsPerPixel == 8)
         DataTools.writeInt(raFile, 256); // biClrUsed
       else
@@ -391,17 +391,19 @@ public class AVIWriter extends FormatWriter {
       // write a JUNK CHUNK for padding
       saveJUNKsignature = raFile.getFilePointer();
       raFile.seek(saveLIST1Size);
-      DataTools.writeInt(raFile, (int)(saveJUNKsignature - (saveLIST1Size+4)));
+      DataTools.writeInt(raFile,
+        (int) (saveJUNKsignature - (saveLIST1Size + 4)));
       raFile.seek(saveLIST1subSize);
-      DataTools.writeInt(raFile, (int)(saveJUNKsignature-(saveLIST1subSize+4)));
+      DataTools.writeInt(raFile,
+        (int) (saveJUNKsignature - (saveLIST1subSize + 4)));
       raFile.seek(saveJUNKsignature);
       DataTools.writeString(raFile, "JUNK");
-      paddingBytes = (int)(4084 - (saveJUNKsignature + 8));
+      paddingBytes = (int) (4084 - (saveJUNKsignature + 8));
       DataTools.writeInt(raFile, paddingBytes);
-      for (int i=0; i<(paddingBytes/2); i++) {
+      for (int i=0; i<paddingBytes/2; i++) {
         DataTools.writeShort(raFile, (short) 0);
       }
-        
+
       // Write the second LIST chunk, which contains the actual data
       DataTools.writeString(raFile, "LIST");
 
@@ -503,7 +505,7 @@ public class AVIWriter extends FormatWriter {
         // 00db or 00dc
         raFile.write(dataSignature);
         // Write the flags - select AVIIF_KEYFRAME
-        if (z == 0) DataTools.writeInt(raFile, 0x10); 
+        if (z == 0) DataTools.writeInt(raFile, 0x10);
         else DataTools.writeInt(raFile, 0x00);
 
         // AVIIF_KEYFRAME 0x00000010L

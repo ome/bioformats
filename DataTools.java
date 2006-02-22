@@ -257,9 +257,9 @@ public abstract class DataTools {
 
 
   // -- Data writing --
-  
+
   /** Writes a string to the given random access file. */
-  public static void writeString(RandomAccessFile out, String s) 
+  public static void writeString(RandomAccessFile out, String s)
     throws IOException
   {
     byte[] bytes =  s.getBytes("UTF-8");
@@ -270,7 +270,7 @@ public abstract class DataTools {
    * Writes an integer to the given random access file
    * in little-endian format.
    */
-  public static void writeInt(RandomAccessFile out, int v) 
+  public static void writeInt(RandomAccessFile out, int v)
     throws IOException
   {
     out.write(v & 0xFF);
@@ -283,9 +283,9 @@ public abstract class DataTools {
    * Writes a short to the given random access file
    * in little-endian format.
    */
-  public static void writeShort(RandomAccessFile out, int v) 
+  public static void writeShort(RandomAccessFile out, int v)
     throws IOException
-  {        
+  {
     out.write(v & 0xFF);
     out.write((v >>> 8) & 0xFF);
   }
@@ -523,5 +523,5 @@ public abstract class DataTools {
   public static String bytesToString(short[] bytes) {
     return bytesToString(bytes, 0, bytes.length);
   }
-  
+
 }
