@@ -46,12 +46,13 @@ public class LociPlugin implements PlugIn {
     if (fileName == null) return;
     String id = directory + fileName;
 
-    IJ.showStatus("Opening: " + fileName);
+    IJ.showStatus("Opening " + fileName);
     ImageReader reader = new ImageReader();
     try {
       int num = reader.getImageCount(id);
       ImageStack stack = null;
       for (int i=0; i<num; i++) {
+        if (i % 5 == 4) IJ.showStatus("Reading plane " + (i + 1) + "/" + num);
         IJ.showProgress((double) i / num);
         Image img = reader.open(id, i);
         if (stack == null) {
@@ -61,6 +62,7 @@ public class LociPlugin implements PlugIn {
         stack.addSlice(fileName + ":" + (i + 1),
           new ImagePlus(null, img).getProcessor());
       }
+      IJ.showStatus("Creating image");
       IJ.showProgress(1);
       new ImagePlus(fileName, stack).show();
     }
