@@ -245,18 +245,10 @@ public class ImageReader extends FormatReader {
    */
   public boolean testRead(String[] args) throws FormatException, IOException {
     if (args.length == 0) {
-      // pop up JFileChooser to test FileFilter logic
-      JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
-      FileFilter[] filt = getFileFilters();
-      FileFilter combo = new ComboFileFilter(filt, "All supported file types");
-      chooser.addChoosableFileFilter(combo);
-      for (int i=0; i<filt.length; i++) {
-        chooser.addChoosableFileFilter(filt[i]);
-      }
-      chooser.setFileFilter(combo);
-      int rval = chooser.showOpenDialog(null);
+      JFileChooser box = getFileChooser();
+      int rval = box.showOpenDialog(null);
       if (rval == JFileChooser.APPROVE_OPTION) {
-        File file = chooser.getSelectedFile();
+        File file = box.getSelectedFile();
         if (file != null) args = new String[] {file.getPath()};
       }
     }

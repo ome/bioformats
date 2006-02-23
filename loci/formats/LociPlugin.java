@@ -36,10 +36,18 @@ import loci.formats.ImageTools;
  */
 public class LociPlugin implements PlugIn {
 
+  // -- Static fields --
+
+  /** Flag indicating whether last operation was successful. */
+  public boolean success = false;
+
+
   // -- PlugIn API methods --
 
   /** Executes the plugin. */
-  public void run(String arg) {
+  public synchronized void run(String arg) {
+    success = false;
+    boolean quiet = !"".equals(arg);
     OpenDialog od = new OpenDialog("Open...", arg);
     String directory = od.getDirectory();
     String fileName = od.getFileName();
@@ -65,11 +73,32 @@ public class LociPlugin implements PlugIn {
       IJ.showStatus("Creating image");
       IJ.showProgress(1);
       new ImagePlus(fileName, stack).show();
+      success = true;
     }
     catch (Exception exc) {
       IJ.showStatus("");
-      IJ.showMessage("LOCI Bio-Formats", "" + exc);
+      if (!quiet) IJ.showMessage("LOCI Bio-Formats", "" + exc.getMessage());
     }
   }
 
 }
+
+/*
+Add the following code to HandleExtraFileTypes.java to enable
+LOCI Bio-Formats through File/Open, drag & drop, etc.
+
+    // CTR: try opening the file with LOCI Bio-Formats
+    Object loci = IJ.runPlugIn("LociPlugin", path);
+    if (loci != null) {
+      // plugin exists and was launched
+      try {
+        // check whether plugin was successful
+        boolean ok = loci.getClass().getField("success").getBoolean(loci);
+        if (ok) {
+          width = IMAGE_OPENED;
+          return null;
+        }
+      }
+      catch (Exception exc) { }
+    }
+*/
