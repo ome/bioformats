@@ -102,6 +102,7 @@ public class BMPReader extends FormatReader {
     }
 
     in.seek(offset);
+    if (width % 2 == 1) width++;
     byte[] pix = new byte[width * height * (bpp / 8)];
     in.read(pix);
 
@@ -115,8 +116,6 @@ public class BMPReader extends FormatReader {
       throw new FormatException("Compression type " + compression +
         " not supported");
     }
-
-    // odd-numbered kidney datasets are split diagonally
 
     if (palette == null) palette = new byte[1][0];
 
@@ -150,17 +149,6 @@ public class BMPReader extends FormatReader {
           for (int i=0; i < 3; i++) {
             pixels[i][j] = pix[pt];
             pt--;
-          }
-        }
-
-        // corrective step required if the width is odd
-        if (width % 2 == 1) {
-          byte[][] temp = pixels;
-          for (int i=0; i<pixels.length; i++) {
-            for (int j=0; j<pixels[i].length; j++) {
-              int off = (int) Math.floor(j / width);
-              pixels[i][j] = temp[i][(j + off) % temp[i].length];
-            }
           }
         }
       }
