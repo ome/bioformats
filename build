@@ -17,18 +17,21 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-# build: a script for building the LOCI Bio-Formats plugin for ImageJ
+# build: a script for building the LOCI Bio-Formats JAR files
 
 cd ../..
 
-# build bio_formats_src.jar
-jar cvfM loci/formats/bio_formats_src.jar loci/formats/plugins.config loci/formats/*.java loci/formats/*.txt loci/formats/test loci/formats/build
+echo Building bio_formats_src.jar
+jar cfM loci/formats/bio_formats_src.jar loci/formats/plugins.config loci/formats/*.java loci/formats/*.txt loci/formats/test loci/formats/build
 
-# build bio_formats.jar
+echo Building bio_formats.jar
 mv loci/formats/plugins.config loci/formats/LociPlugin.class .
-jar cvfM loci/formats/bio_formats.jar plugins.config LociPlugin.class loci/formats/readers.txt loci/formats/writers.txt loci/formats/*.class
+jar cfM loci/formats/bio_formats.jar plugins.config LociPlugin.class loci/formats/readers.txt loci/formats/writers.txt loci/formats/*.class
 mv plugins.config LociPlugin.class loci/formats
 
 cd loci/formats
-ls -l *.jar
+
+echo Copying bio_formats.jar to ImageJ plugins
 cp bio_formats.jar ~/Desktop/ImageJ/plugins/
+
+ls -l *.jar

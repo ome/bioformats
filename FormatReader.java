@@ -47,6 +47,9 @@ public abstract class FormatReader {
   /** File filters for this file format, for use with a JFileChooser. */
   protected FileFilter[] filters;
 
+  /** File chooser for this file format. */
+  protected JFileChooser chooser;
+
   /** Name of current file. */
   protected String currentId;
 
@@ -143,6 +146,23 @@ public abstract class FormatReader {
   public FileFilter[] getFileFilters() {
     if (filters == null) createFilters();
     return filters;
+  }
+
+  /** Gets a JFileChooser that recognizes accepted file types. */
+  public JFileChooser getFileChooser() {
+    if (chooser == null) {
+      chooser = new JFileChooser(System.getProperty("user.dir"));
+      FileFilter[] ff = getFileFilters();
+      ff = ComboFileFilter.sortFilters(ff);
+      FileFilter combo = null;
+      if (ff.length > 1) {
+        combo = new ComboFileFilter(ff, "All supported file types");
+        chooser.addChoosableFileFilter(combo);
+      }
+      for (int i=0; i<ff.length; i++) chooser.addChoosableFileFilter(ff[i]);
+      if (combo != null) chooser.setFileFilter(combo);
+    }
+    return chooser;
   }
 
   /**
