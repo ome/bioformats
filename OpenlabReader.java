@@ -43,7 +43,7 @@ public class OpenlabReader extends FormatReader {
   // -- Static fields --
 
   /** Helper reader to read PICT data with QT Java library. */
-  private static QTReader qtForm = new QTReader();
+  private static LegacyQTReader qtReader = new LegacyQTReader();
 
   // -- Fields --
 
@@ -147,7 +147,7 @@ public class OpenlabReader extends FormatReader {
 
     Dimension dim;
     try {
-      dim= qtForm.getPictDimensions(toRead);
+      dim= qtReader.getPictDimensions(toRead);
     }
     catch (Exception e) {
       dim = new Dimension(0, 0);
@@ -190,7 +190,7 @@ public class OpenlabReader extends FormatReader {
           try {
             // This never actually throws an exception, to my knowledge,
             // but we can always hope.
-            return qtForm.pictToImage(toRead);
+            return qtReader.pictToImage(toRead);
           }
           catch (Exception e) {
             throw new FormatException("No iPic comment block found", e);

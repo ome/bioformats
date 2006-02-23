@@ -1,5 +1,5 @@
 //
-// PictReader.java
+// LegacyPictReader.java
 //
 
 /*
@@ -27,20 +27,20 @@ import java.awt.Image;
 import java.io.*;
 
 /**
- * PictReader is the file format reader for Apple PICT files.
+ * LegacyPictReader is the old file format reader for Apple PICT files.
  * To use it, QuickTime for Java must be installed.
  */
-public class PictReader extends FormatReader {
+public class LegacyPictReader extends FormatReader {
 
   // -- Static fields --
 
   /** Helper reader for reading PICT data with QTJava library. */
-  private static QTReader qtReader = new QTReader();
+  private static LegacyQTReader qtReader = new LegacyQTReader();
 
   // -- Constructor --
 
   /** Constructs a new PICT reader. */
-  public PictReader() { super("PICT", "pict"); }
+  public LegacyPictReader() { super("PICT", "pict"); }
 
 
   // -- FormatReader API methods --
@@ -89,7 +89,7 @@ public class PictReader extends FormatReader {
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {
-    new PictReader().testRead(args);
+    new LegacyPictReader().testRead(args);
   }
 
 }

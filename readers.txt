@@ -1,26 +1,25 @@
 loci.formats.PNGReader # javax.imageio
 loci.formats.JPEGReader # javax.imageio
 loci.formats.GIFReader # javax.imageio
-loci.formats.BioRadReader # proprietary
-loci.formats.IPLabReader # proprietary
-loci.formats.DeltavisionReader # proprietary
-loci.formats.GatanReader # proprietary
-loci.formats.ICSReader # proprietary
-loci.formats.LeicaReader # proprietary (companion file)
-loci.formats.PerkinElmerReader # proprietary (companion files)
-loci.formats.MetamorphReader # TIFF variant
-loci.formats.ZeissLSMReader # TIFF variant
-loci.formats.SEQReader # TIFF variant
-loci.formats.IPWReader # proprietary (needs POIFS)
-loci.formats.ZeissZVIReader # proprietary (needs POIFS)
-loci.formats.FluoviewReader # TIFF variant; isThisType(String) is slow
-loci.formats.AndorReader # TIFF variant; isThisType(String) is slow
+loci.formats.BMPReader
+loci.formats.BioRadReader
+loci.formats.IPLabReader
+loci.formats.DeltavisionReader
+loci.formats.GatanReader
+loci.formats.ICSReader
+loci.formats.OMEXMLReader
+loci.formats.MetamorphReader # TIFF
+loci.formats.ZeissLSMReader # TIFF
+loci.formats.SEQReader # TIFF
+loci.formats.LeicaReader # TIFF + companion file
+loci.formats.PerkinElmerReader # TIFF + companion files
+loci.formats.IPWReader # POIFS
+loci.formats.ZeissZVIReader # POIFS (fallback)
+loci.formats.FluoviewReader # TIFF; isThisType(String) is slow
+loci.formats.AndorReader # TIFF; isThisType(String) is slow
 loci.formats.TiffReader
 loci.formats.AVIReader
-loci.formats.ImageJReader # needs ImageJ
-loci.formats.NativeQTReader
-loci.formats.QTReader # needs QTJ
-#loci.formats.NativePictReader
-loci.formats.PictReader # needs QTJ
-loci.formats.OpenlabReader # needs QTJ; isThisType(String) is slow
-loci.formats.OMEXMLReader
+loci.formats.ImageJReader # ImageJ
+loci.formats.QTReader # QTJ (fallback)
+loci.formats.LegacyPictReader # QTJ
+loci.formats.OpenlabReader # QTJ; isThisType(String) is slow
