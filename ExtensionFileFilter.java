@@ -86,7 +86,13 @@ public class ExtensionFileFilter extends FileFilter
     return false;
   }
 
-  /** return the filter's description */
+  /** Gets the filter's first valid extension. */
+  public String getExtension() { return exts[0]; }
+
+  /** Gets the filter's valid extensions. */
+  public String[] getExtensions() { return exts; }
+
+  /** Gets the filter's description */
   public String getDescription() { return desc; }
 
 
