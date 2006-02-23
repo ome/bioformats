@@ -37,6 +37,7 @@ public class LegacyPictReader extends FormatReader {
   /** Helper reader for reading PICT data with QTJava library. */
   private static LegacyQTReader qtReader = new LegacyQTReader();
 
+
   // -- Constructor --
 
   /** Constructs a new PICT reader. */
@@ -60,10 +61,7 @@ public class LegacyPictReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-
-    if (no != 0) {
-      throw new FormatException("Invalid image number: " + no);
-    }
+    if (no != 0) throw new FormatException("Invalid image number: " + no);
 
     // read in PICT data
     File file = new File(id);
@@ -83,8 +81,8 @@ public class LegacyPictReader extends FormatReader {
   }
 
   /** Closes any open files. */
-  public void close() throws FormatException, IOException {
-  }
+  public void close() throws FormatException, IOException { }
+
 
   // -- Main method --
 

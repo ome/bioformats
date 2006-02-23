@@ -1,23 +1,19 @@
 LOCI Bio-Formats things to do (either Melissa or Curtis):
 
-Implement readers for file formats listed at
+QuickTime:
+* Implement LegacyQTWriter based on ImageJ QT writer plugin.
+* Implement native QTWriter for saving uncompressed QuickTime movies.
+* Implement codecs for QTReader.
+
+PICT:
+* Implement native PictReader, falling back to LegacyPictReader if necessary.
+* Use new PictReader in OpenlabReader.
+
+Implement readers for other file formats listed at
     http://www.loci.wisc.edu/visbio/formats.html
 
-Implement robust native writer for QT format.
-
-Possibly implement an alternative method for pixel extraction, other than the
-BufferedImage one (such "byte[] openBytes(String, int)" in addition to
-"BufferedImage openImage(String, int)"), for use with OMERO.
-
-Solve problem created when we have multiple readers for a single file type
-(e.g., LegacyZVIReader and ZeissZVIReader) that each handle a different subset
-of images.
-  * The easiest solution is for the "faster" reader to be dominant, but call
-    the "slower" reader directly if it detects that it cannot handle the file.
-
-Simultaneous use of multiple QT forms to read from multiple QuickTime files
-(one per form) must be made more efficient, or else the native QT reader must
-be improved to handle all codecs used by our sample data. The same goes for the
-Openlab form (with native PICT support).
-
 Adapt VisBio to take advantage of LOCI Bio-Formats package.
+
+Eventually (later) implement an alternative method for pixel extraction, other
+than the BufferedImage one (such "byte[] openBytes(String, int)" in addition to
+"BufferedImage openImage(String, int)"), for use with OMERO.
