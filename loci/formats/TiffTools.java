@@ -1282,7 +1282,8 @@ public abstract class TiffTools {
       return deflateUncompress(input);
     }
     else if (compression == THUNDERSCAN) {
-      return thunderScanUncompress(input);
+      throw new FormatException("Sorry, Thunderscan compression mode is not " +
+        "supported");
     }
     else {
       throw new FormatException(
@@ -1306,144 +1307,6 @@ public abstract class TiffTools {
     }
   }
 
-
-  /**
-   * Decodes a ThunderScan compressed image.
-   * Much of this code was adapted from the LibTIFF library (source available
-   * at ftp://ftp.sgi.com/graphics/tiff/tiff-v3.4beta037.tar.gz)
-   *
-   * Note that this method may be broken, since we have just one sample, and
-   * there is little information available on the ThunderScan compression type.
-   */
-  public static byte[] thunderScanUncompress(byte[] input)
-    throws FormatException
-  {
-    // -- MELISSA TODO -- this is broken
-    // cross our fingers that this works, since I can't read C code
-
-    /*
-    int[] twoBit = new int[] {0, 1, 0, -1};
-    int[] threeBit = new int[] {0, 1, 2, 3, 0, -3, -2, -1};
-
-    int lastPixel = 0;
-    int nPixels = 0;
-
-    Vector bytes = new Vector();
-    int cc = input.length;
-    int pt = 0;
-    while (cc > 0) {
-      int n, delta;
-
-      n = input[pt];
-      pt++;
-      cc--;
-
-      switch (n) {
-      //switch (n & CODE) {
-        case RUN :
-          // run of pixels
-          // replicate the last pixel n times, where n is the low order 6 bits
-          //if ((nPixels & 1) != 0) {
-          if (nPixels != 0) {
-            bytes.insertElementAt(new Byte((byte) (input[0] | lastPixel)), 0);
-            pt = 1;
-            lastPixel = input[pt]; nPixels++; n--;
-            pt++;
-          }
-          else {
-            lastPixel |= lastPixel << 4;
-          }
-          nPixels += n;
-          for (; n > 0; n -= 2) {
-            //bytes.insertElementAt(new Byte((byte) lastPixel), pt);
-            bytes.add(new Byte((byte) lastPixel));
-            pt++;
-          }
-          if (n == -1) {
-            pt--;
-            bytes.insertElementAt(new Byte((byte) (input[pt] & 0xf0)), pt);
-          }
-          lastPixel &= 0xf;
-          break;
-        case TWO_BIT_DELTAS:
-          if ((delta = ((n >> 4) & 3)) != SKIP_TWO) {
-            lastPixel = (lastPixel + twoBit[delta]) & 0xf;
-            if (nPixels++ != 0) {
-              //bytes.insertElementAt(new Byte((byte) lastPixel), pt);
-              bytes.add(new Byte((byte) lastPixel));
-              pt++;
-            }
-            else {
-              bytes.insertElementAt(new Byte((byte) (lastPixel << 4)), 0);
-            }
-          }
-          if ((delta = ((n >> 2) & 3)) != SKIP_TWO) {
-            lastPixel = (lastPixel + twoBit[delta]) & 0xf;
-            if (nPixels++ != 0) {
-              //bytes.insertElementAt(new Byte((byte) lastPixel), pt);
-              bytes.add(new Byte((byte) lastPixel));
-              pt++;
-            }
-            else {
-              bytes.insertElementAt(new Byte((byte) (lastPixel << 4)), 0);
-            }
-          }
-          if ((delta = (n & 3)) != SKIP_TWO) {
-            lastPixel = (lastPixel + twoBit[delta]) & 0xf;
-            if (nPixels++ != 0) {
-              //bytes.insertElementAt(new Byte((byte) lastPixel), pt);
-              bytes.add(new Byte((byte) lastPixel));
-              pt++;
-            }
-            else {
-              bytes.insertElementAt(new Byte((byte) (lastPixel << 4)), 0);
-            }
-          }
-          break;
-        case THREE_BIT_DELTAS:
-          if ((delta = ((n >> 3) & 7)) != SKIP_THREE) {
-            lastPixel = (lastPixel + threeBit[delta]) & 0xf;
-            if (nPixels++ != 0) {
-              bytes.insertElementAt(new Byte((byte) lastPixel), pt);
-              pt++;
-            }
-            else {
-              bytes.insertElementAt(new Byte((byte) (lastPixel << 4)), 0);
-            }
-          }
-          if ((delta = (n & 7)) != SKIP_THREE) {
-            lastPixel = (lastPixel + threeBit[delta]) & 0xf;
-            if (nPixels++ != 0) {
-              bytes.insertElementAt(new Byte((byte) lastPixel), pt);
-              pt++;
-            }
-            else {
-              bytes.insertElementAt(new Byte((byte) (lastPixel << 4)), 0);
-            }
-          }
-          break;
-        case RAW:
-          lastPixel = n & 0xf;
-          if (nPixels++ != 0) {
-            bytes.insertElementAt(new Byte((byte) lastPixel), pt);
-            pt++;
-          }
-          else {
-            bytes.insertElementAt(new Byte((byte) (lastPixel << 4)), 0);
-          }
-          break;
-      }
-    }
-    input = new byte[bytes.size()];
-    for (int i=0; i<input.length; i++) {
-      input[i] = ((Byte) bytes.get(i)).byteValue();
-    }
-
-    return input;
-    */
-    throw new FormatException("Sorry, Thunderscan compression is not " +
-      "supported.  It will be added in the near future.");
-  }
 
   /** Decodes an Adobe Deflate (Zip) compressed image strip. */
   public static byte[] deflateUncompress(byte[] input) throws FormatException {
