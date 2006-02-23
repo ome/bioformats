@@ -23,389 +23,330 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.*;
-import java.awt.image.*;
+import java.lang.*;
 import java.io.*;
-import java.net.*;
+import java.awt.*;
+import java.util.Vector;
 
 /**
  * QTReader is the file format reader for QuickTime movie files.
- * To use it, QuickTime for Java must be installed.
+ * It does not require any external libraries to be installed.
  *
- * Much of this reader's code was adapted from Wayne Rasband's
- * QuickTime Movie Opener plugin for ImageJ
- * (available at http://rsb.info.nih.gov/ij/).
+ * Currently, compressed movies are not supported, although video codecs will
+ * be added as time permits.
  *
- * TODO -- address efficiency issues; currently 200-550ms are required to
- *         process each plane, with an additional 2500+ ms of overhead
+ * @author Melissa Linkert linkert at cs.wisc.edu
  */
 public class QTReader extends FormatReader {
 
   // -- Constants --
 
-  public static final String NO_QT_MSG = "You need to install " +
-    "QuickTime for Java from http://www.apple.com/quicktime/";
-
-  public static final String EXPIRED_QT_MSG = "Your version of " +
-    "QuickTime for Java has expired";
-
-  protected static final String[] SUFFIXES = { "mov" };
-
-  protected static final boolean MAC_OS_X =
-    System.getProperty("os.name").equals("Mac OS X");
-
-  // -- Static fields --
-
-  /**
-   * This custom class loader searches additional paths for the QTJava.zip
-   * library. Java has a restriction where only one class loader can have a
-   * native library loaded within a JVM. So the class loader must be static,
-   * shared by all QTForms, or else an UnsatisfiedLinkError is thrown when
-   * attempting to initialize QTJava within multiple QTForms.
-   */
-  protected static final ClassLoader LOADER = constructLoader();
-
-  protected static ClassLoader constructLoader() {
-    // set up additional QuickTime for Java paths
-    URL[] paths = null;
-    try {
-      paths = new URL[] {
-        // Windows
-        new URL("file:/WinNT/System32/QTJava.zip"),
-        new URL("file:/Program Files/QuickTime/QTSystem/QTJava.zip"),
-        new URL("file:/Windows/System32/QTJava.zip"),
-        new URL("file:/Windows/System/QTJava.zip"),
-        // Mac OS X
-        new URL("file:/System/Library/Java/Extensions/QTJava.zip")
-      };
-    }
-    catch (MalformedURLException exc) { }
-    return paths == null ? null : new URLClassLoader(paths);
-  }
+  /** List of identifiers for each container atom. */
+  private static final String[] CONTAINER_TYPES = {
+    "moov", "trak", "udta", "tref", "imap", "mdia", "minf", "stbl", "edts",
+    "mdra", "rmra", "imag", "vnrp", "dinf"
+  };
 
 
   // -- Fields --
 
-  /** Flag indicating this reader has been initialized. */
-  protected boolean initialized = false;
+  /** Current file. */
+  private RandomAccessFile in;
 
-  /** Flag indicating QuickTime for Java is not installed. */
-  protected boolean noQT = false;
+  /** Flag indicating whether the current file is little endian. */
+  private boolean little = false;
 
-  /** Flag indicating QuickTime for Java has expired. */
-  protected boolean expiredQT = false;
+  /** Number of images in the file. */
+  private int numImages;
 
-  /** Reflection tool for QuickTime for Java calls. */
-  protected ReflectedUniverse r;
+  /** Pixel data stored in "mdat" atom. */
+  private byte[] pixels;
 
-  /** Number of images in current QuickTime movie. */
-  protected int numImages;
+  /** Width of a single plane. */
+  private int width;
 
-  /** Time increment between frames. */
-  protected int timeStep;
+  /** Height of a single plane. */
+  private int height;
 
-  /** Flag indicating QuickTime frame needs to be redrawn. */
-  protected boolean needsRedrawing;
+  /** Pixel depth. */
+  private int bitsPerPixel;
 
-  /** Image containing current frame. */
-  protected Image image;
+  /** Raw plane size, in bytes. */
+  private int rawSize;
+
+  /** Offsets to each plane's pixel data. */
+  private Vector offsets;
+
+  /** Pixel data for the previous image plane. */
+  private byte[] prevPixels;
+
+  /** Video codec used by this movie. */
+  private String codec;
+
+  /** An instance of the old QuickTime reader, in case this one fails. */
+  private LegacyQTReader legacy;
 
 
   // -- Constructor --
 
-  /** Constructs a new QT reader. */
+  /** Constructs a new QuickTime reader. */
   public QTReader() { super("QuickTime", "mov"); }
-
-
-  // -- QTReader API methods --
-
-  /** Initializes the QuickTime reader. */
-  protected void initReader() {
-    if (initialized) return;
-    boolean needClose = false;
-    r = new ReflectedUniverse(LOADER);
-    try {
-      r.exec("import quicktime.QTSession");
-      r.exec("QTSession.open()");
-      needClose = true;
-      if (MAC_OS_X) {
-        r.exec("import quicktime.app.view.QTImageProducer");
-        r.exec("import quicktime.app.view.MoviePlayer");
-        r.exec("import quicktime.std.movies.TimeInfo");
-      }
-      else {
-        r.exec("import quicktime.app.display.QTCanvas");
-        r.exec("import quicktime.app.image.ImageUtil");
-        r.exec("import quicktime.app.image.JImagePainter");
-        r.exec("import quicktime.app.image.QTImageDrawer");
-        r.exec("import quicktime.app.image.QTImageProducer");
-        r.exec("import quicktime.app.image.Redrawable");
-        r.exec("import quicktime.app.players.MoviePlayer");
-      }
-      r.exec("import quicktime.io.OpenMovieFile");
-      r.exec("import quicktime.io.QTFile");
-      r.exec("import quicktime.qd.Pict");
-      r.exec("import quicktime.qd.QDDimension");
-      r.exec("import quicktime.qd.QDGraphics");
-      r.exec("import quicktime.qd.QDRect");
-      r.exec("import quicktime.std.StdQTConstants");
-      r.exec("import quicktime.std.image.CodecComponent");
-      r.exec("import quicktime.std.image.CompressedFrameInfo");
-      r.exec("import quicktime.std.image.CSequence");
-      r.exec("import quicktime.std.image.ImageDescription");
-      r.exec("import quicktime.std.image.QTImage");
-      r.exec("import quicktime.std.movies.Movie");
-      r.exec("import quicktime.std.movies.Track");
-      r.exec("import quicktime.std.movies.media.VideoMedia");
-      r.exec("import quicktime.util.QTHandle");
-      r.exec("import quicktime.util.RawEncodedImage");
-    }
-    catch (ExceptionInInitializerError err) {
-      noQT = true;
-      Throwable t = err.getException();
-      if (t instanceof SecurityException) {
-        SecurityException exc = (SecurityException) t;
-        if (exc.getMessage().indexOf("expired") >= 0) expiredQT = true;
-      }
-    }
-    catch (Throwable t) { noQT = true; }
-    finally {
-      if (needClose) {
-        try { r.exec("QTSession.close()"); }
-        catch (Throwable t) { }
-      }
-      initialized = true;
-    }
-  }
 
 
   // -- FormatReader API methods --
 
   /** Checks if the given block is a valid header for a QuickTime file. */
-  public boolean isThisType(byte[] block) { return false; }
+  public boolean isThisType(byte[] block) {
+    return false;
+  }
 
   /** Determines the number of images in the given QuickTime file. */
   public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+    if(!id.equals(currentId)) initFile(id);
     return numImages;
   }
 
   /** Obtains the specified image from the given QuickTime file. */
-  public Image open(String id, int no)
-    throws FormatException, IOException
-  {
+  public Image open(String id, int no) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-
-    if (expiredQT) throw new FormatException(EXPIRED_QT_MSG);
-    if (noQT) throw new FormatException(NO_QT_MSG);
-
-    // paint frame into image
-    try {
-      r.setVar("time", timeStep * no);
-      r.exec("moviePlayer.setTime(time)");
-      r.exec("qtip.redraw(null)");
-      r.exec("qtip2 = new QTImageProducer(moviePlayer, dim)");
-      ImageProducer qtip2 = (ImageProducer) r.getVar("qtip2");
-      image = Toolkit.getDefaultToolkit().createImage(qtip2);
-      r.exec("qtip2.redraw(null)");
-    }
-    catch (ReflectException re) {
-      throw new FormatException("Open movie failed", re);
+    if (!codec.equals("raw ")) {
+      if (legacy == null) legacy = new LegacyQTReader();
+      return legacy.open(id, no);
     }
 
-    return image;
+    int offset = ((Integer) offsets.get(no)).intValue();
+    int nextOffset = pixels.length;
+    if (no < offsets.size() - 1) {
+      nextOffset = ((Integer) offsets.get(no+1)).intValue();
+    }
+    byte[] pixs = new byte[nextOffset - offset];
+
+    for (int i=0; i<pixs.length; i++) {
+      pixs[i] = pixels[offset + i];
+    }
+
+    byte[] bytes = uncompress(pixs, codec);
+    prevPixels = bytes;
+
+    if (bitsPerPixel <= 8) {
+      return ImageTools.makeImage(bytes, width, height, 1, false);
+    }
+    else if (bitsPerPixel == 16) {
+      short[] newPix = new short[bytes.length / 2 + 1];
+      for (int i=0; i<bytes.length; i+=2) {
+        newPix[i/2] = DataTools.bytesToShort(bytes, i, little);
+      }
+      return ImageTools.makeImage(newPix, width, height, 1, false);
+    }
+    else if (bitsPerPixel == 32) {
+      int[] newPix = new int[bytes.length / 4];
+      for (int i=0; i<bytes.length; i+=4) {
+        newPix[i/4] = DataTools.bytesToInt(bytes, i, little);
+      }
+      return ImageTools.makeImage(newPix, width, height, 1, false);
+    }
+    else {
+      if (legacy == null) legacy = new LegacyQTReader();
+      return legacy.open(id, no);
+    }
   }
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
-    if (currentId == null) return;
-    if (!initialized) initReader();
-
-    try {
-      r.exec("openMovieFile.close()");
-      r.exec("QTSession.close()");
-    }
-    catch (ReflectException e) {
-      throw new FormatException("Close movie failed", e);
-    }
+    if (in != null) in.close();
+    in = null;
     currentId = null;
   }
 
   /** Initializes the given QuickTime file. */
-  protected void initFile(String id)
-    throws FormatException, IOException
-  {
-    if (!initialized) initReader();
-    if (expiredQT) throw new FormatException(EXPIRED_QT_MSG);
-    if (noQT) throw new FormatException(NO_QT_MSG);
-
+  protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
+    in = new RandomAccessFile(id, "r");
+    offsets = new Vector();
+    parse(0, 0, in.length());
+    numImages = offsets.size();
+  }
 
-    try {
-      r.exec("QTSession.open()");
 
-      // open movie file
-      File file = new File(id);
-      r.setVar("path", file.getAbsolutePath());
-      r.exec("qtf = new QTFile(path)");
-      r.exec("openMovieFile = OpenMovieFile.asRead(qtf)");
-      r.exec("m = Movie.fromFile(openMovieFile)");
+  // -- Helper methods --
 
-      // find first track with width != soundtrack
-      int numTracks = ((Integer) r.exec("m.getTrackCount()")).intValue();
-      int trackMostLikely = 0;
-      int trackNum = 0;
-      while (++trackNum <= numTracks && trackMostLikely == 0) {
-        r.setVar("trackNum", trackNum);
-        r.exec("imageTrack = m.getTrack(trackNum)");
-        r.exec("d = imageTrack.getSize()");
-        Integer w = (Integer) r.exec("d.getWidth()");
-        if (w.intValue() > 0) trackMostLikely = trackNum;
+  /** Parse all of the atoms in the file. */
+  public void parse(int depth, long offset, long length) throws IOException {
+    while (offset < length) {
+      in.seek(offset);
+      // first 4 bytes are the atom size
+      long atomSize = DataTools.read4UnsignedBytes(in, little);
+
+      // read the atom type
+      byte[] four = new byte[4];
+      in.read(four);
+      String atomType = new String(four);
+
+      // if atomSize is 1, then there is an 8 byte extended size
+      if (atomSize == 1) {
+        atomSize = DataTools.read8SignedBytes(in, little);
       }
 
-      r.setVar("trackMostLikely", trackMostLikely);
-      r.exec("imageTrack = m.getTrack(trackMostLikely)");
-      r.exec("d = imageTrack.getSize()");
-      Integer w = (Integer) r.exec("d.getWidth()");
-      Integer h = (Integer) r.exec("d.getHeight()");
-      // now use controller to step movie
-      r.exec("moviePlayer = new MoviePlayer(m)");
-      r.setVar("dim", new Dimension(w.intValue(), h.intValue()));
-      ImageProducer qtip = (ImageProducer)
-        r.exec("qtip = new QTImageProducer(moviePlayer, dim)");
-      image = Toolkit.getDefaultToolkit().createImage(qtip);
-      needsRedrawing = ((Boolean) r.exec("qtip.isRedrawing()")).booleanValue();
-      int maxTime = ((Integer) r.exec("m.getDuration()")).intValue();
+      if (atomSize < 0) {
+        System.out.println("Invalid atom size : " + atomSize);
+      }
 
-      if (MAC_OS_X) {
-        r.setVar("zero", 0);
-        r.setVar("one", 1f);
-        r.exec("timeInfo = new TimeInfo(zero, zero)");
-        r.exec("moviePlayer.setTime(zero)");
-        numImages = 0;
-        int time = 0;
-        do {
-          numImages++;
-          r.exec("timeInfo = imageTrack.getNextInterestingTime(" +
-            "StdQTConstants.nextTimeMediaSample, timeInfo.time, one)");
-          time = ((Integer) r.getVar("timeInfo.time")).intValue();
-        }
-        while (time >= 0);
+      byte[] data = new byte[0];
+
+      // if this is a container atom, parse the children
+      if (isContainer(atomType)) {
+        parse(depth++, in.getFilePointer(), offset + atomSize);
       }
       else {
-        r.exec("seq = ImageUtil.createSequence(imageTrack)");
-        numImages = ((Integer) r.exec("seq.size()")).intValue();
+        if (atomSize == 0) atomSize = in.length();
+        data = new byte[(int) atomSize];
+        in.read(data);
+
+        if (atomType.equals("mdat")) {
+          // we've found the pixel data
+          pixels = data;
+        }
+        else if (atomType.equals("tkhd")) {
+          // we've found the dimensions
+
+          int off = 74;
+          width = DataTools.bytesToInt(data, off, little);
+          off += 4;
+          height = DataTools.bytesToInt(data, off, little);
+        }
+        else if (atomType.equals("stco")) {
+          // we've found the plane offsets
+
+          int numPlanes = DataTools.bytesToInt(data, 4, little);
+          if (numPlanes != numImages) {
+            int off = DataTools.bytesToInt(data, 8, little);
+            offsets.add(new Integer(off));
+            for (int i=1; i<numImages; i++) {
+              offsets.add(new Integer(off + i*rawSize));
+            }
+          }
+          else {
+            int j = 8;
+            for (int i=0; i<numPlanes; i++) {
+              offsets.add(new Integer(DataTools.bytesToInt(data, j, little)));
+              j += 4;
+            }
+          }
+        }
+        else if (atomType.equals("stsd")) {
+          // found video codec and pixel depth information
+          codec = new String(data, 12, 4);
+          bitsPerPixel = DataTools.bytesToInt(data, 90, 2, little);
+        }
+        else if (atomType.equals("stsz")) {
+          // found the number of planes
+          rawSize = DataTools.bytesToInt(data, 4, 4, little);
+          numImages = DataTools.bytesToInt(data, 8, 4, little);
+        }
       }
 
-      timeStep = maxTime / numImages;
-    }
-    catch (Exception e) {
-      throw new FormatException("Open movie failed", e);
-    }
-  }
+      if (atomSize == 0) offset = in.length();
+      else offset += atomSize;
 
-  // -- QTReader API methods --
-
-  /** Whether QuickTime is available to this JVM. */
-  public boolean canDoQT() {
-    if (!initialized) initReader();
-    return !noQT;
-  }
-
-  /** Whether QuickTime for Java has expired. */
-  public boolean isQTExpired() {
-    if (!initialized) initReader();
-    return expiredQT;
-  }
-
-  /** Gets QuickTime for Java reflected universe. */
-  public ReflectedUniverse getUniverse() {
-    if (!initialized) initReader();
-    return r;
-  }
-
-  /** Gets width and height for the given PICT bytes. */
-  public Dimension getPictDimensions(byte[] bytes)
-    throws FormatException, ReflectException
-  {
-    if (!initialized) initReader();
-    if (expiredQT) throw new FormatException(EXPIRED_QT_MSG);
-    if (noQT) throw new FormatException(NO_QT_MSG);
-
-    try {
-      r.exec("QTSession.open()");
-      r.setVar("bytes", bytes);
-      r.exec("pict = new Pict(bytes)");
-      r.exec("box = pict.getPictFrame()");
-      int width = ((Integer) r.exec("box.getWidth()")).intValue();
-      int height = ((Integer) r.exec("box.getHeight()")).intValue();
-      r.exec("QTSession.close()");
-      return new Dimension(width, height);
-    }
-    catch (Exception e) {
-      r.exec("QTSession.close()");
-      throw new FormatException("PICT height determination failed", e);
+      // if a 'udta' atom, skip ahead 4 bytes
+      if (atomType.equals("udta")) offset += 4;
+      //print(depth, atomSize, atomType, data);
     }
   }
 
-  /** Converts the given byte array in PICT format to a Java image. */
-  public synchronized Image pictToImage(byte[] bytes)
-    throws FormatException
-  {
-    if (!initialized) initReader();
-    if (expiredQT) throw new FormatException(EXPIRED_QT_MSG);
-    if (noQT) throw new FormatException(NO_QT_MSG);
-
-    try {
-      r.exec("QTSession.open()");
-
-      // Code adapted from:
-      //   http://www.onjava.com/pub/a/onjava/2002/12/23/jmf.html?page=2
-      r.setVar("bytes", bytes);
-      r.exec("pict = new Pict(bytes)");
-      r.exec("box = pict.getPictFrame()");
-      int width = ((Integer) r.exec("box.getWidth()")).intValue();
-      int height = ((Integer) r.exec("box.getHeight()")).intValue();
-      // note: could get a RawEncodedImage from the Pict, but
-      // apparently no way to get a PixMap from the REI
-      r.exec("g = new QDGraphics(box)");
-      r.exec("pict.draw(g, box)");
-      // get data from the QDGraphics
-      r.exec("pixMap = g.getPixMap()");
-      r.exec("rei = pixMap.getPixelData()");
-
-      // copy bytes to an array
-      int rowBytes = ((Integer) r.exec("pixMap.getRowBytes()")).intValue();
-      int intsPerRow = rowBytes / 4;
-      int pixLen = intsPerRow * height;
-      r.setVar("pixLen", pixLen);
-      int[] pixels = new int[pixLen];
-      r.setVar("pixels", pixels);
-      r.setVar("zero", new Integer(0));
-      r.exec("rei.copyToArray(zero, pixels, zero, pixLen)");
-
-      // now coax into image, ignoring alpha for speed
-      int bitsPerSample = 32;
-      int redMask = 0x00ff0000;
-      int greenMask = 0x0000ff00;
-      int blueMask = 0x000000ff;
-      int alphaMask = 0x00000000;
-      DirectColorModel colorModel = new DirectColorModel(
-        bitsPerSample, redMask, greenMask, blueMask, alphaMask);
-
-      r.exec("QTSession.close()");
-      return Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(
-        width, height, colorModel, pixels, 0, intsPerRow));
+  /** Checks if the given String is a container atom type. */
+  public boolean isContainer(String type) {
+    for(int i=0; i<CONTAINER_TYPES.length; i++) {
+      if(type.equals(CONTAINER_TYPES[i])) return true;
     }
-    catch (Exception e) {
-      try { r.exec("QTSession.close()"); }
-      catch (ReflectException exc) { exc.printStackTrace(); }
-      throw new FormatException("PICT extraction failed", e);
+    return false;
+  }
+
+  /** Debugging method; prints information on an atom. */
+  public void print(int depth, long size, String type, byte[] data) {
+    for (int i=0; i<depth; i++) System.out.print(" ");
+    System.out.print(type + " : [" + size + "]\n");
+  }
+
+  /** Uncompresses an image plane according to the the codec identifier. */
+  public byte[] uncompress(byte[] pixs, String code) throws FormatException {
+    if (code.equals("raw ")) return pixs;
+    else if (code.equals("rle ")) return rleUncompress(pixs);
+    else {
+      throw new FormatException("Sorry, " + codec + " codec is not supported");
     }
+  }
+
+  /** Uncompresses a QT RLE compressed image plane. */
+  public byte[] rleUncompress(byte[] pixs) throws FormatException {
+    // -- TODO -- broken
+
+    /* debug */
+    // print out the first 30 bytes
+    System.out.println();
+    for (int i=0; i<30; i++) {
+      System.out.print(pixs[i] + " ");
+    }
+    System.out.println();
+
+    int pt = 8;
+    long size = DataTools.bytesToInt(pixs, pt, 4, little);
+    pt += 4;
+    if (size < 0) size += 4294967296L;
+
+    // this frame is the same as the one before it
+    if (size < 8) return prevPixels;
+
+    int header = DataTools.bytesToInt(pixs, pt, 2, little);
+    pt += 2;
+
+    Vector output = new Vector();
+
+    if (header == 0) {
+      int skip = 1;  // always one more than the number of bytes to skip
+      while (skip != 0) {
+        skip = pixs[pt];
+        pt++;
+        int rleCode = 0;
+
+        while (rleCode != -1) {
+          if (skip == 0) break;  // finished decoding
+          pt += skip;
+          rleCode = pixs[pt];
+          pt++;
+
+          if (rleCode > 0) {
+            // copy the pixels directly to output buffer
+            for (int i=0; i<rleCode; i++) {
+              output.add(new Byte(pixs[pt]));
+              pt++;
+            }
+          }
+          else if (rleCode < -1) {
+            // grab next byte and repeat it -(rleCode) times
+            for (int i=0; i<-1*rleCode; i++) {
+              output.add(new Byte(pixs[pt]));
+            }
+          }
+          else if (rleCode == 0) {
+            skip = pixs[pt];
+            pt++;
+          }
+        }
+      }
+    }
+    else {
+      throw new FormatException("Sorry, unsupported header : " + header);
+    }
+
+    byte[] toRtn = new byte[output.size()];
+    for (int i=0; i<toRtn.length; i++) {
+      toRtn[i] = ((Byte) output.get(i)).byteValue();
+    }
+    return toRtn;
   }
 
 
