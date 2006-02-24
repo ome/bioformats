@@ -46,7 +46,7 @@ import loci.visbio.view.DisplayManager;
 import visad.util.*;
 
 /** VisBioFrame is the main GUI frame for VisBio. */
-public class VisBioFrame extends GUIFrame implements SpawnListener {
+public class VisBioFrame extends GUIFrame implements Runnable, SpawnListener {
 
   // -- Constants --
 
@@ -126,7 +126,6 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
       LogicManager[] lm = {
         sm, // StateManager
         om, // OptionManager
-        new ClassManager(this),
         wm, // WindowManager
         new HelpManager(this),
         new PanelManager(this),
@@ -177,6 +176,11 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
         }
         splash.setVisible(false);
         splash = null;
+      }
+
+      // preload classes
+      if (true) {
+        new Thread(this).start();
       }
 
       // determine if VisBio crashed last time
@@ -380,6 +384,51 @@ public class VisBioFrame extends GUIFrame implements SpawnListener {
     String cmd = e.getActionCommand();
     if (cmd.lastIndexOf(".") < 0) super.actionPerformed(e);
     else call(cmd);
+  }
+
+
+  // -- Runnable API methods --
+
+  /** Preloads relevant classes. */
+  public void run() {
+    TaskManager tm = (TaskManager) getManager(TaskManager.class);
+    BioTask task = tm.createTask("Preload classes");
+
+    // extract classes to preload from data file
+    task.setStatus("Reading classes list");
+    Vector preloadClasses = new Vector();
+    try {
+      InputStream rc = getClass().getResourceAsStream("classes.txt");
+      if (rc != null) {
+        BufferedReader fin = new BufferedReader(new InputStreamReader(rc));
+        while (true) {
+          String line = fin.readLine();
+          if (line == null) break; // eof
+          preloadClasses.add(line);
+        }
+        fin.close();
+      }
+    }
+    catch (IOException exc) { } // ignore data file I/O errors
+
+    // preload classes
+    int size = preloadClasses.size();
+    String pkg = "";
+    for (int i=0; i<size; i++) {
+      String className = (String) preloadClasses.elementAt(i);
+      int dot = className.lastIndexOf(".");
+      String prefix = className.substring(0, dot);
+      if (!prefix.equals(pkg)) {
+        pkg = prefix;
+        task.setStatus(i, size, pkg);
+      }
+      else task.setStatus(i, size);
+
+      // preload class, ignoring errors
+      try { Class.forName(className); }
+      catch (Throwable t) { }
+    }
+    task.setCompleted();
   }
 
 
