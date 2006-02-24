@@ -27,12 +27,12 @@ import java.awt.event.KeyEvent;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
+import loci.formats.ExtensionFileFilter;
 import loci.visbio.*;
 import loci.visbio.util.SwingUtil;
 import loci.visbio.util.XMLUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import visad.util.ExtensionFileFilter;
 
 /** StateManager is the manager encapsulating VisBio's state logic. */
 public class StateManager extends LogicManager {

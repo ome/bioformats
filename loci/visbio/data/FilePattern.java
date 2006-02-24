@@ -238,6 +238,13 @@ public class FilePattern {
     return s <= e ? pattern.substring(s, e) : null;
   }
 
+  /** Gets the pattern's text string before each numerical block. */
+  public String[] getPrefixes() {
+    String[] s = new String[startIndex.length];
+    for (int i=0; i<s.length; i++) s[i] = getPrefix(i);
+    return s;
+  }
+
 
   // -- Utility methods --
 

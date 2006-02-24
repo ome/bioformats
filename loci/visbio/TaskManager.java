@@ -25,7 +25,7 @@ package loci.visbio;
 
 import loci.visbio.help.HelpManager;
 
-/** TaskManager is the manager encapsulating VisBio's data transform logic. */
+/** TaskManager is the manager encapsulating VisBio's multitasking logic. */
 public class TaskManager extends LogicManager {
 
   // -- Control panel --

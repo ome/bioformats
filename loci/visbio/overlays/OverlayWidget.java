@@ -36,9 +36,9 @@ import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.*;
 import javax.swing.text.Document;
+import loci.formats.ExtensionFileFilter;
 import loci.visbio.data.*;
 import loci.visbio.util.*;
-import visad.util.ExtensionFileFilter;
 
 /** OverlayWidget is a set of GUI controls for an overlay transform. */
 public class OverlayWidget extends JPanel implements ActionListener,

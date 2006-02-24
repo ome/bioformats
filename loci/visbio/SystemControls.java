@@ -32,11 +32,9 @@ import java.awt.event.ActionListener;
 import java.util.Enumeration;
 import java.util.Properties;
 import javax.swing.*;
+import loci.formats.*;
 import loci.visbio.ext.MatlabUtil;
 import loci.visbio.util.*;
-import visad.VisADException;
-import visad.data.qt.QTForm;
-import visad.util.ReflectedUniverse;
 import visad.util.Util;
 
 /** SystemControls is the control panel for reporting system information. */
@@ -113,16 +111,16 @@ public class SystemControls extends ControlPanel implements ActionListener {
     // QuickTime library text field
     String qtVersion = null;
     try {
-      QTForm qtForm = new QTForm();
-      if (qtForm.isQTExpired()) qtVersion = "Expired";
+      LegacyQTReader qtReader = new LegacyQTReader();
+      if (qtReader.isQTExpired()) qtVersion = "Expired";
       else {
-        ReflectedUniverse r = qtForm.getUniverse();
+        ReflectedUniverse r = qtReader.getUniverse();
         String qtMajor = r.exec("QTSession.getMajorVersion()").toString();
         String qtMinor = r.exec("QTSession.getMinorVersion()").toString();
         qtVersion = qtMajor + "." + qtMinor;
       }
     }
-    catch (VisADException exc) { qtVersion = "Missing"; }
+    catch (ReflectException exc) { qtVersion = "Missing"; }
     JTextField qtField = new JTextField(qtVersion);
     qtField.setEditable(false);
 

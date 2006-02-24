@@ -25,22 +25,21 @@ package loci.visbio.view;
 
 import ij.*;
 import ij.io.FileSaver;
-import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.File;
 import java.rmi.RemoteException;
 import java.util.Vector;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
+import loci.formats.*;
 import loci.visbio.SystemManager;
 import loci.visbio.WindowManager;
 import loci.visbio.state.*;
 import loci.visbio.util.*;
 import org.w3c.dom.Element;
 import visad.*;
-import visad.data.avi.AVIForm;
-import visad.util.*;
+import visad.util.Util;
 
 /** Provides logic for capturing display screenshots and movies. */
 public class CaptureHandler implements Saveable {
@@ -110,7 +109,7 @@ public class CaptureHandler implements Saveable {
   public CapturePanel getPanel() { return panel; }
 
   /** Gets a snapshot of the display. */
-  public Image getSnapshot() { return window.getDisplay().getImage(); }
+  public BufferedImage getSnapshot() { return window.getDisplay().getImage(); }
 
   /** Saves a snapshot of the display to a file specified by the user. */
   public void saveSnapshot() {
@@ -194,53 +193,30 @@ public class CaptureHandler implements Saveable {
     final int total = (size - 1) * framesPerTrans + 1;
 
     // get output filename(s) from the user
-    String file = null;
-    int dot = -1;
+    String name = null;
     boolean tiff = false, jpeg = false;
     if (movie) {
       int rval = movieBox.showSaveDialog(captureWindow);
       if (rval != JFileChooser.APPROVE_OPTION) return;
-      file = movieBox.getSelectedFile().getPath();
-      if (file.indexOf(".") < 0) file = file + ".avi";
+      name = movieBox.getSelectedFile().getPath();
+      if (name.indexOf(".") < 0) name += ".avi";
     }
     else {
       int rval = imageBox.showSaveDialog(captureWindow);
       if (rval != JFileChooser.APPROVE_OPTION) return;
-      file = imageBox.getSelectedFile().getPath();
+      name = imageBox.getSelectedFile().getPath();
+      String sel = ((ExtensionFileFilter)
+        imageBox.getFileFilter()).getExtension();
       String ext = "";
-      dot = file.lastIndexOf(".");
-      if (dot >= 0) ext = file.substring(dot + 1).toLowerCase();
-      tiff = ext.equals("tif") || ext.equals("tiff");
-      jpeg = ext.equals("jpg") || ext.equals("jpeg");
-      FileFilter filter = imageBox.getFileFilter();
-      String desc = filter.getDescription();
-      if (desc.startsWith("JPEG")) {
-        if (!jpeg) {
-          file += ".jpg";
-          jpeg = true;
-          dot = file.lastIndexOf(".");
-        }
-      }
-      else if (desc.startsWith("TIFF")) {
-        if (!tiff) {
-          file += ".tif";
-          tiff = true;
-          dot = file.lastIndexOf(".");
-        }
-      }
-      if (!tiff && !jpeg) {
-        JOptionPane.showMessageDialog(captureWindow, "Invalid filename (" +
-          file + "): extension must be TIFF or JPEG.",
-          "Cannot create image sequence", JOptionPane.ERROR_MESSAGE);
-        return;
-      }
+      int dot = name.lastIndexOf(".");
+      if (dot >= 0) ext = name.substring(dot + 1).toLowerCase();
+      if (sel.equals("tif") && !ext.equals("tif")) name += ".tif";
+      else if (sel.equals("jpg") && !ext.equals("jpg")) name += ".jpg";
     }
 
     // capture image sequence in a separate thread
-    final boolean aviMovie = movie;
-    final String filename = file;
-    final int dotIndex = dot;
-    final boolean isTiff = tiff, isJpeg = jpeg;
+    final boolean doMovie = movie;
+    final String filename = name;
     final Vector pos = matrices;
     final int frm = framesPerTrans;
     final boolean doSine = sine;
@@ -251,73 +227,50 @@ public class CaptureHandler implements Saveable {
           window.getVisBio().getManager(WindowManager.class);
         wm.setWaitCursor(true);
 
-        // step incremental from position to position, grabbing images
+        setProgress(0, "Capturing movie");
+
+        String prefix, ext;
+        int dot = filename.lastIndexOf(".");
+        if (dot < 0) dot = filename.length();
+        String pre = filename.substring(0, dot);
+        String post = filename.substring(dot + 1);
+
+        // step incrementally from position to position, grabbing images
+        int count = 1;
+        ImageWriter writer = new ImageWriter();
         double[] mxStart = (double[]) pos.elementAt(0);
-        Image[] images = new Image[total];
-        int count = 0;
         for (int i=1; i<size; i++) {
           double[] mxEnd = (double[]) pos.elementAt(i);
           double[] mx = new double[mxStart.length];
           for (int j=0; j<frm; j++) {
-            setProgress(100 * count / total,
-              "Capturing image " + (count + 1) + "/" + total);
+            setProgress(100 * (count - 1) / total,
+              "Saving image " + count + "/" + total);
             double p = (double) j / frm;
             if (doSine) p = sine(p);
             for (int k=0; k<mx.length; k++) {
               mx[k] = p * (mxEnd[k] - mxStart[k]) + mxStart[k];
             }
-            images[count++] = captureImage(pc, mx, d);
+            BufferedImage image = captureImage(pc, mx, d);
+            String name = doMovie ? filename : (pre + count + post);
+            try { writer.save(name, image, !doMovie); }
+            catch (IOException exc) { exc.printStackTrace(); }
+            catch (FormatException exc) { exc.printStackTrace(); }
+            count++;
           }
           mxStart = mxEnd;
         }
 
         // cap off last frame
-        setProgress(100, "Capturing image " + total + "/" + total);
-        images[count] = captureImage(pc, mxStart, d);
-
-        // save movie data
-        if (aviMovie) {
-          try {
-            // convert image frames into VisAD data objects
-            FlatField[] ff = new FlatField[total];
-            for (int i=0; i<total; i++) {
-              setProgress(100 * i / total,
-                "Processing image " + (i + 1) + "/" + total);
-              ff[i] = DataUtility.makeField(images[i]);
-            }
-            setProgress(100, "Saving movie");
-
-            // compile frames into a single data object
-            RealType index = RealType.getRealType("index");
-            FieldImpl field = DataUtil.makeField(ff, index);
-
-            // write data out to AVI file
-            AVIForm saver = new AVIForm();
-            saver.setFrameRate(fps);
-            saver.save(filename, field, true);
-          }
-          catch (VisADException exc) { exc.printStackTrace(); }
-          catch (RemoteException exc) { exc.printStackTrace(); }
-          catch (IOException exc) { exc.printStackTrace(); }
-        }
-        else {
-          for (int i=0; i<total; i++) {
-            String num = "" + (i + 1);
-            int len = ("" + total).length();
-            while (num.length() < len) num = "0" + num;
-            String s = filename.substring(0, dotIndex) +
-              num + filename.substring(dotIndex);
-            setProgress(100 * i / total, "Saving " +
-              new File(s).getName() + " (" + (i + 1) + "/" + total + ")");
-            FileSaver saver = new FileSaver(new ImagePlus("null", images[i]));
-            if (isTiff) saver.saveAsTiff(s);
-            else if (isJpeg) saver.saveAsJpeg(s);
-          }
-        }
+        setProgress(100, "Saving image " + count + "/" + total);
+        BufferedImage image = captureImage(pc, mxStart, d);
+        String name = doMovie ? filename : (pre + count + post);
+        try { writer.save(name, image, true); }
+        catch (IOException exc) { exc.printStackTrace(); }
+        catch (FormatException exc) { exc.printStackTrace(); }
 
         // clean up
         setProgress(100, "Finishing up");
-        images = null;
+        image = null;
         SystemManager.gc();
 
         setProgress(0, "");
@@ -368,15 +321,15 @@ public class CaptureHandler implements Saveable {
 
       // snapshot file chooser
       imageBox = new JFileChooser();
-      imageBox.addChoosableFileFilter(new ExtensionFileFilter(
-        new String[] {"jpg", "jpeg"}, "JPEG files"));
-      imageBox.addChoosableFileFilter(new ExtensionFileFilter(
-        new String[] {"tif", "tiff"}, "TIFF files"));
+      imageBox.addChoosableFileFilter(
+        new ExtensionFileFilter("jpg", "JPEG images"));
+      imageBox.addChoosableFileFilter(
+        new ExtensionFileFilter("tif", "TIFF images"));
 
       // movie file chooser
       movieBox = new JFileChooser();
-      movieBox.addChoosableFileFilter(new ExtensionFileFilter(
-        new String[] {"avi"}, "AVI movies"));
+      movieBox.addChoosableFileFilter(
+        new ExtensionFileFilter("avi", "AVI movies"));
     }
 
     // set capture window state to match
@@ -441,10 +394,10 @@ public class CaptureHandler implements Saveable {
    * Takes a snapshot of the given display
    * with the specified projection matrix.
    */
-  protected Image captureImage(ProjectionControl pc,
+  protected BufferedImage captureImage(ProjectionControl pc,
     double[] mx, DisplayImpl d)
   {
-    Image image = null;
+    BufferedImage image = null;
     try {
       pc.setMatrix(mx);
 

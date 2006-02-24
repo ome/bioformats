@@ -32,11 +32,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import javax.swing.*;
+import loci.formats.*;
 import loci.visbio.*;
 import loci.visbio.util.*;
 import visad.*;
-import visad.data.tiff.TiffForm;
-import visad.data.tiff.TiffTools;
+import visad.util.DataUtility;
 
 /**
  * ExportPane provides a full-featured set of options for exporting a
@@ -134,8 +134,7 @@ public class ExportPane extends WizardPane {
     patternField = new JTextField();
 
     // format combo box
-    String[] formats = saver.canSaveQT() ?
-      new String[] {"TIFF", "PIC", "MOV"} : new String[] {"TIFF", "PIC"};
+    String[] formats = new String[] {"TIFF", "MOV"};
     formatBox = new BioComboBox(formats);
 
     // lay out first page
@@ -207,9 +206,9 @@ public class ExportPane extends WizardPane {
     new Thread() {
       public void run() {
         try {
-          TiffForm tiffSaver = null;
+          TiffWriter tiffSaver = null;
           if (format.equals("TIFF")) {
-            tiffSaver = (TiffForm) saver.getForm(TiffForm.class);
+            tiffSaver = (TiffWriter) saver.getWriter(TiffWriter.class);
           }
           int count = 0;
           int max = tiffSaver == null ? (numTotal + numFiles) : (2 * numTotal);
@@ -262,7 +261,8 @@ public class ExportPane extends WizardPane {
                   // do horizontal differencing
                   TiffTools.putIFDValue(ifd, TiffTools.PREDICTOR, 2);
                 }
-                tiffSaver.saveImage(filename, image, ifd, true);
+                tiffSaver.saveImage(filename,
+                  DataUtility.extractImage(image, false), ifd, true);
               }
             }
             else {
@@ -300,7 +300,8 @@ public class ExportPane extends WizardPane {
                     TiffTools.putIFDValue(ifd, TiffTools.PREDICTOR, 2);
                   }
                   tiffSaver.saveImage(filename,
-                    image, ifd, j == lengths[excl] - 1);
+                    DataUtility.extractImage(image, false),
+                    ifd, j == lengths[excl] - 1);
                 }
               }
             }
@@ -313,6 +314,12 @@ public class ExportPane extends WizardPane {
             }
           }
           task.setCompleted();
+        }
+        catch (FormatException exc) {
+          exc.printStackTrace();
+          JOptionPane.showMessageDialog(dialog,
+            "Error exporting data: " + exc.getMessage(),
+            "VisBio", JOptionPane.ERROR_MESSAGE);
         }
         catch (VisADException exc) {
           exc.printStackTrace();

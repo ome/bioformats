@@ -34,12 +34,12 @@ import java.rmi.RemoteException;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
+import loci.formats.ExtensionFileFilter;
 import loci.visbio.util.*;
 import visad.*;
 import visad.browser.Convert;
 import visad.java2d.DisplayImplJ2D;
 import visad.util.ColorMapWidget;
-import visad.util.ExtensionFileFilter;
 
 /** ColorPane is a dialog pane for adjusting color settings. */
 public class ColorPane extends DialogPane

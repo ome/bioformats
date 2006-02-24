@@ -1,3 +1,11 @@
+v3.30 - Not yet released
+
+- ADDED: File formats support is now in a standalone package: LOCI Bio-Formats
+- ADDED: Support for Andor Bio-imaging Division (ABD) TIFF
+
+- FIXED: Fix bug in text overlays
+
+
 v3.22 - Tuesday, January 24, 2006
 
 - ADDED: Interface for computing transform results with external system calls

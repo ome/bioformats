@@ -31,12 +31,11 @@ import java.io.CharArrayWriter;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Enumeration;
-import java.util.Vector;
 import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
-import visad.util.*;
+import loci.formats.ImageReader;
+import visad.util.GUIFrame;
 
 /** SwingUtil contains useful Swing functions. */
 public abstract class SwingUtil {
@@ -213,128 +212,18 @@ public abstract class SwingUtil {
     if (!LAFUtil.isMacLookAndFeel()) return;
     scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
     scroll.setHorizontalScrollBarPolicy(
-        JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+      JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
   }
+
+  /** ImageReader for JFileChooser filtering. */
+  protected static ImageReader reader;
 
   /** Constructs a JFileChooser that recognizes accepted VisBio file types. */
   public static JFileChooser getVisBioFileChooser() {
-    JFileChooser dialog = new JFileChooser(System.getProperty("user.dir"));
-    Vector filters = new Vector();
-
-    // TIFF - tiff/TiffForm, bio/FluoviewTiffForm, ij/ImageJForm
-    FileFilter tiff = new ExtensionFileFilter(
-      new String[] {"tif", "tiff"}, "Multi-page TIFF stacks");
-    filters.add(tiff);
-
-    // Bio-Rad PIC - bio/BioRadForm
-    FileFilter biorad = new ExtensionFileFilter("pic", "Bio-Rad PIC files");
-    filters.add(biorad);
-
-    // Deltavision - bio/DeltavisionForm
-    FileFilter deltavision = new ExtensionFileFilter("dv",
-      "Deltavision files");
-    filters.add(deltavision);
-
-    // Gatan Digital Micrograph - bio/GatanForm
-    FileFilter gatan = new ExtensionFileFilter("dm3",
-      "Gatan Digital Micrograph images");
-    filters.add(gatan);
-
-    // Image Cytometry Standard - bio/ICSForm
-    FileFilter ics = new ExtensionFileFilter(
-      new String[] {"ics", "ids"}, "Image Cytometry Standard images");
-    filters.add(ics);
-
-    // Image-Pro Sequence - bio/ImageProSeqForm
-    FileFilter seq = new ExtensionFileFilter("seq",
-      "Image-Pro Sequence files");
-    filters.add(seq);
-
-    // Image-Pro Workspace - bio/IPWForm
-    FileFilter ipw = new ExtensionFileFilter("ipw",
-      "Image-Pro Workspace files");
-    filters.add(ipw);
-
-    // IPLab - bio/IPLabForm
-    FileFilter iplab = new ExtensionFileFilter("ipl", "IPLab files");
-    filters.add(iplab);
-
-    // Leica - bio/LeicaForm
-    FileFilter leica = new ExtensionFileFilter("lei", "Leica files");
-    filters.add(leica);
-
-    // Metamorph STK - bio/MetamorphForm
-    FileFilter metamorph = new ExtensionFileFilter("stk",
-      "Metamorph STK files");
-    filters.add(metamorph);
-
-    // Openlab LIFF - bio/OpenlabForm
-    FileFilter openlab = new ExtensionFileFilter(new String[]
-      {"lif", "liff", ""}, "Openlab LIFF files");
-    filters.add(openlab);
-
-    // PerkinElmer - bio/PerkinElmerForm
-    FileFilter perkinElmer = new ExtensionFileFilter(new String[]
-      {"tim", "zpo", "csv", "htm"}, "PerkinElmer files");
-    filters.add(perkinElmer);
-
-    // QuickTime - qt/QTForm
-    FileFilter qt = new ExtensionFileFilter("mov", "QuickTime movies");
-    filters.add(qt);
-
-    // Zeiss LSM - bio/ZeissForm
-    FileFilter lsm = new ExtensionFileFilter("lsm", "Zeiss LSM files");
-    filters.add(lsm);
-
-    // Zeiss ZVI - bio/ZVIForm
-    FileFilter zvi = new ExtensionFileFilter("zvi", "Zeiss ZVI files");
-    filters.add(zvi);
-
-    // BMP - ij/ImageJForm
-    FileFilter bmp = new ExtensionFileFilter("bmp", "BMP images");
-    filters.add(bmp);
-
-    // DICOM - ij/ImageJForm
-    FileFilter dicom = new ExtensionFileFilter("dicom", "DICOM images");
-    filters.add(dicom);
-
-    // FITS - ij/ImageJForm
-    FileFilter fits = new ExtensionFileFilter("fits", "FITS images");
-    filters.add(fits);
-
-    // GIF - ij/ImageJForm
-    FileFilter gif = new ExtensionFileFilter("gif", "GIF images");
-    filters.add(gif);
-
-    // JPEG - ij/ImageJForm
-    FileFilter jpeg = new ExtensionFileFilter(
-      new String[] {"jpg", "jpeg", "jpe"}, "JPEG images");
-    filters.add(jpeg);
-
-    // PGM - ij/ImageJForm
-    FileFilter pgm = new ExtensionFileFilter("pgm", "PGM images");
-    filters.add(pgm);
-
-    // PICT - qt/PictForm
-    FileFilter pict = new ExtensionFileFilter("pict", "PICT images");
-    filters.add(pict);
-
-    // PNG - ij/ImageJForm
-    FileFilter png = new ExtensionFileFilter("png", "PNG images");
-    filters.add(png);
-
-    // combination filter
-    FileFilter[] ff = new FileFilter[filters.size()];
-    filters.copyInto(ff);
-    FileFilter combo = new ComboFileFilter(ff, "All VisBio file types");
-
-    // add filters to dialog
-    dialog.addChoosableFileFilter(combo);
-    for (int i=0; i<ff.length; i++) dialog.addChoosableFileFilter(ff[i]);
-    dialog.setFileFilter(combo);
-
-    return dialog;
+    if (reader == null) reader = new ImageReader();
+    return reader.getFileChooser();
   }
+
 
   /** Pops up a message box, blocking the current thread. */
   public static void pause(String msg) {

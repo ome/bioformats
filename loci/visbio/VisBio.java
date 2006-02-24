@@ -33,11 +33,11 @@ import loci.visbio.util.SplashScreen;
  * VisBio is a biological visualization tool designed for easy
  * visualization and analysis of multidimensional image data.
  *
- * This class is the main gateway into the application. It creates and displays
- * a VisBioFrame via reflection, so that the splash screen appears as quickly
- * as possible, before the class loader gets too far along.
+ * This class is the main gateway into the application. It creates and
+ * displays a VisBioFrame via reflection, so that the splash screen appears
+ * as quickly as possible, before the class loader gets too far along.
  */
-public class VisBio {
+public class VisBio extends Thread {
 
   // -- Constants --
 
@@ -45,13 +45,13 @@ public class VisBio {
   public static final String TITLE = "VisBio";
 
   /** Application version. */
-  public static final String VERSION = "v3.22";
+  public static final String VERSION = "v3.22a";
 
   /** Application author. */
   public static final String AUTHOR = "Curtis Rueden, LOCI";
 
   /** Application build date. */
-  public static final String DATE = "24 January 2006";
+  public static final String DATE = "20 February 2006";
 
   /** Port to use for communicating between application instances. */
   public static final int INSTANCE_PORT = 0xabcd;
@@ -59,21 +59,14 @@ public class VisBio {
 
   // -- Constructor --
 
-  /** Ensure this class can't be instantiated. */
+  /** Ensure this class can't be externally instantiated. */
   private VisBio() { }
 
 
   // -- VisBio API methods --
 
   /** Launches the VisBio GUI with no arguments, in a separate thread. */
-  public static void startProgram() {
-    new Thread() {
-      public void run() {
-        try { launch(new String[0]); }
-        catch (Exception exc) { exc.printStackTrace(); }
-      }
-    }.start();
-  }
+  public static void startProgram() { new VisBio().start(); }
 
   /** Launches VisBio, returning the newly constructed VisBioFrame object. */
   public static Object launch(String[] args)
@@ -109,6 +102,15 @@ public class VisBio {
       ss.getClass(), String[].class
     });
     return con.newInstance(new Object[] {ss, args});
+  }
+
+
+  // -- Thread API methods --
+
+  /** Launches the VisBio GUI with no arguments. */
+  public void run() {
+    try { launch(new String[0]); }
+    catch (Exception exc) { exc.printStackTrace(); }
   }
 
 

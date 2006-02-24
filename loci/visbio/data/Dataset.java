@@ -497,7 +497,7 @@ public class Dataset extends ImageTransform {
     String filename = "\"" + new File(ids[0]).getName() + "\"";
     try {
       numImages = loaders[0].getBlockCount(ids[0]);
-      format = loaders[0].getFormatString();
+      format = loaders[0].getFormat(ids[0]);
       if (format.startsWith("TIFF")) {
         format = (numImages > 1 ? "multi-page " : "single-image ") + format;
       }
