@@ -20,6 +20,6 @@ loci.formats.AndorReader # TIFF; isThisType(String) is slow
 loci.formats.TiffReader
 loci.formats.AVIReader
 loci.formats.ImageJReader # ImageJ
-loci.formats.QTReader # QTJ (fallback)
+loci.formats.QTReader
 loci.formats.LegacyPictReader # QTJ
 loci.formats.OpenlabReader # QTJ; isThisType(String) is slow
