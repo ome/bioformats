@@ -2,7 +2,6 @@ LOCI Bio-Formats things to do (either Melissa or Curtis):
 
 QuickTime:
 * Implement LegacyQTWriter based on ImageJ QT writer plugin.
-* Implement native QTWriter for saving uncompressed QuickTime movies.
 * Implement jpeg and rle codecs for QTReader.
 
 PICT:
