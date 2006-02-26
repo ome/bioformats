@@ -430,7 +430,6 @@ public class AVIWriter extends FormatWriter {
     // Write the data. Each 3-byte triplet in the bitmap array represents the
     // relative intensities of blue, green, and red, respectively, for a pixel.
     // The color bytes are in reverse order from the Windows convention.
-    byte[] buf = new byte[bytesPerPixel * xDim * yDim];
 
     int width = xDim - xPad;
 
@@ -439,50 +438,8 @@ public class AVIWriter extends FormatWriter {
     // Write the data length
     DataTools.writeInt(raFile, bytesPerPixel * xDim * yDim);
 
-    int[][] values = new int[0][0];
-
-    // get pixels
-
-    DataBuffer dbuf = img.getRaster().getDataBuffer();
-
-    if (dbuf instanceof DataBufferByte) {
-      // originally 8 bit data
-      byte[][] data = ((DataBufferByte) dbuf).getBankData();
-      values = new int[data.length][data[0].length];
-      for (int i=0; i<data.length; i++) {
-        for (int j=0; j<data[i].length; j++) {
-          values[i][j] = (int) data[i][j];
-        }
-      }
-    }
-    else if (dbuf instanceof DataBufferUShort) {
-      // originally 16 bit data
-      short[][] data = ((DataBufferUShort) dbuf).getBankData();
-      values = new int[data.length][data[0].length];
-      for (int i=0; i<data.length; i++) {
-        for (int j=0; j<data[i].length; j++) {
-          values[i][j] = (int) data[i][j];
-        }
-      }
-    }
-    else if (dbuf instanceof DataBufferInt) {
-      // originally 32 bit data
-      values = ((DataBufferInt) dbuf).getBankData();
-    }
-
-    int index = 0;
-    int offset = 0;
-
-    for (int y=yDim-1; y>=0; y--) {
-      offset = y*width;
-      for (int x=0; x<width; x++) {
-        buf[index++] = (byte) values[0][offset++];
-      }
-      for (int i=0; i<xPad; i++) {
-        buf[index++ % buf.length] = (byte) 0;
-      }
-    }
-
+    byte[] buf = ImageTools.getPixels(img, width, yDim);
+    
     raFile.write(buf);
 
     planesWritten++;

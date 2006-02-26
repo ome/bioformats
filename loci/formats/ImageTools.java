@@ -54,6 +54,78 @@ public abstract class ImageTools {
     return new Dimension(image.getWidth(OBS), image.getHeight(OBS));
   }
 
+  /**
+   * Gets the pixel data from the given AWT image
+   * as an int array.
+   */
+  public static int[] getIntPixels(Image image, int xDim, int yDim) {
+    BufferedImage img = makeImage(image);
+
+    DataBuffer dbuf = img.getRaster().getDataBuffer();
+    int[][] values = new int[0][0];
+
+    if (dbuf instanceof DataBufferByte) {
+      // originally 8 bit data
+      byte[][] data = ((DataBufferByte) dbuf).getBankData();
+      values = new int[data.length][data[0].length];
+      for (int i=0; i<data.length; i++) {
+        for (int j=0; j<data[i].length; j++) {
+          values[i][j] = (int) data[i][j];
+        }
+      }
+    }
+    else if (dbuf instanceof DataBufferUShort) {
+      // originally 16 bit data
+      short[][] data = ((DataBufferUShort) dbuf).getBankData();
+      values = new int[data.length][data[0].length];
+      for (int i=0; i<data.length; i++) {
+        for (int j=0; j<data[i].length; j++) {
+          values[i][j] = (int) data[i][j];
+        }
+      }
+    }
+    else if (dbuf instanceof DataBufferInt) {
+      // originally 32 bit data
+      values = ((DataBufferInt) dbuf).getBankData();
+    }
+
+    if (values.length > 1) {
+      int[][] tempValues = values;
+      values = new int[1][tempValues[0].length];
+
+      for (int i=0; i<tempValues[0].length; i++) {
+        int sum = 0;
+        for (int j=0; j<tempValues.length; j++) {
+          sum += tempValues[j][i];
+        }
+        values[0][i] = sum / tempValues.length;
+      }
+    }
+
+    return values[0];
+  }
+
+  /**
+   * Gets the pixel data from the given AWT image
+   * as a byte array.
+   */
+  public static byte[] getPixels(Image image, int xDim, int yDim) {
+    int[] values = getIntPixels(image, xDim, yDim);
+    byte[] buf = new byte[xDim * yDim];
+
+    int index = 0;
+    int offset = 0;
+
+    for (int y=yDim-1; y>=0; y--) {
+      offset = y*xDim;
+      for (int x=0; x<xDim; x++) {
+        buf[index++] = (byte) values[offset++];
+      }
+    }
+
+    return buf;
+  }
+
 
   // -- Image construction --
 

@@ -156,6 +156,29 @@ public abstract class DataTools {
     out.write((v >>> 8) & 0xFF);
   }
 
+  /**
+   * Writes an integer to the given random access file
+   * in big-endian format.
+   */
+  public static void writeReverseInt(RandomAccessFile out, int v)
+    throws IOException
+  {
+    out.write((v >>> 24) & 0xFF);
+    out.write((v >>> 16) & 0xFF);
+    out.write((v >>> 8) & 0xFF);
+    out.write(v & 0xFF);
+  }
+
+  /**
+   * Writes a short to the given random access file
+   * in big-endian format.
+   */
+  public static void writeReverseShort(RandomAccessFile out, int v)
+    throws IOException
+  {
+    out.write((v >>> 8) & 0xFF);
+    out.write(v & 0xFF);
+  }
 
   // -- Word decoding --
 
