@@ -1,7 +1,6 @@
 LOCI Bio-Formats things to do (either Melissa or Curtis):
 
 QuickTime:
-* Implement LegacyQTWriter based on ImageJ QT writer plugin.
 * Implement jpeg and rle codecs for QTReader.
 
 PICT:
