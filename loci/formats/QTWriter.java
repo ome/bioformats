@@ -81,7 +81,6 @@ public class QTWriter extends FormatWriter {
     byte[] buf = ImageTools.getPixels(img, width, height);
 
     // reorder the scanlines
-    // Why do we need to do this?  Don't ask me...QuickTime has *problems*
 
     byte[] temp = buf;
     buf = new byte[temp.length];
