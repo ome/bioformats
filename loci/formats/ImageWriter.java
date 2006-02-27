@@ -117,6 +117,14 @@ public class ImageWriter extends FormatWriter {
     return writers[index].getFormat();
   }
 
+  /** Gets the writer used to save the given file. */
+  public FormatWriter getWriter(String id)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return writers[index];
+  }
+
   /** Gets the file format writer instance matching the given class. */
   public FormatWriter getWriter(Class c) {
     for (int i=0; i<writers.length; i++) {
