@@ -52,11 +52,13 @@ public class QTWriter extends FormatWriter {
   /** Vector of plane offsets. */
   protected Vector offsets;
 
+
   // -- Constructor --
 
   public QTWriter() {
     super("QTWriter", "mov");
   }
+
 
   // -- FormatWriter API methods --
 
@@ -87,8 +89,8 @@ public class QTWriter extends FormatWriter {
 
     int newScanline = height - 1;
 
-    for (int oldScanline=0; oldScanline < height; oldScanline++) {
-      System.arraycopy(temp, oldScanline*width, buf,  newScanline*width, width);
+    for (int oldScanline=0; oldScanline<height; oldScanline++) {
+      System.arraycopy(temp, oldScanline*width, buf, newScanline*width, width);
       newScanline--;
     }
 
@@ -206,4 +208,5 @@ public class QTWriter extends FormatWriter {
   public static void main(String[] args) throws IOException, FormatException {
     new QTWriter().testConvert(args);
   }
+
 }

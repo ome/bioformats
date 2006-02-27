@@ -439,7 +439,7 @@ public class AVIWriter extends FormatWriter {
     DataTools.writeInt(raFile, bytesPerPixel * xDim * yDim);
 
     byte[] buf = ImageTools.getPixels(img, width, yDim);
-    
+
     raFile.write(buf);
 
     planesWritten++;
