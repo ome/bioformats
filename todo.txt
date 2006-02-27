@@ -1,14 +1,19 @@
 LOCI Bio-Formats things to do (either Melissa or Curtis):
 
-QuickTime:
-* Implement jpeg and rle codecs for QTReader.
-
 PICT:
 * Implement native PictReader, falling back to LegacyPictReader if necessary.
 * Use new PictReader in OpenlabReader.
 
-Implement readers for other file formats listed at
-    http://www.loci.wisc.edu/visbio/formats.html
+QuickTime:
+* jpeg codec
+* rle codec
+* svq3 codec (lower priority)
+
+Implement readers for other file formats:
+* Amersham Biosciences GEL
+* Fluoview FV1000 (OIB/OIF)
+* DICOM
+* Anything else listed online: http://www.loci.wisc.edu/visbio/formats.html
 
 Adapt VisBio to take advantage of LOCI Bio-Formats package.
 
