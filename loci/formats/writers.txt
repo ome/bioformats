@@ -2,4 +2,3 @@ loci.formats.TiffWriter
 loci.formats.JPEGWriter
 loci.formats.AVIWriter
 loci.formats.QTWriter
-#loci.formats.LegacyQTWriter # QTJ (fallback)
