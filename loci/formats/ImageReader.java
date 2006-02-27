@@ -27,7 +27,6 @@ import java.awt.Image;
 import java.io.*;
 import java.util.*;
 import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
 
 /**
  * ImageReader is master file format reader for all supported formats.
@@ -173,16 +172,6 @@ public class ImageReader extends FormatReader {
     throw new FormatException("Unknown file format: " + id);
   }
 
-  /** Creates JFileChooser file filters for this file format. */
-  protected void createFilters() {
-    Vector v = new Vector();
-    for (int i=0; i<readers.length; i++) {
-      FileFilter[] ff = readers[i].getFileFilters();
-      for (int j=0; j<ff.length; j++) v.add(ff[j]);
-    }
-    filters = ComboFileFilter.sortFilters(v);
-  }
-
   /**
    * Opens an existing file from the given filename.
    *
@@ -191,16 +180,6 @@ public class ImageReader extends FormatReader {
   public Image[] open(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return readers[index].open(id);
-  }
-
-  /**
-   * Checks if the given string is a valid filename for any supported format.
-   */
-  public boolean isThisType(String name) {
-    for (int i=0; i<readers.length; i++) {
-      if (readers[i].isThisType(name)) return true;
-    }
-    return false;
   }
 
   /**
@@ -258,6 +237,29 @@ public class ImageReader extends FormatReader {
       System.out.println("[" + getFormat(args[0]) + "]");
     }
     return super.testRead(args);
+  }
+
+
+  // -- FormatHandler API methods --
+
+  /** Creates JFileChooser file filters for this file format. */
+  protected void createFilters() {
+    Vector v = new Vector();
+    for (int i=0; i<readers.length; i++) {
+      javax.swing.filechooser.FileFilter[] ff = readers[i].getFileFilters();
+      for (int j=0; j<ff.length; j++) v.add(ff[j]);
+    }
+    filters = ComboFileFilter.sortFilters(v);
+  }
+
+  /**
+   * Checks if the given string is a valid filename for any supported format.
+   */
+  public boolean isThisType(String name) {
+    for (int i=0; i<readers.length; i++) {
+      if (readers[i].isThisType(name)) return true;
+    }
+    return false;
   }
 
 

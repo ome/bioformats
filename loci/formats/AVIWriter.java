@@ -96,8 +96,7 @@ public class AVIWriter extends FormatWriter {
   // -- Constructor --
 
   public AVIWriter() {
-    super("AVI", "avi");
-    setFramesPerSecond(10);
+    super("Audio Video Interleave", "avi");
   }
 
 

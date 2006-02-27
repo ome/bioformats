@@ -26,33 +26,23 @@ package loci.formats;
 import java.awt.Image;
 import java.io.IOException;
 
-/** Abstract superclass of all supported biological file format writers. */
-public abstract class FormatWriter {
+/** Abstract superclass of all biological file format writers. */
+public abstract class FormatWriter extends FormatHandler {
 
-  /** Name of this file format. */
-  protected String format;
-
-  /** List of valid suffixes for this file format. */
-  protected String[] suffixes;
-
-  /** Name of current file. */
-  protected String currentId;
+  // -- Fields --
 
   /** Frame rate to use when writing in frames per second, if applicable. */
-  protected int fps;
+  protected int fps = 10;
 
 
   // -- Constructors --
 
   /** Constructs a format writer with the given name and default suffix. */
-  public FormatWriter(String format, String suffix) {
-    this(format, suffix == null ? null : new String[] {suffix});
-  }
+  public FormatWriter(String format, String suffix) { super(format, suffix); }
 
   /** Constructs a format writer with the given name and default suffixes. */
   public FormatWriter(String format, String[] suffixes) {
-    this.format = format;
-    this.suffixes = suffixes == null ? new String[0] : suffixes;
+    super(format, suffixes);
   }
 
 
@@ -76,25 +66,6 @@ public abstract class FormatWriter {
       save(id, images[i], i == images.length - 1);
     }
   }
-
-  /**
-   * Checks if the given string is a valid filename for this file format.
-   * The default implementation checks filename suffixes against those known
-   * for this format.
-   */
-  public boolean isThisType(String name) {
-    String lname = name.toLowerCase();
-    for (int i=0; i<suffixes.length; i++) {
-      if (lname.endsWith("." + suffixes[i])) return true;
-    }
-    return false;
-  }
-
-  /** Gets the name of this file format. */
-  public String getFormat() { return format; }
-
-  /** Gets the default file suffixes for this file format. */
-  public String[] getSuffixes() { return suffixes; }
 
   /** Sets the frames per second to use when writing. */
   public void setFramesPerSecond(int fps) { this.fps = fps; }
