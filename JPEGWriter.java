@@ -35,7 +35,8 @@ public class JPEGWriter extends FormatWriter {
   // -- Constructor --
 
   public JPEGWriter() {
-    super("JPEG", new String[] {"jpeg", "jpg"});
+    super("Joint Photographic Experts Group",
+      new String[] {"jpg", "jpeg", "jpe"});
   }
 
 

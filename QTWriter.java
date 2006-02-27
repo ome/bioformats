@@ -55,9 +55,7 @@ public class QTWriter extends FormatWriter {
 
   // -- Constructor --
 
-  public QTWriter() {
-    super("QTWriter", "mov");
-  }
+  public QTWriter() { super("QuickTime", "mov"); }
 
 
   // -- FormatWriter API methods --

@@ -47,6 +47,11 @@ public abstract class ImageTools {
    * waiting for it to finish loading if necessary.
    */
   public static Dimension getSize(Image image) {
+    if (image == null) return new Dimension(0, 0);
+    if (image instanceof BufferedImage) {
+      BufferedImage bi = (BufferedImage) image;
+      return new Dimension(bi.getWidth(), bi.getHeight());
+    }
     MediaTracker tracker = new MediaTracker(OBS);
     tracker.addImage(image, 0);
     try { tracker.waitForID(0); }

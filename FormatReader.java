@@ -23,35 +23,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
+import java.awt.Image;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Hashtable;
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
-/** Abstract superclass of all supported biological file format readers. */
-public abstract class FormatReader {
+/** Abstract superclass of all biological file format readers. */
+public abstract class FormatReader extends FormatHandler {
 
-  /** Name of this file format. */
-  protected String format;
-
-  /** Valid suffixes for this file format. */
-  protected String[] suffixes;
-
-  /** File filters for this file format, for use with a JFileChooser. */
-  protected FileFilter[] filters;
-
-  /** File chooser for this file format. */
-  protected JFileChooser chooser;
-
-  /** Name of current file. */
-  protected String currentId;
+  // -- Fields --
 
   /** Hashtable containing metadata key/value pairs. */
   protected Hashtable metadata;
@@ -63,14 +44,11 @@ public abstract class FormatReader {
   // -- Constructors --
 
   /** Constructs a format reader with the given name and default suffix. */
-  public FormatReader(String format, String suffix) {
-    this(format, suffix == null ? null : new String[] {suffix});
-  }
+  public FormatReader(String format, String suffix) { super(format, suffix); }
 
   /** Constructs a format reader with the given name and default suffixes. */
   public FormatReader(String format, String[] suffixes) {
-    this.format = format;
-    this.suffixes = suffixes == null ? new String[0] : suffixes;
+    super(format, suffixes);
   }
 
 
@@ -105,11 +83,6 @@ public abstract class FormatReader {
     ome = OMETools.createRoot();
   }
 
-  /** Creates JFileChooser file filters for this file format. */
-  protected void createFilters() {
-    filters = new FileFilter[] { new FormatFileFilter(this) };
-  }
-
   /**
    * Opens an existing file from the given filename.
    *
@@ -121,48 +94,6 @@ public abstract class FormatReader {
     for (int i=0; i<nImages; i++) images[i] = open(id, i);
     close();
     return images;
-  }
-
-  /**
-   * Checks if the given string is a valid filename for this file format.
-   * The default implementation checks filename suffixes against those known
-   * for this format.
-   */
-  public boolean isThisType(String name) {
-    String lname = name.toLowerCase();
-    for (int i=0; i<suffixes.length; i++) {
-      if (lname.endsWith("." + suffixes[i])) return true;
-    }
-    return false;
-  }
-
-  /** Gets the name of this file format. */
-  public String getFormat() { return format; }
-
-  /** Gets the default file suffixes for this file format. */
-  public String[] getSuffixes() { return suffixes; }
-
-  /** Gets file filters for this file format, for use with a JFileChooser. */
-  public FileFilter[] getFileFilters() {
-    if (filters == null) createFilters();
-    return filters;
-  }
-
-  /** Gets a JFileChooser that recognizes accepted file types. */
-  public JFileChooser getFileChooser() {
-    if (chooser == null) {
-      chooser = new JFileChooser(System.getProperty("user.dir"));
-      FileFilter[] ff = getFileFilters();
-      ff = ComboFileFilter.sortFilters(ff);
-      FileFilter combo = null;
-      if (ff.length > 1) {
-        combo = new ComboFileFilter(ff, "All supported file types");
-        chooser.addChoosableFileFilter(combo);
-      }
-      for (int i=0; i<ff.length; i++) chooser.addChoosableFileFilter(ff[i]);
-      if (combo != null) chooser.setFileFilter(combo);
-    }
-    return chooser;
   }
 
   /**
@@ -239,88 +170,10 @@ public abstract class FormatReader {
     System.out.println(sec + "s elapsed (" +
       avg + "ms per image, " + initial + "ms overhead)");
 
-    // display pixels in pop-up window
-    JFrame frame = new JFrame(format + " - " + id);
-    frame.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) { System.exit(0); }
-    });
-    JPanel p = new JPanel();
-    frame.setContentPane(p);
-    p.setLayout(new BorderLayout());
-    final JSlider slider = num > 1 ? new JSlider(1, num) : null;
-    final JPanel imagePane = new JPanel() {
-      public void paint(Graphics g) {
-        int ndx = slider == null ? 0 : (slider.getValue() - 1);
-        Dimension size = getSize();
-        g.setColor(Color.white);
-        g.fillRect(0, 0, size.width, size.height);
-        g.drawImage(images[ndx], 0, 0, this);
-      }
-      public Dimension getPreferredSize() {
-        int w = images[0].getWidth(this);
-        int h = images[0].getHeight(this);
-        return new Dimension(w, h);
-      }
-    };
-
-    // cursor probe
-    final JLabel mouseLabel = new JLabel(" ");
-    imagePane.addMouseMotionListener(new MouseMotionAdapter() {
-      private StringBuffer sb = new StringBuffer();
-      public void mouseMoved(MouseEvent e) {
-        int ndx = slider == null ? 0 : (slider.getValue() - 1);
-        int x = e.getX();
-        int y = e.getY();
-        sb.setLength(0);
-        if (images.length > 1) {
-          sb.append("N=");
-          sb.append(ndx);
-          sb.append("; ");
-        }
-        BufferedImage image = null;
-        if (images[ndx] instanceof BufferedImage) {
-          image = (BufferedImage) images[ndx];
-          int w = image.getWidth(), h = image.getHeight();
-          if (x < 0) x = 0;
-          if (x >= w) x = w - 1;
-          if (y < 0) y = 0;
-          if (y >= h) y = h - 1;
-        }
-        sb.append("X=");
-        sb.append(x);
-        sb.append("; Y=");
-        sb.append(y);
-        if (image != null) {
-          Raster r = image.getRaster();
-          double[] pix = r.getPixel(x, y, (double[]) null);
-          sb.append("; value");
-          sb.append(pix.length > 1 ? "s=(" : "=");
-          for (int i=0; i<pix.length; i++) {
-            if (i > 0) sb.append(", ");
-            sb.append(pix[i]);
-          }
-          if (pix.length > 1) sb.append(")");
-        }
-        mouseLabel.setText(sb.toString());
-      }
-    });
-    p.add(BorderLayout.NORTH, mouseLabel);
-    p.add(imagePane);
-
-    // slider for navigating across multiple images
-    if (slider != null) {
-      slider.addChangeListener(new ChangeListener() {
-        public void stateChanged(ChangeEvent e) {
-          imagePane.repaint();
-        }
-      });
-      p.add(BorderLayout.SOUTH, slider);
-    }
-
-    // show frame onscreen
-    frame.pack();
-    frame.setLocation(300, 300);
-    frame.show();
+    // display pixels in image viewer
+    ImageViewer viewer = new ImageViewer();
+    viewer.setImages(id, format, images);
+    viewer.show();
 
     // read metadata
     System.out.print("Reading " + id + " metadata ");
@@ -350,6 +203,14 @@ public abstract class FormatReader {
       System.out.println();
     }
     return true;
+  }
+
+
+  // -- FormatHandler API methods --
+
+  /** Creates JFileChooser file filters for this file format. */
+  protected void createFilters() {
+    filters = new FileFilter[] { new FormatFileFilter(this) };
   }
 
 }

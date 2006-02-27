@@ -38,14 +38,14 @@ public class TiffWriter extends FormatWriter {
   /** The last offset written to. */
   private int lastOffset;
 
-  /** Current file output stream. */
-  private FileOutputStream out;
+  /** Current output stream. */
+  private OutputStream out;
 
 
   // -- Constructor --
 
   public TiffWriter() {
-    super("TIFF", new String[] {"tiff", "tif"});
+    super("Tagged Image File Format", new String[] {"tif", "tiff"});
     lastOffset = 0;
   }
 

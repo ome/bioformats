@@ -133,6 +133,16 @@ public class ImageWriter extends FormatWriter {
     return null;
   }
 
+  /** A utility method for converting a file from the command line. */
+  public void testConvert(String[] args) throws FormatException, IOException {
+    if (args.length > 1) {
+      // check file format
+      System.out.print("Checking file format ");
+      System.out.println("[" + getFormat(args[1]) + "]");
+    }
+    super.testConvert(args);
+  }
+
 
   // -- FormatWriter API methods --
 
@@ -145,6 +155,19 @@ public class ImageWriter extends FormatWriter {
   {
     if (!id.equals(currentId)) initFile(id);
     writers[index].save(id, image, last);
+  }
+
+
+  // -- FormatHandler API methods --
+
+  /** Creates JFileChooser file filters for this file format. */
+  protected void createFilters() {
+    Vector v = new Vector();
+    for (int i=0; i<writers.length; i++) {
+      javax.swing.filechooser.FileFilter[] ff = writers[i].getFileFilters();
+      for (int j=0; j<ff.length; j++) v.add(ff[j]);
+    }
+    filters = ComboFileFilter.sortFilters(v);
   }
 
 
@@ -164,16 +187,6 @@ public class ImageWriter extends FormatWriter {
       }
     }
     throw new FormatException("Unknown file format: " + id);
-  }
-
-  /** A utility method for converting a file from the command line. */
-  public void testConvert(String[] args) throws FormatException, IOException {
-    if (args.length > 1) {
-      // check file format
-      System.out.print("Checking file format ");
-      System.out.println("[" + getFormat(args[1]) + "]");
-    }
-    super.testConvert(args);
   }
 
 

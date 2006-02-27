@@ -25,9 +25,9 @@ echo Building bio_formats_src.jar
 jar cfM loci/formats/bio_formats_src.jar loci/formats/plugins.config loci/formats/*.java loci/formats/*.txt loci/formats/test loci/formats/build
 
 echo Building bio_formats.jar
-mv loci/formats/plugins.config loci/formats/LociPlugin.class .
-jar cfM loci/formats/bio_formats.jar plugins.config LociPlugin.class loci/formats/readers.txt loci/formats/writers.txt loci/formats/*.class
-mv plugins.config LociPlugin.class loci/formats
+mv loci/formats/formats.manifest loci/formats/plugins.config loci/formats/LociPlugin.class .
+jar cfm loci/formats/bio_formats.jar formats.manifest plugins.config LociPlugin.class loci/formats/readers.txt loci/formats/writers.txt loci/formats/*.class
+mv formats.manifest plugins.config LociPlugin.class loci/formats
 
 cd loci/formats
 
