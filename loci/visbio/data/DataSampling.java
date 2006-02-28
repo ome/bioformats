@@ -23,15 +23,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.data;
 
+import java.awt.image.BufferedImage;
 import java.math.BigInteger;
-import java.rmi.RemoteException;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import loci.formats.ImageTools;
 import loci.visbio.state.Dynamic;
 import loci.visbio.state.SaveException;
 import loci.visbio.util.*;
 import org.w3c.dom.Element;
-import visad.*;
 
 /** DataSampling is a resampling of another transform. */
 public class DataSampling extends ImageTransform {
@@ -137,8 +137,21 @@ public class DataSampling extends ImageTransform {
   /** Gets number of range components at each pixel. */
   public int getRangeCount() { return numRange; }
 
+  /** Obtains an image from the source(s) at the given dimensional position. */
+  public BufferedImage getImage(int[] pos) {
+    int[] p = new int[pos.length];
+    for (int i=0; i<p.length; i++) p[i] = min[i] + step[i] * pos[i] - 1;
+    ImageTransform it = (ImageTransform) parent;
+    BufferedImage img = it.getImage(p);
+    if (img == null) return null;
+    int w = resX > 0 ? resX : img.getWidth();
+    int h = resY > 0 ? resY : img.getHeight();
+    return ImageTools.scale(img, w, h);
+  }
+
   /**
-   * Gets physical distance between image slices in microns for the given axis.
+   * Gets the physical distance between image planes
+   * in microns for the given axis.
    */
   public double getMicronStep(int axis) {
     int q = axis < 0 ? 1 : step[axis];
@@ -189,27 +202,6 @@ public class DataSampling extends ImageTransform {
 
 
   // -- DataTransform API methods --
-
-  /**
-   * Retrieves the data corresponding to the given dimensional position,
-   * for the given display dimensionality.
-   *
-   * @return null if the transform does not provide data of that dimensionality
-   */
-  public Data getData(int[] pos, int dim, DataCache cache) {
-    if (dim != 2) return null;
-
-    int[] p = new int[pos.length];
-    for (int i=0; i<p.length; i++) p[i] = min[i] + step[i] * pos[i] - 1;
-    Data data = parent.getData(p, dim, cache);
-    if (data == null || !(data instanceof FlatField)) return null;
-
-    int[] res = resX > 0 && resY > 0 ? new int[] {resX, resY} : null;
-    try { return DataUtil.resample((FlatField) data, res, range, true); }
-    catch (VisADException exc) { exc.printStackTrace(); }
-    catch (RemoteException exc) { exc.printStackTrace(); }
-    return null;
-  }
 
   /** Gets whether this transform provides data of the given dimensionality. */
   public boolean isValidDimension(int dim) {

@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.data;
 
+import java.awt.image.BufferedImage;
 import java.math.BigInteger;
 import loci.visbio.state.SaveException;
 import loci.visbio.util.*;
@@ -112,6 +113,9 @@ public abstract class ImageTransform extends DataTransform {
   /** Gets number of range components at each pixel. */
   public abstract int getRangeCount();
 
+  /** Obtains an image from the source(s) at the given dimensional position. */
+  public BufferedImage getImage(int[] pos) { return null; }
+
   /** Gets physical image width in microns. */
   public double getMicronWidth() { return micronWidth; }
 
@@ -188,6 +192,23 @@ public abstract class ImageTransform extends DataTransform {
 
 
   // -- DataTransform API methods --
+
+  /**
+   * Retrieves the data corresponding to the given dimensional position,
+   * for the given display dimensionality.
+   */
+  public Data getData(int[] pos, int dim, DataCache cache) {
+    if (dim != 2) return null;
+    if (cache != null) return cache.getData(this, pos, null, dim);
+
+    BufferedImage img = getImage(pos);
+    if (img == null) return null;
+    try { return new ImageFlatField(img); }
+    catch (VisADException exc) {
+      exc.printStackTrace();
+      return null;
+    }
+  }
 
   /** Retrieves a set of mappings for displaying this transform effectively. */
   public ScalarMap[] getSuggestedMaps() {

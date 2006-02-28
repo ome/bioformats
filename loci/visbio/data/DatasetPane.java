@@ -35,12 +35,13 @@ import java.math.BigInteger;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import loci.formats.FormatException;
+import loci.formats.ImageReader;
 import loci.ome.xml.OMENode;
 import loci.ome.xml.DOMUtil;
 import loci.visbio.VisBioFrame;
 import loci.visbio.util.*;
 import org.w3c.dom.Element;
-import visad.VisADException;
 import visad.util.Util;
 
 /**
@@ -382,15 +383,15 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     // get number of images and OME-XML metadata from the first file
     OMENode ome = null;
     int numImages = 0;
-    ImageFamily loader = new ImageFamily();
+    ImageReader reader = new ImageReader();
     try {
-      numImages = loader.getBlockCount(ids[0]);
-      ome = (OMENode) loader.getOMENode(ids[0]);
+      numImages = reader.getImageCount(ids[0]);
+      ome = (OMENode) reader.getOMENode(ids[0]);
     }
     catch (IOException exc) {
       if (VisBioFrame.DEBUG) exc.printStackTrace();
     }
-    catch (VisADException exc) {
+    catch (FormatException exc) {
       if (VisBioFrame.DEBUG) exc.printStackTrace();
     }
     if (numImages < 1) {

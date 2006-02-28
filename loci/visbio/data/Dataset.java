@@ -23,13 +23,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.data;
 
-import java.awt.Component;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.datatransfer.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.math.BigInteger;
 import java.util.Hashtable;
 import javax.swing.JComponent;
+import loci.formats.*;
 import loci.ome.xml.OMENode;
 import loci.visbio.TaskEvent;
 import loci.visbio.TaskListener;
@@ -79,8 +80,8 @@ public class Dataset extends ImageTransform {
 
   // -- Computed fields --
 
-  /** Data loaders, one for each source file in the array. */
-  protected ImageFamily[] loaders;
+  /** Data readers, one for each source file in the array. */
+  protected ImageReader[] readers;
 
   /** Controls for this dataset. */
   protected DatasetWidget controls;
@@ -184,8 +185,8 @@ public class Dataset extends ImageTransform {
   // -- Dataset API methods --
 
   /** Close all open ids. */
-  public void close() throws VisADException, IOException {
-    for (int i=0; i<ids.length; i++) loaders[i].close();
+  public void close() throws FormatException, IOException {
+    for (int i=0; i<ids.length; i++) readers[i].close();
   }
 
   /** Gets the string pattern describing this dataset. */
@@ -208,6 +209,67 @@ public class Dataset extends ImageTransform {
 
 
   // -- ImageTransform API methods --
+
+  /** Obtains an image from the source(s) at the given dimensional position. */
+  public BufferedImage getImage(int[] pos) {
+    int[] indices = getIndices(pos);
+    int fileIndex = indices[0];
+    if (fileIndex < 0 || fileIndex >= ids.length) {
+      System.err.println("Invalid file number #" + fileIndex);
+      return null;
+    }
+    int imgIndex = indices[1];
+    String filename = "\"" + new File(ids[fileIndex]).getName() + "\"";
+
+    BufferedImage img = null;
+
+    int numImg = -1;
+    try { numImg = readers[fileIndex].getImageCount(ids[fileIndex]); }
+    catch (IOException exc) { numImg = -1; }
+    catch (FormatException exc) { numImg = -1; }
+    if (numImg < 0) {
+      System.err.println("Could not read file " + filename);
+      return null;
+    }
+    else if (numImg == 0) {
+      System.err.println("File " + filename + " contains no images");
+      return null;
+    }
+    if (imgIndex < 0 || imgIndex >= numImg) {
+      System.err.println("Invalid image number #" + (imgIndex + 1) +
+        " for file " + filename + " (" + numImg + " found)");
+      return null;
+    }
+
+    int tries = 3;
+    while (tries > 0) {
+      boolean again = false;
+      try {
+        Image image = readers[fileIndex].open(ids[fileIndex], imgIndex);
+        img = ImageTools.makeImage(image);
+      }
+      catch (IOException exc) {
+        String msg = exc.getMessage();
+        if (msg != null && msg.indexOf("Bad file descriptor") >= 0) {
+          // HACK - trap for catching sporadic exception; try again!
+          if (tries == 0) {
+            System.err.println("Unable to read image #" + (imgIndex + 1) +
+              " from file " + filename);
+            return null;
+          }
+          else again = true;
+        }
+      }
+      catch (FormatException exc) {
+        System.err.println("Unable to read image #" + (imgIndex + 1) +
+          " from file " + filename);
+        return null;
+      }
+      if (again) tries--;
+      else break;
+    }
+    return img;
+  }
 
   /** Gets width of each image. */
   public int getImageWidth() { return resX; }
@@ -276,73 +338,6 @@ public class Dataset extends ImageTransform {
 
 
   // -- DataTransform API methods --
-
-  /** Obtains an image from the source(s) at the given dimensional position. */
-  public Data getData(int[] pos, int dim, DataCache cache) {
-    if (dim != 2) return null;
-    if (cache != null) return cache.getData(this, pos, null, dim);
-
-    int[] indices = getIndices(pos);
-    int fileIndex = indices[0];
-    if (fileIndex < 0 || fileIndex >= ids.length) {
-      System.err.println("Invalid file number #" + fileIndex);
-      return null;
-    }
-    int imgIndex = indices[1];
-    String filename = "\"" + new File(ids[fileIndex]).getName() + "\"";
-
-    DataImpl d = null;
-
-    int numImg = -1;
-    try { numImg = loaders[fileIndex].getBlockCount(ids[fileIndex]); }
-    catch (IOException exc) { numImg = -1; }
-    catch (VisADException exc) { numImg = -1; }
-    if (numImg < 0) {
-      System.err.println("Could not read file " + filename);
-      return null;
-    }
-    else if (numImg == 0) {
-      System.err.println("File " + filename + " contains no images");
-      return null;
-    }
-    if (imgIndex < 0 || imgIndex >= numImg) {
-      System.err.println("Invalid image number #" + (imgIndex + 1) +
-        " for file " + filename + " (" + numImg + " found)");
-      return null;
-    }
-
-    int tries = 3;
-    while (tries > 0) {
-      boolean again = false;
-      try { d = loaders[fileIndex].open(ids[fileIndex], imgIndex); }
-      catch (IOException exc) {
-        String msg = exc.getMessage();
-        if (msg != null && msg.indexOf("Bad file descriptor") >= 0) {
-          // HACK - trap for catching sporadic exception; try again!
-          if (tries == 0) {
-            System.err.println("Unable to read image #" + (imgIndex + 1) +
-              " from file " + filename);
-            return null;
-          }
-          else again = true;
-        }
-      }
-      catch (VisADException exc) {
-        System.err.println("Unable to read image #" + (imgIndex + 1) +
-          " from file " + filename);
-        return null;
-      }
-      if (again) tries--;
-      else break;
-    }
-    if (!(d instanceof FlatField)) {
-      String className = d == null ? "null" : d.getClass().getName();
-      System.err.println("Data chunk #" + (imgIndex + 1) + " from file " +
-        filename + " is not an image (" + className + ")");
-      return null;
-    }
-    return (FlatField) d;
-  }
 
   /** Gets whether this transform provides data of the given dimensionality. */
   public boolean isValidDimension(int dim) { return dim == 2; }
@@ -488,16 +483,16 @@ public class Dataset extends ImageTransform {
       }
     }
 
-    // initialize data loaders
-    loaders = new ImageFamily[ids.length];
-    for (int i=0; i<ids.length; i++) loaders[i] = new ImageFamily();
+    // initialize data readers
+    readers = new ImageReader[ids.length];
+    for (int i=0; i<ids.length; i++) readers[i] = new ImageReader();
 
     // determine number of images per source file
     status(1, numTasks, "Determining image count");
     String filename = "\"" + new File(ids[0]).getName() + "\"";
     try {
-      numImages = loaders[0].getBlockCount(ids[0]);
-      format = loaders[0].getFormat(ids[0]);
+      numImages = readers[0].getImageCount(ids[0]);
+      format = readers[0].getFormat(ids[0]);
       if (format.startsWith("TIFF")) {
         format = (numImages > 1 ? "multi-page " : "single-image ") + format;
       }
@@ -526,31 +521,30 @@ public class Dataset extends ImageTransform {
 
     // load first image for analysis
     status(2, numTasks, "Reading first image");
-    Data d = null;
-    try { d = loaders[0].open(ids[0], 0); }
-    catch (IOException exc) { d = null; }
-    catch (VisADException exc) { d = null; }
-    catch (NullPointerException exc) { d = null; }
-    if (d == null) {
+    Image img = null;
+    try { img = readers[0].open(ids[0], 0); }
+    catch (IOException exc) { img = null; }
+    catch (FormatException exc) { img = null; }
+    catch (NullPointerException exc) { img = null; }
+    if (img == null) {
       System.err.println("Could not read the first image. " +
         filename + " may be corrupt or invalid.");
       return;
     }
-    if (!(d instanceof FlatField)) {
-      System.err.println("First data chunk is not an image. " +
-        filename + " may be corrupt or invalid.");
+    BufferedImage bimg = ImageTools.makeImage(img);
+    ImageFlatField ff = null;
+    try { ff = new ImageFlatField(bimg); }
+    catch (VisADException exc) {
+      System.err.println("Could not construct ImageFlatField.");
       return;
     }
-    FlatField img = (FlatField) d;
 
     // determine image resolution
-    GriddedSet set = (GriddedSet) img.getDomainSet();
-    int[] setLen = set.getLengths();
-    resX = setLen[0];
-    resY = setLen[1];
+    resX = bimg.getWidth();
+    resY = bimg.getHeight();
 
-    // determine number of range components
-    FunctionType ftype = (FunctionType) img.getType();
+    // extract range components
+    FunctionType ftype = (FunctionType) ff.getType();
     MathType range = ftype.getRange();
     if (range instanceof TupleType) {
       TupleType rangeTuple = (TupleType) range;
@@ -566,29 +560,25 @@ public class Dataset extends ImageTransform {
     }
     numRange = color.length;
 
-    // construct suggested mappings
+    // extract domain types
     RealTupleType domain = ftype.getDomain();
     spatial = domain.getRealComponents();
-    if (spatial.length < 2) {
-      System.err.println("Data is not an image (" + ftype + ")");
-      return;
-    }
 
     // load metadata for each source file
     for (int i=0; i<ids.length; i++) {
       String fname = new File(ids[i]).getName();
       status(i + 3, numTasks, "Reading " + fname + " metadata");
-      try { metadata[i] = loaders[i].getMetadata(ids[i]); }
+      try { metadata[i] = readers[i].getMetadata(ids[i]); }
       catch (IOException exc) { metadata[i] = null; }
-      catch (VisADException exc) { metadata[i] = null; }
+      catch (FormatException exc) { metadata[i] = null; }
       if (metadata[i] == null) {
         System.err.println("Could not read metadata from " +
           fname + ". The file may be corrupt or invalid.");
         return;
       }
-      try { ome[i] = (OMENode) loaders[i].getOMENode(ids[i]); }
+      try { ome[i] = (OMENode) readers[i].getOMENode(ids[i]); }
       catch (IOException exc) { ome[i] = null; }
-      catch (VisADException exc) { ome[i] = null; }
+      catch (FormatException exc) { ome[i] = null; }
     }
 
     // construct metadata controls

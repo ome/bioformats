@@ -27,6 +27,7 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import java.awt.BorderLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
@@ -91,8 +92,8 @@ public class ExportPane extends WizardPane {
   /** Associated VisBio frame (for displaying export status). */
   private VisBioFrame bio;
 
-  /** File adapter for exporting VisAD data to disk. */
-  private ImageFamily saver;
+  /** Writer for saving images to disk. */
+  private ImageWriter saver;
 
   /** Data object from which exportable data will be derived. */
   private ImageTransform trans;
@@ -119,7 +120,7 @@ public class ExportPane extends WizardPane {
   public ExportPane(VisBioFrame bio) {
     super("Export data");
     this.bio = bio;
-    saver = new ImageFamily();
+    saver = new ImageWriter();
 
     // -- Page 1 --
 
@@ -211,15 +212,12 @@ public class ExportPane extends WizardPane {
             tiffSaver = (TiffWriter) saver.getWriter(TiffWriter.class);
           }
           int count = 0;
-          int max = tiffSaver == null ? (numTotal + numFiles) : (2 * numTotal);
+          int max = 2 * numTotal;
           task.setStatus(0, max, "Exporting data");
           boolean doLZW = lzw.isSelected();
           boolean padZeroes = leadingZeroes.isSelected();
           int[] plen = new int[stars];
           for (int i=0; i<stars; i++) plen[i] = lengths[maps[i]];
-
-          RealType indexType = null;
-          if (tiffSaver == null) indexType = RealType.getRealType("index");
 
           int[] lengths = trans.getLengths();
           for (int i=0; i<numFiles; i++) {
@@ -242,16 +240,18 @@ public class ExportPane extends WizardPane {
             String filename = sb.toString();
 
             // construct data object
-            FieldImpl data = null;
             if (excl < 0) {
               task.setStatus(count++, max,
-                "Reading image #" + (i + 1) + "/" + numTotal);
-              FlatField image = (FlatField) trans.getData(npos, 2, null);
-              if (tiffSaver == null) data = image;
+                "Reading #" + (i + 1) + "/" + numTotal);
+              FlatField ff = (FlatField) trans.getData(npos, 2, null);
+              Image image = ff instanceof ImageFlatField ?
+                ((ImageFlatField) ff).getImage() :
+                DataUtility.extractImage(ff, false);
+              task.setStatus(count++, max,
+                "Writing #" + (i + 1) + "/" + numTotal);
+              if (tiffSaver == null) saver.save(filename, image, true);
               else {
                 // save image to TIFF file
-                task.setStatus(count++, max,
-                  "Writing image #" + (i + 1) + "/" + numTotal);
                 Hashtable ifd = new Hashtable();
                 TiffTools.putIFDValue(ifd,
                   TiffTools.SOFTWARE, VisBio.TITLE + " " + VisBio.VERSION);
@@ -261,35 +261,25 @@ public class ExportPane extends WizardPane {
                   // do horizontal differencing
                   TiffTools.putIFDValue(ifd, TiffTools.PREDICTOR, 2);
                 }
-                tiffSaver.saveImage(filename,
-                  DataUtility.extractImage(image, false), ifd, true);
+                tiffSaver.saveImage(filename, image, ifd, true);
               }
             }
             else {
-              Integer1DSet fset = null;
-              if (tiffSaver == null) {
-                fset = new Integer1DSet(indexType, lengths[excl]);
-              }
               for (int j=0; j<lengths[excl]; j++) {
                 int img = numImages * i + j + 1;
                 task.setStatus(count++, max,
-                  "Reading image #" + img + "/" + numTotal);
+                  "Reading #" + img + "/" + numTotal);
                 npos[excl] = j;
-                FlatField image = (FlatField) trans.getData(npos, 2, null);
-                if (tiffSaver == null) {
-                  // compile single images into image stack data object
-                  if (data == null) {
-                    FunctionType imageType = (FunctionType) image.getType();
-                    FunctionType stackType =
-                      new FunctionType(indexType, imageType);
-                    data = new FieldImpl(stackType, fset);
-                  }
-                  data.setSample(j, image, false);
-                }
+                FlatField ff = (FlatField) trans.getData(npos, 2, null);
+                Image image = ff instanceof ImageFlatField ?
+                  ((ImageFlatField) ff).getImage() :
+                  DataUtility.extractImage(ff, false);
+                task.setStatus(count++, max,
+                  "Writing #" + img + "/" + numTotal);
+                boolean last = j == lengths[excl] - 1;
+                if (tiffSaver == null) saver.save(filename, image, last);
                 else {
                   // save image to TIFF file
-                  task.setStatus(count++, max,
-                    "Writing image #" + img + "/" + numTotal);
                   Hashtable ifd = new Hashtable();
                   TiffTools.putIFDValue(ifd,
                     TiffTools.SOFTWARE, VisBio.TITLE + " " + VisBio.VERSION);
@@ -299,29 +289,14 @@ public class ExportPane extends WizardPane {
                     // do horizontal differencing
                     TiffTools.putIFDValue(ifd, TiffTools.PREDICTOR, 2);
                   }
-                  tiffSaver.saveImage(filename,
-                    DataUtility.extractImage(image, false),
-                    ifd, j == lengths[excl] - 1);
+                  tiffSaver.saveImage(filename, image, ifd, last);
                 }
               }
-            }
-
-            // save data to file (non-TIFF)
-            if (tiffSaver == null) {
-              String fname = new File(filename).getName();
-              task.setStatus(count++, max, "Exporting " + fname);
-              saver.save(filename, data, false);
             }
           }
           task.setCompleted();
         }
         catch (FormatException exc) {
-          exc.printStackTrace();
-          JOptionPane.showMessageDialog(dialog,
-            "Error exporting data: " + exc.getMessage(),
-            "VisBio", JOptionPane.ERROR_MESSAGE);
-        }
-        catch (VisADException exc) {
           exc.printStackTrace();
           JOptionPane.showMessageDialog(dialog,
             "Error exporting data: " + exc.getMessage(),
