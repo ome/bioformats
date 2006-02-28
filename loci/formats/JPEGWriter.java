@@ -23,11 +23,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import com.sun.image.codec.jpeg.*;
-import java.awt.image.BufferedImage;
 import java.awt.Image;
-import java.io.FileOutputStream;
+import java.io.File;
 import java.io.IOException;
+import javax.imageio.ImageIO;
 
 /** JPEGWriter is the file format writer for JPEG files. */
 public class JPEGWriter extends FormatWriter {
@@ -49,13 +48,7 @@ public class JPEGWriter extends FormatWriter {
   public void save(String id, Image image, boolean last)
     throws FormatException, IOException
   {
-    BufferedImage img = ImageTools.makeImage(image);
-    JPEGEncodeParam param = JPEGCodec.getDefaultJPEGEncodeParam(img);
-    param.setQuality(1.0f, true);
-    FileOutputStream fout = new FileOutputStream(id);
-    JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(fout);
-    encoder.encode(img, param);
-    fout.close();
+    ImageIO.write(ImageTools.makeImage(image), "jpeg", new File(id));
   }
 
 
