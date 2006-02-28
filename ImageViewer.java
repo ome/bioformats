@@ -66,7 +66,7 @@ public class ImageViewer extends JFrame
   /** Constructs an image viewer. */
   public ImageViewer() {
     super(TITLE);
-    setDefaultCloseOperation(EXIT_ON_CLOSE);
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     pane = new JPanel();
     pane.setLayout(new BorderLayout());
     setContentPane(pane);
@@ -203,7 +203,7 @@ public class ImageViewer extends JFrame
         if (file != null) save(file.getPath());
       }
     }
-    else if ("exit".equals(cmd)) System.exit(0);
+    else if ("exit".equals(cmd)) dispose();
   }
 
 
