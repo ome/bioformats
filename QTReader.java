@@ -121,13 +121,13 @@ public class QTReader extends FormatReader {
 
     int offset = ((Integer) offsets.get(no)).intValue();
     int nextOffset = pixels.length;
-    
+
     if (no == 0) {
       scale = offset;
-    }        
-   
+    }
+
     offset -= scale;
-    
+
     if (no < offsets.size() - 1) {
       nextOffset = ((Integer) offsets.get(no+1)).intValue();
       nextOffset -= scale;
@@ -156,11 +156,11 @@ public class QTReader extends FormatReader {
       byte[][] newPix = new byte[3][pixs.length / 3];
       for (int j=0; j<newPix[0].length; j++) {
         for (int i=0; i<newPix.length; i++) {
-          newPix[i][j] = pixs[3*j + i];      
+          newPix[i][j] = pixs[3*j + i];
         }
-      } 
+      }
       return ImageTools.makeImage(newPix, width, height);
-    } 
+    }
     else if (bitsPerPixel == 32) {
       int[] newPix = new int[bytes.length / 4];
       for (int i=0; i<bytes.length; i+=4) {

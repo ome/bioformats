@@ -382,12 +382,12 @@ public class IPLabReader extends FormatReader {
         }
       }
       int r = in.read(fourBytes);
-      if (r > 0) { 
+      if (r > 0) {
         tag = new String(fourBytes);
       }
       else { // eof
-        tag = "fini";       
-      }        
+        tag = "fini";
+      }
     }
   }
 

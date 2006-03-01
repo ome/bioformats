@@ -31,7 +31,7 @@ import java.util.Vector;
 
 /**
  * QTWriter is the file format writer for uncompressed QuickTime movie files.
- * 
+ *
  * @author Melissa Linkert linkert at cs.wisc.edu
  */
 
@@ -54,7 +54,7 @@ public class QTWriter extends FormatWriter {
 
   /** Time the file was created. */
   protected int created;
-  
+
   // -- Constructor --
 
   public QTWriter() { super("QuickTime", "mov"); }
@@ -86,11 +86,11 @@ public class QTWriter extends FormatWriter {
 
     byte[] temp = buf;
     buf = new byte[temp.length];
-    
+
     int newScanline = height - 1;
 
     for (int oldScanline=0; oldScanline<height; oldScanline++) {
-      System.arraycopy(temp, oldScanline*width, buf, 
+      System.arraycopy(temp, oldScanline*width, buf,
         newScanline*width, width);
       newScanline--;
     }
@@ -105,18 +105,18 @@ public class QTWriter extends FormatWriter {
       numWritten++;
 
       // -- write the first header --
-      
+
       DataTools.writeReverseInt(out, 8);
       DataTools.writeString(out, "wide");
-      
+
       // -- write the first plane of pixel data (mdat) --
 
       numBytes = buf.length;
       byteCountOffset = out.getFilePointer();
       DataTools.writeReverseInt(out, numBytes + 8);
       DataTools.writeString(out, "mdat");
-     
-      out.write(buf); 
+
+      out.write(buf);
       offsets.add(new Integer(16));
     }
     else {
@@ -128,19 +128,19 @@ public class QTWriter extends FormatWriter {
 
       // write this plane's pixel data
       out.seek(out.length());
-      out.write(buf); 
-      
+      out.write(buf);
+
       offsets.add(new Integer(planeOffset + 16));
       numWritten++;
     }
 
     if (last) {
       int duration = numWritten * 50;
-      int timeScale = 100;     
-      
+      int timeScale = 100;
+
       // -- write moov atom --
 
-      int atomLength = 685 + 8*numWritten;      
+      int atomLength = 685 + 8*numWritten;
       DataTools.writeReverseInt(out, atomLength);
       DataTools.writeString(out, "moov");
 
@@ -151,12 +151,12 @@ public class QTWriter extends FormatWriter {
       DataTools.writeReverseShort(out, 0); // version
       DataTools.writeReverseShort(out, 0); // flags
       DataTools.writeReverseInt(out, created); // creation time
-      DataTools.writeReverseInt(out, (int) System.currentTimeMillis()); 
+      DataTools.writeReverseInt(out, (int) System.currentTimeMillis());
       DataTools.writeReverseInt(out, timeScale); // time scale
       DataTools.writeReverseInt(out, duration); // duration
       out.write(new byte[] {0, 1, 0, 0});  // preferred rate & volume
       out.write(new byte[] {0, -1, 0, 0, 0, 0, 0, 0, 0, 0}); // reserved
-      
+
       // 3x3 matrix - unsure of significance
 
       DataTools.writeReverseInt(out, 1);
@@ -187,20 +187,20 @@ public class QTWriter extends FormatWriter {
       // -- write tkhd atom --
 
       DataTools.writeReverseInt(out, 92);
-      DataTools.writeString(out, "tkhd"); 
+      DataTools.writeString(out, "tkhd");
       DataTools.writeReverseShort(out, 0); // version
       DataTools.writeReverseShort(out, 15); // flags
-      
+
       DataTools.writeReverseInt(out, created); // creation time
-      DataTools.writeReverseInt(out, (int) System.currentTimeMillis()); 
+      DataTools.writeReverseInt(out, (int) System.currentTimeMillis());
       DataTools.writeReverseInt(out, 1); // track id
       DataTools.writeReverseInt(out, 0); // reserved
-      
+
       DataTools.writeReverseInt(out, duration); // duration
       DataTools.writeReverseInt(out, 0); // reserved
       DataTools.writeReverseInt(out, 0); // reserved
-      DataTools.writeReverseShort(out, 0); // reserved 
-  
+      DataTools.writeReverseShort(out, 0); // reserved
+
       DataTools.writeReverseInt(out, 0); // unknown
       // 3x3 matrix - unsure of significance
 
@@ -219,7 +219,7 @@ public class QTWriter extends FormatWriter {
       DataTools.writeReverseInt(out, height); // image height
       DataTools.writeReverseShort(out, 0); // reserved
 
-      
+
       // -- write edts atom --
 
       DataTools.writeReverseInt(out, 36);
@@ -239,7 +239,7 @@ public class QTWriter extends FormatWriter {
       DataTools.writeReverseShort(out, 0); // unknown
 
       // -- write mdia atom --
-      
+
       atomLength -= 136;
       DataTools.writeReverseInt(out, atomLength);
       DataTools.writeString(out, "mdia");
@@ -252,7 +252,7 @@ public class QTWriter extends FormatWriter {
       DataTools.writeReverseShort(out, 0); // version
       DataTools.writeReverseShort(out, 0); // flags
       DataTools.writeReverseInt(out, created); // creation time
-      DataTools.writeReverseInt(out, (int) System.currentTimeMillis()); 
+      DataTools.writeReverseInt(out, (int) System.currentTimeMillis());
       DataTools.writeReverseInt(out, timeScale); // time scale
       DataTools.writeReverseInt(out, duration); // duration
       DataTools.writeReverseShort(out, 0); // language
@@ -286,9 +286,9 @@ public class QTWriter extends FormatWriter {
       DataTools.writeReverseShort(out, 1); // flags
       DataTools.writeReverseShort(out, 64); // graphics mode
       DataTools.writeReverseShort(out, 32768);  // opcolor 1
-      DataTools.writeReverseShort(out, 32768);  // opcolor 2 
+      DataTools.writeReverseShort(out, 32768);  // opcolor 2
       DataTools.writeReverseShort(out, 32768);  // opcolor 3
-      
+
       // -- write hdlr atom --
 
       DataTools.writeReverseInt(out, 57);
@@ -306,12 +306,12 @@ public class QTWriter extends FormatWriter {
 
       DataTools.writeReverseInt(out, 36);
       DataTools.writeString(out, "dinf");
-      
+
       // -- write dref atom --
 
       DataTools.writeReverseInt(out, 28);
       DataTools.writeString(out, "dref");
- 
+
       DataTools.writeReverseShort(out, 0); // version
       DataTools.writeReverseShort(out, 0); // flags
       DataTools.writeReverseShort(out, 0); // version 2
@@ -326,7 +326,7 @@ public class QTWriter extends FormatWriter {
       atomLength -= 121;
       DataTools.writeReverseInt(out, atomLength);
       DataTools.writeString(out, "stbl");
-     
+
       // -- write stsd atom --
 
       DataTools.writeReverseInt(out, 118);
@@ -339,7 +339,7 @@ public class QTWriter extends FormatWriter {
       DataTools.writeString(out, "raw "); // codec
       out.write(new byte[] {0, 0, 0, 0, 0, 0});  // reserved
       DataTools.writeReverseShort(out, 1); // data reference
-      DataTools.writeReverseShort(out, 1); // version 
+      DataTools.writeReverseShort(out, 1); // version
       DataTools.writeReverseShort(out, 1); // revision
       DataTools.writeString(out, "appl");
       DataTools.writeReverseInt(out, 0); // temporal quality
@@ -383,34 +383,34 @@ public class QTWriter extends FormatWriter {
       DataTools.writeReverseInt(out, 1); // number of entries in the table
       DataTools.writeReverseInt(out, 1); // chunk
       DataTools.writeReverseInt(out, 1); // samples
-      DataTools.writeReverseInt(out, 1); // id 
+      DataTools.writeReverseInt(out, 1); // id
 
       // -- write stsz atom --
 
       DataTools.writeReverseInt(out, 20 + 4*numWritten);
       DataTools.writeString(out, "stsz");
-      
+
       DataTools.writeReverseShort(out, 0); // version
       DataTools.writeReverseShort(out, 0); // flags
       DataTools.writeReverseInt(out, 0); // sample size
       DataTools.writeReverseInt(out, numWritten); // number of planes
       for (int i=0; i<numWritten; i++) {
         DataTools.writeReverseInt(out, width*height); // sample size
-      }        
+      }
 
       // -- write stco atom --
 
       DataTools.writeReverseInt(out, 16 + 4*numWritten);
       DataTools.writeString(out, "stco");
-      
+
       DataTools.writeReverseShort(out, 0); // version
       DataTools.writeReverseShort(out, 0); // flags
       DataTools.writeReverseInt(out, numWritten); // number of planes
       for (int i=0; i<numWritten; i++) {
-        // write the plane offset      
-        DataTools.writeReverseInt(out, ((Integer) offsets.get(i)).intValue()); 
-      }        
-    
+        // write the plane offset
+        DataTools.writeReverseInt(out, ((Integer) offsets.get(i)).intValue());
+      }
+
       out.close();
     }
   }
@@ -421,4 +421,5 @@ public class QTWriter extends FormatWriter {
   public static void main(String[] args) throws IOException, FormatException {
     new QTWriter().testConvert(args);
   }
-}  
+
+}
