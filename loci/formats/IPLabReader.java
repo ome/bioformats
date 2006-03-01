@@ -382,10 +382,12 @@ public class IPLabReader extends FormatReader {
         }
       }
       int r = in.read(fourBytes);
-      if (r < 0) { // eof
-        throw new FormatException("Unexpected end of file");
+      if (r > 0) { 
+        tag = new String(fourBytes);
       }
-      tag = new String(fourBytes);
+      else { // eof
+        tag = "fini";       
+      }        
     }
   }
 
