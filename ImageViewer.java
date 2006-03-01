@@ -29,6 +29,8 @@ import java.awt.image.Raster;
 import java.awt.event.*;
 import java.io.File;
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -74,7 +76,8 @@ public class ImageViewer extends JFrame
 
     // navigation slider
     slider = new JSlider(1, 1);
-    slider.setEnabled(false);
+    slider.setVisible(false);
+    slider.setBorder(new EmptyBorder(5, 3, 5, 3));
     pane.add(BorderLayout.SOUTH, slider);
     slider.addChangeListener(this);
 
@@ -96,6 +99,7 @@ public class ImageViewer extends JFrame
     // cursor probe
     label = new JLabel(" ");
     label.setHorizontalAlignment(SwingConstants.CENTER);
+    label.setBorder(new BevelBorder(BevelBorder.RAISED));
     pane.add(BorderLayout.NORTH, label);
     imagePane.addMouseMotionListener(this);
 
@@ -156,7 +160,7 @@ public class ImageViewer extends JFrame
     slider.removeChangeListener(this);
     slider.setValue(1);
     slider.setMaximum(images.length);
-    slider.setEnabled(images.length > 1);
+    slider.setVisible(images.length > 1);
     slider.addChangeListener(this);
     Dimension dim = ImageTools.getSize(images[0]);
     updateLabel(-1, -1);
