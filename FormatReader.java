@@ -137,43 +137,58 @@ public abstract class FormatReader extends FormatHandler {
    * and displaying the results in a simple display.
    */
   public boolean testRead(String[] args) throws FormatException, IOException {
-    String className = getClass().getName();
-    if (args == null || args.length < 1) {
+    String id = null;
+    boolean pixels = true;
+    if (args != null) {
+      for (int i=0; i<args.length; i++) {
+        if (args[i].startsWith("-")) {
+          if (args[i].equals("-nopix")) pixels = false;
+          else System.out.println("Ignoring unknown command flag: " + args[i]);
+        }
+        else {
+          if (id == null) id = args[i];
+          else System.out.println("Ignoring unknown argument: " + args[i]);
+        }
+      }
+    }
+    if (id == null) {
+      String className = getClass().getName();
       System.out.println("To test read a file in " + format + " format, run:");
-      System.out.println("  java " + className + " in_file");
+      System.out.println("  java " + className + " [-nopix] in_file");
       return false;
     }
-    String id = args[0];
 
     // check type
     System.out.print("Checking " + format + " format ");
     System.out.println(isThisType(id) ? "[yes]" : "[no]");
 
     // read pixels
-    System.out.print("Reading " + id + " pixel data ");
-    long s1 = System.currentTimeMillis();
-    int num = getImageCount(args[0]);
-    long e1 = System.currentTimeMillis();
-    final Image[] images = new Image[num];
-    long s2 = System.currentTimeMillis();
-    for (int i=0; i<num; i++) {
-      images[i] = open(args[0], i);
-      System.out.print(".");
+    if (pixels) {
+      System.out.print("Reading " + id + " pixel data ");
+      long s1 = System.currentTimeMillis();
+      int num = getImageCount(args[0]);
+      long e1 = System.currentTimeMillis();
+      final Image[] images = new Image[num];
+      long s2 = System.currentTimeMillis();
+      for (int i=0; i<num; i++) {
+        images[i] = open(args[0], i);
+        System.out.print(".");
+      }
+      long e2 = System.currentTimeMillis();
+      System.out.println(" [done]");
+
+      // output timing results
+      float sec = (e2 - s1) / 1000f;
+      float avg = (float) (e2 - s2) / num;
+      long initial = e1 - s1;
+      System.out.println(sec + "s elapsed (" +
+        avg + "ms per image, " + initial + "ms overhead)");
+
+      // display pixels in image viewer
+      ImageViewer viewer = new ImageViewer();
+      viewer.setImages(id, format, images);
+      viewer.show();
     }
-    long e2 = System.currentTimeMillis();
-    System.out.println(" [done]");
-
-    // output timing results
-    float sec = (e2 - s1) / 1000f;
-    float avg = (float) (e2 - s2) / num;
-    long initial = e1 - s1;
-    System.out.println(sec + "s elapsed (" +
-      avg + "ms per image, " + initial + "ms overhead)");
-
-    // display pixels in image viewer
-    ImageViewer viewer = new ImageViewer();
-    viewer.setImages(id, format, images);
-    viewer.show();
 
     // read metadata
     System.out.print("Reading " + id + " metadata ");
