@@ -83,15 +83,29 @@ public class QTWriter extends FormatWriter {
     byte[] buf = ImageTools.getPixels(img, width, height);
 
     // reorder the scanlines
+    // also need to check if the width is a multiple of 4
+    // if it is, great; if not, we need to pad each scanline with enough
+    // bytes to make the width a multiple of 4
 
+    int pad = width % 4;
+    if (pad == 3) pad = 1;
+    else if (pad == 1) pad = 3;
+    
     byte[] temp = buf;
-    buf = new byte[temp.length];
+    buf = new byte[temp.length + height*pad];
 
     int newScanline = height - 1;
 
     for (int oldScanline=0; oldScanline<height; oldScanline++) {
       System.arraycopy(temp, oldScanline*width, buf,
-        newScanline*width, width);
+        newScanline*(width+pad), width);
+      
+      // add padding bytes
+
+      for (int i=0; i<pad; i++) {
+        buf[newScanline*(width+pad) + width + i] = 0;
+      }        
+      
       newScanline--;
     }
 

@@ -142,7 +142,24 @@ public class QTReader extends FormatReader {
     byte[] bytes = uncompress(pixs, codec);
     prevPixels = bytes;
 
+    // determine whether we need to strip out any padding bytes
+
+    int pad = width % 4;
+    if (pad == 3) pad = 1;
+    else if (pad == 1) pad = 3;
+
+    if (pad > 0) {
+      bytes = new byte[prevPixels.length - height*pad];    
+     
+      for (int row=0; row<height; row++) {
+        System.arraycopy(prevPixels, row*(width+pad), bytes, row*width, width);
+      }
+    }
+    
     if (bitsPerPixel <= 8) {
+      if (bytes.length == 3 * width * height) {
+        return ImageTools.makeImage(bytes, width, height, 4, false);         
+      }      
       return ImageTools.makeImage(bytes, width, height, 1, false);
     }
     else if (bitsPerPixel == 16) {
