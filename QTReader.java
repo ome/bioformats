@@ -145,9 +145,8 @@ public class QTReader extends FormatReader {
     // determine whether we need to strip out any padding bytes
 
     int pad = width % 4;
-    if (pad == 3) pad = 1;
-    else if (pad == 1) pad = 3;
-
+    pad = (4 - pad) % 4;
+    
     if (pad > 0) {
       bytes = new byte[prevPixels.length - height*pad];    
      
@@ -156,10 +155,14 @@ public class QTReader extends FormatReader {
       }
     }
     
-    if (bitsPerPixel <= 8) {
-      if (bytes.length == 3 * width * height) {
-        return ImageTools.makeImage(bytes, width, height, 4, false);         
+    if (bitsPerPixel <= 8 || bitsPerPixel == 40) {
+      if (bitsPerPixel == 40) {
+        // invert the pixels
+        for (int i=0; i<bytes.length; i++) {
+          bytes[i] = (byte) (255 - bytes[i]);        
+        }      
       }      
+            
       return ImageTools.makeImage(bytes, width, height, 1, false);
     }
     else if (bitsPerPixel == 16) {
