@@ -1181,7 +1181,9 @@ public abstract class TiffTools {
 //            int blue = colorMap[x + 2*bpsPow];
 //            int[] components = {red, green, blue};
 //            samples[i][ndx] = (byte) components[i];
-//            if (maxValue == 0) samples[i][ndx] = (byte) (components[i] % 255);
+//            if (maxValue == 0) {
+//              samples[i][ndx] = (byte) (components[i] % 255);
+//            }
             int cndx = i == 0 ? x : (i == 1 ? (x + bpsPow) : (x + 2*bpsPow));
             int cm = colorMap[cndx];
             samples[i][ndx] = (byte) (maxValue == 0 ? (cm % 255) : cm);
