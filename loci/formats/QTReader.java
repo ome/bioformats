@@ -146,23 +146,23 @@ public class QTReader extends FormatReader {
 
     int pad = width % 4;
     pad = (4 - pad) % 4;
-    
+
     if (pad > 0) {
-      bytes = new byte[prevPixels.length - height*pad];    
-     
+      bytes = new byte[prevPixels.length - height*pad];
+
       for (int row=0; row<height; row++) {
         System.arraycopy(prevPixels, row*(width+pad), bytes, row*width, width);
       }
     }
-    
+
     if (bitsPerPixel <= 8 || bitsPerPixel == 40) {
       if (bitsPerPixel == 40) {
         // invert the pixels
         for (int i=0; i<bytes.length; i++) {
-          bytes[i] = (byte) (255 - bytes[i]);        
-        }      
-      }      
-            
+          bytes[i] = (byte) (255 - bytes[i]);
+        }
+      }
+
       return ImageTools.makeImage(bytes, width, height, 1, false);
     }
     else if (bitsPerPixel == 16) {
