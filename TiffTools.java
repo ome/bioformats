@@ -1109,13 +1109,16 @@ public abstract class TiffTools {
     // 2) if the planar configuration is set to 2 (separated), then go to
     //    j + (i*(bytes.length / sampleCount))
 
+    int bps0 = bitsPerSample[0];
+    int bpsPow = (int) Math.pow(2, bps0);
+    int numBytes = bps0 / 8;
+    boolean noDiv8 = bps0 % 8 != 0;
+    boolean bps8 = bps0 == 8;
 
     int index = 0;
     for (int j=0; j<sampleCount; j++) {
       for (int i=0; i<samples.length; i++) {
-        int numBytes = bitsPerSample[0] / 8;
-
-        if (bitsPerSample[0] % 8 != 0) {
+        if (noDiv8) {
           // bits per sample is not a multiple of 8
           //
           // while images in this category are not in violation of baseline
@@ -1135,15 +1138,11 @@ public abstract class TiffTools {
           // index computed mod bitsPerSample.length to avoid problems with
           // RGB palette
 
-          int offset = (bitsPerSample[0] * (samples.length*j + i)) % 8;
-          if (offset <= (8 - (bitsPerSample[0] % 8))) {
-            index--;
-          }
+          int offset = (bps0 * (samples.length*j + i)) % 8;
+          if (offset <= (8 - (bps0 % 8))) index--;
 
           if (i == 0) counter++;
-          if (counter % 4 == 0 && i == 0) {
-            index++;
-          }
+          if (counter % 4 == 0 && i == 0) index++;
 
           int ndx = startIndex + j;
           samples[i][ndx] = (byte) (b < 0 ? 256 + b : b);
@@ -1154,15 +1153,15 @@ public abstract class TiffTools {
           else if (photoInterp == RGB_PALETTE) {
             int x = b < 0 ? 256 + b : b;
             int red = colorMap[x % colorMap.length];
-            int green = colorMap[(x + (int) Math.pow(2, bitsPerSample[0])) %
+            int green = colorMap[(x + bpsPow) %
               colorMap.length];
-            int blue = colorMap[(x + 2*((int) Math.pow(2, bitsPerSample[0]))) %
+            int blue = colorMap[(x + 2*bpsPow) %
               colorMap.length];
             int[] components = {red, green, blue};
             samples[i][ndx] = (byte) components[i];
           }
         }
-        else if (bitsPerSample[0] == 8) {
+        else if (bps8) {
           // special case handles 8-bit data more quickly
           //if (planar == 2) { index = j+(i*(bytes.length / samples.length)); }
           byte b = bytes[index];
@@ -1177,13 +1176,15 @@ public abstract class TiffTools {
           else if (photoInterp == RGB_PALETTE) {
             index--;
             int x = b < 0 ? 256 + b : b;
-            int red = colorMap[x];
-            int green = colorMap[x + (int) Math.pow(2, bitsPerSample[0])];
-            int blue = colorMap[x + 2*((int) Math.pow(2, bitsPerSample[0]))];
-            int[] components = {red, green, blue};
-
-            samples[i][ndx] = (byte) components[i];
-            if (maxValue == 0) samples[i][ndx] = (byte) (components[i] % 255);
+//            int red = colorMap[x];
+//            int green = colorMap[x + bpsPow];
+//            int blue = colorMap[x + 2*bpsPow];
+//            int[] components = {red, green, blue};
+//            samples[i][ndx] = (byte) components[i];
+//            if (maxValue == 0) samples[i][ndx] = (byte) (components[i] % 255);
+            int cndx = i == 0 ? x : (i == 1 ? (x + bpsPow) : (x + 2*bpsPow));
+            int cm = colorMap[cndx];
+            samples[i][ndx] = (byte) (maxValue == 0 ? (cm % 255) : cm);
           }
           else if (photoInterp == CMYK) {
             samples[i][ndx] = (byte) (255 - samples[i][ndx]);
@@ -1231,10 +1232,8 @@ public abstract class TiffTools {
             /*
             int x = DataTools.bytesToInt(b, littleEndian) % colorMap.length;
             int red = colorMap[x];
-            int green = colorMap[(x +
-              (int) Math.pow(2, bitsPerSample[0])) % colorMap.length];
-            int blue = colorMap[(x +
-              2*((int) Math.pow(2, bitsPerSample[0]))) % colorMap.length];
+            int green = colorMap[(x + bpsPow) % colorMap.length];
+            int blue = colorMap[(x + 2*bpsPow) % colorMap.length];
             int[] components = {red, green, blue};
             samples[i][ndx] = (byte) components[i];
             if (samples[i][ndx] == 0) {
@@ -1247,7 +1246,7 @@ public abstract class TiffTools {
           }
         }
       }
-      if ((photoInterp == RGB_PALETTE) && (bitsPerSample[0] == 8)) index++;
+      if ((photoInterp == RGB_PALETTE) && (bps0 == 8)) index++;
     }
   }
 
