@@ -9,6 +9,9 @@ Leica reader:
 * Read key/value pairs
 * Parse associated LEI file referenced within TIFF comment
 
+Fluoview reader:
+* Read key/value pairs in ImageDescription
+
 Support RGB output in writers:
 * AVI
 * QuickTime
