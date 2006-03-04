@@ -1,6 +1,6 @@
 // LeicaConverter.java
 
-// Coded on 2006 Mar 3 by Curtis Rueden, for Julie Simpson.
+// Coded 2006 Mar 3-4 by Curtis Rueden, for Julie Simpson.
 // Permission is granted to use this code for anything.
 
 import java.awt.Dimension;
@@ -18,14 +18,17 @@ public class LeicaConverter extends JFrame implements ActionListener {
   private JFileChooser rc = reader.getFileChooser();
   private JFileChooser wc = writer.getFileChooser();
 
-  private JTextField input;
-  private JTextField output;
+  private JTextField input, output;
+  private JRadioButton rgb, leica;
+  private JProgressBar progress;
 
   public LeicaConverter() {
     super("Leica Converter");
+    setLocation(100, 100);
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
     JPanel pane = new JPanel();
-    pane.setBorder(new EmptyBorder(5, 5, 5, 5));
+    pane.setBorder(new EmptyBorder(10, 10, 10, 10));
     pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
     setContentPane(pane);
 
@@ -54,7 +57,6 @@ public class LeicaConverter extends JFrame implements ActionListener {
     pane.add(row2);
 
     JLabel outputLabel = new JLabel("Output file");
-    outputLabel.setPreferredSize(inputLabel.getPreferredSize());
     output = new JTextField();
     output.setColumns(25);
     output.setMaximumSize(
@@ -73,6 +75,30 @@ public class LeicaConverter extends JFrame implements ActionListener {
     row3.setLayout(new BoxLayout(row3, BoxLayout.X_AXIS));
     pane.add(row3);
 
+    JLabel formatLabel = new JLabel("Output format");
+    inputLabel.setPreferredSize(formatLabel.getPreferredSize());
+    outputLabel.setPreferredSize(formatLabel.getPreferredSize());
+    rgb = new JRadioButton("merged RGB", true);
+    leica = new JRadioButton("split Leica");
+    ButtonGroup group = new ButtonGroup();
+    group.add(rgb);
+    group.add(leica);
+
+    row3.add(formatLabel);
+    row3.add(Box.createHorizontalStrut(3));
+    row3.add(rgb);
+    row3.add(Box.createHorizontalStrut(3));
+    row3.add(leica);
+    row3.add(Box.createHorizontalGlue());
+
+    JPanel row4 = new JPanel();
+    row4.setLayout(new BoxLayout(row4, BoxLayout.X_AXIS));
+    pane.add(Box.createVerticalStrut(10));
+    pane.add(row4);
+
+    progress = new JProgressBar();
+    progress.setStringPainted(true);
+    progress.setString("");
     JButton convert = new JButton("Convert");
     convert.setActionCommand("convert");
     convert.addActionListener(this);
@@ -80,10 +106,11 @@ public class LeicaConverter extends JFrame implements ActionListener {
     quit.setActionCommand("quit");
     quit.addActionListener(this);
 
-    row3.add(Box.createHorizontalGlue());
-    row3.add(convert);
-    row3.add(Box.createHorizontalStrut(3));
-    row3.add(quit);
+    row4.add(progress);
+    row4.add(Box.createHorizontalStrut(3));
+    row4.add(convert);
+    row4.add(Box.createHorizontalStrut(3));
+    row4.add(quit);
   }
 
   public void actionPerformed(ActionEvent e) {
@@ -98,13 +125,15 @@ public class LeicaConverter extends JFrame implements ActionListener {
       int rval = wc.showSaveDialog(this);
       if (rval != JFileChooser.APPROVE_OPTION) return;
       File file = wc.getSelectedFile();
-      output.setText(file.getPath());
+      String s = file.getPath();
+      if (!writer.isThisType(s)) s += ".tif";
+      output.setText(s);
     }
     else if ("convert".equals(cmd)) {
       // TODO
     }
     else if ("quit".equals(cmd)) {
-      hide();
+      setVisible(false);
       dispose();
     }
   }
