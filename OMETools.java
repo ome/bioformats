@@ -72,7 +72,7 @@ public abstract class OMETools {
       r.exec("import loci.ome.xml.DOMUtil");
       r.setVar("FALSE", false);
     }
-    catch (ReflectException exc) { r = null; }
+    catch (Throwable t) { r = null; }
     return r;
   }
 
