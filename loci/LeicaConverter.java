@@ -3,17 +3,24 @@
 // Coded 2006 Mar 3-4 by Curtis Rueden, for Julie Simpson.
 // Permission is granted to use this code for anything.
 
+import java.awt.Image;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Hashtable;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import loci.formats.*;
 
-public class LeicaConverter extends JFrame implements ActionListener {
+public class LeicaConverter extends JFrame
+  implements ActionListener, Runnable
+{
+  private static final String NL = "" + (char) 13 + (char) 10;
 
   private ImageReader reader = new ImageReader();
+  private ImageReader reader2 = new ImageReader();
   private TiffWriter writer = new TiffWriter();
   private JFileChooser rc = reader.getFileChooser();
   private JFileChooser wc = writer.getFileChooser();
@@ -21,6 +28,7 @@ public class LeicaConverter extends JFrame implements ActionListener {
   private JTextField input, output;
   private JRadioButton rgb, leica;
   private JProgressBar progress;
+  private JButton convert;
 
   public LeicaConverter() {
     super("Leica Converter");
@@ -37,7 +45,7 @@ public class LeicaConverter extends JFrame implements ActionListener {
     pane.add(row1);
 
     JLabel inputLabel = new JLabel("Input file(s)");
-    input = new JTextField();
+    input = new JTextField("D:\\data\\julie\\biorad\\8291mcd8_raw0<1-2>.pic");//TEMP
     input.setColumns(25);
     input.setMaximumSize(
       new Dimension(Integer.MAX_VALUE, input.getPreferredSize().height));
@@ -57,7 +65,7 @@ public class LeicaConverter extends JFrame implements ActionListener {
     pane.add(row2);
 
     JLabel outputLabel = new JLabel("Output file");
-    output = new JTextField();
+    output = new JTextField("C:\\Documents and Settings\\warrior\\Desktop\\test.tif");//TEMP
     output.setColumns(25);
     output.setMaximumSize(
       new Dimension(Integer.MAX_VALUE, output.getPreferredSize().height));
@@ -99,7 +107,7 @@ public class LeicaConverter extends JFrame implements ActionListener {
     progress = new JProgressBar();
     progress.setStringPainted(true);
     progress.setString("");
-    JButton convert = new JButton("Convert");
+    convert = new JButton("Convert");
     convert.setActionCommand("convert");
     convert.addActionListener(this);
     JButton quit = new JButton("Quit");
@@ -119,7 +127,18 @@ public class LeicaConverter extends JFrame implements ActionListener {
       int rval = rc.showOpenDialog(this);
       if (rval != JFileChooser.APPROVE_OPTION) return;
       File file = rc.getSelectedFile();
-      input.setText(file.getPath());
+      String path = file.getPath();
+      int dot = path.lastIndexOf(".");
+      if (dot < 0) dot = path.length();
+      String pre = path.substring(0, dot - 1);
+      char c = path.charAt(dot - 1);
+      String post = path.substring(dot);
+      if ((c == '1' && new File(pre + "2" + post).exists()) ||
+        (c == '2' && new File(pre + "1" + post).exists()))
+      {
+        path = pre + "<1-2>" + post;
+      }
+      input.setText(path);
     }
     else if ("output".equals(cmd)) {
       int rval = wc.showSaveDialog(this);
@@ -130,12 +149,116 @@ public class LeicaConverter extends JFrame implements ActionListener {
       output.setText(s);
     }
     else if ("convert".equals(cmd)) {
-      // TODO
+      new Thread(this).start();
     }
     else if ("quit".equals(cmd)) {
       setVisible(false);
       dispose();
     }
+  }
+
+  public void run() {
+    convert.setEnabled(false);
+    try {
+      String[] in = {input.getText()};
+      String out = output.getText();
+      boolean mergeRGB = rgb.isSelected();
+      int ndx = in[0].indexOf("<1-2>");
+      if (ndx >= 0) {
+        String pre = in[0].substring(0, ndx);
+        String post = in[0].substring(ndx + 5);
+        in = new String[] {
+          pre + "2" + post, // green
+          pre + "1" + post  // red
+        };
+      }
+      int planesPerFile = reader.getImageCount(in[0]);
+      int numPlanes = planesPerFile * in.length;
+
+      if (mergeRGB) { // merged RGB stack
+        int np2 = numPlanes / 2;
+        progress.setMaximum(3 * np2);
+        for (int i=0; i<np2; i++) {
+          progress.setValue(3 * i);
+          int q1 = i / planesPerFile;
+          int c1 = i % planesPerFile;
+          int q2 = (i + np2) / planesPerFile;
+          int c2 = (i + np2) % planesPerFile;
+          progress.setString(i + "/" + np2);
+          BufferedImage ig = ImageTools.makeImage(reader.open(in[q1], c1));
+          progress.setValue(3 * i + 1);
+          BufferedImage ir = ImageTools.makeImage(reader2.open(in[q2], c2));
+          progress.setValue(3 * i + 2);
+          int width = ig.getWidth(), height = ig.getHeight();
+          BufferedImage img = new BufferedImage(width,
+            height, BufferedImage.TYPE_INT_RGB);
+          for (int y=0; y<height; y++) {
+            for (int x=0; x<width; x++) {
+              int r = ir.getRGB(x, y) % 256;
+              int g = ig.getRGB(x, y) % 256;
+              int q = ((g << 8) | r);
+              img.setRGB(x, y, q);
+            }
+          }
+          writer.save(out, img, i == np2 - 1);
+        }
+        progress.setValue(3 * np2);
+      }
+      else { // split Leica stack
+        progress.setMaximum(2 * numPlanes);
+        for (int i=0; i<numPlanes; i++) {
+          progress.setValue(2 * i);
+          int q = i / planesPerFile;
+          int c = i % planesPerFile;
+          progress.setString(i + "/" + numPlanes);
+          Image img = reader.open(in[q], c);
+          Hashtable ifd = null;
+          if (i == 0) {
+            ifd = new Hashtable();
+            StringBuffer sb = new StringBuffer();
+            sb.append("[GLOBAL]");
+            sb.append(NL);
+            sb.append("ImageWidth=");
+            Dimension size = ImageTools.getSize(img);
+            sb.append(size.width);
+            sb.append(NL);
+            sb.append("ImageLength=");
+            sb.append(size.height);
+            sb.append(NL);
+            sb.append("NumOfFrames=");
+            sb.append(numPlanes / 2);
+            sb.append(NL);
+            sb.append("BitsPerSample=8");
+            sb.append(NL);
+            sb.append("SamplesPerPixel=1");
+            sb.append(NL);
+            // TODO - get these from Bio-Rad PIC notes AXIS_2, AXIS_3, AXIS_4
+            // but Bio-Rad reader should put these into PixelSizeX, Y and Z
+            // so that this software does not need special Bio-Rad logic
+            sb.append("VoxelSizeX=");
+            sb.append(NL);
+            sb.append("VoxelSizeY=");
+            sb.append(NL);
+            sb.append("VoxelSizeZ=");
+            sb.append(NL);
+            TiffTools.putIFDValue(ifd,
+              TiffTools.IMAGE_DESCRIPTION, sb.toString());
+          }
+          progress.setValue(2 * i + 1);
+          writer.saveImage(out, img, ifd, i == numPlanes - 1);
+        }
+        progress.setValue(2 * numPlanes);
+      }
+      reader.close();
+      reader2.close();
+    }
+    catch (Exception exc) {
+      JOptionPane.showMessageDialog(this, "Sorry, an error occurred: " +
+        exc.getMessage(), "Leica Converter", JOptionPane.ERROR_MESSAGE);
+    }
+    progress.setString("");
+    progress.setValue(0);
+    convert.setEnabled(true);
   }
 
   public static void main(String[] args) {
