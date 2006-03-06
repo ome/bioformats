@@ -556,8 +556,7 @@ public class OverlayTransform extends DataTransform
           int c = 0;
           for (int i=0; i<size && c<txtSize; i++) {
             OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
-            if (!obj.hasText()) continue;
-            if (!drawText && !obj.isSelected()) continue;
+            if (!obj.hasText() || !drawText) continue;
             txtField.setSample(c++, obj.getData(), false);
           }
         }

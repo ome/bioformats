@@ -116,9 +116,7 @@ public abstract class OverlayObject {
    * Computes a grid to be superimposed on this overlay
    * to indicate it is currently selected.
    */
-  public DataImpl getSelectionGrid() {
-    return getSelectionGrid(false);
-  }
+  public DataImpl getSelectionGrid() { return getSelectionGrid(false); }
 
   /**
    * Computes a grid to be superimposed on this overlay to
