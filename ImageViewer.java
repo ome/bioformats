@@ -88,7 +88,9 @@ public class ImageViewer extends JFrame
         Dimension size = getSize();
         g.setColor(slider.getBackground());
         g.fillRect(0, 0, size.width, size.height);
-        if (images != null) g.drawImage(images[ndx], 0, 0, this);
+        if (images != null && images[ndx] != null) {
+          g.drawImage(images[ndx], 0, 0, this);
+        }
       }
       public Dimension getPreferredSize() {
         return ImageTools.getSize(images == null ? null : images[0]);
@@ -133,14 +135,25 @@ public class ImageViewer extends JFrame
     String format = null;
     try {
       format = reader.getFormat(id);
-      images = reader.open(id);
+      //images = reader.open(id);
+      int num = reader.getImageCount(id);
+      ProgressMonitor progress = new ProgressMonitor(this,
+        "Reading " + id, null, 0, num);
+      images = new Image[num];
+      for (int i=0; i<num; i++) {
+        if (progress.isCanceled()) break;
+        progress.setProgress(i);
+        images[i] = reader.open(id, i);
+        if (i == 0) setImages(id, format, images);
+      }
+      reader.close();
+      progress.setProgress(num);
     }
     catch (Exception exc) {
       exc.printStackTrace();
       wait(false);
       return;
     }
-    setImages(id, format, images);
     wait(false);
   }
 
@@ -148,7 +161,18 @@ public class ImageViewer extends JFrame
   public void save(String id) {
     if (images == null) return;
     wait(true);
-    try { writer.save(id, images); }
+    try {
+      //writer.save(id, images);
+      ProgressMonitor progress = new ProgressMonitor(this,
+        "Saving " + id, null, 0, images.length);
+      for (int i=0; i<images.length; i++) {
+        progress.setProgress(i);
+        boolean canceled = progress.isCanceled();
+        writer.save(id, images[i], i == images.length - 1 || canceled);
+        if (canceled) break;
+      }
+      progress.setProgress(images.length);
+    }
     catch (Exception exc) { exc.printStackTrace(); }
     wait(false);
   }
@@ -193,8 +217,12 @@ public class ImageViewer extends JFrame
       wait(false);
       int rval = chooser.showOpenDialog(this);
       if (rval == JFileChooser.APPROVE_OPTION) {
-        File file = chooser.getSelectedFile();
-        if (file != null) open(file.getPath());
+        final File file = chooser.getSelectedFile();
+        if (file != null) {
+          new Thread() {
+            public void run() { open(file.getPath()); }
+          }.start();
+        }
       }
     }
     else if ("save".equals(cmd)) {
@@ -203,8 +231,12 @@ public class ImageViewer extends JFrame
       wait(false);
       int rval = chooser.showSaveDialog(this);
       if (rval == JFileChooser.APPROVE_OPTION) {
-        File file = chooser.getSelectedFile();
-        if (file != null) save(file.getPath());
+        final File file = chooser.getSelectedFile();
+        if (file != null) {
+          new Thread() {
+            public void run() { save(file.getPath()); }
+          }.start();
+        }
       }
     }
     else if ("exit".equals(cmd)) dispose();
