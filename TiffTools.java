@@ -1509,8 +1509,7 @@ public abstract class TiffTools {
         }
       }
     }
-    else if (buf instanceof DataBufferUShort)
-    {
+    else if (buf instanceof DataBufferUShort) {
       // originally 16 bit data
       short[][] data = ((DataBufferUShort) buf).getBankData();
       values = new int[data.length][data[0].length];
@@ -1580,7 +1579,7 @@ public abstract class TiffTools {
       putIFDValue(ifd, RESOLUTION_UNIT, 1); // no unit
     }
     if (getIFDValue(ifd, SOFTWARE) == null) {
-      putIFDValue(ifd, SOFTWARE, "LOCI Bio-formats");
+      putIFDValue(ifd, SOFTWARE, "LOCI Bio-Formats");
     }
 
     // create pixel output buffers
