@@ -1,3 +1,5 @@
+package loci.ome.ij;
+
 import ij.*;
 
 import java.util.ArrayList;
@@ -7,7 +9,7 @@ import org.openmicroscopy.ds.*;
 import org.openmicroscopy.ds.dto.*;
 import org.openmicroscopy.ds.st.*;
 
-/** 
+/**
  * Utility methods for retrieving images.
  * @author Philip Huettl pmhuettl@wisc.ed
  * @author Melissa Linkert linkert at cs.wisc.edu
@@ -24,9 +26,9 @@ public class OMERetrieve {
     //Specify which fields we want for the image.
 
     Criteria criteria = new Criteria();
-    makeAttributeFields(criteria, new String[] {"id", "name", "created", 
+    makeAttributeFields(criteria, new String[] {"id", "name", "created",
       "description", "default_pixels"});
- 
+
     //Specify which fields we want for the pixels.
     makeAttributeFields(criteria, "default_pixels", new String[] {"id",
       "PixelType", "SizeC", "SizeT", "SizeX", "SizeY", "SizeZ"});
@@ -37,7 +39,7 @@ public class OMERetrieve {
     //retrieve the images using the given criteria
     return retrieveImages(datafact, criteria);
   }
-  
+
   /**
    * method that retrieves the Images from the database that match the
    * criteria given
@@ -64,11 +66,11 @@ public class OMERetrieve {
   }
 
   /** method that retrieves the projects with the given criteria */
-  public static Project[] retrieveProjects(DataFactory datafact, 
+  public static Project[] retrieveProjects(DataFactory datafact,
       Criteria criteria) {
     // get experimenter settings for the logged in user
     Experimenter user = getUser(datafact);
-    
+
     // Retrieve the user's projects.
     criteria.addFilter("owner_id", new Integer(user.getID()));
     criteria.addOrderBy("name");
@@ -89,13 +91,13 @@ public class OMERetrieve {
     fs.addWantedField("experimenter", "id");
     UserState userState = df.getUserState(fs);
     return userState.getExperimenter();
-  }	  
-  
+  }
+
   /** method that retrieves all of current user's datasets from the database */
   public static Dataset[] retrieveAllDatasets(DataFactory datafact) {
     Experimenter user = getUser(datafact);
     Criteria criteria = new Criteria();
-    
+
     //Specify which fields we want for the dataset.
     makeAttributeFields(criteria, new String[] {"id", "name"});
     criteria.addFilter("owner_id", new Integer(user.getID()));
@@ -105,7 +107,7 @@ public class OMERetrieve {
   }
 
   /** method that retrieves the datasets matching the given criteria */
-  public static Dataset[] retrieveDatasets(DataFactory datafact, 
+  public static Dataset[] retrieveDatasets(DataFactory datafact,
       Criteria criteria) {
     List l = datafact.retrieveList(Dataset.class, criteria);
     Object[] ob = l.toArray();
@@ -116,7 +118,7 @@ public class OMERetrieve {
     }
     return ima;
   }
-    
+
   /** method that retrieves a list of experimenters from the database */
   public static String[][] retrieveExperimenters(DataFactory datafact) {
     Criteria criteria = new Criteria();
@@ -134,7 +136,7 @@ public class OMERetrieve {
     }
     return exp;
   }
-	
+
   /**
    * retrieves images using the object array that specifies
    * String Project, String Owner, Integer ImageID, String ImageName,
@@ -201,7 +203,7 @@ public class OMERetrieve {
       return retrieveImages(datafact, criteria);
     }
   }
- 
+
   /** Method that retrieves an image from its ID */
   public static Image getImagefromID(DataFactory datafactory, int imageID) {
     Criteria criteria = new Criteria();
@@ -237,42 +239,42 @@ public class OMERetrieve {
 
   /** adds all image fields to an image criteria */
   public static void addImageFields(Criteria c) {
-    makeAttributeFields(c, new String[] {"id", "name", "created", "description",
-      "owner", "datasets", "all_features", "default_pixels"});
-    makeAttributeFields(c, "all_features", new String[] {"name", "tag", 
+    makeAttributeFields(c, new String[] {"id", "name", "created",
+      "description", "owner", "datasets", "all_features", "default_pixels"});
+    makeAttributeFields(c, "all_features", new String[] {"name", "tag",
       "children", "parent_feature"});
-    makeAttributeFields(c, "owner", new String[] {"FirstName", "LastName", 
+    makeAttributeFields(c, "owner", new String[] {"FirstName", "LastName",
       "id"});
     makeAttributeFields(c, "default_pixels", new String[] {"id", "PixelType",
-      "SizeC", "SizeT", "SizeX", "SizeY", "SizeZ", "FileSHA1", 
-      "ImageServerID"});	    
-    
+      "SizeC", "SizeT", "SizeX", "SizeY", "SizeZ", "FileSHA1",
+      "ImageServerID"});
+
     FieldsSpecification fs = new FieldsSpecification();
     fs.addWantedField("Repository");
     fs.addWantedField("Repository", "ImageServerURL");
     c.addWantedFields("default_pixels", fs);
   }
- 
+
   /** populates the criteria for a certain attribute */
   public static Criteria makeAttributeFields(String[] attr) {
     Criteria c = new Criteria();
     for(int i=0; i<attr.length; i++) {
       c.addWantedField(attr[i]);
-    }	
+    }
     return c;
-  }	  
-  
+  }
+
   /** populates the criteria for a certain attribute */
   public static void makeAttributeFields(Criteria c, String[] attr) {
     for(int i=0; i<attr.length; i++) {
       c.addWantedField(attr[i]);
-    }  
-  } 
+    }
+  }
 
   /** populates the criteria for a certain attribute */
   public static void makeAttributeFields(Criteria c, String name, String[] a) {
     for(int i=0; i<a.length; i++) {
       c.addWantedField(name, a[i]);
-    } 	    
-  } 
-}	
+    }
+  }
+}

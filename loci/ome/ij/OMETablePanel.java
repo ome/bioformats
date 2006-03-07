@@ -1,3 +1,5 @@
+package loci.ome.ij;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
@@ -10,12 +12,12 @@ import java.util.ArrayList;
  * OMETablePanel is the class that handles
  * the table used in displaying the images
  * selectable for download.
- * 
+ *
  * @author Philip Huettl pmhuettl@wisc.edu
  * @author Melissa Linkert, linkert at cs.wisc.edu
  */
 public class OMETablePanel implements ActionListener {
-  
+
   // -- Fields --
 
   private JDialog dialog;
@@ -27,13 +29,13 @@ public class OMETablePanel implements ActionListener {
   private JTextArea own, typ, c1, t1, x1, y1, z1, des, thumb;
   private JTextArea[] areas;
   private String[] columns;
-  
+
   // -- Constructor --
 
   public OMETablePanel(Frame frame, Object[][] tableData, String[] columnNames,
       Object[][] details) {
-	 
-    columns = columnNames;	  
+
+    columns = columnNames;
     cancelPlugin = false;
     //Creates the Dialog Box for getting OME login information
     dialog = new JDialog(frame, "Search Results", true);
@@ -43,7 +45,7 @@ public class OMETablePanel implements ActionListener {
     paneR = new JPanel();
     paneR.setLayout(new BoxLayout(paneR, BoxLayout.Y_AXIS));
     JPanel paneOwner = new JPanel();
-    paneThumb = new JPanel();   
+    paneThumb = new JPanel();
 
     GridBagLayout grid = new GridBagLayout();
     paneOwner.setLayout(grid);
@@ -67,7 +69,7 @@ public class OMETablePanel implements ActionListener {
     d.fill = GridBagConstraints.HORIZONTAL;
     d.insets = new Insets(2,2,2,2);
     d.anchor = GridBagConstraints.FIRST_LINE_START;
-    
+
     paneR.add(paneThumb);
     paneR.add(paneOwner);
     JLabel owner = new JLabel("Owner: ", JLabel.RIGHT);
@@ -101,21 +103,21 @@ public class OMETablePanel implements ActionListener {
     des.setWrapStyleWord(true);
     thumb.setWrapStyleWord(true);
     thumb.setEditable(false);
-	    
+
     Dimension thsize = new Dimension(300,100);
     thumb.setMinimumSize(thsize);
     thumb.setMaximumSize(thsize);
 
     JScrollPane desScroll = new JScrollPane(des);
-   
+
     JLabel[] labels = {owner, type, c, t, x, y, z};
     for(int i=0; i<labels.length; i++) {
       paneOwner.add(labels[i], e);
       paneOwner.add(areas[i], d);
       e.gridy++;
       d.gridy++;
-    }	    
-    
+    }
+
     e.gridheight = 2;
     e.weighty = 2;
     d.gridheight = 2;
@@ -125,28 +127,28 @@ public class OMETablePanel implements ActionListener {
     paneOwner.add(descrip,e);
     paneOwner.add(desScroll,d);
     paneThumb.add(thumb);
-    
+
     extra = details;
     mainpane.setLayout(new BoxLayout(mainpane, BoxLayout.Y_AXIS));
     JLabel label = new JLabel("Select which image(s) to download to ImageJ.");
     label.setAlignmentX(JLabel.CENTER_ALIGNMENT);
     mainpane.add(label);
-    
+
     //create table
     MyTableModel tableModel = new MyTableModel(tableData, columns);
     sorter = new TableSorter(tableModel);
-    
+
     // set whether each column is numerically sorted
     boolean[] isNumeric = new boolean[columns.length];
     for(int i=0; i<isNumeric.length; i++) {
       if(columns[i].equals("ID")) isNumeric[i] = true;
       else isNumeric[i] = false;
-    }	   
+    }
     sorter.setNumeric(isNumeric);
-   
+
     table = new JTable(sorter);
     table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    
+
     //Ask to be notified of selection changes.
     ListSelectionModel rowSM = table.getSelectionModel();
     rowSM.addListSelectionListener(new ListSelectionListener() {
@@ -156,20 +158,20 @@ public class OMETablePanel implements ActionListener {
         ListSelectionModel lsm = (ListSelectionModel)e.getSource();
         if (lsm.isSelectionEmpty()) {
           setPane("-1");
-        } 
+        }
         else {
           int selectedRow = lsm.getMinSelectionIndex();
-	  String row = "-1";
-	  for(int i=0; i<columns.length; i++) {
-	    if(columns[i].equals("ID")) {
-	      row = (String) sorter.getValueAt(selectedRow, i);	  
-	    }
-	  }  
+          String row = "-1";
+          for(int i=0; i<columns.length; i++) {
+            if(columns[i].equals("ID")) {
+              row = (String) sorter.getValueAt(selectedRow, i);
+            }
+          }
           setPane(row);
         }
-      }  
+      }
     });
-    
+
     sorter.setTableHeader(table.getTableHeader());
     JScrollPane scrollPane = new JScrollPane(table);
     scrollPane.setMinimumSize(new Dimension(500, 300));
@@ -206,7 +208,7 @@ public class OMETablePanel implements ActionListener {
     dialog.pack();
     OMESidePanel.centerWindow(frame, dialog);
   }
-  
+
   // -- Methods --
 
   /** implements the ActionListener actionPerformed method */
@@ -220,23 +222,23 @@ public class OMETablePanel implements ActionListener {
       dialog.dispose();
     }
   }
-  
+
   /** method that builds the details pane for the selected image */
   private void setPane(String id) {
     paneThumb.removeAll();
-   
+
     // calculate the row index
     // extra[index][9] should match id
 
     int index = 0;
     for(int i=0; i<extra.length; i++) {
       if(extra[i][9].equals(id)) index = i;
-    }	    
-    
+    }
+
     if (!id.equals("-1")) {
       if (extra[index][0] != null) {
         final BufferedImage img = (BufferedImage) extra[index][0];
-	JPanel imagePanel = new JPanel() {
+          JPanel imagePanel = new JPanel() {
           public void paint(Graphics g) {
             g.drawImage(img, 0, 0, this);
           }
@@ -265,12 +267,12 @@ public class OMETablePanel implements ActionListener {
       paneThumb.add(thumb);
       thumb.setText("");
       for(int i=0; i<areas.length; i++) {
-        areas[i].setText(""); 
+        areas[i].setText("");
       }
       des.setText("");
-    }  
+    }
   }
-  
+
   /** Method that gets the images checked in the table to download to ImageJ */
   public int[] getInput() {
     cancelPlugin = true;

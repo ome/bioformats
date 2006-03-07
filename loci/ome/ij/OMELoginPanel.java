@@ -1,3 +1,5 @@
+package loci.ome.ij;
+
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
@@ -18,7 +20,7 @@ public class OMELoginPanel implements ActionListener {
   private JTextField servField, useField;
   private JPasswordField passField;
   public boolean cancelPlugin;
-  
+
   /** Constructor, sets up the dialog box */
   public OMELoginPanel(Frame frame) {
     cancelPlugin = false;
@@ -37,9 +39,9 @@ public class OMELoginPanel implements ActionListener {
     input.add(input3);
     EmptyBorder bord = new EmptyBorder(5,5,5,5);
     passField = new JPasswordField("", 30);  // insert password here
-    servField = new JTextField(OMESidePanel.getServer(), 30); 
+    servField = new JTextField(OMESidePanel.getServer(), 30);
     useField = new JTextField(OMESidePanel.getUser(), 30);  // insert user here
-    passField.setMaximumSize(new Dimension(passField.getMaximumSize().width, 
+    passField.setMaximumSize(new Dimension(passField.getMaximumSize().width,
       passField.getPreferredSize().height));
     servField.setMaximumSize(new Dimension(servField.getMaximumSize().width,
       servField.getPreferredSize().height));
@@ -57,14 +59,14 @@ public class OMELoginPanel implements ActionListener {
     use.setBorder(new EmptyBorder(2,2,1,1));
     use.setPreferredSize(use.getMinimumSize());
     input2.add(use);
-    input3.add(useField);    
+    input3.add(useField);
     JLabel pas = new JLabel("Password: ", JLabel.TRAILING);
     pas.setAlignmentX(JLabel.RIGHT);
     pas.setAlignmentY(JLabel.TOP);
     pas.setBorder(new EmptyBorder(2,1,1,1));
     pas.setPreferredSize(pas.getMinimumSize());
     input2.add(pas);
-    input3.add(passField);    
+    input3.add(passField);
     in.setContentPane(input1);
     ok = new JButton("OK");
     cancels = new JButton("Cancel");
@@ -78,11 +80,11 @@ public class OMELoginPanel implements ActionListener {
     input1.add(paneBut);
     cancels.addActionListener(this);
     ok.addActionListener(this);
-    input1.setBorder(bord);    
+    input1.setBorder(bord);
     in.pack();
     OMESidePanel.centerWindow(frame, in);
   }
-  
+
   /** implements the ActionListener actionPerformed method */
   public void actionPerformed(ActionEvent e) {
     if ("OK".equals(e.getActionCommand())) {
@@ -94,12 +96,12 @@ public class OMELoginPanel implements ActionListener {
       in.dispose();
     }
   }
-  
+
   /** produces an error notification popup with the inputted text */
   public static void infoShow(Frame frame, String s, String x) {
     JOptionPane.showMessageDialog(frame,s,x,JOptionPane.INFORMATION_MESSAGE);
   }
-  
+
   /** Method that retrieves the information to log onto the OME server */
   public String[] getInput(boolean b) {
     boolean error = false;
@@ -142,5 +144,5 @@ public class OMELoginPanel implements ActionListener {
     }
     return results;
   }
-  
+
 }

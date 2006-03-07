@@ -1,9 +1,8 @@
+package loci.ome.ij;
+
 import ij.*;
 import ij.process.*;
 import ij.gui.GenericDialog;
-import ij.gui.ImageWindow;
-
-import java.util.Vector;
 
 import java.awt.Panel;
 import java.util.Hashtable;
@@ -21,7 +20,7 @@ import org.openmicroscopy.is.*;
  * @author Melissa Linkert linkert at cs.wisc.edu
  */
 public class OMETools {
-  
+
   // -- Fields --
 
   /** Current OME thread. */
@@ -30,7 +29,7 @@ public class OMETools {
   /** Current OME data. */
   private ImageProcessor data;
   private ImagePlus imageP;
-  
+
   /** Current OME server. */
   private String server;
 
@@ -39,7 +38,7 @@ public class OMETools {
 
   /** Current OME password. */
   private String password;
-  
+
   /** Image Stack space or time domain.*/
   private int domainIndex;
 
@@ -60,12 +59,13 @@ public class OMETools {
   private AnalysisEngineManager aem;
   private ImportManager im;
   private RemoteCaller rc;
-  private DataServices rs; 
- 
+  private DataServices rs;
+
   private WiscScan viewer;
-  
+
+
   // -- Runnable API methods --
-   
+
   /**
    * The getInput method prompts and receives user input to determine
    * the OME login fields and whether the stack is in the time or space domain
@@ -79,7 +79,7 @@ public class OMETools {
     server = in[0];
     username = in[1];
     password = in[2];
-   
+
     if(upload) {
       // choose the 4th dimension
       GenericDialog gc = new GenericDialog("OME image export");
@@ -90,13 +90,13 @@ public class OMETools {
       cancelPlugin = gc.wasCanceled();
       if(cancelPlugin) return;
       domainIndex = gc.getNextChoiceIndex();
-    }  
+    }
   }
 
   public static void setPlugin(boolean isCancelled) {
-    cancelPlugin = isCancelled;	  
+    cancelPlugin = isCancelled;
   }
-  
+
   public void pluginCancelled() {
     IJ.showProgress(1);
     IJ.showStatus("OME: Exited.");
@@ -124,16 +124,16 @@ public class OMETools {
       while(!loggedIn) {
         if(cancelPlugin) {
           pluginCancelled();
-  	  return;
+          return;
         }
-  	if(error) {
-	  rs = DataServer.getDefaultServices(server);
-	  rc = rs.getRemoteCaller();
-	}
-	rc.login(username, password);
-	loggedIn = true;
+        if(error) {
+          rs = DataServer.getDefaultServices(server);
+          rc = rs.getRemoteCaller();
+        }
+        rc.login(username, password);
+        loggedIn = true;
       }
-    }  
+    }
     catch(Exception e) {
       OMEDownPanel.error(IJ.getInstance(),
         "The login information is not valid.", "Input Error");
@@ -141,8 +141,8 @@ public class OMETools {
       if(cancelPlugin) {
         pluginCancelled();
       }
-    } 
-  }	 
+    }
+  }
 
   // Get helper classes.
   public void getHelpers() {
@@ -159,11 +159,11 @@ public class OMETools {
       dm = (DatasetManager) rs.getService(DatasetManager.class);
       cm = (ConfigurationManager) rs.getService(ConfigurationManager.class);
       aem = (AnalysisEngineManager) rs.getService(AnalysisEngineManager.class);
-    }  
+    }
     catch(NullPointerException e) {
       cancelPlugin = true;
       getHelpers();
-    }	    
+    }
   }
 
   // Set the stack domain (4th dimension)
@@ -172,19 +172,19 @@ public class OMETools {
       return new int[] {dims[1], 1};
     }
     else {
-      return new int[] {1, dims[1]};	    
+      return new int[] {1, dims[1]};
     }
-  } 	  
- 
+  }
+
   // Logout of OME database
   public void logout() {
     IJ.showStatus("OME: Logging out...");
     IJ.showProgress(.99);
     rc.logout();
     IJ.showStatus("OME: Completed");
-    OMELoginPanel.infoShow(IJ.getInstance(), "OME Transaction Completed", 
+    OMELoginPanel.infoShow(IJ.getInstance(), "OME Transaction Completed",
       "OME");
-  }	  
+  }
 
   public void finalCatch(Exception exc) {
     IJ.setColumnHeadings("Errors");
@@ -192,29 +192,29 @@ public class OMETools {
     IJ.showStatus("Error uploading (see error console for details)");
     exc.printStackTrace();
   }
-  
+
   // -- Upload methods --
-  
+
   /** Does the work for uploading data to OME. */
   public void run(ImagePlus ip, Object[] metadata) {
     try {
       login(true);
       imageP = ip;
       getHelpers();
-     
+
       Experimenter user = OMERetrieve.getUser(df);
-      
+
       // start the import process
       IJ.showStatus("OmeUpload: Starting import...");
       im.startImport(user);
       IJ.showProgress(0.15);
-          
+
       //getting the image to add the pixels to from OME
       Image omeImage = null;
       int omeID = ((Integer)metadata[0]).intValue();
       if (omeID != 0) {
         omeImage = OMERetrieve.getImagefromID(df, omeID);
-      } 
+      }
 
       // locate a repository object to contain the pixels
       IJ.showStatus("OmeUpload: Finding repository...");
@@ -230,13 +230,13 @@ public class OMETools {
       else {
         image = (Image) df.createNew(Image.class);
         image.setName(imageP.getTitle());
-	image.setOwner(user);
-	image.setInserted("now");
+        image.setOwner(user);
+        image.setInserted("now");
         image.setCreated("now");
         image.setDescription("This image was uploaded from ImageJ");
       }
       df.markForUpdate(image);
-      
+
       // extract image dimensions
       int sizeX = imageP.getWidth();
       int sizeY = imageP.getHeight();
@@ -267,14 +267,14 @@ public class OMETools {
       results = setDomain(results);
       int sizeT = results[1] + 1;
       int sizeZ = results[0] + 1;
-      
+
       IJ.showProgress(.25);
 
       // get a MEX for the image's metadata
       IJ.showStatus("OmeUpload: Creating pixels file...");
       ModuleExecution ii = im.getImageImportMEX(image);
       ii.setExperimenter(user);
-     
+
       // create a new pixels file on the image server to contain image pixels
       Pixels pix = pf.newPixels(rep, image, ii,
         sizeX, sizeY, sizeZ, sizeC, sizeT, bytesPerPix, isFloat, isFloat);
@@ -287,13 +287,13 @@ public class OMETools {
         for (int z=0; z<sizeZ; z++) {
           for (int c=0; c<sizeC; c++) {
             byte[] pixels = new byte[sizeX * sizeY * bytesPerPix];
-            IJ.showStatus("OmeUpload: Loading data (t=" + t + ", z=" + z + 
-	      ", c=" + c + ")...");
+            IJ.showStatus("OmeUpload: Loading data (t=" + t + ", z=" + z +
+              ", c=" + c + ")...");
             IJ.showProgress(.25+t/sizeT+z/sizeZ+c/sizeC);
             switch (type) {
               case ImagePlus.COLOR_RGB:
                 ((ColorProcessor)imageP.getStack().getProcessor(
-		  Math.max(z,t)+1)).getRGB(r, g, b);
+                  Math.max(z,t)+1)).getRGB(r, g, b);
                 switch (c) {
                   case 2:
                     pixels = r;
@@ -306,39 +306,39 @@ public class OMETools {
                     break;
                 }
                 break;
-                
+
               case ImagePlus.GRAY16:
-                short[] pixsh = 
-		  (short[]) imageP.getStack().getPixels(Math.max(z,t)+1);
+                short[] pixsh =
+                  (short[]) imageP.getStack().getPixels(Math.max(z,t)+1);
                 for (int i=0; i<pixsh.length; i++) {
                   pixels[2*i] = (byte) ((pixsh[i] & 0xff00) >> 8);
                   pixels[2*i+1] = (byte) (pixsh[i] & 0x00ff);
                 }
                 break;
-                
+
               case ImagePlus.GRAY32:
-                float[] pixsf = 
-		  (float[]) imageP.getStack().getPixels(Math.max(z,t)+1);
+                float[] pixsf =
+                  (float[]) imageP.getStack().getPixels(Math.max(z,t)+1);
                 for (int i=0; i<pixsf.length; i++) {
-                  pixels[4*i] = (byte) 
-		    ((Float.floatToRawIntBits(pixsf[i]) & 0xff000000)>>24);
-                  pixels[4*i+1] = (byte) 
-		    ((Float.floatToRawIntBits(pixsf[i]) & 0x00ff0000)>>16);
-                  pixels[4*i+2] = (byte) 
-		    ((Float.floatToRawIntBits(pixsf[i]) & 0x0000ff00)>>8);
-                  pixels[4*i+3] = (byte) 
-		    (Float.floatToRawIntBits(pixsf[i]) & 0x000000ff);
+                  pixels[4*i] = (byte)
+                    ((Float.floatToRawIntBits(pixsf[i]) & 0xff000000)>>24);
+                  pixels[4*i+1] = (byte)
+                    ((Float.floatToRawIntBits(pixsf[i]) & 0x00ff0000)>>16);
+                  pixels[4*i+2] = (byte)
+                    ((Float.floatToRawIntBits(pixsf[i]) & 0x0000ff00)>>8);
+                  pixels[4*i+3] = (byte)
+                    (Float.floatToRawIntBits(pixsf[i]) & 0x000000ff);
                 }
                 break;
-                
+
               default:
-                byte[] pixsb = (byte[]) 
-		  imageP.getStack().getPixels(Math.max(z,t)+1);
+                byte[] pixsb = (byte[])
+                  imageP.getStack().getPixels(Math.max(z,t)+1);
                 System.arraycopy(pixsb, 0, pixels, 0, pixsb.length);
-            } 
+            }
             // upload the byte buffer
             pf.setPlane(pix, z, c, t, pixels, true);
-              
+
             // This next piece of metadata is necessary for all
             // images; otherwise, the standard OME viewers will not be
             // able to display the image.  The PixelChannelComponent
@@ -354,31 +354,31 @@ public class OMETools {
             // Pixels attribute, the channel attributes should use the
             // image import MEX received earlier from the
             // ImportManager.
-            LogicalChannel logical = (LogicalChannel) 
-	      df.createNew("LogicalChannel");
+            LogicalChannel logical = (LogicalChannel)
+            df.createNew("LogicalChannel");
             logical.setImage(image);
             logical.setModuleExecution(ii);
             if (sizeC == 3) {
               switch(c) {
-	        case 0: logical.setFluor("Blue"); break;
-		case 1: logical.setFluor("Green"); break;
-		case 2: logical.setFluor("Red"); break;
-	      }		
+                case 0: logical.setFluor("Blue"); break;
+                case 1: logical.setFluor("Green"); break;
+                case 2: logical.setFluor("Red"); break;
+              }
               logical.setPhotometricInterpretation("RGB");
             }
-	    else {
+            else {
               logical.setFluor("Gray");
               logical.setPhotometricInterpretation("monochrome");
             }
             df.markForUpdate(logical);
-              
+
             PixelChannelComponent physical = (PixelChannelComponent)
               df.createNew("PixelChannelComponent");
             physical.setImage(image);
             physical.setPixels(pix);
             physical.setIndex(new Integer(c));
             physical.setLogicalChannel(logical);
-	    physical.setModuleExecution(ii);
+            physical.setModuleExecution(ii);
             df.markForUpdate(physical);
           }
         }
@@ -402,7 +402,7 @@ public class OMETools {
       else cs.activateGrayChannel(0,0,255,1);
       pf.setThumbnail(pix, cs);
       IJ.showProgress(.6);
-      
+
       // mark image import MEX as having completed executing
       ii.setStatus("FINISHED");
       df.markForUpdate(ii);
@@ -417,7 +417,7 @@ public class OMETools {
       image.setDefaultPixels(pix);
       df.update(image);
       IJ.showProgress(.9);
-      
+
       // extract image display options and create display options
       DisplayOptions disOp = (DisplayOptions) df.createNew("DisplayOptions");
       disOp.setPixels(pix);
@@ -427,56 +427,56 @@ public class OMETools {
       disOp.setTStop(new Integer(0));
       disOp.setZStart(new Integer(0));
       disOp.setZStop(new Integer(0));
-      
+
       ImageProcessor proc = imageP.getProcessor();
-      // The white and black level are set as constants because imageJ gives the
-      // pixels truncated if you changed these values, this prevents the min and
-      // max being set twice.
+      // The white and black level are set as constants because imageJ gives
+      // the pixels truncated if you changed these values, this prevents the
+      // min and max being set twice.
       Double whiteLevel = new Double(255);//proc.getMax());
       Double blackLevel = new Double(0);//proc.getMin());
-     
+
       if(sizeC == 3) {
-	disOp.setColorMap("RGB");
-	disOp.setDisplayRGB(new Boolean(true));
+        disOp.setColorMap("RGB");
+        disOp.setDisplayRGB(new Boolean(true));
       }
       else {
-	disOp.setColorMap("monochrome");
-	disOp.setDisplayRGB(new Boolean(false));
-      }	
-      
+        disOp.setColorMap("monochrome");
+        disOp.setDisplayRGB(new Boolean(false));
+      }
+
       DisplayChannel ch;
       for(int i=0; i<sizeC; i++) {
         ch = (DisplayChannel) df.createNew("DisplayChannel");
-	if(sizeC == 1) ch.setModuleExecution(ii);  // remove??
-	ch.setImage(image);
-	ch.setGamma(new Float(1));
-	ch.setWhiteLevel(whiteLevel);
-	ch.setBlackLevel(blackLevel);
-	ch.setChannelNumber(new Integer(i));
+        if(sizeC == 1) ch.setModuleExecution(ii);  // remove??
+        ch.setImage(image);
+        ch.setGamma(new Float(1));
+        ch.setWhiteLevel(whiteLevel);
+        ch.setBlackLevel(blackLevel);
+        ch.setChannelNumber(new Integer(i));
 
-	switch(i) {
-	  case 0: 
+        switch(i) {
+          case 0:
             disOp.setGreyChannel(ch);
-	    disOp.setRedChannel(ch);
-	    disOp.setGreenChannel(ch);
-	    disOp.setBlueChannel(ch);
-	    disOp.setRedChannelOn(new Boolean(false));
-	    disOp.setGreenChannelOn(new Boolean(false));
-	    disOp.setBlueChannelOn(new Boolean(false));
-	    break;
-	  case 1:
-	    disOp.setGreenChannel(ch);
-	    break;
-	  case 2:
-	    disOp.setRedChannel(ch);
-	    disOp.setGreyChannel(ch);
-	    disOp.setRedChannelOn(new Boolean(true));
-	    disOp.setGreenChannelOn(new Boolean(true));
-	    disOp.setBlueChannelOn(new Boolean(true));
-	    break;
-	}
-	df.update(ch);
-      }	      
+            disOp.setRedChannel(ch);
+            disOp.setGreenChannel(ch);
+            disOp.setBlueChannel(ch);
+            disOp.setRedChannelOn(new Boolean(false));
+            disOp.setGreenChannelOn(new Boolean(false));
+            disOp.setBlueChannelOn(new Boolean(false));
+            break;
+          case 1:
+            disOp.setGreenChannel(ch);
+            break;
+          case 2:
+            disOp.setRedChannel(ch);
+            disOp.setGreyChannel(ch);
+            disOp.setRedChannelOn(new Boolean(true));
+            disOp.setGreenChannelOn(new Boolean(true));
+            disOp.setBlueChannelOn(new Boolean(true));
+            break;
+        }
+        df.update(ch);
+      }
       df.update(disOp);
 
       // execute the import analysis chain
@@ -491,7 +491,7 @@ public class OMETools {
     }
     catch(IllegalArgumentException e) {
       // do nothing; this means that the user cancelled the login procedure
-    }	    
+    }
     catch (Exception exc) {
       finalCatch(exc);
     }
@@ -507,12 +507,12 @@ public class OMETools {
       DataFactory df) {
 
     if (cancelPlugin) {
-      pluginCancelled();	    
+      pluginCancelled();
       return;
     }
-    
+
     //get pixel data
-    
+
     Pixels pix = image.getDefaultPixels();
     int sizeX, sizeY, sizeZ, sizeC, sizeT;
     sizeX = pix.getSizeX().intValue();
@@ -561,19 +561,19 @@ public class OMETools {
       int[] channelNum = {redChanNum, greenChanNum, blueChanNum};
       for(int i=0; i<sizeC; i++) {
         criteria = OMERetrieve.makeAttributeFields(attrsC);
-	criteria.addWantedField("id");
-	criteria.addFilter("id", (new Integer(channels[i].getID())).toString());
-	channels[i] = (DisplayChannel) df.retrieve("DisplayChannel", criteria);
-	channelNum[i] = channels[i].getChannelNumber().intValue();
-      }	    
+        criteria.addWantedField("id");
+        criteria.addFilter("id", new Integer(channels[i].getID()).toString());
+        channels[i] = (DisplayChannel) df.retrieve("DisplayChannel", criteria);
+        channelNum[i] = channels[i].getChannelNumber().intValue();
+      }
       redChanNum = channelNum[0];
       greenChanNum = channelNum[1];
       blueChanNum = channelNum[2];
     }
-   
+
     int z1 = 0;
     int t1 = 0;
-    
+
     //Create Stack to add planes to in ImageJ
 
     ImageStack is = new ImageStack(sizeX, sizeY);
@@ -588,14 +588,16 @@ public class OMETools {
             ")...");
           if (type == 17 || type == ImagePlus.GRAY32) {
             byte[] pixs = pf.getPlane(pix, z, 0, t, true);
-	    for (int i=0; i<pixeli.length; i++) {
-	      pixeli[i] = ((pixs[4*i] & 0xff)<<24) +((pixs[4*i+1] & 0xff)<<16) +
-	        ((pixs[4*i+2] & 0xff)<<8) +(pixs[4*i+3] & 0xff);
-	      pixeld[i] = (new Integer(pixeli[i])).doubleValue();
-	    }
-  	    FloatProcessor ip = new FloatProcessor(sizeX, sizeY, pixeld);
+            for (int i=0; i<pixeli.length; i++) {
+              pixeli[i] = ((pixs[4*i] & 0xff)<<24) +
+                ((pixs[4*i+1] & 0xff)<<16) +
+                ((pixs[4*i+2] & 0xff)<<8) +
+                (pixs[4*i+3] & 0xff);
+              pixeld[i] = (new Integer(pixeli[i])).doubleValue();
+            }
+            FloatProcessor ip = new FloatProcessor(sizeX, sizeY, pixeld);
             // adding plane to the ImageStack
-	    is.addSlice("Z=" + z + " T=" + t, ip);
+            is.addSlice("Z=" + z + " T=" + t, ip);
           }
           else if (type == ImagePlus.COLOR_256) {
             pixelb = pf.getPlane(pix, z, 0, t, true);
@@ -605,34 +607,37 @@ public class OMETools {
             ByteProcessor ip = new ByteProcessor(sizeX, sizeY);
             ip.setPixels(pixelb);
             // adding plane to the ImageStack
-	    is.addSlice("Z=" + z + " T=" + t, ip);
+            is.addSlice("Z=" + z + " T=" + t, ip);
           }
-	  else if (type == ImagePlus.COLOR_RGB) {
+          else if (type == ImagePlus.COLOR_RGB) {
             byte[] r = pf.getPlane(pix, z, redChanNum, t, true);
             byte[] g = pf.getPlane(pix, z, greenChanNum, t, true);
             byte[] b = pf.getPlane(pix, z, blueChanNum, t, true);
             for (int i=0; i<pixeli.length; i++) {
-              pixeli[i] = ((r[i] & 0xff)<<16)+((g[i] & 0xff)<<8)+ (b[i] & 0xff);            }
+              pixeli[i] = ((r[i] & 0xff)<<16)+
+                ((g[i] & 0xff)<<8)+ (b[i] & 0xff);
+            }
             ColorProcessor ip = new ColorProcessor(sizeX, sizeY, pixeli);
             // adding plane to the ImageStack
-	    is.addSlice("Z=" + z + " T=" + t, ip);
-	  }
+            is.addSlice("Z=" + z + " T=" + t, ip);
+          }
           else if (type == ImagePlus.GRAY16) {
             byte[] pixs = pf.getPlane(pix, z,0,t, true);
             for (int i=0; i<pixels.length; i++) {
-              pixels[i] = (short)(((pixs[2*i] & 0xff)<<8)+(pixs[2*i+1] & 0xff));
+              pixels[i] = (short)(((pixs[2*i] & 0xff)<<8)+
+                (pixs[2*i+1] & 0xff));
             }
             ShortProcessor ip = new ShortProcessor(sizeX, sizeY);
             ip.setPixels(pixels);
             // adding plane to the ImageStack
-	    is.addSlice("Z=" + z + " T=" + t, ip);
+            is.addSlice("Z=" + z + " T=" + t, ip);
           }
           else if (type == ImagePlus.GRAY8) {
             pixelb = pf.getPlane(pix, z, 0, t, true);
             ByteProcessor ip = new ByteProcessor(sizeX, sizeY);
             ip.setPixels(pixelb);
             // adding plane to the ImageStack
-	    is.addSlice("Z=" + z + " T=" + t, ip);
+            is.addSlice("Z=" + z + " T=" + t, ip);
           }
         }
       }
@@ -664,7 +669,7 @@ public class OMETools {
     IJ.showStatus("Displaying Image");
     viewer = new WiscScan();
     boolean tp = (sizeT > 1);
-    viewer.twoDimView(imageP, sizeZ, tp);	// use the WiscScan viewer
+    viewer.twoDimView(imageP, sizeZ, tp); // use the WiscScan viewer
   }
 
   /** returns a list of images that the user chooses */
@@ -737,10 +742,10 @@ public class OMETools {
 
   /** Does the work for downloading data from OME. */
   public void run(OMESidePanel osp) {
-    try {  
+    try {
       login(false);
       getHelpers();
-     
+
       //get database info to use in search
       IJ.showStatus("Getting database info..");
       String[][] owners = OMERetrieve.retrieveExperimenters(df);
@@ -756,7 +761,7 @@ public class OMETools {
         if (objects == null) {
           cancelPlugin = true;
           pluginCancelled();
-	  return;
+          return;
         }
         //get search results
         images = OMERetrieve.retrieveImages(df, objects);
@@ -770,7 +775,7 @@ public class OMETools {
           images = getDownPicks(images,df, pf);
           if (cancelPlugin) {
             pluginCancelled();
-	    return;
+            return;
           }
         }
       }
@@ -782,14 +787,14 @@ public class OMETools {
           return;
         }
       }
-      logout(); 
+      logout();
     }
     catch(NullPointerException e) {
       pluginCancelled();
     }
     catch(IllegalArgumentException f) {
       // do nothing; this means that the user cancelled the login procedure
-    }	    
+    }
     catch (Exception exc) {
       finalCatch(exc);
     }

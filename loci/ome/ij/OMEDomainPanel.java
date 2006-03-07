@@ -1,3 +1,5 @@
+package loci.ome.ij;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
@@ -14,7 +16,7 @@ import java.awt.event.*;
  */
 
 public class OMEDomainPanel implements ActionListener, ChangeListener {
-  
+
   // -- Fields --
 
   private JButton ok, cancels;
@@ -27,7 +29,7 @@ public class OMEDomainPanel implements ActionListener, ChangeListener {
   private int sizeZ, sizeT;
 
   // -- Constructor --
-  
+
   public OMEDomainPanel(Frame frame, int z, int t) {
     sizeZ = z;
     sizeT = t;
@@ -86,14 +88,14 @@ public class OMEDomainPanel implements ActionListener, ChangeListener {
     mainpane.add(paneBut);
     cancels.addActionListener(this);
     ok.addActionListener(this);
-    mainpane.setBorder(bord);    
+    mainpane.setBorder(bord);
     pick.pack();
     OMESidePanel.centerWindow(frame, pick);
   }
-  
+
   /** implement the ActionListener actionPerformed method */
   public void actionPerformed(ActionEvent e) {
-    String command = e.getActionCommand();	  
+    String command = e.getActionCommand();
     if(command.equals("OK")) {
       cancelPlugin = false;
       pick.hide();
@@ -121,15 +123,15 @@ public class OMEDomainPanel implements ActionListener, ChangeListener {
       pick.dispose();
     }
   }
-  
+
   /** Method that retrieves the information to input the specified domain */
   public int[] getInput() {
     cancelPlugin = true;
     pick.show();
     if (cancelPlugin) return null;
-    
+
     //checks and puts results into an array
-  
+
     int[] results = new int[2];
     if (timeDomain == true) {
       results[0] = 1;
@@ -137,13 +139,13 @@ public class OMEDomainPanel implements ActionListener, ChangeListener {
     else results[0] = 0;
     results[1] = slide.getValue();
     return results;
-  } 
-  
+  }
+
   /** Method that implements the ChangeListener stateChanged method */
   public void stateChanged(ChangeEvent e) {
     JSlider source = (JSlider) e.getSource();
     int fps = (int) source.getValue();
-    label4.setText(String.valueOf(fps));    
+    label4.setText(String.valueOf(fps));
   }
-  
+
 }

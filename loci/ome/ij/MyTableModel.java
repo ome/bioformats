@@ -1,3 +1,5 @@
+package loci.ome.ij;
+
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -8,15 +10,15 @@ import javax.swing.table.DefaultTableModel;
  */
 
 public class MyTableModel extends DefaultTableModel {
- 
+
   public MyTableModel(Object[][] data, Object[] columnNames) {
     super(data, columnNames);
   }
-  
+
   public Class getColumnClass(int c) {
     return getValueAt(0, c).getClass();
   }
-  
+
   public boolean isCellEditable(int row, int col) {
     //Note that the data/cell address is constant,
     //no matter where the cell appears onscreen.

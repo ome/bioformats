@@ -1,3 +1,5 @@
+package loci.ome.ij;
+
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
@@ -19,7 +21,7 @@ public class OMEDownPanel implements ActionListener {
   private JComboBox cproj, ctype, cowner;
   private JTextField id, name;
   public boolean cancelPlugin;
-  
+
   //Constructor, sets up the dialog box
   public OMEDownPanel(Frame frame, Project[] projects, String[][] owners) {
     cancelPlugin = false;
@@ -29,8 +31,9 @@ public class OMEDownPanel implements ActionListener {
     pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
     panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
     //labels
-    JLabel enter = new JLabel("Specify search criteria", SwingConstants.CENTER);
-    JLabel enter1 = new JLabel("of the image you wish to", 
+    JLabel enter = new JLabel("Specify search criteria",
+      SwingConstants.CENTER);
+    JLabel enter1 = new JLabel("of the image you wish to",
       SwingConstants.CENTER);
     JLabel enter2 = new JLabel("download into ImageJ.", SwingConstants.CENTER);
     panel.setMinimumSize(new Dimension(500, 500));
@@ -48,8 +51,8 @@ public class OMEDownPanel implements ActionListener {
     paneL.setLayout(new BoxLayout(paneL, BoxLayout.Y_AXIS));
     paneR.setLayout(new BoxLayout(paneR, BoxLayout.Y_AXIS));
     paneInfo.setLayout(new BoxLayout(paneInfo, BoxLayout.X_AXIS));
-    paneInfo.setBorder(new CompoundBorder(new EtchedBorder(EtchedBorder.RAISED),
-      new EmptyBorder(3,3,3,3)));
+    paneInfo.setBorder(new CompoundBorder(
+      new EtchedBorder(EtchedBorder.RAISED), new EmptyBorder(3,3,3,3)));
     paneButtons.setBorder(new EmptyBorder(3,3,3,3));
     paneInfo.setAlignmentX(JPanel.LEFT_ALIGNMENT);
     paneButtons.setAlignmentX(JPanel.LEFT_ALIGNMENT);
@@ -86,7 +89,7 @@ public class OMEDownPanel implements ActionListener {
     cowner.setAlignmentX(JComponent.LEFT_ALIGNMENT);
     cowner.setMinimumSize(new Dimension(50, 10));
     paneR.add(cowner);
-  
+
     id = new JTextField(5);
     id.setMinimumSize(new Dimension(50, 10));
     id.setAlignmentX(JComponent.LEFT_ALIGNMENT);
@@ -95,7 +98,7 @@ public class OMEDownPanel implements ActionListener {
     paneL.add(label);
     paneL.setBorder(new EmptyBorder(5,5,5,5));
     paneR.add(id);
-    
+
     name = new JTextField(10);
     name.setMinimumSize(new Dimension(50, 10));
     name.setAlignmentX(JComponent.LEFT_ALIGNMENT);
@@ -103,7 +106,7 @@ public class OMEDownPanel implements ActionListener {
     JLabel lname = new JLabel("Image Name:", SwingConstants.RIGHT);
     lname.setBorder(bordText);
     paneL.add(lname);
-    
+
     search = new JButton("Search");
     cancel = new JButton("Cancel");
     JButton resets = new JButton("Reset");
@@ -116,11 +119,11 @@ public class OMEDownPanel implements ActionListener {
     search.addActionListener(this);
     cancel.addActionListener(this);
     resets.addActionListener(this);
-    
+
     dia.pack();
     OMESidePanel.centerWindow(frame, dia);
   }
-  
+
   /** shows and retrieves info from the DownPanel */
   public Object[] search() {
     cancelPlugin = true;
@@ -138,7 +141,7 @@ public class OMEDownPanel implements ActionListener {
        results[2] = Integer.decode(s);
     }
     catch (NumberFormatException n) {
-      error((Frame)dia.getOwner(),"The image ID field is not valid.", 
+      error((Frame)dia.getOwner(),"The image ID field is not valid.",
         "Input Error");
       return search();
     }
@@ -153,7 +156,7 @@ public class OMEDownPanel implements ActionListener {
     }
     return results;
   }
-  
+
   /** implements the ActionListener actionPerformed method */
   public void actionPerformed(ActionEvent e){
     cancelPlugin = false;
@@ -168,12 +171,12 @@ public class OMEDownPanel implements ActionListener {
       dia.dispose();
     }
   }
-  
+
   /** produces an error notification popup with the inputted text */
   public static void error(Frame frame, String s, String x){
     JOptionPane.showMessageDialog(frame,s,x,JOptionPane.ERROR_MESSAGE);
   }
-  
+
   /** Resets the options of the search dialog box */
   public void reset(){
     try {

@@ -1,4 +1,0 @@
-#!/bin/bash
-rm *.class
-javac *.java
-jar cvfM ome_plugin.jar plugins.config *.java *.class
