@@ -1,0 +1,10 @@
+#!/bin/sh
+cd ../..
+
+echo Building loci_browser.jar...
+cp loci/browser/plugins.config .
+jar cfM loci/browser/loci_browser.jar plugins.config loci/browser/*.class loci/ome/*.class loci/util/*.class loci/browser/*.java loci/ome/*.java loci/util/*.java loci/browser/build loci/browser/plugins.config
+rm plugins.config
+
+cd loci/browser
+ls -l loci_browser.jar
