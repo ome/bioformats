@@ -45,7 +45,7 @@ public class LeicaConverter extends JFrame
     pane.add(row1);
 
     JLabel inputLabel = new JLabel("Input file(s)");
-    input = new JTextField("D:\\data\\julie\\biorad\\8291mcd8_raw0<1-2>.pic");//TEMP
+    input = new JTextField("/home/curtis/data/leica/julie/biorad/8291mcd8_raw0<1-2>.pic");//TEMP
     input.setColumns(25);
     input.setMaximumSize(
       new Dimension(Integer.MAX_VALUE, input.getPreferredSize().height));
@@ -65,7 +65,7 @@ public class LeicaConverter extends JFrame
     pane.add(row2);
 
     JLabel outputLabel = new JLabel("Output file");
-    output = new JTextField("C:\\Documents and Settings\\warrior\\Desktop\\test.tif");//TEMP
+    output = new JTextField("/home/curtis/Desktop/test.tif");//TEMP
     output.setColumns(25);
     output.setMaximumSize(
       new Dimension(Integer.MAX_VALUE, output.getPreferredSize().height));
@@ -177,6 +177,7 @@ public class LeicaConverter extends JFrame
 
       if (mergeRGB) { // merged RGB stack
         int np2 = numPlanes / 2;
+        byte[][] data = null;
         progress.setMaximum(3 * np2);
         for (int i=0; i<np2; i++) {
           progress.setValue(3 * i);
@@ -190,16 +191,19 @@ public class LeicaConverter extends JFrame
           BufferedImage ir = ImageTools.makeImage(reader2.open(in[q2], c2));
           progress.setValue(3 * i + 2);
           int width = ig.getWidth(), height = ig.getHeight();
-          BufferedImage img = new BufferedImage(width,
-            height, BufferedImage.TYPE_INT_RGB);
+          if (data == null || data[0].length != width * height) {
+            data = new byte[3][width * height];
+          }
           for (int y=0; y<height; y++) {
             for (int x=0; x<width; x++) {
+              int q = y * width + x;
               int r = ir.getRGB(x, y) % 256;
               int g = ig.getRGB(x, y) % 256;
-              int q = ((g << 8) | r);
-              img.setRGB(x, y, q);
+              data[0][q] = (byte) r;
+              data[1][q] = (byte) g;
             }
           }
+          BufferedImage img = ImageTools.makeImage(data, width, height);
           writer.save(out, img, i == np2 - 1);
         }
         progress.setValue(3 * np2);
