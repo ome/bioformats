@@ -313,7 +313,6 @@ public class OMESidePanel implements ActionListener {
     }
   }
 
-
   /** pops up Yes no dialog window */
   public static boolean yesNo(Frame owner, String question) {
     int n = JOptionPane.showConfirmDialog(owner, question, "OME Plugin",
@@ -340,22 +339,15 @@ public class OMESidePanel implements ActionListener {
     return (Object[]) table.get(new Integer(ijID));
   }
 
+
   // -- Utility methods --
 
-  public static String getServer() {
-    return serverName;
-  }
+  public static String getServer() { return serverName; }
 
-  public static String getUser() {
-    return username;
-  }
+  public static String getUser() { return username; }
 
-  public static void setServer(String newServer) {
-    serverName = newServer;
-  }
+  public static void setServer(String newServer) { serverName = newServer; }
 
-  public static void setUser(String newUser) {
-    username = newUser;
-  }
+  public static void setUser(String newUser) { username = newUser; }
 
 }
