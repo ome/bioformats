@@ -1,11 +1,5 @@
-//
-// LociDataBrowser.java
-//
-
 // YTW 2/27/2006: hardcode deconvolve6_Pseudo_Tl000_Zs000.TIF
 // YTW 3/1/2006: rewrite file to make better use of FilePattern
-
-package loci.browser;
 
 import ij.IJ;
 import ij.ImagePlus;
@@ -51,8 +45,6 @@ import java.awt.image.ColorModel;
 import java.awt.event.WindowEvent;
 import java.io.File;
 
-import loci.ome.MetaPanel;
-import loci.util.FilePattern;
 
 public class LociDataBrowser implements PlugIn {
 
@@ -82,19 +74,19 @@ public class LociDataBrowser implements PlugIn {
   private int dim = 4;
 
   private int[] listTP;
-  private int[] listC;
-  private int[] listZ;
+  private int[] listC;  
+    private int[] listZ;
 
   private int idxList;
   private boolean animating = false;
   private int tpStep;
 
-  private static String[] specialPrefixes = {"_BF_"};
-  private static String[] preTime={"TP","Tl", "_BF_"};
-  private static String[] preZ = {"Z","Zs0"};
-  private static String[] preTrans = {"C"};
-
-  private static final boolean DEBUG = false;
+    private static String[] special_prefixes = {"_BF_"};
+    private static String[] pre_time={"TP","Tl", "_BF_"};
+    private static String[] pre_z = {"Z","Zs"};
+    private static String[] pre_trans = {"C"};
+    
+    private static final boolean debug = false;
 
   public void run(String arg) {
     OpenDialog od = new OpenDialog("Open Sequence of Image Stacks:", "");
@@ -105,10 +97,10 @@ public class LociDataBrowser implements PlugIn {
     // Find all the files having similar names (Using FilePattern class)
     String pattern = FilePattern.findPattern(new File(name), directory);
     // avoids NullPointerException if there is no suffix
-    if (pattern == null) pattern = "";
+    if(pattern == null) pattern = "";
     FilePattern fp = new FilePattern(pattern);
-    String[] oldPrefixes = fp.getPrefixes();
-    String[] prefixes = oldPrefixes;
+    String[] old_prefixes = fp.getPrefixes();
+    String[] prefixes = old_prefixes;
     String [] absList = fp.getFiles();     // all the image files
 
 
@@ -135,117 +127,112 @@ public class LociDataBrowser implements PlugIn {
       listC[i] = -1;
       listZ[i] = -1;
     }
-
+	
     int idxTP = -1;
     int idxC = -1;
     int idxZ = -1;
-
+    
     if (numFiles == 1) {
-      hasTP = false;
-      hasZ = true;
-      hasTrans = false;
+	hasTP = false;
+	hasZ = true;
+	hasTrans = false;
     }
     else if (prefixes.length > 0) {
-      boolean special = false;
-      for (int i=0; i<specialPrefixes.length; i++) {
-        if (prefixes[0].startsWith(specialPrefixes[i])) special = true;
-      }
+	boolean special = false;
+	for (int i=0; i<special_prefixes.length; i++)
+	    if (prefixes[0].startsWith(special_prefixes[i])) special = true;
 
-      if (!special) {
-        prefixes[0] = prefixes[0].substring(prefixes[0].lastIndexOf("_")+1);
-      }
-      firstPrefix = prefixes[0];
-      for (int i=0; i<prefixes.length; i++) {
-          prefixes[i]=prefixes[i].replaceAll("\\d+","");
-      }
+	if (!special) 
+	    prefixes[0] = prefixes[0].substring(prefixes[0].lastIndexOf("_")+1);
 
-      for (int i=0; i<prefixes.length; i++) {
-        for (int j=0; j<preTime.length; j++) {
-          if (prefixes[i].equals(preTime[j])) {
-            hasTP = true;
-            idxTP = i;
-          }
-        }
-        for (int j=0; j<preZ.length; j++) {
-          if (prefixes[i].equals(preZ[j])) {
-            hasZ = true;
-            idxZ = i;
-          }
-        }
-        for (int j=0; j<preTrans.length; j++) {
-          if (prefixes[i].equals(preTrans[j])) {
-            hasTrans = true;
-            idxC = i;
-          }
-        }
-      }
+	for (int i=0; i<prefixes.length; i++) {
+	    prefixes[i]=prefixes[i].replaceAll("\\d+$","");
+	}
 
-      int [] repeat = new int[prefixes.length];
-      repeat[0] = 1;
+	firstPrefix = prefixes[0];
+	
+	for (int i=0; i<prefixes.length; i++) {
+	    for (int j=0; j<pre_time.length; j++)
+		if (prefixes[i].equals(pre_time[j])) {
+		    hasTP = true;
+		    idxTP = i;
+		}
+	    for (int j=0; j<pre_z.length; j++)
+		if (prefixes[i].equals(pre_z[j])) {
+		    hasZ = true;
+		    idxZ = i;
+		}
+	    for (int j=0; j<pre_trans.length; j++)
+		if (prefixes[i].equals(pre_trans[j])) {
+		    hasTrans = true;
+		    idxC = i;
+		}
+	}
+	
+	int [] repeat = new int[prefixes.length];
+	repeat[0] = 1;
+	
+	for (int i=1; i<repeat.length; i++)
+	    repeat[i] = fp.getCount()[i-1] * repeat[i-1];
+	
+	int [][] indices = new int[prefixes.length][list.length];
+	if (debug) {
+	    System.err.println("idxTP = "+idxTP);
+	    System.err.println("idxC = "+idxC);
+	    System.err.println("idxZ = "+idxZ);
+	}
+	for (int i=0; i<list.length; i++) {
+	    for (int j=0; j<prefixes.length; j++) {
+		if (j>0) indices[j][i] = (i/fp.getCount()[j-1])%fp.getCount()[j];
+		else indices[j][i] = i%fp.getCount()[0];
+	    }
+	}
+	
+	if (idxTP != -1) listTP = indices[idxTP];
+	if (idxC != -1) listC = indices[idxC];
+	if (idxZ != -1) listZ = indices[idxZ];
+	
+	if (debug) {
+	    for (int i=0; i<prefixes.length; i++) {
+		for (int j=0; j<list.length; j++)
+		    System.err.print(indices[i][j] + " ");
+		System.err.println();
+	    }
+	    System.err.println("listZ = ");
+	    for (int i=0; i<listZ.length; i++) System.err.print(listZ[i]+" ");
+	    System.err.println();
+	    System.err.println("listTP = ");
+	    for (int i=0; i<listTP.length; i++) System.err.print(listTP[i]+" ");
+	    System.err.println();
+	    System.err.println("listC = ");
+	    for (int i=0; i<listC.length; i++) System.err.print(listC[i]+" ");
+	}
 
-      for (int i=1; i<repeat.length; i++) {
-        repeat[i] = fp.getCount()[i-1] * repeat[i-1];
-      }
-
-      int [][] indices = new int[prefixes.length][list.length];
-      if (DEBUG) {
-        System.err.println("idxTP = "+idxTP);
-        System.err.println("idxC = "+idxC);
-        System.err.println("idxZ = "+idxZ);
-      }
-      for (int i=0; i<list.length; i++) {
-        for (int j=0; j<prefixes.length; j++) {
-          if (j>0) indices[j][i] = (i/fp.getCount()[j-1])%fp.getCount()[j];
-          else indices[j][i] = i%fp.getCount()[0];
-        }
-      }
-
-      if (idxTP != -1) listTP = indices[idxTP];
-      if (idxC != -1) listC = indices[idxC];
-      if (idxZ != -1) listZ = indices[idxZ];
-
-      if (DEBUG) {
-        for (int i=0; i<prefixes.length; i++) {
-          for (int j=0; j<list.length; j++) {
-            System.err.print(indices[i][j] + " ");
-          }
-          System.err.println();
-        }
-        System.err.println("listZ = ");
-        for (int i=0; i<listZ.length; i++) System.err.print(listZ[i]+" ");
-        System.err.println();
-        System.err.println("listTP = ");
-        for (int i=0; i<listTP.length; i++) System.err.print(listTP[i]+" ");
-        System.err.println();
-        System.err.println("listC = ");
-        for (int i=0; i<listC.length; i++) System.err.print(listC[i]+" ");
-      }
     }
-//    if ((!hasZ && prefixes.length == 1 && numFiles > 1) ||
-//      (hasTP && prefixes.length == 2))
-//    {
-//      hasZ = true;
-//    }
-    if (!hasTP && prefixes.length == 2) hasZ = true;
-    else if (!hasZ && prefixes.length <= 1 && numFiles > 1) {
-      hasTP = true;
-      hasZ = false;
-      hasTrans = false;
-    }
+	//    if ((!hasZ && prefixes.length == 1 && numFiles > 1) || (hasTP && prefixes.length == 2)) hasZ = true;
+	if (!hasTP && prefixes.length == 2) hasZ = true;
+	else if (!hasZ && prefixes.length <= 1 && numFiles > 1) {
+	    hasTP = true;
+	    hasZ = false;
+	    hasTrans = false;
+	}
+
+
+    
 
     int ndx = fp.getPrefix().indexOf('_');
     ndx = fp.getPrefix().lastIndexOf('_');
     String prefix = "";
-    if (ndx > 1) prefix = fp.getPrefix().substring(ndx-2, ndx);
+    if(ndx > 1) prefix = fp.getPrefix().substring(ndx-2, ndx);
 
-    //for (int aa=0;aa<absList.length;aa++) System.err.println(absList[aa]);
-    //int idxTP = 0;
-    //int idxC = 0;
+    //    for (int aa=0;aa<absList.length;aa++) System.err.println(absList[aa]);
+
+    //    int idxTP = 0;
+    //    int idxC = 0;
     idxList = 0;
 
     if (IJ.debugMode) {
-      IJ.log("LociDataBrowser opening files: "+
-        directory+" ("+list.length+" files)");
+      IJ.log("Wisc_Scan opening files: "+directory+" ("+list.length+" files)");
     }
 
     int width = 0, height = 0, type = 0;
@@ -260,12 +247,13 @@ public class LociDataBrowser implements PlugIn {
       // ** no image is imported yet **
       boolean valid = true;
       for (int i=0; i<list.length; i++) {
-        if (valid) {
-          if (list[i].endsWith(".txt")) continue;
-          ImagePlus imp = new Opener().openImage(directory, list[i]);
+        if(valid) {
 
-          if (imp != null) { // gather all info on the image
-            width = imp.getWidth();
+          if (list[i].endsWith(".txt")) continue;
+            ImagePlus imp = new Opener().openImage(directory, list[i]);
+
+            if (imp != null) { // gather all info on the image
+              width = imp.getWidth();
             height = imp.getHeight();
             depth = imp.getStackSize();
             type = imp.getType();
@@ -275,7 +263,7 @@ public class LociDataBrowser implements PlugIn {
             cb4tp = list[0].indexOf("_C") < list[0].indexOf("_TP");
             start = 1;
             break;
-          }
+           }
           else valid = false;
         }
       }
@@ -311,7 +299,9 @@ public class LociDataBrowser implements PlugIn {
         }
       }
       n = filteredImages;  // number of images aft9er filtering
-      n *= depth;          // multiplied by image depth (# slice in each image)
+      n *= depth;           // multiplied by image depth (# slice in each image)
+
+
 
       // now n = total # slices
 
@@ -341,7 +331,9 @@ public class LociDataBrowser implements PlugIn {
             stack = new ImageStack((int) (width*scale/100.0),
               (int) (height*scale/100.0), cm);
           }
-          else stack = new ImageStack(width, height, cm);
+          else {
+            stack = new ImageStack(width, height, cm);
+          }
 
           info1 = (String)imp.getProperty("Info");
           idxTP = list[i].indexOf("_TP");
@@ -350,7 +342,7 @@ public class LociDataBrowser implements PlugIn {
 
         if (imp == null) {
           // invalid image
-          if (!list[i].startsWith(".")) IJ.log(list[i] + ": unable to open");
+            if (!list[i].startsWith(".")) IJ.log(list[i] + ": unable to open");
         }
         else if (imp.getWidth() != width || imp.getHeight() != height) {
           // current image dimension different than those in the stack
@@ -392,8 +384,7 @@ public class LociDataBrowser implements PlugIn {
 
 //             // no TP, no C
 //             else {
-//               listTP[idxList] = fp.getFirst()[0].intValue()+
-//                 fp.getStep()[0].intValue()*idxList++;
+//                 listTP[idxList] = fp.getFirst()[0].intValue()+fp.getStep()[0].intValue()*idxList++;
 //             }
 //           }
 //           catch (NumberFormatException nfe) {
@@ -403,21 +394,22 @@ public class LociDataBrowser implements PlugIn {
 //             System.err.println("Unknown Error!");
 //             }
 
-          if (!hasTP && depth == 1) hasTP = false;
-          else if (depth == 1) hasZ = false;
+            if (!hasTP && depth == 1) hasTP = false;
+          else if (depth == 1) 	      hasZ = false;
 
-          count = stack.getSize() + 1;  // update image counts
 
-          // update number on screen that shows count
-          //IJ.showStatus(count+"/"+n);
+            count = stack.getSize() + 1;  // update image counts
+
+            // update number on screen that shows count
+             // IJ.showStatus(count+"/"+n);
           //IJ.showProgress((double)count/n);
 
           // process every slice in each TIFF stack
           for (int iSlice=1; iSlice<=depth; iSlice++) {
-            imp.setSlice(iSlice);
+              imp.setSlice(iSlice);
             ImageProcessor ip = imp.getProcessor();
             if (grayscale) {
-              ImageConverter ic = new ImageConverter(imp);
+                ImageConverter ic = new ImageConverter(imp);
               ic.convertToGray8();
               ip = imp.getProcessor();
             }
@@ -425,11 +417,11 @@ public class LociDataBrowser implements PlugIn {
               ip = ip.resize((int) (width*scale/100.0),
                 (int) (height*scale/100.0));
             }
-            if (ip.getMin() < min) min = ip.getMin();
-            if (ip.getMax() > max) max = ip.getMax();
-            String label = imp.getTitle();
-            String info = (String) imp.getProperty("Info");
-            if (info != null) label += "\n" + info;
+               if (ip.getMin() < min) min = ip.getMin();
+               if (ip.getMax() > max) max = ip.getMax();
+               String label = imp.getTitle();
+                   String info = (String) imp.getProperty("Info");
+               if (info != null) label += "\n" + info;
             stack.addSlice(label, ip);
             IJ.showProgress(progress);
             progress += step;
@@ -439,8 +431,8 @@ public class LociDataBrowser implements PlugIn {
         //System.gc();
       }
     }
-    catch (OutOfMemoryError e) {
-      IJ.outOfMemory("LociDataBrowser");
+    catch(OutOfMemoryError e) {
+      IJ.outOfMemory("Wisc_Scan");
       if (stack != null) stack.trim();
     }
     if (stack != null && stack.getSize() > 0) {
@@ -494,13 +486,13 @@ public class LociDataBrowser implements PlugIn {
     imp1.hide();
   }
 
+
   boolean isContained(String[] pre1, String pre2) {
-      for (int i=0; i<pre1.length; i++) {
-        if (pre1[i].equals(pre2)) return true;
-      }
+      for (int i=0; i<pre1.length; i++)
+	  if (pre1[i].equals(pre2)) return true;
       return false;
   }
-
+      
   /* CustomWindow class begin*/
   private class CustomWindow extends ImageWindow
     implements ActionListener, AdjustmentListener, ItemListener
@@ -517,12 +509,9 @@ public class LociDataBrowser implements PlugIn {
     private javax.swing.Timer animationTimer;
     private JSpinner frameRate;
     private JButton xmlButton;        // button to display OME-XML
-    private JLabel label1, label2;
-
+      private JLabel label1, label2;
     /* CustomWindow constructors, initialisation*/
-    CustomWindow(ImagePlus imp, ImageCanvas ic,
-      boolean hasTrans, String prefix)
-    {
+    CustomWindow(ImagePlus imp, ImageCanvas ic, boolean hasTrans, String prefix)    {
       super(imp, ic);
       this.hasTrans = hasTrans;
       this.setTitle(prefix);
@@ -533,14 +522,13 @@ public class LociDataBrowser implements PlugIn {
     void addPanel() {
       depth2 = stackSize/(depth*(hasTrans ? 2 : 1));
       if (!hasTP && numFiles > 1) {
-        if (hasZ) {
-          sliceSel1 = new JScrollBar(JScrollBar.HORIZONTAL, 1, 1, 1,depth+1);
-          sliceSel2 = new JScrollBar(JScrollBar.HORIZONTAL, 1, 1, 1, depth2+1);
-        }
-        else {
-          sliceSel1 = new JScrollBar(JScrollBar.HORIZONTAL, 1, 1, 1,depth2+1);
-          sliceSel2 = new JScrollBar(JScrollBar.HORIZONTAL, 1, 1, 1, depth+1);
-        }
+	  if (hasZ) {
+        sliceSel1 = new JScrollBar(JScrollBar.HORIZONTAL, 1, 1, 1,depth+1);
+        sliceSel2 = new JScrollBar(JScrollBar.HORIZONTAL, 1, 1, 1, depth2+1);
+	  } else {
+        sliceSel1 = new JScrollBar(JScrollBar.HORIZONTAL, 1, 1, 1,depth2+1);
+        sliceSel2 = new JScrollBar(JScrollBar.HORIZONTAL, 1, 1, 1, depth+1);
+	  }
       }
       else {
         sliceSel1 = new JScrollBar(JScrollBar.HORIZONTAL, 1, 1, 1,depth+1);
@@ -565,479 +553,503 @@ public class LociDataBrowser implements PlugIn {
       add(sliceSel2);
       Panel bottom = new Panel() {
         public Dimension getPreferredSize() {
-          // panel is always the same width as the image canvas
-          Dimension d = super.getPreferredSize();
-          d.width = ic.getWidth();
-          return d;
-        }
-      };
+         // panel is always the same width as the image canvas
+         Dimension d = super.getPreferredSize();
+         d.width = ic.getWidth();
+         return d;
+       }
+     };
 
-      GridBagLayout gridbag = new GridBagLayout();
-      GridBagConstraints c = new GridBagConstraints();
-      bottom.setLayout(gridbag);
-      label1 = new JLabel(lab3D);
-      label2 = new JLabel(lab4D);
-      JCheckBox channel2 = new JCheckBox("Transmitted");
-      channel2.setBackground(Color.white);
-      if (!hasTrans) channel2.setEnabled(false);
-      else channel2.addItemListener(this);
-      JButton animate = new JButton("Animate");
+     GridBagLayout gridbag = new GridBagLayout();
+     GridBagConstraints c = new GridBagConstraints();
+     bottom.setLayout(gridbag);
+     label1 = new JLabel(lab3D);
+     label2 = new JLabel(lab4D);
+     JCheckBox channel2 = new JCheckBox("Transmitted");
+     channel2.setBackground(Color.white);
+     if (!hasTrans) channel2.setEnabled(false);
+     else channel2.addItemListener(this);
+     JButton animate = new JButton("Animate");
 
-      SpinnerModel model = new SpinnerNumberModel(10,1,99,1);
-      frameRate = new JSpinner(model);
+     SpinnerModel model = new SpinnerNumberModel(10,1,99,1);
+     frameRate = new JSpinner(model);
 
-      if ((!hasTP && depth == 1) || (hasTP && depth2 == 1) || numFiles == 1) {
-        animate.setEnabled(false);
-        frameRate.setEnabled(false);
-      }
-      else {
-        animate.addActionListener(this);
-        frameRate.addChangeListener(new FrameRateListener());
-      }
+     if ((!hasTP && depth == 1) || (hasTP && depth2 == 1) || numFiles == 1) {
+       animate.setEnabled(false);
+       frameRate.setEnabled(false);
+     }
+     else {
+       animate.addActionListener(this);
+       frameRate.addChangeListener(new FrameRateListener());
+     }
 
-      if  (!hasTP && hasZ) {
-        if (numFiles > 1) {
-          sliceSel1.setEnabled(false);
-        }
-        else {
-          sliceSel2.setEnabled(false);
-        }
-      }
-      else if (!hasTP && depth == 1) sliceSel2.setEnabled(false);
+     if  (!hasTP && hasZ) { 
+	 if (numFiles > 1) {
+	     sliceSel1.setEnabled(false);
+	 } else {
+	     sliceSel2.setEnabled(false);
+	 }
+     } else if (!hasTP && depth == 1) sliceSel2.setEnabled(false);
 
-      c.gridx = 0;
-      c.gridy = 0;
-      c.fill = GridBagConstraints.NONE;
-      c.weightx = 0.0;
-      c.ipadx = 30;
-      c.anchor = GridBagConstraints.LINE_START;
-      gridbag.setConstraints(label1, c);
-      c.gridy = 2;
-      gridbag.setConstraints(label2, c);
-      c.anchor = GridBagConstraints.CENTER;
+     c.gridx = 0;
+     c.gridy = 0;
+     c.fill = GridBagConstraints.NONE;
+     c.weightx = 0.0;
+     c.ipadx = 30;
+     c.anchor = GridBagConstraints.LINE_START;
+     gridbag.setConstraints(label1, c);
+     c.gridy = 2;
+     gridbag.setConstraints(label2, c);
+     c.anchor = GridBagConstraints.CENTER;
 
-      c.gridx = 1;
-      c.gridy = 0;
-      c.gridwidth = 5;
-      c.fill = GridBagConstraints.HORIZONTAL;
-      c.weightx = 1.0;
-      gridbag.setConstraints(sliceSel1, c);
-      c.gridy = 2;
-      gridbag.setConstraints(sliceSel2, c);
+     c.gridx = 1;
+     c.gridy = 0;
+     c.gridwidth = 5;
+     c.fill = GridBagConstraints.HORIZONTAL;
+     c.weightx = 1.0;
+     gridbag.setConstraints(sliceSel1, c);
+     c.gridy = 2;
+     gridbag.setConstraints(sliceSel2, c);
+     
+
+     c.gridx = 6;
+     c.gridy = 0;
+     c.fill = GridBagConstraints.NONE;
+     c.weightx = 0.0;
+     c.insets = new Insets(0,5,0,0);
+     c.anchor = GridBagConstraints.LINE_END;
+     c.gridwidth = 2; // end row
+     gridbag.setConstraints(channel2, c);
+
+     c.fill = GridBagConstraints.NONE;
+     c.weightx = 0.0;
+     c.gridheight = 1;
+     c.gridx = 6;
+     c.gridy = 3;
+     c.gridwidth = GridBagConstraints.REMAINDER; //end row
+     c.insets = new Insets(3,5,3,0);
+     gridbag.setConstraints(animate, c);
+
+     // next row
+     c.gridx = 7;
+     c.gridy = 2;
+     c.gridwidth = 1;
+     c.fill = GridBagConstraints.REMAINDER;
+     c.weightx = 0.0;
+     bottom.add(new JLabel("fps"),c);
+
+     c.gridx = 6;
+     c.gridy = 2;
+     c.ipadx = 20;
+     //     c.gridwidth = GridBagConstraints.REMAINDER; // end row
+     gridbag.setConstraints(frameRate, c);
+     bottom.add(frameRate);
+
+     // add the XML button
+     c.gridx = 5;
+     c.gridy = 3;
+     c.insets = new Insets(3,30,3,5);
+
+     xmlButton = new JButton("OME-XML");
+     xmlButton.addActionListener(this);
+     xmlButton.setActionCommand("xml");
+     gridbag.setConstraints(xmlButton, c);
+
+     c.gridx = 0;
+     c.gridy = 3;
+     c.gridwidth = 2;
+     c.insets = new Insets(0,0,0,0);
+     JButton swapAxesButton = new JButton("Swap Axes");
+     swapAxesButton.addActionListener(this);
+     swapAxesButton.setActionCommand("swap");
+     gridbag.setConstraints(swapAxesButton, c);
+
+     bottom.add(label1);
+     bottom.add(sliceSel1);
+     bottom.add(channel2);
+     bottom.add(label2);
+     bottom.add(sliceSel2);
+     bottom.add(animate);
+     bottom.add(xmlButton);
+     bottom.add(swapAxesButton);
+
+     add(bottom);
+
+     pack();
+     setVisible(true);
+     int previousSlice = imp.getCurrentSlice();
+     imp.setSlice(hasTrans ? depth+1 : 1);
+     WindowManager.addWindow(this);
+     if (previousSlice > 1 && previousSlice <= imp.getStackSize()) {
+       imp.setSlice(previousSlice);
+     }
+   }
+
+   class FrameRateListener implements ChangeListener {
+     public void stateChanged(ChangeEvent e) {
+       JSpinner source = (JSpinner) e.getSource();
+       int oldFPS = fps;
+       fps = ((Integer) (source.getValue())).intValue();
+       if (fps < 1) {
+         frameRate.setValue(new Integer(1));
+         fps = 1;
+       }
+       else if (fps > 99) {
+         frameRate.setValue(new Integer(99));
+         fps = 99;
+       }
+       if (animating) animationTimer.setDelay(1000/fps);
+     }
+   }
+
+   // CTR 11 Feb 2005
+   /* Button Listener*/
+   public void actionPerformed(ActionEvent e) {
+     Object src = e.getSource();
+     if("xml".equals(e.getActionCommand())) {
+       int y = WindowManager.getCurrentImage().getID();
+       Object[] meta = new Object[2];
+       meta[0] = null;
+       meta[1] = MetaPanel.exportMeta(description, y);
+       MetaPanel metaPanel =
+         new MetaPanel(IJ.getInstance(), y, meta, description);
+       metaPanel.show();
+     }
+     else if ("swap".equals(e.getActionCommand())) {
+	 	 String tmp = label1.getText();
+	 label1.setText(label2.getText());
+	 label2.setText(tmp);
+	 label1.setHorizontalTextPosition(JLabel.LEFT);
+	 label2.setHorizontalTextPosition(JLabel.LEFT);
+	 String tmp2 = lab3D;
+	 lab3D = lab4D;
+	 lab4D = tmp2;
+     }	 
+     else if (src instanceof javax.swing.Timer) {
+       boolean changed = false;
+       if (lab3D.equals("time")) {
+         z = sliceSel1.getValue() + 1;
+         if (z >= sliceSel1.getMaximum()) z = sliceSel1.getMinimum();
+         sliceSel1.setValue(z);
+         changed = true;
+       }
+       if (lab4D.equals("time")) {
+         t = sliceSel2.getValue() + 1;
+         if (t >= sliceSel2.getMaximum()) t = sliceSel2.getMinimum();
+         sliceSel2.setValue(t);
+         changed = true;
+       }
+       if (changed) showSlice(z, t, trans);
+     }
+     else if (src instanceof JButton) {
+       JButton animate = (JButton) src;
+       if (animate.getText().equals("Animate")) {
+         animating = true;
+         animationTimer = new javax.swing.Timer(1000 / fps, this);
+         animationTimer.start();
+         animate.setText("Stop");
+       }
+       else {
+         animationTimer.stop();
+         animating = false;
+         animationTimer = null;
+         animate.setText("Animate");
+       }
+     }
+   }
 
 
-      c.gridx = 6;
-      c.gridy = 0;
-      c.fill = GridBagConstraints.NONE;
-      c.weightx = 0.0;
-      c.insets = new Insets(0,5,0,0);
-      c.anchor = GridBagConstraints.LINE_END;
-      c.gridwidth = 2; // end row
-      gridbag.setConstraints(channel2, c);
-
-      c.fill = GridBagConstraints.NONE;
-      c.weightx = 0.0;
-      c.gridheight = 1;
-      c.gridx = 6;
-      c.gridy = 3;
-      c.gridwidth = GridBagConstraints.REMAINDER; //end row
-      c.insets = new Insets(3,5,3,0);
-      gridbag.setConstraints(animate, c);
-
-      // next row
-      c.gridx = 7;
-      c.gridy = 2;
-      c.gridwidth = 1;
-      c.fill = GridBagConstraints.REMAINDER;
-      c.weightx = 0.0;
-      bottom.add(new JLabel("fps"),c);
-
-      c.gridx = 6;
-      c.gridy = 2;
-      c.ipadx = 20;
-      //     c.gridwidth = GridBagConstraints.REMAINDER; // end row
-      gridbag.setConstraints(frameRate, c);
-      bottom.add(frameRate);
-
-      // add the XML button
-      c.gridx = 5;
-      c.gridy = 3;
-      c.insets = new Insets(3,30,3,5);
-
-      xmlButton = new JButton("OME-XML");
-      xmlButton.addActionListener(this);
-      xmlButton.setActionCommand("xml");
-      gridbag.setConstraints(xmlButton, c);
-
-      c.gridx = 0;
-      c.gridy = 3;
-      c.gridwidth = 2;
-      c.insets = new Insets(0,0,0,0);
-      JButton swapAxesButton = new JButton("Swap Axes");
-      swapAxesButton.addActionListener(this);
-      swapAxesButton.setActionCommand("swap");
-      gridbag.setConstraints(swapAxesButton, c);
-
-      bottom.add(label1);
-      bottom.add(sliceSel1);
-      bottom.add(channel2);
-      bottom.add(label2);
-      bottom.add(sliceSel2);
-      bottom.add(animate);
-      bottom.add(xmlButton);
-      bottom.add(swapAxesButton);
-
-      add(bottom);
-
-      pack();
-      setVisible(true);
-      int previousSlice = imp.getCurrentSlice();
-      imp.setSlice(hasTrans ? depth+1 : 1);
-      WindowManager.addWindow(this);
-      if (previousSlice > 1 && previousSlice <= imp.getStackSize()) {
-        imp.setSlice(previousSlice);
-      }
-    }
-
-    class FrameRateListener implements ChangeListener {
-      public void stateChanged(ChangeEvent e) {
-        JSpinner source = (JSpinner) e.getSource();
-        int oldFPS = fps;
-        fps = ((Integer) (source.getValue())).intValue();
-        if (fps < 1) {
-          frameRate.setValue(new Integer(1));
-          fps = 1;
-        }
-        else if (fps > 99) {
-          frameRate.setValue(new Integer(99));
-          fps = 99;
-        }
-        if (animating) animationTimer.setDelay(1000/fps);
-      }
-    }
-
-    // CTR 11 Feb 2005
-    /* Button Listener*/
-    public void actionPerformed(ActionEvent e) {
-      Object src = e.getSource();
-      if ("xml".equals(e.getActionCommand())) {
-        int y = WindowManager.getCurrentImage().getID();
-        Object[] meta = new Object[2];
-        meta[0] = null;
-        meta[1] = MetaPanel.exportMeta(description, y);
-        MetaPanel metaPanel = new MetaPanel(IJ.getInstance(), y, meta);
-        metaPanel.show();
-      }
-      else if ("swap".equals(e.getActionCommand())) {
-        String tmp = label1.getText();
-        label1.setText(label2.getText());
-        label2.setText(tmp);
-        label1.setHorizontalTextPosition(JLabel.LEFT);
-        label2.setHorizontalTextPosition(JLabel.LEFT);
-      }
-      else if (src instanceof javax.swing.Timer) {
-        boolean changed = false;
-        if (lab3D.equals("time")) {
-          z = sliceSel1.getValue() + 1;
-          if (z >= sliceSel1.getMaximum()) z = sliceSel1.getMinimum();
-          sliceSel1.setValue(z);
-          changed = true;
-        }
-        if (lab4D.equals("time")) {
-          t = sliceSel2.getValue() + 1;
-          if (t >= sliceSel2.getMaximum()) t = sliceSel2.getMinimum();
-          sliceSel2.setValue(t);
-          changed = true;
-        }
-        if (changed) showSlice(z, t, trans);
-      }
-      else if (src instanceof JButton) {
-        JButton animate = (JButton) src;
-        if (animate.getText().equals("Animate")) {
-          animating = true;
-          animationTimer = new javax.swing.Timer(1000 / fps, this);
-          animationTimer.start();
-          animate.setText("Stop");
-        }
-        else {
-          animationTimer.stop();
-          animating = false;
-          animationTimer = null;
-          animate.setText("Animate");
-        }
-      }
-    }
-
-    public void windowClosed(WindowEvent e) {
-      if (animationTimer != null) animationTimer.stop();
-    }
-
-    /* Checkbox Listener*/
-    public void itemStateChanged(ItemEvent e) {
-      Object src = e.getSource();
-      if (src instanceof JCheckBox) {
-        JCheckBox channel2 = (JCheckBox) src;
-        trans = channel2.isSelected();
-        showSlice(z,t,trans);
-      }
-    }
-
-    /* Scrollbar Listener*/
-    public void adjustmentValueChanged(AdjustmentEvent adjustmentEvent) {
-      if (adjustmentEvent.getSource() == sliceSel1) {
-        z = sliceSel1.getValue();
-      }
-      if (adjustmentEvent.getSource() == sliceSel2) {
-        t = sliceSel2.getValue();
-      }
-      showSlice(z, t, trans);
-    }
-
-    /* selects and shows slice defined by z, t and trans */
-    public void showSlice(int z, int t, boolean trans) {
-      int c = trans ? 0 : 1;
-      if (numFiles == 1 || (hasZ && !hasTP && !hasTrans && numFiles > 1)) {
-        showSlice(z);
-      }
-      else if (!hasZ && hasTP && !hasTrans && numFiles > 1 && depth == 1) {
-        showSlice(t);
-      }
-//       else if (dim == 2) {
-//         System.err.println("showing slice #"+
-//           (t+depth*(c-1))+": i = "+(t+depth*(c-1)));
-//         showSlice(t + depth*(c-1));
-//      }
-      else {
-        if (listTP[0]==0) t -= tpStep;
-        for (int i=0; i<numFiles;i++) {
-          if ((listTP[i] == t && hasTP) &&
-            ((listC[i] == c && hasTrans) || listC[i] == -1))
-          {
-            if (!hasTP) showSlice(t + depth*i);
-            else showSlice(z + depth*i);
-            break;
-          }
-          else if (DEBUG) System.err.println("Something wrong in showSlice()");
-        }
-      }
-    }
-
-    /* selects and shows slice defined by index */
-    public void showSlice(int index) {
-      if (index >= 1 && index <= imp.getStackSize()) imp.setSlice(index);
-      else if (index < 1) System.err.println("Error: Slice index < 1");
-      else System.err.println("Error: Slice index > stack size");
-      imp.updateAndDraw();
-    }
-
-    /**
-     * drawinfo overrides method from ImageWindow and adds 3rd and 4th
-     * dimension slice position, original code from Wayne Rasband, modified
-     * by me
-     */
-    public void drawInfo(Graphics g) {
-      // CTR HACK - workaround for NullPointerException accessing enclosing
-      // class's fields before it is initialized (official Sun compiler has
-      // this bug, but not code compiled with jikes)
-      try { int x = numFiles; }
-      catch (NullPointerException exc) { return; }
-
-      int textGap = 0;
-
-      StringBuffer sb = new StringBuffer();
-      Insets insets = super.getInsets();
-      int nSlices = imp.getStackSize();
-      if (nSlices > 1) {
-        ImageStack stack = imp.getStack();
-        int currentSlice = imp.getCurrentSlice();
-        sb.append(currentSlice);
-        sb.append("/");
-        sb.append(nSlices);
-        sb.append(" ");
-        sb.append(lab3D);
-        sb.append(": ");
-        sb.append(sliceSel1 == null ? 0 : sliceSel1.getValue());
-        sb.append("/");
-        sb.append(numFiles == 1 ? depth : (!hasTP ? depth2 : depth));
-        sb.append(" ");
-        if (lab4D!=null) sb.append(lab4D);
-        sb.append(": ");
-        sb.append(sliceSel2 == null ? 0 : sliceSel2.getValue());
-        sb.append("/");
-        sb.append(!hasTP ? depth : depth2);
-
-        boolean isLabel = false;
-        String label = stack.getSliceLabel(currentSlice);
-        if (label != null && label.length() > 0) {
-          sb.append(" (");
-          sb.append(label);
-          sb.append(")");
-        }
-        sb.append("; ");
+      public void windowClosed(WindowEvent e) {
+	  if (animationTimer != null) 
+	      animationTimer.stop();
       }
 
-      String name = imp.getTitle();
-      int cndx = name.indexOf("_C");
-      int tpndx = name.indexOf("_TP");
-      if (cndx >= 0 && tpndx >= 0) {
-        sb.append(name.substring(0, cndx));
-        sb.append("_C");
-        sb.append(trans ? "1" : "2");
-        sb.append("_TP");
-        sb.append(t);
-        sb.append("; ");
-      }
+   /* Checkbox Listener*/
+   public void itemStateChanged(ItemEvent e) {
+     Object src = e.getSource();
+     if (src instanceof JCheckBox) {
+       JCheckBox channel2 = (JCheckBox) src;
+       trans = channel2.isSelected();
+       showSlice(z,t,trans);
+     }
+   }
 
-      Calibration cal = imp.getCalibration();
-      if (cal.pixelWidth != 1.0 || cal.pixelHeight != 1.0) {
-      sb.append(IJ.d2s(imp.getWidth()*cal.pixelWidth,2));
-      sb.append("x");
-      sb.append(IJ.d2s(imp.getHeight()*cal.pixelHeight,2));
-      sb.append(" ");
-      sb.append(cal.getUnits());
-      sb.append(" (");
-      sb.append(imp.getWidth());
-      sb.append("x");
-      sb.append(imp.getHeight());
-      sb.append("); ");
-    }
-    else {
-      sb.append(imp.getWidth());
-      sb.append("x");
-      sb.append(imp.getHeight());
-      sb.append(" pixels; ");
-    }
-    int type = imp.getType();
-    int size = (imp.getWidth()*imp.getHeight()*imp.getStackSize())/1048576;
-    switch (type) {
-      case ImagePlus.GRAY8:
-        sb.append("8-bit grayscale");
-        break;
-      case ImagePlus.GRAY16:
-        sb.append("16-bit grayscale");
-        size *= 2;
-        break;
-      case ImagePlus.GRAY32:
-        sb.append("32-bit grayscale");
-        size *= 4;
-        break;
-      case ImagePlus.COLOR_256:
-        sb.append("8-bit color");
-        break;
-      case ImagePlus.COLOR_RGB:
-        sb.append("RGB");
-        size *= 4;
-        break;
-      }
-      sb.append("; ");
-      sb.append(size);
-      sb.append("M");
-      g.drawString(sb.toString(), 5, insets.top + textGap);
-    }
-  }
+   /* Scrollbar Listener*/
+   public void adjustmentValueChanged(AdjustmentEvent adjustmentEvent) {
+     if (adjustmentEvent.getSource() == sliceSel1) {
+       z = sliceSel1.getValue();
+     }
+     if (adjustmentEvent.getSource() == sliceSel2) {
+       t = sliceSel2.getValue();
+     }
+     showSlice(z, t, trans);
+   }
+
+   /* selects and shows slice defined by z, t and trans */
+   public void showSlice(int z, int t, boolean trans) {
+     int c = trans ? 0 : 1;
+     if (numFiles == 1 || (hasZ && !hasTP && !hasTrans && numFiles > 1)) showSlice(z);
+     else if (!hasZ && hasTP && !hasTrans && numFiles > 1 && depth == 1) { 
+
+	 showSlice(t);
+     }
+     else {
+	 if (listTP[0]==0) t -= tpStep;
+	 for (int i=0; i<numFiles;i++) {
+	     if ((listTP[i] == t && hasTP) && ((listC[i] == c && hasTrans) ||
+					       listC[i] == -1)) {
+		 if (!hasTP) {
+		     showSlice(t + depth*i);
+		     break;
+		 }
+		 else {
+		     showSlice(z + depth*i);
+		     break;
+		 }
+	     } else 
+		 if (debug)
+		     System.err.println("Something wrong in showSlice()");
+	 }
+     }
+   }
+
+   /* selects and shows slice defined by index */
+   public void showSlice(int index) {
+     if (index >= 1 && index <= imp.getStackSize()) imp.setSlice(index);
+     else if (index < 1) System.err.println("Error: Slice index < 1");
+     else System.err.println("Error: Slice index > stack size");
+     imp.updateAndDraw();
+   }
+
+   /**
+    * drawinfo overrides method from ImageWindow and adds 3rd and 4th
+    * dimension slice position, original code from Wayne Rasband, modified
+    * by me
+    */
+   public void drawInfo(Graphics g) {
+     // CTR HACK - workaround for NullPointerException accessing enclosing
+     // class's fields before it is initialized (official Sun compiler has
+     // this bug, but not code compiled with jikes)
+     try { int x = numFiles; }
+     catch (NullPointerException exc) { return; }
+
+     int textGap = 0;
+
+     StringBuffer sb = new StringBuffer();
+     Insets insets = super.getInsets();
+     int nSlices = imp.getStackSize();
+     if (nSlices > 1) {
+       ImageStack stack = imp.getStack();
+       int currentSlice = imp.getCurrentSlice();
+       sb.append(currentSlice);
+       sb.append("/");
+       sb.append(nSlices);
+       sb.append(" ");
+       sb.append(lab3D);
+       sb.append(": ");
+       sb.append(sliceSel1 == null ? 0 : sliceSel1.getValue());
+       sb.append("/");
+       sb.append(numFiles == 1 ? depth : (!hasTP ? depth2 : depth));
+       sb.append(" ");
+       if (lab4D!=null) sb.append(lab4D);
+       sb.append(": ");
+       sb.append(sliceSel2 == null ? 0 : sliceSel2.getValue());
+       sb.append("/");
+       sb.append(!hasTP ? depth : depth2);
+
+       boolean isLabel = false;
+       String label = stack.getSliceLabel(currentSlice);
+       if (label != null && label.length() > 0) {
+         sb.append(" (");
+         sb.append(label);
+         sb.append(")");
+       }
+       sb.append("; ");
+     }
+
+     String name = imp.getTitle();
+     int cndx = name.indexOf("_C");
+     int tpndx = name.indexOf("_TP");
+     if (cndx >= 0 && tpndx >= 0) {
+       sb.append(name.substring(0, cndx));
+       sb.append("_C");
+       sb.append(trans ? "1" : "2");
+       sb.append("_TP");
+       sb.append(t);
+       sb.append("; ");
+     }
+
+     Calibration cal = imp.getCalibration();
+     if (cal.pixelWidth != 1.0 || cal.pixelHeight != 1.0) {
+     sb.append(IJ.d2s(imp.getWidth()*cal.pixelWidth,2));
+     sb.append("x");
+     sb.append(IJ.d2s(imp.getHeight()*cal.pixelHeight,2));
+     sb.append(" ");
+     sb.append(cal.getUnits());
+     sb.append(" (");
+     sb.append(imp.getWidth());
+     sb.append("x");
+     sb.append(imp.getHeight());
+     sb.append("); ");
+   }
+   else {
+     sb.append(imp.getWidth());
+     sb.append("x");
+     sb.append(imp.getHeight());
+     sb.append(" pixels; ");
+   }
+   int type = imp.getType();
+   int size = (imp.getWidth()*imp.getHeight()*imp.getStackSize())/1048576;
+   switch (type) {
+     case ImagePlus.GRAY8:
+       sb.append("8-bit grayscale");
+       break;
+     case ImagePlus.GRAY16:
+       sb.append("16-bit grayscale");
+       size *= 2;
+       break;
+     case ImagePlus.GRAY32:
+       sb.append("32-bit grayscale");
+       size *= 4;
+       break;
+     case ImagePlus.COLOR_256:
+       sb.append("8-bit color");
+       break;
+     case ImagePlus.COLOR_RGB:
+       sb.append("RGB");
+       size *= 4;
+       break;
+     }
+     sb.append("; ");
+     sb.append(size);
+     sb.append("M");
+     g.drawString(sb.toString(), 5, insets.top + textGap);
+   }
+ }
+
   /* CustomWindow class end*/
 
-  /** This class represents an array of disk-resident images. */
-  class VirtualStack extends ImageStack {
+/**
+This class represents an array of disk-resident images.
+*/
+class VirtualStack extends ImageStack{
     static final int INITIAL_SIZE = 100;
     String path;
     int nSlices;
     String[] names;
-
+    
     /** Creates a new, empty virtual stack. */
     public VirtualStack(int width, int height, ColorModel cm, String path) {
-      super(width, height, cm);
-      this.path = path;
-      names = new String[INITIAL_SIZE];
-      //IJ.log("VirtualStack: "+path);
+        super(width, height, cm);
+        this.path = path;
+        names = new String[INITIAL_SIZE];
+        //IJ.log("VirtualStack: "+path);
     }
 
-    /** Adds an image FILENAME to the end of the stack. */
+     /** Adds an image FILENAME to the end of the stack. */
     public void addSlice(String name) {
-      if (name==null) throw new IllegalArgumentException("'name' is null!");
-      nSlices++;
-      //IJ.log("addSlice: "+nSlices+"  "+name);
-      if (nSlices==names.length) {
-        String[] tmp = new String[nSlices*2];
-        System.arraycopy(names, 0, tmp, 0, nSlices);
-        names = tmp;
-      }
-      names[nSlices-1] = name;
+        if (name==null) 
+            throw new IllegalArgumentException("'name' is null!");
+        nSlices++;
+       //IJ.log("addSlice: "+nSlices+"  "+name);
+       if (nSlices==names.length) {
+            String[] tmp = new String[nSlices*2];
+            System.arraycopy(names, 0, tmp, 0, nSlices);
+            names = tmp;
+        }
+        names[nSlices-1] = name;
     }
 
-    /** Does nothing. */
+   /** Does nothing. */
     public void addSlice(String sliceLabel, Object pixels) {
-      System.err.println("ERROR: calling addSlice(sliceLabel, pixels)");
-    }
+	System.err.println("ERROR: calling addSlice(sliceLabel, pixels)");    }
 
     /** Does nothing.. */
     public void addSlice(String sliceLabel, ImageProcessor ip) {
-      System.err.println("ERROR: calling addSlice(sliceLabel, ip)");
+	System.err.println("ERROR: calling addSlice(sliceLabel, ip)");
     }
-
+	
     /** Does noting. */
     public void addSlice(String sliceLabel, ImageProcessor ip, int n) {
-      System.err.println("ERROR: calling addSlice(sliceLabel, ip, n)");
+	System.err.println("ERROR: calling addSlice(sliceLabel, ip, n)");
     }
 
     /** Deletes the specified slice, were 1<=n<=nslices. */
     public void deleteSlice(int n) {
-      if (n<1 || n>nSlices) {
-        throw new IllegalArgumentException("Argument out of range: "+n);
-      }
-      if (nSlices<1) return;
-      for (int i=n; i<nSlices; i++) names[i-1] = names[i];
-      names[nSlices-1] = null;
-      nSlices--;
-    }
-
+        if (n<1 || n>nSlices)
+            throw new IllegalArgumentException("Argument out of range: "+n);
+            if (nSlices<1)
+                return;
+            for (int i=n; i<nSlices; i++)
+                names[i-1] = names[i];
+            names[nSlices-1] = null;
+            nSlices--;
+        }
+	
     /** Deletes the last slice in the stack. */
     public void deleteLastSlice() {
-      if (nSlices>0) deleteSlice(nSlices);
+        if (nSlices>0)
+            deleteSlice(nSlices);
     }
-
-    /** Returns the pixel array for the specified slice, were 1<=n<=nslices. */
+       
+   /** Returns the pixel array for the specified slice, were 1<=n<=nslices. */
     public Object getPixels(int n) {
-      ImageProcessor ip = getProcessor(n);
-      return ip == null ? null : ip.getPixels();
+        ImageProcessor ip = getProcessor(n);
+        if (ip!=null)
+            return ip.getPixels();
+        else
+            return null;
+    }       
+    
+     /** Assigns a pixel array to the specified slice,
+        were 1<=n<=nslices. */
+   public void setPixels(Object pixels, int n) {
     }
 
-    /** Assigns a pixel array to the specified slice, were 1<=n<=nslices. */
-    public void setPixels(Object pixels, int n) { }
-
-    /**
-     * Returns an ImageProcessor for the specified slice,
-     * were 1<=n<=nslices. Returns null if the stack is empty.
-     */
+   /** Returns an ImageProcessor for the specified slice,
+        were 1<=n<=nslices. Returns null if the stack is empty.
+    */
     public ImageProcessor getProcessor(int n) {
-      //IJ.log("getProcessor: "+n+"  "+names[n-1]);
-      ImagePlus imp = new Opener().openImage(path, names[n-1]);
-      if (imp == null) return null;
-      int w = imp.getWidth();
-      int h = imp.getHeight();
-      int type = imp.getType();
-      ColorModel cm = imp.getProcessor().getColorModel();
-      return imp.getProcessor();
+        //IJ.log("getProcessor: "+n+"  "+names[n-1]);
+        ImagePlus imp = new Opener().openImage(path, names[n-1]);
+        if (imp!=null) {
+            int w = imp.getWidth();
+            int h = imp.getHeight();
+            int type = imp.getType();
+            ColorModel cm = imp.getProcessor().getColorModel();
+        } else
+            return null;
+        return imp.getProcessor();
+     }
+ 
+     /** Returns the number of slices in this stack. */
+    public int getSize() {
+        return nSlices;
     }
-
-    /** Returns the number of slices in this stack. */
-    public int getSize() { return nSlices; }
 
     /** Returns the file name of the Nth image. */
-    public String getSliceLabel(int n) { return names[n-1]; }
-
+    public String getSliceLabel(int n) {
+         return names[n-1];
+    }
+    
     /** Returns null. */
-    public Object[] getImageArray() { return null; }
+    public Object[] getImageArray() {
+        return null;
+    }
 
-    /** Does nothing. */
-    public void setSliceLabel(String label, int n) { }
+   /** Does nothing. */
+    public void setSliceLabel(String label, int n) {
+    }
 
     /** Always return true. */
-    public boolean isVirtual() { return true; }
+    public boolean isVirtual() {
+        return true;
+    }
 
-    /** Does nothing. */
-    public void trim() { }
-
-  }
+   /** Does nothing. */
+    public void trim() {
+    }
+        
+}
 
 }
