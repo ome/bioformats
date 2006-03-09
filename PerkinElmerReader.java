@@ -93,6 +93,7 @@ public class PerkinElmerReader extends FormatReader {
     // get the working directory
     File tempFile = new File(id);
     File workingDir = tempFile.getParentFile();
+    if (workingDir == null) workingDir = new File(".");
     String workingDirPath = workingDir.getPath() + File.separator;
     String[] ls = workingDir.list();
 
