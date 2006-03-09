@@ -47,12 +47,15 @@ public class ImageViewer extends JFrame
   // -- Constants --
 
   protected static final String TITLE = "LOCI Bio-Formats Viewer";
+  protected static final GraphicsConfiguration GC =
+    ImageTools.getDefaultConfiguration();
 
 
   // -- Fields --
 
   protected JPanel pane;
   protected ImageIcon icon;
+  protected JLabel iconLabel;
   protected JSlider slider;
   protected JLabel probeLabel;
   protected JMenuItem fileSave;
@@ -83,7 +86,8 @@ public class ImageViewer extends JFrame
 
     // image icon
     icon = new ImageIcon();
-    JLabel iconLabel = new JLabel(icon);
+    iconLabel = new JLabel(icon, SwingConstants.LEFT);
+    iconLabel.setVerticalAlignment(SwingConstants.TOP);
     pane.add(new JScrollPane(iconLabel));
 
     // cursor probe
@@ -239,6 +243,7 @@ public class ImageViewer extends JFrame
     updateLabel(-1, -1);
     int ndx = slider == null ? 0 : (slider.getValue() - 1);
     icon.setImage(images == null ? null : images[ndx]);
+    iconLabel.repaint();
   }
 
 

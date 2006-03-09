@@ -47,12 +47,12 @@ public abstract class ImageTools {
   // -- Image scaling --
 
   /** Copies the source image into the target, applying scaling. */
-  public static BufferedImage copy(BufferedImage source, BufferedImage target,
-    Object hint)
+  public static BufferedImage copyScaled(BufferedImage source,
+    BufferedImage target, Object hint)
   {
+    if (hint == null) hint = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
     Graphics2D g2 = target.createGraphics();
-    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-      RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, hint);
     double scalex = (double) target.getWidth() / source.getWidth();
     double scaley = (double) target.getHeight() / source.getHeight();
     AffineTransform xform = AffineTransform.getScaleInstance(scalex, scaley);
@@ -70,7 +70,8 @@ public abstract class ImageTools {
   {
     if (gc == null) gc = getDefaultConfiguration();
     int trans = image.getColorModel().getTransparency();
-    return copy(image, gc.createCompatibleImage(width, height, trans), hint);
+    return copyScaled(image,
+      gc.createCompatibleImage(width, height, trans), hint);
   }
 
   /**
@@ -82,7 +83,7 @@ public abstract class ImageTools {
   {
     WritableRaster raster = cm.createCompatibleWritableRaster(width, height);
     boolean isRasterPremultiplied = cm.isAlphaPremultiplied();
-    return copy(image, new BufferedImage(cm,
+    return copyScaled(image, new BufferedImage(cm,
       raster, isRasterPremultiplied, null), hint);
   }
 
@@ -105,8 +106,7 @@ public abstract class ImageTools {
     if (w == width && h == height) return source;
     if ((width * height) / (w * h) > 0) {
       // use Java2D to enlarge
-      return scale2D(source, width, height,
-        RenderingHints.VALUE_INTERPOLATION_BICUBIC, source.getColorModel());
+      return scale2D(source, width, height, null, source.getColorModel());
     }
     else {
       // use AWT to shrink
@@ -236,6 +236,24 @@ public abstract class ImageTools {
 
 
   // -- Image construction --
+
+  /**
+   * Creates a buffered image compatible with the given graphics
+   * configuration, using the given buffered image as a source.
+   * If gc is null, the default graphics configuration is used.
+   */
+  public static BufferedImage makeImage(BufferedImage image,
+    GraphicsConfiguration gc)
+  {
+    if (gc == null) gc = getDefaultConfiguration();
+    int w = image.getWidth(), h = image.getHeight();
+    int trans = image.getColorModel().getTransparency();
+    BufferedImage result = gc.createCompatibleImage(w, h, trans);
+    Graphics2D g2 = result.createGraphics();
+    g2.drawRenderedImage(image, null);
+    g2.dispose();
+    return result;
+  }
 
   /**
    * Creates a buffered image from the given AWT image object.
