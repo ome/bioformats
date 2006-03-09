@@ -52,9 +52,9 @@ public class ImageViewer extends JFrame
   // -- Fields --
 
   protected JPanel pane;
-  protected JPanel imagePane;
+  protected ImageIcon icon;
   protected JSlider slider;
-  protected JLabel label;
+  protected JLabel probeLabel;
   protected JMenuItem fileSave;
 
   protected ImageReader reader;
@@ -81,29 +81,17 @@ public class ImageViewer extends JFrame
     pane.add(BorderLayout.SOUTH, slider);
     slider.addChangeListener(this);
 
-    // image panel
-    imagePane = new JPanel() {
-      public void paint(Graphics g) {
-        int ndx = slider == null ? 0 : (slider.getValue() - 1);
-        Dimension size = getSize();
-        g.setColor(slider.getBackground());
-        g.fillRect(0, 0, size.width, size.height);
-        if (images != null && images[ndx] != null) {
-          g.drawImage(images[ndx], 0, 0, this);
-        }
-      }
-      public Dimension getPreferredSize() {
-        return ImageTools.getSize(images == null ? null : images[0]);
-      }
-    };
-    pane.add(imagePane);
+    // image icon
+    icon = new ImageIcon();
+    JLabel iconLabel = new JLabel(icon);
+    pane.add(new JScrollPane(iconLabel));
 
     // cursor probe
-    label = new JLabel(" ");
-    label.setHorizontalAlignment(SwingConstants.CENTER);
-    label.setBorder(new BevelBorder(BevelBorder.RAISED));
-    pane.add(BorderLayout.NORTH, label);
-    imagePane.addMouseMotionListener(this);
+    probeLabel = new JLabel(" ");
+    probeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    probeLabel.setBorder(new BevelBorder(BevelBorder.RAISED));
+    pane.add(BorderLayout.NORTH, probeLabel);
+    iconLabel.addMouseMotionListener(this);
 
     // menu bar
     JMenuBar menubar = new JMenuBar();
@@ -202,6 +190,7 @@ public class ImageViewer extends JFrame
     if (id != null || format != null) sb.append("- ");
     sb.append(TITLE);
     setTitle(sb.toString());
+    icon.setImage(images == null ? null : images[0]);
     pack();
   }
 
@@ -248,7 +237,8 @@ public class ImageViewer extends JFrame
   /** Handles slider events. */
   public void stateChanged(ChangeEvent e) {
     updateLabel(-1, -1);
-    imagePane.repaint();
+    int ndx = slider == null ? 0 : (slider.getValue() - 1);
+    icon.setImage(images == null ? null : images[ndx]);
   }
 
 
@@ -307,7 +297,7 @@ public class ImageViewer extends JFrame
       }
     }
     sb.append(" ");
-    label.setText(sb.toString());
+    probeLabel.setText(sb.toString());
   }
 
   /** Toggles wait cursor. */
