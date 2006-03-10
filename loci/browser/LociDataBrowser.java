@@ -1,6 +1,8 @@
 // YTW 2/27/2006: hardcode deconvolve6_Pseudo_Tl000_Zs000.TIF
 // YTW 3/1/2006: rewrite file to make better use of FilePattern
 
+package loci.browser;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
@@ -45,6 +47,8 @@ import java.awt.image.ColorModel;
 import java.awt.event.WindowEvent;
 import java.io.File;
 
+import loci.ome.MetaPanel;
+import loci.util.FilePattern;
 
 public class LociDataBrowser implements PlugIn {
 
@@ -81,10 +85,9 @@ public class LociDataBrowser implements PlugIn {
   private boolean animating = false;
   private int tpStep;
 
-    private static String[] special_prefixes = {"_BF_"};
-    private static String[] pre_time={"TP","Tl", "_BF_"};
-    private static String[] pre_z = {"Z","Zs"};
-    private static String[] pre_trans = {"C"};
+    private static String[] pre_time={"_TP","_Tl"};
+    private static String[] pre_z = {"_Z","_Zs"};
+    private static String[] pre_trans = {"_C"};
     
     private static final boolean debug = false;
 
@@ -103,7 +106,8 @@ public class LociDataBrowser implements PlugIn {
     String[] prefixes = old_prefixes;
     String [] absList = fp.getFiles();     // all the image files
 
-
+    for (int i=0; i<prefixes.length; i++) 
+	System.err.println("prefixes["+i+"] = "+prefixes[i]);
     // find out what axes exist
     hasTP = false;
     hasZ = false;
@@ -138,14 +142,9 @@ public class LociDataBrowser implements PlugIn {
 	hasTrans = false;
     }
     else if (prefixes.length > 0) {
-	boolean special = false;
-	for (int i=0; i<special_prefixes.length; i++)
-	    if (prefixes[0].startsWith(special_prefixes[i])) special = true;
-
-	if (!special) 
-	    prefixes[0] = prefixes[0].substring(prefixes[0].lastIndexOf("_")+1);
 
 	for (int i=0; i<prefixes.length; i++) {
+	    System.err.println("Prefixes["+i+"] = "+prefixes[i]);
 	    prefixes[i]=prefixes[i].replaceAll("\\d+$","");
 	}
 
@@ -711,8 +710,7 @@ public class LociDataBrowser implements PlugIn {
        Object[] meta = new Object[2];
        meta[0] = null;
        meta[1] = MetaPanel.exportMeta(description, y);
-       MetaPanel metaPanel =
-         new MetaPanel(IJ.getInstance(), y, meta, description);
+       MetaPanel metaPanel = new MetaPanel(IJ.getInstance(), y, meta);
        metaPanel.show();
      }
      else if ("swap".equals(e.getActionCommand())) {
