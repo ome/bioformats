@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import javax.swing.JFileChooser;
@@ -107,9 +107,7 @@ public class ImageReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new ImageReader. */
-  public ImageReader() {
-    super("any image", suffixList);
-  }
+  public ImageReader() { super("any image", suffixList); }
 
 
   // -- ImageReader API methods --
@@ -146,7 +144,9 @@ public class ImageReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given image file. */
-  public Image open(String id, int no) throws FormatException, IOException {
+  public BufferedImage open(String id, int no)
+    throws FormatException, IOException
+  {
     if (!id.equals(currentId)) initFile(id);
     return readers[index].open(id, no);
   }
@@ -177,7 +177,7 @@ public class ImageReader extends FormatReader {
    *
    * @return Java Images containing pixel data
    */
-  public Image[] open(String id) throws FormatException, IOException {
+  public BufferedImage[] open(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return readers[index].open(id);
   }

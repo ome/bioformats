@@ -24,9 +24,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.Dimension;
-import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.*;
+import java.util.Vector;
 
 /**
  * OpenlabReader is the file format reader for Openlab LIFF files.
@@ -111,7 +111,7 @@ public class OpenlabReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given Openlab file. */
-  public Image open(String id, int no)
+  public BufferedImage open(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -190,7 +190,7 @@ public class OpenlabReader extends FormatReader {
           try {
             // This never actually throws an exception, to my knowledge,
             // but we can always hope.
-            return qtReader.pictToImage(toRead);
+            return ImageTools.makeImage(qtReader.pictToImage(toRead));
           }
           catch (Exception e) {
             throw new FormatException("No iPic comment block found", e);

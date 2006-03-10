@@ -1,5 +1,5 @@
 //
-// Reader.java
+// PerkinElmerReader.java
 //
 
 /*
@@ -23,13 +23,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.*;
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
+import java.util.StringTokenizer;
 
 /**
- * Reader is the file format reader for PerkinElmer files.
+ * PerkinElmerReader is the file format reader for PerkinElmer files.
  *
  * @author Melissa Linkert linkert at cs.wisc.edu
  */
@@ -70,7 +70,7 @@ public class PerkinElmerReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given PerkinElmer file. */
-  public Image open(String id, int no)
+  public BufferedImage open(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);

@@ -634,14 +634,14 @@ public abstract class TiffTools {
   // -- Image reading methods --
 
   /** Reads the image defined in the given IFD from the specified file. */
-  public static Image getImage(Hashtable ifd, RandomAccessFile in)
+  public static BufferedImage getImage(Hashtable ifd, RandomAccessFile in)
     throws FormatException, IOException
   {
     return getImage(ifd, in, 0);
   }
 
   /** Reads the image defined in the given IFD from the specified file. */
-  public static Image getImage(Hashtable ifd, RandomAccessFile in,
+  public static BufferedImage getImage(Hashtable ifd, RandomAccessFile in,
     int globalOffset) throws FormatException, IOException
   {
     if (DEBUG) debug("parsing IFD entries");

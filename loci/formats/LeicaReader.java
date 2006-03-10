@@ -23,9 +23,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.*;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * Reader is the file format reader for Leica files.
@@ -81,7 +82,7 @@ public class LeicaReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given Leica file. */
-  public Image open(String id, int no)
+  public BufferedImage open(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
