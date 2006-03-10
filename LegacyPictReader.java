@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.*;
 
 /**
@@ -57,7 +57,7 @@ public class LegacyPictReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given PICT file. */
-  public Image open(String id, int no)
+  public BufferedImage open(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -77,7 +77,7 @@ public class LegacyPictReader extends FormatReader {
       left -= r;
     }
     fin.close();
-    return qtReader.pictToImage(bytes);
+    return ImageTools.makeImage(qtReader.pictToImage(bytes));
   }
 
   /** Closes any open files. */

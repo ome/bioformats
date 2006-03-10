@@ -23,9 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.lang.*;
-import java.io.*;
-import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.Vector;
 
 /**
@@ -109,7 +109,9 @@ public class QTReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given QuickTime file. */
-  public Image open(String id, int no) throws FormatException, IOException {
+  public BufferedImage open(String id, int no)
+    throws FormatException, IOException
+  {
     if (!id.equals(currentId)) initFile(id);
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);

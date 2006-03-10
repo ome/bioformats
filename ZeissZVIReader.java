@@ -23,9 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.Image;
-import java.io.*;
-
+import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Iterator;
 
@@ -108,7 +108,7 @@ public class ZeissZVIReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given Zeiss ZVI file. */
-  public Image open(String id, int no)
+  public BufferedImage open(String id, int no)
     throws FormatException, IOException
   {
     if (noPOI) return legacy.open(id, no);

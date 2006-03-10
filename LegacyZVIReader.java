@@ -23,8 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.Image;
-import java.io.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.Vector;
 
 /**
@@ -102,7 +103,7 @@ public class LegacyZVIReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given ZVI file. */
-  public Image open(String id, int no)
+  public BufferedImage open(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -400,7 +401,7 @@ public class LegacyZVIReader extends FormatReader {
     }
 
     /** Reads in this block's image data from the given file. */
-    public Image readImage(RandomAccessFile in)
+    public BufferedImage readImage(RandomAccessFile in)
       throws IOException, FormatException
     {
       long fileSize = in.length();

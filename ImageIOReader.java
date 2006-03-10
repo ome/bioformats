@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -58,7 +58,9 @@ public abstract class ImageIOReader extends FormatReader {
   }
 
   /** Obtains the image from the given image file. */
-  public Image open(String id, int no) throws FormatException, IOException {
+  public BufferedImage open(String id, int no)
+    throws FormatException, IOException
+  {
     if (no != 0) throw new FormatException("Invalid image number: " + no);
     return ImageIO.read(new File(id));
   }

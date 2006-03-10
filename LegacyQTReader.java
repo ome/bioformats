@@ -25,7 +25,8 @@ package loci.formats;
 
 import java.awt.*;
 import java.awt.image.*;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.*;
 
 /**
@@ -289,7 +290,7 @@ public class LegacyQTReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given QuickTime file. */
-  public Image open(String id, int no)
+  public BufferedImage open(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -315,7 +316,7 @@ public class LegacyQTReader extends FormatReader {
       throw new FormatException("Open movie failed", re);
     }
 
-    return image;
+    return ImageTools.makeImage(image);
   }
 
   /** Closes any open files. */
