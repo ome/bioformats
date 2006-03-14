@@ -107,7 +107,7 @@ public class ImageJReader extends FormatReader {
       r.exec("size = image.getStackSize()");
       int size = ((Integer) r.getVar("size")).intValue();
       Image img = (Image) r.exec("image.getImage()");
-      return ImageTools.makeImage(img);
+      return ImageTools.makeBuffered(img);
     }
     catch (Exception exc) {
       exc.printStackTrace();
