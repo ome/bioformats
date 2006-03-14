@@ -74,7 +74,6 @@ public class LociPlugin implements PlugIn {
         int tt = raster.getTransferType();
         if (c == 1) {
           int w = img.getWidth(), h = img.getHeight();
-          ColorModel cm = img.getColorModel();
           if (tt == DataBuffer.TYPE_BYTE) {
             ip = new ByteProcessor(w, h, ImageTools.getBytes(img)[0], null);
           }
