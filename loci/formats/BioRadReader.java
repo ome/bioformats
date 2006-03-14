@@ -129,26 +129,28 @@ public class BioRadReader extends FormatReader {
   /** Flag indicating current Bio-Rad PIC is packed with bytes. */
   private boolean byteFormat;
 
+
   // -- Constructor --
 
   /** Constructs a new BioRadReader. */
   public BioRadReader() { super("Bio-Rad PIC", "pic"); }
 
+
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for an ICS file. */
+  /** Checks if the given block is a valid header for a Bio-Rad PIC file. */
   public boolean isThisType(byte[] block) {
     if (block.length < 56) return false;
     return DataTools.bytesToShort(block, 54, 2, LITTLE_ENDIAN) == PIC_FILE_ID;
   }
 
-  /** Determines the number of images in the given ICS file. */
+  /** Determines the number of images in the given Bio-Rad PIC file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return npic;
   }
 
-  /** Obtains the specified image from the given ICS file. */
+  /** Obtains the specified image from the given Bio-Rad PIC file. */
   public BufferedImage open(String id, int no)
     throws FormatException, IOException
   {

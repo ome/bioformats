@@ -48,7 +48,7 @@ public class JPEGWriter extends FormatWriter {
   public void save(String id, Image image, boolean last)
     throws FormatException, IOException
   {
-    ImageIO.write(ImageTools.makeImage(image), "jpeg", new File(id));
+    ImageIO.write(ImageTools.makeBuffered(image), "jpeg", new File(id));
   }
 
 

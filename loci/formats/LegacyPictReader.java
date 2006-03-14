@@ -77,7 +77,7 @@ public class LegacyPictReader extends FormatReader {
       left -= r;
     }
     fin.close();
-    return ImageTools.makeImage(qtReader.pictToImage(bytes));
+    return ImageTools.makeBuffered(qtReader.pictToImage(bytes));
   }
 
   /** Closes any open files. */

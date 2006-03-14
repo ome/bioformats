@@ -1493,7 +1493,7 @@ public abstract class TiffTools {
     if (image == null) throw new FormatException("Image is null");
     if (DEBUG) debug("writeImage (offset=" + offset + "; last=" + last + ")");
 
-    BufferedImage img = ImageTools.makeImage(image);
+    BufferedImage img = ImageTools.makeBuffered(image);
     DataBuffer buf = img.getRaster().getDataBuffer();
 
     // get pixels

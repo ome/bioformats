@@ -185,7 +185,7 @@ public class OpenlabReader extends FormatReader {
           // there has been no deep gray data, and it is supposed
           // to be a pict... *crosses fingers*
           try {
-            return ImageTools.makeImage(qtReader.openBytes(toRead));
+            return ImageTools.makeBuffered(qtReader.openBytes(toRead));
           }
           catch (Exception e) {
             e.printStackTrace();

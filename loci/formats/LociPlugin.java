@@ -26,10 +26,8 @@ package loci.formats;
 import ij.*;
 import ij.io.OpenDialog;
 import ij.plugin.PlugIn;
-import java.awt.Dimension;
-import java.awt.Image;
+import java.awt.image.*;
 import loci.formats.ImageReader;
-import loci.formats.ImageTools;
 
 /**
  * ImageJ plugin for the LOCI Bio-Formats package.
@@ -64,10 +62,9 @@ public class LociPlugin implements PlugIn {
       for (int i=0; i<num; i++) {
         if (i % 5 == 4) IJ.showStatus("Reading plane " + (i + 1) + "/" + num);
         IJ.showProgress((double) i / num);
-        Image img = reader.open(id, i);
+        BufferedImage img = reader.open(id, i);
         if (stack == null) {
-          Dimension dim = ImageTools.getSize(img);
-          stack = new ImageStack(dim.width, dim.height);
+          stack = new ImageStack(img.getWidth(), img.getHeight());
         }
         stack.addSlice(fileName + ":" + (i + 1),
           new ImagePlus(null, img).getProcessor());

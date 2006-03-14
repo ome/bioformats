@@ -32,7 +32,7 @@ import java.util.*;
  * PictReader is the file format reader for Apple PICT files.
  * Most of this code was adapted from the PICT readers in JIMI
  * (http://java.sun.com/products/jimi/index.html), ImageMagick
- * (http://www.imagemagick.org), and Java QuickDraw (location unknown).
+ * (http://www.imagemagick.org), and Java QuickDraw.
  */
 public class PictReader extends FormatReader {
 
@@ -116,6 +116,7 @@ public class PictReader extends FormatReader {
 
   /** Helper reader in case this one fails. */
   protected LegacyQTReader qtReader = new LegacyQTReader();
+
 
   // -- Constructor --
 
@@ -211,7 +212,7 @@ public class PictReader extends FormatReader {
     }
     catch (Exception e) {
       e.printStackTrace();
-      return ImageTools.makeImage(qtReader.pictToImage(pix));
+      return ImageTools.makeBuffered(qtReader.pictToImage(pix));
     }
 
     // combine everything in the strips Vector
@@ -221,7 +222,7 @@ public class PictReader extends FormatReader {
     }
 
     if (strips.size() == 0) {
-      return ImageTools.makeImage(qtReader.pictToImage(pix));
+      return ImageTools.makeBuffered(qtReader.pictToImage(pix));
     }
 
     if (lookup != null) {

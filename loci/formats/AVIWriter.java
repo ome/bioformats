@@ -112,7 +112,7 @@ public class AVIWriter extends FormatWriter {
     if (image == null) {
       throw new FormatException("Image is null");
     }
-    BufferedImage img = ImageTools.makeImage(image);
+    BufferedImage img = ImageTools.makeBuffered(image);
 
     if (!id.equals(currentId)) {
       currentId = id;

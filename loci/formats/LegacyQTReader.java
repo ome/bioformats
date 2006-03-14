@@ -316,7 +316,7 @@ public class LegacyQTReader extends FormatReader {
       throw new FormatException("Open movie failed", re);
     }
 
-    return ImageTools.makeImage(image);
+    return ImageTools.makeBuffered(image);
   }
 
   /** Closes any open files. */
