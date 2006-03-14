@@ -29,11 +29,19 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 /**
- * Reader is the file format reader for Leica files.
+ * LeicaReader is the file format reader for Leica files.
  *
  * @author Melissa Linkert linkert at cs.wisc.edu
  */
 public class LeicaReader extends FormatReader {
+
+  // -- Constants -
+
+  /** Maximum number of bytes to check for Leica header information. */
+  private static final int BLOCK_CHECK_LEN = 16384*8;
+
+  /** All Leica TIFFs have this tag. */
+  private static final int LEICA_MAGIC_TAG = 33923;
 
   // -- Fields --
 
@@ -60,7 +68,7 @@ public class LeicaReader extends FormatReader {
 
   /** Constructs a new Leica reader. */
   public LeicaReader() {
-    super("Leica", "lei");
+    super("Leica", new String[] {"lei", "tif", "tiff"});
     tiff = new TiffReader();
   }
 
@@ -69,10 +77,50 @@ public class LeicaReader extends FormatReader {
 
   /** Checks if the given block is a valid header for a Leica file. */
   public boolean isThisType(byte[] block) {
-    // check that the block has value of 0x016033F0
-    return (block[0] == 0x01 && block[1] == 0x60 && block[2] == 0x33 &&
-      block[3] == 0xF0) || (block[0] == 0xF0 && block[1] == 0x33 &&
-      block[2] == 0x60 && block[3] == 0x01);
+    if ((block[0] == 0x49 && block[1] == 0x49 && block[2] == 0x49 &&
+      block[3] == 0x49) || (block[0] == 0x4d && block[1] == 0x4d &&
+      block[2] == 0x4d && block[3] == 0x4d))
+    {
+      return true;
+    }
+
+    if (block.length < 3) return false;
+
+    if (block.length < 8) {
+      return true;
+    }
+
+    int ifdlocation = DataTools.bytesToInt(block, 4, true);
+    if (ifdlocation < 0 || ifdlocation + 1 > block.length) {
+      return false;
+    }
+    else {
+      int ifdnumber = DataTools.bytesToInt(block, ifdlocation, 2, true);
+      for (int i=0; i<ifdnumber; i++) {
+        if (ifdlocation + 3 + (i*12) > block.length) return false;
+        else {
+          int ifdtag = DataTools.bytesToInt(block,
+            ifdlocation + 2 + (i*12), 2, true);
+          if (ifdtag == LEICA_MAGIC_TAG) return true;
+        }
+      }
+      return false;
+    }
+  }
+
+  /** Checks if the given string is a valid filename for a Leica file. */
+  public boolean isThisType(String name) {
+    long len = new File(name).length();
+    int size = len < BLOCK_CHECK_LEN ? (int) len : BLOCK_CHECK_LEN;
+    byte[] buf = new byte[size];
+    try {
+      FileInputStream fin = new FileInputStream(name);
+      int r = 0;
+      while (r < size) r += fin.read(buf, r, size - r);
+      fin.close();
+      return isThisType(buf);
+    }
+    catch (IOException e) { return false; }
   }
 
   /** Determines the number of images in the given Leica file. */
@@ -102,75 +150,138 @@ public class LeicaReader extends FormatReader {
 
   /** Initializes the given Leica file. */
   protected void initFile(String id) throws FormatException, IOException {
-    super.initFile(id);
-    in = new RandomAccessFile(id, "r");
+    if (id.toLowerCase().endsWith("tif") || id.toLowerCase().endsWith("tiff"))
+    {
+      super.initFile(id);
+      in = new RandomAccessFile(id, "r");
 
-    byte[] fourBytes = new byte[4];
-    in.read(fourBytes);
-    littleEndian = (fourBytes[0] == TiffTools.LITTLE &&
-      fourBytes[1] == TiffTools.LITTLE &&
-      fourBytes[2] == TiffTools.LITTLE &&
-      fourBytes[3] == TiffTools.LITTLE);
+      // open the TIFF file and look for the "Image Description" field
 
-    in.skipBytes(8);
-    int addr = (int) DataTools.read4UnsignedBytes(in, littleEndian);
-    Vector v = new Vector();
-    while (addr != 0) {
-      Hashtable ifd = new Hashtable();
-      v.add(ifd);
-      in.seek(addr);
-      int numEntries = (int) DataTools.read4UnsignedBytes(in, littleEndian);
-      int tag = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+      Hashtable[] ifds = TiffTools.getIFDs(in);
+      if (ifds == null) throw new FormatException("No IFDs found");
 
-      int numIFDs = 0;
-      while (tag != 0) {
-        // create the IFD structure
-        int offset = (int) DataTools.read4UnsignedBytes(in, littleEndian);
-        int fp = (int) in.getFilePointer();
-        in.seek(offset + 12);
-        int size = (int) DataTools.read4UnsignedBytes(in, littleEndian);
-        byte[] data = new byte[size];
-        in.read(data);
-        ifd.put(new Integer(tag), (Object) data);
-        in.seek(fp);
-        tag = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+      String descr = (String) TiffTools.getIFDValue(ifds[0],
+        TiffTools.IMAGE_DESCRIPTION);
+
+      int ndx = descr.indexOf("Series Name");
+
+      // should be more graceful about this
+      if (ndx == -1) throw new FormatException("LEI file not found");
+
+      String lei = descr.substring(descr.indexOf("=", ndx) + 1);
+      lei = lei.substring(0, lei.indexOf("\n"));
+      lei = lei.trim();
+
+      String dir = id.substring(0, id.lastIndexOf("/") + 1);
+      lei = dir + lei;
+
+      // parse key/value pairs in ImageDescription
+
+      // first thing is to remove anything of the form "[blah]"
+
+      String first;
+      String last;
+
+      while(descr.indexOf("[") != -1) {
+        first = descr.substring(0, descr.indexOf("["));
+        last = descr.substring(descr.indexOf("\n", descr.indexOf("[")));
+        descr = first + last;
       }
 
-      addr = (int) DataTools.read4UnsignedBytes(in, littleEndian);
-    }
-    headerIFDs = new Hashtable[v.size()];
-    v.copyInto(headerIFDs);
+      // each remaining line in descr is a (key, value) pair,
+      // where '=' separates the key from the value
 
-    // determine the length of a filename
+      String key;
+      String value;
+      int eqIndex = descr.indexOf("=");
 
-    int nameLength = 0;
-    for (int i=0; i<headerIFDs.length; i++) {
-      if (headerIFDs[i].get(new Integer(10)) != null) {
-        byte[] temp = (byte[]) headerIFDs[i].get(new Integer(10));
-        nameLength = DataTools.bytesToInt(temp, 8, 4, littleEndian);
+      while(eqIndex != -1) {
+        key = descr.substring(0, eqIndex);
+        value = descr.substring(eqIndex+1, descr.indexOf("\n", eqIndex));
+        metadata.put(key.trim(), value.trim());
+        descr = descr.substring(descr.indexOf("\n", eqIndex));
+        eqIndex = descr.indexOf("=");
       }
-    }
 
-    Vector f = new Vector();
-    for (int i=0; i<headerIFDs.length; i++) {
-      byte[] tempData = (byte[]) headerIFDs[i].get(new Integer(15));
-      int tempImages = DataTools.bytesToInt(tempData, 0, 4, littleEndian);
-      for (int j=0; j<tempImages; j++) {
-        // read in each filename
-        f.add(new String(tempData, 20 + 2*(j*nameLength), 2*nameLength));
+      // now open the LEI file
+      initFile(lei);
+    }
+    else {
+      // parse the LEI file
+
+      if (metadata == null) super.initFile(id);
+      else {
+        if (currentId != id) currentId = id;
       }
-    }
+      in = new RandomAccessFile(id, "r");
 
-    files = new String[f.size()];
-    numImages = f.size();
-    f.copyInto(files);
+      byte[] fourBytes = new byte[4];
+      in.read(fourBytes);
+      littleEndian = (fourBytes[0] == TiffTools.LITTLE &&
+        fourBytes[1] == TiffTools.LITTLE &&
+        fourBytes[2] == TiffTools.LITTLE &&
+        fourBytes[3] == TiffTools.LITTLE);
 
-    String dirPrefix = new File(id).getParent();
-    dirPrefix = dirPrefix == null ? "" : (dirPrefix + File.separator);
-    for (int i=0; i<files.length; i++) {
-      files[i] = dirPrefix + stripString(files[i]);
+      in.skipBytes(8);
+      int addr = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+      Vector v = new Vector();
+      while (addr != 0) {
+        Hashtable ifd = new Hashtable();
+        v.add(ifd);
+        in.seek(addr);
+        int numEntries = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+        int tag = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+
+        int numIFDs = 0;
+        while (tag != 0) {
+          // create the IFD structure
+          int offset = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+          int fp = (int) in.getFilePointer();
+          in.seek(offset + 12);
+          int size = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+          byte[] data = new byte[size];
+          in.read(data);
+          ifd.put(new Integer(tag), (Object) data);
+          in.seek(fp);
+          tag = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+        }
+
+        addr = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+      }
+      headerIFDs = new Hashtable[v.size()];
+      v.copyInto(headerIFDs);
+
+      // determine the length of a filename
+
+      int nameLength = 0;
+      for (int i=0; i<headerIFDs.length; i++) {
+        if (headerIFDs[i].get(new Integer(10)) != null) {
+          byte[] temp = (byte[]) headerIFDs[i].get(new Integer(10));
+          nameLength = DataTools.bytesToInt(temp, 8, 4, littleEndian);
+        }
+      }
+
+      Vector f = new Vector();
+      for (int i=0; i<headerIFDs.length; i++) {
+        byte[] tempData = (byte[]) headerIFDs[i].get(new Integer(15));
+        int tempImages = DataTools.bytesToInt(tempData, 0, 4, littleEndian);
+        for (int j=0; j<tempImages; j++) {
+          // read in each filename
+          f.add(new String(tempData, 20 + 2*(j*nameLength), 2*nameLength));
+        }
+      }
+
+      files = new String[f.size()];
+      numImages = f.size();
+      f.copyInto(files);
+
+      String dirPrefix = new File(id).getParent();
+      dirPrefix = dirPrefix == null ? "" : (dirPrefix + File.separator);
+      for (int i=0; i<files.length; i++) {
+        files[i] = dirPrefix + stripString(files[i]);
+      }
+      initMetadata();
     }
-    initMetadata();
   }
 
   // -- Helper methods --

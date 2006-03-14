@@ -240,6 +240,42 @@ public class FluoviewReader extends BaseTiffReader {
       int firstIndex = descr.indexOf("[LUT Ch");
       int lastIndex = descr.lastIndexOf("[LUT Ch") + 13;
       descr = descr.substring(0, firstIndex) + descr.substring(lastIndex);
+
+      // now parse key-value pairs in the description field
+
+      // first thing is to remove anything of the form "[blah]"
+
+      String first;
+      String last;
+
+      while(descr.indexOf("[") != -1) {
+        first = descr.substring(0, descr.indexOf("["));
+        last = descr.substring(descr.indexOf("\n", descr.indexOf("[")));
+        descr = first + last;
+      }
+
+      // each remaining line in descr is a (key, value) pair,
+      // where '=' separates the key from the value
+
+      String key;
+      String value;
+      int eqIndex = descr.indexOf("=");
+
+      while(eqIndex != -1) {
+        key = descr.substring(0, eqIndex);
+        value = descr.substring(eqIndex+1, descr.indexOf("\n", eqIndex));
+        metadata.put(key.trim(), value.trim());
+        descr = descr.substring(descr.indexOf("\n", eqIndex));
+        eqIndex = descr.indexOf("=");
+      }
+
+      // finally, set descr to be the value of "FLUOVIEW Version"
+
+      descr = (String) metadata.get("FLUOVIEW Version");
+      if (descr == null) {
+        descr = (String) metadata.get("File Version");
+      }
+
       OMETools.setAttribute(ome, "Image", "Description", descr);
 
 
@@ -334,7 +370,6 @@ public class FluoviewReader extends BaseTiffReader {
     catch (IOException e) { e.printStackTrace(); }
     catch (FormatException e) { e.printStackTrace(); }
   }
-
 
   // -- Main method --
 

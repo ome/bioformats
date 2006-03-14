@@ -11,7 +11,7 @@ loci.formats.OMEXMLReader
 loci.formats.MetamorphReader # TIFF
 loci.formats.ZeissLSMReader # TIFF
 loci.formats.SEQReader # TIFF
-loci.formats.LeicaReader # TIFF + companion file
+loci.formats.LeicaReader # TIFF + companion file; isThisType(String) is slow
 loci.formats.PerkinElmerReader # TIFF + companion files
 loci.formats.IPWReader # POIFS
 loci.formats.ZeissZVIReader # POIFS (fallback)
@@ -21,5 +21,5 @@ loci.formats.TiffReader
 loci.formats.AVIReader
 loci.formats.ImageJReader # ImageJ
 loci.formats.QTReader
-loci.formats.LegacyPictReader # QTJ
-loci.formats.OpenlabReader # QTJ; isThisType(String) is slow
+loci.formats.PictReader
+loci.formats.OpenlabReader # isThisType(String) is slow

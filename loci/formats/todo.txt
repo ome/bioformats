@@ -1,20 +1,5 @@
 LOCI Bio-Formats things to do (either Melissa or Curtis):
 
-PICT:
-* Implement native PictReader, falling back to LegacyPictReader if necessary.
-* Use new PictReader in OpenlabReader.
-
-Leica reader:
-* Recognize Leica-style TIFFs (INI-style ImageDescription tag)
-* Read key/value pairs
-* Parse associated LEI file referenced within TIFF comment
-
-Fluoview reader:
-* Read key/value pairs in ImageDescription
-
-Bio-Rad reader:
-* Parse extended notes more thoroughly (e.g., AXIS_2, AXIS_3, AXIS_4)
-
 TIFF writer:
 * Make writer work with alternate DataBuffer/SampleModel configurations
 
