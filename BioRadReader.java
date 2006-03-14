@@ -26,6 +26,8 @@ package loci.formats;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Vector;
+import java.util.StringTokenizer;
 
 /**
  * BioRadReader is the file format reader for Bio-Rad PIC files.
@@ -273,6 +275,94 @@ public class BioRadReader extends FormatReader {
       noteCount++;
       metadata.put("note" + noteCount,
         noteString(num, level, status, type, x, y, text));
+
+      // if the text of the note contains "AXIS", parse the text
+      // more thoroughly (see pg. 21 of the BioRad specs)
+
+      if (text.indexOf("AXIS") != -1) {
+        // use StringTokenizer to break up the text
+
+        StringTokenizer st = new StringTokenizer(text);
+        String key = st.nextToken();
+        String noteType = "";
+        if (st.hasMoreTokens()) {
+          noteType = st.nextToken();
+        }
+
+        int axisType = Integer.parseInt(noteType);
+        Vector params = new Vector();
+        while (st.hasMoreTokens()) {
+          params.add(st.nextToken());
+        }
+
+        if (params.size() > 1) {
+          switch (axisType) {
+            case 1:
+              metadata.put(key + " distance (X) in microns", params.get(0));
+              metadata.put(key + " distance (Y) in microns", params.get(1));
+              break;
+            case 2:
+              metadata.put(key + " time (X) in seconds", params.get(0));
+              metadata.put(key + " time (Y) in seconds", params.get(1));
+              break;
+            case 3:
+              metadata.put(key + " angle (X) in degrees", params.get(0));
+              metadata.put(key + " angle (Y) in degrees", params.get(1));
+              break;
+            case 4:
+              metadata.put(key + " intensity (X)", params.get(0));
+              metadata.put(key + " intensity (Y)", params.get(1));
+              break;
+            case 6:
+              metadata.put(key + " ratio (X)", params.get(0));
+              metadata.put(key + " ratio (Y)", params.get(1));
+              break;
+            case 7:
+              metadata.put(key + " log ratio (X)", params.get(0));
+              metadata.put(key + " log ratio (Y)", params.get(1));
+              break;
+            case 9:
+              metadata.put(key + " noncalibrated intensity min", params.get(0));
+              metadata.put(key + " noncalibrated intensity max", params.get(1));
+              metadata.put(key + " calibrated intensity min", params.get(2));
+              metadata.put(key + " calibrated intensity max", params.get(3));
+              break;
+            case 11:
+              metadata.put(key + " RGB type (X)", params.get(0));
+              metadata.put(key + " RGB type (Y)", params.get(1));
+              break;
+            case 14:
+              metadata.put(key + " time course type (X)", params.get(0));
+              metadata.put(key + " time course type (Y)", params.get(1));
+              break;
+            case 15:
+              metadata.put(key + " inverse sigmoid calibrated intensity (min)",
+                params.get(0));
+              metadata.put(key + " inverse sigmoid calibrated intensity (max)",
+                params.get(1));
+              metadata.put(key + " inverse sigmoid calibrated intensity (beta)",
+                params.get(2));
+              metadata.put(key + " inverse sigmoid calibrated intensity (Kd)",
+                params.get(3));
+              metadata.put(key + " inverse sigmoid calibrated intensity " +
+                "(calibrated max)", params.get(0));
+              break;
+            case 16:
+              metadata.put(key + " log inverse sigmoid calibrated " +
+                "intensity (min)", params.get(0));
+              metadata.put(key + " log inverse sigmoid calibrated " +
+                "intensity (max)", params.get(1));
+              metadata.put(key + " log inverse sigmoid calibrated " +
+                "intensity (beta)", params.get(2));
+              metadata.put(key + " log inverse sigmoid calibrated " +
+                "intensity (Kd)", params.get(3));
+              metadata.put(key + " log inverse sigmoid calibrated " +
+                "intensity (calibrated max)", params.get(0));
+              break;
+          }
+
+        }
+      }
     }
 
     // read color tables

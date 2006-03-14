@@ -31,10 +31,6 @@ import java.util.Vector;
 /**
  * OpenlabReader is the file format reader for Openlab LIFF files.
  *
- * -- TODO --
- * address efficiency issues; testing showed 600-3000 ms were required
- * to process each plane, with an additional 2000-4500 ms of overhead
- *
  * @author Eric Kjellman egkjellman at wisc.edu
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -43,7 +39,8 @@ public class OpenlabReader extends FormatReader {
   // -- Static fields --
 
   /** Helper reader to read PICT data with QT Java library. */
-  private static LegacyQTReader qtReader = new LegacyQTReader();
+  //private static LegacyQTReader qtReader = new LegacyQTReader();
+  private static PictReader qtReader = new PictReader();
 
   // -- Fields --
 
@@ -147,7 +144,7 @@ public class OpenlabReader extends FormatReader {
 
     Dimension dim;
     try {
-      dim= qtReader.getPictDimensions(toRead);
+      dim= qtReader.getDimensions(toRead);
     }
     catch (Exception e) {
       dim = new Dimension(0, 0);
@@ -188,11 +185,10 @@ public class OpenlabReader extends FormatReader {
           // there has been no deep gray data, and it is supposed
           // to be a pict... *crosses fingers*
           try {
-            // This never actually throws an exception, to my knowledge,
-            // but we can always hope.
-            return ImageTools.makeImage(qtReader.pictToImage(toRead));
+            return ImageTools.makeImage(qtReader.openBytes(toRead));
           }
           catch (Exception e) {
+            e.printStackTrace();
             throw new FormatException("No iPic comment block found", e);
           }
         }
@@ -322,7 +318,6 @@ public class OpenlabReader extends FormatReader {
           if (layerName.startsWith("Original Image")) ok = false;
         }
         if (ok) {
-          /* debug */ System.out.println("adding an offset");
           v.add(new Integer(nextOffset)); // add THIS tag offset
         }
       }
