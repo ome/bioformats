@@ -77,6 +77,7 @@ public class LociPlugin implements PlugIn {
           if (tt == DataBuffer.TYPE_BYTE) {
             ip = new ByteProcessor(w, h, ImageTools.getBytes(img)[0], null);
           }
+          //TODO: determine why 16-bit (and probably float also) doesn't work
           else if (tt == DataBuffer.TYPE_USHORT) {
             ip = new ShortProcessor(w, h, ImageTools.getShorts(img)[0], null);
           }

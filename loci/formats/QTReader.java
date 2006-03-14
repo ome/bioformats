@@ -324,7 +324,7 @@ public class QTReader extends FormatReader {
 
   /** Uncompresses a QT RLE compressed image plane. */
   public byte[] rleUncompress(byte[] pixs) throws FormatException {
-    // -- TODO -- broken
+    // -- TODO -- rleUncompress (broken)
 
     /* debug */
     // print out the first 30 bytes
