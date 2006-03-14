@@ -65,9 +65,6 @@ public class LegacyZVIReader extends FormatReader {
   private static final String WHINING = "Sorry, " +
     "ZVI support is still preliminary.  It will be improved as time permits.";
 
-  /** Debugging flag. */
-  private static final boolean DEBUG = false;
-
 
   // -- Fields --
 

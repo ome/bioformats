@@ -38,6 +38,7 @@ public class DeltavisionReader extends FormatReader {
 
   private static final short LITTLE_ENDIAN = -16224;
 
+
   // -- Fields --
 
   /** Current file. */

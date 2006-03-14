@@ -43,9 +43,6 @@ public class AndorReader extends BaseTiffReader {
   private static final int MMHEADER = 34361;
   private static final int MMSTAMP = 34362;
 
-  /** Debugging flag. */
-  private static final boolean DEBUG = false;
-
 
   // -- Constructor --
 
