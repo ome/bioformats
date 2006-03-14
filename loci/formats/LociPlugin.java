@@ -26,6 +26,7 @@ package loci.formats;
 import ij.*;
 import ij.io.OpenDialog;
 import ij.plugin.PlugIn;
+import ij.process.*;
 import java.awt.image.*;
 import loci.formats.ImageReader;
 
@@ -66,8 +67,27 @@ public class LociPlugin implements PlugIn {
         if (stack == null) {
           stack = new ImageStack(img.getWidth(), img.getHeight());
         }
-        stack.addSlice(fileName + ":" + (i + 1),
-          new ImagePlus(null, img).getProcessor());
+
+        ImageProcessor ip = null;
+        WritableRaster raster = img.getRaster();
+        int c = raster.getNumBands();
+        int tt = raster.getTransferType();
+        if (c == 1) {
+          int w = img.getWidth(), h = img.getHeight();
+          ColorModel cm = img.getColorModel();
+          if (tt == DataBuffer.TYPE_BYTE) {
+            ip = new ByteProcessor(w, h, ImageTools.getBytes(img)[0], null);
+          }
+          else if (tt == DataBuffer.TYPE_USHORT) {
+            ip = new ShortProcessor(w, h, ImageTools.getShorts(img)[0], null);
+          }
+          else if (tt == DataBuffer.TYPE_FLOAT) {
+            ip = new FloatProcessor(w, h, ImageTools.getFloats(img)[0], null);
+          }
+        }
+        if (ip == null) ip = new ImagePlus(null, img).getProcessor(); // slow
+
+        stack.addSlice(fileName + ":" + (i + 1), ip);
       }
       IJ.showStatus("Creating image");
       IJ.showProgress(1);

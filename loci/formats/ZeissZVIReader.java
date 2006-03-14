@@ -42,8 +42,6 @@ public class ZeissZVIReader extends FormatReader {
   private static final String NO_POI_MSG = "You need to install " +
     "Jakarta POI from http://jakarta.apache.org/poi/";
 
-  private static final boolean DEBUG = false;
-
 
   // -- Static fields --
 

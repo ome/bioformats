@@ -40,12 +40,6 @@ public class BioRadReader extends FormatReader {
 
   // -- Constants --
 
-  /** Debugging flag. */
-  private static final boolean DEBUG = false;
-
-  /** Debugging level. 1=basic, 2=extended, 3=everything. */
-  private static final int DEBUG_LEVEL = 1;
-
   /** Numerical ID of a valid Bio-Rad PIC file. */
   private static final int PIC_FILE_ID = 12345;
 
@@ -258,6 +252,8 @@ public class BioRadReader extends FormatReader {
     int bpp = byteFormat ? 1 : 2;
     in.skipBytes(bpp * npic * imageLen);
 
+    Vector pixelSize = new Vector();
+
     // read notes
     int noteCount = 0;
     while (notes) {
@@ -283,7 +279,6 @@ public class BioRadReader extends FormatReader {
 
       if (text.indexOf("AXIS") != -1) {
         // use StringTokenizer to break up the text
-
         StringTokenizer st = new StringTokenizer(text);
         String key = st.nextToken();
         String noteType = "";
@@ -300,8 +295,10 @@ public class BioRadReader extends FormatReader {
         if (params.size() > 1) {
           switch (axisType) {
             case 1:
-              metadata.put(key + " distance (X) in microns", params.get(0));
-              metadata.put(key + " distance (Y) in microns", params.get(1));
+              String dx = (String) params.get(0), dy = (String) params.get(1);
+              metadata.put(key + " distance (X) in microns", dx);
+              metadata.put(key + " distance (Y) in microns", dy);
+              pixelSize.add(dy);
               break;
             case 2:
               metadata.put(key + " time (X) in seconds", params.get(0));
@@ -415,6 +412,20 @@ public class BioRadReader extends FormatReader {
     else fmt = "Uint16";
 
     OMETools.setAttribute(ome, "Image", "PixelType", fmt);
+
+    int size = pixelSize.size();
+    if (size >= 1) {
+      OMETools.setAttribute(ome, "Dimensions", "PixelSizeX",
+        (String) pixelSize.get(0));
+    }
+    if (size >= 2) {
+      OMETools.setAttribute(ome, "Dimensions", "PixelSizeY",
+        (String) pixelSize.get(1));
+    }
+    if (size >= 3) {
+      OMETools.setAttribute(ome, "Dimensions", "PixelSizeZ",
+        (String) pixelSize.get(2));
+    }
   }
 
   public String noteString(int n, int l, int s, int t, int x, int y, String p)

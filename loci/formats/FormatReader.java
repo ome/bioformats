@@ -32,6 +32,15 @@ import javax.swing.filechooser.FileFilter;
 /** Abstract superclass of all biological file format readers. */
 public abstract class FormatReader extends FormatHandler {
 
+  // -- Constants --
+
+  /** Debugging flag. */
+  protected static final boolean DEBUG = true;
+
+  /** Debugging level. 1=basic, 2=extended, 3=everything. */
+  protected static final int DEBUG_LEVEL = 1;
+
+
   // -- Fields --
 
   /** Hashtable containing metadata key/value pairs. */
@@ -207,7 +216,7 @@ public abstract class FormatReader extends FormatHandler {
     // output OME-XML
     Object root = null;
     try { root = getOMENode(id); }
-    catch (FormatException exc) { }
+    catch (FormatException exc) { if (DEBUG) exc.printStackTrace(); }
     if (root == null) {
       System.out.println("OME-XML functionality not available " +
         "(package loci.ome.xml not installed)");

@@ -59,6 +59,9 @@ public abstract class OMETools {
     "    </Pixels>\n" +
     "    <ChannelInfo/>\n" +
     "    <StageLabel/>\n" +
+    "    <CustomAttributes>\n" +
+    "      <Dimensions/>\n" +
+    "    </CustomAttributes>\n" +
     "  </Image>\n" +
     "</OME>\n";
 
@@ -115,7 +118,7 @@ public abstract class OMETools {
   }
 
   /**
-   * Gets the value of the specified attribute in the first occurence of the
+   * Gets the value of the given attribute in the first occurence of the
    * specified node.
    * @return the value of the attribute.
    */
@@ -126,7 +129,7 @@ public abstract class OMETools {
   }
 
   /**
-   * Gets the value of the specified attribute in the specified node, where n
+   * Gets the value of the given attribute in the specified node, where n
    * specifies which occurence of the node to look at.
    * @return the value of the attribute.
    */
@@ -152,7 +155,7 @@ public abstract class OMETools {
   }
 
   /**
-   * Sets the value of the specified attribute in the specified node.
+   * Sets the value of the given attribute in the specified node.
    * @return True if the operation was successful.
    */
   public static boolean setAttribute(Object root,
