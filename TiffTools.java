@@ -673,7 +673,7 @@ public abstract class TiffTools {
     //  long tileLength = getIFDLongValue(ifd, TILE_LENGTH, true, 0);
       stripOffsets = getIFDLongArray(ifd, TILE_OFFSETS, true);
       stripByteCounts = getIFDLongArray(ifd, TILE_BYTE_COUNTS, true);
-      // TODO
+      // TODO -- tiled images
       throw new FormatException("Sorry, tiled images are not supported");
     }
     else if (fakeByteCounts) {
