@@ -23,8 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.lang.reflect.Method;
 import java.util.Vector;
+import org.w3c.dom.Element;
 
 /**
  * A utility class for constructing and manipulating OME-XML DOMs. It uses
@@ -226,26 +226,8 @@ public abstract class OMETools {
     if (R == null || root == null || name == null) return null;
     R.setVar("root", root);
     R.setVar("name", name);
-    R.exec("rel = root.getDOMElement()");
-
-    // HACK - We cannot call getOwnerDocument even though it is public:
-    //
-    //   java.lang.IllegalAccessException: Class loci.formats.ReflectedUniverse
-    //   can not access a member of class org.apache.crimson.tree.NodeBase with
-    //   modifiers "public"
-    //
-    // It seems the getOwnerDocument method of
-    // org.apache.crimson.tree.NodeBase, which implements org.w3c.dom.Element,
-    // is not accessible for some reason. So we have to grab the method
-    // directly from org.w3c.dom.Element using reflection the hard way.
-    Object rel = R.getVar("rel");
-    try {
-      Class c = Class.forName("org.w3c.dom.Element");
-      Method m = c.getMethod("getOwnerDocument", null);
-      R.setVar("doc", m.invoke(rel, null));
-    }
-    catch (Exception exc) { exc.printStackTrace(); }
-
+    Element rel = (Element) R.exec("root.getDOMElement()");
+    R.setVar("doc", rel.getOwnerDocument());
     R.exec("el = DOMUtil.findElementList(name, doc)");
     return ((Vector) R.getVar("el"));
   }
