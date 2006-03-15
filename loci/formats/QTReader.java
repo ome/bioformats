@@ -157,16 +157,21 @@ public class QTReader extends FormatReader {
       }
     }
 
-    if (bitsPerPixel <= 8 || bitsPerPixel == 40) {
-      if (bitsPerPixel == 40) {
-        // invert the pixels
-        for (int i=0; i<bytes.length; i++) {
-          bytes[i] = (byte) (255 - bytes[i]);
-        }
+    if (bitsPerPixel == 40) {
+      // invert the pixels
+      for (int i=0; i<bytes.length; i++) {
+        bytes[i] = (byte) (255 - bytes[i]);
       }
 
       return ImageTools.makeImage(bytes, width, height, 1, false);
     }
+    else if (bitsPerPixel == 8) {
+      // invert the pixels
+      for (int i=0; i<bytes.length; i++) {
+        bytes[i] = (byte) (255 - bytes[i]);
+      }
+      return ImageTools.makeImage(bytes, width, height, 3, false); 
+    }        
     else if (bitsPerPixel == 16) {
       short[] newPix = new short[bytes.length / 2 + 1];
       for (int i=0; i<bytes.length; i+=2) {
@@ -175,13 +180,7 @@ public class QTReader extends FormatReader {
       return ImageTools.makeImage(newPix, width, height, 1, false);
     }
     else if (bitsPerPixel == 24) {
-      byte[][] newPix = new byte[3][pixs.length / 3];
-      for (int j=0; j<newPix[0].length; j++) {
-        for (int i=0; i<newPix.length; i++) {
-          newPix[i][j] = pixs[3*j + i];
-        }
-      }
-      return ImageTools.makeImage(newPix, width, height);
+      return ImageTools.makeImage(bytes, width, height, 3, true); 
     }
     else if (bitsPerPixel == 32) {
       int[] newPix = new int[bytes.length / 4];

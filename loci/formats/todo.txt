@@ -3,10 +3,6 @@ LOCI Bio-Formats things to do (either Melissa or Curtis):
 TIFF writer:
 * Make writer work with alternate DataBuffer/SampleModel configurations
 
-Support RGB output in writers:
-* AVI
-* QuickTime
-
 QuickTime:
 * jpeg codec
 * rle codec
