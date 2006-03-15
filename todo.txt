@@ -1,8 +1,5 @@
 LOCI Bio-Formats things to do (either Melissa or Curtis):
 
-TIFF writer:
-* Make writer work with alternate DataBuffer/SampleModel configurations
-
 QuickTime:
 * jpeg codec
 * rle codec
