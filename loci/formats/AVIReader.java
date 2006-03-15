@@ -385,7 +385,8 @@ public class AVIReader extends FormatReader {
                 {
                   int len = bmpScanLineSize;
                   if (bmpBitsPerPixel > 8) {
-                    intData = new short[dwWidth * bmpHeight];
+                    byteData = 
+                      new byte[(bmpBitsPerPixel / 8) * dwWidth * bmpHeight];
                   }
                   else {
                     byteData = new byte[dwWidth * bmpHeight];
@@ -401,22 +402,21 @@ public class AVIReader extends FormatReader {
                     }
 
                     if (bmpBitsPerPixel > 8) {
-                      unpack(rawData, rawOffset, intData, offset, dwWidth);
+                      unpack(rawData, rawOffset, byteData, offset, dwWidth);
                     }
                     else {
-                      unpack(rawData, rawOffset, bmpBitsPerPixel, byteData,
-                        offset, dwWidth);
+                      unpack(rawData, rawOffset, byteData, offset, dwWidth);
                     }
                     rawOffset += len;
                     offset -= dwWidth;
                   }
 
                   if (bmpBitsPerPixel > 8) {
-                    imgs.add(ImageTools.makeImage(intData, dwWidth, bmpHeight,
-                      1, false));
+                    imgs.add(ImageTools.makeImage(rawData, dwWidth, bmpHeight,
+                      (rawData.length / (dwWidth*bmpHeight)), true));
                   }
                   else {
-                    imgs.add(ImageTools.makeImage(byteData, dwWidth, bmpHeight,
+                    imgs.add(ImageTools.makeImage(rawData, dwWidth, bmpHeight,
                       1, false));
                   }
                 }
@@ -473,31 +473,8 @@ public class AVIReader extends FormatReader {
     }
   }
 
-  /** Unpacks a byte array into an int array. */
-  public void unpack(byte[] rawData, int rawOffset, short[] intData,
-    int intOffset, int w)
-  {
-    int j = intOffset;
-    int k = rawOffset;
-    int mask = 0xff;
-    for (int i=0; i<w; i++) {
-      int b0 = (((int) (rawData[k++])) & mask);
-      int b1 = (((int) (rawData[k++])) & mask) << 8;
-      int b2 = (((int) (rawData[k++])) & mask) << 16;
-      if (bmpBitsPerPixel == 32) k++; // ignore alpha
-
-      if (pr != null && pg != null & pb != null) {
-        intData[j] = (short) (0xff000000 | pr[b0] | pg[b1] | pb[b2]);
-      }
-      else {
-        intData[j] = (short) (0xff000000 | b0 | b1 | b2);
-      }
-      j++;
-    }
-  }
-
   /** Unpacks a byte array into a new byte array. */
-  public void unpack(byte[] rawData, int rawOffset, int bpp, byte[] byteData,
+  public void unpack(byte[] rawData, int rawOffset, byte[] byteData,
     int byteOffset, int w)
   {
     for (int i=0; i<w; i++) {

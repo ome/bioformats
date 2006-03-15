@@ -113,10 +113,11 @@ public class AVIWriter extends FormatWriter {
       throw new FormatException("Image is null");
     }
     BufferedImage img = ImageTools.makeBuffered(image);
+    byte[][] byteData = ImageTools.getBytes(img);
 
     if (!id.equals(currentId)) {
       currentId = id;
-      bytesPerPixel = 1;
+      bytesPerPixel = byteData.length;
 
       file = new File(id);
       raFile = new RandomAccessFile(file, "rw");
@@ -437,9 +438,13 @@ public class AVIWriter extends FormatWriter {
     // Write the data length
     DataTools.writeInt(raFile, bytesPerPixel * xDim * yDim);
 
-    byte[] buf = ImageTools.getPixels(img, width, yDim);
-
-    raFile.write(buf);
+    for (int i=0; i<byteData[0].length; i++) {
+      for (int k=0; k<byteData.length; k++) {
+        raFile.write(byteData[k][i]);
+      }        
+    }
+      
+    //raFile.write(buf);
 
     planesWritten++;
 
