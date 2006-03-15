@@ -80,41 +80,43 @@ public class QTWriter extends FormatWriter {
     int height = img.getHeight();
 
     // retrieve pixel data for this plane
-    byte[] buf = ImageTools.getPixels(img, width, height);
-
-    // reorder the scanlines
-    // also need to check if the width is a multiple of 8
+    byte[][] byteData = ImageTools.getBytes(img);
+    
+    // need to check if the width is a multiple of 8
     // if it is, great; if not, we need to pad each scanline with enough
     // bytes to make the width a multiple of 8
 
     int pad = width % 4;
     pad = (4 - pad) % 4;
 
-    byte[] temp = buf;
-    buf = new byte[temp.length + height*pad];
+    byte[][] temp = byteData;
+    byteData = new byte[temp.length][temp[0].length + height*pad];
 
     int newScanline = height - 1;
 
     for (int oldScanline=0; oldScanline<height; oldScanline++) {
-      System.arraycopy(temp, oldScanline*width, buf,
-        newScanline*(width+pad), width);
+      for (int k=0; k<temp.length; k++) {
+        System.arraycopy(temp[k], oldScanline*width, byteData[k],
+          oldScanline*(width+pad), width);
+ 
+        // add padding bytes
 
-
-      // add padding bytes
-
-      for (int i=0; i<pad; i++) {
-        buf[newScanline*(width+pad) + width + i] = 0;
+        for (int i=0; i<pad; i++) {
+          byteData[k][oldScanline*(width+pad) + width + i] = 0;
+        }
       }
-
-      newScanline--;
     }
 
     // invert each pixel
     // this will makes the colors look right in other readers (e.g. xine),
     // but needs to be reversed in QTReader
 
-    for (int i=0; i<buf.length; i++) {
-      buf[i] = (byte) (255 - buf[i]);
+    if (byteData.length == 1) {
+      for (int i=0; i<byteData.length; i++) {
+        for (int k=0; k<byteData[0].length; k++) {      
+          byteData[i][k] = (byte) (255 - byteData[i][k]);
+        }
+      } 
     }
 
     if (!id.equals(currentId)) {
@@ -133,25 +135,35 @@ public class QTWriter extends FormatWriter {
 
       // -- write the first plane of pixel data (mdat) --
 
-      numBytes = buf.length;
+      numBytes = byteData[0].length * byteData.length;
+      
       byteCountOffset = out.getFilePointer();
       DataTools.writeReverseInt(out, numBytes + 8);
       DataTools.writeString(out, "mdat");
-
-      out.write(buf);
+     
+      for (int i=0; i<byteData[0].length; i++) {
+        for (int j=0; j<byteData.length; j++) {
+          out.write(byteData[j][i]);         
+        }      
+      }
 
       offsets.add(new Integer(16));
     }
     else {
       // update the number of pixel bytes written
       int planeOffset = numBytes;
-      numBytes += buf.length;
+      numBytes += (byteData.length * byteData[0].length);
       out.seek(byteCountOffset);
       DataTools.writeReverseInt(out, numBytes + 8);
 
       // write this plane's pixel data
       out.seek(out.length());
-      out.write(buf);
+     
+      for (int i=0; i<byteData[0].length; i++) {
+        for (int j=0; j<byteData.length; j++) {
+          out.write(byteData[j][i]);         
+        }      
+      }         
 
       offsets.add(new Integer(planeOffset + 16));
       numWritten++;
@@ -160,7 +172,9 @@ public class QTWriter extends FormatWriter {
     if (last) {
       int duration = numWritten * 50;
       int timeScale = 100;
-
+      int bitsPerPixel = (byteData.length > 1) ? 24 : 40;
+      int channels = (bitsPerPixel == 40) ? 1 : 3;
+      
       // -- write moov atom --
 
       int atomLength = 685 + 8*numWritten;
@@ -236,7 +250,6 @@ public class QTWriter extends FormatWriter {
       DataTools.writeReverseInt(out, 0);
       DataTools.writeReverseInt(out, 0);
       DataTools.writeReverseInt(out, 16384);
-
 
       DataTools.writeReverseInt(out, width); // image width
       DataTools.writeReverseInt(out, height); // image height
@@ -375,12 +388,12 @@ public class QTWriter extends FormatWriter {
       DataTools.writeReverseShort(out, 1); // frames per sample
       DataTools.writeReverseShort(out, 12); // length of compressor name
       DataTools.writeString(out, "Uncompressed"); // compressor name
-      DataTools.writeReverseInt(out, 40); // unknown
-      DataTools.writeReverseInt(out, 40); // unknown
-      DataTools.writeReverseInt(out, 40); // unknown
-      DataTools.writeReverseInt(out, 40); // unknown
-      DataTools.writeReverseInt(out, 40); // unknown
-      DataTools.writeReverseShort(out, 40); // bits per pixel
+      DataTools.writeReverseInt(out, bitsPerPixel); // unknown
+      DataTools.writeReverseInt(out, bitsPerPixel); // unknown
+      DataTools.writeReverseInt(out, bitsPerPixel); // unknown
+      DataTools.writeReverseInt(out, bitsPerPixel); // unknown
+      DataTools.writeReverseInt(out, bitsPerPixel); // unknown
+      DataTools.writeReverseShort(out, bitsPerPixel); // bits per pixel
       DataTools.writeReverseInt(out, 65535); // ctab ID
       out.write(new byte[] {12, 103, 97, 108}); // gamma
       out.write(new byte[] {97, 1, -52, -52, 0, 0, 0, 0}); // unknown
@@ -418,7 +431,8 @@ public class QTWriter extends FormatWriter {
       DataTools.writeReverseInt(out, 0); // sample size
       DataTools.writeReverseInt(out, numWritten); // number of planes
       for (int i=0; i<numWritten; i++) {
-        DataTools.writeReverseInt(out, height*(width+pad)); // sample size
+        // sample size      
+        DataTools.writeReverseInt(out, channels*height*(width+pad));
       }
 
       // -- write stco atom --
