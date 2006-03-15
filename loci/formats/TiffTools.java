@@ -1494,35 +1494,37 @@ public abstract class TiffTools {
     if (DEBUG) debug("writeImage (offset=" + offset + "; last=" + last + ")");
 
     BufferedImage img = ImageTools.makeBuffered(image);
-    DataBuffer buf = img.getRaster().getDataBuffer();
-
+    
     // get pixels
+
+    Object data = ImageTools.getPixels(img);
     int[][] values = new int[0][0];
 
-    if (buf instanceof DataBufferByte) {
-      // originally 8 bit data
-      byte[][] data = ((DataBufferByte) buf).getBankData();
-      values = new int[data.length][data[0].length];
-      for (int i=0; i<data.length; i++) {
-        for (int j=0; j<data[i].length; j++) {
-          values[i][j] = (int) data[i][j];
+    if (data instanceof byte[][]) {
+      byte[][] pix = (byte[][]) data;
+      values = new int[pix.length][pix[0].length];
+      for (int i=0; i<pix.length; i++) {
+        for (int j=0; j<pix[i].length; j++) {
+          values[i][j] = (int) pix[i][j];       
+        }
+      }
+    }        
+    else if (data instanceof short[][]) {
+      short[][] pix = (short[][]) data;        
+      values = new int[pix.length][pix[0].length];
+      for (int i=0; i<pix.length; i++) {
+        for (int j=0; j<pix[i].length; j++) {
+          values[i][j] = (int) pix[i][j];       
         }
       }
     }
-    else if (buf instanceof DataBufferUShort) {
-      // originally 16 bit data
-      short[][] data = ((DataBufferUShort) buf).getBankData();
-      values = new int[data.length][data[0].length];
-      for (int i=0; i<data.length; i++) {
-        for (int j=0; j<data[i].length; j++) {
-          values[i][j] = (int) data[i][j];
-        }
-      }
-    }
-    else if (buf instanceof DataBufferInt) {
-      // originally 32 bit data
-      values = ((DataBufferInt) buf).getBankData();
-    }
+    else if (data instanceof int[][]) { 
+      values = (int[][]) data;
+    }        
+    else {
+      // should add cases for float/double data...later
+      throw new FormatException("data type not supported");
+    }  
 
     int width = img.getWidth();
     int height = img.getHeight();
