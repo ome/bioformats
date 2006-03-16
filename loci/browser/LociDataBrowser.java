@@ -1,6 +1,8 @@
 // YTW 2/27/2006: hardcode deconvolve6_Pseudo_Tl000_Zs000.TIF
 // YTW 3/1/2006: rewrite file to make better use of FilePattern
 
+// MELISSA 03/15/2006: twoDimView takes a parameter and has public access
+
 package loci.browser;
 
 import ij.IJ;
@@ -448,12 +450,14 @@ public class LociDataBrowser implements PlugIn {
       imp2.show();
     }
     IJ.showProgress(1.0);
-    twoDimView();
+    twoDimView(WindowManager.getCurrentImage());
   }
 
-  private void twoDimView() {
+  public void twoDimView(ImagePlus imp) {
     String name;
-    imp1 = WindowManager.getCurrentImage();
+    imp1 = imp;
+    if (depth == 0) depth = imp1.getStackSize();
+    //imp1 = WindowManager.getCurrentImage();
     if (imp1 == null || (imp1.getStackSize() == 0)) {
       IJ.error("No stack is being selected. Exiting.");
       return;
@@ -786,6 +790,21 @@ public class LociDataBrowser implements PlugIn {
    /* selects and shows slice defined by z, t and trans */
    public void showSlice(int z, int t, boolean trans) {
      int c = trans ? 0 : 1;
+
+     if (listTP == null || listC == null) {
+       if (numFiles == 0) numFiles = 1;
+       for (int i=0; i<numFiles; i++) {
+             
+         if (!hasTP) {
+           showSlice(t + depth*i);
+         }
+         else {
+           showSlice(z + depth*i);
+         }        
+       }       
+       return;
+     }  
+     
      if (numFiles == 1 || (hasZ && !hasTP && !hasTrans && numFiles > 1)) showSlice(z);
      else if (!hasZ && hasTP && !hasTrans && numFiles > 1 && depth == 1) { 
 
