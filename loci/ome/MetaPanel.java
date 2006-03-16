@@ -261,6 +261,9 @@ public class MetaPanel implements ActionListener, TreeSelectionListener {
    */
   private static void addDisk(Object element, DefaultMutableTreeNode root,
     DataFactory df, String identifier) {
+    
+    /* debug */ System.out.println("retrieving " + identifier + " attributes"); 
+          
     IJ.showStatus("Retrieving " + identifier + " attributes.");
     if (element == null) return;
 
@@ -292,21 +295,30 @@ public class MetaPanel implements ActionListener, TreeSelectionListener {
       for (int i=0; i<tempChilds.getLength(); i++) {
         String tmp = tempChilds.item(i).toString();
         String id = tmp.substring(1, tmp.indexOf(" "));
-        String tmpId = tmp.substring(1, tmp.indexOf(">"));
+        String tmpId = tmp;
+        if (tmp.indexOf(">") >= 0) tmpId = tmp.substring(1, tmp.indexOf(">"));
         if (tmpId.length() < id.length()) id = tmpId;
         if (!id.endsWith("Node")) {
           id = id + "Node";
         }
-        if (!id.equals("AttributeNode") &&
-            !id.equals("CustomAttributesNode") &&
-            !id.equals("DatasetNode") && !id.equals("FeatureNode") &&
-            !id.equals("ImageNode") && !id.equals("OMENode") &&
-            !id.equals("ProjectNode"))
+        if (!id.startsWith("Attribute") &&
+            !id.startsWith("CustomAttributes") &&
+            !id.startsWith("Dataset") && !id.startsWith("Feature") &&
+            !id.startsWith("Image") && !id.equals("OMENode") &&
+            !id.startsWith("Project"))
         {
-          id = "loci.ome.xml.st." + id;
+          if (id.indexOf(":") != -1) {
+            id = id.substring(0, id.indexOf(":"));
+          }        
+          id = "loci.ome.xml.st." + id + "Node";
         }
-        else id = "loci.ome.xml." + id;
-
+        else {
+          if (id.indexOf(":") != -1) {
+            id = id.substring(0, id.indexOf(":")) + "Node";
+          }        
+          id = "loci.ome.xml." + id;
+        } 
+          
         // construct a new node using this class
         Class toConstruct = Class.forName(id.trim());
         Constructor construct =
@@ -321,7 +333,7 @@ public class MetaPanel implements ActionListener, TreeSelectionListener {
         names[i] = tmp.substring(tmp.lastIndexOf(".")+1, tmp.lastIndexOf("@"));
       }
     }
-    catch (Throwable t) { }
+    catch (Throwable t) { /* debug */ t.printStackTrace(); }
 
     if (df != null && tempAttrs != null) {
       Criteria criteria = makeAttributeFields(tempAttrs);
@@ -344,7 +356,10 @@ public class MetaPanel implements ActionListener, TreeSelectionListener {
 
     if (tempChilds != null) {
       for (int i=0; i<childs.length; i++) {
-        addDisk(childs[i], node, df, names[i]);
+        String newName = (names == null) ? null : names[i];
+        /* debug */ System.out.println("adding attribute with name '" +
+          newName + "'");
+        addDisk(childs[i], node, df, newName);
       }
     }
   }
