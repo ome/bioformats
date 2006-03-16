@@ -262,8 +262,6 @@ public class MetaPanel implements ActionListener, TreeSelectionListener {
   private static void addDisk(Object element, DefaultMutableTreeNode root,
     DataFactory df, String identifier) {
     
-    /* debug */ System.out.println("retrieving " + identifier + " attributes"); 
-          
     IJ.showStatus("Retrieving " + identifier + " attributes.");
     if (element == null) return;
 
@@ -333,7 +331,7 @@ public class MetaPanel implements ActionListener, TreeSelectionListener {
         names[i] = tmp.substring(tmp.lastIndexOf(".")+1, tmp.lastIndexOf("@"));
       }
     }
-    catch (Throwable t) { /* debug */ t.printStackTrace(); }
+    catch (Throwable t) { }
 
     if (df != null && tempAttrs != null) {
       Criteria criteria = makeAttributeFields(tempAttrs);
@@ -357,8 +355,6 @@ public class MetaPanel implements ActionListener, TreeSelectionListener {
     if (tempChilds != null) {
       for (int i=0; i<childs.length; i++) {
         String newName = (names == null) ? null : names[i];
-        /* debug */ System.out.println("adding attribute with name '" +
-          newName + "'");
         addDisk(childs[i], node, df, newName);
       }
     }
