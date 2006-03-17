@@ -48,7 +48,6 @@ public class OMEController {
    * Retrieves a list of open images from ImageJ, then trims the list
    * appropriately. 
    */
-  
   public static void findOpenImages() {
     current = WindowManager.getIDList();
     
@@ -60,8 +59,8 @@ public class OMEController {
     for (int i=0; i<nImages; i++) {
       ImagePlus img = WindowManager.getImage(current[i]);      
       names[i] = img.getTitle();
-      FileInfo fi = img.getOriginalFileInfo();
       try {
+        FileInfo fi = img.getOriginalFileInfo();
         if (fi == null) fi = img.getFileInfo();
         descriptions[i] = fi.description; 
       }
@@ -126,13 +125,18 @@ public class OMEController {
     else {
       calledOnce = true;
     }        
-  }        
+  }   
 
+  /**
+   * Kills any dead windows and makes sure that the ID, name and description
+   * lists are accurate.
+   */
   private static void cleanup(Vector toRemove, boolean canKill) {
     
     if (canKill) {      
       // first kill in ImageJ
-
+      // the necessity of this step is debatable, but I like having it here
+            
       for (int i=0; i<toRemove.size(); i++) {
         int kill = current[((Integer) toRemove.get(i)).intValue()];
         try {
