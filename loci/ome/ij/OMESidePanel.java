@@ -43,7 +43,7 @@ public class OMESidePanel implements ActionListener {
   //Constructor, sets up the dialog box
   public OMESidePanel(Frame frame) {
     table = new Hashtable();
-    
+
     // parent is ImageJ
     parentWindow = frame;
     cancelPlugin = false;
@@ -138,12 +138,12 @@ public class OMESidePanel implements ActionListener {
     int[] ids = OMEController.getCurrent();
     String[] names = OMEController.getNames();
     String[] descriptions = OMEController.getDescrs();
-   
+
     imageIds = ids;
-    
+
     int numPics = names.length;
     imp = new ImagePlus[numPics];
-            
+
     // now that we have a (hopefully) accurate list of images, we can add them
     // to the panel
     for (int i=0; i<numPics; i++) {
@@ -163,6 +163,7 @@ public class OMESidePanel implements ActionListener {
           try {
             Object o = MetaPanel.exportMeta(descriptions[i], ijimage);
             hashInImage(ijimage, new Object[] {null, o});
+            OMEController.checkMetadata();
           }
           catch (ArrayIndexOutOfBoundsException x) { }
           catch (Exception exc) {
@@ -223,14 +224,14 @@ public class OMESidePanel implements ActionListener {
       int z = list.getSelectedIndex();
       if (z != -1) {
         int y = imageIds[z];
-          
+
         Object[] metadata = (Object[]) getImageMeta(y);
-        
+
         if (metadata == null) {
           metadata = new Object[2];
           metadata[0] = null;
           metadata[1] = MetaPanel.exportMeta(imageDescrs[z], y);
-        }  
+        }
         MetaPanel meta = new MetaPanel(parentWindow, y, metadata);
         meta.show();
       }
@@ -269,7 +270,7 @@ public class OMESidePanel implements ActionListener {
       int id = -1;
       while (table.containsKey(new Integer(id))) {
         id--;
-      }      
+      }
       table.put(new Integer(id), ob);
       ids.add(new Integer(id));
     }
@@ -300,7 +301,7 @@ public class OMESidePanel implements ActionListener {
   public static Hashtable getTable() { return table; }
 
   public static void setTable(Hashtable t) { table = t; }
-  
+
   public static String getServer() { return serverName; }
 
   public static String getUser() { return username; }
