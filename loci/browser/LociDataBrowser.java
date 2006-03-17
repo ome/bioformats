@@ -457,6 +457,23 @@ public class LociDataBrowser implements PlugIn {
     String name;
     imp1 = imp;
     if (depth == 0) depth = imp1.getStackSize();
+
+    if (numFiles == 0) {
+      // HACK      
+      // this will only be true if we called twoDimView(blah)
+      // from the OME plugin
+      FileInfo fileInfo = imp1.getOriginalFileInfo();
+      String info = fileInfo.info;
+      hasTP = 
+        Boolean.valueOf(info.substring(0, info.indexOf(" "))).booleanValue(); 
+      if (hasTP) {
+        numFiles = Integer.parseInt(info.substring(info.indexOf(" ") + 1));
+        numFiles = depth / numFiles;
+        depth = depth / numFiles;
+      }
+      else numFiles = 1;
+    }
+    
     //imp1 = WindowManager.getCurrentImage();
     if (imp1 == null || (imp1.getStackSize() == 0)) {
       IJ.error("No stack is being selected. Exiting.");
@@ -524,6 +541,7 @@ public class LociDataBrowser implements PlugIn {
     /* adds the Scrollbar to the custom window*/
     void addPanel() {
       depth2 = stackSize/(depth*(hasTrans ? 2 : 1));
+      
       if (!hasTP && numFiles > 1) {
 	  if (hasZ) {
         sliceSel1 = new JScrollBar(JScrollBar.HORIZONTAL, 1, 1, 1,depth+1);
@@ -793,15 +811,12 @@ public class LociDataBrowser implements PlugIn {
 
      if (listTP == null || listC == null) {
        if (numFiles == 0) numFiles = 1;
-       for (int i=0; i<numFiles; i++) {
-             
-         if (!hasTP) {
-           showSlice(t + depth*i);
-         }
-         else {
-           showSlice(z + depth*i);
-         }        
-       }       
+       if (!hasTP) {
+         showSlice(z);
+       }
+       else {
+         showSlice(t + depth*(z-1));
+       }        
        return;
      }  
      
