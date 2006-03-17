@@ -3,7 +3,7 @@ package loci.ome.ij;
 import java.awt.*;
 import java.awt.event.*;
 import ij.*;
-import ij.gui.ImageWindow;
+//import ij.gui.ImageWindow;
 import java.util.Hashtable;
 import java.util.Vector;
 import javax.swing.*;
@@ -32,6 +32,7 @@ public class OMESidePanel implements ActionListener {
   private static String username;
 
   private static int[] imageIds;
+  private static String[] imageDescrs;
   private static int numOpenWindows = 0;
   private static int point = 0;
 
@@ -42,6 +43,7 @@ public class OMESidePanel implements ActionListener {
   //Constructor, sets up the dialog box
   public OMESidePanel(Frame frame) {
     table = new Hashtable();
+    
     // parent is ImageJ
     parentWindow = frame;
     cancelPlugin = false;
@@ -130,96 +132,24 @@ public class OMESidePanel implements ActionListener {
 
   /** shows and retrieves info from the SidePanel */
   public static void showIt() {
-    // be warned that this method is rather convoluted
+    OMEController.findOpenImages();
+    OMEController.checkMetadata();
 
-    OMEMetaDataHandler.index = 0;
-    int[] openpics = WindowManager.getIDList();
-    if (openpics == null) openpics = new int[0];
-
-    Vector names = new Vector();
-    Vector descr = new Vector();
-
-    // names and descriptions from WiscScan
-    Vector wiscScanNames = WiscScan.getNames();
-    Vector wiscScanDescr = WiscScan.getDescription();
-
-    Vector idCheck = new Vector();
-    int pt = 0;
-    int numPics = 0;
-
-    // First determine the name and metadata string for each open image.
-    // Note that the *true* number of open images will most likely be less
-    // than openpics.length, since ImageJ counts each instance of the WiscScan
-    // viewer as two images (this isn't a bug in ImageJ, but rather a "feature"
-    // of the WiscScan viewer).
-
-    ImageWindow win;
-    ImagePlus ip;
-    for (int i=0; i<openpics.length; i++) {
-      ip = WindowManager.getImage(openpics[i]);
-      if (ip != null) win = ip.getWindow();
-      else {
-        i++;
-        ip = WindowManager.getImage(openpics[i]);
-        win = ip.getWindow();
-      }
-
-      String className = win == null ? null : win.getClass().getName();
-      if (win == null || className.equals("ij.gui.StackWindow")) {
-        // 3D image -- was opened with the default ImageJ viewer
-        numPics++;
-        try {
-          names.add(ip.getTitle());
-          descr.add(ip.getOriginalFileInfo().description);
-        }
-        catch (NullPointerException e) { }
-      }
-      else if (className.equals("loci.ome.ij.WiscScan$CustomWindow")) {
-        // 4D OME image -- was opened through the OME plugin
-        try {
-          numPics++;
-          if (wiscScanNames != null) {
-            names.add(wiscScanNames.get(pt));
-            descr.add(wiscScanDescr.get(pt));
-          }
-          else {
-            // database image
-                  names.add(ip.getTitle());
-            descr.add(null);
-                }
-          pt++;
-        }
-        catch (ArrayIndexOutOfBoundsException e) { }
-      }
-      else if (className.equals("loci.ome.ij.WiscScan$CustomWindow")) {
-        // 4D WiscScan image -- was opened using the WiscScan 4D plugin
-
-        // in this case, we can only add an image to the list if its ID
-        // isn't already in the list, and if there is another entry in
-        // openpics with the same ID; see above note on how ImageJ handles
-        // the WiscScan viewer
-        if (!inVector(new Integer(openpics[i]), idCheck) &&
-          hasPartner(openpics, openpics[i], i+1))
-        {
-          numPics++;
-          names.add(ip.getTitle());
-          descr.add("");
-          idCheck.add(new Integer(openpics[i]));
-        }
-      }
-    }
-
-    imageIds = openpics;
-    imp = new ImagePlus[openpics.length];
-    String[] titles = new String[openpics.length];
-
+    int[] ids = OMEController.getCurrent();
+    String[] names = OMEController.getNames();
+    String[] descriptions = OMEController.getDescrs();
+   
+    imageIds = ids;
+    
+    int numPics = names.length;
+    imp = new ImagePlus[numPics];
+            
     // now that we have a (hopefully) accurate list of images, we can add them
     // to the panel
     for (int i=0; i<numPics; i++) {
       try {
-        imp[i] = WindowManager.getImage(openpics[i]);
-        titles[i] = (String) names.get(i);
-        int ijimage = openpics[i];
+        imp[i] = WindowManager.getImage(ids[i]);
+        int ijimage = ids[i];
 
         boolean xalan = false;
         IJ.showStatus("Attempting to find xml class...");
@@ -231,7 +161,8 @@ public class OMESidePanel implements ActionListener {
         catch (ClassNotFoundException ex) { }
         if (xalan) {
           try {
-            OMEMetaDataHandler.exportMeta((String) descr.get(i), ijimage);
+            Object o = MetaPanel.exportMeta(descriptions[i], ijimage);
+            hashInImage(ijimage, new Object[] {null, o});
           }
           catch (ArrayIndexOutOfBoundsException x) { }
           catch (Exception exc) {
@@ -245,7 +176,7 @@ public class OMESidePanel implements ActionListener {
       }
       catch (ArrayIndexOutOfBoundsException n) { }
     }
-    list.setListData(titles);
+    list.setListData(names);
 
     dia.show();
     if (cancelPlugin) return;
@@ -292,8 +223,14 @@ public class OMESidePanel implements ActionListener {
       int z = list.getSelectedIndex();
       if (z != -1) {
         int y = imageIds[z];
+          
         Object[] metadata = (Object[]) getImageMeta(y);
-        if (metadata == null) metadata = new Object[3];
+        
+        if (metadata == null) {
+          metadata = new Object[2];
+          metadata[0] = null;
+          metadata[1] = MetaPanel.exportMeta(imageDescrs[z], y);
+        }  
         MetaPanel meta = new MetaPanel(parentWindow, y, metadata);
         meta.show();
       }
@@ -305,7 +242,7 @@ public class OMESidePanel implements ActionListener {
       }
     }
     else if ("open".equals(e.getActionCommand())) {
-      IJ.runPlugIn("WiscScan", "");
+      IJ.runPlugIn("loci.browser.LociDataBrowser", "");
     }
     else {
       cancelPlugin = true;
@@ -322,7 +259,25 @@ public class OMESidePanel implements ActionListener {
 
   /** adds the information to the table to upload the image back to OME */
   public static void hashInImage(int ijid, Object[] ob) {
-    table.put(new Integer(ijid), ob);
+    if (!table.containsKey(new Integer(ijid))) {
+      table.put(new Integer(ijid), ob);
+    }
+    else {
+      // pick a new ID and add it
+
+            /*
+      int id = -1;
+      while (table.containsKey(new Integer(id))) {
+        id--;
+      }      
+      table.put(new Integer(id), ob);
+      ids.add(new Integer(id));
+    }
+
+    while(ids.contains(new Integer(-3))) {
+      ids.remove(new Integer(-3));
+    */
+    }
   }
 
   /** gets the OME image ID from the corresponding imagePlus ID from imageJ */
@@ -342,6 +297,10 @@ public class OMESidePanel implements ActionListener {
 
   // -- Utility methods --
 
+  public static Hashtable getTable() { return table; }
+
+  public static void setTable(Hashtable t) { table = t; }
+  
   public static String getServer() { return serverName; }
 
   public static String getUser() { return username; }

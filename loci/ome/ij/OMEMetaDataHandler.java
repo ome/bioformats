@@ -42,6 +42,7 @@ public class OMEMetaDataHandler {
   /**Method that begins the process of getting metadata from an OME_TIFF file*/
   public static DefaultMutableTreeNode exportMeta(Image image,
       ImagePlus imagePlus, DataFactory df) {
+
     imageP = imagePlus.getProcessor();
     isXML = false;
     omeNode = null;
@@ -166,6 +167,7 @@ public class OMEMetaDataHandler {
   private static void addDb(Object element, DefaultMutableTreeNode root,
       DataFactory df, String identifier) {
     IJ.showStatus("Retrieving " + identifier + " attributes.");
+    
     if(element == null) return;
     if(identifier.equals("DTOType")) return;
     try {

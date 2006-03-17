@@ -121,20 +121,23 @@ public class OMERetrieve {
 
   /** method that retrieves a list of experimenters from the database */
   public static String[][] retrieveExperimenters(DataFactory datafact) {
-    Criteria criteria = new Criteria();
-    //Specify which fields we want for the project.
-    makeAttributeFields(criteria, new String[] {"FirstName", "LastName"});
-    criteria.addOrderBy("LastName");
-    List l = datafact.retrieveList("Experimenter", criteria);
-    Object[] ob = l.toArray();
-    String[][] exp = new String[3][ob.length];
-    //pack the experimenter info into an array
-    for (int i=0; i<ob.length; i++) {
-      exp[0][i] = ((Experimenter)ob[i]).getFirstName();
-      exp[1][i] = ((Experimenter)ob[i]).getLastName();
-      exp[2][i] = new Integer(((Experimenter)ob[i]).getID()).toString();
+    try {
+      Criteria criteria = new Criteria();
+      //Specify which fields we want for the project.
+      makeAttributeFields(criteria, new String[] {"FirstName", "LastName"});
+      criteria.addOrderBy("LastName");
+      List l = datafact.retrieveList("Experimenter", criteria);
+      Object[] ob = l.toArray();
+      String[][] exp = new String[3][ob.length];
+      //pack the experimenter info into an array
+      for (int i=0; i<ob.length; i++) {
+        exp[0][i] = ((Experimenter)ob[i]).getFirstName();
+        exp[1][i] = ((Experimenter)ob[i]).getLastName();
+        exp[2][i] = new Integer(((Experimenter)ob[i]).getID()).toString();
+      }
+      return exp;
     }
-    return exp;
+    catch (NullPointerException n) { return null; }
   }
 
   /**

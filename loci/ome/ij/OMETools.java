@@ -13,6 +13,8 @@ import org.openmicroscopy.ds.managers.*;
 import org.openmicroscopy.ds.st.*;
 import org.openmicroscopy.is.*;
 
+import loci.browser.*;
+
 /**
  * Handles uploading and downloading images.
  *
@@ -61,7 +63,7 @@ public class OMETools {
   private RemoteCaller rc;
   private DataServices rs;
 
-  private WiscScan viewer;
+  private LociDataBrowser viewer;
 
 
   // -- Runnable API methods --
@@ -665,11 +667,19 @@ public class OMETools {
       IJ.showStatus("Retrieving metadata...");
       metas[1] = OMEMetaDataHandler.exportMeta(image, imageP, df);
     }
-    OMESidePanel.hashInImage(image.getID(), metas);
     IJ.showStatus("Displaying Image");
-    viewer = new WiscScan();
+    viewer = new LociDataBrowser();
     boolean tp = (sizeT > 1);
-    viewer.twoDimView(imageP, sizeZ, tp); // use the WiscScan viewer
+ 
+    // HACK
+    // we want to give LociDataBrowser information about
+    // the dimensions of the stack, without messing with the API
+    ij.io.FileInfo fi = new ij.io.FileInfo();
+    fi.info = tp + " " + sizeZ;
+    imageP.setFileInfo(fi);
+   
+    viewer.twoDimView(imageP);
+    OMESidePanel.hashInImage(-1*image.getID(), metas);
   }
 
   /** returns a list of images that the user chooses */
@@ -790,6 +800,7 @@ public class OMETools {
       logout();
     }
     catch(NullPointerException e) {
+      e.printStackTrace();      
       pluginCancelled();
     }
     catch(IllegalArgumentException f) {
