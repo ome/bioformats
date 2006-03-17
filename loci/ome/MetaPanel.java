@@ -157,6 +157,7 @@ public class MetaPanel implements ActionListener, TreeSelectionListener {
   public static DefaultMutableTreeNode exportMeta(String descr,
     int ijimageID)
   {
+          
     isXML = true;
     IJ.showStatus("Retrieving OME-TIFF header.");
     Object[] meta = new Object[2];
@@ -181,8 +182,7 @@ public class MetaPanel implements ActionListener, TreeSelectionListener {
          meta[0] = new Integer(0);
       }
       meta[1] = null;
-      defaultNode = null;
-      return null;
+      return (DefaultMutableTreeNode) meta[1];
     }
     if (meta == null) {
       meta = new Object[2];
