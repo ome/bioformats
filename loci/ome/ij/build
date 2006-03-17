@@ -3,7 +3,7 @@ cd ../../..
 
 echo Building ome_plugin.jar...
 cp loci/ome/ij/plugins.config .
-~/j2sdk1.4.2_10/bin/jar cfM loci/ome/ij/ome_plugin.jar plugins.config loci/ome/ij/*.class loci/ome/*.class loci/util/*.class loci/ome/ij/*.java loci/ome/*.java loci/util/*.java loci/browser/*.class loci/browser/*.java loci/ome/ij/build loci/ome/ij/plugins.config
+jar cfM loci/ome/ij/ome_plugin.jar plugins.config loci/ome/ij/*.class loci/ome/*.class loci/util/*.class loci/ome/ij/*.java loci/ome/*.java loci/util/*.java loci/browser/*.class loci/browser/*.java loci/ome/ij/build loci/ome/ij/plugins.config
 rm plugins.config
 
 cd loci/ome/ij
