@@ -1,3 +1,7 @@
+//
+// LociDataBrowser.java
+//
+
 // YTW 2/27/2006: hardcode deconvolve6_Pseudo_Tl000_Zs000.TIF
 // YTW 3/1/2006: rewrite file to make better use of FilePattern
 
@@ -57,6 +61,14 @@ import java.util.Hashtable;
 import loci.ome.MetaPanel;
 import loci.util.FilePattern;
 
+/**
+ * LociDataBrowser is a plugin for ImageJ that allows for browsing of 4D
+ * image data (stacks of image planes over time) with two-channel support.
+ *
+ * @author Francis Wong yutaiwong at wisc.edu
+ * @author Curtis Rueden ctrueden at wisc.edu
+ * @author Melissa Linkert linkert at cs.wisc.edu
+ */
 public class LociDataBrowser implements PlugIn {
 
   // private static data members
