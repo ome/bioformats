@@ -1,7 +1,10 @@
 // YTW 2/27/2006: hardcode deconvolve6_Pseudo_Tl000_Zs000.TIF
 // YTW 3/1/2006: rewrite file to make better use of FilePattern
 
-// MELISSA 03/15/2006: twoDimView takes a parameter and has public access
+// MELISSA 03/15/2006: twoDimView takes a parameter and has public access;
+//                     tweaked some of the logic in showSlice methods to allow use
+//                     with OME plugin
+// MELISSA 03/17/2006: added logic to preserve file's description
 
 package loci.browser;
 
@@ -49,6 +52,8 @@ import java.awt.image.ColorModel;
 import java.awt.event.WindowEvent;
 import java.io.File;
 
+import java.util.Hashtable;
+
 import loci.ome.MetaPanel;
 import loci.util.FilePattern;
 
@@ -93,11 +98,17 @@ public class LociDataBrowser implements PlugIn {
     
     private static final boolean debug = false;
 
+  // stores the description of each image
+  private static Hashtable extraData;
+
+  private static String d;
+    
   public void run(String arg) {
     OpenDialog od = new OpenDialog("Open Sequence of Image Stacks:", "");
     String directory = od.getDirectory();
     String name = od.getFileName();
     if (name == null) return;
+    if (extraData == null) extraData = new Hashtable();
 
     // Find all the files having similar names (Using FilePattern class)
     String pattern = FilePattern.findPattern(new File(name), directory);
@@ -260,6 +271,7 @@ public class LociDataBrowser implements PlugIn {
             type = imp.getType();
             fi = imp.getOriginalFileInfo();
             description = fi.description;
+            d = description;
             imp.setFileInfo(fi);
             cb4tp = list[0].indexOf("_C") < list[0].indexOf("_TP");
             start = 1;
@@ -512,6 +524,10 @@ public class LociDataBrowser implements PlugIn {
 	  if (pre1[i].equals(pre2)) return true;
       return false;
   }
+
+  public static Hashtable getTable() {
+    return extraData;
+  }         
       
   /* CustomWindow class begin*/
   private class CustomWindow extends ImageWindow
@@ -701,6 +717,10 @@ public class LociDataBrowser implements PlugIn {
      int previousSlice = imp.getCurrentSlice();
      imp.setSlice(hasTrans ? depth+1 : 1);
      WindowManager.addWindow(this);
+     try {
+       extraData.put(new Integer(imp.getID()), d);
+     }
+     catch (NullPointerException n) { }
      if (previousSlice > 1 && previousSlice <= imp.getStackSize()) {
        imp.setSlice(previousSlice);
      }
