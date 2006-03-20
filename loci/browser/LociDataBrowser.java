@@ -108,7 +108,7 @@ public class LociDataBrowser implements PlugIn {
   private static String[] preZ = {"_Z", "_Zs"};
   private static String[] preTrans = {"_C"};
 
-  private static final boolean DEBUG = false;
+  private static final boolean DEBUG = true;
 
   // stores the description of each image
   private static Hashtable extraData;
@@ -132,7 +132,7 @@ public class LociDataBrowser implements PlugIn {
     String [] absList = fp.getFiles();     // all the image files
 
     for (int i=0; i<prefixes.length; i++) {
-      System.err.println("prefixes["+i+"] = "+prefixes[i]);
+      System.err.println("prefixes["+i+"] := "+prefixes[i]);
     }
     // find out what axes exist
     hasTP = false;
@@ -173,30 +173,32 @@ public class LociDataBrowser implements PlugIn {
         System.err.println("Prefixes["+i+"] = "+prefixes[i]);
         prefixes[i]=prefixes[i].replaceAll("\\d+$", "");
       }
-
+      
+      
       firstPrefix = prefixes[0];
-
+      System.err.println(firstPrefix);
       for (int i=0; i<prefixes.length; i++) {
         for (int j=0; j<preTime.length; j++) {
-          if (prefixes[i].equals(preTime[j])) {
+          if (prefixes[i].endsWith(preTime[j])) {
               hasTP = true;
               idxTP = i;
           }
         }
         for (int j=0; j<preZ.length; j++) {
-          if (prefixes[i].equals(preZ[j])) {
+          if (prefixes[i].endsWith(preZ[j])) {
               hasZ = true;
               idxZ = i;
           }
         }
         for (int j=0; j<preTrans.length; j++) {
-          if (prefixes[i].equals(preTrans[j])) {
+          if (prefixes[i].endsWith(preTrans[j])) {
               hasTrans = true;
               idxC = i;
           }
         }
       }
 
+      System.err.println(hasTrans);
       int [] repeat = new int[prefixes.length];
       repeat[0] = 1;
 
@@ -228,13 +230,13 @@ public class LociDataBrowser implements PlugIn {
           }
           System.err.println();
         }
-        System.err.println("listZ = ");
+        System.err.print("listZ = ");
         for (int i=0; i<listZ.length; i++) System.err.print(listZ[i]+" ");
         System.err.println();
-        System.err.println("listTP = ");
+        System.err.print("listTP = ");
         for (int i=0; i<listTP.length; i++) System.err.print(listTP[i]+" ");
         System.err.println();
-        System.err.println("listC = ");
+        System.err.print("listC = ");
         for (int i=0; i<listC.length; i++) System.err.print(listC[i]+" ");
       }
 
@@ -248,7 +250,7 @@ public class LociDataBrowser implements PlugIn {
     else if (!hasZ && prefixes.length <= 1 && numFiles > 1) {
       hasTP = true;
       hasZ = false;
-      hasTrans = false;
+      //      hasTrans = false;
     }
 
     int ndx = fp.getPrefix().indexOf('_');
@@ -496,6 +498,7 @@ public class LociDataBrowser implements PlugIn {
 
   public static Hashtable getTable() { return extraData; }
 
+
   // CustomWindow class begin
   private class CustomWindow extends ImageWindow
     implements ActionListener, AdjustmentListener, ItemListener
@@ -567,7 +570,6 @@ public class LociDataBrowser implements PlugIn {
           return d;
         }
       };
-
       GridBagLayout gridbag = new GridBagLayout();
       GridBagConstraints c = new GridBagConstraints();
       bottom.setLayout(gridbag);
@@ -684,7 +686,7 @@ public class LociDataBrowser implements PlugIn {
       bottom.add(swapAxesButton);
 
       add(bottom);
-
+      //      setSize(1000,getHeight());
       pack();
       setVisible(true);
       int previousSlice = imp.getCurrentSlice();
@@ -697,6 +699,8 @@ public class LociDataBrowser implements PlugIn {
       if (previousSlice > 1 && previousSlice <= imp.getStackSize()) {
         imp.setSlice(previousSlice);
       }
+
+      
     }
 
     class FrameRateListener implements ChangeListener {
