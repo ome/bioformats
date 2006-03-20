@@ -180,7 +180,13 @@ public class ReflectedUniverse {
         }
       }
       if (constructor == null) {
-        throw new ReflectException("No such constructor");
+        StringBuffer sb = new StringBuffer(command);
+        for (int i=0; i<args.length; i++) {
+          sb.append(i == 0 ? "(" : ", ");
+          sb.append(args[i].getClass().getName());
+        }
+        sb.append(")");
+        throw new ReflectException("No such constructor: " + sb.toString());
       }
 
       // invoke constructor
