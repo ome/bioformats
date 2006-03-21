@@ -120,14 +120,20 @@ public abstract class ExternalFunction extends ImageTransform {
     return s;
   }
 
-  /** Gets the default parameter values for this external function transform. */
+  /**
+   * Gets the default parameter values
+   * for this external function transform.
+   */
   public String[] getParameterDefaults() {
     String[] d = new String[paramList.length];
     for (int i=0; i<d.length; i++) d[i] = paramList[i].getValue();
     return d;
   }
 
-  /** Gets the current parameter values for this external function transform. */
+  /**
+   * Gets the current parameter values
+   * for this external function transform.
+   */
   public String[] getParameters() { return params; }
 
 
