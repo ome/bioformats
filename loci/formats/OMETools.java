@@ -267,21 +267,6 @@ public abstract class OMETools {
     return displayROI;
   }
 
-  /** Populates the first OME/Image/CA/LogicalChannel element. */
-  public static Object setLogicalChannel(Object root, String name,
-    Integer samplesPerPixel, Object filter, Object lightSource,
-    Float lightAttenuation, Integer lightWavelength, Object otf,
-    Object detector, Float detectorOffset, Float detectorGain,
-    String illuminationType, Integer pinholeSize,
-    String photometricInterpretation, String mode, String contrastMethod,
-    Object auxLightSource, Float auxLightAttenuation, String auxTechnique,
-    Integer auxLightWavelength, Integer excitationWavelength,
-    Integer emissionWavelength, String fluor, Float ndfilter)
-  {
-    // TODO
-    return null;
-  }
-
   /** Populates the first OME/Image/CA/Pixels element. */
   public static Object setPixels(Object root, Integer sizeX, Integer sizeY,
     Integer sizeZ, Integer sizeC, Integer sizeT, String pixelType,
