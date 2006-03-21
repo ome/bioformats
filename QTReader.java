@@ -90,6 +90,7 @@ public class QTReader extends FormatReader {
   /** Amount to subtract from each offset. */
   private int scale;
 
+
   // -- Constructor --
 
   /** Constructs a new QuickTime reader. */
@@ -120,6 +121,10 @@ public class QTReader extends FormatReader {
     if (!codec.equals("raw ") && !codec.equals("rle ") &&
       !codec.equals("jpeg"))
     {
+      if (DEBUG) {
+        System.out.println("Unsupported codec (" +
+          codec + "); using QTJava reader");
+      }
       if (legacy == null) legacy = new LegacyQTReader();
       return legacy.open(id, no);
     }
