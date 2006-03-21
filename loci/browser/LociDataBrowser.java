@@ -173,8 +173,7 @@ public class LociDataBrowser implements PlugIn {
         System.err.println("Prefixes["+i+"] = "+prefixes[i]);
         prefixes[i]=prefixes[i].replaceAll("\\d+$", "");
       }
-      
-      
+
       firstPrefix = prefixes[0];
       System.err.println(firstPrefix);
       for (int i=0; i<prefixes.length; i++) {
@@ -700,7 +699,6 @@ public class LociDataBrowser implements PlugIn {
         imp.setSlice(previousSlice);
       }
 
-      
     }
 
     class FrameRateListener implements ChangeListener {
