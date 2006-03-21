@@ -36,24 +36,17 @@ public class ImageWriter extends FormatWriter {
 
   // -- Static fields --
 
-  /** List of supported file format writers. */
-  protected static FormatWriter[] writers;
-
-  /** List of supported filename suffixes. */
-  protected static String[] suffixList;
-
-  /** Index of writer with last successful identification. */
-  protected static int lastGood = -1;
+  /** List of writer classes. */
+  protected static Class[] writerClasses;
 
 
   // -- Static initializer --
 
   static {
-    // add built-in writers to the list
+    // read built-in writer classes from writers.txt file
     BufferedReader in = new BufferedReader(new InputStreamReader(
       ImageWriter.class.getResourceAsStream("writers.txt")));
     Vector v = new Vector();
-    HashSet suffixSet = new HashSet();
     while (true) {
       String line = null;
       try { line = in.readLine(); }
@@ -66,7 +59,7 @@ public class ImageWriter extends FormatWriter {
       line = line.trim();
       if (line.equals("")) continue;
 
-      // load writer class and instantiate
+      // load writer class
       Class c = null;
       try { c = Class.forName(line); }
       catch (ClassNotFoundException exc) { }
@@ -75,29 +68,19 @@ public class ImageWriter extends FormatWriter {
           "\" is not a valid format writer.");
         continue;
       }
-      FormatWriter writer = null;
-      try { writer = (FormatWriter) c.newInstance(); }
-      catch (IllegalAccessException exc) { }
-      catch (InstantiationException exc) { }
-      if (writer == null) {
-        System.err.println("Error: \"" + line + "\" cannot be instantiated.");
-        continue;
-      }
-      v.add(writer);
-      String[] suf = writer.getSuffixes();
-      for (int i=0; i<suf.length; i++) suffixSet.add(suf[i]);
+      v.add(c);
     }
     try { in.close(); }
     catch (IOException exc) { exc.printStackTrace(); }
-    writers = new FormatWriter[v.size()];
-    v.copyInto(writers);
-    suffixList = new String[suffixSet.size()];
-    suffixSet.toArray(suffixList);
-    Arrays.sort(suffixList);
+    writerClasses = new Class[v.size()];
+    v.copyInto(writerClasses);
   }
 
 
   // -- Fields --
+
+  /** List of supported file format writers. */
+  protected FormatWriter[] writers;
 
   /** Current form index. */
   protected int index;
@@ -106,7 +89,32 @@ public class ImageWriter extends FormatWriter {
   // -- Constructor --
 
   /** Constructs a new ImageWriter. */
-  public ImageWriter() { super("any image", suffixList); }
+  public ImageWriter() {
+    super("any image", (String[]) null);
+
+    // add built-in writers to the list
+    Vector v = new Vector();
+    HashSet suffixSet = new HashSet();
+    for (int i=0; i<writerClasses.length; i++) {
+      FormatWriter writer = null;
+      try { writer = (FormatWriter) writerClasses[i].newInstance(); }
+      catch (IllegalAccessException exc) { }
+      catch (InstantiationException exc) { }
+      if (writer == null) {
+        System.err.println("Error: " + writerClasses[i].getName() +
+          " cannot be instantiated.");
+        continue;
+      }
+      v.add(writer);
+      String[] suf = writer.getSuffixes();
+      for (int j=0; j<suf.length; j++) suffixSet.add(suf[j]);
+    }
+    writers = new FormatWriter[v.size()];
+    v.copyInto(writers);
+    suffixes = new String[suffixSet.size()];
+    suffixSet.toArray(suffixes);
+    Arrays.sort(suffixes);
+  }
 
 
   // -- ImageWriter API methods --
@@ -133,16 +141,6 @@ public class ImageWriter extends FormatWriter {
     return null;
   }
 
-  /** A utility method for converting a file from the command line. */
-  public void testConvert(String[] args) throws FormatException, IOException {
-    if (args.length > 1) {
-      // check file format
-      System.out.print("Checking file format ");
-      System.out.println("[" + getFormat(args[1]) + "]");
-    }
-    super.testConvert(args);
-  }
-
 
   // -- FormatWriter API methods --
 
@@ -155,6 +153,16 @@ public class ImageWriter extends FormatWriter {
   {
     if (!id.equals(currentId)) initFile(id);
     writers[index].save(id, image, last);
+  }
+
+  /** A utility method for converting a file from the command line. */
+  public void testConvert(String[] args) throws FormatException, IOException {
+    if (args.length > 1) {
+      // check file format
+      System.out.print("Checking file format ");
+      System.out.println("[" + getFormat(args[1]) + "]");
+    }
+    super.testConvert(args);
   }
 
 
@@ -175,13 +183,9 @@ public class ImageWriter extends FormatWriter {
 
   /** Initializes the given image file. */
   protected void initFile(String id) throws FormatException, IOException {
-    // try last known good type first, for efficiency
-    for (int i=-1; i<writers.length; i++) {
-      if (i == lastGood) continue;
-      int ii = i < 0 ? lastGood : i;
-      if (writers[ii].isThisType(id)) {
-        index = ii;
-        lastGood = ii;
+    for (int i=0; i<writers.length; i++) {
+      if (writers[i].isThisType(id)) {
+        index = i;
         currentId = id;
         return;
       }
