@@ -112,10 +112,8 @@ public class OMEXMLReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    int width =
-      Integer.parseInt(OMETools.getAttribute(ome, "Pixels", "SizeX"));
-    int height =
-      Integer.parseInt(OMETools.getAttribute(ome, "Pixels", "SizeY"));
+    int width = OMETools.getSizeX(ome).intValue();
+    int height = OMETools.getSizeY(ome).intValue();
     int channels = 1;
 
     in.seek(((Integer) offsets.get(no)).intValue());
@@ -266,20 +264,20 @@ public class OMEXMLReader extends FormatReader {
     int sizeX = 0;
     int sizeY = 0;
     int sizeZ = 0;
-    int sizeT = 0;
     int sizeC = 0;
+    int sizeT = 0;
 
     if (ome != null) {
-      String type = OMETools.getAttribute(ome, "Pixels", "PixelType");
+      String type = OMETools.getPixelType(ome);
       if (type.endsWith("16")) bpp = 2;
       else if (type.endsWith("32")) bpp = 4;
       else if (type.equals("float")) bpp = 8;
 
-      sizeX = Integer.parseInt(OMETools.getAttribute(ome, "Pixels", "SizeX"));
-      sizeY = Integer.parseInt(OMETools.getAttribute(ome, "Pixels", "SizeY"));
-      sizeZ = Integer.parseInt(OMETools.getAttribute(ome, "Pixels", "SizeZ"));
-      sizeT = Integer.parseInt(OMETools.getAttribute(ome, "Pixels", "SizeT"));
-      sizeC = Integer.parseInt(OMETools.getAttribute(ome, "Pixels", "SizeC"));
+      sizeX = OMETools.getSizeX(ome).intValue();
+      sizeY = OMETools.getSizeY(ome).intValue();
+      sizeZ = OMETools.getSizeZ(ome).intValue();
+      sizeC = OMETools.getSizeC(ome).intValue();
+      sizeT = OMETools.getSizeT(ome).intValue();
     }
     else {
       throw new FormatException("To use this feature, please install the " +

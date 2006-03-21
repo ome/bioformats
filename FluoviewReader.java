@@ -115,7 +115,8 @@ public class FluoviewReader extends BaseTiffReader {
       p++;
 
       // change from the specs: using 257 bytes instead of 256
-      put("ImageName", DataTools.bytesToString(mmHead, p, 257));
+      String imageName = DataTools.bytesToString(mmHead, p, 257);
+      put("ImageName", imageName);
       p += 257 + 4; // there are 4 bytes that we don't need
 
       put("NumberOfColors", DataTools.bytesToLong(mmHead, p, 4, little));
@@ -189,22 +190,20 @@ public class FluoviewReader extends BaseTiffReader {
         put("Comments", new String(comments));
       }
 
-
       // -- Parse OME-XML metadata --
 
       Object off;
       String data;
       long newNum = 0;
       Object obj = new Object();
-      double origin = 0;
-
+      float origin = 0;
 
       // set file to the right place
       off = (Object) ifd.get(new Integer(MMHEADER));
       if (off != null) {
+        OMETools.setImageName(ome, imageName);
+        
         // read the metadata
-        OMETools.setAttribute(ome, "Image", "ImageName",
-          "" + metadata.get("ImageName"));
         byte[] temp2 = new byte[279];
         in.read(temp2);
         char[] dimName;
@@ -214,21 +213,11 @@ public class FluoviewReader extends BaseTiffReader {
             dimName[i] = in.readChar();
           }
 
-          String attr = "";
-          switch (j) {
-            case 1: attr = "X"; break;
-            case 2: attr = "Y"; break;
-            case 3: attr = "Z"; break;
-            case 4: attr = "T"; break;
-            case 5: attr = "C"; break;
-          }
-
-
           newNum = DataTools.read4SignedBytes(in, little);
-          origin = DataTools.readDouble(in, little);
-          if (!attr.equals("T") && !attr.equals("C") && !attr.equals("")) {
-            OMETools.setAttribute(ome, "StageLabel", attr, "" + origin);
-          }
+          origin = (float) DataTools.readDouble(in, little);
+          if (j == 1) OMETools.setStageX(ome, origin);
+          else if (j == 2) OMETools.setStageY(ome, origin);
+          else if (j == 3) OMETools.setStageZ(ome, origin);
 
           DataTools.readDouble(in, little); // skip next double
         }
@@ -275,9 +264,7 @@ public class FluoviewReader extends BaseTiffReader {
       if (descr == null) {
         descr = (String) metadata.get("File Version");
       }
-
-      OMETools.setAttribute(ome, "Image", "Description", descr);
-
+      OMETools.setDescription(ome, descr);
 
       String d = (String) TiffTools.getIFDValue(ifds[0], TiffTools.PAGE_NAME);
       int strPos = d.indexOf("[Higher Dimensions]") + 19;
@@ -347,23 +334,20 @@ public class FluoviewReader extends BaseTiffReader {
       // set the OME-XML dimension attributes appropriately
 
       // first we need to reset the dimensions
-      OMETools.setAttribute(ome, "Pixels", "SizeZ", "1");
-      OMETools.setAttribute(ome, "Pixels", "SizeC", "1");
-      OMETools.setAttribute(ome, "Pixels", "SizeT", "1");
+      OMETools.setSizeZ(ome, 1);
+      OMETools.setSizeC(ome, 1);
+      OMETools.setSizeT(ome, 1);
 
       for(int i=0; i<n.size(); i++) {
         String name = (String) n.get(i);
         String pos = (String) numPlanes.get(i);
+        int q = Integer.parseInt(pos);
 
-        if (name.equals("Ch")) {
-          OMETools.setAttribute(ome, "Pixels", "SizeC", pos);
-        }
+        if (name.equals("Ch")) OMETools.setSizeC(ome, q);
         else if (name.equals("Animation") || name.equals("T")) {
-          OMETools.setAttribute(ome, "Pixels", "SizeT", pos);
+          OMETools.setSizeT(ome, q);
         }
-        else if (name.equals("Z")) {
-          OMETools.setAttribute(ome, "Pixels", "SizeZ", pos);
-        }
+        else if (name.equals("Z")) OMETools.setSizeZ(ome, q);
       }
     }
     catch (NullPointerException e) { /* most likely MMHEADER not found */ }

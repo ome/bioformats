@@ -269,14 +269,9 @@ public class ICSReader extends FormatReader {
     // initialize OME metadata
 
     if (ome != null) {
-      OMETools.setAttribute(ome, "Pixels", "SizeX", "" + dimensions[1]);
-      OMETools.setAttribute(ome, "Pixels", "SizeY", "" + dimensions[2]);
-      OMETools.setAttribute(ome, "Pixels", "SizeZ", "" + dimensions[3]);
-      OMETools.setAttribute(ome, "Pixels", "SizeC", "" + dimensions[4]);
-      OMETools.setAttribute(ome, "Pixels", "SizeT", "" + dimensions[5]);
-      OMETools.setAttribute(ome, "Pixels", "BigEndian", "" + !littleEndian);
-      OMETools.setAttribute(ome, "Image", "Name",
-        "" + metadata.get("filename"));
+      OMETools.setImageName(ome, (String) metadata.get("filename"));
+
+      // populate Pixels element
 
       String ord = (String) metadata.get("order");
       ord = ord.substring(ord.indexOf("x"));
@@ -286,13 +281,10 @@ public class ICSReader extends FormatReader {
         tempOrder[pt] = ord.charAt(i);
         pt++;
       }
-      ord = new String(tempOrder);
-      ord = order.toUpperCase();
-
+      ord = new String(tempOrder).toUpperCase();
       if (ord.indexOf("Z") == -1) ord = ord + "Z";
       if (ord.indexOf("T") == -1) ord = ord + "T";
       if (ord.indexOf("C") == -1) ord = ord + "C";
-      OMETools.setAttribute(ome, "Pixels", "DimensionOrder", ord);
 
       String bits = (String) metadata.get("significant_bits");
       String fmt = (String) metadata.get("format");
@@ -306,7 +298,16 @@ public class ICSReader extends FormatReader {
       else if (fmt.equals("integer")) {
         type = type + "int" + bits;
       }
-      OMETools.setAttribute(ome, "Pixels", "PixelType", type);
+
+      OMETools.setPixels(ome,
+        new Integer(dimensions[1]), // SizeX
+        new Integer(dimensions[2]), // SizeY
+        new Integer(dimensions[3]), // SizeZ
+        new Integer(dimensions[4]), // SizeC
+        new Integer(dimensions[5]), // SizeT
+        type, // PixelType
+        new Boolean(!littleEndian), // BigEndian
+        ord); // DimensionOrder
     }
   }
 

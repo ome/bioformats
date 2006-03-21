@@ -488,8 +488,7 @@ public class OpenlabReader extends FormatReader {
       // Initialize OME metadata
 
       if (ome != null) {
-        OMETools.setAttribute(ome, "Pixels", "BigEndian",
-          little ? "false" : "true");
+        OMETools.setBigEndian(ome, !little);
         if (metadata.get("BitDepth") != null) {
           int bitDepth = ((Integer) metadata.get("BitDepth")).intValue();
           String type;
@@ -498,31 +497,30 @@ public class OpenlabReader extends FormatReader {
           else if (bitDepth <= 16) type = "int16";
           else type = "int32";
 
-          OMETools.setAttribute(ome, "Image", "PixelType", type);
+          OMETools.setPixelType(ome, type);
         }
         if (metadata.get("Timestamp") != null) {
-          OMETools.setAttribute(ome, "Image", "CreationDate",
-            "" + metadata.get("Timestamp").toString());
+          OMETools.setCreationDate(ome, (String) metadata.get("Timestamp"));
         }
 
         if (metadata.get("XOrigin") != null) {
-          OMETools.setAttribute(ome, "StageLabel", "X",
-            "" + metadata.get("XOrigin").toString());
+          Double xOrigin = (Double) metadata.get("XOrigin");
+          OMETools.setStageX(ome, xOrigin.floatValue());
         }
 
         if (metadata.get("YOrigin") != null) {
-          OMETools.setAttribute(ome, "StageLabel", "Y",
-            "" + metadata.get("YOrigin").toString());
+          Double yOrigin = (Double) metadata.get("YOrigin");
+          OMETools.setStageY(ome, yOrigin.floatValue());
         }
 
         if (metadata.get("XScale") != null) {
-          OMETools.setAttribute(ome, "Image", "PixelSizeX",
-            "" + metadata.get("XScale").toString());
+          Double xScale = (Double) metadata.get("XScale");
+          OMETools.setPixelSizeX(ome, xScale.floatValue());
         }
 
         if (metadata.get("YScale") != null) {
-          OMETools.setAttribute(ome, "Image", "PixelSizeY",
-            "" + metadata.get("YScale").toString());
+          Double yScale = (Double) metadata.get("YScale");
+          OMETools.setPixelSizeY(ome, yScale.floatValue());
         }
       }
       in.seek(offset);

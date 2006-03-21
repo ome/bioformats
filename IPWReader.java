@@ -119,10 +119,7 @@ public class IPWReader extends BaseTiffReader {
   /** Initializes the given IPW file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (noPOI) throw new FormatException(NO_POI_MSG);
-    close();
-    currentId = id;
-    metadata = new Hashtable();
-    ome = OMETools.createRoot();
+    super.initFile(id);
     in = new RandomAccessFile(id, "r");
 
     allIFDs = new Hashtable();
@@ -189,14 +186,13 @@ public class IPWReader extends BaseTiffReader {
 
     if (ome != null) {
       super.initOMEMetadata();
-      OMETools.setAttribute(ome, "Pixels", "SizeZ", "" +
-        metadata.get("slices"));
-      OMETools.setAttribute(ome, "Pixels", "SizeC", "" +
-        metadata.get("channels"));
-      OMETools.setAttribute(ome, "Pixels", "SizeT", "" +
-        metadata.get("frames"));
-      OMETools.setAttribute(ome, "Image", "Description", "" +
-        metadata.get("Version"));
+      int sizeZ = Integer.parseInt((String) metadata.get("slices"));
+      int sizeC = Integer.parseInt((String) metadata.get("channels"));
+      int sizeT = Integer.parseInt((String) metadata.get("frames"));
+      OMETools.setSizeZ(ome, sizeZ);
+      OMETools.setSizeC(ome, sizeC);
+      OMETools.setSizeT(ome, sizeT);
+      OMETools.setDescription(ome, (String) metadata.get("Version"));
     }
   }
 

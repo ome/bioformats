@@ -332,41 +332,13 @@ public abstract class BaseTiffReader extends FormatReader {
         bps = new int[3];
       }
 
-
-      OMETools.setAttribute(ome, "Pixels", "SizeX", "" +
-        TiffTools.getIFDIntValue(ifd, TiffTools.IMAGE_WIDTH));
-      OMETools.setAttribute(ome, "Pixels", "SizeY", "" +
-        TiffTools.getIFDIntValue(ifd, TiffTools.IMAGE_LENGTH));
-      OMETools.setAttribute(ome, "Pixels", "SizeZ", "" + 1);
-      OMETools.setAttribute(ome, "Pixels", "SizeT", "" + ifds.length);
-      OMETools.setAttribute(ome, "Pixels", "SizeC", "" + bps.length);
-
-      boolean little = TiffTools.isLittleEndian(ifd);
-      OMETools.setAttribute(ome,
-        "Pixels", "BigEndian", little ? "false" : "true");
-
-      OMETools.setAttribute(ome, "Experimenter", "FirstName", "" +
-        TiffTools.getIFDValue(ifd, TiffTools.ARTIST));
-      OMETools.setAttribute(ome, "Experimenter", "LastName", "" +
-        TiffTools.getIFDValue(ifd, TiffTools.ARTIST));
-
-      String email =
-        (String) TiffTools.getIFDValue(ifd, TiffTools.HOST_COMPUTER);
-
-      OMETools.setAttribute(ome, "Experimenter", "Email", email);
-      OMETools.setAttribute(ome, "Group", "Name", "OME");
-      OMETools.setAttribute(ome, "Image", "Description", "" +
-        TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION));
-
-      OMETools.setAttribute(ome, "Image", "PixelSizeX", "" +
-        TiffTools.getIFDIntValue(ifd, TiffTools.CELL_WIDTH, false, 0));
-      OMETools.setAttribute(ome, "Image", "PixelSizeY", "" +
-        TiffTools.getIFDIntValue(ifd, TiffTools.CELL_LENGTH, false, 0));
-      OMETools.setAttribute(ome, "Image", "PixelSizeZ", "" +
-        TiffTools.getIFDIntValue(ifd, TiffTools.ORIENTATION, false, 0));
-      OMETools.setAttribute(ome, "Image", "CreationDate", "" +
-        TiffTools.getIFDValue(ifd, TiffTools.DATE_TIME));
-
+      // populate Pixels element
+      int sizeX = TiffTools.getIFDIntValue(ifd, TiffTools.IMAGE_WIDTH);
+      int sizeY = TiffTools.getIFDIntValue(ifd, TiffTools.IMAGE_LENGTH);
+      int sizeZ = 1;
+      int sizeT = ifds.length;
+      int sizeC = bps.length;
+      boolean bigEndian = !TiffTools.isLittleEndian(ifd);
       int sample = TiffTools.getIFDIntValue(ifd, TiffTools.SAMPLE_FORMAT);
       String pixelType;
       switch (sample) {
@@ -376,38 +348,70 @@ public abstract class BaseTiffReader extends FormatReader {
         default: pixelType = unknown;
       }
       if (pixelType.indexOf("int") >= 0) { // int or Uint
-        int b = TiffTools.getIFDIntValue(ifd,
-          TiffTools.BITS_PER_SAMPLE);
-        pixelType += b;
+        pixelType += TiffTools.getIFDIntValue(ifd, TiffTools.BITS_PER_SAMPLE);
       }
-      OMETools.setAttribute(ome, "Image", "PixelType", pixelType);
+      OMETools.setPixels(ome, new Integer(sizeX), new Integer(sizeY),
+        new Integer(sizeZ), new Integer(sizeC), new Integer(sizeT),
+        pixelType, new Boolean(bigEndian), null);
 
-      OMETools.setAttribute(ome, "ChannelInfo", "SamplesPerPixel", "" +
-        TiffTools.getIFDIntValue(ifd, TiffTools.SAMPLES_PER_PIXEL));
-
-      int photoInterp2 = TiffTools.getIFDIntValue(ifd,
-        TiffTools.PHOTOMETRIC_INTERPRETATION, true, 0);
-      String photo2;
-      switch (photoInterp2) {
-        case 0: photo2 = "monochrome"; break;
-        case 1: photo2 = "monochrome"; break;
-        case 2: photo2 = "RGB"; break;
-        case 3: photo2 = "monochrome"; break;
-        case 4: photo2 = "RGB"; break;
-        default: photo2 = unknown;
+      // populate Experimenter element
+      String artist = (String) TiffTools.getIFDValue(ifd, TiffTools.ARTIST);
+      String firstName = null, lastName = null;
+      int ndx = artist.indexOf(" ");
+      if (ndx < 0) lastName = artist;
+      else {
+        firstName = artist.substring(0, ndx);
+        lastName = artist.substring(ndx + 1);
       }
-      OMETools.setAttribute(ome, "ChannelInfo",
-        "PhotometricInterpretation", photo2);
+      String email = (String)
+        TiffTools.getIFDValue(ifd, TiffTools.HOST_COMPUTER);
+      OMETools.setExperimenter(ome,
+        firstName, lastName, email, null, null, null);
 
-      OMETools.setAttribute(ome, "StageLabel", "X", "" +
-        TiffTools.getIFDValue(ifd, TiffTools.X_POSITION));
-      OMETools.setAttribute(ome, "StageLabel", "Y", "" +
-        TiffTools.getIFDValue(ifd, TiffTools.Y_POSITION));
+      // populate Image element
+      String creationDate = (String)
+        TiffTools.getIFDValue(ifd, TiffTools.DATE_TIME);
+      String description = (String)
+        TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
+      OMETools.setImage(ome, null, creationDate, description);
 
-      OMETools.setAttribute(ome, "Instrument", "Model", "" +
-        TiffTools.getIFDValue(ifd, TiffTools.MODEL));
-      OMETools.setAttribute(ome, "Instrument", "SerialNumber", "" +
-        TiffTools.getIFDValue(ifd, TiffTools.MAKE));
+      // populate Dimensions element
+      int pixelSizeX = TiffTools.getIFDIntValue(ifd,
+        TiffTools.CELL_WIDTH, false, 0);
+      int pixelSizeY = TiffTools.getIFDIntValue(ifd,
+        TiffTools.CELL_LENGTH, false, 0);
+      int pixelSizeZ = TiffTools.getIFDIntValue(ifd,
+        TiffTools.ORIENTATION, false, 0);
+      OMETools.setDimensions(ome, new Float(pixelSizeX),
+        new Float(pixelSizeY), new Float(pixelSizeZ), null, null);
+
+//      OMETools.setAttribute(ome, "ChannelInfo", "SamplesPerPixel", "" +
+//        TiffTools.getIFDIntValue(ifd, TiffTools.SAMPLES_PER_PIXEL));
+
+//      int photoInterp2 = TiffTools.getIFDIntValue(ifd,
+//        TiffTools.PHOTOMETRIC_INTERPRETATION, true, 0);
+//      String photo2;
+//      switch (photoInterp2) {
+//        case 0: photo2 = "monochrome"; break;
+//        case 1: photo2 = "monochrome"; break;
+//        case 2: photo2 = "RGB"; break;
+//        case 3: photo2 = "monochrome"; break;
+//        case 4: photo2 = "RGB"; break;
+//        default: photo2 = unknown;
+//      }
+//      OMETools.setAttribute(ome, "ChannelInfo",
+//        "PhotometricInterpretation", photo2);
+
+      // populate StageLabel element
+      String x = (String) TiffTools.getIFDValue(ifd, TiffTools.X_POSITION);
+      String y = (String) TiffTools.getIFDValue(ifd, TiffTools.Y_POSITION);
+      OMETools.setStageLabel(ome, null, new Float(x), new Float(y), null);
+
+      // populate Instrument element
+      String model = (String) TiffTools.getIFDValue(ifd, TiffTools.MODEL);
+      String serialNumber = (String)
+        TiffTools.getIFDValue(ifd, TiffTools.MAKE);
+      OMETools.setInstrument(ome, null, model, serialNumber, null);
     }
     catch (FormatException exc) { exc.printStackTrace(); }
   }

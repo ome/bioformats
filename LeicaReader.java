@@ -567,35 +567,32 @@ public class LeicaReader extends FormatReader {
     }
 
     if (ome != null) {
-      OMETools.setAttribute(ome, "Pixels", "SizeX",
-        metadata.get("Image width").toString());
-      OMETools.setAttribute(ome, "Pixels", "SizeY",
-        metadata.get("Image height").toString());
-      OMETools.setAttribute(ome, "Pixels", "SizeZ",
-        metadata.get("Number of images").toString());
-      OMETools.setAttribute(ome, "Pixels", "SizeT", "1");
-      OMETools.setAttribute(ome, "Pixels", "SizeC", "1");
-      OMETools.setAttribute(ome, "Pixels", "BigEndian",
-        littleEndian ? "false" : "true");
-      OMETools.setAttribute(ome, "Group", "Name", "OME");
-      OMETools.setAttribute(ome, "Image", "CreationDate",
+      Integer sizeX = (Integer) metadata.get("Image width");
+      Integer sizeY = (Integer) metadata.get("Image height");
+      Integer sizeZ = (Integer) metadata.get("Number of images");
+      OMETools.setPixels(ome, sizeX, sizeY, sizeZ,
+        new Integer(1), // SizeC
+        new Integer(1), // SizeT
+        null, // PixelType
+        new Boolean(!littleEndian), // BigEndian
+        "XYZTC"); // DimensionOrder
+
+      OMETools.setCreationDate(ome,
         metadata.get("Timestamp 1").toString().substring(3));
-      OMETools.setAttribute(ome, "Image", "Description",
+      OMETools.setDescription(ome,
         metadata.get("Image Description").toString());
 
-      String voxel = metadata.get("VoxelType").toString();
-      String photoInterp;
-      if (voxel.equals("gray normal")) photoInterp = "monochrome";
-      else if (voxel.equals("RGB")) photoInterp = "RGB";
-      else photoInterp = "monochrome";
-
-      OMETools.setAttribute(ome, "ChannelInfo",
-        "PhotometricInterpretation", photoInterp);
-
-      OMETools.setAttribute(ome, "ChannelInfo", "SamplesPerPixel",
-        metadata.get("Samples per pixel").toString());
-
-      OMETools.setAttribute(ome, "Pixels", "DimensionOrder", "XYZTC");
+//      String voxel = metadata.get("VoxelType").toString();
+//      String photoInterp;
+//      if (voxel.equals("gray normal")) photoInterp = "monochrome";
+//      else if (voxel.equals("RGB")) photoInterp = "RGB";
+//      else photoInterp = "monochrome";
+//
+//      OMETools.setAttribute(ome, "ChannelInfo",
+//        "PhotometricInterpretation", photoInterp);
+//
+//      OMETools.setAttribute(ome, "ChannelInfo", "SamplesPerPixel",
+//        metadata.get("Samples per pixel").toString());
     }
   }
 

@@ -453,24 +453,20 @@ public class AVIReader extends FormatReader {
 
   /** Initialize the OME-XML tree. */
   public void initOMEMetadata() {
-    if (ome != null) {
-      OMETools.setAttribute(ome, "Pixels", "SizeX",
-        "" + metadata.get("Frame width"));
-      OMETools.setAttribute(ome, "Pixels", "SizeY",
-        "" + metadata.get("Frame height"));
-      OMETools.setAttribute(ome, "Pixels", "SizeT",
-        "" + metadata.get("Total frames"));
-      int bps = ((Integer) metadata.get("Bits per pixel")).intValue() / 8;
-      OMETools.setAttribute(ome, "Pixels", "SizeC", "" + bps);
-      OMETools.setAttribute(ome, "Pixels", "SizeZ", "1");
-      OMETools.setAttribute(ome, "Pixels", "BigEndian", "" + !little);
-      int tempBps = bps * 8;
-      bps = tempBps / bps;
+    if (ome == null) return;
 
-      String pixType = "int" + bps;
-      OMETools.setAttribute(ome, "Pixels", "PixelType", pixType);
-      OMETools.setAttribute(ome, "Pixels", "DimensionOrder", "XYTCZ");
-    }
+    int bps = ((Integer) metadata.get("Bits per pixel")).intValue() / 8;
+    int tempBps = bps * 8;
+    String pixType = "int" + (tempBps / bps);
+    OMETools.setPixels(ome,
+      new Integer((String) metadata.get("Frame width")), // SizeX
+      new Integer((String) metadata.get("Frame height")), // SizeY
+      new Integer(1), // SizeZ
+      new Integer(bps), // SizeC
+      new Integer((String) metadata.get("Total frames")), // SizeT
+      pixType, // PixelType
+      new Boolean(!little), // BigEndian
+      "XYTCZ"); // DimensionOrder
   }
 
   /** Unpacks a byte array into a new byte array. */
