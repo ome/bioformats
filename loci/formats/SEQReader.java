@@ -87,8 +87,8 @@ public class SEQReader extends BaseTiffReader {
       (String) TiffTools.getIFDValue(ifds[0], TiffTools.IMAGE_DESCRIPTION);
 
     // default values
-    metadata.put("slices", "1");
-    metadata.put("channels", "1");
+    metadata.put("slices", new Integer(1));
+    metadata.put("channels", new Integer(1));
     metadata.put("frames", new Integer(imageCount));
 
     // parse the description to get channels, slices and times where applicable
@@ -110,12 +110,12 @@ public class SEQReader extends BaseTiffReader {
     if ((ome != null) &&
       ((Integer) metadata.get("Number of images")).intValue() != 1)
     {
-      OMETools.setAttribute(ome, "Pixels", "SizeZ",
-        "" + metadata.get("slices"));
-//      OMETools.setAttribute(ome, "Pixels", "SizeC",
-//        "" + metadata.get("channels"));
-      OMETools.setAttribute(ome, "Pixels", "SizeT",
-        "" + metadata.get("frames"));
+      Integer sizeZ = (Integer) metadata.get("slices");
+//      Integer sizeC = (Integer) metadata.get("channels");
+      Integer sizeT = (Integer) metadata.get("frames");
+
+      OMETools.setPixels(ome, null, null,
+        sizeZ, null, sizeT, null, null, null);
     }
   }
 

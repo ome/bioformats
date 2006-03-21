@@ -173,10 +173,10 @@ public class MetamorphReader extends BaseTiffReader {
     super.initOMEMetadata();
     if (ome != null) {
       try {
-        OMETools.setAttribute(ome, "Pixels", "SizeZ",
-          "" + TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true).length);
+        int sizeZ = TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true).length;
+        OMETools.setSizeZ(ome, sizeZ);
       }
-      catch(FormatException f) { f.printStackTrace(); }
+      catch (FormatException e) { e.printStackTrace(); }
     }
   }
 
@@ -266,7 +266,7 @@ public class MetamorphReader extends BaseTiffReader {
             in.read(toread);
             String name = new String(toread);
             put("Name", name);
-            OMETools.setAttribute(ome, "Image", "Name", name);
+            OMETools.setImageName(ome, name);
             break;
           case 8:
             int thresh = DataTools.read4SignedBytes(in, little);
@@ -294,14 +294,13 @@ public class MetamorphReader extends BaseTiffReader {
           case 15:
             int zoom = DataTools.read4SignedBytes(in, little);
             put("Zoom", zoom);
-            OMETools.setAttribute(ome, "DisplayOptions", "Zoom", "" + zoom);
+//            OMETools.setAttribute(ome, "DisplayOptions", "Zoom", "" + zoom);
             break;
           case 16: // oh how we hate you Julian format...
             thedate = decodeDate(DataTools.read4SignedBytes(in, little));
             thetime = decodeTime(DataTools.read4SignedBytes(in, little));
             put("DateTime", thedate + " " + thetime);
-            OMETools.setAttribute(ome,
-              "Image", "CreationDate", thedate + " " + thetime);
+            OMETools.setCreationDate(ome, thedate + " " + thetime);
             break;
           case 17:
             thedate = decodeDate(DataTools.read4SignedBytes(in, little));

@@ -178,15 +178,15 @@ public class GatanReader extends FormatReader {
         case 23: type = "int32"; break;
       }
 
-      OMETools.setAttribute(ome, "Pixels", "PixelType", type);
-      OMETools.setAttribute(ome, "Pixels", "BigEndian",
-        littleEndian ? "false" : "true");
-      OMETools.setAttribute(ome, "Pixels", "SizeX", "" + dims[0]);
-      OMETools.setAttribute(ome, "Pixels", "SizeY", "" + dims[1]);
-      OMETools.setAttribute(ome, "Pixels", "SizeC", "1");
-      OMETools.setAttribute(ome, "Pixels", "SizeZ", "1");
-      OMETools.setAttribute(ome, "Pixels", "SizeT", "1");
-      OMETools.setAttribute(ome, "Pixels", "DimensionOrder", "XYZTC");
+      OMETools.setPixels(ome,
+        new Integer(dims[0]), // SizeX
+        new Integer(dims[1]), // SizeY
+        new Integer(1), // SizeZ
+        new Integer(1), // SizeC
+        new Integer(1), // SizeT
+        type, // PixelType
+        new Boolean(!littleEndian), // BigEndian
+        "XYZTC"); // DimensionOrder
     }
   }
 

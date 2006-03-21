@@ -151,9 +151,9 @@ public class AndorReader extends BaseTiffReader {
       metadata.put("Image type", imgType);
 
       // clear OME-XML dimension info for Z, C and T axes
-      OMETools.setAttribute(ome, "Pixels", "SizeZ", "1");
-      OMETools.setAttribute(ome, "Pixels", "SizeC", "1");
-      OMETools.setAttribute(ome, "Pixels", "SizeT", "1");
+      OMETools.setSizeZ(ome, 1);
+      OMETools.setSizeC(ome, 1);
+      OMETools.setSizeT(ome, 1);
 
       int sizeC = 1;
 
@@ -192,19 +192,15 @@ public class AndorReader extends BaseTiffReader {
 
         // set OME-XML dimensions appropriately
 
-        if (name.equals("Z")) {
-          OMETools.setAttribute(ome, "Pixels", "SizeZ", "" + size);
-        }
-        else if (name.equals("Time")) {
-          OMETools.setAttribute(ome, "Pixels", "SizeT", "" + size);
-        }
+        if (name.equals("Z")) OMETools.setSizeZ(ome, size);
+        else if (name.equals("Time")) OMETools.setSizeT(ome, size);
         else if (!name.trim().equals("") && !name.equals("x") &&
           !name.equals("y"))
         {
           sizeC *= size;
         }
       }
-      OMETools.setAttribute(ome, "Pixels", "SizeC", "" + sizeC);
+      OMETools.setSizeC(ome, sizeC);
     }
 
     // parse stamp value, a sequence of 8 doubles representing the
@@ -298,7 +294,7 @@ public class AndorReader extends BaseTiffReader {
       else if (order.indexOf("C") < 0) order = order + "C";
     }
 
-    OMETools.setAttribute(ome, "Pixels", "DimensionOrder", order);
+    OMETools.setDimensionOrder(ome, order);
   }
 
 

@@ -399,33 +399,33 @@ public class BioRadReader extends FormatReader {
     metadata.put("luts", colors);
 
     // create and populate OME-XML DOM tree
-    OMETools.setAttribute(ome, "Image", "Name", name);
-    OMETools.setAttribute(ome, "Pixels", "SizeX", "" + nx);
-    OMETools.setAttribute(ome, "Pixels", "SizeY", "" + ny);
-    OMETools.setAttribute(ome, "Pixels", "SizeZ", "" + npic);
-    OMETools.setAttribute(ome, "Pixels", "SizeT", "1");
-    OMETools.setAttribute(ome, "Pixels", "SizeC", "1");
 
+    // populate Image element
+    OMETools.setImage(ome, name, null, null);
+
+    // populate Pixels element
     int type = DataTools.bytesToInt(header, 14, 2, LITTLE_ENDIAN);
     String fmt;
     if (type == 1) fmt = "Uint8";
     else fmt = "Uint16";
+    OMETools.setPixels(ome,
+      new Integer(nx), // SizeX
+      new Integer(ny), // SizeY
+      new Integer(npic), // SizeZ
+      new Integer(1), // SizeC
+      new Integer(1), // SizeT
+      fmt, // PixelType
+      null, // BigEndian
+      null); // DimensionOrder
 
-    OMETools.setAttribute(ome, "Image", "PixelType", fmt);
-
+    // populate Dimensions element
     int size = pixelSize.size();
-    if (size >= 1) {
-      OMETools.setAttribute(ome, "Dimensions", "PixelSizeX",
-        (String) pixelSize.get(0));
-    }
-    if (size >= 2) {
-      OMETools.setAttribute(ome, "Dimensions", "PixelSizeY",
-        (String) pixelSize.get(1));
-    }
-    if (size >= 3) {
-      OMETools.setAttribute(ome, "Dimensions", "PixelSizeZ",
-        (String) pixelSize.get(2));
-    }
+    Float pixelSizeX = null, pixelSizeY = null, pixelSizeZ = null;
+    if (size >= 1) pixelSizeX = new Float((String) pixelSize.get(0));
+    if (size >= 2) pixelSizeY = new Float((String) pixelSize.get(1));
+    if (size >= 3) pixelSizeZ = new Float((String) pixelSize.get(2));
+    OMETools.setDimensions(ome,
+      pixelSizeX, pixelSizeY, pixelSizeZ, null, null);
   }
 
   public String noteString(int n, int l, int s, int t, int x, int y, String p)

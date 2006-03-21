@@ -69,7 +69,7 @@ public class ZeissZVIReader extends FormatReader {
   private LegacyZVIReader legacy = new LegacyZVIReader();
 
   /** Flag indicating the current file requires the legacy ZVI reader. */
-  private boolean needLegacy = true;
+  private boolean needLegacy = false;
 
   private Hashtable pixelData = new Hashtable();
   private Hashtable headerData = new Hashtable();
@@ -319,17 +319,7 @@ public class ZeissZVIReader extends FormatReader {
       new Integer(DataTools.bytesToInt(header, pt, 4, true)));
     pt += 6;
 
-    ome = OMETools.createRoot();
     if (ome != null) {
-      OMETools.setAttribute(ome, "Pixels", "SizeX", "" +
-        ((Integer) metadata.get("ImageWidth")).intValue());
-      OMETools.setAttribute(ome, "Pixels", "SizeY", "" +
-      ((Integer) metadata.get("ImageHeight")).intValue());
-      OMETools.setAttribute(ome, "Pixels", "SizeZ", "1");
-      OMETools.setAttribute(ome, "Pixels", "SizeC", "1");
-      OMETools.setAttribute(ome, "Pixels", "SizeT", "" + nImages);
-      OMETools.setAttribute(ome, "Pixels", "DimensionOrder", "XYZTC");
-
       String type;
       switch (pixel) {
         case 1: type = "Uint8"; break;
@@ -344,8 +334,17 @@ public class ZeissZVIReader extends FormatReader {
         default: type = "Uint8";
       }
 
-      OMETools.setAttribute(ome, "Pixels", "PixelType", type);
-      OMETools.setAttribute(ome, "Image", "Name", currentId);
+      Integer sizeX = (Integer) metadata.get("ImageWidth");
+      Integer sizeY = (Integer) metadata.get("ImageHeight");
+      OMETools.setPixels(ome, sizeX, sizeY,
+        new Integer(1), // SizeZ
+        new Integer(1), // SizeC
+        new Integer(nImages), // SizeT
+        type, // PixelType
+        null, // BigEndian
+        "XYZTC"); // DimensionOrder
+
+      OMETools.setImageName(ome, currentId);
     }
 
     // parse the "tags" byte array
@@ -462,17 +461,17 @@ public class ZeissZVIReader extends FormatReader {
           case 222: metadata.put("Compression", data); break;
           case 258:
             metadata.put("BlackValue", data);
-            if (ome != null) {
-              OMETools.setAttribute(ome,
-                "Grey Channel", "BlackLevel", "" + data);
-            }
+//            if (ome != null) {
+//              OMETools.setAttribute(ome,
+//                "Grey Channel", "BlackLevel", "" + data);
+//            }
             break;
           case 259:
             metadata.put("WhiteValue", data);
-            if (ome != null) {
-              OMETools.setAttribute(ome,
-                "Grey Channel", "WhiteLevel", "" + data);
-            }
+//            if (ome != null) {
+//              OMETools.setAttribute(ome,
+//                "Grey Channel", "WhiteLevel", "" + data);
+//            }
             break;
           case 260:
             metadata.put("ImageDataMappingAutoRange", data);
@@ -482,10 +481,10 @@ public class ZeissZVIReader extends FormatReader {
             break;
           case 262:
             metadata.put("GammaValue", data);
-            if (ome != null) {
-              OMETools.setAttribute(ome,
-                "Grey Channel", "GammaLevel", "" + data);
-            }
+//            if (ome != null) {
+//              OMETools.setAttribute(ome,
+//                "Grey Channel", "GammaLevel", "" + data);
+//            }
             break;
           case 264: metadata.put("ImageOverExposure", data); break;
           case 265: metadata.put("ImageRelativeTime1", data); break;
@@ -513,9 +512,7 @@ public class ZeissZVIReader extends FormatReader {
           case 778: metadata.put("Scaling Parent", data); break;
           case 1001:
             metadata.put("Date", data);
-            if (ome != null) {
-              OMETools.setAttribute(ome, "Image", "CreationDate", "" + data);
-            }
+            if (ome != null) OMETools.setCreationDate(ome, data.toString());
             break;
           case 1002: metadata.put("code", data); break;
           case 1003: metadata.put("Source", data); break;
@@ -537,10 +534,10 @@ public class ZeissZVIReader extends FormatReader {
           case 1046: metadata.put("GrabberTimeout", data); break;
           case 1281:
             metadata.put("MultiChannelEnabled", data);
-            if ((((Integer) data).intValue() == 1) && (ome != null)) {
-              OMETools.setAttribute(ome, "Pixels", "SizeC", "" + nImages);
-              OMETools.setAttribute(ome, "Pixels", "SizeT", "1");
-              OMETools.setAttribute(ome, "Pixels", "DimensionOrder", "XYCZT");
+            if (((Integer) data).intValue() == 1 && ome != null) {
+              OMETools.setSizeC(ome, nImages);
+              OMETools.setSizeT(ome, 1);
+              OMETools.setDimensionOrder(ome, "XYCZT");
             }
             break;
           case 1282: metadata.put("MultiChannel Color", data); break;
@@ -549,25 +546,28 @@ public class ZeissZVIReader extends FormatReader {
           case 1536: metadata.put("DocumentInformationGroup", data); break;
           case 1537:
             metadata.put("Title", data);
-            if (ome != null) {
-              OMETools.setAttribute(ome, "Image", "Name", "" + data);
-            }
+            if (ome != null) OMETools.setImageName(ome, data.toString());
             break;
           case 1538:
             metadata.put("Author", data);
             if (ome != null) {
-              OMETools.setAttribute(ome,
-                "Experimenter", "LastName", "" + data);
-              OMETools.setAttribute(ome,
-                "Experimenter", "FirstName", "" + data);
+              // populate Experimenter element
+              String name = data.toString();
+              String firstName = null, lastName = null;
+              int ndx = name.indexOf(" ");
+              if (ndx < 0) lastName = name;
+              else {
+                firstName = name.substring(0, ndx);
+                lastName = name.substring(ndx + 1);
+              }
+              OMETools.setExperimenter(ome,
+                firstName, lastName, null, null, null, null);
             }
             break;
           case 1539: metadata.put("Keywords", data); break;
           case 1540:
             metadata.put("Comments", data);
-            if (ome != null) {
-              OMETools.setAttribute(ome, "Image", "Description", "" + data);
-            }
+            if (ome != null) OMETools.setDescription(ome, data.toString());
             break;
           case 1541: metadata.put("SampleID", data); break;
           case 1542: metadata.put("Subject", data); break;
@@ -584,7 +584,7 @@ public class ZeissZVIReader extends FormatReader {
           case 1792:
             metadata.put("ProjectGroup", data);
             if (ome != null) {
-              OMETools.setAttribute(ome, "Group", "Name", "" + data);
+              OMETools.setGroup(ome, data.toString(), null, null);
             }
             break;
           case 1793: metadata.put("Acquisition Date", data); break;
@@ -624,20 +624,20 @@ public class ZeissZVIReader extends FormatReader {
           case 2073:
             metadata.put("Stage Position X", data);
             if (ome != null) {
-              OMETools.setAttribute(ome, "StageLabel", "X", "" + data);
+              OMETools.setStageX(ome, Integer.parseInt(data.toString()));
             }
             break;
           case 2074:
             metadata.put("Stage Position Y", data);
             if (ome != null) {
-              OMETools.setAttribute(ome, "StageLabel", "Y", "" + data);
+              OMETools.setStageY(ome, Integer.parseInt(data.toString()));
             }
             break;
           case 2075:
             metadata.put("Microscope Name", data);
-            if (ome != null) {
-              OMETools.setAttribute(ome, "Microscope", "Name", "" + data);
-            }
+//            if (ome != null) {
+//              OMETools.setAttribute(ome, "Microscope", "Name", "" + data);
+//            }
             break;
           case 2076: metadata.put("Objective Magnification", data); break;
           case 2077: metadata.put("Objective N.A.", data); break;
@@ -713,9 +713,9 @@ public class ZeissZVIReader extends FormatReader {
           case 2149: metadata.put("FocusDepth", data); break;
           case 2150:
             metadata.put("MicroscopeType", data);
-            if (ome != null) {
-              OMETools.setAttribute(ome, "Microscope", "Type", "" + data);
-            }
+//            if (ome != null) {
+//              OMETools.setAttribute(ome, "Microscope", "Type", "" + data);
+//            }
             break;
           case 2151: metadata.put("Objective Working Distance", data); break;
           case 2152:
@@ -769,9 +769,10 @@ public class ZeissZVIReader extends FormatReader {
           case 2184: metadata.put("Dazzle Protection Active", data); break;
           case 2195:
             metadata.put("Zoom", data);
-            if (ome != null) {
-              OMETools.setAttribute(ome, "DisplayOptions", "Zoom", "" + data);
-            }
+//            if (ome != null) {
+//              OMETools.setAttribute(ome,
+//                "DisplayOptions", "Zoom", "" + data);
+//            }
             break;
           case 2196: metadata.put("ZoomGoSpeed", data); break;
           case 2197: metadata.put("LightZoom", data); break;

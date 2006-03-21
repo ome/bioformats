@@ -281,13 +281,15 @@ public class LegacyZVIReader extends FormatReader {
       // initialize the OME-XML tree
 
       if (ome != null) {
-        OMETools.setAttribute(ome, "Pixels", "SizeX", "" + width);
-        OMETools.setAttribute(ome, "Pixels", "SizeY", "" + height);
-        OMETools.setAttribute(ome, "Pixels", "SizeZ", "" + numZ);
-        OMETools.setAttribute(ome, "Pixels", "SizeT", "" + numT);
-        OMETools.setAttribute(ome, "Pixels", "SizeC", "" + numC);
-        OMETools.setAttribute(ome, "Pixels", "BigEndian", "false");
-        // TODO -- add pixel type
+        OMETools.setPixels(ome,
+          new Integer(width), // SizeX
+          new Integer(height), // SizeY
+          new Integer(numZ), // SizeZ
+          new Integer(numC), // SizeC
+          new Integer(numT), // SizeT
+          null, // PixelType
+          Boolean.FALSE, // BigEndian
+          null); // DimensionOrder
       }
     }
 
