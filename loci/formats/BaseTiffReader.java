@@ -356,17 +356,19 @@ public abstract class BaseTiffReader extends FormatReader {
 
       // populate Experimenter element
       String artist = (String) TiffTools.getIFDValue(ifd, TiffTools.ARTIST);
-      String firstName = null, lastName = null;
-      int ndx = artist.indexOf(" ");
-      if (ndx < 0) lastName = artist;
-      else {
-        firstName = artist.substring(0, ndx);
-        lastName = artist.substring(ndx + 1);
+      if (artist != null) {
+        String firstName = null, lastName = null;
+        int ndx = artist.indexOf(" ");
+        if (ndx < 0) lastName = artist;
+        else {
+          firstName = artist.substring(0, ndx);
+          lastName = artist.substring(ndx + 1);
+        }
+        String email = (String)
+          TiffTools.getIFDValue(ifd, TiffTools.HOST_COMPUTER);
+        OMETools.setExperimenter(ome,
+          firstName, lastName, email, null, null, null);
       }
-      String email = (String)
-        TiffTools.getIFDValue(ifd, TiffTools.HOST_COMPUTER);
-      OMETools.setExperimenter(ome,
-        firstName, lastName, email, null, null, null);
 
       // populate Image element
       String creationDate = (String)

@@ -553,15 +553,17 @@ public class ZeissZVIReader extends FormatReader {
             if (ome != null) {
               // populate Experimenter element
               String name = data.toString();
-              String firstName = null, lastName = null;
-              int ndx = name.indexOf(" ");
-              if (ndx < 0) lastName = name;
-              else {
-                firstName = name.substring(0, ndx);
-                lastName = name.substring(ndx + 1);
+              if (name != null) {
+                String firstName = null, lastName = null;
+                int ndx = name.indexOf(" ");
+                if (ndx < 0) lastName = name;
+                else {
+                  firstName = name.substring(0, ndx);
+                  lastName = name.substring(ndx + 1);
+                }
+                OMETools.setExperimenter(ome,
+                  firstName, lastName, null, null, null, null);
               }
-              OMETools.setExperimenter(ome,
-                firstName, lastName, null, null, null, null);
             }
             break;
           case 1539: metadata.put("Keywords", data); break;
