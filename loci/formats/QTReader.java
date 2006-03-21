@@ -26,7 +26,9 @@ package loci.formats;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.io.ByteArrayInputStream;
 import java.util.Vector;
+import javax.imageio.ImageIO;
 
 /**
  * QTReader is the file format reader for QuickTime movie files.
@@ -115,7 +117,9 @@ public class QTReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-    if (!codec.equals("raw ") && !codec.equals("rle ")) {
+    if (!codec.equals("raw ") && !codec.equals("rle ") &&
+      !codec.equals("jpeg"))
+    {
       if (legacy == null) legacy = new LegacyQTReader();
       return legacy.open(id, no);
     }
@@ -325,8 +329,32 @@ public class QTReader extends FormatReader {
   {
     if (code.equals("raw ")) return pixs;
     else if (code.equals("rle ")) return rleUncompress(pixs);
+    else if (code.equals("jpeg")) return jpegUncompress(pixs);
     else {
       throw new FormatException("Sorry, " + codec + " codec is not supported");
+    }
+  }
+
+  /** Uncompresses a JPEG compressed image plane. */
+  public byte[] jpegUncompress(byte[] input) throws FormatException {
+    // too lazy to write native JPEG support, so use ImageIO
+
+    try {
+      BufferedImage img = ImageIO.read(new ByteArrayInputStream(input));
+
+      byte[][] bytes = ImageTools.getBytes(img);
+
+      byte[] output = new byte[bytes.length * bytes[0].length];
+
+      for (int i=0; i<bytes[0].length; i++) {
+        for (int j=0; j<bytes.length; j++) {
+          output[bytes.length*i + j] = bytes[j][i];
+        }
+      }
+      return output;
+    }
+    catch (IOException e) {
+      throw new FormatException("Invalid JPEG stream");
     }
   }
 
