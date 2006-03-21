@@ -100,7 +100,7 @@ public abstract class OMETools {
       R.setVar("image", image);
 
       R.exec("image.setName(name)");
-      R.exec("image.setCreationDate(creationDate)");
+      R.exec("image.setCreated(creationDate)");
       R.exec("image.setDescription(description)");
     }
     catch (ReflectException exc) { exc.printStackTrace(); }
@@ -445,28 +445,69 @@ public abstract class OMETools {
       null, null, dimensionOrder);
   }
 
-  /** Sets the first OME/Image/CA/StageLabel element's Name attribute. */
+  /** Populates the first OME/Image/CA/StageLabel element's Name attribute. */
   public static Object setStageName(Object root, String name) {
     return setStageLabel(root, name, null, null, null);
   }
 
-  /** Sets the first OME/Image/CA/StageLabel element's X attribute. */
+  /** Populates the first OME/Image/CA/StageLabel element's X attribute. */
   public static Object setStageX(Object root, float x) {
     return setStageLabel(root, null, new Float(x), null, null);
   }
 
-  /** Sets the first OME/Image/CA/StageLabel element's Y attribute. */
+  /** Populates the first OME/Image/CA/StageLabel element's Y attribute. */
   public static Object setStageY(Object root, float y) {
     return setStageLabel(root, null, null, new Float(y), null);
   }
 
-  /** Sets the first OME/Image/CA/StageLabel element's Z attribute. */
+  /** Populates the first OME/Image/CA/StageLabel element's Z attribute. */
   public static Object setStageZ(Object root, float z) {
     return setStageLabel(root, null, null, null, new Float(z));
   }
 
 
   // -- OMETools API methods - individual attribute retrieval --
+
+
+  /** Gets the first OME/Image element's Name attribute. */
+  public static String getImageName(Object root) {
+    return getAttribute(root, "Image", "Name");
+  }
+
+  /** Gets the first OME/Image element's CreationDate attribute. */
+  public static String getCreationDate(Object root) {
+    return getAttribute(root, "Image", "CreationDate");
+  }
+
+  /** Gets the first OME/Image element's Description attribute. */
+  public static String getDescription(Object root, String description) {
+    return getAttribute(root, "Image", "Description");
+  }
+
+  /** Gets the first OME/Image/CA/Dimensions element's PixelSizeX attribute. */
+  public static Float getPixelSizeX(Object root) {
+    return new Float(getAttribute(root, "Dimensions", "PixelSizeT"));
+  }
+
+  /** Gets the first OME/Image/CA/Dimensions element's PixelSizeY attribute. */
+  public static Float getPixelSizeY(Object root) {
+    return new Float(getAttribute(root, "Dimensions", "PixelSizeT"));
+  }
+
+  /** Gets the first OME/Image/CA/Dimensions element's PixelSizeZ attribute. */
+  public static Float getPixelSizeZ(Object root) {
+    return new Float(getAttribute(root, "Dimensions", "PixelSizeT"));
+  }
+
+  /** Gets the first OME/Image/CA/Dimensions element's PixelSizeC attribute. */
+  public static Float getPixelSizeC(Object root) {
+    return new Float(getAttribute(root, "Dimensions", "PixelSizeT"));
+  }
+
+  /** Gets the first OME/Image/CA/Dimensions element's PixelSizeT attribute. */
+  public static Float setPixelSizeT(Object root) {
+    return new Float(getAttribute(root, "Dimensions", "PixelSizeT"));
+  }
 
   /** Gets the first OME/Image/CA/Pixels element's SizeX attribute. */
   public static Integer getSizeX(Object root) {
@@ -510,6 +551,27 @@ public abstract class OMETools {
   public static String getDimensionOrder(Object root) {
     return getAttribute(root, "Pixels", "DimensionOrder");
   }
+
+  /** Gets the first OME/Image/CA/StageLabel element's Name attribute. */
+  public static String getStageName(Object root, String name) {
+    return getAttribute(root, "StageLabel", "Name");
+  }
+
+  /** Gets the first OME/Image/CA/StageLabel element's X attribute. */
+  public static Float getStageX(Object root) {
+    return new Float(getAttribute(root, "StageLabel", "X"));
+  }
+
+  /** Gets the first OME/Image/CA/StageLabel element's Y attribute. */
+  public static Float getStageY(Object root) {
+    return new Float(getAttribute(root, "StageLabel", "Y"));
+  }
+
+  /** Gets the first OME/Image/CA/StageLabel element's Z attribute. */
+  public static Float getStageZ(Object root) {
+    return new Float(getAttribute(root, "StageLabel", "Z"));
+  }
+
 
 
   // -- Helper methods --
