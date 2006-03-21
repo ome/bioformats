@@ -1,6 +1,6 @@
 // LeicaConverter.java
 
-// Coded 2006 Mar 3-4 by Curtis Rueden, for Julie Simpson.
+// Coded 2006 Mar 3-4, 21 by Curtis Rueden, for Julie Simpson.
 // Permission is granted to use this code for anything.
 
 import java.awt.Image;
@@ -29,6 +29,7 @@ public class LeicaConverter extends JFrame
   private JRadioButton rgb, leica;
   private JProgressBar progress;
   private JButton convert;
+  private boolean programQuit;
 
   public LeicaConverter() {
     super("Leica Converter");
@@ -45,7 +46,7 @@ public class LeicaConverter extends JFrame
     pane.add(row1);
 
     JLabel inputLabel = new JLabel("Input file(s)");
-    input = new JTextField("/home/curtis/data/leica/julie/biorad/8291mcd8_raw0<1-2>.pic");//TEMP
+    input = new JTextField();
     input.setColumns(25);
     input.setMaximumSize(
       new Dimension(Integer.MAX_VALUE, input.getPreferredSize().height));
@@ -65,7 +66,7 @@ public class LeicaConverter extends JFrame
     pane.add(row2);
 
     JLabel outputLabel = new JLabel("Output file");
-    output = new JTextField("/home/curtis/Desktop/test.tif");//TEMP
+    output = new JTextField();
     output.setColumns(25);
     output.setMaximumSize(
       new Dimension(Integer.MAX_VALUE, output.getPreferredSize().height));
@@ -152,8 +153,10 @@ public class LeicaConverter extends JFrame
       new Thread(this).start();
     }
     else if ("quit".equals(cmd)) {
-      setVisible(false);
-      dispose();
+      programQuit = true;
+      new Thread() {
+        public void run() { dispose(); }
+      }.start();
     }
   }
 
@@ -186,9 +189,9 @@ public class LeicaConverter extends JFrame
           int q2 = (i + np2) / planesPerFile;
           int c2 = (i + np2) % planesPerFile;
           progress.setString(i + "/" + np2);
-          BufferedImage ig = ImageTools.makeImage(reader.open(in[q1], c1));
+          BufferedImage ig = reader.open(in[q1], c1);
           progress.setValue(3 * i + 1);
-          BufferedImage ir = ImageTools.makeImage(reader2.open(in[q2], c2));
+          BufferedImage ir = reader2.open(in[q2], c2);
           progress.setValue(3 * i + 2);
           int width = ig.getWidth(), height = ig.getHeight();
           if (data == null || data[0].length != width * height) {
@@ -204,7 +207,8 @@ public class LeicaConverter extends JFrame
             }
           }
           BufferedImage img = ImageTools.makeImage(data, width, height);
-          writer.save(out, img, i == np2 - 1);
+          writer.save(out, img, programQuit || i == np2 - 1);
+          if (programQuit) break;
         }
         progress.setValue(3 * np2);
       }
@@ -236,20 +240,31 @@ public class LeicaConverter extends JFrame
             sb.append(NL);
             sb.append("SamplesPerPixel=1");
             sb.append(NL);
-            // TODO - get these from Bio-Rad PIC notes AXIS_2, AXIS_3, AXIS_4
-            // but Bio-Rad reader should put these into PixelSizeX, Y and Z
-            // so that this software does not need special Bio-Rad logic
-            sb.append("VoxelSizeX=");
-            sb.append(NL);
-            sb.append("VoxelSizeY=");
-            sb.append(NL);
-            sb.append("VoxelSizeZ=");
-            sb.append(NL);
+            Object ome = reader.getOMENode(in[q]);
+            Float pixelSizeX = OMETools.getPixelSizeX(ome);
+            if (pixelSizeX != null) {
+              sb.append("VoxelSizeX=");
+              sb.append(pixelSizeX);
+              sb.append(NL);
+            }
+            Float pixelSizeY = OMETools.getPixelSizeY(ome);
+            if (pixelSizeY != null) {
+              sb.append("VoxelSizeY=");
+              sb.append(pixelSizeY);
+              sb.append(NL);
+            }
+            Float pixelSizeZ = OMETools.getPixelSizeZ(ome);
+            if (pixelSizeZ != null) {
+              sb.append("VoxelSizeZ=");
+              sb.append(pixelSizeZ);
+              sb.append(NL);
+            }
             TiffTools.putIFDValue(ifd,
               TiffTools.IMAGE_DESCRIPTION, sb.toString());
           }
           progress.setValue(2 * i + 1);
-          writer.saveImage(out, img, ifd, i == numPlanes - 1);
+          writer.saveImage(out, img, ifd, programQuit || i == numPlanes - 1);
+          if (programQuit) break;
         }
         progress.setValue(2 * numPlanes);
       }
@@ -257,8 +272,10 @@ public class LeicaConverter extends JFrame
       reader2.close();
     }
     catch (Exception exc) {
+      String err = exc.getMessage();
+      if (err == null) err = exc.getClass().getName();
       JOptionPane.showMessageDialog(this, "Sorry, an error occurred: " +
-        exc.getMessage(), "Leica Converter", JOptionPane.ERROR_MESSAGE);
+        err, "Leica Converter", JOptionPane.ERROR_MESSAGE);
     }
     progress.setString("");
     progress.setValue(0);
