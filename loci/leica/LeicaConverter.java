@@ -199,13 +199,15 @@ public class LeicaConverter extends JFrame
           if (data == null || data[0].length != width * height) {
             data = new byte[3][width * height];
           }
+          int[] rpix = ir.getRaster().getSamples(0, 0,
+            width, height, 0, (int[]) null);
+          int[] gpix = ig.getRaster().getSamples(0, 0,
+            width, height, 0, (int[]) null);
           for (int y=0; y<height; y++) {
             for (int x=0; x<width; x++) {
               int q = y * width + x;
-              int r = ir.getRGB(x, y) % 256;
-              int g = ig.getRGB(x, y) % 256;
-              data[0][q] = (byte) r;
-              data[1][q] = (byte) g;
+              data[0][q] = (byte) rpix[q];
+              data[1][q] = (byte) gpix[q];
             }
           }
           BufferedImage img = ImageTools.makeImage(data, width, height);
@@ -274,6 +276,7 @@ public class LeicaConverter extends JFrame
       reader2.close();
     }
     catch (Exception exc) {
+      exc.printStackTrace();
       String err = exc.getMessage();
       if (err == null) err = exc.getClass().getName();
       JOptionPane.showMessageDialog(this, "Sorry, an error occurred: " +
