@@ -3,7 +3,6 @@ LOCI Bio-Formats things to do (either Melissa or Curtis):
 QuickTime:
 * jpeg codec
 * mjpb codec
-* rle codec
 * svq3 codec (lower priority)
 
 Implement readers for other file formats:
