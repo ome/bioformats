@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# build: a script for building the LeicaConverter JAR file
+
+cd ../..
+
+echo Building LeicaConverter.jar...
+cp loci/leica/leica.manifest .
+jar cfm loci/leica/LeicaConverter.jar \
+leica.manifest loci/leica/*.class \
+loci/leica/*.java loci/leica/build \
+loci/formats/*.class loci/formats/*.txt \
+loci/ome/xml/*.class loci/ome/xml/st/*.class loci/ome/xml/*.xslt \
+loci/formats/*.java loci/formats/test loci/formats/build \
+loci/formats/plugins.config loci/formats/formats.manifest \
+loci/ome/xml/*.java loci/ome/xml/st/*.java loci/ome/xml/build
+rm leica.manifest
+
+cd loci/leica
+ls -l LeicaConverter.jar
