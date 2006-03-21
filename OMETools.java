@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import org.w3c.dom.Element;
+
 /**
  * A utility class for constructing and manipulating OME-XML DOMs. It uses
  * reflection to access the loci.ome.xml package so that the class compiles
@@ -41,6 +43,7 @@ public abstract class OMETools {
     ReflectedUniverse r = new ReflectedUniverse();
     try {
       r.exec("import loci.ome.xml.CustomAttributesNode");
+      r.exec("import loci.ome.xml.DOMUtil");
       r.exec("import loci.ome.xml.ImageNode");
       r.exec("import loci.ome.xml.OMENode");
       r.exec("import loci.ome.xml.OMEXMLNode");
@@ -486,52 +489,62 @@ public abstract class OMETools {
 
   /** Gets the first OME/Image/CA/Dimensions element's PixelSizeX attribute. */
   public static Float getPixelSizeX(Object root) {
-    return new Float(getAttribute(root, "Dimensions", "PixelSizeT"));
+    String pixelSizeX = getAttribute(root, "Dimensions", "PixelSizeX");
+    return pixelSizeX == null ? null : new Float(pixelSizeX);
   }
 
   /** Gets the first OME/Image/CA/Dimensions element's PixelSizeY attribute. */
   public static Float getPixelSizeY(Object root) {
-    return new Float(getAttribute(root, "Dimensions", "PixelSizeT"));
+    String pixelSizeY = getAttribute(root, "Dimensions", "PixelSizeY");
+    return pixelSizeY == null ? null : new Float(pixelSizeY);
   }
 
   /** Gets the first OME/Image/CA/Dimensions element's PixelSizeZ attribute. */
   public static Float getPixelSizeZ(Object root) {
-    return new Float(getAttribute(root, "Dimensions", "PixelSizeT"));
+    String pixelSizeZ = getAttribute(root, "Dimensions", "PixelSizeZ");
+    return pixelSizeZ == null ? null : new Float(pixelSizeZ);
   }
 
   /** Gets the first OME/Image/CA/Dimensions element's PixelSizeC attribute. */
   public static Float getPixelSizeC(Object root) {
-    return new Float(getAttribute(root, "Dimensions", "PixelSizeT"));
+    String pixelSizeC = getAttribute(root, "Dimensions", "PixelSizeC");
+    return pixelSizeC == null ? null : new Float(pixelSizeC);
   }
 
   /** Gets the first OME/Image/CA/Dimensions element's PixelSizeT attribute. */
-  public static Float setPixelSizeT(Object root) {
-    return new Float(getAttribute(root, "Dimensions", "PixelSizeT"));
+  public static Float getPixelSizeT(Object root) {
+    String pixelSizeT = getAttribute(root, "Dimensions", "PixelSizeT");
+    return pixelSizeT == null ? null : new Float(pixelSizeT);
   }
 
   /** Gets the first OME/Image/CA/Pixels element's SizeX attribute. */
   public static Integer getSizeX(Object root) {
-    return new Integer(getAttribute(root, "Pixels", "SizeX"));
+    String sizeX = getAttribute(root, "Pixels", "SizeX");
+    return sizeX == null ? null : new Integer(sizeX);
   }
 
   /** Gets the first OME/Image/CA/Pixels element's SizeY attribute. */
   public static Integer getSizeY(Object root) {
-    return new Integer(getAttribute(root, "Pixels", "SizeY"));
+    String sizeY = getAttribute(root, "Pixels", "SizeY");
+    return sizeY == null ? null : new Integer(sizeY);
   }
 
   /** Gets the first OME/Image/CA/Pixels element's SizeZ attribute. */
   public static Integer getSizeZ(Object root) {
-    return new Integer(getAttribute(root, "Pixels", "SizeZ"));
+    String sizeZ = getAttribute(root, "Pixels", "SizeZ");
+    return sizeZ == null ? null : new Integer(sizeZ);
   }
 
   /** Gets the first OME/Image/CA/Pixels element's SizeC attribute. */
   public static Integer getSizeC(Object root) {
-    return new Integer(getAttribute(root, "Pixels", "SizeC"));
+    String sizeC = getAttribute(root, "Pixels", "SizeC");
+    return sizeC == null ? null : new Integer(sizeC);
   }
 
   /** Gets the first OME/Image/CA/Pixels element's SizeT attribute. */
   public static Integer getSizeT(Object root) {
-    return new Integer(getAttribute(root, "Pixels", "SizeT"));
+    String sizeT = getAttribute(root, "Pixels", "SizeT");
+    return sizeT == null ? null : new Integer(sizeT);
   }
 
   /** Gets the first OME/Image/CA/Pixels element's PixelType attribute. */
@@ -541,8 +554,9 @@ public abstract class OMETools {
 
   /** Gets the first OME/Image/CA/Pixels element's BigEndian attribute. */
   public static Boolean getBigEndian(Object root) {
-    return new Boolean(getAttribute(root,
-      "Pixels", "BigEndian").equalsIgnoreCase("true"));
+    String bigEndian = getAttribute(root, "Pixels", "BigEndian");
+    return bigEndian == null ? null :
+      new Boolean(bigEndian.equalsIgnoreCase("true"));
   }
 
   /**
@@ -559,19 +573,21 @@ public abstract class OMETools {
 
   /** Gets the first OME/Image/CA/StageLabel element's X attribute. */
   public static Float getStageX(Object root) {
-    return new Float(getAttribute(root, "StageLabel", "X"));
+    String stageX = getAttribute(root, "StageLabel", "X");
+    return stageX == null ? null : new Float(stageX);
   }
 
   /** Gets the first OME/Image/CA/StageLabel element's Y attribute. */
   public static Float getStageY(Object root) {
-    return new Float(getAttribute(root, "StageLabel", "Y"));
+    String stageY = getAttribute(root, "StageLabel", "Y");
+    return stageY == null ? null : new Float(stageY);
   }
 
   /** Gets the first OME/Image/CA/StageLabel element's Z attribute. */
   public static Float getStageZ(Object root) {
-    return new Float(getAttribute(root, "StageLabel", "Z"));
+    String stageZ = getAttribute(root, "StageLabel", "Z");
+    return stageZ == null ? null : new Float(stageZ);
   }
-
 
 
   // -- Helper methods --
@@ -622,8 +638,8 @@ public abstract class OMETools {
     if (R == null || root == null || name == null) return null;
     R.setVar("root", root);
     R.setVar("name", name);
-    R.exec("rel = root.getDOMElement()");
-    R.exec("doc = rel.getOwnerDocument()");
+    Element rel = (Element) R.exec("root.getDOMElement()");
+    R.setVar("doc", rel.getOwnerDocument());
     R.exec("el = DOMUtil.findElement(name, doc)");
     return R.exec("OMEXMLNode.createNode(el)");
   }
