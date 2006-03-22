@@ -459,11 +459,11 @@ public class AVIReader extends FormatReader {
     int tempBps = bps * 8;
     String pixType = "int" + (tempBps / bps);
     OMETools.setPixels(ome,
-      new Integer((String) metadata.get("Frame width")), // SizeX
-      new Integer((String) metadata.get("Frame height")), // SizeY
+      (Integer) metadata.get("Frame width"), // SizeX
+      (Integer) metadata.get("Frame height"), // SizeY
       new Integer(1), // SizeZ
       new Integer(bps), // SizeC
-      new Integer((String) metadata.get("Total frames")), // SizeT
+      (Integer) metadata.get("Total frames"), // SizeT
       pixType, // PixelType
       new Boolean(!little), // BigEndian
       "XYTCZ"); // DimensionOrder

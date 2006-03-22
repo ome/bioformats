@@ -119,9 +119,11 @@ public class IPWReader extends BaseTiffReader {
   /** Initializes the given IPW file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (noPOI) throw new FormatException(NO_POI_MSG);
-    super.initFile(id);
+    currentId = id;
     in = new RandomAccessFile(id, "r");
-
+    metadata = new Hashtable();
+    ome = OMETools.createRoot();
+    
     allIFDs = new Hashtable();
     numImages = 0;
     ra = new RandomAccessArray(id, "r");

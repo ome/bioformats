@@ -322,9 +322,9 @@ public class DeltavisionReader extends FormatReader {
     int numTitles = DataTools.bytesToInt(header, 220, 4, little);
 
     if (ome != null) {
-      Float x = new Float((String) metadata.get("X origin (in um)"));
-      Float y = new Float((String) metadata.get("Y origin (in um)"));
-      Float z = new Float((String) metadata.get("Z origin (in um)"));
+      Float x = (Float) metadata.get("X origin (in um)");
+      Float y = (Float) metadata.get("Y origin (in um)");
+      Float z = (Float) metadata.get("Z origin (in um)");
       OMETools.setStageLabel(ome, null, x, y, z);
     }
 
