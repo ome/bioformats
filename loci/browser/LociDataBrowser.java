@@ -44,6 +44,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.FlowLayout;
 import java.awt.Insets;
 
 import java.awt.event.ActionEvent;
@@ -166,6 +167,7 @@ public class LociDataBrowser implements PlugIn {
       hasTP = false;
       hasZ = true;
       hasTrans = false;
+      firstPrefix = list[0].substring(0,list[0].indexOf('.'));
     }
     else if (prefixes.length > 0) {
 
@@ -173,7 +175,8 @@ public class LociDataBrowser implements PlugIn {
         System.err.println("Prefixes["+i+"] = "+prefixes[i]);
         prefixes[i]=prefixes[i].replaceAll("\\d+$", "");
       }
-
+      
+      
       firstPrefix = prefixes[0];
       System.err.println(firstPrefix);
       for (int i=0; i<prefixes.length; i++) {
@@ -223,6 +226,7 @@ public class LociDataBrowser implements PlugIn {
       if (idxZ != -1) listZ = indices[idxZ];
 
       if (DEBUG) {
+	  System.err.println("All indices:");
         for (int i=0; i<prefixes.length; i++) {
           for (int j=0; j<list.length; j++) {
             System.err.print(indices[i][j] + " ");
@@ -292,8 +296,11 @@ public class LociDataBrowser implements PlugIn {
             description = fi.description;
             d = description;
             imp.setFileInfo(fi);
-            cb4tp = list[0].indexOf("_C") < list[0].indexOf("_TP");
             start = 1;
+	    if (!hasTP && !hasZ && !hasTrans && (depth>1)) {
+		for (int ii=0; ii < list.length; ii++)
+		    listTP[ii] = ii;
+	    }
             break;
           }
           else valid = false;
@@ -364,8 +371,6 @@ public class LociDataBrowser implements PlugIn {
           else stack = new ImageStack(width, height, cm);
 
           info1 = (String)imp.getProperty("Info");
-          idxTP = list[i].indexOf("_TP");
-          idxC = list[i].indexOf("_C");
         }
 
         if (imp == null) {
@@ -565,7 +570,7 @@ public class LociDataBrowser implements PlugIn {
         public Dimension getPreferredSize() {
           // panel is always the same width as the image canvas
           Dimension d = super.getPreferredSize();
-          d.width = ic.getWidth();
+          d.width = ic.getWidth()<500?500:ic.getWidth();
           return d;
         }
       };
@@ -683,10 +688,12 @@ public class LociDataBrowser implements PlugIn {
       bottom.add(animate);
       bottom.add(xmlButton);
       bottom.add(swapAxesButton);
-
+      bottom.setLocation(-100,bottom.getLocation().y);
       add(bottom);
-      //      setSize(1000,getHeight());
+
+      
       pack();
+      setLayout(new FlowLayout());
       setVisible(true);
       int previousSlice = imp.getCurrentSlice();
       imp.setSlice(hasTrans ? depth+1 : 1);
@@ -699,6 +706,8 @@ public class LociDataBrowser implements PlugIn {
         imp.setSlice(previousSlice);
       }
 
+      repaint();
+      
     }
 
     class FrameRateListener implements ChangeListener {
