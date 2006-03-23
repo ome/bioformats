@@ -63,7 +63,7 @@ public class ImageViewer extends JFrame
   protected ImageReader reader;
   protected ImageWriter writer;
 
-  protected Image[] images;
+  protected BufferedImage[] images;
 
 
   // -- Constructor --
@@ -132,7 +132,7 @@ public class ImageViewer extends JFrame
       int num = reader.getImageCount(id);
       ProgressMonitor progress = new ProgressMonitor(this,
         "Reading " + id, null, 0, num);
-      images = new Image[num];
+      images = new BufferedImage[num];
       for (int i=0; i<num; i++) {
         if (progress.isCanceled()) break;
         progress.setProgress(i);
@@ -171,7 +171,7 @@ public class ImageViewer extends JFrame
   }
 
   /** Sets the viewer to display the given images. */
-  public void setImages(String id, String format, Image[] images) {
+  public void setImages(String id, String format, BufferedImage[] images) {
     this.images = images;
     fileSave.setEnabled(true);
     slider.removeChangeListener(this);
@@ -197,6 +197,12 @@ public class ImageViewer extends JFrame
     setTitle(sb.toString());
     icon.setImage(images == null ? null : images[0]);
     pack();
+  }
+
+  /** Gets the currently displayed image. */
+  public BufferedImage getImage() {
+    int ndx = slider == null ? 0 : (slider.getValue() - 1);
+    return images == null || ndx >= images.length ? null : images[ndx];
   }
 
 
@@ -242,8 +248,7 @@ public class ImageViewer extends JFrame
   /** Handles slider events. */
   public void stateChanged(ChangeEvent e) {
     updateLabel(-1, -1);
-    int ndx = slider == null ? 0 : (slider.getValue() - 1);
-    icon.setImage(images == null ? null : images[ndx]);
+    icon.setImage(getImage());
     iconLabel.repaint();
   }
 
@@ -272,13 +277,11 @@ public class ImageViewer extends JFrame
       sb.append("/");
       sb.append(images.length);
     }
-    BufferedImage image = null;
-    if (images[ndx] instanceof BufferedImage) {
-      image = (BufferedImage) images[ndx];
-      int w = image.getWidth(), h = image.getHeight();
-      if (x >= w) x = w - 1;
-      if (y >= h) y = h - 1;
-    }
+    BufferedImage image = images[ndx];
+    int w = image.getWidth();
+    int h = image.getHeight();
+    if (x >= w) x = w - 1;
+    if (y >= h) y = h - 1;
     if (x >= 0 && y >= 0) {
       if (images.length > 1) sb.append("; ");
       sb.append("X=");
