@@ -85,7 +85,8 @@ public class ImageViewer extends JFrame
     slider.addChangeListener(this);
 
     // image icon
-    icon = new ImageIcon();
+    BufferedImage dummy = ImageTools.makeImage(new byte[1][1], 1, 1);
+    icon = new ImageIcon(dummy);
     iconLabel = new JLabel(icon, SwingConstants.LEFT);
     iconLabel.setVerticalAlignment(SwingConstants.TOP);
     pane.add(new JScrollPane(iconLabel));
