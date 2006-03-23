@@ -956,8 +956,7 @@ public abstract class TiffTools {
       undifference(altBytes, bitsPerSample,
         imageWidth, planarConfig, predictor);
       unpackBytes(samples, (int) imageWidth, altBytes, bitsPerSample,
-        photoInterp, colorMap, littleEndian, maxValue, planarConfig, 0,
-        1);
+        photoInterp, colorMap, littleEndian, maxValue, planarConfig, 0, 1);
     }
 
 
