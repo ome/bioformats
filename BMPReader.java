@@ -211,6 +211,10 @@ public class BMPReader extends FormatReader {
     width = DataTools.bytesToInt(four, littleEndian);
     in.read(four);
     height = DataTools.bytesToInt(four, littleEndian);
+    if (width < 1 || height < 1) {
+      throw new FormatException("Invalid image dimensions: " +
+        width + " x " + height);
+    }
     metadata.put("Image width", "" + width);
     metadata.put("Image height", "" + height);
 
