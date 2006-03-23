@@ -77,6 +77,8 @@ public class LeicaReader extends FormatReader {
 
   /** Checks if the given block is a valid header for a Leica file. */
   public boolean isThisType(byte[] block) {
+    if (block.length < 4) return false;
+
     if ((block[0] == 0x49 && block[1] == 0x49 && block[2] == 0x49 &&
       block[3] == 0x49) || (block[0] == 0x4d && block[1] == 0x4d &&
       block[2] == 0x4d && block[3] == 0x4d))
@@ -84,11 +86,7 @@ public class LeicaReader extends FormatReader {
       return true;
     }
 
-    if (block.length < 3) return false;
-
-    if (block.length < 8) {
-      return true;
-    }
+    if (block.length < 8) return true;
 
     int ifdlocation = DataTools.bytesToInt(block, 4, true);
     if (ifdlocation < 0 || ifdlocation + 1 > block.length) {
