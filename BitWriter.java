@@ -44,14 +44,10 @@ public class BitWriter {
   // -- Constructors --
 
   /** Constructs a new bit writer. */
-  public BitWriter() {
-    this(10);
-  }
+  public BitWriter() { this(10); }
 
   /** Constructs a new bit writer with the given initial buffer size. */
-  public BitWriter(int size) {
-    buf = new byte[size];
-  }
+  public BitWriter(int size) { buf = new byte[size]; }
 
 
   // -- BitWriter API methods --
@@ -123,4 +119,5 @@ public class BitWriter {
       }
     }
   }
+
 }

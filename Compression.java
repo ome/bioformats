@@ -149,9 +149,7 @@ public abstract class Compression {
       }
       else if (-127 <= n || n <= -1) {
         for (int i=0; i<(int) (-n+1); i++) {
-          if (pt < input.length) {
-            output.add(input[pt]);
-          }
+          if (pt < input.length) output.add(input[pt]);
         }
         pt++;
       }

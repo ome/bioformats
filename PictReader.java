@@ -38,8 +38,7 @@ public class PictReader extends FormatReader {
 
   // -- Constants --
 
-  /** Opcodes that we need. */
-
+  // opcodes that we need
   private static final int PICT_CLIP_RGN = 0x1;
   private static final int PICT_BITSRECT = 0x90;
   private static final int PICT_BITSRGN = 0x91;
@@ -50,16 +49,15 @@ public class PictReader extends FormatReader {
   private static final int PICT_END = 0xff;
   private static final int PICT_LONGCOMMENT = 0xa1;
 
-  /** Possible image states. */
+  // possible image states
   private static final int INITIAL = 1;
   private static final int STATE2 = 2;
 
-  /** Other stuff? */
+  // other stuff?
   private static final int INFOAVAIL = 0x0002;
   private static final int IMAGEAVAIL = 0x0004;
 
   /** Table used in expanding pixels that use less than 8 bits. */
-
   private static final byte[] EXPANSION_TABLE = new byte[256 * 8];
 
   static {
@@ -75,6 +73,7 @@ public class PictReader extends FormatReader {
       EXPANSION_TABLE[index++] = (i & 1) == 0 ? (byte) 0 : (byte) 1;
     }
   }
+
 
   // -- Fields --
 
@@ -148,11 +147,7 @@ public class PictReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-
-    if (no < 0 || no >= getImageCount(id)) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
+    if (no != 0) throw new FormatException("Invalid image number: " + no);
     return openBytes(bytes);
   }
 
@@ -169,8 +164,6 @@ public class PictReader extends FormatReader {
     in = new RandomAccessFile(id, "r");
     littleEndian = false;
 
-    strips = new Vector();
-
     // skip the header and read in the remaining bytes
     int len = (int) (in.length() - 512);
     bytes = new byte[len];
@@ -186,19 +179,19 @@ public class PictReader extends FormatReader {
     if (stuff.length < 10) {
       throw new FormatException("Need 10 bytes to calculate dimension");
     }
-
     int w = DataTools.bytesToInt(stuff, 6, 2, littleEndian);
     int h = DataTools.bytesToInt(stuff, 8, 2, littleEndian);
+    if (DEBUG) {
+      System.out.println("PictReader.getDimensions: " + w + " x " + h);
+    }
     return new Dimension(h, w);
   }
 
-
   /** Open a PICT image from an array of bytes (used by OpenlabReader). */
-  public BufferedImage openBytes(byte[] pix) throws FormatException
-  {
+  public BufferedImage openBytes(byte[] pix) throws FormatException {
     // handles case when we call this method directly, instead of
     // through initFile(String)
-    if (currentId == null) currentId = "";
+    if (DEBUG) System.out.println("PictReader.openBytes");
 
     strips = new Vector();
 
@@ -208,7 +201,7 @@ public class PictReader extends FormatReader {
     pt = 0;
 
     try {
-      while (driveDecoder()) { }
+      while (driveDecoder());
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -251,12 +244,16 @@ public class PictReader extends FormatReader {
         }
       }
 
+      if (DEBUG) {
+        System.out.println("PictReader.openBytes: 8-bit data, " + width +
+          " x " + height + ", length=" + data.length + "x" + data[0].length);
+      }
       return ImageTools.makeImage(data, width, height);
     }
     else if (height*3 == strips.size()) {
       // 24 bit data
-
       byte[][] data = new byte[3][height * width];
+
       byte[] channel1;
       byte[] channel2;
       byte[] channel3;
@@ -276,13 +273,17 @@ public class PictReader extends FormatReader {
         }
       }
 
+      if (DEBUG) {
+        System.out.println("PictReader.openBytes: 24-bit data, " + width +
+          " x " + height + ", length=" + data.length + "x" + data[0].length);
+      }
       return ImageTools.makeImage(data, width, height);
     }
     else if (height*4 == strips.size()) {
       // 32 bit data
       // could be broken, since we don't have any data for this case
-
       byte[] data = new byte[4 * height * width];
+
       byte[] channel1;
       int outIndex = 0;
       int rowNum = 0;
@@ -303,12 +304,16 @@ public class PictReader extends FormatReader {
         }
       }
 
+      if (DEBUG) {
+        System.out.println("PictReader.openBytes: 32-bit data, " +
+          width + " x " + height + ", length=" + data.length);
+      }
       return ImageTools.makeImage(data, width, height, 4, false);
     }
     else {
       // 16 bit data
-
       int[] data = new int[3 * height * width];
+
       int[] row;
 
       int outIndex = 0;
@@ -328,16 +333,21 @@ public class PictReader extends FormatReader {
         }
       }
 
+      if (DEBUG) {
+        System.out.println("PictReader.openBytes: 16-bit data, " +
+          width + " x " + height + ", length=" + data.length);
+      }
       return ImageTools.makeImage(data, width, height, 3, true);
     }
   }
+
 
   // -- Helper methods --
 
   /** Loop through the remainder of the file and find relevant opcodes. */
   private boolean driveDecoder() throws FormatException {
-    int opcode;
-    int version;
+    if (DEBUG) System.out.println("PictReader.driveDecoder");
+    int opcode, version;
 
     switch (pictState) {
       case INITIAL:
@@ -397,8 +407,8 @@ public class PictReader extends FormatReader {
 
   /** Handles the opcodes in the PICT file. */
   private boolean drivePictDecoder(int opcode) throws FormatException {
-    short size;
-    short kind;
+    if (DEBUG) System.out.println("PictReader.drivePictDecoder");
+    short size, kind;
 
     switch (opcode) {
       case PICT_BITSRGN:  // rowBytes must be < 8
@@ -435,6 +445,7 @@ public class PictReader extends FormatReader {
 
   /** Handles bitmap and pixmap opcodes of PICT format. */
   private void handlePackBits(int opcode) throws FormatException {
+    if (DEBUG) System.out.println("PictReader.handlePackBits(" + opcode + ")");
     if (opcode == PICT_9A) {
       // special case
       handlePixmap(opcode);
@@ -442,17 +453,14 @@ public class PictReader extends FormatReader {
     else {
       rowBytes = DataTools.bytesToInt(bytes, pt, 2, littleEndian);
       pt += 2;
-      if (versionOne || ((rowBytes & 0x8000) == 0)) {
-        handleBitmap(opcode);
-      }
-      else {
-        handlePixmap(opcode);
-      }
+      if (versionOne || ((rowBytes & 0x8000) == 0)) handleBitmap(opcode);
+      else handlePixmap(opcode);
     }
   }
 
   /** Extract the image data in a PICT bitmap structure. */
   private void handleBitmap(int opcode) throws FormatException {
+    if (DEBUG) System.out.println("PictReader.handleBitmap(" + opcode + ")");
     int row;
     byte[] buf;  // raw byte buffer for data from file
     byte[] uBuf; // uncompressed data -- possibly still pixel packed
@@ -534,6 +542,7 @@ public class PictReader extends FormatReader {
 
   /** Extract the image data in a PICT pixmap structure. */
   private void handlePixmap(int opcode) throws FormatException {
+    if (DEBUG) System.out.println("PictReader.handlePixmap(" + opcode + ")");
     int pixelSize;
     int compCount;
 
@@ -672,6 +681,10 @@ public class PictReader extends FormatReader {
   private void handlePixmap(int rowBytes, int pixelSize, int compCount)
     throws FormatException
   {
+    if (DEBUG) {
+      System.out.println("PictReader.handlePixmap(" +
+        rowBytes + ", " + pixelSize + ", " + compCount + ")");
+    }
     int row;
     int rawLen;
     byte[] buf;  // row raw bytes
@@ -798,6 +811,10 @@ public class PictReader extends FormatReader {
   private void expandPixels(int bitSize, byte[] in, byte[] out, int outLen)
     throws FormatException
   {
+    if (DEBUG) {
+      System.out.println("PictReader.expandPixels(" + bitSize + ", " +
+        in.length + ", " + out.length + ", " + outLen + ")");
+    }
     if (bitSize == 1) {
       int remainder = outLen % 8;
       int max = outLen / 8;
@@ -876,6 +893,9 @@ public class PictReader extends FormatReader {
 
   /** PackBits variant that outputs an int array. */
   private void unpackBits(byte[] in, int[] out) {
+    if (DEBUG) {
+      System.out.println("PictReader.unpackBits(" + in + ", " + out + ")");
+    }
     int i = 0;
     int o = 0;
     int b;
@@ -910,6 +930,7 @@ public class PictReader extends FormatReader {
       else o = out.length;
     }
   }
+
 
   // -- Main method --
 
