@@ -75,14 +75,16 @@ public class LociPlugin implements PlugIn {
         if (c == 1) {
           int w = img.getWidth(), h = img.getHeight();
           if (tt == DataBuffer.TYPE_BYTE) {
-            ip = new ByteProcessor(w, h, ImageTools.getBytes(img)[0], null);
+            byte[] b = ImageTools.getBytes(img)[0];
+            ip = new ByteProcessor(w, h, b, null);
           }
-          //TODO: determine why 16-bit (and probably float also) doesn't work
           else if (tt == DataBuffer.TYPE_USHORT) {
-            ip = new ShortProcessor(w, h, ImageTools.getShorts(img)[0], null);
+            short[] s = ImageTools.getShorts(img)[0];
+            ip = new ShortProcessor(w, h, s, null);
           }
           else if (tt == DataBuffer.TYPE_FLOAT) {
-            ip = new FloatProcessor(w, h, ImageTools.getFloats(img)[0], null);
+            float[] f = ImageTools.getFloats(img)[0];
+            ip = new FloatProcessor(w, h, f, null);
           }
         }
         if (ip == null) ip = new ImagePlus(null, img).getProcessor(); // slow
