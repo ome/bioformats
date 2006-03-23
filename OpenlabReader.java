@@ -39,7 +39,7 @@ public class OpenlabReader extends FormatReader {
   // -- Static fields --
 
   /** Helper reader to decode PICT data. */
-  private static PictReader qtReader = new PictReader();
+  private static PictReader pictReader = new PictReader();
 
 
   // -- Fields --
@@ -140,7 +140,7 @@ public class OpenlabReader extends FormatReader {
     int pixPos = 0;
 
     Dimension dim;
-    try { dim = qtReader.getDimensions(toRead); }
+    try { dim = pictReader.getDimensions(toRead); }
     catch (Exception e) { dim = new Dimension(0, 0); }
 
     int length = toRead.length;
@@ -175,7 +175,7 @@ public class OpenlabReader extends FormatReader {
         if (expectedBlock == 0 && imageType[no] < 9) {
           // there has been no deep gray data, and it is supposed
           // to be a pict... *crosses fingers*
-          try { return ImageTools.makeBuffered(qtReader.openBytes(toRead)); }
+          try { return pictReader.openBytes(toRead); }
           catch (Exception e) {
             e.printStackTrace();
             throw new FormatException("No iPic comment block found", e);
