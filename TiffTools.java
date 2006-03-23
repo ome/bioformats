@@ -24,11 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.Image;
-import java.awt.image.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.zip.*;
 
 /**
  * A utility class for manipulating TIFF files.
@@ -159,34 +158,11 @@ public abstract class TiffTools {
   public static final int FLOAT = 11;
   public static final int DOUBLE = 12;
 
-  // LZW compression codes
-  protected static final int CLEAR_CODE = 256;
-  protected static final int EOI_CODE = 257;
-
-  // ThunderScan compression codes
-
-  protected static final int DATA = 0x3f;
-  protected static final int CODE = 0xc0;
-  protected static final int RUN = 0x00;
-  protected static final int TWO_BIT_DELTAS = 0x40;
-  protected static final int SKIP_TWO = 2;
-  protected static final int THREE_BIT_DELTAS = 0x80;
-  protected static final int SKIP_THREE = 4;
-  protected static final int RAW = 0xc0;
-
-
   // TIFF header constants
   public static final int MAGIC_NUMBER = 42;
   public static final int LITTLE = 0x49;
   public static final int BIG = 0x4d;
 
-  // JPEG tables
-
-  public static int[][] quantizationTables;
-  public static short[][] acTableLengths;
-  public static short[][] acTableValues;
-  public static short[][] dcTableLengths;
-  public static short[][] dcTableValues;
 
   // -- TiffTools API methods --
 
@@ -1272,18 +1248,20 @@ public abstract class TiffTools {
       throw new FormatException("Sorry, CCITT T.6 bi-level encoding " +
         "(Group 4 Fax) compression mode is not supported");
     }
-    else if (compression == LZW) return lzwUncompress(input);
+    else if (compression == LZW) return Compression.lzwUncompress(input);
     else if (compression == JPEG) {
       throw new FormatException(
         "Sorry, JPEG compression mode is not supported");
     }
-    else if (compression == PACK_BITS) return packBitsUncompress(input);
+    else if (compression == PACK_BITS) {
+      return Compression.packBitsUncompress(input);
+    }
     else if (compression == PROPRIETARY_DEFLATE || compression == DEFLATE) {
-      return deflateUncompress(input);
+      return Compression.deflateUncompress(input);
     }
     else if (compression == THUNDERSCAN) {
-      throw new FormatException("Sorry, Thunderscan compression mode is not " +
-        "supported");
+      throw new FormatException("Sorry, " +
+        "Thunderscan compression mode is not supported");
     }
     else {
       throw new FormatException(
@@ -1307,144 +1285,6 @@ public abstract class TiffTools {
     }
   }
 
-
-  /** Decodes an Adobe Deflate (Zip) compressed image strip. */
-  public static byte[] deflateUncompress(byte[] input) throws FormatException {
-    // could have written this from scratch, but using the java.util.zip
-    // package is much easier
-    try {
-      Inflater inf = new Inflater(false);
-      inf.setInput(input);
-      InflaterInputStream i =
-        new InflaterInputStream(new PipedInputStream() , inf);
-      int avail = i.available();
-      Vector bytes = new Vector();
-      while (avail != 0) {
-        bytes.add(new Byte((byte) i.read()));
-        avail = i.available();
-      }
-
-      // copy the Vector to a byte array
-
-      byte[] toRtn = new byte[bytes.size()];
-      for (int j=0; j<toRtn.length; j++) {
-        toRtn[j] = ((Byte) bytes.get(j)).byteValue();
-      }
-      return toRtn;
-    }
-    catch (Exception e) {
-      /* debug */ e.printStackTrace();
-      throw new FormatException("Error uncompressing Adobe Deflate (ZLIB) " +
-        "compressed image strip.");
-    }
-  }
-
-  /**
-   * Decodes a PackBits (Macintosh RLE) compressed image.
-   * Adapted from the TIFF 6.0 specification, page 42.
-   * @author Melissa Linkert, linkert at cs.wisc.edu
-   */
-  public static byte[] packBitsUncompress(byte[] input) {
-    Vector output = new Vector();
-    int pt = 0;
-    byte n;
-    while (pt < input.length) {
-      n = input[pt];
-      pt++;
-      if ((0 <= n) && (n <= 127)) {
-        for (int i=0; i<(int) n+1; i++) {
-          if (pt < input.length) {
-            output.add(new Byte(input[pt]));
-            pt++;
-          }
-        }
-      }
-      else if ((-127 <= n) || (n <= -1)) {
-        for (int i=0; i<(int) (-n+1); i++) {
-          if (pt < input.length) {
-            output.add(new Byte(input[pt]));
-          }
-        }
-        pt++;
-      }
-      else { pt++; }
-    }
-    byte[] toRtn = new byte[output.size()];
-    for (int i=0; i<toRtn.length; i++) {
-      toRtn[i] = ((Byte) output.get(i)).byteValue();
-    }
-    return toRtn;
-  }
-
-  /**
-   * Decodes an LZW-compressed image strip.
-   * Adapted from the TIFF 6.0 Specification:
-   * http://partners.adobe.com/asn/developer/pdfs/tn/TIFF6.pdf (page 61)
-   * @author Eric Kjellman egkjellman at wisc.edu
-   * @author Wayne Rasband wsr at nih.gov
-   */
-  public static byte[] lzwUncompress(byte[] input) throws FormatException {
-    if (input == null || input.length == 0) return input;
-    if (DEBUG) debug("decompressing " + input.length + " bytes of LZW data");
-
-    byte[][] symbolTable = new byte[4096][1];
-    int bitsToRead = 9;
-    int nextSymbol = 258;
-    int code;
-    int oldCode = -1;
-    ByteVector out = new ByteVector(8192);
-    BitBuffer bb = new BitBuffer(input);
-    byte[] byteBuffer1 = new byte[16];
-    byte[] byteBuffer2 = new byte[16];
-
-    while (true) {
-      code = bb.getBits(bitsToRead);
-      if (code == EOI_CODE || code == -1) break;
-      if (code == CLEAR_CODE) {
-        // initialize symbol table
-        for (int i = 0; i < 256; i++) symbolTable[i][0] = (byte) i;
-        nextSymbol = 258;
-        bitsToRead = 9;
-        code = bb.getBits(bitsToRead);
-        if (code == EOI_CODE || code == -1) break;
-        out.add(symbolTable[code]);
-        oldCode = code;
-      }
-      else {
-        if (code < nextSymbol) {
-          // code is in table
-          out.add(symbolTable[code]);
-          // add string to table
-          ByteVector symbol = new ByteVector(byteBuffer1);
-          try {
-            symbol.add(symbolTable[oldCode]);
-          }
-          catch (ArrayIndexOutOfBoundsException a) {
-            throw new FormatException("Sorry, old LZW codes not supported");
-          }
-          symbol.add(symbolTable[code][0]);
-          symbolTable[nextSymbol] = symbol.toByteArray(); //**
-          oldCode = code;
-          nextSymbol++;
-        }
-        else {
-          // out of table
-          ByteVector symbol = new ByteVector(byteBuffer2);
-          symbol.add(symbolTable[oldCode]);
-          symbol.add(symbolTable[oldCode][0]);
-          byte[] outString = symbol.toByteArray();
-          out.add(outString);
-          symbolTable[nextSymbol] = outString; //**
-          oldCode = code;
-          nextSymbol++;
-        }
-        if (nextSymbol == 511) bitsToRead = 10;
-        if (nextSymbol == 1023) bitsToRead = 11;
-        if (nextSymbol == 2047) bitsToRead = 12;
-      }
-    }
-    return out.toByteArray();
-  }
 
 
   // --------------------------- Writing TIFF files ---------------------------
@@ -1813,7 +1653,7 @@ public abstract class TiffTools {
       throw new FormatException("Sorry, CCITT T.6 bi-level encoding " +
         "(Group 4 Fax) compression mode is not supported");
     }
-    else if (compression == LZW) return lzwCompress(input);
+    else if (compression == LZW) return Compression.lzwCompress(input);
     else if (compression == JPEG) {
       throw new FormatException(
         "Sorry, JPEG compression mode is not supported");
@@ -1842,55 +1682,6 @@ public abstract class TiffTools {
     else if (predictor != 1) {
       throw new FormatException("Unknown Predictor (" + predictor + ")");
     }
-  }
-
-  /**
-   * Encodes an image strip using the LZW compression method.
-   * Adapted from the TIFF 6.0 Specification:
-   * http://partners.adobe.com/asn/developer/pdfs/tn/TIFF6.pdf (page 61)
-   */
-  public static byte[] lzwCompress(byte[] input) {
-    if (input == null || input.length == 0) return input;
-    if (DEBUG) debug("compressing " + input.length + " bytes of data to LZW");
-
-    // initialize symbol table
-    LZWTreeNode symbols = new LZWTreeNode(-1);
-    symbols.initialize();
-    int nextCode = 258;
-    int numBits = 9;
-
-    BitWriter out = new BitWriter();
-    out.write(CLEAR_CODE, numBits);
-    ByteVector omega = new ByteVector();
-    for (int i=0; i<input.length; i++) {
-      byte k = input[i];
-      LZWTreeNode omegaNode = symbols.nodeFromString(omega);
-      LZWTreeNode omegaKNode = omegaNode.getChild(k);
-      if (omegaKNode != null) {
-        // omega+k is in the symbol table
-        omega.add(k);
-      }
-      else {
-        out.write(omegaNode.getCode(), numBits);
-        omega.add(k);
-        symbols.addTableEntry(omega, nextCode++);
-        omega.clear();
-        omega.add(k);
-        if (nextCode == 512) numBits = 10;
-        else if (nextCode == 1024) numBits = 11;
-        else if (nextCode == 2048) numBits = 12;
-        else if (nextCode == 4096) {
-          out.write(CLEAR_CODE, numBits);
-          symbols.initialize();
-          nextCode = 258;
-          numBits = 9;
-        }
-      }
-    }
-    out.write(symbols.codeFromString(omega), numBits);
-    out.write(EOI_CODE, numBits);
-
-    return out.toByteArray();
   }
 
 
