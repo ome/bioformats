@@ -132,12 +132,12 @@ public class ImageViewer extends JFrame
       int num = reader.getImageCount(id);
       ProgressMonitor progress = new ProgressMonitor(this,
         "Reading " + id, null, 0, num);
-      images = new BufferedImage[num];
+      BufferedImage[] img = new BufferedImage[num];
       for (int i=0; i<num; i++) {
         if (progress.isCanceled()) break;
         progress.setProgress(i);
-        images[i] = reader.open(id, i);
-        if (i == 0) setImages(id, format, images);
+        img[i] = reader.open(id, i);
+        if (i == 0) setImages(id, format, img);
       }
       reader.close();
       progress.setProgress(num);
