@@ -518,7 +518,7 @@ public class PictReader extends FormatReader {
           throw new FormatException("Sorry, vector data not supported.");
         }
 
-        uBuf = TiffTools.packBitsUncompress(buf);
+        uBuf = Compression.packBitsUncompress(buf);
 
         // invert the pixels -- PICT images map zero to white
 
@@ -760,9 +760,7 @@ public class PictReader extends FormatReader {
           unpackBits(buf, uBufI);
           strips.add(uBufI);
         }
-        else {
-          uBuf = TiffTools.packBitsUncompress(buf);
-        }
+        else uBuf = Compression.packBitsUncompress(buf);
 
         if (pixelSize < 8) {
           expandPixels(pixelSize, uBuf, outBuf, outBuf.length);
