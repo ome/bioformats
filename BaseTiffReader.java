@@ -375,16 +375,16 @@ public abstract class BaseTiffReader extends FormatReader {
         TiffTools.getIFDValue(ifd, TiffTools.DATE_TIME);
       String description;
       try {
-        description = (String) 
+        description = (String)
           TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
       }
       catch (ClassCastException c) {
-        String[] descrs = (String[])       
+        String[] descrs = (String[])
           TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
         if (descrs.length > 0) description = descrs[0];
         else description = null;
-      }        
-        
+      }
+
       OMETools.setImage(ome, null, creationDate, description);
 
       // populate Dimensions element
@@ -417,10 +417,10 @@ public abstract class BaseTiffReader extends FormatReader {
       // populate StageLabel element
       String x = (String) TiffTools.getIFDValue(ifd, TiffTools.X_POSITION);
       String y = (String) TiffTools.getIFDValue(ifd, TiffTools.Y_POSITION);
-      if (x != null && y != null) {
-        OMETools.setStageLabel(ome, null, new Float(x), new Float(y), null);
-      }
-        
+      Float stageX = x == null ? null : new Float(x);
+      Float stageY = y == null ? null : new Float(y);
+      OMETools.setStageLabel(ome, null, stageX, stageY, null);
+
       // populate Instrument element
       String model = (String) TiffTools.getIFDValue(ifd, TiffTools.MODEL);
       String serialNumber = (String)
