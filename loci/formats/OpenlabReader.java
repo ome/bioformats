@@ -38,9 +38,9 @@ public class OpenlabReader extends FormatReader {
 
   // -- Static fields --
 
-  /** Helper reader to read PICT data with QT Java library. */
-  //private static LegacyQTReader qtReader = new LegacyQTReader();
+  /** Helper reader to decode PICT data. */
   private static PictReader qtReader = new PictReader();
+
 
   // -- Fields --
 
@@ -55,9 +55,6 @@ public class OpenlabReader extends FormatReader {
 
   /** Image type for each block of current Openlab LIFF file. */
   private int[] imageType;
-
-  /** Whether there is any color data in current Openlab LIFF file. */
-  private boolean isColor;
 
   /** Flag indicating whether current file is little endian. */
   protected boolean little = true;
@@ -143,12 +140,8 @@ public class OpenlabReader extends FormatReader {
     int pixPos = 0;
 
     Dimension dim;
-    try {
-      dim= qtReader.getDimensions(toRead);
-    }
-    catch (Exception e) {
-      dim = new Dimension(0, 0);
-    }
+    try { dim = qtReader.getDimensions(toRead); }
+    catch (Exception e) { dim = new Dimension(0, 0); }
 
     int length = toRead.length;
     int num, size, blockEnd;
@@ -157,7 +150,7 @@ public class OpenlabReader extends FormatReader {
     int pos = 0;
     int imagePos = 0;
     int imageSize = dim.width * dim.height;
-    int[][] flatSamples = new int[1][imageSize];
+    short[] flatSamples = new short[imageSize];
     byte[] temp;
     boolean skipflag;
 
@@ -165,9 +158,7 @@ public class OpenlabReader extends FormatReader {
     // BufferedImage out of it
     //
     // First, checks the existence of a deep gray block. If it doesn't exist,
-    // assume it is PICT data, and attempt to read it. This is unpleasantly
-    // dangerous, because QuickTime has this unfortunate habit of crashing
-    // when it doesn't work.
+    // assume it is PICT data, and attempt to read it.
 
     // check whether or not there is deep gray data
     while (expectedBlock != totalBlocks) {
@@ -184,9 +175,7 @@ public class OpenlabReader extends FormatReader {
         if (expectedBlock == 0 && imageType[no] < 9) {
           // there has been no deep gray data, and it is supposed
           // to be a pict... *crosses fingers*
-          try {
-            return ImageTools.makeBuffered(qtReader.openBytes(toRead));
-          }
+          try { return ImageTools.makeBuffered(qtReader.openBytes(toRead)); }
           catch (Exception e) {
             e.printStackTrace();
             throw new FormatException("No iPic comment block found", e);
@@ -246,22 +235,12 @@ public class OpenlabReader extends FormatReader {
         pixelValue += pixelData[pos + 1] < 0 ? 256 + pixelData[pos + 1] :
           (int) pixelData[pos + 1];
       }
-      else {
-        throw new FormatException("Malformed LIFF data");
-      }
-      flatSamples[0][imagePos] = pixelValue;
+      else throw new FormatException("Malformed LIFF data");
+      flatSamples[imagePos] = (short) pixelValue;
       imagePos++;
       if (imagePos == imageSize) {  // done, return it
-        if (isColor) {
-          int[][] flatSamp = new int[3][];
-          flatSamp[0] = flatSamp[1] = flatSamp[2] = flatSamples[0];
-          return ImageTools.makeImage(flatSamp, dim.width, dim.height);
-
-        }
-        else {  // it's all grayscale
-          return ImageTools.makeImage(flatSamples[0], dim.width, dim.height,
-            1, false);
-        }
+        return ImageTools.makeImage(flatSamples,
+          dim.width, dim.height, 1, false);
       }
     }
   }
@@ -288,7 +267,6 @@ public class OpenlabReader extends FormatReader {
     in.read(toRead);
     long order = batoi(toRead);  // byte ordering
     little = toRead[2] != 0xff || toRead[3] != 0xff;
-    isColor = false;
 
     toRead = new byte[4];
     Vector v = new Vector(); // a temp vector containing offsets.
@@ -317,9 +295,7 @@ public class OpenlabReader extends FormatReader {
           String layerName = new String(layerNameBytes);
           if (layerName.startsWith("Original Image")) ok = false;
         }
-        if (ok) {
-          v.add(new Integer(nextOffset)); // add THIS tag offset
-        }
+        if (ok) v.add(new Integer(nextOffset)); // add THIS tag offset
       }
       if (nextOffset == nextOffsetTemp) break;
       nextOffset = nextOffsetTemp;
@@ -327,15 +303,14 @@ public class OpenlabReader extends FormatReader {
 
     in.seek(((Integer) v.firstElement()).intValue());
 
-    // create and populate the array of offsets from the vector.
+    // create and populate the array of offsets from the vector
     numBlocks = v.size();
     offsets = new int[numBlocks];
     for (int i = 0; i < numBlocks; i++) {
       offsets[i] = ((Integer) v.get(i)).intValue();
     }
 
-    // check to see whether there is any color data. This also populates
-    // the imageTypes that the file uses.
+    // populate the imageTypes that the file uses
     toRead = new byte[2];
     imageType = new int[numBlocks];
     for (int i = 0; i < numBlocks; i++) {
@@ -343,7 +318,6 @@ public class OpenlabReader extends FormatReader {
       in.skipBytes(40);
       in.read(toRead);
       imageType[i] = batoi(toRead);
-      if (imageType[i] < 9) isColor = true;
     }
 
     initMetadata();
