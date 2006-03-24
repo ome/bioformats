@@ -642,8 +642,8 @@ public abstract class TiffTools {
     boolean fakeRPS = rowsPerStripArray == null;
     boolean isTiled = stripOffsets == null;
 
-    long maxValue = 0;
-
+    long maxValue = getIFDLongValue(ifd, MAX_SAMPLE_VALUE, false, 0); 
+    
     if (isTiled) {
     //  long tileWidth = getIFDLongValue(ifd, TILE_WIDTH, true, 0);
     //  long tileLength = getIFDLongValue(ifd, TILE_LENGTH, true, 0);
@@ -882,14 +882,21 @@ public abstract class TiffTools {
 
     //if (planarConfig == 2) numSamples *= samplesPerPixel;
 
-    byte[][] samples =
-      new byte[samplesPerPixel][numSamples*bitsPerSample[0] / 8];
+    short[][] samples =
+      new short[samplesPerPixel][numSamples];
     byte[] altBytes = new byte[0];
 
     if (bitsPerSample[0] < 8) {
-      samples = new byte[samplesPerPixel][numSamples];
+      samples = new short[samplesPerPixel][numSamples];
     }
-
+ 
+    byte[][] byteData = 
+      new byte[samplesPerPixel][numSamples];
+    float[][] floatData =
+      new float[samplesPerPixel][numSamples];
+   
+    if (bitsPerSample[0] == 16) littleEndian = !littleEndian;
+    
     int overallOffset = 0;
     for (int strip=0, row=0; strip<numStrips; strip++, row+=rowsPerStrip) {
       if (DEBUG) debug("reading image strip #" + strip);
@@ -939,8 +946,28 @@ public abstract class TiffTools {
     // construct field
     if (DEBUG) debug("constructing image");
 
-    return ImageTools.makeImage(samples, (int) imageWidth, (int) imageLength);
-  }
+    if (bitsPerSample[0] == 16) {
+      return ImageTools.makeImage(samples, (int) imageWidth, (int) imageLength);
+    }
+    else if (bitsPerSample[0] == 32) {
+      for (int i=0; i<samplesPerPixel; i++) {
+        for (int j=0; j<numSamples; j++) {
+          floatData[i][j] = (float) samples[i][j];       
+        }        
+      }     
+      return ImageTools.makeImage(floatData, (int) imageWidth, 
+        (int) imageLength);
+    }
+    else {
+      for (int i=0; i<samplesPerPixel; i++) {
+        for (int j=0; j<numSamples; j++) {
+          byteData[i][j] = (byte) samples[i][j];       
+        }        
+      }      
+      return ImageTools.makeImage(byteData, (int) imageWidth, 
+        (int) imageLength);
+    }
+  }  
 
   /**
    * Extracts pixel information from the given byte array according to the
@@ -949,7 +976,7 @@ public abstract class TiffTools {
    * No error checking is performed.
    * This method is tailored specifically for planar (separated) images.
    */
-  public static void planarUnpack(byte[][] samples, int startIndex,
+  public static void planarUnpack(short[][] samples, int startIndex,
     byte[] bytes, int[] bitsPerSample, int photoInterp, boolean littleEndian,
     int strip, int numStrips) throws FormatException
   {
@@ -982,7 +1009,7 @@ public abstract class TiffTools {
           index--;
         }
 
-        byte b = bytes[index];
+        short b = bytes[index];
         index++;
 
         int offset = (bitsPerSample[0] * (samples.length*j + channelNum)) % 8;
@@ -999,24 +1026,27 @@ public abstract class TiffTools {
         if (ndx >= samples[channelNum].length) {
           ndx = samples[channelNum].length - 1;
         }
-        samples[channelNum][ndx] = (byte) (b < 0 ? 256 + b : b);
+        samples[channelNum][ndx] = (short) (b < 0 ? 256 + b : b);
 
         if (photoInterp == WHITE_IS_ZERO || photoInterp == CMYK) {
-           samples[channelNum][ndx] = (byte) (255 - samples[channelNum][ndx]);
+           samples[channelNum][ndx] = 
+             (short) (2147483647 - samples[channelNum][ndx]);
         }
       }
       else if (numBytes == 1) {
-        byte b = bytes[index];
+        float b = bytes[index];
         index++;
 
         int ndx = startIndex + j;
-        samples[channelNum][ndx] = (byte) (b < 0 ? 256 + b : b);
+        samples[channelNum][ndx] = (short) (b < 0 ? 256 + b : b);
 
         if (photoInterp == WHITE_IS_ZERO) { // invert color value
-          samples[channelNum][ndx] = (byte) (255 - samples[channelNum][ndx]);
+          samples[channelNum][ndx] = 
+            (short) (2147483647 - samples[channelNum][ndx]);
         }
         else if (photoInterp == CMYK) {
-          samples[channelNum][ndx] = (byte) (255 - samples[channelNum][ndx]);
+          samples[channelNum][ndx] = 
+            (short) (2147483647 - samples[channelNum][ndx]);
         }
       }
       else {
@@ -1030,16 +1060,17 @@ public abstract class TiffTools {
         index += numBytes;
         int ndx = startIndex + j;
         if (ndx >= samples[0].length) ndx = samples[0].length - 1;
-        samples[channelNum][ndx] =
-          (byte) DataTools.bytesToLong(b, !littleEndian);
+        samples[channelNum][ndx] = 
+          (short) DataTools.bytesToLong(b, !littleEndian);
 
         if (photoInterp == WHITE_IS_ZERO) { // invert color value
           long max = 1;
           for (int q=0; q<numBytes; q++) max *= 8;
-          samples[channelNum][ndx] = (byte) (max - samples[channelNum][ndx]);
+          samples[channelNum][ndx] = (short) (max - samples[channelNum][ndx]);
         }
         else if (photoInterp == CMYK) {
-          samples[channelNum][ndx] = (byte) (255 - samples[channelNum][ndx]);
+          samples[channelNum][ndx] = 
+            (short) (2147483647 - samples[channelNum][ndx]);
         }
       }
     }
@@ -1051,7 +1082,7 @@ public abstract class TiffTools {
    * entry values, and the specified byte ordering.
    * No error checking is performed.
    */
-  public static void unpackBytes(byte[][] samples, int startIndex,
+  public static void unpackBytes(short[][] samples, int startIndex,
     byte[] bytes, int[] bitsPerSample, int photoInterp, int[] colorMap,
     boolean littleEndian, long maxValue, int planar, int strip, int numStrips)
     throws FormatException
@@ -1106,7 +1137,7 @@ public abstract class TiffTools {
             index--;
           }
 
-          byte b = bytes[index];
+          short b = bytes[index];
           index++;
     //      if (planar == 2) index = j + (i*(bytes.length / samples.length));
 
@@ -1120,55 +1151,46 @@ public abstract class TiffTools {
           if (counter % 4 == 0 && i == 0) index++;
 
           int ndx = startIndex + j;
-          samples[i][ndx] = (byte) (b < 0 ? 256 + b : b);
+          samples[i][ndx] = (short) (b < 0 ? 256 + b : b);
 
           if (photoInterp == WHITE_IS_ZERO || photoInterp == CMYK) {
-             samples[i][ndx] = (byte) (255 - samples[i][ndx]); // invert colors
+             samples[i][ndx] = 
+               (short) (2147483647 - samples[i][ndx]); // invert colors
           }
           else if (photoInterp == RGB_PALETTE) {
-            int x = b < 0 ? 256 + b : b;
+            int x = (int) (b < 0 ? 256 + b : b);
             int red = colorMap[x % colorMap.length];
             int green = colorMap[(x + bpsPow) %
               colorMap.length];
             int blue = colorMap[(x + 2*bpsPow) %
               colorMap.length];
             int[] components = {red, green, blue};
-            samples[i][ndx] = (byte) components[i];
+            samples[i][ndx] = (short) components[i];
           }
         }
         else if (bps8) {
           // special case handles 8-bit data more quickly
           //if (planar == 2) { index = j+(i*(bytes.length / samples.length)); }
-          byte b = bytes[index];
+          short b = bytes[index];
           index++;
 
           int ndx = startIndex + j;
-          samples[i][ndx] = (byte) (b < 0 ? 256 + b : b);
+          samples[i][ndx] = (short) (b < 0 ? 2147483647 + b : b);
 
           if (photoInterp == WHITE_IS_ZERO) { // invert color value
-            samples[i][ndx] = (byte) (255 - samples[i][ndx]);
+            samples[i][ndx] = (short) (2147483647 - samples[i][ndx]);
           }
           else if (photoInterp == RGB_PALETTE) {
             index--;
-            int x = b < 0 ? 256 + b : b;
-//            int red = colorMap[x];
-//            int green = colorMap[x + bpsPow];
-//            int blue = colorMap[x + 2*bpsPow];
-//            int[] components = {red, green, blue};
-//            samples[i][ndx] = (byte) components[i];
-//            if (maxValue == 0) {
-//              samples[i][ndx] = (byte) (components[i] % 255);
-//            }
+            int x = (int) (b < 0 ? 256 + b : b);
             int cndx = i == 0 ? x : (i == 1 ? (x + bpsPow) : (x + 2*bpsPow));
             int cm = colorMap[cndx];
-            samples[i][ndx] = (byte) (maxValue == 0 ? (cm % 255) : cm);
+            samples[i][ndx] = (short) (maxValue == 0 ? (cm % 255) : cm);
           }
           else if (photoInterp == CMYK) {
-            samples[i][ndx] = (byte) (255 - samples[i][ndx]);
+            samples[i][ndx] = (short) (2147483647 - samples[i][ndx]);
           }
           else if (photoInterp == Y_CB_CR) {
-            // 1) YCbCrSubSampling -- deal with varying chroma/luma dims
-            // 2) YCbCrPositioning
             if (i == bitsPerSample.length - 1) {
               int lumaRed = colorMap[0];
               int lumaGreen = colorMap[1];
@@ -1179,10 +1201,10 @@ public abstract class TiffTools {
                 (samples[1][ndx]*(2 - 2*lumaBlue) + samples[0][ndx]);
               int green = (int)
                 (samples[0][ndx] - lumaBlue*blue - lumaRed*red);
-              if (lumaGreen != 0) green = (int) (green / lumaGreen);
-              samples[0][ndx] = (byte) (red - colorMap[4]);
-              samples[1][ndx] = (byte) (green - colorMap[6]);
-              samples[2][ndx] = (byte) (blue - colorMap[8]);
+              if (lumaGreen != 0) green = green / lumaGreen;
+              samples[0][ndx] = (short) (red - colorMap[4]);
+              samples[1][ndx] = (short) (green - colorMap[6]);
+              samples[2][ndx] = (short) (blue - colorMap[8]);
             }
           }
         }
@@ -1196,12 +1218,13 @@ public abstract class TiffTools {
           }
           index += numBytes;
           int ndx = startIndex + j;
-          samples[i][ndx] = (byte) DataTools.bytesToLong(b, !littleEndian);
+          samples[i][ndx] = 
+            (short) DataTools.bytesToLong(b, !littleEndian);
 
           if (photoInterp == WHITE_IS_ZERO) { // invert color value
             long max = 1;
             for (int q=0; q<numBytes; q++) max *= 8;
-            samples[i][ndx] = (byte) (max - samples[i][ndx]);
+            samples[i][ndx] = (short) (max - samples[i][ndx]);
           }
           else if (photoInterp == RGB_PALETTE) {
             // will fix this later
@@ -1219,7 +1242,7 @@ public abstract class TiffTools {
             */
           }
           else if (photoInterp == CMYK) {
-            samples[i][ndx] = (byte) (255 - samples[i][ndx]);
+            samples[i][ndx] = (short) (2147483647 - samples[i][ndx]);
           }
         }
       }
