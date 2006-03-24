@@ -96,7 +96,7 @@ public class LociDataBrowser implements PlugIn {
   private boolean cb4tp;
   private String firstPrefix;
   private int dim = 4;
-    private String[] filename;
+  private String[] filename;
 
   private int[] listTP;
   private int[] listC;
@@ -176,33 +176,38 @@ public class LociDataBrowser implements PlugIn {
         System.err.println("Prefixes["+i+"] = "+prefixes[i]);
         prefixes[i]=prefixes[i].replaceAll("\\d+$", "");
       }
-      
-      
+
       firstPrefix = prefixes[0];
       System.err.println(firstPrefix);
       for (int i=0; i<prefixes.length; i++) {
         for (int j=0; j<preTime.length; j++) {
           if (prefixes[i].endsWith(preTime[j])) {
-              hasTP = true;
-              idxTP = i;
-	      if (i==0) firstPrefix = firstPrefix.substring(
-			   0,firstPrefix.indexOf(preTime[j]));
+            hasTP = true;
+            idxTP = i;
+            if (i==0) {
+              firstPrefix = firstPrefix.substring(0,
+                firstPrefix.indexOf(preTime[j]));
+            }
           }
         }
         for (int j=0; j<preZ.length; j++) {
           if (prefixes[i].endsWith(preZ[j])) {
-              hasZ = true;
-              idxZ = i;
-	      if (i==0) firstPrefix = firstPrefix.substring(
-                                0,firstPrefix.indexOf(preZ[j]));
+            hasZ = true;
+            idxZ = i;
+            if (i==0) {
+              firstPrefix = firstPrefix.substring(0,
+                firstPrefix.indexOf(preZ[j]));
+            }
           }
         }
         for (int j=0; j<preTrans.length; j++) {
           if (prefixes[i].endsWith(preTrans[j])) {
-              hasTrans = true;
-              idxC = i;
-	      if (i==0) firstPrefix = firstPrefix.substring(
-                             0,firstPrefix.indexOf(preTrans[j]));
+            hasTrans = true;
+            idxC = i;
+            if (i==0) {
+              firstPrefix = firstPrefix.substring(0,
+                firstPrefix.indexOf(preTrans[j]));
+            }
           }
         }
       }
@@ -233,15 +238,13 @@ public class LociDataBrowser implements PlugIn {
       if (idxZ != -1) listZ = indices[idxZ];
 
       if (!hasTP && !hasZ && !hasTrans) {
-	  for (int aa = 0; aa < listTP.length; aa++) 
-	      listTP[aa] = aa;
-	  System.err.println("Here!!!");
-	  hasTP = true;
-      } 
-	  
+        for (int aa = 0; aa < listTP.length; aa++) listTP[aa] = aa;
+        System.err.println("Here!!!");
+        hasTP = true;
+      }
 
       if (DEBUG) {
-	  System.err.println("All indices:");
+        System.err.println("All indices:");
         for (int i=0; i<prefixes.length; i++) {
           for (int j=0; j<list.length; j++) {
             System.err.print(indices[i][j] + " ");
@@ -290,10 +293,9 @@ public class LociDataBrowser implements PlugIn {
             d = description;
             imp.setFileInfo(fi);
             start = 1;
-	    if (!hasTP && !hasZ && (depth>1)) {
-		for (int ii=0; ii < list.length; ii++)
-		    listTP[ii] = ii;
-	    }
+            if (!hasTP && !hasZ && (depth>1)) {
+              for (int ii=0; ii < list.length; ii++) listTP[ii] = ii;
+            }
             break;
           }
           else valid = false;
@@ -390,7 +392,7 @@ public class LociDataBrowser implements PlugIn {
 
           // process every slice in each TIFF stack
           for (int iSlice=1; iSlice<=depth; iSlice++) {
-	      filename[fileIndex++] = list[i];
+            filename[fileIndex++] = list[i];
             imp.setSlice(iSlice);
             ImageProcessor ip = imp.getProcessor();
             if (grayscale) {
@@ -515,8 +517,8 @@ public class LociDataBrowser implements PlugIn {
     private javax.swing.Timer animationTimer;
     private JSpinner frameRate;
     private JButton xmlButton;        // button to display OME-XML
-      private JLabel label1, label2;
-      private JButton animate;
+    private JLabel label1, label2;
+    private JButton animate;
 
     /** CustomWindow constructors, initialisation */
     CustomWindow(ImagePlus imp, ImageCanvas ic,
@@ -686,7 +688,6 @@ public class LociDataBrowser implements PlugIn {
       bottom.setLocation(-100,bottom.getLocation().y);
       add(bottom);
 
-      
       pack();
       setLayout(new FlowLayout());
       setVisible(true);
@@ -702,7 +703,6 @@ public class LociDataBrowser implements PlugIn {
       }
 
       repaint();
-      
     }
 
     class FrameRateListener implements ChangeListener {
@@ -743,18 +743,17 @@ public class LociDataBrowser implements PlugIn {
         String tmp2 = lab3D;
         lab3D = lab4D;
         lab4D = tmp2;
-	if ((lab3D.equals("time")) && 
-	    (sliceSel1.getMaximum() != sliceSel1.getMinimum()) &&
-	    !animate.isEnabled()) { 
-	    animate.setEnabled(true);
-	    frameRate.setEnabled(true);
-	}
-	else if ((lab3D.equals("z-depth")) &&
-		 (!sliceSel2.isEnabled())) {
-	    animate.setEnabled(false);
-	    frameRate.setEnabled(false);
-	}
-		 
+        if (lab3D.equals("time") &&
+          sliceSel1.getMaximum() != sliceSel1.getMinimum() &&
+          !animate.isEnabled())
+        {
+          animate.setEnabled(true);
+          frameRate.setEnabled(true);
+        }
+        else if (lab3D.equals("z-depth") && !sliceSel2.isEnabled()) {
+          animate.setEnabled(false);
+          frameRate.setEnabled(false);
+        }
       }
       else if (src instanceof javax.swing.Timer) {
         boolean changed = false;
@@ -773,7 +772,6 @@ public class LociDataBrowser implements PlugIn {
         if (changed) showSlice(z, t, trans);
       }
       else if (src instanceof JButton) {
-        JButton animate = (JButton) src;
         if (animate.getText().equals("Animate")) {
           animating = true;
           animationTimer = new javax.swing.Timer(1000 / fps, this);
@@ -830,9 +828,11 @@ public class LociDataBrowser implements PlugIn {
       }
       else if (!hasZ && hasTP && !hasTrans && numFiles > 1 && depth == 1) {
         showSlice(t);
-      } else if (!hasTP && hasTrans && !hasZ && numFiles == 2) {
-	  showSlice(c * depth + t);
-	  } else {
+      }
+      else if (!hasTP && hasTrans && !hasZ && numFiles == 2) {
+        showSlice(c * depth + t);
+      }
+      else {
         if (listTP[0]==0) t -= tpStep;
         for (int i=0; i<numFiles; i++) {
           if ((listTP[i] == t && hasTP) && ((listC[i] == c && hasTrans) ||
@@ -843,15 +843,15 @@ public class LociDataBrowser implements PlugIn {
             break;
           }
           else if (DEBUG) {
-	      System.err.println("t = "+ t);
-	      System.err.println("z = "+ z);
-	      System.err.println("hasTP = "+hasTP);
-	      System.err.println("hasZ = "+hasZ);
-	      System.err.println("hasTrans = "+hasTrans);
-	      System.err.println("Something wrong in showSlice()");
-	      break;
-	  }
-	}
+            System.err.println("t = "+ t);
+            System.err.println("z = "+ z);
+            System.err.println("hasTP = "+hasTP);
+            System.err.println("hasZ = "+hasZ);
+            System.err.println("hasTrans = "+hasTrans);
+            System.err.println("Something wrong in showSlice()");
+            break;
+          }
+        }
       }
     }
 
@@ -899,7 +899,7 @@ public class LociDataBrowser implements PlugIn {
         sb.append("/");
         sb.append(numFiles == 1 ? 1 : (!hasTP ? depth : depth2));
 
-	sb.append(" (" + filename[currentSlice-1] + ")");
+        sb.append(" (" + filename[currentSlice-1] + ")");
         sb.append("; ");
       }
 
