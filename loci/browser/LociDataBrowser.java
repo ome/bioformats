@@ -107,7 +107,7 @@ public class LociDataBrowser implements PlugIn {
   private int tpStep;
 
   private static String[] preTime={"_TP", "_Tl"};
-  private static String[] preZ = {"_Z", "_Zs"};
+  private static String[] preZ = {"_Z", "_Zs", "-Z"};
   private static String[] preTrans = {"_C"};
 
   private static final boolean DEBUG = false;
@@ -133,8 +133,10 @@ public class LociDataBrowser implements PlugIn {
     String[] prefixes = oldPrefixes;
     String [] absList = fp.getFiles();     // all the image files
 
-    for (int i=0; i<prefixes.length; i++) {
-      System.err.println("prefixes["+i+"] := "+prefixes[i]);
+    if (DEBUG) {
+      for (int i=0; i<prefixes.length; i++) {
+        System.err.println("prefixes["+i+"] := "+prefixes[i]);
+      }
     }
     // find out what axes exist
     hasTP = false;
@@ -173,12 +175,12 @@ public class LociDataBrowser implements PlugIn {
     else if (prefixes.length > 0) {
 
       for (int i=0; i<prefixes.length; i++) {
-        System.err.println("Prefixes["+i+"] = "+prefixes[i]);
+        if (DEBUG) System.err.println("Prefixes["+i+"] = "+prefixes[i]);
         prefixes[i]=prefixes[i].replaceAll("\\d+$", "");
       }
 
       firstPrefix = prefixes[0];
-      System.err.println(firstPrefix);
+      if (DEBUG) System.err.println(firstPrefix);
       for (int i=0; i<prefixes.length; i++) {
         for (int j=0; j<preTime.length; j++) {
           if (prefixes[i].endsWith(preTime[j])) {
@@ -212,7 +214,7 @@ public class LociDataBrowser implements PlugIn {
         }
       }
 
-      System.err.println(hasTrans);
+      if (DEBUG) System.err.println(hasTrans);
       int [] repeat = new int[prefixes.length];
       repeat[0] = 1;
 
@@ -239,7 +241,7 @@ public class LociDataBrowser implements PlugIn {
 
       if (!hasTP && !hasZ && !hasTrans) {
         for (int aa = 0; aa < listTP.length; aa++) listTP[aa] = aa;
-        System.err.println("Here!!!");
+        if (DEBUG) System.err.println("Here!!!");
         hasTP = true;
       }
 
@@ -857,10 +859,14 @@ public class LociDataBrowser implements PlugIn {
 
     /** selects and shows slice defined by index */
     public void showSlice(int index) {
-      if (index >= 1 && index <= imp.getStackSize()) imp.setSlice(index);
-      else if (index < 1) System.err.println("Error: Slice index < 1");
-      else System.err.println("Error: Slice index > stack size");
-      imp.updateAndDraw();
+      if (index >= 1 && index <= imp.getStackSize()) {
+        imp.setSlice(index);
+        imp.updateAndDraw();
+      }
+      else if (DEBUG) {
+        if (index < 1) System.err.println("Error: Slice index < 1");
+        else System.err.println("Error: Slice index > stack size");
+      }
     }
 
     /**
@@ -993,17 +999,23 @@ public class LociDataBrowser implements PlugIn {
 
     /** Does nothing. */
     public void addSlice(String sliceLabel, Object pixels) {
-      System.err.println("ERROR: calling addSlice(sliceLabel, pixels)");
+      if (DEBUG) {
+        System.err.println("ERROR: calling addSlice(sliceLabel, pixels)");
+      }
     }
 
     /** Does nothing.. */
     public void addSlice(String sliceLabel, ImageProcessor ip) {
-      System.err.println("ERROR: calling addSlice(sliceLabel, ip)");
+      if (DEBUG) {
+        System.err.println("ERROR: calling addSlice(sliceLabel, ip)");
+      }
     }
 
     /** Does noting. */
     public void addSlice(String sliceLabel, ImageProcessor ip, int n) {
-      System.err.println("ERROR: calling addSlice(sliceLabel, ip, n)");
+      if (DEBUG) {
+        System.err.println("ERROR: calling addSlice(sliceLabel, ip, n)");
+      }
     }
 
     /** Deletes the specified slice, were 1<=n<=nslices. */
