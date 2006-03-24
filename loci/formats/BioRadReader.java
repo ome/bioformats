@@ -321,8 +321,10 @@ public class BioRadReader extends FormatReader {
               metadata.put(key + " log ratio (Y)", params.get(1));
               break;
             case 9:
-              metadata.put(key + " noncalibrated intensity min", params.get(0));
-              metadata.put(key + " noncalibrated intensity max", params.get(1));
+              metadata.put(key + " noncalibrated intensity min",
+                params.get(0));
+              metadata.put(key + " noncalibrated intensity max",
+                params.get(1));
               metadata.put(key + " calibrated intensity min", params.get(2));
               metadata.put(key + " calibrated intensity max", params.get(3));
               break;
@@ -339,8 +341,8 @@ public class BioRadReader extends FormatReader {
                 params.get(0));
               metadata.put(key + " inverse sigmoid calibrated intensity (max)",
                 params.get(1));
-              metadata.put(key + " inverse sigmoid calibrated intensity (beta)",
-                params.get(2));
+              metadata.put(key +
+                " inverse sigmoid calibrated intensity (beta)", params.get(2));
               metadata.put(key + " inverse sigmoid calibrated intensity (Kd)",
                 params.get(3));
               metadata.put(key + " inverse sigmoid calibrated intensity " +

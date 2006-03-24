@@ -202,7 +202,7 @@ public class FluoviewReader extends BaseTiffReader {
       off = (Object) ifd.get(new Integer(MMHEADER));
       if (off != null) {
         OMETools.setImageName(ome, imageName);
-        
+
         // read the metadata
         byte[] temp2 = new byte[279];
         in.read(temp2);

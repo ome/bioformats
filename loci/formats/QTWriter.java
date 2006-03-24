@@ -81,7 +81,7 @@ public class QTWriter extends FormatWriter {
 
     // retrieve pixel data for this plane
     byte[][] byteData = ImageTools.getBytes(img);
-    
+
     // need to check if the width is a multiple of 8
     // if it is, great; if not, we need to pad each scanline with enough
     // bytes to make the width a multiple of 8
@@ -98,7 +98,7 @@ public class QTWriter extends FormatWriter {
       for (int k=0; k<temp.length; k++) {
         System.arraycopy(temp[k], oldScanline*width, byteData[k],
           oldScanline*(width+pad), width);
- 
+
         // add padding bytes
 
         for (int i=0; i<pad; i++) {
@@ -113,10 +113,10 @@ public class QTWriter extends FormatWriter {
 
     if (byteData.length == 1) {
       for (int i=0; i<byteData.length; i++) {
-        for (int k=0; k<byteData[0].length; k++) {      
+        for (int k=0; k<byteData[0].length; k++) {
           byteData[i][k] = (byte) (255 - byteData[i][k]);
         }
-      } 
+      }
     }
 
     if (!id.equals(currentId)) {
@@ -136,15 +136,15 @@ public class QTWriter extends FormatWriter {
       // -- write the first plane of pixel data (mdat) --
 
       numBytes = byteData[0].length * byteData.length;
-      
+
       byteCountOffset = out.getFilePointer();
       DataTools.writeReverseInt(out, numBytes + 8);
       DataTools.writeString(out, "mdat");
-     
+
       for (int i=0; i<byteData[0].length; i++) {
         for (int j=0; j<byteData.length; j++) {
-          out.write(byteData[j][i]);         
-        }      
+          out.write(byteData[j][i]);
+        }
       }
 
       offsets.add(new Integer(16));
@@ -158,12 +158,12 @@ public class QTWriter extends FormatWriter {
 
       // write this plane's pixel data
       out.seek(out.length());
-     
+
       for (int i=0; i<byteData[0].length; i++) {
         for (int j=0; j<byteData.length; j++) {
-          out.write(byteData[j][i]);         
-        }      
-      }         
+          out.write(byteData[j][i]);
+        }
+      }
 
       offsets.add(new Integer(planeOffset + 16));
       numWritten++;
@@ -174,7 +174,7 @@ public class QTWriter extends FormatWriter {
       int timeScale = 100;
       int bitsPerPixel = (byteData.length > 1) ? 24 : 40;
       int channels = (bitsPerPixel == 40) ? 1 : 3;
-      
+
       // -- write moov atom --
 
       int atomLength = 685 + 8*numWritten;
@@ -431,7 +431,7 @@ public class QTWriter extends FormatWriter {
       DataTools.writeReverseInt(out, 0); // sample size
       DataTools.writeReverseInt(out, numWritten); // number of planes
       for (int i=0; i<numWritten; i++) {
-        // sample size      
+        // sample size
         DataTools.writeReverseInt(out, channels*height*(width+pad));
       }
 

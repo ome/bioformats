@@ -441,9 +441,9 @@ public class AVIWriter extends FormatWriter {
     for (int i=0; i<byteData[0].length; i++) {
       for (int k=0; k<byteData.length; k++) {
         raFile.write(byteData[k][i]);
-      }        
+      }
     }
-      
+
     //raFile.write(buf);
 
     planesWritten++;

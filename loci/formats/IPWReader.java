@@ -123,7 +123,7 @@ public class IPWReader extends BaseTiffReader {
     in = new RandomAccessFile(id, "r");
     metadata = new Hashtable();
     ome = OMETools.createRoot();
-    
+
     allIFDs = new Hashtable();
     numImages = 0;
     ra = new RandomAccessArray(id, "r");
