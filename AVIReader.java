@@ -385,7 +385,7 @@ public class AVIReader extends FormatReader {
                 {
                   int len = bmpScanLineSize;
                   if (bmpBitsPerPixel > 8) {
-                    byteData = 
+                    byteData =
                       new byte[(bmpBitsPerPixel / 8) * dwWidth * bmpHeight];
                   }
                   else {

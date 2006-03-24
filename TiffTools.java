@@ -642,8 +642,8 @@ public abstract class TiffTools {
     boolean fakeRPS = rowsPerStripArray == null;
     boolean isTiled = stripOffsets == null;
 
-    long maxValue = getIFDLongValue(ifd, MAX_SAMPLE_VALUE, false, 0); 
-    
+    long maxValue = getIFDLongValue(ifd, MAX_SAMPLE_VALUE, false, 0);
+
     if (isTiled) {
     //  long tileWidth = getIFDLongValue(ifd, TILE_WIDTH, true, 0);
     //  long tileLength = getIFDLongValue(ifd, TILE_LENGTH, true, 0);
@@ -889,14 +889,14 @@ public abstract class TiffTools {
     if (bitsPerSample[0] < 8) {
       samples = new short[samplesPerPixel][numSamples];
     }
- 
-    byte[][] byteData = 
+
+    byte[][] byteData =
       new byte[samplesPerPixel][numSamples];
     float[][] floatData =
       new float[samplesPerPixel][numSamples];
-   
+
     if (bitsPerSample[0] == 16) littleEndian = !littleEndian;
-    
+
     int overallOffset = 0;
     for (int strip=0, row=0; strip<numStrips; strip++, row+=rowsPerStrip) {
       if (DEBUG) debug("reading image strip #" + strip);
@@ -947,27 +947,28 @@ public abstract class TiffTools {
     if (DEBUG) debug("constructing image");
 
     if (bitsPerSample[0] == 16) {
-      return ImageTools.makeImage(samples, (int) imageWidth, (int) imageLength);
+      return ImageTools.makeImage(samples,
+        (int) imageWidth, (int) imageLength);
     }
     else if (bitsPerSample[0] == 32) {
       for (int i=0; i<samplesPerPixel; i++) {
         for (int j=0; j<numSamples; j++) {
-          floatData[i][j] = (float) samples[i][j];       
-        }        
-      }     
-      return ImageTools.makeImage(floatData, (int) imageWidth, 
+          floatData[i][j] = (float) samples[i][j];
+        }
+      }
+      return ImageTools.makeImage(floatData, (int) imageWidth,
         (int) imageLength);
     }
     else {
       for (int i=0; i<samplesPerPixel; i++) {
         for (int j=0; j<numSamples; j++) {
-          byteData[i][j] = (byte) samples[i][j];       
-        }        
-      }      
-      return ImageTools.makeImage(byteData, (int) imageWidth, 
+          byteData[i][j] = (byte) samples[i][j];
+        }
+      }
+      return ImageTools.makeImage(byteData, (int) imageWidth,
         (int) imageLength);
     }
-  }  
+  }
 
   /**
    * Extracts pixel information from the given byte array according to the
@@ -1029,7 +1030,7 @@ public abstract class TiffTools {
         samples[channelNum][ndx] = (short) (b < 0 ? 256 + b : b);
 
         if (photoInterp == WHITE_IS_ZERO || photoInterp == CMYK) {
-           samples[channelNum][ndx] = 
+           samples[channelNum][ndx] =
              (short) (2147483647 - samples[channelNum][ndx]);
         }
       }
@@ -1041,11 +1042,11 @@ public abstract class TiffTools {
         samples[channelNum][ndx] = (short) (b < 0 ? 256 + b : b);
 
         if (photoInterp == WHITE_IS_ZERO) { // invert color value
-          samples[channelNum][ndx] = 
+          samples[channelNum][ndx] =
             (short) (2147483647 - samples[channelNum][ndx]);
         }
         else if (photoInterp == CMYK) {
-          samples[channelNum][ndx] = 
+          samples[channelNum][ndx] =
             (short) (2147483647 - samples[channelNum][ndx]);
         }
       }
@@ -1060,7 +1061,7 @@ public abstract class TiffTools {
         index += numBytes;
         int ndx = startIndex + j;
         if (ndx >= samples[0].length) ndx = samples[0].length - 1;
-        samples[channelNum][ndx] = 
+        samples[channelNum][ndx] =
           (short) DataTools.bytesToLong(b, !littleEndian);
 
         if (photoInterp == WHITE_IS_ZERO) { // invert color value
@@ -1069,7 +1070,7 @@ public abstract class TiffTools {
           samples[channelNum][ndx] = (short) (max - samples[channelNum][ndx]);
         }
         else if (photoInterp == CMYK) {
-          samples[channelNum][ndx] = 
+          samples[channelNum][ndx] =
             (short) (2147483647 - samples[channelNum][ndx]);
         }
       }
@@ -1154,7 +1155,7 @@ public abstract class TiffTools {
           samples[i][ndx] = (short) (b < 0 ? 256 + b : b);
 
           if (photoInterp == WHITE_IS_ZERO || photoInterp == CMYK) {
-             samples[i][ndx] = 
+             samples[i][ndx] =
                (short) (2147483647 - samples[i][ndx]); // invert colors
           }
           else if (photoInterp == RGB_PALETTE) {
@@ -1218,7 +1219,7 @@ public abstract class TiffTools {
           }
           index += numBytes;
           int ndx = startIndex + j;
-          samples[i][ndx] = 
+          samples[i][ndx] =
             (short) DataTools.bytesToLong(b, !littleEndian);
 
           if (photoInterp == WHITE_IS_ZERO) { // invert color value
@@ -1356,7 +1357,7 @@ public abstract class TiffTools {
     if (DEBUG) debug("writeImage (offset=" + offset + "; last=" + last + ")");
 
     BufferedImage img = ImageTools.makeBuffered(image);
-    
+
     // get pixels
 
     Object data = ImageTools.getPixels(img);
@@ -1367,26 +1368,26 @@ public abstract class TiffTools {
       values = new int[pix.length][pix[0].length];
       for (int i=0; i<pix.length; i++) {
         for (int j=0; j<pix[i].length; j++) {
-          values[i][j] = (int) pix[i][j];       
-        }
-      }
-    }        
-    else if (data instanceof short[][]) {
-      short[][] pix = (short[][]) data;        
-      values = new int[pix.length][pix[0].length];
-      for (int i=0; i<pix.length; i++) {
-        for (int j=0; j<pix[i].length; j++) {
-          values[i][j] = (int) pix[i][j];       
+          values[i][j] = (int) pix[i][j];
         }
       }
     }
-    else if (data instanceof int[][]) { 
+    else if (data instanceof short[][]) {
+      short[][] pix = (short[][]) data;
+      values = new int[pix.length][pix[0].length];
+      for (int i=0; i<pix.length; i++) {
+        for (int j=0; j<pix[i].length; j++) {
+          values[i][j] = (int) pix[i][j];
+        }
+      }
+    }
+    else if (data instanceof int[][]) {
       values = (int[][]) data;
-    }        
+    }
     else {
       // should add cases for float/double data...later
       throw new FormatException("data type not supported");
-    }  
+    }
 
     int width = img.getWidth();
     int height = img.getHeight();

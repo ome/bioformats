@@ -45,7 +45,7 @@ public abstract class ImageTools {
 
 
   // -- Image construction --
-  
+
   /**
    * Creates an image from the given unsigned byte data.
    * If the interleaved flag is set, the channels are assumed to be
