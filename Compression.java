@@ -113,11 +113,12 @@ public abstract class Compression {
       inf.setInput(input);
       InflaterInputStream i =
         new InflaterInputStream(new PipedInputStream(), inf);
-      int avail = i.available();
       ByteVector bytes = new ByteVector();
-      while (avail != 0) {
-        bytes.add((byte) i.read());
-        avail = i.available();
+      byte[] buf = new byte[8192];
+      while (true) {
+        int r = i.read(buf, 0, buf.length);
+        if (r == -1) break; // eof
+        bytes.add(buf, 0, r);
       }
       return bytes.toByteArray();
     }
