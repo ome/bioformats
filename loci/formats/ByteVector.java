@@ -47,22 +47,25 @@ public class ByteVector {
   }
 
   public void add(byte x) {
-    if (size>=data.length) {
-      doubleCapacity();
-      add(x);
-    }
-    else data[size++] = x;
+    while (size >= data.length) doubleCapacity();
+    data[size++] = x;
   }
 
   public int size() {
     return size;
   }
 
-  public void add(byte[] array) {
-    int length = array.length;
-    while (data.length-size<length) doubleCapacity();
-    System.arraycopy(array, 0, data, size, length);
-    size += length;
+  public void add(byte[] array) { add(array, 0, array.length); }
+
+  public void add(byte[] array, int off, int len) {
+    while (data.length < size + len) doubleCapacity();
+    if (len == 1) data[size] = array[off];
+    else if (len < 35) {
+      // for loop is faster for small number of elements
+      for (int i=0; i<len; i++) data[size + i] = array[off + i];
+    }
+    else System.arraycopy(array, off, data, size, len);
+    size += len;
   }
 
   void doubleCapacity() {
