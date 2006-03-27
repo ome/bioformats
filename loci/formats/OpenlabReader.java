@@ -123,9 +123,7 @@ public class OpenlabReader extends FormatReader {
     in.read(toRead);
     // right now I'm gonna skip all the header info
     // check to see whether or not this is v2 data
-    if (toRead[0] == 1) {
-      in.skipBytes(128);
-    }
+    if (toRead[0] == 1) in.skipBytes(128);
     in.skipBytes(169);
     // read in the block of data
     toRead = new byte[blockSize];
@@ -154,7 +152,7 @@ public class OpenlabReader extends FormatReader {
     byte[] temp;
     boolean skipflag;
 
-    // read in deep grey pixel data into an array, and create a
+    // read in deep gray pixel data into an array, and create a
     // BufferedImage out of it
     //
     // First, checks the existence of a deep gray block. If it doesn't exist,
@@ -234,6 +232,7 @@ public class OpenlabReader extends FormatReader {
           (int) pixelData[pos] << 8;
         pixelValue += pixelData[pos + 1] < 0 ? 256 + pixelData[pos + 1] :
           (int) pixelData[pos + 1];
+        pos += 2;
       }
       else throw new FormatException("Malformed LIFF data");
       flatSamples[imagePos] = (short) pixelValue;
