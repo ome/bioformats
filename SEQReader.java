@@ -112,21 +112,17 @@ public class SEQReader extends BaseTiffReader {
     {
       Integer sizeZ;
       Integer sizeT;
-           
+
       if (metadata.get("slices") instanceof Integer) {
         sizeZ = (Integer) metadata.get("slices");
-      }        
-      else {
-        sizeZ = new Integer("" + metadata.get("slices"));
-      }        
-        
+      }
+      else sizeZ = new Integer("" + metadata.get("slices"));
+
       if (metadata.get("frames") instanceof Integer) {
         sizeT = (Integer) metadata.get("frames");
       }
-      else {
-        sizeT = new Integer("" + metadata.get("frames"));
-      }        
-      
+      else sizeT = new Integer("" + metadata.get("frames"));
+
       OMETools.setPixels(ome, null, null,
         sizeZ, null, sizeT, null, null, null);
     }
