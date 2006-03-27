@@ -130,30 +130,24 @@ public abstract class Compression {
   /**
    * Decodes a PackBits (Macintosh RLE) compressed image.
    * Adapted from the TIFF 6.0 specification, page 42.
-   * @author Melissa Linkert, linkert at cs.wisc.edu
+   * @author Melissa Linkert linkert at cs.wisc.edu
    */
   public static byte[] packBitsUncompress(byte[] input) {
     ByteVector output = new ByteVector(input.length);
     int pt = 0;
-    byte n;
     while (pt < input.length) {
-      n = input[pt];
-      pt++;
-      if (0 <= n && n <= 127) {
-        for (int i=0; i<(int) n+1; i++) {
-          if (pt < input.length) {
-            output.add(input[pt]);
-            pt++;
-          }
-        }
+      byte n = input[pt++];
+      if (n >= 0) { // 0 <= n <= 127
+        int len = pt + n + 1 > input.length ? (input.length - pt) : (n + 1);
+        output.add(input, pt, len);
+        pt += len;
       }
-      else if (-127 <= n || n <= -1) {
-        for (int i=0; i<(int) (-n+1); i++) {
-          if (pt < input.length) output.add(input[pt]);
-        }
-        pt++;
+      else if (n != -128) { // -127 <= n <= -1
+        if (pt >= input.length) break;
+        int len = -n + 1;
+        byte inp = input[pt++];
+        for (int i=0; i<len; i++) output.add(inp);
       }
-      else pt++;
     }
     return output.toByteArray();
   }
