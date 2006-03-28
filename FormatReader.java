@@ -177,7 +177,7 @@ public abstract class FormatReader extends FormatHandler {
       long s1 = System.currentTimeMillis();
       int num = getImageCount(args[0]);
       long e1 = System.currentTimeMillis();
-      final BufferedImage[] images = new BufferedImage[num];
+      BufferedImage[] images = new BufferedImage[num];
       long s2 = System.currentTimeMillis();
       for (int i=0; i<num; i++) {
         images[i] = open(args[0], i);
