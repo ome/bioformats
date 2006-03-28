@@ -169,14 +169,15 @@ public class LociDataBrowser implements PlugIn {
     int idxTP = -1;
     int idxC = -1;
     int idxZ = -1;
-    
+
     preZ1 = false;
     if (numFiles == 1) {
       hasTP = false;
       hasZ = true;
       hasTrans = false;
-      if (list[0].indexOf('.') != -1) 
-	  firstPrefix = list[0].substring(0,list[0].indexOf('.'));
+      if (list[0].indexOf('.') != -1) {
+        firstPrefix = list[0].substring(0,list[0].indexOf('.'));
+      }
     }
     else if (prefixes.length > 0) {
 
@@ -267,11 +268,10 @@ public class LociDataBrowser implements PlugIn {
         System.err.println();
         System.err.print("listC = ");
         for (int i=0; i<listC.length; i++) System.err.print(listC[i]+" ");
-	System.err.println();
-	System.err.println("hasTP = " + hasTP);
-	System.err.println("hasZ = " + hasZ);
-	System.err.println("hasTrans = " + hasTrans);
-
+        System.err.println();
+        System.err.println("hasTP = " + hasTP);
+        System.err.println("hasZ = " + hasZ);
+        System.err.println("hasTrans = " + hasTrans);
       }
 
     }
@@ -303,10 +303,10 @@ public class LociDataBrowser implements PlugIn {
             type = imp.getType();
             fi = imp.getOriginalFileInfo();
             if (fi != null) {
-		description = fi.description;
-		d = description;
-	    }
-	    imp.setFileInfo(fi);
+              description = fi.description;
+              d = description;
+            }
+            imp.setFileInfo(fi);
 
             start = 1;
             if ((!hasTP && !hasZ && (depth>1))) {
@@ -543,20 +543,21 @@ public class LociDataBrowser implements PlugIn {
       addPanel();
     }
 
-    /** adds the Scrollbar to the custom window*/
+    /** adds the Scrollbar to the custom window */
     void addPanel() {
       depth2 = stackSize/(depth*(hasTrans ? 2 : 1));
       if (hasTP && hasZ && depth == 1) {
-	  maxZ = 0;
-	  maxTP = 0;
-	  for (int i=0; i<listZ.length; i++) {
-	      if (maxZ < listZ[i]) maxZ = listZ[i];
-	      if (maxTP < listTP[i]) maxTP = listTP[i];
-	  }
-          sliceSel1 = new JScrollBar(JScrollBar.HORIZONTAL, 1, 1, 1, maxZ+2);
-          sliceSel2 = new JScrollBar(JScrollBar.HORIZONTAL, 1, 1, 1, maxTP+2);
-      } else if (!hasTP && numFiles > 1) {
-	if (hasZ && !preZ1) {
+        maxZ = 0;
+        maxTP = 0;
+        for (int i=0; i<listZ.length; i++) {
+          if (maxZ < listZ[i]) maxZ = listZ[i];
+          if (maxTP < listTP[i]) maxTP = listTP[i];
+        }
+        sliceSel1 = new JScrollBar(JScrollBar.HORIZONTAL, 1, 1, 1, maxZ+2);
+        sliceSel2 = new JScrollBar(JScrollBar.HORIZONTAL, 1, 1, 1, maxTP+2);
+      }
+      else if (!hasTP && numFiles > 1) {
+        if (hasZ && !preZ1) {
           sliceSel1 = new JScrollBar(JScrollBar.HORIZONTAL, 1, 1, 1, depth+1);
           sliceSel2 = new JScrollBar(JScrollBar.HORIZONTAL, 1, 1, 1, depth2+1);
         }
@@ -573,10 +574,12 @@ public class LociDataBrowser implements PlugIn {
       sliceSel1.addAdjustmentListener(this);
       sliceSel2.addAdjustmentListener(this);
       if (sliceSel1.getMinimum() + 1 == sliceSel1.getMaximum()) {
-	  sliceSel1.setEnabled(false);
+        sliceSel1.setEnabled(false);
       }
 
-      if (sliceSel2.getMinimum() + 1 == sliceSel2.getMaximum()) sliceSel2.setEnabled(false);
+      if (sliceSel2.getMinimum() + 1 == sliceSel2.getMaximum()) {
+        sliceSel2.setEnabled(false);
+      }
 
       int blockIncrement = depth/10;
       if (blockIncrement < 1) blockIncrement = 1;
@@ -588,7 +591,6 @@ public class LociDataBrowser implements PlugIn {
       sliceSel2.setUnitIncrement(1);
       sliceSel2.setBlockIncrement(blockIncrement);
 
-      // CTR 11 Feb 2005
       add(sliceSel1);
       add(sliceSel2);
       Panel bottom = new Panel() {
@@ -748,8 +750,7 @@ public class LociDataBrowser implements PlugIn {
       }
     }
 
-    // CTR 11 Feb 2005
-    /** Button Listener */
+    /** button listener */
     public void actionPerformed(ActionEvent e) {
       Object src = e.getSource();
       if ("xml".equals(e.getActionCommand())) {
@@ -850,7 +851,7 @@ public class LociDataBrowser implements PlugIn {
       }
 
       if (numFiles == 1 || (hasZ && !hasTP && !hasTrans && numFiles > 1)) {
-	  showSlice(z);
+        showSlice(z);
       }
       else if (!hasZ && hasTP && !hasTrans && numFiles > 1 && depth == 1) {
         showSlice(t);
@@ -861,8 +862,8 @@ public class LociDataBrowser implements PlugIn {
       else {
         if (listTP[0]==0) t -= tpStep;
         for (int i=0; i<numFiles; i++) {
-          if (((listTP[i] == t && hasTP) || !hasTP) 
-	      && ((listC[i] == c && hasTrans) || !hasTrans))
+          if (((listTP[i] == t && hasTP) || !hasTP)
+            && ((listC[i] == c && hasTrans) || !hasTrans))
           {
             if (!hasTP) showSlice(t + depth*i);
             else showSlice(z + depth*i);
@@ -873,7 +874,7 @@ public class LociDataBrowser implements PlugIn {
             System.err.println("z = "+ z);
             System.err.println("hasTP = "+hasTP);
             System.err.println("hasZ = "+hasZ);
-	    System.err.println("preZ1 = " + preZ1);
+            System.err.println("preZ1 = " + preZ1);
             System.err.println("hasTrans = "+hasTrans);
             System.err.println("Something wrong in showSlice()");
           }
@@ -906,7 +907,7 @@ public class LociDataBrowser implements PlugIn {
       catch (NullPointerException exc) { return; }
 
       int textGap = 0;
-      
+
       StringBuffer sb = new StringBuffer();
       Insets insets = super.getInsets();
       int nSlices = imp.getStackSize();
@@ -921,13 +922,15 @@ public class LociDataBrowser implements PlugIn {
         sb.append(": ");
         sb.append(sliceSel1 == null ? 0 : sliceSel1.getValue());
         sb.append("/");
-        sb.append(maxZ != 0 ? maxZ+1 : (numFiles == 1 ? depth : (!hasTP ? depth2 : depth)));
+        sb.append(maxZ != 0 ? maxZ+1 :
+          (numFiles == 1 ? depth : (!hasTP ? depth2 : depth)));
         sb.append(" ");
         if (lab4D!=null) sb.append(lab4D);
         sb.append(": ");
         sb.append(sliceSel2 == null ? 0 : sliceSel2.getValue());
         sb.append("/");
-        sb.append(maxTP != 0 ? maxTP+1 : (numFiles == 1 ? 1 : (!hasTP ? depth : depth2)));
+        sb.append(maxTP != 0 ? maxTP+1 :
+          (numFiles == 1 ? 1 : (!hasTP ? depth : depth2)));
 
         sb.append(" (" + filename[currentSlice-1] + ")");
         sb.append("; ");
