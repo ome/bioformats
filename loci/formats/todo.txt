@@ -1,5 +1,3 @@
-LOCI Bio-Formats things to do (either Melissa or Curtis):
-
 QuickTime:
 * mjpb codec
 * svq3 codec (lower priority)
@@ -8,7 +6,7 @@ Implement readers for other file formats:
 * Amersham Biosciences GEL
 * Fluoview FV1000 (OIB/OIF)
 * DICOM
-* Anything else listed online: http://www.loci.wisc.edu/visbio/formats.html
+* Anything else listed online: http://www.loci.wisc.edu/ome/formats.html
 
 Adapt VisBio to take advantage of LOCI Bio-Formats package.
 
