@@ -368,11 +368,11 @@ public abstract class ImageTools {
         }
       }
     }
+    // an order of magnitude faster than the naive makeType solution
     int w = image.getWidth(), h = image.getHeight(), c = r.getNumBands();
     float[][] samples = new float[c][w * h];
     for (int i=0; i<c; i++) r.getSamples(0, 0, w, h, i, samples[i]);
     return samples;
-    //TODO: determine which method is faster for getFloats conversion
     //return getFloats(makeType(image, DataBuffer.TYPE_FLOAT));
   }
 
@@ -390,11 +390,11 @@ public abstract class ImageTools {
         }
       }
     }
+    // an order of magnitude faster than the naive makeType solution
     int w = image.getWidth(), h = image.getHeight(), c = r.getNumBands();
     double[][] samples = new double[c][w * h];
     for (int i=0; i<c; i++) r.getSamples(0, 0, w, h, i, samples[i]);
     return samples;
-    //TODO: determine which method is faster for getFloats conversion
     //return getDoubles(makeType(image, DataBuffer.TYPE_DOUBLE));
   }
 
@@ -461,7 +461,91 @@ public abstract class ImageTools {
 
   /** Merges the given images into a single multi-channel image. */
   public static BufferedImage mergeChannels(BufferedImage[] images) {
-    //TODO: mergeChannels
+    if (images == null || images.length == 0) return null;
+
+    // create list of pixels arrays
+    Object[] list = new Object[images.length];
+    int c = 0, type = 0;
+    for (int i=0; i<images.length; i++) {
+      Object o = getPixels(images[i]);
+      if (o instanceof byte[][]) {
+        if (i == 0) type = DataBuffer.TYPE_BYTE;
+        else if (type != DataBuffer.TYPE_BYTE) return null;
+        c += ((byte[][]) o).length;
+      }
+      else if (o instanceof short[][]) {
+        if (i == 0) type = DataBuffer.TYPE_USHORT;
+        else if (type != DataBuffer.TYPE_USHORT) return null;
+        c += ((short[][]) o).length;
+      }
+      else if (o instanceof int[][]) {
+        if (i == 0) type = DataBuffer.TYPE_INT;
+        else if (type != DataBuffer.TYPE_INT) return null;
+        c += ((int[][]) o).length;
+      }
+      else if (o instanceof float[][]) {
+        if (i == 0) type = DataBuffer.TYPE_FLOAT;
+        else if (type != DataBuffer.TYPE_FLOAT) return null;
+        c += ((float[][]) o).length;
+      }
+      else if (o instanceof double[][]) {
+        if (i == 0) type = DataBuffer.TYPE_DOUBLE;
+        else if (type != DataBuffer.TYPE_DOUBLE) return null;
+        c += ((double[][]) o).length;
+      }
+      if (c > 4) return null;
+      list[i] = o;
+    }
+    if (c != 1 && c != 3 && c != 4) return null;
+
+    // compile results into a single array
+    int w = images[0].getWidth(), h = images[0].getHeight();
+    if (type == DataBuffer.TYPE_BYTE) {
+      byte[][] pix = new byte[c][];
+      int ndx = 0;
+      for (int i=0; i<list.length; i++) {
+        byte[][] b = (byte[][]) list[i];
+        for (int j=0; j<b.length; j++) pix[ndx++] = b[j];
+      }
+      return makeImage(pix, w, h);
+    }
+    if (type == DataBuffer.TYPE_USHORT) {
+      short[][] pix = new short[c][];
+      int ndx = 0;
+      for (int i=0; i<list.length; i++) {
+        short[][] b = (short[][]) list[i];
+        for (int j=0; j<b.length; j++) pix[ndx++] = b[j];
+      }
+      return makeImage(pix, w, h);
+    }
+    if (type == DataBuffer.TYPE_INT) {
+      int[][] pix = new int[c][];
+      int ndx = 0;
+      for (int i=0; i<list.length; i++) {
+        int[][] b = (int[][]) list[i];
+        for (int j=0; j<b.length; j++) pix[ndx++] = b[j];
+      }
+      return makeImage(pix, w, h);
+    }
+    if (type == DataBuffer.TYPE_FLOAT) {
+      float[][] pix = new float[c][];
+      int ndx = 0;
+      for (int i=0; i<list.length; i++) {
+        float[][] b = (float[][]) list[i];
+        for (int j=0; j<b.length; j++) pix[ndx++] = b[j];
+      }
+      return makeImage(pix, w, h);
+    }
+    if (type == DataBuffer.TYPE_DOUBLE) {
+      double[][] pix = new double[c][];
+      int ndx = 0;
+      for (int i=0; i<list.length; i++) {
+        double[][] b = (double[][]) list[i];
+        for (int j=0; j<b.length; j++) pix[ndx++] = b[j];
+      }
+      return makeImage(pix, w, h);
+    }
+
     return null;
   }
 
