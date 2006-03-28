@@ -252,25 +252,17 @@ public class PictReader extends FormatReader {
     }
     else if (height*3 == strips.size()) {
       // 24 bit data
-      byte[][] data = new byte[3][height * width];
+      byte[][] data = new byte[3][width * height];
 
-      byte[] channel1;
-      byte[] channel2;
-      byte[] channel3;
       int outIndex = 0;
-      int rowNum = 0;
-
-      for (int i=0; i<3*height; i+=3, rowNum++) {
-        channel1 = (byte[]) strips.get(i);
-        channel2 = (byte[]) strips.get(i+1);
-        channel3 = (byte[]) strips.get(i+2);
-
-
-        for (int j=0; j<channel1.length; j++, outIndex++) {
-          data[0][outIndex] = channel1[j];
-          data[1][outIndex] = channel2[j];
-          data[2][outIndex] = channel3[j];
-        }
+      for (int i=0; i<3*height; i+=3) {
+        byte[] c0 = (byte[]) strips.get(i);
+        byte[] c1 = (byte[]) strips.get(i+1);
+        byte[] c2 = (byte[]) strips.get(i+2);
+        System.arraycopy(c0, 0, data[0], outIndex, c0.length);
+        System.arraycopy(c1, 0, data[1], outIndex, c1.length);
+        System.arraycopy(c2, 0, data[2], outIndex, c2.length);
+        outIndex += c0.length;
       }
 
       if (DEBUG) {
@@ -312,22 +304,22 @@ public class PictReader extends FormatReader {
     }
     else {
       // 16 bit data
-      int[] data = new int[3 * height * width];
-
-      int[] row;
+      short[] data = new short[3 * height * width];
 
       int outIndex = 0;
-
       for (int i=0; i<height; i++) {
-        row = (int[]) strips.get(i);
+        int[] row = (int[]) strips.get(i);
 
         for (int j=0; j<row.length; j++, outIndex+=3) {
           if (j < width) {
             if (outIndex >= data.length) outIndex = data.length - 1;
 
-            data[outIndex] = row[j] & (0x1F << 10);
-            data[outIndex+1] = row[j] & (0x1F << 5);
-            data[outIndex+2] = row[j] & 0x1F;
+            int s0 = (row[j] & 0x1f);
+            int s1 = (row[j] & 0x3e0); // 0x1f << 5;
+            int s2 = (row[j] & 0x7c00); // 0x1f << 10;
+            data[outIndex] = (short) (s2 >> 10);
+            data[outIndex+1] = (short) (s1 >> 5);
+            data[outIndex+2] = (short) s0;
           }
           else j = row.length;
         }
@@ -351,7 +343,6 @@ public class PictReader extends FormatReader {
 
     switch (pictState) {
       case INITIAL:
-
         int ret;
         int fileSize = DataTools.bytesToInt(bytes, pt, 2, littleEndian);
         pt += 2;
@@ -362,9 +353,7 @@ public class PictReader extends FormatReader {
         int verNumber = DataTools.bytesToInt(bytes, pt, 1, littleEndian);
         pt++;
 
-        if (verOpcode == 0x11 && verNumber == 0x01) {
-          versionOne = true;
-        }
+        if (verOpcode == 0x11 && verNumber == 0x01) versionOne = true;
         else if (verOpcode == 0x00 && verNumber == 0x11) {
           versionOne = false;
           int verOpcode2 = 0x0011;
@@ -378,9 +367,7 @@ public class PictReader extends FormatReader {
           // skip over v2 header -- don't need it here
           pt += 26;
         }
-        else {
-          throw new FormatException("Invalid PICT file");
-        }
+        else throw new FormatException("Invalid PICT file");
 
         pictState = STATE2;
         state |= INFOAVAIL;
@@ -529,10 +516,7 @@ public class PictReader extends FormatReader {
         uBuf = Compression.packBitsUncompress(buf);
 
         // invert the pixels -- PICT images map zero to white
-
-        for (int j=uBuf.length; --j >= 0; ) {
-          uBuf[j] = (byte) ~uBuf[j];
-        }
+        for (int j=0; j<uBuf.length; j++) uBuf[j] = (byte) ~uBuf[j];
 
         expandPixels(1, uBuf, outBuf, outBuf.length);
       }
@@ -720,6 +704,10 @@ public class PictReader extends FormatReader {
     }
 
     if (!compressed) {
+      if (DEBUG) {
+        System.out.println("Pixel data is uncompressed (pixelSize=" +
+          pixelSize + ").");
+      }
       buf = new byte[bufSize];
       for (row = 0; row < height; ++row) {
         System.arraycopy(bytes, pt, buf, 0, rowBytes);
@@ -741,8 +729,12 @@ public class PictReader extends FormatReader {
       }
     }
     else {
+      if (DEBUG) {
+        System.out.println("Pixel data is compressed (pixelSize=" +
+          pixelSize + ").");
+      }
       buf = new byte[bufSize + 1 + bufSize / 128];
-      for (row = 0; row < height; ++row) {
+      for (row=0; row<height; row++) {
         if (rowBytes > 250) {
           rawLen = DataTools.bytesToInt(bytes, pt, 2, littleEndian);
           pt += 2;
@@ -773,15 +765,15 @@ public class PictReader extends FormatReader {
           unpackBits(buf, uBufI);
           strips.add(uBufI);
         }
-        else uBuf = Compression.packBitsUncompress(buf);
+        else {
+          uBuf = Compression.packBitsUncompress(buf);
+        }
 
         if (pixelSize < 8) {
           expandPixels(pixelSize, uBuf, outBuf, outBuf.length);
           strips.add(outBuf);
         }
-        else if (pixelSize == 8) {
-          strips.add(uBuf);
-        }
+        else if (pixelSize == 8) strips.add(uBuf);
         else if (pixelSize == 24 || pixelSize == 32) {
           int offset = 0;
           byte[] newBuf = new byte[width];
@@ -791,15 +783,18 @@ public class PictReader extends FormatReader {
             // alpha channel
             strips.add(newBuf);
             offset += width;
+            newBuf = new byte[width];
             System.arraycopy(uBuf, offset, newBuf, 0, width);
           }
 
           // set each channel R, G, B
           strips.add(newBuf);
           offset += width;
+          newBuf = new byte[width];
           System.arraycopy(uBuf, offset, newBuf, 0, width);
           strips.add(newBuf);
           offset += width;
+          newBuf = new byte[width];
           System.arraycopy(uBuf, offset, newBuf, 0, width);
           strips.add(newBuf);
         }
