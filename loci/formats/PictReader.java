@@ -759,25 +759,30 @@ public class PictReader extends FormatReader {
         }
         else if (pixelSize == 8) strips.add(uBuf);
         else if (pixelSize == 24 || pixelSize == 32) {
+          byte[] newBuf = null;
           int offset = 0;
-          byte[] newBuf = new byte[width];
-          System.arraycopy(uBuf, offset, newBuf, 0, width);
 
           if (compCount == 4) {
             // alpha channel
+            //newBuf = new byte[width];
+            //System.arraycopy(uBuf, offset, newBuf, 0, width);
             strips.add(newBuf);
             offset += width;
-            newBuf = new byte[width];
-            System.arraycopy(uBuf, offset, newBuf, 0, width);
           }
 
-          // set each channel R, G, B
-          strips.add(newBuf);
-          offset += width;
+          // red channel
           newBuf = new byte[width];
           System.arraycopy(uBuf, offset, newBuf, 0, width);
           strips.add(newBuf);
           offset += width;
+
+          // green channel
+          newBuf = new byte[width];
+          System.arraycopy(uBuf, offset, newBuf, 0, width);
+          strips.add(newBuf);
+          offset += width;
+
+          // blue channel
           newBuf = new byte[width];
           System.arraycopy(uBuf, offset, newBuf, 0, width);
           strips.add(newBuf);
