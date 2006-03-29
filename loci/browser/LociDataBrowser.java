@@ -12,53 +12,23 @@
 
 package loci.browser;
 
-import ij.IJ;
-import ij.ImagePlus;
-import ij.ImageStack;
-import ij.WindowManager;
+import ij.*;
 import ij.gui.ImageCanvas;
 import ij.gui.ImageWindow;
-import ij.io.FileInfo;
-import ij.io.OpenDialog;
-import ij.io.Opener;
+import ij.io.*;
 import ij.measure.Calibration;
 import ij.plugin.PlugIn;
 import ij.process.ImageConverter;
 import ij.process.ImageProcessor;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-
-import javax.swing.JScrollBar;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerModel;
-import javax.swing.SpinnerNumberModel;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.ColorModel;
+import java.io.File;
+import java.util.Hashtable;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
-
-import java.awt.Panel;
-
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.FlowLayout;
-import java.awt.Insets;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.image.ColorModel;
-import java.awt.event.WindowEvent;
-import java.io.File;
-
-import java.util.Hashtable;
-
 import loci.ome.MetaPanel;
 import loci.util.FilePattern;
 
@@ -72,11 +42,28 @@ import loci.util.FilePattern;
  */
 public class LociDataBrowser implements PlugIn {
 
-  // private static data members
+  // -- Constants (LociDataBrowser) --
+
+  private static final boolean DEBUG = true;
+
+
+  // -- Static fields (LociDataBrowser) --
+
   private static boolean grayscale = false;
   private static double scale = 100.0;
 
-  // private data members
+  private static String[] preTime = {"_TP", "-TP", ".TP", "_TL", "-TL", ".TL"};
+  private static String[] preZ = {"_Z", "-Z", ".Z", "_ZS", "-ZS", ".ZS"};
+  private static String[] preTrans = {"_C", "-C", ".C"};
+
+  // stores the description of each image
+  private static Hashtable extraData;
+
+  private static String d;
+
+
+  // -- Fields (LociDataBrowser) --
+
   private FileInfo fi;
   private String description;
   private int n, start, increment;
@@ -102,24 +89,88 @@ public class LociDataBrowser implements PlugIn {
   private int[] listC;
   private int[] listZ;
 
-    private int maxZ = 0;
-    private int maxTP = 0;
+  private int maxZ = 0;
+  private int maxTP = 0;
 
   private int idxList;
   private boolean animating = false;
   private boolean preZ1;
   private int tpStep;
 
-  private static String[] preTime={"_TP", "_Tl","-TP",".TP","_t"};
-  private static String[] preZ = {"_Z", "_Zs", "-Z",".Z","_z"};
-  private static String[] preTrans = {"_C","-C",".C"};
 
-  private static final boolean DEBUG = false;
+  // -- LociDataBrowser methods --
 
-  // stores the description of each image
-  private static Hashtable extraData;
+  public void twoDimView(ImagePlus imp) {
+    String name;
+    imp1 = imp;
+    if (depth == 0) depth = imp1.getStackSize();
 
-  private static String d;
+    if (numFiles == 0) {
+      // HACK - this will only be true if we called twoDimView(blah)
+      // from the OME plugin
+      FileInfo fileInfo = imp1.getOriginalFileInfo();
+      String info = fileInfo.info;
+      hasTP = Boolean.valueOf(info.substring(0,
+        info.indexOf(" "))).booleanValue();
+      if (hasTP) {
+        numFiles = Integer.parseInt(info.substring(info.indexOf(" ") + 1));
+        numFiles = depth / numFiles;
+        depth = depth / numFiles;
+      }
+      else numFiles = 1;
+    }
+
+    //imp1 = WindowManager.getCurrentImage();
+    if (imp1 == null || (imp1.getStackSize() == 0)) {
+      IJ.error("No stack is being selected. Exiting.");
+      return;
+    }
+
+    stack1 = imp1.getStack();
+    stackSize = stack1.getSize();
+    name = imp1.getTitle();
+
+    // is it a right assumption that each image has the same number of slices?
+    lab3D = "z-depth";
+    lab4D = "time";
+    if (imp1 instanceof ImagePlus && imp1.getStackSize() > 1) initFrame();
+  }
+
+  void initFrame() {
+    int w = imp1.getWidth();
+    int h = imp1.getHeight();
+    int ss = imp1.getStackSize();
+    String title = imp1.getTitle();
+    imp1.hide();
+
+    ImageStack stack2 = new ImageStack(w, h);
+    for (int i=1; i<=ss; i++) {
+      stack2.addSlice(null, stack1.getProcessor(i));
+    }
+    ImageProcessor ip;
+    ImagePlus imp2 = new ImagePlus(title, stack2);
+    ImageCanvas ic = new ImageCanvas(imp2);
+    new CustomWindow(imp2, ic, hasTrans, firstPrefix);
+  }
+
+  boolean isContained(String[] pre1, String pre2) {
+    for (int i=0; i<pre1.length; i++) {
+      if (pre1[i].equals(pre2)) return true;
+    }
+    return false;
+  }
+
+  private void err(String msg) {
+    System.err.println("LociDataBrowser: " + msg);
+  }
+
+
+  // -- Static LociDataBrowser methods --
+
+  public static Hashtable getTable() { return extraData; }
+
+
+  // -- Plugin methods --
 
   public void run(String arg) {
     OpenDialog od = new OpenDialog("Open Sequence of Image Stacks:", "");
@@ -139,7 +190,7 @@ public class LociDataBrowser implements PlugIn {
 
     if (DEBUG) {
       for (int i=0; i<prefixes.length; i++) {
-        System.err.println("prefixes["+i+"] := "+prefixes[i]);
+        err("prefixes[" + i + "] = " + prefixes[i]);
       }
     }
     // find out what axes exist
@@ -180,49 +231,49 @@ public class LociDataBrowser implements PlugIn {
       }
     }
     else if (prefixes.length > 0) {
-
       for (int i=0; i<prefixes.length; i++) {
-        if (DEBUG) System.err.println("Prefixes["+i+"] = "+prefixes[i]);
+        if (DEBUG) err("prefixes[" + i + "] = " + prefixes[i]);
         prefixes[i]=prefixes[i].replaceAll("\\d+$", "");
       }
 
       firstPrefix = prefixes[0];
-      if (DEBUG) System.err.println(firstPrefix);
+      if (DEBUG) err("firstPrefix = " + firstPrefix);
       for (int i=0; i<prefixes.length; i++) {
+        String pre = prefixes[i].toUpperCase();
         for (int j=0; j<preTime.length; j++) {
-          if (prefixes[i].endsWith(preTime[j])) {
+          if (pre.endsWith(preTime[j])) {
             hasTP = true;
             idxTP = i;
             if (i==0) {
               firstPrefix = firstPrefix.substring(0,
-                firstPrefix.indexOf(preTime[j]));
+                firstPrefix.toUpperCase().indexOf(preTime[j]));
             }
           }
         }
         for (int j=0; j<preZ.length; j++) {
-          if (prefixes[i].endsWith(preZ[j])) {
+          if (pre.endsWith(preZ[j])) {
             hasZ = true;
             idxZ = i;
             if (i==0) {
               firstPrefix = firstPrefix.substring(0,
-                firstPrefix.indexOf(preZ[j]));
+                firstPrefix.toUpperCase().indexOf(preZ[j]));
             }
           }
         }
         for (int j=0; j<preTrans.length; j++) {
-          if (prefixes[i].endsWith(preTrans[j])) {
+          if (pre.endsWith(preTrans[j])) {
             hasTrans = true;
             idxC = i;
             if (i==0) {
               firstPrefix = firstPrefix.substring(0,
-                firstPrefix.indexOf(preTrans[j]));
+                firstPrefix.toUpperCase().indexOf(preTrans[j]));
             }
           }
         }
       }
 
       if (!hasTP && !hasTrans && hasZ) preZ1 = true;
-      if (DEBUG) System.err.println(hasTrans);
+      if (DEBUG) err("hasTrans = " + hasTrans);
       int [] repeat = new int[prefixes.length];
       repeat[0] = 1;
 
@@ -232,9 +283,9 @@ public class LociDataBrowser implements PlugIn {
 
       int [][] indices = new int[prefixes.length][list.length];
       if (DEBUG) {
-        System.err.println("idxTP = "+idxTP);
-        System.err.println("idxC = "+idxC);
-        System.err.println("idxZ = "+idxZ);
+        err("idxTP = " + idxTP);
+        err("idxC = " + idxC);
+        err("idxZ = " + idxZ);
       }
       for (int i=0; i<list.length; i++) {
         for (int j=0; j<prefixes.length; j++) {
@@ -253,31 +304,39 @@ public class LociDataBrowser implements PlugIn {
       }
 
       if (DEBUG) {
-        System.err.println("All indices:");
+        StringBuffer sb = new StringBuffer("all indices = ");
         for (int i=0; i<prefixes.length; i++) {
           for (int j=0; j<list.length; j++) {
-            System.err.print(indices[i][j] + " ");
+            sb.append(indices[i][j]);
+            sb.append(" ");
           }
-          System.err.println();
+          err(sb.toString());
         }
-        System.err.print("listZ = ");
-        for (int i=0; i<listZ.length; i++) System.err.print(listZ[i]+" ");
-        System.err.println();
-        System.err.print("listTP = ");
-        for (int i=0; i<listTP.length; i++) System.err.print(listTP[i]+" ");
-        System.err.println();
-        System.err.print("listC = ");
-        for (int i=0; i<listC.length; i++) System.err.print(listC[i]+" ");
-        System.err.println();
-        System.err.println("hasTP = " + hasTP);
-        System.err.println("hasZ = " + hasZ);
-        System.err.println("hasTrans = " + hasTrans);
+        sb.setLength(0);
+        sb.append("listZ = ");
+        for (int i=0; i<listZ.length; i++) {
+          sb.append(listZ[i]);
+          sb.append(" ");
+        }
+        err(sb.toString());
+        sb.setLength(0);
+        sb.append("listTP = ");
+        for (int i=0; i<listTP.length; i++) {
+          sb.append(listTP[i]);
+          sb.append(" ");
+        }
+        err(sb.toString());
+        sb.setLength(0);
+        sb.append("listC = ");
+        for (int i=0; i<listC.length; i++) {
+          sb.append(listC[i]);
+          sb.append(" ");
+        }
+        err(sb.toString());
+        err("hasTP = " + hasTP);
+        err("hasZ = " + hasZ);
+        err("hasTrans = " + hasTrans);
       }
-
-    }
-
-    if (IJ.debugMode) {
-      IJ.log("Wisc_Scan opening files: "+directory+" ("+list.length+" files)");
     }
 
     int width = 0, height = 0, type = 0;
@@ -343,7 +402,7 @@ public class LociDataBrowser implements PlugIn {
           if (list[i].indexOf(filter) >= 0) filteredImages++;
         }
         if (filteredImages == 0) {
-          IJ.error("None of the "+n+" files contain\n the string '" +
+          IJ.error("None of the " + n + " files contain\n the string '" +
             filter + "' in their name.");
           return;
         }
@@ -366,7 +425,7 @@ public class LociDataBrowser implements PlugIn {
       for (int i=start-1; i<list.length; i++) {
         if (list[i].endsWith(".txt")) continue;
         if (filter != null && (list[i].indexOf(filter) < 0)) continue;
-        if ((counter++%increment) != 0)  continue;
+        if ((counter++ % increment) != 0)  continue;
 
         // open the image in ImagePlus
 
@@ -400,8 +459,8 @@ public class LociDataBrowser implements PlugIn {
           count = stack.getSize() + 1;  // update image counts
 
           // update number on screen that shows count
-          //IJ.showStatus(count+"/"+n);
-          //IJ.showProgress((double)count/n);
+          //IJ.showStatus(count + "/" + n);
+          //IJ.showProgress((double) count / n);
 
           // process every slice in each TIFF stack
           for (int iSlice=1; iSlice<=depth; iSlice++) {
@@ -432,7 +491,7 @@ public class LociDataBrowser implements PlugIn {
       }
     }
     catch (OutOfMemoryError e) {
-      IJ.outOfMemory("Wisc_Scan");
+      IJ.outOfMemory("LociDataBrowser");
       if (stack != null) stack.trim();
     }
     if (stack != null && stack.getSize() > 0) {
@@ -452,72 +511,15 @@ public class LociDataBrowser implements PlugIn {
     twoDimView(WindowManager.getCurrentImage());
   }
 
-  public void twoDimView(ImagePlus imp) {
-    String name;
-    imp1 = imp;
-    if (depth == 0) depth = imp1.getStackSize();
 
-    if (numFiles == 0) {
-      // HACK - this will only be true if we called twoDimView(blah)
-      // from the OME plugin
-      FileInfo fileInfo = imp1.getOriginalFileInfo();
-      String info = fileInfo.info;
-      hasTP = Boolean.valueOf(info.substring(0,
-        info.indexOf(" "))).booleanValue();
-      if (hasTP) {
-        numFiles = Integer.parseInt(info.substring(info.indexOf(" ") + 1));
-        numFiles = depth / numFiles;
-        depth = depth / numFiles;
-      }
-      else numFiles = 1;
-    }
+  // -- Helper classes --
 
-    //imp1 = WindowManager.getCurrentImage();
-    if (imp1 == null || (imp1.getStackSize() == 0)) {
-      IJ.error("No stack is being selected. Exiting.");
-      return;
-    }
-
-    stack1 = imp1.getStack();
-    stackSize = stack1.getSize();
-    name = imp1.getTitle();
-
-    // is it a right assumption that each image has the same number of slices?
-    lab3D = "z-depth";
-    lab4D = "time";
-    if (imp1 instanceof ImagePlus && imp1.getStackSize() > 1) initFrame();
-  }
-
-  void initFrame() {
-    int w = imp1.getWidth();
-    int h = imp1.getHeight();
-    ImageStack stack2 = new ImageStack(w, h);
-    for (int i=1; i<=imp1.getStackSize(); i++) {
-      //IJ.showStatus(i+"/"+imp1.getStackSize());
-      stack2.addSlice(null, stack1.getProcessor(i));
-      //IJ.showProgress((double)i/stackSize);
-    }
-    ImageProcessor ip;
-    ImagePlus imp2 = new ImagePlus(imp1.getTitle(), stack2);
-    ImageCanvas ic = new ImageCanvas(imp2);
-    new CustomWindow(imp2, ic, hasTrans, firstPrefix);
-    imp1.hide();
-  }
-
-  boolean isContained(String[] pre1, String pre2) {
-    for (int i=0; i<pre1.length; i++) {
-      if (pre1[i].equals(pre2)) return true;
-    }
-    return false;
-  }
-
-  public static Hashtable getTable() { return extraData; }
-
-
-  // CustomWindow class begin
-  private class CustomWindow extends ImageWindow
-    implements ActionListener, AdjustmentListener, ItemListener
+  private class CustomWindow extends ImageWindow implements ActionListener,
+    AdjustmentListener, ChangeListener, ItemListener, KeyListener
   {
+
+    // -- Fields (CustomWindow) --
+
     // animation frame rate
     private int fps = 10;
 
@@ -529,22 +531,68 @@ public class LociDataBrowser implements PlugIn {
     private boolean trans = false;
     private javax.swing.Timer animationTimer;
     private JSpinner frameRate;
-    private JButton xmlButton;        // button to display OME-XML
+    private JButton xmlButton; // button to display OME-XML
     private JLabel label1, label2;
     private JButton animate;
 
+
+    // -- Constructor (CustomWindow) --
+
     /** CustomWindow constructors, initialisation */
-    CustomWindow(ImagePlus imp, ImageCanvas ic,
+    CustomWindow(ImagePlus imp, ImageCanvas canvas,
       boolean hasTrans, String prefix)
     {
-      super(imp, ic);
+      super(imp, canvas);
       this.hasTrans = hasTrans;
       this.setTitle(prefix);
-      addPanel();
+
+      // create panel for image canvas
+      Panel imagePane = new Panel() {
+        public void paint(Graphics g) {
+          // paint bounding box here instead of in ImageWindow directly
+          Point loc = ic.getLocation();
+          Dimension csize = ic.getSize();
+          g.drawRect(loc.x-1, loc.y-1, csize.width+1, csize.height+1);
+        }
+      };
+
+      imagePane.setLayout(getLayout()); // ImageLayout
+      imagePane.setBackground(Color.white);
+
+      // redo layout for master window
+      setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+      remove(ic);
+      add(Box.createVerticalStrut(2)); // leave some extra room for text on top
+      add(imagePane);
+      imagePane.add(ic);
+
+      // add custom widgets panel
+      add(makePanel());
+
+      // repack to take extra panel into account
+      pack();
+
+      // listen for arrow key presses
+      addKeyListener(this);
+      ic.addKeyListener(this);
     }
 
-    /** adds the Scrollbar to the custom window */
-    void addPanel() {
+
+    // -- CustomWindow methods --
+
+    /** creates the custom widgets panel */
+    JPanel makePanel() {
+      JPanel pane = new JPanel() {
+        public Dimension getMaximumSize() {
+          Dimension max = super.getMaximumSize();
+          Dimension pref = getPreferredSize();
+          return new Dimension(max.width, pref.height);
+        }
+      };
+      pane.setLayout(new BorderLayout());
+      pane.setBackground(Color.white);
+      pane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
       depth2 = stackSize/(depth*(hasTrans ? 2 : 1));
       if (hasTP && hasZ && depth == 1) {
         maxZ = 0;
@@ -591,21 +639,15 @@ public class LociDataBrowser implements PlugIn {
       sliceSel2.setUnitIncrement(1);
       sliceSel2.setBlockIncrement(blockIncrement);
 
-      add(sliceSel1);
-      add(sliceSel2);
-      Panel bottom = new Panel() {
-        public Dimension getPreferredSize() {
-          // panel is always the same width as the image canvas
-          Dimension d = super.getPreferredSize();
-          d.width = ic.getWidth()<500?500:ic.getWidth();
-          return d;
-        }
-      };
+      Panel bottom = new Panel();
+      bottom.setBackground(Color.white);
       GridBagLayout gridbag = new GridBagLayout();
       GridBagConstraints c = new GridBagConstraints();
       bottom.setLayout(gridbag);
       label1 = new JLabel(lab3D);
+      label1.setHorizontalTextPosition(JLabel.LEFT);
       label2 = new JLabel(lab4D);
+      label2.setHorizontalTextPosition(JLabel.LEFT);
       JCheckBox channel2 = new JCheckBox("Transmitted");
       channel2.setBackground(Color.white);
       if (!hasTrans) channel2.setEnabled(false);
@@ -620,7 +662,7 @@ public class LociDataBrowser implements PlugIn {
         frameRate.setEnabled(false);
       }
       animate.addActionListener(this);
-      frameRate.addChangeListener(new FrameRateListener());
+      frameRate.addChangeListener(this);
 
       if  (!hasTP && hasZ) {
         if (numFiles > 1 && !preZ1) {
@@ -696,6 +738,13 @@ public class LociDataBrowser implements PlugIn {
       xmlButton.setActionCommand("xml");
       gridbag.setConstraints(xmlButton, c);
 
+      // disable XML button if proper libraries are not installed
+      try {
+        Class.forName("loci.ome.xml.OMENode");
+        Class.forName("org.openmicroscopy.ds.dto.Image");
+      }
+      catch (Throwable e) { xmlButton.setEnabled(false); }
+
       c.gridx = 0;
       c.gridy = 3;
       c.gridwidth = 2;
@@ -713,15 +762,10 @@ public class LociDataBrowser implements PlugIn {
       bottom.add(animate);
       bottom.add(xmlButton);
       bottom.add(swapAxesButton);
-      bottom.setLocation(-100,bottom.getLocation().y);
-      add(bottom);
+      //bottom.setLocation(-100, bottom.getLocation().y);
 
-      pack();
-      setLayout(new FlowLayout());
-      setVisible(true);
       int previousSlice = imp.getCurrentSlice();
       imp.setSlice(hasTrans ? depth+1 : 1);
-      WindowManager.addWindow(this);
       try {
         extraData.put(new Integer(imp.getID()), d);
       }
@@ -730,113 +774,8 @@ public class LociDataBrowser implements PlugIn {
         imp.setSlice(previousSlice);
       }
 
-      repaint();
-    }
-
-    class FrameRateListener implements ChangeListener {
-      public void stateChanged(ChangeEvent e) {
-        JSpinner source = (JSpinner) e.getSource();
-        int oldFPS = fps;
-        fps = ((Integer) (source.getValue())).intValue();
-        if (fps < 1) {
-          frameRate.setValue(new Integer(1));
-          fps = 1;
-        }
-        else if (fps > 99) {
-          frameRate.setValue(new Integer(99));
-          fps = 99;
-        }
-        if (animating) animationTimer.setDelay(1000/fps);
-      }
-    }
-
-    /** button listener */
-    public void actionPerformed(ActionEvent e) {
-      Object src = e.getSource();
-      if ("xml".equals(e.getActionCommand())) {
-        int y = WindowManager.getCurrentImage().getID();
-        Object[] meta = new Object[2];
-        meta[0] = null;
-        meta[1] = MetaPanel.exportMeta(description, y);
-        MetaPanel metaPanel = new MetaPanel(IJ.getInstance(), y, meta);
-        metaPanel.show();
-      }
-      else if ("swap".equals(e.getActionCommand())) {
-        String tmp = label1.getText();
-        label1.setText(label2.getText());
-        label2.setText(tmp);
-        label1.setHorizontalTextPosition(JLabel.LEFT);
-        label2.setHorizontalTextPosition(JLabel.LEFT);
-        String tmp2 = lab3D;
-        lab3D = lab4D;
-        lab4D = tmp2;
-        if (lab3D.equals("time") &&
-          sliceSel1.getMaximum() != sliceSel1.getMinimum() &&
-          !animate.isEnabled())
-        {
-          animate.setEnabled(true);
-          frameRate.setEnabled(true);
-        }
-        else if (lab3D.equals("z-depth") && !sliceSel2.isEnabled()) {
-          animate.setEnabled(false);
-          frameRate.setEnabled(false);
-        }
-      }
-      else if (src instanceof javax.swing.Timer) {
-        boolean changed = false;
-        if (lab3D.equals("time")) {
-          z = sliceSel1.getValue() + 1;
-          if (z >= sliceSel1.getMaximum()) z = sliceSel1.getMinimum();
-          sliceSel1.setValue(z);
-          changed = true;
-        }
-        if (lab4D.equals("time")) {
-          t = sliceSel2.getValue() + 1;
-          if (t >= sliceSel2.getMaximum()) t = sliceSel2.getMinimum();
-          sliceSel2.setValue(t);
-          changed = true;
-        }
-        if (changed) showSlice(z, t, trans);
-      }
-      else if (src instanceof JButton) {
-        if (animate.getText().equals("Animate")) {
-          animating = true;
-          animationTimer = new javax.swing.Timer(1000 / fps, this);
-          animationTimer.start();
-          animate.setText("Stop");
-        }
-        else {
-          animationTimer.stop();
-          animating = false;
-          animationTimer = null;
-          animate.setText("Animate");
-        }
-      }
-    }
-
-    public void windowClosed(WindowEvent e) {
-      if (animationTimer != null) animationTimer.stop();
-    }
-
-    /** Checkbox Listener */
-    public void itemStateChanged(ItemEvent e) {
-      Object src = e.getSource();
-      if (src instanceof JCheckBox) {
-        JCheckBox channel2 = (JCheckBox) src;
-        trans = channel2.isSelected();
-        showSlice(z, t, trans);
-      }
-    }
-
-    /** Scrollbar Listener */
-    public void adjustmentValueChanged(AdjustmentEvent adjustmentEvent) {
-      if (adjustmentEvent.getSource() == sliceSel1) {
-        z = sliceSel1.getValue();
-      }
-      if (adjustmentEvent.getSource() == sliceSel2) {
-        t = sliceSel2.getValue();
-      }
-      showSlice(z, t, trans);
+      pane.add(bottom, BorderLayout.CENTER);
+      return pane;
     }
 
     /** selects and shows slice defined by z, t and trans */
@@ -870,13 +809,13 @@ public class LociDataBrowser implements PlugIn {
             break;
           }
           else if (DEBUG && i==numFiles-1) {
-            System.err.println("t = "+ t);
-            System.err.println("z = "+ z);
-            System.err.println("hasTP = "+hasTP);
-            System.err.println("hasZ = "+hasZ);
-            System.err.println("preZ1 = " + preZ1);
-            System.err.println("hasTrans = "+hasTrans);
-            System.err.println("Something wrong in showSlice()");
+            err("something wrong in showSlice");
+            err("t = " + t);
+            err("z = " + z);
+            err("hasTP = " + hasTP);
+            err("hasZ = " + hasZ);
+            err("preZ1 = " + preZ1);
+            err("hasTrans = " + hasTrans);
           }
         }
       }
@@ -889,16 +828,16 @@ public class LociDataBrowser implements PlugIn {
         imp.updateAndDraw();
       }
       else if (DEBUG) {
-        if (index < 1) System.err.println("Error: Slice index < 1");
-        else System.err.println("Error: Slice index > stack size");
+        err("index = " + index + " (stack size = " + imp.getStackSize() +
+          "; sliceSel1 = " + sliceSel1.getValue() +
+          "; sliceSel2 = " + sliceSel2.getValue() + ")");
       }
     }
 
-    /**
-     * drawinfo overrides method from ImageWindow and adds 3rd and 4th
-     * dimension slice position, original code from Wayne Rasband, modified
-     * by me
-     */
+
+    // -- ImageWindow methods (CustomWindow) --
+
+    /** adds 3rd and 4th dimension slice position */
     public void drawInfo(Graphics g) {
       // CTR HACK - workaround for NullPointerException accessing enclosing
       // class's fields before it is initialized (official Sun compiler has
@@ -917,34 +856,22 @@ public class LociDataBrowser implements PlugIn {
         sb.append(currentSlice);
         sb.append("/");
         sb.append(nSlices);
-        sb.append(" ");
+        sb.append("; ");
         sb.append(lab3D);
         sb.append(": ");
         sb.append(sliceSel1 == null ? 0 : sliceSel1.getValue());
         sb.append("/");
         sb.append(maxZ != 0 ? maxZ+1 :
           (numFiles == 1 ? depth : (!hasTP ? depth2 : depth)));
-        sb.append(" ");
-        if (lab4D!=null) sb.append(lab4D);
+        sb.append("; ");
+        if (lab4D != null) sb.append(lab4D);
         sb.append(": ");
         sb.append(sliceSel2 == null ? 0 : sliceSel2.getValue());
         sb.append("/");
         sb.append(maxTP != 0 ? maxTP+1 :
           (numFiles == 1 ? 1 : (!hasTP ? depth : depth2)));
-
-        sb.append(" (" + filename[currentSlice-1] + ")");
         sb.append("; ");
-      }
-
-      String name = imp.getTitle();
-      int cndx = name.indexOf("_C");
-      int tpndx = name.indexOf("_TP");
-      if (cndx >= 0 && tpndx >= 0) {
-        sb.append(name.substring(0, cndx));
-        sb.append("_C");
-        sb.append(trans ? "1" : "2");
-        sb.append("_TP");
-        sb.append(t);
+        sb.append(filename[currentSlice-1]);
         sb.append("; ");
       }
 
@@ -994,14 +921,180 @@ public class LociDataBrowser implements PlugIn {
       sb.append("M");
       g.drawString(sb.toString(), 5, insets.top + textGap);
     }
+
+
+    // -- Component methods --
+
+    public void paint(Graphics g) { drawInfo(g); }
+
+
+    // -- ActionListener methods (CustomWindow) --
+
+    public void actionPerformed(ActionEvent e) {
+      Object src = e.getSource();
+      if ("xml".equals(e.getActionCommand())) {
+        int y = WindowManager.getCurrentImage().getID();
+        Object[] meta = new Object[2];
+        meta[0] = null;
+        meta[1] = MetaPanel.exportMeta(description, y);
+        MetaPanel metaPanel = new MetaPanel(IJ.getInstance(), y, meta);
+        metaPanel.show();
+      }
+      else if ("swap".equals(e.getActionCommand())) {
+        String tmp = label1.getText();
+        label1.setText(label2.getText());
+        label2.setText(tmp);
+        String tmp2 = lab3D;
+        lab3D = lab4D;
+        lab4D = tmp2;
+        if (lab3D.equals("time") &&
+          sliceSel1.getMaximum() != sliceSel1.getMinimum() &&
+          !animate.isEnabled())
+        {
+          animate.setEnabled(true);
+          frameRate.setEnabled(true);
+        }
+        else if (lab3D.equals("z-depth") && !sliceSel2.isEnabled()) {
+          animate.setEnabled(false);
+          frameRate.setEnabled(false);
+        }
+        repaint();
+      }
+      else if (src instanceof javax.swing.Timer) {
+        boolean changed = false;
+        if (lab3D.equals("time")) {
+          z = sliceSel1.getValue() + 1;
+          if (z >= sliceSel1.getMaximum()) z = sliceSel1.getMinimum();
+          sliceSel1.setValue(z);
+          changed = true;
+        }
+        if (lab4D.equals("time")) {
+          t = sliceSel2.getValue() + 1;
+          if (t >= sliceSel2.getMaximum()) t = sliceSel2.getMinimum();
+          sliceSel2.setValue(t);
+          changed = true;
+        }
+        if (changed) showSlice(z, t, trans);
+      }
+      else if (src instanceof JButton) {
+        if (animate.getText().equals("Animate")) {
+          animating = true;
+          animationTimer = new javax.swing.Timer(1000 / fps, this);
+          animationTimer.start();
+          animate.setText("Stop");
+        }
+        else {
+          animationTimer.stop();
+          animating = false;
+          animationTimer = null;
+          animate.setText("Animate");
+        }
+      }
+    }
+
+
+    // -- AdjustmentListener methods (CustomWindow) --
+
+    /** Scrollbar listener */
+    public void adjustmentValueChanged(AdjustmentEvent adjustmentEvent) {
+      if (adjustmentEvent.getSource() == sliceSel1) {
+        z = sliceSel1.getValue();
+      }
+      if (adjustmentEvent.getSource() == sliceSel2) {
+        t = sliceSel2.getValue();
+      }
+      showSlice(z, t, trans);
+    }
+
+
+    // -- ChangeListener methods (CustomWindow) --
+
+    /** JSpinner listener */
+    public void stateChanged(ChangeEvent e) {
+      JSpinner source = (JSpinner) e.getSource();
+      int oldFPS = fps;
+      fps = ((Integer) (source.getValue())).intValue();
+      if (fps < 1) {
+        frameRate.setValue(new Integer(1));
+        fps = 1;
+      }
+      else if (fps > 99) {
+        frameRate.setValue(new Integer(99));
+        fps = 99;
+      }
+      if (animating) animationTimer.setDelay(1000/fps);
+    }
+
+
+    // -- ItemListener methods (CustomWindow) --
+
+    /** Checkbox listener */
+    public void itemStateChanged(ItemEvent e) {
+      Object src = e.getSource();
+      if (src instanceof JCheckBox) {
+        JCheckBox channel2 = (JCheckBox) src;
+        trans = channel2.isSelected();
+        showSlice(z, t, trans);
+      }
+    }
+
+
+    // -- KeyListener methods (CustomWindow) --
+
+    public void keyPressed(KeyEvent e) {
+      int code = e.getKeyCode();
+      boolean swapped = lab3D.equals("time");
+      if (code == KeyEvent.VK_UP) { // previous slice
+        JScrollBar bar = swapped ? sliceSel2 : sliceSel1;
+        int val = bar.getValue(), min = bar.getMinimum();
+        if (val > min) bar.setValue(val - 1);
+      }
+      else if (code == KeyEvent.VK_DOWN) { // next slice
+        JScrollBar bar = swapped ? sliceSel2 : sliceSel1;
+        int val = bar.getValue(), max = bar.getMaximum();
+        if (val < max) bar.setValue(val + 1);
+      }
+      else if (code == KeyEvent.VK_LEFT) { // previous time step
+        JScrollBar bar = swapped ? sliceSel1 : sliceSel2;
+        int val = bar.getValue(), min = bar.getMinimum();
+        if (val > min) bar.setValue(val - 1);
+      }
+      else if (code == KeyEvent.VK_RIGHT) { // next time step
+        JScrollBar bar = swapped ? sliceSel1 : sliceSel2;
+        int val = bar.getValue(), max = bar.getMaximum();
+        if (val < max) bar.setValue(val + 1);
+      }
+    }
+
+    public void keyReleased(KeyEvent e) { }
+
+    public void keyTyped(KeyEvent e) { }
+
+
+    // -- WindowListener methods (CustomWindow) --
+
+    public void windowClosed(WindowEvent e) {
+      if (animationTimer != null) animationTimer.stop();
+    }
+
   } // CustomWindow class end
 
   /** This class represents an array of disk-resident images. */
-  class VirtualStack extends ImageStack{
+  class VirtualStack extends ImageStack {
+
+    // -- Constants (VirtualStack) --
+
     static final int INITIAL_SIZE = 100;
+
+
+    // -- Fields (VirtualStack) --
+
     String path;
     int nSlices;
     String[] names;
+
+
+    // -- Constructor (VirtualStack) --
 
     /** Creates a new, empty virtual stack. */
     public VirtualStack(int width, int height, ColorModel cm, String path) {
@@ -1011,7 +1104,10 @@ public class LociDataBrowser implements PlugIn {
       //IJ.log("VirtualStack: "+path);
     }
 
-     /** Adds an image FILENAME to the end of the stack. */
+
+    // -- VirtualStack methods --
+
+    /** Adds an image FILENAME to the end of the stack. */
     public void addSlice(String name) {
       if (name==null) throw new IllegalArgumentException("'name' is null!");
       nSlices++;
@@ -1024,25 +1120,22 @@ public class LociDataBrowser implements PlugIn {
       names[nSlices-1] = name;
     }
 
+
+    // -- ImageStack methods (VirtualStack) --
+
     /** Does nothing. */
     public void addSlice(String sliceLabel, Object pixels) {
-      if (DEBUG) {
-        System.err.println("ERROR: calling addSlice(sliceLabel, pixels)");
-      }
+      if (DEBUG) err("ERROR: calling addSlice(sliceLabel, pixels)");
     }
 
     /** Does nothing.. */
     public void addSlice(String sliceLabel, ImageProcessor ip) {
-      if (DEBUG) {
-        System.err.println("ERROR: calling addSlice(sliceLabel, ip)");
-      }
+      if (DEBUG) err("ERROR: calling addSlice(sliceLabel, ip)");
     }
 
     /** Does noting. */
     public void addSlice(String sliceLabel, ImageProcessor ip, int n) {
-      if (DEBUG) {
-        System.err.println("ERROR: calling addSlice(sliceLabel, ip, n)");
-      }
+      if (DEBUG) err("ERROR: calling addSlice(sliceLabel, ip, n)");
     }
 
     /** Deletes the specified slice, were 1<=n<=nslices. */
@@ -1106,6 +1199,7 @@ public class LociDataBrowser implements PlugIn {
 
     /** Does nothing. */
     public void trim() { }
+
   }
 
 }
