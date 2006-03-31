@@ -33,7 +33,6 @@ public class OMESidePanel implements ActionListener {
   private static String username;
 
   private static int[] imageIds;
-  private static String[] imageDescrs;
   private static int numOpenWindows = 0;
   private static int point = 0;
 
@@ -192,59 +191,6 @@ public class OMESidePanel implements ActionListener {
     window.setLocation(x, y);
   }
 
-  /** implements the ActionListener actionPerformed method */
-  public void actionPerformed(ActionEvent e) {
-    if ("download".equals(e.getActionCommand())) {
-      OMETools omed = new OMETools();
-      omed.run(this);
-    }
-    else if ("upload".equals(e.getActionCommand())) {
-      if (list.getSelectedIndex() != -1) {
-        OMETools omeu = new OMETools();
-        int x = list.getSelectedIndex();
-        if (table.containsKey(new Integer(imp[x].getID()))) {
-          omeu.run(imp[x], getImageMeta(imp[x].getID()));
-        }
-        else omeu.run(imp[x], null);
-      }
-      else {
-        JOptionPane.showMessageDialog(parentWindow,
-          "Please select an image to export to OME.",
-          "OME Plugin",JOptionPane.INFORMATION_MESSAGE);
-        showIt();
-      }
-    }
-    else if ("edit".equals(e.getActionCommand())) {
-      int z = list.getSelectedIndex();
-      if (z != -1) {
-        int y = imageIds[z];
-
-        Object[] metadata = (Object[]) getImageMeta(y);
-
-        if (metadata == null) {
-          metadata = new Object[2];
-          metadata[0] = null;
-          metadata[1] = MetaPanel.exportMeta(imageDescrs[z], y);
-        }
-        MetaPanel meta = new MetaPanel(parentWindow, y, metadata);
-        meta.show();
-      }
-      else {
-        JOptionPane.showMessageDialog(parentWindow,
-          "Please select an image to edit.",
-          "OME Plugin",JOptionPane.INFORMATION_MESSAGE);
-        showIt();
-      }
-    }
-    else if ("open".equals(e.getActionCommand())) {
-      IJ.runPlugIn("loci.browser.LociDataBrowser", "");
-    }
-    else {
-      cancelPlugin = true;
-      dia.dispose();
-    }
-  }
-
   /** pops up Yes no dialog window */
   public static boolean yesNo(Frame owner, String question) {
     int n = JOptionPane.showConfirmDialog(owner, question, "OME Plugin",
@@ -287,6 +233,55 @@ public class OMESidePanel implements ActionListener {
   /** returns the metadata array for an imagePlus ID */
   public static Object[] getImageMeta(int ijID) {
     return (Object[]) table.get(new Integer(ijID));
+  }
+
+
+  // -- ActionListener methods --
+
+  /** implements the ActionListener actionPerformed method */
+  public void actionPerformed(ActionEvent e) {
+    if ("download".equals(e.getActionCommand())) {
+      OMETools omed = new OMETools();
+      omed.run(this);
+    }
+    else if ("upload".equals(e.getActionCommand())) {
+      if (list.getSelectedIndex() != -1) {
+        OMETools omeu = new OMETools();
+        int x = list.getSelectedIndex();
+        if (table.containsKey(new Integer(imp[x].getID()))) {
+          omeu.run(imp[x], getImageMeta(imp[x].getID()));
+        }
+        else omeu.run(imp[x], null);
+      }
+      else {
+        JOptionPane.showMessageDialog(parentWindow,
+          "Please select an image to export to OME.",
+          "OME Plugin",JOptionPane.INFORMATION_MESSAGE);
+        showIt();
+      }
+    }
+    else if ("edit".equals(e.getActionCommand())) {
+      int z = list.getSelectedIndex();
+      if (z != -1) {
+        int id = imageIds[z];
+        Object[] metadata = (Object[]) getImageMeta(id);
+        MetaPanel meta = new MetaPanel(parentWindow, id, metadata);
+        meta.show();
+      }
+      else {
+        JOptionPane.showMessageDialog(parentWindow,
+          "Please select an image to edit.",
+          "OME Plugin",JOptionPane.INFORMATION_MESSAGE);
+        showIt();
+      }
+    }
+    else if ("open".equals(e.getActionCommand())) {
+      IJ.runPlugIn("loci.browser.LociDataBrowser", "");
+    }
+    else {
+      cancelPlugin = true;
+      dia.dispose();
+    }
   }
 
 
