@@ -204,6 +204,13 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       xml = new JButton("OME-XML");
       xml.addActionListener(this);
       xml.setActionCommand("xml");
+      FileInfo fi = imp.getOriginalFileInfo();
+      String description = fi == null ? null : fi.description;
+      if (description == null || description.length() < 5 ||
+        !description.substring(0, 5).toLowerCase().equals("<?xml"))
+      {
+        xml.setEnabled(false);
+      }
 
       c.gridx = 5;
       c.gridy = 3;
