@@ -208,10 +208,26 @@ public class LociDataBrowser implements PlugIn {
       log("pre", pre);
     }
 
+    // compile axis lengths
+    lengths = new int[count.length + 1];
+    lengths[0] = depth;
+    System.arraycopy(count, 0, lengths, 1, count.length);
+
+    // skip singleton axes
+    boolean[] match = new boolean[lengths.length];
+    int remain = lengths.length;
+    for (int i=0; i<match.length; i++) {
+      if (lengths[i] == 1) {
+        match[i] = true;
+        remain--;
+      }
+    }
+
     // determine which axes are which
     zIndex = tIndex = cIndex = -1;
-    boolean[] match = new boolean[count.length + 1];
     for (int i=1; i<=pre.length; i++) {
+      if (match[i]) continue;
+
       // remove trailing digits and capitalize
       String p = pre[i - 1].replaceAll("\\d+$", "");
       if (i == 1) name = p;
@@ -223,6 +239,7 @@ public class LociDataBrowser implements PlugIn {
           if (p.endsWith(PRE_Z[j])) {
             zIndex = i;
             match[i] = true;
+            remain--;
             break;
           }
         }
@@ -235,6 +252,7 @@ public class LociDataBrowser implements PlugIn {
           if (p.endsWith(PRE_T[j])) {
             tIndex = i;
             match[i] = true;
+            remain--;
             break;
           }
         }
@@ -247,6 +265,7 @@ public class LociDataBrowser implements PlugIn {
           if (p.endsWith(PRE_C[j])) {
             cIndex = i;
             match[i] = true;
+            remain--;
             break;
           }
         }
@@ -258,21 +277,27 @@ public class LociDataBrowser implements PlugIn {
         {
           cIndex = i;
           match[i] = true;
+          remain--;
           break;
         }
       }
     }
 
-    lengths = new int[count.length + 1];
-    lengths[0] = depth;
-    System.arraycopy(count, 0, lengths, 1, count.length);
-
     // assign as many remaining axes as possible
-    for (int i=(depth > 1 ? 0 : 1); i<match.length; i++) {
+    for (int i=0; i<match.length; i++) {
       if (match[i]) continue;
-      if (tIndex < 0) tIndex = i;
-      else if (zIndex < 0) zIndex = i;
-      else if (cIndex < 0) cIndex = i;
+      if (remain == 1) { // TZC
+        // e.g., tubhiswt_C<1-2>.tiff, mri-stack.tif
+        if (tIndex < 0) tIndex = i;
+        else if (zIndex < 0) zIndex = i;
+        else if (cIndex < 0) cIndex = i;
+      }
+      else { // ZTC
+        // e.g., sdub<1-12>.pic, TAABA<1-45>.pic
+        if (zIndex < 0) zIndex = i;
+        else if (tIndex < 0) tIndex = i;
+        else if (cIndex < 0) cIndex = i;
+      }
     }
 
     hasZ = zIndex >= 0;
