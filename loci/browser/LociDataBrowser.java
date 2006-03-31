@@ -195,9 +195,6 @@ public class LociDataBrowser implements PlugIn {
 
         // process every slice in each stack
         for (int j=1; j<=depth; j++) {
-//          if (depth > 1) IJ.showStatus(filenames[i] + " " + j + "/" + depth);
-//          else IJ.showStatus(filenames[i]);
-//          IJ.showProgress((double) (i * depth + j - 1) / (numFiles * depth));
           imp.setSlice(j);
           stack.addSlice(imp.getTitle(), imp.getProcessor());
         }
@@ -355,26 +352,30 @@ public class LociDataBrowser implements PlugIn {
     }
 
     // strip off endings, if any, from name
-    name = strip(name, PRE_Z);
-    name = strip(name, PRE_T);
-    name = strip(name, PRE_C);
+    int zLen = PRE_Z.length, tLen = PRE_T.length, cLen = PRE_C.length;
+    String[] endings = new String[zLen + tLen + cLen];
+    System.arraycopy(PRE_Z, 0, endings, 0, zLen);
+    System.arraycopy(PRE_T, 0, endings, zLen, tLen);
+    System.arraycopy(PRE_C, 0, endings, zLen + tLen, cLen);
+    name = strip(name, endings);
 
     // display image onscreen
     ImagePlus imp = new ImagePlus(name, stack);
     if (fi != null) imp.setFileInfo(fi);
     show(imp);
-//    IJ.showStatus("");
-//    IJ.showProgress(1);
   }
 
 
   // -- Internal LociDataBrowser methods --
 
   protected String strip(String name, String[] endings) {
-    String n = name.toUpperCase();
+    String upper = name.toUpperCase();
     for (int i=0; i<endings.length; i++) {
-      if (n.endsWith(endings[i])) {
-        return name.substring(0, name.length() - endings[i].length());
+      if (upper.endsWith(endings[i])) {
+        name = name.substring(0, name.length() - endings[i].length());
+        name = name.replaceAll("\\d+$", ""); // strip trailing digits
+        upper = name.toUpperCase();
+        i = -1; // start over
       }
     }
     return name;
