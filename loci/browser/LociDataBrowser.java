@@ -83,6 +83,35 @@ public class LociDataBrowser implements PlugIn {
     new CustomWindow(this, imp, new ImageCanvas(imp));
   }
 
+  /**
+   * Shows the given image in a 4D browser window, using the given parameters.
+   * @param imp the image to be shown
+   * @param labels text to be shown for each slice
+   * @param axes length of each dimensional axis
+   * @param countZ number of Z positions (should be at least 1)
+   * @param countT number of T positions (should be at least 1)
+   * @param countC number of C positions (should be at least 1)
+   * @param indexZ axis number of Z axis, or -1 for no Z axis
+   * @param indexT axis number of T axis, or -1 for no T axis
+   * @param indexC axis number of C axis, or -1 for no C axis
+   */
+  public void show(ImagePlus imp, String[] labels, int[] axes,
+    int countZ, int countT, int countC, int indexZ, int indexT, int indexC)
+  {
+    names = labels;
+    lengths = axes;
+    numZ = countZ;
+    numT = countT;
+    numC = countC;
+    hasZ = numZ > 1;
+    hasT = numT > 1;
+    hasC = numC > 1;
+    zIndex = indexZ;
+    tIndex = indexT;
+    cIndex = indexC;
+    show(imp);
+  }
+
   /** gets the slice number for the given Z, T and C indices */
   public int getIndex(int z, int t, int c) {
     int[] pos = new int[lengths.length];

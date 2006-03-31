@@ -306,30 +306,37 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       sb.append(db.numT);
       sb.append("; ");
     }
-    sb.append(db.names[currentSlice-1]);
-    sb.append("; ");
+    if (db.names != null) {
+      String name = db.names[currentSlice - 1];
+      if (name != null) {
+        sb.append(name);
+        sb.append("; ");
+      }
+    }
 
+    int width = imp.getWidth(), height = imp.getHeight();
     Calibration cal = imp.getCalibration();
     if (cal.pixelWidth != 1.0 || cal.pixelHeight != 1.0) {
-      sb.append(IJ.d2s(imp.getWidth()*cal.pixelWidth, 2));
+      sb.append(IJ.d2s(width * cal.pixelWidth, 2));
       sb.append("x");
-      sb.append(IJ.d2s(imp.getHeight()*cal.pixelHeight, 2));
+      sb.append(IJ.d2s(height * cal.pixelHeight, 2));
       sb.append(" ");
       sb.append(cal.getUnits());
       sb.append(" (");
-      sb.append(imp.getWidth());
+      sb.append(width);
       sb.append("x");
-      sb.append(imp.getHeight());
+      sb.append(height);
       sb.append("); ");
     }
     else {
-      sb.append(imp.getWidth());
+      sb.append(width);
       sb.append("x");
-      sb.append(imp.getHeight());
+      sb.append(height);
       sb.append(" pixels; ");
     }
     int type = imp.getType();
-    int size = (imp.getWidth()*imp.getHeight()*imp.getStackSize())/1048576;
+    int stackSize = imp.getStackSize();
+    int size = (width * height * stackSize) / 1048576;
     switch (type) {
       case ImagePlus.GRAY8:
         sb.append("8-bit grayscale");
