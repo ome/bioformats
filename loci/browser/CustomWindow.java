@@ -7,6 +7,7 @@ package loci.browser;
 import ij.*;
 import ij.gui.ImageCanvas;
 import ij.gui.ImageWindow;
+import ij.io.FileInfo;
 import ij.measure.Calibration;
 import java.awt.*;
 import java.awt.event.*;
@@ -35,19 +36,18 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   private String zString = Z_STRING;
   private String tString = T_STRING;
   private int fps = 10;
-  private int z = 1;
-  private int t = 1;
+  private int z = 1, t = 1;
   private boolean trans;
 
 
   // -- Fields - widgets --
 
-  private JScrollBar zSliceSel;
-  private JScrollBar tSliceSel;
+  private JLabel zLabel, tLabel;
+  private JScrollBar zSliceSel, tSliceSel;
+  private JLabel fpsLabel;
   private JSpinner frameRate;
   private JButton xml;
   private Timer animationTimer;
-  private JLabel zLabel, tLabel;
   private JButton animate;
 
 
@@ -65,7 +65,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         // paint bounding box here instead of in ImageWindow directly
         Point loc = ic.getLocation();
         Dimension csize = ic.getSize();
-        g.drawRect(loc.x-1, loc.y-1, csize.width+1, csize.height+1);
+        g.drawRect(loc.x - 1, loc.y - 1, csize.width + 1, csize.height + 1);
       }
     };
 
@@ -75,7 +75,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     // redo layout for master window
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     remove(ic);
-    add(Box.createVerticalStrut(2)); // leave some extra room for text on top
+    add(Box.createVerticalStrut(2)); // leave extra room for text on top
     add(imagePane);
     imagePane.add(ic);
 
@@ -89,6 +89,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     // Z scroll bar label
     zLabel = new JLabel(zString);
     zLabel.setHorizontalTextPosition(JLabel.LEFT);
+    if (!db.hasZ) zLabel.setEnabled(false);
 
     c.gridx = 0;
     c.gridy = 0;
@@ -102,6 +103,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     // T scroll bar label
     tLabel = new JLabel(tString);
     tLabel.setHorizontalTextPosition(JLabel.LEFT);
+    if (!db.hasT) tLabel.setEnabled(false);
 
     c.gridy = 2;
     gridbag.setConstraints(tLabel, c);
@@ -167,7 +169,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     bottom.add(animate);
 
     // FPS label
-    JLabel fpsLabel = new JLabel("fps");
+    fpsLabel = new JLabel("fps");
+    if (!db.hasT) fpsLabel.setEnabled(false);
 
     c.gridx = 7;
     c.gridy = 2;
@@ -190,21 +193,24 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     bottom.add(frameRate);
 
     // OME-XML button
-    xml = new JButton("OME-XML");
+    boolean canDoXML = true;
     try {
       // disable XML button if proper libraries are not installed
       Class.forName("loci.ome.xml.OMENode");
       Class.forName("org.openmicroscopy.ds.dto.Image");
     }
-    catch (Throwable e) { xml.setEnabled(false); }
-    xml.addActionListener(this);
-    xml.setActionCommand("xml");
+    catch (Throwable e) { canDoXML = false; }
+    if (canDoXML) {
+      xml = new JButton("OME-XML");
+      xml.addActionListener(this);
+      xml.setActionCommand("xml");
 
-    c.gridx = 5;
-    c.gridy = 3;
-    c.insets = new Insets(3, 30, 3, 5);
-    gridbag.setConstraints(xml, c);
-    bottom.add(xml);
+      c.gridx = 5;
+      c.gridy = 3;
+      c.insets = new Insets(3, 30, 3, 5);
+      gridbag.setConstraints(xml, c);
+      bottom.add(xml);
+    }
 
     // swap axes button
     JButton swapAxes = new JButton("Swap Axes");
@@ -377,11 +383,11 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     Object src = e.getSource();
     String cmd = e.getActionCommand();
     if ("xml".equals(cmd)) {
-      int y = WindowManager.getCurrentImage().getID();
-      Object[] meta = new Object[2];
-      meta[0] = null;
-//      meta[1] = MetaPanel.exportMeta(description, y);
-      MetaPanel metaPanel = new MetaPanel(IJ.getInstance(), y, meta);
+      int id = imp.getID();
+      FileInfo fi = imp.getOriginalFileInfo();
+      String description = fi == null ? null : fi.description;
+      Object[] meta = {null, MetaPanel.exportMeta(description, id)};
+      MetaPanel metaPanel = new MetaPanel(IJ.getInstance(), id, meta);
       metaPanel.show();
     }
     else if ("swap".equals(cmd)) {
@@ -396,6 +402,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       boolean swapped = zString.equals(T_STRING);
       boolean anim = (!swapped && db.hasT) || (swapped && db.hasZ);
       animate.setEnabled(anim);
+      fpsLabel.setEnabled(anim);
       frameRate.setEnabled(anim);
       repaint(); // redraw info string
     }

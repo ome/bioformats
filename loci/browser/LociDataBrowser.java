@@ -152,8 +152,9 @@ public class LociDataBrowser implements PlugIn {
     }
 
     // read images
-    ImageStack stack = null;
     int depth = 0, width = 0, height = 0, type = 0;
+    ImageStack stack = null;
+    FileInfo fi = null;
     try {
       for (int i=0; i<filenames.length; i++) {
         // open image
@@ -172,6 +173,9 @@ public class LociDataBrowser implements PlugIn {
           type = imp.getType();
           ColorModel cm = imp.getProcessor().getColorModel();
           stack = new ImageStack(width, height, cm);
+
+          // save original file info
+          fi = imp.getOriginalFileInfo();
         }
 
         // verify image is sane
@@ -191,9 +195,9 @@ public class LociDataBrowser implements PlugIn {
 
         // process every slice in each stack
         for (int j=1; j<=depth; j++) {
-          if (depth > 1) IJ.showStatus(filenames[i] + " " + j + "/" + depth);
-          else IJ.showStatus(filenames[i]);
-          IJ.showProgress((double) (i * depth + j - 1) / (numFiles * depth));
+//          if (depth > 1) IJ.showStatus(filenames[i] + " " + j + "/" + depth);
+//          else IJ.showStatus(filenames[i]);
+//          IJ.showProgress((double) (i * depth + j - 1) / (numFiles * depth));
           imp.setSlice(j);
           stack.addSlice(imp.getTitle(), imp.getProcessor());
         }
@@ -214,6 +218,7 @@ public class LociDataBrowser implements PlugIn {
       log("width", width);
       log("height", height);
       log("type", type);
+      log("description", fi == null ? null : fi.description);
     }
 
     // populate names list
@@ -355,9 +360,11 @@ public class LociDataBrowser implements PlugIn {
     name = strip(name, PRE_C);
 
     // display image onscreen
-    show(new ImagePlus(name, stack));
-    IJ.showStatus("");
-    IJ.showProgress(1);
+    ImagePlus imp = new ImagePlus(name, stack);
+    if (fi != null) imp.setFileInfo(fi);
+    show(imp);
+//    IJ.showStatus("");
+//    IJ.showProgress(1);
   }
 
 
@@ -380,7 +387,7 @@ public class LociDataBrowser implements PlugIn {
   protected void log(String var, Object val) {
     int len = -1;
     try { len = Array.getLength(val); }
-    catch (IllegalArgumentException exc) { }
+    catch (Exception exc) { }
 
     if (len < 0) log(var + " = " + val); // single object
     else {
