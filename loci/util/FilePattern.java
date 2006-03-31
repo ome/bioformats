@@ -56,21 +56,21 @@ public class FilePattern {
   /** File listing for this file pattern. */
   private String[] files;
 
-  /** Hardcoded directory to avoid symbolic link problem. */
-  private static String directory; // YTW
-
 
   // -- Constructors --
 
   /** Creates a pattern object using the given file as a template. */
-  public FilePattern(File file) { this(file,"."); }
+  public FilePattern(File file) { this(FilePattern.findPattern(file)); }
 
-  public FilePattern(File file, String directory) {
-    FilePattern.directory = directory;
-    FilePattern.findPattern(file);
+  /**
+   * Creates a pattern object using the given
+   * filename and directory path as a template.
+   */
+  public FilePattern(String name, String dir) {
+    this(FilePattern.findPattern(name, dir));
   }
 
-  /** Creates a pattern object for files with the given file pattern string. */
+  /** Creates a pattern object for files with the given pattern string. */
   public FilePattern(String pattern) {
     this.pattern = pattern;
     valid = false;
@@ -231,33 +231,23 @@ public class FilePattern {
 
   // -- Utility methods --
 
-
-  // YTW
-  public static String findPattern(File file, String dir) {
-    directory = dir;
-    return findPattern(file);
+  /** Identifies the group pattern from a given file within that group. */
+  public static String findPattern(File file) {
+    String dir = file.getParent();
+    return findPattern(file.getName(), file.getAbsoluteFile().getParent());
   }
 
   /** Identifies the group pattern from a given file within that group. */
-  public static String findPattern(File file) {
-    if (directory==null) directory = "."; // YTW
-    //file = file.getAbsoluteFile();
-    //File dir = file.getParentFile();
-    //if (dir == null) return null;
-    //String dirname = dir.getAbsolutePath();
-    //if (!dirname.endsWith(File.separator)) dirname += File.separator;
-    //String name = file.getName();
-
-    // YTW: no getParentFile() to avoid symbolic link problem
-    File dir = new File(directory);
-    if (dir == null) return null;
-    String dirname = dir.getAbsolutePath();
-    if (!dirname.endsWith(File.separator)) dirname += File.separator;
-    String name = file.getName();
+  public static String findPattern(String name, String dir) {
+    if (dir == null) dir = ""; // current directory
+    else if (!dir.equals("") && !dir.endsWith(File.separator)) {
+      dir += File.separator;
+    }
+    File dirFile = new File(dir.equals("") ? "." : dir);
 
     // compile list of numerical blocks
     int len = name.length();
-    int bound = (len + 1) / 2; // max possible number of pairs of indices?
+    int bound = (len + 1) / 2;
     int[] indexList = new int[bound];
     int[] endList = new int[bound];
     int q = 0;
@@ -287,7 +277,7 @@ public class FilePattern {
     }
 
     // analyze each block, building pattern as we go
-    StringBuffer sb = new StringBuffer(dirname);
+    StringBuffer sb = new StringBuffer(dir);
 
     for (int i=0; i<q; i++) {
       int last = i > 0 ? endList[i - 1] : 0;
@@ -296,7 +286,7 @@ public class FilePattern {
       String post = name.substring(endList[i]);
 
       NumberFilter filter = new NumberFilter(pre, post);
-      File[] list = dir.listFiles(filter);
+      File[] list = dirFile.listFiles(filter);
       if (list == null || list.length == 0) return null;
       if (list.length == 1) {
         // false alarm; this number block is constant
@@ -338,7 +328,7 @@ public class FilePattern {
           }
           else {
             while (j < width && !same[j]) j++;
-            String p = findPattern(name, dir, jx, indexList[i] + j, "");
+            String p = findPattern(name, dirFile, jx, indexList[i] + j, "");
             if (p == null) {
               // unable to find an appropriate breakdown of numerical blocks
               return null;
@@ -368,13 +358,13 @@ public class FilePattern {
 
   /** Recursive method for parsing a fixed-width numerical block. */
   private static String findPattern(String name,
-    File dir, int ndx, int end, String p)
+    File dirFile, int ndx, int end, String p)
   {
     if (ndx == end) return p;
     for (int i=end-ndx; i>=1; i--) {
       NumberFilter filter = new NumberFilter(
         name.substring(0, ndx), name.substring(ndx + i));
-      File[] list = dir.listFiles(filter);
+      File[] list = dirFile.listFiles(filter);
       BigInteger[] numbers = new BigInteger[list.length];
       for (int j=0; j<list.length; j++) {
         numbers[j] = new BigInteger(list[j].getName().substring(ndx, ndx + i));
@@ -382,7 +372,7 @@ public class FilePattern {
       Arrays.sort(numbers);
       String bounds = getBounds(numbers, true);
       if (bounds == null) continue;
-      String pat = findPattern(name, dir, ndx + i, end, p + bounds);
+      String pat = findPattern(name, dirFile, ndx + i, end, p + bounds);
       if (pat != null) return pat;
     }
     // no combination worked; this parse path is infeasible
