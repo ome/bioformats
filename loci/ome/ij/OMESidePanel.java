@@ -15,12 +15,13 @@ import loci.ome.MetaPanel;
  *
  * @author Philip Huettl pmhuettl at wisc.edu
  * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class OMESidePanel implements ActionListener {
 
   // -- Fields --
 
-  private static JButton close, upload, download, edit, open;
+  private static JButton close, download, upload, edit, open;
   public static JDialog dia;
   public static boolean cancelPlugin;
   private static JList list;
@@ -36,11 +37,7 @@ public class OMESidePanel implements ActionListener {
   private static int numOpenWindows = 0;
   private static int point = 0;
 
-  // temporary constructor
-  public OMESidePanel() {
-  }
-
-  //Constructor, sets up the dialog box
+  /** constructor, sets up the dialog box */
   public OMESidePanel(Frame frame) {
     table = new Hashtable();
 
@@ -61,6 +58,7 @@ public class OMESidePanel implements ActionListener {
     JPanel paneUp = new JPanel();
     JPanel paneTwo = new JPanel();
     paneTwo.setLayout(new BoxLayout(paneTwo, BoxLayout.X_AXIS));
+    paneTwo.setBorder(new EmptyBorder(5,0,0,0));
     paneR.setLayout(new BoxLayout(paneR, BoxLayout.Y_AXIS));
     paneR.setAlignmentX(JPanel.CENTER_ALIGNMENT);
     paneInfo.setLayout(new BoxLayout(paneInfo, BoxLayout.X_AXIS));
@@ -68,47 +66,46 @@ public class OMESidePanel implements ActionListener {
       EtchedBorder.RAISED),new EmptyBorder(5,5,5,5)));
     paneButtons.setLayout(new BoxLayout(paneButtons, BoxLayout.X_AXIS));
     paneButtons.setBorder(new EmptyBorder(5,5,5,5));
-    paneUp.setBorder(new EmptyBorder(2,2,2,2));
+    paneUp.setLayout(new BoxLayout(paneUp, BoxLayout.X_AXIS));
+    paneUp.setBorder(new EmptyBorder(2,2,6,2));
     pane.add(paneUp);
     pane.add(paneInfo);
     pane.add(paneButtons);
     paneInfo.add(paneR);
     dia.setContentPane(pane);
 
-    //borders
-    EmptyBorder bordCombo = new EmptyBorder(1,0,4,0);
-    EmptyBorder bordText = new EmptyBorder(3,0,2,0);
-
     open = new JButton("4D Open");
     close = new JButton("Close");
-    upload = new JButton("Download");
-    download = new JButton("Upload");
+    download = new JButton("Download");
+    upload = new JButton("Upload");
     edit = new JButton("View Metadata");
-    upload.setMinimumSize(download.getPreferredSize());
     open.setActionCommand("open");
     close.setActionCommand("close");
-    upload.setActionCommand("upload");
     download.setActionCommand("download");
+    upload.setActionCommand("upload");
     edit.setActionCommand("edit");
+    paneUp.add(Box.createHorizontalGlue());
     paneUp.add(open);
-    paneUp.add(upload);
+    paneUp.add(Box.createHorizontalStrut(4));
+    paneUp.add(download);
+    paneUp.add(Box.createHorizontalGlue());
     paneUp.setMaximumSize(paneUp.getPreferredSize());
     paneButtons.add(close);
     open.addActionListener(this);
     close.addActionListener(this);
-    upload.addActionListener(this);
     download.addActionListener(this);
+    upload.addActionListener(this);
     edit.addActionListener(this);
 
-    //List
+    //list
     list = new JList();
     list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    list.setVisibleRowCount(10);
     JScrollPane sp = new JScrollPane(list);
-    sp.setMinimumSize(new Dimension(500, 500));
-    sp.setPreferredSize(sp.getMinimumSize());
     paneR.add(sp);
     paneR.add(paneTwo);
-    paneTwo.add(download);
+    paneTwo.add(upload);
+    paneTwo.add(Box.createHorizontalStrut(4));
     paneTwo.add(edit);
     dia.pack();
     centerWindow(frame, dia);
@@ -183,13 +180,13 @@ public class OMESidePanel implements ActionListener {
     if (cancelPlugin) return;
   }
 
-  /** puts the given window at the edge of the specified parent window. */
+  /** puts the given window at the bottom edge of the parent window. */
   public static void centerWindow(Window parent, Window window) {
     Point loc = parent.getLocation();
     Dimension p = parent.getSize();
     Dimension w = window.getSize();
     int x = loc.x + (p.width - w.width) / 2;
-    int y = loc.y + (p.height - w.height) / 2;
+    int y = loc.y + p.height;
     if (x < 0) x = 0;
     if (y < 0) y = 0;
     window.setLocation(x, y);
@@ -197,14 +194,11 @@ public class OMESidePanel implements ActionListener {
 
   /** implements the ActionListener actionPerformed method */
   public void actionPerformed(ActionEvent e) {
-    // note that "upload" => download and
-    // "download" => upload
-
-    if ("upload".equals(e.getActionCommand())) {
+    if ("download".equals(e.getActionCommand())) {
       OMETools omed = new OMETools();
       omed.run(this);
     }
-    else if ("download".equals(e.getActionCommand())) {
+    else if ("upload".equals(e.getActionCommand())) {
       if (list.getSelectedIndex() != -1) {
         OMETools omeu = new OMETools();
         int x = list.getSelectedIndex();

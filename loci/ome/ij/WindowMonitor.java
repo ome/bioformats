@@ -11,7 +11,8 @@ import ij.WindowManager;
  * Runs a pseudo-infinite loop to monitor changes in the how many files
  * are open.
  *
- * @author Melissa Linkert
+ * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Curtis Rueden ctrueden at wisc.edu
  */
 
 public class WindowMonitor extends Thread {
@@ -20,7 +21,7 @@ public class WindowMonitor extends Thread {
     int[] idList = WindowManager.getIDList();
     if(idList == null) idList = new int[0];
     int[] newIdList;
-    while(!OMESidePanel.cancelPlugin) {
+    while (!OMESidePanel.cancelPlugin) {
       newIdList = WindowManager.getIDList();
       if(newIdList == null) newIdList = new int[0];
       if(idList.length != newIdList.length) OMESidePanel.showIt();
@@ -31,6 +32,9 @@ public class WindowMonitor extends Thread {
         }
       }
       idList = newIdList;
+      try { Thread.sleep(100); }
+      catch (InterruptedException exc) { }
     }
   }
+
 }

@@ -8,13 +8,13 @@ import ij.*;
 import ij.io.*;
 import java.util.*;
 import loci.ome.*;
-import loci.browser.*;
 
 /**
  * OMEController keeps track of all open images, their names, IDs, and
  * associated XML nodes for use with OMESidePanel.
  *
  * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class OMEController {
 
@@ -206,8 +206,9 @@ public class OMEController {
           }
           catch (ArrayIndexOutOfBoundsException e) {
             // fails if this is a disk image opened with the LOCI data browser
-            Hashtable dataBrowser = LociDataBrowser.getTable();
-            descriptions[i] = (String) dataBrowser.get(new Integer(current[i]));
+            ImagePlus img = WindowManager.getImage(current[i]);
+            FileInfo fi = img.getOriginalFileInfo();
+            descriptions[i] = fi == null ? null : fi.description;
             o[1] = MetaPanel.exportMeta(descriptions[i], current[i]);
             metadata.put(new Integer(current[i]), o);
           }
@@ -217,8 +218,9 @@ public class OMEController {
         }
       }
       else if (o[1] == null) {
-        Hashtable dataBrowser = LociDataBrowser.getTable();
-        descriptions[i] = (String) dataBrowser.get(new Integer(current[i]));
+        ImagePlus img = WindowManager.getImage(current[i]);
+        FileInfo fi = img.getOriginalFileInfo();
+        descriptions[i] = fi == null ? null : fi.description;
         o[1] = MetaPanel.exportMeta(descriptions[i], current[i]);
         metadata.put(new Integer(current[i]), o);
       }

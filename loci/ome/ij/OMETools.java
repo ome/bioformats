@@ -20,6 +20,7 @@ import loci.browser.*;
  *
  * @author Philip Huettl pmhuettl@wisc.edu
  * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class OMETools {
 
@@ -168,17 +169,13 @@ public class OMETools {
     }
   }
 
-  // Set the stack domain (4th dimension)
+  /** Set the stack domain (4th dimension) */
   public int[] setDomain(int[] dims) {
-    if(dims[0] == 0) {
-      return new int[] {dims[1], 1};
-    }
-    else {
-      return new int[] {1, dims[1]};
-    }
+    if(dims[0] == 0) return new int[] {dims[1], 1};
+    else return new int[] {1, dims[1]};
   }
 
-  // Logout of OME database
+  /** Logout of OME database */
   public void logout() {
     IJ.showStatus("OME: Logging out...");
     IJ.showProgress(.99);
@@ -194,6 +191,7 @@ public class OMETools {
     IJ.showStatus("Error uploading (see error console for details)");
     exc.printStackTrace();
   }
+
 
   // -- Upload methods --
 
@@ -264,7 +262,7 @@ public class OMETools {
           break;
       }
 
-      //set domain of stack
+      // set domain of stack
       int[] results = new int[] {domainIndex, imageP.getStackSize()};
       results = setDomain(results);
       int sizeT = results[1] + 1;
@@ -291,7 +289,9 @@ public class OMETools {
             byte[] pixels = new byte[sizeX * sizeY * bytesPerPix];
             IJ.showStatus("OmeUpload: Loading data (t=" + t + ", z=" + z +
               ", c=" + c + ")...");
-            IJ.showProgress(.25+t/sizeT+z/sizeZ+c/sizeC);
+            double progress = (double)
+              (t*sizeC*sizeZ+z*sizeC+c)/(sizeT*sizeZ*sizeC);
+            IJ.showProgress(.25+.25*progress);
             switch (type) {
               case ImagePlus.COLOR_RGB:
                 ((ColorProcessor)imageP.getStack().getProcessor(
@@ -573,73 +573,66 @@ public class OMETools {
       blueChanNum = channelNum[2];
     }
 
-    int z1 = 0;
-    int t1 = 0;
-
-    //Create Stack to add planes to in ImageJ
-
+    // create Stack to add planes to in ImageJ
     ImageStack is = new ImageStack(sizeX, sizeY);
     try {
-      for (int t=t1; t<sizeT; t++) {
-        for (int z=z1; z<sizeZ; z++) {
-          byte[] pixelb = new byte[sizeX * sizeY];
-          int[] pixeli = new int[sizeX*sizeY];
-          short[] pixels = new short[sizeX*sizeY];
-          double[] pixeld = new double[sizeX*sizeY];
-          IJ.showStatus("OmeDownload: Loading data (t=" + t + ", z=" + z +
-            ")...");
-          if (type == 17 || type == ImagePlus.GRAY32) {
-            byte[] pixs = pf.getPlane(pix, z, 0, t, true);
-            for (int i=0; i<pixeli.length; i++) {
-              pixeli[i] = ((pixs[4*i] & 0xff)<<24) +
-                ((pixs[4*i+1] & 0xff)<<16) +
-                ((pixs[4*i+2] & 0xff)<<8) +
-                (pixs[4*i+3] & 0xff);
-              pixeld[i] = (new Integer(pixeli[i])).doubleValue();
+      for (int c=0; c<sizeC; c++) {
+        for (int t=0; t<sizeT; t++) {
+          for (int z=0; z<sizeZ; z++) {
+            byte[] pixelb = new byte[sizeX * sizeY];
+            int[] pixeli = new int[sizeX * sizeY];
+            short[] pixels = new short[sizeX * sizeY];
+            double[] pixeld = new double[sizeX * sizeY];
+            IJ.showStatus("OmeDownload: Loading data (c=" +
+              c + ", t=" + t + ", z=" + z + ")...");
+            ImageProcessor ip = null;
+            if (type == 17 || type == ImagePlus.GRAY32) {
+              byte[] pixs = pf.getPlane(pix, z, c, t, true);
+              for (int i=0; i<pixeli.length; i++) {
+                pixeli[i] = ((pixs[4*i] & 0xff)<<24) +
+                  ((pixs[4*i+1] & 0xff)<<16) +
+                  ((pixs[4*i+2] & 0xff)<<8) +
+                  (pixs[4*i+3] & 0xff);
+                pixeld[i] = (new Integer(pixeli[i])).doubleValue();
+              }
+              ip = new FloatProcessor(sizeX, sizeY, pixeld);
             }
-            FloatProcessor ip = new FloatProcessor(sizeX, sizeY, pixeld);
-            // adding plane to the ImageStack
-            is.addSlice("Z=" + z + " T=" + t, ip);
-          }
-          else if (type == ImagePlus.COLOR_256) {
-            pixelb = pf.getPlane(pix, z, 0, t, true);
-            for (int i=0; i<pixelb.length; i++) {
-              pixelb[i] = (byte)(128-pixelb[i]);
+            else if (type == ImagePlus.COLOR_256) {
+              pixelb = pf.getPlane(pix, z, c, t, true);
+              for (int i=0; i<pixelb.length; i++) {
+                pixelb[i] = (byte)(128-pixelb[i]);
+              }
+              ip = new ByteProcessor(sizeX, sizeY);
+              ip.setPixels(pixelb);
             }
-            ByteProcessor ip = new ByteProcessor(sizeX, sizeY);
-            ip.setPixels(pixelb);
-            // adding plane to the ImageStack
-            is.addSlice("Z=" + z + " T=" + t, ip);
-          }
-          else if (type == ImagePlus.COLOR_RGB) {
-            byte[] r = pf.getPlane(pix, z, redChanNum, t, true);
-            byte[] g = pf.getPlane(pix, z, greenChanNum, t, true);
-            byte[] b = pf.getPlane(pix, z, blueChanNum, t, true);
-            for (int i=0; i<pixeli.length; i++) {
-              pixeli[i] = ((r[i] & 0xff)<<16)+
-                ((g[i] & 0xff)<<8)+ (b[i] & 0xff);
+            else if (type == ImagePlus.COLOR_RGB) {
+              byte[] r = pf.getPlane(pix, z, redChanNum, t, true);
+              byte[] g = pf.getPlane(pix, z, greenChanNum, t, true);
+              byte[] b = pf.getPlane(pix, z, blueChanNum, t, true);
+              for (int i=0; i<pixeli.length; i++) {
+                pixeli[i] = ((r[i] & 0xff)<<16)+
+                  ((g[i] & 0xff)<<8)+ (b[i] & 0xff);
+              }
+              ip = new ColorProcessor(sizeX, sizeY, pixeli);
             }
-            ColorProcessor ip = new ColorProcessor(sizeX, sizeY, pixeli);
-            // adding plane to the ImageStack
-            is.addSlice("Z=" + z + " T=" + t, ip);
-          }
-          else if (type == ImagePlus.GRAY16) {
-            byte[] pixs = pf.getPlane(pix, z,0,t, true);
-            for (int i=0; i<pixels.length; i++) {
-              pixels[i] = (short)(((pixs[2*i] & 0xff)<<8)+
-                (pixs[2*i+1] & 0xff));
+            else if (type == ImagePlus.GRAY16) {
+              byte[] pixs = pf.getPlane(pix, z, c, t, true);
+              for (int i=0; i<pixels.length; i++) {
+                pixels[i] = (short)(((pixs[2*i] & 0xff)<<8)+
+                  (pixs[2*i+1] & 0xff));
+              }
+              ip = new ShortProcessor(sizeX, sizeY);
+              ip.setPixels(pixels);
             }
-            ShortProcessor ip = new ShortProcessor(sizeX, sizeY);
-            ip.setPixels(pixels);
-            // adding plane to the ImageStack
-            is.addSlice("Z=" + z + " T=" + t, ip);
-          }
-          else if (type == ImagePlus.GRAY8) {
-            pixelb = pf.getPlane(pix, z, 0, t, true);
-            ByteProcessor ip = new ByteProcessor(sizeX, sizeY);
-            ip.setPixels(pixelb);
-            // adding plane to the ImageStack
-            is.addSlice("Z=" + z + " T=" + t, ip);
+            else if (type == ImagePlus.GRAY8) {
+              pixelb = pf.getPlane(pix, z, c, t, true);
+              ip = new ByteProcessor(sizeX, sizeY);
+              ip.setPixels(pixelb);
+            }
+            if (ip != null) {
+              // adding plane to the ImageStack
+              is.addSlice("C=" + c + " Z=" + z + " T=" + t, ip);
+            }
           }
         }
       }
@@ -669,17 +662,9 @@ public class OMETools {
     }
     IJ.showStatus("Displaying Image");
     viewer = new LociDataBrowser();
-    boolean tp = (sizeT > 1);
-
-    // HACK
-    // we want to give LociDataBrowser information about
-    // the dimensions of the stack, without messing with the API
-    ij.io.FileInfo fi = new ij.io.FileInfo();
-    fi.info = tp + " " + sizeZ;
-    imageP.setFileInfo(fi);
-
-    viewer.twoDimView(imageP);
-    OMESidePanel.hashInImage(-1*image.getID(), metas);
+    viewer.show(imageP, null, new int[] {sizeZ, sizeT, sizeC},
+      sizeZ, sizeT, sizeC, 0, 1, 2);
+    OMESidePanel.hashInImage(-image.getID(), metas);
   }
 
   /** returns a list of images that the user chooses */
