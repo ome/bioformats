@@ -270,8 +270,8 @@ public class LociDataBrowser implements PlugIn {
     // assign as many remaining axes as possible
     for (int i=(depth > 1 ? 0 : 1); i<match.length; i++) {
       if (match[i]) continue;
-      if (zIndex < 0) zIndex = i;
-      else if (tIndex < 0) tIndex = i;
+      if (tIndex < 0) tIndex = i;
+      else if (zIndex < 0) zIndex = i;
       else if (cIndex < 0) cIndex = i;
     }
 
