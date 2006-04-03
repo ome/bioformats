@@ -434,7 +434,7 @@ public class AVIWriter extends FormatWriter {
 
     int width = xDim - xPad;
     int height = byteData[0].length / width;
-    
+
     raFile.write(dataSignature);
     savedbLength.add(new Long(raFile.getFilePointer()));
     // Write the data length
@@ -446,16 +446,16 @@ public class AVIWriter extends FormatWriter {
         offset = i*width + j;
         for (int k=(byteData.length - 1); k>=0; k--) {
           raFile.write(byteData[k][offset]);
-        }        
-      }        
+        }
+      }
 
       for (int j=0; j<xPad; j++) {
         for (int k=0; k<byteData.length; k++) {
-          raFile.write((byte) 0);        
-        }        
-      }      
+          raFile.write((byte) 0);
+        }
+      }
     }
-    
+
     planesWritten++;
 
     if (last) {
