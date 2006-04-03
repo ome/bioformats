@@ -29,7 +29,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   private static final String ANIM_STRING = "Animate";
   private static final String STOP_STRING = "Stop";
 
-
   // -- Fields - state --
 
   private LociDataBrowser db;
@@ -39,7 +38,10 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   private int z = 1, t = 1;
   private boolean trans;
 
+  // -- Fields - for Virtual Stack --
 
+    private int old_z;
+    private int old_t;
   // -- Fields - widgets --
 
   private JLabel zLabel, tLabel;
@@ -283,6 +285,17 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   }
 
 
+    /** selects and shows virtual slice */
+  public void showVirtualSlice(int z, int t, boolean trans, int axis) {
+    int index = db.getIndex(z - 1, t - 1, trans ? 0 : 1);
+    if (LociDataBrowser.DEBUG) {
+      db.log("showVirtualSice: index=" + index +
+        "; z=" + z + "; t=" + t + "; trans=" + trans);
+    }
+  }
+
+
+	
   // -- ImageWindow methods --
 
   /** adds 3rd and 4th dimension slice position */
@@ -295,7 +308,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
     int nSlices = imp.getStackSize();
 
-    ImageStack stack = imp.getStack();
+    //    ImageStack stack = imp.getStack();
     int currentSlice = imp.getCurrentSlice();
 
     StringBuffer sb = new StringBuffer();
@@ -417,12 +430,12 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       boolean swapped = zString.equals(T_STRING);
       if (swapped) {
         z = zSliceSel.getValue() + 1;
-        if (z >= db.numZ) z = 1;
+        if (z > db.numZ) z = 1;
         zSliceSel.setValue(z);
       }
       else {
         t = tSliceSel.getValue() + 1;
-        if (t >= db.numT) t = 1;
+        if (t > db.numT) t = 1; 
         tSliceSel.setValue(t);
       }
       showSlice(z, t, trans);

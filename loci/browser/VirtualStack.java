@@ -1,6 +1,7 @@
 //
 // VirtualStack.java
 //
+package loci.browser;
 
 import ij.ImagePlus;
 import ij.ImageStack;
@@ -15,13 +16,16 @@ class VirtualStack extends ImageStack {
 
   static final int INITIAL_SIZE = 100;
 
-
   // -- Fields (VirtualStack) --
 
   String path;
   int nSlices;
   String[] names;
-
+  protected static final int Z_AXIS = 1;
+  protected static final int T_AXIS = 2;
+  private int fileIndex;  
+  private int stacksize;
+  private ImagePlus imp;
 
   // -- Constructor (VirtualStack) --
 
@@ -30,6 +34,8 @@ class VirtualStack extends ImageStack {
     super(width, height, cm);
     this.path = path;
     names = new String[INITIAL_SIZE];
+    fileIndex = -1;
+    stacksize = -1;
     //IJ.log("VirtualStack: "+path);
   }
 
@@ -57,9 +63,10 @@ class VirtualStack extends ImageStack {
     System.err.println("ERROR: calling addSlice(sliceLabel, pixels)");
   }
 
-  /** Does nothing.. */
+  
   public void addSlice(String sliceLabel, ImageProcessor ip) {
-    System.err.println("ERROR: calling addSlice(sliceLabel, ip)");
+    System.err.println("calling VirtualStack.addSlice(sliceLabel, ip)");
+    addSlice(sliceLabel);
   }
 
   /** Does noting. */
@@ -100,14 +107,23 @@ class VirtualStack extends ImageStack {
    */
   public ImageProcessor getProcessor(int n) {
     //IJ.log("getProcessor: "+n+"  "+names[n-1]);
-    ImagePlus imp = new Opener().openImage(path, names[n-1]);
+    if (stacksize == -1 || fileIndex != (n-1) / stacksize) {
+	imp = new Opener().openImage(path, names[n-1]);
+	stacksize = imp.getStackSize();
+	fileIndex = (n-1) / stacksize;
+    }
     if (imp!=null) {
       int w = imp.getWidth();
       int h = imp.getHeight();
       int type = imp.getType();
       ColorModel cm = imp.getProcessor().getColorModel();
+      imp.setSlice(n % stacksize == 0 ? stacksize : n % stacksize);
     }
     else return null;
+    System.err.println("fileIndex = " + fileIndex);
+    System.err.println("stacksize = " + stacksize);
+    System.err.println("n = " + n);
+
     return imp.getProcessor();
   }
 

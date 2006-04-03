@@ -16,6 +16,7 @@ import java.util.Arrays;
 import loci.util.FilePattern;
 import loci.util.MathUtil;
 
+
 /**
  * LociDataBrowser is a plugin for ImageJ that allows for browsing of 4D
  * image data (stacks of image planes over time) with two-channel support.
@@ -30,7 +31,7 @@ public class LociDataBrowser implements PlugIn {
 
   /** Debugging flag. */
   protected static final boolean DEBUG = false;
-
+  protected static final boolean VIRTUAL = true;
   /** Prefix endings indicating numbering block represents T. */
   private static final String[] PRE_T = {
     "_TP", "-TP", ".TP", "_TL", "-TL", ".TL"
@@ -130,6 +131,7 @@ public class LociDataBrowser implements PlugIn {
     String name = od.getFileName();
     if (name == null) return;
 
+    boolean virtual = VIRTUAL;
     // find all the files having similar names (using FilePattern class)
     String pattern = FilePattern.findPattern(name, directory);
     FilePattern fp = new FilePattern(pattern);
@@ -154,6 +156,7 @@ public class LociDataBrowser implements PlugIn {
     // read images
     int depth = 0, width = 0, height = 0, type = 0;
     ImageStack stack = null;
+    VirtualStack vstack = null;
     FileInfo fi = null;
     try {
       for (int i=0; i<filenames.length; i++) {
@@ -172,7 +175,8 @@ public class LociDataBrowser implements PlugIn {
           height = imp.getHeight();
           type = imp.getType();
           ColorModel cm = imp.getProcessor().getColorModel();
-          stack = new ImageStack(width, height, cm);
+	  if (virtual) stack = new VirtualStack(width, height, cm, directory);
+	  else stack = new ImageStack(width, height, cm);
 
           // save original file info
           fi = imp.getOriginalFileInfo();
