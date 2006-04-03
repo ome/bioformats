@@ -297,6 +297,9 @@ public class QTReader extends FormatReader {
           // found video codec and pixel depth information
           codec = new String(data, 12, 4);
           bitsPerPixel = DataTools.bytesToInt(data, 90, 2, little);
+
+          metadata.put("Codec", codec);
+          metadata.put("Bits per pixel", new Integer(bitsPerPixel));
         }
         else if (atomType.equals("stsz")) {
           // found the number of planes
