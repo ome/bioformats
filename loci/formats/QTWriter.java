@@ -126,7 +126,7 @@ public class QTWriter extends FormatWriter {
       currentId = id;
       out = new RandomAccessFile(id, "rw");
       created = (int) System.currentTimeMillis();
-      numWritten++;
+      numWritten = 1;
 
       // -- write the first header --
 

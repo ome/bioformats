@@ -281,7 +281,11 @@ public class AVIReader extends FormatReader {
                 metadata.put("Bits per pixel", new Integer(bmpBitsPerPixel));
 
                 // scan line is padded with zeros to be a multiple of 4 bytes
-                bmpScanLineSize = ((bmpWidth * bmpBitsPerPixel + 31) / 32) * 4;
+                int npad = bmpWidth % 4;
+                if (npad > 0) npad = 4 - npad;
+
+                bmpScanLineSize = (bmpWidth + npad) * (bmpBitsPerPixel / 8);
+                
                 if (bmpSizeOfBitmap != 0) {
                   bmpActualSize = bmpSizeOfBitmap;
                 }
@@ -391,6 +395,9 @@ public class AVIReader extends FormatReader {
                   else {
                     byteData = new byte[dwWidth * bmpHeight];
                   }
+
+                  int pad = bmpScanLineSize - dwWidth*(bmpBitsPerPixel / 8);
+                  
                   rawData = new byte[bmpActualSize];
                   int rawOffset = 0;
                   int offset = (bmpHeight - 1) * dwWidth;
@@ -401,13 +408,8 @@ public class AVIReader extends FormatReader {
                       whine("Scan line " + i + " ended prematurely.");
                     }
 
-                    if (bmpBitsPerPixel > 8) {
-                      unpack(rawData, rawOffset, byteData, offset, dwWidth);
-                    }
-                    else {
-                      unpack(rawData, rawOffset, byteData, offset, dwWidth);
-                    }
-                    rawOffset += len;
+                    unpack(rawData, rawOffset, byteData, offset, dwWidth);
+                    rawOffset += (len - pad);
                     offset -= dwWidth;
                   }
 
