@@ -400,8 +400,8 @@ public class AVIReader extends FormatReader {
                   
                   rawData = new byte[bmpActualSize];
                   int rawOffset = 0;
-                  int offset = (bmpHeight - 1) * dwWidth;
-
+                  int offset = 0;
+                  
                   for (int i=bmpHeight - 1; i>=0; i--) {
                     int n = in.read(rawData, rawOffset, len);
                     if (n < len) {
@@ -410,9 +410,34 @@ public class AVIReader extends FormatReader {
 
                     unpack(rawData, rawOffset, byteData, offset, dwWidth);
                     rawOffset += (len - pad);
-                    offset -= dwWidth;
+                    offset += dwWidth;
                   }
 
+                  // reverse scanline ordering  
+                  
+                  byte[] temp = rawData;
+                  rawData = new byte[temp.length];
+                  int off = (bmpHeight - 1) * dwWidth * (bmpBitsPerPixel / 8);
+                  int newOff = 0;
+                  int length = dwWidth * (bmpBitsPerPixel / 8);
+                  for (int q=0; q<bmpHeight; q++) {
+                    if (bmpBitsPerPixel == 8) {      
+                      System.arraycopy(temp, off, rawData, newOff, length);   
+                    }
+                    else {
+                      // reverse bytes in groups of 3
+
+                      for (int p=0; p<dwWidth; p++) {
+                        rawData[newOff + p*3] = temp[off + p*3 + 2];
+                        rawData[newOff + p*3 + 1] = temp[off + p*3 + 1];
+                        rawData[newOff + p*3 + 2] = temp[off + p*3];
+                      }        
+                    }
+                            
+                    off -= length;
+                    newOff += length;
+                  }        
+                  
                   if (bmpBitsPerPixel > 8) {
                     imgs.add(ImageTools.makeImage(rawData, dwWidth, bmpHeight,
                       (rawData.length / (dwWidth*bmpHeight)), true));

@@ -441,10 +441,10 @@ public class AVIWriter extends FormatWriter {
     DataTools.writeInt(raFile, bytesPerPixel * xDim * yDim);
 
     int offset = 0;
-    for (int i=0; i<height; i++) {
+    for (int i=(height-1); i>=0; i--) {
       for (int j=0; j<width; j++) {
         offset = i*width + j;
-        for (int k=0; k<byteData.length; k++) {
+        for (int k=(byteData.length - 1); k>=0; k--) {
           raFile.write(byteData[k][offset]);
         }        
       }        
