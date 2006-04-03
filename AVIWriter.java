@@ -116,6 +116,7 @@ public class AVIWriter extends FormatWriter {
     byte[][] byteData = ImageTools.getBytes(img);
 
     if (!id.equals(currentId)) {
+      planesWritten = 0;
       currentId = id;
       bytesPerPixel = byteData.length;
 
@@ -432,20 +433,29 @@ public class AVIWriter extends FormatWriter {
     // The color bytes are in reverse order from the Windows convention.
 
     int width = xDim - xPad;
-
+    int height = byteData[0].length / width;
+    
     raFile.write(dataSignature);
     savedbLength.add(new Long(raFile.getFilePointer()));
     // Write the data length
     DataTools.writeInt(raFile, bytesPerPixel * xDim * yDim);
 
-    for (int i=0; i<byteData[0].length; i++) {
-      for (int k=0; k<byteData.length; k++) {
-        raFile.write(byteData[k][i]);
-      }
+    int offset = 0;
+    for (int i=0; i<height; i++) {
+      for (int j=0; j<width; j++) {
+        offset = i*width + j;
+        for (int k=0; k<byteData.length; k++) {
+          raFile.write(byteData[k][offset]);
+        }        
+      }        
+
+      for (int j=0; j<xPad; j++) {
+        for (int k=0; k<byteData.length; k++) {
+          raFile.write((byte) 0);        
+        }        
+      }      
     }
-
-    //raFile.write(buf);
-
+    
     planesWritten++;
 
     if (last) {
