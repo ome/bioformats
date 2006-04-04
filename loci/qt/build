@@ -1,0 +1,39 @@
+#!/bin/sh
+
+# build: a script for building the QTConverter JAR file
+
+cd ../..
+
+echo Building QTConverter.jar...
+cp loci/qt/qt.manifest .
+jar cfm loci/qt/QTConverter.jar qt.manifest \
+loci/qt/*.class \
+loci/util/FilePattern*.class \
+loci/formats/BitBuffer*.class \
+loci/formats/BitWriter*.class \
+loci/formats/ByteVector*.class \
+loci/formats/ComboFileFilter*.class \
+loci/formats/Compression*.class \
+loci/formats/DataTools*.class \
+loci/formats/ExtensionFileFilter*.class \
+loci/formats/FormatException*.class \
+loci/formats/FormatFileFilter*.class \
+loci/formats/FormatHandler*.class \
+loci/formats/FormatReader*.class \
+loci/formats/FormatWriter*.class \
+loci/formats/ImageTools*.class \
+loci/formats/LZWTreeNode*.class \
+loci/formats/LegacyQTReader*.class \
+loci/formats/OMETools*.class \
+loci/formats/QTReader*.class \
+loci/formats/RandomAccessArray*.class \
+loci/formats/ReflectException*.class \
+loci/formats/ReflectedUniverse*.class \
+loci/formats/TiffRational*.class \
+loci/formats/TiffTools*.class \
+loci/formats/TiffWriter*.class \
+loci/qt/*.java loci/util/FilePattern.java loci/qt/build
+rm qt.manifest
+
+cd loci/qt
+ls -l QTConverter.jar
