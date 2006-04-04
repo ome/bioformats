@@ -35,8 +35,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   private String zString = Z_STRING;
   private String tString = T_STRING;
   private int fps = 10;
-  private int z = 1, t = 1;
-  private boolean trans;
+  private int z = 1, t = 1, c = 1;
   private int oldZ, oldT; // for virtual stack
 
   // -- Fields - widgets --
@@ -82,7 +81,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     Panel bottom = new Panel();
     bottom.setBackground(Color.white);
     GridBagLayout gridbag = new GridBagLayout();
-    GridBagConstraints c = new GridBagConstraints();
+    GridBagConstraints gbc = new GridBagConstraints();
     bottom.setLayout(gridbag);
 
     // Z scroll bar label
@@ -90,13 +89,13 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     zLabel.setHorizontalTextPosition(JLabel.LEFT);
     if (!db.hasZ) zLabel.setEnabled(false);
 
-    c.gridx = 0;
-    c.gridy = 0;
-    c.fill = GridBagConstraints.NONE;
-    c.weightx = 0.0;
-    c.ipadx = 30;
-    c.anchor = GridBagConstraints.LINE_START;
-    gridbag.setConstraints(zLabel, c);
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.fill = GridBagConstraints.NONE;
+    gbc.weightx = 0.0;
+    gbc.ipadx = 30;
+    gbc.anchor = GridBagConstraints.LINE_START;
+    gridbag.setConstraints(zLabel, gbc);
     bottom.add(zLabel);
 
     // T scroll bar label
@@ -104,8 +103,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     tLabel.setHorizontalTextPosition(JLabel.LEFT);
     if (!db.hasT) tLabel.setEnabled(false);
 
-    c.gridy = 2;
-    gridbag.setConstraints(tLabel, c);
+    gbc.gridy = 2;
+    gridbag.setConstraints(tLabel, gbc);
     bottom.add(tLabel);
 
     // Z scroll bar
@@ -116,12 +115,12 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     zSliceSel.setUnitIncrement(1);
     zSliceSel.setBlockIncrement(5);
 
-    c.gridx = 1;
-    c.gridy = 0;
-    c.gridwidth = 5;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    c.weightx = 1.0;
-    gridbag.setConstraints(zSliceSel, c);
+    gbc.gridx = 1;
+    gbc.gridy = 0;
+    gbc.gridwidth = 5;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    gbc.weightx = 1.0;
+    gridbag.setConstraints(zSliceSel, gbc);
     bottom.add(zSliceSel);
 
     // T scroll bar
@@ -132,15 +131,15 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     tSliceSel.setUnitIncrement(1);
     tSliceSel.setBlockIncrement(5);
 
-    c.gridy = 2;
-    gridbag.setConstraints(tSliceSel, c);
+    gbc.gridy = 2;
+    gridbag.setConstraints(tSliceSel, gbc);
     bottom.add(tSliceSel);
 
-    c.gridx = 6;
-    c.gridy = 0;
-    c.fill = GridBagConstraints.NONE;
-    c.weightx = 0.0;
-    c.insets = new Insets(0, 5, 0, 0);
+    gbc.gridx = 6;
+    gbc.gridy = 0;
+    gbc.fill = GridBagConstraints.NONE;
+    gbc.weightx = 0.0;
+    gbc.insets = new Insets(0, 5, 0, 0);
 
     if (db.numC > 2) {
       // C spinner
@@ -149,17 +148,17 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       if (!db.hasC) channels.setEnabled(false);
       channels.addChangeListener(this);
 
-      c.gridwidth = 1;
-      gridbag.setConstraints(channels, c);
+      gbc.gridwidth = 1;
+      gridbag.setConstraints(channels, gbc);
       bottom.add(channels);
 
       // C label
       JLabel cLabel = new JLabel("channel");
       if (!db.hasC) cLabel.setEnabled(false);
 
-      c.gridx = 7;
-      c.weightx = 0.0;
-      gridbag.setConstraints(cLabel, c);
+      gbc.gridx = 7;
+      gbc.weightx = 0.0;
+      gridbag.setConstraints(cLabel, gbc);
       bottom.add(cLabel);
     }
     else {
@@ -169,9 +168,9 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       channels.addItemListener(this);
       channels.setBackground(Color.white);
 
-      c.gridwidth = 2; // end row
-      c.anchor = GridBagConstraints.LINE_END;
-      gridbag.setConstraints(channels, c);
+      gbc.gridwidth = 2; // end row
+      gbc.anchor = GridBagConstraints.LINE_END;
+      gridbag.setConstraints(channels, gbc);
       bottom.add(channels);
     }
 
@@ -180,26 +179,26 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     if (!db.hasT) animate.setEnabled(false);
     animate.addActionListener(this);
 
-    c.gridx = 6;
-    c.gridy = 3;
-    c.gridwidth = GridBagConstraints.REMAINDER; // end row
-    c.gridheight = 1;
-    c.fill = GridBagConstraints.NONE;
-    c.weightx = 0.0;
-    c.insets = new Insets(3, 5, 3, 0);
-    gridbag.setConstraints(animate, c);
+    gbc.gridx = 6;
+    gbc.gridy = 3;
+    gbc.gridwidth = GridBagConstraints.REMAINDER; // end row
+    gbc.gridheight = 1;
+    gbc.fill = GridBagConstraints.NONE;
+    gbc.weightx = 0.0;
+    gbc.insets = new Insets(3, 5, 3, 0);
+    gridbag.setConstraints(animate, gbc);
     bottom.add(animate);
 
     // FPS label
     fpsLabel = new JLabel("fps");
     if (!db.hasT) fpsLabel.setEnabled(false);
 
-    c.gridx = 7;
-    c.gridy = 2;
-    c.gridwidth = 1;
-    c.fill = GridBagConstraints.REMAINDER;
-    c.weightx = 0.0;
-    gridbag.setConstraints(fpsLabel, c);
+    gbc.gridx = 7;
+    gbc.gridy = 2;
+    gbc.gridwidth = 1;
+    gbc.fill = GridBagConstraints.REMAINDER;
+    gbc.weightx = 0.0;
+    gridbag.setConstraints(fpsLabel, gbc);
     bottom.add(fpsLabel);
 
     // FPS spinner
@@ -208,10 +207,10 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     if (!db.hasT) frameRate.setEnabled(false);
     frameRate.addChangeListener(this);
 
-    c.gridx = 6;
-    c.gridy = 2;
-    c.ipadx = 20;
-    gridbag.setConstraints(frameRate, c);
+    gbc.gridx = 6;
+    gbc.gridy = 2;
+    gbc.ipadx = 20;
+    gridbag.setConstraints(frameRate, gbc);
     bottom.add(frameRate);
 
     // OME-XML button
@@ -234,10 +233,10 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         xml.setEnabled(false);
       }
 
-      c.gridx = 5;
-      c.gridy = 3;
-      c.insets = new Insets(3, 30, 3, 5);
-      gridbag.setConstraints(xml, c);
+      gbc.gridx = 5;
+      gbc.gridy = 3;
+      gbc.insets = new Insets(3, 30, 3, 5);
+      gridbag.setConstraints(xml, gbc);
       bottom.add(xml);
     }
 
@@ -247,11 +246,11 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     swapAxes.addActionListener(this);
     swapAxes.setActionCommand("swap");
 
-    c.gridx = 0;
-    c.gridy = 3;
-    c.gridwidth = 2;
-    c.insets = new Insets(0, 0, 0, 0);
-    gridbag.setConstraints(swapAxes, c);
+    gbc.gridx = 0;
+    gbc.gridy = 3;
+    gbc.gridwidth = 2;
+    gbc.insets = new Insets(0, 0, 0, 0);
+    gridbag.setConstraints(swapAxes, gbc);
     bottom.add(swapAxes);
 
     // create enclosing JPanel (for 5-pixel border)
@@ -281,17 +280,12 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   // -- CustomWindow methods --
 
-  /** selects and shows slice defined by z, t and trans */
-  public void showSlice(int z, int t, boolean trans) {
-    showSlice(z, t, trans ? 1 : 2);
-  }
-
   /** selects and shows slice defined by z, t and c */
   public void showSlice(int z, int t, int c) {
     int index = db.getIndex(z - 1, t - 1, c - 1);
     if (LociDataBrowser.DEBUG) {
       db.log("showSlice: index=" + index +
-        "; z=" + z + "; t=" + t + "; trans=" + trans);
+        "; z=" + z + "; t=" + t + "; c=" + c);
     }
     showSlice(index);
   }
@@ -311,11 +305,11 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
 
   /** selects and shows virtual slice */
-  public void showVirtualSlice(int z, int t, boolean trans, int axis) {
-    int index = db.getIndex(z - 1, t - 1, trans ? 0 : 1);
+  public void showVirtualSlice(int z, int t, int c, int axis) {
+    int index = db.getIndex(z - 1, t - 1, c - 1);
     if (LociDataBrowser.DEBUG) {
-      db.log("showVirtualSice: index=" + index +
-        "; z=" + z + "; t=" + t + "; trans=" + trans);
+      db.log("showVirtualSlice: index=" + index +
+        "; z=" + z + "; t=" + t + "; c=" + c);
     }
   }
 
@@ -462,7 +456,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         if (t > db.numT) t = 1;
         tSliceSel.setValue(t);
       }
-      showSlice(z, t, trans);
+      showSlice(z, t, c);
     }
     else if (src instanceof JButton) {
       if (animate.getText().equals(ANIM_STRING)) {
@@ -485,7 +479,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     Object src = adjustmentEvent.getSource();
     if (src == zSliceSel) z = zSliceSel.getValue();
     else if (src == tSliceSel) t = tSliceSel.getValue();
-    showSlice(z, t, trans);
+    showSlice(z, t, c);
   }
 
 
@@ -499,7 +493,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     }
     else { // src == channels
       JSpinner channels = (JSpinner) src;
-      int c = ((Integer) channels.getValue()).intValue();
+      c = ((Integer) channels.getValue()).intValue();
       showSlice(z, t, c);
     }
   }
@@ -509,8 +503,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   public void itemStateChanged(ItemEvent e) {
     JCheckBox channels = (JCheckBox) e.getSource();
-    trans = channels.isSelected();
-    showSlice(z, t, trans);
+    c = channels.isSelected() ? 1 : 2;
+    showSlice(z, t, c);
   }
 
 
