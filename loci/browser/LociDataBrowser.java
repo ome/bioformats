@@ -175,8 +175,8 @@ public class LociDataBrowser implements PlugIn {
           height = imp.getHeight();
           type = imp.getType();
           ColorModel cm = imp.getProcessor().getColorModel();
-	  if (virtual) stack = new VirtualStack(width, height, cm, directory);
-	  else stack = new ImageStack(width, height, cm);
+          if (virtual) stack = new VirtualStack(width, height, cm, directory);
+          else stack = new ImageStack(width, height, cm);
 
           // save original file info
           fi = imp.getOriginalFileInfo();

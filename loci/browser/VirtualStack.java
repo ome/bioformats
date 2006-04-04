@@ -1,6 +1,7 @@
 //
 // VirtualStack.java
 //
+
 package loci.browser;
 
 import ij.ImagePlus;
@@ -12,22 +13,24 @@ import java.awt.image.ColorModel;
 /** This class represents an array of disk-resident images. */
 class VirtualStack extends ImageStack {
 
-  // -- Constants (VirtualStack) --
+  // -- Constants --
 
   static final int INITIAL_SIZE = 100;
 
-  // -- Fields (VirtualStack) --
+
+  // -- Fields --
 
   String path;
   int nSlices;
   String[] names;
   protected static final int Z_AXIS = 1;
   protected static final int T_AXIS = 2;
-  private int fileIndex;  
+  private int fileIndex;
   private int stacksize;
   private ImagePlus imp;
 
-  // -- Constructor (VirtualStack) --
+
+  // -- Constructor --
 
   /** Creates a new, empty virtual stack. */
   public VirtualStack(int width, int height, ColorModel cm, String path) {
@@ -56,14 +59,14 @@ class VirtualStack extends ImageStack {
   }
 
 
-  // -- ImageStack methods (VirtualStack) --
+  // -- ImageStack methods --
 
   /** Does nothing. */
   public void addSlice(String sliceLabel, Object pixels) {
     System.err.println("ERROR: calling addSlice(sliceLabel, pixels)");
   }
 
-  
+
   public void addSlice(String sliceLabel, ImageProcessor ip) {
     System.err.println("calling VirtualStack.addSlice(sliceLabel, ip)");
     addSlice(sliceLabel);
@@ -108,9 +111,9 @@ class VirtualStack extends ImageStack {
   public ImageProcessor getProcessor(int n) {
     //IJ.log("getProcessor: "+n+"  "+names[n-1]);
     if (stacksize == -1 || fileIndex != (n-1) / stacksize) {
-	imp = new Opener().openImage(path, names[n-1]);
-	stacksize = imp.getStackSize();
-	fileIndex = (n-1) / stacksize;
+      imp = new Opener().openImage(path, names[n-1]);
+      stacksize = imp.getStackSize();
+      fileIndex = (n-1) / stacksize;
     }
     if (imp!=null) {
       int w = imp.getWidth();

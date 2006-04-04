@@ -37,11 +37,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   private int fps = 10;
   private int z = 1, t = 1;
   private boolean trans;
+  private int oldZ, oldT; // for virtual stack
 
-  // -- Fields - for Virtual Stack --
-
-    private int old_z;
-    private int old_t;
   // -- Fields - widgets --
 
   private JLabel zLabel, tLabel;
@@ -285,7 +282,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   }
 
 
-    /** selects and shows virtual slice */
+  /** selects and shows virtual slice */
   public void showVirtualSlice(int z, int t, boolean trans, int axis) {
     int index = db.getIndex(z - 1, t - 1, trans ? 0 : 1);
     if (LociDataBrowser.DEBUG) {
@@ -295,7 +292,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   }
 
 
-	
   // -- ImageWindow methods --
 
   /** adds 3rd and 4th dimension slice position */
@@ -435,7 +431,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       }
       else {
         t = tSliceSel.getValue() + 1;
-        if (t > db.numT) t = 1; 
+        if (t > db.numT) t = 1;
         tSliceSel.setValue(t);
       }
       showSlice(z, t, trans);
