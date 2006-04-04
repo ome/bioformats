@@ -43,7 +43,9 @@ public class LociDataBrowser implements PlugIn {
   };
 
   /** Prefix endings indicating numbering block represents C. */
-  private static final String[] PRE_C = {"_C", "-C", ".C"};
+  private static final String[] PRE_C = {
+    "_C", "-C", ".C", "_CH", "-CH", ".CH"
+  };
 
 
   // -- Fields --
