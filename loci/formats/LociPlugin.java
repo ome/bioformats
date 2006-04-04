@@ -59,41 +59,49 @@ public class LociPlugin implements PlugIn {
     ImageReader reader = new ImageReader();
     try {
       int num = reader.getImageCount(id);
-      ImageStack stack = null;
+      ImageStack stackB = null, stackS = null, stackF = null, stackO = null;
       for (int i=0; i<num; i++) {
         if (i % 5 == 4) IJ.showStatus("Reading plane " + (i + 1) + "/" + num);
         IJ.showProgress((double) i / num);
         BufferedImage img = reader.open(id, i);
-        if (stack == null) {
-          stack = new ImageStack(img.getWidth(), img.getHeight());
-        }
 
         ImageProcessor ip = null;
         WritableRaster raster = img.getRaster();
         int c = raster.getNumBands();
         int tt = raster.getTransferType();
+        int w = img.getWidth(), h = img.getHeight();
         if (c == 1) {
-          int w = img.getWidth(), h = img.getHeight();
           if (tt == DataBuffer.TYPE_BYTE) {
             byte[] b = ImageTools.getBytes(img)[0];
             ip = new ByteProcessor(w, h, b, null);
+            if (stackB == null) stackB = new ImageStack(w, h);
+            stackB.addSlice(fileName + ":" + (i + 1), ip);
           }
           else if (tt == DataBuffer.TYPE_USHORT) {
             short[] s = ImageTools.getShorts(img)[0];
             ip = new ShortProcessor(w, h, s, null);
+            if (stackS == null) stackS = new ImageStack(w, h);
+            stackS.addSlice(fileName + ":" + (i + 1), ip);
           }
           else if (tt == DataBuffer.TYPE_FLOAT) {
             float[] f = ImageTools.getFloats(img)[0];
             ip = new FloatProcessor(w, h, f, null);
+            if (stackF == null) stackF = new ImageStack(w, h);
+            stackF.addSlice(fileName + ":" + (i + 1), ip);
           }
         }
-        if (ip == null) ip = new ImagePlus(null, img).getProcessor(); // slow
-
-        stack.addSlice(fileName + ":" + (i + 1), ip);
+        if (ip == null) {
+          ip = new ImagePlus(null, img).getProcessor(); // slow
+          if (stackO == null) stackO = new ImageStack(w, h);
+          stackO.addSlice(fileName + ":" + (i + 1), ip);
+        }
       }
       IJ.showStatus("Creating image");
       IJ.showProgress(1);
-      new ImagePlus(fileName, stack).show();
+      if (stackB != null) new ImagePlus(fileName, stackB).show();
+      if (stackS != null) new ImagePlus(fileName, stackS).show();
+      if (stackF != null) new ImagePlus(fileName, stackF).show();
+      if (stackO != null) new ImagePlus(fileName, stackO).show();
       success = true;
     }
     catch (Exception exc) {
