@@ -136,21 +136,44 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     gridbag.setConstraints(tSliceSel, c);
     bottom.add(tSliceSel);
 
-    // C checkbox
-    JCheckBox channel2 = new JCheckBox("Transmitted");
-    if (!db.hasC) channel2.setEnabled(false);
-    channel2.addItemListener(this);
-    channel2.setBackground(Color.white);
-
     c.gridx = 6;
     c.gridy = 0;
-    c.gridwidth = 2; // end row
     c.fill = GridBagConstraints.NONE;
     c.weightx = 0.0;
     c.insets = new Insets(0, 5, 0, 0);
-    c.anchor = GridBagConstraints.LINE_END;
-    gridbag.setConstraints(channel2, c);
-    bottom.add(channel2);
+
+    if (db.numC > 2) {
+      // C spinner
+      SpinnerModel model = new SpinnerNumberModel(1, 1, db.numC, 1);
+      JSpinner channels = new JSpinner(model);
+      if (!db.hasC) channels.setEnabled(false);
+      channels.addChangeListener(this);
+
+      c.gridwidth = 1;
+      gridbag.setConstraints(channels, c);
+      bottom.add(channels);
+
+      // C label
+      JLabel cLabel = new JLabel("channel");
+      if (!db.hasC) cLabel.setEnabled(false);
+
+      c.gridx = 7;
+      c.weightx = 0.0;
+      gridbag.setConstraints(cLabel, c);
+      bottom.add(cLabel);
+    }
+    else {
+      // C checkbox
+      JCheckBox channels = new JCheckBox("Transmitted");
+      if (!db.hasC) channels.setEnabled(false);
+      channels.addItemListener(this);
+      channels.setBackground(Color.white);
+
+      c.gridwidth = 2; // end row
+      c.anchor = GridBagConstraints.LINE_END;
+      gridbag.setConstraints(channels, c);
+      bottom.add(channels);
+    }
 
     // animate button
     animate = new JButton(ANIM_STRING);
@@ -248,7 +271,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
     // repack to take extra panel into account
     pack();
-    showSlice(1, 1, false);
+    showSlice(1, 1, db.numC == 2 ? 2 : 1);
 
     // listen for arrow key presses
     addKeyListener(this);
@@ -260,7 +283,12 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   /** selects and shows slice defined by z, t and trans */
   public void showSlice(int z, int t, boolean trans) {
-    int index = db.getIndex(z - 1, t - 1, trans ? 0 : 1);
+    showSlice(z, t, trans ? 1 : 2);
+  }
+
+  /** selects and shows slice defined by z, t and c */
+  public void showSlice(int z, int t, int c) {
+    int index = db.getIndex(z - 1, t - 1, c - 1);
     if (LociDataBrowser.DEBUG) {
       db.log("showSlice: index=" + index +
         "; z=" + z + "; t=" + t + "; trans=" + trans);
@@ -464,20 +492,25 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   // -- ChangeListener methods --
 
   public void stateChanged(ChangeEvent e) {
-    fps = ((Integer) frameRate.getValue()).intValue();
-    if (animationTimer != null) animationTimer.setDelay(1000 / fps);
+    Object src = e.getSource();
+    if (src == frameRate) {
+      fps = ((Integer) frameRate.getValue()).intValue();
+      if (animationTimer != null) animationTimer.setDelay(1000 / fps);
+    }
+    else { // src == channels
+      JSpinner channels = (JSpinner) src;
+      int c = ((Integer) channels.getValue()).intValue();
+      showSlice(z, t, c);
+    }
   }
 
 
   // -- ItemListener methods --
 
   public void itemStateChanged(ItemEvent e) {
-    Object src = e.getSource();
-    if (src instanceof JCheckBox) {
-      JCheckBox channel2 = (JCheckBox) src;
-      trans = channel2.isSelected();
-      showSlice(z, t, trans);
-    }
+    JCheckBox channels = (JCheckBox) e.getSource();
+    trans = channels.isSelected();
+    showSlice(z, t, trans);
   }
 
 

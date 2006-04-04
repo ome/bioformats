@@ -31,7 +31,10 @@ public class LociDataBrowser implements PlugIn {
 
   /** Debugging flag. */
   protected static final boolean DEBUG = false;
+
+  /** Flag for toggling availability of virtual stack logic. */
   protected static final boolean VIRTUAL = true;
+
   /** Prefix endings indicating numbering block represents T. */
   private static final String[] PRE_T = {
     "_TP", "-TP", ".TP", "_TL", "-TL", ".TL"
@@ -133,7 +136,6 @@ public class LociDataBrowser implements PlugIn {
     String name = od.getFileName();
     if (name == null) return;
 
-    boolean virtual = VIRTUAL;
     // find all the files having similar names (using FilePattern class)
     String pattern = FilePattern.findPattern(name, directory);
     FilePattern fp = new FilePattern(pattern);
@@ -154,6 +156,8 @@ public class LociDataBrowser implements PlugIn {
       log("pattern", pattern);
       log("filenames", filenames);
     }
+
+    boolean virtual = VIRTUAL;
 
     // read images
     int depth = 0, width = 0, height = 0, type = 0;
