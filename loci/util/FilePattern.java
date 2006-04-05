@@ -233,7 +233,6 @@ public class FilePattern {
 
   /** Identifies the group pattern from a given file within that group. */
   public static String findPattern(File file) {
-    String dir = file.getParent();
     return findPattern(file.getName(), file.getAbsoluteFile().getParent());
   }
 
