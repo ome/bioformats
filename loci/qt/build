@@ -9,6 +9,7 @@ cp loci/qt/qt.manifest .
 jar cfm loci/qt/QTConverter.jar qt.manifest \
 loci/qt/*.class \
 loci/util/FilePattern*.class \
+loci/util/NumberFilter*.class \
 loci/formats/BitBuffer*.class \
 loci/formats/BitWriter*.class \
 loci/formats/ByteVector*.class \
@@ -32,7 +33,8 @@ loci/formats/ReflectedUniverse*.class \
 loci/formats/TiffRational*.class \
 loci/formats/TiffTools*.class \
 loci/formats/TiffWriter*.class \
-loci/qt/*.java loci/util/FilePattern.java loci/qt/build
+loci/qt/*.java loci/util/FilePattern.java loci/util/NumberFilter.java \
+loci/qt/build
 rm qt.manifest
 
 cd loci/qt
