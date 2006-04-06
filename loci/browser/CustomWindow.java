@@ -270,7 +270,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
     // repack to take extra panel into account
     pack();
-    showSlice(1, 1, db.numC == 2 ? 2 : 1);
+    c = db.numC == 2 ? 2 : 1;
+    showSlice(z, t, c);
 
     // listen for arrow key presses
     addKeyListener(this);
