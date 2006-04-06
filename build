@@ -23,8 +23,20 @@ cd ../..
 
 echo Building bio_formats.jar...
 cp loci/formats/formats.manifest loci/formats/plugins.config .
-jar cfm loci/formats/bio_formats.jar formats.manifest plugins.config loci/formats/*.class loci/formats/*.txt loci/formats/*.java loci/formats/test loci/formats/build loci/formats/plugins.config loci/formats/formats.manifest
-rm formats.manifest plugins.config
+echo LOCI Bio-Formats > about.txt
+echo Built `date` >> about.txt
+echo >> about.txt
+echo The LOCI Bio-Formats package is LOCI software written >> about.txt
+echo by Melissa Linkert, Curtis Rueden and Eric Kjellman. >> about.txt
+echo >> about.txt
+echo http://www.loci.wisc.edu/ome/formats.html >> about.txt
+mv about.txt loci/util/about.txt
+jar cfm loci/formats/bio_formats.jar formats.manifest \
+plugins.config loci/util/about.txt \
+loci/formats/*.class loci/util/About*.class loci/formats/*.txt \
+loci/formats/*.java loci/util/About*.java loci/formats/test \
+loci/formats/build loci/formats/plugins.config loci/formats/formats.manifest
+rm formats.manifest plugins.config loci/util/about.txt
 
 cd loci/formats
 ls -l bio_formats.jar
