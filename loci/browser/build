@@ -1,10 +1,25 @@
 #!/bin/sh
+
+# build: a script for building the LOCI 4D Data Browser JAR file
+
 cd ../..
 
 echo Building loci_browser.jar...
-cp loci/browser/plugins.config .
-jar cfM loci/browser/loci_browser.jar plugins.config loci/browser/*.class loci/ome/*.class loci/util/*.class loci/browser/*.java loci/ome/*.java loci/util/*.java loci/browser/build loci/browser/plugins.config
-rm plugins.config
+cp loci/browser/browser.manifest loci/browser/plugins.config .
+echo LOCI 4D Data Browser > about.txt
+echo Built `date` >> about.txt
+echo >> about.txt
+echo The LOCI 4D Data Browser is LOCI software >> about.txt
+echo written by Francis Wong and Curtis Rueden. >> about.txt
+echo >> about.txt
+echo 'http://www.loci.wisc.edu/4d/#browser' >> about.txt
+mv about.txt loci/util/about.txt
+jar cfm loci/browser/loci_browser.jar browser.manifest \
+plugins.config loci/util/about.txt \
+loci/browser/*.class loci/ome/*.class loci/util/*.class \
+loci/browser/*.java loci/ome/*.java loci/util/*.java \
+loci/browser/build loci/browser/plugins.config loci/browser/browser.manifest
+rm browser.manifest plugins.config loci/util/about.txt
 
 cd loci/browser
 ls -l loci_browser.jar
