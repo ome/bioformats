@@ -33,6 +33,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import loci.util.About;
 
 /**
  * ImageViewer is a simple viewer/converter
@@ -116,6 +117,12 @@ public class ImageViewer extends JFrame
     fileExit.setActionCommand("exit");
     fileExit.addActionListener(this);
     file.add(fileExit);
+    JMenu help = new JMenu("Help");
+    menubar.add(help);
+    JMenuItem helpAbout = new JMenuItem("About...");
+    helpAbout.setActionCommand("about");
+    helpAbout.addActionListener(this);
+    help.add(helpAbout);
 
     // image I/O engine
     reader = new ImageReader();
@@ -240,6 +247,11 @@ public class ImageViewer extends JFrame
       }
     }
     else if ("exit".equals(cmd)) dispose();
+    else if ("about".equals(cmd)) {
+      // HACK - JOptionPane prevents shutdown on dispose
+      setDefaultCloseOperation(EXIT_ON_CLOSE);
+      About.show();
+    }
   }
 
 
