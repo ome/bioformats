@@ -1,5 +1,4 @@
 QuickTime:
-* mjpb codec
 * svq3 codec (lower priority)
 
 Implement readers for other file formats:
