@@ -599,7 +599,7 @@ public class LeicaReader extends FormatReader {
    * of twice the required size, with a space at every other position.
    * This method removes the blank spaces from a string.
    */
-  protected String stripString(String toStrip) {
+  protected static String stripString(String toStrip) {
     char[] toRtn = new char[toStrip.length()];
     for (int i=0; i<toRtn.length; i+=2) toRtn[i / 2] = toStrip.charAt(i);
     toStrip = new String(toRtn);
