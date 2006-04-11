@@ -108,28 +108,28 @@ public class LIFReader extends FormatReader {
     
     int offset = ((Long) offsets.get(0)).intValue();
     in.seek((long) (offset + (width * height * bytesPerPixel * no)));
-    byte[] data = new byte[(int) (width * height * bytesPerPixel)];
+    byte[] data = new byte[(int) (width * height * bytesPerPixel * 3)];
     in.read(data);
    
     // pack the data appropriately
 
     if (bps == 8) { 
-      return ImageTools.makeImage(data, width, height, 1, false);
+      return ImageTools.makeImage(data, width, height, 3, false);
     }
     else if (bps == 16) {
-      short[] shortData = new short[width*height];
+      short[] shortData = new short[width*height*3];
       for (int i=0; i<data.length; i+=2) {
         shortData[i/2] = DataTools.bytesToShort(data, i, littleEndian);
       }        
-      return ImageTools.makeImage(shortData, width, height, 1, false);
+      return ImageTools.makeImage(shortData, width, height, 3, false);
     }
     else if (bps == 32) {
-      float[] floatData = new float[width*height];
+      float[] floatData = new float[width*height*3];
       for (int i=0; i<data.length; i+=4) {
         floatData[i/4] = 
           Float.intBitsToFloat(DataTools.bytesToInt(data, i, littleEndian));
       }        
-      return ImageTools.makeImage(floatData, width, height, 1, false);
+      return ImageTools.makeImage(floatData, width, height, 3, false);
     }
     else {
       throw new FormatException("Sorry, bits per sample " + bps + 
