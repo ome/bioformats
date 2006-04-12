@@ -25,3 +25,4 @@ loci.formats.ImageJReader # ImageJ
 loci.formats.QTReader
 loci.formats.PictReader
 loci.formats.OpenlabReader # isThisType(String) is slow
+loci.formats.OIFReader
