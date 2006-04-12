@@ -10,6 +10,8 @@ import ij.io.Opener;
 import ij.process.ImageProcessor;
 import java.awt.image.ColorModel;
 
+import java.util.Arrays;
+
 /** This class represents an array of disk-resident images. */
 class VirtualStack extends ImageStack {
 
@@ -17,6 +19,7 @@ class VirtualStack extends ImageStack {
 
   static final int INITIAL_SIZE = 100;
 
+    static final boolean DEBUG = true;
 
   // -- Fields --
 
@@ -25,20 +28,36 @@ class VirtualStack extends ImageStack {
   String[] names;
   protected static final int Z_AXIS = 1;
   protected static final int T_AXIS = 2;
+  protected int tp;
   private int fileIndex;
   private int stacksize;
   private ImagePlus imp;
+  private boolean animT; // keeping track of which axis to animate
+  private ImageStack currentStack;
+  private static int[] indices;
+  
+    // fields about the image
+    private int height;
+    private int width;
+    private ColorModel cm;
 
+    private boolean animate;
+    private int[] oldptr;  
 
   // -- Constructor --
 
   /** Creates a new, empty virtual stack. */
   public VirtualStack(int width, int height, ColorModel cm, String path) {
     super(width, height, cm);
+    this.width = width;
+    this.height = height;
+    this.cm = cm;
     this.path = path;
     names = new String[INITIAL_SIZE];
     fileIndex = -1;
     stacksize = -1;
+    animT = true;
+    
     //IJ.log("VirtualStack: "+path);
   }
 
@@ -59,6 +78,15 @@ class VirtualStack extends ImageStack {
   }
 
 
+    public void swapAxes(int val, int max) {
+	animT = !animT;
+	stacksize = -1;
+	fileIndex = -1;
+	if (animT) {
+	    currentStack = new ImageStack(width, height, cm);
+	}
+    }
+
   // -- ImageStack methods --
 
   /** Does nothing. */
@@ -68,8 +96,10 @@ class VirtualStack extends ImageStack {
 
 
   public void addSlice(String sliceLabel, ImageProcessor ip) {
-    System.err.println("calling VirtualStack.addSlice(sliceLabel, ip)");
-    addSlice(sliceLabel);
+    if (DEBUG) {
+	System.err.println("calling VirtualStack.addSlice(sliceLabel, ip)");
+	addSlice(sliceLabel);
+    }
   }
 
   /** Does noting. */
@@ -109,26 +139,61 @@ class VirtualStack extends ImageStack {
    * were 1<=n<=nslices. Returns null if the stack is empty.
    */
   public ImageProcessor getProcessor(int n) {
+      if (indices == null) {
     //IJ.log("getProcessor: "+n+"  "+names[n-1]);
-    if (stacksize == -1 || fileIndex != (n-1) / stacksize) {
-      imp = new Opener().openImage(path, names[n-1]);
-      stacksize = imp.getStackSize();
-      fileIndex = (n-1) / stacksize;
-    }
-    if (imp!=null) {
-      int w = imp.getWidth();
-      int h = imp.getHeight();
-      int type = imp.getType();
-      ColorModel cm = imp.getProcessor().getColorModel();
-      imp.setSlice(n % stacksize == 0 ? stacksize : n % stacksize);
-    }
-    else return null;
-    System.err.println("fileIndex = " + fileIndex);
-    System.err.println("stacksize = " + stacksize);
-    System.err.println("n = " + n);
-
-    return imp.getProcessor();
+	  if (stacksize == -1 || fileIndex != (n-1) / stacksize) {
+	      imp = new Opener().openImage(path, names[n-1]);
+	      stacksize = imp.getStackSize();
+	      fileIndex = (n-1) / stacksize;
+	  }
+	  if (imp!=null) {
+	      imp.setSlice(n % stacksize == 0 ? stacksize : n % stacksize);
+	      System.err.println("Stack label = "+imp.getStack().getSliceLabel(n % stacksize == 0 ? stacksize : n % stacksize));
+	  }
+	  else return null;
+	  System.err.println("fileIndex = " + fileIndex);
+	  System.err.println("stacksize = " + stacksize);
+	  System.err.println("n = " + n);
+      return imp.getProcessor();
+      } else {
+	  if (DEBUG) {
+	      System.err.println("n = "+n);
+	      System.err.println("indices[n] = "+indices[n]);
+	  }
+	  if (indices[n] != -1) return currentStack.getProcessor(indices[n]);
+	  else {
+	      if (DEBUG) System.err.println("*** indices["+n+"] == -1!!! ***");
+	      imp = new Opener().openImage(path,names[n-1]);
+	      if (imp!=null) imp.setSlice(n % stacksize == 0 ? stacksize : n % stacksize);
+	      return imp.getProcessor();
+	  }
+      }
   }
+    
+    public static void resetIndices() {
+	indices = null;
+    }
+
+    public void setIndices(int[] ptr) {
+	if (oldptr != null && Arrays.equals(ptr,oldptr)) return;
+	else {
+	    oldptr = (int[])ptr.clone();
+	    currentStack = new ImageStack(width, height, cm);
+	    if (indices == null) indices = new int[nSlices+1];
+	    for (int k=0; k<nSlices; k++) indices[k] = -1;
+	    for (int k=0; k<ptr.length; k++) {
+		indices[ptr[k]] = k+1;
+		imp = new Opener().openImage(path, names[ptr[k]]);
+		int idx = ptr[k] % stacksize == 0 ? stacksize : ptr[k] % stacksize;
+		imp.setSlice(idx);
+		if (DEBUG) {
+		    System.err.println("ptr["+k+"] = "+ptr[k]);
+		    System.err.println("imp.setSlice("+idx+")");
+		}
+		currentStack.addSlice(imp.getTitle(), imp.getProcessor());
+	    }
+	}
+    }
 
   /** Returns the number of slices in this stack. */
   public int getSize() { return nSlices; }

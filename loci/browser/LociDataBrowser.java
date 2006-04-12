@@ -33,7 +33,7 @@ public class LociDataBrowser implements PlugIn {
   protected static final boolean DEBUG = false;
 
   /** Flag for toggling availability of virtual stack logic. */
-  protected static final boolean VIRTUAL = false;
+  protected static final boolean VIRTUAL = true;
 
   /** Prefix endings indicating numbering block represents T. */
   private static final String[] PRE_T = {

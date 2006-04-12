@@ -23,6 +23,9 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   // -- Constants --
 
+    private static final boolean DEBUG = true;
+
+
   private static final String Z_STRING = "z-depth";
   private static final String T_STRING = "time";
 
@@ -47,7 +50,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   private JButton xml;
   private Timer animationTimer;
   private JButton animate;
-
+  private ImageStack stack;
 
   // -- Constructor --
 
@@ -241,7 +244,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     }
 
     // swap axes button
-    JButton swapAxes = new JButton("Swap Axes");
+    JButton swapAxes= new JButton("Swap Axes");
     if (!db.hasZ && !db.hasT) swapAxes.setEnabled(false);
     swapAxes.addActionListener(this);
     swapAxes.setActionCommand("swap");
@@ -436,6 +439,11 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       tString = tmp2;
       zLabel.setText(zString);
       tLabel.setText(tString);
+      ImageStack stack = imp.getStack();
+      if (stack instanceof VirtualStack) {
+	  setIndices();
+	  //	  ((VirtualStack)stack).swapAxes(tSliceSel.getValue(),tSliceSel.getMaximum());
+      }	  
 
       // update buttons
       boolean swapped = zString.equals(T_STRING);
@@ -464,6 +472,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         animationTimer = new Timer(1000 / fps, this);
         animationTimer.start();
         animate.setText(STOP_STRING);
+	setIndices();
       }
       else {
         animationTimer.stop();
@@ -473,13 +482,41 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     }
   }
 
+    public void setIndices() {
+	ImageStack stack = imp.getStack();
+	if (stack instanceof VirtualStack) {
+	    boolean swapped = zString.equals(T_STRING);
+	    if (swapped) {  // animate top scrolling bar
+		int[] indices = new int[zSliceSel.getMaximum()-1];
+		for (int k=0; k<indices.length; k++)
+		    indices[k] = db.getIndex(k,t-1,c);
+		if (DEBUG) {
+		    System.err.println("Indices:");
+		    for (int k=0; k<indices.length; k++)
+			System.err.print(indices[k]+" ");
+		    System.err.println();
+		}
+		((VirtualStack)stack).setIndices(indices);
+	    } else {
+		int[] indices = new int[tSliceSel.getMaximum()-1];
+		for (int k=0; k<indices.length; k++)
+		    indices[k] = db.getIndex(z,k,c)-1;
+		((VirtualStack)stack).setIndices(indices);
+	    }
+	}
+    }
 
   // -- AdjustmentListener methods --
 
   public void adjustmentValueChanged(AdjustmentEvent adjustmentEvent) {
     Object src = adjustmentEvent.getSource();
-    if (src == zSliceSel) z = zSliceSel.getValue();
-    else if (src == tSliceSel) t = tSliceSel.getValue();
+    if (src == zSliceSel) {
+	z = zSliceSel.getValue();
+	if (animate.getText().equals(STOP_STRING) && zString.equals(Z_STRING)) setIndices();
+    } else if (src == tSliceSel) {
+	t = tSliceSel.getValue();
+	if (animate.getText().equals(STOP_STRING) && zString.equals(T_STRING)) setIndices();
+    }
     showSlice(z, t, c);
   }
 
