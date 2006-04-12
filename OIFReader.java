@@ -145,7 +145,19 @@ public class OIFReader extends FormatReader {
         }
         line = ptyReader.readLine();
       }
-    } 
+    }
+
+    if (ome != null) {
+      OMETools.setPixels(ome,
+        new Integer(Integer.parseInt((String) metadata.get("ImageWidth"))),
+        new Integer(Integer.parseInt((String) metadata.get("ImageHeight"))),
+        new Integer(numImages),
+        new Integer(1),
+        new Integer(1),
+        "int" + (8*Integer.parseInt((String) metadata.get("ImageDepth"))), 
+        new Boolean(false),
+        "XYZTC");
+    }
   }
 
   // -- Main method --
