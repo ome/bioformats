@@ -385,6 +385,13 @@ public abstract class BaseTiffReader extends FormatReader {
         else description = null;
       }
 
+      // sanitize comment
+      if (description != null) {
+        description = description.replaceAll("\r\n", "\n"); // CR-LF to LF
+        description = description.replaceAll("\r", "\n"); // CR to LF
+        put("Comment", description); 
+      }
+
       OMETools.setImage(ome, null, creationDate, description);
 
       // populate Dimensions element
