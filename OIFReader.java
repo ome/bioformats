@@ -93,7 +93,8 @@ public class OIFReader extends FormatReader {
     reader = new BufferedReader(new FileReader(id));
     tiffReader = new TiffReader();
   
-    String path = id.substring(0, id.lastIndexOf(File.separator));
+    int slash = id.lastIndexOf(File.separator);
+    String path = slash < 0 ? "." : id.substring(0, slash);
     
     // parse each key/value pair (one per line)
   
