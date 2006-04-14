@@ -19,8 +19,6 @@ class VirtualStack extends ImageStack {
 
   static final int INITIAL_SIZE = 100;
 
-    static final boolean DEBUG = true;
-
   // -- Fields --
 
   String path;
@@ -96,10 +94,10 @@ class VirtualStack extends ImageStack {
 
 
   public void addSlice(String sliceLabel, ImageProcessor ip) {
-    if (DEBUG) {
+    if (LociDataBrowser.DEBUG) {
 	System.err.println("calling VirtualStack.addSlice(sliceLabel, ip)");
-	addSlice(sliceLabel);
     }
+	addSlice(sliceLabel);
   }
 
   /** Does noting. */
@@ -138,7 +136,7 @@ class VirtualStack extends ImageStack {
    * Returns an ImageProcessor for the specified slice,
    * were 1<=n<=nslices. Returns null if the stack is empty.
    */
-  public ImageProcessor getProcessor(int n) {
+    synchronized public ImageProcessor getProcessor(int n) {
       if (indices == null) {
     //IJ.log("getProcessor: "+n+"  "+names[n-1]);
 	  if (stacksize == -1 || fileIndex != (n-1) / stacksize) {
@@ -156,13 +154,13 @@ class VirtualStack extends ImageStack {
 	  System.err.println("n = " + n);
       return imp.getProcessor();
       } else {
-	  if (DEBUG) {
+	  if (LociDataBrowser.DEBUG) {
 	      System.err.println("n = "+n);
 	      System.err.println("indices[n] = "+indices[n]);
 	  }
 	  if (indices[n] != -1) return currentStack.getProcessor(indices[n]);
 	  else {
-	      if (DEBUG) System.err.println("*** indices["+n+"] == -1!!! ***");
+	      if (LociDataBrowser.DEBUG) System.err.println("*** indices["+n+"] == -1!!! ***");
 	      imp = new Opener().openImage(path,names[n-1]);
 	      if (imp!=null) imp.setSlice(n % stacksize == 0 ? stacksize : n % stacksize);
 	      return imp.getProcessor();
@@ -174,9 +172,12 @@ class VirtualStack extends ImageStack {
 	indices = null;
     }
 
-    public void setIndices(int[] ptr) {
+    synchronized public void setIndices(int[] ptr) {
 	// same subset of slices on stack
-	if (oldptr != null && Arrays.equals(ptr,oldptr)) return; 
+	if (oldptr != null && Arrays.equals(ptr,oldptr)) {
+	    if (LociDataBrowser.DEBUG) System.err.println("oldptr == ptr");
+	    return; 
+	}
 	else {
 	    oldptr = (int[])ptr.clone();  // store pointers
 	    currentStack = new ImageStack(width, height, cm);
@@ -189,12 +190,12 @@ class VirtualStack extends ImageStack {
 		    int idx = ptr[k] % stacksize == 0 ? stacksize : ptr[k] % stacksize;
 		    imp.setSlice(idx);
 		    currentStack.addSlice(imp.getTitle(), imp.getProcessor());
-		    if (DEBUG) {
+		    if (LociDataBrowser.DEBUG) {
 			System.err.println("ptr["+k+"] = "+ptr[k]);
 			System.err.println("imp.setSlice("+idx+")");
 		    }
 		} catch (NullPointerException npe) {
-		    if (DEBUG) {
+		    if (LociDataBrowser.DEBUG) {
 			System.err.println("*** NULL POINTER: ptr["+k+"] = "+ptr[k]);
 			System.err.println("Name of file = "+names[ptr[k]]);
 		    }

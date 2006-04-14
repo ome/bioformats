@@ -18,13 +18,10 @@ import javax.swing.event.ChangeEvent;
 import loci.ome.MetaPanel;
 
 public class CustomWindow extends ImageWindow implements ActionListener,
-  AdjustmentListener, ChangeListener, ItemListener, KeyListener
+	 AdjustmentListener, ChangeListener, ItemListener, KeyListener, Runnable
 {
 
   // -- Constants --
-
-    private static final boolean DEBUG = true;
-
 
   private static final String Z_STRING = "z-depth";
   private static final String T_STRING = "time";
@@ -43,7 +40,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   // -- Fields - widgets --
 
-  private JLabel zLabel, tLabel;
+    private JLabel zLabel, tLabel, waitLabel;
   private JScrollBar zSliceSel, tSliceSel;
   private JLabel fpsLabel;
   private JSpinner frameRate;
@@ -52,6 +49,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   private JButton animate;
   private ImageStack stack;
 
+    private Thread thread;
   // -- Constructor --
 
   /** CustomWindow constructors, initialisation */
@@ -100,7 +98,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     gbc.anchor = GridBagConstraints.LINE_START;
     gridbag.setConstraints(zLabel, gbc);
     bottom.add(zLabel);
-
+    
     // T scroll bar label
     tLabel = new JLabel(tString);
     tLabel.setHorizontalTextPosition(JLabel.LEFT);
@@ -109,6 +107,17 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     gbc.gridy = 2;
     gridbag.setConstraints(tLabel, gbc);
     bottom.add(tLabel);
+
+    waitLabel = new JLabel("  ");
+    waitLabel.setHorizontalTextPosition(JLabel.LEFT);
+    gbc.gridx = 0;
+    gbc.gridy = 4;
+    gbc.gridwidth = 3;
+    gbc.ipadx = 60;
+    gridbag.setConstraints(waitLabel, gbc);
+    bottom.add(waitLabel);
+
+    gbc.ipadx = 30;
 
     // Z scroll bar
     zSliceSel = new JScrollBar(JScrollBar.HORIZONTAL,
@@ -255,6 +264,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     gbc.insets = new Insets(0, 0, 0, 0);
     gridbag.setConstraints(swapAxes, gbc);
     bottom.add(swapAxes);
+
+
 
     // create enclosing JPanel (for 5-pixel border)
     JPanel pane = new JPanel() {
@@ -482,6 +493,16 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   }
 
     public void setIndices() {
+	thread = new Thread(this);
+	thread.start();
+    }
+
+    public void run() {
+	SwingUtilities.invokeLater(new Runnable() {
+		public void run() {
+		    waitLabel.setText("Loading...");
+		}
+	    });
 	ImageStack stack = imp.getStack();
 	if (stack instanceof VirtualStack) {
 	    boolean swapped = zString.equals(T_STRING);
@@ -489,8 +510,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 		int[] indices = new int[zSliceSel.getMaximum()-1];
 		for (int k=0; k<indices.length; k++)
 		    indices[k] = db.getIndex(k,t-1,c-1);
-		System.err.println("c = "+c);
-		if (DEBUG) {
+		if (LociDataBrowser.DEBUG) {
 		    System.err.println("Indices:");
 		    for (int k=0; k<indices.length; k++)
 			System.err.print(indices[k]+" ");
@@ -503,9 +523,14 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 		    indices[k] = db.getIndex(z-1,k,c-1);
 		((VirtualStack)stack).setIndices(indices);
 	    }
+	SwingUtilities.invokeLater(new Runnable() {
+		public void run() {
+		    waitLabel.setText(" ");
+		}
+	    });
+	
 	}
     }
-
   // -- AdjustmentListener methods --
 
   public void adjustmentValueChanged(AdjustmentEvent adjustmentEvent) {
