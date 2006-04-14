@@ -161,6 +161,7 @@ public class OpenlabReader extends FormatReader {
     // check whether or not there is deep gray data
     while (expectedBlock != totalBlocks) {
       skipflag = false;
+
       while (pos + 7 < length &&
         (toRead[pos] != 73 || toRead[pos + 1] != 86 ||
         toRead[pos + 2] != 69 || toRead[pos + 3] != 65 ||
@@ -169,6 +170,7 @@ public class OpenlabReader extends FormatReader {
       {
         pos++;
       }
+
       if (pos + 32 > length) { // The header is 32 bytes long.
         if (expectedBlock == 0 && imageType[no] < 9) {
           // there has been no deep gray data, and it is supposed
@@ -294,6 +296,10 @@ public class OpenlabReader extends FormatReader {
           String layerName = new String(layerNameBytes);
           if (layerName.startsWith("Original Image")) ok = false;
         }
+        if (nextOffset == nextOffsetTemp) {
+          v.remove(v.size() - 1);       
+          break;
+        }  
         if (ok) v.add(new Integer(nextOffset)); // add THIS tag offset
       }
       if (nextOffset == nextOffsetTemp) break;
@@ -318,7 +324,6 @@ public class OpenlabReader extends FormatReader {
       in.read(toRead);
       imageType[i] = batoi(toRead);
     }
-
     initMetadata();
   }
 
