@@ -442,7 +442,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       ImageStack stack = imp.getStack();
       if (stack instanceof VirtualStack) {
 	  setIndices();
-	  //	  ((VirtualStack)stack).swapAxes(tSliceSel.getValue(),tSliceSel.getMaximum());
       }	  
 
       // update buttons
@@ -489,7 +488,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 	    if (swapped) {  // animate top scrolling bar
 		int[] indices = new int[zSliceSel.getMaximum()-1];
 		for (int k=0; k<indices.length; k++)
-		    indices[k] = db.getIndex(k,t-1,c);
+		    indices[k] = db.getIndex(k,t-1,c-1);
+		System.err.println("c = "+c);
 		if (DEBUG) {
 		    System.err.println("Indices:");
 		    for (int k=0; k<indices.length; k++)
@@ -500,7 +500,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 	    } else {
 		int[] indices = new int[tSliceSel.getMaximum()-1];
 		for (int k=0; k<indices.length; k++)
-		    indices[k] = db.getIndex(z,k,c)-1;
+		    indices[k] = db.getIndex(z-1,k,c-1);
 		((VirtualStack)stack).setIndices(indices);
 	    }
 	}
@@ -542,6 +542,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   public void itemStateChanged(ItemEvent e) {
     JCheckBox channels = (JCheckBox) e.getSource();
     c = channels.isSelected() ? 1 : 2;
+    setIndices();
     showSlice(z, t, c);
   }
 

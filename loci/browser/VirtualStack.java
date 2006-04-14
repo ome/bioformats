@@ -175,22 +175,32 @@ class VirtualStack extends ImageStack {
     }
 
     public void setIndices(int[] ptr) {
-	if (oldptr != null && Arrays.equals(ptr,oldptr)) return;
+	// same subset of slices on stack
+	if (oldptr != null && Arrays.equals(ptr,oldptr)) return; 
 	else {
-	    oldptr = (int[])ptr.clone();
+	    oldptr = (int[])ptr.clone();  // store pointers
 	    currentStack = new ImageStack(width, height, cm);
 	    if (indices == null) indices = new int[nSlices+1];
-	    for (int k=0; k<nSlices; k++) indices[k] = -1;
+	    for (int k=0; k<=nSlices; k++) indices[k] = -1;
 	    for (int k=0; k<ptr.length; k++) {
-		indices[ptr[k]] = k+1;
-		imp = new Opener().openImage(path, names[ptr[k]]);
-		int idx = ptr[k] % stacksize == 0 ? stacksize : ptr[k] % stacksize;
-		imp.setSlice(idx);
-		if (DEBUG) {
-		    System.err.println("ptr["+k+"] = "+ptr[k]);
-		    System.err.println("imp.setSlice("+idx+")");
+		indices[ptr[k]] = k+1;  // adjust for getIndex() off-by-1
+		try {
+		    imp = new Opener().openImage(path, names[ptr[k]-1]);
+		    int idx = ptr[k] % stacksize == 0 ? stacksize : ptr[k] % stacksize;
+		    imp.setSlice(idx);
+		    currentStack.addSlice(imp.getTitle(), imp.getProcessor());
+		    if (DEBUG) {
+			System.err.println("ptr["+k+"] = "+ptr[k]);
+			System.err.println("imp.setSlice("+idx+")");
+		    }
+		} catch (NullPointerException npe) {
+		    if (DEBUG) {
+			System.err.println("*** NULL POINTER: ptr["+k+"] = "+ptr[k]);
+			System.err.println("Name of file = "+names[ptr[k]]);
+		    }
+		    
 		}
-		currentStack.addSlice(imp.getTitle(), imp.getProcessor());
+
 	    }
 	}
     }
