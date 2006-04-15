@@ -755,23 +755,24 @@ public class QTReader extends FormatReader {
     v.add((byte) 0x3f);
     v.add((byte) 0x00);
 
-    v.add(b.toByteArray());
-    v.add((byte) 0xff);
-    v.add((byte) 0xd9);
-
-    byte[] scanlines = jpegUncompress(v.toByteArray());
-
     // as if everything we had to do up to this point wasn't enough of a pain,
     // the MJPEG-B specifications allow for interlaced frames
     // so now we have to reorder the scanlines...*stabs self in eye*
 
+    byte[] scanlines;
     if (interlaced) {
-      byte[] top = new byte[width * (height / 2)];
-      byte[] bottom = new byte[width * (height / 2)];
-      System.arraycopy(scanlines, 0, top, 0, top.length);
-      System.arraycopy(scanlines, top.length, bottom, 0, bottom.length);
+      ByteVector v2 = v;
+      v.add(b.toByteArray());
+      v.add((byte) 0xff);
+      v.add((byte) 0xd9);
+      v2.add(b2.toByteArray());
+      v2.add((byte) 0xff);
+      v2.add((byte) 0xd9);
 
-      scanlines = new byte[scanlines.length];
+      byte[] top = jpegUncompress(v.toByteArray());
+      byte[] bottom = jpegUncompress(v2.toByteArray());
+            
+      scanlines = new byte[width * height * (bitsPerPixel / 8)];
 
       int topLine = 0;
       int bottomLine = 0;
@@ -786,13 +787,28 @@ public class QTReader extends FormatReader {
         }
       }
     }
+    else {
+      v.add(b.toByteArray());
+      v.add((byte) 0xff);
+      v.add((byte) 0xd9);
+      scanlines = jpegUncompress(v.toByteArray());
+    }
+    
     return scanlines;
   }
 
   /** Uncompresses a JPEG compressed image plane. */
   public byte[] jpegUncompress(byte[] input) throws FormatException {
     // too lazy to write native JPEG support, so use ImageIO
-
+ 
+    // some planes have a 16 byte header that needs to be removed
+    // only expect this loop to execute once
+    while ((input[0] != (byte) 0xff) || (input[1] != (byte) 0xd8)) {
+      byte[] temp = input;
+      input = new byte[temp.length - 16];
+      System.arraycopy(temp, 16, input, 0, input.length);
+    }        
+          
     try {
       BufferedImage img = ImageIO.read(new ByteArrayInputStream(input));
 
@@ -864,19 +880,18 @@ public class QTReader extends FormatReader {
 
     int rowPointer = start * (width * (bitsPerPixel / 8));
 
-
     for (int i=0; i<numLines; i++) {
       skip = input[pt];
 
       if (prevPixels != null) {
         try {
           System.arraycopy(prevPixels, off, output, off,
-            (skip - 1) * (bitsPerPixel / 8));
+            (skip) * (bitsPerPixel / 8));
         }
         catch (ArrayIndexOutOfBoundsException e) { }
       }
-
-      off = rowPointer + ((skip - 1) * (bitsPerPixel / 8));
+      
+      off = rowPointer + ((skip) * (bitsPerPixel / 8));
       pt++;
       while (true) {
         rle = input[pt];
@@ -888,12 +903,12 @@ public class QTReader extends FormatReader {
           if (prevPixels != null) {
             try {
               System.arraycopy(prevPixels, off, output, off,
-                (skip - 1) * (bitsPerPixel / 8));
+                (skip-1) * (bitsPerPixel / 8));
             }
             catch (ArrayIndexOutOfBoundsException e) { }
           }
 
-          off += ((skip - 1) * (bitsPerPixel / 8));
+          off += ((skip-1) * (bitsPerPixel / 8));
           pt++;
         }
         else if (rle == -1) break;
@@ -911,7 +926,6 @@ public class QTReader extends FormatReader {
         }
         else {
           // copy (rle) pixels to output
-
           System.arraycopy(input, pt, output, off, rle*(bitsPerPixel / 8));
           pt += rle*(bitsPerPixel / 8);
           off += rle*(bitsPerPixel / 8);
@@ -920,6 +934,11 @@ public class QTReader extends FormatReader {
       rowPointer += (width * (bitsPerPixel / 8));
     }
 
+    if (prevPixels != null) {
+      for (int i=0; i<output.length; i++) {
+        if (output[i] == 0) output[i] = prevPixels[i];
+      }        
+    }
     return output;
   }
 
