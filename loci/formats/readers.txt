@@ -6,7 +6,9 @@ loci.formats.BioRadReader
 loci.formats.IPLabReader
 loci.formats.DeltavisionReader
 loci.formats.GatanReader
+loci.formats.ImarisReader
 loci.formats.ICSReader
+loci.formats.OpenlabRawReader
 loci.formats.OMEXMLReader
 loci.formats.MetamorphReader # TIFF
 loci.formats.ZeissLSMReader # TIFF
@@ -19,6 +21,7 @@ loci.formats.ZeissZVIReader # POIFS (fallback)
 loci.formats.FluoviewReader # TIFF; isThisType(String) is slow
 loci.formats.AndorReader # TIFF; isThisType(String) is slow
 loci.formats.NikonReader # TIFF; isThisType(String) is slow
+loci.formats.GelReader # TIFF; isThisType(String) is slow
 loci.formats.TiffReader
 loci.formats.AVIReader
 loci.formats.ImageJReader # ImageJ

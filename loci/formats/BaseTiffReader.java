@@ -422,10 +422,19 @@ public abstract class BaseTiffReader extends FormatReader {
 //        "PhotometricInterpretation", photo2);
 
       // populate StageLabel element
-      String x = (String) TiffTools.getIFDValue(ifd, TiffTools.X_POSITION);
-      String y = (String) TiffTools.getIFDValue(ifd, TiffTools.Y_POSITION);
-      Float stageX = x == null ? null : new Float(x);
-      Float stageY = y == null ? null : new Float(y);
+      
+      Object x = TiffTools.getIFDValue(ifd, TiffTools.X_POSITION);
+      Object y = TiffTools.getIFDValue(ifd, TiffTools.Y_POSITION);
+      Float stageX;
+      Float stageY;
+      if (x instanceof TiffRational) {
+        stageX = x == null ? null : new Float(((TiffRational) x).floatValue());
+        stageY = y == null ? null : new Float(((TiffRational) y).floatValue());
+      }        
+      else {
+        stageX = x == null ? null : new Float((String) x);
+        stageY = y == null ? null : new Float((String) y);
+      }  
       OMETools.setStageLabel(ome, null, stageX, stageY, null);
 
       // populate Instrument element
