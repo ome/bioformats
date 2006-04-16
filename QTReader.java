@@ -858,13 +858,15 @@ public class QTReader extends FormatReader {
 
       // copy appropriate lines from prevPixels
 
-      for (int i=0; i<start; i++) {
-        off = i * width * (bitsPerPixel / 8);
-        System.arraycopy(prevPixels, off, output, off,
-          width * (bitsPerPixel / 8));
+      if (prevPixels != null) {
+        for (int i=0; i<start; i++) {
+          off = i * width * (bitsPerPixel / 8);
+          System.arraycopy(prevPixels, off, output, off,
+            width * (bitsPerPixel / 8));
+        }
       }
       off += (width * (bitsPerPixel / 8));
-
+        
       for (int i=(start+numLines); i<height; i++) {
         int offset = i * width * (bitsPerPixel / 8);
         System.arraycopy(prevPixels, offset, output, offset,
@@ -882,16 +884,16 @@ public class QTReader extends FormatReader {
 
     for (int i=0; i<numLines; i++) {
       skip = input[pt];
-
+      
       if (prevPixels != null) {
         try {
-          System.arraycopy(prevPixels, off, output, off,
-            (skip) * (bitsPerPixel / 8));
+          System.arraycopy(prevPixels, rowPointer, output, rowPointer,
+            (skip-1) * (bitsPerPixel / 8));
         }
         catch (ArrayIndexOutOfBoundsException e) { }
       }
       
-      off = rowPointer + ((skip) * (bitsPerPixel / 8));
+      off = rowPointer + ((skip-1) * (bitsPerPixel / 8));
       pt++;
       while (true) {
         rle = input[pt];
@@ -911,10 +913,18 @@ public class QTReader extends FormatReader {
           off += ((skip-1) * (bitsPerPixel / 8));
           pt++;
         }
-        else if (rle == -1) break;
+        else if (rle == -1) {
+          // make sure we copy enough pixels to fill the line   
+
+          if (off < (rowPointer + (width * (bitsPerPixel / 8)))) {
+            System.arraycopy(prevPixels, off, output, off,
+              (rowPointer + (width * (bitsPerPixel / 8))) - off);
+          }      
+                
+          break;
+        }  
         else if (rle < -1) {
           // unpack next pixel and copy it to output -(rle) times
-
           for (int j=0; j<(-1*rle); j++) {
             if (off < output.length) {
               System.arraycopy(input, pt, output, off, bitsPerPixel / 8);
@@ -932,12 +942,6 @@ public class QTReader extends FormatReader {
         }
       }
       rowPointer += (width * (bitsPerPixel / 8));
-    }
-
-    if (prevPixels != null) {
-      for (int i=0; i<output.length; i++) {
-        if (output[i] == 0) output[i] = prevPixels[i];
-      }        
     }
     return output;
   }
