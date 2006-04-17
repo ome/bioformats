@@ -18,10 +18,10 @@ loci.formats.LIFReader
 loci.formats.PerkinElmerReader # TIFF + companion files
 loci.formats.IPWReader # POIFS
 loci.formats.ZeissZVIReader # POIFS (fallback)
+loci.formats.GelReader # TIFF
 loci.formats.FluoviewReader # TIFF; isThisType(String) is slow
 loci.formats.AndorReader # TIFF; isThisType(String) is slow
 loci.formats.NikonReader # TIFF; isThisType(String) is slow
-loci.formats.GelReader # TIFF; isThisType(String) is slow
 loci.formats.TiffReader
 loci.formats.AVIReader
 loci.formats.ImageJReader # ImageJ
