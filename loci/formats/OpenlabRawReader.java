@@ -95,13 +95,11 @@ public class OpenlabRawReader extends FormatReader {
     byte[] data = new byte[width*height*bpp];
     in.read(data);
 
-    // need to invert the pixels
-
-    for (int i=0; i<data.length; i++) {
-      data[i] = (byte) (255 - data[i]);
-    }        
-    
     if (bpp == 1) {
+      // need to invert the pixels
+      for (int i=0; i<data.length; i++) {
+        data[i] = (byte) (255 - data[i]);
+      }        
       return ImageTools.makeImage(data, width, height, channels, false);
     }        
     else if (bpp == 2) {
@@ -150,13 +148,24 @@ public class OpenlabRawReader extends FormatReader {
     numImages = DataTools.bytesToInt(header, 8, 4, false);
     offsets = new int[numImages];
     offsets[0] = (int) in.getFilePointer();
+
+    in.skipBytes(8);
+    int width = DataTools.read4SignedBytes(in, false);
+    int height = DataTools.read4SignedBytes(in, false);
+    in.skipBytes(2);
+    int bpp = DataTools.readUnsignedByte(in);
+    metadata.put("Width", new Integer(width));
+    metadata.put("Height", new Integer(height));
+    metadata.put("Bytes per pixel", new Integer(bpp));
+   
+    in.seek(offsets[0]);
     
     for (int i=1; i<numImages; i++) {
       in.skipBytes(8);
-      int width = DataTools.read4SignedBytes(in, false);
-      int height = DataTools.read4SignedBytes(in, false);
+      width = DataTools.read4SignedBytes(in, false);
+      height = DataTools.read4SignedBytes(in, false);
       in.skipBytes(2);
-      int bpp = DataTools.readUnsignedByte(in);
+      bpp = DataTools.readUnsignedByte(in);
       in.skipBytes(269 + (width*height*bpp));
       offsets[i] = (int) in.getFilePointer();
 
@@ -166,7 +175,7 @@ public class OpenlabRawReader extends FormatReader {
     }
 
     if (ome != null) {
-      int bpp = ((Integer) metadata.get("Bytes per pixel")).intValue();
+      bpp = ((Integer) metadata.get("Bytes per pixel")).intValue();
             
       OMETools.setPixels(ome,
         (Integer) metadata.get("Width"),
