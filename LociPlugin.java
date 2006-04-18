@@ -60,8 +60,15 @@ public class LociPlugin implements PlugIn {
     try {
       int num = reader.getImageCount(id);
       ImageStack stackB = null, stackS = null, stackF = null, stackO = null;
+      long start = System.currentTimeMillis();
+      long time = start;
       for (int i=0; i<num; i++) {
-        if (i % 5 == 4) IJ.showStatus("Reading plane " + (i + 1) + "/" + num);
+        // limit message update rate
+        long clock = System.currentTimeMillis();
+        if (clock - time >= 50) {
+          IJ.showStatus("Reading plane " + (i + 1) + "/" + num);
+          time = clock;
+        }
         IJ.showProgress((double) i / num);
         BufferedImage img = reader.open(id, i);
 
@@ -102,11 +109,23 @@ public class LociPlugin implements PlugIn {
       if (stackS != null) new ImagePlus(fileName, stackS).show();
       if (stackF != null) new ImagePlus(fileName, stackF).show();
       if (stackO != null) new ImagePlus(fileName, stackO).show();
+      long end = System.currentTimeMillis();
+      double elapsed = (end - start) / 1000.0;
+      if (num == 1) IJ.showStatus(elapsed + " seconds");
+      else {
+        long average = (end - start) / num;
+        IJ.showStatus(elapsed + " seconds (" + average + " ms per plane)");
+      }
       success = true;
     }
     catch (Exception exc) {
+      exc.printStackTrace();
       IJ.showStatus("");
-      if (!quiet) IJ.showMessage("LOCI Bio-Formats", "" + exc.getMessage());
+      if (!quiet) {
+        String msg = exc.getMessage();
+        IJ.showMessage("LOCI Bio-Formats", "Sorry, there was a problem " +
+          "reading the data" + (msg == null ? "." : (": " + msg)));
+      }
     }
   }
 
