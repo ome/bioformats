@@ -27,7 +27,7 @@ import java.io.*;
 import java.util.Vector;
 
 /**
- * Reader is the file format reader for
+ * AndorReader is the file format reader for
  * Andor Bio-imaging Division (ABD) TIFF files.
  *
  * @author Melissa Linkert linkert at cs.wisc.edu
