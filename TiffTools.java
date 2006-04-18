@@ -285,7 +285,9 @@ public abstract class TiffTools {
 
           // count number of null terminators
           int nullCount = 0;
-          for (int j=0; j<count; j++) if (ascii[j] == 0) nullCount++;
+          for (int j=0; j<count; j++) {
+            if (ascii[j] == 0 || j == count - 1) nullCount++;
+          }
 
           // convert character array to array of strings
           String[] strings = new String[nullCount];
@@ -294,6 +296,10 @@ public abstract class TiffTools {
             if (ascii[j] == 0) {
               strings[c++] = new String(ascii, ndx + 1, j - ndx - 1);
               ndx = j;
+            }
+            else if (j == count - 1) {
+              // handle non-null-terminated strings
+              strings[c++] = new String(ascii, ndx + 1, j - ndx);
             }
           }
           if (strings.length == 1) value = strings[0];
