@@ -28,9 +28,9 @@ import java.io.*;
 
 /**
  * OpenlabRawReader is the file format reader for Openlab RAW files.
- * Specifications available at 
+ * Specifications available at
  * http://www.improvision.com/support/tech_notes/detail.php?id=344
- * 
+ *
  * @author Melissa Linkert linkert at cs.wisc.edu
  */
 public class OpenlabRawReader extends FormatReader {
@@ -46,11 +46,12 @@ public class OpenlabRawReader extends FormatReader {
   /** Offset to each image's pixel data. */
   protected int[] offsets;
 
-  
+
   // -- Constructor --
 
   /** Constructs a new RAW reader. */
   public OpenlabRawReader() { super("Openlab RAW", "raw"); }
+
 
   // -- FormatReader API methods --
 
@@ -81,7 +82,7 @@ public class OpenlabRawReader extends FormatReader {
     byte[] header = new byte[288];
     in.read(header);
 
-    if (header[0] != 'r' || header[1] != 'I' || 
+    if (header[0] != 'r' || header[1] != 'I' ||
       header[2] != 'M' || header[3] != 'G')
     {
       throw new FormatException("Image identifier 'rIMG' not found.");
@@ -99,26 +100,26 @@ public class OpenlabRawReader extends FormatReader {
       // need to invert the pixels
       for (int i=0; i<data.length; i++) {
         data[i] = (byte) (255 - data[i]);
-      }        
+      }
       return ImageTools.makeImage(data, width, height, channels, false);
-    }        
+    }
     else if (bpp == 2) {
       short[] shortData = new short[width*height];
       for (int i=0; i<data.length; i+=2) {
         shortData[i/2] = DataTools.bytesToShort(data, i, 2, false);
-      }        
-      return ImageTools.makeImage(shortData, width, height, channels, false); 
+      }
+      return ImageTools.makeImage(shortData, width, height, channels, false);
     }
     else if (bpp == 4) {
       float[] floatData = new float[width*height];
       for (int i=0; i<data.length; i+=4) {
-        floatData[i/2] = 
+        floatData[i/2] =
           Float.intBitsToFloat(DataTools.bytesToInt(data, i, 4, false));
-      }        
-      return ImageTools.makeImage(floatData, width, height, channels, false); 
-    }   
+      }
+      return ImageTools.makeImage(floatData, width, height, channels, false);
+    }
     else throw new FormatException("Unsupported bytes per pixel : " + bpp);
-  }   
+  }
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
@@ -130,21 +131,21 @@ public class OpenlabRawReader extends FormatReader {
   /** Initializes the given RAW file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessFile(id, "r"); 
-    
-    // read the 12 byte file header 
-   
+    in = new RandomAccessFile(id, "r");
+
+    // read the 12 byte file header
+
     byte[] header = new byte[12];
     in.read(header);
-    if (header[0] != 'O' || header[1] != 'L' || 
+    if (header[0] != 'O' || header[1] != 'L' ||
       header[2] != 'R' || header[3] != 'W')
     {
       throw new FormatException("Openlab RAW magic string not found.");
-    }        
-    
+    }
+
     int version = DataTools.bytesToInt(header, 4, 4, false);
     metadata.put("Version", new Integer(version));
-    
+
     numImages = DataTools.bytesToInt(header, 8, 4, false);
     offsets = new int[numImages];
     offsets[0] = (int) in.getFilePointer();
@@ -157,9 +158,9 @@ public class OpenlabRawReader extends FormatReader {
     metadata.put("Width", new Integer(width));
     metadata.put("Height", new Integer(height));
     metadata.put("Bytes per pixel", new Integer(bpp));
-   
+
     in.seek(offsets[0]);
-    
+
     for (int i=1; i<numImages; i++) {
       in.skipBytes(8);
       width = DataTools.read4SignedBytes(in, false);
@@ -176,7 +177,7 @@ public class OpenlabRawReader extends FormatReader {
 
     if (ome != null) {
       bpp = ((Integer) metadata.get("Bytes per pixel")).intValue();
-            
+
       OMETools.setPixels(ome,
         (Integer) metadata.get("Width"),
         (Integer) metadata.get("Height"),
@@ -188,6 +189,7 @@ public class OpenlabRawReader extends FormatReader {
         "XYZTC");
     }
   }
+
 
   // -- Main method --
 

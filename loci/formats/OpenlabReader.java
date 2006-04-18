@@ -297,9 +297,9 @@ public class OpenlabReader extends FormatReader {
           if (layerName.startsWith("Original Image")) ok = false;
         }
         if (nextOffset == nextOffsetTemp) {
-          v.remove(v.size() - 1);       
+          v.remove(v.size() - 1);
           break;
-        }  
+        }
         if (ok) v.add(new Integer(nextOffset)); // add THIS tag offset
       }
       if (nextOffset == nextOffsetTemp) break;
@@ -326,6 +326,7 @@ public class OpenlabReader extends FormatReader {
     }
     initMetadata();
   }
+
 
   // -- Helper methods --
 
@@ -505,6 +506,7 @@ public class OpenlabReader extends FormatReader {
     }
   }
 
+
   // -- Helper method --
 
   /** Translates up to the first 4 bytes of a byte array to an integer. */
@@ -516,6 +518,7 @@ public class OpenlabReader extends FormatReader {
     }
     return total;
   }
+
 
   // -- Main method --
 

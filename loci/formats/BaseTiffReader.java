@@ -93,7 +93,7 @@ public abstract class BaseTiffReader extends FormatReader {
 
     int comp = TiffTools.getIFDIntValue(ifd, TiffTools.COMPRESSION);
     String compression = null;
-    switch(comp) {
+    switch (comp) {
       case TiffTools.UNCOMPRESSED:
         compression = "None"; break;
       case TiffTools.CCITT_1D:
@@ -326,8 +326,8 @@ public abstract class BaseTiffReader extends FormatReader {
       }
       metadata.put("BitsPerSample", "" + bps[0]);
 
-      if(TiffTools.getIFDIntValue(ifd, TiffTools.PHOTOMETRIC_INTERPRETATION) ==
-        TiffTools.RGB_PALETTE)
+      if (TiffTools.getIFDIntValue(ifd,
+        TiffTools.PHOTOMETRIC_INTERPRETATION) == TiffTools.RGB_PALETTE)
       {
         bps = new int[3];
       }
@@ -389,7 +389,7 @@ public abstract class BaseTiffReader extends FormatReader {
       if (description != null) {
         description = description.replaceAll("\r\n", "\n"); // CR-LF to LF
         description = description.replaceAll("\r", "\n"); // CR to LF
-        put("Comment", description); 
+        put("Comment", description);
       }
 
       OMETools.setImage(ome, null, creationDate, description);
@@ -422,7 +422,7 @@ public abstract class BaseTiffReader extends FormatReader {
 //        "PhotometricInterpretation", photo2);
 
       // populate StageLabel element
-      
+
       Object x = TiffTools.getIFDValue(ifd, TiffTools.X_POSITION);
       Object y = TiffTools.getIFDValue(ifd, TiffTools.Y_POSITION);
       Float stageX;
@@ -430,11 +430,11 @@ public abstract class BaseTiffReader extends FormatReader {
       if (x instanceof TiffRational) {
         stageX = x == null ? null : new Float(((TiffRational) x).floatValue());
         stageY = y == null ? null : new Float(((TiffRational) y).floatValue());
-      }        
+      }
       else {
         stageX = x == null ? null : new Float((String) x);
         stageY = y == null ? null : new Float((String) y);
-      }  
+      }
       OMETools.setStageLabel(ome, null, stageX, stageY, null);
 
       // populate Instrument element
