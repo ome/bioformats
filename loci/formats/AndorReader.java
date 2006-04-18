@@ -79,19 +79,12 @@ public class AndorReader extends BaseTiffReader {
 
   /** Checks if the given string is a valid filename for an Andor TIFF file. */
   public boolean isThisType(String name) {
+    String lname = name.toLowerCase();
+    if (!lname.endsWith(".tif") && !lname.endsWith(".tiff")) return false;
+
     // just checking the filename isn't enough to differentiate between
     // Andor and regular TIFF; open the file and check more thoroughly
-    long len = new File(name).length();
-    int size = len < BLOCK_CHECK_LEN ? (int) len : BLOCK_CHECK_LEN;
-    byte[] buf = new byte[size];
-    try {
-      FileInputStream fin = new FileInputStream(name);
-      int r = 0;
-      while (r < size) r += fin.read(buf, r, size - r);
-      fin.close();
-      return isThisType(buf);
-    }
-    catch (IOException e) { return false; }
+    return checkBytes(name, BLOCK_CHECK_LEN);
   }
 
 

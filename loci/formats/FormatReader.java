@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Hashtable;
 import javax.swing.filechooser.FileFilter;
@@ -78,7 +78,7 @@ public abstract class FormatReader extends FormatHandler {
   public abstract void close() throws FormatException, IOException;
 
 
-  // -- FormatReader API methods --
+  // -- Internal FormatReader API methods --
 
   /**
    * Initializes the given file (parsing header information, etc.).
@@ -91,6 +91,26 @@ public abstract class FormatReader extends FormatHandler {
     metadata = new Hashtable();
     ome = OMETools.createRoot();
   }
+
+  /**
+   * Opens the given file, reads in the first few KB and calls
+   * isThisType(byte[]) to check whether it matches this format.
+   */
+  protected boolean checkBytes(String name, int maxLen) {
+    long len = new File(name).length();
+    byte[] buf = new byte[len < maxLen ? (int) len : maxLen];
+    try {
+      FileInputStream fin = new FileInputStream(name);
+      int r = 0;
+      while (r < buf.length) r += fin.read(buf, r, buf.length - r);
+      fin.close();
+      return isThisType(buf);
+    }
+    catch (IOException e) { return false; }
+  }
+
+
+  // -- FormatReader API methods --
 
   /**
    * Opens an existing file from the given filename.

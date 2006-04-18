@@ -74,21 +74,7 @@ public class OpenlabReader extends FormatReader {
   public boolean isThisType(String name) {
     // Since we can't always determine it from the name alone (blank
     // extensions), we open the file and call the block verifier.
-    long len = new File(name).length();
-    int count = len < 16384 ? (int) len : 16384;
-    byte[] buf = new byte[count];
-    try {
-      FileInputStream fin = new FileInputStream(name);
-      int read = 0;
-      while (read < count) {
-        read += fin.read(buf, read, count-read);
-      }
-      fin.close();
-      return isThisType(buf);
-    }
-    catch (IOException e) {
-      return false;
-    }
+    return checkBytes(name, 16384);
   }
 
   /** Checks if the given block is a valid header for an Openlab file. */
