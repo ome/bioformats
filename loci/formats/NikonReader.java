@@ -176,12 +176,10 @@ public class NikonReader extends BaseTiffReader {
     // look for the TIFF_EPS_STANDARD tag
     // it should contain version information
 
-    short[] version =
-      (short[]) TiffTools.getIFDValue(ifds[0], TIFF_EPS_STANDARD);
+    short[] version = (short[])
+      TiffTools.getIFDValue(ifds[0], TIFF_EPS_STANDARD);
     String v = "";
-    for (int i=0; i<version.length; i++) {
-      v += version[i];
-    }
+    for (int i=0; i<version.length; i++) v += version[i];
     metadata.put("Version", v);
 
     littleEndian = true;

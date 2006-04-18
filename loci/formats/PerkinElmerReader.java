@@ -59,9 +59,7 @@ public class PerkinElmerReader extends FormatReader {
   // -- FormatReader API methods --
 
   /** Checks if the given block is a valid header for a PerkinElmer file. */
-  public boolean isThisType(byte[] block) {
-    return false;
-  }
+  public boolean isThisType(byte[] block) { return false; }
 
   /** Determines the number of images in the given PerkinElmer file. */
   public int getImageCount(String id) throws FormatException, IOException {
@@ -82,9 +80,7 @@ public class PerkinElmerReader extends FormatReader {
   }
 
   /** Closes any open files. */
-  public void close() throws FormatException, IOException {
-    currentId = null;
-  }
+  public void close() throws FormatException, IOException { currentId = null; }
 
   /** Initializes the given PerkinElmer file. */
   protected void initFile(String id) throws FormatException, IOException {
