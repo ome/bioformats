@@ -45,14 +45,16 @@ public class OIFReader extends FormatReader {
 
   /** Names of every TIFF file to open. */
   protected Vector tiffs;
-  
+
   /** Helper reader to open TIFF files. */
   protected TiffReader tiffReader;
- 
+
+
   // -- Constructor --
 
   /** Constructs a new OIF reader. */
   public OIFReader() { super("Fluoview FV1000 OIF", "oif"); }
+
 
   // -- FormatReader API methods --
 
@@ -78,7 +80,7 @@ public class OIFReader extends FormatReader {
     }
 
     return tiffReader.open((String) tiffs.get(no), 0);
-  }   
+  }
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
@@ -92,12 +94,12 @@ public class OIFReader extends FormatReader {
     super.initFile(id);
     reader = new BufferedReader(new FileReader(id));
     tiffReader = new TiffReader();
-  
+
     int slash = id.lastIndexOf(File.separator);
     String path = slash < 0 ? "." : id.substring(0, slash);
-    
+
     // parse each key/value pair (one per line)
-  
+
     Hashtable filenames = new Hashtable();
     String line = reader.readLine();
     while (line != null) {
@@ -111,13 +113,13 @@ public class OIFReader extends FormatReader {
           filenames.put(new Integer(pos), value);
         }
         metadata.put(key, value);
-      }        
-      line = reader.readLine();         
+      }
+      line = reader.readLine();
     }
-   
+
     numImages = filenames.size();
     tiffs = new Vector(numImages);
-    
+
     // open each INI file (.pty extension)
 
     String tiffPath;
@@ -126,10 +128,10 @@ public class OIFReader extends FormatReader {
       String file = (String) filenames.get(new Integer(i));
       file = file.substring(1, file.length() - 1);
       file = file.replace('\\', File.separatorChar);
-      file = file.replace('/', File.separatorChar); 
+      file = file.replace('/', File.separatorChar);
       file = path + File.separator + file;
       tiffPath = file.substring(0, file.lastIndexOf(File.separator));
-      
+
       ptyReader = new BufferedReader(new FileReader(file));
       line = ptyReader.readLine();
       while (line != null) {
@@ -139,8 +141,8 @@ public class OIFReader extends FormatReader {
           key = LeicaReader.stripString(key);
           value = LeicaReader.stripString(value);
           if (key.equals("DataName")) {
-            value = value.substring(1, value.length() - 1);      
-            tiffs.add(i, tiffPath + File.separator + value);  
+            value = value.substring(1, value.length() - 1);
+            tiffs.add(i, tiffPath + File.separator + value);
           }
           metadata.put("Image " + i + " : " + key, value);
         }
@@ -155,11 +157,12 @@ public class OIFReader extends FormatReader {
         new Integer(numImages),
         new Integer(1),
         new Integer(1),
-        "int" + (8*Integer.parseInt((String) metadata.get("ImageDepth"))), 
+        "int" + (8*Integer.parseInt((String) metadata.get("ImageDepth"))),
         new Boolean(false),
         "XYZTC");
     }
   }
+
 
   // -- Main method --
 

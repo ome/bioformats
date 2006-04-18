@@ -48,7 +48,7 @@ public class LIFReader extends FormatReader {
   /** Offsets to memory blocks, paired with their corresponding description. */
   protected Vector offsets;
 
-  /** 
+  /**
    * Dimension information for each image.
    * The first index specifies the image number, and the second specifies
    * the dimension from the following list:
@@ -60,8 +60,8 @@ public class LIFReader extends FormatReader {
    * 5) bits per pixel
    */
   protected int[][] dims;
-  
-  
+
+
   // -- Constructor --
 
   /** Constructs a new Leica LIF reader. */
@@ -94,48 +94,48 @@ public class LIFReader extends FormatReader {
     int ndx = 0;
     int sum = 0;
     for (int i=0; i<dims.length; i++) {
-      sum += (dims[i][2] * dims[i][3]);       
+      sum += (dims[i][2] * dims[i][3]);
       if (no < sum) {
         ndx = i;
         i = dims.length;
-      }  
-    }       
+      }
+    }
 
     int width = dims[ndx][0];
     int height = dims[ndx][1];
     int bps = dims[ndx][5];
     double bytesPerPixel = bps / 8;
-    
+
     int offset = ((Long) offsets.get(0)).intValue();
     in.seek((long) (offset + (width * height * bytesPerPixel * no)));
     byte[] data = new byte[(int) (width * height * bytesPerPixel * 3)];
     in.read(data);
-   
+
     // pack the data appropriately
 
-    if (bps == 8) { 
+    if (bps == 8) {
       return ImageTools.makeImage(data, width, height, 3, false);
     }
     else if (bps == 16) {
       short[] shortData = new short[width*height*3];
       for (int i=0; i<data.length; i+=2) {
         shortData[i/2] = DataTools.bytesToShort(data, i, littleEndian);
-      }        
+      }
       return ImageTools.makeImage(shortData, width, height, 3, false);
     }
     else if (bps == 32) {
       float[] floatData = new float[width*height*3];
       for (int i=0; i<data.length; i+=4) {
-        floatData[i/4] = 
+        floatData[i/4] =
           Float.intBitsToFloat(DataTools.bytesToInt(data, i, littleEndian));
-      }        
+      }
       return ImageTools.makeImage(floatData, width, height, 3, false);
     }
     else {
-      throw new FormatException("Sorry, bits per sample " + bps + 
-        " not supported");        
+      throw new FormatException("Sorry, bits per sample " + bps +
+        " not supported");
     }
-  }   
+  }
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
@@ -150,53 +150,53 @@ public class LIFReader extends FormatReader {
     offsets = new Vector();
     in = new RandomAccessFile(id, "r");
     littleEndian = true;
-    
+
     // read the header
-    
+
     byte[] header = new byte[8];
     in.read(header);
 
     if ((header[0] != 0x70) && (header[3] != 0x70)) {
       throw new FormatException(id + " is not a valid Leica LIF file");
-    }       
+    }
 
     int chunkLength = DataTools.bytesToInt(header, 4, 4, littleEndian);
 
     // read and parse the XML description
-    
+
     byte[] xmlChunk = new byte[chunkLength];
     in.read(xmlChunk);
 
     if (xmlChunk[0] != 0x2a) {
       throw new FormatException("Invalid XML description");
-    }        
+    }
 
     // number of Unicode characters in the XML block
     int nc = DataTools.bytesToInt(xmlChunk, 1, 4, littleEndian);
     String xml = new String(xmlChunk, 5, nc*2);
     xml = LeicaReader.stripString(xml);
-  
+
     while (in.getFilePointer() < in.length()) {
       byte[] four = new byte[4];
       in.read(four);
       int check = DataTools.bytesToInt(four, littleEndian);
       if (check != 0x70) {
         throw new FormatException("Invalid Memory Block");
-      }        
-  
+      }
+
       in.read(four);
       int memLength = DataTools.bytesToInt(four, littleEndian);
-    
+
       if (in.read() != 0x2a) {
         throw new FormatException("Invalid Memory Description");
-      }          
+      }
 
       in.read(four);
       int blockLength = DataTools.bytesToInt(four, littleEndian);
 
       if (in.read() != 0x2a) {
         throw new FormatException("Invalid Memory Description");
-      }       
+      }
 
       in.read(four);
       int descrLength = DataTools.bytesToInt(four, littleEndian);
@@ -208,7 +208,7 @@ public class LIFReader extends FormatReader {
 
       if (blockLength > 0) {
         offsets.add(new Long(in.getFilePointer()));
-      }  
+      }
       in.skipBytes(blockLength);
     }
     numImages = offsets.size();
@@ -216,8 +216,9 @@ public class LIFReader extends FormatReader {
     initMetadata(xml);
   }
 
-  // -- Utility methods --
-  
+
+  // -- Helper methods --
+
   /** Parses a string of XML and puts the values in a Hashtable. */
   private void initMetadata(String xml) {
     Vector elements = new Vector();
@@ -227,7 +228,7 @@ public class LIFReader extends FormatReader {
     while (xml.length() > 2) {
       String el = xml.substring(1, xml.indexOf(">"));
       xml = xml.substring(xml.indexOf(">") + 1);
-      elements.add(el); 
+      elements.add(el);
     }
 
     // the first element contains version information
@@ -253,39 +254,39 @@ public class LIFReader extends FormatReader {
             dimCounter = 0;
             lutCounter = 0;
           }
-           
+
           key = token.substring(0, token.indexOf("\"") - 1);
           value = token.substring(token.indexOf("\"") + 1,
             token.indexOf("\"", token.indexOf("\"") + 1));
           key = key.trim();
           value = value.trim();
-                
+
           if (key.equals("NumberOfElements")) {
             dims[imageCounter][dimCounter] = Integer.parseInt(value);
             dimCounter++;
             if (dimCounter == 6) dimCounter = 0;
-          }       
- 
+          }
+
           if (key.equals("Resolution")) {
             int val = Integer.parseInt(value);
             if ((val % 8) != 0) val += (8 - (val % 8));
             dims[imageCounter][5] = val;
-          }        
-          
+          }
+
           if (key.equals("LUTName")) lutCounter++;
           if (lutCounter == 3) {
-            dims[imageCounter][4] = lutCounter;      
+            dims[imageCounter][4] = lutCounter;
             lutCounter = 0;
-          }        
-         
-          token = 
+          }
+
+          token =
             token.substring(token.indexOf("\"", token.indexOf("\"") + 1) + 1);
           metadata.put(key + " (image " + imageCounter + ")", value);
-        }        
+        }
       }
       ndx++;
     }
-     
+
     int originalNumImages = numImages;
     for (int i=1; i<=originalNumImages; i++) {
       if (dims[i-1][2] == 0) dims[i-1][2] = 1;
@@ -302,20 +303,20 @@ public class LIFReader extends FormatReader {
         case 16: type = "int16"; break;
         case 32: type = "float"; break;
       }
-            
+
       int z = 0;
       int t = 0;
       for (int i=0; i<dims.length; i++) {
         z += (dims[i][2] == 1) ? 0 : dims[i][2];
         t += (dims[i][3] == 1) ? 0 : dims[i][3];
-      }       
+      }
 
       if (t == 0) t++;
       if (z == 0) z++;
       while ((z*t) < numImages) {
-        z++; 
-      }         
-            
+        z++;
+      }
+
       OMETools.setPixels(ome,
         new Integer(dims[dims.length - 1][0]), // SizeX
         new Integer(dims[dims.length - 1][1]), // SizeY
@@ -327,6 +328,7 @@ public class LIFReader extends FormatReader {
         "XYZTC"); // DimensionOrder
     }
   }
+
 
   // -- Main method --
 

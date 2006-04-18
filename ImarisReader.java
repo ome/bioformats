@@ -28,21 +28,22 @@ import java.io.*;
 
 /**
  * ImarisReader is the file format reader for Bitplane Imaris files.
- * Specifications available at 
+ * Specifications available at
  * http://flash.bitplane.com/support/faqs/faqsview.cfm?inCat=6&inQuestionID=104
- * 
+ *
  * @author Melissa Linkert linkert at cs.wisc.edu
  */
 public class ImarisReader extends FormatReader {
 
-  // -- Constants --      
+  // -- Constants --
 
   /** Magic number; present in all files. */
   private static final int IMARIS_MAGIC_NUMBER = 5021964;
-  
+
   /** Specifies endianness. */
   private static final boolean IS_LITTLE = false;
-  
+
+
   // -- Fields --
 
   /** Current file. */
@@ -53,20 +54,22 @@ public class ImarisReader extends FormatReader {
 
   /** Image dimensions: width, height, z, channels. */
   private int[] dims;
-  
+
   /** Offsets to each image. */
   private int[] offsets;
-  
+
+
   // -- Constructor --
 
   /** Constructs a new Imaris reader. */
   public ImarisReader() { super("Bitplane Imaris", "ims"); }
 
+
   // -- FormatReader API methods --
 
   /** Checks if the given block is a valid header for an Imaris file. */
   public boolean isThisType(byte[] block) {
-    return DataTools.bytesToInt(block, 0, 4, IS_LITTLE) == IMARIS_MAGIC_NUMBER; 
+    return DataTools.bytesToInt(block, 0, 4, IS_LITTLE) == IMARIS_MAGIC_NUMBER;
   }
 
   /** Determines the number of images in the given Imaris file. */
@@ -98,9 +101,9 @@ public class ImarisReader extends FormatReader {
       if (i == 0) oldOffset -= dims[0];
       System.arraycopy(temp, oldOffset, data, i*dims[0], dims[0]);
     }
-    
+
     return ImageTools.makeImage(data, dims[0], dims[1], 1, false);
-  }   
+  }
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
@@ -114,12 +117,12 @@ public class ImarisReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessFile(id, "r");
     dims = new int[4];
-    
+
     long magic = DataTools.read4UnsignedBytes(in, IS_LITTLE);
     if (magic != IMARIS_MAGIC_NUMBER) {
       throw new FormatException("Imaris magic number not found.");
-    }        
-   
+    }
+
     int version = DataTools.read4SignedBytes(in, IS_LITTLE);
     metadata.put("Version", new Integer(version));
     in.skipBytes(4);
@@ -128,13 +131,13 @@ public class ImarisReader extends FormatReader {
     in.read(name);
     String iName = new String(name);
     metadata.put("Image name", iName);
-    
+
     dims[0] = DataTools.read2SignedBytes(in, IS_LITTLE);
     dims[1] = DataTools.read2SignedBytes(in, IS_LITTLE);
     dims[2] = DataTools.read2SignedBytes(in, IS_LITTLE);
-   
+
     in.skipBytes(2); // data type, ignore for now
-  
+
     dims[3] = DataTools.read4SignedBytes(in, IS_LITTLE);
     in.skipBytes(2);
 
@@ -154,16 +157,16 @@ public class ImarisReader extends FormatReader {
     metadata.put("Image comment", comment);
     int isSurvey = DataTools.read4SignedBytes(in, IS_LITTLE);
     metadata.put("Survey performed", isSurvey == 0 ? "true" : "false");
-  
+
     numImages = dims[2] * dims[3];
     offsets = new int[numImages];
-   
+
     for (int i=0; i<dims[3]; i++) {
       int offset = 332 + ((i + 1) * 168) + (i * dims[0] * dims[1] * dims[2]);
       for (int j=0; j<dims[2]; j++) {
         offsets[i*dims[2] + j] = offset + (j * dims[0] * dims[1]);
       }
-    }       
+    }
 
     if (ome != null) {
       OMETools.setPixels(ome,
@@ -176,11 +179,11 @@ public class ImarisReader extends FormatReader {
         new Boolean(!IS_LITTLE),
         "XYZCT");
 
-      OMETools.setImage(ome, 
+      OMETools.setImage(ome,
         (String) metadata.get("Image name"),
         (String) metadata.get("Original date"),
         (String) metadata.get("Image comment"));
-     
+
       OMETools.setDimensions(ome,
         new Float(dx),
         new Float(dy),
@@ -189,6 +192,7 @@ public class ImarisReader extends FormatReader {
         new Float(1));
     }
   }
+
 
   // -- Main method --
 

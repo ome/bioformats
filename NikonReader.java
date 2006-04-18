@@ -40,12 +40,11 @@ public class NikonReader extends BaseTiffReader {
   /** Maximum number of bytes to check for Nikon header information. */
   private static final int BLOCK_CHECK_LEN = 16384;
 
-  /** Tags that give a good indication of whether or not this is an NEF file. */
+  // Tags that give a good indication of whether this is an NEF file.
   private static final int EXIF_IFD_POINTER = 34665;
   private static final int TIFF_EPS_STANDARD = 37398;
 
-  /** EXIF IFD tags. */
-
+  // EXIF IFD tags.
   private static final int EXPOSURE_TIME = 33434;
   private static final int APERTURE = 33437;
   private static final int EXPOSURE_PROGRAM = 34850;
@@ -78,9 +77,8 @@ public class NikonReader extends BaseTiffReader {
   private static final int SATURATION = 41993;
   private static final int SHARPNESS = 41994;
   private static final int SUBJECT_DISTANCE_RANGE = 41996;
- 
-  /** Maker Note tags. */
 
+  // Maker Note tags.
   private static final int FIRMWARE_VERSION = 1;
   private static final int ISO = 2;
   private static final int QUALITY = 4;
@@ -101,15 +99,17 @@ public class NikonReader extends BaseTiffReader {
   private static final int LIGHT_TYPE = 144;
   private static final int HUE = 146;
   private static final int CAPTURE_EDITOR_DATA = 3585;
-  
+
+
   // -- Fields --
-  
+
   /** True if the data is little endian. */
   protected boolean littleEndian;
- 
+
   /** Offset to the Nikon Maker Note. */
   protected int makerNoteOffset;
-  
+
+
   // -- Constructor --
 
   /** Constructs a new Nikon reader. */
@@ -126,29 +126,29 @@ public class NikonReader extends BaseTiffReader {
 
     if (block.length < 3) {
       return false;
-    }  
+    }
     if (block.length < 8) {
       return true; // we have no way of verifying further
     }
-      
+
     boolean little = (block[0] == 0x49 && block[1] == 0x49);
-    
+
     int ifdlocation = DataTools.bytesToInt(block, 4, little);
-    if (ifdlocation < 0 || ifdlocation + 1 > block.length) { 
-      return false; 
+    if (ifdlocation < 0 || ifdlocation + 1 > block.length) {
+      return false;
     }
     else {
       int ifdnumber = DataTools.bytesToInt(block, ifdlocation, 2, little);
       for (int i=0; i<ifdnumber; i++) {
         if (ifdlocation + 3 + (i*12) > block.length) {
           return false;
-        }  
+        }
         else {
           int ifdtag = DataTools.bytesToInt(block,
             ifdlocation + 2 + (i*12), 2, little);
           if (ifdtag == EXIF_IFD_POINTER || ifdtag == TIFF_EPS_STANDARD) {
             return true;
-          }  
+          }
         }
       }
       return false;
@@ -178,30 +178,30 @@ public class NikonReader extends BaseTiffReader {
   /** Populate the metadata hashtable. */
   protected void initMetadata() {
     super.initMetadata();
-  
+
     // look for the TIFF_EPS_STANDARD tag
     // it should contain version information
- 
-    short[] version = 
+
+    short[] version =
       (short[]) TiffTools.getIFDValue(ifds[0], TIFF_EPS_STANDARD);
     String v = "";
     for (int i=0; i<version.length; i++) {
       v += version[i];
-    }      
+    }
     metadata.put("Version", v);
-  
+
     littleEndian = true;
     try {
       littleEndian = TiffTools.isLittleEndian(ifds[0]);
     }
     catch (FormatException f) { }
-      
+
     // now look for the EXIF IFD pointer
-  
+
     int exif = TiffTools.getIFDIntValue(ifds[0], EXIF_IFD_POINTER);
     if (exif != -1) {
       Hashtable exifIFD = parseIFD(exif);
-            
+
       // put all the EXIF data in the metadata hashtable
 
       if (exifIFD != null) {
@@ -209,12 +209,12 @@ public class NikonReader extends BaseTiffReader {
         Integer key;
         String id;
         while (e.hasMoreElements()) {
-          key = (Integer) e.nextElement(); 
+          key = (Integer) e.nextElement();
           int tag = key.intValue();
-          metadata.put(getTagName(tag), exifIFD.get(key)); 
+          metadata.put(getTagName(tag), exifIFD.get(key));
         }
       }
-    }  
+    }
 
     // read the maker note
 
@@ -224,16 +224,17 @@ public class NikonReader extends BaseTiffReader {
       Integer key;
       String id;
       while (e.hasMoreElements()) {
-        key = (Integer) e.nextElement(); 
+        key = (Integer) e.nextElement();
         int tag = key.intValue();
-        metadata.put(getTagName(tag), makerNote.get(key)); 
+        metadata.put(getTagName(tag), makerNote.get(key));
       }
     }
   }
- 
-  // -- Utility methods --
 
-  /** Parse an IFD from the given offset. */ 
+
+  // -- Helper methods --
+
+  /** Parse an IFD from the given offset. */
   private Hashtable parseIFD(int offset) {
     try {
       in.seek(offset);
@@ -248,11 +249,11 @@ public class NikonReader extends BaseTiffReader {
 
         if (tag == MAKER_NOTE) {
           long pt = in.getFilePointer();
-          makerNoteOffset = 
+          makerNoteOffset =
             (int) DataTools.read4UnsignedBytes(in, littleEndian);
           in.seek(pt);
         }
-                
+
         long pos = in.getFilePointer() + 4;
 
         if (type == TiffTools.BYTE) {
@@ -294,7 +295,7 @@ public class NikonReader extends BaseTiffReader {
         }
         else if (type == TiffTools.SHORT) {
           // 16-bit (2-byte) unsigned integer
-               
+
           int[] shorts = new int[count];
           if (count > 2) {
             in.seek(DataTools.read4UnsignedBytes(in, littleEndian));
@@ -406,14 +407,11 @@ public class NikonReader extends BaseTiffReader {
       }
       return newIFD;
     }
-    catch (Exception e) {
-    }        
+    catch (Exception e) { e.printStackTrace(); }
     return null;
-  }        
-  
-  /** 
-   * Gets the name of the IFD tag encoded by the given number.
-   */
+  }
+
+  /** Gets the name of the IFD tag encoded by the given number. */
   private String getTagName(int tag) {
     switch (tag) {
       case EXPOSURE_TIME: return "Exposure Time";
@@ -470,7 +468,8 @@ public class NikonReader extends BaseTiffReader {
       case CAPTURE_EDITOR_DATA: return "Capture Editor Data";
     }
     return "" + tag;
-  }  
+  }
+
 
   // -- Main method --
 

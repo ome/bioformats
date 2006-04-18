@@ -48,7 +48,7 @@ public class QTReader extends FormatReader {
     "mdra", "rmra", "imag", "vnrp", "dinf"
   };
 
-  /** Some MJPEG-B stuff. */
+  // Some MJPEG-B stuff.
 
   /** Header data. */
   private static final byte[] HEADER = new byte[] {
@@ -172,6 +172,7 @@ public class QTReader extends FormatReader {
     (byte) 0xf8, (byte) 0xf9, (byte) 0xfa
   };
 
+
   // -- Fields --
 
   /** Current file. */
@@ -219,6 +220,7 @@ public class QTReader extends FormatReader {
   /** Set to true if the scanlines in a plane are interlaced (mjpb only). */
   private boolean interlaced;
 
+
   // -- Constructor --
 
   /** Constructs a new QuickTime reader. */
@@ -234,7 +236,7 @@ public class QTReader extends FormatReader {
 
   /** Determines the number of images in the given QuickTime file. */
   public int getImageCount(String id) throws FormatException, IOException {
-    if(!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId)) initFile(id);
     return numImages;
   }
 
@@ -475,8 +477,8 @@ public class QTReader extends FormatReader {
 
   /** Checks if the given String is a container atom type. */
   public boolean isContainer(String type) {
-    for(int i=0; i<CONTAINER_TYPES.length; i++) {
-      if(type.equals(CONTAINER_TYPES[i])) return true;
+    for (int i=0; i<CONTAINER_TYPES.length; i++) {
+      if (type.equals(CONTAINER_TYPES[i])) return true;
     }
     return false;
   }
@@ -514,7 +516,7 @@ public class QTReader extends FormatReader {
     // http://www.obrador.com/essentialjpeg/headerinfo.htm
 
     // a brief overview for those who would rather not read the specifications:
-    // MJPEB-B (or Motion JPEG) is a variant of the JPEG compression standard,
+    // MJPEG-B (or Motion JPEG) is a variant of the JPEG compression standard,
     // with one major difference.  In JPEG files (technically JFIF), important
     // blocks are denoted by a 'marker' - the byte '0xff' followed by a byte
     // identifying the type of data to follow.  According to JPEG standards,
@@ -529,9 +531,7 @@ public class QTReader extends FormatReader {
     // interlace the scanlines.
 
     pt += 4;
-    if (pt >= input.length) {
-      pt = 0;
-    }
+    if (pt >= input.length) pt = 0;
 
     // most MJPEG-B planes don't have this identifier
     if (!(input[pt] != 'm' || input[pt+1] != 'j' || input[pt+2] != 'p' ||
@@ -771,7 +771,7 @@ public class QTReader extends FormatReader {
 
       byte[] top = jpegUncompress(v.toByteArray());
       byte[] bottom = jpegUncompress(v2.toByteArray());
-            
+
       scanlines = new byte[width * height * (bitsPerPixel / 8)];
 
       int topLine = 0;
@@ -782,7 +782,8 @@ public class QTReader extends FormatReader {
           topLine++;
         }
         else {
-          System.arraycopy(bottom, bottomLine*width, scanlines, width*i, width);
+          System.arraycopy(bottom, bottomLine*width,
+            scanlines, width*i, width);
           bottomLine++;
         }
       }
@@ -793,22 +794,22 @@ public class QTReader extends FormatReader {
       v.add((byte) 0xd9);
       scanlines = jpegUncompress(v.toByteArray());
     }
-    
+
     return scanlines;
   }
 
   /** Uncompresses a JPEG compressed image plane. */
   public byte[] jpegUncompress(byte[] input) throws FormatException {
     // too lazy to write native JPEG support, so use ImageIO
- 
+
     // some planes have a 16 byte header that needs to be removed
     // only expect this loop to execute once
     while ((input[0] != (byte) 0xff) || (input[1] != (byte) 0xd8)) {
       byte[] temp = input;
       input = new byte[temp.length - 16];
       System.arraycopy(temp, 16, input, 0, input.length);
-    }        
-          
+    }
+
     try {
       BufferedImage img = ImageIO.read(new ByteArrayInputStream(input));
 
@@ -866,7 +867,7 @@ public class QTReader extends FormatReader {
         }
       }
       off += (width * (bitsPerPixel / 8));
-        
+
       for (int i=(start+numLines); i<height; i++) {
         int offset = i * width * (bitsPerPixel / 8);
         System.arraycopy(prevPixels, offset, output, offset,
@@ -884,7 +885,7 @@ public class QTReader extends FormatReader {
 
     for (int i=0; i<numLines; i++) {
       skip = input[pt];
-      
+
       if (prevPixels != null) {
         try {
           System.arraycopy(prevPixels, rowPointer, output, rowPointer,
@@ -892,7 +893,7 @@ public class QTReader extends FormatReader {
         }
         catch (ArrayIndexOutOfBoundsException e) { }
       }
-      
+
       off = rowPointer + ((skip-1) * (bitsPerPixel / 8));
       pt++;
       while (true) {
@@ -914,15 +915,15 @@ public class QTReader extends FormatReader {
           pt++;
         }
         else if (rle == -1) {
-          // make sure we copy enough pixels to fill the line   
+          // make sure we copy enough pixels to fill the line
 
           if (off < (rowPointer + (width * (bitsPerPixel / 8)))) {
             System.arraycopy(prevPixels, off, output, off,
               (rowPointer + (width * (bitsPerPixel / 8))) - off);
-          }      
-                
+          }
+
           break;
-        }  
+        }
         else if (rle < -1) {
           // unpack next pixel and copy it to output -(rle) times
           for (int j=0; j<(-1*rle); j++) {
@@ -945,6 +946,7 @@ public class QTReader extends FormatReader {
     }
     return output;
   }
+
 
   // -- Main method --
 

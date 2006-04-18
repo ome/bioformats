@@ -48,6 +48,7 @@ public class GelReader extends BaseTiffReader {
   private static final int MD_PREP_TIME = 33451;
   private static final int MD_FILE_UNITS = 33452;
 
+
   // -- Constructor --
 
   /** Constructs a new GEL reader. */
@@ -62,6 +63,7 @@ public class GelReader extends BaseTiffReader {
   public boolean isThisType(byte[] block) {
     return false;
   }
+
 
   // -- Internal BaseTiffReader API methods --
 
@@ -80,16 +82,16 @@ public class GelReader extends BaseTiffReader {
       metadata.put("Data format", fmt == 2 ? "square root" : "linear");
     }
     catch (FormatException f) {
-      f.printStackTrace();  
-    }        
-    
-    TiffRational scale = 
+      f.printStackTrace();
+    }
+
+    TiffRational scale =
       (TiffRational) TiffTools.getIFDValue(ifds[1], MD_SCALE_PIXEL);
-    metadata.put("Scale factor", 
+    metadata.put("Scale factor",
       (scale == null) ? new TiffRational(1, 1) : scale);
-   
+
     // ignore MD_COLOR_TABLE
-    
+
     String lab = (String) TiffTools.getIFDValue(ifds[1], MD_LAB_NAME);
     metadata.put("Lab name", lab == null ? "unknown" : lab);
 
@@ -101,7 +103,7 @@ public class GelReader extends BaseTiffReader {
 
     String prepTime = (String) TiffTools.getIFDValue(ifds[1], MD_PREP_TIME);
     metadata.put("Time prepared", prepTime == null ? "unknown" : prepTime);
-   
+
     String units = (String) TiffTools.getIFDValue(ifds[1], MD_FILE_UNITS);
     metadata.put("File units", units == null ? "unknown" : units);
   }
