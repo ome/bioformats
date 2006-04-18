@@ -803,8 +803,7 @@ public class QTReader extends FormatReader {
     // too lazy to write native JPEG support, so use ImageIO
 
     // some planes have a 16 byte header that needs to be removed
-    // only expect this loop to execute once
-    while ((input[0] != (byte) 0xff) || (input[1] != (byte) 0xd8)) {
+    if (input[0] != (byte) 0xff || input[1] != (byte) 0xd8) {
       byte[] temp = input;
       input = new byte[temp.length - 16];
       System.arraycopy(temp, 16, input, 0, input.length);
