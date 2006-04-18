@@ -35,10 +35,7 @@ public class GelReader extends BaseTiffReader {
 
   // -- Constants --
 
-  /** Maximum number of bytes to check for GEL header information. */
-  private static final int BLOCK_CHECK_LEN = 16384;
-
-  /** GEL TIFF private IFD tags. */
+  // GEL TIFF private IFD tags.
   private static final int MD_FILETAG = 33445;
   private static final int MD_SCALE_PIXEL = 33446;
   private static final int MD_COLOR_TABLE = 33447;
@@ -60,9 +57,7 @@ public class GelReader extends BaseTiffReader {
   // -- FormatReader API methods --
 
   /** Checks if the given block is a valid header for a GEL TIFF file. */
-  public boolean isThisType(byte[] block) {
-    return false;
-  }
+  public boolean isThisType(byte[] block) { return false; }
 
 
   // -- Internal BaseTiffReader API methods --
