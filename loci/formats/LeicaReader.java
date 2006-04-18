@@ -43,6 +43,7 @@ public class LeicaReader extends FormatReader {
   /** All Leica TIFFs have this tag. */
   private static final int LEICA_MAGIC_TAG = 33923;
 
+
   // -- Fields --
 
   /** Current file. */
