@@ -116,7 +116,7 @@ public class FluoviewReader extends BaseTiffReader {
       p += 4 + 8; // again, 8 bytes we don't need
 
       // don't add commentSize and commentOffset to hashtable
-      // these will be used later to read in the Comment field
+      // these will be used later to read in the Comments field
       // and add it to the hashtable
       long commentSize = DataTools.bytesToLong(mmHead, p, 4, little);
       p += 4;
@@ -217,6 +217,8 @@ public class FluoviewReader extends BaseTiffReader {
       }
 
       String descr = (String) metadata.get("Comment");
+      metadata.remove("Comment");
+
       // strip LUT data from image description
       int firstIndex = descr.indexOf("[LUT Ch");
       int lastIndex = descr.lastIndexOf("[LUT Ch") + 13;

@@ -156,6 +156,8 @@ public class LeicaReader extends FormatReader {
       if (ifds == null) throw new FormatException("No IFDs found");
 
       String descr = (String) metadata.get("Comment");
+      metadata.remove("Comment");
+
       int ndx = descr.indexOf("Series Name");
 
       // should be more graceful about this

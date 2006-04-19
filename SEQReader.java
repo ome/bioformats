@@ -89,9 +89,10 @@ public class SEQReader extends BaseTiffReader {
     metadata.put("frames", new Integer(imageCount));
 
     // parse the description to get channels, slices and times where applicable
-    String description = (String) metadata.get("Comment");
-    if (description != null) {
-      StringTokenizer tokenizer = new StringTokenizer(description, "\n");
+    String descr = (String) metadata.get("Comment");
+    metadata.remove("Comment");
+    if (descr != null) {
+      StringTokenizer tokenizer = new StringTokenizer(descr, "\n");
       while (tokenizer.hasMoreTokens()) {
         String token = tokenizer.nextToken();
         String label = token.substring(0, token.indexOf("="));
