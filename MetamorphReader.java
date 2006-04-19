@@ -25,6 +25,7 @@ package loci.formats;
 
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.StringTokenizer;
 
 /**
  * Reader is the file format reader for Metamorph STK files.
@@ -171,10 +172,42 @@ public class MetamorphReader extends BaseTiffReader {
   /** Initialize the OME-XML tree. */
   protected void initOMEMetadata() {
     super.initOMEMetadata();
+    
+    // do some special parsing of the TIFF comment
+    // some Metamorph samples have (key, value) pairs embedded in the comment
+    
+    String comment = null;
+    Object o = TiffTools.getIFDValue(ifds[0], TiffTools.IMAGE_DESCRIPTION);
+    if (o instanceof String[]) {
+      String[] s = (String[]) o;
+      if (s.length > 0) comment = s[0];
+    }
+    else if (o != null) comment = o.toString();
+
+    if (comment != null) {
+      StringTokenizer st = new StringTokenizer(comment, "\n");
+      comment = "";
+
+      while (st.hasMoreTokens()) {
+        String line = (String) st.nextToken();
+        if (line.indexOf(":") == -1) {
+          comment += line.trim() + " ";
+        }       
+        else {
+          String key = line.substring(0, line.indexOf(":"));
+          String value = line.substring(line.indexOf(":") + 1);
+          metadata.put(key, value);
+        }        
+      }
+
+      metadata.put("Comment", comment);
+    }        
+    
     if (ome != null) {
       try {
         int sizeZ = TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true).length;
         OMETools.setSizeZ(ome, sizeZ);
+        OMETools.setDescription(ome, (String) metadata.get("Comment"));
       }
       catch (FormatException e) { e.printStackTrace(); }
     }
