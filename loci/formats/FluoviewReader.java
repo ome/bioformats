@@ -216,8 +216,7 @@ public class FluoviewReader extends BaseTiffReader {
         }
       }
 
-      String descr = "" + TiffTools.getIFDValue(ifds[0],
-        TiffTools.IMAGE_DESCRIPTION, false, String.class);
+      String descr = (String) metadata.get("Comment");
       // strip LUT data from image description
       int firstIndex = descr.indexOf("[LUT Ch");
       int lastIndex = descr.lastIndexOf("[LUT Ch") + 13;

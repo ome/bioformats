@@ -186,10 +186,6 @@ public class MetamorphReader extends BaseTiffReader {
       Hashtable ifd = ifds[0];
       super.initStandardMetadata();
 
-      String newDescr = ((String[])
-        ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION)))[0];
-      ifd.put(new Integer(TiffTools.IMAGE_DESCRIPTION), newDescr);
-
       Integer obj = new Integer(0);
 
       int offset;

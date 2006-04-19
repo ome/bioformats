@@ -155,9 +155,7 @@ public class LeicaReader extends FormatReader {
       Hashtable[] ifds = TiffTools.getIFDs(in);
       if (ifds == null) throw new FormatException("No IFDs found");
 
-      String descr = (String) TiffTools.getIFDValue(ifds[0],
-        TiffTools.IMAGE_DESCRIPTION);
-
+      String descr = (String) metadata.get("Comment");
       int ndx = descr.indexOf("Series Name");
 
       // should be more graceful about this
