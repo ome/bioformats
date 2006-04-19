@@ -324,14 +324,13 @@ public abstract class BaseTiffReader extends FormatReader {
 
     // TIFF comment
     String comment = null;
-    Object commentObj = (String)
-      TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
-    if (commentObj instanceof String) comment = (String) commentObj;
-    else if (commentObj instanceof String[]) {
-      String[] s = (String[]) commentObj;
+    Object o = TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
+    if (o instanceof String) comment = (String) o;
+    else if (o instanceof String[]) {
+      String[] s = (String[]) o;
       if (s.length > 0) comment = s[0];
     }
-    else if (commentObj != null) comment = commentObj.toString();
+    else if (o != null) comment = o.toString();
     if (comment != null) {
       // sanitize comment
       comment = comment.replaceAll("\r\n", "\n"); // CR-LF to LF
