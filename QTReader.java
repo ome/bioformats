@@ -287,6 +287,8 @@ public class QTReader extends FormatReader {
       }
     }
 
+    if (codec.equals("jpeg")) return bufferedJPEG(pixs);
+    
     byte[] bytes = uncompress(pixs, codec);
     prevPixels = bytes;
 
@@ -493,9 +495,9 @@ public class QTReader extends FormatReader {
   public byte[] uncompress(byte[] pixs, String code)
     throws FormatException
   {
+    // JPEG codec is handled separately, so not included in this list      
     if (code.equals("raw ")) return pixs;
     else if (code.equals("rle ")) return rleUncompress(pixs);
-    else if (code.equals("jpeg")) return jpegUncompress(pixs);
     else if (code.equals("mjpb")) return mjpbUncompress(pixs);
     else {
       throw new FormatException("Sorry, " + codec + " codec is not supported");
@@ -770,10 +772,10 @@ public class QTReader extends FormatReader {
       v2.add((byte) 0xd9);
 
       byte[] top = jpegUncompress(v.toByteArray());
-      byte[] bottom = jpegUncompress(v2.toByteArray());
-
-      scanlines = new byte[width * height * (bitsPerPixel / 8)];
-
+      byte[] bottom = jpegUncompress(v.toByteArray());
+     
+      scanlines = new byte[width * height];
+      
       int topLine = 0;
       int bottomLine = 0;
       for (int i=0; i<height; i++) {
@@ -797,7 +799,7 @@ public class QTReader extends FormatReader {
 
     return scanlines;
   }
-
+  
   /** Uncompresses a JPEG compressed image plane. */
   public byte[] jpegUncompress(byte[] input) throws FormatException {
     // too lazy to write native JPEG support, so use ImageIO
@@ -828,6 +830,23 @@ public class QTReader extends FormatReader {
     }
   }
 
+  /** Uncompresses a JPEG compressed image and returns it as a BufferedImage. */
+  public BufferedImage bufferedJPEG(byte[] input) throws FormatException {
+    // some planes have a 16 byte header that needs to be removed
+    if (input[0] != (byte) 0xff || input[1] != (byte) 0xd8) {
+      byte[] temp = input;
+      input = new byte[temp.length - 16];
+      System.arraycopy(temp, 16, input, 0, input.length);
+    }
+    
+    try {
+      return ImageIO.read(new ByteArrayInputStream(input));        
+    }
+    catch (IOException e) {
+      throw new FormatException("Invalid JPEG stream");
+    }        
+  }
+  
   /** Uncompresses a QT RLE compressed image plane. */
   public byte[] rleUncompress(byte[] input) throws FormatException {
     if (input.length < 8) return prevPixels;
@@ -877,14 +896,15 @@ public class QTReader extends FormatReader {
 
     // uncompress the remaining scanlines
 
-    byte skip = 0; // number of bytes to skip
+    int skip = 0; // number of bytes to skip
     byte rle = 0; // RLE code
 
     int rowPointer = start * (width * (bitsPerPixel / 8));
-
+    
     for (int i=0; i<numLines; i++) {
       skip = input[pt];
-
+      if (skip < 0) skip += 256;
+      
       if (prevPixels != null) {
         try {
           System.arraycopy(prevPixels, rowPointer, output, rowPointer,
