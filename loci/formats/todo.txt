@@ -11,7 +11,3 @@ Adapt VisBio to take advantage of LOCI Bio-Formats package.
 Eventually (later) implement an alternative method for pixel extraction, other
 than the BufferedImage one (such "byte[] openBytes(String, int)" in addition to
 "BufferedImage openImage(String, int)"), for use with OMERO.
-
-Some Metamorph TIFF comments have "key: value" pairs separated by newlines.
-These should be parsed into metadata and culled from the comment. But be
-careful not to parse lines that are not key/value pairs.
