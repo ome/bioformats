@@ -485,9 +485,56 @@ public class MetamorphReader extends BaseTiffReader {
     catch (IOException e) { e.printStackTrace(); }
     catch (FormatException e) { e.printStackTrace(); }
 
-
     try { super.initStandardMetadata(); }
     catch (Throwable t) { t.printStackTrace(); }
+
+    // parse (mangle) TIFF comment
+    String descr = (String) metadata.get("Comment");
+    if (descr != null) {
+      StringTokenizer st = new StringTokenizer(descr, "\n");
+      StringBuffer sb = new StringBuffer();
+      boolean first = true;
+      while (st.hasMoreTokens()) {
+        String line = st.nextToken();
+        int colon = line.indexOf(": ");
+
+        if (colon < 0) {
+          // normal line (not a key/value pair)
+          if (line.trim().length() > 0) {
+            // not a blank line
+            sb.append(line);
+            if (!line.endsWith(".")) sb.append(".");
+            sb.append("  ");
+          }
+          first = false;
+          continue;
+        }
+
+        if (first) {
+          // first line could be mangled; make a reasonable guess
+          int dot = line.lastIndexOf(".", colon);
+          if (dot >= 0) {
+            String s = line.substring(0, dot + 1);
+            sb.append(s);
+            if (!s.endsWith(".")) sb.append(".");
+            sb.append("  ");
+          }
+          line = line.substring(dot + 1);
+          colon -= dot + 1;
+          first = false;
+        }
+
+        // add key/value pair embedded in comment as separate metadata
+        String key = line.substring(0, colon);
+        String value = line.substring(colon + 2);
+        put(key, value);
+      }
+
+      // replace comment with trimmed version
+      descr = sb.toString().trim();
+      if (descr.equals("")) metadata.remove("Comment");
+      else put("Comment", descr);
+    }
   }
 
 
