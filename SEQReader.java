@@ -83,15 +83,13 @@ public class SEQReader extends BaseTiffReader {
       metadata.put("Number of images", new Integer(imageCount));
     }
 
-    String description =
-      (String) TiffTools.getIFDValue(ifds[0], TiffTools.IMAGE_DESCRIPTION);
-
     // default values
     metadata.put("slices", new Integer(1));
     metadata.put("channels", new Integer(1));
     metadata.put("frames", new Integer(imageCount));
 
     // parse the description to get channels, slices and times where applicable
+    String description = (String) metadata.get("Comment");
     if (description != null) {
       StringTokenizer tokenizer = new StringTokenizer(description, "\n");
       while (tokenizer.hasMoreTokens()) {

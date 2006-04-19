@@ -19,7 +19,7 @@ loci.formats.PictReader        # pict, pct
 
 # multi-extension messes
 loci.formats.ICSReader         # ics, ids
-loci.formats.OIFReader         # oif (directory)
+loci.formats.OIFReader         # oif, various
 loci.formats.PerkinElmerReader # csv, htm, tim, zpo [TIFF+companion]
 
 # POIFS readers

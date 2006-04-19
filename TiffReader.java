@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.io.IOException;
+import java.util.StringTokenizer;
 
 /**
  * TiffReader is the file format reader for TIFF files.
@@ -44,12 +45,43 @@ public class TiffReader extends BaseTiffReader {
 
   // -- Internal BaseTiffForm API methods --
 
+  /** Parses standard metadata. */
+  protected void initStandardMetadata() {
+    super.initStandardMetadata();
+    String comment = (String) metadata.get("Comment");
+
+    // check for ImageJ-style TIFF comment
+    boolean ij = comment != null && comment.startsWith("ImageJ=");
+    if (ij) {
+      int nl = comment.indexOf("\n");
+      put("ImageJ", nl < 0 ? comment.substring(7) : comment.substring(7, nl));
+      metadata.remove("Comment");
+    }
+
+    // check for Improvision-style TIFF comment
+    boolean iv = comment != null && comment.startsWith("[Improvision Data]\n");
+    put("Improvision", iv ? "yes" : "no");
+    if (iv) {
+      // parse key/value pairs
+      StringTokenizer st = new StringTokenizer(comment, "\n");
+      while (st.hasMoreTokens()) {
+        String line = st.nextToken();
+        int equals = line.indexOf("=");
+        if (equals < 0) continue;
+        String key = line.substring(0, equals);
+        String value = line.substring(equals + 1);
+        metadata.put(key, value);
+      }
+      metadata.remove("Comment");
+    }
+  }
+
   /** Parses OME-XML metadata. */
   protected void initOMEMetadata() {
     // check for OME-XML in TIFF comment (OME-TIFF format)
-    Object o = TiffTools.getIFDValue(ifds[0], TiffTools.IMAGE_DESCRIPTION);
-    Object root = o instanceof String ? OMETools.createRoot((String) o) : null;
-    metadata.put("OME-TIFF", root == null ? "no" : "yes");
+    String comment = (String) metadata.get("Comment");
+    Object root = comment == null ? null : OMETools.createRoot(comment);
+    put("OME-TIFF", root == null ? "no" : "yes");
     if (root == null) super.initOMEMetadata();
     else ome = root;
   }
@@ -60,4 +92,5 @@ public class TiffReader extends BaseTiffReader {
   public static void main(String[] args) throws FormatException, IOException {
     new TiffReader().testRead(args);
   }
+
 }

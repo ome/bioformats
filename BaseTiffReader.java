@@ -306,6 +306,38 @@ public abstract class BaseTiffReader extends FormatReader {
 
     putInt("YCbCrPositioning", ifd, TiffTools.Y_CB_CR_POSITIONING);
     putInt("ReferenceBlackWhite", ifd, TiffTools.REFERENCE_BLACK_WHITE);
+
+    // bits per sample and number of channels
+    Object bpsObj = TiffTools.getIFDValue(ifd, TiffTools.BITS_PER_SAMPLE);
+    int bps = -1, numC = 3;
+    if (bpsObj instanceof int[]) {
+      int[] q = (int[]) bpsObj;
+      bps = q[0];
+      numC = q.length;
+    }
+    else if (bpsObj instanceof Number) {
+      bps = ((Number) bpsObj).intValue();
+      numC = 1;
+    }
+    put("BitsPerSample", bps);
+    put("NumberOfChannels", numC);
+
+    // TIFF comment
+    String comment = null;
+    Object commentObj = (String)
+      TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
+    if (commentObj instanceof String) comment = (String) commentObj;
+    else if (commentObj instanceof String[]) {
+      String[] s = (String[]) commentObj;
+      if (s.length > 0) comment = s[0];
+    }
+    else if (commentObj != null) comment = commentObj.toString();
+    if (comment != null) {
+      // sanitize comment
+      comment = comment.replaceAll("\r\n", "\n"); // CR-LF to LF
+      comment = comment.replaceAll("\r", "\n"); // CR to LF
+      put("Comment", comment);
+    }
   }
 
   /** Parses OME-XML metadata. */
@@ -315,29 +347,12 @@ public abstract class BaseTiffReader extends FormatReader {
     try {
       if (ome == null) return; // OME-XML functionality is not available
 
-      Object bitsPerSample =
-        TiffTools.getIFDValue(ifd, TiffTools.BITS_PER_SAMPLE);
-      int[] bps;
-      try {
-        bps = (int[]) bitsPerSample;
-      }
-      catch (Exception ex) {
-        bps = new int[] {((Integer) bitsPerSample).intValue()};
-      }
-      metadata.put("BitsPerSample", "" + bps[0]);
-
-      if (TiffTools.getIFDIntValue(ifd,
-        TiffTools.PHOTOMETRIC_INTERPRETATION) == TiffTools.RGB_PALETTE)
-      {
-        bps = new int[3];
-      }
-
       // populate Pixels element
       int sizeX = TiffTools.getIFDIntValue(ifd, TiffTools.IMAGE_WIDTH);
       int sizeY = TiffTools.getIFDIntValue(ifd, TiffTools.IMAGE_LENGTH);
       int sizeZ = 1;
       int sizeT = ifds.length;
-      int sizeC = bps.length;
+      int sizeC = ((Integer) metadata.get("NumberOfChannels")).intValue();
       boolean bigEndian = !TiffTools.isLittleEndian(ifd);
       int sample = TiffTools.getIFDIntValue(ifd, TiffTools.SAMPLE_FORMAT);
       String pixelType;
@@ -373,25 +388,7 @@ public abstract class BaseTiffReader extends FormatReader {
       // populate Image element
       String creationDate = (String)
         TiffTools.getIFDValue(ifd, TiffTools.DATE_TIME);
-      String description;
-      try {
-        description = (String)
-          TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
-      }
-      catch (ClassCastException c) {
-        String[] descrs = (String[])
-          TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
-        if (descrs.length > 0) description = descrs[0];
-        else description = null;
-      }
-
-      // sanitize comment
-      if (description != null) {
-        description = description.replaceAll("\r\n", "\n"); // CR-LF to LF
-        description = description.replaceAll("\r", "\n"); // CR to LF
-        put("Comment", description);
-      }
-
+      String description = (String) metadata.get("Comment");
       OMETools.setImage(ome, null, creationDate, description);
 
       // populate Dimensions element
