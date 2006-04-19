@@ -448,14 +448,12 @@ public class MetamorphReader extends BaseTiffReader {
         } // end switch
       }
     }
-    catch (NullPointerException n) { }
+    catch (NullPointerException n) { n.printStackTrace(); }
     catch (IOException e) { e.printStackTrace(); }
     catch (FormatException e) { e.printStackTrace(); }
 
 
-    try {
-      super.initStandardMetadata();
-    }
+    try { super.initStandardMetadata(); }
     catch (Throwable t) { t.printStackTrace(); }
   }
 
