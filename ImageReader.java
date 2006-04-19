@@ -233,8 +233,13 @@ public class ImageReader extends FormatReader {
     }
     if (args.length > 0) {
       // check file format
-      System.out.print("Checking file format ");
-      System.out.println("[" + getFormat(args[0]) + "]");
+      for (int i=0; i<args.length; i++) {
+        String arg = args[i];
+        if (arg.startsWith("-")) continue;
+        System.out.print("Checking file format ");
+        System.out.println("[" + getFormat(arg) + "]");
+        break;
+      }
     }
     return super.testRead(args);
   }
