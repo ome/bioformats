@@ -260,7 +260,8 @@ public class ImageViewer extends JFrame
   /** Handles slider events. */
   public void stateChanged(ChangeEvent e) {
     updateLabel(-1, -1);
-    icon.setImage(getImage());
+    BufferedImage image = getImage();
+    if (image != null) icon.setImage(getImage());
     iconLabel.repaint();
   }
 
@@ -290,8 +291,8 @@ public class ImageViewer extends JFrame
       sb.append(images.length);
     }
     BufferedImage image = images[ndx];
-    int w = image.getWidth();
-    int h = image.getHeight();
+    int w = image == null ? -1 : image.getWidth();
+    int h = image == null ? -1 : image.getHeight();
     if (x >= w) x = w - 1;
     if (y >= h) y = h - 1;
     if (x >= 0 && y >= 0) {
