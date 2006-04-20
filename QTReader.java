@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.io.ByteArrayInputStream;
@@ -288,6 +289,7 @@ public class QTReader extends FormatReader {
     }
 
     if (codec.equals("jpeg")) return bufferedJPEG(pixs);
+    else if (codec.equals("mjpb")) return mjpbUncompress(pixs);
     
     byte[] bytes = uncompress(pixs, codec);
     prevPixels = bytes;
@@ -495,17 +497,16 @@ public class QTReader extends FormatReader {
   public byte[] uncompress(byte[] pixs, String code)
     throws FormatException
   {
-    // JPEG codec is handled separately, so not included in this list      
+    // JPEG and mjpb codecs handled separately, so not included in this list
     if (code.equals("raw ")) return pixs;
     else if (code.equals("rle ")) return rleUncompress(pixs);
-    else if (code.equals("mjpb")) return mjpbUncompress(pixs);
     else {
       throw new FormatException("Sorry, " + codec + " codec is not supported");
     }
   }
 
   /** Uncompresses a MJPEG-B compressed image plane. */
-  public byte[] mjpbUncompress(byte[] input) throws FormatException {
+  public BufferedImage mjpbUncompress(byte[] input) throws FormatException {
     byte[] raw = null;
     byte[] raw2 = null;
     int pt = 16; // pointer into the compressed data
@@ -780,7 +781,6 @@ public class QTReader extends FormatReader {
     // the MJPEG-B specifications allow for interlaced frames
     // so now we have to reorder the scanlines...*stabs self in eye*
 
-    byte[] scanlines;
     if (interlaced) {
       ByteVector v2 = new ByteVector(v.size());
       v2.add(v.toByteArray());
@@ -792,65 +792,56 @@ public class QTReader extends FormatReader {
       v2.add((byte) 0xff);
       v2.add((byte) 0xd9);
 
-      // the next two lines account for the slowness of this codec
-      byte[] top = jpegUncompress(v.toByteArray());
-      byte[] bottom = jpegUncompress(v2.toByteArray());
-  
-      scanlines = new byte[width * height];
+      // this takes less time than it used to, but may not be the
+      // most intelligent way of doing things
+      
+      BufferedImage top = bufferedJPEG(v.toByteArray());
+      BufferedImage bottom = bufferedJPEG(v2.toByteArray());
+
+      WritableRaster topRaster = top.getRaster();
+      WritableRaster bottomRaster = bottom.getRaster();
+      
+      byte[] scanlines = new byte[width * height];
+    
+      int[] topBytes = 
+        topRaster.getPixels(0, 0, top.getWidth(), top.getHeight(), 
+        new int[width * (height / 2)]);
+      int[] bottomBytes = bottomRaster.getPixels(0, 0, bottom.getWidth(), 
+        bottom.getHeight(), new int[width * (height / 2)]);
+     
+      byte[] topPixs = new byte[topBytes.length];
+      byte[] bottomPixs = new byte[bottomBytes.length];
+
+      // can safely assume that topBytes.length == bottomBytes.length
+      for (int i=0; i<topBytes.length; i++) {
+        topPixs[i] = (byte) topBytes[i];
+        bottomPixs[i] = (byte) bottomBytes[i];      
+      }
       
       int topLine = 0;
       int bottomLine = 0;
       for (int i=0; i<height; i++) {
         if ((i % 2) == 0) {
-          System.arraycopy(top, topLine*width, scanlines, width*i, width);
+          System.arraycopy(topPixs, topLine*width, scanlines, width*i, width);
           topLine++;
         }
         else {
-          System.arraycopy(bottom, bottomLine*width, scanlines, width*i, width);
+          System.arraycopy(bottomPixs, bottomLine*width, scanlines, 
+            width*i, width);
           bottomLine++;
         }
       }
+
+      return ImageTools.makeImage(scanlines, width, height, 1, false);
     }
     else {
       v.add(b.toByteArray());
       v.add((byte) 0xff);
       v.add((byte) 0xd9);
-      scanlines = jpegUncompress(v.toByteArray());
+      return bufferedJPEG(v.toByteArray());
     }
-
-    return scanlines;
   }
   
-  /** Uncompresses a JPEG compressed image plane. */
-  public byte[] jpegUncompress(byte[] input) throws FormatException {
-    // too lazy to write native JPEG support, so use ImageIO
-
-    // some planes have a 16 byte header that needs to be removed
-    if (input[0] != (byte) 0xff || input[1] != (byte) 0xd8) {
-      byte[] temp = input;
-      input = new byte[temp.length - 16];
-      System.arraycopy(temp, 16, input, 0, input.length);
-    }
-
-    try {
-      BufferedImage img = ImageIO.read(new ByteArrayInputStream(input));
-
-      byte[][] bytes = ImageTools.getBytes(img);
-
-      byte[] output = new byte[bytes.length * bytes[0].length];
-
-      for (int i=0; i<bytes[0].length; i++) {
-        for (int j=0; j<bytes.length; j++) {
-          output[bytes.length*i + j] = bytes[j][i];
-        }
-      }
-      return output;
-    }
-    catch (IOException e) {
-      throw new FormatException("Invalid JPEG stream");
-    }
-  }
-
   /** Uncompresses a JPEG compressed image and returns it as a BufferedImage. */
   public BufferedImage bufferedJPEG(byte[] input) throws FormatException {
     // some planes have a 16 byte header that needs to be removed
