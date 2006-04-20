@@ -290,7 +290,7 @@ public class QTReader extends FormatReader {
 
     if (codec.equals("jpeg")) return bufferedJPEG(pixs);
     else if (codec.equals("mjpb")) return mjpbUncompress(pixs);
-    
+
     byte[] bytes = uncompress(pixs, codec);
     prevPixels = bytes;
 
@@ -533,8 +533,8 @@ public class QTReader extends FormatReader {
     // be spread across multiple fields, effectively forcing the reader to
     // interlace the scanlines.
     //
-    // further aside - 
-    // http://lists.apple.com/archives/quicktime-talk/2000/Nov/msg00269.html 
+    // further aside -
+    // http://lists.apple.com/archives/quicktime-talk/2000/Nov/msg00269.html
     // contains some interesting notes on why Apple chose to define this codec
 
     pt += 4;
@@ -557,7 +557,7 @@ public class QTReader extends FormatReader {
       // offset to second field
       int offset = DataTools.bytesToInt(input, pt, 4, little) + 16;
       pt += 4;
-      
+
       // offset to quantization table
       int quantOffset = DataTools.bytesToInt(input, pt, 4, little) + 16;
       pt += 4;
@@ -627,7 +627,7 @@ public class QTReader extends FormatReader {
       pt = sod;
 
       int numBytes = offset - pt;
-      if (offset == 0) numBytes = input.length - pt; 
+      if (offset == 0) numBytes = input.length - pt;
       raw = new byte[numBytes];
       System.arraycopy(input, pt, raw, 0, raw.length);
 
@@ -738,7 +738,7 @@ public class QTReader extends FormatReader {
 
     v.add((byte) 0xff);
     v.add((byte) 0xc0);
-    
+
     length = 11;
 
     v.add((byte) ((length >>> 8) & 0xff));
@@ -746,7 +746,7 @@ public class QTReader extends FormatReader {
 
     int fieldHeight = height;
     if (interlaced) fieldHeight /= 2;
-    
+
     v.add((byte) 0x08); // bits per sample
     v.add((byte) ((fieldHeight >>> 8) & 0xff));
     v.add((byte) (fieldHeight & 0xff));
@@ -776,7 +776,7 @@ public class QTReader extends FormatReader {
     v.add((byte) 0x00);
     v.add((byte) 0x3f);
     v.add((byte) 0x00);
-    
+
     // as if everything we had to do up to this point wasn't enough of a pain,
     // the MJPEG-B specifications allow for interlaced frames
     // so now we have to reorder the scanlines...*stabs self in eye*
@@ -794,30 +794,30 @@ public class QTReader extends FormatReader {
 
       // this takes less time than it used to, but may not be the
       // most intelligent way of doing things
-      
+
       BufferedImage top = bufferedJPEG(v.toByteArray());
       BufferedImage bottom = bufferedJPEG(v2.toByteArray());
 
       WritableRaster topRaster = top.getRaster();
       WritableRaster bottomRaster = bottom.getRaster();
-      
+
       byte[] scanlines = new byte[width * height];
-    
-      int[] topBytes = 
-        topRaster.getPixels(0, 0, top.getWidth(), top.getHeight(), 
+
+      int[] topBytes =
+        topRaster.getPixels(0, 0, top.getWidth(), top.getHeight(),
         new int[width * (height / 2)]);
-      int[] bottomBytes = bottomRaster.getPixels(0, 0, bottom.getWidth(), 
+      int[] bottomBytes = bottomRaster.getPixels(0, 0, bottom.getWidth(),
         bottom.getHeight(), new int[width * (height / 2)]);
-     
+
       byte[] topPixs = new byte[topBytes.length];
       byte[] bottomPixs = new byte[bottomBytes.length];
 
       // can safely assume that topBytes.length == bottomBytes.length
       for (int i=0; i<topBytes.length; i++) {
         topPixs[i] = (byte) topBytes[i];
-        bottomPixs[i] = (byte) bottomBytes[i];      
+        bottomPixs[i] = (byte) bottomBytes[i];
       }
-      
+
       int topLine = 0;
       int bottomLine = 0;
       for (int i=0; i<height; i++) {
@@ -826,7 +826,7 @@ public class QTReader extends FormatReader {
           topLine++;
         }
         else {
-          System.arraycopy(bottomPixs, bottomLine*width, scanlines, 
+          System.arraycopy(bottomPixs, bottomLine*width, scanlines,
             width*i, width);
           bottomLine++;
         }
@@ -841,8 +841,8 @@ public class QTReader extends FormatReader {
       return bufferedJPEG(v.toByteArray());
     }
   }
-  
-  /** Uncompresses a JPEG compressed image and returns it as a BufferedImage. */
+
+  /** Uncompresses a JPEG compressed image plane. */
   public BufferedImage bufferedJPEG(byte[] input) throws FormatException {
     // some planes have a 16 byte header that needs to be removed
     if (input[0] != (byte) 0xff || input[1] != (byte) 0xd8) {
@@ -850,15 +850,15 @@ public class QTReader extends FormatReader {
       input = new byte[temp.length - 16];
       System.arraycopy(temp, 16, input, 0, input.length);
     }
-    
+
     try {
-      return ImageIO.read(new ByteArrayInputStream(input));        
+      return ImageIO.read(new ByteArrayInputStream(input));
     }
     catch (IOException e) {
       throw new FormatException("Invalid JPEG stream");
-    }        
+    }
   }
-  
+
   /** Uncompresses a QT RLE compressed image plane. */
   public byte[] rleUncompress(byte[] input) throws FormatException {
     if (input.length < 8) return prevPixels;
@@ -912,11 +912,11 @@ public class QTReader extends FormatReader {
     byte rle = 0; // RLE code
 
     int rowPointer = start * (width * (bitsPerPixel / 8));
-    
+
     for (int i=0; i<numLines; i++) {
       skip = input[pt];
       if (skip < 0) skip += 256;
-      
+
       if (prevPixels != null) {
         try {
           System.arraycopy(prevPixels, rowPointer, output, rowPointer,
