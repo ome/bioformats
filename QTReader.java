@@ -35,6 +35,7 @@ import javax.imageio.ImageIO;
  * QTReader is the file format reader for QuickTime movie files.
  * It does not require any external libraries to be installed.
  *
+ * Video codecs currently supported: raw, rle, jpeg, mjpb.
  * Additional video codecs will be added as time permits.
  *
  * @author Melissa Linkert linkert at cs.wisc.edu
