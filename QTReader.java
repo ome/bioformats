@@ -531,6 +531,10 @@ public class QTReader extends FormatReader {
     // from the JPEG documentation.  Finally, MJPEG-B allows for the data to
     // be spread across multiple fields, effectively forcing the reader to
     // interlace the scanlines.
+    //
+    // further aside - 
+    // http://lists.apple.com/archives/quicktime-talk/2000/Nov/msg00269.html 
+    // contains some interesting notes on why Apple chose to define this codec
 
     pt += 4;
     if (pt >= input.length) pt = 0;
@@ -552,7 +556,7 @@ public class QTReader extends FormatReader {
       // offset to second field
       int offset = DataTools.bytesToInt(input, pt, 4, little) + 16;
       pt += 4;
-
+      
       // offset to quantization table
       int quantOffset = DataTools.bytesToInt(input, pt, 4, little) + 16;
       pt += 4;
@@ -621,9 +625,10 @@ public class QTReader extends FormatReader {
       // now we can finally read this field's data
       pt = sod;
 
-      raw = new byte[padSize];
-      if ((pt + padSize) >= input.length) padSize = input.length - pt - 1;
-      System.arraycopy(input, pt, raw, 0, padSize);
+      int numBytes = offset - pt;
+      if (offset == 0) numBytes = input.length - pt; 
+      raw = new byte[numBytes];
+      System.arraycopy(input, pt, raw, 0, raw.length);
 
       // get the second field
       // from the specs:
@@ -635,9 +640,23 @@ public class QTReader extends FormatReader {
       // field T has ((H+1) div 2) lines, and field B has (H div 2) lines."
 
       if (offset != 0) {
-        pt = offset + 28;
-        pt += DataTools.bytesToInt(input, pt, 4, little) + 4;
-        raw2 = new byte[input.length - pt];
+        pt = offset;
+
+        pt += 4; // reserved = 0
+        pt += 4; // 'mjpg' tag
+        pt += 4; // field size
+        pt += 4; // padded field size
+        pt += 4; // offset to next field = 0
+        pt += 4; // quantization table offset
+        pt += 4; // Huffman table offset
+        pt += 4; // sof offset
+        pt += 4; // sos offset
+
+        pt += DataTools.bytesToInt(input, pt, 4, little);
+        pt -= 36; // HACK
+
+        numBytes = input.length - pt;
+        raw2 = new byte[numBytes];
         System.arraycopy(input, pt, raw2, 0, raw2.length);
       }
     }
@@ -669,16 +688,13 @@ public class QTReader extends FormatReader {
     }
 
     // assemble a fake JFIF plane
-    // once again, allow me to say that this would be much easier if the Apple
-    // developers had stuck to the JPEG specifications...*sigh*
 
     ByteVector v = new ByteVector(1000);
     v.add(HEADER);
 
     // add quantization tables
 
-    v.add((byte) 0xff);
-    v.add((byte) 0xdb);
+    v.add(new byte[] {(byte) 0xff, (byte) 0xdb});
 
     int length = LUM_QUANT.length + CHROM_QUANT.length + 4;
     v.add((byte) ((length >>> 8) & 0xff));
@@ -691,8 +707,7 @@ public class QTReader extends FormatReader {
 
     // add Huffman tables
 
-    v.add((byte) 0xff);
-    v.add((byte) 0xc4);
+    v.add(new byte[] {(byte) 0xff, (byte) 0xc4});
 
     length = LUM_DC_BITS.length + LUM_DC.length + CHROM_DC_BITS.length +
       CHROM_DC.length + LUM_AC_BITS.length + LUM_AC.length +
@@ -722,14 +737,18 @@ public class QTReader extends FormatReader {
 
     v.add((byte) 0xff);
     v.add((byte) 0xc0);
-
+    
     length = 11;
+
     v.add((byte) ((length >>> 8) & 0xff));
     v.add((byte) (length & 0xff));
 
+    int fieldHeight = height;
+    if (interlaced) fieldHeight /= 2;
+    
     v.add((byte) 0x08); // bits per sample
-    v.add((byte) ((height >>> 8) & 0xff));
-    v.add((byte) (height & 0xff));
+    v.add((byte) ((fieldHeight >>> 8) & 0xff));
+    v.add((byte) (fieldHeight & 0xff));
     v.add((byte) ((width >>> 8) & 0xff));
     v.add((byte) (width & 0xff));
     v.add((byte) 0x01);
@@ -756,14 +775,16 @@ public class QTReader extends FormatReader {
     v.add((byte) 0x00);
     v.add((byte) 0x3f);
     v.add((byte) 0x00);
-
+    
     // as if everything we had to do up to this point wasn't enough of a pain,
     // the MJPEG-B specifications allow for interlaced frames
     // so now we have to reorder the scanlines...*stabs self in eye*
 
     byte[] scanlines;
     if (interlaced) {
-      ByteVector v2 = v;
+      ByteVector v2 = new ByteVector(v.size());
+      v2.add(v.toByteArray());
+
       v.add(b.toByteArray());
       v.add((byte) 0xff);
       v.add((byte) 0xd9);
@@ -771,9 +792,10 @@ public class QTReader extends FormatReader {
       v2.add((byte) 0xff);
       v2.add((byte) 0xd9);
 
+      // the next two lines account for the slowness of this codec
       byte[] top = jpegUncompress(v.toByteArray());
-      byte[] bottom = jpegUncompress(v.toByteArray());
-     
+      byte[] bottom = jpegUncompress(v2.toByteArray());
+  
       scanlines = new byte[width * height];
       
       int topLine = 0;
@@ -784,8 +806,7 @@ public class QTReader extends FormatReader {
           topLine++;
         }
         else {
-          System.arraycopy(bottom, bottomLine*width,
-            scanlines, width*i, width);
+          System.arraycopy(bottom, bottomLine*width, scanlines, width*i, width);
           bottomLine++;
         }
       }
