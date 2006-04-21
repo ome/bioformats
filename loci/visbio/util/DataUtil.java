@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.util;
 
+import java.awt.image.BufferedImage;
 import java.rmi.RemoteException;
 import java.util.Vector;
 import visad.*;
@@ -77,6 +78,9 @@ public abstract class DataUtil {
   public static FlatField resample(FlatField f, int[] res, boolean[] range,
     float[] min, float[] max) throws VisADException, RemoteException
   {
+    //TODO: rewrite VisBio resampling logic to work on raw images
+    //rework VisBio to avoid any reference to "range components"
+    //instead, multiple range components should always become multiple channels
     GriddedSet set = (GriddedSet) f.getDomainSet();
     float[][] samples = f.getFloats(false);
     FunctionType function = (FunctionType) f.getType();
@@ -360,11 +364,20 @@ public abstract class DataUtil {
     for (int i=0; i<rangeUnits.length; i++) {
       newRangeUnits[i] = rangeUnits[i][0];
     }
-    float[][] samples = field.getFloats(false);
-    FlatField newField = new FlatField(newType,
-      domainSet, rangeCoordSys, rangeSets, newRangeUnits);
-    newField.setSamples(samples, false);
-    return newField;
+    if (field instanceof ImageFlatField) {
+      BufferedImage image = ((ImageFlatField) field).getImage();
+      ImageFlatField newField = new ImageFlatField(newType,
+        domainSet, rangeCoordSys, rangeSets, newRangeUnits);
+      newField.setImage(image);
+      return newField;
+    }
+    else {
+      float[][] samples = field.getFloats(false);
+      FlatField newField = new FlatField(newType,
+        domainSet, rangeCoordSys, rangeSets, newRangeUnits);
+      newField.setSamples(samples, false);
+      return newField;
+    }
   }
 
   /**

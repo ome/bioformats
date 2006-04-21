@@ -39,6 +39,7 @@ import loci.formats.FormatException;
 import loci.formats.ImageReader;
 import loci.ome.xml.OMENode;
 import loci.ome.xml.DOMUtil;
+import loci.util.FilePattern;
 import loci.visbio.VisBioFrame;
 import loci.visbio.util.*;
 import org.w3c.dom.Element;

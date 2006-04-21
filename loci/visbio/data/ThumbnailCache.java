@@ -30,6 +30,11 @@ import visad.VisADException;
 import visad.data.visad.BinaryReader;
 import visad.data.visad.BinaryWriter;
 
+//TODO: rewrite thumbnailing logic to save .visbio cache more efficiently
+//maybe in JPEG format, but definitely in 8-bit
+//put "default" cache files in "cache" subfolder of visbio, instead of just
+//one huge "cache.visbio" file
+
 /** Disk cache for thumbnails generated from datasets. */
 public class ThumbnailCache {
 

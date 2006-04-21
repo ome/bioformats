@@ -138,7 +138,8 @@ public class OptionManager extends LogicManager {
     if (!CONFIG_FILE.exists()) return;
     try {
       Document doc = XMLUtil.parseXML(CONFIG_FILE);
-      if (doc != null) restoreState(doc.getDocumentElement());
+      Element el = doc == null ? null : doc.getDocumentElement();
+      if (el != null) restoreState(el);
       bio.generateEvent(this, "read ini file", false);
     }
     catch (SaveException exc) { exc.printStackTrace(); }
@@ -239,9 +240,11 @@ public class OptionManager extends LogicManager {
   /** Restores the current state from the given DOM element ("VisBio"). */
   public void restoreState(Element el) throws SaveException {
     Element optionsElement = XMLUtil.getFirstChild(el, "Options");
-    for (int i=0; i<list.size(); i++) {
-      BioOption option = (BioOption) list.elementAt(i);
-      option.restoreState(optionsElement);
+    if (optionsElement != null) {
+      for (int i=0; i<list.size(); i++) {
+        BioOption option = (BioOption) list.elementAt(i);
+        option.restoreState(optionsElement);
+      }
     }
   }
 

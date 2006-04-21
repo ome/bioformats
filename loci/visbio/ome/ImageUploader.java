@@ -30,10 +30,10 @@ import org.openmicroscopy.ds.dto.*;
 import org.openmicroscopy.ds.managers.*;
 import org.openmicroscopy.ds.st.*;
 import org.openmicroscopy.is.*;
+import loci.util.FilePattern;
+import loci.util.MathUtil;
 import loci.visbio.*;
 import loci.visbio.data.DataTransform;
-import loci.visbio.data.FilePattern;
-import loci.visbio.util.MathUtil;
 import visad.FlatField;
 
 /**

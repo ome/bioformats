@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.data;
 
 import java.rmi.RemoteException;
+import loci.util.MathUtil;
 import loci.visbio.BioTask;
 import loci.visbio.TaskManager;
 import loci.visbio.util.*;

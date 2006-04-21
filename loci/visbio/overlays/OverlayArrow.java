@@ -25,7 +25,7 @@ package loci.visbio.overlays;
 
 import java.rmi.RemoteException;
 import java.util.Arrays;
-import loci.visbio.util.MathUtil;
+import loci.util.MathUtil;
 import visad.*;
 
 /** OverlayArrow is an arrow wedge overlay. */

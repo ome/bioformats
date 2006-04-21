@@ -30,6 +30,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import loci.util.MathUtil;
 import loci.visbio.VisBio;
 import loci.visbio.util.*;
 

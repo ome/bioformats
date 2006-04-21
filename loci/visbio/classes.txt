@@ -2314,6 +2314,9 @@ loci.ome.xml.OMENode
 loci.ome.xml.OMEXMLHandler
 loci.ome.xml.OMEXMLNode
 loci.ome.xml.st.PixelsNode
+loci.util.FilePattern
+loci.util.MathUtil
+loci.util.NumberFilter
 loci.visbio.BioDropHandler
 loci.visbio.BioTask
 loci.visbio.BioTask$1
@@ -2355,10 +2358,8 @@ loci.visbio.data.DatasetPane$5
 loci.visbio.data.DatasetWidget
 loci.visbio.data.DatasetWidget$ElementWrapper
 loci.visbio.data.ExportPane
-loci.visbio.data.FilePattern
 loci.visbio.data.ImageFamily
 loci.visbio.data.ImageTransform
-loci.visbio.data.NumberFilter
 loci.visbio.data.ProjectionTransform
 loci.visbio.data.ProjectionWidget
 loci.visbio.data.SamplingThumbHandler
@@ -2438,7 +2439,6 @@ loci.visbio.util.FormsUtil
 loci.visbio.util.ImageJUtil
 loci.visbio.util.InstanceServer
 loci.visbio.util.LAFUtil
-loci.visbio.util.MathUtil
 loci.visbio.util.MessagePane
 loci.visbio.util.ObjectUtil
 loci.visbio.util.OutputConsole

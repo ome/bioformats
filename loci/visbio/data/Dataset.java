@@ -28,10 +28,12 @@ import java.awt.datatransfer.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.math.BigInteger;
+import java.rmi.RemoteException;
 import java.util.Hashtable;
 import javax.swing.JComponent;
 import loci.formats.*;
 import loci.ome.xml.OMENode;
+import loci.util.MathUtil;
 import loci.visbio.TaskEvent;
 import loci.visbio.TaskListener;
 import loci.visbio.state.Dynamic;
@@ -245,8 +247,7 @@ public class Dataset extends ImageTransform {
     while (tries > 0) {
       boolean again = false;
       try {
-        Image image = readers[fileIndex].open(ids[fileIndex], imgIndex);
-        img = ImageTools.makeImage(image);
+        img = readers[fileIndex].open(ids[fileIndex], imgIndex);
       }
       catch (IOException exc) {
         String msg = exc.getMessage();
@@ -521,7 +522,7 @@ public class Dataset extends ImageTransform {
 
     // load first image for analysis
     status(2, numTasks, "Reading first image");
-    Image img = null;
+    BufferedImage img = null;
     try { img = readers[0].open(ids[0], 0); }
     catch (IOException exc) { img = null; }
     catch (FormatException exc) { img = null; }
@@ -531,17 +532,22 @@ public class Dataset extends ImageTransform {
         filename + " may be corrupt or invalid.");
       return;
     }
-    BufferedImage bimg = ImageTools.makeImage(img);
     ImageFlatField ff = null;
-    try { ff = new ImageFlatField(bimg); }
+    try { ff = new ImageFlatField(img); }
     catch (VisADException exc) {
       System.err.println("Could not construct ImageFlatField.");
+      exc.printStackTrace();
+      return;
+    }
+    catch (RemoteException exc) {
+      System.err.println("Could not construct ImageFlatField.");
+      exc.printStackTrace();
       return;
     }
 
     // determine image resolution
-    resX = bimg.getWidth();
-    resY = bimg.getHeight();
+    resX = img.getWidth();
+    resY = img.getHeight();
 
     // extract range components
     FunctionType ftype = (FunctionType) ff.getType();

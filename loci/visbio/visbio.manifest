@@ -1,2 +1,2 @@
-Manifest-Version: 1.0
 Main-Class: loci.visbio.VisBio
+Class-Path: bio_formats.jar commons-httpclient-2.0-rc2.jar commons-logging.jar forms-1.0.4.jar ij.jar loci-ome-xml.jar looks-1.2.2.jar ome-java.jar poi-2.5.1-final-20040804.jar visad.jar xmlrpc-1.2-b1.jar

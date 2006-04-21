@@ -25,6 +25,8 @@ package loci.visbio.data;
 
 import java.awt.image.BufferedImage;
 import java.math.BigInteger;
+import java.rmi.RemoteException;
+import loci.util.MathUtil;
 import loci.visbio.state.SaveException;
 import loci.visbio.util.*;
 import org.w3c.dom.Element;
@@ -205,6 +207,10 @@ public abstract class ImageTransform extends DataTransform {
     if (img == null) return null;
     try { return new ImageFlatField(img); }
     catch (VisADException exc) {
+      exc.printStackTrace();
+      return null;
+    }
+    catch (RemoteException exc) {
       exc.printStackTrace();
       return null;
     }

@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.data;
 
 import java.util.Hashtable;
-import loci.visbio.util.MathUtil;
+import loci.util.MathUtil;
 import visad.Data;
 
 /** Provides a simple caching mechanism for full-resolution data in memory. */
