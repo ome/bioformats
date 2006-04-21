@@ -26,6 +26,7 @@ package loci.visbio.ome;
 import java.awt.Component;
 import java.rmi.RemoteException;
 import javax.swing.JOptionPane;
+import loci.visbio.*;
 import loci.visbio.data.*;
 import loci.visbio.state.Dynamic;
 import loci.visbio.util.ObjectUtil;
@@ -68,6 +69,9 @@ public class OMEImage extends ImageTransform {
 
   /** ID for this image. */
   protected int imageId;
+
+  /** Optional task for constructor progress. */
+  protected BioTask task;
 
 
   // -- Computed fields --
@@ -121,11 +125,14 @@ public class OMEImage extends ImageTransform {
    * Constructs a new multidimensional data object from the given
    * OME server, session key and image ID.
    */
-  public OMEImage(String server, String sessionKey, int imageId) {
+  public OMEImage(String server, String sessionKey,
+    int imageId, BioTask task)
+  {
     super(null, null);
     this.server = server;
     this.sessionKey = sessionKey;
     this.imageId = imageId;
+    this.task = task;
     initState(null);
   }
 
@@ -133,12 +140,15 @@ public class OMEImage extends ImageTransform {
    * Constructs a new multidimensional data object from the given
    * OME server, username, password and image ID.
    */
-  public OMEImage(String server, String user, String password, int imageId) {
+  public OMEImage(String server, String user, String password,
+    int imageId, BioTask task)
+  {
     super(null, null);
     this.server = server;
     this.user = user;
     this.password = password;
     this.imageId = imageId;
+    this.task = task;
     initState(null);
   }
 
@@ -234,10 +244,17 @@ public class OMEImage extends ImageTransform {
     }
     else server = OMEManager.getProperServer(server);
 
+    // set up task listener
+    TaskManager tm = (TaskManager)
+      dm.getVisBio().getManager(TaskManager.class);
+    BioTask task = tm.createTask("OME image");
+    task.setStoppable(false);
+
     // make sure everything goes ok
     try {
-      return sessionKey != null ? new OMEImage(server, sessionKey, imageId) :
-        new OMEImage(server, user, password, imageId);
+      return sessionKey != null ?
+        new OMEImage(server, sessionKey, imageId, task) :
+        new OMEImage(server, user, password, imageId, task);
     }
     catch (Exception exc) {
       exc.printStackTrace();
@@ -347,6 +364,17 @@ public class OMEImage extends ImageTransform {
 
     // initialize download helper
     downloader = new ImageDownloader();
+    if (task != null) {
+      task.setStatus("Downloading image");
+      downloader.addTaskListener(new TaskListener() {
+        public void taskUpdated(TaskEvent e) {
+          int val = e.getProgressValue();
+          int max = e.getProgressMaximum();
+          String msg = e.getStatusMessage();
+          task.setStatus(val, max, msg);
+        }
+      });
+    }
 
     // download image details
     rs = sessionKey == null ? downloader.login(server, user, password) :
@@ -354,6 +382,7 @@ public class OMEImage extends ImageTransform {
     df = (DataFactory) rs.getService(DataFactory.class);
     pf = (PixelsFactory) rs.getService(PixelsFactory.class);
     image = downloader.downloadImage(df, imageId);
+    if (image == null && task != null) task.setCompleted();
     name = image.getName();
     pixels = image.getDefaultPixels();
     sizeX = pixels.getSizeX().intValue();
@@ -387,6 +416,8 @@ public class OMEImage extends ImageTransform {
 
     // construct thumbnail handler
     thumbs = new ThumbnailHandler(this, "cache.visbio"); // use global cache
+
+    if (task != null) task.setCompleted();
   }
 
   /**
