@@ -92,6 +92,7 @@ public abstract class OMETools {
   public static Object setImage(Object root, String name,
     String creationDate, String description)
   {
+    if (root == null) return null;
     Object image = null;
     try {
       R.setVar("ome", root);
@@ -115,6 +116,7 @@ public abstract class OMETools {
     String lastName, String email, String institution, String dataDirectory,
     Object group)
   {
+    if (root == null) return null;
     Object experimenter = null;
     try {
       R.setVar("ome", root);
@@ -147,6 +149,7 @@ public abstract class OMETools {
   public static Object setGroup(Object root, String name,
     Object leader, Object contact)
   {
+    if (root == null) return null;
     Object group = null;
     try {
       R.setVar("ome", root);
@@ -173,6 +176,7 @@ public abstract class OMETools {
   public static Object setInstrument(Object root, String manufacturer,
     String model, String serialNumber, String type)
   {
+    if (root == null) return null;
     Object instrument = null;
     try {
       R.setVar("ome", root);
@@ -201,6 +205,7 @@ public abstract class OMETools {
   public static Object setDimensions(Object root, Float pixelSizeX,
     Float pixelSizeY, Float pixelSizeZ, Float pixelSizeC, Float pixelSizeT)
   {
+    if (root == null) return null;
     Object dimensions = null;
     try {
       R.setVar("ome", root);
@@ -234,6 +239,7 @@ public abstract class OMETools {
     Integer z0, Integer x1, Integer y1, Integer z1, Integer t0, Integer t1,
     Object displayOptions)
   {
+    if (root == null) return null;
     Object displayROI = null;
     try {
       R.setVar("ome", root);
@@ -275,6 +281,7 @@ public abstract class OMETools {
     Integer sizeZ, Integer sizeC, Integer sizeT, String pixelType,
     Boolean bigEndian, String dimensionOrder)
   {
+    if (root == null) return null;
     Object pixels = null;
     try {
       R.setVar("ome", root);
@@ -313,6 +320,7 @@ public abstract class OMETools {
   public static Object setStageLabel(Object root, String name,
     Float x, Float y, Float z)
   {
+    if (root == null) return null;
     Object stageLabel = null;
     try {
       R.setVar("ome", root);
