@@ -293,6 +293,13 @@ public class QTReader extends FormatReader {
     else if (codec.equals("mjpb")) return mjpbUncompress(pixs);
 
     byte[] bytes = uncompress(pixs, codec);
+    // on rare occassions, we need to trim the data
+    if ((prevPixels != null) && (prevPixels.length < bytes.length)) {
+      byte[] temp = bytes;
+      bytes = new byte[prevPixels.length];
+      System.arraycopy(temp, 0, bytes, 0, bytes.length);
+    }        
+    
     prevPixels = bytes;
 
     // determine whether we need to strip out any padding bytes
