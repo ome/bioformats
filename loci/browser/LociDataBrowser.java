@@ -15,6 +15,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import loci.util.FilePattern;
 import loci.util.MathUtil;
+import javax.swing.*;
 
 
 /**
@@ -30,10 +31,10 @@ public class LociDataBrowser implements PlugIn {
   // -- Constants --
 
   /** Debugging flag. */
-  protected static final boolean DEBUG = false;
+    protected static final boolean DEBUG = false;
 
   /** Flag for toggling availability of virtual stack logic. */
-  protected static final boolean VIRTUAL = true;
+    //  protected static final boolean VIRTUAL = true;
 
   /** Prefix endings indicating numbering block represents T. */
   private static final String[] PRE_T = {
@@ -68,7 +69,7 @@ public class LociDataBrowser implements PlugIn {
   /** indices into lengths array for Z, T and C */
   protected int zIndex, tIndex, cIndex;
 
-
+    protected boolean virtual;
   // -- LociDataBrowser methods --
 
   /** Displays the given ImageJ image in a 4D browser window. */
@@ -131,9 +132,11 @@ public class LociDataBrowser implements PlugIn {
   // -- Plugin methods --
 
   public void run(String arg) {
-    OpenDialog od = new OpenDialog("Open Sequence of Image Stacks:", "");
-    String directory = od.getDirectory();
-    String name = od.getFileName();
+    LociOpener lociOpener = new LociOpener();
+
+    String directory = lociOpener.getDirectory();
+    String name = lociOpener.getFileName();
+    virtual = lociOpener.getVirtual();
     if (name == null) return;
 
     // find all the files having similar names (using FilePattern class)
@@ -142,6 +145,27 @@ public class LociDataBrowser implements PlugIn {
     String[] filenames = fp.getFiles(); // all the image files
     int numFiles = filenames.length;
 
+    long size = (new File(filenames[0])).length();
+
+    // warns if virtual stack box not checked and projected memory usage > 512 MB
+    if ((size*numFiles > 512000000) && !virtual) {
+	Object[] options = {"Use Virtual Stack",
+			    "Don't Use Virtual Stack"};
+	String warning = "Estimated memory usage exceeds total available memory.\n " +
+	    "Do you want to use virtual stack to load the images?\n";
+	boolean done = false;
+	while (!done) {
+	    int n = JOptionPane.showOptionDialog(null,warning,"Warning",
+					     JOptionPane.YES_NO_OPTION,
+			     JOptionPane.WARNING_MESSAGE,null,options,options[0]);
+	    if (n == 0) {
+		virtual = true; done = true;
+	    } else if (n == 1) {
+		virtual = false; done = true;
+	    }
+	}
+    }
+   
     // trim directory prefix from filename list
     int dirLen = directory.length();
     for (int i=0; i<filenames.length; i++) {
@@ -156,8 +180,6 @@ public class LociDataBrowser implements PlugIn {
       log("pattern", pattern);
       log("filenames", filenames);
     }
-
-    boolean virtual = VIRTUAL;
 
     // read images
     int depth = 0, width = 0, height = 0, type = 0;

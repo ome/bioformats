@@ -9,7 +9,6 @@ import ij.ImageStack;
 import ij.io.Opener;
 import ij.process.ImageProcessor;
 import java.awt.image.ColorModel;
-
 import java.util.Arrays;
 
 /** This class represents an array of disk-resident images. */
@@ -55,7 +54,8 @@ class VirtualStack extends ImageStack {
     fileIndex = -1;
     stacksize = -1;
     animT = true;
-    
+    nSlices = 0;
+
     //IJ.log("VirtualStack: "+path);
   }
 
@@ -84,14 +84,14 @@ class VirtualStack extends ImageStack {
 	    currentStack = new ImageStack(width, height, cm);
 	}
     }
-
-  // -- ImageStack methods --
-
-  /** Does nothing. */
-  public void addSlice(String sliceLabel, Object pixels) {
-    System.err.println("ERROR: calling addSlice(sliceLabel, pixels)");
-  }
-
+    
+    // -- ImageStack methods --
+    
+    /** Does nothing. */
+    public void addSlice(String sliceLabel, Object pixels) {
+	System.err.println("ERROR: calling addSlice(sliceLabel, pixels)");
+    }
+    
 
   public void addSlice(String sliceLabel, ImageProcessor ip) {
     if (LociDataBrowser.DEBUG) {
@@ -146,12 +146,10 @@ class VirtualStack extends ImageStack {
 	  }
 	  if (imp!=null) {
 	      imp.setSlice(n % stacksize == 0 ? stacksize : n % stacksize);
-	      System.err.println("Stack label = "+imp.getStack().getSliceLabel(n % stacksize == 0 ? stacksize : n % stacksize));
+	      if (LociDataBrowser.DEBUG) 
+		  System.err.println("Stack label = "+imp.getStack().getSliceLabel(n % stacksize == 0 ? stacksize : n % stacksize));
 	  }
 	  else return null;
-	  System.err.println("fileIndex = " + fileIndex);
-	  System.err.println("stacksize = " + stacksize);
-	  System.err.println("n = " + n);
       return imp.getProcessor();
       } else {
 	  if (LociDataBrowser.DEBUG) {

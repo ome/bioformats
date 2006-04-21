@@ -1,3 +1,4 @@
+// bug(?): possible race condition between showslice and setindices
 //
 // CustomWindow.java
 //
@@ -296,7 +297,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   // -- CustomWindow methods --
 
   /** selects and shows slice defined by z, t and c */
-  public void showSlice(int z, int t, int c) {
+synchronized public void showSlice(int z, int t, int c) {
     int index = db.getIndex(z - 1, t - 1, c - 1);
     if (LociDataBrowser.DEBUG) {
       db.log("showSlice: index=" + index +
@@ -315,16 +316,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       db.log("invalid index: " + index + " (size = " + imp.getStackSize() +
         "; zSliceSel = " + zSliceSel.getValue() +
         "; tSliceSel = " + tSliceSel.getValue() + ")");
-    }
-  }
-
-
-  /** selects and shows virtual slice */
-  public void showVirtualSlice(int z, int t, int c, int axis) {
-    int index = db.getIndex(z - 1, t - 1, c - 1);
-    if (LociDataBrowser.DEBUG) {
-      db.log("showVirtualSlice: index=" + index +
-        "; z=" + z + "; t=" + t + "; c=" + c);
     }
   }
 
@@ -432,7 +423,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   // -- ActionListener methods --
 
-  public void actionPerformed(ActionEvent e) {
+    synchronized public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
     String cmd = e.getActionCommand();
     if ("xml".equals(cmd)) {
@@ -482,7 +473,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         animationTimer = new Timer(1000 / fps, this);
         animationTimer.start();
         animate.setText(STOP_STRING);
-	setIndices();
+	if (db.virtual) setIndices();
       }
       else {
         animationTimer.stop();
@@ -492,7 +483,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     }
   }
 
-    public void setIndices() {
+    synchronized public void setIndices() {
 	thread = new Thread(this);
 	thread.start();
     }
@@ -567,7 +558,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   public void itemStateChanged(ItemEvent e) {
     JCheckBox channels = (JCheckBox) e.getSource();
     c = channels.isSelected() ? 1 : 2;
-    setIndices();
+    if (db.virtual) setIndices();
     showSlice(z, t, c);
   }
 
