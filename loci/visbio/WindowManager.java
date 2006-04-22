@@ -305,9 +305,9 @@ public class WindowManager extends LogicManager implements WindowListener {
     // options menu
     bio.setSplashStatus(null);
     OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
-// Window docking is too buggy; disable it
-//    om.addBooleanOption("General", DOCKING, 'd',
-//      "Toggles whether window docking features are enabled", docking);
+    // window docking is too buggy; disable it
+    //om.addBooleanOption("General", DOCKING, 'd',
+    //  "Toggles whether window docking features are enabled", docking);
     om.addBooleanOption("General", HIDE_ALL, 'h', "Toggles whether all " +
       "VisBio windows disappear when main window is minimized", hideAll);
   }
