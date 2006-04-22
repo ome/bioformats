@@ -118,32 +118,32 @@ public class ImageDownloader {
         exc.printStackTrace();
         return null;
       }
-      if (pixelType.equals("uint8")) {
+      if (pixelType.equalsIgnoreCase("uint8")) {
         for (int i=0; i<len; i++) {
           int b0 = b[i] & 0xff;
           samples[c][i] = b0;
         }
       }
-      else if (pixelType.equals("uint16")) {
+      else if (pixelType.equalsIgnoreCase("uint16")) {
         for (int i=0; i<len; i++) {
           int b0 = b[2 * i] & 0xff;
           int b1 = (b[2 * i + 1] & 0xff) << 8;
           samples[c][i] = b0 | b1;
         }
       }
-      else if (pixelType.equals("int16")) {
+      else if (pixelType.equalsIgnoreCase("int16")) {
         // CTR TODO pixel type int16
         return null;
       }
-      else if (pixelType.equals("color256")) {
+      else if (pixelType.equalsIgnoreCase("color256")) {
         // CTR TODO pixel type color256
         return null;
       }
-      else if (pixelType.equals("colorRGB")) {
+      else if (pixelType.equalsIgnoreCase("colorRGB")) {
         // CTR TODO pixel type colorRGB
         return null;
       }
-      else if (pixelType.equals("uint32")) {
+      else if (pixelType.equalsIgnoreCase("uint32")) {
         for (int i=0; i<len; i++) {
           int b0 = b[4 * i] & 0xff;
           int b1 = (b[4 * i + 1] & 0xff) << 8;
@@ -152,7 +152,7 @@ public class ImageDownloader {
           samples[c][i] = b0 | b1 | b2 | b3;
         }
       }
-      else if (pixelType.equals("float")) {
+      else if (pixelType.equalsIgnoreCase("float")) {
         for (int i=0; i<len; i++) {
           int b0 = b[4 * i] & 0xff;
           int b1 = (b[4 * i + 1] & 0xff) << 8;
