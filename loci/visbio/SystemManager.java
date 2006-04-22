@@ -176,13 +176,31 @@ public class SystemManager extends LogicManager
   public boolean isJNLP() { return System.getProperty("jnlpx.home") != null; }
 
   /** Gets associated control panel. */
-  public SystemControls getControls() { return systemControls; }
+  public SystemControls getControls() {
+    if (systemControls == null) {
+      // control panel construction delayed until
+      // first use, to improve program startup speed
+      WindowManager wm = (WindowManager) bio.getManager(WindowManager.class);
+      wm.setWaitCursor(true);
+
+      // control panel
+      systemControls = new SystemControls(this);
+      systemFrame = new JFrame("System Information");
+      systemFrame.getContentPane().add(systemControls);
+
+      // register system information window with window manager
+      wm.addWindow(systemFrame);
+      wm.setWaitCursor(false);
+    }
+    return systemControls;
+  }
 
 
   // -- Menu commands --
 
   /** Displays the system information window. */
   public void showSystemInfo() {
+    getControls();
     WindowManager wm = (WindowManager) bio.getManager(WindowManager.class);
     wm.showWindow(systemFrame);
   }
@@ -200,7 +218,7 @@ public class SystemManager extends LogicManager
   }
 
   /** Gets the number of tasks required to initialize this logic manager. */
-  public int getTasks() { return 3; }
+  public int getTasks() { return 2; }
 
 
   // -- ActionListener API methods --
@@ -226,18 +244,8 @@ public class SystemManager extends LogicManager
 
   /** Adds system-related GUI components to VisBio. */
   private void doGUI() {
-    // control panel
-    bio.setSplashStatus("Initializing system information window");
-    systemControls = new SystemControls(this);
-    systemFrame = new JFrame("System Information");
-    systemFrame.getContentPane().add(systemControls);
-
-    // register system information window with window manager
-    WindowManager wm = (WindowManager) bio.getManager(WindowManager.class);
-    wm.addWindow(systemFrame);
-
     // menu items
-    bio.setSplashStatus(null);
+    bio.setSplashStatus("Initializing system information window");
     JMenuItem system = bio.addMenuItem("Window", "System information",
       "loci.visbio.SystemManager.showSystemInfo", 'i');
     system.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0));
