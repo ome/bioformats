@@ -23,8 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 
 /**
  * A utility class with convenience methods for
@@ -36,8 +35,8 @@ public abstract class DataTools {
 
   // -- Data reading --
 
-  /** Reads bytes from the given random access file or array. */
-  public static void readFully(RandomAccessFile in, byte[] bytes)
+  /** Reads bytes from the given data input source. */
+  public static void readFully(DataInput in, byte[] bytes)
     throws IOException
   {
     if (in instanceof RandomAccessArray) {
@@ -47,14 +46,14 @@ public abstract class DataTools {
   }
 
   /** Reads 1 signed byte [-128, 127]. */
-  public static byte readSignedByte(RandomAccessFile in) throws IOException {
+  public static byte readSignedByte(DataInput in) throws IOException {
     byte[] b = new byte[1];
     readFully(in, b);
     return b[0];
   }
 
   /** Reads 1 unsigned byte [0, 255]. */
-  public static short readUnsignedByte(RandomAccessFile in)
+  public static short readUnsignedByte(DataInput in)
     throws IOException
   {
     short q = readSignedByte(in);
@@ -63,7 +62,7 @@ public abstract class DataTools {
   }
 
   /** Reads 2 signed bytes [-32768, 32767]. */
-  public static short read2SignedBytes(RandomAccessFile in, boolean little)
+  public static short read2SignedBytes(DataInput in, boolean little)
     throws IOException
   {
     byte[] bytes = new byte[2];
@@ -72,7 +71,7 @@ public abstract class DataTools {
   }
 
   /** Reads 2 unsigned bytes [0, 65535]. */
-  public static int read2UnsignedBytes(RandomAccessFile in, boolean little)
+  public static int read2UnsignedBytes(DataInput in, boolean little)
     throws IOException
   {
     int q = read2SignedBytes(in, little);
@@ -81,7 +80,7 @@ public abstract class DataTools {
   }
 
   /** Reads 4 signed bytes [-2147483648, 2147483647]. */
-  public static int read4SignedBytes(RandomAccessFile in, boolean little)
+  public static int read4SignedBytes(DataInput in, boolean little)
     throws IOException
   {
     byte[] bytes = new byte[4];
@@ -90,7 +89,7 @@ public abstract class DataTools {
   }
 
   /** Reads 4 unsigned bytes [0, 4294967296]. */
-  public static long read4UnsignedBytes(RandomAccessFile in, boolean little)
+  public static long read4UnsignedBytes(DataInput in, boolean little)
     throws IOException
   {
     long q = read4SignedBytes(in, little);
@@ -99,7 +98,7 @@ public abstract class DataTools {
   }
 
   /** Reads 8 signed bytes [-9223372036854775808, 9223372036854775807]. */
-  public static long read8SignedBytes(RandomAccessFile in, boolean little)
+  public static long read8SignedBytes(DataInput in, boolean little)
     throws IOException
   {
     byte[] bytes = new byte[8];
@@ -108,14 +107,14 @@ public abstract class DataTools {
   }
 
   /** Reads 4 bytes in single precision IEEE format. */
-  public static float readFloat(RandomAccessFile in, boolean little)
+  public static float readFloat(DataInput in, boolean little)
     throws IOException
   {
     return Float.intBitsToFloat(read4SignedBytes(in, little));
   }
 
   /** Reads 8 bytes in double precision IEEE format. */
-  public static double readDouble(RandomAccessFile in, boolean little)
+  public static double readDouble(DataInput in, boolean little)
     throws IOException
   {
     return Double.longBitsToDouble(read8SignedBytes(in, little));
@@ -124,61 +123,46 @@ public abstract class DataTools {
 
   // -- Data writing --
 
-  /** Writes a string to the given random access file. */
-  public static void writeString(RandomAccessFile out, String s)
+  /** Writes a string to the given data output destination. */
+  public static void writeString(DataOutput out, String s)
     throws IOException
   {
     byte[] bytes =  s.getBytes("UTF-8");
     out.write(bytes);
   }
 
-  /**
-   * Writes an integer to the given random access file
-   * in little-endian format.
-   */
-  public static void writeInt(RandomAccessFile out, int v)
+  /** Writes an integer to the given data output destination. */
+  public static void writeInt(DataOutput out, int v, boolean little)
     throws IOException
   {
-    out.write(v & 0xFF);
-    out.write((v >>> 8) & 0xFF);
-    out.write((v >>> 16) & 0xFF);
-    out.write((v >>> 24) & 0xFF);
+    if (little) {
+      out.write(v & 0xFF);
+      out.write((v >>> 8) & 0xFF);
+      out.write((v >>> 16) & 0xFF);
+      out.write((v >>> 24) & 0xFF);
+    }
+    else {
+      out.write((v >>> 24) & 0xFF);
+      out.write((v >>> 16) & 0xFF);
+      out.write((v >>> 8) & 0xFF);
+      out.write(v & 0xFF);
+    }
   }
 
-  /**
-   * Writes a short to the given random access file
-   * in little-endian format.
-   */
-  public static void writeShort(RandomAccessFile out, int v)
+  /** Writes a short to the given data output destination. */
+  public static void writeShort(DataOutput out, int v, boolean little)
     throws IOException
   {
-    out.write(v & 0xFF);
-    out.write((v >>> 8) & 0xFF);
+    if (little) {
+      out.write(v & 0xFF);
+      out.write((v >>> 8) & 0xFF);
+    }
+    else {
+      out.write((v >>> 8) & 0xFF);
+      out.write(v & 0xFF);
+    }
   }
 
-  /**
-   * Writes an integer to the given random access file
-   * in big-endian format.
-   */
-  public static void writeReverseInt(RandomAccessFile out, int v)
-    throws IOException
-  {
-    out.write((v >>> 24) & 0xFF);
-    out.write((v >>> 16) & 0xFF);
-    out.write((v >>> 8) & 0xFF);
-    out.write(v & 0xFF);
-  }
-
-  /**
-   * Writes a short to the given random access file
-   * in big-endian format.
-   */
-  public static void writeReverseShort(RandomAccessFile out, int v)
-    throws IOException
-  {
-    out.write((v >>> 8) & 0xFF);
-    out.write(v & 0xFF);
-  }
 
   // -- Word decoding --
 
