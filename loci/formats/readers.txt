@@ -5,6 +5,7 @@ loci.formats.GIFReader         # gif [javax.imageio]
 
 # standalone readers with unique file extensions
 loci.formats.BMPReader         # bmp
+loci.formats.DicomReader       # dcm, dicom
 loci.formats.BioRadReader      # pic
 loci.formats.IPLabReader       # ipl
 loci.formats.DeltavisionReader # dv
