@@ -298,8 +298,8 @@ public class QTReader extends FormatReader {
       byte[] temp = bytes;
       bytes = new byte[prevPixels.length];
       System.arraycopy(temp, 0, bytes, 0, bytes.length);
-    }        
-    
+    }
+
     prevPixels = bytes;
 
     // determine whether we need to strip out any padding bytes
