@@ -53,9 +53,9 @@ public class OIFReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new OIF reader. */
-  public OIFReader() { 
-    super("Fluoview FV1000 OIF", 
-      new String[] {"oif", "roi", "pty", "tif", "lut", "bmp"}); 
+  public OIFReader() {
+    super("Fluoview FV1000 OIF",
+      new String[] {"oif", "roi", "pty", "tif", "lut", "bmp"});
   }
 
 
@@ -94,25 +94,25 @@ public class OIFReader extends FormatReader {
 
   /** Initializes the given OIF file. */
   protected void initFile(String id) throws FormatException, IOException {
-    
+
     // check to make sure that we have the OIF file
     // if not, we need to look for it in the parent directory
-         
-    String oifFile = id;      
+
+    String oifFile = id;
     if (!id.toLowerCase().endsWith("oif")) {
       File current = new File(id);
       current = current.getAbsoluteFile();
       String parent = current.getParent();
       File tmp = new File(parent);
       parent = tmp.getParent();
-      
+
       // strip off the filename
-   
+
       id = current.getPath();
-      
+
       oifFile = id.substring(id.lastIndexOf(File.separator));
       oifFile = parent + oifFile.substring(0, oifFile.indexOf("_")) + ".oif";
-  
+
       tmp = new File(oifFile);
       if (!tmp.exists()) {
         oifFile = oifFile.substring(0, oifFile.lastIndexOf(".")) + ".OIF";
@@ -123,8 +123,8 @@ public class OIFReader extends FormatReader {
       else {
         currentId = oifFile;
       }
-    }      
-          
+    }
+
     super.initFile(oifFile);
     reader = new BufferedReader(new FileReader(oifFile));
     tiffReader = new TiffReader();

@@ -62,14 +62,14 @@ public class DicomReader extends FormatReader {
   private static final int SEQUENCE_DELIMINATION = 0xFFFEE0DD;
   private static final int PIXEL_DATA = 0x7FE00010;
 
-  private static final int AE=0x4145, AS=0x4153, AT=0x4154, CS=0x4353, 
-    DA=0x4441, DS=0x4453, DT=0x4454, FD=0x4644, FL=0x464C, IS=0x4953, 
-    LO=0x4C4F, LT=0x4C54, PN=0x504E, SH=0x5348, SL=0x534C, SS=0x5353, 
+  private static final int AE=0x4145, AS=0x4153, AT=0x4154, CS=0x4353,
+    DA=0x4441, DS=0x4453, DT=0x4454, FD=0x4644, FL=0x464C, IS=0x4953,
+    LO=0x4C4F, LT=0x4C54, PN=0x504E, SH=0x5348, SL=0x534C, SS=0x5353,
     ST=0x5354, TM=0x544D, UI=0x5549, UL=0x554C, US=0x5553, UT=0x5554,
     OB=0x4F42, OW=0x4F57, SQ=0x5351, UN=0x554E, QQ=0x3F3F;
-    
+
   private static final int IMPLICIT_VR = 0x2d2d;
-  
+
   // -- Fields --
 
   /** Current file. */
@@ -89,10 +89,10 @@ public class DicomReader extends FormatReader {
 
   /** Offset to first plane. */
   protected int offsets;
- 
+
   /** True if the data is little-endian. */
   protected boolean little;
- 
+
   private int location;
   private int elementLength;
   private int vr;
@@ -101,13 +101,13 @@ public class DicomReader extends FormatReader {
   private boolean oddLocations;
   private boolean inSequence;
   private boolean bigEndianTransferSyntax;
-  
+
   // -- Constructor --
 
   /** Constructs a new DICOM reader. */
-  public DicomReader() { 
-    super("Digital Imaging and Communication in Medicine", 
-      new String[] {"dcm", "dicom"}); 
+  public DicomReader() {
+    super("Digital Imaging and Communication in Medicine",
+      new String[] {"dcm", "dicom"});
   }
 
   // -- FormatReader API methods --
@@ -142,26 +142,26 @@ public class DicomReader extends FormatReader {
     }
     else if (bitsPerPixel == 16) {
       // this is horribly broken
-     
+
       short[] shortData = new short[width * height];
       for (int i=0; i<data.length; i+=2) {
         shortData[i/2] = DataTools.bytesToShort(data, i, 2, little);
       }
 
       return ImageTools.makeImage(shortData, width, height, 1, false);
-    }        
+    }
     else if (bitsPerPixel == 32) {
       float[] floatData = new float[width * height];
       for (int i=0; i<data.length; i+=4) {
-        floatData[i/4] = 
+        floatData[i/4] =
           Float.intBitsToFloat(DataTools.bytesToInt(data, i, 4, little));
-      }        
-      return ImageTools.makeImage(floatData, width, height, 1, false);      
+      }
+      return ImageTools.makeImage(floatData, width, height, 1, false);
     }
     else {
-      throw new FormatException("Unsupported bits per pixel : " + bitsPerPixel);
-    }        
-  }   
+      throw new FormatException("Unsupported bits per pixel: " + bitsPerPixel);
+    }
+  }
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
@@ -176,7 +176,7 @@ public class DicomReader extends FormatReader {
     in = new RandomAccessFile(id, "r");
     little = true;
     location = 0;
-    
+
     // some DICOM files have a 128 byte header followed by a 4 byte identifier
 
     byte[] four = new byte[4];
@@ -188,24 +188,24 @@ public class DicomReader extends FormatReader {
       byte[] header = new byte[128];
       in.read(header);
       metadata.put("Header information", new String(header));
-      in.skipBytes(4); 
+      in.skipBytes(4);
       location = 128;
     }
     else in.seek(0);
-    
+
     boolean decodingTags = true;
     boolean signed = false;
 
     while (decodingTags) {
       int tag = getNextTag();
-      
+
       if ((location & 1) != 0) oddLocations = true;
       if (inSequence) {
         addInfo(tag, null);
         if (in.getFilePointer() >= (in.length() - 4)) decodingTags = false;
         continue;
-      }  
-        
+      }
+
       String s;
       switch (tag) {
         case TRANSFER_SYNTAX_UID:
@@ -302,7 +302,7 @@ public class DicomReader extends FormatReader {
     }
     if (numImages == 0) numImages = 1;
 
-    // populate OME-XML node 
+    // populate OME-XML node
     if (ome != null) {
       OMETools.setPixels(ome,
         new Integer((String) metadata.get("Columns")), // SizeX
@@ -316,18 +316,18 @@ public class DicomReader extends FormatReader {
 
       OMETools.setImage(ome,
         null, // name
-        ((String) metadata.get("Content Date")) + "T" + 
+        ((String) metadata.get("Content Date")) + "T" +
           ((String) metadata.get("Content Time")),  // CreationDate
         (String) metadata.get("Image Type"));
-    
+
       OMETools.setInstrument(ome,
         (String) metadata.get("Manufacturer"),
         (String) metadata.get("Manufacturer's Model Name"),
         null, null);
-    
+
     }
   }
- 
+
   // -- Utility methods --
 
   private void addInfo(int tag, String value) throws IOException {
@@ -341,19 +341,19 @@ public class DicomReader extends FormatReader {
       String key = (String) TYPES.get(new Integer(tag));
       if (key == null) key = "" + tag;
       if (tag != PIXEL_DATA) metadata.put(key, info);
-    }         
+    }
   }
 
   private void addInfo(int tag, int value) throws IOException {
     addInfo(tag, Integer.toString(value));
   }
- 
+
   private String getHeaderInfo(int tag, String value) throws IOException {
     if (tag == ITEM_DELIMINATION || tag == SEQUENCE_DELIMINATION) {
       inSequence = false;
     }
 
-    Integer key = new Integer(tag); 
+    Integer key = new Integer(tag);
     String id = (String) TYPES.get(key);
 
     if (id != null) {
@@ -361,30 +361,30 @@ public class DicomReader extends FormatReader {
         vr = (id.charAt(0) << 8) + id.charAt(1);
       }
       if (id.length() > 2) id = id.substring(2);
-    }        
-    
+    }
+
     if (tag == ITEM) return id != null ? id : null;
     if (value != null) return value;
-    
+
     switch (vr) {
-      case AE: 
-      case AS: 
-      case AT: 
-      case CS: 
-      case DA: 
-      case DS: 
-      case DT:  
-      case IS: 
+      case AE:
+      case AS:
+      case AT:
+      case CS:
+      case DA:
+      case DS:
+      case DT:
+      case IS:
       case LO:
-      case LT: 
-      case PN: 
-      case SH: 
-      case ST: 
-      case TM: 
+      case LT:
+      case PN:
+      case SH:
+      case ST:
+      case TM:
       case UI:
         byte[] s = new byte[elementLength];
         in.read(s);
-        value = new String(s); 
+        value = new String(s);
         break;
       case US:
         if (elementLength == 2) {
@@ -394,28 +394,28 @@ public class DicomReader extends FormatReader {
           value = "";
           int n = elementLength / 2;
           for (int i=0; i<n; i++)
-            value += 
+            value +=
               Integer.toString(DataTools.read2SignedBytes(in, little)) + " ";
           }
           break;
       case IMPLICIT_VR:
         s = new byte[elementLength];
         in.read(s);
-        value = new String(s); 
+        value = new String(s);
         if (elementLength <= 4 || elementLength > 44) value = null;
         break;
       case SQ:
         value = "";
         boolean privateTag = ((tag >> 16) & 1) != 0;
         if (tag != ICON_IMAGE_SEQUENCE && !privateTag) break;
-        
+
         // else fall through and skip icon image sequence or private sequence
-       
+
       default:
         long skipCount = (long) elementLength;
         while ((skipCount > 0) && in.getFilePointer() < in.length()) {
           skipCount -= in.skipBytes((int) skipCount);
-        }  
+        }
         location += elementLength;
         value = "";
     }
@@ -424,7 +424,7 @@ public class DicomReader extends FormatReader {
     else if (id == null) return null;
     else return value;
   }
-  
+
   private int getLength() throws IOException {
     byte[] b = new byte[4];
     in.read(b);
@@ -482,12 +482,12 @@ public class DicomReader extends FormatReader {
         return (b[0] << 24) + (b[1] << 16) + (b[2] << 8) + b[3];
     }
   }
-  
+
   private int getNextTag() throws IOException {
     int groupWord = DataTools.read2SignedBytes(in, little);
     if (groupWord == 0x0800 && bigEndianTransferSyntax) {
       little = false;
-      groupWord = 0x0008;      
+      groupWord = 0x0008;
     }
 
     int elementWord = DataTools.read2SignedBytes(in, little);
@@ -497,7 +497,7 @@ public class DicomReader extends FormatReader {
     // hack needed to read some GE files
     // The element length must be even!
     if (elementLength == 13 && !oddLocations) elementLength = 10;
-   
+
     // "Undefined" element length.
     // This is a sort of bracket that encloses a sequence of elements.
     if (elementLength == -1) {
@@ -506,7 +506,7 @@ public class DicomReader extends FormatReader {
     }
     return tag;
   }
-  
+
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {
@@ -514,14 +514,14 @@ public class DicomReader extends FormatReader {
   }
 
 
-  /** 
-   * Assemble the data dictionary. 
+  /**
+   * Assemble the data dictionary.
    * This is incomplete at best, since there are literally thousands of
    * fields defined by the DICOM specifications.
    */
   private static Hashtable buildTypes() {
     Hashtable dict = new Hashtable();
-    
+
     dict.put(new Integer(0x00020002), "Media Storage SOP Class UID");
     dict.put(new Integer(0x00020003), "Media Storage SOP Instance UID");
     dict.put(new Integer(0x00020010), "Transfer Syntax UID");
@@ -622,7 +622,7 @@ public class DicomReader extends FormatReader {
     dict.put(new Integer(0x00081197), "Failure Reason");
     dict.put(new Integer(0x00081198), "Failed SOP Sequence");
     dict.put(new Integer(0x00081199), "Referenced SOP Sequence");
-    dict.put(new Integer(0x00081200), 
+    dict.put(new Integer(0x00081200),
       "Studies Containing Other Referenced Instances Sequence");
     dict.put(new Integer(0x00081250), "Related Series Sequence");
     dict.put(new Integer(0x00082111), "Derivation Description");
@@ -661,7 +661,8 @@ public class DicomReader extends FormatReader {
     dict.put(new Integer(0x00089208), "Complex Image Component");
     dict.put(new Integer(0x00089209), "Acquisition Contrast");
     dict.put(new Integer(0x00089215), "Derivation Code Sequence");
-    dict.put(new Integer(0x00089237), "Reference Grayscale Presentation State");
+    dict.put(new Integer(0x00089237),
+      "Reference Grayscale Presentation State");
     dict.put(new Integer(0x00100010), "Patient's Name");
     dict.put(new Integer(0x00100020), "Patient ID");
     dict.put(new Integer(0x00100021), "Issuer of Patient ID");
@@ -715,7 +716,8 @@ public class DicomReader extends FormatReader {
     dict.put(new Integer(0x00180023), "MR Acquisition Type");
     dict.put(new Integer(0x00180024), "Sequence Name");
     dict.put(new Integer(0x00180025), "Angio Flag");
-    dict.put(new Integer(0x00180026), "Intervention Drug Information Sequence");
+    dict.put(new Integer(0x00180026),
+      "Intervention Drug Information Sequence");
     dict.put(new Integer(0x00180027), "Intervention Drug Stop Time");
     dict.put(new Integer(0x00180028), "Intervention Drug Dose");
     dict.put(new Integer(0x00180029), "Intervention Drug Sequence");
@@ -734,7 +736,8 @@ public class DicomReader extends FormatReader {
     dict.put(new Integer(0x00180072), "Effective Duration");
     dict.put(new Integer(0x00180073), "Acquisition Start Condition");
     dict.put(new Integer(0x00180074), "Acquisition Start Condition Data");
-    dict.put(new Integer(0x00180075), "Acquisition Termination Condition Data");
+    dict.put(new Integer(0x00180075),
+      "Acquisition Termination Condition Data");
     dict.put(new Integer(0x00180080), "Repetition Time");
     dict.put(new Integer(0x00180081), "Echo Time");
     dict.put(new Integer(0x00180082), "Inversion Time");
@@ -759,7 +762,7 @@ public class DicomReader extends FormatReader {
     dict.put(new Integer(0x00181016), "Secondary Capture Device Manufacturer");
     dict.put(new Integer(0x00181017), "Hardcopy Device Manufacturer");
     dict.put(new Integer(0x00181018), "Secondary Capture Device Model Name");
-    dict.put(new Integer(0x00181019), 
+    dict.put(new Integer(0x00181019),
       "Secondary Capture Device Software Version");
     dict.put(new Integer(0x0018101a), "Hardcopy Device Software Version");
     dict.put(new Integer(0x0018101b), "Hardcopy Device Model Name");
@@ -1030,7 +1033,7 @@ public class DicomReader extends FormatReader {
     dict.put(new Integer(0x00200020), "Patient Orientation");
     dict.put(new Integer(0x00200030), "Image Position");
     dict.put(new Integer(0x00200032), "Image Position (Patient)");
-    dict.put(new Integer(0x00200037), "Image Orientation (Patient)"); 
+    dict.put(new Integer(0x00200037), "Image Orientation (Patient)");
     dict.put(new Integer(0x00200050), "Location");
     dict.put(new Integer(0x00200052), "Frame of Reference UID");
     dict.put(new Integer(0x00200070), "Image Geometry Type");
@@ -1084,7 +1087,8 @@ public class DicomReader extends FormatReader {
     dict.put(new Integer(0x00281202), "Green Palette Color LUT Data");
     dict.put(new Integer(0x00281203), "Blue Palette Color LUT Data");
     dict.put(new Integer(0x00281221), "Segmented Red Palette Color LUT Data");
-    dict.put(new Integer(0x00281222), "Segmented Green Palette Color LUT Data");
+    dict.put(new Integer(0x00281222),
+      "Segmented Green Palette Color LUT Data");
     dict.put(new Integer(0x00281223), "Segmented Blue Palette Color LUT Data");
     dict.put(new Integer(0x00281300), "Implant Present");
     dict.put(new Integer(0x00281350), "Partial View");
@@ -1130,11 +1134,11 @@ public class DicomReader extends FormatReader {
     dict.put(new Integer(0x00540202), "Type of Detector Motion");
     dict.put(new Integer(0x00540400), "Image ID");
     dict.put(new Integer(0x20100100), "Border Density");
-    
+
     return dict;
   }
 
 
 
-  
+
 }
