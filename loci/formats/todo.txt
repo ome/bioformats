@@ -6,8 +6,35 @@ Implement readers for other file formats:
 * DICOM
 * Anything else listed online: http://www.loci.wisc.edu/ome/formats.html
 
+Fix incredibly slow metadata parsing in MetamorphReader (don't use
+RandomAccessFile), and potentially other readers.
+
+Check whether ImageTypeSpecifier class is useful for simplifying
+BufferedImage tasks.
+
 Adapt VisBio to take advantage of LOCI Bio-Formats package.
 
-Eventually (later) implement an alternative method for pixel extraction, other
-than the BufferedImage one (such "byte[] openBytes(String, int)" in addition to
-"BufferedImage openImage(String, int)"), for use with OMERO.
+Adapt Bio-Formats API to support OMERO:
+http://cvs.openmicroscopy.org.uk/tiki/tiki-index.php?page=Bio-Formats+Import+Discussion
+1. Parallel APIs, because different readers acquire pixels in different ways:
+  * one for BufferedImages (e.g., for ImageIO-based readers)
+    - BufferedImage openImage(String id, int no)
+  * one for byte[] array (can specify reasonable variants: byte order, pixel
+    type, etc. -- but not interleaved channels) (for OMERO support)
+    - byte[] openBytes(String id, int no)
+  * utility classes to convert between byte[] and BufferedImage
+  * "natively" use whichever approach is natural, and call utility class to
+    convert from "native" structure to that required by the API call as needed
+2. Way to convert between flat image plane index and ZCT coordinates:
+  * in org.openmicroscopy.xml.OMENode: int getIndex(int z, int c, int t)
+  * in org.openmicroscopy.xml.OMENode: int getZ(int index), getT, getC
+3. Way to easily get SizeZ, SizeC and SizeT:
+  * already present as OMETools.getSize* methods
+4. Layer atop base Bio-Formats functionality: VisBio file stitching:
+5. Fine to continue using OME-XML for internal metadata representation. 
+6. Bio-Formats support should be possible in both OMERO and OME-perl
+   (so we can phase out omeul):
+  * for OME-perl, transmit pixels to OMEIS via HTTP, then pass OME-XML to perl
+    API for actual import (need to provide OMEIS image ID or whatever within
+    the XML?)
+  * for OMERO, Bio-Formats API called directly by OMERO import engine 
