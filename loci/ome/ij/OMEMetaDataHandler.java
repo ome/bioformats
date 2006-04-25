@@ -322,10 +322,10 @@ public class OMEMetaDataHandler {
             !id.equals("DatasetNode") && !id.equals("FeatureNode") &&
             !id.equals("ImageNode") && !id.equals("OMENode") &&
             !id.equals("ProjectNode")) {
-                id = "loci.ome.xml.st." + id;
+                id = "org.openmicroscopy.xml.st." + id;
         }
         else {
-          id = "loci.ome.xml." + id;
+          id = "org.openmicroscopy.xml." + id;
         }
 
         // construct a new node using this class

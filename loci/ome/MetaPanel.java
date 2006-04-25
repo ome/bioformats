@@ -308,13 +308,13 @@ public class MetaPanel implements ActionListener, TreeSelectionListener {
           if (id.indexOf(":") != -1) {
             id = id.substring(0, id.indexOf(":"));
           }        
-          id = "loci.ome.xml.st." + id + "Node";
+          id = "org.openmicroscopy.xml.st." + id + "Node";
         }
         else {
           if (id.indexOf(":") != -1) {
             id = id.substring(0, id.indexOf(":")) + "Node";
           }        
-          id = "loci.ome.xml." + id;
+          id = "org.openmicroscopy.xml." + id;
         } 
           
         // construct a new node using this class

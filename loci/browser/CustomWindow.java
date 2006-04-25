@@ -229,9 +229,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     // OME-XML button
     boolean canDoXML = true;
     try {
-      // disable XML button if proper libraries are not installed
-      Class.forName("loci.ome.xml.OMENode");
-      Class.forName("org.openmicroscopy.ds.dto.Image");
+      // disable XML button if ome-java library is not installed
+      Class.forName("org.openmicroscopy.xml.OMENode");
     }
     catch (Throwable e) { canDoXML = false; }
     if (canDoXML) {
@@ -265,8 +264,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     gbc.insets = new Insets(0, 0, 0, 0);
     gridbag.setConstraints(swapAxes, gbc);
     bottom.add(swapAxes);
-
-
 
     // create enclosing JPanel (for 5-pixel border)
     JPanel pane = new JPanel() {

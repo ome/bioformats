@@ -30,9 +30,9 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.*;
-import loci.ome.xml.DOMUtil;
-import loci.ome.xml.OMENode;
 import loci.visbio.util.SwingUtil;
+import org.openmicroscopy.xml.DOMUtil;
+import org.openmicroscopy.xml.OMENode;
 import org.w3c.dom.*;
 
 /** DatasetWidget is a set of GUI controls for a Dataset transform. */

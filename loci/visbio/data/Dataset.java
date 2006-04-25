@@ -32,13 +32,13 @@ import java.rmi.RemoteException;
 import java.util.Hashtable;
 import javax.swing.JComponent;
 import loci.formats.*;
-import loci.ome.xml.OMENode;
 import loci.util.MathUtil;
 import loci.visbio.TaskEvent;
 import loci.visbio.TaskListener;
 import loci.visbio.state.Dynamic;
 import loci.visbio.state.SaveException;
 import loci.visbio.util.*;
+import org.openmicroscopy.xml.OMENode;
 import org.w3c.dom.Element;
 import visad.*;
 
