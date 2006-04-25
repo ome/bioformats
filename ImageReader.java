@@ -183,10 +183,10 @@ public class ImageReader extends FormatReader {
   }
 
   /**
-   * Obtains a loci.ome.xml.OMENode object representing the
+   * Obtains a org.openmicroscopy.xml.OMENode object representing the
    * file's metadata as an OME-XML DOM structure.
    *
-   * @return null if the loci.ome.xml package is not present.
+   * @return null if the org.openmicroscopy.xml package is not present.
    */
   public Object getOMENode(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);

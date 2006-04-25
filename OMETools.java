@@ -27,8 +27,8 @@ import org.w3c.dom.Element;
 
 /**
  * A utility class for constructing and manipulating OME-XML DOMs. It uses
- * reflection to access the loci.ome.xml package so that the class compiles
- * if the loci.ome.xml package is unavailable.
+ * reflection to access the org.openmicroscopy.xml package so that the class
+ * compiles if the org.openmicroscopy.xml package is unavailable.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at cs.wisc.edu
@@ -42,11 +42,11 @@ public abstract class OMETools {
   private static ReflectedUniverse createUniverse() {
     ReflectedUniverse r = new ReflectedUniverse();
     try {
-      r.exec("import loci.ome.xml.CustomAttributesNode");
-      r.exec("import loci.ome.xml.DOMUtil");
-      r.exec("import loci.ome.xml.ImageNode");
-      r.exec("import loci.ome.xml.OMENode");
-      r.exec("import loci.ome.xml.OMEXMLNode");
+      r.exec("import org.openmicroscopy.xml.CustomAttributesNode");
+      r.exec("import org.openmicroscopy.xml.DOMUtil");
+      r.exec("import org.openmicroscopy.xml.ImageNode");
+      r.exec("import org.openmicroscopy.xml.OMENode");
+      r.exec("import org.openmicroscopy.xml.OMEXMLNode");
       r.setVar("FALSE", false);
     }
     catch (Throwable t) { r = null; }
@@ -130,7 +130,7 @@ public abstract class OMETools {
       Object ca = getChild(root, "CustomAttributes");
       R.setVar("ca", ca);
 
-      R.exec("import loci.ome.xml.st.ExperimenterNode");
+      R.exec("import org.openmicroscopy.xml.st.ExperimenterNode");
       experimenter = getChild(ca, "Experimenter");
       R.setVar("experimenter", experimenter);
 
@@ -160,7 +160,7 @@ public abstract class OMETools {
       Object ca = getChild(root, "CustomAttributes");
       R.setVar("ca", ca);
 
-      R.exec("import loci.ome.xml.st.GroupNode");
+      R.exec("import org.openmicroscopy.xml.st.GroupNode");
       group = getChild(ca, "Group");
       R.setVar("group", group);
 
@@ -188,7 +188,7 @@ public abstract class OMETools {
       Object ca = getChild(root, "CustomAttributes");
       R.setVar("ca", ca);
 
-      R.exec("import loci.ome.xml.st.InstrumentNode");
+      R.exec("import org.openmicroscopy.xml.st.InstrumentNode");
       instrument = getChild(ca, "Instrument");
       R.setVar("instrument", instrument);
 
@@ -220,7 +220,7 @@ public abstract class OMETools {
       Object ca = getChild(image, "CustomAttributes");
       R.setVar("ca", ca);
 
-      R.exec("import loci.ome.xml.st.DimensionsNode");
+      R.exec("import org.openmicroscopy.xml.st.DimensionsNode");
       dimensions = getChild(ca, "Dimensions");
       R.setVar("dimensions", dimensions);
 
@@ -258,7 +258,7 @@ public abstract class OMETools {
       Object ca = getChild(image, "CustomAttributes");
       R.setVar("ca", ca);
 
-      R.exec("import loci.ome.xml.st.DisplayROINode");
+      R.exec("import org.openmicroscopy.xml.st.DisplayROINode");
       displayROI = getChild(ca, "DisplayROI");
       R.setVar("displayROI", displayROI);
 
@@ -299,7 +299,7 @@ public abstract class OMETools {
       Object ca = getChild(image, "CustomAttributes");
       R.setVar("ca", ca);
 
-      R.exec("import loci.ome.xml.st.PixelsNode");
+      R.exec("import org.openmicroscopy.xml.st.PixelsNode");
       pixels = getChild(ca, "Pixels");
       R.setVar("pixels", pixels);
 
@@ -334,7 +334,7 @@ public abstract class OMETools {
       Object ca = getChild(image, "CustomAttributes");
       R.setVar("ca", ca);
 
-      R.exec("import loci.ome.xml.st.StageLabelNode");
+      R.exec("import org.openmicroscopy.xml.st.StageLabelNode");
       stageLabel = getChild(ca, "StageLabel");
       R.setVar("stageLabel", stageLabel);
 

@@ -267,23 +267,22 @@ public class OMEXMLReader extends FormatReader {
     int sizeC = 0;
     int sizeT = 0;
 
-    if (ome != null) {
-      String type = OMETools.getPixelType(ome);
-      if (type.endsWith("16")) bpp = 2;
-      else if (type.endsWith("32")) bpp = 4;
-      else if (type.equals("float")) bpp = 8;
-
-      sizeX = OMETools.getSizeX(ome).intValue();
-      sizeY = OMETools.getSizeY(ome).intValue();
-      sizeZ = OMETools.getSizeZ(ome).intValue();
-      sizeC = OMETools.getSizeC(ome).intValue();
-      sizeT = OMETools.getSizeT(ome).intValue();
-    }
-    else {
+    if (ome == null) {
       throw new FormatException("To use this feature, please install the " +
-       "loci.ome.xml package, available from http://www.loci.wisc.edu/ome/");
+       "org.openmicroscopy.xml package, available from " +
+       "http://www.openmicroscopy.org/");
     }
 
+    String type = OMETools.getPixelType(ome);
+    if (type.endsWith("16")) bpp = 2;
+    else if (type.endsWith("32")) bpp = 4;
+    else if (type.equals("float")) bpp = 8;
+
+    sizeX = OMETools.getSizeX(ome).intValue();
+    sizeY = OMETools.getSizeY(ome).intValue();
+    sizeZ = OMETools.getSizeZ(ome).intValue();
+    sizeC = OMETools.getSizeC(ome).intValue();
+    sizeT = OMETools.getSizeT(ome).intValue();
 
     // calculate the number of raw bytes of pixel data that we are expecting
     int expected = sizeX * sizeY * bpp;
