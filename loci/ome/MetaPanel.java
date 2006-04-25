@@ -7,7 +7,6 @@ package loci.ome;
 import ij.*;
 import ij.process.ImageProcessor;
 
-import loci.ome.xml.*;
 import org.w3c.dom.*;
 import java.util.*;
 import java.lang.reflect.*;
@@ -15,6 +14,7 @@ import java.lang.reflect.*;
 import org.openmicroscopy.ds.dto.*;
 import org.openmicroscopy.ds.*;
 import org.openmicroscopy.ds.st.*;
+import org.openmicroscopy.xml.*;
 
 import javax.swing.*;
 import javax.swing.event.*;

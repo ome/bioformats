@@ -6,12 +6,12 @@ import ij.process.ImageProcessor;
 import org.openmicroscopy.ds.dto.*;
 import org.openmicroscopy.ds.*;
 import org.openmicroscopy.ds.st.*;
+import org.openmicroscopy.xml.*;
 import org.w3c.dom.*;
 import java.util.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.lang.reflect.*;
 import loci.ome.XMLObject;
-import loci.ome.xml.*;
 
 /**
  * OMEMetaDataHandler is the class that handles the download of metadata
