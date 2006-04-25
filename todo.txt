@@ -6,13 +6,11 @@ Implement readers for other file formats:
 * DICOM
 * Anything else listed online: http://www.loci.wisc.edu/ome/formats.html
 
-Fix incredibly slow metadata parsing in MetamorphReader (don't use
-RandomAccessFile), and potentially other readers.
-
-Check whether ImageTypeSpecifier class is useful for simplifying
-BufferedImage tasks.
-
-Adapt VisBio to take advantage of LOCI Bio-Formats package.
+Address performance issues:
+* Fix incredibly slow metadata parsing in MetamorphReader (don't use
+  RandomAccessFile), and potentially other readers.
+* Check whether ImageTypeSpecifier class is useful for simplifying
+  BufferedImage tasks.
 
 Adapt Bio-Formats API to support OMERO:
 http://cvs.openmicroscopy.org.uk/tiki/tiki-index.php?page=Bio-Formats+Import+Discussion
@@ -38,3 +36,5 @@ http://cvs.openmicroscopy.org.uk/tiki/tiki-index.php?page=Bio-Formats+Import+Dis
     API for actual import (need to provide OMEIS image ID or whatever within
     the XML?)
   * for OMERO, Bio-Formats API called directly by OMERO import engine 
+
+Adapt VisBio to take advantage of LOCI Bio-Formats package.
