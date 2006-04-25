@@ -53,7 +53,10 @@ public class OIFReader extends FormatReader {
   // -- Constructor --
 
   /** Constructs a new OIF reader. */
-  public OIFReader() { super("Fluoview FV1000 OIF", "oif"); }
+  public OIFReader() { 
+    super("Fluoview FV1000 OIF", 
+      new String[] {"oif", "roi", "pty", "tif", "lut", "bmp"}); 
+  }
 
 
   // -- FormatReader API methods --
@@ -91,12 +94,43 @@ public class OIFReader extends FormatReader {
 
   /** Initializes the given OIF file. */
   protected void initFile(String id) throws FormatException, IOException {
-    super.initFile(id);
-    reader = new BufferedReader(new FileReader(id));
+    
+    // check to make sure that we have the OIF file
+    // if not, we need to look for it in the parent directory
+         
+    String oifFile = id;      
+    if (!id.toLowerCase().endsWith("oif")) {
+      File current = new File(id);
+      current = current.getAbsoluteFile();
+      String parent = current.getParent();
+      File tmp = new File(parent);
+      parent = tmp.getParent();
+      
+      // strip off the filename
+   
+      id = current.getPath();
+      
+      oifFile = id.substring(id.lastIndexOf(File.separator));
+      oifFile = parent + oifFile.substring(0, oifFile.indexOf("_")) + ".oif";
+  
+      tmp = new File(oifFile);
+      if (!tmp.exists()) {
+        oifFile = oifFile.substring(0, oifFile.lastIndexOf(".")) + ".OIF";
+        tmp = new File(oifFile);
+        if (!tmp.exists()) throw new FormatException("OIF file not found");
+        currentId = oifFile;
+      }
+      else {
+        currentId = oifFile;
+      }
+    }      
+          
+    super.initFile(oifFile);
+    reader = new BufferedReader(new FileReader(oifFile));
     tiffReader = new TiffReader();
 
-    int slash = id.lastIndexOf(File.separator);
-    String path = slash < 0 ? "." : id.substring(0, slash);
+    int slash = oifFile.lastIndexOf(File.separator);
+    String path = slash < 0 ? "." : oifFile.substring(0, slash);
 
     // parse each key/value pair (one per line)
 
@@ -148,6 +182,7 @@ public class OIFReader extends FormatReader {
         }
         line = ptyReader.readLine();
       }
+      ptyReader.close();
     }
 
     if (ome != null) {
