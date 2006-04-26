@@ -204,9 +204,9 @@ public class MetamorphReader extends BaseTiffReader {
       int planes = v[1].intValue();
       boolean little = TiffTools.isLittleEndian(ifd);
 
-      while (currentcode != 0) {
+      while (currentcode < 66) {
         currentcode = DataTools.read2SignedBytes(in, little);
-
+        
         // variable declarations, because switch is dumb
         int num, denom;
         int xnum, xdenom, ynum, ydenom;
