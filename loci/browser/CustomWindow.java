@@ -1,7 +1,8 @@
-// bug(?): possible race condition between showslice and setindices
 //
 // CustomWindow.java
 //
+
+// bug(?): possible race condition between showslice and setindices
 
 package loci.browser;
 
@@ -19,7 +20,7 @@ import javax.swing.event.ChangeEvent;
 import loci.ome.MetaPanel;
 
 public class CustomWindow extends ImageWindow implements ActionListener,
-	 AdjustmentListener, ChangeListener, ItemListener, KeyListener, Runnable
+  AdjustmentListener, ChangeListener, ItemListener, KeyListener, Runnable
 {
 
   // -- Constants --
@@ -99,7 +100,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     gbc.anchor = GridBagConstraints.LINE_START;
     gridbag.setConstraints(zLabel, gbc);
     bottom.add(zLabel);
-    
+
     // T scroll bar label
     tLabel = new JLabel(tString);
     tLabel.setHorizontalTextPosition(JLabel.LEFT);
@@ -294,7 +295,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   // -- CustomWindow methods --
 
   /** selects and shows slice defined by z, t and c */
-synchronized public void showSlice(int z, int t, int c) {
+  public synchronized void showSlice(int z, int t, int c) {
     int index = db.getIndex(z - 1, t - 1, c - 1);
     if (LociDataBrowser.DEBUG) {
       db.log("showSlice: index=" + index +
@@ -420,7 +421,7 @@ synchronized public void showSlice(int z, int t, int c) {
 
   // -- ActionListener methods --
 
-    synchronized public void actionPerformed(ActionEvent e) {
+  public synchronized void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
     String cmd = e.getActionCommand();
     if ("xml".equals(cmd)) {
@@ -438,10 +439,8 @@ synchronized public void showSlice(int z, int t, int c) {
       tString = tmp2;
       zLabel.setText(zString);
       tLabel.setText(tString);
-      ImageStack stack = imp.getStack();
-      if (stack instanceof VirtualStack) {
-	  setIndices();
-      }	  
+      ImageStack is = imp.getStack();
+      if (is instanceof VirtualStack) setIndices();
 
       // update buttons
       boolean swapped = zString.equals(T_STRING);
@@ -470,7 +469,7 @@ synchronized public void showSlice(int z, int t, int c) {
         animationTimer = new Timer(1000 / fps, this);
         animationTimer.start();
         animate.setText(STOP_STRING);
-	if (db.virtual) setIndices();
+        if (db.virtual) setIndices();
       }
       else {
         animationTimer.stop();
@@ -480,55 +479,64 @@ synchronized public void showSlice(int z, int t, int c) {
     }
   }
 
-    synchronized public void setIndices() {
-	thread = new Thread(this);
-	thread.start();
-    }
+  public synchronized void setIndices() {
+    thread = new Thread(this);
+    thread.start();
+  }
 
-    public void run() {
-	SwingUtilities.invokeLater(new Runnable() {
-		public void run() {
-		    waitLabel.setText("Loading...");
-		}
-	    });
-	ImageStack stack = imp.getStack();
-	if (stack instanceof VirtualStack) {
-	    boolean swapped = zString.equals(T_STRING);
-	    if (swapped) {  // animate top scrolling bar
-		int[] indices = new int[zSliceSel.getMaximum()-1];
-		for (int k=0; k<indices.length; k++)
-		    indices[k] = db.getIndex(k,t-1,c-1);
-		if (LociDataBrowser.DEBUG) {
-		    System.err.println("Indices:");
-		    for (int k=0; k<indices.length; k++)
-			System.err.print(indices[k]+" ");
-		    System.err.println();
-		}
-		((VirtualStack)stack).setIndices(indices);
-	    } else {
-		int[] indices = new int[tSliceSel.getMaximum()-1];
-		for (int k=0; k<indices.length; k++)
-		    indices[k] = db.getIndex(z-1,k,c-1);
-		((VirtualStack)stack).setIndices(indices);
-	    }
-	SwingUtilities.invokeLater(new Runnable() {
-		public void run() {
-		    waitLabel.setText(" ");
-		}
-	    });
-	
-	}
+  public void run() {
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        waitLabel.setText("Loading...");
+      }
+    });
+    ImageStack is = imp.getStack();
+    if (is instanceof VirtualStack) {
+      boolean swapped = zString.equals(T_STRING);
+      if (swapped) { // animate top scrolling bar
+        int[] indices = new int[zSliceSel.getMaximum()-1];
+        for (int k=0; k<indices.length; k++) {
+          indices[k] = db.getIndex(k,t-1,c-1);
+        }
+        if (LociDataBrowser.DEBUG) {
+          System.err.println("Indices:");
+          for (int k=0; k<indices.length; k++)
+          System.err.print(indices[k]+" ");
+          System.err.println();
+        }
+        ((VirtualStack) is).setIndices(indices);
+      }
+      else {
+        int[] indices = new int[tSliceSel.getMaximum()-1];
+        for (int k=0; k<indices.length; k++) {
+          indices[k] = db.getIndex(z-1,k,c-1);
+        }
+        ((VirtualStack) is).setIndices(indices);
+      }
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          waitLabel.setText(" ");
+        }
+      });
     }
+  }
+
+
   // -- AdjustmentListener methods --
 
   public void adjustmentValueChanged(AdjustmentEvent adjustmentEvent) {
     Object src = adjustmentEvent.getSource();
     if (src == zSliceSel) {
-	z = zSliceSel.getValue();
-	if (animate.getText().equals(STOP_STRING) && zString.equals(Z_STRING)) setIndices();
-    } else if (src == tSliceSel) {
-	t = tSliceSel.getValue();
-	if (animate.getText().equals(STOP_STRING) && zString.equals(T_STRING)) setIndices();
+      z = zSliceSel.getValue();
+      if (animate.getText().equals(STOP_STRING) && zString.equals(Z_STRING)) {
+        setIndices();
+      }
+    }
+    else if (src == tSliceSel) {
+      t = tSliceSel.getValue();
+      if (animate.getText().equals(STOP_STRING) && zString.equals(T_STRING)) {
+        setIndices();
+      }
     }
     showSlice(z, t, c);
   }
