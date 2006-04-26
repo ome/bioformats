@@ -44,9 +44,9 @@ public class AVIReader extends FormatReader {
   /** Number of images in current AVI movie. */
   private int numImages;
 
-  /** Vector of BufferedImages. */
-  private Vector imgs;
-
+  /** Offset to each plane. */
+  private Vector offsets;
+  
   /** Endianness flag. */
   private boolean little = true;
 
@@ -113,7 +113,58 @@ public class AVIReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    return (BufferedImage) imgs.get(no);
+    byteData = new byte[dwWidth * bmpHeight];
+    in.seek(((Long) offsets.get(no)).longValue());
+    int len = bmpScanLineSize;
+
+    int pad = bmpScanLineSize - dwWidth*(bmpBitsPerPixel / 8);
+    rawData = new byte[bmpActualSize];
+    int rawOffset = 0;
+    int offset = 0;
+
+    for (int i=bmpHeight - 1; i>=0; i--) {
+      int n = in.read(rawData, rawOffset, len);
+      if (n < len) {
+        whine("Scan line " + i + " ended prematurely.");
+      }
+
+      unpack(rawData, rawOffset, byteData, offset, dwWidth);
+      rawOffset += (len - pad);
+      offset += dwWidth;
+    }
+
+    // reverse scanline ordering
+
+    byte[] temp = rawData;
+    rawData = new byte[temp.length];
+    int off = (bmpHeight - 1) * dwWidth * (bmpBitsPerPixel / 8);
+    int newOff = 0;
+    int length = dwWidth * (bmpBitsPerPixel / 8);
+    for (int q=0; q<bmpHeight; q++) {
+      if (bmpBitsPerPixel == 8) {
+        System.arraycopy(temp, off, rawData, newOff, length);
+      }
+      else {
+        // reverse bytes in groups of 3
+
+        for (int p=0; p<dwWidth; p++) {
+          rawData[newOff + p*3] = temp[off + p*3 + 2];
+          rawData[newOff + p*3 + 1] = temp[off + p*3 + 1];
+          rawData[newOff + p*3 + 2] = temp[off + p*3];
+        }
+      }
+
+      off -= length;
+      newOff += length;
+    }
+
+    if (bmpBitsPerPixel > 8) {
+      return ImageTools.makeImage(rawData, dwWidth, bmpHeight,
+        (rawData.length / (dwWidth*bmpHeight)), true);
+    }
+    else {
+      return ImageTools.makeImage(rawData, dwWidth, bmpHeight, 1, false);
+    }
   }
 
   /** Closes any open files. */
@@ -127,8 +178,8 @@ public class AVIReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessFile(id, "r");
-    imgs = new Vector();
-
+    offsets = new Vector();
+    
     byte[] list = new byte[4];
     String listString;
 
@@ -387,65 +438,8 @@ public class AVIReader extends FormatReader {
                 if (type.substring(2).equals("db") ||
                   type.substring(2).equals("dc"))
                 {
-                  int len = bmpScanLineSize;
-                  if (bmpBitsPerPixel > 8) {
-                    byteData =
-                      new byte[(bmpBitsPerPixel / 8) * dwWidth * bmpHeight];
-                  }
-                  else {
-                    byteData = new byte[dwWidth * bmpHeight];
-                  }
-
-                  int pad = bmpScanLineSize - dwWidth*(bmpBitsPerPixel / 8);
-
-                  rawData = new byte[bmpActualSize];
-                  int rawOffset = 0;
-                  int offset = 0;
-
-                  for (int i=bmpHeight - 1; i>=0; i--) {
-                    int n = in.read(rawData, rawOffset, len);
-                    if (n < len) {
-                      whine("Scan line " + i + " ended prematurely.");
-                    }
-
-                    unpack(rawData, rawOffset, byteData, offset, dwWidth);
-                    rawOffset += (len - pad);
-                    offset += dwWidth;
-                  }
-
-                  // reverse scanline ordering
-
-                  byte[] temp = rawData;
-                  rawData = new byte[temp.length];
-                  int off = (bmpHeight - 1) * dwWidth * (bmpBitsPerPixel / 8);
-                  int newOff = 0;
-                  int length = dwWidth * (bmpBitsPerPixel / 8);
-                  for (int q=0; q<bmpHeight; q++) {
-                    if (bmpBitsPerPixel == 8) {
-                      System.arraycopy(temp, off, rawData, newOff, length);
-                    }
-                    else {
-                      // reverse bytes in groups of 3
-
-                      for (int p=0; p<dwWidth; p++) {
-                        rawData[newOff + p*3] = temp[off + p*3 + 2];
-                        rawData[newOff + p*3 + 1] = temp[off + p*3 + 1];
-                        rawData[newOff + p*3 + 2] = temp[off + p*3];
-                      }
-                    }
-
-                    off -= length;
-                    newOff += length;
-                  }
-
-                  if (bmpBitsPerPixel > 8) {
-                    imgs.add(ImageTools.makeImage(rawData, dwWidth, bmpHeight,
-                      (rawData.length / (dwWidth*bmpHeight)), true));
-                  }
-                  else {
-                    imgs.add(ImageTools.makeImage(rawData, dwWidth, bmpHeight,
-                      1, false));
-                  }
+                  offsets.add(new Long(in.getFilePointer()));
+                  in.skipBytes(bmpHeight * bmpScanLineSize);
                 }
 
                 type = readStringBytes();
@@ -472,7 +466,7 @@ public class AVIReader extends FormatReader {
         in.seek(in.getFilePointer() + size);
       }
     }
-    numImages = imgs.size();
+    numImages = offsets.size();
     initOMEMetadata();
   }
 

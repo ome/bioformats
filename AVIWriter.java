@@ -91,7 +91,8 @@ public class AVIWriter extends FormatWriter {
   private int t,z;
   private long savemovi;
   private int xMod;
-
+  private int frameOffset;
+  
 
   // -- Constructor --
 
@@ -186,6 +187,8 @@ public class AVIWriter extends FormatWriter {
         xDim += xPad;
       }
 
+      frameOffset = (int) raFile.getFilePointer();
+      
       // dwTotalFrames - total frame number
       DataTools.writeInt(raFile, zDim * tDim, true);
 
@@ -457,7 +460,7 @@ public class AVIWriter extends FormatWriter {
     }
 
     planesWritten++;
-
+    
     if (last) {
       // Write the idx1 CHUNK
       // Write the 'idx1' signature
