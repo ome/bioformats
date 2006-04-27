@@ -123,7 +123,8 @@ public class AVIWriter extends FormatWriter {
       bytesPerPixel = byteData.length;
 
       file = new File(id);
-      raFile = new DataOutputStream(new FileOutputStream(file));
+      raFile = new DataOutputStream(
+        new BufferedOutputStream(new FileOutputStream(file)));
       
       DataTools.writeString(raFile, "RIFF"); // signature
       saveFileSize = raFile.size();
