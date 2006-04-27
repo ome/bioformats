@@ -55,7 +55,7 @@ public class OIFReader extends FormatReader {
   /** Constructs a new OIF reader. */
   public OIFReader() {
     super("Fluoview FV1000 OIF",
-      new String[] {"oif", "roi", "pty", "tif", "lut", "bmp"});
+      new String[] {"oif", "roi", "pty", "lut", "bmp"});
   }
 
 

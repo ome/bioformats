@@ -170,8 +170,8 @@ public class QTWriter extends FormatWriter {
     }
 
     if (last) {
-      int duration = numWritten * 50;
       int timeScale = 100;
+      int duration = numWritten * (timeScale / fps);
       int bitsPerPixel = (byteData.length > 1) ? 24 : 40;
       int channels = (bitsPerPixel == 40) ? 1 : 3;
 
@@ -407,7 +407,7 @@ public class QTWriter extends FormatWriter {
       DataTools.writeShort(out, 0, false); // flags
       DataTools.writeInt(out, 1, false); // number of entries in the table
       DataTools.writeInt(out, numWritten, false); // number of planes
-      DataTools.writeInt(out, 50, false); // duration
+      DataTools.writeInt(out, (timeScale / fps), false); // frames per second 
 
       // -- write stsc atom --
 

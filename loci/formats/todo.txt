@@ -3,7 +3,6 @@ QuickTime:
 
 Implement readers for other file formats:
 * Fluoview FV1000 OIB
-* DICOM
 * Anything else listed online: http://www.loci.wisc.edu/ome/formats.html
 
 Address performance issues:
