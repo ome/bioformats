@@ -196,6 +196,7 @@ public abstract class FormatReader extends FormatHandler {
       System.out.print("Reading " + id + " pixel data ");
       long s1 = System.currentTimeMillis();
       int num = getImageCount(args[0]);
+      System.out.print("(" + num + ") ");
       long e1 = System.currentTimeMillis();
       BufferedImage[] images = new BufferedImage[num];
       long s2 = System.currentTimeMillis();
