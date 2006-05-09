@@ -31,6 +31,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   private static final String ANIM_STRING = "Animate";
   private static final String STOP_STRING = "Stop";
 
+
   // -- Fields - state --
 
   private LociDataBrowser db;
@@ -40,9 +41,10 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   private int z = 1, t = 1, c = 1;
   private int oldZ, oldT; // for virtual stack
 
+
   // -- Fields - widgets --
 
-    private JLabel zLabel, tLabel, waitLabel;
+  private JLabel zLabel, tLabel, waitLabel;
   private JScrollBar zSliceSel, tSliceSel;
   private JLabel fpsLabel;
   private JSpinner frameRate;
@@ -51,7 +53,9 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   private JButton animate;
   private ImageStack stack;
 
-    private Thread thread;
+  private Thread thread;
+
+
   // -- Constructor --
 
   /** CustomWindow constructors, initialisation */
@@ -235,7 +239,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     }
     catch (Throwable e) { canDoXML = false; }
     if (canDoXML) {
-      xml = new JButton("OME-XML");
+      xml = new JButton("Metadata");
       xml.addActionListener(this);
       xml.setActionCommand("xml");
       FileInfo fi = imp.getOriginalFileInfo();
@@ -428,9 +432,42 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       int id = imp.getID();
       FileInfo fi = imp.getOriginalFileInfo();
       String description = fi == null ? null : fi.description;
+
+      // HACK - if ImageDescription does not end with a null character
+      // (older versions of ImageJ truncate the final character)
+      if (description.endsWith("</OME")) description += ">";
+
       Object[] meta = {null, MetaPanel.exportMeta(description, id)};
-      MetaPanel metaPanel = new MetaPanel(IJ.getInstance(), id, meta);
-      metaPanel.show();
+      if (meta[1] == null) {
+        // XML parse failed, create dialog box for raw info
+        JDialog raw = new JDialog(this, "Raw Metadata", false);
+        JPanel rawPane = new JPanel();
+        rawPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+        rawPane.setLayout(new BorderLayout());
+        raw.setContentPane(rawPane);
+        rawPane.add(new JLabel("Metadata parsing failed. " +
+          "Here is the raw info (good luck):"), BorderLayout.NORTH);
+        JTextArea rawText = new JTextArea();
+        rawText.setLineWrap(true);
+        rawText.setColumns(50);
+        rawText.setRows(30);
+        rawText.setEditable(false);
+        rawText.setText(description);
+        JScrollPane rawScroll = new JScrollPane(rawText);
+        rawScroll.setBorder(new EmptyBorder(5, 0, 5, 0));
+        rawPane.add(rawScroll, BorderLayout.CENTER);
+        JButton rawOk = new JButton("OK");
+        rawOk.setActionCommand("rawOk");
+        rawOk.addActionListener(this);
+        rawPane.add(rawOk, BorderLayout.SOUTH);
+        raw.pack();
+        MetaPanel.centerWindow(this, raw);
+        raw.setVisible(true);
+      }
+      else {
+        MetaPanel metaPanel = new MetaPanel(IJ.getInstance(), id, meta);
+        metaPanel.show();
+      }
     }
     else if ("swap".equals(cmd)) {
       // swap labels
