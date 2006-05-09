@@ -79,7 +79,7 @@ public class MetaPanel implements ActionListener, TreeSelectionListener {
     treeView.setPreferredSize(new Dimension(400, 400));
 
     //creates the dialog box
-    dia = new JDialog(frame, "OME Image Attributes", true);
+    dia = new JDialog(frame, "OME Image Attributes", false);
     JPanel pane = new JPanel();
     pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
     customPane = new JPanel();
@@ -115,14 +115,12 @@ public class MetaPanel implements ActionListener, TreeSelectionListener {
   }
 
   /** shows and retrieves info from the DownPanel */
-  public void show() {
-    dia.show();
-  }
+  public void show() { dia.setVisible(true); }
 
   /** implements the ActionListener actionPerformed method */
   public void actionPerformed(ActionEvent e) {
-    DefaultMutableTreeNode node =
-        (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
+    DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+      tree.getLastSelectedPathComponent();
     dia.hide();
   }
 
@@ -151,13 +149,13 @@ public class MetaPanel implements ActionListener, TreeSelectionListener {
     window.setLocation(x, y);
   }
 
+
   // -- OMEMetaDataHandler methods --
 
   /**Method that begins the process of getting metadata from an OME_TIFF file*/
   public static DefaultMutableTreeNode exportMeta(String descr,
     int ijimageID)
   {
-          
     isXML = true;
     IJ.showStatus("Retrieving OME-TIFF header.");
     Object[] meta = new Object[2];
@@ -179,10 +177,10 @@ public class MetaPanel implements ActionListener, TreeSelectionListener {
       IJ.showStatus("Error parsing OME-XML metadata, possibly not present.");
       if (meta == null) {
         meta = new Object[2];
-         meta[0] = new Integer(0);
+        meta[0] = new Integer(0);
       }
       meta[1] = null;
-      return (DefaultMutableTreeNode) meta[1];
+      return null;
     }
     if (meta == null) {
       meta = new Object[2];
@@ -261,7 +259,7 @@ public class MetaPanel implements ActionListener, TreeSelectionListener {
    */
   private static void addDisk(Object element, DefaultMutableTreeNode root,
     DataFactory df, String identifier) {
-    
+
     IJ.showStatus("Retrieving " + identifier + " attributes.");
     if (element == null) return;
 
@@ -307,16 +305,16 @@ public class MetaPanel implements ActionListener, TreeSelectionListener {
         {
           if (id.indexOf(":") != -1) {
             id = id.substring(0, id.indexOf(":"));
-          }        
+          }
           id = "org.openmicroscopy.xml.st." + id + "Node";
         }
         else {
           if (id.indexOf(":") != -1) {
             id = id.substring(0, id.indexOf(":")) + "Node";
-          }        
+          }
           id = "org.openmicroscopy.xml." + id;
-        } 
-          
+        }
+
         // construct a new node using this class
         Class toConstruct = Class.forName(id.trim());
         Constructor construct =
