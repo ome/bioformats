@@ -36,7 +36,7 @@ import javax.imageio.ImageIO;
  */
 public abstract class ImageIOReader extends FormatReader {
 
-  // -- Constructor --
+  // -- Constructors --
 
   /** Constructs a new ImageIOReader. */
   public ImageIOReader(String name, String suffix) { super(name, suffix); }

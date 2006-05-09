@@ -1,5 +1,5 @@
 //
-// JPEGWriter.java
+// PNGWriter.java
 //
 
 /*
@@ -25,21 +25,20 @@ package loci.formats;
 
 import java.io.IOException;
 
-/** JPEGWriter is the file format writer for JPEG files. */
-public class JPEGWriter extends ImageIOWriter {
+/** PNGWriter is the file format writer for PNG files. */
+public class PNGWriter extends ImageIOWriter {
 
   // -- Constructor --
 
-  public JPEGWriter() {
-    super("Joint Photographic Experts Group",
-      new String[] {"jpg", "jpeg", "jpe"}, "jpeg");
+  public PNGWriter() {
+    super("Portable Network Graphics", "png", "png");
   }
 
 
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {
-    new JPEGWriter().testConvert(args);
+    new PNGWriter().testConvert(args);
   }
 
 }
