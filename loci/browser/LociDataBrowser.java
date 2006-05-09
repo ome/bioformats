@@ -191,7 +191,14 @@ public class LociDataBrowser implements PlugIn {
     VirtualStack vstack = null;
     FileInfo fi = null;
     try {
+      ProgressMonitor progress = new ProgressMonitor(null,
+        "Reading", null, 0, filenames.length);
+      progress.setMillisToPopup(50);
       for (int i=0; i<filenames.length; i++) {
+        if (progress.isCanceled()) break;
+        progress.setProgress(i);
+        progress.setNote(filenames[i]);
+
         // open image
         ImagePlus imp = new Opener().openImage(directory, filenames[i]);
         if (imp == null) {
@@ -235,6 +242,7 @@ public class LociDataBrowser implements PlugIn {
           stack.addSlice(imp.getTitle(), imp.getProcessor());
         }
       }
+      progress.setProgress(filenames.length);
 
       if (stack == null || stack.getSize() == 0) {
         // all image files were invalid
