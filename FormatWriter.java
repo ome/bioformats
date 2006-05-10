@@ -55,6 +55,9 @@ public abstract class FormatWriter extends FormatHandler {
   public abstract void save(String id, Image image, boolean last)
     throws FormatException, IOException;
 
+  /** Reports whether the writer can save multiple images to a single file. */
+  public abstract boolean canDoStacks(String id);
+
 
   // -- FormatWriter API methods --
 

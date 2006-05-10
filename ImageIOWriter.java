@@ -68,4 +68,7 @@ public abstract class ImageIOWriter extends FormatWriter {
     ImageIO.write(ImageTools.makeBuffered(image), kind, new File(id));
   }
 
+  /** Reports whether the writer can save multiple images to a single file. */
+  public boolean canDoStacks(String id) { return false; }
+
 }
