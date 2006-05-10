@@ -4,6 +4,7 @@ QuickTime:
 Implement readers for other file formats:
 * Fluoview FV1000 OIB
 * Anything else listed online: http://www.loci.wisc.edu/ome/formats.html
+* EPS (lower priority)
 
 Address performance issues:
 * Fix incredibly slow metadata parsing in MetamorphReader (don't use
