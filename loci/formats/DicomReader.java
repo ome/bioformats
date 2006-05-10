@@ -142,11 +142,11 @@ public class DicomReader extends FormatReader {
     }
     else if (bitsPerPixel == 16) {
       // may still be broken on some samples, but it's better than it was
-            
+
       for (int i=0; i<data.length; i++) {
         data[i] = (byte) (255 - data[i]);
-      }         
-            
+      }
+
       String windowCenter = (String) metadata.get("Window Center");
       String windowWidth = (String) metadata.get("Window Width");
       if (windowCenter != null && windowCenter.indexOf("\\") != -1) {
@@ -163,7 +163,7 @@ public class DicomReader extends FormatReader {
 
       double min = (wCenter - wWidth / 2) + 3964;
       double max = (wCenter + wWidth / 2) - 2540;
-            
+
       short[] shortData = new short[width * height];
       int minValue = Integer.MAX_VALUE;
       int maxValue = Integer.MIN_VALUE;
@@ -178,30 +178,30 @@ public class DicomReader extends FormatReader {
       if (rescale != null) {
         rescale = rescale.trim();
         scale = Double.parseDouble(rescale);
-      }        
-      
+      }
+
       if (min < minValue) {
         for (int i=0; i<shortData.length; i++) {
           shortData[i] = (short) (shortData[i] - (minValue - min) + scale);
-        }        
+        }
       }
       else {
         for (int i=0; i<shortData.length; i++) {
           shortData[i] = (short) (shortData[i] + (min - minValue) + scale);
-        }        
-      }       
+        }
+      }
 
       if (max < maxValue) {
         for (int i=0; i<shortData.length; i++) {
           shortData[i] = (short) (shortData[i] - (maxValue - max));
-        }        
+        }
       }
       else {
         for (int i=0; i<shortData.length; i++) {
           shortData[i] = (short) (shortData[i] - (max - maxValue));
-        }        
-      }        
-      
+        }
+      }
+
       return ImageTools.makeImage(shortData, width, height, 1, false);
     }
     else if (bitsPerPixel == 32) {

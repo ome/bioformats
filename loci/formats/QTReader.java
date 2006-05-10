@@ -479,7 +479,7 @@ public class QTReader extends FormatReader {
         else if (atomType.equals("stts")) {
           int fps = DataTools.bytesToInt(data, 12, 4, little);
           metadata.put("Frames per second", new Integer(fps));
-        }        
+        }
       }
 
       if (atomSize == 0) offset = in.length();
