@@ -16,8 +16,10 @@ echo http://www.loci.wisc.edu/ome/imagej.html >> about.txt
 mv about.txt loci/util/about.txt
 jar cfm loci/ome/ij/ome_plugin.jar ome.manifest \
 plugins.config loci/util/about.txt \
-loci/ome/ij/*.class loci/ome/*.class loci/util/*.class loci/browser/*.class \
-loci/ome/ij/*.java loci/ome/*.java loci/util/*.java loci/browser/*.java \
+loci/ome/ij/*.class loci/ome/*.class loci/ome/viewer/*.class \
+loci/util/*.class loci/browser/*.class \
+loci/ome/ij/*.java loci/ome/*.java loci/ome/viewer/*.java \
+loci/util/*.java loci/browser/*.java \
 loci/ome/ij/build loci/ome/ij/plugins.config loci/ome/ij/ome.manifest
 rm ome.manifest plugins.config loci/util/about.txt
 
