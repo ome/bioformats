@@ -97,6 +97,9 @@ public class TiffWriter extends FormatWriter {
     saveImage(id, image, null, last);
   }
 
+  /** Reports whether the writer can save multiple images to a single file. */
+  public boolean canDoStacks(String id) { return true; }
+
 
   // -- Main method --
 

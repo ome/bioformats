@@ -97,9 +97,7 @@ public class AVIWriter extends FormatWriter {
 
   // -- Constructor --
 
-  public AVIWriter() {
-    super("Audio Video Interleave", "avi");
-  }
+  public AVIWriter() { super("Audio Video Interleave", "avi"); }
 
 
   // -- FormatWriter API methods --
@@ -504,8 +502,11 @@ public class AVIWriter extends FormatWriter {
       
       out.close();
     }
-
   }
+
+  /** Reports whether the writer can save multiple images to a single file. */
+  public boolean canDoStacks(String id) { return true; }
+
 
   // -- Main method --
 

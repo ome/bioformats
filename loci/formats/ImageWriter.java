@@ -155,6 +155,16 @@ public class ImageWriter extends FormatWriter {
     writers[index].save(id, image, last);
   }
 
+  /** Reports whether the writer can save multiple images to a single file. */
+  public boolean canDoStacks(String id) {
+    if (!id.equals(currentId)) {
+      try { initFile(id); }
+      catch (FormatException exc) { return false; }
+      catch (IOException exc) { return false; }
+    }
+    return writers[index].canDoStacks(id);
+  }
+
   /** A utility method for converting a file from the command line. */
   public void testConvert(String[] args) throws FormatException, IOException {
     if (args.length > 1) {

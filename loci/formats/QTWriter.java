@@ -452,6 +452,9 @@ public class QTWriter extends FormatWriter {
     }
   }
 
+  /** Reports whether the writer can save multiple images to a single file. */
+  public boolean canDoStacks(String id) { return true; }
+
 
   // -- Main method --
 
