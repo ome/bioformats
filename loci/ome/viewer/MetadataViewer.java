@@ -4,6 +4,7 @@
 
 package loci.ome.viewer;
 
+import java.awt.Cursor;
 import java.awt.Toolkit;
 import java.awt.event.*;
 import java.io.File;
@@ -11,7 +12,9 @@ import javax.swing.*;
 import loci.util.About;
 
 /** MetadataViewer is a simple application for displaying OME-XML metadata. */
-public class MetadataViewer extends JFrame implements ActionListener {
+public class MetadataViewer extends JFrame
+  implements ActionListener, Runnable
+{
 
   // -- Constants --
 
@@ -29,7 +32,7 @@ public class MetadataViewer extends JFrame implements ActionListener {
   // -- Constructor --
 
   public MetadataViewer(String[] args) {
-    super("OME-TIFF Metadata Viewer");
+    super("OME Metadata Viewer");
     metadata = new MetadataPane();
     setContentPane(metadata);
 
@@ -81,13 +84,32 @@ public class MetadataViewer extends JFrame implements ActionListener {
     if ("open".equals(cmd)) {
       int rval = chooser.showOpenDialog(this);
       if (rval == JFileChooser.APPROVE_OPTION) {
-        openFile(chooser.getSelectedFile());
+        new Thread(this, "MetadataViewer-Opener").start();
       }
     }
-    else if ("exit".equals(cmd)) dispose();
+    else if ("exit".equals(cmd)) System.exit(0);
     else if ("about".equals(cmd)) About.show();
   }
 
+
+  // -- Runnable API methods --
+
+  /** Opens a file in a separate thread. */
+  public void run() {
+    wait(true);
+    File file = chooser.getSelectedFile();
+    openFile(file);
+    setTitle("OME Metadata Viewer - " + file);
+    wait(false);
+  }
+
+
+  // -- Helper methods --
+
+  /** Toggles wait cursor. */
+  protected void wait(boolean wait) {
+    setCursor(wait ? Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) : null);
+  }
 
 
   // -- Main method --

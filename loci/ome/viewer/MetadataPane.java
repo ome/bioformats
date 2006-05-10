@@ -39,9 +39,6 @@ public class MetadataPane extends JPanel
   /** Tree displaying metadata in OME-XML format. */
   protected JTree tree;
 
-  /** Root of tree displaying OME-XML metadata. */
-  protected DefaultMutableTreeNode treeRoot;
-
   /** Field listing CDATA for the given XML element. */
   protected JTextArea cdata;
 
@@ -71,8 +68,7 @@ public class MetadataPane extends JPanel
     // -- XML tree --
 
     // OME-XML tree
-    treeRoot = new DefaultMutableTreeNode();
-    tree = new JTree(treeRoot);
+    tree = new JTree(new DefaultMutableTreeNode());
     JScrollPane scrollTree = new JScrollPane(tree);
     scrollTree.setPreferredSize(new Dimension(250, 0));
     //SwingUtil.configureScrollPane(scrollTree);
@@ -209,6 +205,8 @@ public class MetadataPane extends JPanel
     Document doc = null;
     try { doc = ome == null ? null : ome.getOMEDocument(false); }
     catch (Exception exc) { }
+    DefaultMutableTreeNode treeRoot = new DefaultMutableTreeNode();
+    ((DefaultTreeModel) tree.getModel()).setRoot(treeRoot);
     if (doc != null) {
       buildTree(doc.getDocumentElement(), treeRoot);
       expandTree(tree, treeRoot);
