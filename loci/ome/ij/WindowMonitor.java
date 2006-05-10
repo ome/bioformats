@@ -8,14 +8,16 @@ import java.lang.*;
 import ij.WindowManager;
 
 /**
- * Runs a pseudo-infinite loop to monitor changes in the how many files
- * are open.
+ * Runs a pseudo-infinite loop to monitor
+ * changes in the how many files are open.
  *
  * @author Melissa Linkert linkert at cs.wisc.edu
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 
 public class WindowMonitor extends Thread {
+
+  public WindowMonitor() { super("OME-Plugin-WindowMonitor"); }
 
   public void run() {
     int[] idList = WindowManager.getIDList();
