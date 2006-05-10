@@ -407,7 +407,7 @@ public class QTWriter extends FormatWriter {
       DataTools.writeShort(out, 0, false); // flags
       DataTools.writeInt(out, 1, false); // number of entries in the table
       DataTools.writeInt(out, numWritten, false); // number of planes
-      DataTools.writeInt(out, (timeScale / fps), false); // frames per second 
+      DataTools.writeInt(out, (timeScale / fps), false); // frames per second
 
       // -- write stsc atom --
 

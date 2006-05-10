@@ -46,7 +46,7 @@ public class AVIReader extends FormatReader {
 
   /** Offset to each plane. */
   private Vector offsets;
-  
+
   /** Endianness flag. */
   private boolean little = true;
 
@@ -179,7 +179,7 @@ public class AVIReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessFile(id, "r");
     offsets = new Vector();
-    
+
     byte[] list = new byte[4];
     String listString;
 

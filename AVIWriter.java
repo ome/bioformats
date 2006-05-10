@@ -93,7 +93,7 @@ public class AVIWriter extends FormatWriter {
   private int xMod;
   private long frameOffset;
   private long frameOffset2;
-  
+
 
   // -- Constructor --
 
@@ -123,7 +123,7 @@ public class AVIWriter extends FormatWriter {
       file = new File(id);
       raFile = new DataOutputStream(
         new BufferedOutputStream(new FileOutputStream(file)));
-      
+
       DataTools.writeString(raFile, "RIFF"); // signature
       saveFileSize = raFile.size();
       // Bytes 4 thru 7 contain the length of the file. This length does
@@ -185,7 +185,7 @@ public class AVIWriter extends FormatWriter {
       }
 
       frameOffset = raFile.size();
-      
+
       // dwTotalFrames - total frame number
       DataTools.writeInt(raFile, zDim * tDim, true);
 
@@ -444,16 +444,16 @@ public class AVIWriter extends FormatWriter {
     }
 
     planesWritten++;
-    
+
     if (last) {
       // we still need to open a RandomAccessFile to handle a couple of
       // unavoidable seeks; fortunately, we only need to write a few bytes this
       // way, so it shouldn't affect performance too much
 
       RandomAccessFile out = new RandomAccessFile(id, "rw");
-      out.seek(raFile.size() - 1);     
+      out.seek(raFile.size() - 1);
       raFile.close();
-      
+
       // Write the idx1 CHUNK
       // Write the 'idx1' signature
       idx1Pos = out.getFilePointer();
@@ -493,13 +493,13 @@ public class AVIWriter extends FormatWriter {
       endPos = out.getFilePointer();
       out.seek(saveFileSize);
       DataTools.writeInt(out, (int)(endPos - (saveFileSize+4)), true);
-     
+
       // write the total number of planes
       out.seek(frameOffset);
       DataTools.writeInt(out, planesWritten, true);
       out.seek(frameOffset2);
       DataTools.writeInt(out, planesWritten, true);
-      
+
       out.close();
     }
   }
