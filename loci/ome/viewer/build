@@ -19,6 +19,7 @@ loci/util/about.txt \
 loci/ome/viewer/*.class loci/ome/*.class loci/util/*.class \
 loci/ome/viewer/*.java loci/ome/*.java loci/util/*.java \
 loci/ome/viewer/build loci/ome/viewer/viewer.manifest \
+loci/formats/TiffTools.class loci/formats/FormatException.class \
 -C ../OME-JAVA/src org/openmicroscopy/ds \
 -C ../OME-JAVA/src org/openmicroscopy/xml
 rm viewer.manifest loci/util/about.txt

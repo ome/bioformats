@@ -4,14 +4,21 @@
 
 package loci.ome.viewer;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Toolkit;
+import java.awt.event.*;
 import java.io.File;
 import javax.swing.*;
 import loci.util.About;
 
 /** MetadataViewer is a simple application for displaying OME-XML metadata. */
 public class MetadataViewer extends JFrame implements ActionListener {
+
+  // -- Constants --
+
+  /** Key mask for use with keyboard shortcuts on this operating system. */
+  public static final int MENU_MASK =
+    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+
 
   // -- Fields --
 
@@ -34,16 +41,22 @@ public class MetadataViewer extends JFrame implements ActionListener {
     file.add(fileOpen);
     fileOpen.setActionCommand("open");
     fileOpen.addActionListener(this);
+    fileOpen.setMnemonic('o');
+    fileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, MENU_MASK));
     JMenuItem fileExit = new JMenuItem("Exit");
     file.add(fileExit);
     fileExit.setActionCommand("exit");
     fileExit.addActionListener(this);
+    fileExit.setMnemonic('x');
+    fileExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, MENU_MASK));
     JMenu help = new JMenu("Help");
     menubar.add(help);
     JMenuItem helpAbout = new JMenuItem("About");
     help.add(helpAbout);
     helpAbout.setActionCommand("about");
     helpAbout.addActionListener(this);
+    helpAbout.setMnemonic('a');
+    helpAbout.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, MENU_MASK));
 
     chooser = new JFileChooser(System.getProperty("user.dir"));
 

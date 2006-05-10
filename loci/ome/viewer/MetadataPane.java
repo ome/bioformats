@@ -5,28 +5,30 @@
 package loci.ome.viewer;
 
 import java.awt.BorderLayout;
-import java.io.File;
+import java.awt.Dimension;
+import java.io.*;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.*;
+import loci.formats.TiffTools;
 import org.openmicroscopy.xml.DOMUtil;
 import org.openmicroscopy.xml.OMENode;
 import org.w3c.dom.*;
 
 /** MetadataPane is a panel that displays OME-XML metadata. */
-public class MetadataPane extends JPanel implements TreeSelectionListener {
+public class MetadataPane extends JPanel
+  implements Runnable, TreeSelectionListener
+{
 
   // -- Constants --
 
   /** Column headings for OME-XML attributes table. */
   protected static final String[] TREE_COLUMNS = {"Attribute", "Value"};
-
-  /** Column headings for metadata table. */
-  protected static final String[] META_COLUMNS = {"Name", "Value"};
 
 
   // -- Fields - XML tree --
@@ -39,6 +41,9 @@ public class MetadataPane extends JPanel implements TreeSelectionListener {
 
   /** Root of tree displaying OME-XML metadata. */
   protected DefaultMutableTreeNode treeRoot;
+
+  /** Field listing CDATA for the given XML element. */
+  protected JTextArea cdata;
 
   /** Table listing OME-XML attributes. */
   protected JTable treeTable;
@@ -55,6 +60,9 @@ public class MetadataPane extends JPanel implements TreeSelectionListener {
   /** Text area displaying raw XML. */
   protected JTextArea rawText;
 
+  /** Whether XML is being displayed in raw form. */
+  protected boolean raw;
+
 
   // -- Constructor --
 
@@ -66,6 +74,7 @@ public class MetadataPane extends JPanel implements TreeSelectionListener {
     treeRoot = new DefaultMutableTreeNode();
     tree = new JTree(treeRoot);
     JScrollPane scrollTree = new JScrollPane(tree);
+    scrollTree.setPreferredSize(new Dimension(250, 0));
     //SwingUtil.configureScrollPane(scrollTree);
     tree.setRootVisible(false);
     tree.setShowsRootHandles(true);
@@ -74,19 +83,39 @@ public class MetadataPane extends JPanel implements TreeSelectionListener {
     tree.setSelectionModel(treeSelModel);
     tree.addTreeSelectionListener(this);
 
+    // attributes pane
+    JPanel attributesPane = new JPanel();
+    attributesPane.setLayout(new BoxLayout(attributesPane, BoxLayout.Y_AXIS));
+
+    // CDATA text field
+    cdata = new JTextArea();
+    cdata.setRows(4);
+    cdata.setEditable(false);
+    JScrollPane cdataScroll = new JScrollPane(cdata);
+    int height = cdata.getPreferredSize().height;
+    cdataScroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, height));
+    attributesPane.add(cdataScroll);
+    attributesPane.add(Box.createVerticalStrut(5));
+
     // OME-XML attributes table
-    treeTableModel = new DefaultTableModel(TREE_COLUMNS, 0);
+    treeTableModel = new DefaultTableModel(TREE_COLUMNS, 0) {
+      public boolean isCellEditable(int row, int col) { return false; }
+    };
     treeTable = new JTable(treeTableModel);
+    treeTable.getColumnModel().getColumn(0).setPreferredWidth(100);
+    treeTable.getColumnModel().getColumn(1).setPreferredWidth(300);
     JScrollPane scrollTreeTable = new JScrollPane(treeTable);
     //SwingUtil.configureScrollPane(scrollTreeTable);
+    treeTable.setPreferredScrollableViewportSize(new Dimension(400, 0));
+    attributesPane.add(scrollTreeTable);
 
     // OME-XML split pane
     xmlTree = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-      scrollTree, scrollTreeTable);
+      scrollTree, attributesPane);
 
     // lay out components
-    setLayout(new BorderLayout());
-    add(xmlTree, BorderLayout.CENTER);
+    setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+    add(xmlTree);
 
     // -- Raw panel --
 
@@ -94,8 +123,10 @@ public class MetadataPane extends JPanel implements TreeSelectionListener {
     rawPanel.setLayout(new BorderLayout());
 
     // label explaining what happened
-    rawPanel.add(new JLabel("Metadata parsing failed. " +
-      "Here is the raw info (good luck):"), BorderLayout.NORTH);
+    JLabel rawLabel = new JLabel("Metadata parsing failed. " +
+      "Here is the raw info. Good luck!");
+    rawLabel.setBorder(new EmptyBorder(5, 0, 5, 0));
+    rawPanel.add(rawLabel, BorderLayout.NORTH);
 
     // text area for displaying raw XML
     rawText = new JTextArea();
@@ -103,9 +134,9 @@ public class MetadataPane extends JPanel implements TreeSelectionListener {
     rawText.setColumns(50);
     rawText.setRows(30);
     rawText.setEditable(false);
-    JScrollPane rawScroll = new JScrollPane(rawText);
-    rawScroll.setBorder(new EmptyBorder(5, 0, 5, 0));
-    rawPanel.add(rawScroll, BorderLayout.CENTER);
+    rawPanel.add(new JScrollPane(rawText), BorderLayout.CENTER);
+    rawPanel.setVisible(false);
+    add(rawPanel);
   }
 
 
@@ -119,28 +150,57 @@ public class MetadataPane extends JPanel implements TreeSelectionListener {
     OMENode ome = null;
     try { ome = new OMENode(xml); }
     catch (Exception exc) { }
-    if (ome == null) {
-      rawText.setText(xml);
-      if (getComponent(0) instanceof JSplitPane) {
-        removeAll();
-        add(rawPanel, BorderLayout.CENTER);
-      }
-    }
-    else {
-      setOMEXML(ome);
-      if (getComponent(0) instanceof JPanel) {
-        removeAll();
-        add(xmlTree, BorderLayout.CENTER);
-      }
-    }
+    raw = ome == null;
+    if (raw) rawText.setText(xml);
+    else setOMEXML(ome);
+    SwingUtilities.invokeLater(this);
   }
 
   /**
    * Sets the displayed OME-XML metadata to correspond
    * to the given OME-XML or OME-TIFF file.
+   * @return true if the operation was successful
    */
-  public void setOMEXML(File file) {
-    // TODO
+  public boolean setOMEXML(File file) {
+    try {
+      DataInputStream in = new DataInputStream(new FileInputStream(file));
+      byte[] header = new byte[8];
+      in.readFully(header);
+      if (TiffTools.isValidHeader(header)) {
+        // TIFF file
+        in.close();
+        RandomAccessFile raf = new RandomAccessFile(file, "r");
+        Hashtable[] ifds = TiffTools.getIFDs(raf);
+        raf.close();
+        if (ifds == null || ifds.length == 0) return false;
+        Object value = TiffTools.getIFDValue(ifds[0],
+          TiffTools.IMAGE_DESCRIPTION);
+        String xml = null;
+        if (value instanceof String) xml = (String) value;
+        else if (value instanceof String[]) {
+          String[] s = (String[]) value;
+          StringBuffer sb = new StringBuffer();
+          for (int i=0; i<s.length; i++) sb.append(s[i]);
+          xml = sb.toString();
+        }
+        if (xml == null) return false;
+        setOMEXML(xml);
+      }
+      else {
+        String s = new String(header).trim();
+        if (s.startsWith("<?xml") || s.startsWith("<OME")) {
+          // raw OME-XML
+          byte[] data = new byte[(int) file.length()];
+          System.arraycopy(header, 0, data, 0, 8);
+          in.readFully(data, 8, data.length - 8);
+          in.close();
+          setOMEXML(new String(data));
+        }
+        else return false;
+      }
+      return true;
+    }
+    catch (IOException exc) { return false; }
   }
 
   /** Sets the displayed OME-XML metadata. */
@@ -156,6 +216,22 @@ public class MetadataPane extends JPanel implements TreeSelectionListener {
   }
 
 
+  // -- Component API methods --
+
+  /** Sets the initial size of the metadata pane to be reasonable. */
+  public Dimension getPreferredSize() { return new Dimension(700, 500); }
+
+
+  // -- Runnable API methods --
+
+  /** Shows or hides the proper subpanes. */
+  public void run() {
+    xmlTree.setVisible(!raw);
+    rawPanel.setVisible(raw);
+    validate();
+    repaint();
+  }
+
   // -- TreeSelectionListener API methods --
 
   /** Called when the OME-XML tree selection changes. */
@@ -167,8 +243,12 @@ public class MetadataPane extends JPanel implements TreeSelectionListener {
       return;
     }
 
-    // update OME-XML attributes table
+    // update CDATA text area
     Element el = ((ElementWrapper) node.getUserObject()).el;
+    String text = DOMUtil.getCharacterData(el);
+    cdata.setText(text == null ? "" : text);
+
+    // update OME-XML attributes table
     String[] names = DOMUtil.getAttributeNames(el);
     String[] values = DOMUtil.getAttributeValues(el);
     treeTableModel.setRowCount(names.length);
