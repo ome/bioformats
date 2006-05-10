@@ -163,15 +163,24 @@ public class ImageViewer extends JFrame
     wait(true);
     try {
       //writer.save(id, images);
+      boolean stack = writer.canDoStacks(id);
       ProgressMonitor progress = new ProgressMonitor(this,
-        "Saving " + id, null, 0, images.length);
-      for (int i=0; i<images.length; i++) {
-        progress.setProgress(i);
-        boolean canceled = progress.isCanceled();
-        writer.save(id, images[i], i == images.length - 1 || canceled);
-        if (canceled) break;
+        "Saving " + id, null, 0, stack ? images.length : 1);
+      if (stack) {
+        // save entire stack
+        for (int i=0; i<images.length; i++) {
+          progress.setProgress(i);
+          boolean canceled = progress.isCanceled();
+          writer.save(id, images[i], i == images.length - 1 || canceled);
+          if (canceled) break;
+        }
+        progress.setProgress(images.length);
       }
-      progress.setProgress(images.length);
+      else {
+        // save current image only
+        writer.save(id, getImage(), true);
+        progress.setProgress(1);
+      }
     }
     catch (Exception exc) { exc.printStackTrace(); }
     wait(false);
@@ -208,8 +217,13 @@ public class ImageViewer extends JFrame
 
   /** Gets the currently displayed image. */
   public BufferedImage getImage() {
-    int ndx = slider == null ? 0 : (slider.getValue() - 1);
+    int ndx = getImageIndex();
     return images == null || ndx >= images.length ? null : images[ndx];
+  }
+
+  /** Gets the index of the currently displayed image. */
+  public int getImageIndex() {
+    return slider == null ? 0 : (slider.getValue() - 1);
   }
 
 
@@ -282,7 +296,7 @@ public class ImageViewer extends JFrame
   /** Updates cursor probe label. */
   protected void updateLabel(int x, int y) {
     if (images == null) return;
-    int ndx = slider == null ? 0 : (slider.getValue() - 1);
+    int ndx = getImageIndex();
     sb.setLength(0);
     if (images.length > 1) {
       sb.append("N=");
