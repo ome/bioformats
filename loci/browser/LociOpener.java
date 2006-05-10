@@ -8,6 +8,7 @@
 package loci.browser;
 
 import ij.*;
+import ij.io.OpenDialog;
 import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -26,7 +27,7 @@ public class LociOpener extends JPanel implements ItemListener {
 
     //Set up the file chooser.
     if (fc == null) {
-      fc = new JFileChooser();
+      fc = new JFileChooser(OpenDialog.getDefaultDirectory());
 
       //Add a custom file filter and disable the default
       //(Accept All) file filter.
@@ -49,7 +50,9 @@ public class LociOpener extends JPanel implements ItemListener {
     if (returnVal == JFileChooser.APPROVE_OPTION) {
       File file = fc.getSelectedFile();
       filename = file.getName();
-      dir = fc.getCurrentDirectory().getPath()+File.separator;
+      dir = fc.getCurrentDirectory().getPath();
+      OpenDialog.setDefaultDirectory(dir);
+      dir += File.separator;
     }
     else Macro.abort();
     //Reset the file chooser for the next time it's shown.

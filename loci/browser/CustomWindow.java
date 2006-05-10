@@ -17,7 +17,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
-import loci.ome.MetaPanel;
+import loci.ome.viewer.MetadataPane;
 
 public class CustomWindow extends ImageWindow implements ActionListener,
   AdjustmentListener, ChangeListener, ItemListener, KeyListener, Runnable
@@ -437,37 +437,13 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       // (older versions of ImageJ truncate the final character)
       if (description.endsWith("</OME")) description += ">";
 
-      Object[] meta = {null, MetaPanel.exportMeta(description, id)};
-      if (meta[1] == null) {
-        // XML parse failed, create dialog box for raw info
-        JDialog raw = new JDialog(this, "Raw Metadata", false);
-        JPanel rawPane = new JPanel();
-        rawPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-        rawPane.setLayout(new BorderLayout());
-        raw.setContentPane(rawPane);
-        rawPane.add(new JLabel("Metadata parsing failed. " +
-          "Here is the raw info (good luck):"), BorderLayout.NORTH);
-        JTextArea rawText = new JTextArea();
-        rawText.setLineWrap(true);
-        rawText.setColumns(50);
-        rawText.setRows(30);
-        rawText.setEditable(false);
-        rawText.setText(description);
-        JScrollPane rawScroll = new JScrollPane(rawText);
-        rawScroll.setBorder(new EmptyBorder(5, 0, 5, 0));
-        rawPane.add(rawScroll, BorderLayout.CENTER);
-        JButton rawOk = new JButton("OK");
-        rawOk.setActionCommand("rawOk");
-        rawOk.addActionListener(this);
-        rawPane.add(rawOk, BorderLayout.SOUTH);
-        raw.pack();
-        MetaPanel.centerWindow(this, raw);
-        raw.setVisible(true);
-      }
-      else {
-        MetaPanel metaPanel = new MetaPanel(IJ.getInstance(), id, meta);
-        metaPanel.show();
-      }
+      // pop up a new metadata viewer dialog
+      JDialog meta = new JDialog(this, "Metadata", false);
+      MetadataPane metaPane = new MetadataPane();
+      meta.setContentPane(metaPane);
+      metaPane.setOMEXML(description);
+      meta.pack();
+      meta.setVisible(true);
     }
     else if ("swap".equals(cmd)) {
       // swap labels

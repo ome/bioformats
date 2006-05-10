@@ -16,8 +16,8 @@ echo 'http://www.loci.wisc.edu/4d/#browser' >> about.txt
 mv about.txt loci/util/about.txt
 jar cfm loci/browser/loci_browser.jar browser.manifest \
 plugins.config loci/util/about.txt \
-loci/browser/*.class loci/ome/*.class loci/util/*.class \
-loci/browser/*.java loci/ome/*.java loci/util/*.java \
+loci/browser/*.class loci/ome/viewer/*.class loci/util/*.class \
+loci/browser/*.java loci/ome/viewer/*.java loci/util/*.java \
 loci/browser/build loci/browser/plugins.config loci/browser/browser.manifest
 rm browser.manifest plugins.config loci/util/about.txt
 
