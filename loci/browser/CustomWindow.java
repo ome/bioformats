@@ -7,8 +7,7 @@
 package loci.browser;
 
 import ij.*;
-import ij.gui.ImageCanvas;
-import ij.gui.ImageWindow;
+import ij.gui.*;
 import ij.io.FileInfo;
 import ij.measure.Calibration;
 import java.awt.*;
@@ -438,11 +437,12 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       if (description.endsWith("</OME")) description += ">";
 
       // pop up a new metadata viewer dialog
-      JDialog meta = new JDialog(this, "Metadata", false);
+      JFrame meta = new JFrame("Metadata - " + getTitle());
       MetadataPane metaPane = new MetadataPane();
       meta.setContentPane(metaPane);
       metaPane.setOMEXML(description);
       meta.pack();
+      GUI.center(meta);
       meta.setVisible(true);
     }
     else if ("swap".equals(cmd)) {
