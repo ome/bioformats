@@ -420,6 +420,7 @@ public class DicomReader extends FormatReader {
     if (tag == ITEM) return id != null ? id : null;
     if (value != null) return value;
 
+    boolean skip = false;
     switch (vr) {
       case AE:
       case AS:
@@ -461,17 +462,18 @@ public class DicomReader extends FormatReader {
       case SQ:
         value = "";
         boolean privateTag = ((tag >> 16) & 1) != 0;
-        if (tag != ICON_IMAGE_SEQUENCE && !privateTag) break;
-
-        // else fall through and skip icon image sequence or private sequence
-
+        if (tag == ICON_IMAGE_SEQUENCE || privateTag) skip = true;
+        break;
       default:
-        long skipCount = (long) elementLength;
-        while ((skipCount > 0) && in.getFilePointer() < in.length()) {
-          skipCount -= in.skipBytes((int) skipCount);
-        }
-        location += elementLength;
-        value = "";
+        skip = true;
+    }
+    if (skip) {
+      long skipCount = (long) elementLength;
+      while ((skipCount > 0) && in.getFilePointer() < in.length()) {
+        skipCount -= in.skipBytes((int) skipCount);
+      }
+      location += elementLength;
+      value = "";
     }
 
     if (value != null && id == null && !value.equals("")) return value;
