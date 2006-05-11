@@ -397,4 +397,19 @@ public abstract class DataTools {
     return bytesToString(bytes, 0, bytes.length);
   }
 
+  /** Remove null bytes from a string. */
+  public static String stripString(String toStrip) {
+    char[] toRtn = new char[toStrip.length()];
+    int counter = 0;
+    for (int i=0; i<toRtn.length; i++) {
+      if ((toStrip.charAt(i) != 0) && (toStrip.charAt(i) != ' ')) {
+        toRtn[counter] = toStrip.charAt(i);
+        counter++;
+      }        
+    }        
+    toStrip = new String(toRtn);
+    toStrip = toStrip.trim();
+    return toStrip;
+  }
+  
 }

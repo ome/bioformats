@@ -67,8 +67,15 @@ public class PerkinElmerReader extends FormatReader {
     return numImages;
   }
 
+  /** Obtains the specified image from the given file as a byte array. */
+  public byte[] openBytes(String id, int no) 
+    throws FormatException, IOException
+  {
+    return tiff.openBytes(files[no], 0);
+  }        
+  
   /** Obtains the specified image from the given PerkinElmer file. */
-  public BufferedImage open(String id, int no)
+  public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -76,7 +83,7 @@ public class PerkinElmerReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-    return tiff.open(files[no], 0);
+    return tiff.openImage(files[no], 0);
   }
 
   /** Closes any open files. */
@@ -139,7 +146,7 @@ public class PerkinElmerReader extends FormatReader {
      System.arraycopy(tempFiles, 0, files, 0, filesPt);
 
      numImages = files.length;
-     FileReader read;
+     BufferedReader read;
      char[] data;
      StringTokenizer t;
 
@@ -150,7 +157,7 @@ public class PerkinElmerReader extends FormatReader {
 
      if (timPos != -1) {
        tempFile = new File(workingDir, ls[timPos]);
-       read = new FileReader(tempFile);
+       read = new BufferedReader(new FileReader(tempFile));
        data = new char[(int) tempFile.length()];
        read.read(data);
        t = new StringTokenizer(new String(data));
@@ -173,7 +180,7 @@ public class PerkinElmerReader extends FormatReader {
 
      if (csvPos != -1) {
        tempFile = new File(workingDir, ls[csvPos]);
-       read = new FileReader(tempFile);
+       read = new BufferedReader(new FileReader(tempFile));
        data = new char[(int) tempFile.length()];
        read.read(data);
        t = new StringTokenizer(new String(data));
@@ -200,7 +207,7 @@ public class PerkinElmerReader extends FormatReader {
      }
      else if (zpoPos != -1) {
        tempFile = new File(workingDir, ls[zpoPos]);
-       read = new FileReader(tempFile);
+       read = new BufferedReader(new FileReader(tempFile));
        data = new char[(int) tempFile.length()];
        read.read(data);
        t = new StringTokenizer(new String(data));
@@ -218,7 +225,7 @@ public class PerkinElmerReader extends FormatReader {
        // ooh, pretty HTML
 
        tempFile = new File(workingDir, ls[htmPos]);
-       read = new FileReader(tempFile);
+       read = new BufferedReader(new FileReader(tempFile));
        data = new char[(int) tempFile.length()];
        read.read(data);
 

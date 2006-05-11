@@ -45,8 +45,11 @@ public class OpenlabReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessFile in;
+  protected DataInputStream in;
 
+  /** File length. */
+  private int fileLength;
+  
   /** Number of blocks for current Openlab LIFF. */
   private int numBlocks;
 
@@ -90,8 +93,16 @@ public class OpenlabReader extends FormatReader {
     return numBlocks;
   }
 
+  /** Obtains the specified image from the given file as a byte array. */
+  public byte[] openBytes(String id, int no) 
+    throws FormatException, IOException
+  {
+    throw new FormatException("OpenlabReader.openBytes(String, int) " +
+      "not implemented");
+  }
+
   /** Obtains the specified image from the given Openlab file. */
-  public BufferedImage open(String id, int no)
+  public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -101,7 +112,10 @@ public class OpenlabReader extends FormatReader {
     }
 
     // First initialize:
-    in.seek(offsets[no] + 12);
+    if ((fileLength - in.available()) < (offsets[no] + 12)) {
+      in.skipBytes((int) (in.available() - fileLength + (offsets[no] + 12)));
+    }        
+    
     byte[] toRead = new byte[4];
     in.read(toRead);
     int blockSize = batoi(toRead);
@@ -161,7 +175,7 @@ public class OpenlabReader extends FormatReader {
         if (expectedBlock == 0 && imageType[no] < 9) {
           // there has been no deep gray data, and it is supposed
           // to be a pict... *crosses fingers*
-          try { return pictReader.openBytes(toRead); }
+          try { return pictReader.open(toRead); }
           catch (Exception e) {
             e.printStackTrace();
             throw new FormatException("No iPic comment block found", e);
@@ -242,31 +256,33 @@ public class OpenlabReader extends FormatReader {
   /** Initializes the given Openlab file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessFile(id, "r");
-
+    in = new DataInputStream(
+      new BufferedInputStream(new FileInputStream(id), 4096));
+    fileLength = in.available();
+    
     // initialize an array containing tag offsets, so we can
     // use an O(1) search instead of O(n) later.
     // Also determine whether we will be reading color or grayscale
     // images
 
-    //in.seek(0);
     byte[] toRead = new byte[4];
     in.read(toRead);
     long order = batoi(toRead);  // byte ordering
     little = toRead[2] != 0xff || toRead[3] != 0xff;
 
-    toRead = new byte[4];
+    //toRead = new byte[4];
     Vector v = new Vector(); // a temp vector containing offsets.
 
     // Get first offset.
-    in.seek(16);
+    //in.seek(16);
+    in.skipBytes(12);
     in.read(toRead);
     int nextOffset = batoi(toRead);
     int nextOffsetTemp;
 
     boolean first = true;
     while(nextOffset != 0) {
-      in.seek(nextOffset + 4);
+      in.skipBytes((int) (in.available() - fileLength + (nextOffset + 4)));
       in.read(toRead);
       // get next tag, but still need this one
       nextOffsetTemp = batoi(toRead);
@@ -292,7 +308,8 @@ public class OpenlabReader extends FormatReader {
       nextOffset = nextOffsetTemp;
     }
 
-    in.seek(((Integer) v.firstElement()).intValue());
+    in.skipBytes((int) (in.available() - fileLength + 
+      ((Integer) v.firstElement()).intValue()));
 
     // create and populate the array of offsets from the vector
     numBlocks = v.size();
@@ -305,12 +322,14 @@ public class OpenlabReader extends FormatReader {
     toRead = new byte[2];
     imageType = new int[numBlocks];
     for (int i = 0; i < numBlocks; i++) {
-      in.seek(offsets[i]);
+      in.skipBytes((int) (in.available() - fileLength + offsets[i]));
       in.skipBytes(40);
       in.read(toRead);
       imageType[i] = batoi(toRead);
     }
     initMetadata();
+    in = new DataInputStream(
+      new BufferedInputStream(new FileInputStream(id), 4096));
   }
 
 
@@ -318,9 +337,10 @@ public class OpenlabReader extends FormatReader {
 
   /** Populates the metadata hashtable. */
   private void initMetadata() throws IOException {
+    in = new DataInputStream(
+      new BufferedInputStream(new FileInputStream(currentId), 4096));
 
     // start by reading the file header
-    in.seek(0);
     byte[] toRead = new byte[4];
     in.read(toRead);
     long order = batoi(toRead);  // byte ordering
@@ -343,8 +363,8 @@ public class OpenlabReader extends FormatReader {
     long offset = DataTools.bytesToLong(toRead, little);
 
     // skip to first tag
-    in.seek(offset);
-
+    in.skipBytes((int) (in.available() - fileLength + offset));
+    
     // read in each tag and its data
 
     for (int i=0; i<count; i++) {
@@ -488,7 +508,7 @@ public class OpenlabReader extends FormatReader {
           OMETools.setPixelSizeY(ome, yScale.floatValue());
         }
       }
-      in.seek(offset);
+      in.skipBytes((int) (in.available() - fileLength + offset));
     }
   }
 

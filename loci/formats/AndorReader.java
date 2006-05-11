@@ -102,6 +102,10 @@ public class AndorReader extends BaseTiffReader {
     // look for MMHEADER
     short[] header = (short[]) TiffTools.getIFDValue(ifds[0], MMHEADER);
 
+    int sizeC = 1;
+    int sizeT = 1;
+    int sizeZ = 1;
+   
     if (header != null) {
       int pos = 3;
       metadata.put("Name", DataTools.bytesToString(header, pos, 256));
@@ -143,13 +147,6 @@ public class AndorReader extends BaseTiffReader {
       }
       metadata.put("Image type", imgType);
 
-      // clear OME-XML dimension info for Z, C and T axes
-      OMETools.setSizeZ(ome, 1);
-      OMETools.setSizeC(ome, 1);
-      OMETools.setSizeT(ome, 1);
-
-      int sizeC = 1;
-
       for (int i=1; i<=10; i++) {
         if (DEBUG) {
           System.out.println("bytes for dimension " + i + " name");
@@ -185,15 +182,14 @@ public class AndorReader extends BaseTiffReader {
 
         // set OME-XML dimensions appropriately
 
-        if (name.equals("Z")) OMETools.setSizeZ(ome, size);
-        else if (name.equals("Time")) OMETools.setSizeT(ome, size);
+        if (name.equals("Z")) sizeZ = size;
+        else if (name.equals("Time")) sizeT = size;
         else if (!name.trim().equals("") && !name.equals("x") &&
           !name.equals("y"))
         {
           sizeC *= size;
         }
       }
-      OMETools.setSizeC(ome, sizeC);
     }
 
     // parse stamp value, a sequence of 8 doubles representing the
@@ -287,7 +283,11 @@ public class AndorReader extends BaseTiffReader {
       else if (order.indexOf("C") < 0) order = order + "C";
     }
 
-    OMETools.setDimensionOrder(ome, order);
+    // x, y, z, c, t, pixelType, bigEndian, dimensionOrder
+    OMETools.setPixels(ome, OMETools.getSizeX(ome), OMETools.getSizeY(ome), 
+      new Integer(sizeZ), new Integer(sizeC), new Integer(sizeT), 
+      OMETools.getPixelType(ome), new Boolean(!little), order);
+                    
   }
 
 

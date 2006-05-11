@@ -36,9 +36,6 @@ import java.net.*;
  * Much of this reader's code was adapted from Wayne Rasband's
  * QuickTime Movie Opener plugin for ImageJ
  * (available at http://rsb.info.nih.gov/ij/).
- *
- * TODO -- address efficiency issues; currently 200-550ms are required to
- *         process each plane, with an additional 2500+ ms of overhead
  */
 public class LegacyQTReader extends FormatReader {
 
@@ -290,7 +287,21 @@ public class LegacyQTReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given QuickTime file. */
-  public BufferedImage open(String id, int no)
+  public byte[] openBytes(String id, int no)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+
+    if (no < 0 || no >= getImageCount(id)) {
+      throw new FormatException("Invalid image number: " + no);
+    }         
+
+    throw new FormatException("LegacyQTReader.openBytes(String, int) " +
+      "not implemented");
+  }
+  
+  /** Obtains the specified image from the given QuickTime file. */
+  public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);

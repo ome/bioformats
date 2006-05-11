@@ -24,8 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 
 /**
  * GatanReader is the file format reader for Gatan files.
@@ -42,8 +44,11 @@ public class GatanReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessFile in;
+  protected DataInputStream in;
 
+  /** File length. */
+  private int fileLength;
+  
   /** Flag indicating whether current file is little endian. */
   protected boolean littleEndian;
 
@@ -81,8 +86,21 @@ public class GatanReader extends FormatReader {
     return 1;
   }
 
+  /** Obtains the specified image from the given Gatan file as a byte array. */
+  public byte[] openBytes(String id, int no) 
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+
+    if (no < 0 || no >= getImageCount(id)) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+   
+    return pixelData;
+  }
+
   /** Obtains the specified image from the given Gatan file. */
-  public BufferedImage open(String id, int no)
+  public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -134,8 +152,10 @@ public class GatanReader extends FormatReader {
   /** Initializes the given Gatan file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessFile(id, "r");
-
+    in = new DataInputStream(
+      new BufferedInputStream(new FileInputStream(id), 4096));
+    fileLength = in.available();
+    
     littleEndian = false;
 
     byte[] temp = new byte[4];
@@ -278,15 +298,17 @@ public class GatanReader extends FormatReader {
 
               byte check = 0;
               double bpp = 0.5;
-              int fp = (int) in.getFilePointer();
+              in.mark((int) (bpp * 50 * length));
               while (check != 20 && check != 21) {
                 bpp *= 2;
-                in.seek(fp);
+                in.reset();
+                in.mark((int) (bpp * 50 * length));
                 pixelData = new byte[(int) bpp * length];
                 in.read(pixelData);
                 check = in.readByte();
               }
-              in.seek((long) (fp + bpp * length));
+              in.reset();
+              in.skipBytes((int) (bpp * length));
             }
             else {
               int[] data = new int[length];

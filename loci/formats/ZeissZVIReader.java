@@ -105,13 +105,21 @@ public class ZeissZVIReader extends FormatReader {
     return needLegacy ? legacy.getImageCount(id) : nImages;
   }
 
-  /** Obtains the specified image from the given Zeiss ZVI file. */
-  public BufferedImage open(String id, int no)
+  /** Obtains the specified image from the given ZVI file, as a byte array. */
+  public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (noPOI) return legacy.open(id, no);
+    throw new FormatException("ZeissZVIReader.openBytes(String, int) " +
+      "not implemented");
+  }
+  
+  /** Obtains the specified image from the given Zeiss ZVI file. */
+  public BufferedImage openImage(String id, int no)
+    throws FormatException, IOException
+  {
+    if (noPOI) return legacy.openImage(id, no);
     if (!id.equals(currentId)) initFile(id);
-    if (needLegacy) return legacy.open(id, no);
+    if (needLegacy) return legacy.openImage(id, no);
 
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);

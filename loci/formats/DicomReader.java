@@ -73,8 +73,11 @@ public class DicomReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessFile in;
+  protected DataInputStream in;
 
+  /** File length. */
+  private int fileLength;
+  
   /** Number of image planes in the file. */
   protected int numImages = 0;
 
@@ -123,8 +126,16 @@ public class DicomReader extends FormatReader {
     return numImages;
   }
 
+  /** Obtains the specified image from the given file as a byte array. */
+  public byte[] openBytes(String id, int no) 
+    throws FormatException, IOException
+  {
+    throw new FormatException("DicomReader.openBytes(String, int) " +
+      "not implemented");
+  }
+
   /** Obtains the specified image from the given DICOM file. */
-  public BufferedImage open(String id, int no)
+  public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -134,7 +145,12 @@ public class DicomReader extends FormatReader {
     }
 
     byte[] data = new byte[width * height * (bitsPerPixel / 8)];
-    in.seek(offsets + data.length*no);
+    
+    if ((fileLength - in.available()) < (offsets + data.length * no)) {
+      in.skipBytes((int) (in.available() - fileLength + 
+        (offsets + data.length * no)));
+    }        
+    
     in.read(data);
 
     if (bitsPerPixel < 16) {
@@ -227,25 +243,29 @@ public class DicomReader extends FormatReader {
   /** Initializes the given DICOM file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessFile(id, "r");
+    in = new DataInputStream(
+      new BufferedInputStream(new FileInputStream(id), 4096));
+    fileLength = in.available(); 
+    
     little = true;
     location = 0;
 
     // some DICOM files have a 128 byte header followed by a 4 byte identifier
 
     byte[] four = new byte[4];
-    in.seek(128);
+    in.mark(150);
+    in.skipBytes(128);
     in.read(four);
     if ((new String(four)).equals("DICM")) {
       // header exists, so we'll read it
-      in.seek(0);
+      in.reset();
       byte[] header = new byte[128];
       in.read(header);
       metadata.put("Header information", new String(header));
       in.skipBytes(4);
       location = 128;
     }
-    else in.seek(0);
+    else in.reset();
 
     boolean decodingTags = true;
     boolean signed = false;
@@ -256,7 +276,9 @@ public class DicomReader extends FormatReader {
       if ((location & 1) != 0) oddLocations = true;
       if (inSequence) {
         addInfo(tag, null);
-        if (in.getFilePointer() >= (in.length() - 4)) decodingTags = false;
+        if ((fileLength - in.available()) >= (fileLength - 4)) {
+          decodingTags = false;
+        }  
         continue;
       }
 
@@ -337,7 +359,7 @@ public class DicomReader extends FormatReader {
           break;
         case PIXEL_DATA:
           if (elementLength != 0) {
-            offsets = (int) in.getFilePointer();
+            offsets = (int) (fileLength - in.available());
             addInfo(tag, location);
             decodingTags = false;
           }
@@ -352,7 +374,9 @@ public class DicomReader extends FormatReader {
         default:
           addInfo(tag, null);
       }
-      if (in.getFilePointer() >= (in.length() - 4)) decodingTags = false;
+      if ((fileLength - in.available()) >= (fileLength - 4)) {
+        decodingTags = false;
+      }  
     }
     if (numImages == 0) numImages = 1;
 
@@ -380,6 +404,8 @@ public class DicomReader extends FormatReader {
         null, null);
 
     }
+    in = new DataInputStream(
+      new BufferedInputStream(new FileInputStream(id), 4096));
   }
 
   // -- Utility methods --
@@ -469,7 +495,7 @@ public class DicomReader extends FormatReader {
     }
     if (skip) {
       long skipCount = (long) elementLength;
-      while ((skipCount > 0) && in.getFilePointer() < in.length()) {
+      while ((skipCount > 0) && in.available() > 0) {
         skipCount -= in.skipBytes((int) skipCount);
       }
       location += elementLength;

@@ -47,8 +47,11 @@ public class ImarisReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessFile in;
+  protected DataInputStream in;
 
+  /** Length of file. */
+  private int fileLength;
+  
   /** Number of image planes in the file. */
   protected int numImages = 0;
 
@@ -78,8 +81,8 @@ public class ImarisReader extends FormatReader {
     return numImages;
   }
 
-  /** Obtains the specified image from the given Imaris file. */
-  public BufferedImage open(String id, int no)
+  /** Obtains the specified image from the given Imaris file as a byte array. */
+  public byte[] openBytes(String id, int no) 
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -87,22 +90,24 @@ public class ImarisReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-
-    in.seek(offsets[no]);
+ 
+    in.skipBytes((int) (in.available() - (fileLength - offsets[no])));
     byte[] data = new byte[dims[0] * dims[1]];
-    in.read(data);
-
-    // flip the image upside down
-
-    byte[] temp = data;
-    data = new byte[temp.length];
+  
+    int row = dims[1] - 1;
     for (int i=0; i<dims[1]; i++) {
-      int oldOffset = dims[0] * (dims[1] - i);
-      if (i == 0) oldOffset -= dims[0];
-      System.arraycopy(temp, oldOffset, data, i*dims[0], dims[0]);
+      in.read(data, row*dims[0], dims[0]); 
+      row--;
     }
+    
+    return data;
+  }
 
-    return ImageTools.makeImage(data, dims[0], dims[1], 1, false);
+  /** Obtains the specified image from the given Imaris file. */
+  public BufferedImage openImage(String id, int no)
+    throws FormatException, IOException
+  {
+    return ImageTools.makeImage(openBytes(id, no), dims[0], dims[1], 1, false);
   }
 
   /** Closes any open files. */
@@ -115,7 +120,9 @@ public class ImarisReader extends FormatReader {
   /** Initializes the given Imaris file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessFile(id, "r");
+    in = new DataInputStream(
+      new BufferedInputStream(new FileInputStream(id), 4096));
+    fileLength = in.available();
     dims = new int[4];
 
     long magic = DataTools.read4UnsignedBytes(in, IS_LITTLE);

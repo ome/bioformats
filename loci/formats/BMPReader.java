@@ -24,8 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 
 /**
  * BMPReader is the file format reader for Microsoft Bitmap (BMP) files.
@@ -39,7 +41,7 @@ public class BMPReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessFile in;
+  protected DataInputStream in;
 
   /** Flag indicating whether current file is little endian. */
   protected boolean littleEndian;
@@ -92,8 +94,17 @@ public class BMPReader extends FormatReader {
     return 1;
   }
 
+  /** Obtains the specified image from the given BMP file as a byte array. */
+  public byte[] openBytes(String id, int no) 
+    throws FormatException, IOException
+  {
+    throw new FormatException("BMPReader.openBytes(String, int) not" +
+      " implemented");
+  } 
+
+
   /** Obtains the specified image from the given BMP file. */
-  public BufferedImage open(String id, int no)
+  public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -102,7 +113,6 @@ public class BMPReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    in.seek(offset);
     if (width % 2 == 1) width++;
     byte[] pix = new byte[width * height * (bpp / 8)];
     in.read(pix);
@@ -124,10 +134,10 @@ public class BMPReader extends FormatReader {
       pixels = new byte[3][pix.length];
       int pt = pix.length;
       for (int i=0; i<pix.length; i++) {
-        for (int j=0; j<3; j++) {
-          if (pix[i] < 0) pix[i] += 127;
-          pixels[j][pt] = palette[j][pix[i]];
-        }
+        if (pix[i] < 0) pix[i] += 127;
+        pixels[0][pt] = palette[0][pix[i]];
+        pixels[1][pt] = palette[1][pix[i]];
+        pixels[2][pt] = palette[2][pix[i]];
         pt--;
       }
     }
@@ -147,10 +157,10 @@ public class BMPReader extends FormatReader {
         pixels = new byte[3][pix.length / 3];
         int pt = pix.length - 1;
         for (int j=0; j<pixels[0].length; j++) {
-          for (int i=0; i < 3; i++) {
-            pixels[i][j] = pix[pt];
-            pt--;
-          }
+          pixels[0][j] = pix[pt];
+          pixels[1][j] = pix[pt - 1];
+          pixels[2][j] = pix[pt - 2];
+          pt -= 3;
         }
       }
     }
@@ -159,11 +169,15 @@ public class BMPReader extends FormatReader {
 
     byte[][] tempPx = new byte[pixels.length][pixels[0].length];
 
-    for (int i=0; i<pixels.length; i++) {
-      for (int j=0; j < height; j++) {
-        for (int k=0; k < width; k++) {
-          tempPx[i][(width*j) + k] = pixels[i][(width*(j+1)) - 1 - k];
-        }
+    for (int j=0; j < height; j++) {
+      int oldOff = width * j;
+      int newOff = width * (j+1) - 1;
+      for (int k=0; k < width; k++) {
+        tempPx[0][oldOff] = pixels[0][newOff];
+        tempPx[1][oldOff] = pixels[1][newOff];
+        tempPx[2][oldOff] = pixels[2][newOff];
+        oldOff++;
+        newOff--;     
       }
     }
 
@@ -180,10 +194,13 @@ public class BMPReader extends FormatReader {
   /** Initializes the given BMP file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessFile(id, "r");
-
+    in = new DataInputStream(
+      new BufferedInputStream(new FileInputStream(id), 4096));
+    
     littleEndian = true;
-
+ 
+    int originalSize = in.available();
+    
     // read the first header - 14 bytes
 
     byte[] two = new byte[2];
@@ -254,7 +271,7 @@ public class BMPReader extends FormatReader {
 
     // read the palette, if it exists
 
-    if (offset != (int) in.getFilePointer()) {
+    if (offset != (originalSize - in.available())) {
       palette = new byte[3][nColors];
 
       for (int i=0; i<nColors; i++) {

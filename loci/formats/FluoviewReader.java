@@ -177,7 +177,7 @@ public class FluoviewReader extends BaseTiffReader {
 
       // read in comments field
       if (commentSize > 0) {
-        in.seek(commentOffset);
+        in.skipBytes((int) (in.available() - fileLength + commentOffset));      
         byte[] comments = new byte[(int) commentSize];
         in.read(comments);
         put("Comments", new String(comments));
@@ -193,9 +193,12 @@ public class FluoviewReader extends BaseTiffReader {
 
       // set file to the right place
       off = (Object) ifd.get(new Integer(MMHEADER));
+      
+      float stageX = 0;
+      float stageY = 0;
+      float stageZ = 0;
+      
       if (off != null) {
-        OMETools.setImageName(ome, imageName);
-
         // read the metadata
         byte[] temp2 = new byte[279];
         in.read(temp2);
@@ -208,13 +211,16 @@ public class FluoviewReader extends BaseTiffReader {
 
           newNum = DataTools.read4SignedBytes(in, little);
           origin = (float) DataTools.readDouble(in, little);
-          if (j == 1) OMETools.setStageX(ome, origin);
-          else if (j == 2) OMETools.setStageY(ome, origin);
-          else if (j == 3) OMETools.setStageZ(ome, origin);
+          if (j == 1) stageX = origin;
+          else if (j == 2) stageY = origin; 
+          else if (j == 3) stageZ = origin;
 
           DataTools.readDouble(in, little); // skip next double
         }
       }
+
+      OMETools.setStageLabel(ome, null, new Float(stageX), new Float(stageY),
+        new Float(stageZ));
 
       String descr = (String) metadata.get("Comment");
       metadata.remove("Comment");
@@ -258,8 +264,8 @@ public class FluoviewReader extends BaseTiffReader {
       if (descr == null) {
         descr = (String) metadata.get("File Version");
       }
-      OMETools.setDescription(ome, descr);
-
+      OMETools.setImage(ome, imageName, null, descr);
+      
       String d = (String) TiffTools.getIFDValue(ifds[0], TiffTools.PAGE_NAME);
       int strPos = d.indexOf("[Higher Dimensions]") + 19;
       d = d.substring(strPos);
@@ -328,21 +334,25 @@ public class FluoviewReader extends BaseTiffReader {
       // set the OME-XML dimension attributes appropriately
 
       // first we need to reset the dimensions
-      OMETools.setSizeZ(ome, 1);
-      OMETools.setSizeC(ome, 1);
-      OMETools.setSizeT(ome, 1);
-
+     
+      int sizeZ = 1;
+      int sizeC = 1;
+      int sizeT = 1; 
+      
       for(int i=0; i<n.size(); i++) {
         String name = (String) n.get(i);
         String pos = (String) numPlanes.get(i);
         int q = Integer.parseInt(pos);
 
-        if (name.equals("Ch")) OMETools.setSizeC(ome, q);
+        if (name.equals("Ch")) sizeC = q; 
         else if (name.equals("Animation") || name.equals("T")) {
-          OMETools.setSizeT(ome, q);
+          sizeT = q;
         }
-        else if (name.equals("Z")) OMETools.setSizeZ(ome, q);
+        else if (name.equals("Z")) sizeZ = q;
       }
+  
+      OMETools.setPixels(ome, null, null, new Integer(sizeZ), 
+        new Integer(sizeC), new Integer(sizeT), null, null, null); 
     }
     catch (NullPointerException e) { /* most likely MMHEADER not found */ }
     catch (IOException e) { e.printStackTrace(); }

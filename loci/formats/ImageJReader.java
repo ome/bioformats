@@ -87,8 +87,16 @@ public class ImageJReader extends FormatReader {
     return 1;
   }
 
+  /** Obtains the specified image from the given file as a byte array. */
+  public byte[] openBytes(String id, int no) 
+    throws FormatException, IOException
+  {
+    throw new FormatException("ImageJReader.openBytes(String, int) " +
+      "not implemented");
+  }
+
   /** Obtains the specified image from the given file. */
-  public BufferedImage open(String id, int no)
+  public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);

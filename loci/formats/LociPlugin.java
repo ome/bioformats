@@ -70,7 +70,7 @@ public class LociPlugin implements PlugIn {
           time = clock;
         }
         IJ.showProgress((double) i / num);
-        BufferedImage img = reader.open(id, i);
+        BufferedImage img = reader.openImage(id, i);
 
         ImageProcessor ip = null;
         WritableRaster raster = img.getRaster();

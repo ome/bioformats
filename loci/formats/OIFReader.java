@@ -72,8 +72,15 @@ public class OIFReader extends FormatReader {
     return numImages;
   }
 
+  /** Obtains the specified image from the given OIF file as a byte array. */
+  public byte[] openBytes(String id, int no) 
+    throws FormatException, IOException
+  {
+    return tiffReader.openBytes((String) tiffs.get(no), 0);
+  }
+
   /** Obtains the specified image from the given OIF file. */
-  public BufferedImage open(String id, int no)
+  public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -82,7 +89,7 @@ public class OIFReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    return tiffReader.open((String) tiffs.get(no), 0);
+    return tiffReader.openImage((String) tiffs.get(no), 0);
   }
 
   /** Closes any open files. */
@@ -140,8 +147,8 @@ public class OIFReader extends FormatReader {
       if (!line.startsWith("[") && (line.indexOf("=") > 0)) {
         String key = line.substring(0, line.indexOf("=") - 1).trim();
         String value = line.substring(line.indexOf("=") + 1).trim();
-        key = LeicaReader.stripString(key);
-        value = LeicaReader.stripString(value);
+        key = DataTools.stripString(key);
+        value = DataTools.stripString(value);
         if (key.startsWith("IniFileName") && key.indexOf("Thumb") == -1) {
           int pos = Integer.parseInt(key.substring(11));
           filenames.put(new Integer(pos), value);
@@ -172,8 +179,8 @@ public class OIFReader extends FormatReader {
         if (!line.startsWith("[") && (line.indexOf("=") > 0)) {
           String key = line.substring(0, line.indexOf("=") - 1).trim();
           String value = line.substring(line.indexOf("=") + 1).trim();
-          key = LeicaReader.stripString(key);
-          value = LeicaReader.stripString(value);
+          key = DataTools.stripString(key);
+          value = DataTools.stripString(value);
           if (key.equals("DataName")) {
             value = value.substring(1, value.length() - 1);
             tiffs.add(i, tiffPath + File.separator + value);
