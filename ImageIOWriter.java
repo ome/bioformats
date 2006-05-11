@@ -24,11 +24,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.Image;
-import java.io.File;
+import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-/** ImageIOWriter is the file format writer for JPEG files. */
+/** 
+ * ImageIOWriter is the superclass for file format writers that use the 
+ * javax.imageio library. 
+ *
+ * @author Curtis Rueden ctrueden at wisc.edu 
+ */
 public abstract class ImageIOWriter extends FormatWriter {
 
   // -- Fields --
@@ -60,12 +67,13 @@ public abstract class ImageIOWriter extends FormatWriter {
 
   /**
    * Saves the given image to the specified (possibly already open) file.
-   * The last flag is ignored, since this writer produces single-image JPEGs.
+   * The last flag is ignored, since this writer produces single-image files.
    */
   public void save(String id, Image image, boolean last)
     throws FormatException, IOException
   {
-    ImageIO.write(ImageTools.makeBuffered(image), kind, new File(id));
+    ImageIO.write(ImageTools.makeBuffered(image), kind, new DataOutputStream(
+      new BufferedOutputStream(new FileOutputStream(id), 4096)));
   }
 
   /** Reports whether the writer can save multiple images to a single file. */

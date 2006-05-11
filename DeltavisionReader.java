@@ -24,8 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 
 /**
  * DeltavisionReader is the file format reader for Deltavision files.
@@ -42,7 +44,7 @@ public class DeltavisionReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessFile in;
+  protected DataInputStream in;
 
   /** Number of images in the current file. */
   protected int numImages;
@@ -56,12 +58,25 @@ public class DeltavisionReader extends FormatReader {
   /** Byte array containing extended header data. */
   protected byte[] extHeader;
 
+  /** File length. */
+  private int fileLength;
 
+  /** Image width. */
+  private int width;
+
+  /** Image height. */
+  private int height;
+  
+  /** Bytes per pixel. */
+  private int bytesPerPixel;
+
+  
   // -- Constructor --
 
   /** Constructs a new Deltavision reader. */
-  public DeltavisionReader() { super("Deltavision", "dv"); }
-
+  public DeltavisionReader() { 
+    super("Deltavision", new String[] {"dv", "r3d"}); 
+  }
 
   // -- FormatReader API methods --
 
@@ -76,33 +91,22 @@ public class DeltavisionReader extends FormatReader {
     return numImages;
   }
 
+  /** Obtains the specified image from the given file as a byte array. */
+  public byte[] openBytes(String id, int no) 
+    throws FormatException, IOException
+  {
+    throw new FormatException("DeltavisionReader.openBytes(String, int) " +
+      "not implemented");
+  }
+
   /** Obtains the specified image from the given Deltavision file. */
-  public BufferedImage open(String id, int no)
+  public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
 
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
-    }
-
-    int width = DataTools.bytesToInt(header, 0, 4, little);
-    int height = DataTools.bytesToInt(header, 4, 4, little);
-    int numTimes = DataTools.bytesToInt(header, 180, 2, little);
-    int numWaves = DataTools.bytesToInt(header, 196, 2, little);
-    int numZs = numImages / (numWaves * numTimes);
-    int pixelType = DataTools.bytesToInt(header, 12, 4, little);
-    int dimOrder = DataTools.bytesToInt(header, 182, 2, little);
-    int imageSequence = DataTools.bytesToInt(header, 182, 2, little);
-    int bytesPerPixel = 0;
-
-    switch (pixelType) {
-      case 0: bytesPerPixel = 1; break;
-      case 1: bytesPerPixel = 2; break;
-      case 2: bytesPerPixel = 4; break;
-      case 3: bytesPerPixel = 4; break; // not well supported
-      case 4: bytesPerPixel = 8; break; // not supported
-      case 6: bytesPerPixel = 2; break;
     }
 
     // read the image plane's pixel data
@@ -113,7 +117,11 @@ public class DeltavisionReader extends FormatReader {
     int channels = 1;
     int numSamples = (int) (width * height);
     byte[] rawData = new byte[width * height * bytesPerPixel];
-    in.seek(offset);
+  
+    if ((fileLength - in.available()) < offset) {
+      in.skipBytes(in.available() - fileLength + offset);
+    }        
+    
     in.read(rawData);
 
     if (bytesPerPixel == 1) {
@@ -159,7 +167,10 @@ public class DeltavisionReader extends FormatReader {
   /** Initializes the given Deltavision file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessFile(id, "r");
+
+    in = new DataInputStream(
+      new BufferedInputStream(new FileInputStream(id), 4096));
+    fileLength = in.available();
 
     // read in the image header data
     header = new byte[1024];
@@ -173,8 +184,11 @@ public class DeltavisionReader extends FormatReader {
     extHeader = new byte[extSize];
     in.read(extHeader);
 
-    Integer sizeX = new Integer(DataTools.bytesToInt(header, 0, 4, little));
-    Integer sizeY = new Integer(DataTools.bytesToInt(header, 4, 4, little));
+    width = DataTools.bytesToInt(header, 0, 4, little);
+    height = DataTools.bytesToInt(header, 4, 4, little);
+    
+    Integer sizeX = new Integer(width);
+    Integer sizeY = new Integer(height);
     metadata.put("ImageWidth", sizeX);
     metadata.put("ImageHeight", sizeY);
     metadata.put("NumberOfImages", new Integer(DataTools.bytesToInt(header,
@@ -184,14 +198,26 @@ public class DeltavisionReader extends FormatReader {
     String omePixel;
 
     switch (pixelType) {
-      case 0: pixel = "8 bit unsigned integer"; omePixel = "Uint8"; break;
-      case 1: pixel = "16 bit signed integer"; omePixel = "int16"; break;
-      case 2: pixel = "32 bit floating point"; omePixel = "float"; break;
-      case 3: pixel = "32 bit complex"; omePixel = "Uint32"; break;
-      case 4: pixel = "64 bit complex"; omePixel = "float"; break;
-      case 6: pixel = "16 bit unsigned integer"; omePixel = "Uint16"; break;
-      default: pixel = "unknown"; omePixel = "Uint8";
-    }
+      case 0: pixel = "8 bit unsigned integer"; omePixel = "Uint8"; 
+              bytesPerPixel = 1;
+              break;
+      case 1: pixel = "16 bit signed integer"; omePixel = "int16"; 
+              bytesPerPixel = 2;
+              break;
+      case 2: pixel = "32 bit floating point"; omePixel = "float"; 
+              bytesPerPixel = 4;
+              break;
+      case 3: pixel = "32 bit complex"; omePixel = "Uint32"; 
+              bytesPerPixel = 4;
+              break;
+      case 4: pixel = "64 bit complex"; omePixel = "float"; 
+              bytesPerPixel = 8;
+              break;
+      case 6: pixel = "16 bit unsigned integer"; omePixel = "Uint16"; 
+              bytesPerPixel = 2;
+              break;
+      default: pixel = "unknown"; omePixel = "Uint8"; bytesPerPixel = 1;
+    } 
 
     if (ome != null) {
       OMETools.setPixels(ome, sizeX, sizeY, null, null, null, omePixel,
@@ -334,6 +360,9 @@ public class DeltavisionReader extends FormatReader {
     if (ome != null) {
       OMETools.setDescription(ome, (String) metadata.get("Title 1"));
     }
+    
+    in = new DataInputStream(
+      new BufferedInputStream(new FileInputStream(id), 4096));
   }
 
 

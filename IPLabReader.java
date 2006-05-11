@@ -24,8 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 
 /**
  * IPLabReader is the file format reader for IPLab (.IPL) files.
@@ -38,11 +40,31 @@ public class IPLabReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessFile in;
+  protected DataInputStream in;
 
   /** Flag indicating whether current file is little endian. */
   protected boolean littleEndian;
 
+  /** Number of images in the file. */
+  private int numImages;
+
+  /** Image width. */
+  private int width;
+
+  /** Image height. */
+  private int height;
+
+  /** Pixel type. */
+  private int pixelType;
+
+  /** Bytes per pixel. */
+  private int bps;
+  
+  /** Number of channels. */
+  private int c;
+  
+  /** Total number of pixel bytes. */
+  private int dataSize;
 
   // -- Constructor --
 
@@ -69,18 +91,19 @@ public class IPLabReader extends FormatReader {
   /** Determines the number of images in the given IPLab file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-
-    in.seek(0);
-    in.skipBytes(32);
-    long zDepth = DataTools.read4UnsignedBytes(in, littleEndian);
-    long tDepth = DataTools.read4UnsignedBytes(in, littleEndian);
-
-    int numImages = (int) (zDepth * tDepth);
     return numImages;
   }
 
+  /** Obtains the specified image from the given IPLab file as a byte array. */
+  public byte[] openBytes(String id, int no) 
+    throws FormatException, IOException
+  {
+    throw new FormatException("IPLabReader.openBytes(String, int) " +
+      "not implemented");
+  }
+
   /** Obtains the specified image from the given IPLab file. */
-  public BufferedImage open(String id, int no)
+  public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -89,55 +112,33 @@ public class IPLabReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    // read image bytes and convert to floats
-    in.seek(0);
-    in.skipBytes(16);
-
-    long dataSize = DataTools.read4UnsignedBytes(in, littleEndian);
-    dataSize -= 28; // size of raw image data, in bytes
-    long width = DataTools.read4UnsignedBytes(in, littleEndian);
-    long height = DataTools.read4UnsignedBytes(in, littleEndian);
-    long channels = DataTools.read4UnsignedBytes(in, littleEndian);
-    long zDepth = DataTools.read4UnsignedBytes(in, littleEndian);
-    long tDepth = DataTools.read4UnsignedBytes(in, littleEndian);
-    long pixelType = DataTools.read4UnsignedBytes(in, littleEndian);
-    byte[] rawData = new byte[(int) dataSize];
-    in.readFully(rawData);
-
-    int[] bitsPerSample = new int[1];
-    // bitsPerSample is dependent on the pixel type
-
-    switch ((int) pixelType) {
-      case 0: bitsPerSample[0] = 8; break;
-      case 1: bitsPerSample[0] = 16; break;
-      case 2: bitsPerSample[0] = 16; break;
-      case 3: bitsPerSample[0] = 32; break;
-      case 4: bitsPerSample[0] = 32; break;
-      case 10: bitsPerSample[0] = 64; break;
+    int numPixels = width * height;
+    in.skipBytes(numPixels * bps * no);
+    
+    byte[] rawData = new byte[numPixels * bps];
+    in.readFully(rawData);    
+   
+    if (bps == 1) {
+      return ImageTools.makeImage(rawData, width, height, c, false);
     }
-
-    int w = (int) width, h = (int) height, c = (int) channels;
-    int numPixels = w * h;
-    BufferedImage image = null;
-
-    if (bitsPerSample[0] == 8) {
-      // case for 8 bit data
-      image = ImageTools.makeImage(rawData, w, h, c, false);
-    }
-
-    else if (bitsPerSample[0] == 16) {
-      // case for 16 bit data
+    else if (bps == 2) {
       short[] data = new short[c * numPixels];
-      for (int i=0; i<data.length; i++) {
-        data[i] = DataTools.bytesToShort(rawData, 2 * i, littleEndian);
+      for (int i=0; i<rawData.length; i+=2) {
+        data[i/2] = DataTools.bytesToShort(rawData, i, littleEndian);
       }
-      image = ImageTools.makeImage(data, w, h, c, false);
+      return ImageTools.makeImage(data, width, height, c, false);
     }
-
+    else if (bps == 4) {
+      float[] floatData = new float[c * numPixels];
+      for (int i=0; i<rawData.length; i+=4) {
+        floatData[i/4] = 
+          Float.intBitsToFloat(DataTools.bytesToInt(rawData, i, littleEndian));
+      }
+      return ImageTools.makeImage(floatData, width, height, c, false);    
+    }
     else throw new FormatException("Sorry, " +
-      bitsPerSample[0] + " bits per sample is not supported");
+      bps + " bits per sample is not supported");
 
-    return image;
   }
 
   /** Closes any open files. */
@@ -150,41 +151,60 @@ public class IPLabReader extends FormatReader {
   /** Initializes the given IPLab file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessFile(id, "r");
-
+    in = new DataInputStream(
+      new BufferedInputStream(new FileInputStream(id), 4096));
+    
     byte[] fourBytes = new byte[4];
     in.read(fourBytes);
     littleEndian = new String(fourBytes).equals("iiii");
 
     // populate standard metadata hashtable and OME root node
-    in.seek(0);
-    in.skipBytes(16);
+    in.skipBytes(12);
 
-    long dataSize = DataTools.read4UnsignedBytes(in, littleEndian);
+    dataSize = (int) DataTools.read4UnsignedBytes(in, littleEndian);
     dataSize -= 28; // size of raw image data, in bytes
-    long width = DataTools.read4UnsignedBytes(in, littleEndian);
-    long height = DataTools.read4UnsignedBytes(in, littleEndian);
-    long channels = DataTools.read4UnsignedBytes(in, littleEndian);
+    width = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+    height = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+    c = (int) DataTools.read4UnsignedBytes(in, littleEndian);
     long zDepth = DataTools.read4UnsignedBytes(in, littleEndian);
     long tDepth = DataTools.read4UnsignedBytes(in, littleEndian);
-    long pixelType = DataTools.read4UnsignedBytes(in, littleEndian);
+    pixelType = (int) DataTools.read4UnsignedBytes(in, littleEndian);
 
+    numImages = (int) (zDepth * tDepth);
+    
     metadata.put("Width", new Long(width));
     metadata.put("Height", new Long(height));
-    metadata.put("Channels", new Long(channels));
+    metadata.put("Channels", new Long(c));
     metadata.put("ZDepth", new Long(zDepth));
     metadata.put("TDepth", new Long(tDepth));
 
     String ptype;
+    bps = 1;
     switch ((int) pixelType) {
-      case 0: ptype = "8 bit unsigned"; break;
-      case 1: ptype = "16 bit signed short"; break;
-      case 2: ptype = "16 bit unsigned short"; break;
-      case 3: ptype = "32 bit signed long"; break;
-      case 4: ptype = "32 bit single-precision float"; break;
-      case 5: ptype = "Color24"; break;
-      case 6: ptype = "Color48"; break;
-      case 10: ptype = "64 bit double-precision float"; break;
+      case 0: ptype = "8 bit unsigned"; 
+              bps = 1;
+              break;
+      case 1: ptype = "16 bit signed short"; 
+              bps = 2;
+              break;
+      case 2: ptype = "16 bit unsigned short"; 
+              bps = 2;
+              break;
+      case 3: ptype = "32 bit signed long"; 
+              bps = 4;
+              break;
+      case 4: ptype = "32 bit single-precision float"; 
+              bps = 4;
+              break;
+      case 5: ptype = "Color24"; 
+              bps = 1;
+              break;
+      case 6: ptype = "Color48"; 
+              bps = 2;
+              break;
+      case 10: ptype = "64 bit double-precision float"; 
+               bps = 8;
+               break;
       default: ptype = "reserved";    // for values 7-9
     }
 
@@ -208,7 +228,7 @@ public class IPLabReader extends FormatReader {
         new Integer((int) width), // SizeX
         new Integer((int) height), // SizeY
         new Integer((int) zDepth), // SizeZ
-        new Integer((int) channels), // SizeC
+        new Integer((int) c), // SizeC
         new Integer((int) tDepth), // SizeT
         type, // PixelType
         new Boolean(!littleEndian), // BigEndian
@@ -256,11 +276,11 @@ public class IPLabReader extends FormatReader {
         long size = DataTools.read4UnsignedBytes(in, littleEndian);
         // error checking
 
-        if (size != (44 * channels)) {
+        if (size != (44 * c)) {
           throw new FormatException("Bad normalization settings");
         }
 
-        for (int i=0; i<channels; i++) {
+        for (int i=0; i<c; i++) {
           long source = DataTools.read4UnsignedBytes(in, littleEndian);
 
           String sourceType;
@@ -383,6 +403,9 @@ public class IPLabReader extends FormatReader {
         tag = "fini";
       }
     }
+    in = new DataInputStream(
+      new BufferedInputStream(new FileInputStream(id), 4096));
+    in.skipBytes(44);
   }
 
 

@@ -24,7 +24,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
@@ -57,12 +59,21 @@ public abstract class ImageIOReader extends FormatReader {
     return 1;
   }
 
+  /** Obtains the specified image from the given file as a byte array. */
+  public byte[] openBytes(String id, int no) 
+    throws FormatException, IOException
+  {
+    throw new FormatException("ImageIOReader.openBytes(String, int) " +
+      "not implemented");
+  } 
+
   /** Obtains the image from the given image file. */
-  public BufferedImage open(String id, int no)
+  public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
     if (no != 0) throw new FormatException("Invalid image number: " + no);
-    return ImageIO.read(new File(id));
+    return ImageIO.read(new DataInputStream(
+      new BufferedInputStream(new FileInputStream(id), 4096)));
   }
 
   /** Closes any open files. */

@@ -39,7 +39,7 @@ public class TiffWriter extends FormatWriter {
   private int lastOffset;
 
   /** Current output stream. */
-  private OutputStream out;
+  private BufferedOutputStream out;
 
 
   // -- Constructor --
@@ -68,7 +68,7 @@ public class TiffWriter extends FormatWriter {
         out.close();
       }
       currentId = id;
-      out = new FileOutputStream(currentId);
+      out = new BufferedOutputStream(new FileOutputStream(currentId), 4096);
       DataOutputStream dataOut = new DataOutputStream(out);
       dataOut.writeByte(TiffTools.BIG);
       dataOut.writeByte(TiffTools.BIG);

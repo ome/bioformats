@@ -24,8 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.Hashtable;
 
 /**
@@ -40,8 +42,11 @@ public abstract class BaseTiffReader extends FormatReader {
   // -- Fields --
 
   /** Random access file for the current TIFF. */
-  protected RandomAccessFile in;
+  protected DataInputStream in;
 
+  /** File length. */
+  protected int fileLength;
+  
   /** List of IFDs for the current TIFF. */
   protected Hashtable[] ifds;
 
@@ -364,6 +369,7 @@ public abstract class BaseTiffReader extends FormatReader {
       if (pixelType.indexOf("int") >= 0) { // int or Uint
         pixelType += TiffTools.getIFDIntValue(ifd, TiffTools.BITS_PER_SAMPLE);
       }
+ 
       OMETools.setPixels(ome, new Integer(sizeX), new Integer(sizeY),
         new Integer(sizeZ), new Integer(sizeC), new Integer(sizeT),
         pixelType, new Boolean(bigEndian), null);
@@ -456,8 +462,16 @@ public abstract class BaseTiffReader extends FormatReader {
     return numImages;
   }
 
+  /** Obtains the specified image from the given TIFF file as a byte array. */
+  public byte[] openBytes(String id, int no) 
+    throws FormatException, IOException
+  {
+    throw new FormatException("BaseTiffReader.openBytes(String, int) " +
+      "not implemented");
+  }
+
   /** Obtains the specified image from the given TIFF file. */
-  public BufferedImage open(String id, int no)
+  public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -479,7 +493,10 @@ public abstract class BaseTiffReader extends FormatReader {
   /** Initializes the given TIFF file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessFile(id, "r");
+    in = new DataInputStream(
+      new BufferedInputStream(new FileInputStream(id), 4096));
+    fileLength = in.available();
+   
     ifds = TiffTools.getIFDs(in);
     if (ifds == null) throw new FormatException("No IFDs found");
     numImages = ifds.length;

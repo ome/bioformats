@@ -24,8 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.Vector;
 
 /**
@@ -69,8 +71,11 @@ public class LegacyZVIReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessFile in;
+  protected DataInputStream in;
 
+  /** Length of the current file. */
+  private int fileLength;
+  
   /** List of image blocks. */
   private Vector blockList;
 
@@ -99,8 +104,23 @@ public class LegacyZVIReader extends FormatReader {
     return blockList.size();
   }
 
+  /** Obtains the specified image from the given ZVI file as a byte array. */
+  public byte[] openBytes(String id, int no)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+
+    if (no < 0 || no >= getImageCount(id)) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+
+    throw new FormatException("LegacyZVIReader.openBytes(String, int) " +
+      "not implemented");
+  }        
+
+  
   /** Obtains the specified image from the given ZVI file. */
-  public BufferedImage open(String id, int no)
+  public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -125,8 +145,11 @@ public class LegacyZVIReader extends FormatReader {
   /** Initializes the given ZVI file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessFile(id, "r");
 
+    in = new DataInputStream(
+      new BufferedInputStream(new FileInputStream(id), 4096));
+    fileLength = in.available();
+    
     // Highly questionable decoding strategy:
     //
     // Note that all byte ordering is little endian, includeing 4-byte header
@@ -307,17 +330,27 @@ public class LegacyZVIReader extends FormatReader {
    * Finds the first occurence of the given byte block within the file,
    * starting from the given file position.
    */
-  private static long findBlock(RandomAccessFile in, byte[] block, long start)
-    throws IOException
+  private long findBlock(DataInputStream in, byte[] block, long start)
+    throws IOException, FormatException
   {
     long filePos = start;
-    long fileSize = in.length();
+    long fileSize = fileLength;
     byte[] buf = new byte[BUFFER_SIZE];
     long spot = -1;
     int step = 0;
     boolean found = false;
-    in.seek(start);
 
+    if ((fileLength - in.available()) < start) {
+      in.skipBytes((int) (in.available() - fileLength + start));
+    }
+    else {
+      in = new DataInputStream(
+        new BufferedInputStream(new FileInputStream(currentId), 4096));
+      in.skipBytes((int) start);
+    }        
+   
+    in.mark((int) (fileLength - start));
+    
     while (true) {
       int len = (int) (fileSize - filePos);
       if (len < 0) break;
@@ -349,8 +382,18 @@ public class LegacyZVIReader extends FormatReader {
       filePos += len;
     }
 
+    in.reset();
+    
     // set file pointer to byte immediately following pattern
-    if (spot >= 0) in.seek(spot + block.length);
+    if (spot >= 0) {
+      if ((fileLength - in.available()) < spot + block.length) {
+        in.skipBytes((int) (in.available() - fileLength + spot + block.length));
+      }
+      else {
+        /* debug */ throw new FormatException("invalid seek");
+      }        
+    }
+            
     return spot;
   }
 
@@ -400,10 +443,10 @@ public class LegacyZVIReader extends FormatReader {
     }
 
     /** Reads in this block's image data from the given file. */
-    public BufferedImage readImage(RandomAccessFile in)
+    public BufferedImage readImage(DataInputStream in)
       throws IOException, FormatException
     {
-      long fileSize = in.length();
+      long fileSize = fileLength;
       if (imagePos + imageSize > fileSize) {
         throw new FormatException("File is not big enough to contain the " +
           "pixels (width=" + width + "; height=" + height +
@@ -413,7 +456,14 @@ public class LegacyZVIReader extends FormatReader {
 
       // read image
       byte[] imageBytes = new byte[imageSize];
-      in.seek(imagePos);
+      
+      if ((fileLength - in.available()) < imagePos) {
+        in.skipBytes((int) (in.available() - fileLength + imagePos));
+      }
+      else {
+        /* debug */ throw new FormatException("invalid seek");
+      }        
+      
       in.readFully(imageBytes);
 
       // convert image bytes into BufferedImage

@@ -24,8 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.Vector;
 import java.util.StringTokenizer;
 
@@ -112,7 +114,7 @@ public class BioRadReader extends FormatReader {
   // -- Fields --
 
   /** Input stream for current Bio-Rad PIC. */
-  private RandomAccessFile in;
+  private DataInputStream in;
 
   /** Dimensions of each image in current Bio-Rad PIC. */
   private int nx, ny;
@@ -123,6 +125,9 @@ public class BioRadReader extends FormatReader {
   /** Flag indicating current Bio-Rad PIC is packed with bytes. */
   private boolean byteFormat;
 
+  /** File length. */
+  private int fileLength;
+  
 
   // -- Constructor --
 
@@ -144,8 +149,16 @@ public class BioRadReader extends FormatReader {
     return npic;
   }
 
+  /** Obtains the specified image from the given file as a byte array. */
+  public byte[] openBytes(String id, int no) 
+    throws FormatException, IOException
+  {
+    throw new FormatException("BioRadReader.openBytes(String, int) " +
+      "not implemented");
+  } 
+
   /** Obtains the specified image from the given Bio-Rad PIC file. */
-  public BufferedImage open(String id, int no)
+  public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
     if(!id.equals(currentId)) initFile(id);
@@ -156,11 +169,12 @@ public class BioRadReader extends FormatReader {
 
     // read image bytes
     int imageLen = nx * ny;
-    byte[] data = new byte[imageLen];
+    byte[] data = new byte[imageLen * ((byteFormat) ? 1 : 2)];
 
     if (byteFormat) {
       // jump to proper image number
-      in.seek(no * imageLen + 76);
+  
+      in.skipBytes(in.available() - (fileLength - (no * imageLen + 76)));
       in.readFully(data);
 
       // each pixel is 8 bits
@@ -168,10 +182,9 @@ public class BioRadReader extends FormatReader {
     }
     else {
       // jump to proper image number
-      in.seek(no * 2 * imageLen + 76);
 
       // read in 2 * imageLen bytes
-      data = new byte[imageLen * 2];
+      in.skipBytes(in.available() - (fileLength - (no * 2 * imageLen + 76)));
       in.readFully(data);
 
       // each pixel is 16 bits
@@ -195,8 +208,10 @@ public class BioRadReader extends FormatReader {
   /** Initializes the given IPLab file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessFile(id, "r");
-
+    in = new DataInputStream(
+      new BufferedInputStream(new FileInputStream(id), 4096));
+    fileLength = in.available();
+    
     // read header
     byte[] header = new byte[76];
     in.readFully(header);
@@ -428,6 +443,9 @@ public class BioRadReader extends FormatReader {
     if (size >= 3) pixelSizeZ = new Float((String) pixelSize.get(2));
     OMETools.setDimensions(ome,
       pixelSizeX, pixelSizeY, pixelSizeZ, null, null);
+  
+    in = new DataInputStream(
+      new BufferedInputStream(new FileInputStream(id), 4096));
   }
 
   public String noteString(int n, int l, int s, int t, int x, int y, String p)

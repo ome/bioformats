@@ -159,12 +159,20 @@ public class ImageReader extends FormatReader {
     return readers[index].getImageCount(id);
   }
 
+  /** Obtains the specified image from the given image file as a byte array. */
+  public byte[] openBytes(String id, int no)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id); 
+    return readers[index].openBytes(id, no);      
+  }
+  
   /** Obtains the specified image from the given image file. */
-  public BufferedImage open(String id, int no)
+  public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].open(id, no);
+    return readers[index].openImage(id, no);
   }
 
   /** Closes any open files. */
@@ -179,7 +187,7 @@ public class ImageReader extends FormatReader {
    */
   public BufferedImage[] open(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].open(id);
+    return readers[index].openImage(id);
   }
 
   /**

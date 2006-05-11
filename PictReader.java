@@ -78,8 +78,11 @@ public class PictReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessFile in;
+  protected DataInputStream in;
 
+  /** File length. */
+  private int fileLength;
+  
   /** Flag indicating whether current file is little endian. */
   protected boolean little;
 
@@ -127,13 +130,8 @@ public class PictReader extends FormatReader {
 
   /** Checks if the given block is a valid header for a PICT file. */
   public boolean isThisType(byte[] block) {
-    try {
-      if (in.length() < 528) return false;
-      return true;
-    }
-    catch (IOException e) {
-      return false;
-    }
+    if (fileLength < 528) return false;
+    return true;
   }
 
   /** Determines the number of images in the given PICT file. */
@@ -142,13 +140,21 @@ public class PictReader extends FormatReader {
     return 1;
   }
 
+  /** Obtains the specified image from the given PICT file as a byte array. */
+  public byte[] openBytes(String id, int no) 
+    throws FormatException, IOException
+  {
+    throw new FormatException("PictReader.openBytes(String, int) " +
+      "not implemented");
+  }
+
   /** Obtains the specified image from the given PICT file. */
-  public BufferedImage open(String id, int no)
+  public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
     if (no != 0) throw new FormatException("Invalid image number: " + no);
-    return openBytes(bytes);
+    return open(bytes);
   }
 
   /** Closes any open files. */
@@ -161,11 +167,13 @@ public class PictReader extends FormatReader {
   /** Initializes the given PICT file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessFile(id, "r");
+    in = new DataInputStream(
+      new BufferedInputStream(new FileInputStream(id), 4096));
+    fileLength = in.available();
     little = false;
 
     // skip the header and read in the remaining bytes
-    int len = (int) (in.length() - 512);
+    int len = fileLength - 512;
     bytes = new byte[len];
     in.skipBytes(512);
     in.read(bytes);
@@ -188,7 +196,7 @@ public class PictReader extends FormatReader {
   }
 
   /** Open a PICT image from an array of bytes (used by OpenlabReader). */
-  public BufferedImage openBytes(byte[] pix) throws FormatException {
+  public BufferedImage open(byte[] pix) throws FormatException {
     // handles case when we call this method directly, instead of
     // through initFile(String)
     if (DEBUG) System.out.println("PictReader.openBytes");
@@ -390,17 +398,9 @@ public class PictReader extends FormatReader {
 
     switch (opcode) {
       case PICT_BITSRGN:  // rowBytes must be < 8
-        handlePackBits(opcode);
-        break;
       case PICT_PACKBITSRGN: // rowBytes must be < 8
-        handlePackBits(opcode);
-        break;
       case PICT_BITSRECT: // rowBytes must be < 8
-        handlePackBits(opcode);
-        break;
       case PICT_PACKBITSRECT:
-        handlePackBits(opcode);
-        break;
       case PICT_9A:
         handlePackBits(opcode);
         break;

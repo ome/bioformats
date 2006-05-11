@@ -47,7 +47,7 @@ public class LeicaReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessFile in;
+  protected DataInputStream in;
 
   /** Flag indicating whether current file is little endian. */
   protected boolean littleEndian;
@@ -124,8 +124,15 @@ public class LeicaReader extends FormatReader {
     return numImages;
   }
 
+  /** Obtains the specified image from the given Leica file as a byte array. */
+  public byte[] openBytes(String id, int no) 
+    throws FormatException, IOException
+  {
+    return tiff.openBytes(id, no);
+  }
+
   /** Obtains the specified image from the given Leica file. */
-  public BufferedImage open(String id, int no)
+  public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -133,7 +140,7 @@ public class LeicaReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-    return tiff.open(files[no], 0);
+    return tiff.openImage(files[no], 0);
   }
 
   /** Closes any open files. */
@@ -148,8 +155,9 @@ public class LeicaReader extends FormatReader {
     if (id.toLowerCase().endsWith("tif") || id.toLowerCase().endsWith("tiff"))
     {
       super.initFile(id);
-      in = new RandomAccessFile(id, "r");
-
+      in = new DataInputStream(
+        new BufferedInputStream(new FileInputStream(id), 4096));
+      
       // open the TIFF file and look for the "Image Description" field
 
       Hashtable[] ifds = TiffTools.getIFDs(in);
@@ -208,8 +216,10 @@ public class LeicaReader extends FormatReader {
       else {
         if (currentId != id) currentId = id;
       }
-      in = new RandomAccessFile(id, "r");
-
+      in = new DataInputStream(
+        new BufferedInputStream(new FileInputStream(id), 4096));
+      int fileLength = in.available();
+      
       byte[] fourBytes = new byte[4];
       in.read(fourBytes);
       littleEndian = (fourBytes[0] == TiffTools.LITTLE &&
@@ -223,7 +233,14 @@ public class LeicaReader extends FormatReader {
       while (addr != 0) {
         Hashtable ifd = new Hashtable();
         v.add(ifd);
-        in.seek(addr);
+        
+        if ((fileLength - in.available()) < addr) {
+          in.skipBytes((int) (in.available() - fileLength + addr));
+        }
+        else {
+          /* debug */ throw new FormatException("invalid seek");
+        }        
+        
         int numEntries = (int) DataTools.read4UnsignedBytes(in, littleEndian);
         int tag = (int) DataTools.read4UnsignedBytes(in, littleEndian);
 
@@ -231,13 +248,21 @@ public class LeicaReader extends FormatReader {
         while (tag != 0) {
           // create the IFD structure
           int offset = (int) DataTools.read4UnsignedBytes(in, littleEndian);
-          int fp = (int) in.getFilePointer();
-          in.seek(offset + 12);
+       
+          in.mark(offset + 8210);
+          
+          if ((fileLength - in.available()) < offset + 12) {
+            in.skipBytes((int) (in.available() - fileLength + offset + 12));
+          }
+          else {
+            /* debug */ throw new FormatException("invalid seek");
+          } 
+        
           int size = (int) DataTools.read4UnsignedBytes(in, littleEndian);
           byte[] data = new byte[size];
           in.read(data);
           ifd.put(new Integer(tag), (Object) data);
-          in.seek(fp);
+          in.reset();
           tag = (int) DataTools.read4UnsignedBytes(in, littleEndian);
         }
 
@@ -273,7 +298,7 @@ public class LeicaReader extends FormatReader {
       String dirPrefix = new File(id).getParent();
       dirPrefix = dirPrefix == null ? "" : (dirPrefix + File.separator);
       for (int i=0; i<files.length; i++) {
-        files[i] = dirPrefix + stripString(files[i]);
+        files[i] = dirPrefix + DataTools.stripString(files[i]);
       }
       initMetadata();
     }
@@ -296,7 +321,8 @@ public class LeicaReader extends FormatReader {
           new Integer(DataTools.bytesToInt(temp, 8, 4, littleEndian)));
         metadata.put("Length of file extension",
           new Integer(DataTools.bytesToInt(temp, 12, 4, littleEndian)));
-        metadata.put("Image file extension", stripString(new String(temp, 16,
+        metadata.put("Image file extension", 
+          DataTools.stripString(new String(temp, 16,
           ((Integer) metadata.get("Length of file extension")).intValue())));
       }
 
@@ -339,11 +365,11 @@ public class LeicaReader extends FormatReader {
           DataTools.bytesToInt(temp, 12, 4, littleEndian)));
         int length = DataTools.bytesToInt(temp, 16, 4, littleEndian);
         metadata.put("Maximum voxel intensity",
-          stripString(new String(temp, 20, length)));
+          DataTools.stripString(new String(temp, 20, length)));
         pt = 20 + length;
         pt += 4;
         metadata.put("Minimum voxel intensity",
-          stripString(new String(temp, pt, length)));
+          DataTools.stripString(new String(temp, pt, length)));
         pt += length;
         length = DataTools.bytesToInt(temp, pt, 4, littleEndian);
         pt += 4 + length + 4;
@@ -394,25 +420,25 @@ public class LeicaReader extends FormatReader {
           int len = DataTools.bytesToInt(temp, pt, 4, littleEndian);
           pt += 4;
           metadata.put("Dim" + j + " physical length",
-            stripString(new String(temp, pt, len)));
+            DataTools.stripString(new String(temp, pt, len)));
           pt += len;
 
           len = DataTools.bytesToInt(temp, pt, 4, littleEndian);
           pt += 4;
           metadata.put("Dim" + j + " physical origin",
-            stripString(new String(temp, pt, len)));
+            DataTools.stripString(new String(temp, pt, len)));
           pt += len;
 
           len = DataTools.bytesToInt(temp, pt, 4, littleEndian);
           pt += 4;
           metadata.put("Dim" + j + " name",
-            stripString(new String(temp, pt, len)));
+            DataTools.stripString(new String(temp, pt, len)));
           pt += len;
 
           len = DataTools.bytesToInt(temp, pt, 4, littleEndian);
           pt += 4;
           metadata.put("Dim" + j + " description",
-            stripString(new String(temp, pt, len)));
+            DataTools.stripString(new String(temp, pt, len)));
         }
       }
 
@@ -453,7 +479,7 @@ public class LeicaReader extends FormatReader {
           metadata.put("Number of time-stamps", new Integer(numStamps));
           for (int j=0; j<numStamps; j++) {
             metadata.put("Timestamp " + j,
-              stripString(new String(temp, pt, 64)));
+              DataTools.stripString(new String(temp, pt, 64)));
             pt += 64;
           }
 
@@ -471,7 +497,7 @@ public class LeicaReader extends FormatReader {
               pt += 4;
             }
             metadata.put("Time-marker " + j,
-              stripString(new String(temp, pt, 64)));
+              DataTools.stripString(new String(temp, pt, 64)));
             pt += 64;
           }
         }
@@ -495,25 +521,25 @@ public class LeicaReader extends FormatReader {
         pt += 4;
 
         metadata.put("Image Description",
-          stripString(new String(temp, pt, 2*len)));
+          DataTools.stripString(new String(temp, pt, 2*len)));
         pt += 2*len;
         len = DataTools.bytesToInt(temp, pt, 4, littleEndian);
         pt += 4;
 
         metadata.put("Main file extension",
-          stripString(new String(temp, pt, 2*len)));
+          DataTools.stripString(new String(temp, pt, 2*len)));
         pt += 2*len;
 
         len = DataTools.bytesToInt(temp, pt, 4, littleEndian);
         pt += 4;
         metadata.put("Single image format identifier",
-          stripString(new String(temp, pt, 2*len)));
+          DataTools.stripString(new String(temp, pt, 2*len)));
         pt += 2*len;
 
         len = DataTools.bytesToInt(temp, pt, 4, littleEndian);
         pt += 4;
         metadata.put("Single image extension",
-          stripString(new String(temp, pt, 2*len)));
+          DataTools.stripString(new String(temp, pt, 2*len)));
       }
 
       temp = (byte[]) headerIFDs[i].get(new Integer(70));
@@ -542,18 +568,18 @@ public class LeicaReader extends FormatReader {
           int length = DataTools.bytesToInt(temp, pt, 4, littleEndian);
           pt += 4;
           metadata.put("LUT Channel " + j + " description",
-            stripString(new String(temp, pt, length)));
+            DataTools.stripString(new String(temp, pt, length)));
 
           pt += length;
           length = DataTools.bytesToInt(temp, pt, 4, littleEndian);
           pt += 4;
           metadata.put("LUT Channel " + j + " filename",
-            stripString(new String(temp, pt, length)));
+            DataTools.stripString(new String(temp, pt, length)));
           pt += length;
           length = DataTools.bytesToInt(temp, pt, 4, littleEndian);
           pt += 4;
           metadata.put("LUT Channel " + j + " name",
-            stripString(new String(temp, pt, length)));
+            DataTools.stripString(new String(temp, pt, length)));
           pt += length;
 
           pt += 8;
@@ -589,19 +615,6 @@ public class LeicaReader extends FormatReader {
 //      OMETools.setAttribute(ome, "ChannelInfo", "SamplesPerPixel",
 //        metadata.get("Samples per pixel").toString());
     }
-  }
-
-  /**
-   * The Leica format is stupid and stores each String as a character array
-   * of twice the required size, with a space at every other position.
-   * This method removes the blank spaces from a string.
-   */
-  protected static String stripString(String toStrip) {
-    char[] toRtn = new char[toStrip.length()];
-    for (int i=0; i<toRtn.length; i+=2) toRtn[i / 2] = toStrip.charAt(i);
-    toStrip = new String(toRtn);
-    toStrip = toStrip.trim();
-    return toStrip;
   }
 
   // -- Main method --

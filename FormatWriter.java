@@ -95,7 +95,7 @@ public abstract class FormatWriter extends FormatHandler {
     long read = 0, write = 0;
     for (int i=0; i<num; i++) {
       long s = System.currentTimeMillis();
-      Image image = reader.open(in, i);
+      Image image = reader.openImage(in, i);
       long m = System.currentTimeMillis();
       save(out, image, i == num - 1);
       long e = System.currentTimeMillis();

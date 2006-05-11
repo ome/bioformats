@@ -7,8 +7,6 @@ Implement readers for other file formats:
 * EPS (lower priority)
 
 Address performance issues:
-* Fix incredibly slow metadata parsing in MetamorphReader (don't use
-  RandomAccessFile), and potentially other readers.
 * Check whether ImageTypeSpecifier class is useful for simplifying
   BufferedImage tasks.
 

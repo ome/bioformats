@@ -38,7 +38,7 @@ public class OpenlabRawReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessFile in;
+  protected DataInputStream in;
 
   /** Number of image planes in the file. */
   protected int numImages = 0;
@@ -46,7 +46,21 @@ public class OpenlabRawReader extends FormatReader {
   /** Offset to each image's pixel data. */
   protected int[] offsets;
 
+  /** File length. */
+  private int fileLength;
 
+  /** Image width. */
+  private int width;
+
+  /** Image height. */
+  private int height;
+
+  /** Number of channels. */
+  private int channels;
+ 
+  /** Number of bytes per pixel. */
+  private int bpp;
+  
   // -- Constructor --
 
   /** Constructs a new RAW reader. */
@@ -67,8 +81,16 @@ public class OpenlabRawReader extends FormatReader {
     return numImages;
   }
 
+  /** Obtains the specified image from the given RAW file as a byte array. */
+  public byte[] openBytes(String id, int no) 
+    throws FormatException, IOException
+  {
+    throw new FormatException("OpenlabRawReader.openBytes(String, int) " +
+      "not implemented");
+  }
+
   /** Obtains the specified image from the given RAW file. */
-  public BufferedImage open(String id, int no)
+  public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -77,25 +99,17 @@ public class OpenlabRawReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    in.seek(offsets[no]);
-
-    byte[] header = new byte[288];
-    in.read(header);
-
-    if (header[0] != 'r' || header[1] != 'I' ||
-      header[2] != 'M' || header[3] != 'G')
-    {
-      throw new FormatException("Image identifier 'rIMG' not found.");
-    }
-
-    int width = DataTools.bytesToInt(header, 8, 4, false);
-    int height = DataTools.bytesToInt(header, 12, 4, false);
-    int channels = DataTools.bytesToInt(header, 17, 1, false);
-    int bpp = DataTools.bytesToInt(header, 18, 1, false);
-
+    in.reset();
+    if ((fileLength - in.available()) < offsets[no]) {
+      in.skipBytes((int) (in.available() - fileLength + offsets[no]));
+    }        
+ 
+    in.skipBytes(288);
+    
     byte[] data = new byte[width*height*bpp];
     in.read(data);
-
+    in.mark(100);
+    
     if (bpp == 1) {
       // need to invert the pixels
       for (int i=0; i<data.length; i++) {
@@ -131,8 +145,10 @@ public class OpenlabRawReader extends FormatReader {
   /** Initializes the given RAW file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessFile(id, "r");
-
+    in = new DataInputStream(
+      new BufferedInputStream(new FileInputStream(id), 4096));
+    fileLength = in.available();
+    
     // read the 12 byte file header
 
     byte[] header = new byte[12];
@@ -147,32 +163,24 @@ public class OpenlabRawReader extends FormatReader {
     metadata.put("Version", new Integer(version));
 
     numImages = DataTools.bytesToInt(header, 8, 4, false);
+    in.mark(100);
     offsets = new int[numImages];
-    offsets[0] = (int) in.getFilePointer();
+    offsets[0] = 12;
 
     in.skipBytes(8);
-    int width = DataTools.read4SignedBytes(in, false);
-    int height = DataTools.read4SignedBytes(in, false);
+    width = DataTools.read4SignedBytes(in, false);
+    height = DataTools.read4SignedBytes(in, false);
     in.skipBytes(2);
-    int bpp = DataTools.readUnsignedByte(in);
+    bpp = DataTools.readUnsignedByte(in);
+    channels = DataTools.readUnsignedByte(in);
+    if (channels <= 1) channels = 1;
+    else channels = 3;
     metadata.put("Width", new Integer(width));
     metadata.put("Height", new Integer(height));
     metadata.put("Bytes per pixel", new Integer(bpp));
 
-    in.seek(offsets[0]);
-
     for (int i=1; i<numImages; i++) {
-      in.skipBytes(8);
-      width = DataTools.read4SignedBytes(in, false);
-      height = DataTools.read4SignedBytes(in, false);
-      in.skipBytes(2);
-      bpp = DataTools.readUnsignedByte(in);
-      in.skipBytes(269 + (width*height*bpp));
-      offsets[i] = (int) in.getFilePointer();
-
-      metadata.put("Width", new Integer(width));
-      metadata.put("Height", new Integer(height));
-      metadata.put("Bytes per pixel", new Integer(bpp));
+      offsets[i] = offsets[i-1] + 288 + width*height*bpp;
     }
 
     if (ome != null) {
@@ -182,7 +190,7 @@ public class OpenlabRawReader extends FormatReader {
         (Integer) metadata.get("Width"),
         (Integer) metadata.get("Height"),
         new Integer(numImages),
-        new Integer(1),
+        new Integer(channels),
         new Integer(1),
         (bpp < 4) ? ("int" + (8*bpp)) : "float",
         new Boolean(true),

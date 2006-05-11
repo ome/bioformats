@@ -25,6 +25,7 @@ package loci.formats;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Hashtable;
 import java.util.Vector;
 
 /**
@@ -37,8 +38,11 @@ public class LIFReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessFile in;
+  protected DataInputStream in;
 
+  /** File length. */
+  private int fileLength;
+  
   /** Flag indicating whether current file is little endian. */
   protected boolean littleEndian;
 
@@ -58,6 +62,7 @@ public class LIFReader extends FormatReader {
    * 3) T
    * 4) channels (1 or 3)
    * 5) bits per pixel
+   * 6) extra dimensions
    */
   protected int[][] dims;
 
@@ -81,8 +86,15 @@ public class LIFReader extends FormatReader {
     return numImages;
   }
 
+  /** Obtains the specified image from the given LIF file as a byte array. */
+  public byte[] openBytes(String id, int no) 
+    throws FormatException, IOException
+  {
+    throw new FormatException("LIFReader.openBytes(Sring, int) unimplemented"); 
+  }
+
   /** Obtains the specified image from the given LIF file. */
-  public BufferedImage open(String id, int no)
+  public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -94,7 +106,7 @@ public class LIFReader extends FormatReader {
     int ndx = 0;
     int sum = 0;
     for (int i=0; i<dims.length; i++) {
-      sum += (dims[i][2] * dims[i][3]);
+      sum += (dims[i][2] * dims[i][3] * dims[i][6]);
       if (no < sum) {
         ndx = i;
         i = dims.length;
@@ -103,33 +115,52 @@ public class LIFReader extends FormatReader {
 
     int width = dims[ndx][0];
     int height = dims[ndx][1];
+    int c = dims[ndx][4];
+    if (c == 2) c++;
     int bps = dims[ndx][5];
-    double bytesPerPixel = bps / 8;
+    while (bps % 8 !=0) bps++;
+    int bytesPerPixel = bps / 8;
 
-    int offset = ((Long) offsets.get(0)).intValue();
-    in.seek((long) (offset + (width * height * bytesPerPixel * no)));
-    byte[] data = new byte[(int) (width * height * bytesPerPixel * 3)];
+    int offset = ((Long) offsets.get(ndx)).intValue();
+ 
+    // get the image number within this dataset
+
+    int imageNum = no;
+    for (int i=0; i<ndx; i++) {
+      imageNum -= (dims[i][2] * dims[i][3] * dims[i][6]);
+    }
+
+    if ((fileLength - in.available()) < 
+      (offset + (width * height * bytesPerPixel * imageNum)))
+    {
+      in.skipBytes((int) (in.available() - fileLength + offset + 
+        width * height * bytesPerPixel * imageNum));
+    }
+
+    byte[] data = new byte[(int) (width * height * bytesPerPixel * c)];
+  
     in.read(data);
-
+    
     // pack the data appropriately
 
-    if (bps == 8) {
-      return ImageTools.makeImage(data, width, height, 3, false);
+    if (bps <= 8) {
+      return ImageTools.makeImage(data, width, height, c, false);
     }
-    else if (bps == 16) {
-      short[] shortData = new short[width*height*3];
+    else if (bps <= 16) {
+      short[] shortData = new short[width*height*c];
       for (int i=0; i<data.length; i+=2) {
         shortData[i/2] = DataTools.bytesToShort(data, i, littleEndian);
       }
-      return ImageTools.makeImage(shortData, width, height, 3, false);
+
+      return ImageTools.makeImage(shortData, width, height, c, false);
     }
-    else if (bps == 32) {
-      float[] floatData = new float[width*height*3];
+    else if (bps <= 32) {
+      float[] floatData = new float[width*height*c];
       for (int i=0; i<data.length; i+=4) {
         floatData[i/4] =
           Float.intBitsToFloat(DataTools.bytesToInt(data, i, littleEndian));
       }
-      return ImageTools.makeImage(floatData, width, height, 3, false);
+      return ImageTools.makeImage(floatData, width, height, c, false);
     }
     else {
       throw new FormatException("Sorry, bits per sample " + bps +
@@ -148,7 +179,10 @@ public class LIFReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     offsets = new Vector();
-    in = new RandomAccessFile(id, "r");
+    in = new DataInputStream(
+      new BufferedInputStream(new FileInputStream(id), 4096));
+    fileLength = in.available(); 
+    
     littleEndian = true;
 
     // read the header
@@ -174,9 +208,9 @@ public class LIFReader extends FormatReader {
     // number of Unicode characters in the XML block
     int nc = DataTools.bytesToInt(xmlChunk, 1, 4, littleEndian);
     String xml = new String(xmlChunk, 5, nc*2);
-    xml = LeicaReader.stripString(xml);
+    xml = DataTools.stripString(xml);
 
-    while (in.getFilePointer() < in.length()) {
+    while (in.available() > 0) {
       byte[] four = new byte[4];
       in.read(four);
       int check = DataTools.bytesToInt(four, littleEndian);
@@ -204,16 +238,17 @@ public class LIFReader extends FormatReader {
       byte[] memDescr = new byte[2*descrLength];
       in.read(memDescr);
       String descr = new String(memDescr);
-      descr = LeicaReader.stripString(descr);
+      descr = DataTools.stripString(descr);
 
       if (blockLength > 0) {
-        offsets.add(new Long(in.getFilePointer()));
+        offsets.add(new Long(fileLength - in.available()));
       }
       in.skipBytes(blockLength);
     }
     numImages = offsets.size();
-    dims = new int[numImages][6];
     initMetadata(xml);
+    in = new DataInputStream(
+      new BufferedInputStream(new FileInputStream(id), 4096));
   }
 
 
@@ -238,95 +273,146 @@ public class LIFReader extends FormatReader {
     String value = token.substring(token.indexOf("\"") + 1, token.length()-1);
     metadata.put(key, value);
 
+    // what we have right now is a vector of XML elements, which need to
+    // be parsed into the appropriate image dimensions
+
     int ndx = 1;
-    int imageCounter = -2;
+    numImages = 0;
     int dimCounter = 0;
     int lutCounter = 0;
+
+    // the image data we need starts with the token "ElementName='blah'" and 
+    // ends with the token "/ImageDescription"
+
+    int numDatasets = 0;
+    Vector widths = new Vector();
+    Vector heights = new Vector();
+    Vector zs = new Vector();
+    Vector ts = new Vector();
+    Vector channels = new Vector();
+    Vector bps = new Vector();
+    Vector extraDims = new Vector();
+    
     while (ndx < elements.size()) {
       token = (String) elements.get(ndx);
+      
+      // if the element contains a key/value pair, parse it and put it in
+      // the metadata hashtable
 
-      // only try to parse the element if we know it
-      // contains a key/value pair
+      String tmpToken = token;
       if (token.indexOf("=") != -1) {
-        while (token.length() > 2) {
-          if (key.equals("Element Name")) {
-            imageCounter++;
-            dimCounter = 0;
-            lutCounter = 0;
-          }
-
+        while (token.length() > 2) {      
           key = token.substring(0, token.indexOf("\"") - 1);
           value = token.substring(token.indexOf("\"") + 1,
             token.indexOf("\"", token.indexOf("\"") + 1));
+          
+          token = token.substring(key.length() + value.length() + 3);
+          
           key = key.trim();
           value = value.trim();
-
-          if (key.equals("NumberOfElements")) {
-            dims[imageCounter][dimCounter] = Integer.parseInt(value);
-            dimCounter++;
-            if (dimCounter == 6) dimCounter = 0;
-          }
-
-          if (key.equals("Resolution")) {
-            int val = Integer.parseInt(value);
-            if ((val % 8) != 0) val += (8 - (val % 8));
-            dims[imageCounter][5] = val;
-          }
-
-          if (key.equals("LUTName")) lutCounter++;
-          if (lutCounter == 3) {
-            dims[imageCounter][4] = lutCounter;
-            lutCounter = 0;
-          }
-
-          token =
-            token.substring(token.indexOf("\"", token.indexOf("\"") + 1) + 1);
-          metadata.put(key + " (image " + imageCounter + ")", value);
+          metadata.put(key, value);
         }
-      }
+      }       
+      token = tmpToken;
+           
+      if (token.startsWith("ElementName")) {
+        // loop until we find "/ImageDescription"
+             
+        numDatasets++;
+        int numChannels = 0;
+              
+        while (token.indexOf("/ImageDescription") == -1) {
+          if (token.indexOf("=") != -1) {
+            // create a small hashtable to store just this element's data
+
+            Hashtable tmp = new Hashtable();
+            while (token.length() > 2) {
+              key = token.substring(0, token.indexOf("\"") - 1);
+              value = token.substring(token.indexOf("\"") + 1,
+                token.indexOf("\"", token.indexOf("\"") + 1));
+ 
+              token = token.substring(key.length() + value.length() + 3);
+              
+              key = key.trim();
+              value = value.trim();
+              tmp.put(key, value);
+            } 
+
+            if (tmp.get("ChannelDescriptionDataType") != null) {
+              // found channel description block
+              numChannels++;
+              if (numChannels == 1) {
+                bps.add(new Integer((String) tmp.get("Resolution")));
+              }        
+            }        
+            else if (tmp.get("DimensionDescriptionDimID") != null) {
+              // found dimension description block
+              
+              int w = Integer.parseInt((String) tmp.get("NumberOfElements"));
+              int id = 
+                Integer.parseInt((String) tmp.get("DimensionDescriptionDimID"));
+              
+              int extras = 1;
+              
+              switch (id) {
+                case 1: widths.add(new Integer(w)); break;
+                case 2: heights.add(new Integer(w)); break;
+                case 3: zs.add(new Integer(w)); break;
+                case 4: ts.add(new Integer(w)); break;
+                default: extras *= w;
+              } 
+             
+              extraDims.add(new Integer(extras));
+            }         
+          }
+          
+          ndx++;
+          token = (String) elements.get(ndx); 
+        }
+        channels.add(new Integer(numChannels));
+     
+        if (zs.size() < channels.size()) zs.add(new Integer(1));
+        if (ts.size() < channels.size()) ts.add(new Integer(1));
+      }        
       ndx++;
     }
+   
+    dims = new int[numDatasets][7];
 
-    int originalNumImages = numImages;
-    for (int i=1; i<=originalNumImages; i++) {
-      if (dims[i-1][2] == 0) dims[i-1][2] = 1;
-      if (dims[i-1][3] == 0) dims[i-1][3] = 1;
-      numImages += ((dims[i-1][2]*dims[i-1][3]) - 1);
+    for (int i=0; i<numDatasets; i++) {
+      dims[i][0] = ((Integer) widths.get(i)).intValue();
+      dims[i][1] = ((Integer) heights.get(i)).intValue();
+      dims[i][2] = ((Integer) zs.get(i)).intValue();
+      dims[i][3] = ((Integer) ts.get(i)).intValue();
+      dims[i][4] = ((Integer) channels.get(i)).intValue();
+      dims[i][5] = ((Integer) bps.get(i)).intValue();
+      dims[i][6] = ((Integer) extraDims.get(i)).intValue();
+    
+      numImages += (dims[i][2] * dims[i][3] * dims[i][6]);
     }
-
+  
     // initialize OME-XML
 
     if (ome != null) {
-      String type = "int8";
-      switch (dims[dims.length - 1][5]) {
-        case 12: type = "int16"; break;
-        case 16: type = "int16"; break;
-        case 32: type = "float"; break;
-      }
-
-      int z = 0;
-      int t = 0;
       for (int i=0; i<dims.length; i++) {
-        z += (dims[i][2] == 1) ? 0 : dims[i][2];
-        t += (dims[i][3] == 1) ? 0 : dims[i][3];
+        String type = "int8";
+        switch (dims[i][5]) {
+          case 12: type = "int16"; break;
+          case 16: type = "int16"; break;
+          case 32: type = "float"; break;
+        }
+      
+        OMETools.setPixels(ome,
+          new Integer(dims[i][0]), // SizeX
+          new Integer(dims[i][1]), // SizeY
+          new Integer(dims[i][2]), // SizeZ
+          new Integer(dims[i][4]), // SizeC
+          new Integer(dims[i][3]), // SizeT
+          type, // PixelType
+          new Boolean(!littleEndian), // BigEndian
+          "XYZTC", i); // DimensionOrder
       }
-
-      if (t == 0) t++;
-      if (z == 0) z++;
-      while ((z*t) < numImages) {
-        z++;
-      }
-
-      OMETools.setPixels(ome,
-        new Integer(dims[dims.length - 1][0]), // SizeX
-        new Integer(dims[dims.length - 1][1]), // SizeY
-        new Integer(z), // SizeZ
-        new Integer(1), // SizeC
-        new Integer(t), // SizeT
-        type, // PixelType
-        new Boolean(!littleEndian), // BigEndian
-        "XYZTC"); // DimensionOrder
-    }
+    }  
   }
 
 

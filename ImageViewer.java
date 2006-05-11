@@ -143,7 +143,7 @@ public class ImageViewer extends JFrame
       for (int i=0; i<num; i++) {
         if (progress.isCanceled()) break;
         progress.setProgress(i);
-        img[i] = reader.open(id, i);
+        img[i] = reader.openImage(id, i);
         if (i == 0) setImages(id, format, img);
       }
       reader.close();

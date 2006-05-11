@@ -44,7 +44,7 @@ public class ICSReader extends FormatReader {
   protected String currentIdsId;
 
   /** Current file. */
-  protected RandomAccessFile idsIn; // IDS file
+  protected DataInputStream idsIn; // IDS file
   protected File icsIn; // ICS file
 
   /** Flag indicating whether current file is little endian. */
@@ -53,6 +53,9 @@ public class ICSReader extends FormatReader {
   /** Number of images. */
   protected int numImages;
 
+  /** IDS file length. */
+  private int fileLength;
+  
   /**
    * Dimensions in the following order:
    * 1) bits per pixel
@@ -93,6 +96,7 @@ public class ICSReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
+    // TODO - broken
     if (!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
 
     int width = dimensions[1];
@@ -100,7 +104,12 @@ public class ICSReader extends FormatReader {
     int numSamples = width * height;
     int channels = 1;
 
-    idsIn.seek((dimensions[0]/8) * width * height * no);
+    if ((fileLength - idsIn.available()) < ((dimensions[0]/8)*width*height*no))
+    {
+      idsIn.skipBytes(idsIn.available() - fileLength + 
+        ((dimensions[0]/8) * width * height));
+    }        
+
     byte[] data = new byte[(dimensions[0]/8) * width * height];
     idsIn.readFully(data);
 
@@ -129,7 +138,7 @@ public class ICSReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given ICS file. */
-  public BufferedImage open(String id, int no)
+  public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
     if(!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
@@ -180,9 +189,12 @@ public class ICSReader extends FormatReader {
     if (!idsFile.exists()) throw new FormatException("IDS file not found.");
     currentIcsId = icsId;
     currentIdsId = idsId;
-    icsIn = icsFile;
-    idsIn = new RandomAccessFile(currentIdsId, "r");
 
+    icsIn = icsFile;
+    idsIn = new DataInputStream(
+      new BufferedInputStream(new FileInputStream(currentIdsId), 4096)); 
+    fileLength = idsIn.available();
+    
     BufferedReader reader = new BufferedReader(new FileReader(icsIn));
     String line = reader.readLine();
     line = reader.readLine();

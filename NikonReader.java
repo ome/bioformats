@@ -146,7 +146,7 @@ public class NikonReader extends BaseTiffReader {
         else {
           int ifdtag = DataTools.bytesToInt(block,
             ifdlocation + 2 + (i*12), 2, little);
-          if (ifdtag == EXIF_IFD_POINTER || ifdtag == TIFF_EPS_STANDARD) {
+          if (ifdtag == TIFF_EPS_STANDARD) {
             return true;
           }
         }
@@ -229,7 +229,11 @@ public class NikonReader extends BaseTiffReader {
   /** Parse an IFD from the given offset. */
   private Hashtable parseIFD(int offset) {
     try {
-      in.seek(offset);
+      in = new DataInputStream(
+        new BufferedInputStream(new FileInputStream(currentId), 4096));
+      in.skipBytes(offset);
+      in.mark(fileLength);
+      
       Hashtable newIFD = new Hashtable();
       int numEntries = DataTools.read2UnsignedBytes(in, littleEndian);
       for (int i=0; i<numEntries; i++) {
@@ -240,19 +244,24 @@ public class NikonReader extends BaseTiffReader {
         Object value = null;
 
         if (tag == MAKER_NOTE) {
-          long pt = in.getFilePointer();
+          int pos = fileLength - in.available() - offset;
           makerNoteOffset =
             (int) DataTools.read4UnsignedBytes(in, littleEndian);
-          in.seek(pt);
+          in.reset();
+          in.mark(fileLength);
+          in.skipBytes(pos); 
         }
 
-        long pos = in.getFilePointer() + 4;
+        long pos = fileLength - in.available() + 4;
 
         if (type == TiffTools.BYTE) {
           // 8-bit unsigned integer
           short[] bytes = new short[count];
           if (count > 4) {
-            in.seek(DataTools.read4UnsignedBytes(in, littleEndian));
+            int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+            in.reset();
+            in.mark(fileLength);
+            in.skipBytes(pointer); 
           }
           for (int j=0; j<count; j++) {
             bytes[j] = DataTools.readUnsignedByte(in);
@@ -265,7 +274,10 @@ public class NikonReader extends BaseTiffReader {
           // the last byte must be NUL (binary zero)
           byte[] ascii = new byte[count];
           if (count > 4) {
-            in.seek(DataTools.read4UnsignedBytes(in, littleEndian));
+            int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+            in.reset();
+            in.mark(fileLength);
+            in.skipBytes(pointer); 
           }
           DataTools.readFully(in, ascii);
 
@@ -290,7 +302,10 @@ public class NikonReader extends BaseTiffReader {
 
           int[] shorts = new int[count];
           if (count > 2) {
-            in.seek(DataTools.read4UnsignedBytes(in, littleEndian));
+            int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+            in.reset();
+            in.mark(fileLength);
+            in.skipBytes(pointer); 
           }
           for (int j=0; j<count; j++) {
             shorts[j] = DataTools.read2UnsignedBytes(in, littleEndian);
@@ -302,7 +317,10 @@ public class NikonReader extends BaseTiffReader {
           // 32-bit (4-byte) unsigned integer
           long[] longs = new long[count];
           if (count > 1) {
-            in.seek(DataTools.read4UnsignedBytes(in, littleEndian));
+            int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+            in.reset();
+            in.mark(fileLength);
+            in.skipBytes(pointer); 
           }
           for (int j=0; j<count; j++) {
             longs[j] = DataTools.read4UnsignedBytes(in, littleEndian);
@@ -314,7 +332,10 @@ public class NikonReader extends BaseTiffReader {
           // Two LONGs: the first represents the numerator of a fraction;
           // the second, the denominator
           TiffRational[] rationals = new TiffRational[count];
-          in.seek(DataTools.read4UnsignedBytes(in, littleEndian));
+          int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+          in.reset();
+          in.mark(fileLength);
+          in.skipBytes(pointer); 
           for (int j=0; j<count; j++) {
             long numer = DataTools.read4UnsignedBytes(in, littleEndian);
             long denom = DataTools.read4UnsignedBytes(in, littleEndian);
@@ -329,7 +350,10 @@ public class NikonReader extends BaseTiffReader {
           // depending on the definition of the field
           byte[] sbytes = new byte[count];
           if (count > 4) {
-            in.seek(DataTools.read4UnsignedBytes(in, littleEndian));
+            int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+            in.reset();
+            in.mark(fileLength);
+            in.skipBytes(pointer); 
           }
           DataTools.readFully(in, sbytes);
           if (sbytes.length == 1) value = new Byte(sbytes[0]);
@@ -339,7 +363,10 @@ public class NikonReader extends BaseTiffReader {
           // A 16-bit (2-byte) signed (twos-complement) integer
           short[] sshorts = new short[count];
           if (count > 2) {
-            in.seek(DataTools.read4UnsignedBytes(in, littleEndian));
+            int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+            in.reset();
+            in.mark(fileLength);
+            in.skipBytes(pointer); 
           }
           for (int j=0; j<count; j++) {
             sshorts[j] = DataTools.read2SignedBytes(in, littleEndian);
@@ -351,7 +378,10 @@ public class NikonReader extends BaseTiffReader {
           // A 32-bit (4-byte) signed (twos-complement) integer
           int[] slongs = new int[count];
           if (count > 1) {
-            in.seek(DataTools.read4UnsignedBytes(in, littleEndian));
+            int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+            in.reset();
+            in.mark(fileLength);
+            in.skipBytes(pointer); 
           }
           for (int j=0; j<count; j++) {
             slongs[j] = DataTools.read4SignedBytes(in, littleEndian);
@@ -363,7 +393,10 @@ public class NikonReader extends BaseTiffReader {
           // Two SLONG's: the first represents the numerator of a fraction,
           // the second the denominator
           TiffRational[] srationals = new TiffRational[count];
-          in.seek(DataTools.read4UnsignedBytes(in, littleEndian));
+          int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+          in.reset();
+          in.mark(fileLength);
+          in.skipBytes(pointer); 
           for (int j=0; j<count; j++) {
             int numer = DataTools.read4SignedBytes(in, littleEndian);
             int denom = DataTools.read4SignedBytes(in, littleEndian);
@@ -376,7 +409,10 @@ public class NikonReader extends BaseTiffReader {
           // Single precision (4-byte) IEEE format
           float[] floats = new float[count];
           if (count > 1) {
-            in.seek(DataTools.read4UnsignedBytes(in, littleEndian));
+            int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+            in.reset();
+            in.mark(fileLength);
+            in.skipBytes(pointer); 
           }
           for (int j=0; j<count; j++) {
             floats[j] = DataTools.readFloat(in, littleEndian);
@@ -387,14 +423,19 @@ public class NikonReader extends BaseTiffReader {
         else if (type == TiffTools.DOUBLE) {
           // Double precision (8-byte) IEEE format
           double[] doubles = new double[count];
-          in.seek(DataTools.read4UnsignedBytes(in, littleEndian));
+          int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+          in.reset();
+          in.mark(fileLength);
+          in.skipBytes(pointer); 
           for (int j=0; j<count; j++) {
             doubles[j] = DataTools.readDouble(in, littleEndian);
           }
           if (doubles.length == 1) value = new Double(doubles[0]);
           else value = doubles;
         }
-        in.seek(pos);
+        in.reset();
+        in.mark(fileLength);
+        in.skipBytes((int) (pos - in.available())); 
         if (value != null) newIFD.put(new Integer(tag), value);
       }
       return newIFD;

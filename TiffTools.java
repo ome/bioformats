@@ -198,7 +198,7 @@ public abstract class TiffTools {
    * Gets all IFDs within the given TIFF file, or null
    * if the given file is not a valid TIFF file.
    */
-  public static Hashtable[] getIFDs(RandomAccessFile in) throws IOException {
+  public static Hashtable[] getIFDs(DataInputStream in) throws IOException {
     return getIFDs(in, 0);
   }
 
@@ -206,14 +206,18 @@ public abstract class TiffTools {
    * Gets all IFDs within the given TIFF file, or null
    * if the given file is not a valid TIFF file.
    */
-  public static Hashtable[] getIFDs(RandomAccessFile in, int globalOffset)
+  public static Hashtable[] getIFDs(DataInputStream in, int globalOffset)
     throws IOException
   {
     if (DEBUG) debug("getIFDs: reading IFD entries");
 
+    in = new DataInputStream(in);
+    int fileLength = in.available();
+    
     // start at the beginning of the file
-    in.seek(globalOffset);
-
+    in.skipBytes(globalOffset);
+    in.mark(fileLength); 
+    
     // determine byte order (II = little-endian, MM = big-endian)
     byte[] order = new byte[2];
     in.read(order);
@@ -231,7 +235,7 @@ public abstract class TiffTools {
     // compute maximum possible number of IFDs, for loop safety
     // each IFD must have at least one directory entry, which means that
     // each IFD must be at least 2 + 12 + 4 = 18 bytes in length
-    long ifdMax = (in.length() - 8) / 18;
+    long ifdMax = (fileLength - 8) / 18;
 
     // read in IFDs
     Vector v = new Vector();
@@ -247,7 +251,10 @@ public abstract class TiffTools {
         debug("getIFDs: seeking IFD #" +
           ifdNum + " at " + (globalOffset + offset));
       }
-      in.seek(globalOffset + offset);
+      in.reset();
+      in.mark(fileLength);
+      in.skipBytes((int) offset);
+      
       int numEntries = DataTools.read2UnsignedBytes(in, littleEndian);
       for (int i=0; i<numEntries; i++) {
         int tag = DataTools.read2UnsignedBytes(in, littleEndian);
@@ -259,13 +266,16 @@ public abstract class TiffTools {
         }
         if (count < 0) return null; // invalid data
         Object value = null;
-        long pos = in.getFilePointer() + 4;
+        long pos = fileLength - in.available() + 4;
+        
         if (type == BYTE) {
           // 8-bit unsigned integer
           short[] bytes = new short[count];
           if (count > 4) {
-            in.seek(globalOffset +
-              DataTools.read4UnsignedBytes(in, littleEndian));
+            long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
+            in.reset();
+            in.mark(fileLength);
+            in.skipBytes((int) pointer);
           }
           for (int j=0; j<count; j++) {
             bytes[j] = DataTools.readUnsignedByte(in);
@@ -278,8 +288,10 @@ public abstract class TiffTools {
           // the last byte must be NUL (binary zero)
           byte[] ascii = new byte[count];
           if (count > 4) {
-            in.seek(globalOffset +
-              DataTools.read4UnsignedBytes(in, littleEndian));
+            long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
+            in.reset();
+            in.mark(fileLength);
+            in.skipBytes((int) pointer);
           }
           DataTools.readFully(in, ascii);
 
@@ -309,8 +321,10 @@ public abstract class TiffTools {
           // 16-bit (2-byte) unsigned integer
           int[] shorts = new int[count];
           if (count > 2) {
-            in.seek(globalOffset +
-              DataTools.read4UnsignedBytes(in, littleEndian));
+            long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
+            in.reset();
+            in.mark(fileLength);
+            in.skipBytes((int) pointer);
           }
           for (int j=0; j<count; j++) {
             shorts[j] = DataTools.read2UnsignedBytes(in, littleEndian);
@@ -322,8 +336,10 @@ public abstract class TiffTools {
           // 32-bit (4-byte) unsigned integer
           long[] longs = new long[count];
           if (count > 1) {
-            in.seek(globalOffset +
-              DataTools.read4UnsignedBytes(in, littleEndian));
+            long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
+            in.reset();
+            in.mark(fileLength);
+            in.skipBytes((int) pointer);
           }
           for (int j=0; j<count; j++) {
             longs[j] = DataTools.read4UnsignedBytes(in, littleEndian);
@@ -335,8 +351,10 @@ public abstract class TiffTools {
           // Two LONGs: the first represents the numerator of a fraction;
           // the second, the denominator
           TiffRational[] rationals = new TiffRational[count];
-          in.seek(globalOffset +
-            DataTools.read4UnsignedBytes(in, littleEndian));
+          long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
+          in.reset();
+          in.mark(fileLength);
+          in.skipBytes((int) pointer);
           for (int j=0; j<count; j++) {
             long numer = DataTools.read4UnsignedBytes(in, littleEndian);
             long denom = DataTools.read4UnsignedBytes(in, littleEndian);
@@ -351,8 +369,10 @@ public abstract class TiffTools {
           // depending on the definition of the field
           byte[] sbytes = new byte[count];
           if (count > 4) {
-            in.seek(globalOffset +
-              DataTools.read4UnsignedBytes(in, littleEndian));
+            long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
+            in.reset();
+            in.mark(fileLength);
+            in.skipBytes((int) pointer);
           }
           DataTools.readFully(in, sbytes);
           if (sbytes.length == 1) value = new Byte(sbytes[0]);
@@ -362,8 +382,10 @@ public abstract class TiffTools {
           // A 16-bit (2-byte) signed (twos-complement) integer
           short[] sshorts = new short[count];
           if (count > 2) {
-            in.seek(globalOffset +
-              DataTools.read4UnsignedBytes(in, littleEndian));
+            long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
+            in.reset();
+            in.mark(fileLength);
+            in.skipBytes((int) pointer);
           }
           for (int j=0; j<count; j++) {
             sshorts[j] = DataTools.read2SignedBytes(in, littleEndian);
@@ -375,8 +397,10 @@ public abstract class TiffTools {
           // A 32-bit (4-byte) signed (twos-complement) integer
           int[] slongs = new int[count];
           if (count > 1) {
-            in.seek(globalOffset +
-              DataTools.read4UnsignedBytes(in, littleEndian));
+            long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
+            in.reset();
+            in.mark(fileLength);
+            in.skipBytes((int) pointer);
           }
           for (int j=0; j<count; j++) {
             slongs[j] = DataTools.read4SignedBytes(in, littleEndian);
@@ -388,8 +412,10 @@ public abstract class TiffTools {
           // Two SLONG's: the first represents the numerator of a fraction,
           // the second the denominator
           TiffRational[] srationals = new TiffRational[count];
-          in.seek(globalOffset +
-            DataTools.read4UnsignedBytes(in, littleEndian));
+          long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
+          in.reset();
+          in.mark(fileLength);
+          in.skipBytes((int) pointer);
           for (int j=0; j<count; j++) {
             int numer = DataTools.read4SignedBytes(in, littleEndian);
             int denom = DataTools.read4SignedBytes(in, littleEndian);
@@ -402,8 +428,10 @@ public abstract class TiffTools {
           // Single precision (4-byte) IEEE format
           float[] floats = new float[count];
           if (count > 1) {
-            in.seek(globalOffset +
-              DataTools.read4UnsignedBytes(in, littleEndian));
+            long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
+            in.reset();
+            in.mark(fileLength);
+            in.skipBytes((int) pointer);
           }
           for (int j=0; j<count; j++) {
             floats[j] = DataTools.readFloat(in, littleEndian);
@@ -414,15 +442,19 @@ public abstract class TiffTools {
         else if (type == DOUBLE) {
           // Double precision (8-byte) IEEE format
           double[] doubles = new double[count];
-          in.seek(globalOffset +
-            DataTools.read4UnsignedBytes(in, littleEndian));
+          long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
+          in.reset();
+          in.mark(fileLength);
+          in.skipBytes((int) pointer);
           for (int j=0; j<count; j++) {
             doubles[j] = DataTools.readDouble(in, littleEndian);
           }
           if (doubles.length == 1) value = new Double(doubles[0]);
           else value = doubles;
         }
-        in.seek(globalOffset + pos);
+        in.reset();
+        in.mark(fileLength);
+        in.skipBytes((int) pos);
         if (value != null) ifd.put(new Integer(tag), value);
       }
       offset = DataTools.read4UnsignedBytes(in, littleEndian);
@@ -616,14 +648,14 @@ public abstract class TiffTools {
   // -- Image reading methods --
 
   /** Reads the image defined in the given IFD from the specified file. */
-  public static BufferedImage getImage(Hashtable ifd, RandomAccessFile in)
+  public static BufferedImage getImage(Hashtable ifd, DataInputStream in)
     throws FormatException, IOException
   {
     return getImage(ifd, in, 0);
   }
 
   /** Reads the image defined in the given IFD from the specified file. */
-  public static BufferedImage getImage(Hashtable ifd, RandomAccessFile in,
+  public static BufferedImage getImage(Hashtable ifd, DataInputStream in,
     int globalOffset) throws FormatException, IOException
   {
     if (DEBUG) debug("parsing IFD entries");
@@ -903,12 +935,22 @@ public abstract class TiffTools {
 
     if (bitsPerSample[0] == 16) littleEndian = !littleEndian;
 
+    in.reset();
+    //in.mark((int) (imageLength * samplesPerPixel * 
+    //  imageWidth * (bitsPerSample[0] / 8)));
+    in.mark(in.available());
+    
     int overallOffset = 0;
     for (int strip=0, row=0; strip<numStrips; strip++, row+=rowsPerStrip) {
       if (DEBUG) debug("reading image strip #" + strip);
       long actualRows = (row + rowsPerStrip > imageLength) ?
         imageLength - row : rowsPerStrip;
-      in.seek(globalOffset + stripOffsets[strip]);
+      in.reset();
+      //in.mark((int) (imageLength * samplesPerPixel * 
+      //  imageWidth * (bitsPerSample[0] / 8)));
+      in.mark(in.available());
+      in.skipBytes((int) stripOffsets[strip]);
+      
       if (stripByteCounts[strip] > Integer.MAX_VALUE) {
         throw new FormatException("Sorry, StripByteCounts > " +
           Integer.MAX_VALUE + " is not supported");
