@@ -35,20 +35,10 @@ public abstract class DataTools {
 
   // -- Data reading --
 
-  /** Reads bytes from the given data input source. */
-  public static void readFully(DataInput in, byte[] bytes)
-    throws IOException
-  {
-    if (in instanceof RandomAccessArray) {
-      ((RandomAccessArray) in).copyArray(bytes);
-    }
-    else in.readFully(bytes);
-  }
-
   /** Reads 1 signed byte [-128, 127]. */
   public static byte readSignedByte(DataInput in) throws IOException {
     byte[] b = new byte[1];
-    readFully(in, b);
+    in.readFully(b);
     return b[0];
   }
 
@@ -66,7 +56,7 @@ public abstract class DataTools {
     throws IOException
   {
     byte[] bytes = new byte[2];
-    readFully(in, bytes);
+    in.readFully(bytes);
     return bytesToShort(bytes, little);
   }
 
@@ -84,7 +74,7 @@ public abstract class DataTools {
     throws IOException
   {
     byte[] bytes = new byte[4];
-    readFully(in, bytes);
+    in.readFully(bytes);
     return bytesToInt(bytes, little);
   }
 
@@ -102,7 +92,7 @@ public abstract class DataTools {
     throws IOException
   {
     byte[] bytes = new byte[8];
-    readFully(in, bytes);
+    in.readFully(bytes);
     return bytesToLong(bytes, little);
   }
 
