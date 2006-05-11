@@ -211,13 +211,12 @@ public abstract class TiffTools {
   {
     if (DEBUG) debug("getIFDs: reading IFD entries");
 
-    in = new DataInputStream(in);
     int fileLength = in.available();
-    
+
     // start at the beginning of the file
     in.skipBytes(globalOffset);
-    in.mark(fileLength); 
-    
+    in.mark(fileLength);
+
     // determine byte order (II = little-endian, MM = big-endian)
     byte[] order = new byte[2];
     in.read(order);
@@ -254,7 +253,7 @@ public abstract class TiffTools {
       in.reset();
       in.mark(fileLength);
       in.skipBytes((int) offset);
-      
+
       int numEntries = DataTools.read2UnsignedBytes(in, littleEndian);
       for (int i=0; i<numEntries; i++) {
         int tag = DataTools.read2UnsignedBytes(in, littleEndian);
@@ -267,7 +266,7 @@ public abstract class TiffTools {
         if (count < 0) return null; // invalid data
         Object value = null;
         long pos = fileLength - in.available() + 4;
-        
+
         if (type == BYTE) {
           // 8-bit unsigned integer
           short[] bytes = new short[count];
@@ -936,21 +935,21 @@ public abstract class TiffTools {
     if (bitsPerSample[0] == 16) littleEndian = !littleEndian;
 
     in.reset();
-    //in.mark((int) (imageLength * samplesPerPixel * 
+    //in.mark((int) (imageLength * samplesPerPixel *
     //  imageWidth * (bitsPerSample[0] / 8)));
     in.mark(in.available());
-    
+
     int overallOffset = 0;
     for (int strip=0, row=0; strip<numStrips; strip++, row+=rowsPerStrip) {
       if (DEBUG) debug("reading image strip #" + strip);
       long actualRows = (row + rowsPerStrip > imageLength) ?
         imageLength - row : rowsPerStrip;
       in.reset();
-      //in.mark((int) (imageLength * samplesPerPixel * 
+      //in.mark((int) (imageLength * samplesPerPixel *
       //  imageWidth * (bitsPerSample[0] / 8)));
       in.mark(in.available());
       in.skipBytes((int) stripOffsets[strip]);
-      
+
       if (stripByteCounts[strip] > Integer.MAX_VALUE) {
         throw new FormatException("Sorry, StripByteCounts > " +
           Integer.MAX_VALUE + " is not supported");

@@ -46,7 +46,7 @@ public abstract class BaseTiffReader extends FormatReader {
 
   /** File length. */
   protected int fileLength;
-  
+
   /** List of IFDs for the current TIFF. */
   protected Hashtable[] ifds;
 
@@ -369,7 +369,7 @@ public abstract class BaseTiffReader extends FormatReader {
       if (pixelType.indexOf("int") >= 0) { // int or Uint
         pixelType += TiffTools.getIFDIntValue(ifd, TiffTools.BITS_PER_SAMPLE);
       }
- 
+
       OMETools.setPixels(ome, new Integer(sizeX), new Integer(sizeY),
         new Integer(sizeZ), new Integer(sizeC), new Integer(sizeT),
         pixelType, new Boolean(bigEndian), null);
@@ -463,7 +463,7 @@ public abstract class BaseTiffReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given TIFF file as a byte array. */
-  public byte[] openBytes(String id, int no) 
+  public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     throw new FormatException("BaseTiffReader.openBytes(String, int) " +
@@ -496,7 +496,7 @@ public abstract class BaseTiffReader extends FormatReader {
     in = new DataInputStream(
       new BufferedInputStream(new FileInputStream(id), 4096));
     fileLength = in.available();
-   
+
     ifds = TiffTools.getIFDs(in);
     if (ifds == null) throw new FormatException("No IFDs found");
     numImages = ifds.length;

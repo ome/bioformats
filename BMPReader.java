@@ -95,12 +95,12 @@ public class BMPReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given BMP file as a byte array. */
-  public byte[] openBytes(String id, int no) 
+  public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     throw new FormatException("BMPReader.openBytes(String, int) not" +
       " implemented");
-  } 
+  }
 
 
   /** Obtains the specified image from the given BMP file. */
@@ -177,7 +177,7 @@ public class BMPReader extends FormatReader {
         tempPx[1][oldOff] = pixels[1][newOff];
         tempPx[2][oldOff] = pixels[2][newOff];
         oldOff++;
-        newOff--;     
+        newOff--;
       }
     }
 
@@ -196,11 +196,11 @@ public class BMPReader extends FormatReader {
     super.initFile(id);
     in = new DataInputStream(
       new BufferedInputStream(new FileInputStream(id), 4096));
-    
+
     littleEndian = true;
- 
+
     int originalSize = in.available();
-    
+
     // read the first header - 14 bytes
 
     byte[] two = new byte[2];

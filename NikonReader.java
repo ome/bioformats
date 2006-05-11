@@ -233,7 +233,7 @@ public class NikonReader extends BaseTiffReader {
         new BufferedInputStream(new FileInputStream(currentId), 4096));
       in.skipBytes(offset);
       in.mark(fileLength);
-      
+
       Hashtable newIFD = new Hashtable();
       int numEntries = DataTools.read2UnsignedBytes(in, littleEndian);
       for (int i=0; i<numEntries; i++) {
@@ -249,7 +249,7 @@ public class NikonReader extends BaseTiffReader {
             (int) DataTools.read4UnsignedBytes(in, littleEndian);
           in.reset();
           in.mark(fileLength);
-          in.skipBytes(pos); 
+          in.skipBytes(pos);
         }
 
         long pos = fileLength - in.available() + 4;
@@ -261,7 +261,7 @@ public class NikonReader extends BaseTiffReader {
             int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
             in.reset();
             in.mark(fileLength);
-            in.skipBytes(pointer); 
+            in.skipBytes(pointer);
           }
           for (int j=0; j<count; j++) {
             bytes[j] = DataTools.readUnsignedByte(in);
@@ -277,7 +277,7 @@ public class NikonReader extends BaseTiffReader {
             int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
             in.reset();
             in.mark(fileLength);
-            in.skipBytes(pointer); 
+            in.skipBytes(pointer);
           }
           DataTools.readFully(in, ascii);
 
@@ -305,7 +305,7 @@ public class NikonReader extends BaseTiffReader {
             int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
             in.reset();
             in.mark(fileLength);
-            in.skipBytes(pointer); 
+            in.skipBytes(pointer);
           }
           for (int j=0; j<count; j++) {
             shorts[j] = DataTools.read2UnsignedBytes(in, littleEndian);
@@ -320,7 +320,7 @@ public class NikonReader extends BaseTiffReader {
             int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
             in.reset();
             in.mark(fileLength);
-            in.skipBytes(pointer); 
+            in.skipBytes(pointer);
           }
           for (int j=0; j<count; j++) {
             longs[j] = DataTools.read4UnsignedBytes(in, littleEndian);
@@ -335,7 +335,7 @@ public class NikonReader extends BaseTiffReader {
           int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
           in.reset();
           in.mark(fileLength);
-          in.skipBytes(pointer); 
+          in.skipBytes(pointer);
           for (int j=0; j<count; j++) {
             long numer = DataTools.read4UnsignedBytes(in, littleEndian);
             long denom = DataTools.read4UnsignedBytes(in, littleEndian);
@@ -353,7 +353,7 @@ public class NikonReader extends BaseTiffReader {
             int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
             in.reset();
             in.mark(fileLength);
-            in.skipBytes(pointer); 
+            in.skipBytes(pointer);
           }
           DataTools.readFully(in, sbytes);
           if (sbytes.length == 1) value = new Byte(sbytes[0]);
@@ -366,7 +366,7 @@ public class NikonReader extends BaseTiffReader {
             int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
             in.reset();
             in.mark(fileLength);
-            in.skipBytes(pointer); 
+            in.skipBytes(pointer);
           }
           for (int j=0; j<count; j++) {
             sshorts[j] = DataTools.read2SignedBytes(in, littleEndian);
@@ -381,7 +381,7 @@ public class NikonReader extends BaseTiffReader {
             int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
             in.reset();
             in.mark(fileLength);
-            in.skipBytes(pointer); 
+            in.skipBytes(pointer);
           }
           for (int j=0; j<count; j++) {
             slongs[j] = DataTools.read4SignedBytes(in, littleEndian);
@@ -396,7 +396,7 @@ public class NikonReader extends BaseTiffReader {
           int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
           in.reset();
           in.mark(fileLength);
-          in.skipBytes(pointer); 
+          in.skipBytes(pointer);
           for (int j=0; j<count; j++) {
             int numer = DataTools.read4SignedBytes(in, littleEndian);
             int denom = DataTools.read4SignedBytes(in, littleEndian);
@@ -412,7 +412,7 @@ public class NikonReader extends BaseTiffReader {
             int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
             in.reset();
             in.mark(fileLength);
-            in.skipBytes(pointer); 
+            in.skipBytes(pointer);
           }
           for (int j=0; j<count; j++) {
             floats[j] = DataTools.readFloat(in, littleEndian);
@@ -426,7 +426,7 @@ public class NikonReader extends BaseTiffReader {
           int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
           in.reset();
           in.mark(fileLength);
-          in.skipBytes(pointer); 
+          in.skipBytes(pointer);
           for (int j=0; j<count; j++) {
             doubles[j] = DataTools.readDouble(in, littleEndian);
           }
@@ -435,7 +435,7 @@ public class NikonReader extends BaseTiffReader {
         }
         in.reset();
         in.mark(fileLength);
-        in.skipBytes((int) (pos - in.available())); 
+        in.skipBytes((int) (pos - in.available()));
         if (value != null) newIFD.put(new Integer(tag), value);
       }
       return newIFD;

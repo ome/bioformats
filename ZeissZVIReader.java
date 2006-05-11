@@ -112,7 +112,7 @@ public class ZeissZVIReader extends FormatReader {
     throw new FormatException("ZeissZVIReader.openBytes(String, int) " +
       "not implemented");
   }
-  
+
   /** Obtains the specified image from the given Zeiss ZVI file. */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException

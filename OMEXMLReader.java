@@ -72,7 +72,7 @@ public class OMEXMLReader extends FormatReader {
 
   /** File length. */
   private int fileLength;
-  
+
   /** Number of image planes in the file. */
   protected int numImages = 0;
 
@@ -106,7 +106,7 @@ public class OMEXMLReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given file as a byte array. */
-  public byte[] openBytes(String id, int no) 
+  public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     throw new FormatException("OMEXMLReader.openBytes(String, int) " +
@@ -129,10 +129,10 @@ public class OMEXMLReader extends FormatReader {
 
     if ((fileLength - in.available()) < ((Integer) offsets.get(no)).intValue())
     {
-      in.skipBytes(((Integer) offsets.get(no)).intValue() - 
+      in.skipBytes(((Integer) offsets.get(no)).intValue() -
         (fileLength - in.available()));
     }
-            
+
     byte[] buf;
     if (no < getImageCount(id) - 1) {
 
@@ -219,9 +219,9 @@ public class OMEXMLReader extends FormatReader {
     offsets = new Vector();
 
     in.mark(fileLength);
-    
+
     in.skipBytes(200);
-    
+
     // read a block of 8192 characters, looking for the "BigEndian" pattern
     byte[] buf = new byte[8192];
     boolean found = false;
@@ -244,11 +244,11 @@ public class OMEXMLReader extends FormatReader {
     }
 
     in.reset();
-   
+
     // look for the first BinData element
 
     in.mark(fileLength);
-   
+
     found = false;
     buf = new byte[8192];
     in.read(buf, 0, 14);
@@ -260,8 +260,8 @@ public class OMEXMLReader extends FormatReader {
 
         int ndx = test.indexOf("<Bin");
         if (ndx == -1) throw new FormatException("Pixel data not found");
-        while (!((ndx != -1) && (ndx != test.indexOf("<Bin:External")) && 
-          (ndx != test.indexOf("<Bin:BinaryFile")))) 
+        while (!((ndx != -1) && (ndx != test.indexOf("<Bin:External")) &&
+          (ndx != test.indexOf("<Bin:BinaryFile"))))
         {
           ndx = test.indexOf("<Bin", ndx+1);
         }
@@ -276,7 +276,7 @@ public class OMEXMLReader extends FormatReader {
     }
 
     in.reset();
-    
+
     buf = new byte[((Integer) offsets.get(0)).intValue()];
     in.read(buf);
     String xml = new String(buf);
@@ -311,7 +311,7 @@ public class OMEXMLReader extends FormatReader {
     int expected = sizeX * sizeY * bpp;
 
     in.mark(256);
-   
+
     // find the compression type and adjust 'expected' accordingly
     buf = new byte[256];
     in.read(buf);
@@ -353,8 +353,8 @@ public class OMEXMLReader extends FormatReader {
     in.reset();
     in.mark(500*(safe + 8192));
     in.skipBytes(1);
-    while (((fileLength - in.available() + safe) < fileLength) && 
-      (offsets.size() < numPlanes)) 
+    while (((fileLength - in.available() + safe) < fileLength) &&
+      (offsets.size() < numPlanes))
     {
       in.skipBytes(safe);
 

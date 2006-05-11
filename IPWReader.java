@@ -100,8 +100,8 @@ public class IPWReader extends BaseTiffReader {
   {
     throw new FormatException("IPWReader.openBytes(String, int)" +
       " not implemented");
-  }        
-  
+  }
+
   /** Obtains the specified image from the given IPW file. */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
@@ -137,7 +137,7 @@ public class IPWReader extends BaseTiffReader {
 
     allIFDs = new Hashtable();
     numImages = 0;
-    
+
     try {
       r.setVar("fis", new FileInputStream(id));
       r.exec("fs = new POIFSFileSystem(fis)");
@@ -202,7 +202,7 @@ public class IPWReader extends BaseTiffReader {
       int sizeZ = Integer.parseInt((String) metadata.get("slices"));
       int sizeC = Integer.parseInt((String) metadata.get("channels"));
       int sizeT = Integer.parseInt((String) metadata.get("frames"));
-      OMETools.setPixels(ome, null, null, new Integer(sizeZ), 
+      OMETools.setPixels(ome, null, null, new Integer(sizeZ),
         new Integer(sizeC), new Integer(sizeT), null, null, null);
       OMETools.setDescription(ome, (String) metadata.get("Version"));
     }

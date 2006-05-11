@@ -82,7 +82,7 @@ public class PictReader extends FormatReader {
 
   /** File length. */
   private int fileLength;
-  
+
   /** Flag indicating whether current file is little endian. */
   protected boolean little;
 
@@ -141,7 +141,7 @@ public class PictReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given PICT file as a byte array. */
-  public byte[] openBytes(String id, int no) 
+  public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     throw new FormatException("PictReader.openBytes(String, int) " +

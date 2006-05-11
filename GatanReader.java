@@ -48,7 +48,7 @@ public class GatanReader extends FormatReader {
 
   /** File length. */
   private int fileLength;
-  
+
   /** Flag indicating whether current file is little endian. */
   protected boolean littleEndian;
 
@@ -87,7 +87,7 @@ public class GatanReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given Gatan file as a byte array. */
-  public byte[] openBytes(String id, int no) 
+  public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -95,7 +95,7 @@ public class GatanReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-   
+
     return pixelData;
   }
 
@@ -155,7 +155,7 @@ public class GatanReader extends FormatReader {
     in = new DataInputStream(
       new BufferedInputStream(new FileInputStream(id), 4096));
     fileLength = in.available();
-    
+
     littleEndian = false;
 
     byte[] temp = new byte[4];

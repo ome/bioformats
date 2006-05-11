@@ -285,7 +285,7 @@ public class ZeissLSMReader extends BaseTiffReader {
       p += 4;
 
       in.mark(fileLength);
-      
+
       // the following 4 are file offsets
       data = DataTools.bytesToLong(cz, p, 4, little);
       parseOverlays(data, "OffsetVectorOverlay", little);
@@ -302,14 +302,14 @@ public class ZeissLSMReader extends BaseTiffReader {
       if (data != 0) {
         long fp = fileLength - in.available();
         in.mark(fileLength);
-        
+
         if (fp < data) {
           in.skipBytes((int) (in.available() - fileLength + data));
         }
         else {
           /* debug */ throw new FormatException("invalid seek");
-        }        
-        
+        }
+
         int blockSize = DataTools.read4SignedBytes(in, little);
         int numColors = DataTools.read4SignedBytes(in, little);
         int numNames = DataTools.read4SignedBytes(in, little);
@@ -319,20 +319,20 @@ public class ZeissLSMReader extends BaseTiffReader {
         long offsetNames = data + idata; // will seek to this
 
         // read in the intensity value for each color
-        
+
         in.skipBytes(idata - 16);
-        
+
         for (int i=0; i<numColors; i++) {
           data = DataTools.read4UnsignedBytes(in, little);
           put("Intensity" + i, data);
         }
 
         // read in the channel names
-      
+
         in.reset();
         in.mark(fileLength);
         in.skipBytes((int) offsetNames);
-        
+
         for (int i=0; i<numNames; i++) {
           // we want to read until we find a null char
           String name = "";
@@ -358,9 +358,9 @@ public class ZeissLSMReader extends BaseTiffReader {
       data = DataTools.bytesToLong(cz, p, 4, little);
       if (data != 0) {
         //in.mark((int) (dimensionChannels*4 + data + 1));
-        
+
         in.skipBytes((int) data);
-              
+
         for (int i=0; i<dimensionChannels; i++) {
           data = DataTools.read4UnsignedBytes(in, little);
           put("OffsetChannelDataTypes" + i, data);
@@ -380,7 +380,7 @@ public class ZeissLSMReader extends BaseTiffReader {
         //in.mark((int) (9 + data + 100*8));
         in.mark(fileLength);
         in.skipBytes((int) data);
-        
+
         in.skipBytes(4);
         int numStamps = DataTools.read4SignedBytes(in, little);
         for (int i=0; i<numStamps; i++) {
@@ -395,11 +395,11 @@ public class ZeissLSMReader extends BaseTiffReader {
       if (data != 0) {
         //in.mark(10);
         in.mark(fileLength);
-              
+
         long numBytes = DataTools.read4UnsignedBytes(in, little);
         int numEvents = DataTools.read4SignedBytes(in, little);
-        in.reset();     
-        
+        in.reset();
+
         //in.mark((int) (data + 8 + numEvents*numBytes + 1));
         in.mark(fileLength);
 
@@ -533,7 +533,7 @@ public class ZeissLSMReader extends BaseTiffReader {
         pixelType, // PixelType
         null, // BigEndian
         dimOrder); // DimensionOrder
-    
+
       in.reset();
       in.mark(fileLength);
     }
@@ -554,7 +554,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     in.reset();
     in.mark(fileLength);
     in.skipBytes((int) data);
-    
+
     int nde = DataTools.read4SignedBytes(in, little);
     put("NumberDrawingElements-" + suffix, nde);
     int size = DataTools.read4SignedBytes(in, little);
@@ -621,7 +621,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     in.reset();
     in.mark(fileLength);
     in.skipBytes((int) data);
-    
+
     long size = DataTools.read4UnsignedBytes(in, little);
     long numSubBlocks = DataTools.read4UnsignedBytes(in, little);
     put("NumSubBlocks-" + suffix, numSubBlocks);

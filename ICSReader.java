@@ -55,7 +55,7 @@ public class ICSReader extends FormatReader {
 
   /** IDS file length. */
   private int fileLength;
-  
+
   /**
    * Dimensions in the following order:
    * 1) bits per pixel
@@ -106,9 +106,9 @@ public class ICSReader extends FormatReader {
 
     if ((fileLength - idsIn.available()) < ((dimensions[0]/8)*width*height*no))
     {
-      idsIn.skipBytes(idsIn.available() - fileLength + 
+      idsIn.skipBytes(idsIn.available() - fileLength +
         ((dimensions[0]/8) * width * height));
-    }        
+    }
 
     byte[] data = new byte[(dimensions[0]/8) * width * height];
     idsIn.readFully(data);
@@ -192,9 +192,9 @@ public class ICSReader extends FormatReader {
 
     icsIn = icsFile;
     idsIn = new DataInputStream(
-      new BufferedInputStream(new FileInputStream(currentIdsId), 4096)); 
+      new BufferedInputStream(new FileInputStream(currentIdsId), 4096));
     fileLength = idsIn.available();
-    
+
     BufferedReader reader = new BufferedReader(new FileReader(icsIn));
     String line = reader.readLine();
     line = reader.readLine();

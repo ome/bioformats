@@ -57,10 +57,10 @@ public class OpenlabRawReader extends FormatReader {
 
   /** Number of channels. */
   private int channels;
- 
+
   /** Number of bytes per pixel. */
   private int bpp;
-  
+
   // -- Constructor --
 
   /** Constructs a new RAW reader. */
@@ -82,7 +82,7 @@ public class OpenlabRawReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given RAW file as a byte array. */
-  public byte[] openBytes(String id, int no) 
+  public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     throw new FormatException("OpenlabRawReader.openBytes(String, int) " +
@@ -102,14 +102,14 @@ public class OpenlabRawReader extends FormatReader {
     in.reset();
     if ((fileLength - in.available()) < offsets[no]) {
       in.skipBytes((int) (in.available() - fileLength + offsets[no]));
-    }        
- 
+    }
+
     in.skipBytes(288);
-    
+
     byte[] data = new byte[width*height*bpp];
     in.read(data);
     in.mark(100);
-    
+
     if (bpp == 1) {
       // need to invert the pixels
       for (int i=0; i<data.length; i++) {
@@ -148,7 +148,7 @@ public class OpenlabRawReader extends FormatReader {
     in = new DataInputStream(
       new BufferedInputStream(new FileInputStream(id), 4096));
     fileLength = in.available();
-    
+
     // read the 12 byte file header
 
     byte[] header = new byte[12];

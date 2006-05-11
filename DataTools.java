@@ -405,11 +405,11 @@ public abstract class DataTools {
       if ((toStrip.charAt(i) != 0) && (toStrip.charAt(i) != ' ')) {
         toRtn[counter] = toStrip.charAt(i);
         counter++;
-      }        
-    }        
+      }
+    }
     toStrip = new String(toRtn);
     toStrip = toStrip.trim();
     return toStrip;
   }
-  
+
 }

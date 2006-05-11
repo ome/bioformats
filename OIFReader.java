@@ -73,7 +73,7 @@ public class OIFReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given OIF file as a byte array. */
-  public byte[] openBytes(String id, int no) 
+  public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     return tiffReader.openBytes((String) tiffs.get(no), 0);

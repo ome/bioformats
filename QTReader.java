@@ -184,7 +184,7 @@ public class QTReader extends FormatReader {
 
   /** File length. */
   private int fileLength;
-  
+
   /** Flag indicating whether the current file is little endian. */
   private boolean little = false;
 
@@ -193,10 +193,10 @@ public class QTReader extends FormatReader {
 
   /** Global offset to pixel data. */
   private int globalOffset;
- 
+
   /** Number of bytes of pixel data. */
   private int numPixelBytes;
-  
+
   /** Width of a single plane. */
   private int width;
 
@@ -214,10 +214,10 @@ public class QTReader extends FormatReader {
 
   /** Flag indicating that we've found the pixel data. */
   private boolean foundPixels;
-  
+
   /** Number of relevant atoms parsed. */
   private int numParsed;
-  
+
   /** Offsets to each plane's pixel data. */
   private Vector offsets;
 
@@ -241,7 +241,7 @@ public class QTReader extends FormatReader {
 
   /** The constructed header for an mjpb plane. */
   private ByteVector v;
-  
+
 
   // -- Constructor --
 
@@ -263,7 +263,7 @@ public class QTReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given QT file as a byte array. */
-  public byte[] openBytes(String id, int no) 
+  public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     throw new FormatException("QTReader.openBytes(String, int) " +
@@ -308,15 +308,15 @@ public class QTReader extends FormatReader {
       offset = nextOffset;
       nextOffset = offset;
     }
- 
+
     byte[] pixs = new byte[nextOffset - offset];
-  
+
     if ((fileLength - in.available()) != (globalOffset + offset)) {
       in.skipBytes(offset);
     }
 
     in.read(pixs);
-    
+
     if (codec.equals("jpeg")) return bufferedJPEG(pixs);
     else if (codec.equals("mjpb")) return mjpbUncompress(pixs);
 
@@ -350,7 +350,7 @@ public class QTReader extends FormatReader {
       }
     }
 
-    if (bitsPerPixel == 40) {  
+    if (bitsPerPixel == 40) {
       // invert the pixels
       for (int i=0; i<bytes.length; i++) {
         bytes[i] = (byte) (255 - bytes[i]);
@@ -429,10 +429,10 @@ public class QTReader extends FormatReader {
     while ((offset < length) && !allFound) {
       in.reset();
       in.skipBytes((int) (in.available() - (fileLength - offset)));
-            
+
       // first 4 bytes are the atom size
       long atomSize = DataTools.read4UnsignedBytes(in, little);
-      
+
       // read the atom type
       byte[] four = new byte[4];
       in.read(four);
@@ -456,14 +456,14 @@ public class QTReader extends FormatReader {
       }
       else {
         if (atomSize == 0) atomSize = fileLength;
-        
+
         in.mark((int) (atomSize + 8));
         if (!atomType.equals("mdat") && (atomType.equals("tkhd") ||
            atomType.equals("stco") || atomType.equals("stsd") ||
            atomType.equals("stsz") || atomType.equals("stts"))) {
           data = new byte[(int) atomSize];
           in.read(data);
-        }  
+        }
 
         if (atomType.equals("mdat")) {
           numParsed++;
@@ -483,7 +483,7 @@ public class QTReader extends FormatReader {
         else if (atomType.equals("stco")) {
           // we've found the plane offsets
 
-          numParsed++;      
+          numParsed++;
           int numPlanes = DataTools.bytesToInt(data, 4, little);
           if (numPlanes != numImages) {
             int off = DataTools.bytesToInt(data, 8, little);
@@ -539,7 +539,7 @@ public class QTReader extends FormatReader {
       else offset += atomSize;
 
       allFound = (numParsed >= 6) && foundPixels;
-      
+
       // if a 'udta' atom, skip ahead 4 bytes
       if (atomType.equals("udta")) offset += 4;
       if (DEBUG) print(depth, atomSize, atomType, data);
@@ -845,7 +845,7 @@ public class QTReader extends FormatReader {
       v.add((byte) 0x3f);
       v.add((byte) 0x00);
     }
-      
+
     // as if everything we had to do up to this point wasn't enough of a pain,
     // the MJPEG-B specifications allow for interlaced frames
     // so now we have to reorder the scanlines...*stabs self in eye*
@@ -861,7 +861,7 @@ public class QTReader extends FormatReader {
       f1.add((byte) 0xd9);
       f2.add((byte) 0xff);
       f2.add((byte) 0xd9);
-      
+
       // this takes less time than it used to, but may not be the
       // most intelligent way of doing things
 
@@ -892,7 +892,7 @@ public class QTReader extends FormatReader {
       int bottomLine = 0;
       for (int i=0; i<height; i++) {
         if ((i % 2) == 0) {
-          System.arraycopy(topPixs, topLine*width, scanlines[0], 
+          System.arraycopy(topPixs, topLine*width, scanlines[0],
             width*i, width);
           topLine++;
         }

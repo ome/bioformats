@@ -60,12 +60,12 @@ public abstract class ImageIOReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given file as a byte array. */
-  public byte[] openBytes(String id, int no) 
+  public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     throw new FormatException("ImageIOReader.openBytes(String, int) " +
       "not implemented");
-  } 
+  }
 
   /** Obtains the image from the given image file. */
   public BufferedImage openImage(String id, int no)

@@ -125,7 +125,7 @@ public class LeicaReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given Leica file as a byte array. */
-  public byte[] openBytes(String id, int no) 
+  public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     return tiff.openBytes(id, no);
@@ -157,7 +157,7 @@ public class LeicaReader extends FormatReader {
       super.initFile(id);
       in = new DataInputStream(
         new BufferedInputStream(new FileInputStream(id), 4096));
-      
+
       // open the TIFF file and look for the "Image Description" field
 
       Hashtable[] ifds = TiffTools.getIFDs(in);
@@ -219,7 +219,7 @@ public class LeicaReader extends FormatReader {
       in = new DataInputStream(
         new BufferedInputStream(new FileInputStream(id), 4096));
       int fileLength = in.available();
-      
+
       byte[] fourBytes = new byte[4];
       in.read(fourBytes);
       littleEndian = (fourBytes[0] == TiffTools.LITTLE &&
@@ -233,14 +233,14 @@ public class LeicaReader extends FormatReader {
       while (addr != 0) {
         Hashtable ifd = new Hashtable();
         v.add(ifd);
-        
+
         if ((fileLength - in.available()) < addr) {
           in.skipBytes((int) (in.available() - fileLength + addr));
         }
         else {
           /* debug */ throw new FormatException("invalid seek");
-        }        
-        
+        }
+
         int numEntries = (int) DataTools.read4UnsignedBytes(in, littleEndian);
         int tag = (int) DataTools.read4UnsignedBytes(in, littleEndian);
 
@@ -248,16 +248,16 @@ public class LeicaReader extends FormatReader {
         while (tag != 0) {
           // create the IFD structure
           int offset = (int) DataTools.read4UnsignedBytes(in, littleEndian);
-       
+
           in.mark(offset + 8210);
-          
+
           if ((fileLength - in.available()) < offset + 12) {
             in.skipBytes((int) (in.available() - fileLength + offset + 12));
           }
           else {
             /* debug */ throw new FormatException("invalid seek");
-          } 
-        
+          }
+
           int size = (int) DataTools.read4UnsignedBytes(in, littleEndian);
           byte[] data = new byte[size];
           in.read(data);
@@ -321,7 +321,7 @@ public class LeicaReader extends FormatReader {
           new Integer(DataTools.bytesToInt(temp, 8, 4, littleEndian)));
         metadata.put("Length of file extension",
           new Integer(DataTools.bytesToInt(temp, 12, 4, littleEndian)));
-        metadata.put("Image file extension", 
+        metadata.put("Image file extension",
           DataTools.stripString(new String(temp, 16,
           ((Integer) metadata.get("Length of file extension")).intValue())));
       }

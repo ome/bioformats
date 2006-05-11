@@ -66,16 +66,16 @@ public class DeltavisionReader extends FormatReader {
 
   /** Image height. */
   private int height;
-  
+
   /** Bytes per pixel. */
   private int bytesPerPixel;
 
-  
+
   // -- Constructor --
 
   /** Constructs a new Deltavision reader. */
-  public DeltavisionReader() { 
-    super("Deltavision", new String[] {"dv", "r3d"}); 
+  public DeltavisionReader() {
+    super("Deltavision", new String[] {"dv", "r3d"});
   }
 
   // -- FormatReader API methods --
@@ -92,7 +92,7 @@ public class DeltavisionReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given file as a byte array. */
-  public byte[] openBytes(String id, int no) 
+  public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     throw new FormatException("DeltavisionReader.openBytes(String, int) " +
@@ -117,11 +117,11 @@ public class DeltavisionReader extends FormatReader {
     int channels = 1;
     int numSamples = (int) (width * height);
     byte[] rawData = new byte[width * height * bytesPerPixel];
-  
+
     if ((fileLength - in.available()) < offset) {
       in.skipBytes(in.available() - fileLength + offset);
-    }        
-    
+    }
+
     in.read(rawData);
 
     if (bytesPerPixel == 1) {
@@ -186,7 +186,7 @@ public class DeltavisionReader extends FormatReader {
 
     width = DataTools.bytesToInt(header, 0, 4, little);
     height = DataTools.bytesToInt(header, 4, 4, little);
-    
+
     Integer sizeX = new Integer(width);
     Integer sizeY = new Integer(height);
     metadata.put("ImageWidth", sizeX);
@@ -198,26 +198,26 @@ public class DeltavisionReader extends FormatReader {
     String omePixel;
 
     switch (pixelType) {
-      case 0: pixel = "8 bit unsigned integer"; omePixel = "Uint8"; 
+      case 0: pixel = "8 bit unsigned integer"; omePixel = "Uint8";
               bytesPerPixel = 1;
               break;
-      case 1: pixel = "16 bit signed integer"; omePixel = "int16"; 
+      case 1: pixel = "16 bit signed integer"; omePixel = "int16";
               bytesPerPixel = 2;
               break;
-      case 2: pixel = "32 bit floating point"; omePixel = "float"; 
+      case 2: pixel = "32 bit floating point"; omePixel = "float";
               bytesPerPixel = 4;
               break;
-      case 3: pixel = "32 bit complex"; omePixel = "Uint32"; 
+      case 3: pixel = "32 bit complex"; omePixel = "Uint32";
               bytesPerPixel = 4;
               break;
-      case 4: pixel = "64 bit complex"; omePixel = "float"; 
+      case 4: pixel = "64 bit complex"; omePixel = "float";
               bytesPerPixel = 8;
               break;
-      case 6: pixel = "16 bit unsigned integer"; omePixel = "Uint16"; 
+      case 6: pixel = "16 bit unsigned integer"; omePixel = "Uint16";
               bytesPerPixel = 2;
               break;
       default: pixel = "unknown"; omePixel = "Uint8"; bytesPerPixel = 1;
-    } 
+    }
 
     if (ome != null) {
       OMETools.setPixels(ome, sizeX, sizeY, null, null, null, omePixel,
@@ -360,7 +360,7 @@ public class DeltavisionReader extends FormatReader {
     if (ome != null) {
       OMETools.setDescription(ome, (String) metadata.get("Title 1"));
     }
-    
+
     in = new DataInputStream(
       new BufferedInputStream(new FileInputStream(id), 4096));
   }
