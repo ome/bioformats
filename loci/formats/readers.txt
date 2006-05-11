@@ -17,6 +17,7 @@ loci.formats.LIFReader         # lif
 loci.formats.AVIReader         # avi
 loci.formats.QTReader          # mov
 loci.formats.PictReader        # pict, pct
+loci.formats.SDTReader         # sdt
 
 # multi-extension messes
 loci.formats.ICSReader         # ics, ids
