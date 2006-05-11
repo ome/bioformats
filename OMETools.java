@@ -95,7 +95,7 @@ public abstract class OMETools {
   {
     return setImage(root, name, creationDate, description, 0);
   }
-  
+
   /** Populates the nth OME/Image element. */
   public static Object setImage(Object root, String name,
     String creationDate, String description, int n)
@@ -126,8 +126,8 @@ public abstract class OMETools {
   {
     return setExperimenter(root, firstName, lastName, email, institution,
       dataDirectory, group, 0);
-  }        
-  
+  }
+
   /** Populates the nth OME/CA/Experimenter element. */
   public static Object setExperimenter(Object root, String firstName,
     String lastName, String email, String institution, String dataDirectory,
@@ -167,7 +167,7 @@ public abstract class OMETools {
     Object leader, Object contact)
   {
     return setGroup(root, name, leader, contact, 0);
-  }        
+  }
 
   /** Populates the nth OME/CA/Group element. */
   public static Object setGroup(Object root, String name,
@@ -201,7 +201,7 @@ public abstract class OMETools {
     String model, String serialNumber, String type)
   {
     return setInstrument(root, manufacturer, model, serialNumber, type, 0);
-  }        
+  }
 
   /** Populates the nth OME/CA/Instrument element. */
   public static Object setInstrument(Object root, String manufacturer,
@@ -239,10 +239,10 @@ public abstract class OMETools {
     return setDimensions(root, pixelSizeX, pixelSizeY, pixelSizeZ, pixelSizeC,
       pixelSizeT, 0);
   }
-          
+
   /** Populates the nth OME/Image/CA/Dimensions element. */
   public static Object setDimensions(Object root, Float pixelSizeX,
-    Float pixelSizeY, Float pixelSizeZ, Float pixelSizeC, 
+    Float pixelSizeY, Float pixelSizeZ, Float pixelSizeC,
     Float pixelSizeT, int n)
   {
     if (root == null) return null;
@@ -279,10 +279,10 @@ public abstract class OMETools {
     Integer z0, Integer x1, Integer y1, Integer z1, Integer t0, Integer t1,
     Object displayOptions)
   {
-    return setDisplayROI(root, x0, y0, z0, x1, y1, z1, t0, t1, 
+    return setDisplayROI(root, x0, y0, z0, x1, y1, z1, t0, t1,
       displayOptions, 0);
   }
-  
+
   /** Populates the nth OME/Image/CA/DisplayROI element. */
   public static Object setDisplayROI(Object root, Integer x0, Integer y0,
     Integer z0, Integer x1, Integer y1, Integer z1, Integer t0, Integer t1,
@@ -332,9 +332,9 @@ public abstract class OMETools {
   {
     return setPixels(root, sizeX, sizeY, sizeZ, sizeC, sizeT, pixelType,
       bigEndian, dimensionOrder, 0);
-  }        
+  }
 
-  /** Populates the first OME/Image/CA/Pixels element. */
+  /** Populates the nth OME/Image/CA/Pixels element. */
   public static Object setPixels(Object root, Integer sizeX, Integer sizeY,
     Integer sizeZ, Integer sizeC, Integer sizeT, String pixelType,
     Boolean bigEndian, String dimensionOrder, int n)
@@ -378,8 +378,8 @@ public abstract class OMETools {
   public static Object setStageLabel(Object root, String name,
     Float x, Float y, Float z)
   {
-    return setStageLabel(root, name, x, y, z, 0);     
-  }        
+    return setStageLabel(root, name, x, y, z, 0);
+  }
 
   /** Populates the nth OME/Image/CA/StageLabel element. */
   public static Object setStageLabel(Object root, String name,
@@ -419,7 +419,7 @@ public abstract class OMETools {
   public static Object setImageName(Object root, String name) {
     return setImage(root, name, null, null);
   }
-  
+
   /** Populates the nth OME/Image element's Name attribute. */
   public static Object setImageName(Object root, String name, int n) {
     return setImage(root, name, null, null, n);
@@ -431,11 +431,11 @@ public abstract class OMETools {
   }
 
   /** Populates the nth OME/Image element's CreationDate attribute. */
-  public static Object setCreationDate(Object root, String creationDate, int n) 
+  public static Object setCreationDate(Object root, String creationDate, int n)
   {
     return setImage(root, null, creationDate, null, n);
   }
-  
+
   /** Populates the first OME/Image element's Description attribute. */
   public static Object setDescription(Object root, String description) {
     return setImage(root, null, null, description);
@@ -445,7 +445,7 @@ public abstract class OMETools {
   public static Object setDescription(Object root, String description, int n) {
     return setImage(root, null, null, description, n);
   }
-  
+
   /**
    * Populates the first OME/Image/CA/Dimensions
    * element's PixelSizeX attribute.
@@ -459,10 +459,10 @@ public abstract class OMETools {
    * element's PixelSizeX attribute.
    */
   public static Object setPixelSizeX(Object root, float pixelSizeX, int n) {
-    return setDimensions(root, new Float(pixelSizeX), null, null, null, 
+    return setDimensions(root, new Float(pixelSizeX), null, null, null,
       null, n);
   }
-  
+
   /**
    * Populates the first OME/Image/CA/Dimensions
    * element's PixelSizeY attribute.
@@ -476,10 +476,10 @@ public abstract class OMETools {
    * element's PixelSizeY attribute.
    */
   public static Object setPixelSizeY(Object root, float pixelSizeY, int n) {
-    return setDimensions(root, null, new Float(pixelSizeY), null, 
+    return setDimensions(root, null, new Float(pixelSizeY), null,
       null, null, n);
   }
-  
+
   /**
    * Populates the first OME/Image/CA/Dimensions
    * element's PixelSizeZ attribute.
@@ -493,10 +493,10 @@ public abstract class OMETools {
    * element's PixelSizeZ attribute.
    */
   public static Object setPixelSizeZ(Object root, float pixelSizeZ, int n) {
-    return setDimensions(root, null, null, new Float(pixelSizeZ), 
+    return setDimensions(root, null, null, new Float(pixelSizeZ),
       null, null, n);
   }
-  
+
   /**
    * Populates the first OME/Image/CA/Dimensions
    * element's PixelSizeC attribute.
@@ -510,7 +510,7 @@ public abstract class OMETools {
    * element's PixelSizeC attribute.
    */
   public static Object setPixelSizeC(Object root, float pixelSizeC, int n) {
-    return setDimensions(root, null, null, null, 
+    return setDimensions(root, null, null, null,
       new Float(pixelSizeC), null, n);
   }
 
@@ -527,7 +527,7 @@ public abstract class OMETools {
    * element's PixelSizeT attribute.
    */
   public static Object setPixelSizeT(Object root, float pixelSizeT, int n) {
-    return setDimensions(root, null, null, null, null, 
+    return setDimensions(root, null, null, null, null,
       new Float(pixelSizeT), n);
   }
 
@@ -629,7 +629,7 @@ public abstract class OMETools {
    * element's DimensionOrder attribute.
    */
   public static Object setDimensionOrder(Object root, String dimensionOrder,
-    int n) 
+    int n)
   {
     return setPixels(root, null, null, null, null, null,
       null, null, dimensionOrder, n);
@@ -913,17 +913,17 @@ public abstract class OMETools {
     Vector children = (Vector) R.exec("base.getChildren(name)");
     if (n < children.size()) {
       if (children.get(n) != null) return children.get(n);
-    }        
+    }
     Object child = R.exec("new " + name + "Node(base)");
     return child;
-  }         
+  }
 
   /**
    * Gets the value of the given attribute in the nth occurence of the
    * specified node.
    * @return the value of the attribute.
    */
-  private static String getAttribute(Object root, String nodeName, 
+  private static String getAttribute(Object root, String nodeName,
     String name, int n)
   {
     if (R == null || root == null) return null;
@@ -944,7 +944,10 @@ public abstract class OMETools {
     return null;
   }
 
-  /** Retrieves the specified node associated with the given DOM element name.*/
+  /**
+   * Retrieves the specified node associated
+   * with the given DOM element name.
+   */
   private static Object findNode(Object root, String name, int n)
     throws ReflectException
   {
@@ -958,6 +961,6 @@ public abstract class OMETools {
     Object element = elements.get(n);
     R.setVar("el", element);
     return R.exec("OMEXMLNode.createNode(el)");
-  }        
-  
+  }
+
 }
