@@ -49,7 +49,7 @@ public class OpenlabReader extends FormatReader {
 
   /** File length. */
   private int fileLength;
-  
+
   /** Number of blocks for current Openlab LIFF. */
   private int numBlocks;
 
@@ -94,7 +94,7 @@ public class OpenlabReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given file as a byte array. */
-  public byte[] openBytes(String id, int no) 
+  public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     throw new FormatException("OpenlabReader.openBytes(String, int) " +
@@ -114,8 +114,8 @@ public class OpenlabReader extends FormatReader {
     // First initialize:
     if ((fileLength - in.available()) < (offsets[no] + 12)) {
       in.skipBytes((int) (in.available() - fileLength + (offsets[no] + 12)));
-    }        
-    
+    }
+
     byte[] toRead = new byte[4];
     in.read(toRead);
     int blockSize = batoi(toRead);
@@ -259,7 +259,7 @@ public class OpenlabReader extends FormatReader {
     in = new DataInputStream(
       new BufferedInputStream(new FileInputStream(id), 4096));
     fileLength = in.available();
-    
+
     // initialize an array containing tag offsets, so we can
     // use an O(1) search instead of O(n) later.
     // Also determine whether we will be reading color or grayscale
@@ -308,7 +308,7 @@ public class OpenlabReader extends FormatReader {
       nextOffset = nextOffsetTemp;
     }
 
-    in.skipBytes((int) (in.available() - fileLength + 
+    in.skipBytes((int) (in.available() - fileLength +
       ((Integer) v.firstElement()).intValue()));
 
     // create and populate the array of offsets from the vector
@@ -364,7 +364,7 @@ public class OpenlabReader extends FormatReader {
 
     // skip to first tag
     in.skipBytes((int) (in.available() - fileLength + offset));
-    
+
     // read in each tag and its data
 
     for (int i=0; i<count; i++) {

@@ -163,10 +163,10 @@ public class ImageReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id); 
-    return readers[index].openBytes(id, no);      
+    if (!id.equals(currentId)) initFile(id);
+    return readers[index].openBytes(id, no);
   }
-  
+
   /** Obtains the specified image from the given image file. */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException

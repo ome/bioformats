@@ -59,10 +59,10 @@ public class IPLabReader extends FormatReader {
 
   /** Bytes per pixel. */
   private int bps;
-  
+
   /** Number of channels. */
   private int c;
-  
+
   /** Total number of pixel bytes. */
   private int dataSize;
 
@@ -95,7 +95,7 @@ public class IPLabReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given IPLab file as a byte array. */
-  public byte[] openBytes(String id, int no) 
+  public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     throw new FormatException("IPLabReader.openBytes(String, int) " +
@@ -114,10 +114,10 @@ public class IPLabReader extends FormatReader {
 
     int numPixels = width * height;
     in.skipBytes(numPixels * bps * no);
-    
+
     byte[] rawData = new byte[numPixels * bps];
-    in.readFully(rawData);    
-   
+    in.readFully(rawData);
+
     if (bps == 1) {
       return ImageTools.makeImage(rawData, width, height, c, false);
     }
@@ -131,10 +131,10 @@ public class IPLabReader extends FormatReader {
     else if (bps == 4) {
       float[] floatData = new float[c * numPixels];
       for (int i=0; i<rawData.length; i+=4) {
-        floatData[i/4] = 
+        floatData[i/4] =
           Float.intBitsToFloat(DataTools.bytesToInt(rawData, i, littleEndian));
       }
-      return ImageTools.makeImage(floatData, width, height, c, false);    
+      return ImageTools.makeImage(floatData, width, height, c, false);
     }
     else throw new FormatException("Sorry, " +
       bps + " bits per sample is not supported");
@@ -153,7 +153,7 @@ public class IPLabReader extends FormatReader {
     super.initFile(id);
     in = new DataInputStream(
       new BufferedInputStream(new FileInputStream(id), 4096));
-    
+
     byte[] fourBytes = new byte[4];
     in.read(fourBytes);
     littleEndian = new String(fourBytes).equals("iiii");
@@ -171,7 +171,7 @@ public class IPLabReader extends FormatReader {
     pixelType = (int) DataTools.read4UnsignedBytes(in, littleEndian);
 
     numImages = (int) (zDepth * tDepth);
-    
+
     metadata.put("Width", new Long(width));
     metadata.put("Height", new Long(height));
     metadata.put("Channels", new Long(c));
@@ -181,28 +181,28 @@ public class IPLabReader extends FormatReader {
     String ptype;
     bps = 1;
     switch ((int) pixelType) {
-      case 0: ptype = "8 bit unsigned"; 
+      case 0: ptype = "8 bit unsigned";
               bps = 1;
               break;
-      case 1: ptype = "16 bit signed short"; 
+      case 1: ptype = "16 bit signed short";
               bps = 2;
               break;
-      case 2: ptype = "16 bit unsigned short"; 
+      case 2: ptype = "16 bit unsigned short";
               bps = 2;
               break;
-      case 3: ptype = "32 bit signed long"; 
+      case 3: ptype = "32 bit signed long";
               bps = 4;
               break;
-      case 4: ptype = "32 bit single-precision float"; 
+      case 4: ptype = "32 bit single-precision float";
               bps = 4;
               break;
-      case 5: ptype = "Color24"; 
+      case 5: ptype = "Color24";
               bps = 1;
               break;
-      case 6: ptype = "Color48"; 
+      case 6: ptype = "Color48";
               bps = 2;
               break;
-      case 10: ptype = "64 bit double-precision float"; 
+      case 10: ptype = "64 bit double-precision float";
                bps = 8;
                break;
       default: ptype = "reserved";    // for values 7-9

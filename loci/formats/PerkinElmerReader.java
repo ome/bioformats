@@ -68,12 +68,12 @@ public class PerkinElmerReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given file as a byte array. */
-  public byte[] openBytes(String id, int no) 
+  public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     return tiff.openBytes(files[no], 0);
-  }        
-  
+  }
+
   /** Obtains the specified image from the given PerkinElmer file. */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException

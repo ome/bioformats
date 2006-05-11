@@ -294,12 +294,12 @@ public class LegacyQTReader extends FormatReader {
 
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
-    }         
+    }
 
     throw new FormatException("LegacyQTReader.openBytes(String, int) " +
       "not implemented");
   }
-  
+
   /** Obtains the specified image from the given QuickTime file. */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException

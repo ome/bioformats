@@ -42,7 +42,7 @@ public class LIFReader extends FormatReader {
 
   /** File length. */
   private int fileLength;
-  
+
   /** Flag indicating whether current file is little endian. */
   protected boolean littleEndian;
 
@@ -87,10 +87,10 @@ public class LIFReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given LIF file as a byte array. */
-  public byte[] openBytes(String id, int no) 
+  public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    throw new FormatException("LIFReader.openBytes(Sring, int) unimplemented"); 
+    throw new FormatException("LIFReader.openBytes(Sring, int) unimplemented");
   }
 
   /** Obtains the specified image from the given LIF file. */
@@ -122,7 +122,7 @@ public class LIFReader extends FormatReader {
     int bytesPerPixel = bps / 8;
 
     int offset = ((Long) offsets.get(ndx)).intValue();
- 
+
     // get the image number within this dataset
 
     int imageNum = no;
@@ -130,17 +130,17 @@ public class LIFReader extends FormatReader {
       imageNum -= (dims[i][2] * dims[i][3] * dims[i][6]);
     }
 
-    if ((fileLength - in.available()) < 
+    if ((fileLength - in.available()) <
       (offset + (width * height * bytesPerPixel * imageNum)))
     {
-      in.skipBytes((int) (in.available() - fileLength + offset + 
+      in.skipBytes((int) (in.available() - fileLength + offset +
         width * height * bytesPerPixel * imageNum));
     }
 
     byte[] data = new byte[(int) (width * height * bytesPerPixel * c)];
-  
+
     in.read(data);
-    
+
     // pack the data appropriately
 
     if (bps <= 8) {
@@ -181,8 +181,8 @@ public class LIFReader extends FormatReader {
     offsets = new Vector();
     in = new DataInputStream(
       new BufferedInputStream(new FileInputStream(id), 4096));
-    fileLength = in.available(); 
-    
+    fileLength = in.available();
+
     littleEndian = true;
 
     // read the header
@@ -281,7 +281,7 @@ public class LIFReader extends FormatReader {
     int dimCounter = 0;
     int lutCounter = 0;
 
-    // the image data we need starts with the token "ElementName='blah'" and 
+    // the image data we need starts with the token "ElementName='blah'" and
     // ends with the token "/ImageDescription"
 
     int numDatasets = 0;
@@ -292,35 +292,35 @@ public class LIFReader extends FormatReader {
     Vector channels = new Vector();
     Vector bps = new Vector();
     Vector extraDims = new Vector();
-    
+
     while (ndx < elements.size()) {
       token = (String) elements.get(ndx);
-      
+
       // if the element contains a key/value pair, parse it and put it in
       // the metadata hashtable
 
       String tmpToken = token;
       if (token.indexOf("=") != -1) {
-        while (token.length() > 2) {      
+        while (token.length() > 2) {
           key = token.substring(0, token.indexOf("\"") - 1);
           value = token.substring(token.indexOf("\"") + 1,
             token.indexOf("\"", token.indexOf("\"") + 1));
-          
+
           token = token.substring(key.length() + value.length() + 3);
-          
+
           key = key.trim();
           value = value.trim();
           metadata.put(key, value);
         }
-      }       
+      }
       token = tmpToken;
-           
+
       if (token.startsWith("ElementName")) {
         // loop until we find "/ImageDescription"
-             
+
         numDatasets++;
         int numChannels = 0;
-              
+
         while (token.indexOf("/ImageDescription") == -1) {
           if (token.indexOf("=") != -1) {
             // create a small hashtable to store just this element's data
@@ -330,53 +330,53 @@ public class LIFReader extends FormatReader {
               key = token.substring(0, token.indexOf("\"") - 1);
               value = token.substring(token.indexOf("\"") + 1,
                 token.indexOf("\"", token.indexOf("\"") + 1));
- 
+
               token = token.substring(key.length() + value.length() + 3);
-              
+
               key = key.trim();
               value = value.trim();
               tmp.put(key, value);
-            } 
+            }
 
             if (tmp.get("ChannelDescriptionDataType") != null) {
               // found channel description block
               numChannels++;
               if (numChannels == 1) {
                 bps.add(new Integer((String) tmp.get("Resolution")));
-              }        
-            }        
+              }
+            }
             else if (tmp.get("DimensionDescriptionDimID") != null) {
               // found dimension description block
-              
+
               int w = Integer.parseInt((String) tmp.get("NumberOfElements"));
-              int id = 
-                Integer.parseInt((String) tmp.get("DimensionDescriptionDimID"));
-              
+              int id = Integer.parseInt((String)
+                tmp.get("DimensionDescriptionDimID"));
+
               int extras = 1;
-              
+
               switch (id) {
                 case 1: widths.add(new Integer(w)); break;
                 case 2: heights.add(new Integer(w)); break;
                 case 3: zs.add(new Integer(w)); break;
                 case 4: ts.add(new Integer(w)); break;
                 default: extras *= w;
-              } 
-             
+              }
+
               extraDims.add(new Integer(extras));
-            }         
+            }
           }
-          
+
           ndx++;
-          token = (String) elements.get(ndx); 
+          token = (String) elements.get(ndx);
         }
         channels.add(new Integer(numChannels));
-     
+
         if (zs.size() < channels.size()) zs.add(new Integer(1));
         if (ts.size() < channels.size()) ts.add(new Integer(1));
-      }        
+      }
       ndx++;
     }
-   
+
     dims = new int[numDatasets][7];
 
     for (int i=0; i<numDatasets; i++) {
@@ -387,10 +387,10 @@ public class LIFReader extends FormatReader {
       dims[i][4] = ((Integer) channels.get(i)).intValue();
       dims[i][5] = ((Integer) bps.get(i)).intValue();
       dims[i][6] = ((Integer) extraDims.get(i)).intValue();
-    
+
       numImages += (dims[i][2] * dims[i][3] * dims[i][6]);
     }
-  
+
     // initialize OME-XML
 
     if (ome != null) {
@@ -401,7 +401,7 @@ public class LIFReader extends FormatReader {
           case 16: type = "int16"; break;
           case 32: type = "float"; break;
         }
-      
+
         OMETools.setPixels(ome,
           new Integer(dims[i][0]), // SizeX
           new Integer(dims[i][1]), // SizeY
@@ -412,7 +412,7 @@ public class LIFReader extends FormatReader {
           new Boolean(!littleEndian), // BigEndian
           "XYZTC", i); // DimensionOrder
       }
-    }  
+    }
   }
 
 

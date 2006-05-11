@@ -74,13 +74,13 @@ public abstract class FormatReader extends FormatHandler {
   public abstract BufferedImage openImage(String id, int no)
     throws FormatException, IOException;
 
-  /** 
-   * Obtains the specified image from the given file as a byte array. 
+  /**
+   * Obtains the specified image from the given file as a byte array.
    * This will always return a little-endian array.
    */
   public abstract byte[] openBytes(String id, int no)
     throws FormatException, IOException;
-  
+
   /** Closes the currently open file. */
   public abstract void close() throws FormatException, IOException;
 
@@ -124,8 +124,8 @@ public abstract class FormatReader extends FormatHandler {
    *
    * @return Java Images containing pixel data
    */
-  public BufferedImage[] openImage(String id) 
-    throws FormatException, IOException 
+  public BufferedImage[] openImage(String id)
+    throws FormatException, IOException
   {
     int nImages = getImageCount(id);
     BufferedImage[] images = new BufferedImage[nImages];

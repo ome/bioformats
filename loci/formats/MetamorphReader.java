@@ -192,7 +192,7 @@ public class MetamorphReader extends BaseTiffReader {
 
       if (offset < 0) throw new FormatException("UIC4TAG not found");
       in.skipBytes((int) (in.available() - fileLength + offset));
-      
+
       int currentcode = -1;
       byte[] toread;
 

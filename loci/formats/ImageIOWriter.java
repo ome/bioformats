@@ -30,11 +30,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-/** 
- * ImageIOWriter is the superclass for file format writers that use the 
- * javax.imageio library. 
+/**
+ * ImageIOWriter is the superclass for file format writers that use the
+ * javax.imageio library.
  *
- * @author Curtis Rueden ctrueden at wisc.edu 
+ * @author Curtis Rueden ctrueden at wisc.edu
  */
 public abstract class ImageIOWriter extends FormatWriter {
 

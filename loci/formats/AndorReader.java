@@ -105,7 +105,7 @@ public class AndorReader extends BaseTiffReader {
     int sizeC = 1;
     int sizeT = 1;
     int sizeZ = 1;
-   
+
     if (header != null) {
       int pos = 3;
       metadata.put("Name", DataTools.bytesToString(header, pos, 256));
@@ -284,10 +284,10 @@ public class AndorReader extends BaseTiffReader {
     }
 
     // x, y, z, c, t, pixelType, bigEndian, dimensionOrder
-    OMETools.setPixels(ome, OMETools.getSizeX(ome), OMETools.getSizeY(ome), 
-      new Integer(sizeZ), new Integer(sizeC), new Integer(sizeT), 
+    OMETools.setPixels(ome, OMETools.getSizeX(ome), OMETools.getSizeY(ome),
+      new Integer(sizeZ), new Integer(sizeC), new Integer(sizeT),
       OMETools.getPixelType(ome), new Boolean(!little), order);
-                    
+
   }
 
 

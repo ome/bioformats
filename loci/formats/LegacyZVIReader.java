@@ -75,7 +75,7 @@ public class LegacyZVIReader extends FormatReader {
 
   /** Length of the current file. */
   private int fileLength;
-  
+
   /** List of image blocks. */
   private Vector blockList;
 
@@ -116,9 +116,9 @@ public class LegacyZVIReader extends FormatReader {
 
     throw new FormatException("LegacyZVIReader.openBytes(String, int) " +
       "not implemented");
-  }        
+  }
 
-  
+
   /** Obtains the specified image from the given ZVI file. */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
@@ -149,7 +149,7 @@ public class LegacyZVIReader extends FormatReader {
     in = new DataInputStream(
       new BufferedInputStream(new FileInputStream(id), 4096));
     fileLength = in.available();
-    
+
     // Highly questionable decoding strategy:
     //
     // Note that all byte ordering is little endian, includeing 4-byte header
@@ -347,10 +347,10 @@ public class LegacyZVIReader extends FormatReader {
       in = new DataInputStream(
         new BufferedInputStream(new FileInputStream(currentId), 4096));
       in.skipBytes((int) start);
-    }        
-   
+    }
+
     in.mark((int) (fileLength - start));
-    
+
     while (true) {
       int len = (int) (fileSize - filePos);
       if (len < 0) break;
@@ -383,17 +383,16 @@ public class LegacyZVIReader extends FormatReader {
     }
 
     in.reset();
-    
+
     // set file pointer to byte immediately following pattern
     if (spot >= 0) {
-      if ((fileLength - in.available()) < spot + block.length) {
-        in.skipBytes((int) (in.available() - fileLength + spot + block.length));
+      int q = fileLength - in.available();
+      if (q < spot + block.length) {
+        in.skipBytes((int) (-q + spot + block.length));
       }
-      else {
-        /* debug */ throw new FormatException("invalid seek");
-      }        
+      else throw new FormatException("invalid seek"); // debug
     }
-            
+
     return spot;
   }
 
@@ -456,14 +455,14 @@ public class LegacyZVIReader extends FormatReader {
 
       // read image
       byte[] imageBytes = new byte[imageSize];
-      
+
       if ((fileLength - in.available()) < imagePos) {
         in.skipBytes((int) (in.available() - fileLength + imagePos));
       }
       else {
         /* debug */ throw new FormatException("invalid seek");
-      }        
-      
+      }
+
       in.readFully(imageBytes);
 
       // convert image bytes into BufferedImage

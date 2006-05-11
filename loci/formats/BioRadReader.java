@@ -127,7 +127,7 @@ public class BioRadReader extends FormatReader {
 
   /** File length. */
   private int fileLength;
-  
+
 
   // -- Constructor --
 
@@ -150,12 +150,12 @@ public class BioRadReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given file as a byte array. */
-  public byte[] openBytes(String id, int no) 
+  public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     throw new FormatException("BioRadReader.openBytes(String, int) " +
       "not implemented");
-  } 
+  }
 
   /** Obtains the specified image from the given Bio-Rad PIC file. */
   public BufferedImage openImage(String id, int no)
@@ -173,7 +173,7 @@ public class BioRadReader extends FormatReader {
 
     if (byteFormat) {
       // jump to proper image number
-  
+
       in.skipBytes(in.available() - (fileLength - (no * imageLen + 76)));
       in.readFully(data);
 
@@ -211,7 +211,7 @@ public class BioRadReader extends FormatReader {
     in = new DataInputStream(
       new BufferedInputStream(new FileInputStream(id), 4096));
     fileLength = in.available();
-    
+
     // read header
     byte[] header = new byte[76];
     in.readFully(header);
@@ -443,7 +443,7 @@ public class BioRadReader extends FormatReader {
     if (size >= 3) pixelSizeZ = new Float((String) pixelSize.get(2));
     OMETools.setDimensions(ome,
       pixelSizeX, pixelSizeY, pixelSizeZ, null, null);
-  
+
     in = new DataInputStream(
       new BufferedInputStream(new FileInputStream(id), 4096));
   }

@@ -77,7 +77,7 @@ public class DicomReader extends FormatReader {
 
   /** File length. */
   private int fileLength;
-  
+
   /** Number of image planes in the file. */
   protected int numImages = 0;
 
@@ -127,7 +127,7 @@ public class DicomReader extends FormatReader {
   }
 
   /** Obtains the specified image from the given file as a byte array. */
-  public byte[] openBytes(String id, int no) 
+  public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     throw new FormatException("DicomReader.openBytes(String, int) " +
@@ -145,12 +145,12 @@ public class DicomReader extends FormatReader {
     }
 
     byte[] data = new byte[width * height * (bitsPerPixel / 8)];
-    
+
     if ((fileLength - in.available()) < (offsets + data.length * no)) {
-      in.skipBytes((int) (in.available() - fileLength + 
+      in.skipBytes((int) (in.available() - fileLength +
         (offsets + data.length * no)));
-    }        
-    
+    }
+
     in.read(data);
 
     if (bitsPerPixel < 16) {
@@ -245,8 +245,8 @@ public class DicomReader extends FormatReader {
     super.initFile(id);
     in = new DataInputStream(
       new BufferedInputStream(new FileInputStream(id), 4096));
-    fileLength = in.available(); 
-    
+    fileLength = in.available();
+
     little = true;
     location = 0;
 
@@ -278,7 +278,7 @@ public class DicomReader extends FormatReader {
         addInfo(tag, null);
         if ((fileLength - in.available()) >= (fileLength - 4)) {
           decodingTags = false;
-        }  
+        }
         continue;
       }
 
@@ -376,7 +376,7 @@ public class DicomReader extends FormatReader {
       }
       if ((fileLength - in.available()) >= (fileLength - 4)) {
         decodingTags = false;
-      }  
+      }
     }
     if (numImages == 0) numImages = 1;
 

@@ -55,7 +55,7 @@ public class AVIReader extends FormatReader {
   /** Length of file. */
   private int fileLength;
 
-  
+
   String type = "error";
   String fcc = "error";
   int size = -1;
@@ -111,13 +111,13 @@ public class AVIReader extends FormatReader {
 
 
   /** Obtains the specified image from the given AVI file as a byte array. */
-  public byte[] openBytes(String id, int no) 
+  public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     throw new FormatException("AVIReader.openBytes(String, int)" +
       " not implemented");
-  }        
-  
+  }
+
   /** Obtains the specified image from the given AVI file. */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
@@ -129,12 +129,12 @@ public class AVIReader extends FormatReader {
     }
 
     byteData = new byte[dwWidth * bmpHeight];
-    
+
     long fileOff = ((Long) offsets.get(no)).longValue();
 
     if ((fileLength - in.available()) < fileOff) {
       in.skipBytes((int) (in.available() - fileLength + fileOff));
-    } 
+    }
 
     int len = bmpScanLineSize;
 
@@ -201,7 +201,7 @@ public class AVIReader extends FormatReader {
     in = new DataInputStream(
       new BufferedInputStream(new FileInputStream(id), 4096));
     fileLength = in.available();
-    
+
     offsets = new Vector();
 
     byte[] list = new byte[4];
@@ -252,7 +252,7 @@ public class AVIReader extends FormatReader {
               size = DataTools.read4SignedBytes(in, little);
               if (type.equals("avih")) {
                 in.mark(200);
-                      
+
                 dwMicroSecPerFrame = DataTools.read4SignedBytes(in, little);
                 dwMaxBytesPerSec = DataTools.read4SignedBytes(in, little);
                 dwReserved1 = DataTools.read4SignedBytes(in, little);
@@ -289,7 +289,7 @@ public class AVIReader extends FormatReader {
           }
         }
         else if (fcc.equals("strl")) {
-          long startPos = fileLength - in.available(); 
+          long startPos = fileLength - in.available();
           long streamSize = size;
 
           type = readStringBytes();
@@ -303,7 +303,7 @@ public class AVIReader extends FormatReader {
 
               if (type.equals("strh")) {
                 in.mark(200);
-                      
+
                 String fccStreamTypeOld = fccStreamType;
                 fccStreamType = readStringBytes();
                 if (!fccStreamType.equals("vids")) {
@@ -476,7 +476,7 @@ public class AVIReader extends FormatReader {
                 }
 
                 in.mark(10);
-                
+
                 type = readStringBytes();
                 size = DataTools.read4SignedBytes(in, little);
                 if (type.equals("JUNK")) {
@@ -505,7 +505,7 @@ public class AVIReader extends FormatReader {
     }
     numImages = offsets.size();
     initOMEMetadata();
-    
+
     in = new DataInputStream(
       new BufferedInputStream(new FileInputStream(id), 4096));
   }
