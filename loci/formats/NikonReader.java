@@ -279,7 +279,7 @@ public class NikonReader extends BaseTiffReader {
             in.mark(fileLength);
             in.skipBytes(pointer);
           }
-          DataTools.readFully(in, ascii);
+          in.readFully(ascii);
 
           // count number of null terminators
           int nullCount = 0;
@@ -355,7 +355,7 @@ public class NikonReader extends BaseTiffReader {
             in.mark(fileLength);
             in.skipBytes(pointer);
           }
-          DataTools.readFully(in, sbytes);
+          in.readFully(sbytes);
           if (sbytes.length == 1) value = new Byte(sbytes[0]);
           else value = sbytes;
         }
