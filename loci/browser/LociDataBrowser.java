@@ -133,6 +133,14 @@ public class LociDataBrowser implements PlugIn {
   // -- Plugin methods --
 
   public void run(String arg) {
+    String version = System.getProperty("java.version");
+    double ver = Double.parseDouble(version.substring(0, 3));
+    if (ver < 1.4) {
+      msg("Sorry, the 4D Data Browser requires\n" +
+        "Java 1.4 or later. You can download ImageJ\n" +
+        "with JRE 5.0 from the ImageJ web site.");
+      return;
+    }
     LociOpener lociOpener = new LociOpener();
 
     String directory = lociOpener.getDirectory();
