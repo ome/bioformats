@@ -24,8 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 
 /**
  * SDTReader is the file format reader for
@@ -37,10 +36,19 @@ import java.io.RandomAccessFile;
  */
 public class SDTReader extends FormatReader {
 
+  // -- Constants --
+
+  /** Number of time bins in the decay curve. */
+  protected static final int TIME_BINS = 64;
+
+
   // -- Fields --
 
   /** Current file. */
   protected RandomAccessFile in;
+
+  /** Length in bytes of current file. */
+  protected int fileLen;
 
   /** Number of images in current SDT file. */
   protected int numImages;
@@ -87,8 +95,21 @@ public class SDTReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    //in.seek(offset);
+    in.seek(offset + 2 * width * height * TIME_BINS * no);
     short[] data = new short[width * height];
+
+    for (int y=0; y<height; y++) {
+      for (int x=0; x<width; x++) {
+        int ndx = width * y + x;
+        byte[] pix = new byte[2 * TIME_BINS];
+        in.readFully(pix);
+        int sum = 0;
+        for (int decay=0; decay<TIME_BINS; decay++) {
+          sum += DataTools.bytesToInt(pix, 2 * decay, 2, true);
+        }
+        data[ndx] = (short) sum;
+      }
+    }
 
     return ImageTools.makeImage(data, width, height);
   }
@@ -103,17 +124,20 @@ public class SDTReader extends FormatReader {
   /** Initializes the given SDT file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
+    File file = new File(id);
     in = new RandomAccessFile(id, "r");
 
     // skip 14 byte header
     in.seek(14);
 
     // read offset
-    offset = in.readInt() + 22;
-    System.out.println("offset = " + offset);//TEMP
+    offset = DataTools.read2UnsignedBytes(in, true) + 22;
+
+    // skip to data
+    in.seek(offset);
 
     // compute number of image planes
-    numImages = (int) ((in.length() - offset) / (2 * 64 * width * height));
+    numImages = (int) ((file.length() - offset) / (2 * 64 * width * height));
   }
 
 
