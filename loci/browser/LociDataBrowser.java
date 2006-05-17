@@ -40,7 +40,8 @@ public class LociDataBrowser implements PlugIn {
 
   /** Prefix endings indicating numbering block represents Z. */
   private static final String[] PRE_Z = {
-    "_Z", "-Z", ".Z", "_ZS", "-ZS", ".ZS"
+    "_Z", "-Z", ".Z", "_ZS", "-ZS", ".ZS",
+    "_FP", "-FP", ".FP", "_SEC", "-SEC", ".SEC"
   };
 
   /** Prefix endings indicating numbering block represents C. */
