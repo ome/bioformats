@@ -45,6 +45,20 @@ public abstract class TiffTools {
   // non-IFD tags (for internal use)
   public static final int LITTLE_ENDIAN = 0;
 
+  // IFD types
+  public static final int BYTE = 1;
+  public static final int ASCII = 2;
+  public static final int SHORT = 3;
+  public static final int LONG = 4;
+  public static final int RATIONAL = 5;
+  public static final int SBYTE = 6;
+  public static final int UNDEFINED = 7;
+  public static final int SSHORT = 8;
+  public static final int SLONG = 9;
+  public static final int SRATIONAL = 10;
+  public static final int FLOAT = 11;
+  public static final int DOUBLE = 12;
+
   // IFD tags
   public static final int NEW_SUBFILE_TYPE = 254;
   public static final int SUBFILE_TYPE = 255;
@@ -143,20 +157,6 @@ public abstract class TiffTools {
   public static final int CMYK = 5;
   public static final int Y_CB_CR = 6;
   public static final int CIE_LAB = 8;
-
-  // IFD types
-  public static final int BYTE = 1;
-  public static final int ASCII = 2;
-  public static final int SHORT = 3;
-  public static final int LONG = 4;
-  public static final int RATIONAL = 5;
-  public static final int SBYTE = 6;
-  public static final int UNDEFINED = 7;
-  public static final int SSHORT = 8;
-  public static final int SLONG = 9;
-  public static final int SRATIONAL = 10;
-  public static final int FLOAT = 11;
-  public static final int DOUBLE = 12;
 
   // TIFF header constants
   public static final int MAGIC_NUMBER = 42;
@@ -313,19 +313,21 @@ public abstract class TiffTools {
 
     // read in directory entries for this IFD
     if (DEBUG) {
-      debug("getIFDs: seeking IFD #" +
-        ifdNum + " at " + (globalOffset + offset));
+      debug("getIFDs: seeking IFD #" + ifdNum + " at " +
+        (globalOffset != 0 ? (globalOffset + "+" + offset) : ("" + offset)));
     }
     in.seek(globalOffset + offset);
-
     int numEntries = DataTools.read2UnsignedBytes(in, littleEndian);
+    if (DEBUG) debug("getIFDs: " + numEntries + " directory entries to read");
+
     for (int i=0; i<numEntries; i++) {
+      in.seek(globalOffset + offset + 2 + 12 * i);
       int tag = DataTools.read2UnsignedBytes(in, littleEndian);
       int type = DataTools.read2UnsignedBytes(in, littleEndian);
       int count = (int) DataTools.read4UnsignedBytes(in, littleEndian);
       if (DEBUG) {
         debug("getIFDs: read " + getIFDTagName(tag) +
-          " (type=" + type + "; count=" + count + ")");
+          " (type=" + getIFDTypeName(type) + "; count=" + count + ")");
       }
       if (count < 0) return null; // invalid data
       Object value = null;
@@ -498,20 +500,26 @@ public abstract class TiffTools {
     return ifd;
   }
 
-
   /** Gets the name of the IFD tag encoded by the given number. */
-  public static String getIFDTagName(int tag) {
-    // this method uses reflection to scan the values of this class's
-    // static fields, returning the first matching field's name; it is
-    // probably not very efficient, and is mainly intended for debugging
+  public static String getIFDTagName(int tag) { return getFieldName(tag); }
+
+  /** Gets the name of the IFD type encoded by the given number. */
+  public static String getIFDTypeName(int type) { return getFieldName(type); }
+
+  /**
+   * This method uses reflection to scan the values of this class's
+   * static fields, returning the first matching field's name. It is
+   * probably not very efficient, and is mainly intended for debugging.
+   */
+  protected static String getFieldName(int value) {
     Field[] fields = TiffTools.class.getFields();
     for (int i=0; i<fields.length; i++) {
       try {
-        if (fields[i].getInt(null) == tag) return fields[i].getName();
+        if (fields[i].getInt(null) == value) return fields[i].getName();
       }
       catch (Exception exc) { }
     }
-    return "" + tag;
+    return "" + value;
   }
 
   /** Gets the given directory entry value from the specified IFD. */
