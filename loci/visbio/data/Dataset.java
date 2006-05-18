@@ -247,7 +247,7 @@ public class Dataset extends ImageTransform {
     while (tries > 0) {
       boolean again = false;
       try {
-        img = readers[fileIndex].open(ids[fileIndex], imgIndex);
+        img = readers[fileIndex].openImage(ids[fileIndex], imgIndex);
       }
       catch (IOException exc) {
         String msg = exc.getMessage();
@@ -523,7 +523,7 @@ public class Dataset extends ImageTransform {
     // load first image for analysis
     status(2, numTasks, "Reading first image");
     BufferedImage img = null;
-    try { img = readers[0].open(ids[0], 0); }
+    try { img = readers[0].openImage(ids[0], 0); }
     catch (IOException exc) { img = null; }
     catch (FormatException exc) { img = null; }
     catch (NullPointerException exc) { img = null; }

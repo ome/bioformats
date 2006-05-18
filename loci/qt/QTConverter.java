@@ -224,8 +224,8 @@ public class QTConverter extends JFrame implements ActionListener, Runnable {
           int value = 2 * (o * outPlanes + p);
           progress.setValue(value);
           BufferedImage img = swap ?
-            readers[p].open(inFiles[p], o) : // p <=> Z, o <=> T
-            reader.open(inFiles[o], p); // p <=> T, o <=> Z
+            readers[p].openImage(inFiles[p], o) : // p <=> Z, o <=> T
+            reader.openImage(inFiles[o], p); // p <=> T, o <=> Z
           progress.setValue(value + 1);
           writer.save(outFile, img, shutdown || p == outPlanes - 1);
           if (shutdown) break;
