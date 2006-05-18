@@ -347,14 +347,14 @@ public class RandomAccessStream implements DataInput {
       return ARRAY;
     }
     else if (afp >= fp) {
+      int fpOld = fp;
       while (fp < afp) {
         int skip = dis.skipBytes(afp - fp);
         if (skip == 0) break;
         fp += skip;
       }
 
-      fp += toRead;
-      afp += toRead;
+      afp += fp - fpOld; // only skip number of bytes actually skipped
 
       if (fp >= nextMark) dis.mark(MAX_OVERHEAD);
       nextMark = fp + MAX_OVERHEAD;
@@ -371,14 +371,14 @@ public class RandomAccessStream implements DataInput {
         dis.mark(newBufferSize);
         fp = mark;
 
+        int fpOld = fp;
         while (fp < afp) {
           int skip = dis.skipBytes(afp - fp);
           if (skip == 0) break;
           fp += skip;
         }
 
-        fp += toRead;
-        afp += toRead;
+        afp += fp - fpOld; // only skip number of bytes actually skipped
 
         if (fp >= nextMark) dis.mark(newBufferSize);
         nextMark = fp + newBufferSize;
