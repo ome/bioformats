@@ -92,7 +92,7 @@ public class RandomAccessStream implements DataInput {
   }        
 
   public RandomAccessStream(byte[] array) throws IOException {
-    //raf = new RandomAccessArray(array);  // need to recover RandomAccessArray
+    raf = new RandomAccessArray(array);
     dis = new DataInputStream(new BufferedInputStream(
       new ByteArrayInputStream(array), MAX_OVERHEAD));
     fp = 0;
@@ -237,7 +237,10 @@ public class RandomAccessStream implements DataInput {
       System.arraycopy(buf, afp - array.length, array, 0, array.length);      
     }        
     else {
-      raf.readFully(array);
+      if (raf instanceof RandomAccessArray) {
+        ((RandomAccessArray) raf).copyArray(array);
+      }
+      else raf.readFully(array);
     }     
   }
 
@@ -254,7 +257,10 @@ public class RandomAccessStream implements DataInput {
       System.arraycopy(buf, afp - n, array, offset, n);
     }        
     else {
-      raf.readFully(array, offset, n);
+      if (raf instanceof RandomAccessArray) {
+        ((RandomAccessArray) raf).copyArray(array, offset, n);
+      }
+      else raf.readFully(array, offset, n);
     }     
   }
 
@@ -291,6 +297,7 @@ public class RandomAccessStream implements DataInput {
     mark = 0;
   }        
  
+
   // -- Helper methods --
 
   /** Naive heuristic for determining a "good" buffer size for the DIS. */
@@ -319,7 +326,7 @@ public class RandomAccessStream implements DataInput {
     
     return newSize;
   }
-  
+
   /** 
    * Determine whether it is more efficient to use the DataInputStream or
    * RandomAccessFile for reading (based on the current file pointers).
