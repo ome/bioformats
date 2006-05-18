@@ -24,9 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Hashtable;
 
@@ -42,10 +39,7 @@ public abstract class BaseTiffReader extends FormatReader {
   // -- Fields --
 
   /** Random access file for the current TIFF. */
-  protected DataInputStream in;
-
-  /** File length. */
-  protected int fileLength;
+  protected RandomAccessStream in;
 
   /** List of IFDs for the current TIFF. */
   protected Hashtable[] ifds;
@@ -493,9 +487,7 @@ public abstract class BaseTiffReader extends FormatReader {
   /** Initializes the given TIFF file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new DataInputStream(
-      new BufferedInputStream(new FileInputStream(id), 4096));
-    fileLength = in.available();
+    in = new RandomAccessStream(id);
 
     ifds = TiffTools.getIFDs(in);
     if (ifds == null) throw new FormatException("No IFDs found");
