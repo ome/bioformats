@@ -45,10 +45,9 @@ public class RandomAccessArray extends RandomAccessFile {
 
   // -- Constructor --
 
-  public RandomAccessArray(String name, String mode)
-    throws FileNotFoundException
-  {
-    super(name, mode);
+  public RandomAccessArray(byte[] b) throws FileNotFoundException {
+    super((String) null, null);
+    setStream(b);
   }
 
 
@@ -60,26 +59,17 @@ public class RandomAccessArray extends RandomAccessFile {
     length = b.length;
   }
 
-  public void close() {
-  }
+  public void close() { }
 
-  public long getFilePointer() {
-    return fp;
-  }
+  public long getFilePointer() { return fp; }
 
-  public long length() {
-    return length;
-  }
+  public long length() { return length; }
 
   /** Sets the file pointer. */
-  public void seek(long pos) {
-    fp = pos;
-  }
+  public void seek(long pos) { fp = pos; }
 
   /** Sets the array length. */
-  public void setLength(long newLength) {
-    length = newLength;
-  }
+  public void setLength(long newLength) { length = newLength; }
 
   public int skipBytes(int n) {
     int skipped = n;
