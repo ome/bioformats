@@ -174,16 +174,16 @@ public abstract class TiffTools {
     if (block.length < 4) { return false; }
 
     // byte order must be II or MM
-    boolean little = block[0] == LITTLE && block[1] == LITTLE; // II
-    boolean big = block[0] == BIG && block[1] == BIG; // MM
-    if (!little && !big) return false;
+    boolean littleEndian = block[0] == LITTLE && block[1] == LITTLE; // II
+    boolean bigEndian = block[0] == BIG && block[1] == BIG; // MM
+    if (!littleEndian && !bigEndian) return false;
 
     // check magic number (42)
-    short magic = DataTools.bytesToShort(block, 2, little);
+    short magic = DataTools.bytesToShort(block, 2, littleEndian);
     return magic == MAGIC_NUMBER;
   }
 
-  /** Gets whether the TIFF information in the given IFD is little endian. */
+  /** Gets whether the TIFF information in the given IFD is little-endian. */
   public static boolean isLittleEndian(Hashtable ifd) throws FormatException {
     return ((Boolean) getIFDValue(ifd, LITTLE_ENDIAN,
       true, Boolean.class)).booleanValue();
@@ -206,229 +206,26 @@ public abstract class TiffTools {
    * Gets all IFDs within the given TIFF file, or null
    * if the given file is not a valid TIFF file.
    */
-  public static Hashtable[] getIFDs(RandomAccessStream in, int globalOffset)
+  public static Hashtable[] getIFDs(RandomAccessStream in, long globalOffset)
     throws IOException
   {
-    if (DEBUG) debug("getIFDs: reading IFD entries");
+    // check TIFF header
+    Boolean result = checkHeader(in, globalOffset);
+    if (result == null) return null;
+    boolean littleEndian = result.booleanValue();
 
-    long fileLength = in.length();
-
-    // start at the beginning of the file
-    in.seek(globalOffset);
-
-    // determine byte order (II = little-endian, MM = big-endian)
-    byte[] order = new byte[2];
-    in.read(order);
-    boolean littleEndian = order[0] == LITTLE && order[1] == LITTLE; // II
-    boolean bigEndian = order[0] == BIG && order[1] == BIG; // MM
-    if (!littleEndian && !bigEndian) return null;
-
-    // check magic number (42)
-    int magic = DataTools.read2UnsignedBytes(in, littleEndian);
-    if (magic != MAGIC_NUMBER) return null;
-
-    // get offset to first IFD
-    long offset = DataTools.read4UnsignedBytes(in, littleEndian);
+    long offset = getFirstOffset(in, littleEndian);
 
     // compute maximum possible number of IFDs, for loop safety
     // each IFD must have at least one directory entry, which means that
     // each IFD must be at least 2 + 12 + 4 = 18 bytes in length
-    long ifdMax = (fileLength - 8) / 18;
+    long ifdMax = (in.length() - 8) / 18;
 
     // read in IFDs
     Vector v = new Vector();
     for (long ifdNum=0; ifdNum<ifdMax; ifdNum++) {
-      Hashtable ifd = new Hashtable();
+      Hashtable ifd = getIFD(in, ifdNum, globalOffset, offset, littleEndian);
       v.add(ifd);
-
-      // save little endian flag to internal LITTLE_ENDIAN tag
-      ifd.put(new Integer(LITTLE_ENDIAN), new Boolean(littleEndian));
-
-      // read in directory entries for this IFD
-      if (DEBUG) {
-        debug("getIFDs: seeking IFD #" +
-          ifdNum + " at " + (globalOffset + offset));
-      }
-      in.seek((int) offset);
-
-      int numEntries = DataTools.read2UnsignedBytes(in, littleEndian);
-      for (int i=0; i<numEntries; i++) {
-        int tag = DataTools.read2UnsignedBytes(in, littleEndian);
-        int type = DataTools.read2UnsignedBytes(in, littleEndian);
-        int count = (int) DataTools.read4UnsignedBytes(in, littleEndian);
-        if (DEBUG) {
-          debug("getIFDs: read " + getIFDTagName(tag) +
-            " (type=" + type + "; count=" + count + ")");
-        }
-        if (count < 0) return null; // invalid data
-        Object value = null;
-        long pos = in.getFilePointer() + 4;
-
-        if (type == BYTE) {
-          // 8-bit unsigned integer
-          short[] bytes = new short[count];
-          if (count > 4) {
-            long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
-            in.seek(pointer);
-          }
-          for (int j=0; j<count; j++) {
-            bytes[j] = DataTools.readUnsignedByte(in);
-          }
-          if (bytes.length == 1) value = new Short(bytes[0]);
-          else value = bytes;
-        }
-        else if (type == ASCII) {
-          // 8-bit byte that contain a 7-bit ASCII code;
-          // the last byte must be NUL (binary zero)
-          byte[] ascii = new byte[count];
-          if (count > 4) {
-            long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
-            in.seek(pointer);
-          }
-          in.readFully(ascii);
-
-          // count number of null terminators
-          int nullCount = 0;
-          for (int j=0; j<count; j++) {
-            if (ascii[j] == 0 || j == count - 1) nullCount++;
-          }
-
-          // convert character array to array of strings
-          String[] strings = new String[nullCount];
-          int c = 0, ndx = -1;
-          for (int j=0; j<count; j++) {
-            if (ascii[j] == 0) {
-              strings[c++] = new String(ascii, ndx + 1, j - ndx - 1);
-              ndx = j;
-            }
-            else if (j == count - 1) {
-              // handle non-null-terminated strings
-              strings[c++] = new String(ascii, ndx + 1, j - ndx);
-            }
-          }
-          if (strings.length == 1) value = strings[0];
-          else value = strings;
-        }
-        else if (type == SHORT) {
-          // 16-bit (2-byte) unsigned integer
-          int[] shorts = new int[count];
-          if (count > 2) {
-            long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
-            in.seek(pointer);
-          }
-          for (int j=0; j<count; j++) {
-            shorts[j] = DataTools.read2UnsignedBytes(in, littleEndian);
-          }
-          if (shorts.length == 1) value = new Integer(shorts[0]);
-          else value = shorts;
-        }
-        else if (type == LONG) {
-          // 32-bit (4-byte) unsigned integer
-          long[] longs = new long[count];
-          if (count > 1) {
-            long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
-            in.seek(pointer);
-          }
-          for (int j=0; j<count; j++) {
-            longs[j] = DataTools.read4UnsignedBytes(in, littleEndian);
-          }
-          if (longs.length == 1) value = new Long(longs[0]);
-          else value = longs;
-        }
-        else if (type == RATIONAL) {
-          // Two LONGs: the first represents the numerator of a fraction;
-          // the second, the denominator
-          TiffRational[] rationals = new TiffRational[count];
-          long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
-          in.seek(pointer);
-          for (int j=0; j<count; j++) {
-            long numer = DataTools.read4UnsignedBytes(in, littleEndian);
-            long denom = DataTools.read4UnsignedBytes(in, littleEndian);
-            rationals[j] = new TiffRational(numer, denom);
-          }
-          if (rationals.length == 1) value = rationals[0];
-          else value = rationals;
-        }
-        else if (type == SBYTE || type == UNDEFINED) {
-          // SBYTE: An 8-bit signed (twos-complement) integer
-          // UNDEFINED: An 8-bit byte that may contain anything,
-          // depending on the definition of the field
-          byte[] sbytes = new byte[count];
-          if (count > 4) {
-            long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
-            in.seek(pointer);
-          }
-          in.readFully(sbytes);
-          if (sbytes.length == 1) value = new Byte(sbytes[0]);
-          else value = sbytes;
-        }
-        else if (type == SSHORT) {
-          // A 16-bit (2-byte) signed (twos-complement) integer
-          short[] sshorts = new short[count];
-          if (count > 2) {
-            long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
-            in.seek(pointer);
-          }
-          for (int j=0; j<count; j++) {
-            sshorts[j] = DataTools.read2SignedBytes(in, littleEndian);
-          }
-          if (sshorts.length == 1) value = new Short(sshorts[0]);
-          else value = sshorts;
-        }
-        else if (type == SLONG) {
-          // A 32-bit (4-byte) signed (twos-complement) integer
-          int[] slongs = new int[count];
-          if (count > 1) {
-            long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
-            in.seek(pointer);
-          }
-          for (int j=0; j<count; j++) {
-            slongs[j] = DataTools.read4SignedBytes(in, littleEndian);
-          }
-          if (slongs.length == 1) value = new Integer(slongs[0]);
-          else value = slongs;
-        }
-        else if (type == SRATIONAL) {
-          // Two SLONG's: the first represents the numerator of a fraction,
-          // the second the denominator
-          TiffRational[] srationals = new TiffRational[count];
-          long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
-          in.seek(pointer);
-          for (int j=0; j<count; j++) {
-            int numer = DataTools.read4SignedBytes(in, littleEndian);
-            int denom = DataTools.read4SignedBytes(in, littleEndian);
-            srationals[j] = new TiffRational(numer, denom);
-          }
-          if (srationals.length == 1) value = srationals[0];
-          else value = srationals;
-        }
-        else if (type == FLOAT) {
-          // Single precision (4-byte) IEEE format
-          float[] floats = new float[count];
-          if (count > 1) {
-            long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
-            in.seek(pointer);
-          }
-          for (int j=0; j<count; j++) {
-            floats[j] = DataTools.readFloat(in, littleEndian);
-          }
-          if (floats.length == 1) value = new Float(floats[0]);
-          else value = floats;
-        }
-        else if (type == DOUBLE) {
-          // Double precision (8-byte) IEEE format
-          double[] doubles = new double[count];
-          long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
-          in.seek(pointer);
-          for (int j=0; j<count; j++) {
-            doubles[j] = DataTools.readDouble(in, littleEndian);
-          }
-          if (doubles.length == 1) value = new Double(doubles[0]);
-          else value = doubles;
-        }
-        in.seek(pos);
-        if (value != null) ifd.put(new Integer(tag), value);
-      }
       offset = DataTools.read4UnsignedBytes(in, littleEndian);
       if (offset == 0) break;
     }
@@ -437,6 +234,270 @@ public abstract class TiffTools {
     v.copyInto(ifds);
     return ifds;
   }
+
+  /**
+   * Gets the first IFD within the given TIFF file, or null
+   * if the given file is not a valid TIFF file.
+   */
+  public static Hashtable getFirstIFD(RandomAccessStream in)
+    throws IOException
+  {
+    return getFirstIFD(in, 0);
+  }
+
+  /**
+   * Gets the first IFD within the given TIFF file, or null
+   * if the given file is not a valid TIFF file.
+   */
+  public static Hashtable getFirstIFD(RandomAccessStream in, long globalOffset)
+    throws IOException
+  {
+    // check TIFF header
+    Boolean result = checkHeader(in, globalOffset);
+    if (result == null) return null;
+    boolean littleEndian = result.booleanValue();
+
+    long offset = getFirstOffset(in, littleEndian);
+
+    return getIFD(in, 0, globalOffset, offset, littleEndian);
+  }
+
+  /**
+   * Checks the TIFF header.
+   * @return true if little-endian,
+   *         false if big-endian,
+   *         or null if not a TIFF.
+   */
+  protected static Boolean checkHeader(RandomAccessStream in,
+    long globalOffset) throws IOException
+  {
+    if (DEBUG) debug("getIFDs: reading IFD entries");
+
+    // start at the beginning of the file
+    in.seek(globalOffset);
+
+    // determine byte order (II = little-endian, MM = big-endian)
+    byte[] order = new byte[2];
+    in.readFully(order);
+    boolean littleEndian = order[0] == LITTLE && order[1] == LITTLE; // II
+    boolean bigEndian = order[0] == BIG && order[1] == BIG; // MM
+    if (!littleEndian && !bigEndian) return null;
+
+    // check magic number (42)
+    int magic = DataTools.read2UnsignedBytes(in, littleEndian);
+    if (magic != MAGIC_NUMBER) return null;
+
+    return new Boolean(littleEndian);
+  }
+
+  /**
+   * Gets offset to the first IFD, or -1 if stream is not TIFF.
+   * Assumes the stream is positioned properly (checkHeader just called).
+   */
+  protected static long getFirstOffset(RandomAccessStream in,
+    boolean littleEndian) throws IOException
+  {
+    // get offset to first IFD
+    return DataTools.read4UnsignedBytes(in, littleEndian);
+  }
+
+  /** Gets the IFD stored at the given offset. */
+  protected static Hashtable getIFD(RandomAccessStream in,
+    long ifdNum, long globalOffset, long offset, boolean littleEndian)
+    throws IOException
+  {
+    Hashtable ifd = new Hashtable();
+
+    // save little-endian flag to internal LITTLE_ENDIAN tag
+    ifd.put(new Integer(LITTLE_ENDIAN), new Boolean(littleEndian));
+
+    // read in directory entries for this IFD
+    if (DEBUG) {
+      debug("getIFDs: seeking IFD #" +
+        ifdNum + " at " + (globalOffset + offset));
+    }
+    in.seek(globalOffset + offset);
+
+    int numEntries = DataTools.read2UnsignedBytes(in, littleEndian);
+    for (int i=0; i<numEntries; i++) {
+      int tag = DataTools.read2UnsignedBytes(in, littleEndian);
+      int type = DataTools.read2UnsignedBytes(in, littleEndian);
+      int count = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+      if (DEBUG) {
+        debug("getIFDs: read " + getIFDTagName(tag) +
+          " (type=" + type + "; count=" + count + ")");
+      }
+      if (count < 0) return null; // invalid data
+      Object value = null;
+
+      if (type == BYTE) {
+        // 8-bit unsigned integer
+        short[] bytes = new short[count];
+        if (count > 4) {
+          long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
+          in.seek(globalOffset + pointer);
+        }
+        for (int j=0; j<count; j++) {
+          bytes[j] = DataTools.readUnsignedByte(in);
+        }
+        if (bytes.length == 1) value = new Short(bytes[0]);
+        else value = bytes;
+      }
+      else if (type == ASCII) {
+        // 8-bit byte that contain a 7-bit ASCII code;
+        // the last byte must be NUL (binary zero)
+        byte[] ascii = new byte[count];
+        if (count > 4) {
+          long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
+          in.seek(globalOffset + pointer);
+        }
+        in.readFully(ascii);
+
+        // count number of null terminators
+        int nullCount = 0;
+        for (int j=0; j<count; j++) {
+          if (ascii[j] == 0 || j == count - 1) nullCount++;
+        }
+
+        // convert character array to array of strings
+        String[] strings = new String[nullCount];
+        int c = 0, ndx = -1;
+        for (int j=0; j<count; j++) {
+          if (ascii[j] == 0) {
+            strings[c++] = new String(ascii, ndx + 1, j - ndx - 1);
+            ndx = j;
+          }
+          else if (j == count - 1) {
+            // handle non-null-terminated strings
+            strings[c++] = new String(ascii, ndx + 1, j - ndx);
+          }
+        }
+        if (strings.length == 1) value = strings[0];
+        else value = strings;
+      }
+      else if (type == SHORT) {
+        // 16-bit (2-byte) unsigned integer
+        int[] shorts = new int[count];
+        if (count > 2) {
+          long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
+          in.seek(globalOffset + pointer);
+        }
+        for (int j=0; j<count; j++) {
+          shorts[j] = DataTools.read2UnsignedBytes(in, littleEndian);
+        }
+        if (shorts.length == 1) value = new Integer(shorts[0]);
+        else value = shorts;
+      }
+      else if (type == LONG) {
+        // 32-bit (4-byte) unsigned integer
+        long[] longs = new long[count];
+        if (count > 1) {
+          long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
+          in.seek(globalOffset + pointer);
+        }
+        for (int j=0; j<count; j++) {
+          longs[j] = DataTools.read4UnsignedBytes(in, littleEndian);
+        }
+        if (longs.length == 1) value = new Long(longs[0]);
+        else value = longs;
+      }
+      else if (type == RATIONAL) {
+        // Two LONGs: the first represents the numerator of a fraction;
+        // the second, the denominator
+        TiffRational[] rationals = new TiffRational[count];
+        long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
+        in.seek(globalOffset + pointer);
+        for (int j=0; j<count; j++) {
+          long numer = DataTools.read4UnsignedBytes(in, littleEndian);
+          long denom = DataTools.read4UnsignedBytes(in, littleEndian);
+          rationals[j] = new TiffRational(numer, denom);
+        }
+        if (rationals.length == 1) value = rationals[0];
+        else value = rationals;
+      }
+      else if (type == SBYTE || type == UNDEFINED) {
+        // SBYTE: An 8-bit signed (twos-complement) integer
+        // UNDEFINED: An 8-bit byte that may contain anything,
+        // depending on the definition of the field
+        byte[] sbytes = new byte[count];
+        if (count > 4) {
+          long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
+          in.seek(globalOffset + pointer);
+        }
+        in.readFully(sbytes);
+        if (sbytes.length == 1) value = new Byte(sbytes[0]);
+        else value = sbytes;
+      }
+      else if (type == SSHORT) {
+        // A 16-bit (2-byte) signed (twos-complement) integer
+        short[] sshorts = new short[count];
+        if (count > 2) {
+          long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
+          in.seek(globalOffset + pointer);
+        }
+        for (int j=0; j<count; j++) {
+          sshorts[j] = DataTools.read2SignedBytes(in, littleEndian);
+        }
+        if (sshorts.length == 1) value = new Short(sshorts[0]);
+        else value = sshorts;
+      }
+      else if (type == SLONG) {
+        // A 32-bit (4-byte) signed (twos-complement) integer
+        int[] slongs = new int[count];
+        if (count > 1) {
+          long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
+          in.seek(globalOffset + pointer);
+        }
+        for (int j=0; j<count; j++) {
+          slongs[j] = DataTools.read4SignedBytes(in, littleEndian);
+        }
+        if (slongs.length == 1) value = new Integer(slongs[0]);
+        else value = slongs;
+      }
+      else if (type == SRATIONAL) {
+        // Two SLONG's: the first represents the numerator of a fraction,
+        // the second the denominator
+        TiffRational[] srationals = new TiffRational[count];
+        long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
+        in.seek(globalOffset + pointer);
+        for (int j=0; j<count; j++) {
+          int numer = DataTools.read4SignedBytes(in, littleEndian);
+          int denom = DataTools.read4SignedBytes(in, littleEndian);
+          srationals[j] = new TiffRational(numer, denom);
+        }
+        if (srationals.length == 1) value = srationals[0];
+        else value = srationals;
+      }
+      else if (type == FLOAT) {
+        // Single precision (4-byte) IEEE format
+        float[] floats = new float[count];
+        if (count > 1) {
+          long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
+          in.seek(globalOffset + pointer);
+        }
+        for (int j=0; j<count; j++) {
+          floats[j] = DataTools.readFloat(in, littleEndian);
+        }
+        if (floats.length == 1) value = new Float(floats[0]);
+        else value = floats;
+      }
+      else if (type == DOUBLE) {
+        // Double precision (8-byte) IEEE format
+        double[] doubles = new double[count];
+        long pointer = DataTools.read4UnsignedBytes(in, littleEndian);
+        in.seek(globalOffset + pointer);
+        for (int j=0; j<count; j++) {
+          doubles[j] = DataTools.readDouble(in, littleEndian);
+        }
+        if (doubles.length == 1) value = new Double(doubles[0]);
+        else value = doubles;
+      }
+      if (value != null) ifd.put(new Integer(tag), value);
+    }
+
+    return ifd;
+  }
+
 
   /** Gets the name of the IFD tag encoded by the given number. */
   public static String getIFDTagName(int tag) {
@@ -628,13 +689,12 @@ public abstract class TiffTools {
 
   /** Reads the image defined in the given IFD from the specified file. */
   public static BufferedImage getImage(Hashtable ifd, RandomAccessStream in,
-    int globalOffset) throws FormatException, IOException
+    long globalOffset) throws FormatException, IOException
   {
     if (DEBUG) debug("parsing IFD entries");
 
     // get internal non-IFD entries
-    boolean littleEndian = ((Boolean) getIFDValue(ifd,
-      LITTLE_ENDIAN, true, Boolean.class)).booleanValue();
+    boolean littleEndian = isLittleEndian(ifd);
 
     // get relevant IFD entries
     long imageWidth = getIFDLongValue(ifd, IMAGE_WIDTH, true, 0);
@@ -916,7 +976,7 @@ public abstract class TiffTools {
           Integer.MAX_VALUE + " is not supported");
       }
       byte[] bytes = new byte[(int) stripByteCounts[strip]];
-      in.read(bytes);
+      in.readFully(bytes);
       if (compression != PACK_BITS) {
         bytes = uncompress(bytes, compression);
         undifference(bytes, bitsPerSample,
