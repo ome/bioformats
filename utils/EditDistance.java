@@ -34,7 +34,7 @@ public class EditDistance {
         );
 
         w[j] = cur;
-        cur = next;					
+        cur = next;
       }
 
       w[b.length] = next;
