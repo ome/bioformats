@@ -167,11 +167,10 @@ public class MetadataPane extends JPanel
         // TIFF file
         in.close();
         RandomAccessStream ras = new RandomAccessStream(file.getPath());
-        Hashtable[] ifds = TiffTools.getIFDs(ras);
+        Hashtable ifd = TiffTools.getFirstIFD(ras);
         ras.close();
-        if (ifds == null || ifds.length == 0) return false;
-        Object value = TiffTools.getIFDValue(ifds[0],
-          TiffTools.IMAGE_DESCRIPTION);
+        if (ifd == null) return false;
+        Object value = TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
         String xml = null;
         if (value instanceof String) xml = (String) value;
         else if (value instanceof String[]) {
