@@ -177,7 +177,7 @@ public class FluoviewReader extends BaseTiffReader {
 
       // read in comments field
       if (commentSize > 0) {
-        in.skipBytes((int) (in.available() - fileLength + commentOffset));
+        in.seek(commentOffset);
         byte[] comments = new byte[(int) commentSize];
         in.read(comments);
         put("Comments", new String(comments));

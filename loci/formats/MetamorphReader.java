@@ -191,8 +191,8 @@ public class MetamorphReader extends BaseTiffReader {
       else offset =  w.intValue();
 
       if (offset < 0) throw new FormatException("UIC4TAG not found");
-      in.skipBytes((int) (in.available() - fileLength + offset));
-
+      in.seek(offset);
+      
       int currentcode = -1;
       byte[] toread;
 
@@ -205,7 +205,7 @@ public class MetamorphReader extends BaseTiffReader {
       int planes = v[1].intValue();
       boolean little = TiffTools.isLittleEndian(ifd);
 
-      while ((currentcode < 66) && (in.available() > 2)) {
+      while ((currentcode < 66) && ((in.length() - in.getFilePointer()) > 2)) {
         currentcode = DataTools.read2SignedBytes(in, little);
 
         // variable declarations, because switch is dumb

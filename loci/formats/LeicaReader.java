@@ -47,7 +47,7 @@ public class LeicaReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected DataInputStream in;
+  protected RandomAccessStream in;
 
   /** Flag indicating whether current file is little endian. */
   protected boolean littleEndian;
@@ -155,9 +155,8 @@ public class LeicaReader extends FormatReader {
     if (id.toLowerCase().endsWith("tif") || id.toLowerCase().endsWith("tiff"))
     {
       super.initFile(id);
-      in = new DataInputStream(
-        new BufferedInputStream(new FileInputStream(id), 4096));
-
+      in = new RandomAccessStream(id);
+      
       // open the TIFF file and look for the "Image Description" field
 
       Hashtable[] ifds = TiffTools.getIFDs(in);
@@ -216,9 +215,7 @@ public class LeicaReader extends FormatReader {
       else {
         if (currentId != id) currentId = id;
       }
-      in = new DataInputStream(
-        new BufferedInputStream(new FileInputStream(id), 4096));
-      int fileLength = in.available();
+      in = new RandomAccessStream(id); 
 
       byte[] fourBytes = new byte[4];
       in.read(fourBytes);
@@ -234,13 +231,8 @@ public class LeicaReader extends FormatReader {
         Hashtable ifd = new Hashtable();
         v.add(ifd);
 
-        if ((fileLength - in.available()) < addr) {
-          in.skipBytes((int) (in.available() - fileLength + addr));
-        }
-        else {
-          /* debug */ throw new FormatException("invalid seek");
-        }
-
+        in.seek(addr);
+        
         int numEntries = (int) DataTools.read4UnsignedBytes(in, littleEndian);
         int tag = (int) DataTools.read4UnsignedBytes(in, littleEndian);
 
@@ -249,20 +241,14 @@ public class LeicaReader extends FormatReader {
           // create the IFD structure
           int offset = (int) DataTools.read4UnsignedBytes(in, littleEndian);
 
-          in.mark(offset + 8210);
-
-          if ((fileLength - in.available()) < offset + 12) {
-            in.skipBytes((int) (in.available() - fileLength + offset + 12));
-          }
-          else {
-            /* debug */ throw new FormatException("invalid seek");
-          }
+          long pos = in.getFilePointer();
+          in.seek(offset + 12);
 
           int size = (int) DataTools.read4UnsignedBytes(in, littleEndian);
           byte[] data = new byte[size];
           in.read(data);
           ifd.put(new Integer(tag), (Object) data);
-          in.reset();
+          in.seek(pos);
           tag = (int) DataTools.read4UnsignedBytes(in, littleEndian);
         }
 
