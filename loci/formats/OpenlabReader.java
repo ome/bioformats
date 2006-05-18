@@ -252,7 +252,7 @@ public class OpenlabReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessStream(id);
-    
+
     // initialize an array containing tag offsets, so we can
     // use an O(1) search instead of O(n) later.
     // Also determine whether we will be reading color or grayscale
@@ -328,7 +328,7 @@ public class OpenlabReader extends FormatReader {
   /** Populates the metadata hashtable. */
   private void initMetadata() throws IOException {
     in.seek(0);
-          
+
     // start by reading the file header
     byte[] toRead = new byte[4];
     in.read(toRead);
@@ -353,7 +353,7 @@ public class OpenlabReader extends FormatReader {
 
     // skip to first tag
     in.seek(offset);
-    
+
     // read in each tag and its data
 
     for (int i=0; i<count; i++) {

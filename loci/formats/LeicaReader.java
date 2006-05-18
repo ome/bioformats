@@ -156,7 +156,7 @@ public class LeicaReader extends FormatReader {
     {
       super.initFile(id);
       in = new RandomAccessStream(id);
-      
+
       // open the TIFF file and look for the "Image Description" field
 
       Hashtable[] ifds = TiffTools.getIFDs(in);
@@ -215,7 +215,7 @@ public class LeicaReader extends FormatReader {
       else {
         if (currentId != id) currentId = id;
       }
-      in = new RandomAccessStream(id); 
+      in = new RandomAccessStream(id);
 
       byte[] fourBytes = new byte[4];
       in.read(fourBytes);
@@ -232,7 +232,7 @@ public class LeicaReader extends FormatReader {
         v.add(ifd);
 
         in.seek(addr);
-        
+
         int numEntries = (int) DataTools.read4UnsignedBytes(in, littleEndian);
         int tag = (int) DataTools.read4UnsignedBytes(in, littleEndian);
 

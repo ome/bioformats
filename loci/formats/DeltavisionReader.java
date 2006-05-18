@@ -161,7 +161,7 @@ public class DeltavisionReader extends FormatReader {
     super.initFile(id);
 
     in = new RandomAccessStream(id);
-    
+
     // read in the image header data
     header = new byte[1024];
     in.read(header);

@@ -28,58 +28,60 @@ import java.util.Vector;
 
 /**
  * RandomAccessStream provides methods for "intelligent" reading of files and
- * byte arrays.   
+ * byte arrays.
  *
  * @author Melissa Linkert, linkert at cs.wisc.edu
  */
 public class RandomAccessStream implements DataInput {
 
   // -- Constants --
-       
+
   /** Maximum size of the buffer used by the DataInputStream. */
-  // 256 KB - please don't change this      
-  private static final int MAX_OVERHEAD = 262144; 
+  // 256 KB - please don't change this
+  protected static final int MAX_OVERHEAD = 262144;
 
   /** Maximum number of buffer sizes to keep. */
-  private static final int MAX_HISTORY = 50;
-  
+  protected static final int MAX_HISTORY = 50;
+
   /** Indicators for most efficient method of reading. */
-  private static final int DIS = 0;
-  private static final int RAF = 1;
-  private static final int ARRAY = 2;
-  
+  protected static final int DIS = 0;
+  protected static final int RAF = 1;
+  protected static final int ARRAY = 2;
+
+
   // -- Fields --
 
-  private RandomAccessFile raf;
-  private DataInputStream dis;
+  protected RandomAccessFile raf;
+  protected DataInputStream dis;
 
   /** The file pointer within the DIS. */
-  private int fp;
-  
+  protected int fp;
+
   /** The "absolute" file pointer. */
-  private int afp;
-  
+  protected int afp;
+
   /** Most recent mark. */
-  private int mark;
- 
+  protected int mark;
+
   /** Next place to mark. */
-  private int nextMark;
-  
+  protected int nextMark;
+
   /** The file name. */
-  private String file;
+  protected String file;
 
   /** Starting buffer. */
-  private byte[] buf;
- 
+  protected byte[] buf;
+
   /** Recent buffer sizes. */
-  private Vector recent;
-  
+  protected Vector recent;
+
+
   // -- Constructors --
 
   public RandomAccessStream(String file) throws IOException {
     raf = new RandomAccessFile(file, "r");
     dis = new DataInputStream(new BufferedInputStream(
-      new FileInputStream(file), MAX_OVERHEAD));      
+      new FileInputStream(file), MAX_OVERHEAD));
     this.file = file;
     fp = 0;
     afp = 0;
@@ -89,7 +91,7 @@ public class RandomAccessStream implements DataInput {
     recent = new Vector();
     recent.add(new Integer(MAX_OVERHEAD / 2));
     nextMark = MAX_OVERHEAD;
-  }        
+  }
 
   public RandomAccessStream(byte[] array) throws IOException {
     raf = new RandomAccessArray(array);
@@ -105,7 +107,8 @@ public class RandomAccessStream implements DataInput {
     recent = new Vector();
     recent.add(new Integer(MAX_OVERHEAD / 2));
     nextMark = MAX_OVERHEAD;
-  }       
+  }
+
 
   // -- DataInput API methods --
 
@@ -113,17 +116,17 @@ public class RandomAccessStream implements DataInput {
   public boolean readBoolean() throws IOException {
     return (readByte() != 0);
   }
-  
+
   /** Read one byte and return it. */
   public byte readByte() throws IOException {
     int status = checkEfficiency(1);
-    
+
     if (status == DIS) {
       return dis.readByte();
     }
     else if (status == ARRAY) {
       return buf[afp-1];
-    }        
+    }
     else {
       byte b = raf.readByte();
       return b;
@@ -133,8 +136,8 @@ public class RandomAccessStream implements DataInput {
   /** Read an input char. */
   public char readChar() throws IOException {
     return (char) readByte();
-  }        
- 
+  }
+
   /** Read eight bytes and return a double value. */
   public double readDouble() throws IOException {
     return Double.longBitsToDouble(readLong());
@@ -157,14 +160,14 @@ public class RandomAccessStream implements DataInput {
     while (c != '\n') {
       sb = sb.append(c);
       c = readChar();
-    }        
-    return sb.toString(); 
+    }
+    return sb.toString();
   }
 
   /** Read eight input bytes and return a long value. */
   public long readLong() throws IOException {
     return DataTools.read8SignedBytes(this, false);
-  }       
+  }
 
   /** Read two input bytes and return a short value. */
   public short readShort() throws IOException {
@@ -195,76 +198,76 @@ public class RandomAccessStream implements DataInput {
   /** Read bytes from the stream into the given array. */
   public int read(byte[] array) throws IOException {
     int status = checkEfficiency(array.length);
-    
+
     if (status == DIS) {
-      return dis.read(array);      
+      return dis.read(array);
     }
     else if (status == ARRAY) {
-      System.arraycopy(buf, afp - array.length, array, 0, array.length);      
+      System.arraycopy(buf, afp - array.length, array, 0, array.length);
       return array.length;
-    }        
+    }
     else {
       return raf.read(array);
-    }     
+    }
   }
 
-  /** 
+  /**
    * Read n bytes from the stream into the given array at the specified offset.
    */
   public int read(byte[] array, int offset, int n) throws IOException {
     int status = checkEfficiency(n);
-    
+
     if (status == DIS) {
-      return dis.read(array, offset, n);      
+      return dis.read(array, offset, n);
     }
     else if (status == ARRAY) {
       System.arraycopy(buf, afp - n, array, offset, n);
       return n;
-    }        
+    }
     else {
       return raf.read(array, offset, n);
-    }     
+    }
   }
 
   /** Read bytes from the stream into the given array. */
   public void readFully(byte[] array) throws IOException {
     int status = checkEfficiency(array.length);
-    
+
     if (status == DIS) {
-      dis.readFully(array);      
+      dis.readFully(array);
     }
     else if (status == ARRAY) {
-      System.arraycopy(buf, afp - array.length, array, 0, array.length);      
-    }        
+      System.arraycopy(buf, afp - array.length, array, 0, array.length);
+    }
     else {
       if (raf instanceof RandomAccessArray) {
         ((RandomAccessArray) raf).copyArray(array);
       }
       else raf.readFully(array);
-    }     
+    }
   }
 
-  /** 
+  /**
    * Read n bytes from the stream into the given array at the specified offset.
    */
   public void readFully(byte[] array, int offset, int n) throws IOException {
     int status = checkEfficiency(n);
-    
+
     if (status == DIS) {
-      dis.readFully(array, offset, n);      
+      dis.readFully(array, offset, n);
     }
     else if (status == ARRAY) {
       System.arraycopy(buf, afp - n, array, offset, n);
-    }        
+    }
     else {
       if (raf instanceof RandomAccessArray) {
         ((RandomAccessArray) raf).copyArray(array, offset, n);
       }
       else raf.readFully(array, offset, n);
-    }     
+    }
   }
 
-  
+
   // -- Internal RandomAccessStream API methods --
 
   /** Seek to the given offset within the stream. */
@@ -275,18 +278,18 @@ public class RandomAccessStream implements DataInput {
   /** Alias for readByte(). */
   public int read() throws IOException {
     return (int) readByte();
-  }        
-  
+  }
+
   /** Get the number of bytes in the file. */
   public long length() throws IOException {
     return raf.length();
-  }         
+  }
 
   /** Get the current (absolute) file pointer. */
   public int getFilePointer() {
     return afp;
-  }        
-  
+  }
+
   /** Close the streams. */
   public void close() throws IOException {
     if (raf != null) raf.close();
@@ -295,14 +298,13 @@ public class RandomAccessStream implements DataInput {
     dis = null;
     fp = 0;
     mark = 0;
-  }        
- 
+  }
+
 
   // -- Helper methods --
 
   /** Naive heuristic for determining a "good" buffer size for the DIS. */
-  private int determineBuffer() {
-    
+  protected int determineBuffer() {
     // first we want the weighted average of previous buffer sizes
 
     int sum = 0;
@@ -311,45 +313,45 @@ public class RandomAccessStream implements DataInput {
 
     while ((ndx < recent.size()) && (ndx < MAX_HISTORY)) {
       int size = ((Integer) recent.get(ndx)).intValue();
-      sum += (size * ((ndx / (MAX_HISTORY / 5)) + 1));      
+      sum += (size * ((ndx / (MAX_HISTORY / 5)) + 1));
       div += (ndx / (MAX_HISTORY / 5)) + 1;
       ndx++;
     }
 
     int newSize = sum / div;
     if (newSize > MAX_OVERHEAD) newSize = MAX_OVERHEAD;
-    if (recent.size() < MAX_HISTORY) recent.add(new Integer(newSize)); 
+    if (recent.size() < MAX_HISTORY) recent.add(new Integer(newSize));
     else {
       recent.remove(0);
       recent.add(new Integer(newSize));
-    }        
-    
+    }
+
     return newSize;
   }
 
-  /** 
+  /**
    * Determine whether it is more efficient to use the DataInputStream or
    * RandomAccessFile for reading (based on the current file pointers).
    * Returns 0 if we should use the DataInputStream, 1 if we should use the
    * RandomAccessFile, and 2 for a direct array access.
    */
-  private int checkEfficiency(int toRead) throws IOException {
-  
+  protected int checkEfficiency(int toRead) throws IOException {
     int oldBufferSize = ((Integer) recent.get(recent.size() - 1)).intValue();
 
     if ((afp + toRead) < MAX_OVERHEAD) {
       // this is a really special case that allows us to read directly from
       // an array when working with the first MAX_OVERHEAD bytes of the file
-      // ** also note that it doesn't change the stream       
-            
+      // ** also note that it doesn't change the stream
+
       afp += toRead;
       return ARRAY;
-    }      
+    }
     else if (afp >= fp) {
-            
       while (fp < afp) {
-        fp += dis.skipBytes(afp - fp);
-      }        
+        int skip = dis.skipBytes(afp - fp);
+        if (skip == 0) break;
+        fp += skip;
+      }
 
       fp += toRead;
       afp += toRead;
@@ -357,20 +359,22 @@ public class RandomAccessStream implements DataInput {
       if (fp >= nextMark) dis.mark(MAX_OVERHEAD);
       nextMark = fp + MAX_OVERHEAD;
       mark = fp;
-    
+
       return DIS;
     }
     else {
       if ((fp <= (mark + oldBufferSize)) && (afp >= mark)) {
-   
+
         int newBufferSize = determineBuffer();
-              
+
         dis.reset();
         dis.mark(newBufferSize);
         fp = mark;
-        
+
         while (fp < afp) {
-          fp += dis.skipBytes(afp - fp);
+          int skip = dis.skipBytes(afp - fp);
+          if (skip == 0) break;
+          fp += skip;
         }
 
         fp += toRead;
@@ -379,18 +383,18 @@ public class RandomAccessStream implements DataInput {
         if (fp >= nextMark) dis.mark(newBufferSize);
         nextMark = fp + newBufferSize;
         mark = fp;
-     
+
         return DIS;
       }
       else {
         // we don't want this to happen very often
-              
+
         raf.seek(afp);
-        
+
         afp += toRead;
         return RAF;
       }
-    }      
-  } 
+    }
+  }
 
 }
