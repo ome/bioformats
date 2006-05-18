@@ -24,9 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
@@ -40,7 +37,7 @@ public class IPLabReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected DataInputStream in;
+  protected RandomAccessStream in;
 
   /** Flag indicating whether current file is little endian. */
   protected boolean littleEndian;
@@ -112,8 +109,8 @@ public class IPLabReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    int numPixels = width * height;
-    in.skipBytes(numPixels * bps * no);
+    int numPixels = width * height * c;
+    in.seek(numPixels * bps * no + 44);
 
     byte[] rawData = new byte[numPixels * bps];
     in.readFully(rawData);
@@ -151,9 +148,8 @@ public class IPLabReader extends FormatReader {
   /** Initializes the given IPLab file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new DataInputStream(
-      new BufferedInputStream(new FileInputStream(id), 4096));
-
+    in = new RandomAccessStream(id);
+    
     byte[] fourBytes = new byte[4];
     in.read(fourBytes);
     littleEndian = new String(fourBytes).equals("iiii");
@@ -403,9 +399,6 @@ public class IPLabReader extends FormatReader {
         tag = "fini";
       }
     }
-    in = new DataInputStream(
-      new BufferedInputStream(new FileInputStream(id), 4096));
-    in.skipBytes(44);
   }
 
 

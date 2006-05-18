@@ -24,9 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
@@ -44,10 +41,7 @@ public class GatanReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected DataInputStream in;
-
-  /** File length. */
-  private int fileLength;
+  protected RandomAccessStream in;
 
   /** Flag indicating whether current file is little endian. */
   protected boolean littleEndian;
@@ -152,9 +146,7 @@ public class GatanReader extends FormatReader {
   /** Initializes the given Gatan file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new DataInputStream(
-      new BufferedInputStream(new FileInputStream(id), 4096));
-    fileLength = in.available();
+    in = new RandomAccessStream(id);    
 
     littleEndian = false;
 
@@ -298,17 +290,16 @@ public class GatanReader extends FormatReader {
 
               byte check = 0;
               double bpp = 0.5;
-              in.mark((int) (bpp * 50 * length));
+              //in.mark((int) (bpp * 50 * length));
+              long pos = in.getFilePointer();
               while (check != 20 && check != 21) {
                 bpp *= 2;
-                in.reset();
-                in.mark((int) (bpp * 50 * length));
+                in.seek(pos);
                 pixelData = new byte[(int) bpp * length];
                 in.read(pixelData);
                 check = in.readByte();
               }
-              in.reset();
-              in.skipBytes((int) (bpp * length));
+              in.seek((int) (pos + bpp * length));
             }
             else {
               int[] data = new int[length];

@@ -24,9 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
@@ -44,7 +41,7 @@ public class DeltavisionReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected DataInputStream in;
+  protected RandomAccessStream in;
 
   /** Number of images in the current file. */
   protected int numImages;
@@ -57,9 +54,6 @@ public class DeltavisionReader extends FormatReader {
 
   /** Byte array containing extended header data. */
   protected byte[] extHeader;
-
-  /** File length. */
-  private int fileLength;
 
   /** Image width. */
   private int width;
@@ -118,9 +112,7 @@ public class DeltavisionReader extends FormatReader {
     int numSamples = (int) (width * height);
     byte[] rawData = new byte[width * height * bytesPerPixel];
 
-    if ((fileLength - in.available()) < offset) {
-      in.skipBytes(in.available() - fileLength + offset);
-    }
+    in.seek(offset);
 
     in.read(rawData);
 
@@ -168,10 +160,8 @@ public class DeltavisionReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
-    in = new DataInputStream(
-      new BufferedInputStream(new FileInputStream(id), 4096));
-    fileLength = in.available();
-
+    in = new RandomAccessStream(id);
+    
     // read in the image header data
     header = new byte[1024];
     in.read(header);
@@ -360,11 +350,7 @@ public class DeltavisionReader extends FormatReader {
     if (ome != null) {
       OMETools.setDescription(ome, (String) metadata.get("Title 1"));
     }
-
-    in = new DataInputStream(
-      new BufferedInputStream(new FileInputStream(id), 4096));
   }
-
 
   // -- Main method --
 

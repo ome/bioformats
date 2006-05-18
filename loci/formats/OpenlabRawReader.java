@@ -38,16 +38,13 @@ public class OpenlabRawReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected DataInputStream in;
+  protected RandomAccessStream in;
 
   /** Number of image planes in the file. */
   protected int numImages = 0;
 
   /** Offset to each image's pixel data. */
   protected int[] offsets;
-
-  /** File length. */
-  private int fileLength;
 
   /** Image width. */
   private int width;
@@ -99,16 +96,10 @@ public class OpenlabRawReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    in.reset();
-    if ((fileLength - in.available()) < offsets[no]) {
-      in.skipBytes((int) (in.available() - fileLength + offsets[no]));
-    }
-
-    in.skipBytes(288);
+    in.seek(offsets[no] + 288);
 
     byte[] data = new byte[width*height*bpp];
     in.read(data);
-    in.mark(100);
 
     if (bpp == 1) {
       // need to invert the pixels
@@ -145,10 +136,8 @@ public class OpenlabRawReader extends FormatReader {
   /** Initializes the given RAW file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new DataInputStream(
-      new BufferedInputStream(new FileInputStream(id), 4096));
-    fileLength = in.available();
-
+    in = new RandomAccessStream(id);
+    
     // read the 12 byte file header
 
     byte[] header = new byte[12];
@@ -163,7 +152,6 @@ public class OpenlabRawReader extends FormatReader {
     metadata.put("Version", new Integer(version));
 
     numImages = DataTools.bytesToInt(header, 8, 4, false);
-    in.mark(100);
     offsets = new int[numImages];
     offsets[0] = 12;
 

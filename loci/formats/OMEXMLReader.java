@@ -65,13 +65,10 @@ public class OMEXMLReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected DataInputStream in;
+  protected RandomAccessStream in;
 
   /** Flag indicating whether current file is little endian. */
   protected boolean littleEndian;
-
-  /** File length. */
-  private int fileLength;
 
   /** Number of image planes in the file. */
   protected int numImages = 0;
@@ -127,12 +124,8 @@ public class OMEXMLReader extends FormatReader {
     int height = OMETools.getSizeY(ome).intValue();
     int channels = 1;
 
-    if ((fileLength - in.available()) < ((Integer) offsets.get(no)).intValue())
-    {
-      in.skipBytes(((Integer) offsets.get(no)).intValue() -
-        (fileLength - in.available()));
-    }
-
+    in.seek(((Integer) offsets.get(no)).intValue());
+    
     byte[] buf;
     if (no < getImageCount(id) - 1) {
 
@@ -140,7 +133,8 @@ public class OMEXMLReader extends FormatReader {
         ((Integer) offsets.get(no)).intValue()];
     }
     else {
-      buf = new byte[(int) in.available()];
+      buf = 
+        new byte[(int) (in.length() - ((Integer) offsets.get(no)).intValue())];
     }
     in.read(buf);
     String data = new String(buf);
@@ -213,12 +207,8 @@ public class OMEXMLReader extends FormatReader {
     close();
     currentId = id;
     metadata = new Hashtable();
-    in = new DataInputStream(
-      new BufferedInputStream(new FileInputStream(id), 4096));
-    fileLength = in.available();
+    in = new RandomAccessStream(id);
     offsets = new Vector();
-
-    in.mark(fileLength);
 
     in.skipBytes(200);
 
@@ -226,7 +216,7 @@ public class OMEXMLReader extends FormatReader {
     byte[] buf = new byte[8192];
     boolean found = false;
     while (!found) {
-      if ((fileLength - in.available()) < fileLength) {
+      if (in.getFilePointer() < in.length()) {
         in.read(buf, 9, 8183);
         String test = new String(buf);
 
@@ -243,17 +233,15 @@ public class OMEXMLReader extends FormatReader {
       }
     }
 
-    in.reset();
-
+    in.seek(0);
+    
     // look for the first BinData element
-
-    in.mark(fileLength);
 
     found = false;
     buf = new byte[8192];
     in.read(buf, 0, 14);
     while (!found) {
-      if ((fileLength - in.available()) < fileLength) {
+      if (in.getFilePointer() < in.length()) {
         int numRead = in.read(buf, 14, 8192-14);
 
         String test = new String(buf);
@@ -268,15 +256,15 @@ public class OMEXMLReader extends FormatReader {
         found = true;
         numRead += 14;
         offsets.add(new Integer(
-          (int) (fileLength - in.available()) - (numRead - ndx)));
+          (int) in.getFilePointer() - (numRead - ndx)));
       }
       else {
         throw new FormatException("Pixel data not found");
       }
     }
 
-    in.reset();
-
+    in.seek(0);
+    
     buf = new byte[((Integer) offsets.get(0)).intValue()];
     in.read(buf);
     String xml = new String(buf);
@@ -310,13 +298,13 @@ public class OMEXMLReader extends FormatReader {
     // calculate the number of raw bytes of pixel data that we are expecting
     int expected = sizeX * sizeY * bpp;
 
-    in.mark(256);
-
     // find the compression type and adjust 'expected' accordingly
     buf = new byte[256];
     in.read(buf);
     String data = new String(buf);
 
+    in.seek(((Integer) offsets.get(0)).intValue());
+    
     int compressionStart = data.indexOf("Compression") + 13;
     int compressionEnd = data.indexOf("\"", compressionStart);
     if (compressionStart != -1 && compressionEnd != -1) {
@@ -329,12 +317,10 @@ public class OMEXMLReader extends FormatReader {
     numImages = offsets.size();
     if (numImages < (sizeZ * sizeT * sizeC)) {
       // hope this doesn't happen too often
+      in.seek(((Integer) offsets.get(0)).intValue());
       searchForData(0, sizeZ * sizeT * sizeC);
       numImages = offsets.size();
     }
-
-    in = new DataInputStream(
-      new BufferedInputStream(new FileInputStream(id), 4096));
   }
 
 
@@ -350,10 +336,8 @@ public class OMEXMLReader extends FormatReader {
       offsets.add(zeroth);
     }
 
-    in.reset();
-    in.mark(500*(safe + 8192));
     in.skipBytes(1);
-    while (((fileLength - in.available() + safe) < fileLength) &&
+    while (((in.getFilePointer() + safe) < in.length()) &&
       (offsets.size() < numPlanes))
     {
       in.skipBytes(safe);
@@ -362,7 +346,7 @@ public class OMEXMLReader extends FormatReader {
       found = false;
       byte[] buf = new byte[8192];
       while (!found) {
-        if ((fileLength - in.available()) < fileLength) {
+        if (in.getFilePointer() < in.length()) {
           int numRead = in.read(buf, 20, buf.length - 20);
           String test = new String(buf);
 
@@ -373,7 +357,7 @@ public class OMEXMLReader extends FormatReader {
             found = true;
             if (numRead == buf.length - 20) numRead = buf.length;
             offsets.add(new Integer(
-              (int) (fileLength - in.available()) - (numRead - ndx)));
+              (int) in.getFilePointer() - (numRead - ndx)));
             ndx = test.indexOf("<Bin", ndx+1);
           }
         }
