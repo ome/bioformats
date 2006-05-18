@@ -191,9 +191,9 @@ public class LeicaConverter extends JFrame
           int q2 = (i + np2) / planesPerFile;
           int c2 = (i + np2) % planesPerFile;
           progress.setString(i + "/" + np2);
-          BufferedImage ig = reader.open(in[q1], c1);
+          BufferedImage ig = reader.openImage(in[q1], c1);
           progress.setValue(3 * i + 1);
-          BufferedImage ir = reader2.open(in[q2], c2);
+          BufferedImage ir = reader2.openImage(in[q2], c2);
           progress.setValue(3 * i + 2);
           int width = ig.getWidth(), height = ig.getHeight();
           if (data == null || data[0].length != width * height) {
@@ -223,7 +223,7 @@ public class LeicaConverter extends JFrame
           int q = i / planesPerFile;
           int c = i % planesPerFile;
           progress.setString(i + "/" + numPlanes);
-          Image img = reader.open(in[q], c);
+          Image img = reader.openImage(in[q], c);
           Hashtable ifd = null;
           if (i == 0) {
             ifd = new Hashtable();
