@@ -45,7 +45,7 @@ public class SDTReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessFile in;
+  protected RandomAccessStream in;
 
   /** Length in bytes of current file. */
   protected int fileLen;
@@ -125,7 +125,7 @@ public class SDTReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     File file = new File(id);
-    in = new RandomAccessFile(id, "r");
+    in = new RandomAccessStream(id);
 
     // skip 14 byte header
     in.seek(14);

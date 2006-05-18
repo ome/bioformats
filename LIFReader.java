@@ -38,10 +38,7 @@ public class LIFReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected DataInputStream in;
-
-  /** File length. */
-  private int fileLength;
+  protected RandomAccessStream in;
 
   /** Flag indicating whether current file is little endian. */
   protected boolean littleEndian;
@@ -130,13 +127,8 @@ public class LIFReader extends FormatReader {
       imageNum -= (dims[i][2] * dims[i][3] * dims[i][6]);
     }
 
-    if ((fileLength - in.available()) <
-      (offset + (width * height * bytesPerPixel * imageNum)))
-    {
-      in.skipBytes((int) (in.available() - fileLength + offset +
-        width * height * bytesPerPixel * imageNum));
-    }
-
+    in.seek(offset + width * height * bytesPerPixel * imageNum);
+    
     byte[] data = new byte[(int) (width * height * bytesPerPixel * c)];
 
     in.read(data);
@@ -179,10 +171,8 @@ public class LIFReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     offsets = new Vector();
-    in = new DataInputStream(
-      new BufferedInputStream(new FileInputStream(id), 4096));
-    fileLength = in.available();
-
+    in = new RandomAccessStream(id);
+    
     littleEndian = true;
 
     // read the header
@@ -210,7 +200,7 @@ public class LIFReader extends FormatReader {
     String xml = new String(xmlChunk, 5, nc*2);
     xml = DataTools.stripString(xml);
 
-    while (in.available() > 0) {
+    while (in.getFilePointer() < in.length()) {
       byte[] four = new byte[4];
       in.read(four);
       int check = DataTools.bytesToInt(four, littleEndian);
@@ -241,14 +231,12 @@ public class LIFReader extends FormatReader {
       descr = DataTools.stripString(descr);
 
       if (blockLength > 0) {
-        offsets.add(new Long(fileLength - in.available()));
+        offsets.add(new Long(in.getFilePointer()));
       }
       in.skipBytes(blockLength);
     }
     numImages = offsets.size();
     initMetadata(xml);
-    in = new DataInputStream(
-      new BufferedInputStream(new FileInputStream(id), 4096));
   }
 
 

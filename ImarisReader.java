@@ -47,10 +47,7 @@ public class ImarisReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected DataInputStream in;
-
-  /** Length of file. */
-  private int fileLength;
+  protected RandomAccessStream in;
 
   /** Number of image planes in the file. */
   protected int numImages = 0;
@@ -94,7 +91,7 @@ public class ImarisReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    in.skipBytes((int) (in.available() - (fileLength - offsets[no])));
+    in.seek(offsets[no]);
     byte[] data = new byte[dims[0] * dims[1]];
 
     int row = dims[1] - 1;
@@ -123,9 +120,7 @@ public class ImarisReader extends FormatReader {
   /** Initializes the given Imaris file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new DataInputStream(
-      new BufferedInputStream(new FileInputStream(id), 4096));
-    fileLength = in.available();
+    in = new RandomAccessStream(id);
     dims = new int[4];
 
     long magic = DataTools.read4UnsignedBytes(in, IS_LITTLE);

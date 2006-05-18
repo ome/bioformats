@@ -25,11 +25,8 @@ package loci.formats;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
-import java.io.IOException;
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Vector;
 import javax.imageio.ImageIO;
 
@@ -180,10 +177,7 @@ public class QTReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  private DataInputStream in;
-
-  /** File length. */
-  private int fileLength;
+  private RandomAccessStream in;
 
   /** Flag indicating whether the current file is little endian. */
   private boolean little = false;
@@ -311,10 +305,7 @@ public class QTReader extends FormatReader {
 
     byte[] pixs = new byte[nextOffset - offset];
 
-    if ((fileLength - in.available()) != (globalOffset + offset)) {
-      in.skipBytes(offset);
-    }
-
+    in.seek(globalOffset + offset);
     in.read(pixs);
 
     if (codec.equals("jpeg")) return bufferedJPEG(pixs);
@@ -405,19 +396,15 @@ public class QTReader extends FormatReader {
   /** Initializes the given QuickTime file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new DataInputStream(
-      new BufferedInputStream(new FileInputStream(id), 4096));
-    fileLength = in.available();
+    in = new RandomAccessStream(id);
+    
     offsets = new Vector();
     chunkSizes = new Vector();
     allFound = false;
     foundPixels = false;
     numParsed = 0;
-    in.mark(2);
-    parse(0, 0, fileLength);
+    parse(0, 0, in.length());
     numImages = offsets.size();
-    in = new DataInputStream(
-      new BufferedInputStream(new FileInputStream(id), 4096));
     in.skipBytes(globalOffset);
   }
 
@@ -427,8 +414,7 @@ public class QTReader extends FormatReader {
   /** Parse all of the atoms in the file. */
   public void parse(int depth, long offset, long length) throws IOException {
     while ((offset < length) && !allFound) {
-      in.reset();
-      in.skipBytes((int) (in.available() - (fileLength - offset)));
+      in.seek(offset);
 
       // first 4 bytes are the atom size
       long atomSize = DataTools.read4UnsignedBytes(in, little);
@@ -451,13 +437,11 @@ public class QTReader extends FormatReader {
 
       // if this is a container atom, parse the children
       if (isContainer(atomType)) {
-        in.mark((int) (atomSize + 8));
-        parse(depth++, fileLength - in.available(), offset + atomSize);
+        parse(depth++, in.getFilePointer(), offset + atomSize);
       }
       else {
-        if (atomSize == 0) atomSize = fileLength;
+        if (atomSize == 0) atomSize = in.length();
 
-        in.mark((int) (atomSize + 8));
         if (!atomType.equals("mdat") && (atomType.equals("tkhd") ||
            atomType.equals("stco") || atomType.equals("stsd") ||
            atomType.equals("stsz") || atomType.equals("stts"))) {
@@ -468,7 +452,7 @@ public class QTReader extends FormatReader {
         if (atomType.equals("mdat")) {
           numParsed++;
           foundPixels = true;
-          globalOffset = fileLength - in.available();
+          globalOffset = in.getFilePointer();
           numPixelBytes = (int) atomSize;
         }
         else if (atomType.equals("tkhd")) {
@@ -535,7 +519,7 @@ public class QTReader extends FormatReader {
         }
       }
 
-      if (atomSize == 0) offset = fileLength;
+      if (atomSize == 0) offset = in.length();
       else offset += atomSize;
 
       allFound = (numParsed >= 6) && foundPixels;

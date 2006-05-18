@@ -78,10 +78,7 @@ public class PictReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected DataInputStream in;
-
-  /** File length. */
-  private int fileLength;
+  protected RandomAccessStream in;
 
   /** Flag indicating whether current file is little endian. */
   protected boolean little;
@@ -130,7 +127,7 @@ public class PictReader extends FormatReader {
 
   /** Checks if the given block is a valid header for a PICT file. */
   public boolean isThisType(byte[] block) {
-    if (fileLength < 528) return false;
+    if (block.length < 528) return false;
     return true;
   }
 
@@ -167,13 +164,11 @@ public class PictReader extends FormatReader {
   /** Initializes the given PICT file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new DataInputStream(
-      new BufferedInputStream(new FileInputStream(id), 4096));
-    fileLength = in.available();
+    in = new RandomAccessStream(id);
     little = false;
 
     // skip the header and read in the remaining bytes
-    int len = fileLength - 512;
+    int len = (int) (in.length() - 512);
     bytes = new byte[len];
     in.skipBytes(512);
     in.read(bytes);
