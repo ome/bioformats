@@ -192,7 +192,7 @@ public class BMPReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessStream(id);
-    
+
     littleEndian = true;
 
     // read the first header - 14 bytes

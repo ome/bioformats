@@ -397,7 +397,7 @@ public class QTReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessStream(id);
-    
+
     offsets = new Vector();
     chunkSizes = new Vector();
     allFound = false;

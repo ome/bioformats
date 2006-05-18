@@ -203,7 +203,7 @@ public class BioRadReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessStream(id);
-    
+
     // read header
     byte[] header = new byte[76];
     in.readFully(header);

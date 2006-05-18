@@ -128,7 +128,7 @@ public class LIFReader extends FormatReader {
     }
 
     in.seek(offset + width * height * bytesPerPixel * imageNum);
-    
+
     byte[] data = new byte[(int) (width * height * bytesPerPixel * c)];
 
     in.read(data);
@@ -172,7 +172,7 @@ public class LIFReader extends FormatReader {
     super.initFile(id);
     offsets = new Vector();
     in = new RandomAccessStream(id);
-    
+
     littleEndian = true;
 
     // read the header

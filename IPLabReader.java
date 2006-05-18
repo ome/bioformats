@@ -149,7 +149,7 @@ public class IPLabReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessStream(id);
-    
+
     byte[] fourBytes = new byte[4];
     in.read(fourBytes);
     littleEndian = new String(fourBytes).equals("iiii");

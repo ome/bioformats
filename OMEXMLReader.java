@@ -125,7 +125,7 @@ public class OMEXMLReader extends FormatReader {
     int channels = 1;
 
     in.seek(((Integer) offsets.get(no)).intValue());
-    
+
     byte[] buf;
     if (no < getImageCount(id) - 1) {
 
@@ -133,7 +133,7 @@ public class OMEXMLReader extends FormatReader {
         ((Integer) offsets.get(no)).intValue()];
     }
     else {
-      buf = 
+      buf =
         new byte[(int) (in.length() - ((Integer) offsets.get(no)).intValue())];
     }
     in.read(buf);
@@ -234,7 +234,7 @@ public class OMEXMLReader extends FormatReader {
     }
 
     in.seek(0);
-    
+
     // look for the first BinData element
 
     found = false;
@@ -264,7 +264,7 @@ public class OMEXMLReader extends FormatReader {
     }
 
     in.seek(0);
-    
+
     buf = new byte[((Integer) offsets.get(0)).intValue()];
     in.read(buf);
     String xml = new String(buf);
@@ -304,7 +304,7 @@ public class OMEXMLReader extends FormatReader {
     String data = new String(buf);
 
     in.seek(((Integer) offsets.get(0)).intValue());
-    
+
     int compressionStart = data.indexOf("Compression") + 13;
     int compressionEnd = data.indexOf("\"", compressionStart);
     if (compressionStart != -1 && compressionEnd != -1) {
