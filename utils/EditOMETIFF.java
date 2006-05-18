@@ -22,11 +22,11 @@ public class EditOMETIFF {
       String f = args[i];
       String nf = "new-" + f;
       System.out.print("Reading " + f + " ");
-      DataInputStream fin = new DataInputStream(new FileInputStream(f));
-      Hashtable[] ifds = TiffTools.getIFDs(fin);
+      RandomAccessStream fin = new RandomAccessStream(f);
+      Hashtable ifd = TiffTools.getFirstIFD(fin);
       fin.close();
       String ome = (String)
-        TiffTools.getIFDValue(ifds[0], TiffTools.IMAGE_DESCRIPTION);
+        TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
       System.out.println("[done]");
       System.out.println("OME-XML block =");
       System.out.println(ome);
@@ -38,7 +38,7 @@ public class EditOMETIFF {
         System.out.print(".");
         BufferedImage img = opener.openImage(f, j);
 
-        Hashtable ifd = new Hashtable();
+        ifd = new Hashtable();
         if (j == 0) {
           // update OME-XML block
           TiffTools.putIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION, xml);

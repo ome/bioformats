@@ -2,8 +2,7 @@
 // TiffComment.java
 //
 
-import java.io.DataInputStream;
-import java.io.FileInputStream;
+import loci.formats.RandomAccessStream;
 import loci.formats.TiffTools;
 import java.util.Hashtable;
 
@@ -17,12 +16,12 @@ public class TiffComment {
     }
     for (int i=0; i<args.length; i++) {
       // read IFDs
-      DataInputStream in = new DataInputStream(new FileInputStream(args[i]));
-      Hashtable[] ifds = TiffTools.getIFDs(in);
+      RandomAccessStream in = new RandomAccessStream(args[i]);
+      Hashtable ifd = TiffTools.getFirstIFD(in);
       in.close();
 
       // extract comment
-      Object o = TiffTools.getIFDValue(ifds[0], TiffTools.IMAGE_DESCRIPTION);
+      Object o = TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
       String comment = null;
       if (o instanceof String) comment = (String) o;
       else if (o instanceof String[]) {
