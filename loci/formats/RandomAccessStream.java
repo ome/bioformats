@@ -95,20 +95,9 @@ public class RandomAccessStream implements DataInput {
 
   public RandomAccessStream(byte[] array) throws IOException {
     raf = new RandomAccessArray(array);
-    dis = new DataInputStream(new BufferedInputStream(
-      new ByteArrayInputStream(array), MAX_OVERHEAD));
     fp = 0;
     afp = 0;
-    buf = new byte[MAX_OVERHEAD];
-    /*
-    raf.read(buf);
-    raf.seek(0);
-    */
-    recent = new Vector();
-    recent.add(new Integer(MAX_OVERHEAD / 2));
-    nextMark = MAX_OVERHEAD;
   }
-
 
   // -- DataInput API methods --
 
@@ -121,6 +110,8 @@ public class RandomAccessStream implements DataInput {
   public byte readByte() throws IOException {
     int status = checkEfficiency(1);
 
+    if (afp < raf.length() - 1) afp++;
+    
     if (status == DIS) {
       return dis.readByte();
     }
@@ -198,17 +189,24 @@ public class RandomAccessStream implements DataInput {
   /** Read bytes from the stream into the given array. */
   public int read(byte[] array) throws IOException {
     int status = checkEfficiency(array.length);
-
+    int n = 0;
+    
     if (status == DIS) {
-      return dis.read(array);
+      n = dis.read(array);
     }
     else if (status == ARRAY) {
-      System.arraycopy(buf, afp - array.length, array, 0, array.length);
-      return array.length;
+      n = array.length;
+      if ((buf.length - afp + array.length) < array.length) {
+        n = buf.length - afp + array.length;
+      }        
+      System.arraycopy(buf, afp - array.length, array, 0, n);
     }
     else {
-      return raf.read(array);
+      n = raf.read(array);
     }
+    afp += n;
+    if (status == DIS) fp += n;
+    return n;
   }
 
   /**
@@ -218,15 +216,18 @@ public class RandomAccessStream implements DataInput {
     int status = checkEfficiency(n);
 
     if (status == DIS) {
-      return dis.read(array, offset, n);
+      n = dis.read(array, offset, n);
     }
     else if (status == ARRAY) {
+      if ((buf.length - afp + n) < n) n = buf.length - afp + n;
       System.arraycopy(buf, afp - n, array, offset, n);
-      return n;
     }
     else {
-      return raf.read(array, offset, n);
+      n = raf.read(array, offset, n);
     }
+    afp += n;
+    if (status == DIS) fp += n;
+    return n;
   }
 
   /** Read bytes from the stream into the given array. */
@@ -245,6 +246,8 @@ public class RandomAccessStream implements DataInput {
       }
       else raf.readFully(array);
     }
+    afp += array.length;
+    if (status == DIS) fp += array.length;
   }
 
   /**
@@ -265,6 +268,8 @@ public class RandomAccessStream implements DataInput {
       }
       else raf.readFully(array, offset, n);
     }
+    afp += n;
+    if (status == DIS) fp += n;
   }
 
 
@@ -294,7 +299,7 @@ public class RandomAccessStream implements DataInput {
   public void close() throws IOException {
     if (raf != null) raf.close();
     raf = null;
-    dis.close();
+    if (dis != null) dis.close();
     dis = null;
     fp = 0;
     mark = 0;
@@ -338,23 +343,21 @@ public class RandomAccessStream implements DataInput {
   protected int checkEfficiency(int toRead) throws IOException {
     int oldBufferSize = ((Integer) recent.get(recent.size() - 1)).intValue();
 
-    if (((afp + toRead) < MAX_OVERHEAD) && (afp + toRead < raf.length())) {
+    if (((afp + toRead) < MAX_OVERHEAD) && (afp + toRead < raf.length()) && 
+      (dis != null)) 
+    {
       // this is a really special case that allows us to read directly from
       // an array when working with the first MAX_OVERHEAD bytes of the file
       // ** also note that it doesn't change the stream
 
-      afp += toRead;
       return ARRAY;
     }
-    else if (afp >= fp) {
+    else if ((afp >= fp) && (dis != null)) {
       while (fp < afp) {
         int skip = dis.skipBytes(afp - fp);
         if (skip == 0) break;
         fp += skip;
       }
-
-      if (fp == afp) fp += toRead;
-      afp += toRead;
      
       if (fp >= nextMark) dis.mark(MAX_OVERHEAD);
       nextMark = fp + MAX_OVERHEAD;
@@ -363,7 +366,7 @@ public class RandomAccessStream implements DataInput {
       return DIS;
     }
     else {
-      if ((fp <= (mark + oldBufferSize)) && (afp >= mark)) {
+      if ((fp <= (mark + oldBufferSize)) && (afp >= mark) && (dis != null)) {
 
         int newBufferSize = determineBuffer();
 
@@ -377,9 +380,6 @@ public class RandomAccessStream implements DataInput {
           fp += skip;
         }
 
-        if (fp == afp) fp += toRead;
-        afp += toRead;
-        
         if (fp >= nextMark) dis.mark(newBufferSize);
         nextMark = fp + newBufferSize;
         mark = fp;
@@ -391,7 +391,6 @@ public class RandomAccessStream implements DataInput {
 
         raf.seek(afp);
 
-        afp += toRead;
         return RAF;
       }
     }
