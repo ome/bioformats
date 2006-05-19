@@ -110,13 +110,14 @@ public class RandomAccessStream implements DataInput {
   public byte readByte() throws IOException {
     int status = checkEfficiency(1);
 
+    int oldAFP = afp;
     if (afp < raf.length() - 1) afp++;
     
     if (status == DIS) {
       return dis.readByte();
     }
     else if (status == ARRAY) {
-      return buf[afp];
+      return buf[oldAFP];
     }
     else {
       byte b = raf.readByte();
