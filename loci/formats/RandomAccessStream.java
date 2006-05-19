@@ -116,7 +116,7 @@ public class RandomAccessStream implements DataInput {
       return dis.readByte();
     }
     else if (status == ARRAY) {
-      return buf[afp-1];
+      return buf[afp];
     }
     else {
       byte b = raf.readByte();
@@ -196,10 +196,10 @@ public class RandomAccessStream implements DataInput {
     }
     else if (status == ARRAY) {
       n = array.length;
-      if ((buf.length - afp + array.length) < array.length) {
-        n = buf.length - afp + array.length;
+      if ((buf.length - afp) < array.length) {
+        n = buf.length - afp;
       }        
-      System.arraycopy(buf, afp - array.length, array, 0, n);
+      System.arraycopy(buf, afp, array, 0, n);
     }
     else {
       n = raf.read(array);
@@ -219,8 +219,8 @@ public class RandomAccessStream implements DataInput {
       n = dis.read(array, offset, n);
     }
     else if (status == ARRAY) {
-      if ((buf.length - afp + n) < n) n = buf.length - afp + n;
-      System.arraycopy(buf, afp - n, array, offset, n);
+      if ((buf.length - afp) < n) n = buf.length - afp;
+      System.arraycopy(buf, afp, array, offset, n);
     }
     else {
       n = raf.read(array, offset, n);
@@ -238,7 +238,7 @@ public class RandomAccessStream implements DataInput {
       dis.readFully(array);
     }
     else if (status == ARRAY) {
-      System.arraycopy(buf, afp - array.length, array, 0, array.length);
+      System.arraycopy(buf, afp, array, 0, array.length);
     }
     else {
       if (raf instanceof RandomAccessArray) {
@@ -260,7 +260,7 @@ public class RandomAccessStream implements DataInput {
       dis.readFully(array, offset, n);
     }
     else if (status == ARRAY) {
-      System.arraycopy(buf, afp - n, array, offset, n);
+      System.arraycopy(buf, afp, array, offset, n);
     }
     else {
       if (raf instanceof RandomAccessArray) {
