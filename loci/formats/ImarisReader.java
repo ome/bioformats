@@ -78,6 +78,11 @@ public class ImarisReader extends FormatReader {
     return numImages;
   }
 
+  /** Checks if the images in the file are RGB. */
+  public boolean isRGB(String id) throws FormatException, IOException {
+    return false;
+  }        
+  
   /**
    * Obtains the specified image from the
    * given Imaris file as a byte array.

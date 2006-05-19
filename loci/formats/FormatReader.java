@@ -70,6 +70,10 @@ public abstract class FormatReader extends FormatHandler {
   public abstract int getImageCount(String id)
     throws FormatException, IOException;
 
+  /** Checks if the images in the file are RGB. */
+  public abstract boolean isRGB(String id)
+    throws FormatException, IOException;
+  
   /** Obtains the specified image from the given file. */
   public abstract BufferedImage openImage(String id, int no)
     throws FormatException, IOException;

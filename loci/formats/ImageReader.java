@@ -159,6 +159,12 @@ public class ImageReader extends FormatReader {
     return readers[index].getImageCount(id);
   }
 
+  /** Checks if the images in the file are RGB. */
+  public boolean isRGB(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return readers[index].isRGB(id);      
+  }         
+  
   /** Obtains the specified image from the given image file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException

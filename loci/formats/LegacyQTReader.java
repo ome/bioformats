@@ -286,6 +286,11 @@ public class LegacyQTReader extends FormatReader {
     return numImages;
   }
 
+  /** Checks if the images in the file are RGB. */
+  public boolean isRGB(String id) throws FormatException, IOException {
+    return true;
+  }        
+
   /** Obtains the specified image from the given QuickTime file. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException

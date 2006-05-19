@@ -64,7 +64,6 @@ public class LeicaReader extends FormatReader {
   /** Array of image file names. */
   protected String[] files;
 
-
   // -- Constructor --
 
   /** Constructs a new Leica reader. */
@@ -124,6 +123,11 @@ public class LeicaReader extends FormatReader {
     return numImages;
   }
 
+  /** Checks if the images in the file are RGB. */
+  public boolean isRGB(String id) throws FormatException, IOException {
+    return false; 
+  }        
+  
   /** Obtains the specified image from the given Leica file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException

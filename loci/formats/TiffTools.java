@@ -496,6 +496,7 @@ public abstract class TiffTools {
       }
       if (value != null) ifd.put(new Integer(tag), value);
     }
+    in.seek(globalOffset + offset + 2 + 12 * numEntries);
 
     return ifd;
   }

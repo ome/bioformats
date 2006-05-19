@@ -76,7 +76,8 @@ public class ZeissZVIReader extends FormatReader {
   private byte[] header; // general image header data
   private int nImages = 0;  // number of images
   private byte[] tags;  // tags data
-
+  private int channels;
+  
   // -- Fields used by parseDir --
   private int counter = 0;  // the number of the Image entry
   private int imageWidth = 0;
@@ -105,6 +106,12 @@ public class ZeissZVIReader extends FormatReader {
     return needLegacy ? legacy.getImageCount(id) : nImages;
   }
 
+  /** Checks if the images in the file are RGB. */
+  public boolean isRGB(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return channels > 1;
+  }        
+  
   /** Obtains the specified image from the given ZVI file, as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -157,7 +164,6 @@ public class ZeissZVIReader extends FormatReader {
     int numSamples = width*height;
     int[] bitsPerSample = {validBPP};
 
-    int channels;
     switch (pixelFormat) {
       case 1: channels = 3; break;
       case 2: channels = 4; break;
@@ -1129,6 +1135,8 @@ public class ZeissZVIReader extends FormatReader {
             case 8: bytesPerPixel = 6; break;
             default: bytesPerPixel = 1;
           }
+
+          if ((bytesPerPixel % 2) != 0) channels = 3;
         }
 
         else if (entryName.equals("Contents") &&
