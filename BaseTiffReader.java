@@ -456,6 +456,13 @@ public abstract class BaseTiffReader extends FormatReader {
     return numImages;
   }
 
+  /** Checks if the images in the file are RGB. */
+  public boolean isRGB(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return (TiffTools.getIFDIntValue(ifds[0], 
+      TiffTools.SAMPLES_PER_PIXEL, false, 1) > 1);      
+  }        
+  
   /** Obtains the specified image from the given TIFF file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException

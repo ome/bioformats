@@ -80,6 +80,11 @@ public class GatanReader extends FormatReader {
     return 1;
   }
 
+  /** Checks if the images in the file are RGB. */
+  public boolean isRGB(String id) throws FormatException, IOException {
+    return false;
+  }
+  
   /** Obtains the specified image from the given Gatan file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -124,7 +129,7 @@ public class GatanReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessStream(id);
-
+    
     littleEndian = false;
 
     byte[] temp = new byte[4];
@@ -198,7 +203,7 @@ public class GatanReader extends FormatReader {
       byte[] label = new byte[length];
       in.read(label);
       String labelString = new String(label);
-
+      
       // image data is in tag with type 21 and label 'Data'
       // image dimensions are in type 20 tag with 2 type 15 tags
       // bytes per pixel is in type 21 tag with label 'PixelDepth'
@@ -267,11 +272,11 @@ public class GatanReader extends FormatReader {
 
               byte check = 0;
               double bpp = 0.5;
-              //in.mark((int) (bpp * 50 * length));
               long pos = in.getFilePointer();
               while (check != 20 && check != 21) {
                 bpp *= 2;
                 in.seek(pos);
+
                 pixelData = new byte[(int) bpp * length];
                 in.read(pixelData);
                 check = in.readByte();

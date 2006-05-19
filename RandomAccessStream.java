@@ -361,7 +361,13 @@ public class RandomAccessStream implements DataInput {
         if (skip == 0) break;
         fp += skip;
       }
-     
+   
+      if (recent.size() < MAX_HISTORY) recent.add(new Integer(MAX_OVERHEAD));
+      else {
+        recent.remove(0);
+        recent.add(new Integer(MAX_OVERHEAD));
+      }
+
       if (fp >= nextMark) dis.mark(MAX_OVERHEAD);
       nextMark = fp + MAX_OVERHEAD;
       mark = fp;
@@ -370,7 +376,6 @@ public class RandomAccessStream implements DataInput {
     }
     else {
       if ((fp <= (mark + oldBufferSize)) && (afp >= mark) && (dis != null)) {
-
         int newBufferSize = determineBuffer();
 
         dis.reset();

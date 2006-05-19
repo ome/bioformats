@@ -56,6 +56,11 @@ public class LegacyPictReader extends FormatReader {
     return 1;
   }
 
+  /** Checks if the images in the file are RGB. */
+  public boolean isRGB(String id) throws FormatException, IOException {
+    return true;
+  }         
+  
   /** Obtains the specified image from the given file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException

@@ -255,7 +255,13 @@ public class QTReader extends FormatReader {
     if (!id.equals(currentId)) initFile(id);
     return numImages;
   }
-
+ 
+  /** Checks if the images in the file are RGB. */
+  public boolean isRGB(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return bitsPerPixel < 40;      
+  }
+  
   /** Obtains the specified image from the given QT file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -405,7 +411,7 @@ public class QTReader extends FormatReader {
     numParsed = 0;
     parse(0, 0, in.length());
     numImages = offsets.size();
-    in.skipBytes(globalOffset);
+    in.seek(globalOffset);
   }
 
 
@@ -414,6 +420,7 @@ public class QTReader extends FormatReader {
   /** Parse all of the atoms in the file. */
   public void parse(int depth, long offset, long length) throws IOException {
     while ((offset < length) && !allFound) {
+      /* debug */ System.out.println("offset : " + offset);
       in.seek(offset);
 
       // first 4 bytes are the atom size
@@ -424,6 +431,8 @@ public class QTReader extends FormatReader {
       in.read(four);
       String atomType = new String(four);
 
+      /* debug */ System.out.println("atom : " + atomType);
+      
       // if atomSize is 1, then there is an 8 byte extended size
       if (atomSize == 1) {
         atomSize = DataTools.read8SignedBytes(in, little);
@@ -441,7 +450,9 @@ public class QTReader extends FormatReader {
       }
       else {
         if (atomSize == 0) atomSize = in.length();
-
+  
+        /* debug */ System.out.println("atom size : " + atomSize);
+        
         if (!atomType.equals("mdat") && (atomType.equals("tkhd") ||
            atomType.equals("stco") || atomType.equals("stsd") ||
            atomType.equals("stsz") || atomType.equals("stts"))) {
@@ -471,6 +482,7 @@ public class QTReader extends FormatReader {
           int numPlanes = DataTools.bytesToInt(data, 4, little);
           if (numPlanes != numImages) {
             int off = DataTools.bytesToInt(data, 8, little);
+            /* debug */ System.out.println("adding offset : " + off);
             offsets.add(new Integer(off));
             for (int i=1; i<numImages; i++) {
               if ((chunkSizes.size() > 0) && (i < chunkSizes.size())) {
@@ -478,12 +490,14 @@ public class QTReader extends FormatReader {
               }
               else i = numImages;
               off += rawSize;
+              /* debug */ System.out.println("adding offset : " + off);
               offsets.add(new Integer(off));
             }
           }
           else {
             int j = 8;
             for (int i=0; i<numPlanes; i++) {
+              /* debug */ System.out.println("adding offset");
               offsets.add(new Integer(DataTools.bytesToInt(data, j, little)));
               j += 4;
             }

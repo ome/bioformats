@@ -46,6 +46,8 @@ public class PerkinElmerReader extends FormatReader {
   /** Tiff files to open. */
   protected String[] files;
 
+  /** Number of channels. */
+  private int channels;
 
   // -- Constructor --
 
@@ -67,6 +69,12 @@ public class PerkinElmerReader extends FormatReader {
     return numImages;
   }
 
+  /** Checks if the images in the file are RGB. */
+  public boolean isRGB(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return channels > 1;
+  }        
+  
   /** Obtains the specified image from the given file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -282,6 +290,8 @@ public class PerkinElmerReader extends FormatReader {
        tokenNum++;
      }
 
+     channels = Integer.parseInt(wavelengths);
+     
      // initialize OME-XML
 
      if (ome != null) {

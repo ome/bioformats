@@ -79,7 +79,9 @@ public class LegacyZVIReader extends FormatReader {
   /** List of image blocks. */
   private Vector blockList;
 
-
+  /** Number of channels. */
+  private int c;
+  
   // -- Constructor --
 
   /** Constructs a new legacy ZVI reader. */
@@ -104,6 +106,12 @@ public class LegacyZVIReader extends FormatReader {
     return blockList.size();
   }
 
+  /** Checks if the images in the file are RGB. */
+  public boolean isRGB(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return c > 1;
+  }
+  
   /** Obtains the specified image from the given ZVI file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -301,6 +309,8 @@ public class LegacyZVIReader extends FormatReader {
       blockList.add(zviBlock);
       pos += width * height * bytesPerPixel;
 
+      c = numC;
+      
       // initialize the OME-XML tree
 
       if (ome != null) {
