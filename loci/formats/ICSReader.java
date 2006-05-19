@@ -44,7 +44,7 @@ public class ICSReader extends FormatReader {
   protected String currentIdsId;
 
   /** Current file. */
-  protected DataInputStream idsIn; // IDS file
+  protected RandomAccessStream idsIn; // IDS file
   protected File icsIn; // ICS file
 
   /** Flag indicating whether current file is little endian. */
@@ -52,9 +52,6 @@ public class ICSReader extends FormatReader {
 
   /** Number of images. */
   protected int numImages;
-
-  /** IDS file length. */
-  private int fileLength;
 
   /**
    * Dimensions in the following order:
@@ -89,10 +86,7 @@ public class ICSReader extends FormatReader {
     return numImages;
   }
 
-  /**
-   * Obtains the bytes for the specified image from the given ICS file.
-   * Note : this method will be added to the FormatReader API.
-   */
+  /** Obtains the specified image from the given ICS file, as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
@@ -104,44 +98,19 @@ public class ICSReader extends FormatReader {
     int numSamples = width * height;
     int channels = 1;
 
-    if ((fileLength - idsIn.available()) < ((dimensions[0]/8)*width*height*no))
-    {
-      idsIn.skipBytes(idsIn.available() - fileLength +
-        ((dimensions[0]/8) * width * height));
-    }
-
+    idsIn.seek((dimensions[0] / 8) * width * height * no);
+    
     byte[] data = new byte[(dimensions[0]/8) * width * height];
     idsIn.readFully(data);
 
-    if(dimensions[0] == 8) {
-      // case for 8 bit data
-      return data;
-    }
-    else if(dimensions[0] == 16) {
-      // case for 16 bit data
-      byte[] rawData = new byte[channels * numSamples];
-      for (int i=0; i<rawData.length; i++) {
-        rawData[i] = (byte) DataTools.bytesToShort(data, 2 * i, littleEndian);
-      }
-      return rawData;
-    }
-    else if(dimensions[0] == 32) {
-      // case for 32 bit data -- could be broken
-      byte[] rawData = new byte[channels * numSamples];
-      for (int i=0; i<rawData.length; i++) {
-        rawData[i] = (byte) DataTools.bytesToInt(data, 4 * i, littleEndian);
-      }
-      return rawData;
-    }
-    else throw new FormatException("Sorry, " +
-      dimensions[0] + " bits per sample is not supported");
+    return data;
   }
 
   /** Obtains the specified image from the given ICS file. */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    if(!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
+    if (!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
 
     byte[] data = openBytes(id, no);
     int width = dimensions[1];
@@ -149,7 +118,8 @@ public class ICSReader extends FormatReader {
     int numSamples = width * height;
     int channels = 1;
 
-    return ImageTools.makeImage(data, width, height, channels, false);
+    return ImageTools.makeImage(data, width, height, channels, false, 
+      dimensions[0] / 8, littleEndian);
   }
 
   /** Closes any open files. */
@@ -191,9 +161,7 @@ public class ICSReader extends FormatReader {
     currentIdsId = idsId;
 
     icsIn = icsFile;
-    idsIn = new DataInputStream(
-      new BufferedInputStream(new FileInputStream(currentIdsId), 4096));
-    fileLength = idsIn.available();
+    idsIn = new RandomAccessStream(idsId);
 
     BufferedReader reader = new BufferedReader(new FileReader(icsIn));
     String line = reader.readLine();

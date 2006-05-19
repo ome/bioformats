@@ -176,23 +176,7 @@ public class OMEXMLReader extends FormatReader {
 
     // handle varying bytes per pixel
 
-    if (bpp == 2) {
-      short[] bytes = new short[pixels.length / 2];
-      for (int i=0; i<pixels.length; i+=2) {
-        if ((i/2) < bytes.length) {
-          bytes[i/2] = DataTools.bytesToShort(pixels, i, littleEndian);
-        }
-      }
-      return ImageTools.makeImage(bytes, width, height, channels, false);
-    }
-    else if (bpp == 4) {
-      int[] bytes = new int[pixels.length / 4];
-      for (int i=0; i<pixels.length; i+=4) {
-        bytes[i/4] = DataTools.bytesToInt(pixels, i, littleEndian);
-      }
-    }
-
-    return ImageTools.makeImage(pixels, width, height, channels, false);
+    return ImageTools.makeImage(pixels, width, height, channels, false, bpp, littleEndian);
   }
 
   /** Closes any open files. */

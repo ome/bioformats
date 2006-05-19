@@ -133,31 +133,8 @@ public class LIFReader extends FormatReader {
 
     in.read(data);
 
-    // pack the data appropriately
-
-    if (bps <= 8) {
-      return ImageTools.makeImage(data, width, height, c, false);
-    }
-    else if (bps <= 16) {
-      short[] shortData = new short[width*height*c];
-      for (int i=0; i<data.length; i+=2) {
-        shortData[i/2] = DataTools.bytesToShort(data, i, littleEndian);
-      }
-
-      return ImageTools.makeImage(shortData, width, height, c, false);
-    }
-    else if (bps <= 32) {
-      float[] floatData = new float[width*height*c];
-      for (int i=0; i<data.length; i+=4) {
-        floatData[i/4] =
-          Float.intBitsToFloat(DataTools.bytesToInt(data, i, littleEndian));
-      }
-      return ImageTools.makeImage(floatData, width, height, c, false);
-    }
-    else {
-      throw new FormatException("Sorry, bits per sample " + bps +
-        " not supported");
-    }
+    return ImageTools.makeImage(data, width, height, c, false, 
+      bps / 8, littleEndian);
   }
 
   /** Closes any open files. */

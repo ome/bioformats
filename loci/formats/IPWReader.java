@@ -68,7 +68,7 @@ public class IPWReader extends BaseTiffReader {
   private byte[] header;  // general image header data
   private byte[] tags; // tags data
   private Hashtable allIFDs;
-  private DataInputStream ra;
+  private RandomAccessStream ra;
 
   private int totalBytes= 0;
 
@@ -113,9 +113,7 @@ public class IPWReader extends BaseTiffReader {
     }
     byte[] pixels = (byte[]) pixelData.get(new Integer(no));
     ifds = (Hashtable[]) allIFDs.get(new Integer(no));
-    ra = new DataInputStream(new BufferedInputStream(
-      new ByteArrayInputStream(pixels), 4096));
-    ra.mark(pixels.length);
+    ra = new RandomAccessStream(pixels);
     return TiffTools.getImage(ifds[0], ra);
   }
 
@@ -130,8 +128,7 @@ public class IPWReader extends BaseTiffReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (noPOI) throw new FormatException(NO_POI_MSG);
     currentId = id;
-    in = new DataInputStream(new BufferedInputStream(
-      new FileInputStream(id), 4096));
+    in = new RandomAccessStream(id);
     metadata = new Hashtable();
     ome = OMETools.createRoot();
 
@@ -145,8 +142,7 @@ public class IPWReader extends BaseTiffReader {
       parseDir(0, r.getVar("dir"));
       for(int i=0; i<pixelData.size(); i++) {
         Integer key = new Integer(i);
-        ra = new DataInputStream(new BufferedInputStream(
-          new ByteArrayInputStream((byte[]) pixelData.get(key)), 4096));
+        ra = new RandomAccessStream((byte[]) pixelData.get(key));
         allIFDs.put(key, TiffTools.getIFDs(ra));
       }
       initMetadata(id);

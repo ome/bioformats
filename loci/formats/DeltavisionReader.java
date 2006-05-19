@@ -116,37 +116,8 @@ public class DeltavisionReader extends FormatReader {
 
     in.read(rawData);
 
-    if (bytesPerPixel == 1) {
-      return ImageTools.makeImage(rawData, width, height, channels, false);
-    }
-    else if (bytesPerPixel == 2) {
-      short[] data = new short[numSamples];
-      short q;
-      for (int i=0; i<rawData.length; i+=2) {
-        q = DataTools.bytesToShort(rawData, i, 2, little);
-        data[i/2] = q;
-      }
-      return ImageTools.makeImage(data, width, height, channels, false);
-    }
-    else if (bytesPerPixel == 4) {
-      int[] data = new int[numSamples];
-      int q;
-      for (int i=0; i<rawData.length; i+=4) {
-        q = DataTools.bytesToInt(rawData, i, little);
-        data[i/4] = q;
-      }
-      return ImageTools.makeImage(data, width, height, channels, false);
-    }
-    else if (bytesPerPixel == 8) {
-      // Applied Precision doesn't provide support for 64 bit data,
-      // so we won't either
-      throw new FormatException("Sorry, 64 bit pixel data not supported.");
-    }
-    else {
-      // this should never happen
-      throw new FormatException("Unknown pixel depth : " + bytesPerPixel +
-        " bytes per pixel.");
-    }
+    return ImageTools.makeImage(rawData, width, height, channels, 
+      false, bytesPerPixel, little);
   }
 
   /** Closes any open files. */

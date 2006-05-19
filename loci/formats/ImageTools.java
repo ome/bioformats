@@ -47,6 +47,43 @@ public abstract class ImageTools {
   // -- Image construction --
 
   /**
+   * Creates an image from the given data, performing type conversions as
+   * necessary.
+   * If the interleaved flag is set, the channels are assumed to be
+   * interleaved; otherwise they are assumed to be sequential.
+   * For example, for RGB data, the pattern "RGBRGBRGB..." is interleaved,
+   * while "RRR...GGG...BBB..." is sequential.
+   */
+  public static BufferedImage makeImage(byte[] data, int w, int h, int c,
+    boolean interleaved, int bps, boolean little)
+  {
+    if (bps == 1) return makeImage(data, w, h, c, interleaved);        
+    else if (bps == 2) {
+      short[] shorts = new short[data.length / bps];
+      for (int i=0; i<shorts.length; i++) {
+        shorts[i] = DataTools.bytesToShort(data, i*2, 2, little); 
+      }        
+      return makeImage(shorts, w, h, c, interleaved);
+    }
+    else if (bps == 4) {
+      float[] floats = new float[data.length / bps];
+      for (int i=0; i<floats.length; i++) {
+        floats[i] = 
+          Float.intBitsToFloat(DataTools.bytesToInt(data, i*4, 4, little));
+      }        
+      return makeImage(floats, w, h, c, interleaved);   
+    }
+    else {
+      double[] doubles = new double[data.length / bps];
+      for (int i=0; i<doubles.length; i++) {
+         doubles[i] = Double.longBitsToDouble(
+           DataTools.bytesToLong(data, i*bps, bps, little));       
+      }    
+      return makeImage(doubles, w, h, c, interleaved);
+    }      
+  }
+  
+  /**
    * Creates an image from the given unsigned byte data.
    * If the interleaved flag is set, the channels are assumed to be
    * interleaved; otherwise they are assumed to be sequential.
@@ -169,6 +206,49 @@ public abstract class ImageTools {
     DataBuffer buffer = new DataBufferDouble(data, c * w * h);
     WritableRaster raster = Raster.createWritableRaster(model, buffer, null);
     return new BufferedImage(colorModel, raster, false, null);
+  }
+
+  /**
+   * Creates an image from the given data, performing type conversions as
+   * necessary.
+   * If the interleaved flag is set, the channels are assumed to be
+   * interleaved; otherwise they are assumed to be sequential.
+   * For example, for RGB data, the pattern "RGBRGBRGB..." is interleaved,
+   * while "RRR...GGG...BBB..." is sequential.
+   */
+  public static BufferedImage makeImage(byte[][] data, int w, int h,
+    int bps, boolean little)
+  {
+    if (bps == 1) return makeImage(data, w, h);        
+    else if (bps == 2) {
+      short[][] shorts = new short[data.length][data[0].length / bps];
+      for (int i=0; i<shorts.length; i++) {
+        for (int j=0; j<shorts[0].length; j++) {
+          shorts[i][j] = DataTools.bytesToShort(data[i], j*2, 2, little); 
+        } 
+      }  
+      return makeImage(shorts, w, h);
+    }
+    else if (bps == 4) {
+      float[][] floats = new float[data.length][data[0].length / bps];
+      for (int i=0; i<floats.length; i++) {
+        for (int j=0; j<floats[0].length; j++) {  
+            floats[i][j] = Float.intBitsToFloat(
+              DataTools.bytesToInt(data[i], j*4, 4, little));
+        } 
+      }
+      return makeImage(floats, w, h);   
+    }
+    else {
+      double[][] doubles = new double[data.length][data[0].length / bps];
+      for (int i=0; i<doubles.length; i++) {
+        for (int j=0; j<doubles[0].length; j++) {     
+           doubles[i][j] = Double.longBitsToDouble(
+             DataTools.bytesToLong(data[i], j*bps, bps, little));    
+        }  
+      }    
+      return makeImage(doubles, w, h);
+    }      
   }
 
   /**

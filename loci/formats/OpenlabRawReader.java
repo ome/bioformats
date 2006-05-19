@@ -100,30 +100,16 @@ public class OpenlabRawReader extends FormatReader {
 
     byte[] data = new byte[width*height*bpp];
     in.read(data);
-
+   
     if (bpp == 1) {
       // need to invert the pixels
       for (int i=0; i<data.length; i++) {
         data[i] = (byte) (255 - data[i]);
       }
-      return ImageTools.makeImage(data, width, height, channels, false);
-    }
-    else if (bpp == 2) {
-      short[] shortData = new short[width*height];
-      for (int i=0; i<data.length; i+=2) {
-        shortData[i/2] = DataTools.bytesToShort(data, i, 2, false);
-      }
-      return ImageTools.makeImage(shortData, width, height, channels, false);
-    }
-    else if (bpp == 4) {
-      float[] floatData = new float[width*height];
-      for (int i=0; i<data.length; i+=4) {
-        floatData[i/2] =
-          Float.intBitsToFloat(DataTools.bytesToInt(data, i, 4, false));
-      }
-      return ImageTools.makeImage(floatData, width, height, channels, false);
-    }
-    else throw new FormatException("Unsupported bytes per pixel : " + bpp);
+    }        
+
+    return ImageTools.makeImage(data, width, height, channels, 
+      false, bpp, false);
   }
 
   /** Closes any open files. */

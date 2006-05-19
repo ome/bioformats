@@ -164,30 +164,12 @@ public class BioRadReader extends FormatReader {
     // read image bytes
     int imageLen = nx * ny;
     byte[] data = new byte[imageLen * ((byteFormat) ? 1 : 2)];
+    int offset = no * imageLen;
+    if (byteFormat) offset *= 2;
+    in.readFully(data);
 
-    if (byteFormat) {
-      // jump to proper image number
-
-      in.seek(no * imageLen + 76);
-      in.readFully(data);
-
-      // each pixel is 8 bits
-      return ImageTools.makeImage(data, nx, ny, 1, false);
-    }
-    else {
-      // jump to proper image number
-
-      // read in 2 * imageLen bytes
-      in.seek(no * 2 * imageLen + 76);
-      in.readFully(data);
-
-      // each pixel is 16 bits
-      short[] pixs = new short[imageLen];
-      for(int i=0; i<pixs.length; i++) {
-        pixs[i] = DataTools.bytesToShort(data, 2 * i, LITTLE_ENDIAN);
-      }
-      return ImageTools.makeImage(pixs, nx, ny, 1, false);
-    }
+    return ImageTools.makeImage(data, nx, ny, 1, false, 
+      byteFormat ? 1 : 2, LITTLE_ENDIAN);
   }
 
   /** Closes any open files. */

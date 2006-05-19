@@ -109,31 +109,8 @@ public class GatanReader extends FormatReader {
 
     int numSamples = width * height;
 
-    // supporting 8, 16, and 32 bit data
-
-    if (dims[2] == 1) {
-      return ImageTools.makeImage(pixelData, width, height, channels, false);
-    }
-    else if (dims[2] == 2) {
-      short[] data = new short[numSamples];
-      for (int i=0; i<pixelData.length; i+=2) {
-        data[i/2] = DataTools.bytesToShort(pixelData, i, littleEndian);
-      }
-      return ImageTools.makeImage(data, width, height, channels, false);
-    }
-    else if (dims[2] == 4) {
-      // this could be broken, since we don't have any 32 bit samples
-      // however, I'm pretty sure it will work
-      int[] data = new int[numSamples];
-      for (int i=0; i<pixelData.length; i+=4) {
-        data[i/4] = DataTools.bytesToInt(pixelData, i, 4, littleEndian);
-      }
-      return ImageTools.makeImage(data, width, height, channels, false);
-    }
-    else {
-      throw new FormatException("Sorry, " + dims[2] +
-        " bytes per pixel is unsupported.");
-    }
+    return ImageTools.makeImage(pixelData, width, height, channels, 
+      false, dims[2], littleEndian);
   }
 
   /** Closes any open files. */
