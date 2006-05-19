@@ -115,27 +115,8 @@ public class IPLabReader extends FormatReader {
     byte[] rawData = new byte[numPixels * bps];
     in.readFully(rawData);
 
-    if (bps == 1) {
-      return ImageTools.makeImage(rawData, width, height, c, false);
-    }
-    else if (bps == 2) {
-      short[] data = new short[c * numPixels];
-      for (int i=0; i<rawData.length; i+=2) {
-        data[i/2] = DataTools.bytesToShort(rawData, i, littleEndian);
-      }
-      return ImageTools.makeImage(data, width, height, c, false);
-    }
-    else if (bps == 4) {
-      float[] floatData = new float[c * numPixels];
-      for (int i=0; i<rawData.length; i+=4) {
-        floatData[i/4] =
-          Float.intBitsToFloat(DataTools.bytesToInt(rawData, i, littleEndian));
-      }
-      return ImageTools.makeImage(floatData, width, height, c, false);
-    }
-    else throw new FormatException("Sorry, " +
-      bps + " bits per sample is not supported");
-
+    return ImageTools.makeImage(rawData, width, height, c, false, 
+      bps, littleEndian);
   }
 
   /** Closes any open files. */

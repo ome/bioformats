@@ -190,259 +190,48 @@ public class NikonReader extends BaseTiffReader {
 
     // now look for the EXIF IFD pointer
 
-    int exif = TiffTools.getIFDIntValue(ifds[0], EXIF_IFD_POINTER);
-    if (exif != -1) {
-      Hashtable exifIFD = parseIFD(exif);
+    try {
+      int exif = TiffTools.getIFDIntValue(ifds[0], EXIF_IFD_POINTER);
+      if (exif != -1) {
+        Hashtable exifIFD = TiffTools.getIFD(in, 0, 0, exif, littleEndian);
+            
+        // put all the EXIF data in the metadata hashtable
 
-      // put all the EXIF data in the metadata hashtable
+        if (exifIFD != null) {
+          Enumeration e = exifIFD.keys();
+          Integer key;
+          String id;
+          while (e.hasMoreElements()) {
+            key = (Integer) e.nextElement();
+            int tag = key.intValue();
+            metadata.put(getTagName(tag), exifIFD.get(key));
+          }
+        }
+      }
+    }
+    catch (IOException io) { }
 
-      if (exifIFD != null) {
-        Enumeration e = exifIFD.keys();
+    // read the maker note
+
+    try {
+      Hashtable makerNote = 
+        TiffTools.getIFD(in, 0, 0, makerNoteOffset, littleEndian); 
+      if (makerNote != null) {
+        Enumeration e = makerNote.keys();
         Integer key;
         String id;
         while (e.hasMoreElements()) {
           key = (Integer) e.nextElement();
           int tag = key.intValue();
-          metadata.put(getTagName(tag), exifIFD.get(key));
+          metadata.put(getTagName(tag), makerNote.get(key));
         }
       }
     }
-
-    // read the maker note
-
-    Hashtable makerNote = parseIFD(makerNoteOffset);
-    if (makerNote != null) {
-      Enumeration e = makerNote.keys();
-      Integer key;
-      String id;
-      while (e.hasMoreElements()) {
-        key = (Integer) e.nextElement();
-        int tag = key.intValue();
-        metadata.put(getTagName(tag), makerNote.get(key));
-      }
-    }
+    catch (IOException io) { }
   }
 
 
   // -- Helper methods --
-
-  /** Parse an IFD from the given offset. */
-  private Hashtable parseIFD(int offset) {
-    try {
-      in = new DataInputStream(
-        new BufferedInputStream(new FileInputStream(currentId), 4096));
-      in.skipBytes(offset);
-      in.mark(fileLength);
-
-      Hashtable newIFD = new Hashtable();
-      int numEntries = DataTools.read2UnsignedBytes(in, littleEndian);
-      for (int i=0; i<numEntries; i++) {
-        int tag = DataTools.read2UnsignedBytes(in, littleEndian);
-        int type = DataTools.read2UnsignedBytes(in, littleEndian);
-        int count = (int) DataTools.read4UnsignedBytes(in, littleEndian);
-        if (count < 0) break; // invalid data
-        Object value = null;
-
-        if (tag == MAKER_NOTE) {
-          int pos = fileLength - in.available() - offset;
-          makerNoteOffset =
-            (int) DataTools.read4UnsignedBytes(in, littleEndian);
-          in.reset();
-          in.mark(fileLength);
-          in.skipBytes(pos);
-        }
-
-        long pos = fileLength - in.available() + 4;
-
-        if (type == TiffTools.BYTE) {
-          // 8-bit unsigned integer
-          short[] bytes = new short[count];
-          if (count > 4) {
-            int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
-            in.reset();
-            in.mark(fileLength);
-            in.skipBytes(pointer);
-          }
-          for (int j=0; j<count; j++) {
-            bytes[j] = DataTools.readUnsignedByte(in);
-          }
-          if (bytes.length == 1) value = new Short(bytes[0]);
-          else value = bytes;
-        }
-        else if (type == TiffTools.ASCII) {
-          // 8-bit byte that contain a 7-bit ASCII code;
-          // the last byte must be NUL (binary zero)
-          byte[] ascii = new byte[count];
-          if (count > 4) {
-            int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
-            in.reset();
-            in.mark(fileLength);
-            in.skipBytes(pointer);
-          }
-          in.readFully(ascii);
-
-          // count number of null terminators
-          int nullCount = 0;
-          for (int j=0; j<count; j++) if (ascii[j] == 0) nullCount++;
-
-          // convert character array to array of strings
-          String[] strings = new String[nullCount];
-          int c = 0, ndx = -1;
-          for (int j=0; j<count; j++) {
-            if (ascii[j] == 0) {
-              strings[c++] = new String(ascii, ndx + 1, j - ndx - 1);
-              ndx = j;
-            }
-          }
-          if (strings.length == 1) value = strings[0];
-          else value = strings;
-        }
-        else if (type == TiffTools.SHORT) {
-          // 16-bit (2-byte) unsigned integer
-
-          int[] shorts = new int[count];
-          if (count > 2) {
-            int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
-            in.reset();
-            in.mark(fileLength);
-            in.skipBytes(pointer);
-          }
-          for (int j=0; j<count; j++) {
-            shorts[j] = DataTools.read2UnsignedBytes(in, littleEndian);
-          }
-          if (shorts.length == 1) value = new Integer(shorts[0]);
-          else value = shorts;
-        }
-        else if (type == TiffTools.LONG) {
-          // 32-bit (4-byte) unsigned integer
-          long[] longs = new long[count];
-          if (count > 1) {
-            int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
-            in.reset();
-            in.mark(fileLength);
-            in.skipBytes(pointer);
-          }
-          for (int j=0; j<count; j++) {
-            longs[j] = DataTools.read4UnsignedBytes(in, littleEndian);
-          }
-          if (longs.length == 1) value = new Long(longs[0]);
-          else value = longs;
-        }
-        else if (type == TiffTools.RATIONAL) {
-          // Two LONGs: the first represents the numerator of a fraction;
-          // the second, the denominator
-          TiffRational[] rationals = new TiffRational[count];
-          int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
-          in.reset();
-          in.mark(fileLength);
-          in.skipBytes(pointer);
-          for (int j=0; j<count; j++) {
-            long numer = DataTools.read4UnsignedBytes(in, littleEndian);
-            long denom = DataTools.read4UnsignedBytes(in, littleEndian);
-            rationals[j] = new TiffRational(numer, denom);
-          }
-          if (rationals.length == 1) value = rationals[0];
-          else value = rationals;
-        }
-        else if (type == TiffTools.SBYTE || type == TiffTools.UNDEFINED) {
-          // SBYTE: An 8-bit signed (twos-complement) integer
-          // UNDEFINED: An 8-bit byte that may contain anything,
-          // depending on the definition of the field
-          byte[] sbytes = new byte[count];
-          if (count > 4) {
-            int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
-            in.reset();
-            in.mark(fileLength);
-            in.skipBytes(pointer);
-          }
-          in.readFully(sbytes);
-          if (sbytes.length == 1) value = new Byte(sbytes[0]);
-          else value = sbytes;
-        }
-        else if (type == TiffTools.SSHORT) {
-          // A 16-bit (2-byte) signed (twos-complement) integer
-          short[] sshorts = new short[count];
-          if (count > 2) {
-            int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
-            in.reset();
-            in.mark(fileLength);
-            in.skipBytes(pointer);
-          }
-          for (int j=0; j<count; j++) {
-            sshorts[j] = DataTools.read2SignedBytes(in, littleEndian);
-          }
-          if (sshorts.length == 1) value = new Short(sshorts[0]);
-          else value = sshorts;
-        }
-        else if (type == TiffTools.SLONG) {
-          // A 32-bit (4-byte) signed (twos-complement) integer
-          int[] slongs = new int[count];
-          if (count > 1) {
-            int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
-            in.reset();
-            in.mark(fileLength);
-            in.skipBytes(pointer);
-          }
-          for (int j=0; j<count; j++) {
-            slongs[j] = DataTools.read4SignedBytes(in, littleEndian);
-          }
-          if (slongs.length == 1) value = new Integer(slongs[0]);
-          else value = slongs;
-        }
-        else if (type == TiffTools.SRATIONAL) {
-          // Two SLONG's: the first represents the numerator of a fraction,
-          // the second the denominator
-          TiffRational[] srationals = new TiffRational[count];
-          int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
-          in.reset();
-          in.mark(fileLength);
-          in.skipBytes(pointer);
-          for (int j=0; j<count; j++) {
-            int numer = DataTools.read4SignedBytes(in, littleEndian);
-            int denom = DataTools.read4SignedBytes(in, littleEndian);
-            srationals[j] = new TiffRational(numer, denom);
-          }
-          if (srationals.length == 1) value = srationals[0];
-          else value = srationals;
-        }
-        else if (type == TiffTools.FLOAT) {
-          // Single precision (4-byte) IEEE format
-          float[] floats = new float[count];
-          if (count > 1) {
-            int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
-            in.reset();
-            in.mark(fileLength);
-            in.skipBytes(pointer);
-          }
-          for (int j=0; j<count; j++) {
-            floats[j] = DataTools.readFloat(in, littleEndian);
-          }
-          if (floats.length == 1) value = new Float(floats[0]);
-          else value = floats;
-        }
-        else if (type == TiffTools.DOUBLE) {
-          // Double precision (8-byte) IEEE format
-          double[] doubles = new double[count];
-          int pointer = (int) DataTools.read4UnsignedBytes(in, littleEndian);
-          in.reset();
-          in.mark(fileLength);
-          in.skipBytes(pointer);
-          for (int j=0; j<count; j++) {
-            doubles[j] = DataTools.readDouble(in, littleEndian);
-          }
-          if (doubles.length == 1) value = new Double(doubles[0]);
-          else value = doubles;
-        }
-        in.reset();
-        in.mark(fileLength);
-        in.skipBytes((int) (pos - in.available()));
-        if (value != null) newIFD.put(new Integer(tag), value);
-      }
-      return newIFD;
-    }
-    catch (Exception e) { e.printStackTrace(); }
-    return null;
-  }
 
   /** Gets the name of the IFD tag encoded by the given number. */
   private String getTagName(int tag) {
