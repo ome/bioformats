@@ -338,7 +338,7 @@ public class RandomAccessStream implements DataInput {
   protected int checkEfficiency(int toRead) throws IOException {
     int oldBufferSize = ((Integer) recent.get(recent.size() - 1)).intValue();
 
-    if ((afp + toRead) < MAX_OVERHEAD) {
+    if (((afp + toRead) < MAX_OVERHEAD) && (afp + toRead < raf.length())) {
       // this is a really special case that allows us to read directly from
       // an array when working with the first MAX_OVERHEAD bytes of the file
       // ** also note that it doesn't change the stream
@@ -347,15 +347,15 @@ public class RandomAccessStream implements DataInput {
       return ARRAY;
     }
     else if (afp >= fp) {
-      int fpOld = fp;
       while (fp < afp) {
         int skip = dis.skipBytes(afp - fp);
         if (skip == 0) break;
         fp += skip;
       }
 
-      afp += fp - fpOld; // only skip number of bytes actually skipped
-
+      if (fp == afp) fp += toRead;
+      afp += toRead;
+     
       if (fp >= nextMark) dis.mark(MAX_OVERHEAD);
       nextMark = fp + MAX_OVERHEAD;
       mark = fp;
@@ -371,15 +371,15 @@ public class RandomAccessStream implements DataInput {
         dis.mark(newBufferSize);
         fp = mark;
 
-        int fpOld = fp;
         while (fp < afp) {
           int skip = dis.skipBytes(afp - fp);
           if (skip == 0) break;
           fp += skip;
         }
 
-        afp += fp - fpOld; // only skip number of bytes actually skipped
-
+        if (fp == afp) fp += toRead;
+        afp += toRead;
+        
         if (fp >= nextMark) dis.mark(newBufferSize);
         nextMark = fp + newBufferSize;
         mark = fp;
