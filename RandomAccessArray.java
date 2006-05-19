@@ -46,7 +46,7 @@ public class RandomAccessArray extends RandomAccessFile {
   // -- Constructor --
 
   public RandomAccessArray(byte[] b) throws FileNotFoundException {
-    super((String) null, null);
+    super((String) "RandomAccessArray.java", "r");  // this does nothing
     setStream(b);
   }
 
