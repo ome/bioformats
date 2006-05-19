@@ -114,7 +114,9 @@ public class RandomAccessStream implements DataInput {
     if (afp < raf.length() - 1) afp++;
     
     if (status == DIS) {
-      return dis.readByte();
+      byte b = dis.readByte();
+      fp++;
+      return b;
     }
     else if (status == ARRAY) {
       return buf[oldAFP];
