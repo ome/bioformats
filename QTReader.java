@@ -25,8 +25,7 @@ package loci.formats;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Vector;
 import javax.imageio.ImageIO;
 
@@ -177,7 +176,7 @@ public class QTReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  private RandomAccessStream in;
+  private RandomAccessFile in;
 
   /** Flag indicating whether the current file is little endian. */
   private boolean little = false;
@@ -185,11 +184,8 @@ public class QTReader extends FormatReader {
   /** Number of images in the file. */
   private int numImages;
 
-  /** Global offset to pixel data. */
-  private int globalOffset;
-
-  /** Number of bytes of pixel data. */
-  private int numPixelBytes;
+  /** Pixel data stored in "mdat" atom. */
+  private byte[] pixels;
 
   /** Width of a single plane. */
   private int width;
@@ -202,15 +198,6 @@ public class QTReader extends FormatReader {
 
   /** Raw plane size, in bytes. */
   private int rawSize;
-
-  /** Flag indicating that we've found all the data we need. */
-  private boolean allFound;
-
-  /** Flag indicating that we've found the pixel data. */
-  private boolean foundPixels;
-
-  /** Number of relevant atoms parsed. */
-  private int numParsed;
 
   /** Offsets to each plane's pixel data. */
   private Vector offsets;
@@ -233,9 +220,6 @@ public class QTReader extends FormatReader {
   /** Set to true if the scanlines in a plane are interlaced (mjpb only). */
   private boolean interlaced;
 
-  /** The constructed header for an mjpb plane. */
-  private ByteVector v;
-
 
   // -- Constructor --
 
@@ -255,21 +239,26 @@ public class QTReader extends FormatReader {
     if (!id.equals(currentId)) initFile(id);
     return numImages;
   }
- 
+
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return bitsPerPixel < 40;      
   }
   
-  /** Obtains the specified image from the given QT file as a byte array. */
-  public byte[] openBytes(String id, int no)
+  /** Obtains the specified image from the given file, as a byte array. */
+  public byte[] openBytes(String id, int no) 
     throws FormatException, IOException
   {
-    throw new FormatException("QTReader.openBytes(String, int) " +
-      "not implemented");
-  }
+    if (!id.equals(currentId)) initFile(id);
+    if (no < 0 || no >= getImageCount(id)) {
+      throw new FormatException("Invalid image number: " + no);
+    }        
 
+    throw new FormatException("QTReader.openBytes(String, int) " + 
+      "not implemented");
+  }  
+  
   /** Obtains the specified image from the given QuickTime file. */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
@@ -290,7 +279,7 @@ public class QTReader extends FormatReader {
     }
 
     int offset = ((Integer) offsets.get(no)).intValue();
-    int nextOffset = numPixelBytes;
+    int nextOffset = pixels.length;
 
     if (no == 0) {
       scale = offset;
@@ -311,8 +300,11 @@ public class QTReader extends FormatReader {
 
     byte[] pixs = new byte[nextOffset - offset];
 
-    in.seek(globalOffset + offset);
-    in.read(pixs);
+    for (int i=0; i<pixs.length; i++) {
+      if ((offset + i) < pixels.length) {
+        pixs[i] = pixels[offset + i];
+      }
+    }
 
     if (codec.equals("jpeg")) return bufferedJPEG(pixs);
     else if (codec.equals("mjpb")) return mjpbUncompress(pixs);
@@ -347,7 +339,7 @@ public class QTReader extends FormatReader {
       }
     }
 
-    if (bitsPerPixel == 40) {
+    if ((bitsPerPixel == 40) && !codec.equals("mjpb")) {
       // invert the pixels
       for (int i=0; i<bytes.length; i++) {
         bytes[i] = (byte) (255 - bytes[i]);
@@ -402,16 +394,11 @@ public class QTReader extends FormatReader {
   /** Initializes the given QuickTime file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessStream(id);
-
+    in = new RandomAccessFile(id, "r");
     offsets = new Vector();
     chunkSizes = new Vector();
-    allFound = false;
-    foundPixels = false;
-    numParsed = 0;
     parse(0, 0, in.length());
     numImages = offsets.size();
-    in.seek(globalOffset);
   }
 
 
@@ -419,20 +406,17 @@ public class QTReader extends FormatReader {
 
   /** Parse all of the atoms in the file. */
   public void parse(int depth, long offset, long length) throws IOException {
-    while ((offset < length) && !allFound) {
-      /* debug */ System.out.println("offset : " + offset);
+    while (offset < length) {
       in.seek(offset);
-
+      
       // first 4 bytes are the atom size
       long atomSize = DataTools.read4UnsignedBytes(in, little);
-
+      
       // read the atom type
       byte[] four = new byte[4];
       in.read(four);
       String atomType = new String(four);
 
-      /* debug */ System.out.println("atom : " + atomType);
-      
       // if atomSize is 1, then there is an 8 byte extended size
       if (atomSize == 1) {
         atomSize = DataTools.read8SignedBytes(in, little);
@@ -450,26 +434,16 @@ public class QTReader extends FormatReader {
       }
       else {
         if (atomSize == 0) atomSize = in.length();
-  
-        /* debug */ System.out.println("atom size : " + atomSize);
-        
-        if (!atomType.equals("mdat") && (atomType.equals("tkhd") ||
-           atomType.equals("stco") || atomType.equals("stsd") ||
-           atomType.equals("stsz") || atomType.equals("stts"))) {
-          data = new byte[(int) atomSize];
-          in.read(data);
-        }
+        data = new byte[(int) atomSize];
+        in.read(data);
 
         if (atomType.equals("mdat")) {
-          numParsed++;
-          foundPixels = true;
-          globalOffset = in.getFilePointer();
-          numPixelBytes = (int) atomSize;
+          // we've found the pixel data
+          pixels = data;
         }
         else if (atomType.equals("tkhd")) {
           // we've found the dimensions
 
-          numParsed++;
           int off = 74;
           width = DataTools.bytesToInt(data, off, little);
           off += 4;
@@ -478,11 +452,9 @@ public class QTReader extends FormatReader {
         else if (atomType.equals("stco")) {
           // we've found the plane offsets
 
-          numParsed++;
           int numPlanes = DataTools.bytesToInt(data, 4, little);
           if (numPlanes != numImages) {
-            int off = DataTools.bytesToInt(data, 8, little);
-            /* debug */ System.out.println("adding offset : " + off);
+            int off = DataTools.bytesToInt(data, 4, little);
             offsets.add(new Integer(off));
             for (int i=1; i<numImages; i++) {
               if ((chunkSizes.size() > 0) && (i < chunkSizes.size())) {
@@ -490,14 +462,12 @@ public class QTReader extends FormatReader {
               }
               else i = numImages;
               off += rawSize;
-              /* debug */ System.out.println("adding offset : " + off);
               offsets.add(new Integer(off));
             }
           }
           else {
             int j = 8;
             for (int i=0; i<numPlanes; i++) {
-              /* debug */ System.out.println("adding offset");
               offsets.add(new Integer(DataTools.bytesToInt(data, j, little)));
               j += 4;
             }
@@ -505,8 +475,8 @@ public class QTReader extends FormatReader {
         }
         else if (atomType.equals("stsd")) {
           // found video codec and pixel depth information
-          numParsed++;
           codec = new String(data, 12, 4);
+          
           int fieldsPerPlane = DataTools.bytesToInt(data, 102, 1, little);
           interlaced = fieldsPerPlane == 2;
           bitsPerPixel = DataTools.bytesToInt(data, 90, 2, little);
@@ -514,7 +484,6 @@ public class QTReader extends FormatReader {
           metadata.put("Bits per pixel", new Integer(bitsPerPixel));
         }
         else if (atomType.equals("stsz")) {
-          numParsed++;
           // found the number of planes
           rawSize = DataTools.bytesToInt(data, 4, 4, little);
           numImages = DataTools.bytesToInt(data, 8, 4, little);
@@ -527,7 +496,6 @@ public class QTReader extends FormatReader {
           }
         }
         else if (atomType.equals("stts")) {
-          numParsed++;
           int fps = DataTools.bytesToInt(data, 12, 4, little);
           metadata.put("Frames per second", new Integer(fps));
         }
@@ -535,8 +503,6 @@ public class QTReader extends FormatReader {
 
       if (atomSize == 0) offset = in.length();
       else offset += atomSize;
-
-      allFound = (numParsed >= 6) && foundPixels;
 
       // if a 'udta' atom, skip ahead 4 bytes
       if (atomType.equals("udta")) offset += 4;
@@ -755,121 +721,118 @@ public class QTReader extends FormatReader {
 
     // assemble a fake JFIF plane
 
-    if (v == null) {
-      v = new ByteVector(1000);
-      v.add(HEADER);
+    ByteVector v = new ByteVector(1000);
+    v.add(HEADER);
 
-      // add quantization tables
+    // add quantization tables
 
-      v.add(new byte[] {(byte) 0xff, (byte) 0xdb});
+    v.add(new byte[] {(byte) 0xff, (byte) 0xdb});
 
-      int length = LUM_QUANT.length + CHROM_QUANT.length + 4;
-      v.add((byte) ((length >>> 8) & 0xff));
-      v.add((byte) (length & 0xff));
+    int length = LUM_QUANT.length + CHROM_QUANT.length + 4;
+    v.add((byte) ((length >>> 8) & 0xff));
+    v.add((byte) (length & 0xff));
 
-      v.add((byte) 0x00);
-      v.add(LUM_QUANT);
-      v.add((byte) 0x01);
-      v.add(CHROM_QUANT);
+    v.add((byte) 0x00);
+    v.add(LUM_QUANT);
+    v.add((byte) 0x01);
+    v.add(CHROM_QUANT);
 
-      // add Huffman tables
+    // add Huffman tables
 
-      v.add(new byte[] {(byte) 0xff, (byte) 0xc4});
+    v.add(new byte[] {(byte) 0xff, (byte) 0xc4});
 
-      length = LUM_DC_BITS.length + LUM_DC.length + CHROM_DC_BITS.length +
-        CHROM_DC.length + LUM_AC_BITS.length + LUM_AC.length +
-        CHROM_AC_BITS.length + CHROM_AC.length + 6;
-      v.add((byte) ((length >>> 8) & 0xff));
-      v.add((byte) (length & 0xff));
+    length = LUM_DC_BITS.length + LUM_DC.length + CHROM_DC_BITS.length +
+      CHROM_DC.length + LUM_AC_BITS.length + LUM_AC.length +
+      CHROM_AC_BITS.length + CHROM_AC.length + 6;
+    v.add((byte) ((length >>> 8) & 0xff));
+    v.add((byte) (length & 0xff));
 
-      // the ordering of these tables matters
+    // the ordering of these tables matters
 
-      v.add((byte) 0x00);
-      v.add(LUM_DC_BITS);
-      v.add(LUM_DC);
+    v.add((byte) 0x00);
+    v.add(LUM_DC_BITS);
+    v.add(LUM_DC);
 
-      v.add((byte) 0x01);
-      v.add(CHROM_DC_BITS);
-      v.add(CHROM_DC);
+    v.add((byte) 0x01);
+    v.add(CHROM_DC_BITS);
+    v.add(CHROM_DC);
 
-      v.add((byte) 0x10);
-      v.add(LUM_AC_BITS);
-      v.add(LUM_AC);
+    v.add((byte) 0x10);
+    v.add(LUM_AC_BITS);
+    v.add(LUM_AC);
 
-      v.add((byte) 0x11);
-      v.add(CHROM_AC_BITS);
-      v.add(CHROM_AC);
+    v.add((byte) 0x11);
+    v.add(CHROM_AC_BITS);
+    v.add(CHROM_AC);
 
-      // add start-of-frame header
+    // add start-of-frame header
 
-      v.add((byte) 0xff);
-      v.add((byte) 0xc0);
+    v.add((byte) 0xff);
+    v.add((byte) 0xc0);
 
-      length = 11;
+    length = 11;
 
-      v.add((byte) ((length >>> 8) & 0xff));
-      v.add((byte) (length & 0xff));
+    v.add((byte) ((length >>> 8) & 0xff));
+    v.add((byte) (length & 0xff));
 
-      int fieldHeight = height;
-      if (interlaced) fieldHeight /= 2;
+    int fieldHeight = height;
+    if (interlaced) fieldHeight /= 2;
 
-      v.add((byte) 0x08); // bits per sample
-      v.add((byte) ((fieldHeight >>> 8) & 0xff));
-      v.add((byte) (fieldHeight & 0xff));
-      v.add((byte) ((width >>> 8) & 0xff));
-      v.add((byte) (width & 0xff));
-      v.add((byte) 0x01);
+    v.add((byte) 0x08); // bits per sample
+    v.add((byte) ((fieldHeight >>> 8) & 0xff));
+    v.add((byte) (fieldHeight & 0xff));
+    v.add((byte) ((width >>> 8) & 0xff));
+    v.add((byte) (width & 0xff));
+    v.add((byte) 0x01);
 
-      // channel information
+    // channel information
 
-      v.add((byte) 0x01); // channel id
-      v.add((byte) 0x21); // sampling factors
-      v.add((byte) 0x00); // quantization table number
+    v.add((byte) 0x01); // channel id
+    v.add((byte) 0x21); // sampling factors
+    v.add((byte) 0x00); // quantization table number
 
-      // add start-of-scan header
+    // add start-of-scan header
 
-      v.add((byte) 0xff);
-      v.add((byte) 0xda);
+    v.add((byte) 0xff);
+    v.add((byte) 0xda);
 
-      length = 8;
-      v.add((byte) ((length >>> 8) & 0xff));
-      v.add((byte) (length & 0xff));
+    length = 8;
+    v.add((byte) ((length >>> 8) & 0xff));
+    v.add((byte) (length & 0xff));
 
-      v.add((byte) 0x01);  // number of channels
-      v.add((byte) 0x01);  // channel id
-      v.add((byte) 0x00);  // DC and AC table numbers
+    v.add((byte) 0x01);  // number of channels
+    v.add((byte) 0x01);  // channel id
+    v.add((byte) 0x00);  // DC and AC table numbers
 
-      v.add((byte) 0x00);
-      v.add((byte) 0x3f);
-      v.add((byte) 0x00);
-    }
+    v.add((byte) 0x00);
+    v.add((byte) 0x3f);
+    v.add((byte) 0x00);
 
     // as if everything we had to do up to this point wasn't enough of a pain,
     // the MJPEG-B specifications allow for interlaced frames
     // so now we have to reorder the scanlines...*stabs self in eye*
 
     if (interlaced) {
-      ByteVector f1 = new ByteVector(v.size());
-      ByteVector f2 = new ByteVector(v.size());
-      f1.add(v.toByteArray());
-      f2.add(v.toByteArray());
-      f1.add(b.toByteArray());
-      f2.add(b2.toByteArray());
-      f1.add((byte) 0xff);
-      f1.add((byte) 0xd9);
-      f2.add((byte) 0xff);
-      f2.add((byte) 0xd9);
+      ByteVector v2 = new ByteVector(v.size());
+      v2.add(v.toByteArray());
+
+      v.add(b.toByteArray());
+      v.add((byte) 0xff);
+      v.add((byte) 0xd9);
+      v2.add(b2.toByteArray());
+      v2.add((byte) 0xff);
+      v2.add((byte) 0xd9);
 
       // this takes less time than it used to, but may not be the
       // most intelligent way of doing things
 
-      BufferedImage top = bufferedJPEG(f1.toByteArray());
-      BufferedImage bottom = bufferedJPEG(f2.toByteArray());
+      BufferedImage top = bufferedJPEG(v.toByteArray());
+      BufferedImage bottom = bufferedJPEG(v2.toByteArray());
 
       WritableRaster topRaster = top.getRaster();
       WritableRaster bottomRaster = bottom.getRaster();
 
-      byte[][] scanlines = new byte[1][width * height];
+      byte[] scanlines = new byte[width * height];
 
       int[] topBytes =
         topRaster.getPixels(0, 0, top.getWidth(), top.getHeight(),
@@ -890,25 +853,23 @@ public class QTReader extends FormatReader {
       int bottomLine = 0;
       for (int i=0; i<height; i++) {
         if ((i % 2) == 0) {
-          System.arraycopy(topPixs, topLine*width, scanlines[0],
-            width*i, width);
+          System.arraycopy(topPixs, topLine*width, scanlines, width*i, width);
           topLine++;
         }
         else {
-          System.arraycopy(bottomPixs, bottomLine*width, scanlines[0],
+          System.arraycopy(bottomPixs, bottomLine*width, scanlines,
             width*i, width);
           bottomLine++;
         }
       }
 
-      return ImageTools.makeImage(scanlines, width, height);
+      return ImageTools.makeImage(scanlines, width, height, 1, false);
     }
     else {
-      ByteVector f = new ByteVector(v.size() + 100);
-      f.add(b.toByteArray());
-      f.add((byte) 0xff);
-      f.add((byte) 0xd9);
-      return bufferedJPEG(f.toByteArray());
+      v.add(b.toByteArray());
+      v.add((byte) 0xff);
+      v.add((byte) 0xd9);
+      return bufferedJPEG(v.toByteArray());
     }
   }
 
