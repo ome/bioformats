@@ -507,6 +507,53 @@ public abstract class ImageTools {
     return target;
   }
 
+  /** 
+   * Splits the given multi-channel array into a 2D array. 
+   * The "reverse" parameter is false if channels are in RGB order, true if
+   * channels are in BGR order.
+   */
+  public static byte[][] splitChannels(byte[] array, int c, boolean reverse, 
+    boolean interleaved) 
+  {
+    byte[][] rtn = new byte[c][array.length / c];
+  
+    if (interleaved) {
+      if (reverse) {
+        int offset = 0;
+        for (int i=c-1; i>=0; i--) {
+          System.arraycopy(array, offset, rtn[i], 0, rtn[i].length);
+          offset += rtn[c].length;
+        }
+      }
+      else {
+        for (int i=0; i<c; i++) {
+          System.arraycopy(array, i * rtn[i].length, rtn[i], 0, rtn[i].length);
+        }        
+      }      
+    }
+    else {
+      if (reverse) {
+        int next = 0;
+        for (int i=0; i<array.length; i+=c) {
+          for (int j=c-1; j>=0; j--) {
+            rtn[j][next] = array[i + j]; 
+          }
+          next++;
+        }
+      }
+      else {
+        int next = 0;
+        for (int i=0; i<array.length; i+=c) {
+          for (int j=0; j<c; j++) {
+            rtn[j][next] = array[i + j]; 
+          }
+          next++;
+        }
+      }          
+    }
+    return rtn;
+  }
+  
   /** Splits the given multi-channel image into single-channel images. */
   public static BufferedImage[] splitChannels(BufferedImage image) {
     int w = image.getWidth(), h = image.getHeight();

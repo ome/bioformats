@@ -164,6 +164,18 @@ public class ImageReader extends FormatReader {
     if (!id.equals(currentId)) initFile(id);
     return readers[index].isRGB(id);      
   }         
+ 
+  /**
+   * Allows the client to specify whether or not to separate channels.
+   * By default, channels are left unseparated; thus if we encounter an RGB
+   * image plane, it will be left as RGB and not split into 3 separate planes.
+   */
+  public void setSeparated(String id, boolean separate) 
+    throws FormatException, IOException 
+  {
+    if (!id.equals(currentId)) initFile(id);
+    readers[index].setSeparated(id, separate);
+  }        
   
   /** Obtains the specified image from the given image file as a byte array. */
   public byte[] openBytes(String id, int no)

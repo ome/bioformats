@@ -49,6 +49,8 @@ public abstract class FormatReader extends FormatHandler {
   /** OME root node for OME-XML metadata. */
   protected Object ome;
 
+  /** Flag set to true if multi-channel planes are to be separated. */
+  protected boolean separated = false;
 
   // -- Constructors --
 
@@ -80,7 +82,6 @@ public abstract class FormatReader extends FormatHandler {
 
   /**
    * Obtains the specified image from the given file as a byte array.
-   * This will always return a little-endian array.
    */
   public abstract byte[] openBytes(String id, int no)
     throws FormatException, IOException;
@@ -103,6 +104,18 @@ public abstract class FormatReader extends FormatHandler {
     ome = OMETools.createRoot();
   }
 
+  /**
+   * Allows the client to specify whether or not to separate channels.
+   * By default, channels are left unseparated; thus if we encounter an RGB
+   * image plane, it will be left as RGB and not split into 3 separate planes.
+   */
+  protected void setSeparated(String id, boolean separate) 
+    throws FormatException, IOException 
+  {
+    if (!id.equals(currentId)) initFile(id);
+    separated = separate;        
+  }
+  
   /**
    * Opens the given file, reads in the first few KB and calls
    * isThisType(byte[]) to check whether it matches this format.
