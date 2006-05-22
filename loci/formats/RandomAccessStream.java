@@ -368,39 +368,56 @@ public class RandomAccessStream implements DataInput {
         recent.add(new Integer(MAX_OVERHEAD));
       }
 
-      if (fp >= nextMark) dis.mark(MAX_OVERHEAD);
+      if (fp >= nextMark) {
+        dis.mark(MAX_OVERHEAD);
+      }  
       nextMark = fp + MAX_OVERHEAD;
       mark = fp;
 
       return DIS;
     }
     else {
-      if ((fp <= (mark + oldBufferSize)) && (afp >= mark) && (dis != null)) {
+      if ((dis != null) && (afp >= mark) && (fp < (mark + oldBufferSize))) {
         int newBufferSize = determineBuffer();
 
-        dis.reset();
-        dis.mark(newBufferSize);
-        fp = mark;
-
-        while (fp < afp) {
-          int skip = dis.skipBytes(afp - fp);
-          if (skip == 0) break;
-          fp += skip;
+        boolean valid = true;
+       
+        try {
+          dis.reset();
         }
+        catch (IOException io) {
+          valid = false;
+        }
+          
+        if (valid) {
+          dis.mark(newBufferSize);
+          fp = mark;
 
-        if (fp >= nextMark) dis.mark(newBufferSize);
-        nextMark = fp + newBufferSize;
-        mark = fp;
+          while (fp < afp) {
+            int skip = dis.skipBytes(afp - fp);
+            if (skip == 0) break;
+            fp += skip;
+          }
+  
+          if (fp >= nextMark) {
+            dis.mark(newBufferSize);
+          }  
+          nextMark = fp + newBufferSize;
+          mark = fp;
 
-        return DIS;
+          return DIS;
+        }
+        else {
+          raf.seek(afp);
+          return RAF;
+        }        
       }
       else {
         // we don't want this to happen very often
 
         raf.seek(afp);
-
         return RAF;
-      }
+      }  
     }
   }
 
