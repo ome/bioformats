@@ -3,3 +3,4 @@ loci.formats.JPEGWriter
 loci.formats.PNGWriter
 loci.formats.AVIWriter
 loci.formats.QTWriter
+loci.formats.EPSWriter
