@@ -109,10 +109,7 @@ public abstract class FormatReader extends FormatHandler {
    * By default, channels are left unseparated; thus if we encounter an RGB
    * image plane, it will be left as RGB and not split into 3 separate planes.
    */
-  protected void setSeparated(String id, boolean separate) 
-    throws FormatException, IOException 
-  {
-    if (!id.equals(currentId)) initFile(id);
+  protected void setSeparated(boolean separate) {
     separated = separate;        
   }
   
