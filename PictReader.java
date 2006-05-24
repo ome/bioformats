@@ -134,7 +134,7 @@ public class PictReader extends FormatReader {
   /** Determines the number of images in the given PICT file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return 1;
+    return (!separated) ? 1 : 3;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -146,8 +146,7 @@ public class PictReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    throw new FormatException("PictReader.openBytes(String, int) " +
-      "not implemented");
+    return ImageTools.getBytes(openImage(id, no), separated, no % 3);
   }
 
   /** Obtains the specified image from the given PICT file. */
@@ -155,9 +154,17 @@ public class PictReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    if (no != 0) throw new FormatException("Invalid image number: " + no);
-    return open(bytes);
-  }
+    if (no < 0 || no >= getImageCount(id)) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+    
+    if (isRGB(id) && separated) {
+      return ImageTools.splitChannels(open(bytes))[no];
+    }
+    else {
+      return open(bytes);
+    }
+  } 
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {

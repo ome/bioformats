@@ -88,7 +88,7 @@ public class IPLabReader extends FormatReader {
   /** Determines the number of images in the given IPLab file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return numImages;
+    return (!isRGB(id) || !separated) ? numImages : 3 * numImages;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -101,14 +101,6 @@ public class IPLabReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    throw new FormatException("IPLabReader.openBytes(String, int) " +
-      "not implemented");
-  }
-
-  /** Obtains the specified image from the given IPLab file. */
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
     if (!id.equals(currentId)) initFile(id);
 
     if (no < 0 || no >= getImageCount(id)) {
@@ -116,13 +108,23 @@ public class IPLabReader extends FormatReader {
     }
 
     int numPixels = width * height * c;
-    in.seek(numPixels * bps * no + 44);
+    in.seek(numPixels * bps * (no / c) + 44);
 
     byte[] rawData = new byte[numPixels * bps];
     in.readFully(rawData);
 
-    return ImageTools.makeImage(rawData, width, height, c, false, 
-      bps, littleEndian);
+    if (isRGB(id) && separated) {
+      return ImageTools.splitChannels(rawData, c, false, true)[no % 3];
+    }
+    else return rawData;
+  }
+
+  /** Obtains the specified image from the given IPLab file. */
+  public BufferedImage openImage(String id, int no)
+    throws FormatException, IOException
+  {
+    return ImageTools.makeImage(openBytes(id, no), width, height, 
+      (!isRGB(id) || separated) ? 1 : c, false, bps, littleEndian);
   }
 
   /** Closes any open files. */

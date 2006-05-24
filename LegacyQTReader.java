@@ -283,7 +283,7 @@ public class LegacyQTReader extends FormatReader {
   /** Determines the number of images in the given QuickTime file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return numImages;
+    return (!separated) ? numImages : 3*numImages;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -301,8 +301,18 @@ public class LegacyQTReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    throw new FormatException("LegacyQTReader.openBytes(String, int) " +
-      "not implemented");
+    BufferedImage img = openImage(id, no);
+    if (!separated) {
+      byte[][] p = ImageTools.getBytes(img);
+      byte[] rtn = new byte[p.length * p[0].length];
+      for (int i=0; i<p.length; i++) {
+        System.arraycopy(p[i], 0, rtn, i*p[0].length, p[i].length);
+      }
+      return rtn;
+    }
+    else {
+      return ImageTools.getBytes(img)[0]; 
+    }
   }
 
   /** Obtains the specified image from the given QuickTime file. */
@@ -332,8 +342,13 @@ public class LegacyQTReader extends FormatReader {
       throw new FormatException("Open movie failed", re);
     }
 
-    return ImageTools.makeBuffered(image);
-  }
+    if (!separated) {
+      return ImageTools.makeBuffered(image);
+    }
+    else {
+      return ImageTools.splitChannels(ImageTools.makeBuffered(image))[no % 3]; 
+    }
+  }  
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {

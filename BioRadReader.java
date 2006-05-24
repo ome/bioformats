@@ -152,14 +152,6 @@ public class BioRadReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    throw new FormatException("BioRadReader.openBytes(String, int) " +
-      "not implemented");
-  }
-
-  /** Obtains the specified image from the given Bio-Rad PIC file. */
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
     if(!id.equals(currentId)) initFile(id);
 
     if(no < 0 || no >= npic) {
@@ -170,10 +162,17 @@ public class BioRadReader extends FormatReader {
     int imageLen = nx * ny;
     byte[] data = new byte[imageLen * ((byteFormat) ? 1 : 2)];
     int offset = no * imageLen;
-    if (byteFormat) offset *= 2;
+    if (!byteFormat) offset *= 2;
+    in.seek(offset + 76);
     in.readFully(data);
+    return data;
+  }
 
-    return ImageTools.makeImage(data, nx, ny, 1, false, 
+  /** Obtains the specified image from the given Bio-Rad PIC file. */
+  public BufferedImage openImage(String id, int no)
+    throws FormatException, IOException
+  {
+    return ImageTools.makeImage(openBytes(id, no), nx, ny, 1, false, 
       byteFormat ? 1 : 2, LITTLE_ENDIAN);
   }
 

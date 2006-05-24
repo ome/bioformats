@@ -237,7 +237,7 @@ public class QTReader extends FormatReader {
   /** Determines the number of images in the given QuickTime file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return numImages;
+    return (isRGB(id) && separated) ? 3 * numImages : numImages;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -255,8 +255,108 @@ public class QTReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }        
 
-    throw new FormatException("QTReader.openBytes(String, int) " + 
-      "not implemented");
+    if (!codec.equals("raw ") && !codec.equals("rle ") &&
+      !codec.equals("jpeg") && !codec.equals("mjpb"))
+    {
+      if (DEBUG) {
+        System.out.println("Unsupported codec (" +
+          codec + "); using QTJava reader");
+      }
+      if (legacy == null) legacy = new LegacyQTReader();
+      return legacy.openBytes(id, no);
+    }
+
+    int c = isRGB(id) ? 3 : 1;
+    
+    int offset = ((Integer) offsets.get(no / c)).intValue();
+    int nextOffset = pixels.length;
+
+    if (no == 0) {
+      scale = offset;
+    }
+
+    offset -= scale;
+
+    if ((no / c) < offsets.size() - 1) {
+      nextOffset = ((Integer) offsets.get((no / c) + 1)).intValue();
+      nextOffset -= scale;
+    }
+
+    if ((nextOffset - offset) < 0) {
+      int temp = offset;
+      offset = nextOffset;
+      nextOffset = offset;
+    }
+
+    byte[] pixs = new byte[nextOffset - offset];
+
+    for (int i=0; i<pixs.length; i++) {
+      if ((offset + i) < pixels.length) {
+        pixs[i] = pixels[offset + i];
+      }
+    }
+
+    if (codec.equals("jpeg") || codec.equals("mjpb")) {
+      return ImageTools.getBytes(openImage(id, no), isRGB(id) && separated, 
+        no % c);
+    }        
+    
+    byte[] bytes = uncompress(pixs, codec);
+    // on rare occassions, we need to trim the data
+    if ((prevPixels != null) && (prevPixels.length < bytes.length)) {
+      byte[] temp = bytes;
+      bytes = new byte[prevPixels.length];
+      System.arraycopy(temp, 0, bytes, 0, bytes.length);
+    }
+
+    prevPixels = bytes;
+
+    // determine whether we need to strip out any padding bytes
+
+    int pad = width % 4;
+    pad = (4 - pad) % 4;
+
+    if (width * height * (bitsPerPixel / 8) == prevPixels.length) {
+      pad = 0;
+    }
+
+    if (pad > 0) {
+      bytes = new byte[prevPixels.length - height*pad];
+
+      for (int row=0; row<height; row++) {
+        System.arraycopy(prevPixels, row*(width+pad), bytes,
+          row*width, width);
+      }
+    }
+
+    if (bitsPerPixel == 40 || bitsPerPixel == 8) {
+      // invert the pixels
+      for (int i=0; i<bytes.length; i++) {
+        bytes[i] = (byte) (255 - bytes[i]);
+      }
+
+      return bytes;
+    }
+    else if (bitsPerPixel == 32) {
+      // strip out alpha channel
+      byte[][] data = new byte[3][bytes.length / 4];
+      for (int i=0; i<data[0].length; i++) {
+        data[0][i] = bytes[4*i + 1];
+        data[1][i] = bytes[4*i + 2];
+        data[2][i] = bytes[4*i + 3];
+      }
+
+      byte[] rtn = new byte[data.length * data[0].length];
+      for (int i=0; i<data.length; i++) {
+        System.arraycopy(data[i], 0, rtn, i * data[0].length, data[i].length);
+      }
+      return ImageTools.splitChannels(rtn, isRGB(id) ? 3 : 1, 
+        false, true)[no % c];
+    }
+    else {
+      return ImageTools.splitChannels(bytes, 
+        isRGB(id) ? 3 : 1, false, true)[no % (isRGB(id) ? 3 : 1)];
+    }
   }  
   
   /** Obtains the specified image from the given QuickTime file. */
@@ -278,17 +378,19 @@ public class QTReader extends FormatReader {
       return legacy.openImage(id, no);
     }
 
-    int offset = ((Integer) offsets.get(no)).intValue();
+    int c = isRGB(id) ? 3 : 1;
+    
+    int offset = ((Integer) offsets.get(no / c)).intValue();
     int nextOffset = pixels.length;
 
-    if (no == 0) {
+    if ((no / c) == 0) {
       scale = offset;
     }
 
     offset -= scale;
 
-    if (no < offsets.size() - 1) {
-      nextOffset = ((Integer) offsets.get(no+1)).intValue();
+    if ((no / c) < offsets.size() - 1) {
+      nextOffset = ((Integer) offsets.get((no / c) + 1)).intValue();
       nextOffset -= scale;
     }
 
@@ -306,81 +408,28 @@ public class QTReader extends FormatReader {
       }
     }
 
-    if (codec.equals("jpeg")) return bufferedJPEG(pixs);
-    else if (codec.equals("mjpb")) return mjpbUncompress(pixs);
-
-    byte[] bytes = uncompress(pixs, codec);
-    // on rare occassions, we need to trim the data
-    if ((prevPixels != null) && (prevPixels.length < bytes.length)) {
-      byte[] temp = bytes;
-      bytes = new byte[prevPixels.length];
-      System.arraycopy(temp, 0, bytes, 0, bytes.length);
-    }
-
-    prevPixels = bytes;
-
-    // determine whether we need to strip out any padding bytes
-
-    int pad = width % 4;
-    pad = (4 - pad) % 4;
-
-    if (width * height * (bitsPerPixel / 8) == prevPixels.length) {
-      pad = 0;
-    }
-
-    if (!codec.equals("mjpb")) {
-      if (pad > 0) {
-        bytes = new byte[prevPixels.length - height*pad];
-
-        for (int row=0; row<height; row++) {
-          System.arraycopy(prevPixels, row*(width+pad), bytes,
-            row*width, width);
-        }
+    if (codec.equals("jpeg")) {
+      if (!isRGB(id) || !separated) {
+        return bufferedJPEG(pixs);
       }
-    }
-
-    if ((bitsPerPixel == 40) && !codec.equals("mjpb")) {
-      // invert the pixels
-      for (int i=0; i<bytes.length; i++) {
-        bytes[i] = (byte) (255 - bytes[i]);
+      else {
+        return ImageTools.splitChannels(bufferedJPEG(pixs))[no % 3];
+      }        
+    }  
+    else if (codec.equals("mjpb")) {
+      if (!isRGB(id) || !separated) {
+        return mjpbUncompress(pixs);
       }
-
-      return ImageTools.makeImage(bytes, width, height, 1, false);
-    }
-    else if (bitsPerPixel == 40) {
-      return ImageTools.makeImage(bytes, width, height, 1, false);
-    }
-    else if (bitsPerPixel == 8) {
-      // invert the pixels
-      for (int i=0; i<bytes.length; i++) {
-        bytes[i] = (byte) (255 - bytes[i]);
-      }
-      return ImageTools.makeImage(bytes, width, height, 3, false);
-    }
-    else if (bitsPerPixel == 16) {
-      short[] newPix = new short[bytes.length / 2 + 1];
-      for (int i=0; i<bytes.length; i+=2) {
-        newPix[i/2] = DataTools.bytesToShort(bytes, i, little);
-      }
-      return ImageTools.makeImage(newPix, width, height, 1, false);
-    }
-    else if (bitsPerPixel == 24) {
-      return ImageTools.makeImage(bytes, width, height, 3, true);
-    }
-    else if (bitsPerPixel == 32) {
-      // strip out alpha channel
-      byte[][] data = new byte[3][bytes.length / 4];
-      for (int i=0; i<data[0].length; i++) {
-        data[0][i] = bytes[4*i + 1];
-        data[1][i] = bytes[4*i + 2];
-        data[2][i] = bytes[4*i + 3];
-      }
-
-      return ImageTools.makeImage(data, width, height);
-    }
+      else {
+        return ImageTools.splitChannels(mjpbUncompress(pixs))[no % 3];
+      }        
+    }  
     else {
-      if (legacy == null) legacy = new LegacyQTReader();
-      return legacy.openImage(id, no);
+      int bpp = bitsPerPixel / 8;
+      if (bpp == 3 || bpp == 5) bpp = 1; 
+      if (bpp == 4) bpp = 1;
+      return ImageTools.makeImage(openBytes(id, no), width, height,
+        (isRGB(id) && !separated) ? 3 : 1, false, bpp, little);  
     }
   }
 

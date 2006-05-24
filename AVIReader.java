@@ -38,7 +38,7 @@ public class AVIReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessFile in;
+  protected RandomAccessStream in;
 
   /** Number of images in current AVI movie. */
   private int numImages;
@@ -99,7 +99,8 @@ public class AVIReader extends FormatReader {
   /** Determines the number of images in the given AVI file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return numImages;
+    return (!isRGB(id) || !separated) ? numImages : 
+      (bmpBitsPerPixel / 8) * numImages;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -112,14 +113,6 @@ public class AVIReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    throw new FormatException("AVIReader.openBytes(String, int)" +
-      " not implemented");
-  }
-
-  /** Obtains the specified image from the given AVI file. */
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
     if (!id.equals(currentId)) initFile(id);
 
     if (no < 0 || no >= getImageCount(id)) {
@@ -128,7 +121,7 @@ public class AVIReader extends FormatReader {
 
     byteData = new byte[dwWidth * bmpHeight];
 
-    long fileOff = ((Long) offsets.get(no)).longValue();
+    long fileOff = ((Long) offsets.get(no / (bmpBitsPerPixel / 8))).longValue();
     in.seek(fileOff);
 
     int len = bmpScanLineSize;
@@ -174,13 +167,26 @@ public class AVIReader extends FormatReader {
       newOff += length;
     }
 
-    if (bmpBitsPerPixel > 8) {
-      return ImageTools.makeImage(rawData, dwWidth, bmpHeight,
-        (rawData.length / (dwWidth*bmpHeight)), true);
+    if (separated) {
+      byte[] rtn = new byte[rawData.length / 3];
+      int j = 0;
+      for (int i=(no%3); i<rawData.length; i+=3) {
+        rtn[j] = rawData[i];
+        j++;
+      }    
+      return rtn;
     }
     else {
-      return ImageTools.makeImage(rawData, dwWidth, bmpHeight, 1, false);
+      return rawData;        
     }
+  }
+
+  /** Obtains the specified image from the given AVI file. */
+  public BufferedImage openImage(String id, int no)
+    throws FormatException, IOException
+  {
+    return ImageTools.makeImage(openBytes(id, no), dwWidth, bmpHeight,
+      (!isRGB(id) || separated) ? 1 : 3, false);
   }
 
   /** Closes any open files. */
@@ -193,7 +199,7 @@ public class AVIReader extends FormatReader {
   /** Initializes the given AVI file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessFile(id, "r"); 
+    in = new RandomAccessStream(id); 
     
     offsets = new Vector();
 

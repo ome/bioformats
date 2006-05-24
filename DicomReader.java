@@ -132,14 +132,6 @@ public class DicomReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    throw new FormatException("DicomReader.openBytes(String, int) " +
-      "not implemented");
-  }
-
-  /** Obtains the specified image from the given DICOM file. */
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
     if (!id.equals(currentId)) initFile(id);
 
     if (no < 0 || no >= getImageCount(id)) {
@@ -150,11 +142,8 @@ public class DicomReader extends FormatReader {
 
     in.seek(offsets + data.length * no);
     in.read(data);
-
-    if (bitsPerPixel < 16) {
-      return ImageTools.makeImage(data, width, height, 1, false);
-    }
-    else if (bitsPerPixel == 16) {
+  
+    if (bitsPerPixel == 16) {
       // may still be broken on some samples, but it's better than it was
 
       for (int i=0; i<data.length; i++) {
@@ -216,19 +205,22 @@ public class DicomReader extends FormatReader {
         }
       }
 
-      return ImageTools.makeImage(shortData, width, height, 1, false);
+      data = new byte[shortData.length * 2];
+      for (int i=0; i<shortData.length; i++) {
+        byte[] b = DataTools.shortToBytes(shortData[i], little);
+        data[2*i] = b[0];
+        data[2*i + 1] = b[1];
+      }        
     }
-    else if (bitsPerPixel == 32) {
-      float[] floatData = new float[width * height];
-      for (int i=0; i<data.length; i+=4) {
-        floatData[i/4] =
-          Float.intBitsToFloat(DataTools.bytesToInt(data, i, 4, little));
-      }
-      return ImageTools.makeImage(floatData, width, height, 1, false);
-    }
-    else {
-      throw new FormatException("Unsupported bits per pixel: " + bitsPerPixel);
-    }
+    return data;
+  }
+
+  /** Obtains the specified image from the given DICOM file. */
+  public BufferedImage openImage(String id, int no)
+    throws FormatException, IOException
+  {
+    return ImageTools.makeImage(openBytes(id, no), width, height, 1, false, 
+      bitsPerPixel / 8, little);   
   }
 
   /** Closes any open files. */

@@ -153,6 +153,20 @@ public abstract class DataTools {
     }
   }
 
+  /** Get a pair of bytes representing a short value. */
+  public static byte[] shortToBytes(short v, boolean little) throws IOException 
+  {
+    byte[] rtn = new byte[2];
+    if (little) {
+      rtn[0] = (byte) (v & 0xff);
+      rtn[1] = (byte) ((v >>> 8) & 0xff);
+    }        
+    else {
+      rtn[0] = (byte) ((v >>> 8) & 0xff);         
+      rtn[1] = (byte) (v & 0xff);
+    }
+    return rtn;
+  }        
 
   // -- Word decoding --
 
@@ -402,4 +416,5 @@ public abstract class DataTools {
     return toStrip;
   }
 
+  
 }

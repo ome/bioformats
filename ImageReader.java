@@ -106,7 +106,7 @@ public class ImageReader extends FormatReader {
           " cannot be instantiated.");
         continue;
       }
-      reader.setSeparated(true);  // Add this line to separate RGB planes
+      //reader.setSeparated(true);  // Add this line to separate RGB planes
       v.add(reader);
       String[] suf = reader.getSuffixes();
       for (int j=0; j<suf.length; j++) suffixSet.add(suf[j]);

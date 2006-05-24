@@ -86,14 +86,6 @@ public class SDTReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    throw new FormatException("SDTReader.openBytes(String, int) " +
-      "not implemented");
-  }
-
-  /** Obtains the specified image from the given SDT file. */
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
     if (!id.equals(currentId)) initFile(id);
 
     if (no < 0 || no >= getImageCount(id)) {
@@ -115,8 +107,22 @@ public class SDTReader extends FormatReader {
         data[ndx] = (short) sum;
       }
     }
+  
+    byte[] p = new byte[data.length * 2];
+    for (int i=0; i<data.length; i++) {
+      byte[] b = DataTools.shortToBytes(data[i], true);
+      p[2*i] = b[0];
+      p[2*i + 1] = b[1];
+    }
+    return p;
+  }
 
-    return ImageTools.makeImage(data, width, height);
+  /** Obtains the specified image from the given SDT file. */
+  public BufferedImage openImage(String id, int no)
+    throws FormatException, IOException
+  {
+    return ImageTools.makeImage(openBytes(id, no), width, height, 1, false,
+      2, true);
   }
 
   /** Closes any open files. */

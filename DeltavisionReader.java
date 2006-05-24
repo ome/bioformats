@@ -94,14 +94,6 @@ public class DeltavisionReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    throw new FormatException("DeltavisionReader.openBytes(String, int) " +
-      "not implemented");
-  }
-
-  /** Obtains the specified image from the given Deltavision file. */
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
     if (!id.equals(currentId)) initFile(id);
 
     if (no < 0 || no >= getImageCount(id)) {
@@ -120,8 +112,14 @@ public class DeltavisionReader extends FormatReader {
     in.seek(offset);
 
     in.read(rawData);
+    return rawData;
+  }
 
-    return ImageTools.makeImage(rawData, width, height, channels, 
+  /** Obtains the specified image from the given Deltavision file. */
+  public BufferedImage openImage(String id, int no)
+    throws FormatException, IOException
+  {
+    return ImageTools.makeImage(openBytes(id, no), width, height, 1, 
       false, bytesPerPixel, little);
   }
 
