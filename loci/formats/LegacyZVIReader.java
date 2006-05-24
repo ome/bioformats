@@ -122,8 +122,19 @@ public class LegacyZVIReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    throw new FormatException("LegacyZVIReader.openBytes(String, int) " +
-      "not implemented");
+    BufferedImage img = openImage(id, no);
+
+    if (separated) {
+      return ImageTools.getBytes(img)[0];
+    }
+    else {
+      byte[][] p = ImageTools.getBytes(img);
+      byte[] rtn = new byte[p.length * p[0].length];
+      for (int i=0; i<p.length; i++) {
+        System.arraycopy(p[i], 0, rtn, i*p[0].length, p[i].length);
+      }        
+      return rtn;      
+    }
   }
 
 
@@ -140,8 +151,14 @@ public class LegacyZVIReader extends FormatReader {
     if (DEBUG) System.out.println("Reading image #" + no + "...");
 
     ZVIBlock zviBlock = (ZVIBlock) blockList.elementAt(no);
-    return zviBlock.readImage(in);
-  }
+   
+    if (!isRGB(id) || !separated) { 
+      return zviBlock.readImage(in);
+    }
+    else {
+      return ImageTools.splitChannels(zviBlock.readImage(in))[no % c];        
+    }
+  }  
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {

@@ -367,6 +367,7 @@ public class ZeissLSMReader extends BaseTiffReader {
 
         in.skipBytes(4);
         int numStamps = DataTools.read4SignedBytes(in, little);
+        if (numStamps > 1000) numStamps = 1000;
         for (int i=0; i<numStamps; i++) {
           ddata = DataTools.readDouble(in, little);
           put("TimeStamp" + i, ddata);

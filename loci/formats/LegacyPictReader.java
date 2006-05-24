@@ -53,7 +53,7 @@ public class LegacyPictReader extends FormatReader {
 
   /** Determines the number of images in the given PICT file. */
   public int getImageCount(String id) throws FormatException, IOException {
-    return 1;
+    return (!isRGB(id) || !separated) ? 1 : 3;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -65,8 +65,18 @@ public class LegacyPictReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    throw new FormatException("LegacyPictReader.openBytes(String, int) " +
-      "not implemented");
+    BufferedImage img = openImage(id, no);      
+    if (separated) {
+      return ImageTools.getBytes(img)[0];  
+    }
+    else {
+      byte[][] p = ImageTools.getBytes(img);
+      byte[] rtn = new byte[p.length * p[0].length];
+      for (int i=0; i<p.length; i++) {
+        System.arraycopy(p[i], 0, rtn, i*p[0].length, p[i].length);
+      }
+      return rtn;
+    }        
   }
 
   /** Obtains the specified image from the given PICT file. */
@@ -74,8 +84,10 @@ public class LegacyPictReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    if (no != 0) throw new FormatException("Invalid image number: " + no);
-
+    if (no < 0 || no >= getImageCount(id)) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+      
     // read in PICT data
     File file = new File(id);
     int len = (int) (file.length() - 512);
@@ -90,8 +102,16 @@ public class LegacyPictReader extends FormatReader {
       left -= r;
     }
     fin.close();
-    return ImageTools.makeBuffered(qtReader.pictToImage(bytes));
-  }
+    
+    
+    if (!separated) {
+      return ImageTools.makeBuffered(qtReader.pictToImage(bytes));
+    }
+    else {
+      return ImageTools.splitChannels(ImageTools.makeBuffered(
+        qtReader.pictToImage(bytes)))[no];
+    }        
+  }  
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException { }

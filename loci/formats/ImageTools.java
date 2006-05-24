@@ -508,6 +508,21 @@ public abstract class ImageTools {
   }
 
   /** 
+   * Get the bytes from an image, merging the channels as necessary.
+   */
+  public static byte[] getBytes(BufferedImage img, boolean separated, int c) {
+    byte[][] p = getBytes(img);
+    if (separated) return p[c];
+    else {
+      byte[] rtn = new byte[p.length * p[0].length];
+      for (int i=0; i<p.length; i++) {
+        System.arraycopy(p[i], 0, rtn, i * p[0].length, p[i].length);        
+      }
+      return rtn;
+    }
+  }         
+  
+  /** 
    * Splits the given multi-channel array into a 2D array. 
    * The "reverse" parameter is false if channels are in RGB order, true if
    * channels are in BGR order.

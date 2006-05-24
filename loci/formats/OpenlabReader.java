@@ -87,7 +87,7 @@ public class OpenlabReader extends FormatReader {
   /** Determines the number of images in the given Openlab file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return numBlocks;
+    return (!separated) ? numBlocks : 3*numBlocks;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -99,8 +99,21 @@ public class OpenlabReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    throw new FormatException("OpenlabReader.openBytes(String, int) " +
-      "not implemented");
+    // kinda inefficient...should probably be changed to "natively" use
+    // openBytes, instead of calling openImage and then converting
+  
+    BufferedImage img = openImage(id, no);
+    if (separated) {
+      return ImageTools.getBytes(img)[0];
+    }
+    else {
+      byte[][] p = ImageTools.getBytes(img);
+      byte[] rtn = new byte[p.length * p[0].length];
+      for (int i=0; i<p.length; i++) {
+        System.arraycopy(p[i], 0, rtn, i*p[0].length, p[i].length);        
+      }
+      return rtn;
+    }      
   }
 
   /** Obtains the specified image from the given Openlab file. */
@@ -114,6 +127,7 @@ public class OpenlabReader extends FormatReader {
     }
 
     // First initialize:
+    if (separated) no /= 3;
     in.seek(offsets[no] + 12);
 
     byte[] toRead = new byte[4];

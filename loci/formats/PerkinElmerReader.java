@@ -66,7 +66,7 @@ public class PerkinElmerReader extends FormatReader {
   /** Determines the number of images in the given PerkinElmer file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return numImages;
+    return (!isRGB(id) || !separated) ? numImages : channels * numImages;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -79,7 +79,7 @@ public class PerkinElmerReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    return tiff.openBytes(files[no], 0);
+    return tiff.openBytes(files[no / channels], 0);
   }
 
   /** Obtains the specified image from the given PerkinElmer file. */
@@ -91,7 +91,7 @@ public class PerkinElmerReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-    return tiff.openImage(files[no], 0);
+    return tiff.openImage(files[no / channels], 0);
   }
 
   /** Closes any open files. */

@@ -63,7 +63,12 @@ public class LIFReader extends FormatReader {
    */
   protected int[][] dims;
 
+  private int width;
+  private int height;
+  private int c;
+  private int bpp;
 
+  
   // -- Constructor --
 
   /** Constructs a new Leica LIF reader. */
@@ -80,7 +85,7 @@ public class LIFReader extends FormatReader {
   /** Determines the number of images in the given LIF file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return numImages;
+    return (!isRGB(id) || !separated) ? numImages : dims[0][4] * numImages;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -93,13 +98,6 @@ public class LIFReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    throw new FormatException("LIFReader.openBytes(Sring, int) unimplemented");
-  }
-
-  /** Obtains the specified image from the given LIF file. */
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
     if (!id.equals(currentId)) initFile(id);
 
     if (no < 0 || no >= getImageCount(id)) {
@@ -110,22 +108,22 @@ public class LIFReader extends FormatReader {
     int sum = 0;
     for (int i=0; i<dims.length; i++) {
       sum += (dims[i][2] * dims[i][3] * dims[i][6]);
-      if (no < sum) {
+      if ((no / dims[0][4]) < sum) {
         ndx = i;
         i = dims.length;
       }
     }
 
-    int width = dims[ndx][0];
-    int height = dims[ndx][1];
-    int c = dims[ndx][4];
+    width = dims[ndx][0];
+    height = dims[ndx][1];
+    c = dims[ndx][4];
     if (c == 2) c++;
-    int bps = dims[ndx][5];
-    while (bps % 8 !=0) bps++;
-    int bytesPerPixel = bps / 8;
+    bpp = dims[ndx][5];
+    while (bpp % 8 !=0) bpp++;
+    int bytesPerPixel = bpp / 8;
 
     int offset = ((Long) offsets.get(ndx)).intValue();
-
+  
     // get the image number within this dataset
 
     int imageNum = no;
@@ -136,11 +134,22 @@ public class LIFReader extends FormatReader {
     in.seek(offset + width * height * bytesPerPixel * imageNum);
 
     byte[] data = new byte[(int) (width * height * bytesPerPixel * c)];
-
     in.read(data);
+   
+    if (isRGB(id) && separated) {
+      return ImageTools.splitChannels(data, 3, false, true)[no % 3];
+    }
+    else {
+      return data;        
+    }
+  }
 
-    return ImageTools.makeImage(data, width, height, c, false, 
-      bps / 8, littleEndian);
+  /** Obtains the specified image from the given LIF file. */
+  public BufferedImage openImage(String id, int no)
+    throws FormatException, IOException
+  {
+    return ImageTools.makeImage(openBytes(id, no), width, height, 
+      (!isRGB(id) || separated) ? 1 : c, false, bpp / 8, littleEndian);
   }
 
   /** Closes any open files. */

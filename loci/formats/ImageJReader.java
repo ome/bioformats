@@ -84,7 +84,7 @@ public class ImageJReader extends FormatReader {
   /** Determines the number of images in the given file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return 1;
+    return separated ? 3 : 1;
   }
   
   /** Checks if the images in the file are RGB. */
@@ -96,8 +96,7 @@ public class ImageJReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    throw new FormatException("ImageJReader.openBytes(String, int) " +
-      "not implemented");
+    return ImageTools.getBytes(openImage(id, no), separated, no);
   }
 
   /** Obtains the specified image from the given file. */
@@ -120,8 +119,14 @@ public class ImageJReader extends FormatReader {
       r.exec("size = image.getStackSize()");
       int size = ((Integer) r.getVar("size")).intValue();
       Image img = (Image) r.exec("image.getImage()");
-      return ImageTools.makeBuffered(img);
-    }
+      
+      if (!separated) {
+        return ImageTools.makeBuffered(img);
+      }
+      else {
+        return ImageTools.splitChannels(ImageTools.makeBuffered(img))[no];
+      }        
+    }   
     catch (Exception exc) {
       exc.printStackTrace();
     }

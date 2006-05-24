@@ -75,7 +75,7 @@ public class OpenlabRawReader extends FormatReader {
   /** Determines the number of images in the given RAW file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return numImages;
+    return (!isRGB(id) || !separated) ? numImages : channels * numImages;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -88,21 +88,13 @@ public class OpenlabRawReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    throw new FormatException("OpenlabRawReader.openBytes(String, int) " +
-      "not implemented");
-  }
-
-  /** Obtains the specified image from the given RAW file. */
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
     if (!id.equals(currentId)) initFile(id);
 
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    in.seek(offsets[no] + 288);
+    in.seek(offsets[no / channels] + 288);
 
     byte[] data = new byte[width*height*bpp];
     in.read(data);
@@ -114,8 +106,21 @@ public class OpenlabRawReader extends FormatReader {
       }
     }        
 
-    return ImageTools.makeImage(data, width, height, channels, 
-      false, bpp, false);
+    if (isRGB(id) && separated) {
+      return 
+        ImageTools.splitChannels(data, channels, false, true)[no % channels];
+    }
+    else {
+      return data;        
+    }
+  }
+
+  /** Obtains the specified image from the given RAW file. */
+  public BufferedImage openImage(String id, int no)
+    throws FormatException, IOException
+  {
+    return ImageTools.makeImage(openBytes(id, no), width, height, 
+      (!isRGB(id) || separated) ? 1 : channels, false, bpp, false);
   }
 
   /** Closes any open files. */

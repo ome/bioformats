@@ -453,7 +453,7 @@ public abstract class BaseTiffReader extends FormatReader {
   /** Determines the number of images in the given TIFF file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return numImages;
+    return (!isRGB(id) || !separated) ? numImages : 3 * numImages;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -467,8 +467,8 @@ public abstract class BaseTiffReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    throw new FormatException("BaseTiffReader.openBytes(String, int) " +
-      "not implemented");
+    return ImageTools.getBytes(openImage(id, no), isRGB(id) && separated,
+      no % 3);
   }
 
   /** Obtains the specified image from the given TIFF file. */
@@ -477,12 +477,19 @@ public abstract class BaseTiffReader extends FormatReader {
   {
     if (!id.equals(currentId)) initFile(id);
 
-    if (no < 0 || no >= numImages) {
+    if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    return TiffTools.getImage(ifds[no], in);
-  }
+    if (!isRGB(id) || !separated) {
+      return TiffTools.getImage(ifds[no], in);
+    }
+    else {
+      BufferedImage[] channels = 
+        ImageTools.splitChannels(TiffTools.getImage(ifds[no / 3], in));
+      return channels[no % channels.length];
+    }
+  }  
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
