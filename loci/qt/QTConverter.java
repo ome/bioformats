@@ -54,7 +54,7 @@ public class QTConverter extends JFrame implements ActionListener, Runnable {
 
     row1.add(Box.createHorizontalStrut(4));
 
-    input = new JTextField(36);
+    input = new JTextField(44);
     row1.add(input);
     limitHeight(input);
 
@@ -81,7 +81,7 @@ public class QTConverter extends JFrame implements ActionListener, Runnable {
 
     row2.add(Box.createHorizontalStrut(4));
 
-    output = new JTextField(36);
+    output = new JTextField(44);
     row2.add(output);
     limitHeight(output);
 
