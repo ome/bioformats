@@ -226,7 +226,7 @@ public class ImageReader extends FormatReader {
   public Object getMetadataValue(String id, String field)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
+    //if (!id.equals(currentId)) initFile(id);
     return readers[index].getMetadataValue(id, field);
   }
 
@@ -238,7 +238,7 @@ public class ImageReader extends FormatReader {
    * @return the hashtable containing all metadata from the file
    */
   public Hashtable getMetadata(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+    //if (!id.equals(currentId)) initFile(id);
     return readers[index].getMetadata(id);
   }
 

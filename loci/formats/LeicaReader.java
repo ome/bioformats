@@ -33,7 +33,7 @@ import java.util.Vector;
  *
  * @author Melissa Linkert linkert at cs.wisc.edu
  */
-public class LeicaReader extends FormatReader {
+public class LeicaReader extends BaseTiffReader {
 
   // -- Constants -
 
@@ -47,7 +47,7 @@ public class LeicaReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessStream in;
+  //protected RandomAccessStream in;
 
   /** Flag indicating whether current file is little endian. */
   protected boolean littleEndian;
@@ -59,7 +59,7 @@ public class LeicaReader extends FormatReader {
   protected TiffReader tiff;
 
   /** Number of images in the dataset. */
-  protected int numImages;
+  //protected int numImages;
 
   /** Array of image file names. */
   protected String[] files;
@@ -119,7 +119,9 @@ public class LeicaReader extends FormatReader {
 
   /** Determines the number of images in the given Leica file. */
   public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+      initFile(id);
+    }
     return numImages;
   }
 
@@ -132,15 +134,20 @@ public class LeicaReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    return tiff.openBytes(id, no);
+    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+      initFile(id);
+    }        
+    return tiff.openBytes(currentId, no);
   }
 
   /** Obtains the specified image from the given Leica file. */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-
+    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+      initFile(id);
+    }
+      
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
@@ -158,12 +165,13 @@ public class LeicaReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (id.toLowerCase().endsWith("tif") || id.toLowerCase().endsWith("tiff"))
     {
-      super.initFile(id);
+      if (ifds == null) super.initFile(id);
       in = new RandomAccessStream(id);
 
       // open the TIFF file and look for the "Image Description" field
 
-      Hashtable[] ifds = TiffTools.getIFDs(in);
+      ifds = TiffTools.getIFDs(in);
+      super.initMetadata();
       if (ifds == null) throw new FormatException("No IFDs found");
 
       String descr = (String) metadata.get("Comment");
@@ -298,11 +306,13 @@ public class LeicaReader extends FormatReader {
 
   /** Populates the metadata hashtable and OME root node. */
   protected void initMetadata() {
-   for (int i=0; i<headerIFDs.length; i++) {
-     byte[] temp = (byte[]) headerIFDs[i].get(new Integer(10));
-     if (temp != null) {
-       // the series data
-       // ID_SERIES
+    if (headerIFDs == null) headerIFDs = ifds;
+          
+    for (int i=0; i<headerIFDs.length; i++) {
+      byte[] temp = (byte[]) headerIFDs[i].get(new Integer(10));
+      if (temp != null) {
+        // the series data
+        // ID_SERIES
         metadata.put("Version",
           new Integer(DataTools.bytesToInt(temp, 0, 4, littleEndian)));
         metadata.put("Number of Series",
@@ -588,11 +598,16 @@ public class LeicaReader extends FormatReader {
         new Boolean(!littleEndian), // BigEndian
         "XYZTC"); // DimensionOrder
 
-      OMETools.setCreationDate(ome,
-        metadata.get("Timestamp 1").toString().substring(3));
-      OMETools.setDescription(ome,
-        metadata.get("Image Description").toString());
+      String timestamp = (String) metadata.get("Timestamp 1");
+      if (timestamp != null) {
+        OMETools.setCreationDate(ome, timestamp.toString().substring(3));
+      }
 
+      String description = (String) metadata.get("Image Description");
+      if (description != null) {
+        OMETools.setDescription(ome, description.toString());
+      }
+        
 //      String voxel = metadata.get("VoxelType").toString();
 //      String photoInterp;
 //      if (voxel.equals("gray normal")) photoInterp = "monochrome";

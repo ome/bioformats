@@ -463,7 +463,22 @@ public abstract class BaseTiffReader extends FormatReader {
       TiffTools.SAMPLES_PER_PIXEL, false, 1) > 1) ||
       (TiffTools.getIFDIntValue(ifds[0], TiffTools.PHOTOMETRIC_INTERPRETATION,
       true, 0) == TiffTools.RGB_PALETTE);      
-  }        
+  }       
+
+  /**
+   * Obtains the specified metadata field's value for the given file.
+   *
+   * @param field the name associated with the metadata field
+   * @return the value, or null if the field doesn't exist
+   */
+  public Object getMetadataValue(String id, String field)
+    throws FormatException, IOException 
+  { 
+    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+      initFile(id);
+    }
+    return metadata.get(field);
+  }
   
   /** Obtains the specified image from the given TIFF file as a byte array. */
   public byte[] openBytes(String id, int no)
@@ -477,8 +492,10 @@ public abstract class BaseTiffReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-
+    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+      initFile(id);
+    }
+      
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
