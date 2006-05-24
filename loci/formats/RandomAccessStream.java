@@ -344,8 +344,11 @@ public class RandomAccessStream implements DataInput {
    * RandomAccessFile, and 2 for a direct array access.
    */
   protected int checkEfficiency(int toRead) throws IOException {
-    int oldBufferSize = ((Integer) recent.get(recent.size() - 1)).intValue();
-
+    int oldBufferSize = 0;
+    if (recent != null) {
+      oldBufferSize = ((Integer) recent.get(recent.size() - 1)).intValue();
+    }
+      
     if (((afp + toRead) < MAX_OVERHEAD) && (afp + toRead < raf.length()) && 
       (dis != null)) 
     {
