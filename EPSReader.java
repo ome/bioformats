@@ -29,6 +29,7 @@ import java.util.StringTokenizer;
 
 /**
  * Reader is the file format reader for Encapsulated PostScript (EPS) files.
+ * Some regular PostScript files are also supported.
  * 
  * @author Melissa Linkert linkert at cs.wisc.edu
  */
@@ -61,7 +62,7 @@ public class EPSReader extends FormatReader {
 
   /** Constructs a new EPS reader. */
   public EPSReader() { 
-    super("Encapsulated PostScript", new String[] {"eps", "epsi"}); 
+    super("Encapsulated PostScript", new String[] {"eps", "epsi", "ps"}); 
   }
 
   // -- FormatReader API methods --
