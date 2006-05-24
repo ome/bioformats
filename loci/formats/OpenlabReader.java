@@ -189,7 +189,14 @@ public class OpenlabReader extends FormatReader {
         if (expectedBlock == 0 && imageType[no] < 9) {
           // there has been no deep gray data, and it is supposed
           // to be a pict... *crosses fingers*
-          try { return pictReader.open(toRead); }
+          try { 
+            if (!isRGB(id) || !separated) {
+              return pictReader.open(toRead); 
+            }
+            else {
+              return ImageTools.splitChannels(pictReader.open(toRead))[no%3];
+            }        
+          }  
           catch (Exception e) {
             e.printStackTrace();
             throw new FormatException("No iPic comment block found", e);
