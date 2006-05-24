@@ -68,10 +68,27 @@ public class OIFReader extends FormatReader {
 
   /** Determines the number of images in the given OIF file. */
   public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+      initFile(id);
+    }
     return numImages;
   }
-
+ 
+  /**
+   * Obtains the specified metadata field's value for the given file.
+   *
+   * @param field the name associated with the metadata field
+   * @return the value, or null if the field doesn't exist
+   */
+  public Object getMetadataValue(String id, String field)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+      initFile(id);
+    }
+    return metadata.get(field);
+  }
+  
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     return false;
@@ -81,6 +98,9 @@ public class OIFReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
+    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+      initFile(id);
+    }        
     return tiffReader.openBytes((String) tiffs.get(no), 0);
   }
 
@@ -88,8 +108,10 @@ public class OIFReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-
+    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+      initFile(id);
+    }
+      
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
@@ -106,7 +128,6 @@ public class OIFReader extends FormatReader {
 
   /** Initializes the given OIF file. */
   protected void initFile(String id) throws FormatException, IOException {
-
     // check to make sure that we have the OIF file
     // if not, we need to look for it in the parent directory
 

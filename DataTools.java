@@ -416,5 +416,19 @@ public abstract class DataTools {
     return toStrip;
   }
 
+  /** Check if two filenames have the same prefix. */
+  public static boolean samePrefix(String s1, String s2) {
+    if (s1 == null || s2 == null) return false;
+    int n1 = s1.indexOf(".");
+    int n2 = s2.indexOf(".");
+    if ((n1 == -1) || (n2 == -1)) return false;
+
+    int slash1 = s1.lastIndexOf(File.pathSeparator);
+    int slash2 = s2.lastIndexOf(File.pathSeparator);
+    
+    String sub1 = s1.substring((slash1 == -1) ? 0 : slash1 + 1, n1);
+    String sub2 = s2.substring((slash2 == -1) ? 0 : slash2 + 1, n2);
+    return sub1.equals(sub2) || sub1.startsWith(sub2) || sub2.startsWith(sub1);
+  }
   
 }
