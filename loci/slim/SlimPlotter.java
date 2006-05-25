@@ -23,9 +23,9 @@ public class SlimPlotter
   // -- Constants --
 
   private static final double[] MATRIX = {
-     0.3950,  0.2104, -0.0282, 0.1125,
-    -0.0700,  0.1853,  0.4020, 0.1641,
-     0.2002, -0.3502,  0.1971, 0.0124,
+     0.2821,  0.1503, -0.0201, 0.0418,
+    -0.0500,  0.1323,  0.2871, 0.1198,
+     0.1430, -0.2501,  0.1408, 0.0089,
      0.0000,  0.0000,  0.0000, 1.0000
   };
 
@@ -189,9 +189,9 @@ public class SlimPlotter
     RealType yType = RealType.getRealType("line");
     ScaledUnit ns = new ScaledUnit(1e-9, SI.second, "ns");
     ScaledUnit nm = new ScaledUnit(1e-9, SI.meter, "nm");
-    RealType bType = RealType.getRealType("time", ns);
-    cType = RealType.getRealType("wavelength", nm);
-    RealType vType = RealType.getRealType("count");
+    RealType bType = RealType.getRealType("bin", ns);
+    cType = RealType.getRealType("channel", nm);
+    RealType vType = RealType.getRealType("value");
     RealTupleType xy = new RealTupleType(xType, yType);
     FunctionType xyvFunc = new FunctionType(xy, vType);
     Integer2DSet xySet = new Integer2DSet(xy, width, height);
@@ -234,15 +234,23 @@ public class SlimPlotter
 
     // plot decay curves in 3D display
     decayPlot = new DisplayImplJ3D("decay");
-    decayPlot.addMap(new ScalarMap(bType, Display.XAxis));
-    decayPlot.addMap(new ScalarMap(cType, Display.YAxis));
-    decayPlot.addMap(new ScalarMap(vType, Display.ZAxis));
+    ScalarMap xMap = new ScalarMap(bType, Display.XAxis);
+    ScalarMap yMap = new ScalarMap(cType, Display.YAxis);
+    ScalarMap zMap = new ScalarMap(vType, Display.ZAxis);
+    decayPlot.addMap(xMap);
+    decayPlot.addMap(yMap);
+    decayPlot.addMap(zMap);
     decayPlot.addMap(new ScalarMap(vType, Display.RGB));
     ref = new DataReferenceImpl("decay");
     decayPlot.addReference(ref);
+    xMap.getAxisScale().setTitle("Time (ns)");
+    yMap.getAxisScale().setTitle("Wavelength (nm)");
+    zMap.getAxisScale().setTitle("Count");
     decayPlot.getGraphicsModeControl().setScaleEnable(true);
     decayPlot.getGraphicsModeControl().setTextureEnable(false);
     decayPlot.getProjectionControl().setMatrix(MATRIX);
+    decayPlot.getProjectionControl().setAspectCartesian(
+      new double[] {2, 1, 1});
     progress.setProgress(++p);
     if (progress.isCanceled()) System.exit(0);
 
@@ -253,6 +261,8 @@ public class SlimPlotter
     sums = new float[1][channels * timeBins];
     logs = new float[1][channels * timeBins];
     FieldImpl field = new FieldImpl(cxyvFunc, cSet);
+    int max = 0;
+    int maxChan = 0;
     for (int c=0; c<channels; c++) {
       progress.setProgress(++p);
       if (progress.isCanceled()) System.exit(0);
@@ -265,6 +275,10 @@ public class SlimPlotter
           for (int t=0; t<timeBins; t++) {
             int ndx = 2 * (oc + oh + ow + t);
             int val = DataTools.bytesToInt(data, ndx, 2, true);
+            if (val > max) {
+              max = val;
+              maxChan = c;
+            }
             values[c][h][w][t] = val;
             sums[0][timeBins * c + t] += val;
             sum += val;
@@ -342,6 +356,7 @@ public class SlimPlotter
     decayFrame.setBounds(ifx + ifw, ify, ifw, ifh);
 
     plotData();
+    cSlider.setValue(maxChan + 1);
 
     decayFrame.setVisible(true);
     progress.setProgress(++p);
@@ -394,13 +409,16 @@ public class SlimPlotter
     catch (Exception exc) { exc.printStackTrace(); }
   }
 
+  private boolean first = true;
+
   public void doMouse() {
     double[] cursor = iPlot.getDisplayRenderer().getCursor();
     double[] domain = cursorToDomain(iPlot, cursor);
     curX = (int) domain[0];
     curY = (int) domain[1];
     boolean ap = allpix.isSelected();
-    allpix.setSelected(false);
+    if (first) first = false;
+    else allpix.setSelected(false);
     if (!ap) plotData();
   }
 
