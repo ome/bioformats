@@ -1,4 +1,6 @@
+//
 // SlimPlotter.java
+//
 
 package loci.slim;
 
@@ -7,6 +9,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.Vector;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import loci.formats.DataTools;
 import loci.formats.ExtensionFileFilter;
@@ -14,7 +17,7 @@ import visad.*;
 import visad.java3d.*;
 
 public class SlimPlotter
-  implements ChangeListener, DisplayListener, WindowListener
+  implements ActionListener, ChangeListener, DisplayListener, WindowListener
 {
 
   // -- Constants --
@@ -33,7 +36,12 @@ public class SlimPlotter
   private float[][] sums, logs;
   private int width, height;
   private int channels, timeBins;
+  private int minWave, waveStep;
+  private double timeRange;
   private int curX, curY;
+
+  private JDialog paramDialog;
+  private JTextField wField, hField, tField, cField, trField, wlField, sField;
 
   private JLabel decayLabel;
   private JCheckBox surface, allpix, parallel, logScale;
@@ -41,7 +49,7 @@ public class SlimPlotter
 
   private RealType cType;
   private FunctionType bcvFunc;
-  private Integer2DSet bcSet;
+  private Linear2DSet bcSet;
   private DataReferenceImpl ref;
   private DisplayImpl iPlot, decayPlot;
   private AnimationControl ac;
@@ -50,6 +58,13 @@ public class SlimPlotter
   // -- Constructor --
 
   public SlimPlotter(String[] args) throws Exception {
+    ProgressMonitor progress = new ProgressMonitor(null,
+      "Launching SlimPlotter", "Initializing", 0, 23);
+    progress.setMillisToPopup(0);
+    progress.setMillisToDecideToPopup(0);
+    int p = 0;
+
+    // parse command line arguments
     String filename = null;
     File file = null;
     if (args == null || args.length < 1) {
@@ -65,58 +80,130 @@ public class SlimPlotter
       filename = file.getPath();
     }
     else {
-      // parse command line arguments
       filename = args[0];
       file = new File(filename);
     }
-    width = height = 128;
+    width = height = timeBins = channels = -1;
     if (args.length >= 3) {
-      width = Integer.parseInt(args[1]);
-      height = Integer.parseInt(args[2]);
+      width = parse(args[1], -1);
+      height = parse(args[2], -1);
     }
-    timeBins = 64;
-    if (args.length >= 4) timeBins = Integer.parseInt(args[3]);
-    channels = -1; // autodetect later
-    if (args.length >= 5) channels = Integer.parseInt(args[4]);
+    if (args.length >= 4) timeBins = parse(args[3], -1);
+    if (args.length >= 5) channels = parse(args[4], -1);
 
-    ProgressMonitor progress = new ProgressMonitor(null,
-      "Launching SlimPlotter", "Reading data", 0, 23);
-    progress.setMillisToPopup(0);
-    progress.setMillisToDecideToPopup(0);
-    int p = 0;
-
-    // read SDT file
+    // read SDT file header
     DataInputStream fin = new DataInputStream(new FileInputStream(file));
     fin.skipBytes(14); // skip 14 byte header
     int offset = DataTools.read2UnsignedBytes(fin, true) + 22;
+
+    byte[] stuff = new byte[4096];
+    fin.readFully(stuff);
+    String s = new String(stuff);
+
+    if (width < 0) {
+      String wstr = "[SP_SCAN_X,I,";
+      int wndx = s.indexOf(wstr);
+      width = 128;
+      if (wndx >= 0) {
+        int q = s.indexOf("]", wndx);
+        if (q >= 0) {
+          width = parse(s.substring(wndx + wstr.length(), q), width);
+          System.out.println("Got width from file: " + width);//TEMP
+        }
+      }
+    }
+    if (height < 0) {
+      height = 128;
+      String hstr = "[SP_SCAN_Y,I,";
+      int hndx = s.indexOf(hstr);
+      if (hndx >= 0) {
+        int q = s.indexOf("]", hndx);
+        if (q >= 0) {
+          height = parse(s.substring(hndx + hstr.length(), q), height);
+          System.out.println("Got height from file: " + height);//TEMP
+        }
+      }
+    }
+    if (timeBins < 0) {
+      timeBins = 64;
+      String tstr = "[SP_ADC_RE,I,";
+      int tndx = s.indexOf(tstr);
+      if (tndx >= 0) {
+        int q = s.indexOf("]", tndx);
+        if (q >= 0) {
+          timeBins = parse(s.substring(tndx + tstr.length(), q), timeBins);
+          System.out.println("Got timeBins from file: " + timeBins);//TEMP
+        }
+      }
+    }
     if (channels < 0) {
       // autodetect number of channels based on file size
       channels = (int) ((file.length() - offset) /
         (2 * timeBins * width * height));
     }
+    timeRange = 12.5;
+    minWave = 400;
+    waveStep = 10;
+
+    // show dialog confirming data parameters
+    paramDialog = new JDialog((Frame) null, "SlimPlotter", true);
+    JPanel paramPane = new JPanel();
+    paramPane.setBorder(new EmptyBorder(10, 10, 10, 10));
+    paramDialog.setContentPane(paramPane);
+    paramPane.setLayout(new GridLayout(9, 3));
+    wField = addRow(paramPane, "Image width", width, "pixels");
+    hField = addRow(paramPane, "Image height", height, "pixels");
+    tField = addRow(paramPane, "Time bins", timeBins, "");
+    cField = addRow(paramPane, "Channel count", channels, "");
+    trField = addRow(paramPane, "Time range", timeRange, "nanoseconds");
+    wlField = addRow(paramPane, "Starting wavelength", minWave, "nanometers");
+    sField = addRow(paramPane, "Channel width", waveStep, "nanometers");
+    JButton ok = new JButton("OK");
+    ok.addActionListener(this);
+    paramPane.add(new JLabel());
+    paramPane.add(new JLabel());
+    paramPane.add(new JLabel());
+    paramPane.add(new JLabel());
+    paramPane.add(ok);
+    paramDialog.pack();
+    Dimension ss = Toolkit.getDefaultToolkit().getScreenSize();
+    Dimension ps = paramDialog.getSize();
+    paramDialog.setLocation((ss.width - ps.width) / 2,
+      (ss.height - ps.height) / 2);
+    paramDialog.setVisible(true);
+    int maxWave = minWave + (channels - 1) * waveStep;
+
+    // read pixel data
     progress.setMaximum(channels + 7);
-    fin.skipBytes(offset - 16); // skip to data
+    progress.setNote("Reading data");
+    fin.skipBytes(offset - 16 - stuff.length); // skip to data
     byte[] data = new byte[2 * channels * height * width * timeBins];
     fin.readFully(data);
     fin.close();
     progress.setProgress(++p);
+    if (progress.isCanceled()) System.exit(0);
 
     // create types
     progress.setNote("Creating types");
     RealType xType = RealType.getRealType("element");
     RealType yType = RealType.getRealType("line");
-    RealType bType = RealType.getRealType("bin");
-    cType = RealType.getRealType("channel");
-    RealType vType = RealType.getRealType("value");
+    ScaledUnit ns = new ScaledUnit(1e-9, SI.second, "ns");
+    ScaledUnit nm = new ScaledUnit(1e-9, SI.meter, "nm");
+    RealType bType = RealType.getRealType("time", ns);
+    cType = RealType.getRealType("wavelength", nm);
+    RealType vType = RealType.getRealType("count");
     RealTupleType xy = new RealTupleType(xType, yType);
     FunctionType xyvFunc = new FunctionType(xy, vType);
     Integer2DSet xySet = new Integer2DSet(xy, width, height);
     FunctionType cxyvFunc = new FunctionType(cType, xyvFunc);
-    Integer1DSet cSet = new Integer1DSet(cType, channels);
+    Linear1DSet cSet = new Linear1DSet(cType,
+      minWave, maxWave, channels, null, new Unit[] {nm}, null);
     RealTupleType bc = new RealTupleType(bType, cType);
     bcvFunc = new FunctionType(bc, vType);
-    bcSet = new Integer2DSet(bc, timeBins, channels);
+    bcSet = new Linear2DSet(bc, 0, timeRange, timeBins,
+      minWave, maxWave, channels, null, new Unit[] {ns, nm}, null);
     progress.setProgress(++p);
+    if (progress.isCanceled()) System.exit(0);
 
     // plot intensity data in 2D display
     progress.setNote("Building displays");
@@ -143,6 +230,7 @@ public class SlimPlotter
     iPlot.getProjectionControl().setMatrix(
       iPlot.make_matrix(0, 0, 0, 0.85, 0, 0, 0));
     progress.setProgress(++p);
+    if (progress.isCanceled()) System.exit(0);
 
     // plot decay curves in 3D display
     decayPlot = new DisplayImplJ3D("decay");
@@ -156,6 +244,7 @@ public class SlimPlotter
     decayPlot.getGraphicsModeControl().setTextureEnable(false);
     decayPlot.getProjectionControl().setMatrix(MATRIX);
     progress.setProgress(++p);
+    if (progress.isCanceled()) System.exit(0);
 
     // convert byte data to shorts
     progress.setNote("Constructing images ");
@@ -166,6 +255,7 @@ public class SlimPlotter
     FieldImpl field = new FieldImpl(cxyvFunc, cSet);
     for (int c=0; c<channels; c++) {
       progress.setProgress(++p);
+      if (progress.isCanceled()) System.exit(0);
       int oc = timeBins * width * height * c;
       for (int h=0; h<height; h++) {
         int oh = timeBins * width * h;
@@ -190,6 +280,7 @@ public class SlimPlotter
       logs[0][i] = (float) Math.log(sums[0][i] + 1);
     }
     progress.setProgress(++p);
+    if (progress.isCanceled()) System.exit(0);
 
     // show 2D window on screen
     progress.setNote("Creating plots");
@@ -207,7 +298,6 @@ public class SlimPlotter
     cSlider.addChangeListener(this);
     intensityPane.add(cSlider, BorderLayout.SOUTH);
 
-    Dimension ss = Toolkit.getDefaultToolkit().getScreenSize();
     int pad = 30;
     int ifx = pad / 2, ify = pad / 2;
     int ifw = (ss.width - pad) / 2, ifh = ifw;
@@ -218,8 +308,9 @@ public class SlimPlotter
     ColorControl cc = (ColorControl) iPlot.getControl(ColorControl.class);
     cc.setTable(ColorControl.initTableGreyWedge(new float[3][256]));
 
-    intensityFrame.show();
+    intensityFrame.setVisible(true);
     progress.setProgress(++p);
+    if (progress.isCanceled()) System.exit(0);
 
     // show 3D window on screen
     JFrame decayFrame = new JFrame("Spectral Lifetime Data");
@@ -252,7 +343,7 @@ public class SlimPlotter
 
     plotData();
 
-    decayFrame.show();
+    decayFrame.setVisible(true);
     progress.setProgress(++p);
   }
 
@@ -311,6 +402,19 @@ public class SlimPlotter
     boolean ap = allpix.isSelected();
     allpix.setSelected(false);
     if (!ap) plotData();
+  }
+
+  // -- ActionListener methods --
+
+  public void actionPerformed(ActionEvent e) {
+    width = parse(wField.getText(), width);
+    height = parse(hField.getText(), height);
+    timeBins = parse(tField.getText(), timeBins);
+    channels = parse(cField.getText(), channels);
+    timeRange = parse(trField.getText(), timeRange);
+    minWave = parse(wlField.getText(), minWave);
+    waveStep = parse(sField.getText(), waveStep);
+    paramDialog.setVisible(false);
   }
 
 
@@ -427,6 +531,31 @@ public class SlimPlotter
     }
 
     return values;
+  }
+
+  public static JTextField addRow(JPanel p,
+    String label, double value, String unit)
+  {
+    p.add(new JLabel(label));
+    JTextField field = new JTextField(value == (int) value ?
+      ("" + (int) value) : ("" + value), 8);
+    JPanel fieldPane = new JPanel();
+    fieldPane.setLayout(new BorderLayout());
+    fieldPane.add(field, BorderLayout.CENTER);
+    fieldPane.setBorder(new EmptyBorder(2, 3, 2, 3));
+    p.add(fieldPane);
+    p.add(new JLabel(unit));
+    return field;
+  }
+
+  public static int parse(String s, int last) {
+    try { return Integer.parseInt(s); }
+    catch (NumberFormatException exc) { return last; }
+  }
+
+  public static double parse(String s, double last) {
+    try { return Double.parseDouble(s); }
+    catch (NumberFormatException exc) { return last; }
   }
 
 
