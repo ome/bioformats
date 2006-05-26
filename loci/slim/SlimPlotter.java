@@ -92,14 +92,19 @@ public class SlimPlotter
     if (args.length >= 5) channels = parse(args[4], -1);
 
     // read SDT file header
-    DataInputStream fin = new DataInputStream(new FileInputStream(file));
+    DataInputStream fin = new DataInputStream(new BufferedInputStream(
+      new FileInputStream(file)));
+    fin.mark(4096);
     fin.skipBytes(14); // skip 14 byte header
     int offset = DataTools.read2UnsignedBytes(fin, true) + 22;
+    System.out.println("Data offset: " + offset);//TEMP
 
-    byte[] stuff = new byte[4096];
+    byte[] stuff = new byte[4077];
     fin.readFully(stuff);
     String s = new String(stuff);
+    fin.reset();
 
+    int leftToFind = 3;
     if (width < 0) {
       String wstr = "[SP_SCAN_X,I,";
       int wndx = s.indexOf(wstr);
@@ -109,6 +114,7 @@ public class SlimPlotter
         if (q >= 0) {
           width = parse(s.substring(wndx + wstr.length(), q), width);
           System.out.println("Got width from file: " + width);//TEMP
+          leftToFind--;
         }
       }
     }
@@ -121,6 +127,7 @@ public class SlimPlotter
         if (q >= 0) {
           height = parse(s.substring(hndx + hstr.length(), q), height);
           System.out.println("Got height from file: " + height);//TEMP
+          leftToFind--;
         }
       }
     }
@@ -133,6 +140,7 @@ public class SlimPlotter
         if (q >= 0) {
           timeBins = parse(s.substring(tndx + tstr.length(), q), timeBins);
           System.out.println("Got timeBins from file: " + timeBins);//TEMP
+          leftToFind--;
         }
       }
     }
@@ -144,6 +152,15 @@ public class SlimPlotter
     timeRange = 12.5;
     minWave = 400;
     waveStep = 10;
+
+    // warn user if some numbers were not found
+    if (leftToFind > 0) {
+      JOptionPane.showMessageDialog(null,
+        "Some numbers (image width, image height, and number of time bins)\n" +
+        "were not found within the file. The numbers you are about to see\n" +
+        "are best guesses. Please change them if they are incorrect.",
+        "SlimPlotter", JOptionPane.WARNING_MESSAGE);
+    }
 
     // show dialog confirming data parameters
     paramDialog = new JDialog((Frame) null, "SlimPlotter", true);
@@ -176,7 +193,7 @@ public class SlimPlotter
     // read pixel data
     progress.setMaximum(channels + 7);
     progress.setNote("Reading data");
-    fin.skipBytes(offset - 16 - stuff.length); // skip to data
+    fin.skipBytes(offset); // skip to data
     byte[] data = new byte[2 * channels * height * width * timeBins];
     fin.readFully(data);
     fin.close();
