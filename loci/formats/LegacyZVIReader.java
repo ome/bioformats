@@ -81,7 +81,7 @@ public class LegacyZVIReader extends FormatReader {
 
   /** Number of channels. */
   private int c;
-  
+
   // -- Constructor --
 
   /** Constructs a new legacy ZVI reader. */
@@ -111,7 +111,7 @@ public class LegacyZVIReader extends FormatReader {
     if (!id.equals(currentId)) initFile(id);
     return c > 1;
   }
-  
+
   /** Obtains the specified image from the given ZVI file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -132,8 +132,8 @@ public class LegacyZVIReader extends FormatReader {
       byte[] rtn = new byte[p.length * p[0].length];
       for (int i=0; i<p.length; i++) {
         System.arraycopy(p[i], 0, rtn, i*p[0].length, p[i].length);
-      }        
-      return rtn;      
+      }
+      return rtn;
     }
   }
 
@@ -151,14 +151,14 @@ public class LegacyZVIReader extends FormatReader {
     if (DEBUG) System.out.println("Reading image #" + no + "...");
 
     ZVIBlock zviBlock = (ZVIBlock) blockList.elementAt(no);
-   
-    if (!isRGB(id) || !separated) { 
+
+    if (!isRGB(id) || !separated) {
       return zviBlock.readImage(in);
     }
     else {
-      return ImageTools.splitChannels(zviBlock.readImage(in))[no % c];        
+      return ImageTools.splitChannels(zviBlock.readImage(in))[no % c];
     }
-  }  
+  }
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
@@ -327,7 +327,7 @@ public class LegacyZVIReader extends FormatReader {
       pos += width * height * bytesPerPixel;
 
       c = numC;
-      
+
       // initialize the OME-XML tree
 
       if (ome != null) {

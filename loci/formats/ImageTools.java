@@ -57,24 +57,24 @@ public abstract class ImageTools {
   public static BufferedImage makeImage(byte[] data, int w, int h, int c,
     boolean interleaved, int bps, boolean little)
   {
-    if (bps == 1) return makeImage(data, w, h, c, interleaved);        
+    if (bps == 1) return makeImage(data, w, h, c, interleaved);
     else if (bps == 2) {
       short[] shorts = new short[data.length / bps];
       for (int i=0; i<shorts.length; i++) {
-        shorts[i] = DataTools.bytesToShort(data, i*2, 2, little); 
-      }        
+        shorts[i] = DataTools.bytesToShort(data, i*2, 2, little);
+      }
       return makeImage(shorts, w, h, c, interleaved);
     }
     else if (bps == 3) {
       return ImageTools.makeImage(data, w, h, 3, interleaved);
-    }        
+    }
     else if (bps == 4) {
       float[] floats = new float[data.length / bps];
       for (int i=0; i<floats.length; i++) {
-        floats[i] = 
+        floats[i] =
           Float.intBitsToFloat(DataTools.bytesToInt(data, i*4, 4, little));
-      }        
-      return makeImage(floats, w, h, c, interleaved);   
+      }
+      return makeImage(floats, w, h, c, interleaved);
     }
     else if (bps == 6) {
       short[][] shorts = new short[3][data.length / 6];
@@ -84,7 +84,7 @@ public abstract class ImageTools {
            for (int j=0; j<shorts.length; j++) {
             shorts[j][i] = DataTools.bytesToShort(data, next, 2, little);
             next += 2;
-          }      
+          }
         }
       }
       else {
@@ -94,19 +94,19 @@ public abstract class ImageTools {
             next += 2;
           }
         }
-      }        
+      }
       return makeImage(shorts, w, h);
-    }        
+    }
     else {
       double[] doubles = new double[data.length / bps];
       for (int i=0; i<doubles.length; i++) {
          doubles[i] = Double.longBitsToDouble(
-           DataTools.bytesToLong(data, i*bps, bps, little));       
-      }    
+           DataTools.bytesToLong(data, i*bps, bps, little));
+      }
       return makeImage(doubles, w, h, c, interleaved);
-    }      
+    }
   }
-  
+
   /**
    * Creates an image from the given unsigned byte data.
    * If the interleaved flag is set, the channels are assumed to be
@@ -243,36 +243,36 @@ public abstract class ImageTools {
   public static BufferedImage makeImage(byte[][] data, int w, int h,
     int bps, boolean little)
   {
-    if (bps == 1) return makeImage(data, w, h);        
+    if (bps == 1) return makeImage(data, w, h);
     else if (bps == 2) {
       short[][] shorts = new short[data.length][data[0].length / bps];
       for (int i=0; i<shorts.length; i++) {
         for (int j=0; j<shorts[0].length; j++) {
-          shorts[i][j] = DataTools.bytesToShort(data[i], j*2, 2, little); 
-        } 
-      }  
+          shorts[i][j] = DataTools.bytesToShort(data[i], j*2, 2, little);
+        }
+      }
       return makeImage(shorts, w, h);
     }
     else if (bps == 4) {
       float[][] floats = new float[data.length][data[0].length / bps];
       for (int i=0; i<floats.length; i++) {
-        for (int j=0; j<floats[0].length; j++) {  
+        for (int j=0; j<floats[0].length; j++) {
             floats[i][j] = Float.intBitsToFloat(
               DataTools.bytesToInt(data[i], j*4, 4, little));
-        } 
+        }
       }
-      return makeImage(floats, w, h);   
+      return makeImage(floats, w, h);
     }
     else {
       double[][] doubles = new double[data.length][data[0].length / bps];
       for (int i=0; i<doubles.length; i++) {
-        for (int j=0; j<doubles[0].length; j++) {     
+        for (int j=0; j<doubles[0].length; j++) {
            doubles[i][j] = Double.longBitsToDouble(
-             DataTools.bytesToLong(data[i], j*bps, bps, little));    
-        }  
-      }    
+             DataTools.bytesToLong(data[i], j*bps, bps, little));
+        }
+      }
       return makeImage(doubles, w, h);
-    }      
+    }
   }
 
   /**
@@ -531,7 +531,7 @@ public abstract class ImageTools {
     return target;
   }
 
-  /** 
+  /**
    * Get the bytes from an image, merging the channels as necessary.
    */
   public static byte[] getBytes(BufferedImage img, boolean separated, int c) {
@@ -540,22 +540,22 @@ public abstract class ImageTools {
     else {
       byte[] rtn = new byte[p.length * p[0].length];
       for (int i=0; i<p.length; i++) {
-        System.arraycopy(p[i], 0, rtn, i * p[0].length, p[i].length);        
+        System.arraycopy(p[i], 0, rtn, i * p[0].length, p[i].length);
       }
       return rtn;
     }
-  }         
-  
-  /** 
-   * Splits the given multi-channel array into a 2D array. 
+  }
+
+  /**
+   * Splits the given multi-channel array into a 2D array.
    * The "reverse" parameter is false if channels are in RGB order, true if
    * channels are in BGR order.
    */
-  public static byte[][] splitChannels(byte[] array, int c, boolean reverse, 
-    boolean interleaved) 
+  public static byte[][] splitChannels(byte[] array, int c, boolean reverse,
+    boolean interleaved)
   {
     byte[][] rtn = new byte[c][array.length / c];
-  
+
     if (interleaved) {
       if (reverse) {
         int offset = 0;
@@ -567,15 +567,15 @@ public abstract class ImageTools {
       else {
         for (int i=0; i<c; i++) {
           System.arraycopy(array, i * rtn[i].length, rtn[i], 0, rtn[i].length);
-        }        
-      }      
+        }
+      }
     }
     else {
       if (reverse) {
         int next = 0;
         for (int i=0; i<array.length; i+=c) {
           for (int j=c-1; j>=0; j--) {
-            rtn[j][next] = array[i + j]; 
+            rtn[j][next] = array[i + j];
           }
           next++;
         }
@@ -584,15 +584,15 @@ public abstract class ImageTools {
         int next = 0;
         for (int i=0; i<array.length; i+=c) {
           for (int j=0; j<c; j++) {
-            rtn[j][next] = array[i + j]; 
+            rtn[j][next] = array[i + j];
           }
           next++;
         }
-      }          
+      }
     }
     return rtn;
   }
-  
+
   /** Splits the given multi-channel image into single-channel images. */
   public static BufferedImage[] splitChannels(BufferedImage image) {
     int w = image.getWidth(), h = image.getHeight();

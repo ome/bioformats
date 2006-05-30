@@ -59,15 +59,15 @@ public class LegacyPictReader extends FormatReader {
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     return true;
-  }         
-  
+  }
+
   /** Obtains the specified image from the given file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    BufferedImage img = openImage(id, no);      
+    BufferedImage img = openImage(id, no);
     if (separated) {
-      return ImageTools.getBytes(img)[0];  
+      return ImageTools.getBytes(img)[0];
     }
     else {
       byte[][] p = ImageTools.getBytes(img);
@@ -76,7 +76,7 @@ public class LegacyPictReader extends FormatReader {
         System.arraycopy(p[i], 0, rtn, i*p[0].length, p[i].length);
       }
       return rtn;
-    }        
+    }
   }
 
   /** Obtains the specified image from the given PICT file. */
@@ -87,7 +87,7 @@ public class LegacyPictReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-      
+
     // read in PICT data
     File file = new File(id);
     int len = (int) (file.length() - 512);
@@ -102,16 +102,16 @@ public class LegacyPictReader extends FormatReader {
       left -= r;
     }
     fin.close();
-    
-    
+
+
     if (!separated) {
       return ImageTools.makeBuffered(qtReader.pictToImage(bytes));
     }
     else {
       return ImageTools.splitChannels(ImageTools.makeBuffered(
         qtReader.pictToImage(bytes)))[no];
-    }        
-  }  
+    }
+  }
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException { }

@@ -73,7 +73,7 @@ public class OIFReader extends FormatReader {
     }
     return numImages;
   }
- 
+
   /**
    * Obtains the specified metadata field's value for the given file.
    *
@@ -88,19 +88,19 @@ public class OIFReader extends FormatReader {
     }
     return metadata.get(field);
   }
-  
+
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     return false;
-  }        
-  
+  }
+
   /** Obtains the specified image from the given OIF file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
-    }        
+    }
     return tiffReader.openBytes((String) tiffs.get(no), 0);
   }
 
@@ -111,7 +111,7 @@ public class OIFReader extends FormatReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-      
+
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }

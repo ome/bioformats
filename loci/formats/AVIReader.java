@@ -99,15 +99,15 @@ public class AVIReader extends FormatReader {
   /** Determines the number of images in the given AVI file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return (!isRGB(id) || !separated) ? numImages : 
+    return (!isRGB(id) || !separated) ? numImages :
       (bmpBitsPerPixel / 8) * numImages;
   }
 
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return (bmpBitsPerPixel > 8);     
-  }        
+    return (bmpBitsPerPixel > 8);
+  }
 
   /** Obtains the specified image from the given AVI file as a byte array. */
   public byte[] openBytes(String id, int no)
@@ -121,7 +121,8 @@ public class AVIReader extends FormatReader {
 
     byteData = new byte[dwWidth * bmpHeight];
 
-    long fileOff = ((Long) offsets.get(no / (bmpBitsPerPixel / 8))).longValue();
+    long fileOff = ((Long) offsets.get(no /
+      (bmpBitsPerPixel / 8))).longValue();
     in.seek(fileOff);
 
     int len = bmpScanLineSize;
@@ -173,11 +174,11 @@ public class AVIReader extends FormatReader {
       for (int i=(no%3); i<rawData.length; i+=3) {
         rtn[j] = rawData[i];
         j++;
-      }    
+      }
       return rtn;
     }
     else {
-      return rawData;        
+      return rawData;
     }
   }
 
@@ -199,8 +200,8 @@ public class AVIReader extends FormatReader {
   /** Initializes the given AVI file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessStream(id); 
-    
+    in = new RandomAccessStream(id);
+
     offsets = new Vector();
 
     byte[] list = new byte[4];
@@ -222,7 +223,7 @@ public class AVIReader extends FormatReader {
 
     pos = in.getFilePointer();
     long spos = pos;
-    
+
     while (in.read(list) == 4) {
       in.seek(pos);
       listString = new String(list);
@@ -253,7 +254,7 @@ public class AVIReader extends FormatReader {
               size = DataTools.read4SignedBytes(in, little);
               if (type.equals("avih")) {
                 spos = in.getFilePointer();
-                      
+
                 dwMicroSecPerFrame = DataTools.read4SignedBytes(in, little);
                 dwMaxBytesPerSec = DataTools.read4SignedBytes(in, little);
                 dwReserved1 = DataTools.read4SignedBytes(in, little);
@@ -303,7 +304,7 @@ public class AVIReader extends FormatReader {
 
               if (type.equals("strh")) {
                 spos = in.getFilePointer();
-                      
+
                 String fccStreamTypeOld = fccStreamType;
                 fccStreamType = readStringBytes();
                 if (!fccStreamType.equals("vids")) {

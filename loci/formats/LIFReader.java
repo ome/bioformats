@@ -68,7 +68,7 @@ public class LIFReader extends FormatReader {
   private int c;
   private int bpp;
 
-  
+
   // -- Constructor --
 
   /** Constructs a new Leica LIF reader. */
@@ -92,8 +92,8 @@ public class LIFReader extends FormatReader {
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return dims[0][4] > 1;
-  }        
-  
+  }
+
   /** Obtains the specified image from the given LIF file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -123,7 +123,7 @@ public class LIFReader extends FormatReader {
     int bytesPerPixel = bpp / 8;
 
     int offset = ((Long) offsets.get(ndx)).intValue();
-  
+
     // get the image number within this dataset
 
     int imageNum = no;
@@ -135,12 +135,12 @@ public class LIFReader extends FormatReader {
 
     byte[] data = new byte[(int) (width * height * bytesPerPixel * c)];
     in.read(data);
-   
+
     if (isRGB(id) && separated) {
       return ImageTools.splitChannels(data, 3, false, true)[no % 3];
     }
     else {
-      return data;        
+      return data;
     }
   }
 
@@ -148,7 +148,7 @@ public class LIFReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.makeImage(openBytes(id, no), width, height, 
+    return ImageTools.makeImage(openBytes(id, no), width, height,
       (!isRGB(id) || separated) ? 1 : c, false, bpp / 8, littleEndian);
   }
 

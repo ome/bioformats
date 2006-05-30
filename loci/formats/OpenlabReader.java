@@ -93,15 +93,15 @@ public class OpenlabReader extends FormatReader {
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     return true;
-  }        
-  
+  }
+
   /** Obtains the specified image from the given file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     // kinda inefficient...should probably be changed to "natively" use
     // openBytes, instead of calling openImage and then converting
-  
+
     BufferedImage img = openImage(id, no);
     if (separated) {
       return ImageTools.getBytes(img)[0];
@@ -110,10 +110,10 @@ public class OpenlabReader extends FormatReader {
       byte[][] p = ImageTools.getBytes(img);
       byte[] rtn = new byte[p.length * p[0].length];
       for (int i=0; i<p.length; i++) {
-        System.arraycopy(p[i], 0, rtn, i*p[0].length, p[i].length);        
+        System.arraycopy(p[i], 0, rtn, i*p[0].length, p[i].length);
       }
       return rtn;
-    }      
+    }
   }
 
   /** Obtains the specified image from the given Openlab file. */
@@ -189,14 +189,14 @@ public class OpenlabReader extends FormatReader {
         if (expectedBlock == 0 && imageType[no] < 9) {
           // there has been no deep gray data, and it is supposed
           // to be a pict... *crosses fingers*
-          try { 
+          try {
             if (!isRGB(id) || !separated) {
-              return pictReader.open(toRead); 
+              return pictReader.open(toRead);
             }
             else {
               return ImageTools.splitChannels(pictReader.open(toRead))[no%3];
-            }        
-          }  
+            }
+          }
           catch (Exception e) {
             e.printStackTrace();
             throw new FormatException("No iPic comment block found", e);

@@ -80,8 +80,8 @@ public class SDTReader extends FormatReader {
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     return false;
-  }        
-  
+  }
+
   /** Obtains the specified image from the given SDT file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -107,7 +107,7 @@ public class SDTReader extends FormatReader {
         data[ndx] = (short) sum;
       }
     }
-  
+
     byte[] p = new byte[data.length * 2];
     for (int i=0; i<data.length; i++) {
       byte[] b = DataTools.shortToBytes(data[i], true);

@@ -81,9 +81,9 @@ public class OpenlabRawReader extends FormatReader {
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return channels > 1;      
-  }        
-  
+    return channels > 1;
+  }
+
   /** Obtains the specified image from the given RAW file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -98,20 +98,20 @@ public class OpenlabRawReader extends FormatReader {
 
     byte[] data = new byte[width*height*bpp];
     in.read(data);
-   
+
     if (bpp == 1) {
       // need to invert the pixels
       for (int i=0; i<data.length; i++) {
         data[i] = (byte) (255 - data[i]);
       }
-    }        
+    }
 
     if (isRGB(id) && separated) {
-      return 
+      return
         ImageTools.splitChannels(data, channels, false, true)[no % channels];
     }
     else {
-      return data;        
+      return data;
     }
   }
 
@@ -119,7 +119,7 @@ public class OpenlabRawReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.makeImage(openBytes(id, no), width, height, 
+    return ImageTools.makeImage(openBytes(id, no), width, height,
       (!isRGB(id) || separated) ? 1 : channels, false, bpp, false);
   }
 

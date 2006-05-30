@@ -62,8 +62,8 @@ public abstract class ImageIOReader extends FormatReader {
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     return true;
-  }        
-  
+  }
+
   /** Obtains the specified image from the given file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -89,8 +89,8 @@ public abstract class ImageIOReader extends FormatReader {
         new FileInputStream(id), 4096))));
       if (channels.length > no) return channels[no];
       else return channels[0];
-    }        
-  }  
+    }
+  }
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException { }

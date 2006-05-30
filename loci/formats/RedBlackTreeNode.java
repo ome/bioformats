@@ -6,13 +6,13 @@ package loci.formats;
 
 import java.util.Vector;
 
-/** 
- * Class representing nodes in a red-black tree. 
+/**
+ * Class representing nodes in a red-black tree.
  */
 public class RedBlackTreeNode {
 
   // -- Fields --
- 
+
   /** Pointer to the parent node. */
   public RedBlackTreeNode parent;
 
@@ -24,29 +24,29 @@ public class RedBlackTreeNode {
 
   /** Depth of the node (from the root). */
   public int depth;
-                                    
+
   /** Color of the node. */
   private int color;
-                                                    
+
   /** Node type. */
   private int type;
-                                                            
+
   /** Block number of this node. */
   private int block;
-                                                                           
+
   /** Name of the node. */
   private String name;
 
   /** First block of the node's data. */
   private int firstDataBlock;
- 
+
   /** Size of the file. */
   private int fileSize;
 
   // -- Constructor --
 
   public RedBlackTreeNode(int color, int type, int block, String name,
-    int firstDataBlock, int fileSize) 
+    int firstDataBlock, int fileSize)
   {
     this.color = color;
     this.type = type;
@@ -62,7 +62,7 @@ public class RedBlackTreeNode {
 
   /** Set the node's name. */
   public void setName(String name) { this.name = name; }
-  
+
   /** Retrieve the node's first data block. */
   public int getFirstBlock() { return firstDataBlock; }
 
@@ -74,5 +74,5 @@ public class RedBlackTreeNode {
 
   /** Retrieve the file size. */
   public int getSize() { return fileSize; }
-  
-}  
+
+}

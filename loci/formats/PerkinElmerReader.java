@@ -77,15 +77,15 @@ public class PerkinElmerReader extends FormatReader {
       initFile(id);
     }
     return channels > 1;
-  }        
-  
+  }
+
   /** Obtains the specified image from the given file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
-    }        
+    }
     return tiff.openBytes(files[no / channels], 0);
   }
 
@@ -96,7 +96,7 @@ public class PerkinElmerReader extends FormatReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-      
+
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
@@ -133,22 +133,22 @@ public class PerkinElmerReader extends FormatReader {
     // locate appropriate .tim, .csv, .zpo, .htm and .tif files
 
     String prefix = null;
-    
+
     for (int i=0; i<ls.length; i++) {
       // make sure that the file has a name similar to the name of the
       // specified file
-     
+
       int d = ls[i].lastIndexOf(".");
       String s = dot < 0 ? ls[i] : ls[i].substring(0, d);
-            
-      if (s.startsWith(check) || check.startsWith(s) || 
-        ((prefix != null) && (s.startsWith(prefix)))) 
+
+      if (s.startsWith(check) || check.startsWith(s) ||
+        ((prefix != null) && (s.startsWith(prefix))))
       {
         if (timPos == -1) {
           if (ls[i].toLowerCase().endsWith(".tim")) {
             timPos = i;
             prefix = ls[i].substring(0, d);
-          }  
+          }
         }
         if (csvPos == -1) {
           if (ls[i].toLowerCase().endsWith(".csv")) {
@@ -320,7 +320,7 @@ public class PerkinElmerReader extends FormatReader {
     }
 
     channels = Integer.parseInt(wavelengths);
-     
+
     // initialize OME-XML
 
     if (ome != null) {

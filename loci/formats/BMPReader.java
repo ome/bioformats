@@ -69,8 +69,8 @@ public class BMPReader extends FormatReader {
 
   /** Offset to image data. */
   private int global;
-  
-  
+
+
   // -- Constructor --
 
   /** Constructs a new BMP reader. */
@@ -98,8 +98,8 @@ public class BMPReader extends FormatReader {
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return (bpp > 8);
-  }         
-  
+  }
+
   /** Obtains the specified image from the given BMP file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -108,10 +108,10 @@ public class BMPReader extends FormatReader {
 
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
-    }        
+    }
 
     in.seek(global);
-    
+
     if (width % 2 == 1) width++;
     byte[] pix = new byte[width * height * (bpp / 8)];
     in.read(pix);
@@ -175,23 +175,23 @@ public class BMPReader extends FormatReader {
         tempPx[0][oldOff] = pixels[0][newOff];
         tempPx[1][oldOff] = pixels[1][newOff];
         tempPx[2][oldOff] = pixels[2][newOff];
-        
+
         oldOff++;
         newOff--;
       }
     }
- 
+
     if (isRGB(id) && separated) {
-      return tempPx[no]; 
+      return tempPx[no];
     }
     else {
       byte[] p = new byte[tempPx.length * tempPx[0].length];
       for (int i=0; i<tempPx.length; i++) {
-        System.arraycopy(tempPx[i], 0, p, i * tempPx[i].length, 
+        System.arraycopy(tempPx[i], 0, p, i * tempPx[i].length,
           tempPx[i].length);
-      }        
+      }
       return p;
-    }        
+    }
   }
 
   /** Obtains the specified image from the given BMP file. */

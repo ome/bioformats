@@ -127,16 +127,16 @@ public class LeicaReader extends BaseTiffReader {
 
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
-    return false; 
-  }        
-  
+    return false;
+  }
+
   /** Obtains the specified image from the given Leica file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
-    }        
+    }
     return tiff.openBytes(currentId, no);
   }
 
@@ -147,7 +147,7 @@ public class LeicaReader extends BaseTiffReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-      
+
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
@@ -307,7 +307,7 @@ public class LeicaReader extends BaseTiffReader {
   /** Populates the metadata hashtable and OME root node. */
   protected void initMetadata() {
     if (headerIFDs == null) headerIFDs = ifds;
-          
+
     for (int i=0; i<headerIFDs.length; i++) {
       byte[] temp = (byte[]) headerIFDs[i].get(new Integer(10));
       if (temp != null) {
@@ -607,7 +607,7 @@ public class LeicaReader extends BaseTiffReader {
       if (description != null) {
         OMETools.setDescription(ome, description.toString());
       }
-        
+
 //      String voxel = metadata.get("VoxelType").toString();
 //      String photoInterp;
 //      if (voxel.equals("gray normal")) photoInterp = "monochrome";

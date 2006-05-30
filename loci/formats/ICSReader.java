@@ -89,8 +89,8 @@ public class ICSReader extends FormatReader {
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     return false;
-  }          
-  
+  }
+
   /** Obtains the specified image from the given ICS file, as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -103,7 +103,7 @@ public class ICSReader extends FormatReader {
     int channels = 1;
 
     idsIn.seek((dimensions[0] / 8) * width * height * no);
-    
+
     byte[] data = new byte[(dimensions[0]/8) * width * height];
     idsIn.readFully(data);
 
@@ -122,7 +122,7 @@ public class ICSReader extends FormatReader {
     int numSamples = width * height;
     int channels = 1;
 
-    return ImageTools.makeImage(data, width, height, channels, false, 
+    return ImageTools.makeImage(data, width, height, channels, false,
       dimensions[0] / 8, littleEndian);
   }
 

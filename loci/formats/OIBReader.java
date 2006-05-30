@@ -49,10 +49,10 @@ public class OIBReader extends FormatReader {
 
   /** Height of normal image. */
   private int height;
-  
+
   /** Pixel data. */
-  private Hashtable pixelData; 
-  
+  private Hashtable pixelData;
+
   // -- Constructor --
 
   /** Constructs a new OIB reader. */
@@ -75,13 +75,13 @@ public class OIBReader extends FormatReader {
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     return false;
-  }        
-  
+  }
+
   /** Obtains the specified image from the given OIB file as a byte array. */
-  public byte[] openBytes(String id, int no) 
+  public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.getBytes(openImage(id, no), false, no);    
+    return ImageTools.getBytes(openImage(id, no), false, no);
   }
 
   /** Obtains the specified image from the given OIB file. */
@@ -96,7 +96,7 @@ public class OIBReader extends FormatReader {
 
     byte[] pixels = (byte[]) pixelData.get(new Integer(no));
     RandomAccessStream ra = new RandomAccessStream(pixels);
-  
+
     Hashtable[] fds = TiffTools.getIFDs(ra, 0);
     return TiffTools.getImage(fds[0], ra);
   }
@@ -109,13 +109,13 @@ public class OIBReader extends FormatReader {
   /** Initializes the given OIB file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-  
+
     pixelData = new Hashtable();
-    
+
     OLEParser parser = new OLEParser(id);
     parser.parse(0);
     Vector[] files = parser.getFiles();
-    
+
     for (int i=0; i<files[0].size(); i++) {
       byte[] data = (byte[]) files[1].get(i);
       String pathName = ((String) files[0].get(i)).trim();
@@ -123,9 +123,9 @@ public class OIBReader extends FormatReader {
 
       if (pathName.endsWith("OibInfo.txt")) {
         // some kind of metadata
-      }        
+      }
       else if (pathName.indexOf("Stream") != -1) {
-        // first get the image number  
+        // first get the image number
         String num = pathName.substring(pathName.indexOf("Stream") + 6);
         if (TiffTools.isValidHeader(data)) {
           if (width == 0 && height == 0) {
@@ -147,17 +147,17 @@ public class OIBReader extends FormatReader {
               int h = TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_LENGTH,
                 false, -1);
               if (w == width && h == height) {
-                pixelData.put(Integer.valueOf(num), data);       
-              }    
+                pixelData.put(Integer.valueOf(num), data);
+              }
             }
             catch (IOException e) { }
           }
         }
-      }  
+      }
     }
 
     // align keys in pixelData
-    
+
     Integer[] keys = (Integer[]) pixelData.keySet().toArray(new Integer[0]);
     Arrays.sort(keys);
 
@@ -166,13 +166,13 @@ public class OIBReader extends FormatReader {
     for (int j=0; j<keys.length; j++) {
       t.put(new Integer(i), pixelData.get(keys[j]));
       i++;
-    }    
+    }
     pixelData = t;
-    
+
     numImages = pixelData.size();
-  
+
     // initialize metadata
-  
+
     TiffReader btr = new TiffReader();
     btr.ifds = TiffTools.getIFDs(new RandomAccessStream(
       (byte[]) pixelData.get(new Integer(0))));
@@ -182,7 +182,7 @@ public class OIBReader extends FormatReader {
     OMETools.setSizeC(ome, numImages);
   }
 
-  
+
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {

@@ -243,17 +243,17 @@ public class QTReader extends FormatReader {
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return bitsPerPixel < 40;      
+    return bitsPerPixel < 40;
   }
-  
+
   /** Obtains the specified image from the given file, as a byte array. */
-  public byte[] openBytes(String id, int no) 
+  public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
-    }        
+    }
 
     if (!codec.equals("raw ") && !codec.equals("rle ") &&
       !codec.equals("jpeg") && !codec.equals("mjpb"))
@@ -267,7 +267,7 @@ public class QTReader extends FormatReader {
     }
 
     int c = isRGB(id) ? 3 : 1;
-    
+
     int offset = ((Integer) offsets.get(no / c)).intValue();
     int nextOffset = pixels.length;
 
@@ -297,10 +297,10 @@ public class QTReader extends FormatReader {
     }
 
     if (codec.equals("jpeg") || codec.equals("mjpb")) {
-      return ImageTools.getBytes(openImage(id, no), isRGB(id) && separated, 
+      return ImageTools.getBytes(openImage(id, no), isRGB(id) && separated,
         no % c);
-    }        
-    
+    }
+
     byte[] bytes = uncompress(pixs, codec);
     // on rare occassions, we need to trim the data
     if ((prevPixels != null) && (prevPixels.length < bytes.length)) {
@@ -350,15 +350,15 @@ public class QTReader extends FormatReader {
       for (int i=0; i<data.length; i++) {
         System.arraycopy(data[i], 0, rtn, i * data[0].length, data[i].length);
       }
-      return ImageTools.splitChannels(rtn, isRGB(id) ? 3 : 1, 
+      return ImageTools.splitChannels(rtn, isRGB(id) ? 3 : 1,
         false, true)[no % c];
     }
     else {
-      return ImageTools.splitChannels(bytes, 
+      return ImageTools.splitChannels(bytes,
         isRGB(id) ? 3 : 1, false, true)[no % (isRGB(id) ? 3 : 1)];
     }
-  }  
-  
+  }
+
   /** Obtains the specified image from the given QuickTime file. */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
@@ -379,7 +379,7 @@ public class QTReader extends FormatReader {
     }
 
     int c = isRGB(id) ? 3 : 1;
-    
+
     int offset = ((Integer) offsets.get(no / c)).intValue();
     int nextOffset = pixels.length;
 
@@ -414,22 +414,22 @@ public class QTReader extends FormatReader {
       }
       else {
         return ImageTools.splitChannels(bufferedJPEG(pixs))[no % 3];
-      }        
-    }  
+      }
+    }
     else if (codec.equals("mjpb")) {
       if (!isRGB(id) || !separated) {
         return mjpbUncompress(pixs);
       }
       else {
         return ImageTools.splitChannels(mjpbUncompress(pixs))[no % 3];
-      }        
-    }  
+      }
+    }
     else {
       int bpp = bitsPerPixel / 8;
-      if (bpp == 3 || bpp == 5) bpp = 1; 
+      if (bpp == 3 || bpp == 5) bpp = 1;
       if (bpp == 4) bpp = 1;
       return ImageTools.makeImage(openBytes(id, no), width, height,
-        (isRGB(id) && !separated) ? 3 : 1, false, bpp, little);  
+        (isRGB(id) && !separated) ? 3 : 1, false, bpp, little);
     }
   }
 
@@ -457,10 +457,10 @@ public class QTReader extends FormatReader {
   public void parse(int depth, long offset, long length) throws IOException {
     while (offset < length) {
       in.seek(offset);
-      
+
       // first 4 bytes are the atom size
       long atomSize = DataTools.read4UnsignedBytes(in, little);
-      
+
       // read the atom type
       byte[] four = new byte[4];
       in.read(four);
@@ -525,7 +525,7 @@ public class QTReader extends FormatReader {
         else if (atomType.equals("stsd")) {
           // found video codec and pixel depth information
           codec = new String(data, 12, 4);
-          
+
           int fieldsPerPlane = DataTools.bytesToInt(data, 102, 1, little);
           interlaced = fieldsPerPlane == 2;
           bitsPerPixel = DataTools.bytesToInt(data, 90, 2, little);

@@ -154,19 +154,19 @@ public abstract class DataTools {
   }
 
   /** Get a pair of bytes representing a short value. */
-  public static byte[] shortToBytes(short v, boolean little) throws IOException 
+  public static byte[] shortToBytes(short v, boolean little) throws IOException
   {
     byte[] rtn = new byte[2];
     if (little) {
       rtn[0] = (byte) (v & 0xff);
       rtn[1] = (byte) ((v >>> 8) & 0xff);
-    }        
+    }
     else {
-      rtn[0] = (byte) ((v >>> 8) & 0xff);         
+      rtn[0] = (byte) ((v >>> 8) & 0xff);
       rtn[1] = (byte) (v & 0xff);
     }
     return rtn;
-  }        
+  }
 
   // -- Word decoding --
 
@@ -425,10 +425,10 @@ public abstract class DataTools {
 
     int slash1 = s1.lastIndexOf(File.pathSeparator);
     int slash2 = s2.lastIndexOf(File.pathSeparator);
-    
+
     String sub1 = s1.substring((slash1 == -1) ? 0 : slash1 + 1, n1);
     String sub2 = s2.substring((slash2 == -1) ? 0 : slash2 + 1, n2);
     return sub1.equals(sub2) || sub1.startsWith(sub2) || sub2.startsWith(sub1);
   }
-  
+
 }

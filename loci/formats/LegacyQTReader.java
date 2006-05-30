@@ -289,7 +289,7 @@ public class LegacyQTReader extends FormatReader {
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     return true;
-  }        
+  }
 
   /** Obtains the specified image from the given QuickTime file. */
   public byte[] openBytes(String id, int no)
@@ -311,7 +311,7 @@ public class LegacyQTReader extends FormatReader {
       return rtn;
     }
     else {
-      return ImageTools.getBytes(img)[0]; 
+      return ImageTools.getBytes(img)[0];
     }
   }
 
@@ -346,9 +346,9 @@ public class LegacyQTReader extends FormatReader {
       return ImageTools.makeBuffered(image);
     }
     else {
-      return ImageTools.splitChannels(ImageTools.makeBuffered(image))[no % 3]; 
+      return ImageTools.splitChannels(ImageTools.makeBuffered(image))[no % 3];
     }
-  }  
+  }
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
