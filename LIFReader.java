@@ -117,7 +117,7 @@ public class LIFReader extends FormatReader {
     width = dims[ndx][0];
     height = dims[ndx][1];
     c = dims[ndx][4];
-    if (c == 2) c++;
+    if (c == 2) c--;
     bpp = dims[ndx][5];
     while (bpp % 8 !=0) bpp++;
     int bytesPerPixel = bpp / 8;
@@ -131,6 +131,13 @@ public class LIFReader extends FormatReader {
       imageNum -= (dims[i][2] * dims[i][3] * dims[i][6]);
     }
 
+    if (no == 0) {
+      /* debug */ System.out.println("width : " + width);
+      /* debug */ System.out.println("height : " + height);
+      /* debug */ System.out.println("bpp : " + bpp);
+      /* debug */ System.out.println("c : " + c);
+    }        
+    
     in.seek(offset + width * height * bytesPerPixel * imageNum);
 
     byte[] data = new byte[(int) (width * height * bytesPerPixel * c)];
