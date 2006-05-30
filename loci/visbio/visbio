@@ -1,4 +1,4 @@
 #!/bin/bash
 cd `echo $0 | sed -e 's/\/[^\/]*$//g'`
 java -mx896m -Dswing.defaultlaf=com.jgoodies.plaf.plastic.Plastic3DLookAndFeel loci.visbio.VisBio $*
-cd -
+cd - > /dev/null
