@@ -38,7 +38,7 @@ public class LIFReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessStream in;
+  protected RandomAccessFile in;
 
   /** Flag indicating whether current file is little endian. */
   protected boolean littleEndian;
@@ -131,13 +131,7 @@ public class LIFReader extends FormatReader {
       imageNum -= (dims[i][2] * dims[i][3] * dims[i][6]);
     }
 
-    if (no == 0) {
-      /* debug */ System.out.println("width : " + width);
-      /* debug */ System.out.println("height : " + height);
-      /* debug */ System.out.println("bpp : " + bpp);
-      /* debug */ System.out.println("c : " + c);
-    }        
-    
+    /* debug */ System.out.println("seeking to " + (offset + width*height*bytesPerPixel*imageNum));
     in.seek(offset + width * height * bytesPerPixel * imageNum);
 
     byte[] data = new byte[(int) (width * height * bytesPerPixel * c)];
@@ -170,7 +164,7 @@ public class LIFReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     offsets = new Vector();
-    in = new RandomAccessStream(id);
+    in = new RandomAccessFile(id, "r");
 
     littleEndian = true;
 
