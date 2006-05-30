@@ -280,7 +280,7 @@ public class ZeissLSMReader extends BaseTiffReader {
       p += 4;
 
       int pos = in.getFilePointer();
-      
+
       // the following 4 are file offsets
       data = DataTools.bytesToLong(cz, p, 4, little);
       parseOverlays(data, "OffsetVectorOverlay", little);
@@ -296,9 +296,9 @@ public class ZeissLSMReader extends BaseTiffReader {
       // first we have to make sure that the structure actually exists
       if (data != 0) {
         pos = in.getFilePointer();
-             
+
         in.seek(data);
-        
+
         int blockSize = DataTools.read4SignedBytes(in, little);
         int numColors = DataTools.read4SignedBytes(in, little);
         int numNames = DataTools.read4SignedBytes(in, little);
@@ -379,11 +379,11 @@ public class ZeissLSMReader extends BaseTiffReader {
       data = DataTools.bytesToLong(cz, p, 4, little);
       if (data != 0) {
         pos = in.getFilePointer();
-              
+
         long numBytes = DataTools.read4UnsignedBytes(in, little);
         int numEvents = DataTools.read4SignedBytes(in, little);
         in.seek((int) (pos + data + 8));
-        
+
         for (int i=0; i<numEvents; i++) {
           in.skipBytes(4);
           ddata = DataTools.readDouble(in, little);
@@ -528,7 +528,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     if (data == 0) return;
 
     in.seek((int) data);
-    
+
     int nde = DataTools.read4SignedBytes(in, little);
     put("NumberDrawingElements-" + suffix, nde);
     int size = DataTools.read4SignedBytes(in, little);
@@ -591,7 +591,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     if (data == 0) return;
 
     in.seek((int) data);
-    
+
     long size = DataTools.read4UnsignedBytes(in, little);
     long numSubBlocks = DataTools.read4UnsignedBytes(in, little);
     put("NumSubBlocks-" + suffix, numSubBlocks);

@@ -163,9 +163,9 @@ public class ImageReader extends FormatReader {
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].isRGB(id);      
-  }         
- 
+    return readers[index].isRGB(id);
+  }
+
   /**
    * Allows the client to specify whether or not to separate channels.
    * By default, channels are left unseparated; thus if we encounter an RGB
@@ -173,8 +173,8 @@ public class ImageReader extends FormatReader {
    */
   public void setSeparated(boolean separate) {
     readers[index].setSeparated(separate);
-  }        
-  
+  }
+
   /** Obtains the specified image from the given image file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException

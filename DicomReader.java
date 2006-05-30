@@ -125,9 +125,9 @@ public class DicomReader extends FormatReader {
 
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
-    return false;       
+    return false;
   }
-  
+
   /** Obtains the specified image from the given file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -142,7 +142,7 @@ public class DicomReader extends FormatReader {
 
     in.seek(offsets + data.length * no);
     in.read(data);
-  
+
     if (bitsPerPixel == 16) {
       // may still be broken on some samples, but it's better than it was
 
@@ -210,7 +210,7 @@ public class DicomReader extends FormatReader {
         byte[] b = DataTools.shortToBytes(shortData[i], little);
         data[2*i] = b[0];
         data[2*i + 1] = b[1];
-      }        
+      }
     }
     return data;
   }
@@ -219,8 +219,8 @@ public class DicomReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.makeImage(openBytes(id, no), width, height, 1, false, 
-      bitsPerPixel / 8, little);   
+    return ImageTools.makeImage(openBytes(id, no), width, height, 1, false,
+      bitsPerPixel / 8, little);
   }
 
   /** Closes any open files. */

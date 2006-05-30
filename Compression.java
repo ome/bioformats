@@ -53,7 +53,7 @@ public abstract class Compression {
   protected static final int RAW = 0xc0;
 
   // Base64 alphabet and codes
-  
+
   private static final int FOURBYTE = 4;
   private static final byte PAD = (byte) '=';
 
@@ -77,7 +77,7 @@ public abstract class Compression {
     base64Alphabet['/'] = 63;
   }
 
-  
+
   // -- Compression methods --
 
   /**
@@ -253,7 +253,7 @@ public abstract class Compression {
    */
   public static byte[] decode(String s) throws FormatException {
     byte[] base64Data = s.getBytes();
-     
+
     if (base64Data.length == 0) return new byte[0];
 
     int numberQuadruple = base64Data.length / FOURBYTE;
@@ -270,7 +270,7 @@ public abstract class Compression {
       }
     }
     decodedData = new byte[lastData - numberQuadruple];
-   
+
     for (int i=0; i<numberQuadruple; i++) {
       dataIndex = i * 4;
       marker0 = base64Data[dataIndex + 2];
@@ -278,7 +278,7 @@ public abstract class Compression {
 
       b1 = base64Alphabet[base64Data[dataIndex]];
       b2 = base64Alphabet[base64Data[dataIndex + 1]];
-                                             
+
       if (marker0 != PAD && marker1 != PAD) {
         b3 = base64Alphabet[marker0];
         b4 = base64Alphabet[marker1];

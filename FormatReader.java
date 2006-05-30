@@ -75,7 +75,7 @@ public abstract class FormatReader extends FormatHandler {
   /** Checks if the images in the file are RGB. */
   public abstract boolean isRGB(String id)
     throws FormatException, IOException;
-  
+
   /** Obtains the specified image from the given file. */
   public abstract BufferedImage openImage(String id, int no)
     throws FormatException, IOException;
@@ -110,9 +110,9 @@ public abstract class FormatReader extends FormatHandler {
    * image plane, it will be left as RGB and not split into 3 separate planes.
    */
   protected void setSeparated(boolean separate) {
-    separated = separate;        
+    separated = separate;
   }
-  
+
   /**
    * Opens the given file, reads in the first few KB and calls
    * isThisType(byte[]) to check whether it matches this format.

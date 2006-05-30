@@ -41,8 +41,8 @@ public class EPSWriter extends FormatWriter {
 
   // -- Constructor --
 
-  public EPSWriter() { 
-    super("Encapsulated PostScript", new String[] {"eps", "epsi"}); 
+  public EPSWriter() {
+    super("Encapsulated PostScript", new String[] {"eps", "epsi"});
   }
 
 
@@ -60,7 +60,7 @@ public class EPSWriter extends FormatWriter {
     }
 
     out = new RandomAccessFile(id, "rw");
-    
+
     BufferedImage img = ImageTools.makeBuffered(image);
 
     // get the width and height of the image
@@ -71,31 +71,31 @@ public class EPSWriter extends FormatWriter {
     byte[][] byteData = ImageTools.getBytes(img);
 
     // write the header
-    
+
     DataTools.writeString(out, "%!PS-Adobe-2.0 EPSF-1.2\n");
     DataTools.writeString(out, "%%Title: " + id + "\n");
     DataTools.writeString(out, "%%Creator: LOCI Bio-Formats\n");
     DataTools.writeString(out, "%%Pages: 1\n");
-    DataTools.writeString(out, "%%BoundingBox: 0 0 " + width + 
+    DataTools.writeString(out, "%%BoundingBox: 0 0 " + width +
       " " + height + "\n");
     DataTools.writeString(out, "%%EndComments\n\n");
 
     DataTools.writeString(out, "/ld {load def} bind def\n");
     DataTools.writeString(out, "/s /stroke ld /f /fill ld /m /moveto ld /l " +
-      "/lineto ld /c /curveto ld /rgb {255 div 3 1 roll 255 div 3 1 roll 255 " +
-      "div 3 1 roll setrgbcolor} def\n");
+      "/lineto ld /c /curveto ld /rgb {255 div 3 1 roll 255 div 3 1 " +
+      "roll 255 div 3 1 roll setrgbcolor} def\n");
     DataTools.writeString(out, "0 0 translate\n");
     DataTools.writeString(out, ((float) width) + " " + ((float) height) +
       " scale\n");
     DataTools.writeString(out, "/picstr 40 string def\n");
     if (byteData.length == 1) {
-      DataTools.writeString(out, width + " " + height + " 8 [" + width + 
+      DataTools.writeString(out, width + " " + height + " 8 [" + width +
         " 0 0 " + (-1*height) + " 0 " + height + "] {currentfile picstr " +
         "readhexstring pop} image\n");
-    
+
       // write pixel data
       // for simplicity, write 80 char lines
-    
+
       int charCount = 0;
       for (int i=0; i<byteData[0].length; i++) {
         for (int j=0; j<1; j++) {
@@ -108,18 +108,18 @@ public class EPSWriter extends FormatWriter {
           if (charCount == 40) {
             DataTools.writeString(out, "\n");
             charCount = 0;
-          }  
+          }
         }
       }
     }
     else {
-      DataTools.writeString(out, width + " " + height + " 8 [" + width + 
+      DataTools.writeString(out, width + " " + height + " 8 [" + width +
         " 0 0 " + (-1*height) + " 0 " + height + "] {currentfile picstr " +
         "readhexstring pop} false 3 colorimage\n");
-           
+
       // write pixel data
       // for simplicity, write 80 char lines
-      
+
       int charCount = 0;
       for (int i=0; i<byteData[0].length; i++) {
         for (int j=0; j<byteData.length; j++) {
@@ -132,15 +132,15 @@ public class EPSWriter extends FormatWriter {
           if (charCount == 40) {
             DataTools.writeString(out, "\n");
             charCount = 0;
-          }  
+          }
         }
       }
-    }         
-           
+    }
+
     // write footer
-    
+
     DataTools.writeString(out, "showpage\n");
-    out.close(); 
+    out.close();
   }
 
   /** Reports whether the writer can save multiple images to a single file. */

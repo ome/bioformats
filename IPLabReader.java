@@ -94,9 +94,9 @@ public class IPLabReader extends FormatReader {
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return c > 1;      
+    return c > 1;
   }
-  
+
   /** Obtains the specified image from the given IPLab file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -123,7 +123,7 @@ public class IPLabReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.makeImage(openBytes(id, no), width, height, 
+    return ImageTools.makeImage(openBytes(id, no), width, height,
       (!isRGB(id) || separated) ? 1 : c, false, bps, littleEndian);
   }
 

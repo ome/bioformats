@@ -1,6 +1,6 @@
 //
 // RedBlackTreeNode.java
-// 
+//
 
 /*
 LOCI Bio-Formats package for reading and converting biological file formats.
@@ -34,9 +34,9 @@ public class RedBlackTree {
 
   // -- Constants --
 
-  private static final int RED = 0, BLACK = 1;      
+  private static final int RED = 0, BLACK = 1;
   private static final int ROOT = 5, FILE = 2, DIRECTORY = 1;
-  
+
   // -- Fields --
 
   /** The root of the tree. */
@@ -44,8 +44,8 @@ public class RedBlackTree {
 
   /** Number of leaf nodes. */
   private int numLeaves;
-  
-  /** 
+
+  /**
    * Add a node to the tree.  Note that we do NOT explicitly check that the
    * node to be added conforms to the rules for red-black tree construction.
    * This is because most of our OLE-variant files don't contain properly
@@ -58,12 +58,12 @@ public class RedBlackTree {
    * @param next the block number of the next sibling node
    * @param parent the block number of the parent node
    */
-  public void add(int color, int type, int block, int next, int parent, 
-    String name, int firstDataBlock, int fileSize) 
+  public void add(int color, int type, int block, int next, int parent,
+    String name, int firstDataBlock, int fileSize)
   {
     // first construct a new "dummy" node
-    RedBlackTreeNode newNode = new RedBlackTreeNode(color, type, block, name, 
-      firstDataBlock, fileSize);      
+    RedBlackTreeNode newNode = new RedBlackTreeNode(color, type, block, name,
+      firstDataBlock, fileSize);
 
     if (type == ROOT) {
       // add this node as the root of the tree
@@ -71,8 +71,8 @@ public class RedBlackTree {
       newNode.depth = 0;
       root = newNode;
       return;
-    }        
-  
+    }
+
     if (next == -1) newNode.isLast = true;
 
     // search for the parent
@@ -82,21 +82,21 @@ public class RedBlackTree {
     RedBlackTreeNode parentNode = bfs(parent);
     name = parentNode.getName() + "/ " + name;
     newNode.setName(name);
-    
+
     // set the parent
-   
+
     newNode.depth = parentNode.depth + 1;
     newNode.parent = parentNode;
     parentNode.children.add(newNode);
     if (type == FILE) numLeaves++;
   }
- 
+
   /** Get a list of all leaf nodes (files). */
   public Vector getLeaf() {
     Vector leaves = new Vector();
-    
-    // we expect numLeaves leaf nodes 
-  
+
+    // we expect numLeaves leaf nodes
+
     int numFound = 0;
 
     Vector childs = new Vector();
@@ -108,13 +108,13 @@ public class RedBlackTree {
       else {
         for (int i=0; i<firstChild.children.size(); i++) {
           childs.add(firstChild.children.get(i));
-        }        
-      }        
-    }        
-  
+        }
+      }
+    }
+
     return leaves;
   }
-    
+
   /** Breadth-first search. */
   private RedBlackTreeNode bfs(int block) {
     Vector childs = new Vector();
@@ -126,7 +126,7 @@ public class RedBlackTree {
       if (firstChild.getBlock() == block) return firstChild;
       for (int i=0; i<firstChild.children.size(); i++) {
         childs.add(firstChild.children.get(i));
-      }        
+      }
     }
     return null;
   }
@@ -134,6 +134,6 @@ public class RedBlackTree {
   /** Return true if the root node is null. */
   public boolean nullRoot() {
     return root == null;
-  }        
-  
+  }
+
 }

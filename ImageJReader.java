@@ -86,12 +86,12 @@ public class ImageJReader extends FormatReader {
     if (!id.equals(currentId)) initFile(id);
     return separated ? 3 : 1;
   }
-  
+
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     return true;
-  }        
-  
+  }
+
   /** Obtains the specified image from the given file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -119,14 +119,14 @@ public class ImageJReader extends FormatReader {
       r.exec("size = image.getStackSize()");
       int size = ((Integer) r.getVar("size")).intValue();
       Image img = (Image) r.exec("image.getImage()");
-      
+
       if (!separated) {
         return ImageTools.makeBuffered(img);
       }
       else {
         return ImageTools.splitChannels(ImageTools.makeBuffered(img))[no];
-      }        
-    }   
+      }
+    }
     catch (Exception exc) {
       exc.printStackTrace();
     }

@@ -100,8 +100,8 @@ public class IPWReader extends BaseTiffReader {
     ifds = (Hashtable[]) allIFDs.get(new Integer(0));
     return (TiffTools.getIFDIntValue(ifds[0],
       TiffTools.SAMPLES_PER_PIXEL, false, 1) > 1);
-  }        
-  
+  }
+
   /** Obtains the specified image from the given IPW file, as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
