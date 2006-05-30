@@ -71,4 +71,7 @@ public class TaskControls extends ControlPanel {
     scroll.repaint();
   }
 
+  /** Gets the preferred width of tasks. */
+  public int getPreferredTaskWidth() { return scroll.getSize().width; }
+
 }

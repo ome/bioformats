@@ -62,11 +62,20 @@ public class BioTask extends JPanel implements ActionListener {
   // -- Constructor --
 
   /** Constructs a new VisBio task. */
-  public BioTask(TaskManager tm, String name) {
-    this.tm = tm;
+  public BioTask(TaskManager taskMan, String name) {
+    tm = taskMan;
     title = new JLabel(name);
     title.setFont(title.getFont().deriveFont(Font.BOLD));
-    status = new JLabel();
+    status = new JLabel() {
+      public Dimension getPreferredSize() {
+        // HACK - limit label width to viewport
+        Dimension pref = super.getPreferredSize();
+        int width = tm.getControls().getPreferredTaskWidth() -
+          title.getPreferredSize().width - stop.getPreferredSize().width - 25;
+        if (pref.width < width) width = pref.width;
+        return new Dimension(width, pref.height);
+      }
+    };
     progress = new JProgressBar();
     progress.setIndeterminate(true);
     stop = new JButton("Stop");
