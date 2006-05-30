@@ -15,6 +15,8 @@ v3.50 - Not yet released
 
 - FIXED: Eliminated dependency on QuickTime for MOV, PICT and Openlab LIFF
 - FIXED: Eliminated dependency on Jakarta POI for Image-Pro IPW and Zeiss ZVI
+- FIXED: Avoid horizontal scroll bar in task list for long status messages
+- FIXED: Filter out Java 1.5 XML parser warnings
 - FIXED: Bug in text overlays
 
 
