@@ -1,9 +1,21 @@
-v3.30 - Not yet released
+v3.50 - Not yet released
 
 - ADDED: File formats support is now in a standalone package: LOCI Bio-Formats
-- ADDED: Support for Andor Bio-imaging Division (ABD) TIFF
+- ADDED: Native DICOM support (eliminates dependency on ImageJ)
+- ADDED: Support for Olympus FluoView FV1000 (OIF & OIB) formats
+- ADDED: Support for Andor Bio-Imaging Division TIFF format
+- ADDED: Support for Amersham Biosciences GEL format
+- ADDED: Support for Leica Image File Format (LIF)
+- ADDED: Support for Nikon Electronic Format (NEF)
+- ADDED: Support for Imaris (IMS) format
+- ADDED: Support for Openlab RAW format
+- ADDED: Support for OME-XML format
+- ADDED: Option to use 3D texturing in volume rendering
+- ADDED: Option to use nicer transparency blending
 
-- FIXED: Fix bug in text overlays
+- FIXED: Eliminated dependency on QuickTime for MOV, PICT and Openlab LIFF
+- FIXED: Eliminated dependency on Jakarta POI for Image-Pro IPW and Zeiss ZVI
+- FIXED: Bug in text overlays
 
 
 v3.22 - Tuesday, January 24, 2006

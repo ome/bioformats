@@ -49,6 +49,12 @@ public class DisplayManager extends LogicManager {
   /** String for image stack resolution limit option. */
   public static final String STACK_LIMIT = "Limit image stack resolution";
 
+  /** String for nicest transparency option. */
+  public static final String NICE_ALPHA = "Use nicest transparency";
+
+  /** String for 3D texturing option. */
+  public static final String TEXTURE3D = "Use 3D texturing";
+
   /** String for eye separation setting. */
   public static final String EYE_DISTANCE = "Stereo eye separation";
 
@@ -139,6 +145,20 @@ public class DisplayManager extends LogicManager {
     else return new int[] {Integer.MAX_VALUE, Integer.MAX_VALUE};
   }
 
+  /** Gets whether to use nicest transparency mode from VisBio options. */
+  public boolean isNiceTransparency() {
+    OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
+    BooleanOption opt = (BooleanOption) om.getOption(NICE_ALPHA);
+    return opt.getValue();
+  }
+
+  /** Gets whether to use 3D texturing from VisBio options. */
+  public boolean is3DTextured() {
+    OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
+    BooleanOption opt = (BooleanOption) om.getOption(TEXTURE3D);
+    return opt.getValue();
+  }
+
   /** Gets associated control panel. */
   public DisplayControls getControls() { return displayControls; }
 
@@ -151,6 +171,18 @@ public class DisplayManager extends LogicManager {
     if (eventType == VisBioEvent.LOGIC_ADDED) {
       LogicManager lm = (LogicManager) evt.getSource();
       if (lm == this) doGUI();
+    }
+    else if (eventType == VisBioEvent.STATE_CHANGED) {
+      String msg = evt.getMessage();
+      if ("tweak options".equals(msg)) {
+        boolean nice = isNiceTransparency();
+        boolean texture3d = is3DTextured();
+        DisplayWindow[] dw = getDisplays();
+        for (int i=0; i<dw.length; i++) {
+          dw[i].setTransparencyMode(nice);
+          dw[i].set3DTexturing(texture3d);
+        }
+      }
     }
   }
 
@@ -221,6 +253,10 @@ public class DisplayManager extends LogicManager {
     int stackRes = DEFAULT_STACK_RESOLUTION;
     om.addOption("Visualization", new ResolutionToggleOption(STACK_LIMIT, 'l',
       "Adjusts resolution limit of image stacks", true, stackRes, stackRes));
+    om.addBooleanOption("Visualization", NICE_ALPHA, 'n',
+      "Toggles quality of transparency behavior", true);
+    om.addBooleanOption("Visualization", TEXTURE3D, '3',
+      "Toggles whether 3D textures are used for volume rendering", true);
     om.addNumericOption("Visualization", EYE_DISTANCE, null,
       "Adjusts eye separation for stereo displays", DEFAULT_EYE_SEPARATION);
     om.addBooleanOption("Warnings", WARN_IMAGEJ, 'i',

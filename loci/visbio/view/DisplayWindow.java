@@ -28,6 +28,8 @@ import java.awt.event.*;
 import java.rmi.RemoteException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import loci.formats.ReflectedUniverse;
+import loci.formats.ReflectException;
 import loci.visbio.VisBioFrame;
 import loci.visbio.WindowManager;
 import loci.visbio.data.DataTransform;
@@ -206,6 +208,34 @@ public class DisplayWindow extends JFrame
     return transformHandler.hasTransform(trans);
   }
 
+  /** Sets whether transparency mode is nicest vs fastest. */
+  public void setTransparencyMode(boolean nice) {
+    ReflectedUniverse r = new ReflectedUniverse();
+    try {
+      r.exec("import visad.java3d.DisplayImplJ3D");
+      int nicest = ((Integer) r.getVar("DisplayImplJ3D.NICEST")).intValue();
+      int fastest = ((Integer) r.getVar("DisplayImplJ3D.FASTEST")).intValue();
+      display.getGraphicsModeControl().setTransparencyMode(
+        nice ? nicest : fastest);
+    }
+    catch (ReflectException exc) {
+      System.err.println("Warning: transparency mode setting (nice=" +
+        nice + ") will have no effect. Java3D is probably not installed.");
+    }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
+  }
+
+  /** Sets whether volume rendering uses 3D texturing. */
+  public void set3DTexturing(boolean texture3d) {
+    try {
+      display.getGraphicsModeControl().setTexture3DMode(texture3d ?
+        GraphicsModeControl.TEXTURE3D : GraphicsModeControl.STACK2D);
+    }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
+  }
+
 
   // -- Component API methods --
 
@@ -284,6 +314,8 @@ public class DisplayWindow extends JFrame
 
     if (display == null) {
       display = DisplayUtil.makeDisplay(name, threeD, STEREO);
+      setTransparencyMode(manager.isNiceTransparency());
+      set3DTexturing(manager.is3DTextured());
       display.addDisplayListener(this);
     }
     else display.setName(name);
