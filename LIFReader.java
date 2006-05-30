@@ -131,7 +131,6 @@ public class LIFReader extends FormatReader {
       imageNum -= (dims[i][2] * dims[i][3] * dims[i][6]);
     }
 
-    /* debug */ System.out.println("seeking to " + (offset + width*height*bytesPerPixel*imageNum));
     in.seek(offset + width * height * bytesPerPixel * imageNum);
 
     byte[] data = new byte[(int) (width * height * bytesPerPixel * c)];
