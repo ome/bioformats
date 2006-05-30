@@ -86,6 +86,7 @@ public abstract class BaseTiffReader extends FormatReader {
   /** Parses standard metadata. */
   protected void initStandardMetadata() {
     Hashtable ifd = ifds[0];
+    if (metadata == null) metadata = new Hashtable();
     put("ImageWidth", ifd, TiffTools.IMAGE_WIDTH);
     put("ImageLength", ifd, TiffTools.IMAGE_LENGTH);
     put("BitsPerSample", ifd, TiffTools.BITS_PER_SAMPLE);
@@ -342,6 +343,7 @@ public abstract class BaseTiffReader extends FormatReader {
   protected void initOMEMetadata() {
     final String unknown = "unknown";
     Hashtable ifd = ifds[0];
+    ome = OMETools.createRoot();
     try {
       if (ome == null) return; // OME-XML functionality is not available
 

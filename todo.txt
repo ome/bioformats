@@ -2,7 +2,6 @@ QuickTime:
 * svq3 codec (lower priority)
 
 Implement readers for other file formats:
-* Fluoview FV1000 OIB
 * Anything else listed online: http://www.loci.wisc.edu/ome/formats.html
 
 Address performance issues:
