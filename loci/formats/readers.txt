@@ -19,6 +19,7 @@ loci.formats.QTReader          # mov
 loci.formats.PictReader        # pict, pct
 loci.formats.SDTReader         # sdt
 loci.formats.EPSReader         # eps, epsi
+loci.formats.OIBReader         # oib
 
 # multi-extension messes
 loci.formats.ICSReader         # ics, ids

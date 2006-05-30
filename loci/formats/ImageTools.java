@@ -65,6 +65,9 @@ public abstract class ImageTools {
       }        
       return makeImage(shorts, w, h, c, interleaved);
     }
+    else if (bps == 3) {
+      return ImageTools.makeImage(data, w, h, 3, interleaved);
+    }        
     else if (bps == 4) {
       float[] floats = new float[data.length / bps];
       for (int i=0; i<floats.length; i++) {
@@ -73,6 +76,27 @@ public abstract class ImageTools {
       }        
       return makeImage(floats, w, h, c, interleaved);   
     }
+    else if (bps == 6) {
+      short[][] shorts = new short[3][data.length / 6];
+      int next = 0;
+      if (interleaved) {
+       for (int i=0; i<shorts[0].length; i++) {
+           for (int j=0; j<shorts.length; j++) {
+            shorts[j][i] = DataTools.bytesToShort(data, next, 2, little);
+            next += 2;
+          }      
+        }
+      }
+      else {
+        for (int i=0; i<shorts.length; i++) {
+          for (int j=0; j<shorts[i].length; j++) {
+            shorts[i][j] = DataTools.bytesToShort(data, next, 2, little);
+            next += 2;
+          }
+        }
+      }        
+      return makeImage(shorts, w, h);
+    }        
     else {
       double[] doubles = new double[data.length / bps];
       for (int i=0; i<doubles.length; i++) {
