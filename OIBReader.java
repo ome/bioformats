@@ -81,8 +81,7 @@ public class OIBReader extends FormatReader {
   public byte[] openBytes(String id, int no) 
     throws FormatException, IOException
   {
-    throw new FormatException("OIBReader.openBytes(String, int) " +
-      "not implemented");
+    return ImageTools.getBytes(openImage(id, no), false, no);    
   }
 
   /** Obtains the specified image from the given OIB file. */
