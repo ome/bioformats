@@ -13,6 +13,8 @@ v3.50 - Not yet released
 - ADDED: Option to use 3D texturing in volume rendering
 - ADDED: Option to use nicer transparency blending
 
+- TWEAK: Better initial guess for dataset name
+
 - FIXED: Eliminated dependency on QuickTime for MOV, PICT and Openlab LIFF
 - FIXED: Eliminated dependency on Jakarta POI for Image-Pro IPW and Zeiss ZVI
 - FIXED: Avoid horizontal scroll bar in task list for long status messages

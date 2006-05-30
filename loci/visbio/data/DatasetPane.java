@@ -53,10 +53,19 @@ public class DatasetPane extends WizardPane implements DocumentListener {
 
   // -- Constants --
 
-  /** Common dimensional types. */
+  /** Common dimensional axis types. */
   private static final String[] DIM_TYPES = {
     "Time", "Slice", "Channel", "Spectra", "Lifetime"
   };
+
+  /** Suffix codes indicating Time axis type. */
+  private static final String[] T_CODES = {"t", "tp", "tl"};
+
+  /** Suffix codes indicating Slice axis type. */
+  private static final String[] Z_CODES = {"z", "zs", "fp", "sec"};
+
+  /** Suffix codes indicating Channel axis type. */
+  private static final String[] C_CODES = {"c", "ch"};
 
 
   // -- GUI components, page 1 --
@@ -344,6 +353,16 @@ public class DatasetPane extends WizardPane implements DocumentListener {
 
     // guess at a good name for the dataset
     String prefix = fp.getPrefix();
+
+    // strip off endings, if any, from name
+    int tLen = T_CODES.length, zLen = Z_CODES.length, cLen = C_CODES.length;
+    String[] endings = new String[tLen + zLen + cLen];
+    System.arraycopy(T_CODES, 0, endings, 0, tLen);
+    System.arraycopy(Z_CODES, 0, endings, tLen, zLen);
+    System.arraycopy(C_CODES, 0, endings, tLen + zLen, cLen);
+    prefix = strip(prefix, endings);
+
+    // display image onscreen
     nameField.setText(prefix.equals("") ? "data" + ++nameId : prefix);
 
     // check for matching files
@@ -449,17 +468,15 @@ public class DatasetPane extends WizardPane implements DocumentListener {
       p = p.substring(q);
 
       // look for short letter code indicating dimensional type
-      if (timeOk && (p.equals("t") || p.equals("tp") || p.equals("tl"))) {
+      if (timeOk && isElement(p, T_CODES)) {
         kind[i] = "Time";
         timeOk = false;
       }
-      else if (sliceOk &&
-        (p.equals("z") || p.equals("zs") || p.equals("fp")))
-      {
+      else if (sliceOk && isElement(p, Z_CODES)) {
         kind[i] = "Slice";
         sliceOk = false;
       }
-      else if (channelOk && p.equals("c")) {
+      else if (channelOk && isElement(p, C_CODES)) {
         kind[i] = "Channel";
         channelOk = false;
       }
@@ -642,6 +659,38 @@ public class DatasetPane extends WizardPane implements DocumentListener {
   protected void toggleMicronPanel(boolean on) {
     int count = micronPanel.getComponentCount();
     for (int i=1; i<count; i++) micronPanel.getComponent(i).setEnabled(on);
+  }
+
+  /** Strips the given endings from the end of the specified name string. */
+  protected String strip(String name, String[] endings) {
+    name = stripJunk(name);
+    String lower = name.toLowerCase();
+    for (int i=0; i<endings.length; i++) {
+      if (lower.endsWith(endings[i])) {
+        name = name.substring(0, name.length() - endings[i].length());
+        name = stripJunk(name);
+        lower = name.toLowerCase();
+        i = -1; // start over
+      }
+    }
+    return name;
+  }
+
+  /** Strips junk characters from the end of the given name string. */
+  protected String stripJunk(String name) {
+    name = name.replaceAll("\\d+$", ""); // strip trailing digits
+    name = name.replaceAll("[ -_\\.]+$", ""); // strip divider characters
+    return name;
+  }
+
+  /** Determines whether the given String is present in the specified array. */
+  protected boolean isElement(String s, String[] list) {
+    if (list == null) return false;
+    for (int i=0; i<list.length; i++) {
+      if (s == null && list[i] == null) return true;
+      if (s != null && s.equals(list[i])) return true;
+    }
+    return false;
   }
 
 }
