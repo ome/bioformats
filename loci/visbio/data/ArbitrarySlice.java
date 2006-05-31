@@ -347,6 +347,7 @@ public class ArbitrarySlice extends DataTransform
 
       // generate planar domain samples and corresponding interpolated values
       int res1 = res - 1;
+      float[][][] fieldSamples = new float[fields.length][][];//TEMP
       float[][] planeSamples = new float[3][res * res];
       float[][] planeValues = new float[range.length][res * res];
       for (int r=0; r<res; r++) {
@@ -360,15 +361,17 @@ public class ArbitrarySlice extends DataTransform
         for (int c=0; c<res; c++) {
           float cc = (float) c / res1;
           int ndx = r * res + c;
+          //float xs = planeSamples[0][ndx] = (1 - cc) * xmin + cc * xmax;
           float xs = planeSamples[0][ndx] = (1 - cc) * xmin + cc * xmax;
           float ys = planeSamples[1][ndx] = (1 - cc) * ymin + cc * ymax;
+          ys = h - ys; // lines are flipped
           float zs = planeSamples[2][ndx] = (1 - cc) * zmin + cc * zmax;
           if (xs < 0 || ys < 0 || zs < 0 ||
             xs > w - 1 || ys > h - 1 || zs > n - 1)
           {
             // this pixel is outside the range of the data (missing)
             for (int k=0; k<planeValues.length; k++) {
-              planeValues[k][ndx] = Float.NaN;
+              planeValues[k][ndx] = c;//Float.NaN;
             }
           }
           else {
@@ -379,14 +382,25 @@ public class ArbitrarySlice extends DataTransform
             FlatField field0, field1;
             if (wz == 0) {
               // interpolate from a single field (z0 == z1)
-              try { values0 = values1 = fields[zz].getFloats(false); }
+              try {
+                if (fieldSamples[zz] == null) {//TEMP
+                  fieldSamples[zz] = fields[zz].getFloats(false);//TEMP
+                }//TEMP
+                values0 = values1 = fieldSamples[zz];
+              }
               catch (VisADException exc) { exc.printStackTrace(); }
             }
             else {
               // interpolate between two fields
               try {
-                values0 = fields[zz].getFloats(false);
-                values1 = fields[zz + 1].getFloats(false);
+                if (fieldSamples[zz] == null) {//TEMP
+                  fieldSamples[zz] = fields[zz].getFloats(false);//TEMP
+                }//TEMP
+                if (fieldSamples[zz + 1] == null) {//TEMP
+                  fieldSamples[zz + 1] = fields[zz + 1].getFloats(false);//TEMP
+                }//TEMP
+                values0 = fieldSamples[zz];
+                values1 = fieldSamples[zz + 1];
               }
               catch (VisADException exc) { exc.printStackTrace(); }
             }
@@ -418,6 +432,7 @@ public class ArbitrarySlice extends DataTransform
       }
       try {
         FunctionType planeType = new FunctionType(xyz, imageType.getRange());
+        // set must be gridded, not linear, because ManifoldDimension is 2
         Gridded3DSet planeSet = new Gridded3DSet(xyz,
           planeSamples, res, res, null, xyzUnits, null, false);
         FlatField ff = new FlatField(planeType, planeSet);
