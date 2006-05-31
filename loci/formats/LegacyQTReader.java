@@ -59,7 +59,7 @@ public class LegacyQTReader extends FormatReader {
    * library. Java has a restriction where only one class loader can have a
    * native library loaded within a JVM. So the class loader must be static,
    * shared by all QTForms, or else an UnsatisfiedLinkError is thrown when
-   * attempting to initialize QTJava within multiple QTForms.
+   * attempting to initialize QTJava multiple times.
    */
   protected static final ClassLoader LOADER = constructLoader();
 
