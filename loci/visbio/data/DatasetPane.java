@@ -224,13 +224,7 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     String command = e.getActionCommand();
     if (command.equals("select")) {
       // start file chooser in the directory specified in the file pattern
-      String groupText = groupField.getText();
-      if (groupText.startsWith("~")) {
-        String userHome = System.getProperty("user.home");
-        if (userHome != null) {
-          groupText = userHome + File.separator + groupText.substring(1);
-        }
-      }
+      String groupText = getGroupText();
       File dir = new File(groupText);
       if (dir.isDirectory()) {
         fileBox.setCurrentDirectory(dir);
@@ -260,7 +254,7 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     else if (command.equals("ok")) { // Finish
       // check parameters
       final String name = nameField.getText();
-      final String pattern = groupField.getText();
+      final String pattern = getGroupText();
       final int[] lengths = fp.getCount();
       final String[] files = fp.getFiles();
       int len = lengths.length;
@@ -336,7 +330,7 @@ public class DatasetPane extends WizardPane implements DocumentListener {
   /** Builds the dataset pane's second page. */
   protected void buildPage() {
     // lay out page 2
-    String pattern = groupField.getText();
+    String pattern = getGroupText();
 
     // parse file pattern
     fp = new FilePattern(pattern);
@@ -659,6 +653,18 @@ public class DatasetPane extends WizardPane implements DocumentListener {
   protected void toggleMicronPanel(boolean on) {
     int count = micronPanel.getComponentCount();
     for (int i=1; i<count; i++) micronPanel.getComponent(i).setEnabled(on);
+  }
+
+  /** Gets the text of the group field, replacing ~ with user home. */
+  protected String getGroupText() {
+    String groupText = groupField.getText();
+    if (groupText.startsWith("~")) {
+      String userHome = System.getProperty("user.home");
+      if (userHome != null) {
+        groupText = userHome + groupText.substring(1);
+      }
+    }
+    return groupText;
   }
 
   /** Strips the given endings from the end of the specified name string. */
