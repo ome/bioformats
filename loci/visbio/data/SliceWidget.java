@@ -134,6 +134,7 @@ public class SliceWidget extends JPanel
     res.setPaintTicks(true);
     res.addChangeListener(this);
     resValue = new JLabel(value + " x " + value);
+    resValue.setPreferredSize(new JLabel(max + " x " + max).getPreferredSize());
 
     // create slicing line visibility checkbox
     showLine = new JCheckBox("Show white slicing line", true);
