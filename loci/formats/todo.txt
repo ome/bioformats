@@ -2,7 +2,8 @@ QuickTime:
 * svq3 codec (lower priority)
 
 Implement readers for other file formats:
-* Anything else listed online: http://www.loci.wisc.edu/ome/formats.html
+* SDT (code: java/loci/slim/SlimPlotter.java; data: data/sdt)
+* Anything listed online: http://www.loci.wisc.edu/ome/formats.html
 
 Address performance issues:
 * Check whether ImageTypeSpecifier class is useful for simplifying
@@ -24,7 +25,7 @@ http://cvs.openmicroscopy.org.uk/tiki/tiki-index.php?page=Bio-Formats+Import+Dis
   * in org.openmicroscopy.xml.OMENode: int getZ(int index), getT, getC
 3. Way to easily get SizeZ, SizeC and SizeT:
   * already present as OMETools.getSize* methods
-4. Layer atop base Bio-Formats functionality: VisBio file stitching:
+4. Layer atop base Bio-Formats functionality: VisBio file stitching.
 5. Fine to continue using OME-XML for internal metadata representation. 
 6. Bio-Formats support should be possible in both OMERO and OME-perl
    (so we can phase out omeul):
