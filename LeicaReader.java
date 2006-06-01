@@ -223,7 +223,11 @@ public class LeicaReader extends BaseTiffReader {
     else {
       // parse the LEI file
 
-      if (metadata == null) super.initFile(id);
+      if (metadata == null) {
+        currentId = id;
+        metadata = new Hashtable();
+        ome = OMETools.createRoot();
+      }
       else {
         if (currentId != id) currentId = id;
       }
