@@ -80,6 +80,8 @@ public class RedBlackTree {
     boolean found = false;
     Vector toSearch = root.children;
     RedBlackTreeNode parentNode = bfs(parent);
+    
+    // stupid way of constructing the path name
     name = parentNode.getName() + "/ " + name;
     newNode.setName(name);
 

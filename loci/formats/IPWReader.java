@@ -106,8 +106,7 @@ public class IPWReader extends BaseTiffReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    throw new FormatException("IPWReader.openBytes(String, int)" +
-      " not implemented");
+    return ImageTools.getBytes(openImage(id, no), isRGB(id) && separated, 3);
   }
 
   /** Obtains the specified image from the given IPW file. */
