@@ -350,8 +350,9 @@ public class QTReader extends FormatReader {
       for (int i=0; i<data.length; i++) {
         System.arraycopy(data[i], 0, rtn, i * data[0].length, data[i].length);
       }
-      return ImageTools.splitChannels(rtn, isRGB(id) ? 3 : 1,
-        false, true)[no % c];
+
+      if (!separated) return rtn;
+      else return ImageTools.splitChannels(rtn, 3, false, true)[no % c];
     }
     else {
       return ImageTools.splitChannels(bytes,
