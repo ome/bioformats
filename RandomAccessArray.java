@@ -35,6 +35,22 @@ import java.io.*;
  */
 public class RandomAccessArray extends RandomAccessFile {
 
+  // -- Constants --
+
+  /** Useless temporary file, for compatibility. */
+  private static final File TEMP_FILE = createTempFile();
+
+  private static File createTempFile() {
+    try {
+      File tempFile = File.createTempFile("Bio-Formats", ".tmp");
+      tempFile.deleteOnExit();
+      return tempFile;
+    }
+    catch (IOException exc) { exc.printStackTrace(); }
+    return null;
+  }
+
+
   // -- Fields --
 
   private byte[] stream;
@@ -45,8 +61,13 @@ public class RandomAccessArray extends RandomAccessFile {
 
   // -- Constructor --
 
-  public RandomAccessArray(byte[] b) throws FileNotFoundException {
-    super((String) "RandomAccessArray.java", "r");  // this does nothing
+  /**
+   * Constructs a random access array around the given byte array.
+   * Note that for compatibility reasons with the RandomAccessFile superclass,
+   * an existing file must be passed in to the name parameter.
+   */
+  public RandomAccessArray(byte[] b) throws IOException {
+    super(TEMP_FILE, "r"); // this does nothing
     setStream(b);
   }
 
