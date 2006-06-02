@@ -8,6 +8,11 @@ Implement readers for other file formats:
 Address performance issues:
 * Check whether ImageTypeSpecifier class is useful for simplifying
   BufferedImage tasks.
+* Fix LegacyQTReader and LegacyQTWriter to actually work with reasonable
+  efficiency (study ImageJ QuickTime plugins and figure out why what we are
+  doing is so much slower). Also, investigate George Birbilis's suggestion of
+  using the %WINDIR% environment variable instead of hard-coding "/Windows"
+  as the prefix for paths to check for QTJava.zip.
 
 Adapt Bio-Formats API to support OMERO:
 http://cvs.openmicroscopy.org.uk/tiki/tiki-index.php?page=Bio-Formats+Import+Discussion
