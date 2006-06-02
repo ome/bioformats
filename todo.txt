@@ -17,8 +17,6 @@ Debugging:
 * Figure out what is wrong with Motion JPEG-B colors in QTReader.
 
 Address performance issues:
-* Improve OIB initialization time (avoid allocating progressively larger
-  arrays) -- tell Curtis so he can email Stefan Terjung.
 * Check whether ImageTypeSpecifier class is useful for simplifying
   BufferedImage tasks.
 * Fix LegacyQTReader to work with reasonable efficiency (study ImageJ QuickTime
