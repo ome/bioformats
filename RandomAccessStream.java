@@ -78,6 +78,10 @@ public class RandomAccessStream implements DataInput {
 
   // -- Constructors --
 
+  /**
+   * Constructs a hybrid RandomAccessFile/DataInputStream
+   * around the given file.
+   */
   public RandomAccessStream(String file) throws IOException {
     raf = new RandomAccessFile(file, "r");
     dis = new DataInputStream(new BufferedInputStream(
@@ -93,11 +97,13 @@ public class RandomAccessStream implements DataInput {
     nextMark = MAX_OVERHEAD;
   }
 
+  /** Constructs a random access stream around the given byte array. */
   public RandomAccessStream(byte[] array) throws IOException {
     raf = new RandomAccessArray(array);
     fp = 0;
     afp = 0;
   }
+
 
   // -- DataInput API methods --
 
