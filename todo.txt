@@ -12,8 +12,6 @@ Implement readers for other file formats:
 * Anything listed online: http://www.loci.wisc.edu/ome/formats.html
 
 Debugging:
-* Switch ZVI support to use native OLE parser -- tell Curtis so he can email
-  David Robinson.
 * Figure out what is wrong with Motion JPEG-B colors in QTReader.
 
 Address performance issues:

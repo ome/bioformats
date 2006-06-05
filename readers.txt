@@ -8,7 +8,7 @@ loci.formats.BMPReader         # bmp
 loci.formats.DicomReader       # dcm, dicom
 loci.formats.BioRadReader      # pic
 loci.formats.IPLabReader       # ipl
-loci.formats.DeltavisionReader # dv
+loci.formats.DeltavisionReader # dv, r3d
 loci.formats.GatanReader       # dm3
 loci.formats.ImarisReader      # ims
 loci.formats.OpenlabRawReader  # raw
@@ -20,6 +20,7 @@ loci.formats.PictReader        # pict, pct
 loci.formats.SDTReader         # sdt
 loci.formats.EPSReader         # eps, epsi
 loci.formats.OIBReader         # oib
+loci.formats.ZeissZVIReader    # zvi
 
 # multi-extension messes
 loci.formats.ICSReader         # ics, ids
@@ -28,7 +29,6 @@ loci.formats.PerkinElmerReader # csv, htm, tim, zpo [TIFF+companion]
 
 # POIFS readers
 loci.formats.IPWReader         # ipw [POIFS]
-loci.formats.ZeissZVIReader    # zvi [POIFS (optional)]
 
 # TIFF-based readers with unique file extensions
 loci.formats.MetamorphReader   # stk [TIFF]
