@@ -24,10 +24,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Hashtable;
-import java.util.Iterator;
+import java.util.Vector;
 
 /**
  * ZeissZVIReader is the file format reader for Zeiss ZVI files.
@@ -37,54 +36,31 @@ import java.util.Iterator;
  */
 public class ZeissZVIReader extends FormatReader {
 
-  // -- Constants --
-
-  private static final String NO_POI_MSG = "You need to install " +
-    "Jakarta POI from http://jakarta.apache.org/poi/";
-
-
-  // -- Static fields --
-
-  private static boolean noPOI = false;
-
-  private static ReflectedUniverse r = createReflectedUniverse();
-  private static ReflectedUniverse createReflectedUniverse() {
-    r = null;
-    try {
-      r = new ReflectedUniverse();
-      r.exec("import org.apache.poi.poifs.filesystem.POIFSFileSystem");
-      r.exec("import org.apache.poi.poifs.filesystem.DirectoryEntry");
-      r.exec("import org.apache.poi.poifs.filesystem.DocumentEntry");
-      r.exec("import org.apache.poi.poifs.filesystem.DocumentInputStream");
-      r.exec("import java.util.Iterator");
-    }
-    catch (Throwable exc) { noPOI = true; }
-    return r;
-  }
-
-
   // -- Fields --
 
-  /** An instance of the old ZVI reader, for use if this one fails. */
-  private LegacyZVIReader legacy = new LegacyZVIReader();
-
-  /** Flag indicating the current file requires the legacy ZVI reader. */
-  private boolean needLegacy = false;
-
+  private LegacyZVIReader legacy;
   private Hashtable pixelData = new Hashtable();
   private Hashtable headerData = new Hashtable();
   private byte[] header; // general image header data
   private int nImages = 0;  // number of images
   private byte[] tags;  // tags data
   private int channels;
-
+  
   // -- Fields used by parseDir --
   private int counter = 0;  // the number of the Image entry
   private int imageWidth = 0;
   private int imageHeight = 0;
   private int bytesPerPixel = 0;
+  private int pixelFormat;
 
-
+  private boolean needLegacy;
+  private int width;
+  private int height;
+  private int bitsPerSample;
+  private int dataLength;
+  private int len;
+  private int shuffle;
+  
   // -- Constructor --
 
   /** Constructs a new Zeiss ZVI reader. */
@@ -95,213 +71,559 @@ public class ZeissZVIReader extends FormatReader {
 
   /** Checks if the given block is a valid header for a Zeiss ZVI file. */
   public boolean isThisType(byte[] block) {
-    // just use the legacy version for now
-    return legacy.isThisType(block);
+    return OLEParser.isOLE(block);
   }
 
   /** Determines the number of images in the given Zeiss ZVI file. */
   public int getImageCount(String id) throws FormatException, IOException {
-    if (noPOI) return legacy.getImageCount(id);
     if (!id.equals(currentId)) initFile(id);
-    return needLegacy ? legacy.getImageCount(id) : nImages;
+    if (needLegacy) return legacy.getImageCount(id);
+    return (isRGB(id) && separated) ? (3 * nImages) : nImages;
   }
 
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
+    if (needLegacy) return legacy.isRGB(id);
     return channels > 1;
-  }
-
+  }        
+  
   /** Obtains the specified image from the given ZVI file, as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    throw new FormatException("ZeissZVIReader.openBytes(String, int) " +
-      "not implemented");
+    if (!id.equals(currentId)) initFile(id);
+
+    if (no < 0 || no >= getImageCount(id)) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+
+    if (needLegacy) return legacy.openBytes(id, no);
+    
+    // read image header data
+
+    int c = (isRGB(id) && separated) ? 3 : 1;
+    byte[] imageHead = (byte[]) headerData.get(new Integer(no / c));
+
+    if (imageHead != null) {
+      int pointer = 14;
+      int numBytes = DataTools.bytesToInt(imageHead, pointer, 2, true);
+      pointer += 2 + numBytes;
+
+      pointer += 2;
+      width = DataTools.bytesToInt(imageHead, pointer, 4, true);
+      pointer += 4 + 2;
+
+      height = DataTools.bytesToInt(imageHead, pointer, 4, true);
+      pointer += 4 + 2;
+
+      int depth = DataTools.bytesToInt(imageHead, pointer, 4, true);
+      pointer += 4 + 2;
+
+      pixelFormat = DataTools.bytesToInt(imageHead, pointer, 4, true);
+      pointer += 4 + 2;
+
+      pointer += 6; // count field is always 0
+
+      int validBPP = DataTools.bytesToInt(imageHead, pointer, 4, true);
+      pointer += 4 + 2;
+
+     // read image bytes and convert to floats
+ 
+      pointer = 0;
+      int numSamples = width*height;
+      bitsPerSample = validBPP;
+   
+      switch (pixelFormat) {
+        case 1: channels = 3; break;
+        case 2: channels = 4; break;
+        case 3: channels = 1; break;
+        case 4: channels = 1; break;
+        case 6: channels = 1; break;
+        case 8: channels = 3; break;
+        default: channels = 1;
+      }
+
+      if ((width > imageWidth) && (imageWidth > 0)) {
+        width = imageWidth;
+        height = imageHeight;
+        bitsPerSample = bytesPerPixel * 8;
+      } 
+    }
+    else {
+      width = imageWidth;
+      height = imageHeight;
+      bitsPerSample = bytesPerPixel * 8;
+    }        
+    
+    byte[] px = (byte[]) pixelData.get(new Integer(no / c));
+    byte[] tempPx = new byte[px.length];
+
+    if (bitsPerSample > 64) { bitsPerSample = 8; }
+
+    int bpp = bitsPerSample / 8;
+   
+    // reverse each row
+
+    int mul = (bpp == 1) ? ((int) (width * 0.3)) : 60;
+    if (bpp == 6) mul = (int) (width * 0.32);
+   
+    for (int i=0; i<height; i++) {
+      for (int j=0; j<bpp*width; j++) {
+        int x = j % bpp;
+        int ny = width - (j / bpp);
+       
+        if ((j / bpp) >= mul) {
+          tempPx[(bpp * width * i) + j - (mul*bpp)] =
+            px[(bpp * width * (i + 1)) - (((ny - 1) * bpp) + x)];
+        }
+        else {
+          tempPx[(bpp * width * i) + j + ((width - mul) * bpp)] =
+            px[(bpp * width * (i + 1)) - (((ny - 1) * bpp) + x)];
+        }        
+      }  
+    }
+    
+    // reverse row order
+
+    if ((bitsPerSample / 8) % 3 != 0 && (bitsPerSample != 8)) {
+      px = new byte[tempPx.length];
+    
+      for (int i=0; i<height; i++) {
+        for (int j=0; j<bpp*width; j++) {
+          px[(bpp * width * i) + j] = 
+            tempPx[j + (bpp * width * (height - 1 - i))];       
+        }        
+      }
+      tempPx = px;
+    }
+   
+    if (!isRGB(id) || !separated) {
+      return tempPx;
+    }        
+    else {
+      return ImageTools.splitChannels(tempPx, 3, false, true)[no % 3];      
+    }
   }
 
   /** Obtains the specified image from the given Zeiss ZVI file. */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    if (noPOI) return legacy.openImage(id, no);
-    if (!id.equals(currentId)) initFile(id);
     if (needLegacy) return legacy.openImage(id, no);
-
-    if (no < 0 || no >= getImageCount(id)) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
-    // read image header data
-
-    byte[] imageHead = (byte[]) headerData.get(new Integer(no));
-
-    int pointer = 14;
-    int numBytes = DataTools.bytesToInt(imageHead, pointer, 2, true);
-    pointer += 2 + numBytes;
-
-    pointer += 2;
-    int width = DataTools.bytesToInt(imageHead, pointer, 4, true);
-    pointer += 4 + 2;
-
-    int height = DataTools.bytesToInt(imageHead, pointer, 4, true);
-    pointer += 4 + 2;
-
-    int depth = DataTools.bytesToInt(imageHead, pointer, 4, true);
-    pointer += 4 + 2;
-
-    int pixelFormat = DataTools.bytesToInt(imageHead, pointer, 4, true);
-    pointer += 4 + 2;
-
-    pointer += 6; // count field is always 0
-
-    int validBPP = DataTools.bytesToInt(imageHead, pointer, 4, true);
-    pointer += 4 + 2;
-
-    // read image bytes and convert to floats
-
-    pointer = 0;
-    int numSamples = width*height;
-    int[] bitsPerSample = {validBPP};
-
-    switch (pixelFormat) {
-      case 1: channels = 3; break;
-      case 2: channels = 4; break;
-      case 3: channels = 1; break;
-      case 4: channels = 1; break;
-      case 6: channels = 1; break;
-      case 8: channels = 3; break;
-      default: channels = 1;
-    }
-
-    byte[] px = (byte[]) pixelData.get(new Integer(no));
-    byte[] tempPx = new byte[px.length];
-
-    if (bitsPerSample[0] > 64) { bitsPerSample[0] = 8; }
-
-    byte[][] samples = new byte[(int) channels][numSamples];
-
-    if (bitsPerSample[0] == 8) {
-      // special case for 8 bit data
-
-      // we need to re-order the bytes to reverse each row
-
-      for (int i=0; i<height; i++) {
-        for (int j=0; j<width; j++) {
-          tempPx[(width*i) + j] = px[(width*(i+1)) -1-j];
-        }
-      }
-
-      // and now re-order bytes to reverse the row order
-
-      for (int i=0; i<height; i++) {
-        for (int j=0; j<width; j++) {
-          px[(width*i) + j] = tempPx[j + (width*(height-1-i))];
-        }
-      }
-
-      for (int i=0; i<4*numSamples; i++) {
-        byte q = (byte) DataTools.bytesToShort(px, i, 1, true);
-
-        if (i < numSamples) samples[0][i] = q;
-        else if (channels > 1 && i<2*numSamples) {
-          samples[1][i%numSamples] = q;
-        }
-        else if (channels > 2 && i<3*numSamples) {
-          samples[2][i%numSamples] = q;
-        }
-        else if (channels == 4) {
-          // if we happen to have RBG quad data
-          samples[3][i%numSamples] = q;
-        }
-      }
-    }
-    else if (bitsPerSample[0] == 16) {
-      // case for 16 bit data
-      // this should eventually handle 32 bit data as well
-
-      // we need to re-order the bytes to reverse each row
-
-      for (int i=0; i<height; i++) {
-        for (int j=0; j<2*width; j+=2) {
-          tempPx[(2*width*i)+j] = px[(2*width*(i+1))-2-j];
-          tempPx[(2*width*i)+j+1] =
-            px[(2*width*(i+1))-1-j];
-        }
-      }
-
-      System.arraycopy(tempPx, 0, px, 0, tempPx.length);
-
-      for (int i=0; i<px.length-1; i+=2) {
-        byte q = (byte) ((0x000000ff & px[i+1] << 8) |
-          (0x000000ff & px[i]));
-
-        if (i < 2*numSamples) {
-          samples[0][i/2] = q;
-        }
-        else if (channels == 3 && i<4*numSamples) {
-          samples[1][i%numSamples] = q;
-        }
-        else if (channels == 3) {
-          samples[2][i%numSamples] = q;
-        }
-      }
-    }
-    return ImageTools.makeImage(samples, width, height);
+    byte[] data = openBytes(id, no);
+    int bpp = bitsPerSample / 8;
+    if (bpp == 0) bpp = bytesPerPixel;
+    if (bpp > 4) bpp /= 3;
+    return ImageTools.makeImage(data, width, height,
+      (!isRGB(id) || separated) ? 1 : 3, true, bpp, false);
   }
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
-    if (noPOI || needLegacy) legacy.close();
-    needLegacy = false;
+    header = null;
+    tags = null;
+    pixelData = null;
+    headerData = null;
   }
 
   /** Initializes the given Zeiss ZVI file. */
   protected void initFile(String id) throws FormatException, IOException {
+    super.initFile(id);
+    legacy = new LegacyZVIReader();
+    
+    OLEParser parser = new OLEParser(id);
+    parser.parse(0);
+    Vector[] files = parser.getFiles();
+    headerData = new Hashtable();
+    pixelData = new Hashtable();
+   
+    int largest = 0;
+    int largestIndex = 0;
+   
+    int nextItem = 0;
+    Vector itemNames = parser.getNames();
+   
+    for (int i=0; i<files[0].size(); i++) {
+      byte[] data = (byte[]) files[1].get(i);
+      if (data.length > largest) largestIndex = i;
+      
+      String pathName = ((String) files[0].get(i)).trim();
+      pathName = DataTools.stripString(pathName);
 
-    if (noPOI) {
-      legacy.initFile(id);
-      nImages = legacy.getImageCount(id);
-      return;
+      boolean isContents = pathName.endsWith("Contents");
+      boolean isImage = pathName.endsWith("Image");
+
+      try {
+        if (((isContents && 
+          ((pathName.indexOf("Item") != -1) || pathName.indexOf("Image") != -1)
+          && data.length > 6000)) || (data.length == dataLength))
+        {
+          header = data;
+          
+          while ((dataLength != 0) && (data.length < dataLength) && isContents 
+            && ((pathName.indexOf("Item") != -1) || 
+            pathName.indexOf("Image") != -1)) 
+          {
+            i++;
+            data = (byte[]) files[1].get(i);
+            if (data.length > largest) largestIndex = i;
+      
+            pathName = ((String) files[0].get(i)).trim();
+            pathName = DataTools.stripString(pathName);
+
+            isContents = pathName.endsWith("Contents");
+          }
+            
+          int imageNum = 0;
+          if (pathName.indexOf("Item") != -1) {
+            String num = pathName.substring(pathName.lastIndexOf("Item") + 5,
+              pathName.lastIndexOf(")"));
+            imageNum = Integer.parseInt(num);
+          }
+          if (nextItem < itemNames.size()) {
+            String num = ((String) itemNames.get(nextItem)).trim();
+            if (num.length() > 1) num = DataTools.stripString(num);
+            int n = Integer.parseInt(num);
+
+            // choose whether to use imageNum or n
+                
+            if (n != imageNum) {
+              if (pixelData.containsKey(new Integer(imageNum))) {
+                imageNum = n;        
+              }      
+            }
+
+            if (pathName.indexOf("Item") != -1) {
+              num = pathName.substring(0, pathName.lastIndexOf("Item"));
+              while (pixelData.containsKey(new Integer(imageNum)) && 
+                (num.indexOf("Item") != -1)) 
+              {
+                String s = num.substring(num.lastIndexOf("Item") + 5, 
+                  num.lastIndexOf(")"));
+                imageNum = Integer.parseInt(s);
+                num = num.substring(0, num.lastIndexOf("Item"));
+              }        
+            }
+
+            // if we *still* don't find a valid key, give up and use
+            // the legacy reader
+            
+            if (pixelData.containsKey(new Integer(imageNum))) {
+              if (legacy.getImageCount(id) == 1) break;
+              needLegacy = true;
+              legacy.initFile(id);
+              return;
+            }        
+            
+            nextItem++;
+          }
+        
+          int byteCount = 2;
+          byteCount += 4; // version field
+          byteCount += 6; // type field
+          byteCount += 2;
+          int numBytes = DataTools.bytesToInt(header, byteCount, 2, true);
+          byteCount += 2 + numBytes;
+
+          byteCount += 2;
+          imageWidth = DataTools.bytesToInt(header, byteCount, 4, true);
+          byteCount += 6;
+          imageHeight = DataTools.bytesToInt(header, byteCount, 4, true);
+          byteCount += 4;
+          
+          byteCount += 6; // depth
+          byteCount += 6; // pixel format
+          byteCount += 6; // count
+         
+          byteCount += 2;
+          bitsPerSample = DataTools.bytesToInt(header, byteCount, 4, true);
+          byteCount += 4;
+          
+          numBytes = DataTools.bytesToInt(header, byteCount, 2, true);
+          byteCount += 2 + numBytes; // plugin CLSID
+          byteCount += 38; // not sure what this is for
+
+          byteCount += 2;
+          numBytes = DataTools.bytesToInt(header, byteCount, 4, true);
+          byteCount += 4 + numBytes; // layers
+ 
+          byteCount += 2;
+          numBytes = DataTools.bytesToInt(header, byteCount, 4, true);
+          byteCount += 4 + numBytes; // scaling
+
+          byteCount += 2;
+          numBytes = DataTools.bytesToInt(header, byteCount, 2, true);
+          byteCount += 2 + numBytes; // root folder name
+
+          byteCount += 2;
+          numBytes = DataTools.bytesToInt(header, byteCount, 2, true);
+          byteCount += 2 + numBytes; // display item name
+
+          byteCount += 28; // streamed header data
+        
+          // get pixel data
+
+          if (header.length > byteCount) {
+            byte[] head = new byte[byteCount];
+            System.arraycopy(header, 0, head, 0, head.length);
+            headerData.put(new Integer(imageNum), (Object) head);
+            byte[] px = new byte[header.length - byteCount];
+            System.arraycopy(header, byteCount, px, 0, px.length);
+         
+            if (!pixelData.containsKey(new Integer(imageNum))) {
+              shuffle = parser.shuffle();
+
+              // nasty special case...I pity the person who finds a bug in this
+              if (shuffle > 0) {
+                byte[] chunkOne = new byte[shuffle];
+                byte[] chunkTwo = new byte[parser.length() - shuffle + 11700];
+                System.arraycopy(px, 0, chunkOne, 0, chunkOne.length);
+                System.arraycopy(px, chunkOne.length, chunkTwo, 0, 
+                  chunkTwo.length);
+               
+       
+                byte[] tct = new byte[chunkOne.length];
+                int bpp = bitsPerSample / 8; 
+                int mul = (int) (imageWidth - (imageWidth * 0.01));
+                
+                for (int k=0; k<(chunkOne.length / (bpp*imageWidth)); k++) {
+                  for (int j=0; j<bpp*imageWidth; j++) {
+                    int x = j % bpp;
+                    int ny = imageWidth - (j / bpp);
+
+                    if ((j / bpp) >= mul) {
+                      tct[(bpp * imageWidth * k) + j - (mul*bpp)] =
+                        chunkOne[(bpp * imageWidth * (k + 1)) - 
+                          (((ny - 1) * bpp) + x)];
+                    }
+                    else {
+                      tct[(bpp * imageWidth * k) + j + 
+                        ((imageWidth - mul) * bpp)] =
+                        chunkOne[(bpp * imageWidth * (k + 1)) - 
+                          (((ny - 1) * bpp) + x)];
+                    }
+                  }
+                }
+
+                chunkOne = tct;
+
+                byte[] tco = new byte[chunkTwo.length];
+                mul = (int) (imageWidth * 0.14);
+               
+                for (int k=0; k<(chunkTwo.length / (bpp*imageWidth)); k++) {
+                  for (int j=0; j<bpp*imageWidth; j++) {
+                    int x = j % bpp;
+                    int ny = imageWidth - (j / bpp);
+
+                    if ((j / bpp) >= mul) {
+                      tco[(bpp * imageWidth * k) + j - (mul*bpp)] =
+                        chunkTwo[(bpp * imageWidth * (k + 1)) - 
+                          (((ny - 1) * bpp) + x)];
+                    }
+                    else {
+                      tco[(bpp * imageWidth * k) + j + 
+                        ((imageWidth - mul) * bpp)] =
+                        chunkTwo[(bpp * imageWidth * (k + 1)) - 
+                          (((ny - 1) * bpp) + x)];
+                    }
+                  }
+                }
+ 
+                chunkTwo = tco; 
+                
+                px = new byte[px.length];
+                System.arraycopy(chunkTwo, 0, px, 0, chunkTwo.length);
+                System.arraycopy(chunkOne, 0, px, chunkTwo.length,
+                  chunkOne.length);
+              
+                // now we have to shift the whole array to the right by 
+                // 0.01 * width pixels
+             
+                mul = imageWidth - ((int) (imageWidth * 0.01));
+                
+                byte[] tmp = new byte[px.length];
+                for (int k=0; k<imageHeight; k++) {
+                  for (int j=0; j<bpp*imageWidth; j++) {
+                    int x = j % bpp;
+                    int ny = imageWidth - (j / bpp);
+
+                    if ((j / bpp) >= mul) {
+                      tmp[(bpp * imageWidth * k) + j - (mul*bpp)] =
+                        px[(bpp * imageWidth * (k + 1)) - 
+                        (((ny - 1) * bpp) + x)];
+                    }
+                    else {
+                      tmp[(bpp * imageWidth * k) + j + 
+                        ((imageWidth - mul) * bpp)] =
+                        px[(bpp * imageWidth * (k + 1)) - 
+                        (((ny - 1) * bpp) + x)];
+                    }
+                  }
+                }
+                px = tmp;
+              }
+                   
+              pixelData.put(new Integer(imageNum), (Object) px);
+              dataLength = px.length + head.length;
+              nImages++;
+            }  
+          }
+          else break;
+        }
+        else if (isContents && isImage) {
+          // we've found the header data
+               
+          header = data;
+
+          int pointer = 14;
+          int length = DataTools.bytesToInt(header, pointer, 2, true);
+          pointer += 4 + length;
+
+          imageWidth = DataTools.bytesToInt(header, pointer, 4, true);
+          pointer += 6;
+          imageHeight = DataTools.bytesToInt(header, pointer, 4, true);
+          pointer += 6;
+          pointer += 6;
+
+          pixelFormat = DataTools.bytesToInt(header, pointer, 4, true);
+          pointer += 6;
+
+          switch (pixelFormat) {
+            case 1: bytesPerPixel = 3; break;
+            case 2: bytesPerPixel = 4; break;
+            case 3: bytesPerPixel = 1; break;
+            case 4: bytesPerPixel = 2; break;
+            case 6: bytesPerPixel = 4; break;
+            case 8: bytesPerPixel = 6; break;
+            default: bytesPerPixel = 1;
+          }        
+      
+          if ((bytesPerPixel % 2) != 0) channels = 3;
+        }
+        else if (pathName.endsWith("Tags") && pathName.startsWith("Root Entry"))
+        {
+          // the main tags stream
+          tags = data;
+        }
+      }
+      catch (Exception e) { }
     }
 
-    super.initFile(id);
+    if (nImages == 0) {
+      // HACK
+      // just grab the largest file
+  
+      header = (byte[]) files[1].get(largestIndex);  
+      String pathName = (String) files[0].get(largestIndex);
+   
+      int imageNum = 0;
+      if (pathName.indexOf("Item") != -1) {
+        String num = pathName.substring(pathName.indexOf("Item") + 5,
+          pathName.indexOf(")"));
+        imageNum = Integer.parseInt(num);
+      }
+      
+      int byteCount = 166;
+     
+      byteCount += 2;
+      imageWidth = DataTools.bytesToInt(header, byteCount, 4, true);
+      byteCount += 6;
+      imageHeight = DataTools.bytesToInt(header, byteCount, 4, true);
+      byteCount += 4;
+      
+      byteCount += 6; // depth
+      byteCount += 6; // pixel format
+      byteCount += 6; // count
+      byteCount += 2;
+      bytesPerPixel = DataTools.bytesToInt(header, byteCount, 4, true) / 8;
+      byteCount += 4;
+      
+      int numBytes = DataTools.bytesToInt(header, byteCount, 2, true);
+      byteCount += 2 + numBytes; // plugin CLSID
+      byteCount += 38; // not sure what this is for
 
-    try {
-      r.setVar("fis", new FileInputStream(id));
-      r.exec("fs = new POIFSFileSystem(fis)");
-      r.exec("dir = fs.getRoot()");
-      parseDir(0, r.getVar("dir"));
-      if (nImages == 0) {
-        if (DEBUG) System.out.println("Using LegacyZVIForm");
-        needLegacy = true;
+      byteCount += 2;
+      numBytes = DataTools.bytesToInt(header, byteCount, 4, true);
+      byteCount += 4 + numBytes; // layers
+
+      byteCount += 2;
+      numBytes = DataTools.bytesToInt(header, byteCount, 4, true);
+      byteCount += 4 + numBytes; // scaling
+
+      byteCount += 2;
+      numBytes = DataTools.bytesToInt(header, byteCount, 2, true);
+      byteCount += 2 + numBytes; // root folder name
+
+      byteCount += 2;
+      numBytes = DataTools.bytesToInt(header, byteCount, 2, true);
+      byteCount += 2 + numBytes; // display item name
+
+      byteCount += 28; // streamed header data
+      
+      // get pixel data
+
+      if (header.length > byteCount) {
+        byte[] head = new byte[byteCount];
+        System.arraycopy(header, 0, head, 0, head.length);
+        headerData.put(new Integer(nImages), (Object) head);
+        byte[] px = new byte[header.length - byteCount];
+        System.arraycopy(header, byteCount, px, 0, px.length);
+       
+        shuffle = parser.shuffle();
+
+        // nasty special case...I pity the person who finds a bug in this
+        if (shuffle > 0) {
+          byte[] chunkOne = new byte[shuffle];
+          byte[] chunkTwo = new byte[px.length - shuffle];
+          System.arraycopy(px, 0, chunkOne, 0, chunkOne.length);
+          System.arraycopy(px, chunkOne.length, chunkTwo, 0, chunkTwo.length);
+      
+          byte[] tco = new byte[shuffle];
+          int bpp = bitsPerSample / 8;
+          int mul = (int) (width * 0.14);
+          
+          for (int i=0; i<(chunkOne.length / (bpp*width)); i++) {
+            for (int j=0; j<bpp*width; j++) {
+              int x = j % bpp;
+              int ny = width - (j / bpp);
+
+              if ((j / bpp) >= mul) {
+                tco[(bpp * width * i) + j - (mul*bpp)] =
+                  chunkOne[(bpp * width * (i + 1)) - (((ny - 1) * bpp) + x)];
+              }
+              else {
+                tco[(bpp * width * i) + j + ((width - mul) * bpp)] =
+                  chunkOne[(bpp * width * (i + 1)) - (((ny - 1) * bpp) + x)];
+              }        
+            }        
+          }
+ 
+          chunkOne = tco; 
+          
+          px = new byte[px.length];
+          System.arraycopy(chunkTwo, 0, px, 0, chunkTwo.length);
+          System.arraycopy(chunkOne, 0, px, chunkTwo.length, chunkOne.length);
+        }
+        
+        pixelData.put(new Integer(nImages), (Object) px);
+        nImages++;
       }
     }
-    catch (Throwable t) {
-      noPOI = true;
-      initFile(id);
-      if (DEBUG) t.printStackTrace();
-    }
-    if (!noPOI) initMetadata();
+    
+    initMetadata();
   }
 
 
   // -- Helper methods --
 
-  public static final void print(int depth, String s) {
-    StringBuffer sb = new StringBuffer();
-    for (int i=0; i<depth; i++) sb.append("  ");
-    sb.append(s);
-    System.out.println(sb.toString());
-  }
-
   /** Populates the metadata hashtable. */
   protected void initMetadata() {
-    metadata.put("Legacy", needLegacy ? "yes" : "no");
-
     // parse the "header" byte array
     // right now we're using header data from an image item
 
+    if (header == null) return;
+    
     int pt = 14;
     int numBytes = DataTools.bytesToInt(header, pt, 2, true);
     pt += 2 + numBytes;
@@ -370,6 +692,8 @@ public class ZeissZVIReader extends FormatReader {
 
     // parse the "tags" byte array
 
+    if (tags == null) return;
+    
     pt = 0;
     pt += 16;
 
@@ -1057,185 +1381,6 @@ public class ZeissZVIReader extends FormatReader {
       }
     }
   }
-
-  /** Parse the OLE document structure using Jakarta POI */
-  protected void parseDir(int depth, Object dir)
-    throws IOException, FormatException, ReflectException
-  {
-    r.setVar("dir", dir);
-    r.exec("dirName = dir.getName()");
-    if (DEBUG) print(depth, r.getVar("dirName") + " {");
-    r.setVar("depth", depth);
-    r.exec("iter = dir.getEntries()");
-    Iterator iter = (Iterator) r.getVar("iter");
-    while (iter.hasNext()) {
-      r.setVar("entry", iter.next());
-      r.exec("isInstance = entry.isDirectoryEntry()");
-      r.exec("isDocument = entry.isDocumentEntry()");
-      boolean isInstance = ((Boolean) r.getVar("isInstance")).booleanValue();
-      boolean isDocument = ((Boolean) r.getVar("isDocument")).booleanValue();
-      r.setVar("dir", dir);
-      r.exec("dirName = dir.getName()");
-      if (isInstance) parseDir(depth + 1, r.getVar("entry"));
-      else if (isDocument) {
-        r.exec("entryName = entry.getName()");
-        if (DEBUG) {
-          print(depth + 1, "Found document: " + r.getVar("entryName"));
-        }
-        r.setVar("doc", r.getVar("entry"));
-        r.exec("dis = new DocumentInputStream(doc)");
-        r.exec("numBytes = dis.available()");
-        int numbytes = ((Integer) r.getVar("numBytes")).intValue();
-        byte[] data = new byte[numbytes];
-        r.setVar("data", data);
-        r.exec("dis.read(data)");
-
-        String entryName = (String) r.getVar("entryName");
-        String dirName = (String) r.getVar("dirName");
-
-        boolean isContents = entryName.equals("Contents");
-        boolean isImage = dirName.equals("Image");
-
-        if (isContents && isImage) {
-          // we've found the header data
-
-          int length = ((byte[]) r.getVar("data")).length;
-          header = new byte[length];
-          for (int i=0; i<length; i++) {
-            header[i] = ((byte[]) r.getVar("data"))[i];
-          }
-
-          int pointer = 14;
-
-          length = DataTools.bytesToInt((byte[])
-            r.getVar("data"), pointer, 2, true);
-          pointer += 4;
-          pointer += length; // don't need these bytes
-
-          int width = DataTools.bytesToInt((byte[])
-            r.getVar("data"), pointer, 4, true);
-          imageWidth = width;
-          pointer += 4 + 2;
-          int height = DataTools.bytesToInt((byte[])
-            r.getVar("data"), pointer, 4, true);
-          imageHeight = height;
-          pointer += 4 + 2;
-          pointer += 4 + 2;
-
-          int fmt = DataTools.bytesToInt((byte[])
-            r.getVar("data"), pointer, 4, true);
-          pointer += 4 + 2;
-
-          switch (fmt) {
-            case 1: bytesPerPixel = 3; break;
-            case 2: bytesPerPixel = 4; break;
-            case 3: bytesPerPixel = 1; break;
-            case 4: bytesPerPixel = 2; break;
-            case 6: bytesPerPixel = 4; break;
-            case 8: bytesPerPixel = 6; break;
-            default: bytesPerPixel = 1;
-          }
-
-          if ((bytesPerPixel % 2) != 0) channels = 3;
-        }
-
-        else if (entryName.equals("Contents") &&
-          dirName.substring(0, 4).equals("Item"))
-        {
-          int length = ((byte[]) r.getVar("data")).length;
-          header = new byte[length];
-          for (int i=0; i<length; i++) {
-            header[i] = ((byte[]) r.getVar("data"))[i];
-          }
-
-          String name = dirName.substring(5, dirName.length() - 1);
-          Integer imageNum = Integer.valueOf(name);
-
-          int byteCount = 2;
-          byteCount += 4; // version field
-          byteCount += 6; // type field
-          byteCount += 2;
-          int numBytes = DataTools.bytesToInt((byte[])
-            r.getVar("data"), byteCount, 2, true);
-          byteCount += 2 + numBytes;
-
-          byteCount += 6; // width
-          byteCount += 6; // height
-          byteCount += 6; // depth
-          byteCount += 6; // pixel format
-          byteCount += 6; // count
-          byteCount += 6; // bits per pixel
-
-          numBytes = DataTools.bytesToInt((byte[])
-            r.getVar("data"), byteCount, 2, true);
-          byteCount += 2 + numBytes; // plugin CLSID
-          byteCount += 2 + 4 + (8*4); // not sure what this is for
-
-          byteCount += 2;
-
-          numBytes = DataTools.bytesToInt((byte[])
-            r.getVar("data"), byteCount, 4, true);
-          byteCount += 4 + numBytes; // layers
-
-          byteCount += 2;
-
-          numBytes = DataTools.bytesToInt((byte[])
-            r.getVar("data"), byteCount, 4, true);
-          byteCount += 4 + numBytes; // scaling
-
-          byteCount += 2;
-
-          numBytes = DataTools.bytesToInt((byte[])
-            r.getVar("data"), byteCount, 2, true);
-          byteCount += 2 + numBytes; // root folder name
-
-          byteCount += 2;
-
-          numBytes = DataTools.bytesToInt((byte[])
-            r.getVar("data"), byteCount, 2, true);
-          byteCount += 2 + numBytes; // display item name
-
-          byteCount += 28; // streamed header data
-
-          // get pixel data
-
-          if (((byte[]) r.getVar("data")).length > byteCount) {
-            byte[] head = new byte[byteCount];
-            for (int i=0; i<head.length; i++) {
-              head[i] = ((byte[]) r.getVar("data"))[i];
-            }
-
-            headerData.put(imageNum, (Object) head);
-            byte[] px = new byte[
-              ((byte[]) r.getVar("data")).length - byteCount];
-
-            for (int i=0; i<px.length; i++) {
-              px[i] = ((byte[]) r.getVar("data"))[
-                (((byte[]) r.getVar("data")).length - 1)
-                - i];
-            }
-
-            pixelData.put(imageNum, (Object) px);
-            nImages++;
-          }
-        }
-        else if (entryName.equals("Tags") && dirName.equals("Root Entry")) {
-          // the main tags stream
-
-          tags = new byte[((byte[]) r.getVar("data")).length];
-          for (int i=0; i<tags.length; i++) {
-            tags[i] = ((byte[]) r.getVar("data"))[i];
-          }
-        }
-        r.exec("dis.close()");
-        if (DEBUG) {
-          print(depth + 1, ((byte[])
-            r.getVar("data")).length + " bytes read.");
-        }
-      }
-    }
-  }
-
 
   // -- Main method --
 
