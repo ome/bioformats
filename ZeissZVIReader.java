@@ -165,24 +165,21 @@ public class ZeissZVIReader extends FormatReader {
    
     // reverse each row
 
-    int mul = (bpp == 1) ? ((int) (width * 0.3)) : 60;
-    if (bpp == 6) mul = (int) (width * 0.32);
-   
-    for (int i=0; i<height; i++) {
-      for (int j=0; j<bpp*width; j++) {
-        int x = j % bpp;
-        int ny = width - (j / bpp);
-       
-        if ((j / bpp) >= mul) {
-          tempPx[(bpp * width * i) + j - (mul*bpp)] =
-            px[(bpp * width * (i + 1)) - (((ny - 1) * bpp) + x)];
-        }
-        else {
-          tempPx[(bpp * width * i) + j + ((width - mul) * bpp)] =
-            px[(bpp * width * (i + 1)) - (((ny - 1) * bpp) + x)];
-        }        
-      }  
-    }
+    int mul = 0;
+    switch (bpp) {
+      case 1: mul = (int) (width * 0.3); break;
+      case 2: mul = 60; break;
+      case 6: mul = (int) (width * 0.32); break;
+    }        
+    
+    mul *= bpp;
+    
+    for (int k=0; k<height; k++) {
+      System.arraycopy(px, k*bpp*imageWidth, tempPx, 
+        (k+1)*bpp*imageWidth - mul, mul);
+      System.arraycopy(px, k*bpp*imageWidth+mul, tempPx, 
+        k*bpp*imageWidth, bpp*imageWidth - mul);
+    }        
     
     // reverse row order
 
@@ -231,10 +228,11 @@ public class ZeissZVIReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     legacy = new LegacyZVIReader();
-    
+   
     OLEParser parser = new OLEParser(id);
     parser.parse(0);
     Vector[] files = parser.getFiles();
+    
     headerData = new Hashtable();
     pixelData = new Hashtable();
    
@@ -243,7 +241,7 @@ public class ZeissZVIReader extends FormatReader {
    
     int nextItem = 0;
     Vector itemNames = parser.getNames();
-   
+  
     for (int i=0; i<files[0].size(); i++) {
       byte[] data = (byte[]) files[1].get(i);
       if (data.length > largest) largestIndex = i;
@@ -318,7 +316,7 @@ public class ZeissZVIReader extends FormatReader {
             
             nextItem++;
           }
-        
+       
           int byteCount = 2;
           byteCount += 4; // version field
           byteCount += 6; // type field
@@ -361,7 +359,7 @@ public class ZeissZVIReader extends FormatReader {
           byteCount += 2 + numBytes; // display item name
 
           byteCount += 28; // streamed header data
-        
+          
           // get pixel data
 
           if (header.length > byteCount) {
@@ -381,55 +379,33 @@ public class ZeissZVIReader extends FormatReader {
                 System.arraycopy(px, 0, chunkOne, 0, chunkOne.length);
                 System.arraycopy(px, chunkOne.length, chunkTwo, 0, 
                   chunkTwo.length);
-               
-       
+              
                 byte[] tct = new byte[chunkOne.length];
                 int bpp = bitsPerSample / 8; 
                 int mul = (int) (imageWidth - (imageWidth * 0.01));
-                
+                mul *= bpp;
+                mul += 2;
+      
                 for (int k=0; k<(chunkOne.length / (bpp*imageWidth)); k++) {
-                  for (int j=0; j<bpp*imageWidth; j++) {
-                    int x = j % bpp;
-                    int ny = imageWidth - (j / bpp);
-
-                    if ((j / bpp) >= mul) {
-                      tct[(bpp * imageWidth * k) + j - (mul*bpp)] =
-                        chunkOne[(bpp * imageWidth * (k + 1)) - 
-                          (((ny - 1) * bpp) + x)];
-                    }
-                    else {
-                      tct[(bpp * imageWidth * k) + j + 
-                        ((imageWidth - mul) * bpp)] =
-                        chunkOne[(bpp * imageWidth * (k + 1)) - 
-                          (((ny - 1) * bpp) + x)];
-                    }
-                  }
-                }
+                  System.arraycopy(chunkOne, k*bpp*imageWidth, tct, 
+                    (k+1)*bpp*imageWidth - mul, mul);
+                  System.arraycopy(chunkOne, k*bpp*imageWidth+mul, tct, 
+                    k*bpp*imageWidth, bpp*imageWidth - mul);
+                } 
 
                 chunkOne = tct;
-
+                
                 byte[] tco = new byte[chunkTwo.length];
                 mul = (int) (imageWidth * 0.14);
-               
+                mul *= bpp;
+              
                 for (int k=0; k<(chunkTwo.length / (bpp*imageWidth)); k++) {
-                  for (int j=0; j<bpp*imageWidth; j++) {
-                    int x = j % bpp;
-                    int ny = imageWidth - (j / bpp);
+                  System.arraycopy(chunkTwo, k*bpp*imageWidth, tco, 
+                    (k+1)*bpp*imageWidth - mul, mul);
+                  System.arraycopy(chunkTwo, k*bpp*imageWidth+mul, tco, 
+                    k*bpp*imageWidth, bpp*imageWidth - mul);
+                } 
 
-                    if ((j / bpp) >= mul) {
-                      tco[(bpp * imageWidth * k) + j - (mul*bpp)] =
-                        chunkTwo[(bpp * imageWidth * (k + 1)) - 
-                          (((ny - 1) * bpp) + x)];
-                    }
-                    else {
-                      tco[(bpp * imageWidth * k) + j + 
-                        ((imageWidth - mul) * bpp)] =
-                        chunkTwo[(bpp * imageWidth * (k + 1)) - 
-                          (((ny - 1) * bpp) + x)];
-                    }
-                  }
-                }
- 
                 chunkTwo = tco; 
                 
                 px = new byte[px.length];
@@ -441,26 +417,16 @@ public class ZeissZVIReader extends FormatReader {
                 // 0.01 * width pixels
              
                 mul = imageWidth - ((int) (imageWidth * 0.01));
+                mul *= bpp;
                 
                 byte[] tmp = new byte[px.length];
                 for (int k=0; k<imageHeight; k++) {
-                  for (int j=0; j<bpp*imageWidth; j++) {
-                    int x = j % bpp;
-                    int ny = imageWidth - (j / bpp);
-
-                    if ((j / bpp) >= mul) {
-                      tmp[(bpp * imageWidth * k) + j - (mul*bpp)] =
-                        px[(bpp * imageWidth * (k + 1)) - 
-                        (((ny - 1) * bpp) + x)];
-                    }
-                    else {
-                      tmp[(bpp * imageWidth * k) + j + 
-                        ((imageWidth - mul) * bpp)] =
-                        px[(bpp * imageWidth * (k + 1)) - 
-                        (((ny - 1) * bpp) + x)];
-                    }
-                  }
-                }
+                  System.arraycopy(px, k*bpp*imageWidth, tmp, 
+                    (k+1)*bpp*imageWidth - mul, mul);
+                  System.arraycopy(px, k*bpp*imageWidth+mul, tmp, 
+                    k*bpp*imageWidth, bpp*imageWidth - mul);
+                } 
+                
                 px = tmp;
               }
                    
@@ -570,42 +536,6 @@ public class ZeissZVIReader extends FormatReader {
         byte[] px = new byte[header.length - byteCount];
         System.arraycopy(header, byteCount, px, 0, px.length);
        
-        shuffle = parser.shuffle();
-
-        // nasty special case...I pity the person who finds a bug in this
-        if (shuffle > 0) {
-          byte[] chunkOne = new byte[shuffle];
-          byte[] chunkTwo = new byte[px.length - shuffle];
-          System.arraycopy(px, 0, chunkOne, 0, chunkOne.length);
-          System.arraycopy(px, chunkOne.length, chunkTwo, 0, chunkTwo.length);
-      
-          byte[] tco = new byte[shuffle];
-          int bpp = bitsPerSample / 8;
-          int mul = (int) (width * 0.14);
-          
-          for (int i=0; i<(chunkOne.length / (bpp*width)); i++) {
-            for (int j=0; j<bpp*width; j++) {
-              int x = j % bpp;
-              int ny = width - (j / bpp);
-
-              if ((j / bpp) >= mul) {
-                tco[(bpp * width * i) + j - (mul*bpp)] =
-                  chunkOne[(bpp * width * (i + 1)) - (((ny - 1) * bpp) + x)];
-              }
-              else {
-                tco[(bpp * width * i) + j + ((width - mul) * bpp)] =
-                  chunkOne[(bpp * width * (i + 1)) - (((ny - 1) * bpp) + x)];
-              }        
-            }        
-          }
- 
-          chunkOne = tco; 
-          
-          px = new byte[px.length];
-          System.arraycopy(chunkTwo, 0, px, 0, chunkTwo.length);
-          System.arraycopy(chunkOne, 0, px, chunkTwo.length, chunkOne.length);
-        }
-        
         pixelData.put(new Integer(nImages), (Object) px);
         nImages++;
       }
