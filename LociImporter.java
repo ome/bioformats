@@ -1,5 +1,5 @@
 //
-// LociPlugin.java
+// LociImporter.java
 //
 
 /*
@@ -35,7 +35,7 @@ import loci.formats.ImageReader;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class LociPlugin implements PlugIn {
+public class LociImporter implements PlugIn {
 
   // -- Static fields --
 
