@@ -7,6 +7,7 @@ package loci.slim;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.rmi.RemoteException;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -14,6 +15,7 @@ import javax.swing.event.*;
 import loci.formats.DataTools;
 import loci.formats.ExtensionFileFilter;
 import visad.*;
+import visad.bom.RubberBandBoxRendererJ3D;
 import visad.java3d.*;
 
 public class SlimPlotter
@@ -33,23 +35,24 @@ public class SlimPlotter
   // -- Fields --
 
   private int[][][][] values;
-  private float[][] sums, logs;
   private int width, height;
   private int channels, timeBins;
   private int minWave, waveStep;
   private double timeRange;
-  private int curX, curY;
+  private int minX, minY, maxX, maxY;
+  private float maxVal;
 
   private JDialog paramDialog;
   private JTextField wField, hField, tField, cField, trField, wlField, sField;
 
   private JLabel decayLabel;
-  private JCheckBox surface, allpix, parallel, logScale;
+  private JCheckBox surface, parallel, logScale;
   private JSlider cSlider;
 
   private RealType cType;
   private FunctionType bcvFunc;
   private Linear2DSet bcSet;
+  private ScalarMap zMap, vMap;
   private DataReferenceImpl ref;
   private DisplayImpl iPlot, decayPlot;
   private AnimationControl ac;
@@ -90,6 +93,10 @@ public class SlimPlotter
     }
     if (args.length >= 4) timeBins = parse(args[3], -1);
     if (args.length >= 5) channels = parse(args[4], -1);
+
+    minX = minY = 0;
+    maxX = width;
+    maxY = height;
 
     // read SDT file header
     DataInputStream fin = new DataInputStream(new BufferedInputStream(
@@ -226,10 +233,10 @@ public class SlimPlotter
     progress.setNote("Building displays");
     iPlot = new DisplayImplJ3D("intensity", new TwoDDisplayRendererJ3D());
     iPlot.getMouseBehavior().getMouseHelper().setFunctionMap(new int[][][] {
-      {{MouseHelper.CURSOR_TRANSLATE, MouseHelper.CURSOR_ZOOM}, // L, shift-L
-       {MouseHelper.CURSOR_ROTATE, MouseHelper.NONE}}, // ctrl-L, ctrl-shift-L
-      {{MouseHelper.NONE, MouseHelper.NONE}, // M, shift-M
-       {MouseHelper.NONE, MouseHelper.NONE}}, // ctrl-M, ctrl-shift-M
+      {{MouseHelper.DIRECT, MouseHelper.NONE}, // L, shift-L
+       {MouseHelper.NONE, MouseHelper.NONE}}, // ctrl-L, ctrl-shift-L
+      {{MouseHelper.CURSOR_TRANSLATE, MouseHelper.CURSOR_ZOOM}, // M, shift-M
+       {MouseHelper.CURSOR_ROTATE, MouseHelper.NONE}}, // ctrl-M, ctrl-shift-M
       {{MouseHelper.ROTATE, MouseHelper.ZOOM}, // R, shift-R
        {MouseHelper.TRANSLATE, MouseHelper.NONE}}, // ctrl-R, ctrl-shift-R
     });
@@ -243,6 +250,26 @@ public class SlimPlotter
     iPlot.addMap(new ScalarMap(cType, Display.Animation));
     DataReferenceImpl intensityRef = new DataReferenceImpl("intensity");
     iPlot.addReference(intensityRef);
+
+    final DataReferenceImpl boxRef = new DataReferenceImpl("box");
+    boxRef.setData(new Gridded2DSet(xy, null, 1)); // dummy
+    iPlot.addReferences(new RubberBandBoxRendererJ3D(xType, yType, 0, 0),
+      boxRef);
+    CellImpl cell = new CellImpl() {
+      public void doAction() throws VisADException, RemoteException {
+        Set set = (Set) boxRef.getData();
+        if (set == null) return;
+        float[][] samples = set.getSamples(false);
+        if (samples == null) return;
+        minX = (int) Math.round(samples[0][0]);
+        minY = (int) Math.round(samples[1][0]);
+        maxX = (int) Math.round(samples[0][1]);
+        maxY = (int) Math.round(samples[1][1]);
+        plotData(true);
+      }
+    };
+    cell.addReference(boxRef);
+
     ac = (AnimationControl) iPlot.getControl(AnimationControl.class);
     iPlot.getProjectionControl().setMatrix(
       iPlot.make_matrix(0, 0, 0, 0.85, 0, 0, 0));
@@ -253,11 +280,12 @@ public class SlimPlotter
     decayPlot = new DisplayImplJ3D("decay");
     ScalarMap xMap = new ScalarMap(bType, Display.XAxis);
     ScalarMap yMap = new ScalarMap(cType, Display.YAxis);
-    ScalarMap zMap = new ScalarMap(vType, Display.ZAxis);
+    zMap = new ScalarMap(vType, Display.ZAxis);
     decayPlot.addMap(xMap);
     decayPlot.addMap(yMap);
     decayPlot.addMap(zMap);
-    decayPlot.addMap(new ScalarMap(vType, Display.RGB));
+    vMap = new ScalarMap(vType, Display.RGB);
+    decayPlot.addMap(vMap);
     ref = new DataReferenceImpl("decay");
     decayPlot.addReference(ref);
     xMap.getAxisScale().setTitle("Time (ns)");
@@ -275,8 +303,6 @@ public class SlimPlotter
     progress.setNote("Constructing images ");
     values = new int[channels][height][width][timeBins];
     float[][][] pix = new float[channels][1][width * height];
-    sums = new float[1][channels * timeBins];
-    logs = new float[1][channels * timeBins];
     FieldImpl field = new FieldImpl(cxyvFunc, cSet);
     int max = 0;
     int maxChan = 0;
@@ -297,7 +323,6 @@ public class SlimPlotter
               maxChan = c;
             }
             values[c][h][w][t] = val;
-            sums[0][timeBins * c + t] += val;
             sum += val;
           }
           pix[c][0][width * h + w] = sum;
@@ -306,9 +331,6 @@ public class SlimPlotter
       FlatField ff = new FlatField(xyvFunc, xySet);
       ff.setSamples(pix[c], false);
       field.setSample(c, ff);
-    }
-    for (int i=0; i<sums[0].length; i++) {
-      logs[0][i] = (float) Math.log(sums[0][i] + 1);
     }
     progress.setProgress(++p);
     if (progress.isCanceled()) System.exit(0);
@@ -357,14 +379,11 @@ public class SlimPlotter
     options.setLayout(new BoxLayout(options, BoxLayout.X_AXIS));
     surface = new JCheckBox("Surface", true);
     surface.addChangeListener(this);
-    allpix = new JCheckBox("Sum pixels", true);
-    allpix.addChangeListener(this);
     parallel = new JCheckBox("Parallel projection", false);
     parallel.addChangeListener(this);
     logScale = new JCheckBox("Log scale", false);
     logScale.addChangeListener(this);
     options.add(surface);
-    options.add(allpix);
     options.add(parallel);
     options.add(logScale);
     decayPane.add(options, BorderLayout.SOUTH);
@@ -372,7 +391,7 @@ public class SlimPlotter
     decayFrame.setContentPane(decayPane);
     decayFrame.setBounds(ifx + ifw, ify, ifw, ifh);
 
-    plotData();
+    plotData(true);
     cSlider.setValue(maxChan + 1);
 
     decayFrame.setVisible(true);
@@ -382,61 +401,69 @@ public class SlimPlotter
 
   // -- SlimPlotter methods --
 
-  public void plotData() {
-    if (curX < 0) curX = 0;
-    if (curX >= width) curX = width - 1;
-    if (curY < 0) curY = 0;
-    if (curY >= height) curY = height - 1;
-    boolean all = allpix.isSelected();
-    decayLabel.setText("Decay curve for " +
-      (all ? "all pixels" : ("(" + curX + ", " + curY + ")")));
+  public void plotData(boolean rescale) {
+    if (minX < 0) minX = 0;
+    if (minX >= width) minX = width - 1;
+    if (maxX < 0) maxX = 0;
+    if (maxX >= width) maxX = width - 1;
+    if (minX > maxX) {
+      int x = minX;
+      minX = maxX;
+      maxX = x;
+    }
+    if (minY < 0) minY = 0;
+    if (minY >= height) minY = height - 1;
+    if (maxY < 0) maxY = 0;
+    if (maxY >= height) maxY = height - 1;
+    if (minY > maxY) {
+      int y = minY;
+      minY = maxY;
+      maxY = y;
+    }
+    boolean single = minX == maxX && minY == maxY;
+    if (single) {
+      decayLabel.setText("Decay curve for " + "(" + minX + ", " + minY + ")");
+    }
+    else {
+      decayLabel.setText("Decay curve for " + "(" + minX +
+        ", " + minY + ") - (" + maxX + ", " + maxY + ")");
+    }
     boolean lines = !surface.isSelected();
     boolean log = logScale.isSelected();
-    float[][] samples = null;
-    if (all) samples = log ? logs : sums;
-    else {
-      float[] samps = new float[channels * timeBins];
-      for (int c=0; c<channels; c++) {
-        for (int t=0; t<timeBins; t++) {
-          int ndx = timeBins * c + t;
-          if (all) {
-            // sum all pixels
-            int sum = 0;
-            for (int h=0; h<height; h++) {
-              for (int w=0; w<width; w++) {
-                sum += values[c][h][w][t];
-              }
-            }
-            samps[ndx] = sum;
+    float[] samps = new float[channels * timeBins];
+    maxVal = 0;
+    for (int c=0; c<channels; c++) {
+      for (int t=0; t<timeBins; t++) {
+        int ndx = timeBins * c + t;
+        int sum = 0;
+        for (int h=minY; h<=maxY; h++) {
+          for (int w=minX; w<=maxX; w++) {
+            sum += values[c][h][w][t];
           }
-          else {
-            // pixel at (X, Y)
-            samps[ndx] = values[c][curY][curX][t];
-          }
-          if (log) samps[ndx] = (float) Math.log(samps[ndx] + 1);
         }
+        samps[ndx] = sum;
+        if (log) samps[ndx] = (float) Math.log(samps[ndx] + 1);
+        if (samps[ndx] > maxVal) maxVal = samps[ndx];
       }
-      samples = new float[][] {samps};
     }
     try {
       FlatField ff = new FlatField(bcvFunc, bcSet);
-      ff.setSamples(samples, false);
+      ff.setSamples(new float[][] {samps}, false);
+      if (rescale) {
+        zMap.setRange(0, maxVal == 0 ? 1 : maxVal);
+        vMap.setRange(0, maxVal == 0 ? 1 : maxVal);
+      }
       ref.setData(lines ? ff.domainFactor(cType) : ff);
     }
     catch (Exception exc) { exc.printStackTrace(); }
   }
 
-  private boolean first = true;
-
   public void doMouse() {
     double[] cursor = iPlot.getDisplayRenderer().getCursor();
     double[] domain = cursorToDomain(iPlot, cursor);
-    curX = (int) domain[0];
-    curY = (int) domain[1];
-    boolean ap = allpix.isSelected();
-    if (first) first = false;
-    else allpix.setSelected(false);
-    if (!ap) plotData();
+    minX = maxX = (int) Math.round(domain[0]);
+    minY = maxY = (int) Math.round(domain[1]);
+    plotData(false);
   }
 
   // -- ActionListener methods --
@@ -457,11 +484,8 @@ public class SlimPlotter
 
   public void stateChanged(ChangeEvent e) {
     Object src = e.getSource();
-    if (src == surface) plotData();
-    else if (src == allpix || src == logScale) {
-      plotData();
-      decayPlot.reAutoScale();
-    }
+    if (src == surface) plotData(false);
+    else if (src == logScale) plotData(true);
     else if (src == parallel) {
       try {
         decayPlot.getGraphicsModeControl().setProjectionPolicy(
@@ -484,12 +508,12 @@ public class SlimPlotter
 
   public void displayChanged(DisplayEvent e) {
     int id = e.getId();
-    if (id == DisplayEvent.MOUSE_PRESSED_LEFT) {
+    if (id == DisplayEvent.MOUSE_PRESSED_CENTER) {
       drag = true;
       decayPlot.getDisplayRenderer();
       doMouse();
     }
-    else if (id == DisplayEvent.MOUSE_RELEASED_LEFT) {
+    else if (id == DisplayEvent.MOUSE_RELEASED_CENTER) {
       drag = false;
       decayPlot.reAutoScale();
     }
