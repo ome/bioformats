@@ -27,7 +27,6 @@ import ij.*;
 import ij.plugin.filter.*;
 import ij.process.*;
 import ij.io.*;
-/* debug */ import java.awt.Image;
 import loci.formats.ImageWriter;
 
 /**
