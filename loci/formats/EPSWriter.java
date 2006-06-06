@@ -61,7 +61,8 @@ public class EPSWriter extends FormatWriter {
 
     out = new RandomAccessFile(id, "rw");
 
-    BufferedImage img = ImageTools.makeBuffered(image);
+    BufferedImage img = (cm == null) ? 
+      ImageTools.makeBuffered(image) : ImageTools.makeBuffered(image, cm);
 
     // get the width and height of the image
     int width = img.getWidth();

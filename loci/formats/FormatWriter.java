@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import java.awt.image.ColorModel;
 import java.awt.Image;
 import java.io.IOException;
 
@@ -34,6 +35,8 @@ public abstract class FormatWriter extends FormatHandler {
   /** Frame rate to use when writing in frames per second, if applicable. */
   protected int fps = 10;
 
+  /** Default color model. */
+  protected ColorModel cm;
 
   // -- Constructors --
 
@@ -70,6 +73,12 @@ public abstract class FormatWriter extends FormatHandler {
     }
   }
 
+  /** Sets the color model. */
+  public void setColorModel(ColorModel cm) { this.cm = cm; }
+
+  /** Gets the color model. */
+  public ColorModel getColorModel() { return cm; }
+  
   /** Sets the frames per second to use when writing. */
   public void setFramesPerSecond(int fps) { this.fps = fps; }
 

@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
@@ -72,7 +73,9 @@ public abstract class ImageIOWriter extends FormatWriter {
   public void save(String id, Image image, boolean last)
     throws FormatException, IOException
   {
-    ImageIO.write(ImageTools.makeBuffered(image), kind, new DataOutputStream(
+    BufferedImage img = (cm == null) ? 
+      ImageTools.makeBuffered(image) : ImageTools.makeBuffered(image, cm);
+    ImageIO.write(img, kind, new DataOutputStream(
       new BufferedOutputStream(new FileOutputStream(id), 4096)));
   }
 
