@@ -26,9 +26,6 @@ Address performance issues:
   for QTJava.zip (in LegacyQTReader.
 
 ImageJ plugin:
-* Improve plugin bundle to include multiple plugins -- one for import and one
-  for export. Right now there is no easy way to call the Bio-Formats writers
-  from within ImageJ.
 * Investigate whether current reflection-based approach in modified
   HandleExtraFileTypes is good enough, and modify if necessary. Does
   Bio-Formats play nicely with other installed plugins used by
