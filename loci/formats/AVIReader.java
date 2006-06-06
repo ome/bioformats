@@ -130,7 +130,7 @@ public class AVIReader extends FormatReader {
     int pad = bmpScanLineSize - dwWidth*(bmpBitsPerPixel / 8);
     rawData = new byte[bmpActualSize];
     int rawOffset = 0;
-    int offset = 0;
+    int offset = (bmpHeight - 1) * dwWidth;
 
     for (int i=bmpHeight - 1; i>=0; i--) {
       int n = in.read(rawData, rawOffset, len);
@@ -140,7 +140,7 @@ public class AVIReader extends FormatReader {
 
       unpack(rawData, rawOffset, byteData, offset, dwWidth);
       rawOffset += (len - pad);
-      offset += dwWidth;
+      offset -= dwWidth;
     }
 
     // reverse scanline ordering
@@ -187,7 +187,7 @@ public class AVIReader extends FormatReader {
     throws FormatException, IOException
   {
     return ImageTools.makeImage(openBytes(id, no), dwWidth, bmpHeight,
-      (!isRGB(id) || separated) ? 1 : 3, false);
+      (!isRGB(id) || separated) ? 1 : 3, true);
   }
 
   /** Closes any open files. */

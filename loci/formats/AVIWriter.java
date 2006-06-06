@@ -40,7 +40,7 @@ public class AVIWriter extends FormatWriter {
 
   // -- Fields --
 
-  private DataOutputStream raFile;
+  private RandomAccessFile raFile;
 
   private int planesWritten = 0;
 
@@ -112,20 +112,21 @@ public class AVIWriter extends FormatWriter {
     if (image == null) {
       throw new FormatException("Image is null");
     }
-    BufferedImage img = ImageTools.makeBuffered(image);
+    BufferedImage img = null;
+    if (cm != null) img = ImageTools.makeBuffered(image, cm);
+    else img = ImageTools.makeBuffered(image);
     byte[][] byteData = ImageTools.getBytes(img);
-
+   
     if (!id.equals(currentId)) {
       planesWritten = 0;
       currentId = id;
       bytesPerPixel = byteData.length;
 
       file = new File(id);
-      raFile = new DataOutputStream(
-        new BufferedOutputStream(new FileOutputStream(file)));
-
+      raFile = new RandomAccessFile(file, "rw");
+      
       DataTools.writeString(raFile, "RIFF"); // signature
-      saveFileSize = raFile.size();
+      saveFileSize = raFile.getFilePointer();
       // Bytes 4 thru 7 contain the length of the file. This length does
       // not include bytes 0 thru 7.
       DataTools.writeInt(raFile, 0, true); // for now write 0 for size
@@ -136,6 +137,7 @@ public class AVIWriter extends FormatWriter {
       // Write the length of the LIST CHUNK not including the first 8 bytes
       // with LIST and size. Note that the end of the LIST CHUNK is followed
       // by JUNK.
+      saveLIST1Size = raFile.getFilePointer();
       DataTools.writeInt(raFile, (bytesPerPixel == 1) ? 1240 : 216, true);
       DataTools.writeString(raFile, "hdrl"); // CHUNK type
       DataTools.writeString(raFile, "avih"); // Write the avih sub-CHUNK
@@ -184,7 +186,7 @@ public class AVIWriter extends FormatWriter {
         xDim += xPad;
       }
 
-      frameOffset = raFile.size();
+      frameOffset = raFile.getFilePointer();
 
       // dwTotalFrames - total frame number
       DataTools.writeInt(raFile, zDim * tDim, true);
@@ -221,6 +223,7 @@ public class AVIWriter extends FormatWriter {
       // the length written to saveLIST1Size. The end of the first LIST
       // subCHUNK is followed by JUNK.
 
+      saveLIST1subSize = raFile.getFilePointer();
       DataTools.writeInt(raFile, (bytesPerPixel == 1) ? 1164 : 140 , true);
       DataTools.writeString(raFile, "strl");   // Write the chunk type
       DataTools.writeString(raFile, "strh"); // Write the strh sub-CHUNK
@@ -265,7 +268,7 @@ public class AVIWriter extends FormatWriter {
 
       // dwLength - playing time of AVI file as defined by scale and rate
       // Set equal to the number of frames
-      frameOffset2 = raFile.size();
+      frameOffset2 = raFile.getFilePointer();
       DataTools.writeInt(raFile, tDim * zDim, true);
 
       // dwSuggestedBufferSize - Suggested buffer size for reading the stream.
@@ -302,6 +305,8 @@ public class AVIWriter extends FormatWriter {
       // CHUNK is followed by strn.
       DataTools.writeString(raFile, "strf"); // Write the stream format chunk
 
+      savestrfSize = raFile.getFilePointer();
+      
       // write the strf CHUNK size
       DataTools.writeInt(raFile, (bytesPerPixel == 1) ? 1068 : 44, true);
 
@@ -363,6 +368,12 @@ public class AVIWriter extends FormatWriter {
         raFile.write(lutWrite);
       }
 
+      savestrnPos = raFile.getFilePointer();
+      raFile.seek(savestrfSize);
+      DataTools.writeInt(raFile, 
+        (int) (savestrnPos - (savestrfSize + 4)), true);
+      raFile.seek(savestrnPos);
+      
       // Use strn to provide zero terminated text string describing the stream
       DataTools.writeString(raFile, "strn");
       DataTools.writeInt(raFile, 16, true); // Write length of strn sub-CHUNK
@@ -385,6 +396,15 @@ public class AVIWriter extends FormatWriter {
       text[15] = 0; // termination byte
       raFile.write(text);
 
+      saveJUNKsignature = raFile.getFilePointer();
+      raFile.seek(saveLIST1Size);
+      DataTools.writeInt(raFile, 
+        (int) (saveJUNKsignature - (saveLIST1Size + 4)), true);
+      raFile.seek(saveLIST1subSize);
+      DataTools.writeInt(raFile,
+        (int) (saveJUNKsignature - (saveLIST1subSize + 4)), true);
+      raFile.seek(saveJUNKsignature);
+      
       // write a JUNK CHUNK for padding
       DataTools.writeString(raFile, "JUNK");
       paddingBytes = (int) (4084 - (saveJUNKsignature + 8));
@@ -399,10 +419,10 @@ public class AVIWriter extends FormatWriter {
       // Write the length of the LIST CHUNK not including the first 8 bytes
       // with LIST and size. The end of the second LIST CHUNK is followed by
       // idx1.
-      saveLIST2Size = raFile.size();
+      saveLIST2Size = raFile.getFilePointer();
 
       DataTools.writeInt(raFile, 0, true);  // For now write 0
-      savemovi = raFile.size();
+      savemovi = raFile.getFilePointer();
       DataTools.writeString(raFile, "movi"); // Write CHUNK type 'movi'
       savedbLength = new Vector();
       savedcLength = new long[tDim * zDim];
@@ -423,55 +443,51 @@ public class AVIWriter extends FormatWriter {
     int height = byteData[0].length / width;
 
     raFile.write(dataSignature);
-    savedbLength.add(new Long(raFile.size()));
+    savedbLength.add(new Long(raFile.getFilePointer()));
     // Write the data length
+
     DataTools.writeInt(raFile, bytesPerPixel * xDim * yDim, true);
 
+    byte[] buf = 
+      new byte[byteData.length * byteData[0].length + xPad*byteData.length];
+    
     int offset = 0;
+    int next = 0;
     for (int i=(height-1); i>=0; i--) {
       for (int j=0; j<width; j++) {
         offset = i*width + j;
         for (int k=(byteData.length - 1); k>=0; k--) {
-          raFile.write(byteData[k][offset]);
-        }
-      }
-
-      for (int j=0; j<xPad; j++) {
-        for (int k=0; k<byteData.length; k++) {
-          raFile.write((byte) 0);
+          buf[next] = byteData[k][offset];
+          next++;
         }
       }
     }
+    raFile.write(buf);
+    buf = null;
 
     planesWritten++;
 
     if (last) {
-      // we still need to open a RandomAccessFile to handle a couple of
-      // unavoidable seeks; fortunately, we only need to write a few bytes this
-      // way, so it shouldn't affect performance too much
-
-      RandomAccessFile out = new RandomAccessFile(id, "rw");
-      out.seek(raFile.size() - 1);
-      raFile.close();
-
       // Write the idx1 CHUNK
       // Write the 'idx1' signature
-      idx1Pos = out.getFilePointer();
-      out.seek(saveLIST2Size);
-      DataTools.writeInt(out, (int)(idx1Pos - (saveLIST2Size + 4)), true);
-      out.seek(idx1Pos);
-      DataTools.writeString(out, "idx1");
+      idx1Pos = raFile.getFilePointer();
+      raFile.seek(saveLIST2Size);
+      DataTools.writeInt(raFile, (int)(idx1Pos - (saveLIST2Size + 4)), true);
+      raFile.seek(idx1Pos);
+      DataTools.writeString(raFile, "idx1");
 
+      saveidx1Length = raFile.getFilePointer();
+      
       // Write the length of the idx1 CHUNK not including the idx1 signature
-      DataTools.writeInt(out, 4 + (planesWritten*16), true);
+      DataTools.writeInt(raFile, 4 + (planesWritten*16), true);
 
       for (z=0; z<planesWritten; z++) {
         // In the ckid field write the 4 character code to identify the chunk
         // 00db or 00dc
-        out.write(dataSignature);
+        raFile.write(dataSignature);
         // Write the flags - select AVIIF_KEYFRAME
-        if (z == 0) DataTools.writeInt(out, 0x10, true);
-        else DataTools.writeInt(out, 0x00, true);
+        if (z == 0) DataTools.writeInt(raFile, 0x10, true);
+        else DataTools.writeInt(raFile, 0x00, true);
 
         // AVIIF_KEYFRAME 0x00000010L
         // The flag indicates key frames in the video sequence.
@@ -482,25 +498,28 @@ public class AVIWriter extends FormatWriter {
         // AVIIF_LIST 0x00000001L Marks a LIST CHUNK.
         // AVIIF_TWOCC 2L
         // AVIIF_COMPUSE 0x0FFF0000L These bits are for compressor use.
-        DataTools.writeInt(out, (int) (((Long)
+        DataTools.writeInt(raFile, (int) (((Long)
           savedbLength.get(z)).longValue() - 4 - savemovi), true);
 
         // Write the offset (relative to the 'movi' field) to the relevant
         // CHUNK. Write the length of the relevant CHUNK. Note that this length
         // is also written at savedbLength
-        DataTools.writeInt(out, bytesPerPixel*xDim*yDim, true);
+        DataTools.writeInt(raFile, bytesPerPixel*xDim*yDim, true);
       }
-      endPos = out.getFilePointer();
-      out.seek(saveFileSize);
-      DataTools.writeInt(out, (int)(endPos - (saveFileSize+4)), true);
+      endPos = raFile.getFilePointer();
+      raFile.seek(saveFileSize);
+      DataTools.writeInt(raFile, (int)(endPos - (saveFileSize+4)), true);
 
+      raFile.seek(saveidx1Length);
+      DataTools.writeInt(raFile, (int) (endPos - (saveidx1Length + 4)), true);
+      
       // write the total number of planes
-      out.seek(frameOffset);
-      DataTools.writeInt(out, planesWritten, true);
-      out.seek(frameOffset2);
-      DataTools.writeInt(out, planesWritten, true);
-
-      out.close();
+      raFile.seek(frameOffset);
+      DataTools.writeInt(raFile, planesWritten, true);
+      raFile.seek(frameOffset2);
+      DataTools.writeInt(raFile, planesWritten, true);
+      
+      raFile.close();
     }
   }
 

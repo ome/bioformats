@@ -266,7 +266,7 @@ public class QTReader extends FormatReader {
       return legacy.openBytes(id, no);
     }
 
-    int c = isRGB(id) ? 3 : 1;
+    int c = (isRGB(id) && separated) ? 3 : 1;
 
     int offset = ((Integer) offsets.get(no / c)).intValue();
     int nextOffset = pixels.length;
@@ -355,9 +355,12 @@ public class QTReader extends FormatReader {
       else return ImageTools.splitChannels(rtn, 3, false, true)[no % c];
     }
     else {
-      return ImageTools.splitChannels(bytes,
-        isRGB(id) ? 3 : 1, false, true)[no % (isRGB(id) ? 3 : 1)];
-    }
+      /* debug */ System.out.println("bytes.length : " + bytes.length);      
+      if (isRGB(id) && separated) {
+        return ImageTools.splitChannels(bytes, 3, false, true)[no % c];
+      }
+      else return bytes;
+    }  
   }
 
   /** Obtains the specified image from the given QuickTime file. */
@@ -379,7 +382,7 @@ public class QTReader extends FormatReader {
       return legacy.openImage(id, no);
     }
 
-    int c = isRGB(id) ? 3 : 1;
+    int c = (isRGB(id) && separated) ? 3 : 1;
 
     int offset = ((Integer) offsets.get(no / c)).intValue();
     int nextOffset = pixels.length;
@@ -427,10 +430,10 @@ public class QTReader extends FormatReader {
     }
     else {
       int bpp = bitsPerPixel / 8;
-      if (bpp == 3 || bpp == 5) bpp = 1;
-      if (bpp == 4) bpp = 1;
+      if (bpp == 3 || bpp == 4 || bpp == 5) bpp = 1;
+      /* debug */ System.out.println(isRGB(id) && !separated ? 3 : 1);
       return ImageTools.makeImage(openBytes(id, no), width, height,
-        (isRGB(id) && !separated) ? 3 : 1, false, bpp, little);
+        (isRGB(id) && !separated) ? 3 : 1, true, bpp, little);
     }
   }
 
