@@ -464,7 +464,6 @@ public class FilePattern {
       new File(args[0]);
     System.out.println("File: " + file.getAbsoluteFile());
     String pat = findPattern(file);
-		pat = "Test_Series052_z<000-009>_ch00.tif";//TEMP
     if (pat == null) System.out.println("No pattern found.");
     else {
       System.out.println("Pattern = " + pat);
