@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 import java.io.*;
 
@@ -76,7 +77,11 @@ public class TiffWriter extends FormatWriter {
       dataOut.writeInt(8); // offset to first IFD
       lastOffset = 8;
     }
-    lastOffset += TiffTools.writeImage(image, ifd, out, lastOffset, last);
+
+    BufferedImage img = (cm == null) ?
+      ImageTools.makeBuffered(image) : ImageTools.makeBuffered(image, cm);
+    
+    lastOffset += TiffTools.writeImage(img, ifd, out, lastOffset, last);
     if (last) {
       out.close();
       out = null;

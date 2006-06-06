@@ -73,7 +73,8 @@ public class QTWriter extends FormatWriter {
       throw new FormatException("Image is null");
     }
 
-    BufferedImage img = ImageTools.makeBuffered(image);
+    BufferedImage img = (cm == null) ?
+      ImageTools.makeBuffered(image) : ImageTools.makeBuffered(image, cm);
 
     // get the width and height of the image
     int width = img.getWidth();
