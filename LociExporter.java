@@ -28,7 +28,6 @@ import ij.plugin.filter.*;
 import ij.process.*;
 import ij.io.*;
 import java.awt.Image;
-import loci.formats.ImageWriter;
 
 /**
  * ImageJ plugin for writing files using the LOCI Bio-Formats package.
@@ -81,7 +80,7 @@ public class LociExporter implements PlugInFilter {
       long t3 = System.currentTimeMillis();
       for (int i=0; i<size; i++) {
         ImageProcessor proc = stack.getProcessor(i+1);
-        Image img = proc.createImage(); 
+        Image img = proc.createImage();
         w2.setColorModel(proc.getColorModel());
         IJ.showStatus("writing plane " + (i+1) + " of " + size);
         w2.save(filename, img, i == (size - 1));         
