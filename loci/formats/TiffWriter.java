@@ -80,7 +80,7 @@ public class TiffWriter extends FormatWriter {
 
     BufferedImage img = (cm == null) ?
       ImageTools.makeBuffered(image) : ImageTools.makeBuffered(image, cm);
-    
+
     lastOffset += TiffTools.writeImage(img, ifd, out, lastOffset, last);
     if (last) {
       out.close();

@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Field;
@@ -1426,18 +1425,18 @@ public abstract class TiffTools {
    * @param last Whether this image is the final IFD entry of the TIFF data
    * @return total number of bytes written
    */
-  public static long writeImage(Image image, Hashtable ifd,
+  public static long writeImage(BufferedImage img, Hashtable ifd,
     OutputStream out, int offset, boolean last)
     throws FormatException, IOException
   {
-    if (image == null) throw new FormatException("Image is null");
+    if (img == null) throw new FormatException("Image is null");
     if (DEBUG) debug("writeImage (offset=" + offset + "; last=" + last + ")");
-
-    BufferedImage img = ImageTools.makeBuffered(image);
 
     // get pixels
 
-    Object data = ImageTools.getPixels(img);
+    //Object data = ImageTools.getPixels(img);
+    
+    /*
     int[][] values = new int[0][0];
 
     if (data instanceof byte[][]) {
@@ -1465,6 +1464,9 @@ public abstract class TiffTools {
       // should add cases for float/double data...later
       throw new FormatException("data type not supported");
     }
+    */
+
+    byte[][] values = ImageTools.getBytes(img);
 
     int width = img.getWidth();
     int height = img.getHeight();
@@ -1475,8 +1477,8 @@ public abstract class TiffTools {
     }
     if (values.length == 2) {
       // pad values with extra set of zeroes
-      values = new int[][] {
-        values[0], values[1], new int[values[0].length]
+      values = new byte[][] {
+        values[0], values[1], new byte[values[0].length]
       };
     }
 
