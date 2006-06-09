@@ -94,10 +94,6 @@ public class SlimPlotter
     if (args.length >= 4) timeBins = parse(args[3], -1);
     if (args.length >= 5) channels = parse(args[4], -1);
 
-    minX = minY = 0;
-    maxX = width;
-    maxY = height;
-
     // read SDT file header
     DataInputStream fin = new DataInputStream(new BufferedInputStream(
       new FileInputStream(file)));
@@ -391,6 +387,9 @@ public class SlimPlotter
     decayFrame.setContentPane(decayPane);
     decayFrame.setBounds(ifx + ifw, ify, ifw, ifh);
 
+    minX = minY = 0;
+    maxX = width;
+    maxY = height;
     plotData(true);
     cSlider.setValue(maxChan + 1);
 
