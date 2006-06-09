@@ -60,6 +60,7 @@ public class ZeissZVIReader extends FormatReader {
   private int dataLength;
   private int len;
   private int shuffle;
+  private int previousCut;
   
   // -- Constructor --
 
@@ -162,39 +163,88 @@ public class ZeissZVIReader extends FormatReader {
     if (bitsPerSample > 64) { bitsPerSample = 8; }
 
     int bpp = bitsPerSample / 8;
-   
-    // reverse each row
+  
+    // chop any extra bytes off of the pixel array
+  
+    if (px.length > (width * height * bpp)) {
+      int check = 0;
+      int chop = 0;
+      while (check != imageWidth && chop < 4000) {
+        check = DataTools.bytesToInt(px, chop, 4, true);
+        chop++;
+      }       
+      chop += 23;
+      if (bpp == 2 && (chop % 2 != 0)) chop++;
 
-    int mul = 0;
-    switch (bpp) {
-      case 1: mul = (int) (width * 0.3); break;
-      case 2: mul = 60; break;
-      case 6: mul = (int) (width * 0.32); break;
-    }        
-    
-    mul *= bpp;
-    
-    for (int k=0; k<height; k++) {
-      System.arraycopy(px, k*bpp*imageWidth, tempPx, 
-        (k+1)*bpp*imageWidth - mul, mul);
-      System.arraycopy(px, k*bpp*imageWidth+mul, tempPx, 
-        k*bpp*imageWidth, bpp*imageWidth - mul);
-    }        
-    
+      if (check != imageWidth) chop = 0;
+
+      if (chop > 0) {
+        byte[] tmp = new byte[px.length - chop];
+        System.arraycopy(px, px.length - tmp.length, tmp, 0, tmp.length);
+        px = tmp;
+      }  
+    } 
+
+    if (bpp == 3) {
+      // reverse the channels
+
+      int off = 0;
+      int length = width * 3;
+
+      for (int i=0; i<height; i++) {
+        for (int j=0; j<width; j++) {
+          tempPx[off + j*3] = px[off + j*3 + 2];
+          tempPx[off + j*3 + 1] = px[off + j*3 + 1];
+          tempPx[off + j*3 + 2] = px[off + j*3];
+        }
+        off += length;
+      }
+    }
+    else if (bpp != 6) tempPx = px;
+    else {
+      // slight hack
+      int mul = (int) (0.32 * imageWidth * bpp);
+      for (int i=0; i<imageHeight; i++) {
+        System.arraycopy(px, i*width*bpp, tempPx, (i+1)*width*bpp - mul, mul);
+        System.arraycopy(px, i*width*bpp + mul, tempPx, i*width*bpp, 
+          width*bpp - mul);
+      }
+
+      px = tempPx;
+      tempPx = new byte[px.length];
+
+      // reverse the channels
+      int off = 0;
+      int length = width * bpp;
+
+      for (int i=0; i<height; i++) {
+        for (int j=0; j<width; j++) {
+          tempPx[off + j*6] = px[off + j*6 + 4];
+          tempPx[off + j*6 + 1] = px[off + j*6 + 5];
+          tempPx[off + j*6 + 2] = px[off + j*6 + 2];
+          tempPx[off + j*6 + 3] = px[off + j*6 + 3];
+          tempPx[off + j*6 + 4] = px[off + j*6];
+          tempPx[off + j*6 + 5] = px[off + j*6 + 1];
+        }
+        off += length;
+      }
+    }
+
     // reverse row order
 
     if ((bitsPerSample / 8) % 3 != 0 && (bitsPerSample != 8)) {
       px = new byte[tempPx.length];
-    
+      int off = (height - 1) * width * bpp;
+      int newOff = 0;
+      int length = width * bpp;
       for (int i=0; i<height; i++) {
-        for (int j=0; j<bpp*width; j++) {
-          px[(bpp * width * i) + j] = 
-            tempPx[j + (bpp * width * (height - 1 - i))];       
-        }        
+        System.arraycopy(tempPx, off, px, newOff, length);
+        off -= length;
+        newOff += length;
       }
       tempPx = px;
     }
-   
+  
     if (!isRGB(id) || !separated) {
       return tempPx;
     }        
@@ -429,7 +479,7 @@ public class ZeissZVIReader extends FormatReader {
                 
                 px = tmp;
               }
-                   
+              
               pixelData.put(new Integer(imageNum), (Object) px);
               dataLength = px.length + head.length;
               nImages++;
