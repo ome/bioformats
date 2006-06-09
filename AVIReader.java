@@ -121,8 +121,8 @@ public class AVIReader extends FormatReader {
 
     byteData = new byte[dwWidth * bmpHeight];
 
-    long fileOff = ((Long) offsets.get(no /
-      (bmpBitsPerPixel / 8))).longValue();
+    int c = (isRGB(id) && separated) ? 3 : 1;
+    long fileOff = ((Long) offsets.get(no / c)).longValue();
     in.seek(fileOff);
 
     int len = bmpScanLineSize;
