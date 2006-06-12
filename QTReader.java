@@ -821,7 +821,7 @@ public class QTReader extends FormatReader {
     v.add((byte) 0xff);
     v.add((byte) 0xc0);
 
-    length = 11;
+    length = (bitsPerPixel >= 40) ? 11 : 17;
 
     v.add((byte) ((length >>> 8) & 0xff));
     v.add((byte) (length & 0xff));
@@ -829,12 +829,12 @@ public class QTReader extends FormatReader {
     int fieldHeight = height;
     if (interlaced) fieldHeight /= 2;
 
-    v.add((byte) 0x08); // bits per sample
+    v.add((byte) 0x08);  // bits per sample
     v.add((byte) ((fieldHeight >>> 8) & 0xff));
     v.add((byte) (fieldHeight & 0xff));
     v.add((byte) ((width >>> 8) & 0xff));
     v.add((byte) (width & 0xff));
-    v.add((byte) 0x01);
+    v.add((bitsPerPixel >= 40) ? (byte) 0x01 : (byte) 0x03);
 
     // channel information
 
@@ -842,18 +842,37 @@ public class QTReader extends FormatReader {
     v.add((byte) 0x21); // sampling factors
     v.add((byte) 0x00); // quantization table number
 
+    if (bitsPerPixel < 40) {
+      v.add((byte) 0x02);
+      v.add((byte) 0x11);
+      v.add((byte) 0x01);
+      v.add((byte) 0x03);
+      v.add((byte) 0x11);
+      v.add((byte) 0x01);
+    }
+
+
     // add start-of-scan header
 
     v.add((byte) 0xff);
     v.add((byte) 0xda);
 
-    length = 8;
+    length = (bitsPerPixel >= 40) ? 8 : 12;
     v.add((byte) ((length >>> 8) & 0xff));
     v.add((byte) (length & 0xff));
 
-    v.add((byte) 0x01);  // number of channels
+    // number of channels
+    v.add((bitsPerPixel >= 40) ? (byte) 0x01 : (byte) 0x03);
     v.add((byte) 0x01);  // channel id
     v.add((byte) 0x00);  // DC and AC table numbers
+
+    if (bitsPerPixel < 40) {
+      v.add((byte) 0x02);  // channel id
+      v.add((byte) 0x01);  // DC and AC table numbers
+      v.add((byte) 0x03);  // channel id
+      v.add((byte) 0x01);  // DC and AC table numbers
+    }
+
 
     v.add((byte) 0x00);
     v.add((byte) 0x3f);
@@ -883,13 +902,16 @@ public class QTReader extends FormatReader {
       WritableRaster topRaster = top.getRaster();
       WritableRaster bottomRaster = bottom.getRaster();
 
-      byte[] scanlines = new byte[width * height];
+      byte[][] scanlines = 
+        new byte[(bitsPerPixel >= 40) ? 1 : 3][width * height];
 
       int[] topBytes =
-        topRaster.getPixels(0, 0, top.getWidth(), top.getHeight(),
-        new int[width * (height / 2)]);
+        topRaster.getPixels(topRaster.getMinX(), topRaster.getMinY(), 
+        width, height / 2, 
+        new int[width * (height / 2) * (bitsPerPixel >= 40 ? 1 : 3)]);
       int[] bottomBytes = bottomRaster.getPixels(0, 0, bottom.getWidth(),
-        bottom.getHeight(), new int[width * (height / 2)]);
+        bottom.getHeight(), 
+        new int[width * (height / 2) * (bitsPerPixel >= 40 ? 1 : 3)]);
 
       byte[] topPixs = new byte[topBytes.length];
       byte[] bottomPixs = new byte[bottomBytes.length];
@@ -902,19 +924,40 @@ public class QTReader extends FormatReader {
 
       int topLine = 0;
       int bottomLine = 0;
-      for (int i=0; i<height; i++) {
-        if ((i % 2) == 0) {
-          System.arraycopy(topPixs, topLine*width, scanlines, width*i, width);
-          topLine++;
+      if (bitsPerPixel >= 40) {
+        for (int i=0; i<height; i++) {
+          if ((i % 2) == 0) {
+            System.arraycopy(topPixs, topLine*width, scanlines[0], 
+              width*i, width);
+            topLine++;
+          }
+          else {
+            System.arraycopy(bottomPixs, bottomLine*width, scanlines[0],
+              width*i, width);
+            bottomLine++;
+          }
         }
-        else {
-          System.arraycopy(bottomPixs, bottomLine*width, scanlines,
-            width*i, width);
-          bottomLine++;
+      } 
+      else {
+        for (int i=0; i<height; i++) {
+          if ((i % 2) == 0) {
+            for (int j=0; j<3*width; j++) {
+              scanlines[j % 3][(width * i) + (j / 3)] = 
+                topPixs[topLine*width*3 + j];
+            }
+            topLine++;
+          }
+          else {
+            for (int j=0; j<3*width; j++) {
+              scanlines[j % 3][(width * i) + (j / 3)] = 
+                topPixs[bottomLine*width*3 + j];
+            }
+            bottomLine++;
+          }
         }
       }
 
-      return ImageTools.makeImage(scanlines, width, height, 1, false);
+      return ImageTools.makeImage(scanlines, width, height);
     }
     else {
       v.add(b.toByteArray());
