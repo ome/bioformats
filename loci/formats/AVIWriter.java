@@ -449,8 +449,9 @@ public class AVIWriter extends FormatWriter {
     DataTools.writeInt(raFile, bytesPerPixel * xDim * yDim, true);
 
     byte[] buf = 
-      new byte[byteData.length * byteData[0].length + xPad*byteData.length];
-    
+      new byte[byteData.length * byteData[0].length + 
+      height*xPad*byteData.length];
+   
     int offset = 0;
     int next = 0;
     for (int i=(height-1); i>=0; i--) {
@@ -461,6 +462,7 @@ public class AVIWriter extends FormatWriter {
           next++;
         }
       }
+      next += xPad * byteData.length;
     }
     raFile.write(buf);
     buf = null;
