@@ -178,8 +178,15 @@ public class AVIReader extends FormatReader {
       return rtn;
     }
     else {
-      return rawData;
-    }
+      if (rawData.length == dwWidth * bmpHeight * (bmpBitsPerPixel / 8)) {
+        return rawData;
+      }
+      else {
+        byte[] t = new byte[dwWidth * bmpHeight * (bmpBitsPerPixel / 8)];
+        System.arraycopy(rawData, 0, t, 0, t.length);
+        return t;
+      }
+    }   
   }
 
   /** Obtains the specified image from the given AVI file. */

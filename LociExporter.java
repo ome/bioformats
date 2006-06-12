@@ -78,13 +78,24 @@ public class LociExporter implements PlugInFilter {
       int size = imp.getStackSize();
       
       long t3 = System.currentTimeMillis();
-      for (int i=0; i<size; i++) {
-        ImageProcessor proc = stack.getProcessor(i+1);
-        Image img = proc.createImage();
-        w2.setColorModel(proc.getColorModel());
-        IJ.showStatus("writing plane " + (i+1) + " of " + size);
-        w2.save(filename, img, i == (size - 1));         
+      if (w2.canDoStacks(filename)) {
+        for (int i=0; i<size; i++) {
+          ImageProcessor proc = stack.getProcessor(i+1);
+          Image img = proc.createImage();
+          w2.setColorModel(proc.getColorModel());
+          IJ.showStatus("Writing plane " + (i+1) + " / " + size);
+          IJ.showProgress((double) i / size);
+          w2.save(filename, img, i == (size - 1));         
+        }
       }
+      else {
+        ImageProcessor proc = imp.getProcessor();
+        Image img = imp.getImage();
+        w2.setColorModel(proc.getColorModel());
+        IJ.showStatus("Writing plane 1 / 1");
+        w2.save(filename, img, true);
+      }
+
       long t4 = System.currentTimeMillis();
       if (size == 1) {
         IJ.showStatus((t4 - t1) + " ms");
@@ -92,7 +103,8 @@ public class LociExporter implements PlugInFilter {
       else {
         long average = (t4 - t3) / size;
         IJ.showStatus((t4 - t1) + " ms (" + average + " ms per plane)");
-      }       
+      }      
+      IJ.showProgress(1);
       success = true;
     }
     catch (Exception exc) {
