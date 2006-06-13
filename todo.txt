@@ -15,9 +15,6 @@ Address performance issues:
   plugins and figure out why what we are doing is so much slower -- the
   original code from LegacyQTReader was based on an older version of the ImageJ
   QuickTime reader plugin, so something must have changed).
-* Investigate George Birbilis's suggestion of using the %WINDIR% environment
-  variable instead of hard-coding "/Windows" as the prefix for paths to check
-  for QTJava.zip (in LegacyQTReader.
 
 ImageJ plugin:
 * Investigate whether current reflection-based approach in modified

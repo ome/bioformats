@@ -71,6 +71,10 @@ public class LegacyQTTools {
   protected static ClassLoader constructLoader() {
     // set up additional QuickTime for Java paths
     URL[] paths = null;
+   
+    // should work for Windows
+    String windir = System.getProperty("user.home");
+    
     try {
       paths = new URL[] {
         // Windows
@@ -78,6 +82,8 @@ public class LegacyQTTools {
         new URL("file:/Program Files/QuickTime/QTSystem/QTJava.zip"),
         new URL("file:/Windows/System32/QTJava.zip"),
         new URL("file:/Windows/System/QTJava.zip"),
+        new URL(windir + "/System/QTJava.zip"),
+        new URL(windir + "/System32/QTJava.zip"),
         // Mac OS X
         new URL("file:/System/Library/Java/Extensions/QTJava.zip")
       };
