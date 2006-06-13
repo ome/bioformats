@@ -352,11 +352,11 @@ public class QTReader extends FormatReader {
       }
 
       if (!separated) return rtn;
-      else return ImageTools.splitChannels(rtn, 3, false, true)[no % c];
+      else return ImageTools.splitChannels(rtn, 3, false, false)[no % c];
     }
     else {
       if (isRGB(id) && separated) {
-        return ImageTools.splitChannels(bytes, 3, false, true)[no % c];
+        return ImageTools.splitChannels(bytes, 3, false, false)[no % c];
       }
       else return bytes;
     }  
@@ -431,7 +431,7 @@ public class QTReader extends FormatReader {
       int bpp = bitsPerPixel / 8;
       if (bpp == 3 || bpp == 4 || bpp == 5) bpp = 1;
       return ImageTools.makeImage(openBytes(id, no), width, height,
-        (isRGB(id) && !separated) ? 3 : 1, true, bpp, little);
+        (isRGB(id) && !separated) ? 3 : 1, false, bpp, little);
     }
   }
 
@@ -829,7 +829,10 @@ public class QTReader extends FormatReader {
     int fieldHeight = height;
     if (interlaced) fieldHeight /= 2;
 
-    v.add((byte) 0x08);  // bits per sample
+    int c = bitsPerPixel == 24 ? 3 : (bitsPerPixel == 32 ? 4 : 1);
+
+    v.add(bitsPerPixel >= 40 ? (byte) (bitsPerPixel - 32) : 
+      (byte) (bitsPerPixel / c));  // bits per sample
     v.add((byte) ((fieldHeight >>> 8) & 0xff));
     v.add((byte) (fieldHeight & 0xff));
     v.add((byte) ((width >>> 8) & 0xff));
@@ -1002,7 +1005,10 @@ public class QTReader extends FormatReader {
     int start = 0;
     int pt = 6;
     int numLines = height;
-    byte[] output = new byte[width * height * (bitsPerPixel / 8)];
+    int ebpp = bitsPerPixel / 8;  // effective bytes per pixel
+    if (ebpp == 1 || ebpp == 2) ebpp *= 3;
+    else if (ebpp >= 5) ebpp %= 4;
+    byte[] output = new byte[width * height * ebpp];
 
     if ((header & 0x0008) == 0x0008) {
       start = DataTools.bytesToInt(input, pt, 2, little);
@@ -1016,17 +1022,16 @@ public class QTReader extends FormatReader {
 
       if (prevPixels != null) {
         for (int i=0; i<start; i++) {
-          off = i * width * (bitsPerPixel / 8);
-          System.arraycopy(prevPixels, off, output, off,
-            width * (bitsPerPixel / 8));
+          off = i * width * ebpp;
+          System.arraycopy(prevPixels, off, output, off, width * ebpp);
         }
       }
-      off += (width * (bitsPerPixel / 8));
+      off += (width * ebpp);
 
       for (int i=(start+numLines); i<height; i++) {
-        int offset = i * width * (bitsPerPixel / 8);
+        int offset = i * width * ebpp;
         System.arraycopy(prevPixels, offset, output, offset,
-          width * (bitsPerPixel / 8));
+          width * ebpp);
       }
     }
     else throw new FormatException("Unsupported header : " + header);
@@ -1036,7 +1041,7 @@ public class QTReader extends FormatReader {
     int skip = 0; // number of bytes to skip
     byte rle = 0; // RLE code
 
-    int rowPointer = start * (width * (bitsPerPixel / 8));
+    int rowPointer = start * (width * ebpp);
 
     for (int i=0; i<numLines; i++) {
       skip = input[pt];
@@ -1045,12 +1050,12 @@ public class QTReader extends FormatReader {
       if (prevPixels != null) {
         try {
           System.arraycopy(prevPixels, rowPointer, output, rowPointer,
-            (skip-1) * (bitsPerPixel / 8));
+            (skip-1) * ebpp);
         }
         catch (ArrayIndexOutOfBoundsException e) { }
       }
 
-      off = rowPointer + ((skip-1) * (bitsPerPixel / 8));
+      off = rowPointer + ((skip-1) * ebpp);
       pt++;
       while (true) {
         rle = input[pt];
@@ -1062,20 +1067,20 @@ public class QTReader extends FormatReader {
           if (prevPixels != null) {
             try {
               System.arraycopy(prevPixels, off, output, off,
-                (skip-1) * (bitsPerPixel / 8));
+                (skip-1) * ebpp);
             }
             catch (ArrayIndexOutOfBoundsException e) { }
           }
 
-          off += ((skip-1) * (bitsPerPixel / 8));
+          off += ((skip-1) * ebpp);
           pt++;
         }
         else if (rle == -1) {
           // make sure we copy enough pixels to fill the line
 
-          if (off < (rowPointer + (width * (bitsPerPixel / 8)))) {
+          if (off < (rowPointer + (width * ebpp))) {
             System.arraycopy(prevPixels, off, output, off,
-              (rowPointer + (width * (bitsPerPixel / 8))) - off);
+              (rowPointer + (width * ebpp)) - off);
           }
 
           break;
@@ -1084,21 +1089,21 @@ public class QTReader extends FormatReader {
           // unpack next pixel and copy it to output -(rle) times
           for (int j=0; j<(-1*rle); j++) {
             if (off < output.length) {
-              System.arraycopy(input, pt, output, off, bitsPerPixel / 8);
-              off += (bitsPerPixel / 8);
+              System.arraycopy(input, pt, output, off, ebpp);
+              off += ebpp;
             }
             else j = (-1*rle);
           }
-          pt += (bitsPerPixel / 8);
+          pt += ebpp;
         }
         else {
           // copy (rle) pixels to output
-          System.arraycopy(input, pt, output, off, rle*(bitsPerPixel / 8));
-          pt += rle*(bitsPerPixel / 8);
-          off += rle*(bitsPerPixel / 8);
+          System.arraycopy(input, pt, output, off, rle*ebpp);
+          pt += rle*ebpp;
+          off += rle*ebpp;
         }
       }
-      rowPointer += (width * (bitsPerPixel / 8));
+      rowPointer += (width * ebpp);
     }
     return output;
   }

@@ -3,12 +3,6 @@ QuickTime:
 
 Implement readers for other file formats:
 * SDT (java/loci/slim/SlimPlotter.java, data/sdt) -- but talk to Curtis first
-* Implement LegacyQTWriter (similar to LegacyQTReader -- may want to split out
-  common QTJava handling code to a LegacyQTHelper class), based on improved
-  ImageJ QT writer plugin that now works on both Win32 and Mac OS X. Since the
-  main point of such a class would be to support additional codecs provided by
-  QTJava for free, it would be ideal to have an API in place to specify which
-  codec to use (this might even help in debugging the Motion JPEG-B colors).
 * Anything listed online: http://www.loci.wisc.edu/ome/formats.html
 
 Debugging:

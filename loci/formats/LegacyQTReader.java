@@ -27,7 +27,6 @@ import java.awt.*;
 import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.*;
 
 /**
  * LegacyQTReader is the old file format reader for QuickTime movie files.
@@ -39,59 +38,10 @@ import java.net.*;
  */
 public class LegacyQTReader extends FormatReader {
 
-  // -- Constants --
-
-  public static final String NO_QT_MSG = "You need to install " +
-    "QuickTime for Java from http://www.apple.com/quicktime/";
-
-  public static final String EXPIRED_QT_MSG = "Your version of " +
-    "QuickTime for Java has expired";
-
-  protected static final String[] SUFFIXES = { "mov" };
-
-  protected static final boolean MAC_OS_X =
-    System.getProperty("os.name").equals("Mac OS X");
-
-  // -- Static fields --
-
-  /**
-   * This custom class loader searches additional paths for the QTJava.zip
-   * library. Java has a restriction where only one class loader can have a
-   * native library loaded within a JVM. So the class loader must be static,
-   * shared by all QTForms, or else an UnsatisfiedLinkError is thrown when
-   * attempting to initialize QTJava multiple times.
-   */
-  protected static final ClassLoader LOADER = constructLoader();
-
-  protected static ClassLoader constructLoader() {
-    // set up additional QuickTime for Java paths
-    URL[] paths = null;
-    try {
-      paths = new URL[] {
-        // Windows
-        new URL("file:/WinNT/System32/QTJava.zip"),
-        new URL("file:/Program Files/QuickTime/QTSystem/QTJava.zip"),
-        new URL("file:/Windows/System32/QTJava.zip"),
-        new URL("file:/Windows/System/QTJava.zip"),
-        // Mac OS X
-        new URL("file:/System/Library/Java/Extensions/QTJava.zip")
-      };
-    }
-    catch (MalformedURLException exc) { }
-    return paths == null ? null : new URLClassLoader(paths);
-  }
-
-
   // -- Fields --
 
-  /** Flag indicating this reader has been initialized. */
-  protected boolean initialized = false;
-
-  /** Flag indicating QuickTime for Java is not installed. */
-  protected boolean noQT = false;
-
-  /** Flag indicating QuickTime for Java has expired. */
-  protected boolean expiredQT = false;
+  /** Instance of LegacyQTTools to handle QuickTime for Java detection. */
+  protected LegacyQTTools tools;
 
   /** Reflection tool for QuickTime for Java calls. */
   protected ReflectedUniverse r;
@@ -114,93 +64,16 @@ public class LegacyQTReader extends FormatReader {
   /** Constructs a new QT reader. */
   public LegacyQTReader() { super("QuickTime", "mov"); }
 
-
   // -- LegacyQTReader API methods --
-
-  /** Initializes the QuickTime reader. */
-  protected void initReader() {
-    if (initialized) return;
-    boolean needClose = false;
-    r = new ReflectedUniverse(LOADER);
-    try {
-      r.exec("import quicktime.QTSession");
-      r.exec("QTSession.open()");
-      needClose = true;
-      if (MAC_OS_X) {
-        r.exec("import quicktime.app.view.QTImageProducer");
-        r.exec("import quicktime.app.view.MoviePlayer");
-        r.exec("import quicktime.std.movies.TimeInfo");
-      }
-      else {
-        r.exec("import quicktime.app.display.QTCanvas");
-        r.exec("import quicktime.app.image.ImageUtil");
-        r.exec("import quicktime.app.image.JImagePainter");
-        r.exec("import quicktime.app.image.QTImageDrawer");
-        r.exec("import quicktime.app.image.QTImageProducer");
-        r.exec("import quicktime.app.image.Redrawable");
-        r.exec("import quicktime.app.players.MoviePlayer");
-      }
-      r.exec("import quicktime.io.OpenMovieFile");
-      r.exec("import quicktime.io.QTFile");
-      r.exec("import quicktime.qd.Pict");
-      r.exec("import quicktime.qd.QDDimension");
-      r.exec("import quicktime.qd.QDGraphics");
-      r.exec("import quicktime.qd.QDRect");
-      r.exec("import quicktime.std.StdQTConstants");
-      r.exec("import quicktime.std.image.CodecComponent");
-      r.exec("import quicktime.std.image.CompressedFrameInfo");
-      r.exec("import quicktime.std.image.CSequence");
-      r.exec("import quicktime.std.image.ImageDescription");
-      r.exec("import quicktime.std.image.QTImage");
-      r.exec("import quicktime.std.movies.Movie");
-      r.exec("import quicktime.std.movies.Track");
-      r.exec("import quicktime.std.movies.media.VideoMedia");
-      r.exec("import quicktime.util.QTHandle");
-      r.exec("import quicktime.util.RawEncodedImage");
-    }
-    catch (ExceptionInInitializerError err) {
-      noQT = true;
-      Throwable t = err.getException();
-      if (t instanceof SecurityException) {
-        SecurityException exc = (SecurityException) t;
-        if (exc.getMessage().indexOf("expired") >= 0) expiredQT = true;
-      }
-    }
-    catch (Throwable t) { noQT = true; }
-    finally {
-      if (needClose) {
-        try { r.exec("QTSession.close()"); }
-        catch (Throwable t) { }
-      }
-      initialized = true;
-    }
-  }
-
-  /** Whether QuickTime is available to this JVM. */
-  public boolean canDoQT() {
-    if (!initialized) initReader();
-    return !noQT;
-  }
-
-  /** Whether QuickTime for Java has expired. */
-  public boolean isQTExpired() {
-    if (!initialized) initReader();
-    return expiredQT;
-  }
-
-  /** Gets QuickTime for Java reflected universe. */
-  public ReflectedUniverse getUniverse() {
-    if (!initialized) initReader();
-    return r;
-  }
 
   /** Gets width and height for the given PICT bytes. */
   public Dimension getPictDimensions(byte[] bytes)
     throws FormatException, ReflectException
   {
-    if (!initialized) initReader();
-    if (expiredQT) throw new FormatException(EXPIRED_QT_MSG);
-    if (noQT) throw new FormatException(NO_QT_MSG);
+    if (tools.isQTExpired()) {
+      throw new FormatException(LegacyQTTools.EXPIRED_QT_MSG);
+    }
+    if (!tools.canDoQT()) throw new FormatException(LegacyQTTools.NO_QT_MSG);
 
     try {
       r.exec("QTSession.open()");
@@ -222,9 +95,10 @@ public class LegacyQTReader extends FormatReader {
   public synchronized Image pictToImage(byte[] bytes)
     throws FormatException
   {
-    if (!initialized) initReader();
-    if (expiredQT) throw new FormatException(EXPIRED_QT_MSG);
-    if (noQT) throw new FormatException(NO_QT_MSG);
+    if (tools.isQTExpired()) {
+      throw new FormatException(LegacyQTTools.EXPIRED_QT_MSG);
+    }
+    if (!tools.canDoQT()) throw new FormatException(LegacyQTTools.NO_QT_MSG);
 
     try {
       r.exec("QTSession.open()");
@@ -325,8 +199,10 @@ public class LegacyQTReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    if (expiredQT) throw new FormatException(EXPIRED_QT_MSG);
-    if (noQT) throw new FormatException(NO_QT_MSG);
+    if (tools.isQTExpired()) {
+      throw new FormatException(LegacyQTTools.EXPIRED_QT_MSG);
+    }
+    if (!tools.canDoQT()) throw new FormatException(LegacyQTTools.NO_QT_MSG);
 
     // paint frame into image
     try {
@@ -353,7 +229,6 @@ public class LegacyQTReader extends FormatReader {
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
     if (currentId == null) return;
-    if (!initialized) initReader();
 
     try {
       r.exec("openMovieFile.close()");
@@ -369,10 +244,15 @@ public class LegacyQTReader extends FormatReader {
   protected void initFile(String id)
     throws FormatException, IOException
   {
-    if (!initialized) initReader();
-    if (expiredQT) throw new FormatException(EXPIRED_QT_MSG);
-    if (noQT) throw new FormatException(NO_QT_MSG);
-
+    if (tools == null) {
+      tools = new LegacyQTTools();
+      r = tools.getUniverse();
+    }
+    if (tools.isQTExpired()) {
+      throw new FormatException(LegacyQTTools.EXPIRED_QT_MSG);
+    }
+    if (!tools.canDoQT()) throw new FormatException(LegacyQTTools.NO_QT_MSG);
+    
     super.initFile(id);
 
     try {
@@ -411,7 +291,7 @@ public class LegacyQTReader extends FormatReader {
       needsRedrawing = ((Boolean) r.exec("qtip.isRedrawing()")).booleanValue();
       int maxTime = ((Integer) r.exec("m.getDuration()")).intValue();
 
-      if (MAC_OS_X) {
+      if (LegacyQTTools.MAC_OS_X) {
         r.setVar("zero", 0);
         r.setVar("one", 1f);
         r.exec("timeInfo = new TimeInfo(zero, zero)");

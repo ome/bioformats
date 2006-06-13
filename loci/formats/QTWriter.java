@@ -55,6 +55,12 @@ public class QTWriter extends FormatWriter {
   /** Time the file was created. */
   protected int created;
 
+  /** Whether we need the legacy writer. */
+  protected boolean needLegacy = false;
+
+  /** Legacy QuickTime writer. */
+  protected LegacyQTWriter legacy;
+
   // -- Constructor --
 
   public QTWriter() { super("QuickTime", "mov"); }
@@ -71,6 +77,15 @@ public class QTWriter extends FormatWriter {
   {
     if (image == null) {
       throw new FormatException("Image is null");
+    }
+
+    if (legacy == null) {
+      legacy = new LegacyQTWriter();
+    }
+
+    if (needLegacy) {
+      legacy.save(id, image, last);
+      return;
     }
 
     BufferedImage img = (cm == null) ?
@@ -121,6 +136,14 @@ public class QTWriter extends FormatWriter {
     }
 
     if (!id.equals(currentId)) {
+      int codecId = LegacyQTTools.getCodec();
+      if (codecId != 0) {
+        needLegacy = true;
+        legacy.codecID = codecId;
+        legacy.save(id, image, last);
+        return;
+      }
+
       // -- write the header --
 
       offsets = new Vector();
