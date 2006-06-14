@@ -9,8 +9,6 @@ Debugging:
 * Figure out what is wrong with Motion JPEG-B colors in QTReader.
 
 Address performance issues:
-* Check whether ImageTypeSpecifier class is useful for simplifying
-  BufferedImage tasks.
 * Fix LegacyQTReader to work with reasonable efficiency (study ImageJ QuickTime
   plugins and figure out why what we are doing is so much slower -- the
   original code from LegacyQTReader was based on an older version of the ImageJ
