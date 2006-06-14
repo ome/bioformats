@@ -31,11 +31,11 @@ public class LociDataBrowser implements PlugIn {
   // -- Constants --
 
   /** Debugging flag. */
-  protected static final boolean DEBUG = false;
+  protected static final boolean DEBUG = true;
 
   /** Prefix endings indicating numbering block represents T. */
   private static final String[] PRE_T = {
-    "_TP", "-TP", ".TP", "_TL", "-TL", ".TL"
+    "_T", "-T", ".T", "_TP", "-TP", ".TP", "_TL", "-TL", ".TL"
   };
 
   /** Prefix endings indicating numbering block represents Z. */
@@ -146,6 +146,11 @@ public class LociDataBrowser implements PlugIn {
     String directory = lociOpener.getDirectory();
     String name = lociOpener.getFileName();
     virtual = lociOpener.getVirtual();
+    if (DEBUG) {
+      log("directory", directory);
+      log("name", name);
+      log("virtual", virtual);
+    }
     if (name == null) return;
 
     // find all the files having similar names (using FilePattern class)
@@ -188,8 +193,6 @@ public class LociDataBrowser implements PlugIn {
     }
 
     if (DEBUG) {
-      log("directory", directory);
-      log("name", name);
       log("pattern", pattern);
       log("filenames", filenames);
     }
@@ -456,5 +459,7 @@ public class LociDataBrowser implements PlugIn {
   }
 
   protected void log(String var, int val) { log(var + " = " + val); }
+
+  protected void log(String var, boolean val) { log(var + " = " + val); }
 
 }
