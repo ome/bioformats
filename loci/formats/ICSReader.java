@@ -27,6 +27,8 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.StringTokenizer;
 import java.util.NoSuchElementException;
+import java.util.Vector;
+import java.util.zip.*;
 
 /**
  * ICSReader is the file format reader for ICS (Image Cytometry Standard)
@@ -64,6 +66,12 @@ public class ICSReader extends FormatReader {
    */
   protected int[] dimensions = new int[6];
 
+  /** Flag indicating whether current file is v2.0. */
+  protected boolean versionTwo;
+
+  /** Image data. */
+  protected byte[] data;
+  
 
   // -- Constructor --
 
@@ -102,12 +110,24 @@ public class ICSReader extends FormatReader {
     int numSamples = width * height;
     int channels = 1;
 
-    idsIn.seek((dimensions[0] / 8) * width * height * no);
-
-    byte[] data = new byte[(dimensions[0]/8) * width * height];
-    idsIn.readFully(data);
-
-    return data;
+    int offset = width * height * (dimensions[0] / 8) * no;
+    byte[] plane = new byte[width * height * (dimensions[0] / 8)];
+    System.arraycopy(data, offset, plane, 0, plane.length);
+   
+    // if it's version two, we need to flip the plane upside down
+    if (versionTwo) {
+      byte[] t = new byte[plane.length];
+      int len = width * (dimensions[0] / 8);
+      int off = (height - 1) * len;
+      int newOff = 0;
+      for (int i=0; i<height; i++) {
+        System.arraycopy(plane, off, t, newOff, len);
+        off -= len;
+        newOff += len;
+      }
+      return t;
+    }
+    return plane;
   }
 
   /** Obtains the specified image from the given ICS file. */
@@ -116,13 +136,20 @@ public class ICSReader extends FormatReader {
   {
     if (!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
 
-    byte[] data = openBytes(id, no);
+    byte[] plane = openBytes(id, no);
     int width = dimensions[1];
     int height = dimensions[2];
     int numSamples = width * height;
     int channels = 1;
 
-    return ImageTools.makeImage(data, width, height, channels, false,
+    if (dimensions[0] == 32) {
+      int[][] b = new int[1][plane.length / 4];
+      for (int i=0; i<b[0].length; i++) {
+        b[0][i] = DataTools.bytesToInt(plane, i*4, 4, littleEndian);
+      }
+      return ImageTools.makeImage(b, width, height);
+    }
+    else return ImageTools.makeImage(plane, width, height, channels, false,
       dimensions[0] / 8, littleEndian);
   }
 
@@ -158,21 +185,33 @@ public class ICSReader extends FormatReader {
     if (icsId == null) throw new FormatException("No ICS file found.");
     File icsFile = new File(icsId);
     if (!icsFile.exists()) throw new FormatException("ICS file not found.");
-    if (idsId == null) throw new FormatException("No IDS file found.");
-    File idsFile = new File(idsId);
-    if (!idsFile.exists()) throw new FormatException("IDS file not found.");
+    
+    // check if we have a v2 ICS file
+    RandomAccessFile f = new RandomAccessFile(icsId, "r");
+    byte[] b = new byte[17];
+    f.read(b);
+    if (new String(b).trim().equals("ics_version\t2.0")) {
+      idsIn = new RandomAccessStream(icsId);
+      versionTwo = true;
+    }
+    else {
+      if (idsId == null) throw new FormatException("No IDS file found.");
+      File idsFile = new File(idsId);
+      if (!idsFile.exists()) throw new FormatException("IDS file not found.");
+      currentIdsId = idsId;
+      idsIn = new RandomAccessStream(idsId);
+    }
+
     currentIcsId = icsId;
-    currentIdsId = idsId;
 
     icsIn = icsFile;
-    idsIn = new RandomAccessStream(idsId);
 
     BufferedReader reader = new BufferedReader(new FileReader(icsIn));
     String line = reader.readLine();
     line = reader.readLine();
     StringTokenizer t;
     String token;
-    while (line != null) {
+    while (line != null && !line.trim().equals("end")) {
       t = new StringTokenizer(line);
       while(t.hasMoreTokens()) {
         token = t.nextToken();
@@ -233,6 +272,9 @@ public class ICSReader extends FormatReader {
       }
     }
 
+    int width = dimensions[1];
+    int height = dimensions[2];
+
     numImages = dimensions[3] * dimensions[4] * dimensions[5];
 
     String endian = (String) metadata.get("byte_order");
@@ -249,6 +291,41 @@ public class ICSReader extends FormatReader {
       }
       if (lastByte < firstByte) littleEndian = false;
     }
+
+    String test = (String) metadata.get("compression");
+    boolean gzip = (test == null) ? false : test.equals("gzip");
+  
+    if (versionTwo) {
+      String s = idsIn.readLine();
+      while(!s.trim().equals("end")) s = idsIn.readLine();
+    } 
+    data = new byte[(int) (idsIn.length() - idsIn.getFilePointer())];
+    /* debug */ System.out.println("data.length : " + data.length);
+
+    // extra check is because some of our datasets are labeled as 'gzip', and
+    // have a valid GZIP header, but are actually uncompressed
+    if (gzip && 
+      ((data.length / (numImages) < (width * height * dimensions[0]/8)))) 
+    {
+      idsIn.read(data);
+      byte[] buf = new byte[8192];
+      ByteVector v = new ByteVector();
+      try {
+        GZIPInputStream decompressor = 
+          new GZIPInputStream(new ByteArrayInputStream(data));
+        int r = decompressor.read(buf, 0, buf.length);
+        while (r > 0) {
+          v.add(buf, 0, r);
+          r = decompressor.read(buf, 0, buf.length);
+        }
+        data = v.toByteArray();
+      }
+      catch (Exception dfe) {
+        dfe.printStackTrace();
+        throw new FormatException("Error uncompressing gzip'ed data.");
+      }
+    }
+    else idsIn.readFully(data);
 
     // initialize OME metadata
 
