@@ -23,7 +23,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.awt.image.ComponentSampleModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.SampleModel;
+import java.awt.image.Raster;
+import java.awt.image.RescaleOp;
 import java.awt.image.WritableRaster;
 import java.io.*;
 import java.util.Vector;
@@ -902,29 +908,19 @@ public class QTReader extends FormatReader {
       BufferedImage top = bufferedJPEG(v.toByteArray());
       BufferedImage bottom = bufferedJPEG(v2.toByteArray());
 
-      WritableRaster topRaster = top.getRaster();
-      WritableRaster bottomRaster = bottom.getRaster();
-
       byte[][] scanlines = 
         new byte[(bitsPerPixel >= 40) ? 1 : 3][width * height];
 
-      int[] topBytes =
-        topRaster.getPixels(topRaster.getMinX(), topRaster.getMinY(), 
-        width, height / 2, 
-        new int[width * (height / 2) * (bitsPerPixel >= 40 ? 1 : 3)]);
-      int[] bottomBytes = bottomRaster.getPixels(0, 0, bottom.getWidth(),
-        bottom.getHeight(), 
-        new int[width * (height / 2) * (bitsPerPixel >= 40 ? 1 : 3)]);
-
-      byte[] topPixs = new byte[topBytes.length];
-      byte[] bottomPixs = new byte[bottomBytes.length];
-
-      // can safely assume that topBytes.length == bottomBytes.length
-      for (int i=0; i<topBytes.length; i++) {
-        topPixs[i] = (byte) topBytes[i];
-        bottomPixs[i] = (byte) bottomBytes[i];
-      }
-
+      WritableRaster topRaster = top.getWritableTile(0, 0);
+      WritableRaster bottomRaster = bottom.getWritableTile(0, 0);
+    
+      byte[] topPixs = (byte[]) topRaster.getDataElements(0, 0, top.getWidth(),
+        top.getHeight(), null);
+      byte[] bottomPixs = (byte[]) bottomRaster.getDataElements(0, 0,
+        bottom.getWidth(), bottom.getHeight(), null);
+      top.releaseWritableTile(0, 0);
+      bottom.releaseWritableTile(0, 0);
+        
       int topLine = 0;
       int bottomLine = 0;
       if (bitsPerPixel >= 40) {
@@ -960,7 +956,9 @@ public class QTReader extends FormatReader {
         }
       }
 
-      return ImageTools.makeImage(scanlines, width, height);
+      RescaleOp darken = new RescaleOp(1.5f, -128f, null);
+      return darken.filter(
+        ImageTools.makeImage(scanlines, width, height), null);
     }
     else {
       v.add(b.toByteArray());
