@@ -186,7 +186,7 @@ public class AVIReader extends FormatReader {
         System.arraycopy(rawData, 0, t, 0, t.length);
         return t;
       }
-    }   
+    }
   }
 
   /** Obtains the specified image from the given AVI file. */

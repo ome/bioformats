@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.net.*; 
+import java.net.*;
 import javax.swing.JOptionPane;
 
 /**
@@ -41,12 +41,12 @@ public class LegacyQTTools {
 
   protected static final String[] SUFFIXES = {"mov", "qt"};
 
-  protected static final boolean MAC_OS_X = 
+  protected static final boolean MAC_OS_X =
     System.getProperty("os.name").equals("Mac OS X");
 
   // supported codecs for writing
 
-  public static final String[] CODECS = {"Motion JPEG-B", "Cinepak", 
+  public static final String[] CODECS = {"Motion JPEG-B", "Cinepak",
     "Animation", "H.263", "Sorenson", "Sorenson 3", "MPEG-4", "Raw"};
 
   public static final int[] CODEC_TYPES = {1835692130, 1668704612, 1919706400,
@@ -71,10 +71,10 @@ public class LegacyQTTools {
   protected static ClassLoader constructLoader() {
     // set up additional QuickTime for Java paths
     URL[] paths = null;
-   
+
     // should work for Windows
     String windir = System.getProperty("user.home");
-    
+
     try {
       paths = new URL[] {
         // Windows
@@ -91,8 +91,8 @@ public class LegacyQTTools {
     catch (MalformedURLException exc) { }
     return paths == null ? null : new URLClassLoader(paths);
   }
- 
-  // -- Fields -- 
+
+  // -- Fields --
 
   /** Flag indicating this class has been initialized. */
   protected boolean initialized = false;
@@ -183,14 +183,14 @@ public class LegacyQTTools {
     if (!initialized) initClass();
     return expiredQT;
   }
-  
+
   /** Gets QuickTime for Java reflected universe. */
   public ReflectedUniverse getUniverse() {
     if (!initialized) initClass();
     return r;
   }
 
-  /** Display a dialog box allowing the user to choose a video codec. */ 
+  /** Display a dialog box allowing the user to choose a video codec. */
   public static int getCodec() {
     String codec = (String) JOptionPane.showInputDialog(null,
       "Choose a video codec", "Input", JOptionPane.INFORMATION_MESSAGE, null,
@@ -202,7 +202,7 @@ public class LegacyQTTools {
         codecId = CODEC_TYPES[i];
       }
     }
-    return codecId; 
+    return codecId;
   }
 
 }

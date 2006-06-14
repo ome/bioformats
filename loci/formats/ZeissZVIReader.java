@@ -45,7 +45,7 @@ public class ZeissZVIReader extends FormatReader {
   private int nImages = 0;  // number of images
   private byte[] tags;  // tags data
   private int channels;
-  
+
   // -- Fields used by parseDir --
   private int counter = 0;  // the number of the Image entry
   private int imageWidth = 0;
@@ -61,7 +61,7 @@ public class ZeissZVIReader extends FormatReader {
   private int len;
   private int shuffle;
   private int previousCut;
-  
+
   // -- Constructor --
 
   /** Constructs a new Zeiss ZVI reader. */
@@ -87,8 +87,8 @@ public class ZeissZVIReader extends FormatReader {
     if (!id.equals(currentId)) initFile(id);
     if (needLegacy) return legacy.isRGB(id);
     return channels > 1;
-  }        
-  
+  }
+
   /** Obtains the specified image from the given ZVI file, as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -100,7 +100,7 @@ public class ZeissZVIReader extends FormatReader {
     }
 
     if (needLegacy) return legacy.openBytes(id, no);
-    
+
     // read image header data
 
     int c = (isRGB(id) && separated) ? 3 : 1;
@@ -130,11 +130,11 @@ public class ZeissZVIReader extends FormatReader {
       pointer += 4 + 2;
 
      // read image bytes and convert to floats
- 
+
       pointer = 0;
       int numSamples = width*height;
       bitsPerSample = validBPP;
-   
+
       switch (pixelFormat) {
         case 1: channels = 3; break;
         case 2: channels = 4; break;
@@ -149,30 +149,30 @@ public class ZeissZVIReader extends FormatReader {
         width = imageWidth;
         height = imageHeight;
         bitsPerSample = bytesPerPixel * 8;
-      } 
+      }
     }
     else {
       width = imageWidth;
       height = imageHeight;
       bitsPerSample = bytesPerPixel * 8;
-    }        
-    
+    }
+
     byte[] px = (byte[]) pixelData.get(new Integer(no / c));
     byte[] tempPx = new byte[px.length];
 
     if (bitsPerSample > 64) { bitsPerSample = 8; }
 
     int bpp = bitsPerSample / 8;
-  
+
     // chop any extra bytes off of the pixel array
-  
+
     if (px.length > (width * height * bpp)) {
       int check = 0;
       int chop = 0;
       while (check != imageWidth && chop < 4000) {
         check = DataTools.bytesToInt(px, chop, 4, true);
         chop++;
-      }       
+      }
       chop += 23;
       if (bpp == 2 && (chop % 2 != 0)) chop++;
 
@@ -182,8 +182,8 @@ public class ZeissZVIReader extends FormatReader {
         byte[] tmp = new byte[px.length - chop];
         System.arraycopy(px, px.length - tmp.length, tmp, 0, tmp.length);
         px = tmp;
-      }  
-    } 
+      }
+    }
 
     if (bpp == 3) {
       // reverse the channels
@@ -206,7 +206,7 @@ public class ZeissZVIReader extends FormatReader {
       int mul = (int) (0.32 * imageWidth * bpp);
       for (int i=0; i<imageHeight; i++) {
         System.arraycopy(px, i*width*bpp, tempPx, (i+1)*width*bpp - mul, mul);
-        System.arraycopy(px, i*width*bpp + mul, tempPx, i*width*bpp, 
+        System.arraycopy(px, i*width*bpp + mul, tempPx, i*width*bpp,
           width*bpp - mul);
       }
 
@@ -244,12 +244,12 @@ public class ZeissZVIReader extends FormatReader {
       }
       tempPx = px;
     }
-  
+
     if (!isRGB(id) || !separated) {
       return tempPx;
-    }        
+    }
     else {
-      return ImageTools.splitChannels(tempPx, 3, false, true)[no % 3];      
+      return ImageTools.splitChannels(tempPx, 3, false, true)[no % 3];
     }
   }
 
@@ -278,24 +278,24 @@ public class ZeissZVIReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     legacy = new LegacyZVIReader();
-   
+
     OLEParser parser = new OLEParser(id);
     parser.parse(0);
     Vector[] files = parser.getFiles();
-    
+
     headerData = new Hashtable();
     pixelData = new Hashtable();
-   
+
     int largest = 0;
     int largestIndex = 0;
-   
+
     int nextItem = 0;
     Vector itemNames = parser.getNames();
-  
+
     for (int i=0; i<files[0].size(); i++) {
       byte[] data = (byte[]) files[1].get(i);
       if (data.length > largest) largestIndex = i;
-      
+
       String pathName = ((String) files[0].get(i)).trim();
       pathName = DataTools.stripString(pathName);
 
@@ -303,26 +303,26 @@ public class ZeissZVIReader extends FormatReader {
       boolean isImage = pathName.endsWith("Image");
 
       try {
-        if (((isContents && 
+        if (((isContents &&
           ((pathName.indexOf("Item") != -1) || pathName.indexOf("Image") != -1)
           && data.length > 6000)) || (data.length == dataLength))
         {
           header = data;
-          
-          while ((dataLength != 0) && (data.length < dataLength) && isContents 
-            && ((pathName.indexOf("Item") != -1) || 
-            pathName.indexOf("Image") != -1)) 
+
+          while ((dataLength != 0) && (data.length < dataLength) && isContents
+            && ((pathName.indexOf("Item") != -1) ||
+            pathName.indexOf("Image") != -1))
           {
             i++;
             data = (byte[]) files[1].get(i);
             if (data.length > largest) largestIndex = i;
-      
+
             pathName = ((String) files[0].get(i)).trim();
             pathName = DataTools.stripString(pathName);
 
             isContents = pathName.endsWith("Contents");
           }
-            
+
           int imageNum = 0;
           if (pathName.indexOf("Item") != -1) {
             String num = pathName.substring(pathName.lastIndexOf("Item") + 5,
@@ -335,38 +335,38 @@ public class ZeissZVIReader extends FormatReader {
             int n = Integer.parseInt(num);
 
             // choose whether to use imageNum or n
-                
+
             if (n != imageNum) {
               if (pixelData.containsKey(new Integer(imageNum))) {
-                imageNum = n;        
-              }      
+                imageNum = n;
+              }
             }
 
             if (pathName.indexOf("Item") != -1) {
               num = pathName.substring(0, pathName.lastIndexOf("Item"));
-              while (pixelData.containsKey(new Integer(imageNum)) && 
-                (num.indexOf("Item") != -1)) 
+              while (pixelData.containsKey(new Integer(imageNum)) &&
+                (num.indexOf("Item") != -1))
               {
-                String s = num.substring(num.lastIndexOf("Item") + 5, 
+                String s = num.substring(num.lastIndexOf("Item") + 5,
                   num.lastIndexOf(")"));
                 imageNum = Integer.parseInt(s);
                 num = num.substring(0, num.lastIndexOf("Item"));
-              }        
+              }
             }
 
             // if we *still* don't find a valid key, give up and use
             // the legacy reader
-            
+
             if (pixelData.containsKey(new Integer(imageNum))) {
               if (legacy.getImageCount(id) == 1) break;
               needLegacy = true;
               legacy.initFile(id);
               return;
-            }        
-            
+            }
+
             nextItem++;
           }
-       
+
           int byteCount = 2;
           byteCount += 4; // version field
           byteCount += 6; // type field
@@ -379,15 +379,15 @@ public class ZeissZVIReader extends FormatReader {
           byteCount += 6;
           imageHeight = DataTools.bytesToInt(header, byteCount, 4, true);
           byteCount += 4;
-          
+
           byteCount += 6; // depth
           byteCount += 6; // pixel format
           byteCount += 6; // count
-         
+
           byteCount += 2;
           bitsPerSample = DataTools.bytesToInt(header, byteCount, 4, true);
           byteCount += 4;
-          
+
           numBytes = DataTools.bytesToInt(header, byteCount, 2, true);
           byteCount += 2 + numBytes; // plugin CLSID
           byteCount += 38; // not sure what this is for
@@ -395,7 +395,7 @@ public class ZeissZVIReader extends FormatReader {
           byteCount += 2;
           numBytes = DataTools.bytesToInt(header, byteCount, 4, true);
           byteCount += 4 + numBytes; // layers
- 
+
           byteCount += 2;
           numBytes = DataTools.bytesToInt(header, byteCount, 4, true);
           byteCount += 4 + numBytes; // scaling
@@ -409,7 +409,7 @@ public class ZeissZVIReader extends FormatReader {
           byteCount += 2 + numBytes; // display item name
 
           byteCount += 28; // streamed header data
-          
+
           // get pixel data
 
           if (header.length > byteCount) {
@@ -418,7 +418,7 @@ public class ZeissZVIReader extends FormatReader {
             headerData.put(new Integer(imageNum), (Object) head);
             byte[] px = new byte[header.length - byteCount];
             System.arraycopy(header, byteCount, px, 0, px.length);
-         
+
             if (!pixelData.containsKey(new Integer(imageNum))) {
               shuffle = parser.shuffle();
 
@@ -427,69 +427,69 @@ public class ZeissZVIReader extends FormatReader {
                 byte[] chunkOne = new byte[shuffle];
                 byte[] chunkTwo = new byte[parser.length() - shuffle + 11700];
                 System.arraycopy(px, 0, chunkOne, 0, chunkOne.length);
-                System.arraycopy(px, chunkOne.length, chunkTwo, 0, 
+                System.arraycopy(px, chunkOne.length, chunkTwo, 0,
                   chunkTwo.length);
-              
+
                 byte[] tct = new byte[chunkOne.length];
-                int bpp = bitsPerSample / 8; 
+                int bpp = bitsPerSample / 8;
                 int mul = (int) (imageWidth - (imageWidth * 0.01));
                 mul *= bpp;
                 mul += 2;
-      
+
                 for (int k=0; k<(chunkOne.length / (bpp*imageWidth)); k++) {
-                  System.arraycopy(chunkOne, k*bpp*imageWidth, tct, 
+                  System.arraycopy(chunkOne, k*bpp*imageWidth, tct,
                     (k+1)*bpp*imageWidth - mul, mul);
-                  System.arraycopy(chunkOne, k*bpp*imageWidth+mul, tct, 
+                  System.arraycopy(chunkOne, k*bpp*imageWidth+mul, tct,
                     k*bpp*imageWidth, bpp*imageWidth - mul);
-                } 
+                }
 
                 chunkOne = tct;
-                
+
                 byte[] tco = new byte[chunkTwo.length];
                 mul = (int) (imageWidth * 0.14);
                 mul *= bpp;
-              
-                for (int k=0; k<(chunkTwo.length / (bpp*imageWidth)); k++) {
-                  System.arraycopy(chunkTwo, k*bpp*imageWidth, tco, 
-                    (k+1)*bpp*imageWidth - mul, mul);
-                  System.arraycopy(chunkTwo, k*bpp*imageWidth+mul, tco, 
-                    k*bpp*imageWidth, bpp*imageWidth - mul);
-                } 
 
-                chunkTwo = tco; 
-                
+                for (int k=0; k<(chunkTwo.length / (bpp*imageWidth)); k++) {
+                  System.arraycopy(chunkTwo, k*bpp*imageWidth, tco,
+                    (k+1)*bpp*imageWidth - mul, mul);
+                  System.arraycopy(chunkTwo, k*bpp*imageWidth+mul, tco,
+                    k*bpp*imageWidth, bpp*imageWidth - mul);
+                }
+
+                chunkTwo = tco;
+
                 px = new byte[px.length];
                 System.arraycopy(chunkTwo, 0, px, 0, chunkTwo.length);
                 System.arraycopy(chunkOne, 0, px, chunkTwo.length,
                   chunkOne.length);
-              
-                // now we have to shift the whole array to the right by 
+
+                // now we have to shift the whole array to the right by
                 // 0.01 * width pixels
-             
+
                 mul = imageWidth - ((int) (imageWidth * 0.01));
                 mul *= bpp;
-                
+
                 byte[] tmp = new byte[px.length];
                 for (int k=0; k<imageHeight; k++) {
-                  System.arraycopy(px, k*bpp*imageWidth, tmp, 
+                  System.arraycopy(px, k*bpp*imageWidth, tmp,
                     (k+1)*bpp*imageWidth - mul, mul);
-                  System.arraycopy(px, k*bpp*imageWidth+mul, tmp, 
+                  System.arraycopy(px, k*bpp*imageWidth+mul, tmp,
                     k*bpp*imageWidth, bpp*imageWidth - mul);
-                } 
-                
+                }
+
                 px = tmp;
               }
-              
+
               pixelData.put(new Integer(imageNum), (Object) px);
               dataLength = px.length + head.length;
               nImages++;
-            }  
+            }
           }
           else break;
         }
         else if (isContents && isImage) {
           // we've found the header data
-               
+
           header = data;
 
           int pointer = 14;
@@ -513,8 +513,8 @@ public class ZeissZVIReader extends FormatReader {
             case 6: bytesPerPixel = 4; break;
             case 8: bytesPerPixel = 6; break;
             default: bytesPerPixel = 1;
-          }        
-      
+          }
+
           if ((bytesPerPixel % 2) != 0) channels = 3;
         }
         else if (pathName.endsWith("Tags") && pathName.startsWith("Root Entry"))
@@ -529,32 +529,32 @@ public class ZeissZVIReader extends FormatReader {
     if (nImages == 0) {
       // HACK
       // just grab the largest file
-  
-      header = (byte[]) files[1].get(largestIndex);  
+
+      header = (byte[]) files[1].get(largestIndex);
       String pathName = (String) files[0].get(largestIndex);
-   
+
       int imageNum = 0;
       if (pathName.indexOf("Item") != -1) {
         String num = pathName.substring(pathName.indexOf("Item") + 5,
           pathName.indexOf(")"));
         imageNum = Integer.parseInt(num);
       }
-      
+
       int byteCount = 166;
-     
+
       byteCount += 2;
       imageWidth = DataTools.bytesToInt(header, byteCount, 4, true);
       byteCount += 6;
       imageHeight = DataTools.bytesToInt(header, byteCount, 4, true);
       byteCount += 4;
-      
+
       byteCount += 6; // depth
       byteCount += 6; // pixel format
       byteCount += 6; // count
       byteCount += 2;
       bytesPerPixel = DataTools.bytesToInt(header, byteCount, 4, true) / 8;
       byteCount += 4;
-      
+
       int numBytes = DataTools.bytesToInt(header, byteCount, 2, true);
       byteCount += 2 + numBytes; // plugin CLSID
       byteCount += 38; // not sure what this is for
@@ -576,7 +576,7 @@ public class ZeissZVIReader extends FormatReader {
       byteCount += 2 + numBytes; // display item name
 
       byteCount += 28; // streamed header data
-      
+
       // get pixel data
 
       if (header.length > byteCount) {
@@ -585,12 +585,12 @@ public class ZeissZVIReader extends FormatReader {
         headerData.put(new Integer(nImages), (Object) head);
         byte[] px = new byte[header.length - byteCount];
         System.arraycopy(header, byteCount, px, 0, px.length);
-       
+
         pixelData.put(new Integer(nImages), (Object) px);
         nImages++;
       }
     }
-    
+
     initMetadata();
   }
 
@@ -603,7 +603,7 @@ public class ZeissZVIReader extends FormatReader {
     // right now we're using header data from an image item
 
     if (header == null) return;
-    
+
     int pt = 14;
     int numBytes = DataTools.bytesToInt(header, pt, 2, true);
     pt += 2 + numBytes;
@@ -673,7 +673,7 @@ public class ZeissZVIReader extends FormatReader {
     // parse the "tags" byte array
 
     if (tags == null) return;
-    
+
     pt = 0;
     pt += 16;
 

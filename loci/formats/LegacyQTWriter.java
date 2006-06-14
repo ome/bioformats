@@ -93,7 +93,7 @@ public class LegacyQTWriter extends FormatWriter {
       tools = new LegacyQTTools();
       r = tools.getUniverse();
     }
-    
+
     if (tools.isQTExpired()) {
       throw new FormatException(LegacyQTTools.EXPIRED_QT_MSG);
     }
@@ -115,7 +115,7 @@ public class LegacyQTWriter extends FormatWriter {
         r.exec("movFile = new QTFile(f)");
         r.setVar("val", -2147483648 | 268435456);
         r.setVar("kMoviePlayer", 1414942532);
-        r.exec("movie = Movie.createMovieFile(movFile, kMoviePlayer, val)"); 
+        r.exec("movie = Movie.createMovieFile(movFile, kMoviePlayer, val)");
         int timeScale = TIME_SCALE;
         r.setVar("timeScale", timeScale);
         r.setVar("zero", 0);
@@ -130,23 +130,23 @@ public class LegacyQTWriter extends FormatWriter {
         r.setVar("height", height);
         r.exec("imgDesc2.setWidth(width)");
         r.exec("imgDesc2.setHeight(height)");
-   
+
         r.exec("gw = new QDGraphics(imgDesc2, zero)");
         r.exec("bounds = new QDRect(zero, zero, width, height)");
-        
+
         r.exec("pixMap = gw.getPixMap()");
         r.exec("pixSize = pixMap.getPixelSize()");
         r.setVar("codec", codecID);
         r.setVar("quality", qualityID);
-      
+
         int rawImageSize = width * height * 4;
         r.setVar("rawImageSize", rawImageSize);
-       
+
         r.setVar("boolTrue", true);
         r.exec("imageHandle = new QTHandle(rawImageSize, boolTrue)");
         r.exec("imageHandle.lock()");
         r.exec("compressedImage = RawEncodedImage.fromQTHandle(imageHandle)");
-       
+
         // writer won't work without something to this effect:
         //r.exec("bestFidelity = CodecComponent.bestFidelity");
         // however, every attempt at producing this fails miserably
@@ -154,8 +154,8 @@ public class LegacyQTWriter extends FormatWriter {
         r.setVar("rate", 30);
         r.setVar("nullObj", null);
         r.exec("seq = new CSequence(gw, bounds, pixSize, codec, bestFidelity," +
-          " quality, quality, rate, nullObj, zero)"); 
-        
+          " quality, quality, rate, nullObj, zero)");
+
         r.exec("imgDesc = seq.getDescription()");
       }
       catch (Exception e) {
@@ -189,7 +189,7 @@ public class LegacyQTWriter extends FormatWriter {
 
       if (pixels2 == null) pixels2 = new int[intsPerRow * height];
       r.exec("nativeLittle = EndianOrder.isNativeLittleEndian()");
-      boolean nativeLittle = 
+      boolean nativeLittle =
         ((Boolean) r.getVar("nativeLittle")).booleanValue();
       if (nativeLittle) {
         int offset1, offset2;
@@ -200,15 +200,15 @@ public class LegacyQTWriter extends FormatWriter {
             r.setVar("thisByte", pixels[offset1++]);
             r.exec("b = EndianOrder.flipBigEndianToNative32(thisByte)");
             byte b = ((Byte) r.getVar("b")).byteValue();
-            pixels2[offset2++] = b; 
+            pixels2[offset2++] = b;
           }
-        }  
+        }
       }
       else {
         for (int i=0; i<height; i++) {
-          System.arraycopy(pixels, i*width, pixels2, i*intsPerRow, width); 
+          System.arraycopy(pixels, i*width, pixels2, i*intsPerRow, width);
         }
-      } 
+      }
 
       r.setVar("pixels2", pixels2);
       r.setVar("len", intsPerRow * height);
@@ -216,7 +216,7 @@ public class LegacyQTWriter extends FormatWriter {
       r.exec("pixelData.copyFromArray(zero, pixels2, zero, len)");
       r.setVar("four", 4);
       r.exec("cfInfo = seq.compressFrame(gw, bounds, four, compressedImage)");
-    
+
       // see developer.apple.com/qa/qtmcc/qtmcc20.html
       r.exec("similarity = cfInfo.getSimilarity()");
       int sim = ((Integer) r.getVar("similarity")).intValue();
@@ -253,7 +253,7 @@ public class LegacyQTWriter extends FormatWriter {
         e.printStackTrace();
         throw new FormatException("Legacy QuickTime writer failed.");
       }
-    }  
+    }
   }
 
   /** Reports whether the writer can save multiple images to a single file. */
@@ -265,4 +265,4 @@ public class LegacyQTWriter extends FormatWriter {
     new LegacyQTWriter().testConvert(args);
   }
 
-} 
+}

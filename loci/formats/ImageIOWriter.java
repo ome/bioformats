@@ -73,7 +73,7 @@ public abstract class ImageIOWriter extends FormatWriter {
   public void save(String id, Image image, boolean last)
     throws FormatException, IOException
   {
-    BufferedImage img = (cm == null) ? 
+    BufferedImage img = (cm == null) ?
       ImageTools.makeBuffered(image) : ImageTools.makeBuffered(image, cm);
     ImageIO.write(img, kind, new DataOutputStream(
       new BufferedOutputStream(new FileOutputStream(id), 4096)));

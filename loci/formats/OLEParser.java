@@ -91,15 +91,15 @@ public class OLEParser {
 
   /** Ordered list of item names. */
   private Vector itemNames;
- 
+
   // -- Variables for a weird special case --
-  
+
   /** Cut point for data shuffling. */
   private int cutPoint;
- 
+
   /** Actual number of bytes read in the "main" file. */
   private int realNumRead;
-  
+
   // -- Constructor --
 
   public OLEParser(String filename) {
@@ -443,17 +443,17 @@ public class OLEParser {
         }
       }
       else {
-        start++;     
-    
+        start++;
+
         int numBlocksInFile = 0;
-        
-        Vector v = new Vector(); 
-        
+
+        Vector v = new Vector();
+
         while ((numRead < size) && (start < (in.length() / bigBlock))) {
           in.seek(bigBlock * start);
           v.add(new Integer(start));
           numBlocksInFile++;
-          
+
           int toCopy = bigBlock;
           if ((size - numRead) < bigBlock) {
             toCopy = size - numRead;
@@ -465,13 +465,13 @@ public class OLEParser {
           }
           else {
             start++;
-           
+
             while (inBat(start - 1) && !read.contains(new Integer(start))) {
               start++;
             }
           }
         }
-    
+
 
         boolean reallyWeirdSpecialCase = false;
         int ndx = 0;
@@ -481,24 +481,24 @@ public class OLEParser {
           // one of our files demonstrates this behavior, it is reasonable to
           // assume that this is just another brain-damaged aspect of the OLE
           // file format.
-                
+
           // basically, we want to loop through each block in the file, check
           // if it has already been read; if not, we will try to add it to
           // the beginning of the block list for this file
-      
+
           ndx = v.size();
           for (int j=0; j<(in.length() / bigBlock); j++) {
-            if (!read.contains(new Integer(j)) && !inBat(j - 1) && 
-              !v.contains(new Integer(j))) 
+            if (!read.contains(new Integer(j)) && !inBat(j - 1) &&
+              !v.contains(new Integer(j)))
             {
               v.add(new Integer(j));
-            }       
+            }
           }
           if (v.size() > ndx) reallyWeirdSpecialCase = true;
         }
-    
+
         // now read all of the blocks into the file
-       
+
         numRead = 0;
         for (int j=0; j<v.size(); j++) {
           in.seek(((Integer) v.get(j)).intValue() * bigBlock);
@@ -516,13 +516,13 @@ public class OLEParser {
 
     return new Vector[] {names, files};
   }
- 
-  public int shuffle() { 
-    return cutPoint; 
+
+  public int shuffle() {
+    return cutPoint;
   }
-  
+
   public int length() { return realNumRead; }
-  
+
   private boolean inBat(int b) {
     for (int i=0; i<bat.length; i++) if (b == bat[i]) return true;
     return false;

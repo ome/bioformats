@@ -42,11 +42,11 @@ public class LociExporter implements PlugInFilter {
   public boolean success = false;
 
   // -- Fields --
-  
+
   /** Current stack. */
   private ImagePlus imp;
-  
-  
+
+
   // -- PlugInFilter API methods --
 
   /** Sets up the writer. */
@@ -54,29 +54,29 @@ public class LociExporter implements PlugInFilter {
     this.imp = imp;
     return DOES_ALL + NO_CHANGES;
   }
-  
+
   /** Executes the plugin. */
   public synchronized void run(ImageProcessor ip) {
     success = false;
-   
-    // prompt for the filename to save to  
-          
+
+    // prompt for the filename to save to
+
     SaveDialog sd = new SaveDialog("Save...", imp.getTitle(), "");
     String filename = sd.getFileName();
     if (filename == null) return;
     String fileDir = sd.getDirectory();
-    filename = fileDir + filename; 
+    filename = fileDir + filename;
 
     try {
       long t1 = System.currentTimeMillis();
       ImageWriter writer = new ImageWriter();
       FormatWriter w2 = writer.getWriter(filename);
-      
+
       if (imp == null) return;
 
       ImageStack stack = imp.getStack();
       int size = imp.getStackSize();
-      
+
       long t3 = System.currentTimeMillis();
       if (w2.canDoStacks(filename)) {
         for (int i=0; i<size; i++) {
@@ -85,7 +85,7 @@ public class LociExporter implements PlugInFilter {
           w2.setColorModel(proc.getColorModel());
           IJ.showStatus("Writing plane " + (i+1) + " / " + size);
           IJ.showProgress((double) i / size);
-          w2.save(filename, img, i == (size - 1));         
+          w2.save(filename, img, i == (size - 1));
         }
       }
       else {
@@ -103,7 +103,7 @@ public class LociExporter implements PlugInFilter {
       else {
         long average = (t4 - t3) / size;
         IJ.showStatus((t4 - t1) + " ms (" + average + " ms per plane)");
-      }      
+      }
       IJ.showProgress(1);
       success = true;
     }
@@ -113,7 +113,7 @@ public class LociExporter implements PlugInFilter {
       String msg = exc.getMessage();
       IJ.showMessage("LOCI Bio-Formats", "Sorry, there was a problem " +
         "writing the data" + (msg == null ? "." : (": " + msg)));
-    }    
+    }
   }
 
 }
