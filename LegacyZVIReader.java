@@ -98,15 +98,15 @@ public class LegacyZVIReader extends FormatReader {
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return (bytesPerPixel == 3) || (bytesPerPixel > 4);       
-  } 
+    return (bytesPerPixel == 3) || (bytesPerPixel > 4);
+  }
 
   /** Obtains the specified image from the given ZVI file, as a byte array. */
   public byte[] openBytes(String id, int no) throws FormatException, IOException
   {
-    return ImageTools.getBytes(openImage(id, no), false, no);        
-  }   
-  
+    return ImageTools.getBytes(openImage(id, no), false, no);
+  }
+
   /** Determines the number of images in the given ZVI file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
@@ -126,14 +126,14 @@ public class LegacyZVIReader extends FormatReader {
     if (DEBUG) System.out.println("Reading image #" + no + "...");
 
     ZVIBlock zviBlock = (ZVIBlock) blockList.elementAt(no);
-   
+
     if (!isRGB(id) || !separated) {
       return zviBlock.readImage(in);
     }
     else {
       return ImageTools.splitChannels(zviBlock.readImage(in))[no % 3];
-    }        
-  }  
+    }
+  }
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {

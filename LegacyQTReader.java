@@ -252,7 +252,7 @@ public class LegacyQTReader extends FormatReader {
       throw new FormatException(LegacyQTTools.EXPIRED_QT_MSG);
     }
     if (!tools.canDoQT()) throw new FormatException(LegacyQTTools.NO_QT_MSG);
-    
+
     super.initFile(id);
 
     try {

@@ -116,7 +116,7 @@ public class AVIWriter extends FormatWriter {
     if (cm != null) img = ImageTools.makeBuffered(image, cm);
     else img = ImageTools.makeBuffered(image);
     byte[][] byteData = ImageTools.getBytes(img);
-   
+
     if (!id.equals(currentId)) {
       planesWritten = 0;
       currentId = id;
@@ -124,7 +124,7 @@ public class AVIWriter extends FormatWriter {
 
       file = new File(id);
       raFile = new RandomAccessFile(file, "rw");
-      
+
       DataTools.writeString(raFile, "RIFF"); // signature
       saveFileSize = raFile.getFilePointer();
       // Bytes 4 thru 7 contain the length of the file. This length does
@@ -306,7 +306,7 @@ public class AVIWriter extends FormatWriter {
       DataTools.writeString(raFile, "strf"); // Write the stream format chunk
 
       savestrfSize = raFile.getFilePointer();
-      
+
       // write the strf CHUNK size
       DataTools.writeInt(raFile, (bytesPerPixel == 1) ? 1068 : 44, true);
 
@@ -370,10 +370,10 @@ public class AVIWriter extends FormatWriter {
 
       savestrnPos = raFile.getFilePointer();
       raFile.seek(savestrfSize);
-      DataTools.writeInt(raFile, 
+      DataTools.writeInt(raFile,
         (int) (savestrnPos - (savestrfSize + 4)), true);
       raFile.seek(savestrnPos);
-      
+
       // Use strn to provide zero terminated text string describing the stream
       DataTools.writeString(raFile, "strn");
       DataTools.writeInt(raFile, 16, true); // Write length of strn sub-CHUNK
@@ -398,13 +398,13 @@ public class AVIWriter extends FormatWriter {
 
       saveJUNKsignature = raFile.getFilePointer();
       raFile.seek(saveLIST1Size);
-      DataTools.writeInt(raFile, 
+      DataTools.writeInt(raFile,
         (int) (saveJUNKsignature - (saveLIST1Size + 4)), true);
       raFile.seek(saveLIST1subSize);
       DataTools.writeInt(raFile,
         (int) (saveJUNKsignature - (saveLIST1subSize + 4)), true);
       raFile.seek(saveJUNKsignature);
-      
+
       // write a JUNK CHUNK for padding
       DataTools.writeString(raFile, "JUNK");
       paddingBytes = (int) (4084 - (saveJUNKsignature + 8));
@@ -448,10 +448,10 @@ public class AVIWriter extends FormatWriter {
 
     DataTools.writeInt(raFile, bytesPerPixel * xDim * yDim, true);
 
-    byte[] buf = 
-      new byte[byteData.length * byteData[0].length + 
+    byte[] buf =
+      new byte[byteData.length * byteData[0].length +
       height*xPad*byteData.length];
-   
+
     int offset = 0;
     int next = 0;
     for (int i=(height-1); i>=0; i--) {
@@ -479,7 +479,7 @@ public class AVIWriter extends FormatWriter {
       DataTools.writeString(raFile, "idx1");
 
       saveidx1Length = raFile.getFilePointer();
-      
+
       // Write the length of the idx1 CHUNK not including the idx1 signature
       DataTools.writeInt(raFile, 4 + (planesWritten*16), true);
 
@@ -514,13 +514,13 @@ public class AVIWriter extends FormatWriter {
 
       raFile.seek(saveidx1Length);
       DataTools.writeInt(raFile, (int) (endPos - (saveidx1Length + 4)), true);
-      
+
       // write the total number of planes
       raFile.seek(frameOffset);
       DataTools.writeInt(raFile, planesWritten, true);
       raFile.seek(frameOffset2);
       DataTools.writeInt(raFile, planesWritten, true);
-      
+
       raFile.close();
     }
   }

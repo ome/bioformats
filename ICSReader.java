@@ -27,7 +27,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.StringTokenizer;
 import java.util.NoSuchElementException;
-import java.util.Vector;
 import java.util.zip.*;
 
 /**
@@ -71,7 +70,7 @@ public class ICSReader extends FormatReader {
 
   /** Image data. */
   protected byte[] data;
-  
+
 
   // -- Constructor --
 
@@ -113,7 +112,7 @@ public class ICSReader extends FormatReader {
     int offset = width * height * (dimensions[0] / 8) * no;
     byte[] plane = new byte[width * height * (dimensions[0] / 8)];
     System.arraycopy(data, offset, plane, 0, plane.length);
-   
+
     // if it's version two, we need to flip the plane upside down
     if (versionTwo) {
       byte[] t = new byte[plane.length];
@@ -185,7 +184,7 @@ public class ICSReader extends FormatReader {
     if (icsId == null) throw new FormatException("No ICS file found.");
     File icsFile = new File(icsId);
     if (!icsFile.exists()) throw new FormatException("ICS file not found.");
-    
+
     // check if we have a v2 ICS file
     RandomAccessFile f = new RandomAccessFile(icsId, "r");
     byte[] b = new byte[17];
@@ -294,24 +293,24 @@ public class ICSReader extends FormatReader {
 
     String test = (String) metadata.get("compression");
     boolean gzip = (test == null) ? false : test.equals("gzip");
-  
+
     if (versionTwo) {
       String s = idsIn.readLine();
       while(!s.trim().equals("end")) s = idsIn.readLine();
-    } 
+    }
     data = new byte[(int) (idsIn.length() - idsIn.getFilePointer())];
     /* debug */ System.out.println("data.length : " + data.length);
 
     // extra check is because some of our datasets are labeled as 'gzip', and
     // have a valid GZIP header, but are actually uncompressed
-    if (gzip && 
-      ((data.length / (numImages) < (width * height * dimensions[0]/8)))) 
+    if (gzip &&
+      ((data.length / (numImages) < (width * height * dimensions[0]/8))))
     {
       idsIn.read(data);
       byte[] buf = new byte[8192];
       ByteVector v = new ByteVector();
       try {
-        GZIPInputStream decompressor = 
+        GZIPInputStream decompressor =
           new GZIPInputStream(new ByteArrayInputStream(data));
         int r = decompressor.read(buf, 0, buf.length);
         while (r > 0) {

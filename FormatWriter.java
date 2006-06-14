@@ -78,7 +78,7 @@ public abstract class FormatWriter extends FormatHandler {
 
   /** Gets the color model. */
   public ColorModel getColorModel() { return cm; }
-  
+
   /** Sets the frames per second to use when writing. */
   public void setFramesPerSecond(int fps) { this.fps = fps; }
 

@@ -1435,7 +1435,7 @@ public abstract class TiffTools {
     // get pixels
 
     //Object data = ImageTools.getPixels(img);
-    
+
     /*
     int[][] values = new int[0][0];
 
