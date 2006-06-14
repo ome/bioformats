@@ -36,15 +36,16 @@ public class ImagePreview extends JComponent
     //of this program's own resources.
 
     ImagePlus imp = new Opener().openImage(file.getPath());
-
-    ImageIcon tmpIcon = new ImageIcon(imp.getImage());
-    if (tmpIcon != null) {
-      if (tmpIcon.getIconWidth() > 90) {
-        thumbnail = new ImageIcon(tmpIcon.getImage().getScaledInstance(90,
-          -1, Image.SCALE_DEFAULT));
-      }
-      else { // no need to miniaturize
-        thumbnail = tmpIcon;
+    if (imp != null) {
+      ImageIcon tmpIcon = new ImageIcon(imp.getImage());
+      if (tmpIcon != null) {
+        if (tmpIcon.getIconWidth() > 90) {
+          thumbnail = new ImageIcon(tmpIcon.getImage().getScaledInstance(90,
+            -1, Image.SCALE_DEFAULT));
+        }
+        else { // no need to miniaturize
+          thumbnail = tmpIcon;
+        }
       }
     }
   }

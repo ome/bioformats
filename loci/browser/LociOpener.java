@@ -4,7 +4,6 @@
 
 // derived from Sun's FileChooserDemo2
 
-
 package loci.browser;
 
 import ij.*;
@@ -14,39 +13,31 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class LociOpener extends JPanel implements ItemListener {
+public class LociOpener implements ItemListener {
 
-  private static String newline = "\n";
-  private JFileChooser fc;
   private String filename;
   private String dir;
   private boolean virtual;
 
   public LociOpener() {
-    super(new BorderLayout());
+    // set up the file chooser
+    JFileChooser fc = new JFileChooser(OpenDialog.getDefaultDirectory());
 
-    //Set up the file chooser.
-    if (fc == null) {
-      fc = new JFileChooser(OpenDialog.getDefaultDirectory());
+    // add a custom file filter
+    fc.addChoosableFileFilter(new ImageFilter());
 
-      //Add a custom file filter and disable the default
-      //(Accept All) file filter.
-      fc.addChoosableFileFilter(new ImageFilter());
-      fc.setAcceptAllFileFilterUsed(false);
+    // add the preview pane
+    JPanel p = new JPanel(new BorderLayout());
+    JCheckBox c = new JCheckBox("Use virtual stack");
+    p.add(new ImagePreview(fc), BorderLayout.CENTER);
+    p.add(c, BorderLayout.SOUTH);
+    c.addItemListener(this);
+    fc.setAccessory(p);
 
-      //Add the preview pane.
-      JPanel p = new JPanel(new BorderLayout());
-      JCheckBox c = new JCheckBox("Use virtual stack");
-      p.add(new ImagePreview(fc), BorderLayout.CENTER);
-      p.add(c, BorderLayout.SOUTH);
-      c.addItemListener(this);
-      fc.setAccessory(p);
-    }
+    // show it
+    int returnVal = fc.showDialog(null, "Open");
 
-    //Show it.
-    int returnVal = fc.showDialog(LociOpener.this, "Open");
-
-    //Process the results.
+    // process the results
     if (returnVal == JFileChooser.APPROVE_OPTION) {
       File file = fc.getSelectedFile();
       filename = file.getName();
@@ -55,32 +46,8 @@ public class LociOpener extends JPanel implements ItemListener {
       dir += File.separator;
     }
     else Macro.abort();
-    //Reset the file chooser for the next time it's shown.
+    // reset the file chooser for the next time it's shown
     fc.setSelectedFile(null);
-  }
-
-  /**
-   * Create the GUI and show it.  For thread safety,
-   * this method should be invoked from the
-   * event-dispatching thread.
-   */
-  protected static void createAndShowGUI() {
-    //Make sure we have nice window decorations.
-    JFrame.setDefaultLookAndFeelDecorated(true);
-    JDialog.setDefaultLookAndFeelDecorated(true);
-
-    //Create and set up the window.
-    JFrame frame = new JFrame("LOCI 4D Opener");
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-    //Create and set up the content pane.
-    JComponent newContentPane = new LociOpener();
-    newContentPane.setOpaque(true); //content panes must be opaque
-    frame.setContentPane(newContentPane);
-
-    //Display the window.
-    frame.pack();
-    frame.setVisible(true);
   }
 
   public void itemStateChanged(ItemEvent e) {
@@ -93,15 +60,5 @@ public class LociOpener extends JPanel implements ItemListener {
   public String getFileName() { return filename; }
 
   public boolean getVirtual() { return virtual; }
-
-  public static void main(String[] args) {
-    //Schedule a job for the event-dispatching thread:
-    //creating and showing this application's GUI.
-    javax.swing.SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        createAndShowGUI();
-      }
-    });
-  }
 
 }
