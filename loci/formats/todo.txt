@@ -5,9 +5,6 @@ Implement readers for other file formats:
 * SDT (java/loci/slim/SlimPlotter.java, data/sdt) -- but talk to Curtis first
 * Anything listed online: http://www.loci.wisc.edu/ome/formats.html
 
-Debugging:
-* Figure out what is wrong with Motion JPEG-B colors in QTReader.
-
 Address performance issues:
 * Fix LegacyQTReader to work with reasonable efficiency (study ImageJ QuickTime
   plugins and figure out why what we are doing is so much slower -- the
