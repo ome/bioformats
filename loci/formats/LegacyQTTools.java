@@ -46,11 +46,11 @@ public class LegacyQTTools {
 
   // supported codecs for writing
 
-  public static final String[] CODECS = {"Cinepak", "Animation", "H.263", 
-    "Sorenson", "MPEG-4", "Raw"};
+  public static final String[] CODECS = {"Motion JPEG-B", "Cinepak", 
+    "Animation", "H.263", "Sorenson", "Sorenson 3", "MPEG-4", "Raw"};
 
-  public static final int[] CODEC_TYPES = {1668704612, 1919706400,
-    1748121139, 1398165809, 0x6d703476, 0};
+  public static final int[] CODEC_TYPES = {1835692130, 1668704612, 1919706400,
+    1748121139, 1398165809, 0x53565133, 0x6d703476, 0};
 
   public static final String[] QUALITY_STRINGS = {"Low", "Normal", "High",
     "Maximum"};
