@@ -111,10 +111,10 @@ public class SystemControls extends ControlPanel implements ActionListener {
     // QuickTime library text field
     String qtVersion = null;
     try {
-      LegacyQTReader qtReader = new LegacyQTReader();
-      if (qtReader.isQTExpired()) qtVersion = "Expired";
+      LegacyQTTools qtTools = new LegacyQTTools();
+      if (qtTools.isQTExpired()) qtVersion = "Expired";
       else {
-        ReflectedUniverse r = qtReader.getUniverse();
+        ReflectedUniverse r = qtTools.getUniverse();
         String qtMajor = r.exec("QTSession.getMajorVersion()").toString();
         String qtMinor = r.exec("QTSession.getMinorVersion()").toString();
         qtVersion = qtMajor + "." + qtMinor;
