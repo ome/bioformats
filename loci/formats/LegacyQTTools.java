@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import java.io.File;
+import java.util.StringTokenizer;
 import java.net.*;
 import javax.swing.JOptionPane;
 
@@ -72,24 +74,33 @@ public class LegacyQTTools {
     // set up additional QuickTime for Java paths
     URL[] paths = null;
 
-    // should work for Windows
-    String windir = System.getProperty("user.home");
-
-    try {
-      paths = new URL[] {
-        // Windows
-        new URL("file:/WinNT/System32/QTJava.zip"),
-        new URL("file:/Program Files/QuickTime/QTSystem/QTJava.zip"),
-        new URL("file:/Windows/System32/QTJava.zip"),
-        new URL("file:/Windows/System/QTJava.zip"),
-        new URL(windir + "/System/QTJava.zip"),
-        new URL(windir + "/System32/QTJava.zip"),
-        // Mac OS X
-        new URL("file:/System/Library/Java/Extensions/QTJava.zip")
-      };
+    if (MAC_OS_X) {
+      try {
+        paths = new URL[] {
+          new URL("file:/System/Library/Java/Extensions/QTJava.zip")
+        };
+      }  
+      catch (MalformedURLException exc) { }
+      return paths == null ? null : new URLClassLoader(paths);
     }
-    catch (MalformedURLException exc) { }
-    return paths == null ? null : new URLClassLoader(paths);
+
+    // case for Windows
+    String windir = System.getProperty("java.library.path");
+    StringTokenizer st = new StringTokenizer(windir, ";");
+
+    File f = null;
+    while (st.hasMoreTokens()) {
+      f = new File((String) st.nextToken());
+      if (f.exists()) {
+        try {
+          paths = new URL[] { new URL(f.getName()) };
+        }
+        catch (MalformedURLException exc) { }
+        return paths == null ? null : new URLClassLoader(paths);
+      }  
+    }
+
+    return null;
   }
 
   // -- Fields --
