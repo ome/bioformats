@@ -79,7 +79,7 @@ public class LegacyQTTools {
         paths = new URL[] {
           new URL("file:/System/Library/Java/Extensions/QTJava.zip")
         };
-      }  
+      }
       catch (MalformedURLException exc) { }
       return paths == null ? null : new URLClassLoader(paths);
     }
@@ -97,7 +97,7 @@ public class LegacyQTTools {
         }
         catch (MalformedURLException exc) { }
         return paths == null ? null : new URLClassLoader(paths);
-      }  
+      }
     }
 
     return null;

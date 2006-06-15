@@ -219,7 +219,7 @@ public class QTReader extends FormatReader {
 
   /** Set to true if the scanlines in a plane are interlaced (mjpb only). */
   private boolean interlaced;
- 
+
   /** Flag indicating whether or not the resource and data fork are separated.*/
   private boolean spork;
 
@@ -362,7 +362,7 @@ public class QTReader extends FormatReader {
         return ImageTools.splitChannels(bytes, 3, false, false)[no % c];
       }
       else return bytes;
-    }  
+    }
   }
 
   /** Obtains the specified image from the given QuickTime file. */
@@ -454,7 +454,7 @@ public class QTReader extends FormatReader {
     chunkSizes = new Vector();
     parse(0, 0, in.length());
     numImages = offsets.size();
-  
+
     // this handles the case where the data and resource forks have been
     // separated
     if (spork) {
@@ -475,7 +475,7 @@ public class QTReader extends FormatReader {
         stripHeader();
         parse(0, in.getFilePointer(), in.length());
         numImages = offsets.size();
-        return;  
+        return;
       }
       else {
         f = new File(base.substring(0, base.lastIndexOf(File.separator) + 1) +
@@ -498,8 +498,8 @@ public class QTReader extends FormatReader {
           }
         }
       }
-     
-      
+
+
       throw new FormatException("QuickTime resource fork not found. " +
         " To avoid this issue, please flatten your QuickTime movies " +
         "before importing with Bio-Formats.");
@@ -519,7 +519,7 @@ public class QTReader extends FormatReader {
       String codecString = new String(pixels, 4, 4);
       if (codecString.equals("mjpg")) codec = "mjpb";
       else codec = codecString;
-      
+
       if (codec.equals("mjpb") || codec.equals("jpeg")) {
         // grab the width, height, and bits per pixel from the first plane
 
@@ -530,7 +530,7 @@ public class QTReader extends FormatReader {
           "as time permits.  To avoid this issue, please flatten your " +
           "QuickTime movies before importing with Bio-Formats.");
       }
-     
+
       boolean canAdd = true;
       for (int i=0; i<pixels.length-5; i++) {
         if (codecString.equals(new String(pixels, i, 4))) {
@@ -729,7 +729,7 @@ public class QTReader extends FormatReader {
       if (input[pt-16] == 'm') {
         pt = 4;
         extra = 0;
-      }  
+      }
       pt += 4;
 
       // number of compressed bytes (minus padding)
@@ -936,7 +936,7 @@ public class QTReader extends FormatReader {
 
     int c = bitsPerPixel == 24 ? 3 : (bitsPerPixel == 32 ? 4 : 1);
 
-    v.add(bitsPerPixel >= 40 ? (byte) (bitsPerPixel - 32) : 
+    v.add(bitsPerPixel >= 40 ? (byte) (bitsPerPixel - 32) :
       (byte) (bitsPerPixel / c));  // bits per sample
     v.add((byte) ((fieldHeight >>> 8) & 0xff));
     v.add((byte) (fieldHeight & 0xff));
@@ -1007,26 +1007,26 @@ public class QTReader extends FormatReader {
       BufferedImage top = bufferedJPEG(v.toByteArray());
       BufferedImage bottom = bufferedJPEG(v2.toByteArray());
 
-      byte[][] scanlines = 
+      byte[][] scanlines =
         new byte[(bitsPerPixel >= 40) ? 1 : 3][width * height];
 
       WritableRaster topRaster = top.getWritableTile(0, 0);
       WritableRaster bottomRaster = bottom.getWritableTile(0, 0);
-    
+
       byte[] topPixs = (byte[]) topRaster.getDataElements(0, 0, top.getWidth(),
         top.getHeight(), null);
       byte[] bottomPixs = (byte[]) bottomRaster.getDataElements(0, 0,
         bottom.getWidth(), bottom.getHeight(), null);
       top.releaseWritableTile(0, 0);
       bottom.releaseWritableTile(0, 0);
-       
+
       int topLine = 0;
       int bottomLine = 0;
 
       if (bitsPerPixel >= 40) {
         for (int i=0; i<height; i++) {
-          if (i % 2 == 0) {  
-            System.arraycopy(topPixs, topLine*width, scanlines[0], 
+          if (i % 2 == 0) {
+            System.arraycopy(topPixs, topLine*width, scanlines[0],
               width*i, width);
             topLine++;
           }
@@ -1036,26 +1036,26 @@ public class QTReader extends FormatReader {
             bottomLine++;
           }
         }
-      } 
+      }
       else {
         for (int i=0; i<height; i++) {
           if ((i % 2) == 0) {
             for (int j=0; j<3*width; j++) {
-              scanlines[j % 3][(width * i) + (j / 3)] = 
+              scanlines[j % 3][(width * i) + (j / 3)] =
                 topPixs[topLine*width*3 + j];
             }
             topLine++;
           }
           else {
             for (int j=0; j<3*width; j++) {
-              scanlines[j % 3][(width * i) + (j / 3)] = 
+              scanlines[j % 3][(width * i) + (j / 3)] =
                 topPixs[bottomLine*width*3 + j];
             }
             bottomLine++;
           }
         }
       }
-        
+
       return ImageTools.makeImage(scanlines, width, height);
     }
     else {
