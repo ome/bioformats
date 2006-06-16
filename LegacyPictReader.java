@@ -34,8 +34,8 @@ public class LegacyPictReader extends FormatReader {
 
   // -- Static fields --
 
-  /** Helper reader for reading PICT data with QTJava library. */
-  private static LegacyQTReader qtReader = new LegacyQTReader();
+  /** Helper for reading PICT data with QTJava library. */
+  private static LegacyQTTools qtTools = new LegacyQTTools();
 
 
   // -- Constructor --
@@ -105,11 +105,11 @@ public class LegacyPictReader extends FormatReader {
 
 
     if (!separated) {
-      return ImageTools.makeBuffered(qtReader.pictToImage(bytes));
+      return ImageTools.makeBuffered(qtTools.pictToImage(bytes));
     }
     else {
       return ImageTools.splitChannels(ImageTools.makeBuffered(
-        qtReader.pictToImage(bytes)))[no];
+        qtTools.pictToImage(bytes)))[no];
     }
   }
 

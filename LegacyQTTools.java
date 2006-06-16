@@ -23,6 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import java.awt.*;
+import java.awt.image.DirectColorModel;
+import java.awt.image.MemoryImageSource;
 import java.io.File;
 import java.util.StringTokenizer;
 import java.net.*;
@@ -45,19 +48,6 @@ public class LegacyQTTools {
 
   protected static final boolean MAC_OS_X =
     System.getProperty("os.name").equals("Mac OS X");
-
-  // supported codecs for writing
-
-  public static final String[] CODECS = {"Motion JPEG-B", "Cinepak",
-    "Animation", "H.263", "Sorenson", "Sorenson 3", "MPEG-4", "Raw"};
-
-  public static final int[] CODEC_TYPES = {1835692130, 1668704612, 1919706400,
-    1748121139, 1398165809, 0x53565133, 0x6d703476, 0};
-
-  public static final String[] QUALITY_STRINGS = {"Low", "Normal", "High",
-    "Maximum"};
-
-  public static final int[] QUALITY_CONSTANTS = {256, 512, 768, 1023};
 
   // -- Static fields --
 
@@ -201,19 +191,82 @@ public class LegacyQTTools {
     return r;
   }
 
-  /** Display a dialog box allowing the user to choose a video codec. */
-  public static int getCodec() {
-    String codec = (String) JOptionPane.showInputDialog(null,
-      "Choose a video codec", "Input", JOptionPane.INFORMATION_MESSAGE, null,
-      CODECS, CODECS[0]);
+  /** Gets width and height for the given PICT bytes. */
+  public Dimension getPictDimensions(byte[] bytes)
+    throws FormatException, ReflectException
+  {
+    if (isQTExpired()) throw new FormatException(EXPIRED_QT_MSG);
+    if (!canDoQT()) throw new FormatException(NO_QT_MSG);
 
-    int codecId = 0;
-    for (int i=0; i<CODECS.length; i++) {
-      if (CODECS[i].equals(codec)) {
-        codecId = CODEC_TYPES[i];
-      }
+    try {
+      r.exec("QTSession.open()");
+      r.setVar("bytes", bytes);
+      r.exec("pict = new Pict(bytes)");
+      r.exec("box = pict.getPictFrame()");
+      int width = ((Integer) r.exec("box.getWidth()")).intValue();
+      int height = ((Integer) r.exec("box.getHeight()")).intValue();
+      r.exec("QTSession.close()");
+      return new Dimension(width, height);
     }
-    return codecId;
+    catch (Exception e) {
+      r.exec("QTSession.close()");
+      throw new FormatException("PICT height determination failed", e);
+    }
+  }
+
+  /** Converts the given byte array in PICT format to a Java image. */
+  public synchronized Image pictToImage(byte[] bytes)
+    throws FormatException
+  {
+    if (isQTExpired()) throw new FormatException(EXPIRED_QT_MSG);
+    if (!canDoQT()) throw new FormatException(NO_QT_MSG);
+
+    try {
+      r.exec("QTSession.open()");
+
+      // Code adapted from:
+      //   http://www.onjava.com/pub/a/onjava/2002/12/23/jmf.html?page=2
+      r.setVar("bytes", bytes);
+      r.exec("pict = new Pict(bytes)");
+      r.exec("box = pict.getPictFrame()");
+      int width = ((Integer) r.exec("box.getWidth()")).intValue();
+      int height = ((Integer) r.exec("box.getHeight()")).intValue();
+      // note: could get a RawEncodedImage from the Pict, but
+      // apparently no way to get a PixMap from the REI
+      r.exec("g = new QDGraphics(box)");
+      r.exec("pict.draw(g, box)");
+      // get data from the QDGraphics
+      r.exec("pixMap = g.getPixMap()");
+      r.exec("rei = pixMap.getPixelData()");
+
+      // copy bytes to an array
+      int rowBytes = ((Integer) r.exec("pixMap.getRowBytes()")).intValue();
+      int intsPerRow = rowBytes / 4;
+      int pixLen = intsPerRow * height;
+      r.setVar("pixLen", pixLen);
+      int[] pixels = new int[pixLen];
+      r.setVar("pixels", pixels);
+      r.setVar("zero", new Integer(0));
+      r.exec("rei.copyToArray(zero, pixels, zero, pixLen)");
+
+      // now coax into image, ignoring alpha for speed
+      int bitsPerSample = 32;
+      int redMask = 0x00ff0000;
+      int greenMask = 0x0000ff00;
+      int blueMask = 0x000000ff;
+      int alphaMask = 0x00000000;
+      DirectColorModel colorModel = new DirectColorModel(
+        bitsPerSample, redMask, greenMask, blueMask, alphaMask);
+
+      r.exec("QTSession.close()");
+      return Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(
+        width, height, colorModel, pixels, 0, intsPerRow));
+    }
+    catch (Exception e) {
+      try { r.exec("QTSession.close()"); }
+      catch (ReflectException exc) { exc.printStackTrace(); }
+      throw new FormatException("PICT extraction failed", e);
+    }
   }
 
 }
