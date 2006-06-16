@@ -26,14 +26,15 @@ package loci.formats;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import javax.swing.JOptionPane;
 
 /**
- * LegacyQTWriter is the file format writer for QuickTime movies.  It uses the
+ * LegacyQTWriter is a file format writer for QuickTime movies. It uses the
  * QuickTime for Java library, and allows the user to choose between a variety
  * of common video codecs.
  *
- * Much of this code was based on the QuickTime Writer for ImageJ, available at
- * http://rsb.info.nih.gov/ij
+ * Much of this code was based on the QuickTime Movie Writer for ImageJ
+ * (available at http://rsb.info.nih.gov/ij/plugins/movie-writer.html).
  */
 public class LegacyQTWriter extends FormatWriter {
 
@@ -42,6 +43,19 @@ public class LegacyQTWriter extends FormatWriter {
   /** Time scale. */
   private static final int TIME_SCALE = 600;
   private static final int KEY_FRAME_RATE = 30;
+
+  // supported codecs for writing
+
+  public static final String[] CODECS = {"Motion JPEG-B", "Cinepak",
+    "Animation", "H.263", "Sorenson", "Sorenson 3", "MPEG-4", "Raw"};
+
+  public static final int[] CODEC_TYPES = {1835692130, 1668704612, 1919706400,
+    1748121139, 1398165809, 0x53565133, 0x6d703476, 0};
+
+  public static final String[] QUALITY_STRINGS = {"Low", "Normal", "High",
+    "Maximum"};
+
+  public static final int[] QUALITY_CONSTANTS = {256, 512, 768, 1023};
 
   // -- Fields --
 
@@ -73,6 +87,23 @@ public class LegacyQTWriter extends FormatWriter {
   private int height;
 
   private int[] pixels2 = null;
+
+  // -- Utility methods --
+
+  /** Display a dialog box allowing the user to choose a video codec. */
+  public static int getCodec() {
+    String codec = (String) JOptionPane.showInputDialog(null,
+      "Choose a video codec", "Input", JOptionPane.QUESTION_MESSAGE, null,
+      CODECS, CODECS[0]);
+
+    int codecId = 0;
+    for (int i=0; i<CODECS.length; i++) {
+      if (CODECS[i].equals(codec)) {
+        codecId = CODEC_TYPES[i];
+      }
+    }
+    return codecId;
+  }
 
   // -- Constructor --
 
@@ -147,14 +178,11 @@ public class LegacyQTWriter extends FormatWriter {
         r.exec("imageHandle.lock()");
         r.exec("compressedImage = RawEncodedImage.fromQTHandle(imageHandle)");
 
-        // writer won't work without something to this effect:
-        //r.exec("bestFidelity = CodecComponent.bestFidelity");
-        // however, every attempt at producing this fails miserably
-
         r.setVar("rate", 30);
         r.setVar("nullObj", null);
-        r.exec("seq = new CSequence(gw, bounds, pixSize, codec, bestFidelity," +
-          " quality, quality, rate, nullObj, zero)");
+        r.exec("seq = new CSequence(gw, bounds, pixSize, codec, " +
+          "CodecComponent.bestFidelityCodec, quality, quality, rate, " +
+          "nullObj, zero)");
 
         r.exec("imgDesc = seq.getDescription()");
       }

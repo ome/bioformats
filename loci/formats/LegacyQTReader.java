@@ -24,17 +24,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.*;
-import java.awt.image.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.ImageProducer;
 import java.io.File;
 import java.io.IOException;
 
 /**
- * LegacyQTReader is the old file format reader for QuickTime movie files.
+ * LegacyQTReader is a file format reader for QuickTime movie files.
  * To use it, QuickTime for Java must be installed.
  *
- * Much of this reader's code was adapted from Wayne Rasband's
- * QuickTime Movie Opener plugin for ImageJ
- * (available at http://rsb.info.nih.gov/ij/).
+ * Much of this code was based on the QuickTime Movie Opener for ImageJ
+ * (available at http://rsb.info.nih.gov/ij/plugins/movie-opener.html).
  */
 public class LegacyQTReader extends FormatReader {
 
@@ -58,96 +58,10 @@ public class LegacyQTReader extends FormatReader {
   /** Image containing current frame. */
   protected Image image;
 
-
   // -- Constructor --
 
   /** Constructs a new QT reader. */
   public LegacyQTReader() { super("QuickTime", "mov"); }
-
-  // -- LegacyQTReader API methods --
-
-  /** Gets width and height for the given PICT bytes. */
-  public Dimension getPictDimensions(byte[] bytes)
-    throws FormatException, ReflectException
-  {
-    if (tools.isQTExpired()) {
-      throw new FormatException(LegacyQTTools.EXPIRED_QT_MSG);
-    }
-    if (!tools.canDoQT()) throw new FormatException(LegacyQTTools.NO_QT_MSG);
-
-    try {
-      r.exec("QTSession.open()");
-      r.setVar("bytes", bytes);
-      r.exec("pict = new Pict(bytes)");
-      r.exec("box = pict.getPictFrame()");
-      int width = ((Integer) r.exec("box.getWidth()")).intValue();
-      int height = ((Integer) r.exec("box.getHeight()")).intValue();
-      r.exec("QTSession.close()");
-      return new Dimension(width, height);
-    }
-    catch (Exception e) {
-      r.exec("QTSession.close()");
-      throw new FormatException("PICT height determination failed", e);
-    }
-  }
-
-  /** Converts the given byte array in PICT format to a Java image. */
-  public synchronized Image pictToImage(byte[] bytes)
-    throws FormatException
-  {
-    if (tools.isQTExpired()) {
-      throw new FormatException(LegacyQTTools.EXPIRED_QT_MSG);
-    }
-    if (!tools.canDoQT()) throw new FormatException(LegacyQTTools.NO_QT_MSG);
-
-    try {
-      r.exec("QTSession.open()");
-
-      // Code adapted from:
-      //   http://www.onjava.com/pub/a/onjava/2002/12/23/jmf.html?page=2
-      r.setVar("bytes", bytes);
-      r.exec("pict = new Pict(bytes)");
-      r.exec("box = pict.getPictFrame()");
-      int width = ((Integer) r.exec("box.getWidth()")).intValue();
-      int height = ((Integer) r.exec("box.getHeight()")).intValue();
-      // note: could get a RawEncodedImage from the Pict, but
-      // apparently no way to get a PixMap from the REI
-      r.exec("g = new QDGraphics(box)");
-      r.exec("pict.draw(g, box)");
-      // get data from the QDGraphics
-      r.exec("pixMap = g.getPixMap()");
-      r.exec("rei = pixMap.getPixelData()");
-
-      // copy bytes to an array
-      int rowBytes = ((Integer) r.exec("pixMap.getRowBytes()")).intValue();
-      int intsPerRow = rowBytes / 4;
-      int pixLen = intsPerRow * height;
-      r.setVar("pixLen", pixLen);
-      int[] pixels = new int[pixLen];
-      r.setVar("pixels", pixels);
-      r.setVar("zero", new Integer(0));
-      r.exec("rei.copyToArray(zero, pixels, zero, pixLen)");
-
-      // now coax into image, ignoring alpha for speed
-      int bitsPerSample = 32;
-      int redMask = 0x00ff0000;
-      int greenMask = 0x0000ff00;
-      int blueMask = 0x000000ff;
-      int alphaMask = 0x00000000;
-      DirectColorModel colorModel = new DirectColorModel(
-        bitsPerSample, redMask, greenMask, blueMask, alphaMask);
-
-      r.exec("QTSession.close()");
-      return Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(
-        width, height, colorModel, pixels, 0, intsPerRow));
-    }
-    catch (Exception e) {
-      try { r.exec("QTSession.close()"); }
-      catch (ReflectException exc) { exc.printStackTrace(); }
-      throw new FormatException("PICT extraction failed", e);
-    }
-  }
-
 
   // -- FormatReader API methods --
 
@@ -291,7 +205,7 @@ public class LegacyQTReader extends FormatReader {
       needsRedrawing = ((Boolean) r.exec("qtip.isRedrawing()")).booleanValue();
       int maxTime = ((Integer) r.exec("m.getDuration()")).intValue();
 
-      if (LegacyQTTools.MAC_OS_X) {
+//      if (LegacyQTTools.MAC_OS_X) {
         r.setVar("zero", 0);
         r.setVar("one", 1f);
         r.exec("timeInfo = new TimeInfo(zero, zero)");
@@ -305,11 +219,11 @@ public class LegacyQTReader extends FormatReader {
           time = ((Integer) r.getVar("timeInfo.time")).intValue();
         }
         while (time >= 0);
-      }
-      else {
-        r.exec("seq = ImageUtil.createSequence(imageTrack)");
-        numImages = ((Integer) r.exec("seq.size()")).intValue();
-      }
+//      }
+//      else {
+//        r.exec("seq = ImageUtil.createSequence(imageTrack)");
+//        numImages = ((Integer) r.exec("seq.size()")).intValue();
+//      }
 
       timeStep = maxTime / numImages;
     }
@@ -317,7 +231,6 @@ public class LegacyQTReader extends FormatReader {
       throw new FormatException("Open movie failed", e);
     }
   }
-
 
   // -- Main method --
 
