@@ -26,7 +26,6 @@ package loci.formats;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import javax.swing.JOptionPane;
 
 /**
  * LegacyQTWriter is a file format writer for QuickTime movies. It uses the
@@ -44,19 +43,6 @@ public class LegacyQTWriter extends FormatWriter {
   private static final int TIME_SCALE = 600;
   private static final int KEY_FRAME_RATE = 30;
 
-  // supported codecs for writing
-
-  public static final String[] CODECS = {"Motion JPEG-B", "Cinepak",
-    "Animation", "H.263", "Sorenson", "Sorenson 3", "MPEG-4", "Raw"};
-
-  public static final int[] CODEC_TYPES = {1835692130, 1668704612, 1919706400,
-    1748121139, 1398165809, 0x53565133, 0x6d703476, 0};
-
-  public static final String[] QUALITY_STRINGS = {"Low", "Normal", "High",
-    "Maximum"};
-
-  public static final int[] QUALITY_CONSTANTS = {256, 512, 768, 1023};
-
   // -- Fields --
 
   /** Instance of LegacyQTTools to handle QuickTime for Java detection. */
@@ -66,16 +52,10 @@ public class LegacyQTWriter extends FormatWriter {
   protected ReflectedUniverse r;
 
   /** The codec to use. */
-  private String codec;
+  protected int codec = QTWriter.CODEC_RAW;
 
-  /** The quality level to use. */
-  private String quality;
-
-  /** The codec ID to use. */
-  protected int codecID;
-
-  /** The quality ID to use. */
-  protected int qualityID = 512;
+  /** The quality to use. */
+  protected int quality = QTWriter.QUALITY_NORMAL;
 
   /** Number of frames written. */
   private int numWritten = 0;
@@ -88,28 +68,39 @@ public class LegacyQTWriter extends FormatWriter {
 
   private int[] pixels2 = null;
 
-  // -- Utility methods --
-
-  /** Display a dialog box allowing the user to choose a video codec. */
-  public static int getCodec() {
-    String codec = (String) JOptionPane.showInputDialog(null,
-      "Choose a video codec", "Input", JOptionPane.QUESTION_MESSAGE, null,
-      CODECS, CODECS[0]);
-
-    int codecId = 0;
-    for (int i=0; i<CODECS.length; i++) {
-      if (CODECS[i].equals(codec)) {
-        codecId = CODEC_TYPES[i];
-      }
-    }
-    return codecId;
-  }
-
   // -- Constructor --
 
   public LegacyQTWriter() {
     super("Legacy QuickTime", "mov");
   }
+
+  // -- LegacyQTWriter API methods --
+
+  /**
+   * Sets the encoded movie's codec.
+   * @param codec Codec value:<ul>
+   *   <li>QTWriter.CODEC_MOTION_JPEG_B</li>
+   *   <li>QTWriter.CODEC_CINEPAK</li>
+   *   <li>QTWriter.CODEC_ANIMATION</li>
+   *   <li>QTWriter.CODEC_H_263</li>
+   *   <li>QTWriter.CODEC_SORENSON</li>
+   *   <li>QTWriter.CODEC_SORENSON_3</li>
+   *   <li>QTWriter.CODEC_MPEG_4</li>
+   *   <li>QTWriter.CODEC_RAW</li>
+   * </ul>
+   */
+  public void setCodec(int codec) { this.codec = codec; }
+
+  /**
+   * Sets the quality of the encoded movie.
+   * @param quality Quality value:<ul>
+   *   <li>QTWriter.QUALITY_LOW</li>
+   *   <li>QTWriter.QUALITY_MEDIUM</li>
+   *   <li>QTWriter.QUALITY_HIGH</li>
+   *   <li>QTWriter.QUALITY_MAXIMUM</li>
+   * </ul>
+   */
+  public void setQuality(int quality) { this.quality = quality; }
 
   // -- FormatWriter API methods --
 
@@ -167,8 +158,8 @@ public class LegacyQTWriter extends FormatWriter {
 
         r.exec("pixMap = gw.getPixMap()");
         r.exec("pixSize = pixMap.getPixelSize()");
-        r.setVar("codec", codecID);
-        r.setVar("quality", qualityID);
+        r.setVar("codec", codec);
+        r.setVar("quality", quality);
 
         int rawImageSize = width * height * 4;
         r.setVar("rawImageSize", rawImageSize);

@@ -28,7 +28,6 @@ import java.awt.image.*;
 import java.io.*;
 import java.util.Vector;
 
-
 /**
  * QTWriter is the file format writer for uncompressed QuickTime movie files.
  *
@@ -37,8 +36,54 @@ import java.util.Vector;
 
 public class QTWriter extends FormatWriter {
 
+  // -- Constants --
+
+  /** Value indicating Motion JPEG-B codec. */
+  public static final int CODEC_MOTION_JPEG_B = 1835692130;
+
+  /** Value indicating Cinepack codec. */
+  public static final int CODEC_CINEPAK = 1668704612;
+
+  /** Value indicating Animation codec. */
+  public static final int CODEC_ANIMATION = 1919706400;
+
+  /** Value indicating H.263 codec. */
+  public static final int CODEC_H_263 = 1748121139;
+
+  /** Value indicating Sorenson codec. */
+  public static final int CODEC_SORENSON = 1398165809;
+
+  /** Value indicating Sorenson 3 codec. */
+  public static final int CODEC_SORENSON_3 = 0x53565133;
+
+  /** Value indicating MPEG-4 codec. */
+  public static final int CODEC_MPEG_4 = 0x6d703476;
+
+  /** Value indicating Raw codec. */
+  public static final int CODEC_RAW = 0;
+
+  /** Value indicating Low quality. */
+  public static final int QUALITY_LOW = 256;
+
+  /** Value indicating Normal quality. */
+  public static final int QUALITY_NORMAL = 512;
+
+  /** Value indicating High quality. */
+  public static final int QUALITY_HIGH = 768;
+
+  /** Value indicating Maximum quality. */
+  public static final int QUALITY_MAXIMUM = 1023;
+
+  // -- Fields --
+
   /** Current file. */
   protected RandomAccessFile out;
+
+  /** The codec to use. */
+  protected int codec = CODEC_RAW;
+
+  /** The quality to use. */
+  protected int quality = QUALITY_NORMAL;
 
   /** Number of planes written. */
   protected int numWritten;
@@ -64,6 +109,34 @@ public class QTWriter extends FormatWriter {
   // -- Constructor --
 
   public QTWriter() { super("QuickTime", "mov"); }
+
+  // -- QTWriter API methods --
+
+  /**
+   * Sets the encoded movie's codec.
+   * @param codec Codec value:<ul>
+   *   <li>QTWriter.CODEC_MOTION_JPEG_B</li>
+   *   <li>QTWriter.CODEC_CINEPAK</li>
+   *   <li>QTWriter.CODEC_ANIMATION</li>
+   *   <li>QTWriter.CODEC_H_263</li>
+   *   <li>QTWriter.CODEC_SORENSON</li>
+   *   <li>QTWriter.CODEC_SORENSON_3</li>
+   *   <li>QTWriter.CODEC_MPEG_4</li>
+   *   <li>QTWriter.CODEC_RAW</li>
+   * </ul>
+   */
+  public void setCodec(int codec) { this.codec = codec; }
+
+  /**
+   * Sets the quality of the encoded movie.
+   * @param quality Quality value:<ul>
+   *   <li>QTWriter.QUALITY_LOW</li>
+   *   <li>QTWriter.QUALITY_MEDIUM</li>
+   *   <li>QTWriter.QUALITY_HIGH</li>
+   *   <li>QTWriter.QUALITY_MAXIMUM</li>
+   * </ul>
+   */
+  public void setQuality(int quality) { this.quality = quality; }
 
   // -- FormatWriter API methods --
 
@@ -135,10 +208,9 @@ public class QTWriter extends FormatWriter {
     }
 
     if (!id.equals(currentId)) {
-      int codecId = LegacyQTWriter.getCodec();
-      if (codecId != 0) {
+      if (codec != 0) {
         needLegacy = true;
-        legacy.codecID = codecId;
+        legacy.setCodec(codec);
         legacy.save(id, image, last);
         return;
       }
