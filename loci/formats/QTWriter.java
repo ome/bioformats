@@ -65,7 +65,6 @@ public class QTWriter extends FormatWriter {
 
   public QTWriter() { super("QuickTime", "mov"); }
 
-
   // -- FormatWriter API methods --
 
   /**
@@ -136,7 +135,7 @@ public class QTWriter extends FormatWriter {
     }
 
     if (!id.equals(currentId)) {
-      int codecId = LegacyQTTools.getCodec();
+      int codecId = LegacyQTWriter.getCodec();
       if (codecId != 0) {
         needLegacy = true;
         legacy.codecID = codecId;
@@ -478,7 +477,6 @@ public class QTWriter extends FormatWriter {
 
   /** Reports whether the writer can save multiple images to a single file. */
   public boolean canDoStacks(String id) { return true; }
-
 
   // -- Main method --
 

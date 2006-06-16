@@ -28,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageProducer;
 import java.io.File;
 import java.io.IOException;
+import java.util.Vector;
 
 /**
  * LegacyQTReader is a file format reader for QuickTime movie files.
@@ -49,11 +50,8 @@ public class LegacyQTReader extends FormatReader {
   /** Number of images in current QuickTime movie. */
   protected int numImages;
 
-  /** Time increment between frames. */
-  protected int timeStep;
-
-  /** Flag indicating QuickTime frame needs to be redrawn. */
-  protected boolean needsRedrawing;
+  /** Time offset for each frame. */
+  protected int[] times;
 
   /** Image containing current frame. */
   protected Image image;
@@ -71,7 +69,7 @@ public class LegacyQTReader extends FormatReader {
   /** Determines the number of images in the given QuickTime file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return (!separated) ? numImages : 3*numImages;
+    return !separated ? numImages : (3 * numImages);
   }
 
   /** Checks if the images in the file are RGB. */
@@ -120,13 +118,10 @@ public class LegacyQTReader extends FormatReader {
 
     // paint frame into image
     try {
-      r.setVar("time", timeStep * no);
+      r.setVar("time", times[no]);
       r.exec("moviePlayer.setTime(time)");
       r.exec("qtip.redraw(null)");
-      r.exec("qtip2 = new QTImageProducer(moviePlayer, dim)");
-      ImageProducer qtip2 = (ImageProducer) r.getVar("qtip2");
-      image = Toolkit.getDefaultToolkit().createImage(qtip2);
-      r.exec("qtip2.redraw(null)");
+      r.exec("qtip.updateConsumers(null)");
     }
     catch (ReflectException re) {
       throw new FormatException("Open movie failed", re);
@@ -179,7 +174,6 @@ public class LegacyQTReader extends FormatReader {
       r.exec("openMovieFile = OpenMovieFile.asRead(qtf)");
       r.exec("m = Movie.fromFile(openMovieFile)");
 
-      // find first track with width != soundtrack
       int numTracks = ((Integer) r.exec("m.getTrackCount()")).intValue();
       int trackMostLikely = 0;
       int trackNum = 0;
@@ -196,36 +190,34 @@ public class LegacyQTReader extends FormatReader {
       r.exec("d = imageTrack.getSize()");
       Integer w = (Integer) r.exec("d.getWidth()");
       Integer h = (Integer) r.exec("d.getHeight()");
-      // now use controller to step movie
+
       r.exec("moviePlayer = new MoviePlayer(m)");
       r.setVar("dim", new Dimension(w.intValue(), h.intValue()));
       ImageProducer qtip = (ImageProducer)
         r.exec("qtip = new QTImageProducer(moviePlayer, dim)");
       image = Toolkit.getDefaultToolkit().createImage(qtip);
-      needsRedrawing = ((Boolean) r.exec("qtip.isRedrawing()")).booleanValue();
-      int maxTime = ((Integer) r.exec("m.getDuration()")).intValue();
 
-//      if (LegacyQTTools.MAC_OS_X) {
-        r.setVar("zero", 0);
-        r.setVar("one", 1f);
-        r.exec("timeInfo = new TimeInfo(zero, zero)");
-        r.exec("moviePlayer.setTime(zero)");
-        numImages = 0;
-        int time = 0;
-        do {
-          numImages++;
-          r.exec("timeInfo = imageTrack.getNextInterestingTime(" +
-            "StdQTConstants.nextTimeMediaSample, timeInfo.time, one)");
-          time = ((Integer) r.getVar("timeInfo.time")).intValue();
-        }
-        while (time >= 0);
-//      }
-//      else {
-//        r.exec("seq = ImageUtil.createSequence(imageTrack)");
-//        numImages = ((Integer) r.exec("seq.size()")).intValue();
-//      }
-
-      timeStep = maxTime / numImages;
+      r.setVar("zero", 0);
+      r.setVar("one", 1f);
+      r.exec("timeInfo = new TimeInfo(zero, zero)");
+      r.exec("moviePlayer.setTime(zero)");
+      Vector v = new Vector();
+      int time = 0;
+      Integer q = new Integer(time);
+      do {
+        v.add(q);
+        r.exec("timeInfo = imageTrack.getNextInterestingTime(" +
+          "StdQTConstants.nextTimeMediaSample, timeInfo.time, one)");
+        q = (Integer) r.getVar("timeInfo.time");
+        time = q.intValue();
+      }
+      while (time >= 0);
+      numImages = v.size();
+      times = new int[numImages];
+      for (int i=0; i<times.length; i++) {
+        q = (Integer) v.elementAt(i);
+        times[i] = q.intValue();
+      }
     }
     catch (Exception e) {
       throw new FormatException("Open movie failed", e);

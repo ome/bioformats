@@ -114,7 +114,7 @@ public class PictReader extends FormatReader {
   protected short[][] lookup;
 
   /** Helper reader in case this one fails. */
-  protected LegacyQTReader qtReader = new LegacyQTReader();
+  protected LegacyQTTools qtTools = new LegacyQTTools();
 
 
   // -- Constructor --
@@ -220,7 +220,7 @@ public class PictReader extends FormatReader {
     }
     catch (Exception e) {
       e.printStackTrace();
-      return ImageTools.makeBuffered(qtReader.pictToImage(pix));
+      return ImageTools.makeBuffered(qtTools.pictToImage(pix));
     }
 
     // combine everything in the strips Vector
@@ -230,7 +230,7 @@ public class PictReader extends FormatReader {
     }
 
     if (strips.size() == 0) {
-      return ImageTools.makeBuffered(qtReader.pictToImage(pix));
+      return ImageTools.makeBuffered(qtTools.pictToImage(pix));
     }
 
     if (lookup != null) {

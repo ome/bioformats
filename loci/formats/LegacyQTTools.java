@@ -29,7 +29,6 @@ import java.awt.image.MemoryImageSource;
 import java.io.File;
 import java.util.StringTokenizer;
 import java.net.*;
-import javax.swing.JOptionPane;
 
 /**
  * Utility class for working with QuickTime for Java.
@@ -116,44 +115,20 @@ public class LegacyQTTools {
     boolean needClose = false;
     r = new ReflectedUniverse(LOADER);
     try {
-      r.exec("import java.lang.Class");
-      r.exec("import java.lang.reflect.Field");
       r.exec("import quicktime.QTSession");
       r.exec("QTSession.open()");
       needClose = true;
-      if (MAC_OS_X) {
-        r.exec("import quicktime.app.view.QTImageProducer");
-        r.exec("import quicktime.app.view.MoviePlayer");
-        r.exec("import quicktime.std.movies.TimeInfo");
-      }
-      else {
-        r.exec("import quicktime.app.display.QTCanvas");
-        r.exec("import quicktime.app.image.ImageUtil");
-        r.exec("import quicktime.app.image.JImagePainter");
-        r.exec("import quicktime.app.image.QTImageDrawer");
-        r.exec("import quicktime.app.image.QTImageProducer");
-        r.exec("import quicktime.app.image.Redrawable");
-        r.exec("import quicktime.app.players.MoviePlayer");
-      }
-      r.exec("import quicktime.io.OpenMovieFile");
+
+      // for LegacyQTReader
       r.exec("import quicktime.io.QTFile");
-      r.exec("import quicktime.qd.Pict");
+      r.exec("import quicktime.io.OpenMovieFile");
       r.exec("import quicktime.qd.QDDimension");
-      r.exec("import quicktime.qd.QDGraphics");
-      r.exec("import quicktime.qd.QDRect");
-      r.exec("import quicktime.std.StdQTConstants");
-      r.exec("import quicktime.std.image.CodecComponent");
-      r.exec("import quicktime.std.image.CompressedFrameInfo");
-      r.exec("import quicktime.std.image.CSequence");
-      r.exec("import quicktime.std.image.ImageDescription");
-      r.exec("import quicktime.std.image.QTImage");
       r.exec("import quicktime.std.movies.Movie");
       r.exec("import quicktime.std.movies.Track");
-      r.exec("import quicktime.std.movies.media.VideoMedia");
-      r.exec("import quicktime.std.qtcomponents.SpatialSettings");
-      r.exec("import quicktime.util.EndianOrder");
-      r.exec("import quicktime.util.QTHandle");
-      r.exec("import quicktime.util.RawEncodedImage");
+      r.exec("import quicktime.std.movies.TimeInfo");
+      r.exec("import quicktime.app.view.QTImageProducer");
+      r.exec("import quicktime.app.view.MoviePlayer");
+      r.exec("import quicktime.std.StdQTConstants");
     }
     catch (ExceptionInInitializerError err) {
       noQT = true;
