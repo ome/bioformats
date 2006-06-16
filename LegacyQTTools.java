@@ -80,7 +80,7 @@ public class LegacyQTTools {
           new URL("file:/System/Library/Java/Extensions/QTJava.zip")
         };
       }
-      catch (MalformedURLException exc) { }
+      catch (MalformedURLException exc) { exc.printStackTrace(); }
       return paths == null ? null : new URLClassLoader(paths);
     }
 
@@ -90,12 +90,12 @@ public class LegacyQTTools {
 
     File f = null;
     while (st.hasMoreTokens()) {
-      f = new File((String) st.nextToken());
+      f = new File(st.nextToken(), "QTJava.zip");
       if (f.exists()) {
         try {
-          paths = new URL[] { new URL(f.getName()) };
+          paths = new URL[] {f.toURL()};
         }
-        catch (MalformedURLException exc) { }
+        catch (MalformedURLException exc) { exc.printStackTrace(); }
         return paths == null ? null : new URLClassLoader(paths);
       }
     }
