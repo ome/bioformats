@@ -4,6 +4,7 @@ QuickTime:
 Implement readers for other file formats:
 * SDT (java/loci/slim/SlimPlotter.java, data/sdt) -- but talk to Curtis first
 * Anything listed online: http://www.loci.wisc.edu/ome/formats.html
+* MNG (http://www.libpng.org/pub/mng/) -- low priority
 
 Address performance issues:
 * Fix LegacyQTReader to work with reasonable efficiency (study ImageJ QuickTime
