@@ -77,9 +77,8 @@ public class LegacyQTTools {
     String windir = System.getProperty("java.library.path");
     StringTokenizer st = new StringTokenizer(windir, ";");
 
-    File f = null;
     while (st.hasMoreTokens()) {
-      f = new File(st.nextToken(), "QTJava.zip");
+      File f = new File(st.nextToken(), "QTJava.zip");
       if (f.exists()) {
         try {
           paths = new URL[] {f.toURL()};
@@ -106,7 +105,6 @@ public class LegacyQTTools {
   /** Reflection tool for QuickTime for Java calls. */
   protected ReflectedUniverse r;
 
-
   // -- LegacyQTTools API methods --
 
   /** Initializes the class. */
@@ -119,16 +117,28 @@ public class LegacyQTTools {
       r.exec("QTSession.open()");
       needClose = true;
 
-      // for LegacyQTReader
+      // for LegacyQTReader and LegacyQTWriter
       r.exec("import quicktime.io.QTFile");
+      r.exec("import quicktime.std.movies.Movie");
+
+      // for LegacyQTReader
+      r.exec("import quicktime.app.view.MoviePlayer");
+      r.exec("import quicktime.app.view.QTImageProducer");
       r.exec("import quicktime.io.OpenMovieFile");
       r.exec("import quicktime.qd.QDDimension");
-      r.exec("import quicktime.std.movies.Movie");
-      r.exec("import quicktime.std.movies.Track");
-      r.exec("import quicktime.std.movies.TimeInfo");
-      r.exec("import quicktime.app.view.QTImageProducer");
-      r.exec("import quicktime.app.view.MoviePlayer");
       r.exec("import quicktime.std.StdQTConstants");
+      r.exec("import quicktime.std.movies.TimeInfo");
+      r.exec("import quicktime.std.movies.Track");
+
+      // for LegacyQTWriter
+      r.exec("import quicktime.qd.QDGraphics");
+      r.exec("import quicktime.qd.QDRect");
+      r.exec("import quicktime.std.image.CSequence");
+      r.exec("import quicktime.std.image.CodecComponent");
+      r.exec("import quicktime.std.image.ImageDescription");
+      r.exec("import quicktime.std.movies.media.VideoMedia");
+      r.exec("import quicktime.util.QTHandle");
+      r.exec("import quicktime.util.RawEncodedImage");
     }
     catch (ExceptionInInitializerError err) {
       noQT = true;
