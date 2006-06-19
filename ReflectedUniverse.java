@@ -151,7 +151,10 @@ public class ReflectedUniverse {
       // command is a constructor call
       String className = command.substring(4).trim();
       Object var = getVar(className);
-      if (!(var instanceof Class)) {
+      if (var == null) {
+        throw new ReflectException("class not found: " + className);
+      }
+      else if (!(var instanceof Class)) {
         throw new ReflectException("not a class: " + className);
       }
       Class cl = (Class) var;
@@ -309,7 +312,11 @@ public class ReflectedUniverse {
     int dot = varName.indexOf(".");
     if (dot >= 0) {
       // get field value of variable
-      Object var = variables.get(varName.substring(0, dot).trim());
+      String className = varName.substring(0, dot).trim();
+      Object var = variables.get(className);
+      if (var == null) {
+        throw new ReflectException("No such class: " + className);
+      }
       Class varClass = var instanceof Class ? (Class) var : var.getClass();
       String fieldName = varName.substring(dot + 1).trim();
       Field field;
