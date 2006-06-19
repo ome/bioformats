@@ -371,7 +371,7 @@ public class ArbitrarySlice extends DataTransform
           {
             // this pixel is outside the range of the data (missing)
             for (int k=0; k<planeValues.length; k++) {
-              planeValues[k][ndx] = c;//Float.NaN;
+              planeValues[k][ndx] = Float.NaN;
             }
           }
           else {
