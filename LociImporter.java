@@ -80,18 +80,33 @@ public class LociImporter implements PlugIn {
         if (c == 1) {
           if (tt == DataBuffer.TYPE_BYTE) {
             byte[] b = ImageTools.getBytes(img)[0];
+            if (b.length > w*h) {
+              byte[] tmp = b;
+              b = new byte[w*h];
+              System.arraycopy(tmp, 0, b, 0, b.length);
+            }
             ip = new ByteProcessor(w, h, b, null);
             if (stackB == null) stackB = new ImageStack(w, h);
             stackB.addSlice(fileName + ":" + (i + 1), ip);
           }
           else if (tt == DataBuffer.TYPE_USHORT) {
             short[] s = ImageTools.getShorts(img)[0];
+            if (s.length > w*h) {
+              short[] tmp = s;
+              s = new short[w*h];
+              System.arraycopy(tmp, 0, s, 0, s.length);
+            }
             ip = new ShortProcessor(w, h, s, null);
             if (stackS == null) stackS = new ImageStack(w, h);
             stackS.addSlice(fileName + ":" + (i + 1), ip);
           }
           else if (tt == DataBuffer.TYPE_FLOAT) {
             float[] f = ImageTools.getFloats(img)[0];
+            if (f.length > w*h) {
+              float[] tmp = f;
+              f = new float[w*h];
+              System.arraycopy(tmp, 0, f, 0, f.length);
+            }
             ip = new FloatProcessor(w, h, f, null);
             if (stackF == null) stackF = new ImageStack(w, h);
             stackF.addSlice(fileName + ":" + (i + 1), ip);
