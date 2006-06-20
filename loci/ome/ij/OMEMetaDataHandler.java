@@ -118,7 +118,7 @@ public class OMEMetaDataHandler {
       trajCriteria.addFilter("feature_id", (new Integer(
         feature.getID())).toString());
       //retrieve element to add with all columns loaded
-      trajects = df.retrieveList("Trajectory", trajCriteria);
+      trajects = OMERetrieve.retrieveList("Trajectory", trajCriteria, df);
     }
     else trajects = ((Trajectory)feature).getTrajectoryEntryList();
 
@@ -136,7 +136,7 @@ public class OMEMetaDataHandler {
         IJ.showStatus("Retrieving " + FEATURE_TYPES[i] + "s.");
         List customs = null;
         try {
-          customs = df.retrieveList(FEATURE_TYPES[i], criteria);
+          customs = OMERetrieve.retrieveList(FEATURE_TYPES[i], criteria, df);
         }
         catch(Exception e) {
           e.printStackTrace();

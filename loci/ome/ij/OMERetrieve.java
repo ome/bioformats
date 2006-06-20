@@ -4,6 +4,7 @@ import ij.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import org.openmicroscopy.ds.*;
 import org.openmicroscopy.ds.dto.*;
@@ -46,7 +47,8 @@ public class OMERetrieve {
    */
   public static Image[] retrieveImages(DataFactory datafact, Criteria c) {
     if (c == null) return null;
-    List l = datafact.retrieveList(Image.class, c);
+    List l = retrieveList(Image.class, c, datafact);
+    if (l == null) return null;
     if (l.size() == 0) {
       return null;
     }
@@ -71,16 +73,22 @@ public class OMERetrieve {
     // get experimenter settings for the logged in user
     Experimenter user = getUser(datafact);
 
-    // Retrieve the user's projects.
-    criteria.addFilter("owner_id", new Integer(user.getID()));
-    criteria.addOrderBy("name");
-    List l = datafact.retrieveList(Project.class, criteria);
-    Object[] ob = l.toArray();
-    Project[] ima = new Project[ob.length];
-    for (int i=0; i<ob.length; i++) {
-      ima[i] = (Project)ob[i];
+    try {
+      // Retrieve the user's projects.
+      criteria.addFilter("owner_id", new Integer(user.getID()));
+      criteria.addOrderBy("name");
+      List l = retrieveList(Project.class, criteria, datafact);
+      if (l == null) return new Project[0];
+      Object[] ob = l.toArray();
+      Project[] ima = new Project[ob.length];
+      for (int i=0; i<ob.length; i++) {
+        ima[i] = (Project)ob[i];
+      }
+      return ima;
     }
-    return ima;
+    catch (NullPointerException n) {
+      return new Project[0];
+    }
   }
 
   /** get the settings for the current user */
@@ -89,9 +97,14 @@ public class OMERetrieve {
     fs.addWantedField("id");
     fs.addWantedField("experimenter");
     fs.addWantedField("experimenter", "id");
-    UserState userState = df.getUserState(fs);
-    return userState.getExperimenter();
-  }
+    try {
+      UserState userState = df.getUserState(fs);
+      return userState.getExperimenter();
+    }
+    catch (NullPointerException n) { 
+      return null;  
+    }
+  }  
 
   /** method that retrieves all of current user's datasets from the database */
   public static Dataset[] retrieveAllDatasets(DataFactory datafact) {
@@ -109,7 +122,7 @@ public class OMERetrieve {
   /** method that retrieves the datasets matching the given criteria */
   public static Dataset[] retrieveDatasets(DataFactory datafact,
       Criteria criteria) {
-    List l = datafact.retrieveList(Dataset.class, criteria);
+    List l = retrieveList(Dataset.class, criteria, datafact);
     Object[] ob = l.toArray();
 
     Dataset[] ima = new Dataset[ob.length];
@@ -126,7 +139,8 @@ public class OMERetrieve {
       //Specify which fields we want for the project.
       makeAttributeFields(criteria, new String[] {"FirstName", "LastName"});
       criteria.addOrderBy("LastName");
-      List l = datafact.retrieveList("Experimenter", criteria);
+    
+      List l = retrieveList("Experimenter", criteria, datafact); 
       Object[] ob = l.toArray();
       String[][] exp = new String[3][ob.length];
       //pack the experimenter info into an array
@@ -213,6 +227,7 @@ public class OMERetrieve {
     addImageFields(criteria);
     criteria.addFilter("id", new Integer(imageID));
     Image[] imas = retrieveImages(datafactory, criteria);
+    if (imas == null) return null;
     return imas[0];
   }
 
@@ -242,6 +257,7 @@ public class OMERetrieve {
 
   /** adds all image fields to an image criteria */
   public static void addImageFields(Criteria c) {
+    /*
     makeAttributeFields(c, new String[] {"id", "name", "created",
       "description", "owner", "datasets", "all_features", "default_pixels"});
     makeAttributeFields(c, "all_features", new String[] {"name", "tag",
@@ -251,6 +267,30 @@ public class OMERetrieve {
     makeAttributeFields(c, "default_pixels", new String[] {"id", "PixelType",
       "SizeC", "SizeT", "SizeX", "SizeY", "SizeZ", "FileSHA1",
       "ImageServerID"});
+    */
+
+    c.addWantedField("id");
+    c.addWantedField("name");
+    c.addWantedField("description");
+    c.addWantedField("inserted");
+    c.addWantedField("created");
+    c.addWantedField("owner");
+    c.addWantedField("default_pixels");
+   
+    c.addWantedField("default_pixels", "id");
+    c.addWantedField("default_pixels", "SizeX");
+    c.addWantedField("default_pixels", "SizeY");
+    c.addWantedField("default_pixels", "SizeZ");
+    c.addWantedField("default_pixels", "SizeC");
+    c.addWantedField("default_pixels", "SizeT");
+    c.addWantedField("default_pixels", "PixelType");
+    c.addWantedField("default_pixels", "Repository");
+    c.addWantedField("default_pixels", "ImageServerID");
+    c.addWantedField("default_pixels.Repository", "ImageServerURL");
+
+    c.addWantedField("owner", "FirstName");
+    c.addWantedField("owner", "LastName");
+    c.addWantedField("owner", "id");
 
     FieldsSpecification fs = new FieldsSpecification();
     fs.addWantedField("Repository");
@@ -280,4 +320,36 @@ public class OMERetrieve {
       c.addWantedField(name, a[i]);
     }
   }
+
+  /** 
+   * HACK: this replaces calls to DataFactory.retrieveList(String, Criteria),
+   * since that method is broken for unknown reasons.
+   */
+  public static List retrieveList(String st, Criteria crit, DataFactory df) {
+    List l = new Vector();
+    int need = df.count(st, crit);
+    int have = 0;
+    while (have < need) {
+      crit.setOffset(have);
+      l.add(df.retrieve(st, crit));
+      have++;
+    }
+    return l;
+  }
+
+  /** 
+   * HACK: this replaces calls to DataFactory.retrieveList(Class, Criteria),
+   * since that method is broken for unknown reasons.
+   */
+  public static List retrieveList(Class st, Criteria crit, DataFactory df) {
+    List l = new Vector();
+    int need = df.count(st, crit);
+    int have = 0;
+    while (have < need) {
+      crit.setOffset(have);
+        l.add(df.retrieve(st, crit));
+      have++;
+    }
+    return l;
+  } 
 }

@@ -171,8 +171,15 @@ public class OMETools {
 
   /** Set the stack domain (4th dimension) */
   public int[] setDomain(int[] dims) {
-    if(dims[0] == 0) return new int[] {dims[1], 1};
-    else return new int[] {1, dims[1]};
+    if (dims[0] == 0) dims[0]++;
+    if (dims[1] == 0) dims[1]++;
+    if (domainIndex == 0) {
+      return new int[] {dims[0], dims[1]};
+    }
+    return new int[] {dims[1], dims[0]};
+    
+    //if(dims[0] == 0) return new int[] {dims[1], 1};
+    //else return new int[] {1, dims[1]};
   }
 
   /** Logout of OME database */
@@ -265,8 +272,11 @@ public class OMETools {
       // set domain of stack
       int[] results = new int[] {domainIndex, imageP.getStackSize()};
       results = setDomain(results);
-      int sizeT = results[1] + 1;
-      int sizeZ = results[0] + 1;
+      int sizeT = results[1];
+      int sizeZ = results[0];
+
+      /* debug */ System.out.println("sizeT : " + sizeT);
+      /* debug */ System.out.println("sizeZ : " + sizeZ);
 
       IJ.showProgress(.25);
 
@@ -554,23 +564,29 @@ public class OMETools {
       //retrieve element to add with all columns loaded
       DisplayOptions element = (DisplayOptions)
         df.retrieve("DisplayOptions", criteria);
-      DisplayChannel redChannel = element.getRedChannel();
-      DisplayChannel greenChannel = element.getGreenChannel();
-      DisplayChannel blueChannel = element.getBlueChannel();
-
-      String [] attrsC = {"ChannelNumber"};
-      DisplayChannel[] channels = {redChannel, greenChannel, blueChannel};
-      int[] channelNum = {redChanNum, greenChanNum, blueChanNum};
-      for(int i=0; i<sizeC; i++) {
-        criteria = OMERetrieve.makeAttributeFields(attrsC);
-        criteria.addWantedField("id");
-        criteria.addFilter("id", new Integer(channels[i].getID()).toString());
-        channels[i] = (DisplayChannel) df.retrieve("DisplayChannel", criteria);
-        channelNum[i] = channels[i].getChannelNumber().intValue();
+      DisplayChannel redChannel = null;
+      DisplayChannel greenChannel = null;
+      DisplayChannel blueChannel = null;
+      
+      if (element != null) {
+        redChannel = element.getRedChannel();
+        greenChannel = element.getGreenChannel();
+        blueChannel = element.getBlueChannel();
+       
+        String [] attrsC = {"ChannelNumber"};
+        DisplayChannel[] channels = {redChannel, greenChannel, blueChannel};
+        int[] channelNum = {redChanNum, greenChanNum, blueChanNum};
+        for(int i=0; i<sizeC; i++) {
+          criteria = OMERetrieve.makeAttributeFields(attrsC);
+          criteria.addWantedField("id");
+          criteria.addFilter("id", new Integer(channels[i].getID()).toString());
+          channels[i] = (DisplayChannel) df.retrieve("DisplayChannel", criteria);
+          channelNum[i] = channels[i].getChannelNumber().intValue();
+        }
+        redChanNum = channelNum[0];
+        greenChanNum = channelNum[1];
+        blueChanNum = channelNum[2];
       }
-      redChanNum = channelNum[0];
-      greenChanNum = channelNum[1];
-      blueChanNum = channelNum[2];
     }
 
     // create Stack to add planes to in ImageJ
@@ -747,7 +763,11 @@ public class OMETools {
       Project[] projects = OMERetrieve.retrieveAllProjects(df);
       //create search panel
       IJ.showStatus("Creating search panel...");
-      OMEDownPanel dp = new OMEDownPanel(IJ.getInstance(), projects, owners);
+      OMEDownPanel dp = null;
+      try {
+        dp = new OMEDownPanel(IJ.getInstance(), projects, owners);
+      }
+      catch (NullPointerException n) { return; }
       Image[] images = new Image[0];
       //do the image search
       IJ.showStatus("Searching for images...");
