@@ -103,153 +103,159 @@ public class ZeissZVIReader extends FormatReader {
 
     // read image header data
 
-    int c = (isRGB(id) && separated) ? 3 : 1;
-    byte[] imageHead = (byte[]) headerData.get(new Integer(no / c));
+    try {
+      int c = (isRGB(id) && separated) ? 3 : 1;
+      byte[] imageHead = (byte[]) headerData.get(new Integer(no / c));
 
-    if (imageHead != null) {
-      int pointer = 14;
-      int numBytes = DataTools.bytesToInt(imageHead, pointer, 2, true);
-      pointer += 2 + numBytes;
+      if (imageHead != null) {
+        int pointer = 14;
+        int numBytes = DataTools.bytesToInt(imageHead, pointer, 2, true);
+        pointer += 2 + numBytes;
 
-      pointer += 2;
-      width = DataTools.bytesToInt(imageHead, pointer, 4, true);
-      pointer += 4 + 2;
+        pointer += 2;
+        width = DataTools.bytesToInt(imageHead, pointer, 4, true);
+        pointer += 4 + 2;
 
-      height = DataTools.bytesToInt(imageHead, pointer, 4, true);
-      pointer += 4 + 2;
+        height = DataTools.bytesToInt(imageHead, pointer, 4, true);
+        pointer += 4 + 2;
 
-      int depth = DataTools.bytesToInt(imageHead, pointer, 4, true);
-      pointer += 4 + 2;
+        int depth = DataTools.bytesToInt(imageHead, pointer, 4, true);
+        pointer += 4 + 2;
 
-      pixelFormat = DataTools.bytesToInt(imageHead, pointer, 4, true);
-      pointer += 4 + 2;
+        pixelFormat = DataTools.bytesToInt(imageHead, pointer, 4, true);
+        pointer += 4 + 2;
 
-      pointer += 6; // count field is always 0
+        pointer += 6; // count field is always 0
 
-      int validBPP = DataTools.bytesToInt(imageHead, pointer, 4, true);
-      pointer += 4 + 2;
+        int validBPP = DataTools.bytesToInt(imageHead, pointer, 4, true);
+        pointer += 4 + 2;
 
-     // read image bytes and convert to floats
+        // read image bytes and convert to floats
 
-      pointer = 0;
-      int numSamples = width*height;
-      bitsPerSample = validBPP;
+        pointer = 0;
+        int numSamples = width*height;
+        bitsPerSample = validBPP;
 
-      switch (pixelFormat) {
-        case 1: channels = 3; break;
-        case 2: channels = 4; break;
-        case 3: channels = 1; break;
-        case 4: channels = 1; break;
-        case 6: channels = 1; break;
-        case 8: channels = 3; break;
-        default: channels = 1;
+        switch (pixelFormat) {
+          case 1: channels = 3; break;
+          case 2: channels = 4; break;
+          case 3: channels = 1; break;
+          case 4: channels = 1; break;
+          case 6: channels = 1; break;
+          case 8: channels = 3; break;
+          default: channels = 1;
+        }
+
+        if ((width > imageWidth) && (imageWidth > 0)) {
+          width = imageWidth;
+          height = imageHeight;
+          bitsPerSample = bytesPerPixel * 8;
+        }
       }
-
-      if ((width > imageWidth) && (imageWidth > 0)) {
+      else {
         width = imageWidth;
         height = imageHeight;
         bitsPerSample = bytesPerPixel * 8;
       }
-    }
-    else {
-      width = imageWidth;
-      height = imageHeight;
-      bitsPerSample = bytesPerPixel * 8;
-    }
 
-    byte[] px = (byte[]) pixelData.get(new Integer(no / c));
-    byte[] tempPx = new byte[px.length];
+      byte[] px = (byte[]) pixelData.get(new Integer(no / c));
+      byte[] tempPx = new byte[px.length];
 
-    if (bitsPerSample > 64) { bitsPerSample = 8; }
+      if (bitsPerSample > 64) { bitsPerSample = 8; }
 
-    int bpp = bitsPerSample / 8;
+      int bpp = bitsPerSample / 8;
 
-    // chop any extra bytes off of the pixel array
+      // chop any extra bytes off of the pixel array
 
-    if (px.length > (width * height * bpp)) {
-      int check = 0;
-      int chop = 0;
-      while (check != imageWidth && chop < 4000) {
-        check = DataTools.bytesToInt(px, chop, 4, true);
-        chop++;
-      }
-      chop += 23;
-      if (bpp == 2 && (chop % 2 != 0)) chop++;
-
-      if (check != imageWidth) chop = 0;
-
-      if (chop > 0) {
-        byte[] tmp = new byte[px.length - chop];
-        System.arraycopy(px, px.length - tmp.length, tmp, 0, tmp.length);
-        px = tmp;
-      }
-    }
-
-    if (bpp == 3) {
-      // reverse the channels
-
-      int off = 0;
-      int length = width * 3;
-
-      for (int i=0; i<height; i++) {
-        for (int j=0; j<width; j++) {
-          tempPx[off + j*3] = px[off + j*3 + 2];
-          tempPx[off + j*3 + 1] = px[off + j*3 + 1];
-          tempPx[off + j*3 + 2] = px[off + j*3];
+      if (px.length > (width * height * bpp)) {
+        int check = 0;
+        int chop = 0;
+        while (check != imageWidth && chop < 4000) {
+          check = DataTools.bytesToInt(px, chop, 4, true);
+          chop++;
         }
-        off += length;
-      }
-    }
-    else if (bpp != 6) tempPx = px;
-    else {
-      // slight hack
-      int mul = (int) (0.32 * imageWidth * bpp);
-      for (int i=0; i<imageHeight; i++) {
-        System.arraycopy(px, i*width*bpp, tempPx, (i+1)*width*bpp - mul, mul);
-        System.arraycopy(px, i*width*bpp + mul, tempPx, i*width*bpp,
-          width*bpp - mul);
-      }
+        chop += 23;
+        if (bpp == 2 && (chop % 2 != 0)) chop++;
 
-      px = tempPx;
-      tempPx = new byte[px.length];
+        if (check != imageWidth) chop = 0;
 
-      // reverse the channels
-      int off = 0;
-      int length = width * bpp;
-
-      for (int i=0; i<height; i++) {
-        for (int j=0; j<width; j++) {
-          tempPx[off + j*6] = px[off + j*6 + 4];
-          tempPx[off + j*6 + 1] = px[off + j*6 + 5];
-          tempPx[off + j*6 + 2] = px[off + j*6 + 2];
-          tempPx[off + j*6 + 3] = px[off + j*6 + 3];
-          tempPx[off + j*6 + 4] = px[off + j*6];
-          tempPx[off + j*6 + 5] = px[off + j*6 + 1];
+        if (chop > 0) {
+          byte[] tmp = new byte[px.length - chop];
+          System.arraycopy(px, px.length - tmp.length, tmp, 0, tmp.length);
+          px = tmp;
         }
-        off += length;
+      }
+
+      if (bpp == 3) {
+        // reverse the channels
+  
+        int off = 0;
+        int length = width * 3;
+
+        for (int i=0; i<height; i++) {
+          for (int j=0; j<width; j++) {
+            tempPx[off + j*3] = px[off + j*3 + 2];
+            tempPx[off + j*3 + 1] = px[off + j*3 + 1];
+            tempPx[off + j*3 + 2] = px[off + j*3];
+          }
+          off += length;
+        }
+      }
+      else if (bpp != 6) tempPx = px;
+      else {
+        // slight hack
+        int mul = (int) (0.32 * imageWidth * bpp);
+        for (int i=0; i<imageHeight; i++) {
+          System.arraycopy(px, i*width*bpp, tempPx, (i+1)*width*bpp - mul, mul);
+          System.arraycopy(px, i*width*bpp + mul, tempPx, i*width*bpp,
+            width*bpp - mul);
+        }
+
+        px = tempPx;
+        tempPx = new byte[px.length];
+
+        // reverse the channels
+        int off = 0;
+        int length = width * bpp;
+
+        for (int i=0; i<height; i++) {
+          for (int j=0; j<width; j++) {
+            tempPx[off + j*6] = px[off + j*6 + 4];
+            tempPx[off + j*6 + 1] = px[off + j*6 + 5];
+            tempPx[off + j*6 + 2] = px[off + j*6 + 2];
+            tempPx[off + j*6 + 3] = px[off + j*6 + 3];
+            tempPx[off + j*6 + 4] = px[off + j*6];
+            tempPx[off + j*6 + 5] = px[off + j*6 + 1];
+          }
+          off += length;
+        }
+      }
+
+      // reverse row order
+
+      if ((bitsPerSample / 8) % 3 != 0 && (bitsPerSample != 8)) {
+        px = new byte[tempPx.length];
+        int off = (height - 1) * width * bpp;
+        int newOff = 0;
+        int length = width * bpp;
+        for (int i=0; i<height; i++) {
+          System.arraycopy(tempPx, off, px, newOff, length);
+          off -= length;
+          newOff += length;
+        }
+        tempPx = px;
+      }
+
+      if (!isRGB(id) || !separated) {
+        return tempPx;
+      }
+      else {
+        return ImageTools.splitChannels(tempPx, 3, false, true)[no % 3];
       }
     }
-
-    // reverse row order
-
-    if ((bitsPerSample / 8) % 3 != 0 && (bitsPerSample != 8)) {
-      px = new byte[tempPx.length];
-      int off = (height - 1) * width * bpp;
-      int newOff = 0;
-      int length = width * bpp;
-      for (int i=0; i<height; i++) {
-        System.arraycopy(tempPx, off, px, newOff, length);
-        off -= length;
-        newOff += length;
-      }
-      tempPx = px;
-    }
-
-    if (!isRGB(id) || !separated) {
-      return tempPx;
-    }
-    else {
-      return ImageTools.splitChannels(tempPx, 3, false, true)[no % 3];
+    catch (Exception e) {
+      needLegacy = true;
+      return legacy.openBytes(id, no);
     }
   }
 
@@ -590,6 +596,7 @@ public class ZeissZVIReader extends FormatReader {
         nImages++;
       }
     }
+    openBytes(id, 0);  // set needLegacy appropriately
 
     initMetadata();
   }
