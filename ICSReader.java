@@ -299,7 +299,6 @@ public class ICSReader extends FormatReader {
       while(!s.trim().equals("end")) s = idsIn.readLine();
     }
     data = new byte[(int) (idsIn.length() - idsIn.getFilePointer())];
-    /* debug */ System.out.println("data.length : " + data.length);
 
     // extra check is because some of our datasets are labeled as 'gzip', and
     // have a valid GZIP header, but are actually uncompressed
