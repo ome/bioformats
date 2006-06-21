@@ -25,12 +25,14 @@ loci/formats/FormatWriter*.class \
 loci/formats/ImageTools*.class \
 loci/formats/LZWTreeNode*.class \
 loci/formats/LegacyQTReader*.class \
+loci/formats/LegacyQTTools*.class \
 loci/formats/OMETools*.class \
 loci/formats/QTReader*.class \
 loci/formats/RandomAccessArray*.class \
 loci/formats/ReflectException*.class \
 loci/formats/ReflectedUniverse*.class \
 loci/formats/TiffRational*.class \
+loci/formats/TiffReader*.class \
 loci/formats/TiffTools*.class \
 loci/formats/TiffWriter*.class \
 loci/qt/*.java loci/util/FilePattern.java loci/util/NumberFilter.java \

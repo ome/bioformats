@@ -11,7 +11,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import loci.formats.FormatReader;
+import loci.formats.LegacyQTReader;
+import loci.formats.LegacyQTTools;
 import loci.formats.QTReader;
+import loci.formats.TiffReader;
 import loci.formats.TiffWriter;
 import loci.util.FilePattern;
 
@@ -20,14 +24,16 @@ public class QTConverter extends JFrame implements ActionListener, Runnable {
 
   // -- Fields --
 
-  private QTReader reader = new QTReader();
+  private LegacyQTReader legacyReader = new LegacyQTReader();
+  private QTReader qtReader = new QTReader();
+  private TiffReader tiffReader = new TiffReader();
   private TiffWriter writer = new TiffWriter();
-  private JFileChooser rc = reader.getFileChooser();
+  private JFileChooser rc = qtReader.getFileChooser();
   private JFileChooser wc = writer.getFileChooser();
   private boolean shutdown;
 
   private JTextField input, output;
-  private JCheckBox swapAxes;
+  private JCheckBox qtJava, swapAxes;
   private JProgressBar progress;
   private JButton convert;
 
@@ -101,6 +107,13 @@ public class QTConverter extends JFrame implements ActionListener, Runnable {
     pane.add(row3);
 
     pane.add(Box.createVerticalStrut(4));
+
+    boolean canDoQT = new LegacyQTTools().canDoQT();
+    qtJava = new JCheckBox("Use QTJava", canDoQT);
+    qtJava.setEnabled(canDoQT);
+    row3.add(qtJava);
+
+    row3.add(Box.createHorizontalStrut(3));
 
     swapAxes = new JCheckBox("Swap axes", true);
     row3.add(swapAxes);
@@ -183,6 +196,10 @@ public class QTConverter extends JFrame implements ActionListener, Runnable {
       FilePattern fp = new FilePattern(in);
       String[] inFiles = fp.getFiles();
 
+      FormatReader reader = null;
+      if (qtJava.isSelected()) reader = legacyReader;
+      else reader = qtReader;
+
       int numT = reader.getImageCount(inFiles[0]);
       int numZ = inFiles.length;
       boolean swap = swapAxes.isSelected();
@@ -203,12 +220,12 @@ public class QTConverter extends JFrame implements ActionListener, Runnable {
       progress.setString("Getting ready");
       long start = System.currentTimeMillis();
 
-      QTReader[] readers = null;
+      FormatReader[] readers = null;
       if (swap) {
         // read from multiple files at once, for efficiency
         // (to avoid writing to multiple files at once,
         // or storing multiple images in RAM simultaneously)
-        readers = new QTReader[inFiles.length];
+        readers = new FormatReader[inFiles.length];
         readers[0] = reader;
         for (int i=1; i<readers.length; i++) readers[i] = new QTReader();
       }
