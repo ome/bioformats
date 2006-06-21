@@ -6,16 +6,6 @@ Implement readers for other file formats:
 * Anything listed online: http://www.loci.wisc.edu/ome/formats.html
 * MNG (http://www.libpng.org/pub/mng/) -- low priority
 
-ImageJ plugin:
-* Investigate whether current reflection-based approach in modified
-  HandleExtraFileTypes is good enough, and modify if necessary. Does
-  Bio-Formats play nicely with other installed plugins used by
-  HandleExtraFileTypes? Bio-Formats should probably be tried first, but if it
-  fails, HandleExtraFileTypes should try the remaining standalone plugins
-  before giving up. This may require a restructuring of LociPlugin to extend
-  ImagePlus in addition to implementing PlugIn (see the BioRad_Reader plugin
-  for an example).
-
 Adapt Bio-Formats API to support OMERO:
 http://cvs.openmicroscopy.org.uk/tiki/tiki-index.php?page=Bio-Formats+Import+Discussion
 1. Parallel APIs, because different readers acquire pixels in different ways:
