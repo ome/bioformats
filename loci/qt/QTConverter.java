@@ -189,6 +189,7 @@ public class QTConverter extends JFrame implements ActionListener, Runnable {
 
   public void run() {
     convert.setEnabled(false);
+    progress.setString("Getting ready");
     try {
       String in = input.getText();
       String out = output.getText();
@@ -197,8 +198,8 @@ public class QTConverter extends JFrame implements ActionListener, Runnable {
       String[] inFiles = fp.getFiles();
 
       FormatReader reader = null;
-      if (qtJava.isSelected()) reader = legacyReader;
-      else reader = qtReader;
+      boolean useQTJ = qtJava.isSelected();
+      reader = useQTJ ? (FormatReader) legacyReader : (FormatReader) qtReader;
 
       int numT = reader.getImageCount(inFiles[0]);
       int numZ = inFiles.length;
@@ -217,37 +218,69 @@ public class QTConverter extends JFrame implements ActionListener, Runnable {
       String post = out.substring(star + 1);
 
       progress.setMaximum(2 * numZ * numT);
-      progress.setString("Getting ready");
       long start = System.currentTimeMillis();
 
       FormatReader[] readers = null;
+      TiffWriter[] writers = null;
       if (swap) {
-        // read from multiple files at once, for efficiency
-        // (to avoid writing to multiple files at once,
-        // or storing multiple images in RAM simultaneously)
-        readers = new FormatReader[inFiles.length];
-        readers[0] = reader;
-        for (int i=1; i<readers.length; i++) readers[i] = new QTReader();
+        if (useQTJ) {
+          // write to multiple files at once, for efficiency
+          // (to avoid multiple simultaneous QTJava readers,
+          // or storing multiple images in RAM simultaneously)
+          writers = new TiffWriter[outFiles];
+          writers[0] = writer;
+          for (int i=1; i<writers.length; i++) writers[i] = new TiffWriter();
+        }
+        else {
+          // read from multiple files at once, for efficiency
+          // (to avoid writing to multiple files at once,
+          // or storing multiple images in RAM simultaneously)
+          readers = new FormatReader[inFiles.length];
+          readers[0] = reader;
+          for (int i=1; i<readers.length; i++) readers[i] = new QTReader();
+        }
       }
 
       int digits = ("" + outFiles).length();
-      for (int o=0; o<outFiles; o++) {
-        String num = "" + (o + 1);
-        while (num.length() < digits) num = "0" + num;
-        String outFile = pre + num + post;
-        String outName = new File(outFile).getName();
+      if (swap && useQTJ) {
+        // for each input file, write to all output files
         for (int p=0; p<outPlanes; p++) {
-          progress.setString(outName + " " + (p + 1) + "/" + outPlanes);
-          int value = 2 * (o * outPlanes + p);
-          progress.setValue(value);
-          BufferedImage img = swap ?
-            readers[p].openImage(inFiles[p], o) : // p <=> Z, o <=> T
-            reader.openImage(inFiles[o], p); // p <=> T, o <=> Z
-          progress.setValue(value + 1);
-          writer.save(outFile, img, shutdown || p == outPlanes - 1);
+          for (int o=0; o<outFiles; o++) {
+            String num = "" + (o + 1);
+            while (num.length() < digits) num = "0" + num;
+            String outFile = pre + num + post;
+            String outName = new File(outFile).getName();
+            progress.setString(outName + " " + (p + 1) + "/" + outPlanes);
+            int value = 2 * (p * outFiles + o);
+            progress.setValue(value);
+            BufferedImage img =
+              reader.openImage(inFiles[p], o); // p <=> Z, o <=> T
+            progress.setValue(value + 1);
+            writers[o].save(outFile, img, shutdown || p == outPlanes - 1);
+            if (shutdown) break;
+          }
           if (shutdown) break;
         }
-        if (shutdown) break;
+      }
+      else {
+        for (int o=0; o<outFiles; o++) {
+          String num = "" + (o + 1);
+          while (num.length() < digits) num = "0" + num;
+          String outFile = pre + num + post;
+          String outName = new File(outFile).getName();
+          for (int p=0; p<outPlanes; p++) {
+            progress.setString(outName + " " + (p + 1) + "/" + outPlanes);
+            int value = 2 * (o * outPlanes + p);
+            progress.setValue(value);
+            BufferedImage img = swap ?
+              readers[p].openImage(inFiles[p], o) : // p <=> Z, o <=> T
+              reader.openImage(inFiles[o], p); // p <=> T, o <=> Z
+            progress.setValue(value + 1);
+            writer.save(outFile, img, shutdown || p == outPlanes - 1);
+            if (shutdown) break;
+          }
+          if (shutdown) break;
+        }
       }
       progress.setValue(2 * numZ * numT);
       progress.setString("Finishing");
