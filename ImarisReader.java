@@ -83,6 +83,12 @@ public class ImarisReader extends FormatReader {
     return false;
   }
 
+  /** Returns the number of channels in the file. */
+  public int getChannelCount(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return dims[3];
+  }
+
   /**
    * Obtains the specified image from the
    * given Imaris file as a byte array.

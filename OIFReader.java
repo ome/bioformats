@@ -71,7 +71,7 @@ public class OIFReader extends FormatReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    return numImages;
+    return isRGB(id) ? 3*numImages : numImages;
   }
 
   /**
@@ -91,7 +91,15 @@ public class OIFReader extends FormatReader {
 
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
-    return false;
+    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+      initFile(id);
+    }
+    return tiffReader.isRGB((String) tiffs.get(0));
+  }
+
+  /** Returns the number of images in the file. */
+  public int getChannelCount(String id) throws FormatException, IOException {
+    return isRGB(id) ? 3 : 1;
   }
 
   /** Obtains the specified image from the given OIF file as a byte array. */
@@ -223,7 +231,7 @@ public class OIFReader extends FormatReader {
         new Integer(Integer.parseInt((String) metadata.get("ImageWidth"))),
         new Integer(Integer.parseInt((String) metadata.get("ImageHeight"))),
         new Integer(numImages),
-        new Integer(1),
+        new Integer(getChannelCount(id)),
         new Integer(1),
         "int" + (8*Integer.parseInt((String) metadata.get("ImageDepth"))),
         new Boolean(false),

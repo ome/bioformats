@@ -58,8 +58,8 @@ public class LeicaReader extends BaseTiffReader {
   /** Helper reader. */
   protected TiffReader tiff;
 
-  /** Number of images in the dataset. */
-  //protected int numImages;
+  /** Number of channels in the file. */
+  protected int numChannels;
 
   /** Array of image file names. */
   protected String[] files;
@@ -122,12 +122,23 @@ public class LeicaReader extends BaseTiffReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    return numImages;
+    return (isRGB(id) && separated) ? 3*numImages : numImages;
   }
 
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
-    return false;
+    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+      initFile(id);
+    }
+    return tiff.isRGB(files[0]);
+  }
+
+  /** Returns the number of channels in the file. */
+  public int getChannelCount(String id) throws FormatException, IOException {
+    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+      initFile(id);
+    }
+    return numChannels;
   }
 
   /** Obtains the specified image from the given Leica file as a byte array. */
@@ -167,6 +178,7 @@ public class LeicaReader extends BaseTiffReader {
     {
       if (ifds == null) super.initFile(id);
       in = new RandomAccessStream(id);
+      numChannels = 0;
 
       // open the TIFF file and look for the "Image Description" field
 
@@ -412,6 +424,7 @@ public class LeicaReader extends BaseTiffReader {
             case 5898318: dimType = "logical z-wide"; break;
           }
 
+          if (dimType.equals("channel")) numChannels++;
           metadata.put("Dim" + j + " type", dimType);
           pt += 4;
           metadata.put("Dim" + j + " size", new Integer(
@@ -551,14 +564,14 @@ public class LeicaReader extends BaseTiffReader {
         // LUT data
         // ID_LUTDESC
         int pt = 0;
-        int numChannels = DataTools.bytesToInt(temp, pt, 4, littleEndian);
+        int nChannels = DataTools.bytesToInt(temp, pt, 4, littleEndian);
         pt += 4;
-        metadata.put("Number of LUT channels", new Integer(numChannels));
+        metadata.put("Number of LUT channels", new Integer(nChannels));
         metadata.put("ID of colored dimension",
           new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
         pt += 4;
 
-        for (int j=0; j<numChannels; j++) {
+        for (int j=0; j<nChannels; j++) {
           metadata.put("LUT Channel " + j + " version",
             new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
           pt += 4;
@@ -592,11 +605,15 @@ public class LeicaReader extends BaseTiffReader {
     }
 
     if (ome != null) {
+      try {
+        if (isRGB(currentId)) numChannels *= 3;
+      }
+      catch (Exception exc) { }
       Integer sizeX = (Integer) metadata.get("Image width");
       Integer sizeY = (Integer) metadata.get("Image height");
       Integer sizeZ = (Integer) metadata.get("Number of images");
       OMETools.setPixels(ome, sizeX, sizeY, sizeZ,
-        new Integer(1), // SizeC
+        new Integer(numChannels), // SizeC
         new Integer(1), // SizeT
         null, // PixelType
         new Boolean(!littleEndian), // BigEndian

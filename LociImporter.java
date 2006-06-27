@@ -24,24 +24,37 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import ij.*;
+import ij.gui.GenericDialog;
 import ij.io.OpenDialog;
 import ij.plugin.PlugIn;
 import ij.process.*;
+import java.awt.BorderLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.image.*;
+import java.io.File;
+import javax.swing.*;
 import loci.formats.ImageReader;
+import loci.formats.FormatReader;
 
 /**
  * ImageJ plugin for the LOCI Bio-Formats package.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class LociImporter implements PlugIn {
+public class LociImporter implements PlugIn, ItemListener {
 
   // -- Static fields --
 
   /** Flag indicating whether last operation was successful. */
   public boolean success = false;
 
+  private JCheckBox merge = null;
+  private JCheckBox newWindows = null;
+  private JCheckBox stitching = null;
+  private boolean mergeChannels = true;
+  private boolean splitWindows = false;
+  private boolean stitchFiles = true;
 
   // -- PlugIn API methods --
 
@@ -49,19 +62,67 @@ public class LociImporter implements PlugIn {
   public synchronized void run(String arg) {
     success = false;
     boolean quiet = !"".equals(arg);
-    OpenDialog od = new OpenDialog("Open...", arg);
-    String directory = od.getDirectory();
-    String fileName = od.getFileName();
-    if (fileName == null) return;
-    String id = directory + fileName;
+
+    String id = null;
+    ImageReader reader = new ImageReader();
+
+    if ((new File(arg)).exists()) {
+      id = arg;
+
+      // we still want to prompt for channel merge/split
+
+      GenericDialog gd = new GenericDialog("LOCI Bio-Formats Import Options");
+      gd.addCheckbox("Merge channels", true);
+      gd.addCheckbox("Open each channel in a new window", false);
+      gd.addCheckbox("Stitch together files with a similar name", true);
+      gd.showDialog();
+      mergeChannels = gd.getNextBoolean();
+      splitWindows = gd.getNextBoolean();
+      stitchFiles = gd.getNextBoolean();
+    }
+    else {
+      JFileChooser chooser = reader.getFileChooser();
+
+      // add some additional options to the file chooser
+      JPanel panel = new JPanel(new BorderLayout());
+      merge = new JCheckBox("Merge channels", true);
+      newWindows = new JCheckBox("Open each channel in a new window", false);
+      stitching = new JCheckBox("Stitch together files with a similar name",
+        true);
+      merge.addItemListener(this);
+      newWindows.addItemListener(this);
+      stitching.addItemListener(this);
+      panel.add(merge, BorderLayout.NORTH);
+      panel.add(newWindows, BorderLayout.EAST);
+      panel.add(stitching, BorderLayout.SOUTH);
+      chooser.setAccessory(panel);
+
+      int rval = chooser.showOpenDialog(null);
+      if (rval == JFileChooser.APPROVE_OPTION) {
+        final File file = chooser.getSelectedFile();
+        if (file != null) {
+          id = file.getAbsolutePath();
+          OpenDialog.setDefaultDirectory(
+            chooser.getCurrentDirectory().getPath());
+        }
+      }
+    }
+
+    if (id == null) return;
+    String fileName = id.substring(id.lastIndexOf(File.separator) + 1);
 
     IJ.showStatus("Opening " + fileName);
-    ImageReader reader = new ImageReader();
     try {
-      int num = reader.getImageCount(id);
+      FormatReader r = reader.getReader(id);
+      r.setSeparated(!mergeChannels);
+      int num = 0;
+      if (stitchFiles) num = reader.getTotalImageCount(id);
+      else num = reader.getImageCount(id);
       ImageStack stackB = null, stackS = null, stackF = null, stackO = null;
       long start = System.currentTimeMillis();
       long time = start;
+      int channels = reader.getChannelCount(id);
+
       for (int i=0; i<num; i++) {
         // limit message update rate
         long clock = System.currentTimeMillis();
@@ -70,7 +131,9 @@ public class LociImporter implements PlugIn {
           time = clock;
         }
         IJ.showProgress((double) i / num);
-        BufferedImage img = reader.openImage(id, i);
+        BufferedImage img = null;
+        if (stitchFiles) img = reader.openStitchedImage(id, i);
+        else img = reader.openImage(id, i);
 
         ImageProcessor ip = null;
         WritableRaster raster = img.getRaster();
@@ -120,18 +183,33 @@ public class LociImporter implements PlugIn {
       }
       IJ.showStatus("Creating image");
       IJ.showProgress(1);
-      if (stackB != null) new ImagePlus(fileName, stackB).show();
-      if (stackS != null) new ImagePlus(fileName, stackS).show();
-      if (stackF != null) new ImagePlus(fileName, stackF).show();
-      if (stackO != null) new ImagePlus(fileName, stackO).show();
+      if (stackB != null) {
+        if (!mergeChannels && splitWindows) slice(stackB, fileName, channels);
+        else new ImagePlus(fileName, stackB).show();
+      }
+      if (stackS != null) {
+        if (!mergeChannels && splitWindows) slice(stackS, fileName, channels);
+        else new ImagePlus(fileName, stackS).show();
+      }
+      if (stackF != null) {
+        if (!mergeChannels && splitWindows) slice(stackF, fileName, channels);
+        else new ImagePlus(fileName, stackF).show();
+      }
+      if (stackO != null) {
+        if (!mergeChannels && splitWindows) slice(stackO, fileName, channels);
+        else new ImagePlus(fileName, stackO).show();
+      }
       long end = System.currentTimeMillis();
       double elapsed = (end - start) / 1000.0;
       if (num == 1) IJ.showStatus(elapsed + " seconds");
       else {
         long average = (end - start) / num;
-        IJ.showStatus(elapsed + " seconds (" + average + " ms per plane)");
+        IJ.showStatus("LOCI Bio-Formats : " + elapsed + " seconds (" +
+          average + " ms per plane)");
       }
       success = true;
+      mergeChannels = true;
+      splitWindows = false;
     }
     catch (Exception exc) {
       exc.printStackTrace();
@@ -141,6 +219,36 @@ public class LociImporter implements PlugIn {
         IJ.showMessage("LOCI Bio-Formats", "Sorry, there was a problem " +
           "reading the data" + (msg == null ? "." : (": " + msg)));
       }
+    }
+  }
+
+  private void slice(ImageStack is, String file, int c) {
+    ImageStack[] newStacks = new ImageStack[c];
+    for (int i=0; i<newStacks.length; i++) {
+      newStacks[i] = new ImageStack(is.getWidth(), is.getHeight());
+    }
+
+    for (int i=1; i<=is.getSize(); i+=c) {
+      for (int j=1; j<=c; j++) {
+        newStacks[j].addSlice(is.getSliceLabel(i+j), is.getProcessor(i+j));
+      }
+    }
+
+    for (int i=0; i<newStacks.length; i++) {
+      new ImagePlus(file + " - Ch" + (i+1), newStacks[i]).show();
+    }
+  }
+
+  public void itemStateChanged(ItemEvent e) {
+    Object source = e.getItemSelectable();
+    if (source == merge) {
+      mergeChannels = e.getStateChange() == ItemEvent.SELECTED;
+    }
+    else if (source == newWindows) {
+      splitWindows = e.getStateChange() == ItemEvent.SELECTED;
+    }
+    else if (source == stitching) {
+      stitchFiles = e.getStateChange() == ItemEvent.SELECTED;
     }
   }
 

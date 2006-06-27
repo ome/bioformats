@@ -68,7 +68,7 @@ public class GelReader extends BaseTiffReader {
     super.initMetadata();
     boolean little = true;
     try {
-      little= TiffTools.isLittleEndian(ifds[0]);
+      little = TiffTools.isLittleEndian(ifds[0]);
     }
     catch (FormatException e) { }
 

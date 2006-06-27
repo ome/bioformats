@@ -118,6 +118,7 @@ public class IPWReader extends BaseTiffReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
+
     byte[] pixels = (byte[]) pixelData.get(new Integer(no));
     ifds = (Hashtable[]) allIFDs.get(new Integer(no));
     ra = new RandomAccessStream(pixels);

@@ -467,6 +467,13 @@ public abstract class BaseTiffReader extends FormatReader {
       true, 0) == TiffTools.RGB_PALETTE);
   }
 
+  /** Returns the number of channels in the file. */
+  public int getChannelCount(String id) throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return isRGB(id) ? 3 : 1;
+  }
+
   /**
    * Obtains the specified metadata field's value for the given file.
    *

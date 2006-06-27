@@ -77,6 +77,13 @@ public class LegacyZVIReader extends FormatReader {
   /** Bytes per pixel. */
   private int bytesPerPixel;
 
+  /**
+   * The ordering of images within the file; index is the position in blockList,
+   * and the corresponding value is the actual plane number.
+   */
+  private Vector ordering;
+
+
   // -- Constructor --
 
   /** Constructs a new legacy ZVI reader. */
@@ -99,6 +106,12 @@ public class LegacyZVIReader extends FormatReader {
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return (bytesPerPixel == 3) || (bytesPerPixel > 4);
+  }
+
+  /** Returns the number of channels in the file. */
+  public int getChannelCount(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return isRGB(id) ? 3 : 1;
   }
 
   /** Obtains the specified image from the given ZVI file, as a byte array. */
@@ -322,6 +335,9 @@ public class LegacyZVIReader extends FormatReader {
   }
 
   // -- Utility methods --
+
+  /** Set the plane ordering. */
+  public void setOrdering(Vector v) { ordering = v; }
 
   /**
    * Finds the first occurence of the given byte block within the file,

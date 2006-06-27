@@ -98,6 +98,11 @@ public class ICSReader extends FormatReader {
     return false;
   }
 
+  /** Returns the number of channels in the file. */
+  public int getChannelCount(String id) throws FormatException, IOException {
+    return 1;
+  }
+
   /** Obtains the specified image from the given ICS file, as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException

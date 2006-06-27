@@ -90,13 +90,19 @@ public class DeltavisionReader extends FormatReader {
     return false;
   }
 
+  /** Returns the number of channels in the file. */
+  public int getChannelCount(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return ((Integer) metadata.get("Number of wavelengths")).intValue();
+  }
+
   /** Obtains the specified image from the given file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
 
-    if (no < 0 || no >= getImageCount(id)) {
+    if (no < 0 || no >= numImages) {
       throw new FormatException("Invalid image number: " + no);
     }
 
