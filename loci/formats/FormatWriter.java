@@ -38,6 +38,13 @@ public abstract class FormatWriter extends FormatHandler {
   /** Default color model. */
   protected ColorModel cm;
 
+  /** Available compression types. */
+  protected String[] compressionTypes;
+
+  /** Current compression type. */
+  protected String compression;
+
+
   // -- Constructors --
 
   /** Constructs a format writer with the given name and default suffix. */
@@ -84,6 +91,19 @@ public abstract class FormatWriter extends FormatHandler {
 
   /** Gets the frames per second to use when writing. */
   public int getFramesPerSecond() { return fps; }
+
+  /** Get the available compression types. */
+  public String[] getCompressionTypes() { return compressionTypes; }
+
+  /** Set the current compression type. */
+  public void setCompression(String compress) throws FormatException {
+    compression = compress;
+    // check that this is a valid type
+    for (int i=0; i<compressionTypes.length; i++) {
+      if (compressionTypes[i].equals(compression)) return;
+    }
+    throw new FormatException("Invalid compression type " + compression);
+  }
 
   /** A utility method for converting a file from the command line. */
   public void testConvert(String[] args) throws FormatException, IOException {

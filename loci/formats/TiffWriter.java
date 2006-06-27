@@ -48,6 +48,7 @@ public class TiffWriter extends FormatWriter {
   public TiffWriter() {
     super("Tagged Image File Format", new String[] {"tif", "tiff"});
     lastOffset = 0;
+    compressionTypes = new String[] {"Uncompressed", "LZW"};
   }
 
 
@@ -99,7 +100,10 @@ public class TiffWriter extends FormatWriter {
   public void save(String id, Image image, boolean last)
     throws FormatException, IOException
   {
-    saveImage(id, image, null, last);
+    Hashtable h = new Hashtable();
+    h.put(new Integer(TiffTools.COMPRESSION), compression.equals("LZW") ?
+      new Integer(TiffTools.LZW) : new Integer(TiffTools.UNCOMPRESSED));
+    saveImage(id, image, h, last);
   }
 
   /** Reports whether the writer can save multiple images to a single file. */

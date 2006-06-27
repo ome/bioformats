@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import ij.*;
+import ij.gui.GenericDialog;
 import ij.plugin.filter.*;
 import ij.process.*;
 import java.awt.BorderLayout;
@@ -105,6 +106,16 @@ public class LociExporter implements PlugInFilter, ItemListener {
     try {
       long t1 = System.currentTimeMillis();
       FormatWriter w2 = writer.getWriter(filename);
+
+      // make sure we prompt for a compression type, if applicable
+
+      String[] types = w2.getCompressionTypes();
+      if (types != null) {
+        GenericDialog gd = new GenericDialog("Choose a compression type");
+        gd.addChoice("Available compression types", types, types[0]);
+        gd.showDialog();
+        w2.setCompression(gd.getNextChoice());
+      } 
 
       if (imp == null) return;
 
