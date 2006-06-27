@@ -561,6 +561,7 @@ public class QTWriter extends FormatWriter {
   // -- Helper method --
  
   private void setCodec() {
+    if (compression == null) compression = "Uncompressed";
     if (compression.equals("Uncompressed")) codec = CODEC_RAW;
     else if (compression.equals("Motion JPEG-B")) codec = CODEC_MOTION_JPEG_B;
     else if (compression.equals("Cinepak")) codec = CODEC_CINEPAK;
