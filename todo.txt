@@ -11,8 +11,6 @@ Implement readers for other file formats:
 * animated GIF reader (ImageJ plugin)
 
 ImageJ:
-* add functionality to LociExporter to allow merging/splitting of channels,
-  additional compression options
 * eventually get all of our ImageJ plugins (Bio-Formats, OME, Data Browser) to
   play nicely together
 
