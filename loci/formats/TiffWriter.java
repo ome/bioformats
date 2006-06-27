@@ -101,6 +101,7 @@ public class TiffWriter extends FormatWriter {
     throws FormatException, IOException
   {
     Hashtable h = new Hashtable();
+    if (compression == null) compression = "";
     h.put(new Integer(TiffTools.COMPRESSION), compression.equals("LZW") ?
       new Integer(TiffTools.LZW) : new Integer(TiffTools.UNCOMPRESSED));
     saveImage(id, image, h, last);
