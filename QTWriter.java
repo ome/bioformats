@@ -108,7 +108,14 @@ public class QTWriter extends FormatWriter {
 
   // -- Constructor --
 
-  public QTWriter() { super("QuickTime", "mov"); }
+  public QTWriter() { 
+    super("QuickTime", "mov"); 
+    compressionTypes = new String[] {
+      "Uncompressed", "Motion JPEG-B", "Cinepak", "Animation", "H.263",
+      "Sorenson", "Sorenson 3", "MPEG 4"
+    };
+  
+  }
 
   // -- QTWriter API methods --
 
@@ -208,6 +215,7 @@ public class QTWriter extends FormatWriter {
     }
 
     if (!id.equals(currentId)) {
+      setCodec();
       if (codec != 0) {
         needLegacy = true;
         legacy.setCodec(codec);
@@ -549,6 +557,19 @@ public class QTWriter extends FormatWriter {
 
   /** Reports whether the writer can save multiple images to a single file. */
   public boolean canDoStacks(String id) { return true; }
+
+  // -- Helper method --
+ 
+  private void setCodec() {
+    if (compression.equals("Uncompressed")) codec = CODEC_RAW;
+    else if (compression.equals("Motion JPEG-B")) codec = CODEC_MOTION_JPEG_B;
+    else if (compression.equals("Cinepak")) codec = CODEC_CINEPAK;
+    else if (compression.equals("Animation")) codec = CODEC_ANIMATION;
+    else if (compression.equals("H.263")) codec = CODEC_H_263;
+    else if (compression.equals("Sorenson")) codec = CODEC_SORENSON;
+    else if (compression.equals("Sorenson 3")) codec = CODEC_SORENSON_3;
+    else if (compression.equals("MPEG 4")) codec = CODEC_MPEG_4;
+  }
 
   // -- Main method --
 
