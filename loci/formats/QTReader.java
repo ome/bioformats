@@ -172,7 +172,6 @@ public class QTReader extends FormatReader {
     (byte) 0xf8, (byte) 0xf9, (byte) 0xfa
   };
 
-
   // -- Fields --
 
   /** Current file. */
@@ -247,6 +246,11 @@ public class QTReader extends FormatReader {
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return bitsPerPixel < 40;
+  }
+
+  /** Returns the number of channels in the file. */
+  public int getChannelCount(String id) throws FormatException, IOException {
+    return isRGB(id) ? 3 : 1;
   }
 
   /** Obtains the specified image from the given file, as a byte array. */

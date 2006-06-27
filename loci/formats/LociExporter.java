@@ -26,15 +26,19 @@ package loci.formats;
 import ij.*;
 import ij.plugin.filter.*;
 import ij.process.*;
-import ij.io.*;
+import java.awt.BorderLayout;
 import java.awt.Image;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.File;
+import javax.swing.*;
 
 /**
  * ImageJ plugin for writing files using the LOCI Bio-Formats package.
  *
  * @author Melissa Linkert, linkert at cs.wisc.edu
  */
-public class LociExporter implements PlugInFilter {
+public class LociExporter implements PlugInFilter, ItemListener {
 
   // -- Static fields --
 
@@ -46,6 +50,12 @@ public class LociExporter implements PlugInFilter {
   /** Current stack. */
   private ImagePlus imp;
 
+  private JCheckBox merge = null;
+  private JCheckBox interleave = null;
+  private JCheckBox sample = null;
+  private boolean mergeChannels = true;
+  private boolean interleaveChannels = true;
+  private boolean downSample = false;
 
   // -- PlugInFilter API methods --
 
@@ -61,21 +71,47 @@ public class LociExporter implements PlugInFilter {
 
     // prompt for the filename to save to
 
-    SaveDialog sd = new SaveDialog("Save...", imp.getTitle(), "");
-    String filename = sd.getFileName();
+    ImageWriter writer = new ImageWriter();
+
+    //SaveDialog sd = new SaveDialog("Save...", imp.getTitle(), "");
+
+    String filename = null;
+    JFileChooser chooser = writer.getFileChooser();
+    JPanel panel = new JPanel(new BorderLayout());
+    merge = new JCheckBox("Merge channels (if unchecked, this will separate " +
+      "multi-channel images)", true);
+    merge.addItemListener(this);
+    interleave = new JCheckBox("Interleave channels?", true);
+    interleave.addItemListener(this);
+    sample = new JCheckBox("Enable converting 16-bit grayscale to RGB " +
+      "(will result in data loss)");
+    sample.addItemListener(this);
+    panel.add(merge, BorderLayout.NORTH);
+    panel.add(interleave, BorderLayout.EAST);
+    panel.add(sample, BorderLayout.SOUTH);
+    chooser.setAccessory(panel);
+
+    int rval = chooser.showSaveDialog(null);
+    if (rval == JFileChooser.APPROVE_OPTION) {
+      final File file = chooser.getSelectedFile();
+      if (file != null) {
+        filename = file.getAbsolutePath();
+      }
+
+    }
+
     if (filename == null) return;
-    String fileDir = sd.getDirectory();
-    filename = fileDir + filename;
 
     try {
       long t1 = System.currentTimeMillis();
-      ImageWriter writer = new ImageWriter();
       FormatWriter w2 = writer.getWriter(filename);
 
       if (imp == null) return;
 
       ImageStack stack = imp.getStack();
-      int size = imp.getStackSize();
+      if (mergeChannels) stack = mergeStack(stack, interleaveChannels);
+      else stack = splitStack(stack, interleaveChannels);
+      int size = stack.getSize();
 
       long t3 = System.currentTimeMillis();
       if (w2.canDoStacks(filename)) {
@@ -102,7 +138,8 @@ public class LociExporter implements PlugInFilter {
       }
       else {
         long average = (t4 - t3) / size;
-        IJ.showStatus((t4 - t1) + " ms (" + average + " ms per plane)");
+        IJ.showStatus("LOCI Bio-Formats Exporter: " + (t4 - t1) + " ms (" +
+          average + " ms per plane)");
       }
       IJ.showProgress(1);
       success = true;
@@ -115,5 +152,90 @@ public class LociExporter implements PlugInFilter {
         "writing the data" + (msg == null ? "." : (": " + msg)));
     }
   }
+
+  /**
+   * Merge a greyscale image stack into an RGB stack with 1/3 the size.
+   * The interleaved flag refers to the ordering of channels within the original
+   * stack.
+   */
+  private ImageStack mergeStack(ImageStack is, boolean interleaved)
+    throws Exception
+  {
+    ImageStack newStack = new ImageStack(is.getWidth(), is.getHeight());
+    int type = imp.getType();
+
+    if (type == ImagePlus.GRAY8 || downSample) {
+      ImageStack tempStack = new ImageStack(is.getWidth(), is.getHeight());
+      ImagePlus ip = null;
+      ImageConverter converter = null;
+      int size = is.getSize() / 3;
+      if (interleaved) size *= 3;
+      int increment = size;
+      if (interleaved) increment = 1;
+      int loopIncrement = 1;
+      if (interleaved) loopIncrement = 3;
+      for (int i=1; i<=size; i+=loopIncrement) {
+        while (tempStack.getSize() > 0) tempStack.deleteLastSlice();
+        tempStack.addSlice(is.getSliceLabel(i), is.getProcessor(i));
+        tempStack.addSlice(is.getSliceLabel(i + increment),
+          is.getProcessor(i + increment));
+        tempStack.addSlice(is.getSliceLabel(i + 2 * increment),
+          is.getProcessor(i + 2 * increment));
+        ip = new ImagePlus("temp", tempStack);
+        converter = new ImageConverter(ip);
+        if (type != ImagePlus.GRAY8) converter.convertToGray8();
+        converter.convertRGBStackToRGB();
+        newStack.addSlice("", ip.getImageStack().getProcessor(1));
+      }
+    }
+    else {
+      // exit loudly
+      IJ.showStatus("LOCI Bio-Formats: Cannot convert this stack to RGB; " +
+        "please check the 'Enable converting 16-bit grayscale to RGB' box");
+      throw new Exception("Converting 16-bit data failed, please try again.");
+    }
+    return newStack;
+  }
+
+  private ImageStack splitStack(ImageStack is, boolean interleaved) {
+    ImageStack newStack = new ImageStack(is.getWidth(), is.getHeight());
+
+    // if it's not RGB, don't split the stack - just return it
+    int type = imp.getType();
+    if (type != ImagePlus.COLOR_RGB && type != ImagePlus.COLOR_256) {
+      return is;
+    }
+
+    ImagePlus ip = new ImagePlus("temp", is);
+    ImageConverter converter = new ImageConverter(ip);
+    converter.convertToRGBStack();
+    converter.convertToGray8();
+    ImageStack tempStack = ip.getImageStack();
+
+    if (interleaved) return tempStack;
+
+    for (int j=1; j<=3; j++) {
+      for (int i=j; i<=tempStack.getSize(); i+=3) {
+        newStack.addSlice(tempStack.getSliceLabel(i),
+          tempStack.getProcessor(i));
+      }
+    }
+
+    return newStack;
+  }
+
+  public void itemStateChanged(ItemEvent e) {
+    Object source = e.getItemSelectable();
+    if (source == merge) {
+      mergeChannels = e.getStateChange() == ItemEvent.SELECTED;
+    }
+    else if (source == interleave) {
+      interleaveChannels = e.getStateChange() == ItemEvent.SELECTED;
+    }
+    else if (source == sample) {
+      downSample = e.getStateChange() == ItemEvent.SELECTED;
+    }
+  }
+
 
 }

@@ -76,6 +76,10 @@ public abstract class FormatReader extends FormatHandler {
   public abstract boolean isRGB(String id)
     throws FormatException, IOException;
 
+  /** Returns the number of channels in the file. */
+  public abstract int getChannelCount(String id)
+    throws FormatException, IOException;
+
   /** Obtains the specified image from the given file. */
   public abstract BufferedImage openImage(String id, int no)
     throws FormatException, IOException;

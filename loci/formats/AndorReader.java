@@ -43,6 +43,7 @@ public class AndorReader extends BaseTiffReader {
   private static final int MMHEADER = 34361;
   private static final int MMSTAMP = 34362;
 
+  private int sizeC = 1;
 
   // -- Constructor --
 
@@ -87,6 +88,11 @@ public class AndorReader extends BaseTiffReader {
     return checkBytes(name, BLOCK_CHECK_LEN);
   }
 
+  /** Returns the number of channels in the file. */
+  public int getChannelCount(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return sizeC;
+  }
 
   // -- Internal BaseTiffReader API methods --
 
@@ -102,7 +108,7 @@ public class AndorReader extends BaseTiffReader {
     // look for MMHEADER
     short[] header = (short[]) TiffTools.getIFDValue(ifds[0], MMHEADER);
 
-    int sizeC = 1;
+    sizeC = 1;
     int sizeT = 1;
     int sizeZ = 1;
 
@@ -287,7 +293,6 @@ public class AndorReader extends BaseTiffReader {
     OMETools.setPixels(ome, OMETools.getSizeX(ome), OMETools.getSizeY(ome),
       new Integer(sizeZ), new Integer(sizeC), new Integer(sizeT),
       OMETools.getPixelType(ome), new Boolean(!little), order);
-
   }
 
 

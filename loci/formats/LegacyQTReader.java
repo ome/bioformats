@@ -77,6 +77,11 @@ public class LegacyQTReader extends FormatReader {
     return true;
   }
 
+  /** Returns the number of channels in the file. */
+  public int getChannelCount(String id) throws FormatException, IOException {
+    return 3;
+  }
+
   /** Obtains the specified image from the given QuickTime file. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException

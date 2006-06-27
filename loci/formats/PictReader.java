@@ -142,6 +142,11 @@ public class PictReader extends FormatReader {
     return true;
   }
 
+  /** Returns the number of channels in the file. */
+  public int getChannelCount(String id) throws FormatException, IOException {
+    return 3;
+  }
+
   /** Obtains the specified image from the given PICT file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException

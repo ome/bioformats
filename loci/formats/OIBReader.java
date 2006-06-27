@@ -77,6 +77,11 @@ public class OIBReader extends FormatReader {
     return false;
   }
 
+  /** Returns the number of channels in the file. */
+  public int getChannelCount(String id) throws FormatException, IOException {
+    return 1;
+  }
+
   /** Obtains the specified image from the given OIB file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException

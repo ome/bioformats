@@ -50,6 +50,8 @@ public class FluoviewReader extends BaseTiffReader {
   private static final int MMSTAMP = 34362;
   private static final int MMUSERBLOCK = 34386;
 
+  // -- Fields --
+  private int numChannels = 1;
 
   // -- Constructor --
 
@@ -83,6 +85,11 @@ public class FluoviewReader extends BaseTiffReader {
     return checkBytes(name, BLOCK_CHECK_LEN);
   }
 
+  /** Returns the number of channels in the file. */
+  public int getChannelCount(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return numChannels;
+  }
 
   // -- Internal BaseTiffReader API methods --
 
@@ -350,6 +357,8 @@ public class FluoviewReader extends BaseTiffReader {
         }
         else if (name.equals("Z")) sizeZ = q;
       }
+
+      numChannels = sizeC;
 
       OMETools.setPixels(ome, null, null, new Integer(sizeZ),
         new Integer(sizeC), new Integer(sizeT), null, null, null);

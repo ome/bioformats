@@ -84,6 +84,12 @@ public class OpenlabRawReader extends FormatReader {
     return channels > 1;
   }
 
+  /** Returns the number of channels in the file. */
+  public int getChannelCount(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return channels;
+  }
+
   /** Obtains the specified image from the given RAW file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException

@@ -128,8 +128,7 @@ public class OLEParser {
 
     long check = DataTools.read8SignedBytes(in, true);
     if (check != DataTools.bytesToLong(MAGIC_NUMBER, true)) {
-      throw new IOException("magic number does not match.  Either " +
-        "the file is not an OLE variant or you didn't check the endianness");
+      throw new IOException("File is not an OLE variant");
     }
 
     in.skipBytes(16);
@@ -418,27 +417,36 @@ public class OLEParser {
       // if the size of the file is less than 4096, use the SBAT
       // otherwise, use the BAT
 
-      if (size < 4096) {
-        // offset is start * smallBlock
+      Vector sread = new Vector();
 
-        int ndx = start;
-        while ((numRead < size) && (ndx >= 0)) {
+      if (size < 4096) {
+      //if (size < 8*bigBlock) {
+        // TODO : this is broken
+
+        int ndx = 2 * (start + 1);
+        if ((ndx + 1)*smallBlock >= smallBlockArray.length) {
+          ndx = start;
+        }
+        while ((numRead < size) && (ndx >= 0) &&
+          ((ndx + 1) < smallBlockArray.length / smallBlock))
+        {
           int toCopy = smallBlock;
           if ((size - numRead) < smallBlock) {
             toCopy = size - numRead;
           }
 
+          sread.add(new Integer(ndx));
+
           System.arraycopy(smallBlockArray, ndx*smallBlock, file,
             numRead, toCopy);
           numRead += toCopy;
 
-          int old = ndx;
-          if (ndx < sbat.length) ndx = sbat[ndx];
-          else ndx++;
-          if (ndx * smallBlock >= smallBlockArray.length ||
-            (ndx*smallBlock < 0))
-          {
-            ndx = old + 1;
+          if (ndx < sbat.length && sbat[ndx] >= 0) ndx = sbat[ndx];
+          else {
+            ndx++;
+            while (inSbat(ndx - 1) && !sread.contains(new Integer(ndx))) {
+              ndx++;
+            }
           }
         }
       }
@@ -522,6 +530,11 @@ public class OLEParser {
   }
 
   public int length() { return realNumRead; }
+
+  private boolean inSbat(int b) {
+    for (int i=0; i<sbat.length; i++) if (b == sbat[i]) return true;
+    return false;
+  }
 
   private boolean inBat(int b) {
     for (int i=0; i<bat.length; i++) if (b == bat[i]) return true;

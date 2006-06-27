@@ -41,6 +41,10 @@ public class ZeissLSMReader extends BaseTiffReader {
   /** Tag identifying a Zeiss LSM file. */
   private static final int ZEISS_ID = 34412;
 
+  // -- Fields --
+
+  /** Number of channels. */
+  private int channels;
 
   // -- Constructor --
 
@@ -76,9 +80,16 @@ public class ZeissLSMReader extends BaseTiffReader {
     }
   }
 
+  /** Returns the number of channels in the file. */
+  public int getChannelCount(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return channels;
+  }
+
   /** Initializes the given Zeiss LSM file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
+    channels = 0;
 
     // go through the IFD hashtable array and
     // remove anything with NEw_SUBFILE_TYPE = 1
@@ -502,6 +513,8 @@ public class ZeissLSMReader extends BaseTiffReader {
         default: dimOrder = "XYZCT";
       }
 
+      channels = cSize;
+      if (isRGB(currentId)) channels *= 3;
       OMETools.setPixels(ome,
         new Integer(imageWidth), // SizeX
         new Integer(imageLength), // SizeY

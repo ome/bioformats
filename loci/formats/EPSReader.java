@@ -80,7 +80,14 @@ public class EPSReader extends FormatReader {
 
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
     return channels == 3;
+  }
+
+  /** Returns the number of channels in the file. */
+  public int getChannelCount(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return channels;
   }
 
   /**

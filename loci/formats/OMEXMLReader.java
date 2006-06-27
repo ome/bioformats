@@ -62,6 +62,9 @@ public class OMEXMLReader extends FormatReader {
   /** Image height. */
   private int height;
 
+  /** Number of channels. */
+  private int numChannels;
+
   // -- Constructor --
 
   /** Constructs a new OME-XML reader. */
@@ -86,13 +89,19 @@ public class OMEXMLReader extends FormatReader {
     return false;
   }
 
+  /** Returns the number of channels in the file. */
+  public int getChannelCount(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return numChannels;
+  }
+
   /** Obtains the specified image from the given file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
 
-    if (no < 0 || no >= getImageCount(id)) {
+    if (no < 0 || no >= numImages) {
       throw new FormatException("Invalid image number: " + no);
     }
 
@@ -259,6 +268,8 @@ public class OMEXMLReader extends FormatReader {
     sizeZ = OMETools.getSizeZ(ome).intValue();
     sizeC = OMETools.getSizeC(ome).intValue();
     sizeT = OMETools.getSizeT(ome).intValue();
+
+    numChannels = sizeC;
 
     // calculate the number of raw bytes of pixel data that we are expecting
     int expected = sizeX * sizeY * bpp;
