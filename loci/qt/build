@@ -10,6 +10,7 @@ jar cfm loci/qt/QTConverter.jar qt.manifest \
 loci/qt/*.class \
 loci/util/FilePattern*.class \
 loci/util/NumberFilter*.class \
+loci/formats/BaseTiffReader*.class \
 loci/formats/BitBuffer*.class \
 loci/formats/BitWriter*.class \
 loci/formats/ByteVector*.class \
