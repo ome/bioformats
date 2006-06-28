@@ -319,6 +319,16 @@ public abstract class BaseTiffReader extends FormatReader {
       bps = ((Number) bpsObj).intValue();
       numC = 1;
     }
+  
+    // numC isn't set properly if we have an indexed color image, so we need
+    // to reset it here
+
+    int p = TiffTools.getIFDIntValue(ifd, TiffTools.PHOTOMETRIC_INTERPRETATION);
+    if (p == TiffTools.RGB_PALETTE) {
+      numC = 3;
+      bps *= 3;
+    }
+
     put("BitsPerSample", bps);
     put("NumberOfChannels", numC);
 
