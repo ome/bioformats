@@ -360,8 +360,38 @@ public class FluoviewReader extends BaseTiffReader {
 
       numChannels = sizeC;
 
+      // set the dimension order
+ 
+      String order = "XY";
+     
+      int[] dims = new int[] {sizeZ, sizeC, sizeT};
+      int max = 0;
+      int median = 1;
+      int min = Integer.MAX_VALUE;
+
+      for (int i=0; i<dims.length; i++) {
+        if (dims[i] < min) min = dims[i];
+        if (dims[i] > max) max = dims[i];
+      }
+
+      for (int i=0; i<dims.length; i++) {
+        if (dims[i] != max && dims[i] != min) median = dims[i];
+      }
+
+      int[] orderedDims = new int[] {max, median, min};
+
+      for (int i=0; i<orderedDims.length; i++) {
+        if (orderedDims[i] == sizeZ && order.indexOf("Z") == -1) {
+          order += "Z";
+        }
+        else if (orderedDims[i] == sizeC && order.indexOf("C") == -1) {
+          order += "C";
+        }
+        else order += "T";
+      }
+
       OMETools.setPixels(ome, null, null, new Integer(sizeZ),
-        new Integer(sizeC), new Integer(sizeT), null, null, null);
+        new Integer(sizeC), new Integer(sizeT), null, null, order);
     }
     catch (NullPointerException e) { /* most likely MMHEADER not found */ }
     catch (IOException e) { e.printStackTrace(); }

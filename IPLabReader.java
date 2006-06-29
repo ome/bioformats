@@ -215,6 +215,11 @@ public class IPLabReader extends FormatReader {
         case 10: type = "float"; break;
         default: type = "Uint8";
       }
+
+      String order = "XY";
+      if (c > 1) order += "CZT";
+      else order += "ZTC";
+
       OMETools.setPixels(ome,
         new Integer((int) width), // SizeX
         new Integer((int) height), // SizeY
@@ -223,7 +228,7 @@ public class IPLabReader extends FormatReader {
         new Integer((int) tDepth), // SizeT
         type, // PixelType
         new Boolean(!littleEndian), // BigEndian
-        "XYZTC"); // DimensionOrder
+        order); // DimensionOrder
       OMETools.setImageName(ome, id);
     }
 

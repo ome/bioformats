@@ -128,6 +128,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     // reset numImages and ifds
     numImages = tempIFDs.length;
     ifds = tempIFDs;
+    initMetadata();
   }
 
   /** Populates the metadata hashtable. */
@@ -511,6 +512,13 @@ public class ZeissLSMReader extends BaseTiffReader {
         case 8: dimOrder = "XYCZT"; break;
         case 9: dimOrder = "XYTCZ"; break;
         default: dimOrder = "XYZCT";
+      }
+
+      // some LSM files will have a thumbnail associated with each plane; this
+      // thumbnail is counted as an extra channel, but since we strip out the
+      // thumbnails, we need to correct the channel count
+      while (zSize * cSize * tSize != numImages) {
+        cSize--;   
       }
 
       channels = cSize;

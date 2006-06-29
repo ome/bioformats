@@ -101,6 +101,8 @@ public class GelReader extends BaseTiffReader {
 
     String units = (String) TiffTools.getIFDValue(ifds[1], MD_FILE_UNITS);
     metadata.put("File units", units == null ? "unknown" : units);
+  
+    OMETools.setSizeT(ome, numImages);
   }
 
 

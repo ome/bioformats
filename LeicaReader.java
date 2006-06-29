@@ -613,7 +613,7 @@ public class LeicaReader extends BaseTiffReader {
       Integer sizeY = (Integer) metadata.get("Image height");
       Integer sizeZ = (Integer) metadata.get("Number of images");
       OMETools.setPixels(ome, sizeX, sizeY, sizeZ,
-        new Integer(numChannels), // SizeC
+        new Integer(numChannels == 0 ? 1 : numChannels), // SizeC
         new Integer(1), // SizeT
         null, // PixelType
         new Boolean(!littleEndian), // BigEndian
