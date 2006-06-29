@@ -69,7 +69,7 @@ public class DeltavisionReader extends FormatReader {
 
   /** Constructs a new Deltavision reader. */
   public DeltavisionReader() {
-    super("Deltavision", new String[] {"dv", "r3d"});
+    super("Deltavision", new String[] {"dv", "r3d", "r3d_d3d"});
   }
 
   // -- FormatReader API methods --

@@ -311,6 +311,23 @@ public class BMPReader extends FormatReader {
 
     global = in.getFilePointer();
     metadata.put("Indexed color", palette == null ? "false" : "true");
+  
+    // populate OME-XMl
+
+    int c = (palette == null && bpp == 8) ? 1 : 3;
+    int tbpp = bpp;
+    if (bpp > 8) tbpp /= 3;
+    String pixelType = "int" + tbpp;
+
+    OMETools.setPixels(ome,
+      new Integer(width),  // sizeX
+      new Integer(height), // sizeY
+      new Integer(1), // sizeZ
+      new Integer(c), // sizeC
+      new Integer(1), // sizeT
+      pixelType,
+      new Boolean(!littleEndian), // BigEndian
+      "XYCTZ");
   }
 
 

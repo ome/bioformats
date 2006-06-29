@@ -252,6 +252,10 @@ public class BioRadReader extends FormatReader {
 
     Vector pixelSize = new Vector();
 
+    int sizeZ = npic;
+    int sizeC = 1;
+    int sizeT = 1;
+
     // read notes
     int noteCount = 0;
     while (notes) {
@@ -301,6 +305,8 @@ public class BioRadReader extends FormatReader {
             case 2:
               metadata.put(key + " time (X) in seconds", params.get(0));
               metadata.put(key + " time (Y) in seconds", params.get(1));
+              sizeZ = 1;
+              sizeT = npic;
               break;
             case 3:
               metadata.put(key + " angle (X) in degrees", params.get(0));
@@ -408,15 +414,39 @@ public class BioRadReader extends FormatReader {
     String fmt;
     if (type == 1) fmt = "Uint8";
     else fmt = "Uint16";
+    
+    String dimOrder = "XY";
+    int[] dims = new int[] {sizeZ, sizeC, sizeT};
+    int max = 0;
+    int min = Integer.MAX_VALUE;
+    int median = 1;
+
+    for (int i=0; i<dims.length; i++) {
+      if (dims[i] < min) min = dims[i];
+      if (dims[i] > max) max = dims[i];
+      else median = dims[i];
+    }
+
+    int[] orderedDims = new int[] {max, median, min};
+    for (int i=0; i<orderedDims.length; i++) {
+      if (orderedDims[i] == sizeZ && dimOrder.indexOf("Z") == -1) {
+        dimOrder += "Z";
+      }
+      else if (orderedDims[i] == sizeC && dimOrder.indexOf("C") == -1) {
+        dimOrder += "C";
+      }
+      else dimOrder += "T";
+    }
+
     OMETools.setPixels(ome,
       new Integer(nx), // SizeX
       new Integer(ny), // SizeY
-      new Integer(npic), // SizeZ
-      new Integer(1), // SizeC
-      new Integer(1), // SizeT
+      new Integer(sizeZ), // SizeZ
+      new Integer(sizeC), // SizeC
+      new Integer(sizeT), // SizeT
       fmt, // PixelType
       null, // BigEndian
-      null); // DimensionOrder
+      dimOrder); // DimensionOrder
 
     // populate Dimensions element
     int size = pixelSize.size();
