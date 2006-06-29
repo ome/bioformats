@@ -718,17 +718,6 @@ public class ZeissZVIReader extends FormatReader {
       byte[] tag = (byte[]) tags.get(k);
       pt = 16;
 
-      /*
-      for (int a=0; a<tag.length; a+=20) {
-        for (int b=0; b<20; b++) {
-          if (a+b < tag.length) System.out.print(tag[a+b] + " ");
-        }
-        System.out.print("\n");
-      }
-      System.out.println();
-      */
-      /* end debug */
-
       int w = DataTools.bytesToInt(tag, pt, 2, true);
       pt += 2;
 
@@ -736,10 +725,6 @@ public class ZeissZVIReader extends FormatReader {
       pt += 2;
       int minorVersion = DataTools.bytesToInt(tag, pt, 2, true);
       pt += 2;
-
-      /* debug */ System.out.println("------ NEW FILE ------");
-      /* debug */ System.out.println("major version : " + majorVersion);
-      /* debug */ System.out.println("minor version : " + minorVersion);
 
       w = DataTools.bytesToInt(tag, pt, 2, true);
       pt += 2;

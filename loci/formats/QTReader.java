@@ -459,6 +459,25 @@ public class QTReader extends FormatReader {
     parse(0, 0, in.length());
     numImages = offsets.size();
 
+    if (ome != null) {
+      String pixelType = "int";
+      int bpp = bitsPerPixel / 8;
+      bpp %= 4;
+      if (bpp == 0) bpp++;
+      bpp *= 8;
+      pixelType += bpp;
+
+      OMETools.setPixels(ome,
+        new Integer(width),
+        new Integer(height),
+        new Integer(numImages),
+        new Integer(bitsPerPixel < 40 ? 3 : 1),
+        new Integer(1),
+        pixelType,
+        new Boolean(little),
+        "XYCZT");
+    }
+
     // this handles the case where the data and resource forks have been
     // separated
     if (spork) {

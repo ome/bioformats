@@ -184,7 +184,7 @@ public class OIBReader extends FormatReader {
     btr.initMetadata();
     metadata = btr.metadata;  // hack
     ome = btr.ome;
-    OMETools.setSizeC(ome, numImages);
+    OMETools.setSizeZ(ome, numImages);
   }
 
 
