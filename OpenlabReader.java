@@ -171,6 +171,11 @@ public class OpenlabReader extends FormatReader {
     byte[] temp;
     boolean skipflag;
 
+    if (ome != null) {
+      OMETools.setSizeX(ome, dim.width);
+      OMETools.setSizeY(ome, dim.height);
+    }
+
     // read in deep gray pixel data into an array, and create a
     // BufferedImage out of it
     //
@@ -529,6 +534,14 @@ public class OpenlabReader extends FormatReader {
         }
       }
       in.seek(offset);
+    }
+    if (ome != null) {
+      OMETools.setSizeZ(ome, numBlocks);
+      OMETools.setSizeC(ome, 3);
+      OMETools.setSizeT(ome, 1);
+      OMETools.setDimensionOrder(ome, "XYCZT");
+      OMETools.setBigEndian(ome, !little);
+      OMETools.setPixelType(ome, "int8");
     }
   }
 

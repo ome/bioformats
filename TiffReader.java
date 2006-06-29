@@ -79,8 +79,11 @@ public class TiffReader extends BaseTiffReader {
   /** Parses OME-XML metadata. */
   protected void initOMEMetadata() {
     // check for OME-XML in TIFF comment (OME-TIFF format)
+    // we need an extra check to make sure that any XML we find is indeed
+    // OME-XML (and not some other XML variant)
     String comment = (String) metadata.get("Comment");
     Object root = comment == null ? null : OMETools.createRoot(comment);
+    if (comment == null || comment.indexOf("ome.xsd") == -1) root = null;
     put("OME-TIFF", root == null ? "no" : "yes");
     if (root == null) super.initOMEMetadata();
     else ome = root;

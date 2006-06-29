@@ -168,6 +168,9 @@ public class IPWReader extends BaseTiffReader {
   public void initMetadata(String id)
     throws FormatException, IOException
   {
+    ifds = (Hashtable[]) allIFDs.get(new Integer(0));
+    super.initMetadata();
+
     // parse the image description
     String description = new String(tags, 22, tags.length-22);
     metadata.put("Image Description", description);
@@ -198,14 +201,11 @@ public class IPWReader extends BaseTiffReader {
 
     metadata.put("Version", new String(header).trim());
 
-    ifds = (Hashtable[]) allIFDs.get(new Integer(0));
-    super.initStandardMetadata();
-
     if (ome != null) {
-      super.initOMEMetadata();
       int sizeT = Integer.parseInt((String) metadata.get("slices"));
       int sizeC = Integer.parseInt((String) metadata.get("channels"));
-      int sizeZ = Integer.parseInt((String) metadata.get("frames"));
+      int sizeZ = Integer.parseInt(metadata.get("frames").toString());
+      
       OMETools.setPixels(ome, null, null, new Integer(sizeZ),
         new Integer(sizeC), new Integer(sizeT), null, null, null);
       OMETools.setDescription(ome, (String) metadata.get("Version"));

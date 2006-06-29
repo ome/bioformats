@@ -378,7 +378,7 @@ public abstract class BaseTiffReader extends FormatReader {
 
       OMETools.setPixels(ome, new Integer(sizeX), new Integer(sizeY),
         new Integer(sizeZ), new Integer(sizeC), new Integer(sizeT),
-        pixelType, new Boolean(bigEndian), null);
+        pixelType, new Boolean(bigEndian), "XYCZT");
 
       // populate Experimenter element
       String artist = (String) TiffTools.getIFDValue(ifd, TiffTools.ARTIST);
