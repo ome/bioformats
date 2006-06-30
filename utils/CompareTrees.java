@@ -36,13 +36,13 @@ public class CompareTrees {
   public static final void compare(File dir1, File dir2) {
     if (dir1 == null && dir2 == null) return;
     if (dir2 == null) {
-      System.out.println("<<< " + dir1 + " (" +
-        dir1.listFiles().length + " files)");
+      System.out.println("<<< " + dir1 + "\t[" +
+        dir1.listFiles().length + " files]");
       return;
     }
     if (dir1 == null) {
-      System.out.println(">>> " + dir2 + " (" +
-        dir2.listFiles().length + " files)");
+      System.out.println(">>> " + dir2 + "\t[" +
+        dir2.listFiles().length + " files]");
       return;
     }
     File[] list1 = dir1.listFiles();
@@ -62,7 +62,7 @@ public class CompareTrees {
         System.out.println();
       }
       else if (c > 0) {
-        System.out.println(">>> " + list2[ndx2++] + "\tmissing");
+        System.out.print(">>> " + list2[ndx2++] + "\t[missing]");
         if (d2) System.out.print(" [directory]");
         System.out.println();
       }
@@ -93,7 +93,7 @@ public class CompareTrees {
     if (ndx2 < list2.length) {
       for (int i=ndx2; i<list2.length; i++) {
         boolean d2 = list2[i].isDirectory();
-        System.out.println(">>> " + list2[i] + "\tmissing");
+        System.out.print(">>> " + list2[i] + "\t[missing]");
         if (d2) System.out.print(" [directory]");
         System.out.println();
       }
