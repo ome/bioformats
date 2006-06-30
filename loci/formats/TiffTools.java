@@ -224,6 +224,7 @@ public abstract class TiffTools {
     Vector v = new Vector();
     for (long ifdNum=0; ifdNum<ifdMax; ifdNum++) {
       Hashtable ifd = getIFD(in, ifdNum, globalOffset, offset, littleEndian);
+      if (ifd.size() <= 1) break;
       v.add(ifd);
       offset = DataTools.read4UnsignedBytes(in, littleEndian);
       if (offset == 0) break;
@@ -318,6 +319,7 @@ public abstract class TiffTools {
     in.seek(globalOffset + offset);
     int numEntries = DataTools.read2UnsignedBytes(in, littleEndian);
     if (DEBUG) debug("getIFDs: " + numEntries + " directory entries to read");
+    if (numEntries == 0) return ifd;
 
     for (int i=0; i<numEntries; i++) {
       in.seek(globalOffset + offset + 2 + 12 * i);
@@ -756,6 +758,7 @@ public abstract class TiffTools {
       // Zeiss LSM
 
       rowsPerStripArray = new long[1];
+
       long temp = stripByteCounts[0];
       stripByteCounts = new long[1];
       stripByteCounts[0] = temp;
@@ -766,7 +769,7 @@ public abstract class TiffTools {
       stripOffsets = new long[1];
       stripOffsets[0] = temp;
 
-      for (int i=0; i<stripByteCounts.length; i++) {
+      for (int i=0; i<bitsPerSample.length; i++) {
         // case 1: we're still within bitsPerSample array bounds
         if (i < bitsPerSample.length) {
           // remember that the universe collapses when we divide by 0
@@ -777,6 +780,7 @@ public abstract class TiffTools {
           else if (bitsPerSample[i] == 0 && i > 0) {
             rowsPerStripArray[i] = (long) stripByteCounts[i] /
               (imageLength * (bitsPerSample[i - 1] / 8));
+            bitsPerSample[i] = bitsPerSample[i - 1];
           }
           else {
             throw new FormatException("BitsPerSample is 0");
@@ -789,7 +793,7 @@ public abstract class TiffTools {
         }
       }
 
-      samplesPerPixel = 1;
+      samplesPerPixel = stripOffsets.length;
     }
 
     TiffRational xResolution = getIFDRationalValue(ifd, X_RESOLUTION, false);
