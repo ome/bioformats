@@ -27,6 +27,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.Vector;
 import javax.swing.filechooser.FileFilter;
 
 /** Abstract superclass of all biological file format readers. */
@@ -222,13 +223,13 @@ public abstract class FormatReader extends FormatHandler {
     if (pixels) {
       System.out.print("Reading " + id + " pixel data ");
       long s1 = System.currentTimeMillis();
-      int num = getImageCount(args[0]);
+      int num = getTotalImageCount(args[0]);
       System.out.print("(" + num + ") ");
       long e1 = System.currentTimeMillis();
       BufferedImage[] images = new BufferedImage[num];
       long s2 = System.currentTimeMillis();
       for (int i=0; i<num; i++) {
-        images[i] = openImage(args[0], i);
+        images[i] = openStitchedImage(args[0], i);
         System.out.print(".");
       }
       long e2 = System.currentTimeMillis();
@@ -277,6 +278,98 @@ public abstract class FormatReader extends FormatHandler {
     return true;
   }
 
+  // -- File stitching API methods --
+
+  /** Gets a list of files matching the pattern in the given file name. */
+  public String[] getMatchingFiles(String id) {
+    FilePattern fp = new FilePattern(new File(id));
+    return fp.getFiles();
+  }
+
+  /**
+   * Open all of the files matching the given file, and return the corresponding
+   * array of BufferedImages.
+   */
+  public BufferedImage[] openAllImages(String id)
+    throws FormatException, IOException
+  {
+    String[] files = getMatchingFiles(id);
+    Vector v = new Vector();
+    for (int i=0; i<files.length; i++) {
+      for (int j=0; j<getImageCount(id); j++) {
+        v.add(openImage(files[i], j));
+      }
+    }
+    return (BufferedImage[]) v.toArray(new BufferedImage[0]);
+  }
+
+  /** Get the total number of images in the given file and all matching files.*/
+  public int getTotalImageCount(String id) throws FormatException, IOException {
+    String[] files = getMatchingFiles(id);
+    int num = 0;
+    for (int i=0; i<files.length; i++) {
+      num += getImageCount(files[i]);
+    }
+    return num;
+  }
+
+  /**
+   * Open the given image from the appropriate file matching the
+   * given file name.  The number given should be between 0 and
+   * getTotalImageCount(id); this method will automatically adjust the file
+   * name and plane number accordingly.
+   */
+  public BufferedImage openStitchedImage(String id, int no)
+    throws FormatException, IOException
+  {
+    String[] files = getMatchingFiles(id);
+
+    // first find the appropriate file
+    boolean found = false;
+    String file = files[0];
+    int ndx = 1;  // index into the array of file names
+    while (!found) {
+      if (no < getImageCount(file)) {
+        found = true;
+      }
+      else {
+        no -= getImageCount(file);
+        file = files[ndx];
+        ndx++;
+      }
+    }
+
+    return openImage(file, no);
+  }
+
+  /**
+   * Open the given image from the appropriate file matching the
+   * given file name.  The number given should be between 0 and
+   * getTotalImageCount(id); this method will automatically adjust the file
+   * name and plane number accordingly.
+   */
+  public byte[] openStitchedBytes(String id, int no)
+    throws FormatException, IOException
+  {
+    String[] files = getMatchingFiles(id);
+
+    // first find the appropriate file
+    boolean found = false;
+    String file = files[0];
+    int ndx = 1;  // index into the array of file names
+    while (!found) {
+      if (no < getImageCount(file)) {
+        found = true;
+      }
+      else {
+        no -= getImageCount(file);
+        file = files[ndx];
+        ndx++;
+      }
+    }
+ 
+    return openBytes(file, no);
+  }
 
   // -- FormatHandler API methods --
 
