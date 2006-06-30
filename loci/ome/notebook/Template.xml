@@ -58,7 +58,7 @@
 			<OMEAttribute XMLName="Type" Value=""/>
 		</OMEElement>
 		<OMEElement XMLName="Objective" Description="">
-			<OMEAttribute XMLName="ID" Value=""/>
+			<OMEAttribute XMLName="ID" Value="" Type=""/>
 			<OMEAttribute XMLName="Manufacturer" Value=""/>
 			<OMEAttribute XMLName="Model" Value=""/>
 			<OMEAttribute XMLName="SerialNumber" Value=""/>
@@ -81,7 +81,6 @@
 			<OMEElement XMLName="FilterRef">
 				<OMERef Name="ID"/>
 			</OMEElement>
-		</OMEElement>
-		
+		</OMEElement>		
 	</OMEElement>
 </NotebookTemplate>
