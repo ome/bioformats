@@ -13,10 +13,6 @@ Implement readers for other file formats:
 ImageJ:
 * get ImageJ plugins (Bio-Formats, OME, Data Browser) to play nicely together
 
-Testing:
-* Verify SizeC/Z/T values for all sample data in all formats; use these values
-  with 4D Data Browser for proper visualization
-
 API/Other:
 * if separated == false, we should always merge channels, even if they are
   stored separately within the file
