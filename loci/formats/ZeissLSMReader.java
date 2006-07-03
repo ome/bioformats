@@ -97,14 +97,17 @@ public class ZeissLSMReader extends BaseTiffReader {
     // contains a thumbnail image
 
     int numThumbs = 0;
-    for (int i=0; i<ifds.length; i++) {
-      long subFileType = TiffTools.getIFDLongValue(ifds[i],
-        TiffTools.NEW_SUBFILE_TYPE, true, 0);
-      if (subFileType == 1) {
-        ifds[i] = null;
-        numThumbs++;
+    try {
+      for (int i=0; i<ifds.length; i++) {
+        long subFileType = TiffTools.getIFDLongValue(ifds[i],
+          TiffTools.NEW_SUBFILE_TYPE, true, 0);
+        if (subFileType == 1) {
+          ifds[i] = null;
+          numThumbs++;
+        }
       }
     }
+    catch (Exception e) { }
 
     // now copy ifds to a temp array so that we can get rid of
     // any null entries
