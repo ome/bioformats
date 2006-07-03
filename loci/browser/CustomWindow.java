@@ -19,7 +19,7 @@ import javax.swing.event.ChangeEvent;
 import loci.ome.viewer.MetadataPane;
 
 public class CustomWindow extends ImageWindow implements ActionListener,
-  AdjustmentListener, ChangeListener, ItemListener, KeyListener, Runnable
+  AdjustmentListener, ChangeListener, ItemListener, KeyListener
 {
 
   // -- Constants --
@@ -51,7 +51,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   private Timer animationTimer;
   private JButton animate;
   private ImageStack stack;
-
+  private JProgressBar progressBar;
   private Thread thread;
 
 
@@ -113,14 +113,15 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     gridbag.setConstraints(tLabel, gbc);
     bottom.add(tLabel);
 
-    waitLabel = new JLabel("  ");
-    waitLabel.setHorizontalTextPosition(JLabel.LEFT);
-    gbc.gridx = 0;
-    gbc.gridy = 4;
-    gbc.gridwidth = 3;
-    gbc.ipadx = 60;
-    gridbag.setConstraints(waitLabel, gbc);
-    bottom.add(waitLabel);
+
+//     waitLabel = new JLabel("  ");
+//     waitLabel.setHorizontalTextPosition(JLabel.LEFT);
+//     gbc.gridx = 0;
+//     gbc.gridy = 4;
+//     gbc.gridwidth = 3;
+//     gbc.ipadx = 60;
+//     gridbag.setConstraints(waitLabel, gbc);
+//     bottom.add(waitLabel);
 
     gbc.ipadx = 30;
 
@@ -258,10 +259,11 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
     // swap axes button
     JButton swapAxes= new JButton("Swap Axes");
-    if (!db.hasZ && !db.hasT) swapAxes.setEnabled(false);
+    if (!db.hasZ || !db.hasT) swapAxes.setEnabled(false);
     swapAxes.addActionListener(this);
     swapAxes.setActionCommand("swap");
-
+    
+    
     gbc.gridx = 0;
     gbc.gridy = 3;
     gbc.gridwidth = 2;
@@ -269,6 +271,27 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     gridbag.setConstraints(swapAxes, gbc);
     bottom.add(swapAxes);
 
+    // options button
+    JButton options = new JButton("Options...");
+    options.addActionListener(this);
+    options.setActionCommand("options");
+
+    gbc.gridx = 6;
+    gbc.gridy = 4;
+    gridbag.setConstraints(options, gbc);
+    bottom.add(options);
+
+    
+    progressBar = new JProgressBar();
+    progressBar.setStringPainted(true);
+    progressBar.setString(" ");
+    progressBar.setValue(0);
+    gbc.gridx = 1;
+    gbc.gridy = 4;
+    gbc.gridwidth = 1;
+    gridbag.setConstraints(progressBar, gbc);
+    bottom.add(progressBar);
+    
     // create enclosing JPanel (for 5-pixel border)
     JPanel pane = new JPanel() {
       public Dimension getMaximumSize() {
@@ -285,8 +308,10 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     add(pane);
 
     // repack to take extra panel into account
-    pack();
     c = db.numC == 2 ? 2 : 1;
+
+    pack();
+
     showSlice(z, t, c);
 
     // listen for arrow key presses
@@ -310,7 +335,9 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   /** selects and shows slice defined by index */
   public void showSlice(int index) {
     if (index >= 1 && index <= imp.getStackSize()) {
-      imp.setSlice(index);
+	synchronized (imp) {
+	    imp.setSlice(index);
+	}
       imp.updateAndDraw();
     }
     else if (LociDataBrowser.DEBUG) {
@@ -463,6 +490,11 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       frameRate.setEnabled(anim);
       repaint(); // redraw info string
     }
+    else if ("options".equals(cmd)) {
+	// pops up options menu
+	
+	OptionsWindow.popsup(this, zSliceSel.getMaximum(), tSliceSel.getMaximum());
+    }
     else if (src instanceof Timer) {
       boolean swapped = zString.equals(T_STRING);
       if (swapped) {
@@ -482,7 +514,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         animationTimer = new Timer(1000 / fps, this);
         animationTimer.start();
         animate.setText(STOP_STRING);
-        if (db.virtual) setIndices();
+        if (db.virtual) synchronized(imp) { setIndices(); }
       }
       else {
         animationTimer.stop();
@@ -491,18 +523,13 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       }
     }
   }
+    public void setCustomIndices(int z1, int z2, int t1, int t2) {
+	
+	
+    }
 
+    
   public synchronized void setIndices() {
-    thread = new Thread(this);
-    thread.start();
-  }
-
-  public void run() {
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        waitLabel.setText("Loading...");
-      }
-    });
     ImageStack is = imp.getStack();
     if (is instanceof VirtualStack) {
       boolean swapped = zString.equals(T_STRING);
@@ -517,20 +544,15 @@ public class CustomWindow extends ImageWindow implements ActionListener,
           System.err.print(indices[k]+" ");
           System.err.println();
         }
-        ((VirtualStack) is).setIndices(indices);
+        ((VirtualStack) is).setIndices(indices,progressBar);
       }
       else {
         int[] indices = new int[tSliceSel.getMaximum()-1];
         for (int k=0; k<indices.length; k++) {
           indices[k] = db.getIndex(z-1,k,c-1);
         }
-        ((VirtualStack) is).setIndices(indices);
+        ((VirtualStack) is).setIndices(indices,progressBar);
       }
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          waitLabel.setText(" ");
-        }
-      });
     }
   }
 
@@ -542,16 +564,16 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     if (src == zSliceSel) {
       z = zSliceSel.getValue();
       if (animate.getText().equals(STOP_STRING) && zString.equals(Z_STRING)) {
-        setIndices();
+	  setIndices();
       }
     }
     else if (src == tSliceSel) {
       t = tSliceSel.getValue();
       if (animate.getText().equals(STOP_STRING) && zString.equals(T_STRING)) {
-        setIndices();
+	  setIndices();
       }
     }
-    showSlice(z, t, c);
+    showSlice(z, t, c); 
   }
 
 
@@ -573,10 +595,11 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   // -- ItemListener methods --
 
-  public void itemStateChanged(ItemEvent e) {
+  public synchronized void itemStateChanged(ItemEvent e) {
     JCheckBox channels = (JCheckBox) e.getSource();
     c = channels.isSelected() ? 1 : 2;
-    if (db.virtual) setIndices();
+    
+    if (db.virtual) {setIndices();}
     showSlice(z, t, c);
   }
 
