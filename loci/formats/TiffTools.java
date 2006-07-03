@@ -319,7 +319,7 @@ public abstract class TiffTools {
     in.seek(globalOffset + offset);
     int numEntries = DataTools.read2UnsignedBytes(in, littleEndian);
     if (DEBUG) debug("getIFDs: " + numEntries + " directory entries to read");
-    if (numEntries == 0) return ifd;
+    if (numEntries == 0 || numEntries == 1) return ifd;
 
     for (int i=0; i<numEntries; i++) {
       in.seek(globalOffset + offset + 2 + 12 * i);
@@ -768,6 +768,90 @@ public abstract class TiffTools {
       temp = stripOffsets[0];
       stripOffsets = new long[1];
       stripOffsets[0] = temp;
+
+      if (bitsPerSample[0] == 0) bitsPerSample[0] = 8;
+
+      // we have two files that reverse the endianness for BitsPerSample,
+      // StripOffsets, and StripByteCounts
+    
+      if (bitsPerSample[0] > 64) {
+        byte[] bps = new byte[2];
+        byte[] stripOffs = new byte[4];
+        byte[] byteCounts = new byte[4];
+        if (littleEndian) {
+          bps[0] = (byte) (bitsPerSample[0] & 0xff);
+          bps[1] = (byte) ((bitsPerSample[0] >>> 8) & 0xff);
+          //bps[2] = (byte) ((bitsPerSample[0] >>> 16) & 0xff);
+          //bps[3] = (byte) ((bitsPerSample[0] >>> 24) & 0xff);
+
+          int ndx = stripOffsets.length - 1;
+
+          stripOffs[0] = (byte) (stripOffsets[ndx] & 0xff);
+          stripOffs[1] = (byte) ((stripOffsets[ndx] >>> 8) & 0xff);
+          stripOffs[2] = (byte) ((stripOffsets[ndx] >>> 16) & 0xff);
+          stripOffs[3] = (byte) ((stripOffsets[ndx] >>> 24) & 0xff);
+
+          ndx = stripByteCounts.length - 1;
+
+          byteCounts[0] = (byte) (stripByteCounts[ndx] & 0xff);
+          byteCounts[1] = (byte) ((stripByteCounts[ndx] >>> 8) & 0xff);
+          byteCounts[2] = (byte) ((stripByteCounts[ndx] >>> 16) & 0xff);
+          byteCounts[3] = (byte) ((stripByteCounts[ndx] >>> 24) & 0xff);
+        }
+        else {
+          //bps[3] = (byte) (bitsPerSample[0] & 0xff);
+          //bps[2] = (byte) ((bitsPerSample[0] >>> 8) & 0xff);
+          bps[1] = (byte) ((bitsPerSample[0] >>> 16) & 0xff);
+          bps[0] = (byte) ((bitsPerSample[0] >>> 24) & 0xff);
+
+          stripOffs[3] = (byte) (stripOffsets[0] & 0xff);
+          stripOffs[2] = (byte) ((stripOffsets[0] >>> 8) & 0xff);
+          stripOffs[1] = (byte) ((stripOffsets[0] >>> 16) & 0xff);
+          stripOffs[0] = (byte) ((stripOffsets[0] >>> 24) & 0xff);
+
+          byteCounts[3] = (byte) (stripByteCounts[0] & 0xff);
+          byteCounts[2] = (byte) ((stripByteCounts[0] >>> 8) & 0xff);
+          byteCounts[1] = (byte) ((stripByteCounts[0] >>> 16) & 0xff);
+          byteCounts[0] = (byte) ((stripByteCounts[0] >>> 24) & 0xff);
+        }
+
+        bitsPerSample[0] = DataTools.bytesToInt(bps, !littleEndian);
+        stripOffsets[0] = DataTools.bytesToInt(stripOffs, !littleEndian);
+        stripByteCounts[0] = DataTools.bytesToInt(byteCounts, !littleEndian);
+      }
+
+      if (rowsPerStripArray.length == 1 && stripByteCounts[0] != 
+        (imageWidth * imageLength * (bitsPerSample[0] / 8)) &&
+        compression == UNCOMPRESSED)
+      {
+        stripByteCounts[0] = imageWidth * imageLength * (bitsPerSample[0] / 8);
+        stripOffsets[0] = (int) (in.length() - stripByteCounts[0] - 
+          48 * imageWidth);
+        byte[] row = new byte[(int) imageWidth];
+        in.seek(stripOffsets[0]);
+        in.read(row);
+        boolean isZero = true;
+        for (int i=0; i<row.length; i++) {
+          if (row[i] != 0) {
+            isZero = false;
+            break;
+          }
+        }
+
+        while (isZero) {
+          stripOffsets[0] -= row.length;
+          in.seek(stripOffsets[0]);
+          in.read(row);
+          for (int i=0; i<row.length; i++) {
+            if (row[i] != 0) {
+              isZero = false;
+              stripOffsets[0] -= (stripByteCounts[0] - row.length);
+              break;
+            }
+          }
+        }
+
+      }
 
       for (int i=0; i<bitsPerSample.length; i++) {
         // case 1: we're still within bitsPerSample array bounds
