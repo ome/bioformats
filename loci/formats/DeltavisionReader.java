@@ -64,6 +64,25 @@ public class DeltavisionReader extends FormatReader {
   /** Bytes per pixel. */
   private int bytesPerPixel;
 
+  /** Offset where the ExtHdr starts */
+  protected int initExtHdrOffset = 1024;
+
+  /** Size of one wave, z section, or time element in the extended header */
+  protected int wSize;
+  protected int zSize;
+  protected int tSize;
+
+  protected int numT;
+  protected int numW;
+  protected int numZ;
+  /** the Number of ints in each extended header section. These fields appear
+   * to be all blank but need to be skipped to get to the floats afterwards
+   */
+  protected int numIntsPerSection;
+  protected int numFloatsPerSection;
+
+  /** Initialize an array of Extended Header Field structures */
+  DVExtHdrFields[][][] ExtHdrFields = null;
 
   // -- Constructor --
 
@@ -324,12 +343,95 @@ public class DeltavisionReader extends FormatReader {
       OMETools.setStageLabel(ome, null, x, y, z);
     }
 
+    String title;
     for (int i=1; i<=10; i++) {
-      metadata.put("Title " + i, new String(header, 224 + 80*(i-1), 80));
+      // Make sure that "null" characters are stripped out
+      title = new String(header, 224 + 80*(i-1), 80).replaceAll("\0", "");
+      metadata.put("Title " + i, title);
     }
+
     if (ome != null) {
       OMETools.setDescription(ome, (String) metadata.get("Title 1"));
     }
+
+    // ----- The Extended Header data handler begins here ------
+
+    numIntsPerSection = DataTools.bytesToInt(header, 128, 2, little);
+    numFloatsPerSection = DataTools.bytesToInt(header, 130, 2, little);
+    setOffsetInfo(sequence, numZ, numW, numT);
+    ExtHdrFields = new DVExtHdrFields[numZ][numW][numT];
+
+    // Run through every timeslice, for each wavelength, for each z section
+    // and fill in the Extended Header information array for that image
+    for (int z = 0; z < numZ; z++) {
+      for (int t = 0; t < numT; t++) {
+        for (int w = 0; w < numW; w++) {
+          ExtHdrFields[z][w][t] = new DVExtHdrFields(getTotalOffset(z,w,t), 
+              numIntsPerSection, extHeader, little);
+        }
+      }           
+    } 
+  }
+
+  /**
+   * This method calculates the size of a w, t, z section depending on which
+   * sequence is being used (either ZTW, WZT, or ZWT)
+   * @param imgSequence
+   * @param numZSections
+   * @param numWaves
+   * @param numTimes
+   */
+  private void setOffsetInfo(int imgSequence, int numZSections, 
+      int numWaves, int numTimes)
+  {
+    int smallOffset = (numIntsPerSection + numFloatsPerSection) * 4;
+    switch (imgSequence)
+    {
+    // ZTW sequence
+    case 0: zSize = smallOffset;
+    tSize = zSize * numZSections;
+    wSize = tSize * numTimes;
+    break;
+
+    // WZT sequence
+    case 1: wSize = smallOffset;
+    zSize = wSize * numWaves;
+    tSize = zSize * numZSections;
+    break;
+
+    // ZWT sequence
+    case 2: zSize = smallOffset;
+    wSize = zSize * numZSections;
+    tSize = wSize * numWaves;
+    break;
+    }
+  }
+
+  /**
+   * Given any specific Z, W, and T of a plane, determine the totalOffset from 
+   * the start of the extended header
+   * @param currentZ
+   * @param currentW
+   * @param currentT
+   * @return
+   */
+  public int getTotalOffset(int currentZ, int currentW, int currentT)
+  {
+    return (zSize * currentZ) + (wSize * currentW) + (tSize * currentT);
+  }
+
+  /**
+   * This method returns the a plane number from when given a Z, W 
+   * and T offsets
+   * @param currentZ
+   * @param currentW
+   * @param currentT
+   * @return
+   */
+  public int getPlaneNumber(int currentZ, int currentW, int currentT)
+  {
+    int smallOffset = (numIntsPerSection + numFloatsPerSection) * 4;
+    return getTotalOffset(currentZ, currentW, currentT) / smallOffset;
   }
 
   // -- Main method --
@@ -337,4 +439,229 @@ public class DeltavisionReader extends FormatReader {
   public static void main(String[] args) throws FormatException, IOException {
     new DeltavisionReader().testRead(args);
   }
+}
+
+/**
+ * This private class structure holds the details for the extended header
+ * @author Brian W. Loranger
+ *
+ */
+class DVExtHdrFields {
+
+  private int offsetWithInts;
+
+  private float ODFilter;
+  
+  //  Photosensor reading. Typically in mV.
+  private float photosensorReading;
+  //    Time stamp in seconds since the experiment began.
+  private float timeStampSeconds;
+  // X stage coordinates.
+  private float stageXCoord;
+  // Y stage coordinates.
+  private float stageYCoord;
+  // Z stage coordinates.
+  private float stageZCoord;
+  // Minimum intensity
+  private float minInten;
+  // Maxiumum intensity.
+  private float maxInten;
+  // Mean intesity.
+  private float meanInten;
+  // Exposure time in seconds.
+  private float expTime;
+  // Neutral density value.
+  private float ndFilter;
+  // Excitation filter number.
+  private float exFilter;
+  // Emiision filter number.
+  private float emFilter;
+  // Excitation filter wavelength.
+  private float exWavelen;
+  // Emission filter wavelength.
+  private float emWavelen;
+  // Intensity scaling factor. Usually 1.
+  private float intenScaling;
+  // Energy conversion factor. Usually 1.
+  private float energyConvFactor;
+
+  /* (non-Javadoc)
+   * @see java.lang.Object#toString()
+   * Helper function which overrides toString, printing out the values in 
+   * the header section.
+   */
+  public String toString()
+  {
+    String s = new String();
+
+    s+= "photosensorReading: " + photosensorReading + "\n";
+    s+= "timeStampSeconds: " + timeStampSeconds + "\n";
+    s+= "stageXCoord: " + stageXCoord + "\n";
+    s+= "stageYCoord: " + stageYCoord + "\n";
+    s+= "stageZCoord: " + stageZCoord + "\n";
+    s+= "minInten: " + minInten + "\n";
+    s+= "maxInten: " + maxInten + "\n";
+    s+= "meanInten: " + meanInten + "\n";
+    s+= "expTime: " + expTime + "\n";
+    s+= "ndFilter: " + ndFilter + "\n";
+    s+= "exFilter: " + exFilter + "\n";
+    s+= "emFilter: " + emFilter + "\n";
+    s+= "exWavelen: " + exWavelen + "\n";
+    s+= "emWavelen: " + emWavelen + "\n";
+    s+= "intenScaling: " + intenScaling + "\n";
+    s+= "energyConvFactor: " + energyConvFactor + "\n";
+
+    return s; 
+  }
+
+  /**
+   * Given the starting offset of a specific entry in the extended header
+   * this method will go through each element in the entry and fill each
+   * element's variable with its extended header value.
+   * @param startingOffset
+   * @param numIntsPerSection
+   * @param extHeader
+   * @param little
+   */
+  DVExtHdrFields(int startingOffset, int numIntsPerSection, 
+      byte[] extHeader, boolean little)
+      {
+    // skip over the int values that have nothing in them
+    offsetWithInts = startingOffset + (numIntsPerSection * 4);
+
+    // DV files store the ND (neuatral density) Filter (normally expressed as
+    // a %T (transmittance)) as an OD (optical density) rating. To convert from
+    // one to the other the formula is %T = 10^(-OD) X 100.
+    ODFilter = Float.intBitsToFloat(
+        DataTools.bytesToInt(extHeader, offsetWithInts + 36, 4, little));
+
+    // fill in the extended header information for the floats
+    photosensorReading = 
+      Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts, 4, little));
+    timeStampSeconds = 
+      Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 4, 4, little));
+    stageXCoord = 
+      Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 8, 4, little));
+    stageYCoord = 
+      Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 12, 4, little));
+    stageZCoord = 
+      Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 16, 4, little));
+    minInten = 
+      Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 20, 4, little));
+    maxInten = 
+      Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 24, 4, little));
+    meanInten = 
+      Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 28, 4, little));
+    expTime = 
+      Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 32, 4, little));
+    ndFilter = (float) java.lang.Math.pow(10.0, -ODFilter);
+    exFilter = 
+      Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 40, 4, little));
+    emFilter = 
+      Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 44, 4, little));
+    exWavelen = 
+      Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 48, 4, little));
+    emWavelen = 
+      Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 52, 4, little));
+    intenScaling = 
+      Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 56, 4, little));
+    energyConvFactor = 
+      Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 60, 4, little));    
+      }
+
+  
+  /**
+   * Various getters for the Extended header fields.
+   * @return
+   */
+  public float getPhotosensorReading()
+  {
+    return photosensorReading;
+  }
+
+  public float getTimeStampSeconds()
+  {
+    return timeStampSeconds;
+  }
+
+  public float getStageXCoord()
+  {
+    return stageXCoord;
+  }
+
+  public float getStageYCoord()
+  {
+    return stageYCoord;
+  }
+
+  public float getStageZCoord()
+  {
+    return stageZCoord;
+  }      
+
+  public float getMinInten()
+  {
+    return minInten;
+  }
+
+  public float getMaxInten()
+  {
+    return maxInten;
+  }
+
+  public float getMeanInten()
+  {
+    return meanInten;
+  }
+
+  public float getExpTime()
+  {
+    return expTime;
+  }
+
+  public float getNdFilter()
+  {
+    return ndFilter;
+  }
+
+  public float getExFilter()
+  {
+    return exFilter;
+  }
+
+  public float getEmFilter()
+  {
+    return emFilter;
+  }
+
+  public float getExWavelen()
+  {
+    return exWavelen;
+  }
+
+  public float getEmWavelen()
+  {
+    return emWavelen;
+  }
+
+  public float getIntenScaling()
+  {
+    return intenScaling;
+  }
+
 }
