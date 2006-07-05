@@ -414,7 +414,7 @@ public class BioRadReader extends FormatReader {
     String fmt;
     if (type == 1) fmt = "Uint8";
     else fmt = "Uint16";
-    
+
     String dimOrder = "XY";
     int[] dims = new int[] {sizeZ, sizeC, sizeT};
     int max = 0;

@@ -37,7 +37,6 @@ public class DeltavisionReader extends FormatReader {
 
   private static final short LITTLE_ENDIAN = -16224;
 
-
   // -- Fields --
 
   /** Current file. */
@@ -75,14 +74,16 @@ public class DeltavisionReader extends FormatReader {
   protected int numT;
   protected int numW;
   protected int numZ;
-  /** the Number of ints in each extended header section. These fields appear
+
+  /**
+   * the Number of ints in each extended header section. These fields appear
    * to be all blank but need to be skipped to get to the floats afterwards
    */
   protected int numIntsPerSection;
   protected int numFloatsPerSection;
 
   /** Initialize an array of Extended Header Field structures */
-  DVExtHdrFields[][][] ExtHdrFields = null;
+  protected DVExtHdrFields[][][] extHdrFields = null;
 
   // -- Constructor --
 
@@ -288,9 +289,9 @@ public class DeltavisionReader extends FormatReader {
     metadata.put("Wavelength 5 max. intensity", new Float(Float.intBitsToFloat(
       DataTools.bytesToInt(header, 176, 4, little))));
 
-    int numT = DataTools.bytesToShort(header, 180, 2, little);
-    metadata.put("Number of timepoints", new Integer(numT));
-    if (ome != null) OMETools.setSizeT(ome, numT);
+    int nt = DataTools.bytesToShort(header, 180, 2, little);
+    metadata.put("Number of timepoints", new Integer(nt));
+    if (ome != null) OMETools.setSizeT(ome, nt);
 
     int sequence = DataTools.bytesToInt(header, 182, 4, little);
     String imageSequence;
@@ -311,12 +312,12 @@ public class DeltavisionReader extends FormatReader {
     metadata.put("Z axis tilt angle", new Float(Float.intBitsToFloat(
       DataTools.bytesToInt(header, 192, 4, little))));
 
-    int numW = DataTools.bytesToShort(header, 196, 2, little);
-    metadata.put("Number of wavelengths", new Integer(numW));
-    if (ome != null) OMETools.setSizeC(ome, numW);
-    int numZ = numImages / (numW * numT);
-    metadata.put("Number of focal planes", new Integer(numZ));
-    if (ome != null) OMETools.setSizeZ(ome, numZ);
+    int nw = DataTools.bytesToShort(header, 196, 2, little);
+    metadata.put("Number of wavelengths", new Integer(nw));
+    if (ome != null) OMETools.setSizeC(ome, nw);
+    int nz = numImages / (nw * nt);
+    metadata.put("Number of focal planes", new Integer(nz));
+    if (ome != null) OMETools.setSizeZ(ome, nz);
 
     metadata.put("Wavelength 1 (in nm)", new Integer(DataTools.bytesToShort(
       header, 198, 2, little)));
@@ -359,18 +360,18 @@ public class DeltavisionReader extends FormatReader {
     numIntsPerSection = DataTools.bytesToInt(header, 128, 2, little);
     numFloatsPerSection = DataTools.bytesToInt(header, 130, 2, little);
     setOffsetInfo(sequence, numZ, numW, numT);
-    ExtHdrFields = new DVExtHdrFields[numZ][numW][numT];
+    extHdrFields = new DVExtHdrFields[numZ][numW][numT];
 
     // Run through every timeslice, for each wavelength, for each z section
     // and fill in the Extended Header information array for that image
     for (int z = 0; z < numZ; z++) {
       for (int t = 0; t < numT; t++) {
         for (int w = 0; w < numW; w++) {
-          ExtHdrFields[z][w][t] = new DVExtHdrFields(getTotalOffset(z,w,t), 
+          extHdrFields[z][w][t] = new DVExtHdrFields(getTotalOffset(z,w,t),
               numIntsPerSection, extHeader, little);
         }
-      }           
-    } 
+      }
+    }
   }
 
   /**
@@ -381,7 +382,7 @@ public class DeltavisionReader extends FormatReader {
    * @param numWaves
    * @param numTimes
    */
-  private void setOffsetInfo(int imgSequence, int numZSections, 
+  private void setOffsetInfo(int imgSequence, int numZSections,
       int numWaves, int numTimes)
   {
     int smallOffset = (numIntsPerSection + numFloatsPerSection) * 4;
@@ -408,7 +409,7 @@ public class DeltavisionReader extends FormatReader {
   }
 
   /**
-   * Given any specific Z, W, and T of a plane, determine the totalOffset from 
+   * Given any specific Z, W, and T of a plane, determine the totalOffset from
    * the start of the extended header
    * @param currentZ
    * @param currentW
@@ -421,7 +422,7 @@ public class DeltavisionReader extends FormatReader {
   }
 
   /**
-   * This method returns the a plane number from when given a Z, W 
+   * This method returns the a plane number from when given a Z, W
    * and T offsets
    * @param currentZ
    * @param currentW
@@ -434,234 +435,178 @@ public class DeltavisionReader extends FormatReader {
     return getTotalOffset(currentZ, currentW, currentT) / smallOffset;
   }
 
+
+  /**
+   * This private class structure holds the details for the extended header
+   * @author Brian W. Loranger
+   *
+   */
+  private class DVExtHdrFields {
+
+    private int offsetWithInts;
+
+    private float oDFilter;
+
+    //  Photosensor reading. Typically in mV.
+    private float photosensorReading;
+    //    Time stamp in seconds since the experiment began.
+    private float timeStampSeconds;
+    // X stage coordinates.
+    private float stageXCoord;
+    // Y stage coordinates.
+    private float stageYCoord;
+    // Z stage coordinates.
+    private float stageZCoord;
+    // Minimum intensity
+    private float minInten;
+    // Maxiumum intensity.
+    private float maxInten;
+    // Mean intesity.
+    private float meanInten;
+    // Exposure time in seconds.
+    private float expTime;
+    // Neutral density value.
+    private float ndFilter;
+    // Excitation filter number.
+    private float exFilter;
+    // Emiision filter number.
+    private float emFilter;
+    // Excitation filter wavelength.
+    private float exWavelen;
+    // Emission filter wavelength.
+    private float emWavelen;
+    // Intensity scaling factor. Usually 1.
+    private float intenScaling;
+    // Energy conversion factor. Usually 1.
+    private float energyConvFactor;
+
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#toString()
+     * Helper function which overrides toString, printing out the values in
+     * the header section.
+     */
+    public String toString() {
+      String s = new String();
+
+      s += "photosensorReading: " + photosensorReading + "\n";
+      s += "timeStampSeconds: " + timeStampSeconds + "\n";
+      s += "stageXCoord: " + stageXCoord + "\n";
+      s += "stageYCoord: " + stageYCoord + "\n";
+      s += "stageZCoord: " + stageZCoord + "\n";
+      s += "minInten: " + minInten + "\n";
+      s += "maxInten: " + maxInten + "\n";
+      s += "meanInten: " + meanInten + "\n";
+      s += "expTime: " + expTime + "\n";
+      s += "ndFilter: " + ndFilter + "\n";
+      s += "exFilter: " + exFilter + "\n";
+      s += "emFilter: " + emFilter + "\n";
+      s += "exWavelen: " + exWavelen + "\n";
+      s += "emWavelen: " + emWavelen + "\n";
+      s += "intenScaling: " + intenScaling + "\n";
+      s += "energyConvFactor: " + energyConvFactor + "\n";
+
+      return s;
+    }
+
+    /**
+     * Given the starting offset of a specific entry in the extended header
+     * this method will go through each element in the entry and fill each
+     * element's variable with its extended header value.
+     * @param startingOffset
+     * @param numIntsPerSection
+     * @param extHeader
+     * @param little
+     */
+    protected DVExtHdrFields(int startingOffset, int numIntsPerSection,
+      byte[] extHeader, boolean little)
+    {
+      // skip over the int values that have nothing in them
+      offsetWithInts = startingOffset + (numIntsPerSection * 4);
+
+      // DV files store the ND (neuatral density) Filter (normally expressed as
+      // a %T (transmittance)) as an OD (optical density) rating.
+      // To convert from one to the other the formula is %T = 10^(-OD) X 100.
+      oDFilter = Float.intBitsToFloat(
+        DataTools.bytesToInt(extHeader, offsetWithInts + 36, 4, little));
+
+      // fill in the extended header information for the floats
+      photosensorReading =
+        Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts, 4, little));
+      timeStampSeconds =
+        Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 4, 4, little));
+      stageXCoord =
+        Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 8, 4, little));
+      stageYCoord =
+        Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 12, 4, little));
+      stageZCoord =
+        Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 16, 4, little));
+      minInten =
+        Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 20, 4, little));
+      maxInten =
+        Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 24, 4, little));
+      meanInten =
+        Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 28, 4, little));
+      expTime =
+        Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 32, 4, little));
+      ndFilter = (float) java.lang.Math.pow(10.0, -oDFilter);
+      exFilter =
+        Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 40, 4, little));
+      emFilter =
+        Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 44, 4, little));
+      exWavelen =
+        Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 48, 4, little));
+      emWavelen =
+        Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 52, 4, little));
+      intenScaling =
+        Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 56, 4, little));
+      energyConvFactor =
+        Float.intBitsToFloat(
+          DataTools.bytesToInt(extHeader, offsetWithInts + 60, 4, little));
+    }
+
+
+    /**
+     * Various getters for the Extended header fields.
+     * @return
+     */
+    public float getPhotosensorReading() { return photosensorReading; }
+    public float getTimeStampSeconds() { return timeStampSeconds; }
+    public float getStageXCoord() { return stageXCoord; }
+    public float getStageYCoord() { return stageYCoord; }
+    public float getStageZCoord() { return stageZCoord; }
+    public float getMinInten() { return minInten; }
+    public float getMaxInten() { return maxInten; }
+    public float getMeanInten() { return meanInten; }
+    public float getExpTime() { return expTime; }
+    public float getNdFilter() { return ndFilter; }
+    public float getExFilter() { return exFilter; }
+    public float getEmFilter() { return emFilter; }
+    public float getExWavelen() { return exWavelen; }
+    public float getEmWavelen() { return emWavelen; }
+    public float getIntenScaling() { return intenScaling; }
+
+}
+
+
+
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {
     new DeltavisionReader().testRead(args);
   }
-}
-
-/**
- * This private class structure holds the details for the extended header
- * @author Brian W. Loranger
- *
- */
-class DVExtHdrFields {
-
-  private int offsetWithInts;
-
-  private float ODFilter;
-  
-  //  Photosensor reading. Typically in mV.
-  private float photosensorReading;
-  //    Time stamp in seconds since the experiment began.
-  private float timeStampSeconds;
-  // X stage coordinates.
-  private float stageXCoord;
-  // Y stage coordinates.
-  private float stageYCoord;
-  // Z stage coordinates.
-  private float stageZCoord;
-  // Minimum intensity
-  private float minInten;
-  // Maxiumum intensity.
-  private float maxInten;
-  // Mean intesity.
-  private float meanInten;
-  // Exposure time in seconds.
-  private float expTime;
-  // Neutral density value.
-  private float ndFilter;
-  // Excitation filter number.
-  private float exFilter;
-  // Emiision filter number.
-  private float emFilter;
-  // Excitation filter wavelength.
-  private float exWavelen;
-  // Emission filter wavelength.
-  private float emWavelen;
-  // Intensity scaling factor. Usually 1.
-  private float intenScaling;
-  // Energy conversion factor. Usually 1.
-  private float energyConvFactor;
-
-  /* (non-Javadoc)
-   * @see java.lang.Object#toString()
-   * Helper function which overrides toString, printing out the values in 
-   * the header section.
-   */
-  public String toString()
-  {
-    String s = new String();
-
-    s+= "photosensorReading: " + photosensorReading + "\n";
-    s+= "timeStampSeconds: " + timeStampSeconds + "\n";
-    s+= "stageXCoord: " + stageXCoord + "\n";
-    s+= "stageYCoord: " + stageYCoord + "\n";
-    s+= "stageZCoord: " + stageZCoord + "\n";
-    s+= "minInten: " + minInten + "\n";
-    s+= "maxInten: " + maxInten + "\n";
-    s+= "meanInten: " + meanInten + "\n";
-    s+= "expTime: " + expTime + "\n";
-    s+= "ndFilter: " + ndFilter + "\n";
-    s+= "exFilter: " + exFilter + "\n";
-    s+= "emFilter: " + emFilter + "\n";
-    s+= "exWavelen: " + exWavelen + "\n";
-    s+= "emWavelen: " + emWavelen + "\n";
-    s+= "intenScaling: " + intenScaling + "\n";
-    s+= "energyConvFactor: " + energyConvFactor + "\n";
-
-    return s; 
-  }
-
-  /**
-   * Given the starting offset of a specific entry in the extended header
-   * this method will go through each element in the entry and fill each
-   * element's variable with its extended header value.
-   * @param startingOffset
-   * @param numIntsPerSection
-   * @param extHeader
-   * @param little
-   */
-  DVExtHdrFields(int startingOffset, int numIntsPerSection, 
-      byte[] extHeader, boolean little)
-      {
-    // skip over the int values that have nothing in them
-    offsetWithInts = startingOffset + (numIntsPerSection * 4);
-
-    // DV files store the ND (neuatral density) Filter (normally expressed as
-    // a %T (transmittance)) as an OD (optical density) rating. To convert from
-    // one to the other the formula is %T = 10^(-OD) X 100.
-    ODFilter = Float.intBitsToFloat(
-        DataTools.bytesToInt(extHeader, offsetWithInts + 36, 4, little));
-
-    // fill in the extended header information for the floats
-    photosensorReading = 
-      Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts, 4, little));
-    timeStampSeconds = 
-      Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 4, 4, little));
-    stageXCoord = 
-      Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 8, 4, little));
-    stageYCoord = 
-      Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 12, 4, little));
-    stageZCoord = 
-      Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 16, 4, little));
-    minInten = 
-      Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 20, 4, little));
-    maxInten = 
-      Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 24, 4, little));
-    meanInten = 
-      Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 28, 4, little));
-    expTime = 
-      Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 32, 4, little));
-    ndFilter = (float) java.lang.Math.pow(10.0, -ODFilter);
-    exFilter = 
-      Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 40, 4, little));
-    emFilter = 
-      Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 44, 4, little));
-    exWavelen = 
-      Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 48, 4, little));
-    emWavelen = 
-      Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 52, 4, little));
-    intenScaling = 
-      Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 56, 4, little));
-    energyConvFactor = 
-      Float.intBitsToFloat(
-          DataTools.bytesToInt(extHeader, offsetWithInts + 60, 4, little));    
-      }
-
-  
-  /**
-   * Various getters for the Extended header fields.
-   * @return
-   */
-  public float getPhotosensorReading()
-  {
-    return photosensorReading;
-  }
-
-  public float getTimeStampSeconds()
-  {
-    return timeStampSeconds;
-  }
-
-  public float getStageXCoord()
-  {
-    return stageXCoord;
-  }
-
-  public float getStageYCoord()
-  {
-    return stageYCoord;
-  }
-
-  public float getStageZCoord()
-  {
-    return stageZCoord;
-  }      
-
-  public float getMinInten()
-  {
-    return minInten;
-  }
-
-  public float getMaxInten()
-  {
-    return maxInten;
-  }
-
-  public float getMeanInten()
-  {
-    return meanInten;
-  }
-
-  public float getExpTime()
-  {
-    return expTime;
-  }
-
-  public float getNdFilter()
-  {
-    return ndFilter;
-  }
-
-  public float getExFilter()
-  {
-    return exFilter;
-  }
-
-  public float getEmFilter()
-  {
-    return emFilter;
-  }
-
-  public float getExWavelen()
-  {
-    return exWavelen;
-  }
-
-  public float getEmWavelen()
-  {
-    return emWavelen;
-  }
-
-  public float getIntenScaling()
-  {
-    return intenScaling;
-  }
-
 }

@@ -189,15 +189,15 @@ public class PictReader extends FormatReader {
     bytes = new byte[len];
     in.skipBytes(512);
     in.read(bytes);
-  
+
     if (ome != null) {
       byte[] b = new byte[20];
       in.seek(512);
       in.read(b);
       Dimension d = getDimensions(b);
-      OMETools.setPixels(ome, 
+      OMETools.setPixels(ome,
         new Integer((int) d.getWidth()), new Integer((int) d.getHeight()),
-        new Integer(1), new Integer(3), new Integer(1), "int8", 
+        new Integer(1), new Integer(3), new Integer(1), "int8",
         new Boolean(!little), "XYCZT");
     }
   }

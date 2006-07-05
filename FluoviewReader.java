@@ -361,9 +361,9 @@ public class FluoviewReader extends BaseTiffReader {
       numChannels = sizeC;
 
       // set the dimension order
- 
+
       String order = "XY";
-     
+
       int[] dims = new int[] {sizeZ, sizeC, sizeT};
       int max = 0;
       int median = 1;

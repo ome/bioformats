@@ -115,7 +115,7 @@ public class LociExporter implements PlugInFilter, ItemListener {
         gd.addChoice("Available compression types", types, types[0]);
         gd.showDialog();
         w2.setCompression(gd.getNextChoice());
-      } 
+      }
 
       if (imp == null) return;
 

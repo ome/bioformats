@@ -14,8 +14,6 @@ ImageJ:
 * get ImageJ plugins (Bio-Formats, OME, Data Browser) to play nicely together
 
 API/Other:
-* if separated == false, we should always merge channels, even if they are
-  stored separately within the file
 * improve efficiency of BufferedImage construction and harvesting pixels from a
   BufferedImage
 
@@ -26,4 +24,3 @@ http://cvs.openmicroscopy.org.uk/tiki/tiki-index.php?page=Bio-Formats+Import+Dis
   * for OME-perl, transmit pixels to OMEIS via HTTP, then pass OME-XML to perl
     API for actual import (need to provide OMEIS image ID or whatever within
     the XML?)
-  * for OMERO, Bio-Formats API called directly by OMERO import engine 

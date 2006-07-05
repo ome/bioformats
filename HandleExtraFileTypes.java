@@ -2,7 +2,7 @@ import ij.*;
 import ij.plugin.*;
 import java.io.*;
 
-// Plugin to handle file types which are not implemented 
+// Plugin to handle file types which are not implemented
 // directly in ImageJ through io.Opener
 // nb since there is no _ in the name it will not appear in Plugins menu
 // -----
@@ -11,7 +11,7 @@ import java.io.*;
 // OR by drag and drop onto the ImageJ main panel
 // OR by double clicking in the MacOS 9/X Finder
 // -----
-// Go to the point marked MODIFY HERE and modify to 
+// Go to the point marked MODIFY HERE and modify to
 // recognise and load your own file type
 // I have implemented two file types as examples:
 // 	Biorad PIC and Gatan DM3
@@ -22,7 +22,7 @@ import java.io.*;
 public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
 	static final int IMAGE_OPENED=-1;
 	static final int PLUGIN_NOT_FOUND=-1;
-	
+
 	// Called from io/Opener.java
 	public void run(String path) {
 		if (IJ.versionLessThan("1.30u")) return;
@@ -31,10 +31,10 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
 		String directory = theFile.getParent();
 		String fileName = theFile.getName();
 		if (directory==null) directory = "";
-		
+
 		// Try and recognise file type and load the file if recognised
 		ImagePlus imp=openImage(directory,fileName);
-		if (imp==null) {			
+		if (imp==null) {
 			// failed to load file or plugin has opened and displayed it
 			IJ.showStatus("");
 			return;  // failed to load file or plugin has opened and displayed it
@@ -50,7 +50,7 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
 			setProperty("Info",imp.getProperty("Info"));
 		// Copy over the FileInfo
 		setFileInfo(imp.getOriginalFileInfo());
-	}  
+	}
 
 	private ImagePlus openImage(String directory, String name) {
 		ImagePlus imp = null;
@@ -79,8 +79,8 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
 		}
 		name = name.toLowerCase();
 
-		// OK now we get to the interesting bit 
-		
+		// OK now we get to the interesting bit
+
 		// GJ: added Biorad PIC confocal file handler
 		// Note that the Biorad_Reader plugin extends the ImagePlus class,
 		// which is why the IJ.runPlugIn() call below returns an ImagePlus object.
@@ -88,14 +88,14 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
 		// These make 12345 if you read them as the right kind of short
 		// and should have this value in every Biorad PIC file
 		if(buf[54]==57 && buf[55]==48) {
-                        // Ok we've identified the file type 
+                        // Ok we've identified the file type
 		        // Now load it using the relevant plugin
 		       	imp = (ImagePlus)IJ.runPlugIn("Biorad_Reader", path);
                         if (imp==null) width = PLUGIN_NOT_FOUND;
 		        if (imp!=null&&imp.getWidth()==0) imp = null;
 		        o = imp;
                 }
-		
+
 		// GJ: added Gatan Digital Micrograph DM3 handler
 		// Note that the DM3_Reader plugin extends the ImagePlus class,
 		// which is why the IJ.runPlugIn() call below returns an ImagePlus object.
@@ -119,14 +119,14 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
                         // Open Analyze image and display it
 		       	o = IJ.runPlugIn("Analyze_Reader", path);
 		       	// Set flag so Opener.openImage() does not display error
-		       	width = IMAGE_OPENED; 
-                }        
+		       	width = IMAGE_OPENED;
+                }
 
 		// IPLab file handler
 		// Note that the IPLab_Reader plugin extends the ImagePlus class.
 		// Little-endian IPLab files start with "iiii" or "mmmm".
 		if ((buf[0]==105&& buf[1]==105&&buf[2]==105&&buf[3]==105)
-        		|| (buf[0]==109&& buf[1]==109&&buf[2]==109&&buf[3]==109)) 
+        		|| (buf[0]==109&& buf[1]==109&&buf[2]==109&&buf[3]==109))
                 {
 		        imp = (ImagePlus)IJ.runPlugIn("IPLab_Reader", path);
 		        if (imp==null) width = PLUGIN_NOT_FOUND;
@@ -142,7 +142,7 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
 		        if (imp==null) width = PLUGIN_NOT_FOUND;
 		       	if (imp!=null&&imp.getWidth()==0) imp = null;
 		       	o = imp;
-                }        
+                }
 
 		// Analyze format (.img/.hdr) handler
 		// Note that the Analyze_Reader plugin opens and displays the
@@ -151,8 +151,8 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
                         // Open Analyze image and display it
 		       	o = IJ.runPlugIn("Analyze_Reader", path);
 		       	// Set flag so Opener.openImage() does not display error
-		       	width = IMAGE_OPENED; 
-                }        
+		       	width = IMAGE_OPENED;
+                }
 
 		// Image Cytometry Standard (.ics) handler
 		// http://valelab.ucsf.edu/~nico/IJplugins/Ics_Opener.html
@@ -160,8 +160,8 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
 		        // Open ICS image and display it
 		        o = IJ.runPlugIn("Ics_Opener", path);
         		// Set flag so Opener.openImage() does not display error
-	        	width = IMAGE_OPENED; 
-                }        
+	        	width = IMAGE_OPENED;
+                }
 
 		//  Princeton Instruments SPE image file (.spe) handler
 		//  http://rsb.info.nih.gov/ij/plugins/spe.html
@@ -169,8 +169,8 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
 		        // Open SPEimage and display it
         		o = IJ.runPlugIn("OpenSPE_", path);
 	        	// Set flag so Opener.openImage() does not display error
-		       	width = IMAGE_OPENED; 
-                }        
+		       	width = IMAGE_OPENED;
+                }
 
 		//  Zeiss Confocal LSM 510 image file (.lsm) handler
 		//  http://rsb.info.nih.gov/ij/plugins/lsm-reader.html
@@ -180,7 +180,7 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
                 }
 
 		// BM: added Bruker  file handler 29.07.04
-		if (name.equals("ser") || name.equals("fid") || name.equals("2rr") || name.equals("2ii") || name.equals("3rrr") 
+		if (name.equals("ser") || name.equals("fid") || name.equals("2rr") || name.equals("2ii") || name.equals("3rrr")
 		|| name.equals("3iii") || name.equals("2dseq")) {
                         ij.IJ.showStatus("Opening Bruker " + name + " File");
 		        o = IJ.runPlugIn("BrukerOpener", name + "|" + path);
@@ -207,7 +207,7 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
 		}
 
 		//University of North Carolina (UNC) file format handler
-		// 'magic' numbers are (int) offsets to data structures and may change in future releases. 
+		// 'magic' numbers are (int) offsets to data structures and may change in future releases.
 		if (name.endsWith(".unc") || (buf[3]==117&&buf[7]==-127&&buf[11]==36&&buf[14]==32&&buf[15]==-127)) {
                       o = IJ.runPlugIn("UNC_Reader", path);
                       width = IMAGE_OPENED;
@@ -215,11 +215,11 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
 
 		// ****************** MODIFY HERE ******************
 		// Do what ever you have to do to recognise your own file type
-		// and then call appropriate plugin 
-		// using the above as models 
+		// and then call appropriate plugin
+		// using the above as models
 		// eg:
-		
-		/* 
+
+		/*
 		// A. Dent: Added XYZ handler
 		// ----------------------------------------------
 		// Check if the file ends in .XYZ or .xyz

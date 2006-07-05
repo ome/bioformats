@@ -521,7 +521,7 @@ public class ZeissLSMReader extends BaseTiffReader {
       // thumbnail is counted as an extra channel, but since we strip out the
       // thumbnails, we need to correct the channel count
       while (zSize * cSize * tSize != numImages) {
-        cSize--;   
+        cSize--;
       }
 
       channels = cSize;
