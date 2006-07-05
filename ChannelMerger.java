@@ -70,10 +70,10 @@ public class ChannelMerger extends FormatReader {
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
 
-    int originalImages = reader.getImageCount(id);
+    int originalImages = readerImages;
 
     if (canMerge(id)) {
-      int channels = getChannelCount(id);
+      int channels = ourImages;
       if (channels > 3) originalImages /= 3;
       else originalImages /= channels;
     }
@@ -178,13 +178,25 @@ public class ChannelMerger extends FormatReader {
     currentId = id;
 
     Object root = reader.getOMENode(id);
-    order = OMETools.getDimensionOrder(root);
+    try {
+      order = OMETools.getDimensionOrder(root);
+    }
+    catch (Exception e) {
+      order = "XYZCT";
+    }
 
     dimensions = new int[3];
-    dimensions[0] = ((Integer) OMETools.getSizeZ(root)).intValue();
-    dimensions[1] = ((Integer) OMETools.getSizeC(root)).intValue();
-    dimensions[2] = ((Integer) OMETools.getSizeT(root)).intValue();
-  
+    try {
+      dimensions[0] = ((Integer) OMETools.getSizeZ(root)).intValue();
+      dimensions[1] = ((Integer) OMETools.getSizeC(root)).intValue();
+      dimensions[2] = ((Integer) OMETools.getSizeT(root)).intValue();
+    }
+    catch (Exception e) {
+      for (int i=0; i<dimensions.length; i++) {
+        if (dimensions[i] == 0) dimensions[i] = 1;
+      }
+    }
+
     ourImages = getImageCount(id);
     readerImages = reader.getImageCount(id);
   }
