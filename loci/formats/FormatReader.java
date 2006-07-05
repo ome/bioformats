@@ -223,13 +223,14 @@ public abstract class FormatReader extends FormatHandler {
     if (pixels) {
       System.out.print("Reading " + id + " pixel data ");
       long s1 = System.currentTimeMillis();
-      int num = getTotalImageCount(args[0]);
+      ChannelMerger cm = new ChannelMerger(this);
+      int num = cm.getTotalImageCount(args[0]);
       System.out.print("(" + num + ") ");
       long e1 = System.currentTimeMillis();
       BufferedImage[] images = new BufferedImage[num];
       long s2 = System.currentTimeMillis();
       for (int i=0; i<num; i++) {
-        images[i] = openStitchedImage(args[0], i);
+        images[i] = cm.openStitchedImage(args[0], i);
         System.out.print(".");
       }
       long e2 = System.currentTimeMillis();
