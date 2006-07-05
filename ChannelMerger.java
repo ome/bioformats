@@ -41,6 +41,15 @@ public class ChannelMerger extends FormatReader {
   /** The Z, C, and T dimensions. */
   private int[] dimensions;
 
+  /** Number of planes between channels. */
+  private int between;
+  
+  /** Number of images reported by reader. */
+  private int readerImages;
+
+  /** Number of images reported by ChannelMerger. */
+  private int ourImages;
+  
   // -- Constructors --
 
   /** Constructs a ChannelMerger with the given reader. */
@@ -91,7 +100,9 @@ public class ChannelMerger extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
+    long t0 = System.currentTimeMillis();
     int[] nos = translateVirtual(no, id);
+    long t1 = System.currentTimeMillis();
 
     int size = nos.length;
     if (size != 1 && size != 3 && size != 4) size = 3;
@@ -164,6 +175,7 @@ public class ChannelMerger extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException
   {
     reader.initFile(id);
+    currentId = id;
 
     Object root = reader.getOMENode(id);
     order = OMETools.getDimensionOrder(root);
@@ -172,6 +184,9 @@ public class ChannelMerger extends FormatReader {
     dimensions[0] = ((Integer) OMETools.getSizeZ(root)).intValue();
     dimensions[1] = ((Integer) OMETools.getSizeC(root)).intValue();
     dimensions[2] = ((Integer) OMETools.getSizeT(root)).intValue();
+  
+    ourImages = getImageCount(id);
+    readerImages = reader.getImageCount(id);
   }
 
   /**
@@ -181,7 +196,7 @@ public class ChannelMerger extends FormatReader {
   private int[] translateVirtual(int plane, String id)
     throws FormatException, IOException
   {
-    int[] real = new int[reader.getImageCount(id) / getImageCount(id)];
+    int[] real = new int[readerImages / ourImages];
 
     while (order.length() > 3) order = order.substring(1);
 
@@ -193,16 +208,18 @@ public class ChannelMerger extends FormatReader {
     else {
       // determine the number of planes between channels
 
-      int between = 1;
-      if (order.charAt(0) == 'Z' || order.charAt(1) == 'Z') {
-        between *= dimensions[0];
-      }
-      if (order.charAt(0) == 'T' || order.charAt(1) == 'T') {
-        between *= dimensions[2];
-      }
+      if (between == 0) {
+        between = 1;
+        if (order.charAt(0) == 'Z' || order.charAt(1) == 'Z') {
+          between *= dimensions[0];
+        }
+        if (order.charAt(0) == 'T' || order.charAt(1) == 'T') {
+          between *= dimensions[2];
+        }
 
-      for (int i=0; i<real.length; i++) {
-        real[i] = plane + between * i;
+        for (int i=0; i<real.length; i++) {
+          real[i] = plane + between * i;
+        }
       }
     }
 
