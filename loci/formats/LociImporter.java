@@ -114,14 +114,15 @@ public class LociImporter implements PlugIn, ItemListener {
     IJ.showStatus("Opening " + fileName);
     try {
       FormatReader r = reader.getReader(id);
-      r.setSeparated(!mergeChannels);
+      ChannelMerger cm = new ChannelMerger(r);
+      cm.setSeparated(!mergeChannels);
       int num = 0;
-      if (stitchFiles) num = r.getTotalImageCount(id);
-      else num = reader.getImageCount(id);
+      if (stitchFiles) num = cm.getTotalImageCount(id);
+      else num = cm.getImageCount(id);
       ImageStack stackB = null, stackS = null, stackF = null, stackO = null;
       long start = System.currentTimeMillis();
       long time = start;
-      int channels = reader.getChannelCount(id);
+      int channels = cm.getChannelCount(id);
 
       for (int i=0; i<num; i++) {
         // limit message update rate
@@ -132,8 +133,8 @@ public class LociImporter implements PlugIn, ItemListener {
         }
         IJ.showProgress((double) i / num);
         BufferedImage img = null;
-        if (stitchFiles) img = r.openStitchedImage(id, i);
-        else img = reader.openImage(id, i);
+        if (stitchFiles) img = cm.openStitchedImage(id, i);
+        else img = cm.openImage(id, i);
 
         ImageProcessor ip = null;
         WritableRaster raster = img.getRaster();
@@ -229,7 +230,7 @@ public class LociImporter implements PlugIn, ItemListener {
     }
 
     for (int i=1; i<=is.getSize(); i+=c) {
-      for (int j=1; j<=c; j++) {
+      for (int j=0; j<c; j++) {
         newStacks[j].addSlice(is.getSliceLabel(i+j), is.getProcessor(i+j));
       }
     }

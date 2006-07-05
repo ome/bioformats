@@ -319,7 +319,7 @@ public abstract class BaseTiffReader extends FormatReader {
       bps = ((Number) bpsObj).intValue();
       numC = 1;
     }
-  
+
     // numC isn't set properly if we have an indexed color image, so we need
     // to reset it here
 

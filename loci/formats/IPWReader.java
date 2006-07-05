@@ -205,7 +205,7 @@ public class IPWReader extends BaseTiffReader {
       int sizeT = Integer.parseInt((String) metadata.get("slices"));
       int sizeC = Integer.parseInt((String) metadata.get("channels"));
       int sizeZ = Integer.parseInt(metadata.get("frames").toString());
-      
+
       OMETools.setPixels(ome, null, null, new Integer(sizeZ),
         new Integer(sizeC), new Integer(sizeT), null, null, null);
       OMETools.setDescription(ome, (String) metadata.get("Version"));

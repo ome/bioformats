@@ -281,7 +281,10 @@ public abstract class FormatReader extends FormatHandler {
   // -- File stitching API methods --
 
   /** Gets a list of files matching the pattern in the given file name. */
-  public String[] getMatchingFiles(String id) {
+  public String[] getMatchingFiles(String id)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
     FilePattern fp = new FilePattern(new File(id));
     return fp.getFiles();
   }
@@ -367,7 +370,7 @@ public abstract class FormatReader extends FormatHandler {
         ndx++;
       }
     }
- 
+
     return openBytes(file, no);
   }
 

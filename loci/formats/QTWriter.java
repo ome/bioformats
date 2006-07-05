@@ -108,13 +108,13 @@ public class QTWriter extends FormatWriter {
 
   // -- Constructor --
 
-  public QTWriter() { 
-    super("QuickTime", "mov"); 
+  public QTWriter() {
+    super("QuickTime", "mov");
     compressionTypes = new String[] {
       "Uncompressed", "Motion JPEG-B", "Cinepak", "Animation", "H.263",
       "Sorenson", "Sorenson 3", "MPEG 4"
     };
-  
+
   }
 
   // -- QTWriter API methods --
@@ -559,7 +559,7 @@ public class QTWriter extends FormatWriter {
   public boolean canDoStacks(String id) { return true; }
 
   // -- Helper method --
- 
+
   private void setCodec() {
     if (compression == null) compression = "Uncompressed";
     if (compression.equals("Uncompressed")) codec = CODEC_RAW;

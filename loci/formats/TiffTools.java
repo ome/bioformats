@@ -773,7 +773,7 @@ public abstract class TiffTools {
 
       // we have two files that reverse the endianness for BitsPerSample,
       // StripOffsets, and StripByteCounts
-    
+
       if (bitsPerSample[0] > 64) {
         byte[] bps = new byte[2];
         byte[] stripOffs = new byte[4];
@@ -820,12 +820,12 @@ public abstract class TiffTools {
         stripByteCounts[0] = DataTools.bytesToInt(byteCounts, !littleEndian);
       }
 
-      if (rowsPerStripArray.length == 1 && stripByteCounts[0] != 
+      if (rowsPerStripArray.length == 1 && stripByteCounts[0] !=
         (imageWidth * imageLength * (bitsPerSample[0] / 8)) &&
         compression == UNCOMPRESSED)
       {
         stripByteCounts[0] = imageWidth * imageLength * (bitsPerSample[0] / 8);
-        stripOffsets[0] = (int) (in.length() - stripByteCounts[0] - 
+        stripOffsets[0] = (int) (in.length() - stripByteCounts[0] -
           48 * imageWidth);
         byte[] row = new byte[(int) imageWidth];
         in.seek(stripOffsets[0]);
