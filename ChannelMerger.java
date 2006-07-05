@@ -100,9 +100,7 @@ public class ChannelMerger extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    long t0 = System.currentTimeMillis();
     int[] nos = translateVirtual(no, id);
-    long t1 = System.currentTimeMillis();
 
     int size = nos.length;
     if (size != 1 && size != 3 && size != 4) size = 3;
