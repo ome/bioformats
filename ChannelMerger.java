@@ -100,6 +100,7 @@ public class ChannelMerger extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
+    if (!id.equals(currentId)) initFile(id);
     int[] nos = translateVirtual(no, id);
 
     int size = nos.length;
@@ -138,6 +139,7 @@ public class ChannelMerger extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
+    if (!id.equals(currentId)) initFile(id);
     int[] nos = translateVirtual(no, id);
 
     ByteVector v = new ByteVector(1000);
@@ -195,8 +197,8 @@ public class ChannelMerger extends FormatReader {
       }
     }
 
-    ourImages = getImageCount(id);
     readerImages = reader.getImageCount(id);
+    ourImages = getImageCount(id);
   }
 
   /**

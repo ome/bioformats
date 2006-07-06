@@ -53,6 +53,9 @@ public abstract class FormatReader extends FormatHandler {
   /** Flag set to true if multi-channel planes are to be separated. */
   protected boolean separated = false;
 
+  /** Files with the same pattern. */
+  protected String[] stitchedFiles;
+
   // -- Constructors --
 
   /** Constructs a format reader with the given name and default suffix. */
@@ -297,11 +300,10 @@ public abstract class FormatReader extends FormatHandler {
   public BufferedImage[] openAllImages(String id)
     throws FormatException, IOException
   {
-    String[] files = getMatchingFiles(id);
     Vector v = new Vector();
-    for (int i=0; i<files.length; i++) {
+    for (int i=0; i<stitchedFiles.length; i++) {
       for (int j=0; j<getImageCount(id); j++) {
-        v.add(openImage(files[i], j));
+        v.add(openImage(stitchedFiles[i], j));
       }
     }
     return (BufferedImage[]) v.toArray(new BufferedImage[0]);
@@ -309,10 +311,14 @@ public abstract class FormatReader extends FormatHandler {
 
   /** Get the total number of images in the given file and all matching files.*/
   public int getTotalImageCount(String id) throws FormatException, IOException {
-    String[] files = getMatchingFiles(id);
+    if (!id.equals(currentId)) {
+      initFile(id);
+      stitchedFiles = getMatchingFiles(id);
+    }
+    
     int num = 0;
-    for (int i=0; i<files.length; i++) {
-      num += getImageCount(files[i]);
+    for (int i=0; i<stitchedFiles.length; i++) {
+      num += getImageCount(stitchedFiles[i]);
     }
     return num;
   }
@@ -326,24 +332,9 @@ public abstract class FormatReader extends FormatHandler {
   public BufferedImage openStitchedImage(String id, int no)
     throws FormatException, IOException
   {
-    String[] files = getMatchingFiles(id);
-
-    // first find the appropriate file
-    boolean found = false;
-    String file = files[0];
-    int ndx = 1;  // index into the array of file names
-    while (!found) {
-      if (no < getImageCount(file)) {
-        found = true;
-      }
-      else {
-        no -= getImageCount(file);
-        file = files[ndx];
-        ndx++;
-      }
-    }
-
-    return openImage(file, no);
+    if (!id.equals(currentId)) initFile(id);
+    return openImage(stitchedFiles[no / stitchedFiles.length], 
+      no % (getTotalImageCount(id) / stitchedFiles.length));
   }
 
   /**
@@ -355,24 +346,9 @@ public abstract class FormatReader extends FormatHandler {
   public byte[] openStitchedBytes(String id, int no)
     throws FormatException, IOException
   {
-    String[] files = getMatchingFiles(id);
-
-    // first find the appropriate file
-    boolean found = false;
-    String file = files[0];
-    int ndx = 1;  // index into the array of file names
-    while (!found) {
-      if (no < getImageCount(file)) {
-        found = true;
-      }
-      else {
-        no -= getImageCount(file);
-        file = files[ndx];
-        ndx++;
-      }
-    }
-
-    return openBytes(file, no);
+    if (!id.equals(currentId)) initFile(id);
+    return openBytes(stitchedFiles[no / stitchedFiles.length], 
+      no % (getTotalImageCount(id) / stitchedFiles.length));
   }
 
   // -- FormatHandler API methods --
