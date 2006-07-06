@@ -1,4 +1,5 @@
 QuickTime:
+* Fix legacy and native readers to handle data/quicktime/haining/video2.mov
 * svq3 codec (lower priority)
 
 AVI:
