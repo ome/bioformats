@@ -267,6 +267,9 @@ public class ImageReader extends FormatReader {
         if (arg.startsWith("-")) continue;
         System.out.print("Checking file format ");
         System.out.println("[" + getFormat(arg) + "]");
+        File f = new File(arg);
+        arg = f.getAbsolutePath();
+        args[i] = arg;
         break;
       }
     }
