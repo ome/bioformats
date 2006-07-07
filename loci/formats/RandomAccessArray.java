@@ -80,7 +80,9 @@ public class RandomAccessArray extends RandomAccessFile {
     length = b.length;
   }
 
-  public void close() { }
+  public void close() throws IOException { 
+    super.close();
+  }
 
   public long getFilePointer() { return fp; }
 

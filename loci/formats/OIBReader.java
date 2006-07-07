@@ -103,7 +103,9 @@ public class OIBReader extends FormatReader {
     RandomAccessStream ra = new RandomAccessStream(pixels);
 
     Hashtable[] fds = TiffTools.getIFDs(ra, 0);
-    return TiffTools.getImage(fds[0], ra);
+    BufferedImage img = TiffTools.getImage(fds[0], ra);
+    ra.close();
+    return img;
   }
 
   /** Closes any open files. */
@@ -142,6 +144,8 @@ public class OIBReader extends FormatReader {
             height = TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_LENGTH,
               false, -1);
             pixelData.put(Integer.valueOf(num), data);
+            ras.close();
+            ras = null;
           }
           else {
             RandomAccessStream ra = new RandomAccessStream(data);
@@ -156,6 +160,8 @@ public class OIBReader extends FormatReader {
               }
             }
             catch (IOException e) { }
+            ra.close();
+            ra = null;
           }
         }
       }
