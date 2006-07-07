@@ -7,6 +7,7 @@ package loci.browser;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.io.Opener;
+import java.io.File;
 import ij.process.ImageProcessor;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
@@ -73,7 +74,8 @@ class VirtualStack extends ImageStack {
   public void addSlice(String name) {
     if (name == null) throw new IllegalArgumentException("'name' is null!");
     nSlices++;
-    //IJ.log("addSlice: "+nSlices+"  "+name);
+    name = name.substring(name.lastIndexOf(File.separator)+1);
+    System.err.println("addSlice: "+nSlices+"  "+ name);
     if (nSlices == names.length) {
       String[] tmp = new String[nSlices*2];
       System.arraycopy(names, 0, tmp, 0, nSlices);
@@ -160,12 +162,27 @@ class VirtualStack extends ImageStack {
       return imp.getProcessor();
     }
     else {
+	int count = 0;
 	while (true) {
 	    try {
 		return currentStack.getProcessor(indices[n]);	      
 	    } catch (IllegalArgumentException iae) {
-		try { Thread.sleep(50); }
+		if (LociDataBrowser.DEBUG) {
+		    System.err.print("VirtualStack.getProcessor(): ");
+		    System.err.println("thread sleeps 50 seconds...");
+		}
+		try { count++; Thread.sleep(50); }
 		catch (InterruptedException ie) { }
+		if (count == 3) {
+		    if (LociDataBrowser.DEBUG) System.err.print("Slept enough. ");
+		    imp = new Opener().openImage(path,names[n-1]);
+		    if (imp!=null) {
+			imp.setSlice(n % stacksize == 0 ? stacksize
+				     : n % stacksize);
+		    }
+		    return imp.getProcessor();
+		}
+		    
 	    }
 	}
 //       if (LociDataBrowser.DEBUG) {

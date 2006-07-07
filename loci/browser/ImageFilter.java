@@ -9,7 +9,6 @@ package loci.browser;
 import java.io.File;
 import javax.swing.filechooser.*;
 
-/** ImageFilter.java is a 1.4 example used by FileChooserDemo2.java. */
 public class ImageFilter extends FileFilter {
 
   /** Accepts all directories and all files types supported by ImageJ. */

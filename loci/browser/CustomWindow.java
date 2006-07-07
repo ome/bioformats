@@ -39,7 +39,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   private int fps = 10;
   private int z = 1, t = 1, c = 1;
   private int oldZ, oldT; // for virtual stack
-
+  private boolean customVirtualization = false;
+  private int z1, z2, t1, t2;
 
   // -- Fields - widgets --
 
@@ -492,19 +493,26 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     }
     else if ("options".equals(cmd)) {
 	// pops up options menu
-	
-	OptionsWindow.popsup(this, zSliceSel.getMaximum(), tSliceSel.getMaximum());
+	OptionsWindow ow = new OptionsWindow(zSliceSel.getMaximum(),
+					     tSliceSel.getMaximum());
+	ow.popup(this,z,t);
+	setIndices(ow.getVirtualBounds());
+	customVirtualization = ow.isCustomVirtualization();
     }
     else if (src instanceof Timer) {
       boolean swapped = zString.equals(T_STRING);
       if (swapped) {
         z = zSliceSel.getValue() + 1;
-        if (z > db.numZ) z = 1;
+	if (customVirtualization) {
+	    if (z > z2) z = z1;
+	} else if (z > db.numZ) z = 1;
         zSliceSel.setValue(z);
       }
       else {
         t = tSliceSel.getValue() + 1;
-        if (t > db.numT) t = 1;
+	if (customVirtualization) {
+	    if (t > t2) t = t1;
+	} else if (t > db.numT) t = 1;
         tSliceSel.setValue(t);
       }
       showSlice(z, t, c);
@@ -514,7 +522,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         animationTimer = new Timer(1000 / fps, this);
         animationTimer.start();
         animate.setText(STOP_STRING);
-        if (db.virtual) synchronized(imp) { setIndices(); }
+        if (db.virtual && !customVirtualization)
+	    synchronized(imp) { setIndices(); }
       }
       else {
         animationTimer.stop();
@@ -523,13 +532,34 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       }
     }
   }
-    public void setCustomIndices(int z1, int z2, int t1, int t2) {
-	
-	
+    /** initialize the virtual stack, using the
+     *  argument as its boundaries.
+     *  The argument should be in the form of
+     *  (z1, z2, t1, t2).
+     */
+    public synchronized void setIndices(int[] idx) {
+	// log usage
+	if (LociDataBrowser.DEBUG) {
+	    System.err.println("Calling setIndices(int[])");
+	    System.err.println("z: "+idx[0]+" to "+idx[1]);
+	    System.err.println("t: "+idx[2]+" to "+idx[3]);
+	}
+	customVirtualization = true;
+	ImageStack is = imp.getStack();
+	int[] indices = new int[(idx[1]-idx[0]+1)*(idx[3]-idx[2]+1)];
+	z1 = idx[0]; z2 = idx[1]; t1 = idx[2]; t2 = idx[3];
+	int k=0;
+	if (is instanceof VirtualStack) {
+	    for (int i=idx[0]; i<=idx[1]; i++)
+		for (int j=idx[2]; j<=idx[3]; j++) 
+		    indices[k++] = db.getIndex(i-1,j-1,c-1);
+	}
+	((VirtualStack) is).setIndices(indices,progressBar);
     }
 
     
   public synchronized void setIndices() {
+      customVirtualization = false;
     ImageStack is = imp.getStack();
     if (is instanceof VirtualStack) {
       boolean swapped = zString.equals(T_STRING);

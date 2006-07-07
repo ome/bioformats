@@ -4,9 +4,13 @@
 
 package loci.browser;
 
-import ij.*;
+import ij.ImageStack;
+import ij.ImagePlus;
+import ij.IJ;
+import ij.process.*;
+import ij.io.FileInfo;
+import java.awt.image.*;
 import ij.gui.ImageCanvas;
-import ij.io.*;
 import ij.plugin.PlugIn;
 import java.awt.image.ColorModel;
 import java.io.File;
@@ -15,6 +19,8 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import loci.util.FilePattern;
 import loci.util.MathUtil;
+import loci.formats.*;
+import loci.formats.ChannelMerger;
 import javax.swing.*;
 
 
@@ -70,8 +76,29 @@ public class LociDataBrowser implements PlugIn {
   /** whether stack is accessed from disk as needed */
   protected boolean virtual;
 
+    private ImagePlus imp;
 
   // -- LociDataBrowser methods --
+
+		
+
+  private void slice(ImageStack is, String file, int c) {
+    ImageStack[] newStacks = new ImageStack[c];
+    for (int i=0; i<newStacks.length; i++) {
+      newStacks[i] = new ImageStack(is.getWidth(), is.getHeight());
+    }
+
+    for (int i=1; i<=is.getSize(); i+=c) {
+      for (int j=0; j<c; j++) {
+        newStacks[j].addSlice(is.getSliceLabel(i+j), is.getProcessor(i+j));
+      }
+    }
+
+    for (int i=0; i<newStacks.length; i++) {
+      new ImagePlus(file + " - Ch" + (i+1), newStacks[i]).show();
+    }
+  }
+	
 
   /** Displays the given ImageJ image in a 4D browser window. */
   public void show(ImagePlus imp) {
@@ -141,66 +168,177 @@ public class LociDataBrowser implements PlugIn {
         "with JRE 5.0 from the ImageJ web site.");
       return;
     }
-    LociOpener lociOpener = new LociOpener();
+    LociOpener lociOpener;
+    loci.formats.ImageReader reader = new ImageReader();
+    boolean done2 = false;
+    String directory = "";
+    String name = "";
+    boolean quiet = false;
+    while (!done2) {
+    try {
+// 	loci.formats.FormatReader r = reader.getReader(name);
+// 	ChannelMerger cm = new ChannelMerger(r);
+// 	int num = cm.getTotalImageCount(name);
+// 	ImageStack stackB = null, stackS = null,
+// 	           stackF = null, stackO = null;
+// 	long start = System.currentTimeMillis();
+// 	long time = start;
+// 	int channels = cm.getChannelCount(name);
 
-    String directory = lociOpener.getDirectory();
-    String name = lociOpener.getFileName();
-    virtual = lociOpener.getVirtual();
-    if (DEBUG) {
-      log("directory", directory);
-      log("name", name);
-      log("virtual", virtual);
-    }
-    if (name == null) return;
-
-    // find all the files having similar names (using FilePattern class)
-    String pattern = FilePattern.findPattern(name, directory);
-    FilePattern fp = new FilePattern(pattern);
-    String[] filenames = fp.getFiles(); // all the image files
-    int numFiles = filenames.length;
-
-    long size = (new File(filenames[0])).length();
-
-    // warns if virtual stack box not checked
-    // and projected memory usage > 512 MB
-    if ((size*numFiles > 512000000) && !virtual) {
-      Object[] options = {"Use Virtual Stack", "Don't Use Virtual Stack"};
-      String warning =
-        "Estimated memory usage exceeds total available memory.\n " +
-        "Do you want to use virtual stack to load the images?\n";
-      boolean done = false;
-      while (!done) {
-        int n = JOptionPane.showOptionDialog(null, warning, "Warning",
-          JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE,
-          null, options, options[0]);
-        if (n == 0) {
-          virtual = true;
-          done = true;
-        }
-        else if (n == 1) {
-          virtual = false;
-          done = true;
-        }
+// 	for (int i=0; i<num; i++) {
+// 	    long clock = System.currentTimeMillis();
+// 	    if (clock - time >= 50) {
+// 		IJ.showStatus("Reading plane "+(i+1)+"/"+num);
+// 		time = clock;
+// 	    }
+// 	    IJ.showProgress((double)i/num);
+// 	    BufferedImage img = cm.openStitchedImage(name, i);
+// 	    ImageProcessor ip = null;
+// 	    WritableRaster raster = img.getRaster();
+// 	    int c = raster.getNumBands();
+// 	    int tt = raster.getTransferType();
+// 	    int w = img.getWidth(), h = img.getHeight();
+// 	    if (c == 1) {
+// 		if (tt == DataBuffer.TYPE_BYTE) {
+// 		    byte[] b = ImageTools.getBytes(img)[0];
+// 		    if (b.length > w*h) {
+// 			byte[] tmp = b;
+// 			b = new byte[w*h];
+// 			System.arraycopy(tmp,0,b,0,b.length);
+// 		    }
+// 		    ip = new ByteProcessor (w,h,b,null);
+// 		    if (stackB == null) stackB = new ImageStack(w,h);
+// 		    stackB.addSlice(name + ":" + (i + 1), ip);
+// 		} else if (tt == DataBuffer.TYPE_USHORT) {
+// 		    short[] s = ImageTools.getShorts(img)[0];
+// 		    if (s.length > w*h) {
+// 			short[] tmp = s;
+// 			s = new short[w*h];
+//               System.arraycopy(tmp, 0, s, 0, s.length);
+//             }
+//             ip = new ShortProcessor(w, h, s, null);
+//             if (stackS == null) stackS = new ImageStack(w, h);
+//             stackS.addSlice(name + ":" + (i + 1), ip);
+//           }
+//           else if (tt == DataBuffer.TYPE_FLOAT) {
+//             float[] f = ImageTools.getFloats(img)[0];
+//             if (f.length > w*h) {
+//               float[] tmp = f;
+//               f = new float[w*h];
+//               System.arraycopy(tmp, 0, f, 0, f.length);
+//             }
+//             ip = new FloatProcessor(w, h, f, null);
+//             if (stackF == null) stackF = new ImageStack(w, h);
+//             stackF.addSlice(name + ":" + (i + 1), ip);
+//           }
+//         }
+//         if (ip == null) {
+//           ip = new ImagePlus(null, img).getProcessor(); // slow
+//           if (stackO == null) stackO = new ImageStack(w, h);
+//           stackO.addSlice(name + ":" + (i + 1), ip);
+//         }
+//       }
+//       IJ.showStatus("Creating image");
+//       IJ.showProgress(1);
+//       if (stackB != null) {
+// 	  imp = new ImagePlus(name, stackB);
+//       }
+//       if (stackS != null) {
+// 	  imp = new ImagePlus(name, stackS);
+//       }
+//       if (stackF != null) {
+// 	  imp = new ImagePlus(name, stackF);
+//       }
+//       if (stackO != null) {
+// 	  imp = new ImagePlus(name, stackO);
+//       }
+//       long end = System.currentTimeMillis();
+//       double elapsed = (end - start) / 1000.0;
+//       if (num == 1) IJ.showStatus(elapsed + " seconds");
+//       else {
+//         long average = (end - start) / num;
+//         IJ.showStatus("LOCI Bio-Formats : " + elapsed + " seconds (" +
+//           average + " ms per plane)");
+//       }
+//       done2 = true;
+//     }
+	lociOpener = new LociOpener();
+	
+	directory = lociOpener.getDirectory();
+	name = lociOpener.getAbsolutePath();
+	System.err.println("Name = " +name); // DEBUG
+	virtual = lociOpener.getVirtual();
+	if (name == null) return;
+	if (DEBUG) {
+	    log("directory", directory);
+	    log("name", name);
+	    log("virtual", virtual);
+	}
+	ImagePlusWrapper impw = new ImagePlusWrapper(name);
+	imp = impw.getImagePlus();
+	done2 = true;
+    } catch (Exception exc) {
+      exc.printStackTrace();
+      IJ.showStatus("");
+      if (!quiet) {
+        String msg = exc.getMessage();
+        IJ.showMessage("LOCI Bio-Formats", "Sorry, there was a problem " +
+          "reading the data" + (msg == null ? "." : (": " + msg)));
       }
+      System.err.println("Read error");
+      done2 = false;
     }
+  }
+  
+    
+//      // find all the files having similar names (using FilePattern class)
+    name = name.substring(name.lastIndexOf(File.separator)+1);
+      String pattern = FilePattern.findPattern(name, directory);
+      FilePattern fp = new FilePattern(pattern);
+      String[] filenames = fp.getFiles(); // all the image files
+      int numFiles = filenames.length;
 
-    // trim directory prefix from filename list
-    int dirLen = directory.length();
-    for (int i=0; i<filenames.length; i++) {
-      int q = dirLen;
-      while (filenames[i].charAt(q) == File.separatorChar) q++;
-      filenames[i] = filenames[i].substring(q);
-    }
+     long size = (new File(name)).length();
 
-    if (DEBUG) {
-      log("pattern", pattern);
-      log("filenames", filenames);
-    }
+//     // warns if virtual stack box not checked
+//     // and projected memory usage > 512 MB
+//     if ((size*numFiles > 512000000) && !virtual) {
+//       Object[] options = {"Use Virtual Stack", "Don't Use Virtual Stack"};
+//       String warning =
+//         "Estimated memory usage exceeds total available memory.\n " +
+//         "Do you want to use virtual stack to load the images?\n";
+//       boolean done = false;
+//       while (!done) {
+//         int n = JOptionPane.showOptionDialog(null, warning, "Warning",
+//           JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE,
+//           null, options, options[0]);
+//         if (n == 0) {
+//           virtual = true;
+//           done = true;
+//         }
+//         else if (n == 1) {
+//           virtual = false;
+//           done = true;
+//         }
+//       }
+//     }
+
+//     // trim directory prefix from filename list
+//     int dirLen = directory.length();
+//     for (int i=0; i<filenames.length; i++) {
+//       int q = dirLen;
+//       while (filenames[i].charAt(q) == File.separatorChar) q++;
+//       filenames[i] = filenames[i].substring(q);
+//     }
+
+//     if (DEBUG) {
+//       log("pattern", pattern);
+//       log("filenames", filenames);
+//     }
 
     // read images
     int depth = 0, width = 0, height = 0, type = 0;
     ImageStack stack = null;
-    VirtualStack vstack = null;
     FileInfo fi = null;
     try {
       ProgressMonitor progress = new ProgressMonitor(null,
@@ -212,7 +350,6 @@ public class LociDataBrowser implements PlugIn {
         progress.setNote(filenames[i]);
 
         // open image
-        ImagePlus imp = new Opener().openImage(directory, filenames[i]);
         if (imp == null) {
           // invalid image
           log(filenames[i] + ": unable to open");
@@ -279,7 +416,7 @@ public class LociDataBrowser implements PlugIn {
     for (int i=0; i<filenames.length; i++) {
       Arrays.fill(names, depth * i, depth * (i + 1), filenames[i]);
     }
-    if (DEBUG) log("names", names);
+  
 
     // gather more pattern information
     BigInteger[] first = fp.getFirst();
@@ -416,9 +553,9 @@ public class LociDataBrowser implements PlugIn {
     name = strip(name, endings);
 
     // display image onscreen
-    ImagePlus imp = new ImagePlus(name, stack);
-    if (fi != null) imp.setFileInfo(fi);
-    show(imp);
+    ImagePlus imp2 = new ImagePlus(name, stack);
+    if (fi != null) imp2.setFileInfo(fi);
+    show(imp2);
   }
 
 
