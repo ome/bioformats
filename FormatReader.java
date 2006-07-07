@@ -36,7 +36,7 @@ public abstract class FormatReader extends FormatHandler {
   // -- Constants --
 
   /** Debugging flag. */
-  protected static final boolean DEBUG = false;
+  protected static final boolean DEBUG = false; 
 
   /** Debugging level. 1=basic, 2=extended, 3=everything. */
   protected static final int DEBUG_LEVEL = 1;
@@ -338,7 +338,8 @@ public abstract class FormatReader extends FormatHandler {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    
+    if (stitchedFiles.length == 1) return openImage(stitchedFiles[0], no);
+
     if (imageCounts == null) {
       imageCounts = new int[stitchedFiles.length];
       for (int i=0; i<imageCounts.length; i++) {

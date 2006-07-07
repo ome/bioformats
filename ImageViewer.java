@@ -134,6 +134,9 @@ public class ImageViewer extends JFrame
     wait(true);
     String format = null;
     try {
+      File f = new File(id);
+      id = f.getAbsolutePath();
+      
       format = reader.getFormat(id);
       //images = reader.open(id);
       FormatReader r = reader.getReader(id);
@@ -243,7 +246,7 @@ public class ImageViewer extends JFrame
         final File file = chooser.getSelectedFile();
         if (file != null) {
           new Thread() {
-            public void run() { open(file.getPath()); }
+            public void run() { open(file.getAbsolutePath()); }
           }.start();
         }
       }

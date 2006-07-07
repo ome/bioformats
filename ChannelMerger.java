@@ -201,6 +201,7 @@ public class ChannelMerger extends FormatReader {
 
     readerImages = reader.getImageCount(id);
     ourImages = getImageCount(id);
+    currentId = id;
   }
 
   /**
