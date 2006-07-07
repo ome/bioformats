@@ -56,6 +56,9 @@ public abstract class FormatReader extends FormatHandler {
   /** Files with the same pattern. */
   protected String[] stitchedFiles;
 
+  /** Image counts for each file. */
+  protected int[] imageCounts;
+
   // -- Constructors --
 
   /** Constructs a format reader with the given name and default suffix. */
@@ -110,6 +113,8 @@ public abstract class FormatReader extends FormatHandler {
     currentId = id;
     metadata = new Hashtable();
     ome = OMETools.createRoot();
+    imageCounts = null;
+    stitchedFiles = null;
   }
 
   /**
@@ -333,8 +338,21 @@ public abstract class FormatReader extends FormatHandler {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return openImage(stitchedFiles[no / stitchedFiles.length], 
-      no % (getTotalImageCount(id) / stitchedFiles.length));
+    
+    if (imageCounts == null) {
+      imageCounts = new int[stitchedFiles.length];
+      for (int i=0; i<imageCounts.length; i++) {
+        imageCounts[i] = getImageCount(stitchedFiles[i]);
+      }
+    }
+   
+    int ndx = 0;
+    while (no >= imageCounts[ndx]) {
+      no -= imageCounts[ndx];
+      ndx++;
+    }
+
+    return openImage(stitchedFiles[ndx], no);
   }
 
   /**
@@ -347,8 +365,21 @@ public abstract class FormatReader extends FormatHandler {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return openBytes(stitchedFiles[no / stitchedFiles.length], 
-      no % (getTotalImageCount(id) / stitchedFiles.length));
+  
+    if (imageCounts == null) {
+      imageCounts = new int[stitchedFiles.length];
+      for (int i=0; i<imageCounts.length; i++) {
+        imageCounts[i] = getImageCount(stitchedFiles[i]);
+      }
+    }
+  
+    int ndx = 0;
+    while (no >= imageCounts[ndx]) {
+      no -= imageCounts[ndx];
+      ndx++;
+    }
+
+    return openBytes(stitchedFiles[ndx], no);  
   }
 
   // -- FormatHandler API methods --
