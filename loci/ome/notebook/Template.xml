@@ -1,86 +1,78 @@
 <?xml version="1.0" ?>
 <NotebookTemplate Version="1.0">
 	<OMEElement XMLName="Project" Description="Name of this project.">
-	        <OMEAttribute XMLName="ID" Value=""/>
+	        <OMEAttribute XMLName="ID" Value="" Type="ID"/>
 	        <OMEAttribute XMLName="Name" Value=""/>
-		<OMEElement XMLName="ExperimenterRef" Name="Experimenter">
-			<OMERef Name="ID"/>
-		</OMEElement>	
-		<OMEElement XMLName="GroupRef" Name="Group" Ref="true">
-			<OMERef Name="ID"/>
-		</OMEElement>	
+		<OMEAttribute XMLName="Experimenter" Type="Ref"/>	
+		<OMEAttribute XMLName="Group" Type="Ref"/>
 	</OMEElement>
 	<OMEElement XMLName="Dataset" Description="Information about the dataset.">
-		<OMEAttribute XMLName="ID" Value=""/>
+		<OMEAttribute XMLName="ID" Value="" Type="ID"/>
 	        <OMEAttribute XMLName="Name" Value=""/>
 	        <OMEAttribute XMLName="Locked" Value=""/>
-		<OMEElement XMLName="ExperimenterRef" Name="Experimenter">
-			<OMERef Name="ID"/>
-		</OMEElement>	
-		<OMEElement XMLName="GroupRef" Name="Group">
-			<OMERef Name="ID"/>
-		</OMEElement>	
+		<OMEAttribute XMLName="Experimenter" Type="Ref"/>	
+		<OMEAttribute XMLName="Group" Type="Ref"/>
+	</OMEElement>
+	<OMEElement XMLName="Image" Description="Information about the image acquired.">
+		<OMEAttribute XMLName="ID" Value="" Type="ID"/>
+		<OMEAttribute XMLName="Name"/>
+		<OMEAttribute XMLName="CreationDate"/>
+		<OMEAttribute XMLName="Experimenter" Type="Ref"/>
+		<OMEAttribute XMLName="DefaultPixels" Type="Ref"/>
+		<OMEElement XMLName="LogicalChannel" Description="">
+			<OMEAttribute XMLName="ID" Value="" Type="ID"/>
+			<OMEAttribute XMLName="Name"/>
+			<OMEAttribute XMLName="LightSource" Type="Ref"/>
+			<OMEAttribute XMLName="OTF" Type="Ref"/>
+			<OMEAttribute XMLName="Detector" Type="Ref"/>
+			<OMEAttribute XMLName="Filter" Type="Ref"/>
+		</OMEElement>
+		<OMEElement XMLName="Pixels" Description="">
+			<OMEAttribute XMLName="ID" Value="" Type="ID"/>
+			<OMEAttribute XMLName="SizeX"/>
+			<OMEAttribute XMLName="SizeY"/>
+			<OMEAttribute XMLName="SizeZ"/>
+			<OMEAttribute XMLName="SizeC"/>
+			<OMEAttribute XMLName="SizeT"/>
+			<OMEAttribute XMLName="PixelType"/>
+		</OMEElement>
 	</OMEElement>
 	<OMEElement XMLName="Experiment" Description="Describes the experiment.">
-		<OMEAttribute XMLName="ID" Value=""/>
+		<OMEAttribute XMLName="ID" Value="" Type="ID"/>
 	        <OMEAttribute XMLName="Type" Value=""/>
-		<OMEElement XMLName="Description">
-			<CData/>
-		</OMEElement>
-		<OMEElement XMLName="ExperimenterRef" Name="Experimenter">
-			<OMERef Name="ID"/>
-		</OMEElement>	
+		<OMEAttribute XMLName="Description"/>
+		<OMEAttribute XMLName="Experimenter" Type="Ref"/>
 	</OMEElement>
 	<OMEElement XMLName="Experimenter" Description="Information about the person who did the experiment.">
-		<OMEAttribute XMLName="ID" Value=""/>
-		<OMEElement XMLName="FirstName">
-			<CData/>
-		</OMEElement>
-		<OMEElement XMLName="LastName">
-			<CData/>
-		</OMEElement>
-		<OMEElement XMLName="Email">
-			<CData/>
-		</OMEElement>
-		<OMEElement XMLName="Institution">
-			<CData/>
-		</OMEElement>
-		<OMEElement XMLName="GroupRef" Name="Group">
-			<OMERef Name="ID"/>
-		</OMEElement>			
+		<OMEAttribute XMLName="ID" Value="" Type="ID"/>
+		<OMEAttribute XMLName="FirstName"/>
+		<OMEAttribute XMLName="LastName"/>
+		<OMEAttribute XMLName="Email"/>
+		<OMEAttribute XMLName="Institution"/>
+		<OMEAttribute XMLName="Group" Type="Ref"/>		
 	</OMEElement>
 	<OMEElement XMLName="Instrument" Description="Describes the instrument used.">
-		<OMEAttribute XMLName="ID" Value=""/>		
-		<OMEElement XMLName="Microscope">
-			<OMEAttribute XMLName="Manufacturer" Value=""/>
-			<OMEAttribute XMLName="Model" Value=""/>
-			<OMEAttribute XMLName="SerialNumber" Value=""/>
-			<OMEAttribute XMLName="Type" Value=""/>
-		</OMEElement>
-		<OMEElement XMLName="Objective" Description="">
-			<OMEAttribute XMLName="ID" Value="" Type=""/>
-			<OMEAttribute XMLName="Manufacturer" Value=""/>
-			<OMEAttribute XMLName="Model" Value=""/>
-			<OMEAttribute XMLName="SerialNumber" Value=""/>
-			<OMEElement XMLName="LensNA">
-				<CData/>
-			</OMEElement>
-			<OMEElement XMLName="Magnification">
-				<CData/>
-			</OMEElement>
-		</OMEElement>
-		<OMEElement XMLName="OTF" Description="">
-			<OMEAttribute XMLName="ID" Value=""/>
-			<OMEAttribute XMLName="PixelType" Value=""/>
-			<OMEAttribute XMLName="OpticalAxisAvrg" Value=""/>
-			<OMEAttribute XMLName="SizeX" Value=""/>
-			<OMEAttribute XMLName="SizeY" Value=""/>
-			<OMEElement XMLName="ObjectiveRef" Name="Objective">
-				<OMERef Name="ID"/>
-			</OMEElement>
-			<OMEElement XMLName="FilterRef">
-				<OMERef Name="ID"/>
-			</OMEElement>
-		</OMEElement>		
+		<OMEAttribute XMLName="ID" Value="" Type="ID"/>		
+		<OMEAttribute XMLName="Manufacturer" Value=""/>
+		<OMEAttribute XMLName="Model" Value=""/>
+		<OMEAttribute XMLName="SerialNumber" Value=""/>
+		<OMEAttribute XMLName="Type" Value=""/>
+	</OMEElement>
+	<OMEElement XMLName="Objective" Description="Info relating to the experiment's objective.">
+		<OMEAttribute XMLName="ID" Value="" Type="ID"/>
+		<OMEAttribute XMLName="Manufacturer" Value=""/>
+		<OMEAttribute XMLName="Model" Value=""/>
+		<OMEAttribute XMLName="SerialNumber" Value=""/>
+		<OMEAttribute XMLName="LensNA"/>
+		<OMEAttribute XMLName="Magnification"/>
+	</OMEElement>
+	<OMEElement XMLName="OTF" Description="Whatever an OTF is.">
+		<OMEAttribute XMLName="ID" Value="" Type="ID"/>
+		<OMEAttribute XMLName="PixelType" Value=""/>
+		<OMEAttribute XMLName="OpticalAxisAvrg" Value=""/>
+		<OMEAttribute XMLName="SizeX" Value=""/>
+		<OMEAttribute XMLName="SizeY" Value=""/>
+		<OMEAttribute XMLName="Objective" Type="Ref"/>	
+	        <OMEAttribute XMLName="Filter" Type="Ref"/>	
 	</OMEElement>
 </NotebookTemplate>

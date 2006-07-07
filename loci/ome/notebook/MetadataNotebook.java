@@ -4,10 +4,12 @@ import java.awt.Cursor;
 import java.awt.Toolkit;
 import java.awt.event.*;
 import java.io.File;
+import java.io.FileOutputStream;
 import javax.swing.*;
 import loci.ome.viewer.*;
 import loci.util.About;
 import org.w3c.dom.*;
+import org.openmicroscopy.xml.DOMUtil;
 
 /**
 *   MetadataNotebook.java: 
@@ -33,12 +35,15 @@ public class MetadataNotebook extends JFrame
   protected MetadataPane metadata;
   protected File currentFile;
   protected JMenu tabsMenu;
-
+  protected boolean opening;
 
   // -- Constructor --
 
   public MetadataNotebook(String[] args) {
     super("OME Metadata Notebook");
+    
+    currentFile = null;
+    opening = true;
     
     File f = new File("Template.xml");
     TemplateParser tp = new TemplateParser(f);
@@ -55,6 +60,20 @@ public class MetadataNotebook extends JFrame
     fileOpen.addActionListener(this);
     fileOpen.setMnemonic('o');
     fileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, MENU_MASK));
+    JMenuItem fileSave = new JMenuItem("Save");
+    file.add(fileSave);
+    fileSave.setActionCommand("save");
+    fileSave.addActionListener(this);
+    fileSave.setMnemonic('s');
+    fileSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, MENU_MASK));
+    JMenuItem fileSaveAs = new JMenuItem("Save As...");
+    file.add(fileSaveAs);
+    fileSaveAs.setActionCommand("saveAs");
+    fileSaveAs.addActionListener(this);
+    fileSaveAs.setMnemonic('s');
+    fileSaveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_MASK|KeyEvent.SHIFT_MASK));
+    JSeparator jSep = new JSeparator();
+    file.add(jSep);
     JMenuItem fileExit = new JMenuItem("Exit");
     file.add(fileExit);
     fileExit.setActionCommand("exit");
@@ -99,7 +118,18 @@ public class MetadataNotebook extends JFrame
 
   public void openFile(File file) { 
     metadata.setOMEXML(file);
-    setTitle("OME Metadata Viewer - " + file); 
+    setTitle("OME Metadata Notebook - " + file); 
+  }
+  
+  public void saveFile(File file) {
+    try {
+      FileOutputStream fos = new FileOutputStream(file);
+      DOMUtil.writeXML(fos, metadata.getDoc() ); 
+    }
+    catch (Exception e) {
+//EVENTUALLY HAVE A DIALOG HERE
+      System.out.println("Attempt failed to open file: " + file.getName() );    
+    }
   }
   
   public void changeTabMenu(Object[] tabs) {
@@ -165,11 +195,26 @@ public class MetadataNotebook extends JFrame
   public void actionPerformed(ActionEvent e) {
     String cmd = e.getActionCommand();
     if ("open".equals(cmd)) {
+      chooser.setDialogTitle("Open");
+      chooser.setApproveButtonText("Open");
+      chooser.setApproveButtonToolTipText("Open selected file."); 
+      opening = true;
       int rval = chooser.showOpenDialog(this);
       if (rval == JFileChooser.APPROVE_OPTION) {
-        new Thread(this, "MetadataViewer-Opener").start();
+        new Thread(this, "MetadataNotebook-Opener").start();
       }
     }
+    else if ("saveAs".equals(cmd) || ( "save".equals(cmd) && currentFile == null) ) {
+      opening = false;
+      chooser.setDialogTitle("Save");
+      chooser.setApproveButtonText("Save");
+      chooser.setApproveButtonToolTipText("Save to selected file."); 
+      int rval = chooser.showOpenDialog(this);
+      if (rval == JFileChooser.APPROVE_OPTION) {
+        new Thread(this, "MetadataNotebook-Saver").start();
+      }
+    }
+    else if ("save".equals(cmd) && currentFile != null) saveFile(currentFile);
     else if ("exit".equals(cmd)) System.exit(0);
     else if ("about".equals(cmd)) About.show();
     else if ("advanced".equals(cmd)) {
@@ -189,7 +234,8 @@ public class MetadataNotebook extends JFrame
   public void run() {
     wait(true);
     currentFile = chooser.getSelectedFile();
-    openFile(currentFile);
+    if (opening) openFile(currentFile);
+    else saveFile(currentFile);
     wait(false);
   }
 
