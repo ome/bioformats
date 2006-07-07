@@ -73,8 +73,8 @@ public class ChannelMerger extends FormatReader {
     int originalImages = readerImages;
 
     if (canMerge(id)) {
-      int channels = ourImages;
-      if (channels > 3) originalImages /= 3;
+      int channels = getChannelCount(id);
+      if (channels > 3) originalImages /= channels;
       else originalImages /= channels;
     }
     return originalImages;
