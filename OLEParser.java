@@ -307,7 +307,16 @@ public class OLEParser {
 
     // extract some information from the property table
 
-    String name = new String(table, 0, 64);
+    byte[] b = new byte[64];
+    System.arraycopy(table, 0, b, 0, b.length);
+    
+    StringBuffer sb = new StringBuffer();
+    for (int i=0; i<b.length; i++) {
+      sb = sb.append((char) b[i]);
+    }
+    
+    String name = sb.toString(); 
+
     if (name.trim().equals("")) return;
 
     if (name.indexOf("(") != -1 && name.indexOf(")") != -1) {
