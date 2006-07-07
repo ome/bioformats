@@ -204,10 +204,12 @@ public abstract class FormatReader extends FormatHandler {
   public boolean testRead(String[] args) throws FormatException, IOException {
     String id = null;
     boolean pixels = true;
+    boolean stitch = false;
     if (args != null) {
       for (int i=0; i<args.length; i++) {
         if (args[i].startsWith("-")) {
           if (args[i].equals("-nopix")) pixels = false;
+          else if (args[i].equals("-stitch")) stitch = true;
           else System.out.println("Ignoring unknown command flag: " + args[i]);
         }
         else {
@@ -219,7 +221,7 @@ public abstract class FormatReader extends FormatHandler {
     if (id == null) {
       String className = getClass().getName();
       System.out.println("To test read a file in " + format + " format, run:");
-      System.out.println("  java " + className + " [-nopix] in_file");
+      System.out.println("  java " + className + " [-nopix] [-stitch] in_file");
       return false;
     }
 
@@ -229,16 +231,19 @@ public abstract class FormatReader extends FormatHandler {
 
     // read pixels
     if (pixels) {
-      System.out.print("Reading " + id + " pixel data ");
+      System.out.print("Reading " + (stitch ?
+        FilePattern.findPattern(new File(id)) : id) + " pixel data ");
       long s1 = System.currentTimeMillis();
       ChannelMerger cm = new ChannelMerger(this);
-      int num = cm.getTotalImageCount(args[0]);
+      int num = stitch ?
+        cm.getTotalImageCount(args[0]) : cm.getImageCount(args[0]);
       System.out.print("(" + num + ") ");
       long e1 = System.currentTimeMillis();
       BufferedImage[] images = new BufferedImage[num];
       long s2 = System.currentTimeMillis();
       for (int i=0; i<num; i++) {
-        images[i] = cm.openStitchedImage(args[0], i);
+        images[i] = stitch ?
+          cm.openStitchedImage(args[0], i) : cm.openImage(args[0], i);
         System.out.print(".");
       }
       long e2 = System.currentTimeMillis();
