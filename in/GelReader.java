@@ -69,7 +69,7 @@ public class GelReader extends BaseTiffReader {
    */
   protected void initStandardMetadata() {
     super.initStandardMetadata();
-    
+
     numImages--;
     super.initMetadata();
     boolean little = true;

@@ -207,7 +207,7 @@ public class IPWReader extends BaseTiffReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-    
+
     store.setPixels(null, null, sizeZ,sizeC, sizeT, null, null, null, null);
     store.setImage(null, null, (String) metadata.get("Version"), null);
   }

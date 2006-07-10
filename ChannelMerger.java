@@ -43,13 +43,13 @@ public class ChannelMerger extends FormatReader {
 
   /** Number of planes between channels. */
   private int between;
-  
+
   /** Number of images reported by reader. */
   private int readerImages;
 
   /** Number of images reported by ChannelMerger. */
   private int ourImages;
-  
+
   // -- Constructors --
 
   /** Constructs a ChannelMerger with the given reader. */

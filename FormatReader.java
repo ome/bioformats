@@ -74,7 +74,7 @@ public abstract class FormatReader extends FormatHandler {
   }
 
   // -- Abstract FormatReader API methods --
-  
+
   /** Checks if the given block is a valid header for this file format. */
   public abstract boolean isThisType(byte[] block);
 
@@ -208,7 +208,7 @@ public abstract class FormatReader extends FormatHandler {
       catch (IOException e2) {}
     }
   }
-  
+
   /**
    * Retrieves the current metadata store for this reader. You can be
    * assured that this method will <b>never</b> return a <code>null</code>
@@ -216,7 +216,7 @@ public abstract class FormatReader extends FormatHandler {
    * @return a metadata store implementation.
    */
   public MetadataStore getMetadataStore() { return store; }
-  
+
   /**
    * Retrieves the current metadata store's root object. It is guaranteed that
    * all file parsing has been performed by the reader prior to retrieval.
@@ -226,7 +226,7 @@ public abstract class FormatReader extends FormatHandler {
    * @throws IOException if there is an IO error when reading the file specified
    * by <code>path</code>.
    * @throws FormatException if the file specified by <code>path</code> is of an
-   * unsupported type. 
+   * unsupported type.
    */
   public Object getMetadataStoreRoot(String id)
     throws FormatException, IOException {
@@ -315,7 +315,7 @@ public abstract class FormatReader extends FormatHandler {
       System.out.println(xmlStore.dumpXML());
       System.out.println();
     }
-    
+
     return true;
   }
 

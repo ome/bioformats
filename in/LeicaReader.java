@@ -609,7 +609,7 @@ public class LeicaReader extends BaseTiffReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-    
+
     try {
       if (isRGB(currentId)) numChannels *= 3;
     }

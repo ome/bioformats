@@ -333,7 +333,7 @@ public class ICSReader extends FormatReader {
     else idsIn.readFully(data);
 
     // Populate metadata store
-    
+
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
 

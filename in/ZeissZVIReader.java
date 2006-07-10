@@ -63,7 +63,7 @@ public class ZeissZVIReader extends FormatReader {
   private int len;
   private int shuffle;
   private int previousCut;
-  
+
   private String typeAsString;
 
   // -- Constructor --
@@ -1358,7 +1358,7 @@ public class ZeissZVIReader extends FormatReader {
         }
       }
     }
-    
+
     // Now that we've done the heavy lifting lets get the data into the active
     // metadata store.
     initMetadataStore();
@@ -1374,34 +1374,34 @@ public class ZeissZVIReader extends FormatReader {
     populateExperimenter();
     populateStageLabel();
   }
-  
+
   /**
    * Populates the first image in the metadata store.
    */
   private void populateImage() {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-    
+
     store.setImage((String) metadata.get("Title"),  // Name
                    (String) metadata.get("Date"),  // Creation Date
                    (String) metadata.get("Comments"),  // Description
                    null);  // Use index 0
   }
-  
+
   /**
    * Populates the first pixels set in the metadata store.
    */
   private void populatePixels() {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-    
+
     // Default values
     Integer sizeX = (Integer) metadata.get("ImageWidth");
     Integer sizeY = (Integer) metadata.get("ImageHeight");
     Integer sizeZ = new Integer(1);
     Integer sizeC = new Integer(1);
     Integer sizeT = null;
-    
+
     try {
       sizeT = new Integer(getImageCount(currentId));
     } catch (Exception e) {
@@ -1409,32 +1409,32 @@ public class ZeissZVIReader extends FormatReader {
       // here as the image metadata really is useless without a valid sizeT.
       e.printStackTrace();
     }
-    
+
     String dimensionOrder = "XYZCT";
-    
+
     // If we have a legacy datafile the attribute names are different.
     if (needLegacy) {
       sizeX = (Integer) metadata.get("Width");
       sizeY = (Integer) metadata.get("Height");
     }
-    
+
     if (((Integer) metadata.get("MultiChannelEnabled")).intValue() == 1) {
       sizeC = new Integer(nImages);
       sizeT = new Integer(1);
       dimensionOrder = "XYCZT";
     }
-    
+
       store.setPixels(sizeX, sizeY, sizeZ, sizeC, sizeT, typeAsString,
                       null, dimensionOrder, null);
     }
-  
+
   /**
    * Populates the first experimenter and group in the metadata store.
    */
   private void populateExperimenter() {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-    
+
     // Experimenter
     String name = (String) metadata.get("Author");
     if (name != null) {
@@ -1447,26 +1447,26 @@ public class ZeissZVIReader extends FormatReader {
       }
       store.setExperimenter(firstName, lastName, null, null, null, null, null);
     }
-    
+
     // Group
     // We're doing this here mainly out of convenience, if this gets any more
     // complex it'd be better off in its own method).
     store.setGroup((String) metadata.get("ProjectGroup"), null, null, null);
   }
-    
+
   /**
    * Populates the first stage label in the metadata store.
    */
   private void populateStageLabel() {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-    
+
     // Stage Label
     int xPos = Integer.parseInt((String) metadata.get("Stage Position X"));
     int yPos = Integer.parseInt((String) metadata.get("Stage Position Y"));
     store.setStageLabel(null, new Float(xPos), new Float(yPos), null, null);
   }
-  
+
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {

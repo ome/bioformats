@@ -332,7 +332,7 @@ public class PerkinElmerReader extends FormatReader {
     channels = Integer.parseInt(wavelengths);
 
     // Populate metadata store
-    
+
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
 

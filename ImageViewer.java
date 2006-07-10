@@ -137,7 +137,7 @@ public class ImageViewer extends JFrame
     try {
       File f = new File(id);
       id = f.getAbsolutePath();
-      
+
       format = reader.getFormat(id);
       //images = reader.open(id);
       FormatReader r = reader.getReader(id);

@@ -42,7 +42,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
   // -- Constants --
 
   /**
-   * The reflected universe that is used to avoid direct compile-time 
+   * The reflected universe that is used to avoid direct compile-time
    * dependency on the org.openmicroscopy.xml package.
    */
   private ReflectedUniverse r;
@@ -52,12 +52,12 @@ public class OMEXMLMetadataStore implements MetadataStore {
 
   /** Each channel's global minimum */
   private double[] channelMinimum;
-  
+
   private double[] channelMaximum;
-  
+
   /** Logger for this class. */
   //private static Log log = LogFactory.getLog(OMEXMLMetadataStore.class);
-  
+
   /**
    * Creates a new instance.
    * @throws UnsupportedMetadataStoreException if the constructor is unable to
@@ -73,26 +73,25 @@ public class OMEXMLMetadataStore implements MetadataStore {
       r.exec("import org.openmicroscopy.xml.OMEXMLNode");
       r.setVar("FALSE", false);
     }
-    catch (Throwable t) { 
+    catch (Throwable t) {
       throw new UnsupportedMetadataStoreException(t);
     }
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
    * @see loci.formats.MetadataStore#createRoot()
    */
-  public void createRoot() {
-    createRoot(null);
-  }
-  
-  /* (non-Javadoc)
+  public void createRoot() { createRoot(null); }
+
+  /*
+   * (non-Javadoc)
    * @see loci.formats.MetadataStore#getRoot()
    */
-  public Object getRoot() {
-    return root;
-  }
+  public Object getRoot() { return root; }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
    * @see loci.formats.MetadataStore#setRoot(java.lang.Object)
    */
   public void setRoot(Object root) throws IllegalArgumentException {
@@ -144,8 +143,10 @@ public class OMEXMLMetadataStore implements MetadataStore {
 
   // -- OMETools API methods - node (element) assignment --
 
-  /* (non-Javadoc)
-   * @see loci.formats.MetadataStore#setImage(java.lang.String, java.lang.String, java.lang.String, java.lang.Integer)
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.MetadataStore#setImage(java.lang.String,
+   *   java.lang.String, java.lang.String, java.lang.Integer)
    */
   public void setImage(String name, String creationDate,
                        String description, Integer i)
@@ -172,8 +173,11 @@ public class OMEXMLMetadataStore implements MetadataStore {
     }
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.MetadataStore#setExperimenter(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.Object, java.lang.Integer)
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.MetadataStore#setExperimenter(java.lang.String,
+   *   java.lang.String, java.lang.String, java.lang.String, java.lang.String,
+   *   java.lang.Object, java.lang.Integer)
    */
   public void setExperimenter(String firstName, String lastName, String email,
                               String institution, String dataDirectory,
@@ -204,15 +208,17 @@ public class OMEXMLMetadataStore implements MetadataStore {
       r.exec("experimenter.setDataDirectory(dataDirectory)");
       r.exec("experimenter.setGroup(group)");
     }
-    catch (ReflectException e) { 
+    catch (ReflectException e) {
       // We want potential errors in the reflected universe to be exposed to a
       // developer.
       //log.warn(e);
     }
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.MetadataStore#setGroup(java.lang.String, java.lang.Object, java.lang.Object, java.lang.Integer)
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.MetadataStore#setGroup(java.lang.String,
+   *   java.lang.Object, java.lang.Object, java.lang.Integer)
    */
   public void setGroup(String name, Object leader, Object contact, Integer i)
   {
@@ -235,15 +241,17 @@ public class OMEXMLMetadataStore implements MetadataStore {
       r.exec("group.setLeader(leader)");
       r.exec("group.setContact(contact)");
     }
-    catch (ReflectException e) { 
+    catch (ReflectException e) {
       // We want potential errors in the reflected universe to be exposed to a
       // developer.
       //log.warn(e);
     }
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.MetadataStore#setInstrument(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.Integer)
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.MetadataStore#setInstrument(java.lang.String,
+   *   java.lang.String, java.lang.String, java.lang.String, java.lang.Integer)
    */
   public void setInstrument(String manufacturer, String model,
                             String serialNumber, String type, Integer i)
@@ -269,15 +277,18 @@ public class OMEXMLMetadataStore implements MetadataStore {
       r.exec("instrument.setSerialNumber(serialNumber)");
       r.exec("instrument.setType(type)");
     }
-    catch (ReflectException e) { 
+    catch (ReflectException e) {
       // We want potential errors in the reflected universe to be exposed to a
       // developer.
       //log.warn(e);
     }
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.MetadataStore#setDimensions(java.lang.Float, java.lang.Float, java.lang.Float, java.lang.Float, java.lang.Float, java.lang.Integer)
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.MetadataStore#setDimensions(java.lang.Float,
+   *   java.lang.Float, java.lang.Float, java.lang.Float, java.lang.Float,
+   *   java.lang.Integer)
    */
   public void setDimensions(Float pixelSizeX, Float pixelSizeY,
                             Float pixelSizeZ, Float pixelSizeC,
@@ -308,15 +319,19 @@ public class OMEXMLMetadataStore implements MetadataStore {
       r.exec("dimensions.setPixelSizeC(pixelSizeC)");
       r.exec("dimensions.setPixelSizeT(pixelSizeT)");
     }
-    catch (ReflectException e) { 
+    catch (ReflectException e) {
       // We want potential errors in the reflected universe to be exposed to a
       // developer.
       //log.warn(e);
     }
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.MetadataStore#setDisplayROI(java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Object, java.lang.Integer)
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.MetadataStore#setDisplayROI(java.lang.Integer,
+   *   java.lang.Integer, java.lang.Integer, java.lang.Integer,
+   *   java.lang.Integer, java.lang.Integer, java.lang.Integer,
+   *   java.lang.Integer, java.lang.Object, java.lang.Integer)
    */
   public void setDisplayROI(Integer x0, Integer y0, Integer z0,
                             Integer x1, Integer y1, Integer z1,
@@ -356,15 +371,19 @@ public class OMEXMLMetadataStore implements MetadataStore {
       r.exec("displayROI.setT1(t1)");
       r.exec("displayROI.setDisplayOptions(displayOptions)");
     }
-    catch (ReflectException e) { 
+    catch (ReflectException e) {
       // We want potential errors in the reflected universe to be exposed to a
       // developer.
       //log.warn(e);
     }
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.MetadataStore#setPixels(java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.String, java.lang.Boolean, java.lang.String, java.lang.Integer)
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.MetadataStore#setPixels(java.lang.Integer,
+   *   java.lang.Integer, java.lang.Integer, java.lang.Integer,
+   *   java.lang.Integer, java.lang.String, java.lang.Boolean,
+   *   java.lang.String, java.lang.Integer)
    */
   public void setPixels(Integer sizeX, Integer sizeY, Integer sizeZ,
                         Integer sizeC, Integer sizeT, String pixelType,
@@ -401,15 +420,17 @@ public class OMEXMLMetadataStore implements MetadataStore {
       r.exec("pixels.setBigEndian(bigEndian)");
       r.exec("pixels.setDimensionOrder(dimensionOrder)");
     }
-    catch (ReflectException e) { 
+    catch (ReflectException e) {
       // We want potential errors in the reflected universe to be exposed to a
       // developer.
       //log.warn(e);
     }
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.MetadataStore#setStageLabel(java.lang.String, java.lang.Float, java.lang.Float, java.lang.Float, java.lang.Integer)
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.MetadataStore#setStageLabel(java.lang.String,
+   *   java.lang.Float, java.lang.Float, java.lang.Float, java.lang.Integer)
    */
   public void setStageLabel(String name, Float x, Float y, Float z, Integer i)
   {
@@ -436,15 +457,17 @@ public class OMEXMLMetadataStore implements MetadataStore {
       r.exec("stageLabel.setY(y)");
       r.exec("stageLabel.setZ(z)");
     }
-    catch (ReflectException e) { 
+    catch (ReflectException e) {
       // We want potential errors in the reflected universe to be exposed to a
       // developer.
       //log.warn(e);
     }
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.MetadataStore#setLogicalChannel(int, java.lang.String, float, int, int, java.lang.String, java.lang.String, java.lang.Integer)
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.MetadataStore#setLogicalChannel(int, java.lang.String,
+   *   float, int, int, java.lang.String, java.lang.String, java.lang.Integer)
    */
   public void setLogicalChannel(int channelIdx, String name, float ndFilter,
                                 int emWave, int exWave,
@@ -476,22 +499,22 @@ public class OMEXMLMetadataStore implements MetadataStore {
       r.exec("logicalChannel.setExWave(exWave)");
       r.exec("logicalChannel.setPhotometricInterpretation(pi)");
       r.exec("logicalChannel.setMode(mode)");
-      
+
       // Now populate the channel component
       r.exec("import org.openmicroscopy.xml.st.PixelChannelComponentNode");
       channel = getChild(logicalChannel, "ChannelComponent", i);
       r.setVar("channel", channel);
-      
+
       // It's just waaaaay too complicated to think of dealing with multiple
       // sets of pixels per image with the API as it stands so we're using just
       // the first pixels set.
       Object pixels = getChild(image, "Pixels", null);
-      
+
       r.setVar("channelIdx", channelIdx);
       r.setVar("pixels", pixels);
       r.exec("channel.setIndex(channelIdx)");
       r.exec("channel.setPixels(pixels)");
-      
+
       // For colour domains, we're using "R" for index 0, "G" for index 1 and
       // "B" for index 2. All other indexes are "null".
       switch (channelIdx) {
@@ -509,15 +532,17 @@ public class OMEXMLMetadataStore implements MetadataStore {
       }
       r.exec("channel.setColorDomain(colorDomain)");
     }
-    catch (ReflectException e) { 
+    catch (ReflectException e) {
       // We want potential errors in the reflected universe to be exposed to a
       // developer.
       //log.warn(e);
     }
   }
-  
-  /* (non-Javadoc)
-   * @see loci.formats.MetadataStore#setChannelGlobalMinMax(int, java.lang.Double, java.lang.Double, java.lang.Integer)
+
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.MetadataStore#setChannelGlobalMinMax(int,
+   *   java.lang.Double, java.lang.Double, java.lang.Integer)
    */
   public void setChannelGlobalMinMax(int channel, Double globalMin,
                                      Double globalMax, Integer i) {
@@ -532,7 +557,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
       }
       channelMinimum = new double[sizeC.intValue()];
     }
-    
+
     if (channelMaximum == null) {
       Float sizeC = getPixelSizeC(i);
       if (sizeC == null) {
@@ -541,41 +566,45 @@ public class OMEXMLMetadataStore implements MetadataStore {
       }
       channelMaximum = new double[sizeC.intValue()];
     }
-    
+
     // Now that the array initialization hocus-pocus has been completed lets do
     // the work.
     channelMinimum[channel] = globalMin.doubleValue();
     channelMaximum[channel] = globalMax.doubleValue();
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.MetadataStore#setPlaneInfo(int, int, int, java.lang.Float, java.lang.Float, java.lang.Integer)
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.MetadataStore#setPlaneInfo(int, int, int,
+   *   java.lang.Float, java.lang.Float, java.lang.Integer)
    */
   public void setPlaneInfo(int theZ, int theC, int theT, Float timestamp,
                            Float exposureTime, Integer i) {
     // TODO: No-op with regards to OME-XML until the PlaneInfo type has been
     // put into the OME-XML schema.
   }
-  
-  /* (non-Javadoc)
-   * @see loci.formats.MetadataStore#setDefaultDisplaySettings(java.lang.Integer)
+
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.MetadataStore#setDefaultDisplaySettings(
+   *   java.lang.Integer)
    */
   public void setDefaultDisplaySettings(Integer i) {
     if (i == null) i = new Integer(0);
-    
+
     Float sizeCAsFloat = getPixelSizeC(i);
     if (sizeCAsFloat == null) {
       //log.warn("Out of order access or missing metadata 'sizeC'.");
       return;
     }
     int sizeC = sizeCAsFloat.intValue();
-    
+
     // Sanity check
     if (sizeC < 1) {
       //log.warn("Ignoring request for default display options: sizeC < 1.");
       return;
     }
-    
+
     Object displayOptions = null;
     try {
       r.setVar("ome", root);
@@ -586,15 +615,15 @@ public class OMEXMLMetadataStore implements MetadataStore {
       r.exec("import org.openmicroscopy.xml.st.DisplayOptionsNode");
       displayOptions = getChild(image, "DisplayOptions", i);
       r.setVar("displayOptions", displayOptions);
-      
+
       // The strategy here is to use the already populated (hopefully :))
       // global minimum and global maximum for the black and white levels.
-      
+
       Object[] displayChannels =
         createRGBDisplayChannels(sizeC, displayOptions);
       Object greyscaleChannel =
         createGreyscaleDisplayChannel(displayOptions, new Integer(sizeC + 1));
-      
+
       // Populate the RGB channels
       if (displayChannels.length > 0) {  // Red only
         r.setVar("channel", displayChannels[0]);
@@ -611,19 +640,19 @@ public class OMEXMLMetadataStore implements MetadataStore {
         r.exec("displayOptions.setBlueChannel(channel)");
         r.exec("displayOptions.setBlueChannelOn(Boolean.TRUE)");
       }
-      
+
       // Populate the greyscale channel
       r.setVar("channel", greyscaleChannel);
       r.exec("displayOptions.setGreyChannel(channel)");
       r.exec("displayOptions.setGreyChannelOn(Boolean.TRUE)");
     }
-    catch (ReflectException e) { 
+    catch (ReflectException e) {
       // We want potential errors in the reflected universe to be exposed to a
       // developer.
       //log.warn(e);
     }
   }
-  
+
   /**
    * Creates default DisplayChannel nodes for use with DisplayOptions.
    * @param sizeC the number of channels.
@@ -637,8 +666,8 @@ public class OMEXMLMetadataStore implements MetadataStore {
     throws ReflectException {
     Object[] displayChannels = new Object[sizeC > 3? 3 : sizeC];
     r.exec("import org.openmicroscopy.xml.st.DisplayChannelNode");
-    
-    // Create each channel's display settings 
+
+    // Create each channel's display settings
     for (int i = 0; i < displayChannels.length; i++)
     {
       Object displayChannel =
@@ -650,36 +679,36 @@ public class OMEXMLMetadataStore implements MetadataStore {
       r.exec("displayChannel.setWhiteLevel(max)");
       displayChannels[i] = displayChannel;
     }
-    
+
     return displayChannels;
   }
-  
+
   /**
    * Creates default greyscale DisplayChannel node for use with DisplayOptions.
    * @param displayOptions the display options that the display channel will be
    * used with.
    * @param i the index of display channels. Should be sizeC + 1 for the
-   * greyscale DisplayChannel. 
+   * greyscale DisplayChannel.
    * @return a default greyscale DisplayChannel.
    * @throws ReflectException if there is a syntax problem during execution.
    */
   private Object createGreyscaleDisplayChannel(Object displayOptions, Integer i)
     throws ReflectException {
     r.exec("import org.openmicroscopy.xml.st.DisplayChannelNode");
-    
-    // Create each channel's display settings 
+
+    // Create each channel's display settings
     Object displayChannel = getChild(displayOptions, "DisplayChannel", i);
     r.setVar("displayChannel", displayChannel);
     r.setVar("min", channelMinimum[0]);
     r.setVar("max", channelMaximum[0]);
-    
+
     return displayChannel;
   }
 
   // -- OMEXMLMetadataStore API methods - individual attribute retrieval --
 
   /**
-   * Gets the nth OME/Image element's Name attribute. 
+   * Gets the nth OME/Image element's Name attribute.
    * @param n the index of the element. If <code>null</code> the default index
    * of 0 will be used.
    */
@@ -918,7 +947,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
       String attr = ((String) r.getVar("attr"));
       return attr;
     }
-    catch (ReflectException e) { 
+    catch (ReflectException e) {
       // We want potential errors in the reflected universe to be exposed to a
       // developer.
       //log.warn(e);

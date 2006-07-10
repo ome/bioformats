@@ -310,13 +310,13 @@ public class OLEParser {
 
     byte[] b = new byte[64];
     System.arraycopy(table, 0, b, 0, b.length);
-    
+
     StringBuffer sb = new StringBuffer();
     for (int i=0; i<b.length; i++) {
       sb = sb.append((char) b[i]);
     }
-    
-    String name = sb.toString(); 
+
+    String name = sb.toString();
 
     if (name.trim().equals("")) return;
 

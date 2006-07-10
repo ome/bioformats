@@ -314,7 +314,7 @@ public class LegacyZVIReader extends FormatReader {
       pos += width * height * bytesPerPixel;
 
       // Populate metadata store
-      
+
       // The metadata store we're working with.
       MetadataStore store = getMetadataStore();
 

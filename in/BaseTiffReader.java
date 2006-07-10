@@ -86,7 +86,7 @@ public abstract class BaseTiffReader extends FormatReader {
 
   /**
    * Parses standard metadata.
-   * 
+   *
    * NOTE: Absolutely <b>no</b> calls to the metadata store should be made in
    * this method or methods that override this method. Data <b>will</b> be
    * overwritten if you do so.
@@ -356,11 +356,11 @@ public abstract class BaseTiffReader extends FormatReader {
     }
   }
 
-  /** 
+  /**
    * Populates the metadata store using the data parsed in
    * {@link #initStandardMetadata()} along with some further parsing done in
    * the method itself.
-   * 
+   *
    * All calls to the active <code>MetadataStore</code> should be made in this
    * method and <b>only</b> in this method. This is especially important for
    * sub-classes that override the getters for pixel set array size, etc.
@@ -371,10 +371,10 @@ public abstract class BaseTiffReader extends FormatReader {
     try {
       // Set the pixel values in the metadata store.
       setPixels();
-      
+
       // The metadata store we're working with.
       MetadataStore store = getMetadataStore();
-      
+
       // populate Experimenter element
       String artist = (String) TiffTools.getIFDValue(ifd, TiffTools.ARTIST);
       if (artist != null) {
@@ -538,7 +538,7 @@ public abstract class BaseTiffReader extends FormatReader {
     numImages = ifds.length;
     initMetadata();
   }
-  
+
   /**
    * Retrieves the number of pixels along the X-axis of the image (width).
    * @return the X-axis size.
@@ -547,7 +547,7 @@ public abstract class BaseTiffReader extends FormatReader {
     return new Integer(
         TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_WIDTH));
   }
-  
+
   /**
    * Retrieves the number of pixels along the Y-axis of the image (length).
    * @return the Y-axis size.
@@ -556,15 +556,15 @@ public abstract class BaseTiffReader extends FormatReader {
     return new Integer(
         TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_LENGTH));
   }
-  
+
   /**
-   * Retrieves the number of optical sections in the TIFF. 
+   * Retrieves the number of optical sections in the TIFF.
    * @return the number of optical sections.
    */
   protected Integer getSizeZ() throws FormatException {
     return new Integer(1);
   }
-  
+
   /**
    * Retrieves the number of timepoints in the TIFF.
    * @return the number of timepoints.
@@ -580,7 +580,7 @@ public abstract class BaseTiffReader extends FormatReader {
   protected Integer getSizeC() throws FormatException {
     return (Integer) metadata.get("NumberOfChannels");
   }
-  
+
   /**
    * If the TIFF is big-endian.
    * @return <code>true</code> if the TIFF is big-endian, <code>false</code>
@@ -610,7 +610,7 @@ public abstract class BaseTiffReader extends FormatReader {
     }
     return pixelType;
   }
-  
+
   protected String getDimensionOrder() throws FormatException {
     return "XYCZT";
   }
@@ -618,7 +618,7 @@ public abstract class BaseTiffReader extends FormatReader {
   /**
    * Performs the actual setting of the pixels attributes in the active metadata
    * store by calling:
-   * 
+   *
    * <ul>
    *   <li>{@link #getSizeX()}</li>
    *   <li>{@link #getSizeY()}</li>
@@ -629,7 +629,7 @@ public abstract class BaseTiffReader extends FormatReader {
    *   <li>{@link #getDimensionOrder()}</li>
    *   <li>{@link #getBigEndian()}</li>
    * </ul>
-   * 
+   *
    * If the retrieval of any of these attributes is non-standard, the sub-class
    * should override the corresponding method.
    * @throws FormatException if there is a problem parsing any of the
@@ -640,17 +640,17 @@ public abstract class BaseTiffReader extends FormatReader {
                                  getSizeT(), getPixelType(), getBigEndian(),
                                  getDimensionOrder(), null);
   }
-  
+
   /**
    * Performs the actual setting of the image attributes in the active metadata
    * store by calling:
-   * 
+   *
    * <ul>
    *   <li>{@link #getImageName()}</li>
    *   <li>{@link #getImageCreationDate()}</li>
    *   <li>{@link #getgetImageDescription()}</li>
    * </ul>
-   * 
+   *
    * If the retrieval of any of these attributes is non-standard, the sub-class
    * should override the corresponding method.
    * @throws FormatException if there is a problem parsing any of the
@@ -660,7 +660,7 @@ public abstract class BaseTiffReader extends FormatReader {
     getMetadataStore().setImage(getImageName(), getImageCreationDate(),
                                 getImageDescription(), null);
   }
-  
+
   /**
    * Retrieves the image name from the TIFF.
    * @return the image name.
@@ -668,8 +668,8 @@ public abstract class BaseTiffReader extends FormatReader {
   protected String getImageName() {
     return null;
   }
-  
-  
+
+
   /**
    * Retrieves the image creation date.
    * @return the image creation date.
@@ -677,7 +677,7 @@ public abstract class BaseTiffReader extends FormatReader {
   protected String getImageCreationDate() {
     return (String) TiffTools.getIFDValue(ifds[0], TiffTools.DATE_TIME);
   }
-  
+
   /**
    * Retrieves the image description.
    * @return the image description.

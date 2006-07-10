@@ -66,7 +66,7 @@ public class OMEXMLReader extends FormatReader {
 
   /** Number of channels. */
   private int numChannels;
-  
+
   /** Internal OME-XML metadata store that we use for parsing metadata from the
    * OME-XML file itself.
    */
@@ -259,7 +259,7 @@ public class OMEXMLReader extends FormatReader {
           "org.openmicroscopy.xml package, available from " +
           "http://www.openmicroscopy.org/");
     }
-    
+
     internalStore.createRoot(xml);
 
     int sizeX = 0;

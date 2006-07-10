@@ -257,7 +257,7 @@ public class EPSReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-    
+
     store.setPixels(
       new Integer(width),
       new Integer(height),

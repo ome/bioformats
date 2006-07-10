@@ -47,10 +47,10 @@ public class AndorReader extends BaseTiffReader {
 
   /** Number of optical sections in the file */
   private int sizeZ = 1;
-  
+
   /** Number of channels in the file */
   private int sizeC = 1;
-  
+
   /** Number of timepoints in the file */
   private int sizeT = 1;
 
@@ -113,7 +113,7 @@ public class AndorReader extends BaseTiffReader {
    */
   protected void initStandardMetadata() {
     super.initStandardMetadata();
-    
+
     boolean little = isLittleEndian();
 
     // look for MMHEADER
@@ -298,7 +298,7 @@ public class AndorReader extends BaseTiffReader {
       else if (order.indexOf("C") < 0) order = order + "C";
     }
   }
-  
+
   /* (non-Javadoc)
    * @see loci.formats.BaseTiffReader#getSizeZ()
    */
@@ -312,21 +312,21 @@ public class AndorReader extends BaseTiffReader {
   protected Integer getSizeC() {
     return new Integer(sizeC);
   }
-  
+
   /* (non-Javadoc)
    * @see loci.formats.BaseTiffReader#getSizeT()
    */
   protected Integer getSizeT() {
     return new Integer(sizeT);
   }
-  
+
   /* (non-Javadoc)
    * @see loci.formats.BaseTiffReader#getDimensionOrder()
    */
   protected String getDimensionOrder() {
     return order;
   }
-  
+
   /**
    * Check endianness of the file.
    * @return <code>true</code> if the file is little-endian.
@@ -341,7 +341,7 @@ public class AndorReader extends BaseTiffReader {
     }
     return true;
   }
-  
+
   /* (non-Javadoc)
    * @see loci.formats.BaseTiffReader#getBigEndian()
    */

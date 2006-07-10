@@ -180,7 +180,7 @@ public class OpenlabRawReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-    
+
     store.setPixels(
       (Integer) metadata.get("Width"),
       (Integer) metadata.get("Height"),
