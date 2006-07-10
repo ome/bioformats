@@ -53,8 +53,8 @@ public class FilePattern {
   /** Whether each numerical block is fixed width. */
   private boolean[] fixed;
 
-	/** The number of leading zeroes for each numerical block. */
-	private int[] zeroes;
+  /** The number of leading zeroes for each numerical block. */
+  private int[] zeroes;
 
   /** File listing for this file pattern. */
   private String[] files;
@@ -128,7 +128,7 @@ public class FilePattern {
     step = new BigInteger[num];
     count = new int[num];
     fixed = new boolean[num];
-		zeroes = new int[num];
+    zeroes = new int[num];
     for (int i=0; i<num; i++) {
       String block = pattern.substring(startIndex[i], endIndex[i]);
       int dash = block.indexOf("-");
@@ -164,9 +164,9 @@ public class FilePattern {
         }
         count[i] = end[i].subtract(begin[i]).divide(step[i]).intValue() + 1;
         fixed[i] = b.length() == e.length();
-				int z = 0;
-				for (z=0; z<e.length(); z++) if (e.charAt(z) != '0') break;
-				zeroes[i] = z;
+        int z = 0;
+        for (z=0; z<e.length(); z++) if (e.charAt(z) != '0') break;
+        zeroes[i] = z;
       }
       catch (NumberFormatException exc) {
         msg = "Invalid numerical range values.";
@@ -445,8 +445,8 @@ public class FilePattern {
       BigInteger bi = begin[--ndx];
       while (bi.compareTo(end[ndx]) <= 0) {
         String s = bi.toString();
-				int z = zeroes[ndx];
-				if (fixed[ndx]) z += end[ndx].toString().length() - s.length();
+        int z = zeroes[ndx];
+        if (fixed[ndx]) z += end[ndx].toString().length() - s.length();
         for (int j=0; j<z; j++) s = "0" + s;
         buildFiles(s + pre + prefix, ndx, files);
         bi = bi.add(step[ndx]);
