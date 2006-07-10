@@ -35,6 +35,9 @@ import java.util.StringTokenizer;
 
 public class TiffReader extends BaseTiffReader {
 
+  /** Number of optical sections in the file */
+  private int sizeZ = 1;
+  
   // -- Constructor --
 
   /** Constructs a new Tiff reader. */
@@ -77,18 +80,36 @@ public class TiffReader extends BaseTiffReader {
   }
 
   /** Parses OME-XML metadata. */
-  protected void initOMEMetadata() {
+  protected void initMetadataStore() {
     // check for OME-XML in TIFF comment (OME-TIFF format)
     // we need an extra check to make sure that any XML we find is indeed
     // OME-XML (and not some other XML variant)
+    MetadataStore store = getMetadataStore();
     String comment = (String) metadata.get("Comment");
-    Object root = comment == null ? null : OMETools.createRoot(comment);
-    if (comment == null || comment.indexOf("ome.xsd") == -1) root = null;
-    put("OME-TIFF", root == null ? "no" : "yes");
-    if (root == null) super.initOMEMetadata();
-    else ome = root;
+    if (getMetadataStore() instanceof OMEXMLMetadataStore
+        && comment.indexOf("ome.xsd") != -1) {
+      OMEXMLMetadataStore xmlStore = (OMEXMLMetadataStore) store;
+      xmlStore.createRoot(comment);
+    }
   }
 
+  /* (non-Javadoc)
+   * @see loci.formats.BaseTiffReader#getSizeZ()
+   */
+  protected Integer getSizeZ() {
+    return new Integer(sizeZ);
+  }
+  
+  /**
+   * Allows a class which is delegating parsing responsibility to
+   * <code>TiffReader</code> the ability to affect the <code>sizeZ</code> value
+   * that is inserted into the metadata store.
+   * @param sizeZ the number of optical sections to use when making a call to
+   * {@link MetadataStore#setPixels()}.
+   */
+  void setInitialSizeZ(int sizeZ) {
+    this.sizeZ = sizeZ;
+  }
 
   // -- Main method --
 

@@ -47,7 +47,6 @@ public abstract class BaseTiffReader extends FormatReader {
   /** Number of images in the current TIFF stack. */
   protected int numImages;
 
-
   // -- Constructors --
 
   /** Constructs a new BaseTiffReader. */
@@ -77,13 +76,19 @@ public abstract class BaseTiffReader extends FormatReader {
 
   // -- Internal BaseTiffReader API methods --
 
-  /** Populates the metadata hashtable and OME root node. */
+  /** Populates the metadata hashtable and metadata store. */
   protected void initMetadata() {
     initStandardMetadata();
-    initOMEMetadata();
+    initMetadataStore();
   }
 
-  /** Parses standard metadata. */
+  /**
+   * Parses standard metadata.
+   * 
+   * NOTE: Absolutely <b>no</b> calls to the metadata store should be made in
+   * this method or methods that override this method. Data <b>will</b> be
+   * overwritten if you do so.
+   */
   protected void initStandardMetadata() {
     Hashtable ifd = ifds[0];
     if (metadata == null) metadata = new Hashtable();
@@ -349,37 +354,25 @@ public abstract class BaseTiffReader extends FormatReader {
     }
   }
 
-  /** Parses OME-XML metadata. */
-  protected void initOMEMetadata() {
+  /** 
+   * Populates the metadata store using the data parsed in
+   * {@link #initStandardMetadata()} along with some further parsing done in
+   * the method itself.
+   * 
+   * All calls to the active <code>MetadataStore</code> should be made in this
+   * method and <b>only</b> in this method. This is especially important for
+   * sub-classes that override the getters for pixel set array size, etc.
+   */
+  protected void initMetadataStore() {
     final String unknown = "unknown";
     Hashtable ifd = ifds[0];
-    ome = OMETools.createRoot();
     try {
-      if (ome == null) return; // OME-XML functionality is not available
-
-      // populate Pixels element
-      int sizeX = TiffTools.getIFDIntValue(ifd, TiffTools.IMAGE_WIDTH);
-      int sizeY = TiffTools.getIFDIntValue(ifd, TiffTools.IMAGE_LENGTH);
-      int sizeZ = 1;
-      int sizeT = ifds.length;
-      int sizeC = ((Integer) metadata.get("NumberOfChannels")).intValue();
-      boolean bigEndian = !TiffTools.isLittleEndian(ifd);
-      int sample = TiffTools.getIFDIntValue(ifd, TiffTools.SAMPLE_FORMAT);
-      String pixelType;
-      switch (sample) {
-        case 1: pixelType = "int"; break;
-        case 2: pixelType = "Uint"; break;
-        case 3: pixelType = "float"; break;
-        default: pixelType = unknown;
-      }
-      if (pixelType.indexOf("int") >= 0) { // int or Uint
-        pixelType += TiffTools.getIFDIntValue(ifd, TiffTools.BITS_PER_SAMPLE);
-      }
-
-      OMETools.setPixels(ome, new Integer(sizeX), new Integer(sizeY),
-        new Integer(sizeZ), new Integer(sizeC), new Integer(sizeT),
-        pixelType, new Boolean(bigEndian), "XYCZT");
-
+      // Set the pixel values in the metadata store.
+      setPixels();
+      
+      // The metadata store we're working with.
+      MetadataStore store = getMetadataStore();
+      
       // populate Experimenter element
       String artist = (String) TiffTools.getIFDValue(ifd, TiffTools.ARTIST);
       if (artist != null) {
@@ -392,15 +385,12 @@ public abstract class BaseTiffReader extends FormatReader {
         }
         String email = (String)
           TiffTools.getIFDValue(ifd, TiffTools.HOST_COMPUTER);
-        OMETools.setExperimenter(ome,
-          firstName, lastName, email, null, null, null);
+        store.setExperimenter(firstName, lastName, email,
+                              null, null, null, null);
       }
 
       // populate Image element
-      String creationDate = (String)
-        TiffTools.getIFDValue(ifd, TiffTools.DATE_TIME);
-      String description = (String) metadata.get("Comment");
-      OMETools.setImage(ome, null, creationDate, description);
+      setImage();
 
       // populate Dimensions element
       int pixelSizeX = TiffTools.getIFDIntValue(ifd,
@@ -409,8 +399,8 @@ public abstract class BaseTiffReader extends FormatReader {
         TiffTools.CELL_LENGTH, false, 0);
       int pixelSizeZ = TiffTools.getIFDIntValue(ifd,
         TiffTools.ORIENTATION, false, 0);
-      OMETools.setDimensions(ome, new Float(pixelSizeX),
-        new Float(pixelSizeY), new Float(pixelSizeZ), null, null);
+      store.setDimensions(new Float(pixelSizeX), new Float(pixelSizeY),
+                          new Float(pixelSizeZ), null, null, null);
 
 //      OMETools.setAttribute(ome, "ChannelInfo", "SamplesPerPixel", "" +
 //        TiffTools.getIFDIntValue(ifd, TiffTools.SAMPLES_PER_PIXEL));
@@ -443,13 +433,13 @@ public abstract class BaseTiffReader extends FormatReader {
         stageX = x == null ? null : new Float((String) x);
         stageY = y == null ? null : new Float((String) y);
       }
-      OMETools.setStageLabel(ome, null, stageX, stageY, null);
+      store.setStageLabel(null, stageX, stageY, null, null);
 
       // populate Instrument element
       String model = (String) TiffTools.getIFDValue(ifd, TiffTools.MODEL);
       String serialNumber = (String)
         TiffTools.getIFDValue(ifd, TiffTools.MAKE);
-      OMETools.setInstrument(ome, null, model, serialNumber, null);
+      store.setInstrument(null, model, serialNumber, null, null);
     }
     catch (FormatException exc) { exc.printStackTrace(); }
   }
@@ -546,7 +536,153 @@ public abstract class BaseTiffReader extends FormatReader {
     numImages = ifds.length;
     initMetadata();
   }
+  
+  /**
+   * Retrieves the number of pixels along the X-axis of the image (width).
+   * @return the X-axis size.
+   */
+  protected Integer getSizeX() throws FormatException {
+    return new Integer(
+        TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_WIDTH));
+  }
+  
+  /**
+   * Retrieves the number of pixels along the Y-axis of the image (length).
+   * @return the Y-axis size.
+   */
+  protected Integer getSizeY() throws FormatException {
+    return new Integer(
+        TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_LENGTH));
+  }
+  
+  /**
+   * Retrieves the number of optical sections in the TIFF. 
+   * @return the number of optical sections.
+   */
+  protected Integer getSizeZ() throws FormatException {
+    return new Integer(1);
+  }
+  
+  /**
+   * Retrieves the number of timepoints in the TIFF.
+   * @return the number of timepoints.
+   */
+  protected Integer getSizeT() throws FormatException {
+    return new Integer(ifds.length);
+  }
 
+  /**
+   * Retrieves the number of channels in the TIFF.
+   * @return the number of channels.
+   */
+  protected Integer getSizeC() throws FormatException {
+    return (Integer) metadata.get("NumberOfChannels");
+  }
+  
+  /**
+   * If the TIFF is big-endian.
+   * @return <code>true</code> if the TIFF is big-endian, <code>false</code>
+   * otherwise.
+   * @throws FormatException if there is a problem parsing this metadata.
+   */
+  protected Boolean getBigEndian() throws FormatException {
+    return new Boolean(!TiffTools.isLittleEndian(ifds[0]));
+  }
+
+  /**
+   * Retrieves the pixel type from the TIFF.
+   * @return the pixel type
+   */
+  protected String getPixelType() throws FormatException {
+    Hashtable ifd = ifds[0];
+    int sample = TiffTools.getIFDIntValue(ifd, TiffTools.SAMPLE_FORMAT);
+    String pixelType;
+    switch (sample) {
+      case 1: pixelType = "int"; break;
+      case 2: pixelType = "Uint"; break;
+      case 3: pixelType = "float"; break;
+      default: pixelType = "unknown";
+    }
+    if (pixelType.indexOf("int") >= 0) { // int or Uint
+      pixelType += TiffTools.getIFDIntValue(ifd, TiffTools.BITS_PER_SAMPLE);
+    }
+    return pixelType;
+  }
+  
+  protected String getDimensionOrder() throws FormatException {
+    return "XYCZT";
+  }
+
+  /**
+   * Performs the actual setting of the pixels attributes in the active metadata
+   * store by calling:
+   * 
+   * <ul>
+   *   <li>{@link #getSizeX()}</li>
+   *   <li>{@link #getSizeY()}</li>
+   *   <li>{@link #getSizeZ()}</li>
+   *   <li>{@link #getSizeC()}</li>
+   *   <li>{@link #getSizeT()}</li>
+   *   <li>{@link #getPixelType()}</li>
+   *   <li>{@link #getDimensionOrder()}</li>
+   *   <li>{@link #getBigEndian()}</li>
+   * </ul>
+   * 
+   * If the retrieval of any of these attributes is non-standard, the sub-class
+   * should override the corresponding method.
+   * @throws FormatException if there is a problem parsing any of the
+   * attributes.
+   */
+  private void setPixels() throws FormatException {
+    getMetadataStore().setPixels(getSizeX(), getSizeY(), getSizeZ(), getSizeC(),
+                                 getSizeT(), getPixelType(), getBigEndian(),
+                                 getDimensionOrder(), null);
+  }
+  
+  /**
+   * Performs the actual setting of the image attributes in the active metadata
+   * store by calling:
+   * 
+   * <ul>
+   *   <li>{@link #getImageName()}</li>
+   *   <li>{@link #getImageCreationDate()}</li>
+   *   <li>{@link #getgetImageDescription()}</li>
+   * </ul>
+   * 
+   * If the retrieval of any of these attributes is non-standard, the sub-class
+   * should override the corresponding method.
+   * @throws FormatException if there is a problem parsing any of the
+   * attributes.
+   */
+  private void setImage() throws FormatException {
+    getMetadataStore().setImage(getImageName(), getImageCreationDate(),
+                                getImageDescription(), null);
+  }
+  
+  /**
+   * Retrieves the image name from the TIFF.
+   * @return the image name.
+   */
+  protected String getImageName() {
+    return null;
+  }
+  
+  
+  /**
+   * Retrieves the image creation date.
+   * @return the image creation date.
+   */
+  protected String getImageCreationDate() {
+    return (String) TiffTools.getIFDValue(ifds[0], TiffTools.DATE_TIME);
+  }
+  
+  /**
+   * Retrieves the image description.
+   * @return the image description.
+   */
+  protected String getImageDescription() {
+    return (String) metadata.get("Comment");
+  }
 
   // -- Helper methods --
 

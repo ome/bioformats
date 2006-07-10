@@ -155,38 +155,40 @@ public class GatanReader extends FormatReader {
     in.read(temp);
     parseTags(DataTools.bytesToInt(temp, !littleEndian), "initFile");
 
-    if (ome != null) {
-      int datatype = ((Integer) metadata.get("DataType")).intValue();
+    int datatype = ((Integer) metadata.get("DataType")).intValue();
 
-      String type = "int8";
-      switch (datatype) {
-        case 1: type = "int16"; break;
-        case 2: type = "float"; break;
-        case 3: type = "float"; break;
-        // there is no case 4
-        case 5: type = "float"; break;
-        case 6: type = "Uint8"; break;
-        case 7: type = "int32"; break;
-        case 8: type = "Uint32"; break;
-        case 9: type = "int8"; break;
-        case 10: type = "Uint16"; break;
-        case 11: type = "Uint32"; break;
-        case 12: type = "float"; break;
-        case 13: type = "float"; break;
-        case 14: type = "Uint8"; break;
-        case 23: type = "int32"; break;
-      }
-
-      OMETools.setPixels(ome,
-        new Integer(dims[0]), // SizeX
-        new Integer(dims[1]), // SizeY
-        new Integer(1), // SizeZ
-        new Integer(1), // SizeC
-        new Integer(1), // SizeT
-        type, // PixelType
-        new Boolean(!littleEndian), // BigEndian
-        "XYZTC"); // DimensionOrder
+    String type = "int8";
+    switch (datatype) {
+    case 1: type = "int16"; break;
+    case 2: type = "float"; break;
+    case 3: type = "float"; break;
+    // there is no case 4
+    case 5: type = "float"; break;
+    case 6: type = "Uint8"; break;
+    case 7: type = "int32"; break;
+    case 8: type = "Uint32"; break;
+    case 9: type = "int8"; break;
+    case 10: type = "Uint16"; break;
+    case 11: type = "Uint32"; break;
+    case 12: type = "float"; break;
+    case 13: type = "float"; break;
+    case 14: type = "Uint8"; break;
+    case 23: type = "int32"; break;
     }
+
+    // The metadata store we're working with.
+    MetadataStore store = getMetadataStore();
+    
+    store.setPixels(
+      new Integer(dims[0]), // SizeX
+      new Integer(dims[1]), // SizeY
+      new Integer(1), // SizeZ
+      new Integer(1), // SizeC
+      new Integer(1), // SizeT
+      type, // PixelType
+      new Boolean(!littleEndian), // BigEndian
+      "XYZTC", // DimensionOrder
+      null); // Use index 0
   }
 
 

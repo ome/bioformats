@@ -202,36 +202,37 @@ public class IPLabReader extends FormatReader {
     metadata.put("PixelType", ptype);
     in.skipBytes((int) dataSize);
 
-    if (ome != null) {
-      String type;
-      switch ((int) pixelType) {
-        case 0: type = "Uint8"; break;
-        case 1: type = "int16"; break;
-        case 2: type = "Uint16"; break;
-        case 3: type = "Uint32"; break;
-        case 4: type = "float"; break;
-        case 5: type = "Uint32"; break;
-        case 6: type = "Uint32"; break;
-        case 10: type = "float"; break;
-        default: type = "Uint8";
-      }
-
-      String order = "XY";
-      if (c > 1) order += "CZT";
-      else order += "ZTC";
-
-      OMETools.setPixels(ome,
-        new Integer((int) width), // SizeX
-        new Integer((int) height), // SizeY
-        new Integer((int) zDepth), // SizeZ
-        new Integer((int) c), // SizeC
-        new Integer((int) tDepth), // SizeT
-        type, // PixelType
-        new Boolean(!littleEndian), // BigEndian
-        order); // DimensionOrder
-      OMETools.setImageName(ome, id);
+    String typeAsString;
+    switch ((int) pixelType) {
+    case 0: typeAsString = "Uint8"; break;
+    case 1: typeAsString = "int16"; break;
+    case 2: typeAsString = "Uint16"; break;
+    case 3: typeAsString = "Uint32"; break;
+    case 4: typeAsString = "float"; break;
+    case 5: typeAsString = "Uint32"; break;
+    case 6: typeAsString = "Uint32"; break;
+    case 10: typeAsString = "float"; break;
+    default: typeAsString = "Uint8";
     }
 
+    String order = "XY";
+    if (c > 1) order += "CZT";
+    else order += "ZTC";
+
+    // The metadata store we're working with.
+    MetadataStore store = getMetadataStore();
+    
+    store.setPixels(
+      new Integer((int) width), // SizeX
+      new Integer((int) height), // SizeY
+      new Integer((int) zDepth), // SizeZ
+      new Integer((int) c), // SizeC
+      new Integer((int) tDepth), // SizeT
+      typeAsString, // PixelType
+      new Boolean(!littleEndian), // BigEndian
+      order, // DimensionOrder
+      null); // Use index 0
+    
     in.read(fourBytes);
     String tag = new String(fourBytes);
     while (!tag.equals("fini")) {
@@ -327,14 +328,12 @@ public class IPLabReader extends FormatReader {
         long roiBottom = DataTools.read4UnsignedBytes(in, littleEndian);
         long numRoiPts = DataTools.read4UnsignedBytes(in, littleEndian);
 
-        if (ome != null) {
-          Integer x0 = new Integer((int) roiLeft);
-          Integer x1 = new Integer((int) roiRight);
-          Integer y0 = new Integer((int) roiBottom);
-          Integer y1 = new Integer((int) roiTop);
-          OMETools.setDisplayROI(ome,
-            x0, y0, null, x1, y1, null, null, null, null);
-        }
+        Integer x0 = new Integer((int) roiLeft);
+        Integer x1 = new Integer((int) roiRight);
+        Integer y0 = new Integer((int) roiBottom);
+        Integer y1 = new Integer((int) roiTop);
+        store.setDisplayROI(
+          x0, y0, null, x1, y1, null, null, null, null, null);
 
         for (int i=0; i<numRoiPts; i++) {
           long ptX = DataTools.read4UnsignedBytes(in, littleEndian);
@@ -356,10 +355,9 @@ public class IPLabReader extends FormatReader {
           metadata.put("ResolutionStyle" + i, new Long(xResStyle));
           metadata.put("UnitsPerPixel" + i, new Long(unitsPerPixel));
 
-          if (i == 0 && ome != null) {
+          if (i == 0) {
             Float pixelSize = new Float(unitsPerPixel);
-            OMETools.setDimensions(ome,
-              pixelSize, pixelSize, null, null, null);
+            store.setDimensions(pixelSize, pixelSize, null, null, null, null);
           }
 
           metadata.put("UnitName" + i, new Long(xUnitName));
@@ -387,9 +385,7 @@ public class IPLabReader extends FormatReader {
         metadata.put("Descriptor", descriptor);
         metadata.put("Notes", notes);
 
-        if (ome != null) {
-          OMETools.setDescription(ome, notes);
-        }
+        store.setImage(id, null, notes, null);
       }
       int r = in.read(fourBytes);
       if (r > 0) {

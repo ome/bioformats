@@ -61,6 +61,8 @@ public class ZeissZVIReader extends FormatReader {
   private int len;
   private int shuffle;
   private int previousCut;
+  
+  private String typeAsString;
 
   // -- Constructor --
 
@@ -677,37 +679,17 @@ public class ZeissZVIReader extends FormatReader {
       new Integer(DataTools.bytesToInt(header, pt, 4, true)));
     pt += 6;
 
-    if (ome != null) {
-      String type;
-      switch (pixel) {
-        case 1: type = "Uint8"; break;
-        case 2: type = "Uint8"; break;
-        case 3: type = "Uint8"; break;
-        case 4: type = "int16"; break;
-        case 5: type = "Uint32"; break;
-        case 6: type = "float"; break;
-        case 7: type = "float"; break;
-        case 8: type = "Uint16"; break;
-        case 9: type = "Uint32"; break;
-        default: type = "Uint8";
-      }
-
-      Integer sizeX = (Integer) metadata.get("ImageWidth");
-      Integer sizeY = (Integer) metadata.get("ImageHeight");
-      if (needLegacy) {
-        sizeX = (Integer) metadata.get("Width");
-        sizeY = (Integer) metadata.get("Height");
-      }
-
-      OMETools.setPixels(ome, sizeX, sizeY,
-        new Integer(1), // SizeZ
-        new Integer(1), // SizeC
-        new Integer(getImageCount(currentId)), // SizeT
-        type, // PixelType
-        null, // BigEndian
-        "XYZTC"); // DimensionOrder
-
-      OMETools.setImageName(ome, currentId);
+    switch (pixel) {
+    case 1: typeAsString = "Uint8"; break;
+    case 2: typeAsString = "Uint8"; break;
+    case 3: typeAsString = "Uint8"; break;
+    case 4: typeAsString = "int16"; break;
+    case 5: typeAsString = "Uint32"; break;
+    case 6: typeAsString = "float"; break;
+    case 7: typeAsString = "float"; break;
+    case 8: typeAsString = "Uint16"; break;
+    case 9: typeAsString = "Uint32"; break;
+    default: typeAsString = "Uint8";
     }
 
     // parse the "tags" byte array
@@ -888,10 +870,7 @@ public class ZeissZVIReader extends FormatReader {
             case 776: metadata.put("Scale Unit for Z", data); break;
             case 777: metadata.put("Scale Depth", data); break;
             case 778: metadata.put("Scaling Parent", data); break;
-            case 1001:
-              metadata.put("Date", data);
-              if (ome != null) OMETools.setCreationDate(ome, data.toString());
-              break;
+            case 1001: metadata.put("Date", data); break;
             case 1002: metadata.put("code", data); break;
             case 1003: metadata.put("Source", data); break;
             case 1004: metadata.put("Message", data); break;
@@ -910,45 +889,15 @@ public class ZeissZVIReader extends FormatReader {
             case 1044: metadata.put("CameraTriggerSignalType", data); break;
             case 1045: metadata.put("CameraTriggerEnable", data); break;
             case 1046: metadata.put("GrabberTimeout", data); break;
-            case 1281:
-              metadata.put("MultiChannelEnabled", data);
-              if (((Integer) data).intValue() == 1 && ome != null) {
-                OMETools.setSizeC(ome, nImages);
-                OMETools.setSizeT(ome, 1);
-                OMETools.setDimensionOrder(ome, "XYCZT");
-              }
-              break;
+            case 1281: metadata.put("MultiChannelEnabled", data); break;
             case 1282: metadata.put("MultiChannel Color", data); break;
             case 1283: metadata.put("MultiChannel Weight", data); break;
             case 1284: metadata.put("Channel Name", data); break;
             case 1536: metadata.put("DocumentInformationGroup", data); break;
-            case 1537:
-              metadata.put("Title", data);
-              if (ome != null) OMETools.setImageName(ome, data.toString());
-              break;
-            case 1538:
-              metadata.put("Author", data);
-              if (ome != null) {
-                // populate Experimenter element
-                String name = data.toString();
-                if (name != null) {
-                  String firstName = null, lastName = null;
-                  int ndx = name.indexOf(" ");
-                  if (ndx < 0) lastName = name;
-                  else {
-                    firstName = name.substring(0, ndx);
-                    lastName = name.substring(ndx + 1);
-                  }
-                  OMETools.setExperimenter(ome,
-                    firstName, lastName, null, null, null, null);
-                }
-              }
-              break;
+            case 1537: metadata.put("Title", data); break;
+            case 1538: metadata.put("Author", data); break;
             case 1539: metadata.put("Keywords", data); break;
-            case 1540:
-              metadata.put("Comments", data);
-              if (ome != null) OMETools.setDescription(ome, data.toString());
-              break;
+            case 1540: metadata.put("Comments", data);break;
             case 1541: metadata.put("SampleID", data); break;
             case 1542: metadata.put("Subject", data); break;
             case 1543: metadata.put("RevisionNumber", data); break;
@@ -961,12 +910,7 @@ public class ZeissZVIReader extends FormatReader {
             case 1550: metadata.put("File Date", data); break;
             case 1551: metadata.put("File Size", data); break;
             case 1553: metadata.put("Filename", data); break;
-            case 1792:
-              metadata.put("ProjectGroup", data);
-              if (ome != null) {
-                OMETools.setGroup(ome, data.toString(), null, null);
-              }
-              break;
+            case 1792: metadata.put("ProjectGroup", data);break;
             case 1793: metadata.put("Acquisition Date", data); break;
             case 1794: metadata.put("Last modified by", data); break;
             case 1795: metadata.put("User company", data); break;
@@ -1001,18 +945,8 @@ public class ZeissZVIReader extends FormatReader {
             case 2069: metadata.put("Fluorescence Lamp Intensity", data); break;
             case 2070: metadata.put("LightManagerEnabled", data); break;
             case 2072: metadata.put("Focus Position", data); break;
-            case 2073:
-              metadata.put("Stage Position X", data);
-              if (ome != null) {
-                OMETools.setStageX(ome, Integer.parseInt(data.toString()));
-              }
-              break;
-            case 2074:
-              metadata.put("Stage Position Y", data);
-              if (ome != null) {
-                OMETools.setStageY(ome, Integer.parseInt(data.toString()));
-              }
-              break;
+            case 2073: metadata.put("Stage Position X", data);break;
+            case 2074: metadata.put("Stage Position Y", data); break;
             case 2075:
               metadata.put("Microscope Name", data);
 //              if (ome != null) {
@@ -1423,8 +1357,115 @@ public class ZeissZVIReader extends FormatReader {
         }
       }
     }
+    
+    // Now that we've done the heavy lifting lets get the data into the active
+    // metadata store.
+    initMetadataStore();
   }
 
+  /**
+   * Takes the data collected in {@link #initMetadata()} and uses it to
+   * populate the metadata store.
+   */
+  private void initMetadataStore() {
+    populateImage();
+    populatePixels();
+    populateExperimenter();
+    populateStageLabel();
+  }
+  
+  /**
+   * Populates the first image in the metadata store.
+   */
+  private void populateImage() {
+    // The metadata store we're working with.
+    MetadataStore store = getMetadataStore();
+    
+    store.setImage((String) metadata.get("Title"),  // Name
+                   (String) metadata.get("Date"),  // Creation Date
+                   (String) metadata.get("Comments"),  // Description
+                   null);  // Use index 0
+  }
+  
+  /**
+   * Populates the first pixels set in the metadata store.
+   */
+  private void populatePixels() {
+    // The metadata store we're working with.
+    MetadataStore store = getMetadataStore();
+    
+    // Default values
+    Integer sizeX = (Integer) metadata.get("ImageWidth");
+    Integer sizeY = (Integer) metadata.get("ImageHeight");
+    Integer sizeZ = new Integer(1);
+    Integer sizeC = new Integer(1);
+    Integer sizeT = null;
+    
+    try {
+      sizeT = new Integer(getImageCount(currentId));
+    } catch (Exception e) {
+      // FIXME: Eat the exception for now, we should do something productive
+      // here as the image metadata really is useless without a valid sizeT.
+      e.printStackTrace();
+    }
+    
+    String dimensionOrder = "XYZCT";
+    
+    // If we have a legacy datafile the attribute names are different.
+    if (needLegacy) {
+      sizeX = (Integer) metadata.get("Width");
+      sizeY = (Integer) metadata.get("Height");
+    }
+    
+    if (((Integer) metadata.get("MultiChannelEnabled")).intValue() == 1) {
+      sizeC = new Integer(nImages);
+      sizeT = new Integer(1);
+      dimensionOrder = "XYCZT";
+    }
+    
+      store.setPixels(sizeX, sizeY, sizeZ, sizeC, sizeT, typeAsString,
+                      null, dimensionOrder, null);
+    }
+  
+  /**
+   * Populates the first experimenter and group in the metadata store.
+   */
+  private void populateExperimenter() {
+    // The metadata store we're working with.
+    MetadataStore store = getMetadataStore();
+    
+    // Experimenter
+    String name = (String) metadata.get("Author");
+    if (name != null) {
+      String firstName = null, lastName = null;
+      int ndx = name.indexOf(" ");
+      if (ndx < 0) lastName = name;
+      else {
+        firstName = name.substring(0, ndx);
+        lastName = name.substring(ndx + 1);
+      }
+      store.setExperimenter(firstName, lastName, null, null, null, null, null);
+    }
+    
+    // Group
+    // We're doing this here mainly out of convenience, if this gets any more
+    // complex it'd be better off in its own method).
+    store.setGroup((String) metadata.get("ProjectGroup"), null, null, null);
+  }
+    
+  /**
+   * Populates the first stage label in the metadata store.
+   */
+  private void populateStageLabel() {
+    // The metadata store we're working with.
+    MetadataStore store = getMetadataStore();
+    
+    // Stage Label
+    int xPos = Integer.parseInt((String) metadata.get("Stage Position X"));
+    int yPos = Integer.parseInt((String) metadata.get("Stage Position Y"));
+    store.setStageLabel(null, new Float(xPos), new Float(yPos), null, null);
+  }
+  
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {

@@ -33,6 +33,12 @@ import java.util.StringTokenizer;
  */
 public class SEQReader extends BaseTiffReader {
 
+  /** Number of optical sections in the file */
+  private int sizeZ = 1;
+  
+  /** Number of timepoints in the file */
+  private int sizeT = 1;
+  
   // -- Constants --
 
   /**
@@ -60,7 +66,6 @@ public class SEQReader extends BaseTiffReader {
   protected void initStandardMetadata() {
     super.initStandardMetadata();
 
-    int imageCount = 0;
     for (int j=0; j<ifds.length; j++) {
       short[] tag1 = (short[]) TiffTools.getIFDValue(ifds[j], IMAGE_PRO_TAG_1);
 
@@ -74,20 +79,18 @@ public class SEQReader extends BaseTiffReader {
 
       if (tag2 != -1) {
         // should be one of these for every image plane
-        imageCount++;
+        sizeZ++;
         metadata.put("Frame Rate", new Integer(tag2));
       }
-      else {
-        imageCount = 1;
-      }
-      metadata.put("Number of images", new Integer(imageCount));
+      
+      metadata.put("Number of images", new Integer(sizeZ));
     }
 
     // default values
-    metadata.put("slices", new Integer(1));
+    metadata.put("slices", new Integer(sizeT));
     metadata.put("channels", new Integer(1));
-    metadata.put("frames", new Integer(imageCount));
-
+    metadata.put("frames", new Integer(sizeZ));
+    
     // parse the description to get channels, slices and times where applicable
     String descr = (String) metadata.get("Comment");
     metadata.remove("Comment");
@@ -102,31 +105,19 @@ public class SEQReader extends BaseTiffReader {
     }
   }
 
-  /** Overridden to include the three SEQ-specific tags. */
-  protected void initOMEMetadata() {
-    super.initOMEMetadata();
-
-    if ((ome != null) &&
-      ((Integer) metadata.get("Number of images")).intValue() != 1)
-    {
-      Integer sizeZ;
-      Integer sizeT;
-
-      if (metadata.get("slices") instanceof Integer) {
-        sizeT = (Integer) metadata.get("slices");
-      }
-      else sizeT = new Integer("" + metadata.get("slices"));
-
-      if (metadata.get("frames") instanceof Integer) {
-        sizeZ = (Integer) metadata.get("frames");
-      }
-      else sizeZ = new Integer("" + metadata.get("frames"));
-
-      OMETools.setPixels(ome, null, null,
-        sizeZ, null, sizeT, null, null, null);
-    }
+  /* (non-Javadoc)
+   * @see loci.formats.BaseTiffReader#getSizeZ()
+   */
+  protected Integer getSizeZ() {
+    return new Integer(sizeZ);
   }
 
+  /* (non-Javadoc)
+   * @see loci.formats.BaseTiffReader#getSizeT()
+   */
+  protected Integer getSizeT() {
+    return new Integer(sizeT);
+  }
 
   // -- Main method --
 

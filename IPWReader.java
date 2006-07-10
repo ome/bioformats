@@ -138,8 +138,6 @@ public class IPWReader extends BaseTiffReader {
     currentId = id;
     in = new RandomAccessStream(id);
     metadata = new Hashtable();
-    ome = OMETools.createRoot();
-
     allIFDs = new Hashtable();
     numImages = 0;
 
@@ -201,15 +199,15 @@ public class IPWReader extends BaseTiffReader {
 
     metadata.put("Version", new String(header).trim());
 
-    if (ome != null) {
-      int sizeT = Integer.parseInt((String) metadata.get("slices"));
-      int sizeC = Integer.parseInt((String) metadata.get("channels"));
-      int sizeZ = Integer.parseInt(metadata.get("frames").toString());
+    Integer sizeT = Integer.valueOf((String) metadata.get("slices"));
+    Integer sizeC = Integer.valueOf((String) metadata.get("channels"));
+    Integer sizeZ = Integer.valueOf(metadata.get("frames").toString());
 
-      OMETools.setPixels(ome, null, null, new Integer(sizeZ),
-        new Integer(sizeC), new Integer(sizeT), null, null, null);
-      OMETools.setDescription(ome, (String) metadata.get("Version"));
-    }
+    // The metadata store we're working with.
+    MetadataStore store = getMetadataStore();
+    
+    store.setPixels(null, null, sizeZ,sizeC, sizeT, null, null, null, null);
+    store.setImage(null, null, (String) metadata.get("Version"), null);
   }
 
 

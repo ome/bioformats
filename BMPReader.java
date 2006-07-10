@@ -312,14 +312,17 @@ public class BMPReader extends FormatReader {
     global = in.getFilePointer();
     metadata.put("Indexed color", palette == null ? "false" : "true");
 
-    // populate OME-XMl
+    // Populate metadata store.
+    
+    // The metadata store we're working with.
+    MetadataStore store = getMetadataStore();
 
     int c = (palette == null && bpp == 8) ? 1 : 3;
     int tbpp = bpp;
     if (bpp > 8) tbpp /= 3;
     String pixelType = "int" + tbpp;
 
-    OMETools.setPixels(ome,
+    store.setPixels(
       new Integer(width),  // sizeX
       new Integer(height), // sizeY
       new Integer(1), // sizeZ
@@ -327,7 +330,8 @@ public class BMPReader extends FormatReader {
       new Integer(1), // sizeT
       pixelType,
       new Boolean(!littleEndian), // BigEndian
-      "XYCTZ");
+      "XYCTZ", // Dimension order
+      null); // Use index 0
   }
 
 

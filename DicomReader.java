@@ -372,10 +372,12 @@ public class DicomReader extends FormatReader {
       }
     }
     if (numImages == 0) numImages = 1;
-
+    
+    // The metadata store we're working with.
+    MetadataStore store = getMetadataStore();
+    
     // populate OME-XML node
-    if (ome != null) {
-      OMETools.setPixels(ome,
+    store.setPixels(
         new Integer((String) metadata.get("Columns")), // SizeX
         new Integer((String) metadata.get("Rows")), // SizeY
         new Integer(numImages), // SizeZ
@@ -383,20 +385,20 @@ public class DicomReader extends FormatReader {
         new Integer(1), // SizeT
         "int" + ((String) metadata.get("Bits Allocated")),  // PixelType
         new Boolean(!little),  // BigEndian
-        "XYZTC");
+        "XYZTC", // Dimension order
+        null); // Use index 0
 
-      OMETools.setImage(ome,
+    store.setImage(
         null, // name
         ((String) metadata.get("Content Date")) + "T" +
-          ((String) metadata.get("Content Time")),  // CreationDate
-        (String) metadata.get("Image Type"));
+        ((String) metadata.get("Content Time")),  // CreationDate
+        (String) metadata.get("Image Type"),
+        null); // Use index 0
 
-      OMETools.setInstrument(ome,
+    store.setInstrument(
         (String) metadata.get("Manufacturer"),
         (String) metadata.get("Manufacturer's Model Name"),
-        null, null);
-
-    }
+        null, null, null);
   }
 
   // -- Utility methods --

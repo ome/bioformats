@@ -526,7 +526,11 @@ public class ZeissLSMReader extends BaseTiffReader {
 
       channels = cSize;
       if (isRGB(currentId)) channels *= 3;
-      OMETools.setPixels(ome,
+
+      // The metadata store we're working with.
+      MetadataStore store = getMetadataStore();
+      
+      store.setPixels(
         new Integer(imageWidth), // SizeX
         new Integer(imageLength), // SizeY
         new Integer(zSize), // SizeZ
@@ -534,7 +538,8 @@ public class ZeissLSMReader extends BaseTiffReader {
         new Integer(tSize), // SizeT
         pixelType, // PixelType
         null, // BigEndian
-        dimOrder); // DimensionOrder
+        dimOrder, // DimensionOrder
+        null);
 
       in.seek(pos);
     }

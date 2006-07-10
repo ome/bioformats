@@ -174,19 +174,20 @@ public class OpenlabRawReader extends FormatReader {
       offsets[i] = offsets[i-1] + 288 + width*height*bpp;
     }
 
-    if (ome != null) {
-      bpp = ((Integer) metadata.get("Bytes per pixel")).intValue();
+    bpp = ((Integer) metadata.get("Bytes per pixel")).intValue();
 
-      OMETools.setPixels(ome,
-        (Integer) metadata.get("Width"),
-        (Integer) metadata.get("Height"),
-        new Integer(numImages),
-        new Integer(channels),
-        new Integer(1),
-        (bpp < 4) ? ("int" + (8*bpp)) : "float",
-        new Boolean(true),
-        "XYZTC");
-    }
+    // The metadata store we're working with.
+    MetadataStore store = getMetadataStore();
+    
+    store.setPixels(
+      (Integer) metadata.get("Width"),
+      (Integer) metadata.get("Height"),
+      new Integer(numImages),
+      new Integer(channels),
+      new Integer(1),
+      (bpp < 4) ? ("int" + (8*bpp)) : "float", new Boolean(true),
+      "XYZTC",
+      null);
   }
 
 

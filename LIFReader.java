@@ -377,27 +377,29 @@ public class LIFReader extends FormatReader {
       numImages += (dims[i][2] * dims[i][3] * dims[i][6]);
     }
 
-    // initialize OME-XML
+    // Populate metadata store
 
-    if (ome != null) {
-      for (int i=0; i<dims.length; i++) {
-        String type = "int8";
-        switch (dims[i][5]) {
-          case 12: type = "int16"; break;
-          case 16: type = "int16"; break;
-          case 32: type = "float"; break;
-        }
-
-        OMETools.setPixels(ome,
-          new Integer(dims[i][0]), // SizeX
-          new Integer(dims[i][1]), // SizeY
-          new Integer(dims[i][2]), // SizeZ
-          new Integer(dims[i][4]), // SizeC
-          new Integer(dims[i][3]), // SizeT
-          type, // PixelType
-          new Boolean(!littleEndian), // BigEndian
-          "XYZTC", i); // DimensionOrder
+    // The metadata store we're working with.
+    MetadataStore store = getMetadataStore();
+    
+    for (int i=0; i<dims.length; i++) {
+      String type = "int8";
+      switch (dims[i][5]) {
+      case 12: type = "int16"; break;
+      case 16: type = "int16"; break;
+      case 32: type = "float"; break;
       }
+
+      store.setPixels(
+        new Integer(dims[i][0]), // SizeX
+        new Integer(dims[i][1]), // SizeY
+        new Integer(dims[i][2]), // SizeZ
+        new Integer(dims[i][4]), // SizeC
+        new Integer(dims[i][3]), // SizeT
+        type, // PixelType
+        new Boolean(!littleEndian), // BigEndian
+        "XYZTC", // DimensionOrder
+        new Integer(i)); // Index
     }
   }
 

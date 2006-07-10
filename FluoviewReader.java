@@ -51,7 +51,17 @@ public class FluoviewReader extends BaseTiffReader {
   private static final int MMUSERBLOCK = 34386;
 
   // -- Fields --
-  private int numChannels = 1;
+  /** Number of optical sections in the file */
+  private int sizeZ = 1;
+  
+  /** Number of channels in the file */
+  private int sizeC = 1;
+  
+  /** Number of timepoints in the file */
+  private int sizeT = 1;
+
+  /** The dimension order of the file */
+  private String order;
 
   // -- Constructor --
 
@@ -88,15 +98,17 @@ public class FluoviewReader extends BaseTiffReader {
   /** Returns the number of channels in the file. */
   public int getChannelCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return numChannels;
+    return sizeC;
   }
 
   // -- Internal BaseTiffReader API methods --
 
-  /** Populates the metadata hashtable. */
-  protected void initMetadata() {
-    super.initMetadata();
-
+  /* (non-Javadoc)
+   * @see loci.formats.BaseTiffReader#initStandardMetadata()
+   */
+  protected void initStandardMetadata() {
+    super.initStandardMetadata();
+    
     try {
       Hashtable ifd = ifds[0];
 
@@ -226,8 +238,11 @@ public class FluoviewReader extends BaseTiffReader {
         }
       }
 
-      OMETools.setStageLabel(ome, null, new Float(stageX), new Float(stageY),
-        new Float(stageZ));
+      // The metadata store we're working with.
+      MetadataStore store = getMetadataStore();
+      
+      store.setStageLabel(null, new Float(stageX), new Float(stageY),
+        new Float(stageZ), null);
 
       String descr = (String) metadata.get("Comment");
       metadata.remove("Comment");
@@ -271,7 +286,7 @@ public class FluoviewReader extends BaseTiffReader {
       if (descr == null) {
         descr = (String) metadata.get("File Version");
       }
-      OMETools.setImage(ome, imageName, null, descr);
+      store.setImage(imageName, null, descr, null);
 
       String d = (String) TiffTools.getIFDValue(ifds[0], TiffTools.PAGE_NAME);
       int strPos = d.indexOf("[Higher Dimensions]") + 19;
@@ -338,13 +353,9 @@ public class FluoviewReader extends BaseTiffReader {
         numPlanes.add(new String(dim));
       }
 
-      // set the OME-XML dimension attributes appropriately
+      // Populate the metadata store appropriately
 
       // first we need to reset the dimensions
-
-      int sizeZ = 1;
-      int sizeC = 1;
-      int sizeT = 1;
 
       for(int i=0; i<n.size(); i++) {
         String name = (String) n.get(i);
@@ -357,8 +368,6 @@ public class FluoviewReader extends BaseTiffReader {
         }
         else if (name.equals("Z")) sizeZ = q;
       }
-
-      numChannels = sizeC;
 
       // set the dimension order
 
@@ -389,13 +398,38 @@ public class FluoviewReader extends BaseTiffReader {
         }
         else order += "T";
       }
-
-      OMETools.setPixels(ome, null, null, new Integer(sizeZ),
-        new Integer(sizeC), new Integer(sizeT), null, null, order);
     }
     catch (NullPointerException e) { /* most likely MMHEADER not found */ }
     catch (IOException e) { e.printStackTrace(); }
     catch (FormatException e) { e.printStackTrace(); }
+  }
+  
+  /* (non-Javadoc)
+   * @see loci.formats.BaseTiffReader#getSizeZ()
+   */
+  protected Integer getSizeZ() {
+    return new Integer(sizeZ);
+  }
+
+  /* (non-Javadoc)
+   * @see loci.formats.BaseTiffReader#getSizeC()
+   */
+  protected Integer getSizeC() {
+    return new Integer(sizeC);
+  }
+  
+  /* (non-Javadoc)
+   * @see loci.formats.BaseTiffReader#getSizeT()
+   */
+  protected Integer getSizeT() {
+    return new Integer(sizeT);
+  }
+  
+  /* (non-Javadoc)
+   * @see loci.formats.BaseTiffReader#getDimensionOrder()
+   */
+  protected String getDimensionOrder() {
+    return order;
   }
 
   // -- Main method --

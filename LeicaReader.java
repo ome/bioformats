@@ -238,7 +238,6 @@ public class LeicaReader extends BaseTiffReader {
       if (metadata == null) {
         currentId = id;
         metadata = new Hashtable();
-        ome = OMETools.createRoot();
       }
       else {
         if (currentId != id) currentId = id;
@@ -320,7 +319,9 @@ public class LeicaReader extends BaseTiffReader {
 
   // -- Helper methods --
 
-  /** Populates the metadata hashtable and OME root node. */
+  /* (non-Javadoc)
+   * @see loci.formats.BaseTiffReader#initMetadata()
+   */
   protected void initMetadata() {
     if (headerIFDs == null) headerIFDs = ifds;
 
@@ -604,43 +605,39 @@ public class LeicaReader extends BaseTiffReader {
       }
     }
 
-    if (ome != null) {
-      try {
-        if (isRGB(currentId)) numChannels *= 3;
-      }
-      catch (Exception exc) { }
-      Integer sizeX = (Integer) metadata.get("Image width");
-      Integer sizeY = (Integer) metadata.get("Image height");
-      Integer sizeZ = (Integer) metadata.get("Number of images");
-      OMETools.setPixels(ome, sizeX, sizeY, sizeZ,
-        new Integer(numChannels == 0 ? 1 : numChannels), // SizeC
-        new Integer(1), // SizeT
-        null, // PixelType
-        new Boolean(!littleEndian), // BigEndian
-        "XYZTC"); // DimensionOrder
-
-      String timestamp = (String) metadata.get("Timestamp 1");
-      if (timestamp != null) {
-        OMETools.setCreationDate(ome, timestamp.toString().substring(3));
-      }
-
-      String description = (String) metadata.get("Image Description");
-      if (description != null) {
-        OMETools.setDescription(ome, description.toString());
-      }
-
-//      String voxel = metadata.get("VoxelType").toString();
-//      String photoInterp;
-//      if (voxel.equals("gray normal")) photoInterp = "monochrome";
-//      else if (voxel.equals("RGB")) photoInterp = "RGB";
-//      else photoInterp = "monochrome";
-//
-//      OMETools.setAttribute(ome, "ChannelInfo",
-//        "PhotometricInterpretation", photoInterp);
-//
-//      OMETools.setAttribute(ome, "ChannelInfo", "SamplesPerPixel",
-//        metadata.get("Samples per pixel").toString());
+    // The metadata store we're working with.
+    MetadataStore store = getMetadataStore();
+    
+    try {
+      if (isRGB(currentId)) numChannels *= 3;
     }
+    catch (Exception exc) { }
+    Integer sizeX = (Integer) metadata.get("Image width");
+    Integer sizeY = (Integer) metadata.get("Image height");
+    Integer sizeZ = (Integer) metadata.get("Number of images");
+    store.setPixels(sizeX, sizeY, sizeZ,
+      new Integer(numChannels == 0 ? 1 : numChannels), // SizeC
+      new Integer(1), // SizeT
+      null, // PixelType
+      new Boolean(!littleEndian), // BigEndian
+      "XYZTC", // DimensionOrder
+      null); // Use index 0
+
+    String timestamp = (String) metadata.get("Timestamp 1");
+    String description = (String) metadata.get("Image Description");
+    store.setImage(null, timestamp.substring(3), description, null);
+
+//  String voxel = metadata.get("VoxelType").toString();
+//  String photoInterp;
+//  if (voxel.equals("gray normal")) photoInterp = "monochrome";
+//  else if (voxel.equals("RGB")) photoInterp = "RGB";
+//  else photoInterp = "monochrome";
+
+//  OMETools.setAttribute(ome, "ChannelInfo",
+//  "PhotometricInterpretation", photoInterp);
+
+//  OMETools.setAttribute(ome, "ChannelInfo", "SamplesPerPixel",
+//  metadata.get("Samples per pixel").toString());
   }
 
   // -- Main method --

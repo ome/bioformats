@@ -131,8 +131,6 @@ public class DeltavisionReader extends FormatReader {
     int offset = header.length + extHeader.length;
     offset += width * height * bytesPerPixel * no;
 
-    int channels = 1;
-    int numSamples = (int) (width * height);
     byte[] rawData = new byte[width * height * bytesPerPixel];
 
     in.seek(offset);
@@ -207,11 +205,6 @@ public class DeltavisionReader extends FormatReader {
               bytesPerPixel = 2;
               break;
       default: pixel = "unknown"; omePixel = "Uint8"; bytesPerPixel = 1;
-    }
-
-    if (ome != null) {
-      OMETools.setPixels(ome, sizeX, sizeY, null, null, null, omePixel,
-        new Boolean(!little), null);
     }
 
     metadata.put("PixelType", pixel);
@@ -289,9 +282,8 @@ public class DeltavisionReader extends FormatReader {
     metadata.put("Wavelength 5 max. intensity", new Float(Float.intBitsToFloat(
       DataTools.bytesToInt(header, 176, 4, little))));
 
-    int nt = DataTools.bytesToShort(header, 180, 2, little);
-    metadata.put("Number of timepoints", new Integer(nt));
-    if (ome != null) OMETools.setSizeT(ome, nt);
+    int numT = DataTools.bytesToShort(header, 180, 2, little);
+    metadata.put("Number of timepoints", new Integer(numT));
 
     int sequence = DataTools.bytesToInt(header, 182, 4, little);
     String imageSequence;
@@ -303,7 +295,6 @@ public class DeltavisionReader extends FormatReader {
       default: imageSequence = "unknown"; dimOrder = "XYZTC";
     }
     metadata.put("Image sequence", imageSequence);
-    if (ome != null) OMETools.setDimensionOrder(ome, dimOrder);
 
     metadata.put("X axis tilt angle", new Float(Float.intBitsToFloat(
       DataTools.bytesToInt(header, 184, 4, little))));
@@ -312,12 +303,10 @@ public class DeltavisionReader extends FormatReader {
     metadata.put("Z axis tilt angle", new Float(Float.intBitsToFloat(
       DataTools.bytesToInt(header, 192, 4, little))));
 
-    int nw = DataTools.bytesToShort(header, 196, 2, little);
-    metadata.put("Number of wavelengths", new Integer(nw));
-    if (ome != null) OMETools.setSizeC(ome, nw);
-    int nz = numImages / (nw * nt);
-    metadata.put("Number of focal planes", new Integer(nz));
-    if (ome != null) OMETools.setSizeZ(ome, nz);
+    numW = DataTools.bytesToShort(header, 196, 2, little);
+    metadata.put("Number of wavelengths", new Integer(numW));
+    int numZ = numImages / (numW * numT);
+    metadata.put("Number of focal planes", new Integer(numZ));
 
     metadata.put("Wavelength 1 (in nm)", new Integer(DataTools.bytesToShort(
       header, 198, 2, little)));
@@ -336,24 +325,24 @@ public class DeltavisionReader extends FormatReader {
     metadata.put("Z origin (in um)", new Float(Float.intBitsToFloat(
       DataTools.bytesToInt(header, 216, 4, little))));
     int numTitles = DataTools.bytesToInt(header, 220, 4, little);
-
-    if (ome != null) {
-      Float x = (Float) metadata.get("X origin (in um)");
-      Float y = (Float) metadata.get("Y origin (in um)");
-      Float z = (Float) metadata.get("Z origin (in um)");
-      OMETools.setStageLabel(ome, null, x, y, z);
-    }
+    
+    // The metadata store we're working with.
+    MetadataStore store = getMetadataStore();
+    
+    Float xOrigin = (Float) metadata.get("X origin (in um)");
+    Float yOrigin = (Float) metadata.get("Y origin (in um)");
+    Float zOrigin = (Float) metadata.get("Z origin (in um)");
+    store.setStageLabel(null, xOrigin, yOrigin, zOrigin, null);
 
     String title;
-    for (int i=1; i<=10; i++) {
+    for (int i=1; i<=numTitles; i++) {
       // Make sure that "null" characters are stripped out
       title = new String(header, 224 + 80*(i-1), 80).replaceAll("\0", "");
       metadata.put("Title " + i, title);
     }
-
-    if (ome != null) {
-      OMETools.setDescription(ome, (String) metadata.get("Title 1"));
-    }
+    
+    store.setPixels(sizeX, sizeY, new Integer(numZ), new Integer(numW),
+        new Integer(numT), omePixel, new Boolean(!little), dimOrder, null);
 
     // ----- The Extended Header data handler begins here ------
 

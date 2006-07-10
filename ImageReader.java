@@ -40,7 +40,6 @@ public class ImageReader extends FormatReader {
   /** List of reader classes. */
   protected static Class[] readerClasses;
 
-
   // -- Static initializer --
 
   static {
@@ -86,13 +85,30 @@ public class ImageReader extends FormatReader {
   /** Current form index. */
   protected int index;
 
-
   // -- Constructor --
 
   /** Constructs a new ImageReader. */
   public ImageReader() {
     super("any image", (String[]) null);
+    initializeReaders();
+  }
+  
+  /**
+   * Constructs a new ImageReader with a MetadataStore.
+   * @param store the default metadata store.
+   */
+  public ImageReader(MetadataStore store) {
+    super("any image", (String[]) null);
+    initializeReaders();
+    setMetadataStore(store);
+  }
 
+  /**
+   * Initializes all the built-in file format readers (classes in
+   * <code>readerClasses</code>).
+   */
+  private void initializeReaders()
+  {
     // add built-in readers to the list
     Vector v = new Vector();
     HashSet suffixSet = new HashSet();
@@ -117,8 +133,16 @@ public class ImageReader extends FormatReader {
     suffixSet.toArray(suffixes);
     Arrays.sort(suffixes);
   }
-
-
+  
+  /* (non-Javadoc)
+   * @see loci.formats.FormatReader#setMetadataStore(loci.formats.MetadataStore)
+   */
+  public void setMetadataStore(MetadataStore store) {
+    super.setMetadataStore(store);
+    for (int i = 0; i < readers.length; i++)
+      readers[i].setMetadataStore(store);
+  }
+  
   // -- ImageReader API methods --
 
   /** Gets a string describing the file format for the given file. */
@@ -209,17 +233,6 @@ public class ImageReader extends FormatReader {
   public BufferedImage[] open(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return readers[index].openImage(id);
-  }
-
-  /**
-   * Obtains a org.openmicroscopy.xml.OMENode object representing the
-   * file's metadata as an OME-XML DOM structure.
-   *
-   * @return null if the org.openmicroscopy.xml package is not present.
-   */
-  public Object getOMENode(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[index].getOMENode(id);
   }
 
   /**

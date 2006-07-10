@@ -36,7 +36,7 @@ public abstract class FormatReader extends FormatHandler {
   // -- Constants --
 
   /** Debugging flag. */
-  protected static final boolean DEBUG = false; 
+  protected static final boolean DEBUG = false;
 
   /** Debugging level. 1=basic, 2=extended, 3=everything. */
   protected static final int DEBUG_LEVEL = 1;
@@ -47,17 +47,19 @@ public abstract class FormatReader extends FormatHandler {
   /** Hashtable containing metadata key/value pairs. */
   protected Hashtable metadata;
 
-  /** OME root node for OME-XML metadata. */
-  protected Object ome;
-
   /** Flag set to true if multi-channel planes are to be separated. */
   protected boolean separated = false;
+
 
   /** Files with the same pattern. */
   protected String[] stitchedFiles;
 
   /** Image counts for each file. */
   protected int[] imageCounts;
+
+  /** Current metadata store. Should <b>never</b> be accessed directly as the
+   * semantics of {@link #getMetadataStore()} prevent "null" access. */
+  private MetadataStore store = new DummyMetadataStore();
 
   // -- Constructors --
 
@@ -69,8 +71,55 @@ public abstract class FormatReader extends FormatHandler {
     super(format, suffixes);
   }
 
-
   // -- Abstract FormatReader API methods --
+  
+  /**
+   * Sets the default metadata store for this reader. This invalidates the
+   * current metadata state of the reader and will trigger a call to
+   * {@link #initFile(String)}.
+   * @param store a metadata store implementation.
+   */
+  public void setMetadataStore(MetadataStore store) {
+    this.store = store;
+    // Re-parse the file if we currently have one
+    if (currentId == null) {
+      // We're going to eat these exceptions as they will come up again if
+      // method calls are made to the format.
+      try {
+        initFile(currentId);
+      }
+      catch (FormatException e1) {}
+      catch (IOException e2) {}
+    }
+  }
+  
+  /**
+   * Retrieves the current metadata store for this reader. You can be
+   * assured that this method will <b>never</b> return a <code>null</code>
+   * metadata store.
+   * @return a metadata store implementation.
+   */
+  public MetadataStore getMetadataStore() {
+    return store;
+  }
+  
+  
+  /**
+   * Retrieves the current metadata store's root object. It is guaranteed that
+   * all file parsing has been performed by the reader prior to retrieval.
+   * Requests for a full populated root object should be made using this method.
+   * @param id a fully qualified path to the file.
+   * @return current metadata store's root object fully populated.
+   * @throws IOException if there is an IO error when reading the file specified
+   * by <code>path</code>.
+   * @throws FormatException if the file specified by <code>path</code> is of an
+   * unsupported type. 
+   */
+  public Object getMetadataStoreRoot(String id)
+    throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return getMetadataStore().getRoot();
+  }
 
   /** Checks if the given block is a valid header for this file format. */
   public abstract boolean isThisType(byte[] block);
@@ -112,9 +161,10 @@ public abstract class FormatReader extends FormatHandler {
     close();
     currentId = id;
     metadata = new Hashtable();
-    ome = OMETools.createRoot();
     imageCounts = null;
     stitchedFiles = null;
+	// Re-initialize the MetadataStore
+    getMetadataStore().createRoot();
   }
 
   /**
@@ -162,17 +212,6 @@ public abstract class FormatReader extends FormatHandler {
   }
 
   /**
-   * Obtains a org.openmicroscopy.xml.OMENode object representing the
-   * file's metadata as an OME-XML DOM structure.
-   *
-   * @return null if the org.openmicroscopy.xml package is not present.
-   */
-  public Object getOMENode(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return ome;
-  }
-
-  /**
    * Obtains the specified metadata field's value for the given file.
    *
    * @param field the name associated with the metadata field
@@ -204,12 +243,10 @@ public abstract class FormatReader extends FormatHandler {
   public boolean testRead(String[] args) throws FormatException, IOException {
     String id = null;
     boolean pixels = true;
-    boolean stitch = false;
     if (args != null) {
       for (int i=0; i<args.length; i++) {
         if (args[i].startsWith("-")) {
           if (args[i].equals("-nopix")) pixels = false;
-          else if (args[i].equals("-stitch")) stitch = true;
           else System.out.println("Ignoring unknown command flag: " + args[i]);
         }
         else {
@@ -221,7 +258,7 @@ public abstract class FormatReader extends FormatHandler {
     if (id == null) {
       String className = getClass().getName();
       System.out.println("To test read a file in " + format + " format, run:");
-      System.out.println("  java " + className + " [-nopix] [-stitch] in_file");
+      System.out.println("  java " + className + " [-nopix] in_file");
       return false;
     }
 
@@ -231,19 +268,16 @@ public abstract class FormatReader extends FormatHandler {
 
     // read pixels
     if (pixels) {
-      System.out.print("Reading " + (stitch ?
-        FilePattern.findPattern(new File(id)) : id) + " pixel data ");
+      System.out.print("Reading " + id + " pixel data ");
       long s1 = System.currentTimeMillis();
       ChannelMerger cm = new ChannelMerger(this);
-      int num = stitch ?
-        cm.getTotalImageCount(args[0]) : cm.getImageCount(args[0]);
+      int num = cm.getTotalImageCount(args[0]);
       System.out.print("(" + num + ") ");
       long e1 = System.currentTimeMillis();
       BufferedImage[] images = new BufferedImage[num];
       long s2 = System.currentTimeMillis();
       for (int i=0; i<num; i++) {
-        images[i] = stitch ?
-          cm.openStitchedImage(args[0], i) : cm.openImage(args[0], i);
+        images[i] = cm.openStitchedImage(args[0], i);
         System.out.print(".");
       }
       long e2 = System.currentTimeMillis();
@@ -277,18 +311,13 @@ public abstract class FormatReader extends FormatHandler {
     System.out.println();
 
     // output OME-XML
-    Object root = null;
-    try { root = getOMENode(id); }
-    catch (FormatException exc) { if (DEBUG) exc.printStackTrace(); }
-    if (root == null) {
-      System.out.println("OME-XML functionality not available " +
-        "(package org.openmicroscopy.xml not installed)");
+    MetadataStore store = getMetadataStore();
+    if (store instanceof OMEXMLMetadataStore) {
+      OMEXMLMetadataStore xmlStore = (OMEXMLMetadataStore) store;
+      System.out.println(xmlStore.dumpXML());
       System.out.println();
     }
-    else {
-      System.out.println(OMETools.dumpXML(root));
-      System.out.println();
-    }
+    
     return true;
   }
 
@@ -310,10 +339,11 @@ public abstract class FormatReader extends FormatHandler {
   public BufferedImage[] openAllImages(String id)
     throws FormatException, IOException
   {
+    String[] files = getMatchingFiles(id);
     Vector v = new Vector();
-    for (int i=0; i<stitchedFiles.length; i++) {
+    for (int i=0; i<files.length; i++) {
       for (int j=0; j<getImageCount(id); j++) {
-        v.add(openImage(stitchedFiles[i], j));
+        v.add(openImage(files[i], j));
       }
     }
     return (BufferedImage[]) v.toArray(new BufferedImage[0]);
@@ -321,14 +351,10 @@ public abstract class FormatReader extends FormatHandler {
 
   /** Get the total number of images in the given file and all matching files.*/
   public int getTotalImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) {
-      initFile(id);
-      stitchedFiles = getMatchingFiles(id);
-    }
-    
+    String[] files = getMatchingFiles(id);
     int num = 0;
-    for (int i=0; i<stitchedFiles.length; i++) {
-      num += getImageCount(stitchedFiles[i]);
+    for (int i=0; i<files.length; i++) {
+      num += getImageCount(files[i]);
     }
     return num;
   }
@@ -342,23 +368,24 @@ public abstract class FormatReader extends FormatHandler {
   public BufferedImage openStitchedImage(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-    if (stitchedFiles.length == 1) return openImage(stitchedFiles[0], no);
+    String[] files = getMatchingFiles(id);
 
-    if (imageCounts == null) {
-      imageCounts = new int[stitchedFiles.length];
-      for (int i=0; i<imageCounts.length; i++) {
-        imageCounts[i] = getImageCount(stitchedFiles[i]);
+    // first find the appropriate file
+    boolean found = false;
+    String file = files[0];
+    int ndx = 1;  // index into the array of file names
+    while (!found) {
+      if (no < getImageCount(file)) {
+        found = true;
+      }
+      else {
+        no -= getImageCount(file);
+        file = files[ndx];
+        ndx++;
       }
     }
-   
-    int ndx = 0;
-    while (no >= imageCounts[ndx]) {
-      no -= imageCounts[ndx];
-      ndx++;
-    }
 
-    return openImage(stitchedFiles[ndx], no);
+    return openImage(file, no);
   }
 
   /**
@@ -370,22 +397,24 @@ public abstract class FormatReader extends FormatHandler {
   public byte[] openStitchedBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-  
-    if (imageCounts == null) {
-      imageCounts = new int[stitchedFiles.length];
-      for (int i=0; i<imageCounts.length; i++) {
-        imageCounts[i] = getImageCount(stitchedFiles[i]);
+    String[] files = getMatchingFiles(id);
+
+    // first find the appropriate file
+    boolean found = false;
+    String file = files[0];
+    int ndx = 1;  // index into the array of file names
+    while (!found) {
+      if (no < getImageCount(file)) {
+        found = true;
+      }
+      else {
+        no -= getImageCount(file);
+        file = files[ndx];
+        ndx++;
       }
     }
-  
-    int ndx = 0;
-    while (no >= imageCounts[ndx]) {
-      no -= imageCounts[ndx];
-      ndx++;
-    }
 
-    return openBytes(stitchedFiles[ndx], no);  
+    return openBytes(file, no);
   }
 
   // -- FormatHandler API methods --
@@ -394,5 +423,4 @@ public abstract class FormatReader extends FormatHandler {
   protected void createFilters() {
     filters = new FileFilter[] { new FormatFileFilter(this) };
   }
-
 }
