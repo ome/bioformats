@@ -1,10 +1,11 @@
 //
-// FormatException.java
+// UnsupportedMetadataStoreException.java
 //
 
 /*
 LOCI Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-2006 Melissa Linkert, Curtis Rueden and Eric Kjellman.
+Copyright (C) 2005-2006 Melissa Linkert, Curtis Rueden, Chris Allan
+and Eric Kjellman.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
@@ -25,14 +26,22 @@ package loci.formats;
 
 /**
  * Thrown when metadata store initialization is attempted and failed due to
- * potentially miss pre-requisites.
+ * potentially missing prerequisites.
+ *
+ * @author Chris Allan callan at blackcat.ca
  */
 public class UnsupportedMetadataStoreException extends Exception {
+
+  // -- Constructors --
+
   public UnsupportedMetadataStoreException() { super(); }
+
   public UnsupportedMetadataStoreException(String s) { super(s); }
+
   public UnsupportedMetadataStoreException(String s, Throwable cause) {
     super(s, cause);
   }
-  public UnsupportedMetadataStoreException(Throwable cause) { super(cause); }
-}
 
+  public UnsupportedMetadataStoreException(Throwable cause) { super(cause); }
+
+}
