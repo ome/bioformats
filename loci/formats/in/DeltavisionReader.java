@@ -327,10 +327,10 @@ public class DeltavisionReader extends FormatReader {
     metadata.put("Z origin (in um)", new Float(Float.intBitsToFloat(
       DataTools.bytesToInt(header, 216, 4, little))));
     int numTitles = DataTools.bytesToInt(header, 220, 4, little);
-    
+
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-    
+
     Float xOrigin = (Float) metadata.get("X origin (in um)");
     Float yOrigin = (Float) metadata.get("Y origin (in um)");
     Float zOrigin = (Float) metadata.get("Z origin (in um)");
@@ -342,7 +342,7 @@ public class DeltavisionReader extends FormatReader {
       title = new String(header, 224 + 80*(i-1), 80).replaceAll("\0", "");
       metadata.put("Title " + i, title);
     }
-    
+
     store.setPixels(sizeX, sizeY, new Integer(numZ), new Integer(numW),
         new Integer(numT), omePixel, new Boolean(!little), dimOrder, null);
 

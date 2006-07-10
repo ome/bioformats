@@ -60,10 +60,10 @@ public class OpenlabReader extends FormatReader {
 
   /** Flag indicating whether current file is little endian. */
   protected boolean little = true;
-  
+
   /** Size of a pixel plane/section's X-axis */
   private Integer sizeX;
-  
+
   /** Size of a pixel plane/section's Y-axis */
   private Integer sizeY;
 
@@ -502,43 +502,40 @@ public class OpenlabReader extends FormatReader {
       }
 
       // Populate metadata store
-      
+
       // The metadata store we're working with.
       MetadataStore store = getMetadataStore();
 
       String type = "int8";
       if (metadata.get("BitDepth") != null) {
         int bitDepth = ((Integer) metadata.get("BitDepth")).intValue();
-        
+
         if (bitDepth <= 8) type = "int8";
         else if (bitDepth <= 16) type = "int16";
         else type = "int32";
       }
-      
+
       store.setImage(null, (String) metadata.get("Timestamp"), null, null);
 
       // FIXME: There is a loss of precision here as we are down-casting from
       // double to float.
       store.setStageLabel(null, (Float) metadata.get("XOrigin"),
-          (Float) metadata.get("YOrigin"), null, null);
+        (Float) metadata.get("YOrigin"), null, null);
 
       // FIXME: There is a loss of precision here as we are down-casting from
       // double to float.
       store.setDimensions((Float) metadata.get("XScale"),
-          (Float) metadata.get("YScale"), null, null, null, null);
+        (Float) metadata.get("YScale"), null, null, null, null);
 
       in.seek(offset);
-      
+
       // We need to poke at least one plane so that we can get "sizeX" and
       // "sizeY" set. to populate the pixels set.
-      try {
-        openImage(currentId, 0);
-      } catch (FormatException e) {
-        e.printStackTrace();
-      }
-      
+      try { openImage(currentId, 0); }
+      catch (FormatException e) { e.printStackTrace(); }
+
       store.setPixels(sizeX, sizeY, new Integer(numBlocks), new Integer(3),
-                      new Integer(1), type, new Boolean(!little), "XYCZT", null);
+        new Integer(1), type, new Boolean(!little), "XYCZT", null);
     }
   }
 

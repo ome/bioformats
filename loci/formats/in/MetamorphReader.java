@@ -49,19 +49,17 @@ public class MetamorphReader extends BaseTiffReader {
 
   // -- Fields --
   private int numPlanes;
-  
+
   /** The TIFF's name */
   private String imageName;
-  
+
   /** The TIFF's creation date */
   private String imageCreationDate;
-
 
   // -- Constructor --
 
   /** Constructs a new Metamorph reader. */
   public MetamorphReader() { super("Metamorph STK", "stk"); }
-
 
   // -- FormatReader API methods --
 
@@ -501,27 +499,27 @@ public class MetamorphReader extends BaseTiffReader {
     }
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
    * @see loci.formats.BaseTiffReader#getSizeZ()
    */
   protected Integer getSizeZ() throws FormatException {
-    return new Integer(TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true).length);
+    return new Integer(TiffTools.getIFDLongArray(ifds[0],
+      UIC2TAG, true).length);
   }
-  
-  /* (non-Javadoc)
+
+  /*
+   * (non-Javadoc)
    * @see loci.formats.BaseTiffReader#getImageName()
    */
-  protected String getImageName() {
-    return imageName;
-  }
-  
-  /* (non-Javadoc)
+  protected String getImageName() { return imageName; }
+
+  /*
+   * (non-Javadoc)
    * @see loci.formats.BaseTiffReader#getImageCreationDate()
    */
-  protected String getImageCreationDate() {
-    return imageCreationDate;
-  }
-  
+  protected String getImageCreationDate() { return imageCreationDate; }
+
   // -- Utility methods --
 
   /** Converts a Julian date value into a human-readable string. */

@@ -383,7 +383,7 @@ public class LIFReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-    
+
     for (int i=0; i<dims.length; i++) {
       String type = "int8";
       switch (dims[i][5]) {

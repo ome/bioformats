@@ -531,7 +531,7 @@ public class ZeissLSMReader extends BaseTiffReader {
 
       // The metadata store we're working with.
       MetadataStore store = getMetadataStore();
-      
+
       store.setPixels(
         new Integer(imageWidth), // SizeX
         new Integer(imageLength), // SizeY

@@ -196,10 +196,10 @@ public class PictReader extends FormatReader {
     in.seek(512);
     in.read(b);
     Dimension d = getDimensions(b);
-    
+
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-    
+
     store.setPixels(
       new Integer((int) d.getWidth()), new Integer((int) d.getHeight()),
       new Integer(1), new Integer(3), new Integer(1), "int8",

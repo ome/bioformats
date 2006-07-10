@@ -374,10 +374,10 @@ public class DicomReader extends FormatReader {
       }
     }
     if (numImages == 0) numImages = 1;
-    
+
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-    
+
     // populate OME-XML node
     store.setPixels(
         new Integer((String) metadata.get("Columns")), // SizeX

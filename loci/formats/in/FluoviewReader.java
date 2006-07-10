@@ -55,10 +55,10 @@ public class FluoviewReader extends BaseTiffReader {
   // -- Fields --
   /** Number of optical sections in the file */
   private int sizeZ = 1;
-  
+
   /** Number of channels in the file */
   private int sizeC = 1;
-  
+
   /** Number of timepoints in the file */
   private int sizeT = 1;
 
@@ -110,7 +110,7 @@ public class FluoviewReader extends BaseTiffReader {
    */
   protected void initStandardMetadata() {
     super.initStandardMetadata();
-    
+
     try {
       Hashtable ifd = ifds[0];
 
@@ -242,7 +242,7 @@ public class FluoviewReader extends BaseTiffReader {
 
       // The metadata store we're working with.
       MetadataStore store = getMetadataStore();
-      
+
       store.setStageLabel(null, new Float(stageX), new Float(stageY),
         new Float(stageZ), null);
 
@@ -405,7 +405,7 @@ public class FluoviewReader extends BaseTiffReader {
     catch (IOException e) { e.printStackTrace(); }
     catch (FormatException e) { e.printStackTrace(); }
   }
-  
+
   /* (non-Javadoc)
    * @see loci.formats.BaseTiffReader#getSizeZ()
    */
@@ -419,14 +419,14 @@ public class FluoviewReader extends BaseTiffReader {
   protected Integer getSizeC() {
     return new Integer(sizeC);
   }
-  
+
   /* (non-Javadoc)
    * @see loci.formats.BaseTiffReader#getSizeT()
    */
   protected Integer getSizeT() {
     return new Integer(sizeT);
   }
-  
+
   /* (non-Javadoc)
    * @see loci.formats.BaseTiffReader#getDimensionOrder()
    */

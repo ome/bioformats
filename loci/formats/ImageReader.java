@@ -93,7 +93,7 @@ public class ImageReader extends FormatReader {
     super("any image", (String[]) null);
     initializeReaders();
   }
-  
+
   /**
    * Constructs a new ImageReader with a MetadataStore.
    * @param store the default metadata store.
@@ -134,7 +134,7 @@ public class ImageReader extends FormatReader {
     suffixSet.toArray(suffixes);
     Arrays.sort(suffixes);
   }
-  
+
   /* (non-Javadoc)
    * @see loci.formats.FormatReader#setMetadataStore(loci.formats.MetadataStore)
    */
@@ -143,7 +143,7 @@ public class ImageReader extends FormatReader {
     for (int i = 0; i < readers.length; i++)
       readers[i].setMetadataStore(store);
   }
-  
+
   // -- ImageReader API methods --
 
   /** Gets a string describing the file format for the given file. */

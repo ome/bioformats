@@ -37,10 +37,10 @@ public class SEQReader extends BaseTiffReader {
 
   /** Number of optical sections in the file */
   private int sizeZ = 1;
-  
+
   /** Number of timepoints in the file */
   private int sizeT = 1;
-  
+
   // -- Constants --
 
   /**
@@ -84,7 +84,7 @@ public class SEQReader extends BaseTiffReader {
         sizeZ++;
         metadata.put("Frame Rate", new Integer(tag2));
       }
-      
+
       metadata.put("Number of images", new Integer(sizeZ));
     }
 
@@ -92,7 +92,7 @@ public class SEQReader extends BaseTiffReader {
     metadata.put("slices", new Integer(sizeT));
     metadata.put("channels", new Integer(1));
     metadata.put("frames", new Integer(sizeZ));
-    
+
     // parse the description to get channels, slices and times where applicable
     String descr = (String) metadata.get("Comment");
     metadata.remove("Comment");

@@ -81,7 +81,7 @@ public class RandomAccessArray extends RandomAccessFile {
     length = b.length;
   }
 
-  public void close() throws IOException { 
+  public void close() throws IOException {
     super.close();
   }
 

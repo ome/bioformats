@@ -223,7 +223,7 @@ public class IPLabReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-    
+
     store.setPixels(
       new Integer((int) width), // SizeX
       new Integer((int) height), // SizeY
@@ -234,7 +234,7 @@ public class IPLabReader extends FormatReader {
       new Boolean(!littleEndian), // BigEndian
       order, // DimensionOrder
       null); // Use index 0
-    
+
     in.read(fourBytes);
     String tag = new String(fourBytes);
     while (!tag.equals("fini")) {

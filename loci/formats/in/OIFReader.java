@@ -227,10 +227,10 @@ public class OIFReader extends FormatReader {
       }
       ptyReader.close();
     }
-    
+
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-    
+
     store.setPixels(
       new Integer(Integer.parseInt((String) metadata.get("ImageWidth"))),
       new Integer(Integer.parseInt((String) metadata.get("ImageHeight"))),

@@ -407,7 +407,7 @@ public class BioRadReader extends FormatReader {
     metadata.put("luts", colors);
 
     // Populate the metadata store
-    
+
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
 

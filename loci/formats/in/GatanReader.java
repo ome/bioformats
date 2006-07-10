@@ -180,7 +180,7 @@ public class GatanReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
-    
+
     store.setPixels(
       new Integer(dims[0]), // SizeX
       new Integer(dims[1]), // SizeY

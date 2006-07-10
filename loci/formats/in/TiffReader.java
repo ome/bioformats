@@ -39,7 +39,7 @@ public class TiffReader extends BaseTiffReader {
 
   /** Number of optical sections in the file */
   private int sizeZ = 1;
-  
+
   // -- Constructor --
 
   /** Constructs a new Tiff reader. */
@@ -101,7 +101,7 @@ public class TiffReader extends BaseTiffReader {
   protected Integer getSizeZ() {
     return new Integer(sizeZ);
   }
-  
+
   /**
    * Allows a class which is delegating parsing responsibility to
    * <code>TiffReader</code> the ability to affect the <code>sizeZ</code> value

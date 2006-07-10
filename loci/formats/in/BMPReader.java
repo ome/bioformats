@@ -315,7 +315,7 @@ public class BMPReader extends FormatReader {
     metadata.put("Indexed color", palette == null ? "false" : "true");
 
     // Populate metadata store.
-    
+
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
 
