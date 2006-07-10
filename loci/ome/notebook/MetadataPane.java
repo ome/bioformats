@@ -20,6 +20,8 @@ import org.w3c.dom.*;
 import java.awt.event.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 
 
 /** MetadataPane is a panel that displays OME-XML metadata. */
@@ -65,6 +67,8 @@ public class MetadataPane extends JPanel
 
   /** Constructs widget for displaying OME-XML metadata. */
   public MetadataPane(TemplateParser tp) {
+
+    // -- General Field Initialization --
 
     panelList = new Vector();
     panelsWithID = new Vector();
@@ -196,13 +200,17 @@ public class MetadataPane extends JPanel
   *   documents based on the template
   */
   public void setupTabs() {
+//make sure all old gui stuff is tossed when this called twice. also clear our TablePanel lists
     panelList = new Vector();
     panelsWithID = new Vector();
     tabPane.removeAll();
+    
+//use the list acquired from Template.xml to form the initial tabs    
     Element[] tabList = tParse.getTabs();
     for(int i = 0;i< tabList.length;i++) {
       String thisName = tabList[i].getAttribute("Name");
       if(thisName.length() == 0) thisName = tabList[i].getAttribute("XMLName");
+//make a TabPanel Object that represents the panel that displays data for a node
       TabPanel tPanel = new TabPanel(tabList[i]);
       OMEXMLNode n = null;
 
@@ -222,9 +230,13 @@ public class MetadataPane extends JPanel
       catch (Exception exc) {
         System.out.println(exc.toString());
       }
-            
+      
+//set the field oNode in TabPanel to reflect the structure of the xml document being formed       
       tPanel.oNode = n;
+//do all the good stuff to flesh out the TabPanel's gui with the tables and assorted stuff
       renderTab(tPanel);
+      
+//set up a scrollpane to hold the TabPanel in case it's too large to fit
       JScrollPane scrollPane = new JScrollPane(tPanel);
       scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
       scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -234,6 +246,9 @@ public class MetadataPane extends JPanel
       int keyNumber = getKey(i+1);
       if(keyNumber !=0 ) tabPane.setMnemonicAt(i, keyNumber);
     }
+    
+//this part sets up the refTable's comboBox editor to have choices corresponding to every TablePanel
+//that has a valid ID attribute    
     JComboBox box = new JComboBox();
     for (int i = 0;i<panelsWithID.size();i++) {
       TablePanel p = (TablePanel) panelsWithID.get(i);
@@ -249,17 +264,24 @@ public class MetadataPane extends JPanel
   *   the template will set which parts of the file are displayed.
   */
   public void setupTabs(OMENode ome) {
+//Get rid of old gui components and old TablePanel lists when new file is opened
     tabPane.removeAll();
     panelList = new Vector();
     panelsWithID = new Vector();
+
+//use the list acquired from Template.xml to form the initial tabs  
     Element[] tabList = tParse.getTabs();
     Vector actualTabs = new Vector(2 * tabList.length);
     for(int i = 0;i< tabList.length;i++) {
+//since we have an OMEXML file to compare to now, we have to worry about repeat elements
+//inOmeList will hold all instances of a particular tagname on one level of the node-tree
       Vector inOmeList = null;
       String aName = tabList[i].getAttribute("XMLName");
+//work-around checks if we need to look in CustomAttributes, and subsequently ignore it
       if( aName.equals("Image") || aName.equals("Feature") || aName.equals("Dataset") || aName.equals("Project") ) inOmeList = ome.getChildren(aName);
       else inOmeList = ome.getChild("CustomAttributes").getChildren(aName);
       int vSize = inOmeList.size();
+//check to see if one or more elements with the given tagname (a.k.a. "XMLName") exist in the file
       if(vSize >0) {
         for(int j = 0;j<vSize;j++) {
           String thisName = tabList[i].getAttribute("Name");
@@ -271,17 +293,13 @@ public class MetadataPane extends JPanel
           scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
           scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
           String desc = tabList[i].getAttribute("Description");
-          if (vSize > 1) {
-            Integer jInt = new Integer(j+1);
-            thisName = thisName + " (" + jInt.toString() + ")";
-            tPanel.name = thisName;
-            tPanel.copyNumber = j + 1;
-          }
+          thisName = getTreePathName(tPanel.el,tPanel.oNode);
           if (desc.length() == 0) tabPane.addTab(thisName, null, scrollPane, null);
           else tabPane.addTab(thisName, null, scrollPane, desc);
           actualTabs.add(tabList[i]);
         }
       }
+//if no instances of tagname in file, still set up a blank table based on the template
       else {
         String thisName = tabList[i].getAttribute("Name");
         if(thisName.length() == 0) thisName = tabList[i].getAttribute("XMLName");
@@ -296,12 +314,18 @@ public class MetadataPane extends JPanel
         actualTabs.add(tabList[i]);
       }
     }
+//set up mnemonics
     for(int i = 0;i<actualTabs.size();i++) {
       int keyNumber = getKey(i+1);
       if(keyNumber !=0 ) tabPane.setMnemonicAt(i, keyNumber);
     }
-    MetadataNotebook mn = (MetadataNotebook) getParent().getParent().getParent();
+//change the "Tabs" menu in the original window to reflect the actual tabs created
+// (duplicate tabs are the reason for this)
+    MetadataNotebook mn = (MetadataNotebook) getTopLevelAncestor();
     mn.changeTabMenu(actualTabs.toArray());
+    
+//this part sets up the refTable's comboBox editor to have choices corresponding to every TablePanel
+//that has a valid ID attribute    
     JComboBox box = new JComboBox();
     for (int i = 0;i<panelsWithID.size();i++) {
       TablePanel p = (TablePanel) panelsWithID.get(i);
@@ -313,7 +337,7 @@ public class MetadataPane extends JPanel
     }   
   }
   
-  /** fleshes out the GUI of a given TabPanel
+  /** fleshes out the GUI of a given TabPanel, adding TablePanels appropriately
   */ 
   public void renderTab(TabPanel tp) {
     if(!tp.isRendered) {
@@ -334,8 +358,7 @@ public class MetadataPane extends JPanel
       gbc.gridwidth = GridBagConstraints.REMAINDER;
       gbc.gridheight = 1;
   //placeY will hold info on which position to add a new component to the layout
-      int placeY = 0;
-  
+      int placeY = 0;  
       
   //add a title label to show which element  
   
@@ -738,6 +761,8 @@ public class MetadataPane extends JPanel
             else return true;
           }
         };
+        
+        myTableModel.addTableModelListener(this);
       
         refTable = new JTable(myTableModel);
         refTable.getColumnModel().getColumn(0).setPreferredWidth(150);
@@ -829,8 +854,8 @@ public class MetadataPane extends JPanel
             model.setValueAt(value,i,1);
             addItems.add(value);
           }
-        }
-/*        
+        }   
+/*WHY IS THIS SO FUBARED??          
         Vector v = new Vector();
         for(int i = 0;i < addItems.size();i++) {
           System.out.println("Original: \"" + addItems.get(i).toString());
@@ -852,14 +877,13 @@ public class MetadataPane extends JPanel
       if (e.getSource() instanceof TableButton) {
         TableButton tb = (TableButton) e.getSource();
         JTable jt = tb.table;
-        System.out.println("The row being editted: " + tb.whichRow);
         
         TableModel model = jt.getModel();
         Object obj = model.getValueAt(tb.whichRow, 1);
         String aName = obj.toString();
         TablePanel aPanel = null;
         
-        int whichNum = -1;
+        int whichNum = panelsWithID.size();
         
         for(int i = 0;i<panelsWithID.size();i++) {
           aPanel = (TablePanel) panelsWithID.get(i);
@@ -879,10 +903,12 @@ public class MetadataPane extends JPanel
           }
           JTabbedPane jTabP = (JTabbedPane) anObj;
 	  jTabP.setSelectedComponent(jScr);
-	  System.out.println(jt.getLocation().toString());
-	  System.out.println(tablePan.getAlignmentY());
+//ADD CODE HERE TO FOCUS APPROPRIATELY ON THE TABLE IN QUESTION
 //	  tablePan.newTable.grabFocus();
 //	  jScr.getViewport().setViewPosition(tablePan.getLocationOnScreen());
+	}
+	else {
+	  JOptionPane.showMessageDialog((Frame) getTopLevelAncestor() , "Since the ID in question refers to something\noutside of this file, you cannot \"Goto\" it.", "LSID Detected", JOptionPane.WARNING_MESSAGE);
 	}
       }
     }
@@ -899,6 +925,48 @@ public class MetadataPane extends JPanel
             DOMUtil.setCharacterData(data, oNode.getDOMElement());
           }
           if (oNode != null) oNode.setAttribute(attr, data);
+        }
+      }
+      else if (e.getType() == TableModelEvent.UPDATE && column == 1 && ((TableModel) e.getSource()) == refTable.getModel()) {
+        int row = e.getFirstRow();
+        TableModel model = (TableModel) e.getSource();
+        String data = (String) model.getValueAt(row, column);
+        String attr = (String) model.getValueAt(row,0);
+        String thisID = null;
+        for(int i = 0;i<panelsWithID.size();i++) {
+          TablePanel tp = (TablePanel) panelsWithID.get(i);
+          if(data.equals(tp.name)) thisID = tp.id;
+        }
+        if (thisID != null) oNode.setAttribute(attr, thisID);
+        else {
+/*DIALOG HERE THAT DOESN'T WORK, SHOULD HANDLE CHANGES OF LSIDS
+          Object[] options = {"Yes, do it!",
+                    "Cancel"};
+          final JDialog dialog = new JDialog((Frame) getTopLevelAncestor(),"Confirm LSID Change",true);
+
+          final JOptionPane optionPane = new JOptionPane (
+"Are you sure you want to change this ID\nsince it references something outside\nthis file?",
+JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION, null, options, options[0]);
+
+          optionPane.addPropertyChangeListener(
+            new PropertyChangeListener() {
+              public void propertyChange(PropertyChangeEvent e) {
+                String prop = e.getPropertyName();
+
+                if (dialog.isVisible() 
+                && (e.getSource() == optionPane)
+                && (prop.equals(JOptionPane.VALUE_PROPERTY))) {
+
+                }
+              }
+            });
+            
+            int value = ((Integer)optionPane.getValue()).intValue();
+            if (value == JOptionPane.YES_OPTION) {
+              oNode.setAttribute(attr, data);
+              dialog.setVisible(false);
+            }
+*/
         }
       }
     }
