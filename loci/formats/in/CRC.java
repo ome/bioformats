@@ -21,7 +21,7 @@
  * great code.
  */
 
-package loci.formats;
+package loci.formats.in;
 
 /**
  * A simple class the hold and calculate the CRC for sanity checking
