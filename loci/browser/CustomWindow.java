@@ -114,7 +114,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     gridbag.setConstraints(tLabel, gbc);
     bottom.add(tLabel);
 
-
 //     waitLabel = new JLabel("  ");
 //     waitLabel.setHorizontalTextPosition(JLabel.LEFT);
 //     gbc.gridx = 0;
@@ -263,8 +262,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     if (!db.hasZ || !db.hasT) swapAxes.setEnabled(false);
     swapAxes.addActionListener(this);
     swapAxes.setActionCommand("swap");
-    
-    
+
+
     gbc.gridx = 0;
     gbc.gridy = 3;
     gbc.gridwidth = 2;
@@ -282,7 +281,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     gridbag.setConstraints(options, gbc);
     bottom.add(options);
 
-    
+
     progressBar = new JProgressBar();
     progressBar.setStringPainted(true);
     progressBar.setString(" ");
@@ -292,7 +291,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     gbc.gridwidth = 1;
     gridbag.setConstraints(progressBar, gbc);
     bottom.add(progressBar);
-    
+
     // create enclosing JPanel (for 5-pixel border)
     JPanel pane = new JPanel() {
       public Dimension getMaximumSize() {
@@ -336,9 +335,9 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   /** selects and shows slice defined by index */
   public void showSlice(int index) {
     if (index >= 1 && index <= imp.getStackSize()) {
-	synchronized (imp) {
-	    imp.setSlice(index);
-	}
+      synchronized (imp) {
+        imp.setSlice(index);
+      }
       imp.updateAndDraw();
     }
     else if (LociDataBrowser.DEBUG) {
@@ -492,27 +491,29 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       repaint(); // redraw info string
     }
     else if ("options".equals(cmd)) {
-	// pops up options menu
-	OptionsWindow ow = new OptionsWindow(zSliceSel.getMaximum(),
-					     tSliceSel.getMaximum());
-	ow.popup(this,z,t);
-	setIndices(ow.getVirtualBounds());
-	customVirtualization = ow.isCustomVirtualization();
+      // pops up options menu
+      OptionsWindow ow = new OptionsWindow(zSliceSel.getMaximum(),
+        tSliceSel.getMaximum());
+      ow.popup(this,z,t);
+      setIndices(ow.getVirtualBounds());
+      customVirtualization = ow.isCustomVirtualization();
     }
     else if (src instanceof Timer) {
       boolean swapped = zString.equals(T_STRING);
       if (swapped) {
         z = zSliceSel.getValue() + 1;
-	if (customVirtualization) {
-	    if (z > z2) z = z1;
-	} else if (z > db.numZ) z = 1;
+        if (customVirtualization) {
+          if (z > z2) z = z1;
+        }
+        else if (z > db.numZ) z = 1;
         zSliceSel.setValue(z);
       }
       else {
         t = tSliceSel.getValue() + 1;
-	if (customVirtualization) {
-	    if (t > t2) t = t1;
-	} else if (t > db.numT) t = 1;
+        if (customVirtualization) {
+          if (t > t2) t = t1;
+        }
+        else if (t > db.numT) t = 1;
         tSliceSel.setValue(t);
       }
       showSlice(z, t, c);
@@ -522,8 +523,9 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         animationTimer = new Timer(1000 / fps, this);
         animationTimer.start();
         animate.setText(STOP_STRING);
-        if (db.virtual && !customVirtualization)
-	    synchronized(imp) { setIndices(); }
+        if (db.virtual && !customVirtualization) {
+          synchronized(imp) { setIndices(); }
+        }
       }
       else {
         animationTimer.stop();
@@ -532,34 +534,35 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       }
     }
   }
-    /** initialize the virtual stack, using the
-     *  argument as its boundaries.
-     *  The argument should be in the form of
-     *  (z1, z2, t1, t2).
-     */
-    public synchronized void setIndices(int[] idx) {
-	// log usage
-	if (LociDataBrowser.DEBUG) {
-	    System.err.println("Calling setIndices(int[])");
-	    System.err.println("z: "+idx[0]+" to "+idx[1]);
-	    System.err.println("t: "+idx[2]+" to "+idx[3]);
-	}
-	customVirtualization = true;
-	ImageStack is = imp.getStack();
-	int[] indices = new int[(idx[1]-idx[0]+1)*(idx[3]-idx[2]+1)];
-	z1 = idx[0]; z2 = idx[1]; t1 = idx[2]; t2 = idx[3];
-	int k=0;
-	if (is instanceof VirtualStack) {
-	    for (int i=idx[0]; i<=idx[1]; i++)
-		for (int j=idx[2]; j<=idx[3]; j++) 
-		    indices[k++] = db.getIndex(i-1,j-1,c-1);
-	}
-	((VirtualStack) is).setIndices(indices,progressBar);
-    }
 
-    
+  /**
+   * Initialize the virtual stack, using the argument as its boundaries.
+   * The argument should be in the form of (z1, z2, t1, t2).
+   */
+  public synchronized void setIndices(int[] idx) {
+    // log usage
+    if (LociDataBrowser.DEBUG) {
+      System.err.println("Calling setIndices(int[])");
+      System.err.println("z: "+idx[0]+" to "+idx[1]);
+      System.err.println("t: "+idx[2]+" to "+idx[3]);
+    }
+    customVirtualization = true;
+    ImageStack is = imp.getStack();
+    int[] indices = new int[(idx[1]-idx[0]+1)*(idx[3]-idx[2]+1)];
+    z1 = idx[0]; z2 = idx[1]; t1 = idx[2]; t2 = idx[3];
+    int k=0;
+    if (is instanceof VirtualStack) {
+      for (int i=idx[0]; i<=idx[1]; i++) {
+        for (int j=idx[2]; j<=idx[3]; j++) {
+          indices[k++] = db.getIndex(i-1,j-1,c-1);
+        }
+      }
+    }
+    ((VirtualStack) is).setIndices(indices,progressBar);
+  }
+
   public synchronized void setIndices() {
-      customVirtualization = false;
+    customVirtualization = false;
     ImageStack is = imp.getStack();
     if (is instanceof VirtualStack) {
       boolean swapped = zString.equals(T_STRING);
@@ -594,16 +597,16 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     if (src == zSliceSel) {
       z = zSliceSel.getValue();
       if (animate.getText().equals(STOP_STRING) && zString.equals(Z_STRING)) {
-	  setIndices();
+        setIndices();
       }
     }
     else if (src == tSliceSel) {
       t = tSliceSel.getValue();
       if (animate.getText().equals(STOP_STRING) && zString.equals(T_STRING)) {
-	  setIndices();
+        setIndices();
       }
     }
-    showSlice(z, t, c); 
+    showSlice(z, t, c);
   }
 
 
@@ -628,7 +631,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   public synchronized void itemStateChanged(ItemEvent e) {
     JCheckBox channels = (JCheckBox) e.getSource();
     c = channels.isSelected() ? 1 : 2;
-    
+
     if (db.virtual) {setIndices();}
     showSlice(z, t, c);
   }

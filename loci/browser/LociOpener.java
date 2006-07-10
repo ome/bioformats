@@ -18,8 +18,8 @@ public class LociOpener implements ItemListener {
   private String filename;
   private String dir;
   private boolean virtual;
-    private String absPath;
-    
+  private String absPath;
+
   public LociOpener() {
     // set up the file chooser
     JFileChooser fc = new JFileChooser(OpenDialog.getDefaultDirectory());
@@ -63,6 +63,6 @@ public class LociOpener implements ItemListener {
 
   public boolean getVirtual() { return virtual; }
 
-    public String getAbsolutePath() { return absPath; }
+  public String getAbsolutePath() { return absPath; }
 
 }
