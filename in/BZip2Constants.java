@@ -21,7 +21,7 @@
  * great code.
  */
 
-package loci.formats;
+package loci.formats.in;
 
 /**
  * Base class for both the compress and decompress classes.
