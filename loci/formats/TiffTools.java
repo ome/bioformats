@@ -268,7 +268,7 @@ public abstract class TiffTools {
    *         false if big-endian,
    *         or null if not a TIFF.
    */
-  protected static Boolean checkHeader(RandomAccessStream in,
+  public static Boolean checkHeader(RandomAccessStream in,
     long globalOffset) throws IOException
   {
     if (DEBUG) debug("getIFDs: reading IFD entries");
@@ -294,7 +294,7 @@ public abstract class TiffTools {
    * Gets offset to the first IFD, or -1 if stream is not TIFF.
    * Assumes the stream is positioned properly (checkHeader just called).
    */
-  protected static long getFirstOffset(RandomAccessStream in,
+  public static long getFirstOffset(RandomAccessStream in,
     boolean littleEndian) throws IOException
   {
     // get offset to first IFD
@@ -302,7 +302,7 @@ public abstract class TiffTools {
   }
 
   /** Gets the IFD stored at the given offset. */
-  protected static Hashtable getIFD(RandomAccessStream in,
+  public static Hashtable getIFD(RandomAccessStream in,
     long ifdNum, long globalOffset, long offset, boolean littleEndian)
     throws IOException
   {
@@ -513,7 +513,7 @@ public abstract class TiffTools {
    * static fields, returning the first matching field's name. It is
    * probably not very efficient, and is mainly intended for debugging.
    */
-  protected static String getFieldName(int value) {
+  public static String getFieldName(int value) {
     Field[] fields = TiffTools.class.getFields();
     for (int i=0; i<fields.length; i++) {
       try {

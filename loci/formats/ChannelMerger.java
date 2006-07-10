@@ -25,7 +25,6 @@ package loci.formats;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.lang.*;
 
 /** Logic to automatically merge channels in a file. */
 public class ChannelMerger extends FormatReader {
@@ -179,7 +178,7 @@ public class ChannelMerger extends FormatReader {
     reader.initFile(id);
     currentId = id;
 
-    // FIXME: The following is a *gross* hack. ChannelMerger needs the
+    // HACK - FIXME - The following is a *gross* hack. ChannelMerger needs the
     // dimensions and dimension order of the pixels set and should be able to
     // retrieve this information without relying on the MetadataStore
     // (OMEXMLMetadataStore only in this case) to provide it as these methods

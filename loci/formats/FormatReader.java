@@ -41,7 +41,6 @@ public abstract class FormatReader extends FormatHandler {
   /** Debugging level. 1=basic, 2=extended, 3=everything. */
   protected static final int DEBUG_LEVEL = 1;
 
-
   // -- Fields --
 
   /** Hashtable containing metadata key/value pairs. */
@@ -50,15 +49,16 @@ public abstract class FormatReader extends FormatHandler {
   /** Flag set to true if multi-channel planes are to be separated. */
   protected boolean separated = false;
 
-
   /** Files with the same pattern. */
   protected String[] stitchedFiles;
 
   /** Image counts for each file. */
   protected int[] imageCounts;
 
-  /** Current metadata store. Should <b>never</b> be accessed directly as the
-   * semantics of {@link #getMetadataStore()} prevent "null" access. */
+  /**
+   * Current metadata store. Should <b>never</b> be accessed directly as the
+   * semantics of {@link #getMetadataStore()} prevent "null" access.
+   */
   private MetadataStore store = new DummyMetadataStore();
 
   // -- Constructors --
@@ -73,54 +73,6 @@ public abstract class FormatReader extends FormatHandler {
 
   // -- Abstract FormatReader API methods --
   
-  /**
-   * Sets the default metadata store for this reader. This invalidates the
-   * current metadata state of the reader and will trigger a call to
-   * {@link #initFile(String)}.
-   * @param store a metadata store implementation.
-   */
-  public void setMetadataStore(MetadataStore store) {
-    this.store = store;
-    // Re-parse the file if we currently have one
-    if (currentId == null) {
-      // We're going to eat these exceptions as they will come up again if
-      // method calls are made to the format.
-      try {
-        initFile(currentId);
-      }
-      catch (FormatException e1) {}
-      catch (IOException e2) {}
-    }
-  }
-  
-  /**
-   * Retrieves the current metadata store for this reader. You can be
-   * assured that this method will <b>never</b> return a <code>null</code>
-   * metadata store.
-   * @return a metadata store implementation.
-   */
-  public MetadataStore getMetadataStore() {
-    return store;
-  }
-  
-  
-  /**
-   * Retrieves the current metadata store's root object. It is guaranteed that
-   * all file parsing has been performed by the reader prior to retrieval.
-   * Requests for a full populated root object should be made using this method.
-   * @param id a fully qualified path to the file.
-   * @return current metadata store's root object fully populated.
-   * @throws IOException if there is an IO error when reading the file specified
-   * by <code>path</code>.
-   * @throws FormatException if the file specified by <code>path</code> is of an
-   * unsupported type. 
-   */
-  public Object getMetadataStoreRoot(String id)
-    throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return getMetadataStore().getRoot();
-  }
-
   /** Checks if the given block is a valid header for this file format. */
   public abstract boolean isThisType(byte[] block);
 
@@ -149,7 +101,6 @@ public abstract class FormatReader extends FormatHandler {
   /** Closes the currently open file. */
   public abstract void close() throws FormatException, IOException;
 
-
   // -- Internal FormatReader API methods --
 
   /**
@@ -163,17 +114,8 @@ public abstract class FormatReader extends FormatHandler {
     metadata = new Hashtable();
     imageCounts = null;
     stitchedFiles = null;
-	// Re-initialize the MetadataStore
+    // reinitialize the MetadataStore
     getMetadataStore().createRoot();
-  }
-
-  /**
-   * Allows the client to specify whether or not to separate channels.
-   * By default, channels are left unseparated; thus if we encounter an RGB
-   * image plane, it will be left as RGB and not split into 3 separate planes.
-   */
-  protected void setSeparated(boolean separate) {
-    separated = separate;
   }
 
   /**
@@ -193,7 +135,6 @@ public abstract class FormatReader extends FormatHandler {
     catch (IOException e) { return false; }
   }
 
-
   // -- FormatReader API methods --
 
   /**
@@ -210,6 +151,16 @@ public abstract class FormatReader extends FormatHandler {
     close();
     return images;
   }
+
+  /**
+   * Allows the client to specify whether or not to separate channels.
+   * By default, channels are left unseparated; thus if we encounter an RGB
+   * image plane, it will be left as RGB and not split into 3 separate planes.
+   */
+  public void setSeparated(boolean separate) { separated = separate; }
+
+  /** Gets whether channels are being separated. */
+  public boolean isSeparated() { return separated; }
 
   /**
    * Obtains the specified metadata field's value for the given file.
@@ -234,6 +185,51 @@ public abstract class FormatReader extends FormatHandler {
   public Hashtable getMetadata(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return metadata;
+  }
+
+  /**
+   * Sets the default metadata store for this reader. This invalidates the
+   * current metadata state of the reader and will trigger a call to
+   * {@link #initFile(String)}.
+   * @param store a metadata store implementation.
+   */
+  public void setMetadataStore(MetadataStore store) {
+    this.store = store;
+    // Re-parse the file if we currently have one
+    if (currentId == null) {
+      // We're going to eat these exceptions as they will come up again if
+      // method calls are made to the format.
+      try {
+        initFile(currentId);
+      }
+      catch (FormatException e1) {}
+      catch (IOException e2) {}
+    }
+  }
+  
+  /**
+   * Retrieves the current metadata store for this reader. You can be
+   * assured that this method will <b>never</b> return a <code>null</code>
+   * metadata store.
+   * @return a metadata store implementation.
+   */
+  public MetadataStore getMetadataStore() { return store; }
+  
+  /**
+   * Retrieves the current metadata store's root object. It is guaranteed that
+   * all file parsing has been performed by the reader prior to retrieval.
+   * Requests for a full populated root object should be made using this method.
+   * @param id a fully qualified path to the file.
+   * @return current metadata store's root object fully populated.
+   * @throws IOException if there is an IO error when reading the file specified
+   * by <code>path</code>.
+   * @throws FormatException if the file specified by <code>path</code> is of an
+   * unsupported type. 
+   */
+  public Object getMetadataStoreRoot(String id)
+    throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return getMetadataStore().getRoot();
   }
 
   /**
@@ -311,9 +307,9 @@ public abstract class FormatReader extends FormatHandler {
     System.out.println();
 
     // output OME-XML
-    MetadataStore store = getMetadataStore();
-    if (store instanceof OMEXMLMetadataStore) {
-      OMEXMLMetadataStore xmlStore = (OMEXMLMetadataStore) store;
+    MetadataStore ms = getMetadataStore();
+    if (ms instanceof OMEXMLMetadataStore) {
+      OMEXMLMetadataStore xmlStore = (OMEXMLMetadataStore) ms;
       System.out.println(xmlStore.dumpXML());
       System.out.println();
     }
@@ -423,4 +419,5 @@ public abstract class FormatReader extends FormatHandler {
   protected void createFilters() {
     filters = new FileFilter[] { new FormatFileFilter(this) };
   }
+
 }

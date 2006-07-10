@@ -1,52 +1,52 @@
 # javax.imageio readers
-loci.formats.PNGReader         # png [javax.imageio]
-loci.formats.JPEGReader        # jpg [javax.imageio]
-loci.formats.GIFReader         # gif [javax.imageio]
+loci.formats.in.PNGReader         # png [javax.imageio]
+loci.formats.in.JPEGReader        # jpg [javax.imageio]
+loci.formats.in.GIFReader         # gif [javax.imageio]
 
 # standalone readers with unique file extensions
-loci.formats.BMPReader         # bmp
-loci.formats.DicomReader       # dcm, dicom
-loci.formats.BioRadReader      # pic
-loci.formats.IPLabReader       # ipl
-loci.formats.DeltavisionReader # dv, r3d
-loci.formats.GatanReader       # dm3
-loci.formats.ImarisReader      # ims
-loci.formats.OpenlabRawReader  # raw
-loci.formats.OMEXMLReader      # ome
-loci.formats.LIFReader         # lif
-loci.formats.AVIReader         # avi
-loci.formats.QTReader          # mov
-loci.formats.PictReader        # pict, pct
-loci.formats.SDTReader         # sdt
-loci.formats.EPSReader         # eps, epsi
-loci.formats.OIBReader         # oib
-loci.formats.ZeissZVIReader    # zvi
+loci.formats.in.BMPReader         # bmp
+loci.formats.in.DicomReader       # dcm, dicom
+loci.formats.in.BioRadReader      # pic
+loci.formats.in.IPLabReader       # ipl
+loci.formats.in.DeltavisionReader # dv, r3d
+loci.formats.in.GatanReader       # dm3
+loci.formats.in.ImarisReader      # ims
+loci.formats.in.OpenlabRawReader  # raw
+loci.formats.in.OMEXMLReader      # ome
+loci.formats.in.LIFReader         # lif
+loci.formats.in.AVIReader         # avi
+loci.formats.in.QTReader          # mov
+loci.formats.in.PictReader        # pict, pct
+loci.formats.in.SDTReader         # sdt
+loci.formats.in.EPSReader         # eps, epsi
+loci.formats.in.OIBReader         # oib
+loci.formats.in.ZeissZVIReader    # zvi
 
 # multi-extension messes
-loci.formats.ICSReader         # ics, ids
-loci.formats.OIFReader         # oif, various
-loci.formats.PerkinElmerReader # csv, htm, tim, zpo [TIFF+companion]
+loci.formats.in.ICSReader         # ics, ids
+loci.formats.in.OIFReader         # oif, various
+loci.formats.in.PerkinElmerReader # csv, htm, tim, zpo [TIFF+companion]
 
 # POIFS readers
-loci.formats.IPWReader         # ipw [POIFS]
+loci.formats.in.IPWReader         # ipw [POIFS]
 
 # TIFF-based readers with unique file extensions
-loci.formats.MetamorphReader   # stk [TIFF]
-loci.formats.ZeissLSMReader    # lsm [TIFF]
-loci.formats.SEQReader         # seq [TIFF]
-loci.formats.GelReader         # gel [TIFF]
+loci.formats.in.MetamorphReader   # stk [TIFF]
+loci.formats.in.ZeissLSMReader    # lsm [TIFF]
+loci.formats.in.SEQReader         # seq [TIFF]
+loci.formats.in.GelReader         # gel [TIFF]
 
 # TIFF-based readers with slow isThisType
-loci.formats.LeicaReader       # lei, tif [TIFF+companion; slow isThisType]
-loci.formats.NikonReader       # nef, tif [TIFF; slow isThisType]
-loci.formats.FluoviewReader    # tif [TIFF; slow isThisType]
-loci.formats.AndorReader       # tif [TIFF; slow isThisType]
+loci.formats.in.LeicaReader       # lei, tif [TIFF+companion; slow isThisType]
+loci.formats.in.NikonReader       # nef, tif [TIFF; slow isThisType]
+loci.formats.in.FluoviewReader    # tif [TIFF; slow isThisType]
+loci.formats.in.AndorReader       # tif [TIFF; slow isThisType]
 
 # standard TIFF reader must go last (it accepts any TIFF)
-loci.formats.TiffReader        # tif, tiff
+loci.formats.in.TiffReader        # tif, tiff
 
 # non-TIFF readers with slow isThisType
-loci.formats.OpenlabReader     # liff [slow isThisType]
+loci.formats.in.OpenlabReader     # liff [slow isThisType]
 
 # if nothing else works, try ImageJ
-loci.formats.ImageJReader      # various [ImageJ]
+loci.formats.in.ImageJReader      # various [ImageJ]
