@@ -1,6 +1,6 @@
-loci.formats.TiffWriter
-loci.formats.JPEGWriter
-loci.formats.PNGWriter
-loci.formats.AVIWriter
-loci.formats.QTWriter
-loci.formats.EPSWriter
+loci.formats.out.TiffWriter
+loci.formats.out.JPEGWriter
+loci.formats.out.PNGWriter
+loci.formats.out.AVIWriter
+loci.formats.out.QTWriter
+loci.formats.out.EPSWriter

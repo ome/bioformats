@@ -26,18 +26,18 @@ package loci.formats;
 /**
  * A proxy whose responsibility it is to marshal biological image data into a
  * particular storage medium.
- * 
+ *
  * The <code>MetadataStore</code> interface encompasses the basic metadata that
  * any specific storage medium (file, relational database, etc.) should be
  * expected to store and be expected to return with relationships maintained.
- * 
- * It is expected that the constructors of all implementations of 
+ *
+ * It is expected that the constructors of all implementations of
  * <code>MetadataStore</code> interface throw a
  * {@link UnsupportedMetadataStoreException} if they are unable to initialize
  * some of their dependencies.
  *
  * @author Chris Allan callan at blackcat.ca
- * 
+ *
  * TODO: Further work needs to be done to ensure the validity of the arguments
  * to these methods with not-null constraints and NullPointerException
  * declarations (should be unchecked exceptions).
@@ -48,21 +48,21 @@ public interface MetadataStore {
    * Creates a new <i>root</i> object to be used by the metadata store and
    * resets the internal state of the metadata store.
    */
-  public void createRoot();
-  
+  void createRoot();
+
   /**
    * Sets the <i>root</i> object of the metadata store.
    * @param root object that the store can use as its root.
    * @throws IllegalArgumentException if the <code>root</code> is of an
-   * unsupported or unknown type. 
+   * unsupported or unknown type.
    */
-  public void setRoot(Object root) throws IllegalArgumentException;
-  
+  void setRoot(Object root) throws IllegalArgumentException;
+
   /**
    * Retrieves the <i>root</i> object of the metadata store.
    * @return object that the store is using as its root.
    */
-  public Object getRoot();
+  Object getRoot();
 
   /**
    * Creates an image in the metadata store with a particular index.
@@ -72,8 +72,8 @@ public interface MetadataStore {
    * @param i the index to use in the store. If <code>null</code> the default
    * index of 0 will be used.
    */
-  public void setImage(String name, String creationDate,
-                       String description, Integer i);
+  void setImage(String name, String creationDate,
+                String description, Integer i);
 
   /**
    * Creates an experimenter in the metadata store with a particular index.
@@ -86,9 +86,9 @@ public interface MetadataStore {
    * @param i the index to use in the store. If <code>null</code> the default
    * index of 0 will be used.
    */
-  public void setExperimenter(String firstName, String lastName, String email,
-                              String institution, String dataDirectory,
-                              Object group, Integer i);
+  void setExperimenter(String firstName, String lastName, String email,
+                       String institution, String dataDirectory,
+                       Object group, Integer i);
 
   /**
    * Creates a group in the metadata store with a particular index.
@@ -98,7 +98,7 @@ public interface MetadataStore {
    * @param i the index to use in the store. If <code>null</code> the default
    * index of 0 will be used.
    */
-  public void setGroup(String name, Object leader, Object contact, Integer i);
+  void setGroup(String name, Object leader, Object contact, Integer i);
 
   /**
    * Creates an instrument in the metadata store with a particular index.
@@ -109,10 +109,10 @@ public interface MetadataStore {
    * @param i the index to use in the store. If <code>null</code> the default
    * index of 0 will be used.
    */
-  public void setInstrument(String manufacturer, String model,
-                            String serialNumber, String type, Integer i);
+  void setInstrument(String manufacturer, String model,
+                     String serialNumber, String type, Integer i);
 
-  /** 
+  /**
    * Creates a set of pixel dimensions in the metadata store with a particular
    * index.
    * @param pixelSizeX size of an individual pixel's X axis in microns.
@@ -123,9 +123,9 @@ public interface MetadataStore {
    * @param i the index to use in the store. If <code>null</code> the default
    * index of 0 will be used.
    */
-  public void setDimensions(Float pixelSizeX, Float pixelSizeY,
-                            Float pixelSizeZ, Float pixelSizeC,
-                            Float pixelSizeT, Integer i);
+  void setDimensions(Float pixelSizeX, Float pixelSizeY,
+                     Float pixelSizeZ, Float pixelSizeC,
+                     Float pixelSizeT, Integer i);
 
   /**
    * Creates a 5D bounding box region of interest and a set of display options
@@ -143,12 +143,11 @@ public interface MetadataStore {
    * @param i the index to use in the store. If <code>null</code> the default
    * index of 0 will be used.
    */
-  public void setDisplayROI(Integer x0, Integer y0, Integer z0,
-                            Integer x1, Integer y1, Integer z1,
-                            Integer t0, Integer t1, Object displayOptions,
-                            Integer i);
+  void setDisplayROI(Integer x0, Integer y0, Integer z0,
+                     Integer x1, Integer y1, Integer z1,
+                     Integer t0, Integer t1, Object displayOptions,
+                     Integer i);
 
-  
   /**
    * Creates a pixels set in the metadata store with a particular index.
    * @param sizeX size of an individual plane or section's X axis (width)
@@ -163,10 +162,10 @@ public interface MetadataStore {
    * @param i the index to use in the store. If <code>null</code> the default
    * index of 0 will be used.
    */
-  public void setPixels(Integer sizeX, Integer sizeY, Integer sizeZ,
-                        Integer sizeC, Integer sizeT, String pixelType,
-                        Boolean bigEndian, String dimensionOrder, Integer i);
-  
+  void setPixels(Integer sizeX, Integer sizeY, Integer sizeZ,
+                 Integer sizeC, Integer sizeT, String pixelType,
+                 Boolean bigEndian, String dimensionOrder, Integer i);
+
   /**
    * Creates a stage label in the metadata store with a particular index.
    * @param name a name for the stage label.
@@ -176,7 +175,7 @@ public interface MetadataStore {
    * @param i the index to use in the store. If <code>null</code> the default
    * index of 0 will be used.
    */
-  public void setStageLabel(String name, Float x, Float y, Float z, Integer i);
+  void setStageLabel(String name, Float x, Float y, Float z, Integer i);
 
   /**
    * Creates a logical channel and physical channel in the metadata store for a
@@ -190,35 +189,35 @@ public interface MetadataStore {
    * @param mode the acquisition mode.
    * @param i the index of the pixels set within the metadata store.
    */
-  public void setLogicalChannel(int channelIdx, String name, float ndFilter,
-                                int emWave, int exWave,
-                                String photometricInterpretation, String mode,
-                                Integer i);
-  
+  void setLogicalChannel(int channelIdx, String name, float ndFilter,
+                         int emWave, int exWave,
+                         String photometricInterpretation, String mode,
+                         Integer i);
+
   /**
    * Sets a channel's global min and global max in the metadata store for a
    * particular pixels set.
-   * 
+   *
    * NOTE: The implementation of this method is optional and can be purely a
    * no-op. It is here to ensure compatability with certain stores which require
    * this data to be specified explicitly.
-   * 
+   *
    * @param channel the index of the channel within the pixels set.
    * @param globalMin the global minimum pixel value for the channel.
    * @param globalMax the global maximum pixel value for the channel.
    * @param i the index of the pixels set within the metadata store.
    */
-  public void setChannelGlobalMinMax(int channel, Double globalMin,
-                                     Double globalMax, Integer i);
-  
+  void setChannelGlobalMinMax(int channel, Double globalMin,
+                              Double globalMax, Integer i);
+
   /**
    * Sets the plane information for a particular X-Y plane (section) within a
    * particular pixels set.
-   * 
+   *
    * NOTE: The implementation of this method is optional as this is a
    * transitional type. More information about the PlaneInfo type can be found
    * <a href="http://cvs.openmicroscopy.org.uk/tiki/tiki-index.php?page=DataModelProposal#id119301">here</a>.
-   * 
+   *
    * @param numZ the optical section index.
    * @param numC the channel index.
    * @param numT the timepoint.
@@ -227,13 +226,14 @@ public interface MetadataStore {
    * @param exposureTime exposure time in seconds.
    * @param i the index of the pixels set within the metadata store.
    */
-  public void setPlaneInfo(int theZ, int theC, int theT, Float timestamp,
-                           Float exposureTime, Integer i);
-  
+  void setPlaneInfo(int theZ, int theC, int theT, Float timestamp,
+                    Float exposureTime, Integer i);
+
   /**
    * Instructs the metadata store to set the default display settings for a
    * particular pixels set.
    * @param i the index of the pixels set within the metadata store.
    */
-  public void setDefaultDisplaySettings(Integer i);
+  void setDefaultDisplaySettings(Integer i);
+
 }
