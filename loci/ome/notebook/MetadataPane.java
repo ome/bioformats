@@ -601,11 +601,12 @@ public class MetadataPane extends JPanel
 *   Element ID's representation in the program.
 */
   public class TableButton extends JButton {
-    public DefaultTableModel tableModel;
+    public JTable table;
     public int whichRow;
-    public TableButton(DefaultTableModel dtm, int i) {
+    
+    public TableButton( JTable jt, int i) {
       super("Goto");
-      tableModel = dtm;
+      table = jt;
       whichRow = i;
       Integer aInt = new Integer(i);
       setActionCommand("goto");
@@ -618,7 +619,7 @@ public class MetadataPane extends JPanel
 *   display the attributes of Elements that have no nested Elements
 */
   public class TablePanel extends JPanel
-    implements TableModelListener
+    implements TableModelListener, ActionListener
   {
     public OMEXMLNode oNode;
     public TabPanel tPanel;
@@ -757,7 +758,8 @@ public class MetadataPane extends JPanel
             if (thisEle.hasAttribute("Name")) myTableModel.setValueAt(thisEle.getAttribute("Name"), i, 0);
             else if (thisEle.hasAttribute("XMLName")) myTableModel.setValueAt(thisEle.getAttribute("XMLName"), i, 0);
           }
-          TableButton tb = new TableButton(myTableModel,i);
+          TableButton tb = new TableButton(refTable,i);
+          tb.addActionListener(this);
           buttonPanel.add(tb);
         }      
 
@@ -841,13 +843,53 @@ public class MetadataPane extends JPanel
           jcb.addItem(name);
         }
 */
+        comboBox = jcb;
         refColumn.setCellEditor(new DefaultCellEditor(jcb));        
+      }
+    }
+    
+    public void actionPerformed(ActionEvent e) {
+      if (e.getSource() instanceof TableButton) {
+        TableButton tb = (TableButton) e.getSource();
+        JTable jt = tb.table;
+        System.out.println("The row being editted: " + tb.whichRow);
+        
+        TableModel model = jt.getModel();
+        Object obj = model.getValueAt(tb.whichRow, 1);
+        String aName = obj.toString();
+        TablePanel aPanel = null;
+        
+        int whichNum = -1;
+        
+        for(int i = 0;i<panelsWithID.size();i++) {
+          aPanel = (TablePanel) panelsWithID.get(i);
+          if (aPanel.name.equals(aName)) whichNum = i;
+        }
+        
+        if(whichNum < panelsWithID.size()) {
+          TablePanel tablePan = (TablePanel) panelsWithID.get(whichNum);
+          TabPanel tp = tablePan.tPanel;
+          Container anObj = (Container) tp;
+          while(!(anObj instanceof JScrollPane)) {
+            anObj = anObj.getParent();
+          }
+          JScrollPane jScr = (JScrollPane) anObj;
+          while(!(anObj instanceof JTabbedPane)) {
+            anObj = anObj.getParent();
+          }
+          JTabbedPane jTabP = (JTabbedPane) anObj;
+	  jTabP.setSelectedComponent(jScr);
+	  System.out.println(jt.getLocation().toString());
+	  System.out.println(tablePan.getAlignmentY());
+//	  tablePan.newTable.grabFocus();
+//	  jScr.getViewport().setViewPosition(tablePan.getLocationOnScreen());
+	}
       }
     }
     
     public void tableChanged(TableModelEvent e) {
       int column = e.getColumn();
-      if (e.getType() == TableModelEvent.UPDATE && column == 1) {
+      if (e.getType() == TableModelEvent.UPDATE && column == 1 && ((TableModel) e.getSource()) == newTable.getModel()) {
         int row = e.getFirstRow();
         TableModel model = (TableModel) e.getSource();
         String data = (String) model.getValueAt(row, column);
