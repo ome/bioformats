@@ -10,7 +10,7 @@ echo LOCI plugins for ImageJ > about.txt
 echo Built `date` >> about.txt
 echo >> about.txt
 echo The Bio-Formats library is LOCI software written by >> about.txt
-echo Melissa Linkert, Curtis Rueden and Eric Kjellman. >> about.txt
+echo Melissa Linkert, Curtis Rueden, Chris Allan and Eric Kjellman. >> about.txt
 echo http://www.loci.wisc.edu/ome/formats.html >> about.txt
 echo >> about.txt
 echo The 4D Data Browser is LOCI software written by >> about.txt
@@ -24,13 +24,14 @@ mv about.txt loci/util/about.txt
 
 jar cfm loci/loci_plugins.jar about.manifest \
 plugins.config loci/util/about.txt \
-loci/formats/*.class loci/formats/*.txt \
+loci/formats/*.class loci/formats/in/*.class loci/formats/out/*.class \
+loci/formats/*.txt \
 loci/browser/*.class \
 loci/ome/*.class \
 loci/ome/ij/*.class \
 loci/ome/viewer/*.class \
 loci/util/*.class \
-loci/formats/*.java \
+loci/formats/*.java loci/formats/in/*.java loci/formats/out/*.java \
 loci/formats/test loci/formats/inf loci/formats/show loci/formats/showinf \
 loci/browser/*.java \
 loci/ome/*.java \
