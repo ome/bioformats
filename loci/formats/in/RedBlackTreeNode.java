@@ -2,7 +2,7 @@
 // RedBlackTreeNode.java
 //
 
-package loci.formats;
+package loci.formats.in;
 
 import java.util.Vector;
 
