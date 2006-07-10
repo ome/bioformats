@@ -43,7 +43,17 @@ public class AndorReader extends BaseTiffReader {
   private static final int MMHEADER = 34361;
   private static final int MMSTAMP = 34362;
 
+  /** Number of optical sections in the file */
+  private int sizeZ = 1;
+  
+  /** Number of channels in the file */
   private int sizeC = 1;
+  
+  /** Number of timepoints in the file */
+  private int sizeT = 1;
+
+  /** The dimension order of the file */
+  private String order;
 
   // -- Constructor --
 
@@ -96,22 +106,20 @@ public class AndorReader extends BaseTiffReader {
 
   // -- Internal BaseTiffReader API methods --
 
-  /** Populate the metadata hashtable. */
-  protected void initMetadata() {
-    super.initMetadata();
-    boolean little = true;
-    try {
-      little= TiffTools.isLittleEndian(ifds[0]);
-    }
-    catch (FormatException e) { }
+  /* (non-Javadoc)
+   * @see loci.formats.BaseTiffReader#initStandardMetadata()
+   */
+  protected void initStandardMetadata() {
+    super.initStandardMetadata();
+    
+    boolean little = isLittleEndian();
 
     // look for MMHEADER
     short[] header = (short[]) TiffTools.getIFDValue(ifds[0], MMHEADER);
 
-    sizeC = 1;
-    int sizeT = 1;
-    int sizeZ = 1;
-
+    // The following is now initialized before the super-class "initMetadata()"
+    // method because of the need for overridden "getSizeZ()", "getSizeC()",
+    // "getSizeT()" and "getDimensionOrder()".
     if (header != null) {
       int pos = 3;
       metadata.put("Name", DataTools.bytesToString(header, pos, 256));
@@ -258,7 +266,6 @@ public class AndorReader extends BaseTiffReader {
       diff.add(new Float(differences / numPlanes));
     }
 
-    String order = "XY";
     int[] dimOrder = new int[diff.size()];
     boolean[] added = new boolean[diff.size()];
     for (int i=0; i<dimOrder.length; i++) {
@@ -288,13 +295,57 @@ public class AndorReader extends BaseTiffReader {
       else if (order.indexOf("T") < 0) order = order + "T";
       else if (order.indexOf("C") < 0) order = order + "C";
     }
-
-    // x, y, z, c, t, pixelType, bigEndian, dimensionOrder
-    OMETools.setPixels(ome, OMETools.getSizeX(ome), OMETools.getSizeY(ome),
-      new Integer(sizeZ), new Integer(sizeC), new Integer(sizeT),
-      OMETools.getPixelType(ome), new Boolean(!little), order);
+  }
+  
+  /* (non-Javadoc)
+   * @see loci.formats.BaseTiffReader#getSizeZ()
+   */
+  protected Integer getSizeZ() {
+    return new Integer(sizeZ);
   }
 
+  /* (non-Javadoc)
+   * @see loci.formats.BaseTiffReader#getSizeC()
+   */
+  protected Integer getSizeC() {
+    return new Integer(sizeC);
+  }
+  
+  /* (non-Javadoc)
+   * @see loci.formats.BaseTiffReader#getSizeT()
+   */
+  protected Integer getSizeT() {
+    return new Integer(sizeT);
+  }
+  
+  /* (non-Javadoc)
+   * @see loci.formats.BaseTiffReader#getDimensionOrder()
+   */
+  protected String getDimensionOrder() {
+    return order;
+  }
+  
+  /**
+   * Check endianness of the file.
+   * @return <code>true</code> if the file is little-endian.
+   */
+  protected boolean isLittleEndian() {
+    try {
+      return !TiffTools.isLittleEndian(ifds[0]);
+    }
+    catch (FormatException e) {
+      // FIXME: Should probably do something here other than eating the
+      // exception.
+    }
+    return true;
+  }
+  
+  /* (non-Javadoc)
+   * @see loci.formats.BaseTiffReader#getBigEndian()
+   */
+  protected Boolean getBigEndian() {
+    return new Boolean(!isLittleEndian());
+  }
 
   // -- Main method --
 

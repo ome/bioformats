@@ -58,6 +58,12 @@ public class OpenlabReader extends FormatReader {
 
   /** Flag indicating whether current file is little endian. */
   protected boolean little = true;
+  
+  /** Size of a pixel plane/section's X-axis */
+  private Integer sizeX;
+  
+  /** Size of a pixel plane/section's Y-axis */
+  private Integer sizeY;
 
 
   // -- Constructor --
@@ -171,10 +177,8 @@ public class OpenlabReader extends FormatReader {
     byte[] temp;
     boolean skipflag;
 
-    if (ome != null) {
-      OMETools.setSizeX(ome, dim.width);
-      OMETools.setSizeY(ome, dim.height);
-    }
+    sizeX = new Integer(dim.width);
+    sizeY = new Integer(dim.height);
 
     // read in deep gray pixel data into an array, and create a
     // BufferedImage out of it
@@ -495,53 +499,44 @@ public class OpenlabReader extends FormatReader {
         metadata.put("Other", new String(other));
       }
 
-      // Initialize OME metadata
+      // Populate metadata store
+      
+      // The metadata store we're working with.
+      MetadataStore store = getMetadataStore();
 
-      if (ome != null) {
-        OMETools.setBigEndian(ome, !little);
-        if (metadata.get("BitDepth") != null) {
-          int bitDepth = ((Integer) metadata.get("BitDepth")).intValue();
-          String type;
-
-          if (bitDepth <= 8) type = "int8";
-          else if (bitDepth <= 16) type = "int16";
-          else type = "int32";
-
-          OMETools.setPixelType(ome, type);
-        }
-        if (metadata.get("Timestamp") != null) {
-          OMETools.setCreationDate(ome, (String) metadata.get("Timestamp"));
-        }
-
-        if (metadata.get("XOrigin") != null) {
-          Double xOrigin = (Double) metadata.get("XOrigin");
-          OMETools.setStageX(ome, xOrigin.floatValue());
-        }
-
-        if (metadata.get("YOrigin") != null) {
-          Double yOrigin = (Double) metadata.get("YOrigin");
-          OMETools.setStageY(ome, yOrigin.floatValue());
-        }
-
-        if (metadata.get("XScale") != null) {
-          Double xScale = (Double) metadata.get("XScale");
-          OMETools.setPixelSizeX(ome, xScale.floatValue());
-        }
-
-        if (metadata.get("YScale") != null) {
-          Double yScale = (Double) metadata.get("YScale");
-          OMETools.setPixelSizeY(ome, yScale.floatValue());
-        }
+      String type = "int8";
+      if (metadata.get("BitDepth") != null) {
+        int bitDepth = ((Integer) metadata.get("BitDepth")).intValue();
+        
+        if (bitDepth <= 8) type = "int8";
+        else if (bitDepth <= 16) type = "int16";
+        else type = "int32";
       }
+      
+      store.setImage(null, (String) metadata.get("Timestamp"), null, null);
+
+      // FIXME: There is a loss of precision here as we are down-casting from
+      // double to float.
+      store.setStageLabel(null, (Float) metadata.get("XOrigin"),
+          (Float) metadata.get("YOrigin"), null, null);
+
+      // FIXME: There is a loss of precision here as we are down-casting from
+      // double to float.
+      store.setDimensions((Float) metadata.get("XScale"),
+          (Float) metadata.get("YScale"), null, null, null, null);
+
       in.seek(offset);
-    }
-    if (ome != null) {
-      OMETools.setSizeZ(ome, numBlocks);
-      OMETools.setSizeC(ome, 3);
-      OMETools.setSizeT(ome, 1);
-      OMETools.setDimensionOrder(ome, "XYCZT");
-      OMETools.setBigEndian(ome, !little);
-      OMETools.setPixelType(ome, "int8");
+      
+      // We need to poke at least one plane so that we can get "sizeX" and
+      // "sizeY" set. to populate the pixels set.
+      try {
+        openImage(currentId, 0);
+      } catch (FormatException e) {
+        e.printStackTrace();
+      }
+      
+      store.setPixels(sizeX, sizeY, new Integer(numBlocks), new Integer(3),
+                      new Integer(1), type, new Boolean(!little), "XYCZT", null);
     }
   }
 

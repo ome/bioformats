@@ -330,49 +330,51 @@ public class ICSReader extends FormatReader {
     }
     else idsIn.readFully(data);
 
-    // initialize OME metadata
+    // Populate metadata store
+    
+    // The metadata store we're working with.
+    MetadataStore store = getMetadataStore();
 
-    if (ome != null) {
-      OMETools.setImageName(ome, (String) metadata.get("filename"));
+    store.setImage((String) metadata.get("filename"), null, null, null);
 
-      // populate Pixels element
+    // populate Pixels element
 
-      String ord = (String) metadata.get("order");
-      ord = ord.substring(ord.indexOf("x"));
-      char[] tempOrder = new char[(ord.length() / 2) + 1];
-      int pt = 0;
-      for (int i=0; i<ord.length(); i+=2) {
-        tempOrder[pt] = ord.charAt(i);
-        pt++;
-      }
-      ord = new String(tempOrder).toUpperCase();
-      if (ord.indexOf("Z") == -1) ord = ord + "Z";
-      if (ord.indexOf("T") == -1) ord = ord + "T";
-      if (ord.indexOf("C") == -1) ord = ord + "C";
-
-      String bits = (String) metadata.get("significant_bits");
-      String fmt = (String) metadata.get("format");
-      String sign = (String) metadata.get("sign");
-
-      String type;
-      if (sign.equals("unsigned")) type = "U";
-      else type = "";
-
-      if (fmt.equals("real")) type = "float";
-      else if (fmt.equals("integer")) {
-        type = type + "int" + bits;
-      }
-
-      OMETools.setPixels(ome,
-        new Integer(dimensions[1]), // SizeX
-        new Integer(dimensions[2]), // SizeY
-        new Integer(dimensions[3]), // SizeZ
-        new Integer(dimensions[4]), // SizeC
-        new Integer(dimensions[5]), // SizeT
-        type, // PixelType
-        new Boolean(!littleEndian), // BigEndian
-        ord); // DimensionOrder
+    String ord = (String) metadata.get("order");
+    ord = ord.substring(ord.indexOf("x"));
+    char[] tempOrder = new char[(ord.length() / 2) + 1];
+    int pt = 0;
+    for (int i=0; i<ord.length(); i+=2) {
+      tempOrder[pt] = ord.charAt(i);
+      pt++;
     }
+    ord = new String(tempOrder).toUpperCase();
+    if (ord.indexOf("Z") == -1) ord = ord + "Z";
+    if (ord.indexOf("T") == -1) ord = ord + "T";
+    if (ord.indexOf("C") == -1) ord = ord + "C";
+
+    String bits = (String) metadata.get("significant_bits");
+    String fmt = (String) metadata.get("format");
+    String sign = (String) metadata.get("sign");
+
+    String type;
+    if (sign.equals("unsigned")) type = "U";
+    else type = "";
+
+    if (fmt.equals("real")) type = "float";
+    else if (fmt.equals("integer")) {
+      type = type + "int" + bits;
+    }
+
+    store.setPixels(
+      new Integer(dimensions[1]), // SizeX
+      new Integer(dimensions[2]), // SizeY
+      new Integer(dimensions[3]), // SizeZ
+      new Integer(dimensions[4]), // SizeC
+      new Integer(dimensions[5]), // SizeT
+      type, // PixelType
+      new Boolean(!littleEndian), // BigEndian
+      ord, // DimensionOrder
+      null); // Use index 0
   }
 
 

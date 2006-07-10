@@ -190,16 +190,18 @@ public class PictReader extends FormatReader {
     in.skipBytes(512);
     in.read(bytes);
 
-    if (ome != null) {
-      byte[] b = new byte[20];
-      in.seek(512);
-      in.read(b);
-      Dimension d = getDimensions(b);
-      OMETools.setPixels(ome,
-        new Integer((int) d.getWidth()), new Integer((int) d.getHeight()),
-        new Integer(1), new Integer(3), new Integer(1), "int8",
-        new Boolean(!little), "XYCZT");
-    }
+    byte[] b = new byte[20];
+    in.seek(512);
+    in.read(b);
+    Dimension d = getDimensions(b);
+    
+    // The metadata store we're working with.
+    MetadataStore store = getMetadataStore();
+    
+    store.setPixels(
+      new Integer((int) d.getWidth()), new Integer((int) d.getHeight()),
+      new Integer(1), new Integer(3), new Integer(1), "int8",
+      new Boolean(!little), "XYCZT", null);
   }
 
 

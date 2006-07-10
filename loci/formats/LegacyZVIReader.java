@@ -311,19 +311,21 @@ public class LegacyZVIReader extends FormatReader {
       blockList.add(zviBlock);
       pos += width * height * bytesPerPixel;
 
-      // initialize the OME-XML tree
+      // Populate metadata store
+      
+      // The metadata store we're working with.
+      MetadataStore store = getMetadataStore();
 
-      if (ome != null) {
-        OMETools.setPixels(ome,
-          new Integer(width), // SizeX
-          new Integer(height), // SizeY
-          new Integer(numZ), // SizeZ
-          new Integer(numC), // SizeC
-          new Integer(numT), // SizeT
-          null, // PixelType
-          Boolean.FALSE, // BigEndian
-          null); // DimensionOrder
-      }
+      store.setPixels(
+        new Integer(width), // SizeX
+        new Integer(height), // SizeY
+        new Integer(numZ), // SizeZ
+        new Integer(numC), // SizeC
+        new Integer(numT), // SizeT
+        null, // PixelType
+        Boolean.FALSE, // BigEndian
+        null, // DimensionOrder
+        null); // Use index 0
     }
 
     if (blockList.isEmpty()) {

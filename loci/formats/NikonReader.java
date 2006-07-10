@@ -169,9 +169,11 @@ public class NikonReader extends BaseTiffReader {
 
   // -- Internal BaseTiffReader API methods --
 
-  /** Populate the metadata hashtable. */
-  protected void initMetadata() {
-    super.initMetadata();
+  /* (non-Javadoc)
+   * @see loci.formats.BaseTiffReader#initStandardMetadata()
+   */
+  protected void initStandardMetadata() {
+    super.initStandardMetadata();
 
     // look for the TIFF_EPS_STANDARD tag
     // it should contain version information

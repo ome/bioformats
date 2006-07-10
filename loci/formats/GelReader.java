@@ -62,8 +62,12 @@ public class GelReader extends BaseTiffReader {
 
   // -- Internal BaseTiffReader API methods --
 
-  /** Populate the metadata hashtable. */
-  protected void initMetadata() {
+  /* (non-Javadoc)
+   * @see loci.formats.BaseTiffReader#initStandardMetadata()
+   */
+  protected void initStandardMetadata() {
+    super.initStandardMetadata();
+    
     numImages--;
     super.initMetadata();
     boolean little = true;
@@ -101,10 +105,14 @@ public class GelReader extends BaseTiffReader {
 
     String units = (String) TiffTools.getIFDValue(ifds[1], MD_FILE_UNITS);
     metadata.put("File units", units == null ? "unknown" : units);
-
-    OMETools.setSizeT(ome, numImages);
   }
 
+  /* (non-Javadoc)
+   * @see loci.formats.BaseTiffReader#getSizeT()
+   */
+  protected Integer getSizeT() {
+    return new Integer(numImages);
+  }
 
   // -- Main method --
 

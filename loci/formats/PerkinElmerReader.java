@@ -329,41 +329,43 @@ public class PerkinElmerReader extends FormatReader {
 
     channels = Integer.parseInt(wavelengths);
 
-    // initialize OME-XML
+    // Populate metadata store
+    
+    // The metadata store we're working with.
+    MetadataStore store = getMetadataStore();
 
-    if (ome != null) {
-      // populate Dimensions element
-      String pixelSizeX = (String) metadata.get("Pixel Size X");
-      String pixelSizeY = (String) metadata.get("Pixel Size Y");
-      OMETools.setDimensions(ome, new Float(pixelSizeX),
-        new Float(pixelSizeY), null, null, null);
+    // populate Dimensions element
+    String pixelSizeX = (String) metadata.get("Pixel Size X");
+    String pixelSizeY = (String) metadata.get("Pixel Size Y");
+    store.setDimensions(new Float(pixelSizeX),
+        new Float(pixelSizeY), null, null, null, null);
 
-      // populate Image element
-      String time = (String) metadata.get("Finish Time:");
-      time = time.substring(1).trim();
-      OMETools.setCreationDate(ome, time);
+    // populate Image element
+    String time = (String) metadata.get("Finish Time:");
+    time = time.substring(1).trim();
+    store.setImage(null, time, null, null);
 
-      // populate Pixels element
-      String sizeX = (String) metadata.get("Image Width");
-      String sizeY = (String) metadata.get("Image Length");
-      String sizeZ = (String) metadata.get("Number of slices");
-      OMETools.setPixels(ome,
-        new Integer(sizeX), // SizeX
-        new Integer(sizeY), // SizeY
-        new Integer(sizeZ), // SizeZ
-        new Integer(wavelengths), // SizeC
-        new Integer(timePoints), // SizeT
-        null, // PixelType
-        null, // BigEndian
-        "XYCTZ"); // DimensionOrder
+    // populate Pixels element
+    String sizeX = (String) metadata.get("Image Width");
+    String sizeY = (String) metadata.get("Image Length");
+    String sizeZ = (String) metadata.get("Number of slices");
+    store.setPixels(
+      new Integer(sizeX), // SizeX
+      new Integer(sizeY), // SizeY
+      new Integer(sizeZ), // SizeZ
+      new Integer(wavelengths), // SizeC
+      new Integer(timePoints), // SizeT
+      null, // PixelType
+      null, // BigEndian
+      "XYCTZ", // DimensionOrder
+      null); // Use index 0
 
-      // populate StageLabel element
-      String originX = (String) metadata.get("Origin X");
-      String originY = (String) metadata.get("Origin Y");
-      String originZ = (String) metadata.get("Origin Z");
-      OMETools.setStageLabel(ome, null,
-        new Float(originX), new Float(originY), new Float(originZ));
-    }
+    // populate StageLabel element
+    String originX = (String) metadata.get("Origin X");
+    String originY = (String) metadata.get("Origin Y");
+    String originZ = (String) metadata.get("Origin Z");
+    store.setStageLabel(null, new Float(originX), new Float(originY),
+                        new Float(originZ), null);
   }
 
 

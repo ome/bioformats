@@ -225,18 +225,20 @@ public class OIFReader extends FormatReader {
       }
       ptyReader.close();
     }
-
-    if (ome != null) {
-      OMETools.setPixels(ome,
-        new Integer(Integer.parseInt((String) metadata.get("ImageWidth"))),
-        new Integer(Integer.parseInt((String) metadata.get("ImageHeight"))),
-        new Integer(numImages),
-        new Integer(getChannelCount(id)),
-        new Integer(1),
-        "int" + (8*Integer.parseInt((String) metadata.get("ImageDepth"))),
-        new Boolean(false),
-        "XYZTC");
-    }
+    
+    // The metadata store we're working with.
+    MetadataStore store = getMetadataStore();
+    
+    store.setPixels(
+      new Integer(Integer.parseInt((String) metadata.get("ImageWidth"))),
+      new Integer(Integer.parseInt((String) metadata.get("ImageHeight"))),
+      new Integer(numImages),
+      new Integer(getChannelCount(id)),
+      new Integer(1),
+      "int" + (8*Integer.parseInt((String) metadata.get("ImageDepth"))),
+      new Boolean(false),
+      "XYZTC",
+      null);
   }
 
 

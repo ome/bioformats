@@ -187,10 +187,9 @@ public class OIBReader extends FormatReader {
     TiffReader btr = new TiffReader();
     btr.ifds = TiffTools.getIFDs(new RandomAccessStream(
       (byte[]) pixelData.get(new Integer(0))));
+    btr.setInitialSizeZ(numImages);
     btr.initMetadata();
     metadata = btr.metadata;  // hack
-    ome = btr.ome;
-    OMETools.setSizeZ(ome, numImages);
   }
 
 

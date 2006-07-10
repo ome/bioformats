@@ -251,21 +251,22 @@ public class EPSReader extends FormatReader {
 
     if (bps == 0) bps = 8;
 
-    // Initialize OME-XML
+    // Populate metadata store
 
-    if (ome != null) {
-      OMETools.setPixels(ome,
-        new Integer(width),
-        new Integer(height),
-        new Integer(1),
-        new Integer(channels),
-        new Integer(1),
-        "int8",
-        new Boolean(false),
-        "XYCZT");
-    }
+    // The metadata store we're working with.
+    MetadataStore store = getMetadataStore();
+    
+    store.setPixels(
+      new Integer(width),
+      new Integer(height),
+      new Integer(1),
+      new Integer(channels),
+      new Integer(1),
+      "int8",
+      new Boolean(false),
+      "XYCZT",
+      null);
   }
-
 
   // -- Main method --
 

@@ -64,6 +64,11 @@ public class OMEXMLReader extends FormatReader {
 
   /** Number of channels. */
   private int numChannels;
+  
+  /** Internal OME-XML metadata store that we use for parsing metadata from the
+   * OME-XML file itself.
+   */
+  private OMEXMLMetadataStore internalStore;
 
   // -- Constructor --
 
@@ -105,9 +110,8 @@ public class OMEXMLReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    width = OMETools.getSizeX(ome).intValue();
-    height = OMETools.getSizeY(ome).intValue();
-    int channels = 1;
+    width = internalStore.getSizeX(null).intValue();
+    height = internalStore.getSizeY(null).intValue();
 
     in.seek(((Integer) offsets.get(no)).intValue());
 
@@ -244,7 +248,17 @@ public class OMEXMLReader extends FormatReader {
     String xml = new String(buf);
     xml += "</Pixels></Image></OME>";  // might lose some data this way
 
-    ome = OMETools.createRoot(xml);
+    // The metadata store we're working with.
+    try {
+      internalStore = new OMEXMLMetadataStore();
+    }
+    catch (UnsupportedMetadataStoreException e) {
+      throw new FormatException("To use this feature, please install the " +
+          "org.openmicroscopy.xml package, available from " +
+          "http://www.openmicroscopy.org/");
+    }
+    
+    internalStore.createRoot(xml);
 
     int sizeX = 0;
     int sizeY = 0;
@@ -252,22 +266,16 @@ public class OMEXMLReader extends FormatReader {
     int sizeC = 0;
     int sizeT = 0;
 
-    if (ome == null) {
-      throw new FormatException("To use this feature, please install the " +
-       "org.openmicroscopy.xml package, available from " +
-       "http://www.openmicroscopy.org/");
-    }
-
-    String type = OMETools.getPixelType(ome);
+    String type = internalStore.getPixelType(null);
     if (type.endsWith("16")) bpp = 2;
     else if (type.endsWith("32")) bpp = 4;
     else if (type.equals("float")) bpp = 8;
 
-    sizeX = OMETools.getSizeX(ome).intValue();
-    sizeY = OMETools.getSizeY(ome).intValue();
-    sizeZ = OMETools.getSizeZ(ome).intValue();
-    sizeC = OMETools.getSizeC(ome).intValue();
-    sizeT = OMETools.getSizeT(ome).intValue();
+    sizeX = internalStore.getSizeX(null).intValue();
+    sizeY = internalStore.getSizeY(null).intValue();
+    sizeZ = internalStore.getSizeZ(null).intValue();
+    sizeC = internalStore.getSizeC(null).intValue();
+    sizeT = internalStore.getSizeT(null).intValue();
 
     numChannels = sizeC;
 

@@ -179,9 +179,15 @@ public class ChannelMerger extends FormatReader {
     reader.initFile(id);
     currentId = id;
 
-    Object root = reader.getOMENode(id);
+    // FIXME: The following is a *gross* hack. ChannelMerger needs the
+    // dimensions and dimension order of the pixels set and should be able to
+    // retrieve this information without relying on the MetadataStore
+    // (OMEXMLMetadataStore only in this case) to provide it as these methods
+    // are *not* part of the interface.
+    // -- Chris <callan@blackcat.ca>
+    OMEXMLMetadataStore store = (OMEXMLMetadataStore) reader.getMetadataStore();
     try {
-      order = OMETools.getDimensionOrder(root);
+      order = store.getDimensionOrder(null);
     }
     catch (Exception e) {
       order = "XYZCT";
@@ -189,9 +195,9 @@ public class ChannelMerger extends FormatReader {
 
     dimensions = new int[3];
     try {
-      dimensions[0] = ((Integer) OMETools.getSizeZ(root)).intValue();
-      dimensions[1] = ((Integer) OMETools.getSizeC(root)).intValue();
-      dimensions[2] = ((Integer) OMETools.getSizeT(root)).intValue();
+      dimensions[0] = ((Integer) store.getSizeZ(null)).intValue();
+      dimensions[1] = ((Integer) store.getSizeC(null)).intValue();
+      dimensions[2] = ((Integer) store.getSizeT(null)).intValue();
     }
     catch (Exception e) {
       for (int i=0; i<dimensions.length; i++) {

@@ -522,8 +522,6 @@ public class AVIReader extends FormatReader {
 
   /** Initialize the OME-XML tree. */
   public void initOMEMetadata() {
-    if (ome == null) return;
-
     int bps = ((Integer) metadata.get("Bits per pixel")).intValue() / 8;
     int tempBps = bps * 8;
     String pixType = "int" + (tempBps / bps);
@@ -532,7 +530,7 @@ public class AVIReader extends FormatReader {
     if (bps == 3) order += "CTZ";
     else order += "TCZ";
 
-    OMETools.setPixels(ome,
+    getMetadataStore().setPixels(
       (Integer) metadata.get("Frame width"), // SizeX
       (Integer) metadata.get("Frame height"), // SizeY
       new Integer(1), // SizeZ
@@ -540,7 +538,8 @@ public class AVIReader extends FormatReader {
       new Integer(numImages), // SizeT
       pixType, // PixelType
       new Boolean(!little), // BigEndian
-      order); // DimensionOrder
+      order, // DimensionOrder
+      null); // Use index 0
   }
 
   /** Unpacks a byte array into a new byte array. */

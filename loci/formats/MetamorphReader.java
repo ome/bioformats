@@ -46,8 +46,13 @@ public class MetamorphReader extends BaseTiffReader {
   private static final int UIC4TAG = 33631;
 
   // -- Fields --
-
   private int numPlanes;
+  
+  /** The TIFF's name */
+  private String imageName;
+  
+  /** The TIFF's creation date */
+  private String imageCreationDate;
 
 
   // -- Constructor --
@@ -252,7 +257,7 @@ public class MetamorphReader extends BaseTiffReader {
             in.read(toread);
             String name = new String(toread);
             put("Name", name);
-            OMETools.setImageName(ome, name);
+            imageName = name;
             break;
           case 8:
             int thresh = DataTools.read4SignedBytes(in, little);
@@ -286,7 +291,7 @@ public class MetamorphReader extends BaseTiffReader {
             thedate = decodeDate(DataTools.read4SignedBytes(in, little));
             thetime = decodeTime(DataTools.read4SignedBytes(in, little));
             put("DateTime", thedate + " " + thetime);
-            OMETools.setCreationDate(ome, thedate + " " + thetime);
+            imageCreationDate = thedate + " " + thetime;
             break;
           case 17:
             thedate = decodeDate(DataTools.read4SignedBytes(in, little));
@@ -494,21 +499,27 @@ public class MetamorphReader extends BaseTiffReader {
     }
   }
 
-  /** Initialize the OME-XML tree. */
-  protected void initOMEMetadata() {
-    super.initOMEMetadata();
-
-    if (ome != null) {
-      try {
-        int sizeZ = TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true).length;
-        OMETools.setSizeZ(ome, sizeZ);
-        OMETools.setDescription(ome, (String) metadata.get("Comment"));
-      }
-      catch (FormatException e) { e.printStackTrace(); }
-    }
+  /* (non-Javadoc)
+   * @see loci.formats.BaseTiffReader#getSizeZ()
+   */
+  protected Integer getSizeZ() throws FormatException {
+    return new Integer(TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true).length);
   }
-
-
+  
+  /* (non-Javadoc)
+   * @see loci.formats.BaseTiffReader#getImageName()
+   */
+  protected String getImageName() {
+    return imageName;
+  }
+  
+  /* (non-Javadoc)
+   * @see loci.formats.BaseTiffReader#getImageCreationDate()
+   */
+  protected String getImageCreationDate() {
+    return imageCreationDate;
+  }
+  
   // -- Utility methods --
 
   /** Converts a Julian date value into a human-readable string. */

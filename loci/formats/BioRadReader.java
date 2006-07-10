@@ -404,10 +404,13 @@ public class BioRadReader extends FormatReader {
     }
     metadata.put("luts", colors);
 
-    // create and populate OME-XML DOM tree
+    // Populate the metadata store
+    
+    // The metadata store we're working with.
+    MetadataStore store = getMetadataStore();
 
     // populate Image element
-    OMETools.setImage(ome, name, null, null);
+    store.setImage(name, null, null, null);
 
     // populate Pixels element
     int type = DataTools.bytesToInt(header, 14, 2, LITTLE_ENDIAN);
@@ -438,7 +441,7 @@ public class BioRadReader extends FormatReader {
       else dimOrder += "T";
     }
 
-    OMETools.setPixels(ome,
+    store.setPixels(
       new Integer(nx), // SizeX
       new Integer(ny), // SizeY
       new Integer(sizeZ), // SizeZ
@@ -446,7 +449,8 @@ public class BioRadReader extends FormatReader {
       new Integer(sizeT), // SizeT
       fmt, // PixelType
       null, // BigEndian
-      dimOrder); // DimensionOrder
+      dimOrder, // DimensionOrder
+      null); // Use index 0
 
     // populate Dimensions element
     int size = pixelSize.size();
@@ -454,8 +458,7 @@ public class BioRadReader extends FormatReader {
     if (size >= 1) pixelSizeX = new Float((String) pixelSize.get(0));
     if (size >= 2) pixelSizeY = new Float((String) pixelSize.get(1));
     if (size >= 3) pixelSizeZ = new Float((String) pixelSize.get(2));
-    OMETools.setDimensions(ome,
-      pixelSizeX, pixelSizeY, pixelSizeZ, null, null);
+    store.setDimensions(pixelSizeX, pixelSizeY, pixelSizeZ, null, null, null);
   }
 
   public String noteString(int n, int l, int s, int t, int x, int y, String p)

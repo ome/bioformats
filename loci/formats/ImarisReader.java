@@ -184,29 +184,33 @@ public class ImarisReader extends FormatReader {
       }
     }
 
-    if (ome != null) {
-      OMETools.setPixels(ome,
-        new Integer(dims[0]),
-        new Integer(dims[1]),
-        new Integer(dims[2]),
-        new Integer(dims[3]),
-        new Integer(1),
-        "int8",
-        new Boolean(!IS_LITTLE),
-        "XYZCT");
+    // The metadata store we're working with.
+    MetadataStore store = getMetadataStore();
+    
+    store.setPixels(
+      new Integer(dims[0]),
+      new Integer(dims[1]),
+      new Integer(dims[2]),
+      new Integer(dims[3]),
+      new Integer(1),
+      "int8",
+      new Boolean(!IS_LITTLE),
+      "XYZCT",
+      null);
 
-      OMETools.setImage(ome,
-        (String) metadata.get("Image name"),
-        (String) metadata.get("Original date"),
-        (String) metadata.get("Image comment"));
+    store.setImage(
+      (String) metadata.get("Image name"),
+      (String) metadata.get("Original date"),
+      (String) metadata.get("Image comment"),
+      null);
 
-      OMETools.setDimensions(ome,
-        new Float(dx),
-        new Float(dy),
-        new Float(dz),
-        new Float(1),
-        new Float(1));
-    }
+    store.setDimensions(
+      new Float(dx),
+      new Float(dy),
+      new Float(dz),
+      new Float(1),
+      new Float(1),
+      null);
   }
 
 
