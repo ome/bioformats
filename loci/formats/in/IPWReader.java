@@ -121,7 +121,7 @@ public class IPWReader extends BaseTiffReader {
   /** Get the size of the Z dimension. */
   public int getSizeZ(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return ((Integer) metadata.get("frames")).intValue();
+    return Integer.parseInt((String) metadata.get("frames"));
   }
 
   /** Get the size of the C dimension. */
