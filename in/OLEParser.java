@@ -82,7 +82,7 @@ public class OLEParser {
   private RedBlackTree fileSystem;
 
   /** Blocks we've already read. */
-  private Vector read;
+  private HashSet read;
 
   /** Last property array index parsed. */
   private int last;
@@ -124,7 +124,7 @@ public class OLEParser {
     parents = new Vector();
     fileSystem = new RedBlackTree();
     indices = new Vector();
-    read = new Vector();
+    read = new HashSet();
     itemNames = new Vector();
 
     long check = DataTools.read8SignedBytes(in, true);
@@ -472,7 +472,7 @@ public class OLEParser {
 
         int numBlocksInFile = 0;
 
-        Vector v = new Vector();
+        HashSet v = new HashSet();
 
         while ((numRead < size) && (start < (in.length() / bigBlock))) {
           in.seek(bigBlock * start);
@@ -513,26 +513,27 @@ public class OLEParser {
 
           ndx = v.size();
           for (int j=0; j<(in.length() / bigBlock); j++) {
-            if (!read.contains(new Integer(j)) && !inBat(j - 1) &&
-              !v.contains(new Integer(j)))
-            {
-              v.add(new Integer(j));
+            Integer ij = new Integer(j);
+            if (!read.contains(ij) && !inBat(j - 1) && !v.contains(ij)) {
+              v.add(ij);
             }
           }
           if (v.size() > ndx) reallyWeirdSpecialCase = true;
         }
 
         // now read all of the blocks into the file
-
         numRead = 0;
-        for (int j=0; j<v.size(); j++) {
-          in.seek(((Integer) v.get(j)).intValue() * bigBlock);
-          read.add((Integer) v.get(j));
+        Iterator iter = v.iterator();
+        int j = 0;
+        while (iter.hasNext()) {
+          Integer ij = (Integer) iter.next();
+          in.seek(ij.intValue() * bigBlock);
+          read.add(ij);
           int toCopy = bigBlock;
           if ((size - numRead) < bigBlock) toCopy = size - numRead;
           in.read(file, numRead, toCopy);
           numRead += toCopy;
-          if ((j < ndx) && reallyWeirdSpecialCase) cutPoint += toCopy;
+          if ((j++ < ndx) && reallyWeirdSpecialCase) cutPoint += toCopy;
         }
         if (reallyWeirdSpecialCase) realNumRead = numRead;
       }
