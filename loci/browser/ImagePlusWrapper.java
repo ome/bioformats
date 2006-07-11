@@ -20,7 +20,7 @@ public class ImagePlusWrapper {
         stackF = null, stackO = null;
       long start = System.currentTimeMillis();
       long time = start;
-      int channels = cm.getChannelCount(name);
+      int channels = cm.getSizeC(name);
 
       for (int i=0; i<num; i++) {
         long clock = System.currentTimeMillis();
