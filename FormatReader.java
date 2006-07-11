@@ -263,10 +263,14 @@ public abstract class FormatReader extends FormatHandler {
   public boolean testRead(String[] args) throws FormatException, IOException {
     String id = null;
     boolean pixels = true;
+    boolean stitch = false;
+    boolean separate = false;
     if (args != null) {
       for (int i=0; i<args.length; i++) {
         if (args[i].startsWith("-")) {
           if (args[i].equals("-nopix")) pixels = false;
+          else if (args[i].equals("-stitch")) stitch = true;
+          else if (args[i].equals("-separate")) separate = true;
           else System.out.println("Ignoring unknown command flag: " + args[i]);
         }
         else {
@@ -278,7 +282,8 @@ public abstract class FormatReader extends FormatHandler {
     if (id == null) {
       String className = getClass().getName();
       System.out.println("To test read a file in " + format + " format, run:");
-      System.out.println("  java " + className + " [-nopix] in_file");
+      System.out.println("  java " + className +
+        " [-nopix] [-stitch] [-separate] in_file");
       return false;
     }
 
@@ -288,16 +293,20 @@ public abstract class FormatReader extends FormatHandler {
 
     // read pixels
     if (pixels) {
-      System.out.print("Reading " + id + " pixel data ");
+      System.out.print("Reading " + (stitch ?
+        FilePattern.findPattern(new File(id)) : id) + " pixel data ");
       long s1 = System.currentTimeMillis();
       ChannelMerger cm = new ChannelMerger(this);
-      int num = cm.getTotalImageCount(args[0]);
+      cm.setSeparated(separate);
+      int num = stitch ?
+        cm.getTotalImageCount(id) : cm.getImageCount(id);
       System.out.print("(" + num + ") ");
       long e1 = System.currentTimeMillis();
       BufferedImage[] images = new BufferedImage[num];
       long s2 = System.currentTimeMillis();
       for (int i=0; i<num; i++) {
-        images[i] = cm.openStitchedImage(args[0], i);
+        images[i] = stitch ?
+          cm.openStitchedImage(id, i) : cm.openImage(id, i);
         System.out.print(".");
       }
       long e2 = System.currentTimeMillis();
@@ -317,16 +326,46 @@ public abstract class FormatReader extends FormatHandler {
     }
 
     // read metadata
+    System.out.println();
     System.out.print("Reading " + id + " metadata ");
+    int imageCount = getImageCount(id);
+    boolean rgb = isRGB(id);
+    int sizeX = getSizeX(id);
+    int sizeY = getSizeY(id);
+    int sizeZ = getSizeZ(id);
+    int sizeC = getSizeC(id);
+    int sizeT = getSizeT(id);
+    boolean little = isLittleEndian(id);
+    String dimOrder = getDimensionOrder(id);
     Hashtable meta = getMetadata(id);
     System.out.println("[done]");
 
-    // output metadata
+    // output basic metadata
+    System.out.println("-----");
+    System.out.println("Image count = " + imageCount);
+    System.out.print("RGB = " + rgb);
+    if (rgb && separate) System.out.print(" (separated)");
+    else if (!rgb && !separate) System.out.print(" (merged)");
+    System.out.println();
+    System.out.println("Width = " + sizeX);
+    System.out.println("Height = " + sizeY);
+    System.out.println("SizeZ = " + sizeZ);
+    System.out.println("SizeC = " + sizeC);
+    System.out.println("SizeT = " + sizeT);
+    if (imageCount != sizeZ * sizeC * sizeT / (rgb ? 3 : 1)) {
+      System.out.println("************ Warning: ZCT mismatch ************");
+    }
+    System.out.println("Endianness = " +
+      (little ? "intel (little)" : "motorola (big)"));
+    System.out.println("Dimension order = " + dimOrder);
+    System.out.println("-----");
+
+    // output metadata table
     String[] keys = (String[]) meta.keySet().toArray(new String[0]);
     Arrays.sort(keys);
     for (int i=0; i<keys.length; i++) {
       System.out.print(keys[i] + ": ");
-      System.out.print(getMetadataValue(id, keys[i]) + "\n");
+      System.out.println(getMetadataValue(id, keys[i]));
     }
     System.out.println();
 
