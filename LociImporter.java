@@ -115,11 +115,10 @@ public class LociImporter implements PlugIn, ItemListener {
     IJ.showStatus("Opening " + fileName);
     try {
       FormatReader r = reader.getReader(id);
-      ChannelMerger cm = new ChannelMerger(r);
+      FileStitcher fs = new FileStitcher(r);
+      ChannelMerger cm = new ChannelMerger(stitchFiles ? fs : r);
       cm.setSeparated(!mergeChannels);
-      int num = 0;
-      if (stitchFiles) num = cm.getTotalImageCount(id);
-      else num = cm.getImageCount(id);
+      int num = cm.getImageCount(id);
       ImageStack stackB = null, stackS = null, stackF = null, stackO = null;
       long start = System.currentTimeMillis();
       long time = start;
@@ -133,9 +132,7 @@ public class LociImporter implements PlugIn, ItemListener {
           time = clock;
         }
         IJ.showProgress((double) i / num);
-        BufferedImage img = null;
-        if (stitchFiles) img = cm.openStitchedImage(id, i);
-        else img = cm.openImage(id, i);
+        BufferedImage img = cm.openImage(id, i);
 
         ImageProcessor ip = null;
         WritableRaster raster = img.getRaster();

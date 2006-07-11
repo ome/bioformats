@@ -104,6 +104,12 @@ public class MetamorphReader extends BaseTiffReader {
     return TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true).length;
   }
 
+  /** Get the size of the T dimension. */
+  public int getSizeT(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return getImageCount(id) / getSizeZ(id);
+  }
+
   /** Initializes the given Metamorph file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);

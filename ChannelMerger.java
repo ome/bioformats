@@ -80,6 +80,16 @@ public class ChannelMerger extends FormatReader {
     return originalImages;
   }
 
+  /**
+   * Allows the client to specify whether or not to separate channels.
+   * By default, channels are left unseparated; thus if we encounter an RGB
+   * image plane, it will be left as RGB and not split into 3 separate planes.
+   */
+  public void setSeparated(boolean separate) {
+    this.separated = separate;
+    reader.setSeparated(separate);
+  }
+
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
