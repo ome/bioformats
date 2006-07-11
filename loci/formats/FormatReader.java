@@ -51,12 +51,6 @@ public abstract class FormatReader extends FormatHandler {
   /** Flag set to true if multi-channel planes are to be separated. */
   protected boolean separated = false;
 
-  /** Files with the same pattern. */
-  protected String[] stitchedFiles;
-
-  /** Image counts for each file. */
-  protected int[] imageCounts;
-
   /**
    * Current metadata store. Should <b>never</b> be accessed directly as the
    * semantics of {@link #getMetadataStore()} prevent "null" access.
@@ -136,8 +130,6 @@ public abstract class FormatReader extends FormatHandler {
     close();
     currentId = id;
     metadata = new Hashtable();
-    imageCounts = null;
-    stitchedFiles = null;
     // reinitialize the MetadataStore
     getMetadataStore().createRoot();
   }
@@ -296,17 +288,16 @@ public abstract class FormatReader extends FormatHandler {
       System.out.print("Reading " + (stitch ?
         FilePattern.findPattern(new File(id)) : id) + " pixel data ");
       long s1 = System.currentTimeMillis();
-      ChannelMerger cm = new ChannelMerger(this);
+      FileStitcher fs = new FileStitcher(this);
+      ChannelMerger cm = new ChannelMerger(stitch ? fs : this);
       cm.setSeparated(separate);
-      int num = stitch ?
-        cm.getTotalImageCount(id) : cm.getImageCount(id);
+      int num = cm.getImageCount(id);
       System.out.print("(" + num + ") ");
       long e1 = System.currentTimeMillis();
       BufferedImage[] images = new BufferedImage[num];
       long s2 = System.currentTimeMillis();
       for (int i=0; i<num; i++) {
-        images[i] = stitch ?
-          cm.openStitchedImage(id, i) : cm.openImage(id, i);
+        images[i] = cm.openImage(id, i);
         System.out.print(".");
       }
       long e2 = System.currentTimeMillis();

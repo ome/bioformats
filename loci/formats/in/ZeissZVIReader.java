@@ -118,7 +118,7 @@ public class ZeissZVIReader extends FormatReader {
   /** Get the size of the C dimension. */
   public int getSizeC(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return cSize;
+    return isRGB(id) ? 3*cSize : cSize;
   }
 
   /** Get the size of the T dimension. */
