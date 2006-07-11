@@ -100,11 +100,34 @@ public class AndorReader extends BaseTiffReader {
     return checkBytes(name, BLOCK_CHECK_LEN);
   }
 
-  /** Returns the number of channels in the file. */
-  public int getChannelCount(String id) throws FormatException, IOException {
+  /** Get the size of the Z dimension. */
+  public int getSizeZ(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return sizeZ;
+  }
+
+  /** Get the size of the C dimension. */
+  public int getSizeC(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return sizeC;
   }
+
+  /** Get the size of the T dimension. */
+  public int getSizeT(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return sizeT;
+  }
+
+  /**
+   * Return a five-character string representing the dimension order
+   * within the file.
+   */
+  public String getDimensionOrder(String id) throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return order;
+  }
+
 
   // -- Internal BaseTiffReader API methods --
 
@@ -114,7 +137,11 @@ public class AndorReader extends BaseTiffReader {
   protected void initStandardMetadata() {
     super.initStandardMetadata();
 
-    boolean little = isLittleEndian();
+    boolean little = false;
+    try {
+      little = isLittleEndian(currentId);
+    }
+    catch (Exception e) { }
 
     // look for MMHEADER
     short[] header = (short[]) TiffTools.getIFDValue(ifds[0], MMHEADER);
@@ -285,6 +312,7 @@ public class AndorReader extends BaseTiffReader {
       added[index] = true;
     }
 
+    order = new String();
     for (int i=0; i<dimOrder.length; i++) {
       String name = names[dimOrder[i]].trim();
       if (name.equals("Z") && order.indexOf("Z") < 0) order = order + "Z";
@@ -297,56 +325,6 @@ public class AndorReader extends BaseTiffReader {
       else if (order.indexOf("T") < 0) order = order + "T";
       else if (order.indexOf("C") < 0) order = order + "C";
     }
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.BaseTiffReader#getSizeZ()
-   */
-  protected Integer getSizeZ() {
-    return new Integer(sizeZ);
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.BaseTiffReader#getSizeC()
-   */
-  protected Integer getSizeC() {
-    return new Integer(sizeC);
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.BaseTiffReader#getSizeT()
-   */
-  protected Integer getSizeT() {
-    return new Integer(sizeT);
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.BaseTiffReader#getDimensionOrder()
-   */
-  protected String getDimensionOrder() {
-    return order;
-  }
-
-  /**
-   * Check endianness of the file.
-   * @return <code>true</code> if the file is little-endian.
-   */
-  protected boolean isLittleEndian() {
-    try {
-      return !TiffTools.isLittleEndian(ifds[0]);
-    }
-    catch (FormatException e) {
-      // FIXME: Should probably do something here other than eating the
-      // exception.
-    }
-    return true;
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.BaseTiffReader#getBigEndian()
-   */
-  protected Boolean getBigEndian() {
-    return new Boolean(!isLittleEndian());
   }
 
   // -- Main method --

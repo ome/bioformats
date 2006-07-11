@@ -135,12 +135,57 @@ public class LeicaReader extends BaseTiffReader {
     return tiff.isRGB(files[0]);
   }
 
-  /** Returns the number of channels in the file. */
-  public int getChannelCount(String id) throws FormatException, IOException {
+  /** Get the size of the X dimension. */
+  public int getSizeX(String id) throws FormatException, IOException {
+    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+      initFile(id);
+    }
+    return ((Integer) metadata.get("Image width")).intValue();
+  }
+
+  /** Get the size of the Y dimension. */
+  public int getSizeY(String id) throws FormatException, IOException {
+    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+      initFile(id);
+    }
+    return ((Integer) metadata.get("Image height")).intValue();
+  }
+
+  /** Get the size of the Z dimension. */
+  public int getSizeZ(String id) throws FormatException, IOException {
+    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+      initFile(id);
+    }
+    return ((Integer) metadata.get("Number of images")).intValue();
+  }
+
+  /** Get the size of the C dimension. */
+  public int getSizeC(String id) throws FormatException, IOException {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
     return numChannels;
+  }
+
+  /** Get the size of the T dimension. */
+  public int getSizeT(String id) throws FormatException, IOException {
+    return 1;
+  }
+
+  /** Return true if the data is in little-endian format. */
+  public boolean isLittleEndian(String id) throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return littleEndian;
+  }
+
+  /**
+   * Return a five-character string representing the dimension order
+   * within the file.
+   */
+  public String getDimensionOrder(String id) throws FormatException, IOException
+  {
+    return "XYZTC";
   }
 
   /** Obtains the specified image from the given Leica file as a byte array. */
@@ -185,7 +230,11 @@ public class LeicaReader extends BaseTiffReader {
       // open the TIFF file and look for the "Image Description" field
 
       ifds = TiffTools.getIFDs(in);
-      super.initMetadata();
+      try {
+        super.initMetadata();
+      }
+      catch (NullPointerException n) { }
+
       if (ifds == null) throw new FormatException("No IFDs found");
 
       String descr = (String) metadata.get("Comment");
@@ -233,6 +282,7 @@ public class LeicaReader extends BaseTiffReader {
 
       // now open the LEI file
       initFile(lei);
+      //super.initMetadata();
     }
     else {
       // parse the LEI file
@@ -627,7 +677,11 @@ public class LeicaReader extends BaseTiffReader {
 
     String timestamp = (String) metadata.get("Timestamp 1");
     String description = (String) metadata.get("Image Description");
-    store.setImage(null, timestamp.substring(3), description, null);
+
+    try {
+      store.setImage(null, timestamp.substring(3), description, null);
+    }
+    catch (NullPointerException n) { }
 
 //  String voxel = metadata.get("VoxelType").toString();
 //  String photoInterp;

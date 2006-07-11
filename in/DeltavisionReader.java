@@ -68,6 +68,9 @@ public class DeltavisionReader extends FormatReader {
   /** Offset where the ExtHdr starts */
   protected int initExtHdrOffset = 1024;
 
+  /** Dimension order. */
+  private String order;
+
   /** Size of one wave, z section, or time element in the extended header */
   protected int wSize;
   protected int zSize;
@@ -112,10 +115,50 @@ public class DeltavisionReader extends FormatReader {
     return false;
   }
 
-  /** Returns the number of channels in the file. */
-  public int getChannelCount(String id) throws FormatException, IOException {
+  /** Get the size of the X dimension. */
+  public int getSizeX(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return ((Integer) metadata.get("Number of wavelengths")).intValue();
+    return width;
+  }
+
+  /** Get the size of the Y dimension. */
+  public int getSizeY(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return height;
+  }
+
+  /** Get the size of the Z dimension. */
+  public int getSizeZ(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return numZ;
+  }
+
+  /** Get the size of the C dimension. */
+  public int getSizeC(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return numW;
+  }
+
+  /** Get the size of the T dimension. */
+  public int getSizeT(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return numT;
+  }
+
+  /** Return true if the data is in little-endian format. */
+  public boolean isLittleEndian(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return little;
+  }
+
+  /**
+   * Return a five-character string representing the dimension order
+   * within the file
+   */
+  public String getDimensionOrder(String id) throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return order;
   }
 
   /** Obtains the specified image from the given file as a byte array. */
@@ -328,6 +371,8 @@ public class DeltavisionReader extends FormatReader {
       DataTools.bytesToInt(header, 216, 4, little))));
     int numTitles = DataTools.bytesToInt(header, 220, 4, little);
 
+    order = dimOrder;
+
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
 
@@ -337,7 +382,7 @@ public class DeltavisionReader extends FormatReader {
     store.setStageLabel(null, xOrigin, yOrigin, zOrigin, null);
 
     String title;
-    for (int i=1; i<=numTitles; i++) {
+    for (int i=1; i<=10; i++) {
       // Make sure that "null" characters are stripped out
       title = new String(header, 224 + 80*(i-1), 80).replaceAll("\0", "");
       metadata.put("Title " + i, title);

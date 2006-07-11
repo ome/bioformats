@@ -86,8 +86,30 @@ public abstract class FormatReader extends FormatHandler {
   public abstract boolean isRGB(String id)
     throws FormatException, IOException;
 
-  /** Returns the number of channels in the file. */
-  public abstract int getChannelCount(String id)
+  /** Get the size of the X dimension. */
+  public abstract int getSizeX(String id) throws FormatException, IOException;
+
+  /** Get the size of the Y dimension. */
+  public abstract int getSizeY(String id) throws FormatException, IOException;
+
+  /** Get the size of the Z dimension. */
+  public abstract int getSizeZ(String id) throws FormatException, IOException;
+
+  /** Get the size of the C dimension. */
+  public abstract int getSizeC(String id) throws FormatException, IOException;
+
+  /** Get the size of the T dimension. */
+  public abstract int getSizeT(String id) throws FormatException, IOException;
+
+  /** Return true if the data is in little-endian format. */
+  public abstract boolean isLittleEndian(String id)
+    throws FormatException, IOException;
+
+  /**
+   * Return a five-character string representing the dimension order
+   * within the file.
+   */
+  public abstract String getDimensionOrder(String id)
     throws FormatException, IOException;
 
   /** Obtains the specified image from the given file. */

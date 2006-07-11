@@ -61,6 +61,11 @@ public class GelReader extends BaseTiffReader {
   /** Checks if the given block is a valid header for a GEL TIFF file. */
   public boolean isThisType(byte[] block) { return false; }
 
+  /** Get the size of the T dimension. */
+  public int getSizeT(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return numImages;
+  }
 
   // -- Internal BaseTiffReader API methods --
 
@@ -71,7 +76,7 @@ public class GelReader extends BaseTiffReader {
     super.initStandardMetadata();
 
     numImages--;
-    super.initMetadata();
+    //super.initMetadata();
     boolean little = true;
     try {
       little = TiffTools.isLittleEndian(ifds[0]);
@@ -107,13 +112,6 @@ public class GelReader extends BaseTiffReader {
 
     String units = (String) TiffTools.getIFDValue(ifds[1], MD_FILE_UNITS);
     metadata.put("File units", units == null ? "unknown" : units);
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.BaseTiffReader#getSizeT()
-   */
-  protected Integer getSizeT() {
-    return new Integer(numImages);
   }
 
   // -- Main method --

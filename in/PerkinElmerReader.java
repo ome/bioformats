@@ -81,12 +81,60 @@ public class PerkinElmerReader extends FormatReader {
     return channels > 1;
   }
 
-  /** Returns the number of channels in the file. */
-  public int getChannelCount(String id) throws FormatException, IOException {
+  /** Get the size of the X dimension. */
+  public int getSizeX(String id) throws FormatException, IOException {
+    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+      initFile(id);
+    }
+    return Integer.parseInt((String) metadata.get("Image Width"));
+  }
+
+  /** Get the size of the Y dimension. */
+  public int getSizeY(String id) throws FormatException, IOException {
+    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+      initFile(id);
+    }
+    return Integer.parseInt((String) metadata.get("Image Height"));
+  }
+
+  /** Get the size of the Z dimension. */
+  public int getSizeZ(String id) throws FormatException, IOException {
+    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+      initFile(id);
+    }
+    return Integer.parseInt((String) metadata.get("Number of slices"));
+  }
+
+  /** Get the size of the C dimension. */
+  public int getSizeC(String id) throws FormatException, IOException {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
     return channels;
+  }
+
+  /** Get the size of the T dimension. */
+  public int getSizeT(String id) throws FormatException, IOException {
+    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+      initFile(id);
+    }
+    return numImages / getSizeZ(id);
+  }
+
+  /** Return true if the data is in little-endian format. */
+  public boolean isLittleEndian(String id) throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return tiff.isLittleEndian(files[0]);
+  }
+
+  /**
+   * Return a five-character string representing the dimension order
+   * within the file.
+   */
+  public String getDimensionOrder(String id) throws FormatException, IOException
+  {
+    return "XYCTZ";
   }
 
   /** Obtains the specified image from the given file as a byte array. */

@@ -65,6 +65,9 @@ public class IPLabReader extends FormatReader {
   /** Total number of pixel bytes. */
   private int dataSize;
 
+  /** Dimension order. */
+  private String order;
+
   // -- Constructor --
 
   /** Constructs a new IPLab reader. */
@@ -99,10 +102,50 @@ public class IPLabReader extends FormatReader {
     return c > 1;
   }
 
-  /** Returns the number of channels in the file. */
-  public int getChannelCount(String id) throws FormatException, IOException {
+  /** Get the size of the X dimension. */
+  public int getSizeX(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return width;
+  }
+
+  /** Get the size of the Y dimension. */
+  public int getSizeY(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return height;
+  }
+
+  /** Get the size of the Z dimension. */
+  public int getSizeZ(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return (int) ((Long) metadata.get("ZDepth")).longValue();
+  }
+
+  /** Get the size of the C dimension. */
+  public int getSizeC(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return c;
+  }
+
+  /** Get the size of the T dimension. */
+  public int getSizeT(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return (int) ((Long) metadata.get("TDepth")).longValue();
+  }
+
+  /** Return true if the data is in little-endian format. */
+  public boolean isLittleEndian(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return littleEndian;
+  }
+
+  /**
+   * Return a five-character string representing the dimension order
+   * within the file.
+   */
+  public String getDimensionOrder(String id) throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return order;
   }
 
   /** Obtains the specified image from the given IPLab file as a byte array. */
@@ -217,7 +260,7 @@ public class IPLabReader extends FormatReader {
     default: typeAsString = "Uint8";
     }
 
-    String order = "XY";
+    order = "XY";
     if (c > 1) order += "CZT";
     else order += "ZTC";
 

@@ -104,6 +104,45 @@ public class IPWReader extends BaseTiffReader {
       TiffTools.SAMPLES_PER_PIXEL, false, 1) > 1);
   }
 
+  /** Get the size of the X dimension. */
+  public int getSizeX(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    Hashtable h = ((Hashtable[]) allIFDs.get(new Integer(0)))[0];
+    return TiffTools.getIFDIntValue(h, TiffTools.IMAGE_WIDTH);
+  }
+
+  /** Get the size of the Y dimension. */
+  public int getSizeY(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    Hashtable h = ((Hashtable[]) allIFDs.get(new Integer(0)))[0];
+    return TiffTools.getIFDIntValue(h, TiffTools.IMAGE_LENGTH);
+  }
+
+  /** Get the size of the Z dimension. */
+  public int getSizeZ(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return ((Integer) metadata.get("frames")).intValue();
+  }
+
+  /** Get the size of the C dimension. */
+  public int getSizeC(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return Integer.parseInt((String) metadata.get("channels"));
+  }
+
+  /** Get the size of the T dimension. */
+  public int getSizeT(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return Integer.parseInt((String) metadata.get("slices"));
+  }
+
+  /** Return true if the data is in little-endian format. */
+  public boolean isLittleEndian(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return TiffTools.isLittleEndian(
+      ((Hashtable[]) allIFDs.get(new Integer(0)))[0]);
+  }
+
   /** Obtains the specified image from the given IPW file, as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -169,7 +208,7 @@ public class IPWReader extends BaseTiffReader {
     throws FormatException, IOException
   {
     ifds = (Hashtable[]) allIFDs.get(new Integer(0));
-    super.initMetadata();
+    //super.initMetadata();
 
     // parse the image description
     String description = new String(tags, 22, tags.length-22);

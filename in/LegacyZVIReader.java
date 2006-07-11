@@ -79,13 +79,6 @@ public class LegacyZVIReader extends FormatReader {
   /** Bytes per pixel. */
   private int bytesPerPixel;
 
-  /**
-   * The ordering of images within the file; index is the position in blockList,
-   * and the corresponding value is the actual plane number.
-   */
-  private Vector ordering;
-
-
   // -- Constructor --
 
   /** Constructs a new legacy ZVI reader. */
@@ -110,10 +103,48 @@ public class LegacyZVIReader extends FormatReader {
     return (bytesPerPixel == 3) || (bytesPerPixel > 4);
   }
 
-  /** Returns the number of channels in the file. */
-  public int getChannelCount(String id) throws FormatException, IOException {
+  /** Get the size of the X dimension. */
+  public int getSizeX(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return openImage(id, 0).getWidth();
+  }
+
+  /** Get the size of the Y dimension. */
+  public int getSizeY(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return openImage(id, 0).getHeight();
+  }
+
+  /** Get the size of the Z dimension. */
+  public int getSizeZ(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return blockList.size();
+  }
+
+  /** Get the size of the C dimension. */
+  public int getSizeC(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return isRGB(id) ? 3 : 1;
+  }
+
+  /** Get the size of the T dimension. */
+  public int getSizeT(String id) throws FormatException, IOException {
+    return 1;
+  }
+
+  /** Return true if the data is in little-endian format. */
+  public boolean isLittleEndian(String id) throws FormatException, IOException
+  {
+    return true;
+  }
+
+  /**
+   * Return a five-character string representing the dimension order
+   * within the file.
+   */
+  public String getDimensionOrder(String id) throws FormatException, IOException
+  {
+    return "XYCZT";
   }
 
   /** Obtains the specified image from the given ZVI file, as a byte array. */
@@ -339,9 +370,6 @@ public class LegacyZVIReader extends FormatReader {
   }
 
   // -- Utility methods --
-
-  /** Set the plane ordering. */
-  public void setOrdering(Vector v) { ordering = v; }
 
   /**
    * Finds the first occurence of the given byte block within the file,

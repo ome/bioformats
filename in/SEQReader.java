@@ -61,6 +61,19 @@ public class SEQReader extends BaseTiffReader {
   /** Constructs a new Image-Pro SEQ reader. */
   public SEQReader() { super("Image-Pro Sequence", "seq"); }
 
+  // -- FormatReader API methods --
+
+  /** Get the size of the Z dimension. */
+  public int getSizeZ(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return sizeZ;
+  }
+
+  /** Get the size of the T dimension. */
+  public int getSizeT(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return sizeT;
+  }
 
   // -- Internal BaseTiffReader API methods --
 
@@ -105,20 +118,6 @@ public class SEQReader extends BaseTiffReader {
         metadata.put(label, data);
       }
     }
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.BaseTiffReader#getSizeZ()
-   */
-  protected Integer getSizeZ() {
-    return new Integer(sizeZ);
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.BaseTiffReader#getSizeT()
-   */
-  protected Integer getSizeT() {
-    return new Integer(sizeT);
   }
 
   // -- Main method --

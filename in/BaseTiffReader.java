@@ -444,6 +444,7 @@ public abstract class BaseTiffReader extends FormatReader {
       store.setInstrument(null, model, serialNumber, null, null);
     }
     catch (FormatException exc) { exc.printStackTrace(); }
+    catch (IOException ex) { ex.printStackTrace(); }
   }
 
 
@@ -469,13 +470,6 @@ public abstract class BaseTiffReader extends FormatReader {
       true, 0) == TiffTools.RGB_PALETTE);
   }
 
-  /** Returns the number of channels in the file. */
-  public int getChannelCount(String id) throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return isRGB(id) ? 3 : 1;
-  }
-
   /**
    * Obtains the specified metadata field's value for the given file.
    *
@@ -489,6 +483,50 @@ public abstract class BaseTiffReader extends FormatReader {
       initFile(id);
     }
     return metadata.get(field);
+  }
+
+  /** Get the size of the X dimension. */
+  public int getSizeX(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_WIDTH, false, 0);
+  }
+
+  /** Get the size of the Y dimension. */
+  public int getSizeY(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_LENGTH, false, 0);
+  }
+
+  /** Get the size of the Z dimension. */
+  public int getSizeZ(String id) throws FormatException, IOException {
+    return 1;
+  }
+
+  /** Get the size of the C dimension. */
+  public int getSizeC(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return isRGB(id) ? 3 : 1;
+  }
+
+  /** Get the size of the T dimension. */
+  public int getSizeT(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return ifds.length;
+  }
+
+  /** Return true if the data is in little-endian format. */
+  public boolean isLittleEndian(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return TiffTools.isLittleEndian(ifds[0]);
+  }
+
+  /**
+   * Return a five-character string representing the dimension order
+   * within the file.
+   */
+  public String getDimensionOrder(String id) throws FormatException, IOException
+  {
+    return "XYCZT";
   }
 
   /** Obtains the specified image from the given TIFF file as a byte array. */
@@ -540,48 +578,6 @@ public abstract class BaseTiffReader extends FormatReader {
   }
 
   /**
-   * Retrieves the number of pixels along the X-axis of the image (width).
-   * @return the X-axis size.
-   */
-  protected Integer getSizeX() throws FormatException {
-    return new Integer(
-        TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_WIDTH));
-  }
-
-  /**
-   * Retrieves the number of pixels along the Y-axis of the image (length).
-   * @return the Y-axis size.
-   */
-  protected Integer getSizeY() throws FormatException {
-    return new Integer(
-        TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_LENGTH));
-  }
-
-  /**
-   * Retrieves the number of optical sections in the TIFF.
-   * @return the number of optical sections.
-   */
-  protected Integer getSizeZ() throws FormatException {
-    return new Integer(1);
-  }
-
-  /**
-   * Retrieves the number of timepoints in the TIFF.
-   * @return the number of timepoints.
-   */
-  protected Integer getSizeT() throws FormatException {
-    return new Integer(ifds.length);
-  }
-
-  /**
-   * Retrieves the number of channels in the TIFF.
-   * @return the number of channels.
-   */
-  protected Integer getSizeC() throws FormatException {
-    return (Integer) metadata.get("NumberOfChannels");
-  }
-
-  /**
    * If the TIFF is big-endian.
    * @return <code>true</code> if the TIFF is big-endian, <code>false</code>
    * otherwise.
@@ -611,10 +607,6 @@ public abstract class BaseTiffReader extends FormatReader {
     return pixelType;
   }
 
-  protected String getDimensionOrder() throws FormatException {
-    return "XYCZT";
-  }
-
   /**
    * Performs the actual setting of the pixels attributes in the active metadata
    * store by calling:
@@ -635,10 +627,12 @@ public abstract class BaseTiffReader extends FormatReader {
    * @throws FormatException if there is a problem parsing any of the
    * attributes.
    */
-  private void setPixels() throws FormatException {
-    getMetadataStore().setPixels(getSizeX(), getSizeY(), getSizeZ(), getSizeC(),
-                                 getSizeT(), getPixelType(), getBigEndian(),
-                                 getDimensionOrder(), null);
+  private void setPixels() throws FormatException, IOException {
+    getMetadataStore().setPixels(
+      new Integer(getSizeX(currentId)), new Integer(getSizeY(currentId)),
+      new Integer(getSizeZ(currentId)), new Integer(getSizeC(currentId)),
+      new Integer(getSizeT(currentId)), getPixelType(),
+      getBigEndian(), getDimensionOrder(currentId), null);
   }
 
   /**

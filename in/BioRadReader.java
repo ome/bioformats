@@ -116,10 +116,13 @@ public class BioRadReader extends FormatReader {
   private RandomAccessStream in;
 
   /** Dimensions of each image in current Bio-Rad PIC. */
-  private int nx, ny;
+  private int nx, ny, nz, nt;
 
   /** Number of images in current Bio-Rad PIC. */
   private int npic;
+
+  /** Dimension order in current Bio-Rad PIC. */
+  private String order;
 
   /** Flag indicating current Bio-Rad PIC is packed with bytes. */
   private boolean byteFormat;
@@ -150,9 +153,48 @@ public class BioRadReader extends FormatReader {
     return false;
   }
 
-  /** Returns the number of channels in the file. */
-  public int getChannelCount(String id) throws FormatException, IOException {
+  /** Get the size of the X dimension. */
+  public int getSizeX(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return nx;
+  }
+
+  /** Get the size of the Y dimension. */
+  public int getSizeY(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return ny;
+  }
+
+  /** Get the size of the Z dimension. */
+  public int getSizeZ(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return nz;
+  }
+
+  /** Get the size of the C dimension. */
+  public int getSizeC(String id) throws FormatException, IOException {
     return 1;
+  }
+
+  /** Get the size of the T dimension. */
+  public int getSizeT(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return nt;
+  }
+
+  /** Return true if the data is in little-endian format. */
+  public boolean isLittleEndian(String id) throws FormatException, IOException {
+    return LITTLE_ENDIAN;
+  }
+
+  /**
+   * Return a five-character string representing the dimension order
+   * within the file.
+   */
+  public String getDimensionOrder(String id) throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return order;
   }
 
   /** Obtains the specified image from the given file as a byte array. */
@@ -442,6 +484,10 @@ public class BioRadReader extends FormatReader {
       }
       else dimOrder += "T";
     }
+
+    nz = sizeZ;
+    nt = sizeT;
+    order = dimOrder;
 
     store.setPixels(
       new Integer(nx), // SizeX
