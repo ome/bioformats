@@ -145,7 +145,7 @@ public class FileStitcher extends FormatReader {
   {
     return reader.openBytes(findFile(no), number);
   }
-  
+
   /** Closes the currently open file. */
   public void close() throws FormatException, IOException {
     reader.close();
@@ -171,7 +171,7 @@ public class FileStitcher extends FormatReader {
     int[][] dims = new int[files.length][3];
 
     for (int i=0; i<files.length; i++) {
-      imageCounts[i] = reader.getImageCount(files[i]); 
+      imageCounts[i] = reader.getImageCount(files[i]);
       numImages += imageCounts[i];
       dims[i][0] = reader.getSizeZ(files[i]);
       dims[i][1] = reader.getSizeC(files[i]);
@@ -194,7 +194,7 @@ public class FileStitcher extends FormatReader {
       dimensions[0] = dims[0][0];
       dimensions[1] = dims[0][1];
       dimensions[2] = dims[0][2];
-    
+
       String o = getDimensionOrder(id);
       if (o.endsWith("Z")) dimensions[0] *= files.length;
       else if (o.endsWith("C")) dimensions[1] *= files.length;
