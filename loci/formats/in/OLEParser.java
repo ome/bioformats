@@ -91,7 +91,7 @@ public class OLEParser {
   private boolean parsedAll = false;
 
   /** Ordered list of item names. */
-  private HashSet itemNames;
+  private Vector itemNames;
 
   // -- Variables for a weird special case --
 
@@ -125,7 +125,7 @@ public class OLEParser {
     fileSystem = new RedBlackTree();
     indices = new HashSet();
     read = new HashSet();
-    itemNames = new HashSet();
+    itemNames = new Vector();
 
     long check = DataTools.read8SignedBytes(in, true);
     if (check != DataTools.bytesToLong(MAGIC_NUMBER, true)) {
@@ -405,7 +405,7 @@ public class OLEParser {
   }
 
   /** Get the names of data items in the order they were parsed. */
-  public HashSet getNames() { return itemNames; }
+  public Vector getNames() { return itemNames; }
 
   /**
    * Build the files; that is, for each file, construct a byte array given
