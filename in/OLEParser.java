@@ -73,7 +73,7 @@ public class OLEParser {
   private byte[] propertyArray;
 
   /** Array of property table indices that we've already visited. */
-  private Vector indices;
+  private HashSet indices;
 
   /** Vector of parent nodes. */
   private Vector parents;
@@ -91,7 +91,7 @@ public class OLEParser {
   private boolean parsedAll = false;
 
   /** Ordered list of item names. */
-  private Vector itemNames;
+  private HashSet itemNames;
 
   // -- Variables for a weird special case --
 
@@ -123,9 +123,9 @@ public class OLEParser {
     in = new RandomAccessStream(filename);
     parents = new Vector();
     fileSystem = new RedBlackTree();
-    indices = new Vector();
+    indices = new HashSet();
     read = new HashSet();
-    itemNames = new Vector();
+    itemNames = new HashSet();
 
     long check = DataTools.read8SignedBytes(in, true);
     if (check != DataTools.bytesToLong(MAGIC_NUMBER, true)) {
@@ -404,12 +404,8 @@ public class OLEParser {
     }
   }
 
-  /**
-   * Get the names of data items in the order they were parsed.
-   */
-  public Vector getNames() {
-    return itemNames;
-  }
+  /** Get the names of data items in the order they were parsed. */
+  public HashSet getNames() { return itemNames; }
 
   /**
    * Build the files; that is, for each file, construct a byte array given
@@ -435,7 +431,7 @@ public class OLEParser {
       // if the size of the file is less than 4096, use the SBAT
       // otherwise, use the BAT
 
-      Vector sread = new Vector();
+      HashSet sread = new HashSet();
 
       if (size < 4096) {
       //if (size < 8*bigBlock) {
@@ -472,7 +468,7 @@ public class OLEParser {
 
         int numBlocksInFile = 0;
 
-        HashSet v = new HashSet();
+        Vector v = new Vector();
 
         while ((numRead < size) && (start < (in.length() / bigBlock))) {
           in.seek(bigBlock * start);
@@ -485,9 +481,7 @@ public class OLEParser {
           }
           numRead += toCopy;
 
-          if (start < bat.length) {
-            start = bat[start];
-          }
+          if (start < bat.length) start = bat[start];
           else {
             start++;
 
@@ -513,27 +507,26 @@ public class OLEParser {
 
           ndx = v.size();
           for (int j=0; j<(in.length() / bigBlock); j++) {
-            Integer ij = new Integer(j);
-            if (!read.contains(ij) && !inBat(j - 1) && !v.contains(ij)) {
-              v.add(ij);
+            if (!read.contains(new Integer(j)) && !inBat(j - 1) &&
+              !v.contains(new Integer(j)))
+            {
+              v.add(new Integer(j));
             }
           }
           if (v.size() > ndx) reallyWeirdSpecialCase = true;
         }
 
         // now read all of the blocks into the file
+
         numRead = 0;
-        Iterator iter = v.iterator();
-        int j = 0;
-        while (iter.hasNext()) {
-          Integer ij = (Integer) iter.next();
-          in.seek(ij.intValue() * bigBlock);
-          read.add(ij);
+        for (int j=0; j<v.size(); j++) {
+          in.seek(((Integer) v.get(j)).intValue() * bigBlock);
+          read.add((Integer) v.get(j));
           int toCopy = bigBlock;
           if ((size - numRead) < bigBlock) toCopy = size - numRead;
           in.read(file, numRead, toCopy);
           numRead += toCopy;
-          if ((j++ < ndx) && reallyWeirdSpecialCase) cutPoint += toCopy;
+          if ((j < ndx) && reallyWeirdSpecialCase) cutPoint += toCopy;
         }
         if (reallyWeirdSpecialCase) realNumRead = numRead;
       }
