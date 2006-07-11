@@ -45,8 +45,17 @@ public class ZeissLSMReader extends BaseTiffReader {
 
   // -- Fields --
 
+  /** Number of timepoints. */
+  private int tSize;
+
+  /** Number of Z slices. */
+  private int zSize;
+
   /** Number of channels. */
   private int channels;
+
+  /** Dimension order. */
+  private String dimOrder;
 
   // -- Constructor --
 
@@ -82,10 +91,32 @@ public class ZeissLSMReader extends BaseTiffReader {
     }
   }
 
-  /** Returns the number of channels in the file. */
-  public int getChannelCount(String id) throws FormatException, IOException {
+  /** Get the size of the Z dimension. */
+  public int getSizeZ(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return zSize;
+  }
+
+  /** Get the size of the C dimension. */
+  public int getSizeC(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return channels;
+  }
+
+  /** Get the size of the T dimension. */
+  public int getSizeT(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return tSize;
+  }
+
+  /**
+   * Return a five-character string representing the dimension order
+   * within the file.
+   */
+  public String getDimensionOrder(String id) throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return dimOrder;
   }
 
   /** Initializes the given Zeiss LSM file. */
@@ -491,9 +522,9 @@ public class ZeissLSMReader extends BaseTiffReader {
 
       int imageWidth = DataTools.bytesToInt(omeData, 8, little);
       int imageLength = DataTools.bytesToInt(omeData, 12, little);
-      int zSize = DataTools.bytesToInt(omeData, 16, little);
+      zSize = DataTools.bytesToInt(omeData, 16, little);
       int cSize = DataTools.bytesToInt(omeData, 20, little);
-      int tSize = DataTools.bytesToInt(omeData, 24, little);
+      tSize = DataTools.bytesToInt(omeData, 24, little);
 
       int pixel = DataTools.bytesToInt(omeData, 28, little);
       String pixelType;
@@ -505,7 +536,6 @@ public class ZeissLSMReader extends BaseTiffReader {
       }
 
       short scanType = DataTools.bytesToShort(omeData, 88, little);
-      String dimOrder;
       switch ((int) scanType) {
         case 0: dimOrder = "XYZCT"; break;
         case 1: dimOrder = "XYZCT"; break;

@@ -97,10 +97,32 @@ public class FluoviewReader extends BaseTiffReader {
     return checkBytes(name, BLOCK_CHECK_LEN);
   }
 
-  /** Returns the number of channels in the file. */
-  public int getChannelCount(String id) throws FormatException, IOException {
+  /** Get the size of the Z dimension. */
+  public int getSizeZ(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return sizeZ;
+  }
+
+  /** Get the size of the C dimension. */
+  public int getSizeC(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return sizeC;
+  }
+
+  /** Get the size of the T dimension. */
+  public int getSizeT(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return sizeT;
+  }
+
+  /**
+   * Return a five-character string representing the dimension order
+   * within the file.
+   */
+  public String getDimensionOrder(String id) throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return order;
   }
 
   // -- Internal BaseTiffReader API methods --
@@ -404,34 +426,6 @@ public class FluoviewReader extends BaseTiffReader {
     catch (NullPointerException e) { /* most likely MMHEADER not found */ }
     catch (IOException e) { e.printStackTrace(); }
     catch (FormatException e) { e.printStackTrace(); }
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.BaseTiffReader#getSizeZ()
-   */
-  protected Integer getSizeZ() {
-    return new Integer(sizeZ);
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.BaseTiffReader#getSizeC()
-   */
-  protected Integer getSizeC() {
-    return new Integer(sizeC);
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.BaseTiffReader#getSizeT()
-   */
-  protected Integer getSizeT() {
-    return new Integer(sizeT);
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.BaseTiffReader#getDimensionOrder()
-   */
-  protected String getDimensionOrder() {
-    return order;
   }
 
   // -- Main method --

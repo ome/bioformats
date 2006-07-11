@@ -65,6 +65,10 @@ public class ZeissZVIReader extends FormatReader {
   private int previousCut;
 
   private String typeAsString;
+  private String dimensionOrder;
+  private int zSize;
+  private int tSize;
+  private int cSize;
 
   // -- Constructor --
 
@@ -93,10 +97,50 @@ public class ZeissZVIReader extends FormatReader {
     return channels > 1;
   }
 
-  /** Returns the number of channels in the file. */
-  public int getChannelCount(String id) throws FormatException, IOException {
+  /** Get the size of the X dimension. */
+  public int getSizeX(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return channels;
+    return width;
+  }
+
+  /** Get the size of the Y dimension. */
+  public int getSizeY(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return height;
+  }
+
+  /** Get the size of the Z dimension. */
+  public int getSizeZ(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return zSize;
+  }
+
+  /** Get the size of the C dimension. */
+  public int getSizeC(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return cSize;
+  }
+
+  /** Get the size of the T dimension. */
+  public int getSizeT(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return tSize;
+  }
+
+  /** Return true if the data is in little-endian format. */
+  public boolean isLittleEndian(String id) throws FormatException, IOException
+  {
+    return true;
+  }
+
+  /**
+   * Return a five-character string representing the dimension order
+   * within the file.
+   */
+  public String getDimensionOrder(String id) throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return dimensionOrder;
   }
 
   /** Obtains the specified image from the given ZVI file, as a byte array. */
@@ -544,23 +588,6 @@ public class ZeissZVIReader extends FormatReader {
       }
       catch (Exception e) { }
     }
-
-    // set the legacy reader's plane ordering, just in case this reader fails
-
-    Vector ordering = new Vector();
-    Vector first = new Vector();
-    Vector realNames = parser.getNames();
-    for (int i=0; i<realNames.size(); i++) {
-      String pathName = ((String) realNames.get(i)).trim();
-
-      if (!ordering.contains(new Integer(
-        Integer.parseInt(DataTools.stripString(pathName)))))
-      {
-        ordering.add(new Integer(Integer.parseInt(
-          DataTools.stripString(pathName))));
-      }
-    }
-    legacy.setOrdering(ordering);
 
     if (nImages == 0) {
       // HACK - just grab the largest file
@@ -1410,7 +1437,7 @@ public class ZeissZVIReader extends FormatReader {
       e.printStackTrace();
     }
 
-    String dimensionOrder = "XYZCT";
+    dimensionOrder = "XYZCT";
 
     // If we have a legacy datafile the attribute names are different.
     if (needLegacy) {
@@ -1418,15 +1445,22 @@ public class ZeissZVIReader extends FormatReader {
       sizeY = (Integer) metadata.get("Height");
     }
 
-    if (((Integer) metadata.get("MultiChannelEnabled")).intValue() == 1) {
-      sizeC = new Integer(nImages);
-      sizeT = new Integer(1);
-      dimensionOrder = "XYCZT";
+    Object mce = metadata.get("MultiChannelEnabled");
+    if (mce != null) {
+      if (((Integer) mce).intValue() == 1) {
+        sizeC = new Integer(nImages);
+        sizeT = new Integer(1);
+        dimensionOrder = "XYCZT";
+      }
     }
 
-      store.setPixels(sizeX, sizeY, sizeZ, sizeC, sizeT, typeAsString,
-                      null, dimensionOrder, null);
-    }
+    cSize = sizeC.intValue();
+    tSize = sizeT.intValue();
+    zSize = sizeZ.intValue();
+
+    store.setPixels(sizeX, sizeY, sizeZ, sizeC, sizeT, typeAsString,
+                    null, dimensionOrder, null);
+  }
 
   /**
    * Populates the first experimenter and group in the metadata store.
@@ -1462,9 +1496,12 @@ public class ZeissZVIReader extends FormatReader {
     MetadataStore store = getMetadataStore();
 
     // Stage Label
-    int xPos = Integer.parseInt((String) metadata.get("Stage Position X"));
-    int yPos = Integer.parseInt((String) metadata.get("Stage Position Y"));
-    store.setStageLabel(null, new Float(xPos), new Float(yPos), null, null);
+    try {
+      int xPos = Integer.parseInt((String) metadata.get("Stage Position X"));
+      int yPos = Integer.parseInt((String) metadata.get("Stage Position Y"));
+      store.setStageLabel(null, new Float(xPos), new Float(yPos), null, null);
+    }
+    catch (NumberFormatException n) { }
   }
 
   // -- Main method --

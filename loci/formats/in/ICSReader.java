@@ -73,6 +73,9 @@ public class ICSReader extends FormatReader {
   /** Image data. */
   protected byte[] data;
 
+  /** Dimension order. */
+  private String order;
+
 
   // -- Constructor --
 
@@ -100,9 +103,50 @@ public class ICSReader extends FormatReader {
     return false;
   }
 
-  /** Returns the number of channels in the file. */
-  public int getChannelCount(String id) throws FormatException, IOException {
-    return 1;
+  /** Get the size of the X dimension. */
+  public int getSizeX(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return dimensions[1];
+  }
+
+  /** Get the size of the Y dimension. */
+  public int getSizeY(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return dimensions[2];
+  }
+
+  /** Get the size of the Z dimension. */
+  public int getSizeZ(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return dimensions[3];
+  }
+
+  /** Get the size of the C dimension. */
+  public int getSizeC(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return dimensions[4];
+  }
+
+  /** Get the size of the T dimension. */
+  public int getSizeT(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return dimensions[5];
+  }
+
+  /** Return true if the data is in little-endian format. */
+  public boolean isLittleEndian(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return littleEndian;
+  }
+
+  /**
+   * Return a five-character string representing the dimension order
+   * within the file.
+   */
+  public String getDimensionOrder(String id) throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return order;
   }
 
   /** Obtains the specified image from the given ICS file, as a byte array. */
@@ -244,10 +288,10 @@ public class ICSReader extends FormatReader {
     }
 
     String images = (String) metadata.get("sizes");
-    String order = (String) metadata.get("order");
+    String ord = (String) metadata.get("order");
     // bpp, width, height, z, channels
     StringTokenizer t1 = new StringTokenizer(images);
-    StringTokenizer t2 = new StringTokenizer(order);
+    StringTokenizer t2 = new StringTokenizer(ord);
 
     for(int i=0; i<dimensions.length; i++) {
       dimensions[i] = 1;
@@ -341,18 +385,18 @@ public class ICSReader extends FormatReader {
 
     // populate Pixels element
 
-    String ord = (String) metadata.get("order");
-    ord = ord.substring(ord.indexOf("x"));
-    char[] tempOrder = new char[(ord.length() / 2) + 1];
+    String o = (String) metadata.get("order");
+    o = o.substring(o.indexOf("x"));
+    char[] tempOrder = new char[(o.length() / 2) + 1];
     int pt = 0;
-    for (int i=0; i<ord.length(); i+=2) {
-      tempOrder[pt] = ord.charAt(i);
+    for (int i=0; i<o.length(); i+=2) {
+      tempOrder[pt] = o.charAt(i);
       pt++;
     }
-    ord = new String(tempOrder).toUpperCase();
-    if (ord.indexOf("Z") == -1) ord = ord + "Z";
-    if (ord.indexOf("T") == -1) ord = ord + "T";
-    if (ord.indexOf("C") == -1) ord = ord + "C";
+    o = new String(tempOrder).toUpperCase();
+    if (o.indexOf("Z") == -1) o = o + "Z";
+    if (o.indexOf("T") == -1) o = o + "T";
+    if (o.indexOf("C") == -1) o = o + "C";
 
     String bits = (String) metadata.get("significant_bits");
     String fmt = (String) metadata.get("format");
@@ -366,6 +410,8 @@ public class ICSReader extends FormatReader {
     else if (fmt.equals("integer")) {
       type = type + "int" + bits;
     }
+
+    order = o;
 
     store.setPixels(
       new Integer(dimensions[1]), // SizeX

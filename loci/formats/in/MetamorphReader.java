@@ -98,6 +98,12 @@ public class MetamorphReader extends BaseTiffReader {
     }
   }
 
+  /** Get the size of the Z dimension. */
+  public int getSizeZ(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true).length;
+  }
+
   /** Initializes the given Metamorph file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
@@ -497,15 +503,6 @@ public class MetamorphReader extends BaseTiffReader {
       if (descr.equals("")) metadata.remove("Comment");
       else put("Comment", descr);
     }
-  }
-
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.BaseTiffReader#getSizeZ()
-   */
-  protected Integer getSizeZ() throws FormatException {
-    return new Integer(TiffTools.getIFDLongArray(ifds[0],
-      UIC2TAG, true).length);
   }
 
   /*

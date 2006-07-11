@@ -123,7 +123,7 @@ public class LociImporter implements PlugIn, ItemListener {
       ImageStack stackB = null, stackS = null, stackF = null, stackO = null;
       long start = System.currentTimeMillis();
       long time = start;
-      int channels = cm.getChannelCount(id);
+      int channels = cm.getSizeC(id);
 
       for (int i=0; i<num; i++) {
         // limit message update rate

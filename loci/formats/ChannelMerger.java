@@ -73,7 +73,7 @@ public class ChannelMerger extends FormatReader {
     int originalImages = readerImages;
 
     if (canMerge(id)) {
-      int channels = getChannelCount(id);
+      int channels = getSizeC(id);
       if (channels > 3) originalImages /= channels;
       else originalImages /= channels;
     }
@@ -84,16 +84,57 @@ public class ChannelMerger extends FormatReader {
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
 
-    int channels = getChannelCount(id);
+    int channels = getSizeC(id);
     boolean multipleChannels = channels > 1;
     return multipleChannels && (channels == 3 && reader.isRGB(id)) &&
       !separated;
   }
 
-  /** Returns the number of channels in the file. */
-  public int getChannelCount(String id) throws FormatException, IOException {
+  /** Get the size of the X dimension. */
+  public int getSizeX(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return reader.getChannelCount(id);
+    return reader.getSizeX(id);
+  }
+
+  /** Get the size of the Y dimension. */
+  public int getSizeY(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.getSizeY(id);
+  }
+
+  /** Get the size of the Z dimension. */
+  public int getSizeZ(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.getSizeZ(id);
+  }
+
+  /** Get the size of the C dimension. */
+  public int getSizeC(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.getSizeC(id);
+  }
+
+  /** Get the size of the T dimension. */
+  public int getSizeT(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.getSizeT(id);
+  }
+
+  /** Return true if the data is in little-endian format. */
+  public boolean isLittleEndian(String id) throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.isLittleEndian(id);
+  }
+
+  /**
+   * Return a five-character string representing the dimension order
+   * within the file.
+   */
+  public String getDimensionOrder(String id) throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.getDimensionOrder(id);
   }
 
   /** Obtains the specified image from the given file. */
@@ -119,8 +160,9 @@ public class ChannelMerger extends FormatReader {
       }
       else {
         Object o = ImageTools.getPixels(img[nos.length - 1]);
-        int mul = 1;
-        if (o instanceof short[][]) mul = 2;
+        int mul = 0;
+        if (o instanceof byte[][]) mul = 1;
+        else if (o instanceof short[][]) mul = 2;
         else if (o instanceof int[][]) mul = 4;
         else if (o instanceof float[][]) mul = 4;
         else mul = 8;
@@ -130,7 +172,9 @@ public class ChannelMerger extends FormatReader {
           false, mul, true);
       }
     }
-    return ImageTools.mergeChannels(img);
+
+    BufferedImage image = ImageTools.mergeChannels(img);
+    return image;
   }
 
   /**
@@ -165,7 +209,7 @@ public class ChannelMerger extends FormatReader {
   public boolean canMerge(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
 
-    int channels = getChannelCount(id);
+    int channels = getSizeC(id);
     boolean multipleChannels = channels > 1;
     return multipleChannels && !(channels == 3 && reader.isRGB(id)) &&
       !separated;
@@ -179,31 +223,11 @@ public class ChannelMerger extends FormatReader {
     reader.initFile(id);
     currentId = id;
 
-    // HACK - FIXME - The following is a *gross* hack. ChannelMerger needs the
-    // dimensions and dimension order of the pixels set and should be able to
-    // retrieve this information without relying on the MetadataStore
-    // (OMEXMLMetadataStore only in this case) to provide it as these methods
-    // are *not* part of the interface.
-    // -- Chris <callan@blackcat.ca>
-    OMEXMLMetadataStore store = (OMEXMLMetadataStore) reader.getMetadataStore();
-    try {
-      order = store.getDimensionOrder(null);
-    }
-    catch (Exception e) {
-      order = "XYZCT";
-    }
-
+    order = getDimensionOrder(id);
     dimensions = new int[3];
-    try {
-      dimensions[0] = ((Integer) store.getSizeZ(null)).intValue();
-      dimensions[1] = ((Integer) store.getSizeC(null)).intValue();
-      dimensions[2] = ((Integer) store.getSizeT(null)).intValue();
-    }
-    catch (Exception e) {
-      for (int i=0; i<dimensions.length; i++) {
-        if (dimensions[i] == 0) dimensions[i] = 1;
-      }
-    }
+    dimensions[0] = getSizeZ(id);
+    dimensions[1] = getSizeC(id);
+    dimensions[2] = getSizeT(id);
 
     readerImages = reader.getImageCount(id);
     ourImages = getImageCount(id);
@@ -237,10 +261,10 @@ public class ChannelMerger extends FormatReader {
         if (order.charAt(0) == 'T' || order.charAt(1) == 'T') {
           between *= dimensions[2];
         }
+      }
 
-        for (int i=0; i<real.length; i++) {
-          real[i] = plane + between * i;
-        }
+      for (int i=0; i<real.length; i++) {
+        real[i] = plane + between * i;
       }
     }
 

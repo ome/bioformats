@@ -67,6 +67,15 @@ public class OMEXMLReader extends FormatReader {
   /** Number of channels. */
   private int numChannels;
 
+  /** Number of timepoints. */
+  private int numT;
+
+  /** Number of Z slices. */
+  private int numZ;
+
+  /** Dimension order. */
+  private String order;
+
   /** Internal OME-XML metadata store that we use for parsing metadata from the
    * OME-XML file itself.
    */
@@ -96,10 +105,51 @@ public class OMEXMLReader extends FormatReader {
     return false;
   }
 
-  /** Returns the number of channels in the file. */
-  public int getChannelCount(String id) throws FormatException, IOException {
+  /** Get the size of the X dimension. */
+  public int getSizeX(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return width;
+  }
+
+  /** Get the size of the Y dimension. */
+  public int getSizeY(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return height;
+  }
+
+  /** Get the size of the Z dimension. */
+  public int getSizeZ(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return numZ;
+  }
+
+  /** Get the size of the C dimension. */
+  public int getSizeC(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return numChannels;
+  }
+
+  /** Get the size of the T dimension. */
+  public int getSizeT(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return numT;
+  }
+
+  /** Return true if the data is in little-endian format. */
+  public boolean isLittleEndian(String id) throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return littleEndian;
+  }
+
+  /**
+   * Return a five-character string representing the dimension order
+   * within the file.
+   */
+  public String getDimensionOrder(String id) throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return order;
   }
 
   /** Obtains the specified image from the given file as a byte array. */
@@ -278,6 +328,10 @@ public class OMEXMLReader extends FormatReader {
     sizeZ = internalStore.getSizeZ(null).intValue();
     sizeC = internalStore.getSizeC(null).intValue();
     sizeT = internalStore.getSizeT(null).intValue();
+    order = internalStore.getDimensionOrder(null);
+
+    numZ = sizeZ;
+    numT = sizeT;
 
     numChannels = sizeC;
 

@@ -297,102 +297,110 @@ public class OLEParser {
    * specified number of available bytes.
    */
   private void parseDir(int depth, int ndx) throws IOException {
-    // now we'll read the next property table
 
-    byte[] table = new byte[128];
+    Vector toParse = new Vector();
+    toParse.add(new Integer(ndx));
+    int q = 0;
 
-    System.arraycopy(propertyArray, ndx*128, table, 0, table.length);
+    while (!parsedAll) {
+      while (q < toParse.size()) {
+        ndx = ((Integer) toParse.get(q)).intValue();
+        q++;
 
-    last = ndx;
-    indices.add(new Integer(ndx));
+        byte[] table = new byte[128];
 
-    // extract some information from the property table
+        System.arraycopy(propertyArray, ndx*128, table, 0, table.length);
 
-    byte[] b = new byte[64];
-    System.arraycopy(table, 0, b, 0, b.length);
+        last = ndx;
 
-    StringBuffer sb = new StringBuffer();
-    for (int i=0; i<b.length; i++) {
-      sb = sb.append((char) b[i]);
-    }
+        indices.add(new Integer(ndx));
 
-    String name = sb.toString();
+        // extract some information from the property table
 
-    if (name.trim().equals("")) return;
+        byte[] b = new byte[64];
+        System.arraycopy(table, 0, b, 0, b.length);
 
-    if (name.indexOf("(") != -1 && name.indexOf(")") != -1) {
-      itemNames.add(
-        name.substring(name.indexOf("(") + 1, name.indexOf(")")).trim());
-    }
+        StringBuffer sb = new StringBuffer();
+        for (int i=0; i<b.length; i++) {
+          sb = sb.append((char) b[i]);
+        }
 
-    short numNameChars = DataTools.bytesToShort(table, 64, 2, true);
-    byte propType = table[66]; // 1 = dir, 2 = file, 5 = root
-    byte nodeColor = table[67]; // 0 = red, 1 = black
-    int previousIndex = DataTools.bytesToInt(table, 68, 4, true);
-    int nextIndex = DataTools.bytesToInt(table, 72, 4, true);
-    int firstChildIndex = DataTools.bytesToInt(table, 76, 4, true);
-    int createdSeconds = DataTools.bytesToInt(table, 100, 4, true);
-    int createdDays = DataTools.bytesToInt(table, 104, 4, true);
-    int modifiedSeconds = DataTools.bytesToInt(table, 108, 4, true);
-    int modifiedDays = DataTools.bytesToInt(table, 112, 4, true);
-    int firstBlock = DataTools.bytesToInt(table, 116, 4, true);
-    int fileSize = DataTools.bytesToInt(table, 120, 4, true);
+        String name = sb.toString();
 
-    if (propType != 5) {
-      fileSystem.add(nodeColor, propType, ndx, nextIndex,
-        ((Integer) parents.get(parents.size() - 1)).intValue(),
-        name, firstBlock, fileSize);
-    }
-    else if (fileSystem.nullRoot()) {
-      buildSmallBlockArray(fileSize, firstBlock);
+        if (name.trim().equals("")) return;
 
-      fileSystem.add(nodeColor, propType, 0, nextIndex,
-        -1, name, firstBlock, fileSize);
-      parents.add(new Integer(0));
-    }
+        if (name.indexOf("(") != -1 && name.indexOf(")") != -1) {
+          itemNames.add(
+            name.substring(name.indexOf("(") + 1, name.indexOf(")")).trim());
+        }
 
-    // parse the child
+        short numNameChars = DataTools.bytesToShort(table, 64, 2, true);
+        byte propType = table[66]; // 1 = dir, 2 = file, 5 = root
+        byte nodeColor = table[67]; // 0 = red, 1 = black
+        int previousIndex = DataTools.bytesToInt(table, 68, 4, true);
+        int nextIndex = DataTools.bytesToInt(table, 72, 4, true);
+        int firstChildIndex = DataTools.bytesToInt(table, 76, 4, true);
+        int createdSeconds = DataTools.bytesToInt(table, 100, 4, true);
+        int createdDays = DataTools.bytesToInt(table, 104, 4, true);
+        int modifiedSeconds = DataTools.bytesToInt(table, 108, 4, true);
+        int modifiedDays = DataTools.bytesToInt(table, 112, 4, true);
+        int firstBlock = DataTools.bytesToInt(table, 116, 4, true);
+        int fileSize = DataTools.bytesToInt(table, 120, 4, true);
 
-    if ((firstChildIndex != -1) &&
-      !indices.contains(new Integer(firstChildIndex)) &&
-      (firstChildIndex < (propertyArray.length / 128)))
-    {
-      if ((propType == 5) && fileSystem.nullRoot()) {
-        parents.add(new Integer(0));
-      }
-      else {
-        parents.add(new Integer(ndx));
-      }
-      parseDir(depth + 1, firstChildIndex);
-    }
+        if (propType != 5) {
+          fileSystem.add(nodeColor, propType, ndx, nextIndex,
+            ((Integer) parents.get(parents.size() - 1)).intValue(),
+            name, firstBlock, fileSize);
+        }
+        else if (fileSystem.nullRoot()) {
+          buildSmallBlockArray(fileSize, firstBlock);
 
-    // parse the previous node
+          fileSystem.add(nodeColor, propType, 0, nextIndex, -1, name,
+            firstBlock, fileSize);
+          parents.add(new Integer(0));
+        }
 
-    if ((previousIndex != -1) &&
-      !indices.contains(new Integer(previousIndex)) &&
-      (previousIndex < (propertyArray.length / 128)))
-    {
-      parseDir(depth, previousIndex);
-    }
+        // add the child
 
-    // parse the next node
+        if ((firstChildIndex != -1) &&
+          !indices.contains(new Integer(firstChildIndex)) &&
+          (firstChildIndex < (propertyArray.length / 128)))
+        {
+          if ((propType == 5) && fileSystem.nullRoot()) {
+            parents.add(new Integer(0));
+          }
+          else parents.add(new Integer(ndx));
+          depth++;
+          toParse.add(q, new Integer(firstChildIndex));
+        }
 
-    if ((nextIndex != -1) && !indices.contains(new Integer(nextIndex)) &&
-      (nextIndex < (propertyArray.length / 128)))
-    {
-      parseDir(depth, nextIndex);
-    }
+        // add the previous node
 
-    // if there is anything left, parse that
-    if (!parsedAll && (indices.size() < (propertyArray.length / 128))) {
-      // find the next index to parse
-      for (int i=last; i<(propertyArray.length / 128); i++) {
-        if (parsedAll) return;
-        if (!indices.contains(new Integer(i))) {
-          parseDir(depth, i);
+        if ((previousIndex != -1) &&
+          !indices.contains(new Integer(previousIndex)) &&
+          (previousIndex < (propertyArray.length / 128)))
+        {
+          toParse.add(q, new Integer(previousIndex));
+        }
+
+        // add the next node
+
+        if ((nextIndex != -1) && !indices.contains(new Integer(nextIndex)) &&
+          (nextIndex < (propertyArray.length / 128)))
+        {
+          toParse.add(q, new Integer(nextIndex));
         }
       }
-      parsedAll = true;
+
+      toParse = new Vector();
+      q = 0;
+
+      for (int i=0; i<(propertyArray.length / 128); i++) {
+        if (!indices.contains(new Integer(i))) {
+          toParse.add(new Integer(i));
+        }
+      }
+      parsedAll = toParse.size() == 0;
     }
   }
 
@@ -431,7 +439,6 @@ public class OLEParser {
 
       if (size < 4096) {
       //if (size < 8*bigBlock) {
-        // TODO : this is broken
 
         int ndx = 2 * (start + 1);
         if ((ndx + 1)*smallBlock >= smallBlockArray.length) {

@@ -47,6 +47,13 @@ public class TiffReader extends BaseTiffReader {
     super("Tagged Image File Format", new String[] {"tif", "tiff"});
   }
 
+  // -- FormatReader API methods --
+
+  /** Get the size of the Z dimension. */
+  public int getSizeZ(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return sizeZ;
+  }
 
   // -- Internal BaseTiffForm API methods --
 
@@ -93,13 +100,6 @@ public class TiffReader extends BaseTiffReader {
       OMEXMLMetadataStore xmlStore = (OMEXMLMetadataStore) store;
       xmlStore.createRoot(comment);
     }
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.BaseTiffReader#getSizeZ()
-   */
-  protected Integer getSizeZ() {
-    return new Integer(sizeZ);
   }
 
   /**
