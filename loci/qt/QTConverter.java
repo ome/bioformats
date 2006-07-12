@@ -12,11 +12,11 @@ import java.io.File;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import loci.formats.FormatReader;
-import loci.formats.LegacyQTReader;
 import loci.formats.LegacyQTTools;
-import loci.formats.QTReader;
-import loci.formats.TiffReader;
-import loci.formats.TiffWriter;
+import loci.formats.in.LegacyQTReader;
+import loci.formats.in.QTReader;
+import loci.formats.in.TiffReader;
+import loci.formats.out.TiffWriter;
 import loci.util.FilePattern;
 
 /** A utility for converting 4D QuickTime movies into 4D TIFF stacks. */

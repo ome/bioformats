@@ -15,6 +15,7 @@ import java.util.Hashtable;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import loci.formats.*;
+import loci.formats.out.TiffWriter;
 
 public class LeicaConverter extends JFrame
   implements ActionListener, Runnable
@@ -244,25 +245,18 @@ public class LeicaConverter extends JFrame
             sb.append(NL);
             sb.append("SamplesPerPixel=1");
             sb.append(NL);
-            Object ome = reader.getOMENode(in[q]);
-            Float pixelSizeX = OMETools.getPixelSizeX(ome);
-            if (pixelSizeX != null) {
-              sb.append("VoxelSizeX=");
-              sb.append(pixelSizeX);
-              sb.append(NL);
-            }
-            Float pixelSizeY = OMETools.getPixelSizeY(ome);
-            if (pixelSizeY != null) {
-              sb.append("VoxelSizeY=");
-              sb.append(pixelSizeY);
-              sb.append(NL);
-            }
-            Float pixelSizeZ = OMETools.getPixelSizeZ(ome);
-            if (pixelSizeZ != null) {
-              sb.append("VoxelSizeZ=");
-              sb.append(pixelSizeZ);
-              sb.append(NL);
-            }
+            int sizeX = reader.getSizeX(in[q]);
+            sb.append("VoxelSizeX=");
+            sb.append(sizeX);
+            sb.append(NL);
+            int sizeY = reader.getSizeY(in[q]);
+            sb.append("VoxelSizeY=");
+            sb.append(sizeY);
+            sb.append(NL);
+            int sizeZ = reader.getSizeZ(in[q]);
+            sb.append("VoxelSizeZ=");
+            sb.append(sizeZ);
+            sb.append(NL);
             TiffTools.putIFDValue(ifd,
               TiffTools.IMAGE_DESCRIPTION, sb.toString());
           }
