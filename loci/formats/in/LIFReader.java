@@ -99,19 +99,46 @@ public class LIFReader extends FormatReader {
   /** Get the size of the X dimension. */
   public int getSizeX(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return dims[0][0];
+    
+    int max = 0;
+    int maxIndex = 0;
+    for (int i=0; i<dims.length; i++) {
+      if (dims[i][0] > max) {
+        max = dims[i][0];
+        maxIndex = i;
+      }
+    }
+    
+    return dims[maxIndex][0];
   }
 
   /** Get the size of the Y dimension. */
   public int getSizeY(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return dims[0][1];
+    int max = 0;
+    int maxIndex = 0;
+    for (int i=0; i<dims.length; i++) {
+      if (dims[i][1] > max) {
+        max = dims[i][1];
+        maxIndex = i;
+      }
+    }
+    
+    return dims[maxIndex][1];
   }
 
   /** Get the size of the Z dimension. */
   public int getSizeZ(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return dims[0][2];
+    int zSum = 0;
+    int tSum = 0;
+    for (int i=0; i<dims.length; i++) {
+      zSum += dims[i][2];
+      tSum += dims[i][3];
+    }
+ 
+    if (zSum > tSum) return getImageCount(id); 
+    else return 1;
   }
 
   /** Get the size of the C dimension. */
@@ -123,7 +150,9 @@ public class LIFReader extends FormatReader {
   /** Get the size of the T dimension. */
   public int getSizeT(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return dims[0][3];
+    int z = getSizeZ(id);
+    if (z == 1) return getImageCount(id);
+    else return 1;
   }
 
   /** Return true if the data is in little-endian format. */
@@ -139,7 +168,10 @@ public class LIFReader extends FormatReader {
    */
   public String getDimensionOrder(String id) throws FormatException, IOException
   {
-    return "XYZTC";
+    int sizeZ = getSizeZ(id);
+    int sizeT = getSizeT(id);
+    if (sizeZ > sizeT) return "XYCZT";
+    else return "XYCTZ";
   }
 
   /** Obtains the specified image from the given LIF file as a byte array. */
