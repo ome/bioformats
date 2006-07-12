@@ -15,6 +15,7 @@ import javax.swing.event.*;
 import loci.formats.DataTools;
 import loci.formats.ExtensionFileFilter;
 import visad.*;
+//import visad.bom.CurveManipulationRendererJ3D;
 import visad.bom.RubberBandBoxRendererJ3D;
 import visad.java3d.*;
 
@@ -248,9 +249,18 @@ public class SlimPlotter
     iPlot.addReference(intensityRef);
 
     final DataReferenceImpl boxRef = new DataReferenceImpl("box");
+// for RubberBandBoxRendererJ3D:
     boxRef.setData(new Gridded2DSet(xy, null, 1)); // dummy
     iPlot.addReferences(new RubberBandBoxRendererJ3D(xType, yType, 0, 0),
       boxRef);
+// for CurveManipulationRendererJ3D:
+//    UnionSet dummy = new UnionSet(xy, new Gridded2DSet[] {
+//      new Gridded2DSet(xy, new float[][] {{0}, {0}}, 1)
+//    });
+//    boxRef.setData(dummy);
+//    CurveManipulationRendererJ3D curve =
+//      new CurveManipulationRendererJ3D(0, 0, true);
+//    iPlot.addReferences(curve, boxRef);
     CellImpl cell = new CellImpl() {
       public void doAction() throws VisADException, RemoteException {
         Set set = (Set) boxRef.getData();
