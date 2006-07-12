@@ -50,6 +50,9 @@ public class MetadataPane extends JPanel
   
   /** A list of TablePanel objects that have ID */
   protected Vector panelsWithID;
+  
+  /** A list of external references to be added to the combobox cell editor*/
+  protected Vector addItems;
 
   // -- Fields - raw panel --
 
@@ -72,6 +75,7 @@ public class MetadataPane extends JPanel
 
     panelList = new Vector();
     panelsWithID = new Vector();
+    addItems = new Vector();
     tParse = tp;
     thisOmeNode = null;
 
@@ -121,6 +125,8 @@ public class MetadataPane extends JPanel
     catch (Exception e) {    }
     return doc;
   }
+  
+  public OMENode getRoot() { return thisOmeNode; }
 
   /**
    * Sets the displayed OME-XML metadata to correspond
@@ -203,6 +209,7 @@ public class MetadataPane extends JPanel
 //make sure all old gui stuff is tossed when this called twice. also clear our TablePanel lists
     panelList = new Vector();
     panelsWithID = new Vector();
+    addItems = new Vector();
     tabPane.removeAll();
     
 //use the list acquired from Template.xml to form the initial tabs    
@@ -254,6 +261,9 @@ public class MetadataPane extends JPanel
       TablePanel p = (TablePanel) panelsWithID.get(i);
       box.addItem(p.name);
     }
+    for (int i = 0;i<addItems.size();i++) {
+      box.addItem( (String) addItems.get(i) );
+    }
     for (int i = 0;i<panelList.size();i++) {
       TablePanel p = (TablePanel) panelList.get(i);
       p.setEditor(box);
@@ -268,10 +278,12 @@ public class MetadataPane extends JPanel
     tabPane.removeAll();
     panelList = new Vector();
     panelsWithID = new Vector();
+    addItems = new Vector();
 
 //use the list acquired from Template.xml to form the initial tabs  
     Element[] tabList = tParse.getTabs();
     Vector actualTabs = new Vector(2 * tabList.length);
+    Vector oNodeList = new Vector(2 * tabList.length);
     for(int i = 0;i< tabList.length;i++) {
 //since we have an OMEXML file to compare to now, we have to worry about repeat elements
 //inOmeList will hold all instances of a particular tagname on one level of the node-tree
@@ -297,6 +309,7 @@ public class MetadataPane extends JPanel
           if (desc.length() == 0) tabPane.addTab(thisName, null, scrollPane, null);
           else tabPane.addTab(thisName, null, scrollPane, desc);
           actualTabs.add(tabList[i]);
+          oNodeList.add(tPanel.oNode);
         }
       }
 //if no instances of tagname in file, still set up a blank table based on the template
@@ -314,15 +327,18 @@ public class MetadataPane extends JPanel
         actualTabs.add(tabList[i]);
       }
     }
-//set up mnemonics
+//set up mnemonics, and form an array holding the names of the tabs
+    String[] tabNames = new String[actualTabs.size()];
     for(int i = 0;i<actualTabs.size();i++) {
       int keyNumber = getKey(i+1);
       if(keyNumber !=0 ) tabPane.setMnemonicAt(i, keyNumber);
+      Element e = (Element) actualTabs.get(i);
+      tabNames[i] = getTreePathName(e, (OMEXMLNode) oNodeList.get(i));
     }
 //change the "Tabs" menu in the original window to reflect the actual tabs created
 // (duplicate tabs are the reason for this)
     MetadataNotebook mn = (MetadataNotebook) getTopLevelAncestor();
-    mn.changeTabMenu(actualTabs.toArray());
+    mn.changeTabMenu(tabNames);
     
 //this part sets up the refTable's comboBox editor to have choices corresponding to every TablePanel
 //that has a valid ID attribute    
@@ -330,6 +346,9 @@ public class MetadataPane extends JPanel
     for (int i = 0;i<panelsWithID.size();i++) {
       TablePanel p = (TablePanel) panelsWithID.get(i);
       box.addItem(p.name);
+    }
+    for (int i = 0;i<addItems.size();i++) {
+      box.addItem( (String) addItems.get(i) );
     }
     for (int i = 0;i<panelList.size();i++) {
       TablePanel p = (TablePanel) panelList.get(i);
@@ -368,7 +387,7 @@ public class MetadataPane extends JPanel
       Font thisFont = title.getFont();
       Font newFont = new Font(thisFont.getFontName(),Font.BOLD,18);
       title.setFont(newFont);
-      title.setText(" " + tp.name + ":");
+      title.setText(" " + getTreePathName(tp.el,tp.oNode) + ":");
       titlePanel.add(title);
       
       
@@ -458,10 +477,44 @@ public class MetadataPane extends JPanel
           }
         }        
       }
+      gbc.gridy = placeY;
+      JPanel p = new JPanel();
+      Dimension d = new Dimension(300,600);
+      p.setPreferredSize(d);
+      dataPanel.add(p,gbc);
+      placeY++;
     }
   } 
    
-  public String getTreePathName(Element e) {
+  /*changes the selected tab to tab of index i
+  */
+  public void tabChange(int i) {
+    tabPane.setSelectedIndex(i);
+  }
+
+  /* gets around an annoying GUI layout problem when window is resized.
+  public void fixTables()
+
+  // -- Component API methods --
+
+  /** Sets the initial size of the metadata pane to be reasonable. */
+  public Dimension getPreferredSize() { return new Dimension(700, 500); }
+
+  // -- Runnable API methods --
+
+  /** Shows or hides the proper subpanes. */
+  public void run() {
+    tabPane.setVisible(!raw);
+    rawPanel.setVisible(raw);
+    validate();
+    repaint();
+  }
+  
+  // -- Event API methods --
+   
+  // -- Static methods --
+  
+    public static String getTreePathName(Element e) {
     String thisName = null;
     if(e.hasAttribute("Name"))thisName = e.getAttribute("Name");
     else thisName = e.getAttribute("XMLName");
@@ -475,7 +528,7 @@ public class MetadataPane extends JPanel
     return thisName;
   }
   
-  public String getTreePathName(Element el, OMEXMLNode on) {
+  public static String getTreePathName(Element el, OMEXMLNode on) {
     Vector pathList = new Vector();
     Element aParent = on.getDOMElement();
     Vector pathNames = getTreePathList(el);
@@ -519,7 +572,7 @@ public class MetadataPane extends JPanel
   /** returns a vector of Strings representing the XMLNames of the
   *   template's ancestors in ascending order in the list.
   */
-  public Vector getTreePathList(Element e) {
+  public static Vector getTreePathList(Element e) {
     Vector thisPath = new Vector(10);
     thisPath.add(e.getAttribute("XMLName"));
     
@@ -530,34 +583,6 @@ public class MetadataPane extends JPanel
     }
     return thisPath;
   }
-  
-  /*changes the selected tab to tab of index i
-  */
-  public void tabChange(int i) {
-    tabPane.setSelectedIndex(i);
-  }
-
-  /* gets around an annoying GUI layout problem when window is resized.
-  public void fixTables()
-
-  // -- Component API methods --
-
-  /** Sets the initial size of the metadata pane to be reasonable. */
-  public Dimension getPreferredSize() { return new Dimension(700, 500); }
-
-  // -- Runnable API methods --
-
-  /** Shows or hides the proper subpanes. */
-  public void run() {
-    tabPane.setVisible(!raw);
-    rawPanel.setVisible(raw);
-    validate();
-    repaint();
-  }
-  
-  // -- Event API methods --
-   
-  // -- Static methods --
   
   public static int getKey(int i) {
       int keyNumber = 0;
@@ -648,7 +673,6 @@ public class MetadataPane extends JPanel
     public TabPanel tPanel;
     public String id;
     public String name;
-    public JComboBox comboBox;
     public JTable newTable, refTable;
     
     public TablePanel(Element e, TabPanel tp, OMEXMLNode on) {
@@ -657,7 +681,7 @@ public class MetadataPane extends JPanel
       id = null;
       newTable = null;
       refTable = null;
-      comboBox = null;
+      JComboBox comboBox = null;
       name = getTreePathName(e,on);
       String thisName = getTreePathName(e, on);
       panelList.add(this);
@@ -668,7 +692,11 @@ public class MetadataPane extends JPanel
       for(int i = 0;i<fullList.size();i++) {
         Element thisE = (Element) fullList.get(i);
         if(thisE.hasAttribute("Type") ) {
-          if(thisE.getAttribute("Type").equals("Ref") ) refList.add(thisE);
+          if(thisE.getAttribute("Type").equals("Ref") ) {
+            String value = oNode.getAttribute(thisE.getAttribute("XMLName"));         
+            if (addItems.indexOf("(External) " + value) < 0) addItems.add("(External) " + value);
+            refList.add(thisE);
+          }
           else if(thisE.getAttribute("Type").equals("ID") && oNode != null) {
             if (oNode.getDOMElement().hasAttribute("ID")) {
               id = oNode.getAttribute("ID");
@@ -835,8 +863,6 @@ public class MetadataPane extends JPanel
       if(refTable != null) {      
         TableModel model = refTable.getModel();
         TableColumn refColumn = refTable.getColumnModel().getColumn(1);  
-        Vector addItems = new Vector();
-        
         for(int i = 0;i < refTable.getRowCount();i++) {
           boolean isLocal = false;
           String attrName = (String) model.getValueAt(i,0);
@@ -851,24 +877,10 @@ public class MetadataPane extends JPanel
             }      
           }
           if(!isLocal && value != null) {
-            model.setValueAt(value,i,1);
-            addItems.add(value);
+            model.setValueAt("(External) " + value,i,1);
           }
         }   
-/*WHY IS THIS SO FUBARED??          
-        Vector v = new Vector();
-        for(int i = 0;i < addItems.size();i++) {
-          System.out.println("Original: \"" + addItems.get(i).toString());
-          if (v.indexOf(addItems.get(i)) < 0) v.add(addItems.get(i));
-        }
         
-        for(int i = 0;i < v.size();i++) {
-        System.out.println("Next: \"" + addItems.get(i).toString());
-          String name = (String) v.get(i);
-          jcb.addItem(name);
-        }
-*/
-        comboBox = jcb;
         refColumn.setCellEditor(new DefaultCellEditor(jcb));        
       }
     }
@@ -904,11 +916,13 @@ public class MetadataPane extends JPanel
           JTabbedPane jTabP = (JTabbedPane) anObj;
 	  jTabP.setSelectedComponent(jScr);
 //ADD CODE HERE TO FOCUS APPROPRIATELY ON THE TABLE IN QUESTION
-//	  tablePan.newTable.grabFocus();
-//	  jScr.getViewport().setViewPosition(tablePan.getLocationOnScreen());
+	  Point loc = tablePan.getLocation();
+	  System.out.println("tablePan: getLocation=" + loc);//TEMP
+	  loc.x = 0;
+	  jScr.getViewport().setViewPosition(loc);
 	}
 	else {
-	  JOptionPane.showMessageDialog((Frame) getTopLevelAncestor() , "Since the ID in question refers to something\noutside of this file, you cannot \"Goto\" it.", "LSID Detected", JOptionPane.WARNING_MESSAGE);
+	  JOptionPane.showMessageDialog((Frame) getTopLevelAncestor() , "Since the ID in question refers to something\noutside of this file, you cannot \"Goto\" it.", "External Reference Detected", JOptionPane.WARNING_MESSAGE);
 	}
       }
     }
@@ -939,35 +953,14 @@ public class MetadataPane extends JPanel
         }
         if (thisID != null) oNode.setAttribute(attr, thisID);
         else {
-/*DIALOG HERE THAT DOESN'T WORK, SHOULD HANDLE CHANGES OF LSIDS
-          Object[] options = {"Yes, do it!",
-                    "Cancel"};
-          final JDialog dialog = new JDialog((Frame) getTopLevelAncestor(),"Confirm LSID Change",true);
-
-          final JOptionPane optionPane = new JOptionPane (
-"Are you sure you want to change this ID\nsince it references something outside\nthis file?",
-JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION, null, options, options[0]);
-
-          optionPane.addPropertyChangeListener(
-            new PropertyChangeListener() {
-              public void propertyChange(PropertyChangeEvent e) {
-                String prop = e.getPropertyName();
-
-                if (dialog.isVisible() 
-                && (e.getSource() == optionPane)
-                && (prop.equals(JOptionPane.VALUE_PROPERTY))) {
-
-                }
-              }
-            });
-            
-            int value = ((Integer)optionPane.getValue()).intValue();
-            if (value == JOptionPane.YES_OPTION) {
-              oNode.setAttribute(attr, data);
-              dialog.setVisible(false);
+          for(int i = 0;i<addItems.size();i++) {
+            String s = (String) addItems.get(i);
+            if(data.equals(s)) {
+              oNode.setAttribute(attr, s.substring(11));
+              break;
             }
-*/
-        }
+          }
+        }        
       }
     }
   }

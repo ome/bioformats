@@ -84,7 +84,12 @@ public class MetadataNotebook extends JFrame
     tabsMenu = new JMenu("Tabs");
     menubar.add(tabsMenu);
     Element[] tabs = tp.getTabs();
-    changeTabMenu(tabs);
+    String[] tabNames = new String[tabs.length];
+    for(int i = 0;i<tabs.length;i++) {
+      Element e = tabs[i];
+      tabNames[i] = MetadataPane.getTreePathName(e);
+    }
+    changeTabMenu(tabNames);
     
     JMenu toolsMenu = new JMenu("Tools");
     menubar.add(toolsMenu);
@@ -123,8 +128,9 @@ public class MetadataNotebook extends JFrame
   
   public void saveFile(File file) {
     try {
-      FileOutputStream fos = new FileOutputStream(file);
-      DOMUtil.writeXML(fos, metadata.getDoc() ); 
+      metadata.getRoot().writeOME(file, true);
+//      FileOutputStream fos = new FileOutputStream(file);
+//      DOMUtil.writeXML(fos, metadata.getDoc() ); 
     }
     catch (Exception e) {
 //EVENTUALLY HAVE A DIALOG HERE
@@ -132,56 +138,13 @@ public class MetadataNotebook extends JFrame
     }
   }
   
-  public void changeTabMenu(Object[] tabs) {
+  public void changeTabMenu(String[] tabs) {
     tabsMenu.removeAll();
     for (int i=0; i<tabs.length; i++) {
-      Element elTab = (Element) tabs[i];
-      String thisName = elTab.getAttribute("Name");
-      if(thisName.length() == 0) thisName = elTab.getAttribute("XMLName");
+      String thisName = tabs[i];
       JMenuItem thisTab = new JMenuItem(thisName); 
-      tabsMenu.add(thisTab);
-      switch (i+1) {
-        case 10 : 
-          thisTab.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_0, InputEvent.ALT_MASK));
-          thisTab.setMnemonic(KeyEvent.VK_0);
-          break;
-        case 1 : 
-          thisTab.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.ALT_MASK));
-          thisTab.setMnemonic(KeyEvent.VK_1);
-          break;
-        case 2 : 
-          thisTab.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.ALT_MASK));
-          thisTab.setMnemonic(KeyEvent.VK_2);
-          break;
-        case 3 : 
-          thisTab.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.ALT_MASK));
-          thisTab.setMnemonic(KeyEvent.VK_3);
-          break;
-        case 4 : 
-          thisTab.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4, InputEvent.ALT_MASK));
-          thisTab.setMnemonic(KeyEvent.VK_4);
-          break;
-        case 5 : 
-          thisTab.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_5, InputEvent.ALT_MASK));
-          thisTab.setMnemonic(KeyEvent.VK_5);
-          break;
-        case 6 : 
-          thisTab.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_6, InputEvent.ALT_MASK));
-          thisTab.setMnemonic(KeyEvent.VK_6);
-          break;
-        case 7 : 
-          thisTab.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_7, InputEvent.ALT_MASK));
-          thisTab.setMnemonic(KeyEvent.VK_7);
-          break;
-        case 8 : 
-          thisTab.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_8, InputEvent.ALT_MASK));
-          thisTab.setMnemonic(KeyEvent.VK_8);
-          break;
-        case 9 : 
-          thisTab.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_9, InputEvent.ALT_MASK));
-          thisTab.setMnemonic(KeyEvent.VK_9);
-          break;
-      }
+      tabsMenu.add(thisTab);      
+      thisTab.setAccelerator(KeyStroke.getKeyStroke(MetadataPane.getKey(i+1), InputEvent.ALT_MASK));
       Integer aInt = new Integer(i);
       thisTab.setActionCommand("tabChange" + aInt.toString());
       thisTab.addActionListener(this);
