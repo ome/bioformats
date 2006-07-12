@@ -12,7 +12,7 @@ import java.util.Vector;
  */
 public class LineLength implements FileFilter {
 
-  private static final int LENGTH = 79;
+  private static final int LENGTH = 80;
   private static final int TABWIDTH = 2;
 
   public static void main(String[] args) throws IOException {
