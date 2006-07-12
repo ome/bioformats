@@ -91,7 +91,8 @@ public class TemplateParser
         System.out.println("Some exception occured: " + e.toString());
         e.printStackTrace();
       }
-      
+
+//surfing node-trees...      
       Element thisRoot = templateDoc.getDocumentElement();
       NodeList nl = thisRoot.getChildNodes();
       for (int j = 0;j < nl.getLength();j++) {
@@ -106,6 +107,7 @@ public class TemplateParser
                 Element omeEle = (Element) node;
                 if (omeEle.getTagName().equals("SemanticType")) {
                   NodeList omeAttrList = node.getChildNodes();
+                  Hashtable thisHash = new Hashtable(10);
                   for(int l = 0;l < omeAttrList.getLength();l++) {
                     node = omeAttrList.item(l);
                     if(node instanceof Element) {
@@ -114,16 +116,15 @@ public class TemplateParser
                         if(omeAttr.hasAttribute("DataType")) {
                           String dType = omeAttr.getAttribute("DataType");
                           if(dType.equals("reference")) {
-                            Hashtable thisHash = new Hashtable(10);
                             String attrName = omeAttr.getAttribute("Name");
                             String refType = omeAttr.getAttribute("RefersTo");
                             thisHash.put(attrName,refType);
-                            refHash.put(omeAttr.getAttribute("Name"), thisHash);
                           }
                         }
                       }
                     }
-                  }                  
+                  }
+                  refHash.put(omeEle.getAttribute("Name"), thisHash);                  
                 }
               }
             }
