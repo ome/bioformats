@@ -389,8 +389,6 @@ public class MetadataPane extends JPanel
       title.setFont(newFont);
       title.setText(" " + getTreePathName(tp.el,tp.oNode) + ":");
       titlePanel.add(title);
-      
-      
   
   //if title has a description, add it in italics
       if (tp.el.hasAttribute("Description")) {
@@ -479,7 +477,7 @@ public class MetadataPane extends JPanel
       }
       gbc.gridy = placeY;
       JPanel p = new JPanel();
-      Dimension d = new Dimension(300,600);
+      Dimension d = new Dimension(300,1200);
       p.setPreferredSize(d);
       dataPanel.add(p,gbc);
       placeY++;
@@ -630,13 +628,14 @@ public class MetadataPane extends JPanel
   *   with a JPanel that represents the content of a tab.
   */
   public class TabPanel extends JPanel {
-    public Element el;
+    protected Element el;
     public String name;
     private boolean isRendered;
-    public OMEXMLNode oNode;
-    public int copyNumber;
+    protected OMEXMLNode oNode;
+    protected int titleHeight;
+    
     public TabPanel(Element el) {
-      copyNumber = 0;
+      titleHeight = 0;
       isRendered = false;
       this.el = el;
       oNode = null;
@@ -919,6 +918,8 @@ public class MetadataPane extends JPanel
 	  Point loc = tablePan.getLocation();
 	  System.out.println("tablePan: getLocation=" + loc);//TEMP
 	  loc.x = 0;
+	  System.out.println("titleHeight: " + tp.titleHeight);
+	  loc.y = tp.titleHeight + loc.y;
 	  jScr.getViewport().setViewPosition(loc);
 	}
 	else {

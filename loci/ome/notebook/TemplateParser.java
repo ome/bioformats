@@ -3,6 +3,7 @@ package loci.ome.notebook;
 import javax.xml.parsers.*;
 import org.w3c.dom.*;
 import java.util.Vector;
+import java.util.Hashtable;
 import java.io.*;
 import org.xml.sax.SAXException;
 
@@ -21,6 +22,12 @@ public class TemplateParser
   /** Factory for generating document builders. */
   public static final DocumentBuilderFactory DOC_FACT =
     DocumentBuilderFactory.newInstance();
+  
+  /** A list of filenames where symantic type defs are found*/  
+  public static final String[] TypeDefList = {"Experiment.ome","Experimenter.ome","Group.ome","Image.ome","Instrument.ome","Plate.ome","Screen.ome","OMEIS/Repository.ome","OMEIS/OriginalFile.ome"};
+
+  /** The filename of the folder the symantic type defs are in*/
+  public static final String TypeDefFolder = "TypeDefs/";
 
   //  --Fields--
   
@@ -33,40 +40,109 @@ public class TemplateParser
   /** The root xml Element in the Document*/
   protected Element root;
   
+  /** A hashtable to store the types associated with a reference element
+  *   will be implemented as a Hashtable of Hashtables first key corresponds
+  *   to the OMEElement, second (nested) key corresponds to OMEAttribute,
+  *   and finally the value corresponds to what type the OMEAttribute should
+  *   have */
+  protected Hashtable refHash;
+  
   //  --Constructor--
   
   /** Parses the template document designated by the file argument*/
   public TemplateParser(File file) 
   {
-  // Parse the xml file using the DOM
+    refHash = new Hashtable();
+  
+// Parse the specified xml file (should be Template.xml) using the DOM
     try {
       DocumentBuilder db = DOC_FACT.newDocumentBuilder();
       templateDoc = db.parse(file);
-      root = templateDoc.getDocumentElement();
-      NodeList nList = root.getChildNodes();
-      int nLength = nList.getLength();
-      Vector v = new Vector(nLength);
-      for(int i = 0;i < nLength;i++) {
-        Node node = nList.item(i);
-      	if(node instanceof Element) {
-          Element thisElement = (Element) node;
-          if( "OMEElement".equals(thisElement.getTagName()) ) v.add(thisElement);
-        }
-      }
-      tabList = new Element[v.size()];
-      for(int i = 0;i < v.size();i++) {
-        tabList[i] = (Element) v.elementAt(i);
-      }
     }
     catch (Exception e) { 
       System.out.println("Some exception occured: " + e.toString());
       e.printStackTrace();
+    }
+    
+    root = templateDoc.getDocumentElement();
+    NodeList nList = root.getChildNodes();
+    int nLength = nList.getLength();
+    Vector v = new Vector(nLength);
+    for(int i = 0;i < nLength;i++) {
+      Node node = nList.item(i);
+      if(node instanceof Element) {
+        Element thisElement = (Element) node;
+        if( "OMEElement".equals(thisElement.getTagName()) ) v.add(thisElement);
+      }
+    }
+    tabList = new Element[v.size()];
+    for(int i = 0;i < v.size();i++) {
+      tabList[i] = (Element) v.elementAt(i);
+    }
+
+//setup Hashtables for getting reference types    
+    for (int i = 0;i<TypeDefList.length;i++) {
+      try {
+        File f = new File(TypeDefFolder + TypeDefList[i]);
+        DocumentBuilder db = DOC_FACT.newDocumentBuilder();
+        templateDoc = db.parse(f);
+      }
+      catch (Exception e) { 
+        System.out.println("Some exception occured: " + e.toString());
+        e.printStackTrace();
+      }
+      
+      Element thisRoot = templateDoc.getDocumentElement();
+      NodeList nl = thisRoot.getChildNodes();
+      for (int j = 0;j < nl.getLength();j++) {
+        Node node = nl.item(j);
+        if(node instanceof Element) {
+          Element someE = (Element) node;
+          if (someE.getTagName().equals("SemanticTypeDefinitions")) {
+            NodeList omeEleList = node.getChildNodes();
+            for(int k = 0;k < omeEleList.getLength();k++) {
+              node = omeEleList.item(k);
+              if(node instanceof Element) {
+                Element omeEle = (Element) node;
+                if (omeEle.getTagName().equals("SemanticType")) {
+                  NodeList omeAttrList = node.getChildNodes();
+                  for(int l = 0;l < omeAttrList.getLength();l++) {
+                    node = omeAttrList.item(l);
+                    if(node instanceof Element) {
+                      Element omeAttr = (Element) node;
+                      if (omeAttr.getTagName().equals("Element")) {
+                        if(omeAttr.hasAttribute("DataType")) {
+                          String dType = omeAttr.getAttribute("DataType");
+                          if(dType.equals("reference")) {
+                            Hashtable thisHash = new Hashtable(10);
+                            String attrName = omeAttr.getAttribute("Name");
+                            String refType = omeAttr.getAttribute("RefersTo");
+                            thisHash.put(attrName,refType);
+                            refHash.put(omeAttr.getAttribute("Name"), thisHash);
+                          }
+                        }
+                      }
+                    }
+                  }                  
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
   
   /** returns an array of Elements representing the tabs in the notebook*/
   public Element[] getTabs() {
     return tabList;
+  }
+  
+  /** returns a Hashtable of HashTables representing the types of referenced objects
+  *   for each element's attributes
+  */
+  public Hashtable getHash() {
+    return refHash;
   }
   
   /** returns the version information from the template*/
@@ -83,5 +159,7 @@ public class TemplateParser
     for(int i = 0;i<eList.length;i++) {
       System.out.println(eList[i].getAttribute("XMLName"));
     }
+    Hashtable mmmHash = tp.getHash();
+    System.out.println(mmmHash);
   }
 }
