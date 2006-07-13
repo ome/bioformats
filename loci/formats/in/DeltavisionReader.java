@@ -283,10 +283,12 @@ public class DeltavisionReader extends FormatReader {
       DataTools.bytesToInt(header, 68, 4, little)));
     metadata.put("Section axis sequence", new Integer(
       DataTools.bytesToInt(header, 72, 4, little)));
-    metadata.put("Wavelength 1 min. intensity", new Float(Float.intBitsToFloat(
-      DataTools.bytesToInt(header, 76, 4, little))));
-    metadata.put("Wavelength 1 max. intensity", new Float(Float.intBitsToFloat(
-      DataTools.bytesToInt(header, 80, 4, little))));
+    Float wave1Min = new Float(Float.intBitsToFloat(
+        DataTools.bytesToInt(header, 76, 4, little)));
+    metadata.put("Wavelength 1 min. intensity", wave1Min);
+    Float wave1Max = new Float(Float.intBitsToFloat(
+        DataTools.bytesToInt(header, 80, 4, little)));
+    metadata.put("Wavelength 1 max. intensity", wave1Max);
     metadata.put("Wavelength 1 mean intensity", new Float(Float.intBitsToFloat(
       DataTools.bytesToInt(header, 84, 4, little))));
     metadata.put("Space group number", new Integer(
@@ -295,18 +297,28 @@ public class DeltavisionReader extends FormatReader {
       DataTools.bytesToInt(header, 132, 2, little)));
     metadata.put("Z axis reduction quotient", new Integer(
       DataTools.bytesToInt(header, 134, 2, little)));
-    metadata.put("Wavelength 2 min. intensity", new Float(Float.intBitsToFloat(
-      DataTools.bytesToInt(header, 136, 4, little))));
-    metadata.put("Wavelength 2 max. intensity", new Float(Float.intBitsToFloat(
-      DataTools.bytesToInt(header, 140, 4, little))));
-    metadata.put("Wavelength 3 min. intensity", new Float(Float.intBitsToFloat(
-      DataTools.bytesToInt(header, 144, 4, little))));
-    metadata.put("Wavelength 3 max. intensity", new Float(Float.intBitsToFloat(
-      DataTools.bytesToInt(header, 148, 4, little))));
-    metadata.put("Wavelength 4 min. intensity", new Float(Float.intBitsToFloat(
-      DataTools.bytesToInt(header, 152, 4, little))));
-    metadata.put("Wavelength 4 max. intensity", new Float(Float.intBitsToFloat(
-      DataTools.bytesToInt(header, 156, 4, little))));
+    Float wave2Min = new Float(Float.intBitsToFloat(
+        DataTools.bytesToInt(header, 136, 4, little)));
+    metadata.put("Wavelength 2 min. intensity", wave2Min);
+    Float wave2Max = new Float(Float.intBitsToFloat(
+        DataTools.bytesToInt(header, 140, 4, little)));
+    metadata.put("Wavelength 2 max. intensity", wave2Max);
+
+    Float wave3Min = new Float(Float.intBitsToFloat(
+        DataTools.bytesToInt(header, 144, 4, little)));
+    metadata.put("Wavelength 3 min. intensity", wave3Min);
+
+    Float wave3Max = new Float(Float.intBitsToFloat(
+        DataTools.bytesToInt(header, 148, 4, little)));
+    metadata.put("Wavelength 3 max. intensity", wave3Max);
+
+    Float wave4Min = new Float(Float.intBitsToFloat(
+        DataTools.bytesToInt(header, 152, 4, little)));
+    metadata.put("Wavelength 4 min. intensity", wave4Min);
+
+    Float wave4Max = new Float(Float.intBitsToFloat(
+        DataTools.bytesToInt(header, 156, 4, little)));
+    metadata.put("Wavelength 4 max. intensity", wave4Max);
 
     int type = DataTools.bytesToShort(header, 160, 2, little);
     String imageType;
@@ -322,10 +334,13 @@ public class DeltavisionReader extends FormatReader {
     metadata.put("Image Type", imageType);
     metadata.put("Lens ID Number", new Integer(DataTools.bytesToShort(
       header, 162, 2, little)));
-    metadata.put("Wavelength 5 min. intensity", new Float(Float.intBitsToFloat(
-      DataTools.bytesToInt(header, 172, 4, little))));
-    metadata.put("Wavelength 5 max. intensity", new Float(Float.intBitsToFloat(
-      DataTools.bytesToInt(header, 176, 4, little))));
+    Float wave5Min = new Float(Float.intBitsToFloat(
+        DataTools.bytesToInt(header, 172, 4, little)));
+    metadata.put("Wavelength 5 min. intensity", wave5Min);
+
+    Float wave5Max = new Float(Float.intBitsToFloat(
+        DataTools.bytesToInt(header, 176, 4, little)));
+    metadata.put("Wavelength 5 max. intensity", wave5Max);
 
     numT = DataTools.bytesToShort(header, 180, 2, little);
     metadata.put("Number of timepoints", new Integer(numT));
@@ -376,20 +391,12 @@ public class DeltavisionReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
 
-    Float xOrigin = (Float) metadata.get("X origin (in um)");
-    Float yOrigin = (Float) metadata.get("Y origin (in um)");
-    Float zOrigin = (Float) metadata.get("Z origin (in um)");
-    store.setStageLabel(null, xOrigin, yOrigin, zOrigin, null);
-
     String title;
     for (int i=1; i<=10; i++) {
       // Make sure that "null" characters are stripped out
       title = new String(header, 224 + 80*(i-1), 80).replaceAll("\0", "");
       metadata.put("Title " + i, title);
     }
-
-    store.setPixels(sizeX, sizeY, new Integer(numZ), new Integer(numW),
-        new Integer(numT), omePixel, new Boolean(!little), dimOrder, null);
 
     // ----- The Extended Header data handler begins here ------
 
@@ -398,6 +405,19 @@ public class DeltavisionReader extends FormatReader {
     setOffsetInfo(sequence, numZ, numW, numT);
     extHdrFields = new DVExtHdrFields[numZ][numW][numT];
 
+    store.setPixels(sizeX, sizeY, new Integer(numZ), new Integer(numW),
+        new Integer(numT), omePixel, new Boolean(!little), dimOrder, null);
+
+    store.setDimensions(
+        (Float) metadata.get("X element length (in um)"), 
+        (Float) metadata.get("Y element length (in um)"), 
+        (Float) metadata.get("Z element length (in um)"), 
+        null, null, null);
+    
+    String description = (String) metadata.get("Title 1");
+    description = description.length() == 0? null : description;
+    store.setImage(id, null, description, null);
+
     // Run through every timeslice, for each wavelength, for each z section
     // and fill in the Extended Header information array for that image
     for (int z = 0; z < numZ; z++) {
@@ -405,9 +425,48 @@ public class DeltavisionReader extends FormatReader {
         for (int w = 0; w < numW; w++) {
           extHdrFields[z][w][t] = new DVExtHdrFields(getTotalOffset(z,w,t),
               numIntsPerSection, extHeader, little);
+          
+          store.setPlaneInfo(z, w, t, 
+              new Float(extHdrFields[z][w][t].getTimeStampSeconds()),
+              new Float(extHdrFields[z][w][t].getExpTime()), null);
+
         }
       }
     }
+    
+    for (int w=0; w < numW; w++)
+    {
+        store.setLogicalChannel(w, "happypuppy", 
+                new Float(extHdrFields[0][w][0].getNdFilter()),
+                (Integer) metadata.get("Wavelength " + (w+1) + " (in nm)"),
+                new Integer((int) extHdrFields[0][w][0].getExFilter()),
+                "Monochrome", "Wide-field", null);
+    }
+
+    store.setStageLabel("ome", 
+            new Float(extHdrFields[0][0][0].getStageXCoord()), 
+            new Float(extHdrFields[0][0][0].getStageYCoord()), 
+            new Float(extHdrFields[0][0][0].getStageZCoord()), null);
+    
+    if (numW > 0) 
+      store.setChannelGlobalMinMax(0, new Double(wave1Min.floatValue()), 
+                            new Double(wave1Max.floatValue()), null);
+    if (numW > 1) 
+      store.setChannelGlobalMinMax(1, new Double(wave2Min.floatValue()), 
+                            new Double(wave2Max.floatValue()), null);
+    if (numW > 2) 
+      store.setChannelGlobalMinMax(2, new Double(wave3Min.floatValue()), 
+                            new Double(wave3Max.floatValue()), null);
+    if (numW > 3) 
+      store.setChannelGlobalMinMax(3, new Double(wave4Min.floatValue()), 
+                            new Double(wave4Max.floatValue()), null);
+    if (numW > 4) 
+      store.setChannelGlobalMinMax(4, new Double(wave5Min.floatValue()), 
+                            new Double(wave5Max.floatValue()), null);
+
+    store.setDefaultDisplaySettings(null)
+    ;
+    
   }
 
   /**

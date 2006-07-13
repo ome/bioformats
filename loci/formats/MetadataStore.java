@@ -190,8 +190,8 @@ public interface MetadataStore {
    * @param mode the acquisition mode.
    * @param i the index of the pixels set within the metadata store.
    */
-  void setLogicalChannel(int channelIdx, String name, float ndFilter,
-                         int emWave, int exWave,
+  void setLogicalChannel(int channelIdx, String name, Float ndFilter,
+                         Integer emWave, Integer exWave,
                          String photometricInterpretation, String mode,
                          Integer i);
 

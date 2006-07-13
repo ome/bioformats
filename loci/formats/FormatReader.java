@@ -212,7 +212,7 @@ public abstract class FormatReader extends FormatHandler {
   public void setMetadataStore(MetadataStore store) {
     this.store = store;
     // Re-parse the file if we currently have one
-    if (currentId == null) {
+    if (currentId != null) {
       // We're going to eat these exceptions as they will come up again if
       // method calls are made to the format.
       try {

@@ -469,8 +469,8 @@ public class OMEXMLMetadataStore implements MetadataStore {
    * @see loci.formats.MetadataStore#setLogicalChannel(int, java.lang.String,
    *   float, int, int, java.lang.String, java.lang.String, java.lang.Integer)
    */
-  public void setLogicalChannel(int channelIdx, String name, float ndFilter,
-                                int emWave, int exWave,
+  public void setLogicalChannel(int channelIdx, String name, Float ndFilter,
+                                Integer emWave, Integer exWave,
                                 String photometricInterpretation, String mode,
                                 Integer i) {
     if (i == null) i = new Integer(0);
