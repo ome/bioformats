@@ -343,7 +343,7 @@ public abstract class FormatReader extends FormatHandler {
     System.out.println("SizeZ = " + sizeZ);
     System.out.println("SizeC = " + sizeC);
     System.out.println("SizeT = " + sizeT);
-    if (imageCount != sizeZ * sizeC * sizeT / 
+    if (imageCount != sizeZ * sizeC * sizeT /
       ((rgb && !separate) ? sizeC : 1))
     {
       System.out.println("************ Warning: ZCT mismatch ************");
