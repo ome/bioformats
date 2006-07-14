@@ -177,7 +177,7 @@ public class OMETools {
       return new int[] {dims[0], dims[1]};
     }
     return new int[] {dims[1], dims[0]};
-    
+
     //if(dims[0] == 0) return new int[] {dims[1], 1};
     //else return new int[] {1, dims[1]};
   }
@@ -567,12 +567,12 @@ public class OMETools {
       DisplayChannel redChannel = null;
       DisplayChannel greenChannel = null;
       DisplayChannel blueChannel = null;
-      
+
       if (element != null) {
         redChannel = element.getRedChannel();
         greenChannel = element.getGreenChannel();
         blueChannel = element.getBlueChannel();
-       
+
         String [] attrsC = {"ChannelNumber"};
         DisplayChannel[] channels = {redChannel, greenChannel, blueChannel};
         int[] channelNum = {redChanNum, greenChanNum, blueChanNum};
@@ -580,7 +580,8 @@ public class OMETools {
           criteria = OMERetrieve.makeAttributeFields(attrsC);
           criteria.addWantedField("id");
           criteria.addFilter("id", new Integer(channels[i].getID()).toString());
-          channels[i] = (DisplayChannel) df.retrieve("DisplayChannel", criteria);
+          channels[i] = (DisplayChannel)
+            df.retrieve("DisplayChannel", criteria);
           channelNum[i] = channels[i].getChannelNumber().intValue();
         }
         redChanNum = channelNum[0];

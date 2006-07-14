@@ -101,10 +101,10 @@ public class OMERetrieve {
       UserState userState = df.getUserState(fs);
       return userState.getExperimenter();
     }
-    catch (NullPointerException n) { 
-      return null;  
+    catch (NullPointerException n) {
+      return null;
     }
-  }  
+  }
 
   /** method that retrieves all of current user's datasets from the database */
   public static Dataset[] retrieveAllDatasets(DataFactory datafact) {
@@ -139,8 +139,8 @@ public class OMERetrieve {
       //Specify which fields we want for the project.
       makeAttributeFields(criteria, new String[] {"FirstName", "LastName"});
       criteria.addOrderBy("LastName");
-    
-      List l = retrieveList("Experimenter", criteria, datafact); 
+
+      List l = retrieveList("Experimenter", criteria, datafact);
       Object[] ob = l.toArray();
       String[][] exp = new String[3][ob.length];
       //pack the experimenter info into an array
@@ -276,7 +276,7 @@ public class OMERetrieve {
     c.addWantedField("created");
     c.addWantedField("owner");
     c.addWantedField("default_pixels");
-   
+
     c.addWantedField("default_pixels", "id");
     c.addWantedField("default_pixels", "SizeX");
     c.addWantedField("default_pixels", "SizeY");
@@ -321,7 +321,7 @@ public class OMERetrieve {
     }
   }
 
-  /** 
+  /**
    * HACK: this replaces calls to DataFactory.retrieveList(String, Criteria),
    * since that method is broken for unknown reasons.
    */
@@ -337,7 +337,7 @@ public class OMERetrieve {
     return l;
   }
 
-  /** 
+  /**
    * HACK: this replaces calls to DataFactory.retrieveList(Class, Criteria),
    * since that method is broken for unknown reasons.
    */
@@ -351,5 +351,5 @@ public class OMERetrieve {
       have++;
     }
     return l;
-  } 
+  }
 }
