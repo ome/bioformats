@@ -76,9 +76,9 @@ public class DummyMetadataStore implements MetadataStore {
   {
   }
 
-  public void setLogicalChannel(int channelIdx, String name, float ndFilter,
-    int emWave, int exWave, String photometricInterpretation, String mode,
-    Integer i)
+  public void setLogicalChannel(int channelIdx, String name, Float ndFilter,
+    Integer emWave, Integer exWave, String photometricInterpretation,
+    String mode, Integer i)
   {
   }
 

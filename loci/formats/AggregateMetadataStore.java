@@ -213,11 +213,12 @@ public class AggregateMetadataStore implements MetadataStore {
   /*
    * (non-Javadoc)
    * @see loci.formats.MetadataStore#setLogicalChannel(int, java.lang.String,
-   *   float, int, int, java.lang.String, java.lang.String, java.lang.Integer)
+   *   java.lang.Float, java.lang.Integer, java.lang.Integer, java.lang.String,
+   *   java.lang.String, java.lang.Integer)
    */
-  public void setLogicalChannel(int channelIdx, String name, float ndFilter,
-      int emWave, int exWave, String photometricInterpretation, String mode,
-      Integer i) {
+  public void setLogicalChannel(int channelIdx, String name, Float ndFilter,
+      Integer emWave, Integer exWave, String photometricInterpretation,
+      String mode, Integer i) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       MetadataStore s = (MetadataStore) iter.next();
       s.setLogicalChannel(channelIdx, name, ndFilter, emWave, exWave,
