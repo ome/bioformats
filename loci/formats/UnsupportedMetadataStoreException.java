@@ -30,18 +30,13 @@ package loci.formats;
  *
  * @author Chris Allan callan at blackcat.ca
  */
-public class UnsupportedMetadataStoreException extends Exception {
-
-  // -- Constructors --
+public class UnsupportedMetadataStoreException extends FormatException {
 
   public UnsupportedMetadataStoreException() { super(); }
-
   public UnsupportedMetadataStoreException(String s) { super(s); }
-
   public UnsupportedMetadataStoreException(String s, Throwable cause) {
     super(s, cause);
   }
-
   public UnsupportedMetadataStoreException(Throwable cause) { super(cause); }
 
 }

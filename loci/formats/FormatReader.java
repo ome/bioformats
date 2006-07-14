@@ -257,12 +257,14 @@ public abstract class FormatReader extends FormatHandler {
     boolean pixels = true;
     boolean stitch = false;
     boolean separate = false;
+    boolean omexml = false;
     if (args != null) {
       for (int i=0; i<args.length; i++) {
         if (args[i].startsWith("-")) {
           if (args[i].equals("-nopix")) pixels = false;
           else if (args[i].equals("-stitch")) stitch = true;
           else if (args[i].equals("-separate")) separate = true;
+          else if (args[i].equals("-omexml")) omexml = true;
           else System.out.println("Ignoring unknown command flag: " + args[i]);
         }
         else {
@@ -274,10 +276,11 @@ public abstract class FormatReader extends FormatHandler {
     if (id == null) {
       String className = getClass().getName();
       System.out.println("To test read a file in " + format + " format, run:");
-      System.out.println("  java " + className +
-        " [-nopix] [-stitch] [-separate] in_file");
+      System.out.println("  java " + className + " [-nopix]");
+      System.out.println("    [-stitch] [-separate] [-omexml] in_file");
       return false;
     }
+    if (omexml) setMetadataStore(new OMEXMLMetadataStore());
 
     // check type
     System.out.print("Checking " + format + " format ");
@@ -288,8 +291,8 @@ public abstract class FormatReader extends FormatHandler {
       System.out.print("Reading " + (stitch ?
         FilePattern.findPattern(new File(id)) : id) + " pixel data ");
       long s1 = System.currentTimeMillis();
-      FileStitcher fs = new FileStitcher(this);
-      ChannelMerger cm = new ChannelMerger(stitch ? fs : this);
+      ChannelMerger cm = new ChannelMerger(stitch ?
+        new FileStitcher(this) : this);
       cm.setSeparated(separate);
       int num = cm.getImageCount(id);
       System.out.print("(" + num + ") ");
@@ -365,6 +368,7 @@ public abstract class FormatReader extends FormatHandler {
     // output OME-XML
     MetadataStore ms = getMetadataStore();
     if (ms instanceof OMEXMLMetadataStore) {
+      System.out.println("OME-XML:");
       OMEXMLMetadataStore xmlStore = (OMEXMLMetadataStore) ms;
       System.out.println(xmlStore.dumpXML());
       System.out.println();
