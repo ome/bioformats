@@ -24,11 +24,11 @@ public class VariableComboEditor extends AbstractCellEditor
   private Vector idPanels, addPanels;
 
   private OMEXMLNode oNode;
-  
+
   private JRowBox box;
-  
+
   private JTable refTable;
-  
+
   private static final Hashtable REF_HASH = TemplateParser.getRefHash();
 
   public VariableComboEditor(Vector IDP, Vector AddP, OMEXMLNode oN) {
@@ -58,46 +58,51 @@ public class VariableComboEditor extends AbstractCellEditor
   }
 
 //Implement the one method defined by TableCellEditor.
-  public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-	refTable = table;
-	JRowBox thisBox = new JRowBox(row);
-	TableModel tModel = table.getModel();
-	String eleName = oNode.getDOMElement().getTagName();
-	String attrName = (String) tModel.getValueAt(row, 0);
-	Hashtable subHash = (Hashtable) REF_HASH.get(eleName);
-	if (subHash != null) {
+  public Component getTableCellEditorComponent(JTable table, Object value,
+    boolean isSelected, int row, int column)
+  {
+    refTable = table;
+    JRowBox thisBox = new JRowBox(row);
+    TableModel tModel = table.getModel();
+    String eleName = oNode.getDOMElement().getTagName();
+    String attrName = (String) tModel.getValueAt(row, 0);
+    Hashtable subHash = (Hashtable) REF_HASH.get(eleName);
+    if (subHash != null) {
       String type = (String) subHash.get(attrName);
       if (type != null) {
-	
-	    for(int i = 0;i<idPanels.size();i++) {
-	      MetadataPane.TablePanel tp = (MetadataPane.TablePanel) idPanels.get(i);
-	      String tpClass = tp.oNode.getClass().getName();
-	      boolean isCorrectType = tpClass.equals("org.openmicroscopy.xml.st." + type + "Node");      
-    	  if (isCorrectType) thisBox.addItem(tp.name);
-   		}
-    
+        for(int i = 0;i<idPanels.size();i++) {
+          MetadataPane.TablePanel tp =
+            (MetadataPane.TablePanel) idPanels.get(i);
+          String tpClass = tp.oNode.getClass().getName();
+          boolean isCorrectType =
+            tpClass.equals("org.openmicroscopy.xml.st." + type + "Node");
+          if (isCorrectType) thisBox.addItem(tp.name);
+        }
+
         for(int i = 0;i<addPanels.size();i++) {
           String thisExID = (String) addPanels.get(i);
-          if( thisExID.indexOf(":" + type + ":") >= 0) thisBox.addItem(thisExID);
+          if (thisExID.indexOf(":" + type + ":") >= 0) {
+            thisBox.addItem(thisExID);
+          }
         }
       }
       else addAll(thisBox);
     }
     else addAll(thisBox);
     thisBox.addActionListener(this);
-    
+
     thisBox.setSelectedItem(value);
-	
-	return thisBox;
+
+    return thisBox;
   }
-  
-// -- EventListener API --  
-  
+
+// -- EventListener API --
+
   public void actionPerformed(ActionEvent e) {
     if( e.getSource() instanceof JRowBox) {
       box = (JRowBox) e.getSource();
       int row = box.row;
-      
+
       TableModel model = (TableModel) refTable.getModel();
       String data = (String) box.getSelectedItem();
       String attr = (String) model.getValueAt(row,0);
@@ -105,7 +110,8 @@ public class VariableComboEditor extends AbstractCellEditor
       if(data == null) oNode.setAttribute(attr,"");
       else {
         for(int i = 0;i<idPanels.size();i++) {
-          MetadataPane.TablePanel tp = (MetadataPane.TablePanel) idPanels.get(i);
+          MetadataPane.TablePanel tp =
+            (MetadataPane.TablePanel) idPanels.get(i);
           if(data.equals(tp.name)) thisID = tp.id;
         }
         if (thisID != null) {
@@ -119,16 +125,16 @@ public class VariableComboEditor extends AbstractCellEditor
             }
           }
         }
-      }     
+      }
       fireEditingStopped();
     }
   }
 
 // -- Helper Classes --
-  
+
   public class JRowBox extends JComboBox {
     public int row;
-    
+
     public JRowBox (int r) {
       super();
       row = r;

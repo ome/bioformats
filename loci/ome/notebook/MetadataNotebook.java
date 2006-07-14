@@ -10,7 +10,7 @@ import loci.util.About;
 import org.w3c.dom.*;
 
 /**
-*   MetadataNotebook.java: 
+*   MetadataNotebook.java:
 *      an user-friendly application for displaying and editing OME-XML metadata.
 *
 *   Written by: Christopher Peterson <crpeterson2@wisc.edu>
@@ -39,15 +39,15 @@ public class MetadataNotebook extends JFrame
 
   public MetadataNotebook(String[] args) {
     super("OME Metadata Notebook");
-    
+
     currentFile = null;
     opening = true;
-    
+
     File f = new File("Template.xml");
     TemplateParser tp = new TemplateParser(f);
     metadata = new MetadataPane(tp);
     setContentPane(metadata);
-    
+
     JMenuBar menubar = new JMenuBar();
     setJMenuBar(menubar);
     JMenu file = new JMenu("File");
@@ -69,7 +69,8 @@ public class MetadataNotebook extends JFrame
     fileSaveAs.setActionCommand("saveAs");
     fileSaveAs.addActionListener(this);
     fileSaveAs.setMnemonic('s');
-    fileSaveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_MASK|KeyEvent.SHIFT_MASK));
+    fileSaveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+      KeyEvent.CTRL_MASK|KeyEvent.SHIFT_MASK));
     JSeparator jSep = new JSeparator();
     file.add(jSep);
     JMenuItem fileExit = new JMenuItem("Exit");
@@ -78,7 +79,7 @@ public class MetadataNotebook extends JFrame
     fileExit.addActionListener(this);
     fileExit.setMnemonic('x');
     fileExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, MENU_MASK));
-    
+
     tabsMenu = new JMenu("Tabs");
     menubar.add(tabsMenu);
     Element[] tabs = tp.getTabs();
@@ -88,7 +89,7 @@ public class MetadataNotebook extends JFrame
       tabNames[i] = MetadataPane.getTreePathName(e);
     }
     changeTabMenu(tabNames);
-    
+
     JMenu toolsMenu = new JMenu("Tools");
     menubar.add(toolsMenu);
     JMenuItem advView = new JMenuItem("Advanced Viewer");
@@ -97,7 +98,7 @@ public class MetadataNotebook extends JFrame
     advView.addActionListener(this);
     advView.setMnemonic('v');
     advView.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, MENU_MASK));
-    
+
     JMenu help = new JMenu("Help");
     menubar.add(help);
     JMenuItem helpAbout = new JMenuItem("About");
@@ -119,30 +120,31 @@ public class MetadataNotebook extends JFrame
 
   // -- MetadataViewer API methods --
 
-  public void openFile(File file) { 
+  public void openFile(File file) {
     metadata.setOMEXML(file);
-    setTitle("OME Metadata Notebook - " + file); 
+    setTitle("OME Metadata Notebook - " + file);
   }
-  
+
   public void saveFile(File file) {
     try {
       metadata.getRoot().writeOME(file, true);
 //      FileOutputStream fos = new FileOutputStream(file);
-//      DOMUtil.writeXML(fos, metadata.getDoc() ); 
+//      DOMUtil.writeXML(fos, metadata.getDoc() );
     }
     catch (Exception e) {
 //EVENTUALLY HAVE A DIALOG HERE
-      System.out.println("Attempt failed to open file: " + file.getName() );    
+      System.out.println("Attempt failed to open file: " + file.getName() );
     }
   }
-  
+
   public void changeTabMenu(String[] tabs) {
     tabsMenu.removeAll();
     for (int i=0; i<tabs.length; i++) {
       String thisName = tabs[i];
-      JMenuItem thisTab = new JMenuItem(thisName); 
-      tabsMenu.add(thisTab);      
-      thisTab.setAccelerator(KeyStroke.getKeyStroke(MetadataPane.getKey(i+1), InputEvent.ALT_MASK));
+      JMenuItem thisTab = new JMenuItem(thisName);
+      tabsMenu.add(thisTab);
+      thisTab.setAccelerator(KeyStroke.getKeyStroke(MetadataPane.getKey(i+1),
+        InputEvent.ALT_MASK));
       Integer aInt = new Integer(i);
       thisTab.setActionCommand("tabChange" + aInt.toString());
       thisTab.addActionListener(this);
@@ -158,18 +160,20 @@ public class MetadataNotebook extends JFrame
     if ("open".equals(cmd)) {
       chooser.setDialogTitle("Open");
       chooser.setApproveButtonText("Open");
-      chooser.setApproveButtonToolTipText("Open selected file."); 
+      chooser.setApproveButtonToolTipText("Open selected file.");
       opening = true;
       int rval = chooser.showOpenDialog(this);
       if (rval == JFileChooser.APPROVE_OPTION) {
         new Thread(this, "MetadataNotebook-Opener").start();
       }
     }
-    else if ("saveAs".equals(cmd) || ( "save".equals(cmd) && currentFile == null) ) {
+    else if ("saveAs".equals(cmd) ||
+      ("save".equals(cmd) && currentFile == null))
+    {
       opening = false;
       chooser.setDialogTitle("Save");
       chooser.setApproveButtonText("Save");
-      chooser.setApproveButtonToolTipText("Save to selected file."); 
+      chooser.setApproveButtonToolTipText("Save to selected file.");
       int rval = chooser.showOpenDialog(this);
       if (rval == JFileChooser.APPROVE_OPTION) {
         new Thread(this, "MetadataNotebook-Saver").start();

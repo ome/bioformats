@@ -39,13 +39,13 @@ public class MetadataPane extends JPanel
 
   /** Keeps track of the OMENode being operated on currently*/
   protected OMENode thisOmeNode;
-  
+
   /** A list of all TablePanel objects */
   protected Vector panelList;
-  
+
   /** A list of TablePanel objects that have ID */
   protected Vector panelsWithID;
-  
+
   /** A list of external references to be added to the combobox cell editor*/
   protected Vector addItems;
 
@@ -82,7 +82,7 @@ public class MetadataPane extends JPanel
     setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
     add(tabPane);
     tabPane.setVisible(true);
-    
+
     // -- Raw panel --
 
     raw = false;
@@ -120,7 +120,7 @@ public class MetadataPane extends JPanel
     catch (Exception e) {    }
     return doc;
   }
-  
+
   public OMENode getRoot() { return thisOmeNode; }
 
   /**
@@ -194,34 +194,39 @@ public class MetadataPane extends JPanel
       setupTabs(ome);
     }
   }
-  
+
   /** Sets up the JTabbedPane based on a template, assumes that no OMEXML
   *   file is being compared to the template, so no data will be displayed.
   *   should be used to initialize the application and to create new OMEXML
   *   documents based on the template
   */
   public void setupTabs() {
-//make sure all old gui stuff is tossed when this called twice. also clear our TablePanel lists
+    //make sure all old gui stuff is tossed when this called twice.
+    //also clear our TablePanel lists
     panelList = new Vector();
     panelsWithID = new Vector();
     addItems = new Vector();
     tabPane.removeAll();
-    
-//use the list acquired from Template.xml to form the initial tabs    
+
+    //use the list acquired from Template.xml to form the initial tabs
     Element[] tabList = tParse.getTabs();
     for(int i = 0;i< tabList.length;i++) {
       String thisName = tabList[i].getAttribute("Name");
       if(thisName.length() == 0) thisName = tabList[i].getAttribute("XMLName");
-//make a TabPanel Object that represents the panel that displays data for a node
+      //make a TabPanel Object that represents the panel
+      //that displays data for a node
       TabPanel tPanel = new TabPanel(tabList[i]);
       OMEXMLNode n = null;
 
       try {
-//reflect api gets around large switch statements
+        //reflect api gets around large switch statements
         thisOmeNode = new OMENode();
         ReflectedUniverse r = new ReflectedUniverse();
         String unknownName = tabList[i].getAttribute("XMLName");
-        if (unknownName.equals("Project") || unknownName.equals("Feature") || unknownName.equals("CustomAttributes") || unknownName.equals("Dataset") || unknownName.equals("Image")) {
+        if (unknownName.equals("Project") || unknownName.equals("Feature") ||
+          unknownName.equals("CustomAttributes") ||
+          unknownName.equals("Dataset") || unknownName.equals("Image"))
+        {
           r.exec("import org.openmicroscopy.xml." + unknownName + "Node");
         }
         else r.exec("import org.openmicroscopy.xml.st." + unknownName + "Node");
@@ -232,97 +237,123 @@ public class MetadataPane extends JPanel
       catch (Exception exc) {
         System.out.println(exc.toString());
       }
-      
-//set the field oNode in TabPanel to reflect the structure of the xml document being formed       
+
+      //set the field oNode in TabPanel to reflect the structure of the xml
+      //document being formed
       tPanel.oNode = n;
-//do all the good stuff to flesh out the TabPanel's gui with the tables and assorted stuff
+      //do all the good stuff to flesh out the TabPanel's gui with the tables
+      //and assorted stuff
       renderTab(tPanel);
-      
-//set up a scrollpane to hold the TabPanel in case it's too large to fit
+
+      //set up a scrollpane to hold the TabPanel in case it's too large to fit
       JScrollPane scrollPane = new JScrollPane(tPanel);
-      scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-      scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      scrollPane.setVerticalScrollBarPolicy(
+        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+      scrollPane.setHorizontalScrollBarPolicy(
+        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
       String desc = tabList[i].getAttribute("Description");
       if (desc.length() == 0) tabPane.addTab(thisName, null, scrollPane, null);
       else tabPane.addTab(thisName, null, scrollPane, desc);
       int keyNumber = getKey(i+1);
       if(keyNumber !=0 ) tabPane.setMnemonicAt(i, keyNumber);
     }
-    
-//Makes sure that the external references do not mirror the internal ones
-//since there should be no intersection between the two sets
+
+    //Makes sure that the external references do not mirror the internal ones
+    //since there should be no intersection between the two sets
     for (int j = 0;j<panelsWithID.size();j++) {
       TablePanel tempTP = (TablePanel) panelsWithID.get(j);
       String tryID = "(External) " + tempTP.id;
       if(addItems.indexOf(tryID) >= 0) addItems.remove(tryID);
-    }        
-    
-//this part sets up the refTable's comboBox editor to have choices corresponding to every TablePanel
-//that has a valid ID attribute    
+    }
+
+    //this part sets up the refTable's comboBox editor to have choices
+    //corresponding to every TablePanel that has a valid ID attribute
     for (int i = 0;i<panelList.size();i++) {
       TablePanel p = (TablePanel) panelList.get(i);
       p.setEditor();
-    }   
+    }
   }
-  
+
   /** sets up the JTabbedPane given an OMENode from an OMEXML file.
   *   the template will set which parts of the file are displayed.
   */
   public void setupTabs(OMENode ome) {
-//Get rid of old gui components and old TablePanel lists when new file is opened
+    //Get rid of old gui components and old TablePanel lists
+    //when new file is opened
     tabPane.removeAll();
     panelList = new Vector();
     panelsWithID = new Vector();
     addItems = new Vector();
 
-//use the list acquired from Template.xml to form the initial tabs  
+    //use the list acquired from Template.xml to form the initial tabs
     Element[] tabList = tParse.getTabs();
     Vector actualTabs = new Vector(2 * tabList.length);
     Vector oNodeList = new Vector(2 * tabList.length);
     for(int i = 0;i< tabList.length;i++) {
-//since we have an OMEXML file to compare to now, we have to worry about repeat elements
-//inOmeList will hold all instances of a particular tagname on one level of the node-tree
+      //since we have an OMEXML file to compare to now, we have to worry about
+      //repeat elements
+      //inOmeList will hold all instances of a particular tagname on one level
+      //of the node-tree
       Vector inOmeList = null;
       String aName = tabList[i].getAttribute("XMLName");
-//work-around checks if we need to look in CustomAttributes, and subsequently ignore it
-      if( aName.equals("Image") || aName.equals("Feature") || aName.equals("Dataset") || aName.equals("Project") ) inOmeList = ome.getChildren(aName);
+      //work-around checks if we need to look in CustomAttributes,
+      //and subsequently ignore it
+      if( aName.equals("Image") || aName.equals("Feature") ||
+        aName.equals("Dataset") || aName.equals("Project") )
+      {
+        inOmeList = ome.getChildren(aName);
+      }
       else inOmeList = ome.getChild("CustomAttributes").getChildren(aName);
       int vSize = inOmeList.size();
-//check to see if one or more elements with the given tagname (a.k.a. "XMLName") exist in the file
+      //check to see if one or more elements with the given tagname
+      //(a.k.a. "XMLName") exist in the file
       if(vSize >0) {
         for(int j = 0;j<vSize;j++) {
           String thisName = tabList[i].getAttribute("Name");
-          if(thisName.length() == 0) thisName = tabList[i].getAttribute("XMLName");
+          if(thisName.length() == 0) {
+            thisName = tabList[i].getAttribute("XMLName");
+          }
           TabPanel tPanel = new TabPanel(tabList[i]);
           tPanel.oNode = (OMEXMLNode) inOmeList.get(j);
           renderTab(tPanel);
           JScrollPane scrollPane = new JScrollPane(tPanel);
-          scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-          scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+          scrollPane.setVerticalScrollBarPolicy(
+            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+          scrollPane.setHorizontalScrollBarPolicy(
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
           String desc = tabList[i].getAttribute("Description");
           thisName = getTreePathName(tPanel.el,tPanel.oNode);
-          if (desc.length() == 0) tabPane.addTab(thisName, null, scrollPane, null);
+          if (desc.length() == 0) {
+            tabPane.addTab(thisName, null, scrollPane, null);
+          }
           else tabPane.addTab(thisName, null, scrollPane, desc);
           actualTabs.add(tabList[i]);
           oNodeList.add(tPanel.oNode);
         }
       }
-//if no instances of tagname in file, still set up a blank table based on the template
+      //if no instances of tagname in file,
+      //still set up a blank table based on the template
       else {
         String thisName = tabList[i].getAttribute("Name");
-        if(thisName.length() == 0) thisName = tabList[i].getAttribute("XMLName");
+        if(thisName.length() == 0) {
+          thisName = tabList[i].getAttribute("XMLName");
+        }
         TabPanel tPanel = new TabPanel(tabList[i]);
         renderTab(tPanel);
         JScrollPane scrollPane = new JScrollPane(tPanel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(
+          JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(
+          JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         String desc = tabList[i].getAttribute("Description");
-        if (desc.length() == 0) tabPane.addTab(thisName, null, scrollPane, null);
+        if (desc.length() == 0) {
+          tabPane.addTab(thisName, null, scrollPane, null);
+        }
         else tabPane.addTab(thisName, null, scrollPane, desc);
         actualTabs.add(tabList[i]);
       }
     }
-//set up mnemonics, and form an array holding the names of the tabs
+    //set up mnemonics, and form an array holding the names of the tabs
     String[] tabNames = new String[actualTabs.size()];
     for(int i = 0;i<actualTabs.size();i++) {
       int keyNumber = getKey(i+1);
@@ -330,36 +361,37 @@ public class MetadataPane extends JPanel
       Element e = (Element) actualTabs.get(i);
       tabNames[i] = getTreePathName(e, (OMEXMLNode) oNodeList.get(i));
     }
-//change the "Tabs" menu in the original window to reflect the actual tabs created
-// (duplicate tabs are the reason for this)
+    //change the "Tabs" menu in the original window to reflect the actual tabs
+    //created (duplicate tabs are the reason for this)
     MetadataNotebook mn = (MetadataNotebook) getTopLevelAncestor();
     mn.changeTabMenu(tabNames);
 
-//Makes sure that the external references do not mirror the internal ones
-//since there should be no intersection between the two sets
+    //Makes sure that the external references do not mirror the internal ones
+    //since there should be no intersection between the two sets
     for (int j = 0;j<panelsWithID.size();j++) {
       TablePanel tempTP = (TablePanel) panelsWithID.get(j);
       String tryID = "(External) " + tempTP.id;
       if(addItems.indexOf(tryID) >= 0) addItems.remove(tryID);
-    }    
-    
-//this part sets up the refTable's comboBox editor to have choices corresponding to every TablePanel
-//that has a valid ID attribute
+    }
+
+    //this part sets up the refTable's comboBox editor to have choices
+    //corresponding to every TablePanel that has a valid ID attribute
     for (int i = 0;i<panelList.size();i++) {
       TablePanel p = (TablePanel) panelList.get(i);
       p.setEditor();
-    }   
+    }
   }
-  
-  /** fleshes out the GUI of a given TabPanel, adding TablePanels appropriately
-  */ 
+
+  /**
+   * fleshes out the GUI of a given TabPanel, adding TablePanels appropriately
+   */
   public void renderTab(TabPanel tp) {
     if(!tp.isRendered) {
       tp.isRendered = true;
       tp.removeAll();
 
-  //Set up the GridBagLayout  
-  
+      //Set up the GridBagLayout
+
       JPanel dataPanel = new JPanel();
       dataPanel.setLayout(new GridBagLayout());
       GridBagConstraints gbc = new GridBagConstraints();
@@ -371,11 +403,12 @@ public class MetadataPane extends JPanel
       gbc.weighty = 1.0;
       gbc.gridwidth = GridBagConstraints.REMAINDER;
       gbc.gridheight = 1;
-  //placeY will hold info on which position to add a new component to the layout
-      int placeY = 0;  
-      
-  //add a title label to show which element  
-  
+      //placeY will hold info on which position to add a new component
+      //to the layout
+      int placeY = 0;
+
+      //add a title label to show which element
+
       JPanel titlePanel = new JPanel();
       titlePanel.setLayout(new GridLayout(2,1));
       JLabel title = new JLabel();
@@ -384,39 +417,42 @@ public class MetadataPane extends JPanel
       title.setFont(newFont);
       title.setText(" " + getTreePathName(tp.el,tp.oNode) + ":");
       titlePanel.add(title);
-  
-  //if title has a description, add it in italics
+
+      //if title has a description, add it in italics
       if (tp.el.hasAttribute("Description")) {
         if(tp.el.getAttribute("Description").length() != 0) {
           JLabel descrip = new JLabel();
-          newFont = new Font(thisFont.getFontName(),Font.ITALIC,thisFont.getSize());
+          newFont = new Font(thisFont.getFontName(),
+            Font.ITALIC,thisFont.getSize());
           descrip.setFont(newFont);
           descrip.setText( "     " + tp.el.getAttribute("Description"));
           ins = new Insets(10,30,10,10);
           titlePanel.add(descrip);
         }
       }
-      
+
       tp.titlePanel = titlePanel;
-      
+
       tp.setLayout(new BorderLayout());
       tp.add(titlePanel,BorderLayout.NORTH);
       tp.add(dataPanel,BorderLayout.CENTER);
-      
+
       gbc.gridy = placeY;
       TablePanel pan = new TablePanel(tp.el, tp, tp.oNode);
       dataPanel.add(pan,gbc);
       placeY++;
-      
+
       ins = new Insets(10,30,10,10);
       gbc.insets = ins;
-      
+
       Vector theseElements = DOMUtil.getChildElements("OMEElement",tp.el);
       Vector branchElements = new Vector(theseElements.size());
-      
+
       for(int i = 0;i<theseElements.size();i++) {
         Element e = null;
-        if (theseElements.get(i) instanceof Element) e = (Element) theseElements.get(i);
+        if (theseElements.get(i) instanceof Element) {
+          e = (Element) theseElements.get(i);
+        }
         if (DOMUtil.getChildElements("OMEElement",e).size() != 0) {
           branchElements.add(e);
         }
@@ -424,28 +460,42 @@ public class MetadataPane extends JPanel
           if(tp.oNode != null) {
             Vector v = new Vector();
             String aName = e.getAttribute("XMLName");
-            if( aName.equals("Image") || aName.equals("Feature") || aName.equals("Dataset") || aName.equals("Project") ) v = tp.oNode.getChildren(aName);
-            else if (tp.oNode.getChild("CustomAttributes") != null) v = tp.oNode.getChild("CustomAttributes").getChildren(aName);
-            
+            if( aName.equals("Image") || aName.equals("Feature") ||
+              aName.equals("Dataset") || aName.equals("Project") )
+            {
+              v = tp.oNode.getChildren(aName);
+            }
+            else if (tp.oNode.getChild("CustomAttributes") != null) {
+              v = tp.oNode.getChild("CustomAttributes").getChildren(aName);
+            }
+
             if (v.size() == 0) {
-//Use reflect api to avoid large switch statement to handle construction of different nodes
-//OMEXMLNode child classes
+              //Use reflect api to avoid large switch statement to handle
+              //construction of different nodes
+              //OMEXMLNode child classes
               OMEXMLNode n = null;
-            
+
               try {
                 ReflectedUniverse r = new ReflectedUniverse();
                 String unknownName = e.getAttribute("XMLName");
-                if (unknownName.equals("Project") || unknownName.equals("Feature") || unknownName.equals("CustomAttributes") || unknownName.equals("Dataset") || unknownName.equals("Image")) {
-                  r.exec("import org.openmicroscopy.xml." + unknownName + "Node");
+                if (unknownName.equals("Project") ||
+                  unknownName.equals("Feature") ||
+                  unknownName.equals("CustomAttributes") ||
+                  unknownName.equals("Dataset") ||
+                  unknownName.equals("Image"))
+                {
+                  r.exec("import org.openmicroscopy.xml." +
+                    unknownName + "Node");
                 }
-                else r.exec("import org.openmicroscopy.xml.st." + unknownName + "Node");
+                else {
+                  r.exec("import org.openmicroscopy.xml.st." +
+                    unknownName + "Node");
+                }
                 r.setVar("parent", tp.oNode);
                 r.exec("result = new " + unknownName + "Node(parent)");
                 n = (OMEXMLNode) r.getVar("result");
               }
-              catch (Exception exc) {
-                System.out.println(exc.toString());
-              }
+              catch (Exception exc) { exc.printStackTrace(); }
 
               gbc.gridy = placeY;
               TablePanel p = new TablePanel(e, tp, n);
@@ -453,7 +503,7 @@ public class MetadataPane extends JPanel
               placeY++;
             }
             else {
-                for(int j = 0;j<v.size();j++) {
+              for(int j = 0;j<v.size();j++) {
                 OMEXMLNode n = (OMEXMLNode) v.get(j);
                 gbc.gridy = placeY;
                 TablePanel p = new TablePanel(e, tp, n);
@@ -464,13 +514,13 @@ public class MetadataPane extends JPanel
           }
           else {
             OMEXMLNode n = null;
-          
+
             gbc.gridy = placeY;
             TablePanel p = new TablePanel(e, tp, n);
             dataPanel.add(p,gbc);
             placeY++;
           }
-        }        
+        }
       }
       gbc.gridy = placeY;
       JPanel p = new JPanel();
@@ -479,16 +529,15 @@ public class MetadataPane extends JPanel
       dataPanel.add(p,gbc);
       placeY++;
     }
-  } 
-   
-  /*changes the selected tab to tab of index i
-  */
+  }
+
+  /** changes the selected tab to tab of index i */
   public void tabChange(int i) {
     tabPane.setSelectedIndex(i);
   }
 
-  /* gets around an annoying GUI layout problem when window is resized.
-  public void fixTables()
+//  /** gets around an annoying GUI layout problem when window is resized. */
+//  public void fixTables() { }
 
   // -- Component API methods --
 
@@ -504,25 +553,27 @@ public class MetadataPane extends JPanel
     validate();
     repaint();
   }
-  
+
   // -- Event API methods --
-   
+
   // -- Static methods --
-  
+
     public static String getTreePathName(Element e) {
     String thisName = null;
     if(e.hasAttribute("Name"))thisName = e.getAttribute("Name");
     else thisName = e.getAttribute("XMLName");
-    
+
     Element aParent = DOMUtil.getAncestorElement("OMEElement",e);
     while(aParent != null) {
-      if(aParent.hasAttribute("Name")) thisName = aParent.getAttribute("Name") + thisName;
+      if(aParent.hasAttribute("Name")) {
+        thisName = aParent.getAttribute("Name") + thisName;
+      }
       else thisName = aParent.getAttribute("XMLName") + ": " + thisName;
       aParent = DOMUtil.getAncestorElement("OMEElement",aParent);
     }
     return thisName;
   }
-  
+
   public static String getTreePathName(Element el, OMEXMLNode on) {
     Vector pathList = new Vector();
     Element aParent = on.getDOMElement();
@@ -535,14 +586,14 @@ public class MetadataPane extends JPanel
       aParent = DOMUtil.getAncestorElement(s, aParent);
       pathList.add(0,aParent);
     }
-    
+
     String result = "";
 
     for (int i = 0;i<pathList.size() - 1;i++) {
       aParent = (Element) pathList.get(i);
       Element aChild = (Element) pathList.get(i+1);
       String thisName = aChild.getTagName();
-      
+
       NodeList nl = aParent.getElementsByTagName(thisName);
 
       if (nl.getLength() == 1) {
@@ -555,22 +606,22 @@ public class MetadataPane extends JPanel
           Element e = (Element) nl.item(j);
           if (e == aChild) {
             Integer aInt = new Integer(j+1);
-            if (i == 0) result = result + e.getTagName() + " (" + aInt.toString() + ")";
-            else result = result + ": " + e.getTagName() + " (" + aInt.toString() + ")";
+            if (i == 0) result += e.getTagName() + " (" + aInt.toString() + ")";
+            else result += ": " + e.getTagName() + " (" + aInt.toString() + ")";
           }
         }
       }
     }
     return result;
   }
-  
+
   /** returns a vector of Strings representing the XMLNames of the
   *   template's ancestors in ascending order in the list.
   */
   public static Vector getTreePathList(Element e) {
     Vector thisPath = new Vector(10);
     thisPath.add(e.getAttribute("XMLName"));
-    
+
     Element aParent = DOMUtil.getAncestorElement("OMEElement",e);
     while(aParent != null) {
       thisPath.add(aParent.getAttribute("XMLName"));
@@ -578,38 +629,38 @@ public class MetadataPane extends JPanel
     }
     return thisPath;
   }
-  
+
   public static int getKey(int i) {
       int keyNumber = 0;
       switch (i) {
-        case 1 : 
-	  keyNumber = KeyEvent.VK_1;
+        case 1 :
+          keyNumber = KeyEvent.VK_1;
           break;
-        case 2 : 
+        case 2 :
           keyNumber = KeyEvent.VK_2;
           break;
-        case 3 : 
-	  keyNumber = KeyEvent.VK_3;
+        case 3 :
+          keyNumber = KeyEvent.VK_3;
           break;
-        case 4 : 
-	  keyNumber = KeyEvent.VK_4;
+        case 4 :
+          keyNumber = KeyEvent.VK_4;
           break;
-        case 5 : 
-	  keyNumber = KeyEvent.VK_5;
+        case 5 :
+          keyNumber = KeyEvent.VK_5;
           break;
-        case 6 : 
-	  keyNumber = KeyEvent.VK_6;
+        case 6 :
+          keyNumber = KeyEvent.VK_6;
           break;
-        case 7 : 
-	  keyNumber = KeyEvent.VK_7;
+        case 7 :
+          keyNumber = KeyEvent.VK_7;
           break;
-        case 8 : 
+        case 8 :
           keyNumber = KeyEvent.VK_8;
           break;
-        case 9 : 
+        case 9 :
           keyNumber = KeyEvent.VK_9;
           break;
-        case 10 : 
+        case 10 :
           keyNumber = KeyEvent.VK_0;
           break;
         default:
@@ -617,7 +668,7 @@ public class MetadataPane extends JPanel
       }
       return keyNumber;
   }
-  
+
   // -- Helper classes --
 
   /** Helper class to make my life easier in the creation and use of tabs
@@ -630,7 +681,7 @@ public class MetadataPane extends JPanel
     private boolean isRendered;
     protected OMEXMLNode oNode;
     protected JPanel titlePanel;
-    
+
     public TabPanel(Element el) {
       isRendered = false;
       this.el = el;
@@ -647,7 +698,7 @@ public class MetadataPane extends JPanel
   public class TableButton extends JButton {
     public JTable table;
     public int whichRow;
-    
+
     public TableButton( JTable jt, int i) {
       super("Goto");
       table = jt;
@@ -670,7 +721,7 @@ public class MetadataPane extends JPanel
     public String id;
     public String name;
     public JTable newTable, refTable;
-    
+
     public TablePanel(Element e, TabPanel tp, OMEXMLNode on) {
       oNode = on;
       tPanel = tp;
@@ -681,7 +732,7 @@ public class MetadataPane extends JPanel
       name = getTreePathName(e,on);
       String thisName = getTreePathName(e, on);
       panelList.add(this);
-      
+
       Vector fullList = DOMUtil.getChildElements("OMEAttribute",e);
       Vector attrList = new Vector();
       Vector refList = new Vector();
@@ -690,8 +741,10 @@ public class MetadataPane extends JPanel
         if(thisE.hasAttribute("Type") ) {
           if(thisE.getAttribute("Type").equals("Ref") ) {
             String value = oNode.getAttribute(thisE.getAttribute("XMLName"));
-            if (value != null) {       
-              if ( addItems.indexOf("(External) " + value) < 0) addItems.add("(External) " + value);
+            if (value != null) {
+              if ( addItems.indexOf("(External) " + value) < 0) {
+                addItems.add("(External) " + value);
+              }
             }
             refList.add(thisE);
           }
@@ -701,29 +754,29 @@ public class MetadataPane extends JPanel
               panelsWithID.add(this);
             }
             else {
-//CODE HERE TO CREATE A UNIQUE ID            
+              //CODE HERE TO CREATE A UNIQUE ID
             }
           }
-          else attrList.add(thisE);          
+          else attrList.add(thisE);
         }
         else attrList.add(thisE);
       }
-  
+
       Element cDataEl = DOMUtil.getChildElement("CData",e);
       if (cDataEl != null) attrList.add(0,cDataEl);
-    
+
       JPanel lowPanel = new JPanel();
-    
+
       if (attrList.size() != 0) {
-        myTableModel = new DefaultTableModel(TREE_COLUMNS, 0) {                     
-          public boolean isCellEditable(int row, int col) { 
+        myTableModel = new DefaultTableModel(TREE_COLUMNS, 0) {
+          public boolean isCellEditable(int row, int col) {
             if(col < 1) return false;
             else return true;
           }
         };
-        
+
         myTableModel.addTableModelListener(this);
-      
+
         setLayout(new GridLayout(0,1));
         JLabel tableName = new JLabel(thisName);
         newTable = new JTable(myTableModel);
@@ -743,12 +796,14 @@ public class MetadataPane extends JPanel
         headerPanel.add(tHead, BorderLayout.SOUTH);
         add(headerPanel);
         add(lowPanel);
-      
+
   // update OME-XML attributes table
         myTableModel.setRowCount(attrList.size());
         for (int i=0; i<attrList.size(); i++) {
           Element thisEle = null;
-          if (attrList.get(i) instanceof Element) thisEle = (Element) attrList.get(i); 
+          if (attrList.get(i) instanceof Element) {
+            thisEle = (Element) attrList.get(i);
+          }
           if (thisEle != null) {
             String attrName = thisEle.getAttribute("XMLName");
             if (thisEle.hasAttribute("Name")) {
@@ -770,49 +825,64 @@ public class MetadataPane extends JPanel
               }
             }
             else {
-              if(e.hasAttribute("Name")) myTableModel.setValueAt(e.getAttribute("Name") + " CharData", i, 0);
-              else myTableModel.setValueAt(e.getAttribute("XMLName") + " CharData", i, 0);
-              if(oNode != null && DOMUtil.getCharacterData(oNode.getDOMElement() ) != null) {
-                myTableModel.setValueAt(DOMUtil.getCharacterData(oNode.getDOMElement() ), i, 1);
+              if(e.hasAttribute("Name")) {
+                myTableModel.setValueAt(e.getAttribute("Name") +
+                  " CharData", i, 0);
+              }
+              else {
+                myTableModel.setValueAt(e.getAttribute("XMLName") +
+                  " CharData", i, 0);
+              }
+              if(oNode != null &&
+                DOMUtil.getCharacterData(oNode.getDOMElement()) != null)
+              {
+                myTableModel.setValueAt(
+                  DOMUtil.getCharacterData(oNode.getDOMElement() ), i, 1);
               }
             }
           }
         }
       }
-      
+
       if (refList.size() > 0) {
         myTableModel = new DefaultTableModel(TREE_COLUMNS, 0) {
-          public boolean isCellEditable(int row, int col) { 
+          public boolean isCellEditable(int row, int col) {
             if(col < 1) return false;
             else return true;
           }
         };
-        
+
         myTableModel.addTableModelListener(this);
-      
+
         refTable = new JTable(myTableModel);
         refTable.getColumnModel().getColumn(0).setPreferredWidth(150);
         refTable.getColumnModel().getColumn(1).setPreferredWidth(405);
         TableColumn refColumn = refTable.getColumnModel().getColumn(1);
 
-        comboBox = new JComboBox(); 
+        comboBox = new JComboBox();
         refColumn.setCellEditor(new DefaultCellEditor(comboBox));
-      
+
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new GridLayout(0,1));
-      
+
         myTableModel.setRowCount(refList.size());
         for (int i=0; i<refList.size(); i++) {
           Element thisEle = null;
-          if (refList.get(i) instanceof Element) thisEle = (Element) refList.get(i); 
+          if (refList.get(i) instanceof Element) {
+            thisEle = (Element) refList.get(i);
+          }
           if (thisEle != null) {
-            if (thisEle.hasAttribute("Name")) myTableModel.setValueAt(thisEle.getAttribute("Name"), i, 0);
-            else if (thisEle.hasAttribute("XMLName")) myTableModel.setValueAt(thisEle.getAttribute("XMLName"), i, 0);
+            if (thisEle.hasAttribute("Name")) {
+              myTableModel.setValueAt(thisEle.getAttribute("Name"), i, 0);
+            }
+            else if (thisEle.hasAttribute("XMLName")) {
+              myTableModel.setValueAt(thisEle.getAttribute("XMLName"), i, 0);
+            }
           }
           TableButton tb = new TableButton(refTable,i);
           tb.addActionListener(this);
           buttonPanel.add(tb);
-        }      
+        }
 
         Dimension dim = new Dimension(50, buttonPanel.getHeight());
         buttonPanel.setSize(dim);
@@ -834,7 +904,7 @@ public class MetadataPane extends JPanel
           headerPanel.add(tHead, BorderLayout.SOUTH);
           add(headerPanel);
           add(lowPanel);
-        
+
           JPanel refPanel = new JPanel();
           refPanel.setLayout(new BorderLayout());
           refPanel.add(refTable, BorderLayout.CENTER);
@@ -854,13 +924,13 @@ public class MetadataPane extends JPanel
           placePanel.add(refPanel, BorderLayout.NORTH);
           lowPanel.add(placePanel, BorderLayout.CENTER);
         }
-      }      
+      }
     }
-    
+
     public void setEditor() {
-      if(refTable != null) {      
+      if(refTable != null) {
         TableModel model = refTable.getModel();
-        TableColumn refColumn = refTable.getColumnModel().getColumn(1);  
+        TableColumn refColumn = refTable.getColumnModel().getColumn(1);
         for(int i = 0;i < refTable.getRowCount();i++) {
           boolean isLocal = false;
           String attrName = (String) model.getValueAt(i,0);
@@ -872,34 +942,35 @@ public class MetadataPane extends JPanel
                 isLocal = true;
                 model.setValueAt(tp.name,i,1);
               }
-            }      
+            }
           }
           if(!isLocal && value != null) {
             model.setValueAt("(External) " + value,i,1);
           }
-        }   
-        
-        refColumn.setCellEditor(new VariableComboEditor(panelsWithID, addItems, oNode));        
+        }
+
+        refColumn.setCellEditor(new VariableComboEditor(panelsWithID,
+          addItems, oNode));
       }
     }
-    
+
     public void actionPerformed(ActionEvent e) {
       if (e.getSource() instanceof TableButton) {
         TableButton tb = (TableButton) e.getSource();
         JTable jt = tb.table;
-        
+
         TableModel model = jt.getModel();
         Object obj = model.getValueAt(tb.whichRow, 1);
         String aName = obj.toString();
         TablePanel aPanel = null;
-        
+
         int whichNum = -23;
-        
+
         for(int i = 0;i<panelsWithID.size();i++) {
           aPanel = (TablePanel) panelsWithID.get(i);
           if (aPanel.name.equals(aName)) whichNum = i;
         }
-        
+
         if(whichNum != -23) {
           TablePanel tablePan = (TablePanel) panelsWithID.get(whichNum);
           TabPanel tp = tablePan.tPanel;
@@ -912,22 +983,27 @@ public class MetadataPane extends JPanel
             anObj = anObj.getParent();
           }
           JTabbedPane jTabP = (JTabbedPane) anObj;
-	  jTabP.setSelectedComponent(jScr);
-//ADD CODE HERE TO FOCUS APPROPRIATELY ON THE TABLE IN QUESTION
-	  Point loc = tablePan.getLocation();
-	  loc.x = 0;
-	  loc.y = tp.titlePanel.getHeight() + loc.y;
-	  jScr.getViewport().setViewPosition(loc);
-	}
-	else {
-	  JOptionPane.showMessageDialog((Frame) getTopLevelAncestor() , "Since the ID in question refers to something\noutside of this file, you cannot \"Goto\" it.", "External Reference Detected", JOptionPane.WARNING_MESSAGE);
-	}
+          jTabP.setSelectedComponent(jScr);
+          //ADD CODE HERE TO FOCUS APPROPRIATELY ON THE TABLE IN QUESTION
+          Point loc = tablePan.getLocation();
+          loc.x = 0;
+          loc.y = tp.titlePanel.getHeight() + loc.y;
+          jScr.getViewport().setViewPosition(loc);
+        }
+        else {
+          JOptionPane.showMessageDialog((Frame) getTopLevelAncestor(),
+            "Since the ID in question refers to something\n" +
+            "outside of this file, you cannot \"Goto\" it.",
+            "External Reference Detected", JOptionPane.WARNING_MESSAGE);
+        }
       }
     }
-    
+
     public void tableChanged(TableModelEvent e) {
       int column = e.getColumn();
-      if (e.getType() == TableModelEvent.UPDATE && column == 1 && ((TableModel) e.getSource()) == newTable.getModel()) {
+      if (e.getType() == TableModelEvent.UPDATE && column == 1 &&
+        ((TableModel) e.getSource()) == newTable.getModel())
+      {
         int row = e.getFirstRow();
         TableModel model = (TableModel) e.getSource();
         String data = (String) model.getValueAt(row, column);
