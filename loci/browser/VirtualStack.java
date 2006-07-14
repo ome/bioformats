@@ -6,7 +6,6 @@ package loci.browser;
 
 import ij.ImagePlus;
 import ij.ImageStack;
-import ij.io.Opener;
 import java.io.File;
 import ij.process.ImageProcessor;
 import javax.swing.JProgressBar;

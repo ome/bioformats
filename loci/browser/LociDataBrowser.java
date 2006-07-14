@@ -7,17 +7,13 @@ package loci.browser;
 import ij.ImageStack;
 import ij.ImagePlus;
 import ij.IJ;
-import ij.process.*;
 import ij.io.FileInfo;
-import java.awt.image.*;
 import ij.gui.ImageCanvas;
 import ij.plugin.PlugIn;
 import java.awt.image.ColorModel;
 import java.io.File;
 import java.lang.reflect.Array;
-import java.math.BigInteger;
 import java.awt.Toolkit;
-import java.util.Arrays;
 import loci.util.FilePattern;
 import loci.util.MathUtil;
 import loci.formats.*;
@@ -203,7 +199,7 @@ public class LociDataBrowser implements PlugIn {
 	    ImagePlusWrapper ipw = null;
 	    // process input
 	    ipw = new ImagePlusWrapper(name, virtual);
-	    numZ = ipw.Z; numT = ipw.T; numC = ipw.C;
+	    numZ = ipw.sizeZ; numT = ipw.sizeT; numC = ipw.sizeC;
 	    zIndex = ipw.dim.indexOf('Z')-2;
 	    tIndex = ipw.dim.indexOf('T')-2;
 	    cIndex = ipw.dim.indexOf('C')-2;

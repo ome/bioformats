@@ -6,8 +6,6 @@
 
 package loci.browser;
 
-import ij.ImagePlus;
-import ij.io.Opener;
 import javax.swing.*;
 import java.beans.*;
 import java.awt.*;

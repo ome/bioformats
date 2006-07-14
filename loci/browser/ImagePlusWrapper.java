@@ -7,12 +7,10 @@ import ij.process.*;
 import ij.ImagePlus;
 import loci.formats.*;
 
-
-
 public class ImagePlusWrapper {
 
     protected ImagePlus imp;
-    protected int X, Y, Z, T, C;
+    protected int sizeX, sizeY, sizeZ, sizeT, sizeC;
     protected String dim;
     private int numTotal; // total number of images (across all stitched files)
     private int numSingle;
@@ -32,8 +30,11 @@ public class ImagePlusWrapper {
 	numTotal = reader.getTotalImageCount(name); // gives wrong number!
 
 	dim = reader.getDimensionOrder(name);
-	X = reader.getSizeX(name); Y = reader.getSizeY(name); Z = reader.getSizeZ(name);
-	T = reader.getSizeT(name); C = reader.getSizeC(name);
+	sizeX = reader.getSizeX(name);
+  sizeY = reader.getSizeY(name);
+  sizeZ = reader.getSizeZ(name);
+	sizeT = reader.getSizeT(name);
+  sizeC = reader.getSizeC(name);
 	numSingle = reader.getImageCount(name);
 	System.err.println("numSingle = "+numSingle);
 	System.err.println("numTotal = "+numTotal);
