@@ -5,7 +5,6 @@ import org.w3c.dom.*;
 import java.util.Vector;
 import java.util.Hashtable;
 import java.io.*;
-import org.xml.sax.SAXException;
 
 /**
 *   TemplateParser.java  : a simple xml parser to help set up the 
@@ -24,10 +23,10 @@ public class TemplateParser
     DocumentBuilderFactory.newInstance();
   
   /** A list of filenames where symantic type defs are found*/  
-  public static final String[] TypeDefList = {"Experiment.ome","Experimenter.ome","Group.ome","Image.ome","Instrument.ome","Plate.ome","Screen.ome","OMEIS/Repository.ome","OMEIS/OriginalFile.ome"};
+  public static final String[] TYPE_DEF_LIST = {"Experiment.ome","Experimenter.ome","Group.ome","Image.ome","Instrument.ome","Plate.ome","Screen.ome","OMEIS/Repository.ome","OMEIS/OriginalFile.ome"};
 
   /** The filename of the folder the symantic type defs are in*/
-  public static final String TypeDefFolder = "TypeDefs/";
+  public static final String TYPE_DEF_FOLDER = "TypeDefs/";
 
   //  --Fields--
   
@@ -88,10 +87,10 @@ public class TemplateParser
   public static Hashtable getRefHash() {
   //setup Hashtables for getting reference types
     Hashtable refHash = new Hashtable();    
-    for (int i = 0;i<TypeDefList.length;i++) {
+    for (int i = 0;i<TYPE_DEF_LIST.length;i++) {
       Document templateDoc = null;
       try {
-        File f = new File(TypeDefFolder + TypeDefList[i]);
+        File f = new File(TYPE_DEF_FOLDER + TYPE_DEF_LIST[i]);
         DocumentBuilder db = DOC_FACT.newDocumentBuilder();
         templateDoc = db.parse(f);
       }

@@ -4,12 +4,10 @@ import java.awt.Cursor;
 import java.awt.Toolkit;
 import java.awt.event.*;
 import java.io.File;
-import java.io.FileOutputStream;
 import javax.swing.*;
 import loci.ome.viewer.*;
 import loci.util.About;
 import org.w3c.dom.*;
-import org.openmicroscopy.xml.DOMUtil;
 
 /**
 *   MetadataNotebook.java: 

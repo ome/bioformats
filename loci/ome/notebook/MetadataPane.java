@@ -6,7 +6,6 @@ package loci.ome.notebook;
 
 import java.awt.*;
 import java.io.*;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 import javax.swing.*;
@@ -19,9 +18,6 @@ import org.w3c.dom.*;
 import java.awt.event.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeEvent;
-
 
 /** MetadataPane is a panel that displays OME-XML metadata. */
 public class MetadataPane extends JPanel

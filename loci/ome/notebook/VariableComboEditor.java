@@ -17,7 +17,6 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import org.openmicroscopy.xml.OMEXMLNode;
-import loci.formats.ReflectedUniverse;
 
 public class VariableComboEditor extends AbstractCellEditor
   implements TableCellEditor, ActionListener {
@@ -30,7 +29,7 @@ public class VariableComboEditor extends AbstractCellEditor
   
   private JTable refTable;
   
-  private static final Hashtable refHash = TemplateParser.getRefHash();
+  private static final Hashtable REF_HASH = TemplateParser.getRefHash();
 
   public VariableComboEditor(Vector IDP, Vector AddP, OMEXMLNode oN) {
     idPanels = IDP;
@@ -65,7 +64,7 @@ public class VariableComboEditor extends AbstractCellEditor
 	TableModel tModel = table.getModel();
 	String eleName = oNode.getDOMElement().getTagName();
 	String attrName = (String) tModel.getValueAt(row, 0);
-	Hashtable subHash = (Hashtable) refHash.get(eleName);
+	Hashtable subHash = (Hashtable) REF_HASH.get(eleName);
 	if (subHash != null) {
       String type = (String) subHash.get(attrName);
       if (type != null) {
@@ -73,8 +72,8 @@ public class VariableComboEditor extends AbstractCellEditor
 	    for(int i = 0;i<idPanels.size();i++) {
 	      MetadataPane.TablePanel tp = (MetadataPane.TablePanel) idPanels.get(i);
 	      String tpClass = tp.oNode.getClass().getName();
-	      Boolean isCorrectType = tpClass.equals("org.openmicroscopy.xml.st." + type + "Node");      
-    	  if(isCorrectType.booleanValue() ) thisBox.addItem(tp.name);
+	      boolean isCorrectType = tpClass.equals("org.openmicroscopy.xml.st." + type + "Node");      
+    	  if (isCorrectType) thisBox.addItem(tp.name);
    		}
     
         for(int i = 0;i<addPanels.size();i++) {
