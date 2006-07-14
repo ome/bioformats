@@ -34,6 +34,8 @@ public class ImageFilter extends FileFilter {
         extension.equalsIgnoreCase("pgm") ||
         extension.equalsIgnoreCase("pic") ||
         extension.equalsIgnoreCase("zvi") ||
+        extension.equalsIgnoreCase("ipw") ||
+        extension.equalsIgnoreCase("mov") ||
         extension.equalsIgnoreCase("png"))
       {
         return true;

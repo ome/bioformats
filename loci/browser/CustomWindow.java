@@ -10,6 +10,7 @@ import ij.*;
 import ij.gui.*;
 import ij.io.FileInfo;
 import ij.measure.Calibration;
+import java.io.File;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -62,7 +63,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   public CustomWindow(LociDataBrowser db, ImagePlus imp, ImageCanvas canvas) {
     super(imp, canvas);
     this.db = db;
-    this.setTitle(imp.getTitle());
+    this.setTitle(imp.getTitle().substring(imp.getTitle().lastIndexOf(File.separatorChar)+1));
 
     // create panel for image canvas
     Panel imagePane = new Panel() {
@@ -308,7 +309,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     add(pane);
 
     // repack to take extra panel into account
-    c = db.numC == 2 ? 2 : 1;
+    c = db.numC == 1 ? 2 : 1;
 
     pack();
 
@@ -336,6 +337,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   public void showSlice(int index) {
     if (index >= 1 && index <= imp.getStackSize()) {
       synchronized (imp) {
+	  System.err.println("imp.setSlice("+index+")");
         imp.setSlice(index);
       }
       imp.updateAndDraw();
@@ -570,6 +572,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         int[] indices = new int[zSliceSel.getMaximum()-1];
         for (int k=0; k<indices.length; k++) {
           indices[k] = db.getIndex(k,t-1,c-1);
+	  System.err.println(db.getIndex(k,t-1,c-1));
         }
         if (LociDataBrowser.DEBUG) {
           System.err.println("Indices:");

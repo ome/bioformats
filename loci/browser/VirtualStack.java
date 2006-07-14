@@ -13,6 +13,10 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import java.awt.image.ColorModel;
 import java.util.Arrays;
+import java.awt.Image;
+import java.awt.Toolkit;
+import loci.formats.*;
+
 
 /** This class represents an array of disk-resident images. */
 class VirtualStack extends ImageStack {
@@ -23,38 +27,54 @@ class VirtualStack extends ImageStack {
 
   // -- Fields --
 
-  String path;
+  static String path;
+  
   int nSlices;
   String[] names;
   protected static final int Z_AXIS = 1;
   protected static final int T_AXIS = 2;
   protected int tp;
   private int fileIndex;
-  private int stacksize;
+  protected int stacksize;
   private ImagePlus imp;
   private boolean animT; // keeping track of which axis to animate
   private ImageStack currentStack;
-  private ImageProcessor imp2;
+    private ImageProcessor imp2;
   private static int[] indices;
-  private boolean indexSet;
-  private Thread worker;
+    private boolean indexSet;
+    private Thread worker;    
   // fields about the image
   private int height;
   private int width;
   private ColorModel cm;
-  private int current;
+    private int current;
   private boolean animate;
   private int[] oldptr;
 
+
   // -- Constructor --
 
+
+    public VirtualStack(int width, int height) {
+	super(width,height);
+    this.width = width;
+    this.height = height;
+    currentStack = new ImageStack(0,0);
+    names = new String[INITIAL_SIZE];
+    fileIndex = -1;
+    stacksize = -1;
+    animT = true;
+    nSlices = 0;
+    current = 0;
+    }
+	
   /** Creates a new, empty virtual stack. */
-  public VirtualStack(int width, int height, ColorModel cm, String path) {
+  public VirtualStack(int width, int height, ColorModel cm, String dir) {
     super(width, height, cm);
     this.width = width;
     this.height = height;
     this.cm = cm;
-    this.path = path;
+    path = dir;
     currentStack = new ImageStack(0,0);
     names = new String[INITIAL_SIZE];
     fileIndex = -1;
@@ -145,8 +165,17 @@ class VirtualStack extends ImageStack {
     if (indices == null) {
       //IJ.log("getProcessor: "+n+"  "+names[n-1]);
       if (stacksize == -1 || fileIndex != (n-1) / stacksize) {
-        imp = new Opener().openImage(path, names[n-1]);
-        stacksize = imp.getStackSize();
+	  String absname = path+names[n-1];
+	      try {
+	      if (names[n-1].indexOf(':') != 1) {
+		  Image img =  Toolkit.getDefaultToolkit().createImage(
+				 (new ChannelMerger((new ImageReader()).getReader(
+				  absname))).openImage(absname,0).getSource());
+		  return (new ImagePlus(names[n-1], img)).getProcessor();
+			      
+	      }
+	  } catch (Exception e) { e.printStackTrace(); System.exit(0);}
+
         fileIndex = (n-1) / stacksize;
       }
       if (imp!=null) {
@@ -161,122 +190,110 @@ class VirtualStack extends ImageStack {
       return imp.getProcessor();
     }
     else {
-      int count = 0;
-      while (true) {
-        try {
-          return currentStack.getProcessor(indices[n]);
-        }
-        catch (IllegalArgumentException iae) {
-          if (LociDataBrowser.DEBUG) {
-            System.err.print("VirtualStack.getProcessor(): ");
-            System.err.println("thread sleeps 50 seconds...");
-          }
-          try { count++; Thread.sleep(50); }
-          catch (InterruptedException ie) { }
-          if (count == 3) {
-            if (LociDataBrowser.DEBUG) System.err.print("Slept enough. ");
-            imp = new Opener().openImage(path,names[n-1]);
-            if (imp!=null) {
-              imp.setSlice(n % stacksize == 0 ? stacksize : n % stacksize);
-            }
-            return imp.getProcessor();
-          }
-        }
-      }
-//  if (LociDataBrowser.DEBUG) {
-//    System.err.println("n = "+n);
-//    System.err.println("indices[n] = "+indices[n]);
-//  }
-//  if (indices[n] != -1) {
-//    synchronized (currentStack) {
-//      while (true) {
-//        try {
-//          return currentStack.getProcessor(indices[n]);
-//        }
-//        catch (IllegalArgumentException iae) {
-//          try { Thread.sleep(50); }
-//          catch (InterruptedException ie) {}
-//        }
-//      }
-//    }
-//  }
-//  else {
-//    if (LociDataBrowser.DEBUG) {
-//      System.err.println("*** indices["+n+"] == -1!!! ***");
-//    }
-//    imp = new Opener().openImage(path,names[n-1]);
-//    if (imp!=null) {
-//      imp.setSlice(n % stacksize == 0 ? stacksize : n % stacksize);
-//    }
-//    return imp.getProcessor();
-//  }
+	int count = 0;
+	while (true) {
+	    try {
+		return currentStack.getProcessor(indices[n]);	      
+	    } catch (IllegalArgumentException iae) {
+		if (LociDataBrowser.DEBUG) {
+		    //    System.err.print("VirtualStack.getProcessor(): ");
+		    //    System.err.println("thread sleeps 50 seconds...");
+		}
+		try { count++; Thread.sleep(50); }
+		catch (InterruptedException ie) { }
+		if (count == 3) {
+		    // if (LociDataBrowser.DEBUG) System.err.print("Slept enough. ");
+		    String absname = path+names[n-1];
+		    int idx = (n % stacksize == 0 ? stacksize : n % stacksize)-1;
+		    try {
+			imp = new ImagePlus(names[n-1], Toolkit.getDefaultToolkit().createImage(
+				 ((new ImageReader()).getReader(
+				  absname)).openImage(absname,idx).getSource()));
+		    if (imp==null) {
+			System.err.println("imp==null!!");
+		    }
+		    } catch (Exception e) { e.printStackTrace(); }
+		    return imp.getProcessor();
+		}
+		    
+	    }
+	}
     }
   }
+    
+
 
   public static void resetIndices() { indices = null; }
 
   public synchronized void setIndices(int[] newptr, JProgressBar bar) {
-    final int[] ptr = newptr;
-    final JProgressBar progressBar = bar;
-    if (indices == null) indices = new int[nSlices+1];
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        progressBar.setMaximum(ptr.length);
-      }
-    });
+      final int[] ptr = newptr;
+      final JProgressBar progressBar = bar;
+      if (indices == null) indices = new int[nSlices+1];
+      SwingUtilities.invokeLater(new Runnable() {
+	      public void run() {
+		  progressBar.setMaximum(ptr.length);
+	      }
+	  });
+      
+      worker = new Thread() {
+	      public void run() {
+		      indexSet = false;
+		      progressBar.setMaximum(ptr.length);
+		      // same subset of slices on stack
+		      if (oldptr != null && Arrays.equals(ptr,oldptr)) {
+			  if (LociDataBrowser.DEBUG) System.err.println("oldptr == ptr");
+			  return;
+		      }
+		      else {
+			  oldptr = (int[])ptr.clone();  // store pointers
+			  currentStack = new ImageStack(width, height, cm);
+			  for (int k=0; k<=nSlices; k++) indices[k] = -1;
+			  for (int k=0; k<ptr.length; k++) {
+			      current = k+1;
+			      SwingUtilities.invokeLater(new Runnable() {
+				      public void run() {
+					  progressBar.setValue(current);
+					  progressBar.setString("Loading: " + current +
+								"/" + ptr.length);
+				      }
+				  });
+			      indices[ptr[k]] = k+1;  // adjust for getIndex() off-by-1
+			      try {
+				  String absname = path+names[ptr[k]-1];
+				  int idx = (ptr[k] % stacksize == 0 ? stacksize : ptr[k] % stacksize)-1;
+				  imp = new ImagePlus(names[ptr[k]-1], Toolkit.getDefaultToolkit().createImage(
+							       (new ChannelMerger((new ImageReader()).getReader(
+                                    				  absname))).openImage(absname,idx).getSource()));
+				  currentStack.addSlice(imp.getTitle(), imp.getProcessor());
+				  if (LociDataBrowser.DEBUG) {
+				      System.err.println("ptr["+k+"] = "+ptr[k]);
+				      System.err.println("imp.setSlice("+idx+")");
+				  }
+			      }
+			      catch (NullPointerException npe) {
+				  if (LociDataBrowser.DEBUG) {
+				      System.err.println("*** NULL POINTER: ptr["+k+"] = "+ptr[k]);
+				      System.err.println("Name of file = "+names[ptr[k]]);
+				  }
+			      } catch (Exception e) {
+				  if (LociDataBrowser.DEBUG) {
+				      e.printStackTrace();
+				  }
+			      }
+			  }
+		      }
 
-    worker = new Thread() {
-      public void run() {
-        indexSet = false;
-        progressBar.setMaximum(ptr.length);
-        // same subset of slices on stack
-        if (oldptr != null && Arrays.equals(ptr,oldptr)) {
-          if (LociDataBrowser.DEBUG) System.err.println("oldptr == ptr");
-          return;
-        }
-        else {
-          oldptr = (int[])ptr.clone();  // store pointers
-          currentStack = new ImageStack(width, height, cm);
-          for (int k=0; k<=nSlices; k++) indices[k] = -1;
-          for (int k=0; k<ptr.length; k++) {
-            current = k+1;
-            SwingUtilities.invokeLater(new Runnable() {
-              public void run() {
-                progressBar.setValue(current);
-                progressBar.setString("Loading: " +
-                  current + "/" + ptr.length);
-              }
-            });
-            indices[ptr[k]] = k+1;  // adjust for getIndex() off-by-1
-            try {
-              imp = new Opener().openImage(path, names[ptr[k]-1]);
-              int idx = ptr[k] % stacksize == 0 ?
-                stacksize : ptr[k] % stacksize;
-              imp.setSlice(idx);
-              currentStack.addSlice(imp.getTitle(), imp.getProcessor());
-              if (LociDataBrowser.DEBUG) {
-                System.err.println("ptr["+k+"] = "+ptr[k]);
-                System.err.println("imp.setSlice("+idx+")");
-              }
-            }
-            catch (NullPointerException npe) {
-              if (LociDataBrowser.DEBUG) {
-                System.err.println("*** NULL POINTER: ptr["+k+"] = "+ptr[k]);
-                System.err.println("Name of file = "+names[ptr[k]]);
-              }
-            }
-          }
-        }
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            progressBar.setString("Loaded:  " + ptr.length + "/" + ptr.length);
-          }
-        });
-      }
-    };
-    worker.start();
+		      SwingUtilities.invokeLater(new Runnable() {
+			      public void run() {
+				  progressBar.setString("Loaded:  " + ptr.length + "/" +
+							ptr.length);
+			      }
+			  });
+	      }
+	  };
+      worker.start();
   }
-
+    
   /** Returns the number of slices in this stack. */
   public int getSize() { return nSlices; }
 

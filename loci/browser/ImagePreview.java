@@ -12,45 +12,51 @@ import javax.swing.*;
 import java.beans.*;
 import java.awt.*;
 import java.io.File;
+import loci.formats.*;
 
 /** ImagePreview.java is a 1.4 example used by FileChooserDemo2.java. */
 public class ImagePreview extends JComponent
   implements PropertyChangeListener
 {
-  ImageIcon thumbnail = null;
-  File file = null;
+    ImageIcon thumbnail = null;
+    File file = null;
 
-  public ImagePreview(JFileChooser fc) {
-    setPreferredSize(new Dimension(100, 50));
-    fc.addPropertyChangeListener(this);
-  }
-
-  public void loadImage() {
-    if (file == null) {
-      thumbnail = null;
-      return;
+    public ImagePreview(JFileChooser fc) {
+	setPreferredSize(new Dimension(100, 50));
+	fc.addPropertyChangeListener(this);
+    }
+    
+    public void loadImage() {
+	try {
+	    if (file == null) {
+		thumbnail = null;
+		return;
+	    }
+	    
+	    //Don't use createImageIcon (which is a wrapper for getResource)
+	    //because the image we're trying to load is probably not one
+	    //of this program's own resources.
+	    System.err.println("file path: "+file.getAbsolutePath());
+	    ChannelMerger cm = new ChannelMerger(new ImageReader().getReader(file.getAbsolutePath()));
+	    ImageIcon tmpIcon = new ImageIcon(Toolkit.getDefaultToolkit().createImage(
+				      (cm.openImage(file.getAbsolutePath(),0).getSource())));
+	    if (tmpIcon != null) {
+		if (tmpIcon.getIconWidth() > 90) {
+		    thumbnail = new ImageIcon(tmpIcon.getImage().getScaledInstance(90,
+							   -1, Image.SCALE_DEFAULT));
+		}
+		else { // no need to miniaturize
+		    thumbnail = tmpIcon;
+		}
+	    }
+	    
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
     }
 
-    //Don't use createImageIcon (which is a wrapper for getResource)
-    //because the image we're trying to load is probably not one
-    //of this program's own resources.
 
-    ImagePlus imp = new Opener().openImage(file.getPath());
-    if (imp != null) {
-      ImageIcon tmpIcon = new ImageIcon(imp.getImage());
-      if (tmpIcon != null) {
-        if (tmpIcon.getIconWidth() > 90) {
-          thumbnail = new ImageIcon(tmpIcon.getImage().getScaledInstance(90,
-            -1, Image.SCALE_DEFAULT));
-        }
-        else { // no need to miniaturize
-          thumbnail = tmpIcon;
-        }
-      }
-    }
-  }
-
-  public void propertyChange(PropertyChangeEvent e) {
+   public void propertyChange(PropertyChangeEvent e) {
     boolean update = false;
     String prop = e.getPropertyName();
 
