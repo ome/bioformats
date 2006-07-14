@@ -40,20 +40,14 @@ public class TemplateParser
   /** The root xml Element in the Document*/
   protected Element root;
   
-  /** A hashtable to store the types associated with a reference element
-  *   will be implemented as a Hashtable of Hashtables first key corresponds
-  *   to the OMEElement, second (nested) key corresponds to OMEAttribute,
-  *   and finally the value corresponds to what type the OMEAttribute should
-  *   have */
-  protected Hashtable refHash;
+
+//  protected Hashtable refHash;
   
   //  --Constructor--
   
   /** Parses the template document designated by the file argument*/
   public TemplateParser(File file) 
-  {
-    refHash = new Hashtable();
-  
+  {  
 // Parse the specified xml file (should be Template.xml) using the DOM
     try {
       DocumentBuilder db = DOC_FACT.newDocumentBuilder();
@@ -79,9 +73,23 @@ public class TemplateParser
     for(int i = 0;i < v.size();i++) {
       tabList[i] = (Element) v.elementAt(i);
     }
-
-//setup Hashtables for getting reference types    
+  }
+  
+  /** returns an array of Elements representing the tabs in the notebook*/
+  public Element[] getTabs() {
+    return tabList;
+  }
+  
+  /** Returns a hashtable to store the types associated with a reference element
+  *   will be implemented as a Hashtable of Hashtables first key corresponds
+  *   to the OMEElement, second (nested) key corresponds to OMEAttribute,
+  *   and finally the value corresponds to what type the OMEAttribute should
+  *   have */
+  public static Hashtable getRefHash() {
+  //setup Hashtables for getting reference types
+    Hashtable refHash = new Hashtable();    
     for (int i = 0;i<TypeDefList.length;i++) {
+      Document templateDoc = null;
       try {
         File f = new File(TypeDefFolder + TypeDefList[i]);
         DocumentBuilder db = DOC_FACT.newDocumentBuilder();
@@ -132,17 +140,6 @@ public class TemplateParser
         }
       }
     }
-  }
-  
-  /** returns an array of Elements representing the tabs in the notebook*/
-  public Element[] getTabs() {
-    return tabList;
-  }
-  
-  /** returns a Hashtable of HashTables representing the types of referenced objects
-  *   for each element's attributes
-  */
-  public Hashtable getHash() {
     return refHash;
   }
   
@@ -160,7 +157,7 @@ public class TemplateParser
     for(int i = 0;i<eList.length;i++) {
       System.out.println(eList[i].getAttribute("XMLName"));
     }
-    Hashtable mmmHash = tp.getHash();
+    Hashtable mmmHash = TemplateParser.getRefHash();
     System.out.println(mmmHash);
   }
 }
