@@ -28,6 +28,9 @@ public class TemplateParser
     "Instrument.ome","Plate.ome","Screen.ome","OMEIS/Repository.ome",
     "OMEIS/OriginalFile.ome"
   };
+  
+  /** A list of regular (non "home-baked") type defs to cruise*/
+  public static final String[] OLD_DEF_LIST = {"CA.xsd"};
 
   /** The filename of the folder the symantic type defs are in*/
   public static final String TYPE_DEF_FOLDER = "TypeDefs/";
@@ -139,6 +142,57 @@ public class TemplateParser
                 }
               }
             }
+          }
+        }
+      }
+    }
+    for (int i = 0;i<OLD_DEF_LIST.length;i++) {
+      Document templateDoc = null;
+      try {
+        File f = new File(TYPE_DEF_FOLDER + OLD_DEF_LIST[i]);
+        DocumentBuilder db = DOC_FACT.newDocumentBuilder();
+        templateDoc = db.parse(f);
+      }
+      catch (Exception e) {
+        System.out.println("Some exception occured: " + e.toString());
+        e.printStackTrace();
+      }
+
+//surfing node-trees...
+      Element thisRoot = templateDoc.getDocumentElement();
+      NodeList eleList = thisRoot.getChildNodes();
+      
+      for (int j = 0;j < eleList.getLength();j++) {
+        Node node = eleList.item(j);
+        if(node instanceof Element) {
+          Element eleE = (Element) node;
+          if(eleE.getTagName().equals("xsd:element")) {
+            NodeList wrapperList = eleE.getChildNodes();
+            Hashtable attrHash = new Hashtable(10);
+            for (int k = 0;k < wrapperList.getLength();k++) {
+              node = (Node) wrapperList.item(k);
+              if(node instanceof Element) {
+                Element anotherE = (Element) node;
+                if(anotherE.getTagName().equals("xsd:complexType") ) {
+                  NodeList attrList = anotherE.getChildNodes();
+                  for (int l = 0;l < attrList.getLength();l++) {
+                    node = (Node) attrList.item(l);
+                    if(node instanceof Element) {
+                      Element attrE = (Element) node;
+                      if(attrE.getTagName().equals("xsd:attribute") && attrE.hasAttribute("type") ) {
+                        String type = attrE.getAttribute("type"); 
+                        if ( type.startsWith("OME:") && type.endsWith("ID") ) {
+                          type = type.substring(4, type.length() - 2);
+                          String attrName = attrE.getAttribute("name");
+                          attrHash.put(attrName,type);
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            refHash.put(eleE.getAttribute("name"), attrHash);
           }
         }
       }

@@ -185,7 +185,7 @@ public class MetadataPane extends JPanel
 
   /** Sets the displayed OME-XML metadata. */
   public void setOMEXML(OMENode ome) {
-    // populate OME-XML tree
+    // test for document, then call the setup(OMENode ome) method
     Document doc = null;
     try { doc = ome == null ? null : ome.getOMEDocument(false); }
     catch (Exception exc) { }
@@ -313,14 +313,21 @@ public class MetadataPane extends JPanel
           if(thisName.length() == 0) {
             thisName = tabList[i].getAttribute("XMLName");
           }
+          //create our friend, the TabPanel, which holds the template Element
+          //and the actual OMEXMLNode that either existed previously or has
+          //been created by the ReflectedUniverse mumbojumbo
           TabPanel tPanel = new TabPanel(tabList[i]);
           tPanel.oNode = (OMEXMLNode) inOmeList.get(j);
+          //call renderTab(TabPanel tp) to set up the TabPanel gui, create
+          //TablePanels to display Elements, etc.
           renderTab(tPanel);
+          //create a scrollpane to hold the tabpanel in case it is too large
           JScrollPane scrollPane = new JScrollPane(tPanel);
           scrollPane.setVerticalScrollBarPolicy(
             JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
           scrollPane.setHorizontalScrollBarPolicy(
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+          //test if a description is associated with this tab in the template
           String desc = tabList[i].getAttribute("Description");
           thisName = getTreePathName(tPanel.el,tPanel.oNode);
           if (desc.length() == 0) {
@@ -333,7 +340,9 @@ public class MetadataPane extends JPanel
       }
       //if no instances of tagname in file,
       //still set up a blank table based on the template
+//ADD CODE TO CREATE A NEW NODE TOO
       else {
+        //this section the same as above case, see comments there
         String thisName = tabList[i].getAttribute("Name");
         if(thisName.length() == 0) {
           thisName = tabList[i].getAttribute("XMLName");
@@ -430,24 +439,35 @@ public class MetadataPane extends JPanel
           titlePanel.add(descrip);
         }
       }
-
+      
+	  //this sets up titlePanel so we can access its height later to
+	  //use for "Goto" button scrollpane view setting purposes
       tp.titlePanel = titlePanel;
 
+	  //Layout stuff distinguishes between the title and the data panels
       tp.setLayout(new BorderLayout());
       tp.add(titlePanel,BorderLayout.NORTH);
       tp.add(dataPanel,BorderLayout.CENTER);
 
+	  //First instantiation of TablePanel. This one corresponds to the
+	  //actual "top-level" element, e.g. what the main Tab element is
       gbc.gridy = placeY;
       TablePanel pan = new TablePanel(tp.el, tp, tp.oNode);
       dataPanel.add(pan,gbc);
       placeY++;
 
+	  //make the nested elements have a further indent to distinguish them
       ins = new Insets(10,30,10,10);
       gbc.insets = ins;
 
+	  //look at the template to get the nested Elements we need to display
+	  //with their own TablePanels
       Vector theseElements = DOMUtil.getChildElements("OMEElement",tp.el);
+      //will be a list of those nested elements that have their own nested
+      //elements
       Vector branchElements = new Vector(theseElements.size());
 
+	  //check out each nested Element
       for(int i = 0;i<theseElements.size();i++) {
         Element e = null;
         if (theseElements.get(i) instanceof Element) {
