@@ -3,6 +3,7 @@
 # build: a script for building the SlimPlotter JAR file
 
 cd ../..
+ln -s /home/curtis/cvs/VisAD/visad
 
 echo Building SlimPlotter.jar...
 cp loci/slim/slim.manifest .
@@ -17,5 +18,6 @@ visad/bom/RubberBandBoxRendererJ3D*.class \
 loci/slim/*.java loci/slim/build
 rm slim.manifest
 
+rm visad
 cd loci/slim
 ls -l SlimPlotter.jar
