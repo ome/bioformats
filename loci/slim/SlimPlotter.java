@@ -19,8 +19,8 @@ import visad.*;
 import visad.bom.RubberBandBoxRendererJ3D;
 import visad.java3d.*;
 
-public class SlimPlotter
-  implements ActionListener, ChangeListener, DisplayListener, WindowListener
+public class SlimPlotter implements ActionListener,
+  ChangeListener, DisplayListener, Runnable, WindowListener
 {
 
   // -- Constants --
@@ -32,19 +32,22 @@ public class SlimPlotter
      0.0000,  0.0000,  0.0000, 1.0000
   };
 
-
   // -- Fields --
 
   private int[][][][] values;
+
   private int width, height;
   private int channels, timeBins;
-  private int minWave, waveStep;
   private double timeRange;
+  private int minWave, waveStep;
+  private boolean adjustPeaks;
+
   private int minX, minY, maxX, maxY;
   private float maxVal;
 
   private JDialog paramDialog;
   private JTextField wField, hField, tField, cField, trField, wlField, sField;
+  private JCheckBox peaksBox;
 
   private JLabel decayLabel;
   private JCheckBox surface, parallel, logScale;
@@ -58,12 +61,11 @@ public class SlimPlotter
   private DisplayImpl iPlot, decayPlot;
   private AnimationControl ac;
 
-
   // -- Constructor --
 
   public SlimPlotter(String[] args) throws Exception {
     ProgressMonitor progress = new ProgressMonitor(null,
-      "Launching SlimPlotter", "Initializing", 0, 23);
+      "Launching SlimPlotter", "Initializing", 0, 16 + 7);
     progress.setMillisToPopup(0);
     progress.setMillisToDecideToPopup(0);
     int p = 0;
@@ -96,27 +98,44 @@ public class SlimPlotter
     if (args.length >= 5) channels = parse(args[4], -1);
 
     // read SDT file header
-    DataInputStream fin = new DataInputStream(new BufferedInputStream(
-      new FileInputStream(file)));
-    fin.mark(4096);
-    fin.skipBytes(14); // skip 14 byte header
-    int offset = DataTools.read2UnsignedBytes(fin, true) + 22;
-    System.out.println("Data offset: " + offset);//TEMP
+    RandomAccessFile raf = new RandomAccessFile(file, "r");
+    short revision = DataTools.read2SignedBytes(raf, true);
+    int infoOffset = DataTools.read4SignedBytes(raf, true);
+    short infoLength = DataTools.read2SignedBytes(raf, true);
+    int setupOffs = DataTools.read4SignedBytes(raf, true);
+    short setupLength = DataTools.read2SignedBytes(raf, true);
+    int dataBlockOffset = DataTools.read4SignedBytes(raf, true);
+    short noOfDataBlocks = DataTools.read2SignedBytes(raf, true);
+    int dataBlockLength = DataTools.read4SignedBytes(raf, true);
+    int measDescBlockOffset = DataTools.read4SignedBytes(raf, true);
+    short noOfMeasDescBlocks = DataTools.read2SignedBytes(raf, true);
+    short measDescBlockLength = DataTools.read2SignedBytes(raf, true);
+    int headerValid = DataTools.read2UnsignedBytes(raf, true);
+    long reserved1 = DataTools.read4UnsignedBytes(raf, true);
+    int reserved2 = DataTools.read2UnsignedBytes(raf, true);
+    int chksum = DataTools.read2UnsignedBytes(raf, true);
 
-    byte[] stuff = new byte[4077];
-    fin.readFully(stuff);
-    String s = new String(stuff);
-    fin.reset();
+    int offset = dataBlockOffset + 22;
+    System.out.println("File length: " + file.length());//TEMP
+    System.out.println("Data offset: " + offset);//TEMP
+    System.out.println("Setup offset: " + setupOffs);//TEMP
+
+    // read SDT setup block
+    raf.seek(setupOffs);
+    byte[] setupData = new byte[4095];
+    raf.readFully(setupData);
+    String setup = new String(setupData);
+    raf.close();
 
     int leftToFind = 3;
     if (width < 0) {
       String wstr = "[SP_SCAN_X,I,";
-      int wndx = s.indexOf(wstr);
+      int wndx = setup.indexOf(wstr);
       width = 128;
       if (wndx >= 0) {
-        int q = s.indexOf("]", wndx);
+        int q = setup.indexOf("]", wndx);
         if (q >= 0) {
-          width = parse(s.substring(wndx + wstr.length(), q), width);
+          width = parse(setup.substring(wndx + wstr.length(), q), width);
           System.out.println("Got width from file: " + width);//TEMP
           leftToFind--;
         }
@@ -125,11 +144,11 @@ public class SlimPlotter
     if (height < 0) {
       height = 128;
       String hstr = "[SP_SCAN_Y,I,";
-      int hndx = s.indexOf(hstr);
+      int hndx = setup.indexOf(hstr);
       if (hndx >= 0) {
-        int q = s.indexOf("]", hndx);
+        int q = setup.indexOf("]", hndx);
         if (q >= 0) {
-          height = parse(s.substring(hndx + hstr.length(), q), height);
+          height = parse(setup.substring(hndx + hstr.length(), q), height);
           System.out.println("Got height from file: " + height);//TEMP
           leftToFind--;
         }
@@ -138,11 +157,11 @@ public class SlimPlotter
     if (timeBins < 0) {
       timeBins = 64;
       String tstr = "[SP_ADC_RE,I,";
-      int tndx = s.indexOf(tstr);
+      int tndx = setup.indexOf(tstr);
       if (tndx >= 0) {
-        int q = s.indexOf("]", tndx);
+        int q = setup.indexOf("]", tndx);
         if (q >= 0) {
-          timeBins = parse(s.substring(tndx + tstr.length(), q), timeBins);
+          timeBins = parse(setup.substring(tndx + tstr.length(), q), timeBins);
           System.out.println("Got timeBins from file: " + timeBins);//TEMP
           leftToFind--;
         }
@@ -171,7 +190,7 @@ public class SlimPlotter
     JPanel paramPane = new JPanel();
     paramPane.setBorder(new EmptyBorder(10, 10, 10, 10));
     paramDialog.setContentPane(paramPane);
-    paramPane.setLayout(new GridLayout(9, 3));
+    paramPane.setLayout(new GridLayout(10, 3));
     wField = addRow(paramPane, "Image width", width, "pixels");
     hField = addRow(paramPane, "Image height", height, "pixels");
     tField = addRow(paramPane, "Time bins", timeBins, "");
@@ -180,10 +199,18 @@ public class SlimPlotter
     wlField = addRow(paramPane, "Starting wavelength", minWave, "nanometers");
     sField = addRow(paramPane, "Channel width", waveStep, "nanometers");
     JButton ok = new JButton("OK");
+    paramDialog.getRootPane().setDefaultButton(ok);
     ok.addActionListener(this);
+    // row 8
+    peaksBox = new JCheckBox("Adjust peaks", true);
+    paramPane.add(peaksBox);
+    paramPane.add(new JLabel());
+    paramPane.add(new JLabel());
+    // row 9
     paramPane.add(new JLabel());
     paramPane.add(new JLabel());
     paramPane.add(new JLabel());
+    // row 10
     paramPane.add(new JLabel());
     paramPane.add(ok);
     paramDialog.pack();
@@ -195,8 +222,9 @@ public class SlimPlotter
     int maxWave = minWave + (channels - 1) * waveStep;
 
     // read pixel data
-    progress.setMaximum(channels + 7);
+    progress.setMaximum(adjustPeaks ? (3 * channels + 9) : (channels + 7));
     progress.setNote("Reading data");
+    DataInputStream fin = new DataInputStream(new FileInputStream(file));
     fin.skipBytes(offset); // skip to data
     byte[] data = new byte[2 * channels * height * width * timeBins];
     fin.readFully(data);
@@ -305,7 +333,7 @@ public class SlimPlotter
     progress.setProgress(++p);
     if (progress.isCanceled()) System.exit(0);
 
-    // convert byte data to shorts
+    // convert byte data to unsigned shorts
     progress.setNote("Constructing images ");
     values = new int[channels][height][width][timeBins];
     float[][][] pix = new float[channels][1][width * height];
@@ -340,6 +368,57 @@ public class SlimPlotter
     }
     progress.setProgress(++p);
     if (progress.isCanceled()) System.exit(0);
+
+    // adjust peaks
+    if (adjustPeaks) {
+      progress.setNote("Adjusting peaks ");
+      int[] peaks = new int[channels];
+      for (int c=0; c<channels; c++) {
+        progress.setProgress(++p);
+        if (progress.isCanceled()) System.exit(0);
+        int[] sum = new int[timeBins];
+        for (int h=0; h<height; h++) {
+          for (int w=0; w<width; w++) {
+            for (int t=0; t<timeBins; t++) sum[t] += values[c][h][w][t];
+          }
+        }
+        int peak = 0, ndx = 0;
+        for (int t=0; t<timeBins; t++) {
+          if (peak <= sum[t]) {
+            peak = sum[t];
+            ndx = t;
+          }
+          else if (t > 20) break; // HACK - too early to give up
+        }
+        peaks[c] = ndx;
+      }
+      progress.setProgress(++p);
+      if (progress.isCanceled()) System.exit(0);
+      int maxPeak = 0;
+      for (int c=1; c<channels; c++) {
+        if (maxPeak < peaks[c]) maxPeak = peaks[c];
+      }
+      System.out.println("Aligning peaks to tmax = " + maxPeak);//TEMP
+      for (int c=0; c<channels; c++) {
+        progress.setProgress(++p);
+        if (progress.isCanceled()) System.exit(0);
+        int shift = maxPeak - peaks[c];
+        if (shift > 0) {
+          for (int h=0; h<height; h++) {
+            for (int w=0; w<width; w++) {
+              for (int t=timeBins-1; t>=shift; t--) {
+                values[c][h][w][t] = values[c][h][w][t - shift];
+              }
+              for (int t=shift-1; t>=0; t--) values[c][h][w][t] = 0;
+            }
+          }
+          System.out.println("\tShifted channel #" + c + " by " +//TEMP
+            shift + " [tmax = " + peaks[c] + "]");//TEMP
+        }
+      }
+      progress.setProgress(++p);
+      if (progress.isCanceled()) System.exit(0);
+    }
 
     // show 2D window on screen
     progress.setNote("Creating plots");
@@ -384,11 +463,11 @@ public class SlimPlotter
     JPanel options = new JPanel();
     options.setLayout(new BoxLayout(options, BoxLayout.X_AXIS));
     surface = new JCheckBox("Surface", true);
-    surface.addChangeListener(this);
+    surface.addActionListener(this);
     parallel = new JCheckBox("Parallel projection", false);
-    parallel.addChangeListener(this);
+    parallel.addActionListener(this);
     logScale = new JCheckBox("Log scale", false);
-    logScale.addChangeListener(this);
+    logScale.addActionListener(this);
     options.add(surface);
     options.add(parallel);
     options.add(logScale);
@@ -400,17 +479,118 @@ public class SlimPlotter
     minX = minY = 0;
     maxX = width;
     maxY = height;
-    plotData(true);
     cSlider.setValue(maxChan + 1);
 
     decayFrame.setVisible(true);
     progress.setProgress(++p);
+    progress.close();
+    plotData(true);
   }
-
 
   // -- SlimPlotter methods --
 
+  private Thread plotThread;
+  private boolean plotCanceled;
+  private boolean rescale;
+
+  /** Plots the data in a separate thread. */
   public void plotData(boolean rescale) {
+    final boolean doRescale = rescale;
+    final SlimPlotter sp = this;
+    new Thread("PlotSpawner") {
+      public void run() {
+        synchronized (sp) {
+          if (plotThread != null) {
+            // wait for old thread to cancel out
+            plotCanceled = true;
+            try { plotThread.join(); }
+            catch (InterruptedException exc) { exc.printStackTrace(); }
+          }
+          sp.rescale = doRescale;
+          plotCanceled = false;
+          plotThread = new Thread(sp, "Plotter");
+          plotThread.start();
+        }
+      }
+    }.start();
+  }
+
+  /** Handles mouse events. */
+  public void doMouse() {
+    double[] cursor = iPlot.getDisplayRenderer().getCursor();
+    double[] domain = cursorToDomain(iPlot, cursor);
+    minX = maxX = (int) Math.round(domain[0]);
+    minY = maxY = (int) Math.round(domain[1]);
+    plotData(false);
+  }
+
+  // -- ActionListener methods --
+
+  /** Handles checkbox and button presses. */
+  public void actionPerformed(ActionEvent e) {
+    Object src = e.getSource();
+    if (src == surface) plotData(false);
+    else if (src == logScale) plotData(true);
+    else if (src == parallel) {
+      try {
+        decayPlot.getGraphicsModeControl().setProjectionPolicy(
+          parallel.isSelected() ? DisplayImplJ3D.PARALLEL_PROJECTION :
+          DisplayImplJ3D.PERSPECTIVE_PROJECTION);
+      }
+      catch (Exception exc) { exc.printStackTrace(); }
+    }
+    else { // OK button
+      width = parse(wField.getText(), width);
+      height = parse(hField.getText(), height);
+      timeBins = parse(tField.getText(), timeBins);
+      channels = parse(cField.getText(), channels);
+      timeRange = parse(trField.getText(), timeRange);
+      minWave = parse(wlField.getText(), minWave);
+      waveStep = parse(sField.getText(), waveStep);
+      adjustPeaks = peaksBox.isSelected();
+      paramDialog.setVisible(false);
+    }
+  }
+
+  // -- ChangeListener methods --
+
+  /** Handles slider changes. */
+  public void stateChanged(ChangeEvent e) {
+    int c = cSlider.getValue();
+    try { ac.setCurrent(c - 1); }
+    catch (Exception exc) { exc.printStackTrace(); }
+  }
+
+  // -- DisplayListener methods --
+
+  private boolean drag = false;
+
+  public void displayChanged(DisplayEvent e) {
+    int id = e.getId();
+    if (id == DisplayEvent.MOUSE_PRESSED_CENTER) {
+      drag = true;
+      decayPlot.getDisplayRenderer();
+      doMouse();
+    }
+    else if (id == DisplayEvent.MOUSE_RELEASED_CENTER) {
+      drag = false;
+      decayPlot.reAutoScale();
+    }
+    else if (id == DisplayEvent.MOUSE_DRAGGED) {
+      if (!drag) return; // not a left mouse drag
+      doMouse();
+    }
+  }
+
+  // -- Runnable methods --
+
+  public void run() {
+    ProgressMonitor progress = new ProgressMonitor(null,
+      "Plotting data", null, 0, channels * timeBins + 1);
+    progress.setMillisToPopup(100);
+    progress.setMillisToDecideToPopup(50);
+    int p = 0;
+
     if (minX < 0) minX = 0;
     if (minX >= width) minX = width - 1;
     if (maxX < 0) maxX = 0;
@@ -453,7 +633,11 @@ public class SlimPlotter
         samps[ndx] = sum;
         if (log) samps[ndx] = (float) Math.log(samps[ndx] + 1);
         if (samps[ndx] > maxVal) maxVal = samps[ndx];
+        progress.setProgress(++p);
+        if (progress.isCanceled()) plotCanceled = true;
+        if (plotCanceled) break;
       }
+      if (plotCanceled) break;
     }
     try {
       FlatField ff = new FlatField(bcvFunc, bcSet);
@@ -465,73 +649,10 @@ public class SlimPlotter
       ref.setData(lines ? ff.domainFactor(cType) : ff);
     }
     catch (Exception exc) { exc.printStackTrace(); }
+    progress.setProgress(++p);
+    progress.close();
+    plotThread = null;
   }
-
-  public void doMouse() {
-    double[] cursor = iPlot.getDisplayRenderer().getCursor();
-    double[] domain = cursorToDomain(iPlot, cursor);
-    minX = maxX = (int) Math.round(domain[0]);
-    minY = maxY = (int) Math.round(domain[1]);
-    plotData(false);
-  }
-
-  // -- ActionListener methods --
-
-  public void actionPerformed(ActionEvent e) {
-    width = parse(wField.getText(), width);
-    height = parse(hField.getText(), height);
-    timeBins = parse(tField.getText(), timeBins);
-    channels = parse(cField.getText(), channels);
-    timeRange = parse(trField.getText(), timeRange);
-    minWave = parse(wlField.getText(), minWave);
-    waveStep = parse(sField.getText(), waveStep);
-    paramDialog.setVisible(false);
-  }
-
-
-  // -- ChangeListener methods --
-
-  public void stateChanged(ChangeEvent e) {
-    Object src = e.getSource();
-    if (src == surface) plotData(false);
-    else if (src == logScale) plotData(true);
-    else if (src == parallel) {
-      try {
-        decayPlot.getGraphicsModeControl().setProjectionPolicy(
-          parallel.isSelected() ? DisplayImplJ3D.PARALLEL_PROJECTION :
-          DisplayImplJ3D.PERSPECTIVE_PROJECTION);
-      }
-      catch (Exception exc) { exc.printStackTrace(); }
-    }
-    else if (src == cSlider) {
-      int c = cSlider.getValue();
-      try { ac.setCurrent(c - 1); }
-      catch (Exception exc) { exc.printStackTrace(); }
-    }
-  }
-
-
-  // -- DisplayListener methods --
-
-  private boolean drag = false;
-
-  public void displayChanged(DisplayEvent e) {
-    int id = e.getId();
-    if (id == DisplayEvent.MOUSE_PRESSED_CENTER) {
-      drag = true;
-      decayPlot.getDisplayRenderer();
-      doMouse();
-    }
-    else if (id == DisplayEvent.MOUSE_RELEASED_CENTER) {
-      drag = false;
-      decayPlot.reAutoScale();
-    }
-    else if (id == DisplayEvent.MOUSE_DRAGGED) {
-      if (!drag) return; // not a left mouse drag
-      doMouse();
-    }
-  }
-
 
   // -- WindowListener methods --
 
@@ -542,7 +663,6 @@ public class SlimPlotter
   public void windowDeiconified(WindowEvent e) { }
   public void windowIconified(WindowEvent e) { }
   public void windowOpened(WindowEvent e) { }
-
 
   // -- Utility methods --
 
@@ -625,7 +745,6 @@ public class SlimPlotter
     try { return Double.parseDouble(s); }
     catch (NumberFormatException exc) { return last; }
   }
-
 
   // -- Main method --
 
