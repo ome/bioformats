@@ -426,11 +426,16 @@ public class MetadataPane extends JPanel
       title.setFont(newFont);
       title.setText(" " + getTreePathName(tp.el,tp.oNode) + ":");
       titlePanel.add(title);
+      Color aColor = title.getBackground();
 
       //if title has a description, add it in italics
       if (tp.el.hasAttribute("Description")) {
         if(tp.el.getAttribute("Description").length() != 0) {
-          JLabel descrip = new JLabel();
+          JTextArea descrip = new JTextArea();
+          descrip.setEditable(false);
+          descrip.setLineWrap(true);
+          descrip.setWrapStyleWord(true);
+          descrip.setBackground(aColor);
           newFont = new Font(thisFont.getFontName(),
             Font.ITALIC,thisFont.getSize());
           descrip.setFont(newFont);
@@ -439,6 +444,9 @@ public class MetadataPane extends JPanel
           titlePanel.add(descrip);
         }
       }
+      title.setForeground(new Color(255,255,255));
+      titlePanel.setBackground(new Color(0,0,50));
+//      titlePanel.setBackground(new Color(0,0,255,50));
       
 	  //this sets up titlePanel so we can access its height later to
 	  //use for "Goto" button scrollpane view setting purposes
@@ -542,12 +550,6 @@ public class MetadataPane extends JPanel
           }
         }
       }
-      gbc.gridy = placeY;
-      JPanel p = new JPanel();
-      Dimension d = new Dimension(300,1200);
-      p.setPreferredSize(d);
-      dataPanel.add(p,gbc);
-      placeY++;
     }
   }
 
@@ -741,8 +743,10 @@ public class MetadataPane extends JPanel
     public String id;
     public String name;
     public JTable newTable, refTable;
+    public Element el;
 
     public TablePanel(Element e, TabPanel tp, OMEXMLNode on) {
+      el = e;
       oNode = on;
       tPanel = tp;
       id = null;
@@ -799,7 +803,7 @@ public class MetadataPane extends JPanel
 
         setLayout(new GridLayout(0,1));
         JLabel tableName = new JLabel(thisName);
-        newTable = new JTable(myTableModel);
+        newTable = new ClickableTable(myTableModel, this);
         newTable.getColumnModel().getColumn(0).setPreferredWidth(150);
         newTable.getColumnModel().getColumn(1).setPreferredWidth(475);
         JTableHeader tHead = newTable.getTableHeader();
@@ -874,7 +878,7 @@ public class MetadataPane extends JPanel
 
         myTableModel.addTableModelListener(this);
 
-        refTable = new JTable(myTableModel);
+        refTable = new ClickableTable(myTableModel, this);
         refTable.getColumnModel().getColumn(0).setPreferredWidth(150);
         refTable.getColumnModel().getColumn(1).setPreferredWidth(405);
         TableColumn refColumn = refTable.getColumnModel().getColumn(1);

@@ -1,62 +1,62 @@
 <?xml version="1.0" ?>
 <NotebookTemplate Version="1.0">
 	<OMEElement XMLName="Project" Description="Name of this project.">
-	        <OMEAttribute XMLName="ID" Value="" Type="ID"/>
-	        <OMEAttribute XMLName="Name" Value=""/>
-		<OMEAttribute XMLName="Experimenter" Type="Ref"/>	
-		<OMEAttribute XMLName="Group" Type="Ref"/>
+	    <OMEAttribute XMLName="ID" Value="" Type="ID"/>
+	        <OMEAttribute XMLName="Name" Value="" Description="The name of this project."/>
+		<OMEAttribute XMLName="Experimenter" Type="Ref" Description="Refers to the experimenter doing the project."/>	
+		<OMEAttribute XMLName="Group" Type="Ref" Description="Refers to the group doing the project."/>
 	</OMEElement>
 	<OMEElement XMLName="Dataset" Description="Information about the dataset.">
 		<OMEAttribute XMLName="ID" Value="" Type="ID"/>
-	        <OMEAttribute XMLName="Name" Value=""/>
-	        <OMEAttribute XMLName="Locked" Value=""/>
-		<OMEAttribute XMLName="Experimenter" Type="Ref"/>	
-		<OMEAttribute XMLName="Group" Type="Ref"/>
+	        <OMEAttribute XMLName="Name" Value="" Description="The name of this dataset."/>
+	        <OMEAttribute XMLName="Locked" Value="" Description="Whether or not this experiment is locked."/>
+		<OMEAttribute XMLName="Experimenter" Type="Ref" Description="Refers to the experimenter associated with this dataset"/>	
+		<OMEAttribute XMLName="Group" Type="Ref" Description="Refers to the group associated with this dataset."/>
 	</OMEElement>
 	<OMEElement XMLName="Image" Description="Information about the image acquired.">
 		<OMEAttribute XMLName="ID" Value="" Type="ID"/>
-		<OMEAttribute XMLName="Name"/>
-		<OMEAttribute XMLName="CreationDate"/>
-		<OMEAttribute XMLName="Experimenter" Type="Ref"/>
-		<OMEAttribute XMLName="DefaultPixels" Type="Ref"/>
+		<OMEAttribute XMLName="Name" Description="The name of this image."/>
+		<OMEAttribute XMLName="CreationDate" Description="The date when this image was created."/>
+		<OMEAttribute XMLName="Experimenter" Type="Ref" Description="Refers to the experimenter associated with this image."/>
+		<OMEAttribute XMLName="DefaultPixels" Type="Ref" Description="Refers to the pixels that are in this image."/>
 		<OMEElement XMLName="LogicalChannel" Description="">
 			<OMEAttribute XMLName="ID" Value="" Type="ID"/>
-			<OMEAttribute XMLName="Name"/>
-			<OMEAttribute XMLName="LightSource" Type="Ref"/>
-			<OMEAttribute XMLName="OTF" Type="Ref"/>
-			<OMEAttribute XMLName="Detector" Type="Ref"/>
-			<OMEAttribute XMLName="Filter" Type="Ref"/>
+			<OMEAttribute XMLName="Name" Description="The name of this LogicalChannel."/>
+			<OMEAttribute XMLName="LightSource" Type="Ref" Description="Refers to the lightsource used for this LogicalChannel."/>
+			<OMEAttribute XMLName="OTF" Type="Ref" Description="Refers to the OTF thingy associated with this LogicalChannel."/>
+			<OMEAttribute XMLName="Detector" Type="Ref" Description="Refers to the detector used to create this LogicalChannel."/>
+			<OMEAttribute XMLName="Filter" Type="Ref" Description="Refers to the filter used in this LogicalChannel."/>
 		</OMEElement>
 		<OMEElement XMLName="Pixels" Description="">
 			<OMEAttribute XMLName="ID" Value="" Type="ID"/>
-			<OMEAttribute XMLName="SizeX"/>
-			<OMEAttribute XMLName="SizeY"/>
-			<OMEAttribute XMLName="SizeZ"/>
-			<OMEAttribute XMLName="SizeC"/>
-			<OMEAttribute XMLName="SizeT"/>
-			<OMEAttribute XMLName="PixelType"/>
+			<OMEAttribute XMLName="SizeX" Description="The x coordinate size of these pixels."/>
+			<OMEAttribute XMLName="SizeY" Description="The y coordinate size of these pixels."/>
+			<OMEAttribute XMLName="SizeZ" Description="The z coordinate size of these pixels."/>
+			<OMEAttribute XMLName="SizeC" Description="The c coordinate size of these pixels."/>
+			<OMEAttribute XMLName="SizeT" Description="The t coordinate size of these pixels."/>
+			<OMEAttribute XMLName="PixelType" Description="Describes the type of pixels used."/>
 		</OMEElement>
 	</OMEElement>
 	<OMEElement XMLName="Experiment" Description="Describes the experiment.">
 		<OMEAttribute XMLName="ID" Value="" Type="ID"/>
-	        <OMEAttribute XMLName="Type" Value=""/>
-		<OMEAttribute XMLName="Description"/>
-		<OMEAttribute XMLName="Experimenter" Type="Ref"/>
+	        <OMEAttribute XMLName="Type" Value="" Description="The type of experiment this was."/>
+		<OMEAttribute XMLName="Description" Description="A brief description of the experiment."/>
+		<OMEAttribute XMLName="Experimenter" Type="Ref" Description="Refers to the experimenter associated with this experiment."/>
 	</OMEElement>
 	<OMEElement XMLName="Experimenter" Description="Information about the person who did the experiment.">
 		<OMEAttribute XMLName="ID" Value="" Type="ID"/>
-		<OMEAttribute XMLName="FirstName"/>
-		<OMEAttribute XMLName="LastName"/>
-		<OMEAttribute XMLName="Email"/>
-		<OMEAttribute XMLName="Institution"/>
-		<OMEAttribute XMLName="Group" Type="Ref"/>		
+		<OMEAttribute XMLName="FirstName" Description="The experimenter's first name."/>
+		<OMEAttribute XMLName="LastName" Description="The experimenter's last name."/>
+		<OMEAttribute XMLName="Email" Description="The experimenter's email."/>
+		<OMEAttribute XMLName="Institution" Description="The institution the experimenter belongs to."/>
+		<OMEAttribute XMLName="Group" Type="Ref" Description="Refers to the group associated with this experimenter."/>		
 	</OMEElement>
 	<OMEElement XMLName="Instrument" Description="Describes the instrument used.">
 		<OMEAttribute XMLName="ID" Value="" Type="ID"/>		
-		<OMEAttribute XMLName="Manufacturer" Value=""/>
-		<OMEAttribute XMLName="Model" Value=""/>
-		<OMEAttribute XMLName="SerialNumber" Value=""/>
-		<OMEAttribute XMLName="Type" Value=""/>
+		<OMEAttribute XMLName="Manufacturer" Value="" Description="The manufacturer of this instrument."/>
+		<OMEAttribute XMLName="Model" Value="" Description="The model information about this instrument."/>
+		<OMEAttribute XMLName="SerialNumber" Value="" Description="The serialnumber of this instrument."/>
+		<OMEAttribute XMLName="Type" Value="" Description="The type of instrument this was."/>
 	</OMEElement>
 	<OMEElement XMLName="Objective" Description="Info relating to the experiment's objective.">
 		<OMEAttribute XMLName="ID" Value="" Type="ID"/>
