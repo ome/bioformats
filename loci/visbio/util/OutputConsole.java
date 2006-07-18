@@ -134,23 +134,23 @@ public class OutputConsole extends OutputStream {
     write(new byte[] {(byte) b}, 0, 1);
   }
 
-  private boolean lastInvalid;
+//  private boolean lastInvalid;
 
   public void write(byte[] b, int off, int len) throws IOException {
     final OutputConsole out = this;
     final String s = new String(b, off, len);
 
-    // HACK - filter out crappy Java 1.5 XML parser output
-    String[] invalid = {"Compiler warnings:", "outside of element"};
-    for (int i=0; i<invalid.length; i++) {
-      if (s.indexOf(invalid[i]) >= 0) {
-        lastInvalid = true;
-        return;
-      }
-    }
-    // ignore blank lines following invalid output
-    if (lastInvalid && s.trim().equals("")) return;
-    lastInvalid = false;
+//    // HACK - filter out crappy Java 1.5 XML parser output
+//    String[] invalid = {"Compiler warnings:", "outside of element"};
+//    for (int i=0; i<invalid.length; i++) {
+//      if (s.indexOf(invalid[i]) >= 0) {
+//        lastInvalid = true;
+//        return;
+//      }
+//    }
+//    // ignore blank lines following invalid output
+//    if (lastInvalid && s.trim().equals("")) return;
+//    lastInvalid = false;
 
     Util.invoke(false, new Runnable() {
       public void run() {
