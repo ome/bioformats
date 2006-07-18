@@ -9,12 +9,17 @@ echo Building SlimPlotter.jar...
 cp loci/slim/slim.manifest .
 jar cfm loci/slim/SlimPlotter.jar \
 slim.manifest loci/slim/*.class \
-loci/formats/DataTools.class \
-loci/formats/ExtensionFileFilter.class loci/formats/ComboFileFilter.class \
-visad/*.class visad/java3d/*.class visad/java2d/*.class \
-visad/browser/*.class visad/util/*.class visad/collab/*.class \
+loci/formats/DataTools*.class \
+loci/formats/ExtensionFileFilter*.class loci/formats/ComboFileFilter*.class \
+loci/visbio/util/OutputConsole*.class loci/visbio/util/OutputEvent*.class \
+loci/visbio/util/SwingUtil*.class loci/visbio/util/LAFUtil*.class \
+visad/*.class visad/java3d/*.class visad/java2d/MouseBehaviorJ2D*.class \
+visad/browser/Divider*.class visad/browser/RangeSlider*.class \
+visad/browser/Convert*.class \
+visad/util/*.class visad/collab/*.class \
 visad/data/*.class visad/data/units/*.class \
-visad/bom/RubberBandBoxRendererJ3D*.class \
+visad/bom/CurveManipulationRendererJ3D*.class \
+visad/bom/ShadowCurveSetTypeJ3D*.class \
 loci/slim/*.java loci/slim/build
 rm slim.manifest
 
