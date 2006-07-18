@@ -6,55 +6,60 @@
 
 package loci.browser;
 
-import javax.swing.*;
-import java.beans.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
+import javax.swing.*;
 import loci.formats.*;
 
 /** ImagePreview.java is a 1.4 example used by FileChooserDemo2.java. */
 public class ImagePreview extends JComponent
   implements PropertyChangeListener
 {
-    ImageIcon thumbnail = null;
-    File file = null;
+  ImageIcon thumbnail = null;
+  File file = null;
 
-    public ImagePreview(JFileChooser fc) {
-	setPreferredSize(new Dimension(100, 50));
-	fc.addPropertyChangeListener(this);
+  public ImagePreview(JFileChooser fc) {
+    setPreferredSize(new Dimension(100, 50));
+    fc.addPropertyChangeListener(this);
+  }
+
+  public void loadImage() {
+    try {
+      if (file == null) {
+        thumbnail = null;
+        return;
+      }
+
+      //Don't use createImageIcon (which is a wrapper for getResource)
+      //because the image we're trying to load is probably not one
+      //of this program's own resources.
+      System.err.println("file path: "+file.getAbsolutePath());
+
+      // CTR TODO this is stupid
+      ImageReader ir = new ImageReader();
+      FormatReader fr = ir.getReader(file.getAbsolutePath());
+      ChannelMerger cm = new ChannelMerger(fr);
+      BufferedImage image = cm.openImage(file.getAbsolutePath(),0);
+      ImageIcon tmpIcon = new ImageIcon(
+        Toolkit.getDefaultToolkit().createImage(image.getSource()));
+
+      if (tmpIcon != null) {
+        if (tmpIcon.getIconWidth() > 90) {
+          thumbnail = new ImageIcon(tmpIcon.getImage().getScaledInstance(90,
+            -1, Image.SCALE_DEFAULT));
+        }
+        else { // no need to miniaturize
+          thumbnail = tmpIcon;
+        }
+      }
     }
-    
-    public void loadImage() {
-	try {
-	    if (file == null) {
-		thumbnail = null;
-		return;
-	    }
-	    
-	    //Don't use createImageIcon (which is a wrapper for getResource)
-	    //because the image we're trying to load is probably not one
-	    //of this program's own resources.
-	    System.err.println("file path: "+file.getAbsolutePath());
-	    ChannelMerger cm = new ChannelMerger(new ImageReader().getReader(file.getAbsolutePath()));
-	    ImageIcon tmpIcon = new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				      (cm.openImage(file.getAbsolutePath(),0).getSource())));
-	    if (tmpIcon != null) {
-		if (tmpIcon.getIconWidth() > 90) {
-		    thumbnail = new ImageIcon(tmpIcon.getImage().getScaledInstance(90,
-							   -1, Image.SCALE_DEFAULT));
-		}
-		else { // no need to miniaturize
-		    thumbnail = tmpIcon;
-		}
-	    }
-	    
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
-    }
+    catch (Exception e) { e.printStackTrace(); }
+  }
 
-
-   public void propertyChange(PropertyChangeEvent e) {
+  public void propertyChange(PropertyChangeEvent e) {
     boolean update = false;
     String prop = e.getPropertyName();
 

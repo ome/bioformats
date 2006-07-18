@@ -15,8 +15,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import loci.ome.viewer.MetadataPane;
 
 public class CustomWindow extends ImageWindow implements ActionListener,
@@ -30,7 +30,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   private static final String ANIM_STRING = "Animate";
   private static final String STOP_STRING = "Stop";
-
 
   // -- Fields - state --
 
@@ -56,14 +55,14 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   private JProgressBar progressBar;
   private Thread thread;
 
-
   // -- Constructor --
 
   /** CustomWindow constructors, initialisation */
   public CustomWindow(LociDataBrowser db, ImagePlus imp, ImageCanvas canvas) {
     super(imp, canvas);
     this.db = db;
-    this.setTitle(imp.getTitle().substring(imp.getTitle().lastIndexOf(File.separatorChar)+1));
+    String title = imp.getTitle();
+    this.setTitle(title.substring(title.lastIndexOf(File.separatorChar)+1));
 
     // create panel for image canvas
     Panel imagePane = new Panel() {
@@ -320,7 +319,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     ic.addKeyListener(this);
   }
 
-
   // -- CustomWindow methods --
 
   /** selects and shows slice defined by z, t and c */
@@ -337,7 +335,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   public void showSlice(int index) {
     if (index >= 1 && index <= imp.getStackSize()) {
       synchronized (imp) {
-	  System.err.println("imp.setSlice("+index+")");
         imp.setSlice(index);
       }
       imp.updateAndDraw();
@@ -348,7 +345,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         "; tSliceSel = " + tSliceSel.getValue() + ")");
     }
   }
-
 
   // -- ImageWindow methods --
 
@@ -445,11 +441,9 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     g.drawString(sb.toString(), 5, insets.top + textGap);
   }
 
-
   // -- Component methods --
 
   public void paint(Graphics g) { drawInfo(g); }
-
 
   // -- ActionListener methods --
 
@@ -572,7 +566,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         int[] indices = new int[zSliceSel.getMaximum()-1];
         for (int k=0; k<indices.length; k++) {
           indices[k] = db.getIndex(k,t-1,c-1);
-	  System.err.println(db.getIndex(k,t-1,c-1));
         }
         if (LociDataBrowser.DEBUG) {
           System.err.println("Indices:");
@@ -591,7 +584,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       }
     }
   }
-
 
   // -- AdjustmentListener methods --
 
@@ -612,7 +604,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     showSlice(z, t, c);
   }
 
-
   // -- ChangeListener methods --
 
   public void stateChanged(ChangeEvent e) {
@@ -628,7 +619,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     }
   }
 
-
   // -- ItemListener methods --
 
   public synchronized void itemStateChanged(ItemEvent e) {
@@ -638,7 +628,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     if (db.virtual) {setIndices();}
     showSlice(z, t, c);
   }
-
 
   // -- KeyListener methods --
 
@@ -670,7 +659,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   public void keyReleased(KeyEvent e) { }
 
   public void keyTyped(KeyEvent e) { }
-
 
   // -- WindowListener methods --
 
