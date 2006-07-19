@@ -463,7 +463,7 @@ public class SlimPlotter implements ActionListener,
 
     // show 2D window on screen
     progress.setNote("Creating plots");
-    JFrame intensityFrame = new JFrame("Intensity Data");
+    JFrame intensityFrame = new JFrame("Intensity Data - " + file.getName());
     intensityFrame.addWindowListener(this);
     JPanel intensityPane = new JPanel();
     intensityPane.setLayout(new BorderLayout());
@@ -493,7 +493,8 @@ public class SlimPlotter implements ActionListener,
     if (progress.isCanceled()) System.exit(0);
 
     // show 3D window on screen
-    JFrame decayFrame = new JFrame("Spectral Lifetime Data");
+    JFrame decayFrame = new JFrame("Spectral Lifetime Data - " +
+      file.getName());
     decayFrame.addWindowListener(this);
     JPanel decayPane = new JPanel();
     decayPane.setLayout(new BorderLayout());
