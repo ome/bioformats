@@ -4,6 +4,7 @@
 
 import java.io.*;
 
+/** Computes minimum edit distance between two strings. */
 public class EditDistance {
 
   public static void main(String[] args) throws IOException {

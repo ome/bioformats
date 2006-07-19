@@ -4,7 +4,6 @@
 
 import java.net.MalformedURLException;
 import java.util.List;
-
 import org.openmicroscopy.ds.Criteria;
 import org.openmicroscopy.ds.DataFactory;
 import org.openmicroscopy.ds.DataServer;

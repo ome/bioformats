@@ -6,6 +6,8 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Hashtable;
 import loci.formats.*;
+import loci.formats.in.TiffReader;
+import loci.formats.out.TiffWriter;
 
 /** Allows raw user OME-XML comment editing for the given OME-TIFF files. */
 public class EditOMETIFF {

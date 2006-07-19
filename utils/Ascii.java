@@ -1,4 +1,6 @@
+//
 // Ascii.java
+//
 
 /** Outputs the readable ASCII table from 32 to 127. */
 public class Ascii {

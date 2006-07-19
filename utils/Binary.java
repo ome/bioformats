@@ -1,4 +1,6 @@
+//
 // Binary.java
+//
 
 import java.io.*;
 
