@@ -1,3 +1,14 @@
+/*
+* TemplateParser.java
+*
+*   a simple xml parser to help set up the MetadataNotebook's gui 
+* based on the commonly used data specified in Template.xml
+*/
+
+/*
+*   Written by: Christopher Peterson <crpeterson2@wisc.edu>
+*/
+
 package loci.ome.notebook;
 
 import javax.xml.parsers.*;
@@ -5,14 +16,6 @@ import org.w3c.dom.*;
 import java.util.Vector;
 import java.util.Hashtable;
 import java.io.*;
-
-/**
-*   TemplateParser.java  : a simple xml parser to help set up the
-*      MetadataNotebook's gui based on the commonly used data specified
-*      in Template.xml
-*
-*   Written by: Christopher Peterson <crpeterson2@wisc.edu>
-*/
 
 public class TemplateParser
 {
@@ -46,15 +49,18 @@ public class TemplateParser
   /** The root xml Element in the Document*/
   protected Element root;
 
-
-//  protected Hashtable refHash;
-
   //  --Constructor--
 
-  /** Parses the template document designated by the file argument*/
+  /** Parses the template document designated by the file argument,
+  *   creating a list of "top-level" Elements which I define as those
+  *   elements that have either an OMENode as a parent or a
+  *   CustomAttributesNode as a parent that has an OMENode as a parent
+  *   these top-level elements correspond to the tabs formed in the
+  *   MetadataPane
+  */
   public TemplateParser(File file)
   {
-// Parse the specified xml file (should be Template.xml) using the DOM
+    // Parse the specified xml file (should be Template.xml) using the DOM
     try {
       DocumentBuilder db = DOC_FACT.newDocumentBuilder();
       templateDoc = db.parse(file);
@@ -92,8 +98,11 @@ public class TemplateParser
   *   and finally the value corresponds to what type the OMEAttribute should
   *   have */
   public static Hashtable getRefHash() {
-  //setup Hashtables for getting reference types
+    //setup Hashtables for getting reference types
     Hashtable refHash = new Hashtable();
+    //check each different symantic type definition file for definitions
+    //if definitions overlap, they should be the same anyway, so the last
+    //one encountered is the one used
     for (int i = 0;i<TYPE_DEF_LIST.length;i++) {
       Document templateDoc = null;
       try {
@@ -106,7 +115,8 @@ public class TemplateParser
         e.printStackTrace();
       }
 
-//surfing node-trees...
+      //surfing node-trees... looking at the "home-baked" symantic
+      //type definitions at this point...    .ome type files
       Element thisRoot = templateDoc.getDocumentElement();
       NodeList nl = thisRoot.getChildNodes();
       for (int j = 0;j < nl.getLength();j++) {
@@ -146,6 +156,7 @@ public class TemplateParser
         }
       }
     }
+    //need to parse differently for  each .xsd type symantic def file
     for (int i = 0;i<OLD_DEF_LIST.length;i++) {
       Document templateDoc = null;
       try {
@@ -158,7 +169,7 @@ public class TemplateParser
         e.printStackTrace();
       }
 
-//surfing node-trees...
+      //surfing node-trees...
       Element thisRoot = templateDoc.getDocumentElement();
       NodeList eleList = thisRoot.getChildNodes();
       

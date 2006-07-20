@@ -40,14 +40,18 @@ public class MetadataNotebook extends JFrame
   public MetadataNotebook(String[] args) {
     super("OME Metadata Notebook");
 
+    //initialize fields
     currentFile = null;
     opening = true;
-
+    
+    //give the Template.xml file to the parser to feed on
     File f = new File("Template.xml");
     TemplateParser tp = new TemplateParser(f);
+    //create a MetadataPane, where most everything happens
     metadata = new MetadataPane(tp);
     setContentPane(metadata);
 
+    //setup the menus on this frame
     JMenuBar menubar = new JMenuBar();
     setJMenuBar(menubar);
     JMenu file = new JMenu("File");
@@ -80,6 +84,8 @@ public class MetadataNotebook extends JFrame
     fileExit.setMnemonic('x');
     fileExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, MENU_MASK));
 
+    //setup the tab menu to reflect the top-level tab names gathered by
+    //TemplateParser from the template in Template.xml
     tabsMenu = new JMenu("Tabs");
     menubar.add(tabsMenu);
     Element[] tabs = tp.getTabs();
@@ -88,6 +94,7 @@ public class MetadataNotebook extends JFrame
       Element e = tabs[i];
       tabNames[i] = MetadataPane.getTreePathName(e);
     }
+    //call the method that changes the names in the Tabs menu
     changeTabMenu(tabNames);
 
     JMenu toolsMenu = new JMenu("Tools");
@@ -108,10 +115,15 @@ public class MetadataNotebook extends JFrame
     helpAbout.setMnemonic('a');
     helpAbout.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, MENU_MASK));
 
+    //make a filechooser to open and save our precious files
     chooser = new JFileChooser(System.getProperty("user.dir"));
 
+    //if arguments are specified, it means we should immediately open the
+    //file with filename specified in the first argument
     if (args.length > 0) openFile(new File(args[0]));
+    //useful frame method that handles closing of window
     setDefaultCloseOperation(EXIT_ON_CLOSE);
+    //put frame in the right place, with the right size, and make visible
     setLocation(100, 100);
     pack();
     setVisible(true);
@@ -120,30 +132,40 @@ public class MetadataNotebook extends JFrame
 
   // -- MetadataViewer API methods --
 
+  //opens a file, sets the title of the frame to reflect the current file
   public void openFile(File file) {
     metadata.setOMEXML(file);
     setTitle("OME Metadata Notebook - " + file);
   }
 
+  //saves to a file, sets title of frame to reflect the current file
   public void saveFile(File file) {
     try {
+      //use the node tree in the MetadataPane to write flattened OMECA
+      //to a given file
       metadata.getRoot().writeOME(file, true);
-//      FileOutputStream fos = new FileOutputStream(file);
-//      DOMUtil.writeXML(fos, metadata.getDoc() );
+      setTitle("OME Metadata Notebook - " + file);
     }
     catch (Exception e) {
-//EVENTUALLY HAVE A DIALOG HERE
-      System.out.println("Attempt failed to open file: " + file.getName() );
+      //if all hell breaks loose, display an error dialog
+      JOptionPane.showMessageDialog(this,
+            "Sadly, the file you specified is either write-protected\n" +
+            "or in use by another program. Game over, man.",
+            "Unable to Write to Specified File", JOptionPane.ERROR_MESSAGE);
+      System.out.println("ERROR! Attempt failed to open file: " + file.getName() );
     }
   }
 
+  //given an array of Strings of appropriate tab names, this method
+  //sets up the tab menu accordingly
   public void changeTabMenu(String[] tabs) {
     tabsMenu.removeAll();
     for (int i=0; i<tabs.length; i++) {
       String thisName = tabs[i];
       JMenuItem thisTab = new JMenuItem(thisName);
       tabsMenu.add(thisTab);
-      thisTab.setAccelerator(KeyStroke.getKeyStroke(MetadataPane.getKey(i+1),
+      //set up shortcut keys if tabs menu has less than 11 items
+      if ((i+1) < 11) thisTab.setAccelerator(KeyStroke.getKeyStroke(MetadataPane.getKey(i+1),
         InputEvent.ALT_MASK));
       Integer aInt = new Integer(i);
       thisTab.setActionCommand("tabChange" + aInt.toString());

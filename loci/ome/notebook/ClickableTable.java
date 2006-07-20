@@ -1,3 +1,16 @@
+/*
+* ClickableTable.java
+*
+*   a class that makes tables you can right click to
+* add or subtract duplicate tables and get information
+* on the attributes being manipulated
+*/
+
+/*
+* Written by:  Christopher Peterson  <crpeterson2@wisc.edu>
+*/
+
+
 package loci.ome.notebook;
 
 import javax.swing.JTable;
@@ -10,6 +23,9 @@ import javax.swing.WindowConstants;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -29,27 +45,67 @@ import loci.formats.ReflectedUniverse;
 import java.util.Vector;
 
 public class ClickableTable extends JTable 
-  implements MouseListener, ActionListener {
+  implements MouseListener, ActionListener, ListSelectionListener {
 
+//stores the TablePanel this table is associated with
   protected MetadataPane.TablePanel tp;
+  
+//is the current popup menu at any given rightclick
   protected JPopupMenu jPop;
+  
+//the current row being clicked on at any point  
   private int thisRow;
+  
+//the name of the attribute in the row being clicked on currently
   private String attrName;
+  
+//tells at any given point if the TablePanel being added or deleted
+//is a "duplicate" , e.g. if there is more than one element with its
+//same tagname on a given level of the node tree
   private Boolean isDuplicate;
 
   // -- ClickableTable Constructors --
 
   public ClickableTable(TableModel model, MetadataPane.TablePanel tablePanel) {
     super(model);
+    
     addMouseListener(this);
+
+//initialize various fields
     tp = tablePanel;
     jPop = new JPopupMenu();
     thisRow = -1;
     attrName = null;
+
+//setup a selectionlistener on this table so that if any row is selected it
+    //is immediately deselected (work-around 
+    //for multiple selection irritations)    
+    setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    //Ask to be notified of selection changes.
+    ListSelectionModel rowSM = getSelectionModel();
+    rowSM.addListSelectionListener(new ListSelectionListener() {
+    public void valueChanged(ListSelectionEvent e) {
+	    //Ignore extra messages.
+	    if (e.getValueIsAdjusting()) return;
+	
+	    ListSelectionModel lsm =
+	        (ListSelectionModel)e.getSource();
+	    if (lsm.isSelectionEmpty()) {
+	        //no rows are selected
+	    } 
+	    else {
+	        lsm.clearSelection();
+	        //selectedRow is selected
+	    }
+    }
+});
+
   }
   
   // -- Static ClickableTable API Methods --
-    
+
+  //tests if the given tagname should be 
+  //placed under a CustomAttributesNode  
   public static boolean isInCustom(String tagName) {
     if (tagName.equals("Project") ||
       tagName.equals("Feature") ||
@@ -60,6 +116,8 @@ public class ClickableTable extends JTable
     else return true;
   }
   
+  //tests if this word should have an "a" or an "an"
+  //before it. char c is the first character of the word. 
   public static boolean usesAn(char c) {
     boolean result = false;
     switch(c) {
@@ -85,22 +143,33 @@ public class ClickableTable extends JTable
   // -- MouseListener API Methods --
   
   public void mousePressed(MouseEvent e) {
-    if (e.getButton() == MouseEvent.BUTTON3 || e.getButton() == MouseEvent.BUTTON2) {
+    //test if button 2 or 3 are pressed
+    if (e.getButton() == MouseEvent.BUTTON3 
+      || e.getButton() == MouseEvent.BUTTON2) 
+    {
+      //nifty table method, sees which row the pointer is in
       thisRow = rowAtPoint(e.getPoint());
+      //given the row, get the appropriate attribute's name
       attrName = (String) getModel().getValueAt(thisRow,0);
+      
+      //setup the popup menu based on this information
       jPop = new JPopupMenu("Add/Remove " + attrName + " Attribute:");
       JMenuItem infoItem = null;
-      if( usesAn(attrName.charAt(0)) ) infoItem = new JMenuItem("What is an " + attrName + "?");
+      if( usesAn(attrName.charAt(0)) ) infoItem = 
+        new JMenuItem("What is an " + attrName + "?");
       else infoItem = new JMenuItem("What is a " + attrName + "?");
       
+      //strip away the "(x)" at the end of the tablepanel's name so
+      //it makes sense in the menu, e.g. "Add another Project (2)"
+      //is inaccurate, while "Add another Project" is what we want
       String realBigName = tp.name;
       isDuplicate = false;
       if(realBigName.endsWith(")") ) {
         isDuplicate = true;
         realBigName = realBigName.substring(0,realBigName.length()-4);
       }
-        
       
+      //setup the various menuitems in the popup menu
       JMenuItem addItem = new JMenuItem("Add another " + realBigName);
       JMenuItem bigRemItem = new JMenuItem("Delete this " + realBigName);
       JMenuItem remItem = new JMenuItem("Delete this " + attrName);
@@ -113,6 +182,7 @@ public class ClickableTable extends JTable
       remItem.addActionListener(this);
       remItem.setActionCommand("delete");
       
+      //add the menuitems to the popup menu, add logical separators
       jPop.add(infoItem);
       JSeparator sep = new JSeparator();
       jPop.add(sep);
@@ -125,6 +195,7 @@ public class ClickableTable extends JTable
     }
   }
   
+  //abstract methods we must override but have no use for
   public void mouseReleased(MouseEvent e) {}
   public void mouseClicked(MouseEvent e) {}
   public void mouseEntered(MouseEvent e) {}
@@ -132,14 +203,20 @@ public class ClickableTable extends JTable
   
   // -- ActionLister API Methods --
   
+  //handles the actions caused by selection in the popup menu
   public void actionPerformed(ActionEvent e) {
     String cmd = e.getActionCommand();
+    //create a HelpFrame if user requests help on an attribute
     if ("help".equals(cmd)) {
       HelpFrame helpWin = new HelpFrame();
     }
+    //handle deleting of a single attribute's value in the table
     if ("delete".equals(cmd)) {
+      //get a list of all attributes in this TablePanel
       Vector attrVector = DOMUtil.getChildElements("OMEAttribute", tp.el);
       Element thisAttr = null;
+      //test if attrName is a "Name" or "XMLName" attribute, find the element
+      //that matches attrName 
       for (int i = 0;i<attrVector.size();i++) {
         Element temp = (Element) attrVector.get(i);
         if (temp.hasAttribute("Name")) {
@@ -149,51 +226,80 @@ public class ClickableTable extends JTable
           if (attrName.equals(temp.getAttribute("XMLName")) ) thisAttr = temp;
         }
       }
+      
+      //set nodetree to reflect a blank attribute here, also set table blank
       tp.oNode.setAttribute(thisAttr.getAttribute("XMLName"), "");
       getModel().setValueAt("", thisRow, 1);
     }
+    //this signifies that the user wants to add another "clone" TablePanel
     if ("bigAdd".equals(cmd)) {
-      if (tp.isTopLevel) {
-        String thisTagName =tp.oNode.getDOMElement().getTagName();
+      //get the tagname of the element associated with this tablepanel
+      String thisTagName =tp.oNode.getDOMElement().getTagName();
       
+      //test if the tablepanel in question is actually a tab, e.g. the only
+      //ancestor nodes are CustomAttributesNode and/or OMENode
+      if (tp.isTopLevel) {        
+        //test if we need to deal with CustomAttributesNodes using the
+        //isInCustom(String tagName) static method
         Element parentEle = null;
         if (!isInCustom(thisTagName)) {
           parentEle = tp.tPanel.ome.getDOMElement();
         }
         else parentEle = tp.tPanel.ome.getChild("CustomAttributes").getDOMElement();
+        //create a new element of the appropriate type with the correct parent
         Element cloneEle = DOMUtil.createChild(parentEle,thisTagName);      
-           
+
+				//tell the tablepanel to tell the MetadataPane to redo its GUI based on
+				//the new node tree structure           
         tp.callReRender();
       }
+      //if tablepanel doesn't represent a "top-level" element
       else {
-        String thisTagName =tp.oNode.getDOMElement().getTagName();
+        //test if we need to deal with CustomAttributesNodes
         if (!isInCustom(thisTagName)) {
+          //create a new element of appropriate type with the correct parent
           Element anEle = DOMUtil.createChild(tp.tPanel.oNode.getDOMElement(), 
             thisTagName);
         }
         else {
           OMEXMLNode realParent = tp.tPanel.oNode.getChild("CustomAttributes");
+          //create a new element of appropriate type with the correct
+          //CustomAttributes parent
           Element anEle = DOMUtil.createChild(realParent.getDOMElement(), 
             thisTagName);
         }
+        
+        //tell the tablepanel to tell the MetadataPane to redo its GUI based on
+				//the new node tree structure    
         tp.callReRender();
       }
     }
+    //signifies user wishes to delete an entire tablepanel.
+    //N.B. : if there is only one instance of the tablepanel in question,
+    //it will be deleted then recreated blank in order to comply with the
+    //template
     if ("bigRem".equals(cmd)) {
+      //test if we're dealing with a "top-level" element
       if (tp.isTopLevel) {
         String thisTagName =tp.oNode.getDOMElement().getTagName();
         Element parentEle = null;
         if (!isInCustom(thisTagName)) {
           parentEle = tp.tPanel.ome.getDOMElement();
+          //remove the node in question from its parent
           parentEle.removeChild((Node) tp.oNode.getDOMElement());
         }
         else {
           OMEXMLNode realParent = tp.tPanel.ome.getChild("CustomAttributes");
           parentEle = realParent.getDOMElement();
+          //remove the node in question from its (CustomAttributes) parent
           parentEle.removeChild((Node) tp.oNode.getDOMElement());            
         }
+        
+        //tell the tablepanel to tell the MetadataPane to redo its GUI based on
+				//the new node tree structure
         tp.callReRender();
       }
+      //if not a "top-level" element, do this
       else {
         String thisTagName =tp.oNode.getDOMElement().getTagName();
         if (!isInCustom(thisTagName)) {
@@ -205,6 +311,9 @@ public class ClickableTable extends JTable
           Element parentEle = realParent.getDOMElement(); 
           parentEle.removeChild((Node) tp.oNode.getDOMElement());
         }
+        
+        //tell the tablepanel to tell the MetadataPane to redo its GUI based on
+				//the new node tree structure
         tp.callReRender();
       }
     }
@@ -213,11 +322,14 @@ public class ClickableTable extends JTable
   // -- Helper Classes --
   
   public class HelpFrame extends JFrame {
+    //the only constructor
     public HelpFrame() {
+      //set up the frame itself
       super("Help! - " + tp.name);
       setLocation(200,200);
       setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
       
+      //make a content panel to display stuff on, set its size
       JPanel contentPanel = new JPanel();
       Dimension dim = new Dimension(300,125);
       contentPanel.setPreferredSize(dim);
@@ -225,6 +337,7 @@ public class ClickableTable extends JTable
       setContentPane(contentPanel);
       contentPanel.setBackground(new Color(0,0,50));
 
+			//create a label corresponding to the attribute in question
       JLabel titleLabel = new JLabel(" " + attrName + ":");
       Font thisFont = titleLabel.getFont();
       Font newFont = new Font(thisFont.getFontName(),Font.BOLD,18);
@@ -232,7 +345,10 @@ public class ClickableTable extends JTable
       contentPanel.add(titleLabel, BorderLayout.NORTH);
       titleLabel.setForeground(new Color(255,255,255));
 
+      //set default help text
       String desc = "      No description available for " + attrName + ".";
+      //cruise the template's node tree to get the appropriate 
+      //OMEAttribute's "Description" attribute
       Vector attrVector = DOMUtil.getChildElements("OMEAttribute", tp.el);
       Element thisAttr = null;
       for (int i = 0;i<attrVector.size();i++) {
@@ -244,14 +360,17 @@ public class ClickableTable extends JTable
           if (attrName.equals(temp.getAttribute("XMLName")) ) thisAttr = temp;
         }
       }
-      
-      if (thisAttr != null && thisAttr.hasAttribute("Description")) desc = "      " + thisAttr.getAttribute("Description");
+      if (thisAttr != null && thisAttr.hasAttribute("Description")) 
+        desc = "      " + thisAttr.getAttribute("Description");
+
+      //make a textarea to hold the description found
       JTextArea descArea = new JTextArea(desc);
       descArea.setEditable(false);
       descArea.setLineWrap(true);
       descArea.setWrapStyleWord(true);
       contentPanel.add(descArea, BorderLayout.CENTER);      
       
+      //make the frame the right size and visible
       pack();
       setVisible(true);
     }

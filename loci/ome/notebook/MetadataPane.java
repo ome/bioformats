@@ -207,6 +207,8 @@ public class MetadataPane extends JPanel
     panelsWithID = new Vector();
     addItems = new Vector();
     tabPane.removeAll();
+    try {thisOmeNode = new OMENode();}
+    catch(Exception e) {e.printStackTrace();}
 
     //use the list acquired from Template.xml to form the initial tabs
     Element[] tabList = tParse.getTabs();
@@ -220,7 +222,6 @@ public class MetadataPane extends JPanel
 
       try {
         //reflect api gets around large switch statements
-        thisOmeNode = new OMENode();
         ReflectedUniverse r = new ReflectedUniverse();
         String unknownName = tabList[i].getAttribute("XMLName");
         if (unknownName.equals("Project") || unknownName.equals("Feature") ||
@@ -228,11 +229,29 @@ public class MetadataPane extends JPanel
           unknownName.equals("Dataset") || unknownName.equals("Image"))
         {
           r.exec("import org.openmicroscopy.xml." + unknownName + "Node");
+          r.setVar("parent", thisOmeNode);
+          r.exec("result = new " + unknownName + "Node(parent)");
+          n = (OMEXMLNode) r.getVar("result");
         }
-        else r.exec("import org.openmicroscopy.xml.st." + unknownName + "Node");
-        r.setVar("parent", thisOmeNode);
-        r.exec("result = new " + unknownName + "Node(parent)");
-        n = (OMEXMLNode) r.getVar("result");
+        else {
+	        r.exec("import org.openmicroscopy.xml.CustomAttributesNode");
+	        r.exec("import org.openmicroscopy.xml.st." +
+	          unknownName + "Node");
+	        Element currentCA = DOMUtil.getChildElement("CustomAttributes", thisOmeNode.getDOMElement());
+	        if (currentCA != null) {
+	          CustomAttributesNode caNode = new CustomAttributesNode(currentCA);
+	          r.setVar("parent", caNode);
+	          r.exec("result = new " + unknownName + "Node(parent)");
+	          n = (OMEXMLNode) r.getVar("result");
+	        }
+	        else {
+	          Element cloneEle = DOMUtil.createChild(thisOmeNode.getDOMElement(),"CustomAttributes");
+	          CustomAttributesNode caNode = new CustomAttributesNode(cloneEle);
+	          r.setVar("parent", caNode);
+	          r.exec("result = new " + unknownName + "Node(parent)");
+	          n = (OMEXMLNode) r.getVar("result");
+	        }
+        }
       }
       catch (Exception exc) {
         System.out.println(exc.toString());
