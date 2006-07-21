@@ -18,10 +18,13 @@ import org.w3c.dom.*;
 import java.awt.event.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /** MetadataPane is a panel that displays OME-XML metadata. */
 public class MetadataPane extends JPanel
-  implements Runnable
+  implements Runnable, ComponentListener
 {
   // -- Constants --
   protected static final String[] TREE_COLUMNS = {"Attribute", "Value"};
@@ -48,6 +51,12 @@ public class MetadataPane extends JPanel
 
   /** A list of external references to be added to the combobox cell editor*/
   protected Vector addItems;
+  
+  /** A list of the TabPanels*/
+  protected Vector tabPanelList;
+  
+  /** keeps track of minimum dimensions of a TabPanel*/
+  private Dimension defaultTabSize;
 
   // -- Fields - raw panel --
 
@@ -81,7 +90,10 @@ public class MetadataPane extends JPanel
     setupTabs();
     setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
     add(tabPane);
+    setPreferredSize(new Dimension(700, 500));
     tabPane.setVisible(true);
+    TabPanel tabP = (TabPanel) tabPanelList.get(0);
+    defaultTabSize = tabP.getSize();
 
     // -- Raw panel --
 
@@ -203,6 +215,7 @@ public class MetadataPane extends JPanel
   public void setupTabs() {
     //make sure all old gui stuff is tossed when this called twice.
     //also clear our TablePanel lists
+    tabPanelList = new Vector();
     panelList = new Vector();
     panelsWithID = new Vector();
     addItems = new Vector();
@@ -269,7 +282,7 @@ public class MetadataPane extends JPanel
       scrollPane.setVerticalScrollBarPolicy(
         JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
       scrollPane.setHorizontalScrollBarPolicy(
-        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
       String desc = tabList[i].getAttribute("Description");
       if (desc.length() == 0) tabPane.addTab(thisName, null, scrollPane, null);
       else tabPane.addTab(thisName, null, scrollPane, desc);
@@ -300,6 +313,7 @@ public class MetadataPane extends JPanel
     //Get rid of old gui components and old TablePanel lists
     //when new file is opened
     tabPane.removeAll();
+    tabPanelList = new Vector();
     panelList = new Vector();
     panelsWithID = new Vector();
     addItems = new Vector();
@@ -458,26 +472,10 @@ public class MetadataPane extends JPanel
     if(!tp.isRendered) {
       tp.isRendered = true;
       tp.removeAll();
-
-      //Set up the GridBagLayout
-
-      JPanel dataPanel = new JPanel();
-      dataPanel.setLayout(new GridBagLayout());
-      GridBagConstraints gbc = new GridBagConstraints();
-      gbc.fill = GridBagConstraints.HORIZONTAL;
-      gbc.anchor = GridBagConstraints.NORTHWEST;
-      Insets ins = new Insets(10,10,10,10);
-      gbc.insets = ins;
-      gbc.weightx = 1.0;
-      gbc.weighty = 1.0;
-      gbc.gridwidth = GridBagConstraints.REMAINDER;
-      gbc.gridheight = 1;
-      //placeY will hold info on which position to add a new component
-      //to the layout
-      int placeY = 0;
+      
+      Vector iHoldTables = new Vector();
 
       //add a title label to show which element
-
       JPanel titlePanel = new JPanel();
       titlePanel.setLayout(new GridLayout(2,1));
       JLabel title = new JLabel();
@@ -501,33 +499,22 @@ public class MetadataPane extends JPanel
             Font.ITALIC,thisFont.getSize());
           descrip.setFont(newFont);
           descrip.setText( "     " + tp.el.getAttribute("Description"));
-          ins = new Insets(10,30,10,10);
           titlePanel.add(descrip);
         }
       }
       title.setForeground(new Color(255,255,255));
       titlePanel.setBackground(new Color(0,0,50));
-//      titlePanel.setBackground(new Color(0,0,255,50));
       
 	  //this sets up titlePanel so we can access its height later to
 	  //use for "Goto" button scrollpane view setting purposes
       tp.titlePanel = titlePanel;
 
-	  //Layout stuff distinguishes between the title and the data panels
-      tp.setLayout(new BorderLayout());
-      tp.add(titlePanel,BorderLayout.NORTH);
-      tp.add(dataPanel,BorderLayout.CENTER);
-
 	  //First instantiation of TablePanel. This one corresponds to the
 	  //actual "top-level" element, e.g. what the main Tab element is
-      gbc.gridy = placeY;
       TablePanel pan = new TablePanel(tp.el, tp, tp.oNode);
-      dataPanel.add(pan,gbc);
-      placeY++;
+      iHoldTables.add(pan);
 
 	  //make the nested elements have a further indent to distinguish them
-      ins = new Insets(10,30,10,10);
-      gbc.insets = ins;
 
 	  //look at the template to get the nested Elements we need to display
 	  //with their own TablePanels
@@ -601,31 +588,51 @@ public class MetadataPane extends JPanel
               }
               catch (Exception exc) { exc.printStackTrace(); }
 
-              gbc.gridy = placeY;
               TablePanel p = new TablePanel(e, tp, n);
-              dataPanel.add(p,gbc);
-              placeY++;
+              iHoldTables.add(p);
             }
             else {
               for(int j = 0;j<v.size();j++) {
                 OMEXMLNode n = (OMEXMLNode) v.get(j);
-                gbc.gridy = placeY;
+
                 TablePanel p = new TablePanel(e, tp, n);
-                dataPanel.add(p,gbc);
-                placeY++;
+                iHoldTables.add(p);
               }
             }
           }
           else {
             OMEXMLNode n = null;
-
-            gbc.gridy = placeY;
+            
             TablePanel p = new TablePanel(e, tp, n);
-            dataPanel.add(p,gbc);
-            placeY++;
+            iHoldTables.add(p);
           }
         }
       }
+      
+      String rowString = "";
+      for (int i = 0;i<iHoldTables.size();i++) {
+      	rowString = rowString + "5dlu, pref, ";
+      }
+      rowString = rowString.substring(0, rowString.length() - 2);
+        
+      FormLayout layout = new FormLayout(
+        "5dlu, 5dlu, pref:grow, 5dlu",
+        rowString);
+      PanelBuilder builder = new PanelBuilder(layout);
+      builder.setDefaultDialogBorder();
+      CellConstraints cc = new CellConstraints();
+      
+      int row = 0;
+      for (int i = 0;i<iHoldTables.size();i++) {
+        row = row + 2;
+				if (i == 0) builder.add( (Component)iHoldTables.get(i), cc.xyw(2, row, 2));
+				else builder.add( (Component)iHoldTables.get(i), cc.xy(3, row));
+      }
+      
+      //Layout stuff distinguishes between the title and the data panels
+      tp.setLayout(new BorderLayout());
+      tp.add(titlePanel,BorderLayout.NORTH);
+      tp.add(builder.getPanel(),BorderLayout.CENTER);
     }
   }
 
@@ -641,14 +648,6 @@ public class MetadataPane extends JPanel
     tabPane.setSelectedIndex(tabIndex);
   }
 
-//  /** gets around an annoying GUI layout problem when window is resized. */
-//  public void fixTables() { }
-
-  // -- Component API methods --
-
-  /** Sets the initial size of the metadata pane to be reasonable. */
-  public Dimension getPreferredSize() { return new Dimension(700, 500); }
-
   // -- Runnable API methods --
 
   /** Shows or hides the proper subpanes. */
@@ -660,7 +659,28 @@ public class MetadataPane extends JPanel
   }
 
   // -- Event API methods --
-
+  
+  public void componentResized(ComponentEvent e) {
+    for (int i = 0;i<tabPanelList.size();i++) {
+      TabPanel tp = (TabPanel) tabPanelList.get(i);
+      Container anObj = (Container) tp;
+      while(!(anObj instanceof JViewport)) {
+        anObj = anObj.getParent();
+      }
+      JViewport jView = (JViewport) anObj;
+      Dimension d = jView.getExtentSize();
+      if (d.width > defaultTabSize.width) { 
+	      d.height = tp.getSize().height;
+  	    tp.setPreferredSize(d);
+  	  }
+   	  tp.revalidate();    	  
+    }
+  }
+  
+  public void componentMoved(ComponentEvent e) {}
+  public void componentShown(ComponentEvent e) {}
+  public void componentHidden(ComponentEvent e) {}
+  
   // -- Static methods --
 
     public static String getTreePathName(Element e) {
@@ -798,6 +818,7 @@ public class MetadataPane extends JPanel
       oNode = null;
       name = getTreePathName(el);
       titlePanel = null;
+      tabPanelList.add(this);
     }
     public String toString() { return el == null ? "null" : el.getTagName(); }
   }
@@ -815,8 +836,7 @@ public class MetadataPane extends JPanel
       whichRow = i;
       Integer aInt = new Integer(i);
       setActionCommand("goto");
-      Dimension d = new Dimension(70,15);
-      setPreferredSize(d);
+      setPreferredSize(new Dimension(70, 15));
     }
   }
 
@@ -868,9 +888,6 @@ public class MetadataPane extends JPanel
               id = oNode.getAttribute("ID");
               panelsWithID.add(this);
             }
-            else {
-              //CODE HERE TO CREATE A UNIQUE ID
-            }
           }
           else attrList.add(thisE);
         }
@@ -881,6 +898,12 @@ public class MetadataPane extends JPanel
       if (cDataEl != null) attrList.add(0,cDataEl);
 
       JPanel lowPanel = new JPanel();
+      
+      FormLayout layout = new FormLayout(
+        "pref, pref:grow, pref",
+        "pref,2dlu,pref,pref,pref,3dlu");
+      PanelBuilder builder = new PanelBuilder(layout);
+      CellConstraints cc = new CellConstraints();
 
       if (attrList.size() != 0) {
         myTableModel = new DefaultTableModel(TREE_COLUMNS, 0) {
@@ -894,25 +917,19 @@ public class MetadataPane extends JPanel
 
         setLayout(new GridLayout(0,1));
         JLabel tableName = new JLabel(thisName);
+
         newTable = new ClickableTable(myTableModel, this);
         newTable.getColumnModel().getColumn(0).setPreferredWidth(150);
         newTable.getColumnModel().getColumn(1).setPreferredWidth(475);
         JTableHeader tHead = newTable.getTableHeader();
         tHead.setResizingAllowed(false);
         tHead.setReorderingAllowed(false);
-        JPanel headerPanel = new JPanel();
-        headerPanel.setLayout(new BorderLayout());
-        JPanel aPanel = new JPanel();
-        aPanel.setLayout(new BorderLayout());
-        aPanel.add(tableName,BorderLayout.SOUTH);
-        lowPanel.setLayout(new BorderLayout());
-        lowPanel.add(newTable,BorderLayout.NORTH);
-        headerPanel.add(aPanel, BorderLayout.CENTER);
-        headerPanel.add(tHead, BorderLayout.SOUTH);
-        add(headerPanel);
-        add(lowPanel);
+        
+				builder.add(tableName, cc.xy(1,1));
+				builder.add(tHead, cc.xyw(1,3,3));
+				builder.add(newTable, cc.xyw(1,4,3));
 
-  // update OME-XML attributes table
+        // update OME-XML attributes table
         myTableModel.setRowCount(attrList.size());
         for (int i=0; i<attrList.size(); i++) {
           Element thisEle = null;
@@ -977,8 +994,18 @@ public class MetadataPane extends JPanel
         comboBox = new JComboBox();
         refColumn.setCellEditor(new DefaultCellEditor(comboBox));
 
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(0,1));
+        JPanel buttonPanel;
+        String rowString = "";
+        for (int i=0; i<refList.size(); i++) {
+          rowString = rowString + "pref:grow, ";
+        }
+        rowString = rowString.substring(0,rowString.length()-2);
+        
+        FormLayout layout2 = new FormLayout(
+          "pref",
+          rowString);
+        PanelBuilder builder2 = new PanelBuilder(layout2);
+        CellConstraints cc2 = new CellConstraints();
 
         myTableModel.setRowCount(refList.size());
         for (int i=0; i<refList.size(); i++) {
@@ -996,50 +1023,28 @@ public class MetadataPane extends JPanel
           }
           TableButton tb = new TableButton(refTable,i);
           tb.addActionListener(this);
-          buttonPanel.add(tb);
+          builder2.add(tb, cc2.xy(1,i+1, "center,fill"));
         }
-
-        Dimension dim = new Dimension(50, buttonPanel.getHeight());
-        buttonPanel.setSize(dim);
+        
+        buttonPanel = builder2.getPanel();
 
         if(attrList.size() == 0) {
-          setLayout(new GridLayout(0,1));
           JLabel tableName = new JLabel(thisName);
           JTableHeader tHead = refTable.getTableHeader();
           tHead.setResizingAllowed(false);
           tHead.setReorderingAllowed(false);
-          JPanel headerPanel = new JPanel();
-          headerPanel.setLayout(new BorderLayout());
-          JPanel aPanel = new JPanel();
-          aPanel.setLayout(new BorderLayout());
-          aPanel.add(tableName,BorderLayout.SOUTH);
-          lowPanel.setLayout(new BorderLayout());
-          lowPanel.add(refTable,BorderLayout.NORTH);
-          headerPanel.add(aPanel, BorderLayout.CENTER);
-          headerPanel.add(tHead, BorderLayout.SOUTH);
-          add(headerPanel);
-          add(lowPanel);
-
-          JPanel refPanel = new JPanel();
-          refPanel.setLayout(new BorderLayout());
-          refPanel.add(refTable, BorderLayout.CENTER);
-          refPanel.add(buttonPanel, BorderLayout.EAST);
-          JPanel placePanel = new JPanel();
-          placePanel.setLayout(new BorderLayout());
-          placePanel.add(refPanel, BorderLayout.NORTH);
-          lowPanel.add(placePanel, BorderLayout.CENTER);
+          
+          builder.add(tableName, cc.xy(1,1));
+				  builder.add(tHead, cc.xyw(1,3,2));
+          builder.add(refTable, cc.xyw(1,4,2));
+          builder.add(buttonPanel, cc.xy(3,4));
         }
         else {
-          JPanel refPanel = new JPanel();
-          refPanel.setLayout(new BorderLayout());
-          refPanel.add(refTable, BorderLayout.CENTER);
-          refPanel.add(buttonPanel, BorderLayout.EAST);
-          JPanel placePanel = new JPanel();
-          placePanel.setLayout(new BorderLayout());
-          placePanel.add(refPanel, BorderLayout.NORTH);
-          lowPanel.add(placePanel, BorderLayout.CENTER);
-        }
+					builder.add(refTable, cc.xyw(1,5,2));
+          builder.add(buttonPanel, cc.xy(3,5, "center,fill"));
+        }      
       }
+      add(builder.getPanel());
     }
 
     public void setEditor() {
@@ -1099,7 +1104,6 @@ public class MetadataPane extends JPanel
           }
           JTabbedPane jTabP = (JTabbedPane) anObj;
           jTabP.setSelectedComponent(jScr);
-          //ADD CODE HERE TO FOCUS APPROPRIATELY ON THE TABLE IN QUESTION
           Point loc = tablePan.getLocation();
           loc.x = 0;
           loc.y = tp.titlePanel.getHeight() + loc.y;

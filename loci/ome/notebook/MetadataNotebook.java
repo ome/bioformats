@@ -49,6 +49,8 @@ public class MetadataNotebook extends JFrame
     TemplateParser tp = new TemplateParser(f);
     //create a MetadataPane, where most everything happens
     metadata = new MetadataPane(tp);
+    //allow MetadataPane to handle resizing events
+    addComponentListener(metadata);
     setContentPane(metadata);
 
     //setup the menus on this frame
