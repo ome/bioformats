@@ -29,12 +29,12 @@ package loci.formats;
 import org.openmicroscopy.xml.*;
 import org.openmicroscopy.xml.st.*;
 import org.w3c.dom.Element;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.Vector;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.xml.sax.SAXException;
-import java.io.IOException;
 
 /**
  * A utility class for constructing and manipulating OME-XML DOMs. It requires
@@ -88,6 +88,89 @@ public class OMEXMLMetadataStore implements MetadataStore {
     catch (ParserConfigurationException exc) { exc.printStackTrace(); }
     catch (IOException exc) { exc.printStackTrace(); }
     return null;
+  }
+
+  /**
+   * Gets the nth OME/Image/CA/Pixels element's SizeX attribute.
+   * @param n the index of the element. If <code>null</code> the default index
+   * of 0 will be used.
+   */
+  public Integer getSizeX(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    String sizeX = getAttribute("Pixels", "SizeX", ndx);
+    return sizeX == null ? null : new Integer(sizeX);
+  }
+
+  /**
+   * Gets the nth OME/Image/CA/Pixels element's SizeY attribute.
+   * @param n the index of the element. If <code>null</code> the default index
+   * of 0 will be used.
+   */
+  public Integer getSizeY(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    String sizeY = getAttribute("Pixels", "SizeY", ndx);
+    return sizeY == null ? null : new Integer(sizeY);
+  }
+
+  /**
+   * Gets the nth OME/Image/CA/Pixels element's SizeZ attribute.
+   * @param n the index of the element. If <code>null</code> the default index
+   * of 0 will be used.
+   */
+  public Integer getSizeZ(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    String sizeZ = getAttribute("Pixels", "SizeZ", ndx);
+    return sizeZ == null ? null : new Integer(sizeZ);
+  }
+
+  /**
+   * Gets the nth OME/Image/CA/Pixels element's SizeC attribute.
+   * @param n the index of the element. If <code>null</code> the default index
+   * of 0 will be used.
+   */
+  public Integer getSizeC(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    String sizeC = getAttribute("Pixels", "SizeC", ndx);
+    return sizeC == null ? null : new Integer(sizeC);
+  }
+
+  /**
+   * Gets the nth OME/Image/CA/Pixels element's SizeT attribute.
+   * @param n the index of the element. If <code>null</code> the default index
+   * of 0 will be used.
+   */
+  public Integer getSizeT(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    String sizeT = getAttribute("Pixels", "SizeT", ndx);
+    return sizeT == null ? null : new Integer(sizeT);
+  }
+
+  /** Gets the nth OME/Image/CA/Pixels element's PixelType attribute. */
+  public String getPixelType(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    return getAttribute("Pixels", "PixelType", ndx);
+  }
+
+  /**
+   * Gets the nth OME/Image/CA/Pixels element's BigEndian attribute.
+   * @param n the index of the element. If <code>null</code> the default index
+   * of 0 will be used.
+   */
+  public Boolean getBigEndian(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    String bigEndian = getAttribute("Pixels", "BigEndian", ndx);
+    return bigEndian == null ? null :
+      new Boolean(bigEndian.equalsIgnoreCase("true"));
+  }
+
+  /**
+   * Gets the nth OME/Image/CA/Pixels element's DimensionOrder attribute.
+   * @param n the index of the element. If <code>null</code> the default index
+   * of 0 will be used.
+   */
+  public String getDimensionOrder(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    return getAttribute("Pixels", "DimensionOrder", ndx);
   }
 
   // -- MetadataStore methods --
@@ -287,7 +370,8 @@ public class OMEXMLMetadataStore implements MetadataStore {
   /*
    * (non-Javadoc)
    * @see loci.formats.MetadataStore#setLogicalChannel(int, java.lang.String,
-   *   float, int, int, java.lang.String, java.lang.String, java.lang.Integer)
+   *   java.lang.Float, java.lang.Integer, java.lang.Integer, java.lang.String,
+   *   java.lang.String, java.lang.Integer)
    */
   public void setLogicalChannel(int channelIdx, String name, Float ndFilter,
     Integer emWave, Integer exWave, String photometricInterpretation,
