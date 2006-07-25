@@ -47,7 +47,6 @@ public abstract class FormatHandler {
   /** Name of current file. */
   protected String currentId;
 
-
   // -- Constructors --
 
   /** Constructs a format handler with the given name and default suffix. */
@@ -60,7 +59,6 @@ public abstract class FormatHandler {
     this.format = format;
     this.suffixes = suffixes == null ? new String[0] : suffixes;
   }
-
 
   // -- FormatHandler API methods --
 
@@ -96,19 +94,27 @@ public abstract class FormatHandler {
 
   /** Gets a JFileChooser that recognizes accepted file types. */
   public JFileChooser getFileChooser() {
-    if (chooser == null) {
-      chooser = new JFileChooser(System.getProperty("user.dir"));
-      FileFilter[] ff = getFileFilters();
-      ff = ComboFileFilter.sortFilters(ff);
-      FileFilter combo = null;
-      if (ff.length > 1) {
-        combo = new ComboFileFilter(ff, "All supported file types");
-        chooser.addChoosableFileFilter(combo);
-      }
-      for (int i=0; i<ff.length; i++) chooser.addChoosableFileFilter(ff[i]);
-      if (combo != null) chooser.setFileFilter(combo);
-    }
+    if (chooser == null) chooser = buildFileChooser(getFileFilters());
     return chooser;
+  }
+
+  // -- Utility methods --
+
+  /**
+   * Builds a file chooser with the given file filters,
+   * as well as an "All supported file types" combo filter.
+   */
+  public static JFileChooser buildFileChooser(FileFilter[] ff) {
+    JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+    ff = ComboFileFilter.sortFilters(ff);
+    FileFilter combo = null;
+    if (ff.length > 1) {
+      combo = new ComboFileFilter(ff, "All supported file types");
+      fc.addChoosableFileFilter(combo);
+    }
+    for (int i=0; i<ff.length; i++) fc.addChoosableFileFilter(ff[i]);
+    if (combo != null) fc.setFileFilter(combo);
+    return fc;
   }
 
 }
