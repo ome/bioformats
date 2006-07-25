@@ -95,8 +95,9 @@ public class TiffReader extends BaseTiffReader {
     // OME-XML (and not some other XML variant)
     MetadataStore store = getMetadataStore();
     String comment = (String) metadata.get("Comment");
-    if (getMetadataStore() instanceof OMEXMLMetadataStore
-        && comment.indexOf("ome.xsd") != -1) {
+    if (store instanceof OMEXMLMetadataStore
+      && comment != null && comment.indexOf("ome.xsd") >= 0)
+    {
       OMEXMLMetadataStore xmlStore = (OMEXMLMetadataStore) store;
       xmlStore.createRoot(comment);
     }
