@@ -212,6 +212,9 @@ public class QTReader extends FormatReader {
   /** An instance of the old QuickTime reader, in case this one fails. */
   private LegacyQTReader legacy;
 
+  /** Flag indicating whether to use legacy reader by default. */
+  private boolean useLegacy;
+
   /** Amount to subtract from each offset. */
   private int scale;
 
@@ -221,15 +224,18 @@ public class QTReader extends FormatReader {
   /** Set to true if the scanlines in a plane are interlaced (mjpb only). */
   private boolean interlaced;
 
-  /** Flag indicating whether or not the resource and data fork are separated.*/
+  /** Flag indicating whether the resource and data fork are separated. */
   private boolean spork;
-
 
   // -- Constructor --
 
   /** Constructs a new QuickTime reader. */
   public QTReader() { super("QuickTime", "mov"); }
 
+  // -- QTReader API methods --
+
+  /** Sets whether to use the legacy reader (QTJava) by default. */
+  public void setLegacy(boolean legacy) { useLegacy = legacy; }
 
   // -- FormatReader API methods --
 
@@ -303,13 +309,17 @@ public class QTReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    if (!codec.equals("raw ") && !codec.equals("rle ") &&
+    boolean doLegacy = useLegacy;
+    if (!doLegacy && !codec.equals("raw ") && !codec.equals("rle ") &&
       !codec.equals("jpeg") && !codec.equals("mjpb"))
     {
       if (DEBUG) {
         System.out.println("Unsupported codec (" +
           codec + "); using QTJava reader");
       }
+      doLegacy = true;
+    }
+    if (doLegacy) {
       if (legacy == null) legacy = new LegacyQTReader();
       return legacy.openBytes(id, no);
     }
@@ -418,13 +428,17 @@ public class QTReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-    if (!codec.equals("raw ") && !codec.equals("rle ") &&
+    boolean doLegacy = useLegacy;
+    if (!doLegacy && !codec.equals("raw ") && !codec.equals("rle ") &&
       !codec.equals("jpeg") && !codec.equals("mjpb"))
     {
       if (DEBUG) {
         System.out.println("Unsupported codec (" +
           codec + "); using QTJava reader");
       }
+      doLegacy = true;
+    }
+    if (doLegacy) {
       if (legacy == null) legacy = new LegacyQTReader();
       return legacy.openImage(id, no);
     }
@@ -614,7 +628,6 @@ public class QTReader extends FormatReader {
       */
     }
   }
-
 
   // -- Helper methods --
 
