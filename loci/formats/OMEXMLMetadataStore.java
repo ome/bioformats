@@ -611,10 +611,22 @@ public class OMEXMLMetadataStore implements MetadataStore {
     if (i < children.size()) {
       if (children.get(i) != null) return (OMEXMLNode) children.get(i);
     }
-    // CTR TODO fix this, it is crap
+    String className;
+    Class param;
+    if (name.equals("CustomAttributes") || name.equals("Dataset") ||
+      name.equals("Feature") || name.equals("Image") || name.equals("OME") ||
+      name.equals("Project"))
+    {
+      className = "org.openmicroscopy.xml." + name + "Node";
+      param = base.getClass();
+    }
+    else {
+      className = "org.openmicroscopy.xml.st." + name + "Node";
+      param = CustomAttributesNode.class;
+    }
     try {
-      Class c = Class.forName("org.openmicroscopy.xml.st." + name + "Node");
-      Constructor con = c.getConstructor(new Class[] {OMEXMLNode.class});
+      Class c = Class.forName(className);
+      Constructor con = c.getConstructor(new Class[] {param});
       return (OMEXMLNode) con.newInstance(new Object[] {base});
     }
     catch (Exception exc) { exc.printStackTrace(); }
@@ -622,7 +634,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
   }
 
   /**
-   * Gets the value of the given attribute in the nth occurence of the
+   * Gets the value of the given attribute in the nth occurrence of the
    * specified node.
    * @param nodeName the name of the node to retrieve the value from
    * @param name the name of the attribute to retrieve the value from
