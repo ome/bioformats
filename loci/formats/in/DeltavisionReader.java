@@ -406,14 +406,14 @@ public class DeltavisionReader extends FormatReader {
     extHdrFields = new DVExtHdrFields[numZ][numW][numT];
 
     store.setPixels(sizeX, sizeY, new Integer(numZ), new Integer(numW),
-        new Integer(numT), omePixel, new Boolean(!little), dimOrder, null);
+      new Integer(numT), omePixel, new Boolean(!little), dimOrder, null);
 
     store.setDimensions(
-        (Float) metadata.get("X element length (in um)"), 
-        (Float) metadata.get("Y element length (in um)"), 
-        (Float) metadata.get("Z element length (in um)"), 
-        null, null, null);
-    
+      (Float) metadata.get("X element length (in um)"),
+      (Float) metadata.get("Y element length (in um)"),
+      (Float) metadata.get("Z element length (in um)"),
+      null, null, null);
+
     String description = (String) metadata.get("Title 1");
     description = description.length() == 0? null : description;
     store.setImage(id, null, description, null);
@@ -423,50 +423,51 @@ public class DeltavisionReader extends FormatReader {
     for (int z = 0; z < numZ; z++) {
       for (int t = 0; t < numT; t++) {
         for (int w = 0; w < numW; w++) {
-          extHdrFields[z][w][t] = new DVExtHdrFields(getTotalOffset(z,w,t),
-              numIntsPerSection, extHeader, little);
-          
-          store.setPlaneInfo(z, w, t, 
-              new Float(extHdrFields[z][w][t].getTimeStampSeconds()),
-              new Float(extHdrFields[z][w][t].getExpTime()), null);
+          extHdrFields[z][w][t] = new DVExtHdrFields(getTotalOffset(z, w, t),
+            numIntsPerSection, extHeader, little);
 
+          store.setPlaneInfo(z, w, t,
+            new Float(extHdrFields[z][w][t].getTimeStampSeconds()),
+            new Float(extHdrFields[z][w][t].getExpTime()), null);
         }
       }
     }
-    
-    for (int w=0; w < numW; w++)
-    {
-        store.setLogicalChannel(w, "happypuppy", 
-                new Float(extHdrFields[0][w][0].getNdFilter()),
-                (Integer) metadata.get("Wavelength " + (w+1) + " (in nm)"),
-                new Integer((int) extHdrFields[0][w][0].getExFilter()),
-                "Monochrome", "Wide-field", null);
+
+    for (int w=0; w<numW; w++) {
+      store.setLogicalChannel(w, "happypuppy",
+        new Float(extHdrFields[0][w][0].getNdFilter()),
+        (Integer) metadata.get("Wavelength " + (w+1) + " (in nm)"),
+        new Integer((int) extHdrFields[0][w][0].getExFilter()),
+        "Monochrome", "Wide-field", null);
     }
 
-    store.setStageLabel("ome", 
-            new Float(extHdrFields[0][0][0].getStageXCoord()), 
-            new Float(extHdrFields[0][0][0].getStageYCoord()), 
-            new Float(extHdrFields[0][0][0].getStageZCoord()), null);
-    
-    if (numW > 0) 
-      store.setChannelGlobalMinMax(0, new Double(wave1Min.floatValue()), 
-                            new Double(wave1Max.floatValue()), null);
-    if (numW > 1) 
-      store.setChannelGlobalMinMax(1, new Double(wave2Min.floatValue()), 
-                            new Double(wave2Max.floatValue()), null);
-    if (numW > 2) 
-      store.setChannelGlobalMinMax(2, new Double(wave3Min.floatValue()), 
-                            new Double(wave3Max.floatValue()), null);
-    if (numW > 3) 
-      store.setChannelGlobalMinMax(3, new Double(wave4Min.floatValue()), 
-                            new Double(wave4Max.floatValue()), null);
-    if (numW > 4) 
-      store.setChannelGlobalMinMax(4, new Double(wave5Min.floatValue()), 
-                            new Double(wave5Max.floatValue()), null);
+    store.setStageLabel("ome",
+      new Float(extHdrFields[0][0][0].getStageXCoord()),
+      new Float(extHdrFields[0][0][0].getStageYCoord()),
+      new Float(extHdrFields[0][0][0].getStageZCoord()), null);
 
-    store.setDefaultDisplaySettings(null)
-    ;
-    
+    if (numW > 0) {
+      store.setChannelGlobalMinMax(0, new Double(wave1Min.floatValue()),
+        new Double(wave1Max.floatValue()), null);
+    }
+    if (numW > 1) {
+      store.setChannelGlobalMinMax(1, new Double(wave2Min.floatValue()),
+        new Double(wave2Max.floatValue()), null);
+    }
+    if (numW > 2) {
+      store.setChannelGlobalMinMax(2, new Double(wave3Min.floatValue()),
+        new Double(wave3Max.floatValue()), null);
+    }
+    if (numW > 3) {
+      store.setChannelGlobalMinMax(3, new Double(wave4Min.floatValue()),
+        new Double(wave4Max.floatValue()), null);
+    }
+    if (numW > 4) {
+      store.setChannelGlobalMinMax(4, new Double(wave5Min.floatValue()),
+       new Double(wave5Max.floatValue()), null);
+    }
+
+    store.setDefaultDisplaySettings(null);
   }
 
   /**
