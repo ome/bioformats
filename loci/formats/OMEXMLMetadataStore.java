@@ -90,6 +90,94 @@ public class OMEXMLMetadataStore implements MetadataStore {
     return null;
   }
 
+  // -- OMEXMLMetadataStore methods - individual attribute retrieval --
+
+  /**
+   * Gets the nth OME/Image element's Name attribute.
+   * @param n the index of the element. If <code>null</code> the default index
+   * of 0 will be used.
+   */
+  public String getImageName(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    return getAttribute("Image", "Name", ndx);
+  }
+
+  /**
+   * Gets the nth OME/Image element's CreationDate attribute.
+   * @param n the index of the element. If <code>null</code> the default index
+   * of 0 will be used.
+   */
+  public String getCreationDate(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    return getAttribute("Image", "CreationDate", ndx);
+  }
+
+  /**
+   * Gets the nth OME/Image element's Description attribute.
+   * @param n the index of the element. If <code>null</code> the default index
+   * of 0 will be used.
+   */
+  public String getDescription(String description, Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    return getAttribute("Image", "Description", ndx);
+  }
+
+  /**
+   * Gets the nth OME/Image/CA/Dimensions element's PixelSizeX attribute.
+   * @param n the index of the element. If <code>null</code> the default index
+   * of 0 will be used.
+   */
+  public Float getPixelSizeX(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    String pixelSizeX = getAttribute("Dimensions", "PixelSizeX", ndx);
+    return pixelSizeX == null ? null : new Float(pixelSizeX);
+  }
+
+  /**
+   * Gets the nth OME/Image/CA/Dimensions element's PixelSizeY attribute.
+   * @param n the index of the element. If <code>null</code> the default index
+   * of 0 will be used.
+   */
+  public Float getPixelSizeY(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    String pixelSizeY = getAttribute("Dimensions", "PixelSizeY", ndx);
+    return pixelSizeY == null ? null : new Float(pixelSizeY);
+  }
+
+  /**
+   * Gets the nth OME/Image/CA/Dimensions element's PixelSizeZ attribute.
+   * @param n the index of the element. If <code>null</code> the default index
+   * of 0 will be used.
+   */
+  public Float getPixelSizeZ(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    String pixelSizeZ = getAttribute("Dimensions", "PixelSizeZ", ndx);
+    return pixelSizeZ == null ? null : new Float(pixelSizeZ);
+  }
+
+  /**
+   * Gets the nth OME/Image/CA/Dimensions element's PixelSizeC attribute.
+   * @param n the index of the element. If <code>null</code> the default index
+   * of 0 will be used.
+   */
+  public Float getPixelSizeC(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    String pixelSizeC = getAttribute("Dimensions", "PixelSizeC", ndx);
+    return pixelSizeC == null ? null : new Float(pixelSizeC);
+  }
+
+  /**
+   * Gets the nth OME/Image/CA/Dimensions element's PixelSizeT attribute.
+   * @param n the index of the element. If <code>null</code> the default index
+   * of 0 will be used.
+   */
+  public Float getPixelSizeT(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    String pixelSizeT = getAttribute("Dimensions", "PixelSizeT", ndx);
+    return pixelSizeT == null ? null : new Float(pixelSizeT);
+  }
+
+
   /**
    * Gets the nth OME/Image/CA/Pixels element's SizeX attribute.
    * @param n the index of the element. If <code>null</code> the default index
@@ -171,6 +259,49 @@ public class OMEXMLMetadataStore implements MetadataStore {
   public String getDimensionOrder(Integer n) {
     int ndx = n == null ? 0 : n.intValue();
     return getAttribute("Pixels", "DimensionOrder", ndx);
+  }
+
+  /**
+   * Gets the nth OME/Image/CA/StageLabel element's Name attribute.
+   * @param n the index of the element. If <code>null</code> the default index
+   * of 0 will be used.
+   */
+  public String getStageName(String name, Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    return getAttribute("StageLabel", "Name", ndx);
+  }
+
+  /**
+   * Gets the nth OME/Image/CA/StageLabel element's X attribute.
+   * @param n the index of the element. If <code>null</code> the default index
+   * of 0 will be used.
+   */
+  public Float getStageX(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    String stageX = getAttribute("StageLabel", "X", ndx);
+    return stageX == null ? null : new Float(stageX);
+  }
+
+  /**
+   * Gets the nth OME/Image/CA/StageLabel element's Y attribute.
+   * @param n the index of the element. If <code>null</code> the default index
+   * of 0 will be used.
+   */
+  public Float getStageY(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    String stageY = getAttribute("StageLabel", "Y", ndx);
+    return stageY == null ? null : new Float(stageY);
+  }
+
+  /**
+   * Gets the nth OME/Image/CA/StageLabel element's Z attribute.
+   * @param n the index of the element. If <code>null</code> the default index
+   * of 0 will be used.
+   */
+  public Float getStageZ(Integer n) {
+    int ndx = n == null ? 0 : n.intValue();
+    String stageZ = getAttribute("StageLabel", "Z", ndx);
+    return stageZ == null ? null : new Float(stageZ);
   }
 
   // -- MetadataStore methods --
@@ -392,28 +523,22 @@ public class OMEXMLMetadataStore implements MetadataStore {
     logicalChannel.setMode(mode);
 
     // Now populate the channel component
-    /* CTR TODO FIX THIS
-    r.exec("import org.openmicroscopy.xml.st.PixelChannelComponentNode");
-    channel = getChild(logicalChannel, "ChannelComponent", i);
-    r.setVar("channel", channel);
+    PixelChannelComponentNode channel = (PixelChannelComponentNode)
+      getChild(ca, "PixelChannelComponent", channelIdx);
+    channel.setLogicalChannel(logicalChannel);
+    channel.setIndex(new Integer(channelIdx));
 
     // It's just waaaaay too complicated to think of dealing with multiple
     // sets of pixels per image with the API as it stands so we're using just
     // the first pixels set.
-    PixelsNode pixels = (PixelsNode) getChild(image, "Pixels", 0);
-    Object pixels = getChild(image, "Pixels", null);
-
-    r.setVar("channelIdx", channelIdx);
-    r.setVar("pixels", pixels);
-    r.exec("channel.setIndex(channelIdx)");
-    r.exec("channel.setPixels(pixels)");
+    PixelsNode pixels = (PixelsNode) getChild(ca, "Pixels", 0);
+    channel.setPixels(pixels);
 
     // For colour domains, we're using "R" for index 0, "G" for index 1 and
     // "B" for index 2. All other indexes are "null".
     String[] colorDomains = {"R", "G", "B"};
-    channel.setColorDomain(colorDomain < colorDomains.length ?
-      colorDomains[colorDomain] : null);
-    */
+    channel.setColorDomain(channelIdx < colorDomains.length ?
+      colorDomains[channelIdx] : null);
   }
 
   /*
@@ -425,14 +550,13 @@ public class OMEXMLMetadataStore implements MetadataStore {
     Double globalMin, Double globalMax, Integer i)
   {
     int ndx = i == null ? 0 : i.intValue();
-    /* CTR TODO FIX THIS
     // Since we will need this information for default display options creation
     // but don't have a place really to store this in OME-XML we're just going
     // to store it in instance variables.
     if (channelMinimum == null) {
       Float sizeC = getPixelSizeC(i);
       if (sizeC == null) {
-        //log.warn("Out of order access or missing metadata 'sizeC'.");
+        warn("Out of order access or missing metadata 'sizeC'.");
         return;
       }
       channelMinimum = new double[sizeC.intValue()];
@@ -441,7 +565,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
     if (channelMaximum == null) {
       Float sizeC = getPixelSizeC(i);
       if (sizeC == null) {
-        //log.warn("Out of order access or missing metadata 'sizeC'.");
+        warn("Out of order access or missing metadata 'sizeC'.");
         return;
       }
       channelMaximum = new double[sizeC.intValue()];
@@ -451,7 +575,6 @@ public class OMEXMLMetadataStore implements MetadataStore {
     // let's do the work.
     channelMinimum[channel] = globalMin.doubleValue();
     channelMaximum[channel] = globalMax.doubleValue();
-    */
   }
 
   /*
@@ -474,69 +597,49 @@ public class OMEXMLMetadataStore implements MetadataStore {
    */
   public void setDefaultDisplaySettings(Integer i) {
     int ndx = i == null ? 0 : i.intValue();
-    /* CTR TODO FIX THIS
-    if (i == null) i = new Integer(0);
 
     Float sizeCAsFloat = getPixelSizeC(i);
     if (sizeCAsFloat == null) {
-      //log.warn("Out of order access or missing metadata 'sizeC'.");
+      warn("Out of order access or missing metadata 'sizeC'.");
       return;
     }
     int sizeC = sizeCAsFloat.intValue();
 
     // Sanity check
     if (sizeC < 1) {
-      //log.warn("Ignoring request for default display options: sizeC < 1.");
+      warn("Ignoring request for default display options: sizeC < 1.");
       return;
     }
 
-    Object displayOptions = null;
-    try {
-      r.setVar("ome", root);
+    ImageNode image = (ImageNode) getChild(root, "Image", 0);
+    CustomAttributesNode ca = (CustomAttributesNode)
+      getChild(image, "CustomAttributes", 0);
+    DisplayOptionsNode displayOptions = (DisplayOptionsNode)
+      getChild(ca, "DisplayOptions", ndx);
 
-      Object image = getChild(root, "Image", i);
-      r.setVar("image", image);
+    // The strategy here is to use the already populated (hopefully :))
+    // global minimum and global maximum for the black and white levels.
 
-      r.exec("import org.openmicroscopy.xml.st.DisplayOptionsNode");
-      displayOptions = getChild(image, "DisplayOptions", i);
-      r.setVar("displayOptions", displayOptions);
+    DisplayChannelNode[] displayChannels = createRGBDisplayChannels(sizeC, ca);
+    DisplayChannelNode greyscaleChannel =
+      createGreyscaleDisplayChannel(ca, sizeC + 1);
 
-      // The strategy here is to use the already populated (hopefully :))
-      // global minimum and global maximum for the black and white levels.
-
-      Object[] displayChannels =
-        createRGBDisplayChannels(sizeC, displayOptions);
-      Object greyscaleChannel =
-        createGreyscaleDisplayChannel(displayOptions, new Integer(sizeC + 1));
-
-      // Populate the RGB channels
-      if (displayChannels.length > 0) {  // Red only
-        r.setVar("channel", displayChannels[0]);
-        r.exec("displayOptions.setRedChannel(channel)");
-        r.exec("displayOptions.setRedChannelOn(Boolean.TRUE)");
-      }
-      if (displayChannels.length > 1) {  // Red and green
-        r.setVar("channel", displayChannels[1]);
-        r.exec("displayOptions.setGreenChannel(channel)");
-        r.exec("displayOptions.setGreenChannelOn(Boolean.TRUE)");
-      }
-      if (displayChannels.length > 2) {  // Red, green and blue
-        r.setVar("channel", displayChannels[2]);
-        r.exec("displayOptions.setBlueChannel(channel)");
-        r.exec("displayOptions.setBlueChannelOn(Boolean.TRUE)");
-      }
-
-      // Populate the greyscale channel
-      r.setVar("channel", greyscaleChannel);
-      r.exec("displayOptions.setGreyChannel(channel)");
-      r.exec("displayOptions.setGreyChannelOn(Boolean.TRUE)");
+    // Populate the RGB channels
+    if (displayChannels.length > 0) {  // Red only
+      displayOptions.setRedChannel(displayChannels[0]);
+      displayOptions.setRedChannelOn(Boolean.TRUE);
     }
-    catch (ReflectException e) {
-      // We want potential errors in the reflected universe to be exposed to a
-      // developer.
-      //log.warn(e);
+    if (displayChannels.length > 1) {  // Red and green
+      displayOptions.setGreenChannel(displayChannels[1]);
+      displayOptions.setGreenChannelOn(Boolean.TRUE);
     }
-    */
+    if (displayChannels.length > 2) {  // Red, green and blue
+      displayOptions.setBlueChannel(displayChannels[2]);
+      displayOptions.setBlueChannelOn(Boolean.TRUE);
+    }
+
+    // Populate the greyscale channel
+    displayOptions.setGreyChannel(greyscaleChannel);
   }
 
   // -- Helper methods --
@@ -544,31 +647,23 @@ public class OMEXMLMetadataStore implements MetadataStore {
   /**
    * Creates default DisplayChannel nodes for use with DisplayOptions.
    * @param sizeC the number of channels.
-   * @param displayOptions the display options that these display channels will
-   * be used with.
    * @return an array of display channels.
-   * @throws ReflectException if there is a syntax problem during execution.
    */
-  private Object[] createRGBDisplayChannels(int sizeC, Object displayOptions)
-    throws ReflectException
+  private DisplayChannelNode[] createRGBDisplayChannels(int sizeC,
+    CustomAttributesNode parent)
   {
-    Object[] displayChannels = new Object[sizeC > 3 ? 3 : sizeC];
-    /* CTR TODO FIX THIS
-    r.exec("import org.openmicroscopy.xml.st.DisplayChannelNode");
+    DisplayChannelNode[] displayChannels =
+      new DisplayChannelNode[sizeC > 3 ? 3 : sizeC];
 
     // Create each channel's display settings
-    for (int i = 0; i < displayChannels.length; i++)
-    {
-      Object displayChannel =
-        getChild(displayOptions, "DisplayChannel", new Integer(i));
-      r.setVar("displayChannel", displayChannel);
-      r.setVar("min", channelMinimum[i]);
-      r.setVar("max", channelMaximum[i]);
-      r.exec("displayChannel.setBlackLevel(min)");
-      r.exec("displayChannel.setWhiteLevel(max)");
+    for (int i = 0; i < displayChannels.length; i++) {
+      DisplayChannelNode displayChannel = (DisplayChannelNode)
+        getChild(parent, "DisplayChannel", i);
+      displayChannel.setChannelNumber(new Integer(i));
+      displayChannel.setBlackLevel(new Double(channelMinimum[i]));
+      displayChannel.setWhiteLevel(new Double(channelMaximum[i]));
       displayChannels[i] = displayChannel;
     }
-    */
 
     return displayChannels;
   }
@@ -580,22 +675,16 @@ public class OMEXMLMetadataStore implements MetadataStore {
    * @param i the index of display channels. Should be sizeC + 1 for the
    * greyscale DisplayChannel.
    * @return a default greyscale DisplayChannel.
-   * @throws ReflectException if there is a syntax problem during execution.
    */
-  private Object createGreyscaleDisplayChannel(Object displayOptions,
-    Integer i) throws ReflectException
+  private DisplayChannelNode createGreyscaleDisplayChannel(
+    CustomAttributesNode parent, int i)
   {
-    /* CTR TODO FIX THIS
-    r.exec("import org.openmicroscopy.xml.st.DisplayChannelNode");
-
     // Create each channel's display settings
-    Object displayChannel = getChild(displayOptions, "DisplayChannel", i);
-    r.setVar("displayChannel", displayChannel);
-    r.setVar("min", channelMinimum[0]);
-    r.setVar("max", channelMaximum[0]);
-
+    DisplayChannelNode displayChannel = (DisplayChannelNode)
+      getChild(parent, "DisplayChannel", i);
+    displayChannel.setBlackLevel(new Double(channelMinimum[0]));
+    displayChannel.setWhiteLevel(new Double(channelMaximum[0]));
     return displayChannel;
-    */ return null;
   }
 
   /**
@@ -657,6 +746,12 @@ public class OMEXMLMetadataStore implements MetadataStore {
     Vector elements = DOMUtil.findElementList(name, rel.getOwnerDocument());
     Element el = (Element) elements.get(i);
     return OMEXMLNode.createNode(el);
+  }
+
+  /** Issues the given message as a warning. */
+  private void warn(String msg) {
+    //log.warn(msg);
+    System.err.println(msg);
   }
 
 }
