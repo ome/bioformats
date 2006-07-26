@@ -45,6 +45,10 @@ public class VariableComboEditor extends AbstractCellEditor
 
   //holds the table of references this cell editor is for
   private JTable refTable;
+  
+  //holds internal reference data found in the ome-xml file
+  //that is currently opened by MetadataPane
+  private Hashtable iDefs;
 
   // -- Constants --
 
@@ -57,12 +61,17 @@ public class VariableComboEditor extends AbstractCellEditor
   //IDP : vector of TablePanels that have been found to have ID attributes
   //AddP : vector of Strings that hold all external LSIDs found in this file
   //oN : the OMEXMLNode associated with the TablePanel this editor edits
-  public VariableComboEditor(Vector IDP, Vector AddP, OMEXMLNode oN) {
+  //internalDefs : a hashtable representing semantic type defs found in
+  //    the current open file itself
+  public VariableComboEditor(Vector IDP, Vector AddP, 
+    OMEXMLNode oN, Hashtable internalDefs)
+  {
 		//initialize all fields
     idPanels = IDP;
     addPanels = AddP;
     oNode = oN;
     box = new JRowBox(-1);
+    iDefs = internalDefs;
   }
 
   // -- VariableComboEditor API --
@@ -102,8 +111,9 @@ public class VariableComboEditor extends AbstractCellEditor
     //name of the attribute being edited
     String attrName = (String) tModel.getValueAt(row, 0);
     //get the sub-hashtable for the key associated with this tablepanel's
-    //OMEXMLNode
-    Hashtable subHash = (Hashtable) REF_HASH.get(eleName);
+    //OMEXMLNode... check internal defs first, then external defs
+    Hashtable subHash = (Hashtable) iDefs.get(eleName);
+    if (subHash == null) subHash = (Hashtable) REF_HASH.get(eleName);
     if (subHash != null) {
       //get the string representation of the type this attribute should
       //refer to

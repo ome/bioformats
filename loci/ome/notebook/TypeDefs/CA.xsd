@@ -64,6 +64,8 @@
 			<xsd:attribute name = "Name" type = "xsd:string"/>
 			<xsd:attribute name = "CreationDate" type = "xsd:dateTime"/>
 			<xsd:attribute name = "Description" type = "xsd:string"/>
+			<xsd:attribute name = "Experimenter" type = "OME:ExperimenterID"/>
+			<xsd:attribute name = "Group" type = "OME:GroupID"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name = "Feature">

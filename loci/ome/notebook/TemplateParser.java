@@ -25,7 +25,7 @@ public class TemplateParser
   public static final DocumentBuilderFactory DOC_FACT =
     DocumentBuilderFactory.newInstance();
 
-  /** A list of filenames where symantic type defs are found*/
+  /** A list of filenames where semantic type defs are found*/
   public static final String[] TYPE_DEF_LIST = {
     "Experiment.ome","Experimenter.ome","Group.ome","Image.ome",
     "Instrument.ome","Plate.ome","Screen.ome","OMEIS/Repository.ome",
@@ -35,7 +35,7 @@ public class TemplateParser
   /** A list of regular (non "home-baked") type defs to cruise*/
   public static final String[] OLD_DEF_LIST = {"CA.xsd"};
 
-  /** The filename of the folder the symantic type defs are in*/
+  /** The filename of the folder the semantic type defs are in*/
   public static final String TYPE_DEF_FOLDER = "TypeDefs/";
 
   //  --Fields--
@@ -100,7 +100,7 @@ public class TemplateParser
   public static Hashtable getRefHash() {
     //setup Hashtables for getting reference types
     Hashtable refHash = new Hashtable();
-    //check each different symantic type definition file for definitions
+    //check each different semantic type definition file for definitions
     //if definitions overlap, they should be the same anyway, so the last
     //one encountered is the one used
     for (int i = 0;i<TYPE_DEF_LIST.length;i++) {
@@ -115,7 +115,7 @@ public class TemplateParser
         e.printStackTrace();
       }
 
-      //surfing node-trees... looking at the "home-baked" symantic
+      //surfing node-trees... looking at the "home-baked" semantic
       //type definitions at this point...    .ome type files
       Element thisRoot = templateDoc.getDocumentElement();
       NodeList nl = thisRoot.getChildNodes();
@@ -156,7 +156,7 @@ public class TemplateParser
         }
       }
     }
-    //need to parse differently for  each .xsd type symantic def file
+    //need to parse differently for  each .xsd type semantic def file
     for (int i = 0;i<OLD_DEF_LIST.length;i++) {
       Document templateDoc = null;
       try {
