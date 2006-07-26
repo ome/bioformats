@@ -189,32 +189,25 @@ public class OpenlabReader extends FormatReader {
     if (separated) no /= 3;
     in.seek(offsets[no] + 12);
 
-    byte[] toRead = new byte[4];
-    in.read(toRead);
-    int blockSize = batoi(toRead);
-    toRead = new byte[1];
-    in.read(toRead);
+    int blockSize = in.readInt();
+
+    byte toRead = (byte) in.read();
+
     // right now I'm gonna skip all the header info
     // check to see whether or not this is v2 data
-    if (toRead[0] == 1) in.skipBytes(128);
+    if (toRead == 1) in.skipBytes(128);
     in.skipBytes(169);
     // read in the block of data
-    toRead = new byte[blockSize];
-    int read = 0;
-    int left = blockSize;
-    while (left > 0) {
-      int i = in.read(toRead, read, left);
-      read += i;
-      left -= i;
-    }
+    byte[] b = new byte[blockSize];
+    in.read(b);
     byte[] pixelData = new byte[blockSize];
     int pixPos = 0;
 
     Dimension dim;
-    try { dim = pictReader.getDimensions(toRead); }
+    try { dim = pictReader.getDimensions(b); }
     catch (Exception e) { dim = new Dimension(0, 0); }
 
-    int length = toRead.length;
+    int length = b.length;
     int num, size, blockEnd;
     int totalBlocks = -1; // set to allow loop to start.
     int expectedBlock = 0;
@@ -239,10 +232,9 @@ public class OpenlabReader extends FormatReader {
       skipflag = false;
 
       while (pos + 7 < length &&
-        (toRead[pos] != 73 || toRead[pos + 1] != 86 ||
-        toRead[pos + 2] != 69 || toRead[pos + 3] != 65 ||
-        toRead[pos + 4] != 100 || toRead[pos + 5] != 98 ||
-        toRead[pos + 6] != 112 || toRead[pos + 7] != 113))
+        (b[pos] != 73 || b[pos + 1] != 86 || b[pos + 2] != 69 ||
+        b[pos + 3] != 65 || b[pos + 4] != 100 || b[pos + 5] != 98 ||
+        b[pos + 6] != 112 || b[pos + 7] != 113))
       {
         pos++;
       }
@@ -252,11 +244,11 @@ public class OpenlabReader extends FormatReader {
           // there has been no deep gray data, and it is supposed
           // to be a pict... *crosses fingers*
           try {
-            if (!isRGB(id) || !separated) {
-              return pictReader.open(toRead);
+            if (!separated) {
+              return pictReader.open(b);
             }
             else {
-              return ImageTools.splitChannels(pictReader.open(toRead))[no%3];
+              return ImageTools.splitChannels(pictReader.open(b))[no%3];
             }
           }
           catch (Exception e) {
@@ -273,17 +265,13 @@ public class OpenlabReader extends FormatReader {
 
       // Read info from the iPic comment. This serves as a
       // starting point to read the rest.
-      temp = new byte[] {
-        toRead[pos], toRead[pos+1], toRead[pos+2], toRead[pos+3]
-      };
+      temp = new byte[] { b[pos], b[pos+1], b[pos+2], b[pos+3] };
       num = batoi(temp);
       if (num != expectedBlock) {
         throw new FormatException("Expected iPic block not found");
       }
       expectedBlock++;
-      temp = new byte[] {
-        toRead[pos+4], toRead[pos+5], toRead[pos+6], toRead[pos+7]
-      };
+      temp = new byte[] { b[pos+4], b[pos+5], b[pos+6], b[pos+7] };
       if (totalBlocks == -1) {
         totalBlocks = batoi(temp);
       }
@@ -295,15 +283,13 @@ public class OpenlabReader extends FormatReader {
 
       // skip to size
       pos += 16;
-      temp = new byte[] {
-        toRead[pos], toRead[pos+1], toRead[pos+2], toRead[pos+3]
-      };
+      temp = new byte[] { b[pos], b[pos+1], b[pos+2], b[pos+3] };
       size = batoi(temp);
       pos += 8;
       blockEnd = pos + size;
 
       // copy into our data array.
-      System.arraycopy(toRead, pos, pixelData, pixPos, size);
+      System.arraycopy(b, pos, pixelData, pixPos, size);
       pixPos += size;
     }
     int pixelValue = 0;
@@ -346,27 +332,26 @@ public class OpenlabReader extends FormatReader {
     // Also determine whether we will be reading color or grayscale
     // images
 
-    byte[] toRead = new byte[4];
-    in.read(toRead);
-    long order = batoi(toRead);  // byte ordering
-    little = toRead[2] != 0xff || toRead[3] != 0xff;
+    long order = in.readInt();
+    little = order == 0x0000ffff;
+    //in.order(little);
 
-    //toRead = new byte[4];
     Vector v = new Vector(); // a temp vector containing offsets.
 
     // Get first offset.
-    //in.seek(16);
+
     in.skipBytes(12);
-    in.read(toRead);
-    int nextOffset = batoi(toRead);
+    int nextOffset = in.readInt();
     int nextOffsetTemp;
 
     boolean first = true;
-    while(nextOffset != 0) {
-      in.seek(nextOffset + 4);
-      in.read(toRead);
+    while(nextOffset != 0 && nextOffset < in.length()) {
       // get next tag, but still need this one
-      nextOffsetTemp = batoi(toRead);
+
+      in.seek(nextOffset + 4);
+      nextOffsetTemp = in.readInt();
+
+      byte[] toRead = new byte[4];
       in.read(toRead);
       if ((new String(toRead)).equals("PICT")) {
         boolean ok = true;
@@ -399,13 +384,10 @@ public class OpenlabReader extends FormatReader {
     }
 
     // populate the imageTypes that the file uses
-    toRead = new byte[2];
     imageType = new int[numBlocks];
     for (int i = 0; i < numBlocks; i++) {
-      in.seek(offsets[i]);
-      in.skipBytes(40);
-      in.read(toRead);
-      imageType[i] = batoi(toRead);
+      in.seek(offsets[i] + 40);
+      imageType[i] = in.readShort();
     }
 
     initMetadata();
@@ -416,29 +398,22 @@ public class OpenlabReader extends FormatReader {
 
   /** Populates the metadata hashtable. */
   private void initMetadata() throws FormatException, IOException {
-    in.seek(0);
+    in.seek(8);
+
+    in.order(false);
 
     // start by reading the file header
-    byte[] toRead = new byte[4];
-    in.read(toRead);
-    long order = batoi(toRead);  // byte ordering
-    little = toRead[2] != 0xff || toRead[3] != 0xff;
     metadata.put("Byte Order", new Boolean(little));
 
-    in.skipBytes(4);
-    in.read(toRead);
-    long version = DataTools.bytesToLong(toRead, false);
+    long version = in.readInt();
     metadata.put("Version", new Long(version));
 
-    byte[] er = new byte[2];
-    in.read(er);
-    short count = DataTools.bytesToShort(er, false);
+    short count = in.readShort();
     metadata.put("Count", new Short(count));
 
-    in.skipBytes(2);
+    in.readShort();
 
-    in.read(toRead);
-    long offset = DataTools.bytesToLong(toRead, false);
+    int offset = in.readInt();
 
     // skip to first tag
     in.seek(offset);
@@ -446,58 +421,43 @@ public class OpenlabReader extends FormatReader {
     // read in each tag and its data
 
     for (int i=0; i<count; i++) {
-      in.read(er);
-      short tag = DataTools.bytesToShort(er, false);
-      in.skipBytes(2);
+      short tag = in.readShort();
+      in.readShort();
 
-      in.read(toRead);
-      offset = DataTools.bytesToLong(toRead, false);
-
-      in.read(toRead);
-      long fmt = DataTools.bytesToLong(toRead, false);
+      offset = in.readInt();
+      long fmt = in.readInt();
       metadata.put("Format", new Long(fmt));
 
-      in.read(toRead);
-      long numBytes = DataTools.bytesToLong(toRead, false);
+      long numBytes = in.readInt();
       metadata.put("NumBytes", new Long(numBytes));
 
       if (tag == 67 || tag == 68) {
-        byte[] b = new byte[1];
-        in.read(b);
-        boolean isOpenlab2;
-        if (b[0] == '0') isOpenlab2 = false;
-        else isOpenlab2 = true;
+        boolean isOpenlab2 = in.read() == 0;
         metadata.put("isOpenlab2", new Boolean(isOpenlab2));
 
-        in.skipBytes(2);
-        in.read(er);
-        short layerId = DataTools.bytesToShort(er, false);
+        in.readShort();
+        short layerId = in.readShort();
         metadata.put("LayerID", new Short(layerId));
 
-        in.read(er);
-        short layerType = DataTools.bytesToShort(er, false);
+        short layerType = in.readShort();
         metadata.put("LayerType", new Short(layerType));
 
-        in.read(er);
-        short bitDepth = DataTools.bytesToShort(er, false);
+        short bitDepth = in.readShort();
         metadata.put("BitDepth", new Short(bitDepth));
 
-        in.read(er);
-        short opacity = DataTools.bytesToShort(er, false);
+        short opacity = in.readShort();
         metadata.put("Opacity", new Short(opacity));
 
         // not sure how many bytes to skip here
         in.skipBytes(10);
 
-        in.read(toRead);
-        long type = DataTools.bytesToLong(toRead, false);
+        long type = in.readInt();
         metadata.put("ImageType", new Long(type));
 
         // not sure how many bytes to skip
         in.skipBytes(10);
 
-        in.read(toRead);
-        long timestamp = DataTools.bytesToLong(toRead, false);
+        long timestamp = in.readInt();
         metadata.put("Timestamp", new Long(timestamp));
 
         in.skipBytes(2);
@@ -507,11 +467,10 @@ public class OpenlabReader extends FormatReader {
           in.read(layerName);
           metadata.put("LayerName", new String(layerName));
 
-          in.read(toRead);
-          long timestampMS = DataTools.bytesToLong(toRead, false);
+          long timestampMS = in.readInt();
           metadata.put("Timestamp-MS", new Long(timestampMS));
 
-          in.skipBytes(1);
+          in.read();
           byte[] notes = new byte[118];
           in.read(notes);
           metadata.put("Notes", new String(notes));
@@ -519,29 +478,25 @@ public class OpenlabReader extends FormatReader {
         else in.skipBytes(123);
       }
       else if (tag == 69) {
-        in.read(toRead);
-        long platform = DataTools.bytesToLong(toRead, false);
+        long platform = in.readInt();
         metadata.put("Platform", new Long(platform));
 
-        in.read(er);
-        short units = DataTools.bytesToShort(er, false);
+        short units = in.readShort();
         metadata.put("Units", new Short(units));
 
-        in.read(er);
-        short imageId = DataTools.bytesToShort(er, false);
+        short imageId = in.readShort();
         metadata.put("ID", new Short(imageId));
-        in.skipBytes(1);
+        in.read();
 
-        byte[] toRead2 = new byte[8];
-        double xOrigin = DataTools.readDouble(in, false);
+        double xOrigin = in.readDouble();
         metadata.put("XOrigin", new Double(xOrigin));
-        double yOrigin = DataTools.readDouble(in, false);
+        double yOrigin = in.readDouble();
         metadata.put("YOrigin", new Double(yOrigin));
-        double xScale = DataTools.readDouble(in, false);
+        double xScale = in.readDouble();
         metadata.put("XScale", new Double(xScale));
-        double yScale = DataTools.readDouble(in, false);
+        double yScale = in.readDouble();
         metadata.put("YScale", new Double(yScale));
-        in.skipBytes(1);
+        in.read();
 
         byte[] other = new byte[31];
         in.read(other);
@@ -607,6 +562,7 @@ public class OpenlabReader extends FormatReader {
    * 3 => every 4th plane is RGB, remaining planes are greyscale
    */
   private int checkType() throws FormatException, IOException {
+    if (firstPlane == null) firstPlane = openImage(currentId, 0);
     WritableRaster r = firstPlane.getRaster();
     int b = r.getNumBands();
     if (b == 3) return 2;
@@ -615,24 +571,15 @@ public class OpenlabReader extends FormatReader {
 
     in.seek(offsets[3] + 12);
 
-    byte[] toRead = new byte[4];
-    in.read(toRead);
-    int blockSize = batoi(toRead);
-    toRead = new byte[1];
-    in.read(toRead);
+    int blockSize = in.readInt();
+
     // right now I'm gonna skip all the header info
     // check to see whether or not this is v2 data
-    if (toRead[0] == 1) in.skipBytes(128);
+    if (in.read() == 1) in.skipBytes(128);
     in.skipBytes(169);
     // read in the block of data
-    toRead = new byte[blockSize];
-    int read = 0;
-    int left = blockSize;
-    while (left > 0) {
-      int i = in.read(toRead, read, left);
-      read += i;
-      left -= i;
-    }
+    byte[] toRead = new byte[blockSize];
+    in.read(toRead);
     byte[] pixelData = new byte[blockSize];
     int pixPos = 0;
 

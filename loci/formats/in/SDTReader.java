@@ -143,11 +143,9 @@ public class SDTReader extends FormatReader {
     for (int y=0; y<height; y++) {
       for (int x=0; x<width; x++) {
         int ndx = width * y + x;
-        byte[] pix = new byte[2 * TIME_BINS];
-        in.readFully(pix);
         int sum = 0;
         for (int decay=0; decay<TIME_BINS; decay++) {
-          sum += DataTools.bytesToInt(pix, 2 * decay, 2, true);
+          sum += in.readShort();
         }
         data[ndx] = (short) sum;
       }
@@ -180,20 +178,20 @@ public class SDTReader extends FormatReader {
   /** Initializes the given SDT file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    File file = new File(id);
     in = new RandomAccessStream(id);
+    in.order(true);
 
     // skip 14 byte header
-    in.seek(14);
+    in.skipBytes(14);
 
     // read offset
-    offset = DataTools.read2UnsignedBytes(in, true) + 22;
+    offset = in.readShort() + 22;
 
     // skip to data
     in.seek(offset);
 
     // compute number of image planes
-    numImages = (int) ((file.length() - offset) / (2 * 64 * width * height));
+    numImages = (int) ((in.length() - offset) / (2 * 64 * width * height));
   }
 
 

@@ -213,7 +213,7 @@ public class BioRadReader extends FormatReader {
     int offset = no * imageLen;
     if (!byteFormat) offset *= 2;
     in.seek(offset + 76);
-    in.readFully(data);
+    in.read(data);
     return data;
   }
 
@@ -227,9 +227,8 @@ public class BioRadReader extends FormatReader {
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
-    if (currentId == null) return;
-    in.close();
     currentId = null;
+    if (in != null) in.close();
     in = null;
     metadata = null;
   }
@@ -238,31 +237,31 @@ public class BioRadReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessStream(id);
+    in.order(true);
 
     // read header
-    byte[] header = new byte[76];
-    in.readFully(header);
 
-    nx = DataTools.bytesToInt(header, 0, 2, LITTLE_ENDIAN);
-    ny = DataTools.bytesToInt(header, 2, 2, LITTLE_ENDIAN);
-    npic = DataTools.bytesToInt(header, 4, 2, LITTLE_ENDIAN);
-    byteFormat = DataTools.bytesToInt(header, 14, 2, LITTLE_ENDIAN) != 0;
+    nx = in.readShort();
+    ny = in.readShort();
+    npic = in.readShort();
 
-    int ramp1min = DataTools.bytesToInt(header, 6, 2, LITTLE_ENDIAN);
-    int ramp1max = DataTools.bytesToInt(header, 8, 2, LITTLE_ENDIAN);
-    boolean notes = (header[10] | header[11] | header[12] | header[13]) != 0;
-    int imageNumber = DataTools.bytesToInt(header, 16, 2, LITTLE_ENDIAN);
-    String name = new String(header, 18, 32);
-    int merged = DataTools.bytesToInt(header, 50, 2, LITTLE_ENDIAN);
-    int color1 = DataTools.bytesToInt(header, 52, 2, LITTLE_ENDIAN);
-    int fileId = DataTools.bytesToInt(header, 54, 2, LITTLE_ENDIAN);
-    int ramp2min = DataTools.bytesToInt(header, 56, 2, LITTLE_ENDIAN);
-    int ramp2max = DataTools.bytesToInt(header, 58, 2, LITTLE_ENDIAN);
-    int color2 = DataTools.bytesToInt(header, 60, 2, LITTLE_ENDIAN);
-    int edited = DataTools.bytesToInt(header, 62, 2, LITTLE_ENDIAN);
-    int lens = DataTools.bytesToInt(header, 64, 2, LITTLE_ENDIAN);
-    float magFactor =
-      Float.intBitsToFloat(DataTools.bytesToInt(header, 66, 4, LITTLE_ENDIAN));
+    int ramp1min = in.readShort();
+    int ramp1max = in.readShort();
+    boolean notes = (in.read() | in.read() | in.read() | in.read()) != 0;
+    byteFormat = in.readShort() != 0;
+    int imageNumber = in.readShort();
+    byte[] s = new byte[32];
+    in.read(s);
+    String name = new String(s);
+    int merged = in.readShort();
+    int color1 = in.readShort();
+    int fileId = in.readShort();
+    int ramp2min = in.readShort();
+    int ramp2max = in.readShort();
+    int color2 = in.readShort();
+    int edited = in.readShort();
+    int lens = in.readShort();
+    float magFactor = in.readFloat();
 
     // check validity of header
     if (fileId != PIC_FILE_ID) {
@@ -292,7 +291,7 @@ public class BioRadReader extends FormatReader {
     // skip image data
     int imageLen = nx * ny;
     int bpp = byteFormat ? 1 : 2;
-    in.skipBytes(bpp * npic * imageLen);
+    in.skipBytes(bpp * npic * imageLen + 6);
 
     Vector pixelSize = new Vector();
 
@@ -304,19 +303,21 @@ public class BioRadReader extends FormatReader {
     int noteCount = 0;
     while (notes) {
       // read in note
-      byte[] note = new byte[96];
-      in.readFully(note);
-      int level = DataTools.bytesToInt(note, 0, 2, LITTLE_ENDIAN);
-      notes = (note[2] | note[3] | note[4] | note[5]) != 0;
-      int num = DataTools.bytesToInt(note, 6, 2, LITTLE_ENDIAN);
-      int status = DataTools.bytesToInt(note, 8, 2, LITTLE_ENDIAN);
-      int type = DataTools.bytesToInt(note, 10, 2, LITTLE_ENDIAN);
-      int x = DataTools.bytesToInt(note, 12, 2, LITTLE_ENDIAN);
-      int y = DataTools.bytesToInt(note, 14, 2, LITTLE_ENDIAN);
-      String text = new String(note, 16, 80);
+
+      int level = in.readShort();
+      notes = (in.read() | in.read() | in.read() | in.read()) != 0;
+      int num = in.readShort();
+      int status = in.readShort();
+      int type = in.readShort();
+      int x = in.readShort();
+      int y = in.readShort();
+      s = new byte[80];
+      in.read(s);
+      String text = new String(s);
 
       // add note to list
       noteCount++;
+
       metadata.put("note" + noteCount,
         noteString(num, level, status, type, x, y, text));
 
@@ -420,10 +421,10 @@ public class BioRadReader extends FormatReader {
     boolean eof = false;
     while (!eof && numLuts < 3) {
       try {
-        in.readFully(lut[numLuts]);
+        in.read(lut[numLuts]);
         numLuts++;
       }
-      catch (IOException exc) {
+      catch (Exception exc) {
         eof = true;
         if (DEBUG) exc.printStackTrace();
       }
@@ -457,7 +458,9 @@ public class BioRadReader extends FormatReader {
     store.setImage(name, null, null, null);
 
     // populate Pixels element
-    int type = DataTools.bytesToInt(header, 14, 2, LITTLE_ENDIAN);
+    in.seek(14);
+    //int type = DataTools.bytesToInt(header, 14, 2, LITTLE_ENDIAN);
+    int type = in.readShort();
     String fmt;
     if (type == 1) fmt = "Uint8";
     else fmt = "Uint16";

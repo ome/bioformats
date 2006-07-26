@@ -77,8 +77,6 @@ public class AVIReader extends FormatReader {
     bmpCompression, bmpActualSize, bmpScanLineSize, bmpActualColorsUsed;
   short bmpPlanes, bmpBitsPerPixel;
   boolean bmpTopDown;
-  short[] intData = null;
-  byte[] byteData = null;
   byte[] rawData = null;
   byte[] pr = null;
   byte[] pg = null;
@@ -166,53 +164,35 @@ public class AVIReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    byteData = new byte[dwWidth * bmpHeight];
-
     int c = (isRGB(id) && separated) ? 3 : 1;
     long fileOff = ((Long) offsets.get(no / c)).longValue();
-    in.seek(fileOff);
+    in.seek((int) fileOff);
 
     int len = bmpScanLineSize;
 
     int pad = bmpScanLineSize - dwWidth*(bmpBitsPerPixel / 8);
     rawData = new byte[bmpActualSize];
-    int rawOffset = 0;
-    int offset = (bmpHeight - 1) * dwWidth;
+    int rawOffset = rawData.length - len;
+    int offset = 0;
 
     for (int i=bmpHeight - 1; i>=0; i--) {
-      int n = in.read(rawData, rawOffset, len);
-      if (n < len) {
-        whine("Scan line " + i + " ended prematurely.");
-      }
-
-      unpack(rawData, rawOffset, byteData, offset, dwWidth);
-      rawOffset += (len - pad);
-      offset -= dwWidth;
-    }
-
-    // reverse scanline ordering
-
-    byte[] temp = rawData;
-    rawData = new byte[temp.length];
-    int off = (bmpHeight - 1) * dwWidth * (bmpBitsPerPixel / 8);
-    int newOff = 0;
-    int length = dwWidth * (bmpBitsPerPixel / 8);
-    for (int q=0; q<bmpHeight; q++) {
       if (bmpBitsPerPixel == 8) {
-        System.arraycopy(temp, off, rawData, newOff, length);
+        in.read(rawData, rawOffset, len);
       }
       else {
-        // reverse bytes in groups of 3
-
-        for (int p=0; p<dwWidth; p++) {
-          rawData[newOff + p*3] = temp[off + p*3 + 2];
-          rawData[newOff + p*3 + 1] = temp[off + p*3 + 1];
-          rawData[newOff + p*3 + 2] = temp[off + p*3];
+        byte b, g, r;
+        for (int j=0; j<dwWidth; j++) {
+          b = (byte) in.read();
+          g = (byte) in.read();
+          r = (byte) in.read();
+          rawData[rawOffset + j*3] = r;
+          rawData[rawOffset + j*3 + 1] = g;
+          rawData[rawOffset + j*3 + 2] = b;
         }
       }
 
-      off -= length;
-      newOff += length;
+      rawOffset -= (len - pad);
+      offset += dwWidth;
     }
 
     if (separated) {
@@ -255,6 +235,7 @@ public class AVIReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessStream(id);
+    in.order(true);
 
     offsets = new Vector();
 
@@ -262,7 +243,7 @@ public class AVIReader extends FormatReader {
     String listString;
 
     type = readStringBytes();
-    size = DataTools.read4SignedBytes(in, little);
+    size = in.readInt();
     fcc = readStringBytes();
 
     if (type.equals("RIFF")) {
@@ -278,13 +259,14 @@ public class AVIReader extends FormatReader {
     pos = in.getFilePointer();
     long spos = pos;
 
-    while (in.read(list) == 4) {
-      in.seek(pos);
+    while ((in.length() - in.getFilePointer()) > 4) {
+      in.read(list);
+      in.seek((int) pos);
       listString = new String(list);
 
       if (listString.equals("JUNK")) {
         type = readStringBytes();
-        size = DataTools.read4SignedBytes(in, little);
+        size = in.readInt();
 
         if (type.equals("JUNK")) {
           in.skipBytes(size);
@@ -293,37 +275,36 @@ public class AVIReader extends FormatReader {
       else if (listString.equals("LIST")) {
         spos = in.getFilePointer();
         type = readStringBytes();
-        size = DataTools.read4SignedBytes(in, little);
+        size = in.readInt();
         fcc = readStringBytes();
 
-        in.seek(spos);
+        in.seek((int) spos);
         if (fcc.equals("hdrl")) {
           type = readStringBytes();
-          size = DataTools.read4SignedBytes(in, little);
+          size = in.readInt();
           fcc = readStringBytes();
 
           if (type.equals("LIST")) {
             if (fcc.equals("hdrl")) {
               type = readStringBytes();
-              size = DataTools.read4SignedBytes(in, little);
+              size = in.readInt();
               if (type.equals("avih")) {
                 spos = in.getFilePointer();
 
-                dwMicroSecPerFrame = DataTools.read4SignedBytes(in, little);
-                dwMaxBytesPerSec = DataTools.read4SignedBytes(in, little);
-                dwReserved1 = DataTools.read4SignedBytes(in, little);
-                dwFlags = DataTools.read4SignedBytes(in, little);
-                dwTotalFrames = DataTools.read4SignedBytes(in, little);
-                dwInitialFrames = DataTools.read4SignedBytes(in, little);
-                dwStreams = DataTools.read4SignedBytes(in, little);
-                dwSuggestedBufferSize =
-                  DataTools.read4SignedBytes(in, little);
-                dwWidth = DataTools.read4SignedBytes(in, little);
-                dwHeight = DataTools.read4SignedBytes(in, little);
-                dwScale = DataTools.read4SignedBytes(in, little);
-                dwRate = DataTools.read4SignedBytes(in, little);
-                dwStart = DataTools.read4SignedBytes(in, little);
-                dwLength = DataTools.read4SignedBytes(in, little);
+                dwMicroSecPerFrame = in.readInt();
+                dwMaxBytesPerSec = in.readInt();
+                dwReserved1 = in.readInt();
+                dwFlags = in.readInt();
+                dwTotalFrames = in.readInt();
+                dwInitialFrames = in.readInt();
+                dwStreams = in.readInt();
+                dwSuggestedBufferSize = in.readInt();
+                dwWidth = in.readInt();
+                dwHeight = in.readInt();
+                dwScale= in.readInt();
+                dwRate = in.readInt();
+                dwStart = in.readInt();
+                dwLength = in.readInt();
 
                 metadata.put("Microseconds per frame",
                   new Integer(dwMicroSecPerFrame));
@@ -338,7 +319,10 @@ public class AVIReader extends FormatReader {
                 metadata.put("Start time", new Integer(dwStart));
                 metadata.put("Length", new Integer(dwLength));
 
-                in.seek(spos + size);
+                try {
+                  in.seek((int) (spos + size));
+                }
+                catch (Exception e) { }
               }
             }
           }
@@ -348,13 +332,13 @@ public class AVIReader extends FormatReader {
           long streamSize = size;
 
           type = readStringBytes();
-          size = DataTools.read4SignedBytes(in, little);
+          size = in.readInt();
           fcc = readStringBytes();
 
           if (type.equals("LIST")) {
             if (fcc.equals("strl")) {
               type = readStringBytes();
-              size = DataTools.read4SignedBytes(in, little);
+              size = in.readInt();
 
               if (type.equals("strh")) {
                 spos = in.getFilePointer();
@@ -366,40 +350,44 @@ public class AVIReader extends FormatReader {
                 }
 
                 fccStreamHandler = readStringBytes();
-                dwStreamFlags = DataTools.read4SignedBytes(in, little);
-                dwStreamReserved1 = DataTools.read4SignedBytes(in, little);
-                dwStreamInitialFrames = DataTools.read4SignedBytes(in, little);
-                dwStreamScale = DataTools.read4SignedBytes(in, little);
-                dwStreamRate = DataTools.read4SignedBytes(in, little);
-                dwStreamStart = DataTools.read4SignedBytes(in, little);
-                dwStreamLength = DataTools.read4SignedBytes(in, little);
-                dwStreamSuggestedBufferSize =
-                  DataTools.read4SignedBytes(in, little);
-                dwStreamQuality = DataTools.read4SignedBytes(in, little);
-                dwStreamSampleSize = DataTools.read4SignedBytes(in, little);
+
+                dwStreamFlags = in.readInt();
+                dwStreamReserved1 = in.readInt();
+                dwStreamInitialFrames = in.readInt();
+                dwStreamScale = in.readInt();
+                dwStreamRate = in.readInt();
+                dwStreamStart = in.readInt();
+                dwStreamLength = in.readInt();
+                dwStreamSuggestedBufferSize = in.readInt();
+                dwStreamQuality = in.readInt();
+                dwStreamSampleSize = in.readInt();
 
                 metadata.put("Stream quality", new Integer(dwStreamQuality));
                 metadata.put("Stream sample size",
                   new Integer(dwStreamSampleSize));
 
-                in.seek(spos + size);
+                try {
+                  in.seek((int) (spos + size));
+                }
+                catch (Exception e) { }
               }
 
               type = readStringBytes();
-              size = DataTools.read4SignedBytes(in, little);
+              size = in.readInt();
               if (type.equals("strf")) {
                 spos = in.getFilePointer();
-                bmpSize = DataTools.read4SignedBytes(in, little);
-                bmpWidth = DataTools.read4SignedBytes(in, little);
-                bmpHeight = DataTools.read4SignedBytes(in, little);
-                bmpPlanes = DataTools.read2SignedBytes(in, little);
-                bmpBitsPerPixel = DataTools.read2SignedBytes(in, little);
-                bmpCompression = DataTools.read4SignedBytes(in, little);
-                bmpSizeOfBitmap = DataTools.read4SignedBytes(in, little);
-                bmpHorzResolution = DataTools.read4SignedBytes(in, little);
-                bmpVertResolution = DataTools.read4SignedBytes(in, little);
-                bmpColorsUsed = DataTools.read4SignedBytes(in, little);
-                bmpColorsImportant = DataTools.read4SignedBytes(in, little);
+
+                bmpSize = in.readInt();
+                bmpWidth = in.readInt();
+                bmpHeight = in.readInt();
+                bmpPlanes = in.readShort();
+                bmpBitsPerPixel = in.readShort();
+                bmpCompression = in.readInt();
+                bmpSizeOfBitmap = in.readInt();
+                bmpHorzResolution = in.readInt();
+                bmpVertResolution = in.readInt();
+                bmpColorsUsed = in.readInt();
+                bmpColorsImportant = in.readInt();
 
                 bmpTopDown = (bmpHeight < 0);
                 bmpNoOfPixels = bmpWidth * bmpHeight;
@@ -469,13 +457,13 @@ public class AVIReader extends FormatReader {
                   }
                 }
 
-                in.seek(spos + size);
+                in.seek((int) (spos + size));
               }
             }
 
             spos = in.getFilePointer();
             type = readStringBytes();
-            size = DataTools.read4SignedBytes(in, little);
+            size = in.readInt();
             if (type.equals("strd")) {
               in.skipBytes(size);
             }
@@ -485,7 +473,7 @@ public class AVIReader extends FormatReader {
 
             spos = in.getFilePointer();
             type = readStringBytes();
-            size = DataTools.read4SignedBytes(in, little);
+            size = in.readInt();
             if (type.equals("strn")) {
               in.skipBytes(size);
             }
@@ -494,26 +482,29 @@ public class AVIReader extends FormatReader {
             }
           }
 
-          in.seek((int) (startPos + 8 + streamSize));
+          try {
+            in.seek(startPos + 8 + streamSize);
+          }
+          catch (Exception e) { }
         }
         else if (fcc.equals("movi")) {
           type = readStringBytes();
-          size = DataTools.read4SignedBytes(in, little);
+          size = in.readInt();
           fcc = readStringBytes();
 
           if (type.equals("LIST")) {
             if (fcc.equals("movi")) {
               spos = in.getFilePointer();
               type = readStringBytes();
-              size = DataTools.read4SignedBytes(in, little);
+              size = in.readInt();
               fcc = readStringBytes();
               if (!(type.equals("LIST") && fcc.equals("rec "))) {
-                in.seek(spos);
+                in.seek((int) spos);
               }
 
               spos = in.getFilePointer();
               type = readStringBytes();
-              size = DataTools.read4SignedBytes(in, little);
+              size = in.readInt();
 
               while (type.substring(2).equals("db") ||
                 type.substring(2).equals("dc") ||
@@ -529,12 +520,12 @@ public class AVIReader extends FormatReader {
                 spos = in.getFilePointer();
 
                 type = readStringBytes();
-                size = DataTools.read4SignedBytes(in, little);
+                size = in.readInt();
                 if (type.equals("JUNK")) {
                   in.skipBytes(size);
                   spos = in.getFilePointer();
                   type = readStringBytes();
-                  size = DataTools.read4SignedBytes(in, little);
+                  size = in.readInt();
                 }
               }
               in.seek(spos);
@@ -543,14 +534,20 @@ public class AVIReader extends FormatReader {
         }
         else {
           // skipping unknown block
-          in.skipBytes(8 + size);
+          try {
+            in.skipBytes(8 + size);
+          }
+          catch (IllegalArgumentException iae) { }
         }
       }
       else {
         // skipping unknown block
         type = readStringBytes();
-        size = DataTools.read4SignedBytes(in, little);
-        in.skipBytes(size);
+        try {
+          size = in.readInt();
+          in.skipBytes(size);
+        }
+        catch (Exception iae) { }
       }
       pos = in.getFilePointer();
     }
@@ -581,15 +578,6 @@ public class AVIReader extends FormatReader {
       new Boolean(!little), // BigEndian
       order, // DimensionOrder
       null); // Use index 0
-  }
-
-  /** Unpacks a byte array into a new byte array. */
-  public void unpack(byte[] rawData, int rawOffset, byte[] byteData,
-    int byteOffset, int w)
-  {
-    for (int i=0; i<w; i++) {
-      byteData[byteOffset + i] = rawData[rawOffset + i];
-    }
   }
 
   /** Reads a 4-byte String. */

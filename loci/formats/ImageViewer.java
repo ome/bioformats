@@ -141,15 +141,17 @@ public class ImageViewer extends JFrame
       format = reader.getFormat(id);
       //images = reader.open(id);
       FormatReader r = reader.getReader(id);
-      ChannelMerger cm = new ChannelMerger(r);
-      int num = cm.getTotalImageCount(id);
+      FileStitcher fs = new FileStitcher(r);
+      ChannelMerger cm = new ChannelMerger(fs);
+
+      int num = cm.getImageCount(id);
       ProgressMonitor progress = new ProgressMonitor(this,
         "Reading " + id, null, 0, num);
       BufferedImage[] img = new BufferedImage[num];
       for (int i=0; i<num; i++) {
         if (progress.isCanceled()) break;
         progress.setProgress(i);
-        img[i] = cm.openStitchedImage(id, i);
+        img[i] = cm.openImage(id, i);
         if (i == 0) setImages(id, format, img);
       }
       reader.close();

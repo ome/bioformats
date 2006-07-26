@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.util.Hashtable;
 import loci.formats.*;
 
-
 /**
  * ZeissLSMReader is the file format reader for Zeiss LSM files.
  *
@@ -181,66 +180,9 @@ public class ZeissLSMReader extends BaseTiffReader {
 
       // determine byte order
       boolean little = TiffTools.isLittleEndian(ifd);
+      in.order(little);
 
-      put("NewSubfileType", ifd, TiffTools.NEW_SUBFILE_TYPE);
-      put("ImageWidth", ifd, TiffTools.IMAGE_WIDTH);
-      put("ImageLength", ifd, TiffTools.IMAGE_LENGTH);
-      put("BitsPerSample", ifd, TiffTools.BITS_PER_SAMPLE);
-
-      int comp = TiffTools.getIFDIntValue(ifd,
-        TiffTools.COMPRESSION, false, TiffTools.UNCOMPRESSED);
-      String compression;
-      switch (comp) {
-        case 1: compression = "None"; break;
-        case 2:
-          compression = "CCITT Group 3 1-Dimensional Modified Huffman";
-          break;
-        case 3: compression = "CCITT T.4 bilevel encoding"; break;
-        case 4: compression = "CCITT T.6 bilevel encoding"; break;
-        case 5: compression = "LZW"; break;
-        case 6: compression = "JPEG"; break;
-        case 32773: compression = "PackBits"; break;
-        default: compression = "None";
-      }
-      put("Compression", compression);
-
-      int photo = TiffTools.getIFDIntValue(ifd,
-        TiffTools.PHOTOMETRIC_INTERPRETATION, true, -1);
-
-      String photoInterp;
-      switch (photo) {
-        case 0: photoInterp = "WhiteIsZero"; break;
-        case 1: photoInterp = "BlackIsZero"; break;
-        case 2: photoInterp = "RGB"; break;
-        case 3: photoInterp = "Palette"; break;
-        case 4: photoInterp = "Transparency Mask"; break;
-        default: photoInterp = "unknown"; break;
-      }
-      put("PhotometricInterpretation", photoInterp);
-
-      putInt("StripOffsets", ifd, TiffTools.STRIP_OFFSETS);
-      putInt("SamplesPerPixel", ifd, TiffTools.SAMPLES_PER_PIXEL);
-      putInt("StripByteCounts", ifd, TiffTools.STRIP_BYTE_COUNTS);
-      putInt("ColorMap", ifd, TiffTools.COLOR_MAP);
-
-      int planar = TiffTools.getIFDIntValue(ifd,
-        TiffTools.PLANAR_CONFIGURATION);
-      String planarConfig;
-      switch (planar) {
-        case 1: planarConfig = "Chunky"; break;
-        case 2: planarConfig = "Planar"; break;
-        default: planarConfig = "Chunky";
-      }
-      put("PlanarConfiguration", planarConfig);
-
-      int predict = TiffTools.getIFDIntValue(ifd, TiffTools.PREDICTOR);
-      String predictor;
-      switch (predict) {
-        case 1: predictor = "No prediction scheme"; break;
-        case 2: predictor = "Horizontal differencing"; break;
-        default: predictor = "No prediction scheme";
-      }
-      put("Predictor", predictor);
+      super.initMetadata();
 
       // get Zeiss LSM-specific data
 
@@ -327,6 +269,80 @@ public class ZeissLSMReader extends BaseTiffReader {
       put("DataType2", type);
       p += 4;
 
+      // -- Parse OME-XML metadata --
+
+      short[] omeData = TiffTools.getIFDShortArray(ifd, ZEISS_ID, true);
+      int magicNum = DataTools.bytesToInt(omeData, 0, little);
+
+//      int photoInterp2 = TiffTools.getIFDIntValue(ifd,
+//        TiffTools.PHOTOMETRIC_INTERPRETATION, true, 0);
+//      String photo2;
+//      switch (photoInterp2) {
+//        case 0: photo2 = "monochrome"; break;
+//        case 1: photo2 = "monochrome"; break;
+//        case 2: photo2 = "RGB"; break;
+//        case 3: photo2 = "monochrome"; break;
+//        case 4: photo2 = "RGB"; break;
+//        default: photo2 = "monochrome";
+//      }
+//      OMETools.setAttribute(ome,
+//        "ChannelInfo", "PhotometricInterpretation", photo2);
+
+      int imageWidth = DataTools.bytesToInt(omeData, 8, little);
+      int imageLength = DataTools.bytesToInt(omeData, 12, little);
+      zSize = DataTools.bytesToInt(omeData, 16, little);
+      int cSize = DataTools.bytesToInt(omeData, 20, little);
+      tSize = DataTools.bytesToInt(omeData, 24, little);
+
+      int pixel = DataTools.bytesToInt(omeData, 28, little);
+      String pixelType;
+      switch (pixel) {
+        case 1: pixelType = "Uint8"; break;
+        case 2: pixelType = "Uint16"; break;
+        case 5: pixelType = "float"; break;
+        default: pixelType = "Uint8";
+      }
+
+      short scanType = DataTools.bytesToShort(omeData, 88, little);
+      switch ((int) scanType) {
+        case 0: dimOrder = "XYZCT"; break;
+        case 1: dimOrder = "XYZCT"; break;
+        case 3: dimOrder = "XYTCZ"; break;
+        case 4: dimOrder = "XYZTC"; break;
+        case 5: dimOrder = "XYTCZ"; break;
+        case 6: dimOrder = "XYZTC"; break;
+        case 7: dimOrder = "XYCTZ"; break;
+        case 8: dimOrder = "XYCZT"; break;
+        case 9: dimOrder = "XYTCZ"; break;
+        default: dimOrder = "XYZCT";
+      }
+
+      // some LSM files will have a thumbnail associated with each plane; this
+      // thumbnail is counted as an extra channel, but since we strip out the
+      // thumbnails, we need to correct the channel count
+      while (zSize * cSize * tSize != numImages) {
+        cSize--;
+      }
+
+      if (cSize == 0) cSize++;
+
+      channels = cSize;
+      if (isRGB(currentId)) channels *= 3;
+
+      // The metadata store we're working with.
+      MetadataStore store = getMetadataStore();
+
+      store.setPixels(
+        new Integer(imageWidth), // SizeX
+        new Integer(imageLength), // SizeY
+        new Integer(zSize), // SizeZ
+        new Integer(cSize), // SizeC
+        new Integer(tSize), // SizeT
+        pixelType, // PixelType
+        null, // BigEndian
+        dimOrder, // DimensionOrder
+        null);
+
       int pos = in.getFilePointer();
 
       // the following 4 are file offsets
@@ -342,17 +358,18 @@ public class ZeissLSMReader extends BaseTiffReader {
       data = DataTools.bytesToLong(cz, p, 4, little);
       // seek to this offset and read in the structure there
       // first we have to make sure that the structure actually exists
+
       if (data != 0) {
         pos = in.getFilePointer();
 
         in.seek(data);
 
-        int blockSize = DataTools.read4SignedBytes(in, little);
-        int numColors = DataTools.read4SignedBytes(in, little);
-        int numNames = DataTools.read4SignedBytes(in, little);
-        idata = DataTools.read4SignedBytes(in, little);
+        int blockSize = in.readInt();
+        int numColors = in.readInt();
+        int numNames = in.readInt();
+        idata = in.readInt();
         long offset = data + idata; // will seek to this later
-        idata = DataTools.read4SignedBytes(in, little);
+        idata = in.readInt();
         long offsetNames = data + idata; // will seek to this
 
         // read in the intensity value for each color
@@ -360,23 +377,25 @@ public class ZeissLSMReader extends BaseTiffReader {
         in.skipBytes(idata - 16);
 
         for (int i=0; i<numColors; i++) {
-          data = DataTools.read4UnsignedBytes(in, little);
+          data = in.readInt();
           put("Intensity" + i, data);
         }
 
         // read in the channel names
 
         pos = in.getFilePointer();
-        in.seek((int) (pos + offsetNames));
+        in.seek(pos + offsetNames);
 
         for (int i=0; i<numNames; i++) {
           // we want to read until we find a null char
           String name = "";
           char[] current = new char[1];
-          current[0] = in.readChar();
+          current[0] = (char) in.read();
+          in.read();
           while (current[0] != 0) {
             name.concat(new String(current));
-            current[0] = in.readChar();
+            current[0] = (char) in.read();
+            in.read();
           }
           put("ChannelName" + i, name);
         }
@@ -395,8 +414,7 @@ public class ZeissLSMReader extends BaseTiffReader {
         in.skipBytes((int) data);
 
         for (int i=0; i<dimensionChannels; i++) {
-          data = DataTools.read4UnsignedBytes(in, little);
-          put("OffsetChannelDataTypes" + i, data);
+          put("OffsetChannelDataTypes" + i, in.readInt());
         }
         in.seek(pos);
       }
@@ -411,13 +429,12 @@ public class ZeissLSMReader extends BaseTiffReader {
       data = DataTools.bytesToLong(cz, p, 4, little);
       if (data != 0) {
         pos = in.getFilePointer();
-        in.skipBytes((int) data);
+        in.skipBytes((int) data + 4);
 
-        in.skipBytes(4);
-        int numStamps = DataTools.read4SignedBytes(in, little);
+        int numStamps = in.readInt();
         if (numStamps > 1000) numStamps = 1000;
         for (int i=0; i<numStamps; i++) {
-          ddata = DataTools.readDouble(in, little);
+          ddata = in.readDouble();
           put("TimeStamp" + i, ddata);
         }
         in.seek(pos);
@@ -428,16 +445,16 @@ public class ZeissLSMReader extends BaseTiffReader {
       if (data != 0) {
         pos = in.getFilePointer();
 
-        long numBytes = DataTools.read4UnsignedBytes(in, little);
-        int numEvents = DataTools.read4SignedBytes(in, little);
+        long numBytes = in.readInt();
+        int numEvents = in.readInt();
         in.seek((int) (pos + data + 8));
 
         for (int i=0; i<numEvents; i++) {
-          in.skipBytes(4);
-          ddata = DataTools.readDouble(in, little);
+          in.readInt();
+          ddata = in.readDouble();
           put("Time" + i, ddata);
 
-          data = DataTools.read4UnsignedBytes(in, little);
+          data = in.readInt();
           put("EventType" + i, data);
 
           byte[] descr = new byte[(int) (numBytes - 16)];
@@ -500,85 +517,12 @@ public class ZeissLSMReader extends BaseTiffReader {
       put("OffsetUnmixParameters", DataTools.bytesToLong(cz, p, 4, little));
       p += 4;
 
-
-      // -- Parse OME-XML metadata --
-
-      short[] omeData = TiffTools.getIFDShortArray(ifd, ZEISS_ID, true);
-      int magicNum = DataTools.bytesToInt(omeData, 0, little);
-
-//      int photoInterp2 = TiffTools.getIFDIntValue(ifd,
-//        TiffTools.PHOTOMETRIC_INTERPRETATION, true, 0);
-//      String photo2;
-//      switch (photoInterp2) {
-//        case 0: photo2 = "monochrome"; break;
-//        case 1: photo2 = "monochrome"; break;
-//        case 2: photo2 = "RGB"; break;
-//        case 3: photo2 = "monochrome"; break;
-//        case 4: photo2 = "RGB"; break;
-//        default: photo2 = "monochrome";
-//      }
-//      OMETools.setAttribute(ome,
-//        "ChannelInfo", "PhotometricInterpretation", photo2);
-
-      int imageWidth = DataTools.bytesToInt(omeData, 8, little);
-      int imageLength = DataTools.bytesToInt(omeData, 12, little);
-      zSize = DataTools.bytesToInt(omeData, 16, little);
-      int cSize = DataTools.bytesToInt(omeData, 20, little);
-      tSize = DataTools.bytesToInt(omeData, 24, little);
-
-      int pixel = DataTools.bytesToInt(omeData, 28, little);
-      String pixelType;
-      switch (pixel) {
-        case 1: pixelType = "Uint8"; break;
-        case 2: pixelType = "Uint16"; break;
-        case 5: pixelType = "float"; break;
-        default: pixelType = "Uint8";
-      }
-
-      short scanType = DataTools.bytesToShort(omeData, 88, little);
-      switch ((int) scanType) {
-        case 0: dimOrder = "XYZCT"; break;
-        case 1: dimOrder = "XYZCT"; break;
-        case 3: dimOrder = "XYTCZ"; break;
-        case 4: dimOrder = "XYZTC"; break;
-        case 5: dimOrder = "XYTCZ"; break;
-        case 6: dimOrder = "XYZTC"; break;
-        case 7: dimOrder = "XYCTZ"; break;
-        case 8: dimOrder = "XYCZT"; break;
-        case 9: dimOrder = "XYTCZ"; break;
-        default: dimOrder = "XYZCT";
-      }
-
-      // some LSM files will have a thumbnail associated with each plane; this
-      // thumbnail is counted as an extra channel, but since we strip out the
-      // thumbnails, we need to correct the channel count
-      while (zSize * cSize * tSize != numImages) {
-        cSize--;
-      }
-
-      channels = cSize;
-      if (isRGB(currentId)) channels *= 3;
-
-      // The metadata store we're working with.
-      MetadataStore store = getMetadataStore();
-
-      store.setPixels(
-        new Integer(imageWidth), // SizeX
-        new Integer(imageLength), // SizeY
-        new Integer(zSize), // SizeZ
-        new Integer(cSize), // SizeC
-        new Integer(tSize), // SizeT
-        pixelType, // PixelType
-        null, // BigEndian
-        dimOrder, // DimensionOrder
-        null);
-
       in.seek(pos);
     }
     catch (FormatException e) { e.printStackTrace(); }
     catch (IOException e) { e.printStackTrace(); }
+    catch (Exception e) { }
   }
-
 
   // -- Helper methods --
 
@@ -588,55 +532,54 @@ public class ZeissLSMReader extends BaseTiffReader {
   {
     if (data == 0) return;
 
-    in.seek((int) data);
+    in.seek(data);
 
-    int nde = DataTools.read4SignedBytes(in, little);
+    int nde = in.readInt();
     put("NumberDrawingElements-" + suffix, nde);
-    int size = DataTools.read4SignedBytes(in, little);
-    int idata = DataTools.read4SignedBytes(in, little);
+    int size = in.readInt();
+    int idata = in.readInt();
     put("LineWidth-" + suffix, idata);
-    idata = DataTools.read4SignedBytes(in, little);
+    idata = in.readInt();
     put("Measure-" + suffix, idata);
-    in.skipBytes(8);
-    put("ColorRed-" + suffix, DataTools.readSignedByte(in));
-    put("ColorGreen-" + suffix, DataTools.readSignedByte(in));
-    put("ColorBlue-" + suffix, DataTools.readSignedByte(in));
-    in.skipBytes(1);
+    in.readDouble();
+    put("ColorRed-" + suffix, in.read());
+    put("ColorGreen-" + suffix, in.read());
+    put("ColorBlue-" + suffix, in.read());
+    in.read();
 
-    put("Valid-" + suffix, DataTools.read4SignedBytes(in, little));
-    put("KnotWidth-" + suffix, DataTools.read4SignedBytes(in, little));
-    put("CatchArea-" + suffix, DataTools.read4SignedBytes(in, little));
+    put("Valid-" + suffix, in.readInt());
+    put("KnotWidth-" + suffix, in.readInt());
+    put("CatchArea-" + suffix, in.readInt());
 
     // some fields describing the font
-    put("FontHeight-" + suffix, DataTools.read4SignedBytes(in, little));
-    put("FontWidth-" + suffix, DataTools.read4SignedBytes(in, little));
-    put("FontEscapement-" + suffix, DataTools.read4SignedBytes(in, little));
-    put("FontOrientation-" + suffix, DataTools.read4SignedBytes(in, little));
-    put("FontWeight-" + suffix, DataTools.read4SignedBytes(in, little));
-    put("FontItalic-" + suffix, DataTools.read4SignedBytes(in, little));
-    put("FontUnderline-" + suffix, DataTools.read4SignedBytes(in, little));
-    put("FontStrikeOut-" + suffix, DataTools.read4SignedBytes(in, little));
-    put("FontCharSet-" + suffix, DataTools.read4SignedBytes(in, little));
-    put("FontOutPrecision-" + suffix, DataTools.read4SignedBytes(in, little));
-    put("FontClipPrecision-" + suffix, DataTools.read4SignedBytes(in, little));
-    put("FontQuality-" + suffix, DataTools.read4SignedBytes(in, little));
-    put("FontPitchAndFamily-" + suffix,
-      DataTools.read4SignedBytes(in, little));
+    put("FontHeight-" + suffix, in.readInt());
+    put("FontWidth-" + suffix, in.readInt());
+    put("FontEscapement-" + suffix, in.readInt());
+    put("FontOrientation-" + suffix, in.readInt());
+    put("FontWeight-" + suffix, in.readInt());
+    put("FontItalic-" + suffix, in.readInt());
+    put("FontUnderline-" + suffix, in.readInt());
+    put("FontStrikeOut-" + suffix, in.readInt());
+    put("FontCharSet-" + suffix, in.readInt());
+    put("FontOutPrecision-" + suffix, in.readInt());
+    put("FontClipPrecision-" + suffix, in.readInt());
+    put("FontQuality-" + suffix, in.readInt());
+    put("FontPitchAndFamily-" + suffix, in.readInt());
     byte[] temp = new byte[64];
     in.read(temp);
     put("FontFaceName-" + suffix, new String(temp));
 
     // some flags for measuring values of different drawing element types
-    put("ClosedPolyline-" + suffix, DataTools.readUnsignedByte(in));
-    put("OpenPolyline-" + suffix, DataTools.readUnsignedByte(in));
-    put("ClosedBezierCurve-" + suffix, DataTools.readUnsignedByte(in));
-    put("OpenBezierCurve-" + suffix, DataTools.readUnsignedByte(in));
-    put("ArrowWithClosedTip-" + suffix, DataTools.readUnsignedByte(in));
-    put("ArrowWithOpenTip-" + suffix, DataTools.readUnsignedByte(in));
-    put("Ellipse-" + suffix, DataTools.readUnsignedByte(in));
-    put("Circle-" + suffix, DataTools.readUnsignedByte(in));
-    put("Rectangle-" + suffix, DataTools.readUnsignedByte(in));
-    put("Line-" + suffix, DataTools.readUnsignedByte(in));
+    put("ClosedPolyline-" + suffix, in.read());
+    put("OpenPolyline-" + suffix, in.read());
+    put("ClosedBezierCurve-" + suffix, in.read());
+    put("OpenBezierCurve-" + suffix, in.read());
+    put("ArrowWithClosedTip-" + suffix, in.read());
+    put("ArrowWithOpenTip-" + suffix, in.read());
+    put("Ellipse-" + suffix, in.read());
+    put("Circle-" + suffix, in.read());
+    put("Rectangle-" + suffix, in.read());
+    put("Line-" + suffix, in.read());
     int drawingEl = (size - 194) / nde;
     for (int i=0; i<nde; i++) {
       byte[] draw = new byte[drawingEl];
@@ -653,57 +596,65 @@ public class ZeissLSMReader extends BaseTiffReader {
 
     in.seek((int) data);
 
-    long size = DataTools.read4UnsignedBytes(in, little);
-    long numSubBlocks = DataTools.read4UnsignedBytes(in, little);
+    in.order(little);
+
+    long size = in.readInt();
+    if (size < 0) size += 4294967296L;
+    long numSubBlocks = in.readInt();
+    if (numSubBlocks < 0) numSubBlocks += 4294967296L;
     put("NumSubBlocks-" + suffix, numSubBlocks);
-    long numChannels = DataTools.read4UnsignedBytes(in, little);
+    long numChannels = in.readInt();
+    if (numChannels < 0) numChannels += 4294967296L;
     put("NumChannels-" + suffix, numChannels);
-    data = DataTools.read4UnsignedBytes(in, little);
+    data = in.readInt();
+    if (data < 0) data += 4294967296L;
     put("LutType-" + suffix, data);
-    data = DataTools.read4UnsignedBytes(in, little);
+    data = in.readInt();
+    if (data < 0) data += 4294967296L;
     put("Advanced-" + suffix, data);
-    data = DataTools.read4UnsignedBytes(in, little);
+    data = in.readInt();
+    if (data < 0) data += 4294967296L;
     put("CurrentChannel-" + suffix, data);
     in.skipBytes(36);
 
-    for (int i=0; i<numSubBlocks; i++) {
-      data = DataTools.read4UnsignedBytes(in, little);
-      put("Type" + i + "-" + suffix, data);
+    if (numSubBlocks > 100) numSubBlocks = 20;
 
-      put("Size" + i + "-" + suffix,
-        DataTools.read4UnsignedBytes(in, little));
+    for (int i=0; i<numSubBlocks; i++) {
+      data = in.readInt();
+      if (data < 0) data += 4294967296L;
+      put("Type" + i + "-" + suffix, data);
+      put("Size" + i + "-" + suffix, in.readInt());
 
       switch ((int) data) {
         case 1:
           for (int j=0; j<numChannels; j++) {
-            put("GammaChannel" + j + "-" + i + "-" + suffix,
-              DataTools.readDouble(in, little));
+            put("GammaChannel" + j + "-" + i + "-" + suffix, in.readDouble());
           }
           break;
         case 2:
           for (int j=0; j<numChannels; j++) {
             put("BrightnessChannel" + j + "-" + i + "-" + suffix,
-              DataTools.readDouble(in, little));
+              in.readDouble());
           }
           break;
 
         case 3:
           for (int j=0; j<numChannels; j++) {
             put("ContrastChannel" + j + "-" + i + "-" + suffix,
-              DataTools.readDouble(in, little));
+              in.readDouble());
           }
           break;
 
         case 4:
           for (int j=0; j<numChannels; j++) {
             put("RampStartXChannel" + j + "-" + i + "-" + suffix,
-              DataTools.readDouble(in, little));
+              in.readDouble());
             put("RampStartYChannel" + j + "-" + i + "-" + suffix,
-              DataTools.readDouble(in, little));
+              in.readDouble());
             put("RampEndXChannel" + j + "-" + i + "-" + suffix,
-              DataTools.readDouble(in, little));
+              in.readDouble());
             put("RampEndYChannel" + j + "-" + i + "-" + suffix,
-              DataTools.readDouble(in, little));
+              in.readDouble());
             j += 4;
           }
           break;

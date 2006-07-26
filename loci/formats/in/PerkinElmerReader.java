@@ -94,7 +94,7 @@ public class PerkinElmerReader extends FormatReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    return Integer.parseInt((String) metadata.get("Image Height"));
+    return Integer.parseInt((String) metadata.get("Image Length"));
   }
 
   /** Get the size of the Z dimension. */

@@ -312,7 +312,7 @@ public class AndorReader extends BaseTiffReader {
       added[index] = true;
     }
 
-    order = new String();
+    order = "XY";
     for (int i=0; i<dimOrder.length; i++) {
       String name = names[dimOrder[i]].trim();
       if (name.equals("Z") && order.indexOf("Z") < 0) order = order + "Z";

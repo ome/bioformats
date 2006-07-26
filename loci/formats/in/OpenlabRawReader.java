@@ -184,27 +184,27 @@ public class OpenlabRawReader extends FormatReader {
 
     // read the 12 byte file header
 
-    byte[] header = new byte[12];
+    byte[] header = new byte[4];
     in.read(header);
-    if (header[0] != 'O' || header[1] != 'L' ||
-      header[2] != 'R' || header[3] != 'W')
-    {
+    String check = new String(header);
+    if (!check.equals("OLRW")) {
       throw new FormatException("Openlab RAW magic string not found.");
     }
 
-    int version = DataTools.bytesToInt(header, 4, 4, false);
+    int version = in.readInt();
     metadata.put("Version", new Integer(version));
 
-    numImages = DataTools.bytesToInt(header, 8, 4, false);
+    numImages = in.readInt();
     offsets = new int[numImages];
     offsets[0] = 12;
 
-    in.skipBytes(8);
-    width = DataTools.read4SignedBytes(in, false);
-    height = DataTools.read4SignedBytes(in, false);
-    in.skipBytes(2);
-    bpp = DataTools.readUnsignedByte(in);
-    channels = DataTools.readUnsignedByte(in);
+    in.readLong();
+    width = in.readInt();
+    height = in.readInt();
+    in.readShort();
+    bpp = in.read();
+    channels = in.read();
+
     if (channels <= 1) channels = 1;
     else channels = 3;
     metadata.put("Width", new Integer(width));

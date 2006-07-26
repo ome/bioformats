@@ -231,7 +231,7 @@ public class NikonReader extends BaseTiffReader {
         }
       }
     }
-    catch (IOException io) { }
+    catch (Exception io) { }
   }
 
 

@@ -76,6 +76,8 @@ public class RandomAccessStream implements DataInput {
   /** Recent buffer sizes. */
   protected Vector recent;
 
+  /** Endianness of the stream. */
+  protected boolean littleEndian = false;
 
   // -- Constructors --
 
@@ -151,7 +153,7 @@ public class RandomAccessStream implements DataInput {
 
   /** Read four input bytes and return an int value. */
   public int readInt() throws IOException {
-    return DataTools.read4SignedBytes(this, false);
+    return DataTools.read4SignedBytes(this, littleEndian);
   }
 
   /** Read the next line of text from the input stream. */
@@ -167,12 +169,12 @@ public class RandomAccessStream implements DataInput {
 
   /** Read eight input bytes and return a long value. */
   public long readLong() throws IOException {
-    return DataTools.read8SignedBytes(this, false);
+    return DataTools.read8SignedBytes(this, littleEndian);
   }
 
   /** Read two input bytes and return a short value. */
   public short readShort() throws IOException {
-    return DataTools.read2SignedBytes(this, false);
+    return DataTools.read2SignedBytes(this, littleEndian);
   }
 
   /** Read an input byte and zero extend it appropriately. */
@@ -182,7 +184,7 @@ public class RandomAccessStream implements DataInput {
 
   /** Read two bytes and return an int in the range 0 through 65535. */
   public int readUnsignedShort() throws IOException {
-    return DataTools.read2UnsignedBytes(this, false);
+    return DataTools.read2UnsignedBytes(this, littleEndian);
   }
 
   /** Read a string that has been encoded using a modified UTF-8 format. */
@@ -315,6 +317,10 @@ public class RandomAccessStream implements DataInput {
     mark = 0;
   }
 
+  /** Set the endianness of the stream. */
+  public void order(boolean little) {
+    littleEndian = little;
+  }
 
   // -- Helper methods --
 

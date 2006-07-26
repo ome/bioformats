@@ -279,6 +279,7 @@ public class DicomReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessStream(id);
+    in.order(true);
 
     little = true;
     location = 0;
@@ -286,8 +287,8 @@ public class DicomReader extends FormatReader {
     // some DICOM files have a 128 byte header followed by a 4 byte identifier
 
     byte[] four = new byte[4];
-    long pos = in.getFilePointer();
-    in.skipBytes(128);
+    long pos = 0;
+    in.seek(128);
     in.read(four);
     if ((new String(four)).equals("DICM")) {
       // header exists, so we'll read it
@@ -295,7 +296,7 @@ public class DicomReader extends FormatReader {
       byte[] header = new byte[128];
       in.read(header);
       metadata.put("Header information", new String(header));
-      in.skipBytes(4);
+      in.readInt();
       location = 128;
     }
     else in.seek(pos);
@@ -339,7 +340,7 @@ public class DicomReader extends FormatReader {
           if (frames > 1.0) numImages = (int) frames;
           break;
         case SAMPLES_PER_PIXEL:
-          int samplesPerPixel = DataTools.read2SignedBytes(in, little);
+          int samplesPerPixel = in.readShort();
           addInfo(tag, samplesPerPixel);
           break;
         case PHOTOMETRIC_INTERPRETATION:
@@ -349,15 +350,15 @@ public class DicomReader extends FormatReader {
           addInfo(tag, photoInterpretation);
           break;
         case PLANAR_CONFIGURATION:
-          int planarConfiguration = DataTools.read2SignedBytes(in, little);
+          int planarConfiguration = in.readShort();
           addInfo(tag, planarConfiguration);
           break;
         case ROWS:
-          height = DataTools.read2SignedBytes(in, little);
+          height = in.readShort();
           addInfo(tag, height);
           break;
         case COLUMNS:
-          width = DataTools.read2SignedBytes(in, little);
+          width = in.readShort();
           addInfo(tag, width);
           break;
         case PIXEL_SPACING:
@@ -373,11 +374,11 @@ public class DicomReader extends FormatReader {
           addInfo(tag, spacing);
           break;
         case BITS_ALLOCATED:
-          bitsPerPixel = DataTools.read2SignedBytes(in, little);
+          bitsPerPixel = in.readShort();
           addInfo(tag, bitsPerPixel);
           break;
         case PIXEL_REPRESENTATION:
-          int pixelRepresentation = DataTools.read2SignedBytes(in, little);
+          int pixelRepresentation = in.readShort();
           signed = pixelRepresentation == 1;
           addInfo(tag, pixelRepresentation);
           break;
@@ -502,14 +503,14 @@ public class DicomReader extends FormatReader {
         break;
       case US:
         if (elementLength == 2) {
-          value = Integer.toString(DataTools.read2SignedBytes(in, little));
+          value = Integer.toString(in.readShort());
         }
         else {
           value = "";
           int n = elementLength / 2;
           for (int i=0; i<n; i++)
             value +=
-              Integer.toString(DataTools.read2SignedBytes(in, little)) + " ";
+              Integer.toString(in.readShort()) + " ";
           }
           break;
       case IMPLICIT_VR:
@@ -528,9 +529,10 @@ public class DicomReader extends FormatReader {
     }
     if (skip) {
       long skipCount = (long) elementLength;
-      while ((skipCount > 0) && (in.length() - in.getFilePointer()) > 0) {
-        skipCount -= in.skipBytes((int) skipCount);
+      try {
+        in.skipBytes((int) skipCount);
       }
+      catch (Exception e) { }
       location += elementLength;
       value = "";
     }
@@ -560,7 +562,7 @@ public class DicomReader extends FormatReader {
       case UN:
         // Explicit VR with 32-bit length if other two bytes are zero
         if ((b[2] == 0) || (b[3] == 0)) {
-          return (int) DataTools.read4SignedBytes(in, little);
+          return in.readInt();
         }
         vr = IMPLICIT_VR;
         if (little) return (b[3] << 24) + (b[2] << 16) + (b[1] << 8) + b[0];
@@ -599,13 +601,14 @@ public class DicomReader extends FormatReader {
   }
 
   private int getNextTag() throws IOException {
-    int groupWord = DataTools.read2SignedBytes(in, little);
+    int groupWord = in.readShort();
     if (groupWord == 0x0800 && bigEndianTransferSyntax) {
       little = false;
       groupWord = 0x0008;
+      in.order(false);
     }
 
-    int elementWord = DataTools.read2SignedBytes(in, little);
+    int elementWord = in.readShort();
     int tag = groupWord << 16 | elementWord;
     elementLength = getLength();
 

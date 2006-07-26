@@ -25,7 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
 import java.io.*;
 import java.util.Vector;
 import javax.imageio.ImageIO;
@@ -185,8 +184,11 @@ public class QTReader extends FormatReader {
   /** Number of images in the file. */
   private int numImages;
 
-  /** Pixel data stored in "mdat" atom. */
-  private byte[] pixels;
+  /** Offset to start of pixel data. */
+  private int pixelOffset;
+
+  /** Total number of bytes of pixel data. */
+  private int pixelBytes;
 
   /** Width of a single plane. */
   private int width;
@@ -327,7 +329,7 @@ public class QTReader extends FormatReader {
     int c = (isRGB(id) && separated) ? 3 : 1;
 
     int offset = ((Integer) offsets.get(no / c)).intValue();
-    int nextOffset = pixels.length;
+    int nextOffset = pixelBytes;
 
     if (no == 0) {
       scale = offset;
@@ -348,11 +350,8 @@ public class QTReader extends FormatReader {
 
     byte[] pixs = new byte[nextOffset - offset];
 
-    for (int i=0; i<pixs.length; i++) {
-      if ((offset + i) < pixels.length) {
-        pixs[i] = pixels[offset + i];
-      }
-    }
+    in.seek(pixelOffset + offset);
+    in.read(pixs);
 
     if (codec.equals("jpeg") || codec.equals("mjpb")) {
       return ImageTools.getBytes(openImage(id, no), isRGB(id) && separated,
@@ -446,7 +445,7 @@ public class QTReader extends FormatReader {
     int c = (isRGB(id) && separated) ? 3 : 1;
 
     int offset = ((Integer) offsets.get(no / c)).intValue();
-    int nextOffset = pixels.length;
+    int nextOffset = pixelBytes;
 
     if ((no / c) == 0) {
       scale = offset;
@@ -467,11 +466,8 @@ public class QTReader extends FormatReader {
 
     byte[] pixs = new byte[nextOffset - offset];
 
-    for (int i=0; i<pixs.length; i++) {
-      if ((offset + i) < pixels.length) {
-        pixs[i] = pixels[offset + i];
-      }
-    }
+    in.seek(pixelOffset + offset);
+    in.read(pixs);
 
     if (codec.equals("jpeg")) {
       if (!isRGB(id) || !separated) {
@@ -508,6 +504,8 @@ public class QTReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessFile(id, "r");
+    //in.order(little);
+
     spork = true;
     offsets = new Vector();
     chunkSizes = new Vector();
@@ -531,7 +529,7 @@ public class QTReader extends FormatReader {
       new Integer(bitsPerPixel < 40 ? 3 : 1),
       new Integer(1),
       pixelType,
-      new Boolean(little),
+      new Boolean(!little),
       "XYCZT",
       null);
 
@@ -552,8 +550,9 @@ public class QTReader extends FormatReader {
       File f = new File(base + ".qtr");
       if (f.exists()) {
         in = new RandomAccessFile(f.getAbsolutePath(), "r");
+
         stripHeader();
-        parse(0, in.getFilePointer(), in.length());
+        parse(0, 0, in.length());
         numImages = offsets.size();
         return;
       }
@@ -563,7 +562,7 @@ public class QTReader extends FormatReader {
         if (f.exists()) {
           in = new RandomAccessFile(f.getAbsolutePath(), "r");
           stripHeader();
-          parse(0, in.getFilePointer(), in.length());
+          parse(0, 0, in.length());
           numImages = offsets.size();
           return;
         }
@@ -572,7 +571,7 @@ public class QTReader extends FormatReader {
           if (f.exists()) {
             in = new RandomAccessFile(f.getAbsolutePath(), "r");
             stripHeader();
-            parse(0, in.getFilePointer(), in.length());
+            parse(0, 0, in.length());
             numImages = offsets.size();
             return;
           }
@@ -637,7 +636,8 @@ public class QTReader extends FormatReader {
       in.seek(offset);
 
       // first 4 bytes are the atom size
-      long atomSize = DataTools.read4UnsignedBytes(in, little);
+      long atomSize = in.readInt();
+      if (atomSize < 0) atomSize += 4294967296L;
 
       // read the atom type
       byte[] four = new byte[4];
@@ -646,7 +646,7 @@ public class QTReader extends FormatReader {
 
       // if atomSize is 1, then there is an 8 byte extended size
       if (atomSize == 1) {
-        atomSize = DataTools.read8SignedBytes(in, little);
+        atomSize = in.readLong();
       }
 
       if (atomSize < 0) {
@@ -661,28 +661,33 @@ public class QTReader extends FormatReader {
       }
       else {
         if (atomSize == 0) atomSize = in.length();
-        data = new byte[(int) atomSize];
-        in.read(data);
+        int oldpos = (int) in.getFilePointer();
 
         if (atomType.equals("mdat")) {
           // we've found the pixel data
-          pixels = data;
+          pixelOffset = (int) in.getFilePointer();
+          pixelBytes = (int) atomSize;
+
+          if (pixelBytes > (in.length() - pixelOffset)) {
+            pixelBytes = (int) (in.length() - pixelOffset);
+          }
         }
         else if (atomType.equals("tkhd")) {
           // we've found the dimensions
 
-          int off = 74;
-          width = DataTools.bytesToInt(data, off, little);
-          off += 4;
-          height = DataTools.bytesToInt(data, off, little);
+          in.skipBytes(74);
+          width = in.readInt();
+          height = in.readInt();
         }
         else if (atomType.equals("stco")) {
           // we've found the plane offsets
 
           spork = false;
-          int numPlanes = DataTools.bytesToInt(data, 4, little);
+          in.readInt();
+          int numPlanes = in.readInt();
           if (numPlanes != numImages) {
-            int off = DataTools.bytesToInt(data, 4, little);
+            in.seek(in.getFilePointer() - 4);
+            int off = in.readInt();
             offsets.add(new Integer(off));
             for (int i=1; i<numImages; i++) {
               if ((chunkSizes.size() > 0) && (i < chunkSizes.size())) {
@@ -694,39 +699,53 @@ public class QTReader extends FormatReader {
             }
           }
           else {
-            int j = 8;
             for (int i=0; i<numPlanes; i++) {
-              offsets.add(new Integer(DataTools.bytesToInt(data, j, little)));
-              j += 4;
+              offsets.add(new Integer(in.readInt()));
             }
           }
         }
         else if (atomType.equals("stsd")) {
           // found video codec and pixel depth information
-          codec = new String(data, 12, 4);
 
-          int fieldsPerPlane = DataTools.bytesToInt(data, 102, 1, little);
+          in.readDouble();
+          in.readInt();
+          byte[] b = new byte[4];
+          in.read(b);
+          codec = new String(b);
+
+          in.skipBytes(74);
+
+          bitsPerPixel = in.readShort();
+          in.readShort();
+          in.readDouble();
+          int fieldsPerPlane = in.read();
           interlaced = fieldsPerPlane == 2;
-          bitsPerPixel = DataTools.bytesToInt(data, 90, 2, little);
           metadata.put("Codec", codec);
           metadata.put("Bits per pixel", new Integer(bitsPerPixel));
         }
         else if (atomType.equals("stsz")) {
           // found the number of planes
-          rawSize = DataTools.bytesToInt(data, 4, 4, little);
-          numImages = DataTools.bytesToInt(data, 8, 4, little);
+          in.readInt();
+          rawSize = in.readInt();
+          numImages = in.readInt();
 
           if (rawSize == 0) {
+            in.seek(in.getFilePointer() - 4);
             for (int b=0; b<numImages; b++) {
-              chunkSizes.add(new Integer(DataTools.bytesToInt(
-                data, 8+b*4, 4, little)));
+              chunkSizes.add(new Integer(in.readInt()));
             }
           }
         }
         else if (atomType.equals("stts")) {
-          int fps = DataTools.bytesToInt(data, 12, 4, little);
+          in.readDouble();
+          in.readInt();
+          int fps = in.readInt();
           metadata.put("Frames per second", new Integer(fps));
         }
+        if (oldpos + atomSize < in.length()) {
+          in.seek(oldpos + atomSize);
+        }
+        else break;
       }
 
       if (atomSize == 0) offset = in.length();
@@ -1080,62 +1099,31 @@ public class QTReader extends FormatReader {
       v2.add((byte) 0xff);
       v2.add((byte) 0xd9);
 
-      // this takes less time than it used to, but may not be the
-      // most intelligent way of doing things
-
       BufferedImage top = bufferedJPEG(v.toByteArray());
       BufferedImage bottom = bufferedJPEG(v2.toByteArray());
 
-      byte[][] scanlines =
-        new byte[(bitsPerPixel >= 40) ? 1 : 3][width * height];
+      BufferedImage result = new BufferedImage(top.getWidth(),
+        top.getHeight() + bottom.getHeight(), top.getType());
 
-      WritableRaster topRaster = top.getWritableTile(0, 0);
-      WritableRaster bottomRaster = bottom.getWritableTile(0, 0);
+      int topCount = 0;
+      int bottomCount = 0;
 
-      byte[] topPixs = (byte[]) topRaster.getDataElements(0, 0, top.getWidth(),
-        top.getHeight(), null);
-      byte[] bottomPixs = (byte[]) bottomRaster.getDataElements(0, 0,
-        bottom.getWidth(), bottom.getHeight(), null);
-      top.releaseWritableTile(0, 0);
-      bottom.releaseWritableTile(0, 0);
-
-      int topLine = 0;
-      int bottomLine = 0;
-
-      if (bitsPerPixel >= 40) {
-        for (int i=0; i<height; i++) {
-          if (i % 2 == 0) {
-            System.arraycopy(topPixs, topLine*width, scanlines[0],
-              width*i, width);
-            topLine++;
+      for (int i=0; i<result.getHeight(); i++) {
+        if (i % 2 == 0) {
+          for (int j=0; j<result.getWidth(); j++) {
+            result.setRGB(j, i, top.getRGB(j, topCount));
           }
-          else {
-            System.arraycopy(bottomPixs, bottomLine*width, scanlines[0],
-              width*i, width);
-            bottomLine++;
-          }
+          topCount++;
         }
-      }
-      else {
-        for (int i=0; i<height; i++) {
-          if ((i % 2) == 0) {
-            for (int j=0; j<3*width; j++) {
-              scanlines[j % 3][(width * i) + (j / 3)] =
-                topPixs[topLine*width*3 + j];
-            }
-            topLine++;
+        else {
+          for (int j=0; j<result.getWidth(); j++) {
+            result.setRGB(j, i, bottom.getRGB(j, bottomCount));
           }
-          else {
-            for (int j=0; j<3*width; j++) {
-              scanlines[j % 3][(width * i) + (j / 3)] =
-                topPixs[bottomLine*width*3 + j];
-            }
-            bottomLine++;
-          }
+          bottomCount++;
         }
       }
 
-      return ImageTools.makeImage(scanlines, width, height);
+      return result;
     }
     else {
       v.add(b.toByteArray());

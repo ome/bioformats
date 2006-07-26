@@ -40,7 +40,7 @@ public abstract class BaseTiffReader extends FormatReader {
 
   // -- Fields --
 
-  /** Random access file for the current TIFF. */
+  /** Current TIFF file. */
   protected RandomAccessStream in;
 
   /** List of IFDs for the current TIFF. */
@@ -570,6 +570,7 @@ public abstract class BaseTiffReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessStream(id);
+    if (in.readShort() == 0x4949) in.order(true);
 
     ifds = TiffTools.getIFDs(in);
     if (ifds == null) throw new FormatException("No IFDs found");

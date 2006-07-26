@@ -326,7 +326,6 @@ public class OLEParser {
         }
 
         String name = sb.toString();
-
         if (name.trim().equals("")) return;
 
         if (name.indexOf("(") != -1 && name.indexOf(")") != -1) {
