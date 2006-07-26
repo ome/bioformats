@@ -26,6 +26,7 @@ package loci.formats;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Hashtable;
 
 /** Logic to automatically merge channels in a file. */
 public class ChannelMerger extends FormatReader {
@@ -89,14 +90,31 @@ public class ChannelMerger extends FormatReader {
     reader.setSeparated(separate);
   }
 
+  /**
+   * Obtains the hashtable containing the metadata field/value pairs from
+   * the given file.
+   */
+  public Hashtable getMetadata(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.getMetadata(id);
+  }
+
+  /**
+   * Retrieves the current metadata store for this reader.
+   */
+  public MetadataStore getMetadataStore() {
+    return reader.getMetadataStore();
+  }
+
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
 
     int channels = getSizeC(id);
     boolean multipleChannels = channels > 1;
-    return multipleChannels && (channels == 3 && reader.isRGB(id)) &&
-      !separated;
+    //return multipleChannels && (channels == 3 && reader.isRGB(id)) &&
+    //  !separated;
+    return multipleChannels && !separated;
   }
 
   /** Get the size of the X dimension. */

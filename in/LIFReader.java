@@ -40,7 +40,7 @@ public class LIFReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessFile in;
+  protected RandomAccessStream in;
 
   /** Flag indicating whether current file is little endian. */
   protected boolean littleEndian;
@@ -99,7 +99,7 @@ public class LIFReader extends FormatReader {
   /** Get the size of the X dimension. */
   public int getSizeX(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    
+
     int max = 0;
     int maxIndex = 0;
     for (int i=0; i<dims.length; i++) {
@@ -108,7 +108,7 @@ public class LIFReader extends FormatReader {
         maxIndex = i;
       }
     }
-    
+
     return dims[maxIndex][0];
   }
 
@@ -123,7 +123,7 @@ public class LIFReader extends FormatReader {
         maxIndex = i;
       }
     }
-    
+
     return dims[maxIndex][1];
   }
 
@@ -136,8 +136,8 @@ public class LIFReader extends FormatReader {
       zSum += dims[i][2];
       tSum += dims[i][3];
     }
- 
-    if (zSum > tSum) return getImageCount(id); 
+
+    if (zSum > tSum) return getImageCount(id);
     else return 1;
   }
 
@@ -242,69 +242,60 @@ public class LIFReader extends FormatReader {
   /** Initializes the given LIF file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
+    in = new RandomAccessStream(id);
     offsets = new Vector();
-    in = new RandomAccessFile(id, "r");
 
     littleEndian = true;
+    in.order(littleEndian);
 
     // read the header
 
-    byte[] header = new byte[8];
-    in.read(header);
-
-    if ((header[0] != 0x70) && (header[3] != 0x70)) {
+    byte checkOne = (byte) in.read();
+    in.skipBytes(2);
+    byte checkTwo = (byte) in.read();
+    if (checkOne != 0x70 && checkTwo != 0x70) {
       throw new FormatException(id + " is not a valid Leica LIF file");
     }
 
-    int chunkLength = DataTools.bytesToInt(header, 4, 4, littleEndian);
+    int chunkLength = in.readInt();
 
     // read and parse the XML description
 
-    byte[] xmlChunk = new byte[chunkLength];
-    in.read(xmlChunk);
-
-    if (xmlChunk[0] != 0x2a) {
+    if (in.read() != 0x2a) {
       throw new FormatException("Invalid XML description");
     }
 
     // number of Unicode characters in the XML block
-    int nc = DataTools.bytesToInt(xmlChunk, 1, 4, littleEndian);
-    String xml = new String(xmlChunk, 5, nc*2);
-    xml = DataTools.stripString(xml);
+
+    int nc = in.readInt();
+    byte[] s = new byte[nc * 2];
+    in.read(s);
+    String xml = DataTools.stripString(new String(s));
 
     while (in.getFilePointer() < in.length()) {
-      byte[] four = new byte[4];
-      in.read(four);
-      int check = DataTools.bytesToInt(four, littleEndian);
-      if (check != 0x70) {
+      if (in.readInt() != 0x70) {
         throw new FormatException("Invalid Memory Block");
       }
 
-      in.read(four);
-      int memLength = DataTools.bytesToInt(four, littleEndian);
-
+      int memLength = in.readInt();
       if (in.read() != 0x2a) {
         throw new FormatException("Invalid Memory Description");
       }
 
-      in.read(four);
-      int blockLength = DataTools.bytesToInt(four, littleEndian);
-
+      int blockLength = in.readInt();
       if (in.read() != 0x2a) {
         throw new FormatException("Invalid Memory Description");
       }
 
-      in.read(four);
-      int descrLength = DataTools.bytesToInt(four, littleEndian);
-
+      int descrLength = in.readInt();
       byte[] memDescr = new byte[2*descrLength];
       in.read(memDescr);
-      String descr = new String(memDescr);
-      descr = DataTools.stripString(descr);
+      String descr = DataTools.stripString(new String(memDescr));
 
       if (blockLength > 0) {
         offsets.add(new Long(in.getFilePointer()));
       }
+
       in.skipBytes(blockLength);
     }
     numImages = offsets.size();

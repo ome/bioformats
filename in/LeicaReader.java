@@ -48,9 +48,6 @@ public class LeicaReader extends BaseTiffReader {
 
   // -- Fields --
 
-  /** Current file. */
-  //protected RandomAccessStream in;
-
   /** Flag indicating whether current file is little endian. */
   protected boolean littleEndian;
 
@@ -195,7 +192,7 @@ public class LeicaReader extends BaseTiffReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    return tiff.openBytes(currentId, no);
+    return tiff.openBytes(files[no], no);
   }
 
   /** Obtains the specified image from the given Leica file. */
@@ -224,7 +221,14 @@ public class LeicaReader extends BaseTiffReader {
     if (id.toLowerCase().endsWith("tif") || id.toLowerCase().endsWith("tiff"))
     {
       if (ifds == null) super.initFile(id);
+
       in = new RandomAccessStream(id);
+
+      if (in.readShort() == 0x4949) {
+        in.order(true);
+      }
+
+      in.seek(0);
       numChannels = 0;
 
       // open the TIFF file and look for the "Image Description" field
@@ -294,6 +298,7 @@ public class LeicaReader extends BaseTiffReader {
       else {
         if (currentId != id) currentId = id;
       }
+
       in = new RandomAccessStream(id);
 
       byte[] fourBytes = new byte[4];
@@ -303,8 +308,10 @@ public class LeicaReader extends BaseTiffReader {
         fourBytes[2] == TiffTools.LITTLE &&
         fourBytes[3] == TiffTools.LITTLE);
 
+      in.order(littleEndian);
+
       in.skipBytes(8);
-      int addr = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+      int addr = in.readInt();
       Vector v = new Vector();
       while (addr != 0) {
         Hashtable ifd = new Hashtable();
@@ -312,26 +319,26 @@ public class LeicaReader extends BaseTiffReader {
 
         in.seek(addr);
 
-        int numEntries = (int) DataTools.read4UnsignedBytes(in, littleEndian);
-        int tag = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+        int numEntries = in.readInt();
+        int tag = in.readInt();
 
         int numIFDs = 0;
         while (tag != 0) {
           // create the IFD structure
-          int offset = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+          int offset = in.readInt();
 
           long pos = in.getFilePointer();
           in.seek(offset + 12);
 
-          int size = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+          int size = in.readInt();
           byte[] data = new byte[size];
           in.read(data);
           ifd.put(new Integer(tag), (Object) data);
           in.seek(pos);
-          tag = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+          tag = in.readInt();
         }
 
-        addr = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+        addr = in.readInt();
       }
       headerIFDs = new Hashtable[v.size()];
       v.copyInto(headerIFDs);
@@ -659,6 +666,8 @@ public class LeicaReader extends BaseTiffReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
+
+    if (numChannels == 0) numChannels++;
 
     try {
       if (isRGB(currentId)) numChannels *= 3;

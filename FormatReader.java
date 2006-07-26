@@ -28,7 +28,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Arrays;
 import java.util.Hashtable;
-import java.util.Vector;
 import javax.swing.filechooser.FileFilter;
 import loci.util.FilePattern;
 
@@ -286,13 +285,15 @@ public abstract class FormatReader extends FormatHandler {
     System.out.print("Checking " + format + " format ");
     System.out.println(isThisType(id) ? "[yes]" : "[no]");
 
+
+    ChannelMerger cm = new ChannelMerger(stitch ?
+      new FileStitcher(this) : this);
+
     // read pixels
     if (pixels) {
       System.out.print("Reading " + (stitch ?
         FilePattern.findPattern(new File(id)) : id) + " pixel data ");
       long s1 = System.currentTimeMillis();
-      ChannelMerger cm = new ChannelMerger(stitch ?
-        new FileStitcher(this) : this);
       cm.setSeparated(separate);
       int num = cm.getImageCount(id);
       System.out.print("(" + num + ") ");
@@ -322,15 +323,15 @@ public abstract class FormatReader extends FormatHandler {
     // read metadata
     System.out.println();
     System.out.print("Reading " + id + " metadata ");
-    int imageCount = getImageCount(id);
-    boolean rgb = isRGB(id);
-    int sizeX = getSizeX(id);
-    int sizeY = getSizeY(id);
-    int sizeZ = getSizeZ(id);
-    int sizeC = getSizeC(id);
-    int sizeT = getSizeT(id);
-    boolean little = isLittleEndian(id);
-    String dimOrder = getDimensionOrder(id);
+    int imageCount = cm.getImageCount(id);
+    boolean rgb = cm.isRGB(id);
+    int sizeX = cm.getSizeX(id);
+    int sizeY = cm.getSizeY(id);
+    int sizeZ = cm.getSizeZ(id);
+    int sizeC = cm.getSizeC(id);
+    int sizeT = cm.getSizeT(id);
+    boolean little = cm.isLittleEndian(id);
+    String dimOrder = cm.getDimensionOrder(id);
     Hashtable meta = getMetadata(id);
     System.out.println("[done]");
 
@@ -375,102 +376,6 @@ public abstract class FormatReader extends FormatHandler {
     }
 
     return true;
-  }
-
-  // -- File stitching API methods --
-
-  /** Gets a list of files matching the pattern in the given file name. */
-  public String[] getMatchingFiles(String id)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    FilePattern fp = new FilePattern(new File(id));
-    return fp.getFiles();
-  }
-
-  /**
-   * Open all of the files matching the given file, and return the corresponding
-   * array of BufferedImages.
-   */
-  public BufferedImage[] openAllImages(String id)
-    throws FormatException, IOException
-  {
-    String[] files = getMatchingFiles(id);
-    Vector v = new Vector();
-    for (int i=0; i<files.length; i++) {
-      for (int j=0; j<getImageCount(id); j++) {
-        v.add(openImage(files[i], j));
-      }
-    }
-    return (BufferedImage[]) v.toArray(new BufferedImage[0]);
-  }
-
-  /** Get the total number of images in the given file and all matching files.*/
-  public int getTotalImageCount(String id) throws FormatException, IOException {
-    String[] files = getMatchingFiles(id);
-    int num = 0;
-    for (int i=0; i<files.length; i++) {
-      num += getImageCount(files[i]);
-    }
-    return num;
-  }
-
-  /**
-   * Open the given image from the appropriate file matching the
-   * given file name.  The number given should be between 0 and
-   * getTotalImageCount(id); this method will automatically adjust the file
-   * name and plane number accordingly.
-   */
-  public BufferedImage openStitchedImage(String id, int no)
-    throws FormatException, IOException
-  {
-    String[] files = getMatchingFiles(id);
-
-    // first find the appropriate file
-    boolean found = false;
-    String file = files[0];
-    int ndx = 1;  // index into the array of file names
-    while (!found) {
-      if (no < getImageCount(file)) {
-        found = true;
-      }
-      else {
-        no -= getImageCount(file);
-        file = files[ndx];
-        ndx++;
-      }
-    }
-
-    return openImage(file, no);
-  }
-
-  /**
-   * Open the given image from the appropriate file matching the
-   * given file name.  The number given should be between 0 and
-   * getTotalImageCount(id); this method will automatically adjust the file
-   * name and plane number accordingly.
-   */
-  public byte[] openStitchedBytes(String id, int no)
-    throws FormatException, IOException
-  {
-    String[] files = getMatchingFiles(id);
-
-    // first find the appropriate file
-    boolean found = false;
-    String file = files[0];
-    int ndx = 1;  // index into the array of file names
-    while (!found) {
-      if (no < getImageCount(file)) {
-        found = true;
-      }
-      else {
-        no -= getImageCount(file);
-        file = files[ndx];
-        ndx++;
-      }
-    }
-
-    return openBytes(file, no);
   }
 
   // -- FormatHandler API methods --

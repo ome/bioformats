@@ -142,11 +142,10 @@ public class OIBReader extends FormatReader {
 
     byte[] pixels = (byte[]) pixelData.get(new Integer(no));
     RandomAccessStream ra = new RandomAccessStream(pixels);
+    ra.order(true);
 
     Hashtable[] fds = TiffTools.getIFDs(ra, 0);
-    BufferedImage img = TiffTools.getImage(fds[0], ra);
-    ra.close();
-    return img;
+    return TiffTools.getImage(fds[0], ra);
   }
 
   /** Closes any open files. */
@@ -179,6 +178,7 @@ public class OIBReader extends FormatReader {
           if (width == 0 && height == 0) {
             // get the width and height
             RandomAccessStream ras = new RandomAccessStream(data);
+            ras.order(true);
             Hashtable[] ifds = TiffTools.getIFDs(ras);
             width = TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_WIDTH,
               false, -1);
@@ -190,6 +190,7 @@ public class OIBReader extends FormatReader {
           }
           else {
             RandomAccessStream ra = new RandomAccessStream(data);
+            ra.order(true);
             try {
               Hashtable[] ifds = TiffTools.getIFDs(ra);
               int w = TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_WIDTH,
@@ -201,6 +202,7 @@ public class OIBReader extends FormatReader {
               }
             }
             catch (IOException e) { }
+            catch (IllegalArgumentException e) { }
             ra.close();
             ra = null;
           }
@@ -226,12 +228,14 @@ public class OIBReader extends FormatReader {
     // initialize metadata
 
     TiffReader btr = new TiffReader();
-    Hashtable[] tiffIFDs = TiffTools.getIFDs(new RandomAccessStream(
-      (byte[]) pixelData.get(new Integer(0))));
+    RandomAccessStream b =
+      new RandomAccessStream((byte[]) pixelData.get(new Integer(0)));
+    b.order(true);
+    Hashtable[] tiffIFDs = TiffTools.getIFDs(b);
 
     btr.ifds = tiffIFDs;
     btr.setInitialSizeZ(numImages);
-    btr.in = new RandomAccessStream((byte[]) pixelData.get(new Integer(0)));
+
     try {
       btr.initFile(id);
     }

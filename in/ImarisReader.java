@@ -173,29 +173,31 @@ public class ImarisReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessStream(id);
+    in.order(IS_LITTLE);
+
     dims = new int[4];
 
-    long magic = DataTools.read4UnsignedBytes(in, IS_LITTLE);
+    long magic = in.readInt();
     if (magic != IMARIS_MAGIC_NUMBER) {
       throw new FormatException("Imaris magic number not found.");
     }
 
-    int version = DataTools.read4SignedBytes(in, IS_LITTLE);
+    int version = in.readInt();
     metadata.put("Version", new Integer(version));
-    in.skipBytes(4);
+    in.readInt();
 
     byte[] name = new byte[128];
     in.read(name);
     String iName = new String(name);
     metadata.put("Image name", iName);
 
-    dims[0] = DataTools.read2SignedBytes(in, IS_LITTLE);
-    dims[1] = DataTools.read2SignedBytes(in, IS_LITTLE);
-    dims[2] = DataTools.read2SignedBytes(in, IS_LITTLE);
+    dims[0] = in.readShort();
+    dims[1] = in.readShort();
+    dims[2] = in.readShort();
 
-    in.skipBytes(2); // data type, ignore for now
+    in.skipBytes(2);
 
-    dims[3] = DataTools.read4SignedBytes(in, IS_LITTLE);
+    dims[3] = in.readInt();
     in.skipBytes(2);
 
     byte[] date = new byte[32];
@@ -203,16 +205,16 @@ public class ImarisReader extends FormatReader {
     String origDate = new String(date);
     metadata.put("Original date", origDate);
 
-    float dx = DataTools.readFloat(in, IS_LITTLE);
-    float dy = DataTools.readFloat(in, IS_LITTLE);
-    float dz = DataTools.readFloat(in, IS_LITTLE);
-    short mag = DataTools.read2SignedBytes(in, IS_LITTLE);
+    float dx = in.readFloat();
+    float dy = in.readFloat();
+    float dz = in.readFloat();
+    short mag = in.readShort();
 
     byte[] com = new byte[128];
     in.read(com);
     String comment = new String(com);
     metadata.put("Image comment", comment);
-    int isSurvey = DataTools.read4SignedBytes(in, IS_LITTLE);
+    int isSurvey = in.readInt();
     metadata.put("Survey performed", isSurvey == 0 ? "true" : "false");
 
     numImages = dims[2] * dims[3];

@@ -139,6 +139,8 @@ public class FluoviewReader extends BaseTiffReader {
       // determine byte order
       boolean little = TiffTools.isLittleEndian(ifd);
 
+      in.order(little);
+
       // set file pointer to start reading MM_HEAD metadata
       short[] mmHead = TiffTools.getIFDShortArray(ifd, MMHEADER, false);
       int p = 0; // pointer to next byte in mmHead
@@ -220,7 +222,7 @@ public class FluoviewReader extends BaseTiffReader {
 
       // read in comments field
       if (commentSize > 0) {
-        in.seek(commentOffset);
+        in.seek((int) commentOffset);
         byte[] comments = new byte[(int) commentSize];
         in.read(comments);
         put("Comments", new String(comments));
@@ -249,16 +251,17 @@ public class FluoviewReader extends BaseTiffReader {
         for (int j=0; j<10; j++) {
           dimName = new char[16];
           for (int i=0; i<16; i++) {
-            dimName[i] = in.readChar();
+            dimName[i] = (char) in.read();
+            in.read();
           }
 
-          newNum = DataTools.read4SignedBytes(in, little);
-          origin = (float) DataTools.readDouble(in, little);
+          newNum = in.readInt();
+          origin = (float) in.readDouble();
           if (j == 1) stageX = origin;
           else if (j == 2) stageY = origin;
           else if (j == 3) stageZ = origin;
 
-          DataTools.readDouble(in, little); // skip next double
+          in.readDouble(); // skip next double
         }
       }
 
@@ -423,9 +426,7 @@ public class FluoviewReader extends BaseTiffReader {
         else order += "T";
       }
     }
-    catch (NullPointerException e) { /* most likely MMHEADER not found */ }
-    catch (IOException e) { e.printStackTrace(); }
-    catch (FormatException e) { e.printStackTrace(); }
+    catch (Exception e) { e.printStackTrace(); }
   }
 
   // -- Main method --

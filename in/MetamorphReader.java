@@ -223,7 +223,7 @@ public class MetamorphReader extends BaseTiffReader {
       boolean little = TiffTools.isLittleEndian(ifd);
 
       while ((currentcode < 66) && ((in.length() - in.getFilePointer()) > 2)) {
-        currentcode = DataTools.read2SignedBytes(in, little);
+        currentcode = in.readShort();
 
         // variable declarations, because switch is dumb
         int num, denom;
@@ -232,39 +232,39 @@ public class MetamorphReader extends BaseTiffReader {
         String thedate, thetime;
         switch (currentcode) {
           case 0:
-            String autoscale = DataTools.read4SignedBytes(in, little) == 0 ?
+            String autoscale = in.readInt() == 0 ?
               "no auto-scaling" : "16-bit to 8-bit scaling";
             put("AutoScale", autoscale);
             break;
           case 1:
-            put("MinScale", DataTools.read4SignedBytes(in, little));
+            put("MinScale", in.readInt());
             break;
           case 2:
-            put("MaxScale", DataTools.read4SignedBytes(in, little));
+            put("MaxScale", in.readInt());
             break;
           case 3:
-            int calib = DataTools.read4SignedBytes(in, little);
+            int calib = in.readInt();
             String calibration = calib == 0 ? "on" : "off";
             put("Spatial Calibration", calibration);
             break;
           case 4:
-            num = DataTools.read4SignedBytes(in, little);
-            denom = DataTools.read4SignedBytes(in, little);
+            num = in.readInt();
+            denom = in.readInt();
             put("XCalibration", new TiffRational(num, denom));
             break;
           case 5:
-            num = DataTools.read4SignedBytes(in, little);
-            denom = DataTools.read4SignedBytes(in, little);
+            num = in.readInt();
+            denom = in.readInt();
             put("YCalibration", new TiffRational(num, denom));
             break;
           case 6:
-            num = DataTools.read4SignedBytes(in, little);
+            num = in.readInt();
             toread = new byte[num];
             in.read(toread);
             put("CalibrationUnits", new String(toread));
             break;
           case 7:
-            num = DataTools.read4SignedBytes(in, little);
+            num = in.readInt();
             toread = new byte[num];
             in.read(toread);
             String name = new String(toread);
@@ -272,81 +272,81 @@ public class MetamorphReader extends BaseTiffReader {
             imageName = name;
             break;
           case 8:
-            int thresh = DataTools.read4SignedBytes(in, little);
+            int thresh = in.readInt();
             String threshState = "off";
             if (thresh == 1) threshState = "inside";
             else if (thresh == 2) threshState = "outside";
             put("ThreshState", threshState);
             break;
           case 9:
-            put("ThreshStateRed", DataTools.read4SignedBytes(in, little));
+            put("ThreshStateRed", in.readInt());
             break;
           // there is no 10
           case 11:
-            put("ThreshStateGreen", DataTools.read4SignedBytes(in, little));
+            put("ThreshStateGreen", in.readInt());
             break;
           case 12:
-            put("ThreshStateBlue", DataTools.read4SignedBytes(in, little));
+            put("ThreshStateBlue", in.readInt());
             break;
           case 13:
-            put("ThreshStateLo", DataTools.read4SignedBytes(in, little));
+            put("ThreshStateLo", in.readInt());
             break;
           case 14:
-            put("ThreshStateHi", DataTools.read4SignedBytes(in, little));
+            put("ThreshStateHi", in.readInt());
             break;
           case 15:
-            int zoom = DataTools.read4SignedBytes(in, little);
+            int zoom = in.readInt();
             put("Zoom", zoom);
 //            OMETools.setAttribute(ome, "DisplayOptions", "Zoom", "" + zoom);
             break;
           case 16: // oh how we hate you Julian format...
-            thedate = decodeDate(DataTools.read4SignedBytes(in, little));
-            thetime = decodeTime(DataTools.read4SignedBytes(in, little));
+            thedate = decodeDate(in.readInt());
+            thetime = decodeTime(in.readInt());
             put("DateTime", thedate + " " + thetime);
             imageCreationDate = thedate + " " + thetime;
             break;
           case 17:
-            thedate = decodeDate(DataTools.read4SignedBytes(in, little));
-            thetime = decodeTime(DataTools.read4SignedBytes(in, little));
+            thedate = decodeDate(in.readInt());
+            thetime = decodeTime(in.readInt());
             put("LastSavedTime", thedate + " " + thetime);
             break;
           case 18:
-            put("currentBuffer", DataTools.read4SignedBytes(in, little));
+            put("currentBuffer", in.readInt());
             break;
           case 19:
-            put("grayFit", DataTools.read4SignedBytes(in, little));
+            put("grayFit", in.readInt());
             break;
           case 20:
-            put("grayPointCount", DataTools.read4SignedBytes(in, little));
+            put("grayPointCount", in.readInt());
             break;
           case 21:
-            num = DataTools.read4SignedBytes(in, little);
-            denom = DataTools.read4SignedBytes(in, little);
+            num = in.readInt();
+            denom = in.readInt();
             put("grayX", new TiffRational(num, denom));
             break;
           case 22:
-            num = DataTools.read4SignedBytes(in, little);
-            denom = DataTools.read4SignedBytes(in, little);
+            num = in.readInt();
+            denom = in.readInt();
             put("gray", new TiffRational(num, denom));
             break;
           case 23:
-            num = DataTools.read4SignedBytes(in, little);
-            denom = DataTools.read4SignedBytes(in, little);
+            num = in.readInt();
+            denom = in.readInt();
             put("grayMin", new TiffRational(num, denom));
             break;
           case 24:
-            num = DataTools.read4SignedBytes(in, little);
-            denom = DataTools.read4SignedBytes(in, little);
+            num = in.readInt();
+            denom = in.readInt();
             put("grayMax", new TiffRational(num, denom));
             break;
           case 25:
-            num = DataTools.read4SignedBytes(in, little);
+            num = in.readInt();
             toread = new byte[num];
             in.read(toread);
             put("grayUnitName", new String(toread));
             break;
           case 26:
-            int standardLUT = DataTools.read4SignedBytes(in, little);
+            int standardLUT = in.readInt();
             String standLUT;
             switch (standardLUT) {
               case 0: standLUT = "monochrome"; break;
@@ -360,14 +360,14 @@ public class MetamorphReader extends BaseTiffReader {
             put("StandardLUT", standLUT);
             break;
           case 27:
-            put("Wavelength", DataTools.read4SignedBytes(in, little));
+            put("Wavelength", in.readInt());
             break;
           case 28:
             for (int i = 0; i < planes; i++) {
-                xnum = DataTools.read4SignedBytes(in, little);
-                xdenom = DataTools.read4SignedBytes(in, little);
-                ynum = DataTools.read4SignedBytes(in, little);
-                ydenom = DataTools.read4SignedBytes(in, little);
+                xnum = in.readInt();
+                xdenom = in.readInt();
+                ynum = in.readInt();
+                ydenom = in.readInt();
                 xpos = xnum / xdenom;
                 ypos = ynum / ydenom;
                 put("Stage Position Plane " + i,
@@ -376,10 +376,10 @@ public class MetamorphReader extends BaseTiffReader {
             break;
           case 29:
             for (int i = 0; i < planes; i++) {
-              xnum = DataTools.read4SignedBytes(in, little);
-              xdenom = DataTools.read4SignedBytes(in, little);
-              ynum = DataTools.read4SignedBytes(in, little);
-              ydenom = DataTools.read4SignedBytes(in, little);
+              xnum = in.readInt();
+              xdenom = in.readInt();
+              ynum = in.readInt();
+              ydenom = in.readInt();
               xpos = xnum / xdenom;
               ypos = ynum / ydenom;
               put("Camera Offset Plane " + i,
@@ -387,30 +387,29 @@ public class MetamorphReader extends BaseTiffReader {
             }
             break;
           case 30:
-            put("OverlayMask", DataTools.read4SignedBytes(in, little));
+            put("OverlayMask", in.readInt());
             break;
           case 31:
-            put("OverlayCompress", DataTools.read4SignedBytes(in, little));
+            put("OverlayCompress", in.readInt());
             break;
           case 32:
-            put("Overlay", DataTools.read4SignedBytes(in, little));
+            put("Overlay", in.readInt());
             break;
           case 33:
-            put("SpecialOverlayMask", DataTools.read4SignedBytes(in, little));
+            put("SpecialOverlayMask", in.readInt());
             break;
           case 34:
-            put("SpecialOverlayCompress",
-              DataTools.read4SignedBytes(in, little));
+            put("SpecialOverlayCompress", in.readInt());
             break;
           case 35:
-            put("SpecialOverlay", DataTools.read4SignedBytes(in, little));
+            put("SpecialOverlay", in.readInt());
             break;
           case 36:
-            put("ImageProperty", DataTools.read4SignedBytes(in, little));
+            put("ImageProperty", in.readInt());
             break;
           case 37:
             for (int i = 0; i<planes; i++) {
-              num = DataTools.read4SignedBytes(in, little);
+              num = in.readInt();
               toread = new byte[num];
               in.read(toread);
               String s = new String(toread);
@@ -418,45 +417,44 @@ public class MetamorphReader extends BaseTiffReader {
             }
             break;
           case 38:
-            num = DataTools.read4SignedBytes(in, little);
-            denom = DataTools.read4SignedBytes(in, little);
+            num = in.readInt();
+            denom = in.readInt();
             put("AutoScaleLoInfo", new TiffRational(num, denom));
             break;
           case 39:
-            num = DataTools.read4SignedBytes(in, little);
-            denom = DataTools.read4SignedBytes(in, little);
+            num = in.readInt();
+            denom = in.readInt();
             put("AutoScaleHiInfo", new TiffRational(num, denom));
             break;
           case 40:
             for (int i=0;i<planes;i++) {
-              num = DataTools.read4SignedBytes(in, little);
-              denom = DataTools.read4SignedBytes(in, little);
+              num = in.readInt();
+              denom = in.readInt();
               put("AbsoluteZ Plane " + i, new TiffRational(num, denom));
             }
             break;
           case 41:
             for (int i=0; i<planes; i++) {
-              put("AbsoluteZValid Plane " + i,
-                DataTools.read4SignedBytes(in, little));
+              put("AbsoluteZValid Plane " + i, in.readInt());
             }
             break;
           case 42:
-            put("Gamma", DataTools.read4SignedBytes(in, little));
+            put("Gamma", in.readInt());
             break;
           case 43:
-            put("GammaRed", DataTools.read4SignedBytes(in, little));
+            put("GammaRed", in.readInt());
             break;
           case 44:
-            put("GammaGreen", DataTools.read4SignedBytes(in, little));
+            put("GammaGreen", in.readInt());
             break;
           case 45:
-            put("GammaBlue", DataTools.read4SignedBytes(in, little));
+            put("GammaBlue", in.readInt());
             break;
         } // end switch
       }
     }
     catch (NullPointerException n) { n.printStackTrace(); }
-    catch (IOException e) { e.printStackTrace(); }
+    catch (IOException io) { io.printStackTrace(); }
     catch (FormatException e) { e.printStackTrace(); }
 
     try { super.initStandardMetadata(); }

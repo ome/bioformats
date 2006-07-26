@@ -121,7 +121,7 @@ public class IPWReader extends BaseTiffReader {
   /** Get the size of the Z dimension. */
   public int getSizeZ(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return Integer.parseInt((String) metadata.get("frames"));
+    return Integer.valueOf(metadata.get("frames").toString()).intValue();
   }
 
   /** Get the size of the C dimension. */
@@ -163,11 +163,15 @@ public class IPWReader extends BaseTiffReader {
     byte[] pixels = (byte[]) pixelData.get(new Integer(no));
     ifds = (Hashtable[]) allIFDs.get(new Integer(no));
     ra = new RandomAccessStream(pixels);
+    ra.order(true);
+
     return TiffTools.getImage(ifds[0], ra);
   }
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
+    if (ra != null) ra.close();
+    ra = null;
     if (in != null) in.close();
     in = null;
     currentId = null;
@@ -177,7 +181,9 @@ public class IPWReader extends BaseTiffReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (noPOI) throw new FormatException(NO_POI_MSG);
     currentId = id;
+
     in = new RandomAccessStream(id);
+
     metadata = new Hashtable();
     allIFDs = new Hashtable();
     numImages = 0;
@@ -190,6 +196,7 @@ public class IPWReader extends BaseTiffReader {
       for(int i=0; i<pixelData.size(); i++) {
         Integer key = new Integer(i);
         ra = new RandomAccessStream((byte[]) pixelData.get(key));
+        ra.order(true);
         allIFDs.put(key, TiffTools.getIFDs(ra));
       }
       initMetadata(id);
@@ -208,7 +215,6 @@ public class IPWReader extends BaseTiffReader {
     throws FormatException, IOException
   {
     ifds = (Hashtable[]) allIFDs.get(new Integer(0));
-    //super.initMetadata();
 
     // parse the image description
     String description = new String(tags, 22, tags.length-22);

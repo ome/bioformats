@@ -266,6 +266,7 @@ public class BMPReader extends FormatReader {
     in = new RandomAccessStream(id);
 
     littleEndian = true;
+    in.order(littleEndian);
 
     // read the first header - 14 bytes
 
@@ -273,16 +274,11 @@ public class BMPReader extends FormatReader {
     in.read(two);
     metadata.put("Magic identifier", new String(two));
 
-    byte[] four = new byte[4];
-    in.read(four);
-    metadata.put("File size (in bytes)",
-      "" + DataTools.bytesToInt(four, littleEndian));
-
-    in.skipBytes(4);  // reserved
+    metadata.put("File size (in bytes)", "" + in.readInt());
+    in.skipBytes(4); // reserved
 
     // read the offset to the image data
-    in.read(four);
-    offset = DataTools.bytesToInt(four, littleEndian);
+    offset = in.readInt();
 
     // read the second header - 40 bytes
 
@@ -290,10 +286,9 @@ public class BMPReader extends FormatReader {
 
     // get the dimensions
 
-    in.read(four);
-    width = DataTools.bytesToInt(four, littleEndian);
-    in.read(four);
-    height = DataTools.bytesToInt(four, littleEndian);
+    width = in.readInt();
+    height = in.readInt();
+
     if (width < 1 || height < 1) {
       throw new FormatException("Invalid image dimensions: " +
         width + " x " + height);
@@ -301,15 +296,11 @@ public class BMPReader extends FormatReader {
     metadata.put("Image width", "" + width);
     metadata.put("Image height", "" + height);
 
-    in.read(two);
-    metadata.put("Color planes", "" + DataTools.bytesToInt(two, littleEndian));
-
-    in.read(two);
-    bpp = DataTools.bytesToInt(two, littleEndian);
+    metadata.put("Color planes", "" + in.readShort());
+    bpp = in.readShort();
     metadata.put("Bits per pixel", "" + bpp);
 
-    in.read(four);
-    compression = DataTools.bytesToInt(four, littleEndian);
+    compression = in.readInt();
     String comp = "invalid";
 
     switch (compression) {
@@ -322,17 +313,9 @@ public class BMPReader extends FormatReader {
     metadata.put("Compression type", comp);
 
     in.skipBytes(4);
-
-    in.read(four);
-    metadata.put("X resolution", "" +
-      DataTools.bytesToInt(four, littleEndian));
-    in.read(four);
-    metadata.put("Y resolution", "" +
-      DataTools.bytesToInt(four, littleEndian));
-
-    in.read(four);
-    int nColors = DataTools.bytesToInt(four, littleEndian);
-
+    metadata.put("X resolution", "" + in.readInt());
+    metadata.put("Y resolution", "" + in.readInt());
+    int nColors = in.readInt();
     in.skipBytes(4);
 
     // read the palette, if it exists

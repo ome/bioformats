@@ -222,12 +222,13 @@ public class PictReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessStream(id);
+
     little = false;
 
     // skip the header and read in the remaining bytes
     int len = (int) (in.length() - 512);
     bytes = new byte[len];
-    in.skipBytes(512);
+    in.seek(512);
     in.read(bytes);
 
     byte[] b = new byte[20];

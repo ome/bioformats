@@ -69,6 +69,7 @@ public class ZeissZVIReader extends FormatReader {
   private int zSize;
   private int tSize;
   private int cSize;
+  private int oldBpp;
 
   // -- Constructor --
 
@@ -100,30 +101,35 @@ public class ZeissZVIReader extends FormatReader {
   /** Get the size of the X dimension. */
   public int getSizeX(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
+    if (needLegacy) return legacy.getSizeX(id);
     return width;
   }
 
   /** Get the size of the Y dimension. */
   public int getSizeY(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
+    if (needLegacy) return legacy.getSizeY(id);
     return height;
   }
 
   /** Get the size of the Z dimension. */
   public int getSizeZ(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
+    if (needLegacy) return legacy.getSizeZ(id);
     return zSize;
   }
 
   /** Get the size of the C dimension. */
   public int getSizeC(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
+    if (needLegacy) return legacy.getSizeC(id);
     return isRGB(id) ? 3*cSize : cSize;
   }
 
   /** Get the size of the T dimension. */
   public int getSizeT(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
+    if (needLegacy) return legacy.getSizeT(id);
     return tSize;
   }
 
@@ -140,6 +146,7 @@ public class ZeissZVIReader extends FormatReader {
   public String getDimensionOrder(String id) throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
+    if (needLegacy) return legacy.getDimensionOrder(id);
     return dimensionOrder;
   }
 
@@ -154,6 +161,9 @@ public class ZeissZVIReader extends FormatReader {
     }
 
     if (needLegacy) return legacy.openBytes(id, no);
+
+    //int tbitsPerSample = bitsPerSample;
+    //int tbytesPerPixel = bytesPerPixel;
 
     // read image header data
 
@@ -300,6 +310,9 @@ public class ZeissZVIReader extends FormatReader {
         tempPx = px;
       }
 
+      //bitsPerSample = tbitsPerSample;
+      //bytesPerPixel = tbytesPerPixel;
+
       if (!isRGB(id) || !separated) {
         return tempPx;
       }
@@ -322,6 +335,8 @@ public class ZeissZVIReader extends FormatReader {
     int bpp = bitsPerSample / 8;
     if (bpp == 0) bpp = bytesPerPixel;
     if (bpp > 4) bpp /= 3;
+    //if (bpp == 0) bpp = oldBpp;
+   // else oldBpp = bpp;
     return ImageTools.makeImage(data, width, height,
       (!isRGB(id) || separated) ? 1 : 3, true, bpp, false);
   }
@@ -415,10 +430,22 @@ public class ZeissZVIReader extends FormatReader {
               while (pixelData.containsKey(new Integer(imageNum)) &&
                 (num.indexOf("Item") != -1))
               {
+                int itemIndex = num.lastIndexOf("Item");
+                int parenIndex = num.lastIndexOf(")");
+                if (parenIndex < itemIndex) {
+                  itemIndex = num.lastIndexOf("Item", itemIndex - 1);
+                }
+
+                String s = num.substring(itemIndex + 5, parenIndex);
+                imageNum = Integer.parseInt(s);
+                num = num.substring(0, num.lastIndexOf("Item"));
+
+                /*
                 String s = num.substring(num.lastIndexOf("Item") + 5,
                   num.lastIndexOf(")"));
                 imageNum = Integer.parseInt(s);
                 num = num.substring(0, num.lastIndexOf("Item"));
+                */
               }
             }
 
@@ -553,7 +580,10 @@ public class ZeissZVIReader extends FormatReader {
               nImages++;
             }
           }
-          else break;
+          //else break;
+          else {
+            if (legacy.getImageCount(id) == 1) break;
+          }
         }
         else if (isContents && isImage) {
           // we've found the header data
@@ -652,6 +682,7 @@ public class ZeissZVIReader extends FormatReader {
         nImages++;
       }
     }
+    if (nImages == 0) nImages = 1;
     openBytes(id, 0);  // set needLegacy appropriately
     initMetadata();
   }

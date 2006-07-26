@@ -76,7 +76,7 @@ public class OMEXMLReader extends FormatReader {
   /** Dimension order. */
   private String order;
 
-  /** 
+  /**
    * Internal OME-XML metadata store that we use for parsing metadata from the
    * OME-XML file itself.
    */
