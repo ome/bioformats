@@ -10,14 +10,15 @@ jar cfm loci/qt/QTConverter.jar qt.manifest \
 loci/qt/*.class \
 loci/util/FilePattern*.class \
 loci/util/NumberFilter*.class \
-loci/formats/BaseTiffReader*.class \
 loci/formats/BitBuffer*.class \
 loci/formats/BitWriter*.class \
 loci/formats/ByteVector*.class \
 loci/formats/ComboFileFilter*.class \
 loci/formats/Compression*.class \
 loci/formats/DataTools*.class \
+loci/formats/DummyMetadataStore*.class \
 loci/formats/ExtensionFileFilter*.class \
+loci/formats/FileStitcher*.class \
 loci/formats/FormatException*.class \
 loci/formats/FormatFileFilter*.class \
 loci/formats/FormatHandler*.class \
@@ -25,17 +26,20 @@ loci/formats/FormatReader*.class \
 loci/formats/FormatWriter*.class \
 loci/formats/ImageTools*.class \
 loci/formats/LZWTreeNode*.class \
-loci/formats/LegacyQTReader*.class \
 loci/formats/LegacyQTTools*.class \
-loci/formats/OMETools*.class \
-loci/formats/QTReader*.class \
+loci/formats/MetadataStore*.class \
+loci/formats/OMEXMLMetadataStore*.class \
 loci/formats/RandomAccessArray*.class \
+loci/formats/RandomAccessStream*.class \
 loci/formats/ReflectException*.class \
 loci/formats/ReflectedUniverse*.class \
 loci/formats/TiffRational*.class \
-loci/formats/TiffReader*.class \
 loci/formats/TiffTools*.class \
-loci/formats/TiffWriter*.class \
+loci/formats/in/BaseTiffReader*.class \
+loci/formats/in/LegacyQTReader*.class \
+loci/formats/in/QTReader*.class \
+loci/formats/in/TiffReader*.class \
+loci/formats/out/TiffWriter*.class \
 loci/qt/*.java loci/util/FilePattern.java loci/util/NumberFilter.java \
 loci/qt/build
 rm qt.manifest

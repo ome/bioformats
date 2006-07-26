@@ -11,9 +11,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileFilter;
+import loci.formats.FormatHandler;
 import loci.formats.FormatReader;
 import loci.formats.LegacyQTTools;
-import loci.formats.in.LegacyQTReader;
 import loci.formats.in.QTReader;
 import loci.formats.in.TiffReader;
 import loci.formats.out.TiffWriter;
@@ -22,14 +23,16 @@ import loci.util.FilePattern;
 /** A utility for converting 4D QuickTime movies into 4D TIFF stacks. */
 public class QTConverter extends JFrame implements ActionListener, Runnable {
 
+  // -- Constants --
+
+  private static final String TITLE = "QT TIFF Converter";
+
   // -- Fields --
 
-  private LegacyQTReader legacyReader = new LegacyQTReader();
   private QTReader qtReader = new QTReader();
   private TiffReader tiffReader = new TiffReader();
   private TiffWriter writer = new TiffWriter();
-  private JFileChooser rc = qtReader.getFileChooser();
-  private JFileChooser wc = writer.getFileChooser();
+  private JFileChooser rc, wc;
   private boolean shutdown;
 
   private JTextField input, output;
@@ -37,11 +40,20 @@ public class QTConverter extends JFrame implements ActionListener, Runnable {
   private JProgressBar progress;
   private JButton convert;
 
-
   // -- Constructor --
 
   public QTConverter() {
-    super("QuickTime to TIFF Converter");
+    super(TITLE);
+
+    // file choosers
+    FileFilter[] qtFilters = qtReader.getFileFilters();
+    FileFilter[] tiffFilters = tiffReader.getFileFilters();
+    FileFilter[] ff = new FileFilter[qtFilters.length + tiffFilters.length];
+    System.arraycopy(qtFilters, 0, ff, 0, qtFilters.length);
+    System.arraycopy(tiffFilters, 0, ff, qtFilters.length, tiffFilters.length);
+    rc = FormatHandler.buildFileChooser(ff);
+    wc = writer.getFileChooser();
+
     JPanel pane = new JPanel();
     pane.setBorder(new EmptyBorder(5, 5, 5, 5));
     pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
@@ -144,7 +156,6 @@ public class QTConverter extends JFrame implements ActionListener, Runnable {
     pack();
   }
 
-
   // -- ActionListener methods --
 
   public void actionPerformed(ActionEvent e) {
@@ -153,6 +164,7 @@ public class QTConverter extends JFrame implements ActionListener, Runnable {
       int rval = rc.showOpenDialog(this);
       if (rval != JFileChooser.APPROVE_OPTION) return;
       File file = rc.getSelectedFile();
+      if (file != null) wc.setCurrentDirectory(file);
       String pattern = FilePattern.findPattern(file);
       input.setText(pattern);
     }
@@ -160,22 +172,14 @@ public class QTConverter extends JFrame implements ActionListener, Runnable {
       int rval = wc.showSaveDialog(this);
       if (rval != JFileChooser.APPROVE_OPTION) return;
       File file = wc.getSelectedFile();
+      if (file != null) rc.setCurrentDirectory(file);
       String s = file.getPath();
-
-      // determine file extension
       String name = file.getName();
-      int dot = name.lastIndexOf(".");
-      String ext = dot < 0 ? "" : name.substring(dot);
-
       boolean isTiff = writer.isThisType(s);
-      if (dot >= 0) s = s.substring(0, s.lastIndexOf("."));
-      s += "*" + ext;
       if (!isTiff) s += ".tif";
       output.setText(s);
     }
-    else if ("convert".equals(cmd)) {
-      new Thread(this).start();
-    }
+    else if ("convert".equals(cmd)) new Thread(this).start();
     else if ("quit".equals(cmd)) {
       shutdown = true;
       new Thread() {
@@ -183,7 +187,6 @@ public class QTConverter extends JFrame implements ActionListener, Runnable {
       }.start();
     }
   }
-
 
   // -- Runnable methods --
 
@@ -197,9 +200,10 @@ public class QTConverter extends JFrame implements ActionListener, Runnable {
       FilePattern fp = new FilePattern(in);
       String[] inFiles = fp.getFiles();
 
-      FormatReader reader = null;
-      boolean useQTJ = qtJava.isSelected();
-      reader = useQTJ ? (FormatReader) legacyReader : (FormatReader) qtReader;
+      boolean  isTiff = tiffReader.isThisType(in);
+      FormatReader reader = isTiff ? (FormatReader) tiffReader : qtReader;
+      boolean useQTJ = !isTiff && qtJava.isSelected();
+      qtReader.setLegacy(useQTJ);
 
       int numT = reader.getImageCount(inFiles[0]);
       int numZ = inFiles.length;
@@ -207,15 +211,10 @@ public class QTConverter extends JFrame implements ActionListener, Runnable {
       int outFiles = swap ? numT : numZ;
       int outPlanes = swap ? numZ : numT;
 
-      int star = out.lastIndexOf("*");
-      if (star < 0) {
-        msg("Please use an asterisk in the output name " +
-          "to indicate where the file numbers should go.");
-        convert.setEnabled(true);
-        return;
-      }
+      int star = out.lastIndexOf(".");
+      if (star < 0) star = out.length();
       String pre = out.substring(0, star);
-      String post = out.substring(star + 1);
+      String post = out.substring(star);
 
       progress.setMaximum(2 * numZ * numT);
       long start = System.currentTimeMillis();
@@ -237,7 +236,10 @@ public class QTConverter extends JFrame implements ActionListener, Runnable {
           // or storing multiple images in RAM simultaneously)
           readers = new FormatReader[inFiles.length];
           readers[0] = reader;
-          for (int i=1; i<readers.length; i++) readers[i] = new QTReader();
+          for (int i=1; i<readers.length; i++) {
+            readers[i] = outFiles == 1 ? reader :
+              (isTiff ? (FormatReader) new TiffReader() : new QTReader());
+          }
         }
       }
 
@@ -248,7 +250,7 @@ public class QTConverter extends JFrame implements ActionListener, Runnable {
           for (int o=0; o<outFiles; o++) {
             String num = "" + (o + 1);
             while (num.length() < digits) num = "0" + num;
-            String outFile = pre + num + post;
+            String outFile = outFiles == 1 ? (pre + post) : (pre + num + post);
             String outName = new File(outFile).getName();
             progress.setString(outName + " " + (p + 1) + "/" + outPlanes);
             int value = 2 * (p * outFiles + o);
@@ -266,7 +268,7 @@ public class QTConverter extends JFrame implements ActionListener, Runnable {
         for (int o=0; o<outFiles; o++) {
           String num = "" + (o + 1);
           while (num.length() < digits) num = "0" + num;
-          String outFile = pre + num + post;
+          String outFile = outFiles == 1 ? (pre + post) : (pre + num + post);
           String outName = new File(outFile).getName();
           for (int p=0; p<outPlanes; p++) {
             progress.setString(outName + " " + (p + 1) + "/" + outPlanes);
@@ -304,7 +306,6 @@ public class QTConverter extends JFrame implements ActionListener, Runnable {
     convert.setEnabled(true);
   }
 
-
   // -- Helper methods --
 
   private void limitHeight(JComponent jc) {
@@ -314,10 +315,8 @@ public class QTConverter extends JFrame implements ActionListener, Runnable {
   }
 
   private void msg(String msg) {
-    JOptionPane.showMessageDialog(this, msg,
-      "QuickTime to TIFF Converter", JOptionPane.ERROR_MESSAGE);
+    JOptionPane.showMessageDialog(this, msg, TITLE, JOptionPane.ERROR_MESSAGE);
   }
-
 
   // -- Helper classes --
 
@@ -328,7 +327,6 @@ public class QTConverter extends JFrame implements ActionListener, Runnable {
       return new Dimension(w, h);
     }
   }
-
 
   // -- Main method --
 
