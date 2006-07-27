@@ -192,6 +192,12 @@ public class SDTReader extends FormatReader {
 
     // compute number of image planes
     numImages = (int) ((in.length() - offset) / (2 * 64 * width * height));
+
+    MetadataStore store = getMetadataStore(id);
+    store.setPixels(new Integer(getSizeX(id)), new Integer(getSizeY(id)),
+      new Integer(getSizeZ(id)), new Integer(getSizeC(id)),
+      new Integer(getSizeT(id)), "int16", new Boolean(!isLittleEndian(id)),
+      getDimensionOrder(id), null);
   }
 
 

@@ -244,6 +244,12 @@ public class OIBReader extends FormatReader {
     btr.ifds = tiffIFDs;
     btr.initMetadata();
     metadata = btr.getMetadata(id); // HACK
+
+    MetadataStore store = getMetadataStore(id);
+    store.setPixels(new Integer(getSizeX(id)), new Integer(getSizeY(id)),
+      new Integer(getSizeZ(id)), new Integer(getSizeC(id)),
+      new Integer(getSizeT(id)), null, new Boolean(!isLittleEndian(id)),
+      "XYCTZ", null);
   }
 
 

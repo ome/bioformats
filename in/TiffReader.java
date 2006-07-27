@@ -93,7 +93,12 @@ public class TiffReader extends BaseTiffReader {
     // check for OME-XML in TIFF comment (OME-TIFF format)
     // we need an extra check to make sure that any XML we find is indeed
     // OME-XML (and not some other XML variant)
-    MetadataStore store = getMetadataStore();
+    MetadataStore store = new DummyMetadataStore();
+    try {
+      store = getMetadataStore(currentId);
+    }
+    catch (Exception e) { }
+
     String comment = (String) metadata.get("Comment");
     if (store instanceof OMEXMLMetadataStore
       && comment != null && comment.indexOf("ome.xsd") >= 0)

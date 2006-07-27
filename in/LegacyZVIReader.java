@@ -347,14 +347,14 @@ public class LegacyZVIReader extends FormatReader {
       // Populate metadata store
 
       // The metadata store we're working with.
-      MetadataStore store = getMetadataStore();
+      MetadataStore store = getMetadataStore(id);
 
       store.setPixels(
         new Integer(width), // SizeX
         new Integer(height), // SizeY
-        new Integer(numZ), // SizeZ
-        new Integer(numC), // SizeC
-        new Integer(numT), // SizeT
+        new Integer(getSizeZ(id)), // SizeZ
+        new Integer(getSizeC(id)), // SizeC
+        new Integer(getSizeT(id)), // SizeT
         null, // PixelType
         Boolean.FALSE, // BigEndian
         null, // DimensionOrder

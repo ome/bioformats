@@ -559,7 +559,7 @@ public class AVIReader extends FormatReader {
   // -- AVIReader API methods --
 
   /** Initialize the OME-XML tree. */
-  public void initOMEMetadata() {
+  public void initOMEMetadata() throws FormatException, IOException {
     int bps = ((Integer) metadata.get("Bits per pixel")).intValue() / 8;
     int tempBps = bps * 8;
     String pixType = "int" + (tempBps / bps);
@@ -568,7 +568,7 @@ public class AVIReader extends FormatReader {
     if (bps == 3) order += "CTZ";
     else order += "TCZ";
 
-    getMetadataStore().setPixels(
+    getMetadataStore(currentId).setPixels(
       (Integer) metadata.get("Frame width"), // SizeX
       (Integer) metadata.get("Frame height"), // SizeY
       new Integer(1), // SizeZ

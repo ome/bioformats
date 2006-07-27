@@ -266,7 +266,7 @@ public class IPLabReader extends FormatReader {
     else order += "ZTC";
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore();
+    MetadataStore store = getMetadataStore(id);
 
     store.setPixels(
       new Integer((int) width), // SizeX

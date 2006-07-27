@@ -106,6 +106,22 @@ public class OMEXMLReader extends FormatReader {
     return false;
   }
 
+  /**
+   * Retrieves the current metadata store for this reader. You can be
+   * assured that this method will <b>never</b> return a <code>null</code>
+   * metadata store.
+   * @return a metadata store implementation.
+   */
+  public MetadataStore getMetadataStore(String id)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    if (internalStore == null) {
+      return super.getMetadataStore(id);
+    }
+    return internalStore;
+  }
+
   /** Get the size of the X dimension. */
   public int getSizeX(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
@@ -362,6 +378,8 @@ public class OMEXMLReader extends FormatReader {
       searchForData(0, sizeZ * sizeT * sizeC);
       numImages = offsets.size();
     }
+    width = internalStore.getSizeX(null).intValue();
+    height = internalStore.getSizeY(null).intValue();
   }
 
 

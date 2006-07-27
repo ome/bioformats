@@ -373,7 +373,7 @@ public abstract class BaseTiffReader extends FormatReader {
       setPixels();
 
       // The metadata store we're working with.
-      MetadataStore store = getMetadataStore();
+      MetadataStore store = getMetadataStore(currentId);
 
       // populate Experimenter element
       String artist = (String) TiffTools.getIFDValue(ifd, TiffTools.ARTIST);
@@ -629,7 +629,7 @@ public abstract class BaseTiffReader extends FormatReader {
    * attributes.
    */
   private void setPixels() throws FormatException, IOException {
-    getMetadataStore().setPixels(
+    getMetadataStore(currentId).setPixels(
       new Integer(getSizeX(currentId)), new Integer(getSizeY(currentId)),
       new Integer(getSizeZ(currentId)), new Integer(getSizeC(currentId)),
       new Integer(getSizeT(currentId)), getPixelType(),
@@ -651,8 +651,8 @@ public abstract class BaseTiffReader extends FormatReader {
    * @throws FormatException if there is a problem parsing any of the
    * attributes.
    */
-  private void setImage() throws FormatException {
-    getMetadataStore().setImage(getImageName(), getImageCreationDate(),
+  private void setImage() throws FormatException, IOException {
+    getMetadataStore(currentId).setImage(getImageName(), getImageCreationDate(),
                                 getImageDescription(), null);
   }
 

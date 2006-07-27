@@ -266,7 +266,7 @@ public class FluoviewReader extends BaseTiffReader {
       }
 
       // The metadata store we're working with.
-      MetadataStore store = getMetadataStore();
+      MetadataStore store = getMetadataStore(currentId);
 
       store.setStageLabel(null, new Float(stageX), new Float(stageY),
         new Float(stageZ), null);

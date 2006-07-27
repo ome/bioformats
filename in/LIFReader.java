@@ -445,27 +445,30 @@ public class LIFReader extends FormatReader {
     // Populate metadata store
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore();
+    try {
+      MetadataStore store = getMetadataStore(currentId);
 
-    for (int i=0; i<dims.length; i++) {
-      String type = "int8";
-      switch (dims[i][5]) {
-      case 12: type = "int16"; break;
-      case 16: type = "int16"; break;
-      case 32: type = "float"; break;
+      for (int i=0; i<dims.length; i++) {
+        String type = "int8";
+        switch (dims[i][5]) {
+        case 12: type = "int16"; break;
+        case 16: type = "int16"; break;
+        case 32: type = "float"; break;
+        }
+
+        store.setPixels(
+          new Integer(dims[i][0]), // SizeX
+          new Integer(dims[i][1]), // SizeY
+          new Integer(dims[i][2]), // SizeZ
+          new Integer(dims[i][4]), // SizeC
+          new Integer(dims[i][3]), // SizeT
+          type, // PixelType
+          new Boolean(!littleEndian), // BigEndian
+          "XYZTC", // DimensionOrder
+          new Integer(i)); // Index
       }
-
-      store.setPixels(
-        new Integer(dims[i][0]), // SizeX
-        new Integer(dims[i][1]), // SizeY
-        new Integer(dims[i][2]), // SizeZ
-        new Integer(dims[i][4]), // SizeC
-        new Integer(dims[i][3]), // SizeT
-        type, // PixelType
-        new Boolean(!littleEndian), // BigEndian
-        "XYZTC", // DimensionOrder
-        new Integer(i)); // Index
     }
+    catch (Exception e) { }
   }
 
 

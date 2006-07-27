@@ -520,7 +520,7 @@ public class QTReader extends FormatReader {
     pixelType += bpp;
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore();
+    MetadataStore store = getMetadataStore(id);
 
     store.setPixels(
       new Integer(width),

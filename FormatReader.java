@@ -130,7 +130,7 @@ public abstract class FormatReader extends FormatHandler {
     currentId = id;
     metadata = new Hashtable();
     // reinitialize the MetadataStore
-    getMetadataStore().createRoot();
+    getMetadataStore(id).createRoot();
   }
 
   /**
@@ -203,23 +203,12 @@ public abstract class FormatReader extends FormatHandler {
   }
 
   /**
-   * Sets the default metadata store for this reader. This invalidates the
-   * current metadata state of the reader and will trigger a call to
-   * {@link #initFile(String)}.
+   * Sets the default metadata store for this reader.
+   * 
    * @param store a metadata store implementation.
    */
   public void setMetadataStore(MetadataStore store) {
     this.store = store;
-    // Re-parse the file if we currently have one
-    if (currentId != null) {
-      // We're going to eat these exceptions as they will come up again if
-      // method calls are made to the format.
-      try {
-        initFile(currentId);
-      }
-      catch (FormatException e1) {}
-      catch (IOException e2) {}
-    }
   }
 
   /**
@@ -228,7 +217,12 @@ public abstract class FormatReader extends FormatHandler {
    * metadata store.
    * @return a metadata store implementation.
    */
-  public MetadataStore getMetadataStore() { return store; }
+  public MetadataStore getMetadataStore(String id)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return store;
+  }
 
   /**
    * Retrieves the current metadata store's root object. It is guaranteed that
@@ -244,7 +238,7 @@ public abstract class FormatReader extends FormatHandler {
   public Object getMetadataStoreRoot(String id)
     throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return getMetadataStore().getRoot();
+    return getMetadataStore(id).getRoot();
   }
 
   /**
@@ -279,7 +273,10 @@ public abstract class FormatReader extends FormatHandler {
       System.out.println("    [-stitch] [-separate] [-omexml] in_file");
       return false;
     }
-    if (omexml) setMetadataStore(new OMEXMLMetadataStore());
+    if (omexml) {
+      setMetadataStore(new OMEXMLMetadataStore());
+      getMetadataStore(id).createRoot();
+    }
 
     // check type
     System.out.print("Checking " + format + " format ");
@@ -296,6 +293,7 @@ public abstract class FormatReader extends FormatHandler {
       long s1 = System.currentTimeMillis();
       cm.setSeparated(separate);
       int num = cm.getImageCount(id);
+
       System.out.print("(" + num + ") ");
       long e1 = System.currentTimeMillis();
       BufferedImage[] images = new BufferedImage[num];
@@ -367,7 +365,7 @@ public abstract class FormatReader extends FormatHandler {
     System.out.println();
 
     // output OME-XML
-    MetadataStore ms = getMetadataStore();
+    MetadataStore ms = cm.getMetadataStore(id);
     if (ms instanceof OMEXMLMetadataStore) {
       System.out.println("OME-XML:");
       OMEXMLMetadataStore xmlStore = (OMEXMLMetadataStore) ms;

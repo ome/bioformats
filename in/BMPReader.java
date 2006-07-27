@@ -337,7 +337,7 @@ public class BMPReader extends FormatReader {
     // Populate metadata store.
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore();
+    MetadataStore store = getMetadataStore(id);
 
     int c = (palette == null && bpp == 8) ? 1 : 3;
     int tbpp = bpp;

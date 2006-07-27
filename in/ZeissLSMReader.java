@@ -330,7 +330,7 @@ public class ZeissLSMReader extends BaseTiffReader {
       if (isRGB(currentId)) channels *= 3;
 
       // The metadata store we're working with.
-      MetadataStore store = getMetadataStore();
+      MetadataStore store = getMetadataStore(currentId);
 
       store.setPixels(
         new Integer(imageWidth), // SizeX
