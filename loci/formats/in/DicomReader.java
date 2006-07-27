@@ -415,7 +415,7 @@ public class DicomReader extends FormatReader {
     if (numImages == 0) numImages = 1;
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore();
+    MetadataStore store = getMetadataStore(id);
 
     // populate OME-XML node
     store.setPixels(

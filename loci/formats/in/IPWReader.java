@@ -165,7 +165,9 @@ public class IPWReader extends BaseTiffReader {
     ra = new RandomAccessStream(pixels);
     ra.order(true);
 
-    return TiffTools.getImage(ifds[0], ra);
+    BufferedImage b = TiffTools.getImage(ifds[0], ra);
+    ra.close();
+    return b;
   }
 
   /** Closes any open files. */
@@ -198,6 +200,7 @@ public class IPWReader extends BaseTiffReader {
         ra = new RandomAccessStream((byte[]) pixelData.get(key));
         ra.order(true);
         allIFDs.put(key, TiffTools.getIFDs(ra));
+        ra.close();
       }
       initMetadata(id);
     }
@@ -251,9 +254,10 @@ public class IPWReader extends BaseTiffReader {
     Integer sizeZ = Integer.valueOf(metadata.get("frames").toString());
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore();
+    MetadataStore store = getMetadataStore(id);
 
-    store.setPixels(null, null, sizeZ,sizeC, sizeT, null, null, null, null);
+    store.setPixels(null, null, sizeZ,sizeC, sizeT, null,
+      new Boolean(!isLittleEndian(id)), getDimensionOrder(id), null);
     store.setImage(null, null, (String) metadata.get("Version"), null);
   }
 

@@ -100,10 +100,20 @@ public class ChannelMerger extends FormatReader {
   }
 
   /**
-   * Retrieves the current metadata store for this reader.
+   * Retrieves the current metadata store for this reader. You can be
+   * assured that this method will <b>never</b> return a <code>null</code>
+   * metadata store.
+   * @return a metadata store implementation.
    */
-  public MetadataStore getMetadataStore() {
-    return reader.getMetadataStore();
+  public MetadataStore getMetadataStore(String id)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    MetadataStore store = reader.getMetadataStore(id);
+    store.setPixels(new Integer(getSizeX(id)), new Integer(getSizeY(id)),
+      new Integer(getSizeZ(id)), new Integer(getSizeC(id)),
+      new Integer(getSizeT(id)), null, null, null, null);
+    return store;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -259,6 +269,12 @@ public class ChannelMerger extends FormatReader {
     readerImages = reader.getImageCount(id);
     ourImages = getImageCount(id);
     currentId = id;
+
+    MetadataStore store = reader.getMetadataStore(id);
+    store.setPixels(new Integer(getSizeX(id)), new Integer(getSizeY(id)),
+      new Integer(getSizeZ(id)), new Integer(getSizeC(id)),
+      new Integer(getSizeT(id)), null, null, null, null);
+    setMetadataStore(store);
   }
 
   /**

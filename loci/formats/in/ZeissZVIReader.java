@@ -162,9 +162,6 @@ public class ZeissZVIReader extends FormatReader {
 
     if (needLegacy) return legacy.openBytes(id, no);
 
-    //int tbitsPerSample = bitsPerSample;
-    //int tbytesPerPixel = bytesPerPixel;
-
     // read image header data
 
     try {
@@ -200,6 +197,7 @@ public class ZeissZVIReader extends FormatReader {
         int numSamples = width*height;
         bitsPerSample = validBPP;
 
+        /*
         switch (pixelFormat) {
           case 1: channels = 3; break;
           case 2: channels = 4; break;
@@ -209,6 +207,7 @@ public class ZeissZVIReader extends FormatReader {
           case 8: channels = 3; break;
           default: channels = 1;
         }
+        */
 
         if ((width > imageWidth) && (imageWidth > 0)) {
           width = imageWidth;
@@ -684,9 +683,9 @@ public class ZeissZVIReader extends FormatReader {
     }
     if (nImages == 0) nImages = 1;
     openBytes(id, 0);  // set needLegacy appropriately
+    if (bytesPerPixel == 3) channels = 3;
     initMetadata();
   }
-
 
   // -- Helper methods --
 
@@ -1426,7 +1425,7 @@ public class ZeissZVIReader extends FormatReader {
    * Takes the data collected in {@link #initMetadata()} and uses it to
    * populate the metadata store.
    */
-  private void initMetadataStore() {
+  private void initMetadataStore() throws FormatException, IOException {
     populateImage();
     populatePixels();
     populateExperimenter();
@@ -1436,9 +1435,9 @@ public class ZeissZVIReader extends FormatReader {
   /**
    * Populates the first image in the metadata store.
    */
-  private void populateImage() {
+  private void populateImage() throws FormatException, IOException {
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore();
+    MetadataStore store = getMetadataStore(currentId);
 
     store.setImage((String) metadata.get("Title"),  // Name
                    (String) metadata.get("Date"),  // Creation Date
@@ -1449,9 +1448,9 @@ public class ZeissZVIReader extends FormatReader {
   /**
    * Populates the first pixels set in the metadata store.
    */
-  private void populatePixels() {
+  private void populatePixels() throws FormatException, IOException {
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore();
+    MetadataStore store = getMetadataStore(currentId);
 
     // Default values
     Integer sizeX = (Integer) metadata.get("ImageWidth");
@@ -1489,16 +1488,18 @@ public class ZeissZVIReader extends FormatReader {
     tSize = sizeT.intValue();
     zSize = sizeZ.intValue();
 
-    store.setPixels(sizeX, sizeY, sizeZ, sizeC, sizeT, typeAsString,
-                    null, dimensionOrder, null);
+    store.setPixels(new Integer(getSizeX(currentId)),
+      new Integer(getSizeY(currentId)), new Integer(getSizeZ(currentId)),
+      new Integer(getSizeC(currentId)), new Integer(getSizeT(currentId)),
+      typeAsString, null, dimensionOrder, null);
   }
 
   /**
    * Populates the first experimenter and group in the metadata store.
    */
-  private void populateExperimenter() {
+  private void populateExperimenter() throws FormatException, IOException {
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore();
+    MetadataStore store = getMetadataStore(currentId);
 
     // Experimenter
     String name = (String) metadata.get("Author");
@@ -1522,9 +1523,9 @@ public class ZeissZVIReader extends FormatReader {
   /**
    * Populates the first stage label in the metadata store.
    */
-  private void populateStageLabel() {
+  private void populateStageLabel() throws FormatException, IOException {
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore();
+    MetadataStore store = getMetadataStore(currentId);
 
     // Stage Label
     try {

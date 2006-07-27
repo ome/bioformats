@@ -182,6 +182,12 @@ public class MetamorphReader extends BaseTiffReader {
       pointer++;
     }
     ifds = tempIFDs;
+
+    super.initMetadataStore();
+    MetadataStore store = getMetadataStore(id);
+    store.setPixels(null, null, new Integer(getSizeZ(currentId)), null,
+      new Integer(getSizeT(currentId)), null, null, null, null);
+
   }
 
   // -- Internal BaseTiffReader API methods --

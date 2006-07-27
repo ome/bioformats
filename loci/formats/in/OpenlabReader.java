@@ -506,7 +506,7 @@ public class OpenlabReader extends FormatReader {
       // Populate metadata store
 
       // The metadata store we're working with.
-      MetadataStore store = getMetadataStore();
+      MetadataStore store = getMetadataStore(currentId);
 
       String type = "int8";
       if (metadata.get("BitDepth") != null) {

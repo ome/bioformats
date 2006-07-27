@@ -665,7 +665,11 @@ public class LeicaReader extends BaseTiffReader {
     }
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore();
+    MetadataStore store = new DummyMetadataStore();
+    try {
+      store = getMetadataStore(currentId);
+    }
+    catch (Exception e) { }
 
     if (numChannels == 0) numChannels++;
 

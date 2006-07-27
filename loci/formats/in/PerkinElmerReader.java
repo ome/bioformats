@@ -78,7 +78,7 @@ public class PerkinElmerReader extends FormatReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    return channels > 1;
+    return tiff.isRGB(files[0]);
   }
 
   /** Get the size of the X dimension. */
@@ -118,7 +118,7 @@ public class PerkinElmerReader extends FormatReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    return numImages / getSizeZ(id);
+    return getImageCount(id) / (getSizeZ(id) * getSizeC(id));
   }
 
   /** Return true if the data is in little-endian format. */
@@ -382,7 +382,7 @@ public class PerkinElmerReader extends FormatReader {
     // Populate metadata store
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore();
+    MetadataStore store = getMetadataStore(id);
 
     // populate Dimensions element
     String pixelSizeX = (String) metadata.get("Pixel Size X");
@@ -404,7 +404,7 @@ public class PerkinElmerReader extends FormatReader {
       new Integer(sizeY), // SizeY
       new Integer(sizeZ), // SizeZ
       new Integer(wavelengths), // SizeC
-      new Integer(timePoints), // SizeT
+      new Integer(getSizeT(id)), // SizeT
       null, // PixelType
       null, // BigEndian
       "XYCTZ", // DimensionOrder

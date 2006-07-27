@@ -218,7 +218,7 @@ public class OpenlabRawReader extends FormatReader {
     bpp = ((Integer) metadata.get("Bytes per pixel")).intValue();
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore();
+    MetadataStore store = getMetadataStore(id);
 
     store.setPixels(
       (Integer) metadata.get("Width"),

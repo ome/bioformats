@@ -114,10 +114,20 @@ public class FileStitcher extends FormatReader {
   }
 
   /**
-   * Retrieves the current metadata store for this reader.
+   * Retrieves the current metadata store for this reader. You can be
+   * assured that this method will <b>never</b> return a <code>null</code>
+   * metadata store.
+   * @return a metadata store implementation.
    */
-  public MetadataStore getMetadataStore() {
-    return reader.getMetadataStore();
+  public MetadataStore getMetadataStore(String id)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    MetadataStore store = reader.getMetadataStore(id);
+    store.setPixels(new Integer(getSizeX(id)), new Integer(getSizeY(id)),
+      new Integer(getSizeZ(id)), new Integer(getSizeC(id)),
+      new Integer(getSizeT(id)), null, null, null, null);
+    return store;
   }
 
   /** Determines the number of images in the given file. */
@@ -234,7 +244,6 @@ public class FileStitcher extends FormatReader {
     }
 
     if (varyZ || varyC || varyT) {
-      // this case is probably broken
       for (int j=0; j<3; j++) {
         int max = 0;
         int maxIndex = 0;
@@ -256,6 +265,12 @@ public class FileStitcher extends FormatReader {
       dimensions[4] = dims[0][4];
     }
     setDimensions(dims);
+
+    MetadataStore store = reader.getMetadataStore(id);
+    store.setPixels(new Integer(getSizeX(id)), new Integer(getSizeY(id)),
+      new Integer(getSizeZ(id)), new Integer(getSizeC(id)),
+      new Integer(getSizeT(id)), null, null, null, null);
+    setMetadataStore(store);
   }
 
   // -- Helper methods --
@@ -355,8 +370,21 @@ public class FileStitcher extends FormatReader {
           sizeZ = counts[j];
         }
         else if (max == cpos) {
-          ordering += "C";
-          sizeC = counts[j];
+          if (sizeC == 1 && !isRGB(currentId)) {
+            ordering += "C";
+            sizeC = counts[j];
+          }
+          else {
+            if (sizeZ == 1) {
+              ordering += "Z";
+              sizeZ = counts[j];
+            }
+            else if (sizeT == 1) {
+              ordering += "T";
+              sizeT = counts[j];
+            }
+            else sizeC *= counts[j];
+          }
         }
         else {
           ordering += "T";

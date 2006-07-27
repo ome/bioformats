@@ -389,7 +389,7 @@ public class DeltavisionReader extends FormatReader {
     order = dimOrder;
 
     // The metadata store we're working with.
-    MetadataStore store = getMetadataStore();
+    MetadataStore store = getMetadataStore(id);
 
     String title;
     for (int i=1; i<=10; i++) {
