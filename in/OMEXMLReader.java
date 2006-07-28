@@ -224,7 +224,7 @@ public class OMEXMLReader extends FormatReader {
         Inflater decompressor = new Inflater();
         decompressor.setInput(pixels, 0, pixels.length);
         pixels = new byte[width * height * bpp];
-        int resultLength = decompressor.inflate(pixels);
+        decompressor.inflate(pixels);
         decompressor.end();
       }
       catch (DataFormatException dfe) {

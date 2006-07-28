@@ -204,7 +204,6 @@ public class NikonReader extends BaseTiffReader {
         if (exifIFD != null) {
           Enumeration e = exifIFD.keys();
           Integer key;
-          String id;
           while (e.hasMoreElements()) {
             key = (Integer) e.nextElement();
             int tag = key.intValue();
@@ -223,7 +222,6 @@ public class NikonReader extends BaseTiffReader {
       if (makerNote != null) {
         Enumeration e = makerNote.keys();
         Integer key;
-        String id;
         while (e.hasMoreElements()) {
           key = (Integer) e.nextElement();
           int tag = key.intValue();

@@ -157,8 +157,6 @@ public class GatanReader extends FormatReader {
     int height = dims[1];
     int channels = 1;
 
-    int numSamples = width * height;
-
     return ImageTools.makeImage(pixelData, width, height, channels,
       false, dims[2], littleEndian);
   }
@@ -184,8 +182,7 @@ public class GatanReader extends FormatReader {
       throw new FormatException("invalid header");
     }
 
-    in.read(temp);
-    int numBytes = DataTools.bytesToInt(temp, littleEndian);
+    in.skipBytes(4);
     in.read(temp);
     if (DataTools.bytesToInt(temp, littleEndian) == 1) littleEndian = true;
 

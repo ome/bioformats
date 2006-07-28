@@ -345,7 +345,7 @@ public class QTReader extends FormatReader {
     if ((nextOffset - offset) < 0) {
       int temp = offset;
       offset = nextOffset;
-      nextOffset = offset;
+      nextOffset = temp;
     }
 
     byte[] pixs = new byte[nextOffset - offset];
@@ -461,7 +461,7 @@ public class QTReader extends FormatReader {
     if ((nextOffset - offset) < 0) {
       int temp = offset;
       offset = nextOffset;
-      nextOffset = offset;
+      nextOffset = temp;
     }
 
     byte[] pixs = new byte[nextOffset - offset];
@@ -504,7 +504,6 @@ public class QTReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessFile(id, "r");
-    //in.order(little);
 
     spork = true;
     offsets = new Vector();
@@ -831,11 +830,9 @@ public class QTReader extends FormatReader {
       pt += 4;
 
       // number of compressed bytes (minus padding)
-      int size = DataTools.bytesToInt(input, pt, 4, little);
       pt += 4;
 
       // number of compressed bytes (including padding)
-      int padSize = DataTools.bytesToInt(input, pt, 4, little);
       pt += 4;
 
       // offset to second field
@@ -954,7 +951,6 @@ public class QTReader extends FormatReader {
     // Thus quoth the specifications.
 
     ByteVector b = new ByteVector();
-    int tempPt = 0;
     for (int i=0; i<raw.length; i++) {
       b.add((byte) raw[i]);
       if (raw[i] == (byte) 0xff) {
@@ -964,7 +960,6 @@ public class QTReader extends FormatReader {
 
     if (raw2 == null) raw2 = new byte[0];
     ByteVector b2 = new ByteVector();
-    tempPt = 0;
     for (int i=0; i<raw2.length; i++) {
       b2.add((byte) raw2[i]);
       if (raw2[i] == (byte) 0xff) {
@@ -1155,8 +1150,6 @@ public class QTReader extends FormatReader {
     if (input.length < 8) return prevPixels;
 
     // read the 4 byte chunk length; this should equal input.length
-
-    int length = DataTools.bytesToInt(input, 0, 4, little);
 
     // now read the header
     // if the header is 0, we uncompress the remaining bytes

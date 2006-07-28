@@ -204,7 +204,7 @@ public abstract class FormatReader extends FormatHandler {
 
   /**
    * Sets the default metadata store for this reader.
-   * 
+   *
    * @param store a metadata store implementation.
    */
   public void setMetadataStore(MetadataStore store) {

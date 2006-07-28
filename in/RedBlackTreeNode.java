@@ -45,9 +45,6 @@ public class RedBlackTreeNode {
   /** Depth of the node (from the root). */
   public int depth;
 
-  /** Color of the node. */
-  private int color;
-
   /** Node type. */
   private int type;
 
@@ -68,7 +65,6 @@ public class RedBlackTreeNode {
   public RedBlackTreeNode(int color, int type, int block, String name,
     int firstDataBlock, int fileSize)
   {
-    this.color = color;
     this.type = type;
     this.block = block;
     this.name = name;

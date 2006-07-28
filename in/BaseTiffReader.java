@@ -366,7 +366,6 @@ public abstract class BaseTiffReader extends FormatReader {
    * sub-classes that override the getters for pixel set array size, etc.
    */
   protected void initMetadataStore() {
-    final String unknown = "unknown";
     Hashtable ifd = ifds[0];
     try {
       // Set the pixel values in the metadata store.

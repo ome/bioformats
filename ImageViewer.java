@@ -203,7 +203,6 @@ public class ImageViewer extends JFrame
     slider.setMaximum(images.length);
     slider.setVisible(images.length > 1);
     slider.addChangeListener(this);
-    Dimension dim = ImageTools.getSize(images[0]);
     updateLabel(-1, -1);
     sb.setLength(0);
     if (id != null) {

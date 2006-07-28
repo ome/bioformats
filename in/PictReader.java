@@ -47,7 +47,6 @@ public class PictReader extends FormatReader {
   private static final int PICT_PACKBITSRECT = 0x98;
   private static final int PICT_PACKBITSRGN = 0x99;
   private static final int PICT_9A = 0x9a;
-  private static final int PICT_HEADER = 0xc00;
   private static final int PICT_END = 0xff;
   private static final int PICT_LONGCOMMENT = 0xa1;
 
@@ -404,12 +403,10 @@ public class PictReader extends FormatReader {
   /** Loop through the remainder of the file and find relevant opcodes. */
   private boolean driveDecoder() throws FormatException {
     if (DEBUG) System.out.println("PictReader.driveDecoder");
-    int opcode, version;
+    int opcode;
 
     switch (pictState) {
       case INITIAL:
-        int ret;
-        int fileSize = DataTools.bytesToInt(bytes, pt, 2, little);
         pt += 2;
         // skip over frame
         pt += 8;
@@ -421,7 +418,6 @@ public class PictReader extends FormatReader {
         if (verOpcode == 0x11 && verNumber == 0x01) versionOne = true;
         else if (verOpcode == 0x00 && verNumber == 0x11) {
           versionOne = false;
-          int verOpcode2 = 0x0011;
           int verNumber2 = DataTools.bytesToInt(bytes, pt, 2, little);
           pt += 2;
 
@@ -460,7 +456,6 @@ public class PictReader extends FormatReader {
   /** Handles the opcodes in the PICT file. */
   private boolean drivePictDecoder(int opcode) throws FormatException {
     if (DEBUG) System.out.println("PictReader.drivePictDecoder");
-    short size, kind;
 
     switch (opcode) {
       case PICT_BITSRGN:  // rowBytes must be < 8
@@ -524,9 +519,7 @@ public class PictReader extends FormatReader {
     pt += 2;
 
     // skip next two rectangles
-    pt += 16;
-    int mode = DataTools.bytesToInt(bytes, pt, 2, little);
-    pt += 2;
+    pt += 18;
 
     width = brX - tlX;
     height = brY - tlY;
@@ -595,7 +588,6 @@ public class PictReader extends FormatReader {
 
       pt += 4; // skip fake length and fake EOF
 
-      int version = DataTools.bytesToInt(bytes, pt, 2, little);
       pt += 2;
 
       // read the bounding box
@@ -610,30 +602,12 @@ public class PictReader extends FormatReader {
 
       pt += 2; // undocumented extra short in the data structure
 
-      int packType = DataTools.bytesToInt(bytes, pt, 2, little);
-      pt += 2;
-      int packSize = DataTools.bytesToInt(bytes, pt, 4, little);
-      pt += 4;
-      int hRes = DataTools.bytesToInt(bytes, pt, 4, little);
-      pt += 4;
-      int vRes = DataTools.bytesToInt(bytes, pt, 4, little);
-      pt += 4;
+      pt += 16;
 
-      int pixelType = DataTools.bytesToInt(bytes, pt, 2, little);
-      pt += 2;
       pixelSize = DataTools.bytesToInt(bytes, pt, 2, little);
       pt += 2;
       compCount = DataTools.bytesToInt(bytes, pt, 2, little);
-      pt += 2;
-      int compSize = DataTools.bytesToInt(bytes, pt, 2, little);
-      pt += 2;
-
-      int planeBytes = DataTools.bytesToInt(bytes, pt, 4, little);
-      pt += 4;
-      int pmTable = DataTools.bytesToInt(bytes, pt, 4, little);
-      pt += 4;
-
-      pt += 4; // reserved
+      pt += 16; // reserved
 
       width = brX - tlX;
       height = brY - tlY;
@@ -675,9 +649,7 @@ public class PictReader extends FormatReader {
 
       // read the lookup table
 
-      pt += 2;
-      int id = DataTools.bytesToInt(bytes, pt, 2, little);
-      pt += 2;
+      pt += 4;
       int flags = DataTools.bytesToInt(bytes, pt, 2, little);
       pt += 2;
       int count = DataTools.bytesToInt(bytes, pt, 2, little);
@@ -703,13 +675,9 @@ public class PictReader extends FormatReader {
     }
 
     // skip over two rectangles
-    pt += 16;
-
-    int mode = DataTools.bytesToInt(bytes, pt, 2, little);
-    pt += 2;
+    pt += 18;
 
     if (opcode == PICT_BITSRGN || opcode == PICT_PACKBITSRGN) {
-      int x = DataTools.bytesToInt(bytes, pt, 2, little);
       pt += 2;
     }
 

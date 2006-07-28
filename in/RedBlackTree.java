@@ -35,8 +35,7 @@ public class RedBlackTree {
 
   // -- Constants --
 
-  private static final int RED = 0, BLACK = 1;
-  private static final int ROOT = 5, FILE = 2, DIRECTORY = 1;
+  private static final int ROOT = 5, FILE = 2;
 
   // -- Fields --
 
@@ -78,8 +77,6 @@ public class RedBlackTree {
 
     // search for the parent
 
-    boolean found = false;
-    Vector toSearch = root.children;
     RedBlackTreeNode parentNode = bfs(parent);
 
     // stupid way of constructing the path name

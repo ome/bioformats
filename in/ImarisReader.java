@@ -208,7 +208,7 @@ public class ImarisReader extends FormatReader {
     float dx = in.readFloat();
     float dy = in.readFloat();
     float dz = in.readFloat();
-    short mag = in.readShort();
+    in.readShort();
 
     byte[] com = new byte[128];
     in.read(com);

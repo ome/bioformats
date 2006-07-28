@@ -50,7 +50,6 @@ public class AVIWriter extends FormatWriter {
   private File file;
   private int xDim, yDim, zDim, tDim, xPad;
   private int microSecPerFrame;
-  private int[] dcLength;
 
   // location of file size in bytes not counting first 8 bytes
   private long saveFileSize;
@@ -58,8 +57,6 @@ public class AVIWriter extends FormatWriter {
   // location of length of CHUNK with first LIST - not including first 8
   // bytes with LIST and size. JUNK follows the end of this CHUNK
   private long saveLIST1Size;
-
-  private int[] extents;
 
   // location of length of CHUNK with second LIST - not including first 8
   // bytes with LIST and size. Note that saveLIST1subSize = saveLIST1Size +
@@ -71,26 +68,17 @@ public class AVIWriter extends FormatWriter {
   // strf and size. strn follows the end of this CHUNK.
   private long savestrfSize;
 
-  private int resXUnit = 0;
-  private int resYUnit = 0;
-  private float xResol = 0.0f; // in distance per pixel
-  private float yResol = 0.0f; // in distance per pixel
-  private long biXPelsPerMeter = 0L;
-  private long biYPelsPerMeter = 0L;
-  private byte[] strnSignature;
   private byte[] text;
   private long savestrnPos;
   private long saveJUNKsignature;
   private int paddingBytes;
   private long saveLIST2Size;
   private byte[] dataSignature;
-  private byte[] idx1Signature;
   private Vector savedbLength;
-  private long savedcLength[];
   private long idx1Pos;
   private long endPos;
   private long saveidx1Length;
-  private int t,z;
+  private int z;
   private long savemovi;
   private int xMod;
   private long frameOffset;
@@ -427,8 +415,6 @@ public class AVIWriter extends FormatWriter {
       savemovi = raFile.getFilePointer();
       DataTools.writeString(raFile, "movi"); // Write CHUNK type 'movi'
       savedbLength = new Vector();
-      savedcLength = new long[tDim * zDim];
-      dcLength = new int[tDim * zDim];
 
       dataSignature = new byte[4];
       dataSignature[0] = 48; // 0

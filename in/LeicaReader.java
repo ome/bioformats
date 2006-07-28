@@ -206,6 +206,7 @@ public class LeicaReader extends BaseTiffReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
+
     return tiff.openImage(files[no], 0);
   }
 
@@ -240,6 +241,17 @@ public class LeicaReader extends BaseTiffReader {
       catch (NullPointerException n) { }
 
       if (ifds == null) throw new FormatException("No IFDs found");
+
+      /* debug */
+      int[] thumb = (int[]) TiffTools.getIFDValue(ifds[0], LEICA_MAGIC_TAG);
+      byte[] thumb2 = new byte[thumb.length];
+      for (int i=0; i<thumb.length; i++) {
+        thumb2[i] = (byte) thumb[i];
+      }
+      RandomAccessFile writer = new RandomAccessFile("thumb", "rw");
+      writer.write(thumb2);
+      writer.close();
+      /* end debug*/
 
       String descr = (String) metadata.get("Comment");
       metadata.remove("Comment");
@@ -317,12 +329,10 @@ public class LeicaReader extends BaseTiffReader {
         Hashtable ifd = new Hashtable();
         v.add(ifd);
 
-        in.seek(addr);
+        in.seek(addr + 4);
 
-        int numEntries = in.readInt();
         int tag = in.readInt();
 
-        int numIFDs = 0;
         while (tag != 0) {
           // create the IFD structure
           int offset = in.readInt();

@@ -40,7 +40,7 @@ public class LIFReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessStream in;
+  protected RandomAccessFile in;
 
   /** Flag indicating whether current file is little endian. */
   protected boolean littleEndian;
@@ -242,11 +242,10 @@ public class LIFReader extends FormatReader {
   /** Initializes the given LIF file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessFile(id, "r");
     offsets = new Vector();
 
     littleEndian = true;
-    in.order(littleEndian);
 
     // read the header
 
@@ -257,7 +256,7 @@ public class LIFReader extends FormatReader {
       throw new FormatException(id + " is not a valid Leica LIF file");
     }
 
-    int chunkLength = in.readInt();
+    in.skipBytes(4);
 
     // read and parse the XML description
 
@@ -267,30 +266,29 @@ public class LIFReader extends FormatReader {
 
     // number of Unicode characters in the XML block
 
-    int nc = in.readInt();
+    int nc = DataTools.read4SignedBytes(in, littleEndian);
     byte[] s = new byte[nc * 2];
     in.read(s);
     String xml = DataTools.stripString(new String(s));
 
     while (in.getFilePointer() < in.length()) {
-      if (in.readInt() != 0x70) {
+      if (DataTools.read4SignedBytes(in, littleEndian) != 0x70) {
         throw new FormatException("Invalid Memory Block");
       }
 
-      int memLength = in.readInt();
+      in.skipBytes(4);
       if (in.read() != 0x2a) {
         throw new FormatException("Invalid Memory Description");
       }
 
-      int blockLength = in.readInt();
+      int blockLength = DataTools.read4SignedBytes(in, littleEndian);
       if (in.read() != 0x2a) {
         throw new FormatException("Invalid Memory Description");
       }
 
-      int descrLength = in.readInt();
+      int descrLength = DataTools.read4SignedBytes(in, littleEndian);
       byte[] memDescr = new byte[2*descrLength];
       in.read(memDescr);
-      String descr = DataTools.stripString(new String(memDescr));
 
       if (blockLength > 0) {
         offsets.add(new Long(in.getFilePointer()));
@@ -329,8 +327,6 @@ public class LIFReader extends FormatReader {
 
     int ndx = 1;
     numImages = 0;
-    int dimCounter = 0;
-    int lutCounter = 0;
 
     // the image data we need starts with the token "ElementName='blah'" and
     // ends with the token "/ImageDescription"

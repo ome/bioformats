@@ -40,7 +40,6 @@ public class GelReader extends BaseTiffReader {
   // GEL TIFF private IFD tags.
   private static final int MD_FILETAG = 33445;
   private static final int MD_SCALE_PIXEL = 33446;
-  private static final int MD_COLOR_TABLE = 33447;
   private static final int MD_LAB_NAME = 33448;
   private static final int MD_SAMPLE_INFO = 33449;
   private static final int MD_PREP_DATE = 33450;
@@ -76,12 +75,6 @@ public class GelReader extends BaseTiffReader {
     super.initStandardMetadata();
 
     numImages--;
-    //super.initMetadata();
-    boolean little = true;
-    try {
-      little = TiffTools.isLittleEndian(ifds[0]);
-    }
-    catch (FormatException e) { }
 
     try {
       long fmt = TiffTools.getIFDLongValue(ifds[1], MD_FILETAG, true, 128);

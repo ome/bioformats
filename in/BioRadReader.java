@@ -47,57 +47,10 @@ public class BioRadReader extends FormatReader {
   /** Always little endian. */
   private static final boolean LITTLE_ENDIAN = true;
 
-  // Merge types
-
-  /** Image is not merged. */
-  private static final int MERGE_OFF = 0;
-
-  /** All pixels merged, 16 color (4-bit). */
-  private static final int MERGE_16 = 1;
-
-  /** Alternate pixels merged, 128 color (7-bit). */
-  private static final int MERGE_ALTERNATE = 2;
-
-  /** Alternate columns merged. */
-  private static final int MERGE_COLUMN = 3;
-
-  /** Alternate rows merged. */
-  private static final int MERGE_ROW = 4;
-
-  /** Maximum pixels merged. */
-  private static final int MERGE_MAXIMUM = 5;
-
-  /** 64-color (12-bit) optimized 2-image merge. */
-  private static final int MERGE_OPT12 = 6;
-
-  /**
-   * As above except convert look up table saved after the notes in file,
-   * as opposed to at the end of each image data.
-   */
-  private static final int MERGE_OPT12_V2 = 7;
-
   /** List of merge types. */
   private static final String[] MERGE_NAMES = {
     "MERGE_OFF", "MERGE_16", "MERGE_ALTERNATE", "MERGE_COLUMN", "MERGE_ROW",
     "MERGE_MAXIMUM", "MERGE_OPT12", "MERGE_OPT12_V2"
-  };
-
-  // Look-up table constants
-
-  /** A red pane appears on the screen. */
-  private static final int RED_LUT = 0x01;
-
-  /** A green pane appears on the screen. */
-  private static final int GREEN_LUT = 0x02;
-
-  /** A blue pane appears on the screen. */
-  private static final int BLUE_LUT = 0x04;
-
-  /** List of allowed variable names for NOTE_TYPE_VARIABLE notes. */
-  private static final String[] NOTE_VAR_NAMES = {
-    "SCALE_FACTOR", "LENS_MAGNIFICATION", "RAMP_GAMMA1", "RAMP_GAMMA2",
-    "RAMP_GAMMA3", "RAMP1_MIN", "RAMP2_MIN", "RAMP3_MIN", "RAMP1_MAX",
-    "RAMP2_MAX", "RAMP3_MAX", "PIC_FF_VERSION", "Z_CORRECT_FACTOR"
   };
 
   // Note types

@@ -157,8 +157,6 @@ public class ICSReader extends FormatReader {
 
     int width = dimensions[1];
     int height = dimensions[2];
-    int numSamples = width * height;
-    int channels = 1;
 
     int offset = width * height * (dimensions[0] / 8) * no;
     byte[] plane = new byte[width * height * (dimensions[0] / 8)];
@@ -189,7 +187,6 @@ public class ICSReader extends FormatReader {
     byte[] plane = openBytes(id, no);
     int width = dimensions[1];
     int height = dimensions[2];
-    int numSamples = width * height;
     int channels = 1;
 
     if (dimensions[0] == 32) {

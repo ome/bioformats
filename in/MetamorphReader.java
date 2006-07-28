@@ -42,13 +42,10 @@ public class MetamorphReader extends BaseTiffReader {
 
   // IFD tag numbers of important fields
   private static final int METAMORPH_ID = 33629;
-  private static final int UIC1TAG = 33628;
   private static final int UIC2TAG = 33629;
-  private static final int UIC3TAG = 33630;
   private static final int UIC4TAG = 33631;
 
   // -- Fields --
-  private int numPlanes;
 
   /** The TIFF's name */
   private String imageName;
@@ -116,7 +113,6 @@ public class MetamorphReader extends BaseTiffReader {
 
     long[] uic2 = TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true);
     numImages = uic2.length;
-    numPlanes = numImages;
 
     // copy ifds into a new array of Hashtables that will accomodate the
     // additional image planes
@@ -198,8 +194,6 @@ public class MetamorphReader extends BaseTiffReader {
       Hashtable ifd = ifds[0];
       super.initStandardMetadata();
 
-      Integer obj = new Integer(0);
-
       int offset;
 
       Integer k = new Integer(UIC4TAG);
@@ -226,7 +220,6 @@ public class MetamorphReader extends BaseTiffReader {
       if (v == null) throw new FormatException("Metamorph ID not found");
 
       int planes = v[1].intValue();
-      boolean little = TiffTools.isLittleEndian(ifd);
 
       while ((currentcode < 66) && ((in.length() - in.getFilePointer()) > 2)) {
         currentcode = in.readShort();
