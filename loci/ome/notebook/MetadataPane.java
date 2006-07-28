@@ -13,6 +13,7 @@ import javax.swing.border.EmptyBorder;
 import loci.formats.RandomAccessStream;
 import loci.formats.TiffTools;
 import loci.formats.ReflectedUniverse;
+import loci.formats.ReflectException;
 import org.openmicroscopy.xml.*;
 import org.w3c.dom.*;
 import java.awt.event.*;
@@ -233,6 +234,7 @@ public class MetadataPane extends JPanel
       TabPanel tPanel = new TabPanel(tabList[i]);
       OMEXMLNode n = null;
       String unknownName = tabList[i].getAttribute("XMLName");
+      CustomAttributesNode caNode = null;
 
       try {
         //reflect api gets around large switch statements
@@ -247,19 +249,22 @@ public class MetadataPane extends JPanel
           n = (OMEXMLNode) r.getVar("result");
         }
         else {
-	        r.exec("import org.openmicroscopy.xml.CustomAttributesNode");
-	        r.exec("import org.openmicroscopy.xml.st." +
-	          unknownName + "Node");
 	        Element currentCA = DOMUtil.getChildElement("CustomAttributes", thisOmeNode.getDOMElement());
 	        if (currentCA != null) {
-	          CustomAttributesNode caNode = new CustomAttributesNode(currentCA);
+	          caNode = new CustomAttributesNode(currentCA);
+	          r.exec("import org.openmicroscopy.xml.CustomAttributesNode");
+	          r.exec("import org.openmicroscopy.xml.st." +
+	            unknownName + "Node");
 	          r.setVar("parent", caNode);
 	          r.exec("result = new " + unknownName + "Node(parent)");
 	          n = (OMEXMLNode) r.getVar("result");
 	        }
 	        else {
 	          Element cloneEle = DOMUtil.createChild(thisOmeNode.getDOMElement(),"CustomAttributes");
-	          CustomAttributesNode caNode = new CustomAttributesNode(cloneEle);
+	          caNode = new CustomAttributesNode(cloneEle);
+	          r.exec("import org.openmicroscopy.xml.CustomAttributesNode");
+	          r.exec("import org.openmicroscopy.xml.st." +
+	            unknownName + "Node");
 	          r.setVar("parent", caNode);
 	          r.exec("result = new " + unknownName + "Node(parent)");
 	          n = (OMEXMLNode) r.getVar("result");
@@ -269,7 +274,7 @@ public class MetadataPane extends JPanel
       catch (Exception exc) {
         System.out.println(exc.toString());
       }
-
+      if (caNode != null && n == null) n = new AttributeNode(caNode, unknownName);
 			tPanel.oNode = n;
 
       //set the field oNode in TabPanel to reflect the structure of the xml
@@ -320,6 +325,14 @@ public class MetadataPane extends JPanel
     panelsWithID = new Vector();
     addItems = new Vector();
     internalDefs = new Hashtable();
+    
+    try {
+      Element damnElement = DOMUtil.findElement("LaserCoordinates", ome.getOMEDocument(true));
+      System.out.println(damnElement);
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+    }
 
 		//time to parse internal semantic type defs in file
 		//to handle appropriate reference types
@@ -426,6 +439,7 @@ public class MetadataPane extends JPanel
         TabPanel tPanel = new TabPanel(tabList[i]);
         
         OMEXMLNode n = null;
+        CustomAttributesNode caNode = null;
 
         try {
           ReflectedUniverse r = new ReflectedUniverse();
@@ -443,26 +457,32 @@ public class MetadataPane extends JPanel
             n = (OMEXMLNode) r.getVar("result");
           }
           else {
-            r.exec("import org.openmicroscopy.xml.CustomAttributesNode");
-            r.exec("import org.openmicroscopy.xml.st." +
-              unknownName + "Node");
             Element currentCA = DOMUtil.getChildElement("CustomAttributes", thisOmeNode.getDOMElement());
             if (currentCA != null) {
-              CustomAttributesNode caNode = new CustomAttributesNode(currentCA);
+              caNode = new CustomAttributesNode(currentCA);
+              r.exec("import org.openmicroscopy.xml.CustomAttributesNode");
+              r.exec("import org.openmicroscopy.xml.st." +
+                unknownName + "Node");
               r.setVar("parent", caNode);
               r.exec("result = new " + unknownName + "Node(parent)");
               n = (OMEXMLNode) r.getVar("result");
             }
             else {
               Element cloneEle = DOMUtil.createChild(thisOmeNode.getDOMElement(),"CustomAttributes");
-              CustomAttributesNode caNode = new CustomAttributesNode(cloneEle);
+              caNode = new CustomAttributesNode(cloneEle);
+              r.exec("import org.openmicroscopy.xml.CustomAttributesNode");
+              r.exec("import org.openmicroscopy.xml.st." +
+                unknownName + "Node");
               r.setVar("parent", caNode);
               r.exec("result = new " + unknownName + "Node(parent)");
               n = (OMEXMLNode) r.getVar("result");
             }
           }
         }
-        catch (Exception exc) { exc.printStackTrace(); }
+        catch (Exception exc) {
+          System.out.println(exc.toString());
+        }
+        if (caNode != null && n == null) n = new AttributeNode(caNode, thisName);
         tPanel.oNode = n;
         
         renderTab(tPanel);
@@ -583,21 +603,26 @@ public class MetadataPane extends JPanel
             if( aName.equals("Image") || aName.equals("Feature") ||
               aName.equals("Dataset") || aName.equals("Project") )
             {
-              v = tp.oNode.getChildren(aName);
+              v = DOMUtil.getChildElements(aName, tp.oNode.getDOMElement());
             }
             else if (tp.oNode.getChild("CustomAttributes") != null) {
-              v = tp.oNode.getChild("CustomAttributes").getChildren(aName);
+              v = DOMUtil.getChildElements(aName, 
+                tp.oNode.getChild("CustomAttributes").getDOMElement());
             }
+            
+//            System.out.println("These elements were found for " + aName + ":"
+//              + v);
 
             if (v.size() == 0) {
               //Use reflect api to avoid large switch statement to handle
               //construction of different nodes
               //OMEXMLNode child classes
               OMEXMLNode n = null;
+              CustomAttributesNode caNode = null;
+              String unknownName = aName;
 
               try {
                 ReflectedUniverse r = new ReflectedUniverse();
-                String unknownName = e.getAttribute("XMLName");
                 if (unknownName.equals("Project") ||
                   unknownName.equals("Feature") ||
                   unknownName.equals("CustomAttributes") ||
@@ -611,33 +636,75 @@ public class MetadataPane extends JPanel
                   n = (OMEXMLNode) r.getVar("result");
                 }
                 else {
-                  r.exec("import org.openmicroscopy.xml.CustomAttributesNode");
-                  r.exec("import org.openmicroscopy.xml.st." +
-                    unknownName + "Node");
+
                   Element currentCA = DOMUtil.getChildElement("CustomAttributes", tp.oNode.getDOMElement());
                   if (currentCA != null) {
-                    CustomAttributesNode caNode = new CustomAttributesNode(currentCA);
+                    caNode = new CustomAttributesNode(currentCA);
+                    r.exec("import org.openmicroscopy.xml.CustomAttributesNode");
+                    r.exec("import org.openmicroscopy.xml.st." +
+                      unknownName + "Node");
                     r.setVar("parent", caNode);
                     r.exec("result = new " + unknownName + "Node(parent)");
                     n = (OMEXMLNode) r.getVar("result");
                   }
                   else {
                     Element cloneEle = DOMUtil.createChild(tp.oNode.getDOMElement(),"CustomAttributes");
-                    CustomAttributesNode caNode = new CustomAttributesNode(cloneEle);
+                    caNode = new CustomAttributesNode(cloneEle);
+                    r.exec("import org.openmicroscopy.xml.CustomAttributesNode");
+                    r.exec("import org.openmicroscopy.xml.st." +
+                      unknownName + "Node");
                     r.setVar("parent", caNode);
                     r.exec("result = new " + unknownName + "Node(parent)");
                     n = (OMEXMLNode) r.getVar("result");
                   }
                 }
               }
-              catch (Exception exc) { exc.printStackTrace(); }
-
+              catch (Exception exc) {
+                System.out.println(exc.toString());
+              }
+              if (caNode != null && n == null) {
+                n = new AttributeNode(caNode, unknownName);
+//                System.out.println("Was not found in file: " + n);
+              }
               TablePanel p = new TablePanel(e, tp, n);
               iHoldTables.add(p);
             }
             else {
               for(int j = 0;j<v.size();j++) {
-                OMEXMLNode n = (OMEXMLNode) v.get(j);
+                Element anEle = (Element) v.get(j);
+                
+	              OMEXMLNode n = null;
+	              String unknownName = aName;
+	
+	              try {
+	                ReflectedUniverse r = new ReflectedUniverse();
+	                if (unknownName.equals("Project") ||
+	                  unknownName.equals("Feature") ||
+	                  unknownName.equals("CustomAttributes") ||
+	                  unknownName.equals("Dataset") ||
+	                  unknownName.equals("Image"))
+	                {
+	                  r.exec("import org.openmicroscopy.xml." +
+	                    unknownName + "Node");
+	                  r.setVar("DOMElement", anEle);
+	                  r.exec("result = new " + unknownName + "Node(DOMElement)");
+	                  n = (OMEXMLNode) r.getVar("result");
+	                }
+	                else {
+	                    r.exec("import org.openmicroscopy.xml.st." +
+	                      unknownName + "Node");
+	                    r.setVar("DOMElement", anEle);
+	                    r.exec("result = new " + unknownName + "Node(DOMElement)");
+	                    n = (OMEXMLNode) r.getVar("result");
+	                }
+	              }
+	              catch (Exception exc) {
+	                System.out.println(exc.toString());
+	              }
+	              if (n == null) {
+	                n = new AttributeNode(anEle);
+//	                System.out.println("Was found in file: " + n);
+	              }
 
                 TablePanel p = new TablePanel(e, tp, n);
                 iHoldTables.add(p);
@@ -891,6 +958,7 @@ public class MetadataPane extends JPanel
     public JTable newTable, refTable;
     public Element el;
     public Boolean isTopLevel;
+    private JButton noteButton;
 
     public TablePanel(Element e, TabPanel tp, OMEXMLNode on) {
       isTopLevel = false;
@@ -966,8 +1034,8 @@ public class MetadataPane extends JPanel
         JTableHeader tHead = newTable.getTableHeader();
         tHead.setResizingAllowed(false);
         tHead.setReorderingAllowed(false);
-        JButton noteButton = new JButton("Notes");
-        noteButton.setPreferredSize(new Dimension(70,15));
+        noteButton = new JButton("Notes");
+        noteButton.setPreferredSize(new Dimension(85,15));
         noteButton.addActionListener(this);
         noteButton.setActionCommand("getNotes");
         
@@ -1082,8 +1150,8 @@ public class MetadataPane extends JPanel
           JTableHeader tHead = refTable.getTableHeader();
           tHead.setResizingAllowed(false);
           tHead.setReorderingAllowed(false);
-          JButton noteButton = new JButton("Notes");
-          noteButton.setPreferredSize(new Dimension(70,15));
+          noteButton = new JButton("Notes");
+          noteButton.setPreferredSize(new Dimension(85,15));
           noteButton.addActionListener(this);
           noteButton.setActionCommand("getNotes");
         
@@ -1101,6 +1169,7 @@ public class MetadataPane extends JPanel
       
       noteP = new NotePanel(this);
       builder.add(noteP, cc.xyw(1,7,4, "fill,center"));
+      setNumNotes(noteP.getNumNotes());
       
       add(builder.getPanel());
     }
@@ -1113,7 +1182,7 @@ public class MetadataPane extends JPanel
           boolean isLocal = false;
           String attrName = (String) model.getValueAt(i,0);
           String value = null;
-          if(oNode != null) oNode.getAttribute(attrName);
+          if(oNode != null) value = oNode.getAttribute(attrName);
           for(int j = 0;j < panelsWithID.size();j++) {
             TablePanel tp = (TablePanel) panelsWithID.get(j);
             if (tp.id != null && value != null) {
@@ -1131,6 +1200,10 @@ public class MetadataPane extends JPanel
         refColumn.setCellEditor(new VariableComboEditor(panelsWithID,
           addItems, oNode, internalDefs));
       }
+    }
+    
+    public void setNumNotes(int n) {
+      noteButton.setText("Notes (" + n + ")");
     }
 
     public void actionPerformed(ActionEvent e) {

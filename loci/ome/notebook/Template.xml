@@ -36,7 +36,6 @@
 			<OMEAttribute XMLName="SizeT" Description="The t coordinate size of these pixels."/>
 			<OMEAttribute XMLName="PixelType" Description="Describes the type of pixels used."/>
 		</OMEElement>
-<!--
 		<OMEElement XMLName="LaserCoordinates" Description="">
 			<OMEAttribute XMLName="ID" Type="ID"/>
 			<OMEAttribute XMLName="Laser" Type="Ref" Description="The laser refered to by these coordinates."/>
@@ -47,7 +46,6 @@
 			<OMEAttribute XMLName="TheZ" Description="The focal plane of the event."/>
 			<OMEAttribute XMLName="TheT" Description="The time point of the event."/>
 		</OMEElement>
--->
 	</OMEElement>
 	<OMEElement XMLName="Experiment" Description="Describes the experiment.">
 		<OMEAttribute XMLName="ID" Type="ID"/>
