@@ -189,8 +189,6 @@ public class QTWriter extends FormatWriter {
     byte[][] temp = byteData;
     byteData = new byte[temp.length][temp[0].length + height*pad];
 
-    int newScanline = height - 1;
-
     for (int oldScanline=0; oldScanline<height; oldScanline++) {
       for (int k=0; k<temp.length; k++) {
         System.arraycopy(temp[k], oldScanline*width, byteData[k],

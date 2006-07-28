@@ -173,7 +173,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     long data = 0;
     int idata = 0;
     double ddata = 0;
-    short sdata = 0;
+    //short sdata = 0;
 
     try {
       // -- Parse standard metadata --
@@ -272,21 +272,6 @@ public class ZeissLSMReader extends BaseTiffReader {
       // -- Parse OME-XML metadata --
 
       short[] omeData = TiffTools.getIFDShortArray(ifd, ZEISS_ID, true);
-      int magicNum = DataTools.bytesToInt(omeData, 0, little);
-
-//      int photoInterp2 = TiffTools.getIFDIntValue(ifd,
-//        TiffTools.PHOTOMETRIC_INTERPRETATION, true, 0);
-//      String photo2;
-//      switch (photoInterp2) {
-//        case 0: photo2 = "monochrome"; break;
-//        case 1: photo2 = "monochrome"; break;
-//        case 2: photo2 = "RGB"; break;
-//        case 3: photo2 = "monochrome"; break;
-//        case 4: photo2 = "RGB"; break;
-//        default: photo2 = "monochrome";
-//      }
-//      OMETools.setAttribute(ome,
-//        "ChannelInfo", "PhotometricInterpretation", photo2);
 
       int imageWidth = DataTools.bytesToInt(omeData, 8, little);
       int imageLength = DataTools.bytesToInt(omeData, 12, little);
@@ -362,13 +347,11 @@ public class ZeissLSMReader extends BaseTiffReader {
       if (data != 0) {
         pos = in.getFilePointer();
 
-        in.seek(data);
+        in.seek(data + 4);
 
-        int blockSize = in.readInt();
         int numColors = in.readInt();
         int numNames = in.readInt();
         idata = in.readInt();
-        long offset = data + idata; // will seek to this later
         idata = in.readInt();
         long offsetNames = data + idata; // will seek to this
 

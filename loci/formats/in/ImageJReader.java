@@ -161,7 +161,6 @@ public class ImageJReader extends FormatReader {
       r.setVar("name", file.getName());
       r.exec("image = opener.openImage(dir, name)");
       r.exec("size = image.getStackSize()");
-      int size = ((Integer) r.getVar("size")).intValue();
       Image img = (Image) r.exec("image.getImage()");
 
       if (!separated) {

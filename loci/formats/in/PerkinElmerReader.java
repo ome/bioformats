@@ -284,10 +284,10 @@ public class PerkinElmerReader extends FormatReader {
         "Z slice space"};
       int pt = 0;
       while (t.hasMoreTokens()) {
-        if (tNum < 7) { String temp = t.nextToken(); }
+        if (tNum < 7) { t.nextToken(); }
         else if ((tNum > 7 && tNum < 12) || (tNum > 12 && tNum < 18) ||
           (tNum > 18 && tNum < 22)) {
-          String temp = t.nextToken();
+          t.nextToken();
         }
         else if (pt < hashKeys.length) {
           metadata.put(hashKeys[pt], t.nextToken());
@@ -341,7 +341,6 @@ public class PerkinElmerReader extends FormatReader {
         if (tokens[j].indexOf("<") != -1) tokens[j] = "";
       }
 
-      int slice = 0;
       for (int j=0; j<tokens.length-1; j+=2) {
         if (tokens[j].indexOf("Wavelength") != -1) {
           metadata.put("Camera Data " + tokens[j].charAt(13), tokens[j]);
@@ -361,18 +360,14 @@ public class PerkinElmerReader extends FormatReader {
 
     t = new StringTokenizer(details);
     int tokenNum = 0;
-    String timePoints = "1";
     String wavelengths = "1";
     int numTokens = t.countTokens();
     while (t.hasMoreTokens()) {
       if (tokenNum == numTokens - 6) {
         wavelengths = (String) t.nextToken();
       }
-      else if (tokenNum == numTokens - 4) {
-        timePoints = (String) t.nextToken();
-      }
       else {
-        String temp = t.nextToken();
+        t.nextToken();
       }
       tokenNum++;
     }

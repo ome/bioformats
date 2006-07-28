@@ -43,7 +43,6 @@ public class LegacyQTWriter extends FormatWriter {
 
   /** Time scale. */
   private static final int TIME_SCALE = 600;
-  private static final int KEY_FRAME_RATE = 30;
 
   // -- Fields --
 

@@ -35,9 +35,6 @@ public class TiffWriter extends FormatWriter {
 
   // -- Fields --
 
-  /** The current IFD, containing metadata for the plane(s) to be written. */
-  private Hashtable currentIFD;
-
   /** The last offset written to. */
   private int lastOffset;
 

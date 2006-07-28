@@ -289,7 +289,8 @@ public class IPLabReader extends FormatReader {
           // indexed lookup table
           in.readInt();
           int type = in.readInt();
-          String clutType;
+
+          String clutType = "unknown";
           switch ((int) type) {
             case 0: clutType = "monochrome"; break;
             case 1: clutType = "reverse monochrome"; break;
@@ -304,6 +305,7 @@ public class IPLabReader extends FormatReader {
             case 10: clutType = "yellow"; break;
             case 11: clutType = "saturated pixels"; break;
           }
+          metadata.put("LUT type", clutType);
         }
         else {
           // explicitly defined lookup table
@@ -366,8 +368,7 @@ public class IPLabReader extends FormatReader {
       else if (tag.equals("roi ")) {
         // read in ROI information
 
-        int size = in.readInt();
-        int roiType = in.readInt();
+        in.skipBytes(8);
         int roiLeft = in.readInt();
         int roiTop = in.readInt();
         int roiRight = in.readInt();
@@ -381,10 +382,7 @@ public class IPLabReader extends FormatReader {
         store.setDisplayROI(
           x0, y0, null, x1, y1, null, null, null, null, null);
 
-        for (int i=0; i<numRoiPts; i++) {
-          int ptX = in.readInt();
-          int ptY = in.readInt();
-        }
+        in.skipBytes(8 * numRoiPts);
       }
       else if (tag.equals("mask")) {
         // read in Segmentation Mask

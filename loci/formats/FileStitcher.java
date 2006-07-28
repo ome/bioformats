@@ -288,17 +288,13 @@ public class FileStitcher extends FormatReader {
 
     int maxX = 0;
     int maxY = 0;
-    int maxXIndex = 0;
-    int maxYIndex = 0;
 
     for (int i=0; i<dims.length; i++) {
       if (dims[i][0] > maxX) {
         maxX = dims[i][0];
-        maxXIndex = i;
       }
       if (dims[i][1] > maxY) {
         maxY = dims[i][1];
-        maxYIndex = i;
       }
     }
 

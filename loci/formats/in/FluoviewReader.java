@@ -49,8 +49,6 @@ public class FluoviewReader extends BaseTiffReader {
 
   /** Fluoview TIFF private tags */
   private static final int MMHEADER = 34361;
-  private static final int MMSTAMP = 34362;
-  private static final int MMUSERBLOCK = 34386;
 
   // -- Fields --
   /** Number of optical sections in the file */
@@ -230,14 +228,8 @@ public class FluoviewReader extends BaseTiffReader {
 
       // -- Parse OME-XML metadata --
 
-      Object off;
-      String data;
-      long newNum = 0;
-      Object obj = new Object();
+      Object off = (Object) ifd.get(new Integer(MMHEADER));
       float origin = 0;
-
-      // set file to the right place
-      off = (Object) ifd.get(new Integer(MMHEADER));
 
       float stageX = 0;
       float stageY = 0;
@@ -255,7 +247,7 @@ public class FluoviewReader extends BaseTiffReader {
             in.read();
           }
 
-          newNum = in.readInt();
+          in.skipBytes(4);
           origin = (float) in.readDouble();
           if (j == 1) stageX = origin;
           else if (j == 2) stageY = origin;

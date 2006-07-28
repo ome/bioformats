@@ -55,9 +55,6 @@ public class DicomReader extends FormatReader {
   private static final int WINDOW_WIDTH = 0x00281051;
   private static final int RESCALE_INTERCEPT = 0x00281052;
   private static final int RESCALE_SLOPE = 0x00281053;
-  private static final int RED_PALETTE = 0x00281201;
-  private static final int GREEN_PALETTE = 0x00281202;
-  private static final int BLUE_PALETTE = 0x00281203;
   private static final int ICON_IMAGE_SEQUENCE = 0x00880200;
   private static final int ITEM = 0xFFFEE000;
   private static final int ITEM_DELIMINATION = 0xFFFEE00D;
@@ -98,8 +95,6 @@ public class DicomReader extends FormatReader {
   private int location;
   private int elementLength;
   private int vr;
-  private int previousGroup;
-  private String previousInfo;
   private boolean oddLocations;
   private boolean inSequence;
   private boolean bigEndianTransferSyntax;
@@ -302,7 +297,6 @@ public class DicomReader extends FormatReader {
     else in.seek(pos);
 
     boolean decodingTags = true;
-    boolean signed = false;
 
     while (decodingTags) {
       int tag = getNextTag();
@@ -379,7 +373,6 @@ public class DicomReader extends FormatReader {
           break;
         case PIXEL_REPRESENTATION:
           int pixelRepresentation = in.readShort();
-          signed = pixelRepresentation == 1;
           addInfo(tag, pixelRepresentation);
           break;
         case WINDOW_CENTER:
@@ -448,10 +441,6 @@ public class DicomReader extends FormatReader {
     String info = getHeaderInfo(tag, value);
     if (inSequence && info != null && vr != SQ) info = ">" + info;
     if (info != null && tag != ITEM) {
-      int group = tag >>> 16;
-      previousGroup = group;
-      previousInfo = info;
-
       String key = (String) TYPES.get(new Integer(tag));
       if (key == null) key = "" + tag;
       if (tag != PIXEL_DATA) metadata.put(key, info);

@@ -49,7 +49,6 @@ public class ZeissZVIReader extends FormatReader {
   private int channels;
 
   // -- Fields used by parseDir --
-  private int counter = 0;  // the number of the Image entry
   private int imageWidth = 0;
   private int imageHeight = 0;
   private int bytesPerPixel = 0;
@@ -60,16 +59,13 @@ public class ZeissZVIReader extends FormatReader {
   private int height;
   private int bitsPerSample;
   private int dataLength;
-  private int len;
   private int shuffle;
-  private int previousCut;
 
   private String typeAsString;
   private String dimensionOrder;
   private int zSize;
   private int tSize;
   private int cSize;
-  private int oldBpp;
 
   // -- Constructor --
 
@@ -180,7 +176,6 @@ public class ZeissZVIReader extends FormatReader {
         height = DataTools.bytesToInt(imageHead, pointer, 4, true);
         pointer += 4 + 2;
 
-        int depth = DataTools.bytesToInt(imageHead, pointer, 4, true);
         pointer += 4 + 2;
 
         pixelFormat = DataTools.bytesToInt(imageHead, pointer, 4, true);
@@ -194,20 +189,7 @@ public class ZeissZVIReader extends FormatReader {
         // read image bytes and convert to floats
 
         pointer = 0;
-        int numSamples = width*height;
         bitsPerSample = validBPP;
-
-        /*
-        switch (pixelFormat) {
-          case 1: channels = 3; break;
-          case 2: channels = 4; break;
-          case 3: channels = 1; break;
-          case 4: channels = 1; break;
-          case 6: channels = 1; break;
-          case 8: channels = 3; break;
-          default: channels = 1;
-        }
-        */
 
         if ((width > imageWidth) && (imageWidth > 0)) {
           width = imageWidth;
@@ -309,9 +291,6 @@ public class ZeissZVIReader extends FormatReader {
         tempPx = px;
       }
 
-      //bitsPerSample = tbitsPerSample;
-      //bytesPerPixel = tbytesPerPixel;
-
       if (!isRGB(id) || !separated) {
         return tempPx;
       }
@@ -334,8 +313,6 @@ public class ZeissZVIReader extends FormatReader {
     int bpp = bitsPerSample / 8;
     if (bpp == 0) bpp = bytesPerPixel;
     if (bpp > 4) bpp /= 3;
-    //if (bpp == 0) bpp = oldBpp;
-   // else oldBpp = bpp;
     return ImageTools.makeImage(data, width, height,
       (!isRGB(id) || separated) ? 1 : 3, true, bpp, false);
   }
@@ -438,13 +415,6 @@ public class ZeissZVIReader extends FormatReader {
                 String s = num.substring(itemIndex + 5, parenIndex);
                 imageNum = Integer.parseInt(s);
                 num = num.substring(0, num.lastIndexOf("Item"));
-
-                /*
-                String s = num.substring(num.lastIndexOf("Item") + 5,
-                  num.lastIndexOf(")"));
-                imageNum = Integer.parseInt(s);
-                num = num.substring(0, num.lastIndexOf("Item"));
-                */
               }
             }
 
@@ -579,7 +549,6 @@ public class ZeissZVIReader extends FormatReader {
               nImages++;
             }
           }
-          //else break;
           else {
             if (legacy.getImageCount(id) == 1) break;
           }
@@ -622,14 +591,6 @@ public class ZeissZVIReader extends FormatReader {
       // HACK - just grab the largest file
 
       header = (byte[]) files[1].get(largestIndex);
-      String pathName = (String) files[0].get(largestIndex);
-
-      int imageNum = 0;
-      if (pathName.indexOf("Item") != -1) {
-        String num = pathName.substring(pathName.indexOf("Item") + 5,
-          pathName.indexOf(")"));
-        imageNum = Integer.parseInt(num);
-      }
 
       int byteCount = 166;
 
@@ -756,18 +717,7 @@ public class ZeissZVIReader extends FormatReader {
 
     for (int k=0; k<tags.size(); k++) {
       byte[] tag = (byte[]) tags.get(k);
-      pt = 16;
-
-      int w = DataTools.bytesToInt(tag, pt, 2, true);
-      pt += 2;
-
-      int majorVersion = DataTools.bytesToInt(tag, pt, 2, true);
-      pt += 2;
-      int minorVersion = DataTools.bytesToInt(tag, pt, 2, true);
-      pt += 2;
-
-      w = DataTools.bytesToInt(tag, pt, 2, true);
-      pt += 2;
+      pt = 24;
 
       int numTags = DataTools.bytesToInt(tag, pt, 4, true);
       pt += 4;
@@ -1453,8 +1403,6 @@ public class ZeissZVIReader extends FormatReader {
     MetadataStore store = getMetadataStore(currentId);
 
     // Default values
-    Integer sizeX = (Integer) metadata.get("ImageWidth");
-    Integer sizeY = (Integer) metadata.get("ImageHeight");
     Integer sizeZ = new Integer(1);
     Integer sizeC = new Integer(1);
     Integer sizeT = null;
@@ -1468,12 +1416,6 @@ public class ZeissZVIReader extends FormatReader {
     }
 
     dimensionOrder = "XYZCT";
-
-    // If we have a legacy datafile the attribute names are different.
-    if (needLegacy) {
-      sizeX = (Integer) metadata.get("Width");
-      sizeY = (Integer) metadata.get("Height");
-    }
 
     Object mce = metadata.get("MultiChannelEnabled");
     if (mce != null) {

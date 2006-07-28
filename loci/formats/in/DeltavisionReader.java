@@ -384,7 +384,6 @@ public class DeltavisionReader extends FormatReader {
       DataTools.bytesToInt(header, 212, 4, little))));
     metadata.put("Z origin (in um)", new Float(Float.intBitsToFloat(
       DataTools.bytesToInt(header, 216, 4, little))));
-    int numTitles = DataTools.bytesToInt(header, 220, 4, little);
 
     order = dimOrder;
 

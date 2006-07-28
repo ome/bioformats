@@ -208,7 +208,7 @@ public class OpenlabReader extends FormatReader {
     catch (Exception e) { dim = new Dimension(0, 0); }
 
     int length = b.length;
-    int num, size, blockEnd;
+    int num, size;
     int totalBlocks = -1; // set to allow loop to start.
     int expectedBlock = 0;
     int pos = 0;
@@ -216,7 +216,6 @@ public class OpenlabReader extends FormatReader {
     int imageSize = dim.width * dim.height;
     short[] flatSamples = new short[imageSize];
     byte[] temp;
-    boolean skipflag;
 
     sizeX = new Integer(dim.width);
     sizeY = new Integer(dim.height);
@@ -229,7 +228,6 @@ public class OpenlabReader extends FormatReader {
 
     // check whether or not there is deep gray data
     while (expectedBlock != totalBlocks) {
-      skipflag = false;
 
       while (pos + 7 < length &&
         (b[pos] != 73 || b[pos + 1] != 86 || b[pos + 2] != 69 ||
@@ -286,7 +284,6 @@ public class OpenlabReader extends FormatReader {
       temp = new byte[] { b[pos], b[pos+1], b[pos+2], b[pos+3] };
       size = batoi(temp);
       pos += 8;
-      blockEnd = pos + size;
 
       // copy into our data array.
       System.arraycopy(b, pos, pixelData, pixPos, size);
@@ -334,7 +331,6 @@ public class OpenlabReader extends FormatReader {
 
     long order = in.readInt();
     little = order == 0x0000ffff;
-    //in.order(little);
 
     Vector v = new Vector(); // a temp vector containing offsets.
 
@@ -580,29 +576,20 @@ public class OpenlabReader extends FormatReader {
     // read in the block of data
     byte[] toRead = new byte[blockSize];
     in.read(toRead);
-    byte[] pixelData = new byte[blockSize];
-    int pixPos = 0;
 
     Dimension dim;
     try { dim = pictReader.getDimensions(toRead); }
     catch (Exception e) { dim = new Dimension(0, 0); }
 
     int length = toRead.length;
-    int num, size, blockEnd;
     int totalBlocks = -1; // set to allow loop to start.
     int expectedBlock = 0;
     int pos = 0;
-    int imagePos = 0;
-    int imageSize = dim.width * dim.height;
-    short[] flatSamples = new short[imageSize];
-    byte[] temp;
-    boolean skipflag;
 
     sizeX = new Integer(dim.width);
     sizeY = new Integer(dim.height);
 
     if (expectedBlock != totalBlocks) {
-      skipflag = false;
 
       while (pos + 7 < length &&
         (toRead[pos] != 73 || toRead[pos + 1] != 86 ||
