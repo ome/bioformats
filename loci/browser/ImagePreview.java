@@ -36,25 +36,16 @@ public class ImagePreview extends JComponent
       //Don't use createImageIcon (which is a wrapper for getResource)
       //because the image we're trying to load is probably not one
       //of this program's own resources.
-      System.err.println("file path: "+file.getAbsolutePath());
+      if (LociDataBrowser.DEBUG) {
+        System.err.println("file path: "+file.getAbsolutePath());
+      }
 
-      // CTR TODO this is stupid
       ImageReader ir = new ImageReader();
       FormatReader fr = ir.getReader(file.getAbsolutePath());
-      ChannelMerger cm = new ChannelMerger(fr);
-      BufferedImage image = cm.openImage(file.getAbsolutePath(),0);
-      ImageIcon tmpIcon = new ImageIcon(
-        Toolkit.getDefaultToolkit().createImage(image.getSource()));
+      BufferedImage image = fr.openImage(file.getAbsolutePath(),0);
 
-      if (tmpIcon != null) {
-        if (tmpIcon.getIconWidth() > 90) {
-          thumbnail = new ImageIcon(tmpIcon.getImage().getScaledInstance(90,
-            -1, Image.SCALE_DEFAULT));
-        }
-        else { // no need to miniaturize
-          thumbnail = tmpIcon;
-        }
-      }
+      thumbnail =
+        new ImageIcon(image.getScaledInstance(90, -1, Image.SCALE_DEFAULT));
     }
     catch (Exception e) { e.printStackTrace(); }
   }

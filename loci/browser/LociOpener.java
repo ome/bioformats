@@ -13,6 +13,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import loci.formats.*;
 
 public class LociOpener implements ItemListener {
 
@@ -26,9 +28,19 @@ public class LociOpener implements ItemListener {
   public LociOpener() {
     // set up the file chooser
     fc = new JFileChooser(OpenDialog.getDefaultDirectory());
-    System.err.println("hahaha");
     // add a custom file filter
-    fc.addChoosableFileFilter(new ImageFilter());
+    FileFilter[] ff = LociDataBrowser.reader.getFileFilters();
+    ff = ComboFileFilter.sortFilters(ff);
+    ComboFileFilter combo =
+      new ComboFileFilter(ff, "All supported file types");
+    if (ff.length > 1) {
+      fc.addChoosableFileFilter(combo);
+    }
+    for (int i=0; i<ff.length; i++) {
+      fc.addChoosableFileFilter(ff[i]);
+    }
+    if (combo != null) fc.setFileFilter(combo);
+    else fc.setFileFilter(ff[0]);
 
     // add the preview pane
     JPanel p = new JPanel(new BorderLayout());
