@@ -40,7 +40,6 @@ import java.awt.event.ActionEvent;
 import org.openmicroscopy.xml.*;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import loci.formats.ReflectedUniverse;
 
 import java.util.Vector;
 
@@ -62,7 +61,7 @@ public class ClickableTable extends JTable
 //tells at any given point if the TablePanel being added or deleted
 //is a "duplicate" , e.g. if there is more than one element with its
 //same tagname on a given level of the node tree
-  private Boolean isDuplicate;
+  private boolean isDuplicate;
 
   // -- ClickableTable Constructors --
 

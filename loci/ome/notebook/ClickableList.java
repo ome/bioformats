@@ -9,10 +9,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.JTextArea;
 import javax.swing.JOptionPane;
 import javax.swing.DefaultListSelectionModel;
-import javax.swing.JScrollPane;
-
-import java.awt.Point;
-import java.awt.Container;
 
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;

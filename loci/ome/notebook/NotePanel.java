@@ -5,7 +5,6 @@ import java.util.Vector;
 import javax.swing.*;
 import org.openmicroscopy.xml.*;
 import org.w3c.dom.*;
-import java.awt.event.*;
 import javax.swing.event.*;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;

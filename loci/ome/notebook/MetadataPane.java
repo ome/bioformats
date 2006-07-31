@@ -13,7 +13,6 @@ import javax.swing.border.EmptyBorder;
 import loci.formats.RandomAccessStream;
 import loci.formats.TiffTools;
 import loci.formats.ReflectedUniverse;
-import loci.formats.ReflectException;
 import org.openmicroscopy.xml.*;
 import org.w3c.dom.*;
 import java.awt.event.*;
@@ -957,7 +956,7 @@ public class MetadataPane extends JPanel
     public String name;
     public JTable newTable, refTable;
     public Element el;
-    public Boolean isTopLevel;
+    public boolean isTopLevel;
     private JButton noteButton;
 
     public TablePanel(Element e, TabPanel tp, OMEXMLNode on) {
