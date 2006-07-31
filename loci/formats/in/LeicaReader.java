@@ -242,17 +242,6 @@ public class LeicaReader extends BaseTiffReader {
 
       if (ifds == null) throw new FormatException("No IFDs found");
 
-      /* debug */
-      int[] thumb = (int[]) TiffTools.getIFDValue(ifds[0], LEICA_MAGIC_TAG);
-      byte[] thumb2 = new byte[thumb.length];
-      for (int i=0; i<thumb.length; i++) {
-        thumb2[i] = (byte) thumb[i];
-      }
-      RandomAccessFile writer = new RandomAccessFile("thumb", "rw");
-      writer.write(thumb2);
-      writer.close();
-      /* end debug*/
-
       String descr = (String) metadata.get("Comment");
       metadata.remove("Comment");
 
