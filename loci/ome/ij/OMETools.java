@@ -679,8 +679,9 @@ public class OMETools {
     }
     IJ.showStatus("Displaying Image");
     viewer = new LociDataBrowser();
-    viewer.show(imageP, null, new int[] {sizeZ, sizeT, sizeC},
-      sizeZ, sizeT, sizeC, 0, 1, 2);
+    //viewer.show(imageP, null, new int[] {sizeZ, sizeT, sizeC},
+    //  sizeZ, sizeT, sizeC, 0, 1, 2);
+    viewer.show(imageP);
     OMESidePanel.hashInImage(-image.getID(), metas);
   }
 
