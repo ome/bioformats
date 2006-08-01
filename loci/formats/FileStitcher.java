@@ -191,6 +191,7 @@ public class FileStitcher extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
+    if (!id.equals(currentId)) initFile(id);
     return reader.openImage(findFile(no), number);
   }
 
@@ -198,6 +199,7 @@ public class FileStitcher extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
+    if (!id.equals(currentId)) initFile(id);
     return reader.openBytes(findFile(no), number);
   }
 
