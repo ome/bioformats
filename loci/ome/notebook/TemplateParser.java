@@ -86,6 +86,10 @@ public class TemplateParser
       tabList[i] = (Element) v.elementAt(i);
     }
   }
+  
+  public Element getRoot() {
+    return root;
+  }
 
   /** returns an array of Elements representing the tabs in the notebook*/
   public Element[] getTabs() {

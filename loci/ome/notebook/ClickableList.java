@@ -22,6 +22,7 @@ import org.openmicroscopy.xml.*;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Document;
 
 public class ClickableList extends JList
   implements MouseListener, ActionListener, DocumentListener {
@@ -69,7 +70,7 @@ public class ClickableList extends JList
 	public void setValue(String text) {
 	  if ( ((String) getSelectedValue()) != null && text != null) {
 	    Element currentCA = DOMUtil.getChildElement("CustomAttributes", tableP.tPanel.oNode.getDOMElement());
-	    Vector childList = DOMUtil.getChildElements(tableP.tPanel.el.getAttribute("XMLName") +
+	    Vector childList = DOMUtil.getChildElements(tableP.el.getAttribute("XMLName") +
 	      "Annotation", currentCA);
 	    Element childEle = null;
 	    for(int i = 0;i<childList.size();i++) {
@@ -110,32 +111,68 @@ public class ClickableList extends JList
 	        Element cloneEle = DOMUtil.createChild(tableP.tPanel.oNode.getDOMElement(),"CustomAttributes");
 	        caNode = new CustomAttributesNode(cloneEle);
 	      }
-	
-	      AttributeNode newNode = new AttributeNode(caNode,
-	        tableP.tPanel.el.getAttribute("XMLName") + "Annotation");
+	      
+	      String newXMLName = tableP.el.getAttribute("XMLName") + "Annotation";
+
+				Element omeE = tableP.tPanel.ome.getDOMElement();
+				NodeList omeChildren = omeE.getChildNodes();
+				Element childE = null;
+				for(int i = 0;i < omeChildren.getLength();i++) {
+				  Element tempE = (Element) omeChildren.item(i);
+				  if (tempE.getTagName().equals("SemanticTypeDefinitions"))
+				    childE = tempE; 
+				}
+				if (childE == null) childE =
+				  DOMUtil.createChild(omeE, "SemanticTypeDefinitions");
+				
+				Element stdE = childE;
+				Boolean alreadyPresent = false;
+				NodeList stdChildren = childE.getChildNodes(); 
+				for(int i = 0;i < stdChildren.getLength();i++) {
+				  Element tempE = (Element) stdChildren.item(i);
+				  if (tempE.getTagName().equals("SemanticType") &&
+				    tempE.getAttribute("Name").equals(newXMLName) )
+				      alreadyPresent = true;
+				}
+				
+				if(!alreadyPresent) {
+				  childE = DOMUtil.createChild(stdE, "SemanticType");
+				  childE.setAttribute("Name", newXMLName);
+				  childE.setAttribute("AppliesTo", tableP.tPanel.name.substring(0,1));
+				  Element stE = childE;
+				  
+				  childE = DOMUtil.createChild(stE, "Element");
+				  childE.setAttribute("Name", "Name");
+				  childE.setAttribute("DBLocation", "");
+				  childE.setAttribute("DataType", "string");
+				  
+				  childE = DOMUtil.createChild(stE, "Element");
+				  childE.setAttribute("Name", "Value");
+				  childE.setAttribute("DBLocation", "");
+				  childE.setAttribute("DataType", "string");
+				  
+				  childE = DOMUtil.createChild(stE, "Element");
+				  childE.setAttribute("Name", "NoteFor");
+				  childE.setAttribute("DBLocation", "");
+				  childE.setAttribute("DataType", "reference");
+				  childE.setAttribute("RefersTo", tableP.el.getAttribute("XMLName"));
+				}
+					
+	      AttributeNode newNode = new AttributeNode(caNode, newXMLName);
 	      newNode.setAttribute("NoteFor", tableP.id);  
 	      newNode.setAttribute("Name", newName);
 	      myModel.addElement(newName);
+	      noteP.setNameLabel(true);
 	      tableP.setNumNotes(noteP.getNumNotes());
 	      setSelectedIndex(myModel.getSize() -1);
 	      ensureIndexIsVisible(getSelectedIndex());
-/*
-	      Container anObj = (Container) this;
-          while(!(anObj instanceof JScrollPane)) {
-            anObj = anObj.getParent();
-          }
-        JScrollPane jScr = (JScrollPane) anObj;
-        Point loc = new Point(0, jScr.getViewport().getViewSize().height - 
-          jScr.getViewport().getExtentSize().height);
-        jScr.getViewport().setViewPosition(loc);
-*/
 	    }
 	  }
     if ("remove".equals(cmd)) {
       if ( ((String) getSelectedValue()) != null) {
         int prevIndex = getSelectedIndex();
 	      Element currentCA = DOMUtil.getChildElement("CustomAttributes", tableP.tPanel.oNode.getDOMElement());
-	      Vector childList = DOMUtil.getChildElements(tableP.tPanel.el.getAttribute("XMLName") +
+	      Vector childList = DOMUtil.getChildElements(tableP.el.getAttribute("XMLName") +
 	        "Annotation", currentCA);
 	      Element childEle = null;
 	      for(int i = 0;i<childList.size();i++) {
@@ -150,9 +187,60 @@ public class ClickableList extends JList
 	        }
 	      }
 	      else tableP.tPanel.oNode.getDOMElement().removeChild( (Node) currentCA);
+	      
+	      Document thisDoc = null;
+	      try {
+	        thisDoc = tableP.tPanel.ome.getOMEDocument(true);
+	      }
+	      catch (Exception exc) {
+	        exc.printStackTrace();
+	      }  
+	      Element foundE = DOMUtil.findElement(tableP.el.getAttribute("XMLName")
+	         + "Annotation", thisDoc);
+	        
+	      if (foundE == null) {
+		      String newXMLName = tableP.el.getAttribute("XMLName") + "Annotation";
+	
+					Element omeE = tableP.tPanel.ome.getDOMElement();
+					NodeList omeChildren = omeE.getChildNodes();
+					Element childE = null;
+					for(int i = 0;i < omeChildren.getLength();i++) {
+					  Element tempE = (Element) omeChildren.item(i);
+					  if (tempE.getTagName().equals("SemanticTypeDefinitions"))
+					    childE = tempE; 
+					}
+					if (childE != null) {
+						Element stdE = childE;
+						NodeList stdChildren = childE.getChildNodes();
+						Element stE = null; 
+						for(int i = 0;i < stdChildren.getLength();i++) {
+						  Element tempE = (Element) stdChildren.item(i);
+						  if (tempE.getTagName().equals("SemanticType") &&
+						    tempE.getAttribute("Name").equals(newXMLName) )
+						      stE = tempE;
+					  }
+					  if (stE != null) stdE.removeChild( (Node) stE );
+			      if ( stdChildren != null) {
+			        if ( stdChildren.getLength() == 0) {
+			          omeE.removeChild( (Node) stdE);
+			        }
+			      }
+			      else omeE.removeChild( (Node) stdE);
+					}
+		    }
+	      
 	      myModel.removeElementAt(getSelectedIndex());
+	      if (myModel.size() == 0) {
+	        noteP.setNameLabel(false);
+	        noteP.setNotesLabel(false);
+	      }
 	      tableP.setNumNotes(noteP.getNumNotes());
-	      if (prevIndex > 0) setSelectedIndex(prevIndex - 1);
+	      if (myModel.size() == 1) setSelectedIndex(0);
+	      else {
+		      if (prevIndex >= myModel.size() - 1) 
+		        setSelectedIndex(prevIndex - 1);
+		      else setSelectedIndex(prevIndex);
+		    }
 	      ensureIndexIsVisible(getSelectedIndex());
 	    }
 	    else {
@@ -172,6 +260,12 @@ public class ClickableList extends JList
     catch (Exception exc) {
       exc.printStackTrace();
     }
+    if (myModel.size() != 0 && getSelectedIndex() != -1) {
+	    if (result.equals("")) {
+	      noteP.setNotesLabel(false);
+	    }
+	    else noteP.setNotesLabel(true);
+    }
     setValue(result);
   }
   
@@ -183,6 +277,12 @@ public class ClickableList extends JList
     catch (Exception exc) {
       exc.printStackTrace();
     }
+    if (myModel.size() != 0 && getSelectedIndex() != -1) {
+	    if (result.equals("")) {
+	      noteP.setNotesLabel(false);
+	    }
+	    else noteP.setNotesLabel(true);
+    }
     setValue(result);
   }
   
@@ -193,6 +293,12 @@ public class ClickableList extends JList
     }
     catch (Exception exc) {
       exc.printStackTrace();
+    }
+    if (myModel.size() != 0 && getSelectedIndex() != -1) {
+	    if (result.equals("")) {
+	      noteP.setNotesLabel(false);
+	    }
+	    else noteP.setNotesLabel(true);
     }
     setValue(result);
   }

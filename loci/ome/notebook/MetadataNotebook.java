@@ -56,6 +56,12 @@ public class MetadataNotebook extends JFrame
     setJMenuBar(menubar);
     JMenu file = new JMenu("File");
     menubar.add(file);
+    JMenuItem fileNew = new JMenuItem("New...");
+    file.add(fileNew);
+    fileNew.setActionCommand("new");
+    fileNew.addActionListener(this);
+    fileNew.setMnemonic('n');
+    fileNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, MENU_MASK));
     JMenuItem fileOpen = new JMenuItem("Open");
     file.add(fileOpen);
     fileOpen.setActionCommand("open");
@@ -179,6 +185,11 @@ public class MetadataNotebook extends JFrame
   /** Handles menu commands. */
   public void actionPerformed(ActionEvent e) {
     String cmd = e.getActionCommand();
+    if ("new".equals(cmd)) {
+      setTitle("OME Metadata Notebook");
+      currentFile = null;
+      metadata.setupTabs();
+    }
     if ("open".equals(cmd)) {
       chooser.setDialogTitle("Open");
       chooser.setApproveButtonText("Open");

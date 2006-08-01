@@ -24,6 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
+import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 
@@ -40,6 +41,7 @@ import java.awt.event.ActionEvent;
 import org.openmicroscopy.xml.*;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.util.Vector;
 
@@ -106,13 +108,7 @@ public class ClickableTable extends JTable
   //tests if the given tagname should be 
   //placed under a CustomAttributesNode  
   public static boolean isInCustom(String tagName) {
-    if (tagName.equals("Project") ||
-      tagName.equals("Feature") ||
-      tagName.equals("CustomAttributes") ||
-      tagName.equals("Dataset") ||
-      tagName.equals("Image"))
-    {return false;}
-    else return true;
+    return MetadataPane.isInCustom(tagName);
   }
   
   //tests if this word should have an "a" or an "an"
@@ -185,11 +181,11 @@ public class ClickableTable extends JTable
       jPop.add(infoItem);
       JSeparator sep = new JSeparator();
       jPop.add(sep);
-      jPop.add(addItem);
-      jPop.add(bigRemItem);
+      jPop.add(remItem);
       JSeparator sep2 = new JSeparator();
       jPop.add(sep2);
-      jPop.add(remItem);
+      jPop.add(addItem);
+      jPop.add(bigRemItem);
       jPop.show(this, e.getX(), e.getY());
     }
   }
@@ -227,7 +223,7 @@ public class ClickableTable extends JTable
       }
       
       //set nodetree to reflect a blank attribute here, also set table blank
-      tp.oNode.setAttribute(thisAttr.getAttribute("XMLName"), "");
+      tp.oNode.getDOMElement().removeAttribute(thisAttr.getAttribute("XMLName"));
       getModel().setValueAt("", thisRow, 1);
     }
     //this signifies that the user wants to add another "clone" TablePanel
@@ -240,13 +236,7 @@ public class ClickableTable extends JTable
       if (tp.isTopLevel) {        
         //test if we need to deal with CustomAttributesNodes using the
         //isInCustom(String tagName) static method
-        Element parentEle = null;
-        if (!isInCustom(thisTagName)) {
-          parentEle = tp.tPanel.ome.getDOMElement();
-        }
-        else parentEle = tp.tPanel.ome.getChild("CustomAttributes").getDOMElement();
-        //create a new element of the appropriate type with the correct parent
-        Element cloneEle = DOMUtil.createChild(parentEle,thisTagName);      
+        MetadataPane.makeNode(thisTagName,tp.tPanel.ome);
 
 				//tell the tablepanel to tell the MetadataPane to redo its GUI based on
 				//the new node tree structure           
@@ -255,18 +245,7 @@ public class ClickableTable extends JTable
       //if tablepanel doesn't represent a "top-level" element
       else {
         //test if we need to deal with CustomAttributesNodes
-        if (!isInCustom(thisTagName)) {
-          //create a new element of appropriate type with the correct parent
-          Element anEle = DOMUtil.createChild(tp.tPanel.oNode.getDOMElement(), 
-            thisTagName);
-        }
-        else {
-          OMEXMLNode realParent = tp.tPanel.oNode.getChild("CustomAttributes");
-          //create a new element of appropriate type with the correct
-          //CustomAttributes parent
-          Element anEle = DOMUtil.createChild(realParent.getDOMElement(), 
-            thisTagName);
-        }
+        MetadataPane.makeNode(thisTagName,tp.tPanel.oNode);
         
         //tell the tablepanel to tell the MetadataPane to redo its GUI based on
 				//the new node tree structure    
@@ -291,7 +270,15 @@ public class ClickableTable extends JTable
           OMEXMLNode realParent = tp.tPanel.ome.getChild("CustomAttributes");
           parentEle = realParent.getDOMElement();
           //remove the node in question from its (CustomAttributes) parent
-          parentEle.removeChild((Node) tp.oNode.getDOMElement());            
+          parentEle.removeChild((Node) tp.oNode.getDOMElement());
+
+	        NodeList caChildren = parentEle.getChildNodes();
+		      if ( caChildren != null) {
+		        if ( caChildren.getLength() == 0) {
+		          tp.tPanel.ome.getDOMElement().removeChild( (Node) parentEle);
+		        }
+		      }
+		      else tp.tPanel.oNode.getDOMElement().removeChild( (Node) parentEle);            
         }
         
         //tell the tablepanel to tell the MetadataPane to redo its GUI based on
@@ -309,6 +296,14 @@ public class ClickableTable extends JTable
           OMEXMLNode realParent = tp.tPanel.oNode.getChild("CustomAttributes");
           Element parentEle = realParent.getDOMElement(); 
           parentEle.removeChild((Node) tp.oNode.getDOMElement());
+          
+          NodeList caChildren = parentEle.getChildNodes();
+		      if ( caChildren != null) {
+		        if ( caChildren.getLength() == 0) {
+		          tp.tPanel.oNode.getDOMElement().removeChild( (Node) parentEle);
+		        }
+		      }
+		      else tp.tPanel.oNode.getDOMElement().removeChild( (Node) parentEle);
         }
         
         //tell the tablepanel to tell the MetadataPane to redo its GUI based on
@@ -367,7 +362,8 @@ public class ClickableTable extends JTable
       descArea.setEditable(false);
       descArea.setLineWrap(true);
       descArea.setWrapStyleWord(true);
-      contentPanel.add(descArea, BorderLayout.CENTER);      
+      JScrollPane jScr = new JScrollPane(descArea);
+      contentPanel.add(jScr, BorderLayout.CENTER);      
       
       //make the frame the right size and visible
       pack();
