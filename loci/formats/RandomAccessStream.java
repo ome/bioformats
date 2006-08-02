@@ -49,7 +49,6 @@ public class RandomAccessStream implements DataInput {
   protected static final int RAF = 1;
   protected static final int ARRAY = 2;
 
-
   // -- Fields --
 
   protected RandomAccessFile raf;
@@ -107,6 +106,35 @@ public class RandomAccessStream implements DataInput {
     afp = 0;
   }
 
+  // -- RandomAccessStream API methods --
+
+  /** Seeks to the given offset within the stream. */
+  public void seek(long pos) throws IOException { afp = (int) pos; }
+
+  /** Alias for readByte(). */
+  public int read() throws IOException { return (int) readByte(); }
+
+  /** Gets the number of bytes in the file. */
+  public long length() throws IOException { return raf.length(); }
+
+  /** Gets the current (absolute) file pointer. */
+  public int getFilePointer() { return afp; }
+
+  /** Closes the streams. */
+  public void close() throws IOException {
+    if (raf != null) raf.close();
+    raf = null;
+    if (dis != null) dis.close();
+    dis = null;
+    fp = 0;
+    mark = 0;
+  }
+
+  /** Sets the endianness of the stream. */
+  public void order(boolean little) { littleEndian = little; }
+
+  /** Gets the endianness of the stream. */
+  public boolean isLittleEndian() { return littleEndian; }
 
   // -- DataInput API methods --
 
@@ -282,44 +310,6 @@ public class RandomAccessStream implements DataInput {
     }
     afp += n;
     if (status == DIS) fp += n;
-  }
-
-
-  // -- Internal RandomAccessStream API methods --
-
-  /** Seek to the given offset within the stream. */
-  public void seek(long pos) throws IOException {
-    afp = (int) pos;
-  }
-
-  /** Alias for readByte(). */
-  public int read() throws IOException {
-    return (int) readByte();
-  }
-
-  /** Get the number of bytes in the file. */
-  public long length() throws IOException {
-    return raf.length();
-  }
-
-  /** Get the current (absolute) file pointer. */
-  public int getFilePointer() {
-    return afp;
-  }
-
-  /** Close the streams. */
-  public void close() throws IOException {
-    if (raf != null) raf.close();
-    raf = null;
-    if (dis != null) dis.close();
-    dis = null;
-    fp = 0;
-    mark = 0;
-  }
-
-  /** Set the endianness of the stream. */
-  public void order(boolean little) {
-    littleEndian = little;
   }
 
   // -- Helper methods --
