@@ -486,7 +486,11 @@ public class Dataset extends ImageTransform {
 
     // initialize data readers
     readers = new ImageReader[ids.length];
-    for (int i=0; i<ids.length; i++) readers[i] = new ImageReader();
+    for (int i=0; i<ids.length; i++) {
+      readers[i] = new ImageReader();
+      try { readers[i].setMetadataStore(new OMEXMLMetadataStore()); }
+      catch (UnsupportedMetadataStoreException exc) { exc.printStackTrace(); }
+    }
 
     // determine number of images per source file
     status(1, numTasks, "Determining image count");
@@ -582,7 +586,12 @@ public class Dataset extends ImageTransform {
           fname + ". The file may be corrupt or invalid.");
         return;
       }
-      try { ome[i] = (OMENode) readers[i].getOMENode(ids[i]); }
+      try {
+        MetadataStore ms = readers[i].getMetadataStore(ids[i]);
+        if (ms instanceof OMEXMLMetadataStore) {
+          ome[i] = (OMENode) ((OMEXMLMetadataStore) ms).getRoot();
+        }
+      }
       catch (IOException exc) { ome[i] = null; }
       catch (FormatException exc) { ome[i] = null; }
     }

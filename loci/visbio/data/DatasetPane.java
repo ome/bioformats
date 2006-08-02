@@ -41,8 +41,6 @@ import loci.util.FilePattern;
 import loci.visbio.VisBioFrame;
 import loci.visbio.util.*;
 import org.openmicroscopy.xml.OMENode;
-import org.openmicroscopy.xml.DOMUtil;
-import org.w3c.dom.Element;
 import visad.util.Util;
 
 /**
@@ -400,7 +398,6 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     ImageReader reader = new ImageReader();
     try {
       numImages = reader.getImageCount(ids[0]);
-      ome = (OMENode) reader.getOMENode(ids[0]);
     }
     catch (IOException exc) {
       if (VisBioFrame.DEBUG) exc.printStackTrace();
@@ -420,21 +417,14 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     // extract dimensional axis counts from OME-XML metadata
     String dimOrder = null;
     int sizeZ = 1, sizeT = 1, sizeC = 1;
-    if (ome != null) {
-      try {
-        Element pix = DOMUtil.findElement("Pixels", ome.getOMEDocument(true));
-        String z = DOMUtil.getAttribute("SizeZ", pix);
-        if (z != null && !z.equals("")) sizeZ = Integer.parseInt(z);
-        String t = DOMUtil.getAttribute("SizeT", pix);
-        if (t != null && !t.equals("")) sizeT = Integer.parseInt(t);
-        String c = DOMUtil.getAttribute("SizeC", pix);
-        if (c != null && !c.equals("")) sizeC = Integer.parseInt(c);
-        dimOrder = DOMUtil.getAttribute("DimensionOrder", pix);
-      }
-      catch (Exception exc) {
-        if (VisBioFrame.DEBUG) exc.printStackTrace();
-      }
+    try {
+      dimOrder = reader.getDimensionOrder(ids[0]);
+      sizeZ = reader.getSizeZ(ids[0]);
+      sizeT = reader.getSizeT(ids[0]);
+      sizeC = reader.getSizeC(ids[0]);
     }
+    catch (FormatException exc) { exc.printStackTrace(); }
+    catch (IOException exc) { exc.printStackTrace(); }
 
     // autodetect dimensional types
     String[] kind = new String[blocks];
