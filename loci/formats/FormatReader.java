@@ -26,6 +26,7 @@ package loci.formats;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Hashtable;
 import javax.swing.filechooser.FileFilter;
@@ -274,8 +275,12 @@ public abstract class FormatReader extends FormatHandler {
       return false;
     }
     if (omexml) {
-      setMetadataStore(new OMEXMLMetadataStore());
-      getMetadataStore(id).createRoot();
+      try {
+        Class c = Class.forName("loci.formats.OMEXMLMetadataStore");
+        MetadataStore ms = (MetadataStore) c.newInstance();
+        setMetadataStore(ms);
+      }
+      catch (Exception exc) { }
     }
 
     // check type
@@ -366,11 +371,15 @@ public abstract class FormatReader extends FormatHandler {
 
     // output OME-XML
     MetadataStore ms = cm.getMetadataStore(id);
-    if (ms instanceof OMEXMLMetadataStore) {
+    try {
+      Method m = ms.getClass().getMethod("dumpXML", null);
       System.out.println("OME-XML:");
-      OMEXMLMetadataStore xmlStore = (OMEXMLMetadataStore) ms;
-      System.out.println(xmlStore.dumpXML());
+      System.out.println(m.invoke(ms, null));
       System.out.println();
+    }
+    catch (Exception exc) {
+      System.err.println("OME-XML functionality not available:");
+      exc.printStackTrace();
     }
 
     return true;
