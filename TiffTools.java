@@ -40,7 +40,7 @@ public abstract class TiffTools {
 
   // -- Constants --
 
-  public static final boolean DEBUG = true;
+  public static final boolean DEBUG = false;
 
   // non-IFD tags (for internal use)
   public static final int LITTLE_ENDIAN = 0;
@@ -1703,10 +1703,16 @@ public abstract class TiffTools {
         byte[] extra = extraBuf.toByteArray();
 
         // extract new directory entry parameters
-        int newTag = DataTools.bytesToInt(bytes, 0, 2, little);
-        int newType = DataTools.bytesToInt(bytes, 2, 2, little);
-        int newCount = DataTools.bytesToInt(bytes, 4, little);
-        int newOffset = DataTools.bytesToInt(bytes, 8, little);
+        int newTag = DataTools.bytesToInt(bytes, 0, 2, false);
+        int newType = DataTools.bytesToInt(bytes, 2, 2, false);
+        int newCount = DataTools.bytesToInt(bytes, 4, false);
+        int newOffset = DataTools.bytesToInt(bytes, 8, false);
+        if (DEBUG) {
+          debug("overwriteIFDValue:\n\told: (tag=" + oldTag + "; type=" +
+            oldType + "; count=" + oldCount + "; offset=" + oldOffset +
+            ");\n\tnew: (tag=" + newTag + "; type=" + newType + "; count=" +
+            newCount + "; offset=" + newOffset + ")");
+        }
 
         // determine the best way to overwrite the old entry
         if (extra.length == 0) {
