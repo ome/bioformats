@@ -40,7 +40,7 @@ public abstract class TiffTools {
 
   // -- Constants --
 
-  public static final boolean DEBUG = false;
+  public static final boolean DEBUG = true;
 
   // non-IFD tags (for internal use)
   public static final int LITTLE_ENDIAN = 0;
@@ -58,6 +58,22 @@ public abstract class TiffTools {
   public static final int SRATIONAL = 10;
   public static final int FLOAT = 11;
   public static final int DOUBLE = 12;
+
+  public static final int[] BYTES_PER_ELEMENT = {
+    -1, // invalid type
+    1, // BYTE
+    1, // ASCII
+    2, // SHORT
+    4, // LONG
+    8, // RATIONAL
+    1, // SBYTE
+    1, // UNDEFINED
+    2, // SSHORT
+    4, // SLONG
+    8, // SRATIONAL
+    4, // FLOAT
+    8, // DOUBLE
+  };
 
   // IFD tags
   public static final int NEW_SUBFILE_TYPE = 254;
@@ -1502,6 +1518,231 @@ public abstract class TiffTools {
   }
 
 
+  // -- IFD writing methods --
+
+  /**
+   * Writes the given IFD value to the given output object.
+   * @param ifdOut output object for writing IFD stream
+   * @param extraBuf buffer to which "extra" IFD information should be written
+   * @param extraOut data output wrapper for extraBuf (passed for efficiency)
+   * @param offset global offset to use for IFD offset values
+   * @param tag IFD tag to write
+   * @param value IFD value to write
+   */
+  public static void writeIFDValue(DataOutput ifdOut,
+    ByteArrayOutputStream extraBuf, DataOutputStream extraOut, int offset,
+    int tag, Object value) throws FormatException, IOException
+  {
+    // convert singleton objects into arrays, for simplicity
+    if (value instanceof Short) {
+      value = new short[] {((Short) value).shortValue()};
+    }
+    else if (value instanceof Integer) {
+      value = new int[] {((Integer) value).intValue()};
+    }
+    else if (value instanceof Long) {
+      value = new long[] {((Long) value).longValue()};
+    }
+    else if (value instanceof TiffRational) {
+      value = new TiffRational[] {(TiffRational) value};
+    }
+    else if (value instanceof Float) {
+      value = new float[] {((Float) value).floatValue()};
+    }
+    else if (value instanceof Double) {
+      value = new double[] {((Double) value).doubleValue()};
+    }
+
+    // write directory entry to output buffers
+    ifdOut.writeShort(tag); // tag
+    if (value instanceof short[]) { // BYTE
+      short[] q = (short[]) value;
+      ifdOut.writeShort(BYTE); // type
+      ifdOut.writeInt(q.length); // count
+      if (q.length <= 4) {
+        for (int i=0; i<q.length; i++) ifdOut.writeByte(q[i]); // value(s)
+        for (int i=q.length; i<4; i++) ifdOut.writeByte(0); // padding
+      }
+      else {
+        ifdOut.writeInt(offset + extraBuf.size()); // offset
+        for (int i=0; i<q.length; i++) extraOut.writeByte(q[i]); // values
+      }
+    }
+    else if (value instanceof String) { // ASCII
+      char[] q = ((String) value).toCharArray();
+      ifdOut.writeShort(ASCII); // type
+      ifdOut.writeInt(q.length + 1); // count
+      if (q.length < 4) {
+        for (int i=0; i<q.length; i++) ifdOut.writeByte(q[i]); // value(s)
+        for (int i=q.length; i<4; i++) ifdOut.writeByte(0); // padding
+      }
+      else {
+        ifdOut.writeInt(offset + extraBuf.size()); // offset
+        for (int i=0; i<q.length; i++) extraOut.writeByte(q[i]); // values
+        extraOut.writeByte(0); // concluding NULL byte
+      }
+    }
+    else if (value instanceof int[]) { // SHORT
+      int[] q = (int[]) value;
+      ifdOut.writeShort(SHORT); // type
+      ifdOut.writeInt(q.length); // count
+      if (q.length <= 2) {
+        for (int i=0; i<q.length; i++) ifdOut.writeShort(q[i]); // value(s)
+        for (int i=q.length; i<2; i++) ifdOut.writeShort(0); // padding
+      }
+      else {
+        ifdOut.writeInt(offset + extraBuf.size()); // offset
+        for (int i=0; i<q.length; i++) extraOut.writeShort(q[i]); // values
+      }
+    }
+    else if (value instanceof long[]) { // LONG
+      long[] q = (long[]) value;
+      ifdOut.writeShort(LONG); // type
+      ifdOut.writeInt(q.length); // count
+      if (q.length <= 1) {
+        if (q.length == 1) ifdOut.writeInt((int) q[0]); // value
+        else ifdOut.writeInt(0); // padding
+      }
+      else {
+        ifdOut.writeInt(offset + extraBuf.size()); // offset
+        for (int i=0; i<q.length; i++) {
+          extraOut.writeInt((int) q[i]); // values
+        }
+      }
+    }
+    else if (value instanceof TiffRational[]) { // RATIONAL
+      TiffRational[] q = (TiffRational[]) value;
+      ifdOut.writeShort(RATIONAL); // type
+      ifdOut.writeInt(q.length); // count
+      ifdOut.writeInt(offset + extraBuf.size()); // offset
+      for (int i=0; i<q.length; i++) {
+        extraOut.writeInt((int) q[i].getNumerator()); // values
+        extraOut.writeInt((int) q[i].getDenominator()); // values
+      }
+    }
+    else if (value instanceof float[]) { // FLOAT
+      float[] q = (float[]) value;
+      ifdOut.writeShort(FLOAT); // type
+      ifdOut.writeInt(q.length); // count
+      if (q.length <= 1) {
+        if (q.length == 1) ifdOut.writeFloat(q[0]); // value
+        else ifdOut.writeInt(0); // padding
+      }
+      else {
+        ifdOut.writeInt(offset + extraBuf.size()); // offset
+        for (int i=0; i<q.length; i++) extraOut.writeFloat(q[i]); // values
+      }
+    }
+    else if (value instanceof double[]) { // DOUBLE
+      double[] q = (double[]) value;
+      ifdOut.writeShort(DOUBLE); // type
+      ifdOut.writeInt(q.length); // count
+      ifdOut.writeInt(offset + extraBuf.size()); // offset
+      for (int i=0; i<q.length; i++) extraOut.writeDouble(q[i]); // values
+    }
+    else {
+      throw new FormatException("Unknown IFD value type (" +
+        value.getClass().getName() + ")");
+    }
+  }
+
+  /**
+   * Surgically overwrites an existing IFD value with the given one. This
+   * method requires that the IFD directory entry already exist. It
+   * intelligently updates the count field of the entry to match the new
+   * length. If the new length is longer than the old length, it appends the
+   * new data to the end of the file and updates the offset field; if not, or
+   * if the old data is already at the end of the file, it overwrites the old
+   * data in place.
+   */
+  public static void overwriteIFDValue(RandomAccessFile raf,
+    int ifd, int tag, Object value) throws FormatException, IOException
+  {
+    if (DEBUG) {
+      debug("overwriteIFDValue (ifd=" + ifd + "; tag=" + tag + "; value=" +
+        value + ")");
+    }
+    byte[] header = new byte[4];
+    raf.seek(0);
+    raf.readFully(header);
+    if (!isValidHeader(header)) {
+      throw new FormatException("Invalid TIFF header");
+    }
+    boolean little = header[0] == LITTLE && header[1] == LITTLE; // II
+    int offset = 4; // offset to the IFD
+    short num = 0; // number of directory entries
+
+    // skip to the correct IFD
+    for (int i=0; i<=ifd; i++) {
+      offset = raf.readInt();
+      if (offset <= 0) {
+        throw new FormatException("No such IFD (" + ifd + " of " + i + ")");
+      }
+      raf.seek(offset);
+      num = raf.readShort();
+      if (i < ifd) raf.seek(offset + 2 + 12 * num);
+    }
+
+    // search directory entries for proper tag
+    for (int i=0; i<num; i++) {
+      int oldTag = DataTools.read2UnsignedBytes(raf, little);
+      int oldType = DataTools.read2UnsignedBytes(raf, little);
+      int oldCount = DataTools.read4SignedBytes(raf, little);
+      int oldOffset = DataTools.read4SignedBytes(raf, little);
+      if (oldTag == tag) {
+        // write new value to buffers
+        ByteArrayOutputStream ifdBuf = new ByteArrayOutputStream(14);
+        DataOutputStream ifdOut = new DataOutputStream(ifdBuf);
+        ByteArrayOutputStream extraBuf = new ByteArrayOutputStream();
+        DataOutputStream extraOut = new DataOutputStream(extraBuf);
+        writeIFDValue(ifdOut, extraBuf, extraOut, oldOffset, tag, value);
+        byte[] bytes = ifdBuf.toByteArray();
+        byte[] extra = extraBuf.toByteArray();
+
+        // extract new directory entry parameters
+        int newTag = DataTools.bytesToInt(bytes, 0, 2, little);
+        int newType = DataTools.bytesToInt(bytes, 2, 2, little);
+        int newCount = DataTools.bytesToInt(bytes, 4, little);
+        int newOffset = DataTools.bytesToInt(bytes, 8, little);
+
+        // determine the best way to overwrite the old entry
+        if (extra.length == 0) {
+          // new entry is inline; if old entry wasn't, old data is orphaned
+          // do not override new offset value since data is inline
+          if (DEBUG) debug("overwriteIFDValue: new entry is inline");
+        }
+        else if (newCount <= oldCount) {
+          // new entry is as small or smaller than old entry; overwrite it
+          newOffset = oldOffset;
+          if (DEBUG) debug("overwriteIFDValue: new entry is <= old entry");
+        }
+        else if (oldOffset + BYTES_PER_ELEMENT[oldTag] == raf.length()) {
+          // old entry was already at EOF; overwrite it
+          newOffset = oldOffset;
+          if (DEBUG) debug("overwriteIFDValue: old entry is at EOF");
+        }
+        else {
+          // old entry was elsewhere; append to EOF, orphaning old entry
+          newOffset = (int) raf.length();
+          if (DEBUG) debug("overwriteIFDValue: old entry will be orphaned");
+        }
+
+        // overwrite old entry
+        raf.seek(raf.getFilePointer() - 10); // jump back
+        DataTools.writeShort(raf, newType, little);
+        DataTools.writeInt(raf, newCount, little);
+        DataTools.writeInt(raf, newOffset, little);
+        if (extra.length > 0) {
+          raf.seek(newOffset);
+          raf.write(extra);
+        }
+      }
+    }
+
+    throw new FormatException("Tag not found (" + getIFDTagName(tag) + ")");
+  }
+
+
   // -- Image writing methods --
 
   /**
@@ -1697,118 +1938,8 @@ public abstract class TiffTools {
           ("int[" + ((int[]) value).length + "]") : value.toString();
         debug("writeImage: writing " + sk + " (value=" + sv + ")");
       }
-
-      // convert singleton objects into arrays, for simplicity
-      if (value instanceof Short) {
-        value = new short[] {((Short) value).shortValue()};
-      }
-      else if (value instanceof Integer) {
-        value = new int[] {((Integer) value).intValue()};
-      }
-      else if (value instanceof Long) {
-        value = new long[] {((Long) value).longValue()};
-      }
-      else if (value instanceof TiffRational) {
-        value = new TiffRational[] {(TiffRational) value};
-      }
-      else if (value instanceof Float) {
-        value = new float[] {((Float) value).floatValue()};
-      }
-      else if (value instanceof Double) {
-        value = new double[] {((Double) value).doubleValue()};
-      }
-
-      // write directory entry to output buffers
-      ifdOut.writeShort(((Integer) key).intValue()); // tag
-      if (value instanceof short[]) { // BYTE
-        short[] q = (short[]) value;
-        ifdOut.writeShort(BYTE); // type
-        ifdOut.writeInt(q.length); // count
-        if (q.length <= 4) {
-          for (int i=0; i<q.length; i++) ifdOut.writeByte(q[i]); // value(s)
-          for (int i=q.length; i<4; i++) ifdOut.writeByte(0); // padding
-        }
-        else {
-          ifdOut.writeInt(offset + extraBuf.size()); // offset
-          for (int i=0; i<q.length; i++) extraOut.writeByte(q[i]); // values
-        }
-      }
-      else if (value instanceof String) { // ASCII
-        char[] q = ((String) value).toCharArray();
-        ifdOut.writeShort(ASCII); // type
-        ifdOut.writeInt(q.length + 1); // count
-        if (q.length < 4) {
-          for (int i=0; i<q.length; i++) ifdOut.writeByte(q[i]); // value(s)
-          for (int i=q.length; i<4; i++) ifdOut.writeByte(0); // padding
-        }
-        else {
-          ifdOut.writeInt(offset + extraBuf.size()); // offset
-          for (int i=0; i<q.length; i++) extraOut.writeByte(q[i]); // values
-          extraOut.writeByte(0); // concluding NULL byte
-        }
-      }
-      else if (value instanceof int[]) { // SHORT
-        int[] q = (int[]) value;
-        ifdOut.writeShort(SHORT); // type
-        ifdOut.writeInt(q.length); // count
-        if (q.length <= 2) {
-          for (int i=0; i<q.length; i++) ifdOut.writeShort(q[i]); // value(s)
-          for (int i=q.length; i<2; i++) ifdOut.writeShort(0); // padding
-        }
-        else {
-          ifdOut.writeInt(offset + extraBuf.size()); // offset
-          for (int i=0; i<q.length; i++) extraOut.writeShort(q[i]); // values
-        }
-      }
-      else if (value instanceof long[]) { // LONG
-        long[] q = (long[]) value;
-        ifdOut.writeShort(LONG); // type
-        ifdOut.writeInt(q.length); // count
-        if (q.length <= 1) {
-          if (q.length == 1) ifdOut.writeInt((int) q[0]); // value
-          else ifdOut.writeInt(0); // padding
-        }
-        else {
-          ifdOut.writeInt(offset + extraBuf.size()); // offset
-          for (int i=0; i<q.length; i++) {
-            extraOut.writeInt((int) q[i]); // values
-          }
-        }
-      }
-      else if (value instanceof TiffRational[]) { // RATIONAL
-        TiffRational[] q = (TiffRational[]) value;
-        ifdOut.writeShort(RATIONAL); // type
-        ifdOut.writeInt(q.length); // count
-        ifdOut.writeInt(offset + extraBuf.size()); // offset
-        for (int i=0; i<q.length; i++) {
-          extraOut.writeInt((int) q[i].getNumerator()); // values
-          extraOut.writeInt((int) q[i].getDenominator()); // values
-        }
-      }
-      else if (value instanceof float[]) { // FLOAT
-        float[] q = (float[]) value;
-        ifdOut.writeShort(FLOAT); // type
-        ifdOut.writeInt(q.length); // count
-        if (q.length <= 1) {
-          if (q.length == 1) ifdOut.writeFloat(q[0]); // value
-          else ifdOut.writeInt(0); // padding
-        }
-        else {
-          ifdOut.writeInt(offset + extraBuf.size()); // offset
-          for (int i=0; i<q.length; i++) extraOut.writeFloat(q[i]); // values
-        }
-      }
-      else if (value instanceof double[]) { // DOUBLE
-        double[] q = (double[]) value;
-        ifdOut.writeShort(DOUBLE); // type
-        ifdOut.writeInt(q.length); // count
-        ifdOut.writeInt(offset + extraBuf.size()); // offset
-        for (int i=0; i<q.length; i++) extraOut.writeDouble(q[i]); // values
-      }
-      else {
-        throw new FormatException("Unknown IFD value type (" +
-          value.getClass().getName() + ")");
-      }
+      writeIFDValue(ifdOut, extraBuf, extraOut, offset,
+        ((Integer) key).intValue(), value);
     }
     ifdOut.writeInt(last ? 0 : offset + extraBuf.size()); // offset to next IFD
 
