@@ -73,6 +73,9 @@ DOC_LINKS = \
 DOCFLAGS = -source 1.4 $(DOC_LINKS) -d $(DOC_DIR) -J-Xmx$(DOC_MEM) -package \
 	-doctitle 'VisBio Documentation' $(DOC_EXTRAFLAGS)
 
+# VISAD_DIR is the top-level directory where VisAD class files can be found
+VISAD_DIR = ../..
+
 ############################################################################
 # Customizations
 ############################################################################
@@ -80,6 +83,9 @@ DOCFLAGS = -source 1.4 $(DOC_LINKS) -d $(DOC_DIR) -J-Xmx$(DOC_MEM) -package \
 # to always use IBM's 'jikes' compiler, uncomment the following two lines
 #JC = jikes
 #JFLAGS = +P -deprecation
+
+# to specify a different base directory for VisAD, use the following line
+#VISAD_DIR = ../../../../cvs/VisAD
 
 ############################################################################
 # You shouldn't need to change anything beyond this point
@@ -241,7 +247,7 @@ docs:
 	ls -l $(JAR_DIR)/visbio_docs.jar
 
 visad:
-	@cd ../.. ; \
+	@cd $(VISAD_DIR) ; \
 	date > DATE ; \
 	${JAR} ${JARVERBOSE}cfm $(JAR_DIR)/visad.jar \
 		visad/VisAD.Manifest $(VISAD_FILES) ; \
