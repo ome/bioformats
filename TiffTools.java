@@ -187,16 +187,28 @@ public abstract class TiffTools {
    * the first few bytes of a TIFF file.
    */
   public static boolean isValidHeader(byte[] block) {
-    if (block.length < 4) { return false; }
+    return checkHeader(block) != null;
+  }
+
+  /**
+   * Checks the TIFF header.
+   * @return true if little-endian,
+   *         false if big-endian,
+   *         or null if not a TIFF.
+   */
+  public static Boolean checkHeader(byte[] block) {
+    if (block.length < 4) return null;
 
     // byte order must be II or MM
     boolean littleEndian = block[0] == LITTLE && block[1] == LITTLE; // II
     boolean bigEndian = block[0] == BIG && block[1] == BIG; // MM
-    if (!littleEndian && !bigEndian) return false;
+    if (!littleEndian && !bigEndian) return null;
 
     // check magic number (42)
     short magic = DataTools.bytesToShort(block, 2, littleEndian);
-    return magic == MAGIC_NUMBER;
+    if (magic != MAGIC_NUMBER) return null;
+
+    return new Boolean(littleEndian);
   }
 
   /** Gets whether the TIFF information in the given IFD is little-endian. */
@@ -228,9 +240,8 @@ public abstract class TiffTools {
     // check TIFF header
     Boolean result = checkHeader(in, globalOffset);
     if (result == null) return null;
-    boolean littleEndian = result.booleanValue();
 
-    long offset = getFirstOffset(in, littleEndian);
+    long offset = getFirstOffset(in);
 
     // compute maximum possible number of IFDs, for loop safety
     // each IFD must have at least one directory entry, which means that
@@ -240,7 +251,7 @@ public abstract class TiffTools {
     // read in IFDs
     Vector v = new Vector();
     for (long ifdNum=0; ifdNum<ifdMax; ifdNum++) {
-      Hashtable ifd = getIFD(in, ifdNum, globalOffset, offset, littleEndian);
+      Hashtable ifd = getIFD(in, ifdNum, globalOffset, offset);
       if (ifd.size() <= 1) break;
       v.add(ifd);
       offset = in.readInt();
@@ -271,11 +282,10 @@ public abstract class TiffTools {
     // check TIFF header
     Boolean result = checkHeader(in, globalOffset);
     if (result == null) return null;
-    boolean littleEndian = result.booleanValue();
 
-    long offset = getFirstOffset(in, littleEndian);
+    long offset = getFirstOffset(in);
 
-    return getIFD(in, 0, globalOffset, offset, littleEndian);
+    return getIFD(in, 0, globalOffset, offset);
   }
 
   /**
@@ -292,25 +302,18 @@ public abstract class TiffTools {
     // start at the beginning of the file
     in.seek((int) globalOffset);
 
-    // determine byte order (II = little-endian, MM = big-endian)
-    byte[] order = new byte[2];
-    in.read(order);
-    boolean littleEndian = order[0] == LITTLE && order[1] == LITTLE; // II
-    boolean bigEndian = order[0] == BIG && order[1] == BIG; // MM
-    if (!littleEndian && !bigEndian) return null;
-
-    // check magic number (42)
-    int magic = in.readShort();
-    if (magic != MAGIC_NUMBER) return null;
-
-    return new Boolean(littleEndian);
+    byte[] header = new byte[4];
+    in.readFully(header);
+    Boolean b = checkHeader(header);
+    if (b != null) in.order(b.booleanValue());
+    return b;
   }
 
   /**
    * Gets offset to the first IFD, or -1 if stream is not TIFF.
    * Assumes the stream is positioned properly (checkHeader just called).
    */
-  public static long getFirstOffset(RandomAccessStream in, boolean littleEndian)
+  public static long getFirstOffset(RandomAccessStream in)
     throws IOException
   {
     // get offset to first IFD
@@ -319,13 +322,12 @@ public abstract class TiffTools {
 
   /** Gets the IFD stored at the given offset. */
   public static Hashtable getIFD(RandomAccessStream in,
-    long ifdNum, long globalOffset, long offset, boolean littleEndian)
-    throws IOException
+    long ifdNum, long globalOffset, long offset) throws IOException
   {
     Hashtable ifd = new Hashtable();
 
     // save little-endian flag to internal LITTLE_ENDIAN tag
-    ifd.put(new Integer(LITTLE_ENDIAN), new Boolean(littleEndian));
+    ifd.put(new Integer(LITTLE_ENDIAN), new Boolean(in.isLittleEndian()));
 
     // read in directory entries for this IFD
     if (DEBUG) {
@@ -727,6 +729,7 @@ public abstract class TiffTools {
 
     // get internal non-IFD entries
     boolean littleEndian = isLittleEndian(ifd);
+    in.order(littleEndian);
 
     // get relevant IFD entries
     long imageWidth = getIFDLongValue(ifd, IMAGE_WIDTH, true, 0);
@@ -1669,17 +1672,17 @@ public abstract class TiffTools {
       throw new FormatException("Invalid TIFF header");
     }
     boolean little = header[0] == LITTLE && header[1] == LITTLE; // II
-    int offset = 4; // offset to the IFD
-    short num = 0; // number of directory entries
+    long offset = 4; // offset to the IFD
+    int num = 0; // number of directory entries
 
     // skip to the correct IFD
     for (int i=0; i<=ifd; i++) {
-      offset = raf.readInt();
+      offset = DataTools.read4UnsignedBytes(raf, little);
       if (offset <= 0) {
         throw new FormatException("No such IFD (" + ifd + " of " + i + ")");
       }
       raf.seek(offset);
-      num = raf.readShort();
+      num = DataTools.read2UnsignedBytes(raf, little);
       if (i < ifd) raf.seek(offset + 2 + 12 * num);
     }
 
@@ -1716,7 +1719,7 @@ public abstract class TiffTools {
           newOffset = oldOffset;
           if (DEBUG) debug("overwriteIFDValue: new entry is <= old entry");
         }
-        else if (oldOffset + BYTES_PER_ELEMENT[oldTag] == raf.length()) {
+        else if (oldOffset + BYTES_PER_ELEMENT[oldType] == raf.length()) {
           // old entry was already at EOF; overwrite it
           newOffset = oldOffset;
           if (DEBUG) debug("overwriteIFDValue: old entry is at EOF");
@@ -1736,6 +1739,7 @@ public abstract class TiffTools {
           raf.seek(newOffset);
           raf.write(extra);
         }
+        return;
       }
     }
 
