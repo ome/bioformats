@@ -126,7 +126,7 @@ public class ClickableList extends JList
 				  DOMUtil.createChild(omeE, "SemanticTypeDefinitions");
 				
 				Element stdE = childE;
-				Boolean alreadyPresent = false;
+				boolean alreadyPresent = false;
 				NodeList stdChildren = childE.getChildNodes(); 
 				for(int i = 0;i < stdChildren.getLength();i++) {
 				  Element tempE = (Element) stdChildren.item(i);
