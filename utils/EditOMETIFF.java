@@ -2,12 +2,10 @@
 // EditOMETIFF.java
 //
 
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Hashtable;
-import loci.formats.*;
-import loci.formats.in.TiffReader;
-import loci.formats.out.TiffWriter;
+import loci.formats.RandomAccessStream;
+import loci.formats.TiffTools;
 
 /** Allows raw user OME-XML comment editing for the given OME-TIFF files. */
 public class EditOMETIFF {
@@ -17,42 +15,25 @@ public class EditOMETIFF {
       System.out.println("Usage: java EditOMETIFF file1 file2 ...");
       return;
     }
-    TiffReader opener = new TiffReader();
-    TiffWriter saver = new TiffWriter();
-    BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+    BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
     for (int i=0; i<args.length; i++) {
       String f = args[i];
-      String nf = "new-" + f;
-      System.out.print("Reading " + f + " ");
+      System.out.println("Reading " + f + " ");
       RandomAccessStream fin = new RandomAccessStream(f);
       Hashtable ifd = TiffTools.getFirstIFD(fin);
       fin.close();
+      if (ifd == null) System.out.println("Warning: first IFD is null!");
       String ome = (String)
         TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
       System.out.println("[done]");
       System.out.println("OME-XML block =");
       System.out.println(ome);
       System.out.println("Enter new OME-XML block (no line breaks):");
-      String xml = in.readLine();
+      String xml = cin.readLine();
       System.out.print("Saving " + f);
-      int num = opener.getImageCount(f);
-      for (int j=0; j<num; j++) {
-        System.out.print(".");
-        BufferedImage img = opener.openImage(f, j);
-
-        ifd = new Hashtable();
-        if (j == 0) {
-          // update OME-XML block
-          TiffTools.putIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION, xml);
-        }
-
-        // write file to disk
-        saver.saveImage(nf, img, ifd, j == num - 1);
-      }
-      File oldFile = new File(f);
-      File newFile = new File(nf);
-      oldFile.delete();
-      newFile.renameTo(oldFile);
+      RandomAccessFile raf = new RandomAccessFile(args[i], "rw");
+      TiffTools.overwriteIFDValue(raf, 0, TiffTools.IMAGE_DESCRIPTION, xml);
+      raf.close();
       System.out.println(" [done]");
     }
   }
