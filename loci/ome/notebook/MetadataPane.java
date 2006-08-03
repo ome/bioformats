@@ -27,7 +27,7 @@ public class MetadataPane extends JPanel
   implements Runnable
 {
   // -- Constants --
-  protected static final String[] TREE_COLUMNS = {"Attribute", "Value"};
+  protected static final String[] TREE_COLUMNS = {"Attribute", "Value", "Goto"};
   
   public static final ImageIcon DATA_BULLET = 
     createImageIcon("Icons/Bullet3.gif",
@@ -38,9 +38,6 @@ public class MetadataPane extends JPanel
       "An icon signifying that no metadata is present.");
 
   // -- Fields --
-
-  /** Table model for attributes table*/
-  DefaultTableModel myTableModel;
 
   /** Pane containing XML tree. */
   protected JTabbedPane tabPane;
@@ -81,14 +78,15 @@ public class MetadataPane extends JPanel
   // -- Constructor --
 
   /** Constructs widget for displaying OME-XML metadata. */
-  public MetadataPane(TemplateParser tp) {
+  public MetadataPane() {
 
     // -- General Field Initialization --
 
     panelList = new Vector();
     panelsWithID = new Vector();
     addItems = new Vector();
-    tParse = tp;
+    File f = new File("Template.xml");
+    tParse = new TemplateParser(f);
     thisOmeNode = null;
     internalDefs = null;
 
@@ -124,6 +122,12 @@ public class MetadataPane extends JPanel
     rawPanel.add(new JScrollPane(rawText), BorderLayout.CENTER);
     rawPanel.setVisible(false);
     add(rawPanel);
+  }
+  
+  public MetadataPane(File f)
+  {
+    this();
+    setOMEXML(f);
   }
 
 
@@ -254,8 +258,9 @@ public class MetadataPane extends JPanel
       scrollPane.setHorizontalScrollBarPolicy(
       JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
       String desc = tabList[i].getAttribute("Description");
-      if (desc.length() == 0) tabPane.addTab(thisName, null, scrollPane, null);
-      else tabPane.addTab(thisName, null, scrollPane, desc);
+      if (desc.length() == 0) tabPane.addTab(thisName, NO_DATA_BULLET,
+        scrollPane, null);
+      else tabPane.addTab(thisName, NO_DATA_BULLET, scrollPane, desc);
       int keyNumber = getKey(i+1);
       if(keyNumber !=0 ) tabPane.setMnemonicAt(i, keyNumber);
     }
@@ -423,8 +428,10 @@ public class MetadataPane extends JPanel
     }
     //change the "Tabs" menu in the original window to reflect the actual tabs
     //created (duplicate tabs are the reason for this)
-    MetadataNotebook mn = (MetadataNotebook) getTopLevelAncestor();
-    mn.changeTabMenu(tabNames);
+    if (getTopLevelAncestor() instanceof MetadataNotebook) {
+      MetadataNotebook mn = (MetadataNotebook) getTopLevelAncestor();
+      mn.changeTabMenu(tabNames);
+    }
 
     //Makes sure that the external references do not mirror the internal ones
     //since there should be no intersection between the two sets
@@ -558,7 +565,7 @@ public class MetadataPane extends JPanel
 	                }
 	              }
 	              catch (Exception exc) {
-	                System.out.println(exc.toString());
+//	                System.out.println(exc.toString());
 	              }
 	              if (n == null) {
 	                n = new AttributeNode(anEle);
@@ -593,8 +600,8 @@ public class MetadataPane extends JPanel
       int row = 0;
       for (int i = 0;i<iHoldTables.size();i++) {
         row = row + 2;
-				if (i == 0) builder.add( (Component)iHoldTables.get(i), cc.xyw(2, row, 2));
-				else builder.add( (Component)iHoldTables.get(i), cc.xyw(3, row, 2));
+				if (i == 0) builder.add( (Component)iHoldTables.get(i), cc.xyw(2, row, 2, "left,center"));
+				else builder.add( (Component)iHoldTables.get(i), cc.xyw(3, row, 2, "left,center"));
       }
       
       //Layout stuff distinguishes between the title and the data panels
@@ -758,7 +765,7 @@ public class MetadataPane extends JPanel
       }
     }		        
     catch (Exception exc) {
-      System.out.println(exc.toString());
+//      System.out.println(exc.toString());
     }
     if (caNode != null && n == null) n = new AttributeNode(caNode, unknownName);
     return n;
@@ -859,38 +866,22 @@ public class MetadataPane extends JPanel
     
   }
 
-/** Helper class to handle the "GOTO" buttons that take you to a particular
-*   Element ID's representation in the program.
-*/
-  public class TableButton extends JButton {
-    public JTable table;
-    public int whichRow;
-
-    public TableButton( JTable jt, int i) {
-      super("Goto");
-      table = jt;
-      whichRow = i;
-      Integer aInt = new Integer(i);
-      setActionCommand("goto");
-      setPreferredSize(new Dimension(70, 15));
-    }
-  }
-
 /** Helper class to handle the various TablePanels that will be created to
 *   display the attributes of Elements that have no nested Elements
 */
   public class TablePanel extends JPanel
-    implements TableModelListener, ActionListener
+    implements ActionListener
   {
     public OMEXMLNode oNode;
     public TabPanel tPanel;
     public NotePanel noteP;
     public String id;
     public String name;
-    public JTable newTable, refTable;
+    public JTable table;
     public Element el;
     public boolean isTopLevel;
     private JButton noteButton;
+    protected Vector attrList, refList;
 
     public TablePanel(Element e, TabPanel tp, OMEXMLNode on) {
       isTopLevel = false;
@@ -910,8 +901,6 @@ public class MetadataPane extends JPanel
       oNode = on;
       tPanel = tp;
       id = null;
-      newTable = null;
-      refTable = null;
       JComboBox comboBox = null;
       if (on != null) name = getTreePathName(e,on);
       else name = getTreePathName(e);
@@ -919,8 +908,8 @@ public class MetadataPane extends JPanel
       panelList.add(this);
 
       Vector fullList = DOMUtil.getChildElements("OMEAttribute",e);
-      Vector attrList = new Vector();
-      Vector refList = new Vector();
+      attrList = new Vector();
+      refList = new Vector();
       for(int i = 0;i<fullList.size();i++) {
         Element thisE = (Element) fullList.get(i);
         if(thisE.hasAttribute("Type") ) {
@@ -948,67 +937,73 @@ public class MetadataPane extends JPanel
 
       Element cDataEl = DOMUtil.getChildElement("CData",e);
       if (cDataEl != null) attrList.add(0,cDataEl);
-
-      JPanel lowPanel = new JPanel();
-      
-      FormLayout layout = new FormLayout(
-        "pref, 10dlu, pref:grow, pref",
-        "pref,2dlu,pref,pref,pref,3dlu,pref,3dlu");
-      PanelBuilder builder = new PanelBuilder(layout);
-      CellConstraints cc = new CellConstraints();
       
       JLabel tableName = null;
-      if(oNode == null) tableName = new JLabel(thisName, NO_DATA_BULLET, JLabel.LEFT);
+      if(oNode == null) tableName = 
+        new JLabel(thisName, NO_DATA_BULLET, JLabel.LEFT);
       else tableName = new JLabel(thisName, DATA_BULLET, JLabel.LEFT);
       Font thisFont = tableName.getFont();
       thisFont = new Font(thisFont.getFontName(),
-      Font.BOLD,thisFont.getSize());
+        Font.BOLD,thisFont.getSize());
       tableName.setFont(thisFont);
+      if (el.hasAttribute("ShortDesc"))
+        tableName.setToolTipText(el.getAttribute("ShortDesc"));
+      else if (el.hasAttribute("Description"))
+        tableName.setToolTipText(el.getAttribute("Description"));
+      
+			JButton addButton = new JButton("Make New");
+      addButton.setPreferredSize(new Dimension(95,17));
+      addButton.addActionListener(this);
+      addButton.setActionCommand("Make");
+      addButton.setToolTipText("Create a new " + name + " table.");
+      if ( !isTopLevel && tPanel.oNode == null) addButton.setEnabled(false);
+      
+      noteButton = new JButton("Notes");
+      noteButton.setPreferredSize(new Dimension(85,17));
+      noteButton.addActionListener(this);
+      noteButton.setActionCommand("getNotes");
+      noteButton.setToolTipText(
+        "Display or hide the notes associated with this " + name + ".");
+      
+      DefaultTableModel myTableModel = 
+        new DefaultTableModel(TREE_COLUMNS, 0)
+      {
+        public boolean isCellEditable(int row, int col) {
+          if(col < 1) return false;
+          else return true;
+        }
+      };
+      
+      FormLayout layout = new FormLayout(
+        "pref, 10dlu, pref, pref:grow, pref",
+        "pref,2dlu,pref,pref,3dlu,pref,3dlu");
+      PanelBuilder builder = new PanelBuilder(layout);
+      CellConstraints cc = new CellConstraints();
+      
+      table = new ClickableTable(myTableModel, this);
+      table.setAutoResizeMode( JTable.AUTO_RESIZE_OFF );
+      table.getColumnModel().getColumn(0).setPreferredWidth(125);
+      table.getColumnModel().getColumn(1).setPreferredWidth(430);
+      table.getColumnModel().getColumn(2).setPreferredWidth(70);
+      JTableHeader tHead = table.getTableHeader();
+      tHead.setResizingAllowed(true);
+      tHead.setReorderingAllowed(true);
+      myTableModel.setRowCount(attrList.size() + refList.size());
+      
+    	builder.add(tableName, cc.xy(1,1));
+			builder.add(noteButton, cc.xy(3,1, "left,center"));
+			builder.add(addButton, cc.xyw(5,1,1, "right,center"));
+			builder.add(tHead, cc.xyw(1,3,5));
+			builder.add(table, cc.xyw(1,4,5, "fill, center"));
+			
+			if (oNode == null) {
+        tHead.setVisible(false);
+        noteButton.setVisible(false);
+        table.setVisible(false);
+      }
 
       if (attrList.size() != 0) {
-        myTableModel = new DefaultTableModel(TREE_COLUMNS, 0) {
-          public boolean isCellEditable(int row, int col) {
-            if(col < 1) return false;
-            else return true;
-          }
-        };
-
-        myTableModel.addTableModelListener(this);
-
-        setLayout(new GridLayout(0,1));
-
-        newTable = new ClickableTable(myTableModel, this);
-        newTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); 
-        newTable.getColumnModel().getColumn(0).setPreferredWidth(125);
-        newTable.getColumnModel().getColumn(1).setPreferredWidth(500);
-        newTable.getColumnModel().getColumn(0).setMinWidth(125);
-        JTableHeader tHead = newTable.getTableHeader();
-        tHead.setResizingAllowed(false);
-        tHead.setReorderingAllowed(false);
-        noteButton = new JButton("Notes");
-        noteButton.setPreferredSize(new Dimension(85,15));
-        noteButton.addActionListener(this);
-        noteButton.setActionCommand("getNotes");
-        JButton addButton = new JButton("Make New");
-        addButton.setPreferredSize(new Dimension(85,15));
-        addButton.addActionListener(this);
-        addButton.setActionCommand("Make");
-        if ( !isTopLevel && tPanel.oNode == null) addButton.setEnabled(false);        
-        
-				builder.add(tableName, cc.xy(1,1));
-				builder.add(noteButton, cc.xy(3,1, "left,center"));
-				builder.add(addButton, cc.xyw(3,1, 2, "right,center"));
-				builder.add(tHead, cc.xyw(1,3,4));
-				builder.add(newTable, cc.xyw(1,4,4));
-				
-			  if (oNode == null) {
-          tHead.setVisible(false);
-          noteButton.setVisible(false);
-          newTable.setVisible(false);
-        }
-
         // update OME-XML attributes table
-        myTableModel.setRowCount(attrList.size());
         for (int i=0; i<attrList.size(); i++) {
           Element thisEle = null;
           if (attrList.get(i) instanceof Element) {
@@ -1025,7 +1020,8 @@ public class MetadataPane extends JPanel
 
               }
             }
-            else if (thisEle.hasAttribute("XMLName")) {
+            else if (!thisEle.hasAttribute("Name") &&
+              thisEle.hasAttribute("XMLName")) {
               myTableModel.setValueAt(thisEle.getAttribute("XMLName"), i, 0);
               if(oNode != null) {
                 if(oNode.getDOMElement().hasAttribute(attrName)) {
@@ -1050,44 +1046,12 @@ public class MetadataPane extends JPanel
                 }
               }
             }
+            
           }
         }
       }
 
-      if (refList.size() > 0) {
-        myTableModel = new DefaultTableModel(TREE_COLUMNS, 0) {
-          public boolean isCellEditable(int row, int col) {
-            if(col < 1) return false;
-            else return true;
-          }
-        };
-
-        myTableModel.addTableModelListener(this);
-
-        refTable = new ClickableTable(myTableModel, this);
-        refTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); 
-        refTable.getColumnModel().getColumn(0).setPreferredWidth(125);
-        refTable.getColumnModel().getColumn(1).setPreferredWidth(430);
-        refTable.getColumnModel().getColumn(0).setMinWidth(125);
-        TableColumn refColumn = refTable.getColumnModel().getColumn(1);
-
-        comboBox = new JComboBox();
-        refColumn.setCellEditor(new DefaultCellEditor(comboBox));
-
-        JPanel buttonPanel;
-        String rowString = "";
-        for (int i=0; i<refList.size(); i++) {
-          rowString = rowString + "pref:grow, ";
-        }
-        rowString = rowString.substring(0,rowString.length()-2);
-        
-        FormLayout layout2 = new FormLayout(
-          "pref",
-          rowString);
-        PanelBuilder builder2 = new PanelBuilder(layout2);
-        CellConstraints cc2 = new CellConstraints();
-
-        myTableModel.setRowCount(refList.size());
+      if (refList.size() > 0) {      
         for (int i=0; i<refList.size(); i++) {
           Element thisEle = null;
           if (refList.get(i) instanceof Element) {
@@ -1095,88 +1059,58 @@ public class MetadataPane extends JPanel
           }
           if (thisEle != null) {
             if (thisEle.hasAttribute("Name")) {
-              myTableModel.setValueAt(thisEle.getAttribute("Name"), i, 0);
+              myTableModel.setValueAt(thisEle.getAttribute("Name"), 
+                i + attrList.size(), 0);
             }
             else if (thisEle.hasAttribute("XMLName")) {
-              myTableModel.setValueAt(thisEle.getAttribute("XMLName"), i, 0);
+              myTableModel.setValueAt(thisEle.getAttribute("XMLName"), 
+                i + attrList.size(), 0);
             }
           }
-          TableButton tb = new TableButton(refTable,i);
-          tb.addActionListener(this);
-          builder2.add(tb, cc2.xy(1,i+1, "center,fill"));
-        }
-        
-        buttonPanel = builder2.getPanel();
-
-        if(attrList.size() == 0) {
-          JTableHeader tHead = refTable.getTableHeader();
-          tHead.setResizingAllowed(false);
-          tHead.setReorderingAllowed(false);
-          noteButton = new JButton("Notes");
-          noteButton.setPreferredSize(new Dimension(85,15));
-          noteButton.addActionListener(this);
-          noteButton.setActionCommand("getNotes");
-          JButton addButton = new JButton("Make New");
-          addButton.setPreferredSize(new Dimension(85,15));
-          addButton.addActionListener(this);
-          addButton.setActionCommand("Make");
-          if (!isTopLevel && tPanel.oNode == null) addButton.setEnabled(false);
-        
-			  	builder.add(tableName, cc.xy(1,1));
-			  	builder.add(noteButton, cc.xy(3,1, "left,center"));
-			  	builder.add(addButton, cc.xyw(3,1,2, "right,center"));
-				  builder.add(tHead, cc.xyw(1,3,3));
-          builder.add(refTable, cc.xyw(1,4,3));
-          builder.add(buttonPanel, cc.xy(4,4));
-          if (oNode == null) {
-            tHead.setVisible(false);
-            noteButton.setVisible(false);
-            refTable.setVisible(false);
-            buttonPanel.setVisible(false);
-          }
-        }
-        else {
-					builder.add(refTable, cc.xyw(1,5,3));
-          builder.add(buttonPanel, cc.xy(4,5, "center,fill"));
-          if (oNode == null) {
-            refTable.setVisible(false);
-            buttonPanel.setVisible(false);
-          }
-        }      
+        } 
       }
       
       noteP = new NotePanel(this);
-      builder.add(noteP, cc.xyw(1,7,4, "fill,center"));
+      builder.add(noteP, cc.xyw(1,6,5, "fill,center"));
       setNumNotes(noteP.getNumNotes());
       
       add(builder.getPanel());
     }
 
     public void setEditor() {
-      if(refTable != null) {
-        TableModel model = refTable.getModel();
-        TableColumn refColumn = refTable.getColumnModel().getColumn(1);
-        for(int i = 0;i < refTable.getRowCount();i++) {
-          boolean isLocal = false;
-          String attrName = (String) model.getValueAt(i,0);
-          String value = null;
-          if(oNode != null) value = oNode.getAttribute(attrName);
-          for(int j = 0;j < panelsWithID.size();j++) {
-            TablePanel tp = (TablePanel) panelsWithID.get(j);
-            if (tp.id != null && value != null) {
-              if (value.equals(tp.id)) {
-                isLocal = true;
-                model.setValueAt(tp.name,i,1);
-              }
-            }
+      if(table != null) {
+        TableModel model = table.getModel();
+        TableColumn refColumn = table.getColumnModel().getColumn(1);
+        for(int i = 0;i < table.getRowCount();i++) {
+          if ( i < attrList.size()) {
           }
-          if(!isLocal && value != null && !value.equals("")) {
-            model.setValueAt("(External) " + value,i,1);
-          }
+          else {
+	          boolean isLocal = false;
+	          String attrName = (String) model.getValueAt(i,0);
+	          String value = null;
+	          if(oNode != null) value = oNode.getAttribute(attrName);
+	          for(int j = 0;j < panelsWithID.size();j++) {
+	            TablePanel tp = (TablePanel) panelsWithID.get(j);
+	            if (tp.id != null && value != null) {
+	              if (value.equals(tp.id)) {
+	                isLocal = true;
+	                model.setValueAt(tp.name,i,1);
+	              }
+	            }
+	          }
+	          if(!isLocal && value != null && !value.equals("")) {
+	            model.setValueAt("(External) " + value,i,1);
+	          }
+	          //makes the initial value non-null to display the buttons
+	          model.setValueAt("foobar", i, 2);
+	        }
         }
 
         refColumn.setCellEditor(new VariableComboEditor(panelsWithID,
-          addItems, oNode, internalDefs));
+          addItems, this, internalDefs));
+        TableColumn gotoColumn = table.getColumnModel().getColumn(2);
+        gotoColumn.setCellEditor(new GotoEditor(this));
+        gotoColumn.setCellRenderer(new GotoRenderer());
       }
     }
     
@@ -1185,46 +1119,54 @@ public class MetadataPane extends JPanel
     }
 
     public void actionPerformed(ActionEvent e) {
-      if (e.getSource() instanceof TableButton) {
-        TableButton tb = (TableButton) e.getSource();
+      if (e.getSource() instanceof GotoEditor.TableButton) {
+        GotoEditor.TableButton tb = (GotoEditor.TableButton) e.getSource();
         JTable jt = tb.table;
 
         TableModel model = jt.getModel();
         Object obj = model.getValueAt(tb.whichRow, 1);
-        String aName = obj.toString();
-        TablePanel aPanel = null;
-
-        int whichNum = -23;
-
-        for(int i = 0;i<panelsWithID.size();i++) {
-          aPanel = (TablePanel) panelsWithID.get(i);
-          if (aPanel.name.equals(aName)) whichNum = i;
-        }
-
-        if(whichNum != -23) {
-          TablePanel tablePan = (TablePanel) panelsWithID.get(whichNum);
-          TabPanel tp = tablePan.tPanel;
-          Container anObj = (Container) tp;
-          while(!(anObj instanceof JScrollPane)) {
-            anObj = anObj.getParent();
-          }
-          JScrollPane jScr = (JScrollPane) anObj;
-          while(!(anObj instanceof JTabbedPane)) {
-            anObj = anObj.getParent();
-          }
-          JTabbedPane jTabP = (JTabbedPane) anObj;
-          jTabP.setSelectedComponent(jScr);
-          Point loc = tablePan.getLocation();
-          loc.x = 0;
-          loc.y = tp.titlePanel.getHeight() + loc.y;
-          jScr.getViewport().setViewPosition(loc);
-        }
-        else {
-          JOptionPane.showMessageDialog((Frame) getTopLevelAncestor(),
-            "Since the ID in question refers to something\n" +
-            "outside of this file, you cannot \"Goto\" it.",
-            "External Reference Detected", JOptionPane.WARNING_MESSAGE);
-        }
+        if(obj != null && !obj.toString().equals("")) {
+	        String aName = obj.toString();
+	        TablePanel aPanel = null;
+	
+	        int whichNum = -23;
+	
+	        for(int i = 0;i<panelsWithID.size();i++) {
+	          aPanel = (TablePanel) panelsWithID.get(i);
+	          if (aPanel.name.equals(aName)) whichNum = i;
+	        }
+	
+	        if(whichNum != -23) {
+	          TablePanel tablePan = (TablePanel) panelsWithID.get(whichNum);
+	          TabPanel tp = tablePan.tPanel;
+	          Container anObj = (Container) tp;
+	          while(!(anObj instanceof JScrollPane)) {
+	            anObj = anObj.getParent();
+	          }
+	          JScrollPane jScr = (JScrollPane) anObj;
+	          while(!(anObj instanceof JTabbedPane)) {
+	            anObj = anObj.getParent();
+	          }
+	          JTabbedPane jTabP = (JTabbedPane) anObj;
+	          jTabP.setSelectedComponent(jScr);
+	          Point loc = tablePan.getLocation();
+	          loc.x = 0;
+	          loc.y = tp.titlePanel.getHeight() + loc.y;
+	          jScr.getViewport().setViewPosition(loc);
+	        }
+	        else {
+	          JOptionPane.showMessageDialog((Frame) getTopLevelAncestor(),
+	            "Since the ID in question refers to something\n" +
+	            "outside of this file, you cannot \"Goto\" it.",
+	            "External Reference Detected", JOptionPane.WARNING_MESSAGE);
+	        }
+	      }
+	      else {
+	        JOptionPane.showMessageDialog((Frame) getTopLevelAncestor(),
+	            "Since the ID in question is currently blank,\n" +
+	            "you cannot \"Goto\" it.",
+	            "Null Reference Detected", JOptionPane.WARNING_MESSAGE);
+	      }
       }
       else if(e.getActionCommand().equals("getNotes")) {
         if (noteP.isVisible()) noteP.setVisible(false);
@@ -1286,26 +1228,6 @@ public class MetadataPane extends JPanel
 		      }
 		    }
 	    }
-    }
-
-    public void tableChanged(TableModelEvent e) {
-      int column = e.getColumn();
-      if (e.getType() == TableModelEvent.UPDATE && column == 1 &&
-        ((TableModel) e.getSource()) == newTable.getModel())
-      {
-        int row = e.getFirstRow();
-        TableModel model = (TableModel) e.getSource();
-        String data = (String) model.getValueAt(row, column);
-        String attr = (String) model.getValueAt(row,0);
-        if ( oNode != null && data != null && data != "") {
-          if (attr.endsWith("CharData") ) {
-            DOMUtil.setCharacterData(data, oNode.getDOMElement());
-          }
-          else {
-            oNode.setAttribute(attr, data);
-          }
-        }
-      }
     }
     
     public void callReRender() {

@@ -53,7 +53,7 @@ public class NotePanel extends JPanel
     textArea.setWrapStyleWord(true);
     textArea.getDocument().addDocumentListener(noteList);
     JScrollPane jNoteScroll = new JScrollPane(textArea);
-    jNoteScroll.setPreferredSize(new Dimension(465,100));
+    jNoteScroll.setPreferredSize(new Dimension(450,100));
     jNoteScroll.setVerticalScrollBarPolicy(
       JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 	  

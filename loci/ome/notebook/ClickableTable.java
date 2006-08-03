@@ -85,23 +85,63 @@ public class ClickableTable extends JTable
     //Ask to be notified of selection changes.
     ListSelectionModel rowSM = getSelectionModel();
     rowSM.addListSelectionListener(new ListSelectionListener() {
-    public void valueChanged(ListSelectionEvent e) {
-	    //Ignore extra messages.
-	    if (e.getValueIsAdjusting()) return;
-	
-	    ListSelectionModel lsm =
-	        (ListSelectionModel)e.getSource();
-	    if (lsm.isSelectionEmpty()) {
-	        //no rows are selected
-	    } 
-	    else {
-	        lsm.clearSelection();
-	        //selectedRow is selected
-	    }
-    }
-});
-
+      public void valueChanged(ListSelectionEvent e) {
+	      //Ignore extra messages.
+		    if (e.getValueIsAdjusting()) return;
+		
+		    ListSelectionModel lsm =
+		        (ListSelectionModel)e.getSource();
+		    if (lsm.isSelectionEmpty()) {
+		        //no rows are selected
+		    } 
+		    else {
+		        lsm.clearSelection();
+		        //selectedRow is selected
+		    }
+  	  }
+		});
   }
+  
+  public String getToolTipText(MouseEvent e) {
+    String tip = null;
+    java.awt.Point p = e.getPoint();
+    int rowIndex = rowAtPoint(p);
+    int colIndex = columnAtPoint(p);
+    int realColumnIndex = convertColumnIndexToModel(colIndex);
+
+    if (realColumnIndex == 0) {
+      TableModel model = getModel();
+      String attrName = (String)model.getValueAt(rowIndex,0);
+      Vector v = DOMUtil.getChildElements("OMEAttribute", tp.el);
+      Element thisEle = null;
+      for(int i = 0;i < v.size();i++) {
+        Element tempEle = (Element) v.get(i);
+        if (tempEle.hasAttribute("Name")) {
+          if (tempEle.getAttribute("Name").equals(attrName))
+            thisEle = tempEle;
+        }
+        else if (tempEle.getAttribute("XMLName").equals(attrName))
+          thisEle = tempEle;
+      }
+      
+      if (thisEle.hasAttribute("ShortDesc"))
+        tip = thisEle.getAttribute("ShortDesc");
+      else if (thisEle.hasAttribute("Description"))
+        tip = thisEle.getAttribute("Description");
+      else tip = super.getToolTipText(e);
+    }
+/* Removed this because it was annoying when trying to change values
+    else if (realColumnIndex == 1) {
+      String attrName = (String)getModel().getValueAt(rowIndex,0);
+      tip = "The value associated with this " + attrName + ".";
+    }
+*/
+    else { //another column
+      tip = super.getToolTipText(e);
+    }
+    return tip;
+  }
+
   
   // -- Static ClickableTable API Methods --
 
@@ -178,14 +218,14 @@ public class ClickableTable extends JTable
       remItem.setActionCommand("delete");
       
       //add the menuitems to the popup menu, add logical separators
-      jPop.add(infoItem);
+      jPop.add(addItem);
+      jPop.add(bigRemItem);
       JSeparator sep = new JSeparator();
       jPop.add(sep);
       jPop.add(remItem);
       JSeparator sep2 = new JSeparator();
       jPop.add(sep2);
-      jPop.add(addItem);
-      jPop.add(bigRemItem);
+      jPop.add(infoItem);
       jPop.show(this, e.getX(), e.getY());
     }
   }

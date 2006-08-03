@@ -48,7 +48,18 @@ public class MetadataNotebook extends JFrame
     File f = new File("Template.xml");
     TemplateParser tp = new TemplateParser(f);
     //create a MetadataPane, where most everything happens
-    metadata = new MetadataPane(tp);
+    
+    if( args.length > 0 ) {
+			File file = null;
+      try {
+        file = new File(args[0]);
+      }
+      catch (Exception exc) {
+        System.out.println("Error occured: You suck.");
+      }
+      metadata = new MetadataPane(file);
+    }
+    else metadata = new MetadataPane();
     setContentPane(metadata);
 
     //setup the menus on this frame
