@@ -1707,6 +1707,7 @@ public abstract class TiffTools {
         int newType = DataTools.bytesToInt(bytes, 2, 2, false);
         int newCount = DataTools.bytesToInt(bytes, 4, false);
         int newOffset = DataTools.bytesToInt(bytes, 8, false);
+        boolean terminate = false;
         if (DEBUG) {
           debug("overwriteIFDValue:\n\told: (tag=" + oldTag + "; type=" +
             oldType + "; count=" + oldCount + "; offset=" + oldOffset +
@@ -1720,15 +1721,18 @@ public abstract class TiffTools {
           // do not override new offset value since data is inline
           if (DEBUG) debug("overwriteIFDValue: new entry is inline");
         }
+        else if (oldOffset +
+          oldCount * BYTES_PER_ELEMENT[oldType] == raf.length())
+        {
+          // old entry was already at EOF; overwrite it
+          newOffset = oldOffset;
+          terminate = true;
+          if (DEBUG) debug("overwriteIFDValue: old entry is at EOF");
+        }
         else if (newCount <= oldCount) {
           // new entry is as small or smaller than old entry; overwrite it
           newOffset = oldOffset;
           if (DEBUG) debug("overwriteIFDValue: new entry is <= old entry");
-        }
-        else if (oldOffset + BYTES_PER_ELEMENT[oldType] == raf.length()) {
-          // old entry was already at EOF; overwrite it
-          newOffset = oldOffset;
-          if (DEBUG) debug("overwriteIFDValue: old entry is at EOF");
         }
         else {
           // old entry was elsewhere; append to EOF, orphaning old entry
@@ -1745,6 +1749,7 @@ public abstract class TiffTools {
           raf.seek(newOffset);
           raf.write(extra);
         }
+        if (terminate) raf.setLength(raf.getFilePointer());
         return;
       }
     }
