@@ -13,7 +13,7 @@ public class EditDistance {
     System.out.println("Distance = " + getEditDistance(a, b));
   }
 
-  private static int getEditDistance(String s, String t) {
+  public static int getEditDistance(String s, String t) {
     // Leveshtein algorithm
     if (s == null) s = "";
     if (t == null) t = "";
