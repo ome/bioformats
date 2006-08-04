@@ -36,6 +36,12 @@ public class MetadataPane extends JPanel
   public static final ImageIcon NO_DATA_BULLET = 
     createImageIcon("Icons/Bullet2.gif",
       "An icon signifying that no metadata is present.");
+      
+  public static final Color ADD_COLOR =
+    new Color(0,100,0);
+    
+  public static final Color DELETE_COLOR =
+    new Color(100,0,0);
 
   // -- Fields --
 
@@ -62,6 +68,8 @@ public class MetadataPane extends JPanel
  
   /** Hashtable containing internal semantic type defs in current file*/
   public Hashtable internalDefs;
+  
+  public Boolean hasChanged;
 
   // -- Fields - raw panel --
 
@@ -89,6 +97,7 @@ public class MetadataPane extends JPanel
     tParse = new TemplateParser(f);
     thisOmeNode = null;
     internalDefs = null;
+    hasChanged = false;
 
     // -- Tabbed Pane Initialization --
 
@@ -130,6 +139,11 @@ public class MetadataPane extends JPanel
     setOMEXML(f);
   }
 
+  public MetadataPane(OMENode ome)
+  {
+    this();
+    setOMEXML(ome);
+  }
 
   // -- MetadataPane API methods --
 
@@ -144,6 +158,10 @@ public class MetadataPane extends JPanel
     catch (Exception e) {    }
     return doc;
   }
+  
+  public boolean getState() { return hasChanged; }
+  
+  public void stateChanged(boolean change) {hasChanged = change;} 
 
   public OMENode getRoot() { return thisOmeNode; }
 
@@ -279,6 +297,8 @@ public class MetadataPane extends JPanel
       TablePanel p = (TablePanel) panelList.get(i);
       p.setEditor();
     }
+    
+    stateChanged(false);
   }
 
   /** sets up the JTabbedPane given an OMENode from an OMEXML file.
@@ -447,6 +467,8 @@ public class MetadataPane extends JPanel
       TablePanel p = (TablePanel) panelList.get(i);
       p.setEditor();
     }
+    
+    stateChanged(false);
   }
 
   /**
@@ -852,7 +874,7 @@ public class MetadataPane extends JPanel
     }
     
     public String toString() { return el == null ? "null" : el.getTagName(); }
-    
+        
     public Dimension getPreferredScrollableViewportSize() {
       return getPreferredSize();
     }
@@ -862,8 +884,7 @@ public class MetadataPane extends JPanel
     public int getScrollableBlockIncrement(Rectangle visibleRect,
       int orientation, int direction) {return visibleRect.height;}
     public boolean getScrollableTracksViewportWidth() {return true;}
-    public boolean getScrollableTracksViewportHeight() {return false;}
-    
+    public boolean getScrollableTracksViewportHeight() {return false;}    
   }
 
 /** Helper class to handle the various TablePanels that will be created to
@@ -877,7 +898,7 @@ public class MetadataPane extends JPanel
     public NotePanel noteP;
     public String id;
     public String name;
-    public JTable table;
+    public ClickableTable table;
     public Element el;
     public boolean isTopLevel;
     private JButton noteButton;
@@ -944,19 +965,12 @@ public class MetadataPane extends JPanel
       else tableName = new JLabel(thisName, DATA_BULLET, JLabel.LEFT);
       Font thisFont = tableName.getFont();
       thisFont = new Font(thisFont.getFontName(),
-        Font.BOLD,thisFont.getSize());
+        Font.BOLD,12);
       tableName.setFont(thisFont);
       if (el.hasAttribute("ShortDesc"))
         tableName.setToolTipText(el.getAttribute("ShortDesc"));
       else if (el.hasAttribute("Description"))
         tableName.setToolTipText(el.getAttribute("Description"));
-      
-			JButton addButton = new JButton("Make New");
-      addButton.setPreferredSize(new Dimension(95,17));
-      addButton.addActionListener(this);
-      addButton.setActionCommand("Make");
-      addButton.setToolTipText("Create a new " + name + " table.");
-      if ( !isTopLevel && tPanel.oNode == null) addButton.setEnabled(false);
       
       noteButton = new JButton("Notes");
       noteButton.setPreferredSize(new Dimension(85,17));
@@ -964,6 +978,7 @@ public class MetadataPane extends JPanel
       noteButton.setActionCommand("getNotes");
       noteButton.setToolTipText(
         "Display or hide the notes associated with this " + name + ".");
+      noteButton.setForeground(new Color(0,0,50));
       
       DefaultTableModel myTableModel = 
         new DefaultTableModel(TREE_COLUMNS, 0)
@@ -975,7 +990,7 @@ public class MetadataPane extends JPanel
       };
       
       FormLayout layout = new FormLayout(
-        "pref, 10dlu, pref, pref:grow, pref",
+        "pref, 10dlu, pref, pref:grow, pref, 5dlu, pref",
         "pref,2dlu,pref,pref,3dlu,pref,3dlu");
       PanelBuilder builder = new PanelBuilder(layout);
       CellConstraints cc = new CellConstraints();
@@ -988,13 +1003,32 @@ public class MetadataPane extends JPanel
       JTableHeader tHead = table.getTableHeader();
       tHead.setResizingAllowed(true);
       tHead.setReorderingAllowed(true);
+//      tHead.setBackground(NotePanel.BACK_COLOR);
+//      tHead.setOpaque(false);
       myTableModel.setRowCount(attrList.size() + refList.size());
+      
+      JButton addButton = new JButton("New Table");
+      addButton.setPreferredSize(new Dimension(100,17));
+      addButton.addActionListener(table);
+      addButton.setActionCommand("bigAdd");
+      addButton.setToolTipText("Create a new " + name + " table.");
+      if ( !isTopLevel && tPanel.oNode == null) addButton.setEnabled(false);
+      addButton.setForeground(ADD_COLOR);
+      
+      JButton delButton = new JButton("Delete Table");
+      delButton.setPreferredSize(new Dimension(100,17));
+      delButton.addActionListener(table);
+      delButton.setActionCommand("bigRem");
+      delButton.setToolTipText("Delete this " + name + " table.");
+      if ( oNode == null) delButton.setVisible(false);
+      delButton.setForeground(DELETE_COLOR);
       
     	builder.add(tableName, cc.xy(1,1));
 			builder.add(noteButton, cc.xy(3,1, "left,center"));
 			builder.add(addButton, cc.xyw(5,1,1, "right,center"));
-			builder.add(tHead, cc.xyw(1,3,5));
-			builder.add(table, cc.xyw(1,4,5, "fill, center"));
+			builder.add(delButton, cc.xyw(7,1,1, "right,center"));
+			builder.add(tHead, cc.xyw(1,3,7));
+			builder.add(table, cc.xyw(1,4,7, "fill, center"));
 			
 			if (oNode == null) {
         tHead.setVisible(false);
@@ -1071,7 +1105,7 @@ public class MetadataPane extends JPanel
       }
       
       noteP = new NotePanel(this);
-      builder.add(noteP, cc.xyw(1,6,5, "fill,center"));
+      builder.add(noteP, cc.xyw(1,6,7, "fill,center"));
       setNumNotes(noteP.getNumNotes());
       
       add(builder.getPanel());
@@ -1173,65 +1207,14 @@ public class MetadataPane extends JPanel
         else noteP.setVisible(true);
         noteP.revalidate();
       }
-	    else if (e.getActionCommand().equals("Make")) {
-	      if (oNode == null) {
-	        if(isTopLevel) {
-	          tPanel.oNode = makeNode(tPanel.el.getAttribute("XMLName"), thisOmeNode);
-	          oNode = tPanel.oNode;
-	        }
-		      else {
-		        if(tPanel.oNode != null) oNode = 
-		          makeNode(el.getAttribute("XMLName"), tPanel.oNode);
-		      }
-		      callReRender();	      
-	      }
-	      else {
-		      //get the tagname of the element associated with this tablepanel
-		      String thisTagName = oNode.getDOMElement().getTagName();
-		      
-		      //test if the tablepanel in question is actually a tab, e.g. the only
-		      //ancestor nodes are CustomAttributesNode and/or OMENode
-		      if (isTopLevel) {        
-		        //test if we need to deal with CustomAttributesNodes using the
-		        //isInCustom(String tagName) static method
-		        Element parentEle = null;
-		        if (!isInCustom(thisTagName)) {
-		          parentEle = tPanel.ome.getDOMElement();
-		        }
-		        else parentEle = tPanel.ome.getChild("CustomAttributes").getDOMElement();
-		        //create a new element of the appropriate type with the correct parent
-		        Element cloneEle = DOMUtil.createChild(parentEle,thisTagName);      
-		
-						//tell the tablepanel to tell the MetadataPane to redo its GUI based on
-						//the new node tree structure           
-		        callReRender();
-		      }
-		      //if tablepanel doesn't represent a "top-level" element
-		      else {
-		        //test if we need to deal with CustomAttributesNodes
-		        if (!isInCustom(thisTagName)) {
-		          //create a new element of appropriate type with the correct parent
-		          Element anEle = DOMUtil.createChild(tPanel.oNode.getDOMElement(), 
-		            thisTagName);
-		        }
-		        else {
-		          OMEXMLNode realParent = tPanel.oNode.getChild("CustomAttributes");
-		          //create a new element of appropriate type with the correct
-		          //CustomAttributes parent
-		          Element anEle = DOMUtil.createChild(realParent.getDOMElement(), 
-		            thisTagName);
-		        }
-		        
-		        //tell the tablepanel to tell the MetadataPane to redo its GUI based on
-						//the new node tree structure    
-		        callReRender();
-		      }
-		    }
-	    }
     }
     
     public void callReRender() {
       reRender();
+    }
+    
+    public void callStateChanged(boolean hasChanged) {
+      stateChanged(true);
     }
   }
 }

@@ -7,6 +7,7 @@ import javax.swing.JButton;
 import javax.swing.table.TableCellRenderer;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Color;
 
 public class GotoRenderer extends JButton
   implements TableCellRenderer
@@ -15,6 +16,7 @@ public class GotoRenderer extends JButton
     super("Goto");
     setActionCommand("goto");
     setPreferredSize(new Dimension(70, 15));
+    setForeground(new Color(0,0,50));
     setOpaque(true); //MUST do this for background to show up.
   }
 

@@ -10,6 +10,8 @@ import javax.swing.JTextArea;
 import javax.swing.JOptionPane;
 import javax.swing.DefaultListSelectionModel;
 
+import java.awt.Color;
+
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
@@ -57,9 +59,11 @@ public class ClickableList extends JList
       JMenuItem addItem = new JMenuItem("Add a new note");
       addItem.addActionListener(this);
       addItem.setActionCommand("add");
+//      addItem.setForeground(new Color(0,100,0));
       JMenuItem delItem = new JMenuItem("Delete selected note");
       delItem.addActionListener(this);
       delItem.setActionCommand("remove");
+//      delItem.setForeground(new Color(100,0,0));
       
       jPop.add(addItem);
       jPop.add(delItem);
@@ -167,6 +171,7 @@ public class ClickableList extends JList
 	      setSelectedIndex(myModel.getSize() -1);
 	      ensureIndexIsVisible(getSelectedIndex());
 	    }
+	    tableP.callStateChanged(true);
 	  }
     if ("remove".equals(cmd)) {
       if ( ((String) getSelectedValue()) != null) {
@@ -249,6 +254,7 @@ public class ClickableList extends JList
           "cannot delete the selected note.",
           "No Selection Found", JOptionPane.WARNING_MESSAGE);
 	    }
+	    tableP.callStateChanged(true);
     }
   }
   
@@ -267,6 +273,7 @@ public class ClickableList extends JList
 	    else noteP.setNotesLabel(true);
     }
     setValue(result);
+    tableP.callStateChanged(true);
   }
   
   public void removeUpdate(DocumentEvent e) {
@@ -284,6 +291,7 @@ public class ClickableList extends JList
 	    else noteP.setNotesLabel(true);
     }
     setValue(result);
+    tableP.callStateChanged(true);
   }
   
   public void changedUpdate(DocumentEvent e) {
@@ -301,5 +309,6 @@ public class ClickableList extends JList
 	    else noteP.setNotesLabel(true);
     }
     setValue(result);
+    tableP.callStateChanged(true);
   }
 }

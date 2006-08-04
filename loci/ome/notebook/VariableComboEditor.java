@@ -5,6 +5,11 @@
 * that have different selections depending on the row
 * specified, e.g. a row with "Group" that's a reference
 * should only have LSID selections that are also Groups
+*
+* also, non-ref cells are given a JTextField editor
+*
+* this class handles all of the actual editting of the
+* XML Node tree as well
 */
 
 /*
@@ -273,6 +278,8 @@ public class VariableComboEditor extends AbstractCellEditor
       }
       result = (String) box.getSelectedItem();
       
+      tableP.callStateChanged(true); 
+      
       //let the table know that our editor is done with its
       //eeeeeevil deeds
       fireEditingStopped();
@@ -297,6 +304,7 @@ public class VariableComboEditor extends AbstractCellEditor
     catch (Exception exc) {System.out.println(exc);}
     RowDoc rd = (RowDoc) e.getDocument();
     setNode(rd.row, result);
+    tableP.callStateChanged(true);
   }
   
   public void removeUpdate(DocumentEvent e) {
@@ -307,6 +315,7 @@ public class VariableComboEditor extends AbstractCellEditor
     catch (Exception exc) {System.out.println(exc);}
     RowDoc rd = (RowDoc) e.getDocument();
     setNode(rd.row, result);
+    tableP.callStateChanged(true);
   }
   
   public void changedUpdate(DocumentEvent e) {
@@ -317,6 +326,7 @@ public class VariableComboEditor extends AbstractCellEditor
     catch (Exception exc) {System.out.println(exc);}
     RowDoc rd = (RowDoc) e.getDocument();
     setNode(rd.row, result);
+    tableP.callStateChanged(true);
   }
   
   public void focusGained(FocusEvent e) {

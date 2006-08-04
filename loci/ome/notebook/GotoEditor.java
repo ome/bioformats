@@ -8,6 +8,7 @@ import javax.swing.table.*;
 import javax.swing.AbstractCellEditor;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Color;
 
 public class GotoEditor extends AbstractCellEditor
   implements TableCellEditor, ActionListener {
@@ -40,6 +41,7 @@ public class GotoEditor extends AbstractCellEditor
       button.setActionCommand("Goto");
       button.addActionListener(this);
       button.addActionListener(tableP);
+      button.setForeground(new Color(0,0,50));
       return button;
     }
   }

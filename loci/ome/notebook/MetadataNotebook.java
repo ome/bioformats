@@ -202,13 +202,39 @@ public class MetadataNotebook extends JFrame
       metadata.setupTabs();
     }
     if ("open".equals(cmd)) {
-      chooser.setDialogTitle("Open");
-      chooser.setApproveButtonText("Open");
-      chooser.setApproveButtonToolTipText("Open selected file.");
-      opening = true;
-      int rval = chooser.showOpenDialog(this);
-      if (rval == JFileChooser.APPROVE_OPTION) {
-        new Thread(this, "MetadataNotebook-Opener").start();
+      if (metadata.getState()) {
+        Object[] options = {"Yes, do it!",
+                    "No thanks."};
+				int n = JOptionPane.showOptionDialog(this,
+			    "Are you sure you want to open\n" +
+			    "a new file without saving your\n" +
+			    "changes to the current file?",
+			    "Current File Not Saved",
+			    JOptionPane.YES_NO_OPTION,
+			    JOptionPane.QUESTION_MESSAGE,
+			    null,     //don't use a custom Icon
+			    options,  //the titles of buttons
+			    options[0]); //default button title
+			  if (n == JOptionPane.YES_OPTION) {
+			    chooser.setDialogTitle("Open");
+		      chooser.setApproveButtonText("Open");
+		      chooser.setApproveButtonToolTipText("Open selected file.");
+		      opening = true;
+		      int rval = chooser.showOpenDialog(this);
+		      if (rval == JFileChooser.APPROVE_OPTION) {
+		        new Thread(this, "MetadataNotebook-Opener").start();
+		      }
+			  }
+      }
+      else {
+      	chooser.setDialogTitle("Open");
+		    chooser.setApproveButtonText("Open");
+		    chooser.setApproveButtonToolTipText("Open selected file.");
+		    opening = true;
+		    int rval = chooser.showOpenDialog(this);
+		    if (rval == JFileChooser.APPROVE_OPTION) {
+          new Thread(this, "MetadataNotebook-Opener").start();
+	      }
       }
     }
     else if ("saveAs".equals(cmd) ||
@@ -221,9 +247,13 @@ public class MetadataNotebook extends JFrame
       int rval = chooser.showOpenDialog(this);
       if (rval == JFileChooser.APPROVE_OPTION) {
         new Thread(this, "MetadataNotebook-Saver").start();
+        metadata.stateChanged(false);
       }
     }
-    else if ("save".equals(cmd) && currentFile != null) saveFile(currentFile);
+    else if ("save".equals(cmd) && currentFile != null) {
+      saveFile(currentFile);
+      metadata.stateChanged(false);
+    }
     else if ("exit".equals(cmd)) System.exit(0);
     else if ("about".equals(cmd)) About.show();
     else if ("advanced".equals(cmd)) {

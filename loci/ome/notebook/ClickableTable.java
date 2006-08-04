@@ -216,6 +216,9 @@ public class ClickableTable extends JTable
       bigRemItem.setActionCommand("bigRem");
       remItem.addActionListener(this);
       remItem.setActionCommand("delete");
+//      addItem.setForeground(new Color(0,100,0));
+//      bigRemItem.setForeground(new Color(100,0,0));
+//      remItem.setForeground(new Color(100,0,0));
       
       //add the menuitems to the popup menu, add logical separators
       jPop.add(addItem);
@@ -262,36 +265,54 @@ public class ClickableTable extends JTable
         }
       }
       
+      tp.callStateChanged(true);
+      
       //set nodetree to reflect a blank attribute here, also set table blank
       tp.oNode.getDOMElement().removeAttribute(thisAttr.getAttribute("XMLName"));
       getModel().setValueAt("", thisRow, 1);
     }
     //this signifies that the user wants to add another "clone" TablePanel
     if ("bigAdd".equals(cmd)) {
-      //get the tagname of the element associated with this tablepanel
-      String thisTagName =tp.oNode.getDOMElement().getTagName();
-      
-      //test if the tablepanel in question is actually a tab, e.g. the only
-      //ancestor nodes are CustomAttributesNode and/or OMENode
-      if (tp.isTopLevel) {        
-        //test if we need to deal with CustomAttributesNodes using the
-        //isInCustom(String tagName) static method
-        MetadataPane.makeNode(thisTagName,tp.tPanel.ome);
-
-				//tell the tablepanel to tell the MetadataPane to redo its GUI based on
-				//the new node tree structure           
-        tp.callReRender();
+    	if (tp.oNode == null) {
+        if(tp.isTopLevel) {
+          tp.tPanel.oNode = MetadataPane.makeNode(
+            tp.tPanel.el.getAttribute("XMLName"), tp.tPanel.ome);
+          tp.oNode = tp.tPanel.oNode;
+        }
+	      else {
+	        if(tp.tPanel.oNode != null) tp.oNode = 
+	          MetadataPane.makeNode(
+	            tp.el.getAttribute("XMLName"), tp.tPanel.oNode);
+	      }
+	      tp.callReRender();	      
       }
-      //if tablepanel doesn't represent a "top-level" element
       else {
-        //test if we need to deal with CustomAttributesNodes
-        MetadataPane.makeNode(thisTagName,tp.tPanel.oNode);
-        
-        //tell the tablepanel to tell the MetadataPane to redo its GUI based on
-				//the new node tree structure    
-        tp.callReRender();
-      }
-    }
+	      //get the tagname of the element associated with this tablepanel
+	      String thisTagName =tp.oNode.getDOMElement().getTagName();
+	      
+	      //test if the tablepanel in question is actually a tab, e.g. the only
+	      //ancestor nodes are CustomAttributesNode and/or OMENode
+	      if (tp.isTopLevel) {        
+	        //test if we need to deal with CustomAttributesNodes using the
+	        //isInCustom(String tagName) static method
+	        MetadataPane.makeNode(thisTagName,tp.tPanel.ome);
+	
+					//tell the tablepanel to tell the MetadataPane to redo its GUI based on
+					//the new node tree structure           
+	        tp.callReRender();
+	      }
+	      //if tablepanel doesn't represent a "top-level" element
+	      else {
+	        //test if we need to deal with CustomAttributesNodes
+	        MetadataPane.makeNode(thisTagName,tp.tPanel.oNode);
+	        
+	        //tell the tablepanel to tell the MetadataPane to redo its GUI based on
+					//the new node tree structure    
+	        tp.callReRender();
+	      }
+	    }
+	    tp.callStateChanged(true);
+	  }
     //signifies user wishes to delete an entire tablepanel.
     //N.B. : if there is only one instance of the tablepanel in question,
     //it will be deleted then recreated blank in order to comply with the
@@ -349,7 +370,8 @@ public class ClickableTable extends JTable
         //tell the tablepanel to tell the MetadataPane to redo its GUI based on
 				//the new node tree structure
         tp.callReRender();
-      }
+      }	      
+      tp.callStateChanged(true);
     }
   }
 

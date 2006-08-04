@@ -13,12 +13,15 @@ import com.jgoodies.forms.layout.FormLayout;
 public class NotePanel extends JPanel 
   implements ListSelectionListener {
 
+  public static final Color BACK_COLOR = 
+    new Color(175,175,175);
+
   public static final ImageIcon NOTES_BULLET =
-    MetadataPane.createImageIcon("Icons/Bullet1.gif",
+    MetadataPane.createImageIcon("Icons/Bullet3.gif",
       "An icon signifying that notes are present.");
       
   public static final ImageIcon NO_NOTES_BULLET =
-    MetadataPane.createImageIcon("Icons/Bullet4.gif",
+    MetadataPane.createImageIcon("Icons/Bullet2.gif",
       "An icon signifying that no notes are present.");
 
   MetadataPane.TablePanel tableP;
@@ -30,6 +33,7 @@ public class NotePanel extends JPanel
 	  super();
 	  
 	  tableP = tp;
+	  setBackground(BACK_COLOR);
 	  
 	  Vector noteEleList = getNoteElements();
 	  DefaultListModel thisModel = new DefaultListModel();
@@ -43,6 +47,7 @@ public class NotePanel extends JPanel
 	    }
 	  }	  
 	  
+// buggy...
 //	  if (thisModel.getSize() > 0) noteList.setSelectedIndex(0);
 	  
 	  JScrollPane jScroll = new JScrollPane(noteList);
@@ -58,7 +63,7 @@ public class NotePanel extends JPanel
       JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 	  
     FormLayout layout = new FormLayout(
-      "pref:grow, 10px, pref:grow",
+      "pref, 5dlu, pref:grow, 5dlu, pref, 5dlu, pref",
       "pref,2dlu,pref");
     PanelBuilder builder = new PanelBuilder(layout);
     CellConstraints cc = new CellConstraints();
@@ -67,13 +72,40 @@ public class NotePanel extends JPanel
       nameLabel = new JLabel("Name", NO_NOTES_BULLET, JLabel.LEFT);
     else nameLabel = new JLabel("Name", NOTES_BULLET, JLabel.LEFT);
     noteLabel = new JLabel("Notes", NO_NOTES_BULLET, JLabel.LEFT);
+    Font thisFont = nameLabel.getFont();
+    thisFont = new Font(thisFont.getFontName(),
+      Font.BOLD,thisFont.getSize());
+    nameLabel.setFont(thisFont);
+    thisFont = noteLabel.getFont();
+    thisFont = new Font(thisFont.getFontName(),
+      Font.BOLD,thisFont.getSize());
+    noteLabel.setFont(thisFont);
     
-    builder.add(nameLabel, cc.xy(1,1, "center,center"));
-    builder.add(noteLabel, cc.xy(3,1, "center,center"));
+    JButton addBTN = new JButton("New Note");
+    addBTN.setPreferredSize(new Dimension(100,17));
+    addBTN.setActionCommand("add");
+    addBTN.addActionListener(noteList);
+    addBTN.setToolTipText("Add a new note to the \"Name\" list.");
+    addBTN.setForeground(MetadataPane.ADD_COLOR);
+    addBTN.setBackground(BACK_COLOR);
+    
+    JButton delBTN = new JButton("Delete Note");
+    delBTN.setPreferredSize(new Dimension(100,17));
+    delBTN.setActionCommand("remove");
+    delBTN.addActionListener(noteList);
+    delBTN.setToolTipText("Delete the note selected in the \"Name\" list.");
+    delBTN.setForeground(MetadataPane.DELETE_COLOR);
+    delBTN.setBackground(BACK_COLOR);
+    
+    builder.add(nameLabel, cc.xy(1,1, "left,center"));
+    builder.add(noteLabel, cc.xy(3,1, "left,center"));
+    
+    builder.add(addBTN, cc.xy(5,1, "left,center"));
+    builder.add(delBTN, cc.xy(7,1, "left,center"));
     
     builder.add(jScroll, cc.xy(1,3, "fill,center"));
-    builder.add(jNoteScroll, cc.xy(3,3, "fill,center"));
-    
+    builder.add(jNoteScroll, cc.xyw(3,3,5, "fill,center"));
+    builder.getPanel().setBackground(BACK_COLOR);
     add(builder.getPanel());
     setVisible(false);
     if(noteEleList != null) setVisible(true);
