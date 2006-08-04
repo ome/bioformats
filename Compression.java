@@ -59,6 +59,7 @@ public abstract class Compression {
   private static final byte PAD = (byte) '=';
 
   private static byte[] base64Alphabet = new byte[255];
+  private static byte[] lookupBase64Alphabet = new byte[255];
 
   static {
     for (int i=0; i<255; i++) {
@@ -76,6 +77,21 @@ public abstract class Compression {
 
     base64Alphabet['+'] = 62;
     base64Alphabet['/'] = 63;
+
+    for (int i=0; i<=25; i++) {
+      lookupBase64Alphabet[i] = (byte) ('A' + i);
+    }
+
+    for (int i=26, j=0; i<=51; i++, j++) {
+      lookupBase64Alphabet[i] = (byte) ('a' + j);
+    }
+
+    for (int i=52, j=0; i<=61; i++, j++) {
+      lookupBase64Alphabet[i] = (byte) ('0' + j);
+    }
+
+    lookupBase64Alphabet[62] = (byte) '+';
+    lookupBase64Alphabet[63] = (byte) '/';
   }
 
 
@@ -129,6 +145,81 @@ public abstract class Compression {
     return out.toByteArray();
   }
 
+  /**
+   * Encodes a byte array using Base64 encoding.
+   * Much of this code was adapted from the Apache Commons Codec source.
+   */
+  public static byte[] base64Encode(byte[] input) {
+    int dataBits = input.length * 8;
+    int fewerThan24 = dataBits % 24;
+    int numTriples = dataBits / 24;
+    byte[] encoded = null;
+    int encodedLength = 0;
+
+    if (fewerThan24 != 0) encodedLength = (numTriples + 1) * 4;
+    else encodedLength = numTriples * 4;
+
+    encoded = new byte[encodedLength];
+
+    byte k, l, b1, b2, b3;
+
+    int encodedIndex = 0;
+    int dataIndex = 0;
+
+    for (int i=0; i<numTriples; i++) {
+      dataIndex = i * 3;
+      b1 = input[dataIndex];
+      b2 = input[dataIndex + 1];
+      b3 = input[dataIndex + 2];
+
+      l = (byte) (b2 & 0x0f);
+      k = (byte) (b1 & 0x03);
+
+      byte v1 = ((b1 & -128) == 0) ? (byte) (b1 >> 2) :
+        (byte) ((b1) >> 2 ^ 0xc0);
+      byte v2 = ((b2 & -128) == 0) ? (byte) (b2 >> 4) :
+        (byte) ((b2) >> 4 ^ 0xf0);
+      byte v3 = ((b3 & -128) == 0) ? (byte) (b3 >> 6) :
+        (byte) ((b3) >> 6 ^ 0xfc);
+
+      encoded[encodedIndex] = lookupBase64Alphabet[v1];
+      encoded[encodedIndex + 1] = lookupBase64Alphabet[v2 | (k << 4)];
+      encoded[encodedIndex + 2] = lookupBase64Alphabet[(l << 2) | v3];
+      encoded[encodedIndex + 3] = lookupBase64Alphabet[b3 & 0x3f];
+      encodedIndex += 4;
+    }
+
+    dataIndex = numTriples * 3;
+
+    if (fewerThan24 == 8) {
+      b1 = input[dataIndex];
+      k = (byte) (b1 & 0x03);
+      byte v = ((b1 & -128) == 0) ? (byte) (b1 >> 2) :
+        (byte) ((b1) >> 2 ^ 0xc0);
+      encoded[encodedIndex] = lookupBase64Alphabet[v];
+      encoded[encodedIndex + 1] = lookupBase64Alphabet[k << 4];
+      encoded[encodedIndex + 2] = (byte) '=';
+      encoded[encodedIndex + 3] = (byte) '=';
+    }
+    else if (fewerThan24 == 16) {
+      b1 = input[dataIndex];
+      b2 = input[dataIndex + 1];
+      l = (byte) (b2 & 0x0f);
+      k = (byte) (b1 & 0x03);
+
+      byte v1 = ((b1 & -128) == 0) ? (byte) (b1 >> 2) :
+        (byte) ((b1) >> 2 ^ 0xc0);
+      byte v2 = ((b2 & -128) == 0) ? (byte) (b2 >> 4) :
+        (byte) ((b2) >> 4 ^ 0xf0);
+
+      encoded[encodedIndex] = lookupBase64Alphabet[v1];
+      encoded[encodedIndex + 1] = lookupBase64Alphabet[v2 | (k << 4)];
+      encoded[encodedIndex + 2] = lookupBase64Alphabet[l << 2];
+      encoded[encodedIndex + 3] = (byte) '=';
+    }
+
+    return encoded;
+  }
 
   // -- Decompression methods --
 
