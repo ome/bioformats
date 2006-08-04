@@ -15,6 +15,7 @@
 	</OMEElement>
 	<OMEElement XMLName="Image" Description="Information about the image acquired.">
 		<OMEAttribute XMLName="ID"  Type="ID"/>
+		<OMEAttribute XMLName="Description" Type="Desc"/>
 		<OMEAttribute XMLName="Name" Description="The name of this image."/>
 		<OMEAttribute XMLName="CreationDate" Description="The date when this image was created."/>
 		<OMEAttribute XMLName="Experimenter" Type="Ref" Description="Refers to the experimenter associated with this image."/>

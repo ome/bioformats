@@ -23,6 +23,8 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JTextArea;
+import javax.swing.JScrollPane;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.table.TableModel;
 
@@ -211,6 +213,19 @@ public class VariableComboEditor extends AbstractCellEditor
 		
 		    return thisBox;
       }
+      else if (cellType.equals("Desc")) {
+        table.setRowHeight(row, table.getRowHeight() * 4);
+				JTextArea thisText = new JTextArea(new RowDoc(row), (String) value, 1, 4);
+				thisText.setLineWrap(true);
+        thisText.setWrapStyleWord(true);
+	      thisText.setEditable(true);
+	      thisText.getDocument().addDocumentListener(this);
+	      thisText.addFocusListener(this);
+	      thisText.addMouseListener(this);
+	      JScrollPane jScr = new JScrollPane(thisText);
+//        jScr.setSize(jScr.getSize().width,jScr.getSize().height * 4); 
+	      return jScr;
+      }
       else return null;
     }
    }
@@ -338,17 +353,28 @@ public class VariableComboEditor extends AbstractCellEditor
       }
       catch (Exception exc) {System.out.println(exc);}
     }
-    if (e.getSource() instanceof JRowBox) {
+    else if (e.getSource() instanceof JRowBox) {
       JRowBox thisBox = (JRowBox) e.getSource();
       result = (String) thisBox.getSelectedItem();
     }
+    else if (e.getSource() instanceof JTextArea) {
+      JTextArea text = (JTextArea) e.getSource();
+      try {
+        result = text.getDocument().getText(0, 
+          text.getDocument().getLength());
+      }
+      catch (Exception exc) {System.out.println(exc);}
+    }
   }
   
-  public void focusLost(FocusEvent e) {}
+  public void focusLost(FocusEvent e) {
+
+  }
 
   public void mousePressed(MouseEvent e) {
 	  if (e.getSource() instanceof JTextField &&
-    e.getButton() == MouseEvent.BUTTON1) {
+      e.getButton() == MouseEvent.BUTTON1)
+    {
 		  JTextField text = (JTextField) e.getSource();
 		  try {
 		    result = text.getDocument().getText(0, 
@@ -361,12 +387,29 @@ public class VariableComboEditor extends AbstractCellEditor
 		  JRowBox thisBox = (JRowBox) e.getSource();
       result = (String) thisBox.getSelectedItem();
 	  }
+	  else if (e.getSource() instanceof JTextArea &&
+	    e.getButton() == MouseEvent.BUTTON1) 
+	  {
+      JTextArea text = (JTextArea) e.getSource();
+      try {
+        result = text.getDocument().getText(0, 
+          text.getDocument().getLength());
+      }
+      catch (Exception exc) {System.out.println(exc);}
+    }
 	}
 	
   public void mouseReleased(MouseEvent e) {}
   public void mouseClicked(MouseEvent e) {}
   public void mouseEntered(MouseEvent e) {}
-  public void mouseExited(MouseEvent e) {}
+  public void mouseExited(MouseEvent e) {
+    if (e.getSource() instanceof JTextArea) {
+      JTextArea jta = (JTextArea) e.getSource();
+      RowDoc rd = (RowDoc) jta.getDocument();
+      refTable.setRowHeight(rd.row, refTable.getRowHeight());
+      fireEditingStopped();
+    }
+  }
   
 // -- Helper Classes --
 

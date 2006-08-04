@@ -6,6 +6,7 @@ import javax.swing.*;
 import org.openmicroscopy.xml.*;
 import org.w3c.dom.*;
 import javax.swing.event.*;
+import javax.swing.border.*;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -33,6 +34,7 @@ public class NotePanel extends JPanel
 	  super();
 	  
 	  tableP = tp;
+	  setBorder(new EmptyBorder(5,5,5,5));
 	  setBackground(BACK_COLOR);
 	  
 	  Vector noteEleList = getNoteElements();
@@ -63,9 +65,9 @@ public class NotePanel extends JPanel
       JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 	  
     FormLayout layout = new FormLayout(
-      "pref, 5dlu, pref:grow, 5dlu, pref, 5dlu, pref",
+      "pref, 5dlu, pref, 5dlu, pref:grow:right, 5dlu, pref",
       "pref,2dlu,pref");
-    PanelBuilder builder = new PanelBuilder(layout);
+    setLayout(layout);
     CellConstraints cc = new CellConstraints();
     
     if (thisModel.size() == 0)
@@ -87,7 +89,7 @@ public class NotePanel extends JPanel
     addBTN.addActionListener(noteList);
     addBTN.setToolTipText("Add a new note to the \"Name\" list.");
     addBTN.setForeground(MetadataPane.ADD_COLOR);
-    addBTN.setBackground(BACK_COLOR);
+    addBTN.setOpaque(false);
     
     JButton delBTN = new JButton("Delete Note");
     delBTN.setPreferredSize(new Dimension(100,17));
@@ -95,18 +97,17 @@ public class NotePanel extends JPanel
     delBTN.addActionListener(noteList);
     delBTN.setToolTipText("Delete the note selected in the \"Name\" list.");
     delBTN.setForeground(MetadataPane.DELETE_COLOR);
-    delBTN.setBackground(BACK_COLOR);
+    delBTN.setOpaque(false);
     
-    builder.add(nameLabel, cc.xy(1,1, "left,center"));
-    builder.add(noteLabel, cc.xy(3,1, "left,center"));
+    add(nameLabel, cc.xy(1,1, "left,center"));
+    add(noteLabel, cc.xy(3,1, "left,center"));
     
-    builder.add(addBTN, cc.xy(5,1, "left,center"));
-    builder.add(delBTN, cc.xy(7,1, "left,center"));
+    add(addBTN, cc.xy(5,1, "right,center"));
+    add(delBTN, cc.xy(7,1, "right,center"));
     
-    builder.add(jScroll, cc.xy(1,3, "fill,center"));
-    builder.add(jNoteScroll, cc.xyw(3,3,5, "fill,center"));
-    builder.getPanel().setBackground(BACK_COLOR);
-    add(builder.getPanel());
+    add(jScroll, cc.xy(1,3, "fill,center"));
+    add(jNoteScroll, cc.xyw(3,3,5, "fill,center"));
+    setBackground(BACK_COLOR);
     setVisible(false);
     if(noteEleList != null) setVisible(true);
 	}

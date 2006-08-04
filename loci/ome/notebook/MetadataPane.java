@@ -13,6 +13,7 @@ import javax.swing.border.EmptyBorder;
 import loci.formats.RandomAccessStream;
 import loci.formats.TiffTools;
 import loci.formats.ReflectedUniverse;
+import loci.formats.in.*;
 import org.openmicroscopy.xml.*;
 import org.w3c.dom.*;
 import java.awt.event.*;
@@ -24,7 +25,7 @@ import com.jgoodies.forms.layout.FormLayout;
 
 /** MetadataPane is a panel that displays OME-XML metadata. */
 public class MetadataPane extends JPanel
-  implements Runnable
+  implements ActionListener, Runnable
 {
   // -- Constants --
   protected static final String[] TREE_COLUMNS = {"Attribute", "Value", "Goto"};
@@ -42,6 +43,9 @@ public class MetadataPane extends JPanel
     
   public static final Color DELETE_COLOR =
     new Color(100,0,0);
+    
+  public static final Color TEXT_COLOR =
+    new Color(0,0,50);
 
   // -- Fields --
 
@@ -69,7 +73,11 @@ public class MetadataPane extends JPanel
   /** Hashtable containing internal semantic type defs in current file*/
   public Hashtable internalDefs;
   
-  public Boolean hasChanged;
+  public boolean hasChanged;
+  
+  protected boolean addSave;
+  
+  protected File currentFile; 
 
   // -- Fields - raw panel --
 
@@ -87,7 +95,17 @@ public class MetadataPane extends JPanel
 
   /** Constructs widget for displaying OME-XML metadata. */
   public MetadataPane() {
-
+    this((File) null, true);
+  }
+  
+  public MetadataPane(File f)
+  {
+    this(f, true);
+  }
+  
+  //file: the file to open initially
+  //addSave: whether or not to display the save button
+  public MetadataPane(File file, boolean save) {
     // -- General Field Initialization --
 
     panelList = new Vector();
@@ -98,14 +116,15 @@ public class MetadataPane extends JPanel
     thisOmeNode = null;
     internalDefs = null;
     hasChanged = false;
+    currentFile = null;
+    addSave = save;
 
     // -- Tabbed Pane Initialization --
 
-
     tabPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
     setupTabs();
-    setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-    add(tabPane);
+    setLayout(new CardLayout());
+    add(tabPane,"tabs");
     setPreferredSize(new Dimension(700, 500));
     tabPane.setVisible(true);
     setVisible(true);
@@ -130,19 +149,15 @@ public class MetadataPane extends JPanel
     rawText.setEditable(false);
     rawPanel.add(new JScrollPane(rawText), BorderLayout.CENTER);
     rawPanel.setVisible(false);
-    add(rawPanel);
-  }
-  
-  public MetadataPane(File f)
-  {
-    this();
-    setOMEXML(f);
-  }
-
-  public MetadataPane(OMENode ome)
-  {
-    this();
-    setOMEXML(ome);
+    add(rawPanel,"raw");
+    
+    if (file != null) {
+	    setOMEXML(file);
+	    if (getTopLevelAncestor() instanceof MetadataNotebook) {
+	      MetadataNotebook mn = (MetadataNotebook) getTopLevelAncestor();
+	      mn.setCurrentFile(file);
+	    }
+	  }
   }
 
   // -- MetadataPane API methods --
@@ -164,6 +179,26 @@ public class MetadataPane extends JPanel
   public void stateChanged(boolean change) {hasChanged = change;} 
 
   public OMENode getRoot() { return thisOmeNode; }
+  
+  public void saveFile(File file) {
+    try {
+      //use the node tree in the MetadataPane to write flattened OMECA
+      //to a given file
+      thisOmeNode.writeOME(file, true);
+      if (getTopLevelAncestor() instanceof MetadataNotebook) {
+        MetadataNotebook mdn = (MetadataNotebook) getTopLevelAncestor();
+        mdn.setTitle("OME Metadata Notebook - " + file);
+      }
+    }
+    catch (Exception e) {
+      //if all hell breaks loose, display an error dialog
+      JOptionPane.showMessageDialog(this,
+            "Sadly, the file you specified is either write-protected\n" +
+            "or in use by another program. Game over, man.",
+            "Unable to Write to Specified File", JOptionPane.ERROR_MESSAGE);
+      System.out.println("ERROR! Attempt failed to open file: " + file.getName() );
+    }
+  }
 
   /**
    * Sets the displayed OME-XML metadata to correspond
@@ -220,6 +255,7 @@ public class MetadataPane extends JPanel
         }
         else return false;
       }
+      currentFile = file;
       return true;
     }
     catch (IOException exc) { return false; }
@@ -490,13 +526,23 @@ public class MetadataPane extends JPanel
       title.setFont(newFont);
       if (tp.oNode != null) title.setText(" " + getTreePathName(tp.el,tp.oNode) + ":");
       else title.setText(" " + getTreePathName(tp.el) + ":");
-      titlePanel.add(title);
-      Color aColor = title.getBackground();
+      title.setForeground(new Color(255,255,255));
+      
+      JButton saveButton = new JButton("Save");
+      saveButton.setPreferredSize(new Dimension(70,17));
+      saveButton.setActionCommand("save");
+      saveButton.addActionListener(this);
+      saveButton.setOpaque(false);
+      saveButton.setForeground(TEXT_COLOR);
+      if(!addSave) saveButton.setVisible(false);
+     
+      Color aColor = getBackground();
+      
+      JTextArea descrip = new JTextArea();
 
       //if title has a description, add it in italics
       if (tp.el.hasAttribute("Description")) {
         if(tp.el.getAttribute("Description").length() != 0) {
-          JTextArea descrip = new JTextArea();
           descrip.setEditable(false);
           descrip.setLineWrap(true);
           descrip.setWrapStyleWord(true);
@@ -505,11 +551,20 @@ public class MetadataPane extends JPanel
             Font.ITALIC,thisFont.getSize());
           descrip.setFont(newFont);
           descrip.setText( "     " + tp.el.getAttribute("Description"));
-          titlePanel.add(descrip);
         }
       }
-      title.setForeground(new Color(255,255,255));
-      titlePanel.setBackground(new Color(0,0,50));
+      
+      FormLayout myLayout = new FormLayout(
+        "pref, 5dlu, pref:grow:right, 5dlu",
+        "5dlu, pref, 5dlu, pref");
+      PanelBuilder build = new PanelBuilder(myLayout);
+      CellConstraints cellC = new CellConstraints();
+      
+      build.add( title, cellC.xy(1, 2, "left,center"));
+      build.add( saveButton, cellC.xy(3, 2, "right,center"));
+      build.add( descrip, cellC.xyw(1, 4, 4, "fill,center"));
+      titlePanel = build.getPanel();
+      titlePanel.setBackground(TEXT_COLOR);
       
 	  //this sets up titlePanel so we can access its height later to
 	  //use for "Goto" button scrollpane view setting purposes
@@ -607,29 +662,28 @@ public class MetadataPane extends JPanel
         }
       }
       
-      String rowString = "";
+      String rowString = "pref, 10dlu, ";
       for (int i = 0;i<iHoldTables.size();i++) {
-      	rowString = rowString + "5dlu, pref, ";
+      	rowString = rowString + "pref, 5dlu, ";
       }
       rowString = rowString.substring(0, rowString.length() - 2);
         
       FormLayout layout = new FormLayout(
         "5dlu, 5dlu, pref:grow, 5dlu, 5dlu",
         rowString);
-      PanelBuilder builder = new PanelBuilder(layout);
+      tp.setLayout(layout);
       CellConstraints cc = new CellConstraints();
       
-      int row = 0;
+      tp.add(titlePanel, cc.xyw(1,1,5));
+      
+      int row = 1;
       for (int i = 0;i<iHoldTables.size();i++) {
         row = row + 2;
-				if (i == 0) builder.add( (Component)iHoldTables.get(i), cc.xyw(2, row, 2, "left,center"));
-				else builder.add( (Component)iHoldTables.get(i), cc.xyw(3, row, 2, "left,center"));
+				if (i == 0) tp.add( (Component)iHoldTables.get(i), cc.xyw(2, row, 2, "fill,center"));
+				else tp.add( (Component)iHoldTables.get(i), cc.xyw(3, row, 2, "fill,center"));
       }
       
       //Layout stuff distinguishes between the title and the data panels
-      tp.setLayout(new BorderLayout());
-      tp.add(titlePanel,BorderLayout.NORTH);
-      tp.add(builder.getPanel(),BorderLayout.CENTER);
     }
   }
 
@@ -656,6 +710,14 @@ public class MetadataPane extends JPanel
   }
 
   // -- Event API methods --
+  
+  public void actionPerformed(ActionEvent e) {
+    String cmd = e.getActionCommand();
+    if (cmd.equals("save")) {
+      saveFile(currentFile);
+      stateChanged(false);
+		}
+  }
   
   // -- Static methods --
   
@@ -874,7 +936,7 @@ public class MetadataPane extends JPanel
     }
     
     public String toString() { return el == null ? "null" : el.getTagName(); }
-        
+            
     public Dimension getPreferredScrollableViewportSize() {
       return getPreferredSize();
     }
@@ -971,6 +1033,7 @@ public class MetadataPane extends JPanel
         tableName.setToolTipText(el.getAttribute("ShortDesc"));
       else if (el.hasAttribute("Description"))
         tableName.setToolTipText(el.getAttribute("Description"));
+      tableName.setForeground(TEXT_COLOR);
       
       noteButton = new JButton("Notes");
       noteButton.setPreferredSize(new Dimension(85,17));
@@ -978,7 +1041,7 @@ public class MetadataPane extends JPanel
       noteButton.setActionCommand("getNotes");
       noteButton.setToolTipText(
         "Display or hide the notes associated with this " + name + ".");
-      noteButton.setForeground(new Color(0,0,50));
+      noteButton.setForeground(TEXT_COLOR);
       
       DefaultTableModel myTableModel = 
         new DefaultTableModel(TREE_COLUMNS, 0)
@@ -989,17 +1052,13 @@ public class MetadataPane extends JPanel
         }
       };
       
-      FormLayout layout = new FormLayout(
-        "pref, 10dlu, pref, pref:grow, pref, 5dlu, pref",
-        "pref,2dlu,pref,pref,3dlu,pref,3dlu");
-      PanelBuilder builder = new PanelBuilder(layout);
-      CellConstraints cc = new CellConstraints();
-      
       table = new ClickableTable(myTableModel, this);
-      table.setAutoResizeMode( JTable.AUTO_RESIZE_OFF );
+//      table.setAutoResizeMode( JTable.AUTO_RESIZE_OFF );
       table.getColumnModel().getColumn(0).setPreferredWidth(125);
       table.getColumnModel().getColumn(1).setPreferredWidth(430);
       table.getColumnModel().getColumn(2).setPreferredWidth(70);
+      table.getColumnModel().getColumn(2).setMaxWidth(70);
+      table.getColumnModel().getColumn(2).setMinWidth(70);
       JTableHeader tHead = table.getTableHeader();
       tHead.setResizingAllowed(true);
       tHead.setReorderingAllowed(true);
@@ -1008,7 +1067,7 @@ public class MetadataPane extends JPanel
       myTableModel.setRowCount(attrList.size() + refList.size());
       
       JButton addButton = new JButton("New Table");
-      addButton.setPreferredSize(new Dimension(100,17));
+      addButton.setPreferredSize(new Dimension(110,17));
       addButton.addActionListener(table);
       addButton.setActionCommand("bigAdd");
       addButton.setToolTipText("Create a new " + name + " table.");
@@ -1016,19 +1075,30 @@ public class MetadataPane extends JPanel
       addButton.setForeground(ADD_COLOR);
       
       JButton delButton = new JButton("Delete Table");
-      delButton.setPreferredSize(new Dimension(100,17));
+      delButton.setPreferredSize(new Dimension(110,17));
       delButton.addActionListener(table);
       delButton.setActionCommand("bigRem");
       delButton.setToolTipText("Delete this " + name + " table.");
       if ( oNode == null) delButton.setVisible(false);
       delButton.setForeground(DELETE_COLOR);
       
-    	builder.add(tableName, cc.xy(1,1));
-			builder.add(noteButton, cc.xy(3,1, "left,center"));
-			builder.add(addButton, cc.xyw(5,1,1, "right,center"));
-			builder.add(delButton, cc.xyw(7,1,1, "right,center"));
-			builder.add(tHead, cc.xyw(1,3,7));
-			builder.add(table, cc.xyw(1,4,7, "fill, center"));
+      
+      noteP = new NotePanel(this);
+      setNumNotes(noteP.getNumNotes());
+      
+      FormLayout layout = new FormLayout(
+        "pref, 10dlu, pref, pref:grow:right, 5dlu, pref",
+        "pref,2dlu,pref,pref,3dlu,pref,3dlu");
+      setLayout(layout);
+      CellConstraints cc = new CellConstraints();
+      
+    	add(tableName, cc.xy(1,1));
+			add(noteButton, cc.xy(3,1, "left,center"));
+			add(addButton, cc.xyw(4,1,1, "right,center"));
+			add(delButton, cc.xyw(6,1,1, "right,center"));
+			add(tHead, cc.xyw(1,3,6, "fill, center"));
+			add(table, cc.xyw(1,4,6, "fill, center"));
+      add(noteP, cc.xyw(1,6,6, "fill,center"));
 			
 			if (oNode == null) {
         tHead.setVisible(false);
@@ -1103,12 +1173,6 @@ public class MetadataPane extends JPanel
           }
         } 
       }
-      
-      noteP = new NotePanel(this);
-      builder.add(noteP, cc.xyw(1,6,7, "fill,center"));
-      setNumNotes(noteP.getNumNotes());
-      
-      add(builder.getPanel());
     }
 
     public void setEditor() {
@@ -1207,7 +1271,7 @@ public class MetadataPane extends JPanel
         else noteP.setVisible(true);
         noteP.revalidate();
       }
-    }
+    }  
     
     public void callReRender() {
       reRender();

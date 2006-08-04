@@ -2,11 +2,14 @@ package loci.ome.notebook;
 
 import java.awt.Cursor;
 import java.awt.Toolkit;
+import java.awt.CardLayout;
 import java.awt.event.*;
 import java.io.File;
 import javax.swing.*;
+import javax.swing.border.*;
 import loci.ome.viewer.*;
 import loci.util.About;
+
 import org.w3c.dom.*;
 
 /**
@@ -17,7 +20,7 @@ import org.w3c.dom.*;
 */
 
 public class MetadataNotebook extends JFrame
-  implements ActionListener, Runnable
+  implements ActionListener, ItemListener, Runnable
 {
 
   // -- Constants --
@@ -34,6 +37,8 @@ public class MetadataNotebook extends JFrame
   protected File currentFile;
   protected JMenu tabsMenu;
   protected boolean opening;
+  protected loci.ome.viewer.MetadataPane mdp;
+  protected JMenuItem fileNew;
 
   // -- Constructor --
 
@@ -47,8 +52,10 @@ public class MetadataNotebook extends JFrame
     //give the Template.xml file to the parser to feed on
     File f = new File("Template.xml");
     TemplateParser tp = new TemplateParser(f);
-    //create a MetadataPane, where most everything happens
     
+    mdp = new loci.ome.viewer.MetadataPane();
+    
+    //create a MetadataPane, where most everything happens
     if( args.length > 0 ) {
 			File file = null;
       try {
@@ -57,17 +64,30 @@ public class MetadataNotebook extends JFrame
       catch (Exception exc) {
         System.out.println("Error occured: You suck.");
       }
+      currentFile = file;
       metadata = new MetadataPane(file);
     }
     else metadata = new MetadataPane();
-    setContentPane(metadata);
+    
+    metadata.setVisible(true);
+    mdp.setVisible(false);
+    
+    JPanel contentPanel = new JPanel();
+    contentPanel.setLayout(new CardLayout());
+    contentPanel.setBorder((EmptyBorder) null);
+//    metadata.setBorder(new EmptyBorder(0,0,0,0));
+//    mdp.setBorder(new EmptyBorder(0,0,0,0));
+    contentPanel.add("notebook", metadata);
+    contentPanel.add("viewer", mdp);
+    setContentPane(contentPanel);
 
     //setup the menus on this frame
     JMenuBar menubar = new JMenuBar();
     setJMenuBar(menubar);
     JMenu file = new JMenu("File");
     menubar.add(file);
-    JMenuItem fileNew = new JMenuItem("New...");
+    file.setMnemonic('f');
+    fileNew = new JMenuItem("New...");
     file.add(fileNew);
     fileNew.setActionCommand("new");
     fileNew.addActionListener(this);
@@ -104,6 +124,7 @@ public class MetadataNotebook extends JFrame
     //setup the tab menu to reflect the top-level tab names gathered by
     //TemplateParser from the template in Template.xml
     tabsMenu = new JMenu("Tabs");
+    tabsMenu.setMnemonic('b');
     menubar.add(tabsMenu);
     Element[] tabs = tp.getTabs();
     String[] tabNames = new String[tabs.length];
@@ -115,15 +136,17 @@ public class MetadataNotebook extends JFrame
     changeTabMenu(tabNames);
 
     JMenu toolsMenu = new JMenu("Tools");
+    toolsMenu.setMnemonic('t');
     menubar.add(toolsMenu);
-    JMenuItem advView = new JMenuItem("Advanced Viewer");
+    JCheckBoxMenuItem advView = new JCheckBoxMenuItem("XML View");
+    advView.setSelected(false);
     toolsMenu.add(advView);
-    advView.setActionCommand("advanced");
-    advView.addActionListener(this);
+    advView.addItemListener(this);
     advView.setMnemonic('v');
     advView.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, MENU_MASK));
 
     JMenu help = new JMenu("Help");
+    help.setMnemonic('h');
     menubar.add(help);
     JMenuItem helpAbout = new JMenuItem("About");
     help.add(helpAbout);
@@ -135,9 +158,6 @@ public class MetadataNotebook extends JFrame
     //make a filechooser to open and save our precious files
     chooser = new JFileChooser(System.getProperty("user.dir"));
 
-    //if arguments are specified, it means we should immediately open the
-    //file with filename specified in the first argument
-    if (args.length > 0) openFile(new File(args[0]));
     //useful frame method that handles closing of window
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     //put frame in the right place, with the right size, and make visible
@@ -149,9 +169,14 @@ public class MetadataNotebook extends JFrame
 
   // -- MetadataViewer API methods --
 
+  protected void setCurrentFile(File aFile) {
+    currentFile = aFile;
+  }
+
   //opens a file, sets the title of the frame to reflect the current file
   public void openFile(File file) {
     metadata.setOMEXML(file);
+    mdp.setOMEXML(file);
     setTitle("OME Metadata Notebook - " + file);
   }
 
@@ -254,18 +279,48 @@ public class MetadataNotebook extends JFrame
       saveFile(currentFile);
       metadata.stateChanged(false);
     }
-    else if ("exit".equals(cmd)) System.exit(0);
-    else if ("about".equals(cmd)) About.show();
-    else if ("advanced".equals(cmd)) {
-      String[] stuff = {};
-      MetadataViewer mdv = new MetadataViewer(stuff);
-      mdv.openFile(currentFile);
+    else if ("exit".equals(cmd)) {
+          if (metadata.getState()) {
+        Object[] options = {"Yes, exit!",
+                    "No thanks."};
+				int n = JOptionPane.showOptionDialog(this,
+			    "Are you sure you want to exit without\n" +
+			    "saving your changes to the current file?",
+			    "Current File Not Saved",
+			    JOptionPane.YES_NO_OPTION,
+			    JOptionPane.QUESTION_MESSAGE,
+			    null,     //don't use a custom Icon
+			    options,  //the titles of buttons
+			    options[0]); //default button title
+			  if (n == JOptionPane.YES_OPTION) {
+			    System.exit(0);
+			  }
+      }
+      else {
+				System.exit(0);
+      }
     }
+    else if ("about".equals(cmd)) About.show();
     else if(cmd.startsWith("tabChange")) {
       metadata.tabChange( Integer.parseInt(cmd.substring(9)) );
     }
   }
 
+  public void itemStateChanged(ItemEvent e) {
+		if (e.getStateChange() == ItemEvent.SELECTED) {
+		  metadata.setVisible(false);
+		  tabsMenu.setEnabled(false);
+		  fileNew.setEnabled(false);
+			mdp.setVisible(true);
+      mdp.setOMEXML(metadata.getRoot());
+    }
+    else {
+      mdp.setVisible(false);
+      tabsMenu.setEnabled(true);
+		  fileNew.setEnabled(true);
+			metadata.setVisible(true);
+	  }
+  }
 
   // -- Runnable API methods --
 
