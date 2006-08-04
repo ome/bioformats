@@ -278,6 +278,7 @@ public abstract class FormatReader extends FormatHandler {
       try {
         Class c = Class.forName("loci.formats.OMEXMLMetadataStore");
         MetadataStore ms = (MetadataStore) c.newInstance();
+        ms.createRoot();
         setMetadataStore(ms);
       }
       catch (Exception exc) { }
@@ -370,16 +371,18 @@ public abstract class FormatReader extends FormatHandler {
     System.out.println();
 
     // output OME-XML
-    MetadataStore ms = cm.getMetadataStore(id);
-    try {
-      Method m = ms.getClass().getMethod("dumpXML", null);
-      System.out.println("OME-XML:");
-      System.out.println(m.invoke(ms, null));
-      System.out.println();
-    }
-    catch (Exception exc) {
-      System.err.println("OME-XML functionality not available:");
-      exc.printStackTrace();
+    if (omexml) {
+      MetadataStore ms = cm.getMetadataStore(id);
+      try {
+        Method m = ms.getClass().getMethod("dumpXML", null);
+        System.out.println("OME-XML:");
+        System.out.println(m.invoke(ms, null));
+        System.out.println();
+      }
+      catch (Exception exc) {
+        System.err.println("OME-XML functionality not available:");
+        exc.printStackTrace();
+      }
     }
 
     return true;
