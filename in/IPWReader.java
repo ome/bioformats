@@ -90,6 +90,16 @@ public class IPWReader extends BaseTiffReader {
       block[2] == 0x11 && block[3] == 0xe0);
   }
 
+  /**
+   * Allows the client to specify whether or not to separate channels.
+   * By default, channels are left unseparated; thus if we encounter an RGB
+   * image plane, it will be left as RGB and not split into 3 separate planes.
+   */
+  public void setSeparated(boolean separate) {
+    separated = separate;
+    super.setSeparated(separate);
+  }
+
   /** Determines the number of images in the given IPW file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
