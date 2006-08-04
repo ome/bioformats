@@ -124,6 +124,17 @@ public class LeicaReader extends BaseTiffReader {
     return (isRGB(id) && separated) ? 3*numImages : numImages;
   }
 
+  /**
+   * Allows the client to specify whether or not to separate channels.
+   * By default, channels are left unseparated; thus if we encounter an RGB
+   * image plane, it will be left as RGB and not split into 3 separate planes.
+   */
+  public void setSeparated(boolean separate) {
+    separated = separate;
+    if (tiff != null) tiff.setSeparated(separate);
+    super.setSeparated(separate);
+  }
+
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
@@ -192,7 +203,14 @@ public class LeicaReader extends BaseTiffReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    return tiff.openBytes(files[no], no);
+
+    if (no < 0 || no >= getImageCount(id)) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+    if (isRGB(id) && separated) {
+      return tiff.openBytes(files[no / 3], no % 3);
+    }
+    return tiff.openBytes(files[no], 0);
   }
 
   /** Obtains the specified image from the given Leica file. */
@@ -207,6 +225,9 @@ public class LeicaReader extends BaseTiffReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
+    if (isRGB(id) && separated) {
+      return tiff.openImage(files[no / 3], no % 3);
+    }
     return tiff.openImage(files[no], 0);
   }
 
