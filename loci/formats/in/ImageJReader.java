@@ -43,7 +43,7 @@ public class ImageJReader extends FormatReader {
 
   /** Legal ImageJ suffixes. */
   private static final String[] SUFFIXES = {
-    "tif", "tiff", "dicom", "fits", "pgm", "jpg", "jpeg", "jpe",
+    "tif", "tiff", "dcm", "dicom", "fits", "pgm", "jpg", "jpeg", "jpe",
     "gif", "png", "lut", "bmp", "zip", "roi"
   };
 
@@ -186,7 +186,7 @@ public class ImageJReader extends FormatReader {
     filters = new FileFilter[] {
       new ExtensionFileFilter(new String[] {"tif", "tiff"},
         "Tagged Image File Format"),
-      new ExtensionFileFilter("dicom",
+      new ExtensionFileFilter(new String[] {"dcm", "dicom"},
         "Digital Imaging and Communications in Medicine"),
       new ExtensionFileFilter("fits",
         "Flexible Image Transport System"),

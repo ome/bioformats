@@ -103,7 +103,7 @@ public class DicomReader extends FormatReader {
 
   /** Constructs a new DICOM reader. */
   public DicomReader() {
-    super("Digital Imaging and Communication in Medicine",
+    super("Digital Imaging and Communications in Medicine",
       new String[] {"dcm", "dicom"});
   }
 
