@@ -192,7 +192,8 @@ public class FileStitcher extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return reader.openImage(findFile(no), number);
+    return reader.openImage(findFile(isSeparated() ? no / getSizeC(id) : no),
+      number);
   }
 
   /** Obtains the specified image from the given file as a byte array. */
@@ -200,7 +201,8 @@ public class FileStitcher extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return reader.openBytes(findFile(no), number);
+    return reader.openBytes(findFile(isSeparated() ? no / getSizeC(id) : no),
+      number);
   }
 
   /** Closes the currently open file. */
