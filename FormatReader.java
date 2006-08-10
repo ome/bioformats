@@ -393,6 +393,7 @@ public abstract class FormatReader extends FormatHandler {
   public boolean testRead(String[] args) throws FormatException, IOException {
     String id = null;
     boolean pixels = true;
+    boolean merge = false;
     boolean stitch = false;
     boolean separate = false;
     boolean omexml = false;
@@ -400,6 +401,7 @@ public abstract class FormatReader extends FormatHandler {
       for (int i=0; i<args.length; i++) {
         if (args[i].startsWith("-")) {
           if (args[i].equals("-nopix")) pixels = false;
+          else if (args[i].equals("-merge")) merge = true;
           else if (args[i].equals("-stitch")) stitch = true;
           else if (args[i].equals("-separate")) separate = true;
           else if (args[i].equals("-omexml")) omexml = true;
@@ -415,7 +417,7 @@ public abstract class FormatReader extends FormatHandler {
       String className = getClass().getName();
       System.out.println("To test read a file in " + format + " format, run:");
       System.out.println("  java " + className + " [-nopix]");
-      System.out.println("    [-stitch] [-separate] [-omexml] in_file");
+      System.out.println("    [-merge] [-stitch] [-separate] [-omexml] file");
       return false;
     }
     if (omexml) {
@@ -432,24 +434,24 @@ public abstract class FormatReader extends FormatHandler {
     System.out.print("Checking " + format + " format ");
     System.out.println(isThisType(id) ? "[yes]" : "[no]");
 
-
-    ChannelMerger cm = new ChannelMerger(stitch ?
-      new FileStitcher(this) : this);
+    FormatReader reader = this;
+    if (stitch) reader = new FileStitcher(reader);
+    if (merge) reader = new ChannelMerger(reader);
 
     // read pixels
     if (pixels) {
       System.out.print("Reading " + (stitch ?
         FilePattern.findPattern(new File(id)) : id) + " pixel data ");
       long s1 = System.currentTimeMillis();
-      cm.setSeparated(separate);
-      int num = cm.getImageCount(id);
+      reader.setSeparated(separate);
+      int num = reader.getImageCount(id);
 
       System.out.print("(" + num + ") ");
       long e1 = System.currentTimeMillis();
       BufferedImage[] images = new BufferedImage[num];
       long s2 = System.currentTimeMillis();
       for (int i=0; i<num; i++) {
-        images[i] = cm.openImage(id, i);
+        images[i] = reader.openImage(id, i);
         System.out.print(".");
       }
       long e2 = System.currentTimeMillis();
@@ -471,15 +473,15 @@ public abstract class FormatReader extends FormatHandler {
     // read metadata
     System.out.println();
     System.out.print("Reading " + id + " metadata ");
-    int imageCount = cm.getImageCount(id);
-    boolean rgb = cm.isRGB(id);
-    int sizeX = cm.getSizeX(id);
-    int sizeY = cm.getSizeY(id);
-    int sizeZ = cm.getSizeZ(id);
-    int sizeC = cm.getSizeC(id);
-    int sizeT = cm.getSizeT(id);
-    boolean little = cm.isLittleEndian(id);
-    String dimOrder = cm.getDimensionOrder(id);
+    int imageCount = reader.getImageCount(id);
+    boolean rgb = reader.isRGB(id);
+    int sizeX = reader.getSizeX(id);
+    int sizeY = reader.getSizeY(id);
+    int sizeZ = reader.getSizeZ(id);
+    int sizeC = reader.getSizeC(id);
+    int sizeT = reader.getSizeT(id);
+    boolean little = reader.isLittleEndian(id);
+    String dimOrder = reader.getDimensionOrder(id);
     Hashtable meta = getMetadata(id);
     System.out.println("[done]");
 
@@ -539,7 +541,7 @@ public abstract class FormatReader extends FormatHandler {
 
     // output OME-XML
     if (omexml) {
-      MetadataStore ms = cm.getMetadataStore(id);
+      MetadataStore ms = reader.getMetadataStore(id);
       try {
         Method m = ms.getClass().getMethod("dumpXML", null);
         System.out.println("OME-XML:");
