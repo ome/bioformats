@@ -39,7 +39,7 @@ public abstract class ImageTransform extends DataTransform {
 
   /** Micron unit. */
   public static final ScaledUnit MICRON =
-    new ScaledUnit(1e-6, SI.meter, "mu"); // VisAD font does not display "µ"
+    new ScaledUnit(1e-6, SI.meter, "mu"); // VisAD font does not show MU char
 
 
   // -- Fields --
@@ -284,7 +284,7 @@ public abstract class ImageTransform extends DataTransform {
       sb.append(micronWidth);
       sb.append(" x ");
       sb.append(micronHeight);
-      sb.append(" µ)");
+      sb.append(" " + MU + ")");
     }
     sb.append("</li>\n");
 
@@ -292,7 +292,7 @@ public abstract class ImageTransform extends DataTransform {
     if (micronStep == micronStep) {
       sb.append("<li>");
       sb.append(micronStep);
-      sb.append(" µ between slices</li>\n");
+      sb.append(" " + MU + " between slices</li>\n");
     }
 
     // range component count

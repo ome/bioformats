@@ -287,7 +287,7 @@ public class DataSampling extends ImageTransform {
       sb.append(micronWidth);
       sb.append(" x ");
       sb.append(micronHeight);
-      sb.append(" µ)");
+      sb.append(" " + MU + ")");
     }
     sb.append("</li>\n");
 
@@ -295,7 +295,7 @@ public class DataSampling extends ImageTransform {
     if (micronStep == micronStep) {
       sb.append("<li>");
       sb.append(micronStep);
-      sb.append(" µ between slices</li>\n");
+      sb.append(" " + MU + " between slices</li>\n");
     }
 
     // range component count

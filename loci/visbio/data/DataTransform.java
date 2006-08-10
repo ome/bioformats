@@ -36,6 +36,10 @@ import visad.*;
 /** DataTransform is the superclass of all data transform types. */
 public abstract class DataTransform implements Dynamic, Saveable {
 
+  // -- Constants --
+
+  public static final char MU = (char) 181;
+
   // -- Static fields --
 
   /** Next free transform id number. */
