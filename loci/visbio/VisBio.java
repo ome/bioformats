@@ -45,13 +45,13 @@ public class VisBio extends Thread {
   public static final String TITLE = "VisBio";
 
   /** Application version. */
-  public static final String VERSION = "v3.29";
+  public static final String VERSION = "v3.30";
 
   /** Application author. */
   public static final String AUTHOR = "Curtis Rueden, LOCI";
 
   /** Application build date. */
-  public static final String DATE = "31 May 2006";
+  public static final String DATE = "10 Aug 2006";
 
   /** Port to use for communicating between application instances. */
   public static final int INSTANCE_PORT = 0xabcd;

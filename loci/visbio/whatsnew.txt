@@ -1,6 +1,6 @@
-v3.29 - Wednesday, May 31, 2006
+v3.30 - Thursday, August 10, 2006
 
-- ADDED: File formats support is now in a standalone package: LOCI Bio-Formats
+- ADDED: File formats support is now in standalone Bio-Formats package
 - ADDED: Native DICOM support (eliminates dependency on ImageJ)
 - ADDED: Support for Olympus FluoView FV1000 (OIF & OIB) formats
 - ADDED: Support for Andor Bio-Imaging Division TIFF format
@@ -20,7 +20,7 @@ v3.29 - Wednesday, May 31, 2006
 - FIXED: Eliminated dependency on QuickTime for MOV, PICT and Openlab LIFF
 - FIXED: Eliminated dependency on Jakarta POI for Image-Pro IPW and Zeiss ZVI
 - FIXED: Avoid horizontal scroll bar in task list for long status messages
-- FIXED: Filter out Java 1.5 XML parser warnings
+- FIXED: Eliminate Java 1.5 XML parser warnings
 - FIXED: Bug in text overlays
 - FIXED: Other minor bugfixes
 
