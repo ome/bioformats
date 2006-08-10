@@ -2,8 +2,6 @@
 // CustomWindow.java
 //
 
-// bug(?): possible race condition between showslice and setindices
-
 package loci.browser;
 
 import ij.*;
@@ -17,8 +15,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import loci.formats.MetadataStore;
-import loci.formats.OMEXMLMetadataStore;
 import loci.ome.viewer.MetadataPane;
 
 public class CustomWindow extends ImageWindow implements ActionListener,
@@ -45,24 +41,21 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   // -- Fields - widgets --
 
-  private JLabel zLabel, tLabel;//, waitLabel;
+  private JLabel zLabel, tLabel;
   private JScrollBar zSliceSel, tSliceSel;
-  private JLabel fpsLabel;
-  private JSpinner frameRate;
   private JButton xml;
   private Timer animationTimer;
   private JButton animate;
-  private JSpinner zMin, zMax, tMin, tMax;
-  private JCheckBox custom;
+  private JButton options;
 
   // -- Constructor --
 
-  /** CustomWindow constructors, initialisation */
+  /** CustomWindow constructors, initialization */
   public CustomWindow(LociDataBrowser db, ImagePlus imp, ImageCanvas canvas) {
     super(imp, canvas);
     this.db = db;
     String title = imp.getTitle();
-    this.setTitle(title.substring(title.lastIndexOf(File.separatorChar)+1));
+    this.setTitle(title.substring(title.lastIndexOf(File.separatorChar) + 1));
 
     // create panel for image canvas
     Panel imagePane = new Panel() {
@@ -190,7 +183,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
     gbc.gridx = 6;
     gbc.gridy = 3;
-    gbc.gridwidth = GridBagConstraints.REMAINDER; // end row
     gbc.gridheight = 1;
     gbc.fill = GridBagConstraints.NONE;
     gbc.weightx = 0.0;
@@ -198,91 +190,18 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     gridbag.setConstraints(animate, gbc);
     bottom.add(animate);
 
-    // FPS label
-    fpsLabel = new JLabel("fps");
+    // options button
 
-    gbc.gridx = 7;
-    gbc.gridy = 2;
-    gbc.gridwidth = 1;
-    gbc.fill = GridBagConstraints.REMAINDER;
-    gbc.weightx = 0.0;
-    gridbag.setConstraints(fpsLabel, gbc);
-    bottom.add(fpsLabel);
-
-    // FPS spinner
-    SpinnerModel model = new SpinnerNumberModel(10, 1, 99, 1);
-    frameRate = new JSpinner(model);
-    frameRate.addChangeListener(this);
-
-    gbc.gridx = 6;
-    gbc.gridy = 2;
-    gbc.ipadx = 20;
-    gridbag.setConstraints(frameRate, gbc);
-    bottom.add(frameRate);
-
-    // custom virtualization spinners
-
-    model = new SpinnerNumberModel(1, 1, db.hasZ ? db.numZ : 1, 1);
-    zMin = new JSpinner(model);
-    model = new SpinnerNumberModel(1, 1, db.hasZ ? db.numZ : 1, 1);
-    zMax = new JSpinner(model);
-    model = new SpinnerNumberModel(1, 1, db.hasT ? db.numT : 1, 1);
-    tMin = new JSpinner(model);
-    model = new SpinnerNumberModel(1, 1, db.hasT ? db.numT : 1, 1);
-    tMax = new JSpinner(model);
-    tMin.setEnabled(false);
-    tMax.setEnabled(false);
-    zMin.setEnabled(false);
-    zMax.setEnabled(false);
-
-    zMin.addChangeListener(this);
-    zMax.addChangeListener(this);
-    tMin.addChangeListener(this);
-    tMax.addChangeListener(this);
-
-    JLabel customLabel = new JLabel("Z : from ");
-    gbc.gridx = 0;
-    gbc.gridy = 5;
-    gridbag.setConstraints(customLabel, gbc);
-    bottom.add(customLabel);
-
-    gbc.gridx = 1;
-    gbc.gridy = 5;
-    gridbag.setConstraints(zMin, gbc);
-    bottom.add(zMin);
-
-    customLabel = new JLabel(" to ");
-    gbc.gridx = 2;
-    gbc.gridy = 5;
-    gridbag.setConstraints(customLabel, gbc);
-    bottom.add(customLabel);
+    options = new JButton("Options");
+    options.setActionCommand("options");
+    options.addActionListener(this);
+    options.setEnabled(true);
 
     gbc.gridx = 3;
-    gbc.gridy = 5;
-    gridbag.setConstraints(zMax, gbc);
-    bottom.add(zMax);
-
-    customLabel = new JLabel("T : from ");
-    gbc.gridx = 0;
-    gbc.gridy = 6;
-    gridbag.setConstraints(customLabel, gbc);
-    bottom.add(customLabel);
-
-    gbc.gridx = 1;
-    gbc.gridy = 6;
-    gridbag.setConstraints(tMin, gbc);
-    bottom.add(tMin);
-
-    customLabel = new JLabel(" to ");
-    gbc.gridx = 2;
-    gbc.gridy = 6;
-    gridbag.setConstraints(customLabel, gbc);
-    bottom.add(customLabel);
-
-    gbc.gridx = 3;
-    gbc.gridy = 6;
-    gridbag.setConstraints(tMax, gbc);
-    bottom.add(tMax);
+    gbc.gridy = 3;
+    gbc.insets = new Insets(3, 30, 3, 5);
+    gridbag.setConstraints(options, gbc);
+    bottom.add(options);
 
     // OME-XML button
     boolean canDoXML = true;
@@ -297,52 +216,12 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       xml.setActionCommand("xml");
       xml.setEnabled(true);
 
-      try {
-        FileInfo fi = imp.getOriginalFileInfo();
-        if (fi == null) fi = new FileInfo();
-        MetadataStore store =
-          LociDataBrowser.reader.getMetadataStore(LociDataBrowser.filename);
-        if (store instanceof OMEXMLMetadataStore) {
-          fi.description = ((OMEXMLMetadataStore) store).dumpXML();
-        }
-        else xml.setEnabled(false);
-
-        imp.setFileInfo(fi);
-      }
-      catch (Exception e) { }
-
       gbc.gridx = 5;
       gbc.gridy = 3;
       gbc.insets = new Insets(3, 30, 3, 5);
       gridbag.setConstraints(xml, gbc);
       bottom.add(xml);
     }
-
-    // swap axes button
-    JButton swapAxes = new JButton("Swap Axes");
-    if (!db.hasZ || !db.hasT) swapAxes.setEnabled(false);
-    swapAxes.addActionListener(this);
-    swapAxes.setActionCommand("swap");
-
-    gbc.gridx = 0;
-    gbc.gridy = 3;
-    gbc.gridwidth = 2;
-    gbc.insets = new Insets(0, 0, 0, 0);
-    gridbag.setConstraints(swapAxes, gbc);
-    bottom.add(swapAxes);
-
-    // checkbox to toggle custom virtualization
-
-    custom = new JCheckBox("Custom Virtualization");
-    custom.addItemListener(this);
-    custom.setBackground(Color.white);
-
-    gbc.gridy = 4;
-    gbc.gridwidth = 2; // end row
-    gbc.anchor = GridBagConstraints.LINE_START;
-    gridbag.setConstraints(custom, gbc);
-    bottom.add(custom);
-
 
     // create enclosing JPanel (for 5-pixel border)
     JPanel pane = new JPanel() {
@@ -361,6 +240,11 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
     // repack to take extra panel into account
     c = db.numC;
+
+    if (db.numC * db.numT * db.numZ == imp.getStackSize()) {
+      c = db.numC;
+    }
+    else c = 1;
 
     pack();
 
@@ -386,6 +270,12 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   /** selects and shows slice defined by index */
   public void showSlice(int index) {
     index++;
+
+    if (db.manager != null) {
+      imp.setProcessor("", db.manager.getSlice(index - 1));
+      index = 1;
+    }
+
     if (index >= 1 && index <= imp.getStackSize()) {
       synchronized (imp) {
         imp.setSlice(index);
@@ -397,6 +287,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         "; zSliceSel = " + zSliceSel.getValue() +
         "; tSliceSel = " + tSliceSel.getValue() + ")");
     }
+    repaint();
   }
 
   // -- ImageWindow methods --
@@ -409,8 +300,9 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
     int textGap = 0;
 
-    int nSlices = imp.getStackSize();
+    int nSlices = db.numZ * db.numT * c;
     int currentSlice = imp.getCurrentSlice();
+    if (db.manager != null) currentSlice = db.manager.getSlice();
 
     StringBuffer sb = new StringBuffer();
     sb.append(currentSlice);
@@ -463,6 +355,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     }
     int type = imp.getType();
     int stackSize = imp.getStackSize();
+    if (db.manager != null) stackSize = db.manager.getSize();
     int size = (width * height * stackSize) / 1048576;
     switch (type) {
       case ImagePlus.GRAY8:
@@ -492,6 +385,46 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     g.drawString(sb.toString(), 5, insets.top + textGap);
   }
 
+  /** Set the Z/T values for a custom virtualization. */
+  public void setVirtualization(int[] values) {
+    z1 = values[0];
+    z2 = values[1];
+    t1 = values[2];
+    t2 = values[3];
+    customVirtualization = true;
+  }
+
+  /** Swap the axes - if the flag is set, then animate along Z. */
+  public void swap(boolean isZ) {
+    customVirtualization = false;
+
+    if (isZ) {
+      zString = Z_STRING;
+      tString = T_STRING;
+    }
+    else {
+      zString = T_STRING;
+      tString = Z_STRING;
+    }
+    zLabel.setText(zString);
+    tLabel.setText(tString);
+    setIndices();
+
+    repaint();
+  }
+
+  /** Return true if the axes are swapped. */
+  public boolean isSwapped() { return zString.equals(T_STRING); }
+
+  /** Return true if we are using a custom virtualization. */
+  public boolean isCustom() { return customVirtualization; }
+
+  /** Set the frames per second, and adjust the timer accordingly. */
+  public void setFps(int value) {
+    fps = value;
+    if (animationTimer != null) animationTimer.setDelay(1000 / fps);
+  }
+
   // -- Component methods --
 
   public void paint(Graphics g) { drawInfo(g); }
@@ -501,8 +434,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   public synchronized void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
     String cmd = e.getActionCommand();
-    if ("xml".equals(cmd)) {
-      //int id = imp.getID();
+    if (cmd == null) cmd = ""; // prevent NullPointer
+    if (cmd.equals("xml")) {
       FileInfo fi = imp.getOriginalFileInfo();
       String description = fi == null ? null : fi.description;
 
@@ -519,61 +452,25 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       GUI.center(meta);
       meta.setVisible(true);
     }
-    else if ("swap".equals(cmd)) {
-      // swap labels
-      String tmp2 = zString;
-      zString = tString;
-      tString = tmp2;
-      zLabel.setText(zString);
-      tLabel.setText(tString);
-      setIndices();
-
-      // update buttons
-      boolean swapped = zString.equals(T_STRING);
-
-      repaint(); // redraw info string
-
-      ((SpinnerNumberModel) tMin.getModel()).setMaximum(new Integer(swapped ?
-        (db.hasZ ? db.numZ : 1) : (db.hasT ? db.numT : 1)));
-      ((SpinnerNumberModel) tMax.getModel()).setMaximum(new Integer(swapped ?
-        (db.hasZ ? db.numZ : 1) : (db.hasT ? db.numT : 1)));
-      ((SpinnerNumberModel) zMin.getModel()).setMaximum(new Integer(swapped ?
-        (db.hasT ? db.numT : 1) : (db.hasZ ? db.numZ : 1)));
-      ((SpinnerNumberModel) zMax.getModel()).setMaximum(new Integer(swapped ?
-        (db.hasT ? db.numT : 1) : (db.hasZ ? db.numZ : 1)));
-
-
-      if (customVirtualization) {
-        tMin.setEnabled(swapped ? db.hasZ : db.hasT);
-        tMax.setEnabled(swapped ? db.hasZ : db.hasT);
-        zMin.setEnabled(swapped ? db.hasT : db.hasZ);
-        zMax.setEnabled(swapped ? db.hasT : db.hasZ);
-      }
-      else {
-        tMin.setEnabled(false);
-        tMax.setEnabled(false);
-        zMin.setEnabled(false);
-        zMax.setEnabled(false);
-      }
+    else if (cmd.equals("options")) {
+      OptionsWindow ow = new OptionsWindow(db.hasZ ? db.numZ : 1,
+        db.hasT ? db.numT : 1, this);
+      ow.show();
     }
     else if (src instanceof Timer) {
       boolean swapped = zString.equals(T_STRING) || !db.hasT;
 
       if (swapped) {
         z = zSliceSel.getValue() + 1;
-        if (customVirtualization) {
-          if (z > z2) z = z1;
-        }
-        else if (z > db.numZ) z = 1;
+        if (customVirtualization && (z > z2)) z = z1;
+        else if (!customVirtualization && (z > db.numZ)) z = 1;
         zSliceSel.setValue(z);
         setIndices();
       }
       else {
         t = tSliceSel.getValue() + 1;
-        if (customVirtualization) {
-          if (t > t2) t = t1;
-        }
-        else if (t > db.numT) t = 1;
+        if (customVirtualization && (t > t2)) t = t1;
+        else if (!customVirtualization && (t > db.numT)) t = 1;
         tSliceSel.setValue(t);
         setIndices();
       }
@@ -588,9 +485,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
           synchronized(imp) { setIndices(); }
         }
 
-        if (customVirtualization) {
-          setIndices(new int[] {z1, z2, t1, t2});
-        }
+        if (customVirtualization) setIndices(new int[] {z1, z2, t1, t2});
       }
       else {
         animationTimer.stop();
@@ -660,56 +555,19 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   // -- ChangeListener methods --
 
   public void stateChanged(ChangeEvent e) {
-
-    Object src = e.getSource();
-    if (src == frameRate) {
-      fps = ((Integer) frameRate.getValue()).intValue();
-      if (animationTimer != null) animationTimer.setDelay(1000 / fps);
-    }
-    else if (src == zMin) {
-      z1 = ((Integer) zMin.getValue()).intValue();
-    }
-    else if (src == zMax) {
-      z2 = ((Integer) zMax.getValue()).intValue();
-    }
-    else if (src == tMin) {
-      t1 = ((Integer) tMin.getValue()).intValue();
-    }
-    else if (src == tMax) {
-      t2 = ((Integer) tMax.getValue()).intValue();
-    }
-    else { // src == channels
-      JSpinner channels = (JSpinner) src;
-      c = ((Integer) channels.getValue()).intValue();
-      showSlice(z, t, c);
-    }
+    JSpinner channels = (JSpinner) e.getSource();
+    c = ((Integer) channels.getValue()).intValue();
+    showSlice(z, t, c);
   }
 
   // -- ItemListener methods --
 
   public synchronized void itemStateChanged(ItemEvent e) {
-    if (e.getSource() == custom) {
-      customVirtualization = custom.isSelected();
-      if (customVirtualization) {
-        tMin.setEnabled(db.hasT);
-        tMax.setEnabled(db.hasT);
-        zMin.setEnabled(db.hasZ);
-        zMax.setEnabled(db.hasZ);
-      }
-      else {
-        tMin.setEnabled(false);
-        tMax.setEnabled(false);
-        zMin.setEnabled(false);
-        zMax.setEnabled(false);
-      }
-    }
-    else {
-      JCheckBox channels = (JCheckBox) e.getSource();
-      c = channels.isSelected() ? 1 : 2;
+    JCheckBox channels = (JCheckBox) e.getSource();
+    c = channels.isSelected() ? 1 : 2;
 
-      if (db.virtual) {setIndices();}
-      showSlice(z, t, c);
-    }
+    if (db.virtual) {setIndices();}
+    showSlice(z, t, c);
   }
 
   // -- KeyListener methods --

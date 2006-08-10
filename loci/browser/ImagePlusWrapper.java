@@ -14,20 +14,27 @@ public class ImagePlusWrapper {
   protected ImagePlus imp;
   protected int sizeX, sizeY, sizeZ, sizeT, sizeC;
   protected String dim;
+  protected MetadataStore store;
   private int numTotal; // total number of images (across all stitched files)
 
   /**
    * Constructor.
    * @param name file name, or any one
    *   of the file names if you use file stitching
-   * @param virtual false if use file stitching
+   * @param stitch true if use file stitching
    */
-  public ImagePlusWrapper(String name, boolean virtual) throws
+  public ImagePlusWrapper(String name, boolean stitch) throws
     java.io.IOException, FormatException
   {
     FormatReader r = LociDataBrowser.reader.getReader(name);
+    try {
+      OMEXMLMetadataStore s = new OMEXMLMetadataStore();
+      s.createRoot();
+      r.setMetadataStore(s);
+    }
+    catch (Exception e) { }
     ChannelMerger cm = null;
-    if (virtual) cm = new ChannelMerger(new FileStitcher(r));
+    if (stitch) cm = new ChannelMerger(new FileStitcher(r));
     else cm = new ChannelMerger(r);
 
     // get # images in all matching files
@@ -56,6 +63,14 @@ public class ImagePlusWrapper {
       }
       IJ.showProgress((double)i/num);
       BufferedImage img = cm.openImage(name, i);
+      if (img.getWidth() != sizeX || img.getHeight() != sizeY) {
+        try {
+          img = ImageTools.scale(img, sizeX, sizeY);
+        }
+        catch (Exception e) {
+        }
+      }
+
       ImageProcessor ip = null;
       WritableRaster raster = img.getRaster();
       int c = raster.getNumBands();
@@ -85,8 +100,8 @@ public class ImagePlusWrapper {
           ip = new ShortProcessor(w, h, s, null);
           if (stackS == null) {
             stackS = new ImageStack(w, h);
-            stackS.addSlice(name + ":" + (i + 1), ip);
           }
+          stackS.addSlice(name + ":" + (i + 1), ip);
         }
         else if (tt == DataBuffer.TYPE_FLOAT) {
           float[] f = ImageTools.getFloats(img)[0];
@@ -103,7 +118,7 @@ public class ImagePlusWrapper {
         }
       }
       if (ip == null) {
-        ip = new ImagePlus(null, img).getProcessor(); // slow
+        ip = new ImagePlus(name, img).getProcessor(); // slow
         if (stackO == null) {
           stackO = new ImageStack(w, h);
         }
@@ -132,6 +147,8 @@ public class ImagePlusWrapper {
       IJ.showStatus("LOCI Bio-Formats : " + elapsed + " seconds (" +
         average + " ms per plane)");
     }
+
+    store = cm.getMetadataStore(name);
   }
 
   public ImagePlus getImagePlus() { return imp; }

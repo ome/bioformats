@@ -6,9 +6,9 @@ package loci.browser;
 
 import ij.*;
 import ij.gui.ImageCanvas;
+import ij.io.FileInfo;
 import ij.plugin.PlugIn;
 import java.io.File;
-import javax.swing.*;
 import loci.formats.*;
 import loci.util.FilePattern;
 import loci.util.MathUtil;
@@ -26,7 +26,7 @@ public class LociDataBrowser implements PlugIn {
   // -- Constants --
 
   /** Debugging flag. */
-  protected static final boolean DEBUG = true;
+  protected static final boolean DEBUG = false;
 
   // -- Fields --
 
@@ -53,6 +53,9 @@ public class LociDataBrowser implements PlugIn {
 
   /** whether stack is accessed from disk as needed */
   protected boolean virtual;
+
+  /** cache manager (if virtual stack is used). */
+  protected CacheManager manager;
 
   private ImageStack stack;
 
@@ -120,14 +123,6 @@ public class LociDataBrowser implements PlugIn {
         // process input
         lengths = new int[3];
 
-        if (DEBUG) {
-          System.err.println("zIndex = "+zIndex);
-          System.err.println("tIndex = "+tIndex);
-          System.err.println("cIndex = "+cIndex);
-          System.err.println("numZ = "+numZ);
-          System.err.println("numT = "+numT);
-          System.err.println("numC = "+numC);
-        }
         String absname = name;
         filename = absname;
         name = FilePattern.findPattern(new File(name));
@@ -143,12 +138,13 @@ public class LociDataBrowser implements PlugIn {
 
           int num = cm.getImageCount(absname);
 
+          int size = 20;
+          if (num < size) size = num;
+
+          manager = new CacheManager(size, cm, absname);
+          manager.init();
+
           try {
-            ProgressMonitor progress = new ProgressMonitor(null,
-              "Reading image", null, 0, num);
-
-            // set dimensions appropriately
-
             numZ = cm.getSizeZ(absname);
             numC = cm.getSizeC(absname);
             if (cm.isRGB(absname)) {
@@ -169,21 +165,10 @@ public class LociDataBrowser implements PlugIn {
             lengths[tIndex] = numT;
             lengths[cIndex] = numC;
 
-            for (int i=0; i<num; i++) {
-              if (progress.isCanceled()) break;
-              progress.setProgress(i);
-              progress.setNote(" " + (i+1) + " / " + num + " (" + name + ")");
-
-              // open image
-              if (stack == null) {
-                stack =
-                  new ImageStack(cm.getSizeX(absname), cm.getSizeY(absname));
-              }
-
-              stack.addSlice(absname, (new ImagePlus(absname,
-                cm.openImage(absname, i))).getProcessor());
+            stack = new ImageStack(cm.getSizeX(absname), cm.getSizeY(absname));
+            for (int i=0; i<size; i++) {
+              stack.addSlice(absname + " : " + (i+1), manager.getSlice(i));
             }
-            progress.setProgress(num);
 
             if (stack == null || stack.getSize() == 0) {
               IJ.showMessage("No valid files found.");
@@ -195,20 +180,43 @@ public class LociDataBrowser implements PlugIn {
             if (stack != null) stack.trim();
           }
 
-          reader.setMetadataStore(fr.getMetadataStore(absname));
+          ImagePlus ip = new ImagePlus(absname, stack);
+          FileInfo fi = new FileInfo();
+          try {
+            fi.description =
+              ((OMEXMLMetadataStore) fr.getMetadataStore(absname)).dumpXML();
+          }
+          catch (Exception e) { }
 
-          show(new ImagePlus(absname, stack));
+          ip.setFileInfo(fi);
+          show(ip);
         }
         else {
-          ipw = new ImagePlusWrapper(absname, virtual);
+          ipw = new ImagePlusWrapper(absname, true);
           numZ = ipw.sizeZ; numT = ipw.sizeT; numC = ipw.sizeC;
-          zIndex = ipw.dim.indexOf('Z')-2;
-          tIndex = ipw.dim.indexOf('T')-2;
-          cIndex = ipw.dim.indexOf('C')-2;
+          zIndex = ipw.dim.indexOf('Z') - 2;
+          tIndex = ipw.dim.indexOf('T') - 2;
+          cIndex = ipw.dim.indexOf('C') - 2;
+
+          if (ipw.getImagePlus().getStackSize() != numZ * numT * numC) {
+            numC = 1;
+          }
 
           lengths[zIndex] = numZ;
           lengths[tIndex] = numT;
           lengths[cIndex] = numC;
+
+          hasZ = numZ > 1;
+          hasT = numT > 1;
+          hasC = numC > 1;
+
+          FileInfo fi = ipw.getImagePlus().getOriginalFileInfo();
+          if (fi == null) fi = new FileInfo();
+          try {
+            fi.description = ((OMEXMLMetadataStore) ipw.store).dumpXML();
+          }
+          catch (Exception e) { }
+          ipw.getImagePlus().setFileInfo(fi);
 
           show(ipw.getImagePlus());
         }
