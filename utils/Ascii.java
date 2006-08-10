@@ -6,7 +6,9 @@
 public class Ascii {
 
   public static void main(String[] args) {
-    for (int i=32; i<128; i++) {
+    int max = 255;
+    if (args.length > 0) max = Integer.parseInt(args[0]);
+    for (int i=32; i<=max; i++) {
       String s = "" + i;
       if (i < 100) s = " " + s;
       if (i < 10) s = " " + s;
