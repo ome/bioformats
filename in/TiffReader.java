@@ -37,7 +37,7 @@ import loci.formats.*;
 
 public class TiffReader extends BaseTiffReader {
 
-  /** Number of optical sections in the file */
+  /** Number of optical sections in the file. */
   private int sizeZ = 1;
 
   // -- Constructor --
@@ -49,23 +49,24 @@ public class TiffReader extends BaseTiffReader {
 
   // -- FormatReader API methods --
 
-  /**
-   * Allows the client to specify whether or not to separate channels.
-   * By default, channels are left unseparated; thus if we encounter an RGB
-   * image plane, it will be left as RGB and not split into 3 separate planes.
-   */
-  public void setSeparated(boolean separate) {
-    separated = separate;
-    super.setSeparated(separate);
-  }
-
   /** Get the size of the Z dimension. */
   public int getSizeZ(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return sizeZ;
   }
 
-  // -- Internal BaseTiffForm API methods --
+  // -- Internal TiffReader API methods --
+
+  /**
+   * Allows a class which is delegating parsing responsibility to
+   * <code>TiffReader</code> the ability to affect the <code>sizeZ</code> value
+   * that is inserted into the metadata store.
+   * @param sizeZ the number of optical sections to use when making a call to
+   * {@link MetadataStore#setPixels()}.
+   */
+  protected void setInitialSizeZ(int sizeZ) { this.sizeZ = sizeZ; }
+
+  // -- Internal BaseTiffReader API methods --
 
   /** Parses standard metadata. */
   protected void initStandardMetadata() {
@@ -117,17 +118,6 @@ public class TiffReader extends BaseTiffReader {
       xmlStore.createRoot(comment);
     }
     else super.initMetadataStore();
-  }
-
-  /**
-   * Allows a class which is delegating parsing responsibility to
-   * <code>TiffReader</code> the ability to affect the <code>sizeZ</code> value
-   * that is inserted into the metadata store.
-   * @param sizeZ the number of optical sections to use when making a call to
-   * {@link MetadataStore#setPixels()}.
-   */
-  void setInitialSizeZ(int sizeZ) {
-    this.sizeZ = sizeZ;
   }
 
   // -- Main method --
