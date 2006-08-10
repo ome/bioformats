@@ -42,7 +42,7 @@ default:
 # JFLAGS specifies special flags for the Java compiler
 #
 JC = javac
-JFLAGS = -J-mx64m
+JFLAGS = -J-mx64m -target 1.4 -source 1.4
 
 # JAR is the Java archive executable
 # JARVERBOSE is normally 'v'
