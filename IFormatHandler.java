@@ -31,17 +31,17 @@ public interface IFormatHandler {
   /**
    * Checks if the given string is a valid filename for this file format.
    */
-  public boolean isThisType(String name);
+  boolean isThisType(String name);
 
   /** Gets the name of this file format. */
-  public String getFormat();
+  String getFormat();
 
   /** Gets the default file suffixes for this file format. */
-  public String[] getSuffixes();
+  String[] getSuffixes();
 
   /** Gets file filters for this file format, for use with a JFileChooser. */
-  public FileFilter[] getFileFilters();
+  FileFilter[] getFileFilters();
 
   /** Gets a JFileChooser that recognizes accepted file types. */
-  public JFileChooser getFileChooser();
+  JFileChooser getFileChooser();
 }

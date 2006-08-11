@@ -114,7 +114,7 @@ public class LociImporter implements PlugIn, ItemListener {
 
     IJ.showStatus("Opening " + fileName);
     try {
-      FormatReader r = reader.getReader(id);
+      FormatReader r = (FormatReader) reader.getReader(id);
       FileStitcher fs = new FileStitcher(r);
       ChannelMerger cm = new ChannelMerger(stitchFiles ? fs : r);
       cm.setSeparated(!mergeChannels);
@@ -158,6 +158,8 @@ public class LociImporter implements PlugIn, ItemListener {
               s = new short[w*h];
               System.arraycopy(tmp, 0, s, 0, s.length);
             }
+            /* debug */ System.out.println("w*h : " + (w*h));
+            /* debug */ System.out.println("pixels.length : " + s.length);
             ip = new ShortProcessor(w, h, s, null);
             if (stackS == null) stackS = new ImageStack(w, h);
             stackS.addSlice(fileName + ":" + (i + 1), ip);

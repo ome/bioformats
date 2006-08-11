@@ -137,7 +137,7 @@ public class LIFReader extends FormatReader {
       tSum += dims[i][3];
     }
 
-    if (zSum > tSum) return getImageCount(id);
+    if (zSum > tSum) return getImageCount(id) / (separated ? getSizeC(id) : 1);
     else return 1;
   }
 
@@ -151,7 +151,7 @@ public class LIFReader extends FormatReader {
   public int getSizeT(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     int z = getSizeZ(id);
-    if (z == 1) return getImageCount(id);
+    if (z == 1) return getImageCount(id) / (separated ? getSizeC(id) : 1);
     else return 1;
   }
 
@@ -211,13 +211,13 @@ public class LIFReader extends FormatReader {
       imageNum -= (dims[i][2] * dims[i][3] * dims[i][6]);
     }
 
-    in.seek(offset + width * height * bytesPerPixel * imageNum);
+    in.seek(offset + width * height * bytesPerPixel * imageNum * c);
 
     byte[] data = new byte[(int) (width * height * bytesPerPixel * c)];
     in.read(data);
 
     if (isRGB(id) && separated) {
-      return ImageTools.splitChannels(data, 3, false, true)[no % 3];
+      return ImageTools.splitChannels(data, c, false, true)[no % c];
     }
     else {
       return data;
@@ -298,6 +298,7 @@ public class LIFReader extends FormatReader {
     }
     numImages = offsets.size();
     initMetadata(xml);
+    if (dims[0][4] == 2) numImages /= 2;
   }
 
 
