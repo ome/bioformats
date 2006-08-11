@@ -298,7 +298,6 @@ public class LIFReader extends FormatReader {
     }
     numImages = offsets.size();
     initMetadata(xml);
-    if (dims[0][4] == 2) numImages /= 2;
   }
 
 
