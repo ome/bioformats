@@ -27,6 +27,8 @@ package loci.formats;
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
+
+
 /** A file filter for a biological file format, for use with a JFileChooser. */
 public class FormatFileFilter extends FileFilter
   implements java.io.FileFilter, Comparable

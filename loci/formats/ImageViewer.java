@@ -34,6 +34,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
 import loci.util.About;
 
 /**
@@ -140,7 +141,7 @@ public class ImageViewer extends JFrame
 
       format = reader.getFormat(id);
       //images = reader.open(id);
-      FormatReader r = reader.getReader(id);
+      IFormatReader r = reader.getReader(id);
       FileStitcher fs = new FileStitcher(r);
       ChannelMerger cm = new ChannelMerger(fs);
 

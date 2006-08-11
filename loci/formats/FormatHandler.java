@@ -28,7 +28,7 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 /** Abstract superclass of all biological file format readers and writers. */
-public abstract class FormatHandler {
+public abstract class FormatHandler implements IFormatHandler {
 
   // -- Fields --
 
@@ -68,8 +68,7 @@ public abstract class FormatHandler {
   }
 
   /**
-   * Checks if the given string is a valid filename for this file format.
-   * The default implementation checks filename suffixes against those known
+   * This default implementation checks filename suffixes against those known
    * for this format.
    */
   public boolean isThisType(String name) {
@@ -80,19 +79,27 @@ public abstract class FormatHandler {
     return false;
   }
 
-  /** Gets the name of this file format. */
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatHandler#getFormat()
+   */
   public String getFormat() { return format; }
 
-  /** Gets the default file suffixes for this file format. */
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatHandler#getSuffixes()
+   */
   public String[] getSuffixes() { return suffixes; }
 
-  /** Gets file filters for this file format, for use with a JFileChooser. */
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatHandler#getFileFilters()
+   */
   public FileFilter[] getFileFilters() {
     if (filters == null) createFilters();
     return filters;
   }
 
-  /** Gets a JFileChooser that recognizes accepted file types. */
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatHandler#getFileChooser()
+   */
   public JFileChooser getFileChooser() {
     if (chooser == null) chooser = buildFileChooser(getFileFilters());
     return chooser;

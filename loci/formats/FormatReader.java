@@ -30,10 +30,11 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Hashtable;
 import javax.swing.filechooser.FileFilter;
+
 import loci.util.FilePattern;
 
 /** Abstract superclass of all biological file format readers. */
-public abstract class FormatReader extends FormatHandler {
+public abstract class FormatReader extends FormatHandler implements IFormatReader {
 
   // -- Constants --
 
@@ -386,11 +387,16 @@ public abstract class FormatReader extends FormatHandler {
     return getMetadataStore(id).getRoot();
   }
 
+  public boolean testRead(String[] args) throws FormatException, IOException {
+    return testRead(this, args);
+  }
   /**
    * A utility method for test reading a file from the command line,
    * and displaying the results in a simple display.
    */
-  public boolean testRead(String[] args) throws FormatException, IOException {
+  public static boolean testRead(IFormatReader reader, String[] args)
+    throws FormatException, IOException
+  {
     String id = null;
     boolean pixels = true;
     boolean merge = false;
@@ -414,8 +420,8 @@ public abstract class FormatReader extends FormatHandler {
       }
     }
     if (id == null) {
-      String className = getClass().getName();
-      System.out.println("To test read a file in " + format + " format, run:");
+      String className = reader.getClass().getName();
+      System.out.println("To test read a file in " + reader.getFormat() + " format, run:");
       System.out.println("  java " + className + " [-nopix]");
       System.out.println("    [-merge] [-stitch] [-separate] [-omexml] file");
       return false;
@@ -425,16 +431,15 @@ public abstract class FormatReader extends FormatHandler {
         Class c = Class.forName("loci.formats.OMEXMLMetadataStore");
         MetadataStore ms = (MetadataStore) c.newInstance();
         ms.createRoot();
-        setMetadataStore(ms);
+        reader.setMetadataStore(ms);
       }
       catch (Exception exc) { }
     }
 
     // check type
-    System.out.print("Checking " + format + " format ");
-    System.out.println(isThisType(id) ? "[yes]" : "[no]");
+    System.out.print("Checking " + reader.getFormat() + " format ");
+    System.out.println(reader.isThisType(id) ? "[yes]" : "[no]");
 
-    FormatReader reader = this;
     if (stitch) reader = new FileStitcher(reader);
     if (merge) reader = new ChannelMerger(reader);
 
@@ -466,7 +471,7 @@ public abstract class FormatReader extends FormatHandler {
 
       // display pixels in image viewer
       ImageViewer viewer = new ImageViewer();
-      viewer.setImages(id, format, images);
+      viewer.setImages(id, reader.getFormat(), images);
       viewer.show();
     }
 
@@ -482,7 +487,7 @@ public abstract class FormatReader extends FormatHandler {
     int sizeT = reader.getSizeT(id);
     boolean little = reader.isLittleEndian(id);
     String dimOrder = reader.getDimensionOrder(id);
-    Hashtable meta = getMetadata(id);
+    Hashtable meta = reader.getMetadata(id);
     System.out.println("[done]");
 
     // output basic metadata
@@ -519,8 +524,8 @@ public abstract class FormatReader extends FormatHandler {
     int[][] zct = new int[indices.length][];
     int[] indices2 = new int[indices.length];
     for (int i=0; i<indices.length; i++) {
-      zct[i] = getZCTCoords(id, indices[i]);
-      indices2[i] = getIndex(id, zct[i][0], zct[i][1], zct[i][2]);
+      zct[i] = reader.getZCTCoords(id, indices[i]);
+      indices2[i] = reader.getIndex(id, zct[i][0], zct[i][1], zct[i][2]);
       System.out.print("Plane #" + indices[i] + " <=> Z " + zct[i][0] +
         ", C " + zct[i][1] + ", T " + zct[i][2]);
       if (indices[i] != indices2[i]) {
@@ -535,7 +540,7 @@ public abstract class FormatReader extends FormatHandler {
     Arrays.sort(keys);
     for (int i=0; i<keys.length; i++) {
       System.out.print(keys[i] + ": ");
-      System.out.println(getMetadataValue(id, keys[i]));
+      System.out.println(reader.getMetadataValue(id, keys[i]));
     }
     System.out.println();
 

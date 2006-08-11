@@ -29,6 +29,7 @@ import java.io.*;
 import java.lang.*;
 import java.util.Hashtable;
 import java.util.Vector;
+
 import loci.util.FilePattern;
 
 /** Logic to stitch together files with similar names. */
@@ -53,7 +54,7 @@ public class FileStitcher extends FormatReader {
   // -- Fields --
 
   /** FormatReader used to read the files. */
-  private FormatReader reader;
+  private IFormatReader reader;
 
   /** FilePattern used to build the list of files. */
   private FilePattern fp;
@@ -81,7 +82,7 @@ public class FileStitcher extends FormatReader {
   // -- Constructor --
 
   /** Constructs a FileStitcher with the given reader. */
-  public FileStitcher(FormatReader r) throws FormatException {
+  public FileStitcher(IFormatReader r) throws FormatException {
     super("any", "*");
     if (r == null) throw new FormatException("FormatReader cannot be null");
     reader = r;

@@ -28,13 +28,16 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Hashtable;
 
+
+
+
 /** Logic to automatically merge channels in a file. */
 public class ChannelMerger extends FormatReader {
 
   // -- Fields --
 
   /** FormatReader used to read the file. */
-  private FormatReader reader;
+  private IFormatReader reader;
 
   /** The dimension order. */
   private String order;
@@ -54,7 +57,7 @@ public class ChannelMerger extends FormatReader {
   // -- Constructors --
 
   /** Constructs a ChannelMerger with the given reader. */
-  public ChannelMerger(FormatReader r) throws FormatException {
+  public ChannelMerger(IFormatReader r) throws FormatException {
     super("any", "*");
     if (r == null) throw new FormatException("FormatReader cannot be null");
     reader = r;
@@ -257,7 +260,6 @@ public class ChannelMerger extends FormatReader {
   /** Initializes the given file. */
   protected void initFile(String id) throws FormatException, IOException
   {
-    reader.initFile(id);
     currentId = id;
 
     order = getDimensionOrder(id);
