@@ -26,7 +26,7 @@ public class ImagePlusWrapper {
   public ImagePlusWrapper(String name, boolean stitch) throws
     java.io.IOException, FormatException
   {
-    FormatReader r = LociDataBrowser.reader.getReader(name);
+    FormatReader r = (FormatReader) LociDataBrowser.reader.getReader(name);
     try {
       OMEXMLMetadataStore s = new OMEXMLMetadataStore();
       s.createRoot();

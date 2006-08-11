@@ -130,7 +130,7 @@ public class LociDataBrowser implements PlugIn {
         if (DEBUG) System.err.println("name = "+name);
 
         if (virtual) {
-          FormatReader fr = reader.getReader(absname);
+          FormatReader fr = (FormatReader) reader.getReader(absname);
           fr.setMetadataStore(new OMEXMLMetadataStore());
           fr.getMetadataStore(absname).createRoot();
           FileStitcher fs = new FileStitcher(fr);
@@ -141,6 +141,29 @@ public class LociDataBrowser implements PlugIn {
           int size = 20;
           if (num < size) size = num;
 
+          String ord = cm.getDimensionOrder(absname);
+          ord = ord.substring(2);
+          int minor, major;
+          if (ord.charAt(0) == 'Z') {
+            minor = reader.getSizeZ(filename);
+            major = reader.getSizeT(filename);
+          }      
+          else if (ord.charAt(0) == 'T') {
+            major = reader.getSizeZ(filename);
+            minor = reader.getSizeT(filename);
+          }
+          else {
+            if (ord.charAt(1) == 'Z') {
+              minor = reader.getSizeZ(filename);
+              major = reader.getSizeT(filename);
+            }
+            else {
+              major = reader.getSizeZ(filename);
+              minor = reader.getSizeT(filename);
+            }
+          }
+
+          //manager = new CacheManager(size, minor, major, cm, absname);
           manager = new CacheManager(size, cm, absname);
           manager.init();
 
