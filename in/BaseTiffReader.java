@@ -596,10 +596,12 @@ public abstract class BaseTiffReader extends FormatReader {
     int sample = TiffTools.getIFDIntValue(ifd, TiffTools.SAMPLE_FORMAT);
     String pixelType;
     switch (sample) {
-      case 1: pixelType = "int"; break;
-      case 2: pixelType = "Uint"; break;
+      case 1: pixelType = "Uint"; break;
+      case 2: pixelType = "int"; break;
       case 3: pixelType = "float"; break;
-      default: pixelType = "unknown";
+      // pixelType 4 is unknown but the tiff 6.0 specification (page 80) suggests
+      // to treat these unknowns as Uint.
+      default: pixelType = "Uint";
     }
     if (pixelType.indexOf("int") >= 0) { // int or Uint
       pixelType += TiffTools.getIFDIntValue(ifd, TiffTools.BITS_PER_SAMPLE);
@@ -660,7 +662,7 @@ public abstract class BaseTiffReader extends FormatReader {
    * @return the image name.
    */
   protected String getImageName() {
-    return null;
+    return currentId;
   }
 
 

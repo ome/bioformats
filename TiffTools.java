@@ -908,6 +908,10 @@ public abstract class TiffTools {
     if (xResolution == null || yResolution == null) resolutionUnit = 0;
     int[] colorMap = getIFDIntArray(ifd, COLOR_MAP, false);
     int predictor = getIFDIntValue(ifd, PREDICTOR, false, 1);
+    
+    // If the subsequent color maps are empty, use the first IFD's color map
+    if (colorMap == null)
+      colorMap = getIFDIntArray(getFirstIFD(in), COLOR_MAP, false);
 
     // use special color map for YCbCr
     if (photoInterp == Y_CB_CR) {

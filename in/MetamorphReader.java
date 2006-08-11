@@ -190,10 +190,6 @@ public class MetamorphReader extends BaseTiffReader {
     ifds = tempIFDs;
 
     super.initMetadataStore();
-    MetadataStore store = getMetadataStore(id);
-    store.setPixels(null, null, new Integer(getSizeZ(currentId)), null,
-      new Integer(getSizeT(currentId)), null, null, null, null);
-
   }
 
   // -- Internal BaseTiffReader API methods --
@@ -522,13 +518,20 @@ public class MetamorphReader extends BaseTiffReader {
    * (non-Javadoc)
    * @see loci.formats.BaseTiffReader#getImageName()
    */
-  protected String getImageName() { return imageName; }
+  protected String getImageName() { 
+    if (imageName == null) return super.getImageName();
+    return imageName;
+  }
 
   /*
    * (non-Javadoc)
    * @see loci.formats.BaseTiffReader#getImageCreationDate()
    */
-  protected String getImageCreationDate() { return imageCreationDate; }
+  protected String getImageCreationDate() 
+  {
+    if (imageCreationDate == null) return super.getImageCreationDate();
+    return imageCreationDate; 
+  }
 
   // -- Utility methods --
 

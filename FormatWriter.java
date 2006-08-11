@@ -28,6 +28,7 @@ import java.awt.image.ColorModel;
 import java.awt.Image;
 import java.io.IOException;
 
+
 /** Abstract superclass of all biological file format writers. */
 public abstract class FormatWriter extends FormatHandler {
 
