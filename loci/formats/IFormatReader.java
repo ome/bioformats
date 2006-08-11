@@ -34,54 +34,54 @@ import java.util.Hashtable;
 /** Abstract superclass of all biological file format readers. */
 public interface IFormatReader extends IFormatHandler {
   /** Checks if the given block is a valid header for this file format. */
-  public boolean isThisType(byte[] block);
+  boolean isThisType(byte[] block);
 
   /** Determines the number of images in the given file. */
-  public int getImageCount(String id)
+  int getImageCount(String id)
     throws FormatException, IOException;
 
   /** Checks if the images in the file are RGB. */
-  public boolean isRGB(String id)
+  boolean isRGB(String id)
     throws FormatException, IOException;
 
   /** Get the size of the X dimension. */
-  public int getSizeX(String id) throws FormatException, IOException;
+  int getSizeX(String id) throws FormatException, IOException;
 
   /** Get the size of the Y dimension. */
-  public int getSizeY(String id) throws FormatException, IOException;
+  int getSizeY(String id) throws FormatException, IOException;
 
   /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException;
+  int getSizeZ(String id) throws FormatException, IOException;
 
   /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException;
+  int getSizeC(String id) throws FormatException, IOException;
 
   /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException;
+  int getSizeT(String id) throws FormatException, IOException;
 
   /** Return true if the data is in little-endian format. */
-  public boolean isLittleEndian(String id)
+  boolean isLittleEndian(String id)
     throws FormatException, IOException;
 
   /**
    * Return a five-character string representing the dimension order
    * within the file.
    */
-  public String getDimensionOrder(String id)
+  String getDimensionOrder(String id)
     throws FormatException, IOException;
 
   /** Obtains the specified image from the given file. */
-  public BufferedImage openImage(String id, int no)
+  BufferedImage openImage(String id, int no)
     throws FormatException, IOException;
 
   /**
    * Obtains the specified image from the given file as a byte array.
    */
-  public byte[] openBytes(String id, int no)
+  byte[] openBytes(String id, int no)
     throws FormatException, IOException;
 
   /** Closes the currently open file. */
-  public void close() throws FormatException, IOException;
+  void close() throws FormatException, IOException;
 
 
   /**
@@ -89,7 +89,7 @@ public interface IFormatReader extends IFormatHandler {
    *
    * @return Java Images containing pixel data
    */
-  public BufferedImage[] openImage(String id)
+  BufferedImage[] openImage(String id)
     throws FormatException, IOException;
 
   /**
@@ -97,23 +97,23 @@ public interface IFormatReader extends IFormatHandler {
    * By default, channels are left unseparated; thus if we encounter an RGB
    * image plane, it will be left as RGB and not split into 3 separate planes.
    */
-  public void setSeparated(boolean separate);
+  void setSeparated(boolean separate);
 
   /** Gets whether channels are being separated. */
-  public boolean isSeparated();
+  boolean isSeparated();
 
   /**
    * Gets the rasterized index corresponding
    * to the given Z, C and T coordinates.
    */
-  public int getIndex(String id, int z, int c, int t)
+  int getIndex(String id, int z, int c, int t)
     throws FormatException, IOException;
 
   /**
    * Gets the Z, C and T coordinates corresponding
    * to the given rasterized index value.
    */
-  public int[] getZCTCoords(String id, int index)
+  int[] getZCTCoords(String id, int index)
     throws FormatException, IOException;
 
   /**
@@ -122,7 +122,7 @@ public interface IFormatReader extends IFormatHandler {
    * @param field the name associated with the metadata field
    * @return the value, or null if the field doesn't exist
    */
-  public Object getMetadataValue(String id, String field)
+  Object getMetadataValue(String id, String field)
     throws FormatException, IOException;
 
   /**
@@ -132,13 +132,14 @@ public interface IFormatReader extends IFormatHandler {
    * @param id the filename
    * @return the hashtable containing all metadata from the file
    */
-  public Hashtable getMetadata(String id) throws FormatException, IOException;
+  Hashtable getMetadata(String id) throws FormatException, IOException;
+  
   /**
    * Sets the default metadata store for this reader.
    *
    * @param store a metadata store implementation.
    */
-  public void setMetadataStore(MetadataStore store);
+  void setMetadataStore(MetadataStore store);
 
   /**
    * Retrieves the current metadata store for this reader. You can be
@@ -146,7 +147,7 @@ public interface IFormatReader extends IFormatHandler {
    * metadata store.
    * @return a metadata store implementation.
    */
-  public MetadataStore getMetadataStore(String id)
+  MetadataStore getMetadataStore(String id)
     throws FormatException, IOException;
 
   /**
@@ -160,12 +161,12 @@ public interface IFormatReader extends IFormatHandler {
    * @throws FormatException if the file specified by <code>path</code> is of an
    * unsupported type.
    */
-  public Object getMetadataStoreRoot(String id)
+  Object getMetadataStoreRoot(String id)
     throws FormatException, IOException;
 
   /**
    * A utility method for test reading a file from the command line,
    * and displaying the results in a simple display.
    */
-  public boolean testRead(String[] args) throws FormatException, IOException;
+  boolean testRead(String[] args) throws FormatException, IOException;
 }

@@ -216,8 +216,8 @@ public abstract class FormatReader extends FormatHandler implements IFormatReade
     boolean rgb = isRGB(id);
     if (rgb && !separated) {
       // adjust for RGB merging
-      c /= 3;
-      sizeC /= 3;
+      c = 1;
+      sizeC = 1;
     }
 
     // get SizeT
@@ -288,7 +288,7 @@ public abstract class FormatReader extends FormatHandler implements IFormatReade
     if (sizeC <= 0) throw new FormatException("Invalid C size: " + sizeC);
     int origSizeC = sizeC;
     boolean rgb = isRGB(id);
-    if (rgb && !separated) sizeC /= 3; // adjust for RGB merging
+    if (rgb && !separated) sizeC = 1; // adjust for RGB merging
 
     // get SizeT
     int sizeT = getSizeT(id);
