@@ -1,3 +1,6 @@
+Testing:
+* leica-lif/matthias (from Leica SP5 scope)
+
 QuickTime:
 * Fix legacy and native readers to handle data/quicktime/haining/video2.mov
 * svq3 codec (lower priority)
