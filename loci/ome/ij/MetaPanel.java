@@ -2,7 +2,7 @@
 // MetaPanel.java
 //
 
-package loci.ome;
+package loci.ome.ij;
 
 import ij.*;
 import ij.process.ImageProcessor;

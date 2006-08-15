@@ -8,7 +8,6 @@ import java.util.Hashtable;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.border.*;
-import loci.ome.MetaPanel;
 
 /**
  * OMESidePanel is the class that handles the window alongside ImageJ.

@@ -2,7 +2,7 @@
 // XMLObject.java
 //
 
-package loci.ome;
+package loci.ome.ij;
 
 /**
  * XMLObject is the class that handles display and

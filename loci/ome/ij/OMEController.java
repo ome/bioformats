@@ -7,7 +7,6 @@ package loci.ome.ij;
 import ij.*;
 import ij.io.*;
 import java.util.*;
-import loci.ome.*;
 
 /**
  * OMEController keeps track of all open images, their names, IDs, and
