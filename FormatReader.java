@@ -548,9 +548,9 @@ public abstract class FormatReader extends FormatHandler implements IFormatReade
     if (omexml) {
       MetadataStore ms = reader.getMetadataStore(id);
       try {
-        Method m = ms.getClass().getMethod("dumpXML", null);
+        Method m = ms.getClass().getMethod("dumpXML", (Class[]) null);
         System.out.println("OME-XML:");
-        System.out.println(m.invoke(ms, null));
+        System.out.println(m.invoke(ms, (Object[]) null));
         System.out.println();
       }
       catch (Exception exc) {
