@@ -354,7 +354,7 @@ public class ImageViewer extends JFrame
 
   public static void main(String[] args) {
     ImageViewer viewer = new ImageViewer();
-    viewer.show();
+    viewer.setVisible(true);
     if (args.length > 0) viewer.open(args[0]);
   }
 

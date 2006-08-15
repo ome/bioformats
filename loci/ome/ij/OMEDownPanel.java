@@ -127,7 +127,7 @@ public class OMEDownPanel implements ActionListener {
   /** shows and retrieves info from the DownPanel */
   public Object[] search() {
     cancelPlugin = true;
-    dia.show();
+    dia.setVisible(true);
     if (cancelPlugin) return null;
     //checks and puts results into an array
     Object[] results = new Object[4];
@@ -161,7 +161,7 @@ public class OMEDownPanel implements ActionListener {
   public void actionPerformed(ActionEvent e){
     cancelPlugin = false;
     if ("search".equals(e.getActionCommand())) {
-      dia.hide();
+      dia.setVisible(false);
     }
     else if ("reset".equals(e.getActionCommand()) ) {
       reset();

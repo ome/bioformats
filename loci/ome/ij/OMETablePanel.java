@@ -215,7 +215,7 @@ public class OMETablePanel implements ActionListener {
   public void actionPerformed(ActionEvent e) {
     if ("OK".equals(e.getActionCommand())) {
       cancelPlugin = false;
-      dialog.hide();
+      dialog.setVisible(false);
     }
     else {
       cancelPlugin = true;
@@ -276,7 +276,7 @@ public class OMETablePanel implements ActionListener {
   /** Method that gets the images checked in the table to download to ImageJ */
   public int[] getInput() {
     cancelPlugin = true;
-    dialog.show();
+    dialog.setVisible(true);
     if (cancelPlugin) return null;
     //checks and puts results into an array
     ArrayList al = new ArrayList();

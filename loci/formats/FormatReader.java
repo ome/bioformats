@@ -472,7 +472,7 @@ public abstract class FormatReader extends FormatHandler implements IFormatReade
       // display pixels in image viewer
       ImageViewer viewer = new ImageViewer();
       viewer.setImages(id, reader.getFormat(), images);
-      viewer.show();
+      viewer.setVisible(true);
     }
 
     // read metadata

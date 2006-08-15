@@ -121,7 +121,7 @@ public class MetaPanel implements ActionListener, TreeSelectionListener {
   public void actionPerformed(ActionEvent e) {
     DefaultMutableTreeNode node = (DefaultMutableTreeNode)
       tree.getLastSelectedPathComponent();
-    dia.hide();
+    dia.setVisible(false);
   }
 
   /** detects selection in the tree */

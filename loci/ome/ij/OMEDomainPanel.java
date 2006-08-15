@@ -98,7 +98,7 @@ public class OMEDomainPanel implements ActionListener, ChangeListener {
     String command = e.getActionCommand();
     if(command.equals("OK")) {
       cancelPlugin = false;
-      pick.hide();
+      pick.setVisible(false);
     }
     else if(command.equals("Time")) {
       slide.setMaximum(sizeT-1);
@@ -127,7 +127,7 @@ public class OMEDomainPanel implements ActionListener, ChangeListener {
   /** Method that retrieves the information to input the specified domain */
   public int[] getInput() {
     cancelPlugin = true;
-    pick.show();
+    pick.setVisible(true);
     if (cancelPlugin) return null;
 
     //checks and puts results into an array

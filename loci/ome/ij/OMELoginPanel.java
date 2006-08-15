@@ -89,7 +89,7 @@ public class OMELoginPanel implements ActionListener {
   public void actionPerformed(ActionEvent e) {
     if ("OK".equals(e.getActionCommand())) {
       cancelPlugin = false;
-      in.hide();
+      in.setVisible(false);
     }
     else{
       cancelPlugin = true;
@@ -110,7 +110,7 @@ public class OMELoginPanel implements ActionListener {
         "The login information is not valid.", "Input Error");
     }
     cancelPlugin = true;
-    in.show();
+    in.setVisible(true);
     if (cancelPlugin) return null;
     //checks and puts results into an array
     String[] results = new String[3];

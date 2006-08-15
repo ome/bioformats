@@ -175,7 +175,7 @@ public class OMESidePanel implements ActionListener {
     }
     list.setListData(names);
 
-    dia.show();
+    dia.setVisible(true);
     if (cancelPlugin) return;
   }
 

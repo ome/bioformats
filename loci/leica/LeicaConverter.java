@@ -284,7 +284,7 @@ public class LeicaConverter extends JFrame
   public static void main(String[] args) {
     LeicaConverter lc = new LeicaConverter();
     lc.pack();
-    lc.show();
+    lc.setVisible(true);
   }
 
 }

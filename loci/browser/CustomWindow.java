@@ -455,7 +455,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     else if (cmd.equals("options")) {
       OptionsWindow ow = new OptionsWindow(db.hasZ ? db.numZ : 1,
         db.hasT ? db.numT : 1, this);
-      ow.show();
+      ow.setVisible(true);
     }
     else if (src instanceof Timer) {
       boolean swapped = zString.equals(T_STRING) || !db.hasT;

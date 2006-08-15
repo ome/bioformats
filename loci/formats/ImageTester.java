@@ -186,7 +186,7 @@ public class ImageTester extends JPanel implements WindowListener {
     frame.addWindowListener(pane);
     frame.setContentPane(pane);
     frame.pack();
-    frame.show();
+    frame.setVisible(true);
   }
 
 }
