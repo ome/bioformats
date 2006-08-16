@@ -51,7 +51,7 @@
 	<OMEElement XMLName="Experiment" Description="Describes the experiment.">
 		<OMEAttribute XMLName="ID" Type="ID"/>
 	        <OMEAttribute XMLName="Type"  Description="The type of experiment this was."/>
-		<OMEAttribute XMLName="Description" Description="A brief description of the experiment."/>
+		<OMEAttribute XMLName="Description" Description="A brief description of the experiment." Type="Desc"/>
 		<OMEAttribute XMLName="Experimenter" Type="Ref" Description="Refers to the experimenter associated with this experiment."/>
 	</OMEElement>
 	<OMEElement XMLName="Experimenter" Description="Information about the person who did the experiment.">

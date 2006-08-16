@@ -145,19 +145,25 @@ public class ClickableList extends JList
 				  childE.setAttribute("AppliesTo", tableP.tPanel.name.substring(0,1));
 				  Element stE = childE;
 				  
+				  //Get an upper-case representation of this new semantic type
+				  //to use as a DBLocation
+				  String DBPrefix = "LOCI." +
+  				  tableP.el.getAttribute("XMLName").toUpperCase() + "_ANNOTATION.";
+				  
+				  
 				  childE = DOMUtil.createChild(stE, "Element");
 				  childE.setAttribute("Name", "Name");
-				  childE.setAttribute("DBLocation", "");
+				  childE.setAttribute("DBLocation", DBPrefix + "NAME");
 				  childE.setAttribute("DataType", "string");
 				  
 				  childE = DOMUtil.createChild(stE, "Element");
 				  childE.setAttribute("Name", "Value");
-				  childE.setAttribute("DBLocation", "");
+				  childE.setAttribute("DBLocation", DBPrefix + "VALUE");
 				  childE.setAttribute("DataType", "string");
 				  
 				  childE = DOMUtil.createChild(stE, "Element");
 				  childE.setAttribute("Name", "NoteFor");
-				  childE.setAttribute("DBLocation", "");
+				  childE.setAttribute("DBLocation", DBPrefix + "NOTE_FOR");
 				  childE.setAttribute("DataType", "reference");
 				  childE.setAttribute("RefersTo", tableP.el.getAttribute("XMLName"));
 				}

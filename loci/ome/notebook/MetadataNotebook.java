@@ -182,20 +182,7 @@ public class MetadataNotebook extends JFrame
 
   //saves to a file, sets title of frame to reflect the current file
   public void saveFile(File file) {
-    try {
-      //use the node tree in the MetadataPane to write flattened OMECA
-      //to a given file
-      metadata.getRoot().writeOME(file, true);
-      setTitle("OME Metadata Notebook - " + file);
-    }
-    catch (Exception e) {
-      //if all hell breaks loose, display an error dialog
-      JOptionPane.showMessageDialog(this,
-            "Sadly, the file you specified is either write-protected\n" +
-            "or in use by another program. Game over, man.",
-            "Unable to Write to Specified File", JOptionPane.ERROR_MESSAGE);
-      System.out.println("ERROR! Attempt failed to open file: " + file.getName() );
-    }
+    metadata.saveFile(file);
   }
 
   //given an array of Strings of appropriate tab names, this method
