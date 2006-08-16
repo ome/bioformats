@@ -35,8 +35,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import loci.util.About;
-
 /**
  * ImageViewer is a simple viewer/converter
  * for the LOCI Bio-Formats image formats.
@@ -272,7 +270,18 @@ public class ImageViewer extends JFrame
     else if ("about".equals(cmd)) {
       // HACK - JOptionPane prevents shutdown on dispose
       setDefaultCloseOperation(EXIT_ON_CLOSE);
-      About.show();
+      String title = "LOCI Bio-Formats";
+      String msg =
+        "LOCI Bio-Formats with 4D Data Browser\n" +
+        "Built @date@\n\n" +
+        "The Bio-Formats library is LOCI software written by\n" +
+        "Melissa Linkert, Curtis Rueden, Chris Allan and Eric Kjellman.\n" +
+        "http://www.loci.wisc.edu/ome/formats.html\n\n" +
+        "The 4D Data Browser is LOCI software written by\n" +
+        "Francis Wong, Curtis Rueden and Melissa Linkert.\n" +
+        "http://www.loci.wisc.edu/4d/#browser";
+      JOptionPane.showMessageDialog(this, msg, title,
+        JOptionPane.INFORMATION_MESSAGE);
     }
   }
 
