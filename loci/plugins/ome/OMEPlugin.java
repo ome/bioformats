@@ -21,17 +21,15 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.ome.ij;
+package loci.plugins.ome;
 
 import ij.plugin.PlugIn;
 
 /**
- * OMEPlugin is the ImageJ Plugin
- * that allows image import and exports from
- * the OME database.  This plugin also views
- * OME-XML metadata present in OME-TIFF files.
+ * OMEPlugin is the ImageJ Plugin that allows image import and exports from
+ * the OME database. It also views OME-XML metadata present in OME-TIFF files.
  *
- * @author Philip Huettl pmhuettl@wisc.edu
+ * @author Philip Huettl pmhuettl at wisc.edu
  * @author Melissa Linkert linkert at cs.wisc.edu
  */
 public class OMEPlugin implements PlugIn {

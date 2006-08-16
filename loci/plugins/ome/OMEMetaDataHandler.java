@@ -21,7 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.ome.ij;
+package loci.plugins.ome;
 
 import ij.*;
 import ij.process.ImageProcessor;
@@ -40,10 +40,9 @@ import java.lang.reflect.*;
  * from the database associated with an image and OME.  It also handles the
  * sifting of XML metadata in the header of an OME-TIFF file.
  *
- * @author Philip Huettl pmhuettl@wisc.edu
- * @author Melissa Linkert, linkert at cs.wisc.edu
+ * @author Philip Huettl pmhuettl at wisc.edu
+ * @author Melissa Linkert linkert at cs.wisc.edu
  */
-
 public class OMEMetaDataHandler {
 
   // -- Constants --

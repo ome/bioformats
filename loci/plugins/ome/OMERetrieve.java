@@ -21,7 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.ome.ij;
+package loci.plugins.ome;
 
 import ij.*;
 
@@ -35,10 +35,10 @@ import org.openmicroscopy.ds.st.*;
 
 /**
  * Utility methods for retrieving images.
- * @author Philip Huettl pmhuettl@wisc.ed
+ *
+ * @author Philip Huettl pmhuettl at wisc.edu
  * @author Melissa Linkert linkert at cs.wisc.edu
  */
-
 public class OMERetrieve {
 
   /** method that prints out a list of the users images */

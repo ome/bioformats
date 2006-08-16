@@ -21,7 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.ome.ij;
+package loci.plugins.ome;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -29,13 +29,12 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
- * OMELoginPanel is the class that handles
- * the window used to obtain the information
- * needed to log into the OME database.
- * @author Philip Huettl pmhuettl@wisc.edu
+ * OMELoginPanel is the class that handles the window used
+ * to obtain the information needed to log into the OME database.
+ *
+ * @author Philip Huettl pmhuettl at wisc.edu
  * @author Melissa Linkert linkert at cs.wisc.edu
  */
-
 public class OMELoginPanel implements ActionListener {
   //Fields
   private JButton ok, cancels;

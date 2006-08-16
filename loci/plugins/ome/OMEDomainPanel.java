@@ -21,7 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.ome.ij;
+package loci.plugins.ome;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -30,14 +30,13 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
- * OMEDomainPanel is the class that handles
- * the window used to obtain the domain information
- * on a multidimensional image to allow it to be read
- * in ImageJ.
- * @author Philip Huettl pmhuettl@wisc.edu
+ * OMEDomainPanel is the class that handles the window used
+ * to obtain the domain information on a multidimensional image
+ * to allow it to be read in ImageJ.
+ *
+ * @author Philip Huettl pmhuettl at wisc.edu
  * @author Melissa Linkert linkert at cs.wisc.edu
  */
-
 public class OMEDomainPanel implements ActionListener, ChangeListener {
 
   // -- Fields --

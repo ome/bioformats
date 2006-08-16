@@ -21,7 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.ome.ij;
+package loci.plugins.ome;
 
 import ij.*;
 import ij.process.*;
@@ -41,7 +41,7 @@ import loci.browser.*;
 /**
  * Handles uploading and downloading images.
  *
- * @author Philip Huettl pmhuettl@wisc.edu
+ * @author Philip Huettl pmhuettl at wisc.edu
  * @author Melissa Linkert linkert at cs.wisc.edu
  * @author Curtis Rueden ctrueden at wisc.edu
  */

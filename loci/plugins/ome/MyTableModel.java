@@ -21,17 +21,16 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.ome.ij;
+package loci.plugins.ome;
 
 import javax.swing.table.DefaultTableModel;
 
 /**
- * MyTableModel is the class that handles
- * the table used in displaying the images
- * selectable for download.
- * @author Philip Huettl pmhuettl@wisc.edu
+ * MyTableModel is the class that handles the table used in
+ * displaying the images selectable for download.
+ *
+ * @author Philip Huettl pmhuettl at wisc.edu
  */
-
 public class MyTableModel extends DefaultTableModel {
 
   public MyTableModel(Object[][] data, Object[] columnNames) {
