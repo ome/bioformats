@@ -5,7 +5,7 @@
 // Coded 2006 Mar 3-4, 21 by Curtis Rueden, for Julie Simpson.
 // Permission is granted to use this code for anything.
 
-package loci.leica;
+package loci.apps.leica;
 
 import java.awt.Image;
 import java.awt.Dimension;
