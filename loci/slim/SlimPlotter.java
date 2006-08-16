@@ -66,7 +66,7 @@ public class SlimPlotter implements ActionListener,
 
   // GUI components for decay pane
   private JLabel decayLabel;
-  private JCheckBox surface, parallel, logScale;
+  private JCheckBox surface, parallel, logScale, boundingBox;
   private JButton showLog;
   private JSlider cSlider;
 
@@ -515,11 +515,14 @@ public class SlimPlotter implements ActionListener,
     parallel.addActionListener(this);
     logScale = new JCheckBox("Log scale", false);
     logScale.addActionListener(this);
+    boundingBox = new JCheckBox("Bounding box", true);
+    boundingBox.addActionListener(this);
     showLog = new JButton("Show log");
     showLog.addActionListener(this);
     options.add(surface);
     options.add(parallel);
     options.add(logScale);
+    options.add(boundingBox);
     options.add(showLog);
     decayPane.add(options, BorderLayout.SOUTH);
 
@@ -590,6 +593,12 @@ public class SlimPlotter implements ActionListener,
     Object src = e.getSource();
     if (src == surface) plotData(false);
     else if (src == logScale) plotData(true);
+    else if (src == boundingBox) {
+      try {
+        decayPlot.getDisplayRenderer().setBoxOn(boundingBox.isSelected());
+      }
+      catch (Exception exc) { exc.printStackTrace(); }
+    }
     else if (src == parallel) {
       try {
         decayPlot.getGraphicsModeControl().setProjectionPolicy(
