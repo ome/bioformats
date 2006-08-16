@@ -3,9 +3,8 @@
 //
 
 /*
-LOCI Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-2006 Melissa Linkert, Curtis Rueden, Chris Allan
-and Eric Kjellman.
+LOCI 4D Data Browser package for quick browsing of 4D datasets in ImageJ.
+Copyright (C) 2005-2006 Francis Wong, Curtis Rueden and Melissa Linkert.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
@@ -22,7 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.formats;
+package loci.browser;
 
 import ij.*;
 import ij.gui.GenericDialog;
@@ -35,8 +34,7 @@ import java.awt.event.ItemListener;
 import java.awt.image.*;
 import java.io.File;
 import javax.swing.*;
-import loci.formats.ImageReader;
-import loci.formats.FormatReader;
+import loci.formats.*;
 
 /**
  * ImageJ plugin for the LOCI Bio-Formats package.
