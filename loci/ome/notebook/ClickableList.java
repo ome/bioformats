@@ -33,8 +33,6 @@ import javax.swing.JTextArea;
 import javax.swing.JOptionPane;
 import javax.swing.DefaultListSelectionModel;
 
-import java.awt.Color;
-
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
@@ -170,23 +168,23 @@ public class ClickableList extends JList
 				  
 				  //Get an upper-case representation of this new semantic type
 				  //to use as a DBLocation
-				  String DBPrefix = "LOCI." +
+				  String dbPrefix = "LOCI." +
   				  tableP.el.getAttribute("XMLName").toUpperCase() + "_ANNOTATION.";
 				  
 				  
 				  childE = DOMUtil.createChild(stE, "Element");
 				  childE.setAttribute("Name", "Name");
-				  childE.setAttribute("DBLocation", DBPrefix + "NAME");
+				  childE.setAttribute("DBLocation", dbPrefix + "NAME");
 				  childE.setAttribute("DataType", "string");
 				  
 				  childE = DOMUtil.createChild(stE, "Element");
 				  childE.setAttribute("Name", "Value");
-				  childE.setAttribute("DBLocation", DBPrefix + "VALUE");
+				  childE.setAttribute("DBLocation", dbPrefix + "VALUE");
 				  childE.setAttribute("DataType", "string");
 				  
 				  childE = DOMUtil.createChild(stE, "Element");
 				  childE.setAttribute("Name", "NoteFor");
-				  childE.setAttribute("DBLocation", DBPrefix + "NOTE_FOR");
+				  childE.setAttribute("DBLocation", dbPrefix + "NOTE_FOR");
 				  childE.setAttribute("DataType", "reference");
 				  childE.setAttribute("RefersTo", tableP.el.getAttribute("XMLName"));
 				}

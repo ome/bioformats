@@ -30,7 +30,6 @@ import org.openmicroscopy.xml.*;
 import org.w3c.dom.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
-import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 

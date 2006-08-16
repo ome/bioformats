@@ -364,10 +364,10 @@ public class VariableComboEditor extends AbstractCellEditor
   
   public void focusGained(FocusEvent e) {
     if (e.getSource() instanceof JTextField) {
-      JTextField text = (JTextField) e.getSource();
+      JTextField field = (JTextField) e.getSource();
       try {
-        result = text.getDocument().getText(0, 
-          text.getDocument().getLength());
+        result = field.getDocument().getText(0, 
+          field.getDocument().getLength());
       }
       catch (Exception exc) {System.out.println(exc);}
     }
@@ -376,10 +376,10 @@ public class VariableComboEditor extends AbstractCellEditor
       result = (String) thisBox.getSelectedItem();
     }
     else if (e.getSource() instanceof JTextArea) {
-      JTextArea text = (JTextArea) e.getSource();
+      JTextArea field = (JTextArea) e.getSource();
       try {
-        result = text.getDocument().getText(0, 
-          text.getDocument().getLength());
+        result = field.getDocument().getText(0, 
+          field.getDocument().getLength());
       }
       catch (Exception exc) {System.out.println(exc);}
     }
@@ -393,10 +393,10 @@ public class VariableComboEditor extends AbstractCellEditor
 	  if (e.getSource() instanceof JTextField &&
       e.getButton() == MouseEvent.BUTTON1)
     {
-		  JTextField text = (JTextField) e.getSource();
+		  JTextField field = (JTextField) e.getSource();
 		  try {
-		    result = text.getDocument().getText(0, 
-		      text.getDocument().getLength());
+		    result = field.getDocument().getText(0, 
+		      field.getDocument().getLength());
 		  }
 		  catch (Exception exc) {System.out.println(exc);}
 	  }
@@ -408,10 +408,10 @@ public class VariableComboEditor extends AbstractCellEditor
 	  else if (e.getSource() instanceof JTextArea &&
 	    e.getButton() == MouseEvent.BUTTON1) 
 	  {
-      JTextArea text = (JTextArea) e.getSource();
+      JTextArea field = (JTextArea) e.getSource();
       try {
-        result = text.getDocument().getText(0, 
-          text.getDocument().getLength());
+        result = field.getDocument().getText(0, 
+          field.getDocument().getLength());
       }
       catch (Exception exc) {System.out.println(exc);}
     }

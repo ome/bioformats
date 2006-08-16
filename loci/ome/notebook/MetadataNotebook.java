@@ -30,8 +30,6 @@ import java.awt.event.*;
 import java.io.File;
 import javax.swing.*;
 import javax.swing.border.*;
-import loci.ome.viewer.*;
-import loci.util.About;
 
 import org.w3c.dom.*;
 
@@ -49,7 +47,6 @@ public class MetadataNotebook extends JFrame
   /** Key mask for use with keyboard shortcuts on this operating system. */
   public static final int MENU_MASK =
     Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-
 
   // -- Fields --
 
@@ -187,8 +184,7 @@ public class MetadataNotebook extends JFrame
     setVisible(true);
   }
 
-
-  // -- MetadataViewer API methods --
+  // -- MetadataNotebook API methods --
 
   protected void setCurrentFile(File aFile) {
     currentFile = aFile;
@@ -308,7 +304,15 @@ public class MetadataNotebook extends JFrame
 				System.exit(0);
       }
     }
-    else if ("about".equals(cmd)) About.show();
+    else if ("about".equals(cmd)) {
+      JOptionPane.showMessageDialog(this,
+        "OME Metadata Notebook\n" +
+        "Built @date@\n\n" +
+        "The OME Metadata Notebook is LOCI software written by\n" +
+        "Christopher Peterson.\n" +
+        "http://www.loci.wisc.edu/software/#notebook",
+        "OME Metadata Notebook", JOptionPane.INFORMATION_MESSAGE);
+    }
     else if(cmd.startsWith("tabChange")) {
       metadata.tabChange( Integer.parseInt(cmd.substring(9)) );
     }
@@ -341,14 +345,12 @@ public class MetadataNotebook extends JFrame
     wait(false);
   }
 
-
   // -- Helper methods --
 
   /** Toggles wait cursor. */
   protected void wait(boolean wait) {
     setCursor(wait ? Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) : null);
   }
-
 
   // -- Main method --
 

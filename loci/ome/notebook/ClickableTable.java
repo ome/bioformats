@@ -128,16 +128,16 @@ public class ClickableTable extends JTable
 
     if (realColumnIndex == 0) {
       TableModel model = getModel();
-      String attrName = (String)model.getValueAt(rowIndex,0);
+      String name = (String)model.getValueAt(rowIndex,0);
       Vector v = DOMUtil.getChildElements("OMEAttribute", tp.el);
       Element thisEle = null;
       for(int i = 0;i < v.size();i++) {
         Element tempEle = (Element) v.get(i);
         if (tempEle.hasAttribute("Name")) {
-          if (tempEle.getAttribute("Name").equals(attrName))
+          if (tempEle.getAttribute("Name").equals(name))
             thisEle = tempEle;
         }
-        else if (tempEle.getAttribute("XMLName").equals(attrName))
+        else if (tempEle.getAttribute("XMLName").equals(name))
           thisEle = tempEle;
       }
       
@@ -149,8 +149,8 @@ public class ClickableTable extends JTable
     }
 /* Removed this because it was annoying when trying to change values
     else if (realColumnIndex == 1) {
-      String attrName = (String)getModel().getValueAt(rowIndex,0);
-      tip = "The value associated with this " + attrName + ".";
+      String name = (String)getModel().getValueAt(rowIndex,0);
+      tip = "The value associated with this " + name + ".";
     }
 */
     else { //another column
