@@ -34,8 +34,13 @@ public abstract class About {
       "Built @date@\n\n" +
       "The 4D Data Browser is LOCI software written by\n" +
       "Francis Wong, Curtis Rueden and Melissa Linkert.\n" +
-      "http://www.loci.wisc.edu/4d/#browser",
-      "LOCI 4D Data Browser", JOptionPane.INFORMATION_MESSAGE);
+      "http://www.loci.wisc.edu/4d/#browser\n\n" +
+      "OME Plugin for ImageJ\n" +
+      "Built @date@\n\n" +
+      "The OME Plugin for ImageJ is LOCI software written by\n" +
+      "Philip Huettl and Melissa Linkert.\n" +
+      "http://www.loci.wisc.edu/ome/imagej.html",
+      "LOCI Plugins for ImageJ", JOptionPane.INFORMATION_MESSAGE);
     System.exit(0);
   }
 
