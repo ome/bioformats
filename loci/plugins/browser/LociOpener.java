@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 // derived from Sun's FileChooserDemo2
 
-package loci.browser;
+package loci.plugins.browser;
 
 import ij.Macro;
 import ij.io.OpenDialog;
