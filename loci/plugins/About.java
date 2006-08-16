@@ -30,13 +30,14 @@ public abstract class About {
 
   public static void main(String[] args) {
     JOptionPane.showMessageDialog(null,
-      "LOCI 4D Data Browser\n" +
+      "LOCI Plugins for ImageJ\n" +
       "Built @date@\n\n" +
       "The 4D Data Browser is LOCI software written by\n" +
       "Francis Wong, Curtis Rueden and Melissa Linkert.\n" +
       "http://www.loci.wisc.edu/4d/#browser\n\n" +
-      "OME Plugin for ImageJ\n" +
-      "Built @date@\n\n" +
+      "The Bio-Formats Importer and Exporter are LOCI software\n" +
+      "written by Melissa Linkert and Curtis Rueden.\n" +
+      "http://www.loci.wisc.edu/ome/formats.html\n\n" +
       "The OME Plugin for ImageJ is LOCI software written by\n" +
       "Philip Huettl and Melissa Linkert.\n" +
       "http://www.loci.wisc.edu/ome/imagej.html",
