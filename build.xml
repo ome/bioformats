@@ -1,0 +1,349 @@
+<!--
+build.xml
+
+Master ant build file for all Java software projects at LOCI.
+Download Apache Ant from http://ant.apache.org/.
+Type "ant -projecthelp" for a list of targets.
+
+===============================================================================
+This build file handles the following projects:
+
+LOCI Common Classes
+    JAR file:      loci-common.jar
+    Folders:       loci/ome/viewer
+                   loci/util
+    Main class:    loci.util.About
+    Dependencies:  commons-httpclient-2.0-rc2.jar (ome-java.jar)
+                   commons-logging.jar (ome-java.jar)
+                   ome-java.jar
+                   xmlrpc-1.2-b1.jar (ome-java.jar)
+    Targets:       jar-common
+
+Bio-Formats
+    JAR file:      bio-formats.jar
+    Folders:       loci/formats
+                   loci/formats/*
+    Main class:    loci.formats.ImageViewer
+    Dependencies:  loci-common.jar
+    Targets:       jar-formats
+
+VisBio
+    JAR file:      visbio.jar
+    Folders:       loci/visbio
+                   loci/visbio/*
+    Main class:    loci.visbio.VisBio
+    Dependencies:  bio-formats.jar
+                   commons-httpclient-2.0-rc2.jar (ome-java.jar)
+                   commons-logging.jar (ome-java.jar)
+                   forms-1.0.4.jar
+                   ij.jar
+                   loci-common.jar
+                   looks-1.2.2.jar
+                   ome-java.jar
+                   xmlrpc-1.2-b1.jar (ome-java.jar)
+    Targets:       jar-visbio
+                   visad
+                   dist-visbio
+
+LOCI Plugins for ImageJ
+    JAR file:      loci_plugins.jar
+    Folders:       loci/plugins
+                   loci/plugins/*
+    Main class:    loci.plugins.About
+    IJ plugins:    loci.plugins.browser.LociDataBrowser
+                   loci.plugins.LociImporter
+                   loci.plugins.LociExporter
+                   loci.plugins.ome.OMEPlugin
+    Dependencies:  bio-formats.jar
+                   commons-httpclient-2.0-rc2.jar (ome-java.jar)
+                   commons-logging.jar (ome-java.jar)
+                   loci-common.jar
+                   ome-java.jar
+                   xmlrpc-1.2-b1.jar (ome-java.jar)
+    Targets:       jar-plugins
+
+OME Metadata Notebook
+    JAR file:      ome-notebook.jar
+    Folders:       loci/ome/notebook
+    Main class:    loci.ome.notebook.MetadataNotebook
+    Dependencies:  bio-formats.jar
+                   commons-httpclient-2.0-rc2.jar (ome-java.jar)
+                   commons-logging.jar (ome-java.jar)
+                   forms-1.0.4.jar
+                   loci-common.jar
+                   ome-java.jar
+                   xmlrpc-1.2-b1.jar (ome-java.jar)
+    Targets:       jar-notebook
+
+Leica Converter
+    JAR file:      LeicaConverter.jar
+    Folders:       loci/apps/leica
+    Main class:    loci.apps.leica.LeicaConverter
+    Dependencies:  None (custom built)
+    Targets:       jar-leica
+
+QT TIFF Converter
+    JAR file:      QTConverter.jar
+    Folders:       loci/apps/qt
+    Main class:    loci.apps.qt.QTConverter
+    Dependencies:  None (custom built)
+    Targets:       jar-qt
+
+Slim Plotter
+    JAR file:      SlimPlotter.jar
+    Folders:       loci/apps/slim
+    Main class:    loci.apps.slim.SlimPlotter
+    Dependencies:  None (custom built)
+    Targets:       jar-slim
+
+===============================================================================
+The following external dependencies (in the jar folder) may be required:
+
+Apple eAWT stubs
+    JAR file:  AppleJavaExtensions.jar
+    URL:       http://developer.apple.com/samplecode/AppleJavaExtensions/
+    Notes:     Required to compile VisBio on non-Mac OS X machines
+
+Apache Jakarta Commons HttpClient
+    JAR file:  commons-httpclient-2.0-rc2.jar
+    URL:       http://jakarta.apache.org/commons/httpclient/
+    Notes:     Required for OME Java to communicate with OME servers
+
+Apache Jakarta Commons Logging
+    JAR file:  commons-logging.jar
+    URL:       http://jakarta.apache.org/commons/logging/
+    Notes:     Used by OME Java
+
+JGoodies Forms
+    JAR file:  forms-1.0.4.jar
+    URL:       http://www.jgoodies.com/freeware/forms/index.html
+    Notes:     Used for layout by VisBio and OME Metadata Notebook
+
+ImageJ
+    JAR file:  ij.jar
+    URL:       http://rsb.info.nih.gov/ij/
+    Notes:     Bundled with VisBio to achieve ImageJ interconnectivity
+
+JGoodies Looks
+    JAR file:  looks-1.2.2.jar
+    URL:       http://www.jgoodies.com/freeware/looks/index.html
+    Notes:     Used for a nicer Look & Feel by VisBio
+
+OME Java
+    JAR file:  ome-java.jar
+    URL:       http://openmicroscopy.org/api/java/
+    Notes:     Used by VisBio and the OME Plugin for ImageJ to connect to OME;
+               used by Bio-Formats and the OME Notebook to work with OME-XML
+
+Apache Jakarta POI
+    JAR file:  poi-2.5.1-final-20040804.jar
+    URL:       http://jakarta.apache.org/poi/
+    Notes:     Not used (previously used by Bio-Formats)
+
+Skin Look and Feel
+    JAR file:  skinlf.jar
+    URL:       http://skinlf.l2fprod.com/
+    Notes:     Not used (may be used in the future for flexible skinning)
+
+Apache XML-RPC
+    JAR file:  xmlrpc-1.2-b1.jar
+    URL:       http://ws.apache.org/xmlrpc/
+    Notes:     Required for OME Java to communicate with OME servers
+
+-->
+
+<project name="LOCI Software" default="compile" basedir=".">
+  <description>
+    Master build file for all Java software projects at LOCI
+  </description>
+
+  <!-- Directories -->
+
+  <property name="src.dir" value="."/>
+  <property name="build.dir" value="build"/>
+  <property name="dest.dir" value="${build.dir}/src"/>
+  <property name="classes.dir" value="${build.dir}/classes"/>
+  <property name="jar.dir"  value="${build.dir}/jar"/>
+  <property name="docs.dir" value="${build.dir}/docs"/>
+  <property name="dist.dir" value="${build.dir}/dist"/>
+
+  <!-- External JAR dependencies -->
+
+  <property name="ext.jars" value="jar/AppleJavaExtensions.jar:jar/commons-httpclient-2.0-rc2.jar:jar/commons-logging.jar:jar/forms-1.0.4.jar:jar/ij.jar:jar/looks-1.2.2.jar:jar/ome-java.jar:jar/xmlrpc-1.2-b1.jar"/>
+
+  <!-- Global build targets -->
+
+  <target name="init">
+    <tstamp>
+      <format property="DATE" pattern="d MMMMM yyyy"/>
+      <format property="YEAR" pattern="yyyy"/>
+    </tstamp>
+  </target>
+
+  <target name="compile" depends="copy-source"
+    description="compile LOCI software packages from source">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      classpath="${ext.jars}" deprecation="true"/>
+  </target>
+
+  <target name="jars" depends="jar-common, jar-formats, jar-visbio, jar-plugins, jar-notebook, jar-leica, jar-qt, jar-slim"
+    description="generate JAR files for LOCI software packages"/>
+
+  <target name="docs" depends="init"
+    description="generate Javadocs for LOCI software packages">
+    <mkdir dir="${docs.dir}"/>
+    <javadoc sourcepath="${dest.dir}" destdir="${docs.dir}/api"
+      author="true" version="true" use="true" windowtitle="LOCI Software API">
+      <packageset dir="${dest.dir}"/>
+      <doctitle><![CDATA[<h1>LOCI Software</h1>]]></doctitle>
+      <bottom><![CDATA[<i>Copyright &#169; ${YEAR} Laboratory for Optical and Computational Instrumentation</i>]]></bottom>
+      <tag name="todo" scope="all" description="To do:"/>
+      <link href="http://java.sun.com/j2se/1.4.2/docs/api/"/>
+    </javadoc>
+  </target>
+
+  <target name="clean"
+    description="remove all build files">
+    <delete dir="${build.dir}"/>
+  </target>
+
+  <!-- Internal build targets -->
+
+  <property name="ignore.source"
+    value="loci/plugins/HandleExtraFileTypes.java *.tar.gz"/>
+
+  <target name="copy-source" depends="init">
+    <mkdir dir="${dest.dir}"/>
+    <!-- copy binary files without filtering -->
+    <copy todir="${dest.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="loci/**" excludes="**/*.class **/*.java **/*.config **/*.txt ${ignore.source}"/>
+    </copy>
+    <!-- copy source files with filtering -->
+    <filter token="date" value="${DATE}"/>
+    <copy todir="${dest.dir}" filtering="true" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="loci/**" excludes="**/*.class ${ignore.source}"/>
+    </copy>
+  </target>
+
+  <target name="copy-jars">
+    <!-- copy needed external JARs into build jars folder -->
+    <mkdir dir="${jar.dir}"/>
+    <copy todir="${jar.dir}" preservelastmodified="true">
+      <fileset dir="jar"/>
+    </copy>
+  </target>
+
+  <!-- LOCI Common Classes -->
+
+  <property name="common.packages"
+    value="loci/ome/viewer/** loci/util/**"/>
+
+  <target name="jar-common" depends="compile"
+    description="generate JAR file for LOCI common classes">
+    <mkdir dir="${jar.dir}"/>
+    <jar jarfile="${jar.dir}/loci-common.jar" basedir="${classes.dir}"
+      includes="${common.packages}">
+      <manifest>
+        <attribute name="Main-Class" value="loci.util.About"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <!-- Bio-Formats -->
+
+  <property name="formats.classpath" value="loci-common.jar"/>
+  <property name="formats.packages"
+    value="loci/browser/** loci/formats/**"/>
+  <property name="formats.resources" value="loci/formats/*.txt"/>
+
+  <target name="jar-formats" depends="compile"
+    description="generate Bio-Formats JAR file">
+    <mkdir dir="${jar.dir}"/>
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="${formats.resources}"/>
+    </copy>
+    <jar jarfile="${jar.dir}/bio_formats.jar" basedir="${classes.dir}"
+      includes="${formats.packages}">
+      <manifest>
+        <attribute name="Main-Class" value="loci.util.About"/>
+        <attribute name="Class-Path" value="${formats.classpath}"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <!-- VisBio -->
+
+  <property name="visbio.classpath" value="bio_formats.jar commons-httpclient-2.0-rc2.jar commons-logging.jar forms-1.0.4.jar ij.jar loci-common.jar looks-1.2.2.jar ome-java.jar visad.jar xmlrpc-1.2-b1.jar"/>
+  <property name="visbio.packages" value="loci/visbio/**"/>
+  <property name="visbio.resources" value="loci/visbio/classes.txt loci/visbio/*.png loci/visbio/*.gif loci/visbio/help/*.html loci/visbio/help/*.png loci/visbio/overlays/*.png loci/visbio/view/*.png"/>
+
+  <target name="jar-visbio" depends="compile"
+    description="generate VisBio JAR file">
+    <mkdir dir="${jar.dir}"/>
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="${visbio.resources}"/>
+    </copy>
+    <jar jarfile="${jar.dir}/visbio.jar" basedir="${classes.dir}"
+      includes="${visbio.packages}">
+      <manifest>
+        <attribute name="Main-Class" value="loci.visbio.VisBio"/>
+        <attribute name="Class-Path" value="${visbio.classpath}"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="dist-visbio" depends="jar-visbio, jar-formats"
+    description="generate VisBio's platform-specific distribution bundles">
+    <!-- TODO -->
+  </target>
+
+  <target name="visad" depends="init">
+    <!-- TODO -->
+  </target>
+
+  <!-- LOCI Plugins for ImageJ -->
+
+  <target name="jar-plugins" depends="compile"
+    description="generate LOCI Plugins for ImageJ JAR file">
+    <mkdir dir="${jar.dir}"/>
+    <!-- TODO -->
+  </target>
+
+
+  <!-- OME Metadata Notebook -->
+
+  <target name="jar-notebook" depends="compile"
+    description="generate OME Metadata Notebook JAR file">
+    <mkdir dir="${jar.dir}"/>
+    <!-- TODO -->
+  </target>
+
+
+  <!-- Leica Converter -->
+
+  <target name="jar-leica" depends="compile"
+    description="generate Leica Converter JAR file">
+    <mkdir dir="${jar.dir}"/>
+    <!-- TODO -->
+  </target>
+
+
+  <!-- QT TIFF Converter -->
+
+  <target name="jar-qt" depends="compile"
+    description="generate QT TIFF Converter JAR file">
+    <mkdir dir="${jar.dir}"/>
+    <!-- TODO -->
+  </target>
+
+
+  <!-- Slim Plotter -->
+
+  <target name="jar-slim" depends="compile"
+    description="generate Slim Plotter JAR file">
+    <mkdir dir="${jar.dir}"/>
+    <!-- TODO -->
+  </target>
+
+</project>
