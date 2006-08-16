@@ -1,3 +1,26 @@
+//
+// MetadataPane.java
+//
+
+/*
+OME Metadata Notebook application for exploration and editing of OME-XML and
+OME-TIFF metadata. Copyright (C) 2006 Christopher Peterson.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU Library General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
 package loci.ome.notebook;
 
 import java.awt.*;
@@ -19,19 +42,19 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
-*   MetadataPane.java:
-*      MetadataPane is a panel that displays OME-XML metadata.
-*      Most of the gui code is in here.
-*			 If you want a panel instead of a window, instantiate this
-*    instead of MetadataNotebook.
-*
-*   Written by: Christopher Peterson <crpeterson2@wisc.edu>
-*/
-
+ * A panel that displays OME-XML metadata.
+ * Most of the gui code is in here.
+ * If you want a panel instead of a window, instantiate this
+ * instead of MetadataNotebook.
+ *
+ * @author Christopher Peterson crpeterson2 at wisc.edu
+ */
 public class MetadataPane extends JPanel
   implements ActionListener, Runnable
 {
+
   // -- Constants --
+
   protected static final String[] TREE_COLUMNS = {"Attribute", "Value", "Goto"};
   
   public static final ImageIcon DATA_BULLET = 
