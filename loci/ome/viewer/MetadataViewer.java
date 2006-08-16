@@ -28,7 +28,6 @@ import java.awt.Toolkit;
 import java.awt.event.*;
 import java.io.File;
 import javax.swing.*;
-import loci.util.About;
 
 /** MetadataViewer is a simple application for displaying OME-XML metadata. */
 public class MetadataViewer extends JFrame
@@ -107,7 +106,14 @@ public class MetadataViewer extends JFrame
       }
     }
     else if ("exit".equals(cmd)) System.exit(0);
-    else if ("about".equals(cmd)) About.show();
+    else if ("about".equals(cmd)) {
+      JOptionPane.showMessageDialog(this,
+        "OME Metadata Viewer\n" +
+        "Built @date@\n\n" +
+        "The OME Metadata Viewer is LOCI software written by\n" +
+        "Curtis Rueden.",
+        "OME Metadata Viewer", JOptionPane.INFORMATION_MESSAGE);
+    }
   }
 
 
