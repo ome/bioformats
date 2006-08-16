@@ -30,13 +30,13 @@ import ij.gui.GenericDialog;
 import java.awt.Panel;
 import java.util.Hashtable;
 
+import loci.plugins.browser.LociDataBrowser;
+
 import org.openmicroscopy.ds.*;
 import org.openmicroscopy.ds.dto.*;
 import org.openmicroscopy.ds.managers.*;
 import org.openmicroscopy.ds.st.*;
 import org.openmicroscopy.is.*;
-
-import loci.browser.*;
 
 /**
  * Handles uploading and downloading images.

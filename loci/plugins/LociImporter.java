@@ -3,8 +3,9 @@
 //
 
 /*
-LOCI 4D Data Browser package for quick browsing of 4D datasets in ImageJ.
-Copyright (C) 2005-@year@ Francis Wong, Curtis Rueden and Melissa Linkert.
+LOCI Plugins for ImageJ: a collection of ImageJ plugins including the 4D
+Data Browser, OME Plugin and Bio-Formats Exporter. Copyright (C) 2006
+Melissa Linkert, Curtis Rueden, Philip Huettl and Francis Wong.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
