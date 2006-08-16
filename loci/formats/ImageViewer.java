@@ -270,18 +270,13 @@ public class ImageViewer extends JFrame
     else if ("about".equals(cmd)) {
       // HACK - JOptionPane prevents shutdown on dispose
       setDefaultCloseOperation(EXIT_ON_CLOSE);
-      String title = "LOCI Bio-Formats";
-      String msg =
-        "LOCI Bio-Formats with 4D Data Browser\n" +
+      JOptionPane.showMessageDialog(this,
+        "LOCI Bio-Formats\n" +
         "Built @date@\n\n" +
         "The Bio-Formats library is LOCI software written by\n" +
         "Melissa Linkert, Curtis Rueden, Chris Allan and Eric Kjellman.\n" +
-        "http://www.loci.wisc.edu/ome/formats.html\n\n" +
-        "The 4D Data Browser is LOCI software written by\n" +
-        "Francis Wong, Curtis Rueden and Melissa Linkert.\n" +
-        "http://www.loci.wisc.edu/4d/#browser";
-      JOptionPane.showMessageDialog(this, msg, title,
-        JOptionPane.INFORMATION_MESSAGE);
+        "http://www.loci.wisc.edu/ome/formats.html",
+        "LOCI Bio-Formats", JOptionPane.INFORMATION_MESSAGE);
     }
   }
 

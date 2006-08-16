@@ -3,8 +3,8 @@
 //
 
 /*
-LOCI common classes for use with VisBio, Bio-Formats, 4D Data Browser, etc.
-Copyright (C) 2006 Curtis Rueden.
+LOCI 4D Data Browser package for quick browsing of 4D datasets in ImageJ.
+Copyright (C) 2005-@year@ Francis Wong, Curtis Rueden and Melissa Linkert.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
@@ -21,7 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.util;
+package loci.browser;
 
 import javax.swing.JOptionPane;
 
@@ -30,11 +30,12 @@ public abstract class About {
 
   public static void main(String[] args) {
     JOptionPane.showMessageDialog(null,
-      "LOCI Common Classes\n" +
+      "LOCI 4D Data Browser\n" +
       "Built @date@\n\n" +
-      "The LOCI common classes are LOCI software written by\n" +
-      "Curtis Rueden, for use with other LOCI software packages.",
-      "LOCI Common Classes", JOptionPane.INFORMATION_MESSAGE);
+      "The 4D Data Browser is LOCI software written by\n" +
+      "Francis Wong, Curtis Rueden and Melissa Linkert.\n" +
+      "http://www.loci.wisc.edu/4d/#browser",
+      "LOCI 4D Data Browser", JOptionPane.INFORMATION_MESSAGE);
     System.exit(0);
   }
 

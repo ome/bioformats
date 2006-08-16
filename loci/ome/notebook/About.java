@@ -3,8 +3,8 @@
 //
 
 /*
-LOCI common classes for use with VisBio, Bio-Formats, 4D Data Browser, etc.
-Copyright (C) 2006 Curtis Rueden.
+OME Metadata Notebook application for exploration and editing of OME-XML and
+OME-TIFF metadata. Copyright (C) 2006 Christopher Peterson.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
@@ -21,7 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.util;
+package loci.ome.notebook;
 
 import javax.swing.JOptionPane;
 
@@ -30,11 +30,12 @@ public abstract class About {
 
   public static void main(String[] args) {
     JOptionPane.showMessageDialog(null,
-      "LOCI Common Classes\n" +
+      "OME Metadata Notebook\n" +
       "Built @date@\n\n" +
-      "The LOCI common classes are LOCI software written by\n" +
-      "Curtis Rueden, for use with other LOCI software packages.",
-      "LOCI Common Classes", JOptionPane.INFORMATION_MESSAGE);
+      "The OME Metadata Notebook is LOCI software written by\n" +
+      "Christopher Peterson.\n" +
+      "http://www.loci.wisc.edu/software/#notebook",
+      "OME Metadata Notebook", JOptionPane.INFORMATION_MESSAGE);
     System.exit(0);
   }
 
