@@ -2,6 +2,9 @@
 // QTConverter.java
 //
 
+// Coded April - July 2006 by Curtis Rueden, to ease migration from QuickTime
+// to OME-TIFF format. Permission is granted to use this code for anything.
+
 package loci.qt;
 
 import java.awt.Dimension;

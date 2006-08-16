@@ -2,6 +2,9 @@
 // SlimPlotter.java
 //
 
+// Coded May - July 2006 by Curtis Rueden, for Long Yan and others.
+// Permission is granted to use this code for anything.
+
 package loci.slim;
 
 import java.awt.*;
