@@ -41,6 +41,9 @@ public abstract class TiffTools {
   // -- Constants --
 
   public static final boolean DEBUG = false;
+  
+  /** The number of bytes in each IFD entry. */
+  public static final int BYTES_PER_ENTRY = 12;
 
   // non-IFD tags (for internal use)
   public static final int LITTLE_ENDIAN = 0;
@@ -286,6 +289,59 @@ public abstract class TiffTools {
     long offset = getFirstOffset(in);
 
     return getIFD(in, 0, globalOffset, offset);
+  }
+  
+  /**
+   * Retrieve a given entry from the first IFD in a stream.
+   * 
+   * @param in the stream to retrieve the entry from.
+   * @param tag the tag of the entry to be retrieved.
+   * @return an object representing the entry's fields.
+   * @throws IOException when there is an error accessing the stream <i>in</i>.
+   * @throws UnknownTagException if the <i>tag</i> is not found or unknown.
+   */
+  public static TiffIFDEntry getFirstIFDEntry (RandomAccessStream in, int tag)
+  	throws IOException
+  {
+	  // First lets re-position the file pointer by checking the TIFF header
+	  Boolean result = checkHeader(in, 0);
+	  if (result == null) return null;
+
+	  // Get the offset of the first IFD
+	  long offset = getFirstOffset(in);
+	  
+	  // The following loosly resembles the logic of getIFD()...
+	  in.seek(offset);
+	  int numEntries = in.readShort();
+	  if (numEntries < 0) numEntries += 65536;
+	  
+	  for (int i = 0; i < numEntries; i++) {
+	      in.seek(offset  // The beginning of the IFD
+	    		  + 2     // The width of the initial numEntries field
+	    		  + (BYTES_PER_ENTRY * i));
+	      
+	      int entryTag = in.readShort();
+	      if (entryTag < 0) entryTag += 65536;
+	      
+	      // Skip this tag unless it matches the one we want
+	      if (entryTag != tag) continue;
+	      
+	      // Parse the entry's "Type"
+	      int entryType = in.readShort();
+	      if (entryType < 0) entryType += 65536;
+	      
+	      // Parse the entry's "ValueCount"
+	      int valueCount = in.readInt();
+	      if (valueCount < 0)
+	    	  throw new RuntimeException(
+	    			  "Count of '" + valueCount + "' unexpected.");
+
+	      // Parse the entry's "ValueOffset"
+	      int valueOffset = in.readInt();
+	      
+	      return new TiffIFDEntry(entryTag, entryType, valueCount, valueOffset);
+	  }
+	  throw new UnknownTagException();
   }
 
   /**
