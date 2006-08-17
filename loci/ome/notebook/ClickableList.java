@@ -102,7 +102,7 @@ public class ClickableList extends JList
 	      Element thisEle = (Element) childList.get(i);
 	      if(thisEle.getAttribute("Name").equals((String) getSelectedValue())) childEle = thisEle;
 	    }
-	    childEle.setAttribute("Value", text);
+	    if (childEle!=null) childEle.setAttribute("Value", text);
 	  }
 	}
 	
@@ -129,14 +129,6 @@ public class ClickableList extends JList
 
 			//If a string was returned, say so.
 			if ((newName != null) && (newName.length() > 0)) {
-	      CustomAttributesNode caNode = null;
-	      Element currentCA = DOMUtil.getChildElement("CustomAttributes", tableP.tPanel.oNode.getDOMElement());
-	      if (currentCA != null) caNode = new CustomAttributesNode(currentCA);
-	      else {
-	        Element cloneEle = DOMUtil.createChild(tableP.tPanel.oNode.getDOMElement(),"CustomAttributes");
-	        caNode = new CustomAttributesNode(cloneEle);
-	      }
-	      
 	      String newXMLName = tableP.el.getAttribute("XMLName") + "Annotation";
 
 				Element omeE = tableP.tPanel.ome.getDOMElement();
@@ -189,7 +181,7 @@ public class ClickableList extends JList
 				  childE.setAttribute("RefersTo", tableP.el.getAttribute("XMLName"));
 				}
 					
-	      AttributeNode newNode = new AttributeNode(caNode, newXMLName);
+	      OMEXMLNode newNode = MetadataPane.makeNode(newXMLName, tableP.tPanel.oNode);
 	      newNode.setAttribute("NoteFor", tableP.id);  
 	      newNode.setAttribute("Name", newName);
 	      myModel.addElement(newName);

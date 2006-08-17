@@ -55,4 +55,15 @@ public class GotoRenderer extends JButton
       return this;
     }
   }
+  
+  //overidden for performance reasons... see jdk 1.4 doc
+  //for details as to why I did this
+  public void validate() {}
+  public void revalidate() {}
+  public void repaint(long tm, int x, int y,
+    int width, int height) {}
+  public void firePropertyChange(String propertyName,
+    boolean oldValue, boolean newValue) {}
+  protected void firePropertyChange(String propertyName,
+    Object oldValue, Object newValue) {}
 }

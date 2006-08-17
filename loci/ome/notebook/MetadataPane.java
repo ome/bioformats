@@ -732,7 +732,7 @@ public class MetadataPane extends JPanel
 	              if (n == null) {
 	                n = new AttributeNode(anEle);
 	              }
-
+	              
                 TablePanel p = new TablePanel(e, tp, n);
                 iHoldTables.add(p);
               }
@@ -915,10 +915,8 @@ public class MetadataPane extends JPanel
         n = (OMEXMLNode) r.getVar("result");
       }
       else {
-        Element currentCA = DOMUtil.getChildElement("CustomAttributes", 
-          parent.getDOMElement());
-        if (currentCA != null) {
-          caNode = new CustomAttributesNode(currentCA);
+				caNode = (CustomAttributesNode) parent.getChild("CustomAttributes");
+        if(caNode != null) {
           r.exec("import org.openmicroscopy.xml.CustomAttributesNode");
           r.exec("import org.openmicroscopy.xml.st." +
             unknownName + "Node");
@@ -1058,8 +1056,14 @@ public class MetadataPane extends JPanel
     public boolean isTopLevel;
     private JButton noteButton;
     protected Vector attrList, refList;
+    protected TableCellRenderer labelR,textR,comboR,gotoR;
 
     public TablePanel(Element e, TabPanel tp, OMEXMLNode on) {
+      labelR = new DefaultTableCellRenderer();
+      comboR = new VariableComboRenderer();
+      textR = new VariableTextAreaRenderer();
+      gotoR = new GotoRenderer();
+
       isTopLevel = false;
       
       //check if this TablePanel is "top level"
@@ -1155,7 +1159,45 @@ public class MetadataPane extends JPanel
         }
       };
       
-      table = new ClickableTable(myTableModel, this);
+      table = new ClickableTable(myTableModel, this) {
+        public TableCellRenderer getCellRenderer(int row, int column) {        	          
+          if (column == 1) {
+				    TableModel tModel = table.getModel();
+				  
+				    Vector fullList = DOMUtil.getChildElements("OMEAttribute",el);
+				    Element templateE = null;
+				    for (int i = 0;i<fullList.size();i++) {
+				      Element thisE = (Element) fullList.get(i);
+				      String nameAttr = thisE.getAttribute("XMLName");
+				      if(thisE.hasAttribute("Name")) nameAttr = thisE.getAttribute("Name");
+				      if(nameAttr.equals((String) tModel.getValueAt(row, 0))) templateE = thisE;      
+				    }
+				    
+				    String cellType = null;
+				    
+				    if(templateE.hasAttribute("Type")) cellType = templateE.getAttribute("Type");     
+	        
+				    if(cellType != null) { 
+					    if(cellType.equals("Ref")) {
+					      return comboR;
+					    }
+					    else if(cellType.equals("Desc")) {
+					      return textR;
+					    }
+					    else {
+					      return labelR;
+					    } 
+				    }
+				    else {
+				      return labelR;
+				    }
+				  }
+				  else if (column == 2) {
+				    return gotoR;
+				  }
+				  else return labelR;
+   		  }
+			};
 //      table.setAutoResizeMode( JTable.AUTO_RESIZE_OFF );
       table.getColumnModel().getColumn(0).setPreferredWidth(125);
       table.getColumnModel().getColumn(1).setPreferredWidth(430);
@@ -1164,7 +1206,7 @@ public class MetadataPane extends JPanel
       table.getColumnModel().getColumn(2).setMinWidth(70);
       JTableHeader tHead = table.getTableHeader();
       tHead.setResizingAllowed(true);
-      tHead.setReorderingAllowed(true);
+      tHead.setReorderingAllowed(false);
 //      tHead.setBackground(NotePanel.BACK_COLOR);
 //      tHead.setOpaque(false);
       myTableModel.setRowCount(attrList.size() + refList.size());
@@ -1281,9 +1323,6 @@ public class MetadataPane extends JPanel
           }
         } 
       }
-      
-      TableColumn refColumn = table.getColumnModel().getColumn(1);
-      refColumn.setCellRenderer(new VariableComboRenderer(el));
     }
 
     public void setEditor() {
@@ -1319,7 +1358,6 @@ public class MetadataPane extends JPanel
           addItems, this, internalDefs));
         TableColumn gotoColumn = table.getColumnModel().getColumn(2);
         gotoColumn.setCellEditor(new GotoEditor(this));
-        gotoColumn.setCellRenderer(new GotoRenderer());
       }
     }
     
