@@ -32,7 +32,6 @@ import java.rmi.RemoteException;
 import java.util.Hashtable;
 import javax.swing.JComponent;
 import loci.formats.*;
-import loci.util.MathUtil;
 import loci.visbio.TaskEvent;
 import loci.visbio.TaskListener;
 import loci.visbio.state.Dynamic;

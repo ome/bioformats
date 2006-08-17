@@ -2266,6 +2266,7 @@ loci.formats.ComboFileFilter
 loci.formats.DataTools
 loci.formats.DeltavisionReader
 loci.formats.ExtensionFileFilter
+loci.formats.FilePattern
 loci.formats.FluoviewReader
 loci.formats.FormatException
 loci.formats.FormatFileFilter
@@ -2290,6 +2291,7 @@ loci.formats.LegacyQTReader
 loci.formats.LegacyZVIReader
 loci.formats.LeicaReader
 loci.formats.MetamorphReader
+loci.formats.NumberFilter
 loci.formats.OMETools
 loci.formats.OMEXMLReader
 loci.formats.OpenlabReader
@@ -2306,9 +2308,6 @@ loci.formats.TiffTools
 loci.formats.TiffWriter
 loci.formats.ZeissLSMReader
 loci.formats.ZeissZVIReader
-loci.util.FilePattern
-loci.util.MathUtil
-loci.util.NumberFilter
 loci.visbio.BioDropHandler
 loci.visbio.BioTask
 loci.visbio.BioTask$1
@@ -2431,6 +2430,7 @@ loci.visbio.util.FormsUtil
 loci.visbio.util.ImageJUtil
 loci.visbio.util.InstanceServer
 loci.visbio.util.LAFUtil
+loci.visbio.util.MathUtil
 loci.visbio.util.MessagePane
 loci.visbio.util.ObjectUtil
 loci.visbio.util.OutputConsole

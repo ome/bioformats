@@ -29,8 +29,6 @@ import ij.io.FileInfo;
 import ij.plugin.PlugIn;
 import java.io.File;
 import loci.formats.*;
-import loci.util.FilePattern;
-import loci.util.MathUtil;
 
 /**
  * LociDataBrowser is a plugin for ImageJ that allows for browsing of 4D
@@ -104,7 +102,14 @@ public class LociDataBrowser implements PlugIn {
     if (zIndex >= 0) pos[zIndex] = z;
     if (tIndex >= 0) pos[tIndex] = t;
     if (cIndex >= 0) pos[cIndex] = c;
-    return MathUtil.positionToRaster(lengths, pos);
+    int[] offsets = new int[lengths.length];
+    if (offsets.length > 0) offsets[0] = 1;
+    for (int i=1; i<offsets.length; i++) {
+      offsets[i] = offsets[i - 1] * lengths[i - 1];
+    }
+    int raster = 0;
+    for (int i=0; i<pos.length; i++) raster += offsets[i] * pos[i];
+    return raster;
   }
 
   // -- Plugin methods --

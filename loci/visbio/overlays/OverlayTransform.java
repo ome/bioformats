@@ -31,7 +31,6 @@ import java.rmi.RemoteException;
 import java.util.*;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import loci.util.MathUtil;
 import loci.visbio.data.*;
 import loci.visbio.state.Dynamic;
 import loci.visbio.util.*;

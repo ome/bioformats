@@ -3,8 +3,9 @@
 //
 
 /*
-LOCI common classes for use with VisBio, Bio-Formats, 4D Data Browser, etc.
-Copyright (C) 2006 Curtis Rueden.
+LOCI Bio-Formats package for reading and converting biological file formats.
+Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden, Chris Allan
+and Eric Kjellman.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
@@ -21,7 +22,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.util;
+package loci.formats;
 
 import java.io.File;
 import java.io.FileFilter;

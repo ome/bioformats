@@ -8,23 +8,12 @@ Type "ant -projecthelp" for a list of targets.
 ===============================================================================
 This build file handles the following projects:
 
-LOCI Common Classes
-    JAR file:      loci-common.jar
-    Folders:       loci/ome/viewer
-                   loci/util
-    Main class:    loci.util.About
-    Dependencies:  commons-httpclient-2.0-rc2.jar (ome-java.jar)
-                   commons-logging.jar (ome-java.jar)
-                   ome-java.jar
-                   xmlrpc-1.2-b1.jar (ome-java.jar)
-    Targets:       jar-common
-
 Bio-Formats
     JAR file:      bio-formats.jar
     Folders:       loci/formats
                    loci/formats/*
     Main class:    loci.formats.ImageViewer
-    Dependencies:  loci-common.jar
+    Dependencies:  None
     Targets:       jar-formats
 
 VisBio
@@ -37,7 +26,6 @@ VisBio
                    commons-logging.jar (ome-java.jar)
                    forms-1.0.4.jar
                    ij.jar
-                   loci-common.jar
                    looks-1.2.2.jar
                    ome-java.jar
                    visad.jar
@@ -50,6 +38,7 @@ LOCI Plugins for ImageJ
     JAR file:      loci_plugins.jar
     Folders:       loci/plugins
                    loci/plugins/*
+                   loci/ome/viewer/* (temporary)
     Main class:    loci.plugins.About
     IJ plugins:    loci.plugins.browser.LociDataBrowser
                    loci.plugins.LociImporter
@@ -58,7 +47,6 @@ LOCI Plugins for ImageJ
     Dependencies:  bio-formats.jar
                    commons-httpclient-2.0-rc2.jar (ome-java.jar)
                    commons-logging.jar (ome-java.jar)
-                   loci-common.jar
                    ome-java.jar
                    xmlrpc-1.2-b1.jar (ome-java.jar)
     Targets:       jar-plugins
@@ -66,12 +54,12 @@ LOCI Plugins for ImageJ
 OME Metadata Notebook
     JAR file:      ome-notebook.jar
     Folders:       loci/ome/notebook
+                   loci/ome/viewer (temporary)
     Main class:    loci.ome.notebook.MetadataNotebook
     Dependencies:  bio-formats.jar
                    commons-httpclient-2.0-rc2.jar (ome-java.jar)
                    commons-logging.jar (ome-java.jar)
                    forms-1.0.4.jar
-                   loci-common.jar
                    ome-java.jar
                    xmlrpc-1.2-b1.jar (ome-java.jar)
     Targets:       jar-notebook
@@ -87,7 +75,7 @@ Leica Converter
 QT TIFF Converter
     JAR file:      QTConverter.jar
     Folders:       loci/apps/qt
-                   some loci/formats and loci/util
+                   some loci/formats
     Main class:    loci.apps.qt.QTConverter
     Dependencies:  None (custom built)
     Targets:       jar-qt
@@ -196,7 +184,7 @@ Apache XML-RPC
   </target>
 
   <target name="jars"
-    depends="jar-common, jar-formats, jar-visbio, jar-plugins, jar-notebook, jar-leica, jar-qt, jar-slim"
+    depends="jar-formats, jar-visbio, jar-plugins, jar-notebook, jar-leica, jar-qt, jar-slim"
     description="generate JAR files for LOCI software packages"/>
 
   <target name="docs" depends="init"
@@ -243,28 +231,12 @@ Apache XML-RPC
     </copy>
   </target>
 
-  <!-- LOCI Common Classes -->
-
-  <property name="common.files" value="loci/ome/viewer/** loci/util/**"/>
-
-  <target name="jar-common" depends="compile, copy-jars"
-    description="generate JAR file for LOCI common classes">
-    <mkdir dir="${jar.dir}"/>
-    <jar jarfile="${jar.dir}/loci-common.jar" basedir="${classes.dir}"
-      includes="${common.files}">
-      <manifest>
-        <attribute name="Main-Class" value="loci.util.About"/>
-      </manifest>
-    </jar>
-  </target>
-
   <!-- Bio-Formats -->
 
-  <property name="formats.classpath" value="loci-common.jar"/>
   <property name="formats.files" value="loci/browser/** loci/formats/**"/>
   <property name="formats.resources" value="loci/formats/*.txt"/>
 
-  <target name="jar-formats" depends="compile, jar-common"
+  <target name="jar-formats" depends="compile"
     description="generate Bio-Formats JAR file">
     <mkdir dir="${jar.dir}"/>
     <copy todir="${classes.dir}" preservelastmodified="true">
@@ -274,19 +246,18 @@ Apache XML-RPC
       includes="${formats.files}">
       <manifest>
         <attribute name="Main-Class" value="loci.formats.ImageViewer"/>
-        <attribute name="Class-Path" value="${formats.classpath}"/>
       </manifest>
     </jar>
   </target>
 
   <!-- VisBio -->
 
-  <property name="visbio.classpath" value="bio-formats.jar commons-httpclient-2.0-rc2.jar commons-logging.jar forms-1.0.4.jar ij.jar loci-common.jar looks-1.2.2.jar ome-java.jar visad.jar xmlrpc-1.2-b1.jar"/>
+  <property name="visbio.classpath" value="bio-formats.jar commons-httpclient-2.0-rc2.jar commons-logging.jar forms-1.0.4.jar ij.jar looks-1.2.2.jar ome-java.jar visad.jar xmlrpc-1.2-b1.jar"/>
   <property name="visbio.files" value="loci/visbio/**"/>
   <property name="visbio.resources" value="loci/visbio/classes.txt loci/visbio/*.png loci/visbio/*.gif loci/visbio/help/*.html loci/visbio/help/*.png loci/visbio/overlays/*.png loci/visbio/view/*.png"/>
 
   <target name="jar-visbio"
-    depends="compile, copy-jars, jar-formats, jar-common"
+    depends="compile, copy-jars, jar-formats"
     description="generate VisBio JAR file">
     <mkdir dir="${jar.dir}"/>
     <copy todir="${classes.dir}" preservelastmodified="true">
@@ -309,7 +280,7 @@ Apache XML-RPC
   <!-- LOCI Plugins for ImageJ -->
 
   <target name="jar-plugins"
-    depends="compile, copy-jars, jar-common, jar-formats"
+    depends="compile, copy-jars, jar-formats"
     description="generate LOCI Plugins for ImageJ JAR file">
     <mkdir dir="${jar.dir}"/>
     <!-- TODO -->
@@ -318,7 +289,7 @@ Apache XML-RPC
   <!-- OME Metadata Notebook -->
 
   <target name="jar-notebook"
-    depends="compile, copy-jars, jar-common, jar-formats"
+    depends="compile, copy-jars, jar-formats"
     description="generate OME Metadata Notebook JAR file">
     <mkdir dir="${jar.dir}"/>
     <!-- TODO -->
@@ -343,7 +314,7 @@ Apache XML-RPC
 
   <!-- QT TIFF Converter -->
 
-  <property name="qt.files" value="loci/apps/qt/* loci/util/FilePattern* loci/util/NumberFilter* loci/formats/BitBuffer* loci/formats/BitWriter* loci/formats/ByteVector* loci/formats/ComboFileFilter* loci/formats/Compression* loci/formats/DataTools* loci/formats/DummyMetadataStore* loci/formats/ExtensionFileFilter* loci/formats/FileStitcher* loci/formats/FormatException* loci/formats/FormatFileFilter* loci/formats/FormatHandler* loci/formats/FormatReader* loci/formats/FormatWriter* loci/formats/IFormatHandler* loci/formats/IFormatReader* loci/formats/ImageTools* loci/formats/LZWTreeNode* loci/formats/LegacyQTTools* loci/formats/MetadataStore* loci/formats/OMEXMLMetadataStore* loci/formats/RandomAccessArray* loci/formats/RandomAccessStream* loci/formats/ReflectException* loci/formats/ReflectedUniverse* loci/formats/TiffRational* loci/formats/TiffTools* loci/formats/in/BaseTiffReader* loci/formats/in/LegacyQTReader* loci/formats/in/QTReader* loci/formats/in/TiffReader* loci/formats/out/TiffWriter*"/>
+  <property name="qt.files" value="loci/apps/qt/* loci/formats/BitBuffer* loci/formats/BitWriter* loci/formats/ByteVector* loci/formats/ComboFileFilter* loci/formats/Compression* loci/formats/DataTools* loci/formats/DummyMetadataStore* loci/formats/ExtensionFileFilter* loci/formats/FilePattern* loci/formats/FileStitcher* loci/formats/FormatException* loci/formats/FormatFileFilter* loci/formats/FormatHandler* loci/formats/FormatReader* loci/formats/FormatWriter* loci/formats/IFormatHandler* loci/formats/IFormatReader* loci/formats/ImageTools* loci/formats/LZWTreeNode* loci/formats/LegacyQTTools* loci/formats/MetadataStore* loci/formats/NumberFilter* loci/formats/OMEXMLMetadataStore* loci/formats/RandomAccessArray* loci/formats/RandomAccessStream* loci/formats/ReflectException* loci/formats/ReflectedUniverse* loci/formats/TiffRational* loci/formats/TiffTools* loci/formats/in/BaseTiffReader* loci/formats/in/LegacyQTReader* loci/formats/in/QTReader* loci/formats/in/TiffReader* loci/formats/out/TiffWriter*"/>
 
   <target name="jar-qt" depends="compile"
     description="generate QT TIFF Converter JAR file">

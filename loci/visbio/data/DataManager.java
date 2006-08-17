@@ -31,7 +31,7 @@ import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.swing.tree.DefaultMutableTreeNode;
-import loci.util.FilePattern;
+import loci.formats.FilePattern;
 import loci.visbio.*;
 import loci.visbio.help.HelpManager;
 import loci.visbio.state.*;

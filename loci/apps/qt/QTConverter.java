@@ -15,13 +15,13 @@ import java.io.File;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
+import loci.formats.FilePattern;
 import loci.formats.FormatHandler;
 import loci.formats.FormatReader;
 import loci.formats.LegacyQTTools;
 import loci.formats.in.QTReader;
 import loci.formats.in.TiffReader;
 import loci.formats.out.TiffWriter;
-import loci.util.FilePattern;
 
 /** A utility for converting 4D QuickTime movies into 4D TIFF stacks. */
 public class QTConverter extends JFrame implements ActionListener, Runnable {

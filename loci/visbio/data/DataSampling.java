@@ -28,11 +28,9 @@ import java.math.BigInteger;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import loci.formats.ImageTools;
-import loci.util.MathUtil;
 import loci.visbio.state.Dynamic;
 import loci.visbio.state.SaveException;
-import loci.visbio.util.ObjectUtil;
-import loci.visbio.util.XMLUtil;
+import loci.visbio.util.*;
 import org.w3c.dom.Element;
 
 /** DataSampling is a resampling of another transform. */

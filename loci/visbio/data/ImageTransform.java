@@ -26,7 +26,6 @@ package loci.visbio.data;
 import java.awt.image.BufferedImage;
 import java.math.BigInteger;
 import java.rmi.RemoteException;
-import loci.util.MathUtil;
 import loci.visbio.state.SaveException;
 import loci.visbio.util.*;
 import org.w3c.dom.Element;
