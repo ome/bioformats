@@ -26,6 +26,7 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Hashtable;
 import loci.formats.*;
 
@@ -536,6 +537,24 @@ public abstract class BaseTiffReader extends FormatReader {
   public String getDimensionOrder(String id) throws FormatException, IOException
   {
     return "XYCZT";
+  }
+
+  /**
+   * Obtains an object which represents a given plane within the file.
+   * @param id The path to the file.
+   * @param no The plane or section within the file to obtain.
+   * @return an object which represents the plane.
+   * @throws FormatException if there is an error parsing the file.
+   * @throws IOException if there is an error reading from the file or acquiring
+   * permissions to read the file..
+   */
+  public Plane2D openPlane2D(String id, int no)
+    throws FormatException, IOException
+  {
+    return new Plane2D(
+        ByteBuffer.wrap(openBytes(id, no)),
+        Plane2D.typeFromString(getPixelType()),
+        isLittleEndian(id));
   }
 
   /** Obtains the specified image from the given TIFF file as a byte array. */
