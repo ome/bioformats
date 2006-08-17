@@ -31,8 +31,6 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import javax.swing.filechooser.FileFilter;
 
-import loci.util.FilePattern;
-
 /** Abstract superclass of all biological file format readers. */
 public abstract class FormatReader extends FormatHandler implements IFormatReader {
 

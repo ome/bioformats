@@ -30,8 +30,6 @@ import java.lang.*;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import loci.util.FilePattern;
-
 /** Logic to stitch together files with similar names. */
 public class FileStitcher extends FormatReader {
 
