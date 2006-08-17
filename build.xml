@@ -40,6 +40,7 @@ VisBio
                    loci-common.jar
                    looks-1.2.2.jar
                    ome-java.jar
+                   visad.jar
                    xmlrpc-1.2-b1.jar (ome-java.jar)
     Targets:       jar-visbio
                    visad
@@ -79,12 +80,14 @@ Leica Converter
     JAR file:      LeicaConverter.jar
     Folders:       loci/apps/leica
     Main class:    loci.apps.leica.LeicaConverter
-    Dependencies:  None (custom built)
+    Dependencies:  bio-formats.jar
+                   ome-java.jar
     Targets:       jar-leica
 
 QT TIFF Converter
     JAR file:      QTConverter.jar
     Folders:       loci/apps/qt
+                   some loci/formats and loci/util
     Main class:    loci.apps.qt.QTConverter
     Dependencies:  None (custom built)
     Targets:       jar-qt
@@ -92,8 +95,9 @@ QT TIFF Converter
 Slim Plotter
     JAR file:      SlimPlotter.jar
     Folders:       loci/apps/slim
+                   some loci/formats and loci/visbio
     Main class:    loci.apps.slim.SlimPlotter
-    Dependencies:  None (custom built)
+    Dependencies:  visad.jar
     Targets:       jar-slim
 
 ===============================================================================
@@ -145,11 +149,15 @@ Skin Look and Feel
     URL:       http://skinlf.l2fprod.com/
     Notes:     Not used (may be used in the future for flexible skinning)
 
+VisAD
+    JAR file:  visad.jar
+    URL:       http://www.ssec.wisc.edu/~billh/visad.html
+    Notes:     Stripped down VisAD library used by VisBio and Slim Plotter
+
 Apache XML-RPC
     JAR file:  xmlrpc-1.2-b1.jar
     URL:       http://ws.apache.org/xmlrpc/
     Notes:     Required for OME Java to communicate with OME servers
-
 -->
 
 <project name="LOCI Software" default="compile" basedir=".">
@@ -187,7 +195,8 @@ Apache XML-RPC
       classpath="${ext.jars}" deprecation="true"/>
   </target>
 
-  <target name="jars" depends="jar-common, jar-formats, jar-visbio, jar-plugins, jar-notebook, jar-leica, jar-qt, jar-slim"
+  <target name="jars"
+    depends="jar-common, jar-formats, jar-visbio, jar-plugins, jar-notebook, jar-leica, jar-qt, jar-slim"
     description="generate JAR files for LOCI software packages"/>
 
   <target name="docs" depends="init"
@@ -236,14 +245,13 @@ Apache XML-RPC
 
   <!-- LOCI Common Classes -->
 
-  <property name="common.packages"
-    value="loci/ome/viewer/** loci/util/**"/>
+  <property name="common.files" value="loci/ome/viewer/** loci/util/**"/>
 
-  <target name="jar-common" depends="compile"
+  <target name="jar-common" depends="compile, copy-jars"
     description="generate JAR file for LOCI common classes">
     <mkdir dir="${jar.dir}"/>
     <jar jarfile="${jar.dir}/loci-common.jar" basedir="${classes.dir}"
-      includes="${common.packages}">
+      includes="${common.files}">
       <manifest>
         <attribute name="Main-Class" value="loci.util.About"/>
       </manifest>
@@ -253,18 +261,17 @@ Apache XML-RPC
   <!-- Bio-Formats -->
 
   <property name="formats.classpath" value="loci-common.jar"/>
-  <property name="formats.packages"
-    value="loci/browser/** loci/formats/**"/>
+  <property name="formats.files" value="loci/browser/** loci/formats/**"/>
   <property name="formats.resources" value="loci/formats/*.txt"/>
 
-  <target name="jar-formats" depends="compile"
+  <target name="jar-formats" depends="compile, jar-common"
     description="generate Bio-Formats JAR file">
     <mkdir dir="${jar.dir}"/>
     <copy todir="${classes.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="${formats.resources}"/>
     </copy>
-    <jar jarfile="${jar.dir}/bio_formats.jar" basedir="${classes.dir}"
-      includes="${formats.packages}">
+    <jar jarfile="${jar.dir}/bio-formats.jar" basedir="${classes.dir}"
+      includes="${formats.files}">
       <manifest>
         <attribute name="Main-Class" value="loci.util.About"/>
         <attribute name="Class-Path" value="${formats.classpath}"/>
@@ -274,18 +281,19 @@ Apache XML-RPC
 
   <!-- VisBio -->
 
-  <property name="visbio.classpath" value="bio_formats.jar commons-httpclient-2.0-rc2.jar commons-logging.jar forms-1.0.4.jar ij.jar loci-common.jar looks-1.2.2.jar ome-java.jar visad.jar xmlrpc-1.2-b1.jar"/>
-  <property name="visbio.packages" value="loci/visbio/**"/>
+  <property name="visbio.classpath" value="bio-formats.jar commons-httpclient-2.0-rc2.jar commons-logging.jar forms-1.0.4.jar ij.jar loci-common.jar looks-1.2.2.jar ome-java.jar visad.jar xmlrpc-1.2-b1.jar"/>
+  <property name="visbio.files" value="loci/visbio/**"/>
   <property name="visbio.resources" value="loci/visbio/classes.txt loci/visbio/*.png loci/visbio/*.gif loci/visbio/help/*.html loci/visbio/help/*.png loci/visbio/overlays/*.png loci/visbio/view/*.png"/>
 
-  <target name="jar-visbio" depends="compile"
+  <target name="jar-visbio"
+    depends="compile, copy-jars, jar-formats, jar-common"
     description="generate VisBio JAR file">
     <mkdir dir="${jar.dir}"/>
     <copy todir="${classes.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="${visbio.resources}"/>
     </copy>
     <jar jarfile="${jar.dir}/visbio.jar" basedir="${classes.dir}"
-      includes="${visbio.packages}">
+      includes="${visbio.files}">
       <manifest>
         <attribute name="Main-Class" value="loci.visbio.VisBio"/>
         <attribute name="Class-Path" value="${visbio.classpath}"/>
@@ -298,52 +306,71 @@ Apache XML-RPC
     <!-- TODO -->
   </target>
 
-  <target name="visad" depends="init">
-    <!-- TODO -->
-  </target>
-
   <!-- LOCI Plugins for ImageJ -->
 
-  <target name="jar-plugins" depends="compile"
+  <target name="jar-plugins"
+    depends="compile, copy-jars, jar-common, jar-formats"
     description="generate LOCI Plugins for ImageJ JAR file">
     <mkdir dir="${jar.dir}"/>
     <!-- TODO -->
   </target>
 
-
   <!-- OME Metadata Notebook -->
 
-  <target name="jar-notebook" depends="compile"
+  <target name="jar-notebook"
+    depends="compile, copy-jars, jar-common, jar-formats"
     description="generate OME Metadata Notebook JAR file">
     <mkdir dir="${jar.dir}"/>
     <!-- TODO -->
   </target>
 
-
   <!-- Leica Converter -->
 
-  <target name="jar-leica" depends="compile"
+  <property name="leica.classpath" value="bio-formats.jar ome-java.jar"/>
+  <property name="leica.files" value="loci/apps/leica/**"/>
+
+  <target name="jar-leica" depends="compile, copy-jars, jar-formats"
     description="generate Leica Converter JAR file">
     <mkdir dir="${jar.dir}"/>
-    <!-- TODO -->
+    <jar jarfile="${jar.dir}/LeicaConverter.jar" basedir="${classes.dir}"
+      includes="${leica.files}">
+      <manifest>
+        <attribute name="Main-Class" value="loci.apps.leica.LeicaConverter"/>
+        <attribute name="Class-Path" value="${leica.classpath}"/>
+      </manifest>
+    </jar>
   </target>
 
-
   <!-- QT TIFF Converter -->
+
+  <property name="qt.files" value="loci/apps/qt/* loci/util/FilePattern* loci/util/NumberFilter* loci/formats/BitBuffer* loci/formats/BitWriter* loci/formats/ByteVector* loci/formats/ComboFileFilter* loci/formats/Compression* loci/formats/DataTools* loci/formats/DummyMetadataStore* loci/formats/ExtensionFileFilter* loci/formats/FileStitcher* loci/formats/FormatException* loci/formats/FormatFileFilter* loci/formats/FormatHandler* loci/formats/FormatReader* loci/formats/FormatWriter* loci/formats/IFormatHandler* loci/formats/IFormatReader* loci/formats/ImageTools* loci/formats/LZWTreeNode* loci/formats/LegacyQTTools* loci/formats/MetadataStore* loci/formats/OMEXMLMetadataStore* loci/formats/RandomAccessArray* loci/formats/RandomAccessStream* loci/formats/ReflectException* loci/formats/ReflectedUniverse* loci/formats/TiffRational* loci/formats/TiffTools* loci/formats/in/BaseTiffReader* loci/formats/in/LegacyQTReader* loci/formats/in/QTReader* loci/formats/in/TiffReader* loci/formats/out/TiffWriter*"/>
 
   <target name="jar-qt" depends="compile"
     description="generate QT TIFF Converter JAR file">
     <mkdir dir="${jar.dir}"/>
-    <!-- TODO -->
+    <jar jarfile="${jar.dir}/QTConverter.jar" basedir="${classes.dir}"
+      includes="${qt.files}">
+      <manifest>
+        <attribute name="Main-Class" value="loci.apps.qt.QTConverter"/>
+      </manifest>
+    </jar>
   </target>
-
 
   <!-- Slim Plotter -->
 
-  <target name="jar-slim" depends="compile"
+  <property name="slim.classpath" value="visad.jar"/>
+  <property name="slim.files" value="loci/apps/slim/* loci/formats/DataTools* loci/formats/ExtensionFileFilter* loci/formats/ComboFileFilter* loci/visbio/util/OutputConsole* loci/visbio/util/OutputEvent* loci/visbio/util/SwingUtil* loci/visbio/util/LAFUtil*"/>
+
+  <target name="jar-slim" depends="compile, copy-jars"
     description="generate Slim Plotter JAR file">
     <mkdir dir="${jar.dir}"/>
-    <!-- TODO -->
+    <jar jarfile="${jar.dir}/SlimPlotter.jar" basedir="${classes.dir}"
+      includes="${slim.files}">
+      <manifest>
+        <attribute name="Main-Class" value="loci.apps.slim.SlimPlotter"/>
+        <attribute name="Class-Path" value="${slim.classpath}"/>
+      </manifest>
+    </jar>
   </target>
 
 </project>
