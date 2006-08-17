@@ -121,25 +121,44 @@ public abstract class BaseTiffReader extends FormatReader {
     int photo = TiffTools.getIFDIntValue(ifd,
       TiffTools.PHOTOMETRIC_INTERPRETATION);
     String photoInterp = null;
+    String MetaDataPhotoInterp = null;
+    
     switch (photo) {
       case TiffTools.WHITE_IS_ZERO:
-        photoInterp = "WhiteIsZero"; break;
+        photoInterp = "WhiteIsZero"; 
+        MetaDataPhotoInterp = "Monochrome";
+        break;
       case TiffTools.BLACK_IS_ZERO:
-        photoInterp = "BlackIsZero"; break;
+        photoInterp = "BlackIsZero"; 
+        MetaDataPhotoInterp = "Monochrome";      
+        break;
       case TiffTools.RGB:
-        photoInterp = "RGB"; break;
+        photoInterp = "RGB"; 
+        MetaDataPhotoInterp = "RGB";
+        break;   
       case TiffTools.RGB_PALETTE:
-        photoInterp = "Palette"; break;
+        photoInterp = "Palette"; 
+        MetaDataPhotoInterp = "Monochrome";
+        break;
       case TiffTools.TRANSPARENCY_MASK:
-        photoInterp = "Transparency Mask"; break;
+        photoInterp = "Transparency Mask"; 
+        MetaDataPhotoInterp = "RGB";
+        break;
       case TiffTools.CMYK:
-        photoInterp = "CMYK"; break;
+        photoInterp = "CMYK"; 
+        MetaDataPhotoInterp = "CMYK";
+        break;
       case TiffTools.Y_CB_CR:
-        photoInterp = "YCbCr"; break;
+        photoInterp = "YCbCr"; 
+        MetaDataPhotoInterp = "RGB";
+        break;
       case TiffTools.CIE_LAB:
-        photoInterp = "CIELAB"; break;
+        photoInterp = "CIELAB";
+        MetaDataPhotoInterp = "RGB";
+        break;
     }
     put("PhotometricInterpretation", photoInterp);
+    put("MetaDataPhotometricInterpretation", MetaDataPhotoInterp);
 
     putInt("CellWidth", ifd, TiffTools.CELL_WIDTH);
     putInt("CellLength", ifd, TiffTools.CELL_LENGTH);
@@ -392,6 +411,12 @@ public abstract class BaseTiffReader extends FormatReader {
 
       // populate Image element
       setImage();
+      
+      // populate Logical Channel elements
+      for (int i=0; i < getSizeC(currentId); i++)
+      {
+          setLogicalChannel(i);
+      }
 
       // populate Dimensions element
       int pixelSizeX = TiffTools.getIFDIntValue(ifd,
@@ -406,22 +431,7 @@ public abstract class BaseTiffReader extends FormatReader {
 //      OMETools.setAttribute(ome, "ChannelInfo", "SamplesPerPixel", "" +
 //        TiffTools.getIFDIntValue(ifd, TiffTools.SAMPLES_PER_PIXEL));
 
-//      int photoInterp2 = TiffTools.getIFDIntValue(ifd,
-//        TiffTools.PHOTOMETRIC_INTERPRETATION, true, 0);
-//      String photo2;
-//      switch (photoInterp2) {
-//        case 0: photo2 = "monochrome"; break;
-//        case 1: photo2 = "monochrome"; break;
-//        case 2: photo2 = "RGB"; break;
-//        case 3: photo2 = "monochrome"; break;
-//        case 4: photo2 = "RGB"; break;
-//        default: photo2 = unknown;
-//      }
-//      OMETools.setAttribute(ome, "ChannelInfo",
-//        "PhotometricInterpretation", photo2);
-
       // populate StageLabel element
-
       Object x = TiffTools.getIFDValue(ifd, TiffTools.X_POSITION);
       Object y = TiffTools.getIFDValue(ifd, TiffTools.Y_POSITION);
       Float stageX;
@@ -665,8 +675,61 @@ public abstract class BaseTiffReader extends FormatReader {
     return currentId;
   }
 
+  private void setChannelGlobalMinMax(int i) throws FormatException, IOException {
+      getMetadataStore(currentId).setChannelGlobalMinMax(
+              i, 
+              null,
+              null,
+              null
+              );
+  }
+  
+  private void setLogicalChannel(int i) throws FormatException, IOException {
+      getMetadataStore(currentId).setLogicalChannel(
+              i, 
+              getChannelName(i), 
+              getNdFilter(i), 
+              getEmWave(i), 
+              getExWave(i), 
+              getPhotometricInterpretation(i),
+              getMode(i), // aquisition mode
+              null);
+  }
 
-  /**
+  private String getChannelName(int i) 
+  {
+      return null;
+  }
+  
+  private Float getNdFilter(int i) 
+  {
+      return null;
+  }
+  
+  Integer getEmWave(int i) 
+  {
+      return null;
+  }
+
+  private Integer getExWave(int i) 
+  {
+      return null;
+  }
+  
+  private String getPhotometricInterpretation(int i) throws FormatException, IOException 
+  {
+      return (String) getMetadataValue(currentId, "MetaDataPhotometricInterpretation");
+  }
+  
+  private String getMode(int i) 
+  {
+      return null;
+  }
+  
+  
+  
+  
+/**
    * Retrieves the image creation date.
    * @return the image creation date.
    */
