@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
+<plist version="0.9">
+<dict>
+	<key>CFBundleName</key>
+	<string>VisBio</string>
+	<key>CFBundleVersion</key>
+	<string>3.x</string>
+	<key>CFBundleAllowMixedLocalizations</key>
+	<string>true</string>
+	<key>CFBundleExecutable</key>
+	<string>JavaApplicationStub</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleIconFile</key>
+	<string>visbio.icns</string>
+	<key>Java</key>
+	<dict>
+		<key>VMOptions</key>
+		<string>-Xmx512m</string>
+		<key>MainClass</key>
+		<string>loci.visbio.VisBio</string>
+		<key>JVMVersion</key>
+		<string>1.4+</string>
+		<key>ClassPath</key>
+			<array>
+			<string>$JAVAROOT/bio-formats.jar</string>
+			<string>$JAVAROOT/commons-httpclient-2.0-rc2.jar</string>
+			<string>$JAVAROOT/commons-logging.jar</string>
+			<string>$JAVAROOT/forms-1.0.4.jar</string>
+			<string>$JAVAROOT/ij.jar</string>
+			<string>$JAVAROOT/loci-ome-xml.jar</string>
+			<string>$JAVAROOT/looks-1.2.2.jar</string>
+			<string>$JAVAROOT/ome-java.jar</string>
+			<string>$JAVAROOT/visad.jar</string>
+			<string>$JAVAROOT/visbio.jar</string>
+			<string>$JAVAROOT/xmlrpc-1.2-b1.jar</string>
+			</array>
+		<key>Properties</key>
+		<dict>
+			<key>apple.laf.useScreenMenuBar</key>
+			<string>true</string>
+			<key>apple.j3d.CheckForContextUpdateEachFrame</key>
+			<string>true</string>
+			<key>apple.awt.showGrowBox</key>
+			<string>true</string>
+			<key>swing.defaultlaf</key>
+			<string>apple.laf.AquaLookAndFeel</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

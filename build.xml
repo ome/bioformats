@@ -3,7 +3,7 @@ build.xml
 
 Master ant build file for all Java software projects at LOCI.
 Download Apache Ant from http://ant.apache.org/.
-Type "ant -projecthelp" for a list of targets.
+Type "ant -p" for a list of targets.
 
 ===============================================================================
 This build file handles the following projects:
@@ -31,14 +31,13 @@ VisBio
                    visad.jar
                    xmlrpc-1.2-b1.jar (ome-java.jar)
     Targets:       jar-visbio
-                   visad
                    dist-visbio
 
 LOCI Plugins for ImageJ
     JAR file:      loci_plugins.jar
     Folders:       loci/plugins
                    loci/plugins/*
-                   loci/ome/viewer/* (temporary)
+                   loci/ome/viewer (temporary)
     Main class:    loci.plugins.About
     IJ plugins:    loci.plugins.browser.LociDataBrowser
                    loci.plugins.LociImporter
@@ -159,15 +158,13 @@ Apache XML-RPC
   <property name="build.dir" value="build"/>
   <property name="dest.dir" value="${build.dir}/src"/>
   <property name="classes.dir" value="${build.dir}/classes"/>
-  <property name="jar.dir"  value="${build.dir}/jar"/>
+  <property name="jar.dir" value="${build.dir}/jar"/>
   <property name="docs.dir" value="${build.dir}/docs"/>
   <property name="dist.dir" value="${build.dir}/dist"/>
 
-  <!-- External JAR dependencies -->
-
-  <property name="ext.jars" value="jar/AppleJavaExtensions.jar:jar/commons-httpclient-2.0-rc2.jar:jar/commons-logging.jar:jar/forms-1.0.4.jar:jar/ij.jar:jar/looks-1.2.2.jar:jar/ome-java.jar:jar/xmlrpc-1.2-b1.jar"/>
-
   <!-- Global build targets -->
+
+  <property name="ext.jars" value="jar/AppleJavaExtensions.jar:jar/commons-httpclient-2.0-rc2.jar:jar/commons-logging.jar:jar/forms-1.0.4.jar:jar/ij.jar:jar/looks-1.2.2.jar:jar/ome-java.jar:jar/visad.jar:jar/xmlrpc-1.2-b1.jar"/>
 
   <target name="init">
     <tstamp>
@@ -189,13 +186,11 @@ Apache XML-RPC
 
   <target name="docs" depends="init"
     description="generate Javadocs for LOCI software packages">
-    <mkdir dir="${docs.dir}"/>
     <javadoc sourcepath="${dest.dir}" destdir="${docs.dir}/api"
       author="true" version="true" use="true" windowtitle="LOCI Software API">
       <packageset dir="${dest.dir}"/>
       <doctitle><![CDATA[<h1>LOCI Software</h1>]]></doctitle>
       <bottom><![CDATA[<i>Copyright &#169; ${YEAR} Laboratory for Optical and Computational Instrumentation</i>]]></bottom>
-      <tag name="todo" scope="all" description="To do:"/>
       <link href="http://java.sun.com/j2se/1.4.2/docs/api/"/>
     </javadoc>
   </target>
@@ -211,7 +206,6 @@ Apache XML-RPC
     value="loci/plugins/HandleExtraFileTypes.java *.tar.gz"/>
 
   <target name="copy-source" depends="init">
-    <mkdir dir="${dest.dir}"/>
     <!-- copy binary files without filtering -->
     <copy todir="${dest.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="loci/**" excludes="**/*.class **/*.java **/*.config **/*.txt ${ignore.source}"/>
@@ -225,7 +219,6 @@ Apache XML-RPC
 
   <target name="copy-jars">
     <!-- copy needed external JARs into build jars folder -->
-    <mkdir dir="${jar.dir}"/>
     <copy todir="${jar.dir}" preservelastmodified="true">
       <fileset dir="jar"/>
     </copy>
@@ -238,10 +231,10 @@ Apache XML-RPC
 
   <target name="jar-formats" depends="compile"
     description="generate Bio-Formats JAR file">
-    <mkdir dir="${jar.dir}"/>
     <copy todir="${classes.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="${formats.resources}"/>
     </copy>
+    <mkdir dir="${jar.dir}"/>
     <jar jarfile="${jar.dir}/bio-formats.jar" basedir="${classes.dir}"
       includes="${formats.files}">
       <manifest>
@@ -259,7 +252,6 @@ Apache XML-RPC
   <target name="jar-visbio"
     depends="compile, copy-jars, jar-formats"
     description="generate VisBio JAR file">
-    <mkdir dir="${jar.dir}"/>
     <copy todir="${classes.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="${visbio.resources}"/>
     </copy>
@@ -272,27 +264,147 @@ Apache XML-RPC
     </jar>
   </target>
 
-  <target name="dist-visbio" depends="jar-visbio, jar-formats"
-    description="generate VisBio's platform-specific distribution bundles">
-    <!-- TODO -->
+  <property name="visbio.dist-files" value="bsd-forms.txt bsd-looks.txt gpl-visbio.txt omeul.txt whatsnew.txt *.cpp *.m"/>
+
+  <target name="dist-visbio" depends="dist-visbio-win32, dist-visbio-win32-nojre, dist-visbio-macosx, dist-visbio-linux, dist-visbio-nojre"/>
+
+  <property name="visbio.win32-dir" value="${dist.dir}/visbio/win32/VisBio"/>
+
+  <target name="dist-visbio-win32" depends="jar-visbio, jar-formats">
+    <copy todir="${visbio.win32-dir}" preservelastmodified="true">
+      <fileset dir="dist/visbio/win32"/>
+      <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
+      <fileset dir="${jar.dir}" includes="visbio.jar ${visbio.classpath}"/>
+    </copy>
+    <fixcrlf srcdir="${visbio.win32-dir}" eol="dos"
+      includes="*.txt *.cpp *.m plugins/*.txt"/>
+    <untar src="dist/jre-win32.tar.gz" dest="${visbio.win32-dir}"
+      overwrite="false" compression="gzip"/>
+    <zip destfile="${dist.dir}/visbio${visbio.version}_win32.zip"
+      basedir="${dist.dir}/visbio/win32"/>
+  </target>
+
+  <property name="visbio.win32-nojre-dir"
+    value="${dist.dir}/visbio/win32-nojre/VisBio"/>
+
+  <target name="dist-visbio-win32-nojre" depends="jar-visbio, jar-formats">
+    <copy todir="${visbio.win32-nojre-dir}"
+      preservelastmodified="true">
+      <fileset dir="dist/visbio/win32" excludes="launcher.cfg"/>
+      <fileset dir="dist/visbio/win32-nojre"/>
+      <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
+      <fileset dir="${jar.dir}" includes="visbio.jar ${visbio.classpath}"/>
+    </copy>
+    <fixcrlf srcdir="${visbio.win32-nojre-dir}" eol="dos"
+      includes="*.txt *.cpp *.m plugins/*.txt"/>
+    <zip destfile="${dist.dir}/visbio${visbio.version}_win32_nojre.zip"
+      basedir="${dist.dir}/visbio/win32-nojre"/>
+  </target>
+
+  <property name="visbio.macosx-dir" value="${dist.dir}/visbio/macosx/VisBio"/>
+
+  <target name="dist-visbio-macosx" depends="jar-visbio, jar-formats">
+    <copy todir="${visbio.macosx-dir}"
+      preservelastmodified="true">
+      <fileset dir="dist/visbio/macosx"/>
+      <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
+    </copy>
+    <fixcrlf srcdir="${visbio.macosx-dir}" eol="mac"
+      includes="*.txt *.cpp *.m plugins/*.txt"/>
+    <!-- HACK - copy does not preserve permissions; chmod them back -->
+    <chmod perm="ugo+x">
+      <fileset dir="${visbio.macosx-dir}"
+        includes="visbio omeul VisBio.app/Contents/MacOS/JavaApplicationStub"/>
+    </chmod>
+    <copy todir="${visbio.macosx-dir}/VisBio.app/Contents/Resources/Java">
+      <fileset dir="${jar.dir}" includes="visbio.jar ${visbio.classpath}"/>
+    </copy>
+    <tar destfile="${dist.dir}/visbio${visbio.version}_macosx.tar.gz"
+      basedir="${dist.dir}/visbio/macosx" compression="gzip"/>
+  </target>
+
+  <property name="visbio.linux-dir"
+    value="${dist.dir}/visbio/linux/visbio${visbio.version}"/>
+
+  <target name="dist-visbio-linux" depends="jar-visbio, jar-formats">
+    <copy todir="${visbio.linux-dir}" preservelastmodified="true">
+      <fileset dir="dist/visbio/linux"/>
+      <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
+      <fileset dir="${jar.dir}" includes="visbio.jar ${visbio.classpath}"/>
+    </copy>
+    <fixcrlf srcdir="${visbio.linux-dir}" eol="unix"
+      includes="*.txt *.cpp *.m plugins/*.txt"/>
+    <!-- HACK - copy does not preserve permissions; chmod them back -->
+    <chmod perm="ugo+x">
+      <fileset dir="${visbio.linux-dir}" includes="visbio omeul"/>
+    </chmod>
+<!--
+    <untar src="dist/jre-linux.tar.gz" dest="${visbio.linux-dir}"
+      overwrite="false" compression="gzip"/>
+-->
+    <!-- HACK - untar does not restore permissions; use exec instead -->
+    <exec executable="tar">
+      <arg line="xzf dist/jre-linux.tar.gz -C ${visbio.linux-dir}"/>
+    </exec>
+    <tar destfile="${dist.dir}/visbio${visbio.version}_linux.tar.gz"
+      basedir="${dist.dir}/visbio/linux" compression="gzip"/>
+  </target>
+
+  <property name="visbio.nojre-dir"
+    value="${dist.dir}/visbio/nojre/visbio${visbio.version}"/>
+
+  <target name="dist-visbio-nojre" depends="jar-visbio, jar-formats">
+    <copy todir="${visbio.nojre-dir}" preservelastmodified="true">
+      <fileset dir="dist/visbio/linux"/>
+      <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
+      <fileset dir="${jar.dir}" includes="visbio.jar ${visbio.classpath}"/>
+    </copy>
+    <fixcrlf srcdir="${visbio.nojre-dir}" eol="unix"
+      includes="*.txt *.cpp *.m plugins/*.txt"/>
+    <!-- HACK - copy does not preserve permissions; chmod them back -->
+    <chmod perm="ugo+x">
+      <fileset dir="${visbio.nojre-dir}" includes="visbio omeul"/>
+    </chmod>
+    <tar destfile="${dist.dir}/visbio${visbio.version}.tar.gz"
+      basedir="${dist.dir}/visbio/nojre" compression="gzip"/>
   </target>
 
   <!-- LOCI Plugins for ImageJ -->
 
+  <property name="plugins.files" value="loci/plugins/** loci/ome/viewer/**"/>
+
   <target name="jar-plugins"
     depends="compile, copy-jars, jar-formats"
     description="generate LOCI Plugins for ImageJ JAR file">
-    <mkdir dir="${jar.dir}"/>
-    <!-- TODO -->
+    <jar jarfile="${jar.dir}/loci_plugins.jar" basedir="${classes.dir}"
+      includes="${plugins.files}">
+      <manifest>
+        <attribute name="Main-Class" value="loci.plugins.About"/>
+      </manifest>
+    </jar>
   </target>
 
   <!-- OME Metadata Notebook -->
 
+  <property name="notebook.classpath" value="bio-formats.jar commons-httpclient-2.0-rc2.jar commons-logging.jar forms-1.0.4.jar ome-java.jar xmlrpc-1.2-b1.jar"/>
+  <property name="notebook.files"
+    value="loci/ome/notebook/** loci/ome/viewer/**"/>
+  <property name="notebook.resources" value="loci/ome/notebook/Template.xml loci/ome/notebook/Icons/* loci/ome/notebook/TypeDefs/*"/>
+
   <target name="jar-notebook"
     depends="compile, copy-jars, jar-formats"
     description="generate OME Metadata Notebook JAR file">
-    <mkdir dir="${jar.dir}"/>
-    <!-- TODO -->
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="${notebook.resources}"/>
+    </copy>
+    <jar jarfile="${jar.dir}/ome-notebook.jar" basedir="${classes.dir}"
+      includes="${notebook.files}">
+      <manifest>
+        <attribute name="Main-Class"
+          value="loci.ome.notebook.MetadataNotebook"/>
+        <attribute name="Class-Path" value="${notebook.classpath}"/>
+      </manifest>
+    </jar>
   </target>
 
   <!-- Leica Converter -->
@@ -302,7 +414,6 @@ Apache XML-RPC
 
   <target name="jar-leica" depends="compile, copy-jars, jar-formats"
     description="generate Leica Converter JAR file">
-    <mkdir dir="${jar.dir}"/>
     <jar jarfile="${jar.dir}/LeicaConverter.jar" basedir="${classes.dir}"
       includes="${leica.files}">
       <manifest>
@@ -334,7 +445,6 @@ Apache XML-RPC
 
   <target name="jar-slim" depends="compile, copy-jars"
     description="generate Slim Plotter JAR file">
-    <mkdir dir="${jar.dir}"/>
     <jar jarfile="${jar.dir}/SlimPlotter.jar" basedir="${classes.dir}"
       includes="${slim.files}">
       <manifest>

@@ -1,0 +1,10 @@
+#!/bin/bash
+cd `echo $0 | sed -e 's/\/[^\/]*$//g'`
+if [ -e jre/bin/java ]
+then
+  JAVA=jre/bin/java
+else
+  JAVA=java
+fi
+$JAVA -mx512m -Dswing.defaultlaf=com.jgoodies.plaf.plastic.Plastic3DLookAndFeel -jar visbio.jar $*
+cd -
