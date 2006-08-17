@@ -273,7 +273,7 @@ Apache XML-RPC
     <jar jarfile="${jar.dir}/bio-formats.jar" basedir="${classes.dir}"
       includes="${formats.files}">
       <manifest>
-        <attribute name="Main-Class" value="loci.util.About"/>
+        <attribute name="Main-Class" value="loci.formats.ImageViewer"/>
         <attribute name="Class-Path" value="${formats.classpath}"/>
       </manifest>
     </jar>
