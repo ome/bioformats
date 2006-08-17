@@ -135,21 +135,6 @@ public class SystemControls extends ControlPanel implements ActionListener {
       matlabVersion == null ? "Missing" : matlabVersion);
     matlabField.setEditable(false);
 
-    // JAI library text field
-    JTextField jaiField = new JTextField(
-      getVersionString("javax.media.jai.JAI"));
-    jaiField.setEditable(false);
-
-    // JPEG library text field
-    JTextField jpegField = new JTextField(
-      getVersionString("com.sun.image.codec.jpeg.JPEGCodec"));
-    jpegField.setEditable(false);
-
-    // POIFS library text field
-    JTextField poifsField = new JTextField(
-      getVersionString("org.apache.poi.poifs.filesystem.POIFSFileSystem"));
-    poifsField.setEditable(false);
-
     // Look & Feel text field
     JTextField lafField = new JTextField(LAFUtil.getLookAndFeel()[0]);
     lafField.setEditable(false);
@@ -193,8 +178,7 @@ public class SystemControls extends ControlPanel implements ActionListener {
     FormLayout layout = new FormLayout(
       "right:pref, 3dlu, pref:grow, 3dlu, pref",
       "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 9dlu, " +
-      "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, " +
-      "pref, 3dlu, pref, 3dlu, pref, 9dlu, " +
+      "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 9dlu, " +
       "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref");
     PanelBuilder builder = new PanelBuilder(layout);
     builder.setDefaultDialogBorder();
@@ -231,15 +215,6 @@ public class SystemControls extends ControlPanel implements ActionListener {
     row += 2;
     builder.addLabel("&MATLAB", cc.xy(1, row)).setLabelFor(matlabField);
     builder.add(matlabField, cc.xyw(3, row, 3));
-    row += 2;
-    builder.addLabel("JA&I", cc.xy(1, row)).setLabelFor(jaiField);
-    builder.add(jaiField, cc.xyw(3, row, 3));
-    row += 2;
-    builder.addLabel("JPE&G", cc.xy(1, row)).setLabelFor(jpegField);
-    builder.add(jpegField, cc.xyw(3, row, 3));
-    row += 2;
-    builder.addLabel("POI&FS", cc.xy(1, row)).setLabelFor(poifsField);
-    builder.add(poifsField, cc.xyw(3, row, 3));
     row += 2;
     builder.addSeparator("Configuration", cc.xyw(1, row, 5));
     row += 2;
