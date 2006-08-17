@@ -123,7 +123,7 @@ public class MetamorphReader extends BaseTiffReader {
   }
 
   // -- Internal BaseTiffReader API methods --
-
+  
   /** Populates the metadata hashtable. */
   protected void initStandardMetadata() {
       super.initStandardMetadata();
