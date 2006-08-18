@@ -354,7 +354,9 @@ public class SlimPlotter implements ActionListener,
     xMap.setRange(0, timeRange);
     yMap.setRange(minWave, maxWave);
     xMap.getAxisScale().setTitle("Time (ns)");
-    yMap.getAxisScale().setTitle("Wavelength (nm)");
+    AxisScale yScale = yMap.getAxisScale();
+    yScale.setTitle("Wavelength (nm)");
+    yScale.setSide(AxisScale.SECONDARY);
     zMap.getAxisScale().setTitle("Count");
     GraphicsModeControl gmc = decayPlot.getGraphicsModeControl();
     gmc.setScaleEnable(true);
