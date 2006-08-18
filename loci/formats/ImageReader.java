@@ -50,13 +50,13 @@ public class ImageReader implements IFormatReader {
 
   /** List of reader classes. */
   private static Class[] readerClasses;
-  
+
   /** Name of current file. */
   private String currentId;
-  
+
   /** Valid suffixes for this file format. */
   private String[] suffixes;
-  
+
   // -- Static initializer --
 
   static {
@@ -432,7 +432,7 @@ public class ImageReader implements IFormatReader {
   public String[] getSuffixes() {
     return suffixes;
   }
-  
+
   /**
    * Checks if the given string is a valid filename for any supported format.
    */
@@ -456,11 +456,11 @@ public class ImageReader implements IFormatReader {
     }
     throw new FormatException("Unknown file format: " + id);
   }
-  
+
   /**
    * Retrieves the reader that the ImageReader proxy is currently using or the
    * valid reader for a given file.
-   * 
+   *
    * @param id path to a file.
    * @return the current active reader unless <i>id</i> is not the current
    * <i>id</i>, in which case the active reader will be switched and that
@@ -474,10 +474,10 @@ public class ImageReader implements IFormatReader {
     if (!id.equals(currentId)) initFile(id);
     return currentReader();
   }
-  
+
   /**
    * Retrieves the reader that the ImageReader proxy is currently using.
-   * 
+   *
    * @return the current active reader.
    */
   private IFormatReader currentReader()

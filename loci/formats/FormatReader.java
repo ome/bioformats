@@ -32,7 +32,9 @@ import java.util.Hashtable;
 import javax.swing.filechooser.FileFilter;
 
 /** Abstract superclass of all biological file format readers. */
-public abstract class FormatReader extends FormatHandler implements IFormatReader {
+public abstract class FormatReader extends FormatHandler
+  implements IFormatReader
+{
 
   // -- Constants --
 
@@ -419,7 +421,8 @@ public abstract class FormatReader extends FormatHandler implements IFormatReade
     }
     if (id == null) {
       String className = reader.getClass().getName();
-      System.out.println("To test read a file in " + reader.getFormat() + " format, run:");
+      System.out.println("To test read a file in " +
+        reader.getFormat() + " format, run:");
       System.out.println("  java " + className + " [-nopix]");
       System.out.println("    [-merge] [-stitch] [-separate] [-omexml] file");
       return false;

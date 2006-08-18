@@ -133,7 +133,7 @@ public interface IFormatReader extends IFormatHandler {
    * @return the hashtable containing all metadata from the file
    */
   Hashtable getMetadata(String id) throws FormatException, IOException;
-  
+
   /**
    * Sets the default metadata store for this reader.
    *
