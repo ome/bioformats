@@ -33,7 +33,7 @@ import java.nio.ByteOrder;
  * @author Chris Allan callan at blackcat.ca
  */
 public class Plane2D
-{  
+{
   /** Contains the plane data. */
   private ByteBuffer    data;
 
@@ -54,7 +54,7 @@ public class Plane2D
 
   /** Identifies the <i>UINT16</i> data type used to store pixel values. */
   public static final int     UINT16 = 3;
-  
+
   /** Identifies the <i>INT32</i> data type used to store pixel values. */
   public static final int     INT32 = 4;
 
@@ -83,7 +83,7 @@ public class Plane2D
 
   /**
    * Default constructor.
-   * 
+   *
    * @param data the raw pixels.
    * @param type the type of the pixel data from the constants in this class.
    * @param isLittleEndian <i>true</i> if the plane is of little-endian byte
@@ -124,12 +124,12 @@ public class Plane2D
 
   /**
    * Returns the pixel intensity value of the pixel at <code>(x, y)</code>.
-   * 
+   *
    * @param x The X coordinate.
    * @param y The Y coordinate.
    * @return The intensity value.
    */
-  public double getPixelValue(int x, int y) 
+  public double getPixelValue(int x, int y)
   {
     int offset = x * y * bytesPerPixel;
 
@@ -154,7 +154,7 @@ public class Plane2D
     // This should never happen.
     throw new RuntimeException("Woah nelly! Something is very wrong.");
   }
-  
+
   /**
    * Takes a string value and maps it to one of the pixel type enumerations.
    * @param typeAsString the pixel type as a string.
