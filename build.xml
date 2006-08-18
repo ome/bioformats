@@ -312,15 +312,21 @@ Apache XML-RPC
     <fixcrlf srcdir="${visbio.macosx-dir}" eol="mac"
       includes="*.txt *.cpp *.m plugins/*.txt"/>
     <!-- HACK - copy does not preserve permissions; chmod them back -->
-    <chmod perm="ugo+x">
+    <chmod perm="+x">
       <fileset dir="${visbio.macosx-dir}"
         includes="visbio omeul VisBio.app/Contents/MacOS/JavaApplicationStub"/>
     </chmod>
     <copy todir="${visbio.macosx-dir}/VisBio.app/Contents/Resources/Java">
       <fileset dir="${jar.dir}" includes="visbio.jar ${visbio.classpath}"/>
     </copy>
+<!--
     <tar destfile="${dist.dir}/visbio${visbio.version}_macosx.tar.gz"
       basedir="${dist.dir}/visbio/macosx" compression="gzip"/>
+-->
+    <!-- HACK - tar does not preserve permissions; use exec instead -->
+    <exec executable="tar">
+      <arg line="czf ${dist.dir}/visbio${visbio.version}_macosx.tar.gz -C ${dist.dir}/visbio/macosx VisBio"/>
+    </exec>
   </target>
 
   <property name="visbio.linux-dir"
@@ -335,7 +341,7 @@ Apache XML-RPC
     <fixcrlf srcdir="${visbio.linux-dir}" eol="unix"
       includes="*.txt *.cpp *.m plugins/*.txt"/>
     <!-- HACK - copy does not preserve permissions; chmod them back -->
-    <chmod perm="ugo+x">
+    <chmod perm="+x">
       <fileset dir="${visbio.linux-dir}" includes="visbio omeul"/>
     </chmod>
 <!--
@@ -346,8 +352,14 @@ Apache XML-RPC
     <exec executable="tar">
       <arg line="xzf dist/jre-linux.tar.gz -C ${visbio.linux-dir}"/>
     </exec>
+<!--
     <tar destfile="${dist.dir}/visbio${visbio.version}_linux.tar.gz"
       basedir="${dist.dir}/visbio/linux" compression="gzip"/>
+-->
+    <!-- HACK - tar does not preserve permissions; use exec instead -->
+    <exec executable="tar">
+      <arg line="czf ${dist.dir}/visbio${visbio.version}_linux.tar.gz -C ${dist.dir}/visbio/linux visbio${visbio.version}"/>
+    </exec>
   </target>
 
   <property name="visbio.nojre-dir"
@@ -362,11 +374,17 @@ Apache XML-RPC
     <fixcrlf srcdir="${visbio.nojre-dir}" eol="unix"
       includes="*.txt *.cpp *.m plugins/*.txt"/>
     <!-- HACK - copy does not preserve permissions; chmod them back -->
-    <chmod perm="ugo+x">
+    <chmod perm="+x">
       <fileset dir="${visbio.nojre-dir}" includes="visbio omeul"/>
     </chmod>
+<!--
     <tar destfile="${dist.dir}/visbio${visbio.version}.tar.gz"
       basedir="${dist.dir}/visbio/nojre" compression="gzip"/>
+-->
+    <!-- HACK - tar does not preserve permissions; use exec instead -->
+    <exec executable="tar">
+      <arg line="czf ${dist.dir}/visbio${visbio.version}.tar.gz -C ${dist.dir}/visbio/nojre visbio${visbio.version}"/>
+    </exec>
   </target>
 
   <!-- LOCI Plugins for ImageJ -->
