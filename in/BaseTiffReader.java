@@ -60,7 +60,6 @@ public abstract class BaseTiffReader extends FormatReader {
     super(name, suffixes);
   }
 
-
   // -- BaseTiffReader API methods --
 
   /** Gets the dimensions of the given (possibly multi-page) TIFF file. */
@@ -76,6 +75,23 @@ public abstract class BaseTiffReader extends FormatReader {
     };
   }
 
+  /**
+   * Obtains an object which represents a given plane within the file.
+   * @param id The path to the file.
+   * @param no The plane or section within the file to obtain.
+   * @return an object which represents the plane.
+   * @throws FormatException if there is an error parsing the file.
+   * @throws IOException if there is an error reading from the file or acquiring
+   * permissions to read the file..
+   */
+  public Plane2D openPlane2D(String id, int no)
+    throws FormatException, IOException
+  {
+    return new Plane2D(
+      ByteBuffer.wrap(openBytes(id, no)),
+      Plane2D.typeFromString(getPixelType()),
+      isLittleEndian(id));
+  }
 
   // -- Internal BaseTiffReader API methods --
 
@@ -122,44 +138,44 @@ public abstract class BaseTiffReader extends FormatReader {
     int photo = TiffTools.getIFDIntValue(ifd,
       TiffTools.PHOTOMETRIC_INTERPRETATION);
     String photoInterp = null;
-    String MetaDataPhotoInterp = null;
-    
+    String metaDataPhotoInterp = null;
+
     switch (photo) {
       case TiffTools.WHITE_IS_ZERO:
-        photoInterp = "WhiteIsZero"; 
-        MetaDataPhotoInterp = "Monochrome";
+        photoInterp = "WhiteIsZero";
+        metaDataPhotoInterp = "Monochrome";
         break;
       case TiffTools.BLACK_IS_ZERO:
-        photoInterp = "BlackIsZero"; 
-        MetaDataPhotoInterp = "Monochrome";      
+        photoInterp = "BlackIsZero";
+        metaDataPhotoInterp = "Monochrome";
         break;
       case TiffTools.RGB:
-        photoInterp = "RGB"; 
-        MetaDataPhotoInterp = "RGB";
-        break;   
+        photoInterp = "RGB";
+        metaDataPhotoInterp = "RGB";
+        break;
       case TiffTools.RGB_PALETTE:
-        photoInterp = "Palette"; 
-        MetaDataPhotoInterp = "Monochrome";
+        photoInterp = "Palette";
+        metaDataPhotoInterp = "Monochrome";
         break;
       case TiffTools.TRANSPARENCY_MASK:
-        photoInterp = "Transparency Mask"; 
-        MetaDataPhotoInterp = "RGB";
+        photoInterp = "Transparency Mask";
+        metaDataPhotoInterp = "RGB";
         break;
       case TiffTools.CMYK:
-        photoInterp = "CMYK"; 
-        MetaDataPhotoInterp = "CMYK";
+        photoInterp = "CMYK";
+        metaDataPhotoInterp = "CMYK";
         break;
       case TiffTools.Y_CB_CR:
-        photoInterp = "YCbCr"; 
-        MetaDataPhotoInterp = "RGB";
+        photoInterp = "YCbCr";
+        metaDataPhotoInterp = "RGB";
         break;
       case TiffTools.CIE_LAB:
         photoInterp = "CIELAB";
-        MetaDataPhotoInterp = "RGB";
+        metaDataPhotoInterp = "RGB";
         break;
     }
     put("PhotometricInterpretation", photoInterp);
-    put("MetaDataPhotometricInterpretation", MetaDataPhotoInterp);
+    put("MetaDataPhotometricInterpretation", metaDataPhotoInterp);
 
     putInt("CellWidth", ifd, TiffTools.CELL_WIDTH);
     putInt("CellLength", ifd, TiffTools.CELL_LENGTH);
@@ -412,7 +428,7 @@ public abstract class BaseTiffReader extends FormatReader {
 
       // populate Image element
       setImage();
-      
+
       // populate Logical Channel elements
       for (int i=0; i < getSizeC(currentId); i++)
       {
@@ -455,6 +471,60 @@ public abstract class BaseTiffReader extends FormatReader {
     }
     catch (FormatException exc) { exc.printStackTrace(); }
     catch (IOException ex) { ex.printStackTrace(); }
+  }
+
+  /**
+   * If the TIFF is big-endian.
+   * @return <code>true</code> if the TIFF is big-endian, <code>false</code>
+   * otherwise.
+   * @throws FormatException if there is a problem parsing this metadata.
+   */
+  protected Boolean getBigEndian() throws FormatException {
+    return new Boolean(!TiffTools.isLittleEndian(ifds[0]));
+  }
+
+  /**
+   * Retrieves the pixel type from the TIFF.
+   * @return the pixel type
+   */
+  protected String getPixelType() throws FormatException {
+    Hashtable ifd = ifds[0];
+    int sample = TiffTools.getIFDIntValue(ifd, TiffTools.SAMPLE_FORMAT);
+    String pixelType;
+    switch (sample) {
+      case 1: pixelType = "Uint"; break;
+      case 2: pixelType = "int"; break;
+      case 3: pixelType = "float"; break;
+      // pixelType 4 is unknown but the tiff 6.0 specification (page 80)
+      // suggests to treat these unknowns as Uint.
+      default: pixelType = "Uint";
+    }
+    if (pixelType.indexOf("int") >= 0) { // int or Uint
+      pixelType += TiffTools.getIFDIntValue(ifd, TiffTools.BITS_PER_SAMPLE);
+    }
+    return pixelType;
+  }
+
+  /**
+   * Retrieves the image name from the TIFF.
+   * @return the image name.
+   */
+  protected String getImageName() { return currentId; }
+
+  /**
+   * Retrieves the image creation date.
+   * @return the image creation date.
+   */
+  protected String getImageCreationDate() {
+    return (String) TiffTools.getIFDValue(ifds[0], TiffTools.DATE_TIME);
+  }
+
+  /**
+   * Retrieves the image description.
+   * @return the image description.
+   */
+  protected String getImageDescription() {
+    return (String) metadata.get("Comment");
   }
 
 
@@ -539,24 +609,6 @@ public abstract class BaseTiffReader extends FormatReader {
     return "XYCZT";
   }
 
-  /**
-   * Obtains an object which represents a given plane within the file.
-   * @param id The path to the file.
-   * @param no The plane or section within the file to obtain.
-   * @return an object which represents the plane.
-   * @throws FormatException if there is an error parsing the file.
-   * @throws IOException if there is an error reading from the file or acquiring
-   * permissions to read the file..
-   */
-  public Plane2D openPlane2D(String id, int no)
-    throws FormatException, IOException
-  {
-    return new Plane2D(
-        ByteBuffer.wrap(openBytes(id, no)),
-        Plane2D.typeFromString(getPixelType()),
-        isLittleEndian(id));
-  }
-
   /** Obtains the specified image from the given TIFF file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -606,41 +658,11 @@ public abstract class BaseTiffReader extends FormatReader {
     initMetadata();
   }
 
-  /**
-   * If the TIFF is big-endian.
-   * @return <code>true</code> if the TIFF is big-endian, <code>false</code>
-   * otherwise.
-   * @throws FormatException if there is a problem parsing this metadata.
-   */
-  protected Boolean getBigEndian() throws FormatException {
-    return new Boolean(!TiffTools.isLittleEndian(ifds[0]));
-  }
+  // -- Helper methods --
 
   /**
-   * Retrieves the pixel type from the TIFF.
-   * @return the pixel type
-   */
-  protected String getPixelType() throws FormatException {
-    Hashtable ifd = ifds[0];
-    int sample = TiffTools.getIFDIntValue(ifd, TiffTools.SAMPLE_FORMAT);
-    String pixelType;
-    switch (sample) {
-      case 1: pixelType = "Uint"; break;
-      case 2: pixelType = "int"; break;
-      case 3: pixelType = "float"; break;
-      // pixelType 4 is unknown but the tiff 6.0 specification (page 80) suggests
-      // to treat these unknowns as Uint.
-      default: pixelType = "Uint";
-    }
-    if (pixelType.indexOf("int") >= 0) { // int or Uint
-      pixelType += TiffTools.getIFDIntValue(ifd, TiffTools.BITS_PER_SAMPLE);
-    }
-    return pixelType;
-  }
-
-  /**
-   * Performs the actual setting of the pixels attributes in the active metadata
-   * store by calling:
+   * Performs the actual setting of the pixels attributes in the active
+   * metadata store by calling:
    *
    * <ul>
    *   <li>{@link #getSizeX()}</li>
@@ -682,89 +704,38 @@ public abstract class BaseTiffReader extends FormatReader {
    * attributes.
    */
   private void setImage() throws FormatException, IOException {
-    getMetadataStore(currentId).setImage(getImageName(), getImageCreationDate(),
-                                getImageDescription(), null);
+    getMetadataStore(currentId).setImage(getImageName(),
+        getImageCreationDate(), getImageDescription(), null);
   }
 
-  /**
-   * Retrieves the image name from the TIFF.
-   * @return the image name.
-   */
-  protected String getImageName() {
-    return currentId;
+  private void setChannelGlobalMinMax(int i)
+    throws FormatException, IOException
+  {
+    getMetadataStore(currentId).setChannelGlobalMinMax(i, null, null, null);
   }
 
-  private void setChannelGlobalMinMax(int i) throws FormatException, IOException {
-      getMetadataStore(currentId).setChannelGlobalMinMax(
-              i, 
-              null,
-              null,
-              null
-              );
-  }
-  
   private void setLogicalChannel(int i) throws FormatException, IOException {
-      getMetadataStore(currentId).setLogicalChannel(
-              i, 
-              getChannelName(i), 
-              getNdFilter(i), 
-              getEmWave(i), 
-              getExWave(i), 
-              getPhotometricInterpretation(i),
-              getMode(i), // aquisition mode
-              null);
+    getMetadataStore(currentId).setLogicalChannel(i, getChannelName(i),
+      getNdFilter(i), getEmWave(i), getExWave(i),
+      getPhotometricInterpretation(i), getMode(i), null);
   }
 
-  private String getChannelName(int i) 
+  private String getChannelName(int i) { return null; }
+
+  private Float getNdFilter(int i) { return null; }
+
+  Integer getEmWave(int i) { return null; }
+
+  private Integer getExWave(int i) { return null; }
+
+  private String getPhotometricInterpretation(int i)
+    throws FormatException, IOException
   {
-      return null;
-  }
-  
-  private Float getNdFilter(int i) 
-  {
-      return null;
-  }
-  
-  Integer getEmWave(int i) 
-  {
-      return null;
+    return (String) getMetadataValue(currentId,
+      "MetaDataPhotometricInterpretation");
   }
 
-  private Integer getExWave(int i) 
-  {
-      return null;
-  }
-  
-  private String getPhotometricInterpretation(int i) throws FormatException, IOException 
-  {
-      return (String) getMetadataValue(currentId, "MetaDataPhotometricInterpretation");
-  }
-  
-  private String getMode(int i) 
-  {
-      return null;
-  }
-  
-  
-  
-  
-/**
-   * Retrieves the image creation date.
-   * @return the image creation date.
-   */
-  protected String getImageCreationDate() {
-    return (String) TiffTools.getIFDValue(ifds[0], TiffTools.DATE_TIME);
-  }
-
-  /**
-   * Retrieves the image description.
-   * @return the image description.
-   */
-  protected String getImageDescription() {
-    return (String) metadata.get("Comment");
-  }
-
-  // -- Helper methods --
+  private String getMode(int i) { return null; }
 
   protected void put(String key, Object value) {
     if (value == null) return;

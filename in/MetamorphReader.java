@@ -53,7 +53,7 @@ public class MetamorphReader extends BaseTiffReader {
 
   /** The TIFF's creation date */
   private String imageCreationDate;
-  
+
   //** The TIFF's emWavelength */
   private long[] emWavelength;
 
@@ -123,387 +123,384 @@ public class MetamorphReader extends BaseTiffReader {
   }
 
   // -- Internal BaseTiffReader API methods --
-  
+
   /** Populates the metadata hashtable. */
   protected void initStandardMetadata() {
-      super.initStandardMetadata();
-      
-      try {
-        // Now that the base TIFF standard metadata has been parsed, we need to
-        // parse out the STK metadata from the UIC4TAG.
-        TiffIFDEntry uic4tagEntry = TiffTools.getFirstIFDEntry(in, UIC4TAG);
-        in.seek(uic4tagEntry.getValueOffset());
-        int planes = uic4tagEntry.getValueCount();
+    super.initStandardMetadata();
 
-        // Loop through and parse out each field of the UIC4TAG. A field whose
-        // code is "0" represents the end of the UIC4TAG's fields so we'll stop
-        // when we reach that; much like a NULL terminated C string.
-        int currentcode = in.readShort();
-        byte[] toread;
-        while (currentcode != 0) {
-        // variable declarations, because switch is dumb
-        int num, denom;
-        int xnum, xdenom, ynum, ydenom;
-        double xpos, ypos;
-        String thedate, thetime;
-        switch (currentcode) {
-          case 1:
-            put("MinScale", in.readInt());
-            break;
-          case 2:
-            put("MaxScale", in.readInt());
-            break;
-          case 3:
-            int calib = in.readInt();
-            String calibration = calib == 0 ? "on" : "off";
-            put("Spatial Calibration", calibration);
-            break;
-          case 4:
-            num = in.readInt();
-            denom = in.readInt();
-            put("XCalibration", new TiffRational(num, denom));
-            break;
-          case 5:
-            num = in.readInt();
-            denom = in.readInt();
-            put("YCalibration", new TiffRational(num, denom));
-            break;
-          case 6:
-            num = in.readInt();
-            toread = new byte[num];
-            in.read(toread);
-            put("CalibrationUnits", new String(toread));
-            break;
-          case 7:
-            num = in.readInt();
-            toread = new byte[num];
-            in.read(toread);
-            String name = new String(toread);
-            put("Name", name);
-            imageName = name;
-            break;
-          case 8:
-            int thresh = in.readInt();
-            String threshState = "off";
-            if (thresh == 1) threshState = "inside";
-            else if (thresh == 2) threshState = "outside";
-            put("ThreshState", threshState);
-            break;
-          case 9:
-            put("ThreshStateRed", in.readInt());
-            break;
-          // there is no 10
-          case 11:
-            put("ThreshStateGreen", in.readInt());
-            break;
-          case 12:
-            put("ThreshStateBlue", in.readInt());
-            break;
-          case 13:
-            put("ThreshStateLo", in.readInt());
-            break;
-          case 14:
-            put("ThreshStateHi", in.readInt());
-            break;
-          case 15:
-            int zoom = in.readInt();
-            put("Zoom", zoom);
+    try {
+      // Now that the base TIFF standard metadata has been parsed, we need to
+      // parse out the STK metadata from the UIC4TAG.
+      TiffIFDEntry uic4tagEntry = TiffTools.getFirstIFDEntry(in, UIC4TAG);
+      in.seek(uic4tagEntry.getValueOffset());
+      int planes = uic4tagEntry.getValueCount();
+
+      // Loop through and parse out each field of the UIC4TAG. A field whose
+      // code is "0" represents the end of the UIC4TAG's fields so we'll stop
+      // when we reach that; much like a NULL terminated C string.
+      int currentcode = in.readShort();
+      byte[] toread;
+      while (currentcode != 0) {
+      // variable declarations, because switch is dumb
+      int num, denom;
+      int xnum, xdenom, ynum, ydenom;
+      double xpos, ypos;
+      String thedate, thetime;
+      switch (currentcode) {
+        case 1:
+          put("MinScale", in.readInt());
+          break;
+        case 2:
+          put("MaxScale", in.readInt());
+          break;
+        case 3:
+          int calib = in.readInt();
+          String calibration = calib == 0 ? "on" : "off";
+          put("Spatial Calibration", calibration);
+          break;
+        case 4:
+          num = in.readInt();
+          denom = in.readInt();
+          put("XCalibration", new TiffRational(num, denom));
+          break;
+        case 5:
+          num = in.readInt();
+          denom = in.readInt();
+          put("YCalibration", new TiffRational(num, denom));
+          break;
+        case 6:
+          num = in.readInt();
+          toread = new byte[num];
+          in.read(toread);
+          put("CalibrationUnits", new String(toread));
+          break;
+        case 7:
+          num = in.readInt();
+          toread = new byte[num];
+          in.read(toread);
+          String name = new String(toread);
+          put("Name", name);
+          imageName = name;
+          break;
+        case 8:
+          int thresh = in.readInt();
+          String threshState = "off";
+          if (thresh == 1) threshState = "inside";
+          else if (thresh == 2) threshState = "outside";
+          put("ThreshState", threshState);
+          break;
+        case 9:
+          put("ThreshStateRed", in.readInt());
+          break;
+        // there is no 10
+        case 11:
+          put("ThreshStateGreen", in.readInt());
+          break;
+        case 12:
+          put("ThreshStateBlue", in.readInt());
+          break;
+        case 13:
+          put("ThreshStateLo", in.readInt());
+          break;
+        case 14:
+          put("ThreshStateHi", in.readInt());
+          break;
+        case 15:
+          int zoom = in.readInt();
+          put("Zoom", zoom);
 //            OMETools.setAttribute(ome, "DisplayOptions", "Zoom", "" + zoom);
-            break;
-          case 16: // oh how we hate you Julian format...
-            thedate = decodeDate(in.readInt());
-            thetime = decodeTime(in.readInt());
-            put("DateTime", thedate + " " + thetime);
-            imageCreationDate = thedate + " " + thetime;
-            break;
-          case 17:
-            thedate = decodeDate(in.readInt());
-            thetime = decodeTime(in.readInt());
-            put("LastSavedTime", thedate + " " + thetime);
-            break;
-          case 18:
-            put("currentBuffer", in.readInt());
-            break;
-          case 19:
-            put("grayFit", in.readInt());
-            break;
-          case 20:
-            put("grayPointCount", in.readInt());
-            break;
-          case 21:
-            num = in.readInt();
-            denom = in.readInt();
-            put("grayX", new TiffRational(num, denom));
-            break;
-          case 22:
-            num = in.readInt();
-            denom = in.readInt();
-            put("gray", new TiffRational(num, denom));
-            break;
-          case 23:
-            num = in.readInt();
-            denom = in.readInt();
-            put("grayMin", new TiffRational(num, denom));
-            break;
-          case 24:
-            num = in.readInt();
-            denom = in.readInt();
-            put("grayMax", new TiffRational(num, denom));
-            break;
-          case 25:
-            num = in.readInt();
-            toread = new byte[num];
-            in.read(toread);
-            put("grayUnitName", new String(toread));
-            break;
-          case 26:
-            int standardLUT = in.readInt();
-            String standLUT;
-            switch (standardLUT) {
-              case 0: standLUT = "monochrome"; break;
-              case 1: standLUT = "pseudocolor"; break;
-              case 2: standLUT = "Red"; break;
-              case 3: standLUT = "Green"; break;
-              case 4: standLUT = "Blue"; break;
-              case 5: standLUT = "user-defined"; break;
-              default: standLUT = "monochrome"; break;
-            }
-            put("StandardLUT", standLUT);
-            break;
-          case 27:
-            put("Wavelength", in.readInt());
-            break;
-          case 28:
-            for (int i = 0; i < planes; i++) {
-                xnum = in.readInt();
-                xdenom = in.readInt();
-                ynum = in.readInt();
-                ydenom = in.readInt();
-                xpos = xnum / xdenom;
-                ypos = ynum / ydenom;
-                put("Stage Position Plane " + i,
-                  "(" + xpos + ", " + ypos + ")");
-            }
-            break;
-          case 29:
-            for (int i = 0; i < planes; i++) {
+          break;
+        case 16: // oh how we hate you Julian format...
+          thedate = decodeDate(in.readInt());
+          thetime = decodeTime(in.readInt());
+          put("DateTime", thedate + " " + thetime);
+          imageCreationDate = thedate + " " + thetime;
+          break;
+        case 17:
+          thedate = decodeDate(in.readInt());
+          thetime = decodeTime(in.readInt());
+          put("LastSavedTime", thedate + " " + thetime);
+          break;
+        case 18:
+          put("currentBuffer", in.readInt());
+          break;
+        case 19:
+          put("grayFit", in.readInt());
+          break;
+        case 20:
+          put("grayPointCount", in.readInt());
+          break;
+        case 21:
+          num = in.readInt();
+          denom = in.readInt();
+          put("grayX", new TiffRational(num, denom));
+          break;
+        case 22:
+          num = in.readInt();
+          denom = in.readInt();
+          put("gray", new TiffRational(num, denom));
+          break;
+        case 23:
+          num = in.readInt();
+          denom = in.readInt();
+          put("grayMin", new TiffRational(num, denom));
+          break;
+        case 24:
+          num = in.readInt();
+          denom = in.readInt();
+          put("grayMax", new TiffRational(num, denom));
+          break;
+        case 25:
+          num = in.readInt();
+          toread = new byte[num];
+          in.read(toread);
+          put("grayUnitName", new String(toread));
+          break;
+        case 26:
+          int standardLUT = in.readInt();
+          String standLUT;
+          switch (standardLUT) {
+            case 0: standLUT = "monochrome"; break;
+            case 1: standLUT = "pseudocolor"; break;
+            case 2: standLUT = "Red"; break;
+            case 3: standLUT = "Green"; break;
+            case 4: standLUT = "Blue"; break;
+            case 5: standLUT = "user-defined"; break;
+            default: standLUT = "monochrome"; break;
+          }
+          put("StandardLUT", standLUT);
+          break;
+        case 27:
+          put("Wavelength", in.readInt());
+          break;
+        case 28:
+          for (int i = 0; i < planes; i++) {
               xnum = in.readInt();
               xdenom = in.readInt();
               ynum = in.readInt();
               ydenom = in.readInt();
               xpos = xnum / xdenom;
               ypos = ynum / ydenom;
-              put("Camera Offset Plane " + i,
+              put("Stage Position Plane " + i,
                 "(" + xpos + ", " + ypos + ")");
-            }
-            break;
-          case 30:
-            put("OverlayMask", in.readInt());
-            break;
-          case 31:
-            put("OverlayCompress", in.readInt());
-            break;
-          case 32:
-            put("Overlay", in.readInt());
-            break;
-          case 33:
-            put("SpecialOverlayMask", in.readInt());
-            break;
-          case 34:
-            put("SpecialOverlayCompress", in.readInt());
-            break;
-          case 35:
-            put("SpecialOverlay", in.readInt());
-            break;
-          case 36:
-            put("ImageProperty", in.readInt());
-            break;
-          case 37:
-            for (int i = 0; i<planes; i++) {
-              num = in.readInt();
-              toread = new byte[num];
-              in.read(toread);
-              String s = new String(toread);
-              put("StageLabel Plane " + i, s);
-            }
-            break;
-          case 38:
+          }
+          break;
+        case 29:
+          for (int i = 0; i < planes; i++) {
+            xnum = in.readInt();
+            xdenom = in.readInt();
+            ynum = in.readInt();
+            ydenom = in.readInt();
+            xpos = xnum / xdenom;
+            ypos = ynum / ydenom;
+            put("Camera Offset Plane " + i,
+              "(" + xpos + ", " + ypos + ")");
+          }
+          break;
+        case 30:
+          put("OverlayMask", in.readInt());
+          break;
+        case 31:
+          put("OverlayCompress", in.readInt());
+          break;
+        case 32:
+          put("Overlay", in.readInt());
+          break;
+        case 33:
+          put("SpecialOverlayMask", in.readInt());
+          break;
+        case 34:
+          put("SpecialOverlayCompress", in.readInt());
+          break;
+        case 35:
+          put("SpecialOverlay", in.readInt());
+          break;
+        case 36:
+          put("ImageProperty", in.readInt());
+          break;
+        case 37:
+          for (int i = 0; i<planes; i++) {
+            num = in.readInt();
+            toread = new byte[num];
+            in.read(toread);
+            String s = new String(toread);
+            put("StageLabel Plane " + i, s);
+          }
+          break;
+        case 38:
+          num = in.readInt();
+          denom = in.readInt();
+          put("AutoScaleLoInfo", new TiffRational(num, denom));
+          break;
+        case 39:
+          num = in.readInt();
+          denom = in.readInt();
+          put("AutoScaleHiInfo", new TiffRational(num, denom));
+          break;
+        case 40:
+          for (int i=0;i<planes;i++) {
             num = in.readInt();
             denom = in.readInt();
-            put("AutoScaleLoInfo", new TiffRational(num, denom));
-            break;
-          case 39:
-            num = in.readInt();
-            denom = in.readInt();
-            put("AutoScaleHiInfo", new TiffRational(num, denom));
-            break;
-          case 40:
-            for (int i=0;i<planes;i++) {
-              num = in.readInt();
-              denom = in.readInt();
-              put("AbsoluteZ Plane " + i, new TiffRational(num, denom));
-            }
-            break;
-          case 41:
-            for (int i=0; i<planes; i++) {
-              put("AbsoluteZValid Plane " + i, in.readInt());
-            }
-            break;
-          case 42:
-            put("Gamma", in.readInt());
-            break;
-          case 43:
-            put("GammaRed", in.readInt());
-            break;
-          case 44:
-            put("GammaGreen", in.readInt());
-            break;
-          case 45:
-            put("GammaBlue", in.readInt());
-            break;
-        } // end switch
-        currentcode = in.readShort();
-        }
-        
-        // copy ifds into a new array of Hashtables that will accomodate the
-        // additional image planes
-        long[] uic2 = TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true);
-        numImages = uic2.length;
-
-        Hashtable[] tempIFDs = new Hashtable[ifds.length + numImages];
-        System.arraycopy(ifds, 0, tempIFDs, 0, ifds.length);
-        int pointer = ifds.length;
-
-        long[] oldOffsets = TiffTools.getIFDLongArray(ifds[0],
-            TiffTools.STRIP_OFFSETS, true);
-
-        long[] stripByteCounts = TiffTools.getIFDLongArray(ifds[0],
-            TiffTools.STRIP_BYTE_COUNTS, true);
-
-        int stripsPerImage = oldOffsets.length;
-
-        emWavelength = TiffTools.getIFDLongArray(ifds[0], UIC3TAG, true);
-
-        // for each image plane, construct an IFD hashtable
-
-        Hashtable temp;
-        for(int i=1; i<numImages; i++) {
-          temp = new Hashtable();
-
-          // copy most of the data from 1st IFD
-          temp.put(new Integer(TiffTools.LITTLE_ENDIAN), ifds[0].get(
-              new Integer(TiffTools.LITTLE_ENDIAN)));
-          temp.put(new Integer(TiffTools.IMAGE_WIDTH), ifds[0].get(
-              new Integer(TiffTools.IMAGE_WIDTH)));
-          temp.put(new Integer(TiffTools.IMAGE_LENGTH),
-              ifds[0].get(new Integer(TiffTools.IMAGE_LENGTH)));
-          temp.put(new Integer(TiffTools.BITS_PER_SAMPLE), ifds[0].get(
-              new Integer(TiffTools.BITS_PER_SAMPLE)));
-          temp.put(new Integer(TiffTools.COMPRESSION), ifds[0].get(
-              new Integer(TiffTools.COMPRESSION)));
-          temp.put(new Integer(TiffTools.PHOTOMETRIC_INTERPRETATION),
-              ifds[0].get(new Integer(TiffTools.PHOTOMETRIC_INTERPRETATION)));
-          temp.put(new Integer(TiffTools.STRIP_BYTE_COUNTS), ifds[0].get(
-              new Integer(TiffTools.STRIP_BYTE_COUNTS)));
-          temp.put(new Integer(TiffTools.ROWS_PER_STRIP), ifds[0].get(
-              new Integer(TiffTools.ROWS_PER_STRIP)));
-          temp.put(new Integer(TiffTools.X_RESOLUTION), ifds[0].get(
-              new Integer(TiffTools.X_RESOLUTION)));
-          temp.put(new Integer(TiffTools.Y_RESOLUTION), ifds[0].get(
-              new Integer(TiffTools.Y_RESOLUTION)));
-          temp.put(new Integer(TiffTools.RESOLUTION_UNIT), ifds[0].get(
-              new Integer(TiffTools.RESOLUTION_UNIT)));
-          temp.put(new Integer(TiffTools.PREDICTOR), ifds[0].get(
-              new Integer(TiffTools.PREDICTOR)));
-
-          // now we need a StripOffsets entry
-
-          long planeOffset = i*(oldOffsets[stripsPerImage - 1] +
-              stripByteCounts[stripsPerImage - 1] - oldOffsets[0]);
-
-          long[] newOffsets = new long[oldOffsets.length];
-          newOffsets[0] = planeOffset + oldOffsets[0];
-
-          for(int j=1; j<newOffsets.length; j++) {
-            newOffsets[j] = newOffsets[j-1] + stripByteCounts[0];
+            put("AbsoluteZ Plane " + i, new TiffRational(num, denom));
           }
-
-          temp.put(new Integer(TiffTools.STRIP_OFFSETS), newOffsets);
-          tempIFDs[pointer] = temp;
-          pointer++;
-        }
-        ifds = tempIFDs;
+          break;
+        case 41:
+          for (int i=0; i<planes; i++) {
+            put("AbsoluteZValid Plane " + i, in.readInt());
+          }
+          break;
+        case 42:
+          put("Gamma", in.readInt());
+          break;
+        case 43:
+          put("GammaRed", in.readInt());
+          break;
+        case 44:
+          put("GammaGreen", in.readInt());
+          break;
+        case 45:
+          put("GammaBlue", in.readInt());
+          break;
+      } // end switch
+      currentcode = in.readShort();
       }
-      catch (NullPointerException n) { n.printStackTrace(); }
-      catch (IOException io) { io.printStackTrace(); }
-      catch (FormatException e) { e.printStackTrace(); }
 
-      try { super.initStandardMetadata(); }
-      catch (Throwable t) { t.printStackTrace(); }
+      // copy ifds into a new array of Hashtables that will accomodate the
+      // additional image planes
+      long[] uic2 = TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true);
+      numImages = uic2.length;
 
-      // parse (mangle) TIFF comment
-      String descr = (String) metadata.get("Comment");
-      if (descr != null) {
-        StringTokenizer st = new StringTokenizer(descr, "\n");
-        StringBuffer sb = new StringBuffer();
-        boolean first = true;
-        while (st.hasMoreTokens()) {
-          String line = st.nextToken();
-          int colon = line.indexOf(": ");
+      Hashtable[] tempIFDs = new Hashtable[ifds.length + numImages];
+      System.arraycopy(ifds, 0, tempIFDs, 0, ifds.length);
+      int pointer = ifds.length;
 
-          if (colon < 0) {
-            // normal line (not a key/value pair)
-            if (line.trim().length() > 0) {
-              // not a blank line
-              sb.append(line);
-              if (!line.endsWith(".")) sb.append(".");
-              sb.append("  ");
-            }
-            first = false;
-            continue;
-          }
+      long[] oldOffsets = TiffTools.getIFDLongArray(ifds[0],
+          TiffTools.STRIP_OFFSETS, true);
 
-          if (first) {
-            // first line could be mangled; make a reasonable guess
-            int dot = line.lastIndexOf(".", colon);
-            if (dot >= 0) {
-              String s = line.substring(0, dot + 1);
-              sb.append(s);
-              if (!s.endsWith(".")) sb.append(".");
-              sb.append("  ");
-            }
-            line = line.substring(dot + 1);
-            colon -= dot + 1;
-            first = false;
-          }
+      long[] stripByteCounts = TiffTools.getIFDLongArray(ifds[0],
+          TiffTools.STRIP_BYTE_COUNTS, true);
 
-          // add key/value pair embedded in comment as separate metadata
-          String key = line.substring(0, colon);
-          String value = line.substring(colon + 2);
-          put(key, value);
+      int stripsPerImage = oldOffsets.length;
+
+      emWavelength = TiffTools.getIFDLongArray(ifds[0], UIC3TAG, true);
+
+      // for each image plane, construct an IFD hashtable
+
+      Hashtable temp;
+      for(int i=1; i<numImages; i++) {
+        temp = new Hashtable();
+
+        // copy most of the data from 1st IFD
+        temp.put(new Integer(TiffTools.LITTLE_ENDIAN), ifds[0].get(
+            new Integer(TiffTools.LITTLE_ENDIAN)));
+        temp.put(new Integer(TiffTools.IMAGE_WIDTH), ifds[0].get(
+            new Integer(TiffTools.IMAGE_WIDTH)));
+        temp.put(new Integer(TiffTools.IMAGE_LENGTH),
+            ifds[0].get(new Integer(TiffTools.IMAGE_LENGTH)));
+        temp.put(new Integer(TiffTools.BITS_PER_SAMPLE), ifds[0].get(
+            new Integer(TiffTools.BITS_PER_SAMPLE)));
+        temp.put(new Integer(TiffTools.COMPRESSION), ifds[0].get(
+            new Integer(TiffTools.COMPRESSION)));
+        temp.put(new Integer(TiffTools.PHOTOMETRIC_INTERPRETATION),
+            ifds[0].get(new Integer(TiffTools.PHOTOMETRIC_INTERPRETATION)));
+        temp.put(new Integer(TiffTools.STRIP_BYTE_COUNTS), ifds[0].get(
+            new Integer(TiffTools.STRIP_BYTE_COUNTS)));
+        temp.put(new Integer(TiffTools.ROWS_PER_STRIP), ifds[0].get(
+            new Integer(TiffTools.ROWS_PER_STRIP)));
+        temp.put(new Integer(TiffTools.X_RESOLUTION), ifds[0].get(
+            new Integer(TiffTools.X_RESOLUTION)));
+        temp.put(new Integer(TiffTools.Y_RESOLUTION), ifds[0].get(
+            new Integer(TiffTools.Y_RESOLUTION)));
+        temp.put(new Integer(TiffTools.RESOLUTION_UNIT), ifds[0].get(
+            new Integer(TiffTools.RESOLUTION_UNIT)));
+        temp.put(new Integer(TiffTools.PREDICTOR), ifds[0].get(
+            new Integer(TiffTools.PREDICTOR)));
+
+        // now we need a StripOffsets entry
+
+        long planeOffset = i*(oldOffsets[stripsPerImage - 1] +
+            stripByteCounts[stripsPerImage - 1] - oldOffsets[0]);
+
+        long[] newOffsets = new long[oldOffsets.length];
+        newOffsets[0] = planeOffset + oldOffsets[0];
+
+        for(int j=1; j<newOffsets.length; j++) {
+          newOffsets[j] = newOffsets[j-1] + stripByteCounts[0];
         }
 
-        // replace comment with trimmed version
-        descr = sb.toString().trim();
-        if (descr.equals("")) metadata.remove("Comment");
-        else put("Comment", descr);
+        temp.put(new Integer(TiffTools.STRIP_OFFSETS), newOffsets);
+        tempIFDs[pointer] = temp;
+        pointer++;
       }
+      ifds = tempIFDs;
+    }
+    catch (NullPointerException n) { n.printStackTrace(); }
+    catch (IOException io) { io.printStackTrace(); }
+    catch (FormatException e) { e.printStackTrace(); }
+
+    try { super.initStandardMetadata(); }
+    catch (Throwable t) { t.printStackTrace(); }
+
+    // parse (mangle) TIFF comment
+    String descr = (String) metadata.get("Comment");
+    if (descr != null) {
+      StringTokenizer st = new StringTokenizer(descr, "\n");
+      StringBuffer sb = new StringBuffer();
+      boolean first = true;
+      while (st.hasMoreTokens()) {
+        String line = st.nextToken();
+        int colon = line.indexOf(": ");
+
+        if (colon < 0) {
+          // normal line (not a key/value pair)
+          if (line.trim().length() > 0) {
+            // not a blank line
+            sb.append(line);
+            if (!line.endsWith(".")) sb.append(".");
+            sb.append("  ");
+          }
+          first = false;
+          continue;
+        }
+
+        if (first) {
+          // first line could be mangled; make a reasonable guess
+          int dot = line.lastIndexOf(".", colon);
+          if (dot >= 0) {
+            String s = line.substring(0, dot + 1);
+            sb.append(s);
+            if (!s.endsWith(".")) sb.append(".");
+            sb.append("  ");
+          }
+          line = line.substring(dot + 1);
+          colon -= dot + 1;
+          first = false;
+        }
+
+        // add key/value pair embedded in comment as separate metadata
+        String key = line.substring(0, colon);
+        String value = line.substring(colon + 2);
+        put(key, value);
+      }
+
+      // replace comment with trimmed version
+      descr = sb.toString().trim();
+      if (descr.equals("")) metadata.remove("Comment");
+      else put("Comment", descr);
+    }
   }
 
   // FIXME: Needs to be implemented.
   protected void initMetadataStore() {
-      super.initMetadataStore();
-      
-      for (int i = 0; i < ifds.length; i++)
-      {
-      }
+    super.initMetadataStore();
+    for (int i = 0; i < ifds.length; i++) { }
   }
-  
+
   /*
    * (non-Javadoc)
    * @see loci.formats.BaseTiffReader#getImageName()
    */
-  protected String getImageName() { 
+  protected String getImageName() {
     if (imageName == null) return super.getImageName();
     return imageName;
   }
@@ -512,33 +509,28 @@ public class MetamorphReader extends BaseTiffReader {
    * (non-Javadoc)
    * @see loci.formats.BaseTiffReader#getImageCreationDate()
    */
-  protected String getImageCreationDate() 
-  {
+  protected String getImageCreationDate() {
     if (imageCreationDate == null) return super.getImageCreationDate();
-    return imageCreationDate; 
+    return imageCreationDate;
   }
 
-  private void setChannelGlobalMinMax(int i) throws FormatException, IOException {
-      Double globalMin = (Double) metadata.get("grayMin");
-      Double globalMax = (Double) metadata.get("grayMax");
-      if (globalMin == null | globalMax == null) 
-      {
-		throw new FormatException("No global min/max");
-      }
-      getMetadataStore(currentId).setChannelGlobalMinMax(
-              i, 
-              globalMin,
-              globalMax,
-              null
-              );
-  }
-  
-  Integer getEmWave(int i) 
+  private void setChannelGlobalMinMax(int i)
+    throws FormatException, IOException
   {
-      if (emWavelength[i] == 0)  return null;
-      return new Integer((int) emWavelength[i]);
+    Double globalMin = (Double) metadata.get("grayMin");
+    Double globalMax = (Double) metadata.get("grayMax");
+    if (globalMin == null | globalMax == null) {
+      throw new FormatException("No global min/max");
+    }
+    getMetadataStore(currentId).setChannelGlobalMinMax(i,
+      globalMin, globalMax, null);
   }
-  
+
+  Integer getEmWave(int i) {
+    if (emWavelength[i] == 0)  return null;
+    return new Integer((int) emWavelength[i]);
+  }
+
   // -- Utility methods --
 
   /** Converts a Julian date value into a human-readable string. */
