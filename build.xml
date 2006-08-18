@@ -177,7 +177,7 @@ Apache XML-RPC
     description="compile LOCI software packages from source">
     <mkdir dir="${classes.dir}"/>
     <javac srcdir="${dest.dir}" destdir="${classes.dir}"
-      classpath="${ext.jars}" deprecation="true"/>
+      classpath="${ext.jars}" deprecation="true" source="1.4" target="1.4"/>
   </target>
 
   <target name="jars"
@@ -266,6 +266,8 @@ Apache XML-RPC
 
   <property name="visbio.dist-files" value="bsd-forms.txt bsd-looks.txt gpl-visbio.txt omeul.txt whatsnew.txt *.cpp *.m"/>
 
+  <condition property="isUnix"><os family="unix"/></condition>
+
   <target name="dist-visbio" depends="dist-visbio-win32, dist-visbio-win32-nojre, dist-visbio-macosx, dist-visbio-linux, dist-visbio-nojre"/>
 
   <property name="visbio.win32-dir" value="${dist.dir}/visbio/win32/VisBio"/>
@@ -303,7 +305,9 @@ Apache XML-RPC
 
   <property name="visbio.macosx-dir" value="${dist.dir}/visbio/macosx/VisBio"/>
 
-  <target name="dist-visbio-macosx" depends="jar-visbio, jar-formats">
+  <!-- HACK - limit OS to *nix due to file permission issues -->
+  <target name="dist-visbio-macosx" if="isUnix"
+    depends="jar-visbio, jar-formats">
     <copy todir="${visbio.macosx-dir}"
       preservelastmodified="true">
       <fileset dir="dist/visbio/macosx"/>
@@ -332,7 +336,9 @@ Apache XML-RPC
   <property name="visbio.linux-dir"
     value="${dist.dir}/visbio/linux/visbio${visbio.version}"/>
 
-  <target name="dist-visbio-linux" depends="jar-visbio, jar-formats">
+  <!-- HACK - limit OS to *nix due to file permission issues -->
+  <target name="dist-visbio-linux" if="isUnix"
+    depends="jar-visbio, jar-formats">
     <copy todir="${visbio.linux-dir}" preservelastmodified="true">
       <fileset dir="dist/visbio/linux"/>
       <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
@@ -365,7 +371,9 @@ Apache XML-RPC
   <property name="visbio.nojre-dir"
     value="${dist.dir}/visbio/nojre/visbio${visbio.version}"/>
 
-  <target name="dist-visbio-nojre" depends="jar-visbio, jar-formats">
+  <!-- HACK - limit OS to *nix due to file permission issues -->
+  <target name="dist-visbio-nojre" if="isUnix"
+    depends="jar-visbio, jar-formats">
     <copy todir="${visbio.nojre-dir}" preservelastmodified="true">
       <fileset dir="dist/visbio/linux"/>
       <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
@@ -394,11 +402,15 @@ Apache XML-RPC
   <target name="jar-plugins"
     depends="compile, copy-jars, jar-formats"
     description="generate LOCI Plugins for ImageJ JAR file">
-    <jar jarfile="${jar.dir}/loci_plugins.jar" basedir="${classes.dir}"
-      includes="${plugins.files}">
+    <jar jarfile="${jar.dir}/loci_plugins.jar"
+      basedir="${src.dir}/loci/plugins" includes="plugins.config">
       <manifest>
         <attribute name="Main-Class" value="loci.plugins.About"/>
       </manifest>
+    </jar>
+    <jar jarfile="${jar.dir}/loci_plugins.jar" basedir="${classes.dir}"
+      includes="${plugins.files}" excludes="loci/plugins/plugins.config"
+      update="true">
     </jar>
   </target>
 
