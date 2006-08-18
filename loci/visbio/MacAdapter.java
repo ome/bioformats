@@ -38,7 +38,7 @@ public class MacAdapter extends ApplicationAdapter {
 
   // Alternately, the code can be compiled on other platforms with the
   // "AppleJavaExtensions" stub jar available from:
-  //    http://developer.apple.com/samplecode/Sample_Code/Java.htm
+  //    http://developer.apple.com/samplecode/AppleJavaExtensions/
 
   // -- Fields --
 
