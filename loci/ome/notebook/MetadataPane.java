@@ -318,6 +318,39 @@ public class MetadataPane extends JPanel
 			
 				setOMEXML(ome);
       }
+      else if (file.getPath().endsWith(".ome")) {
+                // TIFF file
+        originalTIFF = null;
+        
+        OMENode ome = null;
+	      
+	      try {
+		      ImageReader reader = new ImageReader();
+					OMEXMLMetadataStore ms = new OMEXMLMetadataStore();
+					reader.setMetadataStore(ms);  // tells reader to write metadata as it's being parsed to an OMENode (DOM in memory)
+					String id = file.getPath();
+					
+				  img = reader.openImage(id, 0); // gets first image from the file
+					int width = 50, height = 50;
+					thumb = ImageTools.scale(img, width, height);
+					ome = (OMENode) ms.getRoot();
+				}
+				catch (Exception exc) {
+				  exc.printStackTrace();
+				}
+				
+        String s = new String(header).trim();
+        if (s.startsWith("<?xml") || s.startsWith("<OME")) {
+          // raw OME-XML
+          byte[] data = new byte[(int) file.length()];
+          System.arraycopy(header, 0, data, 0, 8);
+          in.readFully(data, 8, data.length - 8);
+          in.close();
+          setOMEXML(new String(data));
+        }
+        else return false;
+//				setOMEXML(ome);
+      }
       else {
         originalTIFF = null;
         img = null;
@@ -335,6 +368,7 @@ public class MetadataPane extends JPanel
       }
       
       currentFile = file;
+      in.close();
       return true;
     }
     catch (IOException exc) { return false; }
@@ -1056,14 +1090,8 @@ public class MetadataPane extends JPanel
     public boolean isTopLevel;
     private JButton noteButton;
     protected Vector attrList, refList;
-    protected TableCellRenderer labelR,textR,comboR,gotoR;
 
     public TablePanel(Element e, TabPanel tp, OMEXMLNode on) {
-      labelR = new DefaultTableCellRenderer();
-      comboR = new VariableComboRenderer();
-      textR = new VariableTextAreaRenderer();
-      gotoR = new GotoRenderer();
-
       isTopLevel = false;
       
       //check if this TablePanel is "top level"
@@ -1159,45 +1187,10 @@ public class MetadataPane extends JPanel
         }
       };
       
-      table = new ClickableTable(myTableModel, this) {
-        public TableCellRenderer getCellRenderer(int row, int column) {        	          
-          if (column == 1) {
-				    TableModel tModel = table.getModel();
-				  
-				    Vector fullList = DOMUtil.getChildElements("OMEAttribute",el);
-				    Element templateE = null;
-				    for (int i = 0;i<fullList.size();i++) {
-				      Element thisE = (Element) fullList.get(i);
-				      String nameAttr = thisE.getAttribute("XMLName");
-				      if(thisE.hasAttribute("Name")) nameAttr = thisE.getAttribute("Name");
-				      if(nameAttr.equals((String) tModel.getValueAt(row, 0))) templateE = thisE;      
-				    }
-				    
-				    String cellType = null;
-				    
-				    if(templateE.hasAttribute("Type")) cellType = templateE.getAttribute("Type");     
-	        
-				    if(cellType != null) { 
-					    if(cellType.equals("Ref")) {
-					      return comboR;
-					    }
-					    else if(cellType.equals("Desc")) {
-					      return textR;
-					    }
-					    else {
-					      return labelR;
-					    } 
-				    }
-				    else {
-				      return labelR;
-				    }
-				  }
-				  else if (column == 2) {
-				    return gotoR;
-				  }
-				  else return labelR;
-   		  }
-			};
+      VariableComboEditor vcEdit = new VariableComboEditor(panelsWithID,
+          addItems, this, internalDefs);
+      
+      table = new ClickableTable(myTableModel, this, vcEdit);
 //      table.setAutoResizeMode( JTable.AUTO_RESIZE_OFF );
       table.getColumnModel().getColumn(0).setPreferredWidth(125);
       table.getColumnModel().getColumn(1).setPreferredWidth(430);
@@ -1354,10 +1347,12 @@ public class MetadataPane extends JPanel
 	        }
         }
 
+/*
         refColumn.setCellEditor(new VariableComboEditor(panelsWithID,
           addItems, this, internalDefs));
         TableColumn gotoColumn = table.getColumnModel().getColumn(2);
         gotoColumn.setCellEditor(new GotoEditor(this));
+*/
       }
     }
     

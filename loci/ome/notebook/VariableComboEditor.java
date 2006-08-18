@@ -42,9 +42,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 
-import javax.swing.event.DocumentListener;
-import javax.swing.event.DocumentEvent;
-
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -52,22 +49,9 @@ import org.openmicroscopy.xml.OMEXMLNode;
 import org.openmicroscopy.xml.DOMUtil;
 import org.w3c.dom.Element;
 
-/**
- * A class that allows a table to have comboboxes
- * that have different selections depending on the row
- * specified, e.g. a row with "Group" that's a reference
- * should only have LSID selections that are also Groups
- *
- * also, non-ref cells are given a JTextField editor
- *
- * this class handles all of the actual editting of the
- * XML Node tree as well
- *
- * @author Christopher Peterson crpeterson2 at wisc.edu
- */
 public class VariableComboEditor extends AbstractCellEditor
   implements TableCellEditor, ActionListener, 
-  DocumentListener, FocusListener, MouseListener
+  FocusListener, MouseListener
 {
 
   // -- Fields --
@@ -85,12 +69,9 @@ public class VariableComboEditor extends AbstractCellEditor
 
   //holds the current combobox needed when the cell is clicked
   private JRowBox box;
-  
-  //holds the current label needed when a non-ref cell is clicked
-  private JTextField text;
 
   //holds the table of references this cell editor is for
-  private JTable refTable;
+  protected JTable refTable;
   
   //holds internal reference data found in the ome-xml file
   //that is currently opened by MetadataPane
@@ -119,9 +100,9 @@ public class VariableComboEditor extends AbstractCellEditor
     idPanels = IDP;
     addPanels = AddP;
     tableP = tp;
+    refTable = tp.table;
     oNode = tp.oNode;
     box = new JRowBox(-1);
-    text = new JTextField();
     iDefs = internalDefs;
   }
 
@@ -153,119 +134,64 @@ public class VariableComboEditor extends AbstractCellEditor
   public Component getTableCellEditorComponent(JTable table, Object value,
     boolean isSelected, int row, int column)
   {
-    refTable = table;
     TableModel tModel = table.getModel();
   
-    Vector fullList = DOMUtil.getChildElements("OMEAttribute",tableP.el);
-    Element templateE = null;
-    for (int i = 0;i<fullList.size();i++) {
-      Element thisE = (Element) fullList.get(i);
-      String nameAttr = thisE.getAttribute("XMLName");
-      if(thisE.hasAttribute("Name")) nameAttr = thisE.getAttribute("Name");
-      if(nameAttr.equals((String) tModel.getValueAt(row, 0))) templateE = thisE;      
-    }
+    //use parameters to get information about the cell being edited
+    JRowBox thisBox = new JRowBox(row);
+    thisBox.addFocusListener(this);
     
-    String cellType = null;
-    if(templateE.hasAttribute("Type")) cellType = templateE.getAttribute("Type");
-    
-    if (cellType == null) {
-      JTextField thisText = new JTextField(new RowDoc(row), (String) value, 1);
-      thisText.setEditable(true);
-      thisText.getDocument().addDocumentListener(this);
-      thisText.addFocusListener(this);
-      thisText.addMouseListener(this);
-      return thisText;
-    }
-    else {
-      if (cellType.equals("Ref")) {
-        //use parameters to get information about the cell being edited
-		    JRowBox thisBox = new JRowBox(row);
-		    thisBox.addFocusListener(this);
-		    
-		    //tagname of the node associated with this table
-		    String eleName = oNode.getDOMElement().getTagName();
-		    //name of the attribute being edited
-		    String attrName = (String) tModel.getValueAt(row, 0);
-		    //get the sub-hashtable for the key associated with this tablepanel's
-		    //OMEXMLNode... check internal defs first, then external defs
-		    Hashtable subHash = (Hashtable) iDefs.get(eleName);
-		    if (subHash == null) subHash = (Hashtable) REF_HASH.get(eleName);
-		    if (subHash != null) {
-		      //get the string representation of the type this attribute should
-		      //refer to
-		      String type = (String) subHash.get(attrName);
-		      if (type != null) {
-		        //check the list of internal references for nodes of the
-		        //type that we just found
-		        for(int i = 0;i<idPanels.size();i++) {
-		          MetadataPane.TablePanel tp =
-		            (MetadataPane.TablePanel) idPanels.get(i);
-		          String tpClass = tp.oNode.getClass().getName();
-		          boolean isCorrectType =
-		            tpClass.equals("org.openmicroscopy.xml.st." + type + "Node");
-		          //if the node is of the right type, add it to the combobox
-		          if (isCorrectType) thisBox.addItem(tp.name);
-		        }
-		
-		         //check the list of external references for references of
-		         //the appropriate type
-		        for(int i = 0;i<addPanels.size();i++) {
-		          String thisExID = (String) addPanels.get(i);
-		          if (thisExID.indexOf(":" + type + ":") >= 0) {
-		            //add this external reference to the combobox
-		            thisBox.addItem(thisExID);
-		          }
-		        }
-		      }
-		      //if no type is found for this attribute, add all internal/external
-		      //reference options to the combobox
-		      else addAll(thisBox);
-		    }
-		    //if no attributes are found for this element, add all references 
-		    else addAll(thisBox);
-		
-		    //listen to changes in this combobox
-		    thisBox.addActionListener(this);
-				//set the initial item in the combobox based on the parameter "value"
-		    thisBox.setSelectedItem(value);
-		
-		    return thisBox;
+    //tagname of the node associated with this table
+    String eleName = oNode.getDOMElement().getTagName();
+    //name of the attribute being edited
+    String attrName = (String) tModel.getValueAt(row, 0);
+    //get the sub-hashtable for the key associated with this tablepanel's
+    //OMEXMLNode... check internal defs first, then external defs
+    Hashtable subHash = (Hashtable) iDefs.get(eleName);
+    if (subHash == null) subHash = (Hashtable) REF_HASH.get(eleName);
+    if (subHash != null) {
+      //get the string representation of the type this attribute should
+      //refer to
+      String type = (String) subHash.get(attrName);
+      if (type != null) {
+        //check the list of internal references for nodes of the
+        //type that we just found
+        for(int i = 0;i<idPanels.size();i++) {
+          MetadataPane.TablePanel tp =
+            (MetadataPane.TablePanel) idPanels.get(i);
+          String tpClass = tp.oNode.getClass().getName();
+          boolean isCorrectType =
+            tpClass.equals("org.openmicroscopy.xml.st." + type + "Node");
+          //if the node is of the right type, add it to the combobox
+          if (isCorrectType) thisBox.addItem(tp.name);
+        }
+
+         //check the list of external references for references of
+         //the appropriate type
+        for(int i = 0;i<addPanels.size();i++) {
+          String thisExID = (String) addPanels.get(i);
+          if (thisExID.indexOf(":" + type + ":") >= 0) {
+            //add this external reference to the combobox
+            thisBox.addItem(thisExID);
+          }
+        }
       }
-      else if (cellType.equals("Desc")) {
-        table.setRowHeight(row, table.getRowHeight() * 4);
-				JTextArea thisText = new JTextArea(new RowDoc(row), (String) value, 1, 4);
-				thisText.setLineWrap(true);
-        thisText.setWrapStyleWord(true);
-	      thisText.setEditable(true);
-	      thisText.getDocument().addDocumentListener(this);
-	      thisText.addFocusListener(this);
-	      thisText.addMouseListener(this);
-	      JScrollPane jScr = new JScrollPane(thisText);
-//        jScr.setSize(jScr.getSize().width,jScr.getSize().height * 4); 
-	      return jScr;
-      }
-      else return null;
+      //if no type is found for this attribute, add all internal/external
+      //reference options to the combobox
+      else addAll(thisBox);
     }
-   }
-   
-   public void setNode(int row, String value) {
-     TableModel tModel = refTable.getModel();
-     String attrName = (String) tModel.getValueAt(row, 0);
-     if (value == null || value.equals("") ) {
-       if(oNode.getDOMElement().hasAttribute(attrName)) 
-         oNode.getDOMElement().removeAttribute(attrName);
-     }
-     else {
-	     if (attrName.endsWith("CharData") ) {
-	       DOMUtil.setCharacterData(value, oNode.getDOMElement());
-	     }
-	     else oNode.setAttribute(attrName, value);
-     }
-   }
+    //if no attributes are found for this element, add all references 
+    else addAll(thisBox);
+
+    //listen to changes in this combobox
+    thisBox.addActionListener(this);
+		//set the initial item in the combobox based on the parameter "value"
+    thisBox.setSelectedItem(value);
+
+    return thisBox;
+  }
 
 // -- EventListener API --
 
-  //okay I know this gets ugly, but I didn't code tables to be this way!
   public void actionPerformed(ActionEvent e) {
     if( e.getSource() instanceof JRowBox) {
       box = (JRowBox) e.getSource();
@@ -317,117 +243,29 @@ public class VariableComboEditor extends AbstractCellEditor
       //eeeeeevil deeds
       fireEditingStopped();
     }
-    if (e.getSource() instanceof JTextField) {
-      text = (JTextField) e.getSource();
-      try {
-        result = text.getDocument().getText(0, 
-          text.getDocument().getLength());
-      }
-      catch (Exception exc) {System.out.println(exc);}
-      System.out.println("Text Action: " + result);
-      fireEditingStopped();
-    }
-  }
-  
-  public void insertUpdate(DocumentEvent e) {
-    try {
-      result = e.getDocument().getText(0, 
-        e.getDocument().getLength());
-    }
-    catch (Exception exc) {System.out.println(exc);}
-    RowDoc rd = (RowDoc) e.getDocument();
-    setNode(rd.row, result);
-    tableP.callStateChanged(true);
-  }
-  
-  public void removeUpdate(DocumentEvent e) {
-    try {
-      result = e.getDocument().getText(0, 
-        e.getDocument().getLength());
-    }
-    catch (Exception exc) {System.out.println(exc);}
-    RowDoc rd = (RowDoc) e.getDocument();
-    setNode(rd.row, result);
-    tableP.callStateChanged(true);
-  }
-  
-  public void changedUpdate(DocumentEvent e) {
-    try {
-      result = e.getDocument().getText(0, 
-        e.getDocument().getLength());
-    }
-    catch (Exception exc) {System.out.println(exc);}
-    RowDoc rd = (RowDoc) e.getDocument();
-    setNode(rd.row, result);
-    tableP.callStateChanged(true);
   }
   
   public void focusGained(FocusEvent e) {
-    if (e.getSource() instanceof JTextField) {
-      JTextField field = (JTextField) e.getSource();
-      try {
-        result = field.getDocument().getText(0, 
-          field.getDocument().getLength());
-      }
-      catch (Exception exc) {System.out.println(exc);}
-    }
-    else if (e.getSource() instanceof JRowBox) {
+    if (e.getSource() instanceof JRowBox) {
       JRowBox thisBox = (JRowBox) e.getSource();
       result = (String) thisBox.getSelectedItem();
     }
-    else if (e.getSource() instanceof JTextArea) {
-      JTextArea field = (JTextArea) e.getSource();
-      try {
-        result = field.getDocument().getText(0, 
-          field.getDocument().getLength());
-      }
-      catch (Exception exc) {System.out.println(exc);}
-    }
   }
   
-  public void focusLost(FocusEvent e) {
-
-  }
+  public void focusLost(FocusEvent e) {}
 
   public void mousePressed(MouseEvent e) {
-	  if (e.getSource() instanceof JTextField &&
-      e.getButton() == MouseEvent.BUTTON1)
-    {
-		  JTextField field = (JTextField) e.getSource();
-		  try {
-		    result = field.getDocument().getText(0, 
-		      field.getDocument().getLength());
-		  }
-		  catch (Exception exc) {System.out.println(exc);}
-	  }
 	  if (e.getSource() instanceof JRowBox &&
     e.getButton() == MouseEvent.BUTTON1) {
 		  JRowBox thisBox = (JRowBox) e.getSource();
       result = (String) thisBox.getSelectedItem();
 	  }
-	  else if (e.getSource() instanceof JTextArea &&
-	    e.getButton() == MouseEvent.BUTTON1) 
-	  {
-      JTextArea field = (JTextArea) e.getSource();
-      try {
-        result = field.getDocument().getText(0, 
-          field.getDocument().getLength());
-      }
-      catch (Exception exc) {System.out.println(exc);}
-    }
 	}
 	
   public void mouseReleased(MouseEvent e) {}
   public void mouseClicked(MouseEvent e) {}
   public void mouseEntered(MouseEvent e) {}
-  public void mouseExited(MouseEvent e) {
-    if (e.getSource() instanceof JTextArea) {
-      JTextArea jta = (JTextArea) e.getSource();
-      RowDoc rd = (RowDoc) jta.getDocument();
-      refTable.setRowHeight(rd.row, refTable.getRowHeight());
-      fireEditingStopped();
-    }
-  }
+  public void mouseExited(MouseEvent e) {}
   
 // -- Helper Classes --
 
@@ -437,17 +275,6 @@ public class VariableComboEditor extends AbstractCellEditor
     public int row;
 
     public JRowBox (int r) {
-      super();
-      row = r;
-    }
-  }
-  
-  //very simple extension of Document (text) that simply adds an int
-  //field to designate which row this Document edits
-  public class RowDoc extends DefaultStyledDocument {
-    public int row;
-
-    public RowDoc (int r) {
       super();
       row = r;
     }

@@ -81,12 +81,30 @@ public class ClickableTable extends JTable
 //is a "duplicate" , e.g. if there is more than one element with its
 //same tagname on a given level of the node tree
   private boolean isDuplicate;
+  
+//the TableCellRenderers for this ClickableTable
+  protected TableCellRenderer labelR,textR,comboR,gotoR;
+  
+  protected TableCellEditor labelE,textE,comboE,gotoE;
 
   // -- ClickableTable Constructors --
 
-  public ClickableTable(TableModel model, MetadataPane.TablePanel tablePanel) {
+  public ClickableTable(TableModel model, MetadataPane.TablePanel tablePanel,
+    VariableComboEditor vcEdit)
+  {
     super(model);
     
+    labelR = new DefaultTableCellRenderer();
+    comboR = new VariableComboRenderer();
+    textR = new VariableTextAreaRenderer();
+    gotoR = new GotoRenderer();
+    
+    labelE = new VariableTextFieldEditor(tablePanel);
+    vcEdit.refTable = this;
+    comboE = vcEdit;
+    textE = new VariableTextAreaEditor(tablePanel);
+    gotoE = new GotoEditor(tablePanel);
+
     addMouseListener(this);
 
 //initialize various fields
@@ -158,6 +176,75 @@ public class ClickableTable extends JTable
     }
     return tip;
   }
+  
+  public String getCellType(int row, int column) {
+    TableModel tModel = getModel();
+  
+    Vector fullList = DOMUtil.getChildElements("OMEAttribute",tp.el);
+    Element templateE = null;
+    for (int i = 0;i<fullList.size();i++) {
+      Element thisE = (Element) fullList.get(i);
+      String nameAttr = thisE.getAttribute("XMLName");
+      if(thisE.hasAttribute("Name")) nameAttr = thisE.getAttribute("Name");
+      if(nameAttr.equals((String) tModel.getValueAt(row, 0))) templateE = thisE;      
+    }
+    
+    String cellType = null;
+    
+    if(templateE.hasAttribute("Type")) cellType = templateE.getAttribute("Type");
+    
+    return cellType;
+	}
+  
+  public TableCellRenderer getCellRenderer(int row, int column) {        	          
+    if (column == 1) {
+      String cellType = getCellType(row,column);
+    
+	    if(cellType != null) { 
+		    if(cellType.equals("Ref")) {
+		      return comboR;
+		    }
+		    else if(cellType.equals("Desc")) {
+		      return textR;
+		    }
+		    else {
+		      return labelR;
+		    } 
+	    }
+	    else {
+	      return labelR;
+	    }
+	  }
+	  else if (column == 2) {
+	    return gotoR;
+	  }
+	  else return labelR;
+	}
+	
+	public TableCellEditor getCellEditor(int row, int column) {
+	  if (column == 1) {
+      String cellType = getCellType(row,column);
+    
+	    if(cellType != null) { 
+		    if(cellType.equals("Ref")) {
+		      return comboE;
+		    }
+		    else if(cellType.equals("Desc")) {
+		      return textE;
+		    }
+		    else {
+		      return labelE;
+		    } 
+	    }
+	    else {
+	      return labelE;
+	    }
+	  }
+	  else if (column == 2) {
+	    return gotoE;
+	  }
+	  else return labelE;
+	}
 
   
   // -- Static ClickableTable API Methods --

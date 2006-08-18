@@ -225,10 +225,31 @@ public class MetadataNotebook extends JFrame
   /** Handles menu commands. */
   public void actionPerformed(ActionEvent e) {
     String cmd = e.getActionCommand();
-    if ("new".equals(cmd)) {
-      setTitle("OME Metadata Notebook");
-      currentFile = null;
-      metadata.setupTabs();
+    if ("new".equals(cmd)) {      
+      if (metadata.getState()) {
+        Object[] options = {"Yes, do it!",
+                    "No thanks."};
+				int n = JOptionPane.showOptionDialog(this,
+			    "Are you sure you want to create\n" +
+			    "a new file without saving your\n" +
+			    "changes to the current file?",
+			    "Current File Not Saved",
+			    JOptionPane.YES_NO_OPTION,
+			    JOptionPane.QUESTION_MESSAGE,
+			    null,     //don't use a custom Icon
+			    options,  //the titles of buttons
+			    options[0]); //default button title
+			  if (n == JOptionPane.YES_OPTION) {
+					setTitle("OME Metadata Notebook");
+          currentFile = null;
+          metadata.setupTabs();
+			  }
+      }
+      else {
+	      setTitle("OME Metadata Notebook");
+	      currentFile = null;
+	      metadata.setupTabs();
+      }
     }
     if ("open".equals(cmd)) {
       if (metadata.getState()) {
