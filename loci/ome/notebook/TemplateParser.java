@@ -23,20 +23,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.ome.notebook;
 
+import java.io.*;
+import java.util.Hashtable;
+import java.util.Vector;
 import javax.xml.parsers.*;
 import org.w3c.dom.*;
-import java.util.Vector;
-import java.util.Hashtable;
-import java.io.*;
 
 /**
- * A simple xml parser to help set up the MetadataNotebook's gui 
+ * A simple xml parser to help set up the MetadataNotebook's gui
  * based on the commonly used data specified in Template.xml
  *
  * @author Christopher Peterson crpeterson2 at wisc.edu
  */
-public class TemplateParser
-{
+public class TemplateParser {
+
   //  --Static Fields--
 
   /** Factory for generating document builders. */
@@ -49,7 +49,7 @@ public class TemplateParser
     "Instrument.ome","Plate.ome","Screen.ome","OMEIS/Repository.ome",
     "OMEIS/OriginalFile.ome"
   };
-  
+
   /** A list of regular (non "home-baked") type defs to cruise*/
   public static final String[] OLD_DEF_LIST = {"CA.xsd"};
 
@@ -69,15 +69,15 @@ public class TemplateParser
 
   //  --Constructor--
 
-  /** Parses the template document designated by the file argument,
-  *   creating a list of "top-level" Elements which I define as those
-  *   elements that have either an OMENode as a parent or a
-  *   CustomAttributesNode as a parent that has an OMENode as a parent
-  *   these top-level elements correspond to the tabs formed in the
-  *   MetadataPane
-  */
-  public TemplateParser(File file)
-  {
+  /**
+   * Parses the template document designated by the file argument,
+   * creating a list of "top-level" Elements which I define as those
+   * elements that have either an OMENode as a parent or a
+   * CustomAttributesNode as a parent that has an OMENode as a parent
+   * these top-level elements correspond to the tabs formed in the
+   * MetadataPane
+   */
+  public TemplateParser(File file) {
     // Parse the specified xml file (should be Template.xml) using the DOM
     try {
       DocumentBuilder db = DOC_FACT.newDocumentBuilder();
@@ -92,19 +92,19 @@ public class TemplateParser
     NodeList nList = root.getChildNodes();
     int nLength = nList.getLength();
     Vector v = new Vector(nLength);
-    for(int i = 0;i < nLength;i++) {
+    for (int i = 0;i < nLength;i++) {
       Node node = nList.item(i);
-      if(node instanceof Element) {
+      if (node instanceof Element) {
         Element thisElement = (Element) node;
-        if( "OMEElement".equals(thisElement.getTagName()) ) v.add(thisElement);
+        if ( "OMEElement".equals(thisElement.getTagName()) ) v.add(thisElement);
       }
     }
     tabList = new Element[v.size()];
-    for(int i = 0;i < v.size();i++) {
+    for (int i = 0;i < v.size();i++) {
       tabList[i] = (Element) v.elementAt(i);
     }
   }
-  
+
   public Element getRoot() {
     return root;
   }
@@ -143,38 +143,30 @@ public class TemplateParser
       NodeList nl = thisRoot.getChildNodes();
       for (int j = 0;j < nl.getLength();j++) {
         Node node = nl.item(j);
-        if(node instanceof Element) {
-          Element someE = (Element) node;
-          if (someE.getTagName().equals("SemanticTypeDefinitions")) {
-            NodeList omeEleList = node.getChildNodes();
-            for(int k = 0;k < omeEleList.getLength();k++) {
-              node = omeEleList.item(k);
-              if(node instanceof Element) {
-                Element omeEle = (Element) node;
-                if (omeEle.getTagName().equals("SemanticType")) {
-                  NodeList omeAttrList = node.getChildNodes();
-                  Hashtable thisHash = new Hashtable(10);
-                  for(int l = 0;l < omeAttrList.getLength();l++) {
-                    node = omeAttrList.item(l);
-                    if(node instanceof Element) {
-                      Element omeAttr = (Element) node;
-                      if (omeAttr.getTagName().equals("Element")) {
-                        if(omeAttr.hasAttribute("DataType")) {
-                          String dType = omeAttr.getAttribute("DataType");
-                          if(dType.equals("reference")) {
-                            String attrName = omeAttr.getAttribute("Name");
-                            String refType = omeAttr.getAttribute("RefersTo");
-                            thisHash.put(attrName,refType);
-                          }
-                        }
-                      }
-                    }
-                  }
-                  refHash.put(omeEle.getAttribute("Name"), thisHash);
-                }
-              }
-            }
+        if (!(node instanceof Element)) continue;
+        Element someE = (Element) node;
+        if (!someE.getTagName().equals("SemanticTypeDefinitions")) continue;
+        NodeList omeEleList = node.getChildNodes();
+        for (int k = 0;k < omeEleList.getLength();k++) {
+          node = omeEleList.item(k);
+          if (!(node instanceof Element)) continue;
+          Element omeEle = (Element) node;
+          if (!omeEle.getTagName().equals("SemanticType")) continue;
+          NodeList omeAttrList = node.getChildNodes();
+          Hashtable thisHash = new Hashtable(10);
+          for (int l = 0;l < omeAttrList.getLength();l++) {
+            node = omeAttrList.item(l);
+            if (!(node instanceof Element)) continue;
+            Element omeAttr = (Element) node;
+            if (!omeAttr.getTagName().equals("Element")) continue;
+            if (!omeAttr.hasAttribute("DataType")) continue;
+            String dType = omeAttr.getAttribute("DataType");
+            if (!dType.equals("reference")) continue;
+            String attrName = omeAttr.getAttribute("Name");
+            String refType = omeAttr.getAttribute("RefersTo");
+            thisHash.put(attrName,refType);
           }
+          refHash.put(omeEle.getAttribute("Name"), thisHash);
         }
       }
     }
@@ -194,40 +186,37 @@ public class TemplateParser
       //surfing node-trees...
       Element thisRoot = templateDoc.getDocumentElement();
       NodeList eleList = thisRoot.getChildNodes();
-      
+
       for (int j = 0;j < eleList.getLength();j++) {
         Node node = eleList.item(j);
-        if(node instanceof Element) {
-          Element eleE = (Element) node;
-          if(eleE.getTagName().equals("xsd:element")) {
-            NodeList wrapperList = eleE.getChildNodes();
-            Hashtable attrHash = new Hashtable(10);
-            for (int k = 0;k < wrapperList.getLength();k++) {
-              node = (Node) wrapperList.item(k);
-              if(node instanceof Element) {
-                Element anotherE = (Element) node;
-                if(anotherE.getTagName().equals("xsd:complexType") ) {
-                  NodeList attrList = anotherE.getChildNodes();
-                  for (int l = 0;l < attrList.getLength();l++) {
-                    node = (Node) attrList.item(l);
-                    if(node instanceof Element) {
-                      Element attrE = (Element) node;
-                      if(attrE.getTagName().equals("xsd:attribute") && attrE.hasAttribute("type") ) {
-                        String type = attrE.getAttribute("type"); 
-                        if ( type.startsWith("OME:") && type.endsWith("ID") ) {
-                          type = type.substring(4, type.length() - 2);
-                          String attrName = attrE.getAttribute("name");
-                          attrHash.put(attrName,type);
-                        }
-                      }
-                    }
-                  }
-                }
-              }
+        if (!(node instanceof Element)) continue;
+        Element eleE = (Element) node;
+        if (!eleE.getTagName().equals("xsd:element")) continue;
+        NodeList wrapperList = eleE.getChildNodes();
+        Hashtable attrHash = new Hashtable(10);
+        for (int k = 0;k < wrapperList.getLength();k++) {
+          node = (Node) wrapperList.item(k);
+          if (!(node instanceof Element)) continue;
+          Element anotherE = (Element) node;
+          if (!anotherE.getTagName().equals("xsd:complexType")) continue;
+          NodeList attrList = anotherE.getChildNodes();
+          for (int l = 0;l < attrList.getLength();l++) {
+            node = (Node) attrList.item(l);
+            if (!(node instanceof Element)) continue;
+            Element attrE = (Element) node;
+            if (!attrE.getTagName().equals("xsd:attribute") ||
+              !attrE.hasAttribute("type"))
+            {
+              continue;
             }
-            refHash.put(eleE.getAttribute("name"), attrHash);
+            String type = attrE.getAttribute("type");
+            if (!type.startsWith("OME:") || !type.endsWith("ID")) continue;
+            type = type.substring(4, type.length() - 2);
+            String attrName = attrE.getAttribute("name");
+            attrHash.put(attrName,type);
           }
         }
+        refHash.put(eleE.getAttribute("name"), attrHash);
       }
     }
     return refHash;
@@ -239,15 +228,15 @@ public class TemplateParser
   }
 
   /** used for debugging */
-  public static void main(String[] args)
-  {
+  public static void main(String[] args) {
     File f = new File("Template.xml");
     TemplateParser tp = new TemplateParser(f);
     Element[] eList = tp.getTabs();
-    for(int i = 0;i<eList.length;i++) {
+    for (int i = 0;i<eList.length;i++) {
       System.out.println(eList[i].getAttribute("XMLName"));
     }
     Hashtable mmmHash = TemplateParser.getRefHash();
     System.out.println(mmmHash);
   }
+
 }

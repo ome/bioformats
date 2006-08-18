@@ -23,17 +23,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.ome.notebook;
 
-import javax.swing.JLabel;
-import javax.swing.JTable;
-import javax.swing.JButton;
-import javax.swing.table.TableCellRenderer;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Color;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.table.TableCellRenderer;
 
-public class GotoRenderer extends JButton
-  implements TableCellRenderer
-{
+public class GotoRenderer extends JButton implements TableCellRenderer {
+
   public GotoRenderer() {
     super("Goto");
     setActionCommand("goto");
@@ -42,10 +41,9 @@ public class GotoRenderer extends JButton
     setOpaque(true); //MUST do this for background to show up.
   }
 
-  public Component getTableCellRendererComponent(
-                          JTable table, Object value,
-                          boolean isSelected, boolean hasFocus,
-                          int row, int column) {
+  public Component getTableCellRendererComponent(JTable table, Object value,
+    boolean isSelected, boolean hasFocus, int row, int column)
+  {
     if (value == null) {
       setToolTipText("Not a reference.");
       return new JLabel();
@@ -55,15 +53,15 @@ public class GotoRenderer extends JButton
       return this;
     }
   }
-  
+
   //overidden for performance reasons... see jdk 1.4 doc
   //for details as to why I did this
   public void validate() {}
   public void revalidate() {}
-  public void repaint(long tm, int x, int y,
-    int width, int height) {}
+  public void repaint(long tm, int x, int y, int width, int height) {}
   public void firePropertyChange(String propertyName,
     boolean oldValue, boolean newValue) {}
   protected void firePropertyChange(String propertyName,
     Object oldValue, Object newValue) {}
+
 }

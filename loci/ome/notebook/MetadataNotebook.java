@@ -23,14 +23,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.ome.notebook;
 
+import java.awt.CardLayout;
 import java.awt.Cursor;
 import java.awt.Toolkit;
-import java.awt.CardLayout;
 import java.awt.event.*;
 import java.io.File;
 import javax.swing.*;
 import javax.swing.border.*;
-
 import org.w3c.dom.*;
 
 /**
@@ -66,16 +65,16 @@ public class MetadataNotebook extends JFrame
     //initialize fields
     currentFile = null;
     opening = true;
-    
+
     //give the Template.xml file to the parser to feed on
     File f = new File("Template.xml");
     TemplateParser tp = new TemplateParser(f);
-    
+
     mdp = new loci.ome.viewer.MetadataPane();
-    
+
     //create a MetadataPane, where most everything happens
-    if( args.length > 0 ) {
-			File file = null;
+    if (args.length > 0) {
+      File file = null;
       try {
         file = new File(args[0]);
       }
@@ -86,10 +85,10 @@ public class MetadataNotebook extends JFrame
       metadata = new MetadataPane(file);
     }
     else metadata = new MetadataPane();
-    
+
     metadata.setVisible(true);
     mdp.setVisible(false);
-    
+
     JPanel contentPanel = new JPanel();
     contentPanel.setLayout(new CardLayout());
     contentPanel.setBorder((EmptyBorder) null);
@@ -146,7 +145,7 @@ public class MetadataNotebook extends JFrame
     menubar.add(tabsMenu);
     Element[] tabs = tp.getTabs();
     String[] tabNames = new String[tabs.length];
-    for(int i = 0;i<tabs.length;i++) {
+    for (int i = 0;i<tabs.length;i++) {
       Element e = tabs[i];
       tabNames[i] = MetadataPane.getTreePathName(e);
     }
@@ -186,24 +185,24 @@ public class MetadataNotebook extends JFrame
 
   // -- MetadataNotebook API methods --
 
-  protected void setCurrentFile(File aFile) {
-    currentFile = aFile;
-  }
+  protected void setCurrentFile(File aFile) { currentFile = aFile; }
 
-  //opens a file, sets the title of the frame to reflect the current file
+  /** opens a file, sets the title of the frame to reflect the current file */
   public void openFile(File file) {
     metadata.setOMEXML(file);
     mdp.setOMEXML(file);
     setTitle("OME Metadata Notebook - " + file);
   }
 
-  //saves to a file, sets title of frame to reflect the current file
+  /** saves to a file, sets title of frame to reflect the current file */
   public void saveFile(File file) {
     metadata.saveFile(file);
   }
 
-  //given an array of Strings of appropriate tab names, this method
-  //sets up the tab menu accordingly
+  /**
+   * given an array of Strings of appropriate tab names, this method
+   * sets up the tab menu accordingly
+   */
   public void changeTabMenu(String[] tabs) {
     tabsMenu.removeAll();
     for (int i=0; i<tabs.length; i++) {
@@ -211,8 +210,10 @@ public class MetadataNotebook extends JFrame
       JMenuItem thisTab = new JMenuItem(thisName);
       tabsMenu.add(thisTab);
       //set up shortcut keys if tabs menu has less than 11 items
-      if ((i+1) < 11) thisTab.setAccelerator(KeyStroke.getKeyStroke(MetadataPane.getKey(i+1),
-        InputEvent.ALT_MASK));
+      if ((i+1) < 11) {
+        thisTab.setAccelerator(KeyStroke.getKeyStroke(
+          MetadataPane.getKey(i+1), InputEvent.ALT_MASK));
+      }
       Integer aInt = new Integer(i);
       thisTab.setActionCommand("tabChange" + aInt.toString());
       thisTab.addActionListener(this);
@@ -225,66 +226,64 @@ public class MetadataNotebook extends JFrame
   /** Handles menu commands. */
   public void actionPerformed(ActionEvent e) {
     String cmd = e.getActionCommand();
-    if ("new".equals(cmd)) {      
+    if ("new".equals(cmd)) {
       if (metadata.getState()) {
-        Object[] options = {"Yes, do it!",
-                    "No thanks."};
-				int n = JOptionPane.showOptionDialog(this,
-			    "Are you sure you want to create\n" +
-			    "a new file without saving your\n" +
-			    "changes to the current file?",
-			    "Current File Not Saved",
-			    JOptionPane.YES_NO_OPTION,
-			    JOptionPane.QUESTION_MESSAGE,
-			    null,     //don't use a custom Icon
-			    options,  //the titles of buttons
-			    options[0]); //default button title
-			  if (n == JOptionPane.YES_OPTION) {
-					setTitle("OME Metadata Notebook");
+        Object[] options = {"Yes, do it!", "No thanks."};
+        int n = JOptionPane.showOptionDialog(this,
+          "Are you sure you want to create\n" +
+          "a new file without saving your\n" +
+          "changes to the current file?",
+          "Current File Not Saved",
+          JOptionPane.YES_NO_OPTION,
+          JOptionPane.QUESTION_MESSAGE,
+          null,     //don't use a custom Icon
+          options,  //the titles of buttons
+          options[0]); //default button title
+        if (n == JOptionPane.YES_OPTION) {
+          setTitle("OME Metadata Notebook");
           currentFile = null;
           metadata.setupTabs();
-			  }
+        }
       }
       else {
-	      setTitle("OME Metadata Notebook");
-	      currentFile = null;
-	      metadata.setupTabs();
+        setTitle("OME Metadata Notebook");
+        currentFile = null;
+        metadata.setupTabs();
       }
     }
     if ("open".equals(cmd)) {
       if (metadata.getState()) {
-        Object[] options = {"Yes, do it!",
-                    "No thanks."};
-				int n = JOptionPane.showOptionDialog(this,
-			    "Are you sure you want to open\n" +
-			    "a new file without saving your\n" +
-			    "changes to the current file?",
-			    "Current File Not Saved",
-			    JOptionPane.YES_NO_OPTION,
-			    JOptionPane.QUESTION_MESSAGE,
-			    null,     //don't use a custom Icon
-			    options,  //the titles of buttons
-			    options[0]); //default button title
-			  if (n == JOptionPane.YES_OPTION) {
-			    chooser.setDialogTitle("Open");
-		      chooser.setApproveButtonText("Open");
-		      chooser.setApproveButtonToolTipText("Open selected file.");
-		      opening = true;
-		      int rval = chooser.showOpenDialog(this);
-		      if (rval == JFileChooser.APPROVE_OPTION) {
-		        new Thread(this, "MetadataNotebook-Opener").start();
-		      }
-			  }
+        Object[] options = {"Yes, do it!", "No thanks."};
+        int n = JOptionPane.showOptionDialog(this,
+          "Are you sure you want to open\n" +
+          "a new file without saving your\n" +
+          "changes to the current file?",
+          "Current File Not Saved",
+          JOptionPane.YES_NO_OPTION,
+          JOptionPane.QUESTION_MESSAGE,
+          null,     //don't use a custom Icon
+          options,  //the titles of buttons
+          options[0]); //default button title
+        if (n == JOptionPane.YES_OPTION) {
+          chooser.setDialogTitle("Open");
+          chooser.setApproveButtonText("Open");
+          chooser.setApproveButtonToolTipText("Open selected file.");
+          opening = true;
+          int rval = chooser.showOpenDialog(this);
+          if (rval == JFileChooser.APPROVE_OPTION) {
+            new Thread(this, "MetadataNotebook-Opener").start();
+          }
+        }
       }
       else {
-      	chooser.setDialogTitle("Open");
-		    chooser.setApproveButtonText("Open");
-		    chooser.setApproveButtonToolTipText("Open selected file.");
-		    opening = true;
-		    int rval = chooser.showOpenDialog(this);
-		    if (rval == JFileChooser.APPROVE_OPTION) {
+        chooser.setDialogTitle("Open");
+        chooser.setApproveButtonText("Open");
+        chooser.setApproveButtonToolTipText("Open selected file.");
+        opening = true;
+        int rval = chooser.showOpenDialog(this);
+        if (rval == JFileChooser.APPROVE_OPTION) {
           new Thread(this, "MetadataNotebook-Opener").start();
-	      }
+        }
       }
     }
     else if ("saveAs".equals(cmd) ||
@@ -306,23 +305,22 @@ public class MetadataNotebook extends JFrame
     }
     else if ("exit".equals(cmd)) {
           if (metadata.getState()) {
-        Object[] options = {"Yes, exit!",
-                    "No thanks."};
-				int n = JOptionPane.showOptionDialog(this,
-			    "Are you sure you want to exit without\n" +
-			    "saving your changes to the current file?",
-			    "Current File Not Saved",
-			    JOptionPane.YES_NO_OPTION,
-			    JOptionPane.QUESTION_MESSAGE,
-			    null,     //don't use a custom Icon
-			    options,  //the titles of buttons
-			    options[0]); //default button title
-			  if (n == JOptionPane.YES_OPTION) {
-			    System.exit(0);
-			  }
+        Object[] options = {"Yes, exit!", "No thanks."};
+        int n = JOptionPane.showOptionDialog(this,
+          "Are you sure you want to exit without\n" +
+          "saving your changes to the current file?",
+          "Current File Not Saved",
+          JOptionPane.YES_NO_OPTION,
+          JOptionPane.QUESTION_MESSAGE,
+          null,     //don't use a custom Icon
+          options,  //the titles of buttons
+          options[0]); //default button title
+        if (n == JOptionPane.YES_OPTION) {
+          System.exit(0);
+        }
       }
       else {
-				System.exit(0);
+        System.exit(0);
       }
     }
     else if ("about".equals(cmd)) {
@@ -334,25 +332,25 @@ public class MetadataNotebook extends JFrame
         "http://www.loci.wisc.edu/software/#notebook",
         "OME Metadata Notebook", JOptionPane.INFORMATION_MESSAGE);
     }
-    else if(cmd.startsWith("tabChange")) {
+    else if (cmd.startsWith("tabChange")) {
       metadata.tabChange( Integer.parseInt(cmd.substring(9)) );
     }
   }
 
   public void itemStateChanged(ItemEvent e) {
-		if (e.getStateChange() == ItemEvent.SELECTED) {
-		  metadata.setVisible(false);
-		  tabsMenu.setEnabled(false);
-		  fileNew.setEnabled(false);
-			mdp.setVisible(true);
+    if (e.getStateChange() == ItemEvent.SELECTED) {
+      metadata.setVisible(false);
+      tabsMenu.setEnabled(false);
+      fileNew.setEnabled(false);
+      mdp.setVisible(true);
       mdp.setOMEXML(metadata.getRoot());
     }
     else {
       mdp.setVisible(false);
       tabsMenu.setEnabled(true);
-		  fileNew.setEnabled(true);
-			metadata.setVisible(true);
-	  }
+      fileNew.setEnabled(true);
+      metadata.setVisible(true);
+    }
   }
 
   // -- Runnable API methods --

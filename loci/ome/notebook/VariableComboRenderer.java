@@ -23,32 +23,27 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.ome.notebook;
 
-import javax.swing.JLabel;
-import javax.swing.JTable;
-import javax.swing.JComboBox;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.border.EmptyBorder;
-
 import java.awt.Component;
-import java.awt.BorderLayout;
+import javax.swing.JComboBox;
+import javax.swing.JTable;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.TableCellRenderer;
 
 public class VariableComboRenderer extends JComboBox
   implements TableCellRenderer
 {
-  public VariableComboRenderer() {
-    super();
-  }
 
-  public Component getTableCellRendererComponent(
-                          JTable table, Object value,
-                          boolean isSelected, boolean hasFocus,
-                          int row, int column) {
+  public VariableComboRenderer() { super(); }
+
+  public Component getTableCellRendererComponent(JTable table, Object value,
+    boolean isSelected, boolean hasFocus, int row, int column)
+  {
     removeAllItems();
     addItem(value);
     setBorder((EmptyBorder) null);
     return this;
   }
-  
+
   //overidden for performance reasons... see jdk 1.4 doc
   //for details as to why I did this
 //  public void validate() {}
@@ -59,4 +54,5 @@ public class VariableComboRenderer extends JComboBox
     boolean oldValue, boolean newValue) {}
   protected void firePropertyChange(String propertyName,
     Object oldValue, Object newValue) {}
+
 }

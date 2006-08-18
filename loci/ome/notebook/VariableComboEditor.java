@@ -23,80 +23,80 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.ome.notebook;
 
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import javax.swing.AbstractCellEditor;
-import javax.swing.table.TableCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.JScrollPane;
-import javax.swing.text.DefaultStyledDocument;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
-
-import java.awt.Component;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseEvent;
-
 import java.util.Hashtable;
 import java.util.Vector;
-
 import org.openmicroscopy.xml.OMEXMLNode;
-import org.openmicroscopy.xml.DOMUtil;
-import org.w3c.dom.Element;
 
 public class VariableComboEditor extends AbstractCellEditor
-  implements TableCellEditor, ActionListener, 
-  FocusListener, MouseListener
+  implements TableCellEditor, ActionListener, FocusListener, MouseListener
 {
 
   // -- Fields --
 
-  //Vectors that hold Panels that have ID (idPanels)
-  //and also all external references in the file (addPanels)
+  /**
+   * Vectors that hold Panels that have ID (idPanels)
+   * and also all external references in the file (addPanels)
+   */
   private Vector idPanels, addPanels;
 
-  //refers to the node associated with the TablePanel that
-  //holds the table which uses this cell editor
+  /**
+   * refers to the node associated with the TablePanel that
+   * holds the table which uses this cell editor
+   */
   private OMEXMLNode oNode;
-  
-  //refers to the TablePanel using this editor
+
+  /** refers to the TablePanel using this editor */
   private MetadataPane.TablePanel tableP;
 
-  //holds the current combobox needed when the cell is clicked
+  /** holds the current combobox needed when the cell is clicked */
   private JRowBox box;
 
-  //holds the table of references this cell editor is for
+  /** holds the table of references this cell editor is for */
   protected JTable refTable;
-  
-  //holds internal reference data found in the ome-xml file
-  //that is currently opened by MetadataPane
+
+  /**
+   * holds internal reference data found in the ome-xml file
+   * that is currently opened by MetadataPane
+   */
   private Hashtable iDefs;
-  
+
   private String result;
 
   // -- Constants --
 
-  //get the hashtable describing which attributes refer to what
-  //type of nodes
+  /**
+   * get the hashtable describing which attributes refer to what
+   * type of nodes
+   */
   private static final Hashtable REF_HASH = TemplateParser.getRefHash();
 
   // -- Constructor --
 
-  //IDP : vector of TablePanels that have been found to have ID attributes
-  //AddP : vector of Strings that hold all external LSIDs found in this file
-  //oN : the OMEXMLNode associated with the TablePanel this editor edits
-  //internalDefs : a hashtable representing semantic type defs found in
-  //    the current open file itself
-  public VariableComboEditor(Vector IDP, Vector AddP, 
+  /**
+   * @param IDP vector of TablePanels that have been found to have ID attributes
+   * @param AddP vector of Strings that hold all external LSIDs found in this
+   *        file
+   * @param oN the OMEXMLNode associated with the TablePanel this editor edits
+   * @param internalDefs a hashtable representing semantic type defs found in
+   *        the current open file itself
+   */
+  public VariableComboEditor(Vector IDP, Vector AddP,
     MetadataPane.TablePanel tp, Hashtable internalDefs)
   {
-		//initialize all fields
-		result = null;
+    //initialize all fields
+    result = null;
     idPanels = IDP;
     addPanels = AddP;
     tableP = tp;
@@ -107,10 +107,12 @@ public class VariableComboEditor extends AbstractCellEditor
   }
 
   // -- VariableComboEditor API --
-  
-  //if we give up on tailoring the combobox to the appropriate types,
-  //this method simply adds all possible references of all types to
-  //the combobox
+
+  /**
+   * if we give up on tailoring the combobox to the appropriate types,
+   * this method simply adds all possible references of all types to
+   * the combobox
+   */
   public void addAll(JRowBox jrb) {
     //add internal references
     for (int i = 0;i<idPanels.size();i++) {
@@ -123,23 +125,23 @@ public class VariableComboEditor extends AbstractCellEditor
     }
   }
 
-// -- AbstractCellEditor Implementation --
+  // -- AbstractCellEditor Implementation --
 
-//Implement the one CellEditor method that AbstractCellEditor doesn't.
+  /** Implement the one CellEditor method that AbstractCellEditor doesn't. */
   public Object getCellEditorValue() {
     return result;
   }
 
-//Implement the one method defined by TableCellEditor.
+  /** Implement the one method defined by TableCellEditor. */
   public Component getTableCellEditorComponent(JTable table, Object value,
     boolean isSelected, int row, int column)
   {
     TableModel tModel = table.getModel();
-  
+
     //use parameters to get information about the cell being edited
     JRowBox thisBox = new JRowBox(row);
     thisBox.addFocusListener(this);
-    
+
     //tagname of the node associated with this table
     String eleName = oNode.getDOMElement().getTagName();
     //name of the attribute being edited
@@ -155,7 +157,7 @@ public class VariableComboEditor extends AbstractCellEditor
       if (type != null) {
         //check the list of internal references for nodes of the
         //type that we just found
-        for(int i = 0;i<idPanels.size();i++) {
+        for (int i = 0;i<idPanels.size();i++) {
           MetadataPane.TablePanel tp =
             (MetadataPane.TablePanel) idPanels.get(i);
           String tpClass = tp.oNode.getClass().getName();
@@ -167,7 +169,7 @@ public class VariableComboEditor extends AbstractCellEditor
 
          //check the list of external references for references of
          //the appropriate type
-        for(int i = 0;i<addPanels.size();i++) {
+        for (int i = 0;i<addPanels.size();i++) {
           String thisExID = (String) addPanels.get(i);
           if (thisExID.indexOf(":" + type + ":") >= 0) {
             //add this external reference to the combobox
@@ -179,21 +181,21 @@ public class VariableComboEditor extends AbstractCellEditor
       //reference options to the combobox
       else addAll(thisBox);
     }
-    //if no attributes are found for this element, add all references 
+    //if no attributes are found for this element, add all references
     else addAll(thisBox);
 
     //listen to changes in this combobox
     thisBox.addActionListener(this);
-		//set the initial item in the combobox based on the parameter "value"
+    //set the initial item in the combobox based on the parameter "value"
     thisBox.setSelectedItem(value);
 
     return thisBox;
   }
 
-// -- EventListener API --
+  // -- EventListener API --
 
   public void actionPerformed(ActionEvent e) {
-    if( e.getSource() instanceof JRowBox) {
+    if ( e.getSource() instanceof JRowBox) {
       box = (JRowBox) e.getSource();
       //get the row this JRowBox is made to edit
       int row = box.row;
@@ -205,17 +207,17 @@ public class VariableComboEditor extends AbstractCellEditor
       String attr = (String) model.getValueAt(row,0);
       //set default of thisID as null
       String thisID = null;
-      if(data == null || data.equals("")) {
-        if(oNode.getDOMElement().hasAttribute(attr)) 
+      if (data == null || data.equals("")) {
+        if (oNode.getDOMElement().hasAttribute(attr))
           oNode.getDOMElement().removeAttribute(attr);
       }
       else {
         //check if the selected item corresponds to an internal id
         //if it does, set thisID to the internal id in question
-        for(int i = 0;i<idPanels.size();i++) {
+        for (int i = 0;i<idPanels.size();i++) {
           MetadataPane.TablePanel tp =
             (MetadataPane.TablePanel) idPanels.get(i);
-          if(data.equals(tp.name)) thisID = tp.id;
+          if (data.equals(tp.name)) thisID = tp.id;
         }
         //if an internal reference was found, set the node tree
         //to reflect the changes made by the new selection of
@@ -227,50 +229,53 @@ public class VariableComboEditor extends AbstractCellEditor
         //reference and clip the "(External) " marker from it
         //before setting the attribute to the new value
         else {
-          for(int i = 0;i<addPanels.size();i++) {
+          for (int i = 0;i<addPanels.size();i++) {
             String s = (String) addPanels.get(i);
-            if(data.equals(s)) {
+            if (data.equals(s)) {
               oNode.setAttribute(attr, s.substring(11));
             }
           }
         }
       }
       result = (String) box.getSelectedItem();
-      
-      tableP.callStateChanged(true); 
-      
+
+      tableP.callStateChanged(true);
+
       //let the table know that our editor is done with its
       //eeeeeevil deeds
       fireEditingStopped();
     }
   }
-  
+
   public void focusGained(FocusEvent e) {
     if (e.getSource() instanceof JRowBox) {
       JRowBox thisBox = (JRowBox) e.getSource();
       result = (String) thisBox.getSelectedItem();
     }
   }
-  
+
   public void focusLost(FocusEvent e) {}
 
   public void mousePressed(MouseEvent e) {
-	  if (e.getSource() instanceof JRowBox &&
-    e.getButton() == MouseEvent.BUTTON1) {
-		  JRowBox thisBox = (JRowBox) e.getSource();
+    if (e.getSource() instanceof JRowBox &&
+      e.getButton() == MouseEvent.BUTTON1)
+    {
+      JRowBox thisBox = (JRowBox) e.getSource();
       result = (String) thisBox.getSelectedItem();
-	  }
-	}
-	
+    }
+  }
+
   public void mouseReleased(MouseEvent e) {}
   public void mouseClicked(MouseEvent e) {}
   public void mouseEntered(MouseEvent e) {}
   public void mouseExited(MouseEvent e) {}
-  
-// -- Helper Classes --
 
-  //very simple extension of JComboBox that simply adds an int
-  //field to designate which row this combobox edits
+  // -- Helper Classes --
+
+  /**
+   * very simple extension of JComboBox that simply adds an int
+   * field to designate which row this combobox edits
+   */
   public class JRowBox extends JComboBox {
     public int row;
 
@@ -279,4 +284,5 @@ public class VariableComboEditor extends AbstractCellEditor
       row = r;
     }
   }
+
 }

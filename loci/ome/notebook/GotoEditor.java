@@ -23,25 +23,26 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.ome.notebook;
 
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JTable;
-import javax.swing.table.*;
-import javax.swing.AbstractCellEditor;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Color;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.AbstractCellEditor;
+import javax.swing.JButton;
+import javax.swing.JTable;
+import javax.swing.table.*;
 
 public class GotoEditor extends AbstractCellEditor
-  implements TableCellEditor, ActionListener {
-  
+  implements TableCellEditor, ActionListener
+{
+
   TableButton button;
   MetadataPane.TablePanel tableP;
 
   public GotoEditor(MetadataPane.TablePanel tp) {
-      button = null;
-      tableP = tp;
+    button = null;
+    tableP = tp;
   }
 
   public void actionPerformed(ActionEvent e) {
@@ -49,29 +50,28 @@ public class GotoEditor extends AbstractCellEditor
     fireEditingStopped();
   }
 
-  //Implement the one CellEditor method that AbstractCellEditor doesn't.
+  /** Implement the one CellEditor method that AbstractCellEditor doesn't. */
   public Object getCellEditorValue() {
       return button;
   }
 
-  //Implement the one method defined by TableCellEditor.
+  /** Implement the one method defined by TableCellEditor. */
   public Component getTableCellEditorComponent(JTable table,
     Object value, boolean isSelected, int row, int column)
   {
     if (row < tableP.attrList.size()) return null;
-    else {
-      button = new TableButton(tableP.table, row);                                         
-      button.setActionCommand("Goto");
-      button.addActionListener(this);
-      button.addActionListener(tableP);
-      button.setForeground(new Color(0,0,50));
-      return button;
-    }
+    button = new TableButton(tableP.table, row);
+    button.setActionCommand("Goto");
+    button.addActionListener(this);
+    button.addActionListener(tableP);
+    button.setForeground(new Color(0,0,50));
+    return button;
   }
-  
-  /** Helper class to handle the "GOTO" buttons that take you to a particular
-  *   Element ID's representation in the program.
-  */
+
+  /**
+   * Helper class to handle the "GOTO" buttons that take you to a particular
+   * Element ID's representation in the program.
+   */
   public class TableButton extends JButton {
     public JTable table;
     public int whichRow;
@@ -85,4 +85,5 @@ public class GotoEditor extends AbstractCellEditor
       setPreferredSize(new Dimension(70, 15));
     }
   }
+
 }
