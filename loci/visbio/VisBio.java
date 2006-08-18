@@ -44,8 +44,12 @@ public class VisBio extends Thread {
   /** Application title. */
   public static final String TITLE = "VisBio";
 
-  /** Application version. */
-  public static final String VERSION = "@visbio.version@";
+  /** Application version (of the form "###"). */
+  private static final String V = "@visbio.version@";
+
+  /** Application version (of the form "#.##"). */
+  public static final String VERSION =
+    V.substring(0, V.length() - 2) + "." + V.substring(V.length() - 2);
 
   /** Application author. */
   public static final String AUTHOR = "Curtis Rueden, LOCI";
