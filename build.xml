@@ -86,6 +86,7 @@ Slim Plotter
     Main class:    loci.apps.slim.SlimPlotter
     Dependencies:  visad.jar
     Targets:       jar-slim
+                   dist-slim
 
 ===============================================================================
 The following external dependencies (in the jar folder) may be required:
@@ -152,7 +153,7 @@ Apache XML-RPC
     Master build file for all Java software projects at LOCI
   </description>
 
-  <!-- Directories -->
+  <!-- Global properties -->
 
   <property name="src.dir" value="."/>
   <property name="build.dir" value="build"/>
@@ -161,6 +162,8 @@ Apache XML-RPC
   <property name="jar.dir" value="${build.dir}/jar"/>
   <property name="docs.dir" value="${build.dir}/docs"/>
   <property name="dist.dir" value="${build.dir}/dist"/>
+
+  <condition property="isUnix"><os family="unix"/></condition>
 
   <!-- Global build targets -->
 
@@ -265,8 +268,6 @@ Apache XML-RPC
   </target>
 
   <property name="visbio.dist-files" value="bsd-forms.txt bsd-looks.txt gpl-visbio.txt omeul.txt whatsnew.txt *.cpp *.m"/>
-
-  <condition property="isUnix"><os family="unix"/></condition>
 
   <target name="dist-visbio" depends="dist-visbio-win32, dist-visbio-win32-nojre, dist-visbio-macosx, dist-visbio-linux, dist-visbio-nojre"/>
 
@@ -482,6 +483,26 @@ Apache XML-RPC
         <attribute name="Class-Path" value="${slim.classpath}"/>
       </manifest>
     </jar>
+  </target>
+
+  <property name="slim.dist-dir" value="${dist.dir}/slim/SlimPlotter"/>
+
+  <target name="dist-slim" if="isUnix" depends="copy-jars, jar-slim">
+    <copy todir="${slim.dist-dir}" preservelastmodified="true">
+      <fileset dir="dist/slim"/>
+      <fileset dir="${jar.dir}" includes="SlimPlotter.jar ${slim.classpath}"/>
+    </copy>
+    <!-- HACK - copy does not preserve permissions; chmod them back -->
+    <chmod perm="+x">
+      <fileset dir="${slim.dist-dir}" includes="slim"/>
+    </chmod>
+<!--
+    <zip destfile="${dist.dir}/slim.zip" basedir="${dist.dir}/slim"/>
+-->
+    <!-- HACK - zip does not preserve permissions; use exec instead -->
+    <exec executable="zip" dir="${dist.dir}/slim">
+      <arg line="-r9 ../slim.zip SlimPlotter"/>
+    </exec>
   </target>
 
 </project>
