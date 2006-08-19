@@ -38,7 +38,7 @@
 			<string>$JAVAROOT/loci-ome-xml.jar</string>
 			<string>$JAVAROOT/looks-1.2.2.jar</string>
 			<string>$JAVAROOT/ome-java.jar</string>
-			<string>$JAVAROOT/visad.jar</string>
+			<string>$JAVAROOT/visad-lite.jar</string>
 			<string>$JAVAROOT/visbio.jar</string>
 			<string>$JAVAROOT/xmlrpc-1.2-b1.jar</string>
 			</array>

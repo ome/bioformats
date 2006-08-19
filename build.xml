@@ -28,7 +28,7 @@ VisBio
                    ij.jar
                    looks-1.2.2.jar
                    ome-java.jar
-                   visad.jar
+                   visad-lite.jar
                    xmlrpc-1.2-b1.jar (ome-java.jar)
     Targets:       jar-visbio
                    dist-visbio
@@ -84,7 +84,7 @@ Slim Plotter
     Folders:       loci/apps/slim
                    some loci/formats and loci/visbio
     Main class:    loci.apps.slim.SlimPlotter
-    Dependencies:  visad.jar
+    Dependencies:  visad-lite.jar
     Targets:       jar-slim
                    dist-slim
 
@@ -138,7 +138,7 @@ Skin Look and Feel
     Notes:     Not used (may be used in the future for flexible skinning)
 
 VisAD
-    JAR file:  visad.jar
+    JAR file:  visad-lite.jar
     URL:       http://www.ssec.wisc.edu/~billh/visad.html
     Notes:     Stripped down VisAD library used by VisBio and Slim Plotter
 
@@ -167,7 +167,7 @@ Apache XML-RPC
 
   <!-- Global build targets -->
 
-  <property name="ext.jars" value="jar/AppleJavaExtensions.jar:jar/commons-httpclient-2.0-rc2.jar:jar/commons-logging.jar:jar/forms-1.0.4.jar:jar/ij.jar:jar/looks-1.2.2.jar:jar/ome-java.jar:jar/visad.jar:jar/xmlrpc-1.2-b1.jar"/>
+  <property name="ext.jars" value="jar/AppleJavaExtensions.jar:jar/commons-httpclient-2.0-rc2.jar:jar/commons-logging.jar:jar/forms-1.0.4.jar:jar/ij.jar:jar/looks-1.2.2.jar:jar/ome-java.jar:jar/visad-lite.jar:jar/xmlrpc-1.2-b1.jar"/>
 
   <target name="init">
     <tstamp>
@@ -248,7 +248,7 @@ Apache XML-RPC
 
   <!-- VisBio -->
 
-  <property name="visbio.classpath" value="bio-formats.jar commons-httpclient-2.0-rc2.jar commons-logging.jar forms-1.0.4.jar ij.jar looks-1.2.2.jar ome-java.jar visad.jar xmlrpc-1.2-b1.jar"/>
+  <property name="visbio.classpath" value="bio-formats.jar commons-httpclient-2.0-rc2.jar commons-logging.jar forms-1.0.4.jar ij.jar looks-1.2.2.jar ome-java.jar visad-lite.jar xmlrpc-1.2-b1.jar"/>
   <property name="visbio.files" value="loci/visbio/**"/>
   <property name="visbio.resources" value="loci/visbio/classes.txt loci/visbio/*.png loci/visbio/*.gif loci/visbio/help/*.html loci/visbio/help/*.png loci/visbio/overlays/*.png loci/visbio/view/*.png"/>
 
@@ -471,7 +471,7 @@ Apache XML-RPC
 
   <!-- Slim Plotter -->
 
-  <property name="slim.classpath" value="visad.jar"/>
+  <property name="slim.classpath" value="visad-lite.jar"/>
   <property name="slim.files" value="loci/apps/slim/* loci/formats/DataTools* loci/formats/ExtensionFileFilter* loci/formats/ComboFileFilter* loci/visbio/util/OutputConsole* loci/visbio/util/OutputEvent* loci/visbio/util/SwingUtil* loci/visbio/util/LAFUtil*"/>
 
   <target name="jar-slim" depends="compile, copy-jars"
