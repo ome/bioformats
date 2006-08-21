@@ -15,6 +15,7 @@ Bio-Formats
     Main class:    loci.formats.ImageViewer
     Dependencies:  None
     Targets:       jar-formats
+    License:       LGPL
 
 VisBio
     JAR file:      visbio.jar
@@ -34,6 +35,7 @@ VisBio
                    source-visbio
                    docs-visbio
                    dist-visbio
+    License:       GPL
 
 LOCI Plugins for ImageJ
     JAR file:      loci_plugins.jar
@@ -51,6 +53,7 @@ LOCI Plugins for ImageJ
                    ome-java.jar
                    xmlrpc-1.2-b1.jar (ome-java.jar)
     Targets:       jar-plugins
+    License:       LGPL
 
 OME Metadata Notebook
     JAR file:      ome-notebook.jar
@@ -64,6 +67,7 @@ OME Metadata Notebook
                    ome-java.jar
                    xmlrpc-1.2-b1.jar (ome-java.jar)
     Targets:       jar-notebook
+    License:       LGPL
 
 Leica Converter
     JAR file:      LeicaConverter.jar
@@ -72,6 +76,7 @@ Leica Converter
     Dependencies:  bio-formats.jar
                    ome-java.jar
     Targets:       jar-leica
+    License:       Public domain
 
 QT TIFF Converter
     JAR file:      QTConverter.jar
@@ -80,6 +85,7 @@ QT TIFF Converter
     Main class:    loci.apps.qt.QTConverter
     Dependencies:  None (custom built)
     Targets:       jar-qt
+    License:       Public domain
 
 Slim Plotter
     JAR file:      SlimPlotter.jar
@@ -89,6 +95,7 @@ Slim Plotter
     Dependencies:  visad-lite.jar
     Targets:       jar-slim
                    dist-slim
+    License:       Public domain
 
 ===============================================================================
 The following external dependencies (in the jar folder) may be required:
@@ -102,52 +109,62 @@ Apache Jakarta Commons HttpClient
     JAR file:  commons-httpclient-2.0-rc2.jar
     URL:       http://jakarta.apache.org/commons/httpclient/
     Notes:     Required for OME Java to communicate with OME servers
+    License:   Apache
 
 Apache Jakarta Commons Logging
     JAR file:  commons-logging.jar
     URL:       http://jakarta.apache.org/commons/logging/
     Notes:     Used by OME Java
+    License:   Apache
 
 JGoodies Forms
     JAR file:  forms-1.0.4.jar
     URL:       http://www.jgoodies.com/freeware/forms/index.html
     Notes:     Used for layout by VisBio and OME Metadata Notebook
+    License:   BSD
 
 ImageJ
     JAR file:  ij.jar
     URL:       http://rsb.info.nih.gov/ij/
     Notes:     Bundled with VisBio to achieve ImageJ interconnectivity
+    License:   Public domain
 
 JGoodies Looks
     JAR file:  looks-1.2.2.jar
     URL:       http://www.jgoodies.com/freeware/looks/index.html
-    Notes:     Used for a nicer Look & Feel by VisBio
+    Notes:     Used for a nicer Look & Feel by VisBio and OME Metadata Notebook
+    License:   BSD
 
 OME Java
     JAR file:  ome-java.jar
     URL:       http://openmicroscopy.org/api/java/
     Notes:     Used by VisBio and the OME Plugin for ImageJ to connect to OME;
                used by Bio-Formats and the OME Notebook to work with OME-XML
+    License:   LGPL
 
 Apache Jakarta POI
     JAR file:  poi-2.5.1-final-20040804.jar
     URL:       http://jakarta.apache.org/poi/
     Notes:     Not used (previously used by Bio-Formats)
+    License:   Apache
 
 Skin Look and Feel
     JAR file:  skinlf.jar
     URL:       http://skinlf.l2fprod.com/
     Notes:     Not used (may be used in the future for flexible skinning)
+    License:   Custom (BSD-like)
 
 VisAD
     JAR file:  visad-lite.jar
     URL:       http://www.ssec.wisc.edu/~billh/visad.html
     Notes:     Stripped down VisAD library used by VisBio and Slim Plotter
+    License:   LGPL
 
 Apache XML-RPC
     JAR file:  xmlrpc-1.2-b1.jar
     URL:       http://ws.apache.org/xmlrpc/
     Notes:     Required for OME Java to communicate with OME servers
+    License:   Apache
 -->
 
 <project name="LOCI Software" default="compile" basedir=".">
