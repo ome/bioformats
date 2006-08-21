@@ -2440,7 +2440,6 @@ loci.visbio.util.OutputListener
 loci.visbio.util.SpawnListener
 loci.visbio.util.SplashScreen
 loci.visbio.util.SwingUtil
-loci.visbio.util.VisUtil
 loci.visbio.util.WarningPane
 loci.visbio.util.WizardPane
 loci.visbio.util.XMLUtil
