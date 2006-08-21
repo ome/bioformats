@@ -155,7 +155,7 @@ Apache XML-RPC
     Master build file for all Java software projects at LOCI
   </description>
 
-  <property resource="build.properties"/>
+  <property file="build.properties"/>
   <property file="${user.home}/.ant-global.properties"/>
 
   <condition property="isUnix"><os family="unix"/></condition>
