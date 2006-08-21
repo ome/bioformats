@@ -78,7 +78,7 @@ import java.lang.reflect.*;
  * Andrea Cantatore, Larry Barowski, Trevor Bedzek, Frank Miedrich, and
  * Ron Rabakukk
  *
- * @author Eric Albert ejalbert@cs.stanford.edu)
+ * @author Eric Albert ejalbert at cs.stanford.edu
  * @version 1.4b1 (Released June 20, 2001)
  */
 public abstract class BrowserLauncher {

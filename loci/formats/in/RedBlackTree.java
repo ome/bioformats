@@ -29,7 +29,7 @@ import java.util.*;
 /**
  * An OLE parser helper class for building a filesystem as a red-black tree.
  *
- * @author Melissa Linkert, linkert@cs.wisc.edu
+ * @author Melissa Linkert linkert at cs.wisc.edu
  */
 public class RedBlackTree {
 
