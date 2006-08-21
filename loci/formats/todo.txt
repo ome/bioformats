@@ -2,6 +2,9 @@ Testing:
 * leica-lif/matthias (from Leica SP5 scope)
 * quicktime/haining/video2.mov (both legacy and native)
 
+TIFF:
+* fix support for floating point TIFF files (see TiffTools.java:1199-1203)
+
 QuickTime:
 * svq3 codec (lower priority)
 
