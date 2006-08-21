@@ -54,11 +54,11 @@ public class MetadataPane extends JPanel implements ActionListener, Runnable {
   protected static final String[] TREE_COLUMNS = {"Attribute", "Value", "Goto"};
 
   public static final ImageIcon DATA_BULLET =
-    createImageIcon("Icons/Bullet3.gif",
+    createImageIcon("Icons/bullet-green.gif",
       "An icon signifying that metadata is present.");
 
   public static final ImageIcon NO_DATA_BULLET =
-    createImageIcon("Icons/Bullet2.gif",
+    createImageIcon("Icons/bullet-red.gif",
       "An icon signifying that no metadata is present.");
 
   public static final Color ADD_COLOR =

@@ -39,11 +39,11 @@ public class NotePanel extends JPanel implements ListSelectionListener {
     new Color(175,175,175);
 
   public static final ImageIcon NOTES_BULLET =
-    MetadataPane.createImageIcon("Icons/Bullet3.gif",
+    MetadataPane.createImageIcon("Icons/bullet-green.gif",
       "An icon signifying that notes are present.");
 
   public static final ImageIcon NO_NOTES_BULLET =
-    MetadataPane.createImageIcon("Icons/Bullet2.gif",
+    MetadataPane.createImageIcon("Icons/bullet-red.gif",
       "An icon signifying that no notes are present.");
 
   MetadataPane.TablePanel tableP;

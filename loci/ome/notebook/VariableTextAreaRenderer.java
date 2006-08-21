@@ -37,7 +37,7 @@ public class VariableTextAreaRenderer extends JPanel
 {
 
   public static final ImageIcon TEXT_BULLET =
-    MetadataPane.createImageIcon("Icons/TextBullet.GIF",
+    MetadataPane.createImageIcon("Icons/text-bullet.gif",
     "An icon signifying that a textarea will edit this cell.");
 
   private JLabel jl;
