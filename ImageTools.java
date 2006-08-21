@@ -716,7 +716,221 @@ public abstract class ImageTools {
     return null;
   }
 
+  /** 
+   * Pad the image to the given width and height. The image will be centered
+   * within the new bounds.
+   */
+  public static BufferedImage padImage(BufferedImage img, int width, int height)
+  {
+    if (img == null) {
+      byte[][] data = new byte[1][width * height];
+      return makeImage(data, width, height);
+    }
+    
+    boolean needsPadding = img.getWidth() != width || img.getHeight() != height;
 
+    if (needsPadding) {
+      int totalX = width - img.getWidth();
+      int totalY = height - img.getHeight();
+
+      int xpad = totalX / 2;
+      int ypad = totalY / 2;
+
+      if (xpad == 0 && totalX > 0) xpad = totalX;
+      if (ypad == 0 && totalY > 0) ypad = totalY;
+
+      Object pixels = getPixels(img);
+
+      if (pixels instanceof byte[][]) {
+        byte[][] b = (byte[][]) pixels;
+        byte[][] newBytes = new byte[b.length][width * height];
+        for (int i=0; i<b.length; i++) {
+          newBytes[i] = padImage(b[i], img.getWidth(), width, height);
+        }
+        return makeImage(newBytes, width, height);
+      }
+      else if (pixels instanceof short[][]) {
+        short[][] b = (short[][]) pixels;
+        short[][] newShorts = new short[b.length][width * height];
+        for (int i=0; i<b.length; i++) {
+          newShorts[i] = padImage(b[i], img.getWidth(), width, height);
+        }
+        return makeImage(newShorts, width, height);
+      }
+      else if (pixels instanceof int[][]) {
+        int[][] b = (int[][]) pixels;
+        int[][] newInts = new int[b.length][width * height];
+        for (int i=0; i<b.length; i++) {
+          newInts[i] = padImage(b[i], img.getWidth(), width, height);
+        }
+        return makeImage(newInts, width, height);
+      }
+      else if (pixels instanceof float[][]) {
+        float[][] b = (float[][]) pixels;
+        float[][] newFloats = new float[b.length][width * height];
+        for (int i=0; i<b.length; i++) {
+          newFloats[i] = padImage(b[i], img.getWidth(), width, height);
+        }
+        return makeImage(newFloats, width, height);
+      }
+      else if (pixels instanceof double[][]) {
+        double[][] b = (double[][]) pixels;
+        double[][] newDoubles = new double[b.length][width * height];
+        for (int i=0; i<b.length; i++) {
+          newDoubles[i] = padImage(b[i], img.getWidth(), width, height);
+        }
+        return makeImage(newDoubles, width, height);
+      }
+      return null;
+    }
+    return img;
+  }
+
+  /**
+   * Pad the byte array to the given width and height. The image will be
+   * centered within the new bounds.
+   */
+  public static byte[] padImage(byte[] b, int oldWidth, int width, int height) {
+    boolean needsPadding = 
+      (oldWidth != width) || ((b.length / oldWidth) != height);
+
+    if (needsPadding) {
+      int totalX = width - oldWidth;
+      int totalY = height - (b.length / oldWidth);
+
+      int xpad = totalX / 2;
+      int ypad = totalY / 2;
+
+      if (xpad == 0 && totalX > 0) xpad = totalX;
+      if (ypad == 0 && totalY > 0) ypad = totalY;
+
+      byte[] padded = new byte[width * height];
+
+      for (int i=ypad; i<height - ypad; i++) {
+        System.arraycopy(b, (i - ypad) * oldWidth, padded, i*width + xpad, 
+          oldWidth); 
+      }
+      return padded;
+    }
+    return b;
+  }
+
+  /**
+   * Pad the short array to the given width and height. The image will be
+   * centered within the new bounds.
+   */
+  public static short[] padImage(short[] b, int oldWidth, int width, int height)
+  {
+    boolean needsPadding = oldWidth != width || (b.length / oldWidth) != height;
+
+    if (needsPadding) {
+      int totalX = width - oldWidth;
+      int totalY = height - (b.length / oldWidth);
+
+      int xpad = totalX / 2;
+      int ypad = totalY / 2;
+
+      if (xpad == 0 && totalX > 0) xpad = totalX;
+      if (ypad == 0 && totalY > 0) ypad = totalY;
+
+      short[] padded = new short[width * height];
+
+      for (int i=ypad; i<height - ypad; i++) {
+        System.arraycopy(b, (i - ypad) * oldWidth, padded, i*width + xpad, 
+          oldWidth); 
+      }
+      return padded;
+    }
+    return b;
+  }
+
+  /**
+   * Pad the int array to the given width and height. The image will be
+   * centered within the new bounds.
+   */
+  public static int[] padImage(int[] b, int oldWidth, int width, int height) {
+    boolean needsPadding = oldWidth != width || (b.length / oldWidth) != height;
+
+    if (needsPadding) {
+      int totalX = width - oldWidth;
+      int totalY = height - (b.length / oldWidth);
+
+      int xpad = totalX / 2;
+      int ypad = totalY / 2;
+
+      if (xpad == 0 && totalX > 0) xpad = totalX;
+      if (ypad == 0 && totalY > 0) ypad = totalY;
+
+      int[] padded = new int[width * height];
+
+      for (int i=ypad; i<height - ypad; i++) {
+        System.arraycopy(b, (i - ypad) * oldWidth, padded, i*width + xpad, 
+          oldWidth); 
+      }
+      return padded;
+    }
+    return b;
+  }
+
+  /**
+   * Pad the float array to the given width and height. The image will be
+   * centered within the new bounds.
+   */
+  public static float[] padImage(float[] b, int oldWidth, int width, int height)
+  {
+    boolean needsPadding = oldWidth != width || (b.length / oldWidth) != height;
+
+    if (needsPadding) {
+      int totalX = width - oldWidth;
+      int totalY = height - (b.length / oldWidth);
+
+      int xpad = totalX / 2;
+      int ypad = totalY / 2;
+
+      if (xpad == 0 && totalX > 0) xpad = totalX;
+      if (ypad == 0 && totalY > 0) ypad = totalY;
+
+      float[] padded = new float[width * height];
+
+      for (int i=ypad; i<height - ypad; i++) {
+        System.arraycopy(b, (i - ypad) * oldWidth, padded, i*width + xpad, 
+          oldWidth); 
+      }
+      return padded;
+    }
+    return b;
+  }
+
+  /**
+   * Pad the double array to the given width and height. The image will be
+   * centered within the new bounds.
+   */
+  public static double[] padImage(double[] b, int oldWidth, int width, 
+    int height) 
+  {
+    boolean needsPadding = oldWidth != width || (b.length / oldWidth) != height;
+
+    if (needsPadding) {
+      int totalX = width - oldWidth;
+      int totalY = height - (b.length / oldWidth);
+
+      int xpad = totalX / 2;
+      int ypad = totalY / 2;
+
+      if (xpad == 0 && totalX > 0) xpad = totalX;
+      if (ypad == 0 && totalY > 0) ypad = totalY;
+
+      double[] padded = new double[width * height];
+
+      for (int i=ypad; i<height - ypad; i++) {
+        System.arraycopy(b, (i - ypad) * oldWidth, padded, i*width + xpad, 
+          oldWidth); 
+      }
+      return padded;
+    }
+    return b;
+  }
+  
   // -- Image scaling --
 
   /** Copies the source image into the target, applying scaling. */

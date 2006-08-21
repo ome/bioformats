@@ -246,23 +246,30 @@ public class FileStitcher extends FormatReader {
       varyT = dims[i][4] != dims[i-1][4];
     }
 
-    if (varyZ || varyC || varyT) {
-      for (int j=0; j<3; j++) {
-        int max = 0;
-        int maxIndex = 0;
-        for (int i=0; i<dims.length; i++) {
-          if (dims[i][j] > max) {
-            max = dims[i][j];
-            maxIndex = i;
-          }
-        }
-
-        dimensions[j] = dims[maxIndex][j];
+    // always set the width and height to the maximum values
+   
+    for (int i=0; i<dims.length; i++) {
+      if (dims[i][0] > dimensions[0]) {
+        dimensions[0] = dims[i][0];
+      }
+      if (dims[i][1] > dimensions[1]) {
+        dimensions[1] = dims[i][1];
       }
     }
+
+    if (varyZ || varyC || varyT) {
+      int max = 0;
+      int maxIndex = 0;
+      for (int i=0; i<dims.length; i++) {
+        if (dims[i][2] > max) {
+          max = dims[i][2];
+          maxIndex = i;
+        }
+      }
+
+      dimensions[2] = dims[maxIndex][2];
+    }
     else {
-      dimensions[0] = dims[0][0];
-      dimensions[1] = dims[0][1];
       dimensions[2] = dims[0][2];
       dimensions[3] = dims[0][3];
       dimensions[4] = dims[0][4];
