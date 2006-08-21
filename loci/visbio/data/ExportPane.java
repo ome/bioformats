@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.util.*;
 import javax.swing.*;
 import loci.formats.*;
+import loci.formats.out.TiffWriter;
 import loci.visbio.*;
 import loci.visbio.util.*;
 import visad.*;
