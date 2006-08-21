@@ -77,11 +77,11 @@ public class TemplateParser {
    * these top-level elements correspond to the tabs formed in the
    * MetadataPane
    */
-  public TemplateParser(File file) {
+  public TemplateParser(String filename) {
     // Parse the specified xml file (should be Template.xml) using the DOM
     try {
       DocumentBuilder db = DOC_FACT.newDocumentBuilder();
-      templateDoc = db.parse(file);
+      templateDoc = db.parse(getClass().getResourceAsStream(filename));
     }
     catch (Exception e) {
       System.out.println("Some exception occured: " + e.toString());
@@ -229,8 +229,7 @@ public class TemplateParser {
 
   /** used for debugging */
   public static void main(String[] args) {
-    File f = new File("Template.xml");
-    TemplateParser tp = new TemplateParser(f);
+    TemplateParser tp = new TemplateParser("Template.xml");
     Element[] eList = tp.getTabs();
     for (int i = 0;i<eList.length;i++) {
       System.out.println(eList[i].getAttribute("XMLName"));

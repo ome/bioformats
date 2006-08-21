@@ -146,8 +146,7 @@ public class MetadataPane extends JPanel implements ActionListener, Runnable {
     panelList = new Vector();
     panelsWithID = new Vector();
     addItems = new Vector();
-    File f = new File("Template.xml");
-    tParse = new TemplateParser(f);
+    tParse = new TemplateParser("Template.xml");
     thisOmeNode = null;
     internalDefs = null;
     hasChanged = false;
@@ -1352,13 +1351,6 @@ public class MetadataPane extends JPanel implements ActionListener, Runnable {
             model.setValueAt("foobar", i, 2);
           }
         }
-
-/*
-        refColumn.setCellEditor(new VariableComboEditor(panelsWithID,
-          addItems, this, internalDefs));
-        TableColumn gotoColumn = table.getColumnModel().getColumn(2);
-        gotoColumn.setCellEditor(new GotoEditor(this));
-*/
       }
     }
 

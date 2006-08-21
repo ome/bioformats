@@ -67,8 +67,7 @@ public class MetadataNotebook extends JFrame
     opening = true;
 
     //give the Template.xml file to the parser to feed on
-    File f = new File("Template.xml");
-    TemplateParser tp = new TemplateParser(f);
+    TemplateParser tp = new TemplateParser("Template.xml");
 
     mdp = new loci.ome.viewer.MetadataPane();
 
