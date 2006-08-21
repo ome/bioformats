@@ -208,6 +208,12 @@ public class QTReader extends FormatReader {
   /** Pixel data for the previous image plane. */
   private byte[] prevPixels;
 
+  /** Previous plane number. */
+  private int prevPlane;
+
+  /** Flag indicating whether we can safely use prevPixels. */
+  private boolean canUsePrevious;
+
   /** Video codec used by this movie. */
   private String codec;
 
@@ -353,6 +359,8 @@ public class QTReader extends FormatReader {
     in.seek(pixelOffset + offset);
     in.read(pixs);
 
+    canUsePrevious = (prevPixels != null) && (prevPlane == no - 1);
+    
     if (codec.equals("jpeg") || codec.equals("mjpb")) {
       return ImageTools.getBytes(openImage(id, no), isRGB(id) && separated,
         no % c);
@@ -360,13 +368,14 @@ public class QTReader extends FormatReader {
 
     byte[] bytes = uncompress(pixs, codec);
     // on rare occassions, we need to trim the data
-    if ((prevPixels != null) && (prevPixels.length < bytes.length)) {
+    if (canUsePrevious && (prevPixels.length < bytes.length)) {
       byte[] temp = bytes;
       bytes = new byte[prevPixels.length];
       System.arraycopy(temp, 0, bytes, 0, bytes.length);
     }
 
     prevPixels = bytes;
+    prevPlane = no;
 
     // determine whether we need to strip out any padding bytes
 
@@ -468,6 +477,8 @@ public class QTReader extends FormatReader {
 
     in.seek(pixelOffset + offset);
     in.read(pixs);
+
+    canUsePrevious = (prevPixels != null) && (prevPlane == no - 1);
 
     if (codec.equals("jpeg")) {
       if (!isRGB(id) || !separated) {
@@ -772,7 +783,7 @@ public class QTReader extends FormatReader {
 
   /** Uncompresses an image plane according to the the codec identifier. */
   public byte[] uncompress(byte[] pixs, String code)
-    throws FormatException
+    throws FormatException, IOException
   {
     // JPEG and mjpb codecs handled separately, so not included in this list
     if (code.equals("raw ")) return pixs;
@@ -1052,7 +1063,6 @@ public class QTReader extends FormatReader {
       v.add((byte) 0x01);
     }
 
-
     // add start-of-scan header
 
     v.add((byte) 0xff);
@@ -1073,7 +1083,6 @@ public class QTReader extends FormatReader {
       v.add((byte) 0x03);  // channel id
       v.add((byte) 0x01);  // DC and AC table numbers
     }
-
 
     v.add((byte) 0x00);
     v.add((byte) 0x3f);
@@ -1146,7 +1155,8 @@ public class QTReader extends FormatReader {
   }
 
   /** Uncompresses a QT RLE compressed image plane. */
-  public byte[] rleUncompress(byte[] input) throws FormatException {
+  public byte[] rleUncompress(byte[] input) throws FormatException, IOException
+  {
     if (input.length < 8) return prevPixels;
 
     // read the 4 byte chunk length; this should equal input.length
@@ -1176,7 +1186,7 @@ public class QTReader extends FormatReader {
 
       // copy appropriate lines from prevPixels
 
-      if (prevPixels != null) {
+      if (canUsePrevious) {
         for (int i=0; i<start; i++) {
           off = i * width * ebpp;
           System.arraycopy(prevPixels, off, output, off, width * ebpp);
@@ -1203,7 +1213,7 @@ public class QTReader extends FormatReader {
       skip = input[pt];
       if (skip < 0) skip += 256;
 
-      if (prevPixels != null) {
+      if (canUsePrevious) {
         try {
           System.arraycopy(prevPixels, rowPointer, output, rowPointer,
             (skip-1) * ebpp);
@@ -1220,7 +1230,7 @@ public class QTReader extends FormatReader {
         if (rle == 0) {
           skip = input[pt];
 
-          if (prevPixels != null) {
+          if (canUsePrevious) {
             try {
               System.arraycopy(prevPixels, off, output, off,
                 (skip-1) * ebpp);
@@ -1234,7 +1244,7 @@ public class QTReader extends FormatReader {
         else if (rle == -1) {
           // make sure we copy enough pixels to fill the line
 
-          if (off < (rowPointer + (width * ebpp))) {
+          if (off < (rowPointer + (width * ebpp)) && canUsePrevious) {
             System.arraycopy(prevPixels, off, output, off,
               (rowPointer + (width * ebpp)) - off);
           }
