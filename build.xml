@@ -187,7 +187,7 @@ Apache XML-RPC
     depends="jar-formats, jar-visbio, jar-plugins, jar-notebook, jar-leica, jar-qt, jar-slim"
     description="generate JAR files for LOCI software packages"/>
 
-  <target name="docs" depends="init"
+  <target name="docs" depends="copy-source"
     description="generate Javadocs for LOCI software packages">
     <javadoc sourcepath="${dest.dir}" destdir="${docs.dir}/api"
       author="true" version="true" use="true" windowtitle="LOCI Software API">
@@ -233,7 +233,7 @@ Apache XML-RPC
   <property name="formats.resources" value="loci/formats/*.txt"/>
 
   <target name="jar-formats" depends="compile"
-    description="generate Bio-Formats JAR file">
+    description="generate JAR file for Bio-Formats">
     <copy todir="${classes.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="${formats.resources}"/>
     </copy>
@@ -254,7 +254,7 @@ Apache XML-RPC
 
   <target name="jar-visbio"
     depends="compile, copy-jars, jar-formats"
-    description="generate VisBio JAR file">
+    description="generate JAR file for VisBio">
     <copy todir="${classes.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="${visbio.resources}"/>
     </copy>
@@ -265,6 +265,17 @@ Apache XML-RPC
         <attribute name="Class-Path" value="${visbio.classpath}"/>
       </manifest>
     </jar>
+  </target>
+
+  <target name="docs-visbio" depends="copy-source"
+    description="generate Javadocs for VisBio">
+    <javadoc sourcepath="${dest.dir}" destdir="${docs.dir}/visbio/api"
+      author="true" version="true" use="true" windowtitle="LOCI Software API">
+      <packageset dir="${dest.dir}" includes="loci/visbio/**"/>
+      <doctitle><![CDATA[<h1>VisBio</h1>]]></doctitle>
+      <bottom><![CDATA[<i>Copyright &#169; ${YEAR} Laboratory for Optical and Computational Instrumentation</i>]]></bottom>
+      <link href="http://java.sun.com/j2se/1.4.2/docs/api/"/>
+    </javadoc>
   </target>
 
   <property name="visbio.dist-files" value="bsd-forms.txt bsd-looks.txt gpl-visbio.txt omeul.txt whatsnew.txt *.cpp *.m"/>
@@ -402,7 +413,7 @@ Apache XML-RPC
 
   <target name="jar-plugins"
     depends="compile, copy-jars, jar-formats"
-    description="generate LOCI Plugins for ImageJ JAR file">
+    description="generate JAR file for LOCI Plugins for ImageJ">
     <jar jarfile="${jar.dir}/loci_plugins.jar"
       basedir="${src.dir}/loci/plugins" includes="plugins.config">
       <manifest>
@@ -420,11 +431,11 @@ Apache XML-RPC
   <property name="notebook.classpath" value="bio-formats.jar commons-httpclient-2.0-rc2.jar commons-logging.jar forms-1.0.4.jar ome-java.jar xmlrpc-1.2-b1.jar"/>
   <property name="notebook.files"
     value="loci/ome/notebook/** loci/ome/viewer/**"/>
-  <property name="notebook.resources" value="loci/ome/notebook/Template.xml loci/ome/notebook/Icons/* loci/ome/notebook/TypeDefs/*"/>
+  <property name="notebook.resources" value="loci/ome/notebook/Template.xml loci/ome/notebook/Icons/* loci/ome/notebook/TypeDefs/**"/>
 
   <target name="jar-notebook"
     depends="compile, copy-jars, jar-formats"
-    description="generate OME Metadata Notebook JAR file">
+    description="generate JAR file for OME Metadata Notebook">
     <copy todir="${classes.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="${notebook.resources}"/>
     </copy>
@@ -444,7 +455,7 @@ Apache XML-RPC
   <property name="leica.files" value="loci/apps/leica/**"/>
 
   <target name="jar-leica" depends="compile, copy-jars, jar-formats"
-    description="generate Leica Converter JAR file">
+    description="generate JAR file for Leica Converter">
     <jar jarfile="${jar.dir}/LeicaConverter.jar" basedir="${classes.dir}"
       includes="${leica.files}">
       <manifest>
@@ -459,7 +470,7 @@ Apache XML-RPC
   <property name="qt.files" value="loci/apps/qt/* loci/formats/BitBuffer* loci/formats/BitWriter* loci/formats/ByteVector* loci/formats/ComboFileFilter* loci/formats/Compression* loci/formats/DataTools* loci/formats/DummyMetadataStore* loci/formats/ExtensionFileFilter* loci/formats/FilePattern* loci/formats/FileStitcher* loci/formats/FormatException* loci/formats/FormatFileFilter* loci/formats/FormatHandler* loci/formats/FormatReader* loci/formats/FormatWriter* loci/formats/IFormatHandler* loci/formats/IFormatReader* loci/formats/ImageTools* loci/formats/LZWTreeNode* loci/formats/LegacyQTTools* loci/formats/MetadataStore* loci/formats/NumberFilter* loci/formats/OMEXMLMetadataStore* loci/formats/RandomAccessArray* loci/formats/RandomAccessStream* loci/formats/ReflectException* loci/formats/ReflectedUniverse* loci/formats/TiffRational* loci/formats/TiffTools* loci/formats/in/BaseTiffReader* loci/formats/in/LegacyQTReader* loci/formats/in/QTReader* loci/formats/in/TiffReader* loci/formats/out/TiffWriter*"/>
 
   <target name="jar-qt" depends="compile"
-    description="generate QT TIFF Converter JAR file">
+    description="generate JAR file for QT TIFF Converter">
     <mkdir dir="${jar.dir}"/>
     <jar jarfile="${jar.dir}/QTConverter.jar" basedir="${classes.dir}"
       includes="${qt.files}">
@@ -475,7 +486,7 @@ Apache XML-RPC
   <property name="slim.files" value="loci/apps/slim/* loci/formats/DataTools* loci/formats/ExtensionFileFilter* loci/formats/ComboFileFilter* loci/visbio/util/OutputConsole* loci/visbio/util/OutputEvent* loci/visbio/util/SwingUtil* loci/visbio/util/LAFUtil*"/>
 
   <target name="jar-slim" depends="compile, copy-jars"
-    description="generate Slim Plotter JAR file">
+    description="generate JAR file for Slim Plotter">
     <jar jarfile="${jar.dir}/SlimPlotter.jar" basedir="${classes.dir}"
       includes="${slim.files}">
       <manifest>
