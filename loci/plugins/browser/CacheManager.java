@@ -57,10 +57,7 @@ public class CacheManager {
   private int stackSize = 1;
 
   /** Image dimensions. */
-  private int x, y, ch;
-
-  /** Flag indicating endianness of the image. */
-  private boolean littleEndian;
+  private int x, y;
 
   // -- Constructor --
 
@@ -79,8 +76,6 @@ public class CacheManager {
     try {
       x = reader.getSizeX(filename);
       y = reader.getSizeY(filename);
-      ch = reader.getSizeC(filename);
-      littleEndian = reader.isLittleEndian(filename);
     }
     catch (Exception e) { }
   }
@@ -107,12 +102,12 @@ public class CacheManager {
     position = pos + 1;
     int p = getPosition(pos);
     if (p != -1) {
-      return createProcessor(cache.get(p), x, y, ch, littleEndian);
+      return createProcessor((BufferedImage) cache.get(p), x, y);
     }
 
     updateCache(pos);
     p = getPosition(pos);
-    return createProcessor(cache.get(p), x, y, ch, littleEndian);
+    return createProcessor((BufferedImage) cache.get(p), x, y);
   }
 
   /**
@@ -129,17 +124,9 @@ public class CacheManager {
   /** Initialize the cache. */
   public void init() {
     try {
-      if (!reader.isRGB(filename)) {
-        for (int i=0; i<cacheSize; i++) {
-          cache.add(trim(reader.openBytes(filename, i)));
-          numbers.add(new Integer(i));
-        }
-      }
-      else {
-        for (int i=0; i<cacheSize; i++) {
-          cache.add(reader.openImage(filename, i));
-          numbers.add(new Integer(i));
-        }
+      for (int i=0; i<cacheSize; i++) {
+        cache.add(reader.openImage(filename, i));
+        numbers.add(new Integer(i));
       }
     }
     catch (Exception e) { }
@@ -170,10 +157,7 @@ public class CacheManager {
        lowerBound =
           ((Integer) numbers.get(cacheSize - 1)).intValue() + 1;
         for (int i=lowerBound; i<upperBound; i++) {
-          if (!reader.isRGB(filename)) {
-            cache.add(trim(reader.openBytes(filename, i)));
-          }
-          else cache.add(reader.openImage(filename, i));
+          cache.add(reader.openImage(filename, i));
           numbers.add(new Integer(i));
         }
       }
@@ -189,10 +173,7 @@ public class CacheManager {
       try {
         int count = 0;
         for (int i=lowerBound; i<upperBound; i++) {
-          if (!reader.isRGB(filename)) {
-            cache.add(count, trim(reader.openBytes(filename, i)));
-          }
-          else cache.add(count, reader.openImage(filename, i));
+          cache.add(count, reader.openImage(filename, i));
           numbers.add(count, new Integer(i));
           count++;
         }
@@ -211,10 +192,7 @@ public class CacheManager {
 
       for (int i=lowerBound; i<upperBound; i++) {
         try {
-          if (!reader.isRGB(filename)) {
-            cache.add(trim(reader.openBytes(filename, i)));
-          }
-          else cache.add(reader.openImage(filename, i));
+          cache.add(reader.openImage(filename, i));
           numbers.add(new Integer(i));
         }
         catch (Exception e) { }
@@ -227,59 +205,9 @@ public class CacheManager {
    * parameters.  If the original image was RGB, then the byte array is
    * assumed to contain all three channels in "RRR...GGG...BBB" order.
    */
-  private ImageProcessor createProcessor(Object b, int w, int h, int c,
-    boolean little)
-  {
-    if (b instanceof BufferedImage) {
-      BufferedImage bi = (BufferedImage) b;
-
-      return (new ImagePlus(filename, bi)).getProcessor();
-    }
-    else {
-      byte[] by = (byte[]) b;
-      if (by.length <= w * h) {
-        ByteProcessor proc = new ByteProcessor(w, h);
-        if (by.length == w * h) {
-          proc.setPixels(by);
-        }
-        else {
-          byte[] bytes = new byte[w * h];
-          System.arraycopy(by, 0, bytes, 0, by.length);
-          proc.setPixels(bytes);
-        }
-        return proc;
-      }
-      else if (by.length <= w * h * 2) {
-        short[] shorts = new short[w * h];
-        for (int i=0; i<by.length / 2; i++) {
-          shorts[i] = DataTools.bytesToShort(by, i*2, 2, little);
-        }
-        ShortProcessor proc = new ShortProcessor(w, h);
-        proc.setPixels(shorts);
-        return proc;
-      }
-      else if (by.length <= w * h * 4) {
-        int[] floats = new int[w * h];
-        for (int i=0; i<by.length / 4; i++) {
-          floats[i] = DataTools.bytesToInt(by, i*4, little);
-        }
-        return new FloatProcessor(w, h, floats);
-      }
-    }
-    return null;
-  }
-
-  /** Trim a byte array to the correct size. */
-  private byte[] trim(byte[] b) {
-    if (b.length < x * y) {
-      byte[] t = new byte[x * y];
-      System.arraycopy(b, 0, t, 0, b.length);
-      return t;
-    }
-
-    byte[] t = new byte[x * y * (b.length / (x * y))];
-    System.arraycopy(b, 0, t, 0, t.length);
-    return t;
+  private ImageProcessor createProcessor(BufferedImage b, int w, int h) {
+    b = ImageTools.padImage(b, w, h);
+    return (new ImagePlus(filename, b)).getProcessor();
   }
 
 }

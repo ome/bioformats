@@ -213,6 +213,7 @@ public class LociDataBrowser implements PlugIn {
             lengths[cIndex] = numC;
 
             stack = new ImageStack(cm.getSizeX(absname), cm.getSizeY(absname));
+
             for (int i=0; i<size; i++) {
               stack.addSlice(absname + " : " + (i+1), manager.getSlice(i));
             }
