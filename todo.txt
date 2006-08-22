@@ -9,7 +9,7 @@ AVI:
 * msrle codec (super low priority)
 
 Implement readers for other file formats:
-* SDT (java/loci/slim/SlimPlotter.java, data/sdt, data/specs/sdt)
+* SDT (java/loci/apps/slim/SlimPlotter.java, data/sdt, data/specs/sdt)
 * Anything listed online: http://www.loci.wisc.edu/ome/formats.html
 * MNG (http://www.libpng.org/pub/mng/) -- low priority
 * animated GIF reader (steal code from ImageJ plugin)
