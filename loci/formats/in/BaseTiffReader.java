@@ -445,8 +445,11 @@ public abstract class BaseTiffReader extends FormatReader {
       // populate Logical Channel elements
       for (int i=0; i < getSizeC(currentId); i++)
       {
-        setLogicalChannel(i);
-        setChannelGlobalMinMax(i);
+        try {
+          setLogicalChannel(i);
+          setChannelGlobalMinMax(i);
+        }
+        catch (Exception e) { }
       }
 
       //Populate the default display options
