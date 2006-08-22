@@ -27,7 +27,12 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
-import loci.formats.*;
+
+import loci.formats.DataTools;
+import loci.formats.FormatException;
+import loci.formats.TiffIFDEntry;
+import loci.formats.TiffRational;
+import loci.formats.TiffTools;
 
 /**
  * Reader is the file format reader for Metamorph STK files.
@@ -490,12 +495,6 @@ public class MetamorphReader extends BaseTiffReader {
     }
   }
 
-  // FIXME: Needs to be implemented.
-  protected void initMetadataStore() {
-    super.initMetadataStore();
-    for (int i = 0; i < ifds.length; i++) { }
-  }
-
   /*
    * (non-Javadoc)
    * @see loci.formats.BaseTiffReader#getImageName()
@@ -514,16 +513,17 @@ public class MetamorphReader extends BaseTiffReader {
     return imageCreationDate;
   }
 
-  private void setChannelGlobalMinMax(int i)
+  protected void setChannelGlobalMinMax(int i)
     throws FormatException, IOException
   {
     Double globalMin = (Double) metadata.get("grayMin");
     Double globalMax = (Double) metadata.get("grayMax");
-    if (globalMin == null | globalMax == null) {
-      throw new FormatException("No global min/max");
+    if (globalMin != null | globalMax != null) 
+    {
+      getMetadataStore(currentId).setChannelGlobalMinMax(i, 
+        globalMin,globalMax, null);
     }
-    getMetadataStore(currentId).setChannelGlobalMinMax(i,
-      globalMin, globalMax, null);
+    super.setChannelGlobalMinMax(i);
   }
 
   Integer getEmWave(int i) {

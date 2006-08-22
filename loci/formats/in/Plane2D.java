@@ -42,6 +42,12 @@ public class Plane2D
 
   /** The Java type that we're using for pixel value retrieval */
   private int                 type;
+  
+  /** Number of pixels along the <i>X</i>-axis. */
+  private int                 sizeX;
+  
+  /** Number of pixels along the <i>Y</i>-axis. */
+  private int                 sizeY;
 
   /** Identifies the <i>INT8</i> data type used to store pixel values. */
   public static final int     INT8 = 0;
@@ -89,10 +95,13 @@ public class Plane2D
    * @param isLittleEndian <i>true</i> if the plane is of little-endian byte
    * order.
    */
-  Plane2D(ByteBuffer data, int type, boolean isLittleEndian)
+  Plane2D(ByteBuffer data, int type, boolean isLittleEndian,
+          int sizeX, int sizeY)
   {
     this.type = type;
     this.data = data;
+    this.sizeX = sizeX;
+    this.sizeY = sizeY;
 
     this.data.order(
         isLittleEndian? ByteOrder.LITTLE_ENDIAN: ByteOrder.BIG_ENDIAN);
@@ -131,7 +140,7 @@ public class Plane2D
    */
   public double getPixelValue(int x, int y)
   {
-    int offset = x * y * bytesPerPixel;
+    int offset = ((sizeX * y) + x) * bytesPerPixel;
 
     switch(type) {
     case INT8:

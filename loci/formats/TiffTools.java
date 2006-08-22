@@ -27,6 +27,8 @@ package loci.formats;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Field;
+import java.nio.ByteBuffer;
+import java.nio.ShortBuffer;
 import java.util.*;
 
 /**
@@ -35,6 +37,10 @@ import java.util.*;
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Eric Kjellman egkjellman at wisc.edu
  * @author Melissa Linkert linkert at cs.wisc.edu
+ */
+/**
+ * @author callan
+ *
  */
 public abstract class TiffTools {
 
@@ -778,7 +784,7 @@ public abstract class TiffTools {
   }
 
   /** Reads the image defined in the given IFD from the specified file. */
-  public static BufferedImage getImage(Hashtable ifd, RandomAccessStream in,
+  public static byte[][] getSamples(Hashtable ifd, RandomAccessStream in,
     long globalOffset) throws FormatException, IOException
   {
     if (DEBUG) debug("parsing IFD entries");
@@ -788,16 +794,15 @@ public abstract class TiffTools {
     in.order(littleEndian);
 
     // get relevant IFD entries
-    long imageWidth = getIFDLongValue(ifd, IMAGE_WIDTH, true, 0);
-    long imageLength = getIFDLongValue(ifd, IMAGE_LENGTH, true, 0);
-    int[] bitsPerSample = getIFDIntArray(ifd, BITS_PER_SAMPLE, false);
-    if (bitsPerSample == null) bitsPerSample = new int[] {1};
-    int samplesPerPixel = getIFDIntValue(ifd, SAMPLES_PER_PIXEL, false, 1);
-    int compression = getIFDIntValue(ifd, COMPRESSION, false, UNCOMPRESSED);
-    int photoInterp = getIFDIntValue(ifd, PHOTOMETRIC_INTERPRETATION, true, 0);
-    long[] stripOffsets = getIFDLongArray(ifd, STRIP_OFFSETS, false);
-    long[] stripByteCounts = getIFDLongArray(ifd, STRIP_BYTE_COUNTS, false);
-    long[] rowsPerStripArray = getIFDLongArray(ifd, ROWS_PER_STRIP, false);
+    long imageWidth = getImageWidth(ifd);
+    long imageLength = getImageLength(ifd);
+    int[] bitsPerSample = getBitsPerSample(ifd);
+    int samplesPerPixel = getSamplesPerPixel(ifd);
+    int compression = getCompression(ifd);
+    int photoInterp = getPhotometricInterpretation(ifd);
+    long[] stripOffsets = getStripOffsets(ifd);
+    long[] stripByteCounts = getStripByteCounts(ifd);
+    long[] rowsPerStripArray = getRowsPerStrip(ifd);
 
     boolean fakeByteCounts = stripByteCounts == null;
     boolean fakeRPS = rowsPerStripArray == null;
@@ -1132,13 +1137,6 @@ public abstract class TiffTools {
     short[][] samples = new short[samplesPerPixel][numSamples];
     byte[] altBytes = new byte[0];
 
-    if (bitsPerSample[0] < 8) {
-      samples = new short[samplesPerPixel][numSamples];
-    }
-
-    byte[][] byteData = new byte[samplesPerPixel][numSamples];
-    float[][] floatData = new float[samplesPerPixel][numSamples];
-
     if (bitsPerSample[0] == 16) littleEndian = !littleEndian;
 
     int overallOffset = 0;
@@ -1187,34 +1185,80 @@ public abstract class TiffTools {
         photoInterp, colorMap, littleEndian, maxValue, planarConfig, 0, 1);
     }
 
-
     // construct field
     if (DEBUG) debug("constructing image");
 
-    if (bitsPerSample[0] == 16) {
-      return ImageTools.makeImage(samples,
-        (int) imageWidth, (int) imageLength);
-    }
-    else if (bitsPerSample[0] == 32) {
-      for (int i=0; i<samplesPerPixel; i++) {
-        for (int j=0; j<numSamples; j++) {
-          floatData[i][j] = (float) samples[i][j];
+    // Since the lowest common denominator for all pixel operations is "byte"
+    // we're going to normalize everything to byte.
+    byte[][] byteData = null;
+    if (bitsPerSample[0] == 16)
+    {
+      byteData = new byte[samplesPerPixel][numSamples * 2];
+      for (int i = 0; i < samplesPerPixel; i++)
+      {
+        for (int j = 0; j < numSamples; j++)
+        {
+          byteData[i][j * 2]     = (byte) ((samples[i][j] & 0xFF00) >> 8);
+          byteData[i][j * 2 + 1] = (byte) (samples[i][j] & 0x00FF);
         }
       }
-      return ImageTools.makeImage(floatData, (int) imageWidth,
-        (int) imageLength);
     }
-    else {
-      for (int i=0; i<samplesPerPixel; i++) {
-        for (int j=0; j<numSamples; j++) {
+    else if (bitsPerSample[0] == 32)
+    {
+      // FIXME: To be implemented
+      throw new FormatException("Floating point pixel data not yet supported.");
+    }
+    else
+    {
+      byteData = new byte[samplesPerPixel][numSamples];
+      for (int i=0; i<samplesPerPixel; i++)
+      {
+        for (int j=0; j<numSamples; j++)
+        {
           byteData[i][j] = (byte) samples[i][j];
         }
       }
-      return ImageTools.makeImage(byteData, (int) imageWidth,
-        (int) imageLength);
     }
+    return byteData;
   }
 
+  /** Reads the image defined in the given IFD from the specified file. */
+  public static BufferedImage getImage(Hashtable ifd, RandomAccessStream in,
+                                       long globalOffset)
+    throws FormatException, IOException
+  {
+    // construct field
+    if (DEBUG) debug("constructing image");
+
+    byte[][] samples = getSamples(ifd, in, globalOffset);
+    int[] bitsPerSample = getBitsPerSample(ifd);
+    long imageWidth = getImageWidth(ifd);
+    long imageLength = getImageLength(ifd);
+    int samplesPerPixel = getSamplesPerPixel(ifd);
+
+    if (bitsPerSample[0] == 16) {
+      // First wrap the byte arrays and then use the features of the
+      // ByteBuffer to transform to a ShortBuffer. Finally, use the ShortBuffer
+      // bulk get method to copy the data into a usable form for makeImage().
+      short[][] sampleData = new short[samplesPerPixel][samples[0].length / 2];
+      for (int i = 0; i < samplesPerPixel; i++)
+      {
+        ShortBuffer sampleBuf = ByteBuffer.wrap(samples[i]).asShortBuffer();
+        sampleBuf.get(sampleData[i]);
+      }
+
+      // Now make our image.
+      return ImageTools.makeImage(sampleData,
+          (int) imageWidth, (int) imageLength);
+    }
+    else if (bitsPerSample[0] == 32)
+    {
+      // FIXME: To be implemented.
+      throw new FormatException("Floating point pixel data not yet supported.");
+    }
+    return ImageTools.makeImage(samples, (int) imageWidth, (int) imageLength);
+  }
+  
   /**
    * Extracts pixel information from the given byte array according to the
    * bits per sample, photometric interpretation, and the specified byte
@@ -2030,7 +2074,146 @@ public abstract class TiffTools {
     out.write(extraArray);
     return numBytes;
   }
+  
+  /**
+   * Retrieves the image's width (TIFF tag ImageWidth) from a given TIFF IFD.
+   * @param ifd a TIFF IFD hashtable.
+   * @return the image's width.
+   * @throws FormatException if there is a problem parsing the IFD metadata.
+   */
+  public static long getImageWidth(Hashtable ifd) throws FormatException
+  {
+	  return getIFDLongValue(ifd, IMAGE_WIDTH, true, 0);
+  }
+  
+  /**
+   * Retrieves the image's length (TIFF tag ImageLength) from a given TIFF IFD.
+   * @param ifd a TIFF IFD hashtable.
+   * @return the image's length.
+   * @throws FormatException if there is a problem parsing the IFD metadata.
+   */
+  public static long getImageLength(Hashtable ifd) throws FormatException
+  {
+	  return getIFDLongValue(ifd, IMAGE_LENGTH, true, 0);
+  }
+  
+  /**
+   * Retrieves the image's bits per sample (TIFF tag BitsPerSample) from a given
+   * TIFF IFD.
+   * @param ifd a TIFF IFD hashtable.
+   * @return the image's bits per sample. The length of the array is equal to
+   * the number of samples per pixel.
+   * @throws FormatException if there is a problem parsing the IFD metadata.
+   * @see #getSamplesPerPixel()
+   */
+  public static int[] getBitsPerSample(Hashtable ifd) throws FormatException
+  {
+	  int[] bitsPerSample = getIFDIntArray(ifd, BITS_PER_SAMPLE, false);
+	  if (bitsPerSample == null)
+		  bitsPerSample = new int[] {1};
+	  return bitsPerSample;
+  }
 
+  /**
+   * Retrieves the number of samples per pixel for the image (TIFF tag 
+   * SamplesPerPixel) from a given TIFF IFD.
+   * @param ifd a TIFF IFD hashtable.
+   * @return the number of samples per pixel.
+   * @throws FormatException if there is a problem parsing the IFD metadata.
+   */
+  public static int getSamplesPerPixel(Hashtable ifd) throws FormatException
+  {
+	  return getIFDIntValue(ifd, SAMPLES_PER_PIXEL, false, 1);
+  }
+  
+  /**
+   * Retrieves the image's compression type (TIFF tag Compression) from a
+   * given TIFF IFD.
+   * @param ifd a TIFF IFD hashtable.
+   * @return the image's compression type. As of TIFF 6.0 this is one of:
+   * <ul>
+   *  <li>Uncompressed (1)</li>
+   *  <li>CCITT 1D (2)</li>
+   *  <li>Group 3 Fax (3)</li>
+   *  <li>Group 4 Fax (4)</li>
+   *  <li>LZW (5)</li>
+   *  <li>JPEG (6)</li>
+   *  <li>PackBits (32773)</li>
+   * <ul>
+   * @throws FormatException if there is a problem parsing the IFD metadata.
+   */
+  public static int getCompression(Hashtable ifd) throws FormatException
+  {
+	  return getIFDIntValue(ifd, COMPRESSION, false, UNCOMPRESSED);
+  }
+  
+  /**
+   * Retrieves the image's photometric interpretation (TIFF tag
+   * PhotometricInterpretation) from a given TIFF IFD.
+   * @param ifd a TIFF IFD hashtable.
+   * @return the image's photometric interpretation. As of TIFF 6.0 this is one
+   * of:
+   * <ul>
+   *  <li>WhiteIsZero (0)</li>
+   *  <li>BlackIsZero (1)</li>
+   *  <li>RGB (2)</li>
+   *  <li>RGB Palette (3)</li>
+   *  <li>Transparency mask (4)</li>
+   *  <li>CMYK (5)</li>
+   *  <li>YbCbCr (6)</li>
+   *  <li>CIELab (8)</li>
+   * </ul>
+   *
+   * @throws FormatException if there is a problem parsing the IFD metadata.
+   */
+  public static int getPhotometricInterpretation(Hashtable ifd)
+  	throws FormatException
+  {
+	  return getIFDIntValue(ifd, PHOTOMETRIC_INTERPRETATION, true, 0);
+  }
+  
+  /**
+   * Retrieves the strip offsets for the image (TIFF tag StripOffsets) from a
+   * given TIFF IFD.
+   * @param ifd a TIFF IFD hashtable.
+   * @return the strip offsets for the image. The lenght of the array is equal
+   * to the number of strips per image. <i>StripsPerImage = floor ((ImageLength 
+   * + RowsPerStrip - 1) / RowsPerStrip)</i>.
+   * @throws FormatException if there is a problem parsing the IFD metadata.
+   * @see #getStripByteCounts()
+   * @see #getRowsPerStrip()
+   */
+  public static long[] getStripOffsets(Hashtable ifd) throws FormatException
+  {
+	  return getIFDLongArray(ifd, STRIP_OFFSETS, false);
+  }
+  
+  /**
+   * Retrieves strip byte counts for the image (TIFF tag StripByteCounts) from a
+   * given TIFF IFD.
+   * @param ifd a TIFF IFD hashtable.
+   * @return the byte counts for each strip. The length of the array is equal to
+   * the number of strips per image. <i>StripsPerImage = floor ((ImageLength + 
+   * RowsPerStrip - 1) / RowsPerStrip)</i>.
+   * @throws FormatException if there is a problem parsing the IFD metadata.
+   * @see #getStripOffsets()
+   */
+  public static long[] getStripByteCounts(Hashtable ifd) throws FormatException
+  {
+	  return getIFDLongArray(ifd, STRIP_BYTE_COUNTS, false);
+  }
+  
+  /**
+   * Retrieves the number of rows per strip for image (TIFF tag RowsPerStrip)
+   * from a given TIFF IFD.
+   * @param ifd a TIFF IFD hashtable.
+   * @return the number of rows per strip.
+   * @throws FormatException if there is a problem parsing the IFD metadata.
+   */
+  public static long[] getRowsPerStrip(Hashtable ifd) throws FormatException
+  {
+	  return getIFDLongArray(ifd, ROWS_PER_STRIP, false);
+  }
 
   // -- Compression methods --
 
