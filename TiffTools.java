@@ -27,8 +27,7 @@ package loci.formats;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Field;
-import java.nio.ByteBuffer;
-import java.nio.ShortBuffer;
+import java.nio.*;
 import java.util.*;
 
 /**
@@ -1203,10 +1202,16 @@ public abstract class TiffTools {
         }
       }
     }
-    else if (bitsPerSample[0] == 32)
-    {
-      // FIXME: To be implemented
-      throw new FormatException("Floating point pixel data not yet supported.");
+    else if (bitsPerSample[0] == 32) {
+      byteData = new byte[samplesPerPixel][numSamples * 4];
+      for (int i=0; i<samplesPerPixel; i++) {
+        for (int j=0; j<numSamples; j++) {
+          byteData[i][j * 4] = (byte) ((samples[i][j] & 0xff000000) >> 24);
+          byteData[i][j * 4 + 1] = (byte) ((samples[i][j] & 0xff0000) >> 16);
+          byteData[i][j * 4 + 2] = (byte) ((samples[i][j] & 0xff00) >> 8);
+          byteData[i][j * 4 + 3] = (byte) (samples[i][j] & 0xff);
+        }
+      }
     }
     else
     {
@@ -1251,10 +1256,36 @@ public abstract class TiffTools {
       return ImageTools.makeImage(sampleData,
           (int) imageWidth, (int) imageLength);
     }
-    else if (bitsPerSample[0] == 32)
-    {
-      // FIXME: To be implemented.
-      throw new FormatException("Floating point pixel data not yet supported.");
+    else if (bitsPerSample[0] == 32) {
+      int type = getIFDIntValue(ifd, SAMPLE_FORMAT);
+      if (type == 3) {
+        // float data
+        float[][] floatData = new float[samplesPerPixel][samples[0].length / 4];
+        for (int i=0; i<samplesPerPixel; i++) {
+          FloatBuffer sampleBuf = ByteBuffer.wrap(samples[i]).asFloatBuffer();
+          sampleBuf.get(floatData[i]);
+        }
+        return ImageTools.makeImage(floatData,
+          (int) imageWidth, (int) imageLength);
+      }
+      else {
+        // int data
+        int[][] intData = new int[samplesPerPixel][samples[0].length / 4];
+        for (int i=0; i<samplesPerPixel; i++) {
+          IntBuffer sampleBuf = ByteBuffer.wrap(samples[i]).asIntBuffer();
+          sampleBuf.get(intData[i]);
+        }
+        
+        byte[][] shortData = new byte[samplesPerPixel][intData[0].length];
+        for (int i=0; i<samplesPerPixel; i++) {
+          for (int j=0; j<shortData[0].length; j++) {
+            shortData[i][j] = (byte) intData[i][j];
+          }
+        }
+        
+        return ImageTools.makeImage(shortData,
+          (int) imageWidth, (int) imageLength);
+      }
     }
     return ImageTools.makeImage(samples, (int) imageWidth, (int) imageLength);
   }
