@@ -27,8 +27,18 @@ package loci.formats.in;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.ShortBuffer;
 import java.util.Hashtable;
-import loci.formats.*;
+
+import loci.formats.DataTools;
+import loci.formats.FormatException;
+import loci.formats.FormatReader;
+import loci.formats.ImageTools;
+import loci.formats.MetadataStore;
+import loci.formats.RandomAccessStream;
+import loci.formats.TiffRational;
+import loci.formats.TiffTools;
 
 /**
  * BaseTiffReader is the superclass for file format readers compatible with
@@ -49,6 +59,9 @@ public abstract class BaseTiffReader extends FormatReader {
 
   /** Number of images in the current TIFF stack. */
   protected int numImages;
+  
+  /** The global min and max for each channel */
+  protected Double[][] channelMinMax; 
 
   // -- Constructors --
 
@@ -90,7 +103,7 @@ public abstract class BaseTiffReader extends FormatReader {
     return new Plane2D(
       ByteBuffer.wrap(openBytes(id, no)),
       Plane2D.typeFromString(getPixelType()),
-      isLittleEndian(id));
+      isLittleEndian(id), getSizeX(id), getSizeY(id));
   }
 
   // -- Internal BaseTiffReader API methods --
@@ -432,9 +445,17 @@ public abstract class BaseTiffReader extends FormatReader {
       // populate Logical Channel elements
       for (int i=0; i < getSizeC(currentId); i++)
       {
-          setLogicalChannel(i);
+        setLogicalChannel(i);
+        setChannelGlobalMinMax(i);
       }
 
+      //Populate the default display options
+      store.setDefaultDisplaySettings(null);
+      
+      // Use a default "real" pixel dimension of 1 for each dimensionality.
+      Float f = new Float(1);
+      store.setDimensions(f, f, f, f, f, null);
+      
       // populate Dimensions element
       int pixelSizeX = TiffTools.getIFDIntValue(ifd,
         TiffTools.CELL_WIDTH, false, 0);
@@ -527,7 +548,6 @@ public abstract class BaseTiffReader extends FormatReader {
     return (String) metadata.get("Comment");
   }
 
-
   // -- FormatReader API methods --
 
   /** Checks if the given block is a valid header for a TIFF file. */
@@ -613,11 +633,64 @@ public abstract class BaseTiffReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.getBytes(openImage(id, no), isRGB(id) && separated,
-      no % 3);
+	  if (!id.equals(currentId)) initFile(id);
+	  
+	  byte[][] p = null;
+	  if (separated && isRGB(id))
+	  {
+		  p = TiffTools.getSamples(ifds[no / 3], in, 0);
+		  // We need to swap back the endian-ness due to the getSamples()
+		  // method giving us big-endian (Java) bytes if the image is
+		  // little-endian.
+		  return swapIfRequired(p[no % p.length]);
+	  }
+	  else
+	  {
+		  p = TiffTools.getSamples(ifds[no], in, 0);
+		  byte[] rtn = new byte[p.length * p[0].length];
+		  for (int i=0; i<p.length; i++)
+		  {
+			  swapIfRequired(p[i]);
+			  System.arraycopy(p[i], 0, rtn, i * p[0].length, p[0].length);
+		  }
+		  return rtn;
+	  }
   }
 
-  /** Obtains the specified image from the given TIFF file. */
+  /**
+   * Examines a byte array to see if it needs to be byte swapped and modifies
+   * the byte array directly.
+   * @param byteArray The byte array to check and modify if required.
+   * @return the <i>byteArray</i> either swapped or not for convenience.
+   * @throws IOException if there is an error read from the file.
+   * @throws FormatException if there is an error during metadata parsing.
+   */
+  private byte[] swapIfRequired(byte[] byteArray)
+  	throws FormatException, IOException
+  {
+	  int bitsPerSample = TiffTools.getBitsPerSample(ifds[0])[0];
+	  
+	  // We've got nothing to do if the samples are only 8-bits wide or if they
+	  // are floating point.
+	  if (bitsPerSample == 8 || bitsPerSample == 32) return byteArray;
+	  
+	  if (isLittleEndian(currentId))
+	  {
+		  if (bitsPerSample == 16)  // Short
+		  {
+			  ShortBuffer buf = ByteBuffer.wrap(byteArray).asShortBuffer();
+			  for (int i = 0; i < (byteArray.length / 2); i++)
+				  buf.put(i, Bits.swap(buf.get(i)));
+		  }
+		  else
+			  throw new FormatException(
+					  "Unsupported sample bit width: '" + bitsPerSample + "'");
+	  }
+	  // We've got a big-endian file with a big-endian byte array.
+	  return byteArray;
+  }
+
+/** Obtains the specified image from the given TIFF file. */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
@@ -649,6 +722,7 @@ public abstract class BaseTiffReader extends FormatReader {
   /** Initializes the given TIFF file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
+    channelMinMax = null;
     in = new RandomAccessStream(id);
     if (in.readShort() == 0x4949) in.order(true);
 
@@ -708,33 +782,89 @@ public abstract class BaseTiffReader extends FormatReader {
         getImageCreationDate(), getImageDescription(), null);
   }
 
-  private void setChannelGlobalMinMax(int i)
+  /**
+   * Sets the channels global min and max in the metadata store.
+   * @param channelIdx the channel to set.
+   * @throws FormatException if there is an error parsing metadata.
+   * @throws IOException if there is an error reading the file.
+   */
+  protected void setChannelGlobalMinMax(int channelIdx)
     throws FormatException, IOException
   {
-    getMetadataStore(currentId).setChannelGlobalMinMax(i, null, null, null);
+    getChannelGlobalMinMax();
+    getMetadataStore(currentId).setChannelGlobalMinMax(channelIdx,
+        channelMinMax[channelIdx][0], channelMinMax[channelIdx][1], null);
   }
+  
+  /**
+   * Retrieves the global min and max for each channel.
+   * @throws FormatException if there is an error parsing metadata.
+   * @throws IOException if there is an error reading the file.
+   */
+  public void getChannelGlobalMinMax() throws FormatException, IOException {
+    if (channelMinMax == null) 
+      channelMinMax = new Double[getSizeC(currentId)][2];
+    else return;
 
+    for (int c = 0; c < getSizeC(currentId); c++)
+    {
+      double min = Double.MAX_VALUE;
+      double max = Double.MIN_VALUE;
+      for(int t = 0; t < getSizeT(currentId); t++)
+      {
+        for(int z = 0; z < getSizeZ(currentId); z++)
+        {
+          int index = getIndex(currentId, z, c, t);
+          Plane2D plane = openPlane2D(currentId, index);
+          for (int x = 0; x < getSizeX(currentId); x++)
+          {
+            for (int y = 0; y < getSizeY(currentId); y++)
+            {
+              double pixelValue = plane.getPixelValue(x, y);
+              if (pixelValue < min) min = pixelValue;
+              if (pixelValue > max) max = pixelValue;
+            }
+          }
+        }
+      }
+      channelMinMax[c][0] = new Double(min);
+      channelMinMax[c][1] = new Double(max);
+    }
+  }
+  
+  /**
+   * Sets the logical channel in the metadata store.
+   * @param i the logical channel number.
+   * @throws FormatException if there is an error parsing metadata.
+   * @throws IOException if there is an error reading the file.
+   */
   private void setLogicalChannel(int i) throws FormatException, IOException {
-    getMetadataStore(currentId).setLogicalChannel(i, getChannelName(i),
-      getNdFilter(i), getEmWave(i), getExWave(i),
-      getPhotometricInterpretation(i), getMode(i), null);
+    getMetadataStore(currentId).setLogicalChannel(
+        i, 
+        getChannelName(i), 
+        getNdFilter(i), 
+        getEmWave(i), 
+        getExWave(i), 
+        getPhotometricInterpretation(i),
+        getMode(i), // aquisition mode
+        null);
   }
 
   private String getChannelName(int i) { return null; }
-
+  
   private Float getNdFilter(int i) { return null; }
-
+  
   Integer getEmWave(int i) { return null; }
 
   private Integer getExWave(int i) { return null; }
-
+  
   private String getPhotometricInterpretation(int i)
-    throws FormatException, IOException
+    throws FormatException, IOException 
   {
-    return (String) getMetadataValue(currentId,
-      "MetaDataPhotometricInterpretation");
+    return (String) getMetadataValue(currentId, 
+      "metaDataPhotometricInterpretation");
   }
-
+  
   private String getMode(int i) { return null; }
 
   protected void put(String key, Object value) {

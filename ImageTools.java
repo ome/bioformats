@@ -28,6 +28,8 @@ import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
+import java.nio.ByteBuffer;
+import java.nio.ShortBuffer;
 
 /**
  * A utility class with convenience methods for manipulating images.
