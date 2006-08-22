@@ -392,7 +392,7 @@ public class MetamorphReader extends BaseTiffReader {
       // for each image plane, construct an IFD hashtable
 
       Hashtable temp;
-      for(int i=1; i<numImages; i++) {
+      for(int i=0; i<numImages; i++) {
         temp = new Hashtable();
 
         // copy most of the data from 1st IFD
