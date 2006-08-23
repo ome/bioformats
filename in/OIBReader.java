@@ -52,6 +52,9 @@ public class OIBReader extends FormatReader {
   /** Height of normal image. */
   private int height;
 
+  /** Number of channels. */
+  private int sizeC = 1;
+
   /** Pixel data. */
   private Hashtable pixelData;
 
@@ -76,6 +79,7 @@ public class OIBReader extends FormatReader {
 
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
     return false;
   }
 
@@ -98,13 +102,14 @@ public class OIBReader extends FormatReader {
 
   /** Get the size of the C dimension. */
   public int getSizeC(String id) throws FormatException, IOException {
-    return 1;
+    if (!id.equals(currentId)) initFile(id);
+    return sizeC;
   }
 
   /** Get the size of the T dimension. */
   public int getSizeT(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return numImages;
+    return numImages / getSizeC(id);
   }
 
   /** Return true if the data is in little-endian format. */
@@ -120,7 +125,7 @@ public class OIBReader extends FormatReader {
    */
   public String getDimensionOrder(String id) throws FormatException, IOException
   {
-    return "XYCZT";
+    return "XYCTZ";
   }
 
   /** Obtains the specified image from the given OIB file as a byte array. */
@@ -168,10 +173,53 @@ public class OIBReader extends FormatReader {
       String pathName = ((String) files[0].get(i)).trim();
       pathName = DataTools.stripString(pathName);
 
-      if (pathName.endsWith("OibInfo.txt")) {
-        // some kind of metadata
+      if (DataTools.stripString(new String(data)).indexOf("Parameters") != -1) {
+        // this file contains INI-style metadata
+     
+        String meta = DataTools.stripString(new String(data));
+        try {
+          meta = meta.substring(meta.indexOf("]") + 1);
+          meta = meta.substring(0, meta.lastIndexOf("]"));
+        }
+        catch (Exception e) { meta = ""; }
+
+        boolean setSizeC = false;
+
+        while (meta.length() > 1) {
+          int eqIndex = meta.indexOf("=");
+          try {
+            String key = meta.substring(0, eqIndex);
+            String value = 
+              meta.substring(eqIndex + 1, meta.indexOf("\r\n", eqIndex));
+            if (key.length() < 512 && value.length() < 512) {
+              metadata.put(key.trim(), value.trim());
+             
+              if (key.indexOf("??") != -1 || value.indexOf("??") != -1 ||
+                key.indexOf("   ") != -1 || value.indexOf("   ") != -1)
+              {
+                break;
+              }
+
+              if (key.trim().endsWith("AbsPositionUnitName") && 
+                value.trim().equals("\"Ch\"")) 
+              {
+                setSizeC = true; 
+              }
+
+              if (setSizeC && key.trim().equals("Number")) {
+                if (Integer.parseInt(value.trim()) > sizeC) {
+                  sizeC = Integer.parseInt(value.trim());
+                }
+                setSizeC = false;
+              }
+            }
+            meta = meta.substring(meta.indexOf("\r\n", eqIndex));
+          }
+          catch (Exception e) { break; }
+        }
       }
-      else if (pathName.indexOf("Stream") != -1) {
+
+      if (pathName.indexOf("Stream") != -1) {
         // first get the image number
         String num = pathName.substring(pathName.indexOf("Stream") + 6);
         if (TiffTools.isValidHeader(data)) {
@@ -243,7 +291,7 @@ public class OIBReader extends FormatReader {
 
     btr.ifds = tiffIFDs;
     btr.initMetadata();
-    metadata = btr.getMetadata(id); // HACK
+    //metadata = btr.getMetadata(id); // HACK
 
     MetadataStore store = getMetadataStore(id);
     store.setPixels(new Integer(getSizeX(id)), new Integer(getSizeY(id)),
