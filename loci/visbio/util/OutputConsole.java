@@ -99,9 +99,13 @@ public class OutputConsole extends OutputStream {
 
   // -- OutputConsole API methods --
 
-  public void show() {
-    if (!frame.isVisible()) Util.centerWindow(frame);
-    frame.setVisible(true);
+  public void show() { setVisible(true); }
+
+  public void setVisible(boolean visible) {
+    boolean vis = frame.isVisible();
+    if (visible == vis) return;
+    if (visible) Util.centerWindow(frame);
+    frame.setVisible(visible);
   }
 
   public JFrame getWindow() { return frame; }
