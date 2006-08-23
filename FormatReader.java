@@ -403,6 +403,8 @@ public abstract class FormatReader extends FormatHandler
     boolean stitch = false;
     boolean separate = false;
     boolean omexml = false;
+    int start = 0;
+    int end = 0;
     if (args != null) {
       for (int i=0; i<args.length; i++) {
         if (args[i].startsWith("-")) {
@@ -411,6 +413,15 @@ public abstract class FormatReader extends FormatHandler
           else if (args[i].equals("-stitch")) stitch = true;
           else if (args[i].equals("-separate")) separate = true;
           else if (args[i].equals("-omexml")) omexml = true;
+          else if (args[i].equals("-range")) {
+            try {
+              start = Integer.parseInt(args[i + 1]);
+              i++;
+              end = Integer.parseInt(args[i + 1]);
+              i++;
+            }
+            catch (Exception e) { }
+          }
           else System.out.println("Ignoring unknown command flag: " + args[i]);
         }
         else {
@@ -424,7 +435,8 @@ public abstract class FormatReader extends FormatHandler
       System.out.println("To test read a file in " +
         reader.getFormat() + " format, run:");
       System.out.println("  java " + className + " [-nopix]");
-      System.out.println("    [-merge] [-stitch] [-separate] [-omexml] file");
+      System.out.println("    [-merge] [-stitch] [-separate] [-omexml] " +
+        "[-range start [end]] file");
       return false;
     }
     if (omexml) {
@@ -451,13 +463,17 @@ public abstract class FormatReader extends FormatHandler
       long s1 = System.currentTimeMillis();
       reader.setSeparated(separate);
       int num = reader.getImageCount(id);
+      if (end == 0 || end > num) end = num;
+      if (end < 0) end = 0;
+      if (start < 0) start = 0;
+      if (start >= num) start = num - 1;
 
-      System.out.print("(" + num + ") ");
+      System.out.print("(" + (end - start) + ") ");
       long e1 = System.currentTimeMillis();
-      BufferedImage[] images = new BufferedImage[num];
+      BufferedImage[] images = new BufferedImage[end - start];
       long s2 = System.currentTimeMillis();
-      for (int i=0; i<num; i++) {
-        images[i] = reader.openImage(id, i);
+      for (int i=start; i<end; i++) {
+        images[i - start] = reader.openImage(id, i);
         System.out.print(".");
       }
       long e2 = System.currentTimeMillis();
@@ -465,7 +481,7 @@ public abstract class FormatReader extends FormatHandler
 
       // output timing results
       float sec = (e2 - s1) / 1000f;
-      float avg = (float) (e2 - s2) / num;
+      float avg = (float) (e2 - s2) / (end - start);
       long initial = e1 - s1;
       System.out.println(sec + "s elapsed (" +
         avg + "ms per image, " + initial + "ms overhead)");
