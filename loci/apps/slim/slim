@@ -1,2 +1,6 @@
 #!/bin/bash
-java -mx512m loci.apps.slim.SlimPlotter "$*"
+if [ -e "$*" ]; then
+  java -mx512m loci.apps.slim.SlimPlotter "$*"
+else
+  java -mx512m loci.apps.slim.SlimPlotter
+fi
