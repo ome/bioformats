@@ -1,0 +1,2 @@
+#!/bin/bash
+java -mx512m loci.apps.slim.SlimPlotter "$*"
