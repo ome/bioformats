@@ -234,6 +234,12 @@ public class FileStitcher extends FormatReader {
 
     fp = new FilePattern(new File(id));
     files = fp.getFiles();
+    
+    if (files == null) {
+      throw new FormatException("Invalid file pattern.  Please rename " +
+        "your files or disable file stitching.");
+    }
+    
     imageCounts = new int[files.length];
 
     // determine the total number of images and build a list of dimensions
