@@ -609,6 +609,16 @@ public class SlimPlotter implements ActionListener,
     int decayHeight = 100 * decayWidth / 100; // 100% of width
     int intensityHeight = decayHeight;
     int intensityWidth = 85 * intensityHeight / 100; // 85% of height
+    // enlarge 3D window to fill most of the screen
+    int availWidth = ss.width - intensityWidth - 30;
+    int availHeight = ss.height - 30;
+    int growWidth = availWidth - decayWidth;
+    int growHeight = availHeight - decayHeight;
+    int grow = growWidth < growHeight ? growWidth : growHeight;
+    if (grow > 0) {
+      decayWidth += grow;
+      decayHeight += grow;
+    }
     intensityFrame.setBounds(0, 0, intensityWidth, intensityHeight);
     intensityFrame.setVisible(true);
     decayFrame.setBounds(intensityWidth, 0, decayWidth, decayHeight);
