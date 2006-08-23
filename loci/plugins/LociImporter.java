@@ -132,6 +132,7 @@ public class LociImporter implements PlugIn, ItemListener {
         }
         IJ.showProgress((double) i / num);
         BufferedImage img = cm.openImage(id, i);
+        img = ImageTools.padImage(img, cm.getSizeX(id), cm.getSizeY(id));
 
         ImageProcessor ip = null;
         WritableRaster raster = img.getRaster();
