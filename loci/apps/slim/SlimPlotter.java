@@ -2,18 +2,23 @@
 // SlimPlotter.java
 //
 
-// Coded May - July 2006 by Curtis Rueden, for Long Yan and others.
+// Coded May - August 2006 by Curtis Rueden, for Long Yan and others.
 // Permission is granted to use this code for anything.
 
 package loci.apps.slim;
 
+import jaolho.data.lma.LMA;
+import jaolho.data.lma.LMAFunction;
+import jaolho.data.lma.implementations.JAMAMatrix;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
 import loci.formats.DataTools;
 import loci.formats.ExtensionFileFilter;
@@ -36,6 +41,8 @@ public class SlimPlotter implements ActionListener,
      0.0000,  0.0000,  0.0000, 1.0000
   };
 
+  private static final char TAU = 0x03a4;
+
   // -- Fields --
 
   /** Actual data values, dimensioned [channel][row][column][bin]. */
@@ -47,6 +54,7 @@ public class SlimPlotter implements ActionListener,
   private double timeRange;
   private int minWave, waveStep;
   private boolean adjustPeaks;
+  private int maxPeak;
 
   // ROI parameters
   private float[][] roiGrid;
@@ -66,8 +74,12 @@ public class SlimPlotter implements ActionListener,
 
   // GUI components for decay pane
   private JLabel decayLabel;
-  private JCheckBox surface, parallel, logScale, boundingBox;
-  private JButton showLog;
+  private JRadioButton surface, lines;
+  private JRadioButton linear, log;
+  private JRadioButton perspective, parallel;
+  private JCheckBox showData, showLog;
+  private JCheckBox showBox, showScale;
+  private JCheckBox showFit, showResiduals;
   private JSlider cSlider;
 
   // other GUI components
@@ -78,7 +90,8 @@ public class SlimPlotter implements ActionListener,
   private FunctionType bcvFunc;
   private Linear2DSet bcSet;
   private ScalarMap zMap, vMap;
-  private DataReferenceImpl decayRef;
+  private DataRenderer decayRend, fitRend, resRend;
+  private DataReferenceImpl decayRef, fitRef, resRef;
   private DisplayImpl iPlot, decayPlot;
   private AnimationControl ac;
 
@@ -120,6 +133,11 @@ public class SlimPlotter implements ActionListener,
     }
     if (args.length >= 4) timeBins = parse(args[3], -1);
     if (args.length >= 5) channels = parse(args[4], -1);
+
+    if (!file.exists()) {
+      System.out.println("File does not exist: " + filename);
+      System.exit(2);
+    }
 
     // read SDT file header
     RandomAccessFile raf = new RandomAccessFile(file, "r");
@@ -244,6 +262,8 @@ public class SlimPlotter implements ActionListener,
       (ss.height - ps.height) / 2);
     paramDialog.setVisible(true);
     int maxWave = minWave + (channels - 1) * waveStep;
+    roiCount = width * height;
+    roiPercent = 100;
 
     // read pixel data
     progress.setMaximum(adjustPeaks ?
@@ -349,15 +369,38 @@ public class SlimPlotter implements ActionListener,
     decayPlot.addMap(zMap);
     vMap = new ScalarMap(vType, Display.RGB);
     decayPlot.addMap(vMap);
+
+    decayRend = new DefaultRendererJ3D();
     decayRef = new DataReferenceImpl("decay");
-    decayPlot.addReference(decayRef);
+    decayPlot.addReferences(decayRend, decayRef);
+    if (adjustPeaks) {
+      fitRend = new DefaultRendererJ3D();
+      fitRef = new DataReferenceImpl("fit");
+      decayPlot.addReferences(fitRend, fitRef, new ConstantMap[] {
+        new ConstantMap(1.0, Display.Red),
+        new ConstantMap(1.0, Display.Green),
+        new ConstantMap(1.0, Display.Blue)
+      });
+      fitRend.toggle(false);
+      resRend = new DefaultRendererJ3D();
+      resRef = new DataReferenceImpl("residuals");
+      decayPlot.addReferences(resRend, resRef);
+      resRend.toggle(false);
+    }
+
     xMap.setRange(0, timeRange);
     yMap.setRange(minWave, maxWave);
-    xMap.getAxisScale().setTitle("Time (ns)");
+    AxisScale xScale = xMap.getAxisScale();
+    Font font = Font.decode("serif");
+    xScale.setFont(font);
+    xScale.setTitle("Time (ns)");
     AxisScale yScale = yMap.getAxisScale();
+    yScale.setFont(font);
     yScale.setTitle("Wavelength (nm)");
     yScale.setSide(AxisScale.SECONDARY);
-    zMap.getAxisScale().setTitle("Count");
+    AxisScale zScale = zMap.getAxisScale();
+    zScale.setFont(font);
+    zScale.setTitle("Count");
     GraphicsModeControl gmc = decayPlot.getGraphicsModeControl();
     gmc.setScaleEnable(true);
     gmc.setTextureEnable(false);
@@ -429,7 +472,7 @@ public class SlimPlotter implements ActionListener,
       }
       progress.setProgress(++p);
       if (progress.isCanceled()) System.exit(0);
-      int maxPeak = 0;
+      maxPeak = 0;
       for (int c=1; c<channels; c++) {
         if (maxPeak < peaks[c]) maxPeak = peaks[c];
       }
@@ -447,8 +490,8 @@ public class SlimPlotter implements ActionListener,
               for (int t=shift-1; t>=0; t--) values[c][h][w][t] = 0;
             }
           }
-          log("\tShifted channel #" + c + " by " +
-            shift + " [tmax = " + peaks[c] + "]");
+          log("\tChannel #" + (c + 1) + ": tmax = " + peaks[c] +
+            " (shifting by " + shift + ")");
         }
       }
       progress.setProgress(++p);
@@ -466,7 +509,7 @@ public class SlimPlotter implements ActionListener,
       });
     }
 
-    // show 2D window on screen
+    // construct 2D window
     progress.setNote("Creating plots");
     JFrame intensityFrame = new JFrame("Intensity Data - " + file.getName());
     intensityFrame.addWindowListener(this);
@@ -482,22 +525,16 @@ public class SlimPlotter implements ActionListener,
     cSlider.addChangeListener(this);
     cSlider.setBorder(new EmptyBorder(8, 5, 8, 5));
     intensityPane.add(cSlider, BorderLayout.SOUTH);
-
-    int pad = 30;
-    int ifx = pad / 2, ify = pad / 2;
-    int ifw = (ss.width - pad) / 2, ifh = ifw;
     intensityFrame.setContentPane(intensityPane);
-    intensityFrame.setBounds(ifx, ify, ifw, ifh);
 
     intensityRef.setData(field);
     ColorControl cc = (ColorControl) iPlot.getControl(ColorControl.class);
     cc.setTable(ColorControl.initTableGreyWedge(new float[3][256]));
 
-    intensityFrame.setVisible(true);
     progress.setProgress(++p);
     if (progress.isCanceled()) System.exit(0);
 
-    // show 3D window on screen
+    // construct 3D window
     JFrame decayFrame = new JFrame("Spectral Lifetime Data - " +
       file.getName());
     decayFrame.addWindowListener(this);
@@ -511,28 +548,70 @@ public class SlimPlotter implements ActionListener,
     JPanel options = new JPanel();
     options.setBorder(new EmptyBorder(8, 5, 8, 5));
     options.setLayout(new BoxLayout(options, BoxLayout.X_AXIS));
-    surface = new JCheckBox("Surface", true);
-    surface.addActionListener(this);
-    parallel = new JCheckBox("Parallel projection", false);
-    parallel.addActionListener(this);
-    logScale = new JCheckBox("Log scale", false);
-    logScale.addActionListener(this);
-    boundingBox = new JCheckBox("Bounding box", true);
-    boundingBox.addActionListener(this);
-    showLog = new JButton("Show log");
-    showLog.addActionListener(this);
-    options.add(surface);
-    options.add(parallel);
-    options.add(logScale);
-    options.add(boundingBox);
-    options.add(showLog);
-    decayPane.add(options, BorderLayout.SOUTH);
 
+    surface = new JRadioButton("Surface", true);
+    lines = new JRadioButton("Lines", false);
+    linear = new JRadioButton("Linear", true);
+    log = new JRadioButton("Log", false);
+    perspective = new JRadioButton("Perspective", true);
+    parallel = new JRadioButton("Parallel", false);
+
+    JPanel showPanel = new JPanel();
+    showPanel.setBorder(new TitledBorder("Show"));
+    showPanel.setLayout(new BoxLayout(showPanel, BoxLayout.X_AXIS));
+    JPanel showPanel1 = new JPanel();
+    showPanel1.setLayout(new BoxLayout(showPanel1, BoxLayout.Y_AXIS));
+    showPanel.add(showPanel1);
+    JPanel showPanel2 = new JPanel();
+    showPanel2.setLayout(new BoxLayout(showPanel2, BoxLayout.Y_AXIS));
+    showPanel.add(showPanel2);
+    JPanel showPanel3 = new JPanel();
+    showPanel3.setLayout(new BoxLayout(showPanel3, BoxLayout.Y_AXIS));
+    showPanel.add(showPanel3);
+
+    showData = new JCheckBox("Data", true);
+    showData.addActionListener(this);
+    showPanel1.add(showData);
+    showLog = new JCheckBox("Log", false);
+    showLog.addActionListener(this);
+    showPanel1.add(showLog);
+    showBox = new JCheckBox("Box", true);
+    showBox.addActionListener(this);
+    showPanel2.add(showBox);
+    showScale = new JCheckBox("Scale", true);
+    showScale.addActionListener(this);
+    showPanel2.add(showScale);
+    showFit = new JCheckBox("Fit", false);
+    showFit.setEnabled(adjustPeaks);
+    showFit.addActionListener(this);
+    showPanel3.add(showFit);
+    showResiduals = new JCheckBox("Residuals", false);
+    showResiduals.setEnabled(adjustPeaks);
+    showResiduals.addActionListener(this);
+    showPanel3.add(showResiduals);
+
+    console.getWindow().addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent e) { showLog.setSelected(false); }
+    });
+
+    options.add(makeRadioPanel("Data", surface, lines));
+    options.add(makeRadioPanel("Scale", linear, log));
+    options.add(makeRadioPanel("Projection", perspective, parallel));
+    options.add(showPanel);
+    decayPane.add(options, BorderLayout.SOUTH);
     decayFrame.setContentPane(decayPane);
-    decayFrame.setBounds(ifx + ifw, ify, ifw, ifh);
 
     cSlider.setValue(maxChan + 1);
 
+    // show windows on screen
+    decayFrame.pack();
+    int decayWidth = decayFrame.getSize().width;
+    int decayHeight = 100 * decayWidth / 100; // 100% of width
+    int intensityHeight = decayHeight;
+    int intensityWidth = 85 * intensityHeight / 100; // 85% of height
+    intensityFrame.setBounds(0, 0, intensityWidth, intensityHeight);
+    intensityFrame.setVisible(true);
+    decayFrame.setBounds(intensityWidth, 0, decayWidth, decayHeight);
     decayFrame.setVisible(true);
     progress.setProgress(++p);
     progress.close();
@@ -593,15 +672,9 @@ public class SlimPlotter implements ActionListener,
   /** Handles checkbox and button presses. */
   public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
-    if (src == surface) plotData(false);
-    else if (src == logScale) plotData(true);
-    else if (src == boundingBox) {
-      try {
-        decayPlot.getDisplayRenderer().setBoxOn(boundingBox.isSelected());
-      }
-      catch (Exception exc) { exc.printStackTrace(); }
-    }
-    else if (src == parallel) {
+    if (src == surface || src == lines) plotData(false);
+    else if (src == linear || src == log) plotData(true);
+    else if (src == perspective || src == parallel) {
       try {
         decayPlot.getGraphicsModeControl().setProjectionPolicy(
           parallel.isSelected() ? DisplayImplJ3D.PARALLEL_PROJECTION :
@@ -609,7 +682,27 @@ public class SlimPlotter implements ActionListener,
       }
       catch (Exception exc) { exc.printStackTrace(); }
     }
-    else if (src == showLog) console.show();
+    else if (src == showData) {
+      decayRend.toggle(showData.isSelected());
+    }
+    else if (src == showLog) { console.setVisible(showLog.isSelected()); }
+    else if (src == showBox) {
+      try { decayPlot.getDisplayRenderer().setBoxOn(showBox.isSelected()); }
+      catch (Exception exc) { exc.printStackTrace(); }
+    }
+    else if (src == showScale) {
+      try {
+        boolean scale = showScale.isSelected();
+        decayPlot.getGraphicsModeControl().setScaleEnable(scale);
+      }
+      catch (Exception exc) { exc.printStackTrace(); }
+    }
+    else if (src == showFit) {
+      fitRend.toggle(showFit.isSelected());
+    }
+    else if (src == showResiduals) {
+      resRend.toggle(showResiduals.isSelected());
+    }
     else { // OK button
       width = parse(wField.getText(), width);
       height = parse(hField.getText(), height);
@@ -697,7 +790,7 @@ public class SlimPlotter implements ActionListener,
 
   public void run() {
     ProgressMonitor progress = new ProgressMonitor(null,
-      "Plotting data", null, 0, channels * timeBins + 1);
+      "Plotting data", null, 0, channels * timeBins + 2);
     progress.setMillisToPopup(100);
     progress.setMillisToDecideToPopup(50);
     int p = 0;
@@ -708,8 +801,10 @@ public class SlimPlotter implements ActionListener,
       decayLabel.setText("Decay curve for " + roiCount +
         " pixels (" + roiPercent + "%)");
     }
-    boolean lines = !surface.isSelected();
-    boolean log = logScale.isSelected();
+    boolean doLines = !surface.isSelected();
+    boolean doLog = log.isSelected();
+
+    // calculate samples
     float[] samps = new float[channels * timeBins];
     maxVal = 0;
     for (int c=0; c<channels; c++) {
@@ -725,7 +820,7 @@ public class SlimPlotter implements ActionListener,
           }
         }
         samps[ndx] = sum;
-        if (log) samps[ndx] = (float) Math.log(samps[ndx] + 1);
+        if (doLog) samps[ndx] = (float) Math.log(samps[ndx] + 1);
         if (samps[ndx] > maxVal) maxVal = samps[ndx];
         progress.setProgress(++p);
         if (progress.isCanceled()) plotCanceled = true;
@@ -733,14 +828,75 @@ public class SlimPlotter implements ActionListener,
       }
       if (plotCanceled) break;
     }
+
+    double[][] fitResults = null;
+    if (adjustPeaks) {
+      // perform exponential curve fitting: y(x) = a * e^(-b*t) + c
+      progress.setNote("Fitting curves");
+      progress.setProgress(++p);
+      fitResults = new double[channels][];
+      ExpFunction func = new ExpFunction();
+      float[] params = {maxVal, 1, 0}; // initial guess for (a, b, c)
+      int num = timeBins - maxPeak;
+      float[] xVals = new float[num];
+      for (int i=0; i<xVals.length; i++) xVals[i] = i;
+      float[] yVals = new float[num];
+      float[] weights = new float[num];
+      Arrays.fill(weights, 1); // no weighting
+      log("Computing exponential curve fit parameters");
+      for (int c=0; c<channels; c++) {
+        System.arraycopy(samps, timeBins * c + maxPeak, yVals, 0, num);
+        LMA lma = new LMA(func, params, new float[][] {xVals, yVals}, weights,
+          new JAMAMatrix(params.length, params.length));
+        lma.fit();
+        log("\tChannel #" + (c + 1) + ":");
+        log("\t\titerations=" + lma.iterationCount);
+        log("\t\tchi2=" + lma.chi2);
+        log("\t\ta=" + lma.parameters[0]);
+        log("\t\t" + TAU + "=" + (1 / lma.parameters[1]));
+        log("\t\tc=" + lma.parameters[2]);
+        fitResults[c] = lma.parameters;
+      }
+    }
+
     try {
+      // construct "Data" plot
       FlatField ff = new FlatField(bcvFunc, bcSet);
       ff.setSamples(new float[][] {samps}, false);
       if (rescale) {
         zMap.setRange(0, maxVal == 0 ? 1 : maxVal);
         vMap.setRange(0, maxVal == 0 ? 1 : maxVal);
       }
-      decayRef.setData(lines ? ff.domainFactor(cType) : ff);
+      decayRef.setData(doLines ? ff.domainFactor(cType) : ff);
+
+      if (fitResults != null) {
+        // compute finite sampling matching fitted exponentials
+        float[] fitSamps = new float[channels * timeBins];
+        float[] residuals = new float[channels * timeBins];
+        for (int c=0; c<channels; c++) {
+          double[] q = fitResults[c];
+          for (int t=0; t<timeBins; t++) {
+            int ndx = timeBins * c + t;
+            int et = t - maxPeak; // adjust for peak alignment
+            if (et < 0) fitSamps[ndx] = residuals[ndx] = 0;
+            else {
+              fitSamps[ndx] = (float) (q[0] * Math.exp(-q[1] * et) + q[2]);
+              residuals[ndx] = samps[ndx] - fitSamps[ndx];
+            }
+            //if (residuals[ndx] < 0) residuals[ndx] = -residuals[ndx]; // abs
+          }
+        }
+
+        // construct "Fit" plot
+        FlatField fit = new FlatField(bcvFunc, bcSet);
+        fit.setSamples(new float[][] {fitSamps}, false);
+        fitRef.setData(fit.domainFactor(cType)); // always lines for the fit
+
+        // construct "Residuals" plot
+        FlatField res = new FlatField(bcvFunc, bcSet);
+        res.setSamples(new float[][] {residuals}, false);
+        resRef.setData(res.domainFactor(cType)); // always lines for residuals
+      }
     }
     catch (Exception exc) { exc.printStackTrace(); }
     progress.setProgress(++p);
@@ -757,6 +913,24 @@ public class SlimPlotter implements ActionListener,
   public void windowDeiconified(WindowEvent e) { }
   public void windowIconified(WindowEvent e) { }
   public void windowOpened(WindowEvent e) { }
+
+  // -- Helper methods --
+
+  private JPanel makeRadioPanel(String title,
+    JRadioButton b1, JRadioButton b2)
+  {
+    JPanel p = new JPanel();
+    p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
+    p.setBorder(new TitledBorder(title));
+    p.add(b1);
+    p.add(b2);
+    ButtonGroup group = new ButtonGroup();
+    group.add(b1);
+    group.add(b2);
+    b1.addActionListener(this);
+    b2.addActionListener(this);
+    return p;
+  }
 
   // -- Utility methods --
 
@@ -846,6 +1020,23 @@ public class SlimPlotter implements ActionListener,
   public static double parse(String s, double last) {
     try { return Double.parseDouble(s); }
     catch (NumberFormatException exc) { return last; }
+  }
+
+  // -- Helper classes --
+
+  public class ExpFunction extends LMAFunction {
+    public double getY(double x, double[] a) {
+      return a[0] * Math.exp(-a[1] * x) + a[2];
+    }
+
+    public double getPartialDerivate(double x, double[] a, int parameterIndex) {
+      switch (parameterIndex) {
+        case 0: return Math.exp(-a[1] * x);
+        case 1: return -a[0] * x * Math.exp(-a[1] * x);
+        case 2: return 1;
+      }
+      throw new RuntimeException("No such parameter index: " + parameterIndex);
+    }
   }
 
   // -- Main method --
