@@ -111,6 +111,19 @@ public class FileStitcher extends FormatReader {
     if (!id.equals(currentId)) initFile(id);
     return reader.getMetadata(id);
   }
+  
+  /**
+   * Obtains the specified metadata field's value for the given file.
+   *
+   * @param field the name associated with the metadata field
+   * @return the value, or null if the field doesn't exit
+   */
+  public Object getMetadataValue(String id, String field)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.getMetadataValue(id, field);
+  }
 
   /**
    * Retrieves the current metadata store for this reader. You can be

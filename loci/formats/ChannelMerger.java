@@ -103,6 +103,19 @@ public class ChannelMerger extends FormatReader {
   }
 
   /**
+   * Obtains the specified metadata field's value for the given file.
+   *
+   * @param field the name associated with the metadata field
+   * @return the value, or null if the field doesn't exit
+   */
+  public Object getMetadataValue(String id, String field)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.getMetadataValue(id, field);
+  }
+
+  /**
    * Retrieves the current metadata store for this reader. You can be
    * assured that this method will <b>never</b> return a <code>null</code>
    * metadata store.
