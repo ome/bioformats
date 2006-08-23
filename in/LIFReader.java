@@ -184,11 +184,14 @@ public class LIFReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
+    int tempC = dims[0][4];
+    if (!separated) tempC = 1;
+
     int ndx = 0;
     int sum = 0;
     for (int i=0; i<dims.length; i++) {
       sum += (dims[i][2] * dims[i][3] * dims[i][6]);
-      if ((no / dims[0][4]) < sum) {
+      if ((no / tempC) < sum) {
         ndx = i;
         i = dims.length;
       }
@@ -367,6 +370,7 @@ public class LIFReader extends FormatReader {
 
         numDatasets++;
         int numChannels = 0;
+        int extras = 1;
 
         while (token.indexOf("/ImageDescription") == -1) {
           if (token.indexOf("=") != -1) {
@@ -399,8 +403,6 @@ public class LIFReader extends FormatReader {
               int id = Integer.parseInt((String)
                 tmp.get("DimensionDescriptionDimID"));
 
-              int extras = 1;
-
               switch (id) {
                 case 1: widths.add(new Integer(w)); break;
                 case 2: heights.add(new Integer(w)); break;
@@ -408,14 +410,16 @@ public class LIFReader extends FormatReader {
                 case 4: ts.add(new Integer(w)); break;
                 default: extras *= w;
               }
-
-              extraDims.add(new Integer(extras));
             }
           }
-
+          
           ndx++;
-          token = (String) elements.get(ndx);
+          try {
+            token = (String) elements.get(ndx);
+          }
+          catch (Exception e) { break; } 
         }
+        extraDims.add(new Integer(extras));
         channels.add(new Integer(numChannels));
 
         if (zs.size() < channels.size()) zs.add(new Integer(1));
@@ -424,6 +428,7 @@ public class LIFReader extends FormatReader {
       ndx++;
     }
 
+    numDatasets = widths.size();
     dims = new int[numDatasets][7];
 
     for (int i=0; i<numDatasets; i++) {
