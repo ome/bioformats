@@ -106,7 +106,6 @@ public class BMPReader extends FormatReader {
   public int getSizeX(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     if (width % 2 == 1) width++;
-    /* debug */ System.out.println("returning : " + width);
     return width;
   }
 
