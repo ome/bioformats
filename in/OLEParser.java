@@ -4,7 +4,7 @@
 
 /*
 LOCI Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden, Chris Allan
+Copyright (C) 2005-2006 Melissa Linkert, Curtis Rueden, Chris Allan
 and Eric Kjellman.
 
 This program is free software; you can redistribute it and/or modify
@@ -84,6 +84,9 @@ public class OLEParser {
   /** Blocks we've already read. */
   private HashSet read;
 
+  /** Last property array index parsed. */
+  private int last;
+
   /** Whether or not we've parsed all of the property array entries. */
   private boolean parsedAll = false;
 
@@ -129,7 +132,12 @@ public class OLEParser {
       throw new IOException("File is not an OLE variant");
     }
 
-    in.skipBytes(18);
+    in.skipBytes(16);
+
+    short revision = DataTools.read2SignedBytes(in, true);
+    short version = DataTools.read2SignedBytes(in, true);
+
+    in.skipBytes(2);
 
     bigBlock = (int) Math.pow(2, DataTools.read2SignedBytes(in, true));
     smallBlock = (int) Math.pow(2, DataTools.read4SignedBytes(in, true));
@@ -143,7 +151,7 @@ public class OLEParser {
 
     int sbatIndex = DataTools.read4SignedBytes(in, true);
     int numSbatBlocks = DataTools.read4SignedBytes(in, true);
-    //int xbatIndex = DataTools.read4SignedBytes(in, true);
+    int xbatIndex = DataTools.read4SignedBytes(in, true);
     int numXbatBlocks = DataTools.read4SignedBytes(in, true);
 
     bat = new int[batCount + numXbatBlocks];
@@ -303,6 +311,8 @@ public class OLEParser {
 
         System.arraycopy(propertyArray, ndx*128, table, 0, table.length);
 
+        last = ndx;
+
         indices.add(new Integer(ndx));
 
         // extract some information from the property table
@@ -323,11 +333,16 @@ public class OLEParser {
             name.substring(name.indexOf("(") + 1, name.indexOf(")")).trim());
         }
 
+        short numNameChars = DataTools.bytesToShort(table, 64, 2, true);
         byte propType = table[66]; // 1 = dir, 2 = file, 5 = root
         byte nodeColor = table[67]; // 0 = red, 1 = black
         int previousIndex = DataTools.bytesToInt(table, 68, 4, true);
         int nextIndex = DataTools.bytesToInt(table, 72, 4, true);
         int firstChildIndex = DataTools.bytesToInt(table, 76, 4, true);
+        int createdSeconds = DataTools.bytesToInt(table, 100, 4, true);
+        int createdDays = DataTools.bytesToInt(table, 104, 4, true);
+        int modifiedSeconds = DataTools.bytesToInt(table, 108, 4, true);
+        int modifiedDays = DataTools.bytesToInt(table, 112, 4, true);
         int firstBlock = DataTools.bytesToInt(table, 116, 4, true);
         int fileSize = DataTools.bytesToInt(table, 120, 4, true);
 
