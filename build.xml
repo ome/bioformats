@@ -92,7 +92,8 @@ Slim Plotter
     Folders:       loci/apps/slim
                    some loci/formats and loci/visbio
     Main class:    loci.apps.slim.SlimPlotter
-    Dependencies:  visad-lite.jar
+    Dependencies:  lma.jar
+                   visad-lite.jar
     Targets:       jar-slim
                    dist-slim
     License:       Public domain
@@ -134,6 +135,13 @@ JGoodies Looks
     URL:       http://www.jgoodies.com/freeware/looks/index.html
     Notes:     Used for a nicer Look & Feel by VisBio and OME Metadata Notebook
     License:   BSD
+
+L-M Fit
+    JAR file:  lma.jar
+    URL:       http://users.utu.fi/jaolho/
+    Notes:     Levenberg-Marquardt algorithm for exponential curve fitting
+               with Slim Plotter
+    License:   LGPL
 
 OME Java
     JAR file:  ome-java.jar
