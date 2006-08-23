@@ -387,6 +387,13 @@ public class MetamorphReader extends BaseTiffReader {
 
       int stripsPerImage = oldOffsets.length;
 
+      int check = TiffTools.getIFDIntValue(ifds[0], 
+        TiffTools.PHOTOMETRIC_INTERPRETATION);
+      if (check == TiffTools.RGB_PALETTE) {
+        TiffTools.putIFDValue(ifds[0], TiffTools.PHOTOMETRIC_INTERPRETATION,
+          TiffTools.BLACK_IS_ZERO);
+      }
+
       emWavelength = TiffTools.getIFDLongArray(ifds[0], UIC3TAG, true);
 
       // for each image plane, construct an IFD hashtable
@@ -420,6 +427,8 @@ public class MetamorphReader extends BaseTiffReader {
             new Integer(TiffTools.RESOLUTION_UNIT)));
         temp.put(new Integer(TiffTools.PREDICTOR), ifds[0].get(
             new Integer(TiffTools.PREDICTOR)));
+        temp.put(new Integer(TiffTools.COLOR_MAP), 
+          ifds[0].get(new Integer(TiffTools.COLOR_MAP)));
 
         // now we need a StripOffsets entry
 

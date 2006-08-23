@@ -27,7 +27,6 @@ package loci.formats.in;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.ShortBuffer;
 import java.util.Hashtable;
 
