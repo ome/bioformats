@@ -387,7 +387,7 @@ public class MetamorphReader extends BaseTiffReader {
 
       int stripsPerImage = oldOffsets.length;
 
-      int check = TiffTools.getIFDIntValue(ifds[0], 
+      int check = TiffTools.getIFDIntValue(ifds[0],
         TiffTools.PHOTOMETRIC_INTERPRETATION);
       if (check == TiffTools.RGB_PALETTE) {
         TiffTools.putIFDValue(ifds[0], TiffTools.PHOTOMETRIC_INTERPRETATION,
@@ -427,7 +427,7 @@ public class MetamorphReader extends BaseTiffReader {
             new Integer(TiffTools.RESOLUTION_UNIT)));
         temp.put(new Integer(TiffTools.PREDICTOR), ifds[0].get(
             new Integer(TiffTools.PREDICTOR)));
-        temp.put(new Integer(TiffTools.COLOR_MAP), 
+        temp.put(new Integer(TiffTools.COLOR_MAP),
           ifds[0].get(new Integer(TiffTools.COLOR_MAP)));
 
         // now we need a StripOffsets entry
@@ -527,9 +527,9 @@ public class MetamorphReader extends BaseTiffReader {
   {
     Double globalMin = (Double) metadata.get("grayMin");
     Double globalMax = (Double) metadata.get("grayMax");
-    if (globalMin != null | globalMax != null) 
+    if (globalMin != null | globalMax != null)
     {
-      getMetadataStore(currentId).setChannelGlobalMinMax(i, 
+      getMetadataStore(currentId).setChannelGlobalMinMax(i,
         globalMin,globalMax, null);
     }
     super.setChannelGlobalMinMax(i);

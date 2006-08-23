@@ -111,7 +111,7 @@ public class FileStitcher extends FormatReader {
     if (!id.equals(currentId)) initFile(id);
     return reader.getMetadata(id);
   }
-  
+
   /**
    * Obtains the specified metadata field's value for the given file.
    *
@@ -234,12 +234,12 @@ public class FileStitcher extends FormatReader {
 
     fp = new FilePattern(new File(id));
     files = fp.getFiles();
-    
+
     if (files == null) {
       throw new FormatException("Invalid file pattern.  Please rename " +
         "your files or disable file stitching.");
     }
-    
+
     imageCounts = new int[files.length];
 
     // determine the total number of images and build a list of dimensions
@@ -266,7 +266,7 @@ public class FileStitcher extends FormatReader {
     }
 
     // always set the width and height to the maximum values
-   
+
     for (int i=0; i<dims.length; i++) {
       if (dims[i][0] > dimensions[0]) {
         dimensions[0] = dims[i][0];

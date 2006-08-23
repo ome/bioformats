@@ -360,7 +360,7 @@ public class QTReader extends FormatReader {
     in.read(pixs);
 
     canUsePrevious = (prevPixels != null) && (prevPlane == no - 1);
-    
+
     if (codec.equals("jpeg") || codec.equals("mjpb")) {
       return ImageTools.getBytes(openImage(id, no), isRGB(id) && separated,
         no % c);

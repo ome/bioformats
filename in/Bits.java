@@ -31,26 +31,20 @@ package loci.formats.in;
  */
 class Bits
 {
-	static short swap(short x)
-	{
-		return (short) ((x << 8) | ((x >> 8) & 0xFF));
-	}
+  static short swap(short x) {
+    return (short) ((x << 8) | ((x >> 8) & 0xFF));
+  }
 
-	static char swap(char x)
-	{
-		return (char) ((x << 8) | ((x >> 8) & 0xFF));
-	}
+  static char swap(char x) {
+    return (char) ((x << 8) | ((x >> 8) & 0xFF));
+  }
 
-	static int swap(int x)
-	{
-		return (int)
-			((swap((short)x) << 16) | (swap((short)(x >> 16)) & 0xFFFF));
-	}
+  static int swap(int x) {
+    return (int) ((swap((short)x) << 16) | (swap((short)(x >> 16)) & 0xFFFF));
+  }
 
-	static long swap(long x)
-	{
-		return (long)
-			(((long)swap((int)(x)) << 32) |
-			 ((long)swap((int)(x >> 32)) & 0xFFFFFFFFL));
-	}
+  static long swap(long x) {
+    return (long) (((long)swap((int)(x)) << 32) |
+      ((long)swap((int)(x >> 32)) & 0xFFFFFFFFL));
+  }
 }

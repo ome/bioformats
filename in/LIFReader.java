@@ -412,12 +412,12 @@ public class LIFReader extends FormatReader {
               }
             }
           }
-          
+
           ndx++;
           try {
             token = (String) elements.get(ndx);
           }
-          catch (Exception e) { break; } 
+          catch (Exception e) { break; }
         }
         extraDims.add(new Integer(extras));
         channels.add(new Integer(numChannels));

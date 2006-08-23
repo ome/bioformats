@@ -58,9 +58,9 @@ public abstract class BaseTiffReader extends FormatReader {
 
   /** Number of images in the current TIFF stack. */
   protected int numImages;
-  
+
   /** The global min and max for each channel */
-  protected Double[][] channelMinMax; 
+  protected Double[][] channelMinMax;
 
   // -- Constructors --
 
@@ -453,11 +453,11 @@ public abstract class BaseTiffReader extends FormatReader {
 
       //Populate the default display options
       store.setDefaultDisplaySettings(null);
-      
+
       // Use a default "real" pixel dimension of 1 for each dimensionality.
       Float f = new Float(1);
       store.setDimensions(f, f, f, f, f, null);
-      
+
       // populate Dimensions element
       int pixelSizeX = TiffTools.getIFDIntValue(ifd,
         TiffTools.CELL_WIDTH, false, 0);
@@ -635,28 +635,25 @@ public abstract class BaseTiffReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-	  if (!id.equals(currentId)) initFile(id);
-	  
-	  byte[][] p = null;
-	  if (separated && isRGB(id))
-	  {
-		  p = TiffTools.getSamples(ifds[no / 3], in, 0);
-		  // We need to swap back the endian-ness due to the getSamples()
-		  // method giving us big-endian (Java) bytes if the image is
-		  // little-endian.
-		  return swapIfRequired(p[no % p.length]);
-	  }
-	  else
-	  {
-		  p = TiffTools.getSamples(ifds[no], in, 0);
-		  byte[] rtn = new byte[p.length * p[0].length];
-		  for (int i=0; i<p.length; i++)
-		  {
-			  swapIfRequired(p[i]);
-			  System.arraycopy(p[i], 0, rtn, i * p[0].length, p[0].length);
-		  }
-		  return rtn;
-	  }
+    if (!id.equals(currentId)) initFile(id);
+
+    byte[][] p = null;
+    if (separated && isRGB(id)) {
+      p = TiffTools.getSamples(ifds[no / 3], in, 0);
+      // We need to swap back the endian-ness due to the getSamples()
+      // method giving us big-endian (Java) bytes if the image is
+      // little-endian.
+      return swapIfRequired(p[no % p.length]);
+    }
+    else {
+      p = TiffTools.getSamples(ifds[no], in, 0);
+      byte[] rtn = new byte[p.length * p[0].length];
+      for (int i=0; i<p.length; i++) {
+        swapIfRequired(p[i]);
+        System.arraycopy(p[i], 0, rtn, i * p[0].length, p[0].length);
+      }
+      return rtn;
+    }
   }
 
   /**
@@ -668,28 +665,29 @@ public abstract class BaseTiffReader extends FormatReader {
    * @throws FormatException if there is an error during metadata parsing.
    */
   private byte[] swapIfRequired(byte[] byteArray)
-  	throws FormatException, IOException
+    throws FormatException, IOException
   {
-	  int bitsPerSample = TiffTools.getBitsPerSample(ifds[0])[0];
-	  
-	  // We've got nothing to do if the samples are only 8-bits wide or if they
-	  // are floating point.
-	  if (bitsPerSample == 8 || bitsPerSample == 32) return byteArray;
-	  
-	  if (isLittleEndian(currentId))
-	  {
-		  if (bitsPerSample == 16)  // Short
-		  {
-			  ShortBuffer buf = ByteBuffer.wrap(byteArray).asShortBuffer();
-			  for (int i = 0; i < (byteArray.length / 2); i++)
-				  buf.put(i, Bits.swap(buf.get(i)));
-		  }
-		  else
-			  throw new FormatException(
-					  "Unsupported sample bit width: '" + bitsPerSample + "'");
-	  }
-	  // We've got a big-endian file with a big-endian byte array.
-	  return byteArray;
+    int bitsPerSample = TiffTools.getBitsPerSample(ifds[0])[0];
+
+    // We've got nothing to do if the samples are only 8-bits wide or if they
+    // are floating point.
+    if (bitsPerSample == 8 || bitsPerSample == 32) return byteArray;
+
+    if (isLittleEndian(currentId)) {
+      if (bitsPerSample == 16)  // Short
+      {
+        ShortBuffer buf = ByteBuffer.wrap(byteArray).asShortBuffer();
+        for (int i = 0; i < (byteArray.length / 2); i++) {
+          buf.put(i, Bits.swap(buf.get(i)));
+        }
+      }
+      else {
+        throw new FormatException(
+          "Unsupported sample bit width: '" + bitsPerSample + "'");
+      }
+    }
+    // We've got a big-endian file with a big-endian byte array.
+    return byteArray;
   }
 
 /** Obtains the specified image from the given TIFF file. */
@@ -797,14 +795,14 @@ public abstract class BaseTiffReader extends FormatReader {
     getMetadataStore(currentId).setChannelGlobalMinMax(channelIdx,
         channelMinMax[channelIdx][0], channelMinMax[channelIdx][1], null);
   }
-  
+
   /**
    * Retrieves the global min and max for each channel.
    * @throws FormatException if there is an error parsing metadata.
    * @throws IOException if there is an error reading the file.
    */
   public void getChannelGlobalMinMax() throws FormatException, IOException {
-    if (channelMinMax == null) 
+    if (channelMinMax == null)
       channelMinMax = new Double[getSizeC(currentId)][2];
     else return;
 
@@ -833,7 +831,7 @@ public abstract class BaseTiffReader extends FormatReader {
       channelMinMax[c][1] = new Double(max);
     }
   }
-  
+
   /**
    * Sets the logical channel in the metadata store.
    * @param i the logical channel number.
@@ -842,31 +840,31 @@ public abstract class BaseTiffReader extends FormatReader {
    */
   private void setLogicalChannel(int i) throws FormatException, IOException {
     getMetadataStore(currentId).setLogicalChannel(
-        i, 
-        getChannelName(i), 
-        getNdFilter(i), 
-        getEmWave(i), 
-        getExWave(i), 
+        i,
+        getChannelName(i),
+        getNdFilter(i),
+        getEmWave(i),
+        getExWave(i),
         getPhotometricInterpretation(i),
         getMode(i), // aquisition mode
         null);
   }
 
   private String getChannelName(int i) { return null; }
-  
+
   private Float getNdFilter(int i) { return null; }
-  
+
   Integer getEmWave(int i) { return null; }
 
   private Integer getExWave(int i) { return null; }
-  
+
   private String getPhotometricInterpretation(int i)
-    throws FormatException, IOException 
+    throws FormatException, IOException
   {
-    return (String) getMetadataValue(currentId, 
+    return (String) getMetadataValue(currentId,
       "metaDataPhotometricInterpretation");
   }
-  
+
   private String getMode(int i) { return null; }
 
   protected void put(String key, Object value) {

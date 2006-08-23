@@ -175,7 +175,7 @@ public class OIBReader extends FormatReader {
 
       if (DataTools.stripString(new String(data)).indexOf("Parameters") != -1) {
         // this file contains INI-style metadata
-     
+
         String meta = DataTools.stripString(new String(data));
         try {
           meta = meta.substring(meta.indexOf("]") + 1);
@@ -189,21 +189,21 @@ public class OIBReader extends FormatReader {
           int eqIndex = meta.indexOf("=");
           try {
             String key = meta.substring(0, eqIndex);
-            String value = 
+            String value =
               meta.substring(eqIndex + 1, meta.indexOf("\r\n", eqIndex));
             if (key.length() < 512 && value.length() < 512) {
               metadata.put(key.trim(), value.trim());
-             
+
               if (key.indexOf("??") != -1 || value.indexOf("??") != -1 ||
                 key.indexOf("   ") != -1 || value.indexOf("   ") != -1)
               {
                 break;
               }
 
-              if (key.trim().endsWith("AbsPositionUnitName") && 
-                value.trim().equals("\"Ch\"")) 
+              if (key.trim().endsWith("AbsPositionUnitName") &&
+                value.trim().equals("\"Ch\""))
               {
-                setSizeC = true; 
+                setSizeC = true;
               }
 
               if (setSizeC && key.trim().equals("Number")) {
