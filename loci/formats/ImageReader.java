@@ -335,6 +335,11 @@ public class ImageReader implements IFormatReader {
       for (int i=0; i<args.length; i++) {
         String arg = args[i];
         if (arg.startsWith("-")) continue;
+        try {
+          Integer.parseInt(arg);
+          continue;
+        }
+        catch (Exception e ) { }
         System.out.print("Checking file format ");
         System.out.println("[" + getFormat(arg) + "]");
         File f = new File(arg);
