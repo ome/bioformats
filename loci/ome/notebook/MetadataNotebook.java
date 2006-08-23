@@ -56,12 +56,22 @@ public class MetadataNotebook extends JFrame
   protected boolean opening;
   protected loci.ome.viewer.MetadataPane mdp;
   protected JMenuItem fileNew;
+  protected NotePane noteP;
+  protected WiscScanPane scanP;
+  protected JCheckBoxMenuItem advView, noteView, normView, scanView;
 
   // -- Constructor --
 
   public MetadataNotebook(String[] args) {
     super("OME Metadata Notebook");
 
+		try {
+	    UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+		}
+		catch (Exception exc) {
+		  System.out.println("Sorry but we could not find the look and feel jar.");
+		}
+		
     //initialize fields
     currentFile = null;
     opening = true;
@@ -84,9 +94,14 @@ public class MetadataNotebook extends JFrame
       metadata = new MetadataPane(file);
     }
     else metadata = new MetadataPane();
+    
+    noteP = new NotePane();
+    scanP = new WiscScanPane();
 
     metadata.setVisible(true);
     mdp.setVisible(false);
+    noteP.setVisible(false);
+    scanP.setVisible(false);
 
     JPanel contentPanel = new JPanel();
     contentPanel.setLayout(new CardLayout());
@@ -95,6 +110,8 @@ public class MetadataNotebook extends JFrame
 //    mdp.setBorder(new EmptyBorder(0,0,0,0));
     contentPanel.add("notebook", metadata);
     contentPanel.add("viewer", mdp);
+    contentPanel.add("notes", noteP);
+    contentPanel.add("scan", scanP);
     setContentPane(contentPanel);
 
     //setup the menus on this frame
@@ -153,8 +170,26 @@ public class MetadataNotebook extends JFrame
 
     JMenu toolsMenu = new JMenu("Tools");
     toolsMenu.setMnemonic('t');
-    menubar.add(toolsMenu);
-    JCheckBoxMenuItem advView = new JCheckBoxMenuItem("XML View");
+    menubar.add(toolsMenu);    
+    normView = new JCheckBoxMenuItem("Normal View");
+    normView.setSelected(true);
+    toolsMenu.add(normView);
+    normView.addItemListener(this);
+    normView.setMnemonic('r');
+    normView.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, MENU_MASK));
+    scanView = new JCheckBoxMenuItem("WiscScan View");
+    scanView.setSelected(false);
+    toolsMenu.add(scanView);
+    scanView.addItemListener(this);
+    scanView.setMnemonic('w');
+    scanView.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, MENU_MASK));
+    noteView = new JCheckBoxMenuItem("Note List View");
+    noteView.setSelected(false);
+    toolsMenu.add(noteView);
+    noteView.addItemListener(this);
+    noteView.setMnemonic('l');
+    noteView.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, MENU_MASK));
+    advView = new JCheckBoxMenuItem("XML View");
     advView.setSelected(false);
     toolsMenu.add(advView);
     advView.addItemListener(this);
@@ -190,6 +225,7 @@ public class MetadataNotebook extends JFrame
   public void openFile(File file) {
     metadata.setOMEXML(file);
     mdp.setOMEXML(file);
+    if(noteView.getState()) noteP.setPanels(metadata.panelList);
     setTitle("OME Metadata Notebook - " + file);
   }
 
@@ -337,18 +373,70 @@ public class MetadataNotebook extends JFrame
   }
 
   public void itemStateChanged(ItemEvent e) {
-    if (e.getStateChange() == ItemEvent.SELECTED) {
+    if (e.getStateChange() == ItemEvent.SELECTED && 
+      (JCheckBoxMenuItem) e.getItem() == advView) {
+      noteView.setState(false);
+      normView.setState(false);
+      scanView.setState(false);
       metadata.setVisible(false);
+      noteP.setVisible(false);
+      scanP.setVisible(false);
       tabsMenu.setEnabled(false);
       fileNew.setEnabled(false);
-      mdp.setVisible(true);
       mdp.setOMEXML(metadata.getRoot());
+      mdp.setVisible(true);
     }
-    else {
+    else if (e.getStateChange() == ItemEvent.SELECTED && 
+      (JCheckBoxMenuItem) e.getItem() == noteView) {
+      advView.setState(false);
+      normView.setState(false);
+      scanView.setState(false);
+      metadata.setVisible(false);
+      mdp.setVisible(false);
+      scanP.setVisible(false);
+      tabsMenu.setEnabled(false);
+      fileNew.setEnabled(false);
+      noteP.setPanels(metadata.panelList);
+      noteP.setVisible(true);
+    }
+    else if (e.getStateChange() == ItemEvent.SELECTED && 
+      (JCheckBoxMenuItem) e.getItem() == scanView) {
+      noteView.setState(false);
+      advView.setState(false);
+      normView.setState(false);
+      metadata.setVisible(false);
+      mdp.setVisible(false);
+      tabsMenu.setEnabled(false);
+      fileNew.setEnabled(false);
+//      scanP.setOMEXML(metadata.currentFile);
+      scanP.setVisible(true);
+    }
+    else if (e.getStateChange() == ItemEvent.SELECTED && 
+      (JCheckBoxMenuItem) e.getItem() == normView) {
+      advView.setState(false);
+      noteView.setState(false);
+      scanView.setState(false);
+      noteP.setVisible(false);
+      scanP.setVisible(false);
       mdp.setVisible(false);
       tabsMenu.setEnabled(true);
       fileNew.setEnabled(true);
+      metadata.setupTabs(metadata.getRoot());
       metadata.setVisible(true);
+    }
+    else {
+      if(!advView.getState() && !noteView.getState()
+        && !scanView.getState())
+      	normView.setState(true);
+      else {
+	      noteP.setVisible(false);
+	      mdp.setVisible(false);
+	      scanP.setVisible(false);
+	      tabsMenu.setEnabled(true);
+	      fileNew.setEnabled(true);
+	      metadata.setupTabs(metadata.getRoot());
+	      metadata.setVisible(true);
+      }
     }
   }
 

@@ -1,0 +1,282 @@
+//
+// NotePane.java
+//
+
+/*
+OME Metadata Notebook application for exploration and editing of OME-XML and
+OME-TIFF metadata. Copyright (C) 2006 Christopher Peterson.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU Library General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+package loci.ome.notebook;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import java.util.Vector;
+import java.util.Hashtable;
+import java.util.Enumeration;
+import java.util.Calendar;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import javax.swing.filechooser.FileFilter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
+
+public class NotePane extends JScrollPane
+  implements ActionListener
+{
+  public static final Color TEXT_COLOR =
+    new Color(0,35,0);
+    
+  private JPanel titlePanel;
+  protected JFileChooser chooser;
+  private Vector tPanels;
+
+  public NotePane() {
+  	super();
+  	
+  	tPanels = null;
+  	
+  	titlePanel = new JPanel();
+    titlePanel.setLayout(new GridLayout(2,1));
+    JLabel title = new JLabel();
+    Font thisFont = title.getFont();
+    Font newFont = new Font(thisFont.getFontName(),Font.BOLD,18);
+    title.setFont(newFont);
+    title.setText(" Note List:");
+    title.setForeground(new Color(255,255,255));
+
+    JButton saveButton = new JButton("Export Notes");
+    saveButton.setPreferredSize(new Dimension(120,17));
+    saveButton.setActionCommand("save");
+    saveButton.addActionListener(this);
+    saveButton.setOpaque(false);
+    saveButton.setForeground(TEXT_COLOR);
+
+    Color aColor = getBackground();
+
+    JTextArea descrip = new JTextArea();
+    descrip.setEditable(false);
+    descrip.setLineWrap(true);
+    descrip.setWrapStyleWord(true);
+    descrip.setBackground(aColor);
+    newFont = new Font(thisFont.getFontName(),
+      Font.ITALIC,thisFont.getSize());
+    descrip.setFont(newFont);
+    descrip.setText("     " + "A comprehensive list of all notes in this file.");
+
+    FormLayout myLayout = new FormLayout(
+      "pref, 5dlu, pref:grow:right, 5dlu",
+      "5dlu, pref, 5dlu, pref");
+    PanelBuilder build = new PanelBuilder(myLayout);
+    CellConstraints cellC = new CellConstraints();
+
+    build.add( title, cellC.xy(1, 2, "left,center"));
+    build.add( saveButton, cellC.xy(3, 2, "right,center"));
+    build.add( descrip, cellC.xyw(1, 4, 4, "fill,center"));
+    titlePanel = build.getPanel();
+    titlePanel.setBackground(TEXT_COLOR);
+    
+    chooser = new JFileChooser(System.getProperty("user.dir"));
+   	chooser.setDialogTitle("Export Notes to Text File");
+    chooser.setApproveButtonText("Save");
+    chooser.setApproveButtonToolTipText("Export notes to "
+        + "selected file.");
+    chooser.setFileFilter(new TextFileFilter());
+
+  }
+  
+  public void setPanels(Vector tablePanels) {
+    tPanels = tablePanels;
+  
+    String rowString = "pref";
+    for(int i = 0; i < tablePanels.size();i++) {
+    	rowString = rowString + ", 5dlu, pref";
+    }    
+    
+    ScrollablePanel contentPanel = new ScrollablePanel();
+    FormLayout panelLayout = new FormLayout(
+      "5dlu, pref:grow, 5dlu",
+      rowString);
+    contentPanel.setLayout(panelLayout);
+    CellConstraints cc = new CellConstraints();
+    
+    contentPanel.add(titlePanel, cc.xyw(1,1,3));
+  
+	  for(int i = 0;i < tablePanels.size();i++) {
+	  	MetadataPane.TablePanel tableP = (MetadataPane.TablePanel) 
+	  	  tablePanels.get(i);
+	  	tableP.tableName.setForeground(TEXT_COLOR);
+	  	tableP.addButton.setVisible(false);
+	  	tableP.delButton.setVisible(false);
+	  	tableP.tHead.setVisible(false);
+	  	tableP.table.setVisible(false);
+	  	if(tableP.imageLabel != null) tableP.imageLabel.setVisible(false);
+	  	
+	  	contentPanel.add( tableP, cc.xy(2,(2*i)+3));
+	  }
+	  
+	  setViewportView(contentPanel);
+	}
+	
+	public void actionPerformed(ActionEvent e) {
+	  if(e.getActionCommand().equals("save")) {
+	     Hashtable topHash = new Hashtable();
+	    	Vector names = new Vector();
+	    	for(int i = 0;i < tPanels.size();i++) {
+	    		MetadataPane.TablePanel thisPanel = 
+	    		  (MetadataPane.TablePanel) tPanels.get(i);
+	    		Hashtable noteHash = thisPanel.noteP.getNoteHash();
+	    		topHash.put(thisPanel.name, noteHash);
+	    		
+	    		Enumeration keys = noteHash.keys();
+	    		while(keys.hasMoreElements()) {
+	    		  String suffix = (String) keys.nextElement();
+	    		  names.add(thisPanel.name + "  >>>" + suffix);
+	    		} 
+	    	}
+	    	
+			Object [] values = names.toArray();
+	    	
+	    	Object [] toExport = ExportDialog.showDialog(
+	    	  (Component) getTopLevelAncestor(),
+	    	  (Component) getTopLevelAncestor(),
+	    		"Select the notes you wish to export:",
+	    		"Note Chooser",
+	    		values,
+	    		(Object[]) null,
+	    		"Image (23): LaserCoordinates (23)  >>>Long Note Name");
+	    		
+		  	if (toExport != null) {
+			  	if (toExport.length != 0) {
+					int rval = chooser.showOpenDialog(this);
+					if (rval == JFileChooser.APPROVE_OPTION) {					  
+						String pathName = chooser.getSelectedFile().getPath();
+						if(!pathName.endsWith(".txt")) pathName = pathName + ".txt";
+						
+						File file = new File(pathName);
+						
+						try {
+							FileWriter fw = new FileWriter(file);
+							BufferedWriter bw = new BufferedWriter(fw); 
+							bw.write("** Metadata Notes from " + 
+							  ((MetadataPane.TablePanel)tPanels.get(0))
+							  .getCurrentFile().getName() + " **");
+							bw.newLine();
+							bw.newLine();
+							Calendar rightNow = Calendar.getInstance();
+							bw.write("** Date Exported: " + rightNow.get(Calendar.MONTH) +
+							  "/" + rightNow.get(Calendar.DAY_OF_MONTH) + "/" +
+							  rightNow.get(Calendar.YEAR) + " " +
+							  rightNow.get(Calendar.HOUR_OF_DAY) + ":" +
+							  rightNow.get(Calendar.MINUTE) + " **");
+							bw.newLine();
+							bw.newLine();
+						
+							Vector alreadyUsed = new Vector();
+							int placeMark = 1;
+							
+							for (int i = 0;i < toExport.length;i++) {
+							  String thisNoteName = (String) toExport[i];
+							  
+							  int index = thisNoteName.indexOf(">");
+							  String tableName = thisNoteName.substring(0,index-2);
+						
+								Hashtable subHash = (Hashtable) topHash.get(tableName);
+							
+								if(!alreadyUsed.contains(tableName)) {
+									alreadyUsed.add(tableName);
+									
+									bw.write(placeMark + ") " + tableName);
+									placeMark++;
+									bw.newLine();
+									bw.newLine();
+								}
+								
+								int lIndex = thisNoteName.lastIndexOf(">");
+								String noteName = thisNoteName.substring(lIndex+1,
+									thisNoteName.length());
+								String noteValue = (String) subHash.get(noteName);
+								
+								bw.write("  ->" + noteName + ":");
+								bw.newLine();
+								int newLine = noteValue.indexOf("\n");
+								//handle newline characters found in the note's value
+								while(newLine != -1) {
+									String subValue = noteValue.substring(0,newLine);
+									noteValue = noteValue.substring(newLine+1,
+										noteValue.length());
+									bw.write("     " + subValue);
+									bw.newLine();
+									newLine = noteValue.indexOf("\n");									
+								}
+								if(noteValue != null) bw.write("     " + noteValue);
+								bw.newLine();
+								bw.newLine();
+							}
+							bw.close();
+						}
+						catch (Exception exc) {exc.printStackTrace();}
+				  }
+					else JOptionPane.showMessageDialog(getTopLevelAncestor(),
+					      "No notes were selected to export!",
+					      "Unable to Export Nothingness", JOptionPane.ERROR_MESSAGE);
+		    }
+		  }
+		}
+	}
+	
+
+	// --Helper Classes--
+	
+	public class ScrollablePanel extends JPanel
+	  implements Scrollable
+	{
+	  public ScrollablePanel() {
+	    super();
+	  }
+	  
+	  public Dimension getPreferredScrollableViewportSize() {
+      return getPreferredSize();
+    }
+
+    public int getScrollableUnitIncrement(Rectangle visibleRect,
+      int orientation, int direction) {return 5;}
+    public int getScrollableBlockIncrement(Rectangle visibleRect,
+      int orientation, int direction) {return visibleRect.height;}
+    public boolean getScrollableTracksViewportWidth() {return true;}
+    public boolean getScrollableTracksViewportHeight() {return false;}
+  }
+  
+	public class TextFileFilter extends FileFilter
+	{
+	  public boolean accept(File f) {
+	    if(f.getPath().endsWith(".txt") || f.isDirectory()) return true;
+	    else return false;
+	  }
+	  
+	  public String getDescription() {
+	    return "Text Files";
+	  }
+	}
+}

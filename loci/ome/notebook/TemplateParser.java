@@ -128,9 +128,8 @@ public class TemplateParser {
     for (int i = 0;i<TYPE_DEF_LIST.length;i++) {
       Document templateDoc = null;
       try {
-        File f = new File(TYPE_DEF_FOLDER + TYPE_DEF_LIST[i]);
         DocumentBuilder db = DOC_FACT.newDocumentBuilder();
-        templateDoc = db.parse(f);
+        templateDoc = db.parse(TemplateParser.class.getResourceAsStream(TYPE_DEF_FOLDER + TYPE_DEF_LIST[i]));
       }
       catch (Exception e) {
         System.out.println("Some exception occured: " + e.toString());
@@ -174,9 +173,8 @@ public class TemplateParser {
     for (int i = 0;i<OLD_DEF_LIST.length;i++) {
       Document templateDoc = null;
       try {
-        File f = new File(TYPE_DEF_FOLDER + OLD_DEF_LIST[i]);
         DocumentBuilder db = DOC_FACT.newDocumentBuilder();
-        templateDoc = db.parse(f);
+        templateDoc = db.parse(TemplateParser.class.getResourceAsStream(TYPE_DEF_FOLDER + OLD_DEF_LIST[i]));
       }
       catch (Exception e) {
         System.out.println("Some exception occured: " + e.toString());

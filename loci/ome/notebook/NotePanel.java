@@ -27,6 +27,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import java.awt.*;
 import java.util.Vector;
+import java.util.Hashtable;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
@@ -148,6 +149,20 @@ public class NotePanel extends JPanel implements ListSelectionListener {
       String id = tableP.oNode.getAttribute("ID");
       if (anEle.getAttribute("NoteFor").equals(id)) results.add(anEle);
     }
+    return results;
+  }
+  
+  public Hashtable getNoteHash() {
+    Hashtable results = new Hashtable();
+    Vector noteV = getNoteElements();
+    if (noteV != null) {
+	    for(int i = 0;i< noteV.size();i++) {
+	      Element ele = (Element) noteV.get(i);
+	      String key = ele.getAttribute("Name");
+	      String value = ele.getAttribute("Value");
+	      results.put(key,value);
+	    }
+	  }
     return results;
   }
 

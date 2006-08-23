@@ -47,7 +47,9 @@ import org.w3c.dom.*;
  *
  * @author Christopher Peterson crpeterson2 at wisc.edu
  */
-public class MetadataPane extends JPanel implements ActionListener, Runnable {
+public class MetadataPane extends JPanel 
+  implements ActionListener, Runnable 
+{
 
   // -- Constants --
 
@@ -903,8 +905,8 @@ public class MetadataPane extends JPanel implements ActionListener, Runnable {
             Element e = (Element) nl.item(j);
             if (e == aChild) {
               Integer aInt = new Integer(j+1);
-              if (i == 0) result += ": ";
-              result += e.getTagName() + " (" + aInt.toString() + ")";
+              if (!result.equals("")) result += ": " + e.getTagName() + " (" + aInt + ")";
+              else result += e.getTagName() + " (" + aInt + ")";
             }
           }
         }
@@ -1091,10 +1093,12 @@ public class MetadataPane extends JPanel implements ActionListener, Runnable {
     public String id;
     public String name;
     public ClickableTable table;
+    JTableHeader tHead;
     public Element el;
     public boolean isTopLevel;
-    private JButton noteButton;
+    protected JButton noteButton, addButton, delButton;
     protected Vector attrList, refList;
+    protected JLabel tableName, imageLabel;
 
     public TablePanel(Element e, TabPanel tp, OMEXMLNode on) {
       isTopLevel = false;
@@ -1152,7 +1156,7 @@ public class MetadataPane extends JPanel implements ActionListener, Runnable {
       Element cDataEl = DOMUtil.getChildElement("CData",e);
       if (cDataEl != null) attrList.add(0,cDataEl);
 
-      JLabel tableName = null;
+      tableName = null;
       if (oNode == null) tableName =
         new JLabel(thisName, NO_DATA_BULLET, JLabel.LEFT);
       else tableName = new JLabel(thisName, DATA_BULLET, JLabel.LEFT);
@@ -1174,7 +1178,7 @@ public class MetadataPane extends JPanel implements ActionListener, Runnable {
         "Display or hide the notes associated with this " + name + ".");
       noteButton.setForeground(TEXT_COLOR);
 
-      JLabel imageLabel = null;
+      imageLabel = null;
       if (name.endsWith("Pixels") || name.endsWith("Pixels (1)")) {
         if (thumb != null) {
           imageLabel = new JLabel(new ImageIcon(thumb));
@@ -1203,7 +1207,7 @@ public class MetadataPane extends JPanel implements ActionListener, Runnable {
       table.getColumnModel().getColumn(2).setPreferredWidth(70);
       table.getColumnModel().getColumn(2).setMaxWidth(70);
       table.getColumnModel().getColumn(2).setMinWidth(70);
-      JTableHeader tHead = table.getTableHeader();
+      tHead = table.getTableHeader();
       tHead.setResizingAllowed(true);
       tHead.setReorderingAllowed(false);
 //      tHead.setBackground(NotePanel.BACK_COLOR);
@@ -1213,7 +1217,7 @@ public class MetadataPane extends JPanel implements ActionListener, Runnable {
       String clippedName = name;
       if (name.endsWith(")")) clippedName = name.substring(0,name.length() - 4);
 
-      JButton addButton = new JButton("New Table");
+      addButton = new JButton("New Table");
       addButton.setPreferredSize(new Dimension(110,17));
       addButton.addActionListener(table);
       addButton.setActionCommand("bigAdd");
@@ -1221,7 +1225,7 @@ public class MetadataPane extends JPanel implements ActionListener, Runnable {
       if ( !isTopLevel && tPanel.oNode == null) addButton.setEnabled(false);
       addButton.setForeground(ADD_COLOR);
 
-      JButton delButton = new JButton("Delete Table");
+      delButton = new JButton("Delete Table");
       delButton.setPreferredSize(new Dimension(110,17));
       delButton.addActionListener(table);
       delButton.setActionCommand("bigRem");
@@ -1435,6 +1439,8 @@ public class MetadataPane extends JPanel implements ActionListener, Runnable {
     public void callStateChanged(boolean hasChanged) {
       stateChanged(true);
     }
+    
+    public File getCurrentFile() {return currentFile;}
   }
 
 }
