@@ -28,8 +28,6 @@ import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
-import java.nio.ByteBuffer;
-import java.nio.ShortBuffer;
 
 /**
  * A utility class with convenience methods for manipulating images.
@@ -718,7 +716,7 @@ public abstract class ImageTools {
     return null;
   }
 
-  /** 
+  /**
    * Pad the image to the given width and height. The image will be centered
    * within the new bounds.
    */
@@ -728,7 +726,7 @@ public abstract class ImageTools {
       byte[][] data = new byte[1][width * height];
       return makeImage(data, width, height);
     }
-    
+
     boolean needsPadding = img.getWidth() != width || img.getHeight() != height;
 
     if (needsPadding) {
@@ -793,7 +791,7 @@ public abstract class ImageTools {
    * centered within the new bounds.
    */
   public static byte[] padImage(byte[] b, int oldWidth, int width, int height) {
-    boolean needsPadding = 
+    boolean needsPadding =
       (oldWidth != width) || ((b.length / oldWidth) != height);
 
     if (needsPadding) {
@@ -809,8 +807,8 @@ public abstract class ImageTools {
       byte[] padded = new byte[width * height];
 
       for (int i=ypad; i<height - ypad; i++) {
-        System.arraycopy(b, (i - ypad) * oldWidth, padded, i*width + xpad, 
-          oldWidth); 
+        System.arraycopy(b, (i - ypad) * oldWidth, padded, i*width + xpad,
+          oldWidth);
       }
       return padded;
     }
@@ -838,8 +836,8 @@ public abstract class ImageTools {
       short[] padded = new short[width * height];
 
       for (int i=ypad; i<height - ypad; i++) {
-        System.arraycopy(b, (i - ypad) * oldWidth, padded, i*width + xpad, 
-          oldWidth); 
+        System.arraycopy(b, (i - ypad) * oldWidth, padded, i*width + xpad,
+          oldWidth);
       }
       return padded;
     }
@@ -866,8 +864,8 @@ public abstract class ImageTools {
       int[] padded = new int[width * height];
 
       for (int i=ypad; i<height - ypad; i++) {
-        System.arraycopy(b, (i - ypad) * oldWidth, padded, i*width + xpad, 
-          oldWidth); 
+        System.arraycopy(b, (i - ypad) * oldWidth, padded, i*width + xpad,
+          oldWidth);
       }
       return padded;
     }
@@ -895,8 +893,8 @@ public abstract class ImageTools {
       float[] padded = new float[width * height];
 
       for (int i=ypad; i<height - ypad; i++) {
-        System.arraycopy(b, (i - ypad) * oldWidth, padded, i*width + xpad, 
-          oldWidth); 
+        System.arraycopy(b, (i - ypad) * oldWidth, padded, i*width + xpad,
+          oldWidth);
       }
       return padded;
     }
@@ -907,8 +905,8 @@ public abstract class ImageTools {
    * Pad the double array to the given width and height. The image will be
    * centered within the new bounds.
    */
-  public static double[] padImage(double[] b, int oldWidth, int width, 
-    int height) 
+  public static double[] padImage(double[] b, int oldWidth, int width,
+    int height)
   {
     boolean needsPadding = oldWidth != width || (b.length / oldWidth) != height;
 
@@ -925,14 +923,14 @@ public abstract class ImageTools {
       double[] padded = new double[width * height];
 
       for (int i=ypad; i<height - ypad; i++) {
-        System.arraycopy(b, (i - ypad) * oldWidth, padded, i*width + xpad, 
-          oldWidth); 
+        System.arraycopy(b, (i - ypad) * oldWidth, padded, i*width + xpad,
+          oldWidth);
       }
       return padded;
     }
     return b;
   }
-  
+
   // -- Image scaling --
 
   /** Copies the source image into the target, applying scaling. */
