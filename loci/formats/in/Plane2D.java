@@ -42,10 +42,10 @@ public class Plane2D
 
   /** The Java type that we're using for pixel value retrieval */
   private int                 type;
-  
+
   /** Number of pixels along the <i>X</i>-axis. */
   private int                 sizeX;
-  
+
   /** Number of pixels along the <i>Y</i>-axis. */
   private int                 sizeY;
 

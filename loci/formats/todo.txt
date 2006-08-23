@@ -1,5 +1,4 @@
 Testing:
-* leica-lif/matthias (from Leica SP5 scope)
 * quicktime/haining/video2.mov (both legacy and native)
 
 QuickTime:
