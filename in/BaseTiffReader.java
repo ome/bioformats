@@ -446,7 +446,8 @@ public abstract class BaseTiffReader extends FormatReader {
       {
         try {
           setLogicalChannel(i);
-          setChannelGlobalMinMax(i);
+// CTR 24 Aug 2006 - this call is horribly slow for TIFF files
+//          setChannelGlobalMinMax(i);
         }
         catch (Exception e) { }
       }
