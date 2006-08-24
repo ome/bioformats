@@ -81,6 +81,9 @@ public class MetadataNotebook extends JFrame
 
     mdp = new loci.ome.viewer.MetadataPane();
 
+    noteP = new NotePane();
+    scanP = new WiscScanPane();
+
     //create a MetadataPane, where most everything happens
     if (args.length > 0) {
       File file = null;
@@ -94,9 +97,6 @@ public class MetadataNotebook extends JFrame
       metadata = new MetadataPane(file);
     }
     else metadata = new MetadataPane();
-    
-    noteP = new NotePane();
-    scanP = new WiscScanPane();
 
     metadata.setVisible(true);
     mdp.setVisible(false);
@@ -195,6 +195,15 @@ public class MetadataNotebook extends JFrame
     advView.addItemListener(this);
     advView.setMnemonic('v');
     advView.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, MENU_MASK));
+    JSeparator sep = new JSeparator();
+    toolsMenu.add(sep);
+    JMenuItem exportItem = new JMenuItem("Export Notes");
+    exportItem.setSelected(false);
+    toolsMenu.add(exportItem);
+    exportItem.addActionListener(this);
+    exportItem.setActionCommand("export");
+    exportItem.setMnemonic('x');
+    exportItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, MENU_MASK));
 
     JMenu help = new JMenu("Help");
     help.setMnemonic('h');
@@ -225,6 +234,7 @@ public class MetadataNotebook extends JFrame
   public void openFile(File file) {
     metadata.setOMEXML(file);
     mdp.setOMEXML(file);
+    scanP.setOMEXML(metadata.getRoot());
     if(noteView.getState()) noteP.setPanels(metadata.panelList);
     setTitle("OME Metadata Notebook - " + file);
   }
@@ -286,7 +296,7 @@ public class MetadataNotebook extends JFrame
         metadata.setupTabs();
       }
     }
-    if ("open".equals(cmd)) {
+    else if ("open".equals(cmd)) {
       if (metadata.getState()) {
         Object[] options = {"Yes, do it!", "No thanks."};
         int n = JOptionPane.showOptionDialog(this,
@@ -370,6 +380,10 @@ public class MetadataNotebook extends JFrame
     else if (cmd.startsWith("tabChange")) {
       metadata.tabChange( Integer.parseInt(cmd.substring(9)) );
     }
+    else if ("export".equals(cmd)) {
+      noteP.tPanels = metadata.panelList;
+      noteP.exportNotes();
+    }
   }
 
   public void itemStateChanged(ItemEvent e) {
@@ -408,7 +422,7 @@ public class MetadataNotebook extends JFrame
       mdp.setVisible(false);
       tabsMenu.setEnabled(false);
       fileNew.setEnabled(false);
-//      scanP.setOMEXML(metadata.currentFile);
+      scanP.setOMEXML(metadata.getRoot());
       scanP.setVisible(true);
     }
     else if (e.getStateChange() == ItemEvent.SELECTED && 

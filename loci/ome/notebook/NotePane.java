@@ -32,6 +32,7 @@ import java.util.Vector;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Calendar;
+import java.util.Arrays;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -42,6 +43,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 
+import org.w3c.dom.Element;
+
 public class NotePane extends JScrollPane
   implements ActionListener
 {
@@ -50,7 +53,7 @@ public class NotePane extends JScrollPane
     
   private JPanel titlePanel;
   protected JFileChooser chooser;
-  private Vector tPanels;
+  protected Vector tPanels;
 
   public NotePane() {
   	super();
@@ -139,22 +142,25 @@ public class NotePane extends JScrollPane
 	  setViewportView(contentPanel);
 	}
 	
-	public void actionPerformed(ActionEvent e) {
-	  if(e.getActionCommand().equals("save")) {
-	     Hashtable topHash = new Hashtable();
-	    	Vector names = new Vector();
-	    	for(int i = 0;i < tPanels.size();i++) {
-	    		MetadataPane.TablePanel thisPanel = 
-	    		  (MetadataPane.TablePanel) tPanels.get(i);
-	    		Hashtable noteHash = thisPanel.noteP.getNoteHash();
-	    		topHash.put(thisPanel.name, noteHash);
-	    		
-	    		Enumeration keys = noteHash.keys();
-	    		while(keys.hasMoreElements()) {
-	    		  String suffix = (String) keys.nextElement();
-	    		  names.add(thisPanel.name + "  >>>" + suffix);
-	    		} 
-	    	}
+	public void exportNotes() {
+		if(tPanels != null) {
+	    Hashtable topHash = new Hashtable();
+    	Vector names = new Vector();
+    	for(int i = 0;i < tPanels.size();i++) {
+    		MetadataPane.TablePanel thisPanel = 
+    		  (MetadataPane.TablePanel) tPanels.get(i);
+    		Hashtable noteHash = thisPanel.noteP.getNoteHash();
+    		topHash.put(thisPanel.name, noteHash);
+    		
+    		Vector noteElements = thisPanel.noteP.getNoteElements();
+    		if(noteElements!=null) {
+	    		for (int j=0;j<noteElements.size();j++) {
+	    			Element thisEle = (Element) noteElements.get(j);
+	    		  String suffix = thisEle.getAttribute("Name"); 
+	    		  names.add(thisPanel.name + "  >>>" + suffix);  		  
+	    		}
+    		}
+    	}
 	    	
 			Object [] values = names.toArray();
 	    	
@@ -244,6 +250,10 @@ public class NotePane extends JScrollPane
 		    }
 		  }
 		}
+	}
+	
+	public void actionPerformed(ActionEvent e) {
+	  if(e.getActionCommand().equals("save")) exportNotes();
 	}
 	
 

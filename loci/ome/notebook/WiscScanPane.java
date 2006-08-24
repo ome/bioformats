@@ -3,6 +3,15 @@ package loci.ome.notebook;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.DocumentEvent;
+
+import java.util.Vector;
+import java.util.Arrays;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -11,8 +20,39 @@ import com.jgoodies.forms.layout.FormLayout;
 import org.openmicroscopy.xml.*;
 import org.w3c.dom.*;
 
-public class WiscScanPane extends JTabbedPane {
+public class WiscScanPane extends JTabbedPane
+  implements ActionListener, ItemListener, DocumentListener
+{
+	public static final Object [] exChoices = {"Time-lapse","4-D+",
+	  "PGI/Documentation",
+		"Photoablation","Fluorescense-Lifetime","Spectral-Imaging",
+		"FP","FRET","Screen","Immunocytochemistry Immunofluorescence",
+		"FISH","Electrophysiology","Ion-Imaging","Colocalization",
+	  "FRAP","Photoactivation","Uncaging","Optical-Trapping",
+		"Other"};
+	public static final Object [] wheeChoices = {"None","1 TFI 650SP"};
+	public static final Object [] hoChoices = {"None","1 TFI 650SP"};
+
+  protected JComboBox groupBox, exB, wheeB, hoB;
+  protected JCheckBox tiC, phC, pmtC;
+  protected JTextField firstField,lastField,OMEField,passField,
+    emailField,prT, tempT, pocT, tapT, tiT,pmtT;
+  protected JTextArea desA;
+  protected Element exrEle,exEle,prEle,desEle,tiEle,pmtEle,phEle;
+  protected boolean setup;
+  protected OMENode ome;
+
 	public WiscScanPane() {
+	  setup = false;
+	  ome = null;
+	  exrEle = null;
+	  exEle = null;
+	  prEle = null;
+	  desEle = null;
+	  tiEle = null;
+	  pmtEle = null;
+	  phEle = null;
+	
 	  setPreferredSize(new Dimension(700, 500));
 		JPanel loginPanel = new JPanel();
 		JPanel experimentPanel = new ScrollablePanel();
@@ -27,30 +67,37 @@ public class WiscScanPane extends JTabbedPane {
 	  int w = 300, h = 20;
 	  JLabel firstLabel = new JLabel("First Name");
 	  firstLabel.setPreferredSize(new Dimension(w,h));
-	  JTextField firstField = new JTextField();
+	  firstField = new JTextField();
 	  firstField.setPreferredSize(new Dimension(w,h));
+	  firstField.getDocument().addDocumentListener(this);
 	  JLabel lastLabel = new JLabel("Last Name");
 	  lastLabel.setPreferredSize(new Dimension(w,h));
-	  JTextField lastField = new JTextField();
+	  lastField = new JTextField();
 	  lastField.setPreferredSize(new Dimension(w,h));
+	  lastField.getDocument().addDocumentListener(this);
 	  JLabel OMELabel = new JLabel("OME Name (not supported)");
 	  OMELabel.setPreferredSize(new Dimension(w,h));
-	  JTextField OMEField = new JTextField();
+	  OMEField = new JTextField();
 	  OMEField.setEnabled(false);
 	  OMEField.setPreferredSize(new Dimension(w,h));
+	  OMEField.getDocument().addDocumentListener(this);
 	  JLabel passLabel = new JLabel("Password (not supported)");
 	  passLabel.setPreferredSize(new Dimension(w,h));
-	  JTextField passField = new JTextField();
+	  passField = new JTextField();
 	  passField.setEnabled(false);
 	  passField.setPreferredSize(new Dimension(w,h));
+	  passField.getDocument().addDocumentListener(this);
 	  JLabel emailLabel = new JLabel("Email");
 	  emailLabel.setPreferredSize(new Dimension(w,h));
-	  JTextField emailField = new JTextField();
+	  emailField = new JTextField();
 	  emailField.setPreferredSize(new Dimension(w,h));
-	  JLabel groupLabel = new JLabel("Group");
+	  emailField.getDocument().addDocumentListener(this);
+	  JLabel groupLabel = new JLabel("Group (not supported)");
 	  groupLabel.setPreferredSize(new Dimension(w,h));
-	  JComboBox groupBox = new JComboBox();
+	  groupBox = new JComboBox();
 	  groupBox.setPreferredSize(new Dimension(w,h));
+	  groupBox.addActionListener(this);
+	  groupBox.setEnabled(false);
 	  
 	  JPanel subPanel = null;
 	  
@@ -125,43 +172,50 @@ public class WiscScanPane extends JTabbedPane {
     JLabel wheeL = new JLabel("Wheel");
     JLabel hoL = new JLabel("Holder");
     
-		JTextField prT = new JTextField();
+		prT = new JTextField();
 		prT.setPreferredSize(new Dimension(w,h));
-		JTextField tempT = new JTextField();
+		prT.getDocument().addDocumentListener(this);
+		tempT = new JTextField();
 		tempT.setPreferredSize(new Dimension(w,h));
 		tempT.setEnabled(false);
-		JTextField pocT = new JTextField();
+		pocT = new JTextField();
 		pocT.setPreferredSize(new Dimension(w,h));
 		pocT.setEnabled(false);
-		JTextField tapT = new JTextField();
+		tapT = new JTextField();
 		tapT.setPreferredSize(new Dimension(w,h));
 		tapT.setEnabled(false);
 		
-		JTextField tiT = new JTextField();
+		tiT = new JTextField();
 		tiT.setPreferredSize(new Dimension(80,h));
+		tiT.setEnabled(false);
 		
-		JTextField pmtT = new JTextField();
+		pmtT = new JTextField();
 		pmtT.setPreferredSize(new Dimension(80,h));
-		pmtT.setEnabled(false);
+		pmtT.getDocument().addDocumentListener(this);
 		
-		JTextArea desA = new JTextArea("",4,1);
+		desA = new JTextArea("",4,1);
 		desA.setLineWrap(true);
     desA.setWrapStyleWord(true);
+    desA.getDocument().addDocumentListener(this);
 		JScrollPane desS = new JScrollPane(desA);
 		desS.setPreferredSize(new Dimension(w,h*4));
 		desS.setVerticalScrollBarPolicy(
       JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		
-		JComboBox exB = new JComboBox();
+		  
+		exB = new JComboBox(exChoices);
 		exB.setPreferredSize(new Dimension(w,h));
-		JComboBox wheeB = new JComboBox();
+		exB.addActionListener(this);
+		wheeB = new JComboBox(wheeChoices);
 		wheeB.setEnabled(false);
-		JComboBox hoB = new JComboBox();
+		hoB = new JComboBox(hoChoices);
 		hoB.setEnabled(false);
 		
-		JCheckBox tiC = new JCheckBox("Ti-Sapphire");
-		JCheckBox phC = new JCheckBox("Photodiode Bio-Rad 1024TLD");
-		JCheckBox pmtC = new JCheckBox("PMT Hamamatsu H7422");
+		tiC = new JCheckBox("Ti-Sapphire");
+		tiC.addItemListener(this);
+		phC = new JCheckBox("Photodiode Bio-Rad 1024TLD");
+		phC.addItemListener(this);
+		pmtC = new JCheckBox("PMT Hamamatsu H7422");
+		pmtC.addItemListener(this);
 		
 		FormLayout layoutF = new FormLayout(
         "5dlu,pref,5dlu,pref:grow,5dlu",
@@ -251,4 +305,306 @@ public class WiscScanPane extends JTabbedPane {
     public boolean getScrollableTracksViewportWidth() {return true;}
     public boolean getScrollableTracksViewportHeight() {return false;}
   }
+  
+  public void setOMEXML(OMENode omeNode) {
+    ome = omeNode;
+    setup = true;
+  
+  	Document omeDoc = null;
+  	try {
+  		omeDoc = ome.getOMEDocument(true);
+  	}
+  	catch (Exception exc) {}
+  	
+  	Vector exrVector = DOMUtil.findElementList("Experimenter",omeDoc);
+  	String firstName = "",lastName = "",emailName = "";
+  	for (int i = 0;i<exrVector.size();i++) {
+  	  Element ele = (Element) exrVector.get(i);
+  	  if (ele.hasAttribute("FirstName")) {
+  	  	if(exrEle==null || exrEle == ele) {
+	  	    firstName = ele.getAttribute("FirstName");
+	  	    exrEle = ele;
+	  	  }
+  	  }
+  	  else {
+  	    if(exrEle==null) exrEle = ele;
+  	  }
+  	  if (ele.hasAttribute("LastName")) {
+  	  	if(exrEle==null || exrEle == ele) {
+	  	    lastName = ele.getAttribute("LastName");
+	  	    exrEle = ele;
+	  	  }
+  	  }
+  	  else {
+  	    if(exrEle==null) exrEle = ele;
+  	  }
+  	  if (ele.hasAttribute("Email")) {
+  	  	if(exrEle==null || exrEle == ele) {
+	  	    emailName = ele.getAttribute("Email");
+	  	    exrEle = ele;
+	  	  }
+  	  }
+  	  else {
+  	    if(exrEle==null) exrEle = ele;
+  	  }
+  	}
+  	firstField.setText(firstName);
+  	lastField.setText(lastName);
+  	emailField.setText(emailName);
+  	
+  	Vector exVector = DOMUtil.findElementList("Experiment",omeDoc);
+		String exType = "Other";
+  	for (int i = 0;i<exVector.size();i++) {
+  	  Element ele = (Element) exVector.get(i);
+  	  if (ele.hasAttribute("Type")) {
+  	  	if(exEle==null || exEle == ele) {
+	  	    exType = ele.getAttribute("Type");
+	  	    exEle = ele;
+	  	  }
+  	  }
+  	  else {
+  	    if(exEle==null) exEle = ele;
+  	  }
+  	}
+  	Arrays.sort(exChoices);
+  	if(Arrays.binarySearch(exChoices, exType) >= 0) 
+  	  exB.setSelectedItem(exType);
+  	else exB.setSelectedItem("Other");
+  	
+  	Vector prVector = DOMUtil.findElementList("Project",omeDoc);
+		String prName = null;
+  	for (int i = 0;i<prVector.size();i++) {
+  	  Element ele = (Element) prVector.get(i);
+  	  if (ele.hasAttribute("Name")) {
+  	  	if(prEle==null || prEle == ele) {
+	  	    prName = ele.getAttribute("Name");
+	  	    prEle = ele;
+	  	  }
+  	  }
+  	  else {
+  	    if(prEle==null) prEle = ele;
+  	  }
+  	}
+  	prT.setText(prName);
+  	
+  	Vector desVector = exVector;
+		String desText = null;
+  	for (int i = 0;i<desVector.size();i++) {
+  	  Element ele = (Element) desVector.get(i);
+  	  if (ele.hasAttribute("Description")) {
+  	  	if(desEle==null || desEle == ele) {
+	  	    desText = ele.getAttribute("Description");
+	  	    desEle = ele;
+	  	  }
+  	  }
+  	  else {
+  	    if(desEle==null) desEle = ele;
+  	  }
+  	}
+  	desA.setText(desText);
+  	
+  	Vector tiVector = DOMUtil.findElementList("Laser",omeDoc);
+  	boolean tiToggle = false;
+  	for (int i = 0;i<tiVector.size();i++) {
+  	  Element ele = (Element) tiVector.get(i);
+  	  if (ele.hasAttribute("Medium")) {
+  	    String attr = ele.getAttribute("Medium");
+  	    if(attr.equals("Ti-Sapphire")) {
+  	    	if(tiEle==null || tiEle == ele) {
+  	      	tiToggle = true;
+  	    		tiEle = ele;
+  	    	}
+  	    }
+  	    else {
+  	    	if(tiEle==null) tiEle = ele;
+  	  	}
+  	  }
+  	}
+  	tiC.setSelected(tiToggle);
+  	
+  	Vector phVector = DOMUtil.findElementList("Detector",omeDoc);
+  	boolean phToggle = false;
+  	for (int i = 0;i<phVector.size();i++) {
+  	  Element ele = (Element) phVector.get(i);
+  	  if (ele.hasAttribute("Type")) {
+  	    String attr = ele.getAttribute("Type");
+  	    if(attr.equals("Photodiode")) {
+  	    	if(phEle==null || phEle==ele) {
+  	    		phEle = ele;
+  	    		phToggle = true;
+  	    	}
+  	    }
+  	    else {
+  	    	if(phEle==null) phEle = ele;
+  	  	}
+  	  }
+  	}
+  	phC.setSelected(phToggle);
+  	
+  	Vector pmtVector = phVector;
+  	boolean pmtToggle = false;
+  	for (int i = 0;i<pmtVector.size();i++) {
+  	  Element ele = (Element) pmtVector.get(i);
+  	  if (ele.hasAttribute("Type")) {
+  	    String attr = ele.getAttribute("Type");
+  	    if(attr.equals("PMT")) {
+  	      if(pmtEle==null || pmtEle==ele) {
+	  	      pmtToggle = true;
+  		    	pmtEle = ele;
+  		   	}
+  	    }
+  	    else {
+  	    	if(pmtEle==null) pmtEle = ele;
+  	  	}
+  	  }
+  	}
+  	pmtC.setSelected(pmtToggle);
+  	if(!pmtToggle) pmtT.setEnabled(false);
+  	
+  	if(pmtEle != null && pmtEle.hasAttribute("Gain")) {
+  	  pmtT.setText(pmtEle.getAttribute("Gain"));
+  	}
+  	
+  	setup = false;
+  }
+  
+  public void actionPerformed(ActionEvent e) {
+    if(!setup) {
+      if(e.getSource() instanceof JComboBox) {
+        JComboBox src = (JComboBox) e.getSource();
+        if(src==exB) {
+          if(exEle==null) {
+            exEle = MetadataPane.makeNode("Experiment",
+              ome).getDOMElement();
+          }
+          exEle.setAttribute("Type",(String) exB.getSelectedItem());
+          setOMEXML(ome);
+        }
+      }
+  	}
+  }
+  
+  public void itemStateChanged(ItemEvent e) {
+    if(!setup) {
+			JCheckBox src = (JCheckBox) e.getItem();
+			if(src==tiC) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+				  OMEXMLNode newNode = MetadataPane.makeNode("Laser",ome);
+				  newNode.setAttribute("Medium", "Ti-Sapphire");
+				  newNode.setAttribute("Type", "Solid State");
+				  tiEle = newNode.getDOMElement();
+				}
+				else {
+				  if(ome.getChild("CustomAttributes") != null) {
+					  Node thisNode = (Node) ome.getChild(
+					    "CustomAttributes").getDOMElement();
+					  thisNode.removeChild((Node)tiEle);
+					  tiEle = null;
+					}
+				}
+			}
+			else if(src==phC) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					OMEXMLNode newNode = MetadataPane.makeNode("Detector",ome);
+				  newNode.setAttribute("Manufacturer", "Bio-Rad");
+				  newNode.setAttribute("Model", "1024LD");
+				  newNode.setAttribute("Type", "Photodiode");
+				  phEle = newNode.getDOMElement();
+				}
+				else {
+				  if(ome.getChild("CustomAttributes") != null) {
+						Node thisNode = (Node) ome.getChild(
+					    "CustomAttributes").getDOMElement();
+					  thisNode.removeChild((Node)phEle);
+					  phEle = null;
+					}
+				}
+			}
+			else if(src==pmtC) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					OMEXMLNode newNode = MetadataPane.makeNode("Detector",ome);
+				  newNode.setAttribute("Manufacturer", "Hamamatsu");
+				  newNode.setAttribute("Model", "H7422");
+				  newNode.setAttribute("Type", "PMT");
+				  pmtEle = newNode.getDOMElement();
+				  pmtT.setEnabled(true);
+				}
+				else {
+					if(ome.getChild("CustomAttributes") != null) {
+						Node thisNode = (Node) ome.getChild(
+				  		"CustomAttributes").getDOMElement();
+					  thisNode.removeChild((Node)pmtEle);
+					  pmtEle = null;
+					  pmtT.setEnabled(false);
+					  pmtT.setText("");
+					}
+				}
+			}
+  	}
+  }
+  
+  public void changeNode(DocumentEvent e) {
+  	if(!setup) {
+	    setup = true;
+	    try {
+	      if(e.getDocument() == desA.getDocument()) {
+	        if(desEle==null) {
+	        	desEle = MetadataPane.makeNode("Experiment",
+	        	  ome).getDOMElement();
+	        }
+		  		desEle.setAttribute("Description", e.getDocument().getText(0,
+		        e.getDocument().getLength()));
+		      setOMEXML(ome);
+		    }
+		    else if(e.getDocument() == prT.getDocument()) {
+		    	if(prEle==null) {
+	        	prEle = MetadataPane.makeNode("Project",
+	        	  ome).getDOMElement();
+	        }
+		      prEle.setAttribute("Name", e.getDocument().getText(0,
+		        e.getDocument().getLength()));
+		      setOMEXML(ome);
+		    }
+		    else if(e.getDocument() == pmtT.getDocument()) {
+		      if(pmtC != null)
+		      	pmtEle.setAttribute("Gain", e.getDocument().getText(0,
+		        e.getDocument().getLength()));
+		      else pmtT.setText("");
+		    }
+		    else if(e.getDocument() == firstField.getDocument()) {
+		    	if(exrEle==null) {
+	        	exrEle = MetadataPane.makeNode("Experimenter"
+	        	  ,ome).getDOMElement();
+	        }
+		      exrEle.setAttribute("FirstName", e.getDocument().getText(0,
+		        e.getDocument().getLength()));
+		      setOMEXML(ome);
+		    }
+		    else if(e.getDocument() == lastField.getDocument()) {
+		    	if(exrEle==null) {
+	        	exrEle = MetadataPane.makeNode("Experimenter"
+	        	  ,ome).getDOMElement();
+	        }
+		      exrEle.setAttribute("LastName", e.getDocument().getText(0,
+		        e.getDocument().getLength()));
+		      setOMEXML(ome);
+		    }
+		    else if(e.getDocument() == emailField.getDocument()) {
+		    	if(exrEle==null) {
+	        	exrEle = MetadataPane.makeNode("Experimenter",
+	        	  ome).getDOMElement();
+	        }
+		      exrEle.setAttribute("Email", e.getDocument().getText(0,
+		        e.getDocument().getLength()));
+		      setOMEXML(ome);
+		    }
+	    }
+	    catch (Exception exc) {}
+	    setup = false;
+  	}
+  }
+  
+  public void insertUpdate(DocumentEvent e) {changeNode(e);}
+  public void removeUpdate(DocumentEvent e) {changeNode(e);}
+  public void changedUpdate(DocumentEvent e) {changeNode(e);}
 }
