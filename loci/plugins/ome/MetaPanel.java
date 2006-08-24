@@ -283,9 +283,11 @@ public class MetaPanel implements ActionListener, TreeSelectionListener {
     if (element == null) return;
 
     OMEXMLNode xml = null;
-    if (!element.toString().startsWith("[")) {
+
+    try {
       xml = (OMEXMLNode) element;
     }
+    catch (Exception exc) { }
 
     String[] tempAttrs = null;
     String[] tempValues = null;
@@ -344,8 +346,8 @@ public class MetaPanel implements ActionListener, TreeSelectionListener {
 
       names = new String[childs.length];
       for (int i=0; i<childs.length; i++) {
-        String tmp = childs[i].toString();
-        names[i] = tmp.substring(tmp.lastIndexOf(".")+1, tmp.lastIndexOf("@"));
+        String tmp = tempChilds.item(i).toString();
+        names[i] = tmp.substring(1, tmp.indexOf(":"));
       }
     }
     catch (Throwable t) { }

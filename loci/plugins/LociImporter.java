@@ -26,6 +26,7 @@ package loci.plugins;
 
 import ij.*;
 import ij.gui.GenericDialog;
+import ij.io.FileInfo;
 import ij.io.OpenDialog;
 import ij.plugin.PlugIn;
 import ij.process.*;
@@ -117,11 +118,20 @@ public class LociImporter implements PlugIn, ItemListener {
       FileStitcher fs = new FileStitcher(r);
       ChannelMerger cm = new ChannelMerger(stitchFiles ? fs : r);
       cm.setSeparated(!mergeChannels);
+
+      OMEXMLMetadataStore store = new OMEXMLMetadataStore();
+      store.createRoot();
+      cm.setMetadataStore(store);
+
       int num = cm.getImageCount(id);
       ImageStack stackB = null, stackS = null, stackF = null, stackO = null;
       long start = System.currentTimeMillis();
       long time = start;
       int channels = cm.getSizeC(id);
+
+      FileInfo fi = new FileInfo();
+      fi.description =
+        ((OMEXMLMetadataStore) cm.getMetadataStore(id)).dumpXML();
 
       for (int i=0; i<num; i++) {
         // limit message update rate
@@ -182,22 +192,35 @@ public class LociImporter implements PlugIn, ItemListener {
       }
       IJ.showStatus("Creating image");
       IJ.showProgress(1);
+      ImagePlus ip = null;
       if (stackB != null) {
-        if (!mergeChannels && splitWindows) slice(stackB, fileName, channels);
-        else new ImagePlus(fileName, stackB).show();
+        if (!mergeChannels && splitWindows) {
+          slice(stackB, fileName, channels, fi);
+        }
+        else ip = new ImagePlus(fileName, stackB);
       }
       if (stackS != null) {
-        if (!mergeChannels && splitWindows) slice(stackS, fileName, channels);
-        else new ImagePlus(fileName, stackS).show();
+        if (!mergeChannels && splitWindows) {
+          slice(stackS, fileName, channels, fi);
+        }
+        else ip = new ImagePlus(fileName, stackS);
       }
       if (stackF != null) {
-        if (!mergeChannels && splitWindows) slice(stackF, fileName, channels);
-        else new ImagePlus(fileName, stackF).show();
+        if (!mergeChannels && splitWindows) {
+          slice(stackF, fileName, channels, fi);
+        }
+        else ip = new ImagePlus(fileName, stackF);
       }
       if (stackO != null) {
-        if (!mergeChannels && splitWindows) slice(stackO, fileName, channels);
-        else new ImagePlus(fileName, stackO).show();
+        if (!mergeChannels && splitWindows) {
+          slice(stackO, fileName, channels, fi);
+        }
+        else ip = new ImagePlus(fileName, stackO);
       }
+
+      if (ip != null) ip.setFileInfo(fi);
+      if (ip != null) ip.show();
+
       long end = System.currentTimeMillis();
       double elapsed = (end - start) / 1000.0;
       if (num == 1) IJ.showStatus(elapsed + " seconds");
@@ -221,7 +244,7 @@ public class LociImporter implements PlugIn, ItemListener {
     }
   }
 
-  private void slice(ImageStack is, String file, int c) {
+  private void slice(ImageStack is, String file, int c, FileInfo fi) {
     ImageStack[] newStacks = new ImageStack[c];
     for (int i=0; i<newStacks.length; i++) {
       newStacks[i] = new ImageStack(is.getWidth(), is.getHeight());
@@ -234,7 +257,9 @@ public class LociImporter implements PlugIn, ItemListener {
     }
 
     for (int i=0; i<newStacks.length; i++) {
-      new ImagePlus(file + " - Ch" + (i+1), newStacks[i]).show();
+      ImagePlus ip = new ImagePlus(file + " - Ch" + (i+1), newStacks[i]);
+      ip.setFileInfo(fi);
+      ip.show();
     }
   }
 

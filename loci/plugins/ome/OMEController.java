@@ -82,6 +82,10 @@ public class OMEController {
         FileInfo fi = img.getOriginalFileInfo();
         if (fi == null) fi = img.getFileInfo();
         descriptions[i] = fi.description;
+
+        if (img.getFileInfo().description.length() > descriptions[i].length()) {
+          descriptions[i] = img.getFileInfo().description;
+        }
       }
       catch (NullPointerException n) {
         descriptions[i] = null;
@@ -224,10 +228,10 @@ public class OMEController {
           }
           catch (ArrayIndexOutOfBoundsException e) {
             // fails if this is a disk image opened with the LOCI data browser
-            ImagePlus img = WindowManager.getImage(current[i]);
-            FileInfo fi = img.getOriginalFileInfo();
-            descriptions[i] = fi == null ? null : fi.description;
-            o[1] = MetaPanel.exportMeta(descriptions[i], current[i]);
+            //ImagePlus img = WindowManager.getImage(current[i]);
+            //FileInfo fi = img.getOriginalFileInfo();
+            //descriptions[i] = fi == null ? null : fi.description;
+            //o[1] = MetaPanel.exportMeta(descriptions[i], current[i]);
             metadata.put(new Integer(current[i]), o);
           }
         }

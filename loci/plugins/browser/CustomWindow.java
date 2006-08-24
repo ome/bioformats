@@ -456,7 +456,15 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     if (cmd == null) cmd = ""; // prevent NullPointer
     if (cmd.equals("xml")) {
       FileInfo fi = imp.getOriginalFileInfo();
-      String description = fi == null ? null : fi.description;
+      String description = fi == null ? "" : fi.description;
+
+      try {
+        String altDescription = imp.getFileInfo().description;
+        if (altDescription.length() > description.length()) {
+          description = altDescription;
+        }
+      }
+      catch (Exception exc) { }
 
       // HACK - if ImageDescription does not end with a null character
       // (older versions of ImageJ truncate the final character)
@@ -493,6 +501,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         tSliceSel.setValue(t);
         setIndices();
       }
+
       showSlice(z, t, c);
     }
     else if (src instanceof JButton) {

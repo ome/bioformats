@@ -298,9 +298,6 @@ public class OMETools {
       int sizeT = results[1];
       int sizeZ = results[0];
 
-      /* debug */ System.out.println("sizeT : " + sizeT);
-      /* debug */ System.out.println("sizeZ : " + sizeZ);
-
       IJ.showProgress(.25);
 
       // get a MEX for the image's metadata
@@ -702,8 +699,8 @@ public class OMETools {
     }
     IJ.showStatus("Displaying Image");
     viewer = new LociDataBrowser();
-    //viewer.show(imageP, null, new int[] {sizeZ, sizeT, sizeC},
-    //  sizeZ, sizeT, sizeC, 0, 1, 2);
+
+    viewer.setDimensions(sizeZ, sizeC, sizeT, 0, 2, 1);
     viewer.show(imageP);
     OMESidePanel.hashInImage(-image.getID(), metas);
   }
@@ -746,11 +743,11 @@ public class OMETools {
       }
 
       details[i][2] = p.getPixelType();
-      details[i][3] = p.getSizeC().toString();
-      details[i][4] = p.getSizeT().toString();
-      details[i][5] = p.getSizeX().toString();
-      details[i][6] = p.getSizeY().toString();
-      details[i][7] = p.getSizeZ().toString();
+      details[i][3] = p.getSizeX().toString();
+      details[i][4] = p.getSizeY().toString();
+      details[i][5] = p.getSizeZ().toString();
+      details[i][6] = p.getSizeC().toString();
+      details[i][7] = p.getSizeT().toString();
       details[i][9] = String.valueOf(ima[i].getID());
     }
     String[] columns = {"","Name","ID","Date Created"};
@@ -794,6 +791,7 @@ public class OMETools {
       }
       catch (NullPointerException n) { return; }
       Image[] images = new Image[0];
+
       //do the image search
       IJ.showStatus("Searching for images...");
       while (images.length == 0) {
@@ -818,6 +816,7 @@ public class OMETools {
             return;
           }
         }
+        if (images == null) return;
       }
       //download into ImageJ
       for (int i=0; i<images.length; i++) {

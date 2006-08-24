@@ -40,7 +40,7 @@ public class OMEDownPanel implements ActionListener {
   //Fields
   private JButton search, cancel;
   private JDialog dia;
-  private JComboBox cproj, ctype, cowner;
+  private JComboBox cproj, cowner;
   private JTextField id, name;
   public boolean cancelPlugin;
 
@@ -204,7 +204,6 @@ public class OMEDownPanel implements ActionListener {
     try {
       cproj.setSelectedIndex(0);
       cowner.setSelectedIndex(0);
-      ctype.setSelectedIndex(0);
       id.setText(null);
       name.setText(null);
     }

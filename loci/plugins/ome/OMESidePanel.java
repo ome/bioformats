@@ -262,11 +262,13 @@ public class OMESidePanel implements ActionListener {
 
   /** implements the ActionListener actionPerformed method */
   public void actionPerformed(ActionEvent e) {
-    if ("download".equals(e.getActionCommand())) {
+    String cmd = e.getActionCommand();
+
+    if (cmd.equals("download")) {
       OMETools omed = new OMETools();
       omed.run(this);
     }
-    else if ("upload".equals(e.getActionCommand())) {
+    else if (cmd.equals("upload")) {
       if (list.getSelectedIndex() != -1) {
         OMETools omeu = new OMETools();
         int x = list.getSelectedIndex();
@@ -282,7 +284,7 @@ public class OMESidePanel implements ActionListener {
         showIt();
       }
     }
-    else if ("edit".equals(e.getActionCommand())) {
+    else if (cmd.equals("edit")) {
       int z = list.getSelectedIndex();
       if (z != -1) {
         int id = imageIds[z];
@@ -292,13 +294,13 @@ public class OMESidePanel implements ActionListener {
       }
       else {
         JOptionPane.showMessageDialog(parentWindow,
-          "Please select an image to edit.",
+          "Please select the image whose metadata you would like to view.",
           "OME Plugin",JOptionPane.INFORMATION_MESSAGE);
         showIt();
       }
     }
-    else if ("open".equals(e.getActionCommand())) {
-      IJ.runPlugIn("loci.browser.LociDataBrowser", "");
+    else if (cmd.equals("open")) {
+      IJ.runPlugIn("loci.plugins.browser.LociDataBrowser", "");
     }
     else {
       cancelPlugin = true;

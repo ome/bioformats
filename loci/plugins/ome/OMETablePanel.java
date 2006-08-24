@@ -96,11 +96,11 @@ public class OMETablePanel implements ActionListener {
     paneR.add(paneOwner);
     JLabel owner = new JLabel("Owner: ", JLabel.RIGHT);
     JLabel type = new JLabel("Image Type: ", JLabel.RIGHT);
-    JLabel c = new JLabel("Size C: ", JLabel.RIGHT);
-    JLabel t = new JLabel("Size T: ", JLabel.RIGHT);
     JLabel x = new JLabel("Size X: ", JLabel.RIGHT);
     JLabel y = new JLabel("Size Y: ", JLabel.RIGHT);
     JLabel z = new JLabel("Size Z: ", JLabel.RIGHT);
+    JLabel c = new JLabel("Size C: ", JLabel.RIGHT);
+    JLabel t = new JLabel("Size T: ", JLabel.RIGHT);
     JLabel descrip = new JLabel("Description: ", JLabel.RIGHT);
     owner.setMinimumSize(new Dimension(15, 2));
     type.setMinimumSize(new Dimension(15, 2));
@@ -111,7 +111,7 @@ public class OMETablePanel implements ActionListener {
     z.setMinimumSize(new Dimension(10, 2));
     descrip.setMinimumSize(new Dimension(20, 2));
 
-    areas = new JTextArea[] {own, typ, c1, t1, x1, y1, z1};
+    areas = new JTextArea[] {own, typ, x1, y1, z1, c1, t1};
     for(int i=0; i<areas.length; i++) {
       areas[i] = new JTextArea("", 1, 6);
       areas[i].setEditable(false);
@@ -132,7 +132,7 @@ public class OMETablePanel implements ActionListener {
 
     JScrollPane desScroll = new JScrollPane(des);
 
-    JLabel[] labels = {owner, type, c, t, x, y, z};
+    JLabel[] labels = {owner, type, x, y, z, c, t};
     for(int i=0; i<labels.length; i++) {
       paneOwner.add(labels[i], e);
       paneOwner.add(areas[i], d);
