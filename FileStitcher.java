@@ -135,11 +135,22 @@ public class FileStitcher extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    MetadataStore store = reader.getMetadataStore(id);
-    store.setPixels(new Integer(getSizeX(id)), new Integer(getSizeY(id)),
+    MetadataStore s = reader.getMetadataStore(id);
+    s.setPixels(new Integer(getSizeX(id)), new Integer(getSizeY(id)),
       new Integer(getSizeZ(id)), new Integer(getSizeC(id)),
       new Integer(getSizeT(id)), null, null, null, null);
-    return store;
+    store = s;
+    return s;
+  }
+
+  /**
+   * Sets the default metadata store for this reader.
+   *
+   * @param store a metadata store implementation.
+   */
+  public void setMetadataStore(MetadataStore store) {
+    this.store = store;
+    reader.setMetadataStore(store);
   }
 
   /** Determines the number of images in the given file. */
@@ -295,11 +306,11 @@ public class FileStitcher extends FormatReader {
     }
     setDimensions(dims);
 
-    MetadataStore store = reader.getMetadataStore(id);
-    store.setPixels(new Integer(getSizeX(id)), new Integer(getSizeY(id)),
+    MetadataStore s = reader.getMetadataStore(id);
+    s.setPixels(new Integer(getSizeX(id)), new Integer(getSizeY(id)),
       new Integer(getSizeZ(id)), new Integer(getSizeC(id)),
       new Integer(getSizeT(id)), null, null, null, null);
-    setMetadataStore(store);
+    setMetadataStore(s);
   }
 
   // -- Helper methods --
