@@ -101,12 +101,7 @@ public class OutputConsole extends OutputStream {
 
   public void show() { setVisible(true); }
 
-  public void setVisible(boolean visible) {
-    boolean vis = frame.isVisible();
-    if (visible == vis) return;
-    if (visible) Util.centerWindow(frame);
-    frame.setVisible(visible);
-  }
+  public void setVisible(boolean visible) { frame.setVisible(visible); }
 
   public JFrame getWindow() { return frame; }
 
