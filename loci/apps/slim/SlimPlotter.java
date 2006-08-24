@@ -1108,7 +1108,7 @@ public class SlimPlotter implements ActionListener,
     }
   }
 
-  /** 
+  /**
    * HACK - OutputStream extension for filtering out hardcoded
    * RuntimeException.printStackTrace() exceptions within LMA library.
    */
