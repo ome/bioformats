@@ -283,23 +283,3 @@ public class LociImporter implements PlugIn, ItemListener {
   }
 
 }
-
-/*
-Add the following code to HandleExtraFileTypes.java to enable
-LOCI Bio-Formats through File/Open, drag & drop, etc.
-
-    // CTR: try opening the file with LOCI Bio-Formats
-    Object loci = IJ.runPlugIn("LociPlugin", path);
-    if (loci != null) {
-      // plugin exists and was launched
-      try {
-        // check whether plugin was successful
-        boolean ok = loci.getClass().getField("success").getBoolean(loci);
-        if (ok) {
-          width = IMAGE_OPENED;
-          return null;
-        }
-      }
-      catch (Exception exc) { }
-    }
-*/
