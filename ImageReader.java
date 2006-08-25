@@ -33,14 +33,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Vector;
-
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
-
-
 /**
- * ImageReader is master file format reader for all supported formats.
+ * ImageReader is the master file format reader for all supported formats.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
