@@ -143,9 +143,8 @@ public abstract class FormatReader extends FormatHandler
     long len = new File(name).length();
     byte[] buf = new byte[len < maxLen ? (int) len : maxLen];
     try {
-      FileInputStream fin = new FileInputStream(name);
-      int r = 0;
-      while (r < buf.length) r += fin.read(buf, r, buf.length - r);
+      DataInputStream fin = new DataInputStream(new FileInputStream(name));
+      fin.readFully(buf);
       fin.close();
       return isThisType(buf);
     }
