@@ -490,27 +490,8 @@ public class DataManager extends LogicManager {
     // help window
     bio.setSplashStatus(null);
     HelpManager hm = (HelpManager) bio.getManager(HelpManager.class);
-    String s = "File formats";
-    hm.addHelpTopic(s, "formats.html");
-    hm.addHelpTopic(s + "/TIFF stacks", "tiff.html");
-    hm.addHelpTopic(s + "/Bio-Rad PIC", "biorad.html");
-    hm.addHelpTopic(s + "/Deltavision", "deltavision.html");
-    hm.addHelpTopic(s + "/Gatan Digital Micrograph", "gatan.html");
-    hm.addHelpTopic(s + "/Image Cytometry Standard", "ics.html");
-    hm.addHelpTopic(s + "/Image-Pro Sequence", "imagepro_seq.html");
-    hm.addHelpTopic(s + "/Image-Pro Workspace", "imagepro_ipw.html");
-    hm.addHelpTopic(s + "/IPLab", "iplab.html");
-    hm.addHelpTopic(s + "/Leica", "leica.html");
-    hm.addHelpTopic(s + "/Metamorph STK", "metamorph.html");
-    hm.addHelpTopic(s + "/Olympus Fluoview TIFF", "fluoview.html");
-    hm.addHelpTopic(s + "/Openlab LIFF", "openlab.html");
-    hm.addHelpTopic(s + "/PerkinElmer", "perkinelmer.html");
-    hm.addHelpTopic(s + "/QuickTime movies", "quicktime.html");
-    hm.addHelpTopic(s + "/Zeiss LSM", "zeiss_lsm.html");
-    hm.addHelpTopic(s + "/Zeiss ZVI (Axiovision)", "zeiss_zvi.html");
-    hm.addHelpTopic(s + "/Other formats (JPEG, BMP, etc.)",
-      "other_formats.html");
-    s = "Data transforms";
+    hm.addHelpTopic("File formats", "formats.html");
+    String s = "Data transforms";
     hm.addHelpTopic(s, "data_transforms.html");
     hm.addHelpTopic(s + "/Datasets", "dataset.html");
     hm.addHelpTopic(s + "/Subsamplings", "subsampling.html");
