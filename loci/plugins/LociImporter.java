@@ -119,9 +119,12 @@ public class LociImporter implements PlugIn, ItemListener {
       ChannelMerger cm = new ChannelMerger(stitchFiles ? fs : r);
       cm.setSeparated(!mergeChannels);
 
-      OMEXMLMetadataStore store = new OMEXMLMetadataStore();
-      store.createRoot();
-      cm.setMetadataStore(store);
+      try {
+        OMEXMLMetadataStore store = new OMEXMLMetadataStore();
+        store.createRoot();
+        cm.setMetadataStore(store);
+      }
+      catch (Throwable t) { }
 
       int num = cm.getImageCount(id);
       ImageStack stackB = null, stackS = null, stackF = null, stackO = null;
@@ -130,8 +133,11 @@ public class LociImporter implements PlugIn, ItemListener {
       int channels = cm.getSizeC(id);
 
       FileInfo fi = new FileInfo();
-      fi.description =
-        ((OMEXMLMetadataStore) cm.getMetadataStore(id)).dumpXML();
+      try {
+        fi.description =
+          ((OMEXMLMetadataStore) cm.getMetadataStore(id)).dumpXML();
+      }
+      catch (Throwable t) { }
 
       for (int i=0; i<num; i++) {
         // limit message update rate
