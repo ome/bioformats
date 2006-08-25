@@ -13,7 +13,7 @@ Bio-Formats
     Folders:       loci/formats
                    loci/formats/*
     Main class:    loci.formats.ImageViewer
-    Dependencies:  None
+    Dependencies:  ome-java.jar
     Targets:       jar-formats
     License:       LGPL
 
@@ -245,7 +245,7 @@ Apache XML-RPC
 
   <!-- Bio-Formats -->
 
-  <target name="jar-formats" depends="compile"
+  <target name="jar-formats" depends="compile, copy-jars"
     description="generate JAR file for Bio-Formats">
     <copy todir="${classes.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="${formats.resources}"/>
