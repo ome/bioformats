@@ -39,9 +39,6 @@ public class LeicaReader extends BaseTiffReader {
 
   // -- Constants -
 
-  /** Maximum number of bytes to check for Leica header information. */
-  private static final int BLOCK_CHECK_LEN = 16384*8;
-
   /** All Leica TIFFs have this tag. */
   private static final int LEICA_MAGIC_TAG = 33923;
 
@@ -111,7 +108,49 @@ public class LeicaReader extends BaseTiffReader {
 
     // just checking the filename isn't enough to differentiate between
     // Leica and regular TIFF; open the file and check more thoroughly
-    return checkBytes(name, BLOCK_CHECK_LEN);
+    File file = new File(name);
+    if (!file.exists()) return false;
+    long len = file.length();
+    if (len < 4) return false;
+
+    try {
+      RandomAccessStream ras = new RandomAccessStream(name);
+      ras.order(true); // little-endian
+      if (len < 8) {
+        // we can only check whether it is a TIFF
+        byte[] block = new byte[4];
+        int magic = ras.readInt();
+        ras.close();
+        return magic == 0x49494949;
+      }
+      ras.seek(4);
+      int ifdlocation = ras.readInt();
+      if (ifdlocation < 0 || ifdlocation >= len - 12) {
+        ras.close();
+        return false;
+      }
+      else {
+        ras.seek(ifdlocation);
+        int ifdnumber = ras.readUnsignedShort();
+        for (int i=0; i<ifdnumber; i++) {
+          if (ifdlocation + 3 + i*12 > len) {
+            ras.close();
+            return false;
+          }
+          else {
+            ras.seek(ifdlocation + 2 + i*12);
+            int ifdtag = ras.readUnsignedShort();
+            if (ifdtag == LEICA_MAGIC_TAG) {
+              ras.close();
+              return true;
+            }
+          }
+        }
+        ras.close();
+      }
+    }
+    catch (IOException exc) { }
+    return false;
   }
 
   /** Determines the number of images in the given Leica file. */
