@@ -28,9 +28,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Hashtable;
 
-
-
-
 /** Logic to automatically merge channels in a file. */
 public class ChannelMerger extends FormatReader {
 
@@ -129,8 +126,8 @@ public class ChannelMerger extends FormatReader {
     s.setPixels(new Integer(getSizeX(id)), new Integer(getSizeY(id)),
       new Integer(getSizeZ(id)), new Integer(getSizeC(id)),
       new Integer(getSizeT(id)), null, null, null, null);
-    store = s;
-    return store;
+    metadataStore = s;
+    return metadataStore;
   }
 
   /**
@@ -139,7 +136,7 @@ public class ChannelMerger extends FormatReader {
    * @param store a metadata store implementation.
    */
   public void setMetadataStore(MetadataStore store) {
-    this.store = store;
+    metadataStore = store;
     reader.setMetadataStore(store);
   }
 

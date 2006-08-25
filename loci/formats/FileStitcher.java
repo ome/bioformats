@@ -139,7 +139,7 @@ public class FileStitcher extends FormatReader {
     s.setPixels(new Integer(getSizeX(id)), new Integer(getSizeY(id)),
       new Integer(getSizeZ(id)), new Integer(getSizeC(id)),
       new Integer(getSizeT(id)), null, null, null, null);
-    store = s;
+    metadataStore = s;
     return s;
   }
 
@@ -149,7 +149,7 @@ public class FileStitcher extends FormatReader {
    * @param store a metadata store implementation.
    */
   public void setMetadataStore(MetadataStore store) {
-    this.store = store;
+    metadataStore = store;
     reader.setMetadataStore(store);
   }
 

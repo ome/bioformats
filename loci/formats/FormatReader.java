@@ -56,7 +56,7 @@ public abstract class FormatReader extends FormatHandler
    * Current metadata store. Should <b>never</b> be accessed directly as the
    * semantics of {@link #getMetadataStore()} prevent "null" access.
    */
-  protected MetadataStore store = new DummyMetadataStore();
+  protected MetadataStore metadataStore = new DummyMetadataStore();
 
   // -- Constructors --
 
@@ -353,9 +353,7 @@ public abstract class FormatReader extends FormatHandler
    *
    * @param store a metadata store implementation.
    */
-  public void setMetadataStore(MetadataStore store) {
-    this.store = store;
-  }
+  public void setMetadataStore(MetadataStore store) { metadataStore = store; }
 
   /**
    * Retrieves the current metadata store for this reader. You can be
@@ -367,7 +365,7 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return store;
+    return metadataStore;
   }
 
   /**
