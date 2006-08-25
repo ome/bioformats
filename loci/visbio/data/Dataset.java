@@ -488,7 +488,7 @@ public class Dataset extends ImageTransform {
     for (int i=0; i<ids.length; i++) {
       readers[i] = new ImageReader();
       try { readers[i].setMetadataStore(new OMEXMLMetadataStore()); }
-      catch (UnsupportedMetadataStoreException exc) { exc.printStackTrace(); }
+      catch (MetadataStoreException exc) { exc.printStackTrace(); }
     }
 
     // determine number of images per source file
