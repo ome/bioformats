@@ -78,14 +78,12 @@ public class LeicaReader extends BaseTiffReader {
   public boolean isThisType(byte[] block) {
     if (block.length < 4) return false;
 
-    if ((block[0] == 0x49 && block[1] == 0x49 && block[2] == 0x49 &&
+    if (block.length < 8) {
+      // we can only check whether it is a TIFF
+      return (block[0] == 0x49 && block[1] == 0x49 && block[2] == 0x49 &&
       block[3] == 0x49) || (block[0] == 0x4d && block[1] == 0x4d &&
-      block[2] == 0x4d && block[3] == 0x4d))
-    {
-      return true;
+      block[2] == 0x4d && block[3] == 0x4d);
     }
-
-    if (block.length < 8) return true;
 
     int ifdlocation = DataTools.bytesToInt(block, 4, true);
     if (ifdlocation < 0 || ifdlocation + 1 > block.length) {
