@@ -42,11 +42,10 @@ public class AggregateMetadataStore implements MetadataStore {
   /**
    * Creates a new instance.
    * @param delegates of type {@link MetadataStore}.
-   * @throws UnsupportedMetadataStoreException if the constructor is unable to
+   * @throws MetadataStoreException if the constructor is unable to
    * import pre-requisites of its delegates.
    */
-  public AggregateMetadataStore(List delegates)
-    throws UnsupportedMetadataStoreException {
+  public AggregateMetadataStore(List delegates) throws MetadataStoreException {
     this.delegates = delegates;
   }
 

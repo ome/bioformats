@@ -321,7 +321,7 @@ public class OMEXMLReader extends FormatReader {
     try {
       internalStore = new OMEXMLMetadataStore();
     }
-    catch (UnsupportedMetadataStoreException e) {
+    catch (MetadataStoreException e) {
       throw new FormatException("To use this feature, please install the " +
           "org.openmicroscopy.xml package, available from " +
           "http://www.openmicroscopy.org/");
