@@ -34,7 +34,7 @@ package loci.formats;
  *
  * It is expected that the constructors of all implementations of
  * <code>MetadataStore</code> interface throw a
- * {@link UnsupportedMetadataStoreException} if they are unable to initialize
+ * {@link MetadataStoreException} if they are unable to initialize
  * some of their dependencies.
  *
  * @author Chris Allan callan at blackcat.ca

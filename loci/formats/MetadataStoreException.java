@@ -1,5 +1,5 @@
 //
-// UnsupportedMetadataStoreException.java
+// MetadataStoreException.java
 //
 
 /*
@@ -25,18 +25,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 /**
- * Thrown when metadata store initialization is attempted and failed due to
- * potentially missing prerequisites.
+ * Thrown when a problem occurs with metadata stores (e.g., if initialization
+ * is attempted and fails due to potentially missing prerequisites).
  *
  * @author Chris Allan callan at blackcat.ca
  */
-public class UnsupportedMetadataStoreException extends FormatException {
+public class MetadataStoreException extends FormatException {
 
-  public UnsupportedMetadataStoreException() { super(); }
-  public UnsupportedMetadataStoreException(String s) { super(s); }
-  public UnsupportedMetadataStoreException(String s, Throwable cause) {
+  public MetadataStoreException() { super(); }
+  public MetadataStoreException(String s) { super(s); }
+  public MetadataStoreException(String s, Throwable cause) {
     super(s, cause);
   }
-  public UnsupportedMetadataStoreException(Throwable cause) { super(cause); }
+  public MetadataStoreException(Throwable cause) { super(cause); }
 
 }
