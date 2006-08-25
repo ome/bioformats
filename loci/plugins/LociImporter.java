@@ -30,11 +30,11 @@ import ij.io.FileInfo;
 import ij.io.OpenDialog;
 import ij.plugin.PlugIn;
 import ij.process.*;
-import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.image.*;
 import java.io.File;
+import java.util.Hashtable;
 import javax.swing.*;
 import loci.formats.*;
 
@@ -42,6 +42,7 @@ import loci.formats.*;
  * ImageJ plugin for the LOCI Bio-Formats package.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
+ * @author Melissa Linkert linkert at cs.wisc.edu
  */
 public class LociImporter implements PlugIn, ItemListener {
 
@@ -52,10 +53,12 @@ public class LociImporter implements PlugIn, ItemListener {
 
   private JCheckBox merge = null;
   private JCheckBox newWindows = null;
+  private JCheckBox showMeta = null;
   private JCheckBox stitching = null;
   private boolean mergeChannels = true;
   private boolean splitWindows = false;
-  private boolean stitchFiles = true;
+  private boolean showMetadata = true;
+  private boolean stitchFiles = false;
 
   // -- PlugIn API methods --
 
@@ -67,35 +70,43 @@ public class LociImporter implements PlugIn, ItemListener {
     String id = null;
     ImageReader reader = new ImageReader();
 
+    String mergeString = "Merge channels";
+    String splitString = "Open each channel in its own window";
+    String metadataString = "Display associated metadata";
+    String stitchString = "Stitch files with similar names";
     if ((new File(arg)).exists()) {
       id = arg;
 
       // we still want to prompt for channel merge/split
-
       GenericDialog gd = new GenericDialog("LOCI Bio-Formats Import Options");
-      gd.addCheckbox("Merge channels", true);
-      gd.addCheckbox("Open each channel in a new window", false);
-      gd.addCheckbox("Stitch together files with a similar name", true);
+      gd.addCheckbox(mergeString, mergeChannels);
+      gd.addCheckbox(splitString, splitWindows);
+      gd.addCheckbox(metadataString, showMetadata);
+      gd.addCheckbox(stitchString, stitchFiles);
       gd.showDialog();
       mergeChannels = gd.getNextBoolean();
       splitWindows = gd.getNextBoolean();
+      showMetadata = gd.getNextBoolean();
       stitchFiles = gd.getNextBoolean();
     }
     else {
       JFileChooser chooser = reader.getFileChooser();
 
       // add some additional options to the file chooser
-      JPanel panel = new JPanel(new BorderLayout());
-      merge = new JCheckBox("Merge channels", true);
-      newWindows = new JCheckBox("Open each channel in a new window", false);
-      stitching = new JCheckBox("Stitch together files with a similar name",
-        true);
+      JPanel panel = new JPanel();
+      panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+      merge = new JCheckBox(mergeString, mergeChannels);
+      newWindows = new JCheckBox(splitString, splitWindows);
+      showMeta = new JCheckBox(metadataString, showMetadata);
+      stitching = new JCheckBox(stitchString, stitchFiles);
       merge.addItemListener(this);
       newWindows.addItemListener(this);
+      showMeta.addItemListener(this);
       stitching.addItemListener(this);
-      panel.add(merge, BorderLayout.NORTH);
-      panel.add(newWindows, BorderLayout.EAST);
-      panel.add(stitching, BorderLayout.SOUTH);
+      panel.add(merge);
+      panel.add(newWindows);
+      panel.add(showMeta);
+      panel.add(stitching);
       chooser.setAccessory(panel);
 
       int rval = chooser.showOpenDialog(null);
@@ -127,6 +138,15 @@ public class LociImporter implements PlugIn, ItemListener {
       catch (Throwable t) { }
 
       int num = cm.getImageCount(id);
+      if (showMetadata) {
+        Hashtable meta = cm.getMetadata(id);
+        MetadataPane mp = new MetadataPane(meta);
+        JFrame frame = new JFrame(id + " Metadata");
+        frame.setContentPane(mp);
+        frame.pack();
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+      }
       ImageStack stackB = null, stackS = null, stackF = null, stackO = null;
       long start = System.currentTimeMillis();
       long time = start;
@@ -271,15 +291,11 @@ public class LociImporter implements PlugIn, ItemListener {
 
   public void itemStateChanged(ItemEvent e) {
     Object source = e.getItemSelectable();
-    if (source == merge) {
-      mergeChannels = e.getStateChange() == ItemEvent.SELECTED;
-    }
-    else if (source == newWindows) {
-      splitWindows = e.getStateChange() == ItemEvent.SELECTED;
-    }
-    else if (source == stitching) {
-      stitchFiles = e.getStateChange() == ItemEvent.SELECTED;
-    }
+    boolean selected = e.getStateChange() == ItemEvent.SELECTED;
+    if (source == merge) mergeChannels = selected;
+    else if (source == newWindows) splitWindows = selected;
+    else if (source == showMeta) showMetadata = selected;
+    else if (source == stitching) stitchFiles = selected;
   }
 
 }
