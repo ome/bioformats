@@ -405,7 +405,7 @@ public class SlimPlotter implements ActionListener,
     xMap.setRange(0, timeRange);
     yMap.setRange(minWave, maxWave);
     AxisScale xScale = xMap.getAxisScale();
-    Font font = Font.decode("serif");
+    Font font = Font.decode("serif 24");
     xScale.setFont(font);
     xScale.setTitle("Time (ns)");
     xScale.setSnapToBox(true);
@@ -630,6 +630,11 @@ public class SlimPlotter implements ActionListener,
     intensityFrame.pack();
     int intensityWidth = intensityFrame.getSize().width;
     int intensityHeight = intensityFrame.getSize().height;
+    if (intensityWidth < 500) {
+      // enforce minimum reasonable width
+      intensityHeight = 500 * intensityHeight / intensityWidth;
+      intensityWidth = 400;
+    }
     int decayHeight = intensityHeight;
     int decayWidth = 100 * decayHeight / 100; // 100% of width
 
