@@ -152,9 +152,9 @@ public class MetadataPane extends JPanel
   /**
   * Constructs a pane to display the OME-XML metadata of a
   * given file.
-  * @param f The file to be initially displayed.
+  * @param file The file to be initially displayed.
   */
-  public MetadataPane(File f)
+  public MetadataPane(File file)
   {
     this(f, true);
   }
@@ -162,7 +162,7 @@ public class MetadataPane extends JPanel
   /**
   * Constructs a pane to display the OME-XML metadata of a
   * given file and with the given save policy.
-  * @param f The file to be initially displayed.
+  * @param file The file to be initially displayed.
   * @param save Whether saving should be allowed.
   */
   public MetadataPane(File file, boolean save) {

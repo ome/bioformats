@@ -95,12 +95,12 @@ public class VariableComboEditor extends AbstractCellEditor
 
   /**
    * Construct a new VariableComboEditor.
-   * @param IDP vector of TablePanels that have been found to have ID attributes
+   * @param IDP vector of TablePanels that have been found to have ID attributes.
    * @param AddP vector of Strings that hold all external LSIDs found in this
-   *        file
-   * @param oN the OMEXMLNode associated with the TablePanel this editor edits
+   *        file.
+   * @param tp the TablePanel this editor edits.
    * @param internalDefs a hashtable representing semantic type defs found in
-   *        the current open file itself
+   *        the current open file itself.
    */
   public VariableComboEditor(Vector IDP, Vector AddP,
     MetadataPane.TablePanel tp, Hashtable internalDefs)
