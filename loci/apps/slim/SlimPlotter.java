@@ -41,7 +41,7 @@ public class SlimPlotter implements ActionListener,
      0.0000,  0.0000,  0.0000, 1.0000
   };
 
-  private static final char TAU = 0x03a4;
+  private static final char TAU = 'T';
 
   // -- Fields --
 
@@ -82,6 +82,7 @@ public class SlimPlotter implements ActionListener,
   private JCheckBox showData, showLog;
   private JCheckBox showBox, showScale;
   private JCheckBox showFit, showResiduals;
+  private JSpinner numCurves;
   private JSlider cSlider;
 
   // other GUI components
@@ -613,6 +614,10 @@ public class SlimPlotter implements ActionListener,
     showResiduals.addActionListener(this);
     showPanel3.add(showResiduals);
 
+    numCurves = new JSpinner(new SpinnerNumberModel(1, 1, 9, 1));
+    numCurves.setMaximumSize(numCurves.getPreferredSize());
+    numCurves.addChangeListener(this);
+
     console.getWindow().addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) { showLog.setSelected(false); }
     });
@@ -623,6 +628,7 @@ public class SlimPlotter implements ActionListener,
     options.add(makeRadioPanel("Fit", fitSurface, fitLines));
     options.add(makeRadioPanel("Residuals", resSurface, resLines));
     options.add(showPanel);
+//    options.add(numCurves);
     decayPane.add(options, BorderLayout.SOUTH);
     decayFrame.setContentPane(decayPane);
 
@@ -630,9 +636,9 @@ public class SlimPlotter implements ActionListener,
     intensityFrame.pack();
     int intensityWidth = intensityFrame.getSize().width;
     int intensityHeight = intensityFrame.getSize().height;
-    if (intensityWidth < 500) {
+    if (intensityWidth < 400) {
       // enforce minimum reasonable width
-      intensityHeight = 500 * intensityHeight / intensityWidth;
+      intensityHeight = 400 * intensityHeight / intensityWidth;
       intensityWidth = 400;
     }
     int decayHeight = intensityHeight;
@@ -784,9 +790,13 @@ public class SlimPlotter implements ActionListener,
 
   /** Handles slider changes. */
   public void stateChanged(ChangeEvent e) {
-    int c = cSlider.getValue();
-    try { ac.setCurrent(c - 1); }
-    catch (Exception exc) { exc.printStackTrace(); }
+    Object src = e.getSource();
+    if (src == cSlider) {
+      int c = cSlider.getValue();
+      try { ac.setCurrent(c - 1); }
+      catch (Exception exc) { exc.printStackTrace(); }
+    }
+    else if (src == numCurves) plotData(false, true);
   }
 
   // -- DisplayListener methods --
@@ -897,12 +907,20 @@ public class SlimPlotter implements ActionListener,
     }
 
     double[][] fitResults = null;
+    int numExp = ((Integer) numCurves.getValue()).intValue();
     if (adjustPeaks && refit) {
       // perform exponential curve fitting: y(x) = a * e^(-b*t) + c
       progress.setNote("Fitting curves");
       fitResults = new double[channels][];
-      ExpFunction func = new ExpFunction();
-      float[] params = {maxVal, 1, 0}; // initial guess for (a, b, c)
+      ExpFunction func = new ExpFunction(numExp);
+      float[] params = new float[3 * numExp];
+      for (int i=0; i<numExp; i++) {
+        // initial guess for (a, b, c)
+        int e = 3 * i;
+        params[e] = (numExp - i) * maxVal / (numExp + 1);
+        params[e + 1] = 1;
+        params[e + 2] = 0;
+      }
       int num = timeBins - maxPeak;
       float[] xVals = new float[num];
       for (int i=0; i<num; i++) xVals[i] = i;
@@ -919,9 +937,12 @@ public class SlimPlotter implements ActionListener,
         lma.fit();
         log("\t\titerations=" + lma.iterationCount);
         log("\t\tchi2=" + lma.chi2);
-        log("\t\ta=" + lma.parameters[0]);
-        log("\t\t" + TAU + "=" + (1 / lma.parameters[1]));
-        log("\t\tc=" + lma.parameters[2]);
+        for (int i=0; i<numExp; i++) {
+          int e = 3 * i;
+          log("\t\ta" + i + "=" + lma.parameters[e]);
+          log("\t\t" + TAU + i + "=" + (1 / lma.parameters[e + 1]));
+          log("\t\tc" + i + "=" + lma.parameters[e + 2]);
+        }
         fitResults[c] = lma.parameters;
         progress.setProgress(++p);
       }
@@ -944,7 +965,12 @@ public class SlimPlotter implements ActionListener,
             int et = t - maxPeak; // adjust for peak alignment
             if (et < 0) fitSamps[ndx] = residuals[ndx] = 0;
             else {
-              fitSamps[ndx] = (float) (q[0] * Math.exp(-q[1] * et) + q[2]);
+              float sum = 0;
+              for (int i=0; i<numExp; i++) {
+                int e = 3 * i;
+                sum += (float) (q[e] * Math.exp(-q[e + 1] * et) + q[e + 2]);
+              }
+              fitSamps[ndx] = sum;
               residuals[ndx] = samps[ndx] - fitSamps[ndx];
             }
           }
@@ -1099,14 +1125,27 @@ public class SlimPlotter implements ActionListener,
   // -- Helper classes --
 
   public class ExpFunction extends LMAFunction {
+    /** Number of exponentials to fit. */
+    public int numExp = 1;
+
+    /** Constructs a function with the given number of summed exponentials. */
+    public ExpFunction(int num) { numExp = num; }
+
     public double getY(double x, double[] a) {
-      return a[0] * Math.exp(-a[1] * x) + a[2];
+      double sum = 0;
+      for (int i=0; i<numExp; i++) {
+        int e = 3 * i;
+        sum += a[e] * Math.exp(-a[e + 1] * x) + a[e + 2];
+      }
+      return sum;
     }
 
     public double getPartialDerivate(double x, double[] a, int parameterIndex) {
-      switch (parameterIndex) {
-        case 0: return Math.exp(-a[1] * x);
-        case 1: return -a[0] * x * Math.exp(-a[1] * x);
+      int e = parameterIndex / 3;
+      int off = parameterIndex % 3;
+      switch (off) {
+        case 0: return Math.exp(-a[e + 1] * x);
+        case 1: return -a[e] * x * Math.exp(-a[e + 1] * x);
         case 2: return 1;
       }
       throw new RuntimeException("No such parameter index: " + parameterIndex);
