@@ -39,6 +39,15 @@ import javax.swing.text.JTextComponent;
 import javax.swing.text.DefaultStyledDocument;
 import org.openmicroscopy.xml.DOMUtil;
 
+/**
+ * An abstract superclass that will be extended by the cell editors
+ * for both VariableTextFieldEditor and VariableTextAreaEditor.
+ * Handles most events that should stop editing and holds the current
+ * data of the TextComponent we're interested in as defined by the
+ * last Event of some type that effected a TextComponent in this table.
+ *
+ * @author Christopher Peterson crpeterson2 at wisc.edu
+ */
 public abstract class VariableTextEditor extends AbstractCellEditor
   implements TableCellEditor, ActionListener,
   DocumentListener, FocusListener, MouseListener
@@ -46,22 +55,26 @@ public abstract class VariableTextEditor extends AbstractCellEditor
 
   // -- Fields --
 
-  /** refers to the TablePanel using this editor */
+  /** Refers to the TablePanel using this editor. */
   protected MetadataPane.TablePanel tableP;
 
+  /** The data held by the last edited TextComponent in the table.*/
   protected String result;
 
   // -- Constructor --
 
+  /** Construct a new VariableTextEditor. Only called in subclasses.*/
   public VariableTextEditor(MetadataPane.TablePanel tp) {
     tableP = tp;
     result = null;
   }
 
+  /** Get the data of the current TextComponent.*/
   public Object getCellEditorValue() {
     return result;
   }
 
+  /** Handles the changing of the OMEXMLNode tree.*/
   public void setNode(int row, String value) {
     TableModel tModel = tableP.table.getModel();
     String attrName = (String) tModel.getValueAt(row, 0);
@@ -77,6 +90,10 @@ public abstract class VariableTextEditor extends AbstractCellEditor
     }
   }
 
+  /**
+  * Sets the data of the current text component for a triggering
+  * AWTEvent.
+  */
   public void changeResult(AWTEvent e) {
     if (e.getSource() instanceof JTextComponent) {
       JTextComponent text = (JTextComponent) e.getSource();
@@ -87,7 +104,11 @@ public abstract class VariableTextEditor extends AbstractCellEditor
       catch (Exception exc) {System.out.println(exc);}
     }
   }
-
+  
+  /**
+  * Sets the data of the current text component for a triggering
+  * DocumentEvent.
+  */
   public void changeNode(DocumentEvent e) {
     try {
       result = e.getDocument().getText(0,
@@ -132,8 +153,8 @@ public abstract class VariableTextEditor extends AbstractCellEditor
   }
 
   /**
-   * very simple extension of Document (text) that simply adds an int
-   * field to designate which row this Document edits
+   * Very simple extension of Document (text) that simply adds an int
+   * field to designate which row this Document edits.
    */
   public class RowDoc extends DefaultStyledDocument {
     public int row;

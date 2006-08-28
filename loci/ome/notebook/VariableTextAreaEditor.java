@@ -30,14 +30,28 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.table.TableCellEditor;
 
+/**
+ * A class that defines a textarea editor for cells defined
+ * to be of type "Desc" in the template. This gives the user
+ * more room in these cells to type long descriptions. When
+ * clicked on, the cell expands by four times.
+ *
+ * @author Christopher Peterson crpeterson2 at wisc.edu
+ */
 public class VariableTextAreaEditor extends VariableTextEditor
   implements TableCellEditor
 {
 
+  /** Construct a new VariableTextEditor.*/
   public VariableTextAreaEditor(MetadataPane.TablePanel tp) { super(tp); }
 
   // -- TableCellEditor API methods --
 
+  /**
+  * The method that a table calls to ask for the editing component of
+  * a particular cell. Also handles expansion of the row in this case.
+  * @return The component that is this area's editor (a JTextArea).
+  */
   public Component getTableCellEditorComponent(JTable table, Object value,
     boolean isSelected, int row, int column)
   {
@@ -53,6 +67,7 @@ public class VariableTextAreaEditor extends VariableTextEditor
     return jScr;
   }
 
+  /** Handles the shrinking of this cell when the user's done with editing.*/
   public void focusLost(FocusEvent e) {
     if (e.getSource() instanceof JTextArea) {
       JTextArea jta = (JTextArea) e.getSource();

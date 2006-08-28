@@ -34,30 +34,53 @@ import javax.swing.event.*;
 import org.openmicroscopy.xml.*;
 import org.w3c.dom.*;
 
+/**
+ * A panel that has a JList to display note names, and a
+ * JTextArea to display the content of the note. Also has
+ * buttons for adding and deleting notes.
+ *
+ * @author Christopher Peterson crpeterson2 at wisc.edu
+ */
 public class NotePanel extends JPanel implements ListSelectionListener {
 
+  /** The color of this component's background.*/
   public static final Color BACK_COLOR =
     new Color(175,175,175);
 
+  /** An icon that signifies that notes are present.*/
   public static final ImageIcon NOTES_BULLET =
     MetadataPane.createImageIcon("Icons/bullet-green.gif",
       "An icon signifying that notes are present.");
-
+      
+  /** An icon that signifies that no notes are present.*/
   public static final ImageIcon NO_NOTES_BULLET =
     MetadataPane.createImageIcon("Icons/bullet-red.gif",
       "An icon signifying that no notes are present.");
 
+  /** The TablePanel that this NotePanel is a part of.*/
   MetadataPane.TablePanel tableP;
+  
+  /** The JList SubClass that holds the note names.*/
   public ClickableList noteList;
+  
+  /** The JTextArea that holds a note's content.*/
   public JTextArea textArea;
+  
+  /** The list and textarea's name labels.*/
   public JLabel nameLabel,noteLabel;
 
+  /**
+  * Construct a NotePanel given the parent TablePanel.
+  * @param tp The TablePanel that this NotePanel is a part of.
+  */
   public NotePanel(MetadataPane.TablePanel tp) {
     super();
 
     tableP = tp;
     setBorder(new EmptyBorder(5,5,5,5));
     setBackground(BACK_COLOR);
+    
+    boolean editable = tableP.isEditable();
 
     Vector noteEleList = getNoteElements();
     DefaultListModel thisModel = new DefaultListModel();
@@ -78,6 +101,7 @@ public class NotePanel extends JPanel implements ListSelectionListener {
     jScroll.setPreferredSize(new Dimension(150,100));
 
     textArea = new JTextArea();
+    if(!editable) textArea.setEditable(false);
     textArea.setLineWrap(true);
     textArea.setWrapStyleWord(true);
     textArea.getDocument().addDocumentListener(noteList);
@@ -110,6 +134,7 @@ public class NotePanel extends JPanel implements ListSelectionListener {
     addBTN.setToolTipText("Add a new note to the \"Name\" list.");
     addBTN.setForeground(MetadataPane.ADD_COLOR);
     addBTN.setOpaque(false);
+    if(!editable) addBTN.setEnabled(false);
 
     JButton delBTN = new JButton("Delete Note");
     delBTN.setPreferredSize(new Dimension(100,17));
@@ -118,6 +143,7 @@ public class NotePanel extends JPanel implements ListSelectionListener {
     delBTN.setToolTipText("Delete the note selected in the \"Name\" list.");
     delBTN.setForeground(MetadataPane.DELETE_COLOR);
     delBTN.setOpaque(false);
+    if(!editable) delBTN.setEnabled(false);
 
     add(nameLabel, cc.xy(1,1, "left,center"));
     add(noteLabel, cc.xy(3,1, "left,center"));
@@ -132,6 +158,11 @@ public class NotePanel extends JPanel implements ListSelectionListener {
     if (noteEleList != null) setVisible(true);
   }
 
+  /**
+  * Get the DOM Elements of all notes for this NotePanel's
+  * TablePanel's OMEXMLNode.
+  * @return A vector of all note-type elements for this NotePanel.
+  */
   public Vector getNoteElements() {
     if (tableP.tPanel.oNode == null || tableP.oNode == null) return null;
     Vector results = new Vector();
@@ -152,6 +183,11 @@ public class NotePanel extends JPanel implements ListSelectionListener {
     return results;
   }
   
+  /**
+  * Get a Hashtable of notenames and values for this NotePanel.
+  * @return A Hashtable with keys of the notes' names and values
+  * associated with that note name.
+  */
   public Hashtable getNoteHash() {
     Hashtable results = new Hashtable();
     Vector noteV = getNoteElements();
@@ -166,29 +202,42 @@ public class NotePanel extends JPanel implements ListSelectionListener {
     return results;
   }
 
+  /** Get the number of notes associated with this NotePanel.*/
   public int getNumNotes() {
     Vector thisVector = getNoteElements();
     if (thisVector == null) return 0;
     else return thisVector.size();
   }
 
+  /**
+  * Toggle the icon for the "Name" JLabel.
+  * @param hasElements Does the list have note names in it?
+  */
   public void setNameLabel(boolean hasElements) {
     if (hasElements) nameLabel.setIcon(NOTES_BULLET);
     else nameLabel.setIcon(NO_NOTES_BULLET);
   }
 
+  /**
+  * Toggle the icon for the "Notes" JLabel.
+  * @param hasElements Does the textarea have note names in it?
+  */
   public void setNotesLabel(boolean hasElements) {
     if (hasElements) noteLabel.setIcon(NOTES_BULLET);
     else noteLabel.setIcon(NO_NOTES_BULLET);
   }
 
+  /**
+  * Handles changes in the JList such as selection of a
+  * different name or what have you.
+  */
   public void valueChanged(ListSelectionEvent e) {
     String thisName = (String) noteList.getSelectedValue();
     if ( thisName != null ) {
       Element currentCA = DOMUtil.getChildElement("CustomAttributes",
         tableP.tPanel.oNode.getDOMElement());
       Vector childList = DOMUtil.getChildElements(
-        tableP.tPanel.el.getAttribute("XMLName") + "Annotation", currentCA);
+        tableP.el.getAttribute("XMLName") + "Annotation", currentCA);
       Element childEle = null;
       for (int i = 0;i<childList.size();i++) {
         Element thisEle = (Element) childList.get(i);

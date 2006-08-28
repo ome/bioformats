@@ -39,6 +39,15 @@ import java.util.Hashtable;
 import java.util.Vector;
 import org.openmicroscopy.xml.OMEXMLNode;
 
+/**
+ * A class to handle a combobox editor that chooses its items
+ * intelligently based on the template. This class looks at the
+ * files in the TypeDef folder to see what kind of tag this
+ * reference should be pointing to and then lists all reference
+ * IDs found in the file that meet this criterion.
+ *
+ * @author Christopher Peterson crpeterson2 at wisc.edu
+ */
 public class VariableComboEditor extends AbstractCellEditor
   implements TableCellEditor, ActionListener, FocusListener, MouseListener
 {
@@ -85,6 +94,7 @@ public class VariableComboEditor extends AbstractCellEditor
   // -- Constructor --
 
   /**
+   * Construct a new VariableComboEditor.
    * @param IDP vector of TablePanels that have been found to have ID attributes
    * @param AddP vector of Strings that hold all external LSIDs found in this
    *        file
@@ -107,11 +117,17 @@ public class VariableComboEditor extends AbstractCellEditor
   }
 
   // -- VariableComboEditor API --
+  
+  /**Reset the necessary lists for this editor.*/
+  public void setDefs(Vector IDP, Vector AddP) {
+    idPanels = IDP;
+    addPanels = AddP;
+  }
 
   /**
-   * if we give up on tailoring the combobox to the appropriate types,
+   * If we give up on tailoring the combobox to the appropriate types,
    * this method simply adds all possible references of all types to
-   * the combobox
+   * the combobox.
    */
   public void addAll(JRowBox jrb) {
     //add internal references
@@ -194,6 +210,7 @@ public class VariableComboEditor extends AbstractCellEditor
 
   // -- EventListener API --
 
+  /**Handle whenever the user has selected an item from this combobox.*/
   public void actionPerformed(ActionEvent e) {
     if ( e.getSource() instanceof JRowBox) {
       box = (JRowBox) e.getSource();
@@ -247,6 +264,10 @@ public class VariableComboEditor extends AbstractCellEditor
     }
   }
 
+  /**
+  * Needs this in order to handle when the user presses tab
+  * while the editor combobox is still open.
+  */
   public void focusGained(FocusEvent e) {
     if (e.getSource() instanceof JRowBox) {
       JRowBox thisBox = (JRowBox) e.getSource();
@@ -256,6 +277,7 @@ public class VariableComboEditor extends AbstractCellEditor
 
   public void focusLost(FocusEvent e) {}
 
+  /** Handle whenever the user clicks on this editor.*/
   public void mousePressed(MouseEvent e) {
     if (e.getSource() instanceof JRowBox &&
       e.getButton() == MouseEvent.BUTTON1)
@@ -273,8 +295,8 @@ public class VariableComboEditor extends AbstractCellEditor
   // -- Helper Classes --
 
   /**
-   * very simple extension of JComboBox that simply adds an int
-   * field to designate which row this combobox edits
+   * Very simple extension of JComboBox that simply adds an int
+   * field to designate which row this combobox edits.
    */
   public class JRowBox extends JComboBox {
     public int row;

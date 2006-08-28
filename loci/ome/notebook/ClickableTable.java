@@ -54,43 +54,56 @@ import org.w3c.dom.NodeList;
 /**
  * A class that makes tables you can right click to
  * add or subtract duplicate tables and get information
- * on the attributes being manipulated
+ * on the attributes being manipulated.
  *
  * @author Christopher Peterson crpeterson2 at wisc.edu
  */
 public class ClickableTable extends JTable
   implements MouseListener, ActionListener, ListSelectionListener {
 
-  /** stores the TablePanel this table is associated with */
+  /** stores the TablePanel this table is associated with. */
   protected MetadataPane.TablePanel tp;
 
-  /** is the current popup menu at any given rightclick */
+  /** is the current popup menu at any given rightclick. */
   protected JPopupMenu jPop;
 
-  /** the current row being clicked on at any point */
+  /** the current row being clicked on at any point. */
   private int thisRow;
 
-  /** the name of the attribute in the row being clicked on currently */
+  /** the name of the attribute in the row being clicked on currently. */
   private String attrName;
 
   /**
    * tells at any given point if the TablePanel being added or deleted
    * is a "duplicate" , e.g. if there is more than one element with its
-   * same tagname on a given level of the node tree
+   * same tagname on a given level of the node tree.
    */
   private boolean isDuplicate;
 
-  /** the TableCellRenderers for this ClickableTable */
+  /** The TableCellRenderers for this ClickableTable. */
   protected TableCellRenderer labelR,textR,comboR,gotoR;
 
+  /** The TableCellEditors for this ClickableTable. */
   protected TableCellEditor labelE,textE,comboE,gotoE;
+  
+  /** Whether or not this table should be editable*/
+  protected boolean editable;
 
   // -- ClickableTable Constructors --
 
+  /**
+  * Create a new ClickableTable to display OMEXML metadata.
+  * @param model the model of the table of the TablePanel this table is a
+  * part of.
+  * @param tablePanel the TablePanel this table is a part of.
+  * @param vcEdit the VariableComboEditor that should edit all table cells
+  * that are found to be of type "Ref" as specified by Template.xml .
+  */
   public ClickableTable(TableModel model, MetadataPane.TablePanel tablePanel,
     VariableComboEditor vcEdit)
   {
     super(model);
+    editable = tablePanel.isEditable();
 
     labelR = new DefaultTableCellRenderer();
     comboR = new VariableComboRenderer();
@@ -133,7 +146,16 @@ public class ClickableTable extends JTable
       }
     });
   }
+  
+  /**Reset necessary values for the VariableComboEditor.*/
+  public void setDefs(Vector IDP, Vector AddP) {
+    ((VariableComboEditor)comboE).setDefs(IDP,AddP);
+  }
 
+  /**
+  * Overide the JTable method to get appropriate tooltips based
+  * on the cell the mouse is currently over.
+  */
   public String getToolTipText(MouseEvent e) {
     String tip = null;
     java.awt.Point p = e.getPoint();
@@ -174,7 +196,11 @@ public class ClickableTable extends JTable
     }
     return tip;
   }
-
+  
+  /**
+  * Check Template.xml definitions of a particular cell so that the
+  * cell's type is mapped to the corresponding editor for that type.
+  */
   public String getCellType(int row, int column) {
     TableModel tModel = getModel();
 
@@ -198,6 +224,10 @@ public class ClickableTable extends JTable
     return cellType;
   }
 
+  /**
+  * Overide the JTable method in order to get wierd renderers
+  * based on what row and column we're in.
+  */
   public TableCellRenderer getCellRenderer(int row, int column) {
     if (column == 1) {
       String cellType = getCellType(row,column);
@@ -223,6 +253,10 @@ public class ClickableTable extends JTable
     else return labelR;
   }
 
+  /**
+  * Overide the JTable method in order to get wierd editors based
+  * on what row and column we're in.
+  */
   public TableCellEditor getCellEditor(int row, int column) {
     if (column == 1) {
       String cellType = getCellType(row,column);
@@ -253,7 +287,7 @@ public class ClickableTable extends JTable
 
   /**
    * tests if the given tagname should be
-   * placed under a CustomAttributesNode
+   * placed under a CustomAttributesNode.
    */
   public static boolean isInCustom(String tagName) {
     return MetadataPane.isInCustom(tagName);
@@ -287,6 +321,7 @@ public class ClickableTable extends JTable
 
   // -- MouseListener API Methods --
 
+  /**Handles the creation of the popup menu on right clicks.*/
   public void mousePressed(MouseEvent e) {
     //test if button 2 or 3 are pressed
     if (e.getButton() == MouseEvent.BUTTON3
@@ -316,8 +351,11 @@ public class ClickableTable extends JTable
 
       //setup the various menuitems in the popup menu
       JMenuItem addItem = new JMenuItem("Add another " + realBigName);
+      if(!editable) addItem.setEnabled(false);
       JMenuItem bigRemItem = new JMenuItem("Delete this " + realBigName);
+      if(!editable) bigRemItem.setEnabled(false);
       JMenuItem remItem = new JMenuItem("Delete this " + attrName);
+      if(!editable) remItem.setEnabled(false);
       infoItem.addActionListener(this);
       infoItem.setActionCommand("help");
       addItem.addActionListener(this);
@@ -351,7 +389,7 @@ public class ClickableTable extends JTable
 
   // -- ActionLister API Methods --
 
-  /** handles the actions caused by selection in the popup menu */
+  /** Handles the actions caused by selection in the popup menu. */
   public void actionPerformed(ActionEvent e) {
     String cmd = e.getActionCommand();
     //create a HelpFrame if user requests help on an attribute
@@ -489,6 +527,7 @@ public class ClickableTable extends JTable
 
   // -- Helper Classes --
 
+  /** Defines a little nifty window for displaying help.*/
   public class HelpFrame extends JFrame {
     //the only constructor
     public HelpFrame() {

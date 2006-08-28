@@ -43,16 +43,37 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * A class that makes lists you can right click to
+ * add or subtract notes from. Also handles the changes
+ * to the OMEXMLNodes that arrises from user interaction
+ * with the GUI of a NotePanel.
+ *
+ * @author Christopher Peterson crpeterson2 at wisc.edu
+ */
 public class ClickableList extends JList
   implements MouseListener, ActionListener, DocumentListener
 {
-
+  /**The popup menu created when right-clicking on this list.*/
   protected JPopupMenu jPop;
+  
+  /**The TablePanel this list of notes is for*/
   protected MetadataPane.TablePanel tableP;
+  
+  /**The textarea that displays these notes.*/
   protected JTextArea textArea;
+  
+  /**The listmodel for this list.*/
   protected DefaultListModel myModel;
+  
+  /**The NotePanel that contains this list of notes.*/
   protected NotePanel noteP;
 
+  /**Make a clickable list to display the names of notes for a
+  * TablePanel.
+  * @param thisModel The listmodel for this list.
+  * @param nP The NotePanel that contains this list of notes.
+  */
   public ClickableList (DefaultListModel thisModel, NotePanel nP) {
     super(thisModel);
 
@@ -68,9 +89,11 @@ public class ClickableList extends JList
     noteP = nP;
   }
 
+  /** Handles right-clicking on this list to call up a popup menu.*/
   public void mousePressed(MouseEvent e) {
-    if (e.getButton() == MouseEvent.BUTTON3
+    if ((e.getButton() == MouseEvent.BUTTON3
       || e.getButton() == MouseEvent.BUTTON2)
+      && tableP.isEditable())
     {
       jPop = new JPopupMenu("Add/Remove Notes");
 
@@ -89,6 +112,9 @@ public class ClickableList extends JList
     }
   }
 
+  /**Sets the selected note to the stated value.
+  *  @param text The value that the note should have.
+  */
   public void setValue(String text) {
     if (((String) getSelectedValue()) != null && text != null) {
       Element currentCA = DOMUtil.getChildElement("CustomAttributes",
@@ -114,6 +140,7 @@ public class ClickableList extends JList
   public void mouseEntered(MouseEvent e) {}
   public void mouseExited(MouseEvent e) {}
 
+  /**Handles all popup menu commands.*/
   public void actionPerformed(ActionEvent e) {
     String cmd = e.getActionCommand();
     if ("add".equals(cmd)) {
@@ -285,6 +312,9 @@ public class ClickableList extends JList
     }
   }
 
+  /**Handles insert changes to the textarea that the notes' values
+  *  are stored in. Sets the value of the appropriate node as well.
+  */
   public void insertUpdate(DocumentEvent e) {
     String result = null;
     try {
@@ -298,9 +328,12 @@ public class ClickableList extends JList
       else noteP.setNotesLabel(true);
     }
     setValue(result);
-    tableP.callStateChanged(true);
+    if(tableP.isEditable()) tableP.callStateChanged(true);
   }
-
+  
+  /**Handles remove changes to the textarea that the notes' values
+  *  are stored in. Sets the value of the appropriate node as well.
+  */
   public void removeUpdate(DocumentEvent e) {
     String result = null;
     try {
@@ -314,9 +347,12 @@ public class ClickableList extends JList
       else noteP.setNotesLabel(true);
     }
     setValue(result);
-    tableP.callStateChanged(true);
+    if(tableP.isEditable()) tableP.callStateChanged(true);
   }
-
+  
+  /**Handles wierd changes to the textarea that the notes' values
+  *  are stored in. Sets the value of the appropriate node as well.
+  */
   public void changedUpdate(DocumentEvent e) {
     String result = null;
     try {
@@ -330,7 +366,7 @@ public class ClickableList extends JList
       else noteP.setNotesLabel(true);
     }
     setValue(result);
-    tableP.callStateChanged(true);
+    if(tableP.isEditable()) tableP.callStateChanged(true);
   }
 
 }

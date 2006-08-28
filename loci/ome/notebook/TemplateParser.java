@@ -118,7 +118,7 @@ public class TemplateParser {
   *   will be implemented as a Hashtable of Hashtables first key corresponds
   *   to the OMEElement, second (nested) key corresponds to OMEAttribute,
   *   and finally the value corresponds to what type the OMEAttribute should
-  *   have */
+  *   have. */
   public static Hashtable getRefHash() {
     //setup Hashtables for getting reference types
     Hashtable refHash = new Hashtable();
@@ -220,12 +220,12 @@ public class TemplateParser {
     return refHash;
   }
 
-  /** returns the version information from the template*/
+  /** Returns the version information from the template.*/
   public String getVersion() {
     return root.getAttribute("Version");
   }
 
-  /** used for debugging */
+  /** Used for debugging. */
   public static void main(String[] args) {
     TemplateParser tp = new TemplateParser("Template.xml");
     Element[] eList = tp.getTabs();

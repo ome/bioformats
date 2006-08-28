@@ -45,16 +45,30 @@ import java.io.BufferedWriter;
 
 import org.w3c.dom.Element;
 
+/**
+ * A class that makes a comprehensive list of all the
+ * notes added to a particular OMEXML File by using the
+ * preexisting NotePanels made by MetadataPane.
+ *
+ * @author Christopher Peterson crpeterson2 at wisc.edu
+ */
 public class NotePane extends JScrollPane
   implements ActionListener
 {
+  /**The main text color for this view.*/
   public static final Color TEXT_COLOR =
     new Color(0,35,0);
-    
+  
+  /**The panel that holds the title header for this view.*/
   private JPanel titlePanel;
+  
+  /**The filechooser for this view.*/
   protected JFileChooser chooser;
+  
+  /**A list of all TablePanels in the MetadataPane.*/
   protected Vector tPanels;
 
+  /**Construct the default NotePane object.*/
   public NotePane() {
   	super();
   	
@@ -108,7 +122,11 @@ public class NotePane extends JScrollPane
     chooser.setFileFilter(new TextFileFilter());
 
   }
-  
+
+  /**
+  * Reset the TablePanel list acquired from MetadataPane, get
+  * the NotePanels for these TablePanels, display them.
+  */
   public void setPanels(Vector tablePanels) {
     tPanels = tablePanels;
   
@@ -142,6 +160,10 @@ public class NotePane extends JScrollPane
 	  setViewportView(contentPanel);
 	}
 	
+	/**
+	* Call up the necessary dialogs and then output the selected notes
+	* to the selected text file.
+	*/
 	public void exportNotes() {
 		if(tPanels != null) {
 	    Hashtable topHash = new Hashtable();
@@ -252,6 +274,7 @@ public class NotePane extends JScrollPane
 		}
 	}
 	
+	/**Handle the "Export Notes" button action, call exportNotes().*/
 	public void actionPerformed(ActionEvent e) {
 	  if(e.getActionCommand().equals("save")) exportNotes();
 	}
@@ -259,6 +282,10 @@ public class NotePane extends JScrollPane
 
 	// --Helper Classes--
 	
+	/**
+	* A subclass of JPanel that gets around the annoying resize width
+	* problems inherent in a JPanel that is the View of a JScrollPane.
+	*/
 	public class ScrollablePanel extends JPanel
 	  implements Scrollable
 	{
@@ -278,6 +305,7 @@ public class NotePane extends JScrollPane
     public boolean getScrollableTracksViewportHeight() {return false;}
   }
   
+  /** A filefilter to display only text files and directories.*/
 	public class TextFileFilter extends FileFilter
 	{
 	  public boolean accept(File f) {

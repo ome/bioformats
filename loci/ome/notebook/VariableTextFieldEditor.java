@@ -28,16 +28,29 @@ import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 import java.awt.Component;
 
+/**
+ * A class that handles editing of a cell that is defined in 
+ * the template as having no Type attribute, e.g. it is neither 
+ * of type "Ref" or type "Desc". Creates a JTextField to edit
+ * this cell instead of something fancy.
+ *
+ * @author Christopher Peterson crpeterson2 at wisc.edu
+ */
 public class VariableTextFieldEditor extends VariableTextEditor
   implements TableCellEditor
 {
 
+  /** Construct a new VariableTextFieldEditor.*/
   public VariableTextFieldEditor(MetadataPane.TablePanel tp) {
     super(tp);
   }
 
   // -- TableCellEditor API methods --
 
+  /**
+  * The method a table calls to get the editing component for a
+  * particular cell.
+  */
   public Component getTableCellEditorComponent(JTable table, Object value,
     boolean isSelected, int row, int column)
   {
@@ -48,5 +61,4 @@ public class VariableTextFieldEditor extends VariableTextEditor
     text.addActionListener(this);
     return text;
   }
-
 }

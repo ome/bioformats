@@ -31,8 +31,15 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
+/*
+* A class to handle the appearance of "Goto" buttons
+* that are within a cell of a given ClickableTable.
+* 
+* @author Christopher Peterson crpeterson2 at wisc.edu
+*/
 public class GotoRenderer extends JButton implements TableCellRenderer {
 
+  /**Construct a GotoRenderer.*/
   public GotoRenderer() {
     super("Goto");
     setActionCommand("goto");
@@ -41,6 +48,10 @@ public class GotoRenderer extends JButton implements TableCellRenderer {
     setOpaque(true); //MUST do this for background to show up.
   }
 
+  /**
+  * Overide the TableCellRenderer method to give back the appropriate
+  * component to make the buttons appear even when not clicked on.
+  */
   public Component getTableCellRendererComponent(JTable table, Object value,
     boolean isSelected, boolean hasFocus, int row, int column)
   {
@@ -63,5 +74,4 @@ public class GotoRenderer extends JButton implements TableCellRenderer {
     boolean oldValue, boolean newValue) {}
   protected void firePropertyChange(String propertyName,
     Object oldValue, Object newValue) {}
-
 }

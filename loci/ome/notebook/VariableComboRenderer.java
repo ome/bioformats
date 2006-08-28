@@ -29,12 +29,22 @@ import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellRenderer;
 
+/**
+ * A class to handle how to display a combobox cell even
+ * when the cell is not being edited.
+ *
+ * @author Christopher Peterson crpeterson2 at wisc.edu
+ */
 public class VariableComboRenderer extends JComboBox
   implements TableCellRenderer
 {
-
+  /** Construct a new VariableComboRenderer.*/
   public VariableComboRenderer() { super(); }
 
+  /**
+  * Returns the component that should be displayed by the table in
+  * a reference cell when it is not being edited.
+  */
   public Component getTableCellRendererComponent(JTable table, Object value,
     boolean isSelected, boolean hasFocus, int row, int column)
   {
@@ -48,11 +58,22 @@ public class VariableComboRenderer extends JComboBox
   //for details as to why I did this
 //  public void validate() {}
 //  public void revalidate() {}
+  /**
+  * Made no-op for performance reasons... see jdk 1.4 API
+  * Specifications on DefaultCellRenderer for details.
+  */
   public void repaint(long tm, int x, int y,
     int width, int height) {}
+  /**
+  * Made no-op for performance reasons... see jdk 1.4 API
+  * Specifications on DefaultCellRenderer for details.
+  */
   public void firePropertyChange(String propertyName,
     boolean oldValue, boolean newValue) {}
+  /**
+  * Made no-op for performance reasons... see jdk 1.4 API
+  * Specifications on DefaultCellRenderer for details.
+  */
   protected void firePropertyChange(String propertyName,
     Object oldValue, Object newValue) {}
-
 }

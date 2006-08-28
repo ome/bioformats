@@ -25,6 +25,8 @@ package loci.ome.notebook;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -32,16 +34,28 @@ import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellRenderer;
 
+/**
+ * A class to handle how to display a JTextArea edited
+ * cell when it's not being edited. Basically displays
+ * the first bit of text in a label and a nifty icon on
+ * the right side to signify that this cell will expand.
+ * If the text is too long to fit into the cell then the
+ * label will be clipped and ... will be added.
+ *
+ * @author Christopher Peterson crpeterson2 at wisc.edu
+ */
 public class VariableTextAreaRenderer extends JPanel
   implements TableCellRenderer
 {
-
+  /** A nifty icon to signify that a textare will edit this cell.*/
   public static final ImageIcon TEXT_BULLET =
     MetadataPane.createImageIcon("Icons/text-bullet.gif",
     "An icon signifying that a textarea will edit this cell.");
 
+  /** The label that will hold the text value of this cell.*/
   private JLabel jl;
 
+  /** Construct a new VariableTextAreaRenderer.*/
   public VariableTextAreaRenderer() {
     super();
      jl = new JLabel();
@@ -53,10 +67,32 @@ public class VariableTextAreaRenderer extends JPanel
     setOpaque(false);
   }
 
+  /**
+  * The method that a table calls to get the renderer component
+  * of a particular cell. Returns a simple JPanel here with a label
+  * and an icon added to it.
+  */
   public Component getTableCellRendererComponent(JTable table, Object value,
       boolean isSelected, boolean hasFocus, int row, int column)
-  {
-    jl.setText((String) value);
+  { 
+    String result = (String) value;
+    Font aFont = jl.getFont();
+    FontMetrics fm = getFontMetrics(aFont);
+    int stringWidth = -1;
+    if(result != null) stringWidth = fm.stringWidth(result);
+    else stringWidth = 0;
+    int colWidth = table.getColumnModel().getColumn(1).getWidth();
+    if (stringWidth > colWidth - 15) {
+      for(int i=result.length();i>0;i--) {
+        String subValue = result.substring(0,i);
+        int subWidth = fm.stringWidth(subValue);
+        if (subWidth < colWidth - 30) {
+          result = subValue + "...";
+          break;
+        }
+      }
+    }
+    jl.setText(result);
     return this;
   }
 
@@ -64,10 +100,22 @@ public class VariableTextAreaRenderer extends JPanel
   //for details as to why I did this
 //  public void validate() {}
 //  public void revalidate() {}
+  /**
+  * Made no-op for performance reasons... see jdk 1.4 API
+  * Specifications on DefaultCellRenderer for details.
+  */
   public void repaint(long tm, int x, int y,
     int width, int height) {}
+  /**
+  * Made no-op for performance reasons... see jdk 1.4 API
+  * Specifications on DefaultCellRenderer for details.
+  */
   public void firePropertyChange(String propertyName,
     boolean oldValue, boolean newValue) {}
+  /**
+  * Made no-op for performance reasons... see jdk 1.4 API
+  * Specifications on DefaultCellRenderer for details.
+  */
   protected void firePropertyChange(String propertyName,
     Object oldValue, Object newValue) {}
 

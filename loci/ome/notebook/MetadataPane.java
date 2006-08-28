@@ -44,6 +44,8 @@ import org.w3c.dom.*;
  * Most of the gui code is in here.
  * If you want a panel instead of a window, instantiate this
  * instead of MetadataNotebook.
+ * Sadly you lose quite a bit of functionality such as the
+ * various views if you choose to directly instatiate.
  *
  * @author Christopher Peterson crpeterson2 at wisc.edu
  */
@@ -53,22 +55,28 @@ public class MetadataPane extends JPanel
 
   // -- Constants --
 
+  /**Defines the names of columns in the TablePanels.*/
   protected static final String[] TREE_COLUMNS = {"Attribute", "Value", "Goto"};
 
+  /**An icon that signifies metadata is present.*/
   public static final ImageIcon DATA_BULLET =
     createImageIcon("Icons/bullet-green.gif",
       "An icon signifying that metadata is present.");
 
+  /**An icon that signifies no metadata is present.*/
   public static final ImageIcon NO_DATA_BULLET =
     createImageIcon("Icons/bullet-red.gif",
       "An icon signifying that no metadata is present.");
 
+  /**The color that signifies a button's operation is to add something.*/
   public static final Color ADD_COLOR =
     new Color(0,100,0);
 
+  /**The color that signifies a button's operation is to delete something.*/
   public static final Color DELETE_COLOR =
     new Color(100,0,0);
 
+  /**The main text color of most things.*/
   public static final Color TEXT_COLOR =
     new Color(0,0,50);
 
@@ -77,41 +85,49 @@ public class MetadataPane extends JPanel
   /** Pane containing XML tree. */
   protected JTabbedPane tabPane;
 
-  /** TemplateParser object*/
+  /** TemplateParser object.*/
   protected TemplateParser tParse;
 
-  /** Keeps track of the OMENode being operated on currently*/
+  /** Keeps track of the OMENode being operated on currently.*/
   protected OMENode thisOmeNode;
 
-  /** A list of all TablePanel objects */
+  /** A list of all TablePanel objects. */
   protected Vector panelList;
 
-  /** A list of TablePanel objects that have ID */
+  /** A list of TablePanel objects that have ID attributes. */
   protected Vector panelsWithID;
 
-  /** A list of external references to be added to the combobox cell editor*/
+  /** A list of external references to be added to the combobox cell editor.*/
   protected Vector addItems;
 
-  /** A list of the TabPanels*/
+  /** A list of the TabPanels.*/
   protected Vector tabPanelList;
 
-  /** Hashtable containing internal semantic type defs in current file*/
+  /**
+  * Hashtable containing internal semantic
+  * type defs in current file.
+  */
   public Hashtable internalDefs;
 
-  /** Signifies that the current file has
-  *   changed from the last saved version*/
+  /** 
+  * Signifies that the current file has
+  * changed from the last saved version.
+  */
   public boolean hasChanged;
 
-  /** If true, the save button should be display in each TabPanel*/
+  /** If true, the save button should be display in each TabPanel.*/
   protected boolean addSave;
+  
+  /**Whether or not the user should be able to edit metadata.*/
+  protected boolean editable;
 
-  /** Holds the original file if it is of TIFF format*/
+  /** Holds the original file if it is of TIFF format.*/
   protected File originalTIFF;
 
-  /** Holds the currently edited file, or null if none*/
+  /** Holds the currently edited file, or null if none.*/
   protected File currentFile;
 
-  /** Holds the first image of a tiff file*/
+  /** Holds the first image of a tiff file.*/
   public BufferedImage img, thumb;
 
   // -- Fields - raw panel --
@@ -128,23 +144,42 @@ public class MetadataPane extends JPanel
 
   // -- Constructor --
 
-  /** Constructs widget for displaying OME-XML metadata. */
+  /** Constructs default widget for displaying OME-XML metadata. */
   public MetadataPane() {
     this((File) null, true);
   }
 
+  /**
+  * Constructs a pane to display the OME-XML metadata of a
+  * given file.
+  * @param f The file to be initially displayed.
+  */
   public MetadataPane(File f)
   {
     this(f, true);
   }
+  
+  /**
+  * Constructs a pane to display the OME-XML metadata of a
+  * given file and with the given save policy.
+  * @param f The file to be initially displayed.
+  * @param save Whether saving should be allowed.
+  */
+  public MetadataPane(File file, boolean save) {
+    this(file,save,true);
+  }
 
   /**
+   * Constructs a pane to display the OME-XML metadata of a
+   * given file with the given save and editing policy.
    * @param file the file to open initially
-   * @param addSave whether or not to display the save button
+   * @param save whether or not to display the save button
+   * @param editMe whether or not the user should be able to edit metadata
    */
-  public MetadataPane(File file, boolean save) {
+  public MetadataPane(File file, boolean save, boolean editMe) {
     // -- General Field Initialization --
 
+    editable = editMe;
     panelList = new Vector();
     panelsWithID = new Vector();
     addItems = new Vector();
@@ -202,7 +237,8 @@ public class MetadataPane extends JPanel
   // -- MetadataPane API methods --
 
   /**
-   * retrieves the current document object describing the whole OMEXMLNode tree
+   * Retrieves the current document object
+   * describing the whole OMEXMLNode tree.
    */
   public Document getDoc() {
     Document doc = null;
@@ -213,8 +249,17 @@ public class MetadataPane extends JPanel
     return doc;
   }
 
+  /** 
+  * Tells whether or not the XML has changed due to
+  * user manipulation.
+  */
   public boolean getState() { return hasChanged; }
 
+  /**
+  * Sets whether or not the XML has changed due to
+  * user manipulation.
+  * @param change Has the XML changed?
+  */
   public void stateChanged(boolean change) {
     hasChanged = change;
     for (int i = 0; i < tabPanelList.size();i++) {
@@ -224,14 +269,16 @@ public class MetadataPane extends JPanel
     }
   }
 
+  /** Get the OMENode currently being edited.*/
   public OMENode getRoot() { return thisOmeNode; }
 
+  /** Save to the given file.*/
   public void saveFile(File file) {
     try {
       //use the node tree in the MetadataPane to write flattened OMECA
       //to a given file
       if (originalTIFF != null) {
-        String xml = thisOmeNode.writeOME(true);
+        String xml = thisOmeNode.writeOME(false);
 
         if (originalTIFF == file) {
           RandomAccessFile raf = new RandomAccessFile(file, "rw");
@@ -255,7 +302,7 @@ public class MetadataPane extends JPanel
         }
       }
       else {
-        thisOmeNode.writeOME(file, true);
+        thisOmeNode.writeOME(file, false);
         if (getTopLevelAncestor() instanceof MetadataNotebook) {
           MetadataNotebook mdn = (MetadataNotebook) getTopLevelAncestor();
           mdn.setTitle("OME Metadata Notebook - " + file);
@@ -311,7 +358,11 @@ public class MetadataPane extends JPanel
           reader.setMetadataStore(ms);
           String id = file.getPath();
 
-          img = reader.openImage(id, 0); // gets first image from the file
+          int num = reader.getImageCount(id);
+          if (num > 0) {
+            img = reader.openImage(id, num / 2); // gets middle image from the file
+          }
+          else img = null;
           int width = 50, height = 50;
           thumb = ImageTools.scale(img, width, height);
           ome = (OMENode) ms.getRoot();
@@ -623,7 +674,7 @@ public class MetadataPane extends JPanel
   }
 
   /**
-   * fleshes out the GUI of a given TabPanel, adding TablePanels appropriately
+   * Fleshes out the GUI of a given TabPanel, adding TablePanels appropriately.
    */
   public void renderTab(TabPanel tp) {
     if (tp.isRendered) return;
@@ -828,6 +879,7 @@ public class MetadataPane extends JPanel
 
   // -- Event API methods --
 
+  /** Handle the "QuickSave" button actions.*/
   public void actionPerformed(ActionEvent e) {
     String cmd = e.getActionCommand();
     if (cmd.equals("save")) {
@@ -856,6 +908,7 @@ public class MetadataPane extends JPanel
     }
   }
 
+  /** Get a path name for an element in the template.*/
   public static String getTreePathName(Element e) {
     String thisName = null;
     if (e.hasAttribute("Name"))thisName = e.getAttribute("Name");
@@ -872,6 +925,16 @@ public class MetadataPane extends JPanel
     return thisName;
   }
 
+  /**
+  * Get a path name for a given OMEXMLNode found in the current
+  * file being edited based on the template. Only by calling this
+  * method will duplicate OMEXMLNodes be accounted for, e.g. this
+  * method adds Project (1) or Project (2) to signify multiple
+  * elements.
+  * @param el The template element that corresponds to this OMEXMLNode.
+  * @param on The OMEXMLNode that we want the path name for.
+  * @return A string representing the OMEXMLNode's path name.
+  */
   public static String getTreePathName(Element el, OMEXMLNode on) {
     if (el != null && on != null) {
       Vector pathList = new Vector();
@@ -917,8 +980,8 @@ public class MetadataPane extends JPanel
   }
 
   /**
-   * tests if the given tagname should be
-   * placed under a CustomAttributesNode
+   * Tests if the given tagname should be
+   * placed under a CustomAttributesNode.
    */
   public static boolean isInCustom(String tagName) {
     if (tagName.equals("Project") ||
@@ -933,11 +996,14 @@ public class MetadataPane extends JPanel
   }
 
   /**
-   * return a new node of type specified by unknownName
+   * Return a new node of type specified by unknownName
    * with the specified parent.
    * N.B. The Parent can either be the direct parent or the
    * ancestor that has the CustomAttributesNode that
-   * is the real parent
+   * is the real parent.
+   * @param unknownName The name this new OMEXMLNode should have.
+   * @param parent The parent of the new OMEXMLNode. NEVER pass in
+   * a CustomAttributesNode, but rather the parent of that CANode.
    */
   public static OMEXMLNode makeNode(String unknownName, OMEXMLNode parent) {
     OMEXMLNode n = null;
@@ -983,8 +1049,10 @@ public class MetadataPane extends JPanel
   }
 
   /**
-   * returns a vector of Strings representing the XMLNames of the
+   * Returns a vector of Strings representing the XMLNames of the
    * template's ancestors in ascending order in the list.
+   * @param e The template element we want the path list for.
+   * @return A vector holding the tagnames of all parent elements.
    */
   public static Vector getTreePathList(Element e) {
     Vector thisPath = new Vector(10);
@@ -998,6 +1066,7 @@ public class MetadataPane extends JPanel
     return thisPath;
   }
 
+  /**Converts a number into the KeyEvent for that number.*/
   public static int getKey(int i) {
       int keyNumber = 0;
       switch (i) {
@@ -1047,14 +1116,31 @@ public class MetadataPane extends JPanel
   public class TabPanel extends JPanel
     implements Scrollable
   {
+    /**The template element this TabPanel corresponds to.*/
     protected Element el;
+    
+    /**The name of this TabPanel.*/
     public String name;
+    
+    /**Whether or not this TabPanel has already been rendered.*/
     private boolean isRendered;
+    
+    /**
+    * The OMEXMLNode in the current file that this TabPanel
+    * corresponds to.
+    */
     protected OMEXMLNode oNode;
+    
+    /** The OMENode associated with this file*/
     protected OMENode ome;
+    
+    /** The JPanel that holds this TabPanel's title header.*/
     protected JPanel titlePanel;
+    
+    /** The "QuickSave" button for this TabPanel*/
     protected JButton saveButton;
 
+    /** Construct a TabPanel arround a given template Element.*/
     public TabPanel(Element el) {
       ome = thisOmeNode;
       isRendered = false;
@@ -1066,8 +1152,10 @@ public class MetadataPane extends JPanel
       saveButton = null;
     }
 
+    /** Convert this TabPanel into a String.*/
     public String toString() { return el == null ? "null" : el.getTagName(); }
 
+    /** Implement these scrollable methods to make resizing behave.*/
     public Dimension getPreferredScrollableViewportSize() {
       return getPreferredSize();
     }
@@ -1087,19 +1175,58 @@ public class MetadataPane extends JPanel
   public class TablePanel extends JPanel
     implements ActionListener, MouseListener
   {
+    /**The OMEXMLNode that this TablePanel is displaying.*/
     public OMEXMLNode oNode;
+    
+    /**The TabPanel that this TablePanel is a part of.*/
     public TabPanel tPanel;
+    
+    /**The NotePanel that holds the notes for this TablePanel.*/
     public NotePanel noteP;
+    
+    /**
+    * The "ID" OMEXML attribute for the OMEXMLNode this TablePanel
+    * displays.
+    */
     public String id;
+    
+    /**The name of this TablePanel.*/    
     public String name;
+    
+    /**The ClickableTable that displays this TablePanel's metadata.*/
     public ClickableTable table;
+    
+    /**The tableheader of this TablePanel's ClickableTable*/
     JTableHeader tHead;
+    
+    /**The template element that this TablePanel corresponds to.*/
     public Element el;
+    
+    /**Indicates whether or not this is a nested OMEXMLNode*/
     public boolean isTopLevel;
+    
+    /**
+    * The notes, add table, and delete table buttons
+    * of this TablePanel.
+    */
     protected JButton noteButton, addButton, delButton;
-    protected Vector attrList, refList;
+    
+    /**A list of non "Ref" type attributes.*/
+    protected Vector attrList;
+    
+    /**A list of "Ref" type attributes.*/
+    protected Vector refList;
+    
+    /**The JLabels for the title and the optional image.*/
     protected JLabel tableName, imageLabel;
 
+    /**
+    * Construct a TablePanel to display the metadata of a
+    * particular OMEXMLNode.
+    * @param e The template element this TablePanel corresponds to.
+    * @param tp The TabPanel this TablePanel is a part of.
+    * @param on The OMEXMLNode to be displayed.
+    */
     public TablePanel(Element e, TabPanel tp, OMEXMLNode on) {
       isTopLevel = false;
 
@@ -1192,8 +1319,14 @@ public class MetadataPane extends JPanel
         new DefaultTableModel(TREE_COLUMNS, 0)
       {
         public boolean isCellEditable(int row, int col) {
-          if (col < 1) return false;
-          else return true;
+          if(editable) {
+            if (col < 1) return false;
+            else return true;
+          }
+          else {
+            if (col < 2) return false;
+            else return true;
+          }
         }
       };
 
@@ -1223,6 +1356,7 @@ public class MetadataPane extends JPanel
       addButton.setActionCommand("bigAdd");
       addButton.setToolTipText("Create a new " + clippedName + " table.");
       if ( !isTopLevel && tPanel.oNode == null) addButton.setEnabled(false);
+      if ( !editable) addButton.setEnabled(false);
       addButton.setForeground(ADD_COLOR);
 
       delButton = new JButton("Delete Table");
@@ -1231,6 +1365,7 @@ public class MetadataPane extends JPanel
       delButton.setActionCommand("bigRem");
       delButton.setToolTipText("Delete this " + clippedName + " table.");
       if ( oNode == null) delButton.setVisible(false);
+      if ( !editable) delButton.setEnabled(false);
       delButton.setForeground(DELETE_COLOR);
 
       noteP = new NotePanel(this);
@@ -1327,8 +1462,15 @@ public class MetadataPane extends JPanel
       }
     }
 
+    /**
+    * A method to initialize the reference combo boxes to the value
+    * found in the current file. First sets the Vectors of values
+    * that are possible for the combobox.
+    */
     public void setEditor() {
       if (table != null) {
+        //This resets the possible values of the comboboxes.
+        table.setDefs(panelsWithID, addItems);
         TableModel model = table.getModel();
         TableColumn refColumn = table.getColumnModel().getColumn(1);
         for (int i = 0;i < table.getRowCount();i++) {
@@ -1358,10 +1500,15 @@ public class MetadataPane extends JPanel
       }
     }
 
+    /**Set the number of notes displayed on the "Notes" button.*/
     public void setNumNotes(int n) {
       noteButton.setText("Notes (" + n + ")");
     }
 
+    /**
+    * Handles the actions of the "Goto" buttons and also
+    * the "Notes" button.
+    */
     public void actionPerformed(ActionEvent e) {
       if (e.getSource() instanceof GotoEditor.TableButton) {
         GotoEditor.TableButton tb = (GotoEditor.TableButton) e.getSource();
@@ -1419,6 +1566,10 @@ public class MetadataPane extends JPanel
       }
     }
 
+    /**
+    * Handles the clicking of the icon of Image: Pixels.
+    * If clicked, this icon will enlarge in a dialog.
+    */
     public void mouseClicked(MouseEvent e) {
       if (e.getSource() instanceof JLabel) {
         JOptionPane.showMessageDialog(getTopLevelAncestor(), null,
@@ -1432,15 +1583,24 @@ public class MetadataPane extends JPanel
     public void mouseEntered(MouseEvent e) {}
     public void mouseExited(MouseEvent e) {}
 
+    /** Call MetadataPane.reRender().*/
     public void callReRender() {
       reRender();
     }
 
+    /** Call MetadataPane.stateChanged(boolean change)*/
     public void callStateChanged(boolean hasChanged) {
       stateChanged(true);
     }
     
+    /** @return MetadataPane.currentFile*/
     public File getCurrentFile() {return currentFile;}
+    
+    /**
+    * Checks whether this TablePanel should be editable.
+    * @return MetadataPane.editable
+    */
+    public boolean isEditable() {return editable;}
   }
 
 }

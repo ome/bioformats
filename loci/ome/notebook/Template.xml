@@ -6,6 +6,11 @@
 		<OMEAttribute XMLName="Experimenter" Type="Ref" Description="Refers to the experimenter doing the project."/>	
 		<OMEAttribute XMLName="Group" Type="Ref" Description="Refers to the group doing the project."/>
 	</OMEElement>
+	<OMEElement XMLName="Group" Description="Group of experimenters.">
+	  <OMEAttribute XMLName="ID"  Type="ID"/>
+		<OMEAttribute XMLName="Leader" Type="Ref" Description="Refers to the leader of this group."/>	
+		<OMEAttribute XMLName="Contact" Type="Ref" Description="Who to contact in this group."/>
+	</OMEElement>
 	<OMEElement XMLName="Dataset" Description="Information about the dataset.">
 		<OMEAttribute XMLName="ID"  Type="ID"/>
 	        <OMEAttribute XMLName="Name"  Description="The name of this dataset."/>
@@ -69,6 +74,33 @@
 		<OMEAttribute XMLName="SerialNumber"  Description="The serialnumber of this instrument."/>
 		<OMEAttribute XMLName="Type"  Description="The type of instrument this was."/>
 	</OMEElement>
+  <OMEElement XMLName="LightSource" Description="Information about the light source of some instrument.">
+		<OMEAttribute XMLName="ID"  Type="ID"/>		
+		<OMEAttribute XMLName="Manufacturer"  Description="The manufacturer of this light source."/>
+		<OMEAttribute XMLName="Model"  Description="The model information about this light source."/>
+		<OMEAttribute XMLName="SerialNumber"  Description="The serialnumber of this light source."/>
+		<OMEAttribute XMLName="Instrument"  Description="Refers to the instrument this light source was for." Type="Ref"/>
+	</OMEElement>
+	<OMEElement XMLName="Laser" Description="Information about the laser for some light source.">
+		<OMEAttribute XMLName="ID"  Type="ID"/>		
+		<OMEAttribute XMLName="Medium"  Description="The medium used for this laser."/>
+		<OMEAttribute XMLName="Type"  Description="The type of laser this is."/>
+		<OMEAttribute XMLName="Wavelength"  Description="The wavelength of the laser."/>
+		<OMEAttribute XMLName="LightSource"  Description="Refers to the light source this laser was associated with." Type="Ref"/>
+	</OMEElement>
+	<OMEElement XMLName="Detector" Description="Information about the detector of some instrument.">
+		<OMEAttribute XMLName="ID"  Type="ID"/>		
+		<OMEAttribute XMLName="Gain"  Description="The gain setting for this detector."/>
+		<OMEAttribute XMLName="Manufacturer"  Description="The manufacturer of this detector."/>
+		<OMEAttribute XMLName="Model"  Description="The model information about this detector."/>
+		<OMEAttribute XMLName="SerialNumber"  Description="The serialnumber of this detector."/>
+		<OMEAttribute XMLName="Type"  Description="The type of detector this was."/>
+    <OMEAttribute XMLName="Instrument"  Description="Refers to the instrument this detector was for." Type="Ref"/>
+	</OMEElement>
+	<OMEElement XMLName="Filter" Description="Information about the filter of some instrument.">
+		<OMEAttribute XMLName="ID"  Type="ID"/>		
+    <OMEAttribute XMLName="Instrument"  Description="Refers to the instrument this filter was for." Type="Ref"/>
+	</OMEElement>
 	<OMEElement XMLName="Objective" Description="Info relating to the experiment's objective.">
 		<OMEAttribute XMLName="ID"  Type="ID"/>
 		<OMEAttribute XMLName="Manufacturer" />
@@ -84,6 +116,6 @@
 		<OMEAttribute XMLName="SizeX" />
 		<OMEAttribute XMLName="SizeY" />
 		<OMEAttribute XMLName="Objective" Type="Ref"/>	
-	        <OMEAttribute XMLName="Filter" Type="Ref"/>	
+	  <OMEAttribute XMLName="Filter" Type="Ref"/>	
 	</OMEElement>
 </NotebookTemplate>

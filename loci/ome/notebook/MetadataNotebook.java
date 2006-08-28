@@ -33,7 +33,7 @@ import javax.swing.border.*;
 import org.w3c.dom.*;
 
 /**
- * A user-friendly application for displaying and editing OME-XML metadata.
+ * An user-friendly application for displaying and editing OME-XML metadata.
  *
  * @author Christopher Peterson crpeterson2 at wisc.edu
  */
@@ -49,20 +49,51 @@ public class MetadataNotebook extends JFrame
 
   // -- Fields --
 
+  /**The file chooser used to save and open files.*/
   protected JFileChooser chooser;
+  
+  /**The MetadataPane used to display/edit OMEXML content.*/
   protected MetadataPane metadata;
+  
+  /**Holds the current file being displayed.*/
   protected File currentFile;
+  
+  /**The "Tabs" menu.*/
   protected JMenu tabsMenu;
+  
+  /**Signifies whether we're opening(true) or saving(false) a file.*/
   protected boolean opening;
+  
+  /**Holds the xml viewer that displays xml data in a JTree*/
   protected loci.ome.viewer.MetadataPane mdp;
+  
+  /**The File>New menu item.*/
   protected JMenuItem fileNew;
+  
+  /**The NotePane that displays a comprehensive list of all notes.*/
   protected NotePane noteP;
+  
+  /**The WiscScan emulator that mimics the GUI of the WiscScan
+  *  program for ease of use by our in-house biologists.
+  */
   protected WiscScanPane scanP;
+  
+  /**The checkboxes that switch between the four views.*/
   protected JCheckBoxMenuItem advView, noteView, normView, scanView;
 
-  // -- Constructor --
+  // -- Constructors --
 
+  /** Create a default notebook window with save function and editing enabled.*/
   public MetadataNotebook(String[] args) {
+    this(args,true,true);
+  }
+
+  /**
+  * Create a notebook window with specified save and editing policies.
+  * @param addSave whether or not saving should be enabled
+  * @param editable whether or not users should be able to edit the xml
+  */
+  public MetadataNotebook(String[] args, boolean addSave, boolean editable) {
     super("OME Metadata Notebook");
 
 		try {
@@ -83,6 +114,7 @@ public class MetadataNotebook extends JFrame
 
     noteP = new NotePane();
     scanP = new WiscScanPane();
+    scanP.setEditable(editable);
 
     //create a MetadataPane, where most everything happens
     if (args.length > 0) {
@@ -94,9 +126,10 @@ public class MetadataNotebook extends JFrame
         System.out.println("Error occured: You suck.");
       }
       currentFile = file;
-      metadata = new MetadataPane(file);
+      metadata = new MetadataPane(file, addSave, editable);
+      setTitle("OME Metadata Notebook - " + file);
     }
-    else metadata = new MetadataPane();
+    else metadata = new MetadataPane((File)null, addSave, editable);
 
     metadata.setVisible(true);
     mdp.setVisible(false);
@@ -138,6 +171,7 @@ public class MetadataNotebook extends JFrame
     fileSave.addActionListener(this);
     fileSave.setMnemonic('s');
     fileSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, MENU_MASK));
+    fileSave.setEnabled(addSave);
     JMenuItem fileSaveAs = new JMenuItem("Save As...");
     file.add(fileSaveAs);
     fileSaveAs.setActionCommand("saveAs");
@@ -217,6 +251,9 @@ public class MetadataNotebook extends JFrame
 
     //make a filechooser to open and save our precious files
     chooser = new JFileChooser(System.getProperty("user.dir"));
+    
+    //make WiscScan view the default
+    scanView.setSelected(true);
 
     //useful frame method that handles closing of window
     setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -228,9 +265,10 @@ public class MetadataNotebook extends JFrame
 
   // -- MetadataNotebook API methods --
 
+  /**Set the current file being displayed to this file.*/
   protected void setCurrentFile(File aFile) { currentFile = aFile; }
 
-  /** opens a file, sets the title of the frame to reflect the current file */
+  /** opens a file, sets the title of the frame to reflect the current file.*/
   public void openFile(File file) {
     metadata.setOMEXML(file);
     mdp.setOMEXML(file);
@@ -244,9 +282,8 @@ public class MetadataNotebook extends JFrame
     metadata.saveFile(file);
   }
 
-  /**
-   * given an array of Strings of appropriate tab names, this method
-   * sets up the tab menu accordingly
+  /**Given an array of Strings of appropriate tab names, this method
+   * sets up the tab menu accordingly.
    */
   public void changeTabMenu(String[] tabs) {
     tabsMenu.removeAll();
@@ -386,6 +423,7 @@ public class MetadataNotebook extends JFrame
     }
   }
 
+  /**Handles the checkbox menuitems that change the view.*/
   public void itemStateChanged(ItemEvent e) {
     if (e.getStateChange() == ItemEvent.SELECTED && 
       (JCheckBoxMenuItem) e.getItem() == advView) {
@@ -474,6 +512,9 @@ public class MetadataNotebook extends JFrame
 
   // -- Main method --
 
+  /**Test method for debug uses, or simply to bring up a notebook window
+  *  from the console or whatever.
+  */
   public static void main(String[] args) { new MetadataNotebook(args); }
 
 }

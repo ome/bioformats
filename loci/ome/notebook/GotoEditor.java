@@ -33,18 +33,29 @@ import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.*;
 
+/*
+* A class to handle the behavior of the Goto buttons
+* that are within a cell of a given ClickableTable.
+* These buttons should go to the referenced TabPanel.
+* 
+* @author Christopher Peterson crpeterson2 at wisc.edu
+*/
 public class GotoEditor extends AbstractCellEditor
   implements TableCellEditor, ActionListener
 {
-
+  /**The "Goto" button we're editing.*/
   TableButton button;
+  
+  /**The TablePanel this TableEditor is for.*/
   MetadataPane.TablePanel tableP;
 
+  /**Construct a GotoEditor for a given TablePanel*/
   public GotoEditor(MetadataPane.TablePanel tp) {
     button = null;
     tableP = tp;
   }
 
+  /**Sets up which button was being clicked, stops editing*/
   public void actionPerformed(ActionEvent e) {
     button = (TableButton) e.getSource();
     fireEditingStopped();
@@ -55,7 +66,7 @@ public class GotoEditor extends AbstractCellEditor
       return button;
   }
 
-  /** Implement the one method defined by TableCellEditor. */
+  /** Override the method defined by AbstractCellEditor. */
   public Component getTableCellEditorComponent(JTable table,
     Object value, boolean isSelected, int row, int column)
   {

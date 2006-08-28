@@ -20,9 +20,24 @@ import com.jgoodies.forms.layout.FormLayout;
 import org.openmicroscopy.xml.*;
 import org.w3c.dom.*;
 
+/**
+ * A class that emulates the login and experiment setup screen
+ * found in the program WiscScan, which acquires laser data and
+ * records various things in OMEXML. Many things in WiscScan
+ * itself seem completely broken at the present time and so
+ * many of the fields which are disabled fall into the category
+ * of "broken in WiscScan, not my fault." This view was designed
+ * to make our biologists at UW feel less overwhelmed with the
+ * multiple scary fields found in the normal view. Also it is
+ * not at all clear in many cases how the OMEXML was generated
+ * in the first place.
+ *
+ * @author Christopher Peterson crpeterson2 at wisc.edu
+ */
 public class WiscScanPane extends JTabbedPane
   implements ActionListener, ItemListener, DocumentListener
 {
+  /** Holds types of experiments available.*/
 	public static final Object [] exChoices = {"Time-lapse","4-D+",
 	  "PGI/Documentation",
 		"Photoablation","Fluorescense-Lifetime","Spectral-Imaging",
@@ -30,18 +45,32 @@ public class WiscScanPane extends JTabbedPane
 		"FISH","Electrophysiology","Ion-Imaging","Colocalization",
 	  "FRAP","Photoactivation","Uncaging","Optical-Trapping",
 		"Other"};
+  /** Holds types of filter wheels.*/
 	public static final Object [] wheeChoices = {"None","1 TFI 650SP"};
+	/** Holds types of filter holders.*/
 	public static final Object [] hoChoices = {"None","1 TFI 650SP"};
 
+  /** The various GUI input components for this program.*/
   protected JComboBox groupBox, exB, wheeB, hoB;
+  /** The various GUI input components for this program.*/
   protected JCheckBox tiC, phC, pmtC;
+  /** The various GUI input components for this program.*/
   protected JTextField firstField,lastField,OMEField,passField,
     emailField,prT, tempT, pocT, tapT, tiT,pmtT;
+  /** The various GUI input components for this program.*/
   protected JTextArea desA;
+  /** The XML elements associated with the GUI input components.*/
   protected Element exrEle,exEle,prEle,desEle,tiEle,pmtEle,phEle;
+  /**
+  * A toggle that turns off the action listening for the GUI
+  * components when we are initializing them so that we don't
+  * needlessly change XML to what it already is.
+  */
   protected boolean setup;
+  /** The OMENode for the document being edited.*/
   protected OMENode ome;
 
+  /** Construct a new WiscScanPane.*/
 	public WiscScanPane() {
 	  setup = false;
 	  ome = null;
@@ -285,30 +314,47 @@ public class WiscScanPane extends JTabbedPane
     experimentPanel.add(infoP);
 	}
 	
-	// --Helper Classes--
-	
-	public class ScrollablePanel extends JPanel
-	  implements Scrollable
-	{
-	  public ScrollablePanel() {
-	    super();
-	  }
-	  
-	  public Dimension getPreferredScrollableViewportSize() {
-      return getPreferredSize();
-    }
-
-    public int getScrollableUnitIncrement(Rectangle visibleRect,
-      int orientation, int direction) {return 5;}
-    public int getScrollableBlockIncrement(Rectangle visibleRect,
-      int orientation, int direction) {return visibleRect.height;}
-    public boolean getScrollableTracksViewportWidth() {return true;}
-    public boolean getScrollableTracksViewportHeight() {return false;}
+	/**
+	* Set whether or not the user should be able to edit the
+	* OMEXML in any document.
+	*/
+  public void setEditable(boolean editable) {
+//      groupBox.setEditable(editable);
+      exB.setEditable(editable);
+//      wheeB.setEditable(editable);
+//      hoB.setEditable(editable);
+      tiC.setEnabled(editable);
+      phC.setEnabled(editable);
+      pmtC.setEnabled(editable);
+      firstField.setEditable(editable);
+      lastField.setEditable(editable);
+//      OMEField.setEditable(editable);
+//      passField.setEditable(editable);
+      emailField.setEditable(editable);
+      prT.setEditable(editable);
+//      tempT.setEditable(editable);
+//      pocT.setEditable(editable);
+//      tapT.setEditable(editable);
+//      tiT.setEditable(editable);
+      pmtT.setEditable(editable);
+      desA.setEditable(editable);
   }
   
+  /**
+  * Update the OMEXML that this document is displaying/editing.
+  * @param omeNode The OMENode of the current OMEXML document.
+  */
   public void setOMEXML(OMENode omeNode) {
     ome = omeNode;
     setup = true;
+    
+    exrEle = null;
+	  exEle = null;
+	  prEle = null;
+	  desEle = null;
+	  tiEle = null;
+	  pmtEle = null;
+	  phEle = null;
   
   	Document omeDoc = null;
   	try {
@@ -326,17 +372,11 @@ public class WiscScanPane extends JTabbedPane
 	  	    exrEle = ele;
 	  	  }
   	  }
-  	  else {
-  	    if(exrEle==null) exrEle = ele;
-  	  }
   	  if (ele.hasAttribute("LastName")) {
   	  	if(exrEle==null || exrEle == ele) {
 	  	    lastName = ele.getAttribute("LastName");
 	  	    exrEle = ele;
 	  	  }
-  	  }
-  	  else {
-  	    if(exrEle==null) exrEle = ele;
   	  }
   	  if (ele.hasAttribute("Email")) {
   	  	if(exrEle==null || exrEle == ele) {
@@ -344,13 +384,13 @@ public class WiscScanPane extends JTabbedPane
 	  	    exrEle = ele;
 	  	  }
   	  }
-  	  else {
-  	    if(exrEle==null) exrEle = ele;
-  	  }
   	}
   	firstField.setText(firstName);
   	lastField.setText(lastName);
   	emailField.setText(emailName);
+  	if (exrEle == null && exrVector.size() != 0) {
+  	  exrEle = (Element) exrVector.get(0);
+  	}
   	
   	Vector exVector = DOMUtil.findElementList("Experiment",omeDoc);
 		String exType = "Other";
@@ -362,14 +402,14 @@ public class WiscScanPane extends JTabbedPane
 	  	    exEle = ele;
 	  	  }
   	  }
-  	  else {
-  	    if(exEle==null) exEle = ele;
-  	  }
   	}
   	Arrays.sort(exChoices);
   	if(Arrays.binarySearch(exChoices, exType) >= 0) 
   	  exB.setSelectedItem(exType);
   	else exB.setSelectedItem("Other");
+  	if (exEle == null && exVector.size() != 0) {
+  	  exEle = (Element) exVector.get(0);
+  	}
   	
   	Vector prVector = DOMUtil.findElementList("Project",omeDoc);
 		String prName = null;
@@ -381,11 +421,11 @@ public class WiscScanPane extends JTabbedPane
 	  	    prEle = ele;
 	  	  }
   	  }
-  	  else {
-  	    if(prEle==null) prEle = ele;
-  	  }
   	}
   	prT.setText(prName);
+  	if (prEle == null && prVector.size() != 0) {
+  	  prEle = (Element) prVector.get(0);
+  	}
   	
   	Vector desVector = exVector;
 		String desText = null;
@@ -397,11 +437,11 @@ public class WiscScanPane extends JTabbedPane
 	  	    desEle = ele;
 	  	  }
   	  }
-  	  else {
-  	    if(desEle==null) desEle = ele;
-  	  }
   	}
   	desA.setText(desText);
+  	if (desEle == null && desVector.size() != 0) {
+  	  desEle = (Element) desVector.get(0);
+  	}
   	
   	Vector tiVector = DOMUtil.findElementList("Laser",omeDoc);
   	boolean tiToggle = false;
@@ -415,9 +455,6 @@ public class WiscScanPane extends JTabbedPane
   	    		tiEle = ele;
   	    	}
   	    }
-  	    else {
-  	    	if(tiEle==null) tiEle = ele;
-  	  	}
   	  }
   	}
   	tiC.setSelected(tiToggle);
@@ -434,9 +471,6 @@ public class WiscScanPane extends JTabbedPane
   	    		phToggle = true;
   	    	}
   	    }
-  	    else {
-  	    	if(phEle==null) phEle = ele;
-  	  	}
   	  }
   	}
   	phC.setSelected(phToggle);
@@ -453,13 +487,10 @@ public class WiscScanPane extends JTabbedPane
   		    	pmtEle = ele;
   		   	}
   	    }
-  	    else {
-  	    	if(pmtEle==null) pmtEle = ele;
-  	  	}
   	  }
   	}
   	pmtC.setSelected(pmtToggle);
-  	if(!pmtToggle) pmtT.setEnabled(false);
+  	pmtT.setEnabled(pmtToggle);
   	
   	if(pmtEle != null && pmtEle.hasAttribute("Gain")) {
   	  pmtT.setText(pmtEle.getAttribute("Gain"));
@@ -468,6 +499,9 @@ public class WiscScanPane extends JTabbedPane
   	setup = false;
   }
   
+  // --Event listening methods--
+  
+  /** Handle selections in the JComboBoxes.*/
   public void actionPerformed(ActionEvent e) {
     if(!setup) {
       if(e.getSource() instanceof JComboBox) {
@@ -484,6 +518,7 @@ public class WiscScanPane extends JTabbedPane
   	}
   }
   
+  /** Handle changes with selection in the JCheckBoxes.*/
   public void itemStateChanged(ItemEvent e) {
     if(!setup) {
 			JCheckBox src = (JCheckBox) e.getItem();
@@ -543,6 +578,10 @@ public class WiscScanPane extends JTabbedPane
   	}
   }
   
+  /**
+  * Change the OMEXMLNode tree appropriately for a given
+  * DocumentEvent.
+  */
   public void changeNode(DocumentEvent e) {
   	if(!setup) {
 	    setup = true;
@@ -604,7 +643,36 @@ public class WiscScanPane extends JTabbedPane
   	}
   }
   
+  /** Calls changeNode(e).*/
   public void insertUpdate(DocumentEvent e) {changeNode(e);}
+  /** Calls changeNode(e).*/
   public void removeUpdate(DocumentEvent e) {changeNode(e);}
+  /** Calls changeNode(e).*/
   public void changedUpdate(DocumentEvent e) {changeNode(e);}
+  
+  // --Helper Classes--
+	
+	/**
+	* Fixes the annoyingness that happens with JPanel expansion
+	* within a JScrollPane. Resizing should work appropriately now.
+	*/
+	public class ScrollablePanel extends JPanel
+	  implements Scrollable
+	{
+	  public ScrollablePanel() {
+	    super();
+	  }
+	  
+	  public Dimension getPreferredScrollableViewportSize() {
+      return getPreferredSize();
+    }
+
+    public int getScrollableUnitIncrement(Rectangle visibleRect,
+      int orientation, int direction) {return 5;}
+    public int getScrollableBlockIncrement(Rectangle visibleRect,
+      int orientation, int direction) {return visibleRect.height;}
+    public boolean getScrollableTracksViewportWidth() {return true;}
+    public boolean getScrollableTracksViewportHeight() {return false;}
+  }
+  
 }
