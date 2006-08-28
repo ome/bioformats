@@ -70,6 +70,8 @@ public class LIFReader extends FormatReader {
   private int c;
   private int bpp;
 
+  private int maxZ, maxT, maxEx;
+  
 
   // -- Constructor --
 
@@ -130,15 +132,13 @@ public class LIFReader extends FormatReader {
   /** Get the size of the Z dimension. */
   public int getSizeZ(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    int zSum = 0;
-    int tSum = 0;
-    for (int i=0; i<dims.length; i++) {
-      zSum += dims[i][2];
-      tSum += dims[i][3];
+    if (maxZ == dims.length) maxT *= maxEx;
+    else if (maxT == dims.length) maxZ *= maxEx;
+    else {
+      maxZ *= maxT;
+      maxT = dims.length;
     }
-
-    if (zSum > tSum) return getImageCount(id) / (separated ? getSizeC(id) : 1);
-    else return 1;
+    return maxZ == 1 ? dims.length : maxZ;
   }
 
   /** Get the size of the C dimension. */
@@ -150,9 +150,13 @@ public class LIFReader extends FormatReader {
   /** Get the size of the T dimension. */
   public int getSizeT(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    int z = getSizeZ(id);
-    if (z == 1) return getImageCount(id) / (separated ? getSizeC(id) : 1);
-    else return 1;
+    if (maxZ == dims.length) maxT *= maxEx;
+    else if (maxT == dims.length) maxZ *= maxEx;
+    else {
+      maxZ *= maxT;
+      maxT = dims.length;
+    }
+    return maxT == 1 ? dims.length : maxT;
   }
 
   /** Return true if the data is in little-endian format. */
@@ -184,40 +188,33 @@ public class LIFReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    int tempC = dims[0][4];
-    if (!separated) tempC = 1;
+    // determine which dataset the plane is part of
 
-    int ndx = 0;
-    int sum = 0;
-    for (int i=0; i<dims.length; i++) {
-      sum += (dims[i][2] * dims[i][3] * dims[i][6]);
-      if ((no / tempC) < sum) {
-        ndx = i;
-        i = dims.length;
-      }
-    }
+    int z = getSizeZ(id);
+    int t = getSizeT(id);
 
-    width = dims[ndx][0];
-    height = dims[ndx][1];
-    c = dims[ndx][4];
+    int dataset = ((t == dims.length) ? no / z : no / t);
+
+    width = dims[dataset][0];
+    height = dims[dataset][1];
+    c = dims[dataset][4];
     if (c == 2) c--;
-    bpp = dims[ndx][5];
-    while (bpp % 8 !=0) bpp++;
+    bpp = dims[dataset][5];
+    while (bpp % 8 != 0) bpp++;
     int bytesPerPixel = bpp / 8;
 
-    int offset = ((Long) offsets.get(ndx)).intValue();
+    int offset = ((Long) offsets.get(dataset)).intValue();
 
     // get the image number within this dataset
 
-    int imageNum = no;
-    for (int i=0; i<ndx; i++) {
-      imageNum -= (dims[i][2] * dims[i][3] * dims[i][6]);
-    }
+    int imageNum = ((t == dims.length) ? no % z : no % t);
 
     in.seek(offset + width * height * bytesPerPixel * imageNum * c);
 
     byte[] data = new byte[(int) (width * height * bytesPerPixel * c)];
-    in.read(data);
+    if (imageNum < dims[dataset][2] * dims[dataset][3] * (separated ? c : 1)) {
+      in.read(data);
+    }
 
     if (isRGB(id) && separated) {
       return ImageTools.splitChannels(data, c, false, true)[no % c];
@@ -443,31 +440,43 @@ public class LIFReader extends FormatReader {
       numImages += (dims[i][2] * dims[i][3] * dims[i][6]);
     }
 
+    for (int i=0; i<numDatasets; i++) {
+      if (dims[i][2] > maxZ) maxZ = dims[i][2];
+      if (dims[i][3] > maxT) maxT = dims[i][3];
+      if (dims[i][6] > maxEx) maxEx = dims[i][6];
+    }      
+    
+    if (maxEx > 1) {
+      if (maxT == 1) maxT = maxEx;
+      else if (maxZ == 1) maxZ = maxEx;
+      maxEx = 1;
+    }
+
+    numImages = maxZ * maxT * numDatasets;
+
     // Populate metadata store
 
     // The metadata store we're working with.
     try {
       MetadataStore store = getMetadataStore(currentId);
 
-      for (int i=0; i<dims.length; i++) {
-        String type = "int8";
-        switch (dims[i][5]) {
+      String type = "int8";
+      switch (dims[0][5]) {
         case 12: type = "int16"; break;
         case 16: type = "int16"; break;
         case 32: type = "float"; break;
-        }
-
-        store.setPixels(
-          new Integer(dims[i][0]), // SizeX
-          new Integer(dims[i][1]), // SizeY
-          new Integer(dims[i][2]), // SizeZ
-          new Integer(dims[i][4]), // SizeC
-          new Integer(dims[i][3]), // SizeT
-          type, // PixelType
-          new Boolean(!littleEndian), // BigEndian
-          "XYZTC", // DimensionOrder
-          new Integer(i)); // Index
       }
+
+      store.setPixels(
+        new Integer(getSizeX(currentId)), // SizeX
+        new Integer(getSizeY(currentId)), // SizeY
+        new Integer(getSizeZ(currentId)), // SizeZ
+        new Integer(getSizeC(currentId)), // SizeC
+        new Integer(getSizeT(currentId)), // SizeT
+        type, // PixelType
+        new Boolean(!littleEndian), // BigEndian
+        getDimensionOrder(currentId), // DimensionOrder
+        null); // Index
     }
     catch (Exception e) { }
   }
