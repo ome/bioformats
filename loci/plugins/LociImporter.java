@@ -91,7 +91,8 @@ public class LociImporter implements PlugIn, ItemListener {
     }
     else {
       JFileChooser chooser = reader.getFileChooser();
-      chooser.setCurrentDirectory(new File(OpenDialog.getDefaultDirectory()));
+      String dir = OpenDialog.getDefaultDirectory();
+      if (dir != null) chooser.setCurrentDirectory(new File(dir));
 
       // add some additional options to the file chooser
       JPanel panel = new JPanel();

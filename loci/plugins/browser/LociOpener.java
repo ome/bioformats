@@ -46,7 +46,9 @@ public class LociOpener implements ItemListener {
 
   public LociOpener() {
     // set up the file chooser
-    fc = new JFileChooser(OpenDialog.getDefaultDirectory());
+    String ijDir = OpenDialog.getDefaultDirectory();
+    fc = ijDir == null ? new JFileChooser() : new JFileChooser(ijDir);
+
     // add a custom file filter
     FileFilter[] ff = LociDataBrowser.reader.getFileFilters();
     ff = ComboFileFilter.sortFilters(ff);
