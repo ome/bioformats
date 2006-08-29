@@ -52,6 +52,9 @@ public abstract class FormatReader extends FormatHandler
   /** Flag set to true if multi-channel planes are to be separated. */
   protected boolean separated = false;
 
+  /** The number of the current series. */
+  protected int series = 0;
+
   /**
    * Current metadata store. Should <b>never</b> be accessed directly as the
    * semantics of {@link #getMetadataStore()} prevent "null" access.
@@ -166,6 +169,20 @@ public abstract class FormatReader extends FormatHandler
     for (int i=0; i<nImages; i++) images[i] = openImage(id, i);
     close();
     return images;
+  }
+ 
+  /** Return the number of series in this file. */
+  public int getSeriesCount(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return 1;
+  }
+
+  /** Activates the specified series. */
+  public void setSeries(String id, int no) throws FormatException, IOException {
+    if (no < 0 || no >= getSeriesCount(id)) {
+      throw new FormatException("Invalid series: " + no);
+    }
+    series = no;
   }
 
   /**

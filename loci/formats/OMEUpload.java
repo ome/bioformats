@@ -22,13 +22,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.ome;
+package loci.formats;
 
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
 import java.util.*;
-import loci.formats.*;
 import org.openmicroscopy.ds.*;
 import org.openmicroscopy.ds.dto.*;
 import org.openmicroscopy.ds.managers.*;
