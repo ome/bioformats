@@ -92,6 +92,12 @@ public interface IFormatReader extends IFormatHandler {
   BufferedImage[] openImage(String id)
     throws FormatException, IOException;
 
+  /** Return the number of series in this file. */
+  int getSeriesCount(String id) throws FormatException, IOException;
+
+  /** Activates the specified series. */
+  void setSeries(String id, int no) throws FormatException, IOException;
+
   /**
    * Allows the client to specify whether or not to separate channels.
    * By default, channels are left unseparated; thus if we encounter an RGB
