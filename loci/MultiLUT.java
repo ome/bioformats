@@ -41,9 +41,9 @@ public class MultiLUT extends Object implements ActionListener {
 
   private DisplayImplJ3D display1 = null;
 
-  ScalarMap vmap = null;
-  ScalarMap hmap = null;
-  ScalarMap huexmap = null;
+  private ScalarMap vmap = null;
+  private ScalarMap hmap = null;
+  private ScalarMap huexmap = null;
 
   private DataReferenceImpl lineRef = null;
   /**
