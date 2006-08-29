@@ -67,15 +67,16 @@ public class MetadataNotebook extends JFrame
   /**Holds the xml viewer that displays xml data in a JTree*/
   protected loci.ome.viewer.MetadataPane mdp;
   
-  /**The File>New menu item.*/
+  /**The File&gt;New menu item.*/
   protected JMenuItem fileNew;
   
   /**The NotePane that displays a comprehensive list of all notes.*/
   protected NotePane noteP;
   
-  /**The WiscScan emulator that mimics the GUI of the WiscScan
-  *  program for ease of use by our in-house biologists.
-  */
+  /**
+   * The WiscScan emulator that mimics the GUI of the WiscScan
+   * program for ease of use by our in-house biologists.
+   */
   protected WiscScanPane scanP;
   
   /**The checkboxes that switch between the four views.*/
@@ -97,10 +98,14 @@ public class MetadataNotebook extends JFrame
     super("OME Metadata Notebook");
 
 		try {
-	    UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+      String os = System.getProperty("os.name");
+      String laf = os != null && os.indexOf("Windows") >= 0 ?
+        "com.sun.java.swing.plaf.windows.WindowsLookAndFeel" :
+        "javax.swing.plaf.metal.MetalLookAndFeel";
+	    UIManager.setLookAndFeel(laf);
 		}
 		catch (Exception exc) {
-		  System.out.println("Sorry but we could not find the look and feel jar.");
+		  System.err.println("Sorry, but we could not find the look and feel JAR.");
 		}
 		
     //initialize fields
