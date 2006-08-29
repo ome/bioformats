@@ -150,6 +150,7 @@ public class OverlayWidget extends JPanel implements ActionListener,
     OverlayTool[] toolList = {
       new PointerTool(overlay),
       new LineTool(overlay),
+      new FreeformTool(overlay),
       new MarkerTool(overlay),
       new TextTool(overlay),
       new OvalTool(overlay),
