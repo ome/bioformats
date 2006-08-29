@@ -145,19 +145,14 @@ public class MetadataPane extends JPanel
   // -- Constructor --
 
   /** Constructs default widget for displaying OME-XML metadata. */
-  public MetadataPane() {
-    this((File) null, true);
-  }
+  public MetadataPane() { this((File) null, true); }
 
   /**
   * Constructs a pane to display the OME-XML metadata of a
   * given file.
   * @param file The file to be initially displayed.
   */
-  public MetadataPane(File file)
-  {
-    this(f, true);
-  }
+  public MetadataPane(File file) { this(file, true); }
   
   /**
   * Constructs a pane to display the OME-XML metadata of a
@@ -165,9 +160,7 @@ public class MetadataPane extends JPanel
   * @param file The file to be initially displayed.
   * @param save Whether saving should be allowed.
   */
-  public MetadataPane(File file, boolean save) {
-    this(file,save,true);
-  }
+  public MetadataPane(File file, boolean save) { this(file,save,true); }
 
   /**
    * Constructs a pane to display the OME-XML metadata of a
