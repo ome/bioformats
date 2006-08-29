@@ -14,7 +14,8 @@ Bio-Formats
                    loci/formats/*
     Main class:    loci.formats.ImageViewer
     Dependencies:  ome-java.jar
-    Targets:       jar-formats
+    Targets:       compile-formats
+                   jar-formats
     License:       LGPL
 
 VisBio
@@ -31,7 +32,8 @@ VisBio
                    ome-java.jar
                    visad-lite.jar
                    xmlrpc-1.2-b1.jar (ome-java.jar)
-    Targets:       jar-visbio
+    Targets:       compile-visbio
+                   jar-visbio
                    source-visbio
                    docs-visbio
                    dist-visbio
@@ -52,7 +54,8 @@ LOCI Plugins for ImageJ
                    commons-logging.jar (ome-java.jar)
                    ome-java.jar
                    xmlrpc-1.2-b1.jar (ome-java.jar)
-    Targets:       jar-plugins
+    Targets:       compile-plugins
+                   jar-plugins
     License:       LGPL
 
 OME Metadata Notebook
@@ -66,7 +69,8 @@ OME Metadata Notebook
                    forms-1.0.4.jar
                    ome-java.jar
                    xmlrpc-1.2-b1.jar (ome-java.jar)
-    Targets:       jar-notebook
+    Targets:       compile-notebook
+                   jar-notebook
     License:       LGPL
 
 Leica Converter
@@ -75,7 +79,8 @@ Leica Converter
     Main class:    loci.apps.leica.LeicaConverter
     Dependencies:  bio-formats.jar
                    ome-java.jar
-    Targets:       jar-leica
+    Targets:       compile-leica
+                   jar-leica
     License:       Public domain
 
 QT TIFF Converter
@@ -84,7 +89,8 @@ QT TIFF Converter
                    some loci/formats
     Main class:    loci.apps.qt.QTConverter
     Dependencies:  None (custom built)
-    Targets:       jar-qt
+    Targets:       compile-qt
+                   jar-qt
     License:       Public domain
 
 Slim Plotter
@@ -94,7 +100,8 @@ Slim Plotter
     Main class:    loci.apps.slim.SlimPlotter
     Dependencies:  lma.jar
                    visad-lite.jar
-    Targets:       jar-slim
+    Targets:       compile-slim
+                   jar-slim
                    dist-slim
     License:       Public domain
 
@@ -185,6 +192,9 @@ Apache XML-RPC
 
   <condition property="isUnix"><os family="unix"/></condition>
 
+  <taskdef resource="checkstyletask.properties"
+    classpath="jar/checkstyle-all-4.2.jar"/>
+
   <!-- Global build targets -->
 
   <target name="init">
@@ -194,11 +204,23 @@ Apache XML-RPC
     </tstamp>
   </target>
 
+<!--
   <target name="compile" depends="copy-source"
-    description="compile LOCI software packages from source">
+    description="compile classes for LOCI software packages">
     <mkdir dir="${classes.dir}"/>
     <javac srcdir="${dest.dir}" destdir="${classes.dir}"
       classpath="${ext.jars}" deprecation="true" source="1.4" target="1.4"/>
+  </target>
+-->
+  <target name="compile"
+    depends="compile-formats, compile-visbio, compile-plugins, compile-notebook, compile-leica, compile-qt, compile-slim"
+    description="compile classes for LOCI software packages"/>
+
+  <target name="style" depends="copy-source"
+    description="check style of LOCI software packages source code">
+    <checkstyle config="checkstyle.xml">
+      <fileset dir="${dest.dir}" includes="**/*.java"/>
+    </checkstyle>
   </target>
 
   <target name="jars"
@@ -245,7 +267,15 @@ Apache XML-RPC
 
   <!-- Bio-Formats -->
 
-  <target name="jar-formats" depends="compile, copy-jars"
+  <target name="compile-formats" depends="copy-source"
+    description="compile classes for Bio-Formats">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      includes="${formats.source}" classpath="${ext.jars}"
+      deprecation="true" source="1.4" target="1.4"/>
+  </target>
+
+  <target name="jar-formats" depends="compile-formats, copy-jars"
     description="generate JAR file for Bio-Formats">
     <copy todir="${classes.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="${formats.resources}"/>
@@ -261,7 +291,15 @@ Apache XML-RPC
 
   <!-- VisBio -->
 
-  <target name="jar-visbio" depends="compile, copy-jars, jar-formats"
+  <target name="compile-visbio" depends="copy-source"
+    description="compile classes for VisBio">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      includes="${visbio.source}" classpath="${ext.jars}"
+      deprecation="true" source="1.4" target="1.4"/>
+  </target>
+
+  <target name="jar-visbio" depends="compile-visbio, copy-jars, jar-formats"
     description="generate JAR file for VisBio">
     <copy todir="${classes.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="${visbio.resources}"/>
@@ -421,7 +459,15 @@ Apache XML-RPC
 
   <!-- LOCI Plugins for ImageJ -->
 
-  <target name="jar-plugins" depends="compile, copy-jars, jar-formats"
+  <target name="compile-plugins" depends="copy-source"
+    description="compile classes for LOCI Plugins for ImageJ">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      includes="${plugins.source}" classpath="${ext.jars}"
+      deprecation="true" source="1.4" target="1.4"/>
+  </target>
+
+  <target name="jar-plugins" depends="compile-plugins, copy-jars, jar-formats"
     description="generate JAR file for LOCI Plugins for ImageJ">
     <jar jarfile="${jar.dir}/loci_plugins.jar"
       basedir="${src.dir}/loci/plugins" includes="plugins.config">
@@ -437,7 +483,16 @@ Apache XML-RPC
 
   <!-- OME Metadata Notebook -->
 
-  <target name="jar-notebook" depends="compile, copy-jars, jar-formats"
+  <target name="compile-notebook" depends="copy-source"
+    description="compile classes for OME Metadata Notebook">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      includes="${notebook.source}" classpath="${ext.jars}"
+      deprecation="true" source="1.4" target="1.4"/>
+  </target>
+
+  <target name="jar-notebook"
+    depends="compile-notebook, copy-jars, jar-formats"
     description="generate JAR file for OME Metadata Notebook">
     <copy todir="${classes.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="${notebook.resources}"/>
@@ -454,7 +509,15 @@ Apache XML-RPC
 
   <!-- Leica Converter -->
 
-  <target name="jar-leica" depends="compile, copy-jars, jar-formats"
+  <target name="compile-leica" depends="copy-source"
+    description="compile classes for Leica Converter">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      includes="${leica.source}" classpath="${ext.jars}"
+      deprecation="true" source="1.4" target="1.4"/>
+  </target>
+
+  <target name="jar-leica" depends="compile-leica, copy-jars, jar-formats"
     description="generate JAR file for Leica Converter">
     <jar jarfile="${jar.dir}/LeicaConverter.jar" basedir="${classes.dir}"
       includes="${leica.files}">
@@ -467,7 +530,15 @@ Apache XML-RPC
 
   <!-- QT TIFF Converter -->
 
-  <target name="jar-qt" depends="compile"
+  <target name="compile-qt" depends="copy-source"
+    description="compile classes for QT TIFF Converter">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      includes="${qt.source}" classpath="${ext.jars}"
+      deprecation="true" source="1.4" target="1.4"/>
+  </target>
+
+  <target name="jar-qt" depends="compile-qt"
     description="generate JAR file for QT TIFF Converter">
     <mkdir dir="${jar.dir}"/>
     <jar jarfile="${jar.dir}/QTConverter.jar" basedir="${classes.dir}"
@@ -480,7 +551,15 @@ Apache XML-RPC
 
   <!-- Slim Plotter -->
 
-  <target name="jar-slim" depends="compile, copy-jars"
+  <target name="compile-slim" depends="copy-source"
+    description="compile classes for Slim Plotter">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      includes="${slim.source}" classpath="${ext.jars}"
+      deprecation="true" source="1.4" target="1.4"/>
+  </target>
+
+  <target name="jar-slim" depends="compile-slim, copy-jars"
     description="generate JAR file for Slim Plotter">
     <jar jarfile="${jar.dir}/SlimPlotter.jar" basedir="${classes.dir}"
       includes="${slim.files}">
