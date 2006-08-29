@@ -914,13 +914,26 @@ public class SlimPlotter implements ActionListener,
       fitResults = new double[channels][];
       ExpFunction func = new ExpFunction(numExp);
       float[] params = new float[3 * numExp];
-      for (int i=0; i<numExp; i++) {
-        // initial guess for (a, b, c)
-        int e = 3 * i;
-        params[e] = (numExp - i) * maxVal / (numExp + 1);
-        params[e + 1] = 1;
-        params[e + 2] = 0;
+      if (numExp == 1) {
+        params[0] = maxVal;
+        params[1] = 1;
+        params[2] = 0;
       }
+      else if (numExp == 2) {
+        params[0] = maxVal / 2;
+        params[1] = 0.8f;
+        params[2] = 0;
+        params[0] = maxVal / 2;
+        params[1] = 2;
+        params[2] = 0;
+      }
+//      for (int i=0; i<numExp; i++) {
+//        // initial guess for (a, b, c)
+//        int e = 3 * i;
+//        params[e] = (numExp - i) * maxVal / (numExp + 1);
+//        params[e + 1] = 1;
+//        params[e + 2] = 0;
+//      }
       int num = timeBins - maxPeak;
       float[] xVals = new float[num];
       for (int i=0; i<num; i++) xVals[i] = i;
