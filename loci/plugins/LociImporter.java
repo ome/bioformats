@@ -128,20 +128,35 @@ public class LociImporter implements PlugIn, ItemListener {
     IJ.showStatus("Opening " + fileName);
     try {
       FormatReader r = (FormatReader) reader.getReader(id);
-      FileStitcher fs = new FileStitcher(r);
-      ChannelMerger cm = new ChannelMerger(stitchFiles ? fs : r);
-      cm.setSeparated(!mergeChannels);
+      if (stitchFiles) r = new FileStitcher(r);
+      if (mergeChannels) r = new ChannelMerger(r);
+
+      // if necessary, prompt for the series to open
+
+      GenericDialog datasets =
+        new GenericDialog("LOCI Bio-Formats Series Chooser");
+
+      for (int i=0; i<r.getSeriesCount(id); i++) {
+        datasets.addCheckbox("Series " + i, i == 0);
+      }
+      if (r.getSeriesCount(id) > 1) datasets.showDialog();
+
+      boolean[] series = new boolean[r.getSeriesCount(id)];
+      for (int i=0; i<series.length; i++) {
+        series[i] = datasets.getNextBoolean();
+      }
+
+      r.setSeparated(!mergeChannels);
 
       try {
         OMEXMLMetadataStore store = new OMEXMLMetadataStore();
         store.createRoot();
-        cm.setMetadataStore(store);
+        r.setMetadataStore(store);
       }
       catch (Throwable t) { }
 
-      int num = cm.getImageCount(id);
       if (showMetadata) {
-        Hashtable meta = cm.getMetadata(id);
+        Hashtable meta = r.getMetadata(id);
         MetadataPane mp = new MetadataPane(meta);
         JFrame frame = new JFrame(id + " Metadata");
         frame.setContentPane(mp);
@@ -149,113 +164,121 @@ public class LociImporter implements PlugIn, ItemListener {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
       }
-      ImageStack stackB = null, stackS = null, stackF = null, stackO = null;
-      long start = System.currentTimeMillis();
-      long time = start;
-      int channels = cm.getSizeC(id);
 
-      FileInfo fi = new FileInfo();
-      try {
-        fi.description =
-          ((OMEXMLMetadataStore) cm.getMetadataStore(id)).dumpXML();
-      }
-      catch (Throwable t) { }
+      for (int i=0; i<series.length; i++) {
+        while (!series[i] && i < series.length - 1) { i++; }
+        if (!series[i]) { break; }
+        r.setSeries(id, i);
 
-      for (int i=0; i<num; i++) {
-        // limit message update rate
-        long clock = System.currentTimeMillis();
-        if (clock - time >= 50) {
-          IJ.showStatus("Reading plane " + (i + 1) + "/" + num);
-          time = clock;
+        FileInfo fi = new FileInfo();
+        try {
+          fi.description =
+            ((OMEXMLMetadataStore) r.getMetadataStore(id)).dumpXML();
         }
-        IJ.showProgress((double) i / num);
-        BufferedImage img = cm.openImage(id, i);
-        img = ImageTools.padImage(img, cm.getSizeX(id), cm.getSizeY(id));
+        catch (Throwable t) { }
 
-        ImageProcessor ip = null;
-        WritableRaster raster = img.getRaster();
-        int c = raster.getNumBands();
-        int tt = raster.getTransferType();
-        int w = img.getWidth(), h = img.getHeight();
-        if (c == 1) {
-          if (tt == DataBuffer.TYPE_BYTE) {
-            byte[] b = ImageTools.getBytes(img)[0];
-            if (b.length > w*h) {
-              byte[] tmp = b;
-              b = new byte[w*h];
-              System.arraycopy(tmp, 0, b, 0, b.length);
-            }
-            ip = new ByteProcessor(w, h, b, null);
-            if (stackB == null) stackB = new ImageStack(w, h);
-            stackB.addSlice(fileName + ":" + (i + 1), ip);
+        long start = System.currentTimeMillis();
+        long time = start;
+        int num = r.getImageCount(id);
+        ImageStack stackB = null, stackS = null, stackF = null, stackO = null;
+        int channels = r.getSizeC(id);
+
+        for (int j=0; j<num; j++) {
+          // limit message update rate
+          long clock = System.currentTimeMillis();
+          if (clock - time >= 50) {
+            IJ.showStatus("Reading plane " + (j + 1) + "/" + num);
+            time = clock;
           }
-          else if (tt == DataBuffer.TYPE_USHORT) {
-            short[] s = ImageTools.getShorts(img)[0];
-            if (s.length > w*h) {
-              short[] tmp = s;
-              s = new short[w*h];
-              System.arraycopy(tmp, 0, s, 0, s.length);
-            }
-            ip = new ShortProcessor(w, h, s, null);
-            if (stackS == null) stackS = new ImageStack(w, h);
-            stackS.addSlice(fileName + ":" + (i + 1), ip);
-          }
-          else if (tt == DataBuffer.TYPE_FLOAT) {
-            float[] f = ImageTools.getFloats(img)[0];
-            if (f.length > w*h) {
-              float[] tmp = f;
-              f = new float[w*h];
-              System.arraycopy(tmp, 0, f, 0, f.length);
-            }
-            ip = new FloatProcessor(w, h, f, null);
-            if (stackF == null) stackF = new ImageStack(w, h);
-            stackF.addSlice(fileName + ":" + (i + 1), ip);
-          }
-        }
-        if (ip == null) {
-          ip = new ImagePlus(null, img).getProcessor(); // slow
-          if (stackO == null) stackO = new ImageStack(w, h);
-          stackO.addSlice(fileName + ":" + (i + 1), ip);
-        }
-      }
-      IJ.showStatus("Creating image");
-      IJ.showProgress(1);
-      ImagePlus ip = null;
-      if (stackB != null) {
-        if (!mergeChannels && splitWindows) {
-          slice(stackB, fileName, channels, fi);
-        }
-        else ip = new ImagePlus(fileName, stackB);
-      }
-      if (stackS != null) {
-        if (!mergeChannels && splitWindows) {
-          slice(stackS, fileName, channels, fi);
-        }
-        else ip = new ImagePlus(fileName, stackS);
-      }
-      if (stackF != null) {
-        if (!mergeChannels && splitWindows) {
-          slice(stackF, fileName, channels, fi);
-        }
-        else ip = new ImagePlus(fileName, stackF);
-      }
-      if (stackO != null) {
-        if (!mergeChannels && splitWindows) {
-          slice(stackO, fileName, channels, fi);
-        }
-        else ip = new ImagePlus(fileName, stackO);
-      }
+          IJ.showProgress((double) j / num);
+          BufferedImage img = r.openImage(id, j);
+          img = ImageTools.padImage(img, r.getSizeX(id), r.getSizeY(id));
 
-      if (ip != null) ip.setFileInfo(fi);
-      if (ip != null) ip.show();
+          ImageProcessor ip = null;
+          WritableRaster raster = img.getRaster();
+          int c = raster.getNumBands();
+          int tt = raster.getTransferType();
+          int w = img.getWidth(), h = img.getHeight();
+          if (c == 1) {
+            if (tt == DataBuffer.TYPE_BYTE) {
+              byte[] b = ImageTools.getBytes(img)[0];
+              if (b.length > w*h) {
+                byte[] tmp = b;
+                b = new byte[w*h];
+                System.arraycopy(tmp, 0, b, 0, b.length);
+              }
+              ip = new ByteProcessor(w, h, b, null);
+              if (stackB == null) stackB = new ImageStack(w, h);
+              stackB.addSlice(fileName + ":" + (j + 1), ip);
+            }
+            else if (tt == DataBuffer.TYPE_USHORT) {
+              short[] s = ImageTools.getShorts(img)[0];
+              if (s.length > w*h) {
+                short[] tmp = s;
+                s = new short[w*h];
+                System.arraycopy(tmp, 0, s, 0, s.length);
+              }
+              ip = new ShortProcessor(w, h, s, null);
+              if (stackS == null) stackS = new ImageStack(w, h);
+              stackS.addSlice(fileName + ":" + (j + 1), ip);
+            }
+            else if (tt == DataBuffer.TYPE_FLOAT) {
+              float[] f = ImageTools.getFloats(img)[0];
+              if (f.length > w*h) {
+                float[] tmp = f;
+                f = new float[w*h];
+                System.arraycopy(tmp, 0, f, 0, f.length);
+              }
+              ip = new FloatProcessor(w, h, f, null);
+              if (stackF == null) stackF = new ImageStack(w, h);
+              stackF.addSlice(fileName + ":" + (j + 1), ip);
+            }
+          }
+          if (ip == null) {
+            ip = new ImagePlus(null, img).getProcessor(); // slow
+            if (stackO == null) stackO = new ImageStack(w, h);
+            stackO.addSlice(fileName + ":" + (j + 1), ip);
+          }
+        }
+        IJ.showStatus("Creating image");
+        IJ.showProgress(1);
+        ImagePlus ip = null;
+        if (stackB != null) {
+          if (!mergeChannels && splitWindows) {
+            slice(stackB, fileName, channels, fi);
+          }
+          else ip = new ImagePlus(fileName, stackB);
+        }
+        if (stackS != null) {
+          if (!mergeChannels && splitWindows) {
+            slice(stackS, fileName, channels, fi);
+          }
+          else ip = new ImagePlus(fileName, stackS);
+        }
+        if (stackF != null) {
+          if (!mergeChannels && splitWindows) {
+            slice(stackF, fileName, channels, fi);
+          }
+          else ip = new ImagePlus(fileName, stackF);
+        }
+        if (stackO != null) {
+          if (!mergeChannels && splitWindows) {
+            slice(stackO, fileName, channels, fi);
+          }
+          else ip = new ImagePlus(fileName, stackO);
+        }
 
-      long end = System.currentTimeMillis();
-      double elapsed = (end - start) / 1000.0;
-      if (num == 1) IJ.showStatus(elapsed + " seconds");
-      else {
-        long average = (end - start) / num;
-        IJ.showStatus("LOCI Bio-Formats : " + elapsed + " seconds (" +
-          average + " ms per plane)");
+        if (ip != null) ip.setFileInfo(fi);
+        if (ip != null) ip.show();
+
+        long end = System.currentTimeMillis();
+        double elapsed = (end - start) / 1000.0;
+        if (num == 1) IJ.showStatus(elapsed + " seconds");
+        else {
+          long average = (end - start) / num;
+          IJ.showStatus("LOCI Bio-Formats : " + elapsed + " seconds (" +
+            average + " ms per plane)");
+        }
       }
       success = true;
       mergeChannels = true;

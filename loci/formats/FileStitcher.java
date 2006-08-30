@@ -155,7 +155,7 @@ public class FileStitcher extends FormatReader {
 
   /** Determines the number of images in the given file. */
   public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+    initFile(id);
     return numImages;
   }
 
@@ -166,31 +166,31 @@ public class FileStitcher extends FormatReader {
 
   /** Get the size of the X dimension. */
   public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+    initFile(id);
     return dimensions[0];
   }
 
   /** Get the size of the Y dimension. */
   public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+    initFile(id);
     return dimensions[1];
   }
 
   /** Get the size of the Z dimension. */
   public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+    initFile(id);
     return dimensions[2];
   }
 
   /** Get the size of the C dimension. */
   public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+    initFile(id);
     return dimensions[3];
   }
 
   /** Get the size of the T dimension. */
   public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+    initFile(id);
     return dimensions[4];
   }
 
@@ -208,6 +208,21 @@ public class FileStitcher extends FormatReader {
   {
     if (!id.equals(currentId)) initFile(id);
     return order;
+  }
+
+  /** Return the number of series in this file. */
+  public int getSeriesCount(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.getSeriesCount(id);
+  }
+
+  /** Activates the specified series. */
+  public void setSeries(String id, int no) throws FormatException, IOException {
+    if (no < 0 || no >= getSeriesCount(id)) {
+      throw new FormatException("Invalid series: " + no);
+    }
+    series = no;
+    reader.setSeries(id, no);
   }
 
   /** Obtains the specified image from the given file. */
@@ -307,9 +322,9 @@ public class FileStitcher extends FormatReader {
     setDimensions(dims);
 
     MetadataStore s = reader.getMetadataStore(id);
-    s.setPixels(new Integer(getSizeX(id)), new Integer(getSizeY(id)),
-      new Integer(getSizeZ(id)), new Integer(getSizeC(id)),
-      new Integer(getSizeT(id)), null, null, null, null);
+    s.setPixels(new Integer(dimensions[0]), new Integer(dimensions[1]),
+      new Integer(dimensions[2]), new Integer(dimensions[3]),
+      new Integer(dimensions[3]), null, null, null, null);
     setMetadataStore(s);
   }
 

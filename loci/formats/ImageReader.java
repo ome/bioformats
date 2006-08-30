@@ -246,7 +246,7 @@ public class ImageReader implements IFormatReader {
     if (!id.equals(currentId)) initFile(id);
     return readers[index].getDimensionOrder(id);
   }
- 
+
   /** Return the number of series in the file. */
   public int getSeriesCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
@@ -257,6 +257,12 @@ public class ImageReader implements IFormatReader {
   public void setSeries(String id, int no) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     readers[index].setSeries(id, no);
+  }
+
+  /** Returns the currently active series. */
+  public int getSeries(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return readers[index].getSeries(id);
   }
 
   /**

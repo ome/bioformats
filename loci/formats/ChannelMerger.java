@@ -45,12 +45,6 @@ public class ChannelMerger extends FormatReader {
   /** Number of planes between channels. */
   private int between;
 
-  /** Number of images reported by reader. */
-  private int readerImages;
-
-  /** Number of images reported by ChannelMerger. */
-  private int ourImages;
-
   // -- Constructors --
 
   /** Constructs a ChannelMerger with the given reader. */
@@ -71,7 +65,7 @@ public class ChannelMerger extends FormatReader {
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
 
-    int originalImages = readerImages;
+    int originalImages = reader.getImageCount(id);
 
     if (canMerge(id)) {
       int channels = getSizeC(id);
@@ -198,6 +192,21 @@ public class ChannelMerger extends FormatReader {
     return reader.getDimensionOrder(id);
   }
 
+  /** Return the number of series in this file. */
+  public int getSeriesCount(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.getSeriesCount(id);
+  }
+
+  /** Activates the specified series. */
+  public void setSeries(String id, int no) throws FormatException, IOException {
+    if (no < 0 || no >= getSeriesCount(id)) {
+      throw new FormatException("Invalid series: " + no);
+    }
+    series = no;
+    reader.setSeries(id, no);
+  }
+
   /** Obtains the specified image from the given file. */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
@@ -289,8 +298,6 @@ public class ChannelMerger extends FormatReader {
     dimensions[1] = getSizeC(id);
     dimensions[2] = getSizeT(id);
 
-    readerImages = reader.getImageCount(id);
-    ourImages = getImageCount(id);
     currentId = id;
 
     MetadataStore s = reader.getMetadataStore(id);
@@ -307,7 +314,7 @@ public class ChannelMerger extends FormatReader {
   private int[] translateVirtual(int plane, String id)
     throws FormatException, IOException
   {
-    int[] real = new int[readerImages / ourImages];
+    int[] real = new int[reader.getImageCount(id) / getImageCount(id)];
 
     while (order.length() > 3) order = order.substring(1);
 

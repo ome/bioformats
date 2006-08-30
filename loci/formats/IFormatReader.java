@@ -80,9 +80,19 @@ public interface IFormatReader extends IFormatHandler {
   byte[] openBytes(String id, int no)
     throws FormatException, IOException;
 
+  /** Obtains a thumbnail for the specified image from the given file. */
+  //BufferedImage openThumbImage(String id, int no)
+  //  throws FormatException, IOException;
+
+  /**
+   * Obtains a thumbnail for the specified image from the given file,
+   * as a byte array.
+   */
+  //byte[] openThumbBytes(String id, int no)
+  //  throws FormatException, IOException;
+
   /** Closes the currently open file. */
   void close() throws FormatException, IOException;
-
 
   /**
    * Opens an existing file from the given filename.
@@ -97,6 +107,9 @@ public interface IFormatReader extends IFormatHandler {
 
   /** Activates the specified series. */
   void setSeries(String id, int no) throws FormatException, IOException;
+
+  /** Returns the currently active series. */
+  int getSeries(String id) throws FormatException, IOException;
 
   /**
    * Allows the client to specify whether or not to separate channels.

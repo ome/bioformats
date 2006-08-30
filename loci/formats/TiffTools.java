@@ -838,23 +838,29 @@ public abstract class TiffTools {
       // since stripByteCounts and bitsPerSample are arrays, we have to
       // iterate through each item
 
-      // for now, each array should only have one entry
-      // this is because we don't have support for planar formats, like
-      // Zeiss LSM
+      if (bitsPerSample.length == 2 ||
+        bitsPerSample[bitsPerSample.length - 1] == 0)
+      {
+        int t = bitsPerSample[0];
+        bitsPerSample = new int[1];
+        bitsPerSample[0] = t;
+      }
 
-      rowsPerStripArray = new long[1];
+      rowsPerStripArray = new long[bitsPerSample.length];
 
       long temp = stripByteCounts[0];
-      stripByteCounts = new long[1];
-      stripByteCounts[0] = temp;
+      stripByteCounts = new long[bitsPerSample.length];
+      for (int i=0; i<stripByteCounts.length; i++) stripByteCounts[i] = temp;
       temp = bitsPerSample[0];
-      bitsPerSample = new int[1];
-      bitsPerSample[0] = (int) temp;
+      if (temp == 0) temp = 8;
+      bitsPerSample = new int[bitsPerSample.length];
+      for (int i=0; i<bitsPerSample.length; i++) bitsPerSample[i] = (int) temp;
       temp = stripOffsets[0];
-      stripOffsets = new long[1];
-      stripOffsets[0] = temp;
-
-      if (bitsPerSample[0] == 0) bitsPerSample[0] = 8;
+      stripOffsets = new long[bitsPerSample.length];
+      for (int i=0; i<bitsPerSample.length; i++) {
+        stripOffsets[i] = i == 0 ? temp :
+          stripOffsets[i - 1] + stripByteCounts[i];
+      }
 
       // we have two files that reverse the endianness for BitsPerSample,
       // StripOffsets, and StripByteCounts
@@ -905,33 +911,39 @@ public abstract class TiffTools {
         (imageWidth * imageLength * (bitsPerSample[0] / 8)) &&
         compression == UNCOMPRESSED)
       {
-        stripByteCounts[0] = imageWidth * imageLength * (bitsPerSample[0] / 8);
-        stripOffsets[0] = (int) (in.length() - stripByteCounts[0] -
-          48 * imageWidth);
-        byte[] row = new byte[(int) imageWidth];
-        in.seek((int) stripOffsets[0]);
-        in.read(row);
-        boolean isZero = true;
-        for (int i=0; i<row.length; i++) {
-          if (row[i] != 0) {
-            isZero = false;
-            break;
+        for (int i=0; i<stripByteCounts.length; i++) {
+          stripByteCounts[i] =
+            imageWidth * imageLength * (bitsPerSample[i] / 8);
+          stripOffsets[0] = (int) (in.length() - stripByteCounts[0] -
+            48 * imageWidth);
+          if (i != 0) {
+            stripOffsets[i] = stripOffsets[i - 1] + stripByteCounts[i];
           }
-        }
 
-        while (isZero) {
-          stripOffsets[0] -= row.length;
-          in.seek((int) stripOffsets[0]);
+          byte[] row = new byte[(int) imageWidth];
+          in.seek((int) stripOffsets[i]);
           in.read(row);
-          for (int i=0; i<row.length; i++) {
-            if (row[i] != 0) {
+          boolean isZero = true;
+          for (int j=0; j<row.length; j++) {
+            if (row[j] != 0) {
               isZero = false;
-              stripOffsets[0] -= (stripByteCounts[0] - row.length);
               break;
             }
           }
-        }
 
+          while (isZero) {
+            stripOffsets[i] -= row.length;
+            in.seek((int) stripOffsets[i]);
+            in.read(row);
+            for (int j=0; j<row.length; j++) {
+              if (row[j] != 0) {
+                isZero = false;
+                stripOffsets[i] -= (stripByteCounts[i] - row.length);
+                break;
+              }
+            }
+          }
+        }
       }
 
       for (int i=0; i<bitsPerSample.length; i++) {
