@@ -343,7 +343,7 @@ public class MetamorphReader extends BaseTiffReader {
           put("AutoScaleHiInfo", new TiffRational(num, denom));
           break;
         case 40:
-          for (int i=0;i<planes;i++) {
+          for (int i=0; i<planes; i++) {
             num = in.readInt();
             denom = in.readInt();
             put("AbsoluteZ Plane " + i, new TiffRational(num, denom));
@@ -527,10 +527,9 @@ public class MetamorphReader extends BaseTiffReader {
   {
     Double globalMin = (Double) metadata.get("grayMin");
     Double globalMax = (Double) metadata.get("grayMax");
-    if (globalMin != null | globalMax != null)
-    {
+    if (globalMin != null || globalMax != null) {
       getMetadataStore(currentId).setChannelGlobalMinMax(i,
-        globalMin,globalMax, null);
+        globalMin, globalMax, null);
     }
     super.setChannelGlobalMinMax(i);
   }

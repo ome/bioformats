@@ -131,8 +131,7 @@ public class ZeissZVIReader extends FormatReader {
   }
 
   /** Return true if the data is in little-endian format. */
-  public boolean isLittleEndian(String id) throws FormatException, IOException
-  {
+  public boolean isLittleEndian(String id) throws FormatException, IOException {
     return true;
   }
 
@@ -370,15 +369,14 @@ public class ZeissZVIReader extends FormatReader {
       boolean isImage = pathName.endsWith("Image");
 
       try {
-        if (((isContents &&
-          ((pathName.indexOf("Item") != -1) || pathName.indexOf("Image") != -1)
-          && data.length > 6000)) || (data.length == dataLength))
+        if ((isContents && (pathName.indexOf("Item") != -1 ||
+          pathName.indexOf("Image") != -1) && data.length > 6000) ||
+          data.length == dataLength)
         {
           header = data;
 
-          while ((dataLength != 0) && (data.length < dataLength) && isContents
-            && ((pathName.indexOf("Item") != -1) ||
-            pathName.indexOf("Image") != -1))
+          while (dataLength != 0 && data.length < dataLength && isContents &&
+            (pathName.indexOf("Item") != -1 || pathName.indexOf("Image") != -1))
           {
             i++;
             data = (byte[]) files[1].get(i);
@@ -510,8 +508,8 @@ public class ZeissZVIReader extends FormatReader {
                 for (int k=0; k<(chunkOne.length / (bpp*imageWidth)); k++) {
                   System.arraycopy(chunkOne, k*bpp*imageWidth, tct,
                     (k+1)*bpp*imageWidth - mul, mul);
-                  System.arraycopy(chunkOne, k*bpp*imageWidth+mul, tct,
-                    k*bpp*imageWidth, bpp*imageWidth - mul);
+                  System.arraycopy(chunkOne, k * bpp * imageWidth + mul, tct,
+                    k * bpp * imageWidth, bpp * imageWidth - mul);
                 }
 
                 chunkOne = tct;
@@ -523,8 +521,8 @@ public class ZeissZVIReader extends FormatReader {
                 for (int k=0; k<(chunkTwo.length / (bpp*imageWidth)); k++) {
                   System.arraycopy(chunkTwo, k*bpp*imageWidth, tco,
                     (k+1)*bpp*imageWidth - mul, mul);
-                  System.arraycopy(chunkTwo, k*bpp*imageWidth+mul, tco,
-                    k*bpp*imageWidth, bpp*imageWidth - mul);
+                  System.arraycopy(chunkTwo, k * bpp * imageWidth + mul, tco,
+                    k * bpp * imageWidth, bpp * imageWidth - mul);
                 }
 
                 chunkTwo = tco;
@@ -545,7 +543,7 @@ public class ZeissZVIReader extends FormatReader {
                   System.arraycopy(px, k*bpp*imageWidth, tmp,
                     (k+1)*bpp*imageWidth - mul, mul);
                   System.arraycopy(px, k*bpp*imageWidth+mul, tmp,
-                    k*bpp*imageWidth, bpp*imageWidth - mul);
+                    k * bpp * imageWidth, bpp*imageWidth - mul);
                 }
 
                 px = tmp;
@@ -927,7 +925,7 @@ public class ZeissZVIReader extends FormatReader {
             case 1537: metadata.put("Title", data); break;
             case 1538: metadata.put("Author", data); break;
             case 1539: metadata.put("Keywords", data); break;
-            case 1540: metadata.put("Comments", data);break;
+            case 1540: metadata.put("Comments", data); break;
             case 1541: metadata.put("SampleID", data); break;
             case 1542: metadata.put("Subject", data); break;
             case 1543: metadata.put("RevisionNumber", data); break;
@@ -940,7 +938,7 @@ public class ZeissZVIReader extends FormatReader {
             case 1550: metadata.put("File Date", data); break;
             case 1551: metadata.put("File Size", data); break;
             case 1553: metadata.put("Filename", data); break;
-            case 1792: metadata.put("ProjectGroup", data);break;
+            case 1792: metadata.put("ProjectGroup", data); break;
             case 1793: metadata.put("Acquisition Date", data); break;
             case 1794: metadata.put("Last modified by", data); break;
             case 1795: metadata.put("User company", data); break;
@@ -976,7 +974,7 @@ public class ZeissZVIReader extends FormatReader {
             case 2070: metadata.put("LightManagerEnabled", data); break;
             case 2071: metadata.put("tag_ID_2071", data); break;
             case 2072: metadata.put("Focus Position", data); break;
-            case 2073: metadata.put("Stage Position X", data);break;
+            case 2073: metadata.put("Stage Position X", data); break;
             case 2074: metadata.put("Stage Position Y", data); break;
             case 2075:
               metadata.put("Microscope Name", data);
@@ -1440,9 +1438,8 @@ public class ZeissZVIReader extends FormatReader {
     Integer sizeC = new Integer(1);
     Integer sizeT = null;
 
-    try {
-      sizeT = new Integer(getImageCount(currentId));
-    } catch (Exception e) {
+    try { sizeT = new Integer(getImageCount(currentId)); }
+    catch (Exception e) {
       // FIXME: Eat the exception for now, we should do something productive
       // here as the image metadata really is useless without a valid sizeT.
       e.printStackTrace();

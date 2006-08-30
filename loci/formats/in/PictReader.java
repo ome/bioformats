@@ -171,8 +171,7 @@ public class PictReader extends FormatReader {
   }
 
   /** Return true if the data is in little-endian format. */
-  public boolean isLittleEndian(String id) throws FormatException, IOException
-  {
+  public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return little;
   }
@@ -181,7 +180,8 @@ public class PictReader extends FormatReader {
    * Return a five-character string representing the dimension order
    * within the file.
    */
-  public String getDimensionOrder(String id) throws FormatException, IOException
+  public String getDimensionOrder(String id)
+    throws FormatException, IOException
   {
     return "XYCZT";
   }
@@ -264,7 +264,7 @@ public class PictReader extends FormatReader {
   public BufferedImage open(byte[] pix) throws FormatException {
     // handles case when we call this method directly, instead of
     // through initFile(String)
-    if (DEBUG) System.out.println("PictReader.openBytes");
+    if (DEBUG) System.out.println("PictReader.open");
 
     strips = new Vector();
 
@@ -274,9 +274,9 @@ public class PictReader extends FormatReader {
     pt = 0;
 
     try {
-      while (driveDecoder());
+      while (driveDecoder()) { }
     }
-    catch (Exception e) {
+    catch (FormatException e) {
       e.printStackTrace();
       return ImageTools.makeBuffered(qtTools.pictToImage(pix));
     }
@@ -539,7 +539,7 @@ public class PictReader extends FormatReader {
       if (rowBytes < 8) {  // data is not compressed
         System.arraycopy(bytes, pt, buf, 0, rowBytes);
 
-        for (int j=buf.length; --j >= 0; ) {
+        for (int j=buf.length; --j >= 0;) {
           buf[j] = (byte) ~buf[j];
         }
         expandPixels(1, buf, outBuf, outBuf.length);
@@ -677,20 +677,18 @@ public class PictReader extends FormatReader {
     // skip over two rectangles
     pt += 18;
 
-    if (opcode == PICT_BITSRGN || opcode == PICT_PACKBITSRGN) {
-      pt += 2;
-    }
+    if (opcode == PICT_BITSRGN || opcode == PICT_PACKBITSRGN) pt += 2;
 
     handlePixmap(rowBytes, pixelSize, compCount);
   }
 
   /** Handles the unpacking of the image data. */
-  private void handlePixmap(int rowBytes, int pixelSize, int compCount)
+  private void handlePixmap(int rBytes, int pixelSize, int compCount)
     throws FormatException
   {
     if (DEBUG) {
       System.out.println("PictReader.handlePixmap(" +
-        rowBytes + ", " + pixelSize + ", " + compCount + ")");
+        rBytes + ", " + pixelSize + ", " + compCount + ")");
     }
     int rawLen;
     byte[] buf;  // row raw bytes
@@ -700,9 +698,9 @@ public class PictReader extends FormatReader {
     int outBufSize;
     byte[] outBuf = null;  // used to expand pixel data
 
-    boolean compressed = (rowBytes >= 8) || (pixelSize == 32);
+    boolean compressed = (rBytes >= 8) || (pixelSize == 32);
 
-    bufSize = rowBytes;
+    bufSize = rBytes;
 
     outBufSize = width;
 
@@ -732,7 +730,7 @@ public class PictReader extends FormatReader {
       }
       buf = new byte[bufSize];
       for (int row=0; row<height; row++) {
-        System.arraycopy(bytes, pt, buf, 0, rowBytes);
+        System.arraycopy(bytes, pt, buf, 0, rBytes);
 
         switch (pixelSize) {
           case 16:
@@ -757,7 +755,7 @@ public class PictReader extends FormatReader {
       }
       buf = new byte[bufSize + 1 + bufSize / 128];
       for (int row=0; row<height; row++) {
-        if (rowBytes > 250) {
+        if (rBytes > 250) {
           rawLen = DataTools.bytesToInt(bytes, pt, 2, little);
           pt += 2;
         }
@@ -826,27 +824,27 @@ public class PictReader extends FormatReader {
   }
 
   /** Expand an array of bytes. */
-  private void expandPixels(int bitSize, byte[] in, byte[] out, int outLen)
+  private void expandPixels(int bitSize, byte[] ib, byte[] ob, int outLen)
     throws FormatException
   {
     if (DEBUG) {
       System.out.println("PictReader.expandPixels(" + bitSize + ", " +
-        in.length + ", " + out.length + ", " + outLen + ")");
+        ib.length + ", " + ob.length + ", " + outLen + ")");
     }
     if (bitSize == 1) {
       int remainder = outLen % 8;
       int max = outLen / 8;
       for (int i=0; i<max; i++) {
-        if (i < in.length) {
-          int look = (in[i] & 0xff) * 8;
-          System.arraycopy(EXPANSION_TABLE, look, out, i*8, 8);
+        if (i < ib.length) {
+          int look = (ib[i] & 0xff) * 8;
+          System.arraycopy(EXPANSION_TABLE, look, ob, i*8, 8);
         }
         else i = max;
       }
 
       if (remainder != 0) {
-        if (max < in.length) {
-          System.arraycopy(EXPANSION_TABLE, (in[max] & 0xff) * 8, out,
+        if (max < ib.length) {
+          System.arraycopy(EXPANSION_TABLE, (ib[max] & 0xff) * 8, ob,
             max*8, remainder);
         }
       }
@@ -870,8 +868,7 @@ public class PictReader extends FormatReader {
       throw new FormatException("Can only expand 1, 2, and 4 bit values");
     }
 
-    switch (bitSize)
-    {
+    switch (bitSize) {
       case 1:
         mask = 0x80;
         maskshift = 1;
@@ -896,12 +893,12 @@ public class PictReader extends FormatReader {
     }
 
     i = 0;
-    for (o = 0; o < out.length;) {
+    for (o = 0; o < ob.length;) {
       tmask = mask;
       tpixelshift = pixelshift;
-      v = in[i];
-      for (t = 0; t < count && o < out.length; ++t, ++o) {
-        out[o] = (byte) (((v & tmask) >>> tpixelshift) & 0xff);
+      v = ib[i];
+      for (t = 0; t < count && o < ob.length; ++t, ++o) {
+        ob[o] = (byte) (((v & tmask) >>> tpixelshift) & 0xff);
         tmask = (byte) ((tmask & 0xff) >>> maskshift);
         tpixelshift -= pixelshiftdelta;
       }
@@ -910,9 +907,9 @@ public class PictReader extends FormatReader {
   }
 
   /** PackBits variant that outputs an int array. */
-  private void unpackBits(byte[] in, int[] out) {
+  private void unpackBits(byte[] ib, int[] ob) {
     if (DEBUG) {
-      System.out.println("PictReader.unpackBits(" + in + ", " + out + ")");
+      System.out.println("PictReader.unpackBits(" + ib + ", " + ob + ")");
     }
     int i = 0;
     int o = 0;
@@ -920,32 +917,30 @@ public class PictReader extends FormatReader {
     int rep;
     int end;
 
-    for (o=0; o<out.length;) {
-      if ((i+1) < in.length) {
-        b = in[i++];
+    for (o=0; o<ob.length;) {
+      if (i+1 < ib.length) {
+        b = ib[i++];
         if (b >= 0) {
           b++;
           end = o + b;
           for(; o < end; o++, i+=2) {
-            if ((o < out.length) && ((i+1) < in.length)) {
-              out[o] = (((in[i] & 0xff) << 8) + (in[i+1] & 0xff)) & 0xffff;
+            if (o < ob.length && (i+1) < ib.length) {
+              ob[o] = (((ib[i] & 0xff) << 8) + (ib[i+1] & 0xff)) & 0xffff;
             }
             else o = end;
           }
         }
         else if (b != -128) {
-          rep = (((in[i] & 0xff) << 8) + (in[i+1] & 0xff)) & 0xffff;
+          rep = (((ib[i] & 0xff) << 8) + (ib[i+1] & 0xff)) & 0xffff;
           i += 2;
           end = o - b + 1;
           for (; o < end; o++) {
-            if (o < out.length) {
-              out[o] = rep;
-            }
+            if (o < ob.length) ob[o] = rep;
             else o = end;
           }
         }
       }
-      else o = out.length;
+      else o = ob.length;
     }
   }
 

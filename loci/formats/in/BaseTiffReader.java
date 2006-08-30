@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.util.Hashtable;
-
 import loci.formats.DataTools;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -59,7 +58,7 @@ public abstract class BaseTiffReader extends FormatReader {
   /** Number of images in the current TIFF stack. */
   protected int numImages;
 
-  /** The global min and max for each channel */
+  /** The global min and max for each channel. */
   protected Double[][] channelMinMax;
 
   // -- Constructors --
@@ -435,15 +434,14 @@ public abstract class BaseTiffReader extends FormatReader {
         String email = (String)
           TiffTools.getIFDValue(ifd, TiffTools.HOST_COMPUTER);
         store.setExperimenter(firstName, lastName, email,
-                              null, null, null, null);
+          null, null, null, null);
       }
 
       // populate Image element
       setImage();
 
       // populate Logical Channel elements
-      for (int i=0; i < getSizeC(currentId); i++)
-      {
+      for (int i=0; i<getSizeC(currentId); i++) {
         try {
           setLogicalChannel(i);
 // CTR 24 Aug 2006 - this call is horribly slow for TIFF files
@@ -675,8 +673,7 @@ public abstract class BaseTiffReader extends FormatReader {
     if (bitsPerSample == 8 || bitsPerSample == 32) return byteArray;
 
     if (isLittleEndian(currentId)) {
-      if (bitsPerSample == 16)  // Short
-      {
+      if (bitsPerSample == 16) { // short
         ShortBuffer buf = ByteBuffer.wrap(byteArray).asShortBuffer();
         for (int i = 0; i < (byteArray.length / 2); i++) {
           buf.put(i, Bits.swap(buf.get(i)));
@@ -803,24 +800,20 @@ public abstract class BaseTiffReader extends FormatReader {
    * @throws IOException if there is an error reading the file.
    */
   public void getChannelGlobalMinMax() throws FormatException, IOException {
-    if (channelMinMax == null)
+    if (channelMinMax == null) {
       channelMinMax = new Double[getSizeC(currentId)][2];
+    }
     else return;
 
-    for (int c = 0; c < getSizeC(currentId); c++)
-    {
+    for (int c = 0; c < getSizeC(currentId); c++) {
       double min = Double.MAX_VALUE;
       double max = Double.MIN_VALUE;
-      for(int t = 0; t < getSizeT(currentId); t++)
-      {
-        for(int z = 0; z < getSizeZ(currentId); z++)
-        {
+      for (int t = 0; t < getSizeT(currentId); t++) {
+        for (int z = 0; z < getSizeZ(currentId); z++) {
           int index = getIndex(currentId, z, c, t);
           Plane2D plane = openPlane2D(currentId, index);
-          for (int x = 0; x < getSizeX(currentId); x++)
-          {
-            for (int y = 0; y < getSizeY(currentId); y++)
-            {
+          for (int x = 0; x < getSizeX(currentId); x++) {
+            for (int y = 0; y < getSizeY(currentId); y++) {
               double pixelValue = plane.getPixelValue(x, y);
               if (pixelValue < min) min = pixelValue;
               if (pixelValue > max) max = pixelValue;
@@ -841,14 +834,14 @@ public abstract class BaseTiffReader extends FormatReader {
    */
   private void setLogicalChannel(int i) throws FormatException, IOException {
     getMetadataStore(currentId).setLogicalChannel(
-        i,
-        getChannelName(i),
-        getNdFilter(i),
-        getEmWave(i),
-        getExWave(i),
-        getPhotometricInterpretation(i),
-        getMode(i), // aquisition mode
-        null);
+      i,
+      getChannelName(i),
+      getNdFilter(i),
+      getEmWave(i),
+      getExWave(i),
+      getPhotometricInterpretation(i),
+      getMode(i), // aquisition mode
+      null);
   }
 
   private String getChannelName(int i) { return null; }

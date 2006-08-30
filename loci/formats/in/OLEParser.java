@@ -222,8 +222,8 @@ public class OLEParser {
                 if (check4[j] != 0) isZero = false;
               }
               if (isZero) {
-                if (DataTools.bytesToInt(buf, offset + 116, 4, true) <
-                  (in.length() / bigBlock)) {
+                int q = DataTools.bytesToInt(buf, offset + 116, 4, true);
+                if (q < in.length() / bigBlock) {
                   v.add(new Integer(baseBlock + i + 2));
                 }
               }

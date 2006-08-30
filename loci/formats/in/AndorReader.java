@@ -313,7 +313,7 @@ public class AndorReader extends BaseTiffReader {
       for (int j=0; j<diff.size(); j++) {
         // find the minimum non-zero difference
         float difference = ((Float) diff.get(i)).floatValue();
-        if (difference != 0 && difference < min && added[i] == false) {
+        if (difference != 0 && difference < min && !added[i]) {
           min = difference;
           index = i;
         }

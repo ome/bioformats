@@ -43,7 +43,6 @@ public class IPWReader extends BaseTiffReader {
   private static final String NO_POI_MSG = "You need to install Jakarta POI " +
     "from http://jakarta.apache.org/poi/";
 
-
   // -- Static fields --
 
   private static boolean noPOI = false;
@@ -63,7 +62,6 @@ public class IPWReader extends BaseTiffReader {
     return r;
   }
 
-
   // -- Fields --
 
   private Hashtable pixelData = new Hashtable();
@@ -74,12 +72,10 @@ public class IPWReader extends BaseTiffReader {
 
   private int totalBytes= 0;
 
-
   // -- Constructor --
 
   /** Constructs a new IPW reader. */
   public IPWReader() { super("Image-Pro Workspace", "ipw"); }
-
 
   // -- FormatReader API methods --
 
@@ -220,7 +216,6 @@ public class IPWReader extends BaseTiffReader {
     }
   }
 
-
   // -- Internal BaseTiffReader API methods --
 
   /** Initialize metadata hashtable and OME-XML structure. */
@@ -266,11 +261,10 @@ public class IPWReader extends BaseTiffReader {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(id);
 
-    store.setPixels(null, null, sizeZ,sizeC, sizeT, null,
+    store.setPixels(null, null, sizeZ, sizeC, sizeT, null,
       new Boolean(!isLittleEndian(id)), getDimensionOrder(id), null);
     store.setImage(null, null, (String) metadata.get("Version"), null);
   }
-
 
   // -- Helper methods --
 
@@ -357,14 +351,13 @@ public class IPWReader extends BaseTiffReader {
     }
   }
 
-  /** Debugging utility method */
+  /** Debugging utility method. */
   public static final void print(int depth, String s) {
     StringBuffer sb = new StringBuffer();
     for (int i=0; i<depth; i++) sb.append("  ");
     sb.append(s);
     System.out.println(sb.toString());
   }
-
 
   // -- Main method --
 

@@ -113,8 +113,7 @@ public class OIBReader extends FormatReader {
   }
 
   /** Return true if the data is in little-endian format. */
-  public boolean isLittleEndian(String id) throws FormatException, IOException
-  {
+  public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return littleEndian;
   }
@@ -123,7 +122,8 @@ public class OIBReader extends FormatReader {
    * Return a five-character string representing the dimension order
    * within the file.
    */
-  public String getDimensionOrder(String id) throws FormatException, IOException
+  public String getDimensionOrder(String id)
+    throws FormatException, IOException
   {
     return "XYCTZ";
   }
@@ -282,7 +282,7 @@ public class OIBReader extends FormatReader {
     Hashtable[] tiffIFDs = TiffTools.getIFDs(b);
 
     btr.ifds = tiffIFDs;
-    btr.setInitialSizeZ(numImages);
+    btr.setSizeZ(numImages);
 
     try {
       btr.initFile(id);

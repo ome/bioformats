@@ -138,8 +138,7 @@ public class OpenlabReader extends FormatReader {
   }
 
   /** Return true if the data is in little-endian format. */
-  public boolean isLittleEndian(String id) throws FormatException, IOException
-  {
+  public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return little;
   }
@@ -263,13 +262,13 @@ public class OpenlabReader extends FormatReader {
 
       // Read info from the iPic comment. This serves as a
       // starting point to read the rest.
-      temp = new byte[] { b[pos], b[pos+1], b[pos+2], b[pos+3] };
+      temp = new byte[] {b[pos], b[pos+1], b[pos+2], b[pos+3]};
       num = batoi(temp);
       if (num != expectedBlock) {
         throw new FormatException("Expected iPic block not found");
       }
       expectedBlock++;
-      temp = new byte[] { b[pos+4], b[pos+5], b[pos+6], b[pos+7] };
+      temp = new byte[] {b[pos+4], b[pos+5], b[pos+6], b[pos+7]};
       if (totalBlocks == -1) {
         totalBlocks = batoi(temp);
       }
@@ -281,7 +280,7 @@ public class OpenlabReader extends FormatReader {
 
       // skip to size
       pos += 16;
-      temp = new byte[] { b[pos], b[pos+1], b[pos+2], b[pos+3] };
+      temp = new byte[] {b[pos], b[pos+1], b[pos+2], b[pos+3]};
       size = batoi(temp);
       pos += 8;
 
@@ -458,7 +457,7 @@ public class OpenlabReader extends FormatReader {
 
         in.skipBytes(2);
 
-        if (isOpenlab2 == true) {
+        if (isOpenlab2) {
           byte[] layerName = new byte[127];
           in.read(layerName);
           metadata.put("LayerName", new String(layerName));
@@ -546,16 +545,16 @@ public class OpenlabReader extends FormatReader {
     int len = inp.length>4?4:inp.length;
     int total = 0;
     for (int i = 0; i < len; i++) {
-      total += (inp[i]<0?256+inp[i]:(int)inp[i]) << (((len - 1) - i) * 8);
+      total += (inp[i]<0 ? 256+inp[i] : (int) inp[i]) << (((len - 1) - i) * 8);
     }
     return total;
   }
 
   /**
-   * Checks which type of Openlab file this is:
-   * 1 => all planes are greyscale
-   * 2 => all planes are RGB
-   * 3 => every 4th plane is RGB, remaining planes are greyscale
+   * Checks which type of Openlab file this is.
+   * 1 =&gt; all planes are greyscale.
+   * 2 =&gt; all planes are RGB.
+   * 3 =&gt; every 4th plane is RGB, remaining planes are greyscale.
    */
   private int checkType() throws FormatException, IOException {
     if (firstPlane == null) firstPlane = openImage(currentId, 0);

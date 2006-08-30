@@ -462,7 +462,7 @@ public class AVIWriter extends FormatWriter {
       // Write the 'idx1' signature
       idx1Pos = raFile.getFilePointer();
       raFile.seek(saveLIST2Size);
-      DataTools.writeInt(raFile, (int)(idx1Pos - (saveLIST2Size + 4)), true);
+      DataTools.writeInt(raFile, (int) (idx1Pos - (saveLIST2Size + 4)), true);
       raFile.seek(idx1Pos);
       DataTools.writeString(raFile, "idx1");
 
@@ -498,7 +498,7 @@ public class AVIWriter extends FormatWriter {
       }
       endPos = raFile.getFilePointer();
       raFile.seek(saveFileSize);
-      DataTools.writeInt(raFile, (int)(endPos - (saveFileSize+4)), true);
+      DataTools.writeInt(raFile, (int) (endPos - (saveFileSize + 4)), true);
 
       raFile.seek(saveidx1Length);
       DataTools.writeInt(raFile, (int) (endPos - (saveidx1Length + 4)), true);

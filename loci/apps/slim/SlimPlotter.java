@@ -36,10 +36,10 @@ public class SlimPlotter implements ActionListener,
 
   /** Default orientation for decay curves display. */
   private static final double[] MATRIX = {
-     0.2821,  0.1503, -0.0201, 0.0418,
-    -0.0500,  0.1323,  0.2871, 0.1198,
-     0.1430, -0.2501,  0.1408, 0.0089,
-     0.0000,  0.0000,  0.0000, 1.0000
+    0.2821, 0.1503, -0.0201, 0.0418,
+    -0.0500, 0.1323, 0.2871, 0.1198,
+    0.1430, -0.2501, 0.1408, 0.0089,
+    0.0000, 0.0000, 0.0000, 1.0000
   };
 
   private static final char TAU = 'T';

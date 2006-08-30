@@ -32,8 +32,8 @@ import java.nio.ByteOrder;
  *
  * @author Chris Allan callan at blackcat.ca
  */
-public class Plane2D
-{
+public class Plane2D {
+
   /** Contains the plane data. */
   private ByteBuffer    data;
 
@@ -96,7 +96,7 @@ public class Plane2D
    * order.
    */
   Plane2D(ByteBuffer data, int type, boolean isLittleEndian,
-          int sizeX, int sizeY)
+    int sizeX, int sizeY)
   {
     this.type = type;
     this.data = data;
@@ -138,8 +138,7 @@ public class Plane2D
    * @param y The Y coordinate.
    * @return The intensity value.
    */
-  public double getPixelValue(int x, int y)
-  {
+  public double getPixelValue(int x, int y) {
     int offset = ((sizeX * y) + x) * bytesPerPixel;
 
     switch(type) {
@@ -169,14 +168,13 @@ public class Plane2D
    * @param typeAsString the pixel type as a string.
    * @return type enumeration value for use with class constants.
    */
-  public static int typeFromString(String typeAsString)
-  {
+  public static int typeFromString(String typeAsString) {
     String uppercaseTypeAsString = typeAsString.toUpperCase();
-    for (int i = 0; i < pixelsTypes.length; i++)
-    {
+    for (int i = 0; i < pixelsTypes.length; i++) {
       if (pixelsTypes[i].equals(uppercaseTypeAsString))
         return i;
     }
     throw new RuntimeException("Unknown type: '" + typeAsString + "'");
   }
+
 }

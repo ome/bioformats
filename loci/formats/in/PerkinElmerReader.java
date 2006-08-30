@@ -122,8 +122,7 @@ public class PerkinElmerReader extends FormatReader {
   }
 
   /** Return true if the data is in little-endian format. */
-  public boolean isLittleEndian(String id) throws FormatException, IOException
-  {
+  public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return tiff.isLittleEndian(files[0]);
   }
@@ -132,7 +131,8 @@ public class PerkinElmerReader extends FormatReader {
    * Return a five-character string representing the dimension order
    * within the file.
    */
-  public String getDimensionOrder(String id) throws FormatException, IOException
+  public String getDimensionOrder(String id)
+    throws FormatException, IOException
   {
     return "XYCTZ";
   }
@@ -285,8 +285,9 @@ public class PerkinElmerReader extends FormatReader {
       int pt = 0;
       while (t.hasMoreTokens()) {
         if (tNum < 7) { t.nextToken(); }
-        else if ((tNum > 7 && tNum < 12) || (tNum > 12 && tNum < 18) ||
-          (tNum > 18 && tNum < 22)) {
+        else if ((tNum > 7 && tNum < 12) ||
+          (tNum > 12 && tNum < 18) || (tNum > 18 && tNum < 22))
+        {
           t.nextToken();
         }
         else if (pt < hashKeys.length) {

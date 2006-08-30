@@ -64,7 +64,7 @@ public class TiffReader extends BaseTiffReader {
    * @param sizeZ the number of optical sections to use when making a call to
    * {@link MetadataStore#setPixels()}.
    */
-  protected void setInitialSizeZ(int sizeZ) { this.sizeZ = sizeZ; }
+  protected void setSizeZ(int sizeZ) { this.sizeZ = sizeZ; }
 
   // -- Internal BaseTiffReader API methods --
 
@@ -111,8 +111,8 @@ public class TiffReader extends BaseTiffReader {
     catch (Exception e) { }
 
     String comment = (String) metadata.get("Comment");
-    if (store instanceof OMEXMLMetadataStore
-      && comment != null && comment.indexOf("ome.xsd") >= 0)
+    if (store instanceof OMEXMLMetadataStore &&
+      comment != null && comment.indexOf("ome.xsd") >= 0)
     {
       OMEXMLMetadataStore xmlStore = (OMEXMLMetadataStore) store;
       xmlStore.createRoot(comment);

@@ -218,8 +218,7 @@ public class LeicaReader extends BaseTiffReader {
   }
 
   /** Return true if the data is in little-endian format. */
-  public boolean isLittleEndian(String id) throws FormatException, IOException
-  {
+  public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return littleEndian;
   }
@@ -228,7 +227,8 @@ public class LeicaReader extends BaseTiffReader {
    * Return a five-character string representing the dimension order
    * within the file.
    */
-  public String getDimensionOrder(String id) throws FormatException, IOException
+  public String getDimensionOrder(String id)
+    throws FormatException, IOException
   {
     return "XYZTC";
   }
@@ -277,8 +277,8 @@ public class LeicaReader extends BaseTiffReader {
 
   /** Initializes the given Leica file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (id.toLowerCase().endsWith("tif") || id.toLowerCase().endsWith("tiff"))
-    {
+    String idLow = id.toLowerCase();
+    if (idLow.endsWith("tif") || idLow.endsWith("tiff")) {
       if (ifds == null) super.initFile(id);
 
       in = new RandomAccessStream(id);

@@ -58,12 +58,12 @@ public class ICSReader extends FormatReader {
 
   /**
    * Dimensions in the following order:
-   * 1) bits per pixel
-   * 2) width
-   * 3) height
-   * 4) z
-   * 5) channels
-   * 6) timepoints
+   * 1) bits per pixel,
+   * 2) width,
+   * 3) height,
+   * 4) z,
+   * 5) channels,
+   * 6) timepoints.
    */
   protected int[] dimensions = new int[6];
 

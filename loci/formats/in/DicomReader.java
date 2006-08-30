@@ -77,13 +77,13 @@ public class DicomReader extends FormatReader {
   /** Number of image planes in the file. */
   protected int numImages = 0;
 
-  /** Image width */
+  /** Image width. */
   protected int width;
 
-  /** Image height */
+  /** Image height. */
   protected int height;
 
-  /** Bits per pixel */
+  /** Bits per pixel. */
   protected int bitsPerPixel;
 
   /** Offset to first plane. */

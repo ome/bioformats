@@ -65,15 +65,19 @@ public class DeltavisionReader extends FormatReader {
   /** Bytes per pixel. */
   private int bytesPerPixel;
 
-  /** Offset where the ExtHdr starts */
+  /** Offset where the ExtHdr starts. */
   protected int initExtHdrOffset = 1024;
 
   /** Dimension order. */
   private String order;
 
-  /** Size of one wave, z section, or time element in the extended header */
+  /** Size of one wave in the extended header. */
   protected int wSize;
+
+  /** Size of one z section in the extended header. */
   protected int zSize;
+
+  /** Size of one time element in the extended header. */
   protected int tSize;
 
   protected int numT;
@@ -87,7 +91,7 @@ public class DeltavisionReader extends FormatReader {
   protected int numIntsPerSection;
   protected int numFloatsPerSection;
 
-  /** Initialize an array of Extended Header Field structures */
+  /** Initialize an array of Extended Header Field structures. */
   protected DVExtHdrFields[][][] extHdrFields = null;
 
   // -- Constructor --
@@ -153,7 +157,7 @@ public class DeltavisionReader extends FormatReader {
 
   /**
    * Return a five-character string representing the dimension order
-   * within the file
+   * within the file.
    */
   public String getDimensionOrder(String id) throws FormatException, IOException
   {
@@ -478,54 +482,54 @@ public class DeltavisionReader extends FormatReader {
    * @param numTimes
    */
   private void setOffsetInfo(int imgSequence, int numZSections,
-      int numWaves, int numTimes)
+    int numWaves, int numTimes)
   {
     int smallOffset = (numIntsPerSection + numFloatsPerSection) * 4;
-    switch (imgSequence)
-    {
-    // ZTW sequence
-    case 0: zSize = smallOffset;
-    tSize = zSize * numZSections;
-    wSize = tSize * numTimes;
-    break;
+    switch (imgSequence) {
+      // ZTW sequence
+      case 0:
+        zSize = smallOffset;
+        tSize = zSize * numZSections;
+        wSize = tSize * numTimes;
+        break;
 
-    // WZT sequence
-    case 1: wSize = smallOffset;
-    zSize = wSize * numWaves;
-    tSize = zSize * numZSections;
-    break;
+      // WZT sequence
+      case 1:
+        wSize = smallOffset;
+        zSize = wSize * numWaves;
+        tSize = zSize * numZSections;
+        break;
 
-    // ZWT sequence
-    case 2: zSize = smallOffset;
-    wSize = zSize * numZSections;
-    tSize = wSize * numWaves;
-    break;
+      // ZWT sequence
+      case 2:
+        zSize = smallOffset;
+        wSize = zSize * numZSections;
+        tSize = wSize * numWaves;
+        break;
     }
   }
 
   /**
    * Given any specific Z, W, and T of a plane, determine the totalOffset from
-   * the start of the extended header
+   * the start of the extended header.
    * @param currentZ
    * @param currentW
    * @param currentT
    * @return
    */
-  public int getTotalOffset(int currentZ, int currentW, int currentT)
-  {
+  public int getTotalOffset(int currentZ, int currentW, int currentT) {
     return (zSize * currentZ) + (wSize * currentW) + (tSize * currentT);
   }
 
   /**
    * This method returns the a plane number from when given a Z, W
-   * and T offsets
+   * and T offsets.
    * @param currentZ
    * @param currentW
    * @param currentT
    * @return
    */
-  public int getPlaneNumber(int currentZ, int currentW, int currentT)
-  {
+  public int getPlaneNumber(int currentZ, int currentW, int currentT) {
     int smallOffset = (numIntsPerSection + numFloatsPerSection) * 4;
     return getTotalOffset(currentZ, currentW, currentT) / smallOffset;
   }
