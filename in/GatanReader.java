@@ -51,7 +51,7 @@ public class GatanReader extends FormatReader {
   /** Array of pixel bytes. */
   protected byte[] pixelData;
 
-  /** Dimensions -- width, height, bytes per pixel */
+  /** Dimensions -- width, height, bytes per pixel. */
   protected int[] dims = new int[3];
 
   protected int pixelDataNum = 0;
@@ -115,8 +115,7 @@ public class GatanReader extends FormatReader {
   }
 
   /** Return true if the data is in little-endian format. */
-  public boolean isLittleEndian(String id) throws FormatException, IOException
-  {
+  public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return littleEndian;
   }
@@ -125,7 +124,8 @@ public class GatanReader extends FormatReader {
    * Return a five-character string representing the dimension order
    * within the file.
    */
-  public String getDimensionOrder(String id) throws FormatException, IOException
+  public String getDimensionOrder(String id)
+    throws FormatException, IOException
   {
     return "XYZTC";
   }

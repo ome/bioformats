@@ -62,7 +62,6 @@ public class BioRadReader extends FormatReader {
     "16", "17", "18", "19", "VARIABLE", "STRUCTURE", "4D SERIES"
   };
 
-
   // -- Fields --
 
   /** Input stream for current Bio-Rad PIC. */
@@ -80,12 +79,10 @@ public class BioRadReader extends FormatReader {
   /** Flag indicating current Bio-Rad PIC is packed with bytes. */
   private boolean byteFormat;
 
-
   // -- Constructor --
 
   /** Constructs a new BioRadReader. */
   public BioRadReader() { super("Bio-Rad PIC", "pic"); }
-
 
   // -- FormatReader API methods --
 
@@ -465,8 +462,7 @@ public class BioRadReader extends FormatReader {
     store.setDimensions(pixelSizeX, pixelSizeY, pixelSizeZ, null, null, null);
   }
 
-  public String noteString(int n, int l, int s, int t, int x, int y, String p)
-  {
+  public String noteString(int n, int l, int s, int t, int x, int y, String p) {
     StringBuffer sb = new StringBuffer(100);
     sb.append("level=");
     sb.append(l);
@@ -484,7 +480,6 @@ public class BioRadReader extends FormatReader {
     sb.append(p == null ? "null" : p.trim());
     return sb.toString();
   }
-
 
   // -- Main method --
 

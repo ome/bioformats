@@ -62,10 +62,10 @@ public class BMPReader extends FormatReader {
 
   /**
    * Compression type:
-   * 0 = no compression
-   * 1 = 8 bit run length encoding
-   * 2 = 4 bit run length encoding
-   * 3 = RGB bitmap with mask
+   * 0 = no compression,
+   * 1 = 8 bit run length encoding,
+   * 2 = 4 bit run length encoding,
+   * 3 = RGB bitmap with mask.
    */
   protected int compression;
 

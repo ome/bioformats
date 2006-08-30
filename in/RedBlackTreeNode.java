@@ -34,16 +34,16 @@ public class RedBlackTreeNode {
   // -- Fields --
 
   /** Pointer to the parent node. */
-  public RedBlackTreeNode parent;
+  protected RedBlackTreeNode parent;
 
   /** Vector of pointers to the child nodes. */
-  public Vector children;
+  protected Vector children;
 
   /** True if this node is the rightmost in its level. */
-  public boolean isLast;
+  protected boolean isLast;
 
   /** Depth of the node (from the root). */
-  public int depth;
+  protected int depth;
 
   /** Node type. */
   private int type;

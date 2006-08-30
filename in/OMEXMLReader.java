@@ -153,8 +153,7 @@ public class OMEXMLReader extends FormatReader {
   }
 
   /** Return true if the data is in little-endian format. */
-  public boolean isLittleEndian(String id) throws FormatException, IOException
-  {
+  public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return littleEndian;
   }
@@ -163,7 +162,8 @@ public class OMEXMLReader extends FormatReader {
    * Return a five-character string representing the dimension order
    * within the file.
    */
-  public String getDimensionOrder(String id) throws FormatException, IOException
+  public String getDimensionOrder(String id)
+    throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
     return order;

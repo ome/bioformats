@@ -29,22 +29,28 @@ package loci.formats.in;
  *
  * @author Chris Allan callan at blackcat.ca
  */
-class Bits
-{
-  static short swap(short x) {
+public abstract class Bits {
+
+  // -- Constructor --
+
+  private Bits() { }
+
+  // -- Utility methods --
+
+  public static short swap(short x) {
     return (short) ((x << 8) | ((x >> 8) & 0xFF));
   }
 
-  static char swap(char x) {
+  public static char swap(char x) {
     return (char) ((x << 8) | ((x >> 8) & 0xFF));
   }
 
-  static int swap(int x) {
-    return (int) ((swap((short)x) << 16) | (swap((short)(x >> 16)) & 0xFFFF));
+  public static int swap(int x) {
+    return (int) ((swap((short) x) << 16) | (swap((short) (x >> 16)) & 0xFFFF));
   }
 
-  static long swap(long x) {
-    return (long) (((long)swap((int)(x)) << 32) |
-      ((long)swap((int)(x >> 32)) & 0xFFFFFFFFL));
+  public static long swap(long x) {
+    return (long) (((long) swap((int) x) << 32) |
+      ((long) swap((int) (x >> 32)) & 0xFFFFFFFFL));
   }
 }

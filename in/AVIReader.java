@@ -51,43 +51,41 @@ public class AVIReader extends FormatReader {
   /** Endianness flag. */
   private boolean little = true;
 
-  String type = "error";
-  String fcc = "error";
-  int size = -1;
-  int bigChunkSize;
-  long pos;
+  private String type = "error";
+  private String fcc = "error";
+  private int size = -1;
+  private int bigChunkSize;
+  private long pos;
 
   // AVI Header chunk fields
 
-  int dwMicroSecPerFrame, dwMaxBytesPerSec, dwReserved1, dwFlags,
+  private int dwMicroSecPerFrame, dwMaxBytesPerSec, dwReserved1, dwFlags,
     dwTotalFrames, dwInitialFrames, dwStreams, dwSuggestedBufferSize, dwWidth,
     dwHeight, dwScale, dwRate, dwStart, dwLength;
 
   // Stream Header chunk fields
 
-  String fccStreamType, fccStreamHandler;
-  int dwStreamFlags, dwStreamReserved1, dwStreamInitialFrames, dwStreamScale,
-    dwStreamRate, dwStreamStart, dwStreamLength, dwStreamSuggestedBufferSize,
-    dwStreamQuality, dwStreamSampleSize;
+  private String fccStreamType, fccStreamHandler;
+  private int dwStreamFlags, dwStreamReserved1, dwStreamInitialFrames,
+    dwStreamScale, dwStreamRate, dwStreamStart, dwStreamLength,
+    dwStreamSuggestedBufferSize, dwStreamQuality, dwStreamSampleSize;
 
   // Stream Format chunk fields
 
-  int bmpSize, bmpSizeOfBitmap, bmpHorzResolution, bmpVertResolution,
+  private int bmpSize, bmpSizeOfBitmap, bmpHorzResolution, bmpVertResolution,
     bmpColorsUsed, bmpColorsImportant, bmpNoOfPixels, bmpWidth, bmpHeight,
     bmpCompression, bmpActualSize, bmpScanLineSize, bmpActualColorsUsed;
-  short bmpPlanes, bmpBitsPerPixel;
-  boolean bmpTopDown;
-  byte[] rawData = null;
-  byte[] pr = null;
-  byte[] pg = null;
-  byte[] pb = null;
-
+  private short bmpPlanes, bmpBitsPerPixel;
+  private boolean bmpTopDown;
+  private byte[] rawData = null;
+  private byte[] pr = null;
+  private byte[] pg = null;
+  private byte[] pb = null;
 
   // -- Constructor --
 
   /** Constructs a new AVI reader. */
   public AVIReader() { super("Audio Video Interleave", "avi"); }
-
 
   // -- FormatReader API methods --
 
@@ -594,7 +592,6 @@ public class AVIReader extends FormatReader {
   private void whine(String msg) throws FormatException {
     throw new FormatException(msg);
   }
-
 
   // -- Main method --
 

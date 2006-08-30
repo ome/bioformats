@@ -47,19 +47,13 @@ public class LegacyZVIReader extends FormatReader {
   };
 
   /** Block identifying start of useful header information. */
-  private static final byte[] ZVI_MAGIC_BLOCK_1 = { // 41 00 10
-    65, 0, 16
-  };
+  private static final byte[] ZVI_MAGIC_BLOCK_1 = {65, 0, 16}; // 41 00 10
 
   /** Block identifying second part of useful header information. */
-  private static final byte[] ZVI_MAGIC_BLOCK_2 = { // 41 00 80
-    65, 0, -128
-  };
+  private static final byte[] ZVI_MAGIC_BLOCK_2 = {65, 0, -128}; // 41 00 80
 
   /** Block identifying third part of useful header information. */
-  private static final byte[] ZVI_MAGIC_BLOCK_3 = { // 20 00 10
-    32, 0, 16
-  };
+  private static final byte[] ZVI_MAGIC_BLOCK_3 = {32, 0, 16}; // 20 00 10
 
   /** Memory buffer size in bytes, for reading from disk. */
   private static final int BUFFER_SIZE = 8192;
@@ -134,8 +128,7 @@ public class LegacyZVIReader extends FormatReader {
   }
 
   /** Return true if the data is in little-endian format. */
-  public boolean isLittleEndian(String id) throws FormatException, IOException
-  {
+  public boolean isLittleEndian(String id) throws FormatException, IOException {
     return true;
   }
 
@@ -143,7 +136,8 @@ public class LegacyZVIReader extends FormatReader {
    * Return a five-character string representing the dimension order
    * within the file.
    */
-  public String getDimensionOrder(String id) throws FormatException, IOException
+  public String getDimensionOrder(String id)
+    throws FormatException, IOException
   {
     return "XYCZT";
   }
@@ -469,10 +463,10 @@ public class LegacyZVIReader extends FormatReader {
     }
 
     /** Reads in this block's image data from the given file. */
-    public BufferedImage readImage(RandomAccessFile in)
+    public BufferedImage readImage(RandomAccessFile raf)
       throws IOException, FormatException
     {
-      long fileSize = in.length();
+      long fileSize = raf.length();
       if (imagePos + imageSize > fileSize) {
         throw new FormatException("File is not big enough to contain the " +
           "pixels (width=" + width + "; height=" + height +
@@ -482,8 +476,8 @@ public class LegacyZVIReader extends FormatReader {
 
       // read image
       byte[] imageBytes = new byte[imageSize];
-      in.seek(imagePos);
-      in.readFully(imageBytes);
+      raf.seek(imagePos);
+      raf.readFully(imageBytes);
 
       // convert image bytes into BufferedImage
       if (bytesPerPixel > 4) {
