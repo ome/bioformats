@@ -44,6 +44,9 @@ public abstract class FormatReader extends FormatHandler
   /** Debugging level. 1=basic, 2=extended, 3=everything. */
   protected static final int DEBUG_LEVEL = 1;
 
+  /** Default thumbnail width and height. */
+  protected static final int THUMBNAIL_DIMENSION = 128;
+
   // -- Fields --
 
   /** Hashtable containing metadata key/value pairs. */
@@ -99,6 +102,16 @@ public abstract class FormatReader extends FormatHandler
   /** Get the size of the T dimension. */
   public abstract int getSizeT(String id) throws FormatException, IOException;
 
+  /** Get the size of the X dimension for the thumbnail. */
+  public int getThumbSizeX(String id) throws FormatException, IOException {
+    return THUMBNAIL_DIMENSION;
+  }
+
+  /** Get the size of the Y dimension for the thumbnail. */
+  public int getThumbSizeY(String id) throws FormatException, IOException {
+    return THUMBNAIL_DIMENSION;
+  }
+
   /** Return true if the data is in little-endian format. */
   public abstract boolean isLittleEndian(String id)
     throws FormatException, IOException;
@@ -119,6 +132,33 @@ public abstract class FormatReader extends FormatHandler
    */
   public abstract byte[] openBytes(String id, int no)
     throws FormatException, IOException;
+
+  /** Obtains a thumbnail for the specified image from the given file. */
+  public BufferedImage openThumbImage(String id, int no)
+    throws FormatException, IOException
+  {
+    return ImageTools.scale(openImage(id, no), 
+      getThumbSizeX(id), getThumbSizeY(id));      
+  }
+
+  /**
+   * Obtains a thumbnail for the specified image from the given file,
+   * as a byte array.  We assume that the thumbnail has the same number of
+   * channels as the original image.  If there is more than one channel, then
+   * the resulting byte array will be of the format "RRR...BBB...GGG...".
+   */
+  public byte[] openThumbBytes(String id, int no)
+    throws FormatException, IOException
+  {
+    BufferedImage img = openThumbImage(id, no);
+    byte[][] bytes = ImageTools.getBytes(img);
+    if (bytes.length == 1) return bytes[0];
+    byte[] rtn = new byte[bytes.length * bytes[0].length];
+    for (int i=0; i<bytes.length; i++) {
+      System.arraycopy(bytes[i], 0, rtn, bytes[0].length * i, bytes[i].length);
+    }
+    return rtn;
+  }
 
   /** Closes the currently open file. */
   public abstract void close() throws FormatException, IOException;

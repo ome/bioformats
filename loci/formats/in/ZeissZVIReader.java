@@ -35,6 +35,7 @@ import loci.formats.*;
  *
  * @author Melissa Linkert linkert at cs.wisc.edu
  * @author Curtis Rueden ctrueden at wisc.edu
+ * @author Michel Boudinot Michel dot boudinot at iaf.cnrs-gif.fr
  */
 public class ZeissZVIReader extends FormatReader {
 
@@ -309,12 +310,18 @@ public class ZeissZVIReader extends FormatReader {
     throws FormatException, IOException
   {
     if (needLegacy) return legacy.openImage(id, no);
-    byte[] data = openBytes(id, no);
-    int bpp = bitsPerSample / 8;
-    if (bpp == 0) bpp = bytesPerPixel;
-    if (bpp > 4) bpp /= 3;
-    return ImageTools.makeImage(data, width, height,
-      (!isRGB(id) || separated) ? 1 : 3, true, bpp, false);
+    try {
+      byte[] data = openBytes(id, no);
+      int bpp = bitsPerSample / 8;
+      if (bpp == 0) bpp = bytesPerPixel;
+      if (bpp > 4) bpp /= 3;
+      return ImageTools.makeImage(data, width, height,
+        (!isRGB(id) || separated) ? 1 : 3, true, bpp, false);
+    }
+    catch (Exception e) {
+      needLegacy = true;
+    }
+    return openImage(id, no);
   }
 
   /** Closes any open files. */
@@ -736,6 +743,11 @@ public class ZeissZVIReader extends FormatReader {
 
         try {
           switch (type) {
+            case 0: // VT_EMPTY: nothing
+            case 1: // VT_NUL: nothing
+              data = null;
+              pt += 2;
+              break;
             case 2: // VT_I2: 16 bit integer
               data = new Integer(DataTools.bytesToInt(tag, pt, 2, true));
               pt += 2;
@@ -765,10 +777,14 @@ public class ZeissZVIReader extends FormatReader {
               data = new String(tag, pt, length);
               pt += length;
               break;
+            case 9: // VT_DISPATCH: 16 bytes
+              data = new String(tag, pt, 16);
+              pt += 16;
+              break;
             case 11: // VT_BOOL: 16 bit integer (true if !0)
-              int temp = DataTools.bytesToInt(tag, pt, 4, true);
+              int temp = DataTools.bytesToInt(tag, pt, 2, true);
               data = new Boolean(temp != 0);
-              pt += 4;
+              pt += 2;
               break;
             case 16: // VT_I1: 8 bit integer
               data = new Integer(DataTools.bytesToInt(tag, pt, 1, true));
@@ -858,14 +874,19 @@ public class ZeissZVIReader extends FormatReader {
             case 266: metadata.put("ImageRelativeTime2", data); break;
             case 267: metadata.put("ImageRelativeTime3", data); break;
             case 268: metadata.put("ImageRelativeTime4", data); break;
+            case 333: metadata.put("RelFocusPosition1", data); break;
+            case 334: metadata.put("RelFocusPosition2", data); break;
+            case 513: metadata.put("tagID_513", data); break;
             case 515: metadata.put("ImageWidth", data); break;
             case 516: metadata.put("ImageHeight", data); break;
+            case 517: metadata.put("tagID_517", data); break;
             //case 518: metadata.put("PixelType", data); break;
             case 519: metadata.put("NumberOfRawImages", data); break;
             case 520: metadata.put("ImageSize", data); break;
             case 523: metadata.put("Acquisition pause annotation", data); break;
             case 530: metadata.put("Document Subtype", data); break;
             case 531: metadata.put("Acquisition Bit Depth", data); break;
+            case 532: metadata.put("Image Memory Usage (RAM)", data); break;
             case 534: metadata.put("Z-Stack single representative", data);
                       break;
             case 769: metadata.put("Scale Factor for X", data); break;
@@ -882,6 +903,7 @@ public class ZeissZVIReader extends FormatReader {
             case 1002: metadata.put("code", data); break;
             case 1003: metadata.put("Source", data); break;
             case 1004: metadata.put("Message", data); break;
+            case 1025: metadata.put("Acquisition Date", data); break;
             case 1026: metadata.put("8-bit acquisition", data); break;
             case 1027: metadata.put("Camera Bit Depth", data); break;
             case 1029: metadata.put("MonoReferenceLow", data); break;
@@ -952,6 +974,7 @@ public class ZeissZVIReader extends FormatReader {
             case 2068: metadata.put("Fluorescence Lamp Level", data); break;
             case 2069: metadata.put("Fluorescence Lamp Intensity", data); break;
             case 2070: metadata.put("LightManagerEnabled", data); break;
+            case 2071: metadata.put("tag_ID_2071", data); break;
             case 2072: metadata.put("Focus Position", data); break;
             case 2073: metadata.put("Stage Position X", data);break;
             case 2074: metadata.put("Stage Position Y", data); break;
@@ -1166,6 +1189,8 @@ public class ZeissZVIReader extends FormatReader {
             case 2239:
               metadata.put("Fluorescence Attenuator Position", data);
               break;
+            case 2261: metadata.put("Objective ID", data); break;
+            case 2262: metadata.put("Reflector ID", data); break;
             case 2307: metadata.put("Camera Framestart Left", data); break;
             case 2308: metadata.put("Camera Framestart Top", data); break;
             case 2309: metadata.put("Camera Frame Width", data); break;
@@ -1223,8 +1248,12 @@ public class ZeissZVIReader extends FormatReader {
             case 2602: metadata.put("CameraLiveGainValue", data); break;
             case 2603: metadata.put("CameraLiveExposureTimeValue", data); break;
             case 2604: metadata.put("CameraLiveScalingFactor", data); break;
+            case 2819: metadata.put("Image Index Z", data); break;
+            case 2820: metadata.put("Image Channel Index", data); break;
+            case 2821: metadata.put("Image Index T", data); break;
             case 2822: metadata.put("ImageTile Index", data); break;
             case 2823: metadata.put("Image acquisition Index", data); break;
+            case 2827: metadata.put("Image IndexS", data); break;
             case 2841: metadata.put("Original Stage Position X", data); break;
             case 2842: metadata.put("Original Stage Position Y", data); break;
             case 3088: metadata.put("LayerDrawFlags", data); break;
@@ -1253,6 +1282,7 @@ public class ZeissZVIReader extends FormatReader {
             case 8198:
               metadata.put("Autofocus Current Calibration Item", data);
               break;
+            case 20478: metadata.put("tag_ID_20478", data); break;
             case 65537: metadata.put("CameraFrameFullWidth", data); break;
             case 65538: metadata.put("CameraFrameFullHeight", data); break;
             case 65541: metadata.put("AxioCam Shutter Signal", data); break;
@@ -1361,6 +1391,9 @@ public class ZeissZVIReader extends FormatReader {
             case 65638: metadata.put("DeepView DoF", data); break;
             case 65639: metadata.put("DeepView EDoF", data); break;
             case 65643: metadata.put("DeepView Slider Name", data); break;
+            case 65655: metadata.put("DeepView Slider Name", data); break;
+            case 16777488: metadata.put("Excitation Wavelength", data); break;
+            case 16777489: metadata.put("Emission Wavelength", data); break;
           }
         }
       }
@@ -1471,11 +1504,12 @@ public class ZeissZVIReader extends FormatReader {
 
     // Stage Label
     try {
-      int xPos = Integer.parseInt((String) metadata.get("Stage Position X"));
-      int yPos = Integer.parseInt((String) metadata.get("Stage Position Y"));
+      int xPos = Integer.parseInt(metadata.get("Stage Position X").toString());
+      int yPos = Integer.parseInt(metadata.get("Stage Position Y").toString());
       store.setStageLabel(null, new Float(xPos), new Float(yPos), null, null);
     }
     catch (NumberFormatException n) { }
+    catch (NullPointerException npe) { }
   }
 
   // -- Main method --

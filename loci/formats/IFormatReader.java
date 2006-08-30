@@ -28,9 +28,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Hashtable;
 
-
-
-
 /** Abstract superclass of all biological file format readers. */
 public interface IFormatReader extends IFormatHandler {
   /** Checks if the given block is a valid header for this file format. */
@@ -59,6 +56,12 @@ public interface IFormatReader extends IFormatHandler {
   /** Get the size of the T dimension. */
   int getSizeT(String id) throws FormatException, IOException;
 
+  /** Get the size of the X dimension for the thumbnail. */
+  int getThumbSizeX(String id) throws FormatException, IOException;
+
+  /** Get the size of the Y dimension for the thumbnail. */
+  int getThumbSizeY(String id) throws FormatException, IOException;
+  
   /** Return true if the data is in little-endian format. */
   boolean isLittleEndian(String id)
     throws FormatException, IOException;
@@ -81,15 +84,15 @@ public interface IFormatReader extends IFormatHandler {
     throws FormatException, IOException;
 
   /** Obtains a thumbnail for the specified image from the given file. */
-  //BufferedImage openThumbImage(String id, int no)
-  //  throws FormatException, IOException;
+  BufferedImage openThumbImage(String id, int no)
+    throws FormatException, IOException;
 
   /**
    * Obtains a thumbnail for the specified image from the given file,
    * as a byte array.
    */
-  //byte[] openThumbBytes(String id, int no)
-  //  throws FormatException, IOException;
+  byte[] openThumbBytes(String id, int no)
+    throws FormatException, IOException;
 
   /** Closes the currently open file. */
   void close() throws FormatException, IOException;

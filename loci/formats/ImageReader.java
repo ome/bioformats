@@ -230,6 +230,18 @@ public class ImageReader implements IFormatReader {
     return readers[index].getSizeT(id);
   }
 
+  /** Get the size of the X dimension for the thumbnail. */
+  public int getThumbSizeX(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return readers[index].getThumbSizeX(id);
+  }
+
+  /** Get the size of the Y dimension for the thumbnail. */
+  public int getThumbSizeY(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return readers[index].getThumbSizeY(id);
+  }
+
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException
   {
@@ -290,6 +302,27 @@ public class ImageReader implements IFormatReader {
   {
     if (!id.equals(currentId)) initFile(id);
     return readers[index].openImage(id, no);
+  }
+
+  /** Obtains a thumbnail for the specified image from the given file. */
+  public BufferedImage openThumbImage(String id, int no)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return readers[index].openThumbImage(id, no);
+  }
+
+  /**
+   * Obtains a thumbnail for the specified image from the given file,
+   * as a byte array.  We assume that the thumbnail has the same number of
+   * channels as the original image.  If there is more than one channel, then
+   * the resulting byte array will be of the format "RRR...BBB...GGG...".
+   */
+  public byte[] openThumbBytes(String id, int no)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return readers[index].openThumbBytes(id, no);
   }
 
   /** Closes any open files. */

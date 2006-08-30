@@ -319,9 +319,9 @@ public abstract class DataTools {
   {
     if (bytes.length - off < len) len = bytes.length - off;
     long total = 0;
-    for (int i=0; i<len; i++) {
-      total |= (bytes[i] < 0 ? 256L + bytes[i] :
-        (long) bytes[i]) << ((little ? i : len - i - 1) * 8);
+    for (int i=0, ndx=off; i<len; i++, ndx++) {
+      total |= (bytes[ndx] < 0 ? 256L + bytes[ndx] :
+        (long) bytes[ndx]) << ((little ? i : len - i - 1) * 8);
     }
     return total;
   }

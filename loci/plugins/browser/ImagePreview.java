@@ -61,10 +61,9 @@ public class ImagePreview extends JComponent
 
       ImageReader ir = new ImageReader();
       FormatReader fr = (FormatReader) ir.getReader(file.getAbsolutePath());
-      BufferedImage image = fr.openImage(file.getAbsolutePath(),0);
+      BufferedImage image = fr.openThumbImage(file.getAbsolutePath(),0);
 
-      thumbnail =
-        new ImageIcon(image.getScaledInstance(90, -1, Image.SCALE_DEFAULT));
+      thumbnail = new ImageIcon(image);
     }
     catch (Exception e) { e.printStackTrace(); }
   }
