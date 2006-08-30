@@ -19,6 +19,7 @@ import javax.swing.border.EmptyBorder;
 import loci.formats.*;
 import loci.formats.out.TiffWriter;
 
+/** A tool for converting between Leica TIFF formats. */
 public class LeicaConverter extends JFrame
   implements ActionListener, Runnable
 {

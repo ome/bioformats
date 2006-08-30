@@ -34,6 +34,10 @@ import java.io.*;
  */
 public abstract class DataTools {
 
+  // -- Constructor --
+
+  private DataTools() { }
+
   // -- Data reading --
 
   /** Reads 1 signed byte [-128, 127]. */

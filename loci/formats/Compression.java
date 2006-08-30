@@ -94,6 +94,9 @@ public abstract class Compression {
     lookupBase64Alphabet[63] = (byte) '/';
   }
 
+  // -- Constructor --
+
+  private Compression() { }
 
   // -- Compression methods --
 

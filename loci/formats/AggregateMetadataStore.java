@@ -88,16 +88,16 @@ public class AggregateMetadataStore implements MetadataStore {
    */
   public Object getRoot() {
     throw new RuntimeException("Unsupported with AggregateMetadataStore. Use" +
-        " getDelegates() and getRoot().");
+      " getDelegates() and getRoot().");
   }
 
   /**
    * Unsupported with an AggregateMetadataStore. Throws a RuntimeException up to
    * the caller.
    */
-  public void setRoot(Object root) throws IllegalArgumentException {
+  public void setRoot(Object root) {
     throw new RuntimeException("Unsupported with AggregateMetadataStore. Use" +
-        " getDelegates() and setRoot().");
+      " getDelegates() and setRoot().");
   }
 
   /*
@@ -106,7 +106,8 @@ public class AggregateMetadataStore implements MetadataStore {
    *   java.lang.Double, java.lang.Double, java.lang.Integer)
    */
   public void setChannelGlobalMinMax(int channel, Double globalMin,
-      Double globalMax, Integer i) {
+    Double globalMax, Integer i)
+  {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       MetadataStore s = (MetadataStore) iter.next();
       s.setChannelGlobalMinMax(channel, globalMin, globalMax, i);
@@ -132,11 +133,12 @@ public class AggregateMetadataStore implements MetadataStore {
    *   java.lang.Integer)
    */
   public void setDimensions(Float pixelSizeX, Float pixelSizeY,
-      Float pixelSizeZ, Float pixelSizeC, Float pixelSizeT, Integer i) {
+    Float pixelSizeZ, Float pixelSizeC, Float pixelSizeT, Integer i)
+  {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       MetadataStore s = (MetadataStore) iter.next();
       s.setDimensions(pixelSizeX, pixelSizeY, pixelSizeZ, pixelSizeC,
-                      pixelSizeT,i);
+        pixelSizeT, i);
     }
   }
 
@@ -148,8 +150,9 @@ public class AggregateMetadataStore implements MetadataStore {
    *   java.lang.Integer, java.lang.Object, java.lang.Integer)
    */
   public void setDisplayROI(Integer x0, Integer y0, Integer z0, Integer x1,
-      Integer y1, Integer z1, Integer t0, Integer t1, Object displayOptions,
-      Integer i) {
+    Integer y1, Integer z1, Integer t0, Integer t1, Object displayOptions,
+    Integer i)
+  {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       MetadataStore s = (MetadataStore) iter.next();
       s.setDisplayROI(x0, y0, z0, x1, y1, z1, t0, t1, displayOptions, i);
@@ -163,7 +166,8 @@ public class AggregateMetadataStore implements MetadataStore {
    *   java.lang.Object, java.lang.Integer)
    */
   public void setExperimenter(String firstName, String lastName, String email,
-      String institution, String dataDirectory, Object group, Integer i) {
+    String institution, String dataDirectory, Object group, Integer i)
+  {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       MetadataStore s = (MetadataStore) iter.next();
       s.setExperimenter(firstName, lastName, email, institution, dataDirectory,
@@ -189,7 +193,8 @@ public class AggregateMetadataStore implements MetadataStore {
    *   java.lang.String, java.lang.String, java.lang.Integer)
    */
   public void setImage(String name, String creationDate, String description,
-      Integer i) {
+    Integer i)
+  {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       MetadataStore s = (MetadataStore) iter.next();
       s.setImage(name, creationDate, description, i);
@@ -202,7 +207,8 @@ public class AggregateMetadataStore implements MetadataStore {
    *   java.lang.String, java.lang.String, java.lang.String, java.lang.Integer)
    */
   public void setInstrument(String manufacturer, String model,
-      String serialNumber, String type, Integer i) {
+    String serialNumber, String type, Integer i)
+  {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       MetadataStore s = (MetadataStore) iter.next();
       s.setInstrument(manufacturer, model, serialNumber, type, i);
@@ -216,8 +222,9 @@ public class AggregateMetadataStore implements MetadataStore {
    *   java.lang.String, java.lang.Integer)
    */
   public void setLogicalChannel(int channelIdx, String name, Float ndFilter,
-      Integer emWave, Integer exWave, String photometricInterpretation,
-      String mode, Integer i) {
+    Integer emWave, Integer exWave, String photometricInterpretation,
+    String mode, Integer i)
+  {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       MetadataStore s = (MetadataStore) iter.next();
       s.setLogicalChannel(channelIdx, name, ndFilter, emWave, exWave,
@@ -233,8 +240,9 @@ public class AggregateMetadataStore implements MetadataStore {
    *   java.lang.String, java.lang.Integer)
    */
   public void setPixels(Integer sizeX, Integer sizeY, Integer sizeZ,
-      Integer sizeC, Integer sizeT, String pixelType, Boolean bigEndian,
-      String dimensionOrder, Integer i) {
+    Integer sizeC, Integer sizeT, String pixelType, Boolean bigEndian,
+    String dimensionOrder, Integer i)
+  {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       MetadataStore s = (MetadataStore) iter.next();
       s.setPixels(sizeX, sizeY, sizeZ, sizeC, sizeT, pixelType, bigEndian,
@@ -248,7 +256,8 @@ public class AggregateMetadataStore implements MetadataStore {
    *   java.lang.Float, java.lang.Float, java.lang.Integer)
    */
   public void setPlaneInfo(int theZ, int theC, int theT, Float timestamp,
-      Float exposureTime, Integer i) {
+    Float exposureTime, Integer i)
+  {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       MetadataStore s = (MetadataStore) iter.next();
       s.setPlaneInfo(theZ, theC, theT, timestamp, exposureTime, i);

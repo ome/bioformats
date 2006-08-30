@@ -32,6 +32,12 @@ import javax.swing.UIManager;
 /** LAFUtil contains useful functions relating to Look and Feel. */
 public abstract class LAFUtil {
 
+  // -- Constructor --
+
+  private LAFUtil() { }
+
+  // -- Utility methods --
+
   /** Initializes some look and feel parameters. */
   public static void initLookAndFeel() {
     if (System.getProperty("swing.defaultlaf") == null) {

@@ -16,6 +16,7 @@ import javax.swing.*;
 import java.io.IOException;
 import java.rmi.RemoteException;
 
+/** An application for weighted spectral mapping. */
 public class MultiLUT extends Object implements ActionListener {
 
   private static final int NFILES = 17;
@@ -46,20 +47,17 @@ public class MultiLUT extends Object implements ActionListener {
   private ScalarMap huexmap = null;
 
   private DataReferenceImpl lineRef = null;
-  /**
-      run with 'java -mx256m MultiLUT'
-      in directory with SPB1.PIC, SPB2.PIC, ..., SPB17.PIC
-  */
-  public static void main(String args[])
-         throws IOException, VisADException, RemoteException {
 
+  /**
+   * Run with 'java -mx256m MultiLUT'
+   * in directory with SPB1.PIC, SPB2.PIC, ..., SPB17.PIC.
+   */
+  public static void main(String[] args) throws IOException, VisADException {
     MultiLUT ml = new MultiLUT();
     ml.go(args);
   }
 
-  public void go(String args[])
-         throws IOException, VisADException, RemoteException {
-
+  public void go(String[] args) throws IOException, VisADException {
     String dir = "";
     String slash = System.getProperty("file.separator");
     if (args.length > 0) {
@@ -236,8 +234,8 @@ set = Linear2DSet: Length = 393216
           ss[0][i] = x1 + a * (x2 - x1);
           ss[1][i] = y1 + a * (y2 - y1);
         }
-        Gridded2DSet line = new Gridded2DSet(fdomain, ss, nsamp);
-        xref.setData(line);
+        Gridded2DSet lineSet = new Gridded2DSet(fdomain, ss, nsamp);
+        xref.setData(lineSet);
         FlatField lineField = (FlatField)
         //   bigData.resample(line, Data.WEIGHTED_AVERAGE, Data.NO_ERRORS);
           bigData.resample(line, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
@@ -278,7 +276,7 @@ set = Linear2DSet: Length = 393216
 
     JFrame frame = new JFrame("VisAD MultiLUT");
     frame.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {System.exit(0);}
+      public void windowClosing(WindowEvent e) { System.exit(0); }
     });
 
     // create JPanel in frame
@@ -377,15 +375,12 @@ set = Linear2DSet: Length = 393216
     frame.setVisible(true);
 
     doit();
-
   }
 
   /** Handles button press events. */
   public void actionPerformed(ActionEvent e) {
     String cmd = e.getActionCommand();
-    if (cmd.equals("compute")) {
-      doit();
-    }
+    if (cmd.equals("compute")) doit();
     else if (cmd.equals("valueClear")) {
       try {
         for (int i=0; i<NFILES; i++) {

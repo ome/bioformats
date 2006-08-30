@@ -40,6 +40,12 @@ import visad.util.GUIFrame;
 /** SwingUtil contains useful Swing functions. */
 public abstract class SwingUtil {
 
+  // -- Constructor --
+
+  private SwingUtil() { }
+
+  // -- Utility methods --
+
   /** Constructs a JButton with an icon from the given file id. */
   public static JButton makeButton(Object owner, String id,
     String altText, int wpad, int hpad)

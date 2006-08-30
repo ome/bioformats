@@ -27,6 +27,7 @@ import visad.*;
 import visad.bom.CurveManipulationRendererJ3D;
 import visad.java3d.*;
 
+/** A tool for visualization of spectral lifetime data. */
 public class SlimPlotter implements ActionListener,
   ChangeListener, DisplayListener, Runnable, WindowListener
 {
@@ -685,12 +686,10 @@ public class SlimPlotter implements ActionListener,
 
   private Thread plotThread;
   private boolean plotCanceled;
-  private boolean rescale, refit;
+  private boolean doRescale, doRefit;
 
   /** Plots the data in a separate thread. */
-  public void plotData(boolean rescale, boolean refit) {
-    final boolean doRescale = rescale;
-    final boolean doRefit = refit;
+  public void plotData(final boolean rescale, final boolean refit) {
     final SlimPlotter sp = this;
     new Thread("PlotSpawner") {
       public void run() {
@@ -701,8 +700,8 @@ public class SlimPlotter implements ActionListener,
             try { plotThread.join(); }
             catch (InterruptedException exc) { exc.printStackTrace(); }
           }
-          sp.rescale = doRescale;
-          sp.refit = doRefit;
+          sp.doRescale = rescale;
+          sp.doRefit = refit;
           plotCanceled = false;
           plotThread = new Thread(sp, "Plotter");
           plotThread.start();
@@ -865,7 +864,7 @@ public class SlimPlotter implements ActionListener,
   public void run() {
     ProgressMonitor progress = new ProgressMonitor(null, "Plotting data",
       "Calculating sums", 0,
-      channels * timeBins + (refit ? channels : 0) + 1);
+      channels * timeBins + (doRefit ? channels : 0) + 1);
     progress.setMillisToPopup(100);
     progress.setMillisToDecideToPopup(50);
     int p = 0;
@@ -908,7 +907,7 @@ public class SlimPlotter implements ActionListener,
 
     double[][] fitResults = null;
     int numExp = ((Integer) numCurves.getValue()).intValue();
-    if (adjustPeaks && refit) {
+    if (adjustPeaks && doRefit) {
       // perform exponential curve fitting: y(x) = a * e^(-b*t) + c
       progress.setNote("Fitting curves");
       fitResults = new double[channels][];
@@ -1000,7 +999,7 @@ public class SlimPlotter implements ActionListener,
         resRef.setData(doResLines ? res.domainFactor(cType) : res);
       }
 
-      if (rescale) {
+      if (doRescale) {
         float max = maxVal == 0 ? 1 : maxVal;
         zMap.setRange(0, max);
         zMapFit.setRange(0, max);
@@ -1137,9 +1136,13 @@ public class SlimPlotter implements ActionListener,
 
   // -- Helper classes --
 
+  /**
+   * A summed exponential function of the form:
+   * y(t) = a1*e^(-b1*t) + ... + an*e^(-bn*t) + c.
+   */
   public class ExpFunction extends LMAFunction {
     /** Number of exponentials to fit. */
-    public int numExp = 1;
+    private int numExp = 1;
 
     /** Constructs a function with the given number of summed exponentials. */
     public ExpFunction(int num) { numExp = num; }
@@ -1160,8 +1163,10 @@ public class SlimPlotter implements ActionListener,
         case 0: return Math.exp(-a[e + 1] * x);
         case 1: return -a[e] * x * Math.exp(-a[e + 1] * x);
         case 2: return 1;
+        default:
+          throw new RuntimeException("No such parameter index: " +
+            parameterIndex);
       }
-      throw new RuntimeException("No such parameter index: " + parameterIndex);
     }
   }
 

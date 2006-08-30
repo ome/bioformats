@@ -14,7 +14,8 @@ Bio-Formats
                    loci/formats/*
     Main class:    loci.formats.ImageViewer
     Dependencies:  ome-java.jar
-    Targets:       compile-formats
+    Targets:       style-formats
+                   compile-formats
                    jar-formats
     License:       LGPL
 
@@ -32,7 +33,8 @@ VisBio
                    ome-java.jar
                    visad-lite.jar
                    xmlrpc-1.2-b1.jar (ome-java.jar)
-    Targets:       compile-visbio
+    Targets:       style-visbio
+                   compile-visbio
                    jar-visbio
                    source-visbio
                    docs-visbio
@@ -54,7 +56,8 @@ LOCI Plugins for ImageJ
                    commons-logging.jar (ome-java.jar)
                    ome-java.jar
                    xmlrpc-1.2-b1.jar (ome-java.jar)
-    Targets:       compile-plugins
+    Targets:       style-plugins
+                   compile-plugins
                    jar-plugins
     License:       LGPL
 
@@ -69,7 +72,8 @@ OME Metadata Notebook
                    forms-1.0.4.jar
                    ome-java.jar
                    xmlrpc-1.2-b1.jar (ome-java.jar)
-    Targets:       compile-notebook
+    Targets:       style-notebook
+                   compile-notebook
                    jar-notebook
     License:       LGPL
 
@@ -79,7 +83,8 @@ Leica Converter
     Main class:    loci.apps.leica.LeicaConverter
     Dependencies:  bio-formats.jar
                    ome-java.jar
-    Targets:       compile-leica
+    Targets:       style-leica
+                   compile-leica
                    jar-leica
     License:       Public domain
 
@@ -89,7 +94,8 @@ QT TIFF Converter
                    some loci/formats
     Main class:    loci.apps.qt.QTConverter
     Dependencies:  None (custom built)
-    Targets:       compile-qt
+    Targets:       style-qt
+                   compile-qt
                    jar-qt
     License:       Public domain
 
@@ -100,7 +106,8 @@ Slim Plotter
     Main class:    loci.apps.slim.SlimPlotter
     Dependencies:  lma.jar
                    visad-lite.jar
-    Targets:       compile-slim
+    Targets:       style-slim
+                   compile-slim
                    jar-slim
                    dist-slim
     License:       Public domain
@@ -112,6 +119,12 @@ Apple eAWT stubs
     JAR file:  AppleJavaExtensions.jar
     URL:       http://developer.apple.com/samplecode/AppleJavaExtensions/
     Notes:     Required to compile VisBio on non-Mac OS X machines
+
+Checkstyle
+    JAR file:  checkstyle-all-4.2.jar
+    URL:       http://checkstyle.sourceforge.net/
+    Notes:     Used for style targets to check source code style conventions
+    License:   LGPL
 
 Apache Jakarta Commons HttpClient
     JAR file:  commons-httpclient-2.0-rc2.jar
@@ -204,6 +217,10 @@ Apache XML-RPC
     </tstamp>
   </target>
 
+  <target name="style"
+    depends="style-formats, style-visbio, style-plugins, style-notebook, style-leica, style-qt, style-slim"
+    description="check source code style for LOCI software packages"/>
+
 <!--
   <target name="compile" depends="copy-source"
     description="compile classes for LOCI software packages">
@@ -215,13 +232,6 @@ Apache XML-RPC
   <target name="compile"
     depends="compile-formats, compile-visbio, compile-plugins, compile-notebook, compile-leica, compile-qt, compile-slim"
     description="compile classes for LOCI software packages"/>
-
-  <target name="style" depends="copy-source"
-    description="check style of LOCI software packages source code">
-    <checkstyle config="checkstyle.xml">
-      <fileset dir="${dest.dir}" includes="**/*.java"/>
-    </checkstyle>
-  </target>
 
   <target name="jars"
     depends="jar-formats, jar-visbio, jar-plugins, jar-notebook, jar-leica, jar-qt, jar-slim"
@@ -267,6 +277,13 @@ Apache XML-RPC
 
   <!-- Bio-Formats -->
 
+  <target name="style-formats" depends="copy-source"
+    description="check source code style for Bio-Formats">
+    <checkstyle config="checkstyle.xml">
+      <fileset dir="${dest.dir}" includes="${formats.source}"/>
+    </checkstyle>
+  </target>
+
   <target name="compile-formats" depends="copy-source"
     description="compile classes for Bio-Formats">
     <mkdir dir="${classes.dir}"/>
@@ -290,6 +307,13 @@ Apache XML-RPC
   </target>
 
   <!-- VisBio -->
+
+  <target name="style-visbio" depends="copy-source"
+    description="check source code style for VisBio">
+    <checkstyle config="checkstyle.xml">
+      <fileset dir="${dest.dir}" includes="${visbio.source}"/>
+    </checkstyle>
+  </target>
 
   <target name="compile-visbio" depends="copy-source"
     description="compile classes for VisBio">
@@ -459,6 +483,13 @@ Apache XML-RPC
 
   <!-- LOCI Plugins for ImageJ -->
 
+  <target name="style-plugins" depends="copy-source"
+    description="check source code style for LOCI Plugins for ImageJ">
+    <checkstyle config="checkstyle.xml">
+      <fileset dir="${dest.dir}" includes="${plugins.source}"/>
+    </checkstyle>
+  </target>
+
   <target name="compile-plugins" depends="copy-source"
     description="compile classes for LOCI Plugins for ImageJ">
     <mkdir dir="${classes.dir}"/>
@@ -482,6 +513,13 @@ Apache XML-RPC
   </target>
 
   <!-- OME Metadata Notebook -->
+
+  <target name="style-notebook" depends="copy-source"
+    description="check source code style for OME Metadata Notebook">
+    <checkstyle config="checkstyle.xml">
+      <fileset dir="${dest.dir}" includes="${notebook.source}"/>
+    </checkstyle>
+  </target>
 
   <target name="compile-notebook" depends="copy-source"
     description="compile classes for OME Metadata Notebook">
@@ -509,6 +547,13 @@ Apache XML-RPC
 
   <!-- Leica Converter -->
 
+  <target name="style-leica" depends="copy-source"
+    description="check source code style for Leica Converter">
+    <checkstyle config="checkstyle.xml">
+      <fileset dir="${dest.dir}" includes="${leica.source}"/>
+    </checkstyle>
+  </target>
+
   <target name="compile-leica" depends="copy-source"
     description="compile classes for Leica Converter">
     <mkdir dir="${classes.dir}"/>
@@ -530,6 +575,13 @@ Apache XML-RPC
 
   <!-- QT TIFF Converter -->
 
+  <target name="style-qt" depends="copy-source"
+    description="check source code style for QT TIFF Converter">
+    <checkstyle config="checkstyle.xml">
+      <fileset dir="${dest.dir}" includes="${qt.source}"/>
+    </checkstyle>
+  </target>
+
   <target name="compile-qt" depends="copy-source"
     description="compile classes for QT TIFF Converter">
     <mkdir dir="${classes.dir}"/>
@@ -550,6 +602,13 @@ Apache XML-RPC
   </target>
 
   <!-- Slim Plotter -->
+
+  <target name="style-slim" depends="copy-source"
+    description="check source code style for Slim Plotter">
+    <checkstyle config="checkstyle.xml">
+      <fileset dir="${dest.dir}" includes="${slim.source}"/>
+    </checkstyle>
+  </target>
 
   <target name="compile-slim" depends="copy-source"
     description="compile classes for Slim Plotter">

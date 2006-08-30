@@ -176,8 +176,7 @@ public class ChannelMerger extends FormatReader {
   }
 
   /** Return true if the data is in little-endian format. */
-  public boolean isLittleEndian(String id) throws FormatException, IOException
-  {
+  public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return reader.isLittleEndian(id);
   }
@@ -186,7 +185,8 @@ public class ChannelMerger extends FormatReader {
    * Return a five-character string representing the dimension order
    * within the file.
    */
-  public String getDimensionOrder(String id) throws FormatException, IOException
+  public String getDimensionOrder(String id)
+    throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
     return reader.getDimensionOrder(id);
@@ -288,8 +288,7 @@ public class ChannelMerger extends FormatReader {
   // -- Helper methods --
 
   /** Initializes the given file. */
-  protected void initFile(String id) throws FormatException, IOException
-  {
+  protected void initFile(String id) throws FormatException, IOException {
     currentId = id;
 
     order = getDimensionOrder(id);

@@ -79,7 +79,6 @@ public class FilePattern {
   /** File listing for this file pattern. */
   private String[] files;
 
-
   // -- Constructors --
 
   /** Creates a pattern object using the given file as a template. */
@@ -203,7 +202,6 @@ public class FilePattern {
     valid = true;
   }
 
-
   // -- FilePattern API methods --
 
   /** Gets whether the file pattern string is valid. */
@@ -260,7 +258,6 @@ public class FilePattern {
     for (int i=0; i<s.length; i++) s[i] = getPrefix(i);
     return s;
   }
-
 
   // -- Utility methods --
 
@@ -385,7 +382,6 @@ public class FilePattern {
     return sb.toString();
   }
 
-
   // -- Utility helper methods --
 
   /** Recursive method for parsing a fixed-width numerical block. */
@@ -448,18 +444,17 @@ public class FilePattern {
     return bounds.toString();
   }
 
-
   // -- Helper methods --
 
   /** Recursive method for building filenames for the file listing. */
-  private void buildFiles(String prefix, int ndx, Vector files) {
+  private void buildFiles(String prefix, int ndx, Vector fileList) {
     // compute bounds for constant (non-block) pattern fragment
     int num = startIndex.length;
     int n1 = ndx == 0 ? 0 : endIndex[ndx - 1];
     int n2 = ndx == num ? pattern.length() : startIndex[ndx];
     String pre = pattern.substring(n1, n2);
 
-    if (ndx == 0) files.add(pre + prefix);
+    if (ndx == 0) fileList.add(pre + prefix);
     else {
       // for (int i=begin[ndx]; i<end[ndx]; i+=step[ndx])
       BigInteger bi = begin[--ndx];
@@ -468,12 +463,11 @@ public class FilePattern {
         int z = zeroes[ndx];
         if (fixed[ndx]) z += end[ndx].toString().length() - s.length();
         for (int j=0; j<z; j++) s = "0" + s;
-        buildFiles(s + pre + prefix, ndx, files);
+        buildFiles(s + pre + prefix, ndx, fileList);
         bi = bi.add(step[ndx]);
       }
     }
   }
-
 
   // -- Main method --
 
@@ -501,7 +495,6 @@ public class FilePattern {
   }
 
 }
-
 
 // -- Notes --
 
