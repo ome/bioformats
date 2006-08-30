@@ -170,7 +170,7 @@ public abstract class FormatReader extends FormatHandler
     close();
     return images;
   }
- 
+
   /** Return the number of series in this file. */
   public int getSeriesCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
@@ -183,6 +183,12 @@ public abstract class FormatReader extends FormatHandler
       throw new FormatException("Invalid series: " + no);
     }
     series = no;
+  }
+
+  /** Returns the currently active series. */
+  public int getSeries(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return series;
   }
 
   /**
@@ -419,6 +425,7 @@ public abstract class FormatReader extends FormatHandler
     boolean omexml = false;
     int start = 0;
     int end = 0;
+    int series = 0;
     if (args != null) {
       for (int i=0; i<args.length; i++) {
         if (args[i].startsWith("-")) {
@@ -432,6 +439,13 @@ public abstract class FormatReader extends FormatHandler
               start = Integer.parseInt(args[i + 1]);
               i++;
               end = Integer.parseInt(args[i + 1]);
+              i++;
+            }
+            catch (Exception e) { }
+          }
+          else if (args[i].equals("-series")) {
+            try {
+              series = Integer.parseInt(args[i + 1]);
               i++;
             }
             catch (Exception e) { }
@@ -450,7 +464,7 @@ public abstract class FormatReader extends FormatHandler
         reader.getFormat() + " format, run:");
       System.out.println("  java " + className + " [-nopix]");
       System.out.println("    [-merge] [-stitch] [-separate] [-omexml] " +
-        "[-range start [end]] file");
+        "[-range start [end]] [-series num] file");
       return false;
     }
     if (omexml) {
@@ -476,6 +490,7 @@ public abstract class FormatReader extends FormatHandler
         FilePattern.findPattern(new File(id)) : id) + " pixel data ");
       long s1 = System.currentTimeMillis();
       reader.setSeparated(separate);
+      reader.setSeries(id, series);
       int num = reader.getImageCount(id);
       if (end == 0 || end > num) end = num;
       if (end < 0) end = 0;
