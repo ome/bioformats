@@ -26,7 +26,6 @@ package loci.formats;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.lang.*;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -195,8 +194,7 @@ public class FileStitcher extends FormatReader {
   }
 
   /** Return true if the data is in little-endian format. */
-  public boolean isLittleEndian(String id) throws FormatException, IOException
-  {
+  public boolean isLittleEndian(String id) throws FormatException, IOException {
     return reader.isLittleEndian(id);
   }
 
@@ -204,7 +202,8 @@ public class FileStitcher extends FormatReader {
    * Return a five-character string representing the dimension order
    * within the file.
    */
-  public String getDimensionOrder(String id) throws FormatException, IOException
+  public String getDimensionOrder(String id)
+    throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
     return order;
@@ -336,8 +335,7 @@ public class FileStitcher extends FormatReader {
    *
    * @param dims - the dimensions of each file in the dataset
    */
-  private void setDimensions(int[][] dims) throws FormatException, IOException
-  {
+  private void setDimensions(int[][] dims) throws FormatException, IOException {
     // first set X and Y
     // this is relatively easy - we can just take the maximum value
 

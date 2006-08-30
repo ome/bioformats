@@ -32,20 +32,16 @@ package loci.formats;
  */
 public class DummyMetadataStore implements MetadataStore {
 
-  public void createRoot() {
-  }
+  public void createRoot() { }
 
-  public Object getRoot() {
-    return null;
-  }
+  public Object getRoot() { return null; }
 
   public void setChannelGlobalMinMax(int channel, Double globalMin,
     Double globalMax, Integer i)
   {
   }
 
-  public void setDefaultDisplaySettings(Integer i) {
-  }
+  public void setDefaultDisplaySettings(Integer i) { }
 
   public void setDimensions(Float pixelSizeX, Float pixelSizeY,
     Float pixelSizeZ, Float pixelSizeC, Float pixelSizeT, Integer i)
@@ -93,8 +89,7 @@ public class DummyMetadataStore implements MetadataStore {
   {
   }
 
-  public void setRoot(Object root) throws IllegalArgumentException {
-  }
+  public void setRoot(Object root) { }
 
   public void setStageLabel(String name, Float x, Float y, Float z, Integer i) {
   }

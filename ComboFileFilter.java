@@ -35,25 +35,22 @@ public class ComboFileFilter extends FileFilter
 
   // -- Fields --
 
-  /** list of filters to be combined */
+  /** List of filters to be combined. */
   private FileFilter[] filts;
 
-  /** description */
+  /** Description. */
   private String desc;
-
 
   // -- Constructor --
 
-  /** construct a new filter from a list of other filters */
+  /** Constructs a new filter from a list of other filters. */
   public ComboFileFilter(FileFilter[] filters, String description) {
     filts = new FileFilter[filters.length];
     System.arraycopy(filters, 0, filts, 0, filters.length);
     desc = description;
   }
 
-
   // -- Static ComboFileFilter API methods --
-
 
   /**
    * Sorts the given list of file filters, and combines filters with identical
@@ -100,10 +97,9 @@ public class ComboFileFilter extends FileFilter
     return result;
   }
 
-
   // -- FileFilter API methods --
 
-  /** accept files with the proper filename prefix */
+  /** Accepts files with the proper filename prefix. */
   public boolean accept(File f) {
     for (int i=0; i<filts.length; i++) {
       if (filts[i].accept(f)) return true;
@@ -111,9 +107,8 @@ public class ComboFileFilter extends FileFilter
     return false;
   }
 
-  /** return the filter's description */
+  /** Returns the filter's description. */
   public String getDescription() { return desc; }
-
 
   // -- Comparable API methods --
 
