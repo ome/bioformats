@@ -35,6 +35,7 @@ import loci.formats.*;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Michel Boudinot Michel dot boudinot at iaf.cnrs-gif.fr
  */
 public class LegacyZVIReader extends FormatReader {
 
