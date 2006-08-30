@@ -78,7 +78,8 @@ public class WizardPane extends DialogPane {
   public void setPage(int page) {
     if (this.page == page) return;
     if (this.page >= 0) pages[this.page].setVisible(false);
-    try {Thread.sleep(500);}catch(Exception exc){}
+    try { Thread.sleep(500); }
+    catch (Exception exc) { }
     pages[page].setVisible(true);
     this.page = page;
     enableButtons();

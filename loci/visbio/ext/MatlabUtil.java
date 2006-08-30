@@ -28,7 +28,11 @@ import visad.*;
 import visad.util.ReflectedUniverse;
 
 /** MatlabUtil contains useful MATLAB functions. */
-public abstract class MatlabUtil {
+public final class MatlabUtil {
+
+  // -- Constructor --
+
+  private MatlabUtil() { }
 
   // -- Fields --
 

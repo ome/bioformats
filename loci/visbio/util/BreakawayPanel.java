@@ -126,13 +126,13 @@ public class BreakawayPanel extends JPanel implements ActionListener {
   // -- BreakawayPanel API methods --
 
   /** Sets pane containing GUI components. */
-  public void setContentPane(Container pane) {
+  public void setContentPane(Container c) {
     if (scrollPane == null) {
-      remove(this.pane);
-      add(pane, BorderLayout.CENTER);
+      remove(pane);
+      add(c, BorderLayout.CENTER);
     }
-    else scrollPane.setViewportView(pane);
-    this.pane = pane;
+    else scrollPane.setViewportView(c);
+    pane = c;
   }
 
   /** Gets pane to which GUI components can be added. */

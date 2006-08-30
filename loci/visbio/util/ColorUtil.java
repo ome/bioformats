@@ -28,12 +28,11 @@ import java.io.*;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import visad.*;
-import loci.visbio.util.ObjectUtil;
 
 /** ColorUtil contains useful color table functions. */
-public abstract class ColorUtil {
+public final class ColorUtil {
 
-  // -- Preset color tables --
+  // -- Constants - Preset color tables --
 
   /** Resolution of color tables. */
   public static final int COLOR_DETAIL = 256;
@@ -256,8 +255,7 @@ public abstract class ColorUtil {
      0.106f, 0.106f}
   };
 
-
-  // -- Color table manipulation --
+  // -- Constants - Color table manipulation --
 
   /** RGB color space model. */
   public static final int RGB_MODEL = 0;
@@ -279,6 +277,12 @@ public abstract class ColorUtil {
 
   /** RealType for indicating uniformly solid color component. */
   public static final RealType SOLID = RealType.getRealType("bio_solid");
+
+  // -- Constructor --
+
+  private ColorUtil() { }
+
+  // -- Utility methods --
 
   /**
    * Computes color tables from the given color settings.

@@ -33,10 +33,18 @@ import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 /** XMLUtil contains useful functions for manipulating DOMs. */
-public abstract class XMLUtil {
+public final class XMLUtil {
+
+  // -- Static fields --
 
   /** Document builder for creating DOMs. */
   protected static DocumentBuilder docBuilder;
+
+  // -- Constructor --
+
+  private XMLUtil() { }
+
+  // -- Utility methods --
 
   /** Creates a new DOM. */
   public static Document createDocument(String rootName) {

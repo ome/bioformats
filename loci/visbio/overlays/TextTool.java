@@ -33,14 +33,12 @@ public class TextTool extends OverlayTool {
   /** Text currently being rendered. */
   protected OverlayText text;
 
-
   // -- Constructor --
 
   /** Constructs a text overlay creation tool. */
   public TextTool(OverlayTransform overlay) {
     super(overlay, "Text", "Text", "text.png");
   }
-
 
   // -- OverlayTool API methods --
 

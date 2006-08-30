@@ -26,7 +26,13 @@ package loci.visbio.util;
 import java.math.BigInteger;
 
 /** MathUtil contains useful mathematical functions. */
-public abstract class MathUtil {
+public final class MathUtil {
+
+  // -- Constructor --
+
+  private MathUtil() { }
+
+  // -- Utility methods --
 
   /**
    * Gets the distance between the endpoints p and q, using

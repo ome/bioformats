@@ -31,7 +31,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /** FormsUtil contains useful JGoodies Forms functions. */
-public abstract class FormsUtil {
+public final class FormsUtil {
+
+  // -- Constructor --
+
+  private FormsUtil() { }
+
+  // -- Utility methods --
 
   /** Creates a panel with the given components in one row. */
   public static JPanel makeRow(Object o1, Object o2) {

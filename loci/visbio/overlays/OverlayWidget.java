@@ -71,7 +71,6 @@ public class OverlayWidget extends JPanel implements ActionListener,
    */
   protected boolean ignoreEvents;
 
-
   // -- GUI components - global --
 
   /** File chooser for loading and saving overlays. */
@@ -110,7 +109,6 @@ public class OverlayWidget extends JPanel implements ActionListener,
   /** Button for saving overlays to disk. */
   protected JButton save;
 
-
   // -- GUI components - overlay-specific --
 
   /** Text fields for (X, Y) coordinate pairs. */
@@ -136,7 +134,6 @@ public class OverlayWidget extends JPanel implements ActionListener,
 
   /** Text area for overlay statistics. */
   protected JTextArea stats;
-
 
   // -- Constructor --
 
@@ -358,7 +355,6 @@ public class OverlayWidget extends JPanel implements ActionListener,
     refreshTimer.start();
   }
 
-
   // -- OverlayWidget API methods --
 
   /** Adds the given overlay tool to the overlay widget. */
@@ -569,7 +565,6 @@ public class OverlayWidget extends JPanel implements ActionListener,
     paste.setEnabled(enabled);
   }
 
-
   // -- ActionListener API methods --
 
   /** Handles button presses. */
@@ -658,7 +653,6 @@ public class OverlayWidget extends JPanel implements ActionListener,
     }
   }
 
-
   // -- DocumentListener API methods --
 
   public void changedUpdate(DocumentEvent e) { documentUpdate(e); }
@@ -725,7 +719,6 @@ public class OverlayWidget extends JPanel implements ActionListener,
     }
   }
 
-
   // -- ListSelectionListener API methods --
 
   /** Handles list selection changes. */
@@ -765,7 +758,6 @@ public class OverlayWidget extends JPanel implements ActionListener,
     }
   }
 
-
   // -- TransformListener API methods --
 
   /** Handles font changes. */
@@ -776,7 +768,6 @@ public class OverlayWidget extends JPanel implements ActionListener,
     }
     else if (id == TransformEvent.FONT_CHANGED) refreshCurrentFont();
   }
-
 
   // -- Helper methods --
 

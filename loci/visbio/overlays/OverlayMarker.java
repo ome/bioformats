@@ -43,7 +43,6 @@ public class OverlayMarker extends OverlayObject {
     computeGridParameters();
   }
 
-
   // -- OverlayObject API methods --
 
   /** Gets VisAD data object representing this overlay. */
@@ -92,7 +91,6 @@ public class OverlayMarker extends OverlayObject {
   /** True iff this overlay has an endpoint coordinate pair. */
   public boolean hasEndpoint() { return true; }
 
-
   // -- Internal OverlayObject API methods --
 
   /** Computes parameters needed for selection grid computation. */
@@ -109,7 +107,6 @@ public class OverlayMarker extends OverlayObject {
     xGrid4 = xx2; yGrid4 = yy2;
     horizGridCount = 2; vertGridCount = 2;
   }
-
 
   // -- Object API methods --
 

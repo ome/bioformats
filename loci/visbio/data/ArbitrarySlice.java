@@ -347,7 +347,7 @@ public class ArbitrarySlice extends DataTransform
 
       // generate planar domain samples and corresponding interpolated values
       int res1 = res - 1;
-      float[][][] fieldSamples = new float[fields.length][][];//TEMP
+      float[][][] fieldSamples = new float[fields.length][][]; //TEMP
       float[][] planeSamples = new float[3][res * res];
       float[][] planeValues = new float[range.length][res * res];
       for (int r=0; r<res; r++) {
@@ -383,9 +383,9 @@ public class ArbitrarySlice extends DataTransform
             if (wz == 0) {
               // interpolate from a single field (z0 == z1)
               try {
-                if (fieldSamples[zz] == null) {//TEMP
-                  fieldSamples[zz] = fields[zz].getFloats(false);//TEMP
-                }//TEMP
+                if (fieldSamples[zz] == null) { //TEMP
+                  fieldSamples[zz] = fields[zz].getFloats(false); //TEMP
+                } //TEMP
                 values0 = values1 = fieldSamples[zz];
               }
               catch (VisADException exc) { exc.printStackTrace(); }
@@ -393,12 +393,12 @@ public class ArbitrarySlice extends DataTransform
             else {
               // interpolate between two fields
               try {
-                if (fieldSamples[zz] == null) {//TEMP
-                  fieldSamples[zz] = fields[zz].getFloats(false);//TEMP
-                }//TEMP
-                if (fieldSamples[zz + 1] == null) {//TEMP
-                  fieldSamples[zz + 1] = fields[zz + 1].getFloats(false);//TEMP
-                }//TEMP
+                if (fieldSamples[zz] == null) { //TEMP
+                  fieldSamples[zz] = fields[zz].getFloats(false); //TEMP
+                } //TEMP
+                if (fieldSamples[zz + 1] == null) { //TEMP
+                  fieldSamples[zz + 1] = fields[zz + 1].getFloats(false); //TEMP
+                } //TEMP
                 values0 = fieldSamples[zz];
                 values1 = fieldSamples[zz + 1];
               }

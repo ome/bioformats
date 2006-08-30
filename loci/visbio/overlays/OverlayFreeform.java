@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.overlays;
 
 import java.rmi.RemoteException;
-import loci.visbio.util.MathUtil;
 import java.util.Arrays;
 import visad.*;
 
@@ -48,12 +47,11 @@ public class OverlayFreeform extends OverlayObject {
     hasNodes = true;
     maxNodes = 100;
     nodes = new float[2][maxNodes];
-    Arrays.fill(nodes[0],x1);
-    Arrays.fill(nodes[1],y1);
-    numNodes = 1;    
+    Arrays.fill(nodes[0], x1);
+    Arrays.fill(nodes[1], y1);
+    numNodes = 1;
     computeGridParameters();
   }
-
 
   // -- OverlayObject API methods --
 
@@ -97,9 +95,8 @@ public class OverlayFreeform extends OverlayObject {
 
   /** Retrieves useful statistics about this overlay. */
   public String getStatistics() {
-    
-    return "Bounds = (" + x1 + ", " + y1 + "), (" + x2 + ", " + y2 + ")\n"
-     	+ "Number of Nodes = " + numNodes + "\n"; 
+    return "Bounds = (" + x1 + ", " + y1 + "), (" + x2 + ", " + y2 + ")\n" +
+      "Number of Nodes = " + numNodes + "\n";
   }
 
   /** True iff this overlay has an endpoint coordinate pair. */
@@ -107,7 +104,6 @@ public class OverlayFreeform extends OverlayObject {
 
   /** True iff this overlay has a second endpoint coordinate pair. */
   public boolean hasEndpoint2() { return true; }
-
 
   // -- Internal OverlayObject API methods --
 
@@ -127,7 +123,6 @@ public class OverlayFreeform extends OverlayObject {
     xGrid4 = xx2; yGrid4 = yy2;
     horizGridCount = 3; vertGridCount = 3;
   }
-
 
   // -- Object API methods --
 

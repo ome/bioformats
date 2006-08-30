@@ -30,7 +30,6 @@ import visad.*;
 /** OverlayText is a text string overlay. */
 public class OverlayText extends OverlayObject {
 
-
   // -- Constructors --
 
   /** Constructs an uninitialized text string overlay. */
@@ -44,7 +43,6 @@ public class OverlayText extends OverlayObject {
     this.text = text;
     computeGridParameters();
   }
-
 
   // -- OverlayObject API methods --
 
@@ -92,7 +90,6 @@ public class OverlayText extends OverlayObject {
   /** True iff this overlay object returns text to render. */
   public boolean hasText() { return true; }
 
-
   // -- Internal OverlayObject API methods --
 
   /** Computes parameters needed for selection grid computation. */
@@ -124,7 +121,6 @@ public class OverlayText extends OverlayObject {
     xGrid4 = xx2; yGrid4 = yy2;
     horizGridCount = 2; vertGridCount = 3;
   }
-
 
   // -- Object API methods --
 

@@ -34,13 +34,16 @@ import loci.visbio.VisBio;
 import loci.visbio.util.*;
 
 /** Utility methods for saving and loading overlays to and from disk. */
-public class OverlayIO {
+public final class OverlayIO {
 
   // -- Constants --
 
   /** String indicating a given field is not applicable to an overlay. */
   protected static final String NOT_APPLICABLE = "N/A";
 
+  // -- Constructor --
+
+  private OverlayIO() { }
 
   // -- OverlayIO API methods --
 

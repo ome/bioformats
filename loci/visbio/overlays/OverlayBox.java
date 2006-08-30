@@ -47,7 +47,6 @@ public class OverlayBox extends OverlayObject {
     computeGridParameters();
   }
 
-
   // -- OverlayObject API methods --
 
   /** Gets VisAD data object representing this overlay. */
@@ -135,7 +134,6 @@ public class OverlayBox extends OverlayObject {
   /** True iff this overlay supports the filled parameter. */
   public boolean canBeFilled() { return true; }
 
-
   // -- Internal OverlayObject API methods --
 
   /** Computes parameters needed for selection grid computation. */
@@ -155,11 +153,9 @@ public class OverlayBox extends OverlayObject {
     horizGridCount = 3; vertGridCount = 3;
   }
 
-
   // -- Object API methods --
 
   /** Gets a short string representation of this overlay box. */
   public String toString() { return "Box"; }
-
 
 }

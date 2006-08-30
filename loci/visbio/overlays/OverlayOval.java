@@ -62,7 +62,6 @@ public class OverlayOval extends OverlayObject {
     return arc;
   }
 
-
   // -- Constructors --
 
   /** Constructs an uninitialized bounding oval. */
@@ -79,7 +78,6 @@ public class OverlayOval extends OverlayObject {
     this.y2 = y2;
     computeGridParameters();
   }
-
 
   // -- OverlayObject API methods --
 
@@ -200,7 +198,6 @@ public class OverlayOval extends OverlayObject {
   /** True iff this overlay supports the filled parameter. */
   public boolean canBeFilled() { return true; }
 
-
   // -- Internal OverlayObject API methods --
 
   /** Computes parameters needed for selection grid computation. */
@@ -219,7 +216,6 @@ public class OverlayOval extends OverlayObject {
     xGrid4 = xx2; yGrid4 = yy2;
     horizGridCount = 3; vertGridCount = 3;
   }
-
 
   // -- Object API methods --
 

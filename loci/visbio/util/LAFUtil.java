@@ -30,7 +30,7 @@ import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 
 /** LAFUtil contains useful functions relating to Look and Feel. */
-public abstract class LAFUtil {
+public final class LAFUtil {
 
   // -- Constructor --
 

@@ -38,12 +38,12 @@ public abstract class OverlayObject {
 
   /** Endpoint coordinates. */
   protected float x1, y1, x2, y2;
-  
-  /** Node array (for freeforms with intermediate points) */
-  protected float[][] nodes; 
+
+  /** Node array (for freeforms with intermediate points). */
+  protected float[][] nodes;
   protected int numNodes, maxNodes;
   protected boolean hasNodes;
- 
+
   /** Text string to render. */
   protected String text;
 
@@ -80,7 +80,6 @@ public abstract class OverlayObject {
   /** Number of horizontal and vertical dividing lines for selection grid. */
   protected int horizGridCount, vertGridCount;
 
-
   // -- Constructor --
 
   /** Constructs an overlay. */
@@ -88,7 +87,6 @@ public abstract class OverlayObject {
     this.overlay = overlay;
     overlay.setTextDrawn(false);
   }
-
 
   // -- OverlayObject API methods --
 
@@ -239,10 +237,10 @@ public abstract class OverlayObject {
     this.x1 = x1;
     this.y1 = y1;
     if (hasNodes) {
-    	for (int i=0; i<numNodes; i++) {
-    	    nodes[0][i] = nodes[0][i]+dx;
-    	    nodes[1][i] = nodes[1][i]+dy;
-    	}
+      for (int i=0; i<numNodes; i++) {
+        nodes[0][i] = nodes[0][i]+dx;
+        nodes[1][i] = nodes[1][i]+dy;
+      }
     }
     computeGridParameters();
   }
@@ -253,28 +251,28 @@ public abstract class OverlayObject {
   /** Gets Y coordinate of the overlay's first endpoint. */
   public float getY() { return y1; }
 
-  /** Gets most recent x-coordinate in node array */
+  /** Gets most recent x-coordinate in node array. */
   public float getLastNodeX() {
     return nodes[0][numNodes-1];
   }
-  
-  /** Gets most recent y-coordinate in node array */
+
+  /** Gets most recent y-coordinate in node array. */
   public float getLastNodeY() {
     return nodes[1][numNodes-1];
   }
 
-  /** Sets next node coordinates */
+  /** Sets next node coordinates. */
   public void setNextNode(float x, float y) {
     if (numNodes >= maxNodes) {
-    	maxNodes *= 2;
-    	nodes = resizeNodeArray(nodes,maxNodes);
+      maxNodes *= 2;
+      nodes = resizeNodeArray(nodes, maxNodes);
     }
-    Arrays.fill(nodes[0],numNodes,maxNodes,x);
-    Arrays.fill(nodes[1],numNodes++,maxNodes,y);
+    Arrays.fill(nodes[0], numNodes, maxNodes, x);
+    Arrays.fill(nodes[1], numNodes++, maxNodes, y);
   }
-  
+
   public void truncateNodeArray() {
-    nodes = resizeNodeArray(nodes,numNodes);
+    nodes = resizeNodeArray(nodes, numNodes);
   }
 
   /** Changes X coordinate of the overlay's second endpoint. */
@@ -304,15 +302,15 @@ public abstract class OverlayObject {
 
   /** Gets Y coordinate of the overlay's second endpoint. */
   public float getY2() { return y2; }
-  
-  /** Gets value of largest and smallest x,y values. */
+
+  /** Gets value of largest and smallest x, y values. */
   protected void setBoundaries(float x, float y) {
-    x1 = Math.min(x1,x);
-    x2 = Math.max(x2,x);
-    y1 = Math.min(y1,y);
-    y2 = Math.max(y2,y);
+    x1 = Math.min(x1, x);
+    x2 = Math.max(x2, x);
+    y1 = Math.min(y1, y);
+    y2 = Math.max(y2, y);
   }
- 
+
   /** Changes text to render. */
   public void setText(String text) {
     if (!hasText()) return;
@@ -363,22 +361,22 @@ public abstract class OverlayObject {
 
   /** Gets whether this overlay is still being initially drawn. */
   public boolean isDrawing() { return drawing; }
-  
+
   // -- Internal OverlayObject API methods --
 
   /** Computes parameters needed for selection grid computation. */
   protected abstract void computeGridParameters();
-  
+
   /** Resizes the node array, truncating if necessary. */
-  protected float[][] resizeNodeArray(float[][] A, int newLength) {
-  	int loopMax = Math.min(A[0].length,newLength);
-  	float[][] A2 = new float[2][newLength];
-    	for (int j=0; j<2; j++) {
-    	    for (int i=0; i<loopMax; i++) {
-    	        A2[j][i] = A[j][i];
-    	    }
-    	}
-    	return A2;    	
+  protected float[][] resizeNodeArray(float[][] a, int newLength) {
+    int loopMax = Math.min(a[0].length, newLength);
+    float[][] a2 = new float[2][newLength];
+    for (int j=0; j<2; j++) {
+      for (int i=0; i<loopMax; i++) {
+        a2[j][i] = a[j][i];
+      }
+    }
+    return a2;
   }
 
 }

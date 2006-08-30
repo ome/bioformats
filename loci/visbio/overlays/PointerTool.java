@@ -37,14 +37,12 @@ public class PointerTool extends OverlayTool {
   /** Location where an object was first "grabbed" with a mouse press. */
   protected float grabX, grabY;
 
-
   // -- Constructor --
 
   /** Constructs an overlay manipulation tool. */
   public PointerTool(OverlayTransform overlay) {
     super(overlay, "Pointer", "Pointer", "pointer.png");
   }
-
 
   // -- OverlayTool API methods --
 

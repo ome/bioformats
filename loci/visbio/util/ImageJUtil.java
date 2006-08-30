@@ -34,7 +34,13 @@ import loci.visbio.state.OptionManager;
 import visad.*;
 
 /** ImageJUtil contains useful ImageJ functions. */
-public abstract class ImageJUtil {
+public final class ImageJUtil {
+
+  // -- Constructor --
+
+  private ImageJUtil() { }
+
+  // -- Utility methods --
 
   /**
    * Converts a VisAD FlatField of the form

@@ -70,7 +70,7 @@ public class Docker implements ComponentListener {
   protected boolean enabled = true;
 
   /** Pixel threshold for windows to snap next to one another. */
-  protected int snap = 10;
+  protected int thresh = 10;
 
   /** Whether to snap to the edges of the screen. */
   protected boolean edges = true;
@@ -120,7 +120,7 @@ public class Docker implements ComponentListener {
   public void setEnabled(boolean enabled) { this.enabled = enabled; }
 
   /** Sets the docking threshold in pixels. */
-  public void setSnapThreshold(int pixels) { snap = pixels; }
+  public void setSnapThreshold(int pixels) { thresh = pixels; }
 
   /** Sets whether windows should snap to the screen edges when close. */
   public void setSnapToScreenEdges(boolean snap) { edges = snap; }
@@ -261,7 +261,7 @@ public class Docker implements ComponentListener {
     Point p = new Point(Integer.MAX_VALUE, Integer.MAX_VALUE);
 
     // compute horizontal distance
-    if (b.y <= a.y + a.height + snap && a.y <= b.y + b.height + snap) {
+    if (b.y <= a.y + a.height + thresh && a.y <= b.y + b.height + thresh) {
       int ll = b.x - a.x;
       if (abs(ll) < abs(p.x)) p.x = ll;
       int lr = b.x - (a.x + a.width);
@@ -273,7 +273,7 @@ public class Docker implements ComponentListener {
     }
 
     // compute vertical distance
-    if (b.x <= a.x + a.width + snap && a.x <= b.x + b.width + snap) {
+    if (b.x <= a.x + a.width + thresh && a.x <= b.x + b.width + thresh) {
       int uu = b.y - a.y;
       if (abs(uu) < abs(p.y)) p.y = uu;
       int ud = b.y - (a.y + a.height);
@@ -311,8 +311,8 @@ public class Docker implements ComponentListener {
       if (abs(ps.y) < abs(p.y)) p.y = ps.y;
     }
 
-    if (abs(p.x) > snap) p.x = 0;
-    if (abs(p.y) > snap) p.y = 0;
+    if (abs(p.x) > thresh) p.x = 0;
+    if (abs(p.y) > thresh) p.y = 0;
     return p;
   }
 

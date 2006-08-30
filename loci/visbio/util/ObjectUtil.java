@@ -28,7 +28,11 @@ import java.lang.reflect.Array;
 import java.util.StringTokenizer;
 
 /** ObjectUtil contains object and array manipulation functions. */
-public abstract class ObjectUtil {
+public final class ObjectUtil {
+
+  // -- Constructor --
+
+  private ObjectUtil() { }
 
   // -- Equality testing --
 

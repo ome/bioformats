@@ -243,9 +243,9 @@ public class DatasetWidget extends JPanel
   // -- Helper classes --
 
   /** Helper class for OME-XML metadata tree view. */
-  public class ElementWrapper {
-    public Element el;
-    public ElementWrapper(Element el) { this.el = el; }
+  private class ElementWrapper {
+    protected Element el;
+    ElementWrapper(Element el) { this.el = el; }
     public String toString() { return el == null ? "null" : el.getTagName(); }
   }
 

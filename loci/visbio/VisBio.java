@@ -37,7 +37,7 @@ import loci.visbio.util.SplashScreen;
  * displays a VisBioFrame via reflection, so that the splash screen appears
  * as quickly as possible, before the class loader gets too far along.
  */
-public class VisBio extends Thread {
+public final class VisBio extends Thread {
 
   // -- Constants --
 

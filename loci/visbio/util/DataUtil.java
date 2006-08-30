@@ -29,7 +29,13 @@ import java.util.Vector;
 import visad.*;
 
 /** DataUtil contains useful VisAD data functions. */
-public abstract class DataUtil {
+public final class DataUtil {
+
+  // -- Constructor --
+
+  private DataUtil() { }
+
+  // -- Utility methods --
 
   /**
    * Resamples the given FlatField to the specified resolution,

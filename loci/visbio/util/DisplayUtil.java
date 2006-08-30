@@ -35,7 +35,11 @@ import visad.util.ReflectedUniverse;
 import visad.util.Util;
 
 /** DisplayUtil contains useful VisAD display functions. */
-public abstract class DisplayUtil {
+public final class DisplayUtil {
+
+  // -- Constructor --
+
+  private DisplayUtil() { }
 
   // -- Display utility methods --
 

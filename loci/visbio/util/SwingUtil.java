@@ -38,7 +38,7 @@ import loci.formats.ImageReader;
 import visad.util.GUIFrame;
 
 /** SwingUtil contains useful Swing functions. */
-public abstract class SwingUtil {
+public final class SwingUtil {
 
   // -- Constructor --
 

@@ -35,7 +35,6 @@ public class OverlayManager extends LogicManager {
   /** Constructs a window manager. */
   public OverlayManager(VisBioFrame bio) { super(bio); }
 
-
   // -- LogicManager API methods --
 
   /** Called to notify the logic manager of a VisBio event. */
@@ -49,7 +48,6 @@ public class OverlayManager extends LogicManager {
 
   /** Gets the number of tasks required to initialize this logic manager. */
   public int getTasks() { return 2; }
-
 
   // -- Helper methods --
 

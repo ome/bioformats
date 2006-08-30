@@ -40,7 +40,6 @@ public class OverlayTool {
   /** Filename of icon. */
   protected String icon;
 
-
   // -- Constructor --
 
   /** Constructs a measurement line creation tool. */
@@ -52,7 +51,6 @@ public class OverlayTool {
     this.tip = tip;
     this.icon = icon;
   }
-
 
   // -- OverlayTool API methods --
 
@@ -82,7 +80,6 @@ public class OverlayTool {
 
   /** Gets path to icon file. */
   public String getIcon() { return icon; }
-
 
   // -- Helper methods --
 

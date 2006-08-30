@@ -48,7 +48,6 @@ public class OverlayLine extends OverlayObject {
     computeGridParameters();
   }
 
-
   // -- OverlayObject API methods --
 
   /** Gets VisAD data object representing this overlay. */
@@ -101,7 +100,6 @@ public class OverlayLine extends OverlayObject {
   /** True iff this overlay has a second endpoint coordinate pair. */
   public boolean hasEndpoint2() { return true; }
 
-
   // -- Internal OverlayObject API methods --
 
   /** Computes parameters needed for selection grid computation. */
@@ -117,12 +115,10 @@ public class OverlayLine extends OverlayObject {
     horizGridCount = 3; vertGridCount = 2;
   }
 
-
   // -- Object API methods --
 
   /** Gets a short string representation of this measurement line. */
   public String toString() { return "Line"; }
-
 
   // -- Helper methods --
 

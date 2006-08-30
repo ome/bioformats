@@ -45,7 +45,7 @@ public class DisplayControls extends ControlPanel
   /** List of displays. */
   protected JList displayList;
 
-  /** Display list model */
+  /** Display list model. */
   protected DefaultListModel listModel;
 
   /** Button for adding a 2D display to the list. */

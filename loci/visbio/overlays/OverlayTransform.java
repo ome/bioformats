@@ -74,7 +74,6 @@ public class OverlayTransform extends DataTransform
   /** String indicating a given field is not applicable to an overlay. */
   protected static final String NOT_APPLICABLE = "N/A";
 
-
   // -- Fields --
 
   /** Controls for creating overlays. */
@@ -107,7 +106,6 @@ public class OverlayTransform extends DataTransform
   /** Dimensional position of overlays stored in the clipboard. */
   protected int[] clipboardPos = null;
 
-
   // -- Constructor --
 
   /** Creates an overlay object for the given transform. */
@@ -125,7 +123,6 @@ public class OverlayTransform extends DataTransform
     initState(null);
     parent.addTransformListener(this);
   }
-
 
   // -- OverlayTransform API methods --
 
@@ -458,7 +455,6 @@ public class OverlayTransform extends DataTransform
   /** Gets whether text is drawn. */
   public boolean isTextDrawn() { return drawText; }
 
-
   // -- Static DataTransform API methods --
 
   /** Creates a new set of overlays, with user interaction. */
@@ -483,7 +479,6 @@ public class OverlayTransform extends DataTransform
 
   /** Indicates whether this transform type requires a parent transform. */
   public static boolean isParentRequired() { return true; }
-
 
   // -- DataTransform API methods --
 
@@ -724,7 +719,6 @@ public class OverlayTransform extends DataTransform
     }
   }
 
-
   // -- Dynamic API methods --
 
   /** Tests whether two dynamic objects are equivalent. */
@@ -794,7 +788,6 @@ public class OverlayTransform extends DataTransform
    */
   public void discard() { }
 
-
   // -- TransformListener API methods --
 
   /** Called when parent data transform's parameters are updated. */
@@ -805,7 +798,6 @@ public class OverlayTransform extends DataTransform
       notifyListeners(new TransformEvent(this));
     }
   }
-
 
   // -- Helper methods --
 
