@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.browser;
 
 import ij.*;
+import ij.gui.GenericDialog;
 import ij.gui.ImageCanvas;
 import ij.io.FileInfo;
 import ij.plugin.PlugIn;
@@ -73,6 +74,9 @@ public class LociDataBrowser implements PlugIn {
 
   /** cache manager (if virtual stack is used). */
   protected CacheManager manager;
+
+  /** Series to use in a multi-series file. */
+  protected int series;
 
   private ImageStack stack;
 
@@ -134,6 +138,22 @@ public class LociDataBrowser implements PlugIn {
     return raster;
   }
 
+  /** Set the series to open. */
+  public void setSeries(int num) {
+    // TODO : this isn't the prettiest way of prompting for a series
+    GenericDialog datasets =
+      new GenericDialog("4D Data Browser Series Chooser");
+
+    String[] values = new String[num];
+    for (int i=0; i<values.length; i++) values[i] = "" + i;
+
+    datasets.addChoice("Series ", values, "0");
+
+    if (num > 1) datasets.showDialog();
+
+    series = Integer.parseInt(datasets.getNextChoice());
+  }
+
   // -- Plugin methods --
 
   public void run(String arg) {
@@ -181,6 +201,8 @@ public class LociDataBrowser implements PlugIn {
           fr.getMetadataStore(absname).createRoot();
           FileStitcher fs = new FileStitcher(fr);
           ChannelMerger cm = new ChannelMerger(fs);
+          setSeries(cm.getSeriesCount(absname));
+          cm.setSeries(absname, series);
 
           int num = cm.getImageCount(absname);
 
