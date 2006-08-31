@@ -28,7 +28,7 @@ import java.io.IOException;
 import loci.formats.*;
 
 /**
- * GIFReader is the file format reader for
+ * LegacyGIFReader is a file format reader for
  * Graphics Interchange Format (GIF) images.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
