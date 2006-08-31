@@ -119,8 +119,7 @@ public class ImageReader implements IFormatReader {
    * Initializes all the built-in file format readers (classes in
    * <code>readerClasses</code>).
    */
-  private void initializeReaders()
-  {
+  private void initializeReaders() {
     // add built-in readers to the list
     Vector v = new Vector();
     HashSet suffixSet = new HashSet();
@@ -243,8 +242,7 @@ public class ImageReader implements IFormatReader {
   }
 
   /** Return true if the data is in little-endian format. */
-  public boolean isLittleEndian(String id) throws FormatException, IOException
-  {
+  public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return readers[index].isLittleEndian(id);
   }
@@ -253,7 +251,8 @@ public class ImageReader implements IFormatReader {
    * Return a five-character string representing the dimension order
    * within the file.
    */
-  public String getDimensionOrder(String id) throws FormatException, IOException
+  public String getDimensionOrder(String id)
+    throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
     return readers[index].getDimensionOrder(id);
@@ -282,8 +281,7 @@ public class ImageReader implements IFormatReader {
    * By default, channels are left unseparated; thus if we encounter an RGB
    * image plane, it will be left as RGB and not split into 3 separate planes.
    */
-  public void setSeparated(boolean separate)
-  {
+  public void setSeparated(boolean separate) {
     for (int i = 0; i < readers.length; i++)
       readers[i].setSeparated(separate);
   }
@@ -387,7 +385,7 @@ public class ImageReader implements IFormatReader {
           Integer.parseInt(arg);
           continue;
         }
-        catch (Exception e ) { }
+        catch (Exception e) { }
         System.out.print("Checking file format ");
         System.out.println("[" + getFormat(arg) + "]");
         File f = new File(arg);
@@ -533,10 +531,7 @@ public class ImageReader implements IFormatReader {
    *
    * @return the current active reader.
    */
-  private IFormatReader currentReader()
-  {
-    return readers[index];
-  }
+  private IFormatReader currentReader() { return readers[index]; }
 
   // -- Main method --
 

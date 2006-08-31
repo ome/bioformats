@@ -32,7 +32,7 @@ import java.io.*;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public abstract class DataTools {
+public final class DataTools {
 
   // -- Constructor --
 

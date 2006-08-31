@@ -37,13 +37,16 @@ import java.awt.image.*;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public abstract class ImageTools {
+public final class ImageTools {
 
   // -- Constants --
 
   /** ImageObserver for working with AWT images. */
   protected static final Component OBS = new Container();
 
+  // -- Constructor --
+
+  private ImageTools() { }
 
   // -- Image construction --
 

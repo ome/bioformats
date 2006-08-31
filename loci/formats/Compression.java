@@ -35,7 +35,7 @@ import java.util.zip.InflaterInputStream;
  * @author Eric Kjellman egkjellman at wisc.edu
  * @author Melissa Linkert linkert at cs.wisc.edu
  */
-public abstract class Compression {
+public final class Compression {
 
   // -- Constants --
 

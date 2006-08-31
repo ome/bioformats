@@ -48,7 +48,7 @@ public class TiffIFDEntry {
    */
   private int valueOffset;
 
-  public TiffIFDEntry (int tag, int type, int valueCount, int valueOffset) {
+  public TiffIFDEntry(int tag, int type, int valueCount, int valueOffset) {
     this.tag = tag;
     this.type = type;
     this.valueCount = valueCount;

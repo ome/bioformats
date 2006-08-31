@@ -300,15 +300,6 @@ public abstract class FormatReader extends FormatHandler
         rgb + "; separated=" + separated + "; sizeZ=" + sizeZ + ", sizeC=" +
         origSizeC + ", sizeT=" + sizeT + ", total=" + num);
     }
-    /*
-    sizeZ = 5
-    sizeC = 6
-    sizeT = 7
-    z = 2
-    c = 1
-    t = 4
-    num = 210
-    */
 
     // assign rasterization order
     int v0 = iz == 0 ? z : (ic == 0 ? c : t);
