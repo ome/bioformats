@@ -44,37 +44,37 @@ public class OMEXMLReader extends FormatReader {
   protected RandomAccessStream in;
 
   /** Flag indicating whether current file is little endian. */
-  protected boolean littleEndian;
+  protected boolean[] littleEndian;
 
   /** Number of image planes in the file. */
-  protected int numImages = 0;
+  protected int[] numImages;
 
   /** Number of bits per pixel. */
-  protected int bpp = 1;
+  protected int[] bpp;
 
   /** Offset to each plane's data. */
-  protected Vector offsets;
+  protected Vector[] offsets;
 
   /** String indicating the compression type. */
-  protected String compression;
+  protected String[] compression;
 
   /** Image width. */
-  private int width;
+  private int[] width;
 
   /** Image height. */
-  private int height;
+  private int[] height;
 
   /** Number of channels. */
-  private int numChannels;
+  private int[] numChannels;
 
   /** Number of timepoints. */
-  private int numT;
+  private int[] numT;
 
   /** Number of Z slices. */
-  private int numZ;
+  private int[] numZ;
 
   /** Dimension order. */
-  private String order;
+  private String[] order;
 
   /**
    * Internal OME-XML metadata store that we use for parsing metadata from the
@@ -95,10 +95,16 @@ public class OMEXMLReader extends FormatReader {
     return new String(block, 0, 5).equals("<?xml");
   }
 
+  /** Return the number of series in this file. */
+  public int getSeriesCount(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return width.length;
+  }
+
   /** Determines the number of images in the given OME-XML file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return numImages;
+    return numImages[series];
   }
 
   /** Checks if the images in the file are RGB. */
@@ -125,37 +131,37 @@ public class OMEXMLReader extends FormatReader {
   /** Get the size of the X dimension. */
   public int getSizeX(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return width;
+    return width[series];
   }
 
   /** Get the size of the Y dimension. */
   public int getSizeY(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return height;
+    return height[series];
   }
 
   /** Get the size of the Z dimension. */
   public int getSizeZ(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return numZ;
+    return numZ[series];
   }
 
   /** Get the size of the C dimension. */
   public int getSizeC(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return numChannels;
+    return numChannels[series];
   }
 
   /** Get the size of the T dimension. */
   public int getSizeT(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return numT;
+    return numT[series];
   }
 
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return littleEndian;
+    return littleEndian[series];
   }
 
   /**
@@ -166,7 +172,7 @@ public class OMEXMLReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return order;
+    return order[series];
   }
 
   /** Obtains the specified image from the given file as a byte array. */
@@ -175,24 +181,23 @@ public class OMEXMLReader extends FormatReader {
   {
     if (!id.equals(currentId)) initFile(id);
 
-    if (no < 0 || no >= numImages) {
+    if (no < 0 || no >= numImages[series]) {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    width = internalStore.getSizeX(null).intValue();
-    height = internalStore.getSizeY(null).intValue();
+    int w = width[series];
+    int h = width[series];
 
-    in.seek(((Integer) offsets.get(no)).intValue());
+    in.seek(((Integer) offsets[series].get(no)).intValue());
 
     byte[] buf;
     if (no < getImageCount(id) - 1) {
-
-      buf = new byte[((Integer) offsets.get(no+1)).intValue() -
-        ((Integer) offsets.get(no)).intValue()];
+      buf = new byte[((Integer) offsets[series].get(no + 1)).intValue() -
+        ((Integer) offsets[series].get(no)).intValue()];
     }
     else {
-      buf =
-        new byte[(int) (in.length() - ((Integer) offsets.get(no)).intValue())];
+      buf = new byte[(int) (in.length() -
+        ((Integer) offsets[series].get(no)).intValue())];
     }
     in.read(buf);
     String data = new String(buf);
@@ -207,23 +212,23 @@ public class OMEXMLReader extends FormatReader {
 
     byte[] pixels = Compression.decode(pix);
 
-    if (compression.equals("bzip2")) {
+    if (compression[series].equals("bzip2")) {
       byte[] tempPixels = pixels;
       pixels = new byte[tempPixels.length - 2];
       System.arraycopy(tempPixels, 2, pixels, 0, pixels.length);
 
       ByteArrayInputStream bais = new ByteArrayInputStream(pixels);
       CBZip2InputStream bzip = new CBZip2InputStream(bais);
-      pixels = new byte[width*height*bpp];
+      pixels = new byte[w * h * bpp[series]];
       for (int i=0; i<pixels.length; i++) {
         pixels[i] = (byte) bzip.read();
       }
     }
-    else if (compression.equals("zlib")) {
+    else if (compression[series].equals("zlib")) {
       try {
         Inflater decompressor = new Inflater();
         decompressor.setInput(pixels, 0, pixels.length);
-        pixels = new byte[width * height * bpp];
+        pixels = new byte[w * h * bpp[series]];
         decompressor.inflate(pixels);
         decompressor.end();
       }
@@ -238,8 +243,8 @@ public class OMEXMLReader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.makeImage(openBytes(id, no), width, height,
-      1, false, bpp, littleEndian);
+    return ImageTools.makeImage(openBytes(id, no), width[series],
+      height[series], 1, false, bpp[series], littleEndian[series]);
   }
 
   /** Closes any open files. */
@@ -255,67 +260,128 @@ public class OMEXMLReader extends FormatReader {
     currentId = id;
     metadata = new Hashtable();
     in = new RandomAccessStream(id);
-    offsets = new Vector();
 
     in.skipBytes(200);
 
-    // read a block of 8192 characters, looking for the "BigEndian" pattern
-    byte[] buf = new byte[8192];
-    boolean found = false;
-    while (!found) {
-      if (in.getFilePointer() < in.length()) {
-        in.read(buf, 9, 8183);
-        String test = new String(buf);
+    int numDatasets = 0;
+    Vector endianness = new Vector();
+    Vector bigEndianPos = new Vector();
 
-        int ndx = test.indexOf("BigEndian");
-        if (ndx != -1) {
-          found = true;
-          String endian = test.substring(ndx + 11);
-          if (endian.toLowerCase().startsWith("t")) littleEndian = false;
-          else littleEndian = true;
+    byte[] buf = new byte[1];
+
+    while (in.getFilePointer() < in.length()) {
+      // read a block of 8192 characters, looking for the "BigEndian" pattern
+      buf = new byte[8192];
+      boolean found = false;
+      while (!found) {
+        if (in.getFilePointer() < in.length()) {
+          in.read(buf, 9, 8183);
+          String test = new String(buf);
+
+          int ndx = test.indexOf("BigEndian");
+          if (ndx != -1) {
+            found = true;
+            String endian = test.substring(ndx + 11);
+            endianness.add(new Boolean(!endian.toLowerCase().startsWith("t")));
+            bigEndianPos.add(new Integer(in.getFilePointer() - (8192 - ndx)));
+            numDatasets++;
+          }
         }
+        else if (numDatasets == 0) {
+          throw new FormatException("Pixel data not found.");
+        }
+        else found = true;
       }
-      else {
-        throw new FormatException("Pixel data not found.");
+    }
+
+    littleEndian = new boolean[numDatasets];
+    offsets = new Vector[numDatasets];
+
+    for (int i=0; i<littleEndian.length; i++) {
+      littleEndian[i] = ((Boolean) endianness.get(i)).booleanValue();
+      offsets[i] = new Vector();
+    }
+
+    // look for the first BinData element in each series
+
+    for (int i=0; i<numDatasets; i++) {
+      in.seek(((Integer) bigEndianPos.get(i)).intValue());
+      boolean found = false;
+      buf = new byte[8192];
+      in.read(buf, 0, 14);
+
+      while (!found) {
+        if (in.getFilePointer() < in.length()) {
+          int numRead = in.read(buf, 14, 8192-14);
+
+          String test = new String(buf);
+
+          int ndx = test.indexOf("<Bin");
+          if (ndx == -1) {
+            byte[] b = buf;
+            System.arraycopy(b, 8192 - 15, buf, 0, 14);
+          }
+          else {
+            while (!((ndx != -1) && (ndx != test.indexOf("<Bin:External")) &&
+              (ndx != test.indexOf("<Bin:BinaryFile"))))
+            {
+              ndx = test.indexOf("<Bin", ndx+1);
+            }
+            found = true;
+            numRead += 14;
+            offsets[i].add(new Integer(
+              (int) in.getFilePointer() - (numRead - ndx)));
+          }
+        }
+        else {
+          throw new FormatException("Pixel data not found");
+        }
       }
     }
 
     in.seek(0);
 
-    // look for the first BinData element
-
-    found = false;
-    buf = new byte[8192];
-    in.read(buf, 0, 14);
-    while (!found) {
-      if (in.getFilePointer() < in.length()) {
-        int numRead = in.read(buf, 14, 8192-14);
-
-        String test = new String(buf);
-
-        int ndx = test.indexOf("<Bin");
-        if (ndx == -1) throw new FormatException("Pixel data not found");
-        while (!((ndx != -1) && (ndx != test.indexOf("<Bin:External")) &&
-          (ndx != test.indexOf("<Bin:BinaryFile"))))
-        {
-          ndx = test.indexOf("<Bin", ndx+1);
-        }
-        found = true;
-        numRead += 14;
-        offsets.add(new Integer(
-          (int) in.getFilePointer() - (numRead - ndx)));
+    String xml = "";
+    for (int i=0; i<numDatasets; i++) {
+      if (i == 0) {
+        buf = new byte[((Integer) offsets[i].get(0)).intValue()];
       }
       else {
-        throw new FormatException("Pixel data not found");
+        // look for the next Image element
+
+        boolean found = false;
+        buf = new byte[8192];
+        in.read(buf, 0, 14);
+        while (!found) {
+          if (in.getFilePointer() < in.length()) {
+            int numRead = in.read(buf, 14, 8192-14);
+
+            String test = new String(buf);
+
+            int ndx = test.indexOf("<Image ");
+            if (ndx == -1) {
+              byte[] b = buf;
+              System.arraycopy(b, 8192 - 15, buf, 0, 14);
+            }
+            else {
+              found = true;
+              in.seek(in.getFilePointer() - (8192 - ndx));
+            }
+          }
+          else {
+            throw new FormatException("Pixel data not found");
+          }
+        }
+
+        int bufSize = ((Integer) offsets[i].get(0)).intValue() -
+          in.getFilePointer();
+        buf = new byte[bufSize];
       }
+      in.read(buf);
+      xml += new String(buf);
+      xml += "</Pixels></Image>";
     }
-
-    in.seek(0);
-
-    buf = new byte[((Integer) offsets.get(0)).intValue()];
-    in.read(buf);
-    String xml = new String(buf);
-    xml += "</Pixels></Image></OME>";  // might lose some data this way
+    xml += "</OME>";
 
     // The metadata store we're working with.
     try {
@@ -329,57 +395,66 @@ public class OMEXMLReader extends FormatReader {
 
     internalStore.createRoot(xml);
 
-    int sizeX = 0;
-    int sizeY = 0;
-    int sizeZ = 0;
-    int sizeC = 0;
-    int sizeT = 0;
+    width = new int[numDatasets];
+    height = new int[numDatasets];
+    numImages = new int[numDatasets];
+    bpp = new int[numDatasets];
+    littleEndian = new boolean[numDatasets];
+    compression = new String[numDatasets];
+    numChannels = new int[numDatasets];
+    numT = new int[numDatasets];
+    numZ = new int[numDatasets];
+    order = new String[numDatasets];
 
-    String type = internalStore.getPixelType(null);
-    if (type.endsWith("16")) bpp = 2;
-    else if (type.endsWith("32")) bpp = 4;
-    else if (type.equals("float")) bpp = 8;
+    int oldSeries = getSeries(currentId);
 
-    sizeX = internalStore.getSizeX(null).intValue();
-    sizeY = internalStore.getSizeY(null).intValue();
-    sizeZ = internalStore.getSizeZ(null).intValue();
-    sizeC = internalStore.getSizeC(null).intValue();
-    sizeT = internalStore.getSizeT(null).intValue();
-    order = internalStore.getDimensionOrder(null);
+    for (int i=0; i<numDatasets; i++) {
+      setSeries(currentId, i);
+      Integer ndx = new Integer(i);
+      width[i] = internalStore.getSizeX(ndx).intValue();
+      height[i] = internalStore.getSizeY(ndx).intValue();
+      numT[i] = internalStore.getSizeT(ndx).intValue();
+      numZ[i] = internalStore.getSizeZ(ndx).intValue();
+      numChannels[i] = internalStore.getSizeC(ndx).intValue();
 
-    numZ = sizeZ;
-    numT = sizeT;
+      String type = internalStore.getPixelType(ndx);
+      if (type.endsWith("16")) bpp[i] = 2;
+      else if (type.endsWith("32")) bpp[i] = 4;
+      else if (type.equals("float")) bpp[i] = 8;
+      else bpp[i] = 1;
 
-    numChannels = sizeC;
+      order[i] = internalStore.getDimensionOrder(ndx);
 
-    // calculate the number of raw bytes of pixel data that we are expecting
-    int expected = sizeX * sizeY * bpp;
+      // calculate the number of raw bytes of pixel data that we are expecting
+      int expected = width[i] * height[i] * bpp[i];
 
-    // find the compression type and adjust 'expected' accordingly
-    buf = new byte[256];
-    in.read(buf);
-    String data = new String(buf);
+      // find the compression type and adjust 'expected' accordingly
+      in.seek(((Integer) offsets[i].get(0)).intValue());
+      buf = new byte[256];
+      in.read(buf);
+      String data = new String(buf);
 
-    in.seek(((Integer) offsets.get(0)).intValue());
+      int compressionStart = data.indexOf("Compression") + 13;
+      int compressionEnd = data.indexOf("\"", compressionStart);
+      if (compressionStart != -1 && compressionEnd != -1) {
+        compression[i] = data.substring(compressionStart, compressionEnd);
+      }
+      else compression[i] = "none";
 
-    int compressionStart = data.indexOf("Compression") + 13;
-    int compressionEnd = data.indexOf("\"", compressionStart);
-    if (compressionStart != -1 && compressionEnd != -1) {
-      compression = data.substring(compressionStart, compressionEnd);
+      expected /= 2;
+
+      in.seek(((Integer) offsets[i].get(0)).intValue());
+
+      searchForData(expected, numZ[i] * numT[i] * numChannels[i]);
+      numImages[i] = offsets[i].size();
+      if (numImages[i] < (numZ[i] * numT[i] * numChannels[i])) {
+        // hope this doesn't happen too often
+        in.seek(((Integer) offsets[i].get(0)).intValue());
+        searchForData(0, numZ[i] * numT[i] * numChannels[i]);
+        numImages[i] = offsets[i].size();
+      }
     }
-    else compression = "none";
-
-    expected /= 2;
-    searchForData(expected, sizeZ * sizeT * sizeC);
-    numImages = offsets.size();
-    if (numImages < (sizeZ * sizeT * sizeC)) {
-      // hope this doesn't happen too often
-      in.seek(((Integer) offsets.get(0)).intValue());
-      searchForData(0, sizeZ * sizeT * sizeC);
-      numImages = offsets.size();
-    }
-    width = internalStore.getSizeX(null).intValue();
-    height = internalStore.getSizeY(null).intValue();
+    setSeries(currentId, oldSeries);
   }
 
 
@@ -389,15 +464,15 @@ public class OMEXMLReader extends FormatReader {
   private void searchForData(int safe, int numPlanes) throws IOException {
     int iteration = 0;
     boolean found = false;
-    if (offsets.size() > 1) {
-      Object zeroth = offsets.get(0);
-      offsets.clear();
-      offsets.add(zeroth);
+    if (offsets[series].size() > 1) {
+      Object zeroth = offsets[series].get(0);
+      offsets[series].clear();
+      offsets[series].add(zeroth);
     }
 
     in.skipBytes(1);
     while (((in.getFilePointer() + safe) < in.length()) &&
-      (offsets.size() < numPlanes))
+      (offsets[series].size() < numPlanes))
     {
       in.skipBytes(safe);
 
@@ -415,7 +490,7 @@ public class OMEXMLReader extends FormatReader {
           while (ndx != -1) {
             found = true;
             if (numRead == buf.length - 20) numRead = buf.length;
-            offsets.add(new Integer(
+            offsets[series].add(new Integer(
               (int) in.getFilePointer() - (numRead - ndx)));
             ndx = test.indexOf("<Bin", ndx+1);
           }
