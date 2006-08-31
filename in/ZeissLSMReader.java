@@ -134,6 +134,10 @@ public class ZeissLSMReader extends BaseTiffReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
+    if (no < 0 || no >= getImageCount(id)) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+    
     ifds = TiffTools.getIFDs(in);
     return TiffTools.getImage(ifds[2*no + 1], in);
   }

@@ -51,6 +51,8 @@ public class OIFReader extends FormatReader {
   /** Helper reader to open TIFF files. */
   protected TiffReader tiffReader;
 
+  /** Helper reader to open the thumbnail. */
+  protected BMPReader thumbReader;
 
   // -- Constructor --
 
@@ -176,6 +178,32 @@ public class OIFReader extends FormatReader {
     return tiffReader.openImage((String) tiffs.get(no), 0);
   }
 
+  /** Obtains a thumbnail for the specified image from the given file. */
+  public BufferedImage openThumbImage(String id, int no)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+      initFile(id);
+    }
+
+    if (no < 0 || no >= getImageCount(id)) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+
+    String thumbId = id.substring(0, id.indexOf("_") + 1) + "Thumb.bmp";
+    return thumbReader.openImage(thumbId, 0);
+  }
+
+  /** Get the size of the X dimension for the thumbnail. */
+  public int getThumbSizeX(String id) throws FormatException, IOException {
+    return openThumbImage(id, 0).getWidth();
+  }
+
+  /** Get the size of the Y dimension for the thumbnail. */
+  public int getThumbSizeY(String id) throws FormatException, IOException {
+    return openThumbImage(id, 0).getHeight();
+  }
+
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
     if (reader != null) reader.close();
@@ -241,6 +269,7 @@ public class OIFReader extends FormatReader {
       line = reader.readLine();
     }
 
+    thumbReader = new BMPReader();
     numImages = filenames.size();
     tiffs = new Vector(numImages);
 
