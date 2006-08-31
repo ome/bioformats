@@ -41,11 +41,11 @@ import java.util.*;
  * @author callan
  *
  */
-public abstract class TiffTools {
+public final class TiffTools {
 
   // -- Constants --
 
-  public static final boolean DEBUG = false;
+  private static final boolean DEBUG = false;
 
   /** The number of bytes in each IFD entry. */
   public static final int BYTES_PER_ENTRY = 12;
@@ -187,6 +187,9 @@ public abstract class TiffTools {
   public static final int LITTLE = 0x49;
   public static final int BIG = 0x4d;
 
+  // -- Constructor --
+
+  private TiffTools() { }
 
   // -- TiffTools API methods --
 
@@ -225,7 +228,6 @@ public abstract class TiffTools {
       true, Boolean.class)).booleanValue();
   }
 
-
   // --------------------------- Reading TIFF files ---------------------------
 
   // -- IFD parsing methods --
@@ -260,10 +262,10 @@ public abstract class TiffTools {
     Vector v = new Vector();
     for (long ifdNum=0; ifdNum<ifdMax; ifdNum++) {
       Hashtable ifd = getIFD(in, ifdNum, globalOffset, offset);
-      if (ifd.size() <= 1) break;
+      if (ifd == null || ifd.size() <= 1) break;
       v.add(ifd);
       offset = in.readInt();
-      if (offset == 0) break;
+      if (offset <= 0 || offset >= in.length()) break;
     }
 
     Hashtable[] ifds = new Hashtable[v.size()];
@@ -305,7 +307,7 @@ public abstract class TiffTools {
    * @throws IOException when there is an error accessing the stream <i>in</i>.
    * @throws UnknownTagException if the <i>tag</i> is not found or unknown.
    */
-  public static TiffIFDEntry getFirstIFDEntry (RandomAccessStream in, int tag)
+  public static TiffIFDEntry getFirstIFDEntry(RandomAccessStream in, int tag)
     throws IOException
   {
     // First lets re-position the file pointer by checking the TIFF header
@@ -315,7 +317,7 @@ public abstract class TiffTools {
     // Get the offset of the first IFD
     long offset = getFirstOffset(in);
 
-    // The following loosly resembles the logic of getIFD()...
+    // The following loosely resembles the logic of getIFD()...
     in.seek(offset);
     int numEntries = in.readShort();
     if (numEntries < 0) numEntries += 65536;
@@ -771,7 +773,6 @@ public abstract class TiffTools {
     }
     return results;
   }
-
 
   // -- Image reading methods --
 
@@ -1583,7 +1584,6 @@ public abstract class TiffTools {
     }
   }
 
-
   // -- Decompression methods --
 
   /** Decodes a strip of data compressed with the given compression scheme. */
@@ -1641,8 +1641,6 @@ public abstract class TiffTools {
     }
   }
 
-
-
   // --------------------------- Writing TIFF files ---------------------------
 
   // -- IFD population methods --
@@ -1666,7 +1664,6 @@ public abstract class TiffTools {
   public static void putIFDValue(Hashtable ifd, int tag, long value) {
     putIFDValue(ifd, tag, new Long(value));
   }
-
 
   // -- IFD writing methods --
 
@@ -1903,7 +1900,6 @@ public abstract class TiffTools {
 
     throw new FormatException("Tag not found (" + getIFDTagName(tag) + ")");
   }
-
 
   // -- Image writing methods --
 
@@ -2307,7 +2303,6 @@ public abstract class TiffTools {
       throw new FormatException("Unknown Predictor (" + predictor + ")");
     }
   }
-
 
   // -- Debugging --
 
