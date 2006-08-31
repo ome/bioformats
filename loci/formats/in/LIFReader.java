@@ -117,6 +117,7 @@ public class LIFReader extends FormatReader {
   /** Get the size of the C dimension. */
   public int getSizeC(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
+    if (getImageCount(id) == 1 && dims[series][4] < 3) dims[series][4] = 1;
     return dims[series][4];
   }
 
