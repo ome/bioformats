@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Hashtable;
 import loci.formats.*;
@@ -126,6 +127,25 @@ public class ZeissLSMReader extends BaseTiffReader {
   {
     if (!id.equals(currentId)) initFile(id);
     return dimOrder;
+  }
+  
+  /** Obtains a thumbnail for the specified image from the given file. */
+  public BufferedImage openThumbImage(String id, int no)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    ifds = TiffTools.getIFDs(in);
+    return TiffTools.getImage(ifds[2*no + 1], in);
+  }
+  
+  /** Get the size of the X dimension for the thumbnail. */
+  public int getThumbSizeX(String id) throws FormatException, IOException {
+    return openThumbImage(id, 0).getWidth();
+  }
+
+  /** Get the size of the Y dimension for the thumbnail. */
+  public int getThumbSizeY(String id) throws FormatException, IOException {
+    return openThumbImage(id, 0).getHeight();
   }
 
   /** Initializes the given Zeiss LSM file. */
