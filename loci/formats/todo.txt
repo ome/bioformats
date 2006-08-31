@@ -5,11 +5,6 @@ Codecs:
 * QuickTime - svq3 codec (lower priority)
 * AVI - msrle codec (super low priority)
 
-API:
-* Methods for handling thumbnails:
-  - openThumbImage(String id, int no) - same as openImage, but for thumbnails
-  - openThumbBytes(String id, int no) - less important; only if trivial
-
 Implement readers for other file formats:
 * Anything listed online: http://www.loci.wisc.edu/ome/formats.html
 * SDT (java/loci/apps/slim/SlimPlotter.java, data/sdt, data/specs/sdt)
