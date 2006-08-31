@@ -102,7 +102,7 @@ public class ImageTester extends JPanel implements WindowListener {
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     int wpad = 50, hpad = 100;
     int w = (screen.width - wpad) / chan.length;
-    int h = (screen.height - hpad) / 6;//9;
+    int h = (screen.height - hpad) / 6; //9;
     System.out.println("Using images of size " + w + " x " + h);
     int size = w * h;
     BufferedImage[] bimg1 = new BufferedImage[chan.length];

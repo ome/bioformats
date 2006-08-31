@@ -32,7 +32,6 @@ public class TiffRational extends Number implements Comparable {
   /** Components of the rational's fractional representation. */
   protected long numer, denom;
 
-
   // -- Constructor --
 
   /** Constructs a rational number. */
@@ -40,7 +39,6 @@ public class TiffRational extends Number implements Comparable {
     this.numer = numer;
     this.denom = denom;
   }
-
 
   // -- TiffRational API methods --
 
@@ -66,7 +64,6 @@ public class TiffRational extends Number implements Comparable {
     }
   }
 
-
   // -- Number API methods --
 
   /** Returns the value of the specified number as a byte. */
@@ -89,15 +86,16 @@ public class TiffRational extends Number implements Comparable {
   /** Returns the value of the specified number as a short. */
   public short shortValue() { return (short) longValue(); }
 
-
   // -- Object API methods --
 
   /** Indicates whether some other object is "equal to" this one. */
   public boolean equals(Object o) { return compareTo(o) == 0; }
 
+  /** Reasonable hash value for use with hashtables. */
+  public int hashCode() { return (int) (numer - denom); }
+
   /** Returns a string representation of the object. */
   public String toString() { return numer + "/" + denom; }
-
 
   // -- Comparable API methods --
 

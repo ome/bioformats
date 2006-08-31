@@ -28,18 +28,17 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Hashtable;
 
-/** Abstract superclass of all biological file format readers. */
+/** Interface for all biological file format readers. */
 public interface IFormatReader extends IFormatHandler {
+
   /** Checks if the given block is a valid header for this file format. */
   boolean isThisType(byte[] block);
 
   /** Determines the number of images in the given file. */
-  int getImageCount(String id)
-    throws FormatException, IOException;
+  int getImageCount(String id) throws FormatException, IOException;
 
   /** Checks if the images in the file are RGB. */
-  boolean isRGB(String id)
-    throws FormatException, IOException;
+  boolean isRGB(String id) throws FormatException, IOException;
 
   /** Get the size of the X dimension. */
   int getSizeX(String id) throws FormatException, IOException;
@@ -61,17 +60,15 @@ public interface IFormatReader extends IFormatHandler {
 
   /** Get the size of the Y dimension for the thumbnail. */
   int getThumbSizeY(String id) throws FormatException, IOException;
-  
+
   /** Return true if the data is in little-endian format. */
-  boolean isLittleEndian(String id)
-    throws FormatException, IOException;
+  boolean isLittleEndian(String id) throws FormatException, IOException;
 
   /**
    * Return a five-character string representing the dimension order
    * within the file.
    */
-  String getDimensionOrder(String id)
-    throws FormatException, IOException;
+  String getDimensionOrder(String id) throws FormatException, IOException;
 
   /** Obtains the specified image from the given file. */
   BufferedImage openImage(String id, int no)
@@ -80,8 +77,7 @@ public interface IFormatReader extends IFormatHandler {
   /**
    * Obtains the specified image from the given file as a byte array.
    */
-  byte[] openBytes(String id, int no)
-    throws FormatException, IOException;
+  byte[] openBytes(String id, int no) throws FormatException, IOException;
 
   /** Obtains a thumbnail for the specified image from the given file. */
   BufferedImage openThumbImage(String id, int no)
@@ -91,8 +87,7 @@ public interface IFormatReader extends IFormatHandler {
    * Obtains a thumbnail for the specified image from the given file,
    * as a byte array.
    */
-  byte[] openThumbBytes(String id, int no)
-    throws FormatException, IOException;
+  byte[] openThumbBytes(String id, int no) throws FormatException, IOException;
 
   /** Closes the currently open file. */
   void close() throws FormatException, IOException;
@@ -102,8 +97,7 @@ public interface IFormatReader extends IFormatHandler {
    *
    * @return Java Images containing pixel data
    */
-  BufferedImage[] openImage(String id)
-    throws FormatException, IOException;
+  BufferedImage[] openImage(String id) throws FormatException, IOException;
 
   /** Return the number of series in this file. */
   int getSeriesCount(String id) throws FormatException, IOException;
@@ -135,8 +129,7 @@ public interface IFormatReader extends IFormatHandler {
    * Gets the Z, C and T coordinates corresponding
    * to the given rasterized index value.
    */
-  int[] getZCTCoords(String id, int index)
-    throws FormatException, IOException;
+  int[] getZCTCoords(String id, int index) throws FormatException, IOException;
 
   /**
    * Obtains the specified metadata field's value for the given file.
@@ -169,8 +162,7 @@ public interface IFormatReader extends IFormatHandler {
    * metadata store.
    * @return a metadata store implementation.
    */
-  MetadataStore getMetadataStore(String id)
-    throws FormatException, IOException;
+  MetadataStore getMetadataStore(String id) throws FormatException, IOException;
 
   /**
    * Retrieves the current metadata store's root object. It is guaranteed that
@@ -183,12 +175,12 @@ public interface IFormatReader extends IFormatHandler {
    * @throws FormatException if the file specified by <code>path</code> is of an
    * unsupported type.
    */
-  Object getMetadataStoreRoot(String id)
-    throws FormatException, IOException;
+  Object getMetadataStoreRoot(String id) throws FormatException, IOException;
 
   /**
    * A utility method for test reading a file from the command line,
    * and displaying the results in a simple display.
    */
   boolean testRead(String[] args) throws FormatException, IOException;
+
 }

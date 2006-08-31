@@ -57,7 +57,7 @@ public interface MetadataStore {
    * @throws IllegalArgumentException if the <code>root</code> is of an
    * unsupported or unknown type.
    */
-  void setRoot(Object root) throws IllegalArgumentException;
+  void setRoot(Object root);
 
   /**
    * Retrieves the <i>root</i> object of the metadata store.
@@ -219,9 +219,9 @@ public interface MetadataStore {
    * transitional type. More information about the PlaneInfo type can be found
    * <a href="http://cvs.openmicroscopy.org.uk/tiki/tiki-index.php?page=DataModelProposal#id119301">here</a>.
    *
-   * @param numZ the optical section index.
-   * @param numC the channel index.
-   * @param numT the timepoint.
+   * @param theZ the optical section index.
+   * @param theC the channel index.
+   * @param theT the timepoint.
    * @param timestamp the time of acquisition in seconds of the plane (section)
    * with zero being the start of acquistion.
    * @param exposureTime exposure time in seconds.

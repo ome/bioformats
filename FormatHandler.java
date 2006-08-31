@@ -64,7 +64,7 @@ public abstract class FormatHandler implements IFormatHandler {
 
   /** Creates JFileChooser file filters for this file format. */
   protected void createFilters() {
-    filters = new FileFilter[] { new ExtensionFileFilter(suffixes, format) };
+    filters = new FileFilter[] {new ExtensionFileFilter(suffixes, format)};
   }
 
   /**

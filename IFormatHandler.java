@@ -27,10 +27,10 @@ package loci.formats;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
+/** Interface for all biological file format readers and writers. */
 public interface IFormatHandler {
-  /**
-   * Checks if the given string is a valid filename for this file format.
-   */
+
+  /** Checks if the given string is a valid filename for this file format. */
   boolean isThisType(String name);
 
   /** Gets the name of this file format. */
@@ -44,4 +44,5 @@ public interface IFormatHandler {
 
   /** Gets a JFileChooser that recognizes accepted file types. */
   JFileChooser getFileChooser();
+
 }
