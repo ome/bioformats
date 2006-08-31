@@ -137,8 +137,8 @@ public abstract class FormatReader extends FormatHandler
   public BufferedImage openThumbImage(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.scale(openImage(id, no), 
-      getThumbSizeX(id), getThumbSizeY(id));      
+    return ImageTools.scale(openImage(id, no),
+      getThumbSizeX(id), getThumbSizeY(id));
   }
 
   /**
@@ -442,7 +442,8 @@ public abstract class FormatReader extends FormatHandler
    * unsupported type.
    */
   public Object getMetadataStoreRoot(String id)
-    throws FormatException, IOException {
+    throws FormatException, IOException
+  {
     if (!id.equals(currentId)) initFile(id);
     return getMetadataStore(id).getRoot();
   }
@@ -524,13 +525,81 @@ public abstract class FormatReader extends FormatHandler
     if (stitch) reader = new FileStitcher(reader);
     if (merge) reader = new ChannelMerger(reader);
 
+    // read basic metadata
+    System.out.println();
+    System.out.println("Reading core metadata");
+    System.out.println(stitch ?
+      ("File pattern = " + FilePattern.findPattern(new File(id))) :
+      ("Filename = " + id));
+    int seriesCount = reader.getSeriesCount(id);
+    System.out.println("Series count = " + seriesCount);
+    for (int j=0; j<seriesCount; j++) {
+      reader.setSeries(id, j);
+
+      // read basic metadata for series #i
+      int imageCount = reader.getImageCount(id);
+      boolean rgb = reader.isRGB(id);
+      int sizeX = reader.getSizeX(id);
+      int sizeY = reader.getSizeY(id);
+      int sizeZ = reader.getSizeZ(id);
+      int sizeC = reader.getSizeC(id);
+      int sizeT = reader.getSizeT(id);
+      boolean little = reader.isLittleEndian(id);
+      String dimOrder = reader.getDimensionOrder(id);
+
+      // output basic metadata for series #i
+      System.out.println("Series #" + j + ":");
+      System.out.println("\tImage count = " + imageCount);
+      System.out.print("\tRGB = " + rgb);
+      if (rgb && separate) System.out.print(" (separated)");
+      else if (!rgb && !separate) System.out.print(" (merged)");
+      System.out.println();
+      System.out.println("\tWidth = " + sizeX);
+      System.out.println("\tHeight = " + sizeY);
+      System.out.println("\tSizeZ = " + sizeZ);
+      System.out.println("\tSizeC = " + sizeC);
+      System.out.println("\tSizeT = " + sizeT);
+      if (imageCount != sizeZ * sizeC * sizeT /
+        ((rgb && !separate) ? sizeC : 1))
+      {
+        System.out.println("\t************ Warning: ZCT mismatch ************");
+      }
+      System.out.println("\tEndianness = " +
+        (little ? "intel (little)" : "motorola (big)"));
+      System.out.println("\tDimension order = " + dimOrder);
+      System.out.println("\t-----");
+      int[] indices;
+      if (imageCount > 6) {
+        int q = imageCount / 2;
+        indices = new int[] {0, q - 2, q - 1, q, q + 1, q + 2, imageCount - 1};
+      }
+      else if (imageCount > 2) {
+        indices = new int[] {0, imageCount / 2, imageCount - 1};
+      }
+      else if (imageCount > 1) indices = new int[] {0, 1};
+      else indices = new int[] {0};
+      int[][] zct = new int[indices.length][];
+      int[] indices2 = new int[indices.length];
+      for (int i=0; i<indices.length; i++) {
+        zct[i] = reader.getZCTCoords(id, indices[i]);
+        indices2[i] = reader.getIndex(id, zct[i][0], zct[i][1], zct[i][2]);
+        System.out.print("\tPlane #" + indices[i] + " <=> Z " + zct[i][0] +
+          ", C " + zct[i][1] + ", T " + zct[i][2]);
+        if (indices[i] != indices2[i]) {
+          System.out.println(" [mismatch: " + indices2[i] + "]");
+        }
+        else System.out.println();
+      }
+    }
+    reader.setSeries(id, series);
+    String s = seriesCount > 1 ? (" series #" + series) : "";
+
     // read pixels
     if (pixels) {
-      System.out.print("Reading " + (stitch ?
-        FilePattern.findPattern(new File(id)) : id) + " pixel data ");
+      System.out.println();
+      System.out.print("Reading" + s + " pixel data ");
       long s1 = System.currentTimeMillis();
       reader.setSeparated(separate);
-      reader.setSeries(id, series);
       int num = reader.getImageCount(id);
       if (end == 0 || end > num) end = num;
       if (end < 0) end = 0;
@@ -561,81 +630,24 @@ public abstract class FormatReader extends FormatHandler
       viewer.setVisible(true);
     }
 
-    // read metadata
+    // read format-specific metadata table
     System.out.println();
-    System.out.print("Reading " + id + " metadata ");
-    int imageCount = reader.getImageCount(id);
-    boolean rgb = reader.isRGB(id);
-    int sizeX = reader.getSizeX(id);
-    int sizeY = reader.getSizeY(id);
-    int sizeZ = reader.getSizeZ(id);
-    int sizeC = reader.getSizeC(id);
-    int sizeT = reader.getSizeT(id);
-    boolean little = reader.isLittleEndian(id);
-    String dimOrder = reader.getDimensionOrder(id);
+    System.out.println("Reading" + s + " metadata");
     Hashtable meta = reader.getMetadata(id);
-    System.out.println("[done]");
-
-    // output basic metadata
-    System.out.println("-----");
-    System.out.println("Image count = " + imageCount);
-    System.out.print("RGB = " + rgb);
-    if (rgb && separate) System.out.print(" (separated)");
-    else if (!rgb && !separate) System.out.print(" (merged)");
-    System.out.println();
-    System.out.println("Width = " + sizeX);
-    System.out.println("Height = " + sizeY);
-    System.out.println("SizeZ = " + sizeZ);
-    System.out.println("SizeC = " + sizeC);
-    System.out.println("SizeT = " + sizeT);
-    if (imageCount != sizeZ * sizeC * sizeT /
-      ((rgb && !separate) ? sizeC : 1))
-    {
-      System.out.println("************ Warning: ZCT mismatch ************");
-    }
-    System.out.println("Endianness = " +
-      (little ? "intel (little)" : "motorola (big)"));
-    System.out.println("Dimension order = " + dimOrder);
-    System.out.println("-----");
-    int[] indices;
-    if (imageCount > 6) {
-      int q = imageCount / 2;
-      indices = new int[] {0, q - 2, q - 1, q, q + 1, q + 2, imageCount - 1};
-    }
-    else if (imageCount > 2) {
-      indices = new int[] {0, imageCount / 2, imageCount - 1};
-    }
-    else if (imageCount > 1) indices = new int[] {0, 1};
-    else indices = new int[] {0};
-    int[][] zct = new int[indices.length][];
-    int[] indices2 = new int[indices.length];
-    for (int i=0; i<indices.length; i++) {
-      zct[i] = reader.getZCTCoords(id, indices[i]);
-      indices2[i] = reader.getIndex(id, zct[i][0], zct[i][1], zct[i][2]);
-      System.out.print("Plane #" + indices[i] + " <=> Z " + zct[i][0] +
-        ", C " + zct[i][1] + ", T " + zct[i][2]);
-      if (indices[i] != indices2[i]) {
-        System.out.println(" [mismatch: " + indices2[i] + "]");
-      }
-      else System.out.println();
-    }
-    System.out.println("-----");
-
-    // output metadata table
     String[] keys = (String[]) meta.keySet().toArray(new String[0]);
     Arrays.sort(keys);
     for (int i=0; i<keys.length; i++) {
       System.out.print(keys[i] + ": ");
       System.out.println(reader.getMetadataValue(id, keys[i]));
     }
-    System.out.println();
 
     // output OME-XML
     if (omexml) {
+      System.out.println();
+      System.out.println("Generating OME-XML");
       MetadataStore ms = reader.getMetadataStore(id);
       try {
         Method m = ms.getClass().getMethod("dumpXML", (Class[]) null);
-        System.out.println("OME-XML:");
         System.out.println(m.invoke(ms, (Object[]) null));
         System.out.println();
       }
@@ -652,7 +664,7 @@ public abstract class FormatReader extends FormatHandler
 
   /** Creates JFileChooser file filters for this file format. */
   protected void createFilters() {
-    filters = new FileFilter[] { new FormatFileFilter(this) };
+    filters = new FileFilter[] {new FormatFileFilter(this)};
   }
 
 }
