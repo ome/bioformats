@@ -6,10 +6,6 @@ Codecs:
 * AVI - msrle codec (super low priority)
 
 API:
-* Methods for switching between multiple image series:
-  - getSeriesCount(String id) returns number of series available
-  - setSeries(int no) switches which series is "active" (default is #0)
-  - all other methods operate on the active series
 * Methods for handling thumbnails:
   - openThumbImage(String id, int no) - same as openImage, but for thumbnails
   - openThumbBytes(String id, int no) - less important; only if trivial
@@ -18,7 +14,6 @@ Implement readers for other file formats:
 * Anything listed online: http://www.loci.wisc.edu/ome/formats.html
 * SDT (java/loci/apps/slim/SlimPlotter.java, data/sdt, data/specs/sdt)
 * JPEG-2000 formats: .jp2, .jpc, .j2k, etc.
-* animated GIF reader (steal code from ImageJ plugin)
 * MNG (http://www.libpng.org/pub/mng/) -- low priority
 
 API/Other:

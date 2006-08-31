@@ -23,9 +23,9 @@
 # javax.imageio readers
 loci.formats.in.PNGReader         # png [javax.imageio]
 loci.formats.in.JPEGReader        # jpg [javax.imageio]
-loci.formats.in.GIFReader         # gif [javax.imageio]
 
 # standalone readers with unique file extensions
+loci.formats.in.GIFReader         # gif
 loci.formats.in.BMPReader         # bmp
 loci.formats.in.DicomReader       # dcm, dicom
 loci.formats.in.BioRadReader      # pic
