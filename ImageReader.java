@@ -488,8 +488,20 @@ public class ImageReader implements IFormatReader {
    * Checks if the given string is a valid filename for any supported format.
    */
   public boolean isThisType(String name) {
+    // NB: Unlike individual format readers, ImageReader defaults to *not*
+    // allowing files to be opened to analyze type, because doing so is
+    // quite slow with the large number of supported formats.
+    return isThisType(name, false);
+  }
+
+  /**
+   * Checks if the given string is a valid filename for any supported format.
+   * @param open If true, and the file extension is insufficient to determine
+   *  the file type, the (existing) file is opened for further analysis.
+   */
+  public boolean isThisType(String name, boolean open) {
     for (int i=0; i<readers.length; i++) {
-      if (readers[i].isThisType(name)) return true;
+      if (readers[i].isThisType(name, open)) return true;
     }
     return false;
   }

@@ -44,7 +44,6 @@ public class OpenlabReader extends FormatReader {
   /** Helper reader to decode PICT data. */
   private static PictReader pictReader = new PictReader();
 
-
   // -- Fields --
 
   /** Current file. */
@@ -75,24 +74,33 @@ public class OpenlabReader extends FormatReader {
 
   /** Constructs a new Openlab reader. */
   public OpenlabReader() {
-    super("Openlab LIFF", new String[] {"liff", "lif"});
+    super("Openlab LIFF", "liff");
   }
-
 
   // -- FormatReader API methods --
-
-  /** Checks if the given string is a valid filename for an Openlab file. */
-  public boolean isThisType(String name) {
-    // Since we can't always determine it from the name alone (blank
-    // extensions), we open the file and call the block verifier.
-    return checkBytes(name, 16384);
-  }
 
   /** Checks if the given block is a valid header for an Openlab file. */
   public boolean isThisType(byte[] block) {
     return block.length >= 8 && block[0] == 0 && block[1] == 0 &&
       block[2] == -1 && block[3] == -1 && block[4] == 105 &&
       block[5] == 109 && block[6] == 112 && block[7] == 114;
+  }
+
+  /**
+   * Checks if the given string is a valid filename for an Openlab file.
+   * @param open If true, and the file extension is insufficient to determine
+   *  the file type, the (existing) file is opened for further analysis.
+   */
+  public boolean isThisType(String name, boolean open) {
+    String lname = name.toLowerCase();
+    if (lname.endsWith(".liff")) return true;
+
+    if (open) {
+      // since we can't always determine it from the name alone (blank
+      // extensions), we open the file and call the block verifier
+      return checkBytes(name, 8);
+    }
+    else return lname.indexOf(".") < 0; // file appears to have no extension
   }
 
   /** Determines the number of images in the given Openlab file. */
@@ -388,7 +396,6 @@ public class OpenlabReader extends FormatReader {
     initMetadata();
   }
 
-
   // -- Helper methods --
 
   /** Populates the metadata hashtable. */
@@ -537,19 +544,6 @@ public class OpenlabReader extends FormatReader {
     }
   }
 
-
-  // -- Helper methods --
-
-  /** Translates up to the first 4 bytes of a byte array to an integer. */
-  private static int batoi(byte[] inp) {
-    int len = inp.length>4?4:inp.length;
-    int total = 0;
-    for (int i = 0; i < len; i++) {
-      total += (inp[i]<0 ? 256+inp[i] : (int) inp[i]) << (((len - 1) - i) * 8);
-    }
-    return total;
-  }
-
   /**
    * Checks which type of Openlab file this is.
    * 1 =&gt; all planes are greyscale.
@@ -608,6 +602,18 @@ public class OpenlabReader extends FormatReader {
       return 1;
     }
     return 1;
+  }
+
+  // -- Utility methods --
+
+  /** Translates up to the first 4 bytes of a byte array to an integer. */
+  private static int batoi(byte[] inp) {
+    int len = inp.length>4?4:inp.length;
+    int total = 0;
+    for (int i = 0; i < len; i++) {
+      total += (inp[i]<0 ? 256+inp[i] : (int) inp[i]) << (((len - 1) - i) * 8);
+    }
+    return total;
   }
 
   // -- Main method --

@@ -68,10 +68,20 @@ public abstract class FormatHandler implements IFormatHandler {
   }
 
   /**
-   * This default implementation checks filename suffixes against those known
-   * for this format.
+   * Checks if a file matches the type of this format handler.
+   * The default implementation checks filename suffixes against
+   * those known for this format.
    */
-  public boolean isThisType(String name) {
+  public boolean isThisType(String name) { return isThisType(name, true); }
+
+  /**
+   * Checks if a file matches the type of this format handler.
+   * The default implementation checks filename suffixes against
+   * those known for this format (the open parameter does nothing).
+   * @param open If true, and the file extension is insufficient to determine
+   *  the file type, the (existing) file is opened for further analysis.
+   */
+  public boolean isThisType(String name, boolean open) {
     String lname = name.toLowerCase();
     for (int i=0; i<suffixes.length; i++) {
       if (lname.endsWith("." + suffixes[i])) return true;

@@ -102,7 +102,6 @@ public class NikonReader extends BaseTiffReader {
   private static final int HUE = 146;
   private static final int CAPTURE_EDITOR_DATA = 3585;
 
-
   // -- Fields --
 
   /** True if the data is little endian. */
@@ -111,14 +110,12 @@ public class NikonReader extends BaseTiffReader {
   /** Offset to the Nikon Maker Note. */
   protected int makerNoteOffset;
 
-
   // -- Constructor --
 
   /** Constructs a new Nikon reader. */
   public NikonReader() {
     super("Nikon NEF (TIFF)", new String[] {"nef", "tif", "tiff"});
   }
-
 
   // -- FormatReader API methods --
 
@@ -157,17 +154,6 @@ public class NikonReader extends BaseTiffReader {
     }
   }
 
-  /** Checks if the given string is a valid filename for a Nikon NEF file. */
-  public boolean isThisType(String name) {
-    String lname = name.toLowerCase();
-    if (lname.endsWith(".nef")) return true;
-    else if (!lname.endsWith(".tif") && !lname.endsWith(".tiff")) return false;
-
-    // just checking the filename isn't enough to differentiate between
-    // Nikon and regular TIFF; open the file and check more thoroughly
-    return checkBytes(name, BLOCK_CHECK_LEN);
-  }
-
   /**
    * Allows the client to specify whether or not to separate channels.
    * By default, channels are left unseparated; thus if we encounter an RGB
@@ -176,6 +162,23 @@ public class NikonReader extends BaseTiffReader {
   public void setSeparated(boolean separate) {
     separated = separate;
     super.setSeparated(separate);
+  }
+
+  // -- FormatHandler API methods --
+
+  /**
+   * Checks if the given string is a valid filename for a Nikon NEF file.
+   * @param open If true, and the file extension is insufficient to determine
+   *  the file type, the (existing) file is opened for further analysis.
+   */
+  public boolean isThisType(String name, boolean open) {
+    String lname = name.toLowerCase();
+    if (lname.endsWith(".nef")) return true;
+    else if (!lname.endsWith(".tif") && !lname.endsWith(".tiff")) return false;
+
+    // just checking the filename isn't enough to differentiate between
+    // Nikon and regular TIFF; open the file and check more thoroughly
+    return open ? checkBytes(name, BLOCK_CHECK_LEN) : true;
   }
 
   // -- Internal BaseTiffReader API methods --
@@ -242,7 +245,6 @@ public class NikonReader extends BaseTiffReader {
     catch (Exception io) { }
   }
 
-
   // -- Helper methods --
 
   /** Gets the name of the IFD tag encoded by the given number. */
@@ -303,7 +305,6 @@ public class NikonReader extends BaseTiffReader {
     }
     return "" + tag;
   }
-
 
   // -- Main method --
 
