@@ -71,7 +71,7 @@ public class FormatFileFilter extends FileFilter
   public void setOpenAllowed(boolean openAllowed) { allowOpen = openAllowed; }
 
   /** Gets whether it is allowed to open a file to determine its type. */
-  public boolean  isOpenAllowed() { return allowOpen; }
+  public boolean isOpenAllowed() { return allowOpen; }
 
   // -- FileFilter API methods --
 
@@ -83,6 +83,11 @@ public class FormatFileFilter extends FileFilter
 
   /** Gets the filter's description. */
   public String getDescription() { return desc; }
+
+  // -- Object API methods --
+
+  /** Gets a string representation of this file filter. */
+  public String toString() { return "FormatFileFilter: " + desc; }
 
   // -- Comparable API methods --
 

@@ -50,6 +50,15 @@ public class ComboFileFilter extends FileFilter
     desc = description;
   }
 
+  // -- ComboFileFilter API methods --
+
+  /** Gets the list of file filters forming this filter combination. */
+  public FileFilter[] getFilters() {
+    FileFilter[] ff = new FileFilter[filts.length];
+    System.arraycopy(filts, 0, ff, 0, filts.length);
+    return ff;
+  }
+
   // -- Static ComboFileFilter API methods --
 
   /**
@@ -109,6 +118,19 @@ public class ComboFileFilter extends FileFilter
 
   /** Returns the filter's description. */
   public String getDescription() { return desc; }
+
+  // -- Object API methods --
+
+  /** Gets a string representation of this file filter. */
+  public String toString() {
+    StringBuffer sb = new StringBuffer("ComboFileFilter: ");
+    sb.append(desc);
+    for (int i=0; i<filts.length; i++) {
+      sb.append("\n\t");
+      sb.append(filts[i].toString());
+    }
+    return sb.toString();
+  }
 
   // -- Comparable API methods --
 

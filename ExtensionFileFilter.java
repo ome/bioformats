@@ -40,7 +40,6 @@ public class ExtensionFileFilter extends FileFilter
   /** Description. */
   private String desc;
 
-
   // -- Constructors --
 
   /** Constructs a new filter that accepts the given extension. */
@@ -69,6 +68,13 @@ public class ExtensionFileFilter extends FileFilter
     desc = sb.toString();
   }
 
+  // -- ExtensionFileFilter API methods --
+
+  /** Gets the filter's first valid extension. */
+  public String getExtension() { return exts[0]; }
+
+  /** Gets the filter's valid extensions. */
+  public String[] getExtensions() { return exts; }
 
   // -- FileFilter API methods --
 
@@ -87,15 +93,13 @@ public class ExtensionFileFilter extends FileFilter
     return false;
   }
 
-  /** Gets the filter's first valid extension. */
-  public String getExtension() { return exts[0]; }
-
-  /** Gets the filter's valid extensions. */
-  public String[] getExtensions() { return exts; }
-
   /** Gets the filter's description. */
   public String getDescription() { return desc; }
 
+  // -- Object API methods --
+
+  /** Gets a string representation of this file filter. */
+  public String toString() { return "ExtensionFileFilter: " + desc; }
 
   // -- Comparable API methods --
 

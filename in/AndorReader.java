@@ -135,8 +135,7 @@ public class AndorReader extends BaseTiffReader {
    *  the file type, the (existing) file is opened for further analysis.
    */
   public boolean isThisType(String name, boolean open) {
-    String lname = name.toLowerCase();
-    if (!lname.endsWith(".tif") && !lname.endsWith(".tiff")) return false;
+    if (!super.isThisType(name, open)) return false;
 
     // just checking the filename isn't enough to differentiate between
     // Andor and regular TIFF; open the file and check more thoroughly

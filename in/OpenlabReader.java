@@ -92,15 +92,17 @@ public class OpenlabReader extends FormatReader {
    *  the file type, the (existing) file is opened for further analysis.
    */
   public boolean isThisType(String name, boolean open) {
-    String lname = name.toLowerCase();
-    if (lname.endsWith(".liff")) return true;
+    if (super.isThisType(name, open)) return true;
 
     if (open) {
       // since we can't always determine it from the name alone (blank
       // extensions), we open the file and call the block verifier
       return checkBytes(name, 8);
     }
-    else return lname.indexOf(".") < 0; // file appears to have no extension
+    else {
+      String lname = name.toLowerCase();
+      return lname.indexOf(".") < 0; // file appears to have no extension
+    }
   }
 
   /** Determines the number of images in the given Openlab file. */
