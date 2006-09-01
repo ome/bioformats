@@ -174,96 +174,27 @@ public class GIFReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    byte[] bytes = (byte[]) images.get(no);
-    int[] dest = new int[width * height];
+    byte[] b = new byte[1];
 
-    byte[] last = null;
-    if (no > 0) last = openBytes(id, no - 1);
-
-    if (lastDispose > 0) {
-      if (lastDispose == 3) { // use image before last
-        int n = numFrames - 2;
-        if (n > 0) last = openBytes(id, no - 2);
-        else last = null;
+    if (!separated) {
+      int[] ints = (int[]) images.get(no);
+      b = new byte[width * height * 3];
+      for (int i=0; i<ints.length; i++) {
+        b[i] = (byte) ((ints[i] & 0xff0000) >> 16);
+        b[i + ints.length] = (byte) ((ints[i] & 0xff00) >> 8);
+        b[i + 2*ints.length] = (byte) (ints[i] & 0xff);
       }
-
-      if (last != null) {
-        int[] prev = new int[width * height];
-        for (int i=0; i<prev.length; i++) {
-          byte[] s = new byte[3];
-          s[0] = last[i];
-          s[1] = last[i + prev.length];
-          s[2] = last[i + 2*prev.length];
-          prev[i] = DataTools.bytesToInt(s, false);
-        }
-
-        System.arraycopy(prev, 0, dest, 0, width * height);
-
-        if ((lastDispose == 2) && (lastBgColor != 0)) {
-          int rowStart = (int) lastRect.getY();
-          int rowEnd = (int) (rowStart + lastRect.getHeight());
-          int colStart = (int) lastRect.getX();
-          int colEnd = (int) (colStart + lastRect.getWidth());
-
-          for (int i=rowStart; i<rowEnd; i++) {
-            for (int j=colStart; j<colEnd; j++) {
-              dest[width * i + j] = lastBgColor;
-            }
-          }
-        }
-      }
-
-      int pass = 1;
-      int inc = 8;
-      int iline = 0;
-      for (int i=0; i<ih; i++) {
-        int line = i;
-        if (interlace) {
-          if (iline >= ih) {
-            pass++;
-            switch (pass) {
-              case 2: iline = 4; break;
-              case 3: iline = 2; inc = 4; break;
-              case 4: iline = 1; inc = 2;
-            }
-          }
-          line = iline;
-          iline += inc;
-        }
-        line += iy;
-        if (line < height) {
-          int k = line * width;
-          int dx = k + ix;
-          int dlim = dx + iw;
-          if ((k + width) < dlim) dlim = k + width;
-          int sx = i * iw;
-          while (dx < dlim) {
-            // map color and insert in destination
-            int ndx = ((int) bytes[sx++]) & 0xff;
-            dest[dx++] = act[ndx];
-          }
-        }
-      }
-    }
-
-    // convert int array to byte array
-
-    if (separated) {
-      byte[] b = new byte[dest.length];
-      for (int i=0; i<dest.length; i++) {
-        b[i] = (byte) (dest[i] & (0xff0000 << (2 * (no % 3)) ) << 8*(no % 3));
-      }
-      return b;
     }
     else {
-      byte[] b = new byte[dest.length * 3];
-      for (int i=0; i<dest.length; i++) {
-        b[i] = (byte) ((dest[i] & 0xff0000) << 16);
-        b[i + dest.length] = (byte) ((dest[i] & 0xff00) << 8);
-        b[i + 2*dest.length] = (byte) (dest[i] & 0xff);
+      int[] ints = (int[]) images.get(no / 3);
+      b = new byte[width * height];
+      for (int i=0; i<ints.length; i++) {
+        b[i] = (byte) ((ints[i] & (0xff >> 4 - 2*(no % 3))) <<
+          (16 - ((no % 3) * 8)));
       }
-      return b;
     }
+
+    return b;
   }
 
   /** Obtains the specified image from the given GIF file. */
@@ -451,6 +382,20 @@ public class GIFReader extends FormatReader {
           break;
       }
     }
+
+    // populate metadata store
+
+    MetadataStore store = getMetadataStore(id);
+    store.setPixels(
+      new Integer(width),
+      new Integer(height),
+      new Integer(getSizeZ(id)),
+      new Integer(3),
+      new Integer(getSizeT(id)),
+      "int8",
+      new Boolean(false),
+      getDimensionOrder(id),
+      null);
   }
 
   // -- Helper methods --
@@ -579,7 +524,68 @@ public class GIFReader extends FormatReader {
     }
 
     for (i=pi; i<npix; i++) pixels[i] = 0;
-    images.add(pixels);
+    setPixels();
+  }
+
+  private void setPixels() {
+
+    // expose destination image's pixels as an int array
+    int[] dest = new int[width * height];
+    int lastImage = -1;
+
+    // fill in starting image contents based on last image's dispose code
+    if (lastDispose > 0) {
+      if (lastDispose == 3) { // use image before last
+        int n = numFrames - 2;
+        if (n > 0) lastImage = n - 1;
+      }
+
+      if (lastImage != -1) {
+        int[] prev = (int[]) images.get(lastImage);
+        System.arraycopy(prev, 0, dest, 0, width * height);
+
+        if ((lastDispose == 2) && (lastBgColor != 0)) {
+          // fill last image rectangle with background color
+          /* debug */ System.out.println("filling in background color");
+          // TODO
+        }
+      }
+    }
+
+    // copy each source line to the appropriate place in the destination
+
+    int pass = 1;
+    int inc = 8;
+    int iline = 0;
+    for (int i=0; i<ih; i++) {
+      int line = i;
+      if (interlace) {
+        if (iline >= ih) {
+          pass++;
+          switch (pass) {
+            case 2: iline = 4; break;
+            case 3: iline = 2; inc = 4; break;
+            case 4: iline = 1; inc = 2;
+          }
+        }
+        line = iline;
+        iline += inc;
+      }
+      line += iy;
+      if (line < height) {
+        int k = line * width;
+        int dx = k + ix; // start of line in dest
+        int dlim = dx + iw; // end of dest line
+        if ((k + width) < dlim) dlim = k + width; // past dest edge
+        int sx = i * iw; // start of line in source
+        while (dx < dlim) {
+          // map color and insert in destination
+          int index = ((int) pixels[sx++]) & 0xff;
+          dest[dx++] = act[index];
+        }
+      }
+    }
+    images.add(dest);
   }
 
   // -- Main method --

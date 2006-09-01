@@ -278,7 +278,6 @@ public abstract class FormatReader extends FormatHandler
     boolean rgb = isRGB(id);
     if (rgb && !separated) {
       // adjust for RGB merging
-      c = 1;
       sizeC = 1;
     }
 
