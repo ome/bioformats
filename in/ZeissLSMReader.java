@@ -104,19 +104,19 @@ public class ZeissLSMReader extends BaseTiffReader {
   /** Get the size of the Z dimension. */
   public int getSizeZ(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return zSize;
+    return zSize > 0 ? zSize : 1;
   }
 
   /** Get the size of the C dimension. */
   public int getSizeC(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return channels;
+    return channels > 0 ? channels : 1;
   }
 
   /** Get the size of the T dimension. */
   public int getSizeT(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return tSize;
+    return tSize > 0 ? tSize : 1;
   }
 
   /**
@@ -126,9 +126,9 @@ public class ZeissLSMReader extends BaseTiffReader {
   public String getDimensionOrder(String id) throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return dimOrder;
+    return dimOrder != null ? dimOrder : "XYZCT";
   }
-  
+
   /** Obtains a thumbnail for the specified image from the given file. */
   public BufferedImage openThumbImage(String id, int no)
     throws FormatException, IOException
@@ -137,11 +137,11 @@ public class ZeissLSMReader extends BaseTiffReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-    
+
     ifds = TiffTools.getIFDs(in);
     return TiffTools.getImage(ifds[2*no + 1], in);
   }
-  
+
   /** Get the size of the X dimension for the thumbnail. */
   public int getThumbSizeX(String id) throws FormatException, IOException {
     return openThumbImage(id, 0).getWidth();

@@ -114,6 +114,7 @@ public class LeicaReader extends BaseTiffReader {
     if (len < 4) return false;
 
     try {
+      initFile(name);
       RandomAccessStream ras = new RandomAccessStream(name);
       ras.order(true); // little-endian
       if (len < 8) {
@@ -149,7 +150,7 @@ public class LeicaReader extends BaseTiffReader {
         ras.close();
       }
     }
-    catch (IOException exc) { }
+    catch (Exception exc) { }
     return false;
   }
 

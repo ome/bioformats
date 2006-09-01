@@ -74,6 +74,7 @@ public class OIBReader extends FormatReader {
   /** Determines the number of images in the given OIB file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
+    while (getSizeZ(id) * getSizeC(id) * getSizeT(id) != numImages) numImages++;
     return numImages;
   }
 
@@ -109,7 +110,9 @@ public class OIBReader extends FormatReader {
   /** Get the size of the T dimension. */
   public int getSizeT(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return numImages / getSizeC(id);
+    int rtn = numImages / getSizeC(id);
+    while (rtn * getSizeC(id) < numImages) rtn++;
+    return rtn;
   }
 
   /** Return true if the data is in little-endian format. */
@@ -146,6 +149,10 @@ public class OIBReader extends FormatReader {
     }
 
     byte[] pixels = (byte[]) pixelData.get(new Integer(no));
+    if (pixels == null) {
+      return ImageTools.makeImage(new byte[width*height], width, height,
+        1, false);
+    }
     RandomAccessStream ra = new RandomAccessStream(pixels);
     ra.order(true);
 

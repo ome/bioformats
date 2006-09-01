@@ -139,4 +139,25 @@ public abstract class ImageIOReader extends FormatReader {
   /** Closes any open files. */
   public void close() throws FormatException, IOException { }
 
+  /** Initializes the given file. */
+  public void initFile(String id) throws FormatException, IOException {
+    super.initFile(id);
+
+    // populate the metadata store
+
+    MetadataStore store = getMetadataStore(id);
+    store.setPixels(
+      new Integer(getSizeX(id)),
+      new Integer(getSizeY(id)),
+      new Integer(1),
+      new Integer(3),
+      new Integer(1),
+      "int8",
+      new Boolean(false),
+      getDimensionOrder(id),
+      null);
+    setMetadataStore(store);
+  }
+
+
 }
