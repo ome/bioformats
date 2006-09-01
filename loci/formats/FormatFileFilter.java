@@ -27,12 +27,12 @@ package loci.formats;
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
-
-
 /** A file filter for a biological file format, for use with a JFileChooser. */
 public class FormatFileFilter extends FileFilter
   implements java.io.FileFilter, Comparable
 {
+
+  // -- Fields --
 
   /** Associated file format reader. */
   private FormatReader reader;
@@ -40,6 +40,8 @@ public class FormatFileFilter extends FileFilter
   /** Description. */
   private String desc;
 
+  /** Whether it is ok to open a file to determine its type. */
+  private boolean allowOpen = true;
 
   // -- Constructor --
 
@@ -63,18 +65,24 @@ public class FormatFileFilter extends FileFilter
     desc = sb.toString();
   }
 
+  // -- FormatFileFilter API methods --
+
+  /** Sets whether it is allowed to open a file to determine its type. */
+  public void setOpenAllowed(boolean openAllowed) { allowOpen = openAllowed; }
+
+  /** Gets whether it is allowed to open a file to determine its type. */
+  public boolean  isOpenAllowed() { return allowOpen; }
 
   // -- FileFilter API methods --
 
   /** Accepts files in accordance with the file format reader. */
   public boolean accept(File f) {
     if (f.isDirectory()) return true;
-    return reader.isThisType(f.getPath());
+    return reader.isThisType(f.getPath(), allowOpen);
   }
 
   /** Gets the filter's description. */
   public String getDescription() { return desc; }
-
 
   // -- Comparable API methods --
 

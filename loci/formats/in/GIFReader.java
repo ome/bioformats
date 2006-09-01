@@ -59,36 +59,75 @@ public class GIFReader extends FormatReader {
   private LegacyGIFReader legacy;
 
   private int status;
-  private int width;    // full image width
-  private int height;   // full image height
-  private boolean gctFlag;      // global color table used
-  private int gctSize;          // size of global color table
-  private int loopCount;        // iterations; 0 = repeat forever
 
-  private int[] gct;    // global color table
-  private int[] lct;    // local color table
-  private int[] act;    // active color table
+  /** Full image width. */
+  private int width;
 
-  private int bgIndex;  // background color index
-  private int bgColor;  // background color
-  private int lastBgColor; // previous bg color
-  private int pixelAspect; // pixel aspect ratio
+  /** Full image height. */
+  private int height;
 
-  private boolean lctFlag; // local color table flag
-  private boolean interlace; // interlace flag
-  private int lctSize;       // local color table size
+  /** Global color table used. */
+  private boolean gctFlag;
 
-  private int ix, iy, iw, ih; // current image rectangle
-  private Rectangle lastRect; // last image rectangle
+  /** Size of global color table. */
+  private int gctSize;
 
-  private byte[] block = new byte[256]; // current data block
-  private int blockSize = 0; // block size
+  /** Iterations; 0 = repeat forever. */
+  private int loopCount;
+
+  /** Global color table. */
+  private int[] gct;
+
+  /** Local color table. */
+  private int[] lct;
+
+  /** Active color table. */
+  private int[] act;
+
+  /** Background color index. */
+  private int bgIndex;
+
+  /** Background color. */
+  private int bgColor;
+
+  /** Previous bg color. */
+  private int lastBgColor;
+
+  /** Pixel aspect ratio. */
+  private int pixelAspect;
+
+  /** Local color table flag. */
+  private boolean lctFlag;
+
+  /** Interlace flag. */
+  private boolean interlace;
+
+  /** Local color table size. */
+  private int lctSize;
+
+  /** Current image rectangle. */
+  private int ix, iy, iw, ih;
+
+  /** Last image rectangle. */
+  private Rectangle lastRect;
+
+  /** Current data block. */
+  private byte[] dBlock = new byte[256];
+
+  /** Block size. */
+  private int blockSize = 0;
 
   private int dispose = 0;
   private int lastDispose = 0;
-  private boolean transparency = false; // use transparent color
-  private int delay = 0; // delay in ms
-  private int transIndex; // transparent color index
+
+  /** Use transparent color. */
+  private boolean transparency = false;
+
+  /** Delay in ms. */
+  private int delay = 0;
+
+  /** Transparent color index. */
+  private int transIndex;
 
   // LZW working arrays
   private short[] prefix;
@@ -108,9 +147,7 @@ public class GIFReader extends FormatReader {
   // -- FormatReader API methods --
 
   /** Checks if the given block is a valid header for a GIF file. */
-  public boolean isThisType(byte[] block) {
-    return false;
-  }
+  public boolean isThisType(byte[] block) { return false; }
 
   /** Determines the number of images in the given GIF file. */
   public int getImageCount(String id) throws FormatException, IOException {
@@ -352,13 +389,13 @@ public class GIFReader extends FormatReader {
                 break;
               }
 
-              String app = new String(block, 0, 11);
+              String app = new String(dBlock, 0, 11);
               if (app.equals("NETSCAPE2.0")) {
                 do {
                   check = readBlock();
-                  if (block[0] == 0x03) {
-                    int b1 = ((int) block[1]) & 0xff;
-                    int b2 = ((int) block[2]) & 0xff;
+                  if (dBlock[0] == 0x03) {
+                    int b1 = ((int) dBlock[1]) & 0xff;
+                    int b2 = ((int) dBlock[2]) & 0xff;
                     loopCount = (b2 << 8) | b1;
                   }
                 }
@@ -411,7 +448,7 @@ public class GIFReader extends FormatReader {
     if (blockSize > 0) {
       try {
         while (n < blockSize) {
-          count = in.read(block, n, blockSize - n);
+          count = in.read(dBlock, n, blockSize - n);
           if (count == -1) break;
           n += count;
         }
@@ -454,7 +491,7 @@ public class GIFReader extends FormatReader {
 
     datum = bits = count = first = top = pi = bi = 0;
 
-    for (i=0; i<npix; ) {
+    for (i=0; i<npix;) {
       if (top == 0) {
         if (bits < codeSize) {
           if (count == 0) {
@@ -462,7 +499,7 @@ public class GIFReader extends FormatReader {
             if (count <= 0) break;
             bi = 0;
           }
-          datum += (((int) block[bi]) & 0xff) << bits;
+          datum += (((int) dBlock[bi]) & 0xff) << bits;
           bits += 8;
           bi++;
           count--;

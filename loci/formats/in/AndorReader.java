@@ -64,7 +64,6 @@ public class AndorReader extends BaseTiffReader {
     super("Andor Bio-imaging Division TIFF", new String[] {"tif", "tiff"});
   }
 
-
   // -- FormatReader API methods --
 
   /** Checks if the given block is a valid header for an Andor TIFF file. */
@@ -75,7 +74,7 @@ public class AndorReader extends BaseTiffReader {
     if (block.length < 8) return true; // we have no way of verifying further
 
     int ifdlocation = DataTools.bytesToInt(block, 4 , true);
-    if (ifdlocation < 0 || ifdlocation + 1 > block.length) { return false; }
+    if (ifdlocation < 0 || ifdlocation + 1 > block.length) return false;
     else {
       int ifdnumber = DataTools.bytesToInt(block, ifdlocation, 2, true);
       for (int i=0; i<ifdnumber; i++) {
@@ -88,16 +87,6 @@ public class AndorReader extends BaseTiffReader {
       }
       return false;
     }
-  }
-
-  /** Checks if the given string is a valid filename for an Andor TIFF file. */
-  public boolean isThisType(String name) {
-    String lname = name.toLowerCase();
-    if (!lname.endsWith(".tif") && !lname.endsWith(".tiff")) return false;
-
-    // just checking the filename isn't enough to differentiate between
-    // Andor and regular TIFF; open the file and check more thoroughly
-    return checkBytes(name, BLOCK_CHECK_LEN);
   }
 
   /**
@@ -138,6 +127,21 @@ public class AndorReader extends BaseTiffReader {
     return order;
   }
 
+  // -- FormatHandler API methods --
+
+  /**
+   * Checks if the given string is a valid filename for an Andor TIFF file.
+   * @param open If true, and the file extension is insufficient to determine
+   *  the file type, the (existing) file is opened for further analysis.
+   */
+  public boolean isThisType(String name, boolean open) {
+    String lname = name.toLowerCase();
+    if (!lname.endsWith(".tif") && !lname.endsWith(".tiff")) return false;
+
+    // just checking the filename isn't enough to differentiate between
+    // Andor and regular TIFF; open the file and check more thoroughly
+    return open ? checkBytes(name, BLOCK_CHECK_LEN) : true;
+  }
 
   // -- Internal BaseTiffReader API methods --
 

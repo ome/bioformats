@@ -42,7 +42,6 @@ public class LeicaReader extends BaseTiffReader {
   /** All Leica TIFFs have this tag. */
   private static final int LEICA_MAGIC_TAG = 33923;
 
-
   // -- Fields --
 
   /** Flag indicating whether current file is little endian. */
@@ -67,7 +66,6 @@ public class LeicaReader extends BaseTiffReader {
     super("Leica", new String[] {"lei", "tif", "tiff"});
     tiff = new TiffReader();
   }
-
 
   // -- FormatReader API methods --
 
@@ -98,60 +96,6 @@ public class LeicaReader extends BaseTiffReader {
       }
       return false;
     }
-  }
-
-  /** Checks if the given string is a valid filename for a Leica file. */
-  public boolean isThisType(String name) {
-    String lname = name.toLowerCase();
-    if (lname.endsWith(".lei")) return true;
-    else if (!lname.endsWith(".tif") && !lname.endsWith(".tiff")) return false;
-
-    // just checking the filename isn't enough to differentiate between
-    // Leica and regular TIFF; open the file and check more thoroughly
-    File file = new File(name);
-    if (!file.exists()) return false;
-    long len = file.length();
-    if (len < 4) return false;
-
-    try {
-      initFile(name);
-      RandomAccessStream ras = new RandomAccessStream(name);
-      ras.order(true); // little-endian
-      if (len < 8) {
-        // we can only check whether it is a TIFF
-        byte[] block = new byte[4];
-        int magic = ras.readInt();
-        ras.close();
-        return magic == 0x49494949;
-      }
-      ras.seek(4);
-      int ifdlocation = ras.readInt();
-      if (ifdlocation < 0 || ifdlocation >= len - 12) {
-        ras.close();
-        return false;
-      }
-      else {
-        ras.seek(ifdlocation);
-        int ifdnumber = ras.readUnsignedShort();
-        for (int i=0; i<ifdnumber; i++) {
-          if (ifdlocation + 3 + i*12 > len) {
-            ras.close();
-            return false;
-          }
-          else {
-            ras.seek(ifdlocation + 2 + i*12);
-            int ifdtag = ras.readUnsignedShort();
-            if (ifdtag == LEICA_MAGIC_TAG) {
-              ras.close();
-              return true;
-            }
-          }
-        }
-        ras.close();
-      }
-    }
-    catch (Exception exc) { }
-    return false;
   }
 
   /** Determines the number of images in the given Leica file. */
@@ -432,6 +376,68 @@ public class LeicaReader extends BaseTiffReader {
       }
       initMetadata();
     }
+  }
+
+  // -- FormatHandler API methods --
+
+  /**
+   * Checks if the given string is a valid filename for a Leica file.
+   * @param open If true, and the file extension is insufficient to determine
+   *  the file type, the (existing) file is opened for further analysis.
+   */
+  public boolean isThisType(String name, boolean open) {
+    String lname = name.toLowerCase();
+    if (lname.endsWith(".lei")) return true;
+    else if (!lname.endsWith(".tif") && !lname.endsWith(".tiff")) return false;
+    if (!open) return true; // now allowed to be any more thorough
+
+    // just checking the filename isn't enough to differentiate between
+    // Leica and regular TIFF; open the file and check more thoroughly
+    File file = new File(name);
+    if (!file.exists()) return false;
+    long len = file.length();
+    if (len < 4) return false;
+
+    try {
+      initFile(name);
+      RandomAccessStream ras = new RandomAccessStream(name);
+      ras.order(true); // little-endian
+      if (len < 8) {
+        // we can only check whether it is a TIFF
+        byte[] block = new byte[4];
+        int magic = ras.readInt();
+        ras.close();
+        return magic == 0x49494949;
+      }
+      ras.seek(4);
+      int ifdlocation = ras.readInt();
+      if (ifdlocation < 0 || ifdlocation >= len - 12) {
+        ras.close();
+        return false;
+      }
+      else {
+        ras.seek(ifdlocation);
+        int ifdnumber = ras.readUnsignedShort();
+        for (int i=0; i<ifdnumber; i++) {
+          if (ifdlocation + 3 + i*12 > len) {
+            ras.close();
+            return false;
+          }
+          else {
+            ras.seek(ifdlocation + 2 + i*12);
+            int ifdtag = ras.readUnsignedShort();
+            if (ifdtag == LEICA_MAGIC_TAG) {
+              ras.close();
+              return true;
+            }
+          }
+        }
+        ras.close();
+      }
+    }
+    catch (FormatException exc) { }
+    catch (IOException exc) { }
+    return false;
   }
 
   // -- Helper methods --

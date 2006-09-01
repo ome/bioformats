@@ -33,6 +33,13 @@ public interface IFormatHandler {
   /** Checks if the given string is a valid filename for this file format. */
   boolean isThisType(String name);
 
+  /**
+   * Checks if the given string is a valid filename for this file format.
+   * @param open If true, and the file extension is insufficient to determine
+   *  the file type, the (existing) file is opened for further analysis.
+   */
+  boolean isThisType(String name, boolean open);
+
   /** Gets the name of this file format. */
   String getFormat();
 

@@ -51,6 +51,7 @@ public class FluoviewReader extends BaseTiffReader {
   private static final int MMHEADER = 34361;
 
   // -- Fields --
+
   /** Number of optical sections in the file */
   private int sizeZ = 1;
 
@@ -70,7 +71,6 @@ public class FluoviewReader extends BaseTiffReader {
     super("Olympus Fluoview TIFF", new String[] {"tif", "tiff"});
   }
 
-
   // -- FormatReader API methods --
 
   /** Checks if the given block is a valid header for a Fluoview TIFF file. */
@@ -81,18 +81,6 @@ public class FluoviewReader extends BaseTiffReader {
     // for the 3rd byte, and contain the text "FLUOVIEW"
     String test = new String(block);
     return test.indexOf(FLUOVIEW_MAGIC_STRING) != -1;
-  }
-
-  /**
-   * Checks if the given string is a valid filename for a Fluoview TIFF file.
-   */
-  public boolean isThisType(String name) {
-    String lname = name.toLowerCase();
-    if (!lname.endsWith(".tif") && !lname.endsWith(".tiff")) return false;
-
-    // just checking the filename isn't enough to differentiate between
-    // Fluoview and regular TIFF; open the file and check more thoroughly
-    return checkBytes(name, BLOCK_CHECK_LEN);
   }
 
   /**
@@ -131,6 +119,22 @@ public class FluoviewReader extends BaseTiffReader {
   {
     if (!id.equals(currentId)) initFile(id);
     return order;
+  }
+
+  // -- FormatHandler API methods --
+
+  /**
+   * Checks if the given string is a valid filename for a Fluoview TIFF file.
+   * @param open If true, and the file extension is insufficient to determine
+   *  the file type, the (existing) file is opened for further analysis.
+   */
+  public boolean isThisType(String name, boolean open) {
+    String lname = name.toLowerCase();
+    if (!lname.endsWith(".tif") && !lname.endsWith(".tiff")) return false;
+
+    // just checking the filename isn't enough to differentiate between
+    // Fluoview and regular TIFF; open the file and check more thoroughly
+    return open ? checkBytes(name, BLOCK_CHECK_LEN) : true;
   }
 
   // -- Internal BaseTiffReader API methods --
