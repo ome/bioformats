@@ -352,16 +352,15 @@ public class RandomAccessStream implements DataInput {
       oldBufferSize = ((Integer) recent.get(recent.size() - 1)).intValue();
     }
 
-    if (((afp + toRead) < MAX_OVERHEAD) && (afp + toRead < raf.length()) &&
-      (dis != null))
+    if (dis != null && raf != null &&
+      afp + toRead < MAX_OVERHEAD && afp + toRead < raf.length())
     {
       // this is a really special case that allows us to read directly from
       // an array when working with the first MAX_OVERHEAD bytes of the file
       // ** also note that it doesn't change the stream
-
       return ARRAY;
     }
-    else if ((afp >= fp) && (dis != null)) {
+    else if (afp >= fp && dis != null) {
       while (fp < afp) {
         int skip = dis.skipBytes(afp - fp);
         if (skip == 0) break;
@@ -383,7 +382,7 @@ public class RandomAccessStream implements DataInput {
       return DIS;
     }
     else {
-      if ((dis != null) && (afp >= mark) && (fp < (mark + oldBufferSize))) {
+      if (dis != null && afp >= mark && fp < mark + oldBufferSize) {
         int newBufferSize = determineBuffer();
 
         boolean valid = true;
@@ -420,7 +419,6 @@ public class RandomAccessStream implements DataInput {
       }
       else {
         // we don't want this to happen very often
-
         raf.seek(afp);
         return RAF;
       }
