@@ -29,6 +29,7 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+/** A widget for display of a dataset's associated metadata. */
 public class MetadataPane extends JPanel {
 
   // -- Constants --
@@ -54,7 +55,6 @@ public class MetadataPane extends JPanel {
 
   // -- Constructor --
 
-  /** Constructs a widget for display of a dataset's associated metadata. */
   public MetadataPane(Hashtable metadata) {
     super();
 

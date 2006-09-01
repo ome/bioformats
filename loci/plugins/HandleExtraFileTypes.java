@@ -19,6 +19,10 @@ import java.io.*;
 // Gregory Jefferis - 030629
 // jefferis@stanford.edu
 
+/**
+ * Plugin to handle file types which are not implemented
+ * directly in ImageJ through io.Opener.
+ */
 public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
   static final int IMAGE_OPENED=-1;
   static final int PLUGIN_NOT_FOUND=-1;
@@ -33,7 +37,7 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
     if (directory==null) directory = "";
 
     // Try and recognise file type and load the file if recognised
-    ImagePlus imp=openImage(directory,fileName);
+    ImagePlus imp=openImage(directory, fileName);
     if (imp==null) {
       // failed to load file or plugin has opened and displayed it
       IJ.showStatus("");
@@ -42,13 +46,13 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
     ImageStack stack=imp.getStack();
     // Set the stack of this HandleExtraFileTypes object
     // to that attached to the ImagePlus object returned by openImage()
-    setStack(fileName,stack);
+    setStack(fileName, stack);
     // Copy over the calibration info since it doesn't come with the
     // ImageProcessor
     setCalibration(imp.getCalibration());
     // Also copy the Show Info field over if it exists
     if (imp.getProperty("Info")!=null)
-      setProperty("Info",imp.getProperty("Info"));
+      setProperty("Info", imp.getProperty("Info"));
     // Copy over the FileInfo
     setFileInfo(imp.getOriginalFileInfo());
   }
@@ -74,7 +78,8 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
       is = new FileInputStream(path);
       is.read(buf, 0, 132);
       is.close();
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       // Couldn't open the file for reading
       return null;
     }
@@ -91,7 +96,7 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
     if(buf[54]==57 && buf[55]==48) {
       // Ok we've identified the file type
       // Now load it using the relevant plugin
-      imp = (ImagePlus)IJ.runPlugIn("Biorad_Reader", path);
+      imp = (ImagePlus) IJ.runPlugIn("Biorad_Reader", path);
       if (imp==null) width = PLUGIN_NOT_FOUND;
       if (imp!=null&&imp.getWidth()==0) imp = null;
       o = imp;
@@ -106,7 +111,7 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
       // These make an int value of 3 which is the DM3 version number
       if(buf[0]==0 && buf[1]==0 && buf[2]==0 && buf[3]==3) {
         // Ok we've identified the file type - now load it
-        imp = (ImagePlus)IJ.runPlugIn("DM3_Reader", path);
+        imp = (ImagePlus) IJ.runPlugIn("DM3_Reader", path);
         if (imp==null) width = PLUGIN_NOT_FOUND;
         if (imp!=null&&imp.getWidth()==0) imp = null;
         o = imp;
@@ -129,7 +134,7 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
     if ((buf[0]==105&& buf[1]==105&&buf[2]==105&&buf[3]==105) ||
       (buf[0]==109&& buf[1]==109&&buf[2]==109&&buf[3]==109))
     {
-      imp = (ImagePlus)IJ.runPlugIn("IPLab_Reader", path);
+      imp = (ImagePlus) IJ.runPlugIn("IPLab_Reader", path);
       if (imp==null) width = PLUGIN_NOT_FOUND;
       if (imp!=null&&imp.getWidth()==0) imp = null;
       o = imp;
@@ -142,7 +147,7 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
     if (name.endsWith(".img") && buf[0]==75 && buf[1]==65 &&
       buf[2]==74 && buf[3]==0)
     {
-      imp = (ImagePlus)IJ.runPlugIn("InstantImager_Reader", path);
+      imp = (ImagePlus) IJ.runPlugIn("InstantImager_Reader", path);
       if (imp==null) width = PLUGIN_NOT_FOUND;
       if (imp!=null&&imp.getWidth()==0) imp = null;
       o = imp;
@@ -238,7 +243,7 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
       // Bytes 0 and 1 must equal 42 for this file type
       if(buf[0]==42 && buf[1]==42) {
         // Ok we've identified the file type - now load it
-        imp = (ImagePlus)IJ.runPlugIn("XYZ_Reader", path);
+        imp = (ImagePlus) IJ.runPlugIn("XYZ_Reader", path);
         if (imp==null) width = PLUGIN_NOT_FOUND;
         if (imp!=null&&imp.getWidth()==0) imp = null;
         o = imp;

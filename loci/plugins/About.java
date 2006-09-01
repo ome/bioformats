@@ -27,7 +27,9 @@ package loci.plugins;
 import javax.swing.JOptionPane;
 
 /** Displays a small information dialog about this package. */
-public abstract class About {
+public final class About {
+
+  private About() { }
 
   public static void main(String[] args) {
     JOptionPane.showMessageDialog(null,

@@ -136,15 +136,22 @@ public class LociImporter implements PlugIn, ItemListener {
       GenericDialog datasets =
         new GenericDialog("LOCI Bio-Formats Series Chooser");
 
-      for (int i=0; i<r.getSeriesCount(id); i++) {
-        datasets.addCheckbox("Series " + i, i == 0);
+      int seriesCount = r.getSeriesCount(id);
+      for (int i=0; i<seriesCount; i++) {
+        r.setSeries(id, i);
+        int sizeX = r.getSizeX(id);
+        int sizeY = r.getSizeY(id);
+        int imageCount = r.getImageCount(id);
+        //int sizeZ = r.getSizeZ(id);
+        //int sizeC = r.getSizeC(id);
+        //int sizeT = r.getSizeT(id);
+        datasets.addCheckbox("Series " + i + ": " +
+          sizeX + " x " + sizeY + " x " + imageCount, i == 0);
       }
-      if (r.getSeriesCount(id) > 1) datasets.showDialog();
+      if (seriesCount > 1) datasets.showDialog();
 
-      boolean[] series = new boolean[r.getSeriesCount(id)];
-      for (int i=0; i<series.length; i++) {
-        series[i] = datasets.getNextBoolean();
-      }
+      boolean[] series = new boolean[seriesCount];
+      for (int i=0; i<seriesCount; i++) series[i] = datasets.getNextBoolean();
 
       r.setSeparated(!mergeChannels);
 
@@ -276,7 +283,7 @@ public class LociImporter implements PlugIn, ItemListener {
         if (num == 1) IJ.showStatus(elapsed + " seconds");
         else {
           long average = (end - start) / num;
-          IJ.showStatus("LOCI Bio-Formats : " + elapsed + " seconds (" +
+          IJ.showStatus("LOCI Bio-Formats: " + elapsed + " seconds (" +
             average + " ms per plane)");
         }
       }
