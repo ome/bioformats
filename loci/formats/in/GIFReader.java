@@ -544,12 +544,6 @@ public class GIFReader extends FormatReader {
       if (lastImage != -1) {
         int[] prev = (int[]) images.get(lastImage);
         System.arraycopy(prev, 0, dest, 0, width * height);
-
-        if ((lastDispose == 2) && (lastBgColor != 0)) {
-          // fill last image rectangle with background color
-          /* debug */ System.out.println("filling in background color");
-          // TODO
-        }
       }
     }
 
