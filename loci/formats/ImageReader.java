@@ -455,19 +455,7 @@ public class ImageReader implements IFormatReader {
    * @see loci.formats.IFormatHandler#getFileChooser()
    */
   public JFileChooser getFileChooser() {
-    JFileChooser chooser = FormatHandler.buildFileChooser(getFileFilters());
-
-    // By default, some readers might need to open a file to determine if it
-    // is the proper type, if the extension alone isn't enough to distinguish.
-    //
-    // We want to disable that behavior for ImageReader because it is slow.
-    //
-    // Also, most of the formats that do this are TIFF-based, and the TIFF
-    // reader will already green-light anything with .tif extension, making
-    // more thorough checks redundant.
-    disableOpen(chooser.getChoosableFileFilters());
-
-    return chooser;
+    return FormatHandler.buildFileChooser(getFileFilters());
   }
 
   /* (non-Javadoc)
@@ -552,18 +540,6 @@ public class ImageReader implements IFormatReader {
    * @return the current active reader.
    */
   private IFormatReader currentReader() { return readers[index]; }
-
-  /** Disables file probing to verify file type for the given filters. */
-  private void disableOpen(FileFilter[] ff) {
-    for (int i=0; i<ff.length; i++) {
-      if (ff[i] instanceof FormatFileFilter) {
-        ((FormatFileFilter) ff[i]).setOpenAllowed(false);
-      }
-      else if (ff[i] instanceof ComboFileFilter) {
-        disableOpen(((ComboFileFilter) ff[i]).getFilters());
-      }
-    }
-  }
 
   // -- Main method --
 

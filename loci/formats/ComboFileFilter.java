@@ -41,13 +41,24 @@ public class ComboFileFilter extends FileFilter
   /** Description. */
   private String desc;
 
+  /** Whether it is ok to open a file to determine its type. */
+  private boolean allowOpen;
+
   // -- Constructor --
 
   /** Constructs a new filter from a list of other filters. */
   public ComboFileFilter(FileFilter[] filters, String description) {
+    this(filters, description, true);
+  }
+
+  /** Constructs a new filter from a list of other filters. */
+  public ComboFileFilter(FileFilter[] filters, String description,
+    boolean openAllowed)
+  {
     filts = new FileFilter[filters.length];
     System.arraycopy(filters, 0, filts, 0, filters.length);
     desc = description;
+    allowOpen = openAllowed;
   }
 
   // -- ComboFileFilter API methods --
@@ -111,7 +122,10 @@ public class ComboFileFilter extends FileFilter
   /** Accepts files with the proper filename prefix. */
   public boolean accept(File f) {
     for (int i=0; i<filts.length; i++) {
-      if (filts[i].accept(f)) return true;
+      if (filts[i] instanceof FormatFileFilter) {
+        if (((FormatFileFilter) filts[i]).accept(f, allowOpen)) return true;
+      }
+      else if (filts[i].accept(f)) return true;
     }
     return false;
   }
