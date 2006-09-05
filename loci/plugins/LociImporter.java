@@ -57,7 +57,7 @@ public class LociImporter implements PlugIn, ItemListener {
   private JCheckBox stitching = null;
   private boolean mergeChannels = true;
   private boolean splitWindows = false;
-  private boolean showMetadata = true;
+  private boolean showMetadata = false;
   private boolean stitchFiles = false;
 
   // -- PlugIn API methods --
