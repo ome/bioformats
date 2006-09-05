@@ -84,6 +84,7 @@ public class LociImporter implements PlugIn, ItemListener {
       gd.addCheckbox(metadataString, showMetadata);
       gd.addCheckbox(stitchString, stitchFiles);
       gd.showDialog();
+      if (gd.wasCanceled()) return;
       mergeChannels = gd.getNextBoolean();
       splitWindows = gd.getNextBoolean();
       showMetadata = gd.getNextBoolean();
@@ -148,7 +149,10 @@ public class LociImporter implements PlugIn, ItemListener {
         datasets.addCheckbox("Series " + i + ": " +
           sizeX + " x " + sizeY + " x " + imageCount, i == 0);
       }
-      if (seriesCount > 1) datasets.showDialog();
+      if (seriesCount > 1) {
+        datasets.showDialog();
+        if (datasets.wasCanceled()) return;
+      }
 
       boolean[] series = new boolean[seriesCount];
       for (int i=0; i<seriesCount; i++) series[i] = datasets.getNextBoolean();
