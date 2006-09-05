@@ -40,9 +40,6 @@ public class FormatFileFilter extends FileFilter
   /** Description. */
   private String desc;
 
-  /** Whether it is ok to open a file to determine its type. */
-  private boolean allowOpen = true;
-
   // -- Constructor --
 
   /** Constructs a new filter that accepts the given extension. */
@@ -67,19 +64,19 @@ public class FormatFileFilter extends FileFilter
 
   // -- FormatFileFilter API methods --
 
-  /** Sets whether it is allowed to open a file to determine its type. */
-  public void setOpenAllowed(boolean openAllowed) { allowOpen = openAllowed; }
-
-  /** Gets whether it is allowed to open a file to determine its type. */
-  public boolean isOpenAllowed() { return allowOpen; }
+  /**
+   * Accepts files in accordance with the file format reader.
+   * @param allowOpen whether it is ok to open a file to determine its type.
+   */
+  public boolean accept(File f, boolean allowOpen) {
+    if (f.isDirectory()) return true;
+    return reader.isThisType(f.getPath(), allowOpen);
+  }
 
   // -- FileFilter API methods --
 
   /** Accepts files in accordance with the file format reader. */
-  public boolean accept(File f) {
-    if (f.isDirectory()) return true;
-    return reader.isThisType(f.getPath(), allowOpen);
-  }
+  public boolean accept(File f) { return accept(f, true); }
 
   /** Gets the filter's description. */
   public String getDescription() { return desc; }

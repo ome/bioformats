@@ -126,7 +126,17 @@ public abstract class FormatHandler implements IFormatHandler {
     ff = ComboFileFilter.sortFilters(ff);
     FileFilter combo = null;
     if (ff.length > 1) {
-      combo = new ComboFileFilter(ff, "All supported file types");
+      // By default, some readers might need to open a file to determine if it
+      // is the proper type, when the extension alone isn't enough to
+      // distinguish.
+      //
+      // We want to disable that behavior for the "All supported file types"
+      // combination filter, because otherwise it is too slow.
+      //
+      // Also, most of the formats that do this are TIFF-based, and the TIFF
+      // reader will already green-light anything with .tif extension, making
+      // more thorough checks redundant.
+      combo = new ComboFileFilter(ff, "All supported file types", false);
       fc.addChoosableFileFilter(combo);
     }
     for (int i=0; i<ff.length; i++) fc.addChoosableFileFilter(ff[i]);
