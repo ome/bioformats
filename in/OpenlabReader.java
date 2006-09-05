@@ -36,8 +36,20 @@ import loci.formats.*;
  *
  * @author Eric Kjellman egkjellman at wisc.edu
  * @author Curtis Rueden ctrueden at wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class OpenlabReader extends FormatReader {
+
+  // -- Constants --
+
+  /** Color type indicating grayscale image planes. */
+  private static final int TYPE_GRAYSCALE = 1;
+
+  /** Color type indicating RGB image planes. */
+  private static final int TYPE_RGB = 2;
+
+  /** Color type indicating a mix of RGB and grayscale image planes. */
+  private static final int TYPE_MIXED = 3;
 
   // -- Static fields --
 
@@ -69,6 +81,12 @@ public class OpenlabReader extends FormatReader {
 
   /** First plane. */
   private BufferedImage firstPlane;
+
+  /**
+   * The pattern of grayscale and RGB image planes.
+   * Should be one of: TYPE_GRAYSCALE, TYPE_RGB or TYPE_MIXED.
+   */
+  private int colorType;
 
   // -- Constructor --
 
@@ -114,8 +132,7 @@ public class OpenlabReader extends FormatReader {
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    int type = checkType();
-    return type == 2 || type == 3;
+    return colorType != TYPE_GRAYSCALE;
   }
 
   /** Get the size of the X dimension. */
@@ -506,104 +523,95 @@ public class OpenlabReader extends FormatReader {
         in.read(other);
         metadata.put("Other", new String(other));
       }
-
-      // Populate metadata store
-
-      // The metadata store we're working with.
-      MetadataStore store = getMetadataStore(currentId);
-
-      String type = "int8";
-      if (metadata.get("BitDepth") != null) {
-        int bitDepth = ((Short) metadata.get("BitDepth")).intValue();
-
-        if (bitDepth <= 8) type = "int8";
-        else if (bitDepth <= 16) type = "int16";
-        else type = "int32";
-      }
-
-      store.setImage(null, metadata.get("Timestamp").toString(), null, null);
-
-      // FIXME: There is a loss of precision here as we are down-casting from
-      // double to float.
-      store.setStageLabel(null, (Float) metadata.get("XOrigin"),
-        (Float) metadata.get("YOrigin"), null, null);
-
-      // FIXME: There is a loss of precision here as we are down-casting from
-      // double to float.
-      store.setDimensions((Float) metadata.get("XScale"),
-        (Float) metadata.get("YScale"), null, null, null, null);
-
-      in.seek(offset);
-
-      // We need to poke at least one plane so that we can get "sizeX" and
-      // "sizeY" set. to populate the pixels set.
-      try { firstPlane = openImage(currentId, 0); }
-      catch (FormatException e) { e.printStackTrace(); }
-
-      store.setPixels(sizeX, sizeY, new Integer(numBlocks),
-        new Integer(getSizeC(currentId)), new Integer(1), type,
-        new Boolean(!little), "XYCZT", null);
     }
-  }
 
-  /**
-   * Checks which type of Openlab file this is.
-   * 1 =&gt; all planes are greyscale.
-   * 2 =&gt; all planes are RGB.
-   * 3 =&gt; every 4th plane is RGB, remaining planes are greyscale.
-   */
-  private int checkType() throws FormatException, IOException {
-    if (firstPlane == null) firstPlane = openImage(currentId, 0);
+    // Populate metadata store
+
+    // The metadata store we're working with.
+    MetadataStore store = getMetadataStore(currentId);
+
+    String type = "int8";
+    if (metadata.get("BitDepth") != null) {
+      int bitDepth = ((Short) metadata.get("BitDepth")).intValue();
+
+      if (bitDepth <= 8) type = "int8";
+      else if (bitDepth <= 16) type = "int16";
+      else type = "int32";
+    }
+
+    store.setImage(null, metadata.get("Timestamp").toString(), null, null);
+
+    // FIXME: There is a loss of precision here as we are down-casting from
+    // double to float.
+    store.setStageLabel(null, (Float) metadata.get("XOrigin"),
+      (Float) metadata.get("YOrigin"), null, null);
+
+    // FIXME: There is a loss of precision here as we are down-casting from
+    // double to float.
+    store.setDimensions((Float) metadata.get("XScale"),
+      (Float) metadata.get("YScale"), null, null, null, null);
+
+    in.seek(offset);
+
+    // we need to poke at least one plane so that we can get sizeX, sizeY
+    // and colorType to populate the pixels set
+    try { firstPlane = openImage(currentId, 0); }
+    catch (FormatException e) { e.printStackTrace(); }
+
+    // determine colorType:
+    // 1 => all planes are greyscale
+    // 2 => all planes are RGB
+    // 3 => every 4th plane is RGB, remaining planes are greyscale
+    colorType = -1;
     WritableRaster r = firstPlane.getRaster();
     int b = r.getNumBands();
-    if (b == 3) return 2;
+    if (b == 3) colorType = TYPE_RGB;
+    else if (offsets.length <= 3) colorType = TYPE_GRAYSCALE;
+    else {
+      in.seek(offsets[3] + 12);
 
-    if (offsets.length <= 3) return 1;
+      int blockSize = in.readInt();
 
-    in.seek(offsets[3] + 12);
+      // right now I'm gonna skip all the header info
+      // check to see whether or not this is v2 data
+      if (in.read() == 1) in.skipBytes(128);
+      in.skipBytes(169);
+      // read in the block of data
+      byte[] toRead = new byte[blockSize];
+      in.read(toRead);
 
-    int blockSize = in.readInt();
+      Dimension dim;
+      try { dim = pictReader.getDimensions(toRead); }
+      catch (Exception e) { dim = new Dimension(0, 0); }
 
-    // right now I'm gonna skip all the header info
-    // check to see whether or not this is v2 data
-    if (in.read() == 1) in.skipBytes(128);
-    in.skipBytes(169);
-    // read in the block of data
-    byte[] toRead = new byte[blockSize];
-    in.read(toRead);
+      int length = toRead.length;
+      int totalBlocks = -1; // set to allow loop to start
+      int expectedBlock = 0;
+      int pos = 0;
 
-    Dimension dim;
-    try { dim = pictReader.getDimensions(toRead); }
-    catch (Exception e) { dim = new Dimension(0, 0); }
+      sizeX = new Integer(dim.width);
+      sizeY = new Integer(dim.height);
 
-    int length = toRead.length;
-    int totalBlocks = -1; // set to allow loop to start.
-    int expectedBlock = 0;
-    int pos = 0;
-
-    sizeX = new Integer(dim.width);
-    sizeY = new Integer(dim.height);
-
-    if (expectedBlock != totalBlocks) {
-
-      while (pos + 7 < length &&
-        (toRead[pos] != 73 || toRead[pos + 1] != 86 ||
-        toRead[pos + 2] != 69 || toRead[pos + 3] != 65 ||
-        toRead[pos + 4] != 100 || toRead[pos + 5] != 98 ||
-        toRead[pos + 6] != 112 || toRead[pos + 7] != 113))
-      {
-        pos++;
-      }
-
-      if (pos + 32 > length) { // The header is 32 bytes long.
-        if (expectedBlock == 0 && imageType[3] < 9) {
-          return 3;
+      if (expectedBlock != totalBlocks) {
+        while (pos + 7 < length &&
+          (toRead[pos] != 73 || toRead[pos + 1] != 86 ||
+          toRead[pos + 2] != 69 || toRead[pos + 3] != 65 ||
+          toRead[pos + 4] != 100 || toRead[pos + 5] != 98 ||
+          toRead[pos + 6] != 112 || toRead[pos + 7] != 113))
+        {
+          pos++;
         }
-        return 1;
+
+        if (pos + 32 > length) { // the header is 32 bytes long
+          if (expectedBlock == 0 && imageType[3] < 9) colorType = TYPE_MIXED;
+        }
       }
-      return 1;
+      if (colorType < 0) colorType = TYPE_GRAYSCALE;
     }
-    return 1;
+
+    store.setPixels(sizeX, sizeY, new Integer(numBlocks),
+      new Integer(getSizeC(currentId)), new Integer(1), type,
+      new Boolean(!little), "XYCZT", null);
   }
 
   // -- Utility methods --
