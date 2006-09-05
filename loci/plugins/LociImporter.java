@@ -284,7 +284,9 @@ public class LociImporter implements PlugIn, ItemListener {
 
         long end = System.currentTimeMillis();
         double elapsed = (end - start) / 1000.0;
-        if (num == 1) IJ.showStatus(elapsed + " seconds");
+        if (num == 1) {
+          IJ.showStatus("LOCI Bio-Formats: " + elapsed + " seconds");
+        }
         else {
           long average = (end - start) / num;
           IJ.showStatus("LOCI Bio-Formats: " + elapsed + " seconds (" +
