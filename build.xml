@@ -225,7 +225,7 @@ Apache XML-RPC
   <target name="compile" depends="copy-source"
     description="compile classes for LOCI software packages">
     <mkdir dir="${classes.dir}"/>
-    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}" debug="true"
       classpath="${ext.jars}" deprecation="true" source="1.4" target="1.4"/>
   </target>
 -->
@@ -289,7 +289,7 @@ Apache XML-RPC
     <mkdir dir="${classes.dir}"/>
     <javac srcdir="${dest.dir}" destdir="${classes.dir}"
       includes="${formats.source}" classpath="${ext.jars}"
-      deprecation="true" source="1.4" target="1.4"/>
+      debug="true" deprecation="true" source="1.4" target="1.4"/>
   </target>
 
   <target name="jar-formats" depends="compile-formats, copy-jars"
@@ -320,7 +320,7 @@ Apache XML-RPC
     <mkdir dir="${classes.dir}"/>
     <javac srcdir="${dest.dir}" destdir="${classes.dir}"
       includes="${visbio.source}" classpath="${ext.jars}"
-      deprecation="true" source="1.4" target="1.4"/>
+      debug="true" deprecation="true" source="1.4" target="1.4"/>
   </target>
 
   <target name="jar-visbio" depends="compile-visbio, copy-jars, jar-formats"
@@ -495,7 +495,7 @@ Apache XML-RPC
     <mkdir dir="${classes.dir}"/>
     <javac srcdir="${dest.dir}" destdir="${classes.dir}"
       includes="${plugins.source}" classpath="${ext.jars}"
-      deprecation="true" source="1.4" target="1.4"/>
+      debug="true" deprecation="true" source="1.4" target="1.4"/>
   </target>
 
   <target name="jar-plugins" depends="compile-plugins, copy-jars, jar-formats"
@@ -526,7 +526,7 @@ Apache XML-RPC
     <mkdir dir="${classes.dir}"/>
     <javac srcdir="${dest.dir}" destdir="${classes.dir}"
       includes="${notebook.source}" classpath="${ext.jars}"
-      deprecation="true" source="1.4" target="1.4"/>
+      debug="true" deprecation="true" source="1.4" target="1.4"/>
   </target>
 
   <target name="jar-notebook"
@@ -559,7 +559,7 @@ Apache XML-RPC
     <mkdir dir="${classes.dir}"/>
     <javac srcdir="${dest.dir}" destdir="${classes.dir}"
       includes="${leica.source}" classpath="${ext.jars}"
-      deprecation="true" source="1.4" target="1.4"/>
+      debug="true" deprecation="true" source="1.4" target="1.4"/>
   </target>
 
   <target name="jar-leica" depends="compile-leica, copy-jars, jar-formats"
@@ -587,7 +587,7 @@ Apache XML-RPC
     <mkdir dir="${classes.dir}"/>
     <javac srcdir="${dest.dir}" destdir="${classes.dir}"
       includes="${qt.source}" classpath="${ext.jars}"
-      deprecation="true" source="1.4" target="1.4"/>
+      debug="true" deprecation="true" source="1.4" target="1.4"/>
   </target>
 
   <target name="jar-qt" depends="compile-qt"
@@ -615,7 +615,7 @@ Apache XML-RPC
     <mkdir dir="${classes.dir}"/>
     <javac srcdir="${dest.dir}" destdir="${classes.dir}"
       includes="${slim.source}" classpath="${ext.jars}"
-      deprecation="true" source="1.4" target="1.4"/>
+      debug="true" deprecation="true" source="1.4" target="1.4"/>
   </target>
 
   <target name="jar-slim" depends="compile-slim, copy-jars"
