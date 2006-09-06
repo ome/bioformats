@@ -21,4 +21,4 @@
 # showinf: a script for displaying information about a given image file,
 #          while displaying it in the image viewer
 
-java -mx512m loci.formats.ImageReader "$*"
+java -mx512m loci.formats.ImageReader $*
