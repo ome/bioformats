@@ -51,21 +51,23 @@ public class ImageViewer extends JFrame
   protected static final GraphicsConfiguration GC =
     ImageTools.getDefaultConfiguration();
 
-
   // -- Fields --
 
   protected JPanel pane;
   protected ImageIcon icon;
   protected JLabel iconLabel;
-  protected JSlider slider;
+  protected JPanel sliderPanel;
+  protected JSlider nSlider, zSlider, tSlider, cSlider;
   protected JLabel probeLabel;
   protected JMenuItem fileSave;
 
-  protected ImageReader reader;
-  protected ImageWriter writer;
+  protected ImageReader myReader;
+  protected ImageWriter myWriter;
 
+  protected String filename;
+  protected IFormatReader in;
   protected BufferedImage[] images;
-
+  protected int sizeZ, sizeT, sizeC;
 
   // -- Constructor --
 
@@ -78,12 +80,57 @@ public class ImageViewer extends JFrame
     setContentPane(pane);
     setSize(350, 350); // default size
 
-    // navigation slider
-    slider = new JSlider(1, 1);
-    slider.setVisible(false);
-    slider.setBorder(new EmptyBorder(5, 3, 5, 3));
-    pane.add(BorderLayout.SOUTH, slider);
-    slider.addChangeListener(this);
+    // navigation sliders
+    sliderPanel = new JPanel();
+    sliderPanel.setVisible(false);
+    sliderPanel.setBorder(new EmptyBorder(5, 3, 5, 3));
+    sliderPanel.setLayout(new BoxLayout(sliderPanel, BoxLayout.Y_AXIS));
+    pane.add(BorderLayout.SOUTH, sliderPanel);
+
+    JPanel nPanel = new JPanel();
+    nPanel.setLayout(new BoxLayout(nPanel, BoxLayout.X_AXIS));
+    sliderPanel.add(nPanel);
+    sliderPanel.add(Box.createVerticalStrut(2));
+
+    nSlider = new JSlider(1, 1);
+    nSlider.setEnabled(false);
+    nSlider.addChangeListener(this);
+    nPanel.add(new JLabel("N"));
+    nPanel.add(Box.createHorizontalStrut(3));
+    nPanel.add(nSlider);
+
+    JPanel ztcPanel = new JPanel();
+    ztcPanel.setLayout(new BoxLayout(ztcPanel, BoxLayout.X_AXIS));
+    sliderPanel.add(ztcPanel);
+
+    zSlider = new JSlider(1, 1);
+    Dimension dim = zSlider.getPreferredSize();
+    dim.width = 50;
+    zSlider.setPreferredSize(dim);
+    zSlider.setEnabled(false);
+    zSlider.addChangeListener(this);
+    ztcPanel.add(new JLabel("Z"));
+    ztcPanel.add(Box.createHorizontalStrut(3));
+    ztcPanel.add(zSlider);
+    ztcPanel.add(Box.createHorizontalStrut(7));
+
+    tSlider = new JSlider(1, 1);
+    tSlider.setPreferredSize(dim);
+    tSlider.setEnabled(false);
+    tSlider.addChangeListener(this);
+    ztcPanel.add(new JLabel("T"));
+    ztcPanel.add(Box.createHorizontalStrut(3));
+    ztcPanel.add(tSlider);
+    ztcPanel.add(Box.createHorizontalStrut(7));
+
+    cSlider = new JSlider(1, 1);
+    cSlider.setPreferredSize(dim);
+    cSlider.setEnabled(false);
+    cSlider.addChangeListener(this);
+    ztcPanel.add(new JLabel("C"));
+    ztcPanel.add(Box.createHorizontalStrut(3));
+    ztcPanel.add(cSlider);
+    ztcPanel.add(Box.createHorizontalStrut(7));
 
     // image icon
     BufferedImage dummy = ImageTools.makeImage(new byte[1][1], 1, 1);
@@ -125,36 +172,37 @@ public class ImageViewer extends JFrame
     help.add(helpAbout);
 
     // image I/O engine
-    reader = new ImageReader();
-    writer = new ImageWriter();
+    myReader = new ImageReader();
+    myWriter = new ImageWriter();
   }
 
   /** Opens the given file using the ImageReader. */
   public void open(String id) {
     wait(true);
-    String format = null;
     try {
       File f = new File(id);
       id = f.getAbsolutePath();
 
-      format = reader.getFormat(id);
-      //images = reader.open(id);
-      IFormatReader r = reader.getReader(id);
+      //images = myReader.open(id);
+      IFormatReader r = myReader.getReader(id);
       FileStitcher fs = new FileStitcher(r);
       ChannelMerger cm = new ChannelMerger(fs);
 
       int num = cm.getImageCount(id);
       ProgressMonitor progress = new ProgressMonitor(this,
-        "Reading " + id, null, 0, num);
+        "Reading " + id, null, 0, num + 1);
+      sizeZ = cm.getSizeZ(id);
+      sizeT = cm.getSizeT(id);
+      sizeC = cm.getSizeC(id);
+      progress.setProgress(1);
       BufferedImage[] img = new BufferedImage[num];
       for (int i=0; i<num; i++) {
         if (progress.isCanceled()) break;
-        progress.setProgress(i);
         img[i] = cm.openImage(id, i);
-        if (i == 0) setImages(id, format, img);
+        if (i == 0) setImages(id, cm, img);
+        progress.setProgress(i + 2);
       }
-      reader.close();
-      progress.setProgress(num);
+      myReader.close();
     }
     catch (Exception exc) {
       exc.printStackTrace();
@@ -169,8 +217,8 @@ public class ImageViewer extends JFrame
     if (images == null) return;
     wait(true);
     try {
-      //writer.save(id, images);
-      boolean stack = writer.canDoStacks(id);
+      //myWriter.save(id, images);
+      boolean stack = myWriter.canDoStacks(id);
       ProgressMonitor progress = new ProgressMonitor(this,
         "Saving " + id, null, 0, stack ? images.length : 1);
       if (stack) {
@@ -178,14 +226,14 @@ public class ImageViewer extends JFrame
         for (int i=0; i<images.length; i++) {
           progress.setProgress(i);
           boolean canceled = progress.isCanceled();
-          writer.save(id, images[i], i == images.length - 1 || canceled);
+          myWriter.save(id, images[i], i == images.length - 1 || canceled);
           if (canceled) break;
         }
         progress.setProgress(images.length);
       }
       else {
         // save current image only
-        writer.save(id, getImage(), true);
+        myWriter.save(id, getImage(), true);
         progress.setProgress(1);
       }
     }
@@ -194,20 +242,50 @@ public class ImageViewer extends JFrame
   }
 
   /** Sets the viewer to display the given images. */
-  public void setImages(String id, String format, BufferedImage[] images) {
+  public void setImages(String id,
+    IFormatReader reader, BufferedImage[] images)
+  {
+    filename = id;
+    in = reader;
     this.images = images;
+
+    try {
+      sizeZ = reader.getSizeZ(id);
+      sizeT = reader.getSizeT(id);
+      sizeC = reader.getSizeC(id);
+    }
+    catch (Exception exc) { exc.printStackTrace(); }
+
     fileSave.setEnabled(true);
-    slider.removeChangeListener(this);
-    slider.setValue(1);
-    slider.setMaximum(images.length);
-    slider.setVisible(images.length > 1);
-    slider.addChangeListener(this);
+    nSlider.removeChangeListener(this);
+    zSlider.removeChangeListener(this);
+    tSlider.removeChangeListener(this);
+    cSlider.removeChangeListener(this);
+    nSlider.setValue(1);
+    nSlider.setMaximum(images.length);
+    nSlider.setEnabled(images.length > 1);
+    zSlider.setValue(1);
+    zSlider.setMaximum(sizeZ);
+    zSlider.setEnabled(sizeZ > 1);
+    tSlider.setValue(1);
+    tSlider.setMaximum(sizeT);
+    tSlider.setEnabled(sizeT > 1);
+    cSlider.setValue(1);
+    cSlider.setMaximum(sizeC);
+    cSlider.setEnabled(sizeC > 1);
+    nSlider.addChangeListener(this);
+    zSlider.addChangeListener(this);
+    tSlider.addChangeListener(this);
+    cSlider.addChangeListener(this);
+    sliderPanel.setVisible(images.length > 1);
+
     updateLabel(-1, -1);
     sb.setLength(0);
     if (id != null) {
       sb.append(new File(id).getName());
       sb.append(" ");
     }
+    String format = reader.getFormat();
     if (format != null) {
       sb.append("(");
       sb.append(format);
@@ -228,10 +306,16 @@ public class ImageViewer extends JFrame
   }
 
   /** Gets the index of the currently displayed image. */
-  public int getImageIndex() {
-    return slider == null ? 0 : (slider.getValue() - 1);
-  }
+  public int getImageIndex() { return nSlider.getValue() - 1; }
 
+  /** Gets the Z value of the currently displayed image. */
+  public int getZ() { return zSlider.getValue() - 1; }
+
+  /** Gets the T value of the currently displayed image. */
+  public int getT() { return tSlider.getValue() - 1; }
+
+  /** Gets the C value of the currently displayed image. */
+  public int getC() { return cSlider.getValue() - 1; }
 
   // -- ActionListener API methods --
 
@@ -240,7 +324,7 @@ public class ImageViewer extends JFrame
     String cmd = e.getActionCommand();
     if ("open".equals(cmd)) {
       wait(true);
-      JFileChooser chooser = reader.getFileChooser();
+      JFileChooser chooser = myReader.getFileChooser();
       wait(false);
       int rval = chooser.showOpenDialog(this);
       if (rval == JFileChooser.APPROVE_OPTION) {
@@ -254,7 +338,7 @@ public class ImageViewer extends JFrame
     }
     else if ("save".equals(cmd)) {
       wait(true);
-      JFileChooser chooser = writer.getFileChooser();
+      JFileChooser chooser = myWriter.getFileChooser();
       wait(false);
       int rval = chooser.showSaveDialog(this);
       if (rval == JFileChooser.APPROVE_OPTION) {
@@ -280,17 +364,49 @@ public class ImageViewer extends JFrame
     }
   }
 
-
   // -- ChangeListener API methods --
 
   /** Handles slider events. */
   public void stateChanged(ChangeEvent e) {
+    Object src = e.getSource();
+    if (src == nSlider) {
+      // update Z, T and C sliders
+      int ndx = getImageIndex();
+      int[] zct = {-1, -1, -1};
+      try { zct = in.getZCTCoords(filename, ndx); }
+      catch (Exception exc) { exc.printStackTrace(); }
+      if (zct[0] >= 0) {
+        zSlider.removeChangeListener(this);
+        zSlider.setValue(zct[0] + 1);
+        zSlider.addChangeListener(this);
+      }
+      if (zct[1] >= 0) {
+        cSlider.removeChangeListener(this);
+        cSlider.setValue(zct[1] + 1);
+        cSlider.addChangeListener(this);
+      }
+      if (zct[2] >= 0) {
+        tSlider.removeChangeListener(this);
+        tSlider.setValue(zct[2] + 1);
+        tSlider.addChangeListener(this);
+      }
+    }
+    else {
+      // update N slider
+      int ndx = -1;
+      try { ndx = in.getIndex(filename, getZ(), getC(), getT()); }
+      catch (Exception exc) { exc.printStackTrace(); }
+      if (ndx >= 0) {
+        nSlider.removeChangeListener(this);
+        nSlider.setValue(ndx);
+        nSlider.addChangeListener(this);
+      }
+    }
     updateLabel(-1, -1);
     BufferedImage image = getImage();
     if (image != null) icon.setImage(getImage());
     iconLabel.repaint();
   }
-
 
   // -- MouseMotionListener API methods --
 
@@ -299,7 +415,6 @@ public class ImageViewer extends JFrame
 
   /** Handles cursor probes. */
   public void mouseMoved(MouseEvent e) { updateLabel(e.getX(), e.getY()); }
-
 
   // -- Helper methods --
 
@@ -316,6 +431,24 @@ public class ImageViewer extends JFrame
       sb.append("/");
       sb.append(images.length);
     }
+    if (sizeZ > 1) {
+      sb.append("; Z=");
+      sb.append(getZ() + 1);
+      sb.append("/");
+      sb.append(sizeZ);
+    }
+    if (sizeT > 1) {
+      sb.append("; T=");
+      sb.append(getT() + 1);
+      sb.append("/");
+      sb.append(sizeT);
+    }
+    if (sizeC > 1) {
+      sb.append("; C=");
+      sb.append(getC() + 1);
+      sb.append("/");
+      sb.append(sizeC);
+    }
     BufferedImage image = images[ndx];
     int w = image == null ? -1 : image.getWidth();
     int h = image == null ? -1 : image.getHeight();
@@ -325,14 +458,17 @@ public class ImageViewer extends JFrame
       if (images.length > 1) sb.append("; ");
       sb.append("X=");
       sb.append(x);
+      if (w > 0) {
+        sb.append("/");
+        sb.append(w);
+      }
       sb.append("; Y=");
       sb.append(y);
+      if (h > 0) {
+        sb.append("/");
+        sb.append(h);
+      }
       if (image != null) {
-        sb.append(" (");
-        sb.append(image.getWidth());
-        sb.append(" x ");
-        sb.append(image.getHeight());
-        sb.append(")");
         Raster r = image.getRaster();
         double[] pix = r.getPixel(x, y, (double[]) null);
         sb.append("; value");
@@ -352,7 +488,6 @@ public class ImageViewer extends JFrame
   protected void wait(boolean wait) {
     setCursor(wait ? Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) : null);
   }
-
 
   // -- Main method --
 

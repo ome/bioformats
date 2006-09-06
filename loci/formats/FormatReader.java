@@ -441,6 +441,16 @@ public abstract class FormatReader extends FormatHandler
   public boolean testRead(String[] args) throws FormatException, IOException {
     return testRead(this, args);
   }
+
+  // -- FormatHandler API methods --
+
+  /** Creates JFileChooser file filters for this file format. */
+  protected void createFilters() {
+    filters = new FileFilter[] {new FormatFileFilter(this)};
+  }
+
+  // -- Utility methods --
+
   /**
    * A utility method for test reading a file from the command line,
    * and displaying the results in a simple display.
@@ -616,7 +626,7 @@ public abstract class FormatReader extends FormatHandler
 
       // display pixels in image viewer
       ImageViewer viewer = new ImageViewer();
-      viewer.setImages(id, reader.getFormat(), images);
+      viewer.setImages(id, reader, images);
       viewer.setVisible(true);
     }
 
@@ -648,13 +658,6 @@ public abstract class FormatReader extends FormatHandler
     }
 
     return true;
-  }
-
-  // -- FormatHandler API methods --
-
-  /** Creates JFileChooser file filters for this file format. */
-  protected void createFilters() {
-    filters = new FileFilter[] {new FormatFileFilter(this)};
   }
 
 }
