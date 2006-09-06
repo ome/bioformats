@@ -207,6 +207,12 @@ public class LociImporter implements PlugIn, ItemListener {
           end = (int) range.getNextNumber() - 1;
           step = (int) range.getNextNumber();
         }
+        if (begin < 0) begin = 0;
+        if (begin >= num) begin = num - 1;
+        if (end < begin) end = begin;
+        if (end >= num) end = num - 1;
+        if (step < 1) step = 1;
+        int total = (end - begin) / step + 1;
 
         // dump OME-XML to ImageJ's description field, if available
         FileInfo fi = new FileInfo();
@@ -220,6 +226,7 @@ public class LociImporter implements PlugIn, ItemListener {
         ImageStack stackB = null, stackS = null, stackF = null, stackO = null;
         int channels = r.getSizeC(id);
 
+        int q = 0;
         for (int j=begin; j<=end; j+=step) {
           // limit message update rate
           long clock = System.currentTimeMillis();
@@ -227,7 +234,7 @@ public class LociImporter implements PlugIn, ItemListener {
             IJ.showStatus("Reading plane " + (j + 1) + "/" + num);
             time = clock;
           }
-          IJ.showProgress((double) j / num);
+          IJ.showProgress((double) q++ / total);
           BufferedImage img = r.openImage(id, j);
           img = ImageTools.padImage(img, r.getSizeX(id), r.getSizeY(id));
 
