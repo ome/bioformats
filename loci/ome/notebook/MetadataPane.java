@@ -239,10 +239,8 @@ public class MetadataPane extends JPanel
    */
   public Document getDoc() {
     Document doc = null;
-    try {
-      doc = thisOmeNode.getOMEDocument(false);
-    }
-    catch (Exception e) {    }
+    try { doc = thisOmeNode.getOMEDocument(false); }
+    catch (Exception e) { }
     return doc;
   }
 
@@ -500,8 +498,8 @@ public class MetadataPane extends JPanel
     img = null;
     thumb = null;
     internalDefs = new Hashtable();
-    try {thisOmeNode = new OMENode();}
-    catch(Exception e) {e.printStackTrace();}
+    try { thisOmeNode = new OMENode(); }
+    catch(Exception e) { e.printStackTrace(); }
 
     //use the list acquired from Template.xml to form the initial tabs
     Element[] tabList = tParse.getTabs();
