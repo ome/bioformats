@@ -25,7 +25,6 @@ package loci.plugins.browser;
 
 import ij.*;
 import ij.gui.*;
-import ij.io.FileInfo;
 import ij.measure.Calibration;
 import java.io.File;
 import java.awt.*;
@@ -69,7 +68,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   // -- Constructor --
 
-  /** CustomWindow constructors, initialization */
+  /** CustomWindow constructors, initialization. */
   public CustomWindow(LociDataBrowser db, ImagePlus imp, ImageCanvas canvas) {
     super(imp, canvas);
     this.db = db;
@@ -276,17 +275,17 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   // -- CustomWindow methods --
 
-  /** selects and shows slice defined by z, t and c */
-  public synchronized void showSlice(int z, int t, int c) {
-    int index = db.getIndex(z - 1, t - 1, c - 1);
+  /** Selects and shows slice defined by z, t and c. */
+  public synchronized void showSlice(int zVal, int tVal, int cVal) {
+    int index = db.getIndex(zVal - 1, tVal - 1, cVal - 1);
     if (LociDataBrowser.DEBUG) {
       IJ.log("showSlice: index=" + index +
-        "; z=" + z + "; t=" + t + "; c=" + c);
+        "; z=" + zVal + "; t=" + tVal + "; c=" + cVal);
     }
     showSlice(index);
   }
 
-  /** selects and shows slice defined by index */
+  /** Selects and shows slice defined by index. */
   public void showSlice(int index) {
     index++;
 
@@ -311,7 +310,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   // -- ImageWindow methods --
 
-  /** adds 3rd and 4th dimension slice position */
+  /** Adds 3rd and 4th dimension slice position. */
   public void drawInfo(Graphics g) {
     if (db == null) return;
     int zVal = zSliceSel == null ? 1 : zSliceSel.getValue();
@@ -404,7 +403,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     g.drawString(sb.toString(), 5, insets.top + textGap);
   }
 
-  /** Set the Z/T values for a custom virtualization. */
+  /** Sets the Z/T values for a custom virtualization. */
   public void setVirtualization(int[] values) {
     z1 = values[0];
     z2 = values[1];
@@ -413,7 +412,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     customVirtualization = true;
   }
 
-  /** Swap the axes - if the flag is set, then animate along Z. */
+  /** Swaps the axes - if the flag is set, then animate along Z. */
   public void swap(boolean isZ) {
     customVirtualization = false;
 
@@ -432,13 +431,13 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     repaint();
   }
 
-  /** Return true if the axes are swapped. */
+  /** Returns true if the axes are swapped. */
   public boolean isSwapped() { return zString.equals(T_STRING); }
 
-  /** Return true if we are using a custom virtualization. */
+  /** Returns true if we are using a custom virtualization. */
   public boolean isCustom() { return customVirtualization; }
 
-  /** Set the frames per second, and adjust the timer accordingly. */
+  /** Sets the frames per second, and adjust the timer accordingly. */
   public void setFps(int value) {
     fps = value;
     if (animationTimer != null) animationTimer.setDelay(1000 / fps);
@@ -470,7 +469,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       // HACK - if ImageDescription does not end with a null character
       // (older versions of ImageJ truncate the final character)
       if (description.endsWith("</OME")) description += ">";
-      
+
       // pop up a new metadata viewer dialog
       JFrame meta = new JFrame("Metadata - " + getTitle());
       MetadataPane metaPane = new MetadataPane();
@@ -480,8 +479,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       GUI.center(meta);
       meta.setVisible(true);
 */
-      String [] args = {db.filename};
-      MetadataNotebook metaNote = new MetadataNotebook(args,false,false);
+      String[] args = {db.filename};
+      MetadataNotebook metaNote = new MetadataNotebook(args, false, false);
     }
     else if (cmd.equals("options")) {
       OptionsWindow ow = new OptionsWindow(db.hasZ ? db.numZ : 1,
@@ -528,7 +527,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   }
 
   /**
-   * Initialize the virtual stack, using the argument as its boundaries.
+   * Initializes the virtual stack, using the argument as its boundaries.
    * The argument should be in the form of (z1, z2, t1, t2).
    */
   public synchronized void setIndices(int[] idx) {
@@ -598,7 +597,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     JCheckBox channels = (JCheckBox) e.getSource();
     c = channels.isSelected() ? 1 : 2;
 
-    if (db.virtual) {setIndices();}
+    if (db.virtual) setIndices();
     showSlice(z, t, c);
   }
 

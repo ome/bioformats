@@ -26,6 +26,7 @@ package loci.plugins.browser;
 import ij.*;
 import ij.process.*;
 import java.awt.image.*;
+import java.io.IOException;
 import loci.formats.*;
 
 public class ImagePlusWrapper {
@@ -42,10 +43,9 @@ public class ImagePlusWrapper {
    *   of the file names if you use file stitching
    * @param stitch true if use file stitching
    */
-  public ImagePlusWrapper(String name, boolean stitch) throws
-    java.io.IOException, FormatException
+  public ImagePlusWrapper(String name, IFormatReader r, boolean stitch)
+    throws IOException, FormatException
   {
-    FormatReader r = (FormatReader) LociDataBrowser.reader.getReader(name);
     try {
       OMEXMLMetadataStore s = new OMEXMLMetadataStore();
       s.createRoot();
@@ -80,7 +80,7 @@ public class ImagePlusWrapper {
         IJ.showStatus("Reading plane "+(i+1)+"/"+num);
         time = clock;
       }
-      IJ.showProgress((double)i/num);
+      IJ.showProgress((double) i/num);
       BufferedImage img = cm.openImage(name, i);
       if (img.getWidth() != sizeX || img.getHeight() != sizeY) {
         try {
@@ -101,11 +101,11 @@ public class ImagePlusWrapper {
           if (b.length > w*h) {
             byte[] tmp = b;
             b = new byte[w*h];
-            System.arraycopy(tmp,0,b,0,b.length);
+            System.arraycopy(tmp, 0, b, 0, b.length);
           }
-          ip = new ByteProcessor (w,h,b,null);
+          ip = new ByteProcessor(w, h, b, null);
           if (stackB == null) {
-            stackB = new ImageStack(w,h);
+            stackB = new ImageStack(w, h);
           }
           stackB.addSlice(name + ":" + (i + 1), ip);
         }
@@ -175,4 +175,3 @@ public class ImagePlusWrapper {
   public int getNumTotal() { return numTotal; }
 
 }
-

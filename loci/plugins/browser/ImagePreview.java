@@ -37,8 +37,8 @@ import loci.formats.*;
 public class ImagePreview extends JComponent
   implements PropertyChangeListener
 {
-  ImageIcon thumbnail = null;
-  File file = null;
+  protected ImageIcon thumbnail = null;
+  protected File file = null;
 
   public ImagePreview(JFileChooser fc) {
     setPreferredSize(new Dimension(100, 50));
@@ -61,7 +61,7 @@ public class ImagePreview extends JComponent
 
       ImageReader ir = new ImageReader();
       FormatReader fr = (FormatReader) ir.getReader(file.getAbsolutePath());
-      BufferedImage image = fr.openThumbImage(file.getAbsolutePath(),0);
+      BufferedImage image = fr.openThumbImage(file.getAbsolutePath(), 0);
 
       thumbnail = new ImageIcon(image);
     }

@@ -32,7 +32,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
 import loci.formats.*;
 
 public class LociOpener implements ItemListener {
@@ -46,22 +45,9 @@ public class LociOpener implements ItemListener {
 
   public LociOpener() {
     // set up the file chooser
+    fc = new ImageReader().getFileChooser();
     String ijDir = OpenDialog.getDefaultDirectory();
-    fc = ijDir == null ? new JFileChooser() : new JFileChooser(ijDir);
-
-    // add a custom file filter
-    FileFilter[] ff = LociDataBrowser.reader.getFileFilters();
-    ff = ComboFileFilter.sortFilters(ff);
-    ComboFileFilter combo =
-      new ComboFileFilter(ff, "All supported file types");
-    if (ff.length > 1) {
-      fc.addChoosableFileFilter(combo);
-    }
-    for (int i=0; i<ff.length; i++) {
-      fc.addChoosableFileFilter(ff[i]);
-    }
-    if (combo != null) fc.setFileFilter(combo);
-    else fc.setFileFilter(ff[0]);
+    if (ijDir != null) fc.setCurrentDirectory(new File(ijDir));
 
     // add the preview pane
     JPanel p = new JPanel(new BorderLayout());

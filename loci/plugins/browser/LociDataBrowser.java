@@ -48,31 +48,31 @@ public class LociDataBrowser implements PlugIn {
 
   // -- Fields --
 
-  /** filename for each index */
+  /** Filename for each index. */
   protected String[] names;
 
   /** The file format reader used by the plugin. */
-  protected static ImageReader reader = new ImageReader();
+  protected ImageReader reader = new ImageReader();
 
   /** The current file name. */
-  protected static String filename;
+  protected String filename;
 
-  /** whether dataset has multiple Z, T and C positions */
+  /** Whether dataset has multiple Z, T and C positions. */
   protected boolean hasZ, hasT, hasC;
 
-  /** number of Z, T and C positions */
+  /** Number of Z, T and C positions. */
   protected int numZ, numT, numC;
 
-  /** lengths of all dimensional axes; lengths[0] equals image depth */
+  /** Lengths of all dimensional axes; lengths[0] equals image depth. */
   protected int[] lengths;
 
-  /** indices into lengths array for Z, T and C */
+  /** Indices into lengths array for Z, T and C. */
   protected int zIndex, tIndex, cIndex;
 
-  /** whether stack is accessed from disk as needed */
+  /** Whether stack is accessed from disk as needed. */
   protected boolean virtual;
 
-  /** cache manager (if virtual stack is used). */
+  /** Cache manager (if virtual stack is used). */
   protected CacheManager manager;
 
   /** Series to use in a multi-series file. */
@@ -122,7 +122,7 @@ public class LociDataBrowser implements PlugIn {
     tIndex = t;
   }
 
-  /** gets the slice number for the given Z, T and C indices */
+  /** Gets the slice number for the given Z, T and C indices. */
   public int getIndex(int z, int t, int c) {
     int[] pos = new int[lengths.length];
     if (zIndex >= 0) pos[zIndex] = z;
@@ -138,7 +138,7 @@ public class LociDataBrowser implements PlugIn {
     return raster;
   }
 
-  /** Set the series to open. */
+  /** Sets the series to open. */
   public void setSeries(int num) {
     // TODO : this isn't the prettiest way of prompting for a series
     GenericDialog datasets =
@@ -284,7 +284,7 @@ public class LociDataBrowser implements PlugIn {
           show(ip);
         }
         else {
-          ipw = new ImagePlusWrapper(absname, true);
+          ipw = new ImagePlusWrapper(absname, reader.getReader(name), true);
           numZ = ipw.sizeZ; numT = ipw.sizeT; numC = ipw.sizeC;
           zIndex = ipw.dim.indexOf('Z') - 2;
           tIndex = ipw.dim.indexOf('T') - 2;
