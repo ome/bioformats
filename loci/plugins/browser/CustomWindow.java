@@ -33,7 +33,9 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import loci.ome.notebook.MetadataNotebook;
+import loci.formats.ReflectedUniverse;
+import loci.formats.ReflectException;
+//import loci.ome.notebook.MetadataNotebook;
 
 public class CustomWindow extends ImageWindow implements ActionListener,
   AdjustmentListener, ChangeListener, ItemListener, KeyListener
@@ -224,15 +226,16 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     // OME-XML button
     boolean canDoXML = true;
     try {
-      // disable XML button if ome-java library is not installed
-      Class.forName("org.openmicroscopy.xml.OMENode");
+      // disable XML button if proper libraries are not installed
+      Class.forName("org.openmicroscopy.xml.OMENode"); // ome-java.jar
+      Class.forName("loci.ome.notebook.MetadataNotebook"); // ome-notebook.jar
+      Class.forName("com.jgoodies.forms.layout.FormLayout"); // forms-1.0.4.jar
     }
     catch (Throwable e) { canDoXML = false; }
     if (canDoXML) {
       xml = new JButton("Metadata");
       xml.addActionListener(this);
       xml.setActionCommand("xml");
-      xml.setEnabled(true);
 
       gbc.gridx = 5;
       gbc.gridy = 3;
@@ -480,7 +483,19 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       meta.setVisible(true);
 */
       String[] args = {db.filename};
-      MetadataNotebook metaNote = new MetadataNotebook(args, false, false);
+      //MetadataNotebook metaNote = new MetadataNotebook(args, false, false);
+      try {
+        ReflectedUniverse r = new ReflectedUniverse();
+        r.exec("import loci.ome.notebook.MetadataNotebook");
+        r.setVar("args", args);
+        r.setVar("false", false);
+        r.exec("new MetadataNotebook(args, false, false)");
+      }
+      catch (ReflectException exc) {
+        JOptionPane.showMessageDialog(this,
+          "Sorry, there has been an error creating the metadata editor.",
+          "LOCI 4D Data Browser", JOptionPane.ERROR_MESSAGE);
+      }
     }
     else if (cmd.equals("options")) {
       OptionsWindow ow = new OptionsWindow(db.hasZ ? db.numZ : 1,
