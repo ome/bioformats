@@ -38,7 +38,7 @@ public class WiscScanPane extends JTabbedPane
   implements ActionListener, ItemListener, DocumentListener
 {
   /** Holds types of experiments available.*/
-	public static final Object [] exChoices = {"Time-lapse","4-D+",
+	public static final Object [] EX_CHOICES = {"Time-lapse","4-D+",
 	  "PGI/Documentation",
 		"Photoablation","Fluorescense-Lifetime","Spectral-Imaging",
 		"FP","FRET","Screen","Immunocytochemistry Immunofluorescence",
@@ -46,16 +46,16 @@ public class WiscScanPane extends JTabbedPane
 	  "FRAP","Photoactivation","Uncaging","Optical-Trapping",
 		"Other"};
   /** Holds types of filter wheels.*/
-	public static final Object [] wheeChoices = {"None","1 TFI 650SP"};
+	public static final Object [] WHEE_CHOICES = {"None","1 TFI 650SP"};
 	/** Holds types of filter holders.*/
-	public static final Object [] hoChoices = {"None","1 TFI 650SP"};
+	public static final Object [] HO_CHOICES = {"None","1 TFI 650SP"};
 
   /** The various GUI input components for this program.*/
   protected JComboBox groupBox, exB, wheeB, hoB;
   /** The various GUI input components for this program.*/
   protected JCheckBox tiC, phC, pmtC;
   /** The various GUI input components for this program.*/
-  protected JTextField firstField,lastField,OMEField,passField,
+  protected JTextField firstField,lastField,omeField,passField,
     emailField,prT, tempT, pocT, tapT, tiT,pmtT;
   /** The various GUI input components for this program.*/
   protected JTextArea desA;
@@ -104,12 +104,12 @@ public class WiscScanPane extends JTabbedPane
 	  lastField = new JTextField();
 	  lastField.setPreferredSize(new Dimension(w,h));
 	  lastField.getDocument().addDocumentListener(this);
-	  JLabel OMELabel = new JLabel("OME Name (not supported)");
-	  OMELabel.setPreferredSize(new Dimension(w,h));
-	  OMEField = new JTextField();
-	  OMEField.setEnabled(false);
-	  OMEField.setPreferredSize(new Dimension(w,h));
-	  OMEField.getDocument().addDocumentListener(this);
+	  JLabel omeLabel = new JLabel("OME Name (not supported)");
+	  omeLabel.setPreferredSize(new Dimension(w,h));
+	  omeField = new JTextField();
+	  omeField.setEnabled(false);
+	  omeField.setPreferredSize(new Dimension(w,h));
+	  omeField.getDocument().addDocumentListener(this);
 	  JLabel passLabel = new JLabel("Password (not supported)");
 	  passLabel.setPreferredSize(new Dimension(w,h));
 	  passField = new JTextField();
@@ -141,8 +141,8 @@ public class WiscScanPane extends JTabbedPane
     build.add(firstField,cc.xy(2,4));
     build.add(lastLabel,cc.xy(2,6));
     build.add(lastField,cc.xy(2,8));
-    build.add(OMELabel,cc.xy(2,10));
-    build.add(OMEField,cc.xy(2,12));
+    build.add(omeLabel,cc.xy(2,10));
+    build.add(omeField,cc.xy(2,12));
     build.add(passLabel,cc.xy(2,14));
     build.add(passField,cc.xy(2,16));
     build.add(emailLabel,cc.xy(2,18));
@@ -231,12 +231,12 @@ public class WiscScanPane extends JTabbedPane
 		desS.setVerticalScrollBarPolicy(
       JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		  
-		exB = new JComboBox(exChoices);
+		exB = new JComboBox(EX_CHOICES);
 		exB.setPreferredSize(new Dimension(w,h));
 		exB.addActionListener(this);
-		wheeB = new JComboBox(wheeChoices);
+		wheeB = new JComboBox(WHEE_CHOICES);
 		wheeB.setEnabled(false);
-		hoB = new JComboBox(hoChoices);
+		hoB = new JComboBox(HO_CHOICES);
 		hoB.setEnabled(false);
 		
 		tiC = new JCheckBox("Ti-Sapphire");
@@ -328,7 +328,7 @@ public class WiscScanPane extends JTabbedPane
       pmtC.setEnabled(editable);
       firstField.setEditable(editable);
       lastField.setEditable(editable);
-//      OMEField.setEditable(editable);
+//      omeField.setEditable(editable);
 //      passField.setEditable(editable);
       emailField.setEditable(editable);
       prT.setEditable(editable);
@@ -403,8 +403,8 @@ public class WiscScanPane extends JTabbedPane
 	  	  }
   	  }
   	}
-  	Arrays.sort(exChoices);
-  	if(Arrays.binarySearch(exChoices, exType) >= 0) 
+  	Arrays.sort(EX_CHOICES);
+  	if(Arrays.binarySearch(EX_CHOICES, exType) >= 0) 
   	  exB.setSelectedItem(exType);
   	else exB.setSelectedItem("Other");
   	if (exEle == null && exVector.size() != 0) {
