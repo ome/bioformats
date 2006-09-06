@@ -139,7 +139,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
     gbc.gridx = 1;
     gbc.gridy = 0;
-    gbc.gridwidth = 5;
+    if (db.numC > 2) gbc.gridwidth = 5;
+    else gbc.gridwidth = 6;
     gbc.fill = GridBagConstraints.HORIZONTAL;
     gbc.weightx = 1.0;
     gridbag.setConstraints(zSliceSel, gbc);
@@ -546,6 +547,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
    * The argument should be in the form of (z1, z2, t1, t2).
    */
   public synchronized void setIndices(int[] idx) {
+/*
     // log usage
     if (LociDataBrowser.DEBUG) {
       System.err.println("Calling setIndices(int[])");
@@ -561,9 +563,11 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         indices[k++] = db.getIndex(i-1, j-1, c-1);
       }
     }
+*/
   }
 
   public synchronized void setIndices() {
+/*
     boolean swapped = zString.equals(T_STRING) || !db.hasT;
     if (swapped) {  // animate top scrolling bar
       int[] indices = new int[zSliceSel.getMaximum() - 1];
@@ -577,6 +581,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         indices[k] = db.getIndex(z-1, k, c-1);
       }
     }
+*/
   }
 
   // -- AdjustmentListener methods --
