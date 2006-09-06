@@ -127,21 +127,19 @@ public class MetadataNotebook extends JFrame
     scanP.setEditable(editable);
 
     //create a MetadataPane, where most everything happen
-    if (args != null) {
-      if(args.length > 0) {
-        File file = null;
-        try {
-          file = new File(args[0]);
-        }
-        catch (Exception exc) {
-          System.out.println("Error occured: You suck.");
-        }
-        currentFile = file;
-        metadata = new MetadataPane(file, addSave, editable);
-        setTitle("OME Metadata Notebook - " + file);
+    if (args != null && args.length > 0) {
+      File file = null;
+      try {
+        file = new File(args[0]);
       }
+      catch (Exception exc) {
+        System.out.println("Error occured: You suck.");
+      }
+      currentFile = file;
+      metadata = new MetadataPane(file, addSave, editable);
+      setTitle("OME Metadata Notebook - " + file);
     }
-    else metadata = new MetadataPane((File)null, addSave, editable);
+    else metadata = new MetadataPane((File) null, addSave, editable);
 
     metadata.setVisible(true);
     mdp.setVisible(false);
