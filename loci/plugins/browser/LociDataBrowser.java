@@ -328,4 +328,10 @@ public class LociDataBrowser implements PlugIn {
     }
   }
 
+  /** Main method, for testing. */
+  public static void main(String[] args) {
+    new ImageJ(null);
+    new LociDataBrowser().run("");
+  }
+
 }

@@ -1,8 +1,8 @@
 <?xml version="1.0" ?>
 <NotebookTemplate Version="1.0">
-	<OMEElement XMLName="Project" Description="Data having to do with this project.">
-	    <OMEAttribute XMLName="ID"  Type="ID"/>
-	        <OMEAttribute XMLName="Name"  Description="The name of this project."/>
+	<OMEElement XMLName="Project" Description="Data having to do with this project." RefVars="%Name: $Name%">
+	  <OMEAttribute XMLName="ID"  Type="ID"/>
+	  <OMEAttribute XMLName="Name"  Description="The name of this project."/>
 		<OMEAttribute XMLName="Experimenter" Type="Ref" Description="Refers to the experimenter doing the project."/>	
 		<OMEAttribute XMLName="Group" Type="Ref" Description="Refers to the group doing the project."/>
 	</OMEElement>
@@ -11,21 +11,21 @@
 		<OMEAttribute XMLName="Leader" Type="Ref" Description="Refers to the leader of this group."/>	
 		<OMEAttribute XMLName="Contact" Type="Ref" Description="Who to contact in this group."/>
 	</OMEElement>
-	<OMEElement XMLName="Dataset" Description="Information about the dataset.">
+	<OMEElement XMLName="Dataset" Description="Information about the dataset." RefVars="%Name: $Name%">
 		<OMEAttribute XMLName="ID"  Type="ID"/>
-	        <OMEAttribute XMLName="Name"  Description="The name of this dataset."/>
-	        <OMEAttribute XMLName="Locked"  Description="Whether or not this experiment is locked."/>
+	  <OMEAttribute XMLName="Name"  Description="The name of this dataset."/>
+	  <OMEAttribute XMLName="Locked"  Description="Whether or not this experiment is locked."/>
 		<OMEAttribute XMLName="Experimenter" Type="Ref" Description="Refers to the experimenter associated with this dataset"/>	
 		<OMEAttribute XMLName="Group" Type="Ref" Description="Refers to the group associated with this dataset."/>
 	</OMEElement>
-	<OMEElement XMLName="Image" Description="Information about the image acquired.">
+	<OMEElement XMLName="Image" Description="Information about the image acquired." RefVars="%Name: $Name%%Date Created: $CreationDate%">
 		<OMEAttribute XMLName="ID"  Type="ID"/>
 		<OMEAttribute XMLName="Description" Type="Desc"/>
 		<OMEAttribute XMLName="Name" Description="The name of this image."/>
 		<OMEAttribute XMLName="CreationDate" Description="The date when this image was created."/>
 		<OMEAttribute XMLName="Experimenter" Type="Ref" Description="Refers to the experimenter associated with this image."/>
 		<OMEAttribute XMLName="DefaultPixels" Type="Ref" Description="Refers to the pixels that are in this image."/>
-		<OMEElement XMLName="LogicalChannel" Description="The Channel associated with this image.">
+		<OMEElement XMLName="LogicalChannel" Description="The Channel associated with this image." RefVars="%Name: $Name%">
 			<OMEAttribute XMLName="ID"  Type="ID"/>
 			<OMEAttribute XMLName="Name" Description="The name of this LogicalChannel."/>
 			<OMEAttribute XMLName="LightSource" Type="Ref" Description="Refers to the lightsource used for this LogicalChannel."/>
@@ -33,7 +33,7 @@
 			<OMEAttribute XMLName="Detector" Type="Ref" Description="Refers to the detector used to create this LogicalChannel."/>
 			<OMEAttribute XMLName="Filter" Type="Ref" Description="Refers to the filter used in this LogicalChannel."/>
 		</OMEElement>
-		<OMEElement XMLName="Pixels" Description="The Pixels associated with this element.">
+		<OMEElement XMLName="Pixels" Description="The Pixels associated with this element." RefVars="%Type: $PixelType%">
 			<OMEAttribute XMLName="ID" Type="ID"/>
 			<OMEAttribute XMLName="SizeX" Description="The x coordinate size of these pixels."/>
 			<OMEAttribute XMLName="SizeY" Description="The y coordinate size of these pixels."/>
@@ -42,7 +42,7 @@
 			<OMEAttribute XMLName="SizeT" Description="The t coordinate size of these pixels."/>
 			<OMEAttribute XMLName="PixelType" Description="Describes the type of pixels used."/>
 		</OMEElement>
-		<OMEElement XMLName="LaserCoordinates" Description="The coordinates of the laser.">
+		<OMEElement XMLName="LaserCoordinates" Description="The coordinates of the laser." RefVars="%Type: $Type%">
 			<OMEAttribute XMLName="ID" Type="ID"/>
 			<OMEAttribute XMLName="Laser" Type="Ref" Description="The laser refered to by these coordinates."/>
 			<OMEAttribute XMLName="Type" Description="The type of laser event."/>
@@ -53,13 +53,13 @@
 			<OMEAttribute XMLName="TheT" Description="The time point of the event."/>
 		</OMEElement>
 	</OMEElement>
-	<OMEElement XMLName="Experiment" Description="Describes the experiment.">
+	<OMEElement XMLName="Experiment" Description="Describes the experiment." RefVars="%Type: $Type%">
 		<OMEAttribute XMLName="ID" Type="ID"/>
-	        <OMEAttribute XMLName="Type"  Description="The type of experiment this was."/>
+	  <OMEAttribute XMLName="Type"  Description="The type of experiment this was."/>
 		<OMEAttribute XMLName="Description" Description="A brief description of the experiment." Type="Desc"/>
 		<OMEAttribute XMLName="Experimenter" Type="Ref" Description="Refers to the experimenter associated with this experiment."/>
 	</OMEElement>
-	<OMEElement XMLName="Experimenter" Description="Information about the person who did the experiment.">
+	<OMEElement XMLName="Experimenter" Description="Information about the person who did the experiment." RefVars="%Name: $FirstName  $LastName%%Email: $Email%">
 		<OMEAttribute XMLName="ID"  Type="ID"/>
 		<OMEAttribute XMLName="FirstName" Description="The experimenter's first name."/>
 		<OMEAttribute XMLName="LastName" Description="The experimenter's last name."/>
@@ -67,28 +67,28 @@
 		<OMEAttribute XMLName="Institution" Description="The institution the experimenter belongs to."/>
 		<OMEAttribute XMLName="Group" Type="Ref" Description="Refers to the group associated with this experimenter."/>		
 	</OMEElement>
-	<OMEElement XMLName="Instrument" Description="Describes the instrument used.">
+	<OMEElement XMLName="Instrument" Description="Describes the instrument used." RefVars="%Manufacturer: $Manufacturer%%Model: $Model%%Type: $Type%%Serial Number: $SerialNumber%">
 		<OMEAttribute XMLName="ID"  Type="ID"/>		
 		<OMEAttribute XMLName="Manufacturer"  Description="The manufacturer of this instrument."/>
 		<OMEAttribute XMLName="Model"  Description="The model information about this instrument."/>
 		<OMEAttribute XMLName="SerialNumber"  Description="The serialnumber of this instrument."/>
 		<OMEAttribute XMLName="Type"  Description="The type of instrument this was."/>
 	</OMEElement>
-  <OMEElement XMLName="LightSource" Description="Information about the light source of some instrument.">
+  <OMEElement XMLName="LightSource" Description="Information about the light source of some instrument." RefVars="%Manufacturer: $Manufacturer%%Model: $Model%%Serial Number: $SerialNumber%">
 		<OMEAttribute XMLName="ID"  Type="ID"/>		
 		<OMEAttribute XMLName="Manufacturer"  Description="The manufacturer of this light source."/>
 		<OMEAttribute XMLName="Model"  Description="The model information about this light source."/>
 		<OMEAttribute XMLName="SerialNumber"  Description="The serialnumber of this light source."/>
 		<OMEAttribute XMLName="Instrument"  Description="Refers to the instrument this light source was for." Type="Ref"/>
 	</OMEElement>
-	<OMEElement XMLName="Laser" Description="Information about the laser for some light source.">
+	<OMEElement XMLName="Laser" Description="Information about the laser for some light source." RefVars="%Type: $Type%%Medium: $Medium%%Wavelength: $Wavelength%">
 		<OMEAttribute XMLName="ID"  Type="ID"/>		
 		<OMEAttribute XMLName="Medium"  Description="The medium used for this laser."/>
 		<OMEAttribute XMLName="Type"  Description="The type of laser this is."/>
 		<OMEAttribute XMLName="Wavelength"  Description="The wavelength of the laser."/>
 		<OMEAttribute XMLName="LightSource"  Description="Refers to the light source this laser was associated with." Type="Ref"/>
 	</OMEElement>
-	<OMEElement XMLName="Detector" Description="Information about the detector of some instrument.">
+	<OMEElement XMLName="Detector" Description="Information about the detector of some instrument." RefVars="%Manufacturer: $Manufacturer%%Model: $Model%%Type: $Type%%Serial Number: $SerialNumber%%Gain: $Gain%">
 		<OMEAttribute XMLName="ID"  Type="ID"/>		
 		<OMEAttribute XMLName="Gain"  Description="The gain setting for this detector."/>
 		<OMEAttribute XMLName="Manufacturer"  Description="The manufacturer of this detector."/>
@@ -101,7 +101,7 @@
 		<OMEAttribute XMLName="ID"  Type="ID"/>		
     <OMEAttribute XMLName="Instrument"  Description="Refers to the instrument this filter was for." Type="Ref"/>
 	</OMEElement>
-	<OMEElement XMLName="Objective" Description="Info relating to the experiment's objective.">
+	<OMEElement XMLName="Objective" Description="Info relating to the experiment's objective." RefVars="%Manufacturer: $Manufacturer%%Model: $Model%%Serial Number: $SerialNumber%%Magnification: $Magnification%">
 		<OMEAttribute XMLName="ID"  Type="ID"/>
 		<OMEAttribute XMLName="Manufacturer" />
 		<OMEAttribute XMLName="Model" />
@@ -109,7 +109,7 @@
 		<OMEAttribute XMLName="LensNA"/>
 		<OMEAttribute XMLName="Magnification"/>
 	</OMEElement>
-	<OMEElement XMLName="OTF" Description="Whatever an OTF is.">
+	<OMEElement XMLName="OTF" Description="An OTF." RefVars="%Pixel Type: $PixelType%%Optical Axis Average: $OpticalAxisAverage%%Size X: $SizeX%%Y: $SizeY%">
 		<OMEAttribute XMLName="ID"  Type="ID"/>
 		<OMEAttribute XMLName="PixelType" />
 		<OMEAttribute XMLName="OpticalAxisAvrg" />

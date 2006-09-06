@@ -128,7 +128,7 @@ public class NotePanel extends JPanel implements ListSelectionListener {
     noteLabel.setFont(thisFont);
 
     JButton addBTN = new JButton("New Note");
-    addBTN.setPreferredSize(new Dimension(100,17));
+//    addBTN.setPreferredSize(new Dimension(120,17));
     addBTN.setActionCommand("add");
     addBTN.addActionListener(noteList);
     addBTN.setToolTipText("Add a new note to the \"Name\" list.");
@@ -137,7 +137,7 @@ public class NotePanel extends JPanel implements ListSelectionListener {
     if(!editable) addBTN.setEnabled(false);
 
     JButton delBTN = new JButton("Delete Note");
-    delBTN.setPreferredSize(new Dimension(100,17));
+//    delBTN.setPreferredSize(new Dimension(120,17));
     delBTN.setActionCommand("remove");
     delBTN.addActionListener(noteList);
     delBTN.setToolTipText("Delete the note selected in the \"Name\" list.");

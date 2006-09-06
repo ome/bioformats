@@ -47,7 +47,7 @@ public class TemplateParser {
   public static final String[] TYPE_DEF_LIST = {
     "Experiment.ome","Experimenter.ome","Group.ome","Image.ome",
     "Instrument.ome","Plate.ome","Screen.ome","OMEIS/Repository.ome",
-    "OMEIS/OriginalFile.ome"
+    "OMEIS/OriginalFile.ome","LOCIDefs.ome"
   };
 
   /** A list of regular (non "home-baked") type defs to cruise*/

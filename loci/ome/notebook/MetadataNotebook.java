@@ -80,9 +80,14 @@ public class MetadataNotebook extends JFrame
   protected WiscScanPane scanP;
   
   /**The checkboxes that switch between the four views.*/
-  protected JCheckBoxMenuItem advView, noteView, normView, scanView;
+  protected JCheckBoxMenuItem advView, noteView, normView, scanView,
+    showID;
 
   // -- Constructors --
+
+  public MetadataNotebook() {
+    this((String[]) null,true,true);
+  }
 
   /** Create a default notebook window with save function and editing enabled.*/
   public MetadataNotebook(String[] args) {
@@ -121,18 +126,20 @@ public class MetadataNotebook extends JFrame
     scanP = new WiscScanPane();
     scanP.setEditable(editable);
 
-    //create a MetadataPane, where most everything happens
-    if (args.length > 0) {
-      File file = null;
-      try {
-        file = new File(args[0]);
+    //create a MetadataPane, where most everything happen
+    if (args != null) {
+      if(args.length > 0) {
+        File file = null;
+        try {
+          file = new File(args[0]);
+        }
+        catch (Exception exc) {
+          System.out.println("Error occured: You suck.");
+        }
+        currentFile = file;
+        metadata = new MetadataPane(file, addSave, editable);
+        setTitle("OME Metadata Notebook - " + file);
       }
-      catch (Exception exc) {
-        System.out.println("Error occured: You suck.");
-      }
-      currentFile = file;
-      metadata = new MetadataPane(file, addSave, editable);
-      setTitle("OME Metadata Notebook - " + file);
     }
     else metadata = new MetadataPane((File)null, addSave, editable);
 
@@ -184,6 +191,7 @@ public class MetadataNotebook extends JFrame
     fileSaveAs.setMnemonic('s');
     fileSaveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
       KeyEvent.CTRL_MASK|KeyEvent.SHIFT_MASK));
+    fileSaveAs.setEnabled(addSave);
     JSeparator jSep = new JSeparator();
     file.add(jSep);
     JMenuItem fileExit = new JMenuItem("Exit");
@@ -244,6 +252,16 @@ public class MetadataNotebook extends JFrame
     exportItem.setMnemonic('x');
     exportItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, MENU_MASK));
 
+    JMenu options = new JMenu("Options");
+    options.setMnemonic('o');
+    menubar.add(options);
+    showID = new JCheckBoxMenuItem("Show IDs");
+    showID.setSelected(false);
+    options.add(showID);
+    showID.addItemListener(this);
+    showID.setMnemonic('i');
+    showID.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, MENU_MASK));
+
     JMenu help = new JMenu("Help");
     help.setMnemonic('h');
     menubar.add(help);
@@ -261,7 +279,7 @@ public class MetadataNotebook extends JFrame
     scanView.setSelected(true);
 
     //useful frame method that handles closing of window
-    setDefaultCloseOperation(EXIT_ON_CLOSE);
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     //put frame in the right place, with the right size, and make visible
     setLocation(100, 100);
     pack();
@@ -431,7 +449,8 @@ public class MetadataNotebook extends JFrame
   /**Handles the checkbox menuitems that change the view.*/
   public void itemStateChanged(ItemEvent e) {
     if (e.getStateChange() == ItemEvent.SELECTED && 
-      (JCheckBoxMenuItem) e.getItem() == advView) {
+      (JCheckBoxMenuItem) e.getItem() == advView) 
+    {
       noteView.setState(false);
       normView.setState(false);
       scanView.setState(false);
@@ -444,7 +463,8 @@ public class MetadataNotebook extends JFrame
       mdp.setVisible(true);
     }
     else if (e.getStateChange() == ItemEvent.SELECTED && 
-      (JCheckBoxMenuItem) e.getItem() == noteView) {
+      (JCheckBoxMenuItem) e.getItem() == noteView) 
+    {
       advView.setState(false);
       normView.setState(false);
       scanView.setState(false);
@@ -457,7 +477,8 @@ public class MetadataNotebook extends JFrame
       noteP.setVisible(true);
     }
     else if (e.getStateChange() == ItemEvent.SELECTED && 
-      (JCheckBoxMenuItem) e.getItem() == scanView) {
+      (JCheckBoxMenuItem) e.getItem() == scanView) 
+    {
       noteView.setState(false);
       advView.setState(false);
       normView.setState(false);
@@ -469,7 +490,8 @@ public class MetadataNotebook extends JFrame
       scanP.setVisible(true);
     }
     else if (e.getStateChange() == ItemEvent.SELECTED && 
-      (JCheckBoxMenuItem) e.getItem() == normView) {
+      (JCheckBoxMenuItem) e.getItem() == normView) 
+    {
       advView.setState(false);
       noteView.setState(false);
       scanView.setState(false);
@@ -478,8 +500,20 @@ public class MetadataNotebook extends JFrame
       mdp.setVisible(false);
       tabsMenu.setEnabled(true);
       fileNew.setEnabled(true);
-      metadata.setupTabs(metadata.getRoot());
+      metadata.reRender();
       metadata.setVisible(true);
+    }
+    else if (e.getStateChange() == ItemEvent.SELECTED && 
+      (JCheckBoxMenuItem) e.getItem() == showID) 
+    {
+      metadata.showIDs = true;
+      metadata.reRender();
+    }
+    else if (e.getStateChange() == ItemEvent.DESELECTED && 
+      (JCheckBoxMenuItem) e.getItem() == showID) 
+    {
+      metadata.showIDs = false;
+      metadata.reRender();
     }
     else {
       if(!advView.getState() && !noteView.getState()
@@ -491,7 +525,7 @@ public class MetadataNotebook extends JFrame
 	      scanP.setVisible(false);
 	      tabsMenu.setEnabled(true);
 	      fileNew.setEnabled(true);
-	      metadata.setupTabs(metadata.getRoot());
+	      metadata.reRender();
 	      metadata.setVisible(true);
       }
     }

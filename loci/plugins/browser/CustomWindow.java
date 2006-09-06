@@ -34,7 +34,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import loci.ome.viewer.MetadataPane;
+import loci.ome.notebook.MetadataNotebook;
 
 public class CustomWindow extends ImageWindow implements ActionListener,
   AdjustmentListener, ChangeListener, ItemListener, KeyListener
@@ -455,6 +455,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     String cmd = e.getActionCommand();
     if (cmd == null) cmd = ""; // prevent NullPointer
     if (cmd.equals("xml")) {
+/*
       FileInfo fi = imp.getOriginalFileInfo();
       String description = fi == null ? "" : fi.description;
 
@@ -469,7 +470,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       // HACK - if ImageDescription does not end with a null character
       // (older versions of ImageJ truncate the final character)
       if (description.endsWith("</OME")) description += ">";
-
+      
       // pop up a new metadata viewer dialog
       JFrame meta = new JFrame("Metadata - " + getTitle());
       MetadataPane metaPane = new MetadataPane();
@@ -478,6 +479,9 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       meta.pack();
       GUI.center(meta);
       meta.setVisible(true);
+*/
+      String [] args = {db.filename};
+      MetadataNotebook metaNote = new MetadataNotebook(args,false,false);
     }
     else if (cmd.equals("options")) {
       OptionsWindow ow = new OptionsWindow(db.hasZ ? db.numZ : 1,

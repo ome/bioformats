@@ -121,6 +121,9 @@ public class MetadataPane extends JPanel
   /**Whether or not the user should be able to edit metadata.*/
   protected boolean editable;
 
+  /**Whether or not to display ID attributes. By default, is false.*/
+  protected boolean showIDs;
+
   /** Holds the original file if it is of TIFF format.*/
   protected File originalTIFF;
 
@@ -185,6 +188,7 @@ public class MetadataPane extends JPanel
     originalTIFF = null;
     img = null;
     thumb = null;
+    showIDs = false;
 
     // -- Tabbed Pane Initialization --
 
@@ -295,11 +299,19 @@ public class MetadataPane extends JPanel
         }
       }
       else {
+/**
         thisOmeNode.writeOME(file, false);
         if (getTopLevelAncestor() instanceof MetadataNotebook) {
           MetadataNotebook mdn = (MetadataNotebook) getTopLevelAncestor();
           mdn.setTitle("OME Metadata Notebook - " + file);
         }
+*/
+        //Workaround for transform problems with writeOME(file,false);
+        String xml = thisOmeNode.writeOME(false);
+        FileWriter fw = new FileWriter(file);
+			  BufferedWriter bw = new BufferedWriter(fw);
+			  bw.write(xml);
+			  bw.close();
       }
     }
     catch (Exception e) {
@@ -535,6 +547,24 @@ public class MetadataPane extends JPanel
       TablePanel p = (TablePanel) panelList.get(i);
       p.setEditor();
     }
+    
+    //set the displayed tab to be by default the first image
+    TabPanel firstImageTab = null;
+    for (int i=0;i<tabPanelList.size();i++) {
+      TabPanel tabP = (TabPanel) tabPanelList.get(i);
+      if(tabP.name.startsWith("Image")) {
+        firstImageTab = tabP;
+        break;
+      }
+    }
+    if (firstImageTab != null) {
+      Container anObj = (Container) firstImageTab;
+      while (!(anObj instanceof JScrollPane)) {
+        anObj = anObj.getParent();
+      }
+      JScrollPane jScr = (JScrollPane) anObj;
+      tabPane.setSelectedComponent(jScr);
+    }
 
     stateChanged(false);
   }
@@ -663,6 +693,25 @@ public class MetadataPane extends JPanel
     for (int i = 0;i<panelList.size();i++) {
       TablePanel p = (TablePanel) panelList.get(i);
       p.setEditor();
+    }
+    
+    
+    //set the displayed tab to be by default the first image
+    TabPanel firstImageTab = null;
+    for (int i=0;i<tabPanelList.size();i++) {
+      TabPanel tabP = (TabPanel) tabPanelList.get(i);
+      if(tabP.name.startsWith("Image")) {
+        firstImageTab = tabP;
+        break;
+      }
+    }
+    if (firstImageTab != null) {
+      Container anObj = (Container) firstImageTab;
+      while (!(anObj instanceof JScrollPane)) {
+        anObj = anObj.getParent();
+      }
+      JScrollPane jScr = (JScrollPane) anObj;
+      tabPane.setSelectedComponent(jScr);
     }
   }
 
@@ -1146,7 +1195,8 @@ public class MetadataPane extends JPanel
     }
 
     /** Convert this TabPanel into a String.*/
-    public String toString() { return el == null ? "null" : el.getTagName(); }
+    public String toString() { return el == null ? "null" : 
+      "Name: " + name + " Element: " + el.getTagName(); }
 
     /** Implement these scrollable methods to make resizing behave.*/
     public Dimension getPreferredScrollableViewportSize() {
@@ -1185,6 +1235,12 @@ public class MetadataPane extends JPanel
     
     /**The name of this TablePanel.*/    
     public String name;
+    
+    /**
+    * An String to hold misc data we want to display to distinguish
+    * the name presented for this as an internal reference.
+    */
+    public String refDetails;
     
     /**The ClickableTable that displays this TablePanel's metadata.*/
     public ClickableTable table;
@@ -1244,7 +1300,12 @@ public class MetadataPane extends JPanel
       else name = getTreePathName(e);
       String thisName = name;
       panelList.add(this);
+      
+      //for debuging this simple parser
+      final boolean debug = false;
 
+      //Check which "types" the various template attributes are and
+      //group them into Vectors.
       Vector fullList = DOMUtil.getChildElements("OMEAttribute",e);
       attrList = new Vector();
       refList = new Vector();
@@ -1262,16 +1323,86 @@ public class MetadataPane extends JPanel
             }
             refList.add(thisE);
           }
-          else if (thisE.getAttribute("Type").equals("ID") && oNode != null) {
+          else if (thisE.getAttribute("Type").equals("ID") && oNode != null
+            && !showIDs) {
             if (oNode.getDOMElement().hasAttribute("ID")) {
               id = oNode.getAttribute("ID");
               panelsWithID.add(this);
+            }
+          }
+          else if (thisE.getAttribute("Type").equals("ID") && oNode != null
+            && showIDs) {
+            if (oNode.getDOMElement().hasAttribute("ID")) {
+              id = oNode.getAttribute("ID");
+              panelsWithID.add(this);
+              attrList.add(thisE);
             }
           }
           else attrList.add(thisE);
         }
         else attrList.add(thisE);
       }
+      
+      //Set up the details for internal reference names
+      refDetails = e.getAttribute("RefVars");
+      if(debug) System.out.println();
+      if(debug)   System.out.println(name + " - " + refDetails);
+      boolean noDetails = true;
+      int openIndex = refDetails.indexOf('%');
+      while(openIndex >= 0) {
+        if(debug) System.out.println(openIndex + " " + refDetails.charAt(openIndex));
+        int closeIndex = refDetails.indexOf('%',openIndex + 1);
+        if(debug) System.out.println(closeIndex + " " + refDetails.charAt(closeIndex));
+        String thisCommand = refDetails.substring(openIndex + 1,closeIndex);
+        if(debug) System.out.println("Command: " + thisCommand);
+        String processed = refDetails.substring(0,openIndex);
+        if(debug) System.out.println("Processed: " + processed);
+        String remnants = refDetails.substring(closeIndex+1,refDetails.length());
+        if(debug) System.out.println("Remnants: " + remnants);
+        
+        boolean addThisCommand = false;
+        int varIndex = thisCommand.indexOf('$');
+        while(varIndex >=0) {
+          if(debug) System.out.println("varIndex: " + varIndex + " " + thisCommand.charAt(varIndex));
+          int endIndex = thisCommand.indexOf(' ', varIndex + 1);
+          if (endIndex < 0) endIndex = thisCommand.length();
+          if(debug) System.out.println("endIndex: " + endIndex);
+          String prefix = thisCommand.substring(0,varIndex);
+          if(debug) System.out.println("Prefix: " + prefix);
+          String thisVar = thisCommand.substring(varIndex+1,endIndex);
+          if(debug) System.out.println("thisVar: " + thisVar);
+          String suffix;
+          if(endIndex != thisCommand.length())
+            suffix = thisCommand.substring(endIndex + 1,thisCommand.length());
+          else suffix = "";
+          if(debug) System.out.println("Suffix: " + suffix);
+          String value = null;
+          if (oNode != null) {
+            value = oNode.getAttribute(thisVar);
+          }
+          if (value != null) {
+            if (!value.equals("")) {
+              addThisCommand = true;
+            }
+          }
+          else value = "";
+          if(debug) System.out.println("Value: " + value);
+          thisCommand = prefix + value + suffix;
+          if(debug) System.out.println("thisCommand: " + thisCommand);
+          
+          varIndex = thisCommand.indexOf('$');
+        }
+        if (addThisCommand) {
+          noDetails = false;
+          refDetails = processed + " (" + thisCommand + ")" + remnants;
+        }
+        else refDetails = processed + remnants;
+        if(debug) System.out.println("refDetails: " + refDetails);
+        
+        openIndex = refDetails.indexOf('%');
+      }
+      if(debug) System.out.println(name + " - " + refDetails);
+      if(showIDs) refDetails = refDetails + " (ID: " + id + ")";
 
       Element cDataEl = DOMUtil.getChildElement("CData",e);
       if (cDataEl != null) attrList.add(0,cDataEl);
@@ -1291,7 +1422,7 @@ public class MetadataPane extends JPanel
       tableName.setForeground(TEXT_COLOR);
 
       noteButton = new JButton("Notes");
-      noteButton.setPreferredSize(new Dimension(85,17));
+//      noteButton.setPreferredSize(new Dimension(85,17));
       noteButton.addActionListener(this);
       noteButton.setActionCommand("getNotes");
       noteButton.setToolTipText(
@@ -1344,7 +1475,7 @@ public class MetadataPane extends JPanel
       if (name.endsWith(")")) clippedName = name.substring(0,name.length() - 4);
 
       addButton = new JButton("New Table");
-      addButton.setPreferredSize(new Dimension(110,17));
+//      addButton.setPreferredSize(new Dimension(130,17));
       addButton.addActionListener(table);
       addButton.setActionCommand("bigAdd");
       addButton.setToolTipText("Create a new " + clippedName + " table.");
@@ -1353,7 +1484,7 @@ public class MetadataPane extends JPanel
       addButton.setForeground(ADD_COLOR);
 
       delButton = new JButton("Delete Table");
-      delButton.setPreferredSize(new Dimension(110,17));
+//      delButton.setPreferredSize(new Dimension(130,17));
       delButton.addActionListener(table);
       delButton.setActionCommand("bigRem");
       delButton.setToolTipText("Delete this " + clippedName + " table.");
@@ -1479,7 +1610,9 @@ public class MetadataPane extends JPanel
               if (tp.id != null && value != null) {
                 if (value.equals(tp.id)) {
                   isLocal = true;
-                  model.setValueAt(tp.name,i,1);
+                  if(tp.refDetails != null && !tp.refDetails.equals(""))
+                    model.setValueAt(tp.name + " - " + tp.refDetails,i,1);
+                  else model.setValueAt(tp.name,i,1);
                 }
               }
             }
@@ -1517,7 +1650,7 @@ public class MetadataPane extends JPanel
 
           for (int i = 0;i<panelsWithID.size();i++) {
             aPanel = (TablePanel) panelsWithID.get(i);
-            if (aPanel.name.equals(aName)) whichNum = i;
+            if (aName.startsWith(aPanel.name)) whichNum = i;
           }
 
           if (whichNum != -23) {
@@ -1535,8 +1668,10 @@ public class MetadataPane extends JPanel
             jTabP.setSelectedComponent(jScr);
             Point loc = tablePan.getLocation();
             loc.x = 0;
-            loc.y = tp.titlePanel.getHeight() + loc.y;
-            jScr.getViewport().setViewPosition(loc);
+            JViewport jView = jScr.getViewport();
+            if(jView.getExtentSize().getHeight() <
+              jView.getViewSize().getHeight())
+                jScr.getViewport().setViewPosition(loc);
           }
           else {
             JOptionPane.showMessageDialog((Frame) getTopLevelAncestor(),

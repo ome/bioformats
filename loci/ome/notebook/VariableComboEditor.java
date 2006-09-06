@@ -133,7 +133,9 @@ public class VariableComboEditor extends AbstractCellEditor
     //add internal references
     for (int i = 0;i<idPanels.size();i++) {
       MetadataPane.TablePanel tp = (MetadataPane.TablePanel) idPanels.get(i);
-      jrb.addItem(tp.name);
+      if(tp.refDetails != null && !tp.refDetails.equals(""))
+        jrb.addItem(tp.name + " - " + tp.refDetails);
+      else jrb.addItem(tp.name);
     }
     //add external references
     for (int i = 0;i<addPanels.size();i++) {
@@ -180,7 +182,9 @@ public class VariableComboEditor extends AbstractCellEditor
           boolean isCorrectType =
             tpClass.equals("org.openmicroscopy.xml.st." + type + "Node");
           //if the node is of the right type, add it to the combobox
-          if (isCorrectType) thisBox.addItem(tp.name);
+          if (isCorrectType && !tp.refDetails.equals(""))
+            thisBox.addItem(tp.name + " - " + tp.refDetails);
+          else if(isCorrectType && tp.refDetails.equals("")) thisBox.addItem(tp.name);
         }
 
          //check the list of external references for references of
@@ -234,7 +238,7 @@ public class VariableComboEditor extends AbstractCellEditor
         for (int i = 0;i<idPanels.size();i++) {
           MetadataPane.TablePanel tp =
             (MetadataPane.TablePanel) idPanels.get(i);
-          if (data.equals(tp.name)) thisID = tp.id;
+          if (data.startsWith(tp.name)) thisID = tp.id;
         }
         //if an internal reference was found, set the node tree
         //to reflect the changes made by the new selection of
