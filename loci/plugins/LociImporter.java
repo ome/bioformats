@@ -55,10 +55,12 @@ public class LociImporter implements PlugIn, ItemListener {
   private JCheckBox newWindows = null;
   private JCheckBox showMeta = null;
   private JCheckBox stitching = null;
+  private JCheckBox ranges = null;
   private boolean mergeChannels = true;
   private boolean splitWindows = false;
   private boolean showMetadata = false;
   private boolean stitchFiles = false;
+  private boolean specifyRanges = false;
 
   // -- PlugIn API methods --
 
@@ -74,6 +76,7 @@ public class LociImporter implements PlugIn, ItemListener {
     String splitString = "Open each channel in its own window";
     String metadataString = "Display associated metadata";
     String stitchString = "Stitch files with similar names";
+    String rangeString = "Specify range for each series";
     if ((new File(arg)).exists()) {
       id = arg;
 
@@ -83,12 +86,14 @@ public class LociImporter implements PlugIn, ItemListener {
       gd.addCheckbox(splitString, splitWindows);
       gd.addCheckbox(metadataString, showMetadata);
       gd.addCheckbox(stitchString, stitchFiles);
+      gd.addCheckbox(rangeString, specifyRanges);
       gd.showDialog();
       if (gd.wasCanceled()) return;
       mergeChannels = gd.getNextBoolean();
       splitWindows = gd.getNextBoolean();
       showMetadata = gd.getNextBoolean();
       stitchFiles = gd.getNextBoolean();
+      specifyRanges = gd.getNextBoolean();
     }
     else {
       JFileChooser chooser = reader.getFileChooser();
@@ -102,14 +107,17 @@ public class LociImporter implements PlugIn, ItemListener {
       newWindows = new JCheckBox(splitString, splitWindows);
       showMeta = new JCheckBox(metadataString, showMetadata);
       stitching = new JCheckBox(stitchString, stitchFiles);
+      ranges = new JCheckBox(rangeString, specifyRanges);
       merge.addItemListener(this);
       newWindows.addItemListener(this);
       showMeta.addItemListener(this);
       stitching.addItemListener(this);
+      ranges.addItemListener(this);
       panel.add(merge);
       panel.add(newWindows);
       panel.add(showMeta);
       panel.add(stitching);
+      panel.add(ranges);
       chooser.setAccessory(panel);
 
       int rval = chooser.showOpenDialog(null);
@@ -146,7 +154,7 @@ public class LociImporter implements PlugIn, ItemListener {
         //int sizeZ = r.getSizeZ(id);
         //int sizeC = r.getSizeC(id);
         //int sizeT = r.getSizeT(id);
-        datasets.addCheckbox("Series " + i + ": " +
+        datasets.addCheckbox("Series " + (i + 1) + ": " +
           sizeX + " x " + sizeY + " x " + imageCount, i == 0);
       }
       if (seriesCount > 1) {
@@ -159,14 +167,17 @@ public class LociImporter implements PlugIn, ItemListener {
 
       r.setSeparated(!mergeChannels);
 
+      // store OME metadata into OME-XML structure, if available
+      MetadataStore store = null;
       try {
-        OMEXMLMetadataStore store = new OMEXMLMetadataStore();
+        store = new OMEXMLMetadataStore();
         store.createRoot();
         r.setMetadataStore(store);
       }
-      catch (Throwable t) { }
+      catch (MetadataStoreException exc) { }
 
       if (showMetadata) {
+        // display standard metadata in a table in its own window
         Hashtable meta = r.getMetadata(id);
         MetadataPane mp = new MetadataPane(meta);
         JFrame frame = new JFrame(id + " Metadata");
@@ -177,24 +188,39 @@ public class LociImporter implements PlugIn, ItemListener {
       }
 
       for (int i=0; i<series.length; i++) {
-        while (!series[i] && i < series.length - 1) { i++; }
-        if (!series[i]) { break; }
+        if (!series[i]) continue;
         r.setSeries(id, i);
 
-        FileInfo fi = new FileInfo();
-        try {
-          fi.description =
-            ((OMEXMLMetadataStore) r.getMetadataStore(id)).dumpXML();
-        }
-        catch (Throwable t) { }
-
-        long start = System.currentTimeMillis();
-        long time = start;
         int num = r.getImageCount(id);
+        int begin = 0, end = num - 1, step = 1;
+        if (specifyRanges && num > 1) {
+          // prompt for range of image planes to import
+          GenericDialog range =
+            new GenericDialog("LOCI Bio-Formats Range Chooser");
+          range.addMessage("Series " + (i + 1) + " - " + num + " planes");
+          range.addNumericField("Series_" + (i + 1) + "_Begin: ", 1, 0);
+          range.addNumericField("Series_" + (i + 1) + "_End: ", num, 0);
+          range.addNumericField("Series_" + (i + 1) + "_Step: ", 1, 0);
+          range.showDialog();
+          if (range.wasCanceled()) continue;
+          begin = (int) range.getNextNumber() - 1;
+          end = (int) range.getNextNumber() - 1;
+          step = (int) range.getNextNumber();
+        }
+
+        // dump OME-XML to ImageJ's description field, if available
+        FileInfo fi = new FileInfo();
+        if (store instanceof OMEXMLMetadataStore) {
+          OMEXMLMetadataStore ms = (OMEXMLMetadataStore) store;
+          fi.description = ms.dumpXML();
+        }
+
+        long startTime = System.currentTimeMillis();
+        long time = startTime;
         ImageStack stackB = null, stackS = null, stackF = null, stackO = null;
         int channels = r.getSizeC(id);
 
-        for (int j=0; j<num; j++) {
+        for (int j=begin; j<=end; j+=step) {
           // limit message update rate
           long clock = System.currentTimeMillis();
           if (clock - time >= 50) {
@@ -279,16 +305,18 @@ public class LociImporter implements PlugIn, ItemListener {
           else ip = new ImagePlus(fileName, stackO);
         }
 
-        if (ip != null) ip.setFileInfo(fi);
-        if (ip != null) ip.show();
+        if (ip != null) {
+          ip.setFileInfo(fi);
+          ip.show();
+        }
 
-        long end = System.currentTimeMillis();
-        double elapsed = (end - start) / 1000.0;
+        long endTime = System.currentTimeMillis();
+        double elapsed = (endTime - startTime) / 1000.0;
         if (num == 1) {
           IJ.showStatus("LOCI Bio-Formats: " + elapsed + " seconds");
         }
         else {
-          long average = (end - start) / num;
+          long average = (endTime - startTime) / num;
           IJ.showStatus("LOCI Bio-Formats: " + elapsed + " seconds (" +
             average + " ms per plane)");
         }
@@ -334,6 +362,7 @@ public class LociImporter implements PlugIn, ItemListener {
     else if (source == newWindows) splitWindows = selected;
     else if (source == showMeta) showMetadata = selected;
     else if (source == stitching) stitchFiles = selected;
+    else if (source == ranges) specifyRanges = selected;
   }
 
 }
