@@ -299,19 +299,19 @@ public class MetadataPane extends JPanel
         }
       }
       else {
-/**
         thisOmeNode.writeOME(file, false);
         if (getTopLevelAncestor() instanceof MetadataNotebook) {
           MetadataNotebook mdn = (MetadataNotebook) getTopLevelAncestor();
           mdn.setTitle("OME Metadata Notebook - " + file);
         }
-*/
+/**
         //Workaround for transform problems with writeOME(file,false);
         String xml = thisOmeNode.writeOME(false);
         FileWriter fw = new FileWriter(file);
 			  BufferedWriter bw = new BufferedWriter(fw);
 			  bw.write(xml);
 			  bw.close();
+*/
       }
     }
     catch (Exception e) {
