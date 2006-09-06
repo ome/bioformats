@@ -197,7 +197,7 @@ public class LociImporter implements PlugIn, ItemListener {
           // prompt for range of image planes to import
           GenericDialog range =
             new GenericDialog("LOCI Bio-Formats Range Chooser");
-          range.addMessage("Series " + (i + 1) + " - " + num + " planes");
+          range.addMessage("Series " + (i + 1) + ": " + num + " planes");
           range.addNumericField("Series_" + (i + 1) + "_Begin: ", 1, 0);
           range.addNumericField("Series_" + (i + 1) + "_End: ", num, 0);
           range.addNumericField("Series_" + (i + 1) + "_Step: ", 1, 0);
@@ -231,7 +231,7 @@ public class LociImporter implements PlugIn, ItemListener {
           // limit message update rate
           long clock = System.currentTimeMillis();
           if (clock - time >= 50) {
-            IJ.showStatus("Reading plane " + (j + 1) + "/" + num);
+            IJ.showStatus("Reading plane " + (j + 1) + "/" + (end + 1));
             time = clock;
           }
           IJ.showProgress((double) q++ / total);
