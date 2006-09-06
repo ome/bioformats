@@ -53,11 +53,26 @@ public class LeicaReader extends BaseTiffReader {
   /** Helper reader. */
   protected TiffReader tiff;
 
-  /** Number of channels in the file. */
-  protected int numChannels;
+  /** Number of channels in the current series. */
+  protected int[] numChannels;
 
   /** Array of image file names. */
-  protected String[] files;
+  protected Vector[] files;
+
+  /** Number of series in the file. */
+  private int numSeries;
+
+  /** Image widths. */
+  private int[] widths;
+
+  /** Image heights. */
+  private int[] heights;
+
+  /** Number of Z slices. */
+  private int[] zs;
+
+  /** Total number of planes in each series. */
+  private int[] numPlanes;
 
   // -- Constructor --
 
@@ -103,7 +118,15 @@ public class LeicaReader extends BaseTiffReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    return (isRGB(id) && separated) ? 3*numImages : numImages;
+    return (isRGB(id) && separated) ? 3*numPlanes[series] : numPlanes[series];
+  }
+
+  /** Return the number of series in the given Leica file. */
+  public int getSeriesCount(String id) throws FormatException, IOException {
+    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
+      initFile(id);
+    }
+    return numSeries;
   }
 
   /**
@@ -122,7 +145,7 @@ public class LeicaReader extends BaseTiffReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    return tiff.isRGB(files[0]);
+    return tiff.isRGB((String) files[series].get(0));
   }
 
   /** Get the size of the X dimension. */
@@ -130,7 +153,7 @@ public class LeicaReader extends BaseTiffReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    return ((Integer) metadata.get("Image width")).intValue();
+    return widths[series];
   }
 
   /** Get the size of the Y dimension. */
@@ -138,7 +161,7 @@ public class LeicaReader extends BaseTiffReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    return ((Integer) metadata.get("Image height")).intValue();
+    return heights[series];
   }
 
   /** Get the size of the Z dimension. */
@@ -146,7 +169,7 @@ public class LeicaReader extends BaseTiffReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    return ((Integer) metadata.get("Number of images")).intValue();
+    return zs[series];
   }
 
   /** Get the size of the C dimension. */
@@ -154,7 +177,7 @@ public class LeicaReader extends BaseTiffReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    return numChannels;
+    return numChannels[series];
   }
 
   /** Get the size of the T dimension. */
@@ -190,9 +213,9 @@ public class LeicaReader extends BaseTiffReader {
       throw new FormatException("Invalid image number: " + no);
     }
     if (isRGB(id) && separated) {
-      return tiff.openBytes(files[no / 3], no % 3);
+      return tiff.openBytes((String) files[series].get(no / 3), no % 3);
     }
-    return tiff.openBytes(files[no], 0);
+    return tiff.openBytes((String) files[series].get(no), 0);
   }
 
   /** Obtains the specified image from the given Leica file. */
@@ -208,9 +231,9 @@ public class LeicaReader extends BaseTiffReader {
     }
 
     if (isRGB(id) && separated) {
-      return tiff.openImage(files[no / 3], no % 3);
+      return tiff.openImage((String) files[series].get(no / 3), no % 3);
     }
-    return tiff.openImage(files[no], 0);
+    return tiff.openImage((String) files[series].get(no), 0);
   }
 
   /** Closes any open files. */
@@ -233,7 +256,6 @@ public class LeicaReader extends BaseTiffReader {
       }
 
       in.seek(0);
-      numChannels = 0;
 
       // open the TIFF file and look for the "Image Description" field
 
@@ -318,9 +340,9 @@ public class LeicaReader extends BaseTiffReader {
       int addr = in.readInt();
       Vector v = new Vector();
       while (addr != 0) {
+        numSeries++;
         Hashtable ifd = new Hashtable();
         v.add(ifd);
-
         in.seek(addr + 4);
 
         int tag = in.readInt();
@@ -342,7 +364,15 @@ public class LeicaReader extends BaseTiffReader {
 
         addr = in.readInt();
       }
-      headerIFDs = new Hashtable[v.size()];
+
+      numChannels = new int[numSeries];
+      widths = new int[numSeries];
+      heights = new int[numSeries];
+      zs = new int[numSeries];
+      headerIFDs = new Hashtable[numSeries];
+      files = new Vector[numSeries];
+      numPlanes = new int[numSeries];
+
       v.copyInto(headerIFDs);
 
       // determine the length of a filename
@@ -353,27 +383,22 @@ public class LeicaReader extends BaseTiffReader {
           byte[] temp = (byte[]) headerIFDs[i].get(new Integer(10));
           nameLength = DataTools.bytesToInt(temp, 8, 4, littleEndian);
         }
-      }
-
-      Vector f = new Vector();
-      for (int i=0; i<headerIFDs.length; i++) {
+        
+        Vector f = new Vector();
         byte[] tempData = (byte[]) headerIFDs[i].get(new Integer(15));
         int tempImages = DataTools.bytesToInt(tempData, 0, 4, littleEndian);
+        String dirPrefix = new File(id).getParent();
+        dirPrefix = dirPrefix == null ? "" : (dirPrefix + File.separator);
         for (int j=0; j<tempImages; j++) {
           // read in each filename
-          f.add(new String(tempData, 20 + 2*(j*nameLength), 2*nameLength));
+          f.add(dirPrefix + DataTools.stripString(
+            new String(tempData, 20 + 2*(j*nameLength), 2*nameLength)));
         }
-      }
 
-      files = new String[f.size()];
-      numImages = f.size();
-      f.copyInto(files);
-
-      String dirPrefix = new File(id).getParent();
-      dirPrefix = dirPrefix == null ? "" : (dirPrefix + File.separator);
-      for (int i=0; i<files.length; i++) {
-        files[i] = dirPrefix + DataTools.stripString(files[i]);
+        files[i] = f;
+        numPlanes[i] = f.size();
       }
+      
       initMetadata();
     }
   }
@@ -470,12 +495,14 @@ public class LeicaReader extends BaseTiffReader {
       if (temp != null) {
         // the image data
         // ID_IMAGES
-        metadata.put("Number of images", new Integer(
-          DataTools.bytesToInt(temp, 0, 4, littleEndian)));
-        metadata.put("Image width", new Integer(
-          DataTools.bytesToInt(temp, 4, 4, littleEndian)));
-        metadata.put("Image height", new Integer(
-          DataTools.bytesToInt(temp, 8, 4, littleEndian)));
+        
+        zs[i] = DataTools.bytesToInt(temp, 0, 4, littleEndian); 
+        widths[i] = DataTools.bytesToInt(temp, 4, 4, littleEndian);
+        heights[i] = DataTools.bytesToInt(temp, 8, 4, littleEndian);
+        
+        metadata.put("Number of images", new Integer(zs[i]));
+        metadata.put("Image width", new Integer(widths[i]));
+        metadata.put("Image height", new Integer(heights[i]));
         metadata.put("Bits per Sample", new Integer(
           DataTools.bytesToInt(temp, 12, 4, littleEndian)));
         metadata.put("Samples per pixel", new Integer(
@@ -548,7 +575,7 @@ public class LeicaReader extends BaseTiffReader {
             case 5898318: dimType = "logical z-wide"; break;
           }
 
-          if (dimType.equals("channel")) numChannels++;
+          //if (dimType.equals("channel")) numChannels++;
           metadata.put("Dim" + j + " type", dimType);
           pt += 4;
           metadata.put("Dim" + j + " size", new Integer(
@@ -695,6 +722,8 @@ public class LeicaReader extends BaseTiffReader {
           new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
         pt += 4;
 
+        numChannels[i] = nChannels;
+
         for (int j=0; j<nChannels; j++) {
           metadata.put("LUT Channel " + j + " version",
             new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
@@ -719,8 +748,13 @@ public class LeicaReader extends BaseTiffReader {
           pt += length;
           length = DataTools.bytesToInt(temp, pt, 4, littleEndian);
           pt += 4;
-          metadata.put("LUT Channel " + j + " name",
-            DataTools.stripString(new String(temp, pt, length)));
+
+          String name = DataTools.stripString(new String(temp, pt, length));
+          if (name.equals("Green") || name.equals("Red") || name.equals("Blue"))
+          {
+            numChannels[i] = 3;
+          }
+          metadata.put("LUT Channel " + j + " name", name);
           pt += length;
 
           pt += 8;
@@ -735,30 +769,36 @@ public class LeicaReader extends BaseTiffReader {
     }
     catch (Exception e) { }
 
+    /*
     if (numChannels == 0) numChannels++;
 
     try {
       if (isRGB(currentId)) numChannels *= 3;
     }
     catch (Exception exc) { }
-    Integer sizeX = (Integer) metadata.get("Image width");
-    Integer sizeY = (Integer) metadata.get("Image height");
-    Integer sizeZ = (Integer) metadata.get("Number of images");
-    store.setPixels(sizeX, sizeY, sizeZ,
-      new Integer(numChannels == 0 ? 1 : numChannels), // SizeC
-      new Integer(1), // SizeT
-      null, // PixelType
-      new Boolean(!littleEndian), // BigEndian
-      "XYZTC", // DimensionOrder
-      null); // Use index 0
+    */
+    
+    for (int i=0; i<numSeries; i++) {
+      store.setPixels(
+        new Integer(widths[i]),
+        new Integer(heights[i]),
+        new Integer(zs[i]),
+        new Integer(numChannels[i] == 0 ? 1 : numChannels[i]), // SizeC
+        new Integer(1), // SizeT
+        null, // PixelType
+        new Boolean(!littleEndian), // BigEndian
+        "XYZTC", // DimensionOrder
+        new Integer(i));
 
-    String timestamp = (String) metadata.get("Timestamp 1");
-    String description = (String) metadata.get("Image Description");
+      String timestamp = (String) metadata.get("Timestamp " + (i+1));
+      String description = (String) metadata.get("Image Description");
 
-    try {
-      store.setImage(null, timestamp.substring(3), description, null);
+      try {
+        store.setImage(null, timestamp.substring(3), 
+          description, new Integer(i));
+      }
+      catch (NullPointerException n) { }
     }
-    catch (NullPointerException n) { }
 
 //  String voxel = metadata.get("VoxelType").toString();
 //  String photoInterp;
