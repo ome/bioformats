@@ -307,7 +307,7 @@ public class GatanReader extends FormatReader {
 
             if ("Data".equals(labelString)) pixelDataNum++;
 
-            if ("Data".equals(labelString) && pixelDataNum == 2) {
+            if ("Data".equals(labelString) /*&& pixelDataNum == 2*/) {
               // we're given the number of pixels, but the tag containing
               // bytes per pixel doesn't occur until after the image data
               //
@@ -320,7 +320,6 @@ public class GatanReader extends FormatReader {
               while (check != 20 && check != 21) {
                 bpp *= 2;
                 in.seek(pos);
-
                 pixelData = new byte[(int) bpp * length];
                 in.read(pixelData);
                 check = in.readByte();
