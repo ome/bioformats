@@ -503,9 +503,20 @@ public abstract class FormatReader extends FormatHandler
       String className = reader.getClass().getName();
       System.out.println("To test read a file in " +
         reader.getFormat() + " format, run:");
-      System.out.println("  java " + className + " [-nopix]");
-      System.out.println("    [-merge] [-stitch] [-separate] [-omexml] " +
+      System.out.println("  java " + className +
+        " [-nopix] [-merge] [-stitch]");
+      System.out.println("    [-separate] [-omexml] " +
         "[-range start [end]] [-series num] file");
+      System.out.println();
+      System.out.println("     file: the image file to read");
+      System.out.println("   -nopix: read metadata only, not pixels");
+      System.out.println("   -merge: combine separate channels into RGB image");
+      System.out.println("  -stitch: stitch files with similar names");
+      System.out.println("-separate: split RGB image into separate channels");
+      System.out.println("  -omexml: populate OME-XML metadata");
+      System.out.println("   -range: specify range of planes to read");
+      System.out.println("  -series: specify which image series to read");
+      System.out.println();
       return false;
     }
     if (omexml) {
