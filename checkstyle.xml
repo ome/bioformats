@@ -149,12 +149,10 @@ Run "ant style" to check for source code style deviations.
       <property name="format" value="\s+$"/>
       <property name="message" value="Line has trailing spaces."/>
     </module>
-<!--
     <module name="Indentation">
       <property name="basicOffset" value="2"/>
       <property name="caseIndent" value="2"/>
     </module>
--->
     <module name="TodoComment">
       <property name="format" value="TODO"/>
     </module>

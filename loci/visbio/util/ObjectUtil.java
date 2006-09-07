@@ -88,7 +88,9 @@ public final class ObjectUtil {
   public static boolean arraysEqual(boolean[] a1, boolean[] a2) {
     if (a1 == null || a2 == null) return a1 == null && a2 == null;
     if (a1.length != a2.length) return false;
-    for (int i=0; i<a1.length; i++) if (a1[i] != a2[i]) return false;
+    for (int i=0; i<a1.length; i++) {
+      if (a1[i] != a2[i]) return false;
+    }
     return true;
   }
 
@@ -96,7 +98,9 @@ public final class ObjectUtil {
   public static boolean arraysEqual(byte[] a1, byte[] a2) {
     if (a1 == null || a2 == null) return a1 == null && a2 == null;
     if (a1.length != a2.length) return false;
-    for (int i=0; i<a1.length; i++) if (a1[i] != a2[i]) return false;
+    for (int i=0; i<a1.length; i++) {
+      if (a1[i] != a2[i]) return false;
+    }
     return true;
   }
 
@@ -104,7 +108,9 @@ public final class ObjectUtil {
   public static boolean arraysEqual(char[] a1, char[] a2) {
     if (a1 == null || a2 == null) return a1 == null && a2 == null;
     if (a1.length != a2.length) return false;
-    for (int i=0; i<a1.length; i++) if (a1[i] != a2[i]) return false;
+    for (int i=0; i<a1.length; i++) {
+      if (a1[i] != a2[i]) return false;
+    }
     return true;
   }
 
@@ -112,7 +118,9 @@ public final class ObjectUtil {
   public static boolean arraysEqual(double[] a1, double[] a2) {
     if (a1 == null || a2 == null) return a1 == null && a2 == null;
     if (a1.length != a2.length) return false;
-    for (int i=0; i<a1.length; i++) if (a1[i] != a2[i]) return false;
+    for (int i=0; i<a1.length; i++) {
+      if (a1[i] != a2[i]) return false;
+    }
     return true;
   }
 
@@ -120,7 +128,9 @@ public final class ObjectUtil {
   public static boolean arraysEqual(float[] a1, float[] a2) {
     if (a1 == null || a2 == null) return a1 == null && a2 == null;
     if (a1.length != a2.length) return false;
-    for (int i=0; i<a1.length; i++) if (a1[i] != a2[i]) return false;
+    for (int i=0; i<a1.length; i++) {
+      if (a1[i] != a2[i]) return false;
+    }
     return true;
   }
 
@@ -128,7 +138,9 @@ public final class ObjectUtil {
   public static boolean arraysEqual(int[] a1, int[] a2) {
     if (a1 == null || a2 == null) return a1 == null && a2 == null;
     if (a1.length != a2.length) return false;
-    for (int i=0; i<a1.length; i++) if (a1[i] != a2[i]) return false;
+    for (int i=0; i<a1.length; i++) {
+      if (a1[i] != a2[i]) return false;
+    }
     return true;
   }
 
@@ -136,7 +148,9 @@ public final class ObjectUtil {
   public static boolean arraysEqual(long[] a1, long[] a2) {
     if (a1 == null || a2 == null) return a1 == null && a2 == null;
     if (a1.length != a2.length) return false;
-    for (int i=0; i<a1.length; i++) if (a1[i] != a2[i]) return false;
+    for (int i=0; i<a1.length; i++) {
+      if (a1[i] != a2[i]) return false;
+    }
     return true;
   }
 
@@ -144,7 +158,9 @@ public final class ObjectUtil {
   public static boolean arraysEqual(short[] a1, short[] a2) {
     if (a1 == null || a2 == null) return a1 == null && a2 == null;
     if (a1.length != a2.length) return false;
-    for (int i=0; i<a1.length; i++) if (a1[i] != a2[i]) return false;
+    for (int i=0; i<a1.length; i++) {
+      if (a1[i] != a2[i]) return false;
+    }
     return true;
   }
 

@@ -135,7 +135,9 @@ public class InstanceServer implements Runnable {
         socket.close();
         notifyListeners(new SpawnEvent(args));
       }
-      catch (IOException exc) { if (alive) exc.printStackTrace(); }
+      catch (IOException exc) {
+        if (alive) exc.printStackTrace();
+      }
     }
   }
 

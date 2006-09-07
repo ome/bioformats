@@ -368,10 +368,14 @@ public class DisplayWindow extends JFrame
 
       // lay out components
       pane.add(display.getComponent(), BorderLayout.CENTER);
-      controls.setContentPane(FormsUtil.makeColumn(new Object[] {
-        viewHandler.getPanel(), FormsUtil.makeRow(new Object[] {
-        captureHandler.getPanel()}), "Data", transformHandler.getPanel(),
-        sliders}, null, true));
+      Object[] rows = {
+        viewHandler.getPanel(),
+        FormsUtil.makeRow(new Object[] {captureHandler.getPanel()}),
+        "Data",
+        transformHandler.getPanel(),
+        sliders
+      };
+      controls.setContentPane(FormsUtil.makeColumn(rows, null, true));
       pack();
       repack();
     }

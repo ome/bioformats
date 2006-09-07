@@ -232,7 +232,9 @@ public class BreakawayPanel extends JPanel implements ActionListener {
   public boolean isAutoSize() { return autoSize; }
 
   /** If breakaway panel is in a separate window, ensures it is visible. */
-  public void reshow() { if (edge == null) window.setVisible(true); }
+  public void reshow() {
+    if (edge == null) window.setVisible(true);
+  }
 
   /** Enlarges the window to its preferred size if it is too small. */
   public void repack() {

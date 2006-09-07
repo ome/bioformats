@@ -288,7 +288,9 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
     BioSlideWidget bsw = (BioSlideWidget) sliders.elementAt(axis);
     DataTransform[] dt = bsw.getTransforms();
     int[] ndx = bsw.getIndices();
-    for (int t=0; t<dt.length; t++) if (trans == dt[t]) return ndx[t];
+    for (int t=0; t<dt.length; t++) {
+      if (trans == dt[t]) return ndx[t];
+    }
     return -1;
   }
 

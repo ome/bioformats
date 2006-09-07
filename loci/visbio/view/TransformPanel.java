@@ -444,8 +444,8 @@ public class TransformPanel extends JPanel
     CellConstraints cc = new CellConstraints();
     builder.add(FormsUtil.makeRow(new Object[] {"Arrow keys:",
       "Le&ft/right", leftRightBox, "Up/do&wn", upDownBox}), cc.xy(1, 1));
-    builder.add(FormsUtil.makeRow(new Object[]
-      {animate, "&FPS", fps, animBox}), cc.xy(1, 3));
+    builder.add(FormsUtil.makeRow(new Object[] {animate,
+      "&FPS", fps, animBox}), cc.xy(1, 3));
     return builder.getPanel();
   }
 

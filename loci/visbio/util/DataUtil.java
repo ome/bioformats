@@ -98,7 +98,9 @@ public final class DataUtil {
     // count number of range components to keep
     int keep = 0;
     if (range != null) {
-      for (int i=0; i<range.length; i++) if (range[i]) keep++;
+      for (int i=0; i<range.length; i++) {
+        if (range[i]) keep++;
+      }
     }
 
     // strip out unwanted range components

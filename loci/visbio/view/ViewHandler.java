@@ -391,10 +391,10 @@ public class ViewHandler implements Saveable {
 
     // clear old aspect ratio from projection matrix
     double[] undoOldAspect = {
-      1 / xasp,        0,        0, 0,
-             0, 1 / yasp,        0, 0,
-             0,        0, 1 / zasp, 0,
-             0,        0,        0, 1
+      1 / xasp, 0, 0, 0,
+      0, 1 / yasp, 0, 0,
+      0, 0, 1 / zasp, 0,
+      0, 0, 0, 1
     };
     double[] newMatrix = display.multiply_matrix(oldMatrix, undoOldAspect);
 
@@ -421,8 +421,8 @@ public class ViewHandler implements Saveable {
     double scale = window.is3D() ? DEFAULT_ZOOM_3D : DEFAULT_ZOOM_2D;
     double rotate = window.is3D() ? DEFAULT_ROTATION : 0;
     double[] newMatrix = display.make_matrix(rotate, 0, 0, scale, 0, 0, 0);
-    double[] aspect = new double[]
-      {xasp, 0, 0, 0, 0, yasp, 0, 0, 0, 0, zasp, 0, 0, 0, 0, 1};
+    double[] aspect = new double[] {xasp,
+      0, 0, 0, 0, yasp, 0, 0, 0, 0, zasp, 0, 0, 0, 0, 1};
     return display.multiply_matrix(newMatrix, aspect);
   }
 
