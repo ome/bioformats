@@ -39,7 +39,7 @@ import javax.swing.*;
 import loci.formats.*;
 
 /**
- * ImageJ plugin for the LOCI Bio-Formats package.
+ * ImageJ plugin for reading files using the LOCI Bio-Formats package.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at cs.wisc.edu
