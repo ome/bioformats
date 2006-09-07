@@ -30,6 +30,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 import java.util.zip.*;
 import loci.formats.*;
+import org.openmicroscopy.xml.OMENode;
 
 /**
  * OMEXMLReader is the file format reader for OME-XML files.
@@ -393,7 +394,12 @@ public class OMEXMLReader extends FormatReader {
           "http://www.openmicroscopy.org/");
     }
 
-    internalStore.createRoot(xml);
+    try {
+      internalStore.setRoot(new OMENode(new File(id)));
+    }
+    catch (Exception e) {
+      throw new FormatException("Failed to create metadata store.");
+    }
 
     width = new int[numDatasets];
     height = new int[numDatasets];

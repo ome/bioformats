@@ -411,7 +411,7 @@ public final class DataTools {
     char[] toRtn = new char[toStrip.length()];
     int counter = 0;
     for (int i=0; i<toRtn.length; i++) {
-      if ((toStrip.charAt(i) != 0) && (toStrip.charAt(i) != ' ')) {
+      if (toStrip.charAt(i) != 0) {
         toRtn[counter] = toStrip.charAt(i);
         counter++;
       }
