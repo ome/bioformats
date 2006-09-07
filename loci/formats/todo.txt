@@ -10,6 +10,8 @@ Implement readers for other file formats:
 * SDT (java/loci/apps/slim/SlimPlotter.java, data/sdt, data/specs/sdt)
 * JPEG-2000 formats: .jp2, .jpc, .j2k, etc.
 * MNG (http://www.libpng.org/pub/mng/) -- low priority
+* Perkin Elmer Ultraview ERS
+* SlideBook
 
 API/Other:
 * improve efficiency of BufferedImage construction and
