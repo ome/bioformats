@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio;
 
+import com.jgoodies.plaf.LookUtils;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -74,7 +75,7 @@ public class WindowInfo implements WindowListener {
       window.pack();
       // HACK - work around a layout issue where panel is slightly too short
       // this hack also appears in loci.visbio.view.DisplayWindow.repack()
-      if ("Linux".equals(System.getProperty("os.name"))) {
+      if (LookUtils.IS_OS_LINUX) {
         Dimension size = window.getSize();
         size.height += 10;
         window.setSize(size);

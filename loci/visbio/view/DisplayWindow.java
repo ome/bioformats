@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.view;
 
+import com.jgoodies.plaf.LookUtils;
 import java.awt.*;
 import java.awt.event.*;
 import java.rmi.RemoteException;
@@ -139,7 +140,7 @@ public class DisplayWindow extends JFrame
       size.width = controls.getPreferredSize().width + size.height - 20;
       // HACK - work around a layout issue where panel is slightly too short
       // this hack also appears in loci.visbio.WindowInfo.showWindow()
-      if ("Linux".equals(System.getProperty("os.name"))) size.height += 10;
+      if (LookUtils.IS_OS_LINUX) size.height += 10;
     }
     else if (edge == BorderLayout.NORTH || edge == BorderLayout.SOUTH) {
       size.height = controls.getPreferredSize().height + size.width + 20;

@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.view;
 
+import com.jgoodies.plaf.LookUtils;
 import java.awt.Component;
 import java.util.Vector;
 import javax.swing.JOptionPane;
@@ -179,7 +180,7 @@ public class DisplayManager extends LogicManager {
         boolean texture3d = is3DTextured();
         DisplayWindow[] dw = getDisplays();
         for (int i=0; i<dw.length; i++) {
-          dw[i].setTransparencyMode(nice);
+          if (!LookUtils.IS_OS_MAC) dw[i].setTransparencyMode(nice);
           dw[i].set3DTexturing(texture3d);
         }
       }

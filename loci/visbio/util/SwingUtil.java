@@ -244,7 +244,6 @@ public final class SwingUtil {
     pause(caw.toString());
   }
 
-
   // -- Helper methods --
 
   /**
