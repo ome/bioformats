@@ -118,7 +118,7 @@ public interface MetadataStore {
    * index.
    * @param pixelSizeX size of an individual pixel's X axis in microns.
    * @param pixelSizeY size of an individual pixel's Y axis in microns.
-   * @param pixelSizeZ size of an individual pixel's Y axis in microns.
+   * @param pixelSizeZ size of an individual pixel's Z axis in microns.
    * @param pixelSizeC FIXME: Unknown
    * @param pixelSizeT FIXME: Unknown
    * @param i the index to use in the store. If <code>null</code> the default
