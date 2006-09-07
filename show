@@ -20,4 +20,4 @@
 
 # show: a script for displaying a given image file in the image viewer
 
-java -mx512m loci.formats.ImageViewer $*
+java -mx512m loci.formats.ImageViewer "$@"

@@ -20,4 +20,4 @@
 
 # inf: a script for displaying information about a given image file
 
-java -mx512m loci.formats.ImageReader -nopix $*
+java -mx512m loci.formats.ImageReader -nopix "$@"
