@@ -336,17 +336,20 @@ public class ZeissLSMReader extends BaseTiffReader {
         default: dimOrder = "XYZCT";
       }
 
+      channels = cSize;
+
       // some LSM files will have a thumbnail associated with each plane; this
       // thumbnail is counted as an extra channel, but since we strip out the
       // thumbnails, we need to correct the channel count
-      while (zSize * cSize * tSize != numImages) {
+      while (zSize * cSize * tSize > numImages) {
         cSize--;
       }
 
       if (cSize == 0) cSize++;
 
+      if (isRGB(currentId) && cSize == 1 && channels > 2) cSize = 3;
+
       channels = cSize;
-      if (isRGB(currentId)) channels *= 3;
 
       // The metadata store we're working with.
       MetadataStore store = getMetadataStore(currentId);
