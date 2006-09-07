@@ -660,7 +660,7 @@ public class ZeissZVIReader extends FormatReader {
     // parse the "header" byte array
     // right now we're using header data from an image item
 
-    metadata.put("Legacy?", needLegacy ? "yes" : "no");
+    metadata.put("Legacy", needLegacy ? "yes" : "no");
 
     if (header == null) return;
     if (needLegacy) metadata = legacy.getMetadata(currentId);
