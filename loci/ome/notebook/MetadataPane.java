@@ -391,10 +391,12 @@ public class MetadataPane extends JPanel
           img = reader.openImage(id, 0); // gets first image from the file
           int width = 50, height = 50;
           thumb = ImageTools.scale(img, width, height);
-          ome = (OMENode) ms.getRoot();
+          ome = (OMENode) ((OMEXMLMetadataStore) reader.getMetadataStore(id)).getRoot();
+if (ome == null) System.out.println("the OMENode is NULL!");//TEMP
+          setOMEXML(ome);
         }
         catch (Exception exc) { exc.printStackTrace(); }
-
+/*
         String s = new String(header).trim();
         if (s.startsWith("<?xml") || s.startsWith("<OME")) {
           // raw OME-XML
@@ -405,7 +407,7 @@ public class MetadataPane extends JPanel
           setOMEXML(new String(data));
         }
         else return false;
-        //setOMEXML(ome);
+*/
       }
       else {
         originalTIFF = null;
@@ -436,7 +438,10 @@ public class MetadataPane extends JPanel
     Document doc = null;
     try { doc = ome == null ? null : ome.getOMEDocument(false); }
     catch (Exception exc) { }
-    if (doc == null) return;
+    if (doc == null) {
+      System.out.println("Document is NULL.");
+      return;
+    }
     internalDefs = new Hashtable();
 
     //time to parse internal semantic type defs in file

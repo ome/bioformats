@@ -51,13 +51,14 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   // -- Fields - state --
 
-  private LociDataBrowser db;
+  protected LociDataBrowser db;
   private String zString = Z_STRING;
   private String tString = T_STRING;
   private int fps = 10;
   private int z = 1, t = 1, c = 1;
   private boolean customVirtualization = false;
   private int z1 = 1, z2 = 1, t1 = 1, t2 = 1;
+  protected int zMap,tMap,cMap;
 
   // -- Fields - widgets --
 
@@ -76,6 +77,11 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     this.db = db;
     String title = imp.getTitle();
     this.setTitle(title.substring(title.lastIndexOf(File.separatorChar) + 1));
+    
+    //setup which variables the sliders are set to
+    zMap = 0;
+    tMap = 1;
+    cMap = 2;
 
     // create panel for image canvas
     Panel imagePane = new Panel() {
@@ -430,7 +436,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     }
     zLabel.setText(zString);
     tLabel.setText(tString);
-    setIndices();
 
     repaint();
   }
@@ -503,22 +508,23 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         db.hasT ? db.numT : 1, this);
       ow.setVisible(true);
     }
-    else if (src instanceof Timer) {
-      boolean swapped = zString.equals(T_STRING) || !db.hasT;
-
-      if (swapped) {
-        z = zSliceSel.getValue() + 1;
-        if (customVirtualization && (z > z2)) z = z1;
-        else if (!customVirtualization && (z > db.numZ)) z = 1;
-        zSliceSel.setValue(z);
-        setIndices();
-      }
-      else {
-        t = tSliceSel.getValue() + 1;
-        if (customVirtualization && (t > t2)) t = t1;
-        else if (!customVirtualization && (t > db.numT)) t = 1;
-        tSliceSel.setValue(t);
-        setIndices();
+    else if (src instanceof Timer) {      
+      switch (tMap) {
+        case 0:
+          z = tSliceSel.getValue() + 1;
+          if ((z > db.numZ)) z = 1;
+          tSliceSel.setValue(z);
+          break;
+        case 1:
+          t = tSliceSel.getValue() + 1;
+          if ((t > db.numT)) t = 1;
+          tSliceSel.setValue(t);
+          break;
+        case 2:
+          c = tSliceSel.getValue() + 1;
+          if ((c > db.numC)) c = 1;
+          tSliceSel.setValue(c);
+          break;
       }
 
       showSlice(z, t, c);
@@ -528,11 +534,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         animationTimer = new Timer(1000 / fps, this);
         animationTimer.start();
         animate.setText(STOP_STRING);
-        if (db.virtual && !customVirtualization) {
-          synchronized(imp) { setIndices(); }
-        }
-
-        if (customVirtualization) setIndices(new int[] {z1, z2, t1, t2});
       }
       else {
         animationTimer.stop();
@@ -540,48 +541,51 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         animate.setText(ANIM_STRING);
       }
     }
-  }
-
-  /**
-   * Initializes the virtual stack, using the argument as its boundaries.
-   * The argument should be in the form of (z1, z2, t1, t2).
-   */
-  public synchronized void setIndices(int[] idx) {
-/*
-    // log usage
-    if (LociDataBrowser.DEBUG) {
-      System.err.println("Calling setIndices(int[])");
-      System.err.println("z: "+idx[0]+" to "+idx[1]);
-      System.err.println("t: "+idx[2]+" to "+idx[3]);
-    }
-    int[] indices = new int[(idx[1] - idx[0] + 1) * (idx[3] - idx[2] + 1)];
-    z1 = idx[0]; z2 = idx[1]; t1 = idx[2]; t2 = idx[3];
-    int k=0;
-
-    for (int i=idx[0]; i<= idx[1]; i++) {
-      for (int j=idx[2]; j<=idx[3]; j++) {
-        indices[k++] = db.getIndex(i-1, j-1, c-1);
+    else if (src instanceof JComboBox &&
+      e.getActionCommand().startsWith("mapping"))
+    {
+      JComboBox jcb = (JComboBox) src;
+      if(e.getActionCommand().endsWith("Z")) {
+        zMap = jcb.getSelectedIndex();
+        switch (zMap) {
+          case 0:
+            zSliceSel.setMaximum(db.hasZ ? db.numZ + 1 : 2);
+            if (db.hasZ) zSliceSel.setEnabled(true);
+            else zSliceSel.setEnabled(false);
+            break;
+          case 1:
+            zSliceSel.setMaximum(db.hasT ? db.numT + 1 : 2);
+            if (db.hasT) zSliceSel.setEnabled(true);
+            else zSliceSel.setEnabled(false);
+            break;
+          case 2:
+            zSliceSel.setMaximum(db.hasC ? db.numC + 1 : 2);
+            if (db.hasC) zSliceSel.setEnabled(true);
+            else zSliceSel.setEnabled(false);
+            break;
+        }
+      }
+      else if(e.getActionCommand().endsWith("T")) {
+        tMap = jcb.getSelectedIndex();
+        switch (tMap) {
+          case 0:
+            tSliceSel.setMaximum(db.hasZ ? db.numZ + 1 : 2);
+            if (db.hasZ) tSliceSel.setEnabled(true);
+            else tSliceSel.setEnabled(false);
+            break;
+          case 1:
+            tSliceSel.setMaximum(db.hasT ? db.numT + 1 : 2);
+            if (db.hasT) tSliceSel.setEnabled(true);
+            else tSliceSel.setEnabled(false);
+            break;
+          case 2:
+            tSliceSel.setMaximum(db.hasC ? db.numC + 1 : 2);
+            if (db.hasC) tSliceSel.setEnabled(true);
+            else tSliceSel.setEnabled(false);
+            break;
+        }
       }
     }
-*/
-  }
-
-  public synchronized void setIndices() {
-/*
-    boolean swapped = zString.equals(T_STRING) || !db.hasT;
-    if (swapped) {  // animate top scrolling bar
-      int[] indices = new int[zSliceSel.getMaximum() - 1];
-      for (int k=0; k<indices.length; k++) {
-        indices[k] = db.getIndex(k, t-1, c-1);
-      }
-    }
-    else {
-      int[] indices = new int[tSliceSel.getMaximum() - 1];
-      for (int k=0; k<indices.length; k++) {
-        indices[k] = db.getIndex(z-1, k, c-1);
-      }
-    }
-*/
   }
 
   // -- AdjustmentListener methods --
@@ -589,16 +593,14 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   public void adjustmentValueChanged(AdjustmentEvent adjustmentEvent) {
     Object src = adjustmentEvent.getSource();
     if (src == zSliceSel) {
-      z = zSliceSel.getValue();
-      if (animate.getText().equals(STOP_STRING) && zString.equals(Z_STRING)) {
-        setIndices();
-      }
+      if(zMap == 0) z = zSliceSel.getValue();
+      else if(zMap == 1) t = zSliceSel.getValue();
+      else if(zMap == 2) c = zSliceSel.getValue();
     }
     else if (src == tSliceSel) {
-      t = tSliceSel.getValue();
-      if (animate.getText().equals(STOP_STRING) && zString.equals(T_STRING)) {
-        setIndices();
-      }
+      if(tMap == 0) z = tSliceSel.getValue();
+      else if(tMap == 1) t = tSliceSel.getValue();
+      else if(tMap == 2) c = tSliceSel.getValue();
     }
     showSlice(z, t, c);
   }
@@ -617,7 +619,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     JCheckBox channels = (JCheckBox) e.getSource();
     c = channels.isSelected() ? 1 : 2;
 
-    if (db.virtual) setIndices();
     showSlice(z, t, c);
   }
 
