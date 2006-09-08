@@ -52,7 +52,6 @@ public class SEQReader extends BaseTiffReader {
   /** Frame rate. */
   private static final int IMAGE_PRO_TAG_2 = 40105;
 
-
   // -- Constructor --
 
   /** Constructs a new Image-Pro SEQ reader. */
