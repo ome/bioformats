@@ -86,7 +86,7 @@ public class LIFReader extends FormatReader {
   /** Determines the number of images in the given LIF file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    numImages = dims[series][2]  * dims[series][3];
+    numImages = dims[series][2] * dims[series][3];
     return (!isRGB(id) || !separated) ? numImages : dims[series][4] * numImages;
   }
 
