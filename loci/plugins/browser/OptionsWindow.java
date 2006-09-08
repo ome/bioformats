@@ -154,7 +154,7 @@ public class OptionsWindow extends JFrame implements
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     //put frame in the right place, with the right size, and make visible
     setLocation(100, 100);
-    getContentPane().setPreferredSize(new Dimension(225,200));
+    ((JComponent) getContentPane()).setPreferredSize(new Dimension(225,200));
     pack();
     setVisible(true);
   }
