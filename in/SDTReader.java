@@ -40,6 +40,36 @@ public class SDTReader extends FormatReader {
 
   // -- Constants --
 
+  protected static final short BH_HEADER_CHKSUM = 0x55aa;
+  protected static final short BH_HEADER_NOT_VALID = 0x1111;
+  protected static final short BH_HEADER_VALID = 0x5555;
+
+  /** For .set files (setup only). */
+  protected static final String SETUP_IDENTIFIER = "SPC Setup Script File"; 
+
+  /** For normal .sdt files (setup + data). */
+  protected static final String DATA_IDENTIFIER = "SPC Setup & Data File";
+
+  /**
+   * For .sdt files created automatically in Continuous Flow mode measurement 
+   * (no setup, only data).
+   */
+  protected static final String FLOW_DATA_IDENTIFIER = "SPC Flow Data File";
+
+  /**
+   * For .sdt files created using DLL function SPC_save_data_to_sdtfile
+   * (no setup, only data).
+   */
+  protected static final String DLL_DATA_IDENTIFIER = "SPC DLL Data File";
+
+  /**
+   * For .sdt files created in FIFO mode 
+   * (setup, data blocks = Decay, FCS, FIDA, FILDA &amp; MCS curves 
+   * for each used routing channel).
+   */
+  protected static final String FCS_DATA_IDENTIFIER = "SPC FCS Data File";
+
+
   /** Number of time bins in the decay curve. */
   protected static final int TIME_BINS = 64;
 
@@ -61,12 +91,13 @@ public class SDTReader extends FormatReader {
   /** Dimensions of the current SDT file's images. */
   protected int width = 128, height = 128;
 
+  protected int timeBins = 1; // TODO
+  protected int channels = 1; // TODO
 
   // -- Constructor --
 
   /** Constructs a new SDT reader. */
-  public SDTReader() { super("SPC-Image SDT", "sdt"); }
-
+  public SDTReader() { super("SPCImage Data", "sdt"); }
 
   // -- FormatReader API methods --
 
@@ -84,30 +115,32 @@ public class SDTReader extends FormatReader {
     return false;
   }
 
-  /** Get the size of the X dimension. */
+  /** Gets the size of the X dimension. */
   public int getSizeX(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return width;
   }
 
-  /** Get the size of the Y dimension. */
+  /** Gets the size of the Y dimension. */
   public int getSizeY(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return height;
   }
 
-  /** Get the size of the Z dimension. */
+  /** Gets the size of the Z dimension. */
   public int getSizeZ(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return numImages;
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
     return 1;
   }
 
-  /** Get the size of the T dimension. */
+  /** Gets the size of the C dimension. */
+  public int getSizeC(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    //return timeBins * channels;
+    return numImages; //TODO
+  }
+
+  /** Gets the size of the T dimension. */
   public int getSizeT(String id) throws FormatException, IOException {
     return 1;
   }
@@ -181,13 +214,98 @@ public class SDTReader extends FormatReader {
     in = new RandomAccessStream(id);
     in.order(true);
 
-    // skip 14 byte header
-    in.skipBytes(14);
+    // read file header
 
-    // read offset
-    offset = in.readShort() + 22;
+    // software revision number (lower 4 bits >= 10(decimal))
+    short revision = in.readShort();
+
+    // offset of the info part which contains general text
+    // information (Title, date, time, contents etc.)
+    int infoOffs = in.readInt();
+
+    // length of the info part
+    short infoLength = in.readShort();
+
+    // offset of the setup text data
+    // (system parameters, display parameters, trace parameters etc.)
+    int setupOffs = in.readInt();
+
+    // length of the setup data
+    short setupLength = in.readShort();
+
+    // offset of the first data block
+    int dataBlockOffs = in.readInt();
+
+    // no_of_data_blocks valid only when in 0 .. 0x7ffe range,
+    // if equal to 0x7fff  the  field 'reserved1' contains
+    // valid no_of_data_blocks
+    short noOfDataBlocks = in.readShort();
+
+    // length of the longest block in the file
+    int dataBlockLength = in.readInt();
+
+    // offset to 1st. measurement description block
+    // (system parameters connected to data blocks)
+    int measDescBlockOffs = in.readInt();
+
+    // number of measurement description blocks
+    short noOfMeasDescBlocks = in.readShort();
+
+    // length of the measurement description blocks
+    short measDescBlockLength = in.readShort();
+
+    // valid: 0x5555, not valid: 0x1111
+    short headerValid = in.readShort(); // unsigned
+
+    // reserved1 now contains noOfDataBlocks
+    int reserved1 = in.readInt(); // unsigned
+
+    short reserved2 = in.readShort(); // unsigned
+
+    // checksum of file header
+    short chksum = in.readShort(); // unsigned
+
+    if (DEBUG) {
+      System.err.println("SDT header:");
+      System.err.println("\trevision = " + revision);
+      System.err.println("\tinfoOffs = " + infoOffs);
+      System.err.println("\tinfoLength = " + infoLength);
+      System.err.println("\tsetupOffs = " + setupOffs);
+      System.err.println("\tsetupLength = " + setupLength);
+      System.err.println("\tdataBlockOffs = " + dataBlockOffs);
+      System.err.println("\tnoOfDataBlocks = " + noOfDataBlocks);
+      System.err.println("\tdataBlockLength = " + dataBlockLength);
+      System.err.println("\tmeasDescBlockOffs = " + measDescBlockOffs);
+      System.err.println("\tnoOfMeasDescBlocks = " + noOfMeasDescBlocks);
+      System.err.println("\tmeasDescBlockLength = " + measDescBlockLength);
+      System.err.println("\theaderValid = " + (0xffff & headerValid));
+      System.err.println("\treserved1 = " + (0xffffffff & reserved1));
+      System.err.println("\treserved2 = " + (0xffff & reserved2));
+      System.err.println("\tchksum = " + (0xffff & chksum));
+    }
+
+    // read file info
+    in.seek(infoOffs);
+    byte[] infoBytes = new byte[infoLength];
+    in.readFully(infoBytes);
+    String info = new String(infoBytes);
+    if (DEBUG) {
+      System.out.println("SDT file info:");
+      System.out.println(info);
+    }
+
+    // read setup
+    in.seek(setupOffs);
+    byte[] setupBytes = new byte[setupLength];
+    in.readFully(setupBytes);
+    String setup = new String(setupBytes);
+    if (DEBUG) {
+      System.out.println("SDT setup:");
+      System.out.println(setup);
+    }
 
     // skip to data
+    offset = dataBlockOffs + 22;
     in.seek(offset);
 
     // compute number of image planes
