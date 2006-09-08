@@ -2,16 +2,17 @@ Testing:
 * quicktime/haining/video2.mov (both legacy and native)
 
 Codecs:
-* QuickTime - svq3 codec (lower priority)
-* AVI - msrle codec (super low priority)
+* Zeiss LSM - MDB metadata (lowish)
+* QuickTime - svq3 codec (low)
+* AVI - msrle codec (very low)
 
 Implement readers for other file formats:
 * Anything listed online: http://www.loci.wisc.edu/ome/formats.html
-* SDT (java/loci/apps/slim/SlimPlotter.java, data/sdt, data/specs/sdt)
-* JPEG-2000 formats: .jp2, .jpc, .j2k, etc.
-* MNG (http://www.libpng.org/pub/mng/) -- low priority
+* JPEG-2000 formats: .j2k, .jbig, .jp2, .jpc, etc.
 * Perkin Elmer Ultraview ERS
 * SlideBook
+* MNG (low)
+* AL3D (very low)
 
 API/Other:
 * improve efficiency of BufferedImage construction and

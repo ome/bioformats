@@ -133,7 +133,7 @@ public class SDTReader extends FormatReader {
   {
     if (!id.equals(currentId)) initFile(id);
 
-    if (no < 0 || no >= getImageCount(id)) {
+    if (no < 0 || no >= numImages) {
       throw new FormatException("Invalid image number: " + no);
     }
 
