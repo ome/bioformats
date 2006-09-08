@@ -330,7 +330,7 @@ public class LIFReader extends FormatReader {
       }
       token = tmpToken;
 
-      if (token.startsWith("ElementName")) {
+      if (token.startsWith("Element Name")) {
         // loop until we find "/ImageDescription"
 
         numDatasets++;
@@ -354,19 +354,19 @@ public class LIFReader extends FormatReader {
               tmp.put(key, value);
             }
 
-            if (tmp.get("ChannelDescriptionDataType") != null) {
+            if (tmp.get("ChannelDescription DataType") != null) {
               // found channel description block
               numChannels++;
               if (numChannels == 1) {
                 bps.add(new Integer((String) tmp.get("Resolution")));
               }
             }
-            else if (tmp.get("DimensionDescriptionDimID") != null) {
+            else if (tmp.get("DimensionDescription DimID") != null) {
               // found dimension description block
 
               int w = Integer.parseInt((String) tmp.get("NumberOfElements"));
               int id = Integer.parseInt((String)
-                tmp.get("DimensionDescriptionDimID"));
+                tmp.get("DimensionDescription DimID"));
 
               switch (id) {
                 case 1: widths.add(new Integer(w)); break;
