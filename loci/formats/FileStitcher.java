@@ -74,6 +74,9 @@ public class FileStitcher extends FormatReader {
   /** Next plane number to open. */
   private int number;
 
+  /** Initialized series. */
+  private int validSeries;
+
   private boolean varyZ, varyC, varyT;
 
   // -- Constructor --
@@ -154,7 +157,7 @@ public class FileStitcher extends FormatReader {
 
   /** Determines the number of images in the given file. */
   public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId) || getSeries(id) != validSeries) initFile(id);
     return numImages;
   }
 
@@ -165,31 +168,31 @@ public class FileStitcher extends FormatReader {
 
   /** Get the size of the X dimension. */
   public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId) || getSeries(id) != validSeries) initFile(id);
     return dimensions[0];
   }
 
   /** Get the size of the Y dimension. */
   public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId) || getSeries(id) != validSeries) initFile(id);
     return dimensions[1];
   }
 
   /** Get the size of the Z dimension. */
   public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId) || getSeries(id) != validSeries) initFile(id);
     return dimensions[2];
   }
 
   /** Get the size of the C dimension. */
   public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId) || getSeries(id) != validSeries) initFile(id);
     return dimensions[3];
   }
 
   /** Get the size of the T dimension. */
   public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId) || getSeries(id) != validSeries) initFile(id);
     return dimensions[4];
   }
 
@@ -205,13 +208,13 @@ public class FileStitcher extends FormatReader {
   public String getDimensionOrder(String id)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId) || getSeries(id) != validSeries) initFile(id);
     return order;
   }
 
   /** Return the number of series in this file. */
   public int getSeriesCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+    //if (!id.equals(currentId)) initFile(id);
     return reader.getSeriesCount(id);
   }
 
@@ -228,7 +231,7 @@ public class FileStitcher extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId) || getSeries(id) != validSeries) initFile(id);
     return reader.openImage(findFile(isSeparated() ? no / getSizeC(id) : no),
       number);
   }
@@ -237,7 +240,7 @@ public class FileStitcher extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId) || getSeries(id) != validSeries) initFile(id);
     return reader.openBytes(findFile(isSeparated() ? no / getSizeC(id) : no),
       number);
   }
@@ -254,6 +257,7 @@ public class FileStitcher extends FormatReader {
     currentId = id;
     numImages = 0;
     dimensions = new int[5];
+    validSeries = getSeries(id);
 
     // get the matching files
 
