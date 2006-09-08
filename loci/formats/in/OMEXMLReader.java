@@ -77,11 +77,8 @@ public class OMEXMLReader extends FormatReader {
   /** Dimension order. */
   private String[] order;
 
-  /**
-   * Internal OME-XML metadata store that we use for parsing metadata from the
-   * OME-XML file itself.
-   */
-  private OMEXMLMetadataStore internalStore;
+  /** Internal OME-XML store, for convenient access to metadata fields. */
+  private OMEXMLMetadataStore omexml = new OMEXMLMetadataStore();
 
   // -- Constructor --
 
@@ -111,22 +108,6 @@ public class OMEXMLReader extends FormatReader {
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     return false;
-  }
-
-  /**
-   * Retrieves the current metadata store for this reader. You can be
-   * assured that this method will <b>never</b> return a <code>null</code>
-   * metadata store.
-   * @return a metadata store implementation.
-   */
-  public MetadataStore getMetadataStore(String id)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    if (internalStore == null) {
-      return super.getMetadataStore(id);
-    }
-    return internalStore;
   }
 
   /** Get the size of the X dimension. */
@@ -342,7 +323,6 @@ public class OMEXMLReader extends FormatReader {
 
     in.seek(0);
 
-    String xml = "";
     for (int i=0; i<numDatasets; i++) {
       if (i == 0) {
         buf = new byte[((Integer) offsets[i].get(0)).intValue()];
@@ -379,27 +359,15 @@ public class OMEXMLReader extends FormatReader {
         buf = new byte[bufSize];
       }
       in.read(buf);
-      xml += new String(buf);
-      xml += "</Pixels></Image>";
-    }
-    xml += "</OME>";
-
-    // The metadata store we're working with.
-    try {
-      internalStore = new OMEXMLMetadataStore();
-    }
-    catch (MetadataStoreException e) {
-      throw new FormatException("To use this feature, please install the " +
-          "org.openmicroscopy.xml package, available from " +
-          "http://www.openmicroscopy.org/");
     }
 
+    OMENode ome = null;
     try {
-      internalStore.setRoot(new OMENode(new File(id)));
+      ome = new OMENode(new File(id));
     }
-    catch (Exception e) {
-      throw new FormatException("Failed to create metadata store.");
-    }
+    catch (Exception exc) { throw new FormatException(exc); }
+    MetadataStore store = getMetadataStore(id);
+    store.setRoot(ome);
 
     width = new int[numDatasets];
     height = new int[numDatasets];
@@ -414,22 +382,23 @@ public class OMEXMLReader extends FormatReader {
 
     int oldSeries = getSeries(currentId);
 
+    omexml.setRoot(ome);
     for (int i=0; i<numDatasets; i++) {
       setSeries(currentId, i);
       Integer ndx = new Integer(i);
-      width[i] = internalStore.getSizeX(ndx).intValue();
-      height[i] = internalStore.getSizeY(ndx).intValue();
-      numT[i] = internalStore.getSizeT(ndx).intValue();
-      numZ[i] = internalStore.getSizeZ(ndx).intValue();
-      numChannels[i] = internalStore.getSizeC(ndx).intValue();
+      width[i] = omexml.getSizeX(ndx).intValue();
+      height[i] = omexml.getSizeY(ndx).intValue();
+      numT[i] = omexml.getSizeT(ndx).intValue();
+      numZ[i] = omexml.getSizeZ(ndx).intValue();
+      numChannels[i] = omexml.getSizeC(ndx).intValue();
 
-      String type = internalStore.getPixelType(ndx);
+      String type = omexml.getPixelType(ndx);
       if (type.endsWith("16")) bpp[i] = 2;
       else if (type.endsWith("32")) bpp[i] = 4;
       else if (type.equals("float")) bpp[i] = 8;
       else bpp[i] = 1;
 
-      order[i] = internalStore.getDimensionOrder(ndx);
+      order[i] = omexml.getDimensionOrder(ndx);
 
       // calculate the number of raw bytes of pixel data that we are expecting
       int expected = width[i] * height[i] * bpp[i];

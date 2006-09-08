@@ -64,7 +64,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
   // -- Constructor --
 
   /** Creates a new instance. */
-  public OMEXMLMetadataStore() throws MetadataStoreException { }
+  public OMEXMLMetadataStore() { }
 
   // -- OMEXMLMetadataStore methods --
 
