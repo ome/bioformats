@@ -286,35 +286,35 @@ public class LociImporter implements PlugIn, ItemListener {
         }
         IJ.showStatus("Creating image");
         IJ.showProgress(1);
-        ImagePlus ip = null;
+        ImagePlus imp = null;
         if (stackB != null) {
           if (!mergeChannels && splitWindows) {
             slice(stackB, fileName, channels, fi);
           }
-          else ip = new ImagePlus(fileName, stackB);
+          else imp = new ImagePlus(fileName, stackB);
         }
         if (stackS != null) {
           if (!mergeChannels && splitWindows) {
             slice(stackS, fileName, channels, fi);
           }
-          else ip = new ImagePlus(fileName, stackS);
+          else imp = new ImagePlus(fileName, stackS);
         }
         if (stackF != null) {
           if (!mergeChannels && splitWindows) {
             slice(stackF, fileName, channels, fi);
           }
-          else ip = new ImagePlus(fileName, stackF);
+          else imp = new ImagePlus(fileName, stackF);
         }
         if (stackO != null) {
           if (!mergeChannels && splitWindows) {
             slice(stackO, fileName, channels, fi);
           }
-          else ip = new ImagePlus(fileName, stackO);
+          else imp = new ImagePlus(fileName, stackO);
         }
 
-        if (ip != null) {
-          ip.setFileInfo(fi);
-          ip.show();
+        if (imp != null) {
+          imp.setFileInfo(fi);
+          imp.show();
         }
 
         long endTime = System.currentTimeMillis();
@@ -356,9 +356,9 @@ public class LociImporter implements PlugIn, ItemListener {
     }
 
     for (int i=0; i<newStacks.length; i++) {
-      ImagePlus ip = new ImagePlus(file + " - Ch" + (i+1), newStacks[i]);
-      ip.setFileInfo(fi);
-      ip.show();
+      ImagePlus imp = new ImagePlus(file + " - Ch" + (i+1), newStacks[i]);
+      imp.setFileInfo(fi);
+      imp.show();
     }
   }
 
