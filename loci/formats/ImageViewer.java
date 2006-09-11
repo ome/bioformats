@@ -398,7 +398,7 @@ public class ImageViewer extends JFrame
       catch (Exception exc) { exc.printStackTrace(); }
       if (ndx >= 0) {
         nSlider.removeChangeListener(this);
-        nSlider.setValue(ndx);
+        nSlider.setValue(ndx + 1);
         nSlider.addChangeListener(this);
       }
     }
