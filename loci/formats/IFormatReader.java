@@ -70,6 +70,9 @@ public interface IFormatReader extends IFormatHandler {
    */
   String getDimensionOrder(String id) throws FormatException, IOException;
 
+  /** Returns whether or not the channels are interleaved. */
+  boolean isInterleaved(String id) throws FormatException, IOException;
+
   /** Obtains the specified image from the given file. */
   BufferedImage openImage(String id, int no)
     throws FormatException, IOException;
@@ -109,27 +112,18 @@ public interface IFormatReader extends IFormatHandler {
   int getSeries(String id) throws FormatException, IOException;
 
   /**
-   * Allows the client to specify whether or not to separate channels.
-   * By default, channels are left unseparated; thus if we encounter an RGB
-   * image plane, it will be left as RGB and not split into 3 separate planes.
-   */
-  void setSeparated(boolean separate);
-
-  /** Gets whether channels are being separated. */
-  boolean isSeparated();
-
-  /**
    * Gets the rasterized index corresponding
    * to the given Z, C and T coordinates.
    */
-  int getIndex(String id, int z, int c, int t)
+  int getIndex(String id, int z, int c, int t, boolean separated)
     throws FormatException, IOException;
 
   /**
    * Gets the Z, C and T coordinates corresponding
    * to the given rasterized index value.
    */
-  int[] getZCTCoords(String id, int index) throws FormatException, IOException;
+  int[] getZCTCoords(String id, int index, boolean separated)
+    throws FormatException, IOException;
 
   /**
    * Obtains the specified metadata field's value for the given file.

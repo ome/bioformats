@@ -133,7 +133,6 @@ public class ImageReader implements IFormatReader {
           " cannot be instantiated.");
         continue;
       }
-      //reader.setSeparated(true);  // Add this line to separate RGB planes
       v.add(reader);
       String[] suf = reader.getSuffixes();
       for (int j=0; j<suf.length; j++) suffixSet.add(suf[j]);
@@ -258,6 +257,12 @@ public class ImageReader implements IFormatReader {
     return readers[index].getDimensionOrder(id);
   }
 
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return readers[index].isInterleaved(id);
+  }
+
   /** Return the number of series in the file. */
   public int getSeriesCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
@@ -274,16 +279,6 @@ public class ImageReader implements IFormatReader {
   public int getSeries(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return readers[index].getSeries(id);
-  }
-
-  /**
-   * Allows the client to specify whether or not to separate channels.
-   * By default, channels are left unseparated; thus if we encounter an RGB
-   * image plane, it will be left as RGB and not split into 3 separate planes.
-   */
-  public void setSeparated(boolean separate) {
-    for (int i = 0; i < readers.length; i++)
-      readers[i].setSeparated(separate);
   }
 
   /** Obtains the specified image from the given image file as a byte array. */
@@ -400,10 +395,10 @@ public class ImageReader implements IFormatReader {
   /* (non-Javadoc)
    * @see loci.formats.IFormatReader#getIndex(java.lang.String, int, int, int)
    */
-  public int getIndex(String id, int z, int c, int t)
+  public int getIndex(String id, int z, int c, int t, boolean separated)
     throws FormatException, IOException
   {
-    return currentReader(id).getIndex(id, z, c, t);
+    return currentReader(id).getIndex(id, z, c, t, separated);
   }
 
   /* (non-Javadoc)
@@ -427,17 +422,10 @@ public class ImageReader implements IFormatReader {
   /* (non-Javadoc)
    * @see loci.formats.IFormatReader#getZCTCoords(java.lang.String, int)
    */
-  public int[] getZCTCoords(String id, int index)
+  public int[] getZCTCoords(String id, int index, boolean separated)
     throws FormatException, IOException
   {
-    return currentReader(id).getZCTCoords(id, index);
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#isSeparated()
-   */
-  public boolean isSeparated() {
-    return currentReader().isSeparated();
+    return currentReader(id).getZCTCoords(id, index, separated);
   }
 
   /* (non-Javadoc)

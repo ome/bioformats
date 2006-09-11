@@ -118,7 +118,7 @@ public class LeicaReader extends BaseTiffReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    return (isRGB(id) && separated) ? 3*numPlanes[series] : numPlanes[series];
+    return numPlanes[series];
   }
 
   /** Return the number of series in the given Leica file. */
@@ -127,17 +127,6 @@ public class LeicaReader extends BaseTiffReader {
       initFile(id);
     }
     return numSeries;
-  }
-
-  /**
-   * Allows the client to specify whether or not to separate channels.
-   * By default, channels are left unseparated; thus if we encounter an RGB
-   * image plane, it will be left as RGB and not split into 3 separate planes.
-   */
-  public void setSeparated(boolean separate) {
-    separated = separate;
-    if (tiff != null) tiff.setSeparated(separate);
-    super.setSeparated(separate);
   }
 
   /** Checks if the images in the file are RGB. */
@@ -201,6 +190,11 @@ public class LeicaReader extends BaseTiffReader {
     return "XYZTC";
   }
 
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    return false;
+  }
+
   /** Obtains the specified image from the given Leica file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -211,9 +205,6 @@ public class LeicaReader extends BaseTiffReader {
 
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
-    }
-    if (isRGB(id) && separated) {
-      return tiff.openBytes((String) files[series].get(no / 3), no % 3);
     }
     return tiff.openBytes((String) files[series].get(no), 0);
   }
@@ -230,9 +221,6 @@ public class LeicaReader extends BaseTiffReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    if (isRGB(id) && separated) {
-      return tiff.openImage((String) files[series].get(no / 3), no % 3);
-    }
     return tiff.openImage((String) files[series].get(no), 0);
   }
 
@@ -383,7 +371,7 @@ public class LeicaReader extends BaseTiffReader {
           byte[] temp = (byte[]) headerIFDs[i].get(new Integer(10));
           nameLength = DataTools.bytesToInt(temp, 8, 4, littleEndian);
         }
-        
+
         Vector f = new Vector();
         byte[] tempData = (byte[]) headerIFDs[i].get(new Integer(15));
         int tempImages = DataTools.bytesToInt(tempData, 0, 4, littleEndian);
@@ -398,7 +386,7 @@ public class LeicaReader extends BaseTiffReader {
         files[i] = f;
         numPlanes[i] = f.size();
       }
-      
+
       initMetadata();
     }
   }
@@ -495,11 +483,11 @@ public class LeicaReader extends BaseTiffReader {
       if (temp != null) {
         // the image data
         // ID_IMAGES
-        
-        zs[i] = DataTools.bytesToInt(temp, 0, 4, littleEndian); 
+
+        zs[i] = DataTools.bytesToInt(temp, 0, 4, littleEndian);
         widths[i] = DataTools.bytesToInt(temp, 4, 4, littleEndian);
         heights[i] = DataTools.bytesToInt(temp, 8, 4, littleEndian);
-        
+
         metadata.put("Number of images", new Integer(zs[i]));
         metadata.put("Image width", new Integer(widths[i]));
         metadata.put("Image height", new Integer(heights[i]));
@@ -777,7 +765,7 @@ public class LeicaReader extends BaseTiffReader {
     }
     catch (Exception exc) { }
     */
-    
+
     for (int i=0; i<numSeries; i++) {
       store.setPixels(
         new Integer(widths[i]),
@@ -794,7 +782,7 @@ public class LeicaReader extends BaseTiffReader {
       String description = (String) metadata.get("Image Description");
 
       try {
-        store.setImage(null, timestamp.substring(3), 
+        store.setImage(null, timestamp.substring(3),
           description, new Integer(i));
       }
       catch (NullPointerException n) { }

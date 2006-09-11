@@ -153,6 +153,11 @@ public class OIFReader extends FormatReader {
     return "XYZTC";
   }
 
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    return false;
+  }
+
   /** Obtains the specified image from the given OIF file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException

@@ -83,16 +83,6 @@ public class FluoviewReader extends BaseTiffReader {
     return test.indexOf(FLUOVIEW_MAGIC_STRING) != -1;
   }
 
-  /**
-   * Allows the client to specify whether or not to separate channels.
-   * By default, channels are left unseparated; thus if we encounter an RGB
-   * image plane, it will be left as RGB and not split into 3 separate planes.
-   */
-  public void setSeparated(boolean separate) {
-    separated = separate;
-    super.setSeparated(separate);
-  }
-
   /** Get the size of the Z dimension. */
   public int getSizeZ(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);

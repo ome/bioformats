@@ -28,6 +28,7 @@ import ij.*;
 import ij.gui.GenericDialog;
 import ij.io.FileInfo;
 import ij.io.OpenDialog;
+import ij.measure.Calibration;
 import ij.plugin.PlugIn;
 import ij.process.*;
 import java.awt.event.ItemEvent;
@@ -139,6 +140,12 @@ public class LociImporter implements PlugIn, ItemListener {
       FormatReader r = (FormatReader) reader.getReader(id);
       if (stitchFiles) r = new FileStitcher(r);
       if (mergeChannels) r = new ChannelMerger(r);
+      if (!mergeChannels) r = new ChannelSeparator(r);
+
+      // store OME metadata into OME-XML structure, if available
+      OMEXMLMetadataStore store = new OMEXMLMetadataStore();
+      store.createRoot();
+      r.setMetadataStore(store);
 
       // if necessary, prompt for the series to open
 
@@ -146,16 +153,18 @@ public class LociImporter implements PlugIn, ItemListener {
         new GenericDialog("LOCI Bio-Formats Series Chooser");
 
       int seriesCount = r.getSeriesCount(id);
+      store = (OMEXMLMetadataStore) r.getMetadataStore(id);
       for (int i=0; i<seriesCount; i++) {
         r.setSeries(id, i);
         int sizeX = r.getSizeX(id);
         int sizeY = r.getSizeY(id);
         int imageCount = r.getImageCount(id);
-        //int sizeZ = r.getSizeZ(id);
-        //int sizeC = r.getSizeC(id);
-        //int sizeT = r.getSizeT(id);
-        datasets.addCheckbox("Series " + (i + 1) + ": " +
-          sizeX + " x " + sizeY + " x " + imageCount, i == 0);
+        String name = store.getImageName(new Integer(i));
+        if (name == null || name.length() == 0) {
+          name = "Series " + (i + 1);
+        }
+        datasets.addCheckbox(name + " : " + sizeX + " x " + sizeY + " x " +
+          imageCount, i == 0);
       }
       if (seriesCount > 1) {
         datasets.showDialog();
@@ -164,17 +173,6 @@ public class LociImporter implements PlugIn, ItemListener {
 
       boolean[] series = new boolean[seriesCount];
       for (int i=0; i<seriesCount; i++) series[i] = datasets.getNextBoolean();
-
-      r.setSeparated(!mergeChannels);
-
-      // store OME metadata into OME-XML structure, if available
-      MetadataStore store = null;
-      try {
-        store = new OMEXMLMetadataStore();
-        store.createRoot();
-        r.setMetadataStore(store);
-      }
-      catch (MetadataStoreException exc) { }
 
       if (showMetadata) {
         // display standard metadata in a table in its own window
@@ -216,10 +214,7 @@ public class LociImporter implements PlugIn, ItemListener {
 
         // dump OME-XML to ImageJ's description field, if available
         FileInfo fi = new FileInfo();
-        if (store instanceof OMEXMLMetadataStore) {
-          OMEXMLMetadataStore ms = (OMEXMLMetadataStore) store;
-          fi.description = ms.dumpXML();
-        }
+        fi.description = store.dumpXML();
 
         long startTime = System.currentTimeMillis();
         long time = startTime;
@@ -313,6 +308,27 @@ public class LociImporter implements PlugIn, ItemListener {
         }
 
         if (imp != null) {
+          // retrieve the spatial calibration information, if available
+
+          double xcal = Double.NaN, ycal = Double.NaN, zcal = Double.NaN;
+          Integer ii = new Integer(i);
+
+          Float xf = store.getPixelSizeX(ii);
+          if (xf != null) xcal = xf.floatValue();
+          Float yf = store.getPixelSizeY(ii);
+          if (yf != null) ycal = yf.floatValue();
+          Float zf = store.getPixelSizeZ(ii);
+          if (zf != null) zcal = zf.floatValue();
+
+          Calibration c = new Calibration();
+          c.pixelWidth = xcal;
+          c.setUnit("micron");
+          c.pixelHeight = ycal;
+          c.setUnit("micron");
+          c.pixelDepth = zcal;
+          c.setUnit("micron");
+          imp.setCalibration(c);
+
           imp.setFileInfo(fi);
           imp.show();
         }

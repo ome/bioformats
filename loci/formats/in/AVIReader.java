@@ -97,8 +97,7 @@ public class AVIReader extends FormatReader {
   /** Determines the number of images in the given AVI file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return (!isRGB(id) || !separated) ? numImages :
-      (bmpBitsPerPixel / 8) * numImages;
+    return numImages;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -152,6 +151,11 @@ public class AVIReader extends FormatReader {
     return getSizeC(id) == 3 ? "XYCTZ" : "XYTCZ";
   }
 
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    return true;
+  }
+
   /** Obtains the specified image from the given AVI file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -162,8 +166,7 @@ public class AVIReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    int c = (isRGB(id) && separated) ? 3 : 1;
-    long fileOff = ((Long) offsets.get(no / c)).longValue();
+    long fileOff = ((Long) offsets.get(no)).longValue();
     in.seek((int) fileOff);
 
     int len = bmpScanLineSize;
@@ -193,24 +196,13 @@ public class AVIReader extends FormatReader {
       offset += dwWidth;
     }
 
-    if (separated) {
-      byte[] rtn = new byte[rawData.length / 3];
-      int j = 0;
-      for (int i=(no%3); i<rawData.length; i+=3) {
-        rtn[j] = rawData[i];
-        j++;
-      }
-      return rtn;
+    if (rawData.length == dwWidth * bmpHeight * (bmpBitsPerPixel / 8)) {
+      return rawData;
     }
     else {
-      if (rawData.length == dwWidth * bmpHeight * (bmpBitsPerPixel / 8)) {
-        return rawData;
-      }
-      else {
-        byte[] t = new byte[dwWidth * bmpHeight * (bmpBitsPerPixel / 8)];
-        System.arraycopy(rawData, 0, t, 0, t.length);
-        return t;
-      }
+      byte[] t = new byte[dwWidth * bmpHeight * (bmpBitsPerPixel / 8)];
+      System.arraycopy(rawData, 0, t, 0, t.length);
+      return t;
     }
   }
 
@@ -219,7 +211,7 @@ public class AVIReader extends FormatReader {
     throws FormatException, IOException
   {
     return ImageTools.makeImage(openBytes(id, no), dwWidth, bmpHeight,
-      (!isRGB(id) || separated) ? 1 : 3, true);
+      !isRGB(id) ? 1 : 3, true);
   }
 
   /** Closes any open files. */

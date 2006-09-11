@@ -232,6 +232,9 @@ public class QTReader extends FormatReader {
   /** Set to true if the scanlines in a plane are interlaced (mjpb only). */
   private boolean interlaced;
 
+  /** Gamma value. */
+  private double gamma;
+
   /** Flag indicating whether the resource and data fork are separated. */
   private boolean spork;
 
@@ -255,7 +258,7 @@ public class QTReader extends FormatReader {
   /** Determines the number of images in the given QuickTime file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return (isRGB(id) && separated) ? 3 * numImages : numImages;
+    return numImages;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -308,6 +311,11 @@ public class QTReader extends FormatReader {
     return "XYCZT";
   }
 
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    return false;
+  }
+
   /** Obtains the specified image from the given file, as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -332,9 +340,7 @@ public class QTReader extends FormatReader {
       return legacy.openBytes(id, no);
     }
 
-    int c = (isRGB(id) && separated) ? 3 : 1;
-
-    int offset = ((Integer) offsets.get(no / c)).intValue();
+    int offset = ((Integer) offsets.get(no)).intValue();
     int nextOffset = pixelBytes;
 
     if (no == 0) {
@@ -343,8 +349,8 @@ public class QTReader extends FormatReader {
 
     offset -= scale;
 
-    if ((no / c) < offsets.size() - 1) {
-      nextOffset = ((Integer) offsets.get((no / c) + 1)).intValue();
+    if (no < offsets.size() - 1) {
+      nextOffset = ((Integer) offsets.get(no + 1)).intValue();
       nextOffset -= scale;
     }
 
@@ -362,8 +368,7 @@ public class QTReader extends FormatReader {
     canUsePrevious = (prevPixels != null) && (prevPlane == no - 1);
 
     if (codec.equals("jpeg") || codec.equals("mjpb")) {
-      return ImageTools.getBytes(openImage(id, no), isRGB(id) && separated,
-        no % c);
+      return ImageTools.getBytes(openImage(id, no), false, no);
     }
 
     byte[] bytes = uncompress(pixs, codec);
@@ -417,15 +422,9 @@ public class QTReader extends FormatReader {
         System.arraycopy(data[i], 0, rtn, i * data[0].length, data[i].length);
       }
 
-      if (!separated) return rtn;
-      else return ImageTools.splitChannels(rtn, 3, false, false)[no % c];
+      return rtn;
     }
-    else {
-      if (isRGB(id) && separated) {
-        return ImageTools.splitChannels(bytes, 3, false, false)[no % c];
-      }
-      else return bytes;
-    }
+    else return bytes;
   }
 
   /** Obtains the specified image from the given QuickTime file. */
@@ -451,19 +450,14 @@ public class QTReader extends FormatReader {
       return legacy.openImage(id, no);
     }
 
-    int c = (isRGB(id) && separated) ? 3 : 1;
-
-    int offset = ((Integer) offsets.get(no / c)).intValue();
+    int offset = ((Integer) offsets.get(no)).intValue();
     int nextOffset = pixelBytes;
 
-    if ((no / c) == 0) {
-      scale = offset;
-    }
-
+    if (no == 0) scale = offset;
     offset -= scale;
 
-    if ((no / c) < offsets.size() - 1) {
-      nextOffset = ((Integer) offsets.get((no / c) + 1)).intValue();
+    if (no < offsets.size() - 1) {
+      nextOffset = ((Integer) offsets.get(no + 1)).intValue();
       nextOffset -= scale;
     }
 
@@ -481,26 +475,16 @@ public class QTReader extends FormatReader {
     canUsePrevious = (prevPixels != null) && (prevPlane == no - 1);
 
     if (codec.equals("jpeg")) {
-      if (!isRGB(id) || !separated) {
-        return bufferedJPEG(pixs);
-      }
-      else {
-        return ImageTools.splitChannels(bufferedJPEG(pixs))[no % 3];
-      }
+      return bufferedJPEG(pixs);
     }
     else if (codec.equals("mjpb")) {
-      if (!isRGB(id) || !separated) {
-        return mjpbUncompress(pixs);
-      }
-      else {
-        return ImageTools.splitChannels(mjpbUncompress(pixs))[no % 3];
-      }
+      return mjpbUncompress(pixs);
     }
     else {
       int bpp = bitsPerPixel / 8;
       if (bpp == 3 || bpp == 4 || bpp == 5) bpp = 1;
       return ImageTools.makeImage(openBytes(id, no), width, height,
-        (isRGB(id) && !separated) ? 3 : 1, false, bpp, little);
+        isRGB(id) ? 3 : 1, false, bpp, little);
     }
   }
 
@@ -728,6 +712,9 @@ public class QTReader extends FormatReader {
           bitsPerPixel = in.readShort();
           in.readShort();
           in.readDouble();
+          //in.readFloat();
+          //gamma = in.readFloat();
+          /* debug */ System.out.println("gamma : " + gamma);
           int fieldsPerPlane = in.read();
           interlaced = fieldsPerPlane == 2;
           metadata.put("Codec", codec);

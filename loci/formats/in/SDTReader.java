@@ -45,13 +45,13 @@ public class SDTReader extends FormatReader {
   protected static final short BH_HEADER_VALID = 0x5555;
 
   /** For .set files (setup only). */
-  protected static final String SETUP_IDENTIFIER = "SPC Setup Script File"; 
+  protected static final String SETUP_IDENTIFIER = "SPC Setup Script File";
 
   /** For normal .sdt files (setup + data). */
   protected static final String DATA_IDENTIFIER = "SPC Setup & Data File";
 
   /**
-   * For .sdt files created automatically in Continuous Flow mode measurement 
+   * For .sdt files created automatically in Continuous Flow mode measurement
    * (no setup, only data).
    */
   protected static final String FLOW_DATA_IDENTIFIER = "SPC Flow Data File";
@@ -63,8 +63,8 @@ public class SDTReader extends FormatReader {
   protected static final String DLL_DATA_IDENTIFIER = "SPC DLL Data File";
 
   /**
-   * For .sdt files created in FIFO mode 
-   * (setup, data blocks = Decay, FCS, FIDA, FILDA &amp; MCS curves 
+   * For .sdt files created in FIFO mode
+   * (setup, data blocks = Decay, FCS, FIDA, FILDA &amp; MCS curves
    * for each used routing channel).
    */
   protected static final String FCS_DATA_IDENTIFIER = "SPC FCS Data File";
@@ -158,6 +158,11 @@ public class SDTReader extends FormatReader {
     throws FormatException, IOException
   {
     return "XYZTC";
+  }
+
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    return false;
   }
 
   /** Obtains the specified image from the given SDT file as a byte array. */

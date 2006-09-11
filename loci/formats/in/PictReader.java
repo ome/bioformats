@@ -135,7 +135,7 @@ public class PictReader extends FormatReader {
   /** Determines the number of images in the given PICT file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return (!separated) ? 1 : 3;
+    return 1;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -186,11 +186,16 @@ public class PictReader extends FormatReader {
     return "XYCZT";
   }
 
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    return false;
+  }
+
   /** Obtains the specified image from the given PICT file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.getBytes(openImage(id, no), separated, no % 3);
+    return ImageTools.getBytes(openImage(id, no), false, no % 3);
   }
 
   /** Obtains the specified image from the given PICT file. */
@@ -202,12 +207,7 @@ public class PictReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    if (isRGB(id) && separated) {
-      return ImageTools.splitChannels(open(bytes))[no];
-    }
-    else {
-      return open(bytes);
-    }
+    return open(bytes);
   }
 
   /** Closes any open files. */

@@ -219,12 +219,12 @@ public final class Compression {
 
   // -- Decompression methods --
 
-  /** 
-   * Decodes an LZO-compressed array. 
-   * Adapted from LZO for Java, available at 
+  /**
+   * Decodes an LZO-compressed array.
+   * Adapted from LZO for Java, available at
    * http://www.oberhumer.com/opensource/lzo/
    */
-  public static void lzoUncompress(byte[] src, int size, byte[] dst) 
+  public static void lzoUncompress(byte[] src, int size, byte[] dst)
     throws FormatException
   {
     int ip = 0;
@@ -297,7 +297,7 @@ public final class Compression {
             mPos -= ((src[ip++] & 0xff) << 6);
             if (mPos == op) break loop;
             mPos -= 0x4000;
-          }    
+          }
           else {
             mPos = op - 1 - (t >> 2) - ((src[ip++] & 0xff) << 2);
             t = 0;
@@ -314,7 +314,7 @@ public final class Compression {
           if (t == 0) break;
           do dst[op++] = src[ip++]; while (--t > 0);
         }
-        
+
       }
   }
 

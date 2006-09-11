@@ -86,7 +86,7 @@ public class ImageJReader extends FormatReader {
   /** Determines the number of images in the given file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return separated ? 3 : 1;
+    return 1;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -136,11 +136,16 @@ public class ImageJReader extends FormatReader {
     return "XYCZT";
   }
 
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    return false;
+  }
+
   /** Obtains the specified image from the given file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.getBytes(openImage(id, no), separated, no);
+    return ImageTools.getBytes(openImage(id, no), false, no);
   }
 
   /** Obtains the specified image from the given file. */
@@ -163,12 +168,7 @@ public class ImageJReader extends FormatReader {
       r.exec("size = image.getStackSize()");
       Image img = (Image) r.exec("image.getImage()");
 
-      if (!separated) {
-        return ImageTools.makeBuffered(img);
-      }
-      else {
-        return ImageTools.splitChannels(ImageTools.makeBuffered(img))[no];
-      }
+      return ImageTools.makeBuffered(img);
     }
     catch (Exception exc) {
       exc.printStackTrace();

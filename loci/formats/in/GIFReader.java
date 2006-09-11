@@ -152,7 +152,7 @@ public class GIFReader extends FormatReader {
   /** Determines the number of images in the given GIF file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return separated ? 3 * numFrames : numFrames;
+    return numFrames;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -202,6 +202,11 @@ public class GIFReader extends FormatReader {
     return "XYCTZ";
   }
 
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    return false;
+  }
+
   /** Obtains the specified image from the given GIF file as a byte array. */
   public byte[] openBytes(String id, int no) throws FormatException, IOException
   {
@@ -214,24 +219,13 @@ public class GIFReader extends FormatReader {
 
     byte[] b = new byte[1];
 
-    if (!separated) {
-      int[] ints = (int[]) images.get(no);
-      b = new byte[width * height * 3];
-      for (int i=0; i<ints.length; i++) {
-        b[i] = (byte) ((ints[i] & 0xff0000) >> 16);
-        b[i + ints.length] = (byte) ((ints[i] & 0xff00) >> 8);
-        b[i + 2*ints.length] = (byte) (ints[i] & 0xff);
-      }
+    int[] ints = (int[]) images.get(no);
+    b = new byte[width * height * 3];
+    for (int i=0; i<ints.length; i++) {
+      b[i] = (byte) ((ints[i] & 0xff0000) >> 16);
+      b[i + ints.length] = (byte) ((ints[i] & 0xff00) >> 8);
+      b[i + 2*ints.length] = (byte) (ints[i] & 0xff);
     }
-    else {
-      int[] ints = (int[]) images.get(no / 3);
-      b = new byte[width * height];
-      for (int i=0; i<ints.length; i++) {
-        b[i] = (byte) ((ints[i] & (0xff >> 4 - 2*(no % 3))) <<
-          (16 - ((no % 3) * 8)));
-      }
-    }
-
     return b;
   }
 
@@ -247,8 +241,7 @@ public class GIFReader extends FormatReader {
     }
 
     byte[] b = openBytes(id, no);
-    return ImageTools.makeImage(b, width, height, separated ? 1 : 3,
-      false, 1, true);
+    return ImageTools.makeImage(b, width, height, 3, false, 1, true);
   }
 
   /** Closes any open files. */

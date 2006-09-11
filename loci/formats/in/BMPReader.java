@@ -93,7 +93,7 @@ public class BMPReader extends FormatReader {
   /** Determines the number of images in the given BMP file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return (!isRGB(id) || !separated) ? 1 : 3;
+    return 1;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -144,6 +144,11 @@ public class BMPReader extends FormatReader {
   public String getDimensionOrder(String id) throws FormatException, IOException
   {
     return "XYCTZ";
+  }
+
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    return false;
   }
 
   /** Obtains the specified image from the given BMP file as a byte array. */
@@ -227,17 +232,12 @@ public class BMPReader extends FormatReader {
       }
     }
 
-    if (isRGB(id) && separated) {
-      return tempPx[no];
+    byte[] p = new byte[tempPx.length * tempPx[0].length];
+    for (int i=0; i<tempPx.length; i++) {
+      System.arraycopy(tempPx[i], 0, p, i * tempPx[i].length,
+        tempPx[i].length);
     }
-    else {
-      byte[] p = new byte[tempPx.length * tempPx[0].length];
-      for (int i=0; i<tempPx.length; i++) {
-        System.arraycopy(tempPx[i], 0, p, i * tempPx[i].length,
-          tempPx[i].length);
-      }
-      return p;
-    }
+    return p;
   }
 
   /** Obtains the specified image from the given BMP file. */
@@ -251,7 +251,7 @@ public class BMPReader extends FormatReader {
     }
 
     return ImageTools.makeImage(openBytes(id, no), width, height,
-      (!isRGB(id) || separated) ? 1 : 3, false);
+      !isRGB(id) ? 1 : 3, false);
   }
 
   /** Closes any open files. */

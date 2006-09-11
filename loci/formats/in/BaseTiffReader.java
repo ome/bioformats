@@ -32,7 +32,6 @@ import java.util.Hashtable;
 import loci.formats.DataTools;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
-import loci.formats.ImageTools;
 import loci.formats.MetadataStore;
 import loci.formats.RandomAccessStream;
 import loci.formats.TiffRational;
@@ -559,7 +558,7 @@ public abstract class BaseTiffReader extends FormatReader {
   /** Determines the number of images in the given TIFF file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return (!isRGB(id) || !separated) ? numImages : 3 * numImages;
+    return numImages;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -630,6 +629,11 @@ public abstract class BaseTiffReader extends FormatReader {
     return "XYCZT";
   }
 
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    return false;
+  }
+
   /** Obtains the specified image from the given TIFF file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -637,22 +641,13 @@ public abstract class BaseTiffReader extends FormatReader {
     if (!id.equals(currentId)) initFile(id);
 
     byte[][] p = null;
-    if (separated && isRGB(id)) {
-      p = TiffTools.getSamples(ifds[no / 3], in, 0);
-      // We need to swap back the endian-ness due to the getSamples()
-      // method giving us big-endian (Java) bytes if the image is
-      // little-endian.
-      return swapIfRequired(p[no % p.length]);
+    p = TiffTools.getSamples(ifds[no], in, 0);
+    byte[] rtn = new byte[p.length * p[0].length];
+    for (int i=0; i<p.length; i++) {
+      swapIfRequired(p[i]);
+      System.arraycopy(p[i], 0, rtn, i * p[0].length, p[0].length);
     }
-    else {
-      p = TiffTools.getSamples(ifds[no], in, 0);
-      byte[] rtn = new byte[p.length * p[0].length];
-      for (int i=0; i<p.length; i++) {
-        swapIfRequired(p[i]);
-        System.arraycopy(p[i], 0, rtn, i * p[0].length, p[0].length);
-      }
-      return rtn;
-    }
+    return rtn;
   }
 
   /**
@@ -700,14 +695,7 @@ public abstract class BaseTiffReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    if (!isRGB(id) || !separated) {
-      return TiffTools.getImage(ifds[no], in);
-    }
-    else {
-      BufferedImage[] channels =
-        ImageTools.splitChannels(TiffTools.getImage(ifds[no / 3], in));
-      return channels[no % channels.length];
-    }
+    return TiffTools.getImage(ifds[no], in);
   }
 
   /** Closes any open files. */
@@ -810,7 +798,7 @@ public abstract class BaseTiffReader extends FormatReader {
       double max = Double.MIN_VALUE;
       for (int t = 0; t < getSizeT(currentId); t++) {
         for (int z = 0; z < getSizeZ(currentId); z++) {
-          int index = getIndex(currentId, z, c, t);
+          int index = getIndex(currentId, z, c, t, false);
           Plane2D plane = openPlane2D(currentId, index);
           for (int x = 0; x < getSizeX(currentId); x++) {
             for (int y = 0; y < getSizeY(currentId); y++) {

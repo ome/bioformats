@@ -55,7 +55,7 @@ public class LegacyPictReader extends FormatReader {
 
   /** Determines the number of images in the given PICT file. */
   public int getImageCount(String id) throws FormatException, IOException {
-    return (!isRGB(id) || !separated) ? 1 : 3;
+    return 1;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -105,22 +105,16 @@ public class LegacyPictReader extends FormatReader {
     return "XYCZT";
   }
 
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    return false;
+  }
+
   /** Obtains the specified image from the given file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    BufferedImage img = openImage(id, no);
-    if (separated) {
-      return ImageTools.getBytes(img)[0];
-    }
-    else {
-      byte[][] p = ImageTools.getBytes(img);
-      byte[] rtn = new byte[p.length * p[0].length];
-      for (int i=0; i<p.length; i++) {
-        System.arraycopy(p[i], 0, rtn, i*p[0].length, p[i].length);
-      }
-      return rtn;
-    }
+    return ImageTools.getBytes(openImage(id, no), false, 3);
   }
 
   /** Obtains the specified image from the given PICT file. */
@@ -146,15 +140,7 @@ public class LegacyPictReader extends FormatReader {
       left -= r;
     }
     fin.close();
-
-
-    if (!separated) {
-      return ImageTools.makeBuffered(qtTools.pictToImage(bytes));
-    }
-    else {
-      return ImageTools.splitChannels(ImageTools.makeBuffered(
-        qtTools.pictToImage(bytes)))[no];
-    }
+    return ImageTools.makeBuffered(qtTools.pictToImage(bytes));
   }
 
   /** Closes any open files. */

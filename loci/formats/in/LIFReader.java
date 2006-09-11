@@ -69,6 +69,10 @@ public class LIFReader extends FormatReader {
   private int height;
   private int c;
   private int bpp;
+  private Vector xcal;
+  private Vector ycal;
+  private Vector zcal;
+  private Vector seriesNames;
 
   // -- Constructor --
 
@@ -87,7 +91,7 @@ public class LIFReader extends FormatReader {
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     numImages = dims[series][2] * dims[series][3];
-    return (!isRGB(id) || !separated) ? numImages : dims[series][4] * numImages;
+    return numImages;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -146,6 +150,11 @@ public class LIFReader extends FormatReader {
     else return "XYCTZ";
   }
 
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    return false;
+  }
+
   /** Return the number of series in this file. */
   public int getSeriesCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
@@ -183,13 +192,7 @@ public class LIFReader extends FormatReader {
 
     byte[] data = new byte[(int) (width * height * bytesPerPixel * c)];
     in.read(data);
-
-    if (isRGB(id) && separated) {
-      return ImageTools.splitChannels(data, c, false, true)[no % c];
-    }
-    else {
-      return data;
-    }
+    return data;
   }
 
   /** Obtains the specified image from the given LIF file. */
@@ -197,7 +200,7 @@ public class LIFReader extends FormatReader {
     throws FormatException, IOException
   {
     return ImageTools.makeImage(openBytes(id, no), width, height,
-      (!isRGB(id) || separated) ? 1 : c, false, bpp / 8, littleEndian);
+      !isRGB(id) ? 1 : c, false, bpp / 8, littleEndian);
   }
 
   /** Closes any open files. */
@@ -214,6 +217,10 @@ public class LIFReader extends FormatReader {
     offsets = new Vector();
 
     littleEndian = true;
+
+    xcal = new Vector();
+    ycal = new Vector();
+    zcal = new Vector();
 
     // read the header
 
@@ -274,6 +281,7 @@ public class LIFReader extends FormatReader {
   /** Parses a string of XML and puts the values in a Hashtable. */
   private void initMetadata(String xml) {
     Vector elements = new Vector();
+    seriesNames = new Vector();
 
     // first parse each element in the XML string
 
@@ -332,6 +340,8 @@ public class LIFReader extends FormatReader {
 
       if (token.startsWith("Element Name")) {
         // loop until we find "/ImageDescription"
+        seriesNames.add(token.substring(token.indexOf("=") + 2,
+          token.length() - 1));
 
         numDatasets++;
         int numChannels = 0;
@@ -365,13 +375,17 @@ public class LIFReader extends FormatReader {
               // found dimension description block
 
               int w = Integer.parseInt((String) tmp.get("NumberOfElements"));
+              float cal = Float.parseFloat((String) tmp.get("Length"));
               int id = Integer.parseInt((String)
                 tmp.get("DimensionDescription DimID"));
 
               switch (id) {
-                case 1: widths.add(new Integer(w)); break;
-                case 2: heights.add(new Integer(w)); break;
-                case 3: zs.add(new Integer(w)); break;
+                case 1: widths.add(new Integer(w)); xcal.add(new Float(cal));
+                  break;
+                case 2: heights.add(new Integer(w)); ycal.add(new Float(cal));
+                  break;
+                case 3: zs.add(new Integer(w)); zcal.add(new Float(cal));
+                  break;
                 case 4: ts.add(new Integer(w)); break;
                 default: extras *= w;
               }
@@ -428,6 +442,10 @@ public class LIFReader extends FormatReader {
       }
 
       for (int i=0; i<numDatasets; i++) {
+        Integer ii = new Integer(i);
+
+        store.setImage((String) seriesNames.get(i), null, null, ii);
+
         store.setPixels(
           new Integer(dims[i][0]), // SizeX
           new Integer(dims[i][1]), // SizeY
@@ -437,10 +455,17 @@ public class LIFReader extends FormatReader {
           type, // PixelType
           new Boolean(!littleEndian), // BigEndian
           getDimensionOrder(currentId), // DimensionOrder
-          new Integer(i)); // Index
+          ii); // Index
+
+
+        Float xf = i < xcal.size() ? (Float) xcal.get(i) : null;
+        Float yf = i < ycal.size() ? (Float) ycal.get(i) : null;
+        Float zf = i < zcal.size() ? (Float) zcal.get(i) : null;
+
+        store.setDimensions(xf, yf, zf, null, null, ii);
       }
     }
-    catch (Exception e) { }
+    catch (Exception e) { e.printStackTrace(); }
   }
 
 

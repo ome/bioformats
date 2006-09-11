@@ -412,7 +412,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
   {
     int ndx = i == null ? 0 : i.intValue();
     // TODO find a better way to specify which Dimensions we want
-    ImageNode image = (ImageNode) getChild(root, "Image", 0);
+    ImageNode image = (ImageNode) getChild(root, "Image", ndx);
     CustomAttributesNode ca = (CustomAttributesNode)
       getChild(image, "CustomAttributes", 0);
     DimensionsNode dimensions =
@@ -465,7 +465,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
   {
     int ndx = i == null ? 0 : i.intValue();
     // TODO find a better way to specify which Pixels we want
-    ImageNode image = (ImageNode) getChild(root, "Image", 0);
+    ImageNode image = (ImageNode) getChild(root, "Image", ndx);
     CustomAttributesNode ca = (CustomAttributesNode)
       getChild(image, "CustomAttributes", 0);
     PixelsNode pixels = (PixelsNode) getChild(ca, "Pixels", ndx);

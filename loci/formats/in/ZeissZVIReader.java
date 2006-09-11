@@ -85,7 +85,7 @@ public class ZeissZVIReader extends FormatReader {
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     if (needLegacy) return legacy.getImageCount(id);
-    return (isRGB(id) && separated) ? (3 * nImages) : nImages;
+    return nImages;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -146,6 +146,11 @@ public class ZeissZVIReader extends FormatReader {
     return dimensionOrder;
   }
 
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    return true;
+  }
+
   /** Obtains the specified image from the given ZVI file, as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -161,8 +166,7 @@ public class ZeissZVIReader extends FormatReader {
     // read image header data
 
     try {
-      int c = (isRGB(id) && separated) ? 3 : 1;
-      byte[] imageHead = (byte[]) headerData.get(new Integer(no / c));
+      byte[] imageHead = (byte[]) headerData.get(new Integer(no));
 
       if (imageHead != null) {
         int pointer = 14;
@@ -203,7 +207,7 @@ public class ZeissZVIReader extends FormatReader {
         bitsPerSample = bytesPerPixel * 8;
       }
 
-      byte[] px = (byte[]) pixelData.get(new Integer(no / c));
+      byte[] px = (byte[]) pixelData.get(new Integer(no));
       byte[] tempPx = new byte[px.length];
 
       if (bitsPerSample > 64) { bitsPerSample = 8; }
@@ -248,7 +252,6 @@ public class ZeissZVIReader extends FormatReader {
       }
       else if (bpp != 6) tempPx = px;
       else {
-        // HACK - slight hack
         int mul = (int) (0.32 * imageWidth * bpp);
         for (int i=0; i<imageHeight; i++) {
           System.arraycopy(px, i*width*bpp, tempPx, (i+1)*width*bpp - mul, mul);
@@ -291,12 +294,7 @@ public class ZeissZVIReader extends FormatReader {
         tempPx = px;
       }
 
-      if (!isRGB(id) || !separated) {
-        return tempPx;
-      }
-      else {
-        return ImageTools.splitChannels(tempPx, 3, false, true)[no % 3];
-      }
+      return tempPx;
     }
     catch (Exception e) {
       needLegacy = true;
@@ -315,7 +313,7 @@ public class ZeissZVIReader extends FormatReader {
       if (bpp == 0) bpp = bytesPerPixel;
       if (bpp > 4) bpp /= 3;
       return ImageTools.makeImage(data, width, height,
-        (!isRGB(id) || separated) ? 1 : 3, true, bpp, false);
+        !isRGB(id) ? 1 : 3, true, bpp, false);
     }
     catch (Exception e) {
       needLegacy = true;

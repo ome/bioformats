@@ -126,7 +126,7 @@ public class OpenlabReader extends FormatReader {
   /** Determines the number of images in the given Openlab file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return (!separated) ? numBlocks : 3*numBlocks;
+    return numBlocks;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -180,25 +180,16 @@ public class OpenlabReader extends FormatReader {
     return "XYCZT";
   }
 
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    return false;
+  }
+
   /** Obtains the specified image from the given file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    // kinda inefficient...should probably be changed to "natively" use
-    // openBytes, instead of calling openImage and then converting
-
-    BufferedImage img = openImage(id, no);
-    if (separated) {
-      return ImageTools.getBytes(img)[0];
-    }
-    else {
-      byte[][] p = ImageTools.getBytes(img);
-      byte[] rtn = new byte[p.length * p[0].length];
-      for (int i=0; i<p.length; i++) {
-        System.arraycopy(p[i], 0, rtn, i*p[0].length, p[i].length);
-      }
-      return rtn;
-    }
+    return ImageTools.getBytes(openImage(id, no), false, 3);
   }
 
   /** Obtains the specified image from the given Openlab file. */
@@ -212,7 +203,6 @@ public class OpenlabReader extends FormatReader {
     }
 
     // First initialize:
-    if (separated) no /= 3;
     in.seek(offsets[no] + 12);
 
     int blockSize = in.readInt();
@@ -268,12 +258,7 @@ public class OpenlabReader extends FormatReader {
           // there has been no deep gray data, and it is supposed
           // to be a pict... *crosses fingers*
           try {
-            if (!separated) {
-              return pictReader.open(b);
-            }
-            else {
-              return ImageTools.splitChannels(pictReader.open(b))[no%3];
-            }
+            return pictReader.open(b);
           }
           catch (Exception e) {
             e.printStackTrace();

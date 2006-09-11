@@ -77,7 +77,7 @@ public class OpenlabRawReader extends FormatReader {
   /** Determines the number of images in the given RAW file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return (!isRGB(id) || !separated) ? numImages : channels * numImages;
+    return numImages;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -131,6 +131,11 @@ public class OpenlabRawReader extends FormatReader {
     return "XYZTC";
   }
 
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    return false;
+  }
+
   /** Obtains the specified image from the given RAW file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -153,13 +158,7 @@ public class OpenlabRawReader extends FormatReader {
       }
     }
 
-    if (isRGB(id) && separated) {
-      return
-        ImageTools.splitChannels(data, channels, false, true)[no % channels];
-    }
-    else {
-      return data;
-    }
+    return data;
   }
 
   /** Obtains the specified image from the given RAW file. */
@@ -167,7 +166,7 @@ public class OpenlabRawReader extends FormatReader {
     throws FormatException, IOException
   {
     return ImageTools.makeImage(openBytes(id, no), width, height,
-      (!isRGB(id) || separated) ? 1 : channels, false, bpp, false);
+      !isRGB(id) ? 1 : channels, false, bpp, false);
   }
 
   /** Closes any open files. */

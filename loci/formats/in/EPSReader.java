@@ -77,7 +77,7 @@ public class EPSReader extends FormatReader {
   /** Determines the number of images in the given EPS file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return (!isRGB(id) || !separated) ? 1 : 3;
+    return 1;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -126,6 +126,11 @@ public class EPSReader extends FormatReader {
   public String getDimensionOrder(String id) throws FormatException, IOException
   {
     return "XYCZT";
+  }
+
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    return true;
   }
 
   /**
@@ -186,11 +191,6 @@ public class EPSReader extends FormatReader {
       }
     }
 
-    if (isRGB(id) && separated) {
-      byte[][] px = ImageTools.splitChannels(p, channels, false, false);
-      return px[no];
-    }
-
     return p;
   }
 
@@ -199,7 +199,7 @@ public class EPSReader extends FormatReader {
     throws FormatException, IOException
   {
     return ImageTools.makeImage(openBytes(id, no), width, height,
-      (!isRGB(id) || separated) ? 1 : 3, true);
+      !isRGB(id) ? 1 : 3, true);
   }
 
   /** Closes any open files. */
