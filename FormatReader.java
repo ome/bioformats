@@ -52,9 +52,6 @@ public abstract class FormatReader extends FormatHandler
   /** Hashtable containing metadata key/value pairs. */
   protected Hashtable metadata;
 
-  /** Flag set to true if multi-channel planes are to be separated. */
-  protected boolean separated = false;
-
   /** The number of the current series. */
   protected int series = 0;
 
@@ -121,6 +118,10 @@ public abstract class FormatReader extends FormatHandler
    * within the file.
    */
   public abstract String getDimensionOrder(String id)
+    throws FormatException, IOException;
+
+  /** Returns whether or not the channels are interleaved. */
+  public abstract boolean isInterleaved(String id)
     throws FormatException, IOException;
 
   /** Obtains the specified image from the given file. */
@@ -232,20 +233,10 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /**
-   * Allows the client to specify whether or not to separate channels.
-   * By default, channels are left unseparated; thus if we encounter an RGB
-   * image plane, it will be left as RGB and not split into 3 separate planes.
-   */
-  public void setSeparated(boolean separate) { separated = separate; }
-
-  /** Gets whether channels are being separated. */
-  public boolean isSeparated() { return separated; }
-
-  /**
    * Gets the rasterized index corresponding
    * to the given Z, C and T coordinates.
    */
-  public int getIndex(String id, int z, int c, int t)
+  public int getIndex(String id, int z, int c, int t, boolean separated)
     throws FormatException, IOException
   {
     // get DimensionOrder
@@ -276,10 +267,7 @@ public abstract class FormatReader extends FormatHandler
     }
     int origSizeC = sizeC;
     boolean rgb = isRGB(id);
-    if (rgb && !separated) {
-      // adjust for RGB merging
-      sizeC = 1;
-    }
+    if (!separated) sizeC = 1; // adjust for RGB merging
 
     // get SizeT
     int sizeT = getSizeT(id);
@@ -315,7 +303,7 @@ public abstract class FormatReader extends FormatHandler
    * Gets the Z, C and T coordinates corresponding
    * to the given rasterized index value.
    */
-  public int[] getZCTCoords(String id, int index)
+  public int[] getZCTCoords(String id, int index, boolean separated)
     throws FormatException, IOException
   {
     // get DimensionOrder
@@ -340,7 +328,7 @@ public abstract class FormatReader extends FormatHandler
     if (sizeC <= 0) throw new FormatException("Invalid C size: " + sizeC);
     int origSizeC = sizeC;
     boolean rgb = isRGB(id);
-    if (rgb && !separated) sizeC = 1; // adjust for RGB merging
+    if (!separated) sizeC = 1; // adjust for RGB merging
 
     // get SizeT
     int sizeT = getSizeT(id);
@@ -349,6 +337,7 @@ public abstract class FormatReader extends FormatHandler
     // get image count
     int num = getImageCount(id);
     if (num <= 0) throw new FormatException("Invalid image count: " + num);
+
     if (num != sizeZ * sizeC * sizeT) {
       // if this happens, there is probably a bug in metadata population --
       // either one of the ZCT sizes, or the total number of images --
@@ -534,6 +523,7 @@ public abstract class FormatReader extends FormatHandler
     System.out.println(reader.isThisType(id) ? "[yes]" : "[no]");
 
     if (stitch) reader = new FileStitcher(reader);
+    if (separate) reader = new ChannelSeparator(reader);
     if (merge) reader = new ChannelMerger(reader);
 
     // read basic metadata
@@ -558,11 +548,13 @@ public abstract class FormatReader extends FormatHandler
       boolean little = reader.isLittleEndian(id);
       String dimOrder = reader.getDimensionOrder(id);
 
+      if (sizeC > 1 && merge) rgb = true;
+
       // output basic metadata for series #i
       System.out.println("Series #" + j + ":");
       System.out.println("\tImage count = " + imageCount);
       System.out.print("\tRGB = " + rgb);
-      if (rgb && separate) System.out.print(" (separated)");
+      if (rgb && separate && !merge) System.out.print(" (separated)");
       else if (!rgb && !separate) System.out.print(" (merged)");
       System.out.println();
       System.out.println("\tWidth = " + sizeX);
@@ -571,7 +563,7 @@ public abstract class FormatReader extends FormatHandler
       System.out.println("\tSizeC = " + sizeC);
       System.out.println("\tSizeT = " + sizeT);
       if (imageCount != sizeZ * sizeC * sizeT /
-        ((rgb && !separate) ? sizeC : 1))
+        ((rgb || (sizeC > 1 && merge)) ? sizeC : 1))
       {
         System.out.println("\t************ Warning: ZCT mismatch ************");
       }
@@ -592,8 +584,10 @@ public abstract class FormatReader extends FormatHandler
       int[][] zct = new int[indices.length][];
       int[] indices2 = new int[indices.length];
       for (int i=0; i<indices.length; i++) {
-        zct[i] = reader.getZCTCoords(id, indices[i]);
-        indices2[i] = reader.getIndex(id, zct[i][0], zct[i][1], zct[i][2]);
+        zct[i] = reader.getZCTCoords(id, indices[i],
+          imageCount == sizeZ * sizeT * sizeC);
+        indices2[i] = reader.getIndex(id, zct[i][0], zct[i][1], zct[i][2],
+          imageCount == sizeZ * sizeT * sizeC);
         System.out.print("\tPlane #" + indices[i] + " <=> Z " + zct[i][0] +
           ", C " + zct[i][1] + ", T " + zct[i][2]);
         if (indices[i] != indices2[i]) {
@@ -610,7 +604,6 @@ public abstract class FormatReader extends FormatHandler
       System.out.println();
       System.out.print("Reading" + s + " pixel data ");
       long s1 = System.currentTimeMillis();
-      reader.setSeparated(separate);
       int num = reader.getImageCount(id);
       if (end == 0 || end > num) end = num;
       if (end < 0) end = 0;

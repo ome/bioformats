@@ -93,7 +93,7 @@ public class IPLabReader extends FormatReader {
   /** Determines the number of images in the given IPLab file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return (!isRGB(id) || !separated) ? numImages : 3 * numImages;
+    return numImages;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -148,6 +148,11 @@ public class IPLabReader extends FormatReader {
     return order;
   }
 
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    return false;
+  }
+
   /** Obtains the specified image from the given IPLab file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -163,11 +168,7 @@ public class IPLabReader extends FormatReader {
 
     byte[] rawData = new byte[numPixels * bps];
     in.read(rawData);
-
-    if (isRGB(id) && separated) {
-      return ImageTools.splitChannels(rawData, c, false, true)[no % 3];
-    }
-    else return rawData;
+    return rawData;
   }
 
   /** Obtains the specified image from the given IPLab file. */
@@ -175,7 +176,7 @@ public class IPLabReader extends FormatReader {
     throws FormatException, IOException
   {
     return ImageTools.makeImage(openBytes(id, no), width, height,
-      (!isRGB(id) || separated) ? 1 : c, false, bps, littleEndian);
+      !isRGB(id) ? 1 : c, false, bps, littleEndian);
   }
 
   /** Closes any open files. */

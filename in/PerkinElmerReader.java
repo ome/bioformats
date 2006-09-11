@@ -70,7 +70,7 @@ public class PerkinElmerReader extends FormatReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    return (!isRGB(id) || !separated) ? numImages : channels * numImages;
+    return numImages;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -135,6 +135,11 @@ public class PerkinElmerReader extends FormatReader {
     throws FormatException, IOException
   {
     return "XYCTZ";
+  }
+
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    return false;
   }
 
   /** Obtains the specified image from the given file as a byte array. */

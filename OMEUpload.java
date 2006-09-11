@@ -144,12 +144,11 @@ public class OMEUpload {
 
     ImageReader reader = new ImageReader();
     FormatReader fr = (FormatReader) reader.getReader(file);
+    fr = new ChannelSeparator(fr);
     FileStitcher fs = stitch ? new FileStitcher(fr) : null;
-    fr.setSeparated(true);
     OMEXMLMetadataStore store = new OMEXMLMetadataStore();
     store.createRoot();
     fr.setMetadataStore(store);
-    if (fs != null) fs.setSeparated(true);
     if (fs != null) fs.setMetadataStore(store);
 
     // add the logical channel elements
@@ -178,7 +177,8 @@ public class OMEUpload {
       b = stitch ? fs.openBytes(file, i) : fr.openBytes(file, i);
 
       int[] coords =
-        stitch ? fs.getZCTCoords(file, i) : fr.getZCTCoords(file, i);
+        stitch ? fs.getZCTCoords(file, i, true) :
+        fr.getZCTCoords(file, i, true);
       uploadPlane(b, coords[0], coords[1], coords[2], pix);
     }
 

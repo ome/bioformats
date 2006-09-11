@@ -58,7 +58,7 @@ public abstract class ImageIOReader extends FormatReader {
 
   /** Determines the number of images in the given image file. */
   public int getImageCount(String id) throws FormatException, IOException {
-    return separated ? 3 : 1;
+    return 1;
   }
 
   /** Checks if the images in the file are RGB. */
@@ -108,11 +108,16 @@ public abstract class ImageIOReader extends FormatReader {
     return "XYCZT";
   }
 
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    return false;
+  }
+
   /** Obtains the specified image from the given file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.getBytes(openImage(id, no), separated, no);
+    return ImageTools.getBytes(openImage(id, no), false, no);
   }
 
   /** Obtains the image from the given image file. */
@@ -123,17 +128,8 @@ public abstract class ImageIOReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    if (!separated) {
-      return ImageIO.read(new DataInputStream(
-        new BufferedInputStream(new FileInputStream(id), 4096)));
-    }
-    else {
-      BufferedImage[] channels = ImageTools.splitChannels(ImageIO.read(
-        new DataInputStream(new BufferedInputStream(
-        new FileInputStream(id), 4096))));
-      if (channels.length > no) return channels[no];
-      else return channels[0];
-    }
+    return ImageIO.read(new DataInputStream(
+      new BufferedInputStream(new FileInputStream(id), 4096)));
   }
 
   /** Closes any open files. */

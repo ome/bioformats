@@ -75,16 +75,6 @@ public class ChannelMerger extends FormatReader {
   }
 
   /**
-   * Allows the client to specify whether or not to separate channels.
-   * By default, channels are left unseparated; thus if we encounter an RGB
-   * image plane, it will be left as RGB and not split into 3 separate planes.
-   */
-  public void setSeparated(boolean separate) {
-    this.separated = separate;
-    reader.setSeparated(separate);
-  }
-
-  /**
    * Obtains the hashtable containing the metadata field/value pairs from
    * the given file.
    */
@@ -116,12 +106,7 @@ public class ChannelMerger extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    MetadataStore s = reader.getMetadataStore(id);
-    s.setPixels(new Integer(getSizeX(id)), new Integer(getSizeY(id)),
-      new Integer(getSizeZ(id)), new Integer(getSizeC(id)),
-      new Integer(getSizeT(id)), null, null, null, null);
-    metadataStore = s;
-    return metadataStore;
+    return reader.getMetadataStore(id);
   }
 
   /**
@@ -140,9 +125,7 @@ public class ChannelMerger extends FormatReader {
 
     int channels = getSizeC(id);
     boolean multipleChannels = channels > 1;
-    //return multipleChannels && (channels == 3 && reader.isRGB(id)) &&
-    //  !separated;
-    return multipleChannels && !separated;
+    return multipleChannels && reader.isRGB(id);
   }
 
   /** Get the size of the X dimension. */
@@ -190,6 +173,12 @@ public class ChannelMerger extends FormatReader {
   {
     if (!id.equals(currentId)) initFile(id);
     return reader.getDimensionOrder(id);
+  }
+
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.isInterleaved(id);
   }
 
   /** Return the number of series in this file. */
@@ -269,7 +258,7 @@ public class ChannelMerger extends FormatReader {
   /** Closes the currently open file. */
   public void close() throws FormatException, IOException {
     if (reader != null) reader.close();
-    reader = null;
+    //reader = null;
     currentId = null;
   }
 
@@ -281,8 +270,7 @@ public class ChannelMerger extends FormatReader {
 
     int channels = getSizeC(id);
     boolean multipleChannels = channels > 1;
-    return multipleChannels && !(channels == 3 && reader.isRGB(id)) &&
-      !separated;
+    return multipleChannels && !(channels == 3 && reader.isRGB(id));
   }
 
   // -- Helper methods --
@@ -298,12 +286,6 @@ public class ChannelMerger extends FormatReader {
     dimensions[2] = getSizeT(id);
 
     currentId = id;
-
-    MetadataStore s = reader.getMetadataStore(id);
-    s.setPixels(new Integer(getSizeX(id)), new Integer(getSizeY(id)),
-      new Integer(getSizeZ(id)), new Integer(getSizeC(id)),
-      new Integer(getSizeT(id)), null, null, null, null);
-    setMetadataStore(s);
   }
 
   /**

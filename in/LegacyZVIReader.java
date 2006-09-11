@@ -142,6 +142,11 @@ public class LegacyZVIReader extends FormatReader {
     return "XYCZT";
   }
 
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    return false;
+  }
+
   /** Obtains the specified image from the given ZVI file, as a byte array. */
   public byte[] openBytes(String id, int no) throws FormatException, IOException
   {
@@ -168,12 +173,7 @@ public class LegacyZVIReader extends FormatReader {
 
     ZVIBlock zviBlock = (ZVIBlock) blockList.elementAt(no);
 
-    if (!isRGB(id) || !separated) {
-      return zviBlock.readImage(in);
-    }
-    else {
-      return ImageTools.splitChannels(zviBlock.readImage(in))[no % 3];
-    }
+    return zviBlock.readImage(in);
   }
 
   /** Closes any open files. */

@@ -130,6 +130,11 @@ public class ImarisReader extends FormatReader {
     return "XYZCT";
   }
 
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    return false;
+  }
+
   /**
    * Obtains the specified image from the
    * given Imaris file as a byte array.

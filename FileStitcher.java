@@ -96,16 +96,6 @@ public class FileStitcher extends FormatReader {
   }
 
   /**
-   * Allows the client to specify whether or not to separate channels.
-   * By default, channels are left unseparated; thus if we encounter an RGB
-   * image plane, it will be left as RGB and not split into 3 separate planes.
-   */
-  public void setSeparated(boolean separate) {
-    this.separated = separate;
-    reader.setSeparated(separate);
-  }
-
-  /**
    * Obtains the hashtable containing the metadata field/value pairs from
    * the given file.
    */
@@ -137,12 +127,7 @@ public class FileStitcher extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    MetadataStore s = reader.getMetadataStore(id);
-    s.setPixels(new Integer(getSizeX(id)), new Integer(getSizeY(id)),
-      new Integer(getSizeZ(id)), new Integer(getSizeC(id)),
-      new Integer(getSizeT(id)), null, null, null, null);
-    metadataStore = s;
-    return s;
+    return reader.getMetadataStore(id);
   }
 
   /**
@@ -212,9 +197,14 @@ public class FileStitcher extends FormatReader {
     return order;
   }
 
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.isInterleaved(id);
+  }
+
   /** Return the number of series in this file. */
   public int getSeriesCount(String id) throws FormatException, IOException {
-    //if (!id.equals(currentId)) initFile(id);
     return reader.getSeriesCount(id);
   }
 
@@ -232,8 +222,7 @@ public class FileStitcher extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId) || getSeries(id) != validSeries) initFile(id);
-    return reader.openImage(findFile(isSeparated() ? no / getSizeC(id) : no),
-      number);
+    return reader.openImage(findFile(no), number);
   }
 
   /** Obtains the specified image from the given file as a byte array. */
@@ -241,8 +230,7 @@ public class FileStitcher extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId) || getSeries(id) != validSeries) initFile(id);
-    return reader.openBytes(findFile(isSeparated() ? no / getSizeC(id) : no),
-      number);
+    return reader.openBytes(findFile(no), number);
   }
 
   /** Closes the currently open file. */
