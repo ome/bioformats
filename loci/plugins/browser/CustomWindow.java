@@ -37,6 +37,9 @@ import loci.formats.ReflectedUniverse;
 import loci.formats.ReflectException;
 //import loci.ome.notebook.MetadataNotebook;
 
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 public class CustomWindow extends ImageWindow implements ActionListener,
   AdjustmentListener, ChangeListener, ItemListener, KeyListener
 {
@@ -48,6 +51,9 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   private static final String ANIM_STRING = "Animate";
   private static final String STOP_STRING = "Stop";
+  
+  /**Constant dlu size for indents in GUI*/
+  private static final String TAB = "5dlu";
 
   // -- Fields - state --
 
@@ -60,15 +66,21 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   private boolean customVirtualization = false;
   private int z1 = 1, z2 = 1, t1 = 1, t2 = 1;
   protected int zMap,tMap,cMap,prevZ,prevT;
+  private boolean setup;
 
   // -- Fields - widgets --
 
-  private JLabel zLabel, tLabel;
+  private JLabel zLabel, tLabel, cLabel;
   private JScrollBar zSliceSel, tSliceSel;
   private JButton xml;
   private Timer animationTimer;
   private JButton animate;
   private JButton options;
+  private Panel lowPane;
+  private CellConstraints cc;
+  private JSpinner channelSpin;
+  private JCheckBox channelBox;
+  private Color textColor;
 
   // -- Constructor --
 
@@ -86,6 +98,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     cMap = 2;
     prevZ = 0;
     prevT = 1;
+    
+    setup = false;
 
     // create panel for image canvas
     Panel imagePane = new Panel() {
@@ -97,47 +111,22 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       }
     };
 
-    imagePane.setLayout(getLayout()); // ImageLayout
+//    imagePane.setLayout(getLayout()); // ImageLayout
     imagePane.setBackground(Color.white);
 
     // redo layout for master window
-    setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     remove(ic);
-    add(Box.createVerticalStrut(2)); // leave extra room for text on top
-    add(imagePane);
     imagePane.add(ic);
-
-    // custom panel to house widgets
-    Panel bottom = new Panel();
-    bottom.setBackground(Color.white);
-    GridBagLayout gridbag = new GridBagLayout();
-    GridBagConstraints gbc = new GridBagConstraints();
-    bottom.setLayout(gridbag);
 
     // Z scroll bar label
     zLabel = new JLabel(zString);
     zLabel.setHorizontalTextPosition(JLabel.LEFT);
     if (!db.hasZ) zLabel.setEnabled(false);
 
-    gbc.gridx = 0;
-    gbc.gridy = 0;
-    gbc.fill = GridBagConstraints.NONE;
-    gbc.weightx = 0.0;
-    gbc.ipadx = 30;
-    gbc.anchor = GridBagConstraints.LINE_START;
-    gridbag.setConstraints(zLabel, gbc);
-    bottom.add(zLabel);
-
     // T scroll bar label
     tLabel = new JLabel(tString);
     tLabel.setHorizontalTextPosition(JLabel.LEFT);
     if (!db.hasT) tLabel.setEnabled(false);
-
-    gbc.gridy = 2;
-    gridbag.setConstraints(tLabel, gbc);
-    bottom.add(tLabel);
-
-    gbc.ipadx = 30;
 
     // Z scroll bar
     zSliceSel = new JScrollBar(JScrollBar.HORIZONTAL,
@@ -147,15 +136,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     zSliceSel.setUnitIncrement(1);
     zSliceSel.setBlockIncrement(5);
 
-    gbc.gridx = 1;
-    gbc.gridy = 0;
-    if (db.numC > 2) gbc.gridwidth = 5;
-    else gbc.gridwidth = 6;
-    gbc.fill = GridBagConstraints.HORIZONTAL;
-    gbc.weightx = 1.0;
-    gridbag.setConstraints(zSliceSel, gbc);
-    bottom.add(zSliceSel);
-
     // T scroll bar
     tSliceSel = new JScrollBar(JScrollBar.HORIZONTAL,
       1, 1, 1, db.hasT ? db.numT + 1 : 2);
@@ -164,62 +144,10 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     tSliceSel.setUnitIncrement(1);
     tSliceSel.setBlockIncrement(5);
 
-    gbc.gridy = 2;
-    gridbag.setConstraints(tSliceSel, gbc);
-    bottom.add(tSliceSel);
-
-    gbc.gridx = 6;
-    gbc.gridy = 0;
-    gbc.fill = GridBagConstraints.NONE;
-    gbc.weightx = 0.0;
-    gbc.insets = new Insets(0, 5, 0, 0);
-
-    if (db.numC > 2) {
-      // C spinner
-      SpinnerModel model = new SpinnerNumberModel(1, 1, db.numC, 1);
-      JSpinner channels = new JSpinner(model);
-      if (!db.hasC) channels.setEnabled(false);
-      channels.addChangeListener(this);
-
-      gbc.gridwidth = 1;
-      gridbag.setConstraints(channels, gbc);
-      bottom.add(channels);
-
-      // C label
-      JLabel cLabel = new JLabel("channel");
-      if (!db.hasC) cLabel.setEnabled(false);
-
-      gbc.gridx = 7;
-      gbc.weightx = 0.0;
-      gridbag.setConstraints(cLabel, gbc);
-      bottom.add(cLabel);
-    }
-    else {
-      // C checkbox
-      JCheckBox channels = new JCheckBox("Transmitted");
-      if (!db.hasC) channels.setEnabled(false);
-      channels.addItemListener(this);
-      channels.setBackground(Color.white);
-
-      gbc.gridwidth = 2; // end row
-      gbc.anchor = GridBagConstraints.LINE_END;
-      gridbag.setConstraints(channels, gbc);
-      bottom.add(channels);
-    }
-
     // animate button
     animate = new JButton(ANIM_STRING);
     if (!db.hasT && !db.hasZ) animate.setEnabled(false);
     animate.addActionListener(this);
-
-    gbc.gridx = 6;
-    gbc.gridy = 3;
-    gbc.gridheight = 1;
-    gbc.fill = GridBagConstraints.NONE;
-    gbc.weightx = 0.0;
-    gbc.insets = new Insets(3, 5, 3, 0);
-    gridbag.setConstraints(animate, gbc);
-    bottom.add(animate);
 
     // options button
 
@@ -227,12 +155,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     options.setActionCommand("options");
     options.addActionListener(this);
     options.setEnabled(true);
-
-    gbc.gridx = 3;
-    gbc.gridy = 3;
-    gbc.insets = new Insets(3, 30, 3, 5);
-    gridbag.setConstraints(options, gbc);
-    bottom.add(options);
 
     // OME-XML button
     boolean canDoXML = true;
@@ -243,32 +165,26 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       Class.forName("com.jgoodies.forms.layout.FormLayout"); // forms-1.0.4.jar
     }
     catch (Throwable e) { canDoXML = false; }
+    xml = null;
     if (canDoXML) {
       xml = new JButton("Metadata");
       xml.addActionListener(this);
       xml.setActionCommand("xml");
-
-      gbc.gridx = 5;
-      gbc.gridy = 3;
-      gbc.insets = new Insets(3, 30, 3, 5);
-      gridbag.setConstraints(xml, gbc);
-      bottom.add(xml);
     }
-
-    // create enclosing JPanel (for 5-pixel border)
-    JPanel pane = new JPanel() {
-      public Dimension getMaximumSize() {
-        Dimension max = super.getMaximumSize();
-        Dimension pref = getPreferredSize();
-        return new Dimension(max.width, pref.height);
-      }
-    };
-    pane.setLayout(new BorderLayout());
-    pane.setBackground(Color.white);
-    pane.setBorder(new EmptyBorder(5, 5, 5, 5));
-
-    pane.add(bottom, BorderLayout.CENTER);
-    add(pane);
+    
+    channelBox = new JCheckBox("Transmitted");
+    
+    cLabel = new JLabel("channel");
+    textColor = cLabel.getForeground();
+    SpinnerModel model = new SpinnerNumberModel(1, 1, db.numC, 1);
+    channelSpin = new JSpinner(model);
+    channelSpin.setEditor(new JSpinner.NumberEditor(channelSpin));
+    
+    if(db.numC > 2) channelBox.setVisible(false);
+    else {
+      channelSpin.setVisible(false);
+      cLabel.setForeground(Color.white);
+    }
 
     // repack to take extra panel into account
     c = db.numC;
@@ -277,7 +193,45 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       c = db.numC;
     }
     else c = 1;
+    
+    //setup the layout
+    lowPane = new Panel();
+    FormLayout layout = new FormLayout(
+        TAB + ",pref," + TAB + ",pref:grow," + TAB + ",pref," + TAB + ",pref,"
+        + TAB + ",pref," + TAB + ",pref," + TAB,
+        TAB + ",pref," + TAB + ",pref," + TAB + ",pref," + TAB);
+    lowPane.setLayout(layout);
+    lowPane.setBackground(Color.white);
 
+    cc = new CellConstraints();
+    
+    lowPane.add(zLabel, cc.xy(2,2));
+    lowPane.add(zSliceSel, cc.xyw(4,2,5));
+    lowPane.add(channelBox, cc.xy(12,2));
+    lowPane.add(tLabel, cc.xy(2,4));
+    lowPane.add(tSliceSel, cc.xyw(4,4,5));
+    lowPane.add(cLabel, cc.xy(10,4));
+    lowPane.add(channelSpin, cc.xy(12,4));
+    lowPane.add(options, cc.xy(6,6));
+    if(xml != null) lowPane.add(xml, cc.xy(8,6));
+    lowPane.add(animate, cc.xyw(10,6,3, "right,center"));
+    
+    setC(2);
+    
+    Panel mainPane = new Panel();
+    mainPane.setBackground(Color.white);
+    FormLayout layout2 = new FormLayout(
+      TAB + ",pref:grow," + TAB,
+      TAB + ",pref:grow," + TAB + ",pref," + TAB);
+    mainPane.setLayout(layout2);
+    CellConstraints cc2 = new CellConstraints();
+    mainPane.add(imagePane, cc2.xy(2,2));
+    mainPane.add(lowPane, cc2.xy(2,4));
+    
+    setLayout(new GridLayout());
+    add(mainPane);  
+    
+    //final GUI tasks
     pack();
 
     showSlice(z, t, c);
@@ -288,6 +242,55 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   }
 
   // -- CustomWindow methods --
+  
+  public void setC(int cMap) {
+    this.cMap = cMap;
+    boolean hasThis = false;
+    int numThis = -1;
+    int value = -1;
+    switch (cMap) {
+      case 0:
+        hasThis = db.hasZ;
+        numThis = db.numZ;
+        value = z;
+        break;
+      case 1:
+        hasThis = db.hasT;
+        numThis = db.numT;
+        value = t;
+        break;
+      case 2:
+        hasThis = db.hasC;
+        numThis = db.numC;
+        value = c;
+        break;
+    }
+    if (numThis > 2) {
+      // C spinner
+      SpinnerNumberModel snm = (SpinnerNumberModel) channelSpin.getModel();
+      snm.setMaximum((Comparable) new Integer(numThis));
+      snm.setValue(new Integer(value));
+      channelSpin.setVisible(true);
+      cLabel.setForeground(textColor);
+      if (!hasThis) channelSpin.setEnabled(false);
+      channelSpin.addChangeListener(this);
+
+      // C label
+      if (!hasThis) cLabel.setEnabled(false);
+
+      channelBox.setVisible(false);
+    }
+    else {
+      // C checkbox
+      channelBox.setVisible(true);
+      if (!hasThis) channelBox.setEnabled(false);
+      channelBox.addItemListener(this);
+      channelBox.setBackground(Color.white);
+      
+      channelSpin.setVisible(false);
+      cLabel.setForeground(Color.white);
+    }
+  }
 
   /** Selects and shows slice defined by z, t and c. */
   public synchronized void showSlice(int zVal, int tVal, int cVal) {
@@ -346,7 +349,17 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       sb.append(": ");
       sb.append(zVal);
       sb.append("/");
-      sb.append(db.numZ);
+      switch(zMap) {
+        case 0:
+          sb.append(db.numZ);
+          break;
+        case 1:
+          sb.append(db.numT);
+          break;
+        case 2:
+          sb.append(db.numC);
+          break;
+      }
       sb.append("; ");
     }
     if (db.hasT) {
@@ -354,7 +367,17 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       sb.append(": ");
       sb.append(tVal);
       sb.append("/");
-      sb.append(db.numT);
+      switch(tMap) {
+        case 0:
+          sb.append(db.numZ);
+          break;
+        case 1:
+          sb.append(db.numT);
+          break;
+        case 2:
+          sb.append(db.numC);
+          break;
+      }
       sb.append("; ");
     }
     if (db.names != null) {
@@ -426,24 +449,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     customVirtualization = true;
   }
 
-  /** Swaps the axes - if the flag is set, then animate along Z. */
-  public void swap(boolean isZ) {
-    customVirtualization = false;
-
-    if (isZ) {
-      zString = Z_STRING;
-      tString = T_STRING;
-    }
-    else {
-      zString = T_STRING;
-      tString = Z_STRING;
-    }
-    zLabel.setText(zString);
-    tLabel.setText(tString);
-
-    repaint();
-  }
-
   /** Returns true if we are using a custom virtualization. */
   public boolean isCustom() { return customVirtualization; }
 
@@ -455,7 +460,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   // -- Component methods --
 
-  public void paint(Graphics g) { drawInfo(g); }
+  public void paint(Graphics g) { drawInfo(g);}
 
   // -- ActionListener methods --
 
@@ -480,6 +485,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       }
     }
     else if (cmd.equals("options")) {
+      if (ow!=null) ow.dispose();
       ow = new OptionsWindow(db.hasZ ? db.numZ : 1,
         db.hasT ? db.numT : 1, this);
       ow.setVisible(true);
@@ -520,24 +526,34 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     else if (src instanceof JComboBox &&
       e.getActionCommand().startsWith("mapping"))
     {
+      setup = true;
       JComboBox jcb = (JComboBox) src;
       if(e.getActionCommand().endsWith("Z")) {
         zMap = jcb.getSelectedIndex();
         switch (zMap) {
           case 0:
             zSliceSel.setMaximum(db.hasZ ? db.numZ + 1 : 2);
+            zSliceSel.setValue(z);
             if (db.hasZ) zSliceSel.setEnabled(true);
             else zSliceSel.setEnabled(false);
+            if(tMap == 1) setC(2);
+            else setC(1);
             break;
           case 1:
             zSliceSel.setMaximum(db.hasT ? db.numT + 1 : 2);
+            zSliceSel.setValue(t);
             if (db.hasT) zSliceSel.setEnabled(true);
             else zSliceSel.setEnabled(false);
+            if(tMap == 0) setC(2);
+            else setC(0);
             break;
           case 2:
             zSliceSel.setMaximum(db.hasC ? db.numC + 1 : 2);
+            zSliceSel.setValue(c);
             if (db.hasC) zSliceSel.setEnabled(true);
             else zSliceSel.setEnabled(false);
+            if(tMap == 0) setC(1);
+            else setC(0);
             break;
         }
         if(zMap == tMap) ow.tBox.setSelectedIndex(prevZ);
@@ -548,23 +564,33 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         switch (tMap) {
           case 0:
             tSliceSel.setMaximum(db.hasZ ? db.numZ + 1 : 2);
+            tSliceSel.setValue(z);
             if (db.hasZ) tSliceSel.setEnabled(true);
             else tSliceSel.setEnabled(false);
+            if(zMap == 1) setC(2);
+            else setC(1);
             break;
           case 1:
             tSliceSel.setMaximum(db.hasT ? db.numT + 1 : 2);
+            tSliceSel.setValue(t);
             if (db.hasT) tSliceSel.setEnabled(true);
             else tSliceSel.setEnabled(false);
+            if(zMap == 0) setC(2);
+            else setC(0);
             break;
           case 2:
             tSliceSel.setMaximum(db.hasC ? db.numC + 1 : 2);
+            tSliceSel.setValue(c);
             if (db.hasC) tSliceSel.setEnabled(true);
             else tSliceSel.setEnabled(false);
+            if(zMap == 0) setC(1);
+            else setC(0);
             break;
         }
         if(zMap == tMap) ow.zBox.setSelectedIndex(prevT);
         prevT = tMap;
       }
+      setup = false;
     }
   }
 
@@ -572,15 +598,17 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   public void adjustmentValueChanged(AdjustmentEvent adjustmentEvent) {
     Object src = adjustmentEvent.getSource();
-    if (src == zSliceSel) {
-      if(zMap == 0) z = zSliceSel.getValue();
-      else if(zMap == 1) t = zSliceSel.getValue();
-      else if(zMap == 2) c = zSliceSel.getValue();
-    }
-    else if (src == tSliceSel) {
-      if(tMap == 0) z = tSliceSel.getValue();
-      else if(tMap == 1) t = tSliceSel.getValue();
-      else if(tMap == 2) c = tSliceSel.getValue();
+    if(!setup) {
+      if (src == zSliceSel) {
+        if(zMap == 0) z = zSliceSel.getValue();
+        else if(zMap == 1) t = zSliceSel.getValue();
+        else if(zMap == 2) c = zSliceSel.getValue();
+      }
+      else if (src == tSliceSel) {
+        if(tMap == 0) z = tSliceSel.getValue();
+        else if(tMap == 1) t = tSliceSel.getValue();
+        else if(tMap == 2) c = tSliceSel.getValue();
+      }
     }
     showSlice(z, t, c);
   }
@@ -589,7 +617,18 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   public void stateChanged(ChangeEvent e) {
     JSpinner channels = (JSpinner) e.getSource();
-    c = ((Integer) channels.getValue()).intValue();
+    switch(cMap) {
+      case 0:
+        z = ((Integer) channels.getValue()).intValue();
+        break;
+      case 1:
+        t = ((Integer) channels.getValue()).intValue();
+        break;
+      case 2:
+        c = ((Integer) channels.getValue()).intValue();
+        break;
+    }
+    
     showSlice(z, t, c);
   }
 
@@ -597,7 +636,17 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   public synchronized void itemStateChanged(ItemEvent e) {
     JCheckBox channels = (JCheckBox) e.getSource();
-    c = channels.isSelected() ? 1 : 2;
+    switch(cMap) {
+      case 0:
+        z = channels.isSelected() ? 1 : 2;
+        break;
+      case 1:
+        t = channels.isSelected() ? 1 : 2;
+        break;
+      case 2:
+        c = channels.isSelected() ? 1 : 2;
+        break;
+    }
 
     showSlice(z, t, c);
   }
@@ -606,24 +655,23 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   public void keyPressed(KeyEvent e) {
     int code = e.getKeyCode();
-    boolean swapped = zString.equals(T_STRING);
     if (code == KeyEvent.VK_UP) { // previous slice
-      JScrollBar bar = swapped ? tSliceSel : zSliceSel;
+      JScrollBar bar = zSliceSel;
       int val = bar.getValue(), min = bar.getMinimum();
       if (val > min) bar.setValue(val - 1);
     }
     else if (code == KeyEvent.VK_DOWN) { // next slice
-      JScrollBar bar = swapped ? tSliceSel : zSliceSel;
+      JScrollBar bar = zSliceSel;
       int val = bar.getValue(), max = bar.getMaximum();
       if (val < max) bar.setValue(val + 1);
     }
     else if (code == KeyEvent.VK_LEFT) { // previous time step
-      JScrollBar bar = swapped ? zSliceSel : tSliceSel;
+      JScrollBar bar = tSliceSel;
       int val = bar.getValue(), min = bar.getMinimum();
       if (val > min) bar.setValue(val - 1);
     }
     else if (code == KeyEvent.VK_RIGHT) { // next time step
-      JScrollBar bar = swapped ? zSliceSel : tSliceSel;
+      JScrollBar bar = tSliceSel;
       int val = bar.getValue(), max = bar.getMaximum();
       if (val < max) bar.setValue(val + 1);
     }
