@@ -399,6 +399,7 @@ public class LIFReader extends FormatReader {
           catch (Exception e) { break; }
         }
         extraDims.add(new Integer(extras));
+        if (numChannels == 2) numChannels--;
         channels.add(new Integer(numChannels));
 
         if (zs.size() < channels.size()) zs.add(new Integer(1));
