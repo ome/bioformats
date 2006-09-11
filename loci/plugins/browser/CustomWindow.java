@@ -52,13 +52,14 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   // -- Fields - state --
 
   protected LociDataBrowser db;
+  private OptionsWindow ow;
   private String zString = Z_STRING;
   private String tString = T_STRING;
   private int fps = 10;
   private int z = 1, t = 1, c = 1;
   private boolean customVirtualization = false;
   private int z1 = 1, z2 = 1, t1 = 1, t2 = 1;
-  protected int zMap,tMap,cMap;
+  protected int zMap,tMap,cMap,prevZ,prevT;
 
   // -- Fields - widgets --
 
@@ -75,6 +76,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   public CustomWindow(LociDataBrowser db, ImagePlus imp, ImageCanvas canvas) {
     super(imp, canvas);
     this.db = db;
+    ow = null;
     String title = imp.getTitle();
     this.setTitle(title.substring(title.lastIndexOf(File.separatorChar) + 1));
     
@@ -82,6 +84,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     zMap = 0;
     tMap = 1;
     cMap = 2;
+    prevZ = 0;
+    prevT = 1;
 
     // create panel for image canvas
     Panel imagePane = new Panel() {
@@ -440,9 +444,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     repaint();
   }
 
-  /** Returns true if the axes are swapped. */
-  public boolean isSwapped() { return zString.equals(T_STRING); }
-
   /** Returns true if we are using a custom virtualization. */
   public boolean isCustom() { return customVirtualization; }
 
@@ -463,31 +464,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     String cmd = e.getActionCommand();
     if (cmd == null) cmd = ""; // prevent NullPointer
     if (cmd.equals("xml")) {
-/*
-      FileInfo fi = imp.getOriginalFileInfo();
-      String description = fi == null ? "" : fi.description;
-
-      try {
-        String altDescription = imp.getFileInfo().description;
-        if (altDescription.length() > description.length()) {
-          description = altDescription;
-        }
-      }
-      catch (Exception exc) { }
-
-      // HACK - if ImageDescription does not end with a null character
-      // (older versions of ImageJ truncate the final character)
-      if (description.endsWith("</OME")) description += ">";
-
-      // pop up a new metadata viewer dialog
-      JFrame meta = new JFrame("Metadata - " + getTitle());
-      MetadataPane metaPane = new MetadataPane();
-      meta.setContentPane(metaPane);
-      metaPane.setOMEXML(description);
-      meta.pack();
-      GUI.center(meta);
-      meta.setVisible(true);
-*/
       String[] args = {db.filename};
       //MetadataNotebook metaNote = new MetadataNotebook(args, false, false);
       try {
@@ -504,7 +480,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       }
     }
     else if (cmd.equals("options")) {
-      OptionsWindow ow = new OptionsWindow(db.hasZ ? db.numZ : 1,
+      ow = new OptionsWindow(db.hasZ ? db.numZ : 1,
         db.hasT ? db.numT : 1, this);
       ow.setVisible(true);
     }
@@ -564,6 +540,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
             else zSliceSel.setEnabled(false);
             break;
         }
+        if(zMap == tMap) ow.tBox.setSelectedIndex(prevZ);
+        prevZ = zMap;
       }
       else if(e.getActionCommand().endsWith("T")) {
         tMap = jcb.getSelectedIndex();
@@ -584,6 +562,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
             else tSliceSel.setEnabled(false);
             break;
         }
+        if(zMap == tMap) ow.zBox.setSelectedIndex(prevT);
+        prevT = tMap;
       }
     }
   }

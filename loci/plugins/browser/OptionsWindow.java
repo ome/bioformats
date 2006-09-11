@@ -42,7 +42,7 @@ public class OptionsWindow extends JFrame implements
   private static final String TAB = "5dlu";
 
   /**ComboBoxes for Custom Axes*/
-  private JComboBox zBox, tBox;
+  protected JComboBox zBox, tBox;
 
   /** FPS spinner */
   private JSpinner fps;
