@@ -24,9 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.awt.Dimension;
 import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
 import java.io.*;
 import java.util.Vector;
 import loci.formats.*;
@@ -34,70 +32,64 @@ import loci.formats.*;
 /**
  * OpenlabReader is the file format reader for Openlab LIFF files.
  *
+ * @author Melissa Linkert linkert at wisc.edu
  * @author Eric Kjellman egkjellman at wisc.edu
  * @author Curtis Rueden ctrueden at wisc.edu
- * @author Melissa Linkert linkert at wisc.edu
  */
 public class OpenlabReader extends FormatReader {
 
   // -- Constants --
 
-  /** Color type indicating grayscale image planes. */
-  private static final int TYPE_GRAYSCALE = 1;
-
-  /** Color type indicating RGB image planes. */
-  private static final int TYPE_RGB = 2;
-
-  /** Color type indicating a mix of RGB and grayscale image planes. */
-  private static final int TYPE_MIXED = 3;
+  /** Image types. */
+  private static final int MAC_1_BIT = 1;
+  private static final int MAC_256_GREYS = 5;
+  private static final int MAC_256_COLORS = 6;
+  private static final int MAC_24_BIT = 8;
+  private static final int GREY_16_BIT = 16;
 
   // -- Static fields --
 
-  /** Helper reader to decode PICT data. */
-  private static PictReader pictReader = new PictReader();
+  /** Helper reader to read PICT data. */
+  private static PictReader pict = new PictReader();
 
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessStream in;
+  private RandomAccessStream in;
 
-  /** Number of blocks for current Openlab LIFF. */
-  private int numBlocks;
+  /** LIFF version (should be 2 or 5). */
+  private int version;
 
-  /** Offset for each block of current Openlab LIFF file. */
-  private int[] offsets;
+  /** Number of images in the file. */
+  private int[] numImages;
 
-  /** Image type for each block of current Openlab LIFF file. */
-  private int[] imageType;
+  /** Image width. */
+  private int[] width;
 
-  /** Flag indicating whether current file is little endian. */
-  protected boolean little = true;
+  /** Image height. */
+  private int[] height;
 
-  /** Size of a pixel plane/section's X-axis */
-  private Integer sizeX;
+  /** Number of channels. */
+  private int[] channelCount;
 
-  /** Size of a pixel plane/section's Y-axis */
-  private Integer sizeY;
+  /** Number of series. */
+  private int numSeries;
 
-  /** First plane. */
-  private BufferedImage firstPlane;
+  private Vector[] layerInfoList;
+  private float xCal, yCal, zCal;
+  private int bpp;
 
-  /**
-   * The pattern of grayscale and RGB image planes.
-   * Should be one of: TYPE_GRAYSCALE, TYPE_RGB or TYPE_MIXED.
-   */
-  private int colorType;
+  private int tag = 0, subTag = 0;
+  private String fmt = "";
 
   // -- Constructor --
 
-  /** Constructs a new Openlab reader. */
-  public OpenlabReader() {
-    super("Openlab LIFF", "liff");
-  }
+  /** Constructs a new OpenlabReader. */
+  public OpenlabReader() { super("Openlab LIFF", "liff"); }
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for an Openlab file. */
+  /** Checks if the given block is a valid Openlab LIFF header. */
   public boolean isThisType(byte[] block) {
     return block.length >= 8 && block[0] == 0 && block[1] == 0 &&
       block[2] == -1 && block[3] == -1 && block[4] == 105 &&
@@ -107,15 +99,19 @@ public class OpenlabReader extends FormatReader {
   /**
    * Checks if the given string is a valid filename for an Openlab file.
    * @param open If true, and the file extension is insufficient to determine
-   *  the file type, the (existing) file is opened for further analysis.
+   * the file tyep, the (existing) file is opened for further analysis.
    */
   public boolean isThisType(String name, boolean open) {
     if (super.isThisType(name, open)) return true;
 
     if (open) {
-      // since we can't always determine it from the name alone (blank
-      // extensions), we open the file and call the block verifier
-      return checkBytes(name, 8);
+      byte[] b = new byte[8];
+      try {
+        in = new RandomAccessStream(name);
+        in.read(b);
+      }
+      catch (Exception e) { }
+      return isThisType(b);
     }
     else {
       String lname = name.toLowerCase();
@@ -123,34 +119,40 @@ public class OpenlabReader extends FormatReader {
     }
   }
 
-  /** Determines the number of images in the given Openlab file. */
+  /** Determines the number of images in the given file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return numBlocks;
+    return numImages[series];
   }
 
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return colorType != TYPE_GRAYSCALE;
+    return channelCount[series] > 1;
+  }
+
+  /** Return the number of series in this file. */
+  public int getSeriesCount(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return numSeries;
   }
 
   /** Get the size of the X dimension. */
   public int getSizeX(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return sizeX.intValue();
+    return width[series];
   }
 
   /** Get the size of the Y dimension. */
   public int getSizeY(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return sizeY.intValue();
+    return height[series];
   }
 
   /** Get the size of the Z dimension. */
   public int getSizeZ(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return numBlocks;
+    return numImages[series];
   }
 
   /** Get the size of the C dimension. */
@@ -161,23 +163,21 @@ public class OpenlabReader extends FormatReader {
 
   /** Get the size of the T dimension. */
   public int getSizeT(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
     return 1;
   }
 
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return little;
+    return false;
   }
 
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
+  /** Return a five-character string representing the dimension order. */
   public String getDimensionOrder(String id)
     throws FormatException, IOException
   {
-    return "XYCZT";
+    if (!id.equals(currentId)) initFile(id);
+    return isRGB(id) ? "XYCZT" : "XYZCT";
   }
 
   /** Returns whether or not the channels are interleaved. */
@@ -189,430 +189,508 @@ public class OpenlabReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.getBytes(openImage(id, no), false, 3);
-  }
-
-  /** Obtains the specified image from the given Openlab file. */
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
     if (!id.equals(currentId)) initFile(id);
-
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    // First initialize:
-    in.seek(offsets[no] + 12);
+    LayerInfo info = (LayerInfo) layerInfoList[series].get(no);
+    in.seek(info.layerStart);
 
-    int blockSize = in.readInt();
+    readTagHeader();
 
-    byte toRead = (byte) in.read();
-
-    // right now I'm gonna skip all the header info
-    // check to see whether or not this is v2 data
-    if (toRead == 1) in.skipBytes(128);
-    in.skipBytes(169);
-    // read in the block of data
-    byte[] b = new byte[blockSize];
-    in.read(b);
-    byte[] pixelData = new byte[blockSize];
-    int pixPos = 0;
-
-    Dimension dim;
-    try { dim = pictReader.getDimensions(b); }
-    catch (Exception e) { dim = new Dimension(0, 0); }
-
-    int length = b.length;
-    int num, size;
-    int totalBlocks = -1; // set to allow loop to start.
-    int expectedBlock = 0;
-    int pos = 0;
-    int imagePos = 0;
-    int imageSize = dim.width * dim.height;
-    short[] flatSamples = new short[imageSize];
-    byte[] temp;
-
-    sizeX = new Integer(dim.width);
-    sizeY = new Integer(dim.height);
-
-    // read in deep gray pixel data into an array, and create a
-    // BufferedImage out of it
-    //
-    // First, checks the existence of a deep gray block. If it doesn't exist,
-    // assume it is PICT data, and attempt to read it.
-
-    // check whether or not there is deep gray data
-    while (expectedBlock != totalBlocks) {
-
-      while (pos + 7 < length &&
-        (b[pos] != 73 || b[pos + 1] != 86 || b[pos + 2] != 69 ||
-        b[pos + 3] != 65 || b[pos + 4] != 100 || b[pos + 5] != 98 ||
-        b[pos + 6] != 112 || b[pos + 7] != 113))
-      {
-        pos++;
-      }
-
-      if (pos + 32 > length) { // The header is 32 bytes long.
-        if (expectedBlock == 0 && imageType[no] < 9) {
-          // there has been no deep gray data, and it is supposed
-          // to be a pict... *crosses fingers*
-          try {
-            return pictReader.open(b);
-          }
-          catch (Exception e) {
-            e.printStackTrace();
-            throw new FormatException("No iPic comment block found", e);
-          }
-        }
-        else {
-          throw new FormatException("Expected iPic comment block not found");
-        }
-      }
-
-      pos += 8; // skip the block type we just found
-
-      // Read info from the iPic comment. This serves as a
-      // starting point to read the rest.
-      temp = new byte[] {b[pos], b[pos+1], b[pos+2], b[pos+3]};
-      num = batoi(temp);
-      if (num != expectedBlock) {
-        throw new FormatException("Expected iPic block not found");
-      }
-      expectedBlock++;
-      temp = new byte[] {b[pos+4], b[pos+5], b[pos+6], b[pos+7]};
-      if (totalBlocks == -1) {
-        totalBlocks = batoi(temp);
-      }
-      else {
-        if (batoi(temp) != totalBlocks) {
-          throw new FormatException("Unexpected totalBlocks numbein.read");
-        }
-      }
-
-      // skip to size
-      pos += 16;
-      temp = new byte[] {b[pos], b[pos+1], b[pos+2], b[pos+3]};
-      size = batoi(temp);
-      pos += 8;
-
-      // copy into our data array.
-      System.arraycopy(b, pos, pixelData, pixPos, size);
-      pixPos += size;
+    if ((tag != 67 && tag != 68) ||
+      (!fmt.equals("PICT") && !fmt.equals("RAWi")))
+    {
+      throw new FormatException("Corrupt LIFF file.");
     }
-    int pixelValue = 0;
-    pos = 0;
 
-    // Now read the data and wrap it in a BufferedImage
+    in.skipBytes(24);
+    int volumeType = DataTools.read2SignedBytes(in, false);
+    in.skipBytes(272);
 
-    while (true) {
-      if (pos + 1 < pixelData.length) {
-        pixelValue = pixelData[pos] < 0 ? 256 + pixelData[pos] :
-          (int) pixelData[pos] << 8;
-        pixelValue += pixelData[pos + 1] < 0 ? 256 + pixelData[pos + 1] :
-          (int) pixelData[pos + 1];
-        pos += 2;
+    int top, left, bottom, right;
+
+    if (version == 2) {
+      in.skipBytes(2);
+      top = DataTools.read2SignedBytes(in, false);
+      left = DataTools.read2SignedBytes(in, false);
+      bottom = DataTools.read2SignedBytes(in, false);
+      right = DataTools.read2SignedBytes(in, false);
+
+      if (width[series] == 0) width[series] = right - left;
+      if (height[series] == 0) height[series] = bottom - top;
+    }
+    else {
+      width[series] = DataTools.read4SignedBytes(in, false);
+      height[series] = DataTools.read4SignedBytes(in, false);
+    }
+
+    in.seek(info.layerStart);
+
+    byte[] b = new byte[0];
+
+    if (version == 2) {
+      long nextTag = readTagHeader();
+
+      if ((tag != 67 && tag != 68) || !fmt.equals("PICT")) {
+        throw new FormatException("Corrupt LIFF file.");
       }
-      else throw new FormatException("Malformed LIFF data");
-      flatSamples[imagePos] = (short) pixelValue;
-      imagePos++;
-      if (imagePos == imageSize) {  // done, return it
-        return ImageTools.makeImage(flatSamples,
-          dim.width, dim.height, 1, false);
+      in.skipBytes(298);
+
+      // open image using pict reader
+      try {
+        b = new byte[(int) (nextTag - in.getFilePointer())];
+        in.read(b);
+        BufferedImage img = pict.open(b);
+        byte[][] tmp = ImageTools.getBytes(img);
+        b = new byte[tmp.length * tmp[0].length];
+        for (int i=0; i<tmp.length; i++) {
+          System.arraycopy(tmp[i], 0, b, i * tmp[i].length, tmp[i].length);
+        }
+      }
+      catch (Exception e) {
+        b = null;
+        in.seek(info.layerStart + 12);
+        int blockSize = DataTools.read4SignedBytes(in, false);
+        byte toRead = (byte) in.read();
+
+        // right now I'm gonna skip all the header info
+        // check to see whether or not this is v2 data
+        if (toRead == 1) in.skipBytes(128);
+        in.skipBytes(169);
+        // read in the block of data
+        byte[] q = new byte[blockSize];
+        in.read(q);
+        byte[] pixelData = new byte[blockSize];
+        int pixPos = 0;
+
+        int length = q.length;
+        int num, size;
+        int totalBlocks = -1; // set to allow loop to start.
+        int expectedBlock = 0;
+        int pos = 0;
+
+        while (expectedBlock != totalBlocks) {
+
+          while (pos + 7 < length &&
+           (q[pos] != 73 || q[pos + 1] != 86 || q[pos + 2] != 69 ||
+           q[pos + 3] != 65 || q[pos + 4] != 100 || q[pos + 5] != 98 ||
+           q[pos + 6] != 112 || q[pos + 7] != 113))
+          {
+            pos++;
+          }
+
+          pos += 8; // skip the block type we just found
+
+          // Read info from the iPic comment. This serves as a
+          // starting point to read the rest.
+          num = DataTools.bytesToInt(q, pos, 4, false);
+          if (num != expectedBlock) {
+            throw new FormatException("Expected iPic block not found");
+          }
+          expectedBlock++;
+          if (totalBlocks == -1) {
+            totalBlocks = DataTools.bytesToInt(q, pos + 4, 4, false);
+          }
+          else {
+            if (DataTools.bytesToInt(q, pos + 4, 4, false) != totalBlocks) {
+              throw new FormatException("Unexpected totalBlocks numbein.read");
+            }
+          }
+
+          // skip to size
+          pos += 16;
+
+          size = DataTools.bytesToInt(q, pos, 4, false);
+          pos += 8;
+
+          // copy into our data array.
+          System.arraycopy(q, pos, pixelData, pixPos, size);
+          pixPos += size;
+        }
+        System.gc();
+        b = new byte[pixPos];
+        System.arraycopy(pixelData, 0, b, 0, b.length);
       }
     }
+    else {
+      readTagHeader();
+
+      if (tag != 68 || !fmt.equals("RAWi")) {
+        throw new FormatException("Corrupt LIFF file.");
+      }
+
+      if (subTag != 0) {
+        throw new FormatException("Wrong compression type.");
+      }
+
+      in.skipBytes(24);
+      volumeType = DataTools.read2SignedBytes(in, false);
+
+      in.skipBytes(280);
+      int size = DataTools.read4SignedBytes(in, false);
+      int compressedSize = DataTools.read4SignedBytes(in, false);
+      b = new byte[size];
+      byte[] c = new byte[compressedSize];
+      in.read(c);
+
+      Compression.lzoUncompress(c, size, b);
+
+      if (volumeType == MAC_24_BIT) {
+        bpp = b.length >= width[series] * height[series] * 4 ? 4 : 3;
+
+        int destRowBytes = width[series] * bpp;
+        int srcRowBytes = b.length / height[series];
+
+        byte[] tmp = new byte[destRowBytes * height[series]];
+        int src = 0;
+        int dest = 0;
+        for (int y=0; y<height[series]; y++) {
+          System.arraycopy(b, src, tmp, dest, destRowBytes);
+          src += srcRowBytes;
+          dest += destRowBytes;
+        }
+
+        // strip out alpha channel and force channel separation
+
+        if (bpp == 4) {
+          b = new byte[(3 * tmp.length) / 4];
+          dest = 0;
+          for (int i=0; i<tmp.length; i+=4) {
+            b[dest] = tmp[i + 1];
+            b[dest + (b.length / 3)] = tmp[i + 2];
+            b[dest + ((2 * b.length) / 3)] = tmp[i + 3];
+            dest++;
+          }
+          bpp = 3;
+        }
+      }
+      else if (volumeType < MAC_24_BIT) {
+        throw new FormatException("Unsupported image type : " + volumeType);
+      }
+    }
+    return b;
   }
 
-  /** Closes any open files. */
+  /** Obtains the specified image from the given file. */
+  public BufferedImage openImage(String id, int no)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    if (no < 0 || no >= getImageCount(id)) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+
+    byte[] b = openBytes(id, no);
+    bpp = b.length / (width[series] * height[series]);
+    if (bpp > 3) bpp = 3;
+    return ImageTools.makeImage(b, width[series], height[series],
+      bpp == 3 ? 3 : 1, false, bpp == 3 ? 1 : bpp, false);
+  }
+
+  /** Closes the currently open file. */
   public void close() throws FormatException, IOException {
+    currentId = null;
     if (in != null) in.close();
     in = null;
-    currentId = null;
   }
 
-  /** Initializes the given Openlab file. */
+  /** Initialize the given Openlab LIFF file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessStream(id);
 
-    // initialize an array containing tag offsets, so we can
-    // use an O(1) search instead of O(n) later.
-    // Also determine whether we will be reading color or grayscale
-    // images
+    in.skipBytes(4);
+    byte[] b = new byte[4];
+    in.read(b);
+    String s = new String(b);
+    if (!s.equals("impr")) throw new FormatException("Invalid LIFF file.");
 
-    long order = in.readInt();
-    little = order == 0x0000ffff;
+    version = DataTools.read4SignedBytes(in, false);
 
-    Vector v = new Vector(); // a temp vector containing offsets.
+    if (version != 2 && version != 5) {
+      throw new FormatException("Invalid version : " + version);
+    }
 
-    // Get first offset.
+    // skip the layer count and ID seed
+    in.skipBytes(4);
 
-    in.skipBytes(12);
-    int nextOffset = in.readInt();
-    int nextOffsetTemp;
+    // read offset to first plane
+    int offset = DataTools.read4SignedBytes(in, false);
+    in.seek(offset);
 
-    boolean first = true;
-    while(nextOffset != 0 && nextOffset < in.length()) {
-      // get next tag, but still need this one
+    layerInfoList = new Vector[2];
+    for (int i=0; i<layerInfoList.length; i++) layerInfoList[i] = new Vector();
+    xCal = yCal = zCal = (float) 0.0;
 
-      in.seek(nextOffset + 4);
-      nextOffsetTemp = in.readInt();
+    // scan through the file, and read image information
 
-      byte[] toRead = new byte[4];
-      in.read(toRead);
-      if ((new String(toRead)).equals("PICT")) {
-        boolean ok = true;
-        if (first) {
-          // ignore first image if it is called "Original Image" (pure white)
-          first = false;
-          in.skipBytes(47);
-          byte[] layerNameBytes = new byte[127];
-          in.read(layerNameBytes);
-          String layerName = new String(layerNameBytes);
-          if (layerName.startsWith("Original Image")) ok = false;
-        }
-        if (nextOffset == nextOffsetTemp) {
-          v.remove(v.size() - 1);
-          break;
-        }
-        if (ok) v.add(new Integer(nextOffset)); // add THIS tag offset
+    while (in.getFilePointer() < in.length()) {
+      long nextTag, startPos;
+
+      subTag = tag = 0;
+      try {
+        startPos = in.getFilePointer();
+        nextTag = readTagHeader();
       }
-      if (nextOffset == nextOffsetTemp) break;
-      nextOffset = nextOffsetTemp;
+      catch (Exception e) {
+        if (in.getFilePointer() >= in.length()) break;
+        else throw new FormatException(e.getMessage());
+      }
+
+      try {
+        if (tag == 67 || tag == 68 ||
+          fmt.equals("PICT") || fmt.equals("RAWi"))
+        {
+          LayerInfo info = new LayerInfo();
+          info.layerStart = (int) startPos;
+          info.zPosition = -1;
+          info.wavelength = -1;
+
+          in.skipBytes(24);
+          int volumeType = DataTools.read2SignedBytes(in, false);
+
+          if (volumeType == MAC_1_BIT || volumeType == MAC_256_GREYS ||
+            volumeType == MAC_256_COLORS ||
+            (volumeType >= MAC_24_BIT && volumeType <= GREY_16_BIT))
+          {
+            in.skipBytes(16);
+            b = new byte[128];
+            in.read(b);
+            info.layerName = new String(b);
+
+            if (!info.layerName.trim().equals("Original Image")) {
+              info.timestamp = DataTools.read8SignedBytes(in, false);
+              layerInfoList[0].add(info);
+            }
+          }
+
+        }
+        else if (tag == 69) {
+          in.skipBytes(4);
+          int units = DataTools.read2SignedBytes(in, false);
+          in.skipBytes(12);
+
+          xCal = Float.intBitsToFloat(DataTools.read4SignedBytes(in, false));
+          yCal = Float.intBitsToFloat(DataTools.read4SignedBytes(in, false));
+        }
+        else if (tag == 72 || fmt.equals("USER")) {
+          char aChar = (char) in.read();
+          StringBuffer sb = new StringBuffer();
+          while (aChar != 0) {
+            sb = sb.append(aChar);
+            aChar = (char) in.read();
+          }
+
+          String className = sb.toString();
+
+          if (className.equals("CVariableList")) {
+            aChar = (char) in.read();
+
+            if (aChar == 1) {
+              int numVars = DataTools.read2SignedBytes(in, false);
+              while (numVars > 0) {
+                aChar = (char) in.read();
+                sb = new StringBuffer();
+                while (aChar != 0) {
+                  sb = sb.append(aChar);
+                  aChar = (char) in.read();
+                }
+                //in.read();
+
+                String varName = "";
+                String varStringValue = "";
+                double varNumValue = 0.0;
+
+                className = sb.toString();
+
+                int derivedClassVersion = in.read();
+                if (derivedClassVersion != 1) {
+                  throw new FormatException("Invalid revision.");
+                }
+
+                if (className.equals("CStringVariable")) {
+                  int strSize = DataTools.read4SignedBytes(in, false);
+                  b = new byte[strSize];
+                  in.read(b);
+                  varStringValue = new String(b);
+                  varNumValue = Float.parseFloat(varStringValue);
+
+                  in.skipBytes(1);
+                }
+                else if (className.equals("CFloatVariable")) {
+                  varNumValue = Double.longBitsToDouble(
+                    DataTools.read8SignedBytes(in, false));
+                  varStringValue = "" + varNumValue;
+                }
+
+                int baseClassVersion = in.read();
+                if (baseClassVersion == 1 || baseClassVersion == 2) {
+                  int strSize = DataTools.read4SignedBytes(in, false);
+                  b = new byte[strSize];
+                  in.read(b);
+                  varName = new String(b);
+                  in.skipBytes(baseClassVersion == 1 ? 3 : 2);
+                }
+                else {
+                  throw new FormatException("Invalid revision.");
+                }
+
+                metadata.put(varName, varStringValue);
+                numVars--;
+              }
+            }
+          }
+        }
+
+        in.seek(nextTag);
+      }
+      catch (Exception e) {
+        in.seek(nextTag);
+      }
     }
 
-    in.seek(((Integer) v.firstElement()).intValue());
-
-    // create and populate the array of offsets from the vector
-    numBlocks = v.size();
-    offsets = new int[numBlocks];
-    for (int i = 0; i < numBlocks; i++) {
-      offsets[i] = ((Integer) v.get(i)).intValue();
+    Vector tmp = new Vector();
+    for (int i=0; i<layerInfoList[0].size(); i++) {
+      tmp.add(layerInfoList[0].get(i));
     }
 
-    // populate the imageTypes that the file uses
-    imageType = new int[numBlocks];
-    for (int i = 0; i < numBlocks; i++) {
-      in.seek(offsets[i] + 40);
-      imageType[i] = in.readShort();
+    // Some Openlab LIFF files contain a set of grayscale images followed by
+    // and RGB image.  If this is the case, we want to separate the
+    // grayscale and RGB planes into different series.
+
+    width = new int[1];
+    height = new int[1];
+    numImages = new int[1];
+    numImages[0] = tmp.size();
+
+    boolean firstRGB = openBytes(id, 0).length / 3 >= (width[0] * height[0]);
+    boolean thirdRGB = tmp.size() >= 3 ?
+      openBytes(id, 2).length / 3 >= (width[0] * height[0]) : false;
+    boolean fourthRGB = tmp.size() >= 4 ?
+      openBytes(id, 3).length / 3 >= (width[0] * height[0]) : false;
+
+    int oldWidth = width[0];
+    int oldHeight = height[0];
+
+    if (!firstRGB && (thirdRGB || fourthRGB)) {
+      numSeries = 2;
+    }
+    else numSeries = 1;
+
+    numImages = new int[numSeries];
+    width = new int[numSeries];
+    height = new int[numSeries];
+    channelCount = new int[numSeries];
+    if (numSeries == 1) {
+      numImages[0] = layerInfoList[0].size();
+      channelCount[0] = firstRGB ? 3 : 1;
+    }
+    else {
+      layerInfoList[0].clear();
+      for (int i=0; i<tmp.size(); i++) {
+        LayerInfo layer = (LayerInfo) tmp.get(i);
+        in.seek(layer.layerStart);
+
+        readTagHeader();
+        if (fmt.equals("PICT")) {
+          in.skipBytes(298);
+
+          // check if this is really a PICT image
+          in.skipBytes(8);
+          int w = DataTools.read2SignedBytes(in, false);
+          if ((w == oldWidth) && ((i % 4) == 3)) {
+            layerInfoList[1].add(tmp.get(i));
+          }
+          else layerInfoList[0].add(tmp.get(i));
+        }
+        else {
+          in.skipBytes(24);
+          int type = DataTools.read2SignedBytes(in, false);
+          if (type == MAC_24_BIT) {
+            layerInfoList[1].add(tmp.get(i));
+          }
+          else layerInfoList[0].add(tmp.get(i));
+        }
+      }
+
+      numImages[0] = layerInfoList[0].size();
+      numImages[1] = layerInfoList[1].size();
+      channelCount[0] = 1;
+      channelCount[1] = 3;
+      width[1] = oldWidth;
+      height[1] = oldHeight;
+    }
+    width[0] = oldWidth;
+    height[0] = oldHeight;
+
+    if (bpp == 3) bpp = 1;
+    if (bpp == 0) bpp++;
+
+    // finish populating metadata hashtable
+    metadata.put("Version", new Integer(version));
+    metadata.put("Number of Series", new Integer(numSeries));
+    for (int i=0; i<numSeries; i++) {
+      metadata.put("Width (Series " + i + ")", new Integer(width[i]));
+      metadata.put("Height (Series " + i + ")", new Integer(height[i]));
+      metadata.put("Bit depth (Series " + i + ")", new Integer(bpp * 8));
+      metadata.put("Number of channels (Series " + i + ")",
+        new Integer(channelCount[i]));
+      metadata.put("Number of images (Series " + i + ")",
+        new Integer(numImages[i]));
     }
 
-    initMetadata();
+    // populate MetadataStore
+
+    MetadataStore store = getMetadataStore(id);
+    for (int i=0; i<numSeries; i++) {
+      store.setImage("Series " + i, null, null, new Integer(i));
+      store.setPixels(
+        new Integer(width[i]),
+        new Integer(height[i]),
+        new Integer(numImages[i]),
+        new Integer(channelCount[i]),
+        new Integer(1),
+        "int" + (bpp * 8),
+        new Boolean(!isLittleEndian(id)),
+        getDimensionOrder(id),
+        new Integer(i));
+      store.setDimensions(new Float(xCal), new Float(yCal), new Float(zCal),
+        null, null, new Integer(i));
+    }
   }
 
   // -- Helper methods --
 
-  /** Populates the metadata hashtable. */
-  private void initMetadata() throws FormatException, IOException {
-    in.seek(8);
+  /** Read the next tag. */
+  private long readTagHeader()
+    throws IOException
+  {
+    tag = DataTools.read2SignedBytes(in, false);
+    subTag = DataTools.read2SignedBytes(in, false);
 
-    in.order(false);
+    long nextTag = (version == 2 ? DataTools.read4SignedBytes(in, false) :
+      DataTools.read8SignedBytes(in, false));
 
-    // start by reading the file header
-    metadata.put("Byte Order", new Boolean(little));
-
-    long version = in.readInt();
-    metadata.put("Version", new Long(version));
-
-    short count = in.readShort();
-    metadata.put("Count", new Short(count));
-
-    in.readShort();
-
-    int offset = in.readInt();
-
-    // skip to first tag
-    in.seek(offset);
-
-    // read in each tag and its data
-
-    for (int i=0; i<count; i++) {
-      short tag = in.readShort();
-      in.readShort();
-
-      offset = in.readInt();
-      long fmt = in.readInt();
-      metadata.put("Format", new Long(fmt));
-
-      long numBytes = in.readInt();
-      metadata.put("NumBytes", new Long(numBytes));
-
-      if (tag == 67 || tag == 68) {
-        boolean isOpenlab2 = in.read() == 0;
-        metadata.put("isOpenlab2", new Boolean(isOpenlab2));
-
-        in.readShort();
-        short layerId = in.readShort();
-        metadata.put("LayerID", new Short(layerId));
-
-        short layerType = in.readShort();
-        metadata.put("LayerType", new Short(layerType));
-
-        short bitDepth = in.readShort();
-        metadata.put("BitDepth", new Short(bitDepth));
-
-        short opacity = in.readShort();
-        metadata.put("Opacity", new Short(opacity));
-
-        // not sure how many bytes to skip here
-        in.skipBytes(10);
-
-        long type = in.readInt();
-        metadata.put("ImageType", new Long(type));
-
-        // not sure how many bytes to skip
-        in.skipBytes(10);
-
-        long timestamp = in.readInt();
-        metadata.put("Timestamp", new Long(timestamp));
-
-        in.skipBytes(2);
-
-        if (isOpenlab2) {
-          byte[] layerName = new byte[127];
-          in.read(layerName);
-          metadata.put("LayerName", new String(layerName));
-
-          long timestampMS = in.readInt();
-          metadata.put("Timestamp-MS", new Long(timestampMS));
-
-          in.read();
-          byte[] notes = new byte[118];
-          in.read(notes);
-          metadata.put("Notes", new String(notes));
-        }
-        else in.skipBytes(123);
-      }
-      else if (tag == 69) {
-        long platform = in.readInt();
-        metadata.put("Platform", new Long(platform));
-
-        short units = in.readShort();
-        metadata.put("Units", new Short(units));
-
-        short imageId = in.readShort();
-        metadata.put("ID", new Short(imageId));
-        in.read();
-
-        double xOrigin = in.readDouble();
-        metadata.put("XOrigin", new Double(xOrigin));
-        double yOrigin = in.readDouble();
-        metadata.put("YOrigin", new Double(yOrigin));
-        double xScale = in.readDouble();
-        metadata.put("XScale", new Double(xScale));
-        double yScale = in.readDouble();
-        metadata.put("YScale", new Double(yScale));
-        in.read();
-
-        byte[] other = new byte[31];
-        in.read(other);
-        metadata.put("Other", new String(other));
-      }
-    }
-
-    // Populate metadata store
-
-    // The metadata store we're working with.
-    MetadataStore store = getMetadataStore(currentId);
-
-    String type = "int8";
-    if (metadata.get("BitDepth") != null) {
-      int bitDepth = ((Short) metadata.get("BitDepth")).intValue();
-
-      if (bitDepth <= 8) type = "int8";
-      else if (bitDepth <= 16) type = "int16";
-      else type = "int32";
-    }
-
-    store.setImage(null, metadata.get("Timestamp").toString(), null, null);
-
-    // FIXME: There is a loss of precision here as we are down-casting from
-    // double to float.
-    store.setStageLabel(null, (Float) metadata.get("XOrigin"),
-      (Float) metadata.get("YOrigin"), null, null);
-
-    // FIXME: There is a loss of precision here as we are down-casting from
-    // double to float.
-    store.setDimensions((Float) metadata.get("XScale"),
-      (Float) metadata.get("YScale"), null, null, null, null);
-
-    in.seek(offset);
-
-    // we need to poke at least one plane so that we can get sizeX, sizeY
-    // and colorType to populate the pixels set
-    try { firstPlane = openImage(currentId, 0); }
-    catch (FormatException e) { e.printStackTrace(); }
-
-    // determine colorType:
-    // 1 => all planes are greyscale
-    // 2 => all planes are RGB
-    // 3 => every 4th plane is RGB, remaining planes are greyscale
-    colorType = -1;
-    WritableRaster r = firstPlane.getRaster();
-    int b = r.getNumBands();
-    if (b == 3) colorType = TYPE_RGB;
-    else if (offsets.length <= 3) colorType = TYPE_GRAYSCALE;
-    else {
-      in.seek(offsets[3] + 12);
-
-      int blockSize = in.readInt();
-
-      // right now I'm gonna skip all the header info
-      // check to see whether or not this is v2 data
-      if (in.read() == 1) in.skipBytes(128);
-      in.skipBytes(169);
-      // read in the block of data
-      byte[] toRead = new byte[blockSize];
-      in.read(toRead);
-
-      Dimension dim;
-      try { dim = pictReader.getDimensions(toRead); }
-      catch (Exception e) { dim = new Dimension(0, 0); }
-
-      int length = toRead.length;
-      int totalBlocks = -1; // set to allow loop to start
-      int expectedBlock = 0;
-      int pos = 0;
-
-      sizeX = new Integer(dim.width);
-      sizeY = new Integer(dim.height);
-
-      if (expectedBlock != totalBlocks) {
-        while (pos + 7 < length &&
-          (toRead[pos] != 73 || toRead[pos + 1] != 86 ||
-          toRead[pos + 2] != 69 || toRead[pos + 3] != 65 ||
-          toRead[pos + 4] != 100 || toRead[pos + 5] != 98 ||
-          toRead[pos + 6] != 112 || toRead[pos + 7] != 113))
-        {
-          pos++;
-        }
-
-        if (pos + 32 > length) { // the header is 32 bytes long
-          if (expectedBlock == 0 && imageType[3] < 9) colorType = TYPE_MIXED;
-        }
-      }
-      if (colorType < 0) colorType = TYPE_GRAYSCALE;
-    }
-
-    store.setPixels(sizeX, sizeY, new Integer(numBlocks),
-      new Integer(getSizeC(currentId)), new Integer(1), type,
-      new Boolean(!little), "XYCZT", null);
+    byte[] b = new byte[4];
+    in.read(b);
+    fmt = new String(b);
+    if (version == 2) in.skipBytes(4);
+    else in.skipBytes(8);
+    return nextTag;
   }
 
-  // -- Utility methods --
-
-  /** Translates up to the first 4 bytes of a byte array to an integer. */
-  private static int batoi(byte[] inp) {
-    int len = inp.length>4?4:inp.length;
-    int total = 0;
-    for (int i = 0; i < len; i++) {
-      total += (inp[i]<0 ? 256+inp[i] : (int) inp[i]) << (((len - 1) - i) * 8);
-    }
-    return total;
+  /** Helper class for storing layer info. */
+  protected class LayerInfo {
+    public int layerStart;
+    public int zPosition;
+    public int wavelength;
+    public String layerName;
+    public long timestamp;
   }
 
   // -- Main method --
-
   public static void main(String[] args) throws FormatException, IOException {
     new OpenlabReader().testRead(args);
   }
