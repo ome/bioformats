@@ -57,16 +57,24 @@ public class LociImporter implements PlugIn, ItemListener {
   private JCheckBox showMeta = null;
   private JCheckBox stitching = null;
   private JCheckBox ranges = null;
-  private boolean mergeChannels = true;
-  private boolean splitWindows = false;
-  private boolean showMetadata = false;
-  private boolean stitchFiles = false;
-  private boolean specifyRanges = false;
+  private boolean mergeChannels;
+  private boolean splitWindows;
+  private boolean showMetadata;
+  private boolean stitchFiles;
+  private boolean specifyRanges;
 
   // -- PlugIn API methods --
 
   /** Executes the plugin. */
   public synchronized void run(String arg) {
+    // load preferences from IJ_Prefs.txt
+
+    mergeChannels = Prefs.get("bioformats.mergeChannels", true);
+    splitWindows = Prefs.get("bioformats.splitWindows", false);
+    showMetadata = Prefs.get("bioformats.showMetadata", false);
+    stitchFiles = Prefs.get("bioformats.stitchFiles", false);
+    specifyRanges = Prefs.get("bioformats.specifyRanges", false);
+
     success = false;
     boolean quiet = !"".equals(arg);
 
@@ -345,6 +353,15 @@ public class LociImporter implements PlugIn, ItemListener {
         }
       }
       success = true;
+
+      // save checkbox values to IJ_Prefs.txt
+
+      Prefs.set("bioformats.mergeChannels", mergeChannels);
+      Prefs.set("bioformats.splitWindows", splitWindows);
+      Prefs.set("bioformats.showMetadata", showMetadata);
+      Prefs.set("bioformats.stitchFiles", stitchFiles);
+      Prefs.set("bioformats.specifyRanges", specifyRanges);
+
       mergeChannels = true;
       splitWindows = false;
     }
