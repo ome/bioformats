@@ -440,7 +440,7 @@ public class DicomReader extends FormatReader {
         null, null, null);
   }
 
-  // -- Utility methods --
+  // -- Helper methods --
 
   private void addInfo(int tag, String value) throws IOException {
     String info = getHeaderInfo(tag, value);
@@ -619,12 +619,7 @@ public class DicomReader extends FormatReader {
     return tag;
   }
 
-  // -- Main method --
-
-  public static void main(String[] args) throws FormatException, IOException {
-    new DicomReader().testRead(args);
-  }
-
+  // -- Utility methods --
 
   /**
    * Assemble the data dictionary.
@@ -1250,7 +1245,10 @@ public class DicomReader extends FormatReader {
     return dict;
   }
 
+  // -- Main method --
 
-
+  public static void main(String[] args) throws FormatException, IOException {
+    new DicomReader().testRead(args);
+  }
 
 }
