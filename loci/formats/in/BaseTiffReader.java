@@ -851,6 +851,7 @@ public abstract class BaseTiffReader extends FormatReader {
 
   protected void put(String key, Object value) {
     if (value == null) return;
+    if (value instanceof String) value = ((String) value).trim();
     metadata.put(key, value);
   }
 

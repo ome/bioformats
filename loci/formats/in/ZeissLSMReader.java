@@ -375,16 +375,28 @@ public class ZeissLSMReader extends BaseTiffReader {
         pos = in.getFilePointer();
 
         in.seek(data + 4);
+        pos = in.getFilePointer() - 4;
 
         int numColors = in.readInt();
         int numNames = in.readInt();
+
+        if (numColors > getSizeC(currentId)) {
+          in.seek(data - 2);
+          pos = in.getFilePointer() + 7;
+          in.order(!in.isLittleEndian());
+          in.readInt();
+          numColors = in.readInt();
+          numNames = in.readInt();
+        }
+
         idata = in.readInt();
-        idata = in.readInt();
-        long offsetNames = data + idata; // will seek to this
+        int nameData = in.readInt();
+        long offsetNames = pos + idata; // will seek to this
+
 
         // read in the intensity value for each color
 
-        in.skipBytes(idata - 16);
+        in.seek(offsetNames);
 
         for (int i=0; i<numColors; i++) {
           data = in.readInt();
@@ -393,23 +405,19 @@ public class ZeissLSMReader extends BaseTiffReader {
 
         // read in the channel names
 
-        pos = in.getFilePointer();
-        in.seek(pos + offsetNames);
-
         for (int i=0; i<numNames; i++) {
           // we want to read until we find a null char
-          String name = "";
-          char[] current = new char[1];
-          current[0] = (char) in.read();
-          in.read();
-          while (current[0] != 0) {
-            name.concat(new String(current));
-            current[0] = (char) in.read();
-            in.read();
+          StringBuffer sb = new StringBuffer();
+          char current = (char) in.read();
+          while (current != 0) {
+            sb.append(current);
+            current = (char) in.read();
           }
+          String name = sb.toString();
           put("ChannelName" + i, name);
         }
         in.seek(pos);
+        in.order(isLittleEndian(currentId));
       }
       p += 4;
 
