@@ -118,16 +118,6 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
       }
     }
 
-    // Analyze format (.img/.hdr) handler
-    // Note that the Analyze_Reader plugin opens and displays the
-    // image and does not implement the ImagePlus class.
-    if (name.endsWith(".img") || name.endsWith(".hdr")) {
-      // Open Analyze image and display it
-      o = IJ.runPlugIn("Analyze_Reader", path);
-      // Set flag so Opener.openImage() does not display error
-      width = IMAGE_OPENED;
-    }
-
     // IPLab file handler
     // Note that the IPLab_Reader plugin extends the ImagePlus class.
     // Little-endian IPLab files start with "iiii" or "mmmm".
@@ -172,8 +162,8 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
       width = IMAGE_OPENED;
     }
 
-    //  Princeton Instruments SPE image file (.spe) handler
-    //  http://rsb.info.nih.gov/ij/plugins/spe.html
+    // Princeton Instruments SPE image file (.spe) handler
+    // http://rsb.info.nih.gov/ij/plugins/spe.html
     if (name.endsWith(".spe")) {
       // Open SPEimage and display it
       o = IJ.runPlugIn("OpenSPE_", path);
@@ -181,8 +171,8 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
       width = IMAGE_OPENED;
     }
 
-    //  Zeiss Confocal LSM 510 image file (.lsm) handler
-    //  http://rsb.info.nih.gov/ij/plugins/lsm-reader.html
+    // Zeiss Confocal LSM 510 image file (.lsm) handler
+    // http://rsb.info.nih.gov/ij/plugins/lsm-reader.html
     if (name.endsWith(".lsm")) {
       o = IJ.runPlugIn("LSM_Reader", path);
       width = IMAGE_OPENED;
@@ -258,7 +248,7 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
     // CTR: try opening the file with LOCI Bio-Formats
     // Always check this last!
     if (o == null) {
-      Object loci = IJ.runPlugIn("loci.browser.LociImporter", path);
+      Object loci = IJ.runPlugIn("loci.plugins.LociImporter", path);
       if (loci != null) {
         // plugin exists and was launched
         try {
