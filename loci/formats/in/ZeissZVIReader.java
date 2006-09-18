@@ -25,8 +25,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
+import java.io.*;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Vector;
 import loci.formats.*;
 
@@ -34,105 +35,136 @@ import loci.formats.*;
  * ZeissZVIReader is the file format reader for Zeiss ZVI files.
  *
  * @author Melissa Linkert linkert at cs.wisc.edu
- * @author Curtis Rueden ctrueden at wisc.edu
- * @author Michel Boudinot Michel dot boudinot at iaf.cnrs-gif.fr
  */
 public class ZeissZVIReader extends FormatReader {
 
+  // -- Constants --
+
+  private static final String NO_POI_MSG = "You need to install Jakarta POI " +
+    "from http://jakarta.apache.org/poi/";
+
+  // -- Static fields --
+
+  private static boolean noPOI = false;
+  private static ReflectedUniverse r = createReflectedUniverse();
+
+  private static ReflectedUniverse createReflectedUniverse() {
+    r = null;
+    try {
+      r = new ReflectedUniverse();
+      r.exec("import org.apache.poi.poifs.filesystem.POIFSFileSystem");
+      r.exec("import org.apache.poi.poifs.filesystem.DirectoryEntry");
+      r.exec("import org.apache.poi.poifs.filesystem.DocumentEntry");
+      r.exec("import org.apache.poi.poifs.filesystem.DocumentInputStream");
+      r.exec("import java.util.Iterator");
+    }
+    catch (Throwable exc) { noPOI = true; }
+    return r;
+  }
+
   // -- Fields --
 
-  private LegacyZVIReader legacy;
-  private Hashtable pixelData = new Hashtable();
-  private Hashtable headerData = new Hashtable();
-  private byte[] header; // general image header data
-  private int nImages = 0;  // number of images
-  private Vector tags;  // tags data
-  private int channels;
+  /** Number of images. */
+  private int nImages;
 
-  // -- Fields used by parseDir --
-  private int imageWidth = 0;
-  private int imageHeight = 0;
-  private int bytesPerPixel = 0;
-  private int pixelFormat;
-
-  private boolean needLegacy;
+  /** Image width. */
   private int width;
-  private int height;
-  private int bitsPerSample;
-  private int dataLength;
-  private int shuffle;
 
-  private String typeAsString;
-  private String dimensionOrder;
-  private int zSize;
+  /** Image height. */
+  private int height;
+
+  /** Number of channels. */
+  private int nChannels = 1;
+
+  /** Number of timepoints. */
   private int tSize;
-  private int cSize;
+
+  /* Number of Z slices. */
+  private int zSize;
+
+  /** Number of bytes per pixel. */
+  private int bpp;
+
+  /** Thumbnail width. */
+  private int thumbWidth;
+
+  /** Thumbnail height. */
+  private int thumbHeight;
+
+  /** Hashtable containing the directory entry for each plane. */
+  private Hashtable pixels;
+
+  /** 
+   * Hashtable containing the document name for each plane, 
+   * indexed by the plane number. 
+   */
+  private Hashtable names;
+
+  /** Vector containing Z indices. */
+  private Vector zIndices;
+
+  /** Vector containing C indices. */
+  private Vector cIndices;
+
+  /** Vector containing T indices. */
+  private Vector tIndices;
+
+  private Hashtable offsets;
 
   // -- Constructor --
 
-  /** Constructs a new Zeiss ZVI reader. */
-  public ZeissZVIReader() { super("Zeiss Vision Image", "zvi"); }
-
+  /** Constructs a new ZeissZVI reader. */
+  public ZeissZVIReader() { super("Zeiss Vision Image (ZVI)", "zvi"); }
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for a Zeiss ZVI file. */
+  /** Checks if the given block is a valid header for an Zeiss ZVI file. */
   public boolean isThisType(byte[] block) {
-    return OLEParser.isOLE(block);
+    // all of our samples begin with 0xd0cf11e0
+    return (block[0] == 0xd0 && block[1] == 0xcf &&
+      block[2] == 0x11 && block[3] == 0xe0);
   }
 
   /** Determines the number of images in the given Zeiss ZVI file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    if (needLegacy) return legacy.getImageCount(id);
     return nImages;
   }
 
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    if (needLegacy) return legacy.isRGB(id);
-    return channels > 1;
+    return nChannels > 1 && (nChannels * zSize * tSize != nImages);
   }
 
   /** Get the size of the X dimension. */
   public int getSizeX(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    if (needLegacy) return legacy.getSizeX(id);
     return width;
   }
 
   /** Get the size of the Y dimension. */
   public int getSizeY(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    if (needLegacy) return legacy.getSizeY(id);
     return height;
   }
 
   /** Get the size of the Z dimension. */
   public int getSizeZ(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    if (needLegacy) return legacy.getSizeZ(id);
     return zSize;
   }
 
   /** Get the size of the C dimension. */
   public int getSizeC(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    if (needLegacy) return legacy.getSizeC(id);
-    return isRGB(id) ? 3*cSize : cSize;
+    return nChannels;
   }
 
   /** Get the size of the T dimension. */
   public int getSizeT(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    if (needLegacy) return legacy.getSizeT(id);
     return tSize;
-  }
-
-  /** Return true if the data is in little-endian format. */
-  public boolean isLittleEndian(String id) throws FormatException, IOException {
-    return true;
   }
 
   /**
@@ -142,17 +174,72 @@ public class ZeissZVIReader extends FormatReader {
   public String getDimensionOrder(String id) throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    if (needLegacy) return legacy.getDimensionOrder(id);
-    return dimensionOrder;
+    if (zSize > tSize) return "XYCZT";
+    return "XYCTZ";
+  }
+
+  /** Return true if the data is in little-endian format. */
+  public boolean isLittleEndian(String id) throws FormatException, IOException {
+    return true;
   }
 
   /** Returns whether or not the channels are interleaved. */
   public boolean isInterleaved(String id) throws FormatException, IOException {
-    return true;
+    return true;  
   }
 
   /** Obtains the specified image from the given ZVI file, as a byte array. */
   public byte[] openBytes(String id, int no)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    if (no < 0 || no >= getImageCount(id)) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+
+    try { 
+      Object directory = pixels.get(new Integer(no));
+      String name = (String) names.get(new Integer(no));
+
+      r.setVar("dir", directory);
+      r.setVar("entryName", name);
+      r.exec("document = dir.getEntry(entryName)");
+      r.exec("dis = new DocumentInputStream(document)");
+      r.exec("numBytes = dis.available()");
+      int numbytes = ((Integer) r.getVar("numBytes")).intValue();
+      byte[] b = new byte[numbytes + 4]; // append 0 for final offset
+      r.setVar("data", b);
+      r.exec("dis.read(data)");
+
+      // remove extra bytes
+     
+      int offset = ((Integer) offsets.get(new Integer(no))).intValue();
+      byte[] a = new byte[b.length - offset];
+      System.arraycopy(b, b.length - a.length, a, 0, a.length);
+    
+      if (bpp == 3) {
+        // reverse bytes in groups of 3 to account for BGR storage
+
+        byte[] tmp = a;
+        a = new byte[tmp.length];
+
+        for (int i=0; i<tmp.length; i+=3) {
+          if (i + 2 < tmp.length) {
+            a[i] = tmp[i + 2];
+            a[i + 1] = tmp[i + 1];
+            a[i + 2] = tmp[i];
+          }
+        }
+      }
+      return a;
+    }
+    catch (ReflectException r) {
+      throw new FormatException(r);
+    }
+  }
+
+  /** Obtains the specified image from the given ZVI file. */
+  public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -161,1356 +248,862 @@ public class ZeissZVIReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    if (needLegacy) return legacy.openBytes(id, no);
-
-    // read image header data
-
-    try {
-      byte[] imageHead = (byte[]) headerData.get(new Integer(no));
-
-      if (imageHead != null) {
-        int pointer = 14;
-        int numBytes = DataTools.bytesToInt(imageHead, pointer, 2, true);
-        pointer += 2 + numBytes;
-
-        pointer += 2;
-        width = DataTools.bytesToInt(imageHead, pointer, 4, true);
-        pointer += 4 + 2;
-
-        height = DataTools.bytesToInt(imageHead, pointer, 4, true);
-        pointer += 4 + 2;
-
-        pointer += 4 + 2;
-
-        pixelFormat = DataTools.bytesToInt(imageHead, pointer, 4, true);
-        pointer += 4 + 2;
-
-        pointer += 6; // count field is always 0
-
-        int validBPP = DataTools.bytesToInt(imageHead, pointer, 4, true);
-        pointer += 4 + 2;
-
-        // read image bytes and convert to floats
-
-        pointer = 0;
-        bitsPerSample = validBPP;
-
-        if ((width > imageWidth) && (imageWidth > 0)) {
-          width = imageWidth;
-          height = imageHeight;
-          bitsPerSample = bytesPerPixel * 8;
-        }
-      }
-      else {
-        width = imageWidth;
-        height = imageHeight;
-        bitsPerSample = bytesPerPixel * 8;
-      }
-
-      byte[] px = (byte[]) pixelData.get(new Integer(no));
-      byte[] tempPx = new byte[px.length];
-
-      if (bitsPerSample > 64) { bitsPerSample = 8; }
-
-      int bpp = bitsPerSample / 8;
-
-      // chop any extra bytes off of the pixel array
-
-      if (px.length > (width * height * bpp)) {
-        int check = 0;
-        int chop = 0;
-        while (check != imageWidth && chop < 4000) {
-          check = DataTools.bytesToInt(px, chop, 4, true);
-          chop++;
-        }
-        chop += 23;
-        if (bpp == 2 && (chop % 2 != 0)) chop++;
-
-        if (check != imageWidth) chop = 0;
-
-        if (chop > 0) {
-          byte[] tmp = new byte[px.length - chop];
-          System.arraycopy(px, px.length - tmp.length, tmp, 0, tmp.length);
-          px = tmp;
-        }
-      }
-
-      if (bpp == 3) {
-        // reverse the channels
-
-        int off = 0;
-        int length = width * 3;
-
-        for (int i=0; i<height; i++) {
-          for (int j=0; j<width; j++) {
-            tempPx[off + j*3] = px[off + j*3 + 2];
-            tempPx[off + j*3 + 1] = px[off + j*3 + 1];
-            tempPx[off + j*3 + 2] = px[off + j*3];
-          }
-          off += length;
-        }
-      }
-      else if (bpp != 6) tempPx = px;
-      else {
-        int mul = (int) (0.32 * imageWidth * bpp);
-        for (int i=0; i<imageHeight; i++) {
-          System.arraycopy(px, i*width*bpp, tempPx, (i+1)*width*bpp - mul, mul);
-          System.arraycopy(px, i*width*bpp + mul, tempPx, i*width*bpp,
-            width*bpp - mul);
-        }
-
-        px = tempPx;
-        tempPx = new byte[px.length];
-
-        // reverse the channels
-        int off = 0;
-        int length = width * bpp;
-
-        for (int i=0; i<height; i++) {
-          for (int j=0; j<width; j++) {
-            tempPx[off + j*6] = px[off + j*6 + 4];
-            tempPx[off + j*6 + 1] = px[off + j*6 + 5];
-            tempPx[off + j*6 + 2] = px[off + j*6 + 2];
-            tempPx[off + j*6 + 3] = px[off + j*6 + 3];
-            tempPx[off + j*6 + 4] = px[off + j*6];
-            tempPx[off + j*6 + 5] = px[off + j*6 + 1];
-          }
-          off += length;
-        }
-      }
-
-      // reverse row order
-
-      if ((bitsPerSample / 8) % 3 != 0 && (bitsPerSample != 8)) {
-        px = new byte[tempPx.length];
-        int off = (height - 1) * width * bpp;
-        int newOff = 0;
-        int length = width * bpp;
-        for (int i=0; i<height; i++) {
-          System.arraycopy(tempPx, off, px, newOff, length);
-          off -= length;
-          newOff += length;
-        }
-        tempPx = px;
-      }
-
-      return tempPx;
-    }
-    catch (Exception e) {
-      needLegacy = true;
-      return legacy.openBytes(id, no);
-    }
-  }
-
-  /** Obtains the specified image from the given Zeiss ZVI file. */
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
-    if (needLegacy) return legacy.openImage(id, no);
-    try {
-      byte[] data = openBytes(id, no);
-      int bpp = bitsPerSample / 8;
-      if (bpp == 0) bpp = bytesPerPixel;
-      if (bpp > 4) bpp /= 3;
-      return ImageTools.makeImage(data, width, height,
-        !isRGB(id) ? 1 : 3, true, bpp, false);
-    }
-    catch (Exception e) {
-      needLegacy = true;
-    }
-    return openImage(id, no);
+    return ImageTools.makeImage(openBytes(id, no), width, height, 
+      isRGB(id) ? 3 : 1, true, bpp == 3 ? 1 : bpp, true);
   }
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
-    header = null;
-    tags = null;
-    pixelData = null;
-    headerData = null;
+    currentId = null;
   }
 
-  /** Initializes the given Zeiss ZVI file. */
+  /** Initializes the given ZVI file. */
   protected void initFile(String id) throws FormatException, IOException {
-    super.initFile(id);
-    legacy = new LegacyZVIReader();
+    if (noPOI) throw new FormatException(NO_POI_MSG);
+    currentId = id;
 
-    OLEParser parser = new OLEParser(id);
-    parser.parse(0);
-    Vector[] files = parser.getFiles();
+    metadata = new Hashtable();
+    pixels = new Hashtable();
+    names = new Hashtable();
+    offsets = new Hashtable();
+    zIndices = new Vector();
+    cIndices = new Vector();
+    tIndices = new Vector();
+    
+    nImages = 0;
 
-    headerData = new Hashtable();
-    pixelData = new Hashtable();
-    tags = new Vector();
-
-    for (int i=0; i<files[1].size(); i++) {
-      String path = (String) files[0].get(i);
-      path = DataTools.stripString(path);
-      if (path.endsWith("Tags/Contents")) {
-        tags.add(files[1].get(i));
-      }
+    try {
+      r.setVar("fis", new FileInputStream(id));
+      r.exec("fs = new POIFSFileSystem(fis)");
+      r.exec("dir = fs.getRoot()");
+      parseDir(0, r.getVar("dir"));
+      
+      zSize = zIndices.size();
+      tSize = tIndices.size();
+      nChannels *= cIndices.size();
+      
+      initMetadata();
     }
-
-    int largest = 0;
-    int largestIndex = 0;
-
-    int nextItem = 0;
-    Vector itemNames = parser.getNames();
-
-    for (int i=0; i<files[0].size(); i++) {
-      byte[] data = (byte[]) files[1].get(i);
-      if (data.length > largest) largestIndex = i;
-
-      String pathName = ((String) files[0].get(i)).trim();
-      pathName = DataTools.stripString(pathName);
-
-      boolean isContents = pathName.endsWith("Contents");
-      boolean isImage = pathName.endsWith("Image");
-
-      try {
-        if ((isContents && (pathName.indexOf("Item") != -1 ||
-          pathName.indexOf("Image") != -1) && data.length > 6000) ||
-          data.length == dataLength)
-        {
-          header = data;
-
-          while (dataLength != 0 && data.length < dataLength && isContents &&
-            (pathName.indexOf("Item") != -1 || pathName.indexOf("Image") != -1))
-          {
-            i++;
-            data = (byte[]) files[1].get(i);
-            if (data.length > largest) largestIndex = i;
-
-            pathName = ((String) files[0].get(i)).trim();
-            pathName = DataTools.stripString(pathName);
-            isContents = pathName.endsWith("Contents");
-          }
-
-          int imageNum = 0;
-          if (pathName.indexOf("Item") != -1) {
-            String num = pathName.substring(pathName.lastIndexOf("Item") + 5,
-              pathName.lastIndexOf(")"));
-            imageNum = Integer.parseInt(num);
-          }
-          if (nextItem < itemNames.size()) {
-            String num = ((String) itemNames.get(nextItem)).trim();
-            if (num.length() > 1) num = DataTools.stripString(num);
-            int n = Integer.parseInt(num);
-
-            // choose whether to use imageNum or n
-
-            if (n != imageNum) {
-              if (pixelData.containsKey(new Integer(imageNum))) {
-                imageNum = n;
-              }
-            }
-
-            if (pathName.indexOf("Item") != -1) {
-              num = pathName.substring(0, pathName.lastIndexOf("Item"));
-              while (pixelData.containsKey(new Integer(imageNum)) &&
-                (num.indexOf("Item") != -1))
-              {
-                int itemIndex = num.lastIndexOf("Item");
-                int parenIndex = num.lastIndexOf(")");
-                if (parenIndex < itemIndex) {
-                  itemIndex = num.lastIndexOf("Item", itemIndex - 1);
-                }
-
-                String s = num.substring(itemIndex + 5, parenIndex);
-                imageNum = Integer.parseInt(s);
-                num = num.substring(0, num.lastIndexOf("Item"));
-              }
-            }
-
-            // if we *still* don't find a valid key, give up and use
-            // the legacy reader
-
-            if (pixelData.containsKey(new Integer(imageNum))) {
-              if (legacy.getImageCount(id) == 1) break;
-              needLegacy = true;
-              legacy.initFile(id);
-              return;
-            }
-
-            nextItem++;
-          }
-
-          int byteCount = 2;
-          byteCount += 4; // version field
-          byteCount += 6; // type field
-          byteCount += 2;
-          int numBytes = DataTools.bytesToInt(header, byteCount, 2, true);
-          byteCount += 2 + numBytes;
-
-          byteCount += 2;
-          imageWidth = DataTools.bytesToInt(header, byteCount, 4, true);
-          byteCount += 6;
-          imageHeight = DataTools.bytesToInt(header, byteCount, 4, true);
-          byteCount += 4;
-
-          byteCount += 6; // depth
-          byteCount += 6; // pixel format
-          byteCount += 6; // count
-
-          byteCount += 2;
-          bitsPerSample = DataTools.bytesToInt(header, byteCount, 4, true);
-          byteCount += 4;
-
-          numBytes = DataTools.bytesToInt(header, byteCount, 2, true);
-          byteCount += 2 + numBytes; // plugin CLSID
-          byteCount += 38; // not sure what this is for
-
-          byteCount += 2;
-          numBytes = DataTools.bytesToInt(header, byteCount, 4, true);
-          byteCount += 4 + numBytes; // layers
-
-          byteCount += 2;
-          numBytes = DataTools.bytesToInt(header, byteCount, 4, true);
-          byteCount += 4 + numBytes; // scaling
-
-          byteCount += 2;
-          numBytes = DataTools.bytesToInt(header, byteCount, 2, true);
-          byteCount += 2 + numBytes; // root folder name
-
-          byteCount += 2;
-          numBytes = DataTools.bytesToInt(header, byteCount, 2, true);
-          byteCount += 2 + numBytes; // display item name
-
-          byteCount += 28; // streamed header data
-
-          // get pixel data
-
-          if (header.length > byteCount) {
-            byte[] head = new byte[byteCount];
-            System.arraycopy(header, 0, head, 0, head.length);
-            headerData.put(new Integer(imageNum), (Object) head);
-            byte[] px = new byte[header.length - byteCount];
-            System.arraycopy(header, byteCount, px, 0, px.length);
-
-            if (!pixelData.containsKey(new Integer(imageNum))) {
-              shuffle = parser.shuffle();
-
-              // nasty special case...I pity the person who finds a bug in this
-              if (shuffle > 0) {
-                byte[] chunkOne = new byte[shuffle];
-                byte[] chunkTwo = new byte[parser.length() - shuffle + 11700];
-                System.arraycopy(px, 0, chunkOne, 0, chunkOne.length);
-                System.arraycopy(px, chunkOne.length, chunkTwo, 0,
-                  chunkTwo.length);
-
-                byte[] tct = new byte[chunkOne.length];
-                int bpp = bitsPerSample / 8;
-                int mul = (int) (imageWidth - (imageWidth * 0.01));
-                mul *= bpp;
-                mul += 2;
-
-                for (int k=0; k<(chunkOne.length / (bpp*imageWidth)); k++) {
-                  System.arraycopy(chunkOne, k*bpp*imageWidth, tct,
-                    (k+1)*bpp*imageWidth - mul, mul);
-                  System.arraycopy(chunkOne, k * bpp * imageWidth + mul, tct,
-                    k * bpp * imageWidth, bpp * imageWidth - mul);
-                }
-
-                chunkOne = tct;
-
-                byte[] tco = new byte[chunkTwo.length];
-                mul = (int) (imageWidth * 0.14);
-                mul *= bpp;
-
-                for (int k=0; k<(chunkTwo.length / (bpp*imageWidth)); k++) {
-                  System.arraycopy(chunkTwo, k*bpp*imageWidth, tco,
-                    (k+1)*bpp*imageWidth - mul, mul);
-                  System.arraycopy(chunkTwo, k * bpp * imageWidth + mul, tco,
-                    k * bpp * imageWidth, bpp * imageWidth - mul);
-                }
-
-                chunkTwo = tco;
-
-                px = new byte[px.length];
-                System.arraycopy(chunkTwo, 0, px, 0, chunkTwo.length);
-                System.arraycopy(chunkOne, 0, px, chunkTwo.length,
-                  chunkOne.length);
-
-                // now we have to shift the whole array to the right by
-                // 0.01 * width pixels
-
-                mul = imageWidth - ((int) (imageWidth * 0.01));
-                mul *= bpp;
-
-                byte[] tmp = new byte[px.length];
-                for (int k=0; k<imageHeight; k++) {
-                  System.arraycopy(px, k*bpp*imageWidth, tmp,
-                    (k+1)*bpp*imageWidth - mul, mul);
-                  System.arraycopy(px, k*bpp*imageWidth+mul, tmp,
-                    k * bpp * imageWidth, bpp*imageWidth - mul);
-                }
-
-                px = tmp;
-              }
-
-              pixelData.put(new Integer(imageNum), (Object) px);
-              dataLength = px.length + head.length;
-              nImages++;
-            }
-          }
-          else {
-            if (legacy.getImageCount(id) == 1) break;
-          }
-        }
-        else if (isContents && isImage) {
-          // we've found the header data
-
-          header = data;
-
-          int pointer = 14;
-          int length = DataTools.bytesToInt(header, pointer, 2, true);
-          pointer += 4 + length;
-
-          imageWidth = DataTools.bytesToInt(header, pointer, 4, true);
-          pointer += 6;
-          imageHeight = DataTools.bytesToInt(header, pointer, 4, true);
-          pointer += 6;
-          pointer += 6;
-
-          pixelFormat = DataTools.bytesToInt(header, pointer, 4, true);
-          pointer += 6;
-
-          switch (pixelFormat) {
-            case 1: bytesPerPixel = 3; break;
-            case 2: bytesPerPixel = 4; break;
-            case 3: bytesPerPixel = 1; break;
-            case 4: bytesPerPixel = 2; break;
-            case 6: bytesPerPixel = 4; break;
-            case 8: bytesPerPixel = 6; break;
-            default: bytesPerPixel = 1;
-          }
-
-          if ((bytesPerPixel % 2) != 0) channels = 3;
-        }
-      }
-      catch (Exception e) { }
+    catch (Throwable t) {
+      noPOI = true;
+      if (DEBUG) t.printStackTrace();
     }
-
-    if (nImages == 0) {
-      // HACK - just grab the largest file
-
-      header = (byte[]) files[1].get(largestIndex);
-
-      int byteCount = 166;
-
-      byteCount += 2;
-      imageWidth = DataTools.bytesToInt(header, byteCount, 4, true);
-      byteCount += 6;
-      imageHeight = DataTools.bytesToInt(header, byteCount, 4, true);
-      byteCount += 4;
-
-      byteCount += 6; // depth
-      byteCount += 6; // pixel format
-      byteCount += 6; // count
-      byteCount += 2;
-      bytesPerPixel = DataTools.bytesToInt(header, byteCount, 4, true) / 8;
-      byteCount += 4;
-
-      int numBytes = DataTools.bytesToInt(header, byteCount, 2, true);
-      byteCount += 2 + numBytes; // plugin CLSID
-      byteCount += 38; // not sure what this is for
-
-      byteCount += 2;
-      numBytes = DataTools.bytesToInt(header, byteCount, 4, true);
-      byteCount += 4 + numBytes; // layers
-
-      byteCount += 2;
-      numBytes = DataTools.bytesToInt(header, byteCount, 4, true);
-      byteCount += 4 + numBytes; // scaling
-
-      byteCount += 2;
-      numBytes = DataTools.bytesToInt(header, byteCount, 2, true);
-      byteCount += 2 + numBytes; // root folder name
-
-      byteCount += 2;
-      numBytes = DataTools.bytesToInt(header, byteCount, 2, true);
-      byteCount += 2 + numBytes; // display item name
-
-      byteCount += 28; // streamed header data
-
-      // get pixel data
-
-      if (header.length > byteCount) {
-        byte[] head = new byte[byteCount];
-        System.arraycopy(header, 0, head, 0, head.length);
-        headerData.put(new Integer(nImages), (Object) head);
-        byte[] px = new byte[header.length - byteCount];
-        System.arraycopy(header, byteCount, px, 0, px.length);
-
-        pixelData.put(new Integer(nImages), (Object) px);
-        nImages++;
-      }
-    }
-    if (nImages == 0) nImages = 1;
-    openBytes(id, 0);  // set needLegacy appropriately
-    if (bytesPerPixel == 3) channels = 3;
-    initMetadata();
   }
 
   // -- Helper methods --
 
-  /** Populates the metadata hashtable. */
-  protected void initMetadata() throws FormatException, IOException {
-    // parse the "header" byte array
-    // right now we're using header data from an image item
+  /** Initialize metadata hashtable and OME-XML structure. */
+  private void initMetadata() throws FormatException, IOException {
+    MetadataStore store = getMetadataStore(currentId);
+    store.setImage((String) metadata.get("File Name"), null, null, null);
+    
+    store.setPixels(
+      new Integer(getSizeX(currentId)),
+      new Integer(getSizeY(currentId)),
+      new Integer(getSizeZ(currentId)),
+      new Integer(getSizeC(currentId)),
+      new Integer(getSizeT(currentId)),
+      "int" + ((bpp % 3) * 8),  // pixel type
+      new Boolean(false),
+      getDimensionOrder(currentId),
+      null);
+    
+    store.setDimensions(
+      new Float((String) metadata.get("Scale Factor for X")),
+      new Float((String) metadata.get("Scale Factor for Y")),
+      new Float((String) metadata.get("Scale Factor for Z")),
+      null, null, null);
+  }
 
-    metadata.put("Legacy", needLegacy ? "yes" : "no");
-
-    if (header == null) return;
-    if (needLegacy) metadata = legacy.getMetadata(currentId);
-
-    int pt = 14;
-    int numBytes = DataTools.bytesToInt(header, pt, 2, true);
-    pt += 2 + numBytes;
-
-    pt += 2;
-
-    metadata.put("ImageWidth",
-      new Integer(DataTools.bytesToInt(header, pt, 4, true)));
-    pt += 6;
-    metadata.put("ImageHeight",
-      new Integer(DataTools.bytesToInt(header, pt, 4, true)));
-    pt += 6;
-    pt += 6;
-    int pixel = DataTools.bytesToInt(header, pt, 4, true);
-    pt += 6;
-
-    String fmt;
-    switch (pixel) {
-      case 1: fmt = "8-bit RGB Triple (B, G, R)"; break;
-      case 2: fmt = "8-bit RGB Quad (B, G, R, A)"; break;
-      case 3: fmt = "8-bit grayscale"; break;
-      case 4: fmt = "16-bit signed integer"; break;
-      case 5: fmt = "32-bit integer"; break;
-      case 6: fmt = "32-bit IEEE float"; break;
-      case 7: fmt = "64-bit IEEE float"; break;
-      case 8: fmt = "16-bit unsigned RGB Triple (B, G, R)"; break;
-      case 9: fmt = "32-bit RGB Triple (B, G, R)"; break;
-      default: fmt = "unknown";
-    }
-
-    metadata.put("PixelFormat", fmt);
-
-    metadata.put("NumberOfImages", new Integer(getImageCount(currentId)));
-    pt += 6;
-    metadata.put("BitsPerPixel",
-      new Integer(DataTools.bytesToInt(header, pt, 4, true)));
-    pt += 6;
-
-    switch (pixel) {
-    case 1: typeAsString = "Uint8"; break;
-    case 2: typeAsString = "Uint8"; break;
-    case 3: typeAsString = "Uint8"; break;
-    case 4: typeAsString = "int16"; break;
-    case 5: typeAsString = "Uint32"; break;
-    case 6: typeAsString = "float"; break;
-    case 7: typeAsString = "float"; break;
-    case 8: typeAsString = "Uint16"; break;
-    case 9: typeAsString = "Uint32"; break;
-    default: typeAsString = "Uint8";
-    }
-
-    // parse the "tags" byte array
-
-    if (tags == null || tags.size() == 0) return;
-
-    for (int k=0; k<tags.size(); k++) {
-      byte[] tag = (byte[]) tags.get(k);
-      pt = 24;
-
-      int numTags = DataTools.bytesToInt(tag, pt, 4, true);
-      pt += 4;
-
-      for (int i=0; i<numTags; i++) {
-        // we have duples of {value, ID} form
-
-        if (pt < 0 || pt >= tag.length) break;
-        // first read the data type
-        int type = DataTools.bytesToInt(tag, pt, 2, true);
-        pt += 2;
-
-        // read in appropriate amount of data
-        Object data = null;
-        int length;
-
-        try {
-          switch (type) {
-            case 0: // VT_EMPTY: nothing
-            case 1: // VT_NUL: nothing
-              data = null;
-              pt += 2;
-              break;
-            case 2: // VT_I2: 16 bit integer
-              data = new Integer(DataTools.bytesToInt(tag, pt, 2, true));
-              pt += 2;
-              break;
-            case 3: // VT_I4: 32 bit integer
-              data = new Integer(DataTools.bytesToInt(tag, pt, 4, true));
-              pt += 4;
-              break;
-            case 4: // VT_R4: 32 bit float
-              data = new Float(Float.intBitsToFloat(
-                DataTools.bytesToInt(tag, pt, 4, true)));
-              pt += 4;
-              break;
-            case 5: // VT_R8: 64 bit float
-              data = new Double(Double.longBitsToDouble(
-                DataTools.bytesToLong(tag, pt, 8, true)));
-              pt += 8;
-              break;
-            case 7: // VT_DATE: 64 bit float
-              data = new Double(Double.longBitsToDouble(
-                DataTools.bytesToLong(tag, pt, 8, true)));
-              pt += 8;
-              break;
-            case 8: // VT_BSTR: streamed storage object
-              length = DataTools.bytesToInt(tag, pt, 2, true);
-              pt += 2;
-              data = new String(tag, pt, length);
-              pt += length;
-              break;
-            case 9: // VT_DISPATCH: 16 bytes
-              data = new String(tag, pt, 16);
-              pt += 16;
-              break;
-            case 11: // VT_BOOL: 16 bit integer (true if !0)
-              int temp = DataTools.bytesToInt(tag, pt, 2, true);
-              data = new Boolean(temp != 0);
-              pt += 2;
-              break;
-            case 16: // VT_I1: 8 bit integer
-              data = new Integer(DataTools.bytesToInt(tag, pt, 1, true));
-              pt += 1;
-              break;
-            case 17: // VT_UI1: 8 bit unsigned integer
-              data = new Integer(DataTools.bytesToInt(tag, pt, 1, true));
-              pt += 1;
-              break;
-            case 18: // VT_UI2: 16 bit unsigned integer
-              data = new Integer(DataTools.bytesToInt(tag, pt, 2, true));
-              pt += 2;
-              break;
-            case 19: // VT_UI4: 32 bit unsigned integer
-              data = new Integer(DataTools.bytesToInt(tag, pt, 4, true));
-              pt += 4;
-              break;
-            case 20: // VT_I8: 64 bit integer
-              data = new Integer(DataTools.bytesToInt(tag, pt, 8, true));
-              pt += 8;
-              break;
-            case 21: // VT_UI8: 64 bit unsigned integer
-              data = new Integer(DataTools.bytesToInt(tag, pt, 8, true));
-              pt += 8;
-              break;
-            case 65: // VT_BLOB: binary data
-              length = DataTools.bytesToInt(tag, pt, 4, true);
-              pt += 4;
-              try {
-                data = new String(tag, pt, length);
-              }
-              catch (Throwable e) { data = null; }
-              pt += length;
-              break;
-            case 68: // VT_STORED_OBJECT: streamed storage object
-              length = DataTools.bytesToInt(tag, pt, 2, true);
-              pt += 2;
-              data = new String(tag, pt, length);
-              pt += length;
-              break;
-            default:
-              data = null;
-          }
+  protected void parseDir(int depth, Object dir)
+    throws IOException, FormatException, ReflectException
+  {
+    r.setVar("dir", dir);
+    r.exec("dirName = dir.getName()");
+    r.setVar("depth", depth);
+    r.exec("iter = dir.getEntries()");
+    Iterator iter = (Iterator) r.getVar("iter");
+    while (iter.hasNext()) {
+      r.setVar("entry", iter.next());
+      r.exec("isInstance = entry.isDirectoryEntry()");
+      r.exec("isDocument = entry.isDocumentEntry()");
+      boolean isInstance = ((Boolean) r.getVar("isInstance")).booleanValue();
+      boolean isDocument = ((Boolean) r.getVar("isDocument")).booleanValue();
+      r.setVar("dir", dir);
+      r.exec("dirName = dir.getName()");
+      if (isInstance)  {
+        parseDir(depth + 1, r.getVar("entry"));
+      }
+      else if (isDocument) {
+        r.exec("entryName = entry.getName()");
+        if (DEBUG) {
+          print(depth + 1, "Found document: " + r.getVar("entryName"));
         }
-        catch (Exception e) { }
+        r.exec("dis = new DocumentInputStream(entry)");
+        r.exec("numBytes = dis.available()");
+        int numbytes = ((Integer) r.getVar("numBytes")).intValue();
+        byte[] data = new byte[numbytes + 4]; // append 0 for final offset
+        r.setVar("data", data);
+        r.exec("dis.read(data)");
 
-        pt += 2;  // skip over ID type
-        // read in tag ID
-        int tagID = DataTools.bytesToInt(tag, pt, 4, true);
-        pt += 4;
+        String entryName = (String) r.getVar("entryName");
+        String dirName = (String) r.getVar("dirName");
 
-        pt += 6; // skip over attribute and attribute type (unused)
+        boolean isContents = entryName.toUpperCase().equals("CONTENTS");
+        Object directory = r.getVar("dir");
 
-        // really ugly switch statement to put metadata in hashtable
-        if (data != null) {
-          switch (tagID) {
-            case 222: metadata.put("Compression", data); break;
-            case 258:
-              metadata.put("BlackValue", data);
-//              if (ome != null) {
-//                OMETools.setAttribute(ome,
-//                  "Grey Channel", "BlackLevel", "" + data);
-//              }
-              break;
-            case 259:
-              metadata.put("WhiteValue", data);
-//              if (ome != null) {
-//                OMETools.setAttribute(ome,
-//                  "Grey Channel", "WhiteLevel", "" + data);
-//              }
-              break;
-            case 260:
-              metadata.put("ImageDataMappingAutoRange", data);
-              break;
-            case 261:
-              metadata.put("Thumbnail", data);
-              break;
-            case 262:
-              metadata.put("GammaValue", data);
-//              if (ome != null) {
-//                OMETools.setAttribute(ome,
-//                  "Grey Channel", "GammaLevel", "" + data);
-//              }
-              break;
-            case 264: metadata.put("ImageOverExposure", data); break;
-            case 265: metadata.put("ImageRelativeTime1", data); break;
-            case 266: metadata.put("ImageRelativeTime2", data); break;
-            case 267: metadata.put("ImageRelativeTime3", data); break;
-            case 268: metadata.put("ImageRelativeTime4", data); break;
-            case 333: metadata.put("RelFocusPosition1", data); break;
-            case 334: metadata.put("RelFocusPosition2", data); break;
-            case 513: metadata.put("tagID_513", data); break;
-            case 515: metadata.put("ImageWidth", data); break;
-            case 516: metadata.put("ImageHeight", data); break;
-            case 517: metadata.put("tagID_517", data); break;
-            //case 518: metadata.put("PixelType", data); break;
-            case 519: metadata.put("NumberOfRawImages", data); break;
-            case 520: metadata.put("ImageSize", data); break;
-            case 523: metadata.put("Acquisition pause annotation", data); break;
-            case 530: metadata.put("Document Subtype", data); break;
-            case 531: metadata.put("Acquisition Bit Depth", data); break;
-            case 532: metadata.put("Image Memory Usage (RAM)", data); break;
-            case 534: metadata.put("Z-Stack single representative", data);
-                      break;
-            case 769: metadata.put("Scale Factor for X", data); break;
-            case 770: metadata.put("Scale Unit for X", data); break;
-            case 771: metadata.put("Scale Width", data); break;
-            case 772: metadata.put("Scale Factor for Y", data); break;
-            case 773: metadata.put("Scale Unit for Y", data); break;
-            case 774: metadata.put("Scale Height", data); break;
-            case 775: metadata.put("Scale Factor for Z", data); break;
-            case 776: metadata.put("Scale Unit for Z", data); break;
-            case 777: metadata.put("Scale Depth", data); break;
-            case 778: metadata.put("Scaling Parent", data); break;
-            case 1001: metadata.put("Date", data); break;
-            case 1002: metadata.put("code", data); break;
-            case 1003: metadata.put("Source", data); break;
-            case 1004: metadata.put("Message", data); break;
-            case 1025: metadata.put("Acquisition Date", data); break;
-            case 1026: metadata.put("8-bit acquisition", data); break;
-            case 1027: metadata.put("Camera Bit Depth", data); break;
-            case 1029: metadata.put("MonoReferenceLow", data); break;
-            case 1030: metadata.put("MonoReferenceHigh", data); break;
-            case 1031: metadata.put("RedReferenceLow", data); break;
-            case 1032: metadata.put("RedReferenceHigh", data); break;
-            case 1033: metadata.put("GreenReferenceLow", data); break;
-            case 1034: metadata.put("GreenReferenceHigh", data); break;
-            case 1035: metadata.put("BlueReferenceLow", data); break;
-            case 1036: metadata.put("BlueReferenceHigh", data); break;
-            case 1041: metadata.put("FrameGrabber Name", data); break;
-            case 1042: metadata.put("Camera", data); break;
-            case 1044: metadata.put("CameraTriggerSignalType", data); break;
-            case 1045: metadata.put("CameraTriggerEnable", data); break;
-            case 1046: metadata.put("GrabberTimeout", data); break;
-            case 1281: metadata.put("MultiChannelEnabled", data); break;
-            case 1282: metadata.put("MultiChannel Color", data); break;
-            case 1283: metadata.put("MultiChannel Weight", data); break;
-            case 1284: metadata.put("Channel Name", data); break;
-            case 1536: metadata.put("DocumentInformationGroup", data); break;
-            case 1537: metadata.put("Title", data); break;
-            case 1538: metadata.put("Author", data); break;
-            case 1539: metadata.put("Keywords", data); break;
-            case 1540: metadata.put("Comments", data); break;
-            case 1541: metadata.put("SampleID", data); break;
-            case 1542: metadata.put("Subject", data); break;
-            case 1543: metadata.put("RevisionNumber", data); break;
-            case 1544: metadata.put("Save Folder", data); break;
-            case 1545: metadata.put("FileLink", data); break;
-            case 1546: metadata.put("Document Type", data); break;
-            case 1547: metadata.put("Storage Media", data); break;
-            case 1548: metadata.put("File ID", data); break;
-            case 1549: metadata.put("Reference", data); break;
-            case 1550: metadata.put("File Date", data); break;
-            case 1551: metadata.put("File Size", data); break;
-            case 1553: metadata.put("Filename", data); break;
-            case 1792: metadata.put("ProjectGroup", data); break;
-            case 1793: metadata.put("Acquisition Date", data); break;
-            case 1794: metadata.put("Last modified by", data); break;
-            case 1795: metadata.put("User company", data); break;
-            case 1796: metadata.put("User company logo", data); break;
-            case 1797: metadata.put("Image", data); break;
-            case 1800: metadata.put("User ID", data); break;
-            case 1801: metadata.put("User Name", data); break;
-            case 1802: metadata.put("User City", data); break;
-            case 1803: metadata.put("User Address", data); break;
-            case 1804: metadata.put("User Country", data); break;
-            case 1805: metadata.put("User Phone", data); break;
-            case 1806: metadata.put("User Fax", data); break;
-            case 2049: metadata.put("Objective Name", data); break;
-            case 2050: metadata.put("Optovar", data); break;
-            case 2051: metadata.put("Reflector", data); break;
-            case 2052: metadata.put("Condenser Contrast", data); break;
-            case 2053: metadata.put("Transmitted Light Filter 1", data); break;
-            case 2054: metadata.put("Transmitted Light Filter 2", data); break;
-            case 2055: metadata.put("Reflected Light Shutter", data); break;
-            case 2056: metadata.put("Condenser Front Lens", data); break;
-            case 2057: metadata.put("Excitation Filter Name", data); break;
-            case 2060:
-              metadata.put("Transmitted Light Fieldstop Aperture", data);
-              break;
-            case 2061: metadata.put("Reflected Light Aperture", data); break;
-            case 2062: metadata.put("Condenser N.A.", data); break;
-            case 2063: metadata.put("Light Path", data); break;
-            case 2064: metadata.put("HalogenLampOn", data); break;
-            case 2065: metadata.put("Halogen Lamp Mode", data); break;
-            case 2066: metadata.put("Halogen Lamp Voltage", data); break;
-            case 2068: metadata.put("Fluorescence Lamp Level", data); break;
-            case 2069: metadata.put("Fluorescence Lamp Intensity", data); break;
-            case 2070: metadata.put("LightManagerEnabled", data); break;
-            case 2071: metadata.put("tag_ID_2071", data); break;
-            case 2072: metadata.put("Focus Position", data); break;
-            case 2073: metadata.put("Stage Position X", data); break;
-            case 2074: metadata.put("Stage Position Y", data); break;
-            case 2075:
-              metadata.put("Microscope Name", data);
-//              if (ome != null) {
-//                OMETools.setAttribute(ome, "Microscope", "Name", "" + data);
-//              }
-              break;
-            case 2076: metadata.put("Objective Magnification", data); break;
-            case 2077: metadata.put("Objective N.A.", data); break;
-            case 2078: metadata.put("MicroscopeIllumination", data); break;
-            case 2079: metadata.put("External Shutter 1", data); break;
-            case 2080: metadata.put("External Shutter 2", data); break;
-            case 2081: metadata.put("External Shutter 3", data); break;
-            case 2082: metadata.put("External Filter Wheel 1 Name", data);
-                       break;
-            case 2083: metadata.put("External Filter Wheel 2 Name", data);
-                       break;
-            case 2084: metadata.put("Parfocal Correction", data); break;
-            case 2086: metadata.put("External Shutter 4", data); break;
-            case 2087: metadata.put("External Shutter 5", data); break;
-            case 2088: metadata.put("External Shutter 6", data); break;
-            case 2089: metadata.put("External Filter Wheel 3 Name", data);
-                       break;
-            case 2090: metadata.put("External Filter Wheel 4 Name", data);
-                       break;
-            case 2103: metadata.put("Objective Turret Position", data); break;
-            case 2104: metadata.put("Objective Contrast Method", data); break;
-            case 2105: metadata.put("Objective Immersion Type", data); break;
-            case 2107: metadata.put("Reflector Position", data); break;
-            case 2109:
-              metadata.put("Transmitted Light Filter 1 Position", data);
-              break;
-            case 2110:
-              metadata.put("Transmitted Light Filter 2 Position", data);
-              break;
-            case 2112: metadata.put("Excitation Filter Position", data); break;
-            case 2113: metadata.put("Lamp Mirror Position", data); break;
-            case 2114:
-              metadata.put("External Filter Wheel 1 Position", data);
-              break;
-            case 2115:
-              metadata.put("External Filter Wheel 2 Position", data);
-              break;
-            case 2116:
-              metadata.put("External Filter Wheel 3 Position", data);
-              break;
-            case 2117:
-              metadata.put("External Filter Wheel 4 Position", data);
-              break;
-            case 2118: metadata.put("Lightmanager Mode", data); break;
-            case 2119: metadata.put("Halogen Lamp Calibration", data); break;
-            case 2120: metadata.put("CondenserNAGoSpeed", data); break;
-            case 2121:
-              metadata.put("TransmittedLightFieldstopGoSpeed", data);
-              break;
-            case 2122: metadata.put("OptovarGoSpeed", data); break;
-            case 2123: metadata.put("Focus calibrated", data); break;
-            case 2124: metadata.put("FocusBasicPosition", data); break;
-            case 2125: metadata.put("FocusPower", data); break;
-            case 2126: metadata.put("FocusBacklash", data); break;
-            case 2127: metadata.put("FocusMeasurementOrigin", data); break;
-            case 2128: metadata.put("FocusMeasurementDistance", data); break;
-            case 2129: metadata.put("FocusSpeed", data); break;
-            case 2130: metadata.put("FocusGoSpeed", data); break;
-            case 2131: metadata.put("FocusDistance", data); break;
-            case 2132: metadata.put("FocusInitPosition", data); break;
-            case 2133: metadata.put("Stage calibrated", data); break;
-            case 2134: metadata.put("StagePower", data); break;
-            case 2135: metadata.put("StageXBacklash", data); break;
-            case 2136: metadata.put("StageYBacklash", data); break;
-            case 2137: metadata.put("StageSpeedX", data); break;
-            case 2138: metadata.put("StageSpeedY", data); break;
-            case 2139: metadata.put("StageSpeed", data); break;
-            case 2140: metadata.put("StageGoSpeedX", data); break;
-            case 2141: metadata.put("StageGoSpeedY", data); break;
-            case 2142: metadata.put("StageStepDistanceX", data); break;
-            case 2143: metadata.put("StageStepDistanceY", data); break;
-            case 2144: metadata.put("StageInitialisationPositionX", data);
-                       break;
-            case 2145: metadata.put("StageInitialisationPositionY", data);
-                       break;
-            case 2146: metadata.put("MicroscopeMagnification", data); break;
-            case 2147: metadata.put("ReflectorMagnification", data); break;
-            case 2148: metadata.put("LampMirrorPosition", data); break;
-            case 2149: metadata.put("FocusDepth", data); break;
-            case 2150:
-              metadata.put("MicroscopeType", data);
-//              if (ome != null) {
-//                OMETools.setAttribute(ome, "Microscope", "Type", "" + data);
-//              }
-              break;
-            case 2151: metadata.put("Objective Working Distance", data); break;
-            case 2152:
-              metadata.put("ReflectedLightApertureGoSpeed", data);
-              break;
-            case 2153: metadata.put("External Shutter", data); break;
-            case 2154: metadata.put("ObjectiveImmersionStop", data); break;
-            case 2155: metadata.put("Focus Start Speed", data); break;
-            case 2156: metadata.put("Focus Acceleration", data); break;
-            case 2157: metadata.put("ReflectedLightFieldstop", data); break;
-            case 2158:
-              metadata.put("ReflectedLightFieldstopGoSpeed", data);
-              break;
-            case 2159: metadata.put("ReflectedLightFilter 1", data); break;
-            case 2160: metadata.put("ReflectedLightFilter 2", data); break;
-            case 2161:
-              metadata.put("ReflectedLightFilter1Position", data);
-              break;
-            case 2162:
-              metadata.put("ReflectedLightFilter2Position", data);
-              break;
-            case 2163: metadata.put("TransmittedLightAttenuator", data); break;
-            case 2164: metadata.put("ReflectedLightAttenuator", data); break;
-            case 2165: metadata.put("Transmitted Light Shutter", data); break;
-            case 2166:
-              metadata.put("TransmittedLightAttenuatorGoSpeed", data);
-              break;
-            case 2167:
-              metadata.put("ReflectedLightAttenuatorGoSpeed", data);
-              break;
-            case 2176:
-              metadata.put("TransmittedLightVirtualFilterPosition", data);
-              break;
-            case 2177:
-              metadata.put("TransmittedLightVirtualFilter", data);
-              break;
-            case 2178:
-              metadata.put("ReflectedLightVirtualFilterPosition", data);
-              break;
-            case 2179: metadata.put("ReflectedLightVirtualFilter", data); break;
-            case 2180:
-              metadata.put("ReflectedLightHalogenLampMode", data);
-              break;
-            case 2181:
-              metadata.put("ReflectedLightHalogenLampVoltage", data);
-              break;
-            case 2182:
-              metadata.put("ReflectedLightHalogenLampColorTemperature", data);
-              break;
-            case 2183: metadata.put("ContrastManagerMode", data); break;
-            case 2184: metadata.put("Dazzle Protection Active", data); break;
-            case 2195:
-              metadata.put("Zoom", data);
-//              if (ome != null) {
-//                OMETools.setAttribute(ome,
-//                  "DisplayOptions", "Zoom", "" + data);
-//              }
-              break;
-            case 2196: metadata.put("ZoomGoSpeed", data); break;
-            case 2197: metadata.put("LightZoom", data); break;
-            case 2198: metadata.put("LightZoomGoSpeed", data); break;
-            case 2199: metadata.put("LightZoomCoupled", data); break;
-            case 2200:
-              metadata.put("TransmittedLightHalogenLampMode", data);
-              break;
-            case 2201:
-              metadata.put("TransmittedLightHalogenLampVoltage", data);
-              break;
-            case 2202:
-              metadata.put("TransmittedLightHalogenLampColorTemperature", data);
-              break;
-            case 2203: metadata.put("Reflected Coldlight Mode", data); break;
-            case 2204:
-              metadata.put("Reflected Coldlight Intensity", data);
-              break;
-            case 2205:
-              metadata.put("Reflected Coldlight Color Temperature", data);
-              break;
-            case 2206: metadata.put("Transmitted Coldlight Mode", data); break;
-            case 2207:
-              metadata.put("Transmitted Coldlight Intensity", data);
-              break;
-            case 2208:
-              metadata.put("Transmitted Coldlight Color Temperature", data);
-              break;
-            case 2209:
-              metadata.put("Infinityspace Portchanger Position", data);
-              break;
-            case 2210: metadata.put("Beamsplitter Infinity Space", data); break;
-            case 2211: metadata.put("TwoTv VisCamChanger Position", data);
-                       break;
-            case 2212: metadata.put("Beamsplitter Ocular", data); break;
-            case 2213:
-              metadata.put("TwoTv CamerasChanger Position", data);
-              break;
-            case 2214: metadata.put("Beamsplitter Cameras", data); break;
-            case 2215: metadata.put("Ocular Shutter", data); break;
-            case 2216: metadata.put("TwoTv CamerasChangerCube", data); break;
-            case 2218: metadata.put("Ocular Magnification", data); break;
-            case 2219: metadata.put("Camera Adapter Magnification", data);
-                       break;
-            case 2220: metadata.put("Microscope Port", data); break;
-            case 2221: metadata.put("Ocular Total Magnification", data); break;
-            case 2222: metadata.put("Field of View", data); break;
-            case 2223: metadata.put("Ocular", data); break;
-            case 2224: metadata.put("CameraAdapter", data); break;
-            case 2225: metadata.put("StageJoystickEnabled", data); break;
-            case 2226:
-              metadata.put("ContrastManager Contrast Method", data);
-              break;
-            case 2229:
-              metadata.put("CamerasChanger Beamsplitter Type", data);
-              break;
-            case 2235: metadata.put("Rearport Slider Position", data); break;
-            case 2236: metadata.put("Rearport Source", data); break;
-            case 2237:
-              metadata.put("Beamsplitter Type Infinity Space", data);
-              break;
-            case 2238: metadata.put("Fluorescence Attenuator", data); break;
-            case 2239:
-              metadata.put("Fluorescence Attenuator Position", data);
-              break;
-            case 2261: metadata.put("Objective ID", data); break;
-            case 2262: metadata.put("Reflector ID", data); break;
-            case 2307: metadata.put("Camera Framestart Left", data); break;
-            case 2308: metadata.put("Camera Framestart Top", data); break;
-            case 2309: metadata.put("Camera Frame Width", data); break;
-            case 2310: metadata.put("Camera Frame Height", data); break;
-            case 2311: metadata.put("Camera Binning", data); break;
-            case 2312: metadata.put("CameraFrameFull", data); break;
-            case 2313: metadata.put("CameraFramePixelDistance", data); break;
-            case 2318: metadata.put("DataFormatUseScaling", data); break;
-            case 2319: metadata.put("CameraFrameImageOrientation", data); break;
-            case 2320: metadata.put("VideoMonochromeSignalType", data); break;
-            case 2321: metadata.put("VideoColorSignalType", data); break;
-            case 2322: metadata.put("MeteorChannelInput", data); break;
-            case 2323: metadata.put("MeteorChannelSync", data); break;
-            case 2324: metadata.put("WhiteBalanceEnabled", data); break;
-            case 2325: metadata.put("CameraWhiteBalanceRed", data); break;
-            case 2326: metadata.put("CameraWhiteBalanceGreen", data); break;
-            case 2327: metadata.put("CameraWhiteBalanceBlue", data); break;
-            case 2331: metadata.put("CameraFrameScalingFactor", data); break;
-            case 2562: metadata.put("Meteor Camera Type", data); break;
-            case 2564: metadata.put("Exposure Time [ms]", data); break;
-            case 2568:
-              metadata.put("CameraExposureTimeAutoCalculate", data);
-              break;
-            case 2569: metadata.put("Meteor Gain Value", data); break;
-            case 2571: metadata.put("Meteor Gain Automatic", data); break;
-            case 2572: metadata.put("MeteorAdjustHue", data); break;
-            case 2573: metadata.put("MeteorAdjustSaturation", data); break;
-            case 2574: metadata.put("MeteorAdjustRedLow", data); break;
-            case 2575: metadata.put("MeteorAdjustGreenLow", data); break;
-            case 2576: metadata.put("Meteor Blue Low", data); break;
-            case 2577: metadata.put("MeteorAdjustRedHigh", data); break;
-            case 2578: metadata.put("MeteorAdjustGreenHigh", data); break;
-            case 2579: metadata.put("MeteorBlue High", data); break;
-            case 2582:
-              metadata.put("CameraExposureTimeCalculationControl", data);
-              break;
-            case 2585:
-              metadata.put("AxioCamFadingCorrectionEnable", data);
-              break;
-            case 2587: metadata.put("CameraLiveImage", data); break;
-            case 2588: metadata.put("CameraLiveEnabled", data); break;
-            case 2589: metadata.put("LiveImageSyncObjectName", data); break;
-            case 2590: metadata.put("CameraLiveSpeed", data); break;
-            case 2591: metadata.put("CameraImage", data); break;
-            case 2592: metadata.put("CameraImageWidth", data); break;
-            case 2593: metadata.put("CameraImageHeight", data); break;
-            case 2594: metadata.put("CameraImagePixelType", data); break;
-            case 2595: metadata.put("CameraImageShMemoryName", data); break;
-            case 2596: metadata.put("CameraLiveImageWidth", data); break;
-            case 2597: metadata.put("CameraLiveImageHeight", data); break;
-            case 2598: metadata.put("CameraLiveImagePixelType", data); break;
-            case 2599: metadata.put("CameraLiveImageShMemoryName", data); break;
-            case 2600: metadata.put("CameraLiveMaximumSpeed", data); break;
-            case 2601: metadata.put("CameraLiveBinning", data); break;
-            case 2602: metadata.put("CameraLiveGainValue", data); break;
-            case 2603: metadata.put("CameraLiveExposureTimeValue", data); break;
-            case 2604: metadata.put("CameraLiveScalingFactor", data); break;
-            case 2819: metadata.put("Image Index Z", data); break;
-            case 2820: metadata.put("Image Channel Index", data); break;
-            case 2821: metadata.put("Image Index T", data); break;
-            case 2822: metadata.put("ImageTile Index", data); break;
-            case 2823: metadata.put("Image acquisition Index", data); break;
-            case 2827: metadata.put("Image IndexS", data); break;
-            case 2841: metadata.put("Original Stage Position X", data); break;
-            case 2842: metadata.put("Original Stage Position Y", data); break;
-            case 3088: metadata.put("LayerDrawFlags", data); break;
-            case 3334: metadata.put("RemainingTime", data); break;
-            case 3585: metadata.put("User Field 1", data); break;
-            case 3586: metadata.put("User Field 2", data); break;
-            case 3587: metadata.put("User Field 3", data); break;
-            case 3588: metadata.put("User Field 4", data); break;
-            case 3589: metadata.put("User Field 5", data); break;
-            case 3590: metadata.put("User Field 6", data); break;
-            case 3591: metadata.put("User Field 7", data); break;
-            case 3592: metadata.put("User Field 8", data); break;
-            case 3593: metadata.put("User Field 9", data); break;
-            case 3594: metadata.put("User Field 10", data); break;
-            case 3840: metadata.put("ID", data); break;
-            case 3841: metadata.put("Name", data); break;
-            case 3842: metadata.put("Value", data); break;
-            case 5501: metadata.put("PvCamClockingMode", data); break;
-            case 8193: metadata.put("Autofocus Status Report", data); break;
-            case 8194: metadata.put("Autofocus Position", data); break;
-            case 8195: metadata.put("Autofocus Position Offset", data); break;
-            case 8196:
-              metadata.put("Autofocus Empty Field Threshold", data);
-              break;
-            case 8197: metadata.put("Autofocus Calibration Name", data); break;
-            case 8198:
-              metadata.put("Autofocus Current Calibration Item", data);
-              break;
-            case 20478: metadata.put("tag_ID_20478", data); break;
-            case 65537: metadata.put("CameraFrameFullWidth", data); break;
-            case 65538: metadata.put("CameraFrameFullHeight", data); break;
-            case 65541: metadata.put("AxioCam Shutter Signal", data); break;
-            case 65542: metadata.put("AxioCam Delay Time", data); break;
-            case 65543: metadata.put("AxioCam Shutter Control", data); break;
-            case 65544:
-              metadata.put("AxioCam BlackRefIsCalculated", data);
-              break;
-            case 65545: metadata.put("AxioCam Black Reference", data); break;
-            case 65547: metadata.put("Camera Shading Correction", data); break;
-            case 65550: metadata.put("AxioCam Enhance Color", data); break;
-            case 65551: metadata.put("AxioCam NIR Mode", data); break;
-            case 65552: metadata.put("CameraShutterCloseDelay", data); break;
-            case 65553:
-              metadata.put("CameraWhiteBalanceAutoCalculate", data);
-              break;
-            case 65556: metadata.put("AxioCam NIR Mode Available", data); break;
-            case 65557:
-              metadata.put("AxioCam Fading Correction Available", data);
-              break;
-            case 65559:
-              metadata.put("AxioCam Enhance Color Available", data);
-              break;
-            case 65565: metadata.put("MeteorVideoNorm", data); break;
-            case 65566: metadata.put("MeteorAdjustWhiteReference", data); break;
-            case 65567: metadata.put("MeteorBlackReference", data); break;
-            case 65568: metadata.put("MeteorChannelInputCountMono", data);
+        int pt = 0;
+
+        if (dirName.toUpperCase().equals("ROOT ENTRY") ||
+          dirName.toUpperCase().equals("ROOTENTRY"))
+        {
+          if (entryName.equals("Tags")) {
+            pt += 18;
+            int version = DataTools.bytesToInt(data, pt, 4, true);
+            pt += 4;
+
+            pt += 2;
+            int count = DataTools.bytesToInt(data, pt, 4, true); // # of tags
+            pt += 4;
+
+            // limit count to 4096
+            if (count > 4096) count = 4096;
+
+            for (int i=0; i<count; i++) {
+              int type = DataTools.bytesToInt(data, pt, 2, true);
+              pt += 2;
+
+              String value = "";
+              switch (type) {
+                case 0: break;
+                case 1: break;
+                case 2: value = "" + DataTools.bytesToInt(data, pt, 2, true);
+                        pt += 2;
                         break;
-            case 65570: metadata.put("MeteorChannelInputCountRGB", data); break;
-            case 65571: metadata.put("MeteorEnableVCR", data); break;
-            case 65572: metadata.put("Meteor Brightness", data); break;
-            case 65573: metadata.put("Meteor Contrast", data); break;
-            case 65575: metadata.put("AxioCam Selector", data); break;
-            case 65576: metadata.put("AxioCam Type", data); break;
-            case 65577: metadata.put("AxioCam Info", data); break;
-            case 65580: metadata.put("AxioCam Resolution", data); break;
-            case 65581: metadata.put("AxioCam Color Model", data); break;
-            case 65582: metadata.put("AxioCam MicroScanning", data); break;
-            case 65585: metadata.put("Amplification Index", data); break;
-            case 65586: metadata.put("Device Command", data); break;
-            case 65587: metadata.put("BeamLocation", data); break;
-            case 65588: metadata.put("ComponentType", data); break;
-            case 65589: metadata.put("ControllerType", data); break;
-            case 65590:
-              metadata.put("CameraWhiteBalanceCalculationRedPaint", data);
-              break;
-            case 65591:
-              metadata.put("CameraWhiteBalanceCalculationBluePaint", data);
-              break;
-            case 65592: metadata.put("CameraWhiteBalanceSetRed", data); break;
-            case 65593: metadata.put("CameraWhiteBalanceSetGreen", data); break;
-            case 65594: metadata.put("CameraWhiteBalanceSetBlue", data); break;
-            case 65595:
-              metadata.put("CameraWhiteBalanceSetTargetRed", data);
-              break;
-            case 65596:
-              metadata.put("CameraWhiteBalanceSetTargetGreen", data);
-              break;
-            case 65597:
-              metadata.put("CameraWhiteBalanceSetTargetBlue", data);
-              break;
-            case 65598: metadata.put("ApotomeCamCalibrationMode", data); break;
-            case 65599: metadata.put("ApoTome Grid Position", data); break;
-            case 65600: metadata.put("ApotomeCamScannerPosition", data); break;
-            case 65601: metadata.put("ApoTome Full Phase Shift", data); break;
-            case 65602: metadata.put("ApoTome Grid Name", data); break;
-            case 65603: metadata.put("ApoTome Staining", data); break;
-            case 65604: metadata.put("ApoTome Processing Mode", data); break;
-            case 65605: metadata.put("ApotmeCamLiveCombineMode", data); break;
-            case 65606: metadata.put("ApoTome Filter Name", data); break;
-            case 65607: metadata.put("Apotome Filter Strength", data); break;
-            case 65608: metadata.put("ApotomeCamFilterHarmonics", data); break;
-            case 65609: metadata.put("ApoTome Grating Period", data); break;
-            case 65610: metadata.put("ApoTome Auto Shutter Used", data); break;
-            case 65611: metadata.put("Apotome Cam Status", data); break;
-            case 65612: metadata.put("ApotomeCamNormalize", data); break;
-            case 65613: metadata.put("ApotomeCamSettingsManager", data); break;
-            case 65614: metadata.put("DeepviewCamSupervisorMode", data); break;
-            case 65615: metadata.put("DeepView Processing", data); break;
-            case 65616: metadata.put("DeepviewCamFilterName", data); break;
-            case 65617: metadata.put("DeepviewCamStatus", data); break;
-            case 65618: metadata.put("DeepviewCamSettingsManager", data); break;
-            case 65619: metadata.put("DeviceScalingName", data); break;
-            case 65620: metadata.put("CameraShadingIsCalculated", data); break;
-            case 65621:
-              metadata.put("CameraShadingCalculationName", data);
-              break;
-            case 65622: metadata.put("CameraShadingAutoCalculate", data); break;
-            case 65623: metadata.put("CameraTriggerAvailable", data); break;
-            case 65626: metadata.put("CameraShutterAvailable", data); break;
-            case 65627:
-              metadata.put("AxioCam ShutterMicroScanningEnable", data);
-              break;
-            case 65628: metadata.put("ApotomeCamLiveFocus", data); break;
-            case 65629: metadata.put("DeviceInitStatus", data); break;
-            case 65630: metadata.put("DeviceErrorStatus", data); break;
-            case 65631:
-              metadata.put("ApotomeCamSliderInGridPosition", data);
-              break;
-            case 65632: metadata.put("Orca NIR Mode Used", data); break;
-            case 65633: metadata.put("Orca Analog Gain", data); break;
-            case 65634: metadata.put("Orca Analog Offset", data); break;
-            case 65635: metadata.put("Orca Binning", data); break;
-            case 65636: metadata.put("Orca Bit Depth", data); break;
-            case 65637: metadata.put("ApoTome Averaging Count", data); break;
-            case 65638: metadata.put("DeepView DoF", data); break;
-            case 65639: metadata.put("DeepView EDoF", data); break;
-            case 65643: metadata.put("DeepView Slider Name", data); break;
-            case 65655: metadata.put("DeepView Slider Name", data); break;
-            case 16777488: metadata.put("Excitation Wavelength", data); break;
-            case 16777489: metadata.put("Emission Wavelength", data); break;
+                case 3: value = "" + DataTools.bytesToInt(data, pt, 4, true);
+                        pt += 4;
+                        break;
+                case 4: value = "" + Float.intBitsToFloat(
+                          DataTools.bytesToInt(data, pt, 4, true));
+                        pt += 4;
+                        break;
+                case 5: value = "" + Double.longBitsToDouble(
+                          DataTools.bytesToLong(data, pt, 8, true));
+                        pt += 8;
+                        break;
+                case 7: value = "" + DataTools.bytesToLong(data, pt, 8, true);
+                        pt += 8;
+                        break;
+                case 69:
+                case 8: int len = DataTools.bytesToInt(data, pt, 2, true);
+                        pt += 2;
+                        value = new String(data, pt, len);
+                        pt += len;
+                        break;
+                case 20:
+                case 21: value = "" + DataTools.bytesToLong(data, pt, 8, true);
+                         pt += 8;
+                         break;
+                case 22:
+                case 23: value = "" + DataTools.bytesToInt(data, pt, 4, true);
+                         pt += 4;
+                         break;
+                case 66: int l = DataTools.bytesToInt(data, pt, 2, true);
+                         pt += 2;
+                         value = new String(data, pt, l);
+                         pt += l;
+                         break;
+                default:
+                  int oldPt = pt;
+                  while (DataTools.bytesToInt(data, pt, 2, true) != 3 && 
+                    pt < data.length) 
+                  {
+                    pt += 2;
+                  }
+                  value = new String(data, oldPt, pt - oldPt);
+              }
+
+              pt += 2;
+              int tagID = DataTools.bytesToInt(data, pt, 4, true);
+              pt += 4;
+              pt += 2;
+              int attribute = DataTools.bytesToInt(data, pt, 4, true);
+              pt += 4;
+              parseTag(value, tagID, attribute);
+            }
           }
         }
+        else if (dirName.equals("Tags") && isContents) {
+          pt += 18;
+          int version = DataTools.bytesToInt(data, pt, 4, true);
+          pt += 4;
+
+          pt += 2;
+          int count = DataTools.bytesToInt(data, pt, 4, true); // # of tags
+          pt += 4;
+
+          // limit count to 4096
+          if (count > 4096) count = 4096;
+
+          for (int i=0; i<count; i++) {
+            int type = DataTools.bytesToInt(data, pt, 2, true);
+            pt += 2;
+
+            String value = "";
+            switch (type) {
+              case 0: break;
+              case 1: break;
+              case 2: value = "" + DataTools.bytesToInt(data, pt, 2, true);
+                      pt += 2;
+                      break;
+              case 3: value = "" + DataTools.bytesToInt(data, pt, 4, true);
+                      pt += 4;
+                      break;
+              case 4: value = "" + Float.intBitsToFloat(
+                        DataTools.bytesToInt(data, pt, 4, true));
+                      pt += 4;
+                      break;
+              case 5: value = "" + Double.longBitsToDouble(
+                        DataTools.bytesToLong(data, pt, 8, true));
+                      pt += 8;
+                      break;
+              case 7: value = "" + DataTools.bytesToLong(data, pt, 8, true);
+                      pt += 8;
+                      break;
+              case 69:
+              case 8: int len = DataTools.bytesToInt(data, pt, 2, true);
+                      pt += 2;
+                      try {
+                        value = new String(data, pt, len);
+                        pt += len;
+                      }
+                      catch (Exception e) { return; }
+                      break;
+              case 20:
+              case 21: value = "" + DataTools.bytesToLong(data, pt, 8, true);
+                       pt += 8;
+                       break;
+              case 22:
+              case 23: value = "" + DataTools.bytesToInt(data, pt, 4, true);
+                       pt += 4;
+                       break;
+              case 66: int l = DataTools.bytesToInt(data, pt, 2, true);
+                       pt += 2;
+                       value = new String(data, pt, l);
+                       pt += l;
+                       break;
+              default:
+                int oldPt = pt;
+                while (DataTools.bytesToInt(data, pt, 2, true) != 3 && 
+                  pt < data.length) 
+                {  
+                  pt += 2;
+                }
+                try {
+                  value = new String(data, oldPt, pt - oldPt);
+                }
+                catch (Exception e) { return; }
+            }
+
+            pt += 2;
+            int tagID = DataTools.bytesToInt(data, pt, 4, true);
+            pt += 4;
+            pt += 2;
+            int attribute = DataTools.bytesToInt(data, pt, 4, true);
+            pt += 4;
+            parseTag(value, tagID, attribute);
+          }
+        }
+        else if (isContents && (dirName.equals("Image") || 
+          dirName.toUpperCase().indexOf("ITEM") != -1) && 
+          (data.length > width*height)) 
+        {
+          pt += 2;
+          int version = DataTools.bytesToInt(data, pt, 4, true);
+          pt += 4;
+          
+          int vt = DataTools.bytesToInt(data, pt, 2, true);
+          pt += 2;
+          if (vt == 3) {
+            int type = DataTools.bytesToInt(data, pt, 4, true);
+            pt += 6;
+          }
+          else if (vt == 8) {
+            int l = DataTools.bytesToInt(data, pt, 2, true);
+            pt += 4 + l;
+          }
+          int len = DataTools.bytesToInt(data, pt, 2, true);
+          pt += 2;
+          if (data[pt] == 0 && data[pt + 1] == 0) pt += 2;
+          try {
+            String typeDescription = new String(data, pt, len);
+            pt += len;
+          }
+          catch (Exception e) { break; }
+
+          vt = DataTools.bytesToInt(data, pt, 2, true);
+          pt += 2;
+          if (vt == 8) {
+            len = DataTools.bytesToInt(data, pt, 4, true);
+            pt += 6 + len;
+          }
+
+          width = DataTools.bytesToInt(data, pt, 4, true);
+          pt += 6;
+          height = DataTools.bytesToInt(data, pt, 4, true);
+          pt += 6;
+
+          int zDepth = DataTools.bytesToInt(data, pt, 4, true);
+          pt += 6;
+          int pixelFormat = DataTools.bytesToInt(data, pt, 4, true);
+          pt += 6;
+          int numImageContainers = DataTools.bytesToInt(data, pt, 4, true);
+          pt += 6;
+          int validBitsPerPixel = DataTools.bytesToInt(data, pt, 4, true);
+          pt += 4;
+
+
+          // VT_CLSID - PluginCLSID
+          while (DataTools.bytesToInt(data, pt, 2, true) != 65) {
+            pt += 2;
+          }
+        
+          // VT_BLOB - Others
+          pt += 2;
+          len = DataTools.bytesToInt(data, pt, 4, true);
+          pt += len + 4;
+
+          // VT_STORED_OBJECT - Layers
+          pt += 2;
+          int oldPt = pt;
+          len = DataTools.bytesToInt(data, pt, 4, true);
+          pt += 4;
+
+          pt += 8;
+         
+          int tIndex = DataTools.bytesToInt(data, pt, 4, true);
+          pt += 4;
+          int cIndex = DataTools.bytesToInt(data, pt, 4, true);
+          pt += 4;
+          int zIndex = DataTools.bytesToInt(data, pt, 4, true);
+          pt += 4;
+
+          Integer zndx = new Integer(zIndex);
+          Integer cndx = new Integer(cIndex);
+          Integer tndx = new Integer(tIndex);
+          
+          if (!zIndices.contains(zndx)) zIndices.add(zndx);
+          if (!cIndices.contains(cndx)) cIndices.add(cndx);
+          if (!tIndices.contains(tndx)) tIndices.add(tndx);
+        
+          pt = oldPt + 4 + len;
+
+          boolean foundWidth = DataTools.bytesToInt(data, pt, 4, true) == width;
+          boolean foundHeight = 
+            DataTools.bytesToInt(data, pt + 4, 4, true) == height;
+          while (!foundWidth || !foundHeight) {
+            pt++;
+            foundWidth = DataTools.bytesToInt(data, pt, 4, true) == width;
+            foundHeight = DataTools.bytesToInt(data, pt + 4, 4, true) == height;
+          }
+          pt -= 8;
+
+          // image header and data
+
+          if (dirName.toUpperCase().indexOf("ITEM") != -1 ||
+            (dirName.equals("Image") && numImageContainers == 0))
+          {
+            byte[] o = new byte[data.length - pt];
+            System.arraycopy(data, pt, o, 0, o.length);
+            
+            int imageNum = 0;
+            if (dirName.toUpperCase().indexOf("ITEM") != -1) {
+              String num = dirName.substring(5);
+              num = num.substring(0, num.length() - 1);
+              imageNum = Integer.parseInt(num);
+            }
+            
+            offsets.put(new Integer(imageNum), new Integer(pt + 32));
+            parsePlane(o, imageNum, directory, entryName);
+          }
+        }
+
+        r.exec("dis.close()");
       }
     }
-
-    // Now that we've done the heavy lifting lets get the data into the active
-    // metadata store.
-    initMetadataStore();
   }
 
-  /**
-   * Takes the data collected in {@link #initMetadata()} and uses it to
-   * populate the metadata store.
-   */
-  private void initMetadataStore() throws FormatException, IOException {
-    populateImage();
-    populatePixels();
-    populateExperimenter();
-    populateStageLabel();
+  /** Debugging utility method. */
+  public static final void print(int depth, String s) {
+    StringBuffer sb = new StringBuffer();
+    for (int i=0; i<depth; i++) sb.append("  ");
+    sb.append(s);
+    System.out.println(sb.toString());
   }
 
-  /**
-   * Populates the first image in the metadata store.
-   */
-  private void populateImage() throws FormatException, IOException {
-    // The metadata store we're working with.
-    MetadataStore store = getMetadataStore(currentId);
+  /** Parse a plane of data. */
+  private void parsePlane(byte[] data, int num, Object directory, String entry)
+  {
+    int pt = 2;
 
-    store.setImage((String) metadata.get("Title"),  // Name
-                   (String) metadata.get("Date"),  // Creation Date
-                   (String) metadata.get("Comments"),  // Description
-                   null);  // Use index 0
+    int version = DataTools.bytesToInt(data, pt, 4, true);
+    pt += 6;
+    width = DataTools.bytesToInt(data, pt, 4, true);
+    pt += 4;
+    height = DataTools.bytesToInt(data, pt, 4, true);
+    pt += 4;
+    int depth = DataTools.bytesToInt(data, pt, 4, true); // z depth
+    pt += 4;
+    bpp = DataTools.bytesToInt(data, pt, 4, true);
+    pt += 4;
+    int pixelFormat = DataTools.bytesToInt(data, pt, 4, true); // ignore here
+    pt += 4;
+    int validBitsPerPixel = DataTools.bytesToInt(data, pt, 4, true);
+    pt += 4;
+
+    pixels.put(new Integer(num), directory);
+    names.put(new Integer(num), entry);
+    nImages++;
+    if (bpp % 3 == 0) nChannels = 3;
   }
 
-  /**
-   * Populates the first pixels set in the metadata store.
-   */
-  private void populatePixels() throws FormatException, IOException {
-    // The metadata store we're working with.
-    MetadataStore store = getMetadataStore(currentId);
-
-    // Default values
-    Integer sizeZ = new Integer(1);
-    Integer sizeC = new Integer(1);
-    Integer sizeT = null;
-
-    try { sizeT = new Integer(getImageCount(currentId)); }
-    catch (Exception e) {
-      // FIXME: Eat the exception for now, we should do something productive
-      // here as the image metadata really is useless without a valid sizeT.
-      e.printStackTrace();
+  /** Parse a tag and place it in the metadata hashtable. */
+  private void parseTag(String data, int tagID, int attribute) {
+    switch (tagID) {
+      case 222: metadata.put("Compression", data); break;
+      case 258: metadata.put("BlackValue", data); break;
+      case 259: metadata.put("WhiteValue", data); break;
+      case 260: metadata.put("ImageDataMappingAutoRange", data); break;
+      case 261: metadata.put("Thumbnail", data); break;
+      case 262: metadata.put("GammaValue", data); break;
+      case 264: metadata.put("ImageOverExposure", data); break;
+      case 265: metadata.put("ImageRelativeTime1", data); break;
+      case 266: metadata.put("ImageRelativeTime2", data); break;
+      case 267: metadata.put("ImageRelativeTime3", data); break;
+      case 268: metadata.put("ImageRelativeTime4", data); break;
+      case 333: metadata.put("RelFocusPosition1", data); break;
+      case 334: metadata.put("RelFocusPosition2", data); break;
+      case 513: metadata.put("tagID_513", data); break;
+      case 515: metadata.put("ImageWidth", data); break;
+      case 516: metadata.put("ImageHeight", data); break;
+      case 517: metadata.put("tagID_517", data); break;
+      case 518: metadata.put("PixelType", data); break;
+      case 519: metadata.put("NumberOfRawImages", data); break;
+      case 520: metadata.put("ImageSize", data); break;
+      case 523: metadata.put("Acquisition pause annotation", data); break;
+      case 530: metadata.put("Document Subtype", data); break;
+      case 531: metadata.put("Acquisition Bit Depth", data); break;
+      case 532: metadata.put("Image Memory Usage (RAM)", data); break;
+      case 534: metadata.put("Z-Stack single representative", data); break;
+      case 769: metadata.put("Scale Factor for X", data); break;
+      case 770: metadata.put("Scale Unit for X", data); break;
+      case 771: metadata.put("Scale Width", data); break;
+      case 772: metadata.put("Scale Factor for Y", data); break;
+      case 773: metadata.put("Scale Unit for Y", data); break;
+      case 774: metadata.put("Scale Height", data); break;
+      case 775: metadata.put("Scale Factor for Z", data); break;
+      case 776: metadata.put("Scale Unit for Z", data); break;
+      case 777: metadata.put("Scale Depth", data); break;
+      case 778: metadata.put("Scaling Parent", data); break;
+      case 1001: metadata.put("Date", data); break;
+      case 1002: metadata.put("code", data); break;
+      case 1003: metadata.put("Source", data); break;
+      case 1004: metadata.put("Message", data); break;
+      case 1025: metadata.put("Acquisition Date", data); break;
+      case 1026: metadata.put("8-bit acquisition", data); break;
+      case 1027: metadata.put("Camera Bit Depth", data); break;
+      case 1029: metadata.put("MonoReferenceLow", data); break;
+      case 1030: metadata.put("MonoReferenceHigh", data); break;
+      case 1031: metadata.put("RedReferenceLow", data); break;
+      case 1032: metadata.put("RedReferenceHigh", data); break;
+      case 1033: metadata.put("GreenReferenceLow", data); break;
+      case 1034: metadata.put("GreenReferenceHigh", data); break;
+      case 1035: metadata.put("BlueReferenceLow", data); break;
+      case 1036: metadata.put("BlueReferenceHigh", data); break;
+      case 1041: metadata.put("FrameGrabber Name", data); break;
+      case 1042: metadata.put("Camera", data); break;
+      case 1044: metadata.put("CameraTriggerSignalType", data); break;
+      case 1045: metadata.put("CameraTriggerEnable", data); break;
+      case 1046: metadata.put("GrabberTimeout", data); break;
+      case 1281: metadata.put("MultiChannelEnabled", data); break;
+      case 1282: metadata.put("MultiChannel Color", data); break;
+      case 1283: metadata.put("MultiChannel Weight", data); break;
+      case 1284: metadata.put("Channel Name", data); break;
+      case 1536: metadata.put("DocumentInformationGroup", data); break;
+      case 1537: metadata.put("Title", data); break;
+      case 1538: metadata.put("Author", data); break;
+      case 1539: metadata.put("Keywords", data); break;
+      case 1540: metadata.put("Comments", data); break;
+      case 1541: metadata.put("SampleID", data); break;
+      case 1542: metadata.put("Subject", data); break;
+      case 1543: metadata.put("RevisionNumber", data); break;
+      case 1544: metadata.put("Save Folder", data); break;
+      case 1545: metadata.put("FileLink", data); break;
+      case 1546: metadata.put("Document Type", data); break;
+      case 1547: metadata.put("Storage Media", data); break;
+      case 1548: metadata.put("File ID", data); break;
+      case 1549: metadata.put("Reference", data); break;
+      case 1550: metadata.put("File Date", data); break;
+      case 1551: metadata.put("File Size", data); break;
+      case 1553: metadata.put("Filename", data); break;
+      case 1792: metadata.put("ProjectGroup", data); break;
+      case 1793: metadata.put("Acquisition Date", data); break;
+      case 1794: metadata.put("Last modified by", data); break;
+      case 1795: metadata.put("User company", data); break;
+      case 1796: metadata.put("User company logo", data); break;
+      case 1797: metadata.put("Image", data); break;
+      case 1800: metadata.put("User ID", data); break;
+      case 1801: metadata.put("User Name", data); break;
+      case 1802: metadata.put("User City", data); break;
+      case 1803: metadata.put("User Address", data); break;
+      case 1804: metadata.put("User Country", data); break;
+      case 1805: metadata.put("User Phone", data); break;
+      case 1806: metadata.put("User Fax", data); break;
+      case 2049: metadata.put("Objective Name", data); break;
+      case 2050: metadata.put("Optovar", data); break;
+      case 2051: metadata.put("Reflector", data); break;
+      case 2052: metadata.put("Condenser Contrast", data); break;
+      case 2053: metadata.put("Transmitted Light Filter 1", data); break;
+      case 2054: metadata.put("Transmitted Light Filter 2", data); break;
+      case 2055: metadata.put("Reflected Light Shutter", data); break;
+      case 2056: metadata.put("Condenser Front Lens", data); break;
+      case 2057: metadata.put("Excitation Filter Name", data); break;
+      case 2060: metadata.put("Transmitted Light Fieldstop Aperture", data);
+                 break;
+      case 2061: metadata.put("Reflected Light Aperture", data); break;
+      case 2062: metadata.put("Condenser N.A.", data); break;
+      case 2063: metadata.put("Light Path", data); break;
+      case 2064: metadata.put("HalogenLampOn", data); break;
+      case 2065: metadata.put("Halogen Lamp Mode", data); break;
+      case 2066: metadata.put("Halogen Lamp Voltage", data); break;
+      case 2068: metadata.put("Fluorescence Lamp Level", data); break;
+      case 2069: metadata.put("Fluorescence Lamp Intensity", data); break;
+      case 2070: metadata.put("LightManagerEnabled", data); break;
+      case 2071: metadata.put("tag_ID_2071", data); break;
+      case 2072: metadata.put("Focus Position", data); break;
+      case 2073: metadata.put("Stage Position X", data); break;
+      case 2074: metadata.put("Stage Position Y", data); break;
+      case 2075: metadata.put("Microscope Name", data); break;
+      case 2076: metadata.put("Objective Magnification", data); break;
+      case 2077: metadata.put("Objective N.A.", data); break;
+      case 2078: metadata.put("MicroscopeIllumination", data); break;
+      case 2079: metadata.put("External Shutter 1", data); break;
+      case 2080: metadata.put("External Shutter 2", data); break;
+      case 2081: metadata.put("External Shutter 3", data); break;
+      case 2082: metadata.put("External Filter Wheel 1 Name", data); break;
+      case 2083: metadata.put("External Filter Wheel 2 Name", data); break;
+      case 2084: metadata.put("Parfocal Correction", data); break;
+      case 2086: metadata.put("External Shutter 4", data); break;
+      case 2087: metadata.put("External Shutter 5", data); break;
+      case 2088: metadata.put("External Shutter 6", data); break;
+      case 2089: metadata.put("External Filter Wheel 3 Name", data); break;
+      case 2090: metadata.put("External Filter Wheel 4 Name", data); break;
+      case 2103: metadata.put("Objective Turret Position", data); break;
+      case 2104: metadata.put("Objective Contrast Method", data); break;
+      case 2105: metadata.put("Objective Immersion Type", data); break;
+      case 2107: metadata.put("Reflector Position", data); break;
+      case 2109: metadata.put("Transmitted Light Filter 1 Position", data); 
+                 break;
+      case 2110: metadata.put("Transmitted Light Filter 2 Position", data); 
+                 break;
+      case 2112: metadata.put("Excitation Filter Position", data); break;
+      case 2113: metadata.put("Lamp Mirror Position", data); break;
+      case 2114: metadata.put("External Filter Wheel 1 Position", data); break;
+      case 2115: metadata.put("External Filter Wheel 2 Position", data); break;
+      case 2116: metadata.put("External Filter Wheel 3 Position", data); break;
+      case 2117: metadata.put("External Filter Wheel 4 Position", data); break;
+      case 2118: metadata.put("Lightmanager Mode", data); break;
+      case 2119: metadata.put("Halogen Lamp Calibration", data); break;
+      case 2120: metadata.put("CondenserNAGoSpeed", data); break;
+      case 2121: metadata.put("TransmittedLightFieldstopGoSpeed", data); break;
+      case 2122: metadata.put("OptovarGoSpeed", data); break;
+      case 2123: metadata.put("Focus calibrated", data); break;
+      case 2124: metadata.put("FocusBasicPosition", data); break;
+      case 2125: metadata.put("FocusPower", data); break;
+      case 2126: metadata.put("FocusBacklash", data); break;
+      case 2127: metadata.put("FocusMeasurementOrigin", data); break;
+      case 2128: metadata.put("FocusMeasurementDistance", data); break;
+      case 2129: metadata.put("FocusSpeed", data); break;
+      case 2130: metadata.put("FocusGoSpeed", data); break;
+      case 2131: metadata.put("FocusDistance", data); break;
+      case 2132: metadata.put("FocusInitPosition", data); break;
+      case 2133: metadata.put("Stage calibrated", data); break;
+      case 2134: metadata.put("StagePower", data); break;
+      case 2135: metadata.put("StageXBacklash", data); break;
+      case 2136: metadata.put("StageYBacklash", data); break;
+      case 2137: metadata.put("StageSpeedX", data); break;
+      case 2138: metadata.put("StageSpeedY", data); break;
+      case 2139: metadata.put("StageSpeed", data); break;
+      case 2140: metadata.put("StageGoSpeedX", data); break;
+      case 2141: metadata.put("StageGoSpeedY", data); break;
+      case 2142: metadata.put("StageStepDistanceX", data); break;
+      case 2143: metadata.put("StageStepDistanceY", data); break;
+      case 2144: metadata.put("StageInitialisationPositionX", data); break;
+      case 2145: metadata.put("StageInitialisationPositionY", data); break;
+      case 2146: metadata.put("MicroscopeMagnification", data); break;
+      case 2147: metadata.put("ReflectorMagnification", data); break;
+      case 2148: metadata.put("LampMirrorPosition", data); break;
+      case 2149: metadata.put("FocusDepth", data); break;
+      case 2150: metadata.put("MicroscopeType", data); break;
+      case 2151: metadata.put("Objective Working Distance", data); break;
+      case 2152: metadata.put("ReflectedLightApertureGoSpeed", data); break;
+      case 2153: metadata.put("External Shutter", data); break;
+      case 2154: metadata.put("ObjectiveImmersionStop", data); break;
+      case 2155: metadata.put("Focus Start Speed", data); break;
+      case 2156: metadata.put("Focus Acceleration", data); break;
+      case 2157: metadata.put("ReflectedLightFieldstop", data); break;
+      case 2158: metadata.put("ReflectedLightFieldstopGoSpeed", data); break;
+      case 2159: metadata.put("ReflectedLightFilter 1", data); break;
+      case 2160: metadata.put("ReflectedLightFilter 2", data); break;
+      case 2161: metadata.put("ReflectedLightFilter1Position", data); break;
+      case 2162: metadata.put("ReflectedLightFilter2Position", data); break;
+      case 2163: metadata.put("TransmittedLightAttenuator", data); break;
+      case 2164: metadata.put("ReflectedLightAttenuator", data); break;
+      case 2165: metadata.put("Transmitted Light Shutter", data); break;
+      case 2166: metadata.put("TransmittedLightAttenuatorGoSpeed", data); break;
+      case 2167: metadata.put("ReflectedLightAttenuatorGoSpeed", data); break;
+      case 2176: metadata.put("TransmittedLightVirtualFilterPosition", data);
+                 break;
+      case 2177: metadata.put("TransmittedLightVirtualFilter", data); break;
+      case 2178: metadata.put("ReflectedLightVirtualFilterPosition", data); 
+                 break;
+      case 2179: metadata.put("ReflectedLightVirtualFilter", data); break;
+      case 2180: metadata.put("ReflectedLightHalogenLampMode", data); break;
+      case 2181: metadata.put("ReflectedLightHalogenLampVoltage", data); break;
+      case 2182: 
+        metadata.put("ReflectedLightHalogenLampColorTemperature", data);
+        break;
+      case 2183: metadata.put("ContrastManagerMode", data); break;
+      case 2184: metadata.put("Dazzle Protection Active", data); break;
+      case 2195: metadata.put("Zoom", data); break;
+      case 2196: metadata.put("ZoomGoSpeed", data); break;
+      case 2197: metadata.put("LightZoom", data); break;
+      case 2198: metadata.put("LightZoomGoSpeed", data); break;
+      case 2199: metadata.put("LightZoomCoupled", data); break;
+      case 2200: metadata.put("TransmittedLightHalogenLampMode", data); break;
+      case 2201: metadata.put("TransmittedLightHalogenLampVoltage", data); 
+                 break;
+      case 2202: 
+        metadata.put("TransmittedLightHalogenLampColorTemperature", data);
+        break;
+      case 2203: metadata.put("Reflected Coldlight Mode", data); break;
+      case 2204: metadata.put("Reflected Coldlight Intensity", data); break;
+      case 2205: metadata.put("Reflected Coldlight Color Temperature", data);
+                 break;
+      case 2206: metadata.put("Transmitted Coldlight Mode", data); break;
+      case 2207: metadata.put("Transmitted Coldlight Intensity", data); break;
+      case 2208: metadata.put("Transmitted Coldlight Color Temperature", data);
+                 break;
+      case 2209: metadata.put("Infinityspace Portchanger Position", data);
+                 break;
+      case 2210: metadata.put("Beamsplitter Infinity Space", data); break;
+      case 2211: metadata.put("TwoTv VisCamChanger Position", data); break;
+      case 2212: metadata.put("Beamsplitter Ocular", data); break;
+      case 2213: metadata.put("TwoTv CamerasChanger Position", data); break;
+      case 2214: metadata.put("Beamsplitter Cameras", data); break;
+      case 2215: metadata.put("Ocular Shutter", data); break;
+      case 2216: metadata.put("TwoTv CamerasChangerCube", data); break;
+      case 2218: metadata.put("Ocular Magnification", data); break;
+      case 2219: metadata.put("Camera Adapter Magnification", data); break;
+      case 2220: metadata.put("Microscope Port", data); break;
+      case 2221: metadata.put("Ocular Total Magnification", data); break;
+      case 2222: metadata.put("Field of View", data); break;
+      case 2223: metadata.put("Ocular", data); break;
+      case 2224: metadata.put("CameraAdapter", data); break;
+      case 2225: metadata.put("StageJoystickEnabled", data); break;
+      case 2226: metadata.put("ContrastManager Contrast Method", data); break;
+      case 2229: metadata.put("CamerasChanger Beamsplitter Type", data); break;
+      case 2235: metadata.put("Rearport Slider Position", data); break;
+      case 2236: metadata.put("Rearport Source", data); break;
+      case 2237: metadata.put("Beamsplitter Type Infinity Space", data); break;
+      case 2238: metadata.put("Fluorescence Attenuator", data); break;
+      case 2239: metadata.put("Fluorescence Attenuator Position", data); break;
+      case 2261: metadata.put("Objective ID", data); break;
+      case 2262: metadata.put("Reflector ID", data); break;
+      case 2307: metadata.put("Camera Framestart Left", data); break;
+      case 2308: metadata.put("Camera Framestart Top", data); break;
+      case 2309: metadata.put("Camera Frame Width", data); break;
+      case 2310: metadata.put("Camera Frame Height", data); break;
+      case 2311: metadata.put("Camera Binning", data); break;
+      case 2312: metadata.put("CameraFrameFull", data); break;
+      case 2313: metadata.put("CameraFramePixelDistance", data); break;
+      case 2318: metadata.put("DataFormatUseScaling", data); break;
+      case 2319: metadata.put("CameraFrameImageOrientation", data); break;
+      case 2320: metadata.put("VideoMonochromeSignalType", data); break;
+      case 2321: metadata.put("VideoColorSignalType", data); break;
+      case 2322: metadata.put("MeteorChannelInput", data); break;
+      case 2323: metadata.put("MeteorChannelSync", data); break;
+      case 2324: metadata.put("WhiteBalanceEnabled", data); break;
+      case 2325: metadata.put("CameraWhiteBalanceRed", data); break;
+      case 2326: metadata.put("CameraWhiteBalanceGreen", data); break;
+      case 2327: metadata.put("CameraWhiteBalanceBlue", data); break;
+      case 2331: metadata.put("CameraFrameScalingFactor", data); break;
+      case 2562: metadata.put("Meteor Camera Type", data); break;
+      case 2564: metadata.put("Exposure Time [ms]", data); break;
+      case 2568: metadata.put("CameraExposureTimeAutoCalculate", data); break;
+      case 2569: metadata.put("Meteor Gain Value", data); break;
+      case 2571: metadata.put("Meteor Gain Automatic", data); break;
+      case 2572: metadata.put("MeteorAdjustHue", data); break;
+      case 2573: metadata.put("MeteorAdjustSaturation", data); break;
+      case 2574: metadata.put("MeteorAdjustRedLow", data); break;
+      case 2575: metadata.put("MeteorAdjustGreenLow", data); break;
+      case 2576: metadata.put("Meteor Blue Low", data); break;
+      case 2577: metadata.put("MeteorAdjustRedHigh", data); break;
+      case 2578: metadata.put("MeteorAdjustGreenHigh", data); break;
+      case 2579: metadata.put("MeteorBlue High", data); break;
+      case 2582: metadata.put("CameraExposureTimeCalculationControl", data);
+                 break;
+      case 2585: metadata.put("AxioCamFadingCorrectionEnable", data); break;
+      case 2587: metadata.put("CameraLiveImage", data); break;
+      case 2588: metadata.put("CameraLiveEnabled", data); break;
+      case 2589: metadata.put("LiveImageSyncObjectName", data); break;
+      case 2590: metadata.put("CameraLiveSpeed", data); break;
+      case 2591: metadata.put("CameraImage", data); break;
+      case 2592: metadata.put("CameraImageWidth", data); break;
+      case 2593: metadata.put("CameraImageHeight", data); break;
+      case 2594: metadata.put("CameraImagePixelType", data); break;
+      case 2595: metadata.put("CameraImageShMemoryName", data); break;
+      case 2596: metadata.put("CameraLiveImageWidth", data); break;
+      case 2597: metadata.put("CameraLiveImageHeight", data); break;
+      case 2598: metadata.put("CameraLiveImagePixelType", data); break;
+      case 2599: metadata.put("CameraLiveImageShMemoryName", data); break;
+      case 2600: metadata.put("CameraLiveMaximumSpeed", data); break;
+      case 2601: metadata.put("CameraLiveBinning", data); break;
+      case 2602: metadata.put("CameraLiveGainValue", data); break;
+      case 2603: metadata.put("CameraLiveExposureTimeValue", data); break;
+      case 2604: metadata.put("CameraLiveScalingFactor", data); break;
+      case 2819: metadata.put("Image Index Z", data); break;
+      case 2820: metadata.put("Image Channel Index", data); break;
+      case 2821: metadata.put("Image Index T", data); break;
+      case 2822: metadata.put("ImageTile Index", data); break;
+      case 2823: metadata.put("Image acquisition Index", data); break;
+      case 2827: metadata.put("Image IndexS", data); break;
+      case 2841: metadata.put("Original Stage Position X", data); break;
+      case 2842: metadata.put("Original Stage Position Y", data); break;
+      case 3088: metadata.put("LayerDrawFlags", data); break;
+      case 3334: metadata.put("RemainingTime", data); break;
+      case 3585: metadata.put("User Field 1", data); break;
+      case 3586: metadata.put("User Field 2", data); break;
+      case 3587: metadata.put("User Field 3", data); break;
+      case 3588: metadata.put("User Field 4", data); break;
+      case 3589: metadata.put("User Field 5", data); break;
+      case 3590: metadata.put("User Field 6", data); break;
+      case 3591: metadata.put("User Field 7", data); break;
+      case 3592: metadata.put("User Field 8", data); break;
+      case 3593: metadata.put("User Field 9", data); break;
+      case 3594: metadata.put("User Field 10", data); break;
+      case 3840: metadata.put("ID", data); break;
+      case 3841: metadata.put("Name", data); break;
+      case 3842: metadata.put("Value", data); break;
+      case 5501: metadata.put("PvCamClockingMode", data); break;
+      case 8193: metadata.put("Autofocus Status Report", data); break;
+      case 8194: metadata.put("Autofocus Position", data); break;
+      case 8195: metadata.put("Autofocus Position Offset", data); break;
+      case 8196: metadata.put("Autofocus Empty Field Threshold", data); break;
+      case 8197: metadata.put("Autofocus Calibration Name", data); break;
+      case 8198: metadata.put("Autofocus Current Calibration Item", data);
+                 break;
+      case 20478: metadata.put("tag_ID_20478", data); break;
+      case 65537: metadata.put("CameraFrameFullWidth", data); break;
+      case 65538: metadata.put("CameraFrameFullHeight", data); break;
+      case 65541: metadata.put("AxioCam Shutter Signal", data); break;
+      case 65542: metadata.put("AxioCam Delay Time", data); break;
+      case 65543: metadata.put("AxioCam Shutter Control", data); break;
+      case 65544: metadata.put("AxioCam BlackRefIsCalculated", data); break;
+      case 65545: metadata.put("AxioCam Black Reference", data); break;
+      case 65547: metadata.put("Camera Shading Correction", data); break;
+      case 65550: metadata.put("AxioCam Enhance Color", data); break;
+      case 65551: metadata.put("AxioCam NIR Mode", data); break;
+      case 65552: metadata.put("CameraShutterCloseDelay", data); break;
+      case 65553: metadata.put("CameraWhiteBalanceAutoCalculate", data); break;
+      case 65556: metadata.put("AxioCam NIR Mode Available", data); break;
+      case 65557: metadata.put("AxioCam Fading Correction Available", data);
+                  break;
+      case 65559: metadata.put("AxioCam Enhance Color Available", data); break;
+      case 65565: metadata.put("MeteorVideoNorm", data); break;
+      case 65566: metadata.put("MeteorAdjustWhiteReference", data); break;
+      case 65567: metadata.put("MeteorBlackReference", data); break;
+      case 65568: metadata.put("MeteorChannelInputCountMono", data); break;
+      case 65570: metadata.put("MeteorChannelInputCountRGB", data); break;
+      case 65571: metadata.put("MeteorEnableVCR", data); break;
+      case 65572: metadata.put("Meteor Brightness", data); break;
+      case 65573: metadata.put("Meteor Contrast", data); break;
+      case 65575: metadata.put("AxioCam Selector", data); break;
+      case 65576: metadata.put("AxioCam Type", data); break;
+      case 65577: metadata.put("AxioCam Info", data); break;
+      case 65580: metadata.put("AxioCam Resolution", data); break;
+      case 65581: metadata.put("AxioCam Color Model", data); break;
+      case 65582: metadata.put("AxioCam MicroScanning", data); break;
+      case 65585: metadata.put("Amplification Index", data); break;
+      case 65586: metadata.put("Device Command", data); break;
+      case 65587: metadata.put("BeamLocation", data); break;
+      case 65588: metadata.put("ComponentType", data); break;
+      case 65589: metadata.put("ControllerType", data); break;
+      case 65590: metadata.put("CameraWhiteBalanceCalculationRedPaint", data);
+                  break;
+      case 65591: metadata.put("CameraWhiteBalanceCalculationBluePaint", data);
+                  break;
+      case 65592: metadata.put("CameraWhiteBalanceSetRed", data); break;
+      case 65593: metadata.put("CameraWhiteBalanceSetGreen", data); break;
+      case 65594: metadata.put("CameraWhiteBalanceSetBlue", data); break;
+      case 65595: metadata.put("CameraWhiteBalanceSetTargetRed", data); break;
+      case 65596: metadata.put("CameraWhiteBalanceSetTargetGreen", data); break;
+      case 65597: metadata.put("CameraWhiteBalanceSetTargetBlue", data); break;
+      case 65598: metadata.put("ApotomeCamCalibrationMode", data); break;
+      case 65599: metadata.put("ApoTome Grid Position", data); break;
+      case 65600: metadata.put("ApotomeCamScannerPosition", data); break;
+      case 65601: metadata.put("ApoTome Full Phase Shift", data); break;
+      case 65602: metadata.put("ApoTome Grid Name", data); break;
+      case 65603: metadata.put("ApoTome Staining", data); break;
+      case 65604: metadata.put("ApoTome Processing Mode", data); break;
+      case 65605: metadata.put("ApotmeCamLiveCombineMode", data); break;
+      case 65606: metadata.put("ApoTome Filter Name", data); break;
+      case 65607: metadata.put("Apotome Filter Strength", data); break;
+      case 65608: metadata.put("ApotomeCamFilterHarmonics", data); break;
+      case 65609: metadata.put("ApoTome Grating Period", data); break;
+      case 65610: metadata.put("ApoTome Auto Shutter Used", data); break;
+      case 65611: metadata.put("Apotome Cam Status", data); break;
+      case 65612: metadata.put("ApotomeCamNormalize", data); break;
+      case 65613: metadata.put("ApotomeCamSettingsManager", data); break;
+      case 65614: metadata.put("DeepviewCamSupervisorMode", data); break;
+      case 65615: metadata.put("DeepView Processing", data); break;
+      case 65616: metadata.put("DeepviewCamFilterName", data); break;
+      case 65617: metadata.put("DeepviewCamStatus", data); break;
+      case 65618: metadata.put("DeepviewCamSettingsManager", data); break;
+      case 65619: metadata.put("DeviceScalingName", data); break;
+      case 65620: metadata.put("CameraShadingIsCalculated", data); break;
+      case 65621: metadata.put("CameraShadingCalculationName", data); break;
+      case 65622: metadata.put("CameraShadingAutoCalculate", data); break;
+      case 65623: metadata.put("CameraTriggerAvailable", data); break;
+      case 65626: metadata.put("CameraShutterAvailable", data); break;
+      case 65627: metadata.put("AxioCam ShutterMicroScanningEnable", data); 
+                  break;
+      case 65628: metadata.put("ApotomeCamLiveFocus", data); break;
+      case 65629: metadata.put("DeviceInitStatus", data); break;
+      case 65630: metadata.put("DeviceErrorStatus", data); break;
+      case 65631: metadata.put("ApotomeCamSliderInGridPosition", data); break;
+      case 65632: metadata.put("Orca NIR Mode Used", data); break;
+      case 65633: metadata.put("Orca Analog Gain", data); break;
+      case 65634: metadata.put("Orca Analog Offset", data); break;
+      case 65635: metadata.put("Orca Binning", data); break;
+      case 65636: metadata.put("Orca Bit Depth", data); break;
+      case 65637: metadata.put("ApoTome Averaging Count", data); break;
+      case 65638: metadata.put("DeepView DoF", data); break;
+      case 65639: metadata.put("DeepView EDoF", data); break;
+      case 65643: metadata.put("DeepView Slider Name", data); break;
+      case 65655: metadata.put("DeepView Slider Name", data); break;
+      case 5439491: metadata.put("Acquisition Sofware", data); break;
+      case 16777488: metadata.put("Excitation Wavelength", data); break;
+      case 16777489: metadata.put("Emission Wavelength", data); break;
+      case 101515267: metadata.put("File Name", data); break;
+      case 101253123:
+      case 101777411: metadata.put("Image Name", data); break;
+      default: metadata.put("" + tagID, data);
     }
-
-    dimensionOrder = "XYZCT";
-
-    Object mce = metadata.get("MultiChannelEnabled");
-    if (mce != null) {
-      if (((Integer) mce).intValue() == 1) {
-        sizeC = new Integer(nImages);
-        sizeT = new Integer(1);
-        dimensionOrder = "XYCZT";
-      }
-    }
-
-    cSize = sizeC.intValue();
-    tSize = sizeT.intValue();
-    zSize = sizeZ.intValue();
-
-    store.setPixels(new Integer(getSizeX(currentId)),
-      new Integer(getSizeY(currentId)), new Integer(getSizeZ(currentId)),
-      new Integer(getSizeC(currentId)), new Integer(getSizeT(currentId)),
-      typeAsString, null, dimensionOrder, null);
-  }
-
-  /**
-   * Populates the first experimenter and group in the metadata store.
-   */
-  private void populateExperimenter() throws FormatException, IOException {
-    // The metadata store we're working with.
-    MetadataStore store = getMetadataStore(currentId);
-
-    // Experimenter
-    String name = (String) metadata.get("Author");
-    if (name != null) {
-      String firstName = null, lastName = null;
-      int ndx = name.indexOf(" ");
-      if (ndx < 0) lastName = name;
-      else {
-        firstName = name.substring(0, ndx);
-        lastName = name.substring(ndx + 1);
-      }
-      store.setExperimenter(firstName, lastName, null, null, null, null, null);
-    }
-
-    // Group
-    // We're doing this here mainly out of convenience, if this gets any more
-    // complex it'd be better off in its own method).
-    store.setGroup((String) metadata.get("ProjectGroup"), null, null, null);
-  }
-
-  /**
-   * Populates the first stage label in the metadata store.
-   */
-  private void populateStageLabel() throws FormatException, IOException {
-    // The metadata store we're working with.
-    MetadataStore store = getMetadataStore(currentId);
-
-    // Stage Label
-    try {
-      int xPos = Integer.parseInt(metadata.get("Stage Position X").toString());
-      int yPos = Integer.parseInt(metadata.get("Stage Position Y").toString());
-      store.setStageLabel(null, new Float(xPos), new Float(yPos), null, null);
-    }
-    catch (NumberFormatException n) { }
-    catch (NullPointerException npe) { }
   }
 
   // -- Main method --
-
   public static void main(String[] args) throws FormatException, IOException {
     new ZeissZVIReader().testRead(args);
   }
-
 }
