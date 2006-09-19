@@ -1,10 +1,10 @@
 //
-// LineTool.java
+// FreeformTool.java
 //
 
 /*
 VisBio application for visualization of multidimensional
-biological image data. Copyright (C) 2002-@year@ Greg Meyer.
+biological image data. Copyright (C) 2002-@year@ Curtis Rueden.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -25,7 +25,10 @@ package loci.visbio.overlays;
 
 import loci.visbio.data.TransformEvent;
 
-/** FreeformTool is the tool for creating freeform objects. */
+/**
+ * FreeformTool is the tool for creating freeform objects.
+ * @author Greg Meyer
+ */
 public class FreeformTool extends OverlayTool {
 
   // -- Fields --

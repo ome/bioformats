@@ -4,7 +4,7 @@
 
 /*
 VisBio application for visualization of multidimensional
-biological image data. Copyright (C) 2002-@year@ Greg Meyer.
+biological image data. Copyright (C) 2002-@year@ Curtis Rueden.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -27,7 +27,11 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import visad.*;
 
-/** OverlayFreeform is a freeform overlay. */
+/**
+ * OverlayFreeform is a freeform overlay.
+ * @author Greg Meyer
+ */
+
 public class OverlayFreeform extends OverlayObject {
 
   // -- Constructors --
