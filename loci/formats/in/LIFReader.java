@@ -275,11 +275,10 @@ public class LIFReader extends FormatReader {
     initMetadata(xml);
   }
 
-
   // -- Helper methods --
 
   /** Parses a string of XML and puts the values in a Hashtable. */
-  private void initMetadata(String xml) {
+  private void initMetadata(String xml) throws FormatException, IOException {
     Vector elements = new Vector();
     seriesNames = new Vector();
 
@@ -380,14 +379,23 @@ public class LIFReader extends FormatReader {
                 tmp.get("DimensionDescription DimID"));
 
               switch (id) {
-                case 1: widths.add(new Integer(w)); xcal.add(new Float(cal));
+                case 1:
+                  widths.add(new Integer(w));
+                  xcal.add(new Float(cal));
                   break;
-                case 2: heights.add(new Integer(w)); ycal.add(new Float(cal));
+                case 2:
+                  heights.add(new Integer(w));
+                  ycal.add(new Float(cal));
                   break;
-                case 3: zs.add(new Integer(w)); zcal.add(new Float(cal));
+                case 3:
+                  zs.add(new Integer(w));
+                  zcal.add(new Float(cal));
                   break;
-                case 4: ts.add(new Integer(w)); break;
-                default: extras *= w;
+                case 4:
+                  ts.add(new Integer(w));
+                  break;
+                default:
+                  extras *= w;
               }
             }
           }
@@ -402,8 +410,19 @@ public class LIFReader extends FormatReader {
         if (numChannels == 2) numChannels--;
         channels.add(new Integer(numChannels));
 
-        if (zs.size() < channels.size()) zs.add(new Integer(1));
-        if (ts.size() < channels.size()) ts.add(new Integer(1));
+        if (zs.size() < numDatasets) zs.add(new Integer(1));
+        if (ts.size() < numDatasets) ts.add(new Integer(1));
+
+        int q = numDatasets - 1;
+        if (widths.size() < numDatasets) {
+          throw new FormatException("No width for series #" + q);
+        }
+        if (heights.size() < numDatasets) {
+          throw new FormatException("No height for series #" + q);
+        }
+        if (bps.size() < numDatasets) {
+          throw new FormatException("No bps for series #" + q);
+        }
       }
       ndx++;
     }
@@ -432,41 +451,38 @@ public class LIFReader extends FormatReader {
     // Populate metadata store
 
     // The metadata store we're working with.
-    try {
-      MetadataStore store = getMetadataStore(currentId);
+    MetadataStore store = getMetadataStore(currentId);
 
-      String type = "int8";
-      switch (dims[0][5]) {
-        case 12: type = "int16"; break;
-        case 16: type = "int16"; break;
-        case 32: type = "float"; break;
-      }
-
-      for (int i=0; i<numDatasets; i++) {
-        Integer ii = new Integer(i);
-
-        store.setImage((String) seriesNames.get(i), null, null, ii);
-
-        store.setPixels(
-          new Integer(dims[i][0]), // SizeX
-          new Integer(dims[i][1]), // SizeY
-          new Integer(dims[i][2]), // SizeZ
-          new Integer(dims[i][4]), // SizeC
-          new Integer(dims[i][3]), // SizeT
-          type, // PixelType
-          new Boolean(!littleEndian), // BigEndian
-          getDimensionOrder(currentId), // DimensionOrder
-          ii); // Index
-
-
-        Float xf = i < xcal.size() ? (Float) xcal.get(i) : null;
-        Float yf = i < ycal.size() ? (Float) ycal.get(i) : null;
-        Float zf = i < zcal.size() ? (Float) zcal.get(i) : null;
-
-        store.setDimensions(xf, yf, zf, null, null, ii);
-      }
+    String type = "int8";
+    switch (dims[0][5]) {
+      case 12: type = "int16"; break;
+      case 16: type = "int16"; break;
+      case 32: type = "float"; break;
     }
-    catch (Exception e) { e.printStackTrace(); }
+
+    for (int i=0; i<numDatasets; i++) {
+      Integer ii = new Integer(i);
+
+      store.setImage((String) seriesNames.get(i), null, null, ii);
+
+      store.setPixels(
+        new Integer(dims[i][0]), // SizeX
+        new Integer(dims[i][1]), // SizeY
+        new Integer(dims[i][2]), // SizeZ
+        new Integer(dims[i][4]), // SizeC
+        new Integer(dims[i][3]), // SizeT
+        type, // PixelType
+        new Boolean(!littleEndian), // BigEndian
+        getDimensionOrder(currentId), // DimensionOrder
+        ii); // Index
+
+
+      Float xf = i < xcal.size() ? (Float) xcal.get(i) : null;
+      Float yf = i < ycal.size() ? (Float) ycal.get(i) : null;
+      Float zf = i < zcal.size() ? (Float) zcal.get(i) : null;
+
+      store.setDimensions(xf, yf, zf, null, null, ii);
+    }
   }
 
 
