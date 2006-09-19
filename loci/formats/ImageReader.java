@@ -90,7 +90,6 @@ public class ImageReader implements IFormatReader {
     v.copyInto(readerClasses);
   }
 
-
   // -- Fields --
 
   /** List of supported file format readers. */
@@ -342,7 +341,7 @@ public class ImageReader implements IFormatReader {
   public Object getMetadataValue(String id, String field)
     throws FormatException, IOException
   {
-    //if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId)) initFile(id);
     return readers[index].getMetadataValue(id, field);
   }
 
@@ -354,7 +353,7 @@ public class ImageReader implements IFormatReader {
    * @return the hashtable containing all metadata from the file
    */
   public Hashtable getMetadata(String id) throws FormatException, IOException {
-    //if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId)) initFile(id);
     return readers[index].getMetadata(id);
   }
 
@@ -534,4 +533,5 @@ public class ImageReader implements IFormatReader {
   public static void main(String[] args) throws FormatException, IOException {
     if (!new ImageReader().testRead(args)) System.exit(1);
   }
+
 }
