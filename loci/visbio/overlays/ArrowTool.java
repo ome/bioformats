@@ -33,7 +33,6 @@ public class ArrowTool extends OverlayTool {
   /** Arrow currently being drawn. */
   protected OverlayArrow arrow;
 
-
   // -- Constructor --
 
   /** Constructs an arrow overlay creation tool. */
