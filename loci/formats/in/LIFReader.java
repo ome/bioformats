@@ -413,10 +413,15 @@ public class LIFReader extends FormatReader {
         if (zs.size() < numDatasets) zs.add(new Integer(1));
         if (ts.size() < numDatasets) ts.add(new Integer(1));
 
-        // HACK - handle weird case with missing height (DimID == 2)
-        // it seems to appear as DimID == 3 instead; see Experiment2.lif
+        // HACK - handle "XZ" case (missing height)
         if (heights.size() < numDatasets) {
           heights.add(zs.lastElement());
+          zs.setElementAt(new Integer(1), zs.size() - 1);
+        }
+
+        // HACK - handle "YZ" case (missing width)
+        if (widths.size() < numDatasets) {
+          widths.add(zs.lastElement());
           zs.setElementAt(new Integer(1), zs.size() - 1);
         }
 
