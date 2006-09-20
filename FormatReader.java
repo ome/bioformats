@@ -46,7 +46,45 @@ public abstract class FormatReader extends FormatHandler
 
   /** Default thumbnail width and height. */
   protected static final int THUMBNAIL_DIMENSION = 128;
+  
+  /** Identifies the <i>INT8</i> data type used to store pixel values. */
+  public static final int     INT8 = 0;
 
+  /** Identifies the <i>UINT8</i> data type used to store pixel values. */
+  public static final int     UINT8 = 1;
+
+  /** Identifies the <i>INT16</i> data type used to store pixel values. */
+  public static final int     INT16 = 2;
+
+  /** Identifies the <i>UINT16</i> data type used to store pixel values. */
+  public static final int     UINT16 = 3;
+
+  /** Identifies the <i>INT32</i> data type used to store pixel values. */
+  public static final int     INT32 = 4;
+
+  /** Identifies the <i>UINT32</i> data type used to store pixel values. */
+  public static final int     UINT32 = 5;
+
+  /** Identifies the <i>FLOAT</i> data type used to store pixel values. */
+  public static final int     FLOAT = 6;
+
+  /** Identifies the <i>DOUBLE</i> data type used to store pixel values. */
+  public static final int     DOUBLE = 7;
+
+  /** Human readable pixel type. */
+  private static String[] pixelsTypes;
+  static {
+    pixelsTypes = new String[8];
+    pixelsTypes[FormatReader.INT8] = "INT8";
+    pixelsTypes[FormatReader.UINT8] = "UINT8";
+    pixelsTypes[FormatReader.INT16] = "INT16";
+    pixelsTypes[FormatReader.UINT16] = "UINT16";
+    pixelsTypes[FormatReader.INT32] = "INT32";
+    pixelsTypes[FormatReader.UINT32] = "UINT32";
+    pixelsTypes[FormatReader.FLOAT] = "FLOAT";
+    pixelsTypes[FormatReader.DOUBLE] = "DOUBLE";
+  }
+  
   // -- Fields --
 
   /** Hashtable containing metadata key/value pairs. */
@@ -59,6 +97,9 @@ public abstract class FormatReader extends FormatHandler
   protected int[] sizeX, sizeY, sizeZ, sizeC, sizeT;
   protected String[] currentOrder;
 
+  /** Whether or not we're doing channel stat calculation (no by default). */
+  protected boolean enableChannelStatCalculation = false;
+  
   /**
    * Current metadata store. Should <b>never</b> be accessed directly as the
    * semantics of {@link #getMetadataStore()} prevent "null" access.
@@ -88,6 +129,31 @@ public abstract class FormatReader extends FormatHandler
   public abstract boolean isRGB(String id)
     throws FormatException, IOException;
 
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#getPixelType()
+   */
+  public int getPixelType(String id) throws FormatException, IOException {
+    throw new UnsupportedOperationException("unimplemented for this format.");
+  }
+  
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#getChannelGlobalMinimum(int)
+   */
+  public Double getChannelGlobalMinimum(String id, int theC)
+    throws FormatException, IOException
+  {
+    throw new UnsupportedOperationException("unimplemented for this format.");
+  }
+  
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#getChannelGlobalMaximum(int)
+   */
+  public Double getChannelGlobalMaximum(String id, int theC)
+    throws FormatException, IOException
+  {
+    throw new UnsupportedOperationException("unimplemented for this format.");
+  }
+
   /** Get the size of the X dimension for the thumbnail. */
   public int getThumbSizeX(String id) throws FormatException, IOException {
     return THUMBNAIL_DIMENSION;
@@ -105,6 +171,20 @@ public abstract class FormatReader extends FormatHandler
   /** Returns whether or not the channels are interleaved. */
   public abstract boolean isInterleaved(String id)
     throws FormatException, IOException;
+  
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#setChannelStatCalculationStatus(boolean)
+   */
+  public void setChannelStatCalculationStatus(boolean on) {
+    enableChannelStatCalculation = on;
+  }
+
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#getChannelStatCalculationStatus()
+   */
+  public boolean getChannelStatCalculationStatus() {
+    return enableChannelStatCalculation;
+  }
 
   /** Obtains the specified image from the given file. */
   public abstract BufferedImage openImage(String id, int no)
@@ -115,6 +195,15 @@ public abstract class FormatReader extends FormatHandler
    */
   public abstract byte[] openBytes(String id, int no)
     throws FormatException, IOException;
+  
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#openBytes(java.lang.String, int, byte[])
+   */
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    throw new UnsupportedOperationException("unimplemented for this format.");
+  }
 
   /** Obtains a thumbnail for the specified image from the given file. */
   public BufferedImage openThumbImage(String id, int no)
@@ -224,6 +313,20 @@ public abstract class FormatReader extends FormatHandler
       return isThisType(buf);
     }
     catch (IOException e) { return false; }
+  }
+  
+  /**
+   * Takes a string value and maps it to one of the pixel type enumerations.
+   * @param pixelTypeAsString the pixel type as a string.
+   * @return type enumeration value for use with class constants.
+   */
+  public static int pixelTypeFromString(String pixelTypeAsString) {
+    String uppercaseTypeAsString = pixelTypeAsString.toUpperCase();
+    for (int i = 0; i < pixelsTypes.length; i++) {
+      if (pixelsTypes[i].equals(uppercaseTypeAsString))
+        return i;
+    }
+    throw new RuntimeException("Unknown type: '" + pixelTypeAsString + "'");
   }
 
   // -- FormatReader API methods --
@@ -615,8 +718,6 @@ public abstract class FormatReader extends FormatHandler
       int sizeT = reader.getSizeT(id);
       boolean little = reader.isLittleEndian(id);
       String dimOrder = reader.getDimensionOrder(id);
-
-      if (sizeC > 1 && merge) rgb = true;
 
       // output basic metadata for series #i
       System.out.println("Series #" + j + ":");

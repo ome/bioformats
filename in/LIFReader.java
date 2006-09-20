@@ -65,6 +65,9 @@ public class LIFReader extends FormatReader {
    * 6) extra dimensions
    */
   protected int[][] dims;
+  
+  /** Pixel type. */
+  private int pixelType;
 
   private int width;
   private int height;
@@ -83,6 +86,14 @@ public class LIFReader extends FormatReader {
 
   // -- FormatReader API methods --
 
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#getPixelType()
+   */
+  public int getPixelType(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return pixelType;
+  }
+  
   /** Checks if the given block is a valid header for a LIF file. */
   public boolean isThisType(byte[] block) {
     return block[0] == 0x70;
@@ -436,11 +447,11 @@ public class LIFReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(currentId);
 
-    String type = "int8";
+    pixelType = FormatReader.INT8;
     switch (dims[0][5]) {
-      case 12: type = "int16"; break;
-      case 16: type = "int16"; break;
-      case 32: type = "float"; break;
+      case 12: pixelType = FormatReader.INT16; break;
+      case 16: pixelType = FormatReader.INT16; break;
+      case 32: pixelType = FormatReader.FLOAT; break;
     }
 
     sizeX = new int[numDatasets];
@@ -468,7 +479,7 @@ public class LIFReader extends FormatReader {
         new Integer(dims[i][2]), // SizeZ
         new Integer(dims[i][4]), // SizeC
         new Integer(dims[i][3]), // SizeT
-        type, // PixelType
+        new Integer(pixelType), // PixelType
         new Boolean(!littleEndian), // BigEndian
         getDimensionOrder(currentId), // DimensionOrder
         ii); // Index

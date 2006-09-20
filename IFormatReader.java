@@ -54,6 +54,54 @@ public interface IFormatReader extends IFormatHandler {
 
   /** Get the size of the T dimension. */
   int getSizeT(String id) throws FormatException, IOException;
+  
+  /**
+   * Gets the pixel type.
+   * @param id the image's filename.
+   * @return the pixel type as an enumeration from <code>FormatReader</code>
+   * <i>static</i> pixel types such as <code>INT8</code>.
+   * @throws FormatException if there was a problem parsing file metadata.
+   * @throws IOException if there was an error reading from the file.
+   * @throws UnsupportedOperationException if the reader does not support pixel
+   * type retrieval.
+   */
+  int getPixelType(String id) throws FormatException, IOException;
+  
+  /**
+   * Retrieves a specified channel's global minimum.
+   * @param id the filename of the base image.
+   * @param theC the channel whose minimum is required.
+   * @return the global minimum of the channel; which is defined as the minimum
+   * for the channel across all image planes/sections in the image. Will be
+   * <code>null</code> if there is no channel minimum stored directly in the
+   * file and channel stat calculation is disabled.
+   * @throws FormatException if there was a problem parsing the metadata of the
+   * file.
+   * @throws IOException if there was a problem reading the file.
+   * @throws UnsupportedOperationException if the reader does not support pixel
+   * type retrieval.
+   * @see setChannelStatCalculationStatus()
+   */
+  Double getChannelGlobalMinimum(String id, int theC)
+    throws FormatException, IOException;
+  
+  /**
+   * Retrieves a specified channel's global maximum.
+   * @param id the filename of the base image.
+   * @param theC the channel whose maximum is required.
+   * @return the global maximum of the channel; which is defined as the maximum
+   * for the channel across all image planes/sections in the image. Will be
+   * <code>null</code> if there is no channel maximum stored directly in the
+   * file and channel stat calculation is disabled.
+   * @throws FormatException if there was a problem parsing the metadata of the
+   * file.
+   * @throws IOException if there was a problem reading the file.
+   * @throws UnsupportedOperationException if the reader does not support pixel
+   * type retrieval.
+   * @see setChannelStatCalculationStatus()
+   */
+  Double getChannelGlobalMaximum(String id, int theC)
+    throws FormatException, IOException;
 
   /** Get the size of the X dimension for the thumbnail. */
   int getThumbSizeX(String id) throws FormatException, IOException;
@@ -69,6 +117,26 @@ public interface IFormatReader extends IFormatHandler {
    * within the file.
    */
   String getDimensionOrder(String id) throws FormatException, IOException;
+  
+  /**
+   * Readers can implement potentially performance hindering statistics
+   * calculation as part of metadata parsing. This method allows the user of
+   * the reader to turn such calculations on or off.
+   * @param on <code>true</code> if statistics calculation should be turned on.
+   * @throws UnsupportedOperationException if the reader does not support pixel
+   * type retrieval.
+   * @see getChannelStatCalculationStatus()
+   */
+  void setChannelStatCalculationStatus(boolean on);
+  
+  /**
+   * Retrieve the status of channel statistics calculation.
+   * @return the status.
+   * @throws UnsupportedOperationException if the reader does not support pixel
+   * type retrieval.
+   * @see setChannelStatCalculationStatus()
+   */
+  boolean getChannelStatCalculationStatus();
 
   /** Returns whether or not the channels are interleaved. */
   boolean isInterleaved(String id) throws FormatException, IOException;
@@ -81,6 +149,22 @@ public interface IFormatReader extends IFormatHandler {
    * Obtains the specified image from the given file as a byte array.
    */
   byte[] openBytes(String id, int no) throws FormatException, IOException;
+
+  /**
+   * Obtains the specified image from the given file into a pre-allocated byte
+   * array of (sizeX * sizeY * bytesPerPixel).
+   * @param id the filename of the base image.
+   * @param no the image index within the file.
+   * @param buf a pre-allocated buffer.
+   * @return the pre-allocated buffer <code>buf</code> for convenience.
+   * @throws FormatException if there was a problem parsing the metadata of the
+   * file.
+   * @throws IOException if there was a problem reading the file.
+   * @throws UnsupportedOperationException if the reader does not support pixel
+   * type retrieval.
+   */
+  byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException;
 
   /** Obtains a thumbnail for the specified image from the given file. */
   BufferedImage openThumbImage(String id, int no)

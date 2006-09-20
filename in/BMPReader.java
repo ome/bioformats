@@ -71,7 +71,9 @@ public class BMPReader extends FormatReader {
 
   /** Offset to image data. */
   private int global;
-
+  
+  /** The pixel type. */
+  private int pixelType;
 
   // -- Constructor --
 
@@ -80,6 +82,14 @@ public class BMPReader extends FormatReader {
 
 
   // -- FormatReader API methods --
+  
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#getPixelType()
+   */
+  public int getPixelType(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return pixelType;
+  }
 
   /** Checks if the given block is a valid header for a BMP file. */
   public boolean isThisType(byte[] block) {
@@ -312,7 +322,21 @@ public class BMPReader extends FormatReader {
     int c = (palette == null && bpp == 8) ? 1 : 3;
     int tbpp = bpp;
     if (bpp > 8) tbpp /= 3;
-    String pixelType = "int" + tbpp;
+    
+    switch (tbpp) {
+    case 8:
+      pixelType = FormatReader.INT8;
+      break;
+    case 16:
+      pixelType = FormatReader.INT16;
+      break;
+    case 32:
+      pixelType = FormatReader.INT32;
+      break;
+    default:
+      throw new RuntimeException(
+          "Unknown matching for pixel bit width of: " + tbpp);
+    }
 
     store.setPixels(
       new Integer(width),  // sizeX
@@ -320,7 +344,7 @@ public class BMPReader extends FormatReader {
       new Integer(1), // sizeZ
       new Integer(c), // sizeC
       new Integer(1), // sizeT
-      pixelType,
+      new Integer(pixelType),
       new Boolean(!littleEndian), // BigEndian
       "XYCTZ", // Dimension order
       null); // Use index 0

@@ -79,6 +79,9 @@ public class DeltavisionReader extends FormatReader {
 
   /** Size of one time element in the extended header. */
   protected int tSize;
+  
+  /** The pixel type. */
+  protected int pixelType;
 
   protected int numT;
   protected int numW;
@@ -119,6 +122,66 @@ public class DeltavisionReader extends FormatReader {
     return false;
   }
 
+  /** Get the size of the X dimension. */
+  public int getSizeX(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return width;
+  }
+
+  /** Get the size of the Y dimension. */
+  public int getSizeY(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return height;
+  }
+
+  /** Get the size of the Z dimension. */
+  public int getSizeZ(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return numZ;
+  }
+
+  /** Get the size of the C dimension. */
+  public int getSizeC(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return numW;
+  }
+
+  /** Get the size of the T dimension. */
+  public int getSizeT(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return numT;
+  }
+  
+  /* (non-Javadoc)
+   * @see loci.formats.FormatReader#getPixelType()
+   */
+  public int getPixelType(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return pixelType;
+  }
+  
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#getChannelGlobalMinimum(int)
+   */
+  public Double getChannelGlobalMinimum(String id, int theC)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    Float v = (Float) metadata.get("Wavelength " + theC + " min. intensity");
+    return new Double(v.floatValue());
+  }
+  
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#getChannelGlobalMaximum(int)
+   */
+  public Double getChannelGlobalMaximum(String id, int theC)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    Float v = (Float) metadata.get("Wavelength " + theC + " max. intensity");
+    return new Double(v.floatValue());
+  }
+
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
@@ -134,6 +197,16 @@ public class DeltavisionReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
+    byte[] buf = new byte[width * height * bytesPerPixel];
+    return openBytes(id, no, buf);
+  }
+  
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#openBytes(java.lang.String, int, byte[])
+   */
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
     if (!id.equals(currentId)) initFile(id);
 
     if (no < 0 || no >= numImages) {
@@ -141,16 +214,13 @@ public class DeltavisionReader extends FormatReader {
     }
 
     // read the image plane's pixel data
-
     int offset = header.length + extHeader.length;
     offset += width * height * bytesPerPixel * no;
 
-    byte[] rawData = new byte[width * height * bytesPerPixel];
-
     in.seek(offset);
-
-    in.read(rawData);
-    return rawData;
+    in.read(buf);
+    
+    return buf;
   }
 
   /** Obtains the specified image from the given Deltavision file. */
@@ -195,30 +265,30 @@ public class DeltavisionReader extends FormatReader {
     metadata.put("ImageHeight", ySize);
     metadata.put("NumberOfImages", new Integer(DataTools.bytesToInt(header,
       8, 4, little)));
-    int pixelType = DataTools.bytesToInt(header, 12, 4, little);
+    int filePixelType = DataTools.bytesToInt(header, 12, 4, little);
     String pixel;
-    String omePixel;
 
-    switch (pixelType) {
-      case 0: pixel = "8 bit unsigned integer"; omePixel = "Uint8";
+    switch (filePixelType) {
+      case 0: pixel = "8 bit unsigned integer"; pixelType = FormatReader.UINT8;
               bytesPerPixel = 1;
               break;
-      case 1: pixel = "16 bit signed integer"; omePixel = "int16";
+      case 1: pixel = "16 bit signed integer"; pixelType = FormatReader.UINT16;
               bytesPerPixel = 2;
               break;
-      case 2: pixel = "32 bit floating point"; omePixel = "float";
+      case 2: pixel = "32 bit floating point"; pixelType = FormatReader.FLOAT;
               bytesPerPixel = 4;
               break;
-      case 3: pixel = "32 bit complex"; omePixel = "Uint32";
+      case 3: pixel = "32 bit complex"; pixelType = FormatReader.UINT32;
               bytesPerPixel = 4;
               break;
-      case 4: pixel = "64 bit complex"; omePixel = "float";
+      case 4: pixel = "64 bit complex"; pixelType = FormatReader.FLOAT;
               bytesPerPixel = 8;
               break;
-      case 6: pixel = "16 bit unsigned integer"; omePixel = "Uint16";
+      case 6: pixel = "16 bit unsigned integer"; pixelType = FormatReader.UINT16;
               bytesPerPixel = 2;
               break;
-      default: pixel = "unknown"; omePixel = "Uint8"; bytesPerPixel = 1;
+      default: pixel = "unknown"; pixelType = FormatReader.UINT8;
+              bytesPerPixel = 1;
     }
 
     metadata.put("PixelType", pixel);
@@ -381,8 +451,8 @@ public class DeltavisionReader extends FormatReader {
     extHdrFields = new DVExtHdrFields[numZ][numW][numT];
 
     store.setPixels(new Integer(width), new Integer(height), new Integer(numZ),
-      new Integer(numW), new Integer(numT), omePixel, new Boolean(!little),
-      dimOrder, null);
+      new Integer(numW), new Integer(numT), new Integer(pixelType),
+      new Boolean(!little), dimOrder, null);
 
     store.setDimensions(
       (Float) metadata.get("X element length (in um)"),

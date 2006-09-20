@@ -116,7 +116,9 @@ public class PictReader extends FormatReader {
 
   /** Helper reader in case this one fails. */
   protected LegacyQTTools qtTools = new LegacyQTTools();
-
+  
+  /** Pixel type. */
+  private int pixelType;
 
   // -- Constructor --
 
@@ -125,6 +127,14 @@ public class PictReader extends FormatReader {
 
 
   // -- FormatReader API methods --
+  
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#getPixelType()
+   */
+  public int getPixelType(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return pixelType;
+  }
 
   /** Checks if the given block is a valid header for a PICT file. */
   public boolean isThisType(byte[] block) {
@@ -208,9 +218,10 @@ public class PictReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(id);
 
+    pixelType = FormatReader.INT8;
     store.setPixels(
       new Integer((int) d.getWidth()), new Integer((int) d.getHeight()),
-      new Integer(1), new Integer(3), new Integer(1), "int8",
+      new Integer(1), new Integer(3), new Integer(1), new Integer(pixelType),
       new Boolean(!little), "XYCZT", null);
   }
 

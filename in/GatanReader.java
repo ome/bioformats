@@ -53,6 +53,9 @@ public class GatanReader extends FormatReader {
 
   /** Dimensions -- width, height, bytes per pixel. */
   protected int[] dims = new int[3];
+  
+  /** The pixel type. */
+  private int pixelType;
 
   protected int pixelDataNum = 0;
 
@@ -62,9 +65,16 @@ public class GatanReader extends FormatReader {
   /** Constructs a new Gatan reader. */
   public GatanReader() { super("Gatan Digital Micrograph", "dm3"); }
 
-
   // -- FormatReader API methods --
 
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#getPixelType()
+   */
+  public int getPixelType(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return pixelType;
+  }
+  
   /** Checks if the given block is a valid header for a Gatan file. */
   public boolean isThisType(byte[] block) {
     if (block == null) return false;
@@ -162,23 +172,23 @@ public class GatanReader extends FormatReader {
 
     int datatype = ((Integer) metadata.get("DataType")).intValue();
 
-    String type = "int8";
+    pixelType = FormatReader.INT8;
     switch (datatype) {
-      case 1: type = "int16"; break;
-      case 2: type = "float"; break;
-      case 3: type = "float"; break;
+      case 1: pixelType = FormatReader.INT16; break;
+      case 2: pixelType = FormatReader.FLOAT; break;
+      case 3: pixelType = FormatReader.FLOAT; break;
       // there is no case 4
-      case 5: type = "float"; break;
-      case 6: type = "Uint8"; break;
-      case 7: type = "int32"; break;
-      case 8: type = "Uint32"; break;
-      case 9: type = "int8"; break;
-      case 10: type = "Uint16"; break;
-      case 11: type = "Uint32"; break;
-      case 12: type = "float"; break;
-      case 13: type = "float"; break;
-      case 14: type = "Uint8"; break;
-      case 23: type = "int32"; break;
+      case 5: pixelType = FormatReader.FLOAT; break;
+      case 6: pixelType = FormatReader.UINT8; break;
+      case 7: pixelType = FormatReader.INT32; break;
+      case 8: pixelType = FormatReader.UINT32; break;
+      case 9: pixelType = FormatReader.INT8; break;
+      case 10: pixelType = FormatReader.UINT16; break;
+      case 11: pixelType = FormatReader.UINT32; break;
+      case 12: pixelType = FormatReader.FLOAT; break;
+      case 13: pixelType = FormatReader.FLOAT; break;
+      case 14: pixelType = FormatReader.UINT8; break;
+      case 23: pixelType = FormatReader.INT32; break;
     }
 
     sizeX[0] = dims[0];
@@ -197,7 +207,7 @@ public class GatanReader extends FormatReader {
       new Integer(1), // SizeZ
       new Integer(1), // SizeC
       new Integer(1), // SizeT
-      type, // PixelType
+      new Integer(pixelType), // PixelType
       new Boolean(!littleEndian), // BigEndian
       "XYZTC", // DimensionOrder
       null); // Use index 0

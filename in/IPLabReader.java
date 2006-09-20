@@ -67,15 +67,23 @@ public class IPLabReader extends FormatReader {
 
   /** Dimension order. */
   private String order;
-
+  
   // -- Constructor --
 
   /** Constructs a new IPLab reader. */
   public IPLabReader() { super("IPLab", "ipl"); }
 
-
+  
   // -- FormatReader API methods --
 
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#getPixelType()
+   */
+  public int getPixelType(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return pixelType;
+  }
+  
   /** Checks if the given block is a valid header for an IPLab file. */
   public boolean isThisType(byte[] block) {
     if (block.length < 12) return false; // block length too short
@@ -166,7 +174,7 @@ public class IPLabReader extends FormatReader {
     c = in.readInt();
     int zDepth = in.readInt();
     int tDepth = in.readInt();
-    pixelType = in.readInt();
+    int filePixelType = in.readInt();
 
     numImages = zDepth * tDepth;
 
@@ -178,26 +186,33 @@ public class IPLabReader extends FormatReader {
 
     String ptype;
     bps = 1;
-    switch ((int) pixelType) {
+    switch ((int) filePixelType) {
       case 0: ptype = "8 bit unsigned";
+              pixelType = FormatReader.UINT8;
               bps = 1;
               break;
       case 1: ptype = "16 bit signed short";
+              pixelType = FormatReader.INT16;
               bps = 2;
               break;
       case 2: ptype = "16 bit unsigned short";
+              pixelType = FormatReader.UINT16;
               bps = 2;
               break;
       case 3: ptype = "32 bit signed long";
+              pixelType = FormatReader.INT32;
               bps = 4;
               break;
       case 4: ptype = "32 bit single-precision float";
+              pixelType = FormatReader.FLOAT;
               bps = 4;
               break;
       case 5: ptype = "Color24";
+              pixelType = FormatReader.INT32;
               bps = 1;
               break;
       case 6: ptype = "Color48";
+              pixelType = FormatReader.INT32;
               bps = 2;
               break;
       case 10: ptype = "64 bit double-precision float";
@@ -208,19 +223,6 @@ public class IPLabReader extends FormatReader {
 
     metadata.put("PixelType", ptype);
     in.skipBytes(dataSize);
-
-    String typeAsString;
-    switch ((int) pixelType) {
-    case 0: typeAsString = "Uint8"; break;
-    case 1: typeAsString = "int16"; break;
-    case 2: typeAsString = "Uint16"; break;
-    case 3: typeAsString = "Uint32"; break;
-    case 4: typeAsString = "float"; break;
-    case 5: typeAsString = "Uint32"; break;
-    case 6: typeAsString = "Uint32"; break;
-    case 10: typeAsString = "float"; break;
-    default: typeAsString = "Uint8";
-    }
 
     order = "XY";
     if (c > 1) order += "CZT";
@@ -235,7 +237,7 @@ public class IPLabReader extends FormatReader {
       new Integer((int) zDepth), // SizeZ
       new Integer((int) c), // SizeC
       new Integer((int) tDepth), // SizeT
-      typeAsString, // PixelType
+      new Integer(pixelType), // PixelType
       new Boolean(!littleEndian), // BigEndian
       order, // DimensionOrder
       null); // Use index 0

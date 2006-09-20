@@ -74,10 +74,13 @@ public class OpenlabReader extends FormatReader {
 
   /** Number of series. */
   private int numSeries;
+  
+  /** Pixel type. */
+  private int pixelType;
 
   private Vector[] layerInfoList;
   private float xCal, yCal, zCal;
-  private int bpp;
+  private int bytesPerPixel;
 
   private int tag = 0, subTag = 0;
   private String fmt = "";
@@ -89,6 +92,14 @@ public class OpenlabReader extends FormatReader {
 
   // -- FormatReader API methods --
 
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#getPixelType()
+   */
+  public int getPixelType(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return pixelType;
+  }
+  
   /** Checks if the given block is a valid Openlab LIFF header. */
   public boolean isThisType(byte[] block) {
     return block.length >= 8 && block[0] == 0 && block[1] == 0 &&
@@ -300,9 +311,9 @@ public class OpenlabReader extends FormatReader {
       Compression.lzoUncompress(c, size, b);
 
       if (volumeType == MAC_24_BIT) {
-        bpp = b.length >= width[series] * height[series] * 4 ? 4 : 3;
+        bytesPerPixel = b.length >= width[series] * height[series] * 4 ? 4 : 3;
 
-        int destRowBytes = width[series] * bpp;
+        int destRowBytes = width[series] * bytesPerPixel;
         int srcRowBytes = b.length / height[series];
 
         byte[] tmp = new byte[destRowBytes * height[series]];
@@ -316,7 +327,7 @@ public class OpenlabReader extends FormatReader {
 
         // strip out alpha channel and force channel separation
 
-        if (bpp == 4) {
+        if (bytesPerPixel == 4) {
           b = new byte[(3 * tmp.length) / 4];
           dest = 0;
           for (int i=0; i<tmp.length; i+=4) {
@@ -325,7 +336,7 @@ public class OpenlabReader extends FormatReader {
             b[dest + ((2 * b.length) / 3)] = tmp[i + 3];
             dest++;
           }
-          bpp = 3;
+          bytesPerPixel = 3;
         }
       }
       else if (volumeType < MAC_24_BIT) {
@@ -345,10 +356,10 @@ public class OpenlabReader extends FormatReader {
     }
 
     byte[] b = openBytes(id, no);
-    bpp = b.length / (width[series] * height[series]);
-    if (bpp > 3) bpp = 3;
+    bytesPerPixel = b.length / (width[series] * height[series]);
+    if (bytesPerPixel > 3) bytesPerPixel = 3;
     return ImageTools.makeImage(b, width[series], height[series],
-      bpp == 3 ? 3 : 1, false, bpp == 3 ? 1 : bpp, false);
+      bytesPerPixel == 3 ? 3 : 1, false, bytesPerPixel == 3 ? 1 : bytesPerPixel, false);
   }
 
   /** Closes the currently open file. */
@@ -587,8 +598,8 @@ public class OpenlabReader extends FormatReader {
     width[0] = oldWidth;
     height[0] = oldHeight;
 
-    if (bpp == 3) bpp = 1;
-    if (bpp == 0) bpp++;
+    if (bytesPerPixel == 3) bytesPerPixel = 1;
+    if (bytesPerPixel == 0) bytesPerPixel++;
 
     // finish populating metadata hashtable
     metadata.put("Version", new Integer(version));
@@ -596,7 +607,7 @@ public class OpenlabReader extends FormatReader {
     for (int i=0; i<numSeries; i++) {
       metadata.put("Width (Series " + i + ")", new Integer(width[i]));
       metadata.put("Height (Series " + i + ")", new Integer(height[i]));
-      metadata.put("Bit depth (Series " + i + ")", new Integer(bpp * 8));
+      metadata.put("Bit depth (Series " + i + ")", new Integer(bytesPerPixel * 8));
       metadata.put("Number of channels (Series " + i + ")",
         new Integer(channelCount[i]));
       metadata.put("Number of images (Series " + i + ")",
@@ -613,10 +624,26 @@ public class OpenlabReader extends FormatReader {
     // populate MetadataStore
 
     MetadataStore store = getMetadataStore(id);
+    
+    switch (bytesPerPixel) {
+    case 1:  // 8 * 1 = 8
+      pixelType = FormatReader.INT8;
+      break;
+    case 2:  // 8 * 2 = 16
+      pixelType = FormatReader.INT16;
+      break;
+    case 4:  // 8 * 4 = 32
+      pixelType = FormatReader.INT32;
+      break;
+    default:
+      throw new RuntimeException(
+          "Unknown matching for pixel byte width of: " + bytesPerPixel);
+    }
+    
     for (int i=0; i<numSeries; i++) {
       sizeT[i] += 1;
       currentOrder[i] = isRGB(id) ? "XYCZT" : "XYZCT";
-
+      
       store.setImage("Series " + i, null, null, new Integer(i));
       store.setPixels(
         new Integer(width[i]),
@@ -624,7 +651,7 @@ public class OpenlabReader extends FormatReader {
         new Integer(numImages[i]),
         new Integer(channelCount[i]),
         new Integer(1),
-        "int" + (bpp * 8),
+        new Integer(pixelType),
         new Boolean(!isLittleEndian(id)),
         getDimensionOrder(id),
         new Integer(i));

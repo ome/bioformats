@@ -240,7 +240,7 @@ public class AggregateMetadataStore implements MetadataStore {
    *   java.lang.String, java.lang.Integer)
    */
   public void setPixels(Integer sizeX, Integer sizeY, Integer sizeZ,
-    Integer sizeC, Integer sizeT, String pixelType, Boolean bigEndian,
+    Integer sizeC, Integer sizeT, Integer pixelType, Boolean bigEndian,
     String dimensionOrder, Integer i)
   {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {

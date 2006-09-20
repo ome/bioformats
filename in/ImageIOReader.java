@@ -39,6 +39,9 @@ import loci.formats.*;
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public abstract class ImageIOReader extends FormatReader {
+  
+  /** The pixel type. */
+  private int pixelType;
 
   // -- Constructors --
 
@@ -52,6 +55,14 @@ public abstract class ImageIOReader extends FormatReader {
 
 
   // -- FormatReader API methods --
+  
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#getPixelType()
+   */
+  public int getPixelType(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return pixelType;
+  }
 
   /** Checks if the given block is a valid header for an image file. */
   public boolean isThisType(byte[] block) { return false; }
@@ -112,13 +123,15 @@ public abstract class ImageIOReader extends FormatReader {
     // populate the metadata store
 
     MetadataStore store = getMetadataStore(id);
+    
+    pixelType = FormatReader.INT8;
     store.setPixels(
       new Integer(getSizeX(id)),
       new Integer(getSizeY(id)),
       new Integer(1),
       new Integer(3),
       new Integer(1),
-      "int8",
+      new Integer(pixelType),
       new Boolean(false),
       getDimensionOrder(id),
       null);

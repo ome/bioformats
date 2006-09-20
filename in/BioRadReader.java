@@ -78,6 +78,9 @@ public class BioRadReader extends FormatReader {
 
   /** Flag indicating current Bio-Rad PIC is packed with bytes. */
   private boolean byteFormat;
+  
+  /** The pixel type. */
+  private int pixelType;
 
   // -- Constructor --
 
@@ -85,6 +88,14 @@ public class BioRadReader extends FormatReader {
   public BioRadReader() { super("Bio-Rad PIC", "pic"); }
 
   // -- FormatReader API methods --
+  
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#getPixelType()
+   */
+  public int getPixelType(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return pixelType;
+  }
 
   /** Checks if the given block is a valid header for a Bio-Rad PIC file. */
   public boolean isThisType(byte[] block) {
@@ -377,9 +388,10 @@ public class BioRadReader extends FormatReader {
     in.seek(14);
     //int type = DataTools.bytesToInt(header, 14, 2, LITTLE_ENDIAN);
     int type = in.readShort();
-    String fmt;
-    if (type == 1) fmt = "Uint8";
-    else fmt = "Uint16";
+    if (type == 1)
+      pixelType = FormatReader.UINT8;
+    else
+      pixelType = FormatReader.UINT16;
 
     String dimOrder = "XY";
     int[] dims = new int[] {zSize, cSize, tSize};
@@ -421,7 +433,7 @@ public class BioRadReader extends FormatReader {
       new Integer(zSize), // SizeZ
       new Integer(cSize), // SizeC
       new Integer(tSize), // SizeT
-      fmt, // PixelType
+      new Integer(pixelType), // PixelType
       null, // BigEndian
       dimOrder, // DimensionOrder
       null); // Use index 0

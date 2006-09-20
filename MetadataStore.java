@@ -157,14 +157,15 @@ public interface MetadataStore {
    * (per stack)
    * @param sizeC number of channels per timepoint.
    * @param sizeT number of timepoints.
-   * @param pixelType the pixel type.
+   * @param pixelType the pixel type. One of the enumerated static values
+   * present in {@link #FormatReader}.
    * @param bigEndian if the pixels set is big endian or not.
    * @param dimensionOrder the dimension order of the pixels set.
    * @param i the index to use in the store. If <code>null</code> the default
    * index of 0 will be used.
    */
   void setPixels(Integer sizeX, Integer sizeY, Integer sizeZ,
-                 Integer sizeC, Integer sizeT, String pixelType,
+                 Integer sizeC, Integer sizeT, Integer pixelType,
                  Boolean bigEndian, String dimensionOrder, Integer i);
 
   /**
