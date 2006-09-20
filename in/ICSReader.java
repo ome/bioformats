@@ -103,50 +103,10 @@ public class ICSReader extends FormatReader {
     return false;
   }
 
-  /** Get the size of the X dimension. */
-  public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return dimensions[1];
-  }
-
-  /** Get the size of the Y dimension. */
-  public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return dimensions[2];
-  }
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return dimensions[3];
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return dimensions[4];
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return dimensions[5];
-  }
-
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return littleEndian;
-  }
-
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
-  public String getDimensionOrder(String id) throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return order;
   }
 
   /** Returns whether or not the channels are interleaved. */
@@ -414,6 +374,13 @@ public class ICSReader extends FormatReader {
     }
 
     order = o;
+
+    sizeX[0] = dimensions[1];
+    sizeY[0] = dimensions[2];
+    sizeZ[0] = dimensions[3];
+    sizeC[0] = dimensions[4];
+    sizeT[0] = dimensions[5];
+    currentOrder[0] = order;
 
     store.setPixels(
       new Integer(dimensions[1]), // SizeX

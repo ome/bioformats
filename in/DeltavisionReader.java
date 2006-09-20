@@ -119,50 +119,10 @@ public class DeltavisionReader extends FormatReader {
     return false;
   }
 
-  /** Get the size of the X dimension. */
-  public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return width;
-  }
-
-  /** Get the size of the Y dimension. */
-  public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return height;
-  }
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return numZ;
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return numW;
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return numT;
-  }
-
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return little;
-  }
-
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
-  public String getDimensionOrder(String id) throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return order;
   }
 
   /** Returns whether or not the channels are interleaved. */
@@ -229,10 +189,10 @@ public class DeltavisionReader extends FormatReader {
     width = DataTools.bytesToInt(header, 0, 4, little);
     height = DataTools.bytesToInt(header, 4, 4, little);
 
-    Integer sizeX = new Integer(width);
-    Integer sizeY = new Integer(height);
-    metadata.put("ImageWidth", sizeX);
-    metadata.put("ImageHeight", sizeY);
+    Integer xSize = new Integer(width);
+    Integer ySize = new Integer(height);
+    metadata.put("ImageWidth", xSize);
+    metadata.put("ImageHeight", ySize);
     metadata.put("NumberOfImages", new Integer(DataTools.bytesToInt(header,
       8, 4, little)));
     int pixelType = DataTools.bytesToInt(header, 12, 4, little);
@@ -406,6 +366,13 @@ public class DeltavisionReader extends FormatReader {
       metadata.put("Title " + i, title);
     }
 
+    sizeX[0] = width;
+    sizeY[0] = height;
+    sizeZ[0] = numZ;
+    sizeC[0] = numW;
+    sizeT[0] = numT;
+    currentOrder[0] = order;
+
     // ----- The Extended Header data handler begins here ------
 
     numIntsPerSection = DataTools.bytesToInt(header, 128, 2, little);
@@ -413,8 +380,9 @@ public class DeltavisionReader extends FormatReader {
     setOffsetInfo(sequence, numZ, numW, numT);
     extHdrFields = new DVExtHdrFields[numZ][numW][numT];
 
-    store.setPixels(sizeX, sizeY, new Integer(numZ), new Integer(numW),
-      new Integer(numT), omePixel, new Boolean(!little), dimOrder, null);
+    store.setPixels(new Integer(width), new Integer(height), new Integer(numZ),
+      new Integer(numW), new Integer(numT), omePixel, new Boolean(!little),
+      dimOrder, null);
 
     store.setDimensions(
       (Float) metadata.get("X element length (in um)"),

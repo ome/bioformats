@@ -81,60 +81,10 @@ public class PerkinElmerReader extends FormatReader {
     return tiff.isRGB(files[0]);
   }
 
-  /** Get the size of the X dimension. */
-  public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
-      initFile(id);
-    }
-    return Integer.parseInt((String) metadata.get("Image Width"));
-  }
-
-  /** Get the size of the Y dimension. */
-  public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
-      initFile(id);
-    }
-    return Integer.parseInt((String) metadata.get("Image Length"));
-  }
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
-      initFile(id);
-    }
-    return Integer.parseInt((String) metadata.get("Number of slices"));
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
-      initFile(id);
-    }
-    return channels;
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
-      initFile(id);
-    }
-    return getImageCount(id) / (getSizeZ(id) * getSizeC(id));
-  }
-
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return tiff.isLittleEndian(files[0]);
-  }
-
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
-  public String getDimensionOrder(String id)
-    throws FormatException, IOException
-  {
-    return "XYCTZ";
   }
 
   /** Returns whether or not the channels are interleaved. */
@@ -380,6 +330,13 @@ public class PerkinElmerReader extends FormatReader {
 
     channels = Integer.parseInt(wavelengths);
 
+    sizeX[0] = Integer.parseInt((String) metadata.get("Image Width"));
+    sizeY[0] = Integer.parseInt((String) metadata.get("Image Length"));
+    sizeZ[0] = Integer.parseInt((String) metadata.get("Number of slices"));
+    sizeC[0] = channels;
+    sizeT[0] = getImageCount(currentId) / (sizeZ[0] * sizeC[0]);
+    currentOrder[0] = "XYCTZ";
+
     // Populate metadata store
 
     // The metadata store we're working with.
@@ -397,13 +354,13 @@ public class PerkinElmerReader extends FormatReader {
     store.setImage(null, time, null, null);
 
     // populate Pixels element
-    String sizeX = (String) metadata.get("Image Width");
-    String sizeY = (String) metadata.get("Image Length");
-    String sizeZ = (String) metadata.get("Number of slices");
+    String x = (String) metadata.get("Image Width");
+    String y = (String) metadata.get("Image Length");
+    String z = (String) metadata.get("Number of slices");
     store.setPixels(
-      new Integer(sizeX), // SizeX
-      new Integer(sizeY), // SizeY
-      new Integer(sizeZ), // SizeZ
+      new Integer(x), // SizeX
+      new Integer(y), // SizeY
+      new Integer(z), // SizeZ
       new Integer(wavelengths), // SizeC
       new Integer(getSizeT(id)), // SizeT
       null, // PixelType

@@ -36,10 +36,10 @@ import loci.formats.*;
 public class SEQReader extends BaseTiffReader {
 
   /** Number of optical sections in the file */
-  private int sizeZ = 0;
+  private int zSize = 0;
 
   /** Number of timepoints in the file */
-  private int sizeT = 1;
+  private int tSize = 1;
 
   // -- Constants --
 
@@ -56,26 +56,6 @@ public class SEQReader extends BaseTiffReader {
 
   /** Constructs a new Image-Pro SEQ reader. */
   public SEQReader() { super("Image-Pro Sequence", "seq"); }
-
-  // -- FormatReader API methods --
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return Integer.parseInt((String) metadata.get("frames"));
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return Integer.parseInt((String) metadata.get("slices"));
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return Integer.parseInt((String) metadata.get("channels"));
-  }
 
   // -- Internal BaseTiffReader API methods --
 
@@ -96,23 +76,23 @@ public class SEQReader extends BaseTiffReader {
 
       if (tag2 != -1) {
         // should be one of these for every image plane
-        sizeZ++;
+        zSize++;
         metadata.put("Frame Rate", new Integer(tag2));
       }
 
-      metadata.put("Number of images", new Integer(sizeZ));
+      metadata.put("Number of images", new Integer(zSize));
     }
 
-    if (sizeZ == 0) sizeZ++;
+    if (zSize == 0) zSize++;
 
-    if (sizeZ == 1 && sizeT == 1) {
-      sizeZ = ifds.length;
+    if (zSize == 1 && tSize == 1) {
+      zSize = ifds.length;
     }
 
     // default values
-    metadata.put("frames", "" + sizeZ);
+    metadata.put("frames", "" + zSize);
     metadata.put("channels", metadata.get("NumberOfChannels").toString());
-    metadata.put("slices", "" + sizeT);
+    metadata.put("slices", "" + tSize);
 
     // parse the description to get channels, slices and times where applicable
     String descr = (String) metadata.get("Comment");
@@ -126,6 +106,10 @@ public class SEQReader extends BaseTiffReader {
         metadata.put(label, data);
       }
     }
+
+    sizeZ[0] = zSize;
+    sizeC[0] = Integer.parseInt((String) metadata.get("channels"));
+    sizeT[0] = tSize;
   }
 
   // -- Main method --

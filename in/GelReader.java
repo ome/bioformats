@@ -60,12 +60,6 @@ public class GelReader extends BaseTiffReader {
   /** Checks if the given block is a valid header for a GEL TIFF file. */
   public boolean isThisType(byte[] block) { return false; }
 
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return numImages;
-  }
-
   // -- Internal BaseTiffReader API methods --
 
   /* (non-Javadoc)
@@ -105,6 +99,8 @@ public class GelReader extends BaseTiffReader {
 
     String units = (String) TiffTools.getIFDValue(ifds[1], MD_FILE_UNITS);
     metadata.put("File units", units == null ? "unknown" : units);
+
+    sizeT[series] = numImages;
   }
 
   // -- Main method --

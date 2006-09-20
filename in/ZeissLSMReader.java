@@ -91,34 +91,6 @@ public class ZeissLSMReader extends BaseTiffReader {
     }
   }
 
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return zSize > 0 ? zSize : 1;
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return channels > 0 ? channels : 1;
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return tSize > 0 ? tSize : 1;
-  }
-
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
-  public String getDimensionOrder(String id) throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return dimOrder != null ? dimOrder : "XYZCT";
-  }
-
   /** Obtains a thumbnail for the specified image from the given file. */
   public BufferedImage openThumbImage(String id, int no)
     throws FormatException, IOException
@@ -540,6 +512,11 @@ public class ZeissLSMReader extends BaseTiffReader {
     catch (FormatException e) { e.printStackTrace(); }
     catch (IOException e) { e.printStackTrace(); }
     catch (Exception e) { }
+
+    sizeZ[0] = zSize > 0 ? zSize : 1;
+    sizeC[0] = channels > 0 ? channels : 1;
+    sizeT[0] = tSize > 0 ? tSize : 1;
+    currentOrder[0] = "XYZCT";
   }
 
   // -- Helper methods --

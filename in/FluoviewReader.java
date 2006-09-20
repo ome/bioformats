@@ -50,20 +50,6 @@ public class FluoviewReader extends BaseTiffReader {
   /** Fluoview TIFF private tags */
   private static final int MMHEADER = 34361;
 
-  // -- Fields --
-
-  /** Number of optical sections in the file */
-  private int sizeZ = 1;
-
-  /** Number of channels in the file */
-  private int sizeC = 1;
-
-  /** Number of timepoints in the file */
-  private int sizeT = 1;
-
-  /** The dimension order of the file */
-  private String order;
-
   // -- Constructor --
 
   /** Constructs a new Fluoview TIFF reader. */
@@ -81,34 +67,6 @@ public class FluoviewReader extends BaseTiffReader {
     // for the 3rd byte, and contain the text "FLUOVIEW"
     String test = new String(block);
     return test.indexOf(FLUOVIEW_MAGIC_STRING) != -1;
-  }
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return sizeZ;
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return sizeC;
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return sizeT;
-  }
-
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
-  public String getDimensionOrder(String id) throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return order;
   }
 
   // -- FormatHandler API methods --
@@ -384,18 +342,18 @@ public class FluoviewReader extends BaseTiffReader {
         String pos = (String) numPlanes.get(i);
         int q = Integer.parseInt(pos);
 
-        if (name.equals("Ch")) sizeC = q;
+        if (name.equals("Ch")) sizeC[series] = q;
         else if (name.equals("Animation") || name.equals("T")) {
-          sizeT = q;
+          sizeT[series] = q;
         }
-        else if (name.equals("Z")) sizeZ = q;
+        else if (name.equals("Z")) sizeZ[series] = q;
       }
 
       // set the dimension order
 
-      order = "XY";
+      String order = "XY";
 
-      int[] dims = new int[] {sizeZ, sizeC, sizeT};
+      int[] dims = new int[] {sizeZ[series], sizeC[series], sizeT[series]};
       int max = 0;
       int median = 1;
       int min = Integer.MAX_VALUE;
@@ -412,14 +370,15 @@ public class FluoviewReader extends BaseTiffReader {
       int[] orderedDims = new int[] {max, median, min};
 
       for (int i=0; i<orderedDims.length; i++) {
-        if (orderedDims[i] == sizeZ && order.indexOf("Z") == -1) {
+        if (orderedDims[i] == sizeZ[series] && order.indexOf("Z") == -1) {
           order += "Z";
         }
-        else if (orderedDims[i] == sizeC && order.indexOf("C") == -1) {
+        else if (orderedDims[i] == sizeC[series] && order.indexOf("C") == -1) {
           order += "C";
         }
         else order += "T";
       }
+      currentOrder[series] = order;
     }
     catch (Exception e) { e.printStackTrace(); }
   }

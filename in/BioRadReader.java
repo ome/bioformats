@@ -103,48 +103,9 @@ public class BioRadReader extends FormatReader {
     return false;
   }
 
-  /** Get the size of the X dimension. */
-  public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return nx;
-  }
-
-  /** Get the size of the Y dimension. */
-  public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return ny;
-  }
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return nz;
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    return 1;
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return nt;
-  }
-
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     return LITTLE_ENDIAN;
-  }
-
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
-  public String getDimensionOrder(String id) throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return order;
   }
 
   /** Returns whether or not the channels are interleaved. */
@@ -250,9 +211,9 @@ public class BioRadReader extends FormatReader {
 
     Vector pixelSize = new Vector();
 
-    int sizeZ = npic;
-    int sizeC = 1;
-    int sizeT = 1;
+    int zSize = npic;
+    int cSize = 1;
+    int tSize = 1;
 
     // read notes
     int noteCount = 0;
@@ -305,8 +266,8 @@ public class BioRadReader extends FormatReader {
             case 2:
               metadata.put(key + " time (X) in seconds", params.get(0));
               metadata.put(key + " time (Y) in seconds", params.get(1));
-              sizeZ = 1;
-              sizeT = npic;
+              zSize = 1;
+              tSize = npic;
               break;
             case 3:
               metadata.put(key + " angle (X) in degrees", params.get(0));
@@ -421,7 +382,7 @@ public class BioRadReader extends FormatReader {
     else fmt = "Uint16";
 
     String dimOrder = "XY";
-    int[] dims = new int[] {sizeZ, sizeC, sizeT};
+    int[] dims = new int[] {zSize, cSize, tSize};
     int max = 0;
     int min = Integer.MAX_VALUE;
     int median = 1;
@@ -434,25 +395,32 @@ public class BioRadReader extends FormatReader {
 
     int[] orderedDims = new int[] {max, median, min};
     for (int i=0; i<orderedDims.length; i++) {
-      if (orderedDims[i] == sizeZ && dimOrder.indexOf("Z") == -1) {
+      if (orderedDims[i] == zSize && dimOrder.indexOf("Z") == -1) {
         dimOrder += "Z";
       }
-      else if (orderedDims[i] == sizeC && dimOrder.indexOf("C") == -1) {
+      else if (orderedDims[i] == cSize && dimOrder.indexOf("C") == -1) {
         dimOrder += "C";
       }
       else dimOrder += "T";
     }
 
-    nz = sizeZ;
-    nt = sizeT;
+    nz = zSize;
+    nt = tSize;
     order = dimOrder;
+
+    sizeX[0] = nx;
+    sizeY[0] = ny;
+    sizeZ[0] = nz;
+    sizeC[0] = 1;
+    sizeT[0] = nt;
+    currentOrder[0] = order;
 
     store.setPixels(
       new Integer(nx), // SizeX
       new Integer(ny), // SizeY
-      new Integer(sizeZ), // SizeZ
-      new Integer(sizeC), // SizeC
-      new Integer(sizeT), // SizeT
+      new Integer(zSize), // SizeZ
+      new Integer(cSize), // SizeC
+      new Integer(tSize), // SizeT
       fmt, // PixelType
       null, // BigEndian
       dimOrder, // DimensionOrder

@@ -102,50 +102,10 @@ public class IPLabReader extends FormatReader {
     return c > 1;
   }
 
-  /** Get the size of the X dimension. */
-  public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return width;
-  }
-
-  /** Get the size of the Y dimension. */
-  public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return height;
-  }
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return (int) ((Long) metadata.get("ZDepth")).longValue();
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return c;
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return (int) ((Long) metadata.get("TDepth")).longValue();
-  }
-
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return littleEndian;
-  }
-
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
-  public String getDimensionOrder(String id) throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return order;
   }
 
   /** Returns whether or not the channels are interleaved. */
@@ -438,6 +398,14 @@ public class IPLabReader extends FormatReader {
       catch (Exception e) { tag = "fini"; }
 
     }
+
+    sizeX[0] = width;
+    sizeY[0] = height;
+    sizeZ[0] = (int) ((Long) metadata.get("ZDepth")).longValue();
+    sizeC[0] = c;
+    sizeT[0] = (int) ((Long) metadata.get("TDepth")).longValue();;
+    currentOrder[0] = order;
+
   }
 
 

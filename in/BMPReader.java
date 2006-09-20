@@ -102,48 +102,10 @@ public class BMPReader extends FormatReader {
     return (bpp > 8);
   }
 
-  /** Get the size of the X dimension. */
-  public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    if (width % 2 == 1) width++;
-    return width;
-  }
-
-  /** Get the size of the Y dimension. */
-  public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return height;
-  }
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    return 1;
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return isRGB(id) ? 3 : 1;
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    return 1;
-  }
-
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return littleEndian;
-  }
-
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
-  public String getDimensionOrder(String id) throws FormatException, IOException
-  {
-    return "XYCTZ";
   }
 
   /** Returns whether or not the channels are interleaved. */
@@ -334,6 +296,13 @@ public class BMPReader extends FormatReader {
 
     global = in.getFilePointer();
     metadata.put("Indexed color", palette == null ? "false" : "true");
+
+    sizeX[0] = (width % 2 == 1) ? width + 1 : width;
+    sizeY[0] = height;
+    sizeZ[0] = 1;
+    sizeC[0] = isRGB(id) ? 3 : 1;
+    sizeT[0] = 1;
+    currentOrder[0] = "XYCTZ";
 
     // Populate metadata store.
 

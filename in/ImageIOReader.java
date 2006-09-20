@@ -66,46 +66,9 @@ public abstract class ImageIOReader extends FormatReader {
     return true;
   }
 
-  /** Get the size of the X dimension. */
-  public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return openImage(id, 0).getWidth();
-  }
-
-  /** Get the size of the Y dimension. */
-  public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return openImage(id, 0).getHeight();
-  }
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    return 1;
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    return 3;
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    return 1;
-  }
-
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     return false;
-  }
-
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
-  public String getDimensionOrder(String id)
-    throws FormatException, IOException
-  {
-    return "XYCZT";
   }
 
   /** Returns whether or not the channels are interleaved. */
@@ -138,6 +101,13 @@ public abstract class ImageIOReader extends FormatReader {
   /** Initializes the given file. */
   public void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
+
+    sizeX[0] = openImage(id, 0).getWidth();
+    sizeY[0] = openImage(id, 0).getHeight();
+    sizeZ[0] = 1;
+    sizeC[0] = 3;
+    sizeT[0] = 1;
+    currentOrder[0] = "XYCZT";
 
     // populate the metadata store
 

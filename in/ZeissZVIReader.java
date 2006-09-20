@@ -45,6 +45,7 @@ public class ZeissZVIReader extends FormatReader {
 
   // -- Static fields --
 
+  private static LegacyZVIReader legacy = new LegacyZVIReader();
   private static boolean noPOI = false;
   private static ReflectedUniverse r = createReflectedUniverse();
 
@@ -94,9 +95,9 @@ public class ZeissZVIReader extends FormatReader {
   /** Hashtable containing the directory entry for each plane. */
   private Hashtable pixels;
 
-  /** 
-   * Hashtable containing the document name for each plane, 
-   * indexed by the plane number. 
+  /**
+   * Hashtable containing the document name for each plane,
+   * indexed by the plane number.
    */
   private Hashtable names;
 
@@ -128,54 +129,15 @@ public class ZeissZVIReader extends FormatReader {
   /** Determines the number of images in the given Zeiss ZVI file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
+    if (noPOI) return legacy.getImageCount(id);
     return nImages;
   }
 
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
+    if (noPOI) return legacy.isRGB(id);
     return nChannels > 1 && (nChannels * zSize * tSize != nImages);
-  }
-
-  /** Get the size of the X dimension. */
-  public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return width;
-  }
-
-  /** Get the size of the Y dimension. */
-  public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return height;
-  }
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return zSize;
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return nChannels;
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return tSize;
-  }
-
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
-  public String getDimensionOrder(String id) throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    if (zSize > tSize) return "XYCZT";
-    return "XYCTZ";
   }
 
   /** Return true if the data is in little-endian format. */
@@ -185,7 +147,7 @@ public class ZeissZVIReader extends FormatReader {
 
   /** Returns whether or not the channels are interleaved. */
   public boolean isInterleaved(String id) throws FormatException, IOException {
-    return true;  
+    return true;
   }
 
   /** Obtains the specified image from the given ZVI file, as a byte array. */
@@ -193,11 +155,12 @@ public class ZeissZVIReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
+    if (noPOI) return legacy.openBytes(id, no);
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    try { 
+    try {
       Object directory = pixels.get(new Integer(no));
       String name = (String) names.get(new Integer(no));
 
@@ -212,11 +175,11 @@ public class ZeissZVIReader extends FormatReader {
       r.exec("dis.read(data)");
 
       // remove extra bytes
-     
+
       int offset = ((Integer) offsets.get(new Integer(no))).intValue();
       byte[] a = new byte[b.length - offset];
       System.arraycopy(b, b.length - a.length, a, 0, a.length);
-    
+
       if (bpp == 3) {
         // reverse bytes in groups of 3 to account for BGR storage
 
@@ -234,7 +197,8 @@ public class ZeissZVIReader extends FormatReader {
       return a;
     }
     catch (ReflectException r) {
-      throw new FormatException(r);
+      noPOI = true;
+      return openBytes(id, no);
     }
   }
 
@@ -243,12 +207,12 @@ public class ZeissZVIReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-
+    if (noPOI) return legacy.openImage(id, no);
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    return ImageTools.makeImage(openBytes(id, no), width, height, 
+    return ImageTools.makeImage(openBytes(id, no), width, height,
       isRGB(id) ? 3 : 1, true, bpp == 3 ? 1 : bpp, true);
   }
 
@@ -269,7 +233,7 @@ public class ZeissZVIReader extends FormatReader {
     zIndices = new Vector();
     cIndices = new Vector();
     tIndices = new Vector();
-    
+
     nImages = 0;
 
     try {
@@ -277,17 +241,32 @@ public class ZeissZVIReader extends FormatReader {
       r.exec("fs = new POIFSFileSystem(fis)");
       r.exec("dir = fs.getRoot()");
       parseDir(0, r.getVar("dir"));
-      
+
       zSize = zIndices.size();
       tSize = tIndices.size();
       nChannels *= cIndices.size();
-      
-      initMetadata();
+
+      sizeX = new int[1];
+      sizeY = new int[1];
+      sizeZ = new int[1];
+      sizeC = new int[1];
+      sizeT = new int[1];
+      currentOrder = new String[1];
+
+      sizeX[0] = width;
+      sizeY[0] = height;
+      sizeZ[0] = zSize;
+      sizeC[0] = nChannels;
+      sizeT[0] = tSize;
+      currentOrder[0] = (zSize > tSize) ? "XYCZT" : "XYCTZ";
     }
     catch (Throwable t) {
       noPOI = true;
       if (DEBUG) t.printStackTrace();
     }
+
+    try { initMetadata(); }
+    catch (Exception e) { }
   }
 
   // -- Helper methods --
@@ -296,7 +275,7 @@ public class ZeissZVIReader extends FormatReader {
   private void initMetadata() throws FormatException, IOException {
     MetadataStore store = getMetadataStore(currentId);
     store.setImage((String) metadata.get("File Name"), null, null, null);
-    
+
     store.setPixels(
       new Integer(getSizeX(currentId)),
       new Integer(getSizeY(currentId)),
@@ -307,7 +286,7 @@ public class ZeissZVIReader extends FormatReader {
       new Boolean(false),
       getDimensionOrder(currentId),
       null);
-    
+
     store.setDimensions(
       new Float((String) metadata.get("Scale Factor for X")),
       new Float((String) metadata.get("Scale Factor for Y")),
@@ -415,8 +394,8 @@ public class ZeissZVIReader extends FormatReader {
                          break;
                 default:
                   int oldPt = pt;
-                  while (DataTools.bytesToInt(data, pt, 2, true) != 3 && 
-                    pt < data.length) 
+                  while (DataTools.bytesToInt(data, pt, 2, true) != 3 &&
+                    pt < data.length)
                   {
                     pt += 2;
                   }
@@ -494,9 +473,9 @@ public class ZeissZVIReader extends FormatReader {
                        break;
               default:
                 int oldPt = pt;
-                while (DataTools.bytesToInt(data, pt, 2, true) != 3 && 
-                  pt < data.length) 
-                {  
+                while (DataTools.bytesToInt(data, pt, 2, true) != 3 &&
+                  pt < data.length)
+                {
                   pt += 2;
                 }
                 try {
@@ -514,14 +493,14 @@ public class ZeissZVIReader extends FormatReader {
             parseTag(value, tagID, attribute);
           }
         }
-        else if (isContents && (dirName.equals("Image") || 
-          dirName.toUpperCase().indexOf("ITEM") != -1) && 
-          (data.length > width*height)) 
+        else if (isContents && (dirName.equals("Image") ||
+          dirName.toUpperCase().indexOf("ITEM") != -1) &&
+          (data.length > width*height))
         {
           pt += 2;
           int version = DataTools.bytesToInt(data, pt, 4, true);
           pt += 4;
-          
+
           int vt = DataTools.bytesToInt(data, pt, 2, true);
           pt += 2;
           if (vt == 3) {
@@ -567,7 +546,7 @@ public class ZeissZVIReader extends FormatReader {
           while (DataTools.bytesToInt(data, pt, 2, true) != 65) {
             pt += 2;
           }
-        
+
           // VT_BLOB - Others
           pt += 2;
           len = DataTools.bytesToInt(data, pt, 4, true);
@@ -580,7 +559,7 @@ public class ZeissZVIReader extends FormatReader {
           pt += 4;
 
           pt += 8;
-         
+
           int tIndex = DataTools.bytesToInt(data, pt, 4, true);
           pt += 4;
           int cIndex = DataTools.bytesToInt(data, pt, 4, true);
@@ -591,15 +570,15 @@ public class ZeissZVIReader extends FormatReader {
           Integer zndx = new Integer(zIndex);
           Integer cndx = new Integer(cIndex);
           Integer tndx = new Integer(tIndex);
-          
+
           if (!zIndices.contains(zndx)) zIndices.add(zndx);
           if (!cIndices.contains(cndx)) cIndices.add(cndx);
           if (!tIndices.contains(tndx)) tIndices.add(tndx);
-        
+
           pt = oldPt + 4 + len;
 
           boolean foundWidth = DataTools.bytesToInt(data, pt, 4, true) == width;
-          boolean foundHeight = 
+          boolean foundHeight =
             DataTools.bytesToInt(data, pt + 4, 4, true) == height;
           while (!foundWidth || !foundHeight) {
             pt++;
@@ -615,14 +594,14 @@ public class ZeissZVIReader extends FormatReader {
           {
             byte[] o = new byte[data.length - pt];
             System.arraycopy(data, pt, o, 0, o.length);
-            
+
             int imageNum = 0;
             if (dirName.toUpperCase().indexOf("ITEM") != -1) {
               String num = dirName.substring(5);
               num = num.substring(0, num.length() - 1);
               imageNum = Integer.parseInt(num);
             }
-            
+
             offsets.put(new Integer(imageNum), new Integer(pt + 32));
             parsePlane(o, imageNum, directory, entryName);
           }
@@ -802,9 +781,9 @@ public class ZeissZVIReader extends FormatReader {
       case 2104: metadata.put("Objective Contrast Method", data); break;
       case 2105: metadata.put("Objective Immersion Type", data); break;
       case 2107: metadata.put("Reflector Position", data); break;
-      case 2109: metadata.put("Transmitted Light Filter 1 Position", data); 
+      case 2109: metadata.put("Transmitted Light Filter 1 Position", data);
                  break;
-      case 2110: metadata.put("Transmitted Light Filter 2 Position", data); 
+      case 2110: metadata.put("Transmitted Light Filter 2 Position", data);
                  break;
       case 2112: metadata.put("Excitation Filter Position", data); break;
       case 2113: metadata.put("Lamp Mirror Position", data); break;
@@ -865,12 +844,12 @@ public class ZeissZVIReader extends FormatReader {
       case 2176: metadata.put("TransmittedLightVirtualFilterPosition", data);
                  break;
       case 2177: metadata.put("TransmittedLightVirtualFilter", data); break;
-      case 2178: metadata.put("ReflectedLightVirtualFilterPosition", data); 
+      case 2178: metadata.put("ReflectedLightVirtualFilterPosition", data);
                  break;
       case 2179: metadata.put("ReflectedLightVirtualFilter", data); break;
       case 2180: metadata.put("ReflectedLightHalogenLampMode", data); break;
       case 2181: metadata.put("ReflectedLightHalogenLampVoltage", data); break;
-      case 2182: 
+      case 2182:
         metadata.put("ReflectedLightHalogenLampColorTemperature", data);
         break;
       case 2183: metadata.put("ContrastManagerMode", data); break;
@@ -881,9 +860,9 @@ public class ZeissZVIReader extends FormatReader {
       case 2198: metadata.put("LightZoomGoSpeed", data); break;
       case 2199: metadata.put("LightZoomCoupled", data); break;
       case 2200: metadata.put("TransmittedLightHalogenLampMode", data); break;
-      case 2201: metadata.put("TransmittedLightHalogenLampVoltage", data); 
+      case 2201: metadata.put("TransmittedLightHalogenLampVoltage", data);
                  break;
-      case 2202: 
+      case 2202:
         metadata.put("TransmittedLightHalogenLampColorTemperature", data);
         break;
       case 2203: metadata.put("Reflected Coldlight Mode", data); break;
@@ -1076,7 +1055,7 @@ public class ZeissZVIReader extends FormatReader {
       case 65622: metadata.put("CameraShadingAutoCalculate", data); break;
       case 65623: metadata.put("CameraTriggerAvailable", data); break;
       case 65626: metadata.put("CameraShutterAvailable", data); break;
-      case 65627: metadata.put("AxioCam ShutterMicroScanningEnable", data); 
+      case 65627: metadata.put("AxioCam ShutterMicroScanningEnable", data);
                   break;
       case 65628: metadata.put("ApotomeCamLiveFocus", data); break;
       case 65629: metadata.put("DeviceInitStatus", data); break;

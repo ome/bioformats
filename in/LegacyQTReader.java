@@ -79,47 +79,9 @@ public class LegacyQTReader extends FormatReader {
     return true;
   }
 
-  /** Get the size of the X dimension. */
-  public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return ImageTools.makeBuffered(image).getWidth();
-  }
-
-  /** Get the size of the Y dimension. */
-  public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return ImageTools.makeBuffered(image).getHeight();
-  }
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return numImages;
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    return 3;
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    return 1;
-  }
-
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     return false;
-  }
-
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
-  public String getDimensionOrder(String id)
-    throws FormatException, IOException
-  {
-    return "XYCZT";
   }
 
   /** Returns whether or not the channels are interleaved. */
@@ -252,6 +214,13 @@ public class LegacyQTReader extends FormatReader {
         q = (Integer) v.elementAt(i);
         times[i] = q.intValue();
       }
+
+      sizeX[0] = ImageTools.makeBuffered(image).getWidth();
+      sizeY[0] = ImageTools.makeBuffered(image).getHeight();
+      sizeZ[0] = 1;
+      sizeC[0] = 3;
+      sizeT[0] = numImages;
+      currentOrder[0] = "XYCTZ";
     }
     catch (Exception e) {
       throw new FormatException("Open movie failed", e);

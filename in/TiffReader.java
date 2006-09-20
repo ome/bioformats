@@ -37,22 +37,11 @@ import loci.formats.*;
 
 public class TiffReader extends BaseTiffReader {
 
-  /** Number of optical sections in the file. */
-  private int sizeZ = 1;
-
   // -- Constructor --
 
   /** Constructs a new Tiff reader. */
   public TiffReader() {
     super("Tagged Image File Format", new String[] {"tif", "tiff"});
-  }
-
-  // -- FormatReader API methods --
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return sizeZ;
   }
 
   // -- Internal TiffReader API methods --
@@ -61,10 +50,13 @@ public class TiffReader extends BaseTiffReader {
    * Allows a class which is delegating parsing responsibility to
    * <code>TiffReader</code> the ability to affect the <code>sizeZ</code> value
    * that is inserted into the metadata store.
-   * @param sizeZ the number of optical sections to use when making a call to
+   * @param zSize the number of optical sections to use when making a call to
    * {@link MetadataStore#setPixels()}.
    */
-  protected void setSizeZ(int sizeZ) { this.sizeZ = sizeZ; }
+  protected void setSizeZ(int zSize) {
+    if (sizeZ == null) sizeZ = new int[1];
+    this.sizeZ[0] = zSize;
+  }
 
   // -- Internal BaseTiffReader API methods --
 

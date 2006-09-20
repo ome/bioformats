@@ -55,6 +55,10 @@ public abstract class FormatReader extends FormatHandler
   /** The number of the current series. */
   protected int series = 0;
 
+  /** Dimension fields. */
+  protected int[] sizeX, sizeY, sizeZ, sizeC, sizeT;
+  protected String[] currentOrder;
+
   /**
    * Current metadata store. Should <b>never</b> be accessed directly as the
    * semantics of {@link #getMetadataStore()} prevent "null" access.
@@ -84,21 +88,6 @@ public abstract class FormatReader extends FormatHandler
   public abstract boolean isRGB(String id)
     throws FormatException, IOException;
 
-  /** Get the size of the X dimension. */
-  public abstract int getSizeX(String id) throws FormatException, IOException;
-
-  /** Get the size of the Y dimension. */
-  public abstract int getSizeY(String id) throws FormatException, IOException;
-
-  /** Get the size of the Z dimension. */
-  public abstract int getSizeZ(String id) throws FormatException, IOException;
-
-  /** Get the size of the C dimension. */
-  public abstract int getSizeC(String id) throws FormatException, IOException;
-
-  /** Get the size of the T dimension. */
-  public abstract int getSizeT(String id) throws FormatException, IOException;
-
   /** Get the size of the X dimension for the thumbnail. */
   public int getThumbSizeX(String id) throws FormatException, IOException {
     return THUMBNAIL_DIMENSION;
@@ -111,13 +100,6 @@ public abstract class FormatReader extends FormatHandler
 
   /** Return true if the data is in little-endian format. */
   public abstract boolean isLittleEndian(String id)
-    throws FormatException, IOException;
-
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
-  public abstract String getDimensionOrder(String id)
     throws FormatException, IOException;
 
   /** Returns whether or not the channels are interleaved. */
@@ -166,6 +148,47 @@ public abstract class FormatReader extends FormatHandler
 
   // -- Internal FormatReader API methods --
 
+  /** Get the size of the X dimension. */
+  public int getSizeX(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return sizeX[series];
+  }
+
+  /** Get the size of the Y dimension. */
+  public int getSizeY(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return sizeY[series];
+  }
+
+  /** Get the size of the Z dimension. */
+  public int getSizeZ(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return sizeZ[series];
+  }
+
+  /** Get the size of the C dimension. */
+  public int getSizeC(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return sizeC[series];
+  }
+
+  /** Get the size of the T dimension. */
+  public int getSizeT(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return sizeT[series];
+  }
+
+  /**
+   * Return a five-character string representing the dimension order
+   * within the file.
+   */
+  public String getDimensionOrder(String id)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return currentOrder[series];
+  }
+
   /**
    * Initializes the given file (parsing header information, etc.).
    * Most subclasses should override this method to perform
@@ -175,6 +198,14 @@ public abstract class FormatReader extends FormatHandler
     close();
     currentId = id;
     metadata = new Hashtable();
+
+    sizeX = new int[1];
+    sizeY = new int[1];
+    sizeZ = new int[1];
+    sizeC = new int[1];
+    sizeT = new int[1];
+    currentOrder = new String[1];
+
     // reinitialize the MetadataStore
     getMetadataStore(id).createRoot();
   }
@@ -233,6 +264,43 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /**
+   * Swaps the dimensions according to the given dimension order.  If the given
+   * order is identical to the file's native order, then nothing happens.
+   */
+  public void swapDimensions(String id, String order)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    if (order.equals(currentOrder[series])) return;
+
+    int[] dims = new int[5];
+
+    int xndx = currentOrder[series].indexOf("X");
+    int yndx = currentOrder[series].indexOf("Y");
+    int zndx = currentOrder[series].indexOf("Z");
+    int cndx = currentOrder[series].indexOf("C");
+    int tndx = currentOrder[series].indexOf("T");
+
+    dims[xndx] = sizeX[series];
+    dims[yndx] = sizeY[series];
+    dims[zndx] = sizeZ[series];
+    dims[cndx] = sizeC[series];
+    dims[tndx] = sizeT[series];
+
+    sizeX[series] = dims[order.indexOf("X")];
+    sizeY[series] = dims[order.indexOf("Y")];
+    sizeZ[series] = dims[order.indexOf("Z")];
+    sizeC[series] = dims[order.indexOf("C")];
+    sizeT[series] = dims[order.indexOf("T")];
+    currentOrder[series] = order;
+
+    MetadataStore store = getMetadataStore(id);
+    store.setPixels(new Integer(sizeX[series]), new Integer(sizeY[series]),
+      new Integer(sizeZ[series]), new Integer(sizeC[series]),
+      new Integer(sizeT[series]), null, null, order, new Integer(series));
+  }
+
+  /**
    * Gets the rasterized index corresponding
    * to the given Z, C and T coordinates.
    */
@@ -253,33 +321,33 @@ public abstract class FormatReader extends FormatHandler
     }
 
     // get SizeZ
-    int sizeZ = getSizeZ(id);
-    if (sizeZ <= 0) throw new FormatException("Invalid Z size: " + sizeZ);
-    if (z < 0 || z >= sizeZ) {
-      throw new FormatException("Invalid Z index: " + z + "/" + sizeZ);
+    int zSize = getSizeZ(id);
+    if (zSize <= 0) throw new FormatException("Invalid Z size: " + zSize);
+    if (z < 0 || z >= zSize) {
+      throw new FormatException("Invalid Z index: " + z + "/" + zSize);
     }
 
     // get SizeC
-    int sizeC = getSizeC(id);
-    if (sizeC <= 0) throw new FormatException("Invalid C size: " + sizeC);
-    if (c < 0 || c >= sizeC) {
-      throw new FormatException("Invalid C index: " + c + "/" + sizeC);
+    int cSize = getSizeC(id);
+    if (cSize <= 0) throw new FormatException("Invalid C size: " + cSize);
+    if (c < 0 || c >= cSize) {
+      throw new FormatException("Invalid C index: " + c + "/" + cSize);
     }
-    int origSizeC = sizeC;
+    int origSizeC = cSize;
     boolean rgb = isRGB(id);
-    if (!separated) sizeC = 1; // adjust for RGB merging
+    if (!separated) cSize = 1; // adjust for RGB merging
 
     // get SizeT
-    int sizeT = getSizeT(id);
-    if (sizeT <= 0) throw new FormatException("Invalid T size: " + sizeT);
-    if (t < 0 || t >= sizeT) {
-      throw new FormatException("Invalid T index: " + t + "/" + sizeT);
+    int tSize = getSizeT(id);
+    if (tSize <= 0) throw new FormatException("Invalid T size: " + tSize);
+    if (t < 0 || t >= tSize) {
+      throw new FormatException("Invalid T index: " + t + "/" + tSize);
     }
 
     // get image count
     int num = getImageCount(id);
     if (num <= 0) throw new FormatException("Invalid image count: " + num);
-    if (num != sizeZ * sizeC * sizeT) {
+    if (num != zSize * cSize * tSize) {
       // if this happens, there is probably a bug in metadata population --
       // either one of the ZCT sizes, or the total number of images --
       // or else the input file is invalid
@@ -292,9 +360,9 @@ public abstract class FormatReader extends FormatHandler
     int v0 = iz == 0 ? z : (ic == 0 ? c : t);
     int v1 = iz == 1 ? z : (ic == 1 ? c : t);
     int v2 = iz == 2 ? z : (ic == 2 ? c : t);
-    int len0 = iz == 0 ? sizeZ : (ic == 0 ? sizeC : sizeT);
-    int len1 = iz == 1 ? sizeZ : (ic == 1 ? sizeC : sizeT);
-    int len2 = iz == 2 ? sizeZ : (ic == 2 ? sizeC : sizeT);
+    int len0 = iz == 0 ? zSize : (ic == 0 ? cSize : tSize);
+    int len1 = iz == 1 ? zSize : (ic == 1 ? cSize : tSize);
+    int len2 = iz == 2 ? zSize : (ic == 2 ? cSize : tSize);
 
     return v0 + v1 * len0 + v2 * len0 * len1;
   }
@@ -320,39 +388,39 @@ public abstract class FormatReader extends FormatHandler
     }
 
     // get SizeZ
-    int sizeZ = getSizeZ(id);
-    if (sizeZ <= 0) throw new FormatException("Invalid Z size: " + sizeZ);
+    int zSize = getSizeZ(id);
+    if (zSize <= 0) throw new FormatException("Invalid Z size: " + zSize);
 
     // get SizeC
-    int sizeC = getSizeC(id);
-    if (sizeC <= 0) throw new FormatException("Invalid C size: " + sizeC);
-    int origSizeC = sizeC;
+    int cSize = getSizeC(id);
+    if (cSize <= 0) throw new FormatException("Invalid C size: " + cSize);
+    int origSizeC = cSize;
     boolean rgb = isRGB(id);
-    if (!separated && rgb) sizeC = 1; // adjust for RGB merging
+    if (!separated && rgb) cSize = 1; // adjust for RGB merging
 
     // get SizeT
-    int sizeT = getSizeT(id);
-    if (sizeT <= 0) throw new FormatException("Invalid T size: " + sizeT);
+    int tSize = getSizeT(id);
+    if (tSize <= 0) throw new FormatException("Invalid T size: " + tSize);
 
     // get image count
     int num = getImageCount(id);
     if (num <= 0) throw new FormatException("Invalid image count: " + num);
 
-    if (num != sizeZ * sizeC * sizeT) {
+    if (num != zSize * cSize * tSize) {
       // if this happens, there is probably a bug in metadata population --
       // either one of the ZCT sizes, or the total number of images --
       // or else the input file is invalid
       throw new FormatException("ZCT size vs image count mismatch (rgb=" +
-        rgb + "; separated=" + separated + "; sizeZ=" + sizeZ + ", sizeC=" +
-        origSizeC + ", sizeT=" + sizeT + ", total=" + num);
+        rgb + "; separated=" + separated + "; sizeZ=" + zSize + ", sizeC=" +
+        origSizeC + ", sizeT=" + tSize + ", total=" + num);
     }
     if (index < 0 || index >= num) {
       throw new FormatException("Invalid image index: " + index + "/" + num);
     }
 
     // assign rasterization order
-    int len0 = iz == 0 ? sizeZ : (ic == 0 ? sizeC : sizeT);
-    int len1 = iz == 1 ? sizeZ : (ic == 1 ? sizeC : sizeT);
+    int len0 = iz == 0 ? zSize : (ic == 0 ? cSize : tSize);
+    int len1 = iz == 1 ? zSize : (ic == 1 ? cSize : tSize);
     //int len2 = iz == 2 ? sizeZ : (ic == 2 ? sizeC : sizeT);
     int v0 = index % len0;
     int v1 = index / len0 % len1;

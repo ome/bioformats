@@ -87,47 +87,10 @@ public class GatanReader extends FormatReader {
     return false;
   }
 
-  /** Get the size of the X dimension. */
-  public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return dims[0];
-  }
-
-  /** Get the size of the Y dimension. */
-  public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return dims[1];
-  }
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    return 1;
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    return 1;
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    return 1;
-  }
-
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return littleEndian;
-  }
-
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
-  public String getDimensionOrder(String id)
-    throws FormatException, IOException
-  {
-    return "XYZTC";
   }
 
   /** Returns whether or not the channels are interleaved. */
@@ -201,22 +164,29 @@ public class GatanReader extends FormatReader {
 
     String type = "int8";
     switch (datatype) {
-    case 1: type = "int16"; break;
-    case 2: type = "float"; break;
-    case 3: type = "float"; break;
-    // there is no case 4
-    case 5: type = "float"; break;
-    case 6: type = "Uint8"; break;
-    case 7: type = "int32"; break;
-    case 8: type = "Uint32"; break;
-    case 9: type = "int8"; break;
-    case 10: type = "Uint16"; break;
-    case 11: type = "Uint32"; break;
-    case 12: type = "float"; break;
-    case 13: type = "float"; break;
-    case 14: type = "Uint8"; break;
-    case 23: type = "int32"; break;
+      case 1: type = "int16"; break;
+      case 2: type = "float"; break;
+      case 3: type = "float"; break;
+      // there is no case 4
+      case 5: type = "float"; break;
+      case 6: type = "Uint8"; break;
+      case 7: type = "int32"; break;
+      case 8: type = "Uint32"; break;
+      case 9: type = "int8"; break;
+      case 10: type = "Uint16"; break;
+      case 11: type = "Uint32"; break;
+      case 12: type = "float"; break;
+      case 13: type = "float"; break;
+      case 14: type = "Uint8"; break;
+      case 23: type = "int32"; break;
     }
+
+    sizeX[0] = dims[0];
+    sizeY[0] = dims[1];
+    sizeZ[0] = 1;
+    sizeC[0] = 1;
+    sizeT[0] = 1;
+    currentOrder[0] = "XYZTC";
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(id);

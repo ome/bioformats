@@ -53,7 +53,7 @@ public class OIBReader extends FormatReader {
   private int height;
 
   /** Number of channels. */
-  private int sizeC = 1;
+  private int cSize = 1;
 
   /** Pixel data. */
   private Hashtable pixelData;
@@ -84,51 +84,10 @@ public class OIBReader extends FormatReader {
     return false;
   }
 
-  /** Get the size of the X dimension. */
-  public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return width;
-  }
-
-  /** Get the size of the Y dimension. */
-  public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return height;
-  }
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    return 1;
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return sizeC;
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    int rtn = numImages / getSizeC(id);
-    while (rtn * getSizeC(id) < numImages) rtn++;
-    return rtn;
-  }
-
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return littleEndian;
-  }
-
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
-  public String getDimensionOrder(String id)
-    throws FormatException, IOException
-  {
-    return "XYCTZ";
   }
 
   /** Returns whether or not the channels are interleaved. */
@@ -219,8 +178,8 @@ public class OIBReader extends FormatReader {
               }
 
               if (setSizeC && key.trim().equals("Number")) {
-                if (Integer.parseInt(value.trim()) > sizeC) {
-                  sizeC = Integer.parseInt(value.trim());
+                if (Integer.parseInt(value.trim()) > cSize) {
+                  cSize = Integer.parseInt(value.trim());
                 }
                 setSizeC = false;
               }
@@ -284,6 +243,16 @@ public class OIBReader extends FormatReader {
     pixelData = t;
 
     numImages = pixelData.size();
+
+    sizeX[0] = width;
+    sizeY[0] = height;
+    sizeZ[0] = 1;
+    sizeC[0] = cSize;
+
+    int rtn = numImages / sizeC[0];
+    while (rtn * sizeC[0] < numImages) rtn++;
+    sizeT[0] = rtn;
+    currentOrder[0] = "XYCTZ";
 
     // initialize metadata
 

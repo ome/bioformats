@@ -101,54 +101,10 @@ public class LIFReader extends FormatReader {
     return dims[series][4] > 1;
   }
 
-  /** Get the size of the X dimension. */
-  public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return dims[series][0];
-  }
-
-  /** Get the size of the Y dimension. */
-  public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return dims[series][1];
-  }
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return dims[series][2];
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    if (getImageCount(id) == 1 && dims[series][4] < 3) dims[series][4] = 1;
-    return dims[series][4];
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return dims[series][3];
-  }
-
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return littleEndian;
-  }
-
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
-  public String getDimensionOrder(String id)
-    throws FormatException, IOException
-  {
-    int sizeZ = getSizeZ(id);
-    int sizeT = getSizeT(id);
-    if (sizeZ > sizeT) return "XYCZT";
-    else return "XYCTZ";
   }
 
   /** Returns whether or not the channels are interleaved. */
@@ -289,7 +245,7 @@ public class LIFReader extends FormatReader {
     while (st.hasMoreTokens()) {
       String token = st.nextToken();
       elements.add(token.substring(1));
-    }    
+    }
 
     // the first element contains version information
 
@@ -341,7 +297,7 @@ public class LIFReader extends FormatReader {
       if (token.startsWith("ScannerSettingRecord")) {
         if (token.indexOf("csScanMode") != -1) {
           int index = token.indexOf("Variant") + 7;
-          String ordering = token.substring(index + 2, 
+          String ordering = token.substring(index + 2,
             token.indexOf("\"", index + 3));
           ordering = ordering.toLowerCase();
 
@@ -355,10 +311,10 @@ public class LIFReader extends FormatReader {
           if (zPos < 0) zPos = 2;
           if (tPos < 0) tPos = 3;
 
-          int x = ((Integer) widths.get(widths.size() - 1)).intValue(); 
-          int y = ((Integer) heights.get(widths.size() - 1)).intValue(); 
-          int z = ((Integer) zs.get(widths.size() - 1)).intValue(); 
-          int t = ((Integer) ts.get(widths.size() - 1)).intValue(); 
+          int x = ((Integer) widths.get(widths.size() - 1)).intValue();
+          int y = ((Integer) heights.get(widths.size() - 1)).intValue();
+          int z = ((Integer) zs.get(widths.size() - 1)).intValue();
+          int t = ((Integer) ts.get(widths.size() - 1)).intValue();
 
           int[] dimensions = {x, y, z, t};
 
@@ -487,7 +443,21 @@ public class LIFReader extends FormatReader {
       case 32: type = "float"; break;
     }
 
+    sizeX = new int[numDatasets];
+    sizeY = new int[numDatasets];
+    sizeZ = new int[numDatasets];
+    sizeC = new int[numDatasets];
+    sizeT = new int[numDatasets];
+    currentOrder = new String[numDatasets];
+
     for (int i=0; i<numDatasets; i++) {
+      sizeX[i] = dims[i][0];
+      sizeY[i] = dims[i][1];
+      sizeZ[i] = dims[i][2];
+      sizeC[i] = dims[i][4];
+      sizeT[i] = dims[i][3];
+      currentOrder[i] = (sizeZ[i] > sizeT[i]) ? "XYCZT" : "XYCTZ";
+
       Integer ii = new Integer(i);
 
       store.setImage((String) seriesNames.get(i), null, null, ii);
