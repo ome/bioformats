@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Hashtable;
+import java.util.StringTokenizer;
 import java.util.Vector;
 import loci.formats.*;
 
@@ -284,11 +285,11 @@ public class LIFReader extends FormatReader {
 
     // first parse each element in the XML string
 
-    while (xml.length() > 2) {
-      String el = xml.substring(1, xml.indexOf(">"));
-      xml = xml.substring(xml.indexOf(">") + 1);
-      elements.add(el);
-    }
+    StringTokenizer st = new StringTokenizer(xml, ">");
+    while (st.hasMoreTokens()) {
+      String token = st.nextToken();
+      elements.add(token.substring(1));
+    }    
 
     // the first element contains version information
 
@@ -337,7 +338,42 @@ public class LIFReader extends FormatReader {
       }
       token = tmpToken;
 
-      if (token.startsWith("Element Name")) {
+      if (token.startsWith("ScannerSettingRecord")) {
+        if (token.indexOf("csScanMode") != -1) {
+          int index = token.indexOf("Variant") + 7;
+          String ordering = token.substring(index + 2, 
+            token.indexOf("\"", index + 3));
+          ordering = ordering.toLowerCase();
+
+          int xPos = ordering.indexOf("x");
+          int yPos = ordering.indexOf("y");
+          int zPos = ordering.indexOf("z");
+          int tPos = ordering.indexOf("t");
+
+          if (xPos < 0) xPos = 0;
+          if (yPos < 0) yPos = 1;
+          if (zPos < 0) zPos = 2;
+          if (tPos < 0) tPos = 3;
+
+          int x = ((Integer) widths.get(widths.size() - 1)).intValue(); 
+          int y = ((Integer) heights.get(widths.size() - 1)).intValue(); 
+          int z = ((Integer) zs.get(widths.size() - 1)).intValue(); 
+          int t = ((Integer) ts.get(widths.size() - 1)).intValue(); 
+
+          int[] dimensions = {x, y, z, t};
+
+          x = dimensions[xPos];
+          y = dimensions[yPos];
+          z = dimensions[zPos];
+          t = dimensions[tPos];
+
+          widths.setElementAt(new Integer(x), widths.size() - 1);
+          heights.setElementAt(new Integer(y), heights.size() - 1);
+          zs.setElementAt(new Integer(z), zs.size() - 1);
+          ts.setElementAt(new Integer(t), ts.size() - 1);
+        }
+      }
+      else if (token.startsWith("Element Name")) {
         // loop until we find "/ImageDescription"
         seriesNames.add(token.substring(token.indexOf("=") + 2,
           token.length() - 1));
@@ -410,31 +446,10 @@ public class LIFReader extends FormatReader {
         if (numChannels == 2) numChannels--;
         channels.add(new Integer(numChannels));
 
+        if (widths.size() < numDatasets) widths.add(new Integer(1));
+        if (heights.size() < numDatasets) heights.add(new Integer(1));
         if (zs.size() < numDatasets) zs.add(new Integer(1));
         if (ts.size() < numDatasets) ts.add(new Integer(1));
-
-        // HACK - handle "XZ" case (missing height)
-        if (heights.size() < numDatasets) {
-          heights.add(zs.lastElement());
-          zs.setElementAt(new Integer(1), zs.size() - 1);
-        }
-
-        // HACK - handle "YZ" case (missing width)
-        if (widths.size() < numDatasets) {
-          widths.add(zs.lastElement());
-          zs.setElementAt(new Integer(1), zs.size() - 1);
-        }
-
-        int q = numDatasets - 1;
-        if (widths.size() < numDatasets) {
-          throw new FormatException("No width for series #" + q);
-        }
-        if (heights.size() < numDatasets) {
-          throw new FormatException("No height for series #" + q);
-        }
-        if (bps.size() < numDatasets) {
-          throw new FormatException("No bps for series #" + q);
-        }
       }
       ndx++;
     }
