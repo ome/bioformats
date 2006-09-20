@@ -27,6 +27,9 @@ package loci.formats.in;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import loci.formats.FormatReader;
+import loci.formats.ImageReader;
+
 /**
  * A class which represents an entire 2D plane.
  *
@@ -49,44 +52,6 @@ public class Plane2D {
   /** Number of pixels along the <i>Y</i>-axis. */
   private int                 sizeY;
 
-  /** Identifies the <i>INT8</i> data type used to store pixel values. */
-  public static final int     INT8 = 0;
-
-  /** Identifies the <i>UINT8</i> data type used to store pixel values. */
-  public static final int     UINT8 = 1;
-
-  /** Identifies the <i>INT16</i> data type used to store pixel values. */
-  public static final int     INT16 = 2;
-
-  /** Identifies the <i>UINT16</i> data type used to store pixel values. */
-  public static final int     UINT16 = 3;
-
-  /** Identifies the <i>INT32</i> data type used to store pixel values. */
-  public static final int     INT32 = 4;
-
-  /** Identifies the <i>UINT32</i> data type used to store pixel values. */
-  public static final int     UINT32 = 5;
-
-  /** Identifies the <i>FLOAT</i> data type used to store pixel values. */
-  public static final int     FLOAT = 6;
-
-  /** Identifies the <i>DOUBLE</i> data type used to store pixel values. */
-  public static final int     DOUBLE = 7;
-
-  /** Human readable pixel type. */
-  private static String[] pixelsTypes;
-  static {
-    pixelsTypes = new String[8];
-    pixelsTypes[INT8] = "INT8";
-    pixelsTypes[UINT8] = "UINT8";
-    pixelsTypes[INT16] = "INT16";
-    pixelsTypes[UINT16] = "UINT16";
-    pixelsTypes[INT32] = "INT32";
-    pixelsTypes[UINT32] = "UINT32";
-    pixelsTypes[FLOAT] = "FLOAT";
-    pixelsTypes[DOUBLE] = "DOUBLE";
-  }
-
   /**
    * Default constructor.
    *
@@ -106,29 +71,7 @@ public class Plane2D {
     this.data.order(
         isLittleEndian? ByteOrder.LITTLE_ENDIAN: ByteOrder.BIG_ENDIAN);
 
-    this.bytesPerPixel = getBytesPerPixel();
-  }
-
-  /**
-   * Retrieves how many bytes per pixel the current plane or section has.
-   * @return the number of bytes per pixel.
-   */
-  private int getBytesPerPixel() {
-    switch(type) {
-    case 0:
-    case 1:
-      return 1;  // INT8 or UINT8
-    case 2:
-    case 3:
-      return 2;  // INT16 or UINT16
-    case 4:
-    case 5:
-    case 6:
-      return 4;  // INT32, UINT32 or FLOAT
-    case 7:
-      return 8;  // DOUBLE
-    }
-    throw new RuntimeException("Unknown type with id: '" + type + "'");
+    this.bytesPerPixel = ImageReader.getBytesPerPixel(type);
   }
 
   /**
@@ -142,39 +85,24 @@ public class Plane2D {
     int offset = ((sizeX * y) + x) * bytesPerPixel;
 
     switch(type) {
-    case INT8:
+    case FormatReader.INT8:
       return data.get(offset);
-    case INT16:
+    case FormatReader.INT16:
       return data.getShort(offset);
-    case INT32:
+    case FormatReader.INT32:
       return data.getInt(offset);
-    case FLOAT:
+    case FormatReader.FLOAT:
       return data.getFloat(offset);
-    case DOUBLE:
+    case FormatReader.DOUBLE:
       return data.getDouble(offset);
-    case UINT8:
+    case FormatReader.UINT8:
       return (short) (data.get(offset) & 0xFF);
-    case UINT16:
+    case FormatReader.UINT16:
       return (int) (data.getShort(offset) & 0xFFFF);
-    case UINT32:
+    case FormatReader.UINT32:
       return (long) (data.getInt(offset) & 0xFFFFFFFFL);
     }
     // This should never happen.
     throw new RuntimeException("Woah nelly! Something is very wrong.");
   }
-
-  /**
-   * Takes a string value and maps it to one of the pixel type enumerations.
-   * @param typeAsString the pixel type as a string.
-   * @return type enumeration value for use with class constants.
-   */
-  public static int typeFromString(String typeAsString) {
-    String uppercaseTypeAsString = typeAsString.toUpperCase();
-    for (int i = 0; i < pixelsTypes.length; i++) {
-      if (pixelsTypes[i].equals(uppercaseTypeAsString))
-        return i;
-    }
-    throw new RuntimeException("Unknown type: '" + typeAsString + "'");
-  }
-
 }

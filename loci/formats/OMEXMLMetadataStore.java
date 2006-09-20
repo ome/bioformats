@@ -460,7 +460,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
    *   java.lang.String, java.lang.Integer)
    */
   public void setPixels(Integer sizeX, Integer sizeY, Integer sizeZ,
-    Integer sizeC, Integer sizeT, String pixelType, Boolean bigEndian,
+    Integer sizeC, Integer sizeT, Integer pixelType, Boolean bigEndian,
     String dimensionOrder, Integer i)
   {
     int ndx = i == null ? 0 : i.intValue();
@@ -474,7 +474,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
     pixels.setSizeZ(sizeZ);
     pixels.setSizeC(sizeC);
     pixels.setSizeT(sizeT);
-    pixels.setPixelType(pixelType);
+    pixels.setPixelType(pixelTypeAsString(pixelType));
     pixels.setBigEndian(bigEndian);
     pixels.setDimensionOrder(dimensionOrder);
   }
@@ -643,6 +643,38 @@ public class OMEXMLMetadataStore implements MetadataStore {
   }
 
   // -- Helper methods --
+  
+  /**
+   * Gets the OME pixel type string from the Bio-Formats enumeration.
+   * @param pixelType the <i>pixel type</i> as an enumeration.
+   * @return the <i>pixel type</i> as a string.
+   */
+  private String pixelTypeAsString(Integer pixelType)
+  {
+    if (pixelType == null)
+      return null;
+    
+    switch(pixelType.intValue())
+    {
+    case FormatReader.INT8:
+      return "int8";
+    case FormatReader.UINT8:
+      return "Uint8";
+    case FormatReader.INT16:
+      return "int16";
+    case FormatReader.UINT16:
+      return "Uint16";
+    case FormatReader.INT32:
+      return "int32";
+    case FormatReader.UINT32:
+      return "Uint32";
+    case FormatReader.FLOAT:
+      return "float";
+    case FormatReader.DOUBLE:
+      return "double";
+    }
+    throw new RuntimeException("Unknown pixel type: " + pixelType);
+  }
 
   /**
    * Creates default DisplayChannel nodes for use with DisplayOptions.

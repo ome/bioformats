@@ -226,6 +226,34 @@ public class ImageReader implements IFormatReader {
     if (!id.equals(currentId)) initFile(id);
     return readers[index].getSizeT(id);
   }
+  
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#getPixelType()
+   */
+  public int getPixelType(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return readers[index].getPixelType(id);
+  }
+  
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#getChannelGlobalMinimum(int)
+   */
+  public Double getChannelGlobalMinimum(String id, int theC)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return readers[index].getChannelGlobalMinimum(id, theC);
+  }
+  
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#getChannelGlobalMaximum(int)
+   */
+  public Double getChannelGlobalMaximum(String id, int theC)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return readers[index].getChannelGlobalMaximum(id, theC);
+  }
 
   /** Get the size of the X dimension for the thumbnail. */
   public int getThumbSizeX(String id) throws FormatException, IOException {
@@ -254,6 +282,21 @@ public class ImageReader implements IFormatReader {
   {
     if (!id.equals(currentId)) initFile(id);
     return readers[index].getDimensionOrder(id);
+  }
+  
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#setChannelStatCalculationStatus(boolean)
+   */
+  public void setChannelStatCalculationStatus(boolean on) {
+    for (int i = 0; i < readers.length; i++)
+      readers[i].setChannelStatCalculationStatus(on);
+  }
+
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#getChannelStatCalculationStatus()
+   */
+  public boolean getChannelStatCalculationStatus() {
+    return readers[index].getChannelStatCalculationStatus();
   }
 
   /** Returns whether or not the channels are interleaved. */
@@ -297,6 +340,16 @@ public class ImageReader implements IFormatReader {
   {
     if (!id.equals(currentId)) initFile(id);
     return readers[index].openBytes(id, no);
+  }
+  
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#openBytes(java.lang.String, int, byte[])
+   */
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return readers[index].openBytes(id, no, buf);
   }
 
   /** Obtains the specified image from the given image file. */
@@ -498,6 +551,30 @@ public class ImageReader implements IFormatReader {
       if (readers[i].isThisType(name, open)) return true;
     }
     return false;
+  }
+  
+  /**
+   * Retrieves how many bytes per pixel the current plane or section has.
+   * @param type the pixel type as retrieved from {@link #getPixelType()}.
+   * @return the number of bytes per pixel.
+   * @see getPixelType()
+   */
+  public static int getBytesPerPixel(int type) {
+    switch(type) {
+    case FormatReader.INT8:
+    case FormatReader.UINT8:
+      return 1;
+    case FormatReader.INT16:
+    case FormatReader.UINT16:
+      return 2;
+    case FormatReader.INT32:
+    case FormatReader.UINT32:
+    case FormatReader.FLOAT:
+      return 4;
+    case FormatReader.DOUBLE:
+      return 8;
+    }
+    throw new RuntimeException("Unknown type with id: '" + type + "'");
   }
 
   // -- Internal ImageReader API methods --

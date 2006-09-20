@@ -26,6 +26,7 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+
 import loci.formats.*;
 
 /**
@@ -58,7 +59,10 @@ public class OpenlabRawReader extends FormatReader {
   private int channels;
 
   /** Number of bytes per pixel. */
-  private int bpp;
+  private int bytesPerPixel;
+  
+  /** Pixel type. */
+  private int pixelType;
 
   // -- Constructor --
 
@@ -67,6 +71,14 @@ public class OpenlabRawReader extends FormatReader {
 
 
   // -- FormatReader API methods --
+  
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#getPixelType()
+   */
+  public int getPixelType(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return pixelType;
+  }
 
   /** Checks if the given block is a valid header for a RAW file. */
   public boolean isThisType(byte[] block) {
@@ -108,10 +120,10 @@ public class OpenlabRawReader extends FormatReader {
 
     in.seek(offsets[no / channels] + 288);
 
-    byte[] data = new byte[width*height*bpp];
+    byte[] data = new byte[width*height*bytesPerPixel];
     in.read(data);
 
-    if (bpp == 1) {
+    if (bytesPerPixel == 1) {
       // need to invert the pixels
       for (int i=0; i<data.length; i++) {
         data[i] = (byte) (255 - data[i]);
@@ -126,7 +138,7 @@ public class OpenlabRawReader extends FormatReader {
     throws FormatException, IOException
   {
     return ImageTools.makeImage(openBytes(id, no), width, height,
-      !isRGB(id) ? 1 : channels, false, bpp, false);
+      !isRGB(id) ? 1 : channels, false, bytesPerPixel, false);
   }
 
   /** Closes any open files. */
@@ -161,20 +173,20 @@ public class OpenlabRawReader extends FormatReader {
     width = in.readInt();
     height = in.readInt();
     in.readShort();
-    bpp = in.read();
+    bytesPerPixel = in.read();
     channels = in.read();
 
     if (channels <= 1) channels = 1;
     else channels = 3;
     metadata.put("Width", new Integer(width));
     metadata.put("Height", new Integer(height));
-    metadata.put("Bytes per pixel", new Integer(bpp));
+    metadata.put("Bytes per pixel", new Integer(bytesPerPixel));
 
     for (int i=1; i<numImages; i++) {
-      offsets[i] = offsets[i-1] + 288 + width*height*bpp;
+      offsets[i] = offsets[i-1] + 288 + width*height*bytesPerPixel;
     }
 
-    bpp = ((Integer) metadata.get("Bytes per pixel")).intValue();
+    bytesPerPixel = ((Integer) metadata.get("Bytes per pixel")).intValue();
 
     sizeX[0] = width;
     sizeY[0] = height;
@@ -185,6 +197,20 @@ public class OpenlabRawReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(id);
+    
+    switch (bytesPerPixel) {
+    case 1:  // 8 * 1 = 8
+      pixelType = FormatReader.INT8;
+      break;
+    case 2:  // 8 * 2 = 16
+      pixelType = FormatReader.INT16;
+      break;
+    case 3:  // Unsupported
+      throw new RuntimeException(
+          "Unknown matching for pixel byte width of: " + bytesPerPixel);
+    default:
+      pixelType = FormatReader.FLOAT;
+    }
 
     store.setPixels(
       (Integer) metadata.get("Width"),
@@ -192,7 +218,8 @@ public class OpenlabRawReader extends FormatReader {
       new Integer(numImages),
       new Integer(channels),
       new Integer(1),
-      (bpp < 4) ? ("int" + (8*bpp)) : "float", new Boolean(true),
+      new Integer(pixelType),
+      new Boolean(true),
       "XYZTC",
       null);
   }

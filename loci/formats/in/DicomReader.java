@@ -91,6 +91,9 @@ public class DicomReader extends FormatReader {
 
   /** True if the data is little-endian. */
   protected boolean little;
+  
+  /** The pixel type. */
+  private int pixelType;
 
   private int location;
   private int elementLength;
@@ -108,6 +111,14 @@ public class DicomReader extends FormatReader {
   }
 
   // -- FormatReader API methods --
+  
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#getPixelType()
+   */
+  public int getPixelType(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return pixelType;
+  }
 
   /** Checks if the given block is a valid header for a DICOM file. */
   public boolean isThisType(byte[] block) {
@@ -385,6 +396,21 @@ public class DicomReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(id);
 
+    switch (bitsPerPixel) {
+    case 8:
+      pixelType = FormatReader.INT8;
+      break;
+    case 16:
+      pixelType = FormatReader.INT16;
+      break;
+    case 32:
+      pixelType = FormatReader.INT32;
+      break;
+    default:
+      throw new RuntimeException(
+          "Unknown matching for pixel bit width of: " + bitsPerPixel);
+    }
+    
     // populate OME-XML node
     store.setPixels(
         new Integer((String) metadata.get("Columns")), // SizeX
@@ -392,7 +418,7 @@ public class DicomReader extends FormatReader {
         new Integer(numImages), // SizeZ
         new Integer(1), // SizeC
         new Integer(1), // SizeT
-        "int" + ((String) metadata.get("Bits Allocated")),  // PixelType
+        new Integer(pixelType),  // PixelType
         new Boolean(!little),  // BigEndian
         "XYZTC", // Dimension order
         null); // Use index 0

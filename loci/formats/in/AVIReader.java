@@ -518,21 +518,31 @@ public class AVIReader extends FormatReader {
 
   /** Initialize the OME-XML tree. */
   public void initOMEMetadata() throws FormatException, IOException {
-    int bps = ((Integer) metadata.get("Bits per pixel")).intValue() / 8;
-    int tempBps = bps * 8;
-    String pixType = "int" + (tempBps / bps);
+    int bitsPerPixel = ((Integer) metadata.get("Bits per pixel")).intValue();
+    int bytesPerPixel = bitsPerPixel / 8;
+    
+    int pixelType;
+    if (bitsPerPixel == 8)
+      pixelType = FormatReader.INT8;
+    else if (bitsPerPixel == 16)
+      pixelType = FormatReader.INT16;
+    else if (bitsPerPixel == 32)
+      pixelType = FormatReader.INT32;
+    else
+      throw new FormatException(
+          "Unknown matching for pixel bit width of: " + bitsPerPixel);
 
     String order = "XY";
-    if (bps == 3) order += "CTZ";
+    if (bytesPerPixel == 3) order += "CTZ";
     else order += "TCZ";
 
     getMetadataStore(currentId).setPixels(
       (Integer) metadata.get("Frame width"), // SizeX
       (Integer) metadata.get("Frame height"), // SizeY
       new Integer(1), // SizeZ
-      new Integer(bps), // SizeC
+      new Integer(bytesPerPixel), // SizeC
       new Integer(numImages), // SizeT
-      pixType, // PixelType
+      new Integer(pixelType), // PixelType
       new Boolean(!little), // BigEndian
       order, // DimensionOrder
       null); // Use index 0

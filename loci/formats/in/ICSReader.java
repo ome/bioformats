@@ -76,6 +76,8 @@ public class ICSReader extends FormatReader {
   /** Dimension order. */
   private String order;
 
+  /** The pixel type. */
+  private int pixelType;
 
   // -- Constructor --
 
@@ -84,9 +86,16 @@ public class ICSReader extends FormatReader {
     super("Image Cytometry Standard", new String[] {"ics", "ids"});
   }
 
-
   // -- FormatReader API methods --
-
+  
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#getPixelType()
+   */
+  public int getPixelType(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return pixelType;
+  }
+  
   /** Checks if the given block is a valid header for an ICS file. */
   public boolean isThisType(byte[] block) {
     return false;
@@ -360,17 +369,53 @@ public class ICSReader extends FormatReader {
     if (o.indexOf("T") == -1) o = o + "T";
     if (o.indexOf("C") == -1) o = o + "C";
 
-    String bits = (String) metadata.get("significant_bits");
-    String fmt = (String) metadata.get("format");
+    int bitsPerPixel =
+      Integer.parseInt((String) metadata.get("significant_bits"));
+    String format = (String) metadata.get("format");
     String sign = (String) metadata.get("sign");
 
-    String type;
-    if (sign.equals("unsigned")) type = "U";
-    else type = "";
-
-    if (fmt.equals("real")) type = "float";
-    else if (fmt.equals("integer")) {
-      type = type + "int" + bits;
+    if (format.equals("real"))
+      pixelType = FormatReader.FLOAT;
+    else if (format.equals("integer"))
+    {
+      if (sign.equals("unsigned"))
+      {
+        switch (bitsPerPixel) {
+        case 8:
+          pixelType = FormatReader.INT8;
+          break;
+        case 16:
+          pixelType = FormatReader.INT16;
+          break;
+        case 32:
+          pixelType = FormatReader.INT32;
+          break;
+        default:
+          throw new RuntimeException(
+              "Unknown matching for pixel bit width of: " + bitsPerPixel);
+        }
+      }
+      else
+      {
+        switch (bitsPerPixel) {
+        case 8:
+          pixelType = FormatReader.INT8;
+          break;
+        case 16:
+          pixelType = FormatReader.INT16;
+          break;
+        case 32:
+          pixelType = FormatReader.INT32;
+          break;
+        default:
+          throw new RuntimeException(
+              "Unknown matching for pixel bit width of: " + bitsPerPixel);
+        }
+      }
+    }
+    else
+    {
+      throw new RuntimeException("Unknown pixel format: " + format);
     }
 
     order = o;
@@ -388,7 +433,7 @@ public class ICSReader extends FormatReader {
       new Integer(dimensions[3]), // SizeZ
       new Integer(dimensions[4]), // SizeC
       new Integer(dimensions[5]), // SizeT
-      type, // PixelType
+      new Integer(pixelType), // PixelType
       new Boolean(!littleEndian), // BigEndian
       ord, // DimensionOrder
       null); // Use index 0

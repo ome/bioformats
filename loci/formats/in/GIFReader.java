@@ -28,6 +28,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.Vector;
 import java.io.*;
+
 import loci.formats.*;
 
 /**
@@ -128,6 +129,9 @@ public class GIFReader extends FormatReader {
 
   /** Transparent color index. */
   private int transIndex;
+  
+  /** The pixel type. */
+  private int pixelType;
 
   // LZW working arrays
   private short[] prefix;
@@ -145,6 +149,14 @@ public class GIFReader extends FormatReader {
   }
 
   // -- FormatReader API methods --
+  
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#getPixelType()
+   */
+  public int getPixelType(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return pixelType;
+  }
 
   /** Checks if the given block is a valid header for a GIF file. */
   public boolean isThisType(byte[] block) { return false; }
@@ -387,13 +399,15 @@ public class GIFReader extends FormatReader {
     // populate metadata store
 
     MetadataStore store = getMetadataStore(id);
+    
+    pixelType = FormatReader.INT8;
     store.setPixels(
       new Integer(width),
       new Integer(height),
       new Integer(getSizeZ(id)),
       new Integer(3),
       new Integer(getSizeT(id)),
-      "int8",
+      new Integer(pixelType),
       new Boolean(false),
       getDimensionOrder(id),
       null);

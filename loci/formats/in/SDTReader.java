@@ -26,6 +26,7 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+
 import loci.formats.*;
 
 /**
@@ -90,6 +91,9 @@ public class SDTReader extends FormatReader {
 
   /** Dimensions of the current SDT file's images. */
   protected int width = 128, height = 128;
+  
+  /** Pixel type. */
+  private int pixelType;
 
   protected int timeBins = 1; // TODO
   protected int channels = 1; // TODO
@@ -100,6 +104,14 @@ public class SDTReader extends FormatReader {
   public SDTReader() { super("SPCImage Data", "sdt"); }
 
   // -- FormatReader API methods --
+  
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#getPixelType()
+   */
+  public int getPixelType(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return pixelType;
+  }
 
   /** Checks if the given block is a valid header for an SDT file. */
   public boolean isThisType(byte[] block) { return false; }
@@ -284,10 +296,12 @@ public class SDTReader extends FormatReader {
     currentOrder[0] = "XYZTC";
 
     MetadataStore store = getMetadataStore(id);
+    
+    pixelType = FormatReader.INT16;
     store.setPixels(new Integer(getSizeX(id)), new Integer(getSizeY(id)),
       new Integer(getSizeZ(id)), new Integer(getSizeC(id)),
-      new Integer(getSizeT(id)), "int16", new Boolean(!isLittleEndian(id)),
-      getDimensionOrder(id), null);
+      new Integer(getSizeT(id)), new Integer(pixelType),
+      new Boolean(!isLittleEndian(id)), getDimensionOrder(id), null);
   }
 
 
