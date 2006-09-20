@@ -405,10 +405,10 @@ public class ImageReader implements IFormatReader {
   /* (non-Javadoc)
    * @see loci.formats.IFormatReader#getIndex(java.lang.String, int, int, int)
    */
-  public int getIndex(String id, int z, int c, int t, boolean separated)
+  public int getIndex(String id, int z, int c, int t)
     throws FormatException, IOException
   {
-    return currentReader(id).getIndex(id, z, c, t, separated);
+    return currentReader(id).getIndex(id, z, c, t);
   }
 
   /* (non-Javadoc)
@@ -432,10 +432,10 @@ public class ImageReader implements IFormatReader {
   /* (non-Javadoc)
    * @see loci.formats.IFormatReader#getZCTCoords(java.lang.String, int)
    */
-  public int[] getZCTCoords(String id, int index, boolean separated)
+  public int[] getZCTCoords(String id, int index)
     throws FormatException, IOException
   {
-    return currentReader(id).getZCTCoords(id, index, separated);
+    return currentReader(id).getZCTCoords(id, index);
   }
 
   /* (non-Javadoc)

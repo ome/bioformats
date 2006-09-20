@@ -772,7 +772,7 @@ public abstract class BaseTiffReader extends FormatReader {
       double max = Double.MIN_VALUE;
       for (int t = 0; t < getSizeT(currentId); t++) {
         for (int z = 0; z < getSizeZ(currentId); z++) {
-          int index = getIndex(currentId, z, c, t, false);
+          int index = getIndex(currentId, z, c, t);
           Plane2D plane = openPlane2D(currentId, index);
           for (int x = 0; x < getSizeX(currentId); x++) {
             for (int y = 0; y < getSizeY(currentId); y++) {

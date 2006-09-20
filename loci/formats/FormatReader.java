@@ -304,7 +304,7 @@ public abstract class FormatReader extends FormatHandler
    * Gets the rasterized index corresponding
    * to the given Z, C and T coordinates.
    */
-  public int getIndex(String id, int z, int c, int t, boolean separated)
+  public int getIndex(String id, int z, int c, int t)
     throws FormatException, IOException
   {
     // get DimensionOrder
@@ -335,7 +335,7 @@ public abstract class FormatReader extends FormatHandler
     }
     int origSizeC = cSize;
     boolean rgb = isRGB(id);
-    if (!separated) cSize = 1; // adjust for RGB merging
+    if (rgb) cSize = 1;
 
     // get SizeT
     int tSize = getSizeT(id);
@@ -352,7 +352,7 @@ public abstract class FormatReader extends FormatHandler
       // either one of the ZCT sizes, or the total number of images --
       // or else the input file is invalid
       throw new FormatException("ZCT size vs image count mismatch (rgb=" +
-        rgb + "; separated=" + separated + "; sizeZ=" + sizeZ + ", sizeC=" +
+        rgb + "; sizeZ=" + sizeZ + ", sizeC=" +
         origSizeC + ", sizeT=" + sizeT + ", total=" + num);
     }
 
@@ -371,7 +371,7 @@ public abstract class FormatReader extends FormatHandler
    * Gets the Z, C and T coordinates corresponding
    * to the given rasterized index value.
    */
-  public int[] getZCTCoords(String id, int index, boolean separated)
+  public int[] getZCTCoords(String id, int index)
     throws FormatException, IOException
   {
     // get DimensionOrder
@@ -396,7 +396,7 @@ public abstract class FormatReader extends FormatHandler
     if (cSize <= 0) throw new FormatException("Invalid C size: " + cSize);
     int origSizeC = cSize;
     boolean rgb = isRGB(id);
-    if (!separated && rgb) cSize = 1; // adjust for RGB merging
+    if (rgb) cSize = 1;
 
     // get SizeT
     int tSize = getSizeT(id);
@@ -411,7 +411,7 @@ public abstract class FormatReader extends FormatHandler
       // either one of the ZCT sizes, or the total number of images --
       // or else the input file is invalid
       throw new FormatException("ZCT size vs image count mismatch (rgb=" +
-        rgb + "; separated=" + separated + "; sizeZ=" + zSize + ", sizeC=" +
+        rgb + "; sizeZ=" + zSize + ", sizeC=" +
         origSizeC + ", sizeT=" + tSize + ", total=" + num);
     }
     if (index < 0 || index >= num) {
@@ -652,10 +652,8 @@ public abstract class FormatReader extends FormatHandler
       int[][] zct = new int[indices.length][];
       int[] indices2 = new int[indices.length];
       for (int i=0; i<indices.length; i++) {
-        zct[i] = reader.getZCTCoords(id, indices[i],
-          imageCount == sizeZ * sizeT * sizeC);
-        indices2[i] = reader.getIndex(id, zct[i][0], zct[i][1], zct[i][2],
-          imageCount == sizeZ * sizeT * sizeC);
+        zct[i] = reader.getZCTCoords(id, indices[i]);
+        indices2[i] = reader.getIndex(id, zct[i][0], zct[i][1], zct[i][2]);
         System.out.print("\tPlane #" + indices[i] + " <=> Z " + zct[i][0] +
           ", C " + zct[i][1] + ", T " + zct[i][2]);
         if (indices[i] != indices2[i]) {
