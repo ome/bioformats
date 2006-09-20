@@ -373,7 +373,7 @@ public class ImageViewer extends JFrame
       // update Z, T and C sliders
       int ndx = getImageIndex();
       int[] zct = {-1, -1, -1};
-      try { zct = in.getZCTCoords(filename, ndx, false); }
+      try { zct = in.getZCTCoords(filename, ndx); }
       catch (Exception exc) { exc.printStackTrace(); }
       if (zct[0] >= 0) {
         zSlider.removeChangeListener(this);
@@ -394,7 +394,7 @@ public class ImageViewer extends JFrame
     else {
       // update N slider
       int ndx = -1;
-      try { ndx = in.getIndex(filename, getZ(), getC(), getT(), false); }
+      try { ndx = in.getIndex(filename, getZ(), getC(), getT()); }
       catch (Exception exc) { exc.printStackTrace(); }
       if (ndx >= 0) {
         nSlider.removeChangeListener(this);

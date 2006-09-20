@@ -177,8 +177,8 @@ public class OMEUpload {
       b = stitch ? fs.openBytes(file, i) : fr.openBytes(file, i);
 
       int[] coords =
-        stitch ? fs.getZCTCoords(file, i, true) :
-        fr.getZCTCoords(file, i, true);
+        stitch ? fs.getZCTCoords(file, i) :
+        fr.getZCTCoords(file, i);
       uploadPlane(b, coords[0], coords[1], coords[2], pix);
     }
 

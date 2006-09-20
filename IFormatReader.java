@@ -124,14 +124,14 @@ public interface IFormatReader extends IFormatHandler {
    * Gets the rasterized index corresponding
    * to the given Z, C and T coordinates.
    */
-  int getIndex(String id, int z, int c, int t, boolean separated)
+  int getIndex(String id, int z, int c, int t)
     throws FormatException, IOException;
 
   /**
    * Gets the Z, C and T coordinates corresponding
    * to the given rasterized index value.
    */
-  int[] getZCTCoords(String id, int index, boolean separated)
+  int[] getZCTCoords(String id, int index)
     throws FormatException, IOException;
 
   /**
