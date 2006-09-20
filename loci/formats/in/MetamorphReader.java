@@ -104,18 +104,6 @@ public class MetamorphReader extends BaseTiffReader {
     }
   }
 
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true).length;
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return getImageCount(id) / getSizeZ(id);
-  }
-
   // -- Internal BaseTiffReader API methods --
 
   /** Populates the metadata hashtable. */
@@ -489,6 +477,11 @@ public class MetamorphReader extends BaseTiffReader {
       if (descr.equals("")) metadata.remove("Comment");
       else put("Comment", descr);
     }
+    try {
+      sizeZ[0] = TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true).length;
+      sizeT[0] = getImageCount(currentId) / sizeZ[0];
+    }
+    catch (Exception e) { }
   }
 
   /*

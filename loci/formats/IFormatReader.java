@@ -112,6 +112,15 @@ public interface IFormatReader extends IFormatHandler {
   int getSeries(String id) throws FormatException, IOException;
 
   /**
+   * Swaps the dimensions according to the given dimension order.  If the given
+   * order is identical to the file's native order, then nothing happens.
+   * Note that this method will throw an exception if X and Y do not appear in
+   * positions 0 and 1 (although X and Y can be reversed).
+   */
+  void swapDimensions(String id, String order)
+    throws FormatException, IOException;
+
+  /**
    * Gets the rasterized index corresponding
    * to the given Z, C and T coordinates.
    */

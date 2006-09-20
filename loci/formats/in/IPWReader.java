@@ -100,38 +100,6 @@ public class IPWReader extends BaseTiffReader {
       TiffTools.SAMPLES_PER_PIXEL, false, 1) > 1);
   }
 
-  /** Get the size of the X dimension. */
-  public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    Hashtable h = ((Hashtable[]) allIFDs.get(new Integer(0)))[0];
-    return TiffTools.getIFDIntValue(h, TiffTools.IMAGE_WIDTH);
-  }
-
-  /** Get the size of the Y dimension. */
-  public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    Hashtable h = ((Hashtable[]) allIFDs.get(new Integer(0)))[0];
-    return TiffTools.getIFDIntValue(h, TiffTools.IMAGE_LENGTH);
-  }
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return Integer.valueOf(metadata.get("frames").toString()).intValue();
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return Integer.parseInt((String) metadata.get("channels"));
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return Integer.parseInt((String) metadata.get("slices"));
-  }
-
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
@@ -244,14 +212,29 @@ public class IPWReader extends BaseTiffReader {
 
     metadata.put("Version", new String(header).trim());
 
-    Integer sizeT = Integer.valueOf((String) metadata.get("slices"));
-    Integer sizeC = Integer.valueOf((String) metadata.get("channels"));
-    Integer sizeZ = Integer.valueOf(metadata.get("frames").toString());
+    Integer tSize = Integer.valueOf((String) metadata.get("slices"));
+    Integer cSize = Integer.valueOf((String) metadata.get("channels"));
+    Integer zSize = Integer.valueOf(metadata.get("frames").toString());
+
+    sizeX = new int[1];
+    sizeY = new int[1];
+    sizeZ = new int[1];
+    sizeC = new int[1];
+    sizeT = new int[1];
+    currentOrder = new String[1];
+
+    Hashtable h = ((Hashtable[]) allIFDs.get(new Integer(0)))[0];
+    sizeX[0] = TiffTools.getIFDIntValue(h, TiffTools.IMAGE_WIDTH);
+    sizeY[0] = TiffTools.getIFDIntValue(h, TiffTools.IMAGE_LENGTH);
+    sizeZ[0] = Integer.valueOf(metadata.get("frames").toString()).intValue();
+    sizeC[0] = Integer.parseInt((String) metadata.get("channels"));
+    sizeT[0] = Integer.parseInt((String) metadata.get("slices"));
+    currentOrder[0] = "XYCTZ";
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(id);
 
-    store.setPixels(null, null, sizeZ, sizeC, sizeT, null,
+    store.setPixels(null, null, zSize, cSize, tSize, null,
       new Boolean(!isLittleEndian(id)), getDimensionOrder(id), null);
     store.setImage(null, null, (String) metadata.get("Version"), null);
   }

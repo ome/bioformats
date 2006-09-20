@@ -137,47 +137,9 @@ public class OpenlabReader extends FormatReader {
     return numSeries;
   }
 
-  /** Get the size of the X dimension. */
-  public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return width[series];
-  }
-
-  /** Get the size of the Y dimension. */
-  public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return height[series];
-  }
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return numImages[series];
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return isRGB(id) ? 3 : 1;
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return 1;
-  }
-
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     return false;
-  }
-
-  /** Return a five-character string representing the dimension order. */
-  public String getDimensionOrder(String id)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return isRGB(id) ? "XYCZT" : "XYZCT";
   }
 
   /** Returns whether or not the channels are interleaved. */
@@ -641,10 +603,20 @@ public class OpenlabReader extends FormatReader {
         new Integer(numImages[i]));
     }
 
+    sizeX = width;
+    sizeY = height;
+    sizeZ = numImages;
+    sizeC = channelCount;
+    sizeT = new int[numSeries];
+    currentOrder = new String[numSeries];
+
     // populate MetadataStore
 
     MetadataStore store = getMetadataStore(id);
     for (int i=0; i<numSeries; i++) {
+      sizeT[i] += 1;
+      currentOrder[i] = isRGB(id) ? "XYCZT" : "XYZCT";
+
       store.setImage("Series " + i, null, null, new Integer(i));
       store.setPixels(
         new Integer(width[i]),

@@ -400,6 +400,18 @@ public abstract class BaseTiffReader extends FormatReader {
       comment = comment.replaceAll("\r", "\n"); // CR to LF
       put("Comment", comment);
     }
+
+    try {
+      sizeX[0] =
+        TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_WIDTH, false, 0);
+      sizeY[0] =
+        TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_LENGTH, false, 0);
+      sizeZ[0] = 1;
+      sizeC[0] = isRGB(currentId) ? 3 : 1;
+      sizeT[0] = ifds.length;
+      currentOrder[0] = "XYCZT";
+    }
+    catch (Exception e) { }
   }
 
   /**
@@ -585,48 +597,10 @@ public abstract class BaseTiffReader extends FormatReader {
     return metadata.get(field);
   }
 
-  /** Get the size of the X dimension. */
-  public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_WIDTH, false, 0);
-  }
-
-  /** Get the size of the Y dimension. */
-  public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_LENGTH, false, 0);
-  }
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    return 1;
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return isRGB(id) ? 3 : 1;
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return ifds.length;
-  }
-
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return TiffTools.isLittleEndian(ifds[0]);
-  }
-
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
-  public String getDimensionOrder(String id) throws FormatException, IOException
-  {
-    return "XYCZT";
   }
 
   /** Returns whether or not the channels are interleaved. */

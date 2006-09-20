@@ -85,49 +85,9 @@ public class ImarisReader extends FormatReader {
     return false;
   }
 
-  /** Get the size of the X dimension. */
-  public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return dims[0];
-  }
-
-  /** Get the size of the Y dimension. */
-  public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return dims[1];
-  }
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return dims[2];
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return dims[3];
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return getImageCount(id) / (dims[2] * dims[3]);
-  }
-
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     return IS_LITTLE;
-  }
-
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
-  public String getDimensionOrder(String id)
-    throws FormatException, IOException
-  {
-    return "XYZCT";
   }
 
   /** Returns whether or not the channels are interleaved. */
@@ -231,6 +191,13 @@ public class ImarisReader extends FormatReader {
         offsets[i*dims[2] + j] = offset + (j * dims[0] * dims[1]);
       }
     }
+
+    sizeX[0] = dims[0];
+    sizeY[0] = dims[1];
+    sizeZ[0] = dims[2];
+    sizeC[0] = dims[3];
+    sizeT[0] = numImages / (dims[2] * dims[3]);
+    currentOrder[0] = "XYZCT";
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(id);

@@ -110,51 +110,10 @@ public class OMEXMLReader extends FormatReader {
     return false;
   }
 
-  /** Get the size of the X dimension. */
-  public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return width[series];
-  }
-
-  /** Get the size of the Y dimension. */
-  public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return height[series];
-  }
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return numZ[series];
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return numChannels[series];
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return numT[series];
-  }
-
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return littleEndian[series];
-  }
-
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
-  public String getDimensionOrder(String id)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return order[series];
   }
 
   /** Returns whether or not the channels are interleaved. */
@@ -435,6 +394,12 @@ public class OMEXMLReader extends FormatReader {
       }
     }
     setSeries(currentId, oldSeries);
+    sizeX = width;
+    sizeY = height;
+    sizeZ = numZ;
+    sizeC = numChannels;
+    sizeT = numT;
+    currentOrder = order;
   }
 
 

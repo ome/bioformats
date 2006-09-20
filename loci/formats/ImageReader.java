@@ -280,6 +280,17 @@ public class ImageReader implements IFormatReader {
     return readers[index].getSeries(id);
   }
 
+  /**
+   * Swaps the dimensions according to the given dimension order.  If the given
+   * order is identical to the file's native order, then nothing happens.
+   */
+  public void swapDimensions(String id, String order)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    readers[index].swapDimensions(id, order);
+  }
+
   /** Obtains the specified image from the given image file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException

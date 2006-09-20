@@ -312,10 +312,24 @@ public class FileStitcher extends FormatReader {
     }
     setDimensions(dims);
 
+    sizeX = new int[1];
+    sizeY = new int[1];
+    sizeZ = new int[1];
+    sizeC = new int[1];
+    sizeT = new int[1];
+    currentOrder = new String[1];
+
+    sizeX[0] = dimensions[0];
+    sizeY[0] = dimensions[1];
+    sizeZ[0] = dimensions[2];
+    sizeC[0] = dimensions[3];
+    sizeT[0] = dimensions[4];
+    currentOrder[0] = reader.getDimensionOrder(id);
+
     MetadataStore s = reader.getMetadataStore(id);
     s.setPixels(new Integer(dimensions[0]), new Integer(dimensions[1]),
       new Integer(dimensions[2]), new Integer(dimensions[3]),
-      new Integer(dimensions[3]), null, null, null, null);
+      new Integer(dimensions[4]), null, null, null, null);
     setMetadataStore(s);
   }
 
@@ -362,9 +376,9 @@ public class FileStitcher extends FormatReader {
 
     int[] counts = fp.getCount();
 
-    int sizeZ = 1;
-    int sizeC = 1;
-    int sizeT = 1;
+    int zSize = 1;
+    int cSize = 1;
+    int tSize = 1;
 
     String ordering = "";
 
@@ -408,28 +422,28 @@ public class FileStitcher extends FormatReader {
 
         if (max == zpos) {
           ordering += "Z";
-          sizeZ = counts[j];
+          zSize = counts[j];
         }
         else if (max == cpos) {
-          if (sizeC == 1 && !isRGB(currentId)) {
+          if (cSize == 1 && !isRGB(currentId)) {
             ordering += "C";
-            sizeC = counts[j];
+            cSize = counts[j];
           }
           else {
-            if (sizeZ == 1) {
+            if (zSize == 1) {
               ordering += "Z";
-              sizeZ = counts[j];
+              zSize = counts[j];
             }
-            else if (sizeT == 1) {
+            else if (tSize == 1) {
               ordering += "T";
-              sizeT = counts[j];
+              tSize = counts[j];
             }
-            else sizeC *= counts[j];
+            else cSize *= counts[j];
           }
         }
         else {
           ordering += "T";
-          sizeT = counts[j];
+          tSize = counts[j];
         }
       }
       else {
@@ -440,18 +454,18 @@ public class FileStitcher extends FormatReader {
           if (!varyZ && !varyC && !varyT) {
             if (counts[j] != 1) {
               // we already set this dimension
-              if (sizeZ == 1) {
-                sizeZ = sizeC;
+              if (zSize == 1) {
+                zSize = cSize;
                 ordering += "Z";
               }
-              else if (sizeT == 1) {
-                sizeT = sizeC;
+              else if (tSize == 1) {
+                tSize = cSize;
                 ordering += "T";
               }
             }
 
             if (ordering.indexOf("C") == -1) ordering += "C";
-            sizeC = counts[j];
+            cSize = counts[j];
           }
         }
         else {
@@ -459,11 +473,11 @@ public class FileStitcher extends FormatReader {
 
           if (dimensions[2] == 1) {
             ordering += "Z";
-            sizeZ = counts[j];
+            zSize = counts[j];
           }
           else if (dimensions[4] == 1) {
             ordering += "T";
-            sizeT = counts[j];
+            tSize = counts[j];
           }
         }
       }
@@ -471,25 +485,25 @@ public class FileStitcher extends FormatReader {
 
     // reset the dimensions, preserving internal sizes
 
-    dimensions[3] *= sizeC;
+    dimensions[3] *= cSize;
 
-    if (sizeZ > 1 && dimensions[2] > 1) {
+    if (zSize > 1 && dimensions[2] > 1) {
       if (dimensions[4] == 1) {
         dimensions[4] = dimensions[2];
-        dimensions[2] = sizeZ;
+        dimensions[2] = zSize;
       }
-      else dimensions[2] *= sizeZ;
+      else dimensions[2] *= zSize;
     }
-    else dimensions[2] *= sizeZ;
+    else dimensions[2] *= zSize;
 
-    if (sizeT > 1 && dimensions[4] > 1) {
+    if (tSize > 1 && dimensions[4] > 1) {
       if (dimensions[2] == 1) {
         dimensions[2] = dimensions[4];
-        dimensions[4] = sizeT;
+        dimensions[4] = tSize;
       }
-      else dimensions[4] *= sizeT;
+      else dimensions[4] *= tSize;
     }
-    else dimensions[4] *= sizeT;
+    else dimensions[4] *= tSize;
 
     // make sure ordering is right
     String begin = "";

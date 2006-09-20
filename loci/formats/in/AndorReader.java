@@ -45,15 +45,6 @@ public class AndorReader extends BaseTiffReader {
   private static final int MMHEADER = 34361;
   private static final int MMSTAMP = 34362;
 
-  /** Number of optical sections in the file */
-  private int sizeZ = 1;
-
-  /** Number of channels in the file */
-  private int sizeC = 1;
-
-  /** Number of timepoints in the file */
-  private int sizeT = 1;
-
   /** The dimension order of the file */
   private String order;
 
@@ -87,34 +78,6 @@ public class AndorReader extends BaseTiffReader {
       }
       return false;
     }
-  }
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return sizeZ;
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return sizeC;
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return sizeT;
-  }
-
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
-  public String getDimensionOrder(String id) throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return order;
   }
 
   // -- FormatHandler API methods --
@@ -228,12 +191,12 @@ public class AndorReader extends BaseTiffReader {
 
         // set OME-XML dimensions appropriately
 
-        if (name.equals("Z")) sizeZ = size;
-        else if (name.equals("Time")) sizeT = size;
+        if (name.equals("Z")) sizeZ[series] = size;
+        else if (name.equals("Time")) sizeT[series] = size;
         else if (!name.trim().equals("") && !name.equals("x") &&
           !name.equals("y"))
         {
-          sizeC *= size;
+          sizeC[series] *= size;
         }
       }
     }
@@ -328,6 +291,7 @@ public class AndorReader extends BaseTiffReader {
       else if (order.indexOf("T") < 0) order = order + "T";
       else if (order.indexOf("C") < 0) order = order + "C";
     }
+    currentOrder[series] = order;
   }
 
   // -- Main method --

@@ -137,57 +137,10 @@ public class LeicaReader extends BaseTiffReader {
     return tiff.isRGB((String) files[series].get(0));
   }
 
-  /** Get the size of the X dimension. */
-  public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
-      initFile(id);
-    }
-    return widths[series];
-  }
-
-  /** Get the size of the Y dimension. */
-  public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
-      initFile(id);
-    }
-    return heights[series];
-  }
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
-      initFile(id);
-    }
-    return zs[series];
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
-      initFile(id);
-    }
-    return numChannels[series];
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    return 1;
-  }
-
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return littleEndian;
-  }
-
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
-  public String getDimensionOrder(String id)
-    throws FormatException, IOException
-  {
-    return "XYZTC";
   }
 
   /** Returns whether or not the channels are interleaved. */
@@ -450,6 +403,7 @@ public class LeicaReader extends BaseTiffReader {
     }
     catch (FormatException exc) { }
     catch (IOException exc) { }
+    catch (NullPointerException exc) { }
     return false;
   }
 
@@ -750,6 +704,13 @@ public class LeicaReader extends BaseTiffReader {
       }
     }
 
+    sizeX = widths;
+    sizeY = heights;
+    sizeZ = zs;
+    sizeC = numChannels;;
+    sizeT = new int[numSeries];
+    currentOrder = new String[numSeries];
+
     // The metadata store we're working with.
     MetadataStore store = new DummyMetadataStore();
     try {
@@ -767,6 +728,10 @@ public class LeicaReader extends BaseTiffReader {
     */
 
     for (int i=0; i<numSeries; i++) {
+      if (sizeC[i] == 0) sizeC[i] = 1;
+      sizeT[i] += 1;
+      currentOrder[i] = "XYZTC";
+
       store.setPixels(
         new Integer(widths[i]),
         new Integer(heights[i]),

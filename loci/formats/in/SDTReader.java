@@ -115,49 +115,9 @@ public class SDTReader extends FormatReader {
     return false;
   }
 
-  /** Gets the size of the X dimension. */
-  public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return width;
-  }
-
-  /** Gets the size of the Y dimension. */
-  public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return height;
-  }
-
-  /** Gets the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return 1;
-  }
-
-  /** Gets the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    //return timeBins * channels;
-    return numImages; //TODO
-  }
-
-  /** Gets the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    return 1;
-  }
-
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     return true;
-  }
-
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
-  public String getDimensionOrder(String id)
-    throws FormatException, IOException
-  {
-    return "XYZTC";
   }
 
   /** Returns whether or not the channels are interleaved. */
@@ -315,6 +275,13 @@ public class SDTReader extends FormatReader {
 
     // compute number of image planes
     numImages = (int) ((in.length() - offset) / (2 * 64 * width * height));
+
+    sizeX[0] = width;
+    sizeY[0] = height;
+    sizeZ[0] = 1;
+    sizeC[0] = numImages;
+    sizeT[0] = 1;
+    currentOrder[0] = "XYZTC";
 
     MetadataStore store = getMetadataStore(id);
     store.setPixels(new Integer(getSizeX(id)), new Integer(getSizeY(id)),

@@ -86,49 +86,9 @@ public class OpenlabRawReader extends FormatReader {
     return channels > 1;
   }
 
-  /** Get the size of the X dimension. */
-  public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return width;
-  }
-
-  /** Get the size of the Y dimension. */
-  public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return height;
-  }
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return numImages;
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return channels;
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return 1;
-  }
-
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     return false;
-  }
-
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
-  public String getDimensionOrder(String id)
-    throws FormatException, IOException
-  {
-    return "XYZTC";
   }
 
   /** Returns whether or not the channels are interleaved. */
@@ -215,6 +175,13 @@ public class OpenlabRawReader extends FormatReader {
     }
 
     bpp = ((Integer) metadata.get("Bytes per pixel")).intValue();
+
+    sizeX[0] = width;
+    sizeY[0] = height;
+    sizeZ[0] = numImages;
+    sizeC[0] = channels;
+    sizeT[0] = 1;
+    currentOrder[0] = "XYZTC";
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(id);

@@ -107,50 +107,9 @@ public class LegacyZVIReader extends FormatReader {
     return (bytesPerPixel == 3) || (bytesPerPixel > 4);
   }
 
-  /** Get the size of the X dimension. */
-  public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return openImage(id, 0).getWidth();
-  }
-
-  /** Get the size of the Y dimension. */
-  public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return openImage(id, 0).getHeight();
-  }
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return numZ;
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return numC;
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return numT;
-  }
-
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     return true;
-  }
-
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
-  public String getDimensionOrder(String id)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return dimensionOrder;
   }
 
   /** Returns whether or not the channels are interleaved. */
@@ -245,7 +204,7 @@ public class LegacyZVIReader extends FormatReader {
     numC = 0;
     numT = 0;
     int numI = 0;
-    
+
     while (true) {
       // search for start of next image header
       long header = findBlock(in, ZVI_MAGIC_BLOCK_1, pos);
@@ -309,7 +268,7 @@ public class LegacyZVIReader extends FormatReader {
 //+ (mb) decoding strategy modification
       //      Some zvi images have the following structure:
       //        ZVI_SIG                    Decoding:
-      //        ZVI_MAGIC_BLOCK_1 
+      //        ZVI_MAGIC_BLOCK_1
       //        ZVI_MAGIC_BLOCK_2      <== Start of header information
       //        - Z-slice (4 bytes)     -> theZ = 0
       //        - channel (4 bytes)     -> theC = 0
@@ -319,12 +278,12 @@ public class LegacyZVIReader extends FormatReader {
       //        - channel (4 bytes)     -> theC actual value
       //        - timestep (4 bytes)    -> theT actual value
       //        ZVI_MAGIC_BLOCK_3      <== End of header information
-      //        ... 
-      //        
+      //        ...
+      //
       //        Two consecutive Start of header information ZVI_MAGIC_BLOCK_2
       //        make test 3) of original decoding strategy fail. The first
       //        null values are taken as theZ, theC and theT values, the
-      //        following actual values are ignored. 
+      //        following actual values are ignored.
       //        Parsing the rest of the file appears to be ok.
       //
       //        New decoding strategy looks for the last header information
@@ -384,8 +343,8 @@ public class LegacyZVIReader extends FormatReader {
 
       // perform some checks on the header info
       // populate Z, C and T index collections
-      zSet.add(new Integer(theZ));    
-      cSet.add(new Integer(theC));    
+      zSet.add(new Integer(theZ));
+      cSet.add(new Integer(theC));
       tSet.add(new Integer(theT));
       numI++;
       // sorry not a very clever way to find dimension order
@@ -395,7 +354,7 @@ public class LegacyZVIReader extends FormatReader {
 
       if ((numI == 3) && (zSet.size() == 2) && (cFlag == 1)) {
         dimensionOrder = "XYCZT";
-      }  
+      }
       if ((numI == 3) && (tSet.size() == 2) && (cFlag == 1)) {
         dimensionOrder = "XYCTZ";
       }
@@ -410,11 +369,18 @@ public class LegacyZVIReader extends FormatReader {
       }
       if ((numI == 3) && (zSet.size() == 2) && (tFlag == 1)) {
         dimensionOrder = "XYTZC";
-      }  
+      }
 
       // save this image block's position
       blockList.add(zviBlock);
       pos += width * height * bytesPerPixel;
+
+      sizeX[0] = openImage(id, 0).getWidth();
+      sizeY[0] = openImage(id, 0).getHeight();
+      sizeZ[0] = numZ;
+      sizeC[0] = numC;
+      sizeT[0] = numT;
+      currentOrder[0] = dimensionOrder;
 
       // Populate metadata store
 
@@ -437,9 +403,9 @@ public class LegacyZVIReader extends FormatReader {
       throw new FormatException("No image data found." + WHINING);
     }
     // number of Z, C and T index
-    numZ = zSet.size();    
+    numZ = zSet.size();
     numC = cSet.size();
-    numT = tSet.size();  
+    numT = tSet.size();
     if (numZ * numC * numT != blockList.size()) {
       System.err.println("Warning: image counts do not match. " + WHINING);
     }
@@ -574,7 +540,7 @@ public class LegacyZVIReader extends FormatReader {
           System.arraycopy(imageBytes, index, b, 0, bytesPerChannel);
           index += bytesPerChannel;
           // our zvi images are 16 bit per pixel (BitsPerPixel) but
-          // with an Acquisition Bit Depth of 12 
+          // with an Acquisition Bit Depth of 12
           samples[c][i] = (short)(DataTools.bytesToShort(b, true)*8);
         }
       }
