@@ -723,8 +723,8 @@ public abstract class FormatReader extends FormatHandler
       System.out.println("Series #" + j + ":");
       System.out.println("\tImage count = " + imageCount);
       System.out.print("\tRGB = " + rgb);
-      if (rgb && separate && !merge) System.out.print(" (separated)");
-      else if (!rgb && !separate) System.out.print(" (merged)");
+      if (merge) System.out.print(" (merged)");
+      else if (separate) System.out.print(" (separated)");
       System.out.println();
       System.out.println("\tWidth = " + sizeX);
       System.out.println("\tHeight = " + sizeY);
