@@ -51,11 +51,15 @@ public class PerkinElmerReader extends FormatReader {
   /** Number of channels. */
   private int channels;
 
+  /** Flag indicating that the image data is in TIFF format. */
+  private boolean isTiff = true;
+
   // -- Constructor --
 
   /** Constructs a new PerkinElmer reader. */
   public PerkinElmerReader() {
-    super("PerkinElmer", new String[] {"csv", "htm", "tim", "zpo"});
+    super("PerkinElmer", new String[] {"rec", "cfg", "ano", "2", "3", "4",
+      "csv", "htm", "tim", "zpo"});
     tiff = new TiffReader();
   }
 
@@ -78,13 +82,15 @@ public class PerkinElmerReader extends FormatReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    return tiff.isRGB(files[0]);
+    if (isTiff) return tiff.isRGB(files[0]);
+    return false;
   }
 
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return tiff.isLittleEndian(files[0]);
+    if (isTiff) return tiff.isLittleEndian(files[0]);
+    return true;
   }
 
   /** Returns whether or not the channels are interleaved. */
@@ -99,7 +105,14 @@ public class PerkinElmerReader extends FormatReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    return tiff.openBytes(files[no / channels], 0);
+    if (isTiff) return tiff.openBytes(files[no / channels], 0);
+ 
+    String file = files[no / channels];
+    RandomAccessStream s = new RandomAccessStream(file);
+    byte[] b = new byte[(int) s.length() - 6]; // each file has 6 magic bytes
+    s.skipBytes(6);
+    s.read(b);
+    return b;
   }
 
   /** Obtains the specified image from the given PerkinElmer file. */
@@ -113,7 +126,11 @@ public class PerkinElmerReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-    return tiff.openImage(files[no / channels], 0);
+    if (isTiff) return tiff.openImage(files[no / channels], 0);
+  
+    byte[] b = openBytes(id, no);
+    int bpp = b.length / (sizeX[0] * sizeY[0]);
+    return ImageTools.makeImage(b, sizeX[0], sizeY[0], 1, false, bpp, true);
   }
 
   /** Closes any open files. */
@@ -132,6 +149,9 @@ public class PerkinElmerReader extends FormatReader {
 
     // check if we have any of the required header file types
 
+    int cfgPos = -1;
+    int anoPos = -1;
+    int recPos = -1;
     int timPos = -1;
     int csvPos = -1;
     int zpoPos = -1;
@@ -154,40 +174,71 @@ public class PerkinElmerReader extends FormatReader {
       int d = ls[i].lastIndexOf(".");
       String s = dot < 0 ? ls[i] : ls[i].substring(0, d);
 
+      String filename = ls[i].toLowerCase();
+
       if (s.startsWith(check) || check.startsWith(s) ||
         ((prefix != null) && (s.startsWith(prefix))))
       {
+        if (cfgPos == -1) {
+          if (filename.endsWith(".cfg")) {
+            cfgPos = i;
+            prefix = ls[i].substring(0, d);
+          }
+        }
+
+        if (anoPos == -1) {
+          if (filename.endsWith(".ano")) {
+            anoPos = i;
+            prefix = ls[i].substring(0, d);
+          }
+        }
+
+        if (recPos == -1) {
+          if (filename.endsWith(".rec")) {
+            recPos = i;
+            prefix = ls[i].substring(0, d);
+          }
+        }
+
         if (timPos == -1) {
-          if (ls[i].toLowerCase().endsWith(".tim")) {
+          if (filename.endsWith(".tim")) {
             timPos = i;
             prefix = ls[i].substring(0, d);
           }
         }
         if (csvPos == -1) {
-          if (ls[i].toLowerCase().endsWith(".csv")) {
+          if (filename.endsWith(".csv")) {
             csvPos = i;
             prefix = ls[i].substring(0, d);
           }
         }
         if (zpoPos == -1) {
-          if (ls[i].toLowerCase().endsWith(".zpo")) {
+          if (filename.endsWith(".zpo")) {
             zpoPos = i;
             prefix = ls[i].substring(0, d);
           }
         }
         if (htmPos == -1) {
-          if (ls[i].toLowerCase().endsWith(".htm")) {
+          if (filename.endsWith(".htm")) {
             htmPos = i;
             prefix = ls[i].substring(0, d);
           }
         }
 
-        if (ls[i].toLowerCase().endsWith(".tif") ||
-          ls[i].toLowerCase().endsWith(".tiff"))
-        {
+        if (filename.endsWith(".tif") || filename.endsWith(".tiff")) {
           files[filesPt] = workingDirPath + ls[i];
           filesPt++;
         }
+
+        try {
+          String extension = filename.substring(filename.lastIndexOf(".") + 1);
+          int num = Integer.parseInt(extension);
+          isTiff = false;
+          files[filesPt] = workingDirPath + ls[i];
+          filesPt++;
+        }
+        catch (Exception e) { }
+
       }
     }
 
@@ -223,7 +274,16 @@ public class PerkinElmerReader extends FormatReader {
       // there are 9 additional tokens, but I don't know what they're for
 
       while (t.hasMoreTokens() && tNum<hashKeys.length) {
-        metadata.put(hashKeys[tNum], t.nextToken());
+        String token = t.nextToken();
+        while ((tNum == 1 || tNum == 2) && !token.trim().equals("0")) {
+          tNum++;
+        }
+
+        if (tNum == 4) {
+          try { Integer.parseInt(token); }
+          catch (Exception e) { tNum++; }
+        }
+        metadata.put(hashKeys[tNum], token);
         tNum++;
       }
     }
@@ -318,14 +378,16 @@ public class PerkinElmerReader extends FormatReader {
     int tokenNum = 0;
     String wavelengths = "1";
     int numTokens = t.countTokens();
+    boolean foundId = false;
+    String prevToken = "";
     while (t.hasMoreTokens()) {
-      if (tokenNum == numTokens - 6) {
-        wavelengths = (String) t.nextToken();
-      }
-      else {
-        t.nextToken();
+      String token = t.nextToken();
+      foundId = token.equals("Wavelengths");
+      if (foundId) {
+        wavelengths = prevToken;  
       }
       tokenNum++;
+      prevToken = token;
     }
 
     channels = Integer.parseInt(wavelengths);
@@ -336,6 +398,17 @@ public class PerkinElmerReader extends FormatReader {
     sizeC[0] = channels;
     sizeT[0] = getImageCount(currentId) / (sizeZ[0] * sizeC[0]);
     currentOrder[0] = "XYCTZ";
+
+    if (sizeZ[0] <= 0) {
+      sizeZ[0] = 1;
+      sizeT[0] = getImageCount(currentId) / (sizeZ[0] * sizeC[0]);
+    }
+    if (sizeC[0] <= 0) {
+      sizeC[0] = 1;
+      sizeT[0] = getImageCount(currentId) / (sizeZ[0] * sizeC[0]);
+    }
+    if (sizeT[0] <= 0) sizeT[0] = 1;
+
 
     // Populate metadata store
 
@@ -372,8 +445,11 @@ public class PerkinElmerReader extends FormatReader {
     String originX = (String) metadata.get("Origin X");
     String originY = (String) metadata.get("Origin Y");
     String originZ = (String) metadata.get("Origin Z");
-    store.setStageLabel(null, new Float(originX), new Float(originY),
+    try {
+      store.setStageLabel(null, new Float(originX), new Float(originY),
                         new Float(originZ), null);
+    }
+    catch (Exception e) { }
   }
 
 
