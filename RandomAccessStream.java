@@ -33,7 +33,7 @@ import java.util.Vector;
  *
  * @author Melissa Linkert, linkert at cs.wisc.edu
  */
-public class RandomAccessStream implements DataInput {
+public class RandomAccessStream extends InputStream implements DataInput {
 
   // -- Constants --
 
@@ -78,6 +78,9 @@ public class RandomAccessStream implements DataInput {
   /** Endianness of the stream. */
   protected boolean littleEndian = false;
 
+  /** Number of bytes by which to extend the stream. */
+  protected int ext = 0;
+
   // -- Constructors --
 
   /**
@@ -108,11 +111,21 @@ public class RandomAccessStream implements DataInput {
 
   // -- RandomAccessStream API methods --
 
+  /** 
+   * Sets the number of bytes by which to extend the stream.  This only applies
+   * to InputStream API methods.
+   */
+  public void setExtend(int ext) { this.ext = ext; }
+
   /** Seeks to the given offset within the stream. */
   public void seek(long pos) throws IOException { afp = (int) pos; }
 
   /** Alias for readByte(). */
-  public int read() throws IOException { return (int) readByte(); }
+  public int read() throws IOException { 
+    int b = (int) readByte(); 
+    if (b == -1 && (afp >= length()) && ext > 0) return 0;
+    return b;
+  }
 
   /** Gets the number of bytes in the file. */
   public long length() throws IOException { return raf.length(); }
@@ -228,31 +241,14 @@ public class RandomAccessStream implements DataInput {
 
   /** Read bytes from the stream into the given array. */
   public int read(byte[] array) throws IOException {
-    int status = checkEfficiency(array.length);
-    int n = 0;
-
-    if (status == DIS) {
-      n = dis.read(array);
-    }
-    else if (status == ARRAY) {
-      n = array.length;
-      if ((buf.length - afp) < array.length) {
-        n = buf.length - afp;
-      }
-      System.arraycopy(buf, afp, array, 0, n);
-    }
-    else {
-      n = raf.read(array);
-    }
-    afp += n;
-    if (status == DIS) fp += n;
-    return n;
+    return read(array, 0, array.length);
   }
 
   /**
    * Read n bytes from the stream into the given array at the specified offset.
    */
   public int read(byte[] array, int offset, int n) throws IOException {
+    int toRead = n;
     int status = checkEfficiency(n);
 
     if (status == DIS) {
@@ -267,6 +263,13 @@ public class RandomAccessStream implements DataInput {
     }
     afp += n;
     if (status == DIS) fp += n;
+    if (n < toRead && ext > 0) {
+      while (n < array.length && ext > 0) {
+        n++;
+        ext--;
+      }
+    }
+
     return n;
   }
 
@@ -275,7 +278,7 @@ public class RandomAccessStream implements DataInput {
     int status = checkEfficiency(array.length);
 
     if (status == DIS) {
-      dis.readFully(array);
+      dis.readFully(array, 0, array.length);
     }
     else if (status == ARRAY) {
       System.arraycopy(buf, afp, array, 0, array.length);
@@ -284,7 +287,7 @@ public class RandomAccessStream implements DataInput {
       if (raf instanceof RandomAccessArray) {
         ((RandomAccessArray) raf).copyArray(array);
       }
-      else raf.readFully(array);
+      else raf.readFully(array, 0, array.length);
     }
     afp += array.length;
     if (status == DIS) fp += array.length;
@@ -310,6 +313,23 @@ public class RandomAccessStream implements DataInput {
     }
     afp += n;
     if (status == DIS) fp += n;
+  }
+
+  // -- InputStream API methods --
+
+  public int available() throws IOException {
+    return dis.available() + ext;
+  }
+
+  public void mark(int readLimit) {
+    dis.mark(readLimit);
+  }
+
+  public boolean markSupported() { return true; }
+
+  public void reset() throws IOException {
+    dis.reset();
+    fp = (int) (length() - dis.available());
   }
 
   // -- Helper methods --
