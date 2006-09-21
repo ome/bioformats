@@ -25,9 +25,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.Arrays;
+import java.io.*;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.StringTokenizer;
 import java.util.Vector;
 import loci.formats.*;
 
@@ -38,90 +39,181 @@ import loci.formats.*;
  */
 public class OIBReader extends FormatReader {
 
+  // -- Constants --
+
+  private static final String NO_POI_MSG = "You need to install Jakarta POI " +
+    "from http://jakarta.apache.org/poi/";
+
+  // -- Static fields --
+
+  private static boolean noPOI = false;
+  private static ReflectedUniverse r = createReflectedUniverse();
+
+  private static ReflectedUniverse createReflectedUniverse() {
+    r = null;
+    try {
+      r = new ReflectedUniverse();
+      r.exec("import org.apache.poi.poifs.filesystem.POIFSFileSystem");
+      r.exec("import org.apache.poi.poifs.filesystem.DirectoryEntry");
+      r.exec("import org.apache.poi.poifs.filesystem.DocumentEntry");
+      r.exec("import org.apache.poi.poifs.filesystem.DocumentInputStream");
+      r.exec("import java.util.Iterator");
+    }
+    catch (Throwable exc) { noPOI = true; }
+    return r;
+  }
+
   // -- Fields --
 
-  /** Flag indicating whether current file is little endian. */
-  protected boolean littleEndian;
+  /** Number of images. */
+  private int nImages;
 
-  /** Number of images in the file. */
-  private int numImages;
-
-  /** Width of normal image. */
+  /** Image width. */
   private int width;
 
-  /** Height of normal image. */
+  /** Image height. */
   private int height;
 
   /** Number of channels. */
-  private int cSize = 1;
+  private int nChannels = 1;
 
-  /** Pixel data. */
-  private Hashtable pixelData;
+  /** Number of timepoints. */
+  private int tSize;
+
+  /* Number of Z slices. */
+  private int zSize;
+
+  /** Number of bytes per pixel. */
+  private int bpp;
+
+  /** Thumbnail width. */
+  private int thumbWidth;
+
+  /** Thumbnail height. */
+  private int thumbHeight;
+
+  /** Hashtable containing the directory entry for each plane. */
+  private Hashtable pixels;
+
+  /**
+   * Hashtable containing the document name for each plane,
+   * indexed by the plane number.
+   */
+  private Hashtable names;
+
+  /** Vector containing Z indices. */
+  private Vector zIndices;
+
+  /** Vector containing C indices. */
+  private Vector cIndices;
+
+  /** Vector containing T indices. */
+  private Vector tIndices;
+  
+  /** Pixel type. */
+  private int pixelType;
+
+  private boolean littleEndian;
 
   // -- Constructor --
 
   /** Constructs a new OIB reader. */
   public OIBReader() { super("Fluoview FV1000 OIB", "oib"); }
 
-
   // -- FormatReader API methods --
+  
+  /* (non-Javadoc)
+   * @see loci.formats.IFormatReader#getPixelType()
+   */
+  public int getPixelType(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return pixelType;
+  }
 
   /** Checks if the given block is a valid header for an OIB file. */
   public boolean isThisType(byte[] block) {
-    return false;
+    return (block[0] == 0xd0 && block[1] == 0xcf &&
+      block[2] == 0x11 && block[3] == 0xe0);
   }
 
   /** Determines the number of images in the given OIB file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    while (getSizeZ(id) * getSizeC(id) * getSizeT(id) != numImages) numImages++;
-    return numImages;
+    return nImages;
   }
 
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return false;
+    return nChannels > 1 && (nChannels * zSize * tSize != nImages);
   }
 
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return littleEndian;
+    return true;
   }
 
   /** Returns whether or not the channels are interleaved. */
   public boolean isInterleaved(String id) throws FormatException, IOException {
-    return false;
+    return true;
   }
 
-  /** Obtains the specified image from the given OIB file as a byte array. */
+  /** Obtains the specified image from the given ZVI file, as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.getBytes(openImage(id, no), false, no);
-  }
-
-  /** Obtains the specified image from the given OIB file. */
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
     if (!id.equals(currentId)) initFile(id);
-
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    byte[] pixels = (byte[]) pixelData.get(new Integer(no));
-    if (pixels == null) {
-      return ImageTools.makeImage(new byte[width*height], width, height,
-        1, false);
-    }
-    RandomAccessStream ra = new RandomAccessStream(pixels);
-    ra.order(true);
+    try {
+      String directory = (String) pixels.get(new Integer(no));
+      String name = (String) names.get(new Integer(no));
 
-    Hashtable[] fds = TiffTools.getIFDs(ra, 0);
-    return TiffTools.getImage(fds[0], ra);
+      r.setVar("dirName", directory);
+      r.exec("root = fs.getRoot()");
+      r.exec("dir = root.getEntry(dirName)");
+      r.setVar("entryName", name);
+      r.exec("document = dir.getEntry(entryName)");
+      r.exec("dis = new DocumentInputStream(document)");
+      r.exec("numBytes = dis.available()");
+      int numbytes = ((Integer) r.getVar("numBytes")).intValue();
+      byte[] b = new byte[numbytes + 4]; // append 0 for final offset
+      r.setVar("data", b);
+      r.exec("dis.read(data)");
+
+      RandomAccessStream stream = new RandomAccessStream(b);
+      Hashtable[] ifds = TiffTools.getIFDs(stream);
+      littleEndian = TiffTools.isLittleEndian(ifds[0]);
+      byte[][] samples = TiffTools.getSamples(ifds[0], stream, 0);
+
+      byte[] rtn = new byte[samples.length * samples[0].length];
+      for (int i=0; i<samples.length; i++) {
+        System.arraycopy(samples[i], 0, rtn, i*samples[i].length, 
+          samples[i].length);
+      }
+      return rtn;
+    }
+    catch (ReflectException r) {
+      noPOI = true;
+      return new byte[0]; 
+    }
+  }
+
+  /** Obtains the specified image from the given ZVI file. */
+  public BufferedImage openImage(String id, int no)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    if (no < 0 || no >= getImageCount(id)) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+    
+    byte[] b = openBytes(id, no);
+    int bytes = b.length / (width * height);
+    return ImageTools.makeImage(b, width, height, bytes == 3 ? 3 : 1,
+      false, bytes == 3 ? 1 : bytes, !littleEndian); 
   }
 
   /** Closes any open files. */
@@ -129,163 +221,215 @@ public class OIBReader extends FormatReader {
     currentId = null;
   }
 
-  /** Initializes the given OIB file. */
+  /** Initializes the given ZVI file. */
   protected void initFile(String id) throws FormatException, IOException {
-    super.initFile(id);
+    if (noPOI) throw new FormatException(NO_POI_MSG);
+    currentId = id;
 
-    pixelData = new Hashtable();
+    metadata = new Hashtable();
+    pixels = new Hashtable();
+    names = new Hashtable();
+    zIndices = new Vector();
+    cIndices = new Vector();
+    tIndices = new Vector();
 
-    OLEParser parser = new OLEParser(id);
-    parser.parse(0);
-    Vector[] files = parser.getFiles();
-
-    for (int i=0; i<files[0].size(); i++) {
-      byte[] data = (byte[]) files[1].get(i);
-      String pathName = ((String) files[0].get(i)).trim();
-      pathName = DataTools.stripString(pathName);
-
-      if (DataTools.stripString(new String(data)).indexOf("Parameters") != -1) {
-        // this file contains INI-style metadata
-
-        String meta = DataTools.stripString(new String(data));
-        try {
-          meta = meta.substring(meta.indexOf("]") + 1);
-          meta = meta.substring(0, meta.lastIndexOf("]"));
-        }
-        catch (Exception e) { meta = ""; }
-
-        boolean setSizeC = false;
-
-        while (meta.length() > 1) {
-          int eqIndex = meta.indexOf("=");
-          try {
-            String key = meta.substring(0, eqIndex);
-            String value =
-              meta.substring(eqIndex + 1, meta.indexOf("\r\n", eqIndex));
-            if (key.length() < 512 && value.length() < 512) {
-              metadata.put(key.trim(), value.trim());
-
-              if (key.indexOf("??") != -1 || value.indexOf("??") != -1 ||
-                key.indexOf("   ") != -1 || value.indexOf("   ") != -1)
-              {
-                break;
-              }
-
-              if (key.trim().endsWith("AbsPositionUnitName") &&
-                value.trim().equals("\"Ch\""))
-              {
-                setSizeC = true;
-              }
-
-              if (setSizeC && key.trim().equals("Number")) {
-                if (Integer.parseInt(value.trim()) > cSize) {
-                  cSize = Integer.parseInt(value.trim());
-                }
-                setSizeC = false;
-              }
-            }
-            meta = meta.substring(meta.indexOf("\r\n", eqIndex));
-          }
-          catch (Exception e) { break; }
-        }
-      }
-
-      if (pathName.indexOf("Stream") != -1) {
-        // first get the image number
-        String num = pathName.substring(pathName.indexOf("Stream") + 6);
-        if (TiffTools.isValidHeader(data)) {
-          if (width == 0 && height == 0) {
-            // get the width and height
-            RandomAccessStream ras = new RandomAccessStream(data);
-            ras.order(true);
-            Hashtable[] ifds = TiffTools.getIFDs(ras);
-            width = TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_WIDTH,
-              false, -1);
-            height = TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_LENGTH,
-              false, -1);
-            pixelData.put(Integer.valueOf(num), data);
-            ras.close();
-            ras = null;
-          }
-          else {
-            RandomAccessStream ra = new RandomAccessStream(data);
-            ra.order(true);
-            try {
-              Hashtable[] ifds = TiffTools.getIFDs(ra);
-              int w = TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_WIDTH,
-                false, -1);
-              int h = TiffTools.getIFDIntValue(ifds[0], TiffTools.IMAGE_LENGTH,
-                false, -1);
-              if (w == width && h == height) {
-                pixelData.put(Integer.valueOf(num), data);
-              }
-            }
-            catch (IOException e) { }
-            catch (IllegalArgumentException e) { }
-            ra.close();
-            ra = null;
-          }
-        }
-      }
-    }
-
-    // align keys in pixelData
-
-    Integer[] keys = (Integer[]) pixelData.keySet().toArray(new Integer[0]);
-    Arrays.sort(keys);
-
-    Hashtable t = new Hashtable();
-    int i = 0;
-    for (int j=0; j<keys.length; j++) {
-      t.put(new Integer(i), pixelData.get(keys[j]));
-      i++;
-    }
-    pixelData = t;
-
-    numImages = pixelData.size();
-
-    sizeX[0] = width;
-    sizeY[0] = height;
-    sizeZ[0] = 1;
-    sizeC[0] = cSize;
-
-    int rtn = numImages / sizeC[0];
-    while (rtn * sizeC[0] < numImages) rtn++;
-    sizeT[0] = rtn;
-    currentOrder[0] = "XYCTZ";
-
-    // initialize metadata
-
-    TiffReader btr = new TiffReader();
-    RandomAccessStream b =
-      new RandomAccessStream((byte[]) pixelData.get(new Integer(0)));
-    b.order(true);
-    Hashtable[] tiffIFDs = TiffTools.getIFDs(b);
-
-    btr.ifds = tiffIFDs;
-    btr.setSizeZ(numImages);
+    nImages = 0;
 
     try {
-      btr.initFile(id);
+      RandomAccessStream ras = new RandomAccessStream(id);
+      if (ras.length() % 4096 != 0) {
+        ras.setExtend(4096 - (int) (ras.length() % 4096));
+      }
+      r.setVar("fis", ras);
+      r.exec("fs = new POIFSFileSystem(fis)");
+      r.exec("dir = fs.getRoot()");
+      parseDir(0, r.getVar("dir"));
+
+      String[] labels = new String[9];
+      String[] dims = new String[9];
+
+      for (int i=0; i<labels.length; i++) {
+        labels[i] = (String) 
+          metadata.get("[Axis " + i + " Parameters Common] - AxisCode");
+        dims[i] = 
+          (String) metadata.get("[Axis " + i + " Parameters Common] - MaxSize");
+      }
+
+      if (nChannels == 0) nChannels++;
+
+      for (int i=0; i<labels.length; i++) {
+        if (labels[i].equals("\"X\"")) width = Integer.parseInt(dims[i]);
+        else if (labels[i].equals("\"Y\"")) height = Integer.parseInt(dims[i]);
+        else if (labels[i].equals("\"C\"")) {
+          nChannels = Integer.parseInt(dims[i]);
+        }
+        else if (labels[i].equals("\"Z\"")) zSize = Integer.parseInt(dims[i]);
+        else if (labels[i].equals("\"T\"")) tSize = Integer.parseInt(dims[i]);
+        else if (!dims[i].equals("0")) nChannels *= Integer.parseInt(dims[i]);
+      }
+
+      if (zSize == 0) zSize++;
+      if (tSize == 0) tSize++;
+
+      sizeX = new int[1];
+      sizeY = new int[1];
+      sizeZ = new int[1];
+      sizeC = new int[1];
+      sizeT = new int[1];
+      currentOrder = new String[1];
+
+      sizeX[0] = width;
+      sizeY[0] = height;
+      sizeZ[0] = zSize;
+      sizeC[0] = nChannels;
+      sizeT[0] = tSize;
+      currentOrder[0] = (zSize > tSize) ? "XYCZT" : "XYCTZ";
+    
+      if (nImages == zSize * tSize * nChannels + 1) nImages--;
     }
+    catch (Throwable t) {
+      noPOI = true;
+      if (DEBUG) t.printStackTrace();
+      initFile(id);
+    }
+
+    try { initMetadata(); }
     catch (Exception e) { }
-
-    btr.ifds = tiffIFDs;
-    btr.initMetadata();
-    //metadata = btr.getMetadata(id); // HACK
-
-    MetadataStore store = getMetadataStore(id);
-    store.setPixels(new Integer(getSizeX(id)), new Integer(getSizeY(id)),
-      new Integer(getSizeZ(id)), new Integer(getSizeC(id)),
-      new Integer(getSizeT(id)), null, new Boolean(!isLittleEndian(id)),
-      "XYCTZ", null);
   }
 
+  // -- Helper methods --
+
+  /** Initialize metadata hashtable and OME-XML structure. */
+  private void initMetadata() throws FormatException, IOException {
+    MetadataStore store = getMetadataStore(currentId);
+    store.setImage((String) metadata.get("DataName"), null, null, null);
+
+    switch (bpp % 3) {
+    case 0:
+    case 1:
+      pixelType = FormatReader.INT8;
+      break;
+    case 2:  // 8 * 2 = 16
+      pixelType = FormatReader.INT16;
+      break;
+    case 4:  // 8 * 4 = 32
+      pixelType = FormatReader.INT32;
+      break;
+    default:
+      throw new RuntimeException(
+          "Unknown matching for pixel byte width of: " + bpp);
+    }
+    
+    store.setPixels(
+      new Integer(getSizeX(currentId)),
+      new Integer(getSizeY(currentId)),
+      new Integer(getSizeZ(currentId)),
+      new Integer(getSizeC(currentId)),
+      new Integer(getSizeT(currentId)),
+      new Integer(pixelType),
+      new Boolean(false),
+      getDimensionOrder(currentId),
+      null);
+
+    /*
+    store.setDimensions(
+      new Float((String) metadata.get("Scale Factor for X")),
+      new Float((String) metadata.get("Scale Factor for Y")),
+      new Float((String) metadata.get("Scale Factor for Z")),
+      null, null, null);
+    */
+  }
+
+  protected void parseDir(int depth, Object dir)
+    throws IOException, FormatException, ReflectException
+  {
+    r.setVar("dir", dir);
+    r.exec("dirName = dir.getName()");
+    r.setVar("depth", depth);
+    r.exec("iter = dir.getEntries()");
+    Iterator iter = (Iterator) r.getVar("iter");
+    while (iter.hasNext()) {
+      r.setVar("entry", iter.next());
+      r.exec("isInstance = entry.isDirectoryEntry()");
+      r.exec("isDocument = entry.isDocumentEntry()");
+      boolean isInstance = ((Boolean) r.getVar("isInstance")).booleanValue();
+      boolean isDocument = ((Boolean) r.getVar("isDocument")).booleanValue();
+      r.setVar("dir", dir);
+      r.exec("dirName = dir.getName()");
+      if (isInstance)  {
+        parseDir(depth + 1, r.getVar("entry"));
+      }
+      else if (isDocument) {
+        r.exec("entryName = entry.getName()");
+        if (DEBUG) {
+          print(depth + 1, "Found document: " + r.getVar("entryName"));
+        }
+        r.exec("dis = new DocumentInputStream(entry)");
+        r.exec("numBytes = dis.available()");
+        int numbytes = ((Integer) r.getVar("numBytes")).intValue();
+        byte[] data = new byte[numbytes + 4]; // append 0 for final offset
+        r.setVar("data", data);
+        r.exec("dis.read(data)");
+
+        String entryName = (String) r.getVar("entryName");
+        String dirName = (String) r.getVar("dirName");
+
+        boolean isContents = entryName.toUpperCase().equals("CONTENTS");
+        Object directory = r.getVar("dir");
+
+        int pt = 0;
+
+        // check the first 2 bytes of the stream
+
+        byte[] b = {data[0], data[1], data[2], data[3]};
+        
+        if (data[0] == 0x42 && data[1] == 0x4d) {
+          // this is the thumbnail
+        }
+        else if (TiffTools.checkHeader(b) != null) {
+          // this is an actual image plane
+          Integer num = new Integer(nImages);
+          pixels.put(num, dirName);
+          names.put(num, entryName);
+          nImages++;
+        }
+        else if (entryName.equals("OibInfo.txt")) { /* ignore this */ }
+        else {
+          // INI-style metadata
+           
+          String ini = new String(data);
+          ini = DataTools.stripString(ini).trim();
+
+          StringTokenizer st = new StringTokenizer(ini, "\n");
+
+          String prefix = "";
+
+          while (st.hasMoreTokens()) {
+            String token = st.nextToken();
+            if (token.indexOf("=") != -1) {
+              String key = token.substring(0, token.indexOf("="));
+              String value = token.substring(token.indexOf("=") + 1);
+              metadata.put(prefix + key.trim(), value.trim());
+            }
+            else prefix = token.trim() + " - ";
+          }
+        }
+
+        r.exec("dis.close()");
+      }
+    }
+  }
+
+  /** Debugging utility method. */
+  public static final void print(int depth, String s) {
+    StringBuffer sb = new StringBuffer();
+    for (int i=0; i<depth; i++) sb.append("  ");
+    sb.append(s);
+    System.out.println(sb.toString());
+  }
 
   // -- Main method --
-
   public static void main(String[] args) throws FormatException, IOException {
     new OIBReader().testRead(args);
   }
-
 }
