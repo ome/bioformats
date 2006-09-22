@@ -554,6 +554,7 @@ public class OpenlabReader extends FormatReader {
 
     if (numSeries == 1) {
       numImages[0] = layerInfoList[0].size();
+      channelCount[0] = firstRGB ? 3 : 1;
     }
     else {
       layerInfoList[0].clear();

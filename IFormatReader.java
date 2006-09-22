@@ -54,7 +54,7 @@ public interface IFormatReader extends IFormatHandler {
 
   /** Get the size of the T dimension. */
   int getSizeT(String id) throws FormatException, IOException;
-  
+
   /**
    * Gets the pixel type.
    * @param id the image's filename.
@@ -66,7 +66,7 @@ public interface IFormatReader extends IFormatHandler {
    * type retrieval.
    */
   int getPixelType(String id) throws FormatException, IOException;
-  
+
   /**
    * Retrieves a specified channel's global minimum.
    * @param id the filename of the base image.
@@ -84,7 +84,7 @@ public interface IFormatReader extends IFormatHandler {
    */
   Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException;
-  
+
   /**
    * Retrieves a specified channel's global maximum.
    * @param id the filename of the base image.
@@ -117,7 +117,7 @@ public interface IFormatReader extends IFormatHandler {
    * within the file.
    */
   String getDimensionOrder(String id) throws FormatException, IOException;
-  
+
   /**
    * Readers can implement potentially performance hindering statistics
    * calculation as part of metadata parsing. This method allows the user of
@@ -128,7 +128,7 @@ public interface IFormatReader extends IFormatHandler {
    * @see getChannelStatCalculationStatus()
    */
   void setChannelStatCalculationStatus(boolean on);
-  
+
   /**
    * Retrieve the status of channel statistics calculation.
    * @return the status.

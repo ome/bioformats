@@ -226,7 +226,7 @@ public class ImageReader implements IFormatReader {
     if (!id.equals(currentId)) initFile(id);
     return readers[index].getSizeT(id);
   }
-  
+
   /* (non-Javadoc)
    * @see loci.formats.IFormatReader#getPixelType()
    */
@@ -234,7 +234,7 @@ public class ImageReader implements IFormatReader {
     if (!id.equals(currentId)) initFile(id);
     return readers[index].getPixelType(id);
   }
-  
+
   /* (non-Javadoc)
    * @see loci.formats.IFormatReader#getChannelGlobalMinimum(int)
    */
@@ -244,7 +244,7 @@ public class ImageReader implements IFormatReader {
     if (!id.equals(currentId)) initFile(id);
     return readers[index].getChannelGlobalMinimum(id, theC);
   }
-  
+
   /* (non-Javadoc)
    * @see loci.formats.IFormatReader#getChannelGlobalMaximum(int)
    */
@@ -283,7 +283,7 @@ public class ImageReader implements IFormatReader {
     if (!id.equals(currentId)) initFile(id);
     return readers[index].getDimensionOrder(id);
   }
-  
+
   /* (non-Javadoc)
    * @see loci.formats.IFormatReader#setChannelStatCalculationStatus(boolean)
    */
@@ -341,7 +341,7 @@ public class ImageReader implements IFormatReader {
     if (!id.equals(currentId)) initFile(id);
     return readers[index].openBytes(id, no);
   }
-  
+
   /* (non-Javadoc)
    * @see loci.formats.IFormatReader#openBytes(java.lang.String, int, byte[])
    */
@@ -552,7 +552,7 @@ public class ImageReader implements IFormatReader {
     }
     return false;
   }
-  
+
   /**
    * Retrieves how many bytes per pixel the current plane or section has.
    * @param type the pixel type as retrieved from {@link #getPixelType()}.
