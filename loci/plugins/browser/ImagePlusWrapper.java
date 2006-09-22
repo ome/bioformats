@@ -173,5 +173,84 @@ public class ImagePlusWrapper {
   public ImagePlus getImagePlus() { return imp; }
 
   public int getNumTotal() { return numTotal; }
+  
+  public static synchronized ImageProcessor getImageProcessor( 
+    String name, FormatReader read, int index) 
+  {
+    String dim;
+    int sizeX,sizeY,sizeZ,sizeT,sizeC;
+    try {
+      dim = read.getDimensionOrder(name);
+      sizeX = read.getSizeX(name);
+      sizeY = read.getSizeY(name);
+      sizeZ = read.getSizeZ(name);
+      sizeT = read.getSizeT(name);
+      sizeC = read.getSizeC(name);
+    }
+    catch (Exception exc) {
+      System.out.println("Ack! ImagePlusWrapper.getImageProcessor() " +
+      "encountered an exception when trying to get the size of various "
+      + "dimensions from the FormatReader passed to it.");
+      return null;
+    }
+    
+    BufferedImage img;
+    try {
+      img = read.openImage(name, index);
+    }
+    catch (Exception exc) {
+      System.out.println("Sorry, but ImagePlusWrapper.getImageProcessor() "
+      + "encountered an exception when trying to open the FormatReader's "
+      + "image with index " + index + ".");
+      return null;
+    }
+    
+    if (img.getWidth() != sizeX || img.getHeight() != sizeY) {
+      try {
+        img = ImageTools.scale(img, sizeX, sizeY);
+      }
+      catch (Exception e) {
+      }
+    }
 
+    ImageProcessor ip = null;
+    WritableRaster raster = img.getRaster();
+    int c = raster.getNumBands();
+    int tt = raster.getTransferType();
+    int w = img.getWidth(), h = img.getHeight();
+    if (c == 1) {
+      if (tt == DataBuffer.TYPE_BYTE) {
+        byte[] b = ImageTools.getBytes(img)[0];
+        if (b.length > w*h) {
+          byte[] tmp = b;
+          b = new byte[w*h];
+          System.arraycopy(tmp, 0, b, 0, b.length);
+        }
+        ip = new ByteProcessor(w, h, b, null);
+      }
+      else if (tt == DataBuffer.TYPE_USHORT) {
+        short[] s = ImageTools.getShorts(img)[0];
+        if (s.length > w*h) {
+          short[] tmp = s;
+          s = new short[w*h];
+          System.arraycopy(tmp, 0, s, 0, s.length);
+        }
+        ip = new ShortProcessor(w, h, s, null);
+      }
+      else if (tt == DataBuffer.TYPE_FLOAT) {
+        float[] f = ImageTools.getFloats(img)[0];
+        if (f.length > w*h) {
+          float[] tmp = f;
+          f = new float[w*h];
+          System.arraycopy(tmp, 0, f, 0, f.length);
+        }
+        ip = new FloatProcessor(w, h, f, null);
+      }
+    }
+    if (ip == null) {
+      ip = new ImagePlus(name, img).getProcessor(); // slow
+    }
+    
+    return ip;
+  }
 }

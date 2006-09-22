@@ -233,7 +233,6 @@ public class LociDataBrowser implements PlugIn {
 
           //manager = new CacheManager(size, minor, major, cm, absname);
           manager = new CacheManager(size, cm, absname);
-          manager.init();
 
           try {
             numZ = cm.getSizeZ(absname);
@@ -259,8 +258,9 @@ public class LociDataBrowser implements PlugIn {
             stack = new ImageStack(cm.getSizeX(absname), cm.getSizeY(absname));
 
             for (int i=0; i<size; i++) {
-              stack.addSlice(absname + " : " + (i+1), manager.getSlice(i));
+              stack.addSlice(absname + " : " + (i+1), manager.getSlice(0,i,0));
             }
+            
 
             if (stack == null || stack.getSize() == 0) {
               IJ.showMessage("No valid files found.");

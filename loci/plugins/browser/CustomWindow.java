@@ -324,6 +324,29 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     }
     repaint();
   }
+  
+  /** Selects and shows slice defined by z, t and c. */
+  public synchronized void showTempSlice(int zVal, int tVal, int cVal) {
+    int index = db.getIndex(zVal - 1, tVal - 1, cVal - 1);
+    if (LociDataBrowser.DEBUG) {
+      IJ.log("showSlice: index=" + index +
+        "; z=" + zVal + "; t=" + tVal + "; c=" + cVal);
+    }
+    showTempSlice(index);
+  }
+  
+  public void showTempSlice(int index) {
+
+    imp.setProcessor("", db.manager.getTempSlice(index));
+    imp.updateAndDraw();
+    
+    if (LociDataBrowser.DEBUG) {
+      IJ.log("invalid index: " + index + " (size = " + imp.getStackSize() +
+        "; zSliceSel = " + zSliceSel.getValue() +
+        "; tSliceSel = " + tSliceSel.getValue() + ")");
+    }
+    repaint();
+  }
 
   // -- ImageWindow methods --
 
@@ -508,8 +531,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
           tSliceSel.setValue(c);
           break;
       }
-
-      showSlice(z, t, c);
     }
     else if (src instanceof JButton) {
       if (animate.getText().equals(ANIM_STRING)) {
@@ -597,7 +618,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   // -- AdjustmentListener methods --
 
   public void adjustmentValueChanged(AdjustmentEvent adjustmentEvent) {
-    Object src = adjustmentEvent.getSource();
+    JScrollBar src = (JScrollBar) adjustmentEvent.getSource();
     if(!setup) {
       if (src == zSliceSel) {
         if(zMap == 0) z = zSliceSel.getValue();
@@ -610,7 +631,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         else if(tMap == 2) c = tSliceSel.getValue();
       }
     }
-    showSlice(z, t, c);
+    if (!src.getValueIsAdjusting() || db.manager == null) showSlice(z, t, c);
+    else showTempSlice(z,t,c);
   }
 
   // -- ChangeListener methods --
