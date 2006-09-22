@@ -60,12 +60,14 @@ public abstract class FormatHandler implements IFormatHandler {
     this.suffixes = suffixes == null ? new String[0] : suffixes;
   }
 
-  // -- FormatHandler API methods --
+  // -- Internal FormatHandler API methods --
 
   /** Creates JFileChooser file filters for this file format. */
   protected void createFilters() {
     filters = new FileFilter[] {new ExtensionFileFilter(suffixes, format)};
   }
+
+  // -- IFormatHandler API methods --
 
   /**
    * Checks if a file matches the type of this format handler.
@@ -89,17 +91,20 @@ public abstract class FormatHandler implements IFormatHandler {
     return false;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
    * @see loci.formats.IFormatHandler#getFormat()
    */
   public String getFormat() { return format; }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
    * @see loci.formats.IFormatHandler#getSuffixes()
    */
   public String[] getSuffixes() { return suffixes; }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
    * @see loci.formats.IFormatHandler#getFileFilters()
    */
   public FileFilter[] getFileFilters() {
@@ -107,7 +112,8 @@ public abstract class FormatHandler implements IFormatHandler {
     return filters;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
    * @see loci.formats.IFormatHandler#getFileChooser()
    */
   public JFileChooser getFileChooser() {
