@@ -107,9 +107,9 @@ public class SEQReader extends BaseTiffReader {
       }
     }
 
-    sizeZ[0] = zSize;
     sizeC[0] = Integer.parseInt((String) metadata.get("channels"));
-    sizeT[0] = tSize;
+    sizeZ[0] = Integer.parseInt((String) metadata.get("frames"));
+    sizeT[0] = Integer.parseInt((String) metadata.get("slices"));
   }
 
   // -- Main method --

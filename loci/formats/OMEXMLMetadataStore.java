@@ -643,7 +643,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
   }
 
   // -- Helper methods --
-  
+
   /**
    * Gets the OME pixel type string from the Bio-Formats enumeration.
    * @param pixelType the <i>pixel type</i> as an enumeration.
@@ -653,7 +653,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
   {
     if (pixelType == null)
       return null;
-    
+
     switch(pixelType.intValue())
     {
     case FormatReader.INT8:

@@ -397,7 +397,17 @@ public class PerkinElmerReader extends FormatReader {
     sizeZ[0] = Integer.parseInt((String) metadata.get("Number of slices"));
     sizeC[0] = channels;
     sizeT[0] = getImageCount(currentId) / (sizeZ[0] * sizeC[0]);
-    pixelType[0] = tiff.getPixelType(files[0]);
+    if (isTiff) pixelType[0] = tiff.getPixelType(files[0]);
+    else {
+      int bpp = openBytes(id, 0).length / (sizeX[0] * sizeY[0]);
+      switch (bpp) {
+        case 1: pixelType[0] = FormatReader.INT8; break;
+        case 2: pixelType[0] = FormatReader.INT16; break;
+        case 3: pixelType[0] = FormatReader.INT8; break;
+        case 4: pixelType[0] = FormatReader.INT32; break;
+      }
+    }
+
     currentOrder[0] = "XYCTZ";
 
     if (sizeZ[0] <= 0) {

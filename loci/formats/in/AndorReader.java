@@ -294,6 +294,30 @@ public class AndorReader extends BaseTiffReader {
     currentOrder[series] = order;
   }
 
+  protected void initMetadataStore() {
+    try {
+      super.initMetadataStore();
+
+      float pixelSizeX = 0.0f, pixelSizeY = 0.0f, pixelSizeZ = 0.0f;
+
+      for (int i=1; i<10; i++) {
+        String name = (String) metadata.get("Dimension " + i + " Name");
+        String size = (String) metadata.get("Dimension " + i + " Resolution");
+
+        if (name != null && size != null) {
+          if (name.equals("x")) pixelSizeX = Float.parseFloat(size);
+          else if (name.equals("y")) pixelSizeY = Float.parseFloat(size); 
+          else if (name.equals("z")) pixelSizeZ = Float.parseFloat(size);
+        }
+      }
+
+      MetadataStore store = getMetadataStore(currentId);
+      store.setDimensions(new Float(pixelSizeX), new Float(pixelSizeY),
+        new Float(pixelSizeZ), null, null, null);
+    }
+    catch (Exception e) { }
+  }
+
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {

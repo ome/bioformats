@@ -265,6 +265,7 @@ public class OIBReader extends FormatReader {
       sizeZ = new int[1];
       sizeC = new int[1];
       sizeT = new int[1];
+      pixelType = new int[1];
       currentOrder = new String[1];
 
       sizeX[0] = width;
@@ -313,6 +314,12 @@ public class OIBReader extends FormatReader {
       new Boolean(false),
       getDimensionOrder(currentId),
       null);
+
+    Float pixX = new Float(metadata.get(
+      "[Reference Image Parameter] - WidthConvertValue").toString());
+    Float pixY = new Float(metadata.get(
+      "[Reference Image Parameter] - HeightConvertValue").toString());
+    store.setDimensions(pixX, pixY, null, null, null, null);
   }
 
   protected void parseDir(int depth, Object dir)

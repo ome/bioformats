@@ -251,6 +251,7 @@ public class ZeissZVIReader extends FormatReader {
       sizeZ = new int[1];
       sizeC = new int[1];
       sizeT = new int[1];
+      pixelType = new int[1];
       currentOrder = new String[1];
 
       sizeX[0] = width;
