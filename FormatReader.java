@@ -116,168 +116,7 @@ public abstract class FormatReader extends FormatHandler
     super(format, suffixes);
   }
 
-  // -- Abstract FormatReader API methods --
-
-  /** Checks if the given block is a valid header for this file format. */
-  public abstract boolean isThisType(byte[] block);
-
-  /** Determines the number of images in the given file. */
-  public abstract int getImageCount(String id)
-    throws FormatException, IOException;
-
-  /** Checks if the images in the file are RGB. */
-  public abstract boolean isRGB(String id)
-    throws FormatException, IOException;
-
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#getPixelType()
-   */
-  public int getPixelType(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return pixelType[series];
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelGlobalMinimum(int)
-   */
-  public Double getChannelGlobalMinimum(String id, int theC)
-    throws FormatException, IOException
-  {
-    throw new UnsupportedOperationException("unimplemented for this format.");
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelGlobalMaximum(int)
-   */
-  public Double getChannelGlobalMaximum(String id, int theC)
-    throws FormatException, IOException
-  {
-    throw new UnsupportedOperationException("unimplemented for this format.");
-  }
-
-  /** Get the size of the X dimension for the thumbnail. */
-  public int getThumbSizeX(String id) throws FormatException, IOException {
-    return THUMBNAIL_DIMENSION;
-  }
-
-  /** Get the size of the Y dimension for the thumbnail. */
-  public int getThumbSizeY(String id) throws FormatException, IOException {
-    return THUMBNAIL_DIMENSION;
-  }
-
-  /** Return true if the data is in little-endian format. */
-  public abstract boolean isLittleEndian(String id)
-    throws FormatException, IOException;
-
-  /** Returns whether or not the channels are interleaved. */
-  public abstract boolean isInterleaved(String id)
-    throws FormatException, IOException;
-
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#setChannelStatCalculationStatus(boolean)
-   */
-  public void setChannelStatCalculationStatus(boolean on) {
-    enableChannelStatCalculation = on;
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelStatCalculationStatus()
-   */
-  public boolean getChannelStatCalculationStatus() {
-    return enableChannelStatCalculation;
-  }
-
-  /** Obtains the specified image from the given file. */
-  public abstract BufferedImage openImage(String id, int no)
-    throws FormatException, IOException;
-
-  /**
-   * Obtains the specified image from the given file as a byte array.
-   */
-  public abstract byte[] openBytes(String id, int no)
-    throws FormatException, IOException;
-
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#openBytes(java.lang.String, int, byte[])
-   */
-  public byte[] openBytes(String id, int no, byte[] buf)
-    throws FormatException, IOException
-  {
-    throw new UnsupportedOperationException("unimplemented for this format.");
-  }
-
-  /** Obtains a thumbnail for the specified image from the given file. */
-  public BufferedImage openThumbImage(String id, int no)
-    throws FormatException, IOException
-  {
-    return ImageTools.scale(openImage(id, no),
-      getThumbSizeX(id), getThumbSizeY(id));
-  }
-
-  /**
-   * Obtains a thumbnail for the specified image from the given file,
-   * as a byte array.  We assume that the thumbnail has the same number of
-   * channels as the original image.  If there is more than one channel, then
-   * the resulting byte array will be of the format "RRR...BBB...GGG...".
-   */
-  public byte[] openThumbBytes(String id, int no)
-    throws FormatException, IOException
-  {
-    BufferedImage img = openThumbImage(id, no);
-    byte[][] bytes = ImageTools.getBytes(img);
-    if (bytes.length == 1) return bytes[0];
-    byte[] rtn = new byte[bytes.length * bytes[0].length];
-    for (int i=0; i<bytes.length; i++) {
-      System.arraycopy(bytes[i], 0, rtn, bytes[0].length * i, bytes[i].length);
-    }
-    return rtn;
-  }
-
-  /** Closes the currently open file. */
-  public abstract void close() throws FormatException, IOException;
-
   // -- Internal FormatReader API methods --
-
-  /** Get the size of the X dimension. */
-  public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return sizeX[series];
-  }
-
-  /** Get the size of the Y dimension. */
-  public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return sizeY[series];
-  }
-
-  /** Get the size of the Z dimension. */
-  public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return sizeZ[series];
-  }
-
-  /** Get the size of the C dimension. */
-  public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return sizeC[series];
-  }
-
-  /** Get the size of the T dimension. */
-  public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return sizeT[series];
-  }
-
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
-  public String getDimensionOrder(String id)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return currentOrder[series];
-  }
 
   /**
    * Initializes the given file (parsing header information, etc.).
@@ -317,21 +156,179 @@ public abstract class FormatReader extends FormatHandler
     catch (IOException e) { return false; }
   }
 
-  /**
-   * Takes a string value and maps it to one of the pixel type enumerations.
-   * @param pixelTypeAsString the pixel type as a string.
-   * @return type enumeration value for use with class constants.
-   */
-  public static int pixelTypeFromString(String pixelTypeAsString) {
-    String uppercaseTypeAsString = pixelTypeAsString.toUpperCase();
-    for (int i = 0; i < pixelsTypes.length; i++) {
-      if (pixelsTypes[i].equals(uppercaseTypeAsString))
-        return i;
-    }
-    throw new RuntimeException("Unknown type: '" + pixelTypeAsString + "'");
+  // -- Internal FormatHandler API methods --
+
+  /** Creates JFileChooser file filters for this file format. */
+  protected void createFilters() {
+    filters = new FileFilter[] {new FormatFileFilter(this)};
   }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
+
+  /** Checks if the given block is a valid header for this file format. */
+  public abstract boolean isThisType(byte[] block);
+
+  /** Determines the number of images in the given file. */
+  public abstract int getImageCount(String id)
+    throws FormatException, IOException;
+
+  /** Checks if the images in the file are RGB. */
+  public abstract boolean isRGB(String id)
+    throws FormatException, IOException;
+
+    /** Get the size of the X dimension. */
+  public int getSizeX(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return sizeX[series];
+  }
+
+  /** Get the size of the Y dimension. */
+  public int getSizeY(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return sizeY[series];
+  }
+
+  /** Get the size of the Z dimension. */
+  public int getSizeZ(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return sizeZ[series];
+  }
+
+  /** Get the size of the C dimension. */
+  public int getSizeC(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return sizeC[series];
+  }
+
+  /** Get the size of the T dimension. */
+  public int getSizeT(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return sizeT[series];
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.IFormatReader#getPixelType()
+   */
+  public int getPixelType(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return pixelType[series];
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.IFormatReader#getChannelGlobalMinimum(int)
+   */
+  public Double getChannelGlobalMinimum(String id, int theC)
+    throws FormatException, IOException
+  {
+    throw new UnsupportedOperationException("unimplemented for this format.");
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.IFormatReader#getChannelGlobalMaximum(int)
+   */
+  public Double getChannelGlobalMaximum(String id, int theC)
+    throws FormatException, IOException
+  {
+    throw new UnsupportedOperationException("unimplemented for this format.");
+  }
+
+  /** Get the size of the X dimension for the thumbnail. */
+  public int getThumbSizeX(String id) throws FormatException, IOException {
+    return THUMBNAIL_DIMENSION;
+  }
+
+  /** Get the size of the Y dimension for the thumbnail. */
+  public int getThumbSizeY(String id) throws FormatException, IOException {
+    return THUMBNAIL_DIMENSION;
+  }
+
+  /** Return true if the data is in little-endian format. */
+  public abstract boolean isLittleEndian(String id)
+    throws FormatException, IOException;
+
+  /**
+   * Return a five-character string representing the dimension order
+   * within the file.
+   */
+  public String getDimensionOrder(String id)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return currentOrder[series];
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.IFormatReader#setChannelStatCalculationStatus(boolean)
+   */
+  public void setChannelStatCalculationStatus(boolean on) {
+    enableChannelStatCalculation = on;
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.IFormatReader#getChannelStatCalculationStatus()
+   */
+  public boolean getChannelStatCalculationStatus() {
+    return enableChannelStatCalculation;
+  }
+
+  /** Returns whether or not the channels are interleaved. */
+  public abstract boolean isInterleaved(String id)
+    throws FormatException, IOException;
+
+  /** Obtains the specified image from the given file. */
+  public abstract BufferedImage openImage(String id, int no)
+    throws FormatException, IOException;
+
+  /**
+   * Obtains the specified image from the given file as a byte array.
+   */
+  public abstract byte[] openBytes(String id, int no)
+    throws FormatException, IOException;
+
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.IFormatReader#openBytes(java.lang.String, int, byte[])
+   */
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    throw new UnsupportedOperationException("unimplemented for this format.");
+  }
+
+  /** Obtains a thumbnail for the specified image from the given file. */
+  public BufferedImage openThumbImage(String id, int no)
+    throws FormatException, IOException
+  {
+    return ImageTools.scale(openImage(id, no),
+      getThumbSizeX(id), getThumbSizeY(id));
+  }
+
+  /**
+   * Obtains a thumbnail for the specified image from the given file,
+   * as a byte array.  We assume that the thumbnail has the same number of
+   * channels as the original image.  If there is more than one channel, then
+   * the resulting byte array will be of the format "RRR...BBB...GGG...".
+   */
+  public byte[] openThumbBytes(String id, int no)
+    throws FormatException, IOException
+  {
+    BufferedImage img = openThumbImage(id, no);
+    byte[][] bytes = ImageTools.getBytes(img);
+    if (bytes.length == 1) return bytes[0];
+    byte[] rtn = new byte[bytes.length * bytes[0].length];
+    for (int i=0; i<bytes.length; i++) {
+      System.arraycopy(bytes[i], 0, rtn, bytes[0].length * i, bytes[i].length);
+    }
+    return rtn;
+  }
+
+  /** Closes the currently open file. */
+  public abstract void close() throws FormatException, IOException;
 
   /**
    * Opens an existing file from the given filename.
@@ -604,13 +601,6 @@ public abstract class FormatReader extends FormatHandler
     return testRead(this, args);
   }
 
-  // -- FormatHandler API methods --
-
-  /** Creates JFileChooser file filters for this file format. */
-  protected void createFilters() {
-    filters = new FileFilter[] {new FormatFileFilter(this)};
-  }
-
   // -- Utility methods --
 
   /**
@@ -639,17 +629,14 @@ public abstract class FormatReader extends FormatHandler
           else if (args[i].equals("-omexml")) omexml = true;
           else if (args[i].equals("-range")) {
             try {
-              start = Integer.parseInt(args[i + 1]);
-              i++;
-              end = Integer.parseInt(args[i + 1]);
-              i++;
+              start = Integer.parseInt(args[++i]);
+              end = Integer.parseInt(args[++i]);
             }
             catch (Exception e) { }
           }
           else if (args[i].equals("-series")) {
             try {
-              series = Integer.parseInt(args[i + 1]);
-              i++;
+              series = Integer.parseInt(args[++i]);
             }
             catch (Exception e) { }
           }
@@ -668,7 +655,7 @@ public abstract class FormatReader extends FormatHandler
       System.out.println("  java " + className +
         " [-nopix] [-merge] [-stitch]");
       System.out.println("    [-separate] [-omexml] " +
-        "[-range start [end]] [-series num] file");
+        "[-range start end] [-series num] file");
       System.out.println();
       System.out.println("     file: the image file to read");
       System.out.println("   -nopix: read metadata only, not pixels");
@@ -833,6 +820,20 @@ public abstract class FormatReader extends FormatHandler
     }
 
     return true;
+  }
+
+  /**
+   * Takes a string value and maps it to one of the pixel type enumerations.
+   * @param pixelTypeAsString the pixel type as a string.
+   * @return type enumeration value for use with class constants.
+   */
+  public static int pixelTypeFromString(String pixelTypeAsString) {
+    String uppercaseTypeAsString = pixelTypeAsString.toUpperCase();
+    for (int i = 0; i < pixelsTypes.length; i++) {
+      if (pixelsTypes[i].equals(uppercaseTypeAsString))
+        return i;
+    }
+    throw new RuntimeException("Unknown type: '" + pixelTypeAsString + "'");
   }
 
 }
