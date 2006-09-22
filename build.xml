@@ -14,6 +14,7 @@ Bio-Formats
                    loci/formats/*
     Main class:    loci.formats.ImageViewer
     Dependencies:  ome-java.jar
+                   poi-loci.jar
     Targets:       style-formats
                    compile-formats
                    jar-formats
@@ -31,6 +32,7 @@ VisBio
                    ij.jar
                    looks-1.2.2.jar
                    ome-java.jar
+                   poi-loci.jar (bio-formats.jar)
                    visad-lite.jar
                    xmlrpc-1.2-b1.jar (ome-java.jar)
     Targets:       style-visbio
@@ -54,7 +56,8 @@ LOCI Plugins for ImageJ
     Dependencies:  bio-formats.jar
                    commons-httpclient-2.0-rc2.jar (ome-java.jar)
                    commons-logging.jar (ome-java.jar)
-                   ome-java.jar
+                   ome-java.jar (bio-formats.jar)
+                   poi-loci.jar (bio-formats.jar)
                    xmlrpc-1.2-b1.jar (ome-java.jar)
     Targets:       style-plugins
                    compile-plugins
@@ -171,9 +174,10 @@ OME Java
     License:   LGPL
 
 Apache Jakarta POI
-    JAR file:  poi-2.5.1-final-20040804.jar
+    JAR file:  poi-loci.jar
     URL:       http://jakarta.apache.org/poi/
-    Notes:     Not used (previously used by Bio-Formats)
+    Notes:     Used by Bio-Formats for OLE support (OIB, ZVI, IPW); based on
+               poi-2.5.1-final-20040804.jar, with bugfixes so that OLE v2 works
     License:   Apache
 
 Skin Look and Feel
@@ -302,6 +306,7 @@ Apache XML-RPC
       includes="${formats.files}">
       <manifest>
         <attribute name="Main-Class" value="loci.formats.ImageViewer"/>
+        <attribute name="Class-Path" value="${formats.classpath}"/>
       </manifest>
     </jar>
   </target>
