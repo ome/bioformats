@@ -65,9 +65,6 @@ public class LIFReader extends FormatReader {
    * 6) extra dimensions
    */
   protected int[][] dims;
-  
-  /** Pixel type. */
-  private int pixelType;
 
   private int width;
   private int height;
@@ -86,14 +83,6 @@ public class LIFReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#getPixelType()
-   */
-  public int getPixelType(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return pixelType;
-  }
-  
   /** Checks if the given block is a valid header for a LIF file. */
   public boolean isThisType(byte[] block) {
     return block[0] == 0x70;
@@ -447,18 +436,12 @@ public class LIFReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(currentId);
 
-    pixelType = FormatReader.INT8;
-    switch (dims[0][5]) {
-      case 12: pixelType = FormatReader.INT16; break;
-      case 16: pixelType = FormatReader.INT16; break;
-      case 32: pixelType = FormatReader.FLOAT; break;
-    }
-
     sizeX = new int[numDatasets];
     sizeY = new int[numDatasets];
     sizeZ = new int[numDatasets];
     sizeC = new int[numDatasets];
     sizeT = new int[numDatasets];
+    pixelType = new int[numDatasets];
     currentOrder = new String[numDatasets];
 
     for (int i=0; i<numDatasets; i++) {
@@ -468,6 +451,13 @@ public class LIFReader extends FormatReader {
       sizeC[i] = dims[i][4];
       sizeT[i] = dims[i][3];
       currentOrder[i] = (sizeZ[i] > sizeT[i]) ? "XYCZT" : "XYCTZ";
+
+      while (dims[i][5] % 8 != 0) dims[i][5]++;
+      switch (dims[i][5]) {
+        case 8: pixelType[i] = FormatReader.INT8; break;
+        case 16: pixelType[i] = FormatReader.INT16; break;
+        case 32: pixelType[i] = FormatReader.FLOAT; break;
+      }
 
       Integer ii = new Integer(i);
 
@@ -479,7 +469,7 @@ public class LIFReader extends FormatReader {
         new Integer(dims[i][2]), // SizeZ
         new Integer(dims[i][4]), // SizeC
         new Integer(dims[i][3]), // SizeT
-        new Integer(pixelType), // PixelType
+        new Integer(pixelType[i]), // PixelType
         new Boolean(!littleEndian), // BigEndian
         getDimensionOrder(currentId), // DimensionOrder
         ii); // Index

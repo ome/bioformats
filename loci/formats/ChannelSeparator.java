@@ -139,6 +139,12 @@ public class ChannelSeparator extends FormatReader {
     return reader.getSizeT(id);
   }
 
+  /** Gets the pixel type as an enumeration from FormatReader. */
+  public int getPixelType(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.getPixelType(id);
+  }
+
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);

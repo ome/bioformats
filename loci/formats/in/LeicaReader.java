@@ -709,6 +709,7 @@ public class LeicaReader extends BaseTiffReader {
     sizeZ = zs;
     sizeC = numChannels;;
     sizeT = new int[numSeries];
+    pixelType = new int[numSeries];
     currentOrder = new String[numSeries];
 
     // The metadata store we're working with.
@@ -718,19 +719,20 @@ public class LeicaReader extends BaseTiffReader {
     }
     catch (Exception e) { }
 
-    /*
-    if (numChannels == 0) numChannels++;
-
-    try {
-      if (isRGB(currentId)) numChannels *= 3;
-    }
-    catch (Exception exc) { }
-    */
-
     for (int i=0; i<numSeries; i++) {
       if (sizeC[i] == 0) sizeC[i] = 1;
       sizeT[i] += 1;
       currentOrder[i] = "XYZTC";
+
+      int tPixelType = ((Integer) metadata.get("Bytes per pixel")).intValue();
+      switch (tPixelType) {
+        case 1: pixelType[i] = FormatReader.INT8; break;
+        case 2: pixelType[i] = FormatReader.INT16; break;
+        case 3: pixelType[i] = FormatReader.INT8; break;
+        case 4: pixelType[i] = FormatReader.INT32; break;
+        case 6: pixelType[i] = FormatReader.INT16; break;
+        case 8: pixelType[i] = FormatReader.DOUBLE; break;
+      }
 
       store.setPixels(
         new Integer(widths[i]),
@@ -738,7 +740,7 @@ public class LeicaReader extends BaseTiffReader {
         new Integer(zs[i]),
         new Integer(numChannels[i] == 0 ? 1 : numChannels[i]), // SizeC
         new Integer(1), // SizeT
-        null, // PixelType
+        new Integer(pixelType[i]), // PixelType
         new Boolean(!littleEndian), // BigEndian
         "XYZTC", // DimensionOrder
         new Integer(i));
@@ -752,18 +754,6 @@ public class LeicaReader extends BaseTiffReader {
       }
       catch (NullPointerException n) { }
     }
-
-//  String voxel = metadata.get("VoxelType").toString();
-//  String photoInterp;
-//  if (voxel.equals("gray normal")) photoInterp = "monochrome";
-//  else if (voxel.equals("RGB")) photoInterp = "RGB";
-//  else photoInterp = "monochrome";
-
-//  OMETools.setAttribute(ome, "ChannelInfo",
-//  "PhotometricInterpretation", photoInterp);
-
-//  OMETools.setAttribute(ome, "ChannelInfo", "SamplesPerPixel",
-//  metadata.get("Samples per pixel").toString());
   }
 
   // -- Main method --

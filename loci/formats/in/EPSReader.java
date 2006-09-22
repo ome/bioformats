@@ -59,9 +59,6 @@ public class EPSReader extends FormatReader {
 
   /** Flag indicating binary data. */
   private boolean binary;
-  
-  /** The pixel type. */
-  private int pixelType;
 
   // -- Constructor --
 
@@ -71,14 +68,6 @@ public class EPSReader extends FormatReader {
   }
 
   // -- FormatReader API methods --
-  
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#getPixelType()
-   */
-  public int getPixelType(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return pixelType;
-  }
 
   /** Checks if the given block is a valid header for an EPS file. */
   public boolean isThisType(byte[] block) {
@@ -274,15 +263,15 @@ public class EPSReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(id);
-    
-    pixelType = FormatReader.INT8;
+
+    pixelType[0] = FormatReader.INT8;
     store.setPixels(
       new Integer(width),
       new Integer(height),
       new Integer(1),
       new Integer(channels),
       new Integer(1),
-      new Integer(pixelType),
+      new Integer(pixelType[0]),
       new Boolean(false),
       "XYCZT",
       null);

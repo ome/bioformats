@@ -237,9 +237,6 @@ public class QTReader extends FormatReader {
 
   /** Flag indicating whether the resource and data fork are separated. */
   private boolean spork;
-  
-  /** Pixel type. */
-  private int pixelType;
 
   // -- Constructor --
 
@@ -252,14 +249,6 @@ public class QTReader extends FormatReader {
   public void setLegacy(boolean legacy) { useLegacy = legacy; }
 
   // -- FormatReader API methods --
-  
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#getPixelType()
-   */
-  public int getPixelType(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return pixelType;
-  }
 
   /** Checks if the given block is a valid header for a QuickTime file. */
   public boolean isThisType(byte[] block) {
@@ -483,15 +472,13 @@ public class QTReader extends FormatReader {
     int bytesPerPixel = bitsPerPixel / 8;
     bytesPerPixel %= 4;
     switch (bytesPerPixel) {
-    case 0:
-    case 1:
-      pixelType = FormatReader.INT8;
-      break;
-    case 2:  // 8 * 2 = 16
-      pixelType = FormatReader.INT16;
-      break;
-    default:
-      throw new RuntimeException(
+      case 0:
+      case 1: pixelType[0] = FormatReader.INT8; break;
+      case 2: pixelType[0] = FormatReader.INT16; break;
+      case 3: pixelType[0] = FormatReader.INT8; break;
+      case 4: pixelType[0] = FormatReader.INT32; break;
+      default:
+        throw new RuntimeException(
           "Unknown matching for pixel byte width of: " + bytesPerPixel);
     }
 
@@ -511,7 +498,7 @@ public class QTReader extends FormatReader {
       new Integer(numImages),
       new Integer(bitsPerPixel < 40 ? 3 : 1),
       new Integer(1),
-      new Integer(pixelType),
+      new Integer(pixelType[0]),
       new Boolean(!little),
       "XYCZT",
       null);
@@ -703,7 +690,6 @@ public class QTReader extends FormatReader {
           in.readDouble();
           //in.readFloat();
           //gamma = in.readFloat();
-          /* debug */ System.out.println("gamma : " + gamma);
           int fieldsPerPlane = in.read();
           interlaced = fieldsPerPlane == 2;
           metadata.put("Codec", codec);

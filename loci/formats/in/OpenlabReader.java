@@ -74,9 +74,6 @@ public class OpenlabReader extends FormatReader {
 
   /** Number of series. */
   private int numSeries;
-  
-  /** Pixel type. */
-  private int pixelType;
 
   private Vector[] layerInfoList;
   private float xCal, yCal, zCal;
@@ -92,14 +89,6 @@ public class OpenlabReader extends FormatReader {
 
   // -- FormatReader API methods --
 
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#getPixelType()
-   */
-  public int getPixelType(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return pixelType;
-  }
-  
   /** Checks if the given block is a valid Openlab LIFF header. */
   public boolean isThisType(byte[] block) {
     return block.length >= 8 && block[0] == 0 && block[1] == 0 &&
@@ -359,7 +348,8 @@ public class OpenlabReader extends FormatReader {
     bytesPerPixel = b.length / (width[series] * height[series]);
     if (bytesPerPixel > 3) bytesPerPixel = 3;
     return ImageTools.makeImage(b, width[series], height[series],
-      bytesPerPixel == 3 ? 3 : 1, false, bytesPerPixel == 3 ? 1 : bytesPerPixel, false);
+      bytesPerPixel == 3 ? 3 : 1, false,
+      bytesPerPixel == 3 ? 1 : bytesPerPixel, false);
   }
 
   /** Closes the currently open file. */
@@ -538,11 +528,16 @@ public class OpenlabReader extends FormatReader {
     numImages = new int[1];
     numImages[0] = tmp.size();
 
+    int[] bpp = new int[3];
+
     boolean firstRGB = openBytes(id, 0).length / 3 >= (width[0] * height[0]);
+    bpp[0] = bytesPerPixel;
     boolean thirdRGB = tmp.size() >= 3 ?
       openBytes(id, 2).length / 3 >= (width[0] * height[0]) : false;
+    bpp[1] = bytesPerPixel;
     boolean fourthRGB = tmp.size() >= 4 ?
       openBytes(id, 3).length / 3 >= (width[0] * height[0]) : false;
+    bpp[2] = bytesPerPixel;
 
     int oldWidth = width[0];
     int oldHeight = height[0];
@@ -556,9 +551,9 @@ public class OpenlabReader extends FormatReader {
     width = new int[numSeries];
     height = new int[numSeries];
     channelCount = new int[numSeries];
+
     if (numSeries == 1) {
       numImages[0] = layerInfoList[0].size();
-      channelCount[0] = firstRGB ? 3 : 1;
     }
     else {
       layerInfoList[0].clear();
@@ -619,31 +614,29 @@ public class OpenlabReader extends FormatReader {
     sizeZ = numImages;
     sizeC = channelCount;
     sizeT = new int[numSeries];
+    pixelType = new int[numSeries];
     currentOrder = new String[numSeries];
 
     // populate MetadataStore
 
     MetadataStore store = getMetadataStore(id);
-    
-    switch (bytesPerPixel) {
-    case 1:  // 8 * 1 = 8
-      pixelType = FormatReader.INT8;
-      break;
-    case 2:  // 8 * 2 = 16
-      pixelType = FormatReader.INT16;
-      break;
-    case 4:  // 8 * 4 = 32
-      pixelType = FormatReader.INT32;
-      break;
-    default:
-      throw new RuntimeException(
-          "Unknown matching for pixel byte width of: " + bytesPerPixel);
-    }
-    
+
     for (int i=0; i<numSeries; i++) {
       sizeT[i] += 1;
       currentOrder[i] = isRGB(id) ? "XYCZT" : "XYZCT";
-      
+
+      if (i != 0) {
+        if (bpp[i] == bpp[0]) bpp[i] = bpp[i + 1];
+      }
+
+      switch (bpp[i]) {
+        case 1: pixelType[i] = FormatReader.INT8; break;
+        case 2: pixelType[i] = FormatReader.INT16; break;
+        case 3: pixelType[i] = FormatReader.INT8; break;
+        case 4: pixelType[i] = FormatReader.INT32; break;
+        case 6: pixelType[i] = FormatReader.INT16; break;
+      }
+
       store.setImage("Series " + i, null, null, new Integer(i));
       store.setPixels(
         new Integer(width[i]),
@@ -651,7 +644,7 @@ public class OpenlabReader extends FormatReader {
         new Integer(numImages[i]),
         new Integer(channelCount[i]),
         new Integer(1),
-        new Integer(pixelType),
+        new Integer(pixelType[i]),
         new Boolean(!isLittleEndian(id)),
         getDimensionOrder(id),
         new Integer(i));

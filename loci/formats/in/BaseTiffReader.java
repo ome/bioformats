@@ -45,10 +45,10 @@ import loci.formats.TiffTools;
  * @author Melissa Linkert linkert at cs.wisc.edu
  */
 public abstract class BaseTiffReader extends FormatReader {
-  
+
   /** The minimum index in the channelMinMax array */
   private static final int MIN = 0;
-  
+
   /** The maximum index in the channelMinMax array */
   private static final int MAX = 0;
 
@@ -414,6 +414,30 @@ public abstract class BaseTiffReader extends FormatReader {
       sizeZ[0] = 1;
       sizeC[0] = isRGB(currentId) ? 3 : 1;
       sizeT[0] = ifds.length;
+
+      int bitsPerSample = TiffTools.getIFDIntValue(ifds[0],
+        TiffTools.BITS_PER_SAMPLE);
+      int bitFormat = TiffTools.getIFDIntValue(ifds[0], TiffTools.SAMPLE_FORMAT);
+
+      while (bitsPerSample % 8 != 0) bitsPerSample++;
+      if (bitsPerSample == 24 || bitsPerSample == 48) bitsPerSample /= 3;
+
+      if (bitFormat == 3) pixelType[0] = FormatReader.FLOAT;
+      else if (bitFormat == 2) {
+        switch (bitsPerSample) {
+          case 8: pixelType[0] = FormatReader.INT8; break;
+          case 16: pixelType[0] = FormatReader.INT16; break;
+          case 32: pixelType[0] = FormatReader.INT32; break;
+        }
+      }
+      else {
+        switch (bitsPerSample) {
+          case 8: pixelType[0] = FormatReader.UINT8; break;
+          case 16: pixelType[0] = FormatReader.UINT16; break;
+          case 32: pixelType[0] = FormatReader.UINT32; break;
+        }
+      }
+
       currentOrder[0] = "XYCZT";
     }
     catch (Exception e) { }
@@ -585,50 +609,6 @@ public abstract class BaseTiffReader extends FormatReader {
   }
 
   /* (non-Javadoc)
-   * @see loci.formats.FormatReader#getPixelType()
-   */
-  public int getPixelType(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    Hashtable ifd = ifds[0];
-
-    // Grab the number of bits per sample and check it to make sure that we've
-    // got a matching to the types that metadata stores are supposed to
-    // support.
-    int bitsPerSample =
-      TiffTools.getIFDIntValue(ifd, TiffTools.BITS_PER_SAMPLE);
-    if (bitsPerSample != 8 && bitsPerSample != 16 && bitsPerSample != 32)
-      throw new RuntimeException(
-          "Unknown matching for pixel bit width of: " + bitsPerSample);
-    
-    int sampleFormat = TiffTools.getIFDIntValue(ifd, TiffTools.SAMPLE_FORMAT);
-    switch (sampleFormat) {
-      case 2:
-        switch (bitsPerSample) {
-        case 8:
-          return FormatReader.INT8;
-        case 16:
-          return FormatReader.INT16;
-        case 32:
-          return FormatReader.INT32;
-        }
-      case 3:
-        return FormatReader.FLOAT;
-      default:
-        // pixelType 4 is unknown but the tiff 6.0 specification (page 80)
-        // suggests to treat these unknowns as unsigned integer as well.
-        switch (bitsPerSample) {
-        case 8:
-          return FormatReader.UINT8;
-        case 16:
-          return FormatReader.UINT16;
-        case 32:
-          return FormatReader.UINT32;
-        }
-    }
-    throw new RuntimeException("Woah! We shouldn't be here!");
-  }
-  
-  /* (non-Javadoc)
    * @see loci.formats.IFormatReader#getChannelGlobalMinimum(int)
    */
   public Double getChannelGlobalMinimum(String id, int theC)
@@ -637,7 +617,7 @@ public abstract class BaseTiffReader extends FormatReader {
     if (!id.equals(currentId)) initFile(id);
     return channelMinMax[theC][MIN];
   }
-  
+
   /* (non-Javadoc)
    * @see loci.formats.IFormatReader#getChannelGlobalMaximum(int)
    */

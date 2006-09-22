@@ -148,6 +148,7 @@ public class ImageJReader extends FormatReader {
     sizeZ[0] = 1;
     sizeC[0] = 3;
     sizeT[0] = 1;
+    pixelType[0] = FormatReader.INT8;
     currentOrder[0] = "XYCZT";
   }
 

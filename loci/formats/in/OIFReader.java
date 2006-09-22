@@ -53,9 +53,6 @@ public class OIFReader extends FormatReader {
 
   /** Helper reader to open the thumbnail. */
   protected BMPReader thumbReader;
-  
-  /** Pixel type. */
-  private int pixelType;
 
   // -- Constructor --
 
@@ -67,14 +64,6 @@ public class OIFReader extends FormatReader {
 
 
   // -- FormatReader API methods --
-  
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#getPixelType()
-   */
-  public int getPixelType(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return pixelType;
-  }
 
   /** Checks if the given block is a valid header for an OIF file. */
   public boolean isThisType(byte[] block) {
@@ -282,20 +271,14 @@ public class OIFReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(oifFile);
-    
+
     int imageDepth = Integer.parseInt((String) metadata.get("ImageDepth"));
     switch (imageDepth) {
-    case 1:  // 8 * 1 = 8
-      pixelType = FormatReader.INT8;
-      break;
-    case 2:  // 8 * 2 = 16
-      pixelType = FormatReader.INT16;
-      break;
-    case 4:  // 8 * 4 = 32
-      pixelType = FormatReader.INT32;
-      break;
-    default:
-      throw new RuntimeException(
+      case 1: pixelType[0] = FormatReader.INT8; break;
+      case 2: pixelType[0] = FormatReader.INT16; break;
+      case 4: pixelType[0] = FormatReader.INT32; break;
+      default:
+        throw new RuntimeException(
           "Unknown matching for pixel depth of: " + imageDepth);
     }
 
@@ -305,7 +288,7 @@ public class OIFReader extends FormatReader {
       new Integer(numImages),
       new Integer(getSizeC(id)),
       new Integer(1),
-      new Integer(pixelType),
+      new Integer(pixelType[0]),
       new Boolean(false),
       "XYZTC",
       null);

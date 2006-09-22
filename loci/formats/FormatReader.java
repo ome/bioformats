@@ -46,7 +46,7 @@ public abstract class FormatReader extends FormatHandler
 
   /** Default thumbnail width and height. */
   protected static final int THUMBNAIL_DIMENSION = 128;
-  
+
   /** Identifies the <i>INT8</i> data type used to store pixel values. */
   public static final int     INT8 = 0;
 
@@ -84,7 +84,7 @@ public abstract class FormatReader extends FormatHandler
     pixelsTypes[FormatReader.FLOAT] = "FLOAT";
     pixelsTypes[FormatReader.DOUBLE] = "DOUBLE";
   }
-  
+
   // -- Fields --
 
   /** Hashtable containing metadata key/value pairs. */
@@ -94,12 +94,12 @@ public abstract class FormatReader extends FormatHandler
   protected int series = 0;
 
   /** Dimension fields. */
-  protected int[] sizeX, sizeY, sizeZ, sizeC, sizeT;
+  protected int[] sizeX, sizeY, sizeZ, sizeC, sizeT, pixelType;
   protected String[] currentOrder;
 
   /** Whether or not we're doing channel stat calculation (no by default). */
   protected boolean enableChannelStatCalculation = false;
-  
+
   /**
    * Current metadata store. Should <b>never</b> be accessed directly as the
    * semantics of {@link #getMetadataStore()} prevent "null" access.
@@ -133,9 +133,10 @@ public abstract class FormatReader extends FormatHandler
    * @see loci.formats.IFormatReader#getPixelType()
    */
   public int getPixelType(String id) throws FormatException, IOException {
-    throw new UnsupportedOperationException("unimplemented for this format.");
+    if (!id.equals(currentId)) initFile(id);
+    return pixelType[series];
   }
-  
+
   /* (non-Javadoc)
    * @see loci.formats.IFormatReader#getChannelGlobalMinimum(int)
    */
@@ -144,7 +145,7 @@ public abstract class FormatReader extends FormatHandler
   {
     throw new UnsupportedOperationException("unimplemented for this format.");
   }
-  
+
   /* (non-Javadoc)
    * @see loci.formats.IFormatReader#getChannelGlobalMaximum(int)
    */
@@ -171,7 +172,7 @@ public abstract class FormatReader extends FormatHandler
   /** Returns whether or not the channels are interleaved. */
   public abstract boolean isInterleaved(String id)
     throws FormatException, IOException;
-  
+
   /* (non-Javadoc)
    * @see loci.formats.IFormatReader#setChannelStatCalculationStatus(boolean)
    */
@@ -195,7 +196,7 @@ public abstract class FormatReader extends FormatHandler
    */
   public abstract byte[] openBytes(String id, int no)
     throws FormatException, IOException;
-  
+
   /* (non-Javadoc)
    * @see loci.formats.IFormatReader#openBytes(java.lang.String, int, byte[])
    */
@@ -293,6 +294,7 @@ public abstract class FormatReader extends FormatHandler
     sizeZ = new int[1];
     sizeC = new int[1];
     sizeT = new int[1];
+    pixelType = new int[1];
     currentOrder = new String[1];
 
     // reinitialize the MetadataStore
@@ -314,7 +316,7 @@ public abstract class FormatReader extends FormatHandler
     }
     catch (IOException e) { return false; }
   }
-  
+
   /**
    * Takes a string value and maps it to one of the pixel type enumerations.
    * @param pixelTypeAsString the pixel type as a string.
@@ -739,6 +741,8 @@ public abstract class FormatReader extends FormatHandler
       System.out.println("\tEndianness = " +
         (little ? "intel (little)" : "motorola (big)"));
       System.out.println("\tDimension order = " + dimOrder);
+      System.out.println("\tPixel type = " +
+        pixelsTypes[reader.getPixelType(id)]);
       System.out.println("\t-----");
       int[] indices;
       if (imageCount > 6) {

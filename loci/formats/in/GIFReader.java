@@ -56,9 +56,6 @@ public class GIFReader extends FormatReader {
   /** Number of frames. */
   private int numFrames;
 
-  /** Alternate GIF reader, for single frame files. */
-  private LegacyGIFReader legacy;
-
   private int status;
 
   /** Full image width. */
@@ -129,9 +126,6 @@ public class GIFReader extends FormatReader {
 
   /** Transparent color index. */
   private int transIndex;
-  
-  /** The pixel type. */
-  private int pixelType;
 
   // LZW working arrays
   private short[] prefix;
@@ -149,14 +143,6 @@ public class GIFReader extends FormatReader {
   }
 
   // -- FormatReader API methods --
-  
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#getPixelType()
-   */
-  public int getPixelType(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return pixelType;
-  }
 
   /** Checks if the given block is a valid header for a GIF file. */
   public boolean isThisType(byte[] block) { return false; }
@@ -186,7 +172,6 @@ public class GIFReader extends FormatReader {
   public byte[] openBytes(String id, int no) throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    if (numFrames == 1) return legacy.openBytes(id, no);
 
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
@@ -209,7 +194,6 @@ public class GIFReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    if (numFrames == 1) return legacy.openImage(id, no);
 
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
@@ -229,8 +213,6 @@ public class GIFReader extends FormatReader {
   /** Initializes the given GIF file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-
-    legacy = new LegacyGIFReader();
 
     status = STATUS_OK;
     in = new RandomAccessStream(id);
@@ -399,15 +381,15 @@ public class GIFReader extends FormatReader {
     // populate metadata store
 
     MetadataStore store = getMetadataStore(id);
-    
-    pixelType = FormatReader.INT8;
+
+    pixelType[0] = FormatReader.INT8;
     store.setPixels(
       new Integer(width),
       new Integer(height),
       new Integer(getSizeZ(id)),
       new Integer(3),
       new Integer(getSizeT(id)),
-      new Integer(pixelType),
+      new Integer(pixelType[0]),
       new Boolean(false),
       getDimensionOrder(id),
       null);

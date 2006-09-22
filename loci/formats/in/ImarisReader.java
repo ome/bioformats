@@ -61,24 +61,13 @@ public class ImarisReader extends FormatReader {
   /** Offsets to each image. */
   private int[] offsets;
 
-  /** The pixel type. */
-  private int pixelType;
-
   // -- Constructor --
 
   /** Constructs a new Imaris reader. */
   public ImarisReader() { super("Bitplane Imaris", "ims"); }
 
-  
+
   // -- FormatReader API methods --
-  
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#getPixelType()
-   */
-  public int getPixelType(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return pixelType;
-  }
 
   /** Checks if the given block is a valid header for an Imaris file. */
   public boolean isThisType(byte[] block) {
@@ -213,14 +202,14 @@ public class ImarisReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(id);
 
-    pixelType = FormatReader.INT8;
+    pixelType[0] = FormatReader.INT8;
     store.setPixels(
       new Integer(dims[0]),
       new Integer(dims[1]),
       new Integer(dims[2]),
       new Integer(dims[3]),
       new Integer(1),
-      new Integer(pixelType),
+      new Integer(pixelType[0]),
       new Boolean(!IS_LITTLE),
       "XYZCT",
       null);

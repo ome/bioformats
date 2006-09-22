@@ -343,6 +343,7 @@ public class OMEXMLReader extends FormatReader {
     numT = new int[numDatasets];
     numZ = new int[numDatasets];
     order = new String[numDatasets];
+    pixelType = new int[numDatasets];
 
     int oldSeries = getSeries(currentId);
 
@@ -357,10 +358,19 @@ public class OMEXMLReader extends FormatReader {
       numChannels[i] = omexml.getSizeC(ndx).intValue();
 
       String type = omexml.getPixelType(ndx);
-      if (type.endsWith("16")) bpp[i] = 2;
-      else if (type.endsWith("32")) bpp[i] = 4;
-      else if (type.equals("float")) bpp[i] = 8;
-      else bpp[i] = 1;
+      if (type.endsWith("16")) {
+        bpp[i] = 2;
+        pixelType[i] = FormatReader.INT16;
+      }
+      else if (type.endsWith("32")) {
+        bpp[i] = 4;
+        pixelType[i] = FormatReader.INT32;
+      }
+      else if (type.equals("float")) {
+        bpp[i] = 4;
+        pixelType[i] = FormatReader.FLOAT;
+      }
+      else { bpp[i] = 1; pixelType[i] = FormatReader.INT8; }
 
       order[i] = omexml.getDimensionOrder(ndx);
 
