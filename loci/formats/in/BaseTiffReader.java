@@ -417,7 +417,8 @@ public abstract class BaseTiffReader extends FormatReader {
 
       int bitsPerSample = TiffTools.getIFDIntValue(ifds[0],
         TiffTools.BITS_PER_SAMPLE);
-      int bitFormat = TiffTools.getIFDIntValue(ifds[0], TiffTools.SAMPLE_FORMAT);
+      int bitFormat = TiffTools.getIFDIntValue(ifds[0],
+        TiffTools.SAMPLE_FORMAT);
 
       while (bitsPerSample % 8 != 0) bitsPerSample++;
       if (bitsPerSample == 24 || bitsPerSample == 48) bitsPerSample /= 3;

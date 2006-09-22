@@ -292,10 +292,10 @@ public class OIFReader extends FormatReader {
       new Boolean(false),
       "XYZTC",
       null);
-  
-    Float pixX = 
+
+    Float pixX =
       new Float(metadata.get("Image 0 : WidthConvertValue").toString());
-    Float pixY = 
+    Float pixY =
       new Float(metadata.get("Image 0 : HeightConvertValue").toString());
 
     store.setDimensions(pixX, pixY, null, null, null, null);

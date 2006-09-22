@@ -603,7 +603,8 @@ public class OpenlabReader extends FormatReader {
     for (int i=0; i<numSeries; i++) {
       metadata.put("Width (Series " + i + ")", new Integer(width[i]));
       metadata.put("Height (Series " + i + ")", new Integer(height[i]));
-      metadata.put("Bit depth (Series " + i + ")", new Integer(bytesPerPixel * 8));
+      metadata.put("Bit depth (Series " + i + ")",
+        new Integer(bytesPerPixel * 8));
       metadata.put("Number of channels (Series " + i + ")",
         new Integer(channelCount[i]));
       metadata.put("Number of images (Series " + i + ")",
