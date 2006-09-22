@@ -112,23 +112,18 @@ public class EPSReader extends FormatReader {
 
     byte[] p = new byte[width * height * channels * (bps / 8)];
 
+    RandomAccessStream ras = new RandomAccessStream(id);
+    int line = 0;
+    
+    while (line <= start) {
+      ras.readLine();
+      line++;
+    }
+    
     if (binary) {
-      RandomAccessStream ras = new RandomAccessStream(id);
-      int line = 0;
-      while (line <= start) {
-        ras.readLine();
-        line++;
-      }
       ras.read(p, 0, p.length);
     }
     else {
-      RandomAccessStream ras = new RandomAccessStream(id);
-      int line = 0;
-      while (line <= start) {
-        ras.readLine();
-        line++;
-      }
-
       int pos = ras.getFilePointer();
       String len = ras.readLine();
       ras.seek(pos);
