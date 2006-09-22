@@ -63,7 +63,6 @@ public class PerkinElmerReader extends FormatReader {
     tiff = new TiffReader();
   }
 
-
   // -- FormatReader API methods --
 
   /** Checks if the given block is a valid header for a PerkinElmer file. */
@@ -420,7 +419,6 @@ public class PerkinElmerReader extends FormatReader {
     }
     if (sizeT[0] <= 0) sizeT[0] = 1;
 
-
     // Populate metadata store
 
     // The metadata store we're working with.
@@ -462,7 +460,6 @@ public class PerkinElmerReader extends FormatReader {
     }
     catch (Exception e) { }
   }
-
 
   // -- Main method --
 
