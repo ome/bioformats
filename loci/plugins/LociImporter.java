@@ -105,6 +105,15 @@ public class LociImporter implements PlugIn, ItemListener {
       specifyRanges = gd.getNextBoolean();
     }
     else {
+      // use system L&F, to match ImageJ's appearance to the extent possible
+      LookAndFeel laf = null;
+      try {
+        laf = UIManager.getLookAndFeel();
+        String sys = UIManager.getSystemLookAndFeelClassName();
+        UIManager.setLookAndFeel(sys);
+      }
+      catch (Exception exc) { exc.printStackTrace(); }
+
       JFileChooser chooser = reader.getFileChooser();
       String dir = OpenDialog.getDefaultDirectory();
       if (dir != null) chooser.setCurrentDirectory(new File(dir));
@@ -130,6 +139,13 @@ public class LociImporter implements PlugIn, ItemListener {
       chooser.setAccessory(panel);
 
       int rval = chooser.showOpenDialog(null);
+
+      // restore original L&F
+      if (laf != null) {
+        try { UIManager.setLookAndFeel(laf); }
+        catch (UnsupportedLookAndFeelException exc) { exc.printStackTrace(); }
+      }
+
       if (rval == JFileChooser.APPROVE_OPTION) {
         final File file = chooser.getSelectedFile();
         if (file != null) {
@@ -148,7 +164,7 @@ public class LociImporter implements PlugIn, ItemListener {
       FormatReader r = (FormatReader) reader.getReader(id);
       if (stitchFiles) r = new FileStitcher(r);
       if (mergeChannels) r = new ChannelMerger(r);
-      if (!mergeChannels) r = new ChannelSeparator(r);
+      else r = new ChannelSeparator(r);
 
       // store OME metadata into OME-XML structure, if available
       OMEXMLMetadataStore store = new OMEXMLMetadataStore();
