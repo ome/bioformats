@@ -194,6 +194,7 @@ public class ImageViewer extends JFrame
       sizeZ = cm.getSizeZ(id);
       sizeT = cm.getSizeT(id);
       sizeC = cm.getSizeC(id);
+      if (cm.isRGB(id)) sizeC = (sizeC + 2) / 3; // adjust for RGB
       progress.setProgress(1);
       BufferedImage[] img = new BufferedImage[num];
       for (int i=0; i<num; i++) {
@@ -253,6 +254,7 @@ public class ImageViewer extends JFrame
       sizeZ = reader.getSizeZ(id);
       sizeT = reader.getSizeT(id);
       sizeC = reader.getSizeC(id);
+      if (reader.isRGB(id)) sizeC = (sizeC + 2) / 3; // adjust for RGB
     }
     catch (Exception exc) { exc.printStackTrace(); }
 
