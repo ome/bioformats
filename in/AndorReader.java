@@ -306,7 +306,7 @@ public class AndorReader extends BaseTiffReader {
 
         if (name != null && size != null) {
           if (name.equals("x")) pixelSizeX = Float.parseFloat(size);
-          else if (name.equals("y")) pixelSizeY = Float.parseFloat(size); 
+          else if (name.equals("y")) pixelSizeY = Float.parseFloat(size);
           else if (name.equals("z")) pixelSizeZ = Float.parseFloat(size);
         }
       }

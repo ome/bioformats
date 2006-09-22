@@ -114,12 +114,12 @@ public class EPSReader extends FormatReader {
 
     RandomAccessStream ras = new RandomAccessStream(id);
     int line = 0;
-    
+
     while (line <= start) {
       ras.readLine();
       line++;
     }
-    
+
     if (binary) {
       ras.read(p, 0, p.length);
     }
