@@ -163,7 +163,7 @@ public class VisBioFrame extends GUIFrame implements Runnable, SpawnListener {
       if (LAFUtil.isMacLookAndFeel()) wm.setDistributedMenus(true);
 
       // show VisBio window onscreen
-      pack();
+      SwingUtil.pack(this);
       Util.centerWindow(this);
       setVisible(true);
 

@@ -139,7 +139,7 @@ public class DisplayWindow extends JFrame
     if (edge == BorderLayout.EAST || edge == BorderLayout.WEST) {
       size.width = controls.getPreferredSize().width + size.height - 20;
       // HACK - work around a layout issue where panel is slightly too short
-      // this hack also appears in loci.visbio.WindowInfo.showWindow()
+      // this hack also appears in loci.visbio.util.SwingUtil.pack()
       if (LookUtils.IS_OS_LINUX) size.height += 10;
     }
     else if (edge == BorderLayout.NORTH || edge == BorderLayout.SOUTH) {

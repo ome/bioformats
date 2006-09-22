@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio.util;
 
+import com.jgoodies.plaf.LookUtils;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -123,6 +124,23 @@ public final class SwingUtil {
       c = c.getParent();
     }
     return null;
+  }
+
+  /**
+   * Packs a window, with hacks to correct for
+   * inaccuracies in certain cases.
+   */
+  public static void pack(Window w) {
+    System.out.println("Packing " + ((JFrame) w).getTitle());//TEMP
+    w.pack();
+    // HACK - work around a layout issue where panel is slightly too narrow and
+    // short; this hack also appears in loci.visbio.view.DisplayWindow.repack()
+    if (LookUtils.IS_OS_LINUX) {
+      Dimension size = w.getSize();
+      size.width += 18;
+      size.height += 10;
+      w.setSize(size);
+    }
   }
 
   /**

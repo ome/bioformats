@@ -1,3 +1,10 @@
+Development version
+
+- TWEAK: Ability to change Look & Feel on the fly
+
+- FIXED: Layout bugs with some Look & Feels
+
+
 v3.30 - Thursday, August 10, 2006
 
 - ADDED: File formats support is now in standalone Bio-Formats package

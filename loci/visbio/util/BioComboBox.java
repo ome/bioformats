@@ -28,8 +28,8 @@ import javax.swing.JComboBox;
 
 /**
  * An extension of JComboBox that makes the widget slightly wider than normal,
- * to work around a bug in the Windows Look and Feel where combo boxes are
- * slightly too narrow.
+ * to work around a bug in the Windows and GTK Look and Feels where combo boxes
+ * are slightly too narrow.
  */
 public class BioComboBox extends JComboBox {
 
@@ -46,12 +46,15 @@ public class BioComboBox extends JComboBox {
 
   /**
    * Gets a slightly wider preferred size than normal, to work around a bug
-   * in the Windows Look and Feel where combo boxes are slightly too narrow.
+   * in the Windows and GTK Look and Feels where combo boxes are slightly too
+   * narrow.
    */
   public Dimension getPreferredSize() {
     Dimension prefSize = super.getPreferredSize();
-    if (!LAFUtil.isWindowsLookAndFeel()) return prefSize;
-    return new Dimension(prefSize.width + 10, prefSize.height);
+    if (LAFUtil.isWindowsLookAndFeel() || LAFUtil.isGTKLookAndFeel()) {
+      return new Dimension(prefSize.width + 10, prefSize.height);
+    }
+    return prefSize;
   }
 
 }

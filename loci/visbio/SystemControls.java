@@ -27,6 +27,7 @@ import com.jgoodies.plaf.LookUtils;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Enumeration;
@@ -44,6 +45,9 @@ public class SystemControls extends ControlPanel implements ActionListener {
 
   /** Memory usage text field. */
   private JTextField memField;
+
+  /** Look &amp; Feel text field. */
+  private JTextField lafField;
 
 
   // -- Fields --
@@ -136,7 +140,7 @@ public class SystemControls extends ControlPanel implements ActionListener {
     matlabField.setEditable(false);
 
     // Look & Feel text field
-    JTextField lafField = new JTextField(LAFUtil.getLookAndFeel()[0]);
+    lafField = new JTextField(LAFUtil.getLookAndFeel()[0]);
     lafField.setEditable(false);
 
     // Look & Feel alteration button
@@ -291,10 +295,28 @@ public class SystemControls extends ControlPanel implements ActionListener {
         }
       }
       if (ndx < 0 || lafs[1][ndx].equals(laf[1])) return; // cancel or same
-      sm.writeScript(-1, lafs[1][ndx], null);
-      JOptionPane.showMessageDialog(this,
-        "The change will take effect next time you run VisBio.",
-        "VisBio", JOptionPane.INFORMATION_MESSAGE);
+
+      try {
+        // update Look and Feel
+        UIManager.setLookAndFeel(lafs[1][ndx]);
+        WindowManager wm = (WindowManager)
+          lm.getVisBio().getManager(WindowManager.class);
+        Window[] w = wm.getWindows();
+        for (int i=0; i<w.length; i++) {
+          SwingUtilities.updateComponentTreeUI(w[i]);
+          SwingUtil.repack(w[i]);
+        }
+
+        // save change to startup script
+        sm.writeScript(-1, lafs[1][ndx], null);
+
+        // update L&F field
+        lafField.setText(LAFUtil.getLookAndFeel()[0]);
+      }
+      catch (ClassNotFoundException exc) { exc.printStackTrace(); }
+      catch (IllegalAccessException exc) { exc.printStackTrace(); }
+      catch (InstantiationException exc) { exc.printStackTrace(); }
+      catch (UnsupportedLookAndFeelException exc) { exc.printStackTrace(); }
     }
     else if ("render".equals(cmd)) {
       String rend = getJ3DString();

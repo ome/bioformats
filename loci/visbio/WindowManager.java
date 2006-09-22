@@ -124,6 +124,16 @@ public class WindowManager extends LogicManager implements WindowListener {
     w.dispose();
   }
 
+  /** Gets a list of windows being handled by the window manager. */
+  public Window[] getWindows() {
+    Enumeration e = windows.keys();
+    Window[] w = new Window[windows.size()];
+    for (int i=0; i<w.length; i++) {
+      w[i] = (Window) e.nextElement();
+    }
+    return w;
+  }
+
   /** Toggles the cursor between hourglass and normal pointer mode. */
   public void setWaitCursor(boolean wait) {
     boolean doCursor = false;

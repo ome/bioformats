@@ -23,10 +23,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.visbio;
 
-import com.jgoodies.plaf.LookUtils;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import loci.visbio.util.SwingUtil;
 
 /** A class for keeping track of information about a window. */
 public class WindowInfo implements WindowListener {
@@ -71,16 +71,7 @@ public class WindowInfo implements WindowListener {
 
   /** Displays the window onscreen. */
   public void showWindow() {
-    if (first && pack) {
-      window.pack();
-      // HACK - work around a layout issue where panel is slightly too short
-      // this hack also appears in loci.visbio.view.DisplayWindow.repack()
-      if (LookUtils.IS_OS_LINUX) {
-        Dimension size = window.getSize();
-        size.height += 10;
-        window.setSize(size);
-      }
-    }
+    if (first && pack) SwingUtil.pack(window);
 
     // arrange window in cascade formation
     Dimension ss = Toolkit.getDefaultToolkit().getScreenSize();

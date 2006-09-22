@@ -84,6 +84,12 @@ public final class LAFUtil {
     return laf.getClass().getName().indexOf("Windows") >= 0;
   }
 
+  /** Gets whether the current look and feel is GTK+. */
+  public static boolean isGTKLookAndFeel() {
+    LookAndFeel laf = UIManager.getLookAndFeel();
+    return laf.getClass().getName().indexOf("GTK") >= 0;
+  }
+
   /**
    * Gets whether the current look and feel is
    * one of the JGoodies Plastic series.
