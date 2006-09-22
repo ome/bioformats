@@ -64,12 +64,12 @@ public class IPWReader extends BaseTiffReader {
 
   // -- Fields --
 
-  private Hashtable pixelData = new Hashtable();
+  private Hashtable pixels;
+  private Hashtable names;
   private byte[] header;  // general image header data
   private byte[] tags; // tags data
-  private Hashtable allIFDs;
-  private RandomAccessStream ra;
-
+  private boolean rgb;
+  private boolean little;
   private int totalBytes= 0;
 
   // -- Constructor --
@@ -95,27 +95,17 @@ public class IPWReader extends BaseTiffReader {
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    ifds = (Hashtable[]) allIFDs.get(new Integer(0));
-    return (TiffTools.getIFDIntValue(ifds[0],
-      TiffTools.SAMPLES_PER_PIXEL, false, 1) > 1);
+    return rgb;
   }
 
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return TiffTools.isLittleEndian(
-      ((Hashtable[]) allIFDs.get(new Integer(0)))[0]);
+    return little;
   }
 
   /** Obtains the specified image from the given IPW file, as a byte array. */
   public byte[] openBytes(String id, int no)
-    throws FormatException, IOException
-  {
-    return ImageTools.getBytes(openImage(id, no), false, 3);
-  }
-
-  /** Obtains the specified image from the given IPW file. */
-  public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -124,20 +114,65 @@ public class IPWReader extends BaseTiffReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    byte[] pixels = (byte[]) pixelData.get(new Integer(no));
-    ifds = (Hashtable[]) allIFDs.get(new Integer(no));
-    ra = new RandomAccessStream(pixels);
-    ra.order(true);
+    try {
+      String directory = (String) pixels.get(new Integer(no));
+      String name = (String) names.get(new Integer(no));
 
-    BufferedImage b = TiffTools.getImage(ifds[0], ra);
-    ra.close();
-    return b;
+      r.setVar("dirName", directory);
+      r.exec("root = fs.getRoot()");
+
+      if (!directory.equals("Root Entry")) {
+        r.exec("dir = root.getEntry(dirName)");
+        r.setVar("entryName", name);
+        r.exec("document = dir.getEntry(entryName)");
+      }
+      else {
+        r.setVar("entryName", name);
+        r.exec("document = root.getEntry(entryName)");
+      }
+
+      r.exec("dis = new DocumentInputStream(document)");
+      r.exec("numBytes = dis.available()");
+      int numBytes = ((Integer) r.getVar("numBytes")).intValue();
+      byte[] b = new byte[numBytes + 4]; // append 0 for final offset
+      r.setVar("data", b);
+      r.exec("dis.read(data)");
+
+      RandomAccessStream stream = new RandomAccessStream(b);
+      ifds = TiffTools.getIFDs(stream);
+      little = TiffTools.isLittleEndian(ifds[0]);
+      byte[][] samples = TiffTools.getSamples(ifds[0], stream, 0);
+
+      byte[] rtn = new byte[samples.length * samples[0].length];
+      for (int i=0; i<samples.length; i++) {
+        System.arraycopy(samples[i], 0, rtn, i*samples[i].length,
+          samples[i].length);
+      }
+      return rtn;
+    }
+    catch (ReflectException r) {
+      noPOI = true;
+      return new byte[0];
+    }
+  }
+
+  /** Obtains the specified image from the given IPW file. */
+  public BufferedImage openImage(String id, int no)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    if (no < 0 || no >= getImageCount(id)) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+
+    byte[] b = openBytes(id, no);
+    int bytes = b.length / (sizeX[0] * sizeY[0]);
+    return ImageTools.makeImage(b, sizeX[0], sizeY[0], bytes == 3 ? 3 : 1,
+      false, bytes == 3 ? 1 : bytes, little);
   }
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
-    if (ra != null) ra.close();
-    ra = null;
     if (in != null) in.close();
     in = null;
     currentId = null;
@@ -151,7 +186,8 @@ public class IPWReader extends BaseTiffReader {
     in = new RandomAccessStream(id);
 
     metadata = new Hashtable();
-    allIFDs = new Hashtable();
+    pixels = new Hashtable();
+    names = new Hashtable();
     numImages = 0;
 
     try {
@@ -159,13 +195,6 @@ public class IPWReader extends BaseTiffReader {
       r.exec("fs = new POIFSFileSystem(fis)");
       r.exec("dir = fs.getRoot()");
       parseDir(0, r.getVar("dir"));
-      for(int i=0; i<pixelData.size(); i++) {
-        Integer key = new Integer(i);
-        ra = new RandomAccessStream((byte[]) pixelData.get(key));
-        ra.order(true);
-        allIFDs.put(key, TiffTools.getIFDs(ra));
-        ra.close();
-      }
       initMetadata(id);
     }
     catch (Throwable t) {
@@ -180,7 +209,38 @@ public class IPWReader extends BaseTiffReader {
   public void initMetadata(String id)
     throws FormatException, IOException
   {
-    ifds = (Hashtable[]) allIFDs.get(new Integer(0));
+    String directory = (String) pixels.get(new Integer(0));
+    String name = (String) names.get(new Integer(0));
+
+    try {
+      r.setVar("dirName", directory);
+      r.exec("root = fs.getRoot()");
+      if (!directory.equals("Root Entry")) {
+        r.exec("dir = root.getEntry(dirName)");
+        r.setVar("entryName", name);
+        r.exec("document = dir.getEntry(entryName)");
+      }
+      else {
+        r.setVar("entryName", name);
+        r.exec("document = root.getEntry(entryName)");
+      }
+
+      r.exec("dis = new DocumentInputStream(document)");
+      r.exec("numBytes = dis.available()");
+      int numBytes = ((Integer) r.getVar("numBytes")).intValue();
+      byte[] b = new byte[numBytes + 4]; // append 0 for final offset
+      r.setVar("data", b);
+      r.exec("dis.read(data)");
+
+      RandomAccessStream stream = new RandomAccessStream(b);
+      ifds = TiffTools.getIFDs(stream);
+    }
+    catch (ReflectException r) { }
+
+    rgb = (TiffTools.getIFDIntValue(ifds[0],
+      TiffTools.SAMPLES_PER_PIXEL, false, 1) > 1);
+
+    little = TiffTools.isLittleEndian(ifds[0]);
 
     // parse the image description
     String description = new String(tags, 22, tags.length-22);
@@ -221,9 +281,10 @@ public class IPWReader extends BaseTiffReader {
     sizeZ = new int[1];
     sizeC = new int[1];
     sizeT = new int[1];
+    pixelType = new int[1];
     currentOrder = new String[1];
 
-    Hashtable h = ((Hashtable[]) allIFDs.get(new Integer(0)))[0];
+    Hashtable h = ifds[0];
     sizeX[0] = TiffTools.getIFDIntValue(h, TiffTools.IMAGE_WIDTH);
     sizeY[0] = TiffTools.getIFDIntValue(h, TiffTools.IMAGE_LENGTH);
     sizeZ[0] = Integer.valueOf(metadata.get("frames").toString()).intValue();
@@ -231,10 +292,33 @@ public class IPWReader extends BaseTiffReader {
     sizeT[0] = Integer.parseInt((String) metadata.get("slices"));
     currentOrder[0] = "XYCTZ";
 
+    int bitsPerSample = TiffTools.getIFDIntValue(ifds[0],
+      TiffTools.BITS_PER_SAMPLE);
+    int bitFormat = TiffTools.getIFDIntValue(ifds[0], TiffTools.SAMPLE_FORMAT);
+
+    while (bitsPerSample % 8 != 0) bitsPerSample++;
+    if (bitsPerSample == 24 || bitsPerSample == 48) bitsPerSample /= 3;
+
+    if (bitFormat == 3) pixelType[0] = FormatReader.FLOAT;
+    else if (bitFormat == 2) {
+      switch (bitsPerSample) {
+        case 8: pixelType[0] = FormatReader.INT8; break;
+        case 16: pixelType[0] = FormatReader.INT16; break;
+        case 32: pixelType[0] = FormatReader.INT32; break;
+      }
+    }
+    else {
+      switch (bitsPerSample) {
+        case 8: pixelType[0] = FormatReader.UINT8; break;
+        case 16: pixelType[0] = FormatReader.UINT16; break;
+        case 32: pixelType[0] = FormatReader.UINT32; break;
+      }
+    }
+
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(id);
 
-    store.setPixels(null, null, zSize, cSize, tSize, null,
+    store.setPixels(null, null, zSize, cSize, tSize, new Integer(pixelType[0]),
       new Boolean(!isLittleEndian(id)), getDimensionOrder(id), null);
     store.setImage(null, null, (String) metadata.get("Version"), null);
   }
@@ -246,7 +330,6 @@ public class IPWReader extends BaseTiffReader {
   {
     r.setVar("dir", dir);
     r.exec("dirName = dir.getName()");
-    if (DEBUG) print(depth, r.getVar("dirName") + " {");
     r.setVar("depth", depth);
     r.exec("iter = dir.getEntries()");
     Iterator iter = (Iterator) r.getVar("iter");
@@ -263,9 +346,6 @@ public class IPWReader extends BaseTiffReader {
       }
       else if (isDocument) {
         r.exec("entryName = entry.getName()");
-        if (DEBUG) {
-          print(depth + 1, "Found document: " + r.getVar("entryName"));
-        }
         r.exec("dis = new DocumentInputStream(entry)");
         r.exec("numBytes = dis.available()");
         int numbytes = ((Integer) r.getVar("numBytes")).intValue();
@@ -312,7 +392,8 @@ public class IPWReader extends BaseTiffReader {
           else name = "0";
 
           Integer imageNum = Integer.valueOf(name);
-          pixelData.put(imageNum, data);
+          pixels.put(imageNum, dirName);
+          names.put(imageNum, entryName);
           numImages++;
         }
         r.exec("dis.close()");

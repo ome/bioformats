@@ -109,9 +109,6 @@ public class OIBReader extends FormatReader {
 
   /** Vector containing T indices. */
   private Vector tIndices;
-  
-  /** Pixel type. */
-  private int pixelType;
 
   private boolean littleEndian;
 
@@ -121,14 +118,6 @@ public class OIBReader extends FormatReader {
   public OIBReader() { super("Fluoview FV1000 OIB", "oib"); }
 
   // -- FormatReader API methods --
-  
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#getPixelType()
-   */
-  public int getPixelType(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return pixelType;
-  }
 
   /** Checks if the given block is a valid header for an OIB file. */
   public boolean isThisType(byte[] block) {
@@ -190,14 +179,14 @@ public class OIBReader extends FormatReader {
 
       byte[] rtn = new byte[samples.length * samples[0].length];
       for (int i=0; i<samples.length; i++) {
-        System.arraycopy(samples[i], 0, rtn, i*samples[i].length, 
+        System.arraycopy(samples[i], 0, rtn, i*samples[i].length,
           samples[i].length);
       }
       return rtn;
     }
     catch (ReflectException r) {
       noPOI = true;
-      return new byte[0]; 
+      return new byte[0];
     }
   }
 
@@ -209,11 +198,11 @@ public class OIBReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-    
+
     byte[] b = openBytes(id, no);
     int bytes = b.length / (width * height);
     return ImageTools.makeImage(b, width, height, bytes == 3 ? 3 : 1,
-      false, bytes == 3 ? 1 : bytes, !littleEndian); 
+      false, bytes == 3 ? 1 : bytes, !littleEndian);
   }
 
   /** Closes any open files. */
@@ -249,9 +238,9 @@ public class OIBReader extends FormatReader {
       String[] dims = new String[9];
 
       for (int i=0; i<labels.length; i++) {
-        labels[i] = (String) 
+        labels[i] = (String)
           metadata.get("[Axis " + i + " Parameters Common] - AxisCode");
-        dims[i] = 
+        dims[i] =
           (String) metadata.get("[Axis " + i + " Parameters Common] - MaxSize");
       }
 
@@ -284,7 +273,7 @@ public class OIBReader extends FormatReader {
       sizeC[0] = nChannels;
       sizeT[0] = tSize;
       currentOrder[0] = (zSize > tSize) ? "XYCZT" : "XYCTZ";
-    
+
       if (nImages == zSize * tSize * nChannels + 1) nImages--;
     }
     catch (Throwable t) {
@@ -305,39 +294,25 @@ public class OIBReader extends FormatReader {
     store.setImage((String) metadata.get("DataName"), null, null, null);
 
     switch (bpp % 3) {
-    case 0:
-    case 1:
-      pixelType = FormatReader.INT8;
-      break;
-    case 2:  // 8 * 2 = 16
-      pixelType = FormatReader.INT16;
-      break;
-    case 4:  // 8 * 4 = 32
-      pixelType = FormatReader.INT32;
-      break;
-    default:
-      throw new RuntimeException(
+      case 0:
+      case 1: pixelType[0] = FormatReader.INT8; break;
+      case 2: pixelType[0] = FormatReader.INT16; break;
+      case 4: pixelType[0] = FormatReader.INT32; break;
+      default:
+        throw new RuntimeException(
           "Unknown matching for pixel byte width of: " + bpp);
     }
-    
+
     store.setPixels(
       new Integer(getSizeX(currentId)),
       new Integer(getSizeY(currentId)),
       new Integer(getSizeZ(currentId)),
       new Integer(getSizeC(currentId)),
       new Integer(getSizeT(currentId)),
-      new Integer(pixelType),
+      new Integer(pixelType[0]),
       new Boolean(false),
       getDimensionOrder(currentId),
       null);
-
-    /*
-    store.setDimensions(
-      new Float((String) metadata.get("Scale Factor for X")),
-      new Float((String) metadata.get("Scale Factor for Y")),
-      new Float((String) metadata.get("Scale Factor for Z")),
-      null, null, null);
-    */
   }
 
   protected void parseDir(int depth, Object dir)
@@ -382,7 +357,7 @@ public class OIBReader extends FormatReader {
         // check the first 2 bytes of the stream
 
         byte[] b = {data[0], data[1], data[2], data[3]};
-        
+
         if (data[0] == 0x42 && data[1] == 0x4d) {
           // this is the thumbnail
         }
@@ -396,7 +371,7 @@ public class OIBReader extends FormatReader {
         else if (entryName.equals("OibInfo.txt")) { /* ignore this */ }
         else {
           // INI-style metadata
-           
+
           String ini = new String(data);
           ini = DataTools.stripString(ini).trim();
 

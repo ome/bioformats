@@ -181,6 +181,12 @@ public class FileStitcher extends FormatReader {
     return dimensions[4];
   }
 
+  /** Gets the pixel type as an enumeration from FormatReader. */
+  public int getPixelType(String id) throws FormatException, IOException {
+    if (!id.equals(currentId) || getSeries(id) != validSeries) initFile(id);
+    return reader.getPixelType(id);
+  }
+
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     return reader.isLittleEndian(id);

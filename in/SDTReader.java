@@ -86,9 +86,6 @@ public class SDTReader extends FormatReader {
   /** Dimensions of the current SDT file's image planes. */
   protected int width, height;
 
-  /** Pixel type. */
-  protected int pixelType;
-
   /** Number of time bins in lifetime histogram. */
   protected int timeBins;
 
@@ -675,11 +672,11 @@ public class SDTReader extends FormatReader {
     // see blockType defines below
     int blockType = in.readUnsignedShort();
 
-    // Number of the measurement description block 
+    // Number of the measurement description block
     // corresponding to this data block
     short measDescBlockNo = in.readShort();
 
-    // long blockNo - see remarks below 
+    // long blockNo - see remarks below
     long lblockNo = (0xffffffffL & in.readInt()); // unsigned
 
     // reserved2 now contains block (set) length
@@ -704,12 +701,12 @@ public class SDTReader extends FormatReader {
     sizeC[0] = timeBins * channels;
     sizeT[0] = 1;
     currentOrder[0] = "XYZTC";
-    pixelType = FormatReader.INT16;
+    pixelType[0] = FormatReader.INT16;
 
     MetadataStore store = getMetadataStore(id);
     store.setPixels(new Integer(getSizeX(id)), new Integer(getSizeY(id)),
       new Integer(getSizeZ(id)), new Integer(getSizeC(id)),
-      new Integer(getSizeT(id)), new Integer(pixelType),
+      new Integer(getSizeT(id)), new Integer(pixelType[0]),
       new Boolean(!isLittleEndian(id)), getDimensionOrder(id), null);
   }
 

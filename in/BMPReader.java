@@ -71,9 +71,9 @@ public class BMPReader extends FormatReader {
 
   /** Offset to image data. */
   private int global;
-  
+
   /** The pixel type. */
-  private int pixelType;
+  private int pixType;
 
   // -- Constructor --
 
@@ -82,14 +82,6 @@ public class BMPReader extends FormatReader {
 
 
   // -- FormatReader API methods --
-  
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#getPixelType()
-   */
-  public int getPixelType(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return pixelType;
-  }
 
   /** Checks if the given block is a valid header for a BMP file. */
   public boolean isThisType(byte[] block) {
@@ -307,11 +299,23 @@ public class BMPReader extends FormatReader {
     global = in.getFilePointer();
     metadata.put("Indexed color", palette == null ? "false" : "true");
 
+    int c = (palette == null & bpp == 8) ? 1 : 3;
+    int tbpp = bpp;
+    if (bpp > 8) tbpp /= 3;
+    while (tbpp % 8 != 0) tbpp++;
+
+    switch (tbpp) {
+      case 8: pixType = FormatReader.INT8; break;
+      case 16: pixType = FormatReader.INT16; break;
+      case 32: pixType = FormatReader.INT32; break;
+    }
+
     sizeX[0] = (width % 2 == 1) ? width + 1 : width;
     sizeY[0] = height;
     sizeZ[0] = 1;
     sizeC[0] = isRGB(id) ? 3 : 1;
     sizeT[0] = 1;
+    pixelType[0] = pixType;
     currentOrder[0] = "XYCTZ";
 
     // Populate metadata store.
@@ -319,32 +323,13 @@ public class BMPReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(id);
 
-    int c = (palette == null && bpp == 8) ? 1 : 3;
-    int tbpp = bpp;
-    if (bpp > 8) tbpp /= 3;
-    
-    switch (tbpp) {
-    case 8:
-      pixelType = FormatReader.INT8;
-      break;
-    case 16:
-      pixelType = FormatReader.INT16;
-      break;
-    case 32:
-      pixelType = FormatReader.INT32;
-      break;
-    default:
-      throw new RuntimeException(
-          "Unknown matching for pixel bit width of: " + tbpp);
-    }
-
     store.setPixels(
       new Integer(width),  // sizeX
       new Integer(height), // sizeY
       new Integer(1), // sizeZ
       new Integer(c), // sizeC
       new Integer(1), // sizeT
-      new Integer(pixelType),
+      new Integer(pixType),
       new Boolean(!littleEndian), // BigEndian
       "XYCTZ", // Dimension order
       null); // Use index 0

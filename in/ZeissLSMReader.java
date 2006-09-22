@@ -56,9 +56,6 @@ public class ZeissLSMReader extends BaseTiffReader {
 
   /** Dimension order. */
   private String dimOrder;
-  
-  /** Pixel type. */
-  private int pixelType;
 
   // -- Constructor --
 
@@ -67,14 +64,6 @@ public class ZeissLSMReader extends BaseTiffReader {
 
 
   // -- FormatReader API methods --
-  
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#getPixelType()
-   */
-  public int getPixelType(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return pixelType;
-  }
 
   /** Checks if the given block is a valid header for a Zeiss LSM file. */
   public boolean isThisType(byte[] block) {
@@ -288,10 +277,10 @@ public class ZeissLSMReader extends BaseTiffReader {
 
       int pixel = DataTools.bytesToInt(omeData, 28, little);
       switch (pixel) {
-        case 1: pixelType = FormatReader.UINT8; break;
-        case 2: pixelType = FormatReader.UINT16; break;
-        case 5: pixelType = FormatReader.FLOAT; break;
-        default: pixelType = FormatReader.UINT8;
+        case 1: pixelType[0] = FormatReader.UINT8; break;
+        case 2: pixelType[0] = FormatReader.UINT16; break;
+        case 5: pixelType[0] = FormatReader.FLOAT; break;
+        default: pixelType[0] = FormatReader.UINT8;
       }
 
       short scanType = DataTools.bytesToShort(omeData, 88, little);
@@ -332,7 +321,7 @@ public class ZeissLSMReader extends BaseTiffReader {
         new Integer(zSize), // SizeZ
         new Integer(cSize), // SizeC
         new Integer(tSize), // SizeT
-        new Integer(pixelType), // PixelType
+        new Integer(pixelType[0]), // PixelType
         null, // BigEndian
         dimOrder, // DimensionOrder
         null);

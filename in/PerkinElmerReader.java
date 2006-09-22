@@ -106,7 +106,7 @@ public class PerkinElmerReader extends FormatReader {
       initFile(id);
     }
     if (isTiff) return tiff.openBytes(files[no / channels], 0);
- 
+
     String file = files[no / channels];
     RandomAccessStream s = new RandomAccessStream(file);
     byte[] b = new byte[(int) s.length() - 6]; // each file has 6 magic bytes
@@ -127,7 +127,7 @@ public class PerkinElmerReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
     if (isTiff) return tiff.openImage(files[no / channels], 0);
-  
+
     byte[] b = openBytes(id, no);
     int bpp = b.length / (sizeX[0] * sizeY[0]);
     return ImageTools.makeImage(b, sizeX[0], sizeY[0], 1, false, bpp, true);
@@ -384,7 +384,7 @@ public class PerkinElmerReader extends FormatReader {
       String token = t.nextToken();
       foundId = token.equals("Wavelengths");
       if (foundId) {
-        wavelengths = prevToken;  
+        wavelengths = prevToken;
       }
       tokenNum++;
       prevToken = token;
@@ -397,6 +397,7 @@ public class PerkinElmerReader extends FormatReader {
     sizeZ[0] = Integer.parseInt((String) metadata.get("Number of slices"));
     sizeC[0] = channels;
     sizeT[0] = getImageCount(currentId) / (sizeZ[0] * sizeC[0]);
+    pixelType[0] = tiff.getPixelType(files[0]);
     currentOrder[0] = "XYCTZ";
 
     if (sizeZ[0] <= 0) {
@@ -436,7 +437,7 @@ public class PerkinElmerReader extends FormatReader {
       new Integer(z), // SizeZ
       new Integer(wavelengths), // SizeC
       new Integer(getSizeT(id)), // SizeT
-      null, // PixelType
+      new Integer(pixelType[0]), // PixelType
       null, // BigEndian
       "XYCTZ", // DimensionOrder
       null); // Use index 0

@@ -60,9 +60,6 @@ public class OpenlabRawReader extends FormatReader {
 
   /** Number of bytes per pixel. */
   private int bytesPerPixel;
-  
-  /** Pixel type. */
-  private int pixelType;
 
   // -- Constructor --
 
@@ -71,14 +68,6 @@ public class OpenlabRawReader extends FormatReader {
 
 
   // -- FormatReader API methods --
-  
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#getPixelType()
-   */
-  public int getPixelType(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return pixelType;
-  }
 
   /** Checks if the given block is a valid header for a RAW file. */
   public boolean isThisType(byte[] block) {
@@ -197,19 +186,12 @@ public class OpenlabRawReader extends FormatReader {
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(id);
-    
+
     switch (bytesPerPixel) {
-    case 1:  // 8 * 1 = 8
-      pixelType = FormatReader.INT8;
-      break;
-    case 2:  // 8 * 2 = 16
-      pixelType = FormatReader.INT16;
-      break;
-    case 3:  // Unsupported
-      throw new RuntimeException(
-          "Unknown matching for pixel byte width of: " + bytesPerPixel);
-    default:
-      pixelType = FormatReader.FLOAT;
+      case 1: pixelType[0] = FormatReader.INT8; break;
+      case 2: pixelType[0] = FormatReader.INT16; break;
+      case 3: pixelType[0] = FormatReader.INT8; break;
+      default: pixelType[0] = FormatReader.FLOAT;
     }
 
     store.setPixels(
@@ -218,7 +200,7 @@ public class OpenlabRawReader extends FormatReader {
       new Integer(numImages),
       new Integer(channels),
       new Integer(1),
-      new Integer(pixelType),
+      new Integer(pixelType[0]),
       new Boolean(true),
       "XYZTC",
       null);

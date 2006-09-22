@@ -109,9 +109,6 @@ public class ZeissZVIReader extends FormatReader {
 
   /** Vector containing T indices. */
   private Vector tIndices;
-  
-  /** Pixel type. */
-  private int pixelType;
 
   private Hashtable offsets;
 
@@ -121,14 +118,6 @@ public class ZeissZVIReader extends FormatReader {
   public ZeissZVIReader() { super("Zeiss Vision Image (ZVI)", "zvi"); }
 
   // -- FormatReader API methods --
-  
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#getPixelType()
-   */
-  public int getPixelType(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return pixelType;
-  }
 
   /** Checks if the given block is a valid header for an Zeiss ZVI file. */
   public boolean isThisType(byte[] block) {
@@ -288,28 +277,18 @@ public class ZeissZVIReader extends FormatReader {
     store.setImage((String) metadata.get("File Name"), null, null, null);
 
     switch (bpp % 3) {
-    case 0:
-    case 1:
-      pixelType = FormatReader.INT8;
-      break;
-    case 2:  // 8 * 2 = 16
-      pixelType = FormatReader.INT16;
-      break;
-    case 4:  // 8 * 4 = 32
-      pixelType = FormatReader.INT32;
-      break;
-    default:
-      throw new RuntimeException(
-          "Unknown matching for pixel byte width of: " + bpp);
+      case 0:
+      case 1: pixelType[0] = FormatReader.INT8; break;
+      case 2: pixelType[0] = FormatReader.INT16; break;
     }
-    
+
     store.setPixels(
       new Integer(getSizeX(currentId)),
       new Integer(getSizeY(currentId)),
       new Integer(getSizeZ(currentId)),
       new Integer(getSizeC(currentId)),
       new Integer(getSizeT(currentId)),
-      new Integer(pixelType),
+      new Integer(pixelType[0]),
       new Boolean(false),
       getDimensionOrder(currentId),
       null);

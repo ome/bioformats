@@ -111,7 +111,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
 
   // -- RandomAccessStream API methods --
 
-  /** 
+  /**
    * Sets the number of bytes by which to extend the stream.  This only applies
    * to InputStream API methods.
    */
@@ -121,8 +121,8 @@ public class RandomAccessStream extends InputStream implements DataInput {
   public void seek(long pos) throws IOException { afp = (int) pos; }
 
   /** Alias for readByte(). */
-  public int read() throws IOException { 
-    int b = (int) readByte(); 
+  public int read() throws IOException {
+    int b = (int) readByte();
     if (b == -1 && (afp >= length()) && ext > 0) return 0;
     return b;
   }
@@ -241,7 +241,28 @@ public class RandomAccessStream extends InputStream implements DataInput {
 
   /** Read bytes from the stream into the given array. */
   public int read(byte[] array) throws IOException {
-    return read(array, 0, array.length);
+    int status = checkEfficiency(array.length);
+    int n = 0;
+
+    if (status == DIS) { n = dis.read(array); }
+    else if (status == ARRAY) {
+      n = array.length;
+      if ((buf.length - afp) < array.length) {
+        n = buf.length - afp;
+      }
+      System.arraycopy(buf, afp, array, 0, n);
+    }
+    else n = raf.read(array);
+
+    afp += n;
+    if (status == DIS) fp += n;
+    if (n < array.length && ext > 0) {
+      while (n < array.length && ext > 0) {
+        n++;
+        ext--;
+      }
+    }
+    return n;
   }
 
   /**

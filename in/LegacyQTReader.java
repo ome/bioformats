@@ -220,6 +220,7 @@ public class LegacyQTReader extends FormatReader {
       sizeZ[0] = 1;
       sizeC[0] = 3;
       sizeT[0] = numImages;
+      pixelType[0] = FormatReader.INT8;
       currentOrder[0] = "XYCTZ";
     }
     catch (Exception e) {
