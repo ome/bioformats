@@ -1,14 +1,37 @@
+//
+// CacheManager.java
+//
+
+/*
+LOCI 4D Data Browser package for quick browsing of 4D datasets in ImageJ.
+Copyright (C) 2005-@year@ Christopher Peterson, Francis Wong, Curtis Rueden
+and Melissa Linkert.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU Library General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Library General Public License for more details.
+
+You should have received a copy of the GNU Library General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
 package loci.plugins.browser;
 
 import ij.process.ImageProcessor;
-import loci.formats.*;
-import java.awt.image.BufferedImage;
 import java.util.Arrays;
+import loci.formats.*;
 
-public class CacheManager 
-  implements Runnable
-{
-  // - Constants -
+public class CacheManager implements Runnable {
+
+  // -- Constants --
+
   public static final int Z_AXIS = 0x01;
   public static final int T_AXIS = 0x02;
   public static final int C_AXIS = 0x04;
@@ -21,7 +44,8 @@ public class CacheManager
   
   public static final boolean DEBUG = true;
 
-  // - Fields -
+  // -- Fields --
+
   private ImageProcessor [] cache;
   private FormatReader read;
   private int axis;
@@ -43,7 +67,8 @@ public class CacheManager
 
   protected int [] loadList;
 
-  // - Constructors
+  // -- Constructors --
+
   public CacheManager(int size, 
     FormatReader read, String fileName) 
   {
@@ -101,7 +126,7 @@ public class CacheManager
     updateCache();
   }
   
-  // - CacheManager API -
+  // -- CacheManager API methods --
   
   public void setAxis(int axis) {
     quit = true;
@@ -152,7 +177,7 @@ public class CacheManager
   public int getSlice() {
     int index;
     try {
-      index = read.getIndex(fileName,z,c,t,false);
+      index = read.getIndex(fileName,z,c,t);
     }
     catch (Exception exc) { return -1;}
     return index;
@@ -163,7 +188,7 @@ public class CacheManager
 
     int[] coords;
     try {
-      coords = read.getZCTCoords(fileName,index,false);
+      coords = read.getZCTCoords(fileName,index);
       z = coords[0];
       c = coords[1];
       t = coords[2];
@@ -195,7 +220,7 @@ public class CacheManager
   public ImageProcessor getSlice(int z, int t, int c) {
     int index;
     try {
-      index = read.getIndex(fileName,z,c,t,false);
+      index = read.getIndex(fileName,z,c,t);
     }
     catch (Exception exc) {
       if (DEBUG) exc.printStackTrace();
@@ -212,7 +237,7 @@ public class CacheManager
   public ImageProcessor getTempSlice(int z, int t, int c) {
     int index;
     try {
-      index = read.getIndex(fileName,z,c,t,false);
+      index = read.getIndex(fileName,z,c,t);
     }
     catch (Exception exc) {
       if (DEBUG) exc.printStackTrace();
@@ -455,13 +480,13 @@ public class CacheManager
         int index;
         try {
           if (someAxis == Z_AXIS) {
-            index = read.getIndex(fileName,realCoord,c,t,false);
+            index = read.getIndex(fileName,realCoord,c,t);
           }
           else if (someAxis == T_AXIS) {
-            index = read.getIndex(fileName,z,c,realCoord,false);
+            index = read.getIndex(fileName,z,c,realCoord);
           }
           else {
-            index = read.getIndex(fileName,z,realCoord,t,false);
+            index = read.getIndex(fileName,z,realCoord,t);
           }
         }
         catch (Exception exc) { 
@@ -506,13 +531,13 @@ public class CacheManager
         int index;
         try {
           if (someAxis == Z_AXIS) {
-            index = read.getIndex(fileName,realCoord,c,t,false);
+            index = read.getIndex(fileName,realCoord,c,t);
           }
           else if (someAxis == T_AXIS) {
-            index = read.getIndex(fileName,z,c,realCoord,false);
+            index = read.getIndex(fileName,z,c,realCoord);
           }
           else {
-            index = read.getIndex(fileName,z,realCoord,t,false);
+            index = read.getIndex(fileName,z,realCoord,t);
           }
         }
         catch (Exception exc) { 
@@ -529,10 +554,10 @@ public class CacheManager
   }
     
   /**
-  * Method to reflect the looping behavior of the cache when
-  * trying to define upper and lower bounds of which images to
-  * load.
-  */
+   * Method to reflect the looping behavior of the cache when
+   * trying to define upper and lower bounds of which images to
+   * load.
+   */
   private void clipBounds(int lowBound, int upBound, int axis) {
     int size;
     if(axis == Z_AXIS) size = sizeZ;
@@ -593,7 +618,7 @@ public class CacheManager
     }
   }
   
-  // - Runnable API -
+  // -- Runnable API methods --
   
   public void run() {
     quit = false;
@@ -607,4 +632,5 @@ public class CacheManager
       }
     }
   }
+
 }

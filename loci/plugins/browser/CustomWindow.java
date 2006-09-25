@@ -4,7 +4,8 @@
 
 /*
 LOCI 4D Data Browser package for quick browsing of 4D datasets in ImageJ.
-Copyright (C) 2005-@year@ Francis Wong, Curtis Rueden and Melissa Linkert.
+Copyright (C) 2005-@year@ Christopher Peterson, Francis Wong, Curtis Rueden
+and Melissa Linkert.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
@@ -30,7 +31,6 @@ import java.io.File;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import loci.formats.ReflectedUniverse;
