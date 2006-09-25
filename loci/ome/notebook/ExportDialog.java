@@ -39,63 +39,25 @@ import com.jgoodies.forms.layout.FormLayout;
  *
  * @author Christopher Peterson crpeterson2 at wisc.edu
  */
-public class ExportDialog extends JDialog
-                        implements ActionListener {
-  /**Holds the dialog*/
+public class ExportDialog extends JDialog implements ActionListener {
+
+  // -- Fields --
+
+  /** Holds the dialog. */
   private static ExportDialog dialog;
 
-  /**The list of values returned as selected in the dialog.*/
+  /** The list of values returned as selected in the dialog. */
   private static Object [] value;
 
-  /**The JList found in this dialog*/
+  /** The JList found in this dialog. */
   private JList list;
 
-  /**
-   * Set up and show the dialog.  The first Component argument
-   * determines which frame the dialog depends on; it should be
-   * a component in the dialog's controlling frame. The second
-   * Component argument should be null if you want the dialog
-   * to come up with its left corner in the center of the screen;
-   * otherwise, it should be the component on top of which the
-   * dialog should appear.
-   */
-  public static Object [] showDialog(Component frameComp,
-  																Component locationComp,
-                                  String labelText,
-                                  String title,
-                                  Object[] possibleValues,
-                                  Object[] initialValue,
-                                  String longValue) {
-      Frame frame = JOptionPane.getFrameForComponent(frameComp);
-      dialog = new ExportDialog(frame,
-      												locationComp,
-                              labelText,
-                              title,
-                              possibleValues,
-                              initialValue,
-                              longValue);
-      dialog.setVisible(true);
-      return value;
-  }
+  // -- Constructor --
 
-  /**Set the selected values to a specified array.*/
-  private void setValue(Object [] newValue) {
-    value = newValue;
-    if (newValue != null) {
-	    for(int i = 0;i < newValue.length;i++) {
-	      list.setSelectedValue(value[i], false);
-	    }
-    }
-  }
-
-  /**Set up the GUI, etc. Can't directly instatiate this.*/
-  private ExportDialog(Frame frame,
-  									 Component locationComp,
-                     String labelText,
-                     String title,
-                     Object[] data,
-                     Object[] initialValue,
-                     String longValue) {
+  /** Set up the GUI, etc. Can't directly instatiate this. */
+  private ExportDialog(Frame frame, Component locationComp, String labelText,
+    String title, Object[] data, Object[] initialValue, String longValue)
+  {
     super(frame, title, true);
 
     JButton cancelButton = new JButton("Cancel");
@@ -169,7 +131,7 @@ public class ExportDialog extends JDialog
     listPane.add(exportAllButton, cc.xy(4,6));
     listPane.add(cancelButton, cc.xy(6,6));
 
-		setContentPane(listPane);
+    setContentPane(listPane);
 
     //Initialize values.
     setValue(initialValue);
@@ -177,15 +139,52 @@ public class ExportDialog extends JDialog
     setLocationRelativeTo(locationComp);
   }
 
-  /**Handle clicks on the Export and ExportAll and cancel buttons.*/
+  // -- ExportDialog API methods --
+
+  /**
+   * Set up and show the dialog.  The first Component argument
+   * determines which frame the dialog depends on; it should be
+   * a component in the dialog's controlling frame. The second
+   * Component argument should be null if you want the dialog
+   * to come up with its left corner in the center of the screen;
+   * otherwise, it should be the component on top of which the
+   * dialog should appear.
+   */
+  public static Object[] showDialog(Component frameComp,
+    Component locationComp, String labelText, String title,
+    Object[] possibleValues, Object[] initialValue, String longValue)
+  {
+    Frame frame = JOptionPane.getFrameForComponent(frameComp);
+    dialog = new ExportDialog(frame, locationComp, labelText, title,
+      possibleValues, initialValue, longValue);
+    dialog.setVisible(true);
+    return value;
+  }
+
+  // -- Helper methods --
+
+  /** Set the selected values to a specified array. */
+  private void setValue(Object [] newValue) {
+    value = newValue;
+    if (newValue != null) {
+      for (int i = 0;i < newValue.length;i++) {
+        list.setSelectedValue(value[i], false);
+      }
+    }
+  }
+
+  // -- ActionListener API methods --
+
+  /** Handle clicks on the Export and ExportAll and cancel buttons. */
   public void actionPerformed(ActionEvent e) {
     if ("Set".equals(e.getActionCommand())) {
       ExportDialog.value = list.getSelectedValues();
     }
     if ("SetAll".equals(e.getActionCommand())) {
       list.setSelectionInterval(0, list.getModel().getSize() - 1);
-  		ExportDialog.value = list.getSelectedValues();
+      ExportDialog.value = list.getSelectedValues();
     }
     ExportDialog.dialog.setVisible(false);
   }
+
 }

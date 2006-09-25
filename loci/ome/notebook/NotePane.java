@@ -50,29 +50,28 @@ import org.w3c.dom.Element;
  *
  * @author Christopher Peterson crpeterson2 at wisc.edu
  */
-public class NotePane extends JScrollPane
-  implements ActionListener
-{
-  /**The main text color for this view.*/
+public class NotePane extends JScrollPane implements ActionListener {
+
+  /** The main text color for this view. */
   public static final Color TEXT_COLOR =
     new Color(0,35,0);
 
-  /**The panel that holds the title header for this view.*/
+  /** The panel that holds the title header for this view. */
   private JPanel titlePanel;
 
-  /**The filechooser for this view.*/
+  /** The filechooser for this view. */
   protected JFileChooser chooser;
 
-  /**A list of all TablePanels in the MetadataPane.*/
+  /** A list of all TablePanels in the MetadataPane. */
   protected Vector tPanels;
 
-  /**Construct the default NotePane object.*/
+  /** Construct the default NotePane object. */
   public NotePane() {
-  	super();
+    super();
 
-  	tPanels = null;
+    tPanels = null;
 
-  	titlePanel = new JPanel();
+    titlePanel = new JPanel();
     titlePanel.setLayout(new GridLayout(2,1));
     JLabel title = new JLabel();
     Font thisFont = title.getFont();
@@ -98,7 +97,7 @@ public class NotePane extends JScrollPane
     newFont = new Font(thisFont.getFontName(),
       Font.ITALIC,thisFont.getSize());
     descrip.setFont(newFont);
-    descrip.setText("     " + "A comprehensive list of all notes in this file.");
+    descrip.setText("     A comprehensive list of all notes in this file.");
 
     FormLayout myLayout = new FormLayout(
       "pref, 5dlu, pref:grow:right, 5dlu",
@@ -113,12 +112,11 @@ public class NotePane extends JScrollPane
     titlePanel.setBackground(TEXT_COLOR);
 
     chooser = new JFileChooser(System.getProperty("user.dir"));
-   	chooser.setDialogTitle("Export Notes to Text File");
+    chooser.setDialogTitle("Export Notes to Text File");
     chooser.setApproveButtonText("Save");
-    chooser.setApproveButtonToolTipText("Export notes to "
-        + "selected file.");
+    chooser.setApproveButtonToolTipText("Export notes to " +
+      "selected file.");
     chooser.setFileFilter(new TextFileFilter());
-
   }
 
   /**
@@ -129,8 +127,8 @@ public class NotePane extends JScrollPane
     tPanels = tablePanels;
 
     String rowString = "pref";
-    for(int i = 0; i < tablePanels.size();i++) {
-    	rowString = rowString + ", 5dlu, pref";
+    for (int i = 0; i < tablePanels.size();i++) {
+      rowString = rowString + ", 5dlu, pref";
     }
 
     ScrollablePanel contentPanel = new ScrollablePanel();
@@ -142,156 +140,146 @@ public class NotePane extends JScrollPane
 
     contentPanel.add(titlePanel, cc.xyw(1,1,3));
 
-	  for(int i = 0;i < tablePanels.size();i++) {
-	  	MetadataPane.TablePanel tableP = (MetadataPane.TablePanel)
-	  	  tablePanels.get(i);
-	  	tableP.tableName.setForeground(TEXT_COLOR);
-	  	tableP.addButton.setVisible(false);
-	  	tableP.delButton.setVisible(false);
-	  	tableP.tHead.setVisible(false);
-	  	tableP.table.setVisible(false);
-	  	if(tableP.imageLabel != null) tableP.imageLabel.setVisible(false);
+    for (int i = 0;i < tablePanels.size();i++) {
+      MetadataPane.TablePanel tableP = (MetadataPane.TablePanel)
+        tablePanels.get(i);
+      tableP.tableName.setForeground(TEXT_COLOR);
+      tableP.addButton.setVisible(false);
+      tableP.delButton.setVisible(false);
+      tableP.tHead.setVisible(false);
+      tableP.table.setVisible(false);
+      if (tableP.imageLabel != null) tableP.imageLabel.setVisible(false);
 
-	  	contentPanel.add( tableP, cc.xy(2,(2*i)+3));
-	  }
+      contentPanel.add( tableP, cc.xy(2,(2*i)+3));
+    }
 
-	  setViewportView(contentPanel);
-	}
+    setViewportView(contentPanel);
+  }
 
-	/**
-	* Call up the necessary dialogs and then output the selected notes
-	* to the selected text file.
-	*/
-	public void exportNotes() {
-		if(tPanels != null) {
-	    Hashtable topHash = new Hashtable();
-    	Vector names = new Vector();
-    	for(int i = 0;i < tPanels.size();i++) {
-    		MetadataPane.TablePanel thisPanel =
-    		  (MetadataPane.TablePanel) tPanels.get(i);
-    		Hashtable noteHash = thisPanel.noteP.getNoteHash();
-    		topHash.put(thisPanel.name, noteHash);
+  /**
+   * Call up the necessary dialogs and then output the selected notes
+   * to the selected text file.
+   */
+  public void exportNotes() {
+    if (tPanels != null) {
+      Hashtable topHash = new Hashtable();
+      Vector names = new Vector();
+      for (int i = 0;i < tPanels.size();i++) {
+        MetadataPane.TablePanel thisPanel =
+          (MetadataPane.TablePanel) tPanels.get(i);
+        Hashtable noteHash = thisPanel.noteP.getNoteHash();
+        topHash.put(thisPanel.name, noteHash);
 
-    		Vector noteElements = thisPanel.noteP.getNoteElements();
-    		if(noteElements!=null) {
-	    		for (int j=0;j<noteElements.size();j++) {
-	    			Element thisEle = (Element) noteElements.get(j);
-	    		  String suffix = thisEle.getAttribute("Name");
-	    		  names.add(thisPanel.name + "  >>>" + suffix);
-	    		}
-    		}
-    	}
+        Vector noteElements = thisPanel.noteP.getNoteElements();
+        if (noteElements!=null) {
+          for (int j=0;j<noteElements.size();j++) {
+            Element thisEle = (Element) noteElements.get(j);
+            String suffix = thisEle.getAttribute("Name");
+            names.add(thisPanel.name + "  >>>" + suffix);
+          }
+        }
+      }
 
-			Object [] values = names.toArray();
+      Object[] values = names.toArray();
 
-	    	Object [] toExport = ExportDialog.showDialog(
-	    	  (Component) getTopLevelAncestor(),
-	    	  (Component) getTopLevelAncestor(),
-	    		"Select the notes you wish to export:",
-	    		"Note Chooser",
-	    		values,
-	    		(Object[]) null,
-	    		"Image (23): LaserCoordinates (23)  >>>Long Note Name");
+      Object[] toExport = ExportDialog.showDialog(
+        (Component) getTopLevelAncestor(), (Component) getTopLevelAncestor(),
+        "Select the notes you wish to export:", "Note Chooser", values,
+        (Object[]) null,
+        "Image (23): LaserCoordinates (23)  >>>Long Note Name");
 
-		  	if (toExport != null) {
-			  	if (toExport.length != 0) {
-					int rval = chooser.showOpenDialog(this);
-					if (rval == JFileChooser.APPROVE_OPTION) {
-						String pathName = chooser.getSelectedFile().getPath();
-						if(!pathName.endsWith(".txt")) pathName = pathName + ".txt";
+      if (toExport != null && toExport.length > 0) {
+        int rval = chooser.showOpenDialog(this);
+        if (rval == JFileChooser.APPROVE_OPTION) {
+          String pathName = chooser.getSelectedFile().getPath();
+          if (!pathName.endsWith(".txt")) pathName = pathName + ".txt";
 
-						File file = new File(pathName);
+          File file = new File(pathName);
 
-						try {
-							FileWriter fw = new FileWriter(file);
-							BufferedWriter bw = new BufferedWriter(fw);
-							bw.write("** Metadata Notes from " +
-							  ((MetadataPane.TablePanel)tPanels.get(0))
-							  .getCurrentFile().getName() + " **");
-							bw.newLine();
-							bw.newLine();
-							Calendar rightNow = Calendar.getInstance();
-							bw.write("** Date Exported: " + rightNow.get(Calendar.MONTH) +
-							  "/" + rightNow.get(Calendar.DAY_OF_MONTH) + "/" +
-							  rightNow.get(Calendar.YEAR) + " " +
-							  rightNow.get(Calendar.HOUR_OF_DAY) + ":" +
-							  rightNow.get(Calendar.MINUTE) + " **");
-							bw.newLine();
-							bw.newLine();
+          try {
+            FileWriter fw = new FileWriter(file);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write("** Metadata Notes from " +
+              ((MetadataPane.TablePanel)tPanels.get(0))
+              .getCurrentFile().getName() + " **");
+            bw.newLine();
+            bw.newLine();
+            Calendar rightNow = Calendar.getInstance();
+            bw.write("** Date Exported: " + rightNow.get(Calendar.MONTH) +
+              "/" + rightNow.get(Calendar.DAY_OF_MONTH) + "/" +
+              rightNow.get(Calendar.YEAR) + " " +
+              rightNow.get(Calendar.HOUR_OF_DAY) + ":" +
+              rightNow.get(Calendar.MINUTE) + " **");
+            bw.newLine();
+            bw.newLine();
 
-							Vector alreadyUsed = new Vector();
-							int placeMark = 1;
+            Vector alreadyUsed = new Vector();
+            int placeMark = 1;
 
-							for (int i = 0;i < toExport.length;i++) {
-							  String thisNoteName = (String) toExport[i];
+            for (int i = 0;i < toExport.length;i++) {
+              String thisNoteName = (String) toExport[i];
 
-							  int index = thisNoteName.indexOf(">");
-							  String tableName = thisNoteName.substring(0,index-2);
+              int index = thisNoteName.indexOf(">");
+              String tableName = thisNoteName.substring(0,index-2);
 
-								Hashtable subHash = (Hashtable) topHash.get(tableName);
+              Hashtable subHash = (Hashtable) topHash.get(tableName);
 
-								if(!alreadyUsed.contains(tableName)) {
-									alreadyUsed.add(tableName);
+              if (!alreadyUsed.contains(tableName)) {
+                alreadyUsed.add(tableName);
 
-									bw.write(placeMark + ") " + tableName);
-									placeMark++;
-									bw.newLine();
-									bw.newLine();
-								}
+                bw.write(placeMark + ") " + tableName);
+                placeMark++;
+                bw.newLine();
+                bw.newLine();
+              }
 
-								int lIndex = thisNoteName.lastIndexOf(">");
-								String noteName = thisNoteName.substring(lIndex+1,
-									thisNoteName.length());
-								String noteValue = (String) subHash.get(noteName);
+              int lIndex = thisNoteName.lastIndexOf(">");
+              String noteName = thisNoteName.substring(lIndex+1,
+                thisNoteName.length());
+              String noteValue = (String) subHash.get(noteName);
 
-								bw.write("  ->" + noteName + ":");
-								bw.newLine();
-								int newLine = noteValue.indexOf("\n");
-								//handle newline characters found in the note's value
-								while(newLine != -1) {
-									String subValue = noteValue.substring(0,newLine);
-									noteValue = noteValue.substring(newLine+1,
-										noteValue.length());
-									bw.write("     " + subValue);
-									bw.newLine();
-									newLine = noteValue.indexOf("\n");
-								}
-								if(noteValue != null) bw.write("     " + noteValue);
-								bw.newLine();
-								bw.newLine();
-							}
-							bw.close();
-						}
-						catch (Exception exc) {exc.printStackTrace();}
-				  }
-					else JOptionPane.showMessageDialog(getTopLevelAncestor(),
-					      "No notes were selected to export!",
-					      "Unable to Export Nothingness", JOptionPane.ERROR_MESSAGE);
-		    }
-		  }
-		}
-	}
+              bw.write("  ->" + noteName + ":");
+              bw.newLine();
+              int newLine = noteValue.indexOf("\n");
+              //handle newline characters found in the note's value
+              while (newLine != -1) {
+                String subValue = noteValue.substring(0,newLine);
+                noteValue = noteValue.substring(newLine+1,
+                  noteValue.length());
+                bw.write("     " + subValue);
+                bw.newLine();
+                newLine = noteValue.indexOf("\n");
+              }
+              if (noteValue != null) bw.write("     " + noteValue);
+              bw.newLine();
+              bw.newLine();
+            }
+            bw.close();
+          }
+          catch (Exception exc) {exc.printStackTrace();}
+        }
+        else JOptionPane.showMessageDialog(getTopLevelAncestor(),
+              "No notes were selected to export!",
+              "Unable to Export Nothingness", JOptionPane.ERROR_MESSAGE);
+      }
+    }
+  }
 
-	/**Handle the "Export Notes" button action, call exportNotes().*/
-	public void actionPerformed(ActionEvent e) {
-	  if(e.getActionCommand().equals("save")) exportNotes();
-	}
+  /** Handle the "Export Notes" button action, call exportNotes(). */
+  public void actionPerformed(ActionEvent e) {
+    if (e.getActionCommand().equals("save")) exportNotes();
+  }
 
+  // -- Helper classes --
 
-	// --Helper Classes--
+  /**
+   * A subclass of JPanel that gets around the annoying resize width
+   * problems inherent in a JPanel that is the View of a JScrollPane.
+   */
+  public class ScrollablePanel extends JPanel implements Scrollable {
+    public ScrollablePanel() { super(); }
 
-	/**
-	* A subclass of JPanel that gets around the annoying resize width
-	* problems inherent in a JPanel that is the View of a JScrollPane.
-	*/
-	public class ScrollablePanel extends JPanel
-	  implements Scrollable
-	{
-	  public ScrollablePanel() {
-	    super();
-	  }
-
-	  public Dimension getPreferredScrollableViewportSize() {
+    public Dimension getPreferredScrollableViewportSize() {
       return getPreferredSize();
     }
 
@@ -303,16 +291,16 @@ public class NotePane extends JScrollPane
     public boolean getScrollableTracksViewportHeight() {return false;}
   }
 
-  /** A filefilter to display only text files and directories.*/
-	public class TextFileFilter extends FileFilter
-	{
-	  public boolean accept(File f) {
-	    if(f.getPath().endsWith(".txt") || f.isDirectory()) return true;
-	    else return false;
-	  }
+  /** A file filter to display only text files and directories. */
+  public class TextFileFilter extends FileFilter {
+    public boolean accept(File f) {
+      if (f.getPath().endsWith(".txt") || f.isDirectory()) return true;
+      else return false;
+    }
 
-	  public String getDescription() {
-	    return "Text Files";
-	  }
-	}
+    public String getDescription() {
+      return "Text Files";
+    }
+  }
+
 }

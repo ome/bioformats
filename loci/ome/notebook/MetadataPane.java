@@ -306,18 +306,18 @@ public class MetadataPane extends JPanel
         //Workaround for transform problems with writeOME(file,false);
         String xml = thisOmeNode.writeOME(false);
         FileWriter fw = new FileWriter(file);
-			  BufferedWriter bw = new BufferedWriter(fw);
-			  bw.write(xml);
-			  bw.close();
+        BufferedWriter bw = new BufferedWriter(fw);
+        bw.write(xml);
+        bw.close();
 */
       }
     }
     catch (Exception e) {
       //if all hell breaks loose, display an error dialog
       JOptionPane.showMessageDialog(getTopLevelAncestor(),
-            "Sadly, the file you specified is either write-protected\n" +
-            "or in use by another program. Game over, man.",
-            "Unable to Write to Specified File", JOptionPane.ERROR_MESSAGE);
+        "Sadly, the file you specified is either write-protected\n" +
+        "or in use by another program. Game over, man.",
+        "Unable to Write to Specified File", JOptionPane.ERROR_MESSAGE);
       System.out.println("ERROR! Attempt failed to open file: " +
         file.getName() );
     }
@@ -363,7 +363,8 @@ public class MetadataPane extends JPanel
 
           int num = reader.getImageCount(id);
           if (num > 0) {
-            img = reader.openImage(id, num / 2); // gets middle image from the file
+            // get middle image from the file
+            img = reader.openImage(id, num / 2);
           }
           else img = null;
           int width = 50, height = 50;
@@ -391,8 +392,8 @@ public class MetadataPane extends JPanel
           img = reader.openImage(id, 0); // gets first image from the file
           int width = 50, height = 50;
           thumb = ImageTools.scale(img, width, height);
-          ome = (OMENode) ((OMEXMLMetadataStore) reader.getMetadataStore(id)).getRoot();
-if (ome == null) System.out.println("the OMENode is NULL!");//TEMP
+          ome = (OMENode) ((OMEXMLMetadataStore)
+            reader.getMetadataStore(id)).getRoot();
           setOMEXML(ome);
         }
         catch (Exception exc) { exc.printStackTrace(); }
@@ -555,7 +556,7 @@ if (ome == null) System.out.println("the OMENode is NULL!");//TEMP
     TabPanel firstImageTab = null;
     for (int i=0;i<tabPanelList.size();i++) {
       TabPanel tabP = (TabPanel) tabPanelList.get(i);
-      if(tabP.name.startsWith("Image")) {
+      if (tabP.name.startsWith("Image")) {
         firstImageTab = tabP;
         break;
       }
@@ -703,7 +704,7 @@ if (ome == null) System.out.println("the OMENode is NULL!");//TEMP
     TabPanel firstImageTab = null;
     for (int i=0;i<tabPanelList.size();i++) {
       TabPanel tabP = (TabPanel) tabPanelList.get(i);
-      if(tabP.name.startsWith("Image")) {
+      if (tabP.name.startsWith("Image")) {
         firstImageTab = tabP;
         break;
       }
@@ -1013,7 +1014,9 @@ if (ome == null) System.out.println("the OMENode is NULL!");//TEMP
             Element e = (Element) nl.item(j);
             if (e == aChild) {
               Integer aInt = new Integer(j+1);
-              if (!result.equals("")) result += ": " + e.getTagName() + " (" + aInt + ")";
+              if (!result.equals("")) {
+                result += ": " + e.getTagName() + " (" + aInt + ")";
+              }
               else result += e.getTagName() + " (" + aInt + ")";
             }
           }
@@ -1348,37 +1351,49 @@ if (ome == null) System.out.println("the OMENode is NULL!");//TEMP
 
       //Set up the details for internal reference names
       refDetails = e.getAttribute("RefVars");
-      if(debug) System.out.println();
-      if(debug)   System.out.println(name + " - " + refDetails);
+      if (debug) System.out.println();
+      if (debug)   System.out.println(name + " - " + refDetails);
       boolean noDetails = true;
       int openIndex = refDetails.indexOf('%');
-      while(openIndex >= 0) {
-        if(debug) System.out.println(openIndex + " " + refDetails.charAt(openIndex));
+      while (openIndex >= 0) {
+        if (debug) {
+          System.out.println(openIndex + " " + refDetails.charAt(openIndex));
+        }
         int closeIndex = refDetails.indexOf('%',openIndex + 1);
-        if(debug) System.out.println(closeIndex + " " + refDetails.charAt(closeIndex));
+        if (debug) {
+          System.out.println(closeIndex + " " + refDetails.charAt(closeIndex));
+        }
         String thisCommand = refDetails.substring(openIndex + 1,closeIndex);
-        if(debug) System.out.println("Command: " + thisCommand);
+        if (debug) {
+          System.out.println("Command: " + thisCommand);
+        }
         String processed = refDetails.substring(0,openIndex);
-        if(debug) System.out.println("Processed: " + processed);
-        String remnants = refDetails.substring(closeIndex+1,refDetails.length());
-        if(debug) System.out.println("Remnants: " + remnants);
+        if (debug) {
+          System.out.println("Processed: " + processed);
+        }
+        String remnants = refDetails.substring(closeIndex + 1,
+          refDetails.length());
+        if (debug) System.out.println("Remnants: " + remnants);
 
         boolean addThisCommand = false;
         int varIndex = thisCommand.indexOf('$');
-        while(varIndex >=0) {
-          if(debug) System.out.println("varIndex: " + varIndex + " " + thisCommand.charAt(varIndex));
+        while (varIndex >=0) {
+          if (debug) {
+            System.out.println("varIndex: " +
+              varIndex + " " + thisCommand.charAt(varIndex));
+          }
           int endIndex = thisCommand.indexOf(' ', varIndex + 1);
           if (endIndex < 0) endIndex = thisCommand.length();
-          if(debug) System.out.println("endIndex: " + endIndex);
+          if (debug) System.out.println("endIndex: " + endIndex);
           String prefix = thisCommand.substring(0,varIndex);
-          if(debug) System.out.println("Prefix: " + prefix);
+          if (debug) System.out.println("Prefix: " + prefix);
           String thisVar = thisCommand.substring(varIndex+1,endIndex);
-          if(debug) System.out.println("thisVar: " + thisVar);
+          if (debug) System.out.println("thisVar: " + thisVar);
           String suffix;
-          if(endIndex != thisCommand.length())
+          if (endIndex != thisCommand.length())
             suffix = thisCommand.substring(endIndex + 1,thisCommand.length());
           else suffix = "";
-          if(debug) System.out.println("Suffix: " + suffix);
+          if (debug) System.out.println("Suffix: " + suffix);
           String value = null;
           if (oNode != null) {
             value = oNode.getAttribute(thisVar);
@@ -1389,9 +1404,9 @@ if (ome == null) System.out.println("the OMENode is NULL!");//TEMP
             }
           }
           else value = "";
-          if(debug) System.out.println("Value: " + value);
+          if (debug) System.out.println("Value: " + value);
           thisCommand = prefix + value + suffix;
-          if(debug) System.out.println("thisCommand: " + thisCommand);
+          if (debug) System.out.println("thisCommand: " + thisCommand);
 
           varIndex = thisCommand.indexOf('$');
         }
@@ -1400,12 +1415,12 @@ if (ome == null) System.out.println("the OMENode is NULL!");//TEMP
           refDetails = processed + " (" + thisCommand + ")" + remnants;
         }
         else refDetails = processed + remnants;
-        if(debug) System.out.println("refDetails: " + refDetails);
+        if (debug) System.out.println("refDetails: " + refDetails);
 
         openIndex = refDetails.indexOf('%');
       }
-      if(debug) System.out.println(name + " - " + refDetails);
-      if(showIDs) refDetails = refDetails + " (ID: " + id + ")";
+      if (debug) System.out.println(name + " - " + refDetails);
+      if (showIDs) refDetails = refDetails + " (ID: " + id + ")";
 
       Element cDataEl = DOMUtil.getChildElement("CData",e);
       if (cDataEl != null) attrList.add(0,cDataEl);
@@ -1446,7 +1461,7 @@ if (ome == null) System.out.println("the OMENode is NULL!");//TEMP
         new DefaultTableModel(TREE_COLUMNS, 0)
       {
         public boolean isCellEditable(int row, int col) {
-          if(editable) {
+          if (editable) {
             if (col < 1) return false;
             else return true;
           }
@@ -1613,7 +1628,7 @@ if (ome == null) System.out.println("the OMENode is NULL!");//TEMP
               if (tp.id != null && value != null) {
                 if (value.equals(tp.id)) {
                   isLocal = true;
-                  if(tp.refDetails != null && !tp.refDetails.equals(""))
+                  if (tp.refDetails != null && !tp.refDetails.equals(""))
                     model.setValueAt(tp.name + " - " + tp.refDetails,i,1);
                   else model.setValueAt(tp.name,i,1);
                 }
@@ -1672,7 +1687,7 @@ if (ome == null) System.out.println("the OMENode is NULL!");//TEMP
             Point loc = tablePan.getLocation();
             loc.x = 0;
             JViewport jView = jScr.getViewport();
-            if(jView.getExtentSize().getHeight() <
+            if (jView.getExtentSize().getHeight() <
               jView.getViewSize().getHeight())
                 jScr.getViewport().setViewPosition(loc);
           }
@@ -1685,9 +1700,9 @@ if (ome == null) System.out.println("the OMENode is NULL!");//TEMP
         }
         else {
           JOptionPane.showMessageDialog((Frame) getTopLevelAncestor(),
-              "Since the ID in question is currently blank,\n" +
-              "you cannot \"Goto\" it.",
-              "Null Reference Detected", JOptionPane.WARNING_MESSAGE);
+            "Since the ID in question is currently blank,\n" +
+            "you cannot \"Goto\" it.",
+            "Null Reference Detected", JOptionPane.WARNING_MESSAGE);
         }
       }
       else if (e.getActionCommand().equals("getNotes")) {

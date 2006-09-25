@@ -102,16 +102,16 @@ public class MetadataNotebook extends JFrame
   public MetadataNotebook(String[] args, boolean addSave, boolean editable) {
     super("OME Metadata Notebook");
 
-		try {
+    try {
       String os = System.getProperty("os.name");
       String laf = os != null && os.indexOf("Windows") >= 0 ?
         "com.sun.java.swing.plaf.windows.WindowsLookAndFeel" :
         "javax.swing.plaf.metal.MetalLookAndFeel";
-	    UIManager.setLookAndFeel(laf);
-		}
-		catch (Exception exc) {
-		  System.err.println("Sorry, but we could not find the look and feel JAR.");
-		}
+      UIManager.setLookAndFeel(laf);
+    }
+    catch (Exception exc) {
+      System.err.println("Sorry, but we could not find the look and feel JAR.");
+    }
 
     //initialize fields
     currentFile = null;
@@ -514,17 +514,17 @@ public class MetadataNotebook extends JFrame
       metadata.reRender();
     }
     else {
-      if(!advView.getState() && !noteView.getState()
-        && !scanView.getState())
-      	normView.setState(true);
+      if (!advView.getState() && !noteView.getState() && !scanView.getState()) {
+        normView.setState(true);
+      }
       else {
-	      noteP.setVisible(false);
-	      mdp.setVisible(false);
-	      scanP.setVisible(false);
-	      tabsMenu.setEnabled(true);
-	      fileNew.setEnabled(true);
-	      metadata.reRender();
-	      metadata.setVisible(true);
+        noteP.setVisible(false);
+        mdp.setVisible(false);
+        scanP.setVisible(false);
+        tabsMenu.setEnabled(true);
+        fileNew.setEnabled(true);
+        metadata.reRender();
+        metadata.setVisible(true);
       }
     }
   }
