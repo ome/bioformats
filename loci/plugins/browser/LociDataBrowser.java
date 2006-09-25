@@ -28,7 +28,6 @@ import ij.*;
 import ij.gui.GenericDialog;
 import ij.gui.ImageCanvas;
 import ij.io.FileInfo;
-import ij.plugin.PlugIn;
 import java.io.File;
 import loci.formats.*;
 import loci.plugins.Util;
@@ -41,7 +40,7 @@ import loci.plugins.Util;
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at cs.wisc.edu
  */
-public class LociDataBrowser implements PlugIn {
+public class LociDataBrowser {
 
   // -- Constants --
 
@@ -82,7 +81,7 @@ public class LociDataBrowser implements PlugIn {
 
   private ImageStack stack;
 
-  // -- LociDataBrowser methods --
+  // -- LociDataBrowser API methods --
 
   /** Displays the given ImageJ image in a 4D browser window. */
   public void show(ImagePlus imp) {
@@ -155,8 +154,6 @@ public class LociDataBrowser implements PlugIn {
 
     series = Integer.parseInt(datasets.getNextChoice());
   }
-
-  // -- Plugin methods --
 
   public void run(String arg) {
     if (!Util.checkVersion()) return;
@@ -332,6 +329,8 @@ public class LociDataBrowser implements PlugIn {
       }
     }
   }
+
+  // -- Main method --
 
   /** Main method, for testing. */
   public static void main(String[] args) {

@@ -1,12 +1,11 @@
 //
-// LociImporter.java
+// BrowserPlugin.java
 //
 
 /*
-LOCI Plugins for ImageJ: a collection of ImageJ plugins including the 4D
-Data Browser, OME Plugin and Bio-Formats Exporter. Copyright (C) 2006
-Melissa Linkert, Christopher Peterson, Curtis Rueden, Philip Huettl
-and Francis Wong.
+LOCI 4D Data Browser plugin for quick browsing of 4D datasets in ImageJ.
+Copyright (C) 2005-@year@ Christopher Peterson, Francis Wong, Curtis Rueden
+and Melissa Linkert.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
@@ -23,33 +22,29 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.plugins;
+package loci.plugins.browser;
 
 import ij.plugin.PlugIn;
+import loci.plugins.Util;
 
 /**
- * ImageJ plugin for reading files using the LOCI Bio-Formats package.
- * Wraps core logic in loci.plugins.Importer, to avoid direct references
- * to classes in the external Bio-Formats library.
+ * BrowserPlugin is a wrapper for the LOCI Data Browser plugin for ImageJ,
+ * to avoid direct references to classes from the external Bio-Formats library.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
- * @author Melissa Linkert linkert at cs.wisc.edu
  */
-public class LociImporter implements PlugIn {
+public class BrowserPlugin implements PlugIn {
 
   // -- Fields --
 
-  /** Flag indicating whether last operation was successful. */
-  public boolean success = false;
+  private LociDataBrowser ldb = new LociDataBrowser();
 
   // -- PlugIn API methods --
 
-  /** Executes the plugin. */
-  public synchronized void run(String arg) {
-    success = false;
+  public void run(String arg) {
     if (!Util.checkVersion()) return;
     if (!Util.checkLibraries(true, true, false)) return;
-    new Importer(this).run(arg);
+    ldb.run(arg);
   }
 
 }
