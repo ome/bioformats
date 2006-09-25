@@ -526,10 +526,10 @@ public class OpenlabReader extends FormatReader {
     numImages[0] = tmp.size();
 
     // determine if we have a multi-series file
-    
+
     openBytes(id, 0);
     int oldWidth = width[0];
-    
+
     int oldSize = 0;
     for (int i=0; i<tmp.size(); i++) {
       LayerInfo layer = (LayerInfo) tmp.get(i);
@@ -542,7 +542,7 @@ public class OpenlabReader extends FormatReader {
         // check if this is really a PICT image
         in.skipBytes(8);
         int w = DataTools.read2SignedBytes(in, false);
-        int newSize = (int) (nextTag - in.getFilePointer()); 
+        int newSize = (int) (nextTag - in.getFilePointer());
         if ((w == oldWidth) && ((i % 4) == 3) && (newSize != oldSize)) {
           layerInfoList[1].add(tmp.get(i));
           layerInfoList[0].remove(tmp.get(i));
@@ -588,7 +588,7 @@ public class OpenlabReader extends FormatReader {
     int oldSeries = getSeries(currentId);
     for (int i=0; i<bpp.length; i++) {
       setSeries(currentId, 0);
-      bpp[i] = openBytes(id, 0).length / (width[i] * height[i]); 
+      bpp[i] = openBytes(id, 0).length / (width[i] * height[i]);
     }
     setSeries(currentId, oldSeries);
 

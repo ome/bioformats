@@ -135,8 +135,8 @@ public class MetamorphReader extends BaseTiffReader {
 
             String key = sb.toString().trim();
             int value = in.readInt();
-            if (!key.trim().equals("") && key.trim().length() > 3 && 
-              key.trim().indexOf("?") == -1) 
+            if (!key.trim().equals("") && key.trim().length() > 3 &&
+              key.trim().indexOf("?") == -1)
             {
               metadata.put(key, new Integer(value));
             }
@@ -221,7 +221,7 @@ public class MetamorphReader extends BaseTiffReader {
         }
 
         temp.put(new Integer(TiffTools.STRIP_OFFSETS), newOffsets);
-        
+
         tempIFDs[pointer] = temp;
         pointer++;
       }
@@ -553,7 +553,7 @@ public class MetamorphReader extends BaseTiffReader {
         case 45:
           put("GammaBlue", in.readInt());
           break;
-      } 
+      }
       currentcode = in.readShort();
     }
   }
