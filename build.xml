@@ -199,7 +199,7 @@ Apache XML-RPC
     License:   Apache
 -->
 
-<project name="LOCI Software" default="compile" basedir=".">
+<project name="LOCI Software" default="jars" basedir=".">
   <description>
     Master build file for all Java software projects at LOCI
   </description>
