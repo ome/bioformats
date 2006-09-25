@@ -236,9 +236,9 @@ public class OpenlabReader extends FormatReader {
         while (expectedBlock != totalBlocks) {
 
           while (pos + 7 < length &&
-           (q[pos] != 73 || q[pos + 1] != 86 || q[pos + 2] != 69 ||
-           q[pos + 3] != 65 || q[pos + 4] != 100 || q[pos + 5] != 98 ||
-           q[pos + 6] != 112 || q[pos + 7] != 113))
+            (q[pos] != 73 || q[pos + 1] != 86 || q[pos + 2] != 69 ||
+            q[pos + 3] != 65 || q[pos + 4] != 100 || q[pos + 5] != 98 ||
+            q[pos + 6] != 112 || q[pos + 7] != 113))
           {
             pos++;
           }
@@ -633,11 +633,21 @@ public class OpenlabReader extends FormatReader {
       catch (ArrayIndexOutOfBoundsException a) { }
 
       switch (bpp[i]) {
-        case 1: pixelType[i] = FormatReader.INT8; break;
-        case 2: pixelType[i] = FormatReader.INT16; break;
-        case 3: pixelType[i] = FormatReader.INT8; break;
-        case 4: pixelType[i] = FormatReader.INT32; break;
-        case 6: pixelType[i] = FormatReader.INT16; break;
+        case 1:
+          pixelType[i] = FormatReader.INT8;
+          break;
+        case 2:
+          pixelType[i] = FormatReader.INT16;
+          break;
+        case 3:
+          pixelType[i] = FormatReader.INT8;
+          break;
+        case 4:
+          pixelType[i] = FormatReader.INT32;
+          break;
+        case 6:
+          pixelType[i] = FormatReader.INT16;
+          break;
       }
 
       store.setImage("Series " + i, null, null, new Integer(i));
@@ -678,11 +688,11 @@ public class OpenlabReader extends FormatReader {
 
   /** Helper class for storing layer info. */
   protected class LayerInfo {
-    public int layerStart;
-    public int zPosition;
-    public int wavelength;
-    public String layerName;
-    public long timestamp;
+    protected int layerStart;
+    protected int zPosition;
+    protected int wavelength;
+    protected String layerName;
+    protected long timestamp;
   }
 
   // -- Main method --

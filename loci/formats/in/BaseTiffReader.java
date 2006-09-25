@@ -134,19 +134,26 @@ public abstract class BaseTiffReader extends FormatReader {
     String compression = null;
     switch (comp) {
       case TiffTools.UNCOMPRESSED:
-        compression = "None"; break;
+        compression = "None";
+        break;
       case TiffTools.CCITT_1D:
-        compression = "CCITT Group 3 1-Dimensional Modified Huffman"; break;
+        compression = "CCITT Group 3 1-Dimensional Modified Huffman";
+        break;
       case TiffTools.GROUP_3_FAX:
-        compression = "CCITT T.4 bilevel encoding"; break;
+        compression = "CCITT T.4 bilevel encoding";
+        break;
       case TiffTools.GROUP_4_FAX:
-        compression = "CCITT T.6 bilevel encoding"; break;
+        compression = "CCITT T.6 bilevel encoding";
+        break;
       case TiffTools.LZW:
-        compression = "LZW"; break;
+        compression = "LZW";
+        break;
       case TiffTools.JPEG:
-        compression = "JPEG"; break;
+        compression = "JPEG";
+        break;
       case TiffTools.PACK_BITS:
-        compression = "PackBits"; break;
+        compression = "PackBits";
+        break;
     }
     put("Compression", compression);
 
@@ -199,14 +206,30 @@ public abstract class BaseTiffReader extends FormatReader {
     String orientation = null;
     // there is no case 0
     switch (or) {
-      case 1: orientation = "1st row -> top; 1st column -> left"; break;
-      case 2: orientation = "1st row -> top; 1st column -> right"; break;
-      case 3: orientation = "1st row -> bottom; 1st column -> right"; break;
-      case 4: orientation = "1st row -> bottom; 1st column -> left"; break;
-      case 5: orientation = "1st row -> left; 1st column -> top"; break;
-      case 6: orientation = "1st row -> right; 1st column -> top"; break;
-      case 7: orientation = "1st row -> right; 1st column -> bottom"; break;
-      case 8: orientation = "1st row -> left; 1st column -> bottom"; break;
+      case 1:
+        orientation = "1st row -> top; 1st column -> left";
+        break;
+      case 2:
+        orientation = "1st row -> top; 1st column -> right";
+        break;
+      case 3:
+        orientation = "1st row -> bottom; 1st column -> right";
+        break;
+      case 4:
+        orientation = "1st row -> bottom; 1st column -> left";
+        break;
+      case 5:
+        orientation = "1st row -> left; 1st column -> top";
+        break;
+      case 6:
+        orientation = "1st row -> right; 1st column -> top";
+        break;
+      case 7:
+        orientation = "1st row -> right; 1st column -> bottom";
+        break;
+      case 8:
+        orientation = "1st row -> left; 1st column -> bottom";
+        break;
     }
     put("Orientation", orientation);
     putInt("SamplesPerPixel", ifd, TiffTools.SAMPLES_PER_PIXEL);
@@ -223,9 +246,15 @@ public abstract class BaseTiffReader extends FormatReader {
     int thresh = TiffTools.getIFDIntValue(ifd, TiffTools.THRESHHOLDING);
     String threshholding = null;
     switch (thresh) {
-      case 1: threshholding = "No dithering or halftoning"; break;
-      case 2: threshholding = "Ordered dithering or halftoning"; break;
-      case 3: threshholding = "Randomized error diffusion"; break;
+      case 1:
+        threshholding = "No dithering or halftoning";
+        break;
+      case 2:
+        threshholding = "Ordered dithering or halftoning";
+        break;
+      case 3:
+        threshholding = "Randomized error diffusion";
+        break;
     }
     put("Threshholding", threshholding);
 
@@ -254,8 +283,12 @@ public abstract class BaseTiffReader extends FormatReader {
       TiffTools.PLANAR_CONFIGURATION);
     String planarConfig = null;
     switch (planar) {
-      case 1: planarConfig = "Chunky"; break;
-      case 2: planarConfig = "Planar"; break;
+      case 1:
+        planarConfig = "Chunky";
+        break;
+      case 2:
+        planarConfig = "Planar";
+        break;
     }
     put("PlanarConfiguration", planarConfig);
 
@@ -271,9 +304,15 @@ public abstract class BaseTiffReader extends FormatReader {
     int res = TiffTools.getIFDIntValue(ifd, TiffTools.RESOLUTION_UNIT);
     String resUnit = null;
     switch (res) {
-      case 1: resUnit = "None"; break;
-      case 2: resUnit = "Inch"; break;
-      case 3: resUnit = "Centimeter"; break;
+      case 1:
+        resUnit = "None";
+        break;
+      case 2:
+        resUnit = "Inch";
+        break;
+      case 3:
+        resUnit = "Centimeter";
+        break;
     }
     put("ResolutionUnit", resUnit);
 
@@ -283,8 +322,12 @@ public abstract class BaseTiffReader extends FormatReader {
     int predict = TiffTools.getIFDIntValue(ifd, TiffTools.PREDICTOR);
     String predictor = null;
     switch (predict) {
-      case 1: predictor = "No prediction scheme"; break;
-      case 2: predictor = "Horizontal differencing"; break;
+      case 1:
+        predictor = "No prediction scheme";
+        break;
+      case 2:
+        predictor = "Horizontal differencing";
+        break;
     }
     put("Predictor", predictor);
 
@@ -300,8 +343,12 @@ public abstract class BaseTiffReader extends FormatReader {
     int ink = TiffTools.getIFDIntValue(ifd, TiffTools.INK_SET);
     String inkSet = null;
     switch (ink) {
-      case 1: inkSet = "CMYK"; break;
-      case 2: inkSet = "Other"; break;
+      case 1:
+        inkSet = "CMYK";
+        break;
+      case 2:
+        inkSet = "Other";
+        break;
     }
     put("InkSet", inkSet);
 
@@ -314,10 +361,18 @@ public abstract class BaseTiffReader extends FormatReader {
     int fmt = TiffTools.getIFDIntValue(ifd, TiffTools.SAMPLE_FORMAT);
     String sampleFormat = null;
     switch (fmt) {
-      case 1: sampleFormat = "unsigned integer"; break;
-      case 2: sampleFormat = "two's complement signed integer"; break;
-      case 3: sampleFormat = "IEEE floating point"; break;
-      case 4: sampleFormat = "undefined"; break;
+      case 1:
+        sampleFormat = "unsigned integer";
+        break;
+      case 2:
+        sampleFormat = "two's complement signed integer";
+        break;
+      case 3:
+        sampleFormat = "IEEE floating point";
+        break;
+      case 4:
+        sampleFormat = "undefined";
+        break;
     }
     put("SampleFormat", sampleFormat);
 
@@ -328,8 +383,12 @@ public abstract class BaseTiffReader extends FormatReader {
     int jpeg = TiffTools.getIFDIntValue(ifd, TiffTools.JPEG_PROC);
     String jpegProc = null;
     switch (jpeg) {
-      case 1: jpegProc = "baseline sequential process"; break;
-      case 14: jpegProc = "lossless process with Huffman coding"; break;
+      case 1:
+        jpegProc = "baseline sequential process";
+        break;
+      case 14:
+        jpegProc = "lossless process with Huffman coding";
+        break;
     }
     put("JPEGProc", jpegProc);
 
@@ -429,16 +488,28 @@ public abstract class BaseTiffReader extends FormatReader {
       if (bitFormat == 3) pixelType[0] = FormatReader.FLOAT;
       else if (bitFormat == 2) {
         switch (bitsPerSample) {
-          case 8: pixelType[0] = FormatReader.INT8; break;
-          case 16: pixelType[0] = FormatReader.INT16; break;
-          case 32: pixelType[0] = FormatReader.INT32; break;
+          case 8:
+            pixelType[0] = FormatReader.INT8;
+            break;
+          case 16:
+            pixelType[0] = FormatReader.INT16;
+            break;
+          case 32:
+            pixelType[0] = FormatReader.INT32;
+            break;
         }
       }
       else {
         switch (bitsPerSample) {
-          case 8: pixelType[0] = FormatReader.UINT8; break;
-          case 16: pixelType[0] = FormatReader.UINT16; break;
-          case 32: pixelType[0] = FormatReader.UINT32; break;
+          case 8:
+            pixelType[0] = FormatReader.UINT8;
+            break;
+          case 16:
+            pixelType[0] = FormatReader.UINT16;
+            break;
+          case 32:
+            pixelType[0] = FormatReader.UINT32;
+            break;
         }
       }
 
@@ -488,9 +559,9 @@ public abstract class BaseTiffReader extends FormatReader {
       for (int i=0; i<getSizeC(currentId); i++) {
         try {
           setLogicalChannel(i);
-          if (getChannelGlobalMinimum(currentId, 0) != null
-              && getChannelGlobalMaximum(currentId, 0) != null
-              || enableChannelStatCalculation)
+          if (getChannelGlobalMinimum(currentId, 0) != null &&
+            getChannelGlobalMaximum(currentId, 0) != null ||
+            enableChannelStatCalculation)
           {
             setChannelGlobalMinMax(i);
           }
@@ -591,10 +662,13 @@ public abstract class BaseTiffReader extends FormatReader {
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return (TiffTools.getIFDIntValue(ifds[0],
-      TiffTools.SAMPLES_PER_PIXEL, false, 1) > 1) ||
-      (TiffTools.getIFDIntValue(ifds[0], TiffTools.PHOTOMETRIC_INTERPRETATION,
-      true, 0) == TiffTools.RGB_PALETTE);
+    if (TiffTools.getIFDIntValue(ifds[0],
+      TiffTools.SAMPLES_PER_PIXEL, false, 1) > 1)
+    {
+      return true;
+    }
+    return TiffTools.getIFDIntValue(ifds[0],
+      TiffTools.PHOTOMETRIC_INTERPRETATION, true, 0) == TiffTools.RGB_PALETTE;
   }
 
   /**
@@ -866,8 +940,8 @@ public abstract class BaseTiffReader extends FormatReader {
 
   protected void put(String key, int value) {
     if (value == -1) return; // indicates missing value
-      metadata.put(key, new Integer(value));
-    }
+    metadata.put(key, new Integer(value));
+  }
 
   protected void put(String key, boolean value) {
     put(key, new Boolean(value));

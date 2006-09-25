@@ -184,7 +184,7 @@ public class OIBReader extends FormatReader {
       }
       return rtn;
     }
-    catch (ReflectException r) {
+    catch (ReflectException e) {
       noPOI = true;
       return new byte[0];
     }
@@ -296,9 +296,15 @@ public class OIBReader extends FormatReader {
 
     switch (bpp % 3) {
       case 0:
-      case 1: pixelType[0] = FormatReader.INT8; break;
-      case 2: pixelType[0] = FormatReader.INT16; break;
-      case 4: pixelType[0] = FormatReader.INT32; break;
+      case 1:
+        pixelType[0] = FormatReader.INT8;
+        break;
+      case 2:
+        pixelType[0] = FormatReader.INT16;
+        break;
+      case 4:
+        pixelType[0] = FormatReader.INT32;
+        break;
       default:
         throw new RuntimeException(
           "Unknown matching for pixel byte width of: " + bpp);

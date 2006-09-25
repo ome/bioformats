@@ -91,8 +91,8 @@ public class LeicaReader extends BaseTiffReader {
     if (block.length < 8) {
       // we can only check whether it is a TIFF
       return (block[0] == 0x49 && block[1] == 0x49 && block[2] == 0x49 &&
-      block[3] == 0x49) || (block[0] == 0x4d && block[1] == 0x4d &&
-      block[2] == 0x4d && block[3] == 0x4d);
+        block[3] == 0x49) || (block[0] == 0x4d && block[1] == 0x4d &&
+        block[2] == 0x4d && block[3] == 0x4d);
     }
 
     int ifdlocation = DataTools.bytesToInt(block, 4, true);
@@ -428,9 +428,9 @@ public class LeicaReader extends BaseTiffReader {
           new Integer(DataTools.bytesToInt(temp, 8, 4, littleEndian)));
         metadata.put("Length of file extension",
           new Integer(DataTools.bytesToInt(temp, 12, 4, littleEndian)));
+        Integer fileExtLen = (Integer) metadata.get("Length of file extension");
         metadata.put("Image file extension",
-          DataTools.stripString(new String(temp, 16,
-          ((Integer) metadata.get("Length of file extension")).intValue())));
+          DataTools.stripString(new String(temp, 16, fileExtLen.intValue())));
       }
 
       temp = (byte[]) headerIFDs[i].get(new Integer(15));
@@ -461,9 +461,15 @@ public class LeicaReader extends BaseTiffReader {
         int voxelType = DataTools.bytesToInt(temp, 4, 4, littleEndian);
         String type = "";
         switch (voxelType) {
-          case 0: type = "undefined"; break;
-          case 10: type = "gray normal"; break;
-          case 20: type = "RGB"; break;
+          case 0:
+            type = "undefined";
+            break;
+          case 10:
+            type = "gray normal";
+            break;
+          case 20:
+            type = "RGB";
+            break;
         }
 
         metadata.put("VoxelType", type);
@@ -488,33 +494,87 @@ public class LeicaReader extends BaseTiffReader {
           int dimId = DataTools.bytesToInt(temp, pt, 4, littleEndian);
           String dimType = "";
           switch (dimId) {
-            case 0: dimType = "undefined"; break;
-            case 120: dimType = "x"; break;
-            case 121: dimType = "y"; break;
-            case 122: dimType = "z"; break;
-            case 116: dimType = "t"; break;
-            case 6815843: dimType = "channel"; break;
-            case 6357100: dimType = "wave length"; break;
-            case 7602290: dimType = "rotation"; break;
-            case 7798904: dimType = "x-wide for the motorized xy-stage"; break;
-            case 7798905: dimType = "y-wide for the motorized xy-stage"; break;
-            case 7798906: dimType = "z-wide for the z-stage-drive"; break;
-            case 4259957: dimType = "user1 - unspecified"; break;
-            case 4325493: dimType = "user2 - unspecified"; break;
-            case 4391029: dimType = "user3 - unspecified"; break;
-            case 6357095: dimType = "graylevel"; break;
-            case 6422631: dimType = "graylevel1"; break;
-            case 6488167: dimType = "graylevel2"; break;
-            case 6553703: dimType = "graylevel3"; break;
-            case 7864398: dimType = "logical x"; break;
-            case 7929934: dimType = "logical y"; break;
-            case 7995470: dimType = "logical z"; break;
-            case 7602254: dimType = "logical t"; break;
-            case 7077966: dimType = "logical lambda"; break;
-            case 7471182: dimType = "logical rotation"; break;
-            case 5767246: dimType = "logical x-wide"; break;
-            case 5832782: dimType = "logical y-wide"; break;
-            case 5898318: dimType = "logical z-wide"; break;
+            case 0:
+              dimType = "undefined";
+              break;
+            case 120:
+              dimType = "x";
+              break;
+            case 121:
+              dimType = "y";
+              break;
+            case 122:
+              dimType = "z";
+              break;
+            case 116:
+              dimType = "t";
+              break;
+            case 6815843:
+              dimType = "channel";
+              break;
+            case 6357100:
+              dimType = "wave length";
+              break;
+            case 7602290:
+              dimType = "rotation";
+              break;
+            case 7798904:
+              dimType = "x-wide for the motorized xy-stage";
+              break;
+            case 7798905:
+              dimType = "y-wide for the motorized xy-stage";
+              break;
+            case 7798906:
+              dimType = "z-wide for the z-stage-drive";
+              break;
+            case 4259957:
+              dimType = "user1 - unspecified";
+              break;
+            case 4325493:
+              dimType = "user2 - unspecified";
+              break;
+            case 4391029:
+              dimType = "user3 - unspecified";
+              break;
+            case 6357095:
+              dimType = "graylevel";
+              break;
+            case 6422631:
+              dimType = "graylevel1";
+              break;
+            case 6488167:
+              dimType = "graylevel2";
+              break;
+            case 6553703:
+              dimType = "graylevel3";
+              break;
+            case 7864398:
+              dimType = "logical x";
+              break;
+            case 7929934:
+              dimType = "logical y";
+              break;
+            case 7995470:
+              dimType = "logical z";
+              break;
+            case 7602254:
+              dimType = "logical t";
+              break;
+            case 7077966:
+              dimType = "logical lambda";
+              break;
+            case 7471182:
+              dimType = "logical rotation";
+              break;
+            case 5767246:
+              dimType = "logical x-wide";
+              break;
+            case 5832782:
+              dimType = "logical y-wide";
+              break;
+            case 5898318:
+              dimType = "logical z-wide";
+              break;
           }
 
           //if (dimType.equals("channel")) numChannels++;
@@ -601,9 +661,9 @@ public class LeicaReader extends BaseTiffReader {
             pt += 4;
 
             for (int k=0; k<numDims; k++) {
-              metadata.put("Time-marker " + j + " Dimension " + k +
-                " coordinate", new Integer(DataTools.bytesToInt(temp,
-                pt, 4, littleEndian)));
+              metadata.put("Time-marker " + j +
+                " Dimension " + k + " coordinate",
+                new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
               pt += 4;
             }
             metadata.put("Time-marker " + j,
@@ -707,7 +767,7 @@ public class LeicaReader extends BaseTiffReader {
     sizeX = widths;
     sizeY = heights;
     sizeZ = zs;
-    sizeC = numChannels;;
+    sizeC = numChannels;
     sizeT = new int[numSeries];
     pixelType = new int[numSeries];
     currentOrder = new String[numSeries];
@@ -726,12 +786,24 @@ public class LeicaReader extends BaseTiffReader {
 
       int tPixelType = ((Integer) metadata.get("Bytes per pixel")).intValue();
       switch (tPixelType) {
-        case 1: pixelType[i] = FormatReader.INT8; break;
-        case 2: pixelType[i] = FormatReader.INT16; break;
-        case 3: pixelType[i] = FormatReader.INT8; break;
-        case 4: pixelType[i] = FormatReader.INT32; break;
-        case 6: pixelType[i] = FormatReader.INT16; break;
-        case 8: pixelType[i] = FormatReader.DOUBLE; break;
+        case 1:
+          pixelType[i] = FormatReader.INT8;
+          break;
+        case 2:
+          pixelType[i] = FormatReader.INT16;
+          break;
+        case 3:
+          pixelType[i] = FormatReader.INT8;
+          break;
+        case 4:
+          pixelType[i] = FormatReader.INT32;
+          break;
+        case 6:
+          pixelType[i] = FormatReader.INT16;
+          break;
+        case 8:
+          pixelType[i] = FormatReader.DOUBLE;
+          break;
       }
 
       store.setPixels(

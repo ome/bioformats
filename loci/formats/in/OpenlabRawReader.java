@@ -188,10 +188,17 @@ public class OpenlabRawReader extends FormatReader {
     MetadataStore store = getMetadataStore(id);
 
     switch (bytesPerPixel) {
-      case 1: pixelType[0] = FormatReader.INT8; break;
-      case 2: pixelType[0] = FormatReader.INT16; break;
-      case 3: pixelType[0] = FormatReader.INT8; break;
-      default: pixelType[0] = FormatReader.FLOAT;
+      case 1:
+        pixelType[0] = FormatReader.INT8;
+        break;
+      case 2:
+        pixelType[0] = FormatReader.INT16;
+        break;
+      case 3:
+        pixelType[0] = FormatReader.INT8;
+        break;
+      default:
+        pixelType[0] = FormatReader.FLOAT;
     }
 
     store.setPixels(

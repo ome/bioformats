@@ -454,9 +454,15 @@ public class LIFReader extends FormatReader {
 
       while (dims[i][5] % 8 != 0) dims[i][5]++;
       switch (dims[i][5]) {
-        case 8: pixelType[i] = FormatReader.INT8; break;
-        case 16: pixelType[i] = FormatReader.INT16; break;
-        case 32: pixelType[i] = FormatReader.FLOAT; break;
+        case 8:
+          pixelType[i] = FormatReader.INT8;
+          break;
+        case 16:
+          pixelType[i] = FormatReader.INT16;
+          break;
+        case 32:
+          pixelType[i] = FormatReader.FLOAT;
+          break;
       }
 
       Integer ii = new Integer(i);

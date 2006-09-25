@@ -61,11 +61,13 @@ public class DicomReader extends FormatReader {
   private static final int SEQUENCE_DELIMINATION = 0xFFFEE0DD;
   private static final int PIXEL_DATA = 0x7FE00010;
 
-  private static final int AE=0x4145, AS=0x4153, AT=0x4154, CS=0x4353,
-    DA=0x4441, DS=0x4453, DT=0x4454, FD=0x4644, FL=0x464C, IS=0x4953,
-    LO=0x4C4F, LT=0x4C54, PN=0x504E, SH=0x5348, SL=0x534C, SS=0x5353,
-    ST=0x5354, TM=0x544D, UI=0x5549, UL=0x554C, US=0x5553, UT=0x5554,
-    OB=0x4F42, OW=0x4F57, SQ=0x5351, UN=0x554E, QQ=0x3F3F;
+  private static final int AE=0x4145, AS=0x4153, AT=0x4154, CS=0x4353;
+  private static final int DA=0x4441, DS=0x4453, DT=0x4454, FD=0x4644;
+  private static final int FL=0x464C, IS=0x4953, LO=0x4C4F, LT=0x4C54;
+  private static final int PN=0x504E, SH=0x5348, SL=0x534C, SS=0x5353;
+  private static final int ST=0x5354, TM=0x544D, UI=0x5549, UL=0x554C;
+  private static final int US=0x5553, UT=0x5554, OB=0x4F42, OW=0x4F57;
+  private static final int SQ=0x5351, UN=0x554E, QQ=0x3F3F;
 
   private static final int IMPLICIT_VR = 0x2d2d;
 
@@ -389,34 +391,40 @@ public class DicomReader extends FormatReader {
     if (bitsPerPixel == 24 || bitsPerPixel == 48) bitsPerPixel /= 3;
 
     switch (bitsPerPixel) {
-      case 8: pixelType[0] = FormatReader.INT8; break;
-      case 16: pixelType[0] = FormatReader.INT16; break;
-      case 32: pixelType[0] = FormatReader.INT32; break;
+      case 8:
+        pixelType[0] = FormatReader.INT8;
+        break;
+      case 16:
+        pixelType[0] = FormatReader.INT16;
+        break;
+      case 32:
+        pixelType[0] = FormatReader.INT32;
+        break;
     }
 
     // populate OME-XML node
     store.setPixels(
-        new Integer((String) metadata.get("Columns")), // SizeX
-        new Integer((String) metadata.get("Rows")), // SizeY
-        new Integer(numImages), // SizeZ
-        new Integer(1), // SizeC
-        new Integer(1), // SizeT
-        new Integer(pixelType[0]),  // PixelType
-        new Boolean(!little),  // BigEndian
-        "XYZTC", // Dimension order
-        null); // Use index 0
+      new Integer((String) metadata.get("Columns")), // SizeX
+      new Integer((String) metadata.get("Rows")), // SizeY
+      new Integer(numImages), // SizeZ
+      new Integer(1), // SizeC
+      new Integer(1), // SizeT
+      new Integer(pixelType[0]),  // PixelType
+      new Boolean(!little),  // BigEndian
+      "XYZTC", // Dimension order
+      null); // Use index 0
 
     store.setImage(
-        null, // name
-        ((String) metadata.get("Content Date")) + "T" +
-        ((String) metadata.get("Content Time")),  // CreationDate
-        (String) metadata.get("Image Type"),
-        null); // Use index 0
+      null, // name
+      ((String) metadata.get("Content Date")) + "T" +
+      ((String) metadata.get("Content Time")),  // CreationDate
+      (String) metadata.get("Image Type"),
+      null); // Use index 0
 
     store.setInstrument(
-        (String) metadata.get("Manufacturer"),
-        (String) metadata.get("Manufacturer's Model Name"),
-        null, null, null);
+      (String) metadata.get("Manufacturer"),
+      (String) metadata.get("Manufacturer's Model Name"),
+      null, null, null);
   }
 
   // -- Helper methods --
@@ -475,17 +483,15 @@ public class DicomReader extends FormatReader {
         value = new String(s);
         break;
       case US:
-        if (elementLength == 2) {
-          value = Integer.toString(in.readShort());
-        }
+        if (elementLength == 2) value = Integer.toString(in.readShort());
         else {
           value = "";
           int n = elementLength / 2;
-          for (int i=0; i<n; i++)
-            value +=
-              Integer.toString(in.readShort()) + " ";
+          for (int i=0; i<n; i++) {
+            value += Integer.toString(in.readShort()) + " ";
           }
-          break;
+        }
+        break;
       case IMPLICIT_VR:
         s = new byte[elementLength];
         in.read(s);
