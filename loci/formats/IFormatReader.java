@@ -62,8 +62,6 @@ public interface IFormatReader extends IFormatHandler {
    * <i>static</i> pixel types such as <code>INT8</code>.
    * @throws FormatException if there was a problem parsing file metadata.
    * @throws IOException if there was an error reading from the file.
-   * @throws UnsupportedOperationException if the reader does not support pixel
-   * type retrieval.
    */
   int getPixelType(String id) throws FormatException, IOException;
 
@@ -78,8 +76,6 @@ public interface IFormatReader extends IFormatHandler {
    * @throws FormatException if there was a problem parsing the metadata of the
    * file.
    * @throws IOException if there was a problem reading the file.
-   * @throws UnsupportedOperationException if the reader does not support pixel
-   * type retrieval.
    * @see setChannelStatCalculationStatus()
    */
   Double getChannelGlobalMinimum(String id, int theC)
@@ -96,8 +92,6 @@ public interface IFormatReader extends IFormatHandler {
    * @throws FormatException if there was a problem parsing the metadata of the
    * file.
    * @throws IOException if there was a problem reading the file.
-   * @throws UnsupportedOperationException if the reader does not support pixel
-   * type retrieval.
    * @see setChannelStatCalculationStatus()
    */
   Double getChannelGlobalMaximum(String id, int theC)
@@ -123,8 +117,6 @@ public interface IFormatReader extends IFormatHandler {
    * calculation as part of metadata parsing. This method allows the user of
    * the reader to turn such calculations on or off.
    * @param on <code>true</code> if statistics calculation should be turned on.
-   * @throws UnsupportedOperationException if the reader does not support pixel
-   * type retrieval.
    * @see getChannelStatCalculationStatus()
    */
   void setChannelStatCalculationStatus(boolean on);
@@ -132,8 +124,6 @@ public interface IFormatReader extends IFormatHandler {
   /**
    * Retrieve the status of channel statistics calculation.
    * @return the status.
-   * @throws UnsupportedOperationException if the reader does not support pixel
-   * type retrieval.
    * @see setChannelStatCalculationStatus()
    */
   boolean getChannelStatCalculationStatus();
@@ -160,8 +150,6 @@ public interface IFormatReader extends IFormatHandler {
    * @throws FormatException if there was a problem parsing the metadata of the
    * file.
    * @throws IOException if there was a problem reading the file.
-   * @throws UnsupportedOperationException if the reader does not support pixel
-   * type retrieval.
    */
   byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException;

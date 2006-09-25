@@ -84,8 +84,8 @@ public final class ImageTools {
       short[][] shorts = new short[3][data.length / 6];
       int next = 0;
       if (interleaved) {
-       for (int i=0; i<shorts[0].length; i++) {
-           for (int j=0; j<shorts.length; j++) {
+        for (int i=0; i<shorts[0].length; i++) {
+          for (int j=0; j<shorts.length; j++) {
             shorts[j][i] = DataTools.bytesToShort(data, next, 2, little);
             next += 2;
           }
@@ -104,8 +104,8 @@ public final class ImageTools {
     else {
       double[] doubles = new double[data.length / bps];
       for (int i=0; i<doubles.length; i++) {
-         doubles[i] = Double.longBitsToDouble(
-           DataTools.bytesToLong(data, i*bps, bps, little));
+        doubles[i] = Double.longBitsToDouble(
+          DataTools.bytesToLong(data, i*bps, bps, little));
       }
       return makeImage(doubles, w, h, c, interleaved);
     }
@@ -261,8 +261,8 @@ public final class ImageTools {
       float[][] floats = new float[data.length][data[0].length / bps];
       for (int i=0; i<floats.length; i++) {
         for (int j=0; j<floats[0].length; j++) {
-            floats[i][j] = Float.intBitsToFloat(
-              DataTools.bytesToInt(data[i], j*4, 4, little));
+          floats[i][j] = Float.intBitsToFloat(
+            DataTools.bytesToInt(data[i], j*4, 4, little));
         }
       }
       return makeImage(floats, w, h);
@@ -271,8 +271,8 @@ public final class ImageTools {
       double[][] doubles = new double[data.length][data[0].length / bps];
       for (int i=0; i<doubles.length; i++) {
         for (int j=0; j<doubles[0].length; j++) {
-           doubles[i][j] = Double.longBitsToDouble(
-             DataTools.bytesToLong(data[i], j*bps, bps, little));
+          doubles[i][j] = Double.longBitsToDouble(
+            DataTools.bytesToLong(data[i], j*bps, bps, little));
         }
       }
       return makeImage(doubles, w, h);
@@ -1109,10 +1109,17 @@ public final class ImageTools {
   public static ColorModel makeColorModel(int c, int dataType) {
     int type;
     switch (c) {
-      case 1: type = ColorSpace.CS_GRAY; break;
-      case 3: type = ColorSpace.CS_sRGB; break;
-      case 4: type = ColorSpace.CS_sRGB; break;
-      default: return null;
+      case 1:
+        type = ColorSpace.CS_GRAY;
+        break;
+      case 3:
+        type = ColorSpace.CS_sRGB;
+        break;
+      case 4:
+        type = ColorSpace.CS_sRGB;
+        break;
+      default:
+        return null;
     }
     return new ComponentColorModel(ColorSpace.getInstance(type),
       c == 4, false, ColorModel.TRANSLUCENT, dataType);

@@ -316,7 +316,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
    * (non-Javadoc)
    * @see loci.formats.MetadataStore#setRoot(java.lang.Object)
    */
-  public void setRoot(Object root) throws IllegalArgumentException {
+  public void setRoot(Object root) {
     if (!(root instanceof OMENode)) {
       throw new IllegalArgumentException(
         "This metadata store accepts root objects of type 'OMENode'.");
@@ -649,29 +649,26 @@ public class OMEXMLMetadataStore implements MetadataStore {
    * @param pixelType the <i>pixel type</i> as an enumeration.
    * @return the <i>pixel type</i> as a string.
    */
-  private String pixelTypeAsString(Integer pixelType)
-  {
-    if (pixelType == null)
-      return null;
+  private String pixelTypeAsString(Integer pixelType) {
+    if (pixelType == null) return null;
 
-    switch(pixelType.intValue())
-    {
-    case FormatReader.INT8:
-      return "int8";
-    case FormatReader.UINT8:
-      return "Uint8";
-    case FormatReader.INT16:
-      return "int16";
-    case FormatReader.UINT16:
-      return "Uint16";
-    case FormatReader.INT32:
-      return "int32";
-    case FormatReader.UINT32:
-      return "Uint32";
-    case FormatReader.FLOAT:
-      return "float";
-    case FormatReader.DOUBLE:
-      return "double";
+    switch (pixelType.intValue()) {
+      case FormatReader.INT8:
+        return "int8";
+      case FormatReader.UINT8:
+        return "Uint8";
+      case FormatReader.INT16:
+        return "int16";
+      case FormatReader.UINT16:
+        return "Uint16";
+      case FormatReader.INT32:
+        return "int32";
+      case FormatReader.UINT32:
+        return "Uint32";
+      case FormatReader.FLOAT:
+        return "float";
+      case FormatReader.DOUBLE:
+        return "double";
     }
     throw new RuntimeException("Unknown pixel type: " + pixelType);
   }

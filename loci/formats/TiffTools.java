@@ -224,8 +224,8 @@ public final class TiffTools {
 
   /** Gets whether the TIFF information in the given IFD is little-endian. */
   public static boolean isLittleEndian(Hashtable ifd) throws FormatException {
-    return ((Boolean) getIFDValue(ifd, LITTLE_ENDIAN,
-      true, Boolean.class)).booleanValue();
+    return ((Boolean)
+      getIFDValue(ifd, LITTLE_ENDIAN, true, Boolean.class)).booleanValue();
   }
 
   // --------------------------- Reading TIFF files ---------------------------

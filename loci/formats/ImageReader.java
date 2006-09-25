@@ -96,7 +96,7 @@ public class ImageReader implements IFormatReader {
   private IFormatReader[] readers;
 
   /** Current form index. */
-  private int index;
+  private int current;
 
   // -- Constructor --
 
@@ -156,7 +156,7 @@ public class ImageReader implements IFormatReader {
   /** Gets a string describing the file format for the given file. */
   public String getFormat(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].getFormat();
+    return readers[current].getFormat();
   }
 
   /** Gets the reader used to open the given file. */
@@ -164,7 +164,7 @@ public class ImageReader implements IFormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index];
+    return readers[current];
   }
 
   /** Gets the file format reader instance matching the given class. */
@@ -188,43 +188,43 @@ public class ImageReader implements IFormatReader {
   /** Determines the number of images in the given image file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].getImageCount(id);
+    return readers[current].getImageCount(id);
   }
 
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].isRGB(id);
+    return readers[current].isRGB(id);
   }
 
   /** Get the size of the X dimension. */
   public int getSizeX(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].getSizeX(id);
+    return readers[current].getSizeX(id);
   }
 
   /** Get the size of the Y dimension. */
   public int getSizeY(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].getSizeY(id);
+    return readers[current].getSizeY(id);
   }
 
   /** Get the size of the Z dimension. */
   public int getSizeZ(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].getSizeZ(id);
+    return readers[current].getSizeZ(id);
   }
 
   /** Get the size of the C dimension. */
   public int getSizeC(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].getSizeC(id);
+    return readers[current].getSizeC(id);
   }
 
   /** Get the size of the T dimension. */
   public int getSizeT(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].getSizeT(id);
+    return readers[current].getSizeT(id);
   }
 
   /* (non-Javadoc)
@@ -232,7 +232,7 @@ public class ImageReader implements IFormatReader {
    */
   public int getPixelType(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].getPixelType(id);
+    return readers[current].getPixelType(id);
   }
 
   /* (non-Javadoc)
@@ -242,7 +242,7 @@ public class ImageReader implements IFormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].getChannelGlobalMinimum(id, theC);
+    return readers[current].getChannelGlobalMinimum(id, theC);
   }
 
   /* (non-Javadoc)
@@ -252,25 +252,25 @@ public class ImageReader implements IFormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].getChannelGlobalMaximum(id, theC);
+    return readers[current].getChannelGlobalMaximum(id, theC);
   }
 
   /** Get the size of the X dimension for the thumbnail. */
   public int getThumbSizeX(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].getThumbSizeX(id);
+    return readers[current].getThumbSizeX(id);
   }
 
   /** Get the size of the Y dimension for the thumbnail. */
   public int getThumbSizeY(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].getThumbSizeY(id);
+    return readers[current].getThumbSizeY(id);
   }
 
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].isLittleEndian(id);
+    return readers[current].isLittleEndian(id);
   }
 
   /**
@@ -281,7 +281,7 @@ public class ImageReader implements IFormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].getDimensionOrder(id);
+    return readers[current].getDimensionOrder(id);
   }
 
   /* (non-Javadoc)
@@ -296,31 +296,31 @@ public class ImageReader implements IFormatReader {
    * @see loci.formats.IFormatReader#getChannelStatCalculationStatus()
    */
   public boolean getChannelStatCalculationStatus() {
-    return readers[index].getChannelStatCalculationStatus();
+    return readers[current].getChannelStatCalculationStatus();
   }
 
   /** Returns whether or not the channels are interleaved. */
   public boolean isInterleaved(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].isInterleaved(id);
+    return readers[current].isInterleaved(id);
   }
 
   /** Return the number of series in the file. */
   public int getSeriesCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].getSeriesCount(id);
+    return readers[current].getSeriesCount(id);
   }
 
   /** Activates the specified series. */
   public void setSeries(String id, int no) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    readers[index].setSeries(id, no);
+    readers[current].setSeries(id, no);
   }
 
   /** Returns the currently active series. */
   public int getSeries(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].getSeries(id);
+    return readers[current].getSeries(id);
   }
 
   /**
@@ -331,7 +331,7 @@ public class ImageReader implements IFormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    readers[index].swapDimensions(id, order);
+    readers[current].swapDimensions(id, order);
   }
 
   /** Obtains the specified image from the given image file as a byte array. */
@@ -339,7 +339,7 @@ public class ImageReader implements IFormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].openBytes(id, no);
+    return readers[current].openBytes(id, no);
   }
 
   /* (non-Javadoc)
@@ -349,7 +349,7 @@ public class ImageReader implements IFormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].openBytes(id, no, buf);
+    return readers[current].openBytes(id, no, buf);
   }
 
   /** Obtains the specified image from the given image file. */
@@ -357,7 +357,7 @@ public class ImageReader implements IFormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].openImage(id, no);
+    return readers[current].openImage(id, no);
   }
 
   /** Obtains a thumbnail for the specified image from the given file. */
@@ -365,7 +365,7 @@ public class ImageReader implements IFormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].openThumbImage(id, no);
+    return readers[current].openThumbImage(id, no);
   }
 
   /**
@@ -378,7 +378,7 @@ public class ImageReader implements IFormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].openThumbBytes(id, no);
+    return readers[current].openThumbBytes(id, no);
   }
 
   /** Closes any open files. */
@@ -393,7 +393,7 @@ public class ImageReader implements IFormatReader {
    */
   public BufferedImage[] open(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].openImage(id);
+    return readers[current].openImage(id);
   }
 
   /**
@@ -406,7 +406,7 @@ public class ImageReader implements IFormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].getMetadataValue(id, field);
+    return readers[current].getMetadataValue(id, field);
   }
 
   /**
@@ -418,7 +418,7 @@ public class ImageReader implements IFormatReader {
    */
   public Hashtable getMetadata(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return readers[index].getMetadata(id);
+    return readers[current].getMetadata(id);
   }
 
   /**
@@ -524,7 +524,7 @@ public class ImageReader implements IFormatReader {
   /* (non-Javadoc)
    * @see loci.formats.IFormatHandler#getFormat()
    */
-  public String getFormat() { return readers[index].getFormat(); }
+  public String getFormat() { return readers[current].getFormat(); }
 
   /* (non-Javadoc)
    * @see loci.formats.IFormatHandler#getSuffixes()
@@ -561,18 +561,18 @@ public class ImageReader implements IFormatReader {
    */
   public static int getBytesPerPixel(int type) {
     switch(type) {
-    case FormatReader.INT8:
-    case FormatReader.UINT8:
-      return 1;
-    case FormatReader.INT16:
-    case FormatReader.UINT16:
-      return 2;
-    case FormatReader.INT32:
-    case FormatReader.UINT32:
-    case FormatReader.FLOAT:
-      return 4;
-    case FormatReader.DOUBLE:
-      return 8;
+      case FormatReader.INT8:
+      case FormatReader.UINT8:
+        return 1;
+      case FormatReader.INT16:
+      case FormatReader.UINT16:
+        return 2;
+      case FormatReader.INT32:
+      case FormatReader.UINT32:
+      case FormatReader.FLOAT:
+        return 4;
+      case FormatReader.DOUBLE:
+        return 8;
     }
     throw new RuntimeException("Unknown type with id: '" + type + "'");
   }
@@ -583,7 +583,7 @@ public class ImageReader implements IFormatReader {
   private void initFile(String id) throws FormatException, IOException {
     for (int i=0; i<readers.length; i++) {
       if (readers[i].isThisType(id)) {
-        index = i;
+        current = i;
         currentId = id;
         return;
       }
@@ -614,7 +614,7 @@ public class ImageReader implements IFormatReader {
    *
    * @return the current active reader.
    */
-  private IFormatReader currentReader() { return readers[index]; }
+  private IFormatReader currentReader() { return readers[current]; }
 
   // -- Main method --
 
