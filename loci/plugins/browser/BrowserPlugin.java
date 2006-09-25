@@ -37,13 +37,14 @@ public class BrowserPlugin implements PlugIn {
 
   // -- Fields --
 
-  private LociDataBrowser ldb = new LociDataBrowser();
+  private LociDataBrowser ldb;
 
   // -- PlugIn API methods --
 
   public void run(String arg) {
     if (!Util.checkVersion()) return;
     if (!Util.checkLibraries(true, true, false)) return;
+    if (ldb == null) ldb = new LociDataBrowser();
     ldb.run(arg);
   }
 

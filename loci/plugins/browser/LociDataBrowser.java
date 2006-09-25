@@ -30,7 +30,6 @@ import ij.gui.ImageCanvas;
 import ij.io.FileInfo;
 import java.io.File;
 import loci.formats.*;
-import loci.plugins.Util;
 
 /**
  * LociDataBrowser is a plugin for ImageJ that allows for browsing of 4D
@@ -156,17 +155,6 @@ public class LociDataBrowser {
   }
 
   public void run(String arg) {
-    if (!Util.checkVersion()) return;
-    if (!Util.checkLibraries(true, true, false)) return;
-
-    String version = System.getProperty("java.version");
-    double ver = Double.parseDouble(version.substring(0, 3));
-    if (ver < 1.4) {
-      IJ.showMessage("Sorry, the 4D Data Browser requires\n" +
-        "Java 1.4 or later. You can download ImageJ\n" +
-        "with JRE 5.0 from the ImageJ web site.");
-      return;
-    }
     LociOpener lociOpener = new LociOpener();
     boolean done2 = false;
     String directory = "";
