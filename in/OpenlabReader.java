@@ -519,80 +519,78 @@ public class OpenlabReader extends FormatReader {
       tmp.add(layerInfoList[0].get(i));
     }
 
-    // Some Openlab LIFF files contain a set of grayscale images followed by
-    // and RGB image.  If this is the case, we want to separate the
-    // grayscale and RGB planes into different series.
-
     width = new int[1];
     height = new int[1];
-    numImages = new int[1];
+    channelCount = new int[2];
+    numImages = new int[2];
     numImages[0] = tmp.size();
 
-    int[] bpp = new int[3];
-
-    boolean firstRGB = openBytes(id, 0).length / 3 >= (width[0] * height[0]);
-    bpp[0] = bytesPerPixel;
-    boolean thirdRGB = tmp.size() >= 3 ?
-      openBytes(id, 2).length / 3 >= (width[0] * height[0]) : false;
-    bpp[1] = bytesPerPixel;
-    boolean fourthRGB = tmp.size() >= 4 ?
-      openBytes(id, 3).length / 3 >= (width[0] * height[0]) : false;
-    bpp[2] = bytesPerPixel;
-
+    // determine if we have a multi-series file
+    
+    openBytes(id, 0);
     int oldWidth = width[0];
-    int oldHeight = height[0];
+    
+    int oldSize = 0;
+    for (int i=0; i<tmp.size(); i++) {
+      LayerInfo layer = (LayerInfo) tmp.get(i);
+      in.seek(layer.layerStart);
 
-    if (!firstRGB && (thirdRGB || fourthRGB)) {
-      numSeries = 2;
-    }
-    else numSeries = 1;
+      long nextTag = readTagHeader();
+      if (fmt.equals("PICT")) {
+        in.skipBytes(298);
 
-    numImages = new int[numSeries];
-    width = new int[numSeries];
-    height = new int[numSeries];
-    channelCount = new int[numSeries];
-
-    if (numSeries == 1) {
-      numImages[0] = layerInfoList[0].size();
-      channelCount[0] = firstRGB ? 3 : 1;
-    }
-    else {
-      layerInfoList[0].clear();
-      for (int i=0; i<tmp.size(); i++) {
-        LayerInfo layer = (LayerInfo) tmp.get(i);
-        in.seek(layer.layerStart);
-
-        readTagHeader();
-        if (fmt.equals("PICT")) {
-          in.skipBytes(298);
-
-          // check if this is really a PICT image
-          in.skipBytes(8);
-          int w = DataTools.read2SignedBytes(in, false);
-          if ((w == oldWidth) && ((i % 4) == 3)) {
-            layerInfoList[1].add(tmp.get(i));
-          }
-          else layerInfoList[0].add(tmp.get(i));
+        // check if this is really a PICT image
+        in.skipBytes(8);
+        int w = DataTools.read2SignedBytes(in, false);
+        int newSize = (int) (nextTag - in.getFilePointer()); 
+        if ((w == oldWidth) && ((i % 4) == 3) && (newSize != oldSize)) {
+          layerInfoList[1].add(tmp.get(i));
+          layerInfoList[0].remove(tmp.get(i));
         }
-        else {
-          in.skipBytes(24);
-          int type = DataTools.read2SignedBytes(in, false);
-          if (type == MAC_24_BIT) {
-            layerInfoList[1].add(tmp.get(i));
-          }
-          else layerInfoList[0].add(tmp.get(i));
+        else oldSize = newSize;
+      }
+      else {
+        in.skipBytes(24);
+        int type = DataTools.read2SignedBytes(in, false);
+        if (type == MAC_24_BIT) {
+          layerInfoList[1].add(tmp.get(i));
+          layerInfoList[0].remove(tmp.get(i));
         }
       }
+    }
 
+    if (layerInfoList[1].size() == 0 || layerInfoList[0].size() == 0) {
+      channelCount = new int[1];
+      channelCount[0] = layerInfoList[1].size() == 0 ? 1 : 3;
+      int oldImages = numImages[0];
+      numImages = new int[1];
+      numImages[0] = oldImages;
+    }
+    else {
       numImages[0] = layerInfoList[0].size();
       numImages[1] = layerInfoList[1].size();
       channelCount[0] = 1;
       channelCount[1] = 3;
-      width[1] = oldWidth;
-      height[1] = oldHeight;
+      int oldW = width[0];
+      int oldH = height[0];
+      width = new int[2];
+      height = new int[2];
+      width[0] = oldW;
+      width[1] = oldW;
+      height[0] = oldH;
+      height[1] = oldH;
     }
-    width[0] = oldWidth;
-    height[0] = oldHeight;
+
+    numSeries = numImages.length;
+
+    int[] bpp = new int[numSeries];
+
+    int oldSeries = getSeries(currentId);
+    for (int i=0; i<bpp.length; i++) {
+      setSeries(currentId, 0);
+      bpp[i] = openBytes(id, 0).length / (width[i] * height[i]); 
+    }
+    setSeries(currentId, oldSeries);
 
     if (bytesPerPixel == 3) bytesPerPixel = 1;
     if (bytesPerPixel == 0) bytesPerPixel++;
@@ -627,9 +625,12 @@ public class OpenlabReader extends FormatReader {
       sizeT[i] += 1;
       currentOrder[i] = isRGB(id) ? "XYCZT" : "XYZCT";
 
-      if (i != 0) {
-        if (bpp[i] == bpp[0]) bpp[i] = bpp[i + 1];
+      try {
+        if (i != 0) {
+          if (bpp[i] == bpp[0]) bpp[i] = bpp[i + 1];
+        }
       }
+      catch (ArrayIndexOutOfBoundsException a) { }
 
       switch (bpp[i]) {
         case 1: pixelType[i] = FormatReader.INT8; break;
