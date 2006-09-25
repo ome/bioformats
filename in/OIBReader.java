@@ -381,6 +381,7 @@ public class OIBReader extends FormatReader {
 
           String ini = new String(data);
           ini = DataTools.stripString(ini).trim();
+          if (ini.indexOf("????????") != -1) ini = "";
 
           StringTokenizer st = new StringTokenizer(ini, "\n");
 
