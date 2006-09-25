@@ -64,7 +64,7 @@ public final class Util {
       checkLibrary("org.openmicroscopy.xml.OMENode", "ome-java.jar", hs);
     }
     if (omeJavaDS) {
-      checkLibrary("org.openmicroscopy.ds.XmlRpcCaller", "ome-java.jar", hs);
+      checkLibrary("org.openmicroscopy.ds.DataServer", "ome-java.jar", hs);
       checkLibrary("org.apache.xmlrpc.XmlRpcClient", "xmlrpc-1.2-b1.jar", hs);
       checkLibrary("org.apache.commons.httpclient.HttpClient",
         "commons-httpclient-2.0-rc2.jar", hs);
