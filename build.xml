@@ -360,9 +360,12 @@ Apache XML-RPC
     <zip zipfile="${build.dir}/visbio_docs.zip" basedir="${visbio.docs-dir}"/>
   </target>
 
-  <target name="dist-visbio" depends="dist-visbio-win32, dist-visbio-win32-nojre, dist-visbio-macosx, dist-visbio-linux, dist-visbio-nojre"/>
+  <target name="dist-visbio"
+    depends="dist-visbio-win32, dist-visbio-win32-nojre, dist-visbio-macosx, dist-visbio-linux, dist-visbio-nojre"
+    description="create distribution bundles for VisBio"/>
 
-  <target name="dist-visbio-win32" depends="jar-visbio, jar-formats">
+  <target name="dist-visbio-win32" depends="jar-visbio, jar-formats"
+    description="create distribution bundle for VisBio: Windows w/ JRE">
     <copy todir="${visbio.win32-dir}" preservelastmodified="true">
       <fileset dir="dist/visbio/win32"/>
       <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
@@ -376,7 +379,8 @@ Apache XML-RPC
       basedir="${dist.dir}/visbio/win32"/>
   </target>
 
-  <target name="dist-visbio-win32-nojre" depends="jar-visbio, jar-formats">
+  <target name="dist-visbio-win32-nojre" depends="jar-visbio, jar-formats"
+    description="create distribution bundle for VisBio: Windows no JRE">
     <copy todir="${visbio.win32-nojre-dir}"
       preservelastmodified="true">
       <fileset dir="dist/visbio/win32" excludes="launcher.cfg"/>
@@ -392,7 +396,8 @@ Apache XML-RPC
 
   <!-- HACK - limit OS to *nix due to file permission issues -->
   <target name="dist-visbio-macosx" if="isUnix"
-    depends="jar-visbio, jar-formats">
+    depends="jar-visbio, jar-formats"
+    description="create distribution bundle for VisBio: Mac OS X">
     <copy todir="${visbio.macosx-dir}"
       preservelastmodified="true">
       <fileset dir="dist/visbio/macosx"/>
@@ -423,7 +428,8 @@ Apache XML-RPC
 
   <!-- HACK - limit OS to *nix due to file permission issues -->
   <target name="dist-visbio-linux" if="isUnix"
-    depends="jar-visbio, jar-formats">
+    depends="jar-visbio, jar-formats"
+    description="create distribution bundle for VisBio: Linux w/ JRE">
     <copy todir="${visbio.linux-dir}" preservelastmodified="true">
       <fileset dir="dist/visbio/linux"/>
       <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
@@ -461,7 +467,8 @@ Apache XML-RPC
 
   <!-- HACK - limit OS to *nix due to file permission issues -->
   <target name="dist-visbio-nojre" if="isUnix"
-    depends="jar-visbio, jar-formats">
+    depends="jar-visbio, jar-formats"
+    description="create distribution bundle for VisBio: cross-platform">
     <copy todir="${visbio.nojre-dir}" preservelastmodified="true">
       <fileset dir="dist/visbio/linux"/>
       <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
@@ -634,7 +641,8 @@ Apache XML-RPC
     </jar>
   </target>
 
-  <target name="dist-slim" if="isUnix" depends="copy-jars, jar-slim">
+  <target name="dist-slim" if="isUnix" depends="copy-jars, jar-slim"
+    description="create distribution bundle for Slim Plotter">
     <copy todir="${slim.dist-dir}" preservelastmodified="true">
       <fileset dir="dist/slim"/>
       <fileset dir="${jar.dir}" includes="SlimPlotter.jar ${slim.classpath}"/>
