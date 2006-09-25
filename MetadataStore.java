@@ -54,8 +54,6 @@ public interface MetadataStore {
   /**
    * Sets the <i>root</i> object of the metadata store.
    * @param root object that the store can use as its root.
-   * @throws IllegalArgumentException if the <code>root</code> is of an
-   * unsupported or unknown type.
    */
   void setRoot(Object root);
 

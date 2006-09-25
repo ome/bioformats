@@ -184,7 +184,9 @@ public class FilePattern {
         count[i] = end[i].subtract(begin[i]).divide(step[i]).intValue() + 1;
         fixed[i] = b.length() == e.length();
         int z = 0;
-        for (z=0; z<e.length(); z++) if (e.charAt(z) != '0') break;
+        for (z=0; z<e.length(); z++) {
+          if (e.charAt(z) != '0') break;
+        }
         zeroes[i] = z;
       }
       catch (NumberFormatException exc) {

@@ -239,83 +239,82 @@ public final class Compression {
       if (t < 16) return;
     }
 
-    loop:
-      for (; ; t = src[ip++] & 0xff) {
+  loop:
+    for (;; t = src[ip++] & 0xff) {
+      if (t < 16) {
+        if (t == 0) {
+          while (src[ip] == 0) {
+            t += 255;
+            ip++;
+          }
+          t += 15 + (src[ip++] & 0xff);
+        }
+        t += 3;
+        do dst[op++] = src[ip++]; while (--t > 0);
+        t = src[ip++] & 0xff;
         if (t < 16) {
+          mPos = op - 0x801 - (t >> 2) - ((src[ip++] & 0xff) << 2);
+          if (mPos < 0) {
+            t = LZO_OVERRUN;
+            break loop;
+          }
+          t = 3;
+          do dst[op++] = dst[mPos++]; while (--t > 0);
+          t = src[ip - 2] & 3;
+          if (t == 0) continue;
+          do dst[op++] = src[ip++]; while (--t > 0);
+          t = src[ip++] & 0xff;
+        }
+      }
+      for (;; t = src[ip++] & 0xff) {
+        if (t >= 64) {
+          mPos = op - 1 - ((t >> 2) & 7) - ((src[ip++] & 0xff) << 3);
+          t = (t >> 5) - 1;
+        }
+        else if (t >= 32) {
+          t &= 31;
           if (t == 0) {
             while (src[ip] == 0) {
               t += 255;
               ip++;
             }
-            t += 15 + (src[ip++] & 0xff);
+            t += 31 + (src[ip++] & 0xff);
           }
-          t += 3;
-          do dst[op++] = src[ip++]; while (--t > 0);
-          t = src[ip++] & 0xff;
-          if (t < 16) {
-            mPos = op - 0x801 - (t >> 2) - ((src[ip++] & 0xff) << 2);
-            if (mPos < 0) {
-              t = LZO_OVERRUN;
-              break loop;
-            }
-            t = 3;
-            do dst[op++] = dst[mPos++]; while (--t > 0);
-            t = src[ip - 2] & 3;
-            if (t == 0) continue;
-            do dst[op++] = src[ip++]; while (--t > 0);
-            t = src[ip++] & 0xff;
-          }
+          mPos = op - 1 - ((src[ip++] & 0xff) >> 2);
+          mPos -= ((src[ip++] & 0xff) << 6);
         }
-        for (; ; t = src[ip++] & 0xff) {
-          if (t >= 64) {
-            mPos = op - 1 - ((t >> 2) & 7) - ((src[ip++] & 0xff) << 3);
-            t = (t >> 5) - 1;
-          }
-          else if (t >= 32) {
-            t &= 31;
-            if (t == 0) {
-              while (src[ip] == 0) {
-                t += 255;
-                ip++;
-              }
-              t += 31 + (src[ip++] & 0xff);
+        else if (t >= 16) {
+          mPos = op - ((t & 8) << 11);
+          t &= 7;
+          if (t == 0) {
+            while (src[ip] == 0) {
+              t += 255;
+              ip++;
             }
-            mPos = op - 1 - ((src[ip++] & 0xff) >> 2);
-            mPos -= ((src[ip++] & 0xff) << 6);
+            t += 7 + (src[ip++] & 0xff);
           }
-          else if (t >= 16) {
-            mPos = op - ((t & 8) << 11);
-            t &= 7;
-            if (t == 0) {
-              while (src[ip] == 0) {
-                t += 255;
-                ip++;
-              }
-              t += 7 + (src[ip++] & 0xff);
-            }
-            mPos -= ((src[ip++] & 0xff) >> 2);
-            mPos -= ((src[ip++] & 0xff) << 6);
-            if (mPos == op) break loop;
-            mPos -= 0x4000;
-          }
-          else {
-            mPos = op - 1 - (t >> 2) - ((src[ip++] & 0xff) << 2);
-            t = 0;
-          }
-
-          if (mPos < 0) {
-            t = LZO_OVERRUN;
-            break loop;
-          }
-
-          t += 2;
-          do dst[op++] = dst[mPos++]; while (--t > 0);
-          t = src[ip - 2] & 3;
-          if (t == 0) break;
-          do dst[op++] = src[ip++]; while (--t > 0);
+          mPos -= ((src[ip++] & 0xff) >> 2);
+          mPos -= ((src[ip++] & 0xff) << 6);
+          if (mPos == op) break loop;
+          mPos -= 0x4000;
+        }
+        else {
+          mPos = op - 1 - (t >> 2) - ((src[ip++] & 0xff) << 2);
+          t = 0;
         }
 
+        if (mPos < 0) {
+          t = LZO_OVERRUN;
+          break loop;
+        }
+
+        t += 2;
+        do dst[op++] = dst[mPos++]; while (--t > 0);
+        t = src[ip - 2] & 3;
+        if (t == 0) break;
+        do dst[op++] = src[ip++]; while (--t > 0);
       }
+    }
   }
 
   /** Decodes an Adobe Deflate (Zip) compressed image strip. */
