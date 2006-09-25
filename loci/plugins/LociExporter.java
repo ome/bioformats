@@ -5,7 +5,8 @@
 /*
 LOCI Plugins for ImageJ: a collection of ImageJ plugins including the 4D
 Data Browser, OME Plugin and Bio-Formats Exporter. Copyright (C) 2006
-Melissa Linkert, Curtis Rueden, Philip Huettl and Francis Wong.
+Melissa Linkert, Christopher Peterson, Curtis Rueden, Philip Huettl
+and Francis Wong.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
@@ -72,23 +73,23 @@ public class LociExporter implements PlugInFilter, ItemListener {
   /** Executes the plugin. */
   public synchronized void run(ImageProcessor ip) {
     success = false;
-
-    // prompt for the filename to save to
+    if (!Util.checkVersion()) return;
+    if (!Util.checkLibraries(true, true, false)) return;
 
     ImageWriter writer = new ImageWriter();
+
+    // prompt for the filename to save to
 
     //SaveDialog sd = new SaveDialog("Save...", imp.getTitle(), "");
 
     String filename = null;
     JFileChooser chooser = writer.getFileChooser();
     JPanel panel = new JPanel(new BorderLayout());
-    merge = new JCheckBox("Merge channels (if unchecked, this will separate " +
-      "multi-channel images)", true);
+    merge = new JCheckBox("Merge channels", true);
     merge.addItemListener(this);
-    interleave = new JCheckBox("Interleave channels?", true);
+    interleave = new JCheckBox("Interleave channels", true);
     interleave.addItemListener(this);
-    sample = new JCheckBox("Enable converting 16-bit grayscale to RGB " +
-      "(will result in data loss)");
+    sample = new JCheckBox("Convert 16-bit grayscale to RGB");
     sample.addItemListener(this);
     panel.add(merge, BorderLayout.NORTH);
     panel.add(interleave, BorderLayout.EAST);
@@ -98,12 +99,8 @@ public class LociExporter implements PlugInFilter, ItemListener {
     int rval = chooser.showSaveDialog(null);
     if (rval == JFileChooser.APPROVE_OPTION) {
       final File file = chooser.getSelectedFile();
-      if (file != null) {
-        filename = file.getAbsolutePath();
-      }
-
+      if (file != null) filename = file.getAbsolutePath();
     }
-
     if (filename == null) return;
 
     try {

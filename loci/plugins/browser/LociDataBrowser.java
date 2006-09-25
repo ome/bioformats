@@ -3,7 +3,7 @@
 //
 
 /*
-LOCI 4D Data Browser package for quick browsing of 4D datasets in ImageJ.
+LOCI 4D Data Browser plugin for quick browsing of 4D datasets in ImageJ.
 Copyright (C) 2005-@year@ Christopher Peterson, Francis Wong, Curtis Rueden
 and Melissa Linkert.
 
@@ -31,6 +31,7 @@ import ij.io.FileInfo;
 import ij.plugin.PlugIn;
 import java.io.File;
 import loci.formats.*;
+import loci.plugins.Util;
 
 /**
  * LociDataBrowser is a plugin for ImageJ that allows for browsing of 4D
@@ -158,6 +159,9 @@ public class LociDataBrowser implements PlugIn {
   // -- Plugin methods --
 
   public void run(String arg) {
+    if (!Util.checkVersion()) return;
+    if (!Util.checkLibraries(true, true, false)) return;
+
     String version = System.getProperty("java.version");
     double ver = Double.parseDouble(version.substring(0, 3));
     if (ver < 1.4) {

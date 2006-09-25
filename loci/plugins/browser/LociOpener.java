@@ -3,7 +3,7 @@
 //
 
 /*
-LOCI 4D Data Browser package for quick browsing of 4D datasets in ImageJ.
+LOCI 4D Data Browser plugin for quick browsing of 4D datasets in ImageJ.
 Copyright (C) 2005-@year@ Christopher Peterson, Francis Wong, Curtis Rueden
 and Melissa Linkert.
 

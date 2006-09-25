@@ -5,7 +5,8 @@
 /*
 LOCI Plugins for ImageJ: a collection of ImageJ plugins including the 4D
 Data Browser, OME Plugin and Bio-Formats Exporter. Copyright (C) 2006
-Melissa Linkert, Curtis Rueden, Philip Huettl and Francis Wong.
+Melissa Linkert, Christopher Peterson, Curtis Rueden, Philip Huettl
+and Francis Wong.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Library General Public License as published by
@@ -67,15 +68,17 @@ public class LociImporter implements PlugIn, ItemListener {
 
   /** Executes the plugin. */
   public synchronized void run(String arg) {
-    // load preferences from IJ_Prefs.txt
+    success = false;
+    if (!Util.checkVersion()) return;
+    if (!Util.checkLibraries(true, true, false)) return;
 
+    // load preferences from IJ_Prefs.txt
     mergeChannels = Prefs.get("bioformats.mergeChannels", true);
     splitWindows = Prefs.get("bioformats.splitWindows", false);
     showMetadata = Prefs.get("bioformats.showMetadata", false);
     stitchFiles = Prefs.get("bioformats.stitchFiles", false);
     specifyRanges = Prefs.get("bioformats.specifyRanges", false);
 
-    success = false;
     boolean quiet = !"".equals(arg);
 
     String id = null;

@@ -23,7 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.ome;
 
+import ij.IJ;
 import ij.plugin.PlugIn;
+import loci.plugins.Util;
 
 /**
  * OMEPlugin is the ImageJ Plugin that allows image import and exports from
@@ -36,10 +38,10 @@ public class OMEPlugin implements PlugIn {
   private static OMESidePanel omeSidePanel;
 
   /** shows and retrieves info from the SidePanel */
-  public void run(java.lang.String arg) {
-    if (omeSidePanel == null) {
-      omeSidePanel = new OMESidePanel(ij.IJ.getInstance());
-    }
+  public void run(String arg) {
+    if (!Util.checkVersion()) return;
+    if (!Util.checkLibraries(true, true, true)) return;
+    if (omeSidePanel == null) omeSidePanel = new OMESidePanel(IJ.getInstance());
     WindowMonitor monitor = new WindowMonitor();
     monitor.start();
     OMESidePanel.showIt();
