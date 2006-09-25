@@ -51,7 +51,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   private static final String ANIM_STRING = "Animate";
   private static final String STOP_STRING = "Stop";
-  
+
   /**Constant dlu size for indents in GUI*/
   private static final String TAB = "5dlu";
 
@@ -91,14 +91,14 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     ow = null;
     String title = imp.getTitle();
     this.setTitle(title.substring(title.lastIndexOf(File.separatorChar) + 1));
-    
+
     //setup which variables the sliders are set to
     zMap = 0;
     tMap = 1;
     cMap = 2;
     prevZ = 0;
     prevT = 1;
-    
+
     setup = false;
 
     // create panel for image canvas
@@ -171,15 +171,15 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       xml.addActionListener(this);
       xml.setActionCommand("xml");
     }
-    
+
     channelBox = new JCheckBox("Transmitted");
-    
+
     cLabel = new JLabel("channel");
     textColor = cLabel.getForeground();
     SpinnerModel model = new SpinnerNumberModel(1, 1, db.numC, 1);
     channelSpin = new JSpinner(model);
     channelSpin.setEditor(new JSpinner.NumberEditor(channelSpin));
-    
+
     if(db.numC > 2) channelBox.setVisible(false);
     else {
       channelSpin.setVisible(false);
@@ -193,7 +193,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       c = db.numC;
     }
     else c = 1;
-    
+
     //setup the layout
     lowPane = new Panel();
     FormLayout layout = new FormLayout(
@@ -204,7 +204,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     lowPane.setBackground(Color.white);
 
     cc = new CellConstraints();
-    
+
     lowPane.add(zLabel, cc.xy(2,2));
     lowPane.add(zSliceSel, cc.xyw(4,2,5));
     lowPane.add(channelBox, cc.xy(12,2));
@@ -215,9 +215,9 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     lowPane.add(options, cc.xy(6,6));
     if(xml != null) lowPane.add(xml, cc.xy(8,6));
     lowPane.add(animate, cc.xyw(10,6,3, "right,center"));
-    
+
     setC(2);
-    
+
     Panel mainPane = new Panel();
     mainPane.setBackground(Color.white);
     FormLayout layout2 = new FormLayout(
@@ -227,10 +227,10 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     CellConstraints cc2 = new CellConstraints();
     mainPane.add(imagePane, cc2.xy(2,2));
     mainPane.add(lowPane, cc2.xy(2,4));
-    
+
     setLayout(new GridLayout());
-    add(mainPane);  
-    
+    add(mainPane);
+
     //final GUI tasks
     pack();
 
@@ -242,7 +242,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   }
 
   // -- CustomWindow methods --
-  
+
   public void setC(int cMap) {
     this.cMap = cMap;
     boolean hasThis = false;
@@ -286,7 +286,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       if (!hasThis) channelBox.setEnabled(false);
       channelBox.addItemListener(this);
       channelBox.setBackground(Color.white);
-      
+
       channelSpin.setVisible(false);
       cLabel.setForeground(Color.white);
     }
@@ -324,7 +324,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     }
     repaint();
   }
-  
+
   /** Selects and shows slice defined by z, t and c. */
   public synchronized void showTempSlice(int zVal, int tVal, int cVal) {
     int index = db.getIndex(zVal - 1, tVal - 1, cVal - 1);
@@ -334,12 +334,12 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     }
     showTempSlice(index);
   }
-  
+
   public void showTempSlice(int index) {
 
     imp.setProcessor("", db.manager.getTempSlice(index));
     imp.updateAndDraw();
-    
+
     if (LociDataBrowser.DEBUG) {
       IJ.log("invalid index: " + index + " (size = " + imp.getStackSize() +
         "; zSliceSel = " + zSliceSel.getValue() +
@@ -513,7 +513,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         db.hasT ? db.numT : 1, this);
       ow.setVisible(true);
     }
-    else if (src instanceof Timer) {      
+    else if (src instanceof Timer) {
       switch (tMap) {
         case 0:
           z = tSliceSel.getValue() + 1;
@@ -650,7 +650,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         c = ((Integer) channels.getValue()).intValue();
         break;
     }
-    
+
     showSlice(z, t, c);
   }
 

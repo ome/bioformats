@@ -174,9 +174,9 @@ public class ImagePlusWrapper {
   public ImagePlus getImagePlus() { return imp; }
 
   public int getNumTotal() { return numTotal; }
-  
-  public static synchronized ImageProcessor getImageProcessor( 
-    String name, FormatReader read, int index) 
+
+  public static synchronized ImageProcessor getImageProcessor(
+    String name, FormatReader read, int index)
   {
     String dim;
     int sizeX,sizeY,sizeZ,sizeT,sizeC;
@@ -194,7 +194,7 @@ public class ImagePlusWrapper {
       + "dimensions from the FormatReader passed to it.");
       return null;
     }
-    
+
     BufferedImage img;
     try {
       img = read.openImage(name, index);
@@ -205,7 +205,7 @@ public class ImagePlusWrapper {
       + "image with index " + index + ".");
       return null;
     }
-    
+
     if (img.getWidth() != sizeX || img.getHeight() != sizeY) {
       try {
         img = ImageTools.scale(img, sizeX, sizeY);
@@ -251,7 +251,7 @@ public class ImagePlusWrapper {
     if (ip == null) {
       ip = new ImagePlus(name, img).getProcessor(); // slow
     }
-    
+
     return ip;
   }
 }

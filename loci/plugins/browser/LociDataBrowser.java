@@ -262,7 +262,7 @@ public class LociDataBrowser {
             for (int i=0; i<size; i++) {
               stack.addSlice(absname + " : " + (i+1), manager.getSlice(0,i,0));
             }
-            
+
 
             if (stack == null || stack.getSize() == 0) {
               IJ.showMessage("No valid files found.");
