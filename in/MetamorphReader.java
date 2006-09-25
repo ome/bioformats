@@ -46,7 +46,7 @@ public class MetamorphReader extends BaseTiffReader {
   // -- Constants --
 
   // IFD tag numbers of important fields
-  private static final int METAMORPH_ID = 33629;
+  private static final int METAMORPH_ID = 33628;
   private static final int UIC2TAG = 33629;
   private static final int UIC3TAG = 33630;
   private static final int UIC4TAG = 33631;
@@ -117,12 +117,222 @@ public class MetamorphReader extends BaseTiffReader {
       in.seek(uic4tagEntry.getValueOffset());
       int planes = uic4tagEntry.getValueCount();
 
-      // Loop through and parse out each field of the UIC4TAG. A field whose
-      // code is "0" represents the end of the UIC4TAG's fields so we'll stop
-      // when we reach that; much like a NULL terminated C string.
-      int currentcode = in.readShort();
-      byte[] toread;
-      while (currentcode != 0) {
+      parseTags(planes);
+
+      // no idea how this tag is organized - this is just a guess
+      long[] uic1 = TiffTools.getIFDLongArray(ifds[0], METAMORPH_ID, true);
+      for (int i=1; i<uic1.length; i+=2) {
+        if (uic1[i] >= in.length() / 2) {
+          in.seek(uic1[i] + 12);
+          while (in.getFilePointer() < in.length()) {
+            // read a null-terminated string (key), followed by an int value
+            StringBuffer sb = new StringBuffer();
+            char c = (char) in.read();
+            while (c != 0) {
+              sb = sb.append(c);
+              c = (char) in.read();
+            }
+
+            String key = sb.toString().trim();
+            int value = in.readInt();
+            if (!key.trim().equals("") && key.trim().length() > 3 && 
+              key.trim().indexOf("?") == -1) 
+            {
+              metadata.put(key, new Integer(value));
+            }
+          }
+        }
+      }
+
+      // copy ifds into a new array of Hashtables that will accomodate the
+      // additional image planes
+      long[] uic2 = TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true);
+      numImages = uic2.length;
+
+      long[] uic3 = TiffTools.getIFDLongArray(ifds[0], UIC3TAG, true);
+      for (int i=0; i<uic3.length; i++) {
+        in.seek(uic3[i]);
+        put("Wavelength [" + i + "]", in.readLong() / in.readLong());
+      }
+
+      Hashtable[] tempIFDs = new Hashtable[numImages];
+
+      long[] oldOffsets = TiffTools.getIFDLongArray(ifds[0],
+          TiffTools.STRIP_OFFSETS, true);
+
+      long[] stripByteCounts = TiffTools.getIFDLongArray(ifds[0],
+          TiffTools.STRIP_BYTE_COUNTS, true);
+
+      int stripsPerImage = oldOffsets.length;
+
+      int check = TiffTools.getIFDIntValue(ifds[0],
+        TiffTools.PHOTOMETRIC_INTERPRETATION);
+      if (check == TiffTools.RGB_PALETTE) {
+        TiffTools.putIFDValue(ifds[0], TiffTools.PHOTOMETRIC_INTERPRETATION,
+          TiffTools.BLACK_IS_ZERO);
+      }
+
+      emWavelength = TiffTools.getIFDLongArray(ifds[0], UIC3TAG, true);
+
+      // for each image plane, construct an IFD hashtable
+
+      int pointer = 0;
+
+      Hashtable temp;
+      for(int i=0; i<numImages; i++) {
+        temp = new Hashtable();
+
+        // copy most of the data from 1st IFD
+        temp.put(new Integer(TiffTools.LITTLE_ENDIAN), ifds[0].get(
+            new Integer(TiffTools.LITTLE_ENDIAN)));
+        temp.put(new Integer(TiffTools.IMAGE_WIDTH), ifds[0].get(
+            new Integer(TiffTools.IMAGE_WIDTH)));
+        temp.put(new Integer(TiffTools.IMAGE_LENGTH),
+            ifds[0].get(new Integer(TiffTools.IMAGE_LENGTH)));
+        temp.put(new Integer(TiffTools.BITS_PER_SAMPLE), ifds[0].get(
+            new Integer(TiffTools.BITS_PER_SAMPLE)));
+        temp.put(new Integer(TiffTools.COMPRESSION), ifds[0].get(
+            new Integer(TiffTools.COMPRESSION)));
+        temp.put(new Integer(TiffTools.PHOTOMETRIC_INTERPRETATION),
+            ifds[0].get(new Integer(TiffTools.PHOTOMETRIC_INTERPRETATION)));
+        temp.put(new Integer(TiffTools.STRIP_BYTE_COUNTS), ifds[0].get(
+            new Integer(TiffTools.STRIP_BYTE_COUNTS)));
+        temp.put(new Integer(TiffTools.ROWS_PER_STRIP), ifds[0].get(
+            new Integer(TiffTools.ROWS_PER_STRIP)));
+        temp.put(new Integer(TiffTools.X_RESOLUTION), ifds[0].get(
+            new Integer(TiffTools.X_RESOLUTION)));
+        temp.put(new Integer(TiffTools.Y_RESOLUTION), ifds[0].get(
+            new Integer(TiffTools.Y_RESOLUTION)));
+        temp.put(new Integer(TiffTools.RESOLUTION_UNIT), ifds[0].get(
+            new Integer(TiffTools.RESOLUTION_UNIT)));
+        temp.put(new Integer(TiffTools.PREDICTOR), ifds[0].get(
+            new Integer(TiffTools.PREDICTOR)));
+
+        // now we need a StripOffsets entry
+
+        long planeOffset = i*(oldOffsets[stripsPerImage - 1] +
+            stripByteCounts[stripsPerImage - 1] - oldOffsets[0]);
+
+        long[] newOffsets = new long[oldOffsets.length];
+        newOffsets[0] = planeOffset + oldOffsets[0];
+
+        for(int j=1; j<newOffsets.length; j++) {
+          newOffsets[j] = newOffsets[j-1] + stripByteCounts[0];
+        }
+
+        temp.put(new Integer(TiffTools.STRIP_OFFSETS), newOffsets);
+        
+        tempIFDs[pointer] = temp;
+        pointer++;
+      }
+      ifds = tempIFDs;
+    }
+    catch (NullPointerException n) { n.printStackTrace(); }
+    catch (IOException io) { io.printStackTrace(); }
+    catch (FormatException e) { e.printStackTrace(); }
+
+    try { super.initStandardMetadata(); }
+    catch (Throwable t) { t.printStackTrace(); }
+
+    // parse (mangle) TIFF comment
+    String descr = (String) metadata.get("Comment");
+    if (descr != null) {
+      StringTokenizer st = new StringTokenizer(descr, "\n");
+      StringBuffer sb = new StringBuffer();
+      boolean first = true;
+      while (st.hasMoreTokens()) {
+        String line = st.nextToken();
+        int colon = line.indexOf(": ");
+
+        if (colon < 0) {
+          // normal line (not a key/value pair)
+          if (line.trim().length() > 0) {
+            // not a blank line
+            sb.append(line);
+            if (!line.endsWith(".")) sb.append(".");
+            sb.append("  ");
+          }
+          first = false;
+          continue;
+        }
+
+        if (first) {
+          // first line could be mangled; make a reasonable guess
+          int dot = line.lastIndexOf(".", colon);
+          if (dot >= 0) {
+            String s = line.substring(0, dot + 1);
+            sb.append(s);
+            if (!s.endsWith(".")) sb.append(".");
+            sb.append("  ");
+          }
+          line = line.substring(dot + 1);
+          colon -= dot + 1;
+          first = false;
+        }
+
+        // add key/value pair embedded in comment as separate metadata
+        String key = line.substring(0, colon);
+        String value = line.substring(colon + 2);
+        put(key, value);
+      }
+
+      // replace comment with trimmed version
+      descr = sb.toString().trim();
+      if (descr.equals("")) metadata.remove("Comment");
+      else put("Comment", descr);
+    }
+    try {
+      sizeZ[0] = TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true).length;
+      sizeT[0] = getImageCount(currentId) / sizeZ[0];
+    }
+    catch (Exception e) { }
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.BaseTiffReader#getImageName()
+   */
+  protected String getImageName() {
+    if (imageName == null) return super.getImageName();
+    return imageName;
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.BaseTiffReader#getImageCreationDate()
+   */
+  protected String getImageCreationDate() {
+    if (imageCreationDate == null) return super.getImageCreationDate();
+    return imageCreationDate;
+  }
+
+  protected void setChannelGlobalMinMax(int i)
+    throws FormatException, IOException
+  {
+    Double globalMin = (Double) metadata.get("grayMin");
+    Double globalMax = (Double) metadata.get("grayMax");
+    if (globalMin != null || globalMax != null) {
+      getMetadataStore(currentId).setChannelGlobalMinMax(i,
+        globalMin, globalMax, null);
+    }
+    super.setChannelGlobalMinMax(i);
+  }
+
+  Integer getEmWave(int i) {
+    if (emWavelength[i] == 0)  return null;
+    return new Integer((int) emWavelength[i]);
+  }
+
+  // -- Utility methods --
+
+  /** Parse (tag, value) pairs. */
+  private void parseTags(int planes) throws IOException {
+    // Loop through and parse out each field. A field whose
+    // code is "0" represents the end of the fields so we'll stop
+    // when we reach that; much like a NULL terminated C string.
+    int currentcode = in.readShort();
+    byte[] toread;
+    while (currentcode != 0) {
       // variable declarations, because switch is dumb
       int num, denom;
       int xnum, xdenom, ynum, ydenom;
@@ -257,14 +467,14 @@ public class MetamorphReader extends BaseTiffReader {
           break;
         case 28:
           for (int i = 0; i < planes; i++) {
-              xnum = in.readInt();
-              xdenom = in.readInt();
-              ynum = in.readInt();
-              ydenom = in.readInt();
-              xpos = xnum / xdenom;
-              ypos = ynum / ydenom;
-              put("Stage Position Plane " + i,
-                "(" + xpos + ", " + ypos + ")");
+            xnum = in.readInt();
+            xdenom = in.readInt();
+            ynum = in.readInt();
+            ydenom = in.readInt();
+            xpos = xnum / xdenom;
+            ypos = ynum / ydenom;
+            put("Stage Position Plane " + i,
+              "(" + xpos + ", " + ypos + ")");
           }
           break;
         case 29:
@@ -343,183 +553,10 @@ public class MetamorphReader extends BaseTiffReader {
         case 45:
           put("GammaBlue", in.readInt());
           break;
-      } // end switch
+      } 
       currentcode = in.readShort();
-      }
-
-      // copy ifds into a new array of Hashtables that will accomodate the
-      // additional image planes
-      long[] uic2 = TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true);
-      numImages = uic2.length;
-
-      Hashtable[] tempIFDs = new Hashtable[ifds.length + numImages];
-      System.arraycopy(ifds, 0, tempIFDs, 0, ifds.length);
-      int pointer = ifds.length;
-
-      long[] oldOffsets = TiffTools.getIFDLongArray(ifds[0],
-          TiffTools.STRIP_OFFSETS, true);
-
-      long[] stripByteCounts = TiffTools.getIFDLongArray(ifds[0],
-          TiffTools.STRIP_BYTE_COUNTS, true);
-
-      int stripsPerImage = oldOffsets.length;
-
-      int check = TiffTools.getIFDIntValue(ifds[0],
-        TiffTools.PHOTOMETRIC_INTERPRETATION);
-      if (check == TiffTools.RGB_PALETTE) {
-        TiffTools.putIFDValue(ifds[0], TiffTools.PHOTOMETRIC_INTERPRETATION,
-          TiffTools.BLACK_IS_ZERO);
-      }
-
-      emWavelength = TiffTools.getIFDLongArray(ifds[0], UIC3TAG, true);
-
-      // for each image plane, construct an IFD hashtable
-
-      Hashtable temp;
-      for(int i=0; i<numImages; i++) {
-        temp = new Hashtable();
-
-        // copy most of the data from 1st IFD
-        temp.put(new Integer(TiffTools.LITTLE_ENDIAN), ifds[0].get(
-            new Integer(TiffTools.LITTLE_ENDIAN)));
-        temp.put(new Integer(TiffTools.IMAGE_WIDTH), ifds[0].get(
-            new Integer(TiffTools.IMAGE_WIDTH)));
-        temp.put(new Integer(TiffTools.IMAGE_LENGTH),
-            ifds[0].get(new Integer(TiffTools.IMAGE_LENGTH)));
-        temp.put(new Integer(TiffTools.BITS_PER_SAMPLE), ifds[0].get(
-            new Integer(TiffTools.BITS_PER_SAMPLE)));
-        temp.put(new Integer(TiffTools.COMPRESSION), ifds[0].get(
-            new Integer(TiffTools.COMPRESSION)));
-        temp.put(new Integer(TiffTools.PHOTOMETRIC_INTERPRETATION),
-            ifds[0].get(new Integer(TiffTools.PHOTOMETRIC_INTERPRETATION)));
-        temp.put(new Integer(TiffTools.STRIP_BYTE_COUNTS), ifds[0].get(
-            new Integer(TiffTools.STRIP_BYTE_COUNTS)));
-        temp.put(new Integer(TiffTools.ROWS_PER_STRIP), ifds[0].get(
-            new Integer(TiffTools.ROWS_PER_STRIP)));
-        temp.put(new Integer(TiffTools.X_RESOLUTION), ifds[0].get(
-            new Integer(TiffTools.X_RESOLUTION)));
-        temp.put(new Integer(TiffTools.Y_RESOLUTION), ifds[0].get(
-            new Integer(TiffTools.Y_RESOLUTION)));
-        temp.put(new Integer(TiffTools.RESOLUTION_UNIT), ifds[0].get(
-            new Integer(TiffTools.RESOLUTION_UNIT)));
-        temp.put(new Integer(TiffTools.PREDICTOR), ifds[0].get(
-            new Integer(TiffTools.PREDICTOR)));
-
-        // now we need a StripOffsets entry
-
-        long planeOffset = i*(oldOffsets[stripsPerImage - 1] +
-            stripByteCounts[stripsPerImage - 1] - oldOffsets[0]);
-
-        long[] newOffsets = new long[oldOffsets.length];
-        newOffsets[0] = planeOffset + oldOffsets[0];
-
-        for(int j=1; j<newOffsets.length; j++) {
-          newOffsets[j] = newOffsets[j-1] + stripByteCounts[0];
-        }
-
-        temp.put(new Integer(TiffTools.STRIP_OFFSETS), newOffsets);
-        tempIFDs[pointer] = temp;
-        pointer++;
-      }
-      ifds = tempIFDs;
     }
-    catch (NullPointerException n) { n.printStackTrace(); }
-    catch (IOException io) { io.printStackTrace(); }
-    catch (FormatException e) { e.printStackTrace(); }
-
-    try { super.initStandardMetadata(); }
-    catch (Throwable t) { t.printStackTrace(); }
-
-    // parse (mangle) TIFF comment
-    String descr = (String) metadata.get("Comment");
-    if (descr != null) {
-      StringTokenizer st = new StringTokenizer(descr, "\n");
-      StringBuffer sb = new StringBuffer();
-      boolean first = true;
-      while (st.hasMoreTokens()) {
-        String line = st.nextToken();
-        int colon = line.indexOf(": ");
-
-        if (colon < 0) {
-          // normal line (not a key/value pair)
-          if (line.trim().length() > 0) {
-            // not a blank line
-            sb.append(line);
-            if (!line.endsWith(".")) sb.append(".");
-            sb.append("  ");
-          }
-          first = false;
-          continue;
-        }
-
-        if (first) {
-          // first line could be mangled; make a reasonable guess
-          int dot = line.lastIndexOf(".", colon);
-          if (dot >= 0) {
-            String s = line.substring(0, dot + 1);
-            sb.append(s);
-            if (!s.endsWith(".")) sb.append(".");
-            sb.append("  ");
-          }
-          line = line.substring(dot + 1);
-          colon -= dot + 1;
-          first = false;
-        }
-
-        // add key/value pair embedded in comment as separate metadata
-        String key = line.substring(0, colon);
-        String value = line.substring(colon + 2);
-        put(key, value);
-      }
-
-      // replace comment with trimmed version
-      descr = sb.toString().trim();
-      if (descr.equals("")) metadata.remove("Comment");
-      else put("Comment", descr);
-    }
-    try {
-      sizeZ[0] = TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true).length;
-      sizeT[0] = getImageCount(currentId) / sizeZ[0];
-    }
-    catch (Exception e) { }
   }
-
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.BaseTiffReader#getImageName()
-   */
-  protected String getImageName() {
-    if (imageName == null) return super.getImageName();
-    return imageName;
-  }
-
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.BaseTiffReader#getImageCreationDate()
-   */
-  protected String getImageCreationDate() {
-    if (imageCreationDate == null) return super.getImageCreationDate();
-    return imageCreationDate;
-  }
-
-  protected void setChannelGlobalMinMax(int i)
-    throws FormatException, IOException
-  {
-    Double globalMin = (Double) metadata.get("grayMin");
-    Double globalMax = (Double) metadata.get("grayMax");
-    if (globalMin != null || globalMax != null) {
-      getMetadataStore(currentId).setChannelGlobalMinMax(i,
-        globalMin, globalMax, null);
-    }
-    super.setChannelGlobalMinMax(i);
-  }
-
-  Integer getEmWave(int i) {
-    if (emWavelength[i] == 0)  return null;
-    return new Integer((int) emWavelength[i]);
-  }
-
-  // -- Utility methods --
 
   /** Converts a Julian date value into a human-readable string. */
   public static String decodeDate(int julian) {
