@@ -400,10 +400,18 @@ public class PerkinElmerReader extends FormatReader {
     else {
       int bpp = openBytes(id, 0).length / (sizeX[0] * sizeY[0]);
       switch (bpp) {
-        case 1: pixelType[0] = FormatReader.INT8; break;
-        case 2: pixelType[0] = FormatReader.INT16; break;
-        case 3: pixelType[0] = FormatReader.INT8; break;
-        case 4: pixelType[0] = FormatReader.INT32; break;
+        case 1:
+          pixelType[0] = FormatReader.INT8;
+          break;
+        case 2:
+          pixelType[0] = FormatReader.INT16;
+          break;
+        case 3:
+          pixelType[0] = FormatReader.INT8;
+          break;
+        case 4:
+          pixelType[0] = FormatReader.INT32;
+          break;
       }
     }
 

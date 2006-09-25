@@ -150,7 +150,7 @@ public class IPWReader extends BaseTiffReader {
       }
       return rtn;
     }
-    catch (ReflectException r) {
+    catch (ReflectException e) {
       noPOI = true;
       return new byte[0];
     }
@@ -235,7 +235,7 @@ public class IPWReader extends BaseTiffReader {
       RandomAccessStream stream = new RandomAccessStream(b);
       ifds = TiffTools.getIFDs(stream);
     }
-    catch (ReflectException r) { }
+    catch (ReflectException e) { }
 
     rgb = (TiffTools.getIFDIntValue(ifds[0],
       TiffTools.SAMPLES_PER_PIXEL, false, 1) > 1);
@@ -302,16 +302,28 @@ public class IPWReader extends BaseTiffReader {
     if (bitFormat == 3) pixelType[0] = FormatReader.FLOAT;
     else if (bitFormat == 2) {
       switch (bitsPerSample) {
-        case 8: pixelType[0] = FormatReader.INT8; break;
-        case 16: pixelType[0] = FormatReader.INT16; break;
-        case 32: pixelType[0] = FormatReader.INT32; break;
+        case 8:
+          pixelType[0] = FormatReader.INT8;
+          break;
+        case 16:
+          pixelType[0] = FormatReader.INT16;
+          break;
+        case 32:
+          pixelType[0] = FormatReader.INT32;
+          break;
       }
     }
     else {
       switch (bitsPerSample) {
-        case 8: pixelType[0] = FormatReader.UINT8; break;
-        case 16: pixelType[0] = FormatReader.UINT16; break;
-        case 32: pixelType[0] = FormatReader.UINT32; break;
+        case 8:
+          pixelType[0] = FormatReader.UINT8;
+          break;
+        case 16:
+          pixelType[0] = FormatReader.UINT16;
+          break;
+        case 32:
+          pixelType[0] = FormatReader.UINT32;
+          break;
       }
     }
 
@@ -372,8 +384,8 @@ public class IPWReader extends BaseTiffReader {
         else if (entryName.equals("FrameInfo")) {
           // should always be 16 bytes (if present)
           for(int i=0; i<data.length/2; i++) {
-            metadata.put("FrameInfo "+i, new Short(
-            DataTools.bytesToShort(data, i*2, true)));
+            metadata.put("FrameInfo "+i,
+              new Short(DataTools.bytesToShort(data, i*2, true)));
           }
         }
         else if (entryName.equals("ImageInfo")) {

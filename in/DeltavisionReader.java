@@ -258,33 +258,40 @@ public class DeltavisionReader extends FormatReader {
     String pixel;
 
     switch (filePixelType) {
-      case 0: pixel = "8 bit unsigned integer";
-              pixelType[0] = FormatReader.UINT8;
-              bytesPerPixel = 1;
-              break;
-      case 1: pixel = "16 bit signed integer";
-              pixelType[0] = FormatReader.UINT16;
-              bytesPerPixel = 2;
-              break;
-      case 2: pixel = "32 bit floating point";
-              pixelType[0] = FormatReader.FLOAT;
-              bytesPerPixel = 4;
-              break;
-      case 3: pixel = "32 bit complex";
-              pixelType[0] = FormatReader.UINT32;
-              bytesPerPixel = 4;
-              break;
-      case 4: pixel = "64 bit complex";
-              pixelType[0] = FormatReader.FLOAT;
-              bytesPerPixel = 8;
-              break;
-      case 6: pixel = "16 bit unsigned integer";
-              pixelType[0] = FormatReader.UINT16;
-              bytesPerPixel = 2;
-              break;
-      default: pixel = "unknown";
-               pixelType[0] = FormatReader.UINT8;
-               bytesPerPixel = 1;
+      case 0:
+        pixel = "8 bit unsigned integer";
+        pixelType[0] = FormatReader.UINT8;
+        bytesPerPixel = 1;
+        break;
+      case 1:
+        pixel = "16 bit signed integer";
+        pixelType[0] = FormatReader.UINT16;
+        bytesPerPixel = 2;
+        break;
+      case 2:
+        pixel = "32 bit floating point";
+        pixelType[0] = FormatReader.FLOAT;
+        bytesPerPixel = 4;
+        break;
+      case 3:
+        pixel = "32 bit complex";
+        pixelType[0] = FormatReader.UINT32;
+        bytesPerPixel = 4;
+        break;
+      case 4:
+        pixel = "64 bit complex";
+        pixelType[0] = FormatReader.FLOAT;
+        bytesPerPixel = 8;
+        break;
+      case 6:
+        pixel = "16 bit unsigned integer";
+        pixelType[0] = FormatReader.UINT16;
+        bytesPerPixel = 2;
+        break;
+      default:
+        pixel = "unknown";
+        pixelType[0] = FormatReader.UINT8;
+        bytesPerPixel = 1;
     }
 
     metadata.put("PixelType", pixel);
@@ -358,12 +365,23 @@ public class DeltavisionReader extends FormatReader {
     int type = DataTools.bytesToShort(header, 160, 2, little);
     String imageType;
     switch (type) {
-      case 0: imageType = "normal"; break;
-      case 1: imageType = "Tilt-series"; break;
-      case 2: imageType = "Stereo tilt-series"; break;
-      case 3: imageType = "Averaged images"; break;
-      case 4: imageType = "Averaged stereo pairs"; break;
-      default: imageType = "unknown";
+      case 0:
+        imageType = "normal";
+        break;
+      case 1:
+        imageType = "Tilt-series";
+        break;
+      case 2:
+        imageType = "Stereo tilt-series";
+        break;
+      case 3:
+        imageType = "Averaged images";
+        break;
+      case 4:
+        imageType = "Averaged stereo pairs";
+        break;
+      default:
+        imageType = "unknown";
     }
 
     metadata.put("Image Type", imageType);
@@ -384,10 +402,17 @@ public class DeltavisionReader extends FormatReader {
     String imageSequence;
     String dimOrder;
     switch (sequence) {
-      case 0: imageSequence = "ZTW"; dimOrder = "XYZTC"; break;
-      case 1: imageSequence = "WZT"; dimOrder = "XYCZT"; break;
-      case 2: imageSequence = "ZWT"; dimOrder = "XYZCT"; break;
-      default: imageSequence = "unknown"; dimOrder = "XYZTC";
+      case 0:
+        imageSequence = "ZTW"; dimOrder = "XYZTC";
+        break;
+      case 1:
+        imageSequence = "WZT"; dimOrder = "XYCZT";
+        break;
+      case 2:
+        imageSequence = "ZWT"; dimOrder = "XYZCT";
+        break;
+      default:
+        imageSequence = "unknown"; dimOrder = "XYZTC";
     }
     metadata.put("Image sequence", imageSequence);
 
@@ -506,7 +531,7 @@ public class DeltavisionReader extends FormatReader {
     }
     if (numW > 4) {
       store.setChannelGlobalMinMax(4, new Double(wave5Min.floatValue()),
-       new Double(wave5Max.floatValue()), null);
+        new Double(wave5Max.floatValue()), null);
     }
 
     store.setDefaultDisplaySettings(null);
@@ -573,11 +598,9 @@ public class DeltavisionReader extends FormatReader {
     return getTotalOffset(currentZ, currentW, currentT) / smallOffset;
   }
 
-
   /**
    * This private class structure holds the details for the extended header
    * @author Brian W. Loranger
-   *
    */
   private class DVExtHdrFields {
 
@@ -585,37 +608,52 @@ public class DeltavisionReader extends FormatReader {
 
     private float oDFilter;
 
-    //  Photosensor reading. Typically in mV.
+    /** Photosensor reading. Typically in mV. */
     private float photosensorReading;
-    //    Time stamp in seconds since the experiment began.
+
+    /** Time stamp in seconds since the experiment began. */
     private float timeStampSeconds;
-    // X stage coordinates.
+
+    /** X stage coordinates. */
     private float stageXCoord;
-    // Y stage coordinates.
+
+    /** Y stage coordinates. */
     private float stageYCoord;
-    // Z stage coordinates.
+
+    /** Z stage coordinates. */
     private float stageZCoord;
-    // Minimum intensity
+
+    /** Minimum intensity */
     private float minInten;
-    // Maxiumum intensity.
+
+    /** Maxiumum intensity. */
     private float maxInten;
-    // Mean intesity.
+
+    /** Mean intesity. */
     private float meanInten;
-    // Exposure time in seconds.
+
+    /** Exposure time in seconds. */
     private float expTime;
-    // Neutral density value.
+
+    /** Neutral density value. */
     private float ndFilter;
-    // Excitation filter number.
+
+    /** Excitation filter number. */
     private float exFilter;
-    // Emiision filter number.
+
+    /** Emiision filter number. */
     private float emFilter;
-    // Excitation filter wavelength.
+
+    /** Excitation filter wavelength. */
     private float exWavelen;
-    // Emission filter wavelength.
+
+    /** Emission filter wavelength. */
     private float emWavelen;
-    // Intensity scaling factor. Usually 1.
+
+    /** Intensity scaling factor. Usually 1. */
     private float intenScaling;
-    // Energy conversion factor. Usually 1.
+
+    /** Energy conversion factor. Usually 1. */
     private float energyConvFactor;
 
     /*
@@ -717,11 +755,7 @@ public class DeltavisionReader extends FormatReader {
           DataTools.bytesToInt(extHeader, offsetWithInts + 60, 4, little));
     }
 
-
-    /**
-     * Various getters for the Extended header fields.
-     * @return
-     */
+    /** Various getters for the Extended header fields. */
     public float getPhotosensorReading() { return photosensorReading; }
     public float getTimeStampSeconds() { return timeStampSeconds; }
     public float getStageXCoord() { return stageXCoord; }
@@ -738,13 +772,12 @@ public class DeltavisionReader extends FormatReader {
     public float getEmWavelen() { return emWavelen; }
     public float getIntenScaling() { return intenScaling; }
 
-}
-
-
+  }
 
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {
     new DeltavisionReader().testRead(args);
   }
+
 }

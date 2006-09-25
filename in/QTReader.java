@@ -473,10 +473,18 @@ public class QTReader extends FormatReader {
     bytesPerPixel %= 4;
     switch (bytesPerPixel) {
       case 0:
-      case 1: pixelType[0] = FormatReader.INT8; break;
-      case 2: pixelType[0] = FormatReader.INT16; break;
-      case 3: pixelType[0] = FormatReader.INT8; break;
-      case 4: pixelType[0] = FormatReader.INT32; break;
+      case 1:
+        pixelType[0] = FormatReader.INT8;
+        break;
+      case 2:
+        pixelType[0] = FormatReader.INT16;
+        break;
+      case 3:
+        pixelType[0] = FormatReader.INT8;
+        break;
+      case 4:
+        pixelType[0] = FormatReader.INT32;
+        break;
       default:
         throw new RuntimeException(
           "Unknown matching for pixel byte width of: " + bytesPerPixel);

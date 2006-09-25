@@ -59,22 +59,23 @@ public class AVIReader extends FormatReader {
 
   // AVI Header chunk fields
 
-  private int dwMicroSecPerFrame, dwMaxBytesPerSec, dwReserved1, dwFlags,
-    dwTotalFrames, dwInitialFrames, dwStreams, dwSuggestedBufferSize, dwWidth,
-    dwHeight, dwScale, dwRate, dwStart, dwLength;
+  private int dwMicroSecPerFrame, dwMaxBytesPerSec, dwReserved1, dwFlags;
+  private int dwTotalFrames, dwInitialFrames, dwStreams, dwSuggestedBufferSize;
+  private int dwWidth, dwHeight, dwScale, dwRate, dwStart, dwLength;
 
   // Stream Header chunk fields
 
   private String fccStreamType, fccStreamHandler;
-  private int dwStreamFlags, dwStreamReserved1, dwStreamInitialFrames,
-    dwStreamScale, dwStreamRate, dwStreamStart, dwStreamLength,
-    dwStreamSuggestedBufferSize, dwStreamQuality, dwStreamSampleSize;
+  private int dwStreamFlags, dwStreamReserved1, dwStreamInitialFrames;
+  private int dwStreamScale, dwStreamRate, dwStreamStart, dwStreamLength;
+  private int dwStreamSuggestedBufferSize, dwStreamQuality, dwStreamSampleSize;
 
   // Stream Format chunk fields
 
-  private int bmpSize, bmpSizeOfBitmap, bmpHorzResolution, bmpVertResolution,
-    bmpColorsUsed, bmpColorsImportant, bmpNoOfPixels, bmpWidth, bmpHeight,
-    bmpCompression, bmpActualSize, bmpScanLineSize, bmpActualColorsUsed;
+  private int bmpSize, bmpSizeOfBitmap, bmpHorzResolution, bmpVertResolution;
+  private int bmpColorsUsed, bmpColorsImportant, bmpNoOfPixels, bmpWidth;
+  private int bmpHeight, bmpCompression, bmpActualSize, bmpScanLineSize;
+  private int bmpActualColorsUsed;
   private short bmpPlanes, bmpBitsPerPixel;
   private boolean bmpTopDown;
   private byte[] rawData = null;

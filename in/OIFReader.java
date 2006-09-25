@@ -274,9 +274,15 @@ public class OIFReader extends FormatReader {
 
     int imageDepth = Integer.parseInt((String) metadata.get("ImageDepth"));
     switch (imageDepth) {
-      case 1: pixelType[0] = FormatReader.INT8; break;
-      case 2: pixelType[0] = FormatReader.INT16; break;
-      case 4: pixelType[0] = FormatReader.INT32; break;
+      case 1:
+        pixelType[0] = FormatReader.INT8;
+        break;
+      case 2:
+        pixelType[0] = FormatReader.INT16;
+        break;
+      case 4:
+        pixelType[0] = FormatReader.INT32;
+        break;
       default:
         throw new RuntimeException(
           "Unknown matching for pixel depth of: " + imageDepth);

@@ -240,58 +240,110 @@ public class NikonReader extends BaseTiffReader {
   /** Gets the name of the IFD tag encoded by the given number. */
   private String getTagName(int tag) {
     switch (tag) {
-      case EXPOSURE_TIME: return "Exposure Time";
-      case APERTURE: return "Aperture";
-      case EXPOSURE_PROGRAM: return "Exposure Program";
-      case DATE_TIME_DIGITIZED: return "Date/Time Digitized";
-      case DATE_TIME_ORIGINAL: return "Date/Time Original";
-      case EXPOSURE_BIAS_VALUE: return "Exposure Bias Value";
-      case MAX_APERTURE_VALUE: return "Max Aperture Value";
-      case METERING_MODE: return "Metering Mode";
-      case LIGHT_SOURCE: return "Light Source";
-      case FLASH: return "Flash Enabled?";
-      case FOCAL_LENGTH: return "Focal length of lens";
-      case SENSING_METHOD: return "Sensing Method";
-      case MAKER_NOTE: return "Offset to maker note";
-      case USER_COMMENT: return "User comment";
-      case SUBSEC_TIME: return "Subsec. Sampling for Date/Time field";
-      case SUBSEC_TIME_ORIGINAL: return "Subsec. Sampling for original date";
-      case SUBSEC_TIME_DIGITIZED: return "Subsec. Sampling for digitized date";
-      case COLOR_SPACE: return "Color space";
-      case FILE_SOURCE: return "File source";
-      case SCENE_TYPE: return "Scene type";
-      case CFA_PATTERN: return "CFA pattern";
-      case CUSTOM_RENDERED: return "Custom Rendered?";
-      case EXPOSURE_MODE: return "Exposure mode";
-      case WHITE_BALANCE: return "White Balance";
-      case DIGITAL_ZOOM_RATIO: return "Digital Zoom Ratio";
-      case FOCAL_LENGTH_35MM_FILM: return "Focal Length of 35mm lens";
-      case SCENE_CAPTURE_TYPE: return "Scene Capture Type";
-      case GAIN_CONTROL: return "Gain Control";
-      case CONTRAST: return "Contrast";
-      case SATURATION: return "Saturation";
-      case SHARPNESS: return "Sharpness";
-      case SUBJECT_DISTANCE_RANGE: return "Subject Distance Range";
-      case FIRMWARE_VERSION: return "Firmware version";
-      case ISO: return "ISO";
-      case QUALITY: return "Quality";
-      case MAKER_WHITE_BALANCE: return "White Balance (Maker)";
-      case SHARPENING: return "Sharpening";
-      case FOCUS_MODE: return "Focus Mode";
-      case FLASH_SETTING: return "Flash Setting";
-      case FLASH_MODE: return "Flash Mode";
-      case WHITE_BALANCE_FINE: return "White Balance Fine";
-      case WHITE_BALANCE_RGB_COEFFS: return "White Balance (RGB coefficients)";
-      case FLASH_COMPENSATION: return "Flash compensation";
-      case TONE_COMPENSATION: return "Tone compensation";
-      case LENS_TYPE: return "Lens type";
-      case LENS: return "Lens";
-      case FLASH_USED: return "Flash used?";
-      case CURVE: return "Curve";
-      case COLOR_MODE: return "Color mode";
-      case LIGHT_TYPE: return "Light type";
-      case HUE: return "Hue";
-      case CAPTURE_EDITOR_DATA: return "Capture Editor Data";
+      case EXPOSURE_TIME:
+        return "Exposure Time";
+      case APERTURE:
+        return "Aperture";
+      case EXPOSURE_PROGRAM:
+        return "Exposure Program";
+      case DATE_TIME_DIGITIZED:
+        return "Date/Time Digitized";
+      case DATE_TIME_ORIGINAL:
+        return "Date/Time Original";
+      case EXPOSURE_BIAS_VALUE:
+        return "Exposure Bias Value";
+      case MAX_APERTURE_VALUE:
+        return "Max Aperture Value";
+      case METERING_MODE:
+        return "Metering Mode";
+      case LIGHT_SOURCE:
+        return "Light Source";
+      case FLASH:
+        return "Flash Enabled?";
+      case FOCAL_LENGTH:
+        return "Focal length of lens";
+      case SENSING_METHOD:
+        return "Sensing Method";
+      case MAKER_NOTE:
+        return "Offset to maker note";
+      case USER_COMMENT:
+        return "User comment";
+      case SUBSEC_TIME:
+        return "Subsec. Sampling for Date/Time field";
+      case SUBSEC_TIME_ORIGINAL:
+        return "Subsec. Sampling for original date";
+      case SUBSEC_TIME_DIGITIZED:
+        return "Subsec. Sampling for digitized date";
+      case COLOR_SPACE:
+        return "Color space";
+      case FILE_SOURCE:
+        return "File source";
+      case SCENE_TYPE:
+        return "Scene type";
+      case CFA_PATTERN:
+        return "CFA pattern";
+      case CUSTOM_RENDERED:
+        return "Custom Rendered?";
+      case EXPOSURE_MODE:
+        return "Exposure mode";
+      case WHITE_BALANCE:
+        return "White Balance";
+      case DIGITAL_ZOOM_RATIO:
+        return "Digital Zoom Ratio";
+      case FOCAL_LENGTH_35MM_FILM:
+        return "Focal Length of 35mm lens";
+      case SCENE_CAPTURE_TYPE:
+        return "Scene Capture Type";
+      case GAIN_CONTROL:
+        return "Gain Control";
+      case CONTRAST:
+        return "Contrast";
+      case SATURATION:
+        return "Saturation";
+      case SHARPNESS:
+        return "Sharpness";
+      case SUBJECT_DISTANCE_RANGE:
+        return "Subject Distance Range";
+      case FIRMWARE_VERSION:
+        return "Firmware version";
+      case ISO:
+        return "ISO";
+      case QUALITY:
+        return "Quality";
+      case MAKER_WHITE_BALANCE:
+        return "White Balance (Maker)";
+      case SHARPENING:
+        return "Sharpening";
+      case FOCUS_MODE:
+        return "Focus Mode";
+      case FLASH_SETTING:
+        return "Flash Setting";
+      case FLASH_MODE:
+        return "Flash Mode";
+      case WHITE_BALANCE_FINE:
+        return "White Balance Fine";
+      case WHITE_BALANCE_RGB_COEFFS:
+        return "White Balance (RGB coefficients)";
+      case FLASH_COMPENSATION:
+        return "Flash compensation";
+      case TONE_COMPENSATION:
+        return "Tone compensation";
+      case LENS_TYPE:
+        return "Lens type";
+      case LENS:
+        return "Lens";
+      case FLASH_USED:
+        return "Flash used?";
+      case CURVE:
+        return "Curve";
+      case COLOR_MODE:
+        return "Color mode";
+      case LIGHT_TYPE:
+        return "Light type";
+      case HUE:
+        return "Hue";
+      case CAPTURE_EDITOR_DATA:
+        return "Capture Editor Data";
     }
     return "" + tag;
   }

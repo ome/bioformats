@@ -26,7 +26,6 @@ package loci.formats.in;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-
 import loci.formats.FormatReader;
 import loci.formats.ImageReader;
 
@@ -38,19 +37,19 @@ import loci.formats.ImageReader;
 public class Plane2D {
 
   /** Contains the plane data. */
-  private ByteBuffer    data;
+  private ByteBuffer data;
 
   /** How many bytes make up a pixel value. */
-  private int                 bytesPerPixel;
+  private int bytesPerPixel;
 
   /** The Java type that we're using for pixel value retrieval */
-  private int                 type;
+  private int type;
 
   /** Number of pixels along the <i>X</i>-axis. */
-  private int                 sizeX;
+  private int sizeX;
 
   /** Number of pixels along the <i>Y</i>-axis. */
-  private int                 sizeY;
+  private int sizeY;
 
   /**
    * Default constructor.
@@ -68,8 +67,8 @@ public class Plane2D {
     this.sizeX = sizeX;
     this.sizeY = sizeY;
 
-    this.data.order(
-        isLittleEndian? ByteOrder.LITTLE_ENDIAN: ByteOrder.BIG_ENDIAN);
+    this.data.order(isLittleEndian ?
+      ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
 
     this.bytesPerPixel = ImageReader.getBytesPerPixel(type);
   }
@@ -84,23 +83,23 @@ public class Plane2D {
   public double getPixelValue(int x, int y) {
     int offset = ((sizeX * y) + x) * bytesPerPixel;
 
-    switch(type) {
-    case FormatReader.INT8:
-      return data.get(offset);
-    case FormatReader.INT16:
-      return data.getShort(offset);
-    case FormatReader.INT32:
-      return data.getInt(offset);
-    case FormatReader.FLOAT:
-      return data.getFloat(offset);
-    case FormatReader.DOUBLE:
-      return data.getDouble(offset);
-    case FormatReader.UINT8:
-      return (short) (data.get(offset) & 0xFF);
-    case FormatReader.UINT16:
-      return (int) (data.getShort(offset) & 0xFFFF);
-    case FormatReader.UINT32:
-      return (long) (data.getInt(offset) & 0xFFFFFFFFL);
+    switch (type) {
+      case FormatReader.INT8:
+        return data.get(offset);
+      case FormatReader.INT16:
+        return data.getShort(offset);
+      case FormatReader.INT32:
+        return data.getInt(offset);
+      case FormatReader.FLOAT:
+        return data.getFloat(offset);
+      case FormatReader.DOUBLE:
+        return data.getDouble(offset);
+      case FormatReader.UINT8:
+        return (short) (data.get(offset) & 0xFF);
+      case FormatReader.UINT16:
+        return (int) (data.getShort(offset) & 0xFFFF);
+      case FormatReader.UINT32:
+        return (long) (data.getInt(offset) & 0xFFFFFFFFL);
     }
     // This should never happen.
     throw new RuntimeException("Woah nelly! Something is very wrong.");

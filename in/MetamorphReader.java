@@ -96,7 +96,7 @@ public class MetamorphReader extends BaseTiffReader {
         if (ifdlocation + 3 + (i * 12) > block.length) return true;
         else {
           int ifdtag = DataTools.bytesToInt(block,
-          ifdlocation + 2 + (i * 12), 2, true);
+            ifdlocation + 2 + (i * 12), 2, true);
           if (ifdtag == METAMORPH_ID) return true; // absolutely a valid file
         }
       }
@@ -452,13 +452,26 @@ public class MetamorphReader extends BaseTiffReader {
           int standardLUT = in.readInt();
           String standLUT;
           switch (standardLUT) {
-            case 0: standLUT = "monochrome"; break;
-            case 1: standLUT = "pseudocolor"; break;
-            case 2: standLUT = "Red"; break;
-            case 3: standLUT = "Green"; break;
-            case 4: standLUT = "Blue"; break;
-            case 5: standLUT = "user-defined"; break;
-            default: standLUT = "monochrome"; break;
+            case 0:
+              standLUT = "monochrome";
+              break;
+            case 1:
+              standLUT = "pseudocolor";
+              break;
+            case 2:
+              standLUT = "Red";
+              break;
+            case 3:
+              standLUT = "Green";
+              break;
+            case 4:
+              standLUT = "Blue";
+              break;
+            case 5:
+              standLUT = "user-defined";
+              break;
+            default:
+              standLUT = "monochrome"; break;
           }
           put("StandardLUT", standLUT);
           break;

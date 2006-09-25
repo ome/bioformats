@@ -269,10 +269,18 @@ public class BMPReader extends FormatReader {
     String comp = "invalid";
 
     switch (compression) {
-      case 0: comp = "None"; break;
-      case 1: comp = "8 bit run length encoding"; break;
-      case 2: comp = "4 bit run length encoding"; break;
-      case 3: comp = "RGB bitmap with mask"; break;
+      case 0:
+        comp = "None";
+        break;
+      case 1:
+        comp = "8 bit run length encoding";
+        break;
+      case 2:
+        comp = "4 bit run length encoding";
+        break;
+      case 3:
+        comp = "RGB bitmap with mask";
+        break;
     }
 
     metadata.put("Compression type", comp);
@@ -305,9 +313,15 @@ public class BMPReader extends FormatReader {
     while (tbpp % 8 != 0) tbpp++;
 
     switch (tbpp) {
-      case 8: pixType = FormatReader.INT8; break;
-      case 16: pixType = FormatReader.INT16; break;
-      case 32: pixType = FormatReader.INT32; break;
+      case 8:
+        pixType = FormatReader.INT8;
+        break;
+      case 16:
+        pixType = FormatReader.INT16;
+        break;
+      case 32:
+        pixType = FormatReader.INT32;
+        break;
     }
 
     sizeX[0] = (width % 2 == 1) ? width + 1 : width;

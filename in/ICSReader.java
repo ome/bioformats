@@ -364,25 +364,34 @@ public class ICSReader extends FormatReader {
     String sign = (String) metadata.get("sign");
 
     if (fmt.equals("real")) pixelType[0] = FormatReader.FLOAT;
-    else if (fmt.equals("integer"))
-    {
+    else if (fmt.equals("integer")) {
       while (bitsPerPixel % 8 != 0) bitsPerPixel++;
       if (bitsPerPixel == 24 || bitsPerPixel == 48) bitsPerPixel /= 3;
 
-      if (sign.equals("unsigned"))
-      {
+      if (sign.equals("unsigned")) {
         switch (bitsPerPixel) {
-          case 8: pixelType[0] = FormatReader.UINT8; break;
-          case 16: pixelType[0] = FormatReader.UINT16; break;
-          case 32: pixelType[0] = FormatReader.UINT32; break;
+          case 8:
+            pixelType[0] = FormatReader.UINT8;
+            break;
+          case 16:
+            pixelType[0] = FormatReader.UINT16;
+            break;
+          case 32:
+            pixelType[0] = FormatReader.UINT32;
+            break;
         }
       }
-      else
-      {
+      else {
         switch (bitsPerPixel) {
-          case 8: pixelType[0] = FormatReader.INT8; break;
-          case 16: pixelType[0] = FormatReader.INT16; break;
-          case 32: pixelType[0] = FormatReader.INT32; break;
+          case 8:
+            pixelType[0] = FormatReader.INT8;
+            break;
+          case 16:
+            pixelType[0] = FormatReader.INT16;
+            break;
+          case 32:
+            pixelType[0] = FormatReader.INT32;
+            break;
         }
       }
     }

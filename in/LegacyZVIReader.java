@@ -319,34 +319,44 @@ public class LegacyZVIReader extends FormatReader {
 
       String type = "";
       switch (pixType) {
-        case 1: type = "8 bit rgb tuple, 24 bpp";
-                pixelType[0] = FormatReader.INT8;
-                break;
-        case 2: type = "8 bit rgb quad, 32 bpp";
-                pixelType[0] = FormatReader.INT8;
-                break;
-        case 3: type = "8 bit grayscale";
-                pixelType[0] = FormatReader.INT8;
-                break;
-        case 4: type = "16 bit signed int, 16 bpp";
-                pixelType[0] = FormatReader.INT16;
-                break;
-        case 5: type = "32 bit int, 32 bpp";
-                pixelType[0] = FormatReader.INT32;
-                break;
-        case 6: type = "32 bit float, 32 bpp";
-                pixelType[0] = FormatReader.FLOAT;
-                break;
-        case 7: type = "64 bit float, 64 bpp";
-                pixelType[0] = FormatReader.DOUBLE;
-                break;
-        case 8: type = "16 bit unsigned short triple, 48 bpp";
-                pixelType[0] = FormatReader.INT16;
-                break;
-        case 9: type = "32 bit int triple, 96 bpp";
-                pixelType[0] = FormatReader.INT32;
-                break;
-        default: type = "undefined pixel type (" + pixType + ")";
+        case 1:
+          type = "8 bit rgb tuple, 24 bpp";
+          pixelType[0] = FormatReader.INT8;
+          break;
+        case 2:
+          type = "8 bit rgb quad, 32 bpp";
+          pixelType[0] = FormatReader.INT8;
+          break;
+        case 3:
+          type = "8 bit grayscale";
+          pixelType[0] = FormatReader.INT8;
+          break;
+        case 4:
+          type = "16 bit signed int, 16 bpp";
+          pixelType[0] = FormatReader.INT16;
+          break;
+        case 5:
+          type = "32 bit int, 32 bpp";
+          pixelType[0] = FormatReader.INT32;
+          break;
+        case 6:
+          type = "32 bit float, 32 bpp";
+          pixelType[0] = FormatReader.FLOAT;
+          break;
+        case 7:
+          type = "64 bit float, 64 bpp";
+          pixelType[0] = FormatReader.DOUBLE;
+          break;
+        case 8:
+          type = "16 bit unsigned short triple, 48 bpp";
+          pixelType[0] = FormatReader.INT16;
+          break;
+        case 9:
+          type = "32 bit int triple, 96 bpp";
+          pixelType[0] = FormatReader.INT32;
+          break;
+        default:
+          type = "undefined pixel type (" + pixType + ")";
       }
 
       metadata.put("Width", new Integer(width));
@@ -559,7 +569,7 @@ public class LegacyZVIReader extends FormatReader {
           index += bytesPerChannel;
           // our zvi images are 16 bit per pixel (BitsPerPixel) but
           // with an Acquisition Bit Depth of 12
-          samples[c][i] = (short)(DataTools.bytesToShort(b, true)*8);
+          samples[c][i] = (short) (DataTools.bytesToShort(b, true) * 8);
         }
       }
       return ImageTools.makeImage(samples, width, height);

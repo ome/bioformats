@@ -49,7 +49,7 @@ public class ImageJReader extends FormatReader {
 
   /** Message produced when attempting to use ImageJ without it installed. */
   private static final String NO_IJ = "This feature requires ImageJ, " +
-   "available online at http://rsb.info.nih.gov/ij/download.html";
+    "available online at http://rsb.info.nih.gov/ij/download.html";
 
   // -- Fields --
 

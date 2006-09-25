@@ -554,9 +554,17 @@ public class GIFReader extends FormatReader {
         if (iline >= ih) {
           pass++;
           switch (pass) {
-            case 2: iline = 4; break;
-            case 3: iline = 2; inc = 4; break;
-            case 4: iline = 1; inc = 2;
+            case 2:
+              iline = 4;
+              break;
+            case 3:
+              iline = 2;
+              inc = 4;
+              break;
+            case 4:
+              iline = 1;
+              inc = 2;
+              break;
           }
         }
         line = iline;

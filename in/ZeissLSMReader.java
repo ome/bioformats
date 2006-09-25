@@ -67,7 +67,7 @@ public class ZeissLSMReader extends BaseTiffReader {
 
   /** Checks if the given block is a valid header for a Zeiss LSM file. */
   public boolean isThisType(byte[] block) {
-  if (block.length < 3) return false;
+    if (block.length < 3) return false;
     if (block[0] != TiffTools.LITTLE) return false; // denotes little-endian
     if (block[1] != TiffTools.LITTLE) return false;
     if (block[2] != TiffTools.MAGIC_NUMBER) return false; // denotes TIFF
@@ -205,11 +205,20 @@ public class ZeissLSMReader extends BaseTiffReader {
       idata = DataTools.bytesToInt(cz, p, little);
       String type;
       switch (idata) {
-        case 1: type = "8 bit unsigned integer"; break;
-        case 2: type = "12 bit unsigned integer"; break;
-        case 5: type = "32 bit float"; break;
-        case 0: type = "varying data types"; break;
-        default: type = "8 bit unsigned integer"; break;
+        case 1:
+          type = "8 bit unsigned integer";
+          break;
+        case 2:
+          type = "12 bit unsigned integer";
+          break;
+        case 5:
+          type = "32 bit float";
+          break;
+        case 0:
+          type = "varying data types";
+          break;
+        default:
+          type = "8 bit unsigned integer";
       }
       put("DataType", type);
       p += 4;
@@ -230,37 +239,72 @@ public class ZeissLSMReader extends BaseTiffReader {
 
       idata = DataTools.bytesToInt(cz, p, 2, little);
       switch (idata) {
-        case 0: type = "x-y-z scan"; break;
-        case 1: type = "z scan (x-z plane)"; break;
-        case 2: type = "line scan"; break;
-        case 3: type = "time series x-y"; break;
-        case 4: type = "time series x-z"; break;
-        case 5: type = "time series 'Mean of ROIs'"; break;
-        case 6: type = "time series x-y-z"; break;
-        case 7: type = "spline scan"; break;
-        case 8: type = "spline scan x-z"; break;
-        case 9: type = "time series spline plane x-z"; break;
-        case 10: type = "point mode"; break;
-        default: type = "x-y-z scan";
+        case 0:
+          type = "x-y-z scan";
+          break;
+        case 1:
+          type = "z scan (x-z plane)";
+          break;
+        case 2:
+          type = "line scan";
+          break;
+        case 3:
+          type = "time series x-y";
+          break;
+        case 4:
+          type = "time series x-z";
+          break;
+        case 5:
+          type = "time series 'Mean of ROIs'";
+          break;
+        case 6:
+          type = "time series x-y-z";
+          break;
+        case 7:
+          type = "spline scan";
+          break;
+        case 8:
+          type = "spline scan x-z";
+          break;
+        case 9:
+          type = "time series spline plane x-z";
+          break;
+        case 10:
+          type = "point mode";
+          break;
+        default:
+          type = "x-y-z scan";
       }
       put("ScanType", type);
       p += 2;
 
       idata = DataTools.bytesToInt(cz, p, 2, little);
       switch (idata) {
-        case 0: type = "no spectral scan"; break;
-        case 1: type = "acquired with spectral scan"; break;
-        default: type = "no spectral scan";
+        case 0:
+          type = "no spectral scan";
+          break;
+        case 1:
+          type = "acquired with spectral scan";
+          break;
+        default:
+          type = "no spectral scan";
       }
       put("SpectralScan", type);
       p += 2;
 
       data = DataTools.bytesToLong(cz, p, 4, little);
       switch ((int) data) {
-        case 0: type = "original scan data"; break;
-        case 1: type = "calculated data"; break;
-        case 2: type = "animation"; break;
-        default: type = "original scan data";
+        case 0:
+          type = "original scan data";
+          break;
+        case 1:
+          type = "calculated data";
+          break;
+        case 2:
+          type = "animation";
+          break;
+        default:
+          type = "original scan data";
       }
       put("DataType2", type);
       p += 4;
@@ -277,24 +321,50 @@ public class ZeissLSMReader extends BaseTiffReader {
 
       int pixel = DataTools.bytesToInt(omeData, 28, little);
       switch (pixel) {
-        case 1: pixelType[0] = FormatReader.UINT8; break;
-        case 2: pixelType[0] = FormatReader.UINT16; break;
-        case 5: pixelType[0] = FormatReader.FLOAT; break;
-        default: pixelType[0] = FormatReader.UINT8;
+        case 1:
+          pixelType[0] = FormatReader.UINT8;
+          break;
+        case 2:
+          pixelType[0] = FormatReader.UINT16;
+          break;
+        case 5:
+          pixelType[0] = FormatReader.FLOAT;
+          break;
+        default:
+          pixelType[0] = FormatReader.UINT8;
       }
 
       short scanType = DataTools.bytesToShort(omeData, 88, little);
       switch ((int) scanType) {
-        case 0: dimOrder = "XYZCT"; break;
-        case 1: dimOrder = "XYZCT"; break;
-        case 3: dimOrder = "XYTCZ"; break;
-        case 4: dimOrder = "XYZTC"; break;
-        case 5: dimOrder = "XYTCZ"; break;
-        case 6: dimOrder = "XYZTC"; break;
-        case 7: dimOrder = "XYCTZ"; break;
-        case 8: dimOrder = "XYCZT"; break;
-        case 9: dimOrder = "XYTCZ"; break;
-        default: dimOrder = "XYZCT";
+        case 0:
+          dimOrder = "XYZCT";
+          break;
+        case 1:
+          dimOrder = "XYZCT";
+          break;
+        case 3:
+          dimOrder = "XYTCZ";
+          break;
+        case 4:
+          dimOrder = "XYZTC";
+          break;
+        case 5:
+          dimOrder = "XYTCZ";
+          break;
+        case 6:
+          dimOrder = "XYZTC";
+          break;
+        case 7:
+          dimOrder = "XYCTZ";
+          break;
+        case 8:
+          dimOrder = "XYCZT";
+          break;
+        case 9:
+          dimOrder = "XYTCZ";
+          break;
+        default:
+          dimOrder = "XYZCT";
       }
 
       channels = cSize;

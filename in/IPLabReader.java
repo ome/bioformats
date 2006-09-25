@@ -176,39 +176,48 @@ public class IPLabReader extends FormatReader {
     String ptype;
     bps = 1;
     switch ((int) filePixelType) {
-      case 0: ptype = "8 bit unsigned";
-              pixelType[0] = FormatReader.UINT8;
-              bps = 1;
-              break;
-      case 1: ptype = "16 bit signed short";
-              pixelType[0] = FormatReader.INT16;
-              bps = 2;
-              break;
-      case 2: ptype = "16 bit unsigned short";
-              pixelType[0] = FormatReader.UINT16;
-              bps = 2;
-              break;
-      case 3: ptype = "32 bit signed long";
-              pixelType[0] = FormatReader.INT32;
-              bps = 4;
-              break;
-      case 4: ptype = "32 bit single-precision float";
-              pixelType[0] = FormatReader.FLOAT;
-              bps = 4;
-              break;
-      case 5: ptype = "Color24";
-              pixelType[0] = FormatReader.INT32;
-              bps = 1;
-              break;
-      case 6: ptype = "Color48";
-              pixelType[0] = FormatReader.INT32;
-              bps = 2;
-              break;
-      case 10: ptype = "64 bit double-precision float";
-               pixelType[0] = FormatReader.DOUBLE;
-               bps = 8;
-               break;
-      default: ptype = "reserved";    // for values 7-9
+      case 0:
+        ptype = "8 bit unsigned";
+        pixelType[0] = FormatReader.UINT8;
+        bps = 1;
+        break;
+      case 1:
+        ptype = "16 bit signed short";
+        pixelType[0] = FormatReader.INT16;
+        bps = 2;
+        break;
+      case 2:
+        ptype = "16 bit unsigned short";
+        pixelType[0] = FormatReader.UINT16;
+        bps = 2;
+        break;
+      case 3:
+        ptype = "32 bit signed long";
+        pixelType[0] = FormatReader.INT32;
+        bps = 4;
+        break;
+      case 4:
+        ptype = "32 bit single-precision float";
+        pixelType[0] = FormatReader.FLOAT;
+        bps = 4;
+        break;
+      case 5:
+        ptype = "Color24";
+        pixelType[0] = FormatReader.INT32;
+        bps = 1;
+        break;
+      case 6:
+        ptype = "Color48";
+        pixelType[0] = FormatReader.INT32;
+        bps = 2;
+        break;
+      case 10:
+        ptype = "64 bit double-precision float";
+        pixelType[0] = FormatReader.DOUBLE;
+        bps = 8;
+        break;
+      default:
+        ptype = "reserved"; // for values 7-9
     }
 
     metadata.put("PixelType", ptype);
@@ -245,18 +254,42 @@ public class IPLabReader extends FormatReader {
 
           String clutType = "unknown";
           switch ((int) type) {
-            case 0: clutType = "monochrome"; break;
-            case 1: clutType = "reverse monochrome"; break;
-            case 2: clutType = "BGR"; break;
-            case 3: clutType = "classify"; break;
-            case 4: clutType = "rainbow"; break;
-            case 5: clutType = "red"; break;
-            case 6: clutType = "green"; break;
-            case 7: clutType = "blue"; break;
-            case 8: clutType = "cyan"; break;
-            case 9: clutType = "magenta"; break;
-            case 10: clutType = "yellow"; break;
-            case 11: clutType = "saturated pixels"; break;
+            case 0:
+              clutType = "monochrome";
+              break;
+            case 1:
+              clutType = "reverse monochrome";
+              break;
+            case 2:
+              clutType = "BGR";
+              break;
+            case 3:
+              clutType = "classify";
+              break;
+            case 4:
+              clutType = "rainbow";
+              break;
+            case 5:
+              clutType = "red";
+              break;
+            case 6:
+              clutType = "green";
+              break;
+            case 7:
+              clutType = "blue";
+              break;
+            case 8:
+              clutType = "cyan";
+              break;
+            case 9:
+              clutType = "magenta";
+              break;
+            case 10:
+              clutType = "yellow";
+              break;
+            case 11:
+              clutType = "saturated pixels";
+              break;
           }
           metadata.put("LUT type", clutType);
         }
@@ -283,13 +316,26 @@ public class IPLabReader extends FormatReader {
 
           String sourceType;
           switch ((int) source) {
-            case 0: sourceType = "user"; break;
-            case 1: sourceType = "plane"; break;
-            case 2: sourceType = "sequence"; break;
-            case 3: sourceType = "saturated plane"; break;
-            case 4: sourceType = "saturated sequence"; break;
-            case 5: sourceType = "ROI"; break;
-            default: sourceType = "user";
+            case 0:
+              sourceType = "user";
+              break;
+            case 1:
+              sourceType = "plane";
+              break;
+            case 2:
+              sourceType = "sequence";
+              break;
+            case 3:
+              sourceType = "saturated plane";
+              break;
+            case 4:
+              sourceType = "saturated sequence";
+              break;
+            case 5:
+              sourceType = "ROI";
+              break;
+            default:
+              sourceType = "user";
           }
           metadata.put("NormalizationSource" + i, sourceType);
 
@@ -395,7 +441,7 @@ public class IPLabReader extends FormatReader {
     sizeY[0] = height;
     sizeZ[0] = (int) ((Long) metadata.get("ZDepth")).longValue();
     sizeC[0] = c;
-    sizeT[0] = (int) ((Long) metadata.get("TDepth")).longValue();;
+    sizeT[0] = (int) ((Long) metadata.get("TDepth")).longValue();
     currentOrder[0] = order;
 
   }

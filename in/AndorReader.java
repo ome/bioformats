@@ -141,18 +141,41 @@ public class AndorReader extends BaseTiffReader {
       pos++;
       String imgType;
       switch (type) {
-        case 1: imgType = "1 bit binary"; break;
-        case 2: imgType = "4 bit binary"; break;
-        case 3: imgType = "8 bit binary"; break;
-        case 4: imgType = "8 bit greyscale"; break;
-        case 5: imgType = "12 bit greyscale"; break;
-        case 6: imgType = "16 bit greyscale"; break;
-        case 7: imgType = "32 bit greyscale"; break;
-        case 8: imgType = "64 bit greyscale"; break;
-        case 9: imgType = "24 bit color"; break;
-        case 10: imgType = "32 bit float"; break;
-        case 11: imgType = "64 bit float"; break;
-        default: imgType = "unknown";
+        case 1:
+          imgType = "1 bit binary";
+          break;
+        case 2:
+          imgType = "4 bit binary";
+          break;
+        case 3:
+          imgType = "8 bit binary";
+          break;
+        case 4:
+          imgType = "8 bit greyscale";
+          break;
+        case 5:
+          imgType = "12 bit greyscale";
+          break;
+        case 6:
+          imgType = "16 bit greyscale";
+          break;
+        case 7:
+          imgType = "32 bit greyscale";
+          break;
+        case 8:
+          imgType = "64 bit greyscale";
+          break;
+        case 9:
+          imgType = "24 bit color";
+          break;
+        case 10:
+          imgType = "32 bit float";
+          break;
+        case 11:
+          imgType = "64 bit float";
+          break;
+        default:
+          imgType = "unknown";
       }
       metadata.put("Image type", imgType);
 
@@ -175,13 +198,11 @@ public class AndorReader extends BaseTiffReader {
         int size = DataTools.bytesToInt(header, pos, little);
         metadata.put("Dimension " + i + " Size", "" + size);
         pos += 4;
-        metadata.put("Dimension " + i + " Origin",
-          "" + Double.longBitsToDouble(
-          DataTools.bytesToLong(header, pos, little)));
+        metadata.put("Dimension " + i + " Origin", "" +
+          Double.longBitsToDouble(DataTools.bytesToLong(header, pos, little)));
         pos += 8;
-        metadata.put("Dimension " + i + " Resolution",
-          "" + Double.longBitsToDouble(
-          DataTools.bytesToLong(header, pos, little)));
+        metadata.put("Dimension " + i + " Resolution", "" +
+          Double.longBitsToDouble(DataTools.bytesToLong(header, pos, little)));
         pos += 8;
         metadata.put("Dimension " + i + " Calibration units",
           "" + DataTools.bytesToString(header, pos, 16));

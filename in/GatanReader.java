@@ -162,21 +162,49 @@ public class GatanReader extends FormatReader {
 
     pixelType[0] = FormatReader.INT8;
     switch (datatype) {
-      case 1: pixelType[0] = FormatReader.INT16; break;
-      case 2: pixelType[0] = FormatReader.FLOAT; break;
-      case 3: pixelType[0] = FormatReader.FLOAT; break;
+      case 1:
+        pixelType[0] = FormatReader.INT16;
+        break;
+      case 2:
+        pixelType[0] = FormatReader.FLOAT;
+        break;
+      case 3:
+        pixelType[0] = FormatReader.FLOAT;
+        break;
       // there is no case 4
-      case 5: pixelType[0] = FormatReader.FLOAT; break;
-      case 6: pixelType[0] = FormatReader.UINT8; break;
-      case 7: pixelType[0] = FormatReader.INT32; break;
-      case 8: pixelType[0] = FormatReader.UINT32; break;
-      case 9: pixelType[0] = FormatReader.INT8; break;
-      case 10: pixelType[0] = FormatReader.UINT16; break;
-      case 11: pixelType[0] = FormatReader.UINT32; break;
-      case 12: pixelType[0] = FormatReader.FLOAT; break;
-      case 13: pixelType[0] = FormatReader.FLOAT; break;
-      case 14: pixelType[0] = FormatReader.UINT8; break;
-      case 23: pixelType[0] = FormatReader.INT32; break;
+      case 5:
+        pixelType[0] = FormatReader.FLOAT;
+        break;
+      case 6:
+        pixelType[0] = FormatReader.UINT8;
+        break;
+      case 7:
+        pixelType[0] = FormatReader.INT32;
+        break;
+      case 8:
+        pixelType[0] = FormatReader.UINT32;
+        break;
+      case 9:
+        pixelType[0] = FormatReader.INT8;
+        break;
+      case 10:
+        pixelType[0] = FormatReader.UINT16;
+        break;
+      case 11:
+        pixelType[0] = FormatReader.UINT32;
+        break;
+      case 12:
+        pixelType[0] = FormatReader.FLOAT;
+        break;
+      case 13:
+        pixelType[0] = FormatReader.FLOAT;
+        break;
+      case 14:
+        pixelType[0] = FormatReader.UINT8;
+        break;
+      case 23:
+        pixelType[0] = FormatReader.INT32;
+        break;
     }
 
     sizeX[0] = dims[0];
@@ -235,21 +263,36 @@ public class GatanReader extends FormatReader {
           dataType = DataTools.bytesToInt(temp, !littleEndian);
           int data;
           switch (dataType) {
-            case 2: data = DataTools.read2SignedBytes(in, littleEndian); break;
-            case 3: data = DataTools.read4SignedBytes(in, littleEndian); break;
-            case 4: data = DataTools.read2UnsignedBytes(in, littleEndian);
+            case 2:
+              data = DataTools.read2SignedBytes(in, littleEndian);
+              break;
+            case 3:
+              data = DataTools.read4SignedBytes(in, littleEndian);
+              break;
+            case 4:
+              data = DataTools.read2UnsignedBytes(in, littleEndian);
               break;
             case 5:
               data = (int) DataTools.read4UnsignedBytes(in, littleEndian);
               break;
-            case 6: data = (int) DataTools.readFloat(in, littleEndian); break;
-            case 7: data = (int) DataTools.readFloat(in, littleEndian);
+            case 6:
+              data = (int) DataTools.readFloat(in, littleEndian);
+              break;
+            case 7:
+              data = (int) DataTools.readFloat(in, littleEndian);
               in.skipBytes(4);
               break;
-            case 8: data = DataTools.readSignedByte(in); break;
-            case 9: data = DataTools.readSignedByte(in); break;
-            case 10: data = DataTools.readSignedByte(in); break;
-            default: data = 0;
+            case 8:
+              data = DataTools.readSignedByte(in);
+              break;
+            case 9:
+              data = DataTools.readSignedByte(in);
+              break;
+            case 10:
+              data = DataTools.readSignedByte(in);
+              break;
+            default:
+              data = 0;
           }
           if (parent.equals("Dimensions")) {
             if (i == 0) dims[0] = data;
@@ -334,14 +377,30 @@ public class GatanReader extends FormatReader {
               dataType = DataTools.bytesToInt(temp, !littleEndian);
 
               switch (dataType) {
-                case 2: skip += 2; break;
-                case 3: skip += 4; break;
-                case 4: skip += 2; break;
-                case 5: skip += 4; break;
-                case 6: skip += 4; break;
-                case 7: skip += 8; break;
-                case 8: skip += 1; break;
-                case 9: skip += 1; break;
+                case 2:
+                  skip += 2;
+                  break;
+                case 3:
+                  skip += 4;
+                  break;
+                case 4:
+                  skip += 2;
+                  break;
+                case 5:
+                  skip += 4;
+                  break;
+                case 6:
+                  skip += 4;
+                  break;
+                case 7:
+                  skip += 8;
+                  break;
+                case 8:
+                  skip += 1;
+                  break;
+                case 9:
+                  skip += 1;
+                  break;
               }
             }
             in.skipBytes(skip);
@@ -363,14 +422,30 @@ public class GatanReader extends FormatReader {
                 dataType = DataTools.bytesToInt(temp, !littleEndian);
 
                 switch (dataType) {
-                  case 2: skip += 2; break;
-                  case 3: skip += 4; break;
-                  case 4: skip += 2; break;
-                  case 5: skip += 4; break;
-                  case 6: skip += 4; break;
-                  case 7: skip += 8; break;
-                  case 8: skip += 1; break;
-                  case 9: skip += 1; break;
+                  case 2:
+                    skip += 2;
+                    break;
+                  case 3:
+                    skip += 4;
+                    break;
+                  case 4:
+                    skip += 2;
+                    break;
+                  case 5:
+                    skip += 4;
+                    break;
+                  case 6:
+                    skip += 4;
+                    break;
+                  case 7:
+                    skip += 8;
+                    break;
+                  case 8:
+                    skip += 1;
+                    break;
+                  case 9:
+                    skip += 1;
+                    break;
                 }
               }
             }
@@ -387,7 +462,6 @@ public class GatanReader extends FormatReader {
       }
     }
   }
-
 
   // -- Main method --
 
