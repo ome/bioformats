@@ -49,8 +49,8 @@ import org.w3c.dom.*;
  *
  * @author Christopher Peterson crpeterson2 at wisc.edu
  */
-public class MetadataPane extends JPanel 
-  implements ActionListener, Runnable 
+public class MetadataPane extends JPanel
+  implements ActionListener, Runnable
 {
 
   // -- Constants --
@@ -109,7 +109,7 @@ public class MetadataPane extends JPanel
   */
   public Hashtable internalDefs;
 
-  /** 
+  /**
   * Signifies that the current file has
   * changed from the last saved version.
   */
@@ -117,7 +117,7 @@ public class MetadataPane extends JPanel
 
   /** If true, the save button should be display in each TabPanel.*/
   protected boolean addSave;
-  
+
   /**Whether or not the user should be able to edit metadata.*/
   protected boolean editable;
 
@@ -156,7 +156,7 @@ public class MetadataPane extends JPanel
   * @param file The file to be initially displayed.
   */
   public MetadataPane(File file) { this(file, true); }
-  
+
   /**
   * Constructs a pane to display the OME-XML metadata of a
   * given file and with the given save policy.
@@ -244,7 +244,7 @@ public class MetadataPane extends JPanel
     return doc;
   }
 
-  /** 
+  /**
   * Tells whether or not the XML has changed due to
   * user manipulation.
   */
@@ -550,7 +550,7 @@ if (ome == null) System.out.println("the OMENode is NULL!");//TEMP
       TablePanel p = (TablePanel) panelList.get(i);
       p.setEditor();
     }
-    
+
     //set the displayed tab to be by default the first image
     TabPanel firstImageTab = null;
     for (int i=0;i<tabPanelList.size();i++) {
@@ -697,8 +697,8 @@ if (ome == null) System.out.println("the OMENode is NULL!");//TEMP
       TablePanel p = (TablePanel) panelList.get(i);
       p.setEditor();
     }
-    
-    
+
+
     //set the displayed tab to be by default the first image
     TabPanel firstImageTab = null;
     for (int i=0;i<tabPanelList.size();i++) {
@@ -1163,25 +1163,25 @@ if (ome == null) System.out.println("the OMENode is NULL!");//TEMP
   {
     /**The template element this TabPanel corresponds to.*/
     protected Element el;
-    
+
     /**The name of this TabPanel.*/
     public String name;
-    
+
     /**Whether or not this TabPanel has already been rendered.*/
     private boolean isRendered;
-    
+
     /**
     * The OMEXMLNode in the current file that this TabPanel
     * corresponds to.
     */
     protected OMEXMLNode oNode;
-    
+
     /** The OMENode associated with this file*/
     protected OMENode ome;
-    
+
     /** The JPanel that holds this TabPanel's title header.*/
     protected JPanel titlePanel;
-    
+
     /** The "QuickSave" button for this TabPanel*/
     protected JButton saveButton;
 
@@ -1198,7 +1198,7 @@ if (ome == null) System.out.println("the OMENode is NULL!");//TEMP
     }
 
     /** Convert this TabPanel into a String.*/
-    public String toString() { return el == null ? "null" : 
+    public String toString() { return el == null ? "null" :
       "Name: " + name + " Element: " + el.getTagName(); }
 
     /** Implement these scrollable methods to make resizing behave.*/
@@ -1223,52 +1223,52 @@ if (ome == null) System.out.println("the OMENode is NULL!");//TEMP
   {
     /**The OMEXMLNode that this TablePanel is displaying.*/
     public OMEXMLNode oNode;
-    
+
     /**The TabPanel that this TablePanel is a part of.*/
     public TabPanel tPanel;
-    
+
     /**The NotePanel that holds the notes for this TablePanel.*/
     public NotePanel noteP;
-    
+
     /**
     * The "ID" OMEXML attribute for the OMEXMLNode this TablePanel
     * displays.
     */
     public String id;
-    
-    /**The name of this TablePanel.*/    
+
+    /**The name of this TablePanel.*/
     public String name;
-    
+
     /**
     * An String to hold misc data we want to display to distinguish
     * the name presented for this as an internal reference.
     */
     public String refDetails;
-    
+
     /**The ClickableTable that displays this TablePanel's metadata.*/
     public ClickableTable table;
-    
+
     /**The tableheader of this TablePanel's ClickableTable*/
     JTableHeader tHead;
-    
+
     /**The template element that this TablePanel corresponds to.*/
     public Element el;
-    
+
     /**Indicates whether or not this is a nested OMEXMLNode*/
     public boolean isTopLevel;
-    
+
     /**
     * The notes, add table, and delete table buttons
     * of this TablePanel.
     */
     protected JButton noteButton, addButton, delButton;
-    
+
     /**A list of non "Ref" type attributes.*/
     protected Vector attrList;
-    
+
     /**A list of "Ref" type attributes.*/
     protected Vector refList;
-    
+
     /**The JLabels for the title and the optional image.*/
     protected JLabel tableName, imageLabel;
 
@@ -1303,7 +1303,7 @@ if (ome == null) System.out.println("the OMENode is NULL!");//TEMP
       else name = getTreePathName(e);
       String thisName = name;
       panelList.add(this);
-      
+
       //for debuging this simple parser
       final boolean debug = false;
 
@@ -1345,7 +1345,7 @@ if (ome == null) System.out.println("the OMENode is NULL!");//TEMP
         }
         else attrList.add(thisE);
       }
-      
+
       //Set up the details for internal reference names
       refDetails = e.getAttribute("RefVars");
       if(debug) System.out.println();
@@ -1362,7 +1362,7 @@ if (ome == null) System.out.println("the OMENode is NULL!");//TEMP
         if(debug) System.out.println("Processed: " + processed);
         String remnants = refDetails.substring(closeIndex+1,refDetails.length());
         if(debug) System.out.println("Remnants: " + remnants);
-        
+
         boolean addThisCommand = false;
         int varIndex = thisCommand.indexOf('$');
         while(varIndex >=0) {
@@ -1392,7 +1392,7 @@ if (ome == null) System.out.println("the OMENode is NULL!");//TEMP
           if(debug) System.out.println("Value: " + value);
           thisCommand = prefix + value + suffix;
           if(debug) System.out.println("thisCommand: " + thisCommand);
-          
+
           varIndex = thisCommand.indexOf('$');
         }
         if (addThisCommand) {
@@ -1401,7 +1401,7 @@ if (ome == null) System.out.println("the OMENode is NULL!");//TEMP
         }
         else refDetails = processed + remnants;
         if(debug) System.out.println("refDetails: " + refDetails);
-        
+
         openIndex = refDetails.indexOf('%');
       }
       if(debug) System.out.println(name + " - " + refDetails);
@@ -1723,10 +1723,10 @@ if (ome == null) System.out.println("the OMENode is NULL!");//TEMP
     public void callStateChanged(boolean hasChanged) {
       stateChanged(true);
     }
-    
+
     /** @return MetadataPane.currentFile*/
     public File getCurrentFile() {return currentFile;}
-    
+
     /**
     * Checks whether this TablePanel should be editable.
     * @return MetadataPane.editable

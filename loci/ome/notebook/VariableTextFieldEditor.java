@@ -29,8 +29,8 @@ import javax.swing.table.TableCellEditor;
 import java.awt.Component;
 
 /**
- * A class that handles editing of a cell that is defined in 
- * the template as having no Type attribute, e.g. it is neither 
+ * A class that handles editing of a cell that is defined in
+ * the template as having no Type attribute, e.g. it is neither
  * of type "Ref" or type "Desc". Creates a JTextField to edit
  * this cell instead of something fancy.
  *

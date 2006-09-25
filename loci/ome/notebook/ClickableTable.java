@@ -85,7 +85,7 @@ public class ClickableTable extends JTable
 
   /** The TableCellEditors for this ClickableTable. */
   protected TableCellEditor labelE,textE,comboE,gotoE;
-  
+
   /** Whether or not this table should be editable*/
   protected boolean editable;
 
@@ -146,7 +146,7 @@ public class ClickableTable extends JTable
       }
     });
   }
-  
+
   /**Reset necessary values for the VariableComboEditor.*/
   public void setDefs(Vector IDP, Vector AddP) {
     ((VariableComboEditor)comboE).setDefs(IDP,AddP);
@@ -196,7 +196,7 @@ public class ClickableTable extends JTable
     }
     return tip;
   }
-  
+
   /**
   * Check Template.xml definitions of a particular cell so that the
   * cell's type is mapped to the corresponding editor for that type.

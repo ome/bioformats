@@ -117,7 +117,7 @@ public class VariableComboEditor extends AbstractCellEditor
   }
 
   // -- VariableComboEditor API --
-  
+
   /**Reset the necessary lists for this editor.*/
   public void setDefs(Vector IDP, Vector AddP) {
     idPanels = IDP;

@@ -56,22 +56,22 @@ public class NotePane extends JScrollPane
   /**The main text color for this view.*/
   public static final Color TEXT_COLOR =
     new Color(0,35,0);
-  
+
   /**The panel that holds the title header for this view.*/
   private JPanel titlePanel;
-  
+
   /**The filechooser for this view.*/
   protected JFileChooser chooser;
-  
+
   /**A list of all TablePanels in the MetadataPane.*/
   protected Vector tPanels;
 
   /**Construct the default NotePane object.*/
   public NotePane() {
   	super();
-  	
+
   	tPanels = null;
-  	
+
   	titlePanel = new JPanel();
     titlePanel.setLayout(new GridLayout(2,1));
     JLabel title = new JLabel();
@@ -111,7 +111,7 @@ public class NotePane extends JScrollPane
     build.add( descrip, cellC.xyw(1, 4, 4, "fill,center"));
     titlePanel = build.getPanel();
     titlePanel.setBackground(TEXT_COLOR);
-    
+
     chooser = new JFileChooser(System.getProperty("user.dir"));
    	chooser.setDialogTitle("Export Notes to Text File");
     chooser.setApproveButtonText("Save");
@@ -127,23 +127,23 @@ public class NotePane extends JScrollPane
   */
   public void setPanels(Vector tablePanels) {
     tPanels = tablePanels;
-  
+
     String rowString = "pref";
     for(int i = 0; i < tablePanels.size();i++) {
     	rowString = rowString + ", 5dlu, pref";
-    }    
-    
+    }
+
     ScrollablePanel contentPanel = new ScrollablePanel();
     FormLayout panelLayout = new FormLayout(
       "5dlu, pref:grow, 5dlu",
       rowString);
     contentPanel.setLayout(panelLayout);
     CellConstraints cc = new CellConstraints();
-    
+
     contentPanel.add(titlePanel, cc.xyw(1,1,3));
-  
+
 	  for(int i = 0;i < tablePanels.size();i++) {
-	  	MetadataPane.TablePanel tableP = (MetadataPane.TablePanel) 
+	  	MetadataPane.TablePanel tableP = (MetadataPane.TablePanel)
 	  	  tablePanels.get(i);
 	  	tableP.tableName.setForeground(TEXT_COLOR);
 	  	tableP.addButton.setVisible(false);
@@ -151,13 +151,13 @@ public class NotePane extends JScrollPane
 	  	tableP.tHead.setVisible(false);
 	  	tableP.table.setVisible(false);
 	  	if(tableP.imageLabel != null) tableP.imageLabel.setVisible(false);
-	  	
+
 	  	contentPanel.add( tableP, cc.xy(2,(2*i)+3));
 	  }
-	  
+
 	  setViewportView(contentPanel);
 	}
-	
+
 	/**
 	* Call up the necessary dialogs and then output the selected notes
 	* to the selected text file.
@@ -167,23 +167,23 @@ public class NotePane extends JScrollPane
 	    Hashtable topHash = new Hashtable();
     	Vector names = new Vector();
     	for(int i = 0;i < tPanels.size();i++) {
-    		MetadataPane.TablePanel thisPanel = 
+    		MetadataPane.TablePanel thisPanel =
     		  (MetadataPane.TablePanel) tPanels.get(i);
     		Hashtable noteHash = thisPanel.noteP.getNoteHash();
     		topHash.put(thisPanel.name, noteHash);
-    		
+
     		Vector noteElements = thisPanel.noteP.getNoteElements();
     		if(noteElements!=null) {
 	    		for (int j=0;j<noteElements.size();j++) {
 	    			Element thisEle = (Element) noteElements.get(j);
-	    		  String suffix = thisEle.getAttribute("Name"); 
-	    		  names.add(thisPanel.name + "  >>>" + suffix);  		  
+	    		  String suffix = thisEle.getAttribute("Name");
+	    		  names.add(thisPanel.name + "  >>>" + suffix);
 	    		}
     		}
     	}
-	    	
+
 			Object [] values = names.toArray();
-	    	
+
 	    	Object [] toExport = ExportDialog.showDialog(
 	    	  (Component) getTopLevelAncestor(),
 	    	  (Component) getTopLevelAncestor(),
@@ -192,20 +192,20 @@ public class NotePane extends JScrollPane
 	    		values,
 	    		(Object[]) null,
 	    		"Image (23): LaserCoordinates (23)  >>>Long Note Name");
-	    		
+
 		  	if (toExport != null) {
 			  	if (toExport.length != 0) {
 					int rval = chooser.showOpenDialog(this);
-					if (rval == JFileChooser.APPROVE_OPTION) {					  
+					if (rval == JFileChooser.APPROVE_OPTION) {
 						String pathName = chooser.getSelectedFile().getPath();
 						if(!pathName.endsWith(".txt")) pathName = pathName + ".txt";
-						
+
 						File file = new File(pathName);
-						
+
 						try {
 							FileWriter fw = new FileWriter(file);
-							BufferedWriter bw = new BufferedWriter(fw); 
-							bw.write("** Metadata Notes from " + 
+							BufferedWriter bw = new BufferedWriter(fw);
+							bw.write("** Metadata Notes from " +
 							  ((MetadataPane.TablePanel)tPanels.get(0))
 							  .getCurrentFile().getName() + " **");
 							bw.newLine();
@@ -218,32 +218,32 @@ public class NotePane extends JScrollPane
 							  rightNow.get(Calendar.MINUTE) + " **");
 							bw.newLine();
 							bw.newLine();
-						
+
 							Vector alreadyUsed = new Vector();
 							int placeMark = 1;
-							
+
 							for (int i = 0;i < toExport.length;i++) {
 							  String thisNoteName = (String) toExport[i];
-							  
+
 							  int index = thisNoteName.indexOf(">");
 							  String tableName = thisNoteName.substring(0,index-2);
-						
+
 								Hashtable subHash = (Hashtable) topHash.get(tableName);
-							
+
 								if(!alreadyUsed.contains(tableName)) {
 									alreadyUsed.add(tableName);
-									
+
 									bw.write(placeMark + ") " + tableName);
 									placeMark++;
 									bw.newLine();
 									bw.newLine();
 								}
-								
+
 								int lIndex = thisNoteName.lastIndexOf(">");
 								String noteName = thisNoteName.substring(lIndex+1,
 									thisNoteName.length());
 								String noteValue = (String) subHash.get(noteName);
-								
+
 								bw.write("  ->" + noteName + ":");
 								bw.newLine();
 								int newLine = noteValue.indexOf("\n");
@@ -254,7 +254,7 @@ public class NotePane extends JScrollPane
 										noteValue.length());
 									bw.write("     " + subValue);
 									bw.newLine();
-									newLine = noteValue.indexOf("\n");									
+									newLine = noteValue.indexOf("\n");
 								}
 								if(noteValue != null) bw.write("     " + noteValue);
 								bw.newLine();
@@ -271,15 +271,15 @@ public class NotePane extends JScrollPane
 		  }
 		}
 	}
-	
+
 	/**Handle the "Export Notes" button action, call exportNotes().*/
 	public void actionPerformed(ActionEvent e) {
 	  if(e.getActionCommand().equals("save")) exportNotes();
 	}
-	
+
 
 	// --Helper Classes--
-	
+
 	/**
 	* A subclass of JPanel that gets around the annoying resize width
 	* problems inherent in a JPanel that is the View of a JScrollPane.
@@ -290,7 +290,7 @@ public class NotePane extends JScrollPane
 	  public ScrollablePanel() {
 	    super();
 	  }
-	  
+
 	  public Dimension getPreferredScrollableViewportSize() {
       return getPreferredSize();
     }
@@ -302,7 +302,7 @@ public class NotePane extends JScrollPane
     public boolean getScrollableTracksViewportWidth() {return true;}
     public boolean getScrollableTracksViewportHeight() {return false;}
   }
-  
+
   /** A filefilter to display only text files and directories.*/
 	public class TextFileFilter extends FileFilter
 	{
@@ -310,7 +310,7 @@ public class NotePane extends JScrollPane
 	    if(f.getPath().endsWith(".txt") || f.isDirectory()) return true;
 	    else return false;
 	  }
-	  
+
 	  public String getDescription() {
 	    return "Text Files";
 	  }

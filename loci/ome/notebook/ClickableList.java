@@ -56,16 +56,16 @@ public class ClickableList extends JList
 {
   /**The popup menu created when right-clicking on this list.*/
   protected JPopupMenu jPop;
-  
+
   /**The TablePanel this list of notes is for*/
   protected MetadataPane.TablePanel tableP;
-  
+
   /**The textarea that displays these notes.*/
   protected JTextArea textArea;
-  
+
   /**The listmodel for this list.*/
   protected DefaultListModel myModel;
-  
+
   /**The NotePanel that contains this list of notes.*/
   protected NotePanel noteP;
 
@@ -330,7 +330,7 @@ public class ClickableList extends JList
     setValue(result);
     if(tableP.isEditable()) tableP.callStateChanged(true);
   }
-  
+
   /**Handles remove changes to the textarea that the notes' values
   *  are stored in. Sets the value of the appropriate node as well.
   */
@@ -349,7 +349,7 @@ public class ClickableList extends JList
     setValue(result);
     if(tableP.isEditable()) tableP.callStateChanged(true);
   }
-  
+
   /**Handles wierd changes to the textarea that the notes' values
   *  are stored in. Sets the value of the appropriate node as well.
   */

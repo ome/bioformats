@@ -37,7 +37,7 @@ import javax.swing.table.*;
 * A class to handle the behavior of the Goto buttons
 * that are within a cell of a given ClickableTable.
 * These buttons should go to the referenced TabPanel.
-* 
+*
 * @author Christopher Peterson crpeterson2 at wisc.edu
 */
 public class GotoEditor extends AbstractCellEditor
@@ -45,7 +45,7 @@ public class GotoEditor extends AbstractCellEditor
 {
   /**The "Goto" button we're editing.*/
   TableButton button;
-  
+
   /**The TablePanel this TableEditor is for.*/
   MetadataPane.TablePanel tableP;
 

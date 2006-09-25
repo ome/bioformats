@@ -51,34 +51,34 @@ public class MetadataNotebook extends JFrame
 
   /**The file chooser used to save and open files.*/
   protected JFileChooser chooser;
-  
+
   /**The MetadataPane used to display/edit OMEXML content.*/
   protected MetadataPane metadata;
-  
+
   /**Holds the current file being displayed.*/
   protected File currentFile;
-  
+
   /**The "Tabs" menu.*/
   protected JMenu tabsMenu;
-  
+
   /**Signifies whether we're opening(true) or saving(false) a file.*/
   protected boolean opening;
-  
+
   /**Holds the xml viewer that displays xml data in a JTree*/
   protected loci.ome.viewer.MetadataPane mdp;
-  
+
   /**The File&gt;New menu item.*/
   protected JMenuItem fileNew;
-  
+
   /**The NotePane that displays a comprehensive list of all notes.*/
   protected NotePane noteP;
-  
+
   /**
    * The WiscScan emulator that mimics the GUI of the WiscScan
    * program for ease of use by our in-house biologists.
    */
   protected WiscScanPane scanP;
-  
+
   /**The checkboxes that switch between the four views.*/
   protected JCheckBoxMenuItem advView, noteView, normView, scanView,
     showID;
@@ -112,7 +112,7 @@ public class MetadataNotebook extends JFrame
 		catch (Exception exc) {
 		  System.err.println("Sorry, but we could not find the look and feel JAR.");
 		}
-		
+
     //initialize fields
     currentFile = null;
     opening = true;
@@ -215,7 +215,7 @@ public class MetadataNotebook extends JFrame
 
     JMenu toolsMenu = new JMenu("Tools");
     toolsMenu.setMnemonic('t');
-    menubar.add(toolsMenu);    
+    menubar.add(toolsMenu);
     normView = new JCheckBoxMenuItem("Normal View");
     normView.setSelected(true);
     toolsMenu.add(normView);
@@ -272,7 +272,7 @@ public class MetadataNotebook extends JFrame
 
     //make a filechooser to open and save our precious files
     chooser = new JFileChooser(System.getProperty("user.dir"));
-    
+
     //make WiscScan view the default
     scanView.setSelected(true);
 
@@ -446,8 +446,8 @@ public class MetadataNotebook extends JFrame
 
   /**Handles the checkbox menuitems that change the view.*/
   public void itemStateChanged(ItemEvent e) {
-    if (e.getStateChange() == ItemEvent.SELECTED && 
-      (JCheckBoxMenuItem) e.getItem() == advView) 
+    if (e.getStateChange() == ItemEvent.SELECTED &&
+      (JCheckBoxMenuItem) e.getItem() == advView)
     {
       noteView.setState(false);
       normView.setState(false);
@@ -460,8 +460,8 @@ public class MetadataNotebook extends JFrame
       mdp.setOMEXML(metadata.getRoot());
       mdp.setVisible(true);
     }
-    else if (e.getStateChange() == ItemEvent.SELECTED && 
-      (JCheckBoxMenuItem) e.getItem() == noteView) 
+    else if (e.getStateChange() == ItemEvent.SELECTED &&
+      (JCheckBoxMenuItem) e.getItem() == noteView)
     {
       advView.setState(false);
       normView.setState(false);
@@ -474,8 +474,8 @@ public class MetadataNotebook extends JFrame
       noteP.setPanels(metadata.panelList);
       noteP.setVisible(true);
     }
-    else if (e.getStateChange() == ItemEvent.SELECTED && 
-      (JCheckBoxMenuItem) e.getItem() == scanView) 
+    else if (e.getStateChange() == ItemEvent.SELECTED &&
+      (JCheckBoxMenuItem) e.getItem() == scanView)
     {
       noteView.setState(false);
       advView.setState(false);
@@ -487,8 +487,8 @@ public class MetadataNotebook extends JFrame
       scanP.setOMEXML(metadata.getRoot());
       scanP.setVisible(true);
     }
-    else if (e.getStateChange() == ItemEvent.SELECTED && 
-      (JCheckBoxMenuItem) e.getItem() == normView) 
+    else if (e.getStateChange() == ItemEvent.SELECTED &&
+      (JCheckBoxMenuItem) e.getItem() == normView)
     {
       advView.setState(false);
       noteView.setState(false);
@@ -501,14 +501,14 @@ public class MetadataNotebook extends JFrame
       metadata.reRender();
       metadata.setVisible(true);
     }
-    else if (e.getStateChange() == ItemEvent.SELECTED && 
-      (JCheckBoxMenuItem) e.getItem() == showID) 
+    else if (e.getStateChange() == ItemEvent.SELECTED &&
+      (JCheckBoxMenuItem) e.getItem() == showID)
     {
       metadata.showIDs = true;
       metadata.reRender();
     }
-    else if (e.getStateChange() == ItemEvent.DESELECTED && 
-      (JCheckBoxMenuItem) e.getItem() == showID) 
+    else if (e.getStateChange() == ItemEvent.DESELECTED &&
+      (JCheckBoxMenuItem) e.getItem() == showID)
     {
       metadata.showIDs = false;
       metadata.reRender();

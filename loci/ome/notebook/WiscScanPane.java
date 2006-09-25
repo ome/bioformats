@@ -81,17 +81,17 @@ public class WiscScanPane extends JTabbedPane
 	  tiEle = null;
 	  pmtEle = null;
 	  phEle = null;
-	
+
 	  setPreferredSize(new Dimension(700, 500));
 		JPanel loginPanel = new JPanel();
 		JPanel experimentPanel = new ScrollablePanel();
 		JScrollPane jScroll = new JScrollPane(experimentPanel);
-		addTab("WiscScan Login", (Icon) null, loginPanel, 
+		addTab("WiscScan Login", (Icon) null, loginPanel,
 		  "Emulates the login screen of WiscScan.");
-	  addTab("Experiment Setup Information", (Icon) null, 
+	  addTab("Experiment Setup Information", (Icon) null,
 	    jScroll, "Emulates the Experiment Setup Information"
 	    + " screen of WiscScan.");
-	  
+
 	  //gui setup for login screen
 	  int w = 300, h = 20;
 	  JLabel firstLabel = new JLabel("First Name");
@@ -127,16 +127,16 @@ public class WiscScanPane extends JTabbedPane
 	  groupBox.setPreferredSize(new Dimension(w,h));
 	  groupBox.addActionListener(this);
 	  groupBox.setEnabled(false);
-	  
+
 	  JPanel subPanel = null;
-	  
+
 	  FormLayout layout = new FormLayout(
         "5dlu,center:pref,5dlu",
         "5dlu,pref,5dlu,pref,5dlu,pref,5dlu,pref,5dlu,pref,5dlu,pref," +
           "5dlu,pref,5dlu,pref,5dlu,pref,5dlu,pref,5dlu,pref,5dlu,pref,5dlu");
     PanelBuilder build = new PanelBuilder(layout);
     CellConstraints cc = new CellConstraints();
-    
+
     build.add(firstLabel,cc.xy(2,2));
     build.add(firstField,cc.xy(2,4));
     build.add(lastLabel,cc.xy(2,6));
@@ -149,33 +149,33 @@ public class WiscScanPane extends JTabbedPane
     build.add(emailField,cc.xy(2,20));
     build.add(groupLabel,cc.xy(2,22));
     build.add(groupBox,cc.xy(2,24));
-    
+
     subPanel = build.getPanel();
-    
-    Border lineB = BorderFactory.createMatteBorder(1, 
+
+    Border lineB = BorderFactory.createMatteBorder(1,
     	1, 1, 1, Color.BLACK);
     EmptyBorder emptyB = new EmptyBorder(5,5,5,5);
     EmptyBorder empB = new EmptyBorder(5,5,5,5);
     CompoundBorder tempB = new CompoundBorder(lineB,emptyB);
     CompoundBorder finalB = new CompoundBorder(empB,lineB);
     subPanel.setBorder(finalB);
-    
+
     JPanel holderP = new JPanel();
     holderP.add(subPanel);
-    
-    JLabel welcomeLabel = new JLabel("Welcome To WiscScan", 
+
+    JLabel welcomeLabel = new JLabel("Welcome To WiscScan",
     	JLabel.CENTER);
 //    Font thisFont = welcomeLabel.getFont();
     Font thisFont = new Font("Serif",
       Font.PLAIN,64);
     welcomeLabel.setFont(thisFont);
-    
+
     loginPanel.setLayout(new BorderLayout());
     loginPanel.add(welcomeLabel, BorderLayout.NORTH);
     loginPanel.add(holderP, BorderLayout.CENTER);
-    
+
     //gui setup for experiment setup screen
-    
+
     Border etchB = BorderFactory.createEtchedBorder(
     	EtchedBorder.LOWERED);
 		TitledBorder infoB = BorderFactory.createTitledBorder(
@@ -188,19 +188,19 @@ public class WiscScanPane extends JTabbedPane
 		  etchB, "Detector");
 
     JPanel infoP, filterP, laserP, detP;
-    
+
     w = 250;
-    
+
     JLabel exL = new JLabel("Experiment Type");
     JLabel prL = new JLabel("Project Name");
     JLabel desL = new JLabel("Description");
     JLabel tempL = new JLabel("Temperature");
     JLabel pocL = new JLabel("Pockel Cell");
     JLabel tapL = new JLabel("Tap Settings");
-    
+
     JLabel wheeL = new JLabel("Wheel");
     JLabel hoL = new JLabel("Holder");
-    
+
 		prT = new JTextField();
 		prT.setPreferredSize(new Dimension(w,h));
 		prT.getDocument().addDocumentListener(this);
@@ -213,15 +213,15 @@ public class WiscScanPane extends JTabbedPane
 		tapT = new JTextField();
 		tapT.setPreferredSize(new Dimension(w,h));
 		tapT.setEnabled(false);
-		
+
 		tiT = new JTextField();
 		tiT.setPreferredSize(new Dimension(80,h));
 		tiT.setEnabled(false);
-		
+
 		pmtT = new JTextField();
 		pmtT.setPreferredSize(new Dimension(80,h));
 		pmtT.getDocument().addDocumentListener(this);
-		
+
 		desA = new JTextArea("",4,1);
 		desA.setLineWrap(true);
     desA.setWrapStyleWord(true);
@@ -230,7 +230,7 @@ public class WiscScanPane extends JTabbedPane
 		desS.setPreferredSize(new Dimension(w,h*4));
 		desS.setVerticalScrollBarPolicy(
       JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		  
+
 		exB = new JComboBox(EX_CHOICES);
 		exB.setPreferredSize(new Dimension(w,h));
 		exB.addActionListener(this);
@@ -238,60 +238,60 @@ public class WiscScanPane extends JTabbedPane
 		wheeB.setEnabled(false);
 		hoB = new JComboBox(HO_CHOICES);
 		hoB.setEnabled(false);
-		
+
 		tiC = new JCheckBox("Ti-Sapphire");
 		tiC.addItemListener(this);
 		phC = new JCheckBox("Photodiode Bio-Rad 1024TLD");
 		phC.addItemListener(this);
 		pmtC = new JCheckBox("PMT Hamamatsu H7422");
 		pmtC.addItemListener(this);
-		
+
 		FormLayout layoutF = new FormLayout(
         "5dlu,pref,5dlu,pref:grow,5dlu",
         "5dlu,pref,5dlu,pref,5dlu");
     PanelBuilder buildF = new PanelBuilder(layoutF);
     CellConstraints ccF = new CellConstraints();
-    
+
     buildF.add(wheeL, ccF.xy(2,2));
     buildF.add(wheeB, ccF.xy(4,2));
     buildF.add(hoL, ccF.xy(2,4));
     buildF.add(hoB, ccF.xy(4,4));
-    
+
     filterP = buildF.getPanel();
     filterP.setBorder(filterB);
-    
+
     FormLayout layoutL = new FormLayout(
         "5dlu,pref,5dlu,pref,pref:grow, 5dlu",
         "5dlu,pref,25dlu");
     PanelBuilder buildL = new PanelBuilder(layoutL);
     CellConstraints ccL = new CellConstraints();
-    
+
     buildL.add(tiC, cc.xy(2,2));
     buildL.add(tiT, cc.xy(4,2));
-    
+
     laserP = buildL.getPanel();
     laserP.setBorder(laserB);
-    
+
     FormLayout layoutD = new FormLayout(
         "5dlu,pref,5dlu,pref,pref:grow, 5dlu",
         "5dlu,pref,5dlu,pref,20dlu");
     PanelBuilder buildD = new PanelBuilder(layoutD);
     CellConstraints ccD = new CellConstraints();
-    
+
     buildD.add(phC, cc.xy(2,2));
     buildD.add(pmtC, cc.xy(2,4));
     buildD.add(pmtT, cc.xy(4,4));
-    
+
     detP = buildD.getPanel();
     detP.setBorder(detB);
-    
+
     FormLayout layoutE = new FormLayout(
         "5dlu,pref,5dlu,pref,5dlu,",
         "5dlu,pref,5dlu,pref,5dlu,top:pref,5dlu,pref,5dlu,pref,"
         + "5dlu,pref,5dlu,pref,5dlu,pref,5dlu,pref,5dlu");
     PanelBuilder buildE = new PanelBuilder(layoutE);
     CellConstraints ccE = new CellConstraints();
-    
+
     buildE.add(exL, cc.xy(2,2));
     buildE.add(exB, cc.xy(4,2));
     buildE.add(prL, cc.xy(2,4));
@@ -307,13 +307,13 @@ public class WiscScanPane extends JTabbedPane
     buildE.add(filterP, cc.xyw(2,14,3));
     buildE.add(laserP, cc.xyw(2,16,3));
     buildE.add(detP, cc.xyw(2,18,3));
-    
+
     infoP = buildE.getPanel();
     infoP.setBorder(infoB);
-    
+
     experimentPanel.add(infoP);
 	}
-	
+
 	/**
 	* Set whether or not the user should be able to edit the
 	* OMEXML in any document.
@@ -339,7 +339,7 @@ public class WiscScanPane extends JTabbedPane
       pmtT.setEditable(editable);
       desA.setEditable(editable);
   }
-  
+
   /**
   * Update the OMEXML that this document is displaying/editing.
   * @param omeNode The OMENode of the current OMEXML document.
@@ -347,7 +347,7 @@ public class WiscScanPane extends JTabbedPane
   public void setOMEXML(OMENode omeNode) {
     ome = omeNode;
     setup = true;
-    
+
     exrEle = null;
 	  exEle = null;
 	  prEle = null;
@@ -355,13 +355,13 @@ public class WiscScanPane extends JTabbedPane
 	  tiEle = null;
 	  pmtEle = null;
 	  phEle = null;
-  
+
   	Document omeDoc = null;
   	try {
   		omeDoc = ome.getOMEDocument(true);
   	}
   	catch (Exception exc) {}
-  	
+
   	Vector exrVector = DOMUtil.findElementList("Experimenter",omeDoc);
   	String firstName = "",lastName = "",emailName = "";
   	for (int i = 0;i<exrVector.size();i++) {
@@ -391,7 +391,7 @@ public class WiscScanPane extends JTabbedPane
   	if (exrEle == null && exrVector.size() != 0) {
   	  exrEle = (Element) exrVector.get(0);
   	}
-  	
+
   	Vector exVector = DOMUtil.findElementList("Experiment",omeDoc);
 		String exType = "Other";
   	for (int i = 0;i<exVector.size();i++) {
@@ -404,13 +404,13 @@ public class WiscScanPane extends JTabbedPane
   	  }
   	}
   	Arrays.sort(EX_CHOICES);
-  	if(Arrays.binarySearch(EX_CHOICES, exType) >= 0) 
+  	if(Arrays.binarySearch(EX_CHOICES, exType) >= 0)
   	  exB.setSelectedItem(exType);
   	else exB.setSelectedItem("Other");
   	if (exEle == null && exVector.size() != 0) {
   	  exEle = (Element) exVector.get(0);
   	}
-  	
+
   	Vector prVector = DOMUtil.findElementList("Project",omeDoc);
 		String prName = null;
   	for (int i = 0;i<prVector.size();i++) {
@@ -426,7 +426,7 @@ public class WiscScanPane extends JTabbedPane
   	if (prEle == null && prVector.size() != 0) {
   	  prEle = (Element) prVector.get(0);
   	}
-  	
+
   	Vector desVector = exVector;
 		String desText = null;
   	for (int i = 0;i<desVector.size();i++) {
@@ -442,7 +442,7 @@ public class WiscScanPane extends JTabbedPane
   	if (desEle == null && desVector.size() != 0) {
   	  desEle = (Element) desVector.get(0);
   	}
-  	
+
   	Vector tiVector = DOMUtil.findElementList("Laser",omeDoc);
   	boolean tiToggle = false;
   	for (int i = 0;i<tiVector.size();i++) {
@@ -458,7 +458,7 @@ public class WiscScanPane extends JTabbedPane
   	  }
   	}
   	tiC.setSelected(tiToggle);
-  	
+
   	Vector phVector = DOMUtil.findElementList("Detector",omeDoc);
   	boolean phToggle = false;
   	for (int i = 0;i<phVector.size();i++) {
@@ -474,7 +474,7 @@ public class WiscScanPane extends JTabbedPane
   	  }
   	}
   	phC.setSelected(phToggle);
-  	
+
   	Vector pmtVector = phVector;
   	boolean pmtToggle = false;
   	for (int i = 0;i<pmtVector.size();i++) {
@@ -491,16 +491,16 @@ public class WiscScanPane extends JTabbedPane
   	}
   	pmtC.setSelected(pmtToggle);
   	pmtT.setEnabled(pmtToggle);
-  	
+
   	if(pmtEle != null && pmtEle.hasAttribute("Gain")) {
   	  pmtT.setText(pmtEle.getAttribute("Gain"));
   	}
-  	
+
   	setup = false;
   }
-  
+
   // --Event listening methods--
-  
+
   /** Handle selections in the JComboBoxes.*/
   public void actionPerformed(ActionEvent e) {
     if(!setup) {
@@ -517,7 +517,7 @@ public class WiscScanPane extends JTabbedPane
       }
   	}
   }
-  
+
   /** Handle changes with selection in the JCheckBoxes.*/
   public void itemStateChanged(ItemEvent e) {
     if(!setup) {
@@ -577,7 +577,7 @@ public class WiscScanPane extends JTabbedPane
 			}
   	}
   }
-  
+
   /**
   * Change the OMEXMLNode tree appropriately for a given
   * DocumentEvent.
@@ -642,16 +642,16 @@ public class WiscScanPane extends JTabbedPane
 	    setup = false;
   	}
   }
-  
+
   /** Calls changeNode(e).*/
   public void insertUpdate(DocumentEvent e) {changeNode(e);}
   /** Calls changeNode(e).*/
   public void removeUpdate(DocumentEvent e) {changeNode(e);}
   /** Calls changeNode(e).*/
   public void changedUpdate(DocumentEvent e) {changeNode(e);}
-  
+
   // --Helper Classes--
-	
+
 	/**
 	* Fixes the annoyingness that happens with JPanel expansion
 	* within a JScrollPane. Resizing should work appropriately now.
@@ -662,7 +662,7 @@ public class WiscScanPane extends JTabbedPane
 	  public ScrollablePanel() {
 	    super();
 	  }
-	  
+
 	  public Dimension getPreferredScrollableViewportSize() {
       return getPreferredSize();
     }
@@ -674,5 +674,5 @@ public class WiscScanPane extends JTabbedPane
     public boolean getScrollableTracksViewportWidth() {return true;}
     public boolean getScrollableTracksViewportHeight() {return false;}
   }
-  
+
 }

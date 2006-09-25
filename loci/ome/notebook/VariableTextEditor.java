@@ -104,7 +104,7 @@ public abstract class VariableTextEditor extends AbstractCellEditor
       catch (Exception exc) {System.out.println(exc);}
     }
   }
-  
+
   /**
   * Sets the data of the current text component for a triggering
   * DocumentEvent.

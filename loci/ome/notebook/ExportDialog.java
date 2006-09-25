@@ -43,10 +43,10 @@ public class ExportDialog extends JDialog
                         implements ActionListener {
   /**Holds the dialog*/
   private static ExportDialog dialog;
-  
+
   /**The list of values returned as selected in the dialog.*/
   private static Object [] value;
-  
+
   /**The JList found in this dialog*/
   private JList list;
 
@@ -158,7 +158,7 @@ public class ExportDialog extends JDialog
       "5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu");
     listPane.setLayout(panelLayout);
     CellConstraints cc = new CellConstraints();
-    
+
     listPane.setLayout(panelLayout);
     JLabel label = new JLabel(labelText);
     label.setLabelFor(list);
@@ -168,7 +168,7 @@ public class ExportDialog extends JDialog
     listPane.add(exportButton, cc.xy(2,6));
     listPane.add(exportAllButton, cc.xy(4,6));
     listPane.add(cancelButton, cc.xy(6,6));
-    
+
 		setContentPane(listPane);
 
     //Initialize values.

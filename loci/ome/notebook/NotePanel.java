@@ -51,7 +51,7 @@ public class NotePanel extends JPanel implements ListSelectionListener {
   public static final ImageIcon NOTES_BULLET =
     MetadataPane.createImageIcon("Icons/bullet-green.gif",
       "An icon signifying that notes are present.");
-      
+
   /** An icon that signifies that no notes are present.*/
   public static final ImageIcon NO_NOTES_BULLET =
     MetadataPane.createImageIcon("Icons/bullet-red.gif",
@@ -59,13 +59,13 @@ public class NotePanel extends JPanel implements ListSelectionListener {
 
   /** The TablePanel that this NotePanel is a part of.*/
   MetadataPane.TablePanel tableP;
-  
+
   /** The JList SubClass that holds the note names.*/
   public ClickableList noteList;
-  
+
   /** The JTextArea that holds a note's content.*/
   public JTextArea textArea;
-  
+
   /** The list and textarea's name labels.*/
   public JLabel nameLabel,noteLabel;
 
@@ -79,7 +79,7 @@ public class NotePanel extends JPanel implements ListSelectionListener {
     tableP = tp;
     setBorder(new EmptyBorder(5,5,5,5));
     setBackground(BACK_COLOR);
-    
+
     boolean editable = tableP.isEditable();
 
     Vector noteEleList = getNoteElements();
@@ -182,7 +182,7 @@ public class NotePanel extends JPanel implements ListSelectionListener {
     }
     return results;
   }
-  
+
   /**
   * Get a Hashtable of notenames and values for this NotePanel.
   * @return A Hashtable with keys of the notes' names and values
