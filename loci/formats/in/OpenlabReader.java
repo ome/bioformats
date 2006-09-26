@@ -632,7 +632,7 @@ public class OpenlabReader extends FormatReader {
       }
       catch (ArrayIndexOutOfBoundsException a) { }
 
-      switch (bpp[i]) {
+      switch (bytesPerPixel * 8) {
         case 1:
           pixelType[i] = FormatReader.INT8;
           break;
