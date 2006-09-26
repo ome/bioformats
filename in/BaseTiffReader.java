@@ -32,6 +32,7 @@ import java.util.Hashtable;
 import loci.formats.DataTools;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
+import loci.formats.ImageReader;
 import loci.formats.MetadataStore;
 import loci.formats.RandomAccessStream;
 import loci.formats.TiffRational;
@@ -50,7 +51,7 @@ public abstract class BaseTiffReader extends FormatReader {
   private static final int MIN = 0;
 
   /** The maximum index in the channelMinMax array */
-  private static final int MAX = 0;
+  private static final int MAX = 1;
 
   // -- Fields --
 
@@ -559,8 +560,8 @@ public abstract class BaseTiffReader extends FormatReader {
       for (int i=0; i<getSizeC(currentId); i++) {
         try {
           setLogicalChannel(i);
-          if (getChannelGlobalMinimum(currentId, 0) != null &&
-            getChannelGlobalMaximum(currentId, 0) != null ||
+          if ((getChannelGlobalMinimum(currentId, 0) == null ||
+            getChannelGlobalMaximum(currentId, 0) == null) &&
             enableChannelStatCalculation)
           {
             setChannelGlobalMinMax(i);
@@ -693,6 +694,8 @@ public abstract class BaseTiffReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
+    if (channelMinMax == null || channelMinMax[theC] == null)
+      return null;
     return channelMinMax[theC][MIN];
   }
 
@@ -703,6 +706,8 @@ public abstract class BaseTiffReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
+    if (channelMinMax == null || channelMinMax[theC] == null)
+      return null;
     return channelMinMax[theC][MAX];
   }
 
@@ -717,20 +722,33 @@ public abstract class BaseTiffReader extends FormatReader {
     return false;
   }
 
-  /** Obtains the specified image from the given TIFF file as a byte array. */
-  public byte[] openBytes(String id, int no)
+  /* (non-Javadoc)
+   * @see loci.formats.FormatReader#openBytes(java.lang.String, int, byte[])
+   */
+  public byte[] openBytes(java.lang.String id, int no, byte[] buf)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
 
     byte[][] p = null;
     p = TiffTools.getSamples(ifds[no], in, 0);
-    byte[] rtn = new byte[p.length * p[0].length];
     for (int i=0; i<p.length; i++) {
       swapIfRequired(p[i]);
-      System.arraycopy(p[i], 0, rtn, i * p[0].length, p[0].length);
+      System.arraycopy(p[i], 0, buf, i * p[0].length, p[0].length);
     }
-    return rtn;
+    return buf;
+  }
+  
+  /* (non-Javadoc)
+   * @see loci.formats.FormatReader#openBytes(java.lang.String, int)
+   */
+  public byte[] openBytes(String id, int no)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    int bytesPerPixel = ImageReader.getBytesPerPixel(getPixelType(id));
+    byte[] buf = new byte[getSizeX(id) * getSizeY(id) * bytesPerPixel];
+    return openBytes(id, no, buf);
   }
 
   /**
