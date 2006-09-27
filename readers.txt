@@ -43,6 +43,7 @@ loci.formats.in.SDTReader         # sdt
 loci.formats.in.EPSReader         # eps, epsi
 loci.formats.in.OIBReader         # oib
 loci.formats.in.ZeissZVIReader    # zvi
+loci.formats.in.SlidebookReader   # sld
 
 # multi-extension messes
 loci.formats.in.ICSReader         # ics, ids
