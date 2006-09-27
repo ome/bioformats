@@ -59,7 +59,10 @@ public class OIBReader extends FormatReader {
       r.exec("import org.apache.poi.poifs.filesystem.DocumentInputStream");
       r.exec("import java.util.Iterator");
     }
-    catch (Throwable exc) { noPOI = true; }
+    catch (Throwable exc) {
+      /* debug */ exc.printStackTrace();
+      noPOI = true;
+    }
     return r;
   }
 
@@ -182,9 +185,11 @@ public class OIBReader extends FormatReader {
         System.arraycopy(samples[i], 0, rtn, i*samples[i].length,
           samples[i].length);
       }
+      stream.close();
       return rtn;
     }
     catch (ReflectException e) {
+      /* debug */ e.printStackTrace();
       noPOI = true;
       return new byte[0];
     }
@@ -386,7 +391,6 @@ public class OIBReader extends FormatReader {
           // INI-style metadata
 
           String ini = new String(data);
-          ini = DataTools.stripString(ini).trim();
           if (ini.indexOf("????????") != -1) ini = "";
 
           StringTokenizer st = new StringTokenizer(ini, "\n");
@@ -395,13 +399,20 @@ public class OIBReader extends FormatReader {
 
           while (st.hasMoreTokens()) {
             String token = st.nextToken();
+            token = DataTools.stripString(token);
+            if (token.indexOf("!!!!!!") != -1) token = "";
             if (token.indexOf("=") != -1) {
               String key = token.substring(0, token.indexOf("="));
               String value = token.substring(token.indexOf("=") + 1);
               metadata.put(prefix + key.trim(), value.trim());
             }
-            else prefix = token.trim() + " - ";
+            else {
+              prefix = token.trim() + " - ";
+              if (prefix.charAt(2) == '[') prefix = prefix.substring(2);
+            }
           }
+
+          data = null;
         }
 
         r.exec("dis.close()");
