@@ -48,41 +48,41 @@ public abstract class FormatReader extends FormatHandler
   protected static final int THUMBNAIL_DIMENSION = 128;
 
   /** Identifies the <i>INT8</i> data type used to store pixel values. */
-  public static final int     INT8 = 0;
+  public static final int INT8 = 0;
 
   /** Identifies the <i>UINT8</i> data type used to store pixel values. */
-  public static final int     UINT8 = 1;
+  public static final int UINT8 = 1;
 
   /** Identifies the <i>INT16</i> data type used to store pixel values. */
-  public static final int     INT16 = 2;
+  public static final int INT16 = 2;
 
   /** Identifies the <i>UINT16</i> data type used to store pixel values. */
-  public static final int     UINT16 = 3;
+  public static final int UINT16 = 3;
 
   /** Identifies the <i>INT32</i> data type used to store pixel values. */
-  public static final int     INT32 = 4;
+  public static final int INT32 = 4;
 
   /** Identifies the <i>UINT32</i> data type used to store pixel values. */
-  public static final int     UINT32 = 5;
+  public static final int UINT32 = 5;
 
   /** Identifies the <i>FLOAT</i> data type used to store pixel values. */
-  public static final int     FLOAT = 6;
+  public static final int FLOAT = 6;
 
   /** Identifies the <i>DOUBLE</i> data type used to store pixel values. */
-  public static final int     DOUBLE = 7;
+  public static final int DOUBLE = 7;
 
   /** Human readable pixel type. */
   private static String[] pixelsTypes;
   static {
     pixelsTypes = new String[8];
-    pixelsTypes[FormatReader.INT8] = "INT8";
-    pixelsTypes[FormatReader.UINT8] = "UINT8";
-    pixelsTypes[FormatReader.INT16] = "INT16";
-    pixelsTypes[FormatReader.UINT16] = "UINT16";
-    pixelsTypes[FormatReader.INT32] = "INT32";
-    pixelsTypes[FormatReader.UINT32] = "UINT32";
-    pixelsTypes[FormatReader.FLOAT] = "FLOAT";
-    pixelsTypes[FormatReader.DOUBLE] = "DOUBLE";
+    pixelsTypes[FormatReader.INT8] = "int8";
+    pixelsTypes[FormatReader.UINT8] = "uint8";
+    pixelsTypes[FormatReader.INT16] = "int16";
+    pixelsTypes[FormatReader.UINT16] = "uint16";
+    pixelsTypes[FormatReader.INT32] = "int32";
+    pixelsTypes[FormatReader.UINT32] = "uint32";
+    pixelsTypes[FormatReader.FLOAT] = "float";
+    pixelsTypes[FormatReader.DOUBLE] = "double";
   }
 
   // -- Fields --
@@ -828,10 +828,9 @@ public abstract class FormatReader extends FormatHandler
    * @return type enumeration value for use with class constants.
    */
   public static int pixelTypeFromString(String pixelTypeAsString) {
-    String uppercaseTypeAsString = pixelTypeAsString.toUpperCase();
+    String lowercaseTypeAsString = pixelTypeAsString.toLowerCase();
     for (int i = 0; i < pixelsTypes.length; i++) {
-      if (pixelsTypes[i].equals(uppercaseTypeAsString))
-        return i;
+      if (pixelsTypes[i].equals(lowercaseTypeAsString)) return i;
     }
     throw new RuntimeException("Unknown type: '" + pixelTypeAsString + "'");
   }
