@@ -194,6 +194,7 @@ public class ZeissZVIReader extends FormatReader {
           }
         }
       }
+      b = null;
       return a;
     }
     catch (ReflectException e) {
@@ -640,6 +641,7 @@ public class ZeissZVIReader extends FormatReader {
           }
         }
 
+        data = null;
         r.exec("dis.close()");
       }
     }
