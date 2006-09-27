@@ -148,6 +148,7 @@ public class IPWReader extends BaseTiffReader {
         System.arraycopy(samples[i], 0, rtn, i*samples[i].length,
           samples[i].length);
       }
+      stream.close();
       return rtn;
     }
     catch (ReflectException e) {
@@ -234,6 +235,7 @@ public class IPWReader extends BaseTiffReader {
 
       RandomAccessStream stream = new RandomAccessStream(b);
       ifds = TiffTools.getIFDs(stream);
+      stream.close();
     }
     catch (ReflectException e) { }
 
