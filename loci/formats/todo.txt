@@ -9,7 +9,6 @@ Codecs:
 Implement readers for other file formats:
 * Anything listed online: http://www.loci.wisc.edu/ome/formats.html
 * JPEG-2000 formats: .j2k, .jbig, .jp2, .jpc, etc.
-* SlideBook
 * MNG (low)
 * AL3D (very low)
 
