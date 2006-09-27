@@ -37,7 +37,8 @@ public final class About {
       "LOCI Plugins for ImageJ\n" +
       "Built @date@\n\n" +
       "The 4D Data Browser is LOCI software written by\n" +
-      "Francis Wong, Curtis Rueden and Melissa Linkert.\n" +
+      "Christopher Peterson, Francis Wong, Curtis Rueden\n" +
+      "and Melissa Linkert.\n" +
       "http://www.loci.wisc.edu/4d/#browser\n\n" +
       "The Bio-Formats Importer and Exporter are LOCI software\n" +
       "written by Melissa Linkert and Curtis Rueden.\n" +
