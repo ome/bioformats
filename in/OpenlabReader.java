@@ -527,7 +527,7 @@ public class OpenlabReader extends FormatReader {
 
     // determine if we have a multi-series file
 
-    openBytes(id, 0);
+    int oldChannels = openBytes(id, 0).length / (width[0] * height[0] * 3);
     int oldWidth = width[0];
 
     int oldSize = 0;
@@ -562,6 +562,8 @@ public class OpenlabReader extends FormatReader {
     if (layerInfoList[1].size() == 0 || layerInfoList[0].size() == 0) {
       channelCount = new int[1];
       channelCount[0] = layerInfoList[1].size() == 0 ? 1 : 3;
+      if (channelCount[0] == 1 && oldChannels == 1) channelCount[0] = 3;
+
       int oldImages = numImages[0];
       numImages = new int[1];
       numImages[0] = oldImages;
@@ -587,7 +589,7 @@ public class OpenlabReader extends FormatReader {
 
     int oldSeries = getSeries(currentId);
     for (int i=0; i<bpp.length; i++) {
-      setSeries(currentId, 0);
+      setSeries(currentId, i);
       bpp[i] = openBytes(id, 0).length / (width[i] * height[i]);
     }
     setSeries(currentId, oldSeries);
@@ -602,7 +604,7 @@ public class OpenlabReader extends FormatReader {
       metadata.put("Width (Series " + i + ")", new Integer(width[i]));
       metadata.put("Height (Series " + i + ")", new Integer(height[i]));
       metadata.put("Bit depth (Series " + i + ")",
-        new Integer(bytesPerPixel * 8));
+        new Integer(bpp[i] * 8));
       metadata.put("Number of channels (Series " + i + ")",
         new Integer(channelCount[i]));
       metadata.put("Number of images (Series " + i + ")",
@@ -632,7 +634,7 @@ public class OpenlabReader extends FormatReader {
       }
       catch (ArrayIndexOutOfBoundsException a) { }
 
-      switch (bytesPerPixel * 8) {
+      switch (bpp[i]) {
         case 1:
           pixelType[i] = FormatReader.INT8;
           break;

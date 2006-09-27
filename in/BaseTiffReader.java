@@ -738,7 +738,7 @@ public abstract class BaseTiffReader extends FormatReader {
     }
     return buf;
   }
-  
+
   /* (non-Javadoc)
    * @see loci.formats.FormatReader#openBytes(java.lang.String, int)
    */
