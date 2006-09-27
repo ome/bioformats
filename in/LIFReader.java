@@ -367,6 +367,7 @@ public class LIFReader extends FormatReader {
 
               int w = Integer.parseInt((String) tmp.get("NumberOfElements"));
               float cal = Float.parseFloat((String) tmp.get("Length"));
+              cal *= 1000;
               int id = Integer.parseInt((String)
                 tmp.get("DimensionDescription DimID"));
 
