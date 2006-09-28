@@ -60,7 +60,6 @@ public class OIBReader extends FormatReader {
       r.exec("import java.util.Iterator");
     }
     catch (Throwable exc) {
-      /* debug */ exc.printStackTrace();
       noPOI = true;
     }
     return r;
@@ -189,7 +188,6 @@ public class OIBReader extends FormatReader {
       return rtn;
     }
     catch (ReflectException e) {
-      /* debug */ e.printStackTrace();
       noPOI = true;
       return new byte[0];
     }
