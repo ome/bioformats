@@ -81,14 +81,19 @@ public class Importer implements ItemListener {
 
     String id = null;
     ImageReader reader = new ImageReader();
+    IFormatReader r = null;
 
     String mergeString = "Merge channels to RGB";
     String splitString = "Open each channel in its own window";
     String metadataString = "Display associated metadata";
     String stitchString = "Stitch files with similar names";
     String rangeString = "Specify range for each series";
-    if ((new File(arg)).exists()) {
+    if (quiet && new File(arg).exists()) { // try to open the given file
       id = arg;
+
+      // first determine whether we can handle this file
+      try { r = reader.getReader(id); }
+      catch (Exception exc) { return; }
 
       // we still want to prompt for channel merge/split
       GenericDialog gd = new GenericDialog("LOCI Bio-Formats Import Options");
@@ -105,7 +110,7 @@ public class Importer implements ItemListener {
       stitchFiles = gd.getNextBoolean();
       specifyRanges = gd.getNextBoolean();
     }
-    else {
+    else { // prompt the user for a file using a file chooser
       // use system L&F, to match ImageJ's appearance to the extent possible
       LookAndFeel laf = null;
       try {
@@ -162,7 +167,7 @@ public class Importer implements ItemListener {
 
     IJ.showStatus("Opening " + fileName);
     try {
-      FormatReader r = (FormatReader) reader.getReader(id);
+      if (r == null) r = reader.getReader(id);
       if (stitchFiles) r = new FileStitcher(r);
       if (mergeChannels) r = new ChannelMerger(r);
       else r = new ChannelSeparator(r);
@@ -389,11 +394,25 @@ public class Importer implements ItemListener {
       IJ.showStatus("");
       if (!quiet) {
         String msg = exc.getMessage();
-        IJ.showMessage("LOCI Bio-Formats", "Sorry, there was a problem " +
-          "reading the data" + (msg == null ? "." : (": " + msg)));
+        IJ.error("LOCI Bio-Formats", "Sorry, there was a problem " +
+          "reading the data" + (msg == null ? "." : (":\n" + msg)));
       }
     }
   }
+
+  // -- ItemListener API methods --
+
+  public void itemStateChanged(ItemEvent e) {
+    Object source = e.getItemSelectable();
+    boolean selected = e.getStateChange() == ItemEvent.SELECTED;
+    if (source == merge) mergeChannels = selected;
+    else if (source == newWindows) splitWindows = selected;
+    else if (source == showMeta) showMetadata = selected;
+    else if (source == stitching) stitchFiles = selected;
+    else if (source == ranges) specifyRanges = selected;
+  }
+
+  // -- Helper methods --
 
   private void slice(ImageStack is, String file, int c, FileInfo fi) {
     ImageStack[] newStacks = new ImageStack[c];
@@ -412,16 +431,6 @@ public class Importer implements ItemListener {
       imp.setFileInfo(fi);
       imp.show();
     }
-  }
-
-  public void itemStateChanged(ItemEvent e) {
-    Object source = e.getItemSelectable();
-    boolean selected = e.getStateChange() == ItemEvent.SELECTED;
-    if (source == merge) mergeChannels = selected;
-    else if (source == newWindows) splitWindows = selected;
-    else if (source == showMeta) showMetadata = selected;
-    else if (source == stitching) stitchFiles = selected;
-    else if (source == ranges) specifyRanges = selected;
   }
 
 }
