@@ -242,6 +242,12 @@ public class IPWReader extends BaseTiffReader {
     rgb = (TiffTools.getIFDIntValue(ifds[0],
       TiffTools.SAMPLES_PER_PIXEL, false, 1) > 1);
 
+    if (!rgb) {
+      rgb = TiffTools.getIFDIntValue(ifds[0],
+        TiffTools.PHOTOMETRIC_INTERPRETATION, false, 1) ==
+        TiffTools.RGB_PALETTE;
+    }
+
     little = TiffTools.isLittleEndian(ifds[0]);
 
     // parse the image description
@@ -292,7 +298,34 @@ public class IPWReader extends BaseTiffReader {
     sizeZ[0] = Integer.valueOf(metadata.get("frames").toString()).intValue();
     sizeC[0] = Integer.parseInt((String) metadata.get("channels"));
     sizeT[0] = Integer.parseInt((String) metadata.get("slices"));
-    currentOrder[0] = "XYCTZ";
+    currentOrder[0] = "XY";
+
+    if (rgb) sizeC[0] *= 3;
+
+    int maxNdx = 0, max = 0;
+    int[] dims = {sizeZ[0], sizeC[0], sizeT[0]};
+    String[] axes = {"Z", "C", "T"};
+
+    for (int i=0; i<dims.length; i++) {
+      if (dims[i] > max) {
+        max = dims[i];
+        maxNdx = i;
+      }
+    }
+
+    currentOrder[0] += axes[maxNdx];
+
+    if (maxNdx != 1) {
+      if (sizeC[0] > 1) {
+        currentOrder[0] += "C";
+        currentOrder[0] += (maxNdx == 0 ? axes[2] : axes[0]);
+      }
+      else currentOrder[0] += (maxNdx == 0 ? axes[2] : axes[0]) + "C";
+    }
+    else {
+      if (sizeZ[0] > sizeT[0]) currentOrder[0] += "ZT";
+      else currentOrder[0] += "TZ";
+    }
 
     int bitsPerSample = TiffTools.getIFDIntValue(ifds[0],
       TiffTools.BITS_PER_SAMPLE);

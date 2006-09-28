@@ -301,32 +301,36 @@ public class LIFReader extends FormatReader {
             token.indexOf("\"", index + 3));
           ordering = ordering.toLowerCase();
 
-          int xPos = ordering.indexOf("x");
-          int yPos = ordering.indexOf("y");
-          int zPos = ordering.indexOf("z");
-          int tPos = ordering.indexOf("t");
+          if (ordering.indexOf("x") == -1 || ordering.indexOf("y") == -1 ||
+            ordering.indexOf("xy") == -1)
+          {
+            int xPos = ordering.indexOf("x");
+            int yPos = ordering.indexOf("y");
+            int zPos = ordering.indexOf("z");
+            int tPos = ordering.indexOf("t");
 
-          if (xPos < 0) xPos = 0;
-          if (yPos < 0) yPos = 1;
-          if (zPos < 0) zPos = 2;
-          if (tPos < 0) tPos = 3;
+            if (xPos < 0) xPos = 0;
+            if (yPos < 0) yPos = 1;
+            if (zPos < 0) zPos = 2;
+            if (tPos < 0) tPos = 3;
 
-          int x = ((Integer) widths.get(widths.size() - 1)).intValue();
-          int y = ((Integer) heights.get(widths.size() - 1)).intValue();
-          int z = ((Integer) zs.get(widths.size() - 1)).intValue();
-          int t = ((Integer) ts.get(widths.size() - 1)).intValue();
+            int x = ((Integer) widths.get(widths.size() - 1)).intValue();
+            int y = ((Integer) heights.get(widths.size() - 1)).intValue();
+            int z = ((Integer) zs.get(widths.size() - 1)).intValue();
+            int t = ((Integer) ts.get(widths.size() - 1)).intValue();
 
-          int[] dimensions = {x, y, z, t};
+            int[] dimensions = {x, y, z, t};
 
-          x = dimensions[xPos];
-          y = dimensions[yPos];
-          z = dimensions[zPos];
-          t = dimensions[tPos];
+            x = dimensions[xPos];
+            y = dimensions[yPos];
+            z = dimensions[zPos];
+            t = dimensions[tPos];
 
-          widths.setElementAt(new Integer(x), widths.size() - 1);
-          heights.setElementAt(new Integer(y), heights.size() - 1);
-          zs.setElementAt(new Integer(z), zs.size() - 1);
-          ts.setElementAt(new Integer(t), ts.size() - 1);
+            widths.setElementAt(new Integer(x), widths.size() - 1);
+            heights.setElementAt(new Integer(y), heights.size() - 1);
+            zs.setElementAt(new Integer(z), zs.size() - 1);
+            ts.setElementAt(new Integer(t), ts.size() - 1);
+          }
         }
       }
       else if (token.startsWith("Element Name")) {
@@ -401,12 +405,19 @@ public class LIFReader extends FormatReader {
         }
         extraDims.add(new Integer(extras));
         if (numChannels == 2) numChannels--;
+        if (numChannels == 0) numChannels++;
         channels.add(new Integer(numChannels));
 
-        if (widths.size() < numDatasets) widths.add(new Integer(1));
-        if (heights.size() < numDatasets) heights.add(new Integer(1));
-        if (zs.size() < numDatasets) zs.add(new Integer(1));
-        if (ts.size() < numDatasets) ts.add(new Integer(1));
+        if (widths.size() < numDatasets && heights.size() < numDatasets) {
+          numDatasets--;
+        }
+        else {
+          if (widths.size() < numDatasets) widths.add(new Integer(1));
+          if (heights.size() < numDatasets) heights.add(new Integer(1));
+          if (zs.size() < numDatasets) zs.add(new Integer(1));
+          if (ts.size() < numDatasets) ts.add(new Integer(1));
+          if (bps.size() < numDatasets) bps.add(new Integer(8));
+        }
       }
       ndx++;
     }
@@ -488,6 +499,7 @@ public class LIFReader extends FormatReader {
 
       store.setDimensions(xf, yf, zf, null, null, ii);
     }
+    /* debug */ System.out.println(store);
   }
 
 

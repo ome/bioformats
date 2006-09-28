@@ -214,6 +214,8 @@ public class Importer implements ItemListener {
         if (!series[i]) continue;
         r.setSeries(id, i);
 
+        String name = id + " - " + store.getImageName(new Integer(i));
+
         int num = r.getImageCount(id);
         int begin = 0, end = num - 1, step = 1;
         if (specifyRanges && num > 1) {
@@ -273,7 +275,7 @@ public class Importer implements ItemListener {
               }
               ip = new ByteProcessor(w, h, b, null);
               if (stackB == null) stackB = new ImageStack(w, h);
-              stackB.addSlice(fileName + ":" + (j + 1), ip);
+              stackB.addSlice(name + ":" + (j + 1), ip);
             }
             else if (tt == DataBuffer.TYPE_USHORT) {
               short[] s = ImageTools.getShorts(img)[0];
@@ -284,7 +286,7 @@ public class Importer implements ItemListener {
               }
               ip = new ShortProcessor(w, h, s, null);
               if (stackS == null) stackS = new ImageStack(w, h);
-              stackS.addSlice(fileName + ":" + (j + 1), ip);
+              stackS.addSlice(name + ":" + (j + 1), ip);
             }
             else if (tt == DataBuffer.TYPE_FLOAT) {
               float[] f = ImageTools.getFloats(img)[0];
@@ -295,13 +297,13 @@ public class Importer implements ItemListener {
               }
               ip = new FloatProcessor(w, h, f, null);
               if (stackF == null) stackF = new ImageStack(w, h);
-              stackF.addSlice(fileName + ":" + (j + 1), ip);
+              stackF.addSlice(name + ":" + (j + 1), ip);
             }
           }
           if (ip == null) {
             ip = new ImagePlus(null, img).getProcessor(); // slow
             if (stackO == null) stackO = new ImageStack(w, h);
-            stackO.addSlice(fileName + ":" + (j + 1), ip);
+            stackO.addSlice(name + ":" + (j + 1), ip);
           }
         }
         IJ.showStatus("Creating image");
@@ -309,27 +311,27 @@ public class Importer implements ItemListener {
         ImagePlus imp = null;
         if (stackB != null) {
           if (!mergeChannels && splitWindows) {
-            slice(stackB, fileName, channels, fi);
+            slice(stackB, name, channels, fi);
           }
-          else imp = new ImagePlus(fileName, stackB);
+          else imp = new ImagePlus(name, stackB);
         }
         if (stackS != null) {
           if (!mergeChannels && splitWindows) {
-            slice(stackS, fileName, channels, fi);
+            slice(stackS, name, channels, fi);
           }
-          else imp = new ImagePlus(fileName, stackS);
+          else imp = new ImagePlus(name, stackS);
         }
         if (stackF != null) {
           if (!mergeChannels && splitWindows) {
-            slice(stackF, fileName, channels, fi);
+            slice(stackF, name, channels, fi);
           }
-          else imp = new ImagePlus(fileName, stackF);
+          else imp = new ImagePlus(name, stackF);
         }
         if (stackO != null) {
           if (!mergeChannels && splitWindows) {
-            slice(stackO, fileName, channels, fi);
+            slice(stackO, name, channels, fi);
           }
-          else imp = new ImagePlus(fileName, stackO);
+          else imp = new ImagePlus(name, stackO);
         }
 
         if (imp != null) {
