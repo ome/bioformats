@@ -41,8 +41,6 @@ loci.formats.in.QTReader          # mov
 loci.formats.in.PictReader        # pict, pct
 loci.formats.in.SDTReader         # sdt
 loci.formats.in.EPSReader         # eps, epsi
-loci.formats.in.OIBReader         # oib
-loci.formats.in.ZeissZVIReader    # zvi
 loci.formats.in.SlidebookReader   # sld
 
 # multi-extension messes
@@ -50,7 +48,9 @@ loci.formats.in.ICSReader         # ics, ids
 loci.formats.in.OIFReader         # oif, various
 loci.formats.in.PerkinElmerReader # csv, htm, tim, zpo [TIFF+companion]
 
-# POIFS readers
+# POI readers
+loci.formats.in.ZeissZVIReader    # zvi [POIFS]
+loci.formats.in.OIBReader         # oib [POIFS]
 loci.formats.in.IPWReader         # ipw [POIFS]
 
 # TIFF-based readers with unique file extensions
