@@ -499,7 +499,6 @@ public class LIFReader extends FormatReader {
 
       store.setDimensions(xf, yf, zf, null, null, ii);
     }
-    /* debug */ System.out.println(store);
   }
 
 
