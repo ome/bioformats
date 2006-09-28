@@ -121,28 +121,31 @@ public class MetamorphReader extends BaseTiffReader {
 
       // no idea how this tag is organized - this is just a guess
       long[] uic1 = TiffTools.getIFDLongArray(ifds[0], METAMORPH_ID, true);
-      for (int i=1; i<uic1.length; i+=2) {
-        if (uic1[i] >= in.length() / 2) {
-          in.seek(uic1[i] + 12);
-          while (in.getFilePointer() < in.length()) {
-            // read a null-terminated string (key), followed by an int value
-            StringBuffer sb = new StringBuffer();
-            char c = (char) in.read();
-            while (c != 0) {
-              sb = sb.append(c);
-              c = (char) in.read();
-            }
+      try {
+        for (int i=1; i<uic1.length; i+=2) {
+          if (uic1[i] >= in.length() / 2) {
+            in.seek(uic1[i] + 12);
+            while (in.getFilePointer() < in.length()) {
+              // read a null-terminated string (key), followed by an int value
+              StringBuffer sb = new StringBuffer();
+              char c = (char) in.read();
+              while (c != 0) {
+                sb = sb.append(c);
+                c = (char) in.read();
+              }
 
-            String key = sb.toString().trim();
-            int value = in.readInt();
-            if (!key.trim().equals("") && key.trim().length() > 3 &&
-              key.trim().indexOf("?") == -1)
-            {
-              metadata.put(key, new Integer(value));
+              String key = sb.toString().trim();
+              int value = in.readInt();
+              if (!key.trim().equals("") && key.trim().length() > 3 &&
+                key.trim().indexOf("?") == -1)
+              {
+                metadata.put(key, new Integer(value));
+              }
             }
           }
         }
       }
+      catch (Exception e) { }
 
       // copy ifds into a new array of Hashtables that will accomodate the
       // additional image planes
