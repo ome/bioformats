@@ -379,7 +379,6 @@ public final class ImageTools {
     return makeImage(new double[][] {data}, w, h);
   }
 
-
   // -- Data extraction --
 
   /**
@@ -505,7 +504,6 @@ public final class ImageTools {
     return samples;
     //return getDoubles(makeType(image, DataBuffer.TYPE_DOUBLE));
   }
-
 
   // -- Image conversion --
 
@@ -666,7 +664,8 @@ public final class ImageTools {
       if (c > 4) return null;
       list[i] = o;
     }
-    if (c != 1 && c != 3 && c != 4) return null;
+    if (c < 1 || c > 4) return null;
+    if (c == 2) c = 3; // blank B channel
 
     // compile results into a single array
     int w = images[0].getWidth(), h = images[0].getHeight();
@@ -677,6 +676,7 @@ public final class ImageTools {
         byte[][] b = (byte[][]) list[i];
         for (int j=0; j<b.length; j++) pix[ndx++] = b[j];
       }
+      while (ndx < pix.length) pix[ndx++] = new byte[w * h]; // blank channel
       return makeImage(pix, w, h);
     }
     if (type == DataBuffer.TYPE_USHORT) {
@@ -686,6 +686,7 @@ public final class ImageTools {
         short[][] b = (short[][]) list[i];
         for (int j=0; j<b.length; j++) pix[ndx++] = b[j];
       }
+      while (ndx < pix.length) pix[ndx++] = new short[w * h]; // blank channel
       return makeImage(pix, w, h);
     }
     if (type == DataBuffer.TYPE_INT) {
@@ -695,6 +696,7 @@ public final class ImageTools {
         int[][] b = (int[][]) list[i];
         for (int j=0; j<b.length; j++) pix[ndx++] = b[j];
       }
+      while (ndx < pix.length) pix[ndx++] = new int[w * h]; // blank channel
       return makeImage(pix, w, h);
     }
     if (type == DataBuffer.TYPE_FLOAT) {
@@ -704,6 +706,7 @@ public final class ImageTools {
         float[][] b = (float[][]) list[i];
         for (int j=0; j<b.length; j++) pix[ndx++] = b[j];
       }
+      while (ndx < pix.length) pix[ndx++] = new float[w * h]; // blank channel
       return makeImage(pix, w, h);
     }
     if (type == DataBuffer.TYPE_DOUBLE) {
@@ -713,6 +716,7 @@ public final class ImageTools {
         double[][] b = (double[][]) list[i];
         for (int j=0; j<b.length; j++) pix[ndx++] = b[j];
       }
+      while (ndx < pix.length) pix[ndx++] = new double[w * h]; // blank channel
       return makeImage(pix, w, h);
     }
 
@@ -1005,7 +1009,6 @@ public final class ImageTools {
     }
   }
 
-
   // -- AWT images --
 
   /**
@@ -1074,7 +1077,6 @@ public final class ImageTools {
     return new Dimension(image.getWidth(OBS), image.getHeight(OBS));
   }
 
-
   // -- Graphics configuration --
 
   /**
@@ -1101,7 +1103,6 @@ public final class ImageTools {
     GraphicsDevice gd = ge.getDefaultScreenDevice();
     return gd.getDefaultConfiguration();
   }
-
 
   // -- Color model --
 
