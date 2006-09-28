@@ -230,4 +230,9 @@ public class ChannelSeparator extends FormatReader {
     currentId = null;
   }
 
+  /** Initializes the given file. */
+  protected void initFile(String id) throws FormatException, IOException {
+    currentId = id;
+  }
+
 }
