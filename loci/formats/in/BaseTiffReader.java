@@ -457,9 +457,6 @@ public abstract class BaseTiffReader extends FormatReader {
     else if (o instanceof String[]) {
       String[] s = (String[]) o;
       if (s.length > 0) comment = s[0];
-      for (int i=1; i<s.length; i++) {
-        comment += "\n" + s[i];
-      }
     }
     else if (o != null) comment = o.toString();
     if (comment != null) {
