@@ -208,6 +208,17 @@ public class Importer implements ItemListener {
       if (showMetadata) {
         // display standard metadata in a table in its own window
         Hashtable meta = r.getMetadata(id);
+        meta.put("\tSizeX", new Integer(r.getSizeX(id)));
+        meta.put("\tSizeY", new Integer(r.getSizeY(id)));
+        meta.put("\tSizeZ", new Integer(r.getSizeZ(id)));
+        meta.put("\tSizeT", new Integer(r.getSizeT(id)));
+        meta.put("\tSizeC", new Integer(r.getSizeC(id)));
+        meta.put("\tIsRGB", new Boolean(r.isRGB(id)));
+        meta.put("\tPixelType",
+          FormatReader.getPixelTypeString(r.getPixelType(id)));
+        meta.put("\tLittleEndian", new Boolean(r.isLittleEndian(id)));
+        meta.put("\tDimensionOrder", r.getDimensionOrder(id));
+        meta.put("\tIsInterleaved", new Boolean(r.isInterleaved(id)));
         MetadataPane mp = new MetadataPane(meta);
         JFrame frame = new JFrame(id + " Metadata");
         frame.setContentPane(mp);
