@@ -355,14 +355,22 @@ public class Importer implements ItemListener {
           Float zf = store.getPixelSizeZ(ii);
           if (zf != null) zcal = zf.floatValue();
 
-          Calibration c = new Calibration();
-          c.pixelWidth = xcal;
-          c.setUnit("micron");
-          c.pixelHeight = ycal;
-          c.setUnit("micron");
-          c.pixelDepth = zcal;
-          c.setUnit("micron");
-          imp.setCalibration(c);
+          if (xcal == xcal || ycal == ycal || zcal == zcal) {
+            Calibration c = new Calibration();
+            if (xcal == xcal) {
+              c.pixelWidth = xcal;
+              c.setUnit("micron");
+            }
+            if (ycal == ycal) {
+              c.pixelHeight = ycal;
+              c.setUnit("micron");
+            }
+            if (zcal == zcal) {
+              c.pixelDepth = zcal;
+              c.setUnit("micron");
+            }
+            imp.setCalibration(c);
+          }
 
           imp.setFileInfo(fi);
           imp.show();
