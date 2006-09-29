@@ -37,8 +37,7 @@ public class ChannelSeparator extends ReaderWrapper {
     super(r);
   }
 
-  // -- FormatReader API methods --
-
+  // -- IFormatReader API methods --
 
   /** Determines the number of images in the given file. */
   public int getImageCount(String id) throws FormatException, IOException {

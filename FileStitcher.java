@@ -82,7 +82,7 @@ public class FileStitcher extends ReaderWrapper {
     super(r);
   }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /** Determines the number of images in the given file. */
   public int getImageCount(String id) throws FormatException, IOException {
@@ -147,7 +147,23 @@ public class FileStitcher extends ReaderWrapper {
     return reader.openBytes(findFile(no), number);
   }
 
-  // -- Internal FormatReader API methods --
+  public int getIndex(String id, int z, int c, int t)
+    throws FormatException, IOException
+  {
+    return FormatReader.getIndex(this, id, z, c, t);
+  }
+
+  public int[] getZCTCoords(String id, int index)
+    throws FormatException, IOException
+  {
+    return FormatReader.getZCTCoords(this, id, index);
+  }
+
+  public boolean testRead(String[] args) throws FormatException, IOException {
+    return FormatReader.testRead(this, args);
+  }
+
+  // -- Helper methods --
 
   /** Initializes the given file. */
   protected void initFile(String id) throws FormatException, IOException {
@@ -226,24 +242,6 @@ public class FileStitcher extends ReaderWrapper {
       new Integer(dimensions[4]), null, null, null, null);
     setMetadataStore(s);
   }
-
-  public int getIndex(String id, int z, int c, int t)
-    throws FormatException, IOException
-  {
-    return FormatReader.getIndex(this, id, z, c, t);
-  }
-
-  public int[] getZCTCoords(String id, int index)
-    throws FormatException, IOException
-  {
-    return FormatReader.getZCTCoords(this, id, index);
-  }
-
-  public boolean testRead(String[] args) throws FormatException, IOException {
-    return FormatReader.testRead(this, args);
-  }
-
-  // -- Helper methods --
 
   /**
    * Set the X, Y, Z, C, and T dimensions; uses some special heuristics on the
