@@ -66,6 +66,7 @@ public class ChannelMerger extends ReaderWrapper {
     if (!canMerge(id)) return super.openImage(id, no);
     int sizeC = getSizeC(id);
     int[] nos = getZCTCoords(id, no);
+    
     int z = nos[0], t = nos[2];
     String order = getDimensionOrder(id);
     int ic = order.indexOf("C") - 2;
@@ -74,7 +75,7 @@ public class ChannelMerger extends ReaderWrapper {
     }
     BufferedImage[] img = new BufferedImage[sizeC];
     for (int c=0; c<sizeC; c++) {
-      img[c] = reader.openImage(id, getIndex(id, z, c, t));
+      img[c] = reader.openImage(id, reader.getIndex(id, z, c, t));
     }
     return ImageTools.mergeChannels(img);
   }
@@ -94,7 +95,7 @@ public class ChannelMerger extends ReaderWrapper {
     int ic = dimOrder.indexOf("C") - 2;
     byte[] bytes = null;
     for (int c=0; c<sizeC; c++) {
-      byte[] b = reader.openBytes(id, getIndex(id, z, c, t));
+      byte[] b = reader.openBytes(id, reader.getIndex(id, z, c, t));
       if (c == 0) {
         // assume array lengths for each channel are equal
         bytes = new byte[sizeC * b.length];
