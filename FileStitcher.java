@@ -232,16 +232,16 @@ public class FileStitcher extends ReaderWrapper {
   {
     return FormatReader.getIndex(this, id, z, c, t);
   }
-                
+
   public int[] getZCTCoords(String id, int index)
     throws FormatException, IOException
-  { 
+  {
     return FormatReader.getZCTCoords(this, id, index);
   }
 
   public boolean testRead(String[] args) throws FormatException, IOException {
     return FormatReader.testRead(this, args);
-  } 
+  }
 
   // -- Helper methods --
 
@@ -251,8 +251,8 @@ public class FileStitcher extends ReaderWrapper {
    *
    * @param dims - the dimensions of each file in the dataset
    */
-  private void setDimensions(String id, int[][] dims) 
-    throws FormatException, IOException 
+  private void setDimensions(String id, int[][] dims)
+    throws FormatException, IOException
   {
     // first set X and Y
     // this is relatively easy - we can just take the maximum value

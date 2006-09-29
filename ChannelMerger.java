@@ -66,7 +66,7 @@ public class ChannelMerger extends ReaderWrapper {
     if (!canMerge(id)) return super.openImage(id, no);
     int sizeC = getSizeC(id);
     int[] nos = getZCTCoords(id, no);
-    
+
     int z = nos[0], t = nos[2];
     String order = getDimensionOrder(id);
     int ic = order.indexOf("C") - 2;
