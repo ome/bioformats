@@ -168,8 +168,8 @@ public class HandleExtraFileTypes extends ImagePlus implements PlugIn {
 
     // ZVI file handler
     // Little-endian ZVI files start with d0 cf 11 e0.
-    if (name.endsWith(".zvi") ||
-      (buf[0] == -48 && buf[1] == -49 && buf[2] == 17 && buf[3] == -32))
+    if (name.endsWith(".zvi") &&
+      buf[0] == -48 && buf[1] == -49 && buf[2] == 17 && buf[3] == -32)
     {
       o = tryPlugIn("ZVI_Reader", path);
     }
