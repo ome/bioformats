@@ -143,7 +143,7 @@ public class OMEUpload {
     // initialize readers
 
     ImageReader reader = new ImageReader();
-    FormatReader fr = (FormatReader) reader.getReader(file);
+    IFormatReader fr = (FormatReader) reader.getReader(file);
     fr = new ChannelSeparator(fr);
     FileStitcher fs = stitch ? new FileStitcher(fr) : null;
     OMEXMLMetadataStore store = new OMEXMLMetadataStore();

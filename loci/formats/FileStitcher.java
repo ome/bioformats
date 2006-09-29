@@ -26,11 +26,10 @@ package loci.formats;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Hashtable;
 import java.util.Vector;
 
 /** Logic to stitch together files with similar names. */
-public class FileStitcher extends FormatReader {
+public class FileStitcher extends ReaderWrapper {
 
   // -- Constants --
 
@@ -49,9 +48,6 @@ public class FileStitcher extends FormatReader {
   private static final String[] C = {"C", "CH", "W", "Ch", "ch"};
 
   // -- Fields --
-
-  /** FormatReader used to read the files. */
-  private IFormatReader reader;
 
   /** FilePattern used to build the list of files. */
   private FilePattern fp;
@@ -75,7 +71,7 @@ public class FileStitcher extends FormatReader {
   private int number;
 
   /** Initialized series. */
-  private int validSeries;
+  private int validSeries = -1;
 
   private boolean varyZ, varyC, varyT;
 
@@ -83,113 +79,45 @@ public class FileStitcher extends FormatReader {
 
   /** Constructs a FileStitcher with the given reader. */
   public FileStitcher(IFormatReader r) throws FormatException {
-    super("any", "*");
-    if (r == null) throw new FormatException("FormatReader cannot be null");
-    reader = r;
+    super(r);
   }
 
   // -- FormatReader API methods --
 
-  /** Checks if the given block is a valid header for this file format. */
-  public boolean isThisType(byte[] block) {
-    return reader.isThisType(block);
-  }
-
-  /**
-   * Obtains the hashtable containing the metadata field/value pairs from
-   * the given file.
-   */
-  public Hashtable getMetadata(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return reader.getMetadata(id);
-  }
-
-  /**
-   * Obtains the specified metadata field's value for the given file.
-   *
-   * @param field the name associated with the metadata field
-   * @return the value, or null if the field doesn't exit
-   */
-  public Object getMetadataValue(String id, String field)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return reader.getMetadataValue(id, field);
-  }
-
-  /**
-   * Retrieves the current metadata store for this reader. You can be
-   * assured that this method will <b>never</b> return a <code>null</code>
-   * metadata store.
-   * @return a metadata store implementation.
-   */
-  public MetadataStore getMetadataStore(String id)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return reader.getMetadataStore(id);
-  }
-
-  /**
-   * Sets the default metadata store for this reader.
-   *
-   * @param store a metadata store implementation.
-   */
-  public void setMetadataStore(MetadataStore store) {
-    metadataStore = store;
-    reader.setMetadataStore(store);
-  }
-
   /** Determines the number of images in the given file. */
   public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) || getSeries(id) != validSeries) initFile(id);
+    if (getSeries(id) != validSeries) initFile(id);
     return numImages;
-  }
-
-  /** Checks if the images in the file are RGB. */
-  public boolean isRGB(String id) throws FormatException, IOException {
-    return reader.isRGB(id);
   }
 
   /** Get the size of the X dimension. */
   public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) || getSeries(id) != validSeries) initFile(id);
+    if (getSeries(id) != validSeries) initFile(id);
     return dimensions[0];
   }
 
   /** Get the size of the Y dimension. */
   public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) || getSeries(id) != validSeries) initFile(id);
+    if (getSeries(id) != validSeries) initFile(id);
     return dimensions[1];
   }
 
   /** Get the size of the Z dimension. */
   public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) || getSeries(id) != validSeries) initFile(id);
+    if (getSeries(id) != validSeries) initFile(id);
     return dimensions[2];
   }
 
   /** Get the size of the C dimension. */
   public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) || getSeries(id) != validSeries) initFile(id);
+    if (getSeries(id) != validSeries) initFile(id);
     return dimensions[3];
   }
 
   /** Get the size of the T dimension. */
   public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) || getSeries(id) != validSeries) initFile(id);
+    if (getSeries(id) != validSeries) initFile(id);
     return dimensions[4];
-  }
-
-  /** Gets the pixel type as an enumeration from FormatReader. */
-  public int getPixelType(String id) throws FormatException, IOException {
-    if (!id.equals(currentId) || getSeries(id) != validSeries) initFile(id);
-    return reader.getPixelType(id);
-  }
-
-  /** Return true if the data is in little-endian format. */
-  public boolean isLittleEndian(String id) throws FormatException, IOException {
-    return reader.isLittleEndian(id);
   }
 
   /**
@@ -199,35 +127,15 @@ public class FileStitcher extends FormatReader {
   public String getDimensionOrder(String id)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId) || getSeries(id) != validSeries) initFile(id);
+    if (getSeries(id) != validSeries) initFile(id);
     return order;
-  }
-
-  /** Returns whether or not the channels are interleaved. */
-  public boolean isInterleaved(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return reader.isInterleaved(id);
-  }
-
-  /** Return the number of series in this file. */
-  public int getSeriesCount(String id) throws FormatException, IOException {
-    return reader.getSeriesCount(id);
-  }
-
-  /** Activates the specified series. */
-  public void setSeries(String id, int no) throws FormatException, IOException {
-    if (no < 0 || no >= getSeriesCount(id)) {
-      throw new FormatException("Invalid series: " + no);
-    }
-    series = no;
-    reader.setSeries(id, no);
   }
 
   /** Obtains the specified image from the given file. */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId) || getSeries(id) != validSeries) initFile(id);
+    if (getSeries(id) != validSeries) initFile(id);
     return reader.openImage(findFile(no), number);
   }
 
@@ -235,20 +143,14 @@ public class FileStitcher extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId) || getSeries(id) != validSeries) initFile(id);
+    if (getSeries(id) != validSeries) initFile(id);
     return reader.openBytes(findFile(no), number);
-  }
-
-  /** Closes the currently open file. */
-  public void close() throws FormatException, IOException {
-    reader.close();
   }
 
   // -- Internal FormatReader API methods --
 
   /** Initializes the given file. */
   protected void initFile(String id) throws FormatException, IOException {
-    currentId = id;
     numImages = 0;
     dimensions = new int[5];
     validSeries = getSeries(id);
@@ -316,21 +218,7 @@ public class FileStitcher extends FormatReader {
       dimensions[3] = dims[0][3];
       dimensions[4] = dims[0][4];
     }
-    setDimensions(dims);
-
-    sizeX = new int[1];
-    sizeY = new int[1];
-    sizeZ = new int[1];
-    sizeC = new int[1];
-    sizeT = new int[1];
-    currentOrder = new String[1];
-
-    sizeX[0] = dimensions[0];
-    sizeY[0] = dimensions[1];
-    sizeZ[0] = dimensions[2];
-    sizeC[0] = dimensions[3];
-    sizeT[0] = dimensions[4];
-    currentOrder[0] = reader.getDimensionOrder(id);
+    setDimensions(id, dims);
 
     MetadataStore s = reader.getMetadataStore(id);
     s.setPixels(new Integer(dimensions[0]), new Integer(dimensions[1]),
@@ -338,6 +226,22 @@ public class FileStitcher extends FormatReader {
       new Integer(dimensions[4]), null, null, null, null);
     setMetadataStore(s);
   }
+
+  public int getIndex(String id, int z, int c, int t)
+    throws FormatException, IOException
+  {
+    return FormatReader.getIndex(this, id, z, c, t);
+  }
+                
+  public int[] getZCTCoords(String id, int index)
+    throws FormatException, IOException
+  { 
+    return FormatReader.getZCTCoords(this, id, index);
+  }
+
+  public boolean testRead(String[] args) throws FormatException, IOException {
+    return FormatReader.testRead(this, args);
+  } 
 
   // -- Helper methods --
 
@@ -347,7 +251,9 @@ public class FileStitcher extends FormatReader {
    *
    * @param dims - the dimensions of each file in the dataset
    */
-  private void setDimensions(int[][] dims) throws FormatException, IOException {
+  private void setDimensions(String id, int[][] dims) 
+    throws FormatException, IOException 
+  {
     // first set X and Y
     // this is relatively easy - we can just take the maximum value
 
@@ -431,7 +337,7 @@ public class FileStitcher extends FormatReader {
           zSize = counts[j];
         }
         else if (max == cpos) {
-          if (cSize == 1 && !isRGB(currentId)) {
+          if (cSize == 1 && !isRGB(id)) {
             ordering += "C";
             cSize = counts[j];
           }
@@ -513,7 +419,7 @@ public class FileStitcher extends FormatReader {
 
     // make sure ordering is right
     String begin = "";
-    String readerOrder = reader.getDimensionOrder(currentId);
+    String readerOrder = reader.getDimensionOrder(id);
     for (int j=0; j<readerOrder.length(); j++) {
       if (ordering.indexOf(readerOrder.substring(j, j+1)) == -1) {
         begin += readerOrder.substring(j, j+1);
