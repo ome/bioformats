@@ -72,8 +72,8 @@ public class Importer implements ItemListener {
   /** Executes the plugin. */
   public void run(String arg) {
     // load preferences from IJ_Prefs.txt
-    mergeChannels = Prefs.get("bioformats.mergeChannels", true);
-    splitWindows = Prefs.get("bioformats.splitWindows", false);
+    mergeChannels = Prefs.get("bioformats.mergeChannels", false);
+    splitWindows = Prefs.get("bioformats.splitWindows", true);
     showMetadata = Prefs.get("bioformats.showMetadata", false);
     stitchFiles = Prefs.get("bioformats.stitchFiles", false);
     specifyRanges = Prefs.get("bioformats.specifyRanges", false);
