@@ -181,6 +181,7 @@ public final class TiffTools {
   public static final int CMYK = 5;
   public static final int Y_CB_CR = 6;
   public static final int CIE_LAB = 8;
+  public static final int CFA_ARRAY = 32803;
 
   // TIFF header constants
   public static final int MAGIC_NUMBER = 42;
@@ -1089,7 +1090,7 @@ public final class TiffTools {
     else if (photoInterp != WHITE_IS_ZERO &&
       photoInterp != BLACK_IS_ZERO && photoInterp != RGB &&
       photoInterp != RGB_PALETTE && photoInterp != CMYK &&
-      photoInterp != Y_CB_CR)
+      photoInterp != Y_CB_CR && photoInterp != CFA_ARRAY)
     {
       throw new FormatException("Unknown PhotometricInterpretation (" +
         photoInterp + ")");
@@ -1140,7 +1141,9 @@ public final class TiffTools {
         samplesPerPixel + "; numSamples=" + numSamples + ")");
     }
 
-    if (samplesPerPixel == 1 && photoInterp == RGB_PALETTE) {
+    if (samplesPerPixel == 1 && (photoInterp == RGB_PALETTE ||
+      photoInterp == CFA_ARRAY))
+    {
       samplesPerPixel = 3;
     }
 
@@ -1203,6 +1206,7 @@ public final class TiffTools {
     // Since the lowest common denominator for all pixel operations is "byte"
     // we're going to normalize everything to byte.
     byte[][] byteData = null;
+
     if (bitsPerSample[0] == 16)
     {
       byteData = new byte[samplesPerPixel][numSamples * 2];
@@ -1253,6 +1257,11 @@ public final class TiffTools {
     long imageWidth = getImageWidth(ifd);
     long imageLength = getImageLength(ifd);
     int samplesPerPixel = getSamplesPerPixel(ifd);
+    int photoInterp = getPhotometricInterpretation(ifd);
+
+    if (photoInterp == RGB_PALETTE || photoInterp == CFA_ARRAY) {
+      samplesPerPixel = 3;
+    }
 
     if (bitsPerSample[0] == 16) {
       // First wrap the byte arrays and then use the features of the
@@ -1449,11 +1458,14 @@ public final class TiffTools {
     // 2) if the planar configuration is set to 2 (separated), then go to
     //    j + (i*(bytes.length / sampleCount))
 
+
     int bps0 = bitsPerSample[0];
     int bpsPow = (int) Math.pow(2, bps0);
     int numBytes = bps0 / 8;
     boolean noDiv8 = bps0 % 8 != 0;
     boolean bps8 = bps0 == 8;
+
+    int colorPointer = 0;
 
     int index = 0;
     for (int j=0; j<sampleCount; j++) {
@@ -1500,6 +1512,16 @@ public final class TiffTools {
               colorMap.length];
             int[] components = {red, green, blue};
             samples[i][ndx] = (short) components[i];
+          }
+          else if (photoInterp == CFA_ARRAY) {
+            switch (colorMap[colorPointer]) {
+              case 0: samples[0][ndx] = samples[i][ndx]; break;
+              case 1: samples[1][ndx] = samples[i][ndx]; break;
+              case 2: samples[2][ndx] = samples[i][ndx]; break;
+            }
+
+            colorPointer++;
+            colorPointer %= colorMap.length;
           }
         }
         else if (bps8) {
@@ -1561,26 +1583,21 @@ public final class TiffTools {
             samples[i][ndx] = (short) (max - samples[i][ndx]);
           }
           else if (photoInterp == RGB_PALETTE) {
-            // will fix this later
-            throw new FormatException("16 bit RGB palette not supported");
-            /*
-            int x = DataTools.bytesToInt(b, littleEndian) % colorMap.length;
-            int red = colorMap[x];
-            int green = colorMap[(x + bpsPow) % colorMap.length];
-            int blue = colorMap[(x + 2*bpsPow) % colorMap.length];
-            int[] components = {red, green, blue};
-            samples[i][ndx] = (byte) components[i];
-            if (samples[i][ndx] == 0) {
-              samples[i][ndx] = (byte) (components[i] % 255);
-            }
-            */
+            index -= numBytes;
+
+            int x = samples[i][ndx];  // this is the index into the color table
+            int cndx = i == 0 ? x : (i == 1 ? (x + bpsPow) : (x + 2*bpsPow));
+            int cm = colorMap[cndx];
+
+            samples[i][ndx] = (short) (maxValue == 0 ?
+              (cm % (bpsPow - 1)) : cm);
           }
           else if (photoInterp == CMYK) {
             samples[i][ndx] = (short) (2147483647 - samples[i][ndx]);
           }
         }
       }
-      if ((photoInterp == RGB_PALETTE) && (bps0 == 8)) index++;
+      if (photoInterp == RGB_PALETTE) index += (bps0 / 8);
     }
   }
 

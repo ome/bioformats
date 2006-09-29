@@ -89,21 +89,21 @@ public class ChannelSeparator extends ReaderWrapper {
     }
     else return reader.openBytes(id, no);
   }
-  
+
   public int getIndex(String id, int z, int c, int t)
     throws FormatException, IOException
   {
     return FormatReader.getIndex(this, id, z, c, t);
   }
-                  
+
   public int[] getZCTCoords(String id, int index)
     throws FormatException, IOException
-  { 
+  {
     return FormatReader.getZCTCoords(this, id, index);
   }
 
   public boolean testRead(String[] args) throws FormatException, IOException {
     return FormatReader.testRead(this, args);
-  } 
+  }
 
 }
