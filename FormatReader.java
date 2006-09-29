@@ -72,17 +72,17 @@ public abstract class FormatReader extends FormatHandler
   public static final int DOUBLE = 7;
 
   /** Human readable pixel type. */
-  private static String[] pixelsTypes;
+  private static String[] pixelTypes;
   static {
-    pixelsTypes = new String[8];
-    pixelsTypes[FormatReader.INT8] = "int8";
-    pixelsTypes[FormatReader.UINT8] = "uint8";
-    pixelsTypes[FormatReader.INT16] = "int16";
-    pixelsTypes[FormatReader.UINT16] = "uint16";
-    pixelsTypes[FormatReader.INT32] = "int32";
-    pixelsTypes[FormatReader.UINT32] = "uint32";
-    pixelsTypes[FormatReader.FLOAT] = "float";
-    pixelsTypes[FormatReader.DOUBLE] = "double";
+    pixelTypes = new String[8];
+    pixelTypes[FormatReader.INT8] = "int8";
+    pixelTypes[FormatReader.UINT8] = "uint8";
+    pixelTypes[FormatReader.INT16] = "int16";
+    pixelTypes[FormatReader.UINT16] = "uint16";
+    pixelTypes[FormatReader.INT32] = "int32";
+    pixelTypes[FormatReader.UINT32] = "uint32";
+    pixelTypes[FormatReader.FLOAT] = "float";
+    pixelTypes[FormatReader.DOUBLE] = "double";
   }
 
   // -- Fields --
@@ -617,7 +617,7 @@ public abstract class FormatReader extends FormatHandler
         (little ? "intel (little)" : "motorola (big)"));
       System.out.println("\tDimension order = " + dimOrder);
       System.out.println("\tPixel type = " +
-        pixelsTypes[reader.getPixelType(id)]);
+        getPixelTypeString(reader.getPixelType(id)));
       System.out.println("\t-----");
       int[] indices;
       if (imageCount > 6) {
@@ -849,10 +849,20 @@ public abstract class FormatReader extends FormatHandler
    */
   public static int pixelTypeFromString(String pixelTypeAsString) {
     String lowercaseTypeAsString = pixelTypeAsString.toLowerCase();
-    for (int i = 0; i < pixelsTypes.length; i++) {
-      if (pixelsTypes[i].equals(lowercaseTypeAsString)) return i;
+    for (int i = 0; i < pixelTypes.length; i++) {
+      if (pixelTypes[i].equals(lowercaseTypeAsString)) return i;
     }
     throw new RuntimeException("Unknown type: '" + pixelTypeAsString + "'");
+  }
+
+  /**
+   * Takes a pixel type value and gets a corresponding string representation.
+   * @param pixelType the pixel type.
+   * @return string value for human-readable output.
+   */
+  public static String getPixelTypeString(int pixelType) {
+    if (pixelType < 0 || pixelType >= pixelTypes.length) return null;
+    return pixelTypes[pixelType];
   }
 
 }
