@@ -28,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.util.StringTokenizer;
+import java.util.Vector;
 import loci.formats.*;
 
 /**
@@ -171,6 +172,10 @@ public class PerkinElmerReader extends FormatReader {
       // specified file
 
       int d = ls[i].lastIndexOf(".");
+      while (d == -1 && i < ls.length) {
+        i++;
+        d = ls[i].lastIndexOf(".");
+      }
       String s = dot < 0 ? ls[i] : ls[i].substring(0, d);
 
       String filename = ls[i].toLowerCase();
@@ -236,14 +241,66 @@ public class PerkinElmerReader extends FormatReader {
           files[filesPt] = workingDirPath + ls[i];
           filesPt++;
         }
-        catch (Exception e) { }
-
+        catch (Exception e) {
+          try {
+            String extension = filename.substring(filename.lastIndexOf(".") + 1);
+            int num = Integer.parseInt(extension, 16);
+            isTiff = false;
+            files[filesPt] = workingDirPath + ls[i];
+            filesPt++;
+          }
+          catch (Exception f) {
+          }
+        }
       }
     }
 
+    // re-order the files
+
     String[] tempFiles = files;
     files = new String[filesPt];
-    System.arraycopy(tempFiles, 0, files, 0, filesPt);
+    //System.arraycopy(tempFiles, 0, files, 0, filesPt);
+
+    // determine the number of different extensions we have
+
+    int extCount = 0;
+    Vector foundExts = new Vector();
+    for (int i=0; i<filesPt; i++) {
+      String ext = tempFiles[i].substring(tempFiles[i].lastIndexOf(".") + 1);
+      if (!foundExts.contains(ext)) {
+        extCount++;
+        foundExts.add(ext);
+      }
+    }
+
+    for (int i=0; i<filesPt; i+=extCount) {
+      Vector extSet = new Vector();
+      for (int j=0; j<extCount; j++) {
+        if (extSet.size() == 0) extSet.add(tempFiles[i + j]);
+        else {
+          String ext =
+            tempFiles[i+j].substring(tempFiles[i+j].lastIndexOf(".") + 1);
+          int extNum = Integer.parseInt(ext, 16);
+
+          int insert = -1;
+          int pos = 0;
+          while (insert == -1 && pos < extSet.size()) {
+            String posString = (String) extSet.get(pos);
+            posString = posString.substring(posString.lastIndexOf(".") + 1);
+            int posNum = Integer.parseInt(posString, 16);
+
+            if (extNum < posNum) insert = pos;
+            pos++;
+          }
+          if (insert == -1) extSet.add(tempFiles[i+j]);
+          else extSet.add(insert, tempFiles[i + j]);
+        }
+      }
+
+      for (int j=0; j<extCount; j++) {
+        files[i+j] = (String) extSet.get(j);
+      }
+    }
 
     numImages = files.length;
     BufferedReader read;
