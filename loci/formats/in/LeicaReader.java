@@ -365,41 +365,24 @@ public class LeicaReader extends BaseTiffReader {
     if (len < 4) return false;
 
     try {
-      initFile(name);
       RandomAccessStream ras = new RandomAccessStream(name);
-      ras.order(true); // little-endian
-      if (len < 8) {
-        // we can only check whether it is a TIFF
-        byte[] block = new byte[4];
-        int magic = ras.readInt();
-        ras.close();
-        return magic == 0x49494949;
-      }
-      ras.seek(4);
-      int ifdlocation = ras.readInt();
-      if (ifdlocation < 0 || ifdlocation >= len - 12) {
-        ras.close();
-        return false;
-      }
-      else {
-        ras.seek(ifdlocation);
-        int ifdnumber = ras.readUnsignedShort();
-        for (int i=0; i<ifdnumber; i++) {
-          if (ifdlocation + 3 + i*12 > len) {
-            ras.close();
-            return false;
-          }
-          else {
-            ras.seek(ifdlocation + 2 + i*12);
-            int ifdtag = ras.readUnsignedShort();
-            if (ifdtag == LEICA_MAGIC_TAG) {
-              ras.close();
-              return true;
-            }
-          }
-        }
-        ras.close();
-      }
+      Hashtable ifd = TiffTools.getFirstIFD(ras);
+      if (ifd == null) return false;
+
+      String descr = (String) ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION));
+      int ndx = descr.indexOf("Series Name");
+
+      if (ndx == -1) throw new FormatException("LEI file not found");
+
+      String lei = descr.substring(descr.indexOf("=", ndx) + 1);
+      lei = lei.substring(0, lei.indexOf("\n"));
+      lei = lei.trim();
+
+      String dir = name.substring(0, name.lastIndexOf("/") + 1);
+      lei = dir + lei;
+
+      File check = new File(lei);
+      if (!check.exists()) return false;
     }
     catch (FormatException exc) { }
     catch (IOException exc) { }
