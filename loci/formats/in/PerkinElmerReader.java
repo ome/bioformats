@@ -112,6 +112,7 @@ public class PerkinElmerReader extends FormatReader {
     byte[] b = new byte[(int) s.length() - 6]; // each file has 6 magic bytes
     s.skipBytes(6);
     s.read(b);
+    s.close();
     return b;
   }
 
