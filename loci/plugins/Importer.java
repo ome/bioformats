@@ -35,6 +35,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.image.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.Hashtable;
 import javax.swing.*;
 import loci.formats.*;
@@ -252,6 +253,8 @@ public class Importer implements ItemListener {
         long time = startTime;
         ImageStack stackB = null, stackS = null, stackF = null, stackO = null;
         int channels = r.getSizeC(id);
+        int sizeZ = r.getSizeZ(id);
+        int sizeT = r.getSizeT(id);
 
         int q = 0;
         for (int j=begin; j<=end; j+=step) {
@@ -316,25 +319,25 @@ public class Importer implements ItemListener {
         ImagePlus imp = null;
         if (stackB != null) {
           if (!mergeChannels && splitWindows) {
-            slice(stackB, name, channels, fi);
+            slice(stackB, id, sizeZ, channels, sizeT, fi, r);
           }
           else imp = new ImagePlus(name, stackB);
         }
         if (stackS != null) {
           if (!mergeChannels && splitWindows) {
-            slice(stackS, name, channels, fi);
+            slice(stackS, id, sizeZ, channels, sizeT, fi, r);
           }
           else imp = new ImagePlus(name, stackS);
         }
         if (stackF != null) {
           if (!mergeChannels && splitWindows) {
-            slice(stackF, name, channels, fi);
+            slice(stackF, id, sizeZ, channels, sizeT, fi, r);
           }
           else imp = new ImagePlus(name, stackF);
         }
         if (stackO != null) {
           if (!mergeChannels && splitWindows) {
-            slice(stackO, name, channels, fi);
+            slice(stackO, id, sizeZ, channels, sizeT, fi, r);
           }
           else imp = new ImagePlus(name, stackO);
         }
@@ -414,15 +417,20 @@ public class Importer implements ItemListener {
 
   // -- Helper methods --
 
-  private void slice(ImageStack is, String file, int c, FileInfo fi) {
+  private void slice(ImageStack is, String file, int z, int c, int t, 
+    FileInfo fi, IFormatReader r) throws FormatException, IOException 
+  {
     ImageStack[] newStacks = new ImageStack[c];
     for (int i=0; i<newStacks.length; i++) {
       newStacks[i] = new ImageStack(is.getWidth(), is.getHeight());
     }
-
-    for (int i=1; i<=is.getSize(); i+=c) {
-      for (int j=0; j<c; j++) {
-        newStacks[j].addSlice(is.getSliceLabel(i+j), is.getProcessor(i+j));
+      
+    for (int i=0; i<c; i++) {
+      for (int j=0; j<z; j++) {
+        for (int k=0; k<t; k++) {
+          int s = r.getIndex(file, j, i, k) + 1;
+          newStacks[i].addSlice(is.getSliceLabel(s), is.getProcessor(s));
+        }
       }
     }
 
