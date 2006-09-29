@@ -47,7 +47,7 @@ public class CacheManager implements Runnable {
   // -- Fields --
 
   private ImageProcessor [] cache;
-  private FormatReader read;
+  private IFormatReader read;
   private int axis;
   private int oldAxis;
   private int mode;
@@ -70,13 +70,13 @@ public class CacheManager implements Runnable {
   // -- Constructors --
 
   public CacheManager(int size,
-    FormatReader read, String fileName)
+    IFormatReader read, String fileName)
   {
     this(0,size,read,fileName, T_AXIS, CROSS_MODE);
   }
 
   public CacheManager(int back, int forward,
-    FormatReader read, String fileName, int axis, int mode)
+    IFormatReader read, String fileName, int axis, int mode)
   {
     this(0,0,0,back,forward,back,forward,back,
       forward,read,fileName,axis,mode,FORWARD_FIRST);
@@ -84,7 +84,7 @@ public class CacheManager implements Runnable {
 
   public CacheManager(int z, int t, int c, int backZ, int forwardZ,
     int backT, int forwardT, int backC, int forwardC,
-    FormatReader read, String fileName, int axis, int mode, int strategy)
+    IFormatReader read, String fileName, int axis, int mode, int strategy)
   {
     loop = true;
     this.z = z;

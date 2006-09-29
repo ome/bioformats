@@ -176,7 +176,7 @@ public class ImagePlusWrapper {
   public int getNumTotal() { return numTotal; }
 
   public static synchronized ImageProcessor getImageProcessor(
-    String name, FormatReader read, int index)
+    String name, IFormatReader read, int index)
   {
     String dim;
     int sizeX,sizeY,sizeZ,sizeT,sizeC;
