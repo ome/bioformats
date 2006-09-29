@@ -176,7 +176,7 @@ public abstract class FormatReader extends FormatHandler
   public abstract boolean isRGB(String id)
     throws FormatException, IOException;
 
-    /** Get the size of the X dimension. */
+  /** Get the size of the X dimension. */
   public int getSizeX(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return sizeX[series];
