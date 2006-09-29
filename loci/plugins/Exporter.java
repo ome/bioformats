@@ -29,7 +29,6 @@ import ij.*;
 import ij.gui.GenericDialog;
 import ij.process.ImageConverter;
 import ij.process.ImageProcessor;
-import java.awt.BorderLayout;
 import java.awt.Image;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -70,10 +69,6 @@ public class Exporter implements ItemListener {
 
   /** Executes the plugin. */
   public synchronized void run(ImageProcessor ip) {
-    plugin.success = false;
-    if (!Util.checkVersion()) return;
-    if (!Util.checkLibraries(true, true, false)) return;
-
     ImageWriter writer = new ImageWriter();
 
     // prompt for the filename to save to
@@ -82,16 +77,17 @@ public class Exporter implements ItemListener {
 
     String filename = null;
     JFileChooser chooser = writer.getFileChooser();
-    JPanel panel = new JPanel(new BorderLayout());
+    JPanel panel = new JPanel();
+    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
     merge = new JCheckBox("Merge channels", true);
     merge.addItemListener(this);
     interleave = new JCheckBox("Interleave channels", true);
     interleave.addItemListener(this);
     sample = new JCheckBox("Convert 16-bit grayscale to RGB");
     sample.addItemListener(this);
-    panel.add(merge, BorderLayout.NORTH);
-    panel.add(interleave, BorderLayout.EAST);
-    panel.add(sample, BorderLayout.SOUTH);
+    panel.add(merge);
+    panel.add(interleave);
+    panel.add(sample);
     chooser.setAccessory(panel);
 
     int rval = chooser.showSaveDialog(null);

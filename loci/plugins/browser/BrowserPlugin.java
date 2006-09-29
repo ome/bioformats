@@ -43,7 +43,7 @@ public class BrowserPlugin implements PlugIn {
 
   public void run(String arg) {
     if (!Util.checkVersion()) return;
-    if (!Util.checkLibraries(true, true, false)) return;
+    if (!Util.checkLibraries(true, true, false, true)) return;
     if (ldb == null) ldb = new LociDataBrowser();
     ldb.run(arg);
   }

@@ -40,7 +40,7 @@ public class OMEPlugin implements PlugIn {
   /** shows and retrieves info from the SidePanel */
   public void run(String arg) {
     if (!Util.checkVersion()) return;
-    if (!Util.checkLibraries(true, true, true)) return;
+    if (!Util.checkLibraries(true, true, true, true)) return;
     if (omeSidePanel == null) omeSidePanel = new OMESidePanel(IJ.getInstance());
     WindowMonitor monitor = new WindowMonitor();
     monitor.start();

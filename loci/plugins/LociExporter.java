@@ -57,7 +57,7 @@ public class LociExporter implements PlugInFilter {
   public synchronized void run(ImageProcessor ip) {
     success = false;
     if (!Util.checkVersion()) return;
-    if (!Util.checkLibraries(true, true, false)) return;
+    if (!Util.checkLibraries(true, true, false, false)) return;
     if (exporter != null) exporter.run(ip);
   }
 

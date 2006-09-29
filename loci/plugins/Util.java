@@ -52,7 +52,7 @@ public final class Util {
    * @return true if libraries are present, false if some are missing.
    */
   public static boolean checkLibraries(boolean bioFormats,
-    boolean omeJavaXML, boolean omeJavaDS)
+    boolean omeJavaXML, boolean omeJavaDS, boolean forms)
   {
     HashSet hs = new HashSet();
     if (bioFormats) {
@@ -70,6 +70,10 @@ public final class Util {
         "commons-httpclient-2.0-rc2.jar", hs);
       checkLibrary("org.apache.commons.logging.Log", "commons-logging.jar", hs);
     }
+    if (forms) {
+      checkLibrary("com.jgoodies.forms.layout.FormLayout",
+        "forms-1.0.4.jar", hs);
+    }
     int missing = hs.size();
     if (missing > 0) {
       StringBuffer sb = new StringBuffer();
@@ -83,7 +87,8 @@ public final class Util {
       String them = missing == 1 ? "it" : "them";
       sb.append("\nPlease download ");
       sb.append(them);
-      sb.append(" from the LOCI website");
+      sb.append(" from the LOCI website at");
+      sb.append("\n    http://www.loci.wisc.edu/software/");
       sb.append("\nand place ");
       sb.append(them);
       sb.append(" in the ImageJ plugins folder.");
