@@ -75,7 +75,10 @@ public class FileStitcher extends ReaderWrapper {
 
   private boolean varyZ, varyC, varyT;
 
-  // -- Constructor --
+  // -- Constructors --
+
+  /** Constructs a FileStitcher around a new image reader. */
+  public FileStitcher() throws FormatException { super(); }
 
   /** Constructs a FileStitcher with the given reader. */
   public FileStitcher(IFormatReader r) throws FormatException {

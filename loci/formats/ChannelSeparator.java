@@ -30,7 +30,10 @@ import java.io.IOException;
 /** Logic to automatically separate the channels in a file. */
 public class ChannelSeparator extends ReaderWrapper {
 
-  // -- Constructor --
+  // -- Constructors --
+
+  /** Constructs a ChannelSeparator around a new image reader. */
+  public ChannelSeparator() throws FormatException { super(); }
 
   /** Constructs a ChannelSeparator with the given reader. */
   public ChannelSeparator(IFormatReader r) throws FormatException {
