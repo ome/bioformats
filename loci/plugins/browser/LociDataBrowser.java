@@ -90,8 +90,8 @@ public class LociDataBrowser {
       IJ.showMessage("Cannot show invalid image.");
       return;
     }
-
-    if (stackSize == 1) {
+ 
+    if (stackSize == 1 && !virtual) {
       // show single image normally
       imp.show();
       return;
@@ -160,6 +160,7 @@ public class LociDataBrowser {
     String directory = "";
     String name = "";
     boolean quiet = false;
+    
     // get file name and virtual stack option
     stack = null;
     while (!done2) {
@@ -247,24 +248,28 @@ public class LociDataBrowser {
             lengths[tIndex] = numT;
             lengths[cIndex] = numC;
 
-            stack = new ImageStack(cm.getSizeX(absname), cm.getSizeY(absname));
+//            stack = new ImageStack(cm.getSizeX(absname), cm.getSizeY(absname));
 
+/*  Unnecessary now with new CacheManager
             for (int i=0; i<size; i++) {
               stack.addSlice(absname + " : " + (i+1), manager.getSlice(0,i,0));
             }
-
 
             if (stack == null || stack.getSize() == 0) {
               IJ.showMessage("No valid files found.");
               return;
             }
+*/
           }
           catch (OutOfMemoryError e) {
             IJ.outOfMemory("LociDataBrowser");
             if (stack != null) stack.trim();
           }
 
-          ImagePlus ip = new ImagePlus(absname, stack);
+          ImagePlus ip;
+          if(stack != null) ip = new ImagePlus(absname, stack);
+          else ip = new ImagePlus(absname);
+          
           FileInfo fi = new FileInfo();
           try {
             fi.description =
@@ -325,7 +330,12 @@ public class LociDataBrowser {
   /** Main method, for testing. */
   public static void main(String[] args) {
     new ImageJ(null);
-    new LociDataBrowser().run("");
+    StringBuffer sb = new StringBuffer();
+    for (int i=0; i<args.length; i++) {
+      if (i > 0) sb.append(" ");
+      sb.append(args[i]);
+    }
+    new LociDataBrowser().run(sb.toString());
   }
 
 }

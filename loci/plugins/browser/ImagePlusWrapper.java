@@ -178,6 +178,7 @@ public class ImagePlusWrapper {
   public static synchronized ImageProcessor getImageProcessor(
     String name, IFormatReader read, int index)
   {
+    System.out.println(Thread.currentThread() + ": getImageProcessor START");
     String dim;
     int sizeX,sizeY,sizeZ,sizeT,sizeC;
     try {
@@ -200,9 +201,12 @@ public class ImagePlusWrapper {
       img = read.openImage(name, index);
     }
     catch (Exception exc) {
-      System.out.println("Sorry, but ImagePlusWrapper.getImageProcessor() "
-      + "encountered an exception when trying to open the FormatReader's "
-      + "image with index " + index + ".");
+      System.out.println("Sorry, but ImagePlusWrapper.getImageProcessor() " +
+        "encountered an exception when trying to open the FormatReader's " +
+        "image with index " + index + " (sizeX=" + sizeX + ", sizeY=" +
+        sizeY + ", sizeZ=" + sizeZ + ", sizeT=" + sizeT + ", sizeC=" + sizeC +
+        ").");
+      exc.printStackTrace();
       return null;
     }
 
@@ -251,6 +255,8 @@ public class ImagePlusWrapper {
     if (ip == null) {
       ip = new ImagePlus(name, img).getProcessor(); // slow
     }
+
+    System.out.println(Thread.currentThread() + ": getImageProcessor END");
 
     return ip;
   }
