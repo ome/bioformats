@@ -22,32 +22,38 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+
 package loci.plugins.browser;
 
 import ij.process.ImageProcessor;
-import java.util.Arrays;
 import loci.formats.*;
+import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
-public class CacheManager implements Runnable {
-
-  // -- Constants --
-
+public class CacheManager 
+  implements Runnable
+{
+  // - Constants -
   public static final int Z_AXIS = 0x01;
   public static final int T_AXIS = 0x02;
   public static final int C_AXIS = 0x04;
-
+  
   public static final int CROSS_MODE = 0x10;
   public static final int RECT_MODE = 0x20;
-
+  
   public static final int FORWARD_FIRST = 0x0100;
   public static final int SURROUND_FIRST = 0x0200;
-
+  
   public static final boolean DEBUG = true;
 
-  // -- Fields --
-
+  // - Fields -
+  
+  /** The array of cached images.*/
   private ImageProcessor [] cache;
+  
+  /** The IFormatReader that handles conversion of formats.*/
   private IFormatReader read;
+  
   private int axis;
   private int oldAxis;
   private int mode;
@@ -67,21 +73,20 @@ public class CacheManager implements Runnable {
 
   protected int [] loadList;
 
-  // -- Constructors --
-
-  public CacheManager(int size,
-    IFormatReader read, String fileName)
+  // - Constructors
+  public CacheManager(int size, 
+    IFormatReader read, String fileName) 
   {
-    this(0,size,read,fileName, T_AXIS, CROSS_MODE);
+    this(0,size,read,fileName, Z_AXIS, CROSS_MODE);
   }
-
+  
   public CacheManager(int back, int forward,
     IFormatReader read, String fileName, int axis, int mode)
   {
     this(0,0,0,back,forward,back,forward,back,
       forward,read,fileName,axis,mode,FORWARD_FIRST);
   }
-
+  
   public CacheManager(int z, int t, int c, int backZ, int forwardZ,
     int backT, int forwardT, int backC, int forwardC,
     IFormatReader read, String fileName, int axis, int mode, int strategy)
@@ -125,27 +130,34 @@ public class CacheManager implements Runnable {
     this.oldStrategy = strategy;
     updateCache();
   }
-
-  // -- CacheManager API methods --
-
+  
+  // - CacheManager API -
+  
   public void setAxis(int axis) {
     quit = true;
     oldAxis = this.axis;
     this.axis = axis;
     updateCache();
   }
-
+  
   public void setMode(int mode) {
     quit = true;
     oldMode = this.mode;
     this.mode = mode;
     updateCache();
   }
-
+  
+  public void setStrategy(int strategy) {
+    quit = true;
+    oldStrategy = this.strategy;
+    this.strategy = strategy;
+    updateCache();
+  }
+  
   public void setSize(int back, int forward) {
     setSize(back,forward,back,forward,back,forward);
   }
-
+  
   public void setSize(int backZ, int forwardZ, int backT,
     int forwardT, int backC, int forwardC)
   {
@@ -164,16 +176,17 @@ public class CacheManager implements Runnable {
     this.forwardC = forwardC;
     updateCache();
   }
-
+  
   public int getSize() {
     int count = 0;
     for (int i = 0;i<cache.length;i++) {
       if( cache[i] == null) continue;
       count++;
+//      if(DEBUG) System.out.println("In cache: " + i);
     }
     return count;
   }
-
+  
   public int getSlice() {
     int index;
     try {
@@ -182,7 +195,7 @@ public class CacheManager implements Runnable {
     catch (Exception exc) { return -1;}
     return index;
   }
-
+  
   public ImageProcessor getSlice(int index) {
     if(DEBUG) System.out.println("GETTING SLICE: " + index);
 
@@ -194,15 +207,15 @@ public class CacheManager implements Runnable {
       t = coords[2];
     }
     catch (Exception exc) { if(DEBUG) exc.printStackTrace();}
-
+    
     ImageProcessor result = cache[index];
     if (Arrays.binarySearch(loadList,index) >= 0) {
       if(result != null) {
-        if(DEBUG) System.out.println("Slice found in cache.");
+        if(DEBUG) System.out.println("Slice found in cache.");      
         return result;
       }
       else {
-        if(DEBUG) System.out.println("Slice not found in cache. LOADING...");
+        if(DEBUG) System.out.println("Slice not found in cache. LOADING...");  
         result = ImagePlusWrapper.getImageProcessor(fileName,read,index);
         cache[index] = result;
         return result;
@@ -216,7 +229,7 @@ public class CacheManager implements Runnable {
       return result;
     }
   }
-
+  
   public ImageProcessor getSlice(int z, int t, int c) {
     int index;
     try {
@@ -228,12 +241,12 @@ public class CacheManager implements Runnable {
     }
     return getSlice(index);
   }
-
+  
   public ImageProcessor getTempSlice(int index) {
     if (cache[index] != null) return cache[index];
     return ImagePlusWrapper.getImageProcessor(fileName,read,index);
   }
-
+  
   public ImageProcessor getTempSlice(int z, int t, int c) {
     int index;
     try {
@@ -245,7 +258,7 @@ public class CacheManager implements Runnable {
     }
     return getTempSlice(index);
   }
-
+  
   private int [] getToCache(boolean old) {
     int [] result = null;
     int z,t,c,backZ,forwardZ,backT,forwardT,backC,forwardC,axis,mode;
@@ -275,34 +288,47 @@ public class CacheManager implements Runnable {
       axis = this.axis;
       mode = this.mode;
     }
-
+    
     if (mode == CROSS_MODE) {
       if (axis == Z_AXIS) {
         int lowBound = z - backZ;
         int upBound = z + forwardZ;
-
-        int [] upSet = getUpSet(lowBound,upBound, Z_AXIS, z);
-        int [] lowSet = getLowSet(lowBound,upBound, Z_AXIS, z);
-
+        
+        int [] upSet = getUpSet(lowBound,upBound, Z_AXIS, z, t, c);
+        int [] lowSet = getLowSet(lowBound,upBound, Z_AXIS, z, t, c);
+        
         result = new int [upSet.length + lowSet.length];
-
+        
         if (strategy == FORWARD_FIRST) {
-          int count = 0;
-
-          for(int i = 0;i<upSet.length;i++) {
-            result[count] = upSet[i];
-            count++;
-          }
-          for(int i = 0;i<lowSet.length;i++) {
-            result[count] = lowSet[i];
-            count++;
-          }
+          result = append(lowSet,upSet);
         }
         else if(strategy == SURROUND_FIRST) {
           result = getMix(lowSet,upSet);
         }
       }
       else if (axis == (Z_AXIS | T_AXIS)) {
+        int lowBoundZ = z - backZ;
+        int upBoundZ = z + forwardZ;
+        int lowBoundT = t - backT;
+        int upBoundT = t + forwardT;
+        
+        int [] upSetZ = getUpSet(lowBoundZ,upBoundZ, Z_AXIS, z, t, c);
+        int [] lowSetZ = getLowSet(lowBoundZ,upBoundZ, Z_AXIS, z, t, c);
+        int [] upSetT = getUpSet(lowBoundT,upBoundT, T_AXIS, z, t, c);
+        int [] lowSetT = getLowSet(lowBoundT,upBoundT, T_AXIS, z, t, c);
+        
+        result = new int [upSetZ.length + lowSetZ.length + upSetT.length
+          + lowSetT.length];
+          
+        int [] upSet = getMix(upSetT, upSetZ);
+        int [] lowSet = getMix(lowSetT,lowSetZ);
+        
+        if (strategy == FORWARD_FIRST) {
+          result = append(lowSet,upSet);
+        }
+        else if(strategy == SURROUND_FIRST) {
+          result = getMix(lowSet,upSet);
+        }
       }
       else if (axis == (Z_AXIS | C_AXIS)) {
       }
@@ -311,23 +337,14 @@ public class CacheManager implements Runnable {
       else if (axis == T_AXIS) {
         int lowBound = t - backT;
         int upBound = t + forwardT;
-
-        int [] upSet = getUpSet(lowBound,upBound, T_AXIS, t);
-        int [] lowSet = getLowSet(lowBound,upBound, T_AXIS, t);
-
+        
+        int [] upSet = getUpSet(lowBound,upBound, T_AXIS, z, t, c);
+        int [] lowSet = getLowSet(lowBound,upBound, T_AXIS, z, t, c);
+        
         result = new int [upSet.length + lowSet.length];
-
+        
         if (strategy == FORWARD_FIRST) {
-          int count = 0;
-
-          for(int i = 0;i<upSet.length;i++) {
-            result[count] = upSet[i];
-            count++;
-          }
-          for(int i = 0;i<lowSet.length;i++) {
-            result[count] = lowSet[i];
-            count++;
-          }
+          result = append(lowSet,upSet);
         }
         else if(strategy == SURROUND_FIRST) {
           result = getMix(lowSet,upSet);
@@ -338,23 +355,14 @@ public class CacheManager implements Runnable {
       else if (axis == C_AXIS) {
         int lowBound = c - backC;
         int upBound = c + forwardC;
-
-        int [] upSet = getUpSet(lowBound,upBound, C_AXIS, c);
-        int [] lowSet = getLowSet(lowBound,upBound, C_AXIS, c);
-
+        
+        int [] upSet = getUpSet(lowBound,upBound, C_AXIS, z, t, c);
+        int [] lowSet = getLowSet(lowBound,upBound, C_AXIS, z, t, c);
+        
         result = new int [upSet.length + lowSet.length];
-
+        
         if (strategy == FORWARD_FIRST) {
-          int count = 0;
-
-          for(int i = 0;i<upSet.length;i++) {
-            result[count] = upSet[i];
-            count++;
-          }
-          for(int i = 0;i<lowSet.length;i++) {
-            result[count] = lowSet[i];
-            count++;
-          }
+          result = append(lowSet,upSet);
         }
         else if(strategy == SURROUND_FIRST) {
           result = getMix(lowSet,upSet);
@@ -395,15 +403,31 @@ public class CacheManager implements Runnable {
     }
     return result;
   }
-
+  
+  public static int[] append(int [] lowSet, int [] upSet) {
+    int[] result = new int[upSet.length + lowSet.length];
+    int count = 0;
+  
+    for(int i = 0;i<upSet.length;i++) {
+      result[count] = upSet[i];
+      count++;
+    }
+    for(int i = 0;i<lowSet.length;i++) {
+      result[count] = lowSet[i];
+      count++;
+    }
+    
+    return result;
+  }
+  
   public static int[] getMix(int[] lowSet, int[] upSet) {
     int [] result = new int[lowSet.length + upSet.length];
     int countUp = 0;
     int countLow = 0;
-
+    
     boolean mixing = true;
     boolean getFromTop = true;
-
+    
     for(int i = 0;i<result.length;i++) {
       if (mixing) {
         int value;
@@ -430,8 +454,8 @@ public class CacheManager implements Runnable {
             countLow++;
           }
           getFromTop = true;
-          result[i] = value;
         }
+        result[i] = value;
       }
       else {
         int [] thisSet;
@@ -444,22 +468,32 @@ public class CacheManager implements Runnable {
           thisSet = lowSet;
           count = countLow;
         }
-
+          
         result[i] = thisSet[count];
         count++;
       }
     }
     return result;
   }
-
-  private int [] getUpSet(int lowBound,int upBound,int someAxis, int mid) {
+  
+  private int [] getUpSet(int lowBound,int upBound,int someAxis, int z, int t, int c) {
     int size = -1;
-    if (someAxis == Z_AXIS) size = sizeZ;
-    else if (someAxis == T_AXIS) size = sizeT;
-    else size = sizeC;
-
+    int mid = -1;
+    if (someAxis == Z_AXIS) {
+      size = sizeZ;
+      mid = z;
+    }
+    else if (someAxis == T_AXIS) {
+      size = sizeT;
+      mid = t;
+    }
+    else {
+      size = sizeC;
+      mid = c;
+    }
+    
     int [] result = null;
-
+    
     if(size!= -1 && mid != -1) {
       if (upBound >= size) {
         if (lowBound < 0) upBound = size -1;
@@ -468,11 +502,11 @@ public class CacheManager implements Runnable {
           if (upBound > maxBig) upBound = maxBig;
         }
       }
-
+      
       result = new int[upBound - (mid - 1)];
-
+      
       int count = 0;
-
+      
       for(int i = mid;i<=upBound;i++) {
         int realCoord = i;
         if(i >= size) realCoord = i - size;
@@ -489,28 +523,37 @@ public class CacheManager implements Runnable {
             index = read.getIndex(fileName,z,realCoord,t);
           }
         }
-        catch (Exception exc) {
+        catch (Exception exc) { 
           if(DEBUG) exc.printStackTrace();
           return null;
         }
-
+        
         result[count] = index;
         count++;
       }
     }
-
+    
     return result;
   }
-
-  private int [] getLowSet(int lowBound,int upBound,int someAxis, int mid) {
+  
+  private int [] getLowSet(int lowBound,int upBound,int someAxis, int z, int t, int c) {
     int size = -1;
-    if (someAxis == Z_AXIS) size = sizeZ;
-    else if (someAxis == T_AXIS) size = sizeT;
-    else size = sizeC;
-
-
+    int mid = -1;
+    if (someAxis == Z_AXIS) {
+      size = sizeZ;
+      mid = z;
+    }
+    else if (someAxis == T_AXIS) {
+      size = sizeT;
+      mid = t;
+    }
+    else {
+      size = sizeC;
+      mid = c;
+    }
+    
     int [] result = null;
-
+    
     if(size!= -1 && mid != -1) {
       if (lowBound < 0) {
         if (upBound >= size) lowBound = 0;
@@ -519,11 +562,11 @@ public class CacheManager implements Runnable {
           if (lowBound < maxNeg) lowBound = maxNeg;
         }
       }
-
+      
       result = new int[mid - lowBound];
-
+      
       int count = 0;
-
+      
       for(int i = mid - 1;i>=lowBound;i--) {
         int realCoord = i;
         if(i < 0) realCoord = size + i;
@@ -540,86 +583,59 @@ public class CacheManager implements Runnable {
             index = read.getIndex(fileName,z,realCoord,t);
           }
         }
-        catch (Exception exc) {
+        catch (Exception exc) { 
           if(DEBUG) exc.printStackTrace();
           return null;
         }
-
+        
         result[count] = index;
         count++;
       }
     }
-
+    
     return result;
-  }
-
-  /**
-   * Method to reflect the looping behavior of the cache when
-   * trying to define upper and lower bounds of which images to
-   * load.
-   */
-  private void clipBounds(int lowBound, int upBound, int axis) {
-    int size;
-    if(axis == Z_AXIS) size = sizeZ;
-    else if(axis == T_AXIS) size = sizeT;
-    else size = sizeC;
-
-    if(!loop) {
-      if (lowBound < 0) lowBound = 0;
-      if (upBound >= size) upBound = size - 1;
-    }
-    else {
-      if (lowBound < 0) {
-        if(upBound < size) {
-          int maxNeg = (upBound + 1) - size;
-          if(lowBound < maxNeg) lowBound = maxNeg;
-        }
-        else {
-          lowBound = 0;
-          upBound = size - 1;
-        }
-      }
-      else if (upBound >= size && lowBound > 0) {
-        int maxBig = (size - 1) + lowBound;
-        if (upBound > maxBig) upBound = maxBig;
-      }
-    }
-
-    if (DEBUG) {
-      System.out.println("Bounds: " + lowBound + " - " + upBound);
-    }
-  }
-
+  }    
+  
   private void updateCache() {
     if (DEBUG) System.out.println("UPDATING CACHE");
-
+    
     clearCache();
-
+    
     Thread loader = new Thread(this);
     loader.start();
   }
-
+  
   private void clearCache() {
     if (DEBUG) System.out.println("CLEARING CACHE");
-
+    quit = true;
+    
     int [] oldIndex = getToCache(true);
     oldZ = z;
     oldT = t;
     oldC = c;
     int [] newIndex = getToCache(false);
-    if (DEBUG) System.out.println("oldIndex: " + oldIndex );
-    if (DEBUG) System.out.println("newIndex: " + newIndex );
-    Arrays.sort(newIndex);
+    if (DEBUG) {
+      for(int i = 0;i<oldIndex.length;i++) {
+        System.out.println("oldIndex " + i + ": " + oldIndex[i] );
+      }
+      for(int i = 0;i<newIndex.length;i++) {
+        System.out.println("newIndex " + i + ": " + newIndex[i] );
+      }
+    }
+    
     loadList = newIndex;
-
+    Arrays.sort(newIndex);
+    
     for (int i = 0;i<oldIndex.length;i++) {
       if(Arrays.binarySearch(newIndex, oldIndex[i]) < 0)
         cache[oldIndex[i]] = null;
     }
+    
+    if (DEBUG) System.out.println("Cache Size after clear: " + getSize()); 
   }
-
-  // -- Runnable API methods --
-
+  
+  // - Runnable API -
+  
   public void run() {
     quit = false;
 
@@ -631,6 +647,6 @@ public class CacheManager implements Runnable {
         cache[loadList[i]] = imp;
       }
     }
+    
   }
-
 }

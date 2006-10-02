@@ -186,7 +186,7 @@ public class LociDataBrowser {
         if (DEBUG) System.err.println("name = "+name);
 
         if (virtual) {
-          FormatReader fr = (FormatReader) reader.getReader(absname);
+          IFormatReader fr = (IFormatReader) reader.getReader(absname);
           fr.setMetadataStore(new OMEXMLMetadataStore());
           fr.getMetadataStore(absname).createRoot();
           FileStitcher fs = new FileStitcher(fr);
@@ -221,8 +221,10 @@ public class LociDataBrowser {
             }
           }
 
-          //manager = new CacheManager(size, minor, major, cm, absname);
-          manager = new CacheManager(size, cm, absname);
+          manager = new CacheManager(0,0,0,0,0,5,25,0,0,cm,
+            absname, CacheManager.T_AXIS,
+            CacheManager.CROSS_MODE, CacheManager.FORWARD_FIRST);
+          //manager = new CacheManager(size, cm, absname);
 
           try {
             numZ = cm.getSizeZ(absname);
