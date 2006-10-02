@@ -197,8 +197,8 @@ public class PictReader extends FormatReader {
     in.read(b);
     Dimension d = getDimensions(b);
 
-    sizeX[0] = width;
-    sizeY[0] = height;
+    sizeX[0] = d.width; 
+    sizeY[0] = d.height;
     sizeZ[0] = 1;
     sizeC[0] = 3;
     sizeT[0] = 1;
@@ -209,7 +209,7 @@ public class PictReader extends FormatReader {
 
     pixelType[0] = FormatReader.INT8;
     store.setPixels(
-      new Integer((int) d.getWidth()), new Integer((int) d.getHeight()),
+      new Integer(d.width), new Integer(d.height),
       new Integer(1), new Integer(3), new Integer(1), new Integer(pixelType[0]),
       new Boolean(!little), "XYCZT", null);
   }

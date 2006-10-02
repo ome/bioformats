@@ -277,8 +277,13 @@ public class Importer implements ItemListener {
           }
           IJ.showProgress((double) q++ / total);
           BufferedImage img = r.openImage(id, j);
-          img = ImageTools.padImage(img, r.getSizeX(id), r.getSizeY(id));
-
+          
+          if (img.getWidth() < r.getSizeX(id) || 
+            img.getHeight() < r.getSizeY(id))
+          {
+            img = ImageTools.padImage(img, r.getSizeX(id), r.getSizeY(id));
+          }
+            
           ImageProcessor ip = null;
           WritableRaster raster = img.getRaster();
           int c = raster.getNumBands();
@@ -398,6 +403,8 @@ public class Importer implements ItemListener {
             average + " ms per plane)");
         }
       }
+
+      r.close();
       plugin.success = true;
 
       // save checkbox values to IJ_Prefs.txt
