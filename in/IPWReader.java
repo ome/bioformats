@@ -177,6 +177,11 @@ public class IPWReader extends BaseTiffReader {
     if (in != null) in.close();
     in = null;
     currentId = null;
+  
+    String[] vars = {"dirName", "root", "dir", "document", "dis", 
+      "numBytes", "data", "fis", "fs", "iter", "isInstance", "isDocument", 
+      "entry", "documentName", "entryName"};
+    for (int i=0; i<vars.length; i++) r.setVar(vars[i], null);
   }
 
   /** Initializes the given IPW file. */
