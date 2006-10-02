@@ -30,12 +30,13 @@ import java.io.*;
 /** Logic to automatically merge channels in a file. */
 public class ChannelMerger extends ReaderWrapper {
 
-  // -- Constructor --
+  // -- Constructors --
+
+  /** Constructs a ChannelMerger around a new image reader. */
+  public ChannelMerger() throws FormatException { super(); }
 
   /** Constructs a ChannelMerger with the given reader. */
-  public ChannelMerger(IFormatReader r) throws FormatException {
-    super(r);
-  }
+  public ChannelMerger(IFormatReader r) throws FormatException { super(r); }
 
   // -- ChannelMerger API methods --
 

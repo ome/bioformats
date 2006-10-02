@@ -41,7 +41,10 @@ public abstract class ReaderWrapper implements IFormatReader {
   /** FormatReader used to read the file. */
   protected IFormatReader reader;
 
-  // -- Constructor --
+  // -- Constructors --
+
+  /** Constructs a reader wrapper around a new image reader. */
+  public ReaderWrapper() throws FormatException { this(new ImageReader()); }
 
   /** Constructs a reader wrapper around the given reader. */
   public ReaderWrapper(IFormatReader r) throws FormatException {
