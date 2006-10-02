@@ -133,6 +133,63 @@ public class ZeissZVIReader extends FormatReader {
     return nImages;
   }
 
+  /** Get the size of the X dimension. */
+  public int getSizeX(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    if (noPOI) return legacy.getSizeX(id);
+    return super.getSizeX(id);
+  }
+
+  /** Get the size of the Y dimension. */
+  public int getSizeY(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    if (noPOI) return legacy.getSizeY(id);
+    return super.getSizeY(id);
+  }
+
+  /** Get the size of the Z dimension. */
+  public int getSizeZ(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    if (noPOI) return legacy.getSizeZ(id);
+    return super.getSizeZ(id);
+  }
+
+  /** Get the size of the C dimension. */
+  public int getSizeC(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    if (noPOI) return legacy.getSizeC(id);
+    return super.getSizeC(id);
+  }
+
+  /** Get the size of the T dimension. */
+  public int getSizeT(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    if (noPOI) return legacy.getSizeT(id);
+    return super.getSizeT(id);
+  }
+
+  /**
+   * (non-Javadoc)
+   * @see loci.formats.IFormatReader#getPixelType()
+   */
+  public int getPixelType(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    if (noPOI) return legacy.getPixelType(id);
+    return super.getPixelType(id);
+  }
+ 
+  /**
+   * Return a five-character string representing the dimension order
+   * within the file.
+   */
+  public String getDimensionOrder(String id)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    if (noPOI) return legacy.getDimensionOrder(id);
+    return super.getDimensionOrder(id);
+  }
+
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
@@ -220,7 +277,7 @@ public class ZeissZVIReader extends FormatReader {
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
     currentId = null;
-  
+    noPOI = false; 
     String[] vars = {"dirName", "root", "dir", "document", "dis", 
       "numBytes", "data", "fis", "fs", "iter", "isInstance", "isDocument", 
       "entry", "documentName", "entryName"};
@@ -229,7 +286,11 @@ public class ZeissZVIReader extends FormatReader {
 
   /** Initializes the given ZVI file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (noPOI) throw new FormatException(NO_POI_MSG);
+    if (noPOI) {
+      legacy.initFile(id);
+      return;
+    }
+
     currentId = id;
 
     metadata = new Hashtable();
@@ -243,7 +304,11 @@ public class ZeissZVIReader extends FormatReader {
     nImages = 0;
 
     try {
-      r.setVar("fis", new FileInputStream(id));
+      RandomAccessStream ras = new RandomAccessStream(id);
+      if (ras.length() % 4096 != 0) {
+        ras.setExtend((4096 - (int) (ras.length() % 4096)));
+      }
+      r.setVar("fis", ras);
       r.exec("fs = new POIFSFileSystem(fis)");
       r.exec("dir = fs.getRoot()");
       parseDir(0, r.getVar("dir"));
@@ -270,6 +335,7 @@ public class ZeissZVIReader extends FormatReader {
     catch (Throwable t) {
       noPOI = true;
       if (DEBUG) t.printStackTrace();
+      initFile(id);
     }
 
     try { initMetadata(); }

@@ -405,9 +405,9 @@ public class LegacyZVIReader extends FormatReader {
 
       sizeX[0] = openImage(id, 0).getWidth();
       sizeY[0] = openImage(id, 0).getHeight();
-      sizeZ[0] = numZ;
-      sizeC[0] = numC;
-      sizeT[0] = numT;
+      sizeZ[0] = zSet.size();
+      sizeC[0] = cSet.size();
+      sizeT[0] = tSet.size();
       currentOrder[0] = dimensionOrder;
 
       // Populate metadata store
