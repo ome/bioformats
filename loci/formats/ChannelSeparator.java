@@ -44,6 +44,13 @@ public class ChannelSeparator extends ReaderWrapper {
 
   /** Determines the number of images in the given file. */
   public int getImageCount(String id) throws FormatException, IOException {
+    String order = getDimensionOrder(id);
+    String newOrder = "XYC";
+    if (order.indexOf("T") < order.indexOf("Z")) newOrder += "TZ";
+    else newOrder += "ZT";
+    ((FormatReader) reader).currentOrder[((FormatReader) reader).series] = 
+      newOrder;
+    
     return reader.isRGB(id) ? getSizeC(id) * reader.getImageCount(id) :
       reader.getImageCount(id);
   }

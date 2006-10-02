@@ -269,13 +269,11 @@ public class Importer implements ItemListener {
 
         if (specifyRanges && num > 1) {
           // reset sizeZ and sizeT if we aren't opening the entire series
-          int[] first = r.getZCTCoords(id, begin);
-          int[] last = r.getZCTCoords(id, end);
-
-          sizeZ = last[0] - first[0];
-          sizeT = last[2] - first[2];
-          if (sizeZ == 0) sizeZ++;
-          if (sizeT == 0) sizeT++;
+          sizeZ = begin;
+          sizeT = end;
+          if (channels > 1) {
+            channels = r.getIndex(id, 0, 1, 0) - r.getIndex(id, 0, 0, 0);
+          }
         }
 
         int q = 0;
@@ -346,25 +344,25 @@ public class Importer implements ItemListener {
         ImagePlus imp = null;
         if (stackB != null) {
           if (!mergeChannels && splitWindows) {
-            slice(stackB, id, sizeZ, channels, sizeT, fi, r);
+            slice(stackB, id, sizeZ, channels, sizeT, fi, r, specifyRanges);
           }
           else imp = new ImagePlus(name, stackB);
         }
         if (stackS != null) {
           if (!mergeChannels && splitWindows) {
-            slice(stackS, id, sizeZ, channels, sizeT, fi, r);
+            slice(stackS, id, sizeZ, channels, sizeT, fi, r, specifyRanges);
           }
           else imp = new ImagePlus(name, stackS);
         }
         if (stackF != null) {
           if (!mergeChannels && splitWindows) {
-            slice(stackF, id, sizeZ, channels, sizeT, fi, r);
+            slice(stackF, id, sizeZ, channels, sizeT, fi, r, specifyRanges);
           }
           else imp = new ImagePlus(name, stackF);
         }
         if (stackO != null) {
           if (!mergeChannels && splitWindows) {
-            slice(stackO, id, sizeZ, channels, sizeT, fi, r);
+            slice(stackO, id, sizeZ, channels, sizeT, fi, r, specifyRanges);
           }
           else imp = new ImagePlus(name, stackO);
         }
@@ -455,18 +453,35 @@ public class Importer implements ItemListener {
   // -- Helper methods --
 
   private void slice(ImageStack is, String file, int z, int c, int t, 
-    FileInfo fi, IFormatReader r) throws FormatException, IOException 
+    FileInfo fi, IFormatReader r, boolean range) 
+    throws FormatException, IOException 
   {
+    int step = 1;
+    if (range) {
+      step = c;
+      c = r.getSizeC(file);
+    }
+    
     ImageStack[] newStacks = new ImageStack[c];
     for (int i=0; i<newStacks.length; i++) {
       newStacks[i] = new ImageStack(is.getWidth(), is.getHeight());
     }
-      
+  
     for (int i=0; i<c; i++) {
-      for (int j=0; j<z; j++) {
-        for (int k=0; k<t; k++) {
-          int s = r.getIndex(file, j, i, k) + 1;
-          newStacks[i].addSlice(is.getSliceLabel(s), is.getProcessor(s));
+      if (range) {
+        for (int j=z; j<=t; j+=((t - z + 1) / is.getSize())) {
+          int s = (i*step) + (j - z)*c + 1;
+          if (s - 1 < is.getSize()) {
+            newStacks[i].addSlice(is.getSliceLabel(s), is.getProcessor(s));
+          }
+        }
+      }
+      else {
+        for (int j=0; j<z; j++) {
+          for (int k=0; k<t; k++) {
+            int s = r.getIndex(file, j, i, k) + 1;
+            newStacks[i].addSlice(is.getSliceLabel(s), is.getProcessor(s));
+          }
         }
       }
     }
