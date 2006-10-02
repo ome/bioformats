@@ -220,6 +220,11 @@ public class ZeissZVIReader extends FormatReader {
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
     currentId = null;
+  
+    String[] vars = {"dirName", "root", "dir", "document", "dis", 
+      "numBytes", "data", "fis", "fs", "iter", "isInstance", "isDocument", 
+      "entry", "documentName", "entryName"};
+    for (int i=0; i<vars.length; i++) r.setVar(vars[i], null);
   }
 
   /** Initializes the given ZVI file. */
