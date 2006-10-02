@@ -217,7 +217,8 @@ public class LeicaReader extends BaseTiffReader {
       if (ndx == -1) throw new FormatException("LEI file not found");
 
       String lei = descr.substring(descr.indexOf("=", ndx) + 1);
-      lei = lei.substring(0, lei.indexOf("\n"));
+      int newLineNdx = lei.indexOf("\n");
+      lei = lei.substring(0, newLineNdx == -1 ? lei.length() : newLineNdx);
       lei = lei.trim();
 
       String dir = id.substring(0, id.lastIndexOf("/") + 1);
@@ -245,9 +246,13 @@ public class LeicaReader extends BaseTiffReader {
 
       while(eqIndex != -1) {
         key = descr.substring(0, eqIndex);
-        value = descr.substring(eqIndex+1, descr.indexOf("\n", eqIndex));
+        newLineNdx = descr.indexOf("\n", eqIndex);
+        if (newLineNdx == -1) newLineNdx = descr.length();
+        value = descr.substring(eqIndex+1, newLineNdx);
         metadata.put(key.trim(), value.trim());
-        descr = descr.substring(descr.indexOf("\n", eqIndex));
+        newLineNdx = descr.indexOf("\n", eqIndex);
+        if (newLineNdx == -1) newLineNdx = descr.length();
+        descr = descr.substring(newLineNdx);
         eqIndex = descr.indexOf("=");
       }
 
@@ -305,6 +310,8 @@ public class LeicaReader extends BaseTiffReader {
 
         addr = in.readInt();
       }
+
+      if (v.size() < numSeries) numSeries = v.size();
 
       numChannels = new int[numSeries];
       widths = new int[numSeries];
@@ -372,7 +379,7 @@ public class LeicaReader extends BaseTiffReader {
       String descr = (String) ifd.get(new Integer(TiffTools.IMAGE_DESCRIPTION));
       int ndx = descr.indexOf("Series Name");
 
-      if (ndx == -1) throw new FormatException("LEI file not found");
+      if (ndx == -1) return false;
 
       String lei = descr.substring(descr.indexOf("=", ndx) + 1);
       lei = lei.substring(0, lei.indexOf("\n"));
@@ -382,9 +389,8 @@ public class LeicaReader extends BaseTiffReader {
       lei = dir + lei;
 
       File check = new File(lei);
-      if (!check.exists()) return false;
+      return check.exists();
     }
-    catch (FormatException exc) { }
     catch (IOException exc) { }
     catch (NullPointerException exc) { }
     return false;
@@ -754,6 +760,20 @@ public class LeicaReader extends BaseTiffReader {
     sizeT = new int[numSeries];
     pixelType = new int[numSeries];
     currentOrder = new String[numSeries];
+ 
+    try {
+      int oldSeries = getSeries(currentId);
+      for (int i=0; i<sizeC.length; i++) {
+        setSeries(currentId, i);
+        if (isRGB(currentId)) sizeC[i] = 3;
+      }
+      setSeries(currentId, oldSeries);
+    }
+    catch (Exception e) { 
+      // NullPointerException caught here if the file we opened was a TIFF.
+      // However, the sizeC field will be adjusted anyway by a later call to
+      // BaseTiffReader.initMetadata
+    }
 
     // The metadata store we're working with.
     MetadataStore store = new DummyMetadataStore();
