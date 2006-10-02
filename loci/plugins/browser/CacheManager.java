@@ -27,7 +27,6 @@ package loci.plugins.browser;
 
 import ij.process.ImageProcessor;
 import loci.formats.*;
-import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
 public class CacheManager 
@@ -391,6 +390,7 @@ public class CacheManager
   public ImageProcessor getSlice(int z, int t, int c) {
     int index;
     try {
+      System.out.println("file=" + fileName + "; z=" + z + "; t=" + t + "; c=" + c + "; sizeZ=" + read.getSizeZ(fileName) + "; sizeT=" + read.getSizeT(fileName) + "; sizeC=" + read.getSizeC(fileName));//TEMP
       index = read.getIndex(fileName,z,c,t);
     }
     catch (Exception exc) {

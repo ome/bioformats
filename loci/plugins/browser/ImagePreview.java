@@ -38,12 +38,14 @@ import loci.formats.*;
 public class ImagePreview extends JComponent
   implements PropertyChangeListener
 {
+  protected ImageReader ir;
   protected ImageIcon thumbnail = null;
   protected File file = null;
 
-  public ImagePreview(JFileChooser fc) {
+  public ImagePreview(JFileChooser fc, ImageReader ir) {
     setPreferredSize(new Dimension(100, 50));
     fc.addPropertyChangeListener(this);
+    this.ir = ir;
   }
 
   public void loadImage() {
@@ -60,9 +62,12 @@ public class ImagePreview extends JComponent
         System.err.println("file path: "+file.getAbsolutePath());
       }
 
-      ImageReader ir = new ImageReader();
-      IFormatReader fr = (IFormatReader) ir.getReader(file.getAbsolutePath());
-      BufferedImage image = fr.openThumbImage(file.getAbsolutePath(), 0);
+      String path = file.getAbsolutePath();
+      int sizeZ = ir.getSizeZ(path);
+      int sizeT = ir.getSizeT(path);
+      int index = ir.getIndex(path, sizeZ / 2, 0, sizeT / 2);
+      BufferedImage image = ir.openThumbImage(path, index);
+      ir.close();
 
       thumbnail = new ImageIcon(image);
     }

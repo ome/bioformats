@@ -178,7 +178,6 @@ public class ImagePlusWrapper {
   public static synchronized ImageProcessor getImageProcessor(
     String name, IFormatReader read, int index)
   {
-    System.out.println(Thread.currentThread() + ": getImageProcessor START");
     String dim;
     int sizeX,sizeY,sizeZ,sizeT,sizeC;
     try {
@@ -255,8 +254,6 @@ public class ImagePlusWrapper {
     if (ip == null) {
       ip = new ImagePlus(name, img).getProcessor(); // slow
     }
-
-    System.out.println(Thread.currentThread() + ": getImageProcessor END");
 
     return ip;
   }

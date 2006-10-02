@@ -46,14 +46,15 @@ public class LociOpener implements ItemListener {
 
   public LociOpener() {
     // set up the file chooser
-    fc = new ImageReader().getFileChooser();
+    ImageReader ir = new ImageReader();
+    fc = ir.getFileChooser();
     String ijDir = OpenDialog.getDefaultDirectory();
     if (ijDir != null) fc.setCurrentDirectory(new File(ijDir));
 
     // add the preview pane
     JPanel p = new JPanel(new BorderLayout());
     JCheckBox c = new JCheckBox("Use virtual stack");
-    p.add(new ImagePreview(fc), BorderLayout.CENTER);
+    p.add(new ImagePreview(fc, ir), BorderLayout.CENTER);
     p.add(c, BorderLayout.SOUTH);
     c.addItemListener(this);
     fc.setAccessory(p);
