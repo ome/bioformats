@@ -267,6 +267,17 @@ public class Importer implements ItemListener {
         int sizeZ = r.getSizeZ(id);
         int sizeT = r.getSizeT(id);
 
+        if (specifyRanges && num > 1) {
+          // reset sizeZ and sizeT if we aren't opening the entire series
+          int[] first = r.getZCTCoords(id, begin);
+          int[] last = r.getZCTCoords(id, end);
+
+          sizeZ = last[0] - first[0];
+          sizeT = last[2] - first[2];
+          if (sizeZ == 0) sizeZ++;
+          if (sizeT == 0) sizeT++;
+        }
+
         int q = 0;
         for (int j=begin; j<=end; j+=step) {
           // limit message update rate
