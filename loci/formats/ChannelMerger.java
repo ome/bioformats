@@ -55,6 +55,13 @@ public class ChannelMerger extends ReaderWrapper {
     return no;
   }
 
+  /** Gets the pixel type. */
+  public int getPixelType(String id) throws FormatException, IOException {
+    int type = super.getPixelType(id);
+    if (isRGB(id) && type > FormatReader.UINT8) type = FormatReader.UINT8;
+    return type;
+  }
+
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     return canMerge(id) || reader.isRGB(id);

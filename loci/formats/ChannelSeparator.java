@@ -48,6 +48,19 @@ public class ChannelSeparator extends ReaderWrapper {
       reader.getImageCount(id);
   }
 
+  /**
+   * Return a five-character string representing the dimension order
+   * within the file
+   */
+  public String getDimensionOrder(String id) throws FormatException, IOException
+  {
+    String order = super.getDimensionOrder(id);
+    String newOrder = "XYC";
+    if (order.indexOf("Z") > order.indexOf("T")) newOrder += "TZ";
+    else newOrder += "ZT";
+    return newOrder;
+  }
+
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) {
     return false;
