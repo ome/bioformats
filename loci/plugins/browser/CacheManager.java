@@ -474,15 +474,75 @@ public class CacheManager
       mode = this.mode;
     }
     
-    if (mode == CROSS_MODE) {
-      if (axis == Z_AXIS) {
-        int lowBound = z - backZ;
-        int upBound = z + forwardZ;
+    if (axis == Z_AXIS || axis == T_AXIS || axis == C_AXIS) {
+      int lowBound, upBound;
+      if(axis == Z_AXIS) {
+        lowBound = z - backZ;
+        upBound = z + forwardZ;
+      }
+      else if(axis == T_AXIS) {
+        lowBound = t - backT;
+        upBound = t + forwardT;
+      }
+      else {
+        lowBound = c - backC;
+        upBound = c + forwardC;
+      }
+      
+      int [] upSet = getUpSet(lowBound, upBound, axis, z, t, c);
+      int [] lowSet = getLowSet(lowBound, upBound, axis, z, t, c);
+      
+      result = new int [upSet.length + lowSet.length];
+      
+      if (strategy == FORWARD_FIRST) {
+        result = append(lowSet, upSet);
+      }
+      else if(strategy == SURROUND_FIRST) {
+        result = getMix(lowSet, upSet);
+      }
+    }
+    else if (mode == CROSS_MODE && !(axis == Z_AXIS || 
+      axis == T_AXIS || axis == C_AXIS))
+    {
+      if (axis == (Z_AXIS | T_AXIS) || axis == (Z_AXIS | C_AXIS) ||
+        axis == (T_AXIS | C_AXIS))
+      {
+        int lowBound1, lowBound2;
+        int upBound1, upBound2;
+        int axis1, axis2;
         
-        int [] upSet = getUpSet(lowBound, upBound, Z_AXIS, z, t, c);
-        int [] lowSet = getLowSet(lowBound, upBound, Z_AXIS, z, t, c);
+        if(axis == (Z_AXIS | T_AXIS)) {
+          lowBound1 = z - backZ;
+          upBound1 = z + forwardZ;
+          lowBound2 = t - backT;
+          upBound2 = t + forwardT;
+          axis1 = Z_AXIS;
+          axis2 = T_AXIS;
+        }
+        else if(axis == (Z_AXIS | C_AXIS)) {
+          lowBound1 = z - backZ;
+          upBound1 = z + forwardZ;
+          lowBound2 = c - backC;
+          upBound2 = c + forwardC;
+          axis1 = Z_AXIS;
+          axis2 = C_AXIS;
+        }
+        else {
+          lowBound1 = c - backC;
+          upBound1 = c + forwardC;
+          lowBound2 = t - backT;
+          upBound2 = t + forwardT;
+          axis1 = C_AXIS;
+          axis2 = T_AXIS;
+        }
         
-        result = new int [upSet.length + lowSet.length];
+        int[] upSet1 = getUpSet(lowBound1, upBound1, axis1, z, t, c);
+        int[] lowSet1 = getLowSet(lowBound1, upBound1, axis1, z, t, c);
+        int[] upSet2 = getUpSet(lowBound2, upBound2, axis2, z, t, c);
+        int[] lowSet2 = getLowSet(lowBound2, upBound2, axis2, z, t, c);
+        
+        int [] upSet = getMix(upSet1, upSet2);
+        int [] lowSet = getMix(lowSet1, lowSet2);
         
         if (strategy == FORWARD_FIRST) {
           result = append(lowSet, upSet);
@@ -490,43 +550,80 @@ public class CacheManager
         else if(strategy == SURROUND_FIRST) {
           result = getMix(lowSet, upSet);
         }
+        
+        if(DEBUG) {
+          String temp;
+          if(old) temp = "old";
+          else temp = "new";
+          System.out.println(temp + "Index DEBUG");
+        
+          System.out.print("UpSet1 = {");
+          for(int i = 0;i<upSet1.length;i++) {
+            if( i != 0) System.out.print(",");
+            System.out.print(upSet1[i]);
+          }
+          System.out.println("}");
+          
+          System.out.print("UpSet2 = {");
+          for(int i = 0;i<upSet2.length;i++) {
+            if( i != 0) System.out.print(",");
+            System.out.print(upSet2[i]);
+          }
+          System.out.println("}");
+          
+          System.out.print("LowSet1 = {");
+          for(int i = 0;i<lowSet1.length;i++) {
+            if( i != 0) System.out.print(",");
+            System.out.print(lowSet1[i]);
+          }
+          System.out.println("}");
+          
+          System.out.print("LowSet2 = {");
+          for(int i = 0;i<lowSet2.length;i++) {
+            if( i != 0) System.out.print(",");
+            System.out.print(lowSet2[i]);
+          }
+          System.out.println("}");
+          
+          System.out.print("UpSet = {");
+          for(int i = 0;i<upSet.length;i++) {
+            if( i != 0) System.out.print(",");
+            System.out.print(upSet[i]);
+          }
+          System.out.println("}");
+          
+          System.out.print("lowSet = {");
+          for(int i = 0;i<lowSet.length;i++) {
+            if( i != 0) System.out.print(",");
+            System.out.print(lowSet[i]);
+          }
+          System.out.println("}");
+          
+          System.out.print("Result = {");
+          for(int i = 0;i<result.length;i++) {
+            if( i != 0) System.out.print(",");
+            System.out.print(result[i]);
+          }
+          System.out.println("}");
+        }
       }
-      else if (axis == (Z_AXIS | T_AXIS)) {
+      else if ( (axis == (Z_AXIS | T_AXIS | C_AXIS))) {
         int lowBoundZ = z - backZ;
         int upBoundZ = z + forwardZ;
         int lowBoundT = t - backT;
         int upBoundT = t + forwardT;
+        int lowBoundC = c - backC;
+        int upBoundC = c + forwardC;
         
         int [] upSetZ = getUpSet(lowBoundZ, upBoundZ, Z_AXIS, z, t, c);
         int [] lowSetZ = getLowSet(lowBoundZ, upBoundZ, Z_AXIS, z, t, c);
         int [] upSetT = getUpSet(lowBoundT, upBoundT, T_AXIS, z, t, c);
         int [] lowSetT = getLowSet(lowBoundT, upBoundT, T_AXIS, z, t, c);
+        int [] upSetC = getUpSet(lowBoundC, upBoundC, C_AXIS, z, t, c);
+        int [] lowSetC = getLowSet(lowBoundC, upBoundC, C_AXIS, z, t, c);
         
-        result = new int [upSetZ.length + lowSetZ.length + upSetT.length
-          + lowSetT.length];
-          
-        int [] upSet = getMix(upSetT, upSetZ);
-        int [] lowSet = getMix(lowSetT, lowSetZ);
-        
-        if (strategy == FORWARD_FIRST) {
-          result = append(lowSet, upSet);
-        }
-        else if(strategy == SURROUND_FIRST) {
-          result = getMix(lowSet, upSet);
-        }
-      }
-      else if (axis == (Z_AXIS | C_AXIS)) {
-      }
-      else if (axis == (Z_AXIS | T_AXIS | C_AXIS)) {
-      }
-      else if (axis == T_AXIS) {
-        int lowBound = t - backT;
-        int upBound = t + forwardT;
-        
-        int [] upSet = getUpSet(lowBound, upBound, T_AXIS, z, t, c);
-        int [] lowSet = getLowSet(lowBound, upBound, T_AXIS, z, t, c);
-        
-        result = new int [upSet.length + lowSet.length];
+        int [] upSet = getMix(upSetZ, upSetT, upSetC);
+        int [] lowSet = getMix(lowSetZ, lowSetT, lowSetC);
         
         if (strategy == FORWARD_FIRST) {
           result = append(lowSet, upSet);
@@ -535,56 +632,33 @@ public class CacheManager
           result = getMix(lowSet, upSet);
         }
       }
-      else if (axis == (T_AXIS | C_AXIS)) {
-      }
-      else if (axis == C_AXIS) {
-        int lowBound = c - backC;
-        int upBound = c + forwardC;
-        
-        int [] upSet = getUpSet(lowBound, upBound, C_AXIS, z, t, c);
-        int [] lowSet = getLowSet(lowBound, upBound, C_AXIS, z, t, c);
-        
-        result = new int [upSet.length + lowSet.length];
-        
-        if (strategy == FORWARD_FIRST) {
-          result = append(lowSet, upSet);
-        }
-        else if(strategy == SURROUND_FIRST) {
-          result = getMix(lowSet, upSet);
-        }
-      }
+      else return null;
     }
-    else if (mode == RECT_MODE) {
-      if (axis == Z_AXIS) {
-      }
-      else if (axis == (Z_AXIS | T_AXIS)) {
-      }
-      else if (axis == (Z_AXIS | C_AXIS)) {
+    else if (mode == RECT_MODE && !(axis == Z_AXIS || 
+      axis == T_AXIS || axis == C_AXIS))
+    {
+      if (axis == (Z_AXIS | T_AXIS) || axis == (Z_AXIS | C_AXIS) ||
+        axis == (T_AXIS | C_AXIS))
+      {
+        
       }
       else if (axis == (Z_AXIS | T_AXIS | C_AXIS)) {
+      
       }
-      else if (axis == T_AXIS) {
-      }
-      else if (axis == (T_AXIS | C_AXIS)) {
-      }
-      else if (axis == C_AXIS) {
-      }
+      else return null;
     }
-    else if (mode == (CROSS_MODE | RECT_MODE)) {
-      if (axis == Z_AXIS) {
-      }
-      else if (axis == (Z_AXIS | T_AXIS)) {
-      }
-      else if (axis == (Z_AXIS | C_AXIS)) {
+    else if (mode == (CROSS_MODE | RECT_MODE) && !(axis == Z_AXIS || 
+      axis == T_AXIS || axis == C_AXIS))
+    {
+      if (axis == (Z_AXIS | T_AXIS) || axis == (Z_AXIS | C_AXIS) ||
+        axis == (T_AXIS | C_AXIS))
+      {
+
       }
       else if (axis == (Z_AXIS | T_AXIS | C_AXIS)) {
+      
       }
-      else if (axis == T_AXIS) {
-      }
-      else if (axis == (T_AXIS | C_AXIS)) {
-      }
-      else if (axis == C_AXIS) {
-      }
+      else return null;
     }
     return result;
   }
@@ -616,16 +690,31 @@ public class CacheManager
   
   /**
   * Takes two integer arrays and mixes them until one runs out of
-  * elements, then adds the rest of the remaining array's elements
+  * elements, then adds the rest of the remaining array's elements.
+  * Starts at the beginning position of each array.
   * @param lowSet The array to be mixed in second.
   * @param upSet The array to be mixed in first.
   * @return The new array formed by mixing the two parameter
   * arrays.
   */
   public static int[] getMix(int[] lowSet, int[] upSet) {
-    int [] result = new int[lowSet.length + upSet.length];
-    int countUp = 0;
-    int countLow = 0;
+    return getMix(lowSet,0,upSet,0);
+  }
+  
+  /**
+  * Takes two integer arrays and mixes them until one runs out of
+  * elements, then adds the rest of the remaining array's elements
+  * @param lowSet The array to be mixed in second.
+  * @param lowStart The position in the second array to start at.
+  * @param upSet The array to be mixed in first.
+  * @param upStart The position in the first array to start at.
+  * @return The new array formed by mixing the two parameter
+  * arrays.
+  */
+  public static int[] getMix(int[] lowSet, int lowStart, int[] upSet, int upStart) {
+    int [] result = new int[lowSet.length + upSet.length - lowStart - upStart];
+    int countUp = upStart;
+    int countLow = lowStart;
     
     boolean mixing = true;
     boolean getFromTop = true;
@@ -660,21 +749,74 @@ public class CacheManager
         result[i] = value;
       }
       else {
-        int [] thisSet;
-        int count;
         if(getFromTop) {
-          thisSet = upSet;
-          count = countUp;
+          result[i] = upSet[countUp];
+          countUp++;
         }
         else {
-          thisSet = lowSet;
-          count = countLow;
+          result[i] = lowSet[countLow];
+          countLow++;
         }
-          
-        result[i] = thisSet[count];
-        count++;
       }
     }
+    return result;
+  }
+  
+  /**
+  * Takes three integer arrays and mixes them until one runs out of
+  * elements, then adds the rest of the remaining arrays' elements.
+  * @param set1 The array to be mixed in first.
+  * @param set2 The array to be mixed in second.
+  * @param set3 The array to be mixed in third.
+  * @return The new array formed by mixing the three parameter
+  * arrays.
+  */
+  public static int[] getMix(int[] set1, int[] set2, int[] set3) {
+    int[] result = new int[set1.length + set2.length + set3.length];
+    int count1 = 0, count2 = 0, count3 = 0;
+    int toggle = 0;
+    int lastI = 0;
+    
+    for(int i = 0;i< result.length;i++) {
+      int value;
+      lastI = i;
+      if (toggle == 0) {
+        if(count1 < set1.length) {
+          value = set1[count1];
+          count1++;
+        }
+        else break;
+      }
+      else if (toggle == 1) {
+        if(count2 < set2.length) {
+          value = set2[count2];
+          count2++;
+        }
+        else break;
+      }
+      else {
+        if(count3 < set3.length) {
+          value = set3[count3];
+          count3++;
+        }
+        else break;
+      }
+      toggle++;
+      toggle = toggle %3;
+      result[i] = value;
+    }
+    
+    int [] theRest;
+    if (count1 >= set1.length) theRest = 
+      getMix(set3,count3,set2,count2);
+    else if (count2 >= set2.length) theRest = 
+      getMix(set1,count1,set3,count3);
+    else theRest = getMix(set2,count2,set1,count1);
+    
+    for(int i = 0; i<theRest.length;i++) {
+      result[lastI + i] = theRest[i];
+    }
+    
     return result;
   }
   
@@ -721,6 +863,11 @@ public class CacheManager
     int [] result = null;
     
     if(size!= -1 && mid != -1) {
+      if ((upBound - lowBound)> (size - 1)) {
+        upBound = size - 1;
+        lowBound = 0;
+      }
+      
       if (upBound >= size) {
         if (lowBound < 0) upBound = size -1;
         else {
@@ -805,6 +952,11 @@ public class CacheManager
     int [] result = null;
     
     if(size!= -1 && mid != -1) {
+      if ((upBound - lowBound)> (size - 1)) {
+        upBound = size - 1;
+        lowBound = 0;
+      }
+    
       if (lowBound < 0) {
         if (upBound >= size) lowBound = 0;
         else {
@@ -874,6 +1026,7 @@ public class CacheManager
     oldT = t;
     oldC = c;
     int [] newIndex = getToCache(false);
+/*
     if (DEBUG) {
       for(int i = 0;i<oldIndex.length;i++) {
         System.out.println("oldIndex " + i + ": " + oldIndex[i] );
@@ -882,8 +1035,10 @@ public class CacheManager
         System.out.println("newIndex " + i + ": " + newIndex[i] );
       }
     }
+*/
     
-    loadList = newIndex;
+    loadList = new int[newIndex.length];
+    System.arraycopy(newIndex, 0, loadList, 0, newIndex.length);
     Arrays.sort(newIndex);
     
     for (int i = 0;i<oldIndex.length;i++) {
@@ -903,7 +1058,8 @@ public class CacheManager
     for(int i = 0;i<loadList.length;i++) {
       if(quit) break;
       if(cache[loadList[i]] == null) {
-        if (DEBUG) System.out.println("CACHING... index: " + loadList[i]); 
+        if (DEBUG) System.out.println("CACHING... index: " + loadList[i]);
+        
         ImageProcessor imp = ImagePlusWrapper.getImageProcessor(
           fileName, read, loadList[i]);
         cache[loadList[i]] = imp;

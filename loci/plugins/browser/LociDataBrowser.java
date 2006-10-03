@@ -133,18 +133,14 @@ public class LociDataBrowser {
 
   /** Gets the slice number for the given Z, T and C indices. */
   public int getIndex(int z, int t, int c) {
-    int[] pos = new int[lengths.length];
-    if (zIndex >= 0) pos[zIndex] = z;
-    if (tIndex >= 0) pos[tIndex] = t;
-    if (cIndex >= 0) pos[cIndex] = c;
-    int[] offsets = new int[lengths.length];
-    if (offsets.length > 0) offsets[0] = 1;
-    for (int i=1; i<offsets.length; i++) {
-      offsets[i] = offsets[i - 1] * lengths[i - 1];
+    int result = -1;
+    synchronized(reader) {
+      try {
+        result = reader.getIndex(id,z,c,t);
+      }
+      catch (Exception exc) {if (DEBUG) exc.printStackTrace();}
     }
-    int raster = 0;
-    for (int i=0; i<pos.length; i++) raster += offsets[i] * pos[i];
-    return raster;
+    return result;
   }
 
   /** Sets the series to open. */
@@ -226,8 +222,8 @@ public class LociDataBrowser {
               }
             }
 
-            manager = new CacheManager(0, 0, 0, 0, 0, 5, 25, 0, 0,
-              reader, id, CacheManager.T_AXIS,
+            manager = new CacheManager(0, 0, 0, 10, 10, 20, 20, 0, 0,
+              reader, id, CacheManager.Z_AXIS | CacheManager.T_AXIS,
               CacheManager.CROSS_MODE, CacheManager.FORWARD_FIRST);
             //manager = new CacheManager(size, cm, id);
 
