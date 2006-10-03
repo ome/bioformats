@@ -26,6 +26,7 @@ package loci.formats;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.nio.*;
 import java.util.*;
@@ -632,6 +633,47 @@ public final class TiffTools {
     if (checkClass != null && value != null &&
       !checkClass.isInstance(value))
     {
+      // wrap object in array of length 1, if appropriate
+      Class cType = checkClass.getComponentType();
+      Object array = null;
+      if (cType == value.getClass()) {
+        array = Array.newInstance(value.getClass(), 1);
+        Array.set(array, 0, value);
+      }
+      if (cType == boolean.class && value instanceof Boolean) {
+        array = Array.newInstance(boolean.class, 1);
+        Array.setBoolean(array, 0, ((Boolean) value).booleanValue());
+      }
+      else if (cType == byte.class && value instanceof Byte) {
+        array = Array.newInstance(byte.class, 1);
+        Array.setByte(array, 0, ((Byte) value).byteValue());
+      }
+      else if (cType == char.class && value instanceof Character) {
+        array = Array.newInstance(char.class, 1);
+        Array.setChar(array, 0, ((Character) value).charValue());
+      }
+      else if (cType == double.class && value instanceof Double) {
+        array = Array.newInstance(double.class, 1);
+        Array.setDouble(array, 0, ((Double) value).doubleValue());
+      }
+      else if (cType == float.class && value instanceof Float) {
+        array = Array.newInstance(float.class, 1);
+        Array.setFloat(array, 0, ((Float) value).floatValue());
+      }
+      else if (cType == int.class && value instanceof Integer) {
+        array = Array.newInstance(int.class, 1);
+        Array.setInt(array, 0, ((Integer) value).intValue());
+      }
+      else if (cType == long.class && value instanceof Long) {
+        array = Array.newInstance(long.class, 1);
+        Array.setLong(array, 0, ((Long) value).longValue());
+      }
+      else if (cType == short.class && value instanceof Short) {
+        array = Array.newInstance(short.class, 1);
+        Array.setShort(array, 0, ((Short) value).shortValue());
+      }
+      if (array != null) return array;
+
       throw new FormatException(getIFDTagName(tag) +
         " directory entry is the wrong type (got " +
         value.getClass().getName() + ", expected " + checkClass.getName());
@@ -1806,7 +1848,7 @@ public final class TiffTools {
     }
     else {
       throw new FormatException("Unknown IFD value type (" +
-        value.getClass().getName() + ")");
+        value.getClass().getName() + "): " + value);
     }
   }
 
@@ -2106,6 +2148,7 @@ public final class TiffTools {
       if (!(key instanceof Integer)) {
         throw new FormatException("Malformed IFD tag (" + key + ")");
       }
+      if (((Integer) key).intValue() == LITTLE_ENDIAN) continue;
       Object value = ifd.get(key);
       if (DEBUG) {
         String sk = getIFDTagName(((Integer) key).intValue());
