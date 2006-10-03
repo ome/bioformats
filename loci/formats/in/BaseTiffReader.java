@@ -692,8 +692,9 @@ public abstract class BaseTiffReader extends FormatReader {
   {
     if (!id.equals(currentId)) initFile(id);
     if (channelMinMax == null || channelMinMax[theC] == null)
-      return null;
-    return channelMinMax[theC][MIN];
+      return super.getChannelGlobalMinimum(id, theC);
+    if (channelMinMax[theC][MIN] != null) return channelMinMax[theC][MIN];
+    return super.getChannelGlobalMinimum(id, theC);
   }
 
   /* (non-Javadoc)
@@ -704,8 +705,9 @@ public abstract class BaseTiffReader extends FormatReader {
   {
     if (!id.equals(currentId)) initFile(id);
     if (channelMinMax == null || channelMinMax[theC] == null)
-      return null;
-    return channelMinMax[theC][MAX];
+      return super.getChannelGlobalMaximum(id, theC);
+    return channelMinMax[theC][MAX] == null ? 
+      super.getChannelGlobalMaximum(id, theC) : channelMinMax[theC][MAX];
   }
 
   /** Return true if the data is in little-endian format. */
@@ -744,7 +746,8 @@ public abstract class BaseTiffReader extends FormatReader {
   {
     if (!id.equals(currentId)) initFile(id);
     int bytesPerPixel = ImageReader.getBytesPerPixel(getPixelType(id));
-    byte[] buf = new byte[getSizeX(id) * getSizeY(id) * bytesPerPixel];
+    byte[] buf = new byte[getSizeX(id) * getSizeY(id) * getSizeC(id) * 
+      bytesPerPixel];
     return openBytes(id, no, buf);
   }
 
