@@ -368,7 +368,7 @@ public class MetadataPane extends JPanel
           }
           else img = null;
           int width = 50, height = 50;
-          thumb = ImageTools.scale(img, width, height);
+          thumb = ImageTools.scale(img, width, height, false, false);
           ome = (OMENode) ms.getRoot();
         }
         catch (Exception exc) { exc.printStackTrace(); }
@@ -391,7 +391,7 @@ public class MetadataPane extends JPanel
 
           img = reader.openImage(id, 0); // gets first image from the file
           int width = 50, height = 50;
-          thumb = ImageTools.scale(img, width, height);
+          thumb = ImageTools.scale(img, width, height, false, false);
           ome = (OMENode) ((OMEXMLMetadataStore)
             reader.getMetadataStore(id)).getRoot();
           setOMEXML(ome);

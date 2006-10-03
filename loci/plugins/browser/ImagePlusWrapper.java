@@ -87,7 +87,7 @@ public class ImagePlusWrapper {
         if (w != sizeX || h != sizeY) {
           System.out.println("Warning: image size " + w + "x" + h +
             " does not match expected size of " + sizeX + "x" + sizeY + ".");
-          img = ImageTools.scale(img, sizeX, sizeY);
+          img = ImageTools.scale(img, sizeX, sizeY, false, false);
           w = sizeX;
           h = sizeY;
         }
@@ -218,7 +218,7 @@ public class ImagePlusWrapper {
     if (w != sizeX || h != sizeY) {
       System.out.println("Warning: image size " + w + "x" + h +
         " does not match expected size of " + sizeX + "x" + sizeY + ".");
-      img = ImageTools.scale(img, sizeX, sizeY);
+      img = ImageTools.scale(img, sizeX, sizeY, false, false);
       w = sizeX;
       h = sizeY;
     }

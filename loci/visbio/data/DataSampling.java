@@ -146,7 +146,7 @@ public class DataSampling extends ImageTransform {
     if (img == null) return null;
     int w = resX > 0 ? resX : img.getWidth();
     int h = resY > 0 ? resY : img.getHeight();
-    return ImageTools.scale(img, w, h);
+    return ImageTools.scale(img, w, h, false, false);
   }
 
   /**
