@@ -73,7 +73,13 @@ public class FileStitcher extends ReaderWrapper {
   /** Initialized series. */
   private int validSeries = -1;
 
+  /** Index into the array of readers. */
+  private int index = 0;
+
   private boolean varyZ, varyC, varyT;
+  
+  private IFormatReader[] readers;
+  private boolean multipleReaders = false;
 
   // -- Constructors --
 
@@ -83,6 +89,15 @@ public class FileStitcher extends ReaderWrapper {
   /** Constructs a FileStitcher with the given reader. */
   public FileStitcher(IFormatReader r) throws FormatException {
     super(r);
+  }
+
+  /** 
+   * Constructs a FileStitcher with the given reader; 
+   * if the flag is set to true, a separate reader is used for each file.
+   */
+  public FileStitcher(IFormatReader r, boolean flag) throws FormatException {
+    super(r);
+    multipleReaders = flag;
   }
 
   // -- IFormatReader API methods --
@@ -139,7 +154,7 @@ public class FileStitcher extends ReaderWrapper {
     throws FormatException, IOException
   {
     if (getSeries(id) != validSeries) initFile(id);
-    return reader.openImage(findFile(no), number);
+    return readers[index].openImage(findFile(no), number);
   }
 
   /** Obtains the specified image from the given file as a byte array. */
@@ -147,7 +162,7 @@ public class FileStitcher extends ReaderWrapper {
     throws FormatException, IOException
   {
     if (getSeries(id) != validSeries) initFile(id);
-    return reader.openBytes(findFile(no), number);
+    return readers[index].openBytes(findFile(no), number);
   }
 
   public int getIndex(String id, int z, int c, int t)
@@ -238,6 +253,18 @@ public class FileStitcher extends ReaderWrapper {
       dimensions[4] = dims[0][4];
     }
     setDimensions(id, dims);
+
+    readers = new IFormatReader[files.length];
+    if (multipleReaders) {
+      ImageReader ir = new ImageReader();
+      readers[0] = reader;
+      for (int i=1; i<readers.length; i++) {
+        readers[i] = ir.getReader(files[i]);
+      }
+    }
+    else {
+      for (int i=0; i<readers.length; i++) readers[i] = reader;
+    }
 
     MetadataStore s = reader.getMetadataStore(id);
     s.setPixels(new Integer(dimensions[0]), new Integer(dimensions[1]),
@@ -443,6 +470,7 @@ public class FileStitcher extends ReaderWrapper {
       else {
         no -= imageCounts[ndx - 1];
         file = files[ndx];
+        index = ndx;
         ndx++;
       }
     }
