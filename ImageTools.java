@@ -1108,19 +1108,31 @@ public final class ImageTools {
    * having the same color model as the original image.
    */
   public static BufferedImage scale(BufferedImage source,
-    int width, int height)
+    int width, int height, boolean preserve, boolean pad)
   {
     int w = source.getWidth();
     int h = source.getHeight();
     if (w == width && h == height) return source;
+   
+    int oldHeight = height;
+
+    if (preserve) {
+      // keep the width the same, but adjust height accordingly
+      height = (h * width) / w;
+    }
+    
     if ((width * height) / (w * h) > 0) {
       // use Java2D to enlarge
-      return scale2D(source, width, height, null, source.getColorModel());
+      source = scale2D(source, width, height, null, source.getColorModel());
+      if (pad) return padImage(source, width, oldHeight);
+      return source;
     }
     else {
       // use AWT to shrink
-      return makeBuffered(scaleAWT(source, width, height,
+      source = makeBuffered(scaleAWT(source, width, height,
         Image.SCALE_AREA_AVERAGING), source.getColorModel());
+      if (pad) return padImage(source, width, oldHeight);
+      return source;
     }
   }
 
