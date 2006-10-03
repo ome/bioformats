@@ -238,7 +238,7 @@ set = Linear2DSet: Length = 393216
         xref.setData(lineSet);
         FlatField lineField = (FlatField)
         //   bigData.resample(line, Data.WEIGHTED_AVERAGE, Data.NO_ERRORS);
-          bigData.resample(line, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
+          bigData.resample(lineSet, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
         float[][] lineSamples =
           lineField.getFloats(false); // [NFILES][nsamp]
         Linear1DSet pointSet = new Linear1DSet(point, 0.0, 1.0, nsamp);
