@@ -500,6 +500,7 @@ public abstract class FormatReader extends FormatHandler
   {
     String id = null;
     boolean pixels = true;
+    boolean thumbs = false;
     boolean merge = false;
     boolean stitch = false;
     boolean separate = false;
@@ -511,6 +512,7 @@ public abstract class FormatReader extends FormatHandler
       for (int i=0; i<args.length; i++) {
         if (args[i].startsWith("-")) {
           if (args[i].equals("-nopix")) pixels = false;
+          else if (args[i].equals("-thumbs")) thumbs = true;
           else if (args[i].equals("-merge")) merge = true;
           else if (args[i].equals("-stitch")) stitch = true;
           else if (args[i].equals("-separate")) separate = true;
@@ -547,6 +549,7 @@ public abstract class FormatReader extends FormatHandler
       System.out.println();
       System.out.println("     file: the image file to read");
       System.out.println("   -nopix: read metadata only, not pixels");
+      System.out.println("  -thumbs: read thumbnails instead of normal pixels");
       System.out.println("   -merge: combine separate channels into RGB image");
       System.out.println("  -stitch: stitch files with similar names");
       System.out.println("-separate: split RGB image into separate channels");
@@ -593,6 +596,8 @@ public abstract class FormatReader extends FormatHandler
       int sizeZ = reader.getSizeZ(id);
       int sizeC = reader.getSizeC(id);
       int sizeT = reader.getSizeT(id);
+      int thumbSizeX = reader.getThumbSizeX(id);
+      int thumbSizeY = reader.getThumbSizeY(id);
       boolean little = reader.isLittleEndian(id);
       String dimOrder = reader.getDimensionOrder(id);
 
@@ -613,6 +618,8 @@ public abstract class FormatReader extends FormatHandler
       {
         System.out.println("\t************ Warning: ZCT mismatch ************");
       }
+      System.out.println("\tThumbnail size = " +
+        thumbSizeX + " x " + thumbSizeY);
       System.out.println("\tEndianness = " +
         (little ? "intel (little)" : "motorola (big)"));
       System.out.println("\tDimension order = " + dimOrder);
@@ -661,7 +668,8 @@ public abstract class FormatReader extends FormatHandler
       BufferedImage[] images = new BufferedImage[end - start];
       long s2 = System.currentTimeMillis();
       for (int i=start; i<end; i++) {
-        images[i - start] = reader.openImage(id, i);
+        images[i - start] = thumbs ?
+          reader.openThumbImage(id, i) : reader.openImage(id, i);
         System.out.print(".");
       }
       long e2 = System.currentTimeMillis();
