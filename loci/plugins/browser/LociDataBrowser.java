@@ -248,27 +248,21 @@ public class LociDataBrowser {
             lengths[tIndex] = numT;
             lengths[cIndex] = numC;
 
-//            stack = new ImageStack(cm.getSizeX(absname), cm.getSizeY(absname));
-
-/*  Unnecessary now with new CacheManager
-            for (int i=0; i<size; i++) {
-              stack.addSlice(absname + " : " + (i+1), manager.getSlice(0,i,0));
-            }
-
-            if (stack == null || stack.getSize() == 0) {
-              IJ.showMessage("No valid files found.");
-              return;
-            }
-*/
+            // CTR: stack must not be null
+            stack = new ImageStack(cm.getSizeX(absname), cm.getSizeY(absname));
+            // CTR: must add at least one image to the stack
+            stack.addSlice(absname + " : 1", manager.getSlice(0, 0, 0));
           }
           catch (OutOfMemoryError e) {
             IJ.outOfMemory("LociDataBrowser");
             if (stack != null) stack.trim();
           }
 
-          ImagePlus ip;
-          if(stack != null) ip = new ImagePlus(absname, stack);
-          else ip = new ImagePlus(absname);
+          if (stack == null || stack.getSize() == 0) {
+            IJ.error("Sorry, there was a problem creating the image stack.");
+            return;
+          }
+          ImagePlus imp = new ImagePlus(absname, stack);
           
           FileInfo fi = new FileInfo();
           try {
@@ -277,8 +271,8 @@ public class LociDataBrowser {
           }
           catch (Exception e) { }
 
-          ip.setFileInfo(fi);
-          show(ip);
+          imp.setFileInfo(fi);
+          show(imp);
         }
         else {
           ipw = new ImagePlusWrapper(absname, reader.getReader(name), true);
