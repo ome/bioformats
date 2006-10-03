@@ -276,6 +276,9 @@ public class Importer implements ItemListener {
           }
         }
 
+        int min = r.getChannelGlobalMinimum(id, r.getSizeC(id)).intValue();
+        int max = r.getChannelGlobalMaximum(id, r.getSizeC(id)).intValue();
+
         int q = 0;
         for (int j=begin; j<=end; j+=step) {
           // limit message update rate
@@ -292,7 +295,11 @@ public class Importer implements ItemListener {
           {
             img = ImageTools.padImage(img, r.getSizeX(id), r.getSizeY(id));
           }
-            
+         
+          if (r.isRGB(id) && r.getPixelType(id) >= FormatReader.INT16) {
+            img = ImageTools.autoscale(img, min, max); 
+          }
+
           ImageProcessor ip = null;
           WritableRaster raster = img.getRaster();
           int c = raster.getNumBands();

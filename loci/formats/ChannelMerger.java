@@ -30,7 +30,7 @@ import java.io.*;
 /** Logic to automatically merge channels in a file. */
 public class ChannelMerger extends ReaderWrapper {
 
-  // -- Constructors --
+  // -- Constructor --
 
   /** Constructs a ChannelMerger around a new image reader. */
   public ChannelMerger() throws FormatException { super(); }
@@ -77,6 +77,11 @@ public class ChannelMerger extends ReaderWrapper {
     BufferedImage[] img = new BufferedImage[sizeC];
     for (int c=0; c<sizeC; c++) {
       img[c] = reader.openImage(id, reader.getIndex(id, z, c, t));
+    
+      int min = getChannelGlobalMinimum(id, sizeC).intValue();
+      int max = getChannelGlobalMaximum(id, sizeC).intValue();
+    
+      img[c] = ImageTools.autoscale(img[c], min, max);
     }
     return ImageTools.mergeChannels(img);
   }
@@ -97,6 +102,13 @@ public class ChannelMerger extends ReaderWrapper {
     byte[] bytes = null;
     for (int c=0; c<sizeC; c++) {
       byte[] b = reader.openBytes(id, reader.getIndex(id, z, c, t));
+      
+      int min = getChannelGlobalMinimum(id, sizeC).intValue();
+      int max = getChannelGlobalMaximum(id, sizeC).intValue();
+      
+      b = ImageTools.autoscale(b, min, max, 
+        b.length / (getSizeX(id) * getSizeY(id) * sizeC), isLittleEndian(id)); 
+      
       if (c == 0) {
         // assume array lengths for each channel are equal
         bytes = new byte[sizeC * b.length];
