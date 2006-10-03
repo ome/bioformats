@@ -548,6 +548,8 @@ public final class ImageTools {
     }
   }
 
+  // -- Image manipulation --
+
   /**
    * Splits the given multi-channel array into a 2D array.
    * The "reverse" parameter is false if channels are in RGB order, true if
@@ -936,6 +938,119 @@ public final class ImageTools {
       return padded;
     }
     return b;
+  }
+
+  /** 
+   * Perform autoscaling on the given BufferedImage; 
+   * map min to 0 and max to 255.
+   */
+  public static BufferedImage autoscale(BufferedImage img, int min, int max) {
+    Object pixels = getPixels(img);
+  
+    if (pixels instanceof byte[][]) return img;
+    else if (pixels instanceof short[][]) {
+      short[][] shorts = (short[][]) pixels;
+      byte[][] out = new byte[shorts.length][shorts[0].length];
+
+      for (int i=0; i<out.length; i++) {
+        for (int j=0; j<out[i].length; j++) {
+          if (shorts[i][j] < 0) shorts[i][j] += 32767;
+         
+          float diff = (float) max - (float) min;
+          float dist = (float) (shorts[i][j] - min) / diff;
+        
+
+          if (shorts[i][j] >= max) out[i][j] = (byte) 255;
+          else if (shorts[i][j] <= min) out[i][j] = 0;
+          else out[i][j] = (byte) (dist * 256);
+        }
+      }
+
+      return ImageTools.makeImage(out, img.getWidth(), img.getHeight());
+    }
+    else if (pixels instanceof int[][]) {
+      int[][] ints = (int[][]) pixels;
+      byte[][] out = new byte[ints.length][ints[0].length];
+
+      for (int i=0; i<out.length; i++) {
+        for (int j=0; j<out[i].length; j++) {
+          if (ints[i][j] >= max) out[i][j] = (byte) 255;
+          else if (ints[i][j] <= min) out[i][j] = 0;
+          else {
+            int diff = max - min;
+            float dist = (ints[i][j] - min) / diff;
+            out[i][j] = (byte) (dist * 256);
+          }
+        }
+      }
+
+      return ImageTools.makeImage(out, img.getWidth(), img.getHeight());
+    }
+    else if (pixels instanceof float[][]) {
+      float[][] floats = (float[][]) pixels;
+      byte[][] out = new byte[floats.length][floats[0].length];
+
+      for (int i=0; i<out.length; i++) {
+        for (int j=0; j<out[i].length; j++) {
+          if (floats[i][j] >= max) out[i][j] = (byte) 255;
+          else if (floats[i][j] <= min) out[i][j] = 0;
+          else {
+            int diff = max - min;
+            float dist = (floats[i][j] - min) / diff;
+            out[i][j] = (byte) (dist * 256);
+          }
+        }
+      }
+
+      return ImageTools.makeImage(out, img.getWidth(), img.getHeight());
+    }
+    else if (pixels instanceof double[][]) {
+      double[][] doubles = (double[][]) pixels;
+      byte[][] out = new byte[doubles.length][doubles[0].length];
+
+      for (int i=0; i<out.length; i++) {
+        for (int j=0; j<out[i].length; j++) {
+          if (doubles[i][j] >= max) out[i][j] = (byte) 255;
+          else if (doubles[i][j] <= min) out[i][j] = 0;
+          else {
+            int diff = max - min;
+            float dist = (float) (doubles[i][j] - min) / diff;
+            out[i][j] = (byte) (dist * 256);
+          }
+        }
+      }
+
+      return ImageTools.makeImage(out, img.getWidth(), img.getHeight());
+    }
+    return img;
+  }
+
+  /**
+   * Perform autoscaling on the given byte array;
+   * map min to 0 and max to 255.
+   */
+  public static byte[] autoscale(byte[] b, int min, int max, int bpp, 
+    boolean little) 
+  {
+    if (bpp == 1) return b;
+
+    byte[] out = new byte[b.length / bpp];
+
+    for (int i=0; i<b.length; i+=bpp) {
+      int s = DataTools.bytesToInt(b, i, bpp, little);
+
+      if (s >= max) s = 255;
+      else if (s <= min) s = 0;
+      else {
+        int diff = max - min;
+        float dist = (s - min) / diff;
+     
+        s = (int) dist * 256;
+      }
+
+      out[i / bpp] = (byte) s; 
+    }
+    return out;
   }
 
   // -- Image scaling --

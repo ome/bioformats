@@ -34,7 +34,7 @@ import loci.formats.*;
  * QTReader is the file format reader for QuickTime movie files.
  * It does not require any external libraries to be installed.
  *
- * Video codecs currently supported: raw, rle, jpeg, mjpb.
+ * Video codecs currently supported: raw, rle, jpeg, mjpb, rpza.
  * Additional video codecs will be added as time permits.
  *
  * @author Melissa Linkert linkert at cs.wisc.edu
@@ -217,6 +217,12 @@ public class QTReader extends FormatReader {
   /** Video codec used by this movie. */
   private String codec;
 
+  /** Some movies use two video codecs -- this is the second codec. */
+  private String altCodec;
+
+  /** Number of frames that use the alternate codec. */
+  private int altPlanes;
+
   /** An instance of the old QuickTime reader, in case this one fails. */
   private LegacyQTReader legacy;
 
@@ -237,6 +243,8 @@ public class QTReader extends FormatReader {
 
   /** Flag indicating whether the resource and data fork are separated. */
   private boolean spork;
+
+  private boolean flip;
 
   // -- Constructor --
 
@@ -287,13 +295,16 @@ public class QTReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
+    String code = codec;
+    if (no >= getImageCount(id) - altPlanes) code = altCodec;
+
     boolean doLegacy = useLegacy;
-    if (!doLegacy && !codec.equals("raw ") && !codec.equals("rle ") &&
-      !codec.equals("jpeg") && !codec.equals("mjpb"))
+    if (!doLegacy && !code.equals("raw ") && !code.equals("rle ") &&
+      !code.equals("jpeg") && !code.equals("mjpb") && !code.equals("rpza"))
     {
       if (DEBUG) {
         System.out.println("Unsupported codec (" +
-          codec + "); using QTJava reader");
+          code + "); using QTJava reader");
       }
       doLegacy = true;
     }
@@ -305,10 +316,7 @@ public class QTReader extends FormatReader {
     int offset = ((Integer) offsets.get(no)).intValue();
     int nextOffset = pixelBytes;
 
-    if (no == 0) {
-      scale = offset;
-    }
-
+    scale = ((Integer) offsets.get(0)).intValue();
     offset -= scale;
 
     if (no < offsets.size() - 1) {
@@ -329,16 +337,49 @@ public class QTReader extends FormatReader {
 
     canUsePrevious = (prevPixels != null) && (prevPlane == no - 1);
 
-    if (codec.equals("jpeg") || codec.equals("mjpb")) {
+    if (code.equals("jpeg") || code.equals("mjpb")) {
       return ImageTools.getBytes(openImage(id, no), false, no);
     }
 
-    byte[] bytes = uncompress(pixs, codec);
+    byte[] bytes = uncompress(pixs, code);
     // on rare occassions, we need to trim the data
     if (canUsePrevious && (prevPixels.length < bytes.length)) {
       byte[] temp = bytes;
       bytes = new byte[prevPixels.length];
       System.arraycopy(temp, 0, bytes, 0, bytes.length);
+    }
+
+    if (flip) {
+      // we need to flip the X and Y axes before displaying
+
+      byte[] tmp = bytes;
+      bytes = new byte[tmp.length];
+
+      int t = width;
+      width = height;
+      height = t;
+
+      int b = bytes.length / (width * height);
+
+      if (b % 3 != 0) {
+        for (int i=0; i<width; i++) {
+          for (int j=0; j<height; j++) {
+            for (int k=0; k<b; k++) {
+              bytes[j*width*b + (width - i) + b] = tmp[i*height*b + j + b];
+            }
+          }
+        }
+      }
+      else {
+        for (int i=0; i<3; i++) {
+          for (int j=0; j<width; j++) {
+            for (int k=0; k<height; k++) {
+              bytes[k*width +i*width*height + (width - j - 1)] =
+                tmp[j*height + k + i*width*height];
+            }
+          }
+        }
+      }
     }
 
     prevPixels = bytes;
@@ -353,13 +394,50 @@ public class QTReader extends FormatReader {
       pad = 0;
     }
 
-    if (pad > 0) {
+    if (pad > 0 && !code.equals("rpza")) {
       bytes = new byte[prevPixels.length - height*pad];
 
       for (int row=0; row<height; row++) {
         System.arraycopy(prevPixels, row*(width+pad), bytes,
           row*width, width);
       }
+    }
+    else if (code.equals("rpza")) {
+      bytes = new byte[prevPixels.length];
+
+      int cut = 0;
+
+      for (int i=width-1; i>=0; i--) {
+        byte[] redColumn = new byte[height];
+        byte[] greenColumn = new byte[height];
+        byte[] blueColumn = new byte[height];
+
+        for (int j=0; j<cut; j++) {
+          redColumn[j] = prevPixels[(j+height-cut)*width + i];
+          greenColumn[j] = prevPixels[(j+height-cut)*width + i + width*height];
+          blueColumn[j] = prevPixels[(j+height-cut)*width + i + 2*width*height];
+        }
+
+        for (int j=cut; j<height; j++) {
+          redColumn[j] = prevPixels[j*width + i];
+          greenColumn[j] = prevPixels[j*width + i + width*height];
+          blueColumn[j] = prevPixels[j*width + i + 2*width*height];
+        }
+
+        if (i > width - 1 - height) cut++;
+
+        for (int j=0; j<height; j++) {
+          bytes[j*width + i] = redColumn[j];
+          bytes[j*width + i + width*height] = greenColumn[j];
+          bytes[j*width + i + 2*width*height] = blueColumn[j];
+        }
+      }
+    }
+
+    if (flip) {
+      int t = width;
+      width = height;
+      height = t;
     }
 
     if (bitsPerPixel == 40 || bitsPerPixel == 8) {
@@ -397,13 +475,17 @@ public class QTReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
+
+    String code = codec;
+    if (no >= getImageCount(id) - altPlanes) code = altCodec;
+
     boolean doLegacy = useLegacy;
-    if (!doLegacy && !codec.equals("raw ") && !codec.equals("rle ") &&
-      !codec.equals("jpeg") && !codec.equals("mjpb"))
+    if (!doLegacy && !code.equals("raw ") && !code.equals("rle ") &&
+      !code.equals("jpeg") && !code.equals("mjpb") && !code.equals("rpza"))
     {
       if (DEBUG) {
         System.out.println("Unsupported codec (" +
-          codec + "); using QTJava reader");
+          code + "); using QTJava reader");
       }
       doLegacy = true;
     }
@@ -415,7 +497,7 @@ public class QTReader extends FormatReader {
     int offset = ((Integer) offsets.get(no)).intValue();
     int nextOffset = pixelBytes;
 
-    if (no == 0) scale = offset;
+    scale = ((Integer) offsets.get(0)).intValue();
     offset -= scale;
 
     if (no < offsets.size() - 1) {
@@ -436,17 +518,17 @@ public class QTReader extends FormatReader {
 
     canUsePrevious = (prevPixels != null) && (prevPlane == no - 1);
 
-    if (codec.equals("jpeg")) {
+    if (code.equals("jpeg")) {
       return bufferedJPEG(pixs);
     }
-    else if (codec.equals("mjpb")) {
+    else if (code.equals("mjpb")) {
       return mjpbUncompress(pixs);
     }
     else {
       int bpp = bitsPerPixel / 8;
       if (bpp == 3 || bpp == 4 || bpp == 5) bpp = 1;
-      return ImageTools.makeImage(openBytes(id, no), width, height,
-        isRGB(id) ? 3 : 1, false, bpp, little);
+      return ImageTools.makeImage(openBytes(id, no), flip ? height : width,
+        flip ? width : height, isRGB(id) ? 3 : 1, false, bpp, little);
     }
   }
 
@@ -468,32 +550,20 @@ public class QTReader extends FormatReader {
     parse(0, 0, in.length());
     numImages = offsets.size();
 
-    //String pixelType = "int";
     int bytesPerPixel = bitsPerPixel / 8;
     bytesPerPixel %= 4;
+
     switch (bytesPerPixel) {
       case 0:
-      case 1:
-        pixelType[0] = FormatReader.INT8;
-        break;
-      case 2:
-        pixelType[0] = FormatReader.INT16;
-        break;
-      case 3:
-        pixelType[0] = FormatReader.INT8;
-        break;
-      case 4:
-        pixelType[0] = FormatReader.INT32;
-        break;
-      default:
-        throw new RuntimeException(
-          "Unknown matching for pixel byte width of: " + bytesPerPixel);
+      case 1: pixelType[0] = FormatReader.INT8; break;
+      case 2: pixelType[0] = FormatReader.INT16; break;
+      case 3: pixelType[0] = FormatReader.INT8; break;
     }
 
-    sizeX[0] = width;
-    sizeY[0] = height;
+    sizeX[0] = flip ? height : width;
+    sizeY[0] = flip ? width : height;
     sizeZ[0] = numImages;
-    sizeC[0] = isRGB(id) ? 3 : 1;
+    sizeC[0] = bitsPerPixel < 40 ? 3 : 1;
     sizeT[0] = 1;
     currentOrder[0] = "XYCZT";
 
@@ -653,7 +723,23 @@ public class QTReader extends FormatReader {
         else if (atomType.equals("tkhd")) {
           // we've found the dimensions
 
-          in.skipBytes(74);
+          in.skipBytes(38);
+          int[][] matrix = new int[3][3];
+
+          for (int i=0; i<matrix.length; i++) {
+            for (int j=0; j<matrix[0].length; j++) {
+              matrix[i][j] = in.readInt();
+            }
+          }
+
+          // The contents of the matrix we just read determine whether or not
+          // we should flip the width and height.  We can check the first two
+          // rows of the matrix - they should correspond to the first two rows
+          // of an identity matrix.
+
+          // TODO : adapt to use the value of flip
+          flip = matrix[0][0] == 0 && matrix[1][0] != 0;
+
           width = in.readInt();
           height = in.readInt();
         }
@@ -685,23 +771,33 @@ public class QTReader extends FormatReader {
         else if (atomType.equals("stsd")) {
           // found video codec and pixel depth information
 
-          in.readDouble();
           in.readInt();
-          byte[] b = new byte[4];
-          in.read(b);
-          codec = new String(b);
+          int numEntries = in.readInt();
+          in.readInt();
 
-          in.skipBytes(74);
+          for (int i=0; i<numEntries; i++) {
+            byte[] b = new byte[4];
+            in.read(b);
+            if (i == 0) {
+              codec = new String(b);
+              in.skipBytes(74);
 
-          bitsPerPixel = in.readShort();
-          in.readShort();
-          in.readDouble();
-          //in.readFloat();
-          //gamma = in.readFloat();
-          int fieldsPerPlane = in.read();
-          interlaced = fieldsPerPlane == 2;
-          metadata.put("Codec", codec);
-          metadata.put("Bits per pixel", new Integer(bitsPerPixel));
+              bitsPerPixel = in.readShort();
+              if (codec.equals("rpza")) bitsPerPixel = 8;
+              in.readShort();
+              in.readDouble();
+              int fieldsPerPlane = in.read();
+              interlaced = fieldsPerPlane == 2;
+              metadata.put("Codec", codec);
+              metadata.put("Bits per pixel", new Integer(bitsPerPixel));
+              in.readDouble();
+              in.read();
+            }
+            else {
+              altCodec = new String(b);
+              metadata.put("Second codec", altCodec);
+            }
+          }
         }
         else if (atomType.equals("stsz")) {
           // found the number of planes
@@ -713,6 +809,24 @@ public class QTReader extends FormatReader {
             in.seek(in.getFilePointer() - 4);
             for (int b=0; b<numImages; b++) {
               chunkSizes.add(new Integer(in.readInt()));
+            }
+          }
+        }
+        else if (atomType.equals("stsc")) {
+          in.readInt();
+
+          int numChunks = in.readInt();
+
+          if (altCodec != null) {
+            int prevChunk = 0;
+            for (int i=0; i<numChunks; i++) {
+              int chunk = in.readInt();
+              int planesPerChunk = in.readInt();
+              int id = in.readInt();
+
+              if (id == 2) altPlanes += planesPerChunk * (chunk - prevChunk);
+
+              prevChunk = chunk;
             }
           }
         }
@@ -758,9 +872,176 @@ public class QTReader extends FormatReader {
     // JPEG and mjpb codecs handled separately, so not included in this list
     if (code.equals("raw ")) return pixs;
     else if (code.equals("rle ")) return rleUncompress(pixs);
+    else if (code.equals("rpza")) return rpzaUncompress(pixs);
     else {
       throw new FormatException("Sorry, " + codec + " codec is not supported");
     }
+  }
+
+  /** Uncompresses an RPZA compressed image plane. */
+  private byte[] rpzaUncompress(byte[] input) throws FormatException {
+    bitsPerPixel = 8;
+    int[] out = new int[width * height];
+
+    int pt = 1; // pointer into the array of compressed bytes
+
+    // get the chunk size
+    int size = DataTools.bytesToInt(input, pt, 3, false);
+    pt += 3;
+
+    int totalBlocks = ((width + 3) / 4) * ((height + 3) / 4);
+    int currentBlock = 0;
+    int blocksPerRow = ((width + 3) / 4);
+    int rowPtr = 0;
+    int pixelPtr = 0;
+    int colorA = 0, colorB = 0;
+
+    // process chunk data
+
+    while (pt + 4 < input.length && currentBlock < totalBlocks) {
+      byte opcode = input[pt];
+      pt++;
+
+      int nBlocks = (opcode & 0x1f) + 1;
+
+      if ((opcode & 0x80) == 0) {
+        colorA = (opcode << 8) | input[pt];
+        pt++;
+        opcode = 0;
+
+        if ((input[pt] & 0x80) != 0) {
+          opcode = 0x20;
+          nBlocks = 1;
+        }
+      }
+
+      switch (opcode & 0xe0) {
+        case 0x80:
+          // skip blocks
+          while (nBlocks > 0) {
+            currentBlock++;
+            nBlocks--;
+            pixelPtr += 4;
+            if (pixelPtr >= width - 1) {
+              rowPtr += 4;
+              pixelPtr = 0;
+            }
+          }
+          break;
+        case 0xa0:
+          // fill blocks with one color
+          colorA = DataTools.bytesToInt(input, pt, 2, false);
+          pt += 2;
+          while (nBlocks > 0) {
+            // fill the whole block with colorA
+
+            for (int y=0; y<4; y++) {
+              for (int x=0; x<4; x++) {
+                if ((rowPtr + y)*width + pixelPtr + x < out.length) {
+                  out[(rowPtr + y)*width + pixelPtr + x] = colorA;
+                }
+              }
+            }
+
+            pixelPtr += 4;
+            if (pixelPtr >= width - 1) {
+              rowPtr += 4;
+              pixelPtr = 0;
+            }
+            currentBlock++;
+            nBlocks--;
+          }
+          break;
+        case 0xc0:
+          colorA = DataTools.bytesToInt(input, pt, 2, false);
+          pt += 2;
+        case 0x20:
+          // fill blocks with 4 colors
+          colorB = DataTools.bytesToInt(input, pt, 2, false);
+          pt += 2;
+
+          // sort out the colors
+          int[] colors = new int[4];
+          colors[0] = colorB;
+          colors[1] = 0;
+          colors[2] = 0;
+          colors[3] = colorA;
+
+          int ta = (colorA >> 10) & 0x1f;
+          int tb = (colorB >> 10) & 0x1f;
+          colors[1] |= ((11 * ta + 21 * tb) >> 5) << 10;
+          colors[2] |= ((21 * ta + 11 * tb) >> 5) << 10;
+
+          ta = (colorA >> 5) & 0x1f;
+          tb = (colorB >> 5) & 0x1f;
+          colors[1] |= ((11 * ta + 21 * tb) >> 5) << 5;
+          colors[2] |= ((21 * ta + 11 * tb) >> 5) << 5;
+
+          ta = colorA & 0x1f;
+          tb = colorB & 0x1f;
+          colors[1] |= ((11 * ta + 21 * tb) >> 5);
+          colors[2] |= ((21 * ta + 11 * tb) >> 5);
+
+          while (nBlocks > 0) {
+            for (int y=0; y<4; y++) {
+              if (pt >= input.length) break;
+              int ndx = input[pt];
+              pt++;
+              for (int x=0; x<4; x++) {
+                int idx = (ndx >> (2 * (3 - x))) & 0x03;
+                if ((rowPtr + y)*width + pixelPtr + x < out.length) {
+                  out[(rowPtr + y)*width + pixelPtr + x] = colors[idx];
+                }
+              }
+            }
+
+            pixelPtr += 4;
+            if (pixelPtr >= width - 1) {
+              rowPtr += 4;
+              pixelPtr = 0;
+            }
+            currentBlock++;
+            nBlocks--;
+          }
+
+          break;
+        case 0x00:
+          // fill block with 16 colors
+
+          for (int y=0; y<4; y++) {
+            for (int x=0; x<4; x++) {
+              if (y != 0 || x != 0) {
+                colorA = DataTools.bytesToInt(input, pt, 2, false);
+                pt += 2;
+              }
+              if ((rowPtr + y)*width + pixelPtr + x < out.length) {
+                out[(rowPtr + y)*width + pixelPtr + x] = colorA;
+              }
+            }
+          }
+
+          pixelPtr += 4;
+          if (pixelPtr >= width - 1) {
+            rowPtr += 4;
+            pixelPtr = 0;
+          }
+
+          currentBlock++;
+          break;
+      }
+    }
+
+    // convert int array to byte array and return
+    // note that the colors need to be reversed
+
+    byte[] rtn = new byte[out.length * 3];
+    for (int i=0; i<out.length; i++) {
+      int color = 65535 - out[i];
+      rtn[i] = (byte) ((color >> 10) & 0x1f);
+      rtn[i + out.length] = (byte) ((color >> 5) & 0x1f);
+      rtn[i + 2*out.length] = (byte) (color & 0x1f);
+    }
+    return rtn;
   }
 
   /** Uncompresses a MJPEG-B compressed image plane. */
@@ -1076,24 +1357,52 @@ public class QTReader extends FormatReader {
       BufferedImage top = bufferedJPEG(v.toByteArray());
       BufferedImage bottom = bufferedJPEG(v2.toByteArray());
 
-      BufferedImage result = new BufferedImage(top.getWidth(),
-        top.getHeight() + bottom.getHeight(), top.getType());
+      BufferedImage result = null;
 
-      int topCount = 0;
-      int bottomCount = 0;
+      if (flip) {
+        result = new BufferedImage(top.getHeight() + bottom.getHeight(),
+          top.getWidth(), top.getType());
 
-      for (int i=0; i<result.getHeight(); i++) {
-        if (i % 2 == 0) {
-          for (int j=0; j<result.getWidth(); j++) {
-            result.setRGB(j, i, top.getRGB(j, topCount));
+        int topCount = 0;
+        int bottomCount = 0;
+
+        for (int i=0; i<result.getWidth(); i++) {
+          if (i % 2 == 0) {
+            for (int j=0; j<result.getHeight(); j++) {
+              result.setRGB((result.getWidth() - i - 1), j,
+                top.getRGB(j, topCount));
+            }
+            topCount++;
           }
-          topCount++;
+          else {
+            for (int j=0; j<result.getHeight(); j++) {
+              result.setRGB((result.getWidth() - i - 1), j,
+                bottom.getRGB(j, bottomCount));
+            }
+            bottomCount++;
+          }
         }
-        else {
-          for (int j=0; j<result.getWidth(); j++) {
-            result.setRGB(j, i, bottom.getRGB(j, bottomCount));
+      }
+      else {
+        result = new BufferedImage(top.getWidth(),
+          top.getHeight() + bottom.getHeight(), top.getType());
+
+        int topCount = 0;
+        int bottomCount = 0;
+
+        for (int i=0; i<result.getHeight(); i++) {
+          if (i % 2 == 0) {
+            for (int j=0; j<result.getWidth(); j++) {
+              result.setRGB(j, i, top.getRGB(j, topCount));
+            }
+            topCount++;
           }
-          bottomCount++;
+          else {
+            for (int j=0; j<result.getWidth(); j++) {
+              result.setRGB(j, i, bottom.getRGB(j, bottomCount));
+            }
+            bottomCount++;
+          }
         }
       }
 
@@ -1164,11 +1473,13 @@ public class QTReader extends FormatReader {
       }
       off += (width * ebpp);
 
-      for (int i=(start+numLines); i<height; i++) {
-        int offset = i * width * ebpp;
-        System.arraycopy(prevPixels, offset, output, offset,
-          width * ebpp);
-      }
+      if (canUsePrevious) {
+        for (int i=(start+numLines); i<height; i++) {
+          int offset = i * width * ebpp;
+          System.arraycopy(prevPixels, offset, output, offset,
+            width * ebpp);
+        }
+      }  
     }
     else throw new FormatException("Unsupported header : " + header);
 
