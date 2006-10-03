@@ -492,7 +492,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     String cmd = e.getActionCommand();
     if (cmd == null) cmd = ""; // prevent NullPointer
     if (cmd.equals("xml")) {
-      String[] args = {db.filename};
+      String[] args = {db.id};
       //MetadataNotebook metaNote = new MetadataNotebook(args, false, false);
       try {
         ReflectedUniverse r = new ReflectedUniverse();

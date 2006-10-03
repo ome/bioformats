@@ -26,8 +26,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.browser;
 
 import ij.process.ImageProcessor;
-import loci.formats.*;
+import java.io.IOException;
 import java.util.Arrays;
+import loci.formats.*;
 
 public class CacheManager 
   implements Runnable
@@ -92,34 +93,34 @@ public class CacheManager
   private int oldStrategy;
   
   /** Holds the amount of "back" images to store in the cache.*/
-  private int backZ,backT,backC;
+  private int backZ, backT, backC;
   
   /**
   * Holds the previous amount of back images stored in cache
   * to use when clearing the cache for a particular dimension.
   */
-  private int oldBackZ,oldBackT,oldBackC;
+  private int oldBackZ, oldBackT, oldBackC;
   
   /** Holds the amount of "forward" images to store in the cache.*/
-  private int forwardZ,forwardT,forwardC;
+  private int forwardZ, forwardT, forwardC;
   
   /**
   * Holds the previous amount of forward images stored in cache
   * to use when clearing the cache for a particular dimension.
   */
-  private int oldForwardZ,oldForwardT,oldForwardC;
+  private int oldForwardZ, oldForwardT, oldForwardC;
   
   /**
   * Holds the current "origin" slice's coordinates. These coordinates
   * are used to center the caching around this slice.
   */
-  private int z,t,c;
+  private int z, t, c;
   
   /** Holds the previous origin slice's coordinates.*/
-  private int oldZ,oldT,oldC;
+  private int oldZ, oldT, oldC;
   
   /** Holds the total size of the various dimensions of the file(s).*/
-  private int sizeZ,sizeT,sizeC;
+  private int sizeZ, sizeT, sizeC;
   
   /** The path name of the image file being worked on.*/
   private String fileName;
@@ -138,17 +139,15 @@ public class CacheManager
   protected int [] loadList;
 
   // - Constructors
-  public CacheManager(int size, 
-    IFormatReader read, String fileName) 
-  {
-    this(0,size,read,fileName, T_AXIS, CROSS_MODE);
+  public CacheManager(int size, IFormatReader read, String fileName) {
+    this(0, size, read, fileName, T_AXIS, CROSS_MODE);
   }
   
   public CacheManager(int back, int forward,
     IFormatReader read, String fileName, int axis, int mode)
   {
-    this(0,0,0,back,forward,back,forward,back,
-      forward,read,fileName,axis,mode,FORWARD_FIRST);
+    this(0, 0, 0, back, forward, back, forward, back,
+      forward, read, fileName, axis, mode, FORWARD_FIRST);
   }
   
   /**
@@ -195,14 +194,16 @@ public class CacheManager
     quit = false;
     this.fileName = fileName;
     this.read = read;
-    try {
-      sizeZ = read.getSizeZ(fileName);
-      sizeT = read.getSizeT(fileName);
-      sizeC = read.getSizeC(fileName);
-      cache = new ImageProcessor[read.getImageCount(fileName)];
-    }
-    catch (Exception exc) {
-      if (DEBUG) System.out.println("Error reading size of file.");
+    synchronized (read) {
+      try {
+        sizeZ = read.getSizeZ(fileName);
+        sizeT = read.getSizeT(fileName);
+        sizeC = read.getSizeC(fileName);
+        cache = new ImageProcessor[read.getImageCount(fileName)];
+      }
+      catch (Exception exc) {
+        if (DEBUG) System.out.println("Error reading size of file.");
+      }
     }
     oldAxis = axis;
     oldMode = mode;
@@ -275,7 +276,7 @@ public class CacheManager
   * @param forward The number of forward slices to cache.
   */
   public void setSize(int back, int forward) {
-    setSize(back,forward,back,forward,back,forward);
+    setSize(back, forward, back, forward, back, forward);
   }
   
   /**
@@ -334,10 +335,12 @@ public class CacheManager
   */
   public int getSlice() {
     int index;
-    try {
-      index = read.getIndex(fileName,z,c,t);
+    synchronized (read) {
+      try {
+        index = read.getIndex(fileName, z, c, t);
+      }
+      catch (Exception exc) { return -1;}
     }
-    catch (Exception exc) { return -1;}
     return index;
   }
   
@@ -350,29 +353,32 @@ public class CacheManager
     if(DEBUG) System.out.println("GETTING SLICE: " + index);
 
     int[] coords;
-    try {
-      coords = read.getZCTCoords(fileName,index);
-      z = coords[0];
-      c = coords[1];
-      t = coords[2];
+    synchronized (read) {
+      try {
+        coords = read.getZCTCoords(fileName, index);
+        z = coords[0];
+        c = coords[1];
+        t = coords[2];
+      }
+      catch (FormatException exc) { exc.printStackTrace(); }
+      catch (IOException exc) { exc.printStackTrace(); }
     }
-    catch (Exception exc) { if(DEBUG) exc.printStackTrace();}
     
     ImageProcessor result = cache[index];
-    if (Arrays.binarySearch(loadList,index) >= 0) {
+    if (Arrays.binarySearch(loadList, index) >= 0) {
       if(result != null) {
         if(DEBUG) System.out.println("Slice found in cache.");      
         return result;
       }
       else {
         if(DEBUG) System.out.println("Slice not found in cache. LOADING...");  
-        result = ImagePlusWrapper.getImageProcessor(fileName,read,index);
+        result = ImagePlusWrapper.getImageProcessor(fileName, read, index);
         cache[index] = result;
         return result;
       }
     }
     else {
-      result = ImagePlusWrapper.getImageProcessor(fileName,read,index);
+      result = ImagePlusWrapper.getImageProcessor(fileName, read, index);
       cache[index] = result;
 
       updateCache();
@@ -389,13 +395,14 @@ public class CacheManager
   */
   public ImageProcessor getSlice(int z, int t, int c) {
     int index;
-    try {
-      System.out.println("file=" + fileName + "; z=" + z + "; t=" + t + "; c=" + c + "; sizeZ=" + read.getSizeZ(fileName) + "; sizeT=" + read.getSizeT(fileName) + "; sizeC=" + read.getSizeC(fileName));//TEMP
-      index = read.getIndex(fileName,z,c,t);
-    }
-    catch (Exception exc) {
-      if (DEBUG) exc.printStackTrace();
-      return null;
+    synchronized (read) {
+      try {
+        index = read.getIndex(fileName, z, c, t);
+      }
+      catch (Exception exc) {
+        if (DEBUG) exc.printStackTrace();
+        return null;
+      }
     }
     return getSlice(index);
   }
@@ -407,7 +414,7 @@ public class CacheManager
   */
   public ImageProcessor getTempSlice(int index) {
     if (cache[index] != null) return cache[index];
-    return ImagePlusWrapper.getImageProcessor(fileName,read,index);
+    return ImagePlusWrapper.getImageProcessor(fileName, read, index);
   }
   
   /**
@@ -419,12 +426,14 @@ public class CacheManager
   */
   public ImageProcessor getTempSlice(int z, int t, int c) {
     int index;
-    try {
-      index = read.getIndex(fileName,z,c,t);
-    }
-    catch (Exception exc) {
-      if (DEBUG) exc.printStackTrace();
-      return null;
+    synchronized (read) {
+      try {
+        index = read.getIndex(fileName, z, c, t);
+      }
+      catch (Exception exc) {
+        if (DEBUG) exc.printStackTrace();
+        return null;
+      }
     }
     return getTempSlice(index);
   }
@@ -437,7 +446,7 @@ public class CacheManager
   */
   private int [] getToCache(boolean old) {
     int [] result = null;
-    int z,t,c,backZ,forwardZ,backT,forwardT,backC,forwardC,axis,mode;
+    int z, t, c, backZ, forwardZ, backT, forwardT, backC, forwardC, axis, mode;
     if (old) {
       z = oldZ;
       t = oldT;
@@ -470,16 +479,16 @@ public class CacheManager
         int lowBound = z - backZ;
         int upBound = z + forwardZ;
         
-        int [] upSet = getUpSet(lowBound,upBound, Z_AXIS, z, t, c);
-        int [] lowSet = getLowSet(lowBound,upBound, Z_AXIS, z, t, c);
+        int [] upSet = getUpSet(lowBound, upBound, Z_AXIS, z, t, c);
+        int [] lowSet = getLowSet(lowBound, upBound, Z_AXIS, z, t, c);
         
         result = new int [upSet.length + lowSet.length];
         
         if (strategy == FORWARD_FIRST) {
-          result = append(lowSet,upSet);
+          result = append(lowSet, upSet);
         }
         else if(strategy == SURROUND_FIRST) {
-          result = getMix(lowSet,upSet);
+          result = getMix(lowSet, upSet);
         }
       }
       else if (axis == (Z_AXIS | T_AXIS)) {
@@ -488,22 +497,22 @@ public class CacheManager
         int lowBoundT = t - backT;
         int upBoundT = t + forwardT;
         
-        int [] upSetZ = getUpSet(lowBoundZ,upBoundZ, Z_AXIS, z, t, c);
-        int [] lowSetZ = getLowSet(lowBoundZ,upBoundZ, Z_AXIS, z, t, c);
-        int [] upSetT = getUpSet(lowBoundT,upBoundT, T_AXIS, z, t, c);
-        int [] lowSetT = getLowSet(lowBoundT,upBoundT, T_AXIS, z, t, c);
+        int [] upSetZ = getUpSet(lowBoundZ, upBoundZ, Z_AXIS, z, t, c);
+        int [] lowSetZ = getLowSet(lowBoundZ, upBoundZ, Z_AXIS, z, t, c);
+        int [] upSetT = getUpSet(lowBoundT, upBoundT, T_AXIS, z, t, c);
+        int [] lowSetT = getLowSet(lowBoundT, upBoundT, T_AXIS, z, t, c);
         
         result = new int [upSetZ.length + lowSetZ.length + upSetT.length
           + lowSetT.length];
           
         int [] upSet = getMix(upSetT, upSetZ);
-        int [] lowSet = getMix(lowSetT,lowSetZ);
+        int [] lowSet = getMix(lowSetT, lowSetZ);
         
         if (strategy == FORWARD_FIRST) {
-          result = append(lowSet,upSet);
+          result = append(lowSet, upSet);
         }
         else if(strategy == SURROUND_FIRST) {
-          result = getMix(lowSet,upSet);
+          result = getMix(lowSet, upSet);
         }
       }
       else if (axis == (Z_AXIS | C_AXIS)) {
@@ -514,16 +523,16 @@ public class CacheManager
         int lowBound = t - backT;
         int upBound = t + forwardT;
         
-        int [] upSet = getUpSet(lowBound,upBound, T_AXIS, z, t, c);
-        int [] lowSet = getLowSet(lowBound,upBound, T_AXIS, z, t, c);
+        int [] upSet = getUpSet(lowBound, upBound, T_AXIS, z, t, c);
+        int [] lowSet = getLowSet(lowBound, upBound, T_AXIS, z, t, c);
         
         result = new int [upSet.length + lowSet.length];
         
         if (strategy == FORWARD_FIRST) {
-          result = append(lowSet,upSet);
+          result = append(lowSet, upSet);
         }
         else if(strategy == SURROUND_FIRST) {
-          result = getMix(lowSet,upSet);
+          result = getMix(lowSet, upSet);
         }
       }
       else if (axis == (T_AXIS | C_AXIS)) {
@@ -532,16 +541,16 @@ public class CacheManager
         int lowBound = c - backC;
         int upBound = c + forwardC;
         
-        int [] upSet = getUpSet(lowBound,upBound, C_AXIS, z, t, c);
-        int [] lowSet = getLowSet(lowBound,upBound, C_AXIS, z, t, c);
+        int [] upSet = getUpSet(lowBound, upBound, C_AXIS, z, t, c);
+        int [] lowSet = getLowSet(lowBound, upBound, C_AXIS, z, t, c);
         
         result = new int [upSet.length + lowSet.length];
         
         if (strategy == FORWARD_FIRST) {
-          result = append(lowSet,upSet);
+          result = append(lowSet, upSet);
         }
         else if(strategy == SURROUND_FIRST) {
-          result = getMix(lowSet,upSet);
+          result = getMix(lowSet, upSet);
         }
       }
     }
@@ -691,7 +700,7 @@ public class CacheManager
   * to be cached, with the first to be cached in the beginning of
   * the array.
   */
-  private int [] getUpSet(int lowBound,int upBound,
+  private int [] getUpSet(int lowBound, int upBound,
     int someAxis, int z, int t, int c)
   {
     int size = -1;
@@ -729,20 +738,22 @@ public class CacheManager
         if(i >= size) realCoord = i - size;
 
         int index;
-        try {
-          if (someAxis == Z_AXIS) {
-            index = read.getIndex(fileName,realCoord,c,t);
+        synchronized (read) {
+          try {
+            if (someAxis == Z_AXIS) {
+              index = read.getIndex(fileName, realCoord, c, t);
+            }
+            else if (someAxis == T_AXIS) {
+              index = read.getIndex(fileName, z, c, realCoord);
+            }
+            else {
+              index = read.getIndex(fileName, z, realCoord, t);
+            }
           }
-          else if (someAxis == T_AXIS) {
-            index = read.getIndex(fileName,z,c,realCoord);
+          catch (Exception exc) { 
+            exc.printStackTrace();
+            return null;
           }
-          else {
-            index = read.getIndex(fileName,z,realCoord,t);
-          }
-        }
-        catch (Exception exc) { 
-          if(DEBUG) exc.printStackTrace();
-          return null;
         }
         
         result[count] = index;
@@ -775,7 +786,7 @@ public class CacheManager
   * to be cached, with the first to be cached in the beginning of
   * the array.
   */
-  private int [] getLowSet(int lowBound,int upBound,int someAxis, int z, int t, int c) {
+  private int [] getLowSet(int lowBound, int upBound, int someAxis, int z, int t, int c) {
     int size = -1;
     int mid = -1;
     if (someAxis == Z_AXIS) {
@@ -811,20 +822,22 @@ public class CacheManager
         if(i < 0) realCoord = size + i;
 
         int index;
-        try {
-          if (someAxis == Z_AXIS) {
-            index = read.getIndex(fileName,realCoord,c,t);
+        synchronized (read) {
+          try {
+            if (someAxis == Z_AXIS) {
+              index = read.getIndex(fileName, realCoord, c, t);
+            }
+            else if (someAxis == T_AXIS) {
+              index = read.getIndex(fileName, z, c, realCoord);
+            }
+            else {
+              index = read.getIndex(fileName, z, realCoord, t);
+            }
           }
-          else if (someAxis == T_AXIS) {
-            index = read.getIndex(fileName,z,c,realCoord);
+          catch (Exception exc) { 
+            exc.printStackTrace();
+            return null;
           }
-          else {
-            index = read.getIndex(fileName,z,realCoord,t);
-          }
-        }
-        catch (Exception exc) { 
-          if(DEBUG) exc.printStackTrace();
-          return null;
         }
         
         result[count] = index;
@@ -892,7 +905,7 @@ public class CacheManager
       if(cache[loadList[i]] == null) {
         if (DEBUG) System.out.println("CACHING... index: " + loadList[i]); 
         ImageProcessor imp = ImagePlusWrapper.getImageProcessor(
-          fileName,read,loadList[i]);
+          fileName, read, loadList[i]);
         cache[loadList[i]] = imp;
       }
     }

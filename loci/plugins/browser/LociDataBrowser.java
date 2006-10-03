@@ -28,7 +28,6 @@ import ij.*;
 import ij.gui.GenericDialog;
 import ij.gui.ImageCanvas;
 import ij.io.FileInfo;
-import java.io.File;
 import loci.formats.*;
 
 /**
@@ -52,10 +51,10 @@ public class LociDataBrowser {
   protected String[] names;
 
   /** The file format reader used by the plugin. */
-  protected ImageReader reader = new ImageReader();
+  protected IFormatReader reader;
 
   /** The current file name. */
-  protected String filename;
+  protected String id;
 
   /** Whether dataset has multiple Z, T and C positions. */
   protected boolean hasZ, hasT, hasC;
@@ -79,6 +78,16 @@ public class LociDataBrowser {
   protected int series;
 
   private ImageStack stack;
+
+  // -- Constructor --
+
+  /** Constructs a new data browser. */
+  public LociDataBrowser() {
+    try {
+      reader = new FileStitcher(new ChannelSeparator());
+    }
+    catch (FormatException exc) { exc.printStackTrace(); }
+  }
 
   // -- LociDataBrowser API methods --
 
@@ -180,102 +189,99 @@ public class LociDataBrowser {
         // process input
         lengths = new int[3];
 
-        String absname = name;
-        filename = absname;
-        name = FilePattern.findPattern(new File(name));
-        name = name.substring(name.lastIndexOf(File.separatorChar)+1);
-        if (DEBUG) System.err.println("name = "+name);
+        id = name;
+        if (DEBUG) System.err.println("id = " + id);
 
         if (virtual) {
-          IFormatReader fr = (IFormatReader) reader.getReader(absname);
-          fr.setMetadataStore(new OMEXMLMetadataStore());
-          fr.getMetadataStore(absname).createRoot();
-          FileStitcher fs = new FileStitcher(fr);
-          ChannelMerger cm = new ChannelMerger(fs);
-          setSeries(cm.getSeriesCount(absname));
-          cm.setSeries(absname, series);
+          OMEXMLMetadataStore store = new OMEXMLMetadataStore();
+          synchronized (reader) {
+            reader.setMetadataStore(store);
+            store.createRoot();
+            reader.setSeries(id, series);
 
-          int num = cm.getImageCount(absname);
+            int num = reader.getImageCount(id);
 
-          int size = 20;
-          if (num < size) size = num;
+            int size = 20;
+            if (num < size) size = num;
 
-          String ord = cm.getDimensionOrder(absname);
-          ord = ord.substring(2);
-          int minor, major;
-          if (ord.charAt(0) == 'Z') {
-            minor = reader.getSizeZ(filename);
-            major = reader.getSizeT(filename);
-          }
-          else if (ord.charAt(0) == 'T') {
-            major = reader.getSizeZ(filename);
-            minor = reader.getSizeT(filename);
-          }
-          else {
-            if (ord.charAt(1) == 'Z') {
-              minor = reader.getSizeZ(filename);
-              major = reader.getSizeT(filename);
+            String ord = reader.getDimensionOrder(id);
+            ord = ord.substring(2);
+            int minor, major;
+            if (ord.charAt(0) == 'Z') {
+              minor = reader.getSizeZ(id);
+              major = reader.getSizeT(id);
+            }
+            else if (ord.charAt(0) == 'T') {
+              major = reader.getSizeZ(id);
+              minor = reader.getSizeT(id);
             }
             else {
-              major = reader.getSizeZ(filename);
-              minor = reader.getSizeT(filename);
+              if (ord.charAt(1) == 'Z') {
+                minor = reader.getSizeZ(id);
+                major = reader.getSizeT(id);
+              }
+              else {
+                major = reader.getSizeZ(id);
+                minor = reader.getSizeT(id);
+              }
             }
-          }
 
-          manager = new CacheManager(0,0,0,0,0,5,25,0,0,cm,
-            absname, CacheManager.T_AXIS,
-            CacheManager.CROSS_MODE, CacheManager.FORWARD_FIRST);
-          //manager = new CacheManager(size, cm, absname);
+            manager = new CacheManager(0, 0, 0, 0, 0, 5, 25, 0, 0,
+              reader, id, CacheManager.T_AXIS,
+              CacheManager.CROSS_MODE, CacheManager.FORWARD_FIRST);
+            //manager = new CacheManager(size, cm, id);
 
-          try {
-            numZ = cm.getSizeZ(absname);
-            numC = cm.getSizeC(absname);
-            if (cm.isRGB(absname)) {
-              if (numC <= 3) numC = 1;
-              else numC /= 3;
+            try {
+              numZ = reader.getSizeZ(id);
+              numC = reader.getSizeC(id);
+              if (reader.isRGB(id)) {
+                if (numC <= 3) numC = 1;
+                else numC /= 3;
+              }
+              numT = reader.getSizeT(id);
+              hasZ = numZ > 1;
+              hasC = numC > 1;
+              hasT = numT > 1;
+
+              String order = reader.getDimensionOrder(id);
+              zIndex = order.indexOf("Z") - 2;
+              cIndex = order.indexOf("C") - 2;
+              tIndex = order.indexOf("T") - 2;
+
+              lengths[zIndex] = numZ;
+              lengths[tIndex] = numT;
+              lengths[cIndex] = numC;
+
+              // CTR: stack must not be null
+              int sizeX = reader.getSizeX(id);
+              int sizeY = reader.getSizeY(id);
+              stack = new ImageStack(sizeX, sizeY);
+              // CTR: must add at least one image to the stack
+              stack.addSlice(id + " : 1", manager.getSlice(0, 0, 0));
             }
-            numT = cm.getSizeT(absname);
-            hasZ = numZ > 1;
-            hasC = numC > 1;
-            hasT = numT > 1;
-
-            String order = cm.getDimensionOrder(absname);
-            zIndex = order.indexOf("Z") - 2;
-            cIndex = order.indexOf("C") - 2;
-            tIndex = order.indexOf("T") - 2;
-
-            lengths[zIndex] = numZ;
-            lengths[tIndex] = numT;
-            lengths[cIndex] = numC;
-
-            // CTR: stack must not be null
-            stack = new ImageStack(cm.getSizeX(absname), cm.getSizeY(absname));
-            // CTR: must add at least one image to the stack
-            stack.addSlice(absname + " : 1", manager.getSlice(0, 0, 0));
-          }
-          catch (OutOfMemoryError e) {
-            IJ.outOfMemory("LociDataBrowser");
-            if (stack != null) stack.trim();
+            catch (OutOfMemoryError e) {
+              IJ.outOfMemory("LociDataBrowser");
+              if (stack != null) stack.trim();
+            }
           }
 
           if (stack == null || stack.getSize() == 0) {
             IJ.error("Sorry, there was a problem creating the image stack.");
             return;
           }
-          ImagePlus imp = new ImagePlus(absname, stack);
+          ImagePlus imp = new ImagePlus(id, stack);
           
           FileInfo fi = new FileInfo();
           try {
-            fi.description =
-              ((OMEXMLMetadataStore) fr.getMetadataStore(absname)).dumpXML();
+            fi.description = store.dumpXML();
           }
-          catch (Exception e) { }
+          catch (Exception exc) { exc.printStackTrace(); }
 
           imp.setFileInfo(fi);
           show(imp);
         }
         else {
-          ipw = new ImagePlusWrapper(absname, reader.getReader(name), true);
+          ipw = new ImagePlusWrapper(id, reader, true);
           numZ = ipw.sizeZ; numT = ipw.sizeT; numC = ipw.sizeC;
           zIndex = ipw.dim.indexOf('Z') - 2;
           tIndex = ipw.dim.indexOf('T') - 2;

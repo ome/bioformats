@@ -47,181 +47,187 @@ public class ImagePlusWrapper {
   public ImagePlusWrapper(String name, IFormatReader r, boolean stitch)
     throws IOException, FormatException
   {
-    try {
-      OMEXMLMetadataStore s = new OMEXMLMetadataStore();
-      s.createRoot();
-      r.setMetadataStore(s);
-    }
-    catch (Exception e) { }
-    ChannelMerger cm = null;
-    if (stitch) cm = new ChannelMerger(new FileStitcher(r));
-    else cm = new ChannelMerger(r);
-
-    // get # images in all matching files
-    numTotal = cm.getImageCount(name);
-
-    dim = cm.getDimensionOrder(name);
-    sizeX = cm.getSizeX(name);
-    sizeY = cm.getSizeY(name);
-    sizeZ = cm.getSizeZ(name);
-    sizeT = cm.getSizeT(name);
-    sizeC = cm.getSizeC(name);
-    if (LociDataBrowser.DEBUG) {
-      System.err.println("numTotal = "+numTotal);
-    }
-
-    int num = cm.getImageCount(name);
-    ImageStack stackB = null, stackS = null,
-      stackF = null, stackO = null;
-    long start = System.currentTimeMillis();
-    long time = start;
-    for (int i=0; i<num; i++) {
-      long clock = System.currentTimeMillis();
-      if (clock - time >= 50) {
-        IJ.showStatus("Reading plane "+(i+1)+"/"+num);
-        time = clock;
+    store = new OMEXMLMetadataStore();
+    synchronized (r) {
+      try {
+        store.createRoot();
+        r.setMetadataStore(store);
       }
-      IJ.showProgress((double) i/num);
-      BufferedImage img = cm.openImage(name, i);
-      if (img.getWidth() != sizeX || img.getHeight() != sizeY) {
-        try {
+      catch (Exception e) { e.printStackTrace(); }
+
+      // get # images in all matching files
+      numTotal = r.getImageCount(name);
+
+      dim = r.getDimensionOrder(name);
+      sizeX = r.getSizeX(name);
+      sizeY = r.getSizeY(name);
+      sizeZ = r.getSizeZ(name);
+      sizeT = r.getSizeT(name);
+      sizeC = r.getSizeC(name);
+      if (LociDataBrowser.DEBUG) {
+        System.err.println("numTotal = "+numTotal);
+      }
+
+      int num = r.getImageCount(name);
+      ImageStack stackB = null, stackS = null,
+        stackF = null, stackO = null;
+      long start = System.currentTimeMillis();
+      long time = start;
+      for (int i=0; i<num; i++) {
+        long clock = System.currentTimeMillis();
+        if (clock - time >= 50) {
+          IJ.showStatus("Reading plane "+(i+1)+"/"+num);
+          time = clock;
+        }
+        IJ.showProgress((double) i/num);
+        BufferedImage img = r.openImage(name, i);
+
+        // scale image if it is the wrong size
+        int w = img.getWidth(), h = img.getHeight();
+        if (w != sizeX || h != sizeY) {
+          System.out.println("Warning: image size " + w + "x" + h +
+            " does not match expected size of " + sizeX + "x" + sizeY + ".");
           img = ImageTools.scale(img, sizeX, sizeY);
+          w = sizeX;
+          h = sizeY;
         }
-        catch (Exception e) {
-        }
-      }
 
-      ImageProcessor ip = null;
-      WritableRaster raster = img.getRaster();
-      int c = raster.getNumBands();
-      int tt = raster.getTransferType();
-      int w = img.getWidth(), h = img.getHeight();
-      if (c == 1) {
-        if (tt == DataBuffer.TYPE_BYTE) {
-          byte[] b = ImageTools.getBytes(img)[0];
-          if (b.length > w*h) {
-            byte[] tmp = b;
-            b = new byte[w*h];
-            System.arraycopy(tmp, 0, b, 0, b.length);
+        ImageProcessor ip = null;
+        WritableRaster raster = img.getRaster();
+        int c = raster.getNumBands();
+        int tt = raster.getTransferType();
+        if (c == 1) {
+          if (tt == DataBuffer.TYPE_BYTE) {
+            byte[] b = ImageTools.getBytes(img)[0];
+            if (b.length > w*h) {
+              byte[] tmp = b;
+              b = new byte[w*h];
+              System.arraycopy(tmp, 0, b, 0, b.length);
+            }
+            ip = new ByteProcessor(w, h, b, null);
+            if (stackB == null) {
+              stackB = new ImageStack(w, h);
+            }
+            stackB.addSlice(name + ":" + (i + 1), ip);
           }
-          ip = new ByteProcessor(w, h, b, null);
-          if (stackB == null) {
-            stackB = new ImageStack(w, h);
+          else if (tt == DataBuffer.TYPE_USHORT) {
+            short[] s = ImageTools.getShorts(img)[0];
+            if (s.length > w*h) {
+              short[] tmp = s;
+              s = new short[w*h];
+              System.arraycopy(tmp, 0, s, 0, s.length);
+            }
+            ip = new ShortProcessor(w, h, s, null);
+            if (stackS == null) {
+              stackS = new ImageStack(w, h);
+            }
+            stackS.addSlice(name + ":" + (i + 1), ip);
           }
-          stackB.addSlice(name + ":" + (i + 1), ip);
+          else if (tt == DataBuffer.TYPE_FLOAT) {
+            float[] f = ImageTools.getFloats(img)[0];
+            if (f.length > w*h) {
+              float[] tmp = f;
+              f = new float[w*h];
+              System.arraycopy(tmp, 0, f, 0, f.length);
+            }
+            ip = new FloatProcessor(w, h, f, null);
+            if (stackF == null) {
+              stackF = new ImageStack(w, h);
+            }
+            stackF.addSlice(name + ":" + (i + 1), ip);
+          }
         }
-        else if (tt == DataBuffer.TYPE_USHORT) {
-          short[] s = ImageTools.getShorts(img)[0];
-          if (s.length > w*h) {
-            short[] tmp = s;
-            s = new short[w*h];
-            System.arraycopy(tmp, 0, s, 0, s.length);
+        if (ip == null) {
+          ip = new ImagePlus(name, img).getProcessor(); // slow
+          if (stackO == null) {
+            stackO = new ImageStack(w, h);
           }
-          ip = new ShortProcessor(w, h, s, null);
-          if (stackS == null) {
-            stackS = new ImageStack(w, h);
-          }
-          stackS.addSlice(name + ":" + (i + 1), ip);
-        }
-        else if (tt == DataBuffer.TYPE_FLOAT) {
-          float[] f = ImageTools.getFloats(img)[0];
-          if (f.length > w*h) {
-            float[] tmp = f;
-            f = new float[w*h];
-            System.arraycopy(tmp, 0, f, 0, f.length);
-          }
-          ip = new FloatProcessor(w, h, f, null);
-          if (stackF == null) {
-            stackF = new ImageStack(w, h);
-          }
-          stackF.addSlice(name + ":" + (i + 1), ip);
+          stackO.addSlice(name + ":" + (i + 1), ip);
         }
       }
-      if (ip == null) {
-        ip = new ImagePlus(name, img).getProcessor(); // slow
-        if (stackO == null) {
-          stackO = new ImageStack(w, h);
-        }
-        stackO.addSlice(name + ":" + (i + 1), ip);
+      IJ.showStatus("Creating image");
+      IJ.showProgress(1);
+      if (stackB != null) {
+        imp = new ImagePlus(name, stackB);
+      }
+      if (stackS != null) {
+        imp = new ImagePlus(name, stackS);
+      }
+      if (stackF != null) {
+        imp = new ImagePlus(name, stackF);
+      }
+      if (stackO != null) {
+        imp = new ImagePlus(name, stackO);
+      }
+      long end = System.currentTimeMillis();
+      double elapsed = (end - start) / 1000.0;
+      if (num == 1) IJ.showStatus(elapsed + " seconds");
+      else {
+        long average = (end - start) / num;
+        IJ.showStatus("LOCI Bio-Formats : " + elapsed + " seconds (" +
+          average + " ms per plane)");
       }
     }
-    IJ.showStatus("Creating image");
-    IJ.showProgress(1);
-    if (stackB != null) {
-      imp = new ImagePlus(name, stackB);
-    }
-    if (stackS != null) {
-      imp = new ImagePlus(name, stackS);
-    }
-    if (stackF != null) {
-      imp = new ImagePlus(name, stackF);
-    }
-    if (stackO != null) {
-      imp = new ImagePlus(name, stackO);
-    }
-    long end = System.currentTimeMillis();
-    double elapsed = (end - start) / 1000.0;
-    if (num == 1) IJ.showStatus(elapsed + " seconds");
-    else {
-      long average = (end - start) / num;
-      IJ.showStatus("LOCI Bio-Formats : " + elapsed + " seconds (" +
-        average + " ms per plane)");
-    }
-
-    store = cm.getMetadataStore(name);
   }
 
   public ImagePlus getImagePlus() { return imp; }
 
   public int getNumTotal() { return numTotal; }
 
-  public static synchronized ImageProcessor getImageProcessor(
+  public static ImageProcessor getImageProcessor(
     String name, IFormatReader read, int index)
   {
-    String dim;
-    int sizeX,sizeY,sizeZ,sizeT,sizeC;
-    try {
-      dim = read.getDimensionOrder(name);
-      sizeX = read.getSizeX(name);
-      sizeY = read.getSizeY(name);
-      sizeZ = read.getSizeZ(name);
-      sizeT = read.getSizeT(name);
-      sizeC = read.getSizeC(name);
-    }
-    catch (Exception exc) {
-      System.out.println("Ack! ImagePlusWrapper.getImageProcessor() " +
-      "encountered an exception when trying to get the size of various "
-      + "dimensions from the FormatReader passed to it.");
-      return null;
-    }
-
-    BufferedImage img;
-    try {
-      img = read.openImage(name, index);
-    }
-    catch (Exception exc) {
-      System.out.println("Sorry, but ImagePlusWrapper.getImageProcessor() " +
-        "encountered an exception when trying to open the FormatReader's " +
-        "image with index " + index + " (sizeX=" + sizeX + ", sizeY=" +
-        sizeY + ", sizeZ=" + sizeZ + ", sizeT=" + sizeT + ", sizeC=" + sizeC +
-        ").");
-      exc.printStackTrace();
-      return null;
-    }
-
-    if (img.getWidth() != sizeX || img.getHeight() != sizeY) {
+    BufferedImage img = null;
+    String dim = null;
+    int sizeX = 0, sizeY = 0, sizeZ = 0, sizeT = 0, sizeC = 0;
+    synchronized (read) {
+      Exception problem = null;
       try {
-        img = ImageTools.scale(img, sizeX, sizeY);
+        dim = read.getDimensionOrder(name);
+        sizeX = read.getSizeX(name);
+        sizeY = read.getSizeY(name);
+        sizeZ = read.getSizeZ(name);
+        sizeT = read.getSizeT(name);
+        sizeC = read.getSizeC(name);
       }
-      catch (Exception e) {
+      catch (FormatException exc) { problem = exc; }
+      catch (IOException exc) { problem = exc; }
+      if (problem != null) {
+        problem.printStackTrace();
+        return null;
       }
+
+      // read image from disk
+      try {
+        img = read.openImage(name, index);
+      }
+      catch (FormatException exc) { exc.printStackTrace(); }
+      catch (IOException exc) { exc.printStackTrace(); }
     }
 
+    if (img == null) {
+      System.out.println("Sorry, but there was a problem reading image '" +
+        name + "' at index " + index + " (sizeX=" + sizeX + ", sizeY=" +
+        sizeY + ", sizeZ=" + sizeZ + ", sizeT=" + sizeT + ", sizeC=" + sizeC +
+        ", dim=" + dim + ").");
+      return null;
+    }
+
+    // scale image if it is the wrong size
+    int w = img.getWidth(), h = img.getHeight();
+    if (w != sizeX || h != sizeY) {
+      System.out.println("Warning: image size " + w + "x" + h +
+        " does not match expected size of " + sizeX + "x" + sizeY + ".");
+      img = ImageTools.scale(img, sizeX, sizeY);
+      w = sizeX;
+      h = sizeY;
+    }
+
+    // convert BufferedImage to ImageProcessor
     ImageProcessor ip = null;
     WritableRaster raster = img.getRaster();
     int c = raster.getNumBands();
     int tt = raster.getTransferType();
-    int w = img.getWidth(), h = img.getHeight();
     if (c == 1) {
       if (tt == DataBuffer.TYPE_BYTE) {
         byte[] b = ImageTools.getBytes(img)[0];
@@ -257,4 +263,5 @@ public class ImagePlusWrapper {
 
     return ip;
   }
+
 }
