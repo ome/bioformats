@@ -308,7 +308,7 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException
   {
     return ImageTools.scale(openImage(id, no),
-      getThumbSizeX(id), getThumbSizeY(id), true, true);
+      getThumbSizeX(id), getThumbSizeY(id), true, false);
   }
 
   /**
