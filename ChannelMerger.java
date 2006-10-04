@@ -33,10 +33,10 @@ public class ChannelMerger extends ReaderWrapper {
   // -- Constructor --
 
   /** Constructs a ChannelMerger around a new image reader. */
-  public ChannelMerger() throws FormatException { super(); }
+  public ChannelMerger() { super(); }
 
   /** Constructs a ChannelMerger with the given reader. */
-  public ChannelMerger(IFormatReader r) throws FormatException { super(r); }
+  public ChannelMerger(IFormatReader r) { super(r); }
 
   // -- ChannelMerger API methods --
 

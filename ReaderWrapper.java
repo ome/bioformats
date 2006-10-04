@@ -44,11 +44,13 @@ public abstract class ReaderWrapper implements IFormatReader {
   // -- Constructors --
 
   /** Constructs a reader wrapper around a new image reader. */
-  public ReaderWrapper() throws FormatException { this(new ImageReader()); }
+  public ReaderWrapper() { this(new ImageReader()); }
 
   /** Constructs a reader wrapper around the given reader. */
-  public ReaderWrapper(IFormatReader r) throws FormatException {
-    if (r == null) throw new FormatException("Format reader cannot be null");
+  public ReaderWrapper(IFormatReader r) {
+    if (r == null) {
+      throw new IllegalArgumentException("Format reader cannot be null");
+    }
     reader = r;
   }
 

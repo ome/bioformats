@@ -84,18 +84,16 @@ public class FileStitcher extends ReaderWrapper {
   // -- Constructors --
 
   /** Constructs a FileStitcher around a new image reader. */
-  public FileStitcher() throws FormatException { super(); }
+  public FileStitcher() { super(); }
 
   /** Constructs a FileStitcher with the given reader. */
-  public FileStitcher(IFormatReader r) throws FormatException {
-    super(r);
-  }
+  public FileStitcher(IFormatReader r) { super(r); }
 
   /** 
    * Constructs a FileStitcher with the given reader; 
    * if the flag is set to true, a separate reader is used for each file.
    */
-  public FileStitcher(IFormatReader r, boolean flag) throws FormatException {
+  public FileStitcher(IFormatReader r, boolean flag) {
     super(r);
     multipleReaders = flag;
   }

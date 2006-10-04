@@ -33,12 +33,10 @@ public class ChannelSeparator extends ReaderWrapper {
   // -- Constructors --
 
   /** Constructs a ChannelSeparator around a new image reader. */
-  public ChannelSeparator() throws FormatException { super(); }
+  public ChannelSeparator() { super(); }
 
   /** Constructs a ChannelSeparator with the given reader. */
-  public ChannelSeparator(IFormatReader r) throws FormatException {
-    super(r);
-  }
+  public ChannelSeparator(IFormatReader r) { super(r); }
 
   // -- IFormatReader API methods --
 
