@@ -167,12 +167,23 @@ public class Importer implements ItemListener {
     String fileName = id.substring(id.lastIndexOf(File.separator) + 1);
 
     IJ.showStatus("Opening " + fileName);
+    
+    boolean doRGBMerge = false;
+    
     try {
       if (r == null) r = reader.getReader(id);
       if (stitchFiles) r = new FileStitcher(r);
       if (mergeChannels) r = new ChannelMerger(r);
       else r = new ChannelSeparator(r);
 
+      if (r.isRGB(id) && r.getPixelType(id) >= FormatReader.INT16 &&
+        (r.getChannelGlobalMinimum(id, 0) == null || 
+        r.getChannelGlobalMaximum(id, 0) == null))
+      {
+        doRGBMerge = true;
+        r = new ChannelSeparator(r);
+      }
+              
       // store OME metadata into OME-XML structure, if available
       OMEXMLMetadataStore store = new OMEXMLMetadataStore();
       store.createRoot();
@@ -276,9 +287,6 @@ public class Importer implements ItemListener {
           }
         }
 
-        int min = r.getChannelGlobalMinimum(id, r.getSizeC(id)).intValue();
-        int max = r.getChannelGlobalMaximum(id, r.getSizeC(id)).intValue();
-
         int q = 0;
         for (int j=begin; j<=end; j+=step) {
           // limit message update rate
@@ -295,9 +303,21 @@ public class Importer implements ItemListener {
           {
             img = ImageTools.padImage(img, r.getSizeX(id), r.getSizeY(id));
           }
-         
+     
+          int cCoord = r.getZCTCoords(id, j)[1];
+
+          Double min = r.getChannelGlobalMinimum(id, cCoord);
+          Double max = r.getChannelGlobalMaximum(id, cCoord);
+
           if (r.isRGB(id) && r.getPixelType(id) >= FormatReader.INT16) {
-            img = ImageTools.autoscale(img, min, max); 
+            if (min == null || max == null) {
+              // call ImageJ's RGB merge utility after we display
+              doRGBMerge = true;
+            }
+            else {
+              // we can autoscale on our own
+              img = ImageTools.autoscale(img, min.intValue(), max.intValue());
+            }
           }
 
           ImageProcessor ip = null;
@@ -305,6 +325,7 @@ public class Importer implements ItemListener {
           int c = raster.getNumBands();
           int tt = raster.getTransferType();
           int w = img.getWidth(), h = img.getHeight();
+         
           if (c == 1) {
             if (tt == DataBuffer.TYPE_BYTE) {
               byte[] b = ImageTools.getBytes(img)[0];
@@ -405,6 +426,34 @@ public class Importer implements ItemListener {
           }
 
           imp.setFileInfo(fi);
+          
+          if (doRGBMerge) {
+            int c = r.getSizeC(id);
+            ImageStack is = imp.getImageStack();
+            int w = is.getWidth(), h = is.getHeight();
+            ImageStack newStack = new ImageStack(w, h);
+
+            ImageProcessor[] procs = new ImageProcessor[c];
+            for (int k=0; k<is.getSize(); k+=c) {
+              for (int j=0; j<c; j++) {
+                procs[j] = is.getProcessor(k + j + 1);
+                procs[j] = procs[j].convertToByte(true);
+              }
+
+              byte[] red = new byte[w * h];
+              byte[] green = new byte[w * h];
+              byte[] blue = new byte[w * h];
+            
+              red = (byte[]) procs[0].getPixels();
+              if (c > 1) green = (byte[]) procs[1].getPixels();
+              if (c > 2) blue = (byte[]) procs[2].getPixels();
+
+              ColorProcessor color = new ColorProcessor(w, h);
+              color.setRGB(red, green, blue);
+              newStack.addSlice(is.getSliceLabel(k + 1), color);
+            }
+            imp.setStack(imp.getTitle(), newStack);
+          }
           imp.show();
         }
 
@@ -422,6 +471,7 @@ public class Importer implements ItemListener {
 
       r.close();
       plugin.success = true;
+      doRGBMerge = false;
 
       // save checkbox values to IJ_Prefs.txt
 
