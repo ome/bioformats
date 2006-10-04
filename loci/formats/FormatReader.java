@@ -634,7 +634,7 @@ public abstract class FormatReader extends FormatHandler
     System.out.print("Checking " + reader.getFormat() + " format ");
     System.out.println(reader.isThisType(id) ? "[yes]" : "[no]");
 
-    if (stitch) reader = new FileStitcher(reader, true);
+    if (stitch) reader = new FileStitcher(reader);
     if (separate) reader = new ChannelSeparator(reader);
     if (merge) reader = new ChannelMerger(reader);
 
