@@ -112,6 +112,28 @@ public class BioRadReader extends FormatReader {
   public boolean isInterleaved(String id) throws FormatException, IOException {
     return false;
   }
+  
+  /**
+   * (non-Javadoc)
+   * @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int)
+   */
+  public Double getChannelGlobalMinimum(String id, int theC)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return new Double(((Integer) metadata.get("ramp1_min")).intValue());
+  }
+
+  /**
+   * (non-Javadoc)
+   * @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int)
+   */
+  public Double getChannelGlobalMaximum(String id, int theC)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return new Double(((Integer) metadata.get("ramp1_max")).intValue());
+  }
 
   /** Obtains the specified image from the given file as a byte array. */
   public byte[] openBytes(String id, int no)

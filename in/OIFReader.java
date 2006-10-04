@@ -49,7 +49,7 @@ public class OIFReader extends FormatReader {
   protected Vector tiffs;
 
   /** Helper reader to open TIFF files. */
-  protected TiffReader tiffReader;
+  protected TiffReader[] tiffReader;
 
   /** Helper reader to open the thumbnail. */
   protected BMPReader thumbReader;
@@ -98,7 +98,7 @@ public class OIFReader extends FormatReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    return tiffReader.isRGB((String) tiffs.get(0));
+    return tiffReader[0].isRGB((String) tiffs.get(0));
   }
 
   /** Return true if the data is in little-endian format. */
@@ -111,6 +111,28 @@ public class OIFReader extends FormatReader {
     return false;
   }
 
+  /**
+   * (non-Javadoc)
+   * @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int)
+   */
+  public Double getChannelGlobalMinimum(String id, int theC)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return new Double((String) metadata.get("Image 0 : DataMin"));
+  }
+
+  /**
+   * (non-Javadoc)
+   * @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int)
+   */
+  public Double getChannelGlobalMaximum(String id, int theC)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return new Double((String) metadata.get("Image 0: DataMax"));
+  }
+
   /** Obtains the specified image from the given OIF file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -118,7 +140,7 @@ public class OIFReader extends FormatReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    return tiffReader.openBytes((String) tiffs.get(no), 0);
+    return tiffReader[no].openBytes((String) tiffs.get(no), 0);
   }
 
   /** Obtains the specified image from the given OIF file. */
@@ -133,7 +155,7 @@ public class OIFReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    return tiffReader.openImage((String) tiffs.get(no), 0);
+    return tiffReader[no].openImage((String) tiffs.get(no), 0);
   }
 
   /** Obtains a thumbnail for the specified image from the given file. */
@@ -148,7 +170,19 @@ public class OIFReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    String thumbId = id.substring(0, id.indexOf("_") + 1) + "Thumb.bmp";
+    String thumbId = "";
+    String dir = id.substring(0, id.lastIndexOf(File.separator) + 1);
+    dir += id.substring(id.lastIndexOf(File.separator) + 1) + ".files" + 
+      File.separator;
+
+    if (id.indexOf("_") != -1) {
+      thumbId = dir + id.substring(id.lastIndexOf(File.separator) + 1, 
+        id.lastIndexOf("_") + 1) + "Thumb.bmp";
+    }
+    else {
+      thumbId = dir + id.substring(id.lastIndexOf(File.separator) + 1, 
+        id.lastIndexOf(".")) + "_Thumb.bmp";
+    }
     return thumbReader.openImage(thumbId, 0);
   }
 
@@ -203,7 +237,6 @@ public class OIFReader extends FormatReader {
 
     super.initFile(oifFile);
     reader = new BufferedReader(new FileReader(oifFile));
-    tiffReader = new TiffReader();
 
     int slash = oifFile.lastIndexOf(File.separator);
     String path = slash < 0 ? "." : oifFile.substring(0, slash);
@@ -230,6 +263,9 @@ public class OIFReader extends FormatReader {
     thumbReader = new BMPReader();
     numImages = filenames.size();
     tiffs = new Vector(numImages);
+
+    tiffReader = new TiffReader[numImages];
+    for (int i=0; i<numImages; i++) tiffReader[i] = new TiffReader();
 
     // open each INI file (.pty extension)
 

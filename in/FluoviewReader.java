@@ -69,6 +69,32 @@ public class FluoviewReader extends BaseTiffReader {
     return test.indexOf(FLUOVIEW_MAGIC_STRING) != -1;
   }
 
+  /**
+   * (non-Javadoc)
+   * @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int)
+   */
+  public Double getChannelGlobalMinimum(String id, int theC)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    String s = (String) metadata.get("Map Ch" + theC + ": Range");
+    s = s.substring(0, s.indexOf("to") - 1).trim();
+    return new Double(Integer.parseInt(s));
+  }
+
+  /**
+   * (non-Javadoc)
+   * @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int)
+   */
+  public Double getChannelGlobalMaximum(String id, int theC)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    String s = (String) metadata.get("Map Ch" + theC + ": Range");
+    s = s.substring(s.indexOf("to") + 2).trim();
+    return new Double(Integer.parseInt(s));
+  }
+
   // -- FormatHandler API methods --
 
   /**
@@ -337,6 +363,9 @@ public class FluoviewReader extends BaseTiffReader {
 
       // first we need to reset the dimensions
 
+      boolean setZ = false;
+      boolean setT = false;
+
       for(int i=0; i<n.size(); i++) {
         String name = (String) n.get(i);
         String pos = (String) numPlanes.get(i);
@@ -345,9 +374,16 @@ public class FluoviewReader extends BaseTiffReader {
         if (name.equals("Ch")) sizeC[series] = q;
         else if (name.equals("Animation") || name.equals("T")) {
           sizeT[series] = q;
+          setT = true;
         }
-        else if (name.equals("Z")) sizeZ[series] = q;
+        else if (name.equals("Z")) {
+          sizeZ[series] = q;
+          setZ = true;
+        }
       }
+
+      if (setZ && !setT) sizeT[series] = 1;
+      if (setT && !setZ) sizeZ[series] = 1;
 
       // set the dimension order
 

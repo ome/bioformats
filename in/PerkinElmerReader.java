@@ -44,7 +44,7 @@ public class PerkinElmerReader extends FormatReader {
   protected int numImages;
 
   /** Helper reader. */
-  protected TiffReader tiff;
+  protected TiffReader[] tiff;
 
   /** Tiff files to open. */
   protected String[] files;
@@ -61,7 +61,6 @@ public class PerkinElmerReader extends FormatReader {
   public PerkinElmerReader() {
     super("PerkinElmer", new String[] {"rec", "cfg", "ano", "2", "3", "4",
       "csv", "htm", "tim", "zpo"});
-    tiff = new TiffReader();
   }
 
   // -- FormatReader API methods --
@@ -82,14 +81,14 @@ public class PerkinElmerReader extends FormatReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    if (isTiff) return tiff.isRGB(files[0]);
+    if (isTiff) return tiff[0].isRGB(files[0]);
     return false;
   }
 
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    if (isTiff) return tiff.isLittleEndian(files[0]);
+    if (isTiff) return tiff[0].isLittleEndian(files[0]);
     return true;
   }
 
@@ -105,7 +104,7 @@ public class PerkinElmerReader extends FormatReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    if (isTiff) return tiff.openBytes(files[no / channels], 0);
+    if (isTiff) return tiff[no / channels].openBytes(files[no / channels], 0);
 
     String file = files[no];
     RandomAccessStream s = new RandomAccessStream(file);
@@ -127,7 +126,7 @@ public class PerkinElmerReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-    if (isTiff) return tiff.openImage(files[no / channels], 0);
+    if (isTiff) return tiff[no / channels].openImage(files[no / channels], 0);
 
     byte[] b = openBytes(id, no);
     int bpp = b.length / (sizeX[0] * sizeY[0]);
@@ -308,6 +307,9 @@ public class PerkinElmerReader extends FormatReader {
     char[] data;
     StringTokenizer t;
 
+    tiff = new TiffReader[numImages];
+    for (int i=0; i<tiff.length; i++) tiff[i] = new TiffReader();
+
     // highly questionable metadata parsing
 
     // we always parse the .tim and .htm files if they exist, along with
@@ -454,7 +456,7 @@ public class PerkinElmerReader extends FormatReader {
     sizeZ[0] = Integer.parseInt((String) metadata.get("Number of slices"));
     sizeC[0] = channels;
     sizeT[0] = getImageCount(currentId) / (sizeZ[0] * sizeC[0]);
-    if (isTiff) pixelType[0] = tiff.getPixelType(files[0]);
+    if (isTiff) pixelType[0] = tiff[0].getPixelType(files[0]);
     else {
       int bpp = openBytes(id, 0).length / (sizeX[0] * sizeY[0]);
       switch (bpp) {
