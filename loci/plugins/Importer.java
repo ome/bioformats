@@ -183,12 +183,14 @@ public class Importer implements ItemListener {
       if (mergeChannels) r = new ChannelMerger(r);
       else r = new ChannelSeparator(r);
 
-      if (r.isRGB(id) && r.getPixelType(id) >= FormatReader.INT16 &&
-        (r.getChannelGlobalMinimum(id, 0) == null || 
-        r.getChannelGlobalMaximum(id, 0) == null))
-      {
-        doRGBMerge = true;
-        r = new ChannelSeparator(r);
+      if (r.isRGB(id) && r.getPixelType(id) >= FormatReader.INT16) {
+//        Double min = r.getChannelGlobalMinimum(id, 0);
+//        Double max = r.getChannelGlobalMaximum(id, 0);
+        Double min = null, max = null;
+        if (min == null || max == null) {
+          doRGBMerge = true;
+          r = new ChannelSeparator(r);
+        }
       }
               
       // store OME metadata into OME-XML structure, if available
@@ -313,8 +315,9 @@ public class Importer implements ItemListener {
      
           int cCoord = r.getZCTCoords(id, j)[1];
 
-          Double min = r.getChannelGlobalMinimum(id, cCoord);
-          Double max = r.getChannelGlobalMaximum(id, cCoord);
+//          Double min = r.getChannelGlobalMinimum(id, cCoord);
+//          Double max = r.getChannelGlobalMaximum(id, cCoord);
+          Double min = null, max = null;
 
           if (r.isRGB(id) && r.getPixelType(id) >= FormatReader.INT16) {
             if (min == null || max == null) {
