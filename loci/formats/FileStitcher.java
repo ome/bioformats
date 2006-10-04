@@ -26,6 +26,7 @@ package loci.formats;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Arrays;
 import java.util.Vector;
 
 /** Logic to stitch together files with similar names. */
@@ -254,15 +255,20 @@ public class FileStitcher extends ReaderWrapper {
 
     readers = new IFormatReader[files.length];
     if (multipleReaders) {
-      ImageReader ir = new ImageReader();
       readers[0] = reader;
+      ImageReader ir = (ImageReader) reader;
       for (int i=1; i<readers.length; i++) {
         readers[i] = ir.getReader(files[i]);
+        // now we know the type of reader to use, but want a separate
+        // object for each file, so create a new one of that type
+        try {
+          readers[i] = (IFormatReader) readers[i].getClass().newInstance();
+        }
+        catch (InstantiationException exc) { exc.printStackTrace(); }
+        catch (IllegalAccessException exc) { exc.printStackTrace(); }
       }
     }
-    else {
-      for (int i=0; i<readers.length; i++) readers[i] = reader;
-    }
+    else Arrays.fill(readers, reader);
 
     MetadataStore s = reader.getMetadataStore(id);
     s.setPixels(new Integer(dimensions[0]), new Integer(dimensions[1]),
