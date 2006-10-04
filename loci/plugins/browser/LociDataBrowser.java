@@ -83,10 +83,7 @@ public class LociDataBrowser {
 
   /** Constructs a new data browser. */
   public LociDataBrowser() {
-    try {
-      reader = new FileStitcher(new ChannelSeparator());
-    }
-    catch (FormatException exc) { exc.printStackTrace(); }
+    reader = new ChannelSeparator(new FileStitcher());
   }
 
   // -- LociDataBrowser API methods --
