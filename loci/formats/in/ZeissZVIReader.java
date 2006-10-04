@@ -305,9 +305,14 @@ public class ZeissZVIReader extends FormatReader {
 
     try {
       RandomAccessStream ras = new RandomAccessStream(id);
-      if (ras.length() % 4096 != 0) {
-        ras.setExtend((4096 - (int) (ras.length() % 4096)));
-      }
+      // Don't uncomment this block.  Even though OIBReader has something 
+      // like this, it's really a bad idea here.  Every ZVI file we have *will*
+      // break if you uncomment it.
+      // 
+      //if (ras.length() % 4096 != 0) {
+      //  ras.setExtend((4096 - (int) (ras.length() % 4096)));
+      //}
+      
       r.setVar("fis", ras);
       r.exec("fs = new POIFSFileSystem(fis)");
       r.exec("dir = fs.getRoot()");
@@ -333,6 +338,7 @@ public class ZeissZVIReader extends FormatReader {
       currentOrder[0] = (zSize > tSize) ? "XYCZT" : "XYCTZ";
     }
     catch (Throwable t) {
+      /* debug */ t.printStackTrace();
       noPOI = true;
       if (DEBUG) t.printStackTrace();
       initFile(id);
