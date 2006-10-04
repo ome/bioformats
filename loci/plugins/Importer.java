@@ -104,7 +104,10 @@ public class Importer implements ItemListener {
       gd.addCheckbox(stitchString, stitchFiles);
       gd.addCheckbox(rangeString, specifyRanges);
       gd.showDialog();
-      if (gd.wasCanceled()) return;
+      if (gd.wasCanceled()) {
+        plugin.canceled = true;
+        return;
+      }
       mergeChannels = gd.getNextBoolean();
       splitWindows = gd.getNextBoolean();
       showMetadata = gd.getNextBoolean();
@@ -160,6 +163,10 @@ public class Importer implements ItemListener {
           OpenDialog.setDefaultDirectory(
             chooser.getCurrentDirectory().getPath());
         }
+      }
+      else {
+        plugin.canceled = true;
+        return;
       }
     }
 

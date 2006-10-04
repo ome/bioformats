@@ -40,12 +40,16 @@ public class LociImporter implements PlugIn {
   // -- Fields --
 
   /** Flag indicating whether last operation was successful. */
-  public boolean success = false;
+  public boolean success;
+
+  /** Flag indicating whether last operation was canceled. */
+  public boolean canceled;
 
   // -- PlugIn API methods --
 
   /** Executes the plugin. */
   public synchronized void run(String arg) {
+    canceled = false;
     success = false;
     if (!Util.checkVersion()) return;
     if (!Util.checkLibraries(true, true, false, false)) return;
