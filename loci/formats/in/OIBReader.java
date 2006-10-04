@@ -157,7 +157,9 @@ public class OIBReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return new Double((String) metadata.get("[Image Parameters] - DataMin"));
+    String s = (String) metadata.get("[Image Parameters] - DataMin");
+    try { return new Double(s); }
+    catch (NumberFormatException exc) { return null; }
   }
 
   /**
@@ -168,7 +170,9 @@ public class OIBReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return new Double((String) metadata.get("[Image Parameters] - DataMax"));
+    String s = (String) metadata.get("[Image Parameters] - DataMax");
+    try { return new Double(s); }
+    catch (NumberFormatException exc) { return null; }
   }
 
   /** Obtains the specified image from the given ZVI file, as a byte array. */
