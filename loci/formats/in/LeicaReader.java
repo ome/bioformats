@@ -50,8 +50,8 @@ public class LeicaReader extends BaseTiffReader {
   /** Array of IFD-like structures containing metadata. */
   protected Hashtable[] headerIFDs;
 
-  /** Helper reader. */
-  protected TiffReader tiff;
+  /** Helper readers. */
+  protected TiffReader[][] tiff;
 
   /** Number of channels in the current series. */
   protected int[] numChannels;
@@ -79,7 +79,6 @@ public class LeicaReader extends BaseTiffReader {
   /** Constructs a new Leica reader. */
   public LeicaReader() {
     super("Leica", new String[] {"lei", "tif", "tiff"});
-    tiff = new TiffReader();
   }
 
   // -- FormatReader API methods --
@@ -134,7 +133,7 @@ public class LeicaReader extends BaseTiffReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    return tiff.isRGB((String) files[series].get(0));
+    return tiff[series][0].isRGB((String) files[series].get(0));
   }
 
   /** Return true if the data is in little-endian format. */
@@ -148,6 +147,28 @@ public class LeicaReader extends BaseTiffReader {
     return false;
   }
 
+  /**
+   * (non-Javadoc)
+   * @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int)
+   */
+  public Double getChannelGlobalMinimum(String id, int theC)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return new Double((String) metadata.get("Minimum voxel intensity"));
+  }
+
+  /**
+   * (non-Javadoc)
+   * @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int)
+   */
+  public Double getChannelGlobalMaximum(String id, int theC)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return new Double((String) metadata.get("Maximum voxel intensity"));
+  }
+
   /** Obtains the specified image from the given Leica file as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
@@ -159,7 +180,7 @@ public class LeicaReader extends BaseTiffReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-    return tiff.openBytes((String) files[series].get(no), 0);
+    return tiff[series][no].openBytes((String) files[series].get(no), 0);
   }
 
   /** Obtains the specified image from the given Leica file. */
@@ -174,7 +195,7 @@ public class LeicaReader extends BaseTiffReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    return tiff.openImage((String) files[series].get(no), 0);
+    return tiff[series][no].openImage((String) files[series].get(no), 0);
   }
 
   /** Closes any open files. */
@@ -326,6 +347,9 @@ public class LeicaReader extends BaseTiffReader {
       // determine the length of a filename
 
       int nameLength = 0;
+     
+      int maxPlanes = 0;
+
       for (int i=0; i<headerIFDs.length; i++) {
         if (headerIFDs[i].get(new Integer(10)) != null) {
           byte[] temp = (byte[]) headerIFDs[i].get(new Integer(10));
@@ -345,6 +369,15 @@ public class LeicaReader extends BaseTiffReader {
 
         files[i] = f;
         numPlanes[i] = f.size();
+        if (numPlanes[i] > maxPlanes) maxPlanes = numPlanes[i];
+      }
+
+      tiff = new TiffReader[numSeries][maxPlanes];
+
+      for (int i=0; i<tiff.length; i++) {
+        for (int j=0; j<tiff[i].length; j++) {
+          tiff[i][j] = new TiffReader();     
+        }
       }
 
       initMetadata();

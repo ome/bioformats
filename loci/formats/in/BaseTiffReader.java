@@ -480,6 +480,7 @@ public abstract class BaseTiffReader extends FormatReader {
       int bitFormat = TiffTools.getIFDIntValue(ifds[0],
         TiffTools.SAMPLE_FORMAT);
 
+      if (bitsPerSample == 12) bitsPerSample = 8;  // special case
       while (bitsPerSample % 8 != 0) bitsPerSample++;
       if (bitsPerSample == 24 || bitsPerSample == 48) bitsPerSample /= 3;
 
@@ -692,9 +693,8 @@ public abstract class BaseTiffReader extends FormatReader {
   {
     if (!id.equals(currentId)) initFile(id);
     if (channelMinMax == null || channelMinMax[theC] == null)
-      return super.getChannelGlobalMinimum(id, theC);
-    if (channelMinMax[theC][MIN] != null) return channelMinMax[theC][MIN];
-    return super.getChannelGlobalMinimum(id, theC);
+      return null;
+    return channelMinMax[theC][MIN];
   }
 
   /* (non-Javadoc)
@@ -705,9 +705,8 @@ public abstract class BaseTiffReader extends FormatReader {
   {
     if (!id.equals(currentId)) initFile(id);
     if (channelMinMax == null || channelMinMax[theC] == null)
-      return super.getChannelGlobalMaximum(id, theC);
-    return channelMinMax[theC][MAX] == null ? 
-      super.getChannelGlobalMaximum(id, theC) : channelMinMax[theC][MAX];
+      return null;
+    return channelMinMax[theC][MAX]; 
   }
 
   /** Return true if the data is in little-endian format. */

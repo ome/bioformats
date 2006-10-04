@@ -100,18 +100,55 @@ public class ZeissLSMReader extends BaseTiffReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    ifds = TiffTools.getIFDs(in);
-    return TiffTools.getImage(ifds[2*no + 1], in);
+    if (2*no + 1 < ifds.length) return TiffTools.getImage(ifds[2*no + 1], in);
+    return super.openThumbImage(id, no);
   }
 
   /** Get the size of the X dimension for the thumbnail. */
   public int getThumbSizeX(String id) throws FormatException, IOException {
-    return openThumbImage(id, 0).getWidth();
+    if (!id.equals(currentId)) initFile(id);
+    if (ifds.length == 1) return super.getThumbSizeX(id);
+    return TiffTools.getIFDIntValue(ifds[1], TiffTools.IMAGE_WIDTH, false, 1);
   }
 
   /** Get the size of the Y dimension for the thumbnail. */
   public int getThumbSizeY(String id) throws FormatException, IOException {
-    return openThumbImage(id, 0).getHeight();
+    if (!id.equals(currentId)) initFile(id);
+    if (ifds.length == 1) return super.getThumbSizeY(id);
+    return TiffTools.getIFDIntValue(ifds[1], TiffTools.IMAGE_LENGTH, false, 1);
+  }
+
+  /** Obtains the specified image from the given file. */
+  public BufferedImage openImage(String id, int no)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    if (no < 0 || no >= getImageCount(id)) {
+      throw new FormatException("Invalid image number: " + no);   
+    }
+
+    ifds = TiffTools.getIFDs(in);
+    return TiffTools.getImage(ifds[2*no], in);
+  }
+ 
+  /** Obtains the specified image from the given file as a byte array. */
+  public byte[] openBytes(String id, int no) 
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    if (no < 0 || no >= getImageCount(id)) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+
+    ifds = TiffTools.getIFDs(in);
+    byte[][] p = TiffTools.getSamples(ifds[2*no], in, 0);
+    byte[] b = new byte[p.length * p[0].length];
+
+    for (int i=0; i<p.length; i++) {
+      System.arraycopy(p[i], 0, b, i*p[0].length, p[i].length);
+    }
+ 
+    return b;
   }
 
   /** Initializes the given Zeiss LSM file. */
@@ -160,6 +197,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     numImages = tempIFDs.length;
     ifds = tempIFDs;
     initMetadata();
+    ifds = TiffTools.getIFDs(in);
   }
 
   /** Populates the metadata hashtable. */

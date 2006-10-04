@@ -128,6 +128,7 @@ public class BMPReader extends FormatReader {
     in.seek(global);
 
     if (width % 2 == 1) width++;
+    
     byte[] pix = new byte[width * height * (bpp / 8)];
     in.read(pix);
 
@@ -176,6 +177,17 @@ public class BMPReader extends FormatReader {
           pixels[2][j] = pix[pt - 2];
           pt -= 3;
         }
+      }
+      else if (bpp == 32) {
+        pixels = new byte[3][pix.length / 4];
+        int pt = pix.length - 1;
+        for (int j=0; j<pixels[0].length; j++) {
+          pixels[0][j] = pix[pt];
+          pixels[1][j] = pix[pt - 1];
+          pixels[2][j] = pix[pt - 2];
+          pt -= 4;
+        }
+        bpp = 24;
       }
     }
 

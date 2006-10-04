@@ -75,6 +75,9 @@ public class LIFReader extends FormatReader {
   private Vector zcal;
   private Vector seriesNames;
 
+  private Vector channelMins;
+  private Vector channelMaxs;
+
   // -- Constructor --
 
   /** Constructs a new Leica LIF reader. */
@@ -116,6 +119,28 @@ public class LIFReader extends FormatReader {
   public int getSeriesCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return dims.length;
+  }
+
+  /**
+   * (non-Javadoc)
+   * @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int)
+   */
+  public Double getChannelGlobalMinimum(String id, int theC)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return new Double(((Integer) channelMins.get(series)).intValue());
+  }
+
+  /**
+   * (non-Javadoc)
+   * @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int)
+   */
+  public Double getChannelGlobalMaximum(String id, int theC)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return new Double(((Integer) channelMaxs.get(series)).intValue());
   }
 
   /** Obtains the specified image from the given LIF file as a byte array. */
@@ -364,6 +389,8 @@ public class LIFReader extends FormatReader {
               numChannels++;
               if (numChannels == 1) {
                 bps.add(new Integer((String) tmp.get("Resolution")));
+                channelMins.add(new Integer((String) tmp.get("Min")));
+                channelMaxs.add(new Integer((String) tmp.get("Maxs")));
               }
             }
             else if (tmp.get("DimensionDescription DimID") != null) {
