@@ -940,9 +940,95 @@ public final class ImageTools {
     return b;
   }
 
+  /** Perform 5x5 B-spline convolution on the given image. */
+  public static byte[][] convolve(byte[][] image, int width, int height) {
+
+    byte[] red = image[0];
+    byte[] green = image[1];
+    byte[] blue = image[2];
+
+    byte[] newRed = new byte[image[0].length];
+    byte[] newGreen = new byte[image[0].length];
+    byte[] newBlue = new byte[image[0].length];
+
+    int[][] kernel = {{1, 4, 6, 4, 1}, {4, 16, 24, 16, 4}, {6, 24, 36, 24, 6}, 
+      {4, 16, 24, 16, 4}, {1, 4, 6, 4, 1}};
+
+    for (int i=0; i<height; i++) {
+      for (int j=0; j<width; j++) {
+        int rrow = 0, grow = 0, brow = 0;
+        int[] krow = kernel[i % 5];
+
+        int diff = width - j;
+
+        int sum = 0;
+        if (diff < 5) {
+          while (diff > 0) {
+            rrow += krow[diff - 1] * red[i*width + j + diff - 1];
+            grow += krow[diff - 1] * green[i*width + j + diff - 1];
+            brow += krow[diff - 1] * blue[i*width + j + diff - 1];
+            sum += krow[diff - 1];
+            diff--;
+          }
+        }
+        else {
+          for (int m=0; m<5; m++) {
+            rrow += krow[m] * red[i*width + j + m];
+            grow += krow[m] * green[i*width + j + m];
+            brow += krow[m] * blue[i*width + j + m];
+            sum += krow[m];
+          }
+        }
+     
+        newRed[i*width + j] = (byte) (rrow / sum);
+        newGreen[i*width + j] = (byte) (grow / sum);
+        newBlue[i*width + j] = (byte) (brow / sum);
+      }
+    }
+
+    for (int i=0; i<height; i++) {
+      for (int j=0; j<width; j++) {
+        int rcol = 0, gcol = 0, bcol = 0;
+        int[] kcol = kernel[j % 5];
+
+        int diff = height - i;
+
+        int sum = 0;
+        if (diff < 5) {
+          while (diff > 0) {
+            rcol += kcol[diff - 1] * newRed[(i + diff - 1)*width + j];
+            gcol += kcol[diff - 1] * newGreen[(i + diff - 1)*width + j];
+            bcol += kcol[diff - 1] * newBlue[(i + diff - 1)*width + j];
+            sum += kcol[diff - 1];
+            diff--;
+          }
+        }
+        else {
+          for (int m=0; m<5; m++) {
+            rcol += kcol[m] * newRed[(i+m)*width + j];
+            gcol += kcol[m] * newGreen[(i+m)*width + j];
+            bcol += kcol[m] * newBlue[(i+m)*width + j];
+            sum += kcol[m];
+          }
+        }
+
+        red[i*width + j] = (byte) (rcol / sum);
+        green[i*width + j] = (byte) (gcol / sum);
+        blue[i*width + j] = (byte) (bcol / sum);
+      }
+    }
+
+    image[0] = red;
+    image[1] = green;
+    image[2] = blue;
+    
+    return image;
+  }
+
   /** 
    * Perform autoscaling on the given BufferedImage; 
-   * map min to 0 and max to 255.
+   * map min to 0 and max to 255.  If the BufferedImage has 8 bit data, then
+   * nothing happens.
    */
   public static BufferedImage autoscale(BufferedImage img, int min, int max) {
     Object pixels = getPixels(img);
@@ -1027,7 +1113,8 @@ public final class ImageTools {
 
   /**
    * Perform autoscaling on the given byte array;
-   * map min to 0 and max to 255.
+   * map min to 0 and max to 255.  If the number of bytes per pixel is 1, then
+   * nothing happens.
    */
   public static byte[] autoscale(byte[] b, int min, int max, int bpp, 
     boolean little) 
@@ -1051,6 +1138,39 @@ public final class ImageTools {
       out[i / bpp] = (byte) s; 
     }
     return out;
+  }
+
+  /** Scan a plane for the channel min and max values. */
+  public static Double[] scanData(byte[] plane, int bits, boolean littleEndian) 
+  {
+    int max = 0;
+    int min = Integer.MAX_VALUE;
+   
+    if (bits <= 8) {
+      for (int j=0; j<plane.length; j++) {
+        if (plane[j] < min) min = plane[j];
+        if (plane[j] > max) max = plane[j];
+      }
+    }
+    else if (bits == 16) {
+      for (int j=0; j<plane.length; j+=2) {
+        short s = DataTools.bytesToShort(plane, j, 2, littleEndian);
+        if (s < min) min = s;
+        if (s > max) max = s;
+      }
+    }
+    else if (bits == 32) {
+      for (int j=0; j<plane.length; j+=4) {
+        int s = DataTools.bytesToInt(plane, j, 4, littleEndian);
+        if (s < min) min = s;
+        if (s > max) max = s;
+      }
+    }
+
+    Double[] rtn = new Double[2];
+    rtn[0] = new Double(min);
+    rtn[1] = new Double(max);
+    return rtn;
   }
 
   // -- Image scaling --

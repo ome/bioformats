@@ -55,13 +55,6 @@ public class ChannelMerger extends ReaderWrapper {
     return no;
   }
 
-  /** Gets the pixel type. */
-  public int getPixelType(String id) throws FormatException, IOException {
-    int type = super.getPixelType(id);
-    if (isRGB(id) && type > FormatReader.UINT8) type = FormatReader.UINT8;
-    return type;
-  }
-
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     return canMerge(id) || reader.isRGB(id);
@@ -84,11 +77,6 @@ public class ChannelMerger extends ReaderWrapper {
     BufferedImage[] img = new BufferedImage[sizeC];
     for (int c=0; c<sizeC; c++) {
       img[c] = reader.openImage(id, reader.getIndex(id, z, c, t));
-    
-      int min = getChannelGlobalMinimum(id, sizeC).intValue();
-      int max = getChannelGlobalMaximum(id, sizeC).intValue();
-    
-      img[c] = ImageTools.autoscale(img[c], min, max);
     }
     return ImageTools.mergeChannels(img);
   }
@@ -109,12 +97,6 @@ public class ChannelMerger extends ReaderWrapper {
     byte[] bytes = null;
     for (int c=0; c<sizeC; c++) {
       byte[] b = reader.openBytes(id, reader.getIndex(id, z, c, t));
-      
-      int min = getChannelGlobalMinimum(id, sizeC).intValue();
-      int max = getChannelGlobalMaximum(id, sizeC).intValue();
-      
-      b = ImageTools.autoscale(b, min, max, 
-        b.length / (getSizeX(id) * getSizeY(id) * sizeC), isLittleEndian(id)); 
       
       if (c == 0) {
         // assume array lengths for each channel are equal

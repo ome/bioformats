@@ -222,8 +222,7 @@ public abstract class FormatReader extends FormatHandler
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id); 
-    return scanData(this, id)[0];
+    return null;
   }
 
   /*
@@ -233,8 +232,7 @@ public abstract class FormatReader extends FormatHandler
   public Double getChannelGlobalMaximum(String id, int theC)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id); 
-    return scanData(this, id)[1];
+    return null;
   }
 
   /** Get the size of the X dimension for the thumbnail. */
@@ -493,64 +491,6 @@ public abstract class FormatReader extends FormatHandler
   }
 
   // -- Utility methods --
-
-  /** Scan a series for the channel min and max values. */
-  public static Double[] scanData(IFormatReader reader, String id) 
-    throws FormatException, IOException
-  {
-    int numImages = reader.getImageCount(id);
-    
-    int max = 0;
-    int min = Integer.MAX_VALUE;
-   
-    int type = reader.getPixelType(id);
-
-    int bits = 0;
-    switch (type) {
-      case INT8:
-      case UINT8: bits = 8; break;
-      case INT16:
-      case UINT16: bits = 16; break;
-      case INT32:
-      case UINT32:
-      case FLOAT: bits = 32; break;
-      default: bits = 64;
-    }
-
-    if (numImages > 6) numImages = 6;
-
-    for (int i=0; i<numImages; i++) {
-      byte[] b = reader.openBytes(id, i);
-
-      if (type == INT8 || type == UINT8) {
-        for (int j=0; j<b.length; j++) {
-          if (b[j] < min) min = b[j];
-          if (b[j] > max) max = b[j];
-        }
-      }
-      else if (type == INT16 || type == UINT16) {
-        for (int j=0; j<b.length; j+=2) {
-          short s = DataTools.bytesToShort(b, j, 2, reader.isLittleEndian(id));
-          if (s < min) min = s;
-          if (s > max) max = s;
-        }
-      }
-      else if (type == INT32 || type == UINT32 || type == FLOAT) {
-        for (int j=0; j<b.length; j+=4) {
-          int s = DataTools.bytesToInt(b, j, 4, reader.isLittleEndian(id));
-          if (s < min) min = s;
-          if (s > max) max = s;
-        }
-      }
-
-      if (min == 0 && max == (2^bits)) break; 
-    }
-   
-    Double[] rtn = new Double[2];
-    rtn[0] = new Double(min);
-    rtn[1] = new Double(max);
-    return rtn;
-  }
 
   /**
    * A utility method for test reading a file from the command line,
