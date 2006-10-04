@@ -61,7 +61,7 @@ public class ImageViewer extends JFrame
   protected JLabel probeLabel;
   protected JMenuItem fileSave;
 
-  protected ImageReader myReader;
+  protected IFormatReader myReader;
   protected ImageWriter myWriter;
 
   protected String filename;
@@ -172,7 +172,7 @@ public class ImageViewer extends JFrame
     help.add(helpAbout);
 
     // image I/O engine
-    myReader = new ImageReader();
+    myReader = new ChannelMerger(new FileStitcher());
     myWriter = new ImageWriter();
   }
 
@@ -184,23 +184,19 @@ public class ImageViewer extends JFrame
       id = f.getAbsolutePath();
 
       //images = myReader.open(id);
-      IFormatReader r = myReader.getReader(id);
-      FileStitcher fs = new FileStitcher(r);
-      ChannelMerger cm = new ChannelMerger(fs);
-
-      int num = cm.getImageCount(id);
+      int num = myReader.getImageCount(id);
       ProgressMonitor progress = new ProgressMonitor(this,
         "Reading " + id, null, 0, num + 1);
-      sizeZ = cm.getSizeZ(id);
-      sizeT = cm.getSizeT(id);
-      sizeC = cm.getSizeC(id);
-      if (cm.isRGB(id)) sizeC = (sizeC + 2) / 3; // adjust for RGB
+      sizeZ = myReader.getSizeZ(id);
+      sizeT = myReader.getSizeT(id);
+      sizeC = myReader.getSizeC(id);
+      if (myReader.isRGB(id)) sizeC = (sizeC + 2) / 3; // adjust for RGB
       progress.setProgress(1);
       BufferedImage[] img = new BufferedImage[num];
       for (int i=0; i<num; i++) {
         if (progress.isCanceled()) break;
-        img[i] = cm.openImage(id, i);
-        if (i == 0) setImages(id, cm, img);
+        img[i] = myReader.openImage(id, i);
+        if (i == 0) setImages(id, myReader, img);
         progress.setProgress(i + 2);
       }
       myReader.close();
