@@ -79,7 +79,7 @@ public class FileStitcher extends ReaderWrapper {
   private boolean varyZ, varyC, varyT;
   
   private IFormatReader[] readers;
-  private boolean multipleReaders = false;
+  private boolean multipleReaders = true;
 
   // -- Constructors --
 
