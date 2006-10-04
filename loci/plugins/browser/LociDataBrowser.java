@@ -96,7 +96,7 @@ public class LociDataBrowser {
       IJ.showMessage("Cannot show invalid image.");
       return;
     }
- 
+
     if (stackSize == 1 && !virtual) {
       // show single image normally
       imp.show();
@@ -162,7 +162,7 @@ public class LociDataBrowser {
     String directory = "";
     String name = "";
     boolean quiet = false;
-    
+
     // get file name and virtual stack option
     stack = null;
     while (!done2) {
@@ -263,7 +263,7 @@ public class LociDataBrowser {
             return;
           }
           ImagePlus imp = new ImagePlus(id, stack);
-          
+
           FileInfo fi = new FileInfo();
           try {
             fi.description = store.dumpXML();
