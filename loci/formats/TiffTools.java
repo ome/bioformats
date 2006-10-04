@@ -172,6 +172,7 @@ public final class TiffTools {
   public static final int PROPRIETARY_DEFLATE = 32946;
   public static final int DEFLATE = 8;
   public static final int THUNDERSCAN = 32809;
+  public static final int NIKON_JPEG = 34713;
 
   // photometric interpretation types
   public static final int WHITE_IS_ZERO = 0;
@@ -1189,6 +1190,14 @@ public final class TiffTools {
       samplesPerPixel = 3;
     }
 
+    if (photoInterp == CFA_ARRAY) {
+      int[] tempMap = new int[colorMap.length + 2];
+      System.arraycopy(colorMap, 0, tempMap, 0, colorMap.length);
+      tempMap[tempMap.length - 2] = (int) imageWidth;
+      tempMap[tempMap.length - 1] = (int) imageLength;
+      colorMap = tempMap;
+    }
+
     //if (planarConfig == 2) numSamples *= samplesPerPixel;
 
     short[][] samples = new short[samplesPerPixel][numSamples];
@@ -1283,6 +1292,13 @@ public final class TiffTools {
         }
       }
     }
+
+    /*
+    if (photoInterp == CFA_ARRAY) {
+      byteData = 
+        ImageTools.convolve(byteData, (int) imageWidth, (int) imageLength);
+    }
+    */
     return byteData;
   }
 
@@ -1506,8 +1522,35 @@ public final class TiffTools {
     int numBytes = bps0 / 8;
     boolean noDiv8 = bps0 % 8 != 0;
     boolean bps8 = bps0 == 8;
+  
+    int width = 0;
+    int height = 0;
+    if (photoInterp == CFA_ARRAY) {
+      width = colorMap[colorMap.length - 2];
+      height = colorMap[colorMap.length - 1];
+    }
 
-    int colorPointer = 0;
+    //int row = startIndex / width, col = 0;
+    int row = 0, col = 0;
+    if (width != 0) row = startIndex / width;
+
+    int cw = 0;
+    int ch = 0;
+
+    if (photoInterp == CFA_ARRAY) {
+      byte[] c = new byte[2];
+      c[0] = (byte) colorMap[0];
+      c[1] = (byte) colorMap[1];
+    
+      cw = DataTools.bytesToInt(c, littleEndian);
+      c[0] = (byte) colorMap[2];
+      c[1] = (byte) colorMap[3];
+      ch = DataTools.bytesToInt(c, littleEndian);
+
+      int[] tmp = colorMap;
+      colorMap = new int[tmp.length - 6];
+      System.arraycopy(tmp, 4, colorMap, 0, colorMap.length);
+    }
 
     int index = 0;
     for (int j=0; j<sampleCount; j++) {
@@ -1539,7 +1582,8 @@ public final class TiffTools {
           if (counter % 4 == 0 && i == 0) index++;
 
           int ndx = startIndex + j;
-          samples[i][ndx] = (short) (b < 0 ? 256 + b : b);
+          short s = (short) (b < 0 ? 256 + b : b);
+          if (photoInterp != CFA_ARRAY) samples[i][ndx] = s;
 
           if (photoInterp == WHITE_IS_ZERO || photoInterp == CMYK) {
              samples[i][ndx] =
@@ -1556,14 +1600,45 @@ public final class TiffTools {
             samples[i][ndx] = (short) components[i];
           }
           else if (photoInterp == CFA_ARRAY) {
-            switch (colorMap[colorPointer]) {
-              case 0: samples[0][ndx] = samples[i][ndx]; break;
-              case 1: samples[1][ndx] = samples[i][ndx]; break;
-              case 2: samples[2][ndx] = samples[i][ndx]; break;
+            /*
+            if (i == 0) {
+              if (row % 2 == 0) {
+                if (row*width + col < samples[0].length) {
+                  samples[colorMap[col % cw]][row*width + col] = s;
+                }
+                col++;
+                if ((col-1) % cw == (cw - 1) && col != width) {
+                  row++;
+                  col -= cw;
+                }  
+                else if (col == width) {
+                  row += ch;
+                  col = 0;
+                }
+              }
+              else {
+                if (row*width + col < samples[0].length) {
+                  samples[colorMap[cw + (col % cw)]][row*width + col] = s; 
+                }
+                col++;
+                if ((col-1) % cw == (cw - 1) && col != width) row--;
+                else if (col == width) {
+                  row++;
+                  col = 0;
+                }
+              }
             }
+            */
 
-            colorPointer++;
-            colorPointer %= colorMap.length;
+            if (i == 0) {
+              int colorIndex = (col % cw) + ((row % 2) == 0 ? 0 : cw);
+              samples[colorMap[colorIndex]][row*width + col] = s;
+              col++;
+              if (col == width) {
+                row++;
+                col = 0;
+              }
+            }
           }
         }
         else if (bps8) {
@@ -1668,6 +1743,11 @@ public final class TiffTools {
       throw new FormatException(
         "Sorry, JPEG compression mode is not supported");
     }
+    /*
+    else if (compression == JPEG || compression == NIKON_JPEG) {
+      return Compression.jpegUncompress(input);
+    }
+    */
     else if (compression == PACK_BITS) {
       return Compression.packBitsUncompress(input);
     }
