@@ -64,14 +64,14 @@ public class SDTReader extends FormatReader {
   // -- SDTReader API methods --
 
   /**
-   * Toggles whether the reader should operate return
-   * intensity data only (the sum of each lifetime histogram).
+   * Toggles whether the reader should return intensity
+   * data only (the sum of each lifetime histogram).
    */
   public void setIntensity(boolean intensity) { this.intensity = intensity; }
 
   /**
-   * Gets whether the reader is combining each lifetime histogram
-   * into an summed intensity image plane.
+   * Gets whether the reader is combining each lifetime
+   * histogram into a summed intensity image plane.
    */
   public boolean isIntensity() { return intensity; }
 
@@ -85,6 +85,17 @@ public class SDTReader extends FormatReader {
   public int getChannelCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return channels;
+  }
+
+  /** Gets object containing SDT header information. */
+  public SDTInfo getInfo(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return info;
+  }
+
+  public short[][][][] openData(String id) {
+    // CTR TODO
+    return null;
   }
 
   // -- IFormatReader API methods --
