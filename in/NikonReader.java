@@ -47,7 +47,6 @@ public class NikonReader extends BaseTiffReader {
   private static final int TIFF_EPS_STANDARD = 37398;
 
   // EXIF IFD tags.
-  private static final int CFA_REPEAT_DIM = 33421;
   private static final int EXPOSURE_TIME = 33434;
   private static final int APERTURE = 33437;
   private static final int EXPOSURE_PROGRAM = 34850;
@@ -110,10 +109,6 @@ public class NikonReader extends BaseTiffReader {
 
   /** Offset to the Nikon Maker Note. */
   protected int makerNoteOffset;
-
-  /** The original IFD. */
-  protected Hashtable original;
-
 
   // -- Constructor --
 
@@ -179,49 +174,7 @@ public class NikonReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* (non-Javadoc)
-   * @see loci.formats.in.BaseTiffReader#initFile(String)
-   */
-  protected void initFile(String id) throws FormatException, IOException {
-    close();
-    currentId = id;
-    metadata = new Hashtable();
-
-    sizeX = new int[1];
-    sizeY = new int[1];
-    sizeZ = new int[1];
-    sizeC = new int[1];
-    sizeT = new int[1];
-    pixelType = new int[1];
-    currentOrder = new String[1];
-    getMetadataStore(id).createRoot();
-
-    channelMinMax = null;
-    in = new RandomAccessStream(id);
-    if (in.readShort() == 0x4949) in.order(true);
-
-    ifds = TiffTools.getIFDs(in);
-    if (ifds == null) throw new FormatException("No IFDs found");
-
-    // look for the SubIFD tag (330);
-
-    int offset = TiffTools.getIFDIntValue(ifds[0], 330, false, 0);
-    Hashtable realImage = TiffTools.getIFD(in, 1, 0, offset);
-
-    original = ifds[0];
-    ifds[0] = realImage;
-    numImages = 1;
-
-    initMetadata();
-
-    try {
-      realImage.put(new Integer(TiffTools.COLOR_MAP),
-        metadata.get("CFA pattern"));
-    }
-    catch (Exception e) { }
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.in.BaseTiffReader#initStandardMetadata()
+   * @see loci.formats.BaseTiffReader#initStandardMetadata()
    */
   protected void initStandardMetadata() {
     super.initStandardMetadata();
@@ -230,7 +183,7 @@ public class NikonReader extends BaseTiffReader {
     // it should contain version information
 
     short[] version = (short[])
-      TiffTools.getIFDValue(original, TIFF_EPS_STANDARD);
+      TiffTools.getIFDValue(ifds[0], TIFF_EPS_STANDARD);
     String v = "";
     for (int i=0; i<version.length; i++) v += version[i];
     metadata.put("Version", v);
@@ -244,8 +197,9 @@ public class NikonReader extends BaseTiffReader {
     // now look for the EXIF IFD pointer
 
     try {
-      int exif = TiffTools.getIFDIntValue(original, EXIF_IFD_POINTER);
+      int exif = TiffTools.getIFDIntValue(ifds[0], EXIF_IFD_POINTER);
       if (exif != -1) {
+        in.order(littleEndian); // CTR: is this really necessary?
         Hashtable exifIFD = TiffTools.getIFD(in, 0, 0, exif);
 
         // put all the EXIF data in the metadata hashtable
@@ -256,13 +210,7 @@ public class NikonReader extends BaseTiffReader {
           while (e.hasMoreElements()) {
             key = (Integer) e.nextElement();
             int tag = key.intValue();
-            if (tag == CFA_PATTERN) {
-              byte[] cfa = (byte[]) exifIFD.get(key);
-              int[] colorMap = new int[cfa.length];
-              for (int i=0; i<cfa.length; i++) colorMap[i] = (int) cfa[i];
-              metadata.put(getTagName(tag), colorMap);
-            }
-            else metadata.put(getTagName(tag), exifIFD.get(key));
+            metadata.put(getTagName(tag), exifIFD.get(key));
           }
         }
       }
@@ -272,6 +220,7 @@ public class NikonReader extends BaseTiffReader {
     // read the maker note
 
     try {
+      in.order(littleEndian); // CTR: is this really necessary?
       Hashtable makerNote = TiffTools.getIFD(in, 0, 0, makerNoteOffset);
       if (makerNote != null) {
         Enumeration e = makerNote.keys();
@@ -291,8 +240,6 @@ public class NikonReader extends BaseTiffReader {
   /** Gets the name of the IFD tag encoded by the given number. */
   private String getTagName(int tag) {
     switch (tag) {
-      case CFA_REPEAT_DIM:
-        return "CFA Repeat Dimensions";
       case EXPOSURE_TIME:
         return "Exposure Time";
       case APERTURE:
