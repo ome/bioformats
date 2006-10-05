@@ -436,9 +436,11 @@ public class Importer implements ItemListener {
           }
 
           imp.setFileInfo(fi);
-          
+         
+          int c = r.getSizeC(id);
+          r.close();
+
           if (doRGBMerge) {
-            int c = r.getSizeC(id);
             ImageStack is = imp.getImageStack();
             int w = is.getWidth(), h = is.getHeight();
             ImageStack newStack = new ImageStack(w, h);
