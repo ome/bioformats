@@ -103,6 +103,14 @@ public class ChannelSeparator extends ReaderWrapper {
     else return reader.openBytes(id, no);
   }
 
+  /** Obtains a thumbnail for the specified image from the given file. */
+  public BufferedImage openThumbImage(String id, int no)
+    throws FormatException, IOException
+  {
+    return ImageTools.scale(openImage(id, no), getThumbSizeX(id), 
+      getThumbSizeY(id), true, true);
+  }
+
   public int getIndex(String id, int z, int c, int t)
     throws FormatException, IOException
   {

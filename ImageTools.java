@@ -815,7 +815,15 @@ public final class ImageTools {
 
       byte[] padded = new byte[width * height];
 
-      for (int i=ypad; i<height - ypad; i++) {
+      int n = 0;
+      if (ypad * 2 != totalY) n = 1;
+
+      if (totalY < 0) {
+        ypad = 0;
+        n = 0;
+      }
+
+      for (int i=ypad; i<height - ypad - n; i++) {
         System.arraycopy(b, (i - ypad) * oldWidth, padded, i*width + xpad,
           oldWidth);
       }
@@ -844,7 +852,15 @@ public final class ImageTools {
 
       short[] padded = new short[width * height];
 
-      for (int i=ypad; i<height - ypad; i++) {
+      int n = 0;
+      if (ypad * 2 != totalY) n = 1;
+
+      if (totalY < 0) {
+        ypad = 0;
+        n = 0;
+      }
+
+      for (int i=ypad; i<height - ypad - n; i++) {
         System.arraycopy(b, (i - ypad) * oldWidth, padded, i*width + xpad,
           oldWidth);
       }
@@ -872,7 +888,15 @@ public final class ImageTools {
 
       int[] padded = new int[width * height];
 
-      for (int i=ypad; i<height - ypad; i++) {
+      int n = 0;
+      if (ypad * 2 != totalY) n = 1;
+
+      if (totalY < 0) {
+        ypad = 0;
+        n = 0;
+      }
+
+      for (int i=ypad; i<height - ypad - n; i++) {
         System.arraycopy(b, (i - ypad) * oldWidth, padded, i*width + xpad,
           oldWidth);
       }
@@ -901,7 +925,15 @@ public final class ImageTools {
 
       float[] padded = new float[width * height];
 
-      for (int i=ypad; i<height - ypad; i++) {
+      int n = 0;
+      if (ypad * 2 != totalY) n = 1;
+
+      if (totalY < 0) {
+        ypad = 0;
+        n = 0;
+      }
+
+      for (int i=ypad; i<height - ypad - n; i++) {
         System.arraycopy(b, (i - ypad) * oldWidth, padded, i*width + xpad,
           oldWidth);
       }
@@ -931,7 +963,15 @@ public final class ImageTools {
 
       double[] padded = new double[width * height];
 
-      for (int i=ypad; i<height - ypad; i++) {
+      int n = 0;
+      if (ypad * 2 != totalY) n = 1;
+
+      if (totalY < 0) {
+        ypad = 0;
+        n = 0;
+      }
+      
+      for (int i=ypad; i<height - ypad - n; i++) {
         System.arraycopy(b, (i - ypad) * oldWidth, padded, i*width + xpad,
           oldWidth);
       }
@@ -1240,7 +1280,7 @@ public final class ImageTools {
       // keep the width the same, but adjust height accordingly
       height = (h * width) / w;
     }
-    
+   
     if ((width * height) / (w * h) > 0) {
       // use Java2D to enlarge
       source = scale2D(source, width, height, null, source.getColorModel());

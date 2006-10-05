@@ -106,6 +106,15 @@ public class ChannelMerger extends ReaderWrapper {
     }
     return bytes;
   }
+ 
+  /** Obtains a thumbnail for the specified image from the given file. */
+  public BufferedImage openThumbImage(String id, int no)
+    throws FormatException, IOException
+  {
+    if (!canMerge(id)) return super.openThumbImage(id, no);
+    return ImageTools.scale(openImage(id, no), getThumbSizeX(id), 
+      getThumbSizeY(id), true, true);
+  }
 
   public int getIndex(String id, int z, int c, int t)
     throws FormatException, IOException
