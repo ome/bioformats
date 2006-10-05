@@ -203,6 +203,8 @@ public class LIFReader extends FormatReader {
     xcal = new Vector();
     ycal = new Vector();
     zcal = new Vector();
+    channelMins = new Vector();
+    channelMaxs = new Vector();
 
     // read the header
 
@@ -389,8 +391,11 @@ public class LIFReader extends FormatReader {
               numChannels++;
               if (numChannels == 1) {
                 bps.add(new Integer((String) tmp.get("Resolution")));
-                channelMins.add(new Integer((String) tmp.get("Min")));
-                channelMaxs.add(new Integer((String) tmp.get("Maxs")));
+                try {
+                  channelMins.add(new Integer((String) tmp.get("Min")));
+                  channelMaxs.add(new Integer((String) tmp.get("Maxs")));
+                }
+                catch (Exception e) { }
               }
             }
             else if (tmp.get("DimensionDescription DimID") != null) {
