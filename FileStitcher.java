@@ -256,9 +256,12 @@ public class FileStitcher extends ReaderWrapper {
     readers = new IFormatReader[files.length];
     if (multipleReaders) {
       readers[0] = reader;
-      ImageReader ir = (ImageReader) reader;
+      IFormatReader r = reader;
+      while (r instanceof ReaderWrapper) r = ((ReaderWrapper) r).reader;
+      ImageReader ir = null;
+      if (r instanceof ImageReader) ir = (ImageReader) r;
       for (int i=1; i<readers.length; i++) {
-        readers[i] = ir.getReader(files[i]);
+        readers[i] = ir == null ? r : ir.getReader(files[i]);
         // now we know the type of reader to use, but want a separate
         // object for each file, so create a new one of that type
         try {
