@@ -320,6 +320,7 @@ public class Importer implements ItemListener {
           Double min = null, max = null;
 
           if (r.isRGB(id) && r.getPixelType(id) >= FormatReader.INT16) {
+            
             if (min == null || max == null) {
               // call ImageJ's RGB merge utility after we display
               doRGBMerge = true;
@@ -335,7 +336,7 @@ public class Importer implements ItemListener {
           int c = raster.getNumBands();
           int tt = raster.getTransferType();
           int w = img.getWidth(), h = img.getHeight();
-         
+        
           if (c == 1) {
             if (tt == DataBuffer.TYPE_BYTE) {
               byte[] b = ImageTools.getBytes(img)[0];
@@ -368,7 +369,18 @@ public class Importer implements ItemListener {
               }
               ip = new FloatProcessor(w, h, f, null);
               if (stackF == null) stackF = new ImageStack(w, h);
-              stackF.addSlice(name + ":" + (j + 1), ip);
+              
+              if (stackB != null) {
+                ip = ip.convertToByte(true);
+                stackB.addSlice(name + ":" + (j + 1), ip);
+                stackF = null; 
+              }
+              else if (stackS != null) {
+                ip = ip.convertToShort(true);
+                stackS.addSlice(name + ":" + (j + 1), ip);
+                stackF = null; 
+              }
+              else stackF.addSlice(name + ":" + (j + 1), ip);
             }
           }
           if (ip == null) {
@@ -418,7 +430,7 @@ public class Importer implements ItemListener {
           Float zf = store.getPixelSizeZ(ii);
           if (zf != null) zcal = zf.floatValue();
 
-          if (xcal == xcal || ycal == ycal || zcal == zcal) {
+          if (xcal != Double.NaN || ycal != Double.NaN || zcal != Double.NaN) {
             Calibration c = new Calibration();
             if (xcal == xcal) {
               c.pixelWidth = xcal;
@@ -442,6 +454,7 @@ public class Importer implements ItemListener {
 
           if (doRGBMerge) {
             ImageStack is = imp.getImageStack();
+
             int w = is.getWidth(), h = is.getHeight();
             ImageStack newStack = new ImageStack(w, h);
 
