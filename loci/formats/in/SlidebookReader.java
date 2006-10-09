@@ -140,6 +140,12 @@ public class SlidebookReader extends FormatReader {
 
     bpp = 2; // this is a major assumption
 
+    // check if there are multiple "series" - note that each series has the
+    // same dimensions, so we can display each plane as part of the same series
+
+    in.seek(160);
+    boolean multiSeries = DataTools.read4UnsignedBytes(in, true) > 1;
+
     // pixel data always begins at 0x6b0
 
     in.seek(1792);
@@ -172,7 +178,9 @@ public class SlidebookReader extends FormatReader {
     in.seek(1792 + count - 20);
 
     int check = in.read();
+    int lastH = 0;
     while (check == 'h') {
+      lastH = in.getFilePointer();
       in.skipBytes(255);
       numC++;
       check = in.read();
@@ -197,21 +205,37 @@ public class SlidebookReader extends FormatReader {
       n = in.read(buf, 20, buf.length - 20);
     }
 
-    // this looks right, but I'm not confident that it will work in general
-    in.seek(0x106);
+    // look for the first "i...II" block - this will have the width and height
+
+    in.seek(lastH);
+    in.skipBytes(335);
+
     width = DataTools.read2UnsignedBytes(in, true);
-    in.seek(0x306);
     height = DataTools.read2UnsignedBytes(in, true);
+    
+    if (multiSeries) {
+      width /= numC;
+      height /= numC;
+    }
 
     numImages = count / (width * height * bpp);
+
+    float planes = (float) count / (float) (width * height * bpp);
+    numImages = (int) planes;
 
     sizeX[0] = width;
     sizeY[0] = height;
     sizeZ[0] = numImages / (numT * numC);
     sizeC[0] = numC;
     sizeT[0] = numT;
+
     pixelType[0] = FormatReader.INT16;
     currentOrder[0] = "XY";
+ 
+    if (numImages != (sizeZ[0] * sizeC[0] * sizeT[0])) {
+      sizeZ[0] = 1;
+      sizeT[0] = numImages / sizeC[0];
+    }
 
     int[] dims = {sizeZ[0], sizeC[0], sizeT[0]};
     String[] names = {"Z", "C", "T"};
@@ -235,6 +259,10 @@ public class SlidebookReader extends FormatReader {
     currentOrder[0] += names[maxNdx];
     currentOrder[0] += names[medNdx];
     currentOrder[0] += names[minNdx];
+  
+    if (sizeZ[0] == 0) sizeZ[0] = 1;
+    if (sizeC[0] == 0) sizeC[0] = 1;
+    if (sizeT[0] == 0) sizeT[0] = 1;
   }
 
   // -- Main method --
