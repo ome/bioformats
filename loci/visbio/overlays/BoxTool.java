@@ -50,7 +50,7 @@ public class BoxTool extends OverlayTool {
     box = new OverlayBox(overlay, x, y, x, y);
     configureOverlay(box);
     OverlayWidget panel = (OverlayWidget) overlay.getControls();
-    box.setFilled(panel.isFilled());
+    box.setFilled(panel.isFilled()); 
     overlay.addObject(box, pos);
   }
 
