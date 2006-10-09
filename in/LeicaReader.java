@@ -158,7 +158,9 @@ public class LeicaReader extends BaseTiffReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-    return tiff[series][no].openBytes((String) files[series].get(no), 0);
+    byte[] b = tiff[series][no].openBytes((String) files[series].get(no), 0);
+    tiff[series][no].close();
+    return b;
   }
 
   /** Obtains the specified image from the given Leica file. */
@@ -173,7 +175,10 @@ public class LeicaReader extends BaseTiffReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    return tiff[series][no].openImage((String) files[series].get(no), 0);
+    BufferedImage b = 
+      tiff[series][no].openImage((String) files[series].get(no), 0);
+    tiff[series][no].close();
+    return b;
   }
 
   /** Closes any open files. */
