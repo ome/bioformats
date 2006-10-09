@@ -131,7 +131,6 @@ public final class SwingUtil {
    * inaccuracies in certain cases.
    */
   public static void pack(Window w) {
-    System.out.println("Packing " + ((JFrame) w).getTitle());//TEMP
     w.pack();
     // HACK - work around a layout issue where panel is slightly too narrow and
     // short; this hack also appears in loci.visbio.view.DisplayWindow.repack()
