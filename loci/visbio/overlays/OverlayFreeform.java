@@ -68,15 +68,23 @@ public class OverlayFreeform extends OverlayObject {
     float r = color.getRed() / 255f;
     float g = color.getGreen() / 255f;
     float b = color.getBlue() / 255f;
-    float[][] rangeSamples = new float[3][setSamples[0].length];
-    Arrays.fill(rangeSamples[0], r);
-    Arrays.fill(rangeSamples[1], g);
-    Arrays.fill(rangeSamples[2], b);
 
     FlatField field = null;
     try {
-      GriddedSet fieldSet = new Gridded2DSet(domain,
+      SampledSet fieldSet = new Gridded2DSet(domain,
         setSamples, setSamples[0].length, null, null, null, false);
+      if (filled) {
+        Irregular2DSet roiSet =
+          DelaunayCustom.fillCheck((Gridded2DSet) fieldSet, false);
+        if (roiSet != null) fieldSet = roiSet;
+      }
+
+      int len = fieldSet.getSamples(false)[0].length;
+      float[][] rangeSamples = new float[3][len];
+      Arrays.fill(rangeSamples[0], r);
+      Arrays.fill(rangeSamples[1], g);
+      Arrays.fill(rangeSamples[2], b);
+
       FunctionType fieldType = new FunctionType(domain, range);
       field = new FlatField(fieldType, fieldSet);
       field.setSamples(rangeSamples);
@@ -108,6 +116,9 @@ public class OverlayFreeform extends OverlayObject {
 
   /** True iff this overlay has a second endpoint coordinate pair. */
   public boolean hasEndpoint2() { return true; }
+
+  /** True iff this overlay supports the filled parameter. */
+  public boolean canBeFilled() { return true; }
 
   // -- Internal OverlayObject API methods --
 
