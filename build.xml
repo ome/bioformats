@@ -91,21 +91,22 @@ Leica Converter
                    jar-leica
     License:       Public domain
 
-QT TIFF Converter
-    JAR file:      QTConverter.jar
-    Folders:       loci/apps/qt
-                   some loci/formats
-    Main class:    loci.apps.qt.QTConverter
+Movie Stitcher
+    JAR file:      MovieStitcher.jar
+    Folders:       loci/apps/stitcher
+                   loci/formats
+                   loci/formats/*
+    Main class:    loci.apps.sticher.MovieStitcher
     Dependencies:  None (custom built)
-    Targets:       style-qt
-                   compile-qt
-                   jar-qt
+    Targets:       style-stitcher
+                   compile-stitcher
+                   jar-stitcher
     License:       Public domain
 
 Slim Plotter
     JAR file:      SlimPlotter.jar
     Folders:       loci/apps/slim
-                   some loci/formats and loci/visbio
+                   some loci/formats, loci/formats/in and loci/visbio
     Main class:    loci.apps.slim.SlimPlotter
     Dependencies:  lma.jar
                    visad-lite.jar
@@ -222,7 +223,7 @@ Apache XML-RPC
   </target>
 
   <target name="style"
-    depends="style-formats, style-visbio, style-plugins, style-notebook, style-leica, style-qt, style-slim"
+    depends="style-formats, style-visbio, style-plugins, style-notebook, style-leica, style-stitcher, style-slim"
     description="check source code style for LOCI software packages"/>
 
 <!--
@@ -234,11 +235,11 @@ Apache XML-RPC
   </target>
 -->
   <target name="compile"
-    depends="compile-formats, compile-visbio, compile-plugins, compile-notebook, compile-leica, compile-qt, compile-slim"
+    depends="compile-formats, compile-visbio, compile-plugins, compile-notebook, compile-leica, compile-stitcher, compile-slim"
     description="compile classes for LOCI software packages"/>
 
   <target name="jars"
-    depends="jar-formats, jar-visbio, jar-plugins, jar-notebook, jar-leica, jar-qt, jar-slim"
+    depends="jar-formats, jar-visbio, jar-plugins, jar-notebook, jar-leica, jar-stitcher, jar-slim"
     description="generate JAR files for LOCI software packages"/>
 
   <target name="docs" depends="copy-source"
@@ -585,30 +586,30 @@ Apache XML-RPC
     </jar>
   </target>
 
-  <!-- QT TIFF Converter -->
+  <!-- Movie Stitcher -->
 
-  <target name="style-qt" depends="copy-source"
-    description="check source code style for QT TIFF Converter">
+  <target name="style-stitcher" depends="copy-source"
+    description="check source code style for Movie Stitcher">
     <checkstyle config="checkstyle.xml">
-      <fileset dir="${dest.dir}" includes="${qt.source}"/>
+      <fileset dir="${dest.dir}" includes="${stitcher.source}"/>
     </checkstyle>
   </target>
 
-  <target name="compile-qt" depends="copy-source"
-    description="compile classes for QT TIFF Converter">
+  <target name="compile-stitcher" depends="copy-source"
+    description="compile classes for Movie Stitcher">
     <mkdir dir="${classes.dir}"/>
     <javac srcdir="${dest.dir}" destdir="${classes.dir}"
-      includes="${qt.source}" classpath="${ext.jars}"
+      includes="${stitcher.source}" classpath="${ext.jars}"
       debug="true" deprecation="true" source="1.4" target="1.4"/>
   </target>
 
-  <target name="jar-qt" depends="compile-qt"
-    description="generate JAR file for QT TIFF Converter">
+  <target name="jar-stitcher" depends="compile-stitcher"
+    description="generate JAR file for Movie Stitcher">
     <mkdir dir="${jar.dir}"/>
     <jar jarfile="${jar.dir}/QTConverter.jar" basedir="${classes.dir}"
-      includes="${qt.files}">
+      includes="${stitcher.files}">
       <manifest>
-        <attribute name="Main-Class" value="loci.apps.qt.QTConverter"/>
+        <attribute name="Main-Class" value="loci.apps.stitcher.QTConverter"/>
       </manifest>
     </jar>
   </target>
