@@ -1,11 +1,11 @@
 //
-// QTConverter.java
+// MovieStitcher.java
 //
 
-// Coded April - July 2006 by Curtis Rueden, to ease migration from QuickTime
-// to OME-TIFF format. Permission is granted to use this code for anything.
+// Coded in 2006 by Curtis Rueden.
+// Permission is granted to use this code for anything.
 
-package loci.apps.qt;
+package loci.apps.stitcher;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -23,12 +23,15 @@ import loci.formats.in.QTReader;
 import loci.formats.in.TiffReader;
 import loci.formats.out.TiffWriter;
 
-/** A utility for converting 4D QuickTime movies into 4D TIFF stacks. */
-public class QTConverter extends JFrame implements ActionListener, Runnable {
+/**
+ * A utility for reorganizing and converting QuickTime movies,
+ * TIFF series and other datasets.
+ */
+public class MovieStitcher extends JFrame implements ActionListener, Runnable {
 
   // -- Constants --
 
-  private static final String TITLE = "QT TIFF Converter";
+  private static final String TITLE = "Movie Stitcher";
 
   // -- Fields --
 
@@ -45,7 +48,7 @@ public class QTConverter extends JFrame implements ActionListener, Runnable {
 
   // -- Constructor --
 
-  public QTConverter() {
+  public MovieStitcher() {
     super(TITLE);
 
     // file choosers
@@ -334,7 +337,7 @@ public class QTConverter extends JFrame implements ActionListener, Runnable {
   // -- Main method --
 
   public static void main(String[] args) {
-    new QTConverter().setVisible(true);
+    new MovieStitcher().setVisible(true);
   }
 
 }
