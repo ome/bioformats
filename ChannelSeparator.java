@@ -53,10 +53,13 @@ public class ChannelSeparator extends ReaderWrapper {
   public String getDimensionOrder(String id) throws FormatException, IOException
   {
     String order = super.getDimensionOrder(id);
-    String newOrder = "XYC";
-    if (order.indexOf("Z") > order.indexOf("T")) newOrder += "TZ";
-    else newOrder += "ZT";
-    return newOrder;
+    if (reader.isRGB(id)) {
+      String newOrder = "XYC";
+      if (order.indexOf("Z") > order.indexOf("T")) newOrder += "TZ";
+      else newOrder += "ZT";
+      return newOrder;
+    }
+    return order;
   }
 
   /** Checks if the images in the file are RGB. */

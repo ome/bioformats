@@ -286,6 +286,8 @@ public class ZeissZVIReader extends FormatReader {
 
   /** Initializes the given ZVI file. */
   protected void initFile(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) close();
+    
     if (noPOI) {
       legacy.initFile(id);
       return;
@@ -335,10 +337,34 @@ public class ZeissZVIReader extends FormatReader {
       sizeZ[0] = zSize;
       sizeC[0] = nChannels;
       sizeT[0] = tSize;
-      currentOrder[0] = (zSize > tSize) ? "XYCZT" : "XYCTZ";
+  
+      Object check = metadata.get("Image Channel Index");
+      if (check != null) {
+        int[] dims = {sizeZ[0], sizeC[0], sizeT[0]};
+        int max = 0, min = Integer.MAX_VALUE, maxNdx = 0, minNdx = 0;
+        String[] axes = {"Z", "C", "T"};
+
+        for (int i=0; i<dims.length; i++) {
+          if (dims[i] > max) {
+            max = dims[i];
+            maxNdx = i;
+          }
+          if (dims[i] < min) {
+            min = dims[i];
+            minNdx = i;
+          }
+        }
+       
+        int medNdx = 0;
+        for (int i=0; i<3; i++) { 
+          if (i != maxNdx && i != minNdx) medNdx = i;
+        }
+
+        currentOrder[0] = "XY" + axes[maxNdx] + axes[medNdx] + axes[minNdx];
+      }
+      else currentOrder[0] = (zSize > tSize) ? "XYCZT" : "XYCTZ";
     }
     catch (Throwable t) {
-      /* debug */ t.printStackTrace();
       noPOI = true;
       if (DEBUG) t.printStackTrace();
       initFile(id);
