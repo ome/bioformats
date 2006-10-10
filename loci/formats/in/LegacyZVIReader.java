@@ -376,26 +376,29 @@ public class LegacyZVIReader extends FormatReader {
       tSet.add(new Integer(theT));
       numI++;
       // sorry not a very clever way to find dimension order
+     
       if ((numI == 2) && (cSet.size() == 2))  cFlag = 1;
       if ((numI == 2) && (zSet.size() == 2))  zFlag = 1;
       if ((numI == 2) && (tSet.size() == 2))  tFlag = 1;
 
-      if ((numI == 3) && (zSet.size() == 2) && (cFlag == 1)) {
+        /*
+      if ((numI % 3 == 0) && (zSet.size() > 1) && (cFlag == 1)) {
         dimensionOrder = "XYCZT";
       }
-      if ((numI == 3) && (tSet.size() == 2) && (cFlag == 1)) {
+      if ((numI % 3 == 0) && (tSet.size() > 1) && (cFlag == 1)) {
         dimensionOrder = "XYCTZ";
       }
-      if ((numI == 3) && (cSet.size() == 2) && (zFlag == 1)) {
+      */
+      if ((numI % 3 == 0) && (cSet.size() > 1) && (zFlag == 1)) {
         dimensionOrder = "XYZCT";
       }
-      if ((numI == 3) && (tSet.size() == 2) && (zFlag == 1)) {
+      if ((numI % 3 == 0) && (tSet.size() > 1) && (zFlag == 1)) {
         dimensionOrder = "XYZTC";
       }
-      if ((numI == 3) && (cSet.size() == 2) && (tFlag == 1)) {
+      if ((numI % 3 == 0) && (cSet.size() > 1) && (tFlag == 1)) {
         dimensionOrder = "XYTCZ";
       }
-      if ((numI == 3) && (zSet.size() == 2) && (tFlag == 1)) {
+      if ((numI % 3 == 0) && (zSet.size() > 1) && (tFlag == 1)) {
         dimensionOrder = "XYTZC";
       }
 

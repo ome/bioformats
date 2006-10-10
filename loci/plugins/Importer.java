@@ -538,12 +538,13 @@ public class Importer implements ItemListener {
     FileInfo fi, IFormatReader r, boolean range) 
     throws FormatException, IOException 
   {
+    
     int step = 1;
     if (range) {
       step = c;
       c = r.getSizeC(file);
     }
-    
+  
     ImageStack[] newStacks = new ImageStack[c];
     for (int i=0; i<newStacks.length; i++) {
       newStacks[i] = new ImageStack(is.getWidth(), is.getHeight());
