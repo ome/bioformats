@@ -303,10 +303,10 @@ Apache XML-RPC
       <fileset dir="${src.dir}" includes="${formats.resources}"/>
     </copy>
     <mkdir dir="${jar.dir}"/>
-    <jar jarfile="${jar.dir}/bio-formats.jar" basedir="${classes.dir}"
+    <jar jarfile="${jar.dir}/${formats.jar}" basedir="${classes.dir}"
       includes="${formats.files}">
       <manifest>
-        <attribute name="Main-Class" value="loci.formats.ImageViewer"/>
+        <attribute name="Main-Class" value="${formats.main}"/>
         <attribute name="Class-Path" value="${formats.classpath}"/>
       </manifest>
     </jar>
@@ -334,10 +334,10 @@ Apache XML-RPC
     <copy todir="${classes.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="${visbio.resources}"/>
     </copy>
-    <jar jarfile="${jar.dir}/visbio.jar" basedir="${classes.dir}"
+    <jar jarfile="${jar.dir}/${visbio.jar}" basedir="${classes.dir}"
       includes="${visbio.files}">
       <manifest>
-        <attribute name="Main-Class" value="loci.visbio.VisBio"/>
+        <attribute name="Main-Class" value="${visbio.main}"/>
         <attribute name="Class-Path" value="${visbio.classpath}"/>
       </manifest>
     </jar>
@@ -513,13 +513,13 @@ Apache XML-RPC
 
   <target name="jar-plugins" depends="compile-plugins, copy-jars, jar-formats"
     description="generate JAR file for LOCI Plugins for ImageJ">
-    <jar jarfile="${jar.dir}/loci_plugins.jar"
+    <jar jarfile="${jar.dir}/${plugins.jar}"
       basedir="${src.dir}/loci/plugins" includes="plugins.config">
       <manifest>
-        <attribute name="Main-Class" value="loci.plugins.About"/>
+        <attribute name="Main-Class" value="${plugins.main}"/>
       </manifest>
     </jar>
-    <jar jarfile="${jar.dir}/loci_plugins.jar" basedir="${classes.dir}"
+    <jar jarfile="${jar.dir}/${plugins.jar}" basedir="${classes.dir}"
       includes="${plugins.files}" excludes="loci/plugins/plugins.config"
       update="true">
     </jar>
@@ -548,11 +548,10 @@ Apache XML-RPC
     <copy todir="${classes.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="${notebook.resources}"/>
     </copy>
-    <jar jarfile="${jar.dir}/ome-notebook.jar" basedir="${classes.dir}"
+    <jar jarfile="${jar.dir}/${notebook.jar}" basedir="${classes.dir}"
       includes="${notebook.files}">
       <manifest>
-        <attribute name="Main-Class"
-          value="loci.ome.notebook.MetadataNotebook"/>
+        <attribute name="Main-Class" value="${notebook.main}"/>
         <attribute name="Class-Path" value="${notebook.classpath}"/>
       </manifest>
     </jar>
@@ -577,10 +576,10 @@ Apache XML-RPC
 
   <target name="jar-leica" depends="compile-leica, copy-jars, jar-formats"
     description="generate JAR file for Leica Converter">
-    <jar jarfile="${jar.dir}/LeicaConverter.jar" basedir="${classes.dir}"
+    <jar jarfile="${jar.dir}/${leica.jar}" basedir="${classes.dir}"
       includes="${leica.files}">
       <manifest>
-        <attribute name="Main-Class" value="loci.apps.leica.LeicaConverter"/>
+        <attribute name="Main-Class" value="${leica.main}"/>
         <attribute name="Class-Path" value="${leica.classpath}"/>
       </manifest>
     </jar>
@@ -606,10 +605,10 @@ Apache XML-RPC
   <target name="jar-stitcher" depends="compile-stitcher"
     description="generate JAR file for Movie Stitcher">
     <mkdir dir="${jar.dir}"/>
-    <jar jarfile="${jar.dir}/QTConverter.jar" basedir="${classes.dir}"
+    <jar jarfile="${jar.dir}/${stitcher.jar}" basedir="${classes.dir}"
       includes="${stitcher.files}">
       <manifest>
-        <attribute name="Main-Class" value="loci.apps.stitcher.QTConverter"/>
+        <attribute name="Main-Class" value="${stitcher.main}"/>
       </manifest>
     </jar>
   </target>
@@ -633,10 +632,10 @@ Apache XML-RPC
 
   <target name="jar-slim" depends="compile-slim, copy-jars"
     description="generate JAR file for Slim Plotter">
-    <jar jarfile="${jar.dir}/SlimPlotter.jar" basedir="${classes.dir}"
+    <jar jarfile="${jar.dir}/${slim.jar}" basedir="${classes.dir}"
       includes="${slim.files}">
       <manifest>
-        <attribute name="Main-Class" value="loci.apps.slim.SlimPlotter"/>
+        <attribute name="Main-Class" value="${slim.main}"/>
         <attribute name="Class-Path" value="${slim.classpath}"/>
       </manifest>
     </jar>
