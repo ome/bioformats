@@ -609,6 +609,7 @@ Apache XML-RPC
       includes="${stitcher.files}">
       <manifest>
         <attribute name="Main-Class" value="${stitcher.main}"/>
+        <attribute name="Class-Path" value="${stitcher.classpath}"/>
       </manifest>
     </jar>
   </target>
