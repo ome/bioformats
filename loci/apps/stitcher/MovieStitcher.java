@@ -8,19 +8,16 @@
 package loci.apps.stitcher;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Arrays;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileFilter;
-import loci.formats.FilePattern;
-import loci.formats.FormatHandler;
-import loci.formats.FormatReader;
-import loci.formats.LegacyQTTools;
+import loci.formats.*;
 import loci.formats.in.QTReader;
-import loci.formats.in.TiffReader;
 import loci.formats.out.TiffWriter;
 
 /**
@@ -32,17 +29,17 @@ public class MovieStitcher extends JFrame implements ActionListener, Runnable {
   // -- Constants --
 
   private static final String TITLE = "Movie Stitcher";
+  private static final int COLUMNS = 24;
 
   // -- Fields --
 
-  private QTReader qtReader = new QTReader();
-  private TiffReader tiffReader = new TiffReader();
+  private ImageReader reader = new ImageReader();
   private TiffWriter writer = new TiffWriter();
   private JFileChooser rc, wc;
   private boolean shutdown;
 
   private JTextField input, output;
-  private JCheckBox qtJava, swapAxes;
+  private JCheckBox qtJava, swapAxes, omeTiff;
   private JProgressBar progress;
   private JButton convert;
 
@@ -52,12 +49,7 @@ public class MovieStitcher extends JFrame implements ActionListener, Runnable {
     super(TITLE);
 
     // file choosers
-    FileFilter[] qtFilters = qtReader.getFileFilters();
-    FileFilter[] tiffFilters = tiffReader.getFileFilters();
-    FileFilter[] ff = new FileFilter[qtFilters.length + tiffFilters.length];
-    System.arraycopy(qtFilters, 0, ff, 0, qtFilters.length);
-    System.arraycopy(tiffFilters, 0, ff, qtFilters.length, tiffFilters.length);
-    rc = FormatHandler.buildFileChooser(ff);
+    rc = reader.getFileChooser();
     wc = writer.getFileChooser();
 
     JPanel pane = new JPanel();
@@ -78,7 +70,7 @@ public class MovieStitcher extends JFrame implements ActionListener, Runnable {
 
     row1.add(Box.createHorizontalStrut(4));
 
-    input = new JTextField(44);
+    input = new JTextField(COLUMNS);
     row1.add(input);
     limitHeight(input);
 
@@ -105,7 +97,7 @@ public class MovieStitcher extends JFrame implements ActionListener, Runnable {
 
     row2.add(Box.createHorizontalStrut(4));
 
-    output = new JTextField(44);
+    output = new JTextField(COLUMNS);
     row2.add(output);
     limitHeight(output);
 
@@ -124,7 +116,7 @@ public class MovieStitcher extends JFrame implements ActionListener, Runnable {
     row3.setLayout(new BoxLayout(row3, BoxLayout.X_AXIS));
     pane.add(row3);
 
-    pane.add(Box.createVerticalStrut(4));
+    pane.add(Box.createVerticalStrut(9));
 
     boolean canDoQT = new LegacyQTTools().canDoQT();
     qtJava = new JCheckBox("Use QTJava", canDoQT);
@@ -136,14 +128,12 @@ public class MovieStitcher extends JFrame implements ActionListener, Runnable {
     swapAxes = new JCheckBox("Swap axes", true);
     row3.add(swapAxes);
 
-    row3.add(Box.createHorizontalStrut(8));
+    row3.add(Box.createHorizontalStrut(3));
 
-    progress = new JProgressBar();
-    progress.setString("");
-    progress.setStringPainted(true);
-    row3.add(progress);
+    omeTiff = new JCheckBox("OME-TIFF", true);
+    row3.add(omeTiff);
 
-    row3.add(Box.createHorizontalStrut(8));
+    row3.add(Box.createHorizontalGlue());
 
     convert = new JButton("Convert");
     row3.add(convert);
@@ -156,6 +146,23 @@ public class MovieStitcher extends JFrame implements ActionListener, Runnable {
     row3.add(quit);
     quit.setActionCommand("quit");
     quit.addActionListener(this);
+
+    // -- Row 4 --
+
+    JPanel row4 = new RowPanel();
+    row4.setLayout(new BoxLayout(row4, BoxLayout.X_AXIS));
+    pane.add(row4);
+
+    progress = new JProgressBar();
+    progress.setString("");
+    progress.setStringPainted(true);
+    row4.add(progress);
+
+    row4.add(Box.createHorizontalStrut(8));
+
+    JLabel version = new JLabel("Built on @date@");
+    version.setFont(version.getFont().deriveFont(Font.ITALIC));
+    row4.add(version);
 
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     setLocation(100, 100);
@@ -202,14 +209,19 @@ public class MovieStitcher extends JFrame implements ActionListener, Runnable {
     try {
       String in = input.getText();
       String out = output.getText();
+      if (in.trim().equals("")) {
+        msg("Please specify input files.");
+        convert.setEnabled(true);
+        progress.setString("");
+        return;
+      }
 
       FilePattern fp = new FilePattern(in);
       String[] inFiles = fp.getFiles();
 
-      boolean  isTiff = tiffReader.isThisType(in);
-      FormatReader reader = isTiff ? (FormatReader) tiffReader : qtReader;
-      boolean useQTJ = !isTiff && qtJava.isSelected();
-      qtReader.setLegacy(useQTJ);
+      boolean isQT = reader.getFormat(in).equals("QuickTime");
+      boolean useQTJ = isQT && qtJava.isSelected();
+      ((QTReader) reader.getReader(QTReader.class)).setLegacy(useQTJ);
 
       int numT = reader.getImageCount(inFiles[0]);
       int numZ = inFiles.length;
@@ -225,7 +237,7 @@ public class MovieStitcher extends JFrame implements ActionListener, Runnable {
       progress.setMaximum(2 * numZ * numT);
       long start = System.currentTimeMillis();
 
-      FormatReader[] readers = null;
+      IFormatReader[] readers = null;
       TiffWriter[] writers = null;
       if (swap) {
         if (useQTJ) {
@@ -240,11 +252,15 @@ public class MovieStitcher extends JFrame implements ActionListener, Runnable {
           // read from multiple files at once, for efficiency
           // (to avoid writing to multiple files at once,
           // or storing multiple images in RAM simultaneously)
-          readers = new FormatReader[inFiles.length];
-          readers[0] = reader;
-          for (int i=1; i<readers.length; i++) {
-            readers[i] = outFiles == 1 ? reader :
-              (isTiff ? (FormatReader) new TiffReader() : new QTReader());
+          readers = new IFormatReader[inFiles.length];
+          IFormatReader r = reader.getReader(inFiles[0]);
+          if (outFiles == 1) Arrays.fill(readers, r);
+          else {
+            readers[0] = r;
+            Class c = r.getClass();
+            for (int i=1; i<readers.length; i++) {
+              readers[i] = (IFormatReader) c.newInstance();
+            }
           }
         }
       }
