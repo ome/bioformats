@@ -25,7 +25,7 @@ import loci.formats.out.TiffWriter;
 
 /**
  * A utility for reorganizing and converting QuickTime movies,
- * TIFF series and other datasets.
+ * TIFF series and other 4D datasets.
  */
 public class MovieStitcher extends JFrame implements ActionListener, Runnable {
 
