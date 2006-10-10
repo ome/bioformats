@@ -955,10 +955,12 @@ public class QTReader extends FormatReader {
         case 0xc0:
           colorA = DataTools.bytesToInt(input, pt, 2, false);
           pt += 2;
+          break;
         case 0x20:
           // fill blocks with 4 colors
+          colorA = DataTools.bytesToInt(input, pt, 2, false);
           colorB = DataTools.bytesToInt(input, pt, 2, false);
-          pt += 2;
+          pt += 4;
 
           // sort out the colors
           int[] colors = new int[4];
