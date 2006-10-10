@@ -206,6 +206,9 @@ public class FilePattern {
 
   // -- FilePattern API methods --
 
+  /** Gets the file pattern string. */
+  public String getPattern() { return pattern; }
+
   /** Gets whether the file pattern string is valid. */
   public boolean isValid() { return valid; }
 

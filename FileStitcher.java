@@ -77,26 +77,54 @@ public class FileStitcher extends ReaderWrapper {
   /** Index into the array of readers. */
   private int index = 0;
 
+  /** Whether each dimension size varies between files. */
   private boolean varyZ, varyC, varyT;
   
+  /** Reader used for each file. */
   private IFormatReader[] readers;
+
+  /** Whether to use a separate reader for each file. */
   private boolean multipleReaders = true;
+
+  /**
+   * Whether string ids given should be treated
+   * as file patterns rather than single file paths.
+   */
+  private boolean patternIds = false;
 
   // -- Constructors --
 
   /** Constructs a FileStitcher around a new image reader. */
   public FileStitcher() { super(); }
 
-  /** Constructs a FileStitcher with the given reader. */
+  /**
+   * Constructs a FileStitcher with the given reader.
+   * @param r The reader to use for reading stitched files.
+   */
   public FileStitcher(IFormatReader r) { super(r); }
 
   /** 
-   * Constructs a FileStitcher with the given reader; 
-   * if the flag is set to true, a separate reader is used for each file.
+   * Constructs a FileStitcher with the given reader.
+   * @param r The reader to use for reading stitched files.
+   * @param multipleReaders Whether to use a separate reader for each file.
    */
-  public FileStitcher(IFormatReader r, boolean flag) {
+  public FileStitcher(IFormatReader r, boolean multipleReaders) {
     super(r);
-    multipleReaders = flag;
+    this.multipleReaders = multipleReaders;
+  }
+
+  /** 
+   * Constructs a FileStitcher with the given reader.
+   * @param multipleReaders Whether to use a separate reader for each file.
+   * @param patternIds Whether string ids given should be treated as file
+   *   patterns rather than single file paths.
+   */
+  public FileStitcher(IFormatReader r, boolean multipleReaders,
+    boolean patternIds)
+  {
+    super(r);
+    this.multipleReaders = multipleReaders;
+    this.patternIds = patternIds;
   }
 
   // -- IFormatReader API methods --
@@ -189,13 +217,26 @@ public class FileStitcher extends ReaderWrapper {
     validSeries = getSeries(id);
 
     // get the matching files
+    if (patternIds) {
+      // id is a file pattern
+      fp = new FilePattern(id);
+    }
+    else {
+      // id is a file path; find the containing pattern
+      fp = new FilePattern(new File(id));
+    }
 
-    fp = new FilePattern(new File(id));
+    String msg = " Please rename your files or disable file stitching.";
+    if (!fp.isValid()) {
+      throw new FormatException("Invalid " +
+        (patternIds ? "file pattern" : "filename") + " (" + id + "): " +
+        fp.getErrorMessage() + msg);
+    }
+
     files = fp.getFiles();
-
     if (files == null) {
-      throw new FormatException("Invalid file pattern.  Please rename " +
-        "your files or disable file stitching.");
+       throw new FormatException("No files matching pattern (" +
+         fp.getPattern() + "). " + msg);
     }
 
     imageCounts = new int[files.length];
