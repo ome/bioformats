@@ -181,8 +181,6 @@ public class ImageViewer extends JFrame
     try {
       File f = new File(id);
       id = f.getAbsolutePath();
-
-      //images = myReader.open(id);
       int num = myReader.getImageCount(id);
       ProgressMonitor progress = new ProgressMonitor(this,
         "Reading " + id, null, 0, num + 1);

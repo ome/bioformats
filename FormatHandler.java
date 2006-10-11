@@ -60,13 +60,6 @@ public abstract class FormatHandler implements IFormatHandler {
     this.suffixes = suffixes == null ? new String[0] : suffixes;
   }
 
-  // -- Internal FormatHandler API methods --
-
-  /** Creates JFileChooser file filters for this file format. */
-  protected void createFilters() {
-    filters = new FileFilter[] {new ExtensionFileFilter(suffixes, format)};
-  }
-
   // -- IFormatHandler API methods --
 
   /**
@@ -81,7 +74,8 @@ public abstract class FormatHandler implements IFormatHandler {
    * The default implementation checks filename suffixes against
    * those known for this format (the open parameter does nothing).
    * @param open If true, and the file extension is insufficient to determine
-   *  the file type, the (existing) file is opened for further analysis.
+   *  the file type, the (existing) file is opened for further analysis. Does
+   *  nothing in the default implementation.
    */
   public boolean isThisType(String name, boolean open) {
     String lname = name.toLowerCase();
@@ -91,31 +85,21 @@ public abstract class FormatHandler implements IFormatHandler {
     return false;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.IFormatHandler#getFormat()
-   */
+  /* @see loci.formats.IFormatHandler#getFormat() */
   public String getFormat() { return format; }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.IFormatHandler#getSuffixes()
-   */
+  /* @see loci.formats.IFormatHandler#getSuffixes() */
   public String[] getSuffixes() { return suffixes; }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.IFormatHandler#getFileFilters()
-   */
+  /* @see loci.formats.IFormatHandler#getFileFilters() */
   public FileFilter[] getFileFilters() {
-    if (filters == null) createFilters();
+    if (filters == null) {
+      filters = new FileFilter[] {new ExtensionFileFilter(suffixes, format)};
+    }
     return filters;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.IFormatHandler#getFileChooser()
-   */
+  /* @see loci.formats.IFormatHandler#getFileChooser() */
   public JFileChooser getFileChooser() {
     if (chooser == null) chooser = buildFileChooser(getFileFilters());
     return chooser;

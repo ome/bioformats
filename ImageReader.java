@@ -48,12 +48,6 @@ public class ImageReader implements IFormatReader {
   /** List of reader classes. */
   private static Class[] readerClasses;
 
-  /** Name of current file. */
-  private String currentId;
-
-  /** Valid suffixes for this file format. */
-  private String[] suffixes;
-
   // -- Static initializer --
 
   static {
@@ -95,33 +89,42 @@ public class ImageReader implements IFormatReader {
   /** List of supported file format readers. */
   private IFormatReader[] readers;
 
+  /**
+   * Valid suffixes for this file format.
+   * Populated the first time getSuffixes() is called.
+   */
+  private String[] suffixes;
+
+  /**
+   * File filters for this file format, for use with a JFileChooser.
+   * Populated the first time getFileFilters() is called.
+   */
+  protected FileFilter[] filters;
+
+  /**
+   * File chooser for this file format.
+   * Created the first time getFileChooser() is called.
+   */
+  protected JFileChooser chooser;
+
+  /** Name of current file. */
+  private String currentId;
+
   /** Current form index. */
   private int current;
 
-  // -- Constructor --
+  // -- Constructors --
 
   /** Constructs a new ImageReader. */
-  public ImageReader() {
-    initializeReaders();
-  }
+  public ImageReader() { this(null); }
 
   /**
    * Constructs a new ImageReader with a MetadataStore.
    * @param store the default metadata store.
    */
   public ImageReader(MetadataStore store) {
-    initializeReaders();
-    setMetadataStore(store);
-  }
-
-  /**
-   * Initializes all the built-in file format readers (classes in
-   * <code>readerClasses</code>).
-   */
-  private void initializeReaders() {
     // add built-in readers to the list
     Vector v = new Vector();
-    HashSet suffixSet = new HashSet();
     for (int i=0; i<readerClasses.length; i++) {
       IFormatReader reader = null;
       try { reader = (IFormatReader) readerClasses[i].newInstance(); }
@@ -133,37 +136,37 @@ public class ImageReader implements IFormatReader {
         continue;
       }
       v.add(reader);
-      String[] suf = reader.getSuffixes();
-      for (int j=0; j<suf.length; j++) suffixSet.add(suf[j]);
     }
     readers = new IFormatReader[v.size()];
     v.copyInto(readers);
-    suffixes = new String[suffixSet.size()];
-    suffixSet.toArray(suffixes);
-    Arrays.sort(suffixes);
-  }
 
-  /* (non-Javadoc)
-   * @see loci.formats.FormatReader#setMetadataStore(loci.formats.MetadataStore)
-   */
-  public void setMetadataStore(MetadataStore store) {
-    for (int i = 0; i < readers.length; i++)
-      readers[i].setMetadataStore(store);
+    if (store != null) setMetadataStore(store);
   }
 
   // -- ImageReader API methods --
 
   /** Gets a string describing the file format for the given file. */
   public String getFormat(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].getFormat();
+    return getReader(id).getFormat();
   }
 
   /** Gets the reader used to open the given file. */
   public IFormatReader getReader(String id)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId)) {
+      // initialize file
+      boolean success = false;
+      for (int i=0; i<readers.length; i++) {
+        if (readers[i].isThisType(id)) {
+          current = i;
+          currentId = id;
+          success = true;
+          break;
+        }
+      }
+      if (!success) throw new FormatException("Unknown file format: " + id);
+    }
     return readers[current];
   }
 
@@ -175,7 +178,7 @@ public class ImageReader implements IFormatReader {
     return null;
   }
 
-  // -- FormatReader API methods --
+  // -- IFormatReader API methods --
 
   /** Checks if the given block is a valid header for an image file. */
   public boolean isThisType(byte[] block) {
@@ -187,90 +190,80 @@ public class ImageReader implements IFormatReader {
 
   /** Determines the number of images in the given image file. */
   public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].getImageCount(id);
+    return getReader(id).getImageCount(id);
   }
 
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].isRGB(id);
+    return getReader(id).isRGB(id);
   }
 
   /** Get the size of the X dimension. */
   public int getSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].getSizeX(id);
+    return getReader(id).getSizeX(id);
   }
 
   /** Get the size of the Y dimension. */
   public int getSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].getSizeY(id);
+    return getReader(id).getSizeY(id);
   }
 
   /** Get the size of the Z dimension. */
   public int getSizeZ(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].getSizeZ(id);
+    return getReader(id).getSizeZ(id);
   }
 
   /** Get the size of the C dimension. */
   public int getSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].getSizeC(id);
+    return getReader(id).getSizeC(id);
   }
 
   /** Get the size of the T dimension. */
   public int getSizeT(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].getSizeT(id);
+    return getReader(id).getSizeT(id);
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
    * @see loci.formats.IFormatReader#getPixelType()
    */
   public int getPixelType(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].getPixelType(id);
+    return getReader(id).getPixelType(id);
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
    * @see loci.formats.IFormatReader#getChannelGlobalMinimum(int)
    */
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].getChannelGlobalMinimum(id, theC);
+    return getReader(id).getChannelGlobalMinimum(id, theC);
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
    * @see loci.formats.IFormatReader#getChannelGlobalMaximum(int)
    */
   public Double getChannelGlobalMaximum(String id, int theC)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].getChannelGlobalMaximum(id, theC);
+    return getReader(id).getChannelGlobalMaximum(id, theC);
   }
 
   /** Get the size of the X dimension for the thumbnail. */
   public int getThumbSizeX(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].getThumbSizeX(id);
+    return getReader(id).getThumbSizeX(id);
   }
 
   /** Get the size of the Y dimension for the thumbnail. */
   public int getThumbSizeY(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].getThumbSizeY(id);
+    return getReader(id).getThumbSizeY(id);
   }
 
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].isLittleEndian(id);
+    return getReader(id).isLittleEndian(id);
   }
 
   /**
@@ -280,92 +273,62 @@ public class ImageReader implements IFormatReader {
   public String getDimensionOrder(String id)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].getDimensionOrder(id);
+    return getReader(id).getDimensionOrder(id);
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
    * @see loci.formats.IFormatReader#setChannelStatCalculationStatus(boolean)
    */
   public void setChannelStatCalculationStatus(boolean on) {
-    for (int i = 0; i < readers.length; i++)
+    for (int i=0; i<readers.length; i++) {
       readers[i].setChannelStatCalculationStatus(on);
+    }
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
    * @see loci.formats.IFormatReader#getChannelStatCalculationStatus()
    */
   public boolean getChannelStatCalculationStatus() {
-    return readers[current].getChannelStatCalculationStatus();
+    // NB: all readers should have the same status
+    return readers[0].getChannelStatCalculationStatus();
   }
 
   /** Returns whether or not the channels are interleaved. */
   public boolean isInterleaved(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].isInterleaved(id);
-  }
-
-  /** Return the number of series in the file. */
-  public int getSeriesCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].getSeriesCount(id);
-  }
-
-  /** Activates the specified series. */
-  public void setSeries(String id, int no) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    readers[current].setSeries(id, no);
-  }
-
-  /** Returns the currently active series. */
-  public int getSeries(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].getSeries(id);
-  }
-
-  /**
-   * Swaps the dimensions according to the given dimension order.  If the given
-   * order is identical to the file's native order, then nothing happens.
-   */
-  public void swapDimensions(String id, String order)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    readers[current].swapDimensions(id, order);
-  }
-
-  /** Obtains the specified image from the given image file as a byte array. */
-  public byte[] openBytes(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].openBytes(id, no);
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#openBytes(java.lang.String, int, byte[])
-   */
-  public byte[] openBytes(String id, int no, byte[] buf)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].openBytes(id, no, buf);
+    return getReader(id).isInterleaved(id);
   }
 
   /** Obtains the specified image from the given image file. */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].openImage(id, no);
+    return getReader(id).openImage(id, no);
+  }
+
+  /** Obtains the specified image from the given image file as a byte array. */
+  public byte[] openBytes(String id, int no)
+    throws FormatException, IOException
+  {
+    return getReader(id).openBytes(id, no);
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.IFormatReader#openBytes(java.lang.String, int, byte[])
+   */
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    return getReader(id).openBytes(id, no, buf);
   }
 
   /** Obtains a thumbnail for the specified image from the given file. */
   public BufferedImage openThumbImage(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].openThumbImage(id, no);
+    return getReader(id).openThumbImage(id, no);
   }
 
   /**
@@ -377,8 +340,7 @@ public class ImageReader implements IFormatReader {
   public byte[] openThumbBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].openThumbBytes(id, no);
+    return getReader(id).openThumbBytes(id, no);
   }
 
   /** Closes any open files. */
@@ -386,14 +348,59 @@ public class ImageReader implements IFormatReader {
     for (int i=0; i<readers.length; i++) readers[i].close();
   }
 
-  /**
-   * Opens an existing file from the given filename.
-   *
-   * @return Java Images containing pixel data
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.IFormatReader#openImage(java.lang.String)
    */
-  public BufferedImage[] open(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].openImage(id);
+  public BufferedImage[] openImage(String id)
+    throws FormatException, IOException
+  {
+    return getReader(id).openImage(id);
+  }
+
+  /** Return the number of series in the file. */
+  public int getSeriesCount(String id) throws FormatException, IOException {
+    return getReader(id).getSeriesCount(id);
+  }
+
+  /** Activates the specified series. */
+  public void setSeries(String id, int no) throws FormatException, IOException {
+    getReader(id).setSeries(id, no);
+  }
+
+  /** Returns the currently active series. */
+  public int getSeries(String id) throws FormatException, IOException {
+    return getReader(id).getSeries(id);
+  }
+
+  /**
+   * Swaps the dimensions according to the given dimension order.  If the given
+   * order is identical to the file's native order, then nothing happens.
+   */
+  public void swapDimensions(String id, String order)
+    throws FormatException, IOException
+  {
+    getReader(id).swapDimensions(id, order);
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.IFormatReader#getIndex(java.lang.String, int, int, int)
+   */
+  public int getIndex(String id, int z, int c, int t)
+    throws FormatException, IOException
+  {
+    return getReader(id).getIndex(id, z, c, t);
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.IFormatReader#getZCTCoords(java.lang.String, int)
+   */
+  public int[] getZCTCoords(String id, int index)
+    throws FormatException, IOException
+  {
+    return getReader(id).getZCTCoords(id, index);
   }
 
   /**
@@ -405,8 +412,7 @@ public class ImageReader implements IFormatReader {
   public Object getMetadataValue(String id, String field)
     throws FormatException, IOException
   {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].getMetadataValue(id, field);
+    return getReader(id).getMetadataValue(id, field);
   }
 
   /**
@@ -417,8 +423,36 @@ public class ImageReader implements IFormatReader {
    * @return the hashtable containing all metadata from the file
    */
   public Hashtable getMetadata(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return readers[current].getMetadata(id);
+    return getReader(id).getMetadata(id);
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.FormatReader#setMetadataStore(loci.formats.MetadataStore)
+   */
+  public void setMetadataStore(MetadataStore store) {
+    for (int i = 0; i < readers.length; i++)
+      readers[i].setMetadataStore(store);
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.IFormatReader#getMetadataStore(java.lang.String)
+   */
+  public MetadataStore getMetadataStore(String id)
+    throws FormatException, IOException
+  {
+    return getReader(id).getMetadataStore(id);
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.IFormatReader#getMetadataStoreRoot(java.lang.String)
+   */
+  public Object getMetadataStoreRoot(String id)
+    throws FormatException, IOException
+  {
+    return getReader(id).getMetadataStoreRoot(id);
   }
 
   /**
@@ -455,81 +489,7 @@ public class ImageReader implements IFormatReader {
     return FormatReader.testRead(this, args);
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#getIndex(java.lang.String, int, int, int)
-   */
-  public int getIndex(String id, int z, int c, int t)
-    throws FormatException, IOException
-  {
-    return currentReader(id).getIndex(id, z, c, t);
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#getMetadataStore(java.lang.String)
-   */
-  public MetadataStore getMetadataStore(String id)
-    throws FormatException, IOException
-  {
-    return currentReader(id).getMetadataStore(id);
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#getMetadataStoreRoot(java.lang.String)
-   */
-  public Object getMetadataStoreRoot(String id)
-    throws FormatException, IOException
-  {
-    return currentReader(id).getMetadataStoreRoot(id);
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#getZCTCoords(java.lang.String, int)
-   */
-  public int[] getZCTCoords(String id, int index)
-    throws FormatException, IOException
-  {
-    return currentReader(id).getZCTCoords(id, index);
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#openImage(java.lang.String)
-   */
-  public BufferedImage[] openImage(String id)
-    throws FormatException, IOException
-  {
-    return currentReader(id).openImage(id);
-  }
-
-  // -- FormatHandler API methods --
-
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatHandler#getFileChooser()
-   */
-  public JFileChooser getFileChooser() {
-    return FormatHandler.buildFileChooser(getFileFilters());
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatHandler#getFileFilters()
-   */
-  public FileFilter[] getFileFilters() {
-    Vector v = new Vector();
-    for (int i=0; i<readers.length; i++) {
-      javax.swing.filechooser.FileFilter[] ff = readers[i].getFileFilters();
-      for (int j=0; j<ff.length; j++) v.add(ff[j]);
-    }
-    return ComboFileFilter.sortFilters(v);
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatHandler#getFormat()
-   */
-  public String getFormat() { return readers[current].getFormat(); }
-
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatHandler#getSuffixes()
-   */
-  public String[] getSuffixes() { return suffixes; }
+  // -- IFormatHandler API methods --
 
   /**
    * Checks if the given string is a valid filename for any supported format.
@@ -552,6 +512,59 @@ public class ImageReader implements IFormatReader {
     }
     return false;
   }
+
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.IFormatHandler#getFormat()
+   */
+  public String getFormat() { return "image"; }
+
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.IFormatHandler#getSuffixes()
+   */
+  public String[] getSuffixes() {
+    if (suffixes == null) {
+      HashSet suffixSet = new HashSet();
+      for (int i=0; i<readers.length; i++) {
+        String[] suf = readers[i].getSuffixes();
+        for (int j=0; j<suf.length; j++) suffixSet.add(suf[j]);
+      }
+      suffixes = new String[suffixSet.size()];
+      suffixSet.toArray(suffixes);
+      Arrays.sort(suffixes);
+    }
+    return suffixes;
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.IFormatHandler#getFileFilters()
+   */
+  public FileFilter[] getFileFilters() {
+    if (filters == null) {
+      Vector v = new Vector();
+      for (int i=0; i<readers.length; i++) {
+        javax.swing.filechooser.FileFilter[] ff = readers[i].getFileFilters();
+        for (int j=0; j<ff.length; j++) v.add(ff[j]);
+      }
+      filters = ComboFileFilter.sortFilters(v);
+    }
+    return filters;
+  }
+
+  /*
+   * (non-Javadoc)
+   * @see loci.formats.IFormatHandler#getFileChooser()
+   */
+  public JFileChooser getFileChooser() {
+    if (chooser == null) {
+      chooser = FormatHandler.buildFileChooser(getFileFilters());
+    }
+    return chooser;
+  }
+
+  // -- Utility methods --
 
   /**
    * Retrieves how many bytes per pixel the current plane or section has.
@@ -576,45 +589,6 @@ public class ImageReader implements IFormatReader {
     }
     throw new RuntimeException("Unknown type with id: '" + type + "'");
   }
-
-  // -- Internal ImageReader API methods --
-
-  /** Initializes the given image file. */
-  private void initFile(String id) throws FormatException, IOException {
-    for (int i=0; i<readers.length; i++) {
-      if (readers[i].isThisType(id)) {
-        current = i;
-        currentId = id;
-        return;
-      }
-    }
-    throw new FormatException("Unknown file format: " + id);
-  }
-
-  /**
-   * Retrieves the reader that the ImageReader proxy is currently using or the
-   * valid reader for a given file.
-   *
-   * @param id path to a file.
-   * @return the current active reader unless <i>id</i> is not the current
-   * <i>id</i>, in which case the active reader will be switched and that
-   * reader returned.
-   * @throws FormatException
-   * @throws IOException
-   */
-  private IFormatReader currentReader(String id)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-    return currentReader();
-  }
-
-  /**
-   * Retrieves the reader that the ImageReader proxy is currently using.
-   *
-   * @return the current active reader.
-   */
-  private IFormatReader currentReader() { return readers[current]; }
 
   // -- Main method --
 

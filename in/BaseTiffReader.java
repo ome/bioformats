@@ -98,8 +98,8 @@ public abstract class BaseTiffReader extends FormatReader {
    * @param no The plane or section within the file to obtain.
    * @return an object which represents the plane.
    * @throws FormatException if there is an error parsing the file.
-   * @throws IOException if there is an error reading from the file or acquiring
-   * permissions to read the file..
+   * @throws IOException if there is an error reading from the file or
+   *   acquiring permissions to read the file.
    */
   public Plane2D openPlane2D(String id, int no)
     throws FormatException, IOException
