@@ -59,7 +59,6 @@ public class ImageJReader extends FormatReader {
   /** Flag indicating ImageJ is not installed. */
   private boolean noImageJ = false;
 
-
   // -- Constructor --
 
   /** Constructs a new ImageJ reader. */
@@ -76,7 +75,6 @@ public class ImageJReader extends FormatReader {
     }
     catch (Exception exc) { noImageJ = true; }
   }
-
 
   // -- FormatReader API methods --
 
@@ -157,27 +155,31 @@ public class ImageJReader extends FormatReader {
     currentId = null;
   }
 
-  /** Creates JFileChooser file filters for this file format. */
-  protected void createFilters() {
-    filters = new FileFilter[] {
-      new ExtensionFileFilter(new String[] {"tif", "tiff"},
-        "Tagged Image File Format"),
-      new ExtensionFileFilter(new String[] {"dcm", "dicom"},
-        "Digital Imaging and Communications in Medicine"),
-      new ExtensionFileFilter("fits",
-        "Flexible Image Transport System"),
-      new ExtensionFileFilter("pgm", "PGM"),
-      new ExtensionFileFilter(new String[] {"jpg", "jpeg", "jpe"},
-        "Joint Photographic Experts Group"),
-      new ExtensionFileFilter("gif", "Graphics Interchange Format"),
-      new ExtensionFileFilter("png", "Portable Network Graphics"),
-      new ExtensionFileFilter("lut", "ImageJ Lookup Table"),
-      new ExtensionFileFilter("bmp", "Windows Bitmap"),
-      new ExtensionFileFilter("zip", "Zip-compressed TIFF"),
-      new ExtensionFileFilter("roi", "ImageJ Region of Interest")
-    };
-  }
+  // -- IFormatHandler API methods --
 
+  /* @see loci.formats.IFormatHandler#getFileFilters() */
+  public FileFilter[] getFileFilters() {
+    if (filters == null) {
+      filters = new FileFilter[] {
+        new ExtensionFileFilter(new String[] {"tif", "tiff"},
+          "Tagged Image File Format"),
+        new ExtensionFileFilter(new String[] {"dcm", "dicom"},
+          "Digital Imaging and Communications in Medicine"),
+        new ExtensionFileFilter("fits",
+          "Flexible Image Transport System"),
+        new ExtensionFileFilter("pgm", "PGM"),
+        new ExtensionFileFilter(new String[] {"jpg", "jpeg", "jpe"},
+          "Joint Photographic Experts Group"),
+        new ExtensionFileFilter("gif", "Graphics Interchange Format"),
+        new ExtensionFileFilter("png", "Portable Network Graphics"),
+        new ExtensionFileFilter("lut", "ImageJ Lookup Table"),
+        new ExtensionFileFilter("bmp", "Windows Bitmap"),
+        new ExtensionFileFilter("zip", "Zip-compressed TIFF"),
+        new ExtensionFileFilter("roi", "ImageJ Region of Interest")
+      };
+    }
+    return filters;
+  }
 
   // -- Main method --
 

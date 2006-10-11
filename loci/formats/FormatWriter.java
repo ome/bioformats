@@ -24,13 +24,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.image.ColorModel;
 import java.awt.Image;
+import java.awt.image.ColorModel;
 import java.io.IOException;
 
 
 /** Abstract superclass of all biological file format writers. */
-public abstract class FormatWriter extends FormatHandler {
+public abstract class FormatWriter extends FormatHandler
+  implements IFormatWriter
+{
 
   // -- Fields --
 
@@ -46,7 +48,6 @@ public abstract class FormatWriter extends FormatHandler {
   /** Current compression type. */
   protected String compression;
 
-
   // -- Constructors --
 
   /** Constructs a format writer with the given name and default suffix. */
@@ -57,8 +58,7 @@ public abstract class FormatWriter extends FormatHandler {
     super(format, suffixes);
   }
 
-
-  // -- Abstract FormatWriter API methods --
+  // -- IFormatWriter API methods --
 
   /**
    * Saves the given image to the specified (possibly already open) file.
@@ -69,18 +69,6 @@ public abstract class FormatWriter extends FormatHandler {
 
   /** Reports whether the writer can save multiple images to a single file. */
   public abstract boolean canDoStacks(String id);
-
-
-  // -- FormatWriter API methods --
-
-  /** Saves the given images to the specified file. */
-  public void save(String id, Image[] images)
-    throws FormatException, IOException
-  {
-    for (int i=0; i<images.length; i++) {
-      save(id, images[i], i == images.length - 1);
-    }
-  }
 
   /** Sets the color model. */
   public void setColorModel(ColorModel cm) { this.cm = cm; }
@@ -107,13 +95,25 @@ public abstract class FormatWriter extends FormatHandler {
     throw new FormatException("Invalid compression type " + compression);
   }
 
+  /* @see loci.formats.IFormatWriter#testConvert(String[]) */
+  public boolean testConvert(String[] args)
+    throws FormatException, IOException
+  {
+    return testConvert(this, args);
+  }
+
+  // -- Utility methods --
+
   /** A utility method for converting a file from the command line. */
-  public void testConvert(String[] args) throws FormatException, IOException {
-    String className = getClass().getName();
+  public static boolean testConvert(IFormatWriter writer, String[] args)
+    throws FormatException, IOException
+  {
+    String className = writer.getClass().getName();
     if (args == null || args.length < 2) {
-      System.out.println("To convert a file to " + format + " format, run:");
+      System.out.println("To convert a file to " + writer.getFormat() +
+        " format, run:");
       System.out.println("  java " + className + " in_file out_file");
-      return;
+      return false;
     }
     String in = args[0];
     String out = args[1];
@@ -128,7 +128,7 @@ public abstract class FormatWriter extends FormatHandler {
       long s = System.currentTimeMillis();
       Image image = reader.openImage(in, i);
       long m = System.currentTimeMillis();
-      save(out, image, i == num - 1);
+      writer.save(out, image, i == num - 1);
       long e = System.currentTimeMillis();
       System.out.print(".");
       read += m - s;
@@ -144,6 +144,8 @@ public abstract class FormatWriter extends FormatHandler {
     float writeAvg = (float) write / num;
     System.out.println(sec + "s elapsed (" +
       readAvg + "+" + writeAvg + "ms per image, " + initial + "ms overhead)");
+
+    return true;
   }
 
 }

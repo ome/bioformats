@@ -156,13 +156,6 @@ public abstract class FormatReader extends FormatHandler
     catch (IOException e) { return false; }
   }
 
-  // -- Internal FormatHandler API methods --
-
-  /** Creates JFileChooser file filters for this file format. */
-  protected void createFilters() {
-    filters = new FileFilter[] {new FormatFileFilter(this)};
-  }
-
   // -- IFormatReader API methods --
 
   /** Checks if the given block is a valid header for this file format. */
@@ -206,29 +199,20 @@ public abstract class FormatReader extends FormatHandler
     return sizeT[series];
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getPixelType()
-   */
+  /* @see loci.formats.IFormatReader#getPixelType(String) */
   public int getPixelType(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return pixelType[series];
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelGlobalMinimum(int)
-   */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
   {
     return null;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelGlobalMaximum(int)
-   */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
   public Double getChannelGlobalMaximum(String id, int theC)
     throws FormatException, IOException
   {
@@ -260,18 +244,12 @@ public abstract class FormatReader extends FormatHandler
     return currentOrder[series];
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#setChannelStatCalculationStatus(boolean)
-   */
+  /* @see loci.formats.IFormatReader#setChannelStatCalculationStatus(boolean) */
   public void setChannelStatCalculationStatus(boolean on) {
     enableChannelStatCalculation = on;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelStatCalculationStatus()
-   */
+  /* @see loci.formats.IFormatReader#getChannelStatCalculationStatus() */
   public boolean getChannelStatCalculationStatus() {
     return enableChannelStatCalculation;
   }
@@ -290,10 +268,7 @@ public abstract class FormatReader extends FormatHandler
   public abstract byte[] openBytes(String id, int no)
     throws FormatException, IOException;
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#openBytes(java.lang.String, int, byte[])
-   */
+  /* @see loci.formats.IFormatReader#openBytes(java.lang.String, int, byte[]) */
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -486,8 +461,19 @@ public abstract class FormatReader extends FormatHandler
     return getMetadataStore(id).getRoot();
   }
 
+  /* @see loci.formats.IFormatReader#testRead(String[]) */
   public boolean testRead(String[] args) throws FormatException, IOException {
     return testRead(this, args);
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#getFileFilters() */
+  public FileFilter[] getFileFilters() {
+    if (filters == null) {
+      filters = new FileFilter[] {new FormatFileFilter(this)};
+    }
+    return filters;
   }
 
   // -- Utility methods --
