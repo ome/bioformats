@@ -505,6 +505,40 @@ public final class ImageTools {
     //return getDoubles(makeType(image, DataBuffer.TYPE_DOUBLE));
   }
 
+  /**
+   * Gets the pixel type of the given image.
+   * @return One of the following types:<ul>
+   *   <li>FormatReader.INT8</li>
+   *   <li>FormatReader.UINT8</li>
+   *   <li>FormatReader.INT16</li>
+   *   <li>FormatReader.UINT16</li>
+   *   <li>FormatReader.INT32</li>
+   *   <li>FormatReader.UINT32</li>
+   *   <li>FormatReader.FLOAT</li>
+   *   <li>FormatReader.DOUBLE</li>
+   *   <li>-1 (unknown type)</li>
+   * </ul>
+   */
+  public static int getPixelType(BufferedImage image) {
+    int type = image.getRaster().getDataBuffer().getDataType();
+    switch (type) {
+      case DataBuffer.TYPE_BYTE:
+        return FormatReader.UINT8;
+      case DataBuffer.TYPE_DOUBLE:
+        return FormatReader.DOUBLE;
+      case DataBuffer.TYPE_FLOAT:
+        return FormatReader.FLOAT;
+      case DataBuffer.TYPE_INT:
+        return FormatReader.INT32;
+      case DataBuffer.TYPE_SHORT:
+        return FormatReader.INT16;
+      case DataBuffer.TYPE_USHORT:
+        return FormatReader.UINT16;
+      default:
+        return -1;
+    }
+  }
+
   // -- Image conversion --
 
   /** Copies the given image into a result with the specified data type. */

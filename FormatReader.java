@@ -601,6 +601,7 @@ public abstract class FormatReader extends FormatHandler
       int thumbSizeY = reader.getThumbSizeY(id);
       boolean little = reader.isLittleEndian(id);
       String dimOrder = reader.getDimensionOrder(id);
+      int pixelType = reader.getPixelType(id);
 
       // output basic metadata for series #i
       System.out.println("Series #" + j + ":");
@@ -624,8 +625,7 @@ public abstract class FormatReader extends FormatHandler
       System.out.println("\tEndianness = " +
         (little ? "intel (little)" : "motorola (big)"));
       System.out.println("\tDimension order = " + dimOrder);
-      System.out.println("\tPixel type = " +
-        getPixelTypeString(reader.getPixelType(id)));
+      System.out.println("\tPixel type = " + getPixelTypeString(pixelType));
       System.out.println("\t-----");
       int[] indices;
       if (imageCount > 6) {
@@ -652,6 +652,7 @@ public abstract class FormatReader extends FormatHandler
     }
     reader.setSeries(id, series);
     String s = seriesCount > 1 ? (" series #" + series) : "";
+    int pixelType = reader.getPixelType(id);
 
     // read pixels
     if (pixels) {
@@ -668,13 +669,29 @@ public abstract class FormatReader extends FormatHandler
       long e1 = System.currentTimeMillis();
       BufferedImage[] images = new BufferedImage[end - start];
       long s2 = System.currentTimeMillis();
+      boolean mismatch = false;
       for (int i=start; i<end; i++) {
         images[i - start] = thumbs ?
           reader.openThumbImage(id, i) : reader.openImage(id, i);
-        System.out.print(".");
+
+        // check for pixel type mismatch
+        int pixType = ImageTools.getPixelType(images[i - start]);
+        if (pixType != pixelType) {
+          if (!mismatch) {
+            System.out.println();
+            mismatch = true;
+          }
+          System.out.println("\tPlane #" + i + ": pixel type mismatch: " +
+            getPixelTypeString(pixType) + "/" + getPixelTypeString(pixelType));
+        }
+        else {
+          mismatch = false;
+          System.out.print(".");
+        }
       }
       long e2 = System.currentTimeMillis();
-      System.out.println(" [done]");
+      if (!mismatch) System.out.print(" ");
+      System.out.println("[done]");
 
       // output timing results
       float sec = (e2 - s1) / 1000f;
@@ -870,8 +887,8 @@ public abstract class FormatReader extends FormatHandler
    * @return string value for human-readable output.
    */
   public static String getPixelTypeString(int pixelType) {
-    if (pixelType < 0 || pixelType >= pixelTypes.length) return null;
-    return pixelTypes[pixelType];
+    return pixelType < 0 || pixelType >= pixelTypes.length ?
+      "unknown (" + pixelType + ")" : pixelTypes[pixelType];
   }
 
 }
