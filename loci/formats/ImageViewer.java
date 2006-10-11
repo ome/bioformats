@@ -25,8 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
+import java.awt.image.*;
 import java.awt.event.*;
 import java.io.File;
 import javax.swing.*;
@@ -476,6 +475,9 @@ public class ImageViewer extends JFrame
           sb.append(pix[i]);
         }
         if (pix.length > 1) sb.append(")");
+        sb.append("; type=");
+        int pixelType = ImageTools.getPixelType(image);
+        sb.append(FormatReader.getPixelTypeString(pixelType));
       }
     }
     sb.append(" ");
