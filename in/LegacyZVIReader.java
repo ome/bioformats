@@ -381,14 +381,12 @@ public class LegacyZVIReader extends FormatReader {
       if ((numI == 2) && (zSet.size() == 2))  zFlag = 1;
       if ((numI == 2) && (tSet.size() == 2))  tFlag = 1;
 
-        /*
       if ((numI % 3 == 0) && (zSet.size() > 1) && (cFlag == 1)) {
         dimensionOrder = "XYCZT";
       }
       if ((numI % 3 == 0) && (tSet.size() > 1) && (cFlag == 1)) {
         dimensionOrder = "XYCTZ";
       }
-      */
       if ((numI % 3 == 0) && (cSet.size() > 1) && (zFlag == 1)) {
         dimensionOrder = "XYZCT";
       }

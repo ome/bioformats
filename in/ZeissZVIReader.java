@@ -65,6 +65,12 @@ public class ZeissZVIReader extends FormatReader {
 
   // -- Fields --
 
+  /** Current file. */
+  private RandomAccessStream ras;
+
+  /** Flag set to true if we need to use the legacy reader. */
+  private boolean needLegacy = false;
+
   /** Number of images. */
   private int nImages;
 
@@ -80,7 +86,7 @@ public class ZeissZVIReader extends FormatReader {
   /** Number of timepoints. */
   private int tSize;
 
-  /* Number of Z slices. */
+  /** Number of Z slices. */
   private int zSize;
 
   /** Number of bytes per pixel. */
@@ -129,42 +135,42 @@ public class ZeissZVIReader extends FormatReader {
   /** Determines the number of images in the given Zeiss ZVI file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    if (noPOI) return legacy.getImageCount(id);
+    if (noPOI || needLegacy) return legacy.getImageCount(id);
     return nImages;
   }
 
   /** Get the size of the X dimension. */
   public int getSizeX(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    if (noPOI) return legacy.getSizeX(id);
+    if (noPOI || needLegacy) return legacy.getSizeX(id);
     return super.getSizeX(id);
   }
 
   /** Get the size of the Y dimension. */
   public int getSizeY(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    if (noPOI) return legacy.getSizeY(id);
+    if (noPOI || needLegacy) return legacy.getSizeY(id);
     return super.getSizeY(id);
   }
 
   /** Get the size of the Z dimension. */
   public int getSizeZ(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    if (noPOI) return legacy.getSizeZ(id);
+    if (noPOI || needLegacy) return legacy.getSizeZ(id);
     return super.getSizeZ(id);
   }
 
   /** Get the size of the C dimension. */
   public int getSizeC(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    if (noPOI) return legacy.getSizeC(id);
+    if (noPOI || needLegacy) return legacy.getSizeC(id);
     return super.getSizeC(id);
   }
 
   /** Get the size of the T dimension. */
   public int getSizeT(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    if (noPOI) return legacy.getSizeT(id);
+    if (noPOI || needLegacy) return legacy.getSizeT(id);
     return super.getSizeT(id);
   }
 
@@ -174,7 +180,7 @@ public class ZeissZVIReader extends FormatReader {
    */
   public int getPixelType(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    if (noPOI) return legacy.getPixelType(id);
+    if (noPOI || needLegacy) return legacy.getPixelType(id);
     return super.getPixelType(id);
   }
  
@@ -186,14 +192,14 @@ public class ZeissZVIReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    if (noPOI) return legacy.getDimensionOrder(id);
+    if (noPOI || needLegacy) return legacy.getDimensionOrder(id);
     return super.getDimensionOrder(id);
   }
 
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    if (noPOI) return legacy.isRGB(id);
+    if (noPOI || needLegacy) return legacy.isRGB(id);
     return nChannels > 1 && (nChannels * zSize * tSize != nImages);
   }
 
@@ -212,7 +218,7 @@ public class ZeissZVIReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    if (noPOI) return legacy.openBytes(id, no);
+    if (noPOI || needLegacy) return legacy.openBytes(id, no);
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
@@ -255,7 +261,7 @@ public class ZeissZVIReader extends FormatReader {
       return a;
     }
     catch (ReflectException e) {
-      noPOI = true;
+      needLegacy = true;
       return openBytes(id, no);
     }
   }
@@ -265,7 +271,7 @@ public class ZeissZVIReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    if (noPOI) return legacy.openImage(id, no);
+    if (noPOI || needLegacy) return legacy.openImage(id, no);
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
@@ -277,7 +283,9 @@ public class ZeissZVIReader extends FormatReader {
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
     currentId = null;
-    noPOI = false; 
+    needLegacy = false; 
+    if (ras != null) ras.close();
+    ras = null;
     String[] vars = {"dirName", "root", "dir", "document", "dis", 
       "numBytes", "data", "fis", "fs", "iter", "isInstance", "isDocument", 
       "entry", "documentName", "entryName"};
@@ -286,12 +294,13 @@ public class ZeissZVIReader extends FormatReader {
 
   /** Initializes the given ZVI file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) close();
-    
-    if (noPOI) {
+
+    if (noPOI || needLegacy) {
       legacy.initFile(id);
       return;
     }
+
+    close();
 
     currentId = id;
 
@@ -306,7 +315,8 @@ public class ZeissZVIReader extends FormatReader {
     nImages = 0;
 
     try {
-      RandomAccessStream ras = new RandomAccessStream(id);
+      ras = new RandomAccessStream(id);
+
       // Don't uncomment this block.  Even though OIBReader has something 
       // like this, it's really a bad idea here.  Every ZVI file we have *will*
       // break if you uncomment it.
@@ -314,7 +324,7 @@ public class ZeissZVIReader extends FormatReader {
       //if (ras.length() % 4096 != 0) {
       //  ras.setExtend((4096 - (int) (ras.length() % 4096)));
       //}
-      
+    
       r.setVar("fis", ras);
       r.exec("fs = new POIFSFileSystem(fis)");
       r.exec("dir = fs.getRoot()");
@@ -339,7 +349,7 @@ public class ZeissZVIReader extends FormatReader {
       sizeT[0] = tSize;
   
       Object check = metadata.get("Image Channel Index");
-      if (check != null) {
+      if (check != null && !check.toString().trim().equals("")) {
         int[] dims = {sizeZ[0], sizeC[0], sizeT[0]};
         int max = 0, min = Integer.MAX_VALUE, maxNdx = 0, minNdx = 0;
         String[] axes = {"Z", "C", "T"};
@@ -361,11 +371,14 @@ public class ZeissZVIReader extends FormatReader {
         }
 
         currentOrder[0] = "XY" + axes[maxNdx] + axes[medNdx] + axes[minNdx];
+        if (sizeZ[0] == sizeC[0] && sizeC[0] == sizeT[0]) {
+          currentOrder[0] = legacy.getDimensionOrder(id);
+        }
       }
       else currentOrder[0] = (zSize > tSize) ? "XYCZT" : "XYCTZ";
     }
     catch (Throwable t) {
-      noPOI = true;
+      needLegacy = true;
       if (DEBUG) t.printStackTrace();
       initFile(id);
     }
