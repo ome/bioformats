@@ -339,6 +339,63 @@ public abstract class OverlayObject {
 
  }
 
+ /** Computes the nearest node to the node specified */
+ public float[] computeNearestNodeToNode(int index) {
+   int indexNearestNode = -1; 
+   float minDistance = Float.MAX_VALUE;
+  
+   //System.out.println("computeNearestNode("+ x + "," + y + ")");
+
+   float x = nodes[0][index];
+   float y = nodes[1][index];
+ 
+   for (int i = 0; i < numNodes; i++) {
+     if (i != index) {
+       float xx = nodes[0][i];
+       float yy = nodes[1][i];
+       //System.out.println ("Coords of node under comparison: (" + xx + "," + yy +")"); //TEMP
+       float dx = x - xx;
+       float dy = y - yy;
+       float distance = (float) Math.sqrt(dx* dx + dy * dy);
+      
+       if (distance < minDistance) {
+         minDistance = distance;
+         indexNearestNode = i;
+         //System.out.println("indexNearestNode reassigned to " + indexNearestNode);
+       }
+     }
+   }
+   float[] retvals = {(float) indexNearestNode, minDistance};
+   return retvals;
+  }
+
+ public float[] computeNearestNodeAhead(int index) {
+   int indexNearestNode = -1; 
+   float minDistance = Float.MAX_VALUE;
+  
+   //System.out.println("computeNearestNode("+ x + "," + y + ")");
+
+   float x = nodes[0][index];
+   float y = nodes[1][index];
+   for (int i = index + 1; i < numNodes; i++) {
+     float xx = nodes[0][i];
+     float yy = nodes[1][i];
+     //System.out.println ("Coords of node under comparison: (" + xx + "," + yy +")"); //TEMP
+     float dx = x - xx;
+     float dy = y - yy;
+     float distance = (float) Math.sqrt(dx* dx + dy * dy);
+    
+     if (distance < minDistance) {
+       minDistance = distance;
+       indexNearestNode = i;
+       //System.out.println("indexNearestNode reassigned to " + indexNearestNode);
+     }
+   } 
+   float[] retvals = {(float) indexNearestNode, minDistance};
+   return retvals;
+
+ }
+  
  //---------------------------------------------------------------
  // ACS 10/3/06
  // inserts a node point _before_ the node at the given index
@@ -368,20 +425,45 @@ public abstract class OverlayObject {
     //System.out.println("Inserted. Printing node Array :");
     printNodeArray();
   }
+   
+  /** inserts *quantity nodes before nodes[index], colocational with nodes[][index] */
+  public void addNodes (int index, int quantity) {
+    // note: in the end, there are quantity + 1 nodes at location nodes[][index]
+    if (index < 0 || index >= numNodes) { }
+    else {
+      float[][] newNodes = new float[2][numNodes + quantity];
+      System.arraycopy(nodes[0], 0, newNodes[0], 0, index);
+      System.arraycopy(nodes[1], 0, newNodes[0], 0, index);
+      // now insert quantity colocational nodes
+      for (int i=0; i < quantity; i++) {
+        newNodes[0][index + i] = nodes[0][index];
+        newNodes[1][index + i] = nodes[1][index];
+      }
+      // now copy remaining nodes
+      System.arraycopy(nodes[0], index, newNodes[0], index + quantity, numNodes - index);
+      System.arraycopy(nodes[1], index, newNodes[1], index + quantity, numNodes - index);
+      numNodes = numNodes + quantity;
+      maxNodes = maxNodes + quantity;
+      nodes = newNodes;
+    }
+  }
 
+   
+  /**deletes a node from the node array */
   public void deleteNode(int index) {
-    if(index>=0 && index < numNodes) {
+    if (index >=0 && index < numNodes) {
       float [][] newNodes =  new float[2][numNodes-1];
-      //System.arraycopy(nodes[0], 0, newNodes[0], 0, index);
-      //System.arraycopy(nodes[0], index+1, newNodes[0], index, numNodes-index-1);
-      //System.arraycopy(nodes[1], 0, newNodes[1], 0, index);
-      //System.arraycopy(nodes[1], index+1, newNodes[1], index, numNodes-index-1);
+      System.arraycopy(nodes[0], 0, newNodes[0], 0, index);
+      System.arraycopy(nodes[0], index+1, newNodes[0], index, numNodes-index-1);
+      System.arraycopy(nodes[1], 0, newNodes[1], 0, index);
+      System.arraycopy(nodes[1], index+1, newNodes[1], index, numNodes-index-1);
       numNodes--;
       maxNodes--;
       nodes = newNodes;
     }
   }
-          
+   
+        
   public void printNodeArray() {
     for (int i = 0; i < maxNodes; i++) { //print all (even fake) nodes
       //System.out.println("(" + nodes[0][i] + "," + nodes[1][i] + ")");
@@ -479,7 +561,7 @@ public abstract class OverlayObject {
 
   // ACS TODO double check this
   public void setNodeCoords(int nodeIndex, float newX, float newY) {
-    if (nodeIndex < numNodes) {
+    if (nodeIndex < 0 && nodeIndex < numNodes) {
       //System.out.println("OverlayObject: resetting node " + nodeIndex + " to (" + newX + "," + newY + ")");
       nodes[0][nodeIndex] = newX;
       nodes[1][nodeIndex] = newY;
