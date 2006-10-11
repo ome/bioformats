@@ -31,9 +31,7 @@ import java.io.File;
 import java.util.StringTokenizer;
 import java.net.*;
 
-/**
- * Utility class for working with QuickTime for Java.
- */
+/** Utility class for working with QuickTime for Java. */
 public class LegacyQTTools {
 
   // -- Constants --

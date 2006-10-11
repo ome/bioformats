@@ -115,7 +115,6 @@ public final class DataTools {
     return Double.longBitsToDouble(read8SignedBytes(in, little));
   }
 
-
   // -- Data writing --
 
   /** Writes a string to the given data output destination. */
