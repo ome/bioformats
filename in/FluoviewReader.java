@@ -69,10 +69,7 @@ public class FluoviewReader extends BaseTiffReader {
     return test.indexOf(FLUOVIEW_MAGIC_STRING) != -1;
   }
 
-  /**
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int)
-   */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
   {
@@ -82,10 +79,7 @@ public class FluoviewReader extends BaseTiffReader {
     return new Double(Integer.parseInt(s));
   }
 
-  /**
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int)
-   */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
   public Double getChannelGlobalMaximum(String id, int theC)
     throws FormatException, IOException
   {

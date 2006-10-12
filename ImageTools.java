@@ -1119,7 +1119,6 @@ public final class ImageTools {
           float diff = (float) max - (float) min;
           float dist = (float) (shorts[i][j] - min) / diff;
 
-
           if (shorts[i][j] >= max) out[i][j] = (byte) 255;
           else if (shorts[i][j] <= min) out[i][j] = 0;
           else out[i][j] = (byte) (dist * 256);

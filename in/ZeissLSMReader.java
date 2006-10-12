@@ -62,7 +62,6 @@ public class ZeissLSMReader extends BaseTiffReader {
   /** Constructs a new Zeiss LSM reader. */
   public ZeissLSMReader() { super("Zeiss Laser-Scanning Microscopy", "lsm"); }
 
-
   // -- FormatReader API methods --
 
   /** Checks if the given block is a valid header for a Zeiss LSM file. */
@@ -124,15 +123,15 @@ public class ZeissLSMReader extends BaseTiffReader {
   {
     if (!id.equals(currentId)) initFile(id);
     if (no < 0 || no >= getImageCount(id)) {
-      throw new FormatException("Invalid image number: " + no);   
+      throw new FormatException("Invalid image number: " + no);
     }
 
     ifds = TiffTools.getIFDs(in);
     return TiffTools.getImage(ifds[2*no], in);
   }
- 
+
   /** Obtains the specified image from the given file as a byte array. */
-  public byte[] openBytes(String id, int no) 
+  public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -147,7 +146,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     for (int i=0; i<p.length; i++) {
       System.arraycopy(p[i], 0, b, i*p[0].length, p[i].length);
     }
- 
+
     return b;
   }
 
@@ -472,7 +471,6 @@ public class ZeissLSMReader extends BaseTiffReader {
         int nameData = in.readInt();
         long offsetNames = pos + idata; // will seek to this
 
-
         // read in the intensity value for each color
 
         in.seek(offsetNames);
@@ -784,7 +782,6 @@ public class ZeissLSMReader extends BaseTiffReader {
       }
     }
   }
-
 
   // -- Main method --
 

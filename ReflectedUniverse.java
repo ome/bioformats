@@ -42,7 +42,6 @@ public class ReflectedUniverse {
   /** Debugging flag. */
   protected boolean debug;
 
-
   // -- Constructors --
 
   /** Constructs a new reflected universe. */
@@ -64,7 +63,6 @@ public class ReflectedUniverse {
     debug = false;
   }
 
-
   // -- Utility methods --
 
   /**
@@ -82,7 +80,6 @@ public class ReflectedUniverse {
       (c == boolean.class && o instanceof Boolean) ||
       (c == char.class && o instanceof Character));
   }
-
 
   // -- API methods --
 

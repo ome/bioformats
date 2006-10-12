@@ -28,7 +28,6 @@ import java.awt.Image;
 import java.awt.image.ColorModel;
 import java.io.IOException;
 
-
 /** Abstract superclass of all biological file format writers. */
 public abstract class FormatWriter extends FormatHandler
   implements IFormatWriter
@@ -71,13 +70,13 @@ public abstract class FormatWriter extends FormatHandler
   public abstract boolean canDoStacks(String id);
 
   /** Sets the color model. */
-  public void setColorModel(ColorModel cm) { this.cm = cm; }
+  public void setColorModel(ColorModel model) { cm = model; }
 
   /** Gets the color model. */
   public ColorModel getColorModel() { return cm; }
 
   /** Sets the frames per second to use when writing. */
-  public void setFramesPerSecond(int fps) { this.fps = fps; }
+  public void setFramesPerSecond(int rate) { fps = rate; }
 
   /** Gets the frames per second to use when writing. */
   public int getFramesPerSecond() { return fps; }

@@ -149,10 +149,7 @@ public class OIBReader extends FormatReader {
     return true;
   }
 
-  /**
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int)
-   */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
   {
@@ -162,10 +159,7 @@ public class OIBReader extends FormatReader {
     catch (NumberFormatException exc) { return null; }
   }
 
-  /**
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int)
-   */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
   public Double getChannelGlobalMaximum(String id, int theC)
     throws FormatException, IOException
   {
@@ -237,9 +231,9 @@ public class OIBReader extends FormatReader {
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
     currentId = null;
-  
-    String[] vars = {"dirName", "root", "dir", "document", "dis", 
-      "numBytes", "data", "fis", "fs", "iter", "isInstance", "isDocument", 
+
+    String[] vars = {"dirName", "root", "dir", "document", "dis",
+      "numBytes", "data", "fis", "fs", "iter", "isInstance", "isDocument",
       "entry", "documentName", "entryName"};
     for (int i=0; i<vars.length; i++) r.setVar(vars[i], null);
   }
@@ -433,7 +427,8 @@ public class OIBReader extends FormatReader {
             if (token.indexOf("=") != -1) {
               String key = token.substring(0, token.indexOf("="));
               String value = token.substring(token.indexOf("=") + 1);
-              if ((prefix+key).trim().equals("[FileInformation] - Resolution")) {
+              String s = (prefix + key).trim();
+              if (s.equals("[FileInformation] - Resolution")) {
                 int max = Integer.parseInt(value.trim());
                 while (Math.pow(2, bpp) < max) bpp++;
                 bpp /= 8;

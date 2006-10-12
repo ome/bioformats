@@ -40,7 +40,6 @@ public class PNGReader extends ImageIOReader {
   /** Constructs a new PNGReader. */
   public PNGReader() { super("Portable Network Graphics", "png"); }
 
-
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {

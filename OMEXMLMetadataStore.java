@@ -177,7 +177,6 @@ public class OMEXMLMetadataStore implements MetadataStore {
     return pixelSizeT == null ? null : new Float(pixelSizeT);
   }
 
-
   /**
    * Gets the nth OME/Image/CA/Pixels element's SizeX attribute.
    * @param n the index of the element. If <code>null</code> the default index

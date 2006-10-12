@@ -556,9 +556,15 @@ public class QTReader extends FormatReader {
 
     switch (bytesPerPixel) {
       case 0:
-      case 1: pixelType[0] = FormatReader.UINT8; break;
-      case 2: pixelType[0] = FormatReader.INT16; break;
-      case 3: pixelType[0] = FormatReader.UINT8; break;
+      case 1:
+        pixelType[0] = FormatReader.UINT8;
+        break;
+      case 2:
+        pixelType[0] = FormatReader.INT16;
+        break;
+      case 3:
+        pixelType[0] = FormatReader.UINT8;
+        break;
     }
 
     sizeX[0] = flip ? height : width;
@@ -626,7 +632,6 @@ public class QTReader extends FormatReader {
           }
         }
       }
-
 
       throw new FormatException("QuickTime resource fork not found. " +
         " To avoid this issue, please flatten your QuickTime movies " +
@@ -1482,7 +1487,7 @@ public class QTReader extends FormatReader {
           System.arraycopy(prevPixels, offset, output, offset,
             width * ebpp);
         }
-      }  
+      }
     }
     else throw new FormatException("Unsupported header : " + header);
 

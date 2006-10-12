@@ -50,7 +50,6 @@ public abstract class ImageIOReader extends FormatReader {
     super(name, suffixes);
   }
 
-
   // -- FormatReader API methods --
 
   /** Checks if the given block is a valid header for an image file. */
@@ -126,6 +125,5 @@ public abstract class ImageIOReader extends FormatReader {
       null);
     setMetadataStore(store);
   }
-
 
 }

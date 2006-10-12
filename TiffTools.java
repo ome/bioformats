@@ -625,7 +625,7 @@ public final class TiffTools {
   {
     Object value = ifd.get(new Integer(tag));
     if (checkNull && value == null) {
-       throw new FormatException(
+      throw new FormatException(
         getIFDTagName(tag) + " directory entry not found");
     }
     if (checkClass != null && value != null &&
@@ -1150,9 +1150,9 @@ public final class TiffTools {
     if (planarConfig == 2) numStrips *= samplesPerPixel;
 
     if (stripOffsets.length != numStrips) {
-        throw new FormatException("StripOffsets length (" +
-          stripOffsets.length + ") does not match expected " +
-          "number of strips (" + numStrips + ")");
+      throw new FormatException("StripOffsets length (" +
+        stripOffsets.length + ") does not match expected " +
+        "number of strips (" + numStrips + ")");
     }
 
     if (stripByteCounts.length != numStrips) {
@@ -1255,13 +1255,10 @@ public final class TiffTools {
     // we're going to normalize everything to byte.
     byte[][] byteData = null;
 
-    if (bitsPerSample[0] == 16)
-    {
+    if (bitsPerSample[0] == 16) {
       byteData = new byte[samplesPerPixel][numSamples * 2];
-      for (int i = 0; i < samplesPerPixel; i++)
-      {
-        for (int j = 0; j < numSamples; j++)
-        {
+      for (int i = 0; i < samplesPerPixel; i++) {
+        for (int j = 0; j < numSamples; j++) {
           byteData[i][j * 2]     = (byte) ((samples[i][j] & 0xFF00) >> 8);
           byteData[i][j * 2 + 1] = (byte) (samples[i][j] & 0x00FF);
         }
@@ -1278,13 +1275,10 @@ public final class TiffTools {
         }
       }
     }
-    else
-    {
+    else {
       byteData = new byte[samplesPerPixel][numSamples];
-      for (int i=0; i<samplesPerPixel; i++)
-      {
-        for (int j=0; j<numSamples; j++)
-        {
+      for (int i=0; i<samplesPerPixel; i++) {
+        for (int j=0; j<numSamples; j++) {
           byteData[i][j] = (byte) samples[i][j];
         }
       }
@@ -1322,15 +1316,14 @@ public final class TiffTools {
       // ByteBuffer to transform to a ShortBuffer. Finally, use the ShortBuffer
       // bulk get method to copy the data into a usable form for makeImage().
       short[][] sampleData = new short[samplesPerPixel][samples[0].length / 2];
-      for (int i = 0; i < samplesPerPixel; i++)
-      {
+      for (int i = 0; i < samplesPerPixel; i++) {
         ShortBuffer sampleBuf = ByteBuffer.wrap(samples[i]).asShortBuffer();
         sampleBuf.get(sampleData[i]);
       }
 
       // Now make our image.
       return ImageTools.makeImage(sampleData,
-          (int) imageWidth, (int) imageLength);
+        (int) imageWidth, (int) imageLength);
     }
     else if (bitsPerSample[0] == 32) {
       int type = getIFDIntValue(ifd, SAMPLE_FORMAT);
@@ -1426,8 +1419,8 @@ public final class TiffTools {
         samples[channelNum][ndx] = (short) (b < 0 ? 256 + b : b);
 
         if (photoInterp == WHITE_IS_ZERO || photoInterp == CMYK) {
-           samples[channelNum][ndx] =
-             (short) (2147483647 - samples[channelNum][ndx]);
+          samples[channelNum][ndx] =
+            (short) (Integer.MAX_VALUE - samples[channelNum][ndx]);
         }
       }
       else if (numBytes == 1) {
@@ -1439,11 +1432,11 @@ public final class TiffTools {
 
         if (photoInterp == WHITE_IS_ZERO) { // invert color value
           samples[channelNum][ndx] =
-            (short) (2147483647 - samples[channelNum][ndx]);
+            (short) (Integer.MAX_VALUE - samples[channelNum][ndx]);
         }
         else if (photoInterp == CMYK) {
           samples[channelNum][ndx] =
-            (short) (2147483647 - samples[channelNum][ndx]);
+            (short) (Integer.MAX_VALUE - samples[channelNum][ndx]);
         }
       }
       else {
@@ -1467,7 +1460,7 @@ public final class TiffTools {
         }
         else if (photoInterp == CMYK) {
           samples[channelNum][ndx] =
-            (short) (2147483647 - samples[channelNum][ndx]);
+            (short) (Integer.MAX_VALUE - samples[channelNum][ndx]);
         }
       }
     }
@@ -1511,7 +1504,6 @@ public final class TiffTools {
     //    to the index
     // 2) if the planar configuration is set to 2 (separated), then go to
     //    j + (i*(bytes.length / sampleCount))
-
 
     int bps0 = bitsPerSample[0];
     int bpsPow = (int) Math.pow(2, bps0);
@@ -1582,8 +1574,8 @@ public final class TiffTools {
           if (photoInterp != CFA_ARRAY) samples[i][ndx] = s;
 
           if (photoInterp == WHITE_IS_ZERO || photoInterp == CMYK) {
-             samples[i][ndx] =
-               (short) (2147483647 - samples[i][ndx]); // invert colors
+            samples[i][ndx] =
+              (short) (Integer.MAX_VALUE - samples[i][ndx]); // invert colors
           }
           else if (photoInterp == RGB_PALETTE) {
             int x = (int) (b < 0 ? 256 + b : b);
@@ -1644,10 +1636,10 @@ public final class TiffTools {
           index++;
 
           int ndx = startIndex + j;
-          samples[i][ndx] = (short) (b < 0 ? 2147483647 + b : b);
+          samples[i][ndx] = (short) (b < 0 ? Integer.MAX_VALUE + b : b);
 
           if (photoInterp == WHITE_IS_ZERO) { // invert color value
-            samples[i][ndx] = (short) (2147483647 - samples[i][ndx]);
+            samples[i][ndx] = (short) (Integer.MAX_VALUE - samples[i][ndx]);
           }
           else if (photoInterp == RGB_PALETTE) {
             index--;
@@ -1657,7 +1649,7 @@ public final class TiffTools {
             samples[i][ndx] = (short) (maxValue == 0 ? (cm % 255) : cm);
           }
           else if (photoInterp == CMYK) {
-            samples[i][ndx] = (short) (2147483647 - samples[i][ndx]);
+            samples[i][ndx] = (short) (Integer.MAX_VALUE - samples[i][ndx]);
           }
           else if (photoInterp == Y_CB_CR) {
             if (i == bitsPerSample.length - 1) {
@@ -1706,7 +1698,7 @@ public final class TiffTools {
               (cm % (bpsPow - 1)) : cm);
           }
           else if (photoInterp == CMYK) {
-            samples[i][ndx] = (short) (2147483647 - samples[i][ndx]);
+            samples[i][ndx] = (short) (Integer.MAX_VALUE - samples[i][ndx]);
           }
         }
       }
@@ -2309,7 +2301,7 @@ public final class TiffTools {
    *  <li>LZW (5)</li>
    *  <li>JPEG (6)</li>
    *  <li>PackBits (32773)</li>
-   * <ul>
+   * </ul>
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
   public static int getCompression(Hashtable ifd) throws FormatException {
@@ -2352,8 +2344,7 @@ public final class TiffTools {
    * @see #getStripByteCounts(Hashtable)
    * @see #getRowsPerStrip(Hashtable)
    */
-  public static long[] getStripOffsets(Hashtable ifd) throws FormatException
-  {
+  public static long[] getStripOffsets(Hashtable ifd) throws FormatException {
     return getIFDLongArray(ifd, STRIP_OFFSETS, false);
   }
 
@@ -2379,8 +2370,7 @@ public final class TiffTools {
    * @return the number of rows per strip.
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
-  public static long[] getRowsPerStrip(Hashtable ifd) throws FormatException
-  {
+  public static long[] getRowsPerStrip(Hashtable ifd) throws FormatException {
     return getIFDLongArray(ifd, ROWS_PER_STRIP, false);
   }
 

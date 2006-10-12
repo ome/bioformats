@@ -64,7 +64,6 @@ public class LegacyZVIReader extends FormatReader {
   private static final String WHINING = "Sorry, " +
     "ZVI support is still preliminary.  It will be improved as time permits.";
 
-
   // -- Fields --
 
   /** Current file. */
@@ -87,7 +86,6 @@ public class LegacyZVIReader extends FormatReader {
 
   /** Constructs a new legacy ZVI reader. */
   public LegacyZVIReader() { super("Legacy ZVI", "zvi"); }
-
 
   // -- FormatReader API methods --
 
@@ -364,7 +362,6 @@ public class LegacyZVIReader extends FormatReader {
       metadata.put("PixelType", type);
       metadata.put("BPP", new Integer(bytesPerPixel));
 
-
       ZVIBlock zviBlock = new ZVIBlock(theZ, theC, theT, width, height,
         alwaysOne, bytesPerPixel, pixType, bitDepth, pos);
       if (DEBUG) System.out.println(zviBlock);
@@ -376,7 +373,7 @@ public class LegacyZVIReader extends FormatReader {
       tSet.add(new Integer(theT));
       numI++;
       // sorry not a very clever way to find dimension order
-     
+
       if ((numI == 2) && (cSet.size() == 2))  cFlag = 1;
       if ((numI == 2) && (zSet.size() == 2))  zFlag = 1;
       if ((numI == 2) && (tSet.size() == 2))  tFlag = 1;
@@ -493,7 +490,6 @@ public class LegacyZVIReader extends FormatReader {
     return spot;
   }
 
-
   // -- Helper classes --
 
   /** Contains information collected from a ZVI image header. */
@@ -585,7 +581,6 @@ public class LegacyZVIReader extends FormatReader {
         "  pixelType = " + pixelType + "\n" + "  bitDepth = " + bitDepth;
     }
   }
-
 
   // -- Main method --
 

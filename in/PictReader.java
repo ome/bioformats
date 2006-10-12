@@ -75,7 +75,6 @@ public class PictReader extends FormatReader {
     }
   }
 
-
   // -- Fields --
 
   /** Current file. */
@@ -121,7 +120,6 @@ public class PictReader extends FormatReader {
 
   /** Constructs a new PICT reader. */
   public PictReader() { super("PICT", new String[] {"pict", "pct"}); }
-
 
   // -- FormatReader API methods --
 
@@ -197,7 +195,7 @@ public class PictReader extends FormatReader {
     in.read(b);
     Dimension d = getDimensions(b);
 
-    sizeX[0] = d.width; 
+    sizeX[0] = d.width;
     sizeY[0] = d.height;
     sizeZ[0] = 1;
     sizeC[0] = 3;
@@ -213,7 +211,6 @@ public class PictReader extends FormatReader {
       new Integer(1), new Integer(3), new Integer(1), new Integer(pixelType[0]),
       new Boolean(!little), "XYCZT", null);
   }
-
 
   // -- PictReader API methods --
 
@@ -366,7 +363,6 @@ public class PictReader extends FormatReader {
       return ImageTools.makeImage(data, width, height, 3, true);
     }
   }
-
 
   // -- Helper methods --
 
@@ -913,7 +909,6 @@ public class PictReader extends FormatReader {
       else o = ob.length;
     }
   }
-
 
   // -- Main method --
 

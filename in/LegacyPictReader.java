@@ -39,12 +39,10 @@ public class LegacyPictReader extends FormatReader {
   /** Helper for reading PICT data with QTJava library. */
   private static LegacyQTTools qtTools = new LegacyQTTools();
 
-
   // -- Constructor --
 
   /** Constructs a new PICT reader. */
   public LegacyPictReader() { super("PICT", "pict"); }
-
 
   // -- FormatReader API methods --
 
@@ -120,7 +118,6 @@ public class LegacyPictReader extends FormatReader {
 
   /** Closes any open files. */
   public void close() throws FormatException, IOException { }
-
 
   // -- Main method --
 

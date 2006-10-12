@@ -112,11 +112,8 @@ public class BioRadReader extends FormatReader {
   public boolean isInterleaved(String id) throws FormatException, IOException {
     return false;
   }
-  
-  /**
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int)
-   */
+
+  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
   {
@@ -124,10 +121,7 @@ public class BioRadReader extends FormatReader {
     return new Double(((Integer) metadata.get("ramp1_min")).intValue());
   }
 
-  /**
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int)
-   */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
   public Double getChannelGlobalMaximum(String id, int theC)
     throws FormatException, IOException
   {

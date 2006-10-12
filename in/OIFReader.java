@@ -62,7 +62,6 @@ public class OIFReader extends FormatReader {
       new String[] {"oif", "roi", "pty", "lut", "bmp"});
   }
 
-
   // -- FormatReader API methods --
 
   /** Checks if the given block is a valid header for an OIF file. */
@@ -111,10 +110,7 @@ public class OIFReader extends FormatReader {
     return false;
   }
 
-  /**
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int)
-   */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
   {
@@ -122,10 +118,7 @@ public class OIFReader extends FormatReader {
     return new Double((String) metadata.get("Image 0 : DataMin"));
   }
 
-  /**
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int)
-   */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
   public Double getChannelGlobalMaximum(String id, int theC)
     throws FormatException, IOException
   {
@@ -172,15 +165,15 @@ public class OIFReader extends FormatReader {
 
     String thumbId = "";
     String dir = id.substring(0, id.lastIndexOf(File.separator) + 1);
-    dir += id.substring(id.lastIndexOf(File.separator) + 1) + ".files" + 
+    dir += id.substring(id.lastIndexOf(File.separator) + 1) + ".files" +
       File.separator;
 
     if (id.indexOf("_") != -1) {
-      thumbId = dir + id.substring(id.lastIndexOf(File.separator) + 1, 
+      thumbId = dir + id.substring(id.lastIndexOf(File.separator) + 1,
         id.lastIndexOf("_") + 1) + "Thumb.bmp";
     }
     else {
-      thumbId = dir + id.substring(id.lastIndexOf(File.separator) + 1, 
+      thumbId = dir + id.substring(id.lastIndexOf(File.separator) + 1,
         id.lastIndexOf(".")) + "_Thumb.bmp";
     }
     return thumbReader.openImage(thumbId, 0);
@@ -206,7 +199,7 @@ public class OIFReader extends FormatReader {
       for (int i=0; i<tiffReader.length; i++) {
         if (tiffReader[i] != null) tiffReader[i].close();
       }
-    }  
+    }
     tiffs = null;
   }
 
@@ -349,7 +342,6 @@ public class OIFReader extends FormatReader {
 
     store.setDimensions(pixX, pixY, null, null, null, null);
   }
-
 
   // -- Main method --
 

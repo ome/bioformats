@@ -41,7 +41,6 @@ public class TiffWriter extends FormatWriter {
   /** Current output stream. */
   private BufferedOutputStream out;
 
-
   // -- Constructor --
 
   public TiffWriter() {
@@ -49,7 +48,6 @@ public class TiffWriter extends FormatWriter {
     lastOffset = 0;
     compressionTypes = new String[] {"Uncompressed", "LZW"};
   }
-
 
   // -- TiffWriter API methods --
 
@@ -89,7 +87,6 @@ public class TiffWriter extends FormatWriter {
     }
   }
 
-
   // -- FormatWriter API methods --
 
   /**
@@ -108,7 +105,6 @@ public class TiffWriter extends FormatWriter {
 
   /** Reports whether the writer can save multiple images to a single file. */
   public boolean canDoStacks(String id) { return true; }
-
 
   // -- Main method --
 

@@ -46,14 +46,12 @@ public class GelReader extends BaseTiffReader {
   private static final int MD_PREP_TIME = 33451;
   private static final int MD_FILE_UNITS = 33452;
 
-
   // -- Constructor --
 
   /** Constructs a new GEL reader. */
   public GelReader() {
     super("Molecular Dynamics GEL TIFF", new String[] {"gel"});
   }
-
 
   // -- FormatReader API methods --
 

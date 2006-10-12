@@ -175,7 +175,7 @@ public class LeicaReader extends BaseTiffReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    BufferedImage b = 
+    BufferedImage b =
       tiff[series][no].openImage((String) files[series].get(no), 0);
     tiff[series][no].close();
     return b;
@@ -194,7 +194,7 @@ public class LeicaReader extends BaseTiffReader {
           }
         }
       }
-    }  
+    }
   }
 
   /** Initializes the given Leica file. */
@@ -339,7 +339,7 @@ public class LeicaReader extends BaseTiffReader {
       // determine the length of a filename
 
       int nameLength = 0;
-     
+
       int maxPlanes = 0;
 
       for (int i=0; i<headerIFDs.length; i++) {
@@ -368,7 +368,7 @@ public class LeicaReader extends BaseTiffReader {
 
       for (int i=0; i<tiff.length; i++) {
         for (int j=0; j<tiff[i].length; j++) {
-          tiff[i][j] = new TiffReader();     
+          tiff[i][j] = new TiffReader();
         }
       }
 
@@ -785,7 +785,7 @@ public class LeicaReader extends BaseTiffReader {
     sizeT = new int[numSeries];
     pixelType = new int[numSeries];
     currentOrder = new String[numSeries];
- 
+
     try {
       int oldSeries = getSeries(currentId);
       for (int i=0; i<sizeC.length; i++) {
@@ -794,7 +794,7 @@ public class LeicaReader extends BaseTiffReader {
       }
       setSeries(currentId, oldSeries);
     }
-    catch (Exception e) { 
+    catch (Exception e) {
       // NullPointerException caught here if the file we opened was a TIFF.
       // However, the sizeC field will be adjusted anyway by a later call to
       // BaseTiffReader.initMetadata

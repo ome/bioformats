@@ -42,7 +42,6 @@ public class JPEGReader extends ImageIOReader {
       new String[] {"jpg", "jpeg", "jpe"});
   }
 
-
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {

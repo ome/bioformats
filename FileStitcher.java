@@ -75,7 +75,7 @@ public class FileStitcher extends ReaderWrapper {
   private int validSeries = -1;
 
   /** Index into the array of readers. */
-  private int index = 0;
+  private int current = 0;
 
   /** Whether each dimension size varies between files. */
   private boolean varyZ, varyC, varyT;
@@ -181,7 +181,7 @@ public class FileStitcher extends ReaderWrapper {
     throws FormatException, IOException
   {
     if (getSeries(id) != validSeries) initFile(id);
-    return readers[index].openImage(findFile(no), number);
+    return readers[current].openImage(findFile(no), number);
   }
 
   /** Obtains the specified image from the given file as a byte array. */
@@ -189,7 +189,7 @@ public class FileStitcher extends ReaderWrapper {
     throws FormatException, IOException
   {
     if (getSeries(id) != validSeries) initFile(id);
-    return readers[index].openBytes(findFile(no), number);
+    return readers[current].openBytes(findFile(no), number);
   }
 
   public int getIndex(String id, int z, int c, int t)
@@ -518,7 +518,7 @@ public class FileStitcher extends ReaderWrapper {
       else {
         no -= imageCounts[ndx - 1];
         file = files[ndx];
-        index = ndx;
+        current = ndx;
         ndx++;
       }
     }

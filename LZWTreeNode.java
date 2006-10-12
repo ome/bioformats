@@ -39,7 +39,6 @@ public class LZWTreeNode {
   /** Code corresponding to this node. */
   protected int code;
 
-
   // -- Constructor --
 
   /** Constructs a new LZW symbol tree node. */
@@ -47,7 +46,6 @@ public class LZWTreeNode {
     children = new LZWTreeNode[256];
     this.code = code;
   }
-
 
   // -- LZWTreeNode API methods --
 
