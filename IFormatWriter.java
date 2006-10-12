@@ -24,8 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.awt.image.ColorModel;
 import java.awt.Image;
+import java.awt.image.ColorModel;
 import java.io.IOException;
 
 /** Interface for all biological file format writers. */

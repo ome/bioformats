@@ -28,8 +28,8 @@ import java.awt.*;
 import java.awt.image.DirectColorModel;
 import java.awt.image.MemoryImageSource;
 import java.io.File;
-import java.util.StringTokenizer;
 import java.net.*;
+import java.util.StringTokenizer;
 
 /** Utility class for working with QuickTime for Java. */
 public class LegacyQTTools {

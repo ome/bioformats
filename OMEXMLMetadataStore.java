@@ -26,14 +26,14 @@ package loci.formats;
 
 //import org.apache.commons.logging.Log;
 //import org.apache.commons.logging.LogFactory;
-import org.openmicroscopy.xml.*;
-import org.openmicroscopy.xml.st.*;
-import org.w3c.dom.Element;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.Vector;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import org.openmicroscopy.xml.*;
+import org.openmicroscopy.xml.st.*;
+import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 /**

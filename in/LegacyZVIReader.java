@@ -27,9 +27,9 @@ package loci.formats.in;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Vector;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Vector;
 import loci.formats.*;
 
 /**
