@@ -286,6 +286,12 @@ public class ZeissZVIReader extends FormatReader {
     needLegacy = false; 
     if (ras != null) ras.close();
     ras = null;
+    
+    if (legacy != null) legacy.close();
+    pixels = null;
+    names = null;
+    offsets = null;
+    
     String[] vars = {"dirName", "root", "dir", "document", "dis", 
       "numBytes", "data", "fis", "fs", "iter", "isInstance", "isDocument", 
       "entry", "documentName", "entryName"};

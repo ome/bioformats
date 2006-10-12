@@ -357,6 +357,8 @@ public class OpenlabReader extends FormatReader {
     currentId = null;
     if (in != null) in.close();
     in = null;
+    if (pict != null) pict.close();
+    layerInfoList = null;
   }
 
   /** Initialize the given Openlab LIFF file. */
