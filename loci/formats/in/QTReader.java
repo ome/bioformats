@@ -537,6 +537,7 @@ public class QTReader extends FormatReader {
     if (in != null) in.close();
     in = null;
     currentId = null;
+    prevPixels = null;
   }
 
   /** Initializes the given QuickTime file. */

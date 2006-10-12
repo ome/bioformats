@@ -201,6 +201,13 @@ public class OIFReader extends FormatReader {
     if (reader != null) reader.close();
     reader = null;
     currentId = null;
+    if (thumbReader != null) thumbReader.close();
+    if (tiffReader != null) {
+      for (int i=0; i<tiffReader.length; i++) {
+        if (tiffReader[i] != null) tiffReader[i].close();
+      }
+    }  
+    tiffs = null;
   }
 
   /** Initializes the given OIF file. */

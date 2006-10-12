@@ -179,6 +179,7 @@ public class ICSReader extends FormatReader {
     icsIn = null;
     currentIcsId = null;
     currentIdsId = null;
+    data = null;
   }
 
   /** Initializes the given IPLab file. */

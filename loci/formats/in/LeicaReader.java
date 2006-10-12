@@ -186,6 +186,15 @@ public class LeicaReader extends BaseTiffReader {
     if (in != null) in.close();
     in = null;
     currentId = null;
+    if (tiff != null) {
+      for (int i=0; i<tiff.length; i++) {
+        if (tiff[i] != null) {
+          for (int j=0; j<tiff[i].length; j++) {
+            if (tiff[i][j] != null) tiff[i][j].close();
+          }
+        }
+      }
+    }  
   }
 
   /** Initializes the given Leica file. */

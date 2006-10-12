@@ -134,7 +134,15 @@ public class PerkinElmerReader extends FormatReader {
   }
 
   /** Closes any open files. */
-  public void close() throws FormatException, IOException { currentId = null; }
+  public void close() throws FormatException, IOException { 
+    currentId = null; 
+    files = null;
+    if (tiff != null) {
+      for (int i=0; i<tiff.length; i++) {
+        if (tiff[i] != null) tiff[i].close();
+      }
+    }  
+  }
 
   /** Initializes the given PerkinElmer file. */
   protected void initFile(String id) throws FormatException, IOException {
