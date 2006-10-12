@@ -110,7 +110,7 @@ public class ChannelSeparator extends ReaderWrapper {
   public BufferedImage openThumbImage(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.scale(openImage(id, no), getThumbSizeX(id), 
+    return ImageTools.scale(openImage(id, no), getThumbSizeX(id),
       getThumbSizeY(id), true, true);
   }
 

@@ -1004,7 +1004,7 @@ public final class ImageTools {
         ypad = 0;
         n = 0;
       }
-      
+
       for (int i=ypad; i<height - ypad - n; i++) {
         System.arraycopy(b, (i - ypad) * oldWidth, padded, i*width + xpad,
           oldWidth);
@@ -1025,7 +1025,7 @@ public final class ImageTools {
     byte[] newGreen = new byte[image[0].length];
     byte[] newBlue = new byte[image[0].length];
 
-    int[][] kernel = {{1, 4, 6, 4, 1}, {4, 16, 24, 16, 4}, {6, 24, 36, 24, 6}, 
+    int[][] kernel = {{1, 4, 6, 4, 1}, {4, 16, 24, 16, 4}, {6, 24, 36, 24, 6},
       {4, 16, 24, 16, 4}, {1, 4, 6, 4, 1}};
 
     for (int i=0; i<height; i++) {
@@ -1053,7 +1053,7 @@ public final class ImageTools {
             sum += krow[m];
           }
         }
-     
+
         newRed[i*width + j] = (byte) (rrow / sum);
         newGreen[i*width + j] = (byte) (grow / sum);
         newBlue[i*width + j] = (byte) (brow / sum);
@@ -1095,18 +1095,18 @@ public final class ImageTools {
     image[0] = red;
     image[1] = green;
     image[2] = blue;
-    
+
     return image;
   }
 
-  /** 
-   * Perform autoscaling on the given BufferedImage; 
+  /**
+   * Perform autoscaling on the given BufferedImage;
    * map min to 0 and max to 255.  If the BufferedImage has 8 bit data, then
    * nothing happens.
    */
   public static BufferedImage autoscale(BufferedImage img, int min, int max) {
     Object pixels = getPixels(img);
-  
+
     if (pixels instanceof byte[][]) return img;
     else if (pixels instanceof short[][]) {
       short[][] shorts = (short[][]) pixels;
@@ -1115,10 +1115,10 @@ public final class ImageTools {
       for (int i=0; i<out.length; i++) {
         for (int j=0; j<out[i].length; j++) {
           if (shorts[i][j] < 0) shorts[i][j] += 32767;
-         
+
           float diff = (float) max - (float) min;
           float dist = (float) (shorts[i][j] - min) / diff;
-        
+
 
           if (shorts[i][j] >= max) out[i][j] = (byte) 255;
           else if (shorts[i][j] <= min) out[i][j] = 0;
@@ -1190,8 +1190,8 @@ public final class ImageTools {
    * map min to 0 and max to 255.  If the number of bytes per pixel is 1, then
    * nothing happens.
    */
-  public static byte[] autoscale(byte[] b, int min, int max, int bpp, 
-    boolean little) 
+  public static byte[] autoscale(byte[] b, int min, int max, int bpp,
+    boolean little)
   {
     if (bpp == 1) return b;
 
@@ -1205,21 +1205,21 @@ public final class ImageTools {
       else {
         int diff = max - min;
         float dist = (s - min) / diff;
-     
+
         s = (int) dist * 256;
       }
 
-      out[i / bpp] = (byte) s; 
+      out[i / bpp] = (byte) s;
     }
     return out;
   }
 
   /** Scan a plane for the channel min and max values. */
-  public static Double[] scanData(byte[] plane, int bits, boolean littleEndian) 
+  public static Double[] scanData(byte[] plane, int bits, boolean littleEndian)
   {
     int max = 0;
     int min = Integer.MAX_VALUE;
-   
+
     if (bits <= 8) {
       for (int j=0; j<plane.length; j++) {
         if (plane[j] < min) min = plane[j];
@@ -1307,14 +1307,14 @@ public final class ImageTools {
     int w = source.getWidth();
     int h = source.getHeight();
     if (w == width && h == height) return source;
-   
+
     int oldHeight = height;
 
     if (preserve) {
       // keep the width the same, but adjust height accordingly
       height = (h * width) / w;
     }
-   
+
     if ((width * height) / (w * h) > 0) {
       // use Java2D to enlarge
       source = scale2D(source, width, height, null, source.getColorModel());
