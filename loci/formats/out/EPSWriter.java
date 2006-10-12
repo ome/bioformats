@@ -45,7 +45,6 @@ public class EPSWriter extends FormatWriter {
     super("Encapsulated PostScript", new String[] {"eps", "epsi"});
   }
 
-
   // -- FormatWriter API methods --
 
   /**
@@ -146,7 +145,6 @@ public class EPSWriter extends FormatWriter {
 
   /** Reports whether the writer can save multiple images to a single file. */
   public boolean canDoStacks(String id) { return false; }
-
 
   // -- Main method --
 

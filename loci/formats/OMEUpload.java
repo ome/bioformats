@@ -67,14 +67,14 @@ public class OMEUpload {
   // -- OMEUpload API methods --
 
   /** Attempt to log in to the server. Returns true if successful. */
-  public boolean login(String server, String user, String pass)
+  public boolean login(String address, String login, String pass)
     throws FormatException, IOException
   {
-    this.server = server + "/shoola";
-    omeis = server + "/cgi-bin/omeis";
+    server = address + "/shoola";
+    omeis = address + "/cgi-bin/omeis";
 
     Vector v = new Vector();
-    v.add(user);
+    v.add(login);
     v.add(pass);
 
     sessionKey = sendRequest(buildXML("createSession", v));
@@ -287,7 +287,9 @@ public class OMEUpload {
   }
 
   /** Parse OME-XML tree and mark it for updating. */
-  private void parseXML(OMEXMLNode xml, DataFactory df, ModuleExecution mex) {
+  private void parseXML(OMEXMLNode xml,
+    DataFactory factory, ModuleExecution mex)
+  {
     NodeList children = xml.getDOMElement().getChildNodes();
     Object[] childs = new Object[children.getLength()];
 
@@ -296,7 +298,7 @@ public class OMEUpload {
       Class dtoClass = child.getDTOType();
       Object o = null;
       if (dtoClass == null) {
-        parseXML(child, df, mex);
+        parseXML(child, factory, mex);
         break;
       }
 
@@ -354,9 +356,9 @@ public class OMEUpload {
           mexMethod.invoke(o, new Object[] {mex});
         }
         catch (Exception e) { }
-        df.markForUpdate((DataInterface) o);
+        factory.markForUpdate((DataInterface) o);
 
-        parseXML(child, df, mex);
+        parseXML(child, factory, mex);
       }
     }
   }

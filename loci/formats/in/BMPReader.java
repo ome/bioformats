@@ -80,7 +80,6 @@ public class BMPReader extends FormatReader {
   /** Constructs a new BMP reader. */
   public BMPReader() { super("Windows Bitmap", "bmp"); }
 
-
   // -- FormatReader API methods --
 
   /** Checks if the given block is a valid header for a BMP file. */
@@ -128,7 +127,7 @@ public class BMPReader extends FormatReader {
     in.seek(global);
 
     if (width % 2 == 1) width++;
-    
+
     byte[] pix = new byte[width * height * (bpp / 8)];
     in.read(pix);
 
@@ -360,7 +359,6 @@ public class BMPReader extends FormatReader {
       "XYCTZ", // Dimension order
       null); // Use index 0
   }
-
 
   // -- Main method --
 

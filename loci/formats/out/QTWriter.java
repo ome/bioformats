@@ -358,7 +358,6 @@ public class QTWriter extends FormatWriter {
       DataTools.writeInt(out, height, false); // image height
       DataTools.writeShort(out, 0, false); // reserved
 
-
       // -- write edts atom --
 
       DataTools.writeInt(out, 36, false);

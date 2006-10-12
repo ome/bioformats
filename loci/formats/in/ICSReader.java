@@ -26,8 +26,8 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.StringTokenizer;
 import java.util.NoSuchElementException;
+import java.util.StringTokenizer;
 import java.util.zip.*;
 import loci.formats.*;
 
@@ -163,7 +163,7 @@ public class ICSReader extends FormatReader {
       // have any better ideas (just remember to update the pixel type as well).
       short[] f = new short[plane.length / 4];
       for (int i=0; i<f.length; i++) {
-        f[i] = (short) Float.intBitsToFloat(DataTools.bytesToInt(plane, i*4, 
+        f[i] = (short) Float.intBitsToFloat(DataTools.bytesToInt(plane, i*4,
           4, littleEndian));
       }
       return ImageTools.makeImage(f, width, height);
@@ -429,7 +429,6 @@ public class ICSReader extends FormatReader {
       ord, // DimensionOrder
       null); // Use index 0
   }
-
 
   // -- Main method --
 

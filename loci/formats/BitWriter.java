@@ -41,7 +41,6 @@ public class BitWriter {
   /** Bit index into current byte of the buffer. */
   private int bit;
 
-
   // -- Constructors --
 
   /** Constructs a new bit writer. */
@@ -49,7 +48,6 @@ public class BitWriter {
 
   /** Constructs a new bit writer with the given initial buffer size. */
   public BitWriter(int size) { buf = new byte[size]; }
-
 
   // -- BitWriter API methods --
 
@@ -85,7 +83,6 @@ public class BitWriter {
     System.arraycopy(buf, 0, b, 0, size);
     return b;
   }
-
 
   // -- Main method --
 

@@ -41,11 +41,9 @@ public class ImageTester extends JPanel implements WindowListener {
 
   private BufferedImage[][] img;
 
-
   // -- Constructor --
 
   public ImageTester(BufferedImage[][] img) { this.img = img; }
-
 
   // -- Component API methods --
 
@@ -83,7 +81,6 @@ public class ImageTester extends JPanel implements WindowListener {
     return new Dimension(width, height);
   }
 
-
   // -- WindowListener methods --
 
   public void windowActivated(WindowEvent e) { }
@@ -93,7 +90,6 @@ public class ImageTester extends JPanel implements WindowListener {
   public void windowDeiconified(WindowEvent e) { }
   public void windowIconified(WindowEvent e) { }
   public void windowOpened(WindowEvent e) { }
-
 
   // -- Main method --
 

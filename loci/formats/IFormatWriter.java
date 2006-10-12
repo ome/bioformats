@@ -49,7 +49,7 @@ public interface IFormatWriter extends IFormatHandler {
   ColorModel getColorModel();
 
   /** Sets the frames per second to use when writing. */
-  void setFramesPerSecond(int fps);
+  void setFramesPerSecond(int rate);
 
   /** Gets the frames per second to use when writing. */
   int getFramesPerSecond();

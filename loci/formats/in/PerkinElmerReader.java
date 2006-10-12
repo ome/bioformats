@@ -134,14 +134,14 @@ public class PerkinElmerReader extends FormatReader {
   }
 
   /** Closes any open files. */
-  public void close() throws FormatException, IOException { 
-    currentId = null; 
+  public void close() throws FormatException, IOException {
+    currentId = null;
     files = null;
     if (tiff != null) {
       for (int i=0; i<tiff.length; i++) {
         if (tiff[i] != null) tiff[i].close();
       }
-    }  
+    }
   }
 
   /** Initializes the given PerkinElmer file. */
@@ -243,16 +243,16 @@ public class PerkinElmerReader extends FormatReader {
         }
 
         try {
-          String extension = filename.substring(filename.lastIndexOf(".") + 1);
-          int num = Integer.parseInt(extension);
+          String ext = filename.substring(filename.lastIndexOf(".") + 1);
+          int num = Integer.parseInt(ext);
           isTiff = false;
           files[filesPt] = workingDirPath + ls[i];
           filesPt++;
         }
         catch (Exception e) {
           try {
-            String extension = filename.substring(filename.lastIndexOf(".") + 1);
-            int num = Integer.parseInt(extension, 16);
+            String ext = filename.substring(filename.lastIndexOf(".") + 1);
+            int num = Integer.parseInt(ext, 16);
             isTiff = false;
             files[filesPt] = workingDirPath + ls[i];
             filesPt++;

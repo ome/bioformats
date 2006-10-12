@@ -39,7 +39,6 @@ public class NumberFilter implements FileFilter {
   /** String appearing after the numerical block. */
   private String post;
 
-
   // -- Constructor --
 
   /**
@@ -51,7 +50,6 @@ public class NumberFilter implements FileFilter {
     this.post = post;
   }
 
-
   // -- NumberFilter API methods --
 
   /** Gets numbers filling the asterisk positions. */
@@ -62,7 +60,6 @@ public class NumberFilter implements FileFilter {
     try { return new BigInteger(name.substring(ndx, end)); }
     catch (NumberFormatException exc) { return null; }
   }
-
 
   // -- FileFilter API methods --
 

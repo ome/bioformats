@@ -706,7 +706,7 @@ public abstract class BaseTiffReader extends FormatReader {
     if (!id.equals(currentId)) initFile(id);
     if (channelMinMax == null || channelMinMax[theC] == null)
       return null;
-    return channelMinMax[theC][MAX]; 
+    return channelMinMax[theC][MAX];
   }
 
   /** Return true if the data is in little-endian format. */
@@ -745,7 +745,7 @@ public abstract class BaseTiffReader extends FormatReader {
   {
     if (!id.equals(currentId)) initFile(id);
     int bytesPerPixel = ImageReader.getBytesPerPixel(getPixelType(id));
-    byte[] buf = new byte[getSizeX(id) * getSizeY(id) * getSizeC(id) * 
+    byte[] buf = new byte[getSizeX(id) * getSizeY(id) * getSizeC(id) *
       bytesPerPixel];
     return openBytes(id, no, buf);
   }

@@ -37,7 +37,6 @@ public class JPEGWriter extends ImageIOWriter {
       new String[] {"jpg", "jpeg", "jpe"}, "jpeg");
   }
 
-
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {

@@ -66,7 +66,6 @@ public class OpenlabRawReader extends FormatReader {
   /** Constructs a new RAW reader. */
   public OpenlabRawReader() { super("Openlab RAW", "raw"); }
 
-
   // -- FormatReader API methods --
 
   /** Checks if the given block is a valid header for a RAW file. */
@@ -212,7 +211,6 @@ public class OpenlabRawReader extends FormatReader {
       "XYZTC",
       null);
   }
-
 
   // -- Main method --
 

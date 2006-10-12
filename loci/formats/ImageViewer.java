@@ -236,12 +236,10 @@ public class ImageViewer extends JFrame
   }
 
   /** Sets the viewer to display the given images. */
-  public void setImages(String id,
-    IFormatReader reader, BufferedImage[] images)
-  {
+  public void setImages(String id, IFormatReader reader, BufferedImage[] img) {
     filename = id;
     in = reader;
-    this.images = images;
+    images = img;
 
     try {
       sizeZ = reader.getSizeZ(id);

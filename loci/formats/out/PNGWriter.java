@@ -36,7 +36,6 @@ public class PNGWriter extends ImageIOWriter {
     super("Portable Network Graphics", "png", "png");
   }
 
-
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {

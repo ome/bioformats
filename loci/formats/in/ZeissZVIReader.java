@@ -40,8 +40,8 @@ public class ZeissZVIReader extends FormatReader {
 
   // -- Constants --
 
-  private static final String NO_POI_MSG = "You need to install Jakarta POI " +
-    "from http://jakarta.apache.org/poi/";
+  private static final String NO_POI_MSG =
+    "You need to install Jakarta POI from http://jakarta.apache.org/poi/";
 
   // -- Static fields --
 
@@ -180,7 +180,7 @@ public class ZeissZVIReader extends FormatReader {
     if (noPOI || needLegacy) return legacy.getPixelType(id);
     return super.getPixelType(id);
   }
- 
+
   /**
    * Return a five-character string representing the dimension order
    * within the file.
@@ -280,17 +280,17 @@ public class ZeissZVIReader extends FormatReader {
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
     currentId = null;
-    needLegacy = false; 
+    needLegacy = false;
     if (ras != null) ras.close();
     ras = null;
-    
+
     if (legacy != null) legacy.close();
     pixels = null;
     names = null;
     offsets = null;
-    
-    String[] vars = {"dirName", "root", "dir", "document", "dis", 
-      "numBytes", "data", "fis", "fs", "iter", "isInstance", "isDocument", 
+
+    String[] vars = {"dirName", "root", "dir", "document", "dis",
+      "numBytes", "data", "fis", "fs", "iter", "isInstance", "isDocument",
       "entry", "documentName", "entryName"};
     for (int i=0; i<vars.length; i++) r.setVar(vars[i], null);
   }
@@ -320,14 +320,14 @@ public class ZeissZVIReader extends FormatReader {
     try {
       ras = new RandomAccessStream(id);
 
-      // Don't uncomment this block.  Even though OIBReader has something 
+      // Don't uncomment this block.  Even though OIBReader has something
       // like this, it's really a bad idea here.  Every ZVI file we have *will*
       // break if you uncomment it.
-      // 
+      //
       //if (ras.length() % 4096 != 0) {
       //  ras.setExtend((4096 - (int) (ras.length() % 4096)));
       //}
-    
+
       r.setVar("fis", ras);
       r.exec("fs = new POIFSFileSystem(fis)");
       r.exec("dir = fs.getRoot()");
@@ -350,7 +350,7 @@ public class ZeissZVIReader extends FormatReader {
       sizeZ[0] = zSize;
       sizeC[0] = nChannels;
       sizeT[0] = tSize;
-  
+
       Object check = metadata.get("Image Channel Index");
       if (check != null && !check.toString().trim().equals("")) {
         int[] dims = {sizeZ[0], sizeC[0], sizeT[0]};
@@ -367,9 +367,9 @@ public class ZeissZVIReader extends FormatReader {
             minNdx = i;
           }
         }
-       
+
         int medNdx = 0;
-        for (int i=0; i<3; i++) { 
+        for (int i=0; i<3; i++) {
           if (i != maxNdx && i != minNdx) medNdx = i;
         }
 
@@ -693,7 +693,6 @@ public class ZeissZVIReader extends FormatReader {
           pt += 6;
           int validBitsPerPixel = DataTools.bytesToInt(data, pt, 4, true);
           pt += 4;
-
 
           // VT_CLSID - PluginCLSID
           while (DataTools.bytesToInt(data, pt, 2, true) != 65) {

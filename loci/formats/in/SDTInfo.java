@@ -141,7 +141,7 @@ public class SDTInfo {
 
   protected String setup;
 
-  // -- Fields - MeasureInfo -- 
+  // -- Fields - MeasureInfo --
 
   protected boolean hasMeasureInfo;
 

@@ -85,7 +85,6 @@ public class OMEXMLReader extends FormatReader {
   /** Constructs a new OME-XML reader. */
   public OMEXMLReader() { super("OME-XML", "ome"); }
 
-
   // -- FormatReader API methods --
 
   /** Checks if the given block is a valid header for an OME-XML file. */
@@ -372,10 +371,10 @@ public class OMEXMLReader extends FormatReader {
         bpp[i] = 4;
         pixelType[i] = FormatReader.FLOAT;
       }
-      else { 
-        bpp[i] = 1; 
-        pixelType[i] = type.indexOf("u") == -1 ? FormatReader.INT8 : 
-          FormatReader.UINT8; 
+      else {
+        bpp[i] = 1;
+        pixelType[i] = type.indexOf("u") == -1 ? FormatReader.INT8 :
+          FormatReader.UINT8;
       }
 
       order[i] = omexml.getDimensionOrder(ndx);
@@ -417,7 +416,6 @@ public class OMEXMLReader extends FormatReader {
     sizeT = numT;
     currentOrder = order;
   }
-
 
   // -- Helper methods --
 

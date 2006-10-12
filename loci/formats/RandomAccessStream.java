@@ -115,7 +115,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
    * Sets the number of bytes by which to extend the stream.  This only applies
    * to InputStream API methods.
    */
-  public void setExtend(int ext) { this.ext = ext; }
+  public void setExtend(int extend) { ext = extend; }
 
   /** Seeks to the given offset within the stream. */
   public void seek(long pos) throws IOException { afp = (int) pos; }

@@ -204,8 +204,8 @@ public class ImageWriter implements IFormatWriter {
   }
 
   /** Sets the frames per second to use when writing. */
-  public void setFramesPerSecond(int fps) {
-    for (int i=0; i<writers.length; i++) writers[i].setFramesPerSecond(fps);
+  public void setFramesPerSecond(int rate) {
+    for (int i=0; i<writers.length; i++) writers[i].setFramesPerSecond(rate);
   }
 
   /** Gets the frames per second to use when writing. */

@@ -70,7 +70,6 @@ public class IPLabReader extends FormatReader {
   /** Constructs a new IPLab reader. */
   public IPLabReader() { super("IPLab", "ipl"); }
 
-
   // -- FormatReader API methods --
 
   /** Checks if the given block is a valid header for an IPLab file. */
@@ -110,10 +109,7 @@ public class IPLabReader extends FormatReader {
     return false;
   }
 
-  /**
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int)
-   */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
   {
@@ -121,10 +117,7 @@ public class IPLabReader extends FormatReader {
     return (Double) metadata.get("NormalizationMin" + theC);
   }
 
-  /**
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int)
-   */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
   public Double getChannelGlobalMaximum(String id, int theC)
     throws FormatException, IOException
   {
@@ -467,7 +460,6 @@ public class IPLabReader extends FormatReader {
     currentOrder[0] = order;
 
   }
-
 
   // -- Main method --
 

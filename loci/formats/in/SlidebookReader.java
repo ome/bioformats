@@ -38,7 +38,6 @@ public class SlidebookReader extends FormatReader {
 
   // -- Constants --
 
-
   // -- Fields --
 
   /** Current file. */
@@ -63,7 +62,6 @@ public class SlidebookReader extends FormatReader {
 
   /** Constructs a new Slidebook reader. */
   public SlidebookReader() { super("Intelligent Imaging Slidebook", "sld"); }
-
 
   // -- FormatReader API methods --
 
@@ -212,7 +210,7 @@ public class SlidebookReader extends FormatReader {
 
     width = DataTools.read2UnsignedBytes(in, true);
     height = DataTools.read2UnsignedBytes(in, true);
-    
+
     if (multiSeries) {
       width /= numC;
       height /= numC;
@@ -231,7 +229,7 @@ public class SlidebookReader extends FormatReader {
 
     pixelType[0] = FormatReader.UINT16;
     currentOrder[0] = "XY";
- 
+
     if (numImages != (sizeZ[0] * sizeC[0] * sizeT[0])) {
       sizeZ[0] = 1;
       sizeT[0] = numImages / sizeC[0];
@@ -259,7 +257,7 @@ public class SlidebookReader extends FormatReader {
     currentOrder[0] += names[maxNdx];
     currentOrder[0] += names[medNdx];
     currentOrder[0] += names[minNdx];
-  
+
     if (sizeZ[0] == 0) sizeZ[0] = 1;
     if (sizeC[0] == 0) sizeC[0] = 1;
     if (sizeT[0] == 0) sizeT[0] = 1;

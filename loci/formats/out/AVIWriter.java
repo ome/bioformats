@@ -84,11 +84,9 @@ public class AVIWriter extends FormatWriter {
   private long frameOffset;
   private long frameOffset2;
 
-
   // -- Constructor --
 
   public AVIWriter() { super("Audio Video Interleave", "avi"); }
-
 
   // -- FormatWriter API methods --
 
@@ -515,7 +513,6 @@ public class AVIWriter extends FormatWriter {
 
   /** Reports whether the writer can save multiple images to a single file. */
   public boolean canDoStacks(String id) { return true; }
-
 
   // -- Main method --
 

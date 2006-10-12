@@ -260,5 +260,4 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getFileChooser();
   }
 
-
 }

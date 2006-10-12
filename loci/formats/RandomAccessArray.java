@@ -51,14 +51,12 @@ public class RandomAccessArray extends RandomAccessFile {
     return null;
   }
 
-
   // -- Fields --
 
   private byte[] stream;
   private long fp; // the file pointer
   private long length; // array length
   private static final String EOF = "End of file reached";
-
 
   // -- Constructor --
 
@@ -71,7 +69,6 @@ public class RandomAccessArray extends RandomAccessFile {
     super(TEMP_FILE, "r"); // this does nothing
     setStream(b);
   }
-
 
   // -- Utility methods --
 
@@ -109,7 +106,6 @@ public class RandomAccessArray extends RandomAccessFile {
     }
     return skipped;
   }
-
 
   // -- Reading methods --
 
@@ -165,7 +161,6 @@ public class RandomAccessArray extends RandomAccessFile {
     if (b == null) throw new NullPointerException();
     System.arraycopy(stream, off, b, 0, b.length);
   }
-
 
   // -- Writing methods --
 

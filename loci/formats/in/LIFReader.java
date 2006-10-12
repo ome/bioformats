@@ -83,7 +83,6 @@ public class LIFReader extends FormatReader {
   /** Constructs a new Leica LIF reader. */
   public LIFReader() { super("Leica Image File Format", "lif"); }
 
-
   // -- FormatReader API methods --
 
   /** Checks if the given block is a valid header for a LIF file. */
@@ -121,10 +120,7 @@ public class LIFReader extends FormatReader {
     return dims.length;
   }
 
-  /**
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int)
-   */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
   {
@@ -132,10 +128,7 @@ public class LIFReader extends FormatReader {
     return new Double(((Integer) channelMins.get(series)).intValue());
   }
 
-  /**
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int)
-   */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
   public Double getChannelGlobalMaximum(String id, int theC)
     throws FormatException, IOException
   {
@@ -524,7 +517,6 @@ public class LIFReader extends FormatReader {
         getDimensionOrder(currentId), // DimensionOrder
         ii); // Index
 
-
       Float xf = i < xcal.size() ? (Float) xcal.get(i) : null;
       Float yf = i < ycal.size() ? (Float) ycal.get(i) : null;
       Float zf = i < zcal.size() ? (Float) zcal.get(i) : null;
@@ -532,7 +524,6 @@ public class LIFReader extends FormatReader {
       store.setDimensions(xf, yf, zf, null, null, ii);
     }
   }
-
 
   // -- Main method --
 

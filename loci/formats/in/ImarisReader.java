@@ -46,7 +46,6 @@ public class ImarisReader extends FormatReader {
   /** Specifies endianness. */
   private static final boolean IS_LITTLE = false;
 
-
   // -- Fields --
 
   /** Current file. */
@@ -65,7 +64,6 @@ public class ImarisReader extends FormatReader {
 
   /** Constructs a new Imaris reader. */
   public ImarisReader() { super("Bitplane Imaris", "ims"); }
-
 
   // -- FormatReader API methods --
 
@@ -228,7 +226,6 @@ public class ImarisReader extends FormatReader {
       new Float(1),
       null);
   }
-
 
   // -- Main method --
 

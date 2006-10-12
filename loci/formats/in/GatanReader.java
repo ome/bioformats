@@ -39,7 +39,6 @@ public class GatanReader extends FormatReader {
 
   private static final byte[] GATAN_MAGIC_BLOCK_1 = {0, 0, 0, 3};
 
-
   // -- Fields --
 
   /** Current file. */
@@ -96,10 +95,7 @@ public class GatanReader extends FormatReader {
     return false;
   }
 
-  /**
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int)
-   */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
   {
@@ -109,10 +105,7 @@ public class GatanReader extends FormatReader {
     return new Double(((Integer) metadata.get("EstimatedMax")).intValue());
   }
 
-  /**
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int)
-   */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
   public Double getChannelGlobalMaximum(String id, int theC)
     throws FormatException, IOException
   {
@@ -253,7 +246,6 @@ public class GatanReader extends FormatReader {
       "XYZTC", // DimensionOrder
       null); // Use index 0
   }
-
 
   // -- Helper method --
 

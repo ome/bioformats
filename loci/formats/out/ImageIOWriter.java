@@ -45,7 +45,6 @@ public abstract class ImageIOWriter extends FormatWriter {
 
   protected String kind;
 
-
   // -- Constructors --
 
   /**
@@ -64,7 +63,6 @@ public abstract class ImageIOWriter extends FormatWriter {
     super(format, suffixes);
     this.kind = kind;
   }
-
 
   // -- FormatWriter API methods --
 
