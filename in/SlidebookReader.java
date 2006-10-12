@@ -229,7 +229,7 @@ public class SlidebookReader extends FormatReader {
     sizeC[0] = numC;
     sizeT[0] = numT;
 
-    pixelType[0] = FormatReader.INT16;
+    pixelType[0] = FormatReader.UINT16;
     currentOrder[0] = "XY";
  
     if (numImages != (sizeZ[0] * sizeC[0] * sizeT[0])) {

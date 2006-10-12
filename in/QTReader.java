@@ -555,9 +555,9 @@ public class QTReader extends FormatReader {
 
     switch (bytesPerPixel) {
       case 0:
-      case 1: pixelType[0] = FormatReader.INT8; break;
+      case 1: pixelType[0] = FormatReader.UINT8; break;
       case 2: pixelType[0] = FormatReader.INT16; break;
-      case 3: pixelType[0] = FormatReader.INT8; break;
+      case 3: pixelType[0] = FormatReader.UINT8; break;
     }
 
     sizeX[0] = flip ? height : width;

@@ -311,13 +311,13 @@ public class OIFReader extends FormatReader {
     int imageDepth = Integer.parseInt((String) metadata.get("ImageDepth"));
     switch (imageDepth) {
       case 1:
-        pixelType[0] = FormatReader.INT8;
+        pixelType[0] = FormatReader.UINT8;
         break;
       case 2:
-        pixelType[0] = FormatReader.INT16;
+        pixelType[0] = FormatReader.UINT16;
         break;
       case 4:
-        pixelType[0] = FormatReader.INT32;
+        pixelType[0] = FormatReader.UINT32;
         break;
       default:
         throw new RuntimeException(

@@ -187,7 +187,7 @@ public class GatanReader extends FormatReader {
     pixelType[0] = FormatReader.INT8;
     switch (datatype) {
       case 1:
-        pixelType[0] = FormatReader.INT16;
+        pixelType[0] = FormatReader.UINT16;
         break;
       case 2:
         pixelType[0] = FormatReader.FLOAT;

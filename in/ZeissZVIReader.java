@@ -397,10 +397,10 @@ public class ZeissZVIReader extends FormatReader {
     switch (bpp % 3) {
       case 0:
       case 1:
-        pixelType[0] = FormatReader.INT8;
+        pixelType[0] = FormatReader.UINT8;
         break;
       case 2:
-        pixelType[0] = FormatReader.INT16;
+        pixelType[0] = FormatReader.UINT16;
         break;
     }
 

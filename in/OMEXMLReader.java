@@ -357,20 +357,26 @@ public class OMEXMLReader extends FormatReader {
       numZ[i] = omexml.getSizeZ(ndx).intValue();
       numChannels[i] = omexml.getSizeC(ndx).intValue();
 
-      String type = omexml.getPixelType(ndx);
+      String type = omexml.getPixelType(ndx).toLowerCase();
       if (type.endsWith("16")) {
         bpp[i] = 2;
-        pixelType[i] = FormatReader.INT16;
+        pixelType[i] = type.indexOf("u") == -1 ? FormatReader.INT16 :
+          FormatReader.UINT16;
       }
       else if (type.endsWith("32")) {
         bpp[i] = 4;
-        pixelType[i] = FormatReader.INT32;
+        pixelType[i] = type.indexOf("u") == -1 ? FormatReader.INT32 :
+          FormatReader.UINT32;
       }
       else if (type.equals("float")) {
         bpp[i] = 4;
         pixelType[i] = FormatReader.FLOAT;
       }
-      else { bpp[i] = 1; pixelType[i] = FormatReader.INT8; }
+      else { 
+        bpp[i] = 1; 
+        pixelType[i] = type.indexOf("u") == -1 ? FormatReader.INT8 : 
+          FormatReader.UINT8; 
+      }
 
       order[i] = omexml.getDimensionOrder(ndx);
 

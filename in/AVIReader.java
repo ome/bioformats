@@ -510,7 +510,7 @@ public class AVIReader extends FormatReader {
     sizeZ[0] = 1;
     sizeC[0] = isRGB(id) ? 3 : 1;
     sizeT[0] = numImages;
-    pixelType[0] = FormatReader.INT8;
+    pixelType[0] = FormatReader.UINT8;
     currentOrder[0] = sizeC[0] == 3 ? "XYCTZ" : "XYTCZ";
 
     initOMEMetadata();
@@ -523,10 +523,10 @@ public class AVIReader extends FormatReader {
     int bitsPerPixel = ((Integer) metadata.get("Bits per pixel")).intValue();
     int bytesPerPixel = bitsPerPixel / 8;
 
-    if (bitsPerPixel == 8) pixelType[0] = FormatReader.INT8;
-    else if (bitsPerPixel == 16) pixelType[0] = FormatReader.INT16;
-    else if (bitsPerPixel == 32) pixelType[0] = FormatReader.INT32;
-    else if (bitsPerPixel == 24) pixelType[0] = FormatReader.INT8;
+    if (bitsPerPixel == 8) pixelType[0] = FormatReader.UINT8;
+    else if (bitsPerPixel == 16) pixelType[0] = FormatReader.UINT16;
+    else if (bitsPerPixel == 32) pixelType[0] = FormatReader.UINT32;
+    else if (bitsPerPixel == 24) pixelType[0] = FormatReader.UINT8;
     else
       throw new FormatException(
           "Unknown matching for pixel bit width of: " + bitsPerPixel);

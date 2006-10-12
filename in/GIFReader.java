@@ -382,7 +382,7 @@ public class GIFReader extends FormatReader {
 
     MetadataStore store = getMetadataStore(id);
 
-    pixelType[0] = FormatReader.INT8;
+    pixelType[0] = FormatReader.UINT8;
     store.setPixels(
       new Integer(width),
       new Integer(height),
