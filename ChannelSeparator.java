@@ -47,10 +47,11 @@ public class ChannelSeparator extends ReaderWrapper {
   }
 
   /**
-   * Return a five-character string representing the dimension order
-   * within the file
+   * Gets a five-character string representing
+   * the dimension order within the file.
    */
-  public String getDimensionOrder(String id) throws FormatException, IOException
+  public String getDimensionOrder(String id)
+    throws FormatException, IOException
   {
     String order = super.getDimensionOrder(id);
     if (reader.isRGB(id)) {
