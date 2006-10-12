@@ -1295,7 +1295,7 @@ public final class TiffTools {
 
     /*
     if (photoInterp == CFA_ARRAY) {
-      byteData = 
+      byteData =
         ImageTools.convolve(byteData, (int) imageWidth, (int) imageLength);
     }
     */
@@ -1522,7 +1522,7 @@ public final class TiffTools {
     int numBytes = bps0 / 8;
     boolean noDiv8 = bps0 % 8 != 0;
     boolean bps8 = bps0 == 8;
-  
+
     int width = 0;
     int height = 0;
     if (photoInterp == CFA_ARRAY) {
@@ -1541,7 +1541,7 @@ public final class TiffTools {
       byte[] c = new byte[2];
       c[0] = (byte) colorMap[0];
       c[1] = (byte) colorMap[1];
-    
+
       cw = DataTools.bytesToInt(c, littleEndian);
       c[0] = (byte) colorMap[2];
       c[1] = (byte) colorMap[3];
@@ -1610,7 +1610,7 @@ public final class TiffTools {
                 if ((col-1) % cw == (cw - 1) && col != width) {
                   row++;
                   col -= cw;
-                }  
+                }
                 else if (col == width) {
                   row += ch;
                   col = 0;
@@ -1618,7 +1618,7 @@ public final class TiffTools {
               }
               else {
                 if (row*width + col < samples[0].length) {
-                  samples[colorMap[cw + (col % cw)]][row*width + col] = s; 
+                  samples[colorMap[cw + (col % cw)]][row*width + col] = s;
                 }
                 col++;
                 if ((col-1) % cw == (cw - 1) && col != width) row--;

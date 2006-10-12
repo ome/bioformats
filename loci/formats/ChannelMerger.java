@@ -97,7 +97,7 @@ public class ChannelMerger extends ReaderWrapper {
     byte[] bytes = null;
     for (int c=0; c<sizeC; c++) {
       byte[] b = reader.openBytes(id, reader.getIndex(id, z, c, t));
-      
+
       if (c == 0) {
         // assume array lengths for each channel are equal
         bytes = new byte[sizeC * b.length];
@@ -106,13 +106,13 @@ public class ChannelMerger extends ReaderWrapper {
     }
     return bytes;
   }
- 
+
   /** Obtains a thumbnail for the specified image from the given file. */
   public BufferedImage openThumbImage(String id, int no)
     throws FormatException, IOException
   {
     if (!canMerge(id)) return super.openThumbImage(id, no);
-    return ImageTools.scale(openImage(id, no), getThumbSizeX(id), 
+    return ImageTools.scale(openImage(id, no), getThumbSizeX(id),
       getThumbSizeY(id), true, true);
   }
 

@@ -79,7 +79,7 @@ public class FileStitcher extends ReaderWrapper {
 
   /** Whether each dimension size varies between files. */
   private boolean varyZ, varyC, varyT;
-  
+
   /** Reader used for each file. */
   private IFormatReader[] readers;
 
@@ -103,7 +103,7 @@ public class FileStitcher extends ReaderWrapper {
    */
   public FileStitcher(IFormatReader r) { super(r); }
 
-  /** 
+  /**
    * Constructs a FileStitcher with the given reader.
    * @param r The reader to use for reading stitched files.
    * @param multipleReaders Whether to use a separate reader for each file.
@@ -113,7 +113,7 @@ public class FileStitcher extends ReaderWrapper {
     this.multipleReaders = multipleReaders;
   }
 
-  /** 
+  /**
    * Constructs a FileStitcher with the given reader.
    * @param multipleReaders Whether to use a separate reader for each file.
    * @param patternIds Whether string ids given should be treated as file
