@@ -219,11 +219,25 @@ public class LociDataBrowser {
               }
             }
 
-            manager = new CacheManager(0, 0, 0, 10, 10, 20, 20, 0, 0,
-              reader, id, CacheManager.Z_AXIS | CacheManager.T_AXIS,
-              CacheManager.CROSS_MODE, CacheManager.FORWARD_FIRST);
-            //manager = new CacheManager(size, cm, id);
 
+//good for 2d focus around a point
+            manager = new CacheManager(0, 0, 0, 2, 2, 2, 2, 0, 0,
+              reader, id, CacheManager.Z_AXIS | CacheManager.T_AXIS
+              | CacheManager.C_AXIS,
+              CacheManager.RECT_MODE, CacheManager.SURROUND_FIRST);
+
+/*
+//good for animation
+            manager = new CacheManager(0, 0, 0, 0, 10, 0, 20, 0, 0,
+              reader, id, CacheManager.T_AXIS,
+              CacheManager.CROSS_MODE, CacheManager.FORWARD_FIRST);
+//good for 2d focus around a point
+            manager = new CacheManager(0, 0, 0, 2, 3, 2, 3, 0, 0,
+              reader, id, CacheManager.Z_AXIS | CacheManager.T_AXIS,
+              CacheManager.RECT_MODE, CacheManager.FORWARD_FIRST);
+//default
+            manager = new CacheManager(size, cm, id);
+*/
             try {
               numZ = reader.getSizeZ(id);
               numC = reader.getSizeC(id);

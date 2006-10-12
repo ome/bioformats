@@ -27,6 +27,7 @@ package loci.plugins.browser;
 import ij.process.ImageProcessor;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Vector;
 import loci.formats.*;
 
 public class CacheManager implements Runnable {
@@ -112,6 +113,12 @@ public class CacheManager implements Runnable {
 
   /** Holds the total size of the various dimensions of the file(s).*/
   private int sizeZ, sizeT, sizeC;
+  
+  /** Holds the current priority of each axis.*/
+  private int curZPriority, curTPriority, curCPriority;
+  
+  /** Holds the previous priority of each axis.*/
+  private int oldZPriority, oldTPriority, oldCPriority;
 
   /** The path name of the image file being worked on.*/
   private String fileName;
@@ -215,6 +222,14 @@ public class CacheManager implements Runnable {
     curMode = mode;
     this.strategy = strategy;
     this.oldStrategy = strategy;
+    
+    //set default axes' priorities
+    curTPriority = 2;
+    curZPriority = 1;
+    curCPriority = 0;
+    oldTPriority = 2;
+    oldZPriority = 1;
+    oldCPriority = 0;
 
     //Start the caching thread.
     updateCache();
@@ -303,6 +318,58 @@ public class CacheManager implements Runnable {
     curBackC = backC;
     oldForwardC = curForwardC;
     curForwardC = forwardC;
+    updateCache();
+  }
+  
+  /**
+  * A method to set which axis to cache first.
+  * @param top The axis constant with the highest priority.
+  * @param mid The axis constant with the mid priority.
+  * @param mid The axis constant with the lowest priority.
+  */
+  public void setPriority(int top, int mid, int low) {
+    if (top == mid || mid == low || top == low) return;
+    
+    quit = true;
+    
+    int storeZ = curZPriority;
+    int storeT = curTPriority;
+    int storeC = curCPriority;
+    
+    if (top == Z_AXIS) curZPriority = 2;
+    else if (top == T_AXIS) curTPriority = 2;
+    else if (top == C_AXIS) curCPriority = 2;
+    else {
+      curZPriority = storeZ;
+      curTPriority = storeT;
+      curCPriority = storeC;
+      return;
+    }
+    
+    if (mid == Z_AXIS) curZPriority = 1;
+    else if (mid == T_AXIS) curTPriority = 1;
+    else if (mid == C_AXIS) curCPriority = 1;
+    else {
+      curZPriority = storeZ;
+      curTPriority = storeT;
+      curCPriority = storeC;
+      return;
+    }
+    
+    if (low == Z_AXIS) curZPriority = 0;
+    else if (low == T_AXIS) curTPriority = 0;
+    else if (low == C_AXIS) curCPriority = 0;
+    else {
+      curZPriority = storeZ;
+      curTPriority = storeT;
+      curCPriority = storeC;
+      return;
+    }
+    
+    oldZPriority = curZPriority;
+    oldTPriority = curTPriority;
+    oldCPriority = curCPriority;
+    
     updateCache();
   }
 
@@ -439,6 +506,7 @@ public class CacheManager implements Runnable {
   private int[] getToCache(boolean old) {
     int[] result = null;
     int z, t, c, backZ, forwardZ, backT, forwardT, backC, forwardC, axis, mode;
+    int zPriority, tPriority, cPriority;
     if (old) {
       z = oldZ;
       t = oldT;
@@ -451,6 +519,9 @@ public class CacheManager implements Runnable {
       forwardC = oldForwardC;
       axis = oldAxis;
       mode = oldMode;
+      zPriority = oldZPriority;
+      tPriority = oldTPriority;
+      cPriority = oldCPriority;
     }
     else {
       z = curZ;
@@ -464,6 +535,9 @@ public class CacheManager implements Runnable {
       forwardC = curForwardC;
       axis = curAxis;
       mode = curMode;
+      zPriority = curZPriority;
+      tPriority = curTPriority;
+      cPriority = curCPriority;
     }
 
     if (axis == Z_AXIS || axis == T_AXIS || axis == C_AXIS) {
@@ -542,62 +616,6 @@ public class CacheManager implements Runnable {
         else if (strategy == SURROUND_FIRST) {
           result = getMix(lowSet, upSet);
         }
-
-        if (DEBUG) {
-          String temp;
-          if (old) temp = "old";
-          else temp = "new";
-          System.out.println(temp + "Index DEBUG");
-
-          System.out.print("UpSet1 = {");
-          for (int i = 0; i<upSet1.length; i++) {
-            if ( i != 0) System.out.print(",");
-            System.out.print(upSet1[i]);
-          }
-          System.out.println("}");
-
-          System.out.print("UpSet2 = {");
-          for (int i = 0; i<upSet2.length; i++) {
-            if ( i != 0) System.out.print(",");
-            System.out.print(upSet2[i]);
-          }
-          System.out.println("}");
-
-          System.out.print("LowSet1 = {");
-          for (int i = 0; i<lowSet1.length; i++) {
-            if ( i != 0) System.out.print(",");
-            System.out.print(lowSet1[i]);
-          }
-          System.out.println("}");
-
-          System.out.print("LowSet2 = {");
-          for (int i = 0; i<lowSet2.length; i++) {
-            if ( i != 0) System.out.print(",");
-            System.out.print(lowSet2[i]);
-          }
-          System.out.println("}");
-
-          System.out.print("UpSet = {");
-          for (int i = 0; i<upSet.length; i++) {
-            if ( i != 0) System.out.print(",");
-            System.out.print(upSet[i]);
-          }
-          System.out.println("}");
-
-          System.out.print("lowSet = {");
-          for (int i = 0; i<lowSet.length; i++) {
-            if ( i != 0) System.out.print(",");
-            System.out.print(lowSet[i]);
-          }
-          System.out.println("}");
-
-          System.out.print("Result = {");
-          for (int i = 0; i<result.length; i++) {
-            if ( i != 0) System.out.print(",");
-            System.out.print(result[i]);
-          }
-          System.out.println("}");
-        }
       }
       else if ( (axis == (Z_AXIS | T_AXIS | C_AXIS))) {
         int lowBoundZ = z - backZ;
@@ -632,10 +650,152 @@ public class CacheManager implements Runnable {
       if (axis == (Z_AXIS | T_AXIS) || axis == (Z_AXIS | C_AXIS) ||
         axis == (T_AXIS | C_AXIS))
       {
-
+        int firstLowBound, firstUpBound, secondLowBound, secondUpBound;
+        int firstAxis, secondAxis;
+        
+        if( axis == (Z_AXIS | T_AXIS) ) {
+          if (tPriority > zPriority) {
+            firstLowBound = t - backT;
+            firstUpBound = t + forwardT;
+            secondLowBound = z - backZ;
+            secondUpBound = z + forwardZ;
+            firstAxis = T_AXIS;
+            secondAxis = Z_AXIS;
+          }
+          else {
+            firstLowBound = z - backZ;
+            firstUpBound = z + forwardZ;
+            secondLowBound = t - backT;
+            secondUpBound = t + forwardT;
+            firstAxis = Z_AXIS;
+            secondAxis = T_AXIS;
+          }
+        }
+        else if ( axis == (Z_AXIS | C_AXIS) ) {
+          if (cPriority > zPriority) {
+            firstLowBound = c - backC;
+            firstUpBound = c + forwardC;
+            secondLowBound = z - backZ;
+            secondUpBound = z + forwardZ;
+            firstAxis = C_AXIS;
+            secondAxis = Z_AXIS;
+          }
+          else {
+            firstLowBound = z - backZ;
+            firstUpBound = z + forwardZ;
+            secondLowBound = c - backC;
+            secondUpBound = c + forwardC;
+            firstAxis = Z_AXIS;
+            secondAxis = C_AXIS;
+          }
+        }
+        else {    //axis == (T_AXIS | C_AXIS)
+          if (tPriority > cPriority) {
+            firstLowBound = t - backT;
+            firstUpBound = t + forwardT;
+            secondLowBound = c - backC;
+            secondUpBound = c + forwardC;
+            firstAxis = T_AXIS;
+            secondAxis = C_AXIS;
+          }
+          else {
+            firstLowBound = c - backC;
+            firstUpBound = c + forwardC;
+            secondLowBound = t - backT;
+            secondUpBound = t + forwardT;
+            firstAxis = C_AXIS;
+            secondAxis = T_AXIS;
+          }
+        }
+        
+        if (strategy == FORWARD_FIRST) {
+          result = getRect(firstAxis,firstLowBound,firstUpBound,
+            secondAxis,secondLowBound,secondUpBound,z,t,c);
+        }
+        else if (strategy == SURROUND_FIRST) {
+          result = getSpiral(firstAxis,firstLowBound,firstUpBound,
+            secondAxis,secondLowBound,secondUpBound,z,t,c);
+        }
       }
       else if (axis == (Z_AXIS | T_AXIS | C_AXIS)) {
-
+        //f: first | s: second | t: third
+        int fLow,fUp,sLow,sUp,tLow,tUp,fAxis,sAxis,tAxis;
+        
+        if (zPriority > tPriority && zPriority > cPriority) {
+          fLow = z - backZ;
+          fUp = z + forwardZ;
+          fAxis = Z_AXIS;
+          
+          if(tPriority > cPriority) {
+            sLow = t - backT;
+            sUp = t + forwardT;
+            sAxis = T_AXIS;
+            tLow = c - backC;
+            tUp = c + forwardC;
+            tAxis = C_AXIS;
+          }
+          else { //cPriority 2nd greatest
+            sLow = c - backC;
+            sUp = c + forwardC;
+            sAxis = C_AXIS;
+            tLow = t - backT;
+            tUp = t + forwardT;
+            tAxis = T_AXIS;
+          }
+        }
+        else if (tPriority > zPriority && tPriority > cPriority) {
+          fLow = t - backT;
+          fUp = t + forwardT;
+          fAxis = T_AXIS;
+          
+          if(zPriority > cPriority) {
+            sLow = z - backZ;
+            sUp = z + forwardZ;
+            sAxis = Z_AXIS;
+            tLow = c - backC;
+            tUp = c + forwardC;
+            tAxis = C_AXIS;
+          }
+          else { //cPriority 2nd greatest
+            sLow = c - backC;
+            sUp = c + forwardC;
+            sAxis = C_AXIS;
+            tLow = z - backZ;
+            tUp = z + forwardZ;
+            tAxis = Z_AXIS;
+          }
+        }
+        else { //cPriority greatest
+          fLow = c - backC;
+          fUp = c + forwardC;
+          fAxis = C_AXIS;
+          
+          if(tPriority > zPriority) {
+            sLow = t - backT;
+            sUp = t + forwardT;
+            sAxis = T_AXIS;
+            tLow = z - backZ;
+            tUp = z + forwardZ;
+            tAxis = Z_AXIS;
+          }
+          else { //zPriority 2nd greatest
+            sLow = z - backZ;
+            sUp = z + forwardZ;
+            sAxis = Z_AXIS;
+            tLow = t - backT;
+            tUp = t + forwardT;
+            tAxis = T_AXIS;
+          }
+        }
+        
+        if (strategy == FORWARD_FIRST) {
+          result = getBrick(fAxis,fLow,fUp,
+            sAxis,sLow,sUp,tAxis,tLow,tUp,z,t,c);
+        }
+        else if (strategy == SURROUND_FIRST) {
+          result = getCyclone(fAxis,fLow,fUp,
+            sAxis,sLow,sUp,tAxis,tLow,tUp,z,t,c);
+        }
       }
       else return null;
     }
@@ -665,6 +825,10 @@ public class CacheManager implements Runnable {
   * parameter arrays.
   */
   public static int[] append(int[] lowSet, int[] upSet) {
+    if(lowSet.length == 0 && upSet.length != 0) return upSet;
+    else if(lowSet.length != 0 && upSet.length == 0) return lowSet;
+    else if(lowSet.length == 0 && upSet.length == 0) return lowSet;
+  
     int[] result = new int[upSet.length + lowSet.length];
     int count = 0;
 
@@ -995,6 +1159,609 @@ public class CacheManager implements Runnable {
 
     return result;
   }
+  
+  /**
+  * A method to get a 2d "ring" of indeces around a given point.
+  * Note that if the ring would be outside of the maximum values
+  * for a given dimension, that part of the ring is cropped out.
+  * @param fAxis The constant signifying the first axis to cache.
+  * @param sAxis The constant signifying the 2nd axis to cache.
+  * @param z The z coordinate of the center of the ring.
+  * @param t The t coordinate of the center of the ring.
+  * @param c The c coordinate of the center of the ring.
+  * @param r The radius of the ring.
+  * @return An integer array containing the indeces of slices
+  * to load in "correct" order (kind of arbitrary here).
+  */
+  private int [] getRing(int fAxis, int sAxis,
+    int z,int t,int c,int r)
+  {
+    if (r == 0) {
+      int index = -1;
+
+      try {
+        index = read.getIndex(fileName, z, c, t);
+      }
+      catch(Exception exc) {if(DEBUG) exc.printStackTrace();}
+      
+      int[] result = {index};     
+      return result;
+    }
+    else {
+      int[] result = {};
+      int fUp,fLow,fSize,sUp,sLow,sSize;
+      
+      if (fAxis == Z_AXIS) {
+        fSize = sizeZ;
+        fUp = z + r;
+        fLow = z - r;
+      }
+      else if (fAxis == T_AXIS) {
+        fSize = sizeT;
+        fUp = t + r;
+        fLow = t - r;
+      }
+      else { //fAxis == C_AXIS
+        fSize = sizeC;
+        fUp = c + r;
+        fLow = c - r;
+      }
+      
+      if (sAxis == Z_AXIS) {
+        sSize = sizeZ;
+        sUp = z + r;
+        sLow = z - r;
+      }
+      else if (sAxis == T_AXIS) {
+        sSize = sizeT;
+        sUp = t + r;
+        sLow = t - r;
+      }
+      else { //sAxis == C_AXIS
+        sSize = sizeC;
+        sUp = c + r;
+        sLow = c - r;
+      }
+      
+      Vector temp = new Vector();
+      
+      //The following code could be made more concise.
+      if(fUp < fSize) {
+        for(int s = sLow;s<=sUp;s++) {
+          if(s >= 0 && s < sSize) {
+            int index = -1;
+            
+            synchronized (read) {
+              try {
+                if (fAxis == Z_AXIS) {
+                  if (sAxis == T_AXIS) {
+                    index = read.getIndex(fileName, fUp, c, s);
+                  }
+                  else { //sAxis == C_AXIS
+                    index = read.getIndex(fileName, fUp, s, t);
+                  }
+                }
+                else if (fAxis == T_AXIS) {
+                  if (sAxis == Z_AXIS) {
+                    index = read.getIndex(fileName, s, c, fUp);
+                  }
+                  else { //sAxis == C_AXIS
+                    index = read.getIndex(fileName, z, s, fUp);
+                  }
+                }
+                else { //fAxis == C_AXIS
+                  if (sAxis == Z_AXIS) {
+                    index = read.getIndex(fileName, s, fUp, t);
+                  }
+                  else { //sAxis == T_AXIS
+                    index = read.getIndex(fileName, z, fUp, s);
+                  }
+                }
+              }
+              catch(Exception exc) {if(DEBUG) exc.printStackTrace();}
+            }
+            
+            if (index != -1) {
+              Integer indexObj = new Integer(index);
+              
+              temp.add(indexObj);
+            }
+          }
+          else continue;
+        }
+      }
+      
+      if(fLow >= 0) {
+        for(int s = sLow;s<=sUp;s++) {
+          if(s >= 0 && s < sSize) {
+            int index = -1;
+            
+            synchronized (read) {
+              try {
+                if (fAxis == Z_AXIS) {
+                  if (sAxis == T_AXIS) {
+                    index = read.getIndex(fileName, fLow, c, s);
+                  }
+                  else { //sAxis == C_AXIS
+                    index = read.getIndex(fileName, fLow, s, t);
+                  }
+                }
+                else if (fAxis == T_AXIS) {
+                  if (sAxis == Z_AXIS) {
+                    index = read.getIndex(fileName, s, c, fLow);
+                  }
+                  else { //sAxis == C_AXIS
+                    index = read.getIndex(fileName, z, s, fLow);
+                  }
+                }
+                else { //fAxis == C_AXIS
+                  if (sAxis == Z_AXIS) {
+                    index = read.getIndex(fileName, s, fLow, t);
+                  }
+                  else { //sAxis == T_AXIS
+                    index = read.getIndex(fileName, z, fLow, s);
+                  }
+                }
+              }
+              catch(Exception exc) {if(DEBUG) exc.printStackTrace();}
+            }
+            
+            if (index != -1) {
+              Integer indexObj = new Integer(index);
+              
+              temp.add(indexObj);
+            }
+          }
+          else continue;
+        }
+      }
+      
+      if(sUp < sSize) {
+        for(int f = fLow + 1;f < fUp;f++) {
+          if(f >= 0 && f < fSize) {
+            int index = -1;
+            
+            synchronized (read) {
+              try {
+                if (sAxis == Z_AXIS) {
+                  if (fAxis == T_AXIS) {
+                    index = read.getIndex(fileName, sUp, c, f);
+                  }
+                  else { //fAxis == C_AXIS
+                    index = read.getIndex(fileName, sUp, f, t);
+                  }
+                }
+                else if (sAxis == T_AXIS) {
+                  if (fAxis == Z_AXIS) {
+                    index = read.getIndex(fileName, f, c, sUp);
+                  }
+                  else { //fAxis == C_AXIS
+                    index = read.getIndex(fileName, z, f, sUp);
+                  }
+                }
+                else { //sAxis == C_AXIS
+                  if (fAxis == Z_AXIS) {
+                    index = read.getIndex(fileName, f, sUp, t);
+                  }
+                  else { //fAxis == T_AXIS
+                    index = read.getIndex(fileName, z, sUp, f);
+                  }
+                }
+              }
+              catch(Exception exc) {if(DEBUG) exc.printStackTrace();}
+            }
+            
+            if (index != -1) {
+              Integer indexObj = new Integer(index);
+              
+              temp.add(indexObj);
+            }
+          }
+          else continue;
+        }
+      }
+      
+      if(sLow >= 0) {
+        for(int f = fLow + 1;f < fUp;f++) {
+          if(f >= 0 && f < fSize) {
+            int index = -1;
+            
+            synchronized (read) {
+              try {
+                if (sAxis == Z_AXIS) {
+                  if (fAxis == T_AXIS) {
+                    index = read.getIndex(fileName, sLow, c, f);
+                  }
+                  else { //fAxis == C_AXIS
+                    index = read.getIndex(fileName, sLow, f, t);
+                  }
+                }
+                else if (sAxis == T_AXIS) {
+                  if (fAxis == Z_AXIS) {
+                    index = read.getIndex(fileName, f, c, sLow);
+                  }
+                  else { //fAxis == C_AXIS
+                    index = read.getIndex(fileName, z, f, sLow);
+                  }
+                }
+                else { //sAxis == C_AXIS
+                  if (fAxis == Z_AXIS) {
+                    index = read.getIndex(fileName, f, sLow, t);
+                  }
+                  else { //fAxis == T_AXIS
+                    index = read.getIndex(fileName, z, sLow, f);
+                  }
+                }
+              }
+              catch(Exception exc) {if(DEBUG) exc.printStackTrace();}
+            }
+            
+            if (index != -1) {
+              Integer indexObj = new Integer(index);
+              
+              temp.add(indexObj);
+            }
+          }
+          else continue;
+        }
+      }
+  
+      Object[] tempArray = temp.toArray();
+      result = new int[tempArray.length];
+      for(int i = 0;i<tempArray.length;i++) {
+        result[i] = ((Integer)tempArray[i]).intValue();
+      }
+        
+      return result;
+    }
+  }
+  
+  /**
+  * A method to get a 2d rectangular cache in FORWARD_FIRST strategy.
+  * @param fAxis The axis constant to be cached first.
+  * @param fLow The lower bound of the first cached axis.
+  * @param fUp The upper bound of the first cached axis.
+  * @param sAxis The axis constant to be cached second.
+  * @param sLow The lower bound of the second cached axis.
+  * @param sUp The upper bound of the second cached axis.
+  * @param z The z coordinate to use as the z midpoint.
+  * @param t The t coordinate to use as the t midpoint.
+  * @param c The c coordinate to use as the c midpoint.
+  * @return An integer array of indeces to be cached in order of
+  * priority.
+  */
+  private int[] getRect(int fAxis,int fLow,int fUp,
+    int sAxis,int sLow,int sUp,int z,int t,int c)
+  {
+    int [] result = {};
+    int fSize,sSize,fMid,sMid;
+    if (fAxis == Z_AXIS) {
+      fSize = sizeZ;
+      fMid = z;
+    }
+    else if (fAxis == T_AXIS) {
+      fSize = sizeT;
+      fMid = t;
+    }
+    else { //fAxis == C_AXIS
+      fSize = sizeC;
+      fMid = c;
+    }
+    
+    if (sAxis == Z_AXIS) {
+      sSize = sizeZ;
+      sMid = z;
+    }
+    else if (sAxis == T_AXIS) {
+      sSize = sizeT;
+      sMid = t;
+    }
+    else { //sAxis == C_AXIS
+      sSize = sizeC;
+      sMid = c;
+    }
+    
+    //clip bounds, no looping in RECT_MODE
+    if(fLow < 0) fLow = 0;
+    if(fUp >= fSize) fUp = fSize - 1;
+    if(sLow < 0) sLow = 0;
+    if(sUp >= sSize) sUp = sSize - 1;
+    
+    if(DEBUG) {
+      System.out.println("fSize: " + fSize + " | fMid:" + fMid +
+        " | fUp:" + fUp + " | fLow:" + fLow + " | sSize:" + sSize +
+        " | sMid:" + sMid + " | sUp:" + sUp + " | sLow:" + sLow);
+    }
+    
+    for(int sRow = sMid;sRow<=sUp;sRow++) {
+      int[] toAdd = {};
+
+      try {
+        if (sAxis == Z_AXIS) toAdd = getUpSet(fLow,fUp,fAxis,sRow,t,c);
+        else if (sAxis == T_AXIS) toAdd =
+          getUpSet(fLow,fUp,fAxis,z,sRow,c);
+        else toAdd = getUpSet(fLow,fUp,fAxis,z,t,sRow); 
+      }
+      catch (Exception exc) {
+        exc.printStackTrace();
+      }
+      
+      result = append(toAdd,result);
+    }
+    
+    if(sMid - 1 >= 0) {
+      for(int sRow = sMid - 1;sRow>=sLow;sRow--) {
+        int[] toAdd = {};
+  
+        try {
+          if (sAxis == Z_AXIS) toAdd = getUpSet(fLow,fUp,fAxis,sRow,t,c);
+          else if (sAxis == T_AXIS) toAdd =
+            getUpSet(fLow,fUp,fAxis,z,sRow,c);
+          else toAdd = getUpSet(fLow,fUp,fAxis,z,t,sRow); 
+        }
+        catch (Exception exc) {
+          exc.printStackTrace();
+        }
+        
+        result = append(toAdd,result);
+      }
+    }
+    
+    for(int sRow = sMid;sRow<=sUp;sRow++) {
+      int[] toAdd = {};
+
+      try {
+        if (sAxis == Z_AXIS) toAdd = getLowSet(fLow,fUp,fAxis,sRow,t,c);
+        else if (sAxis == T_AXIS) toAdd =
+          getLowSet(fLow,fUp,fAxis,z,sRow,c);
+        else toAdd = getLowSet(fLow,fUp,fAxis,z,t,sRow); 
+      }
+      catch (Exception exc) {
+        exc.printStackTrace();
+      }
+      
+      result = append(toAdd,result);
+    }
+    
+    if(sMid - 1 >= 0) {
+      for(int sRow = sMid - 1;sRow>=sLow;sRow--) {
+        int[] toAdd = {};
+  
+        try {
+          if (sAxis == Z_AXIS) toAdd = getLowSet(fLow,fUp,fAxis,sRow,t,c);
+          else if (sAxis == T_AXIS) toAdd =
+            getLowSet(fLow,fUp,fAxis,z,sRow,c);
+          else toAdd = getLowSet(fLow,fUp,fAxis,z,t,sRow); 
+        }
+        catch (Exception exc) {
+          exc.printStackTrace();
+        }
+        
+        result = append(toAdd,result);
+      }
+    }
+       
+    return result;
+  }
+  
+  /**
+  * A method to get a 3d "brick" cache in FORWARD_FIRST strategy.
+  * @param fAxis The axis constant to be cached first.
+  * @param fLow The lower bound of the first cached axis.
+  * @param fUp The upper bound of the first cached axis.
+  * @param sAxis The axis constant to be cached second.
+  * @param sLow The lower bound of the second cached axis.
+  * @param sUp The upper bound of the second cached axis.
+  * @param tAxis The axis constant to be cached third.
+  * @param tLow The lower bound of the third cached axis.
+  * @param tUp The upper bound of the third cached axis.
+  * @param z The z coordinate to use as the z midpoint.
+  * @param t The t coordinate to use as the t midpoint.
+  * @param c The c coordinate to use as the c midpoint.
+  * @return An integer array of indeces to be cached in order of
+  * priority.
+  */
+  private int[] getBrick(int fAxis,int fLow,int fUp,
+    int sAxis,int sLow,int sUp,
+    int tAxis,int tLow,int tUp, int z,int t,int c)
+  {
+          int [] result = {};
+    int fSize,sSize,tSize,fMid,sMid,tMid;
+    if (fAxis == Z_AXIS) {
+      fSize = sizeZ;
+      fMid = z;
+    }
+    else if (fAxis == T_AXIS) {
+      fSize = sizeT;
+      fMid = t;
+    }
+    else { //fAxis == C_AXIS
+      fSize = sizeC;
+      fMid = c;
+    }
+    
+    if (sAxis == Z_AXIS) {
+      sSize = sizeZ;
+      sMid = z;
+    }
+    else if (sAxis == T_AXIS) {
+      sSize = sizeT;
+      sMid = t;
+    }
+    else { //sAxis == C_AXIS
+      sSize = sizeC;
+      sMid = c;
+    }
+    
+    if (tAxis == Z_AXIS) {
+      tSize = sizeZ;
+      tMid = z;
+    }
+    else if (tAxis == T_AXIS) {
+      tSize = sizeT;
+      tMid = t;
+    }
+    else { //tAxis == C_AXIS
+      tSize = sizeC;
+      tMid = c;
+    }
+    
+    //clip bounds, no looping in RECT_MODE
+    if(fLow < 0) fLow = 0;
+    if(fUp >= fSize) fUp = fSize - 1;
+    if(sLow < 0) sLow = 0;
+    if(sUp >= sSize) sUp = sSize - 1;
+    if(tLow < 0) tLow = 0;
+    if(tUp >= tSize) tUp = tSize - 1;
+    
+    for(int tRow = tMid;tRow<=tUp;tRow++) {
+      int[] toAdd = {};
+      if (tAxis == Z_AXIS) 
+        toAdd = getRect(fAxis,fLow,fUp,sAxis,sLow,sUp,tRow,t,c);
+      else if(tAxis == T_AXIS)
+        toAdd = getRect(fAxis,fLow,fUp,sAxis,sLow,sUp,z,tRow,c);
+      else //tAxis == C_AXIS
+        toAdd = getRect(fAxis,fLow,fUp,sAxis,sLow,sUp,z,t,tRow);
+      
+      result = append(toAdd,result);
+    }
+    
+    if(tMid - 1 >= 0) {
+      for(int tRow = tMid - 1;tRow>=tLow;tRow--) {
+        int[] toAdd = {};
+        if (tAxis == Z_AXIS) 
+          toAdd = getRect(fAxis,fLow,fUp,sAxis,sLow,sUp,tRow,t,c);
+        else if(tAxis == T_AXIS)
+          toAdd = getRect(fAxis,fLow,fUp,sAxis,sLow,sUp,z,tRow,c);
+        else //tAxis == C_AXIS
+          toAdd = getRect(fAxis,fLow,fUp,sAxis,sLow,sUp,z,t,tRow);
+        
+        result = append(toAdd,result);
+      }
+    }
+    
+    return result;
+  }
+  
+  /**
+  * A method to get a 2d rectangular cache in SURROUND_FIRST strategy.
+  * @param fAxis The axis constant to be cached first.
+  * @param fLow The lower bound of the first cached axis.
+  * @param fUp The upper bound of the first cached axis.
+  * @param sAxis The axis constant to be cached second.
+  * @param sLow The lower bound of the second cached axis.
+  * @param sUp The upper bound of the second cached axis.
+  * @param z The z coordinate to use as the z midpoint.
+  * @param t The t coordinate to use as the t midpoint.
+  * @param c The c coordinate to use as the c midpoint.
+  * @return An integer array of indeces to be cached in order of
+  * priority.
+  */
+  private int[] getSpiral(int fAxis,int fLow,int fUp,
+    int sAxis,int sLow,int sUp,int z,int t,int c)
+  {
+    int [] result = {};
+    int fMax, sMax, rMax;
+    
+    if (fAxis == Z_AXIS) {
+      fMax = Math.max(z-fLow,fUp-z);
+    }
+    else if (fAxis == T_AXIS) {
+      fMax = Math.max(t-fLow,fUp-t);
+    }
+    else { //fAxis == C_AXIS
+      fMax = Math.max(z-fLow,fUp-z);
+    }
+    
+    if (sAxis == Z_AXIS) {
+      sMax = Math.max(z-sLow,sUp-z);
+    }
+    else if (sAxis == T_AXIS) {
+      sMax = Math.max(t-sLow,sUp-t);
+    }
+    else { //sAxis == C_AXIS
+      sMax = Math.max(c-sLow,sUp-c);
+    }
+    
+    rMax = Math.max(fMax,sMax);
+    
+    for(int r = 0;r <= rMax;r++) {
+      int toAdd[];
+      
+      toAdd = getRing(fAxis,sAxis,z,t,c,r);
+      result = append(toAdd,result);
+    }
+    
+    return result;
+  }
+
+  /**
+  * A method to get a 3d "cyclone" cache in SURROUND_FIRST strategy.
+  * @param fAxis The axis constant to be cached first.
+  * @param fLow The lower bound of the first cached axis.
+  * @param fUp The upper bound of the first cached axis.
+  * @param sAxis The axis constant to be cached second.
+  * @param sLow The lower bound of the second cached axis.
+  * @param sUp The upper bound of the second cached axis.
+  * @param tAxis The axis constant to be cached third.
+  * @param tLow The lower bound of the third cached axis.
+  * @param tUp The upper bound of the third cached axis.
+  * @param z The z coordinate to use as the z midpoint.
+  * @param t The t coordinate to use as the t midpoint.
+  * @param c The c coordinate to use as the c midpoint.
+  * @return An integer array of indeces to be cached in order of
+  * priority.
+  */
+  private int[] getCyclone(int fAxis,int fLow,int fUp,
+    int sAxis,int sLow,int sUp,
+    int tAxis,int tLow,int tUp,int z,int t,int c)
+  {
+    int[] result;
+    int tMid;
+    if (tAxis == Z_AXIS) {
+      tMid = z;
+    }
+    else if (tAxis == T_AXIS) {
+      tMid = t;
+    }
+    else { //tAxis == C_AXIS
+      tMid = c;
+    }
+    
+    int[] upSet = {};
+    int[] lowSet = {};
+    
+    for(int tRow = tMid;tRow <= tUp;tRow++) {
+      int[] toAdd = {};
+
+      if(tAxis == Z_AXIS) toAdd = getSpiral(fAxis,fLow,fUp,
+        sAxis,sLow,sUp,tRow,t,c);
+      else if(tAxis == T_AXIS) toAdd = getSpiral(fAxis,fLow,fUp,
+        sAxis,sLow,sUp,z,tRow,c);
+      else toAdd = getSpiral(fAxis,fLow,fUp,
+        sAxis,sLow,sUp,z,t,tRow);
+        
+      upSet = append(toAdd,upSet); 
+    }
+    
+    if(tMid - 1 >= 0) {
+      for(int tRow = tMid - 1;tRow >= tLow;tRow--) {
+        int[] toAdd = {};
+  
+        if(tAxis == Z_AXIS) toAdd = getSpiral(fAxis,fLow,fUp,
+          sAxis,sLow,sUp,tRow,t,c);
+        else if(tAxis == T_AXIS) toAdd = getSpiral(fAxis,fLow,fUp,
+          sAxis,sLow,sUp,z,tRow,c);
+        else toAdd = getSpiral(fAxis,fLow,fUp,
+          sAxis,sLow,sUp,z,t,tRow);
+          
+        lowSet = append(toAdd,lowSet); 
+      }
+    }
+  
+    result = getMix(lowSet,upSet);
+    return result;
+  }
 
   /**
   * Clears the cache, starts the thread to load the new slices
@@ -1022,16 +1789,22 @@ public class CacheManager implements Runnable {
     oldT = curT;
     oldC = curC;
     int[] newIndex = getToCache(false);
-/*
+
     if (DEBUG) {
-      for (int i = 0; i<oldIndex.length; i++) {
-        System.out.println("oldIndex " + i + ": " + oldIndex[i] );
-      }
-      for (int i = 0; i<newIndex.length; i++) {
-        System.out.println("newIndex " + i + ": " + newIndex[i] );
-      }
+          System.out.print("OldIndex = {");
+          for (int i = 0; i<oldIndex.length; i++) {
+            if ( i != 0) System.out.print(",");
+            System.out.print(oldIndex[i]);
+          }
+          System.out.println("}");
+          
+          System.out.print("NewIndex = {");
+          for (int i = 0; i<newIndex.length; i++) {
+            if ( i != 0) System.out.print(",");
+            System.out.print(newIndex[i]);
+          }
+          System.out.println("}");
     }
-*/
 
     loadList = new int[newIndex.length];
     System.arraycopy(newIndex, 0, loadList, 0, newIndex.length);
