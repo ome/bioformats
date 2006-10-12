@@ -569,8 +569,39 @@ public class Importer implements ItemListener {
       }
     }
 
+    // retrieve the spatial calibration information, if available
+
+    OMEXMLMetadataStore store = 
+      (OMEXMLMetadataStore) r.getMetadataStore(file);
+    double xcal = Double.NaN, ycal = Double.NaN, zcal = Double.NaN;
+    Integer ii = new Integer(r.getSeries(file));
+
+    Float xf = store.getPixelSizeX(ii);
+    if (xf != null) xcal = xf.floatValue();
+    Float yf = store.getPixelSizeY(ii);
+    if (yf != null) ycal = yf.floatValue();
+    Float zf = store.getPixelSizeZ(ii);
+    if (zf != null) zcal = zf.floatValue();
+
     for (int i=0; i<newStacks.length; i++) {
       ImagePlus imp = new ImagePlus(file + " - Ch" + (i+1), newStacks[i]);
+          
+      if (xcal != Double.NaN || ycal != Double.NaN || zcal != Double.NaN) {
+        Calibration cal = new Calibration();
+        if (xcal == xcal) {
+          cal.pixelWidth = xcal;
+          cal.setUnit("micron");
+        }
+        if (ycal == ycal) {
+          cal.pixelHeight = ycal;
+          cal.setUnit("micron");
+        }
+        if (zcal == zcal) {
+          cal.pixelDepth = zcal;
+          cal.setUnit("micron");
+        }
+        imp.setCalibration(cal);
+      }
       imp.setFileInfo(fi);
       imp.show();
     }

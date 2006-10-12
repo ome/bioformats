@@ -26,8 +26,8 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
+import java.util.NoSuchElementException;
 import java.util.zip.*;
 import loci.formats.*;
 
@@ -153,11 +153,20 @@ public class ICSReader extends FormatReader {
     int channels = 1;
 
     if (dimensions[0] == 32) {
-      int[][] b = new int[1][plane.length / 4];
-      for (int i=0; i<b[0].length; i++) {
-        b[0][i] = DataTools.bytesToInt(plane, i*4, 4, littleEndian);
+      // Some justification for this approach:
+      // Java won't allow us to create a grayscale BufferedImage with float
+      // data.  We could (theoretically) display all floating point data as
+      // RGB, effectively tripling the amount of memory needed.  However, tests
+      // showed that the images produced using float + RGB were worse than
+      // those produced by the following method.  So, yes this wrong, and yes
+      // it will result in some data loss.  Feel free to change this if you
+      // have any better ideas (just remember to update the pixel type as well).
+      short[] f = new short[plane.length / 4];
+      for (int i=0; i<f.length; i++) {
+        f[i] = (short) Float.intBitsToFloat(DataTools.bytesToInt(plane, i*4, 
+          4, littleEndian));
       }
-      return ImageTools.makeImage(b, width, height);
+      return ImageTools.makeImage(f, width, height);
     }
     else return ImageTools.makeImage(plane, width, height, channels, false,
       dimensions[0] / 8, littleEndian);
@@ -363,7 +372,7 @@ public class ICSReader extends FormatReader {
     String fmt = (String) metadata.get("format");
     String sign = (String) metadata.get("sign");
 
-    if (fmt.equals("real")) pixelType[0] = FormatReader.FLOAT;
+    if (fmt.equals("real")) pixelType[0] = FormatReader.INT16;
     else if (fmt.equals("integer")) {
       while (bitsPerPixel % 8 != 0) bitsPerPixel++;
       if (bitsPerPixel == 24 || bitsPerPixel == 48) bitsPerPixel /= 3;
