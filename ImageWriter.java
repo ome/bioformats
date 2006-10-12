@@ -148,9 +148,7 @@ public class ImageWriter implements IFormatWriter {
   }
 
   /** Gets the writer used to save the given file. */
-  public FormatWriter getWriter(String id)
-    throws FormatException, IOException
-  {
+  public FormatWriter getWriter(String id) throws FormatException {
     if (!id.equals(currentId)) {
       // initialize file
       boolean success = false;
@@ -188,7 +186,7 @@ public class ImageWriter implements IFormatWriter {
   }
 
   /** Reports whether the writer can save multiple images to a single file. */
-  public boolean canDoStacks(String id) throws FormatException, IOException {
+  public boolean canDoStacks(String id) throws FormatException {
     return getWriter(id).canDoStacks(id);
   }
 
