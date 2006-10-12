@@ -326,13 +326,13 @@ public class BMPReader extends FormatReader {
 
     switch (tbpp) {
       case 8:
-        pixType = FormatReader.INT8;
+        pixType = FormatReader.UINT8;
         break;
       case 16:
-        pixType = FormatReader.INT16;
+        pixType = FormatReader.UINT16;
         break;
       case 32:
-        pixType = FormatReader.INT32;
+        pixType = FormatReader.UINT32;
         break;
     }
 

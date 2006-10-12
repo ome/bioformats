@@ -331,13 +331,13 @@ public class OIBReader extends FormatReader {
     switch (bpp % 3) {
       case 0:
       case 1:
-        pixelType[0] = FormatReader.INT8;
+        pixelType[0] = FormatReader.UINT8;
         break;
       case 2:
-        pixelType[0] = FormatReader.INT16;
+        pixelType[0] = FormatReader.UINT16;
         break;
       case 4:
-        pixelType[0] = FormatReader.INT32;
+        pixelType[0] = FormatReader.UINT32;
         break;
       default:
         throw new RuntimeException(
@@ -433,6 +433,11 @@ public class OIBReader extends FormatReader {
             if (token.indexOf("=") != -1) {
               String key = token.substring(0, token.indexOf("="));
               String value = token.substring(token.indexOf("=") + 1);
+              if ((prefix+key).trim().equals("[FileInformation] - Resolution")) {
+                int max = Integer.parseInt(value.trim());
+                while (Math.pow(2, bpp) < max) bpp++;
+                bpp /= 8;
+              }
               metadata.put(prefix + key.trim(), value.trim());
             }
             else {

@@ -639,10 +639,10 @@ public class OpenlabReader extends FormatReader {
           pixelType[i] = FormatReader.INT8;
           break;
         case 2:
-          pixelType[i] = FormatReader.INT16;
+          pixelType[i] = FormatReader.UINT16;
           break;
         case 3:
-          pixelType[i] = FormatReader.INT8;
+          pixelType[i] = FormatReader.UINT8;
           break;
         case 4:
           pixelType[i] = FormatReader.INT32;

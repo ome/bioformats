@@ -464,7 +464,7 @@ public class PerkinElmerReader extends FormatReader {
           pixelType[0] = FormatReader.INT8;
           break;
         case 2:
-          pixelType[0] = FormatReader.INT16;
+          pixelType[0] = FormatReader.UINT16;
           break;
         case 3:
           pixelType[0] = FormatReader.INT8;
