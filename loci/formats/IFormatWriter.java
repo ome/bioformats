@@ -39,8 +39,7 @@ public interface IFormatWriter extends IFormatHandler {
     throws FormatException, IOException;
 
   /** Reports whether the writer can save multiple images to a single file. */
-  boolean canDoStacks(String id)
-    throws FormatException, IOException;
+  boolean canDoStacks(String id) throws FormatException;
 
   /** Sets the color model. */
   void setColorModel(ColorModel cm);
