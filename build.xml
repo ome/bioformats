@@ -255,11 +255,16 @@ Apache XML-RPC
   <target name="docs" depends="copy-source"
     description="generate Javadocs for LOCI software packages">
     <javadoc sourcepath="${dest.dir}" destdir="${docs.dir}/api"
-      author="true" version="true" use="true" windowtitle="LOCI Software API">
+      classpath="${ext.jars}" author="true" version="true" use="true"
+      windowtitle="LOCI Software API">
       <packageset dir="${dest.dir}"/>
       <doctitle><![CDATA[<h1>LOCI Software</h1>]]></doctitle>
       <bottom><![CDATA[${copyright}]]></bottom>
       <link href="http://java.sun.com/j2se/1.4.2/docs/api/"/>
+      <link href="http://www.ssec.wisc.edu/~dglo/docs/"/>
+      <link href="http://rsbweb.nih.gov/ij/developer/api/"/>
+      <link href="http://www.jdocs.com/formlayout/1.0.4/api/"/>
+      <link href="http://www.jdocs.com/looks/1.2.2/api/"/>
     </javadoc>
   </target>
 

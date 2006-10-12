@@ -2042,7 +2042,7 @@ public final class TiffTools {
    * Writes the given field to the specified output stream using the given
    * byte offset and IFD, in big-endian format.
    *
-   * @param image The field to write
+   * @param img The field to write
    * @param ifd Hashtable representing the TIFF IFD; can be null
    * @param out The output stream to which the TIFF data should be written
    * @param offset The value to use for specifying byte offsets
@@ -2256,8 +2256,7 @@ public final class TiffTools {
    * @return the image's width.
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
-  public static long getImageWidth(Hashtable ifd) throws FormatException
-  {
+  public static long getImageWidth(Hashtable ifd) throws FormatException {
     return getIFDLongValue(ifd, IMAGE_WIDTH, true, 0);
   }
 
@@ -2267,8 +2266,7 @@ public final class TiffTools {
    * @return the image's length.
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
-  public static long getImageLength(Hashtable ifd) throws FormatException
-  {
+  public static long getImageLength(Hashtable ifd) throws FormatException {
     return getIFDLongValue(ifd, IMAGE_LENGTH, true, 0);
   }
 
@@ -2277,12 +2275,11 @@ public final class TiffTools {
    * TIFF IFD.
    * @param ifd a TIFF IFD hashtable.
    * @return the image's bits per sample. The length of the array is equal to
-   * the number of samples per pixel.
+   *   the number of samples per pixel.
    * @throws FormatException if there is a problem parsing the IFD metadata.
-   * @see #getSamplesPerPixel()
+   * @see #getSamplesPerPixel(Hashtable)
    */
-  public static int[] getBitsPerSample(Hashtable ifd) throws FormatException
-  {
+  public static int[] getBitsPerSample(Hashtable ifd) throws FormatException {
     int[] bitsPerSample = getIFDIntArray(ifd, BITS_PER_SAMPLE, false);
     if (bitsPerSample == null) bitsPerSample = new int[] {1};
     return bitsPerSample;
@@ -2295,8 +2292,7 @@ public final class TiffTools {
    * @return the number of samples per pixel.
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
-  public static int getSamplesPerPixel(Hashtable ifd) throws FormatException
-  {
+  public static int getSamplesPerPixel(Hashtable ifd) throws FormatException {
     return getIFDIntValue(ifd, SAMPLES_PER_PIXEL, false, 1);
   }
 
@@ -2316,8 +2312,7 @@ public final class TiffTools {
    * <ul>
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
-  public static int getCompression(Hashtable ifd) throws FormatException
-  {
+  public static int getCompression(Hashtable ifd) throws FormatException {
     return getIFDIntValue(ifd, COMPRESSION, false, UNCOMPRESSED);
   }
 
@@ -2351,11 +2346,11 @@ public final class TiffTools {
    * given TIFF IFD.
    * @param ifd a TIFF IFD hashtable.
    * @return the strip offsets for the image. The lenght of the array is equal
-   * to the number of strips per image. <i>StripsPerImage = floor ((ImageLength
-   * + RowsPerStrip - 1) / RowsPerStrip)</i>.
+   *   to the number of strips per image. <i>StripsPerImage =
+   *   floor ((ImageLength + RowsPerStrip - 1) / RowsPerStrip)</i>.
    * @throws FormatException if there is a problem parsing the IFD metadata.
-   * @see #getStripByteCounts()
-   * @see #getRowsPerStrip()
+   * @see #getStripByteCounts(Hashtable)
+   * @see #getRowsPerStrip(Hashtable)
    */
   public static long[] getStripOffsets(Hashtable ifd) throws FormatException
   {
@@ -2367,10 +2362,10 @@ public final class TiffTools {
    * given TIFF IFD.
    * @param ifd a TIFF IFD hashtable.
    * @return the byte counts for each strip. The length of the array is equal to
-   * the number of strips per image. <i>StripsPerImage = floor ((ImageLength +
-   * RowsPerStrip - 1) / RowsPerStrip)</i>.
+   *   the number of strips per image. <i>StripsPerImage =
+   *   floor((ImageLength + RowsPerStrip - 1) / RowsPerStrip)</i>.
    * @throws FormatException if there is a problem parsing the IFD metadata.
-   * @see #getStripOffsets()
+   * @see #getStripOffsets(Hashtable)
    */
   public static long[] getStripByteCounts(Hashtable ifd) throws FormatException
   {

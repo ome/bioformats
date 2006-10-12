@@ -342,9 +342,9 @@ public final class Compression {
   /**
    * Decodes a PackBits (Macintosh RLE) compressed image.
    * Adapted from the TIFF 6.0 specification, page 42.
-   * @author Melissa Linkert linkert at cs.wisc.edu
    */
   public static byte[] packBitsUncompress(byte[] input) {
+    // written by Melissa Linkert linkert at cs.wisc.edu
     ByteVector output = new ByteVector(input.length);
     int pt = 0;
     while (pt < input.length) {
@@ -367,11 +367,11 @@ public final class Compression {
   /**
    * Decodes an LZW-compressed image strip.
    * Adapted from the TIFF 6.0 Specification:
-   * http://partners.adobe.com/asn/developer/pdfs/tn/TIFF6.pdf (page 61)
-   * @author Eric Kjellman egkjellman at wisc.edu
-   * @author Wayne Rasband wsr at nih.gov
+   * http://partners.adobe.com/asn/developer/pdfs/tn/TIFF6.pdf (page 61).
    */
   public static byte[] lzwUncompress(byte[] input) throws FormatException {
+    // original author Eric Kjellman
+    // modified by Wayne Rasband wsr at nih.gov
     if (input == null || input.length == 0) return input;
 
     byte[][] symbolTable = new byte[4096][1];

@@ -156,7 +156,7 @@ public interface MetadataStore {
    * @param sizeC number of channels per timepoint.
    * @param sizeT number of timepoints.
    * @param pixelType the pixel type. One of the enumerated static values
-   * present in {@link #FormatReader}.
+   * present in {@link FormatReader}.
    * @param bigEndian if the pixels set is big endian or not.
    * @param dimensionOrder the dimension order of the pixels set.
    * @param i the index to use in the store. If <code>null</code> the default
