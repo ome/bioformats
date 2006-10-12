@@ -223,28 +223,19 @@ public class ImageReader implements IFormatReader {
     return getReader(id).getSizeT(id);
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getPixelType()
-   */
+  /* @see IFormatReader#getPixelType() */
   public int getPixelType(String id) throws FormatException, IOException {
     return getReader(id).getPixelType(id);
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelGlobalMinimum(int)
-   */
+  /* @see IFormatReader#getChannelGlobalMinimum(int) */
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
   {
     return getReader(id).getChannelGlobalMinimum(id, theC);
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelGlobalMaximum(int)
-   */
+  /* @see IFormatReader#getChannelGlobalMaximum(int) */
   public Double getChannelGlobalMaximum(String id, int theC)
     throws FormatException, IOException
   {
@@ -276,20 +267,14 @@ public class ImageReader implements IFormatReader {
     return getReader(id).getDimensionOrder(id);
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#setChannelStatCalculationStatus(boolean)
-   */
+  /* @see IFormatReader#setChannelStatCalculationStatus(boolean) */
   public void setChannelStatCalculationStatus(boolean on) {
     for (int i=0; i<readers.length; i++) {
       readers[i].setChannelStatCalculationStatus(on);
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelStatCalculationStatus()
-   */
+  /* @see IFormatReader#getChannelStatCalculationStatus() */
   public boolean getChannelStatCalculationStatus() {
     // NB: all readers should have the same status
     return readers[0].getChannelStatCalculationStatus();
@@ -314,10 +299,7 @@ public class ImageReader implements IFormatReader {
     return getReader(id).openBytes(id, no);
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#openBytes(java.lang.String, int, byte[])
-   */
+  /* @see IFormatReader#openBytes(java.lang.String, int, byte[]) */
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -348,10 +330,7 @@ public class ImageReader implements IFormatReader {
     for (int i=0; i<readers.length; i++) readers[i].close();
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#openImage(java.lang.String)
-   */
+  /* @see IFormatReader#openImage(java.lang.String) */
   public BufferedImage[] openImage(String id)
     throws FormatException, IOException
   {
@@ -384,8 +363,7 @@ public class ImageReader implements IFormatReader {
   }
 
   /*
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getIndex(java.lang.String, int, int, int)
+   * @see IFormatReader#getIndex(java.lang.String, int, int, int)
    */
   public int getIndex(String id, int z, int c, int t)
     throws FormatException, IOException
@@ -393,10 +371,7 @@ public class ImageReader implements IFormatReader {
     return getReader(id).getIndex(id, z, c, t);
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getZCTCoords(java.lang.String, int)
-   */
+  /* @see IFormatReader#getZCTCoords(java.lang.String, int) */
   public int[] getZCTCoords(String id, int index)
     throws FormatException, IOException
   {
@@ -427,28 +402,21 @@ public class ImageReader implements IFormatReader {
   }
 
   /*
-   * (non-Javadoc)
-   * @see loci.formats.FormatReader#setMetadataStore(loci.formats.MetadataStore)
+   * @see FormatReader#setMetadataStore(loci.formats.MetadataStore)
    */
   public void setMetadataStore(MetadataStore store) {
     for (int i = 0; i < readers.length; i++)
       readers[i].setMetadataStore(store);
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getMetadataStore(java.lang.String)
-   */
+  /* @see IFormatReader#getMetadataStore(java.lang.String) */
   public MetadataStore getMetadataStore(String id)
     throws FormatException, IOException
   {
     return getReader(id).getMetadataStore(id);
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getMetadataStoreRoot(java.lang.String)
-   */
+  /* @see IFormatReader#getMetadataStoreRoot(java.lang.String) */
   public Object getMetadataStoreRoot(String id)
     throws FormatException, IOException
   {
@@ -513,16 +481,10 @@ public class ImageReader implements IFormatReader {
     return false;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.IFormatHandler#getFormat()
-   */
+  /* @see IFormatHandler#getFormat() */
   public String getFormat() { return "image"; }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.IFormatHandler#getSuffixes()
-   */
+  /* @see IFormatHandler#getSuffixes() */
   public String[] getSuffixes() {
     if (suffixes == null) {
       HashSet suffixSet = new HashSet();
@@ -537,10 +499,7 @@ public class ImageReader implements IFormatReader {
     return suffixes;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.IFormatHandler#getFileFilters()
-   */
+  /* @see IFormatHandler#getFileFilters() */
   public FileFilter[] getFileFilters() {
     if (filters == null) {
       Vector v = new Vector();
@@ -553,10 +512,7 @@ public class ImageReader implements IFormatReader {
     return filters;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.IFormatHandler#getFileChooser()
-   */
+  /* @see IFormatHandler#getFileChooser() */
   public JFileChooser getFileChooser() {
     if (chooser == null) {
       chooser = FormatHandler.buildFileChooser(getFileFilters());
@@ -568,9 +524,10 @@ public class ImageReader implements IFormatReader {
 
   /**
    * Retrieves how many bytes per pixel the current plane or section has.
-   * @param type the pixel type as retrieved from {@link #getPixelType()}.
+   * @param type the pixel type as retrieved from
+   *   {@link IFormatReader#getPixelType(String)}.
    * @return the number of bytes per pixel.
-   * @see getPixelType()
+   * @see IFormatReader#getPixelType(String)
    */
   public static int getBytesPerPixel(int type) {
     switch(type) {

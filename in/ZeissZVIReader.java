@@ -174,10 +174,7 @@ public class ZeissZVIReader extends FormatReader {
     return super.getSizeT(id);
   }
 
-  /**
-   * (non-Javadoc)
-   * @see loci.formats.IFormatReader#getPixelType()
-   */
+  /* @see loci.formats.IFormatReader#getPixelType(String) */
   public int getPixelType(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     if (noPOI || needLegacy) return legacy.getPixelType(id);

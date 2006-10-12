@@ -76,7 +76,7 @@ public interface IFormatReader extends IFormatHandler {
    * @throws FormatException if there was a problem parsing the metadata of the
    * file.
    * @throws IOException if there was a problem reading the file.
-   * @see setChannelStatCalculationStatus()
+   * @see #setChannelStatCalculationStatus(boolean)
    */
   Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException;
@@ -92,7 +92,7 @@ public interface IFormatReader extends IFormatHandler {
    * @throws FormatException if there was a problem parsing the metadata of the
    * file.
    * @throws IOException if there was a problem reading the file.
-   * @see setChannelStatCalculationStatus()
+   * @see #setChannelStatCalculationStatus(boolean)
    */
   Double getChannelGlobalMaximum(String id, int theC)
     throws FormatException, IOException;
@@ -117,14 +117,14 @@ public interface IFormatReader extends IFormatHandler {
    * calculation as part of metadata parsing. This method allows the user of
    * the reader to turn such calculations on or off.
    * @param on <code>true</code> if statistics calculation should be turned on.
-   * @see getChannelStatCalculationStatus()
+   * @see #getChannelStatCalculationStatus()
    */
   void setChannelStatCalculationStatus(boolean on);
 
   /**
    * Retrieve the status of channel statistics calculation.
    * @return the status.
-   * @see setChannelStatCalculationStatus()
+   * @see #setChannelStatCalculationStatus(boolean)
    */
   boolean getChannelStatCalculationStatus();
 

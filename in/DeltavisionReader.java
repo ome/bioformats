@@ -579,7 +579,6 @@ public class DeltavisionReader extends FormatReader {
    * @param currentZ
    * @param currentW
    * @param currentT
-   * @return
    */
   public int getTotalOffset(int currentZ, int currentW, int currentT) {
     return (zSize * currentZ) + (wSize * currentW) + (tSize * currentT);
@@ -591,7 +590,6 @@ public class DeltavisionReader extends FormatReader {
    * @param currentZ
    * @param currentW
    * @param currentT
-   * @return
    */
   public int getPlaneNumber(int currentZ, int currentW, int currentT) {
     int smallOffset = (numIntsPerSection + numFloatsPerSection) * 4;
