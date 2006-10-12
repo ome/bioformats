@@ -4,7 +4,10 @@
 
 import java.io.*;
 
-/** Scans text files for end-of-line spaces, and removes them. */
+/**
+ * Scans text files for end-of-line spaces or tabs, and
+ * multiple consecutive blank lines, and removes them.
+ */
 public class FixEOLSpaces {
 
   public static void main(String[] args) throws IOException {
@@ -15,6 +18,7 @@ public class FixEOLSpaces {
       // check for EOL spaces and tabs
       BufferedReader in = new BufferedReader(new FileReader(inFile));
       boolean process = false;
+      boolean lastBlank = false;
       while (true) {
         String line = in.readLine();
         if (line == null) break;
@@ -22,6 +26,13 @@ public class FixEOLSpaces {
           process = true;
           break;
         }
+        boolean blank = line.trim().equals("");
+        if (blank && lastBlank) {
+          // found consecutive blank lines
+          process = true;
+          break;
+        }
+        lastBlank = blank;
       }
       in.close();
 
@@ -30,6 +41,7 @@ public class FixEOLSpaces {
         in = new BufferedReader(new FileReader(inFile));
         File outFile = new File(args[i] + ".tmp");
         PrintWriter out = new PrintWriter(new FileWriter(outFile));
+        lastBlank = false;
         while (true) {
           String line = in.readLine();
           if (line == null) break;
@@ -41,7 +53,9 @@ public class FixEOLSpaces {
             }
             line = new String(c, 0, n + 1);
           }
-          out.println(line);
+          boolean blank = line.equals("");
+          if (!blank || !lastBlank) out.println(line);
+          lastBlank = blank;
         }
         out.close();
         in.close();
