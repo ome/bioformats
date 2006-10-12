@@ -1,0 +1,5 @@
+#!/bin/bash
+if [ ! -e ~/svn/java/build/jar/loci-checks.jar ]; then
+  cd ~/svn/java && ant jar-checks && cd -
+fi
+java -cp $CLASSPATH:/home/`whoami`/svn/java/jar/checkstyle-all-4.2.jar:/home/`whoami`/svn/java/build/jar/loci-checks.jar com.puppycrawl.tools.checkstyle.Main -c ~/svn/java/checkstyle.xml $*

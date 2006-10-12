@@ -65,7 +65,11 @@ Run "ant style" to check for source code style deviations.
     <!-- </module> -->
 
     <!-- Following interprets the header file as regular expressions. -->
-    <!-- <module name="RegexpHeader"/>                                -->
+    <module name="RegexpHeader">
+      <property name="header"
+        value="^//$\n^// [0-9A-Za-z]*\.java$\n^//$\n^$\n^/\*$\n^[^\*]*$\n^\*/$\n^$\n^package .*;$"/>
+      <property name="multiLines" value="6, 9, 11, 14"/>
+    </module>
 
     <!-- Checks for imports                              -->
     <!-- See http://checkstyle.sf.net/config_import.html -->
@@ -158,6 +162,10 @@ Run "ant style" to check for source code style deviations.
       <property name="format" value="TODO"/>
     </module>
     <module name="UpperEll"/>
+
+    <!-- LOCI custom checks -->
+    <module name="loci.checks.BlankLinesCheck"/>
+
   </module>
 
 </module>

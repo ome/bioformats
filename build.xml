@@ -116,6 +116,16 @@ Slim Plotter
                    dist-slim
     License:       Public domain
 
+LOCI Checkstyle checks
+    JAR file:      loci-checks.jar
+    Folders:       loci/checks
+    Main class:    loci.checks.About
+    Dependencies:  checkstyle-all-4.2.jar
+    Targets:       style-checks
+                   compile-checks
+                   jar-checks
+    License:       Public domain
+
 ===============================================================================
 The following external dependencies (in the jar folder) may be required:
 
@@ -211,7 +221,7 @@ Apache XML-RPC
   <condition property="isUnix"><os family="unix"/></condition>
 
   <taskdef resource="checkstyletask.properties"
-    classpath="jar/checkstyle-all-4.2.jar"/>
+    classpath="jar/checkstyle-all-4.2.jar:build/jar/loci-checks.jar"/>
 
   <!-- Global build targets -->
 
@@ -223,7 +233,7 @@ Apache XML-RPC
   </target>
 
   <target name="style"
-    depends="style-formats, style-visbio, style-plugins, style-notebook, style-leica, style-stitcher, style-slim"
+    depends="style-formats, style-visbio, style-plugins, style-notebook, style-leica, style-stitcher, style-slim, style-checks"
     description="check source code style for LOCI software packages"/>
 
 <!--
@@ -282,9 +292,9 @@ Apache XML-RPC
 
   <!-- Bio-Formats -->
 
-  <target name="style-formats" depends="copy-source"
+  <target name="style-formats" depends="copy-source, jar-checks"
     description="check source code style for Bio-Formats">
-    <checkstyle config="checkstyle.xml">
+    <checkstyle config="checkstyle.xml" failOnViolation="false">
       <fileset dir="${dest.dir}" includes="${formats.source}"/>
     </checkstyle>
   </target>
@@ -314,9 +324,9 @@ Apache XML-RPC
 
   <!-- VisBio -->
 
-  <target name="style-visbio" depends="copy-source"
+  <target name="style-visbio" depends="copy-source, jar-checks"
     description="check source code style for VisBio">
-    <checkstyle config="checkstyle.xml">
+    <checkstyle config="checkstyle.xml" failOnViolation="false">
       <fileset dir="${dest.dir}" includes="${visbio.source}"/>
     </checkstyle>
   </target>
@@ -496,9 +506,9 @@ Apache XML-RPC
 
   <!-- LOCI Plugins for ImageJ -->
 
-  <target name="style-plugins" depends="copy-source"
+  <target name="style-plugins" depends="copy-source, jar-checks"
     description="check source code style for LOCI Plugins for ImageJ">
-    <checkstyle config="checkstyle.xml">
+    <checkstyle config="checkstyle.xml" failOnViolation="false">
       <fileset dir="${dest.dir}" includes="${plugins.source}"/>
     </checkstyle>
   </target>
@@ -527,9 +537,9 @@ Apache XML-RPC
 
   <!-- OME Metadata Notebook -->
 
-  <target name="style-notebook" depends="copy-source"
+  <target name="style-notebook" depends="copy-source, jar-checks"
     description="check source code style for OME Metadata Notebook">
-    <checkstyle config="checkstyle.xml">
+    <checkstyle config="checkstyle.xml" failOnViolation="false">
       <fileset dir="${dest.dir}" includes="${notebook.source}"/>
     </checkstyle>
   </target>
@@ -559,9 +569,9 @@ Apache XML-RPC
 
   <!-- Leica Converter -->
 
-  <target name="style-leica" depends="copy-source"
+  <target name="style-leica" depends="copy-source, jar-checks"
     description="check source code style for Leica Converter">
-    <checkstyle config="checkstyle.xml">
+    <checkstyle config="checkstyle.xml" failOnViolation="false">
       <fileset dir="${dest.dir}" includes="${leica.source}"/>
     </checkstyle>
   </target>
@@ -587,9 +597,9 @@ Apache XML-RPC
 
   <!-- Movie Stitcher -->
 
-  <target name="style-stitcher" depends="copy-source"
+  <target name="style-stitcher" depends="copy-source, jar-checks"
     description="check source code style for Movie Stitcher">
-    <checkstyle config="checkstyle.xml">
+    <checkstyle config="checkstyle.xml" failOnViolation="false">
       <fileset dir="${dest.dir}" includes="${stitcher.source}"/>
     </checkstyle>
   </target>
@@ -616,9 +626,9 @@ Apache XML-RPC
 
   <!-- Slim Plotter -->
 
-  <target name="style-slim" depends="copy-source"
+  <target name="style-slim" depends="copy-source, jar-checks"
     description="check source code style for Slim Plotter">
-    <checkstyle config="checkstyle.xml">
+    <checkstyle config="checkstyle.xml" failOnViolation="false">
       <fileset dir="${dest.dir}" includes="${slim.source}"/>
     </checkstyle>
   </target>
@@ -661,6 +671,37 @@ Apache XML-RPC
       <arg value="../slim.zip"/>
       <arg value="SlimPlotter"/>
     </exec>
+  </target>
+
+  <!-- LOCI Checkstyle checks -->
+
+  <target name="style-checks" depends="copy-source, jar-checks"
+    description="check source code style for Slim Plotter">
+    <checkstyle config="checkstyle.xml" failOnViolation="false">
+      <fileset dir="${dest.dir}" includes="${checks.source}"/>
+    </checkstyle>
+  </target>
+
+  <target name="compile-checks" depends="copy-source"
+    description="compile classes for Slim Plotter">
+    <mkdir dir="${classes.dir}"/>
+    <javac srcdir="${dest.dir}" destdir="${classes.dir}"
+      includes="${checks.source}" classpath="${ext.jars}"
+      debug="true" deprecation="true" source="1.4" target="1.4"/>
+  </target>
+
+  <target name="jar-checks" depends="compile-checks, copy-jars"
+    description="generate JAR file for Slim Plotter">
+    <copy todir="${classes.dir}" preservelastmodified="true">
+      <fileset dir="${src.dir}" includes="${checks.resources}"/>
+    </copy>
+    <jar jarfile="${jar.dir}/${checks.jar}" basedir="${classes.dir}"
+      includes="${checks.files}">
+      <manifest>
+        <attribute name="Main-Class" value="${checks.main}"/>
+        <attribute name="Class-Path" value="${checks.classpath}"/>
+      </manifest>
+    </jar>
   </target>
 
 </project>
