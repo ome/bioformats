@@ -37,10 +37,7 @@ import java.util.*;
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Eric Kjellman egkjellman at wisc.edu
  * @author Melissa Linkert linkert at cs.wisc.edu
- */
-/**
- * @author callan
- *
+ * @author Chris Allan callan at blackcat.ca
  */
 public final class TiffTools {
 
@@ -1304,8 +1301,7 @@ public final class TiffTools {
 
   /** Reads the image defined in the given IFD from the specified file. */
   public static BufferedImage getImage(Hashtable ifd, RandomAccessStream in,
-                                       long globalOffset)
-    throws FormatException, IOException
+    long globalOffset) throws FormatException, IOException
   {
     // construct field
     if (DEBUG) debug("constructing image");
