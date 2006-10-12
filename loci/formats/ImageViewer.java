@@ -25,8 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.*;
-import java.awt.image.*;
 import java.awt.event.*;
+import java.awt.image.*;
 import java.io.File;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;

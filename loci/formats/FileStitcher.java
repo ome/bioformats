@@ -235,8 +235,8 @@ public class FileStitcher extends ReaderWrapper {
 
     files = fp.getFiles();
     if (files == null) {
-       throw new FormatException("No files matching pattern (" +
-         fp.getPattern() + "). " + msg);
+      throw new FormatException("No files matching pattern (" +
+        fp.getPattern() + "). " + msg);
     }
 
     imageCounts = new int[files.length];

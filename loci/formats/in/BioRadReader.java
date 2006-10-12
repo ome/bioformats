@@ -26,8 +26,8 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Vector;
 import java.util.StringTokenizer;
+import java.util.Vector;
 import loci.formats.*;
 
 /**

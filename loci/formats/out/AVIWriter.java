@@ -25,8 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.out;
 
 import java.awt.Image;
-import java.io.*;
 import java.awt.image.*;
+import java.io.*;
 import java.util.Vector;
 import loci.formats.*;
 

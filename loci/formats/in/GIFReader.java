@@ -26,9 +26,8 @@ package loci.formats.in;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.util.Vector;
 import java.io.*;
-
+import java.util.Vector;
 import loci.formats.*;
 
 /**

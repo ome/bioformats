@@ -26,8 +26,8 @@ package loci.formats.out;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Hashtable;
 import java.io.*;
+import java.util.Hashtable;
 import loci.formats.*;
 
 /** TiffWriter is the file format writer for TIFF files. */
