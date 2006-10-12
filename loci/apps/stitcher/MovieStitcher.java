@@ -287,6 +287,7 @@ public class MovieStitcher extends JFrame implements ActionListener, Runnable {
         }
       }
       else {
+        // write each output file sequentially
         for (int o=0; o<outFiles; o++) {
           String num = "" + (o + 1);
           while (num.length() < digits) num = "0" + num;
