@@ -156,6 +156,7 @@ public class GatanReader extends FormatReader {
     if (in != null) in.close();
     in = null;
     currentId = null;
+    pixelData = null;
   }
 
   /** Initializes the given Gatan file. */
