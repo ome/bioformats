@@ -249,7 +249,7 @@ Apache XML-RPC
     description="compile classes for LOCI software packages"/>
 
   <target name="jars"
-    depends="jar-formats, jar-visbio, jar-plugins, jar-notebook, jar-leica, jar-stitcher, jar-slim"
+    depends="jar-formats, jar-visbio, jar-plugins, jar-notebook, jar-leica, jar-stitcher, jar-slim, jar-checks"
     description="generate JAR files for LOCI software packages"/>
 
   <target name="docs" depends="copy-source"
