@@ -87,12 +87,14 @@ public abstract class FormatWriter extends FormatHandler
 
   /** Set the current compression type. */
   public void setCompression(String compress) throws FormatException {
-    compression = compress;
     // check that this is a valid type
     for (int i=0; i<compressionTypes.length; i++) {
-      if (compressionTypes[i].equals(compression)) return;
+      if (compressionTypes[i].equals(compress)) {
+        compression = compress;
+        return;
+      }
     }
-    throw new FormatException("Invalid compression type " + compression);
+    throw new FormatException("Invalid compression type: " + compress);
   }
 
   /* @see loci.formats.IFormatWriter#testConvert(String[]) */

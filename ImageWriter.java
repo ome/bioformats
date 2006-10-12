@@ -89,22 +89,28 @@ public class ImageWriter implements IFormatWriter {
   protected FormatWriter[] writers;
 
   /**
-   * Valid suffixes for this file format.
+   * Valid suffixes for all file format writers.
    * Populated the first time getSuffixes() is called.
    */
   private String[] suffixes;
 
   /**
-   * File filters for this file format, for use with a JFileChooser.
+   * File filters for all file format writers, for use with a JFileChooser.
    * Populated the first time getFileFilters() is called.
    */
   protected FileFilter[] filters;
 
   /**
-   * File chooser for this file format.
+   * File chooser for all file format writers.
    * Created the first time getFileChooser() is called.
    */
   protected JFileChooser chooser;
+
+  /**
+   * Compression types for all file format writers.
+   * Populated the first time getCompressionTypes() is called.
+   */
+  protected String[] compressionTypes;
 
   /** Name of current file. */
   private String currentId;
@@ -118,7 +124,6 @@ public class ImageWriter implements IFormatWriter {
   public ImageWriter() {
     // add built-in writers to the list
     Vector v = new Vector();
-    HashSet suffixSet = new HashSet();
     for (int i=0; i<writerClasses.length; i++) {
       FormatWriter writer = null;
       try { writer = (FormatWriter) writerClasses[i].newInstance(); }
@@ -130,14 +135,9 @@ public class ImageWriter implements IFormatWriter {
         continue;
       }
       v.add(writer);
-      String[] suf = writer.getSuffixes();
-      for (int j=0; j<suf.length; j++) suffixSet.add(suf[j]);
     }
     writers = new FormatWriter[v.size()];
     v.copyInto(writers);
-    suffixes = new String[suffixSet.size()];
-    suffixSet.toArray(suffixes);
-    Arrays.sort(suffixes);
   }
 
   // -- ImageWriter API methods --
@@ -216,13 +216,33 @@ public class ImageWriter implements IFormatWriter {
 
   /** Gets the available compression types. */
   public String[] getCompressionTypes() {
-    // CTR TODO - fix this API
-    return null;
+    if (compressionTypes == null) {
+      HashSet set = new HashSet();
+      for (int i=0; i<writers.length; i++) {
+        String[] s = writers[i].getCompressionTypes();
+        for (int j=0; j<s.length; j++) set.add(s[j]);
+      }
+      compressionTypes = new String[set.size()];
+      set.toArray(compressionTypes);
+      Arrays.sort(compressionTypes);
+    }
+    return compressionTypes;
   }
 
   /** Sets the current compression type. */
   public void setCompression(String compress) throws FormatException {
-    // CTR TODO - fix this API
+    boolean ok = false;
+    for (int i=0; i<writers.length; i++) {
+      String[] s = writers[i].getCompressionTypes();
+      for (int j=0; j<s.length; j++) {
+        if (s[j].equals(compress)) {
+          // valid compression type for this format
+          writers[i].setCompression(compress);
+          ok = true;
+        }
+      }
+    }
+    if (!ok) throw new FormatException("Invalid compression type: " + compress);
   }
 
   /** A utility method for converting a file from the command line. */
@@ -265,13 +285,13 @@ public class ImageWriter implements IFormatWriter {
   /** Gets the default file suffixes for this file format. */
   public String[] getSuffixes() {
     if (suffixes == null) {
-      HashSet suffixSet = new HashSet();
+      HashSet set = new HashSet();
       for (int i=0; i<writers.length; i++) {
-        String[] suf = writers[i].getSuffixes();
-        for (int j=0; j<suf.length; j++) suffixSet.add(suf[j]);
+        String[] s = writers[i].getSuffixes();
+        for (int j=0; j<s.length; j++) set.add(s[j]);
       }
-      suffixes = new String[suffixSet.size()];
-      suffixSet.toArray(suffixes);
+      suffixes = new String[set.size()];
+      set.toArray(suffixes);
       Arrays.sort(suffixes);
     }
     return suffixes;
