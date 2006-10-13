@@ -31,8 +31,8 @@ import ij.io.FileInfo;
 import ij.io.OpenDialog;
 import ij.measure.Calibration;
 import ij.process.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.Dimension;
+import java.awt.event.*;
 import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
@@ -46,7 +46,7 @@ import loci.formats.*;
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at cs.wisc.edu
  */
-public class Importer implements ItemListener {
+public class Importer implements ActionListener, ItemListener {
 
   // -- Fields --
 
@@ -55,11 +55,15 @@ public class Importer implements ItemListener {
   private JCheckBox showMeta = null;
   private JCheckBox stitching = null;
   private JCheckBox ranges = null;
+  private JCheckBox[] boxes = null;
+  private JButton okButton = null;
+  private JFrame seriesFrame = null;
   private boolean mergeChannels;
   private boolean splitWindows;
   private boolean showMetadata;
   private boolean stitchFiles;
   private boolean specifyRanges;
+  private boolean[] series = null;
 
   private LociImporter plugin;
 
@@ -174,9 +178,9 @@ public class Importer implements ItemListener {
     String fileName = id.substring(id.lastIndexOf(File.separator) + 1);
 
     IJ.showStatus("Opening " + fileName);
-    
+
     boolean doRGBMerge = false;
-    
+
     try {
       if (r == null) r = reader.getReader(id);
       if (stitchFiles) r = new FileStitcher(r);
@@ -192,7 +196,7 @@ public class Importer implements ItemListener {
           r = new ChannelSeparator(r);
         }
       }
-              
+
       // store OME metadata into OME-XML structure, if available
       OMEXMLMetadataStore store = new OMEXMLMetadataStore();
       store.createRoot();
@@ -200,11 +204,16 @@ public class Importer implements ItemListener {
 
       // if necessary, prompt for the series to open
 
-      GenericDialog datasets =
-        new GenericDialog("LOCI Bio-Formats Series Chooser");
-
       int seriesCount = r.getSeriesCount(id);
+      series = new boolean[seriesCount];
+      series[0] = true;
       store = (OMEXMLMetadataStore) r.getMetadataStore(id);
+
+      JPanel pane = new JPanel();
+      pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
+      pane.setMaximumSize(new Dimension(350, 350));
+      boxes = new JCheckBox[seriesCount];
+
       for (int i=0; i<seriesCount; i++) {
         r.setSeries(id, i);
         int sizeX = r.getSizeX(id);
@@ -214,16 +223,29 @@ public class Importer implements ItemListener {
         if (name == null || name.length() == 0) {
           name = "Series " + (i + 1);
         }
-        datasets.addCheckbox(name + " : " + sizeX + " x " + sizeY + " x " +
-          imageCount, i == 0);
-      }
-      if (seriesCount > 1) {
-        datasets.showDialog();
-        if (datasets.wasCanceled()) return;
+        boxes[i] = new JCheckBox(name + " : " + sizeX + " x " + sizeY +
+          " x " + imageCount, i == 0);
+        boxes[i].addItemListener(this);
+        pane.add(boxes[i]);
       }
 
-      boolean[] series = new boolean[seriesCount];
-      for (int i=0; i<seriesCount; i++) series[i] = datasets.getNextBoolean();
+      if (seriesCount > 1) {
+        okButton = new JButton("OK");
+        okButton.addActionListener(this);
+        pane.add(okButton);
+
+        JScrollPane scroller = new JScrollPane(pane);
+
+        seriesFrame = new JFrame("LOCI Bio-Formats Series Chooser");
+        scroller.setMaximumSize(new Dimension(350, 350));
+        seriesFrame.setContentPane(scroller);
+        seriesFrame.pack();
+        seriesFrame.setSize(350, 350);
+        seriesFrame.setVisible(true);
+        seriesFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        seriesFrame.show();
+        while (seriesFrame.isShowing());
+      }
 
       if (showMetadata) {
         // display standard metadata in a table in its own window
@@ -306,13 +328,13 @@ public class Importer implements ItemListener {
           }
           IJ.showProgress((double) q++ / total);
           BufferedImage img = r.openImage(id, j);
-          
-          if (img.getWidth() < r.getSizeX(id) || 
+
+          if (img.getWidth() < r.getSizeX(id) ||
             img.getHeight() < r.getSizeY(id))
           {
             img = ImageTools.padImage(img, r.getSizeX(id), r.getSizeY(id));
           }
-     
+
           int cCoord = r.getZCTCoords(id, j)[1];
 
 //          Double min = r.getChannelGlobalMinimum(id, cCoord);
@@ -320,7 +342,7 @@ public class Importer implements ItemListener {
           Double min = null, max = null;
 
           if (r.isRGB(id) && r.getPixelType(id) >= FormatReader.INT16) {
-            
+
             if (min == null || max == null) {
               // call ImageJ's RGB merge utility after we display
               doRGBMerge = true;
@@ -336,7 +358,7 @@ public class Importer implements ItemListener {
           int c = raster.getNumBands();
           int tt = raster.getTransferType();
           int w = img.getWidth(), h = img.getHeight();
-        
+
           if (c == 1) {
             if (tt == DataBuffer.TYPE_BYTE) {
               byte[] b = ImageTools.getBytes(img)[0];
@@ -369,16 +391,16 @@ public class Importer implements ItemListener {
               }
               ip = new FloatProcessor(w, h, f, null);
               if (stackF == null) stackF = new ImageStack(w, h);
-              
+
               if (stackB != null) {
                 ip = ip.convertToByte(true);
                 stackB.addSlice(name + ":" + (j + 1), ip);
-                stackF = null; 
+                stackF = null;
               }
               else if (stackS != null) {
                 ip = ip.convertToShort(true);
                 stackS.addSlice(name + ":" + (j + 1), ip);
-                stackF = null; 
+                stackF = null;
               }
               else stackF.addSlice(name + ":" + (j + 1), ip);
             }
@@ -448,7 +470,7 @@ public class Importer implements ItemListener {
           }
 
           imp.setFileInfo(fi);
-         
+
           int c = r.getSizeC(id);
           r.close();
 
@@ -468,7 +490,7 @@ public class Importer implements ItemListener {
               byte[] red = new byte[w * h];
               byte[] green = new byte[w * h];
               byte[] blue = new byte[w * h];
-            
+
               red = (byte[]) procs[0].getPixels();
               if (c > 1) green = (byte[]) procs[1].getPixels();
               if (c > 2) blue = (byte[]) procs[2].getPixels();
@@ -530,26 +552,43 @@ public class Importer implements ItemListener {
     else if (source == showMeta) showMetadata = selected;
     else if (source == stitching) stitchFiles = selected;
     else if (source == ranges) specifyRanges = selected;
+    else {
+      if (series != null) {
+        for (int i=0; i<boxes.length; i++) {
+          if (source == boxes[i]) {
+            series[i] = selected;
+            return;
+          }
+        }
+      }
+    }
+  }
+
+  // -- ActionListener API methods --
+
+  public void actionPerformed(ActionEvent e) {
+    Object source = e.getSource();
+    if (source == okButton) seriesFrame.dispose();
   }
 
   // -- Helper methods --
 
-  private void slice(ImageStack is, String file, int z, int c, int t, 
-    FileInfo fi, IFormatReader r, boolean range) 
-    throws FormatException, IOException 
+  private void slice(ImageStack is, String file, int z, int c, int t,
+    FileInfo fi, IFormatReader r, boolean range)
+    throws FormatException, IOException
   {
-    
+
     int step = 1;
     if (range) {
       step = c;
       c = r.getSizeC(file);
     }
-  
+
     ImageStack[] newStacks = new ImageStack[c];
     for (int i=0; i<newStacks.length; i++) {
       newStacks[i] = new ImageStack(is.getWidth(), is.getHeight());
     }
-  
+
     for (int i=0; i<c; i++) {
       if (range) {
         for (int j=z; j<=t; j+=((t - z + 1) / is.getSize())) {
@@ -571,7 +610,7 @@ public class Importer implements ItemListener {
 
     // retrieve the spatial calibration information, if available
 
-    OMEXMLMetadataStore store = 
+    OMEXMLMetadataStore store =
       (OMEXMLMetadataStore) r.getMetadataStore(file);
     double xcal = Double.NaN, ycal = Double.NaN, zcal = Double.NaN;
     Integer ii = new Integer(r.getSeries(file));
@@ -585,7 +624,7 @@ public class Importer implements ItemListener {
 
     for (int i=0; i<newStacks.length; i++) {
       ImagePlus imp = new ImagePlus(file + " - Ch" + (i+1), newStacks[i]);
-          
+
       if (xcal != Double.NaN || ycal != Double.NaN || zcal != Double.NaN) {
         Calibration cal = new Calibration();
         if (xcal == xcal) {
