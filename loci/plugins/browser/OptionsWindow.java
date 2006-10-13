@@ -40,7 +40,7 @@ public class OptionsWindow extends JFrame implements
   // -- Fields --
 
   /**Constant dlu size for indents in GUI*/
-  private static final String TAB = "5dlu";
+  private static final String TAB = "7dlu";
 
   /**ComboBoxes for Custom Axes*/
   protected JComboBox zBox, tBox;
@@ -66,15 +66,12 @@ public class OptionsWindow extends JFrame implements
     // add Display Pane
 
     JPanel disPane = new JPanel();
-    JPanel axesPane = new JPanel();
     TitledBorder disB = BorderFactory.createTitledBorder(etchB,
       "Display Options");
-    TitledBorder axesB = BorderFactory.createTitledBorder(etchB,
-      "Custom Axes");
 
     disPane.setBorder(disB);
-    axesPane.setBorder(axesB);
 
+    JLabel custLab = new JLabel("\u00B7" + "Custom Axes");
     JLabel fileLab = new JLabel("Filename:");
     JLabel zLab = new JLabel("Z axis:");
     zLab.setForeground(Color.red);
@@ -111,22 +108,16 @@ public class OptionsWindow extends JFrame implements
     FormLayout layout = new FormLayout(
         TAB + ",pref," + TAB + ",pref:grow," + TAB,
         "pref,pref,pref,pref");
-    axesPane.setLayout(layout);
+    disPane.setLayout(layout);
     CellConstraints cc = new CellConstraints();
 
-    axesPane.add(fileLab,cc.xy(2,2));
-    axesPane.add(filePane,cc.xy(4,2));
-    axesPane.add(zLab,cc.xy(2,3));
-    axesPane.add(zBox,cc.xy(4,3));
-    axesPane.add(tLab,cc.xy(2,4));
-    axesPane.add(tBox,cc.xy(4,4));
-
-    FormLayout disLay = new FormLayout(
-      "pref:grow", "pref:grow");
-    disPane.setLayout(disLay);
-    CellConstraints disC = new CellConstraints();
-
-    disPane.add(axesPane, disC.xy(1,1));
+    disPane.add(custLab,cc.xyw(1,1,5));
+    disPane.add(fileLab,cc.xy(2,2));
+    disPane.add(filePane,cc.xy(4,2));
+    disPane.add(zLab,cc.xy(2,3));
+    disPane.add(zBox,cc.xy(4,3));
+    disPane.add(tLab,cc.xy(2,4));
+    disPane.add(tBox,cc.xy(4,4));
 
     //set up animation options pane
 
@@ -149,18 +140,111 @@ public class OptionsWindow extends JFrame implements
 
     aniPane.add(fpsLab,cc2.xy(2,1));
     aniPane.add(fps,cc2.xy(4,1));
+    
+    JPanel cachePane = new JPanel();
+    TitledBorder cacheB = BorderFactory.createTitledBorder(
+      etchB, "CacheManager Options");
+    cachePane.setBorder(cacheB);
+    
+    JLabel typeL = new JLabel("\u00B7" + "Cache Type");
+    JLabel axesL = new JLabel("Axes to Cache:");
+    JLabel modeL = new JLabel("Cache Mode:");
+    JLabel stratL = new JLabel("Loading Strategy:");
+    JLabel sizeL = new JLabel("\u00B7" + "Slices to Store");
+    JLabel forL = new JLabel("Forward");
+    JLabel backL = new JLabel("Backward");
+    JLabel zL = new JLabel("Z:");
+    JLabel tL = new JLabel("T:");
+    JLabel cL = new JLabel("C:");
+    JLabel priorL = new JLabel("\u00B7" + "Axis Priority");
+    JLabel topL = new JLabel("Top:");
+    JLabel midL = new JLabel("Mid:");
+    JLabel lowL = new JLabel("Low:");
+    
+    JCheckBox zCheck = new JCheckBox("Z");
+    JCheckBox tCheck = new JCheckBox("T");
+    JCheckBox cCheck = new JCheckBox("C");
+    JPanel checkPanel = new JPanel(new GridLayout(1,3));
+    checkPanel.add(zCheck);
+    checkPanel.add(tCheck);
+    checkPanel.add(cCheck);
+    
+    String[] modes = {"Crosshair", "Rectangle", "Cross/Rect"};
+    JComboBox modeBox = new JComboBox(modes);
+    String[] strats = {"Forward","Surround"};
+    JComboBox stratBox = new JComboBox(strats);
+    String[] axes = {"Z","T","C"};
+    JComboBox topBox = new JComboBox(axes);
+    JComboBox midBox = new JComboBox(axes);
+    JComboBox lowBox = new JComboBox(axes);
+    
+    SpinnerNumberModel zFMod = new SpinnerNumberModel(0,0,9999,1);
+    JSpinner zFSpin = new JSpinner(zFMod);
+    SpinnerNumberModel zBMod = new SpinnerNumberModel(0,0,9999,1);
+    JSpinner zBSpin = new JSpinner(zBMod);
+    SpinnerNumberModel tFMod = new SpinnerNumberModel(20,0,9999,1);
+    JSpinner tFSpin = new JSpinner(tFMod);
+    SpinnerNumberModel tBMod = new SpinnerNumberModel(0,0,9999,1);
+    JSpinner tBSpin = new JSpinner(tBMod);
+    SpinnerNumberModel cFMod = new SpinnerNumberModel(0,0,9999,1);
+    JSpinner cFSpin = new JSpinner(cFMod);
+    SpinnerNumberModel cBMod = new SpinnerNumberModel(0,0,9999,1);
+    JSpinner cBSpin = new JSpinner(cBMod);
+    
+    JButton resetBtn = new JButton("Reset to Default");
+    
+    FormLayout layout3 = new FormLayout(
+      TAB + ",pref," + TAB + ",pref:grow," + TAB + ",pref:grow," + TAB,
+      "pref,pref,pref,pref," + TAB + ",pref,pref,pref,pref,pref,"
+      + TAB + ",pref,pref,pref,pref," + TAB + ",pref");
+    cachePane.setLayout(layout3);
+    CellConstraints cc3 = new CellConstraints();
+    
+    cachePane.add(typeL,cc3.xyw(1,1,7));
+    cachePane.add(axesL,cc3.xyw(2,2,3));
+    cachePane.add(checkPanel,cc3.xy(6,2));
+    cachePane.add(modeL,cc3.xyw(2,3,3));
+    cachePane.add(modeBox,cc3.xy(6,3));
+    cachePane.add(stratL,cc3.xyw(2,4,3));
+    cachePane.add(stratBox,cc3.xy(6,4));
+    cachePane.add(sizeL,cc3.xyw(1,6,7));
+    cachePane.add(forL,cc3.xy(4,7));
+    cachePane.add(backL,cc3.xy(6,7));
+    cachePane.add(zL,cc3.xy(2,8));
+    cachePane.add(zFSpin,cc3.xy(4,8));
+    cachePane.add(zBSpin,cc3.xy(6,8));
+    cachePane.add(tL,cc3.xy(2,9));
+    cachePane.add(tFSpin,cc3.xy(4,9));
+    cachePane.add(tBSpin,cc3.xy(6,9));
+    cachePane.add(cL,cc3.xy(2,10));
+    cachePane.add(cFSpin,cc3.xy(4,10));
+    cachePane.add(cBSpin,cc3.xy(6,10));
+    cachePane.add(priorL,cc3.xyw(1,12,7));
+    cachePane.add(topL,cc3.xy(2,13));
+    cachePane.add(topBox,cc3.xy(4,13));
+    cachePane.add(midL,cc3.xy(2,14));
+    cachePane.add(midBox,cc3.xy(4,14));
+    cachePane.add(lowL,cc3.xy(2,15));
+    cachePane.add(lowBox,cc3.xy(4,15));
+    cachePane.add(resetBtn,cc3.xyw(2,17,5,"right,center"));
 
     //configure/layout content pane
-    setLayout(new BorderLayout());
-
-    add(disPane,BorderLayout.CENTER);
-    add(aniPane,BorderLayout.NORTH);
+    FormLayout lastLayout = new FormLayout(
+      "pref:grow",
+      "pref,pref,pref");
+    setLayout(lastLayout);
+    CellConstraints ccs = new CellConstraints();
+    
+    add(aniPane,ccs.xy(1,1));
+    add(cachePane,ccs.xy(1,2));
+    add(disPane,ccs.xy(1,3));
+    
 
     //useful frame method that handles closing of window
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     //put frame in the right place, with the right size, and make visible
     setLocation(100, 100);
-    ((JComponent) getContentPane()).setPreferredSize(new Dimension(225,200));
+//    ((JComponent) getContentPane()).setPreferredSize(new Dimension(300,500));
     pack();
     setVisible(true);
   }
