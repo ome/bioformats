@@ -26,6 +26,7 @@ package loci.formats;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Vector;
 
@@ -241,19 +242,54 @@ public class FileStitcher extends ReaderWrapper {
 
     imageCounts = new int[files.length];
 
+    // determine reader type for these files; assume all are the same type
+    Vector classes = new Vector();
+    IFormatReader r = reader;
+    while (r instanceof ReaderWrapper) {
+      classes.add(r.getClass());
+      r = ((ReaderWrapper) r).getReader();
+    }
+    if (r instanceof ImageReader) r = ((ImageReader) r).getReader(files[0]);
+    classes.add(r.getClass());
+
+    readers = new IFormatReader[files.length];
+    if (multipleReaders) {
+      // instantiate a reader object of the proper type for each file
+      readers[0] = reader;
+      for (int i=1; i<readers.length; i++) {
+        try {
+          r = null;
+          for (int j=classes.size()-1; j>=0; j--) {
+            Class c = (Class) classes.elementAt(j);
+            if (r == null) r = (IFormatReader) c.newInstance();
+            else {
+              r = (IFormatReader) c.getConstructor(
+                new Class[] {c}).newInstance(new Object[] {r});
+            }
+          }
+          readers[i] = (IFormatReader) r;
+        }
+        catch (InstantiationException exc) { exc.printStackTrace(); }
+        catch (IllegalAccessException exc) { exc.printStackTrace(); }
+        catch (NoSuchMethodException exc) { exc.printStackTrace(); }
+        catch (InvocationTargetException exc) { exc.printStackTrace(); }
+      }
+    }
+    else Arrays.fill(readers, reader);
+
     // determine the total number of images and build a list of dimensions
     // for each file
 
     int[][] dims = new int[files.length][5];
 
     for (int i=0; i<files.length; i++) {
-      imageCounts[i] = reader.getImageCount(files[i]);
+      imageCounts[i] = readers[i].getImageCount(files[i]);
       numImages += imageCounts[i];
-      dims[i][0] = reader.getSizeX(files[i]);
-      dims[i][1] = reader.getSizeY(files[i]);
-      dims[i][2] = reader.getSizeZ(files[i]);
-      dims[i][3] = reader.getSizeC(files[i]);
-      dims[i][4] = reader.getSizeT(files[i]);
+      dims[i][0] = readers[i].getSizeX(files[i]);
+      dims[i][1] = readers[i].getSizeY(files[i]);
+      dims[i][2] = readers[i].getSizeZ(files[i]);
+      dims[i][3] = readers[i].getSizeC(files[i]);
+      dims[i][4] = readers[i].getSizeT(files[i]);
     }
 
     // determine how many varying dimensions there are
@@ -294,26 +330,6 @@ public class FileStitcher extends ReaderWrapper {
     }
     setDimensions(id, dims);
 
-    readers = new IFormatReader[files.length];
-    if (multipleReaders) {
-      readers[0] = reader;
-      IFormatReader r = reader;
-      while (r instanceof ReaderWrapper) r = ((ReaderWrapper) r).reader;
-      ImageReader ir = null;
-      if (r instanceof ImageReader) ir = (ImageReader) r;
-      for (int i=1; i<readers.length; i++) {
-        readers[i] = ir == null ? r : ir.getReader(files[i]);
-        // now we know the type of reader to use, but want a separate
-        // object for each file, so create a new one of that type
-        try {
-          readers[i] = (IFormatReader) readers[i].getClass().newInstance();
-        }
-        catch (InstantiationException exc) { exc.printStackTrace(); }
-        catch (IllegalAccessException exc) { exc.printStackTrace(); }
-      }
-    }
-    else Arrays.fill(readers, reader);
-
     MetadataStore s = reader.getMetadataStore(id);
     s.setPixels(new Integer(dimensions[0]), new Integer(dimensions[1]),
       new Integer(dimensions[2]), new Integer(dimensions[3]),
@@ -353,15 +369,7 @@ public class FileStitcher extends ReaderWrapper {
 
     // first we'll get a list of the prefix blocks
 
-    Vector prefixes = new Vector();
-    int i = 0;
-    String prefix = fp.getPrefix(i);
-    while (prefix != null) {
-      prefixes.add(prefix);
-      i++;
-      prefix = fp.getPrefix(i);
-    }
-
+    String[] prefixes = fp.getPrefixes();
     int[] counts = fp.getCount();
 
     int zSize = 1;
@@ -377,7 +385,7 @@ public class FileStitcher extends ReaderWrapper {
       int cndx = -1;
       int tndx = -1;
 
-      String p = (String) prefixes.get(j);
+      String p = prefixes[j];
       for (int k=0; k<Z.length; k++) {
         if (p.indexOf(Z[k]) != -1) {
           zndx = k;
