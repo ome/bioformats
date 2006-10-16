@@ -54,6 +54,11 @@ public abstract class ReaderWrapper implements IFormatReader {
     reader = r;
   }
 
+  // -- ReaderWrapper API methods --
+
+  /** Gets the wrapped reader. */
+  public IFormatReader getReader() { return reader; }
+
   // -- IFormatReader API methods --
 
   public boolean isThisType(byte[] block) {
