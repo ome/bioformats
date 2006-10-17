@@ -40,19 +40,19 @@ public interface IFormatReader extends IFormatHandler {
   /** Checks if the images in the file are RGB. */
   boolean isRGB(String id) throws FormatException, IOException;
 
-  /** Get the size of the X dimension. */
+  /** Gets the size of the X dimension. */
   int getSizeX(String id) throws FormatException, IOException;
 
-  /** Get the size of the Y dimension. */
+  /** Gets the size of the Y dimension. */
   int getSizeY(String id) throws FormatException, IOException;
 
-  /** Get the size of the Z dimension. */
+  /** Gets the size of the Z dimension. */
   int getSizeZ(String id) throws FormatException, IOException;
 
-  /** Get the size of the C dimension. */
+  /** Gets the size of the C dimension. */
   int getSizeC(String id) throws FormatException, IOException;
 
-  /** Get the size of the T dimension. */
+  /** Gets the size of the T dimension. */
   int getSizeT(String id) throws FormatException, IOException;
 
   /**
@@ -103,12 +103,12 @@ public interface IFormatReader extends IFormatHandler {
   /** Get the size of the Y dimension for the thumbnail. */
   int getThumbSizeY(String id) throws FormatException, IOException;
 
-  /** Return true if the data is in little-endian format. */
+  /** Gets whether the data is in little-endian format. */
   boolean isLittleEndian(String id) throws FormatException, IOException;
 
   /**
-   * Return a five-character string representing the dimension order
-   * within the file.
+   * Gets a five-character string representing the
+   * dimension order within the file.
    */
   String getDimensionOrder(String id) throws FormatException, IOException;
 
@@ -122,13 +122,13 @@ public interface IFormatReader extends IFormatHandler {
   void setChannelStatCalculationStatus(boolean on);
 
   /**
-   * Retrieve the status of channel statistics calculation.
+   * Retrieves the status of channel statistics calculation.
    * @return the status.
    * @see #setChannelStatCalculationStatus(boolean)
    */
   boolean getChannelStatCalculationStatus();
 
-  /** Returns whether or not the channels are interleaved. */
+  /** Gets whether or not the channels are interleaved. */
   boolean isInterleaved(String id) throws FormatException, IOException;
 
   /** Obtains the specified image from the given file. */
@@ -167,20 +167,13 @@ public interface IFormatReader extends IFormatHandler {
   /** Closes the currently open file. */
   void close() throws FormatException, IOException;
 
-  /**
-   * Opens an existing file from the given filename.
-   *
-   * @return Java Images containing pixel data
-   */
-  BufferedImage[] openImage(String id) throws FormatException, IOException;
-
-  /** Return the number of series in this file. */
+  /** Gets the number of series in this file. */
   int getSeriesCount(String id) throws FormatException, IOException;
 
   /** Activates the specified series. */
   void setSeries(String id, int no) throws FormatException, IOException;
 
-  /** Returns the currently active series. */
+  /** Gets the currently active series. */
   int getSeries(String id) throws FormatException, IOException;
 
   /**

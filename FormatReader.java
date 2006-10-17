@@ -306,21 +306,6 @@ public abstract class FormatReader extends FormatHandler
   /** Closes the currently open file. */
   public abstract void close() throws FormatException, IOException;
 
-  /**
-   * Opens an existing file from the given filename.
-   *
-   * @return Java Images containing pixel data
-   */
-  public BufferedImage[] openImage(String id)
-    throws FormatException, IOException
-  {
-    int nImages = getImageCount(id);
-    BufferedImage[] images = new BufferedImage[nImages];
-    for (int i=0; i<nImages; i++) images[i] = openImage(id, i);
-    close();
-    return images;
-  }
-
   /** Return the number of series in this file. */
   public int getSeriesCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);

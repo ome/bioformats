@@ -173,12 +173,6 @@ public abstract class ReaderWrapper implements IFormatReader {
     reader.close();
   }
 
-  public BufferedImage[] openImage(String id)
-    throws FormatException, IOException
-  {
-    return reader.openImage(id);
-  }
-
   public int getSeriesCount(String id) throws FormatException, IOException {
     return reader.getSeriesCount(id);
   }
