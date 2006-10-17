@@ -30,7 +30,9 @@ import java.util.Arrays;
 import java.util.Vector;
 
 /**
- * FilePattern is a collection of methods for handling VisBio file patterns.
+ * FilePattern is a collection of methods for handling file patterns, a way of
+ * succinctly representing a collection of files meant to be part of the same
+ * data series.
  *
  * Examples:
  * <ul>

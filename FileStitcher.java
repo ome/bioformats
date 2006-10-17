@@ -36,18 +36,13 @@ public class FileStitcher extends ReaderWrapper {
   // -- Constants --
 
   /** Prefix endings indicating time dimension. */
-  private static final String[] T = {
-    "T", "TP", "TL", "Tl", "t", "tp", "Tp", "tP", "tL", "tl"
-  };
+  private static final String[] T = {"t", "tl", "tp"};
 
   /** Prefix endings indicating space dimension. */
-  private static final String[] Z = {
-    "Z", "ZS", "FP", "SEC", "Focal", "z", "zs", "Zs", "zS", "fp", "Fp", "fP",
-    "BF"
-  };
+  private static final String[] Z = {"bf", "focal", "fp", "sec", "z", "zs"};
 
   /** Prefix endings indicating channel dimension. */
-  private static final String[] C = {"C", "CH", "W", "Ch", "ch"};
+  private static final String[] C = {"c", "ch", "w"};
 
   // -- Fields --
 
@@ -303,12 +298,8 @@ public class FileStitcher extends ReaderWrapper {
     // always set the width and height to the maximum values
 
     for (int i=0; i<dims.length; i++) {
-      if (dims[i][0] > dimensions[0]) {
-        dimensions[0] = dims[i][0];
-      }
-      if (dims[i][1] > dimensions[1]) {
-        dimensions[1] = dims[i][1];
-      }
+      if (dims[i][0] > dimensions[0]) dimensions[0] = dims[i][0];
+      if (dims[i][1] > dimensions[1]) dimensions[1] = dims[i][1];
     }
 
     if (varyZ || varyC || varyT) {
@@ -385,32 +376,26 @@ public class FileStitcher extends ReaderWrapper {
       int cndx = -1;
       int tndx = -1;
 
-      String p = prefixes[j];
+      String p = prefixes[j].toLowerCase();
       for (int k=0; k<Z.length; k++) {
-        if (p.indexOf(Z[k]) != -1) {
-          zndx = k;
-        }
+        if (p.indexOf(Z[k]) >= 0) zndx = k;
       }
 
       if (counts[j] <= 4) {
         for (int k=0; k<C.length; k++) {
-          if (p.indexOf(C[k]) != -1) {
-            cndx = k;
-          }
+          if (p.indexOf(C[k]) >= 0) cndx = k;
         }
       }
 
       for (int k=0; k<T.length; k++) {
-        if (p.indexOf(T[k]) != -1) {
-          tndx = k;
-        }
+        if (p.indexOf(T[k]) >= 0) tndx = k;
       }
 
-      if (zndx != -1 || cndx != -1 || tndx != -1) {
+      if (zndx >= 0 || cndx >= 0 || tndx >= 0) {
         // the largest of these three is the dimension we will choose
-        int zpos = zndx == -1 ? -1 : p.indexOf(Z[zndx]);
-        int cpos = cndx == -1 ? -1 : p.indexOf(C[cndx]);
-        int tpos = tndx == -1 ? -1 : p.indexOf(T[tndx]);
+        int zpos = zndx < 0 ? -1 : p.indexOf(Z[zndx]);
+        int cpos = cndx < 0 ? -1 : p.indexOf(C[cndx]);
+        int tpos = tndx < 0 ? -1 : p.indexOf(T[tndx]);
 
         int max = zpos;
         if (cpos > max) max = cpos;
@@ -460,7 +445,7 @@ public class FileStitcher extends ReaderWrapper {
               }
             }
 
-            if (ordering.indexOf("C") == -1) ordering += "C";
+            if (ordering.indexOf("C") < 0) ordering += "C";
             cSize = counts[j];
           }
         }
@@ -505,7 +490,7 @@ public class FileStitcher extends ReaderWrapper {
     String begin = "";
     String readerOrder = reader.getDimensionOrder(id);
     for (int j=0; j<readerOrder.length(); j++) {
-      if (ordering.indexOf(readerOrder.substring(j, j+1)) == -1) {
+      if (ordering.indexOf(readerOrder.substring(j, j+1)) < 0) {
         begin += readerOrder.substring(j, j+1);
       }
     }
