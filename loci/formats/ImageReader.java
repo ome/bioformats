@@ -330,14 +330,7 @@ public class ImageReader implements IFormatReader {
     for (int i=0; i<readers.length; i++) readers[i].close();
   }
 
-  /* @see IFormatReader#openImage(java.lang.String) */
-  public BufferedImage[] openImage(String id)
-    throws FormatException, IOException
-  {
-    return getReader(id).openImage(id);
-  }
-
-  /** Return the number of series in the file. */
+  /** Gets the number of series in the file. */
   public int getSeriesCount(String id) throws FormatException, IOException {
     return getReader(id).getSeriesCount(id);
   }
@@ -347,7 +340,7 @@ public class ImageReader implements IFormatReader {
     getReader(id).setSeries(id, no);
   }
 
-  /** Returns the currently active series. */
+  /** Gets the currently active series. */
   public int getSeries(String id) throws FormatException, IOException {
     return getReader(id).getSeries(id);
   }
