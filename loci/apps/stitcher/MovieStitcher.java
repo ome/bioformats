@@ -2,8 +2,10 @@
 // MovieStitcher.java
 //
 
-// Coded in 2006 by Curtis Rueden.
-// Permission is granted to use this code for anything.
+/*
+Coded in 2006 by Curtis Rueden.
+Permission is granted to use this code for anything.
+*/
 
 package loci.apps.stitcher;
 
@@ -310,7 +312,9 @@ public class MovieStitcher extends JFrame implements ActionListener, Runnable {
       progress.setValue(2 * numZ * numT);
       progress.setString("Finishing");
       if (readers == null) reader.close();
-      else for (int i=0; i<readers.length; i++) readers[i].close();
+      else {
+        for (int i=0; i<readers.length; i++) readers[i].close();
+      }
 
       long end = System.currentTimeMillis();
       double time = (end - start) / 1000.0;

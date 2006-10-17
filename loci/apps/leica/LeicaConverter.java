@@ -2,13 +2,15 @@
 // LeicaConverter.java
 //
 
-// Coded 2006 Mar 3-4, 21 by Curtis Rueden, for Julie Simpson.
-// Permission is granted to use this code for anything.
+/*
+Coded 2006 Mar 3-4, 21 by Curtis Rueden, for Julie Simpson.
+Permission is granted to use this code for anything.
+*/
 
 package loci.apps.leica;
 
-import java.awt.Image;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
