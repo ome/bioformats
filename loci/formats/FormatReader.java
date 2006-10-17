@@ -487,6 +487,7 @@ public abstract class FormatReader extends FormatHandler
   {
     String id = null;
     boolean pixels = true;
+    boolean doMeta = true;
     boolean thumbs = false;
     boolean merge = false;
     boolean stitch = false;
@@ -499,6 +500,7 @@ public abstract class FormatReader extends FormatHandler
       for (int i=0; i<args.length; i++) {
         if (args[i].startsWith("-")) {
           if (args[i].equals("-nopix")) pixels = false;
+          else if (args[i].equals("-nometa")) doMeta = false;
           else if (args[i].equals("-thumbs")) thumbs = true;
           else if (args[i].equals("-merge")) merge = true;
           else if (args[i].equals("-stitch")) stitch = true;
@@ -536,6 +538,7 @@ public abstract class FormatReader extends FormatHandler
       System.out.println();
       System.out.println("     file: the image file to read");
       System.out.println("   -nopix: read metadata only, not pixels");
+      System.out.println("  -nometa: output only core metadata");
       System.out.println("  -thumbs: read thumbnails instead of normal pixels");
       System.out.println("   -merge: combine separate channels into RGB image");
       System.out.println("  -stitch: stitch files with similar names");
@@ -612,28 +615,32 @@ public abstract class FormatReader extends FormatHandler
         (little ? "intel (little)" : "motorola (big)"));
       System.out.println("\tDimension order = " + dimOrder);
       System.out.println("\tPixel type = " + getPixelTypeString(pixelType));
-      System.out.println("\t-----");
-      int[] indices;
-      if (imageCount > 6) {
-        int q = imageCount / 2;
-        indices = new int[] {0, q - 2, q - 1, q, q + 1, q + 2, imageCount - 1};
-      }
-      else if (imageCount > 2) {
-        indices = new int[] {0, imageCount / 2, imageCount - 1};
-      }
-      else if (imageCount > 1) indices = new int[] {0, 1};
-      else indices = new int[] {0};
-      int[][] zct = new int[indices.length][];
-      int[] indices2 = new int[indices.length];
-      for (int i=0; i<indices.length; i++) {
-        zct[i] = reader.getZCTCoords(id, indices[i]);
-        indices2[i] = reader.getIndex(id, zct[i][0], zct[i][1], zct[i][2]);
-        System.out.print("\tPlane #" + indices[i] + " <=> Z " + zct[i][0] +
-          ", C " + zct[i][1] + ", T " + zct[i][2]);
-        if (indices[i] != indices2[i]) {
-          System.out.println(" [mismatch: " + indices2[i] + "]");
+      if (doMeta) {
+        System.out.println("\t-----");
+        int[] indices;
+        if (imageCount > 6) {
+          int q = imageCount / 2;
+          indices = new int[] {
+            0, q - 2, q - 1, q, q + 1, q + 2, imageCount - 1
+          };
         }
-        else System.out.println();
+        else if (imageCount > 2) {
+          indices = new int[] {0, imageCount / 2, imageCount - 1};
+        }
+        else if (imageCount > 1) indices = new int[] {0, 1};
+        else indices = new int[] {0};
+        int[][] zct = new int[indices.length][];
+        int[] indices2 = new int[indices.length];
+        for (int i=0; i<indices.length; i++) {
+          zct[i] = reader.getZCTCoords(id, indices[i]);
+          indices2[i] = reader.getIndex(id, zct[i][0], zct[i][1], zct[i][2]);
+          System.out.print("\tPlane #" + indices[i] + " <=> Z " + zct[i][0] +
+            ", C " + zct[i][1] + ", T " + zct[i][2]);
+          if (indices[i] != indices2[i]) {
+            System.out.println(" [mismatch: " + indices2[i] + "]");
+          }
+          else System.out.println();
+        }
       }
     }
     reader.setSeries(id, series);
@@ -693,14 +700,16 @@ public abstract class FormatReader extends FormatHandler
     }
 
     // read format-specific metadata table
-    System.out.println();
-    System.out.println("Reading" + s + " metadata");
-    Hashtable meta = reader.getMetadata(id);
-    String[] keys = (String[]) meta.keySet().toArray(new String[0]);
-    Arrays.sort(keys);
-    for (int i=0; i<keys.length; i++) {
-      System.out.print(keys[i] + ": ");
-      System.out.println(reader.getMetadataValue(id, keys[i]));
+    if (doMeta) {
+      System.out.println();
+      System.out.println("Reading" + s + " metadata");
+      Hashtable meta = reader.getMetadata(id);
+      String[] keys = (String[]) meta.keySet().toArray(new String[0]);
+      Arrays.sort(keys);
+      for (int i=0; i<keys.length; i++) {
+        System.out.print(keys[i] + ": ");
+        System.out.println(reader.getMetadataValue(id, keys[i]));
+      }
     }
 
     // output OME-XML
