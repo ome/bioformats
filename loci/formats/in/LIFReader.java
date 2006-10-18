@@ -300,17 +300,16 @@ public class LIFReader extends FormatReader {
 
       String tmpToken = token;
       if (token.indexOf("=") != -1) {
-        while (token.length() > 2) {
-          key = token.substring(0, token.indexOf("\"") - 1);
-          value = token.substring(token.indexOf("\"") + 1,
-            token.indexOf("\"", token.indexOf("\"") + 1));
-
-          token = token.substring(key.length() + value.length() + 3);
-
-          key = key.trim();
-          value = value.trim();
-          metadata.put(key, value);
+        token = token.substring(0, token.length() - 1).trim();
+        key = token.substring(0, token.indexOf(" ")).trim();
+        int count = 1;
+        while (metadata.containsKey(key)) {
+          if (key.indexOf(" ") != -1) key = key.substring(0, key.indexOf(" "));
+          key = key + " " + count;
+          count++;
         }
+        value = token.substring(token.indexOf(" ") + 1).trim();
+        metadata.put(key, value);
       }
       token = tmpToken;
 
