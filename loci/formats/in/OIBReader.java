@@ -26,10 +26,7 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.*;
 import loci.formats.*;
 
 /**
@@ -261,6 +258,40 @@ public class OIBReader extends FormatReader {
       r.exec("fs = new POIFSFileSystem(fis)");
       r.exec("dir = fs.getRoot()");
       parseDir(0, r.getVar("dir"));
+
+      // sort names
+
+      Vector newKeys = new Vector();
+      Vector comps = new Vector();
+      Enumeration keys = names.keys();
+      while (keys.hasMoreElements()) {
+        Object key = keys.nextElement();
+        String value = (String) names.get(key);
+        int comp = Integer.parseInt(value.substring(value.indexOf("0")));
+        int size = newKeys.size();
+        for (int i=0; i<size; i++) {
+          if (comp < ((Integer) comps.get(i)).intValue()) {
+            newKeys.add(i, value);
+            comps.add(i, new Integer(comp));
+            i = size;
+          }
+          else if (i == size - 1) {
+            newKeys.add(value);
+            comps.add(new Integer(comp));
+            i = size;
+          }
+        }
+        if (newKeys.size() == 0) {
+          newKeys.add(value);
+          comps.add(new Integer(comp));
+        }
+      }
+
+      Hashtable newNames = new Hashtable();
+      for (int i=0; i<newKeys.size(); i++) {
+        newNames.put(new Integer(i), newKeys.get(i));
+      }
+      names = newNames;
 
       String[] labels = new String[9];
       String[] dims = new String[9];
