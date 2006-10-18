@@ -300,10 +300,26 @@ public class OIFReader extends FormatReader {
 
     sizeX[0] = Integer.parseInt((String) metadata.get("ImageWidth"));
     sizeY[0] = Integer.parseInt((String) metadata.get("ImageHeight"));
-    sizeZ[0] = numImages;
-    sizeC[0] = isRGB(currentId) ? 3 : 1;
-    sizeT[0] = 1;
-    currentOrder[0] = "XYZTC";
+    String metadataOrder = (String) metadata.get("AxisOrder");
+    metadataOrder = metadataOrder.substring(1, metadataOrder.length() - 1);
+    if (metadataOrder == null) metadataOrder = "XYZTC";
+    else {
+      String[] names = new String[] {"X", "Y", "Z", "C", "T"};
+      if (metadataOrder.length() < 5) {
+        for (int i=0; i<names.length; i++) {
+          if (metadataOrder.indexOf(names[i]) == -1) metadataOrder += names[i];
+        }
+      }
+    }
+    currentOrder[0] = metadataOrder;
+
+    sizeC[0] = (isRGB(currentId) || metadataOrder.indexOf("C") == 2) ? 3 : 1;
+    int remainingImages = numImages;
+    if (metadataOrder.indexOf("C") == 2) remainingImages /= 3;
+    sizeZ[0] = metadataOrder.indexOf("Z") < metadataOrder.indexOf("T") ?
+      remainingImages : 1; 
+    sizeT[0] = metadataOrder.indexOf("T") < metadataOrder.indexOf("Z") ?
+      remainingImages : 1;
 
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(oifFile);
@@ -327,9 +343,9 @@ public class OIFReader extends FormatReader {
     store.setPixels(
       new Integer(Integer.parseInt((String) metadata.get("ImageWidth"))),
       new Integer(Integer.parseInt((String) metadata.get("ImageHeight"))),
-      new Integer(numImages),
+      new Integer(sizeZ[0]),
       new Integer(getSizeC(id)),
-      new Integer(1),
+      new Integer(sizeT[0]),
       new Integer(pixelType[0]),
       new Boolean(false),
       "XYZTC",
