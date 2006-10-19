@@ -51,8 +51,7 @@ public class AliconaReader extends FormatReader {
   /** Number of channels. */
   private int channels;
 
-  /** Image offsets. */
-  private int depthOffset;
+  /** Image offset. */
   private int textureOffset;
 
   /** Number of bytes per pixel (either 1 or 2). */
@@ -192,9 +191,6 @@ public class AliconaReader extends FormatReader {
       else if (key.equals("Cols")) width = Integer.parseInt(value);
       else if (key.equals("NumberOfPlanes")) {
         numImages = Integer.parseInt(value);
-      }
-      else if (key.equals("DepthImageOffset")) {
-        depthOffset = Integer.parseInt(value);
       }
       else if (key.equals("TextureImageOffset")) {
         textureOffset = Integer.parseInt(value);
