@@ -176,6 +176,9 @@ public interface IFormatReader extends IFormatHandler {
   /** Gets the currently active series. */
   int getSeries(String id) throws FormatException, IOException;
 
+  /** Specify whether or not to ignore color tables, if present. */
+  void setIgnoreColorTable(boolean ignore);
+
   /**
    * Swaps the dimensions according to the given dimension order.  If the given
    * order is identical to the file's native order, then nothing happens.

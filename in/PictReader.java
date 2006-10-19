@@ -137,7 +137,7 @@ public class PictReader extends FormatReader {
 
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
-    return true;
+    return !ignoreColorTable;
   }
 
   /** Return true if the data is in little-endian format. */
@@ -198,7 +198,7 @@ public class PictReader extends FormatReader {
     sizeX[0] = d.width;
     sizeY[0] = d.height;
     sizeZ[0] = 1;
-    sizeC[0] = 3;
+    sizeC[0] = ignoreColorTable ? 1 : 3;
     sizeT[0] = 1;
     currentOrder[0] = "XYCZT";
 
@@ -208,8 +208,8 @@ public class PictReader extends FormatReader {
     pixelType[0] = FormatReader.INT8;
     store.setPixels(
       new Integer(d.width), new Integer(d.height),
-      new Integer(1), new Integer(3), new Integer(1), new Integer(pixelType[0]),
-      new Boolean(!little), "XYCZT", null);
+      new Integer(1), new Integer(sizeC[0]), new Integer(1),
+      new Integer(pixelType[0]), new Boolean(!little), "XYCZT", null);
   }
 
   // -- PictReader API methods --
@@ -258,7 +258,7 @@ public class PictReader extends FormatReader {
       return ImageTools.makeBuffered(qtTools.pictToImage(pix));
     }
 
-    if (lookup != null) {
+    if (lookup != null && !ignoreColorTable) {
       // 8 bit data
       short[][] data = new short[3][height * width];
 
@@ -287,6 +287,16 @@ public class PictReader extends FormatReader {
       if (DEBUG) {
         System.out.println("PictReader.openBytes: 8-bit data, " + width +
           " x " + height + ", length=" + data.length + "x" + data[0].length);
+      }
+      return ImageTools.makeImage(data, width, height);
+    }
+    else if (ignoreColorTable) {
+      byte[][] data = new byte[1][width * height];
+      byte[] row;
+
+      for (int i=0; i<height; i++) {
+        row = (byte[]) strips.get(i);
+        System.arraycopy(row, 0, data[0], i*width, width);
       }
       return ImageTools.makeImage(data, width, height);
     }

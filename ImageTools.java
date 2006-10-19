@@ -1014,89 +1014,167 @@ public final class ImageTools {
     return b;
   }
 
-  /** Perform 5x5 B-spline convolution on the given image. */
-  public static byte[][] convolve(byte[][] image, int width, int height) {
+  /** Perform demosaicing on a byte array, assuming a {B, G, G, R} mosaic. */
+  public static short[][] demosaic(short[][] input, int w, int h) {
 
-    byte[] red = image[0];
-    byte[] green = image[1];
-    byte[] blue = image[2];
+    for (int i=0; i<input[0].length; i++) {
+      // determine which color components need to be calculated
 
-    byte[] newRed = new byte[image[0].length];
-    byte[] newGreen = new byte[image[0].length];
-    byte[] newBlue = new byte[image[0].length];
+      boolean needsRed = !(((i / w) % 2 == 1) && ((i % w) % 2 == 1));
+      boolean needsBlue = !(((i / w) % 2 == 0) && ((i % w) % 2 == 0));
+      boolean needsGreen = needsBlue ^ needsRed;
 
-    int[][] kernel = {{1, 4, 6, 4, 1}, {4, 16, 24, 16, 4}, {6, 24, 36, 24, 6},
-      {4, 16, 24, 16, 4}, {1, 4, 6, 4, 1}};
-
-    for (int i=0; i<height; i++) {
-      for (int j=0; j<width; j++) {
-        int rrow = 0, grow = 0, brow = 0;
-        int[] krow = kernel[i % 5];
-
-        int diff = width - j;
-
+      if (needsRed) {
         int sum = 0;
+        int count = 0;
+
+        int[] indices = null;
+
+        if (!needsBlue) {
+          indices = new int[] {i - w - 1, i - w + 1, i + w - 1, i + w + 1};
+        }
+        else if ((i / w) % 2 == 1) indices = new int[] {i - 1, i + 1};
+        else indices = new int[] {i - w, i + w};
+
+        for (int j=0; j<indices.length; j++) {
+          if (indices[j] < input[0].length && indices[j] >= 0) {
+            sum += (int) input[0][indices[j]];
+            count++;
+          }
+        }
+
+        if (count > 0) {
+          input[0][i] = (short) (sum / count);
+        }
+      }
+
+      if (needsGreen) {
+        int sum = 0;
+        int count = 0;
+
+        int[] indices = {i - w, i - 1, i + 1, i + w};
+
+        for (int j=0; j<indices.length; j++) {
+          if (indices[j] < input[0].length && indices[j] >= 0) {
+            sum += (int) input[1][indices[j]];
+            count++;
+          }
+        }
+
+        if (count > 0) {
+          input[1][i] = (short) (sum / count);
+        }
+      }
+
+      if (needsBlue) {
+        int sum = 0;
+        int count = 0;
+
+        int[] indices = null;
+
+        if (!needsRed) {
+          indices = new int[] {i - w - 1, i - w + 1, i + w - 1, i + w + 1};
+        }
+        else if ((i / w) % 2 == 1) indices = new int[] {i - w, i + w};
+        else indices = new int[] {i - 1, i + 1};
+
+        for (int j=0; j<indices.length; j++) {
+          if (indices[j] < input[0].length && indices[j] >= 0) {
+            sum += (int) input[2][indices[j]];
+            count++;
+          }
+        }
+
+        if (count > 0) {
+          input[2][i] = (short) (sum / count);
+        }
+      }
+    }
+
+    // Before returning, perform convolution with a 5x5 pseudo-Gaussian filter.
+    // This is *not* an optimal filter, but it works reasonably well.
+
+    short[] newRed = new short[w * h];
+    short[] newGreen = new short[w * h];
+    short[] newBlue = new short[w * h];
+
+    float[][] kernel = new float[5][5];
+    kernel[0] = new float[] {0.458f, 0.823f, 1f, 0.823f, 0.458f};
+    kernel[1] = new float[] {0.823f, 1f, 1.09f, 1f, 0.823f};
+    kernel[2] = new float[] {1f, 1.09f, 1.135f, 1.09f, 1f};
+    kernel[3] = new float[] {0.823f, 1f, 1.09f, 1f, 0.823f};
+    kernel[4] = new float[] {0.458f, 0.823f, 1f, 0.823f, 0.458f};
+
+    for (int i=0; i<h; i++) {
+      for (int j=0; j<w; j++) {
+        float redRow = 0, greenRow = 0, blueRow = 0;
+        float[] kernelRow = kernel[i % 5];
+
+        int diff = w - j;
+        float sum = 0;
+
         if (diff < 5) {
           while (diff > 0) {
-            rrow += krow[diff - 1] * red[i*width + j + diff - 1];
-            grow += krow[diff - 1] * green[i*width + j + diff - 1];
-            brow += krow[diff - 1] * blue[i*width + j + diff - 1];
-            sum += krow[diff - 1];
+            int off = i*w + j + diff - 1;
+            redRow += kernelRow[diff - 1] * input[0][off];
+            greenRow += kernelRow[diff - 1] * input[1][off];
+            blueRow += kernelRow[diff - 1] * input[2][off];
+            sum += kernelRow[diff - 1];
             diff--;
           }
         }
         else {
           for (int m=0; m<5; m++) {
-            rrow += krow[m] * red[i*width + j + m];
-            grow += krow[m] * green[i*width + j + m];
-            brow += krow[m] * blue[i*width + j + m];
-            sum += krow[m];
+            int off = i*w + j + m;
+            redRow += kernelRow[m] * input[0][off];
+            greenRow += kernelRow[m] * input[1][off];
+            blueRow += kernelRow[m] * input[2][off];
+            sum += kernelRow[m];
           }
         }
-
-        newRed[i*width + j] = (byte) (rrow / sum);
-        newGreen[i*width + j] = (byte) (grow / sum);
-        newBlue[i*width + j] = (byte) (brow / sum);
+        if (sum == 0) sum = 1;
+        newRed[i*w + j] = (short) (redRow / sum);
+        newGreen[i*w + j] = (short) (greenRow / sum);
+        newBlue[i*w + j] = (short) (blueRow / sum);
       }
     }
 
-    for (int i=0; i<height; i++) {
-      for (int j=0; j<width; j++) {
-        int rcol = 0, gcol = 0, bcol = 0;
-        int[] kcol = kernel[j % 5];
+    for (int i=0; i<h; i++) {
+      for (int j=0; j<w; j++) {
+        float redCol = 0, greenCol = 0, blueCol = 0;
+        float[] kernelCol = kernel[j % 5];
 
-        int diff = height - i;
+        int diff = h - i;
+        float sum = 0;
 
-        int sum = 0;
         if (diff < 5) {
           while (diff > 0) {
-            rcol += kcol[diff - 1] * newRed[(i + diff - 1)*width + j];
-            gcol += kcol[diff - 1] * newGreen[(i + diff - 1)*width + j];
-            bcol += kcol[diff - 1] * newBlue[(i + diff - 1)*width + j];
-            sum += kcol[diff - 1];
+            int off = (i + diff - 1) * w + j;
+            redCol += kernelCol[diff - 1] * newRed[off];
+            greenCol += kernelCol[diff - 1] * newGreen[off];
+            blueCol += kernelCol[diff - 1] * newBlue[off];
+            sum += kernelCol[diff - 1];
             diff--;
           }
         }
         else {
           for (int m=0; m<5; m++) {
-            rcol += kcol[m] * newRed[(i+m)*width + j];
-            gcol += kcol[m] * newGreen[(i+m)*width + j];
-            bcol += kcol[m] * newBlue[(i+m)*width + j];
-            sum += kcol[m];
+            int off = (i + m) * w + j;
+            redCol += kernelCol[m] * newRed[off];
+            greenCol += kernelCol[m] * newGreen[off];
+            blueCol += kernelCol[m] * newBlue[off];
+            sum += kernelCol[m];
           }
         }
 
-        red[i*width + j] = (byte) (rcol / sum);
-        green[i*width + j] = (byte) (gcol / sum);
-        blue[i*width + j] = (byte) (bcol / sum);
+        if (sum == 0) sum = 1;
+        input[0][i*w + j] = (short) (redCol / sum);
+        input[1][i*w + j] = (short) (greenCol / sum);
+        input[2][i*w + j] = (short) (blueCol / sum);
       }
     }
 
-    image[0] = red;
-    image[1] = green;
-    image[2] = blue;
-
-    return image;
+    return input;
   }
 
   /**

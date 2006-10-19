@@ -81,7 +81,10 @@ public class PerkinElmerReader extends FormatReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    if (isTiff) return tiff[0].isRGB(files[0]);
+    if (isTiff) {
+      tiff[0].setIgnoreColorTable(ignoreColorTable);
+      return tiff[0].isRGB(files[0]);
+    }
     return false;
   }
 
@@ -104,7 +107,10 @@ public class PerkinElmerReader extends FormatReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    if (isTiff) return tiff[no / channels].openBytes(files[no / channels], 0);
+    if (isTiff) {
+      tiff[no / channels].setIgnoreColorTable(ignoreColorTable);
+      return tiff[no / channels].openBytes(files[no / channels], 0);
+    }
 
     String file = files[no];
     RandomAccessStream s = new RandomAccessStream(file);
@@ -126,7 +132,10 @@ public class PerkinElmerReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-    if (isTiff) return tiff[no / channels].openImage(files[no / channels], 0);
+    if (isTiff) {
+      tiff[no / channels].setIgnoreColorTable(ignoreColorTable);
+      return tiff[no / channels].openImage(files[no / channels], 0);
+    }
 
     byte[] b = openBytes(id, no);
     int bpp = b.length / (sizeX[0] * sizeY[0]);

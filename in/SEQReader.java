@@ -112,7 +112,7 @@ public class SEQReader extends BaseTiffReader {
     sizeT[0] = Integer.parseInt((String) metadata.get("slices"));
 
     try {
-      if (isRGB(currentId)) sizeC[0] *= 3;
+      if (isRGB(currentId) && sizeC[0] != 3) sizeC[0] *= 3;
     }
     catch (Exception e) { }
 

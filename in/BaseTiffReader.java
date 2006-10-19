@@ -196,6 +196,10 @@ public abstract class BaseTiffReader extends FormatReader {
         photoInterp = "CIELAB";
         metaDataPhotoInterp = "RGB";
         break;
+      case TiffTools.CFA_ARRAY:
+        photoInterp = "Color Filter Array";
+        metaDataPhotoInterp = "RGB";
+        break;
     }
     put("PhotometricInterpretation", photoInterp);
     put("MetaDataPhotometricInterpretation", metaDataPhotoInterp);
@@ -204,6 +208,13 @@ public abstract class BaseTiffReader extends FormatReader {
     putInt("CellLength", ifd, TiffTools.CELL_LENGTH);
 
     int or = TiffTools.getIFDIntValue(ifd, TiffTools.ORIENTATION);
+
+    // adjust the width and height if necessary
+    if (or == 8) {
+      put("ImageWidth", ifd, TiffTools.IMAGE_LENGTH);
+      put("ImageLength", ifd, TiffTools.IMAGE_WIDTH);
+    }
+
     String orientation = null;
     // there is no case 0
     switch (or) {
@@ -442,7 +453,8 @@ public abstract class BaseTiffReader extends FormatReader {
     // to reset it here
 
     int p = TiffTools.getIFDIntValue(ifd, TiffTools.PHOTOMETRIC_INTERPRETATION);
-    if (p == TiffTools.RGB_PALETTE) {
+    if (!ignoreColorTable &&
+      (p == TiffTools.RGB_PALETTE || p == TiffTools.CFA_ARRAY)) {
       numC = 3;
       bps *= 3;
     }
@@ -480,7 +492,7 @@ public abstract class BaseTiffReader extends FormatReader {
       int bitFormat = TiffTools.getIFDIntValue(ifds[0],
         TiffTools.SAMPLE_FORMAT);
 
-      if (bitsPerSample == 12) bitsPerSample = 8;  // special case
+      //if (bitsPerSample == 12) bitsPerSample = 8;  // special case
       while (bitsPerSample % 8 != 0) bitsPerSample++;
       if (bitsPerSample == 24 || bitsPerSample == 48) bitsPerSample /= 3;
 
@@ -666,8 +678,17 @@ public abstract class BaseTiffReader extends FormatReader {
     {
       return true;
     }
-    return TiffTools.getIFDIntValue(ifds[0],
-      TiffTools.PHOTOMETRIC_INTERPRETATION, true, 0) == TiffTools.RGB_PALETTE;
+    try {
+      int p = TiffTools.getIFDIntValue(ifds[0],
+        TiffTools.PHOTOMETRIC_INTERPRETATION, true, 0);
+      return (!ignoreColorTable &&
+        (p == TiffTools.RGB_PALETTE || p == TiffTools.CFA_ARRAY)) ||
+        p == TiffTools.RGB;
+    }
+    catch (Exception e) {
+      return TiffTools.getIFDIntValue(ifds[0],
+        TiffTools.SAMPLES_PER_PIXEL, true, 0) > 1;
+    }
   }
 
   /**
@@ -729,7 +750,7 @@ public abstract class BaseTiffReader extends FormatReader {
     if (!id.equals(currentId)) initFile(id);
 
     byte[][] p = null;
-    p = TiffTools.getSamples(ifds[no], in, 0);
+    p = TiffTools.getSamples(ifds[no], in, 0, ignoreColorTable);
     for (int i=0; i<p.length; i++) {
       swapIfRequired(p[i]);
       System.arraycopy(p[i], 0, buf, i * p[0].length, p[0].length);
@@ -795,7 +816,7 @@ public abstract class BaseTiffReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    return TiffTools.getImage(ifds[no], in);
+    return TiffTools.getImage(ifds[no], in, 0, ignoreColorTable);
   }
 
   /** Closes any open files. */

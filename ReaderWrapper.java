@@ -185,6 +185,10 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getSeries(id);
   }
 
+  public void setIgnoreColorTable(boolean ignore) {
+    reader.setIgnoreColorTable(ignore);
+  }
+
   public void swapDimensions(String id, String order)
     throws FormatException, IOException
   {

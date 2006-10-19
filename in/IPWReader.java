@@ -95,7 +95,7 @@ public class IPWReader extends BaseTiffReader {
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return rgb;
+    return rgb && !ignoreColorTable;
   }
 
   /** Return true if the data is in little-endian format. */
@@ -141,7 +141,8 @@ public class IPWReader extends BaseTiffReader {
       RandomAccessStream stream = new RandomAccessStream(b);
       ifds = TiffTools.getIFDs(stream);
       little = TiffTools.isLittleEndian(ifds[0]);
-      byte[][] samples = TiffTools.getSamples(ifds[0], stream, 0);
+      byte[][] samples =
+        TiffTools.getSamples(ifds[0], stream, 0, ignoreColorTable);
 
       byte[] rtn = new byte[samples.length * samples[0].length];
       for (int i=0; i<samples.length; i++) {
@@ -311,6 +312,7 @@ public class IPWReader extends BaseTiffReader {
     currentOrder[0] = "XY";
 
     if (rgb) sizeC[0] *= 3;
+    if (ignoreColorTable) sizeC[0] = 1;
 
     int maxNdx = 0, max = 0;
     int[] dims = {sizeZ[0], sizeC[0], sizeT[0]};
