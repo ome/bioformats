@@ -59,7 +59,7 @@ public interface Uploader {
    * 
    * @return the number of pixel bytes uploaded
    */
-  int uploadPlane(BufferedImage plane, MetadataStore store) 
+  int uploadPlane(BufferedImage plane, int num, MetadataStore store) 
     throws UploadException;
 
   /** 
@@ -68,8 +68,8 @@ public interface Uploader {
    * 
    * @return the number of pixel bytes uploaded
    */
-  int uploadPlane(BufferedImage plane, MetadataStore store, Integer image,
-    Integer dataset) throws UploadException;
+  int uploadPlane(BufferedImage plane, int num, MetadataStore store, 
+    Integer image, Integer dataset) throws UploadException;
 
   /**
    * Upload a single byte array to the server, creating a new
@@ -77,7 +77,8 @@ public interface Uploader {
    * 
    * @return the number of pixel bytes uploaded
    */
-  int uploadPlane(byte[] plane, MetadataStore store) throws UploadException;
+  int uploadPlane(byte[] plane, int num, MetadataStore store) 
+    throws UploadException;
 
   /**
    * Upload a single byte array to the server, placing it in the given image,
@@ -85,7 +86,7 @@ public interface Uploader {
    * 
    * @return the number of pixel bytes uploaded
    */
-  int uploadPlane(byte[] plane, MetadataStore store, Integer image, 
+  int uploadPlane(byte[] plane, int num, MetadataStore store, Integer image, 
     Integer dataset) throws UploadException;
 
   /**
@@ -94,8 +95,8 @@ public interface Uploader {
    * 
    * @return the number of pixel bytes uploaded
    */
-  int uploadPlanes(BufferedImage[] planes, MetadataStore store)
-    throws UploadException;
+  int uploadPlanes(BufferedImage[] planes, int first, int last, int step, 
+    MetadataStore store) throws UploadException;
 
   /**
    * Upload an array of BufferedImages to the server, placing them in the given
@@ -103,8 +104,8 @@ public interface Uploader {
    * 
    * @return the number of pixel bytes uploaded
    */
-  int uploadPlanes(BufferedImage[] planes, MetadataStore store, 
-    Integer image, Integer dataset) throws UploadException;
+  int uploadPlanes(BufferedImage[] planes, int first, int last, int step, 
+    MetadataStore store, Integer image, Integer dataset) throws UploadException;
 
   /**
    * Upload an array of byte arrays to the server, creating a new image
@@ -112,7 +113,8 @@ public interface Uploader {
    * 
    * @return the number of pixel bytes uploaded
    */
-  int uploadPlanes(byte[][] planes, MetadataStore store) throws UploadException;
+  int uploadPlanes(byte[][] planes, int first, int last, int step, 
+    MetadataStore store) throws UploadException;
 
   /**
    * Upload an array of byte arrays to the server, placing them in the given
@@ -120,7 +122,7 @@ public interface Uploader {
    * 
    * @return the number of pixel bytes uploaded
    */
-  int uploadPlanes(byte[][] planes, MetadataStore store, Integer image, 
-    Integer dataset) throws UploadException;
+  int uploadPlanes(byte[][] planes, int first, int last, int step,
+    MetadataStore store, Integer image, Integer dataset) throws UploadException;
 
 }
