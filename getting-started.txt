@@ -1,9 +1,11 @@
-Some notes on writing a new file format reader for LOCI Bio-Formats:
+              Bio-Formats Getting Started Guide by Melissa Linkert
+
+This document is a brief guide to writing new Bio-Formats file format readers.
 
 All format readers should extend either loci.formats.FormatReader or a reader
 in loci.formats.in.
 
-The following methods must be overridden:
+---=== Methods to override ===---
 
 boolean isThisType(byte[]) : 
   Check the first few bytes of a file to determine if the file can be read by
@@ -95,15 +97,16 @@ Bio-Formats, it is more efficient to make the new reader a subclass of the
 existing reader (rather than subclassing FormatReader).  In this case, it is
 usually sufficient to override initFile(String) and isThisType(byte[]).
 
-A few other useful things:
+---=== Other useful things ===---
 
 - loci.formats.RandomAccessStream is a hybrid RandomAccessFile/InputStream
   class that is generally more efficient than either RandomAccessFile or
-  InputStream.  It is recommended that you use this for reading binary files.
+  InputStream, and implements the DataInput interface.
+  It is recommended that you use this for reading binary files.
 
 - loci.formats.DataTools provides a number of methods for converting bytes to
   shorts, ints, longs, etc.  It also supports reading most primitive types
-  directly from a RandomAccessStream.
+  directly from a RandomAccessStream (or other DataInput implementation).
 
 - loci.formats.ImageTools provides several methods for manipulating
   java.awt.image.BufferedImage objects.  In particular, it can create
@@ -131,8 +134,11 @@ A few other useful things:
   can be found in loci.formats.BitBuffer and loci.formats.BitWriter
 
 - Once you have written your file format reader, add a line to the readers.txt
-  file with the fully name of the reader, followed by a '#' and the file
-  extensions associated with the file format.
+  file with the fully qualified name of the reader, followed by a '#' and the
+  file extensions associated with the file format. Note that ImageReader,
+  the master file format reader, tries to identify which format reader to use
+  according to the order given in readers.txt, so be sure to place your reader
+  in an appropriate position within the list.
 
 - The easiest way to test your new reader is by calling "java
   loci.formats.ImageReader <file name>".  If all goes well, you should see
@@ -150,7 +156,7 @@ A few other useful things:
     -merge              Combine separate channels into a set of RGB images.
     -stitch             Open all files with a similar name.
     -separate           Force RGB images to be split into separate channels.
-    -ignore             Intepret indexed color images as grayscale.
+    -nocolors           Intepret indexed color images as grayscale.
     -omexml             Output the OME-XML for the file.
     -range              Specify a range of images to open.
     -series             Set the series number (for container file formats).
@@ -160,3 +166,7 @@ A few other useful things:
   recommend first looking at loci.formats.in.ImarisReader (this is the most
   straightforward one).  loci.formats.in.LIFReader and ZeissZVIReader are also
   good references that show off some of the nicer features of Bio-Formats.
+
+If you have questions about Bio-Formats, please contact:
+  Curtis Rueden <ctrueden@wisc.edu>
+  Melissa Linkert <linkert@wisc.edu>
