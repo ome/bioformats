@@ -106,9 +106,10 @@ Movie Stitcher
 Slim Plotter
     JAR file:      SlimPlotter.jar
     Folders:       loci/apps/slim
-                   some loci/formats, loci/formats/in and loci/visbio
+                   some loci/visbio
     Main class:    loci.apps.slim.SlimPlotter
-    Dependencies:  lma.jar
+    Dependencies:  bio-formats.jar
+                   lma.jar
                    visad-lite.jar
     Targets:       style-slim
                    compile-slim
