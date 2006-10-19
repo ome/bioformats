@@ -22,6 +22,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
+import loci.formats.in.SDTInfo;
+import loci.formats.in.SDTReader;
 import loci.formats.DataTools;
 import loci.formats.ExtensionFileFilter;
 import loci.visbio.util.OutputConsole;
@@ -51,6 +53,9 @@ public class SlimPlotter implements ActionListener,
   /** Actual data values, dimensioned [channel][row][column][bin]. */
   private int[][][][] values;
 
+  /** Current binned data values, dimensioned [channels * timeBins]. */
+  private float[] samps;
+
   // data parameters
   private int width, height;
   private int channels, timeBins;
@@ -75,6 +80,9 @@ public class SlimPlotter implements ActionListener,
   private JTextField wField, hField, tField, cField, trField, wlField, sField;
   private JCheckBox peaksBox;
 
+  // GUI components for intensity pane
+  private JSlider cSlider;
+
   // GUI components for decay pane
   private JLabel decayLabel;
   private JRadioButton linear, log;
@@ -86,7 +94,7 @@ public class SlimPlotter implements ActionListener,
   private JCheckBox showBox, showScale;
   private JCheckBox showFit, showResiduals;
   private JSpinner numCurves;
-  private JSlider cSlider;
+  private JButton exportData;
 
   // other GUI components
   private OutputConsole console;
@@ -108,7 +116,7 @@ public class SlimPlotter implements ActionListener,
     System.setErr(new ConsoleStream(new PrintStream(console)));
 
     ProgressMonitor progress = new ProgressMonitor(null,
-      "Launching SlimPlotter", "Initializing", 0, 16 + 7);
+      "Launching SlimPlotter", "Initializing", 0, 16 + 8);
     progress.setMillisToPopup(0);
     progress.setMillisToDecideToPopup(0);
     int p = 0;
@@ -132,13 +140,6 @@ public class SlimPlotter implements ActionListener,
       filename = args[0];
       file = new File(filename);
     }
-    width = height = timeBins = channels = -1;
-    if (args.length >= 3) {
-      width = parse(args[1], -1);
-      height = parse(args[2], -1);
-    }
-    if (args.length >= 4) timeBins = parse(args[3], -1);
-    if (args.length >= 5) channels = parse(args[4], -1);
 
     if (!file.exists()) {
       System.out.println("File does not exist: " + filename);
@@ -146,92 +147,20 @@ public class SlimPlotter implements ActionListener,
     }
 
     // read SDT file header
-    RandomAccessFile raf = new RandomAccessFile(file, "r");
-    short revision = DataTools.read2SignedBytes(raf, true);
-    int infoOffset = DataTools.read4SignedBytes(raf, true);
-    short infoLength = DataTools.read2SignedBytes(raf, true);
-    int setupOffs = DataTools.read4SignedBytes(raf, true);
-    short setupLength = DataTools.read2SignedBytes(raf, true);
-    int dataBlockOffset = DataTools.read4SignedBytes(raf, true);
-    short noOfDataBlocks = DataTools.read2SignedBytes(raf, true);
-    int dataBlockLength = DataTools.read4SignedBytes(raf, true);
-    int measDescBlockOffset = DataTools.read4SignedBytes(raf, true);
-    short noOfMeasDescBlocks = DataTools.read2SignedBytes(raf, true);
-    short measDescBlockLength = DataTools.read2SignedBytes(raf, true);
-    int headerValid = DataTools.read2UnsignedBytes(raf, true);
-    long reserved1 = DataTools.read4UnsignedBytes(raf, true);
-    int reserved2 = DataTools.read2UnsignedBytes(raf, true);
-    int chksum = DataTools.read2UnsignedBytes(raf, true);
-
-    int offset = dataBlockOffset + 22;
-    log("File length: " + file.length());
-    log("Data offset: " + offset);
-    log("Setup offset: " + setupOffs);
-
-    // read SDT setup block
-    raf.seek(setupOffs);
-    byte[] setupData = new byte[4095];
-    raf.readFully(setupData);
-    String setup = new String(setupData);
-    raf.close();
-
-    int leftToFind = 3;
-    if (width < 0) {
-      String wstr = "[SP_SCAN_X,I,";
-      int wndx = setup.indexOf(wstr);
-      width = 128;
-      if (wndx >= 0) {
-        int q = setup.indexOf("]", wndx);
-        if (q >= 0) {
-          width = parse(setup.substring(wndx + wstr.length(), q), width);
-          log("Got width from file: " + width);
-          leftToFind--;
-        }
-      }
-    }
-    if (height < 0) {
-      height = 128;
-      String hstr = "[SP_SCAN_Y,I,";
-      int hndx = setup.indexOf(hstr);
-      if (hndx >= 0) {
-        int q = setup.indexOf("]", hndx);
-        if (q >= 0) {
-          height = parse(setup.substring(hndx + hstr.length(), q), height);
-          log("Got height from file: " + height);
-          leftToFind--;
-        }
-      }
-    }
-    if (timeBins < 0) {
-      timeBins = 64;
-      String tstr = "[SP_ADC_RE,I,";
-      int tndx = setup.indexOf(tstr);
-      if (tndx >= 0) {
-        int q = setup.indexOf("]", tndx);
-        if (q >= 0) {
-          timeBins = parse(setup.substring(tndx + tstr.length(), q), timeBins);
-          log("Got timeBins from file: " + timeBins);
-          leftToFind--;
-        }
-      }
-    }
-    if (channels < 0) {
-      // autodetect number of channels based on file size
-      channels = (int) ((file.length() - offset) /
-        (2 * timeBins * width * height));
-    }
+    SDTReader reader = new SDTReader();
+    SDTInfo info = reader.getInfo(file.getPath());
+    reader.close();
+    int offset = info.dataBlockOffs + 22;
+    width = info.width;
+    height = info.height;
+    timeBins = info.timeBins;
+    channels = info.channels;
     timeRange = 12.5;
     minWave = 400;
     waveStep = 10;
-
-    // warn user if some numbers were not found
-    if (leftToFind > 0) {
-      JOptionPane.showMessageDialog(null,
-        "Some numbers (image width, image height, and number of time bins)\n" +
-        "were not found within the file. The numbers you are about to see\n" +
-        "are best guesses. Please change them if they are incorrect.",
-        "SlimPlotter", JOptionPane.WARNING_MESSAGE);
-    }
+    progress.setMaximum(adjustPeaks ?
+      (channels * height + 2 * channels + 10) : (channels * height + 8));
+    progress.setNote("Creating user interface");
 
     // show dialog confirming data parameters
     paramDialog = new JDialog((Frame) null, "SlimPlotter", true);
@@ -270,11 +199,10 @@ public class SlimPlotter implements ActionListener,
     int maxWave = minWave + (channels - 1) * waveStep;
     roiCount = width * height;
     roiPercent = 100;
+    progress.setProgress(++p);
+    progress.setNote("Reading data");
 
     // read pixel data
-    progress.setMaximum(adjustPeaks ?
-      (channels * height + 2 * channels + 9) : (channels * height + 7));
-    progress.setNote("Reading data");
     DataInputStream fin = new DataInputStream(new FileInputStream(file));
     fin.skipBytes(offset); // skip to data
     byte[] data = new byte[2 * channels * height * width * timeBins];
@@ -621,6 +549,9 @@ public class SlimPlotter implements ActionListener,
     numCurves.setMaximumSize(numCurves.getPreferredSize());
     numCurves.addChangeListener(this);
 
+    exportData = new JButton("Export");
+    exportData.addActionListener(this);
+
     console.getWindow().addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) { showLog.setSelected(false); }
     });
@@ -632,6 +563,8 @@ public class SlimPlotter implements ActionListener,
     options.add(makeRadioPanel("Residuals", resSurface, resLines));
     options.add(showPanel);
 //    options.add(numCurves);
+    options.add(Box.createHorizontalStrut(5));
+    options.add(exportData);
     decayPane.add(options, BorderLayout.SOUTH);
     decayFrame.setContentPane(decayPane);
 
@@ -774,6 +707,39 @@ public class SlimPlotter implements ActionListener,
     else if (src == showResiduals) {
       resRend.toggle(showResiduals.isSelected());
     }
+    else if (src == exportData) {
+      // get output file from user
+      JFileChooser jc = new JFileChooser(System.getProperty("user.dir"));
+      jc.addChoosableFileFilter(new ExtensionFileFilter("txt",
+        "Text files"));
+      int rval = jc.showSaveDialog(exportData);
+      if (rval != JFileChooser.APPROVE_OPTION) return;
+      File file = jc.getSelectedFile();
+      if (file == null) return;
+
+      // write currently displayed binned data to file
+      try {
+        PrintWriter out = new PrintWriter(new FileWriter(file));
+        out.println(timeBins + " x " + channels + " (count=" + roiCount +
+          ", percent=" + roiPercent + ", maxVal=" + maxVal + ")");
+        for (int c=0; c<channels; c++) {
+          for (int t=0; t<timeBins; t++) {
+            if (t > 0) out.print(" ");
+            float s = samps[timeBins * c + t];
+            int is = (int) s;
+            if (is == s) out.print(is);
+            else out.print(s);
+          }
+          out.println();
+        }
+        out.close();
+      }
+      catch (IOException exc) {
+        JOptionPane.showMessageDialog(exportData,
+          "There was a problem writing the file: " + exc.getMessage(),
+          "SlimPlotter", JOptionPane.ERROR_MESSAGE);
+      }
+    }
     else { // OK button
       width = parse(wField.getText(), width);
       height = parse(hField.getText(), height);
@@ -847,7 +813,7 @@ public class SlimPlotter implements ActionListener,
       catch (VisADException exc) {
         String msg = exc.getMessage();
         if ("path self intersects".equals(msg)) {
-          JOptionPane.showMessageDialog(null,
+          JOptionPane.showMessageDialog(iPlot.getComponent(),
             "Please draw a curve that does not intersect itself.",
             "SlimPlotter", JOptionPane.ERROR_MESSAGE);
         }
@@ -883,7 +849,7 @@ public class SlimPlotter implements ActionListener,
     boolean doLog = log.isSelected();
 
     // calculate samples
-    float[] samps = new float[channels * timeBins];
+    samps = new float[channels * timeBins];
     maxVal = 0;
     for (int c=0; c<channels; c++) {
       for (int t=0; t<timeBins; t++) {
