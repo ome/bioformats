@@ -38,245 +38,245 @@ public class SDTInfo {
 
   // -- Constants --
 
-  protected static final short BH_HEADER_CHKSUM = 0x55aa;
-  protected static final short BH_HEADER_NOT_VALID = 0x1111;
-  protected static final short BH_HEADER_VALID = 0x5555;
+  public static final short BH_HEADER_CHKSUM = 0x55aa;
+  public static final short BH_HEADER_NOT_VALID = 0x1111;
+  public static final short BH_HEADER_VALID = 0x5555;
 
   /** For .set files (setup only). */
-  protected static final String SETUP_IDENTIFIER = "SPC Setup Script File";
+  public static final String SETUP_IDENTIFIER = "SPC Setup Script File";
 
   /** For normal .sdt files (setup + data). */
-  protected static final String DATA_IDENTIFIER = "SPC Setup & Data File";
+  public static final String DATA_IDENTIFIER = "SPC Setup & Data File";
 
   /**
    * For .sdt files created automatically in Continuous Flow mode measurement
    * (no setup, only data).
    */
-  protected static final String FLOW_DATA_IDENTIFIER = "SPC Flow Data File";
+  public static final String FLOW_DATA_IDENTIFIER = "SPC Flow Data File";
 
   /**
    * For .sdt files created using DLL function SPC_save_data_to_sdtfile
    * (no setup, only data).
    */
-  protected static final String DLL_DATA_IDENTIFIER = "SPC DLL Data File";
+  public static final String DLL_DATA_IDENTIFIER = "SPC DLL Data File";
 
   /**
    * For .sdt files created in FIFO mode
    * (setup, data blocks = Decay, FCS, FIDA, FILDA &amp; MCS curves
    * for each used routing channel).
    */
-  protected static final String FCS_DATA_IDENTIFIER = "SPC FCS Data File";
+  public static final String FCS_DATA_IDENTIFIER = "SPC FCS Data File";
 
-  protected static final String X_STRING = "#SP [SP_SCAN_X,I,";
-  protected static final String Y_STRING = "#SP [SP_SCAN_Y,I,";
-  protected static final String T_STRING = "#SP [SP_ADC_RE,I,";
-  protected static final String C_STRING = "#SP [SP_SCAN_RX,I,";
+  public static final String X_STRING = "#SP [SP_SCAN_X,I,";
+  public static final String Y_STRING = "#SP [SP_SCAN_Y,I,";
+  public static final String T_STRING = "#SP [SP_ADC_RE,I,";
+  public static final String C_STRING = "#SP [SP_SCAN_RX,I,";
 
   // -- Fields --
 
-  protected int width, height, timeBins, channels;
+  public int width, height, timeBins, channels;
 
   // -- Fields - File header --
 
   /** Software revision number (lower 4 bits &gt;= 10(decimal)). */
-  protected short revision;
+  public short revision;
 
   /**
    * Offset of the info part which contains general text
    * information (Title, date, time, contents etc.).
    */
-  protected int infoOffs;
+  public int infoOffs;
 
   /** Length of the info part. */
-  protected short infoLength;
+  public short infoLength;
 
   /**
    * Offset of the setup text data
    * (system parameters, display parameters, trace parameters etc.).
    */
-  protected int setupOffs;
+  public int setupOffs;
 
   /** Length of the setup data. */
-  protected short setupLength;
+  public short setupLength;
 
   /** Offset of the first data block. */
-  protected int dataBlockOffs;
+  public int dataBlockOffs;
 
   /**
    * no_of_data_blocks valid only when in 0 .. 0x7ffe range,
    * if equal to 0x7fff  the  field 'reserved1' contains
    * valid no_of_data_blocks.
    */
-  protected short noOfDataBlocks;
+  public short noOfDataBlocks;
 
   // length of the longest block in the file
-  protected int dataBlockLength;
+  public int dataBlockLength;
 
   // offset to 1st. measurement description block
   // (system parameters connected to data blocks)
-  protected int measDescBlockOffs;
+  public int measDescBlockOffs;
 
   // number of measurement description blocks
-  protected short noOfMeasDescBlocks;
+  public short noOfMeasDescBlocks;
 
   // length of the measurement description blocks
-  protected short measDescBlockLength;
+  public short measDescBlockLength;
 
   // valid: 0x5555, not valid: 0x1111
-  protected int headerValid;
+  public int headerValid;
 
   // reserved1 now contains noOfDataBlocks
-  protected long reserved1; // unsigned
+  public long reserved1; // unsigned
 
-  protected int reserved2;
+  public int reserved2;
 
   // checksum of file header
-  protected int chksum;
+  public int chksum;
 
   // -- Fields - File Info --
 
-  protected String info;
+  public String info;
 
   // -- Fields -- Setup --
 
-  protected String setup;
+  public String setup;
 
   // -- Fields - MeasureInfo --
 
-  protected boolean hasMeasureInfo;
+  public boolean hasMeasureInfo;
 
   /** Time of creation. */
-  protected String time;
+  public String time;
 
   /** Date of creation. */
-  protected String date;
+  public String date;
 
   /** Serial number of the module. */
-  protected String modSerNo;
+  public String modSerNo;
 
-  protected short measMode;
-  protected float cfdLL;
-  protected float cfdLH;
-  protected float cfdZC;
-  protected float cfdHF;
-  protected float synZC;
-  protected short synFD;
-  protected float synHF;
-  protected float tacR;
-  protected short tacG;
-  protected float tacOF;
-  protected float tacLL;
-  protected float tacLH;
-  protected short adcRE;
-  protected short ealDE;
-  protected short ncx;
-  protected short ncy;
-  protected int page;
-  protected float colT;
-  protected float repT;
-  protected short stopt;
-  protected int overfl;
-  protected short useMotor;
-  protected int steps;
-  protected float offset;
-  protected short dither;
-  protected short incr;
-  protected short memBank;
+  public short measMode;
+  public float cfdLL;
+  public float cfdLH;
+  public float cfdZC;
+  public float cfdHF;
+  public float synZC;
+  public short synFD;
+  public float synHF;
+  public float tacR;
+  public short tacG;
+  public float tacOF;
+  public float tacLL;
+  public float tacLH;
+  public short adcRE;
+  public short ealDE;
+  public short ncx;
+  public short ncy;
+  public int page;
+  public float colT;
+  public float repT;
+  public short stopt;
+  public int overfl;
+  public short useMotor;
+  public int steps;
+  public float offset;
+  public short dither;
+  public short incr;
+  public short memBank;
 
   /** Module type. */
-  protected String modType;
+  public String modType;
 
-  protected float synTH;
-  protected short deadTimeComp;
+  public float synTH;
+  public short deadTimeComp;
 
   /** 2 = disabled line markers. */
-  protected short polarityL;
+  public short polarityL;
 
-  protected short polarityF;
-  protected short polarityP;
+  public short polarityF;
+  public short polarityP;
 
   /** Line predivider = 2 ** (linediv). */
-  protected short linediv;
+  public short linediv;
 
-  protected short accumulate;
-  protected int flbckY;
-  protected int flbckX;
-  protected int bordU;
-  protected int bordL;
-  protected float pixTime;
-  protected short pixClk;
-  protected short trigger;
-  protected int scanX;
-  protected int scanY;
-  protected int scanRX;
-  protected int scanRY;
-  protected short fifoTyp;
-  protected int epxDiv;
-  protected int modTypeCode;
+  public short accumulate;
+  public int flbckY;
+  public int flbckX;
+  public int bordU;
+  public int bordL;
+  public float pixTime;
+  public short pixClk;
+  public short trigger;
+  public int scanX;
+  public int scanY;
+  public int scanRX;
+  public int scanRY;
+  public short fifoTyp;
+  public int epxDiv;
+  public int modTypeCode;
 
   /** New in v.8.4. */
-  protected int modFpgaVer;
+  public int modFpgaVer;
 
-  protected float overflowCorrFactor;
-  protected int adcZoom;
+  public float overflowCorrFactor;
+  public int adcZoom;
 
   /** Cycles (accumulation cycles in FLOW mode). */
-  protected int cycles;
+  public int cycles;
 
   // -- Fields - MeasStopInfo --
 
-  protected boolean hasMeasStopInfo;
+  public boolean hasMeasStopInfo;
 
   /** Last SPC_test_state return value (status). */
-  protected int status;
+  public int status;
 
   /** Scan clocks bits 2-0 (frame, line, pixel), rates_read - bit 15. */
-  protected int flags;
+  public int flags;
 
   /**
    * Time from start to  - disarm (simple measurement)
    * - or to the end of the cycle (for complex measurement).
    */
-  protected float stopTime;
+  public float stopTime;
 
   /** Current step (if multi-step measurement). */
-  protected int curStep;
+  public int curStep;
 
   /**
    * Current cycle (accumulation cycle in FLOW mode) -
    * (if multi-cycle measurement).
    */
-  protected int curCycle;
+  public int curCycle;
 
   /** Current measured page. */
-  protected int curPage;
+  public int curPage;
 
   /** Minimum rates during the measurement. */
-  protected float minSyncRate;
+  public float minSyncRate;
 
   /** (-1.0 - not set). */
-  protected float minCfdRate;
+  public float minCfdRate;
 
-  protected float minTacRate;
-  protected float minAdcRate;
+  public float minTacRate;
+  public float minAdcRate;
 
   /** Maximum rates during the measurement. */
-  protected float maxSyncRate;
+  public float maxSyncRate;
 
   /** (-1.0 - not set). */
-  protected float maxCfdRate;
+  public float maxCfdRate;
 
-  protected float maxTacRate;
-  protected float maxAdcRate;
-  protected int mReserved1;
-  protected float mReserved2;
+  public float maxTacRate;
+  public float maxAdcRate;
+  public int mReserved1;
+  public float mReserved2;
 
   // -- Fields - MeasFCSInfo --
 
-  protected boolean hasMeasFCSInfo;
+  public boolean hasMeasFCSInfo;
 
   /** Routing channel number. */
-  protected int chan;
+  public int chan;
 
   /**
    * Bit 0 = 1 - decay curve calculated.
@@ -286,101 +286,101 @@ public class SDTInfo {
    * Bit 4 = 1 - MCS curve calculated.
    * Bit 5 = 1 - 3D Image calculated.
    */
-  protected int fcsDecayCalc;
+  public int fcsDecayCalc;
 
   /** Macro time clock in 0.1 ns units. */
-  protected long mtResol; // unsigned
+  public long mtResol; // unsigned
 
   /** Correlation time [ms]. */
-  protected float cortime;
+  public float cortime;
 
   /** No of photons. */
-  protected long calcPhotons; // unsigned
+  public long calcPhotons; // unsigned
 
   /** No of FCS values. */
-  protected int fcsPoints;
+  public int fcsPoints;
 
   /** Macro time of the last photon. */
-  protected float endTime;
+  public float endTime;
 
   /**
    * No of Fifo overruns
    * when &gt; 0  fcs curve &amp; endTime are not valid.
    */
-  protected int overruns;
+  public int overruns;
 
   /**
    * 0 - linear FCS with log binning (100 bins/log)
    * when bit 15 = 1 (0x8000) - Multi-Tau FCS
    * where bits 14-0 = ktau parameter.
    */
-  protected int fcsType;
+  public int fcsType;
 
   /**
    * Cross FCS routing channel number
    * when chan = crossChan and mod == crossMod - Auto FCS
    * otherwise - Cross FCS.
    */
-  protected int crossChan;
+  public int crossChan;
 
   /** Module number. */
-  protected int mod;
+  public int mod;
 
   /** Cross FCS module number. */
-  protected int crossMod;
+  public int crossMod;
 
   /** Macro time clock of cross FCS module in 0.1 ns units. */
-  protected long crossMtResol; // unsigned
+  public long crossMtResol; // unsigned
 
   // -- Fields - extended MeasureInfo -
 
-  protected boolean hasExtendedMeasureInfo;
+  public boolean hasExtendedMeasureInfo;
 
   /**
    * 4 subsequent fields valid only for Camera mode
    * or FIFO_IMAGE mode.
    */
-  protected int imageX;
-  protected int imageY;
-  protected int imageRX;
-  protected int imageRY;
+  public int imageX;
+  public int imageY;
+  public int imageRX;
+  public int imageRY;
 
   /** Gain for XY ADCs (SPC930). */
-  protected short xyGain;
+  public short xyGain;
 
   /** Use or not  Master Clock (SPC140 multi-module). */
-  protected short masterClock;
+  public short masterClock;
 
   /** ADC sample delay (SPC-930). */
-  protected short adcDE;
+  public short adcDE;
 
   /** Detector type (SPC-930 in camera mode). */
-  protected short detType;
+  public short detType;
 
   /** X axis representation (SPC-930). */
-  protected short xAxis;
+  public short xAxis;
 
   // -- Fields - MeasHISTInfo --
 
-  protected boolean hasMeasHISTInfo;
+  public boolean hasMeasHISTInfo;
 
   /** Interval time [ms] for FIDA histogram. */
-  protected float fidaTime;
+  public float fidaTime;
 
   /** Interval time [ms] for FILDA histogram. */
-  protected float fildaTime;
+  public float fildaTime;
 
   /** No of FIDA values. */
-  protected int fidaPoints;
+  public int fidaPoints;
 
   /** No of FILDA values. */
-  protected int fildaPoints;
+  public int fildaPoints;
 
   /** Interval time [ms] for MCS histogram. */
-  protected float mcsTime;
+  public float mcsTime;
 
   /** No of MCS values. */
-  protected int mcsPoints;
+  public int mcsPoints;
 
   // -- Fields - BHFileBlockHeader --
 
@@ -389,28 +389,28 @@ public class SDTInfo {
    * Valid only when in 0..0x7ffe range, otherwise use lblock_no field
    * obsolete now, lblock_no contains full block no information.
    */
-  protected short blockNo;
+  public short blockNo;
 
   /** Offset of the data block from the beginning of the file. */
-  protected int dataOffs;
+  public int dataOffs;
 
   /** Offset to the data block header of the next data block. */
-  protected int nextBlockOffs;
+  public int nextBlockOffs;
 
   /** See blockType defines below. */
-  protected int blockType;
+  public int blockType;
 
   /**
    * Number of the measurement description block
    * corresponding to this data block.
    */
-  protected short measDescBlockNo;
+  public short measDescBlockNo;
 
   /** Long blockNo - see remarks below. */
-  protected long lblockNo; // unsigned
+  public long lblockNo; // unsigned
 
   /** reserved2 now contains block (set) length. */
-  protected long blockLength; // unsigned
+  public long blockLength; // unsigned
 
   // -- Constructor --
 
