@@ -256,7 +256,7 @@ public class Importer implements ActionListener, ItemListener {
         seriesFrame.setSize(350, 350);
         seriesFrame.setVisible(true);
         seriesFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        seriesFrame.show();
+        seriesFrame.setVisible(true);
         while (seriesFrame.isShowing());
       }
 
