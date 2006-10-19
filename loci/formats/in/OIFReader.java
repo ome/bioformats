@@ -317,9 +317,17 @@ public class OIFReader extends FormatReader {
     }
     currentOrder[0] = metadataOrder;
 
-    sizeC[0] = (isRGB(currentId) || metadataOrder.indexOf("C") == 2) ? 3 : 1;
+    String axis = (String) metadata.get("View Max CH");
+    int axisCount = 1;
+    if (axis != null) {
+      axis = axis.substring(1, axis.length() -1 );
+      axisCount = Integer.parseInt(axis.trim());
+    }
+    if (isRGB(currentId)) axisCount *= 3;
+
+    sizeC[0] = axisCount;
     int remainingImages = numImages;
-    if (metadataOrder.indexOf("C") == 2) remainingImages /= 3;
+    if (metadataOrder.indexOf("C") == 2) remainingImages /= axisCount;
     sizeZ[0] = metadataOrder.indexOf("Z") < metadataOrder.indexOf("T") ?
       remainingImages : 1;
     sizeT[0] = metadataOrder.indexOf("T") < metadataOrder.indexOf("Z") ?
