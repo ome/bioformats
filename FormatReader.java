@@ -499,8 +499,8 @@ public abstract class FormatReader extends FormatHandler
           else if (args[i].equals("-merge")) merge = true;
           else if (args[i].equals("-stitch")) stitch = true;
           else if (args[i].equals("-separate")) separate = true;
+          else if (args[i].equals("-nocolors")) ignoreColors = true;
           else if (args[i].equals("-omexml")) omexml = true;
-          else if (args[i].equals("-ignore")) ignoreColors = true;
           else if (args[i].equals("-range")) {
             try {
               start = Integer.parseInt(args[++i]);
@@ -538,7 +538,7 @@ public abstract class FormatReader extends FormatHandler
       System.out.println("   -merge: combine separate channels into RGB image");
       System.out.println("  -stitch: stitch files with similar names");
       System.out.println("-separate: split RGB image into separate channels");
-      System.out.println("  -ignore: ignore color lookup tables, if present");
+      System.out.println("-nocolors: ignore color lookup tables, if present");
       System.out.println("  -omexml: populate OME-XML metadata");
       System.out.println("   -range: specify range of planes to read");
       System.out.println("  -series: specify which image series to read");
