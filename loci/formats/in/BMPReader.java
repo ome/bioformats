@@ -144,7 +144,7 @@ public class BMPReader extends FormatReader {
 
     if (palette == null) palette = new byte[1][0];
 
-    if (palette[0].length != 0) {
+    if (palette[0].length != 0 && !ignoreColorTable) {
       pixels = new byte[3][pix.length];
       int pt = pix.length;
       for (int i=0; i<pix.length; i++) {

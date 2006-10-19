@@ -97,6 +97,7 @@ public class OIFReader extends FormatReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
+    tiffReader[0].setIgnoreColorTable(ignoreColorTable);
     return tiffReader[0].isRGB((String) tiffs.get(0));
   }
 
@@ -133,6 +134,7 @@ public class OIFReader extends FormatReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
+    tiffReader[no].setIgnoreColorTable(ignoreColorTable);
     return tiffReader[no].openBytes((String) tiffs.get(no), 0);
   }
 
@@ -148,6 +150,7 @@ public class OIFReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
+    tiffReader[no].setIgnoreColorTable(ignoreColorTable);
     return tiffReader[no].openImage((String) tiffs.get(no), 0);
   }
 
@@ -176,6 +179,7 @@ public class OIFReader extends FormatReader {
       thumbId = dir + id.substring(id.lastIndexOf(File.separator) + 1,
         id.lastIndexOf(".")) + "_Thumb.bmp";
     }
+    thumbReader.setIgnoreColorTable(ignoreColorTable);
     return thumbReader.openImage(thumbId, 0);
   }
 
@@ -317,7 +321,7 @@ public class OIFReader extends FormatReader {
     int remainingImages = numImages;
     if (metadataOrder.indexOf("C") == 2) remainingImages /= 3;
     sizeZ[0] = metadataOrder.indexOf("Z") < metadataOrder.indexOf("T") ?
-      remainingImages : 1; 
+      remainingImages : 1;
     sizeT[0] = metadataOrder.indexOf("T") < metadataOrder.indexOf("Z") ?
       remainingImages : 1;
 

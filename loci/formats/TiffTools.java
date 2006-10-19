@@ -169,7 +169,7 @@ public final class TiffTools {
   public static final int PROPRIETARY_DEFLATE = 32946;
   public static final int DEFLATE = 8;
   public static final int THUNDERSCAN = 32809;
-  public static final int NIKON_JPEG = 34713;
+  public static final int NIKON = 34713;
 
   // photometric interpretation types
   public static final int WHITE_IS_ZERO = 0;
@@ -828,6 +828,17 @@ public final class TiffTools {
   public static byte[][] getSamples(Hashtable ifd, RandomAccessStream in,
     long globalOffset) throws FormatException, IOException
   {
+    return getSamples(ifd, in, globalOffset, false);
+  }
+
+  /**
+   * Reads the image defined in the given IFD from the specified file.
+   * If the 'ignore' flag is set, then RGB LUT images are interpreted as
+   * grayscale images.
+   */
+  public static byte[][] getSamples(Hashtable ifd, RandomAccessStream in,
+    long globalOffset, boolean ignore) throws FormatException, IOException
+  {
     if (DEBUG) debug("parsing IFD entries");
 
     // get internal non-IFD entries
@@ -850,6 +861,10 @@ public final class TiffTools {
     boolean isTiled = stripOffsets == null;
 
     long maxValue = getIFDLongValue(ifd, MAX_SAMPLE_VALUE, false, 0);
+
+    if (ignore && (photoInterp == RGB_PALETTE || photoInterp == CFA_ARRAY)) {
+      photoInterp = BLACK_IS_ZERO;
+    }
 
     if (isTiled) {
     //  long tileWidth = getIFDLongValue(ifd, TILE_WIDTH, true, 0);
@@ -1255,6 +1270,13 @@ public final class TiffTools {
     // we're going to normalize everything to byte.
     byte[][] byteData = null;
 
+    if (bitsPerSample[0] == 12) bitsPerSample[0] = 16;
+
+    if (photoInterp == CFA_ARRAY) {
+      samples =
+        ImageTools.demosaic(samples, (int) imageWidth, (int) imageLength);
+    }
+
     if (bitsPerSample[0] == 16) {
       byteData = new byte[samplesPerPixel][numSamples * 2];
       for (int i = 0; i < samplesPerPixel; i++) {
@@ -1284,12 +1306,6 @@ public final class TiffTools {
       }
     }
 
-    /*
-    if (photoInterp == CFA_ARRAY) {
-      byteData =
-        ImageTools.convolve(byteData, (int) imageWidth, (int) imageLength);
-    }
-    */
     return byteData;
   }
 
@@ -1297,21 +1313,35 @@ public final class TiffTools {
   public static BufferedImage getImage(Hashtable ifd, RandomAccessStream in,
     long globalOffset) throws FormatException, IOException
   {
+    return getImage(ifd, in, globalOffset, false);
+  }
+
+  /**
+   * Reads the image defined in the given IFD from the specified file.
+   * If the 'ignore' flag is set, then RGB LUT images are interpreted as
+   * grayscale images.
+   */
+  public static BufferedImage getImage(Hashtable ifd, RandomAccessStream in,
+    long globalOffset, boolean ignore) throws FormatException, IOException
+  {
     // construct field
     if (DEBUG) debug("constructing image");
 
-    byte[][] samples = getSamples(ifd, in, globalOffset);
+    byte[][] samples = getSamples(ifd, in, globalOffset, ignore);
     int[] bitsPerSample = getBitsPerSample(ifd);
     long imageWidth = getImageWidth(ifd);
     long imageLength = getImageLength(ifd);
     int samplesPerPixel = getSamplesPerPixel(ifd);
     int photoInterp = getPhotometricInterpretation(ifd);
+    if (ignore && (photoInterp == RGB_PALETTE || photoInterp == CFA_ARRAY)) {
+      photoInterp = BLACK_IS_ZERO;
+    }
 
     if (photoInterp == RGB_PALETTE || photoInterp == CFA_ARRAY) {
       samplesPerPixel = 3;
     }
 
-    if (bitsPerSample[0] == 16) {
+    if (bitsPerSample[0] == 16 || bitsPerSample[0] == 12) {
       // First wrap the byte arrays and then use the features of the
       // ByteBuffer to transform to a ShortBuffer. Finally, use the ShortBuffer
       // bulk get method to copy the data into a usable form for makeImage().
@@ -1518,8 +1548,8 @@ public final class TiffTools {
       height = colorMap[colorMap.length - 1];
     }
 
-    //int row = startIndex / width, col = 0;
     int row = 0, col = 0;
+
     if (width != 0) row = startIndex / width;
 
     int cw = 0;
@@ -1541,36 +1571,25 @@ public final class TiffTools {
     }
 
     int index = 0;
+    int count = 0;
+
+    BitBuffer bb = new BitBuffer(bytes);
+
     for (int j=0; j<sampleCount; j++) {
       for (int i=0; i<samples.length; i++) {
         if (noDiv8) {
           // bits per sample is not a multiple of 8
-          //
-          // while images in this category are not in violation of baseline
-          // TIFF specs, it's a bad idea to write bits per sample values that
-          // aren't divisible by 8
-
-          // -- MELISSA TODO -- improve this as time permits
-          if (index == bytes.length) {
-            //throw new FormatException("bad index : i = " + i + ", j = " + j);
-            index--;
-          }
-
-          short b = bytes[index];
-          index++;
-    //      if (planar == 2) index = j + (i*(bytes.length / samples.length));
-
-          // index computed mod bitsPerSample.length to avoid problems with
-          // RGB palette
-
-          int offset = (bps0 * (samples.length*j + i)) % 8;
-          if (offset <= (8 - (bps0 % 8))) index--;
-
-          if (i == 0) counter++;
-          if (counter % 4 == 0 && i == 0) index++;
 
           int ndx = startIndex + j;
-          short s = (short) (b < 0 ? 256 + b : b);
+          short s = 0;
+          if ((i == 0 && (photoInterp == CFA_ARRAY ||
+            photoInterp == RGB_PALETTE) || (photoInterp != CFA_ARRAY &&
+            photoInterp != RGB_PALETTE)))
+          {
+            s = (short) bb.getBits(bps0);
+          }
+          short b = s;
+
           if (photoInterp != CFA_ARRAY) samples[i][ndx] = s;
 
           if (photoInterp == WHITE_IS_ZERO || photoInterp == CMYK) {
@@ -1588,43 +1607,20 @@ public final class TiffTools {
             samples[i][ndx] = (short) components[i];
           }
           else if (photoInterp == CFA_ARRAY) {
-            /*
             if (i == 0) {
-              if (row % 2 == 0) {
-                if (row*width + col < samples[0].length) {
-                  samples[colorMap[col % cw]][row*width + col] = s;
-                }
-                col++;
-                if ((col-1) % cw == (cw - 1) && col != width) {
-                  row++;
-                  col -= cw;
-                }
-                else if (col == width) {
+              int pixelIndex = (row + (count / cw))*width + col + (count % cw);
+
+              samples[colorMap[count]][pixelIndex] = s;
+              count++;
+
+              if (count == colorMap.length) {
+                count = 0;
+                col += cw*ch;
+                if (col == width) col = cw;
+                else if (col > width) {
                   row += ch;
                   col = 0;
                 }
-              }
-              else {
-                if (row*width + col < samples[0].length) {
-                  samples[colorMap[cw + (col % cw)]][row*width + col] = s;
-                }
-                col++;
-                if ((col-1) % cw == (cw - 1) && col != width) row--;
-                else if (col == width) {
-                  row++;
-                  col = 0;
-                }
-              }
-            }
-            */
-
-            if (i == 0) {
-              int colorIndex = (col % cw) + ((row % 2) == 0 ? 0 : cw);
-              samples[colorMap[colorIndex]][row*width + col] = s;
-              col++;
-              if (col == width) {
-                row++;
-                col = 0;
               }
             }
           }
@@ -1731,11 +1727,9 @@ public final class TiffTools {
       throw new FormatException(
         "Sorry, JPEG compression mode is not supported");
     }
-    /*
-    else if (compression == JPEG || compression == NIKON_JPEG) {
-      return Compression.jpegUncompress(input);
+    else if (compression == NIKON) {
+      return Compression.nikonUncompress(input);
     }
-    */
     else if (compression == PACK_BITS) {
       return Compression.packBitsUncompress(input);
     }

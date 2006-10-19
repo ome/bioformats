@@ -100,6 +100,9 @@ public abstract class FormatReader extends FormatHandler
   /** Whether or not we're doing channel stat calculation (no by default). */
   protected boolean enableChannelStatCalculation = false;
 
+  /** Whether or not to ignore color tables, if present. */
+  protected boolean ignoreColorTable;
+
   /**
    * Current metadata store. Should <b>never</b> be accessed directly as the
    * semantics of {@link #getMetadataStore(String)} prevent "null" access.
@@ -326,6 +329,11 @@ public abstract class FormatReader extends FormatHandler
     return series;
   }
 
+  /** Specify whether or not to ignore color tables, if present. */
+  public void setIgnoreColorTable(boolean ignore) {
+    ignoreColorTable = ignore;
+  }
+
   /**
    * Swaps the dimensions according to the given dimension order.  If the given
    * order is identical to the file's native order, then nothing happens.
@@ -478,6 +486,7 @@ public abstract class FormatReader extends FormatHandler
     boolean stitch = false;
     boolean separate = false;
     boolean omexml = false;
+    boolean ignoreColors = false;
     int start = 0;
     int end = 0;
     int series = 0;
@@ -491,6 +500,7 @@ public abstract class FormatReader extends FormatHandler
           else if (args[i].equals("-stitch")) stitch = true;
           else if (args[i].equals("-separate")) separate = true;
           else if (args[i].equals("-omexml")) omexml = true;
+          else if (args[i].equals("-ignore")) ignoreColors = true;
           else if (args[i].equals("-range")) {
             try {
               start = Integer.parseInt(args[++i]);
@@ -528,6 +538,7 @@ public abstract class FormatReader extends FormatHandler
       System.out.println("   -merge: combine separate channels into RGB image");
       System.out.println("  -stitch: stitch files with similar names");
       System.out.println("-separate: split RGB image into separate channels");
+      System.out.println("  -ignore: ignore color lookup tables, if present");
       System.out.println("  -omexml: populate OME-XML metadata");
       System.out.println("   -range: specify range of planes to read");
       System.out.println("  -series: specify which image series to read");
@@ -551,6 +562,8 @@ public abstract class FormatReader extends FormatHandler
     if (stitch) reader = new FileStitcher(reader);
     if (separate) reader = new ChannelSeparator(reader);
     if (merge) reader = new ChannelMerger(reader);
+
+    reader.setIgnoreColorTable(ignoreColors);
 
     // read basic metadata
     System.out.println();

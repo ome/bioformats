@@ -345,6 +345,11 @@ public class ImageReader implements IFormatReader {
     return getReader(id).getSeries(id);
   }
 
+  /* @see IFormatReader#setIgnoreColorTable(boolean) */
+  public void setIgnoreColorTable(boolean ignore) {
+    for (int i=0; i<readers.length; i++) readers[i].setIgnoreColorTable(ignore);
+  }
+
   /**
    * Swaps the dimensions according to the given dimension order.  If the given
    * order is identical to the file's native order, then nothing happens.

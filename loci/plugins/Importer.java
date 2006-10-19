@@ -51,6 +51,7 @@ public class Importer implements ActionListener, ItemListener {
   // -- Fields --
 
   private JCheckBox merge = null;
+  private JCheckBox ignore = null;
   private JCheckBox newWindows = null;
   private JCheckBox showMeta = null;
   private JCheckBox stitching = null;
@@ -59,6 +60,7 @@ public class Importer implements ActionListener, ItemListener {
   private JButton okButton = null;
   private JFrame seriesFrame = null;
   private boolean mergeChannels;
+  private boolean ignoreTables;
   private boolean splitWindows;
   private boolean showMetadata;
   private boolean stitchFiles;
@@ -77,6 +79,7 @@ public class Importer implements ActionListener, ItemListener {
   public void run(String arg) {
     // load preferences from IJ_Prefs.txt
     mergeChannels = Prefs.get("bioformats.mergeChannels", false);
+    ignoreTables = Prefs.get("bioformats.ignoreTable", false);
     splitWindows = Prefs.get("bioformats.splitWindows", true);
     showMetadata = Prefs.get("bioformats.showMetadata", false);
     stitchFiles = Prefs.get("bioformats.stitchFiles", false);
@@ -89,6 +92,7 @@ public class Importer implements ActionListener, ItemListener {
     IFormatReader r = null;
 
     String mergeString = "Merge channels to RGB";
+    String ignoreString = "Ignore color lookup table";
     String splitString = "Open each channel in its own window";
     String metadataString = "Display associated metadata";
     String stitchString = "Stitch files with similar names";
@@ -103,6 +107,7 @@ public class Importer implements ActionListener, ItemListener {
       // we still want to prompt for channel merge/split
       GenericDialog gd = new GenericDialog("LOCI Bio-Formats Import Options");
       gd.addCheckbox(mergeString, mergeChannels);
+      gd.addCheckbox(ignoreString, ignoreTables);
       gd.addCheckbox(splitString, splitWindows);
       gd.addCheckbox(metadataString, showMetadata);
       gd.addCheckbox(stitchString, stitchFiles);
@@ -113,6 +118,7 @@ public class Importer implements ActionListener, ItemListener {
         return;
       }
       mergeChannels = gd.getNextBoolean();
+      ignoreTables = gd.getNextBoolean();
       splitWindows = gd.getNextBoolean();
       showMetadata = gd.getNextBoolean();
       stitchFiles = gd.getNextBoolean();
@@ -136,16 +142,19 @@ public class Importer implements ActionListener, ItemListener {
       JPanel panel = new JPanel();
       panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
       merge = new JCheckBox(mergeString, mergeChannels);
+      ignore = new JCheckBox(ignoreString, ignoreTables);
       newWindows = new JCheckBox(splitString, splitWindows);
       showMeta = new JCheckBox(metadataString, showMetadata);
       stitching = new JCheckBox(stitchString, stitchFiles);
       ranges = new JCheckBox(rangeString, specifyRanges);
       merge.addItemListener(this);
+      ignore.addItemListener(this);
       newWindows.addItemListener(this);
       showMeta.addItemListener(this);
       stitching.addItemListener(this);
       ranges.addItemListener(this);
       panel.add(merge);
+      panel.add(ignore);
       panel.add(newWindows);
       panel.add(showMeta);
       panel.add(stitching);
@@ -187,15 +196,19 @@ public class Importer implements ActionListener, ItemListener {
       if (mergeChannels) r = new ChannelMerger(r);
       else r = new ChannelSeparator(r);
 
-      if (r.isRGB(id) && r.getPixelType(id) >= FormatReader.INT16) {
+      if (!ignoreTables) {
+        if (r.isRGB(id) && r.getPixelType(id) >= FormatReader.INT16) {
 //        Double min = r.getChannelGlobalMinimum(id, 0);
 //        Double max = r.getChannelGlobalMaximum(id, 0);
-        Double min = null, max = null;
-        if (min == null || max == null) {
-          doRGBMerge = true;
-          r = new ChannelSeparator(r);
+          Double min = null, max = null;
+          if (min == null || max == null) {
+            doRGBMerge = true;
+            r = new ChannelSeparator(r);
+          }
         }
       }
+
+      r.setIgnoreColorTable(ignoreTables);
 
       // store OME metadata into OME-XML structure, if available
       OMEXMLMetadataStore store = new OMEXMLMetadataStore();
@@ -523,6 +536,7 @@ public class Importer implements ActionListener, ItemListener {
       // save checkbox values to IJ_Prefs.txt
 
       Prefs.set("bioformats.mergeChannels", mergeChannels);
+      Prefs.set("bioformats.ignoreTables", ignoreTables);
       Prefs.set("bioformats.splitWindows", splitWindows);
       Prefs.set("bioformats.showMetadata", showMetadata);
       Prefs.set("bioformats.stitchFiles", stitchFiles);
@@ -548,6 +562,7 @@ public class Importer implements ActionListener, ItemListener {
     Object source = e.getItemSelectable();
     boolean selected = e.getStateChange() == ItemEvent.SELECTED;
     if (source == merge) mergeChannels = selected;
+    else if (source == ignore) ignoreTables = selected;
     else if (source == newWindows) splitWindows = selected;
     else if (source == showMeta) showMetadata = selected;
     else if (source == stitching) stitchFiles = selected;

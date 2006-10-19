@@ -154,7 +154,7 @@ public class GIFReader extends FormatReader {
 
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
-    return true;
+    return !ignoreColorTable;
   }
 
   /** Return true if the data is in little-endian format. */
@@ -177,13 +177,19 @@ public class GIFReader extends FormatReader {
     }
 
     byte[] b = new byte[1];
-
     int[] ints = (int[]) images.get(no);
-    b = new byte[width * height * 3];
-    for (int i=0; i<ints.length; i++) {
-      b[i] = (byte) ((ints[i] & 0xff0000) >> 16);
-      b[i + ints.length] = (byte) ((ints[i] & 0xff00) >> 8);
-      b[i + 2*ints.length] = (byte) (ints[i] & 0xff);
+
+    if (!ignoreColorTable) {
+      b = new byte[width * height * 3];
+      for (int i=0; i<ints.length; i++) {
+        b[i] = (byte) ((ints[i] & 0xff0000) >> 16);
+        b[i + ints.length] = (byte) ((ints[i] & 0xff00) >> 8);
+        b[i + 2*ints.length] = (byte) (ints[i] & 0xff);
+      }
+    }
+    else {
+      b = new byte[width * height];
+      for (int i=0; i<b.length; i++) b[i] = (byte) ints[i];
     }
     return b;
   }
@@ -199,7 +205,8 @@ public class GIFReader extends FormatReader {
     }
 
     byte[] b = openBytes(id, no);
-    return ImageTools.makeImage(b, width, height, 3, false, 1, true);
+    return ImageTools.makeImage(b, width, height, b.length / (width * height),
+      false, 1, true);
   }
 
   /** Closes any open files. */
@@ -373,7 +380,7 @@ public class GIFReader extends FormatReader {
     sizeX[0] = width;
     sizeY[0] = height;
     sizeZ[0] = 1;
-    sizeC[0] = 3;
+    sizeC[0] = ignoreColorTable ? 1 : 3;
     sizeT[0] = numFrames;
     currentOrder[0] = "XYCTZ";
 
@@ -579,7 +586,8 @@ public class GIFReader extends FormatReader {
         while (dx < dlim) {
           // map color and insert in destination
           int index = ((int) pixels[sx++]) & 0xff;
-          dest[dx++] = act[index];
+          if (!ignoreColorTable) dest[dx++] = act[index];
+          else dest[dx++] = index;
         }
       }
     }

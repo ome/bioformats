@@ -24,9 +24,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.io.PipedInputStream;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
+import javax.imageio.ImageIO;
 
 /**
  * A utility class for handling various compression types.
@@ -86,6 +88,12 @@ public final class Compression {
     lookupBase64Alphabet[62] = (byte) '+';
     lookupBase64Alphabet[63] = (byte) '/';
   }
+
+  /** Huffman tree for the Nikon decoder. */
+  private static final int[] NIKON_TREE = {
+    0, 1, 5, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0,
+    0, 5, 4, 3, 6, 2, 7, 1, 0, 8, 9, 11, 10, 12
+  };
 
   // -- Constructor --
 
@@ -342,9 +350,9 @@ public final class Compression {
   /**
    * Decodes a PackBits (Macintosh RLE) compressed image.
    * Adapted from the TIFF 6.0 specification, page 42.
+   * @author Melissa Linkert linkert at cs.wisc.edu
    */
   public static byte[] packBitsUncompress(byte[] input) {
-    // written by Melissa Linkert linkert at cs.wisc.edu
     ByteVector output = new ByteVector(input.length);
     int pt = 0;
     while (pt < input.length) {
@@ -365,13 +373,65 @@ public final class Compression {
   }
 
   /**
+   * Decodes an image strip using Nikon's compression algorithm (a variant on
+   * Huffman coding).
+   */
+  public static byte[] nikonUncompress(byte[] input) throws FormatException {
+    BitWriter out = new BitWriter(input.length);
+    BitBuffer bb = new BitBuffer(input);
+    boolean eof = false;
+
+    while (!eof) {
+      boolean codeFound = false;
+      int code = 0;
+      int bitsRead = 0;
+      while (!codeFound) {
+        int bit = bb.getBits(1);
+        if (bit == -1) {
+          eof = true;
+          break;
+        }
+        bitsRead++;
+        code >>= 1;
+        code += bit;
+
+        for (int i=16; i<NIKON_TREE.length; i++) {
+          if (code == NIKON_TREE[i]) {
+            int ndx = i;
+            int count = 0;
+            while (ndx > 16) {
+              ndx -= NIKON_TREE[count];
+              count++;
+            }
+
+            if (ndx < 16) count--;
+
+            if (bitsRead == count + 1) {
+              codeFound = true;
+              i = NIKON_TREE.length;
+              break;
+            }
+          }
+        }
+      }
+
+      while (code > 0) {
+        out.write(bb.getBits(1), 1);
+        code--;
+      }
+    }
+    byte[] b = out.toByteArray();
+    return b;
+  }
+
+  /**
    * Decodes an LZW-compressed image strip.
    * Adapted from the TIFF 6.0 Specification:
-   * http://partners.adobe.com/asn/developer/pdfs/tn/TIFF6.pdf (page 61).
+   * http://partners.adobe.com/asn/developer/pdfs/tn/TIFF6.pdf (page 61)
+   * @author Eric Kjellman egkjellman at wisc.edu
+   * @author Wayne Rasband wsr at nih.gov
    */
   public static byte[] lzwUncompress(byte[] input) throws FormatException {
-    // original author Eric Kjellman
-    // modified by Wayne Rasband wsr at nih.gov
     if (input == null || input.length == 0) return input;
 
     byte[][] symbolTable = new byte[4096][1];
@@ -433,6 +493,21 @@ public final class Compression {
     return out.toByteArray();
   }
 
+  /** Decodes a JPEG-compressed image. */
+  public static byte[] jpegUncompress(byte[] input) throws IOException {
+    BufferedImage b = ImageIO.read(new ByteArrayInputStream(input));
+
+    byte[][] buf = ImageTools.getBytes(b);
+    byte[] rtn = new byte[buf.length * buf[0].length];
+    if (buf.length == 1) rtn = buf[0];
+    else {
+      for (int i=0; i<buf.length; i++) {
+        System.arraycopy(buf[i], 0, rtn, i*buf[0].length, buf[i].length);
+      }
+    }
+    return rtn;
+  }
+
   /**
    * Decodes a Base64 encoded String.
    * Much of this code was adapted from the Apache Commons Codec source.
@@ -488,4 +563,5 @@ public final class Compression {
     }
     return decodedData;
   }
+
 }

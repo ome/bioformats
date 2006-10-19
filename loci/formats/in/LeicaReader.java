@@ -133,6 +133,7 @@ public class LeicaReader extends BaseTiffReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
+    tiff[series][0].setIgnoreColorTable(ignoreColorTable);
     return tiff[series][0].isRGB((String) files[series].get(0));
   }
 
@@ -158,6 +159,7 @@ public class LeicaReader extends BaseTiffReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
+    tiff[series][no].setIgnoreColorTable(ignoreColorTable);
     byte[] b = tiff[series][no].openBytes((String) files[series].get(no), 0);
     tiff[series][no].close();
     return b;
@@ -175,6 +177,7 @@ public class LeicaReader extends BaseTiffReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
+    tiff[series][no].setIgnoreColorTable(ignoreColorTable);
     BufferedImage b =
       tiff[series][no].openImage((String) files[series].get(no), 0);
     tiff[series][no].close();
