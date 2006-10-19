@@ -1,0 +1,162 @@
+Some notes on writing a new file format reader for LOCI Bio-Formats:
+
+All format readers should extend either loci.formats.FormatReader or a reader
+in loci.formats.in.
+
+The following methods must be overridden:
+
+boolean isThisType(byte[]) : 
+  Check the first few bytes of a file to determine if the file can be read by
+  this reader.  You can assume that the first byte of the array corresponds to
+  the first byte of the file.  Return true if the file can be read; false if
+  not (or if there is no way of checking).
+
+int getImageCount(String) throws FormatException, IOException :
+  Return the number of image planes in the file.  This method should begin
+  by checking if the given argument is equal to the current file; if not,
+  initFile(String) should be called (see below).
+
+boolean isRGB(String) throws FormatException, IOException :
+  This should only return true if the file's image planes are stored as RGB
+  or indexed color.  All other cases return false.  This method should begin
+  by checking if the given argument is equal to the current file; if not,
+  initFile(String) should be called (see below).
+
+boolean isLittleEndian(String) throws FormatException, IOException :
+  Return the byte ordering of the pixel data.  Note that in some cases, this
+  is different from the file's native ordering.  If the pixel data is
+  guaranteed to have 8 bits per pixel, then isLittleEndian can return
+  anything. This method should begin by checking if the given argument is equal 
+  to the current file; if not, initFile(String) should be called (see below).
+
+boolean isInterleaved(String) throws FormatException, IOException :
+  This is only relevant if the file's image planes are stored as RGB or
+  indexed color; however, it should always be implemented.  If the image
+  planes are RGB, and the pixel data is stored as "RRR...GGG...BBB", then
+  return false.  Otherwise, if the pixel data is stored as "RGBRGBRGB..."
+  return true.  This method should begin by checking if the given argument 
+  is equal to the current file; if not, initFile(String) should be called 
+  (see below).
+
+byte[] openBytes(String, int) throws FormatException, IOException :
+  Returns a byte array containing the pixel data for the specified image from
+  the given file.  Should throw a FormatException if the image number is invalid
+  (less than 0 or >= the number of images).  The ordering of the array
+  returned by openBytes should correspond to the values returned by
+  isLittleEndian(String) and isInterleaved(String).  Also, the length of the
+  byte array should be [image width * image height * bytes per pixel].  Extra
+  bytes will generally be truncated.  This method should begin
+  by checking if the given argument is equal to the current file; if not,
+  initFile(String) should be called (see below).
+
+BufferedImage openImage(String, int) throws FormatException, IOException :
+  Basically the same as openBytes, but returns a java.awt.image.BufferedImage
+  instead of a byte array.  In general, the easiest way to implement this is
+  by getting the corresponding byte array from openBytes, then returning
+  loci.formats.ImageTools.makeImage(byte[], int width, int height, int
+  numberOfChannels, boolean isInterleaved, int bytesPerPixel, boolean
+  isLittleEndian).
+
+void close() throws FormatException, IOException :
+  Close the stream used to read the file, and set the stream and file name to
+  null.  It is also very important to free any resources initialized elsewhere
+  in the reader.  After calling close on a reader, any additional calls to
+  that reader should result in a call to initFile(String).
+
+protected void initFile(String) throws FormatException, IOException :
+  The majority of the file parsing logic should be placed in this method.  The
+  idea is to call this method once (and only once!) when the file is first
+  opened.  Generally, you will want to start by calling
+  super.initFile(String).  You will also need to set up the stream for reading
+  the file, as well as initializing any dimension information and metadata.
+  Most of this logic is up to you; however, it is wise to set the following
+  variables:
+    int sizeX[0] : the image width
+    int sizeY[0] : the image height
+    int sizeZ[0] : number of planes along Z axis (set to 1 if there are none)
+    int sizeC[0] : the number of channels (set to 3 if RGB/indexed color)
+    int sizeT[0] : number of planes along T axis (set to 1 if there are none)
+    String currentOrder[0] : the dimension ordering of the planes
+    int pixelType[0] : corresponds to the number of bytes per pixel; see 
+                       constant values in FormatReader for a list of valid
+                       values
+
+  Note that each variable is intialized to 0 or null when
+  super.initFile(String) is called.
+  Also, super.initFile(String) constructs a Hashtable called "metadata" where
+  you should store any relevant metadata.
+
+static void main(String[]) throws FormatException, IOException :
+  Consists of the following line:
+    "new <class name>().testRead(args);"
+
+Note that if the new format is a variant of a format currently supported by
+Bio-Formats, it is more efficient to make the new reader a subclass of the
+existing reader (rather than subclassing FormatReader).  In this case, it is
+usually sufficient to override initFile(String) and isThisType(byte[]).
+
+A few other useful things:
+
+- loci.formats.RandomAccessStream is a hybrid RandomAccessFile/InputStream
+  class that is generally more efficient than either RandomAccessFile or
+  InputStream.  It is recommended that you use this for reading binary files.
+
+- loci.formats.DataTools provides a number of methods for converting bytes to
+  shorts, ints, longs, etc.  It also supports reading most primitive types
+  directly from a RandomAccessStream.
+
+- loci.formats.ImageTools provides several methods for manipulating
+  java.awt.image.BufferedImage objects.  In particular, it can create
+  BufferedImages from primitive type arrays, resize images, split RGB images
+  into 3 grayscale images, and so on.  Consult the source or javadoc for more
+  information.
+
+- If your reader relies on third-party code which may not be available to all 
+  users, it is strongly suggested that you access this code only through a
+  loci.formats.ReflectedUniverse object.  For an example of how this works,
+  see loci.formats.in.ZeissZVIReader.
+
+- Several common image compression types are supported in
+  loci.formats.Compression.  These include LZW, LZO, Base64, ZIP and RLE.
+
+- If you wish to convert a file's metadata to OME-XML (strongly encouraged),
+  loci.formats.OMEXMLMetadataStore provides methods for creating OME-XML from
+  metadata values.  Note that OMEXMLMetadataStore is a subclass of 
+  loci.formats.MetadataStore (every subclass of FormatReader keeps an instance
+  of MetadataStore by default); so to add OME-XML support is as simple as
+  calling getMetadataStore(String) on a format reader instance, and then
+  calling the appropriate "set" methods as documented in OMEXMLMetadataStore.
+
+- Utility methods for reading and writing individual bits from a byte array
+  can be found in loci.formats.BitBuffer and loci.formats.BitWriter
+
+- Once you have written your file format reader, add a line to the readers.txt
+  file with the fully name of the reader, followed by a '#' and the file
+  extensions associated with the file format.
+
+- The easiest way to test your new reader is by calling "java
+  loci.formats.ImageReader <file name>".  If all goes well, you should see
+  all of the metadata and dimension information, along with a window showing
+  the images in the file.  ImageReader can take additional parameters; a
+  brief listing is provided for reference, but it is recommended that you
+  take a look at the contents of FormatReader.testRead to see exactly what
+  each one does.
+
+    Argument            Action
+    --------------------------
+    -nopix              Read metadata only; don't display images.
+    -nometa             Output only core metadata (dimension information).
+    -thumbs             Read thumbnails instead of regular images.
+    -merge              Combine separate channels into a set of RGB images.
+    -stitch             Open all files with a similar name.
+    -separate           Force RGB images to be split into separate channels.
+    -ignore             Intepret indexed color images as grayscale.
+    -omexml             Output the OME-XML for the file.
+    -range              Specify a range of images to open.
+    -series             Set the series number (for container file formats).
+
+- For more details, please look at the source code and javadocs.  Studying
+  existing readers is probably the best way to get a feel for the API; I would
+  recommend first looking at loci.formats.in.ImarisReader (this is the most
+  straightforward one).  loci.formats.in.LIFReader and ZeissZVIReader are also
+  good references that show off some of the nicer features of Bio-Formats.
