@@ -803,8 +803,24 @@ public abstract class FormatReader extends FormatHandler
   public static int[] getZCTCoords(IFormatReader reader,
     String id, int index) throws FormatException, IOException
   {
-    // get DimensionOrder
     String order = reader.getDimensionOrder(id);
+    int zSize = reader.getSizeZ(id);
+    int cSize = reader.getSizeC(id);
+    int tSize = reader.getSizeT(id);
+    int num = reader.getImageCount(id);
+    boolean rgb = reader.isRGB(id);
+
+    return getZCTCoords(order, zSize, cSize, tSize, num, rgb, index);
+  }
+
+  /**
+   * Gets the Z, C and T coordinates corresponding to the given rasterized
+   * index value.
+   */
+  public static int[] getZCTCoords(String order, int zSize, int cSize,
+    int tSize, int num, boolean rgb, int index)
+    throws FormatException, IOException
+  {
     if (order == null) throw new FormatException("Dimension order is null");
     if (!order.startsWith("XY")) {
       throw new FormatException("Invalid dimension order: " + order);
@@ -816,23 +832,18 @@ public abstract class FormatReader extends FormatHandler
       throw new FormatException("Invalid dimension order: " + order);
     }
 
-    // get SizeZ
-    int zSize = reader.getSizeZ(id);
+    // check SizeZ
     if (zSize <= 0) throw new FormatException("Invalid Z size: " + zSize);
 
-    // get SizeC
-    int cSize = reader.getSizeC(id);
+    // check SizeC
     if (cSize <= 0) throw new FormatException("Invalid C size: " + cSize);
     int origSizeC = cSize;
-    boolean rgb = reader.isRGB(id);
     if (rgb) cSize = 1;
 
-    // get SizeT
-    int tSize = reader.getSizeT(id);
+    // check SizeT
     if (tSize <= 0) throw new FormatException("Invalid T size: " + tSize);
 
-    // get image count
-    int num = reader.getImageCount(id);
+    // check image count
     if (num <= 0) throw new FormatException("Invalid image count: " + num);
 
     if (num != zSize * cSize * tSize) {
