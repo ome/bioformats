@@ -4,6 +4,7 @@
 
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
+import loci.formats.FilePattern;
 import loci.formats.RandomAccessStream;
 import loci.formats.TiffTools;
 import loci.formats.in.TiffReader;
@@ -15,14 +16,21 @@ public class SewTiffs {
   private static final int DOTS = 50;
 
   public static void main(String[] args) throws Exception {
-    if (args.length < 3) {
+    if (args.length < 2) {
       System.out.println(
-        "Usage: java SewTiffs base_name channel_num time_count");
+        "Usage: java SewTiffs base_name channel_num [time_count]");
       System.exit(1);
     }
     String base = args[0];
     int c = Integer.parseInt(args[1]);
-    int num = Integer.parseInt(args[2]);
+    int num;
+    if (args.length < 3) {
+      FilePattern fp = new FilePattern(base + "_C1_TP1.tiff");
+      int[] count = fp.getCount();
+      num = count[1];
+    }
+    else num = Integer.parseInt(args[2]);
+    System.out.println("Fixing " + base + "_C" + c + "_TP<1-" + num + ">.tiff");
     TiffReader in = new TiffReader();
     TiffWriter out = new TiffWriter();
     String outId = base + "_C" + c + ".tiff";
