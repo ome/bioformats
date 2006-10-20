@@ -512,7 +512,7 @@ public final class Compression {
    * Decodes a Base64 encoded String.
    * Much of this code was adapted from the Apache Commons Codec source.
    */
-  public static byte[] decode(String s) throws FormatException {
+  public static byte[] base64Decode(String s) throws FormatException {
     byte[] base64Data = s.getBytes();
 
     if (base64Data.length == 0) return new byte[0];
