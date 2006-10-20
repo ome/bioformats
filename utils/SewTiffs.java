@@ -3,6 +3,7 @@
 //
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.Hashtable;
 import loci.formats.FilePattern;
 import loci.formats.RandomAccessStream;
@@ -25,7 +26,7 @@ public class SewTiffs {
     int c = Integer.parseInt(args[1]);
     int num;
     if (args.length < 3) {
-      FilePattern fp = new FilePattern(base + "_C1_TP1.tiff");
+      FilePattern fp = new FilePattern(new File(base + "_C1_TP1.tiff"));
       int[] count = fp.getCount();
       num = count[1];
     }
@@ -36,6 +37,7 @@ public class SewTiffs {
     String outId = base + "_C" + c + ".tiff";
     System.out.println("Writing " + outId);
     System.out.print("   ");
+    boolean comment = false;
     for (int t=0; t<num; t++) {
       String inId = base + "_C" + c + "_TP" + (t + 1) + ".tiff";
 
@@ -59,6 +61,7 @@ public class SewTiffs {
         if (desc != null) {
           ifd = new Hashtable();
           TiffTools.putIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION, desc);
+          comment = true;
           out.saveImage(outId, image, ifd, t == num - 1);
           System.out.print(".");
           continue;
@@ -76,6 +79,8 @@ public class SewTiffs {
       }
     }
     System.out.println();
+    if (comment) System.out.println("OME-TIFF comment saved.");
+    else System.out.println("No OME-TIFF comment found.");
   }
 
 }
