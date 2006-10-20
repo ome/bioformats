@@ -33,11 +33,11 @@ public interface Uploader {
   /** Log all users out of current server. */
   void logout();
 
-  /** 
+  /**
    * Upload the planes in the given file to the server, creating a new
    * image in the process.  If the "stitch" flag is set to true, then all files
    * that are similar to the given file will be uploaded as well.
-   * 
+   *
    * @return the number of pixel bytes uploaded
    */
   int uploadFile(String file, boolean stitch) throws UploadException;
@@ -47,82 +47,92 @@ public interface Uploader {
    * given image, and optionally the given dataset.  If the "stitch" flag is
    * set to true, then all files that are similar to the given file will be
    * uploaded as well.
-   * 
+   *
    * @return the number of pixel bytes uploaded
    */
   int uploadFile(String file, boolean stitch, Integer image, Integer dataset)
     throws UploadException;
 
-  /** 
-   * Upload a single BufferedImage to the server, creating a new 
-   * image in the process.
-   * 
+  /**
+   * Upload a single BufferedImage to the server, creating a new
+   * image in the process.  If the 'close' flag is set to true, the
+   * pixels file should be closed.
+   *
    * @return the number of pixel bytes uploaded
    */
-  int uploadPlane(BufferedImage plane, int num, MetadataStore store) 
-    throws UploadException;
+  int uploadPlane(BufferedImage plane, int num, MetadataStore store,
+    boolean close) throws UploadException;
 
-  /** 
-   * Upload a single BufferedImage to the server, placing it in the 
-   * given image, and optionally the given dataset.
-   * 
+  /**
+   * Upload a single BufferedImage to the server, placing it in the
+   * given image, and optionally the given dataset.  If the 'close' flag
+   * is set to true, the pixels file should be closed.
+   *
    * @return the number of pixel bytes uploaded
    */
-  int uploadPlane(BufferedImage plane, int num, MetadataStore store, 
-    Integer image, Integer dataset) throws UploadException;
+  int uploadPlane(BufferedImage plane, int num, MetadataStore store,
+    Integer image, Integer dataset, boolean close) throws UploadException;
 
   /**
    * Upload a single byte array to the server, creating a new
-   * image in the process.
-   * 
+   * image in the process.  If the 'close' flag is set to true, the
+   * pixels file should be closed.
+   *
    * @return the number of pixel bytes uploaded
    */
-  int uploadPlane(byte[] plane, int num, MetadataStore store) 
+  int uploadPlane(byte[] plane, int num, MetadataStore store, boolean close)
     throws UploadException;
 
   /**
    * Upload a single byte array to the server, placing it in the given image,
-   * and optionally the given dataset.
-   * 
+   * and optionally the given dataset. If the 'close' flag is set to true, the
+   * pixels file should be closed.
+   *
    * @return the number of pixel bytes uploaded
    */
-  int uploadPlane(byte[] plane, int num, MetadataStore store, Integer image, 
-    Integer dataset) throws UploadException;
+  int uploadPlane(byte[] plane, int num, MetadataStore store, Integer image,
+    Integer dataset, boolean close) throws UploadException;
 
   /**
    * Upload an array of BufferedImages to the server, creating a new image
-   * in the process.
-   * 
+   * in the process. If the 'close' flag is set to true, the
+   * pixels file should be closed.
+   *
    * @return the number of pixel bytes uploaded
    */
-  int uploadPlanes(BufferedImage[] planes, int first, int last, int step, 
-    MetadataStore store) throws UploadException;
+  int uploadPlanes(BufferedImage[] planes, int first, int last, int step,
+    MetadataStore store, boolean close) throws UploadException;
 
   /**
    * Upload an array of BufferedImages to the server, placing them in the given
-   * image, and optionally the given dataset.
-   * 
+   * image, and optionally the given dataset.  If the 'close' flag is set
+   * to true, the pixels file should be closed.
+   *
    * @return the number of pixel bytes uploaded
    */
-  int uploadPlanes(BufferedImage[] planes, int first, int last, int step, 
-    MetadataStore store, Integer image, Integer dataset) throws UploadException;
+  int uploadPlanes(BufferedImage[] planes, int first, int last, int step,
+    MetadataStore store, Integer image, Integer dataset, boolean close)
+    throws UploadException;
 
   /**
    * Upload an array of byte arrays to the server, creating a new image
-   * in the process.
-   * 
-   * @return the number of pixel bytes uploaded
-   */
-  int uploadPlanes(byte[][] planes, int first, int last, int step, 
-    MetadataStore store) throws UploadException;
-
-  /**
-   * Upload an array of byte arrays to the server, placing them in the given
-   * image, and optionally the given dataset.
-   * 
+   * in the process.  If the 'close' flag is set to true, the
+   * pixels file should be closed.
+   *
    * @return the number of pixel bytes uploaded
    */
   int uploadPlanes(byte[][] planes, int first, int last, int step,
-    MetadataStore store, Integer image, Integer dataset) throws UploadException;
+    MetadataStore store, boolean close) throws UploadException;
+
+  /**
+   * Upload an array of byte arrays to the server, placing them in the given
+   * image, and optionally the given dataset.  If the 'close' flag is set to
+   * true, the pixels file should be closed.
+   *
+   * @return the number of pixel bytes uploaded
+   */
+  int uploadPlanes(byte[][] planes, int first, int last, int step,
+    MetadataStore store, Integer image, Integer dataset, boolean close)
+    throws UploadException;
 
 }
