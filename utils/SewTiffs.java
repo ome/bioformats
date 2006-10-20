@@ -26,9 +26,9 @@ public class SewTiffs {
     int c = Integer.parseInt(args[1]);
     int num;
     if (args.length < 3) {
-      FilePattern fp = new FilePattern(new File(base + "_C1_TP1.tiff"));
+      FilePattern fp = new FilePattern(new File(base + "_C" + c + "_TP1.tiff"));
       int[] count = fp.getCount();
-      num = count[1];
+      num = count[count.length - 1];
     }
     else num = Integer.parseInt(args[2]);
     System.out.println("Fixing " + base + "_C" + c + "_TP<1-" + num + ">.tiff");
