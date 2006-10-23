@@ -325,7 +325,7 @@ public class CacheManager implements Runnable {
   * A method to set which axis to cache first.
   * @param top The axis constant with the highest priority.
   * @param mid The axis constant with the mid priority.
-  * @param mid The axis constant with the lowest priority.
+  * @param low The axis constant with the lowest priority.
   */
   public void setPriority(int top, int mid, int low) {
     if (top == mid || mid == low || top == low) return;
