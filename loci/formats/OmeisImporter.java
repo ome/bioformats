@@ -34,12 +34,159 @@ import java.util.*;
  */
 public class OmeisImporter {
 
-  // -- OmeisImporter API methods - main functionality --
+  /** Reader for handling file formats. */
+  private IFormatReader reader;
 
-  public void testIds(int[] fileIds) {
+  /** Metadata store, for gathering OME-XML metadata. */
+  private OMEXMLMetadataStore store;
+
+  // -- Constructor --
+
+  public OmeisImporter() {
+    reader = new ChannelSeparator();
+    store = new OMEXMLMetadataStore();
+    reader.setMetadataStore(store);
   }
 
-  public void importIds(int[] fileIds) {
+  // -- OmeisImporter API methods - main functionality --
+
+  /**
+   * Tests whether Bio-Formats is potentially capable of importing the given
+   * file IDs. Outputs the IDs it can potentially import, one per line.
+   */
+  public void testIds(int[] fileIds) throws OmeisException {
+    for (int i=0; i<fileIds.length; i++) {
+      Hashtable fileInfo = getFileInfo(fileIds[i]);
+      String id = (String) fileInfo.get("Name");
+      if (id != null && reader.isThisType(id)) System.out.println(fileIds[i]);
+    }
+  }
+
+  /**
+   * Attempts to import the given file IDs using Bio-Formats. Pixels are saved
+   * to the pixels files designated by OMEIS, and an OME-XML metadata block
+   * describing all successfully imported data is dumped to standard output.
+   */
+  public void importIds(int[] fileIds) throws OmeisException {
+    boolean doLittle = isLittleEndian();
+
+    for (int i=0; i<fileIds.length; i++) {
+      String id = getLocalFilePath(fileIds[i]);
+      Hashtable fileInfo = getFileInfo(fileIds[i]);
+      String oid = (String) fileInfo.get("Name");
+
+      try {
+        int seriesCount = reader.getSeriesCount(id);
+        for (int s=0; s<seriesCount; s++) {
+          reader.setSeries(id, s);
+
+          // gather pixels information for this series
+          int sizeX = reader.getSizeX(id);
+          int sizeY = reader.getSizeY(id);
+          int sizeZ = reader.getSizeZ(id);
+          int sizeC = reader.getSizeC(id);
+          int sizeT = reader.getSizeT(id);
+          int pixelType = reader.getPixelType(id);
+          int bytesPerPixel;
+          boolean isSigned, isFloat;
+          switch (pixelType) {
+            case FormatReader.INT8:
+              bytesPerPixel = 1;
+              isSigned = true;
+              isFloat = false;
+              break;
+            case FormatReader.UINT8:
+              bytesPerPixel = 1;
+              isSigned = false;
+              isFloat = false;
+              break;
+            case FormatReader.INT16:
+              bytesPerPixel = 2;
+              isSigned = true;
+              isFloat = false;
+              break;
+            case FormatReader.UINT16:
+              bytesPerPixel = 2;
+              isSigned = false;
+              isFloat = false;
+              break;
+            case FormatReader.INT32:
+              bytesPerPixel = 4;
+              isSigned = true;
+              isFloat = false;
+              break;
+            case FormatReader.UINT32:
+              bytesPerPixel = 4;
+              isSigned = false;
+              isFloat = false;
+              break;
+            case FormatReader.FLOAT:
+              bytesPerPixel = 4;
+              isSigned = true;
+              isFloat = true;
+              break;
+            case FormatReader.DOUBLE:
+              bytesPerPixel = 8;
+              isSigned = true;
+              isFloat = true;
+              break;
+            default:
+              System.err.println("Error: unknown pixel type for '" +
+                oid + "' series #" + s + ": " + pixelType);
+              continue;
+          }
+          boolean little = reader.isLittleEndian(id);
+          boolean swap = doLittle != little;
+
+          // ask OMEIS to allocate new pixels file
+          int pixelsId = newPixels(sizeX, sizeY, sizeZ, sizeC, sizeT,
+            bytesPerPixel, isSigned, isFloat);
+          String pixelsPath = getLocalPixelsPath(pixelsId);
+
+          // write pixels to file
+          FileOutputStream out = new FileOutputStream(pixelsPath);
+          int imageCount = reader.getImageCount(id);
+          for (int j=0; i<imageCount; j++) {
+            byte[] plane = reader.openBytes(id, j);
+            if (swap && bytesPerPixel > 1 && !isFloat) { // swap endianness
+              for (int b=0; b<plane.length; b+=bytesPerPixel) {
+                for (int k=0; k<bytesPerPixel/2; k++) {
+                  int i1 = b + k;
+                  int i2 = b + bytesPerPixel - k - 1;
+                  byte b1 = plane[i1];
+                  byte b2 = plane[i2];
+                  plane[i1] = b2;
+                  plane[i2] = b1;
+                }
+              }
+            }
+            out.write(plane);
+          }
+          out.close();
+          reader.close();
+
+          // tell OMEIS we're done
+          pixelsId = finishPixels(pixelsId);
+
+          // inject pixels ID into proper Pixels element
+          // CTR TODO
+        }
+
+        // output OME-XML to standard output
+        System.out.println(store.dumpXML());
+        // CTR TODO - needs to be merged into one big OME block
+      }
+      catch (FormatException exc) {
+        System.err.println(
+          "Error: an exception occurred reading '" + oid + "':");
+        exc.printStackTrace();
+      }
+      catch (IOException exc) {
+        System.err.println(
+          "Error: an exception occurred reading '" + oid + "':");
+        exc.printStackTrace();
+      }
+    }
   }
 
   // -- OmeisImporter API methods - OMEIS method calls --
@@ -225,10 +372,15 @@ public class OmeisImporter {
 
   // -- Main method --
 
+  /**
+   * Run ./omebf with a list of file IDs to import those IDs.
+   * Run with the -test flag to ask Bio-Formats whether it
+   * thinks it can import those files.
+   */
   public static void main(String[] args) {
     OmeisImporter importer = new OmeisImporter();
     boolean test = false;
-    int[] ids = new int[args.length];
+    int[] fileIds = new int[args.length];
 
     // parse command line arguments
     int num = 0;
@@ -237,7 +389,7 @@ public class OmeisImporter {
       else {
         try {
           int q = Integer.parseInt(args[i]);
-          ids[num++] = q;
+          fileIds[num++] = q;
         }
         catch (NumberFormatException exc) {
           System.err.println("Warning: ignoring parameter: " + args[i]);
@@ -245,13 +397,13 @@ public class OmeisImporter {
       }
     }
     int[] trimIds = new int[num];
-    System.arraycopy(ids, 0, trimIds, 0, num);
-    ids = trimIds;
+    System.arraycopy(fileIds, 0, trimIds, 0, num);
+    fileIds = trimIds;
 
     // process the IDs
     try {
-      if (test) importer.testIds(ids);
-      else importer.importIds(ids);
+      if (test) importer.testIds(fileIds);
+      else importer.importIds(fileIds);
     }
     catch (Exception exc) {
       System.err.println("An exception occurred:");
