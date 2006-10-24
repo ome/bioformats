@@ -105,9 +105,10 @@ public class OpenlabReader extends FormatReader {
     if (super.isThisType(name, open)) return true;
 
     if (open) {
+      String aid = getMappedId(name);
       byte[] b = new byte[8];
       try {
-        in = new RandomAccessStream(name);
+        in = new RandomAccessStream(aid);
         in.read(b);
       }
       catch (Exception e) { }

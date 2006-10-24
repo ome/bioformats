@@ -323,9 +323,9 @@ public class ImageWriter implements IFormatWriter {
     }
   }
 
-  /* @see IFormatHandler#getActualFilename(String) */
-  public String getActualFilename(String id) {
-    return writers[0].getActualFilename(id);
+  /* @see IFormatHandler#getMappedId(String) */
+  public String getMappedId(String id) {
+    return writers[0].getMappedId(id);
   }
 
   // -- Main method --
