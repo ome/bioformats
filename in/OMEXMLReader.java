@@ -204,7 +204,7 @@ public class OMEXMLReader extends FormatReader {
     close();
     currentId = id;
     metadata = new Hashtable();
-    in = new RandomAccessStream(id);
+    in = new RandomAccessStream(getMappedId(id));
 
     in.skipBytes(200);
 
@@ -326,7 +326,7 @@ public class OMEXMLReader extends FormatReader {
 
     OMENode ome = null;
     try {
-      ome = new OMENode(new File(id));
+      ome = new OMENode(new File(getMappedId(id)));
     }
     catch (Exception exc) { throw new FormatException(exc); }
     MetadataStore store = getMetadataStore(id);

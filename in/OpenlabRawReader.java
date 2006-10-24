@@ -139,7 +139,7 @@ public class OpenlabRawReader extends FormatReader {
   /** Initializes the given RAW file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessStream(getMappedId(id));
 
     // read the 12 byte file header
 

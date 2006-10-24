@@ -161,7 +161,7 @@ public class IPLabReader extends FormatReader {
   /** Initializes the given IPLab file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessStream(getMappedId(id));
 
     byte[] fourBytes = new byte[4];
     in.read(fourBytes);

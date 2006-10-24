@@ -194,7 +194,7 @@ public class NikonReader extends BaseTiffReader {
     getMetadataStore(id).createRoot();
 
     channelMinMax = null;
-    in = new RandomAccessStream(id);
+    in = new RandomAccessStream(getMappedId(id));
     if (in.readShort() == 0x4949) in.order(true);
 
     ifds = TiffTools.getIFDs(in);

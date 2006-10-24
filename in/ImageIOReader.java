@@ -91,7 +91,7 @@ public abstract class ImageIOReader extends FormatReader {
     }
 
     return ImageIO.read(new DataInputStream(
-      new BufferedInputStream(new FileInputStream(id), 4096)));
+      new BufferedInputStream(new FileInputStream(getMappedId(id)), 4096)));
   }
 
   /** Closes any open files. */

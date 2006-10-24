@@ -318,7 +318,7 @@ public class ZeissZVIReader extends FormatReader {
     nImages = 0;
 
     try {
-      ras = new RandomAccessStream(id);
+      ras = new RandomAccessStream(getMappedId(id));
 
       // Don't uncomment this block.  Even though OIBReader has something
       // like this, it's really a bad idea here.  Every ZVI file we have *will*

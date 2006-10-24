@@ -250,7 +250,7 @@ public class OIBReader extends FormatReader {
     nImages = 0;
 
     try {
-      RandomAccessStream ras = new RandomAccessStream(id);
+      RandomAccessStream ras = new RandomAccessStream(getMappedId(id));
       if (ras.length() % 4096 != 0) {
         ras.setExtend(4096 - (int) (ras.length() % 4096));
       }

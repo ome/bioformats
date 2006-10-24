@@ -203,23 +203,24 @@ public class ICSReader extends FormatReader {
     }
 
     if (icsId == null) throw new FormatException("No ICS file found.");
-    File icsFile = new File(icsId);
+    File icsFile = new File(getMappedId(icsId));
     if (!icsFile.exists()) throw new FormatException("ICS file not found.");
 
     // check if we have a v2 ICS file
-    RandomAccessFile f = new RandomAccessFile(icsId, "r");
+    RandomAccessFile f = new RandomAccessFile(getMappedId(icsId), "r");
     byte[] b = new byte[17];
     f.read(b);
+    f.close();
     if (new String(b).trim().equals("ics_version\t2.0")) {
-      idsIn = new RandomAccessStream(icsId);
+      idsIn = new RandomAccessStream(getMappedId(icsId));
       versionTwo = true;
     }
     else {
       if (idsId == null) throw new FormatException("No IDS file found.");
-      File idsFile = new File(idsId);
+      File idsFile = new File(getMappedId(idsId));
       if (!idsFile.exists()) throw new FormatException("IDS file not found.");
       currentIdsId = idsId;
-      idsIn = new RandomAccessStream(idsId);
+      idsIn = new RandomAccessStream(getMappedId(idsId));
     }
 
     currentIcsId = icsId;

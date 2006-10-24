@@ -180,7 +180,7 @@ public class PictReader extends FormatReader {
   /** Initializes the given PICT file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessStream(getMappedId(id));
 
     little = false;
 

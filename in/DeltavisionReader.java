@@ -225,7 +225,7 @@ public class DeltavisionReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
-    in = new RandomAccessStream(id);
+    in = new RandomAccessStream(getMappedId(id));
 
     // read in the image header data
     header = new byte[1024];

@@ -135,7 +135,7 @@ public class ImarisReader extends FormatReader {
   /** Initializes the given Imaris file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessStream(getMappedId(id));
     in.order(IS_LITTLE);
 
     dims = new int[4];

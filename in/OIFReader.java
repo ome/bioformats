@@ -214,7 +214,7 @@ public class OIFReader extends FormatReader {
 
     String oifFile = id;
     if (!id.toLowerCase().endsWith("oif")) {
-      File current = new File(id);
+      File current = new File(getMappedId(id));
       current = current.getAbsoluteFile();
       String parent = current.getParent();
       File tmp = new File(parent);
@@ -227,20 +227,18 @@ public class OIFReader extends FormatReader {
       oifFile = id.substring(id.lastIndexOf(File.separator));
       oifFile = parent + oifFile.substring(0, oifFile.indexOf("_")) + ".oif";
 
-      tmp = new File(oifFile);
+      tmp = new File(getMappedId(oifFile));
       if (!tmp.exists()) {
         oifFile = oifFile.substring(0, oifFile.lastIndexOf(".")) + ".OIF";
-        tmp = new File(oifFile);
+        tmp = new File(getMappedId(oifFile));
         if (!tmp.exists()) throw new FormatException("OIF file not found");
         currentId = oifFile;
       }
-      else {
-        currentId = oifFile;
-      }
+      else currentId = oifFile;
     }
 
     super.initFile(oifFile);
-    reader = new BufferedReader(new FileReader(oifFile));
+    reader = new BufferedReader(new FileReader(getMappedId(oifFile)));
 
     int slash = oifFile.lastIndexOf(File.separator);
     String path = slash < 0 ? "." : oifFile.substring(0, slash);
@@ -283,7 +281,7 @@ public class OIFReader extends FormatReader {
       file = path + File.separator + file;
       tiffPath = file.substring(0, file.lastIndexOf(File.separator));
 
-      ptyReader = new BufferedReader(new FileReader(file));
+      ptyReader = new BufferedReader(new FileReader(getMappedId(file)));
       line = ptyReader.readLine();
       while (line != null) {
         if (!line.startsWith("[") && (line.indexOf("=") > 0)) {

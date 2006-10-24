@@ -206,7 +206,7 @@ public class LeicaReader extends BaseTiffReader {
     if (idLow.endsWith("tif") || idLow.endsWith("tiff")) {
       if (ifds == null) super.initFile(id);
 
-      in = new RandomAccessStream(id);
+      in = new RandomAccessStream(getMappedId(id));
 
       if (in.readShort() == 0x4949) {
         in.order(true);
@@ -287,7 +287,7 @@ public class LeicaReader extends BaseTiffReader {
         if (currentId != id) currentId = id;
       }
 
-      in = new RandomAccessStream(id);
+      in = new RandomAccessStream(getMappedId(id));
 
       byte[] fourBytes = new byte[4];
       in.read(fourBytes);
@@ -354,7 +354,7 @@ public class LeicaReader extends BaseTiffReader {
         Vector f = new Vector();
         byte[] tempData = (byte[]) headerIFDs[i].get(new Integer(15));
         int tempImages = DataTools.bytesToInt(tempData, 0, 4, littleEndian);
-        String dirPrefix = new File(id).getParent();
+        String dirPrefix = new File(getMappedId(id)).getParent();
         dirPrefix = dirPrefix == null ? "" : (dirPrefix + File.separator);
         for (int j=0; j<tempImages; j++) {
           // read in each filename
@@ -395,14 +395,13 @@ public class LeicaReader extends BaseTiffReader {
 
     // just checking the filename isn't enough to differentiate between
     // Leica and regular TIFF; open the file and check more thoroughly
-    String aid = getMappedId(name);
-    File file = new File(aid);
+    File file = new File(getMappedId(name));
     if (!file.exists()) return false;
     long len = file.length();
     if (len < 4) return false;
 
     try {
-      RandomAccessStream ras = new RandomAccessStream(aid);
+      RandomAccessStream ras = new RandomAccessStream(getMappedId(name));
       Hashtable ifd = TiffTools.getFirstIFD(ras);
       if (ifd == null) return false;
 
