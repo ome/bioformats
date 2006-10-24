@@ -113,11 +113,11 @@ public class PerkinElmerReader extends FormatReader {
     }
 
     String file = files[no];
-    RandomAccessStream s = new RandomAccessStream(file);
-    byte[] b = new byte[(int) s.length() - 6]; // each file has 6 magic bytes
-    s.skipBytes(6);
-    s.read(b);
-    s.close();
+    RandomAccessStream ras = new RandomAccessStream(getMappedId(file));
+    byte[] b = new byte[(int) ras.length() - 6]; // each file has 6 magic bytes
+    ras.skipBytes(6);
+    ras.read(b);
+    ras.close();
     return b;
   }
 
@@ -158,7 +158,7 @@ public class PerkinElmerReader extends FormatReader {
     super.initFile(id);
 
     // get the working directory
-    File tempFile = new File(id);
+    File tempFile = new File(getMappedId(id));
     File workingDir = tempFile.getParentFile();
     if (workingDir == null) workingDir = new File(".");
     String workingDirPath = workingDir.getPath() + File.separator;

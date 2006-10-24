@@ -195,7 +195,7 @@ public class IPWReader extends BaseTiffReader {
     if (noPOI) throw new FormatException(NO_POI_MSG);
     currentId = id;
 
-    in = new RandomAccessStream(id);
+    in = new RandomAccessStream(getMappedId(id));
 
     metadata = new Hashtable();
     pixels = new Hashtable();
@@ -203,7 +203,7 @@ public class IPWReader extends BaseTiffReader {
     numImages = 0;
 
     try {
-      r.setVar("fis", new FileInputStream(id));
+      r.setVar("fis", new FileInputStream(getMappedId(id)));
       r.exec("fs = new POIFSFileSystem(fis)");
       r.exec("dir = fs.getRoot()");
       parseDir(0, r.getVar("dir"));

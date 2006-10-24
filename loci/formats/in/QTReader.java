@@ -602,7 +602,7 @@ public class QTReader extends FormatReader {
       }
       else base = id;
 
-      File f = new File(base + ".qtr");
+      File f = new File(getMappedId(base + ".qtr"));
       if (f.exists()) {
         in = new RandomAccessFile(f.getAbsolutePath(), "r");
 
@@ -612,8 +612,9 @@ public class QTReader extends FormatReader {
         return;
       }
       else {
-        f = new File(base.substring(0, base.lastIndexOf(File.separator) + 1) +
-          "._" + base.substring(base.lastIndexOf(File.separator) + 1));
+        f = new File(getMappedId(base.substring(0,
+          base.lastIndexOf(File.separator) + 1) + "._" +
+          base.substring(base.lastIndexOf(File.separator) + 1)));
         if (f.exists()) {
           in = new RandomAccessFile(f.getAbsolutePath(), "r");
           stripHeader();
@@ -622,7 +623,7 @@ public class QTReader extends FormatReader {
           return;
         }
         else {
-          f = new File(base + "/rsrc");
+          f = new File(getMappedId(base + "/rsrc"));
           if (f.exists()) {
             in = new RandomAccessFile(f.getAbsolutePath(), "r");
             stripHeader();

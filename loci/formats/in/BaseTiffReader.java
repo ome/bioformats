@@ -822,7 +822,7 @@ public abstract class BaseTiffReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     channelMinMax = null;
-    in = new RandomAccessStream(id);
+    in = new RandomAccessStream(getMappedId(id));
     if (in.readShort() == 0x4949) in.order(true);
 
     ifds = TiffTools.getIFDs(in);

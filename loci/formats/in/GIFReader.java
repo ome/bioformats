@@ -221,7 +221,7 @@ public class GIFReader extends FormatReader {
     super.initFile(id);
 
     status = STATUS_OK;
-    in = new RandomAccessStream(id);
+    in = new RandomAccessStream(getMappedId(id));
     images = new Vector();
 
     byte[] buf = new byte[6];

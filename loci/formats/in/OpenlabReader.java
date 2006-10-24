@@ -105,10 +105,9 @@ public class OpenlabReader extends FormatReader {
     if (super.isThisType(name, open)) return true;
 
     if (open) {
-      String aid = getMappedId(name);
       byte[] b = new byte[8];
       try {
-        in = new RandomAccessStream(aid);
+        in = new RandomAccessStream(getMappedId(name));
         in.read(b);
       }
       catch (Exception e) { }
@@ -365,7 +364,7 @@ public class OpenlabReader extends FormatReader {
   /** Initialize the given Openlab LIFF file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessStream(getMappedId(id));
 
     in.skipBytes(4);
     byte[] b = new byte[4];

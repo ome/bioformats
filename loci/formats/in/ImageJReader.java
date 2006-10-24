@@ -122,7 +122,7 @@ public class ImageJReader extends FormatReader {
     if (noImageJ) throw new FormatException(NO_IJ);
 
     try {
-      File file = new File(id);
+      File file = new File(getMappedId(id));
       r.setVar("dir", file.getParent() + System.getProperty("file.separator"));
       r.setVar("name", file.getName());
       r.exec("image = opener.openImage(dir, name)");

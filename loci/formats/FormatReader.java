@@ -490,6 +490,7 @@ public abstract class FormatReader extends FormatHandler
     int start = 0;
     int end = 0;
     int series = 0;
+    String map = null;
     if (args != null) {
       for (int i=0; i<args.length; i++) {
         if (args[i].startsWith("-") && args.length > 1) {
@@ -514,6 +515,7 @@ public abstract class FormatReader extends FormatHandler
             }
             catch (Exception e) { }
           }
+          else if (args[i].equals("-map")) map = args[++i];
           else System.out.println("Ignoring unknown command flag: " + args[i]);
         }
         else {
@@ -527,8 +529,8 @@ public abstract class FormatReader extends FormatHandler
       System.out.println("To test read a file in " +
         reader.getFormat() + " format, run:");
       System.out.println("  java " + className +
-        " [-nopix] [-merge] [-stitch]");
-      System.out.println("    [-separate] [-omexml] " +
+        " [-nopix] [-nometa] [-thumbs] [-merge]");
+      System.out.println("    [-stitch] [-separate] [-omexml] " +
         "[-range start end] [-series num] file");
       System.out.println();
       System.out.println("     file: the image file to read");
@@ -545,6 +547,7 @@ public abstract class FormatReader extends FormatHandler
       System.out.println();
       return false;
     }
+    if (map != null) reader.mapId(id, map);
     if (omexml) {
       try {
         Class c = Class.forName("loci.formats.OMEXMLMetadataStore");
@@ -568,9 +571,12 @@ public abstract class FormatReader extends FormatHandler
     // read basic metadata
     System.out.println();
     System.out.println("Reading core metadata");
-    System.out.println(stitch ?
-      ("File pattern = " + FilePattern.findPattern(new File(id))) :
-      ("Filename = " + id));
+    if (stitch) {
+      String p = FilePattern.findPattern(new File(map == null ? id : map));
+      System.out.println("File pattern = " + p);
+    }
+    else System.out.println("Filename = " + id);
+    if (map != null) System.out.println("Mapped filename = " + map);
     int seriesCount = reader.getSeriesCount(id);
     System.out.println("Series count = " + seriesCount);
     for (int j=0; j<seriesCount; j++) {

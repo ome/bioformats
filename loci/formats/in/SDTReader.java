@@ -193,7 +193,7 @@ public class SDTReader extends FormatReader {
   /** Initializes the given SDT file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessStream(getMappedId(id));
     in.order(true);
 
     // read file header information
