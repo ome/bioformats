@@ -55,16 +55,17 @@ public class OmeisImporter {
    * file IDs. Outputs the IDs it can potentially import, one per line.
    */
   public void testIds(int[] fileIds) throws OmeisException {
+    // set up file path mappings
     String[] ids = new String[fileIds.length];
-    String[] paths = new String[fileIds.length];
     for (int i=0; i<fileIds.length; i++) {
       Hashtable fileInfo = getFileInfo(fileIds[i]);
       ids[i] = (String) fileInfo.get("Name");
-      paths[i] = getLocalFilePath(fileIds[i]);
-      reader.mapId(ids[i], paths[i]);
+      String path = getLocalFilePath(fileIds[i]);
+      reader.mapId(ids[i], path);
     }
+    // check types
     for (int i=0; i<fileIds.length; i++) {
-      if (ids[i] == null && reader.isThisType(ids[i])) {
+      if (ids[i] != null && reader.isThisType(ids[i])) {
         System.out.println(fileIds[i]);
       }
     }
@@ -78,11 +79,19 @@ public class OmeisImporter {
   public void importIds(int[] fileIds) throws OmeisException {
     boolean doLittle = isLittleEndian();
 
+    // set up file path mappings
+    String[] ids = new String[fileIds.length];
     for (int i=0; i<fileIds.length; i++) {
-      String id = getLocalFilePath(fileIds[i]);
       Hashtable fileInfo = getFileInfo(fileIds[i]);
-      String oid = (String) fileInfo.get("Name");
+      ids[i] = (String) fileInfo.get("Name");
+      String path = getLocalFilePath(fileIds[i]);
+      reader.mapId(ids[i], path);
+    }
 
+    // read files
+    for (int i=0; i<fileIds.length; i++) {
+      String id = ids[i];
+      String path = reader.getMappedId(ids[i]);
       try {
         int seriesCount = reader.getSeriesCount(id);
         for (int s=0; s<seriesCount; s++) {
@@ -140,7 +149,7 @@ public class OmeisImporter {
               break;
             default:
               System.err.println("Error: unknown pixel type for '" +
-                oid + "' series #" + s + ": " + pixelType);
+                path + "' series #" + s + ": " + pixelType);
               continue;
           }
           boolean little = reader.isLittleEndian(id);
@@ -186,12 +195,12 @@ public class OmeisImporter {
       }
       catch (FormatException exc) {
         System.err.println(
-          "Error: an exception occurred reading '" + oid + "':");
+          "Error: an exception occurred reading '" + path + "':");
         exc.printStackTrace();
       }
       catch (IOException exc) {
         System.err.println(
-          "Error: an exception occurred reading '" + oid + "':");
+          "Error: an exception occurred reading '" + path + "':");
         exc.printStackTrace();
       }
     }
