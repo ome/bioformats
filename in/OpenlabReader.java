@@ -99,7 +99,7 @@ public class OpenlabReader extends FormatReader {
   /**
    * Checks if the given string is a valid filename for an Openlab file.
    * @param open If true, and the file extension is insufficient to determine
-   * the file tyep, the (existing) file is opened for further analysis.
+   * the file type, the (existing) file is opened for further analysis.
    */
   public boolean isThisType(String name, boolean open) {
     if (super.isThisType(name, open)) return true;
@@ -114,8 +114,7 @@ public class OpenlabReader extends FormatReader {
       return isThisType(b);
     }
     else {
-      String lname = name.toLowerCase();
-      return lname.indexOf(".") < 0; // file appears to have no extension
+      return name.indexOf(".") < 0; // file appears to have no extension
     }
   }
 
