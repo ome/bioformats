@@ -55,10 +55,18 @@ public class OmeisImporter {
    * file IDs. Outputs the IDs it can potentially import, one per line.
    */
   public void testIds(int[] fileIds) throws OmeisException {
+    String[] ids = new String[fileIds.length];
+    String[] paths = new String[fileIds.length];
     for (int i=0; i<fileIds.length; i++) {
       Hashtable fileInfo = getFileInfo(fileIds[i]);
-      String id = (String) fileInfo.get("Name");
-      if (id != null && reader.isThisType(id)) System.out.println(fileIds[i]);
+      ids[i] = (String) fileInfo.get("Name");
+      paths[i] = getLocalFilePath(fileIds[i]);
+      reader.mapId(ids[i], paths[i]);
+    }
+    for (int i=0; i<fileIds.length; i++) {
+      if (ids[i] == null && reader.isThisType(ids[i])) {
+        System.out.println(fileIds[i]);
+      }
     }
   }
 
