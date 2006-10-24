@@ -266,9 +266,9 @@ public class ImageWriter implements IFormatWriter {
   }
 
   /**
-   * Checks if the given string is a valid filename for this file format.
+   * Checks if the given string is a valid filename for any supported format.
    * @param open If true, and the file extension is insufficient to determine
-   *  the file type, the (existing) file is opened for further analysis.
+   *   the file type, the (existing) file is opened for further analysis.
    */
   public boolean isThisType(String name, boolean open) {
     for (int i=0; i<writers.length; i++) {

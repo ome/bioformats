@@ -92,9 +92,10 @@ public class FluoviewReader extends BaseTiffReader {
   // -- FormatHandler API methods --
 
   /**
-   * Checks if the given string is a valid filename for a Fluoview TIFF file.
-   * @param open If true, and the file extension is insufficient to determine
-   *  the file type, the (existing) file is opened for further analysis.
+   * Checks if the given string is a valid filename for an Fluoview TIFF file.
+   * @param open If true, the (existing) file is opened for further analysis,
+   *   since the file extension is insufficient to confirm that the file is in
+   *   Fluoview TIFF format.
    */
   public boolean isThisType(String name, boolean open) {
     if (!super.isThisType(name, open)) return false;

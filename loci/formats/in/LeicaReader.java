@@ -383,8 +383,9 @@ public class LeicaReader extends BaseTiffReader {
 
   /**
    * Checks if the given string is a valid filename for a Leica file.
-   * @param open If true, and the file extension is insufficient to determine
-   *  the file type, the (existing) file is opened for further analysis.
+   * @param open If true, the (existing) file is opened for further analysis,
+   *   since the file extension is insufficient to confirm that the file is in
+   *   Leica format.
    */
   public boolean isThisType(String name, boolean open) {
     String lname = name.toLowerCase();

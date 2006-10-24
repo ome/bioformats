@@ -74,8 +74,8 @@ public abstract class FormatHandler implements IFormatHandler {
    * The default implementation checks filename suffixes against
    * those known for this format (the open parameter does nothing).
    * @param open If true, and the file extension is insufficient to determine
-   *  the file type, the (existing) file is opened for further analysis. Does
-   *  nothing in the default implementation.
+   *   the file type, the (existing) file is opened for further analysis.
+   *   Does nothing in the default implementation.
    */
   public boolean isThisType(String name, boolean open) {
     String lname = name.toLowerCase();
