@@ -427,9 +427,7 @@ public class LeicaReader extends BaseTiffReader {
 
   // -- Helper methods --
 
-  /* (non-Javadoc)
-   * @see loci.formats.BaseTiffReader#initMetadata()
-   */
+  /* @see loci.formats.BaseTiffReader#initMetadata() */
   protected void initMetadata() {
     if (headerIFDs == null) headerIFDs = ifds;
 

@@ -178,9 +178,7 @@ public class NikonReader extends BaseTiffReader {
 
   // -- Internal BaseTiffReader API methods --
 
-  /* (non-Javadoc)
-   * @see loci.formats.in.BaseTiffReader#initFile(String)
-   */
+  /* @see BaseTiffReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     close();
     currentId = id;
@@ -228,9 +226,7 @@ public class NikonReader extends BaseTiffReader {
     catch (Exception e) { }
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.in.BaseTiffReader#initStandardMetadata()
-   */
+  /* @see BaseTiffReader#initStandardMetadata() */
   protected void initStandardMetadata() {
     super.initStandardMetadata();
 

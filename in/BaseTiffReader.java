@@ -706,9 +706,7 @@ public abstract class BaseTiffReader extends FormatReader {
     return metadata.get(field);
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelGlobalMinimum(int)
-   */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(int) */
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
   {
@@ -718,9 +716,7 @@ public abstract class BaseTiffReader extends FormatReader {
     return channelMinMax[theC][MIN];
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelGlobalMaximum(int)
-   */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(int) */
   public Double getChannelGlobalMaximum(String id, int theC)
     throws FormatException, IOException
   {
@@ -741,10 +737,8 @@ public abstract class BaseTiffReader extends FormatReader {
     return false;
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.FormatReader#openBytes(java.lang.String, int, byte[])
-   */
-  public byte[] openBytes(java.lang.String id, int no, byte[] buf)
+  /* @see loci.formats.FormatReader#openBytes(String, int, byte[]) */
+  public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -758,9 +752,7 @@ public abstract class BaseTiffReader extends FormatReader {
     return buf;
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.FormatReader#openBytes(java.lang.String, int)
-   */
+  /* @see loci.formats.FormatReader#openBytes(String, int) */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {

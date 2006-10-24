@@ -52,4 +52,27 @@ public interface IFormatHandler {
   /** Gets a JFileChooser that recognizes accepted file types. */
   JFileChooser getFileChooser();
 
+  /**
+   * Maps the given id to the actual filename on disk. Typically actual
+   * filenames are used for ids, making this step unnecessary, but in some
+   * cases it is useful; e.g., if the file has been renamed to conform to a
+   * standard naming scheme and the original file extension is lost, then using
+   * the original filename as the id assists format handlers with type
+   * identification and pattern matching, and the id can be mapped to the
+   * actual filename for reading the file's contents.
+   * @see #getActualFilename(String)
+   */
+  void mapId(String id, String filename);
+
+  /**
+   * Gets the actual filename on disk for the given id. Typically the id itself
+   * is the filename, but in some cases may not be (e.g., if OMEIS has renamed
+   * a file from its original name to a standard location such as Files/101,
+   * the original filename is useful for checking the file extension and doing
+   * pattern matching, but the renamed filename is required to read its
+   * contents).
+   * @see #mapId(String, String)
+   */
+  String getActualFilename(String id);
+
 }

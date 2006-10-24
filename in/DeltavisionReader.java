@@ -149,9 +149,7 @@ public class DeltavisionReader extends FormatReader {
     return numT;
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelGlobalMinimum(int)
-   */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(int) */
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
   {
@@ -160,9 +158,7 @@ public class DeltavisionReader extends FormatReader {
     return new Double(v.floatValue());
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#getChannelGlobalMaximum(int)
-   */
+  /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(int) */
   public Double getChannelGlobalMaximum(String id, int theC)
     throws FormatException, IOException
   {
@@ -190,9 +186,7 @@ public class DeltavisionReader extends FormatReader {
     return openBytes(id, no, buf);
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.IFormatReader#openBytes(java.lang.String, int, byte[])
-   */
+  /* @see loci.formats.IFormatReader#openBytes(String, int, byte[]) */
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -654,9 +648,7 @@ public class DeltavisionReader extends FormatReader {
     /** Energy conversion factor. Usually 1. */
     private float energyConvFactor;
 
-    /*
-     * (non-Javadoc)
-     * @see java.lang.Object#toString()
+    /**
      * Helper function which overrides toString, printing out the values in
      * the header section.
      */
@@ -732,7 +724,7 @@ public class DeltavisionReader extends FormatReader {
       expTime =
         Float.intBitsToFloat(
           DataTools.bytesToInt(extHeader, offsetWithInts + 32, 4, little));
-      ndFilter = (float) java.lang.Math.pow(10.0, -oDFilter);
+      ndFilter = (float) Math.pow(10.0, -oDFilter);
       exFilter =
         Float.intBitsToFloat(
           DataTools.bytesToInt(extHeader, offsetWithInts + 40, 4, little));

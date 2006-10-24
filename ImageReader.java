@@ -299,7 +299,7 @@ public class ImageReader implements IFormatReader {
     return getReader(id).openBytes(id, no);
   }
 
-  /* @see IFormatReader#openBytes(java.lang.String, int, byte[]) */
+  /* @see IFormatReader#openBytes(String, int, byte[]) */
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -361,7 +361,7 @@ public class ImageReader implements IFormatReader {
   }
 
   /*
-   * @see IFormatReader#getIndex(java.lang.String, int, int, int)
+   * @see IFormatReader#getIndex(String, int, int, int)
    */
   public int getIndex(String id, int z, int c, int t)
     throws FormatException, IOException
@@ -369,7 +369,7 @@ public class ImageReader implements IFormatReader {
     return getReader(id).getIndex(id, z, c, t);
   }
 
-  /* @see IFormatReader#getZCTCoords(java.lang.String, int) */
+  /* @see IFormatReader#getZCTCoords(String, int) */
   public int[] getZCTCoords(String id, int index)
     throws FormatException, IOException
   {
@@ -399,22 +399,21 @@ public class ImageReader implements IFormatReader {
     return getReader(id).getMetadata(id);
   }
 
-  /*
-   * @see FormatReader#setMetadataStore(loci.formats.MetadataStore)
-   */
+  /* @see FormatReader#setMetadataStore(MetadataStore) */
   public void setMetadataStore(MetadataStore store) {
-    for (int i = 0; i < readers.length; i++)
+    for (int i=0; i<readers.length; i++) {
       readers[i].setMetadataStore(store);
+    }
   }
 
-  /* @see IFormatReader#getMetadataStore(java.lang.String) */
+  /* @see IFormatReader#getMetadataStore(String) */
   public MetadataStore getMetadataStore(String id)
     throws FormatException, IOException
   {
     return getReader(id).getMetadataStore(id);
   }
 
-  /* @see IFormatReader#getMetadataStoreRoot(java.lang.String) */
+  /* @see IFormatReader#getMetadataStoreRoot(String) */
   public Object getMetadataStoreRoot(String id)
     throws FormatException, IOException
   {
@@ -516,6 +515,18 @@ public class ImageReader implements IFormatReader {
       chooser = FormatHandler.buildFileChooser(getFileFilters());
     }
     return chooser;
+  }
+
+  /* @see IFormatHandler#mapId(String, String) */
+  public void mapId(String id, String filename) {
+    for (int i=0; i<readers.length; i++) {
+      readers[i].mapId(id, filename);
+    }
+  }
+
+  /* @see IFormatHandler#getActualFilename(String) */
+  public String getActualFilename(String id) {
+    return readers[0].getActualFilename(id);
   }
 
   // -- Utility methods --

@@ -316,6 +316,18 @@ public class ImageWriter implements IFormatWriter {
     return chooser;
   }
 
+  /* @see IFormatHandler#mapId(String, String) */
+  public void mapId(String id, String filename) {
+    for (int i=0; i<writers.length; i++) {
+      writers[i].mapId(id, filename);
+    }
+  }
+
+  /* @see IFormatHandler#getActualFilename(String) */
+  public String getActualFilename(String id) {
+    return writers[0].getActualFilename(id);
+  }
+
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {

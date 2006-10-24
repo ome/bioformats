@@ -60,9 +60,7 @@ public class GelReader extends BaseTiffReader {
 
   // -- Internal BaseTiffReader API methods --
 
-  /* (non-Javadoc)
-   * @see loci.formats.BaseTiffReader#initStandardMetadata()
-   */
+  /* @see loci.formats.BaseTiffReader#initStandardMetadata() */
   protected void initStandardMetadata() {
     super.initStandardMetadata();
 

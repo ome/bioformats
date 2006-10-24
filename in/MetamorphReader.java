@@ -291,19 +291,13 @@ public class MetamorphReader extends BaseTiffReader {
     catch (Exception e) { }
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.BaseTiffReader#getImageName()
-   */
+  /*@see loci.formats.BaseTiffReader#getImageName() */
   protected String getImageName() {
     if (imageName == null) return super.getImageName();
     return imageName;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.BaseTiffReader#getImageCreationDate()
-   */
+  /* @see loci.formats.BaseTiffReader#getImageCreationDate() */
   protected String getImageCreationDate() {
     if (imageCreationDate == null) return super.getImageCreationDate();
     return imageCreationDate;
