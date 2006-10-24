@@ -173,7 +173,7 @@ public class NikonReader extends BaseTiffReader {
 
     // just checking the filename isn't enough to differentiate between
     // Nikon and regular TIFF; open the file and check more thoroughly
-    return open ? checkBytes(name, BLOCK_CHECK_LEN) : true;
+    return open ? checkBytes(getMappedId(name), BLOCK_CHECK_LEN) : true;
   }
 
   // -- Internal BaseTiffReader API methods --

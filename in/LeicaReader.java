@@ -395,13 +395,14 @@ public class LeicaReader extends BaseTiffReader {
 
     // just checking the filename isn't enough to differentiate between
     // Leica and regular TIFF; open the file and check more thoroughly
-    File file = new File(name);
+    String aid = getMappedId(name);
+    File file = new File(aid);
     if (!file.exists()) return false;
     long len = file.length();
     if (len < 4) return false;
 
     try {
-      RandomAccessStream ras = new RandomAccessStream(name);
+      RandomAccessStream ras = new RandomAccessStream(aid);
       Hashtable ifd = TiffTools.getFirstIFD(ras);
       if (ifd == null) return false;
 
@@ -417,7 +418,7 @@ public class LeicaReader extends BaseTiffReader {
       String dir = name.substring(0, name.lastIndexOf("/") + 1);
       lei = dir + lei;
 
-      File check = new File(lei);
+      File check = new File(getMappedId(lei));
       return check.exists();
     }
     catch (IOException exc) { }

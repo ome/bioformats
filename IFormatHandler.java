@@ -60,7 +60,7 @@ public interface IFormatHandler {
    * the original filename as the id assists format handlers with type
    * identification and pattern matching, and the id can be mapped to the
    * actual filename for reading the file's contents.
-   * @see #getActualFilename(String)
+   * @see #getMappedId(String)
    */
   void mapId(String id, String filename);
 
@@ -73,6 +73,6 @@ public interface IFormatHandler {
    * contents).
    * @see #mapId(String, String)
    */
-  String getActualFilename(String id);
+  String getMappedId(String id);
 
 }

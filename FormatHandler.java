@@ -117,8 +117,8 @@ public abstract class FormatHandler implements IFormatHandler {
     else idMap.put(id, filename);
   }
 
-  /* @see IFormatHandler#getActualFilename(String) */
-  public String getActualFilename(String id) {
+  /* @see IFormatHandler#getMappedId(String) */
+  public String getMappedId(String id) {
     String filename = id == null ? null : (String) idMap.get(id);
     return filename == null ? id : filename;
   }
