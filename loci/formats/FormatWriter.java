@@ -96,7 +96,7 @@ public abstract class FormatWriter extends FormatHandler
     throw new FormatException("Invalid compression type: " + compress);
   }
 
-  /* @see loci.formats.IFormatWriter#testConvert(String[]) */
+  /* @see FormatWriter#testConvert(String[]) */
   public boolean testConvert(String[] args)
     throws FormatException, IOException
   {

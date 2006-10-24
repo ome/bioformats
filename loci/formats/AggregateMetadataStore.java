@@ -73,9 +73,7 @@ public class AggregateMetadataStore implements MetadataStore {
     return delegates;
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.MetadataStore#createRoot()
-   */
+  /* @see MetadataStore#createRoot() */
   public void createRoot() {
     for (Iterator i = delegates.iterator(); i.hasNext();) {
       ((MetadataStore) i.next()).createRoot();
@@ -83,8 +81,8 @@ public class AggregateMetadataStore implements MetadataStore {
   }
 
   /**
-   * Unsupported with an AggregateMetadataStore. Throws a RuntimeException up to
-   * the caller.
+   * Unsupported with an AggregateMetadataStore.
+   * Throws a RuntimeException up to the caller.
    */
   public Object getRoot() {
     throw new RuntimeException("Unsupported with AggregateMetadataStore. Use" +
@@ -92,19 +90,15 @@ public class AggregateMetadataStore implements MetadataStore {
   }
 
   /**
-   * Unsupported with an AggregateMetadataStore. Throws a RuntimeException up to
-   * the caller.
+   * Unsupported with an AggregateMetadataStore.
+   * Throws a RuntimeException up to the caller.
    */
   public void setRoot(Object root) {
     throw new RuntimeException("Unsupported with AggregateMetadataStore. Use" +
       " getDelegates() and setRoot().");
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.MetadataStore#setChannelGlobalMinMax(int,
-   *   java.lang.Double, java.lang.Double, java.lang.Integer)
-   */
+  /* @see MetadataStore#setChannelGlobalMinMax(int, Double, Double, Integer) */
   public void setChannelGlobalMinMax(int channel, Double globalMin,
     Double globalMax, Integer i)
   {
@@ -114,11 +108,7 @@ public class AggregateMetadataStore implements MetadataStore {
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.MetadataStore#setDefaultDisplaySettings(
-   *   java.lang.Integer)
-   */
+  /* @see MetadataStore#setDefaultDisplaySettings(Integer) */
   public void setDefaultDisplaySettings(Integer i) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       MetadataStore s = (MetadataStore) iter.next();
@@ -127,10 +117,8 @@ public class AggregateMetadataStore implements MetadataStore {
   }
 
   /*
-   * (non-Javadoc)
-   * @see loci.formats.MetadataStore#setDimensions(java.lang.Float,
-   *   java.lang.Float, java.lang.Float, java.lang.Float, java.lang.Float,
-   *   java.lang.Integer)
+   * @see MetadataStore#setDimensions(Float,
+   *   Float, Float, Float, Float, Integer)
    */
   public void setDimensions(Float pixelSizeX, Float pixelSizeY,
     Float pixelSizeZ, Float pixelSizeC, Float pixelSizeT, Integer i)
@@ -143,11 +131,8 @@ public class AggregateMetadataStore implements MetadataStore {
   }
 
   /*
-   * (non-Javadoc)
-   * @see loci.formats.MetadataStore#setDisplayROI(java.lang.Integer,
-   *   java.lang.Integer, java.lang.Integer, java.lang.Integer,
-   *   java.lang.Integer, java.lang.Integer, java.lang.Integer,
-   *   java.lang.Integer, java.lang.Object, java.lang.Integer)
+   * @see MetadataStore#setDisplayROI(Integer, Integer, Integer,
+   *   Integer, Integer, Integer, Integer, Integer, Object, Integer)
    */
   public void setDisplayROI(Integer x0, Integer y0, Integer z0, Integer x1,
     Integer y1, Integer z1, Integer t0, Integer t1, Object displayOptions,
@@ -160,10 +145,8 @@ public class AggregateMetadataStore implements MetadataStore {
   }
 
   /*
-   * (non-Javadoc)
-   * @see loci.formats.MetadataStore#setExperimenter(java.lang.String,
-   *   java.lang.String, java.lang.String, java.lang.String, java.lang.String,
-   *   java.lang.Object, java.lang.Integer)
+   * @see MetadataStore#setExperimenter(String,
+   *   String, String, String, String, Object, Integer)
    */
   public void setExperimenter(String firstName, String lastName, String email,
     String institution, String dataDirectory, Object group, Integer i)
@@ -175,11 +158,7 @@ public class AggregateMetadataStore implements MetadataStore {
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.MetadataStore#setGroup(java.lang.String,
-   *   java.lang.Object, java.lang.Object, java.lang.Integer)
-   */
+  /* @see MetadataStore#setGroup(String, Object, Object, Integer) */
   public void setGroup(String name, Object leader, Object contact, Integer i) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       MetadataStore s = (MetadataStore) iter.next();
@@ -187,11 +166,7 @@ public class AggregateMetadataStore implements MetadataStore {
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.MetadataStore#setImage(java.lang.String,
-   *   java.lang.String, java.lang.String, java.lang.Integer)
-   */
+  /* @see MetadataStore#setImage(String, String, String, Integer) */
   public void setImage(String name, String creationDate, String description,
     Integer i)
   {
@@ -202,9 +177,7 @@ public class AggregateMetadataStore implements MetadataStore {
   }
 
   /*
-   * (non-Javadoc)
-   * @see loci.formats.MetadataStore#setInstrument(java.lang.String,
-   *   java.lang.String, java.lang.String, java.lang.String, java.lang.Integer)
+   * @see MetadataStore#setInstrument(String, String, String, String, Integer)
    */
   public void setInstrument(String manufacturer, String model,
     String serialNumber, String type, Integer i)
@@ -216,10 +189,8 @@ public class AggregateMetadataStore implements MetadataStore {
   }
 
   /*
-   * (non-Javadoc)
-   * @see loci.formats.MetadataStore#setLogicalChannel(int, java.lang.String,
-   *   java.lang.Float, java.lang.Integer, java.lang.Integer, java.lang.String,
-   *   java.lang.String, java.lang.Integer)
+   * @see MetadataStore#setLogicalChannel(int, String,
+   *   Float, Integer, Integer, String, String, Integer)
    */
   public void setLogicalChannel(int channelIdx, String name, Float ndFilter,
     Integer emWave, Integer exWave, String photometricInterpretation,
@@ -233,11 +204,8 @@ public class AggregateMetadataStore implements MetadataStore {
   }
 
   /*
-   * (non-Javadoc)
-   * @see loci.formats.MetadataStore#setPixels(java.lang.Integer,
-   *   java.lang.Integer, java.lang.Integer, java.lang.Integer,
-   *   java.lang.Integer, java.lang.String, java.lang.Boolean,
-   *   java.lang.String, java.lang.Integer)
+   * @see MetadataStore#setPixels(Integer, Integer, Integer,
+   *   Integer, Integer, String, Boolean, String, Integer)
    */
   public void setPixels(Integer sizeX, Integer sizeY, Integer sizeZ,
     Integer sizeC, Integer sizeT, Integer pixelType, Boolean bigEndian,
@@ -250,11 +218,7 @@ public class AggregateMetadataStore implements MetadataStore {
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.MetadataStore#setPlaneInfo(int, int, int,
-   *   java.lang.Float, java.lang.Float, java.lang.Integer)
-   */
+  /* @see MetadataStore#setPlaneInfo(int, int, int, Float, Float, Integer) */
   public void setPlaneInfo(int theZ, int theC, int theT, Float timestamp,
     Float exposureTime, Integer i)
   {
@@ -264,11 +228,7 @@ public class AggregateMetadataStore implements MetadataStore {
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * @see loci.formats.MetadataStore#setStageLabel(java.lang.String,
-   *   java.lang.Float, java.lang.Float, java.lang.Float, java.lang.Integer)
-   */
+  /* @see MetadataStore#setStageLabel(String, Float, Float, Float, Integer) */
   public void setStageLabel(String name, Float x, Float y, Float z, Integer i) {
     for (Iterator iter = delegates.iterator(); iter.hasNext();) {
       MetadataStore s = (MetadataStore) iter.next();

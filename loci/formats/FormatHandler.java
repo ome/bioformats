@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import java.util.Hashtable;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
@@ -37,6 +38,9 @@ public abstract class FormatHandler implements IFormatHandler {
 
   /** Valid suffixes for this file format. */
   protected String[] suffixes;
+
+  /** Map from given filenames to actual filenames. */
+  protected Hashtable idMap;
 
   /** File filters for this file format, for use with a JFileChooser. */
   protected FileFilter[] filters;
@@ -58,6 +62,7 @@ public abstract class FormatHandler implements IFormatHandler {
   public FormatHandler(String format, String[] suffixes) {
     this.format = format;
     this.suffixes = suffixes == null ? new String[0] : suffixes;
+    idMap = new Hashtable();
   }
 
   // -- IFormatHandler API methods --
@@ -85,13 +90,13 @@ public abstract class FormatHandler implements IFormatHandler {
     return false;
   }
 
-  /* @see loci.formats.IFormatHandler#getFormat() */
+  /* @see IFormatHandler#getFormat() */
   public String getFormat() { return format; }
 
-  /* @see loci.formats.IFormatHandler#getSuffixes() */
+  /* @see IFormatHandler#getSuffixes() */
   public String[] getSuffixes() { return suffixes; }
 
-  /* @see loci.formats.IFormatHandler#getFileFilters() */
+  /* @see IFormatHandler#getFileFilters() */
   public FileFilter[] getFileFilters() {
     if (filters == null) {
       filters = new FileFilter[] {new ExtensionFileFilter(suffixes, format)};
@@ -99,10 +104,23 @@ public abstract class FormatHandler implements IFormatHandler {
     return filters;
   }
 
-  /* @see loci.formats.IFormatHandler#getFileChooser() */
+  /* @see IFormatHandler#getFileChooser() */
   public JFileChooser getFileChooser() {
     if (chooser == null) chooser = buildFileChooser(getFileFilters());
     return chooser;
+  }
+
+  /* @see IFormatHandler#mapId(String, String) */
+  public void mapId(String id, String filename) {
+    if (id == null) return;
+    if (filename == null) idMap.remove(id);
+    else idMap.put(id, filename);
+  }
+
+  /* @see IFormatHandler#getActualFilename(String) */
+  public String getActualFilename(String id) {
+    String filename = id == null ? null : (String) idMap.get(id);
+    return filename == null ? id : filename;
   }
 
   // -- Utility methods --
