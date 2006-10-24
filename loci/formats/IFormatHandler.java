@@ -66,11 +66,11 @@ public interface IFormatHandler {
 
   /**
    * Gets the actual filename on disk for the given id. Typically the id itself
-   * is the filename, but in some cases may not be (e.g., if OMEIS has renamed
+   * is the filename, but in some cases may not be; e.g., if OMEIS has renamed
    * a file from its original name to a standard location such as Files/101,
    * the original filename is useful for checking the file extension and doing
    * pattern matching, but the renamed filename is required to read its
-   * contents).
+   * contents.
    * @see #mapId(String, String)
    */
   String getMappedId(String id);
