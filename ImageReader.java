@@ -433,24 +433,6 @@ public class ImageReader implements IFormatReader {
         if (file != null) args = new String[] {file.getPath()};
       }
     }
-    if (args.length > 0) {
-      // check file format
-      for (int i=0; i<args.length; i++) {
-        String arg = args[i];
-        if (arg.startsWith("-")) continue;
-        try {
-          Integer.parseInt(arg);
-          continue;
-        }
-        catch (Exception e) { }
-        System.out.print("Checking file format ");
-        System.out.println("[" + getFormat(arg) + "]");
-        File f = new File(arg);
-        arg = f.getAbsolutePath();
-        args[i] = arg;
-        break;
-      }
-    }
     return FormatReader.testRead(this, args);
   }
 

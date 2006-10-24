@@ -558,9 +558,18 @@ public abstract class FormatReader extends FormatHandler
       catch (Exception exc) { }
     }
 
-    // check type
-    System.out.print("Checking " + reader.getFormat() + " format ");
-    System.out.println(reader.isThisType(id) ? "[yes]" : "[no]");
+    // check file format
+    if (reader instanceof ImageReader) {
+      // determine format
+      ImageReader ir = (ImageReader) reader;
+      System.out.print("Checking file format ");
+      System.out.println("[" + ir.getFormat(id) + "]");
+    }
+    else {
+      // verify format
+      System.out.print("Checking " + reader.getFormat() + " format ");
+      System.out.println(reader.isThisType(id) ? "[yes]" : "[no]");
+    }
 
     if (stitch) reader = new FileStitcher(reader);
     if (separate) reader = new ChannelSeparator(reader);
