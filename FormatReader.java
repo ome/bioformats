@@ -492,7 +492,7 @@ public abstract class FormatReader extends FormatHandler
     int series = 0;
     if (args != null) {
       for (int i=0; i<args.length; i++) {
-        if (args[i].startsWith("-")) {
+        if (args[i].startsWith("-") && args.length > 1) {
           if (args[i].equals("-nopix")) pixels = false;
           else if (args[i].equals("-nometa")) doMeta = false;
           else if (args[i].equals("-thumbs")) thumbs = true;
