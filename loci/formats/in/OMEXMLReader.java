@@ -336,7 +336,6 @@ public class OMEXMLReader extends FormatReader {
     height = new int[numDatasets];
     numImages = new int[numDatasets];
     bpp = new int[numDatasets];
-    littleEndian = new boolean[numDatasets];
     compression = new String[numDatasets];
     numChannels = new int[numDatasets];
     numT = new int[numDatasets];
