@@ -131,7 +131,7 @@ public class OMEXMLReader extends FormatReader {
     }
 
     int w = width[series];
-    int h = width[series];
+    int h = height[series];
 
     in.seek(((Integer) offsets[series].get(no)).intValue());
 
