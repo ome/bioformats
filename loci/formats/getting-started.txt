@@ -97,16 +97,19 @@ Bio-Formats, it is more efficient to make the new reader a subclass of the
 existing reader (rather than subclassing FormatReader).  In this case, it is
 usually sufficient to override initFile(String) and isThisType(byte[]).
 
-Any time you read a file from disk (e.g. when constructing a file stream), you
+Any time you read a file from disk (e.g., when constructing a file stream), you
 *must* read from the file name returned by FormatHandler.getMappedId(String),
-not the file name passed to the reader.  Thus a stub for initFile(String) might
-look like this:
+not the file name passed to the reader.  Thus, a stub for initFile(String)
+might look like this:
 
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    RandomAccessStream in = new RandomAccessStream(getMappedId(String));
+    RandomAccessStream in = new RandomAccessStream(getMappedId(id));
+    // read basic file structure and metadata from stream
   }
 
+For more details, see the Javadoc for IFormatHandler.mapId(String, String)
+and IFormatHandler.getMappedId(String).
 
 ---=== Other useful things ===---
 
