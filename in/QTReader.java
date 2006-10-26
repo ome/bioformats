@@ -286,11 +286,6 @@ public class QTReader extends FormatReader {
     return false;
   }
 
-  /* @see IFormatHandler#mapId(String, String) */
-  public void mapId(String id, String filename) {
-    super.mapId(id, filename);
-  }
-
   /* @see FormatReader#setMetadataStore(MetadataStore) */
   public void setMetadataStore(MetadataStore store) {
     super.setMetadataStore(store);
