@@ -45,7 +45,7 @@ public class ZeissZVIReader extends FormatReader {
 
   // -- Static fields --
 
-  private static LegacyZVIReader legacy = new LegacyZVIReader();
+  private LegacyZVIReader legacy = new LegacyZVIReader();
   private static boolean noPOI = false;
   private static ReflectedUniverse r = createReflectedUniverse();
 
