@@ -213,7 +213,7 @@ public class ZeissZVIReader extends FormatReader {
   /* @see IFormatHandler#mapId(String, String) */
   public void mapId(String id, String filename) {
     super.mapId(id, filename);
-    if (noPOI || needLegacy) legacy.mapId(id, filename);
+    legacy.mapId(id, filename);
   }
 
   /* @see FormatReader#setMetadataStore(MetadataStore) */

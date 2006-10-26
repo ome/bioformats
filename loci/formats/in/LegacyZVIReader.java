@@ -154,7 +154,7 @@ public class LegacyZVIReader extends FormatReader {
   /** Initializes the given ZVI file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessFile(id, "r");
+    in = new RandomAccessFile(getMappedId(id), "r");
 
     // Highly questionable decoding strategy:
     //
