@@ -286,6 +286,26 @@ public class QTReader extends FormatReader {
     return false;
   }
 
+  /* @see IFormatHandler#mapId(String, String) */
+  public void mapId(String id, String filename) {
+    super.mapId(id, filename);
+    if (useLegacy) legacy.mapId(id, filename);
+  }
+
+  /* @see FormatReader#setMetadataStore(MetadataStore) */
+  public void setMetadataStore(MetadataStore store) {
+    super.setMetadataStore(store);
+    if (useLegacy) legacy.setMetadataStore(store);
+  }
+
+  /* @see FormatReader#swapDimensions(String, String) */
+  public void swapDimensions(String id, String order)
+    throws FormatException, IOException
+  {
+    super.swapDimensions(id, order);
+    if (useLegacy) legacy.swapDimensions(id, order);
+  }
+
   /** Obtains the specified image from the given file, as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
