@@ -26,6 +26,10 @@ package loci.formats;
 
 import java.io.*;
 import java.util.*;
+import org.openmicroscopy.xml.DOMUtil;
+import org.openmicroscopy.xml.OMENode;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * A command line utility used by OMEIS to interface with Bio-Formats.
@@ -33,6 +37,13 @@ import java.util.*;
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class OmeisImporter {
+
+  // -- Constants --
+
+  /** Debugging flag. */
+  private static final boolean DEBUG = true;
+
+  // -- Fields --
 
   /** Reader for handling file formats. */
   private IFormatReader reader;
@@ -88,12 +99,28 @@ public class OmeisImporter {
       reader.mapId(ids[i], path);
     }
 
+    ByteArrayOutputStream xml = new ByteArrayOutputStream();
+
     // read files
     for (int i=0; i<fileIds.length; i++) {
       String id = ids[i];
       String path = reader.getMappedId(ids[i]);
+      if (DEBUG) log("Reading file '" + id + "' --> " + path);
       try {
         int seriesCount = reader.getSeriesCount(id);
+
+        // get DOM and Pixels elements for the file's OME-XML metadata
+        OMENode ome = (OMENode) store.getRoot();
+        Document omeDoc = ome.getOMEDocument(false);
+        Vector pix = DOMUtil.findElementList("Pixels", omeDoc);
+        if (pix.size() != seriesCount) {
+          System.err.println("Error: Pixels element count (" +
+            pix.size() + ") does not match series count (" +
+            seriesCount + ") for '" + path + "'");
+          continue;
+        }
+        if (DEBUG) log(seriesCount + " series detected.");
+
         for (int s=0; s<seriesCount; s++) {
           reader.setSeries(id, s);
 
@@ -159,11 +186,19 @@ public class OmeisImporter {
           int pixelsId = newPixels(sizeX, sizeY, sizeZ, sizeC, sizeT,
             bytesPerPixel, isSigned, isFloat);
           String pixelsPath = getLocalPixelsPath(pixelsId);
+          if (DEBUG) {
+            log("Series #" + s + ": id=" + pixelsId + ", path=" + pixelsPath);
+          }
 
           // write pixels to file
           FileOutputStream out = new FileOutputStream(pixelsPath);
           int imageCount = reader.getImageCount(id);
-          for (int j=0; i<imageCount; j++) {
+          if (DEBUG) {
+            log("Processing " + imageCount + " planes (sizeZ=" + sizeZ +
+              ", sizeC=" + sizeC + ", sizeT=" + sizeT + "): ", false);
+          }
+          for (int j=0; j<imageCount; j++) {
+            if (DEBUG) log(".", false);
             byte[] plane = reader.openBytes(id, j);
             if (swap && bytesPerPixel > 1 && !isFloat) { // swap endianness
               for (int b=0; b<plane.length; b+=bytesPerPixel) {
@@ -181,28 +216,44 @@ public class OmeisImporter {
           }
           out.close();
           reader.close();
+          if (DEBUG) log(" [done]");
 
           // tell OMEIS we're done
           pixelsId = finishPixels(pixelsId);
+          if (DEBUG) log("finishPixels called (new id=" + pixelsId + ")");
 
-          // inject pixels ID into proper Pixels element
-          // CTR TODO
+          // get SHA1 hash for finished pixels
+          String sha1 = getPixelsSHA1(pixelsId);
+          if (DEBUG) log("SHA1=" + sha1);
+
+          // inject important extra attributes into proper Pixels element
+          Element pixels = (Element) pix.elementAt(s);
+          pixels.setAttribute("FileSHA1", sha1);
+          pixels.setAttribute("Repository", "urn:lsid:skyking.microscopy.wisc.edu:OME_SemanticType_BootstrapRepository:4-1gbDg1");//FIXME
+          pixels.setAttribute("ImageServerID", "" + pixelsId);
+          if (DEBUG) log("Pixel attributes injected.");
         }
 
-        // output OME-XML to standard output
-        System.out.println(store.dumpXML());
-        // CTR TODO - needs to be merged into one big OME block
+        // accumulate XML into buffer
+        DOMUtil.writeXML(xml, omeDoc);
+        // TODO need to strip off <OME></OME> root, and readd it at
+        // the end, so that all XML blocks are part of the same root.
       }
-      catch (FormatException exc) {
+      catch (Exception exc) {
         System.err.println(
           "Error: an exception occurred reading '" + path + "':");
         exc.printStackTrace();
       }
-      catch (IOException exc) {
-        System.err.println(
-          "Error: an exception occurred reading '" + path + "':");
-        exc.printStackTrace();
-      }
+    }
+
+    // output OME-XML to standard output
+    try {
+      xml.close();
+      System.out.println(new String(xml.toByteArray()));
+    }
+    catch (IOException exc) {
+      System.err.println("Error: an exception occurred compiling OME-XML");
+      exc.printStackTrace();
     }
   }
 
@@ -223,7 +274,9 @@ public class OmeisImporter {
       throw new OmeisException(
         "Failed to obtain local path for file ID " + fileId);
     }
+    /*TEMP
     return s[0];
+    TEMP*/return "/OME/OMEIS/" + s[0]; // until OMEIS paths are absolute
   }
 
   /**
@@ -286,9 +339,10 @@ public class OmeisImporter {
 
   /** Gets whether the local system uses little-endian byte order. */
   public boolean isLittleEndian() throws OmeisException {
-    // ./omeis Method=GetEndianness
+    if (true) return true; // TEMP until OMEIS has this method
+    // ./omeis Method=GetNativeEndian
     String[] s;
-    try { s = omeis("GetEndianness", ""); }
+    try { s = omeis("GetNativeEndian", ""); }
     catch (IOException exc) { throw new OmeisException(exc); }
     catch (InterruptedException exc) { throw new OmeisException(exc); }
     if (s.length > 1) {
@@ -318,7 +372,9 @@ public class OmeisImporter {
       throw new OmeisException(
         "Failed to obtain local path for pixels ID " + pixelsId);
     }
+    /*TEMP
     return s[0];
+    TEMP*/return "/OME/OMEIS/" + s[0]; // until OMEIS paths are absolute
   }
 
   /**
@@ -346,6 +402,24 @@ public class OmeisImporter {
       throw new OmeisException("Invalid pixels ID from FinishPixels: " + s[0]);
     }
     return pid;
+  }
+
+  /** Gets SHA1 hash for the pixels corresponding to the given pixels ID. */
+  public String getPixelsSHA1(int pixelsId) throws OmeisException {
+    // ./omeis Method=PixelsSHA1 PixelsID=pid
+    String[] s;
+    try { s = omeis("PixelsSHA1", "PixelsID=" + pixelsId); }
+    catch (IOException exc) { throw new OmeisException(exc); }
+    catch (InterruptedException exc) { throw new OmeisException(exc); }
+    if (s.length > 1) {
+      System.err.println("Warning: ignoring " + (s.length - 1) +
+        " extraneous lines in OMEIS PixelsSHA1 call");
+    }
+    else if (s.length < 1) {
+      throw new OmeisException(
+        "Failed to obtain SHA1 for pixels ID " + pixelsId);
+    }
+    return s[0];
   }
 
   // -- Helper methods --
@@ -385,6 +459,13 @@ public class OmeisImporter {
     String[] results = new String[v.size()];
     v.copyInto(results);
     return results;
+  }
+
+  private void log(String msg) { log(msg, true); }
+
+  private void log(String msg, boolean nl) {
+    if (nl) System.err.println(msg);
+    else System.err.print(msg);
   }
 
   // -- Main method --
