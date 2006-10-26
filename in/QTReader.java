@@ -289,7 +289,6 @@ public class QTReader extends FormatReader {
   /* @see IFormatHandler#mapId(String, String) */
   public void mapId(String id, String filename) {
     super.mapId(id, filename);
-    if (useLegacy) legacy.mapId(id, filename);
   }
 
   /* @see FormatReader#setMetadataStore(MetadataStore) */
@@ -329,7 +328,7 @@ public class QTReader extends FormatReader {
       doLegacy = true;
     }
     if (doLegacy) {
-      if (legacy == null) legacy = new LegacyQTReader();
+      if (legacy == null) legacy = createLegacyReader();
       return legacy.openBytes(id, no);
     }
 
@@ -510,7 +509,7 @@ public class QTReader extends FormatReader {
       doLegacy = true;
     }
     if (doLegacy) {
-      if (legacy == null) legacy = new LegacyQTReader();
+      if (legacy == null) legacy = createLegacyReader();
       return legacy.openImage(id, no);
     }
 
@@ -1600,6 +1599,12 @@ public class QTReader extends FormatReader {
       }
       else in.seek(in.getFilePointer() - 3);
     }
+  }
+
+  /** Creates a legacy QT reader. */
+  private LegacyQTReader createLegacyReader() {
+    // use the same id mappings that this reader does
+    return new LegacyQTReader(idMap);
   }
 
   // -- Main method --

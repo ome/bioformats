@@ -29,6 +29,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageProducer;
 import java.io.File;
 import java.io.IOException;
+import java.util.Hashtable;
 import java.util.Vector;
 import loci.formats.*;
 
@@ -62,6 +63,12 @@ public class LegacyQTReader extends FormatReader {
 
   /** Constructs a new QT reader. */
   public LegacyQTReader() { super("QuickTime", "mov"); }
+
+  /** Constructs a new QT reader with the given id mappings. */
+  public LegacyQTReader(Hashtable idMap) {
+    super("QuickTime", "mov");
+    if (idMap != null) this.idMap = idMap;
+  }
 
   // -- FormatReader API methods --
 
