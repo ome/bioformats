@@ -210,6 +210,26 @@ public class ZeissZVIReader extends FormatReader {
     return true;
   }
 
+  /* @see IFormatHandler#mapId(String, String) */
+  public void mapId(String id, String filename) {
+    super.mapId(id, filename);
+    if (noPOI || needLegacy) legacy.mapId(id, filename);
+  }
+
+  /* @see FormatReader#setMetadataStore(MetadataStore) */
+  public void setMetadataStore(MetadataStore store) {
+    super.setMetadataStore(store);
+    if (noPOI || needLegacy) legacy.setMetadataStore(store);
+  }
+
+  /* @see FormatReader#swapDimensions(String, String) */
+  public void swapDimensions(String id, String order)
+    throws FormatException, IOException
+  {
+    super.swapDimensions(id, order);
+    if (noPOI || needLegacy) legacy.swapDimensions(id, order);
+  }
+
   /** Obtains the specified image from the given ZVI file, as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
