@@ -1727,8 +1727,12 @@ public final class TiffTools {
       throw new FormatException(
         "Sorry, JPEG compression mode is not supported");
     }
+    //else if (compression == NIKON) {
+    //  return Compression.nikonUncompress(input);
+    //}
     else if (compression == NIKON) {
-      return Compression.nikonUncompress(input);
+      throw new FormatException("Sorry, Nikon compression mode is not " +
+        "supported; it will be added in the near future");
     }
     else if (compression == PACK_BITS) {
       return Compression.packBitsUncompress(input);

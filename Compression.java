@@ -375,6 +375,8 @@ public final class Compression {
   /**
    * Decodes an image strip using Nikon's compression algorithm (a variant on
    * Huffman coding).
+   *
+   * TODO : this is broken
    */
   public static byte[] nikonUncompress(byte[] input) throws FormatException {
     BitWriter out = new BitWriter(input.length);
