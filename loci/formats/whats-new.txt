@@ -1,35 +1,47 @@
-New features:
+2006 Oct 27:
+* Multi-series support for Slidebook
+* Added support for Alicona AL3D
+* Fixed plane ordering issue with FV1000 OIB
+* Enhanced dimension detection in FV1000 OIF
+* Added preliminary support for reading NEF images
+* Added option to ignore color tables
+* Fixed ImageJ GUI problems
+* Fixed spatial calibration problem in ImageJ
+* Fixed some lingering bugs in Zeiss ZVI support
+* Fixed bugs in OME-XML reader
+* Tweaked ICS floating-point logic
+* Fixed memory leaks in all readers
+* Better file stitching logic
 
-* multi-series support for Slidebook
-* added support for Alicona AL3D
-* fixed plane ordering issue with FV1000 OIB
-* enhanced dimension detection in FV1000 OIF
-* added preliminary support for reading NEF images
-* added option to ignore color tables
-* fixed ImageJ GUI problems
-* fixed spatial calibration problem in ImageJ
-* fixed some lingering bugs in Zeiss ZVI support
-* fixed bugs in OME-XML reader
-* tweaked ICS floating-point logic
-* fixed memory leaks in all readers
-* enhanced file stitching logic
+2006 Oct 6:
+* Support for 3i SlideBook format (single series only for now)
+* Support for 16-bit RGB palette TIFF
+* Fixed bug preventing import of certain Metamorph STK files
+* Fixed some bugs in PerkinElmer UltraView support
+* Fixed some bugs in Leica LEI support
+* Fixed a bug in Zeiss ZVI support
+* Fixed bugs in Zeiss LSM support
+* Fixed a bug causing slow identification of Leica datasets
+* Fixed bugs in the channel merging logic
+* Fixed memory leak for OIB format
+* Better scaling of 48-bit RGB data to 24-bit RGB
+* Fixed duplicate channels bug in "open each channel in a separate window"
+* Fixed a bug preventing PICT import into ImageJ
+* Better integration with HandleExtraFileTypes
+* Better virtual stack support in Data Browser plugin
+* Fixed bug in native QuickTime random access
+* Keep aspect ratio for computed thumbnails
+* Much faster file stitching logic
 
-Upcoming features (incomplete):
-
-* support for Imaris 5 files (TIFF variant)
-* better NEF support
-
-Interested parties:
-
-Aryeh Weiss - aryeh@cc.huji.ac.il
-Kate Luby-Phelps - kate.phelps@utsouthwestern.edu
-Robert Dougherty - rpd@optinav.com
-Stefan Terjung - stefan.terjung@embl.de 
-Andrey Kuznetsov - akuznets@uchicago.edu
-Dietmar Rieder - dietmar.rieder@tugraz.at
-Vytas Bindokas - vytas@drugs.bsd.uchicago.edu
-Tony Collins - tcollins@macbiophotonics.ca
-Kay Schneitz - schneitz@wzw.tum.de
-Tom Moninger - thomas-moninger@uiowa.edu
-Michel Boudinot - Michel.boudinot@iaf.cnrs-gif.fr
-Thomas Ascher - thomas.ascher@alicona.com
+2006 Sep 27:
+* PerkinElmer: support for PE UltraView
+* Openlab LIFF: support for Openlab v5
+* Leica LEI: bugfixes, and support for multiple series
+* ZVI, OIB, IPW: more robust handling of these formats (eliminated
+  custom OLE parsing logic in favor of Apache POI)
+* OIB: better metadata parsing (but maybe still not perfect?)
+* LSM: fixed a bug preventing import of certain LSMs
+* Metamorph STK: fixed a bug resulting in duplicate image planes
+* User interface: use of system look & feel for file chooser dialog
+  when available
+* Better notification when JAR libraries are missing
