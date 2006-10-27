@@ -35,7 +35,7 @@ public final class MathUtil {
   // -- Utility methods --
 
   /**
-   * Gets the distance between the endpoints p and q, using
+   * Gets the distance between the points p and q, using
    * the given conversion values between pixels and microns.
    *
    * @param p Coordinates of the first endpoint
@@ -58,14 +58,46 @@ public final class MathUtil {
    * @param a Coordinates of the line's first endpoint
    * @param b Coordinates of the line's second endpoint
    * @param v Coordinates of the standalone endpoint
-   * @param segment Whether distance computation should be
-   *                constrained to the given line segment
+   * @param segment Whether distance computation should be constrained to the given line segment
+   *
    */
   public static double getDistance(double[] a, double[] b, double[] v,
     boolean segment)
   {
-    int len = a.length;
+    double[] p = getProjection(a, b, v, segment);
+    return getDistance(p, v);
+  }
+  
+  /**
+   * Computes the minimum distance between the point p and the point v.
+   *
+   * @param p Coordinates of the first point
+   * @param v Coordinates of the second point
+   *
+   */
+  public static double getDistance (double[] p, double[] v) {
+    int len = p.length;  // redundant with getProjection
+    double sum = 0;
+    for (int i=0; i<len; i++) {
+      double dist = p[i] - v[i]; 
+      sum += dist * dist;
+    }
+    return Math.sqrt(sum);
+  }
 
+  /**
+   * Computes the projection of the point v onto the line segment a-b.
+   *
+   * @param a Coordinates of the segment's first endpoint
+   * @param b Coordinates of the segment's second endpoint
+   * @param v Coordinates of the point to be projected 
+   * @param segment Whether the projection should be constrained to the given line segment 
+   *
+   */
+
+  public static double[] getProjection (double[] a, double[] b, double[] v, boolean segment) 
+  {
+    int len = a.length;
     // vectors
     double[] ab = new double[len];
     double[] va = new double[len];
@@ -84,8 +116,7 @@ public final class MathUtil {
     double c = numer / denom;
     double[] p = new double[len];
     for (int i=0; i<len; i++) p[i] = c * ab[i] + a[i];
-
-    // determine which point (a, b or p) to use in distance computation
+    
     int flag = 0;
     if (segment) {
       for (int i=0; i<len; i++) {
@@ -96,18 +127,11 @@ public final class MathUtil {
       }
     }
 
-    double sum = 0;
-    for (int i=0; i<len; i++) {
-      double q;
-      if (flag == 0) q = p[i] - v[i]; // use p
-      else if (flag == 1) q = a[i] - v[i]; // use a
-      else q = b[i] - v[i]; // flag == 2, use b
-      sum += q * q;
-    }
-
-    return Math.sqrt(sum);
+    if (flag == 0) return p;
+    else if (flag == 1) return a;
+    else return b;
   }
-
+  
   /** Rounds the value to nearest value along the given progression. */
   public static int getNearest(double val, int min, int max, int step) {
     int lo = (int) ((val - min) / step);
