@@ -1,0 +1,35 @@
+New features:
+
+* multi-series support for Slidebook
+* added support for Alicona AL3D
+* fixed plane ordering issue with FV1000 OIB
+* enhanced dimension detection in FV1000 OIF
+* added preliminary support for reading NEF images
+* added option to ignore color tables
+* fixed ImageJ GUI problems
+* fixed spatial calibration problem in ImageJ
+* fixed some lingering bugs in Zeiss ZVI support
+* fixed bugs in OME-XML reader
+* tweaked ICS floating-point logic
+* fixed memory leaks in all readers
+* enhanced file stitching logic
+
+Upcoming features (incomplete):
+
+* support for Imaris 5 files (TIFF variant)
+* better NEF support
+
+Interested parties:
+
+Aryeh Weiss - aryeh@cc.huji.ac.il
+Kate Luby-Phelps - kate.phelps@utsouthwestern.edu
+Robert Dougherty - rpd@optinav.com
+Stefan Terjung - stefan.terjung@embl.de 
+Andrey Kuznetsov - akuznets@uchicago.edu
+Dietmar Rieder - dietmar.rieder@tugraz.at
+Vytas Bindokas - vytas@drugs.bsd.uchicago.edu
+Tony Collins - tcollins@macbiophotonics.ca
+Kay Schneitz - schneitz@wzw.tum.de
+Tom Moninger - thomas-moninger@uiowa.edu
+Michel Boudinot - Michel.boudinot@iaf.cnrs-gif.fr
+Thomas Ascher - thomas.ascher@alicona.com
