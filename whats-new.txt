@@ -45,3 +45,6 @@
 * User interface: use of system look & feel for file chooser dialog
   when available
 * Better notification when JAR libraries are missing
+
+2006 Mar 31:
+* First release
