@@ -229,7 +229,7 @@ public class OmeisImporter {
           // inject important extra attributes into proper Pixels element
           Element pixels = (Element) pix.elementAt(s);
           pixels.setAttribute("FileSHA1", sha1);
-          pixels.setAttribute("Repository", "urn:lsid:skyking.microscopy.wisc.edu:OME_SemanticType_BootstrapRepository:4-1gbDg1");//FIXME
+//          pixels.setAttribute("Repository", "urn:lsid:skyking.microscopy.wisc.edu:OME_SemanticType_BootstrapRepository:4-1gbDg1");
           pixels.setAttribute("ImageServerID", "" + pixelsId);
           if (DEBUG) log("Pixel attributes injected.");
         }
