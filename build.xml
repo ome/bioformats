@@ -135,10 +135,16 @@ Apple eAWT stubs
     URL:       http://developer.apple.com/samplecode/AppleJavaExtensions/
     Notes:     Required to compile VisBio on non-Mac OS X machines
 
+Ant-Contrib
+    JAR file:  ant-contrib-1.0b1.jar
+    URL:       http://ant-contrib.sourceforge.net/
+    Notes:     Used by tools target to iterate over JAR files ("for" task)
+    License:   Apache
+ 
 Checkstyle
     JAR file:  checkstyle-all-4.2.jar
     URL:       http://checkstyle.sourceforge.net/
-    Notes:     Used for style targets to check source code style conventions
+    Notes:     Used by style targets to check source code style conventions
     License:   LGPL
 
 Apache Jakarta Commons HttpClient
@@ -174,8 +180,8 @@ JGoodies Looks
 L-M Fit
     JAR file:  lma.jar
     URL:       http://users.utu.fi/jaolho/
-    Notes:     Levenberg-Marquardt algorithm for exponential curve fitting
-               with Slim Plotter
+    Notes:     Levenberg-Marquardt algorithm for exponential curve fitting,
+               used by Slim Plotter
     License:   LGPL
 
 OME Java
@@ -221,8 +227,12 @@ Apache XML-RPC
 
   <condition property="isUnix"><os family="unix"/></condition>
 
+  <!-- Non-core ant tasks -->
+
   <taskdef resource="checkstyletask.properties"
     classpath="jar/checkstyle-all-4.2.jar:build/jar/loci-checks.jar"/>
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties"
+    classpath="jar/ant-contrib-1.0b1.jar"/>
 
   <!-- Global build targets -->
 
@@ -234,7 +244,8 @@ Apache XML-RPC
   </target>
 
   <target name="style"
-    depends="style-formats, style-visbio, style-plugins, style-notebook, style-leica, style-stitcher, style-slim, style-checks"
+    depends="style-formats, style-visbio, style-plugins, style-notebook,
+      style-leica, style-stitcher, style-slim, style-checks"
     description="check source code style for LOCI software packages"/>
 
 <!--
@@ -246,12 +257,33 @@ Apache XML-RPC
   </target>
 -->
   <target name="compile"
-    depends="compile-formats, compile-visbio, compile-plugins, compile-notebook, compile-leica, compile-stitcher, compile-slim"
+    depends="compile-formats, compile-visbio, compile-plugins,
+      compile-notebook, compile-leica, compile-stitcher, compile-slim"
     description="compile classes for LOCI software packages"/>
 
   <target name="jars"
-    depends="jar-formats, jar-visbio, jar-plugins, jar-notebook, jar-leica, jar-stitcher, jar-slim, jar-checks"
+    depends="jar-formats, jar-visbio, jar-plugins, jar-notebook, jar-leica,
+      jar-stitcher, jar-slim, jar-checks"
     description="generate JAR files for LOCI software packages"/>
+
+  <target name="tools" depends="jars"
+    description="create JAR file encompassing several LOCI tools">
+    <for list="${tools.libraries}" param="jar" delimiter=" " trim="true">
+      <sequential>
+        <unjar src="${jar.dir}/@{jar}" dest="${tools.dir}">
+          <patternset>
+            <exclude name="META-INF/**"/>
+          </patternset>
+        </unjar>
+      </sequential>
+    </for>
+    <jar jarfile="${jar.dir}/${tools.jar}" basedir="${tools.dir}">
+      <manifest>
+        <attribute name="Main-Class" value="${tools.main}"/>
+      </manifest>
+    </jar>
+    <delete dir="${tools.dir}"/>
+  </target>
 
   <target name="docs" depends="copy-source"
     description="generate Javadocs for LOCI software packages">
@@ -378,19 +410,20 @@ Apache XML-RPC
   </target>
 
   <target name="dist-visbio"
-    depends="dist-visbio-win32, dist-visbio-win32-nojre, dist-visbio-macosx, dist-visbio-linux, dist-visbio-nojre"
+    depends="dist-visbio-win32, dist-visbio-win32-nojre, dist-visbio-macosx,
+      dist-visbio-linux, dist-visbio-nojre"
     description="create distribution bundles for VisBio"/>
 
   <target name="dist-visbio-win32" depends="jar-visbio, jar-formats"
     description="create distribution bundle for VisBio: Windows w/ JRE">
     <copy todir="${visbio.win32-dir}" preservelastmodified="true">
-      <fileset dir="dist/visbio/win32"/>
+      <fileset dir="${dist.dir}/visbio/win32"/>
       <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
       <fileset dir="${jar.dir}" includes="visbio.jar ${visbio.classpath}"/>
     </copy>
     <fixcrlf srcdir="${visbio.win32-dir}" eol="dos"
-      includes="*.txt *.cpp *.m plugins/*.txt"/>
-    <untar src="dist/jre-win32.tar.gz" dest="${visbio.win32-dir}"
+      includes="${visbio.text-files}"/>
+    <untar src="${dist.dir}/jre-win32.tar.gz" dest="${visbio.win32-dir}"
       overwrite="false" compression="gzip"/>
     <zip destfile="${dist.dir}/visbio${visbio.version}_win32.zip"
       basedir="${dist.dir}/visbio/win32"/>
@@ -400,13 +433,13 @@ Apache XML-RPC
     description="create distribution bundle for VisBio: Windows no JRE">
     <copy todir="${visbio.win32-nojre-dir}"
       preservelastmodified="true">
-      <fileset dir="dist/visbio/win32" excludes="launcher.cfg"/>
-      <fileset dir="dist/visbio/win32-nojre"/>
+      <fileset dir="${dist.dir}/visbio/win32" excludes="launcher.cfg"/>
+      <fileset dir="${dist.dir}/visbio/win32-nojre"/>
       <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
       <fileset dir="${jar.dir}" includes="visbio.jar ${visbio.classpath}"/>
     </copy>
     <fixcrlf srcdir="${visbio.win32-nojre-dir}" eol="dos"
-      includes="*.txt *.cpp *.m plugins/*.txt"/>
+      includes="${visbio.text-files}"/>
     <zip destfile="${dist.dir}/visbio${visbio.version}_win32_nojre.zip"
       basedir="${dist.dir}/visbio/win32-nojre"/>
   </target>
@@ -417,15 +450,14 @@ Apache XML-RPC
     description="create distribution bundle for VisBio: Mac OS X">
     <copy todir="${visbio.macosx-dir}"
       preservelastmodified="true">
-      <fileset dir="dist/visbio/macosx"/>
+      <fileset dir="${dist.dir}/visbio/macosx"/>
       <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
     </copy>
     <fixcrlf srcdir="${visbio.macosx-dir}" eol="mac"
-      includes="*.txt *.cpp *.m plugins/*.txt"/>
+      includes="${visbio.text-files}"/>
     <!-- HACK - copy does not preserve permissions; chmod them back -->
     <chmod perm="+x">
-      <fileset dir="${visbio.macosx-dir}"
-        includes="visbio omeul VisBio.app/Contents/MacOS/JavaApplicationStub"/>
+      <fileset dir="${visbio.macosx-dir}" includes="${visbio.macosx-exec}"/>
     </chmod>
     <copy todir="${visbio.macosx-dir}/VisBio.app/Contents/Resources/Java">
       <fileset dir="${jar.dir}" includes="visbio.jar ${visbio.classpath}"/>
@@ -448,24 +480,24 @@ Apache XML-RPC
     depends="jar-visbio, jar-formats"
     description="create distribution bundle for VisBio: Linux w/ JRE">
     <copy todir="${visbio.linux-dir}" preservelastmodified="true">
-      <fileset dir="dist/visbio/linux"/>
+      <fileset dir="${dist.dir}/visbio/linux"/>
       <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
       <fileset dir="${jar.dir}" includes="visbio.jar ${visbio.classpath}"/>
     </copy>
     <fixcrlf srcdir="${visbio.linux-dir}" eol="unix"
-      includes="*.txt *.cpp *.m plugins/*.txt"/>
+      includes="${visbio.text-files}"/>
     <!-- HACK - copy does not preserve permissions; chmod them back -->
     <chmod perm="+x">
-      <fileset dir="${visbio.linux-dir}" includes="visbio omeul"/>
+      <fileset dir="${visbio.linux-dir}" includes="${visbio.linux-exec}"/>
     </chmod>
 <!--
-    <untar src="dist/jre-linux.tar.gz" dest="${visbio.linux-dir}"
+    <untar src="${dist.dir}/jre-linux.tar.gz" dest="${visbio.linux-dir}"
       overwrite="false" compression="gzip"/>
 -->
     <!-- HACK - untar does not restore permissions; use exec instead -->
     <exec executable="tar">
       <arg value="xzf"/>
-      <arg value="dist/jre-linux.tar.gz"/>
+      <arg value="${dist.dir}/jre-linux.tar.gz"/>
       <arg value="-C"/>
       <arg value="${visbio.linux-dir}"/>
     </exec>
@@ -487,15 +519,15 @@ Apache XML-RPC
     depends="jar-visbio, jar-formats"
     description="create distribution bundle for VisBio: cross-platform">
     <copy todir="${visbio.nojre-dir}" preservelastmodified="true">
-      <fileset dir="dist/visbio/linux"/>
+      <fileset dir="${dist.dir}/visbio/linux"/>
       <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
       <fileset dir="${jar.dir}" includes="visbio.jar ${visbio.classpath}"/>
     </copy>
     <fixcrlf srcdir="${visbio.nojre-dir}" eol="unix"
-      includes="*.txt *.cpp *.m plugins/*.txt"/>
+      includes="${visbio.text-files}"/>
     <!-- HACK - copy does not preserve permissions; chmod them back -->
     <chmod perm="+x">
-      <fileset dir="${visbio.nojre-dir}" includes="visbio omeul"/>
+      <fileset dir="${visbio.nojre-dir}" includes="${visbio.linux-exec}"/>
     </chmod>
 <!--
     <tar destfile="${dist.dir}/visbio${visbio.version}.tar.gz"
@@ -661,12 +693,12 @@ Apache XML-RPC
   <target name="dist-slim" if="isUnix" depends="copy-jars, jar-slim"
     description="create distribution bundle for Slim Plotter">
     <copy todir="${slim.dist-dir}" preservelastmodified="true">
-      <fileset dir="dist/slim"/>
+      <fileset dir="${dist.dir}/slim"/>
       <fileset dir="${jar.dir}" includes="SlimPlotter.jar ${slim.classpath}"/>
     </copy>
     <!-- HACK - copy does not preserve permissions; chmod them back -->
     <chmod perm="+x">
-      <fileset dir="${slim.dist-dir}" includes="slim"/>
+      <fileset dir="${slim.dist-dir}" includes="${slim.exec}"/>
     </chmod>
 <!--
     <zip destfile="${dist.dir}/slim.zip" basedir="${dist.dir}/slim"/>
