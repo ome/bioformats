@@ -108,7 +108,7 @@ might look like this:
     // read basic file structure and metadata from stream
   }
 
-For more details, see the Javadoc for IFormatHandler.mapId(String, String)
+For more details, see the javadoc for IFormatHandler.mapId(String, String)
 and IFormatHandler.getMappedId(String).
 
 ---=== Other useful things ===---
