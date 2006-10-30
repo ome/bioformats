@@ -867,12 +867,9 @@ public final class TiffTools {
     }
 
     if (isTiled) {
-    //  long tileWidth = getIFDLongValue(ifd, TILE_WIDTH, true, 0);
-    //  long tileLength = getIFDLongValue(ifd, TILE_LENGTH, true, 0);
       stripOffsets = getIFDLongArray(ifd, TILE_OFFSETS, true);
       stripByteCounts = getIFDLongArray(ifd, TILE_BYTE_COUNTS, true);
-      // TODO -- tiled images
-      throw new FormatException("Sorry, tiled images are not supported");
+      //throw new FormatException("Sorry, tiled images are not supported");
     }
     else if (fakeByteCounts) {
       // technically speaking, this shouldn't happen (since TIFF writers are
@@ -1217,40 +1214,87 @@ public final class TiffTools {
 
     if (bitsPerSample[0] == 16) littleEndian = !littleEndian;
 
-    int overallOffset = 0;
-    for (int strip=0, row=0; strip<numStrips; strip++, row+=rowsPerStrip) {
-      if (DEBUG) debug("reading image strip #" + strip);
-      long actualRows = (row + rowsPerStrip > imageLength) ?
-        imageLength - row : rowsPerStrip;
-      in.seek((int) stripOffsets[strip]);
+    if (isTiled) {
+      long tileWidth = getIFDLongValue(ifd, TILE_WIDTH, true, 0);
+      long tileLength = getIFDLongValue(ifd, TILE_LENGTH, true, 0);
 
-      if (stripByteCounts[strip] > Integer.MAX_VALUE) {
-        throw new FormatException("Sorry, StripByteCounts > " +
-          Integer.MAX_VALUE + " is not supported");
-      }
-      byte[] bytes = new byte[(int) stripByteCounts[strip]];
-      in.read(bytes);
-      if (compression != PACK_BITS) {
-        bytes = uncompress(bytes, compression);
-        undifference(bytes, bitsPerSample,
-          imageWidth, planarConfig, predictor);
-        int offset = (int) (imageWidth * row);
-        if (planarConfig == 2) {
-          offset = overallOffset / samplesPerPixel;
+      byte[] data = new byte[(int) stripByteCounts[0] * stripOffsets.length];
+
+      int row = 0;
+      int col = 0;
+
+      int bytes = bitsPerSample[0] / 8;
+
+      for (int i=0; i<stripOffsets.length; i++) {
+        byte[] b = new byte[(int) stripByteCounts[i]];
+        in.seek(stripOffsets[i]);
+        in.read(b);
+
+        b = uncompress(b, compression);
+
+        int rowBytes = (int) (tileWidth * 
+          (stripByteCounts[0] / (tileWidth*tileLength)));
+       
+        for (int j=0; j<tileLength; j++) {
+          int len = rowBytes;
+          if (col*bytes + rowBytes > imageWidth*bytes) {
+            len = (int) (imageWidth*bytes - col*bytes);
+          }
+        
+          System.arraycopy(b, j*rowBytes, data, 
+            (int) ((row+j)*imageWidth*bytes + col*bytes), len);   
         }
-        unpackBytes(samples, offset, bytes, bitsPerSample,
-          photoInterp, colorMap, littleEndian, maxValue, planarConfig, strip,
-          (int) numStrips);
-        overallOffset += bytes.length / bitsPerSample.length;
+
+        // update row and column
+      
+        col += (int) tileWidth;
+        if (col >= imageWidth) {
+          row += (int) tileLength;
+          col = 0;
+        }
       }
-      else {
-        // concatenate contents of bytes to altBytes
-        byte[] tempPackBits = new byte[altBytes.length];
-        System.arraycopy(altBytes, 0, tempPackBits, 0, altBytes.length);
-        altBytes = new byte[altBytes.length + bytes.length];
-        System.arraycopy(tempPackBits, 0, altBytes, 0, tempPackBits.length);
-        System.arraycopy(bytes, 0, altBytes,
-          tempPackBits.length, bytes.length);
+
+      undifference(data, bitsPerSample, imageWidth, planarConfig, predictor);
+      unpackBytes(samples, 0, data, bitsPerSample, photoInterp, colorMap,
+        littleEndian, maxValue, planarConfig, 0, 1);
+    }
+    else {
+      int overallOffset = 0;
+    
+      for (int strip=0, row=0; strip<numStrips; strip++, row+=rowsPerStrip) {
+        if (DEBUG) debug("reading image strip #" + strip);
+        long actualRows = (row + rowsPerStrip > imageLength) ?
+          imageLength - row : rowsPerStrip;
+        in.seek((int) stripOffsets[strip]);
+
+        if (stripByteCounts[strip] > Integer.MAX_VALUE) {
+          throw new FormatException("Sorry, StripByteCounts > " +
+            Integer.MAX_VALUE + " is not supported");
+        }
+        byte[] bytes = new byte[(int) stripByteCounts[strip]];
+        in.read(bytes);
+        if (compression != PACK_BITS) {
+          bytes = uncompress(bytes, compression);
+          undifference(bytes, bitsPerSample,
+            imageWidth, planarConfig, predictor);
+          int offset = (int) (imageWidth * row);
+          if (planarConfig == 2) {
+            offset = overallOffset / samplesPerPixel;
+          }
+          unpackBytes(samples, offset, bytes, bitsPerSample,
+            photoInterp, colorMap, littleEndian, maxValue, planarConfig, strip,
+            (int) numStrips);
+          overallOffset += bytes.length / bitsPerSample.length;
+        }
+        else {
+          // concatenate contents of bytes to altBytes
+          byte[] tempPackBits = new byte[altBytes.length];
+          System.arraycopy(altBytes, 0, tempPackBits, 0, altBytes.length);
+          altBytes = new byte[altBytes.length + bytes.length];
+          System.arraycopy(tempPackBits, 0, altBytes, 0, tempPackBits.length);
+          System.arraycopy(bytes, 0, altBytes,
+            tempPackBits.length, bytes.length);
+        }
       }
     }
 
