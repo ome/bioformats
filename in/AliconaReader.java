@@ -29,9 +29,7 @@ import java.io.*;
 
 import loci.formats.*;
 
-/**
- * AliconaReader is the file format reader for Alicona AL3D files.
- */
+/** AliconaReader is the file format reader for Alicona AL3D files. */
 public class AliconaReader extends FormatReader {
 
   // -- Fields --
