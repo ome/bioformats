@@ -305,6 +305,17 @@ Apache XML-RPC
     <delete dir="${build.dir}"/>
   </target>
 
+  <target name="dev-compile" description="compile classes in-place (no copy)">
+    <javac srcdir="loci" destdir="." debug="true"
+      classpath="${ext.jars}" deprecation="true" source="1.4" target="1.4"/>
+  </target>
+
+  <target name="dev-clean" description="remove classes in-place (no copy)">
+    <delete>
+      <fileset dir="." includes="loci/**/*.class"/>
+    </delete>
+  </target>
+
   <!-- Internal build targets -->
 
   <target name="copy-source" depends="init">
