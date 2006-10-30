@@ -24,8 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Hashtable;
 import javax.swing.JFileChooser;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 
 /** Abstract superclass of all biological file format readers and writers. */
@@ -129,27 +131,39 @@ public abstract class FormatHandler implements IFormatHandler {
    * Builds a file chooser with the given file filters,
    * as well as an "All supported file types" combo filter.
    */
-  public static JFileChooser buildFileChooser(FileFilter[] ff) {
-    JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
-    ff = ComboFileFilter.sortFilters(ff);
-    FileFilter combo = null;
-    if (ff.length > 1) {
-      // By default, some readers might need to open a file to determine if it
-      // is the proper type, when the extension alone isn't enough to
-      // distinguish.
-      //
-      // We want to disable that behavior for the "All supported file types"
-      // combination filter, because otherwise it is too slow.
-      //
-      // Also, most of the formats that do this are TIFF-based, and the TIFF
-      // reader will already green-light anything with .tif extension, making
-      // more thorough checks redundant.
-      combo = new ComboFileFilter(ff, "All supported file types", false);
-      fc.addChoosableFileFilter(combo);
+  public static JFileChooser buildFileChooser(final FileFilter[] filters) {
+    final JFileChooser[] jfc = new JFileChooser[1];
+    try {
+      // NB: must construct JFileChooser in the
+      // Swing worker thread, to avoid deadlocks
+      SwingUtilities.invokeAndWait(new Runnable() {
+        public void run() {
+          JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+          FileFilter[] ff = ComboFileFilter.sortFilters(filters);
+          FileFilter combo = null;
+          if (ff.length > 1) {
+            // By default, some readers might need to open a file to determine
+            // if it is the proper type, when the extension alone isn't enough
+            // to distinguish.
+            //
+            // We want to disable that behavior for the "All supported file
+            // types" combination filter, because otherwise it is too slow.
+            //
+            // Also, most of the formats that do this are TIFF-based, and the
+            // TIFF reader will already green-light anything with .tif
+            // extension, making more thorough checks redundant.
+            combo = new ComboFileFilter(ff, "All supported file types", false);
+            fc.addChoosableFileFilter(combo);
+          }
+          for (int i=0; i<ff.length; i++) fc.addChoosableFileFilter(ff[i]);
+          if (combo != null) fc.setFileFilter(combo);
+          jfc[0] = fc;
+        }
+      });
     }
-    for (int i=0; i<ff.length; i++) fc.addChoosableFileFilter(ff[i]);
-    if (combo != null) fc.setFileFilter(combo);
-    return fc;
+    catch (InterruptedException exc) { return null; }
+    catch (InvocationTargetException exc) { return null; }
+    return jfc[0];
   }
 
 }
