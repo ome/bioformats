@@ -92,7 +92,7 @@ public class ICSReader extends FormatReader {
 
   /** Determines the number of images in the given ICS file. */
   public int getImageCount(String id) throws FormatException, IOException {
-    if(!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
+    if (!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
     return numImages;
   }
 
@@ -103,7 +103,7 @@ public class ICSReader extends FormatReader {
 
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
     return !littleEndian;
   }
 
@@ -185,6 +185,7 @@ public class ICSReader extends FormatReader {
   /** Initializes the given IPLab file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
+    System.out.println("ICS initFile: id=" + id);//TEMP
 
     String icsId = id, idsId = id;
     int dot = id.lastIndexOf(".");
@@ -199,7 +200,7 @@ public class ICSReader extends FormatReader {
       // convert D to C regardless of case
       char[] c = icsId.toCharArray();
       c[c.length - 2]--;
-      id = icsId = new String(c);
+      /*id = */icsId = new String(c);
     }
 
     if (icsId == null) throw new FormatException("No ICS file found.");
