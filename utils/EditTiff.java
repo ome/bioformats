@@ -1,5 +1,5 @@
 //
-// EditOMETIFF.java
+// EditTiff.java
 //
 
 import java.io.*;
@@ -7,12 +7,12 @@ import java.util.Hashtable;
 import loci.formats.RandomAccessStream;
 import loci.formats.TiffTools;
 
-/** Allows raw user OME-XML comment editing for the given OME-TIFF files. */
-public class EditOMETIFF {
+/** Allows raw user TIFF comment editing for the given TIFF files. */
+public class EditTiff {
 
   public static void main(String[] args) throws Exception {
     if (args.length == 0) {
-      System.out.println("Usage: java EditOMETIFF file1 file2 ...");
+      System.out.println("Usage: java EditTiff file1 file2 ...");
       return;
     }
     BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
@@ -29,9 +29,9 @@ public class EditOMETIFF {
         TiffTools.getIFDValue(ifd, TiffTools.IMAGE_DESCRIPTION);
       System.out.println("[done]");
       // display comment, and prompt for changes
-      System.out.println("OME-XML block =");
+      System.out.println("Comment =");
       System.out.println(ome);
-      System.out.println("Enter new OME-XML block (no line breaks):");
+      System.out.println("Enter new comment (no line breaks):");
       String xml = cin.readLine();
       System.out.print("Saving " + f);
       // save results back to the TIFF file
