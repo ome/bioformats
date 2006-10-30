@@ -104,7 +104,7 @@ public class ICSReader extends FormatReader {
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return littleEndian;
+    return !littleEndian;
   }
 
   /** Returns whether or not the channels are interleaved. */
@@ -169,7 +169,7 @@ public class ICSReader extends FormatReader {
       return ImageTools.makeImage(f, width, height);
     }
     else return ImageTools.makeImage(plane, width, height, channels, false,
-      dimensions[0] / 8, littleEndian);
+      dimensions[0] / 8, !littleEndian);
   }
 
   /** Closes any open files. */
@@ -376,36 +376,21 @@ public class ICSReader extends FormatReader {
     String fmt = (String) metadata.get("format");
     String sign = (String) metadata.get("sign");
 
-    if (fmt.equals("real")) pixelType[0] = FormatReader.INT16;
+    if (fmt.equals("real")) pixelType[0] = FormatReader.UINT16;
     else if (fmt.equals("integer")) {
       while (bitsPerPixel % 8 != 0) bitsPerPixel++;
       if (bitsPerPixel == 24 || bitsPerPixel == 48) bitsPerPixel /= 3;
 
-      if (sign.equals("unsigned")) {
-        switch (bitsPerPixel) {
-          case 8:
-            pixelType[0] = FormatReader.UINT8;
-            break;
-          case 16:
-            pixelType[0] = FormatReader.UINT16;
-            break;
-          case 32:
-            pixelType[0] = FormatReader.UINT32;
-            break;
-        }
-      }
-      else {
-        switch (bitsPerPixel) {
-          case 8:
-            pixelType[0] = FormatReader.INT8;
-            break;
-          case 16:
-            pixelType[0] = FormatReader.INT16;
-            break;
-          case 32:
-            pixelType[0] = FormatReader.INT32;
-            break;
-        }
+      switch (bitsPerPixel) {
+        case 8:
+          pixelType[0] = FormatReader.UINT8;
+          break;
+        case 16:
+          pixelType[0] = FormatReader.UINT16;
+          break;
+        case 32:
+          pixelType[0] = FormatReader.UINT32;
+          break;
       }
     }
     else {
