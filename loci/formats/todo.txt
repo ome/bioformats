@@ -14,11 +14,3 @@ Implement readers for other file formats:
 API/Other:
 * improve efficiency of BufferedImage construction and
   harvesting pixels from a BufferedImage
-
-Adapt Bio-Formats API to support OMERO:
-http://cvs.openmicroscopy.org.uk/tiki/tiki-index.php?page=Bio-Formats+Import+Discussion
-1. Bio-Formats support should be possible in both OMERO and OME-perl
-   (so we can phase out omeul):
-  * for OME-perl, transmit pixels to OMEIS via HTTP, then pass OME-XML to perl
-    API for actual import (need to provide OMEIS image ID or whatever within
-    the XML?)
