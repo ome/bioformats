@@ -260,6 +260,7 @@ public class ICSReader extends FormatReader {
 
     String images = (String) metadata.get("sizes");
     String ord = (String) metadata.get("order");
+    ord = ord.trim();
     // bpp, width, height, z, channels
     StringTokenizer t1 = new StringTokenizer(images);
     StringTokenizer t2 = new StringTokenizer(ord);
@@ -271,8 +272,8 @@ public class ICSReader extends FormatReader {
     String imageToken;
     String orderToken;
     while (t1.hasMoreTokens() && t2.hasMoreTokens()) {
-      imageToken = t1.nextToken();
-      orderToken = t2.nextToken();
+      imageToken = t1.nextToken().trim();
+      orderToken = t2.nextToken().trim();
       if (orderToken.equals("bits")) {
         dimensions[0] = Integer.parseInt(imageToken);
       }
@@ -357,14 +358,15 @@ public class ICSReader extends FormatReader {
     // populate Pixels element
 
     String o = (String) metadata.get("order");
-    o = o.substring(o.indexOf("x"));
+    o = o.trim();
+    o = o.substring(o.indexOf("x")).trim();
     char[] tempOrder = new char[(o.length() / 2) + 1];
     int pt = 0;
     for (int i=0; i<o.length(); i+=2) {
       tempOrder[pt] = o.charAt(i);
       pt++;
     }
-    o = new String(tempOrder).toUpperCase();
+    o = new String(tempOrder).toUpperCase().trim();
     if (o.indexOf("Z") == -1) o = o + "Z";
     if (o.indexOf("T") == -1) o = o + "T";
     if (o.indexOf("C") == -1) o = o + "C";
@@ -417,7 +419,7 @@ public class ICSReader extends FormatReader {
     sizeZ[0] = dimensions[3];
     sizeC[0] = dimensions[4];
     sizeT[0] = dimensions[5];
-    currentOrder[0] = order;
+    currentOrder[0] = order.trim();
 
     store.setPixels(
       new Integer(dimensions[1]), // SizeX
