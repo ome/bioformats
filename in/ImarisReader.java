@@ -26,7 +26,6 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
-
 import loci.formats.*;
 
 /**
@@ -66,88 +65,6 @@ public class ImarisReader extends FormatReader {
   public ImarisReader() { super("Bitplane Imaris", "ims"); }
 
   // -- FormatReader API methods --
-
-  /* @see loci.formats.IFormatHandler#isThisType(String) */
-  public boolean isThisType(String name) {
-    return isThisType(name, true);
-  }
-
-  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    try {
-      RandomAccessFile f = new RandomAccessFile(name, "r");
-      byte[] b = new byte[4];
-      f.read(b);
-      f.close();
-      return name.toLowerCase().endsWith("ims") && isThisType(b);
-    }
-    catch (Exception e) { return false; }
-  }
-
-  /** Checks if the given block is a valid header for an Imaris file. */
-  public boolean isThisType(byte[] block) {
-    return DataTools.bytesToInt(block, 0, 4, IS_LITTLE) == IMARIS_MAGIC_NUMBER;
-  }
-
-  /** Determines the number of images in the given Imaris file. */
-  public int getImageCount(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return numImages;
-  }
-
-  /** Checks if the images in the file are RGB. */
-  public boolean isRGB(String id) throws FormatException, IOException {
-    return false;
-  }
-
-  /** Return true if the data is in little-endian format. */
-  public boolean isLittleEndian(String id) throws FormatException, IOException {
-    return IS_LITTLE;
-  }
-
-  /** Returns whether or not the channels are interleaved. */
-  public boolean isInterleaved(String id) throws FormatException, IOException {
-    return false;
-  }
-
-  /**
-   * Obtains the specified image from the
-   * given Imaris file as a byte array.
-   */
-  public byte[] openBytes(String id, int no)
-    throws FormatException, IOException
-  {
-    if (!id.equals(currentId)) initFile(id);
-
-    if (no < 0 || no >= getImageCount(id)) {
-      throw new FormatException("Invalid image number: " + no);
-    }
-
-    in.seek(offsets[no]);
-    byte[] data = new byte[dims[0] * dims[1]];
-
-    int row = dims[1] - 1;
-    for (int i=0; i<dims[1]; i++) {
-      in.read(data, row*dims[0], dims[0]);
-      row--;
-    }
-
-    return data;
-  }
-
-  /** Obtains the specified image from the given Imaris file. */
-  public BufferedImage openImage(String id, int no)
-    throws FormatException, IOException
-  {
-    return ImageTools.makeImage(openBytes(id, no), dims[0], dims[1], 1, false);
-  }
-
-  /** Closes any open files. */
-  public void close() throws FormatException, IOException {
-    if (in != null) in.close();
-    in = null;
-    currentId = null;
-  }
 
   /** Initializes the given Imaris file. */
   protected void initFile(String id) throws FormatException, IOException {
@@ -242,6 +159,89 @@ public class ImarisReader extends FormatReader {
       new Float(1),
       new Float(1),
       null);
+  }
+
+  // -- IFormatReader API methods --
+
+  /** Checks if the given block is a valid header for an Imaris file. */
+  public boolean isThisType(byte[] block) {
+    return DataTools.bytesToInt(block, 0, 4, IS_LITTLE) == IMARIS_MAGIC_NUMBER;
+  }
+
+  /** Determines the number of images in the given Imaris file. */
+  public int getImageCount(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return numImages;
+  }
+
+  /** Checks if the images in the file are RGB. */
+  public boolean isRGB(String id) throws FormatException, IOException {
+    return false;
+  }
+
+  /** Return true if the data is in little-endian format. */
+  public boolean isLittleEndian(String id) throws FormatException, IOException {
+    return IS_LITTLE;
+  }
+
+  /** Returns whether or not the channels are interleaved. */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    return false;
+  }
+
+  /**
+   * Obtains the specified image from the
+   * given Imaris file as a byte array.
+   */
+  public byte[] openBytes(String id, int no)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+
+    if (no < 0 || no >= getImageCount(id)) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+
+    in.seek(offsets[no]);
+    byte[] data = new byte[dims[0] * dims[1]];
+
+    int row = dims[1] - 1;
+    for (int i=0; i<dims[1]; i++) {
+      in.read(data, row*dims[0], dims[0]);
+      row--;
+    }
+
+    return data;
+  }
+
+  /** Obtains the specified image from the given Imaris file. */
+  public BufferedImage openImage(String id, int no)
+    throws FormatException, IOException
+  {
+    return ImageTools.makeImage(openBytes(id, no), dims[0], dims[1], 1, false);
+  }
+
+  /** Closes any open files. */
+  public void close() throws FormatException, IOException {
+    if (in != null) in.close();
+    in = null;
+    currentId = null;
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (!super.isThisType(name, open)) return false; // check extension
+    if (!open) return true; // not allowed to check the file contents
+    try {
+      DataInputStream dis = new DataInputStream(new FileInputStream(name));
+      byte[] b = new byte[4];
+      dis.readFully(b);
+      dis.close();
+      return isThisType(b);
+    }
+    catch (IOException e) { return false; }
   }
 
   // -- Main method --
