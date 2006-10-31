@@ -572,6 +572,15 @@ public class OMEXMLMetadataStore implements MetadataStore {
     // The strategy here is to use the already populated (hopefully :))
     // global minimum and global maximum for the black and white levels.
 
+    if (channelMinimum == null) {
+      warn("Out of order access or missing metadata 'channelMinimum'.");
+      return;
+    }
+    if (channelMaximum == null) {
+      warn("Out of order access or missing metadata 'channelMinimum'.");
+      return;
+    }
+
     DisplayChannelNode[] displayChannels = createRGBDisplayChannels(sizeC, ca);
     DisplayChannelNode greyscaleChannel =
       createGreyscaleDisplayChannel(ca, sizeC + 1);
