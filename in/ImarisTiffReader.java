@@ -97,7 +97,7 @@ public class ImarisTiffReader extends BaseTiffReader {
     if (lname.endsWith(".ims")) return true;
 
     // just checking the filename isn't enough to differentiate between
-    // Nikon and regular TIFF; open the file and check more thoroughly
+    // Imaris and regular TIFF; open the file and check more thoroughly
     return open ? checkBytes(getMappedId(name), 1024) : true;
   }
 
