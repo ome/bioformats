@@ -76,6 +76,9 @@ public class ICSReader extends FormatReader {
   /** Dimension order. */
   private String order;
 
+  /** Flag indicating that the images are RGB. */
+  private boolean rgb;
+
   // -- Constructor --
 
   /** Constructs a new ICSReader. */
@@ -93,12 +96,13 @@ public class ICSReader extends FormatReader {
   /** Determines the number of images in the given ICS file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
-    return numImages;
+    return numImages / (rgb ? 3 : 1);
   }
 
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
-    return false;
+    if (!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
+    return rgb;
   }
 
   /** Return true if the data is in little-endian format. */
@@ -121,14 +125,14 @@ public class ICSReader extends FormatReader {
     int width = dimensions[1];
     int height = dimensions[2];
 
-    int offset = width * height * (dimensions[0] / 8) * no;
-    byte[] plane = new byte[width * height * (dimensions[0] / 8)];
+    int offset = width * height * (dimensions[0] / 8) * no * (rgb ? 3 : 1);
+    byte[] plane = new byte[width*height * (dimensions[0] / 8) * (rgb ? 3 : 1)];
     System.arraycopy(data, offset, plane, 0, plane.length);
 
     // if it's version two, we need to flip the plane upside down
     if (versionTwo) {
       byte[] t = new byte[plane.length];
-      int len = width * (dimensions[0] / 8);
+      int len = width * (dimensions[0] / 8) * (rgb ? 3 : 1);
       int off = (height - 1) * len;
       int newOff = 0;
       for (int i=0; i<height; i++) {
@@ -150,7 +154,7 @@ public class ICSReader extends FormatReader {
     byte[] plane = openBytes(id, no);
     int width = dimensions[1];
     int height = dimensions[2];
-    int channels = 1;
+    int channels = rgb ? 3 : 1;
 
     if (dimensions[0] == 32) {
       // Some justification for this approach:
@@ -161,10 +165,14 @@ public class ICSReader extends FormatReader {
       // those produced by the following method.  So, yes this wrong, and yes
       // it will result in some data loss.  Feel free to change this if you
       // have any better ideas (just remember to update the pixel type as well).
-      short[] f = new short[plane.length / 4];
-      for (int i=0; i<f.length; i++) {
-        f[i] = (short) Float.intBitsToFloat(DataTools.bytesToInt(plane, i*4,
-          4, littleEndian));
+      short[][] f = new short[channels][plane.length / 4];
+      int p = 0;
+      for (int j=0; j<f[0].length; j++) {
+        for (int i=0; i<f.length; i++) {
+          f[i][j] = (short) Float.intBitsToFloat(DataTools.bytesToInt(plane, 
+            p*4, 4, littleEndian));
+          p++;
+        }
       }
       return ImageTools.makeImage(f, width, height);
     }
@@ -185,7 +193,6 @@ public class ICSReader extends FormatReader {
   /** Initializes the given IPLab file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    System.out.println("ICS initFile: id=" + id);//TEMP
 
     String icsId = id, idsId = id;
     int dot = id.lastIndexOf(".");
@@ -269,6 +276,8 @@ public class ICSReader extends FormatReader {
     for(int i=0; i<dimensions.length; i++) {
       dimensions[i] = 1;
     }
+
+    rgb = ord.indexOf("ch") >= 0 && ord.indexOf("ch") < ord.indexOf("x");
 
     String imageToken;
     String orderToken;
