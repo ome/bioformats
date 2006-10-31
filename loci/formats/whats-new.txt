@@ -1,3 +1,7 @@
+2006 Oct 31:
+* Added support for Imaris 5 files
+* Added support for RGB ICS images
+
 2006 Oct 30:
 * Added support for tiled TIFFs
 * Fixed bugs in ICS reader
