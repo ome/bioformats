@@ -67,6 +67,23 @@ public class ImarisReader extends FormatReader {
 
   // -- FormatReader API methods --
 
+  /* @see loci.formats.IFormatHandler#isThisType(String) */
+  public boolean isThisType(String name) {
+    return isThisType(name, true);
+  }
+
+  /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    try {
+      RandomAccessFile f = new RandomAccessFile(name, "r");
+      byte[] b = new byte[4];
+      f.read(b);
+      f.close();
+      return name.toLowerCase().endsWith("ims") && isThisType(b);
+    }
+    catch (Exception e) { return false; }
+  }
+
   /** Checks if the given block is a valid header for an Imaris file. */
   public boolean isThisType(byte[] block) {
     return DataTools.bytesToInt(block, 0, 4, IS_LITTLE) == IMARIS_MAGIC_NUMBER;

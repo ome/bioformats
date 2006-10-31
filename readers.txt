@@ -59,6 +59,7 @@ loci.formats.in.MetamorphReader   # stk [TIFF]
 loci.formats.in.ZeissLSMReader    # lsm [TIFF]
 loci.formats.in.SEQReader         # seq [TIFF]
 loci.formats.in.GelReader         # gel [TIFF]
+loci.formats.in.ImarisTiffReader  # ims [TIFF]
 
 # TIFF-based readers with slow isThisType
 loci.formats.in.LeicaReader       # lei, tif [TIFF+companion; slow isThisType]

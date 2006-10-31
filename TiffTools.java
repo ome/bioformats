@@ -869,7 +869,7 @@ public final class TiffTools {
     if (isTiled) {
       stripOffsets = getIFDLongArray(ifd, TILE_OFFSETS, true);
       stripByteCounts = getIFDLongArray(ifd, TILE_BYTE_COUNTS, true);
-      //throw new FormatException("Sorry, tiled images are not supported");
+      rowsPerStripArray = new long[] {imageLength};
     }
     else if (fakeByteCounts) {
       // technically speaking, this shouldn't happen (since TIFF writers are
