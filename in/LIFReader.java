@@ -111,7 +111,7 @@ public class LIFReader extends FormatReader {
 
   /** Returns whether or not the channels are interleaved. */
   public boolean isInterleaved(String id) throws FormatException, IOException {
-    return false;
+    return true;
   }
 
   /** Return the number of series in this file. */

@@ -283,7 +283,7 @@ public class QTReader extends FormatReader {
 
   /** Returns whether or not the channels are interleaved. */
   public boolean isInterleaved(String id) throws FormatException, IOException {
-    return false;
+    return true;
   }
 
   /* @see FormatReader#setMetadataStore(MetadataStore) */

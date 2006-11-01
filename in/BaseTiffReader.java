@@ -734,7 +734,7 @@ public abstract class BaseTiffReader extends FormatReader {
 
   /** Returns whether or not the channels are interleaved. */
   public boolean isInterleaved(String id) throws FormatException, IOException {
-    return false;
+    return true;
   }
 
   /* @see loci.formats.FormatReader#openBytes(String, int, byte[]) */

@@ -335,6 +335,29 @@ public class OIBReader extends FormatReader {
       currentOrder[0] = (zSize > tSize) ? "XYCZT" : "XYCTZ";
 
       if (nImages == zSize * tSize * nChannels + 1) nImages--;
+
+      if (nImages > zSize * tSize * nChannels) {
+        int diff = nImages - (zSize * tSize * nChannels);
+
+        if (diff % zSize == 0 && zSize > 1) {
+          while (nImages > zSize * tSize * nChannels) tSize++;
+        }
+        else if (diff % tSize == 0 && tSize > 1) {
+          while (nImages > zSize * tSize * nChannels) zSize++;
+        }
+        else if (diff % nChannels == 0) {
+          if (zSize > tSize) {
+            while (nImages > zSize * tSize * nChannels) zSize++;
+          }
+          else {
+            while (nImages > zSize * tSize * nChannels) tSize++;
+          }
+        }
+      }
+
+      sizeZ[0] = zSize;
+      sizeC[0] = nChannels;
+      sizeT[0] = tSize;
     }
     catch (Throwable t) {
       noPOI = true;

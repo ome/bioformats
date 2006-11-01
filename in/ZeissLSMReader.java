@@ -419,6 +419,11 @@ public class ZeissLSMReader extends BaseTiffReader {
 
       channels = cSize;
 
+      while (numImages > zSize * cSize * tSize) {
+        if (zSize > tSize) zSize++;
+        else tSize++;
+      }
+
       // The metadata store we're working with.
       MetadataStore store = getMetadataStore(currentId);
 

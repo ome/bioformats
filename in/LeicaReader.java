@@ -145,7 +145,7 @@ public class LeicaReader extends BaseTiffReader {
 
   /** Returns whether or not the channels are interleaved. */
   public boolean isInterleaved(String id) throws FormatException, IOException {
-    return false;
+    return true;
   }
 
   /** Obtains the specified image from the given Leica file as a byte array. */

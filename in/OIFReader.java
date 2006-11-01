@@ -135,7 +135,9 @@ public class OIFReader extends FormatReader {
       initFile(id);
     }
     tiffReader[no].setIgnoreColorTable(ignoreColorTable);
-    return tiffReader[no].openBytes((String) tiffs.get(no), 0);
+    byte[] b = tiffReader[no].openBytes((String) tiffs.get(no), 0);
+    tiffReader[no].close();
+    return b;
   }
 
   /** Obtains the specified image from the given OIF file. */
@@ -151,7 +153,9 @@ public class OIFReader extends FormatReader {
     }
 
     tiffReader[no].setIgnoreColorTable(ignoreColorTable);
-    return tiffReader[no].openImage((String) tiffs.get(no), 0);
+    BufferedImage b = tiffReader[no].openImage((String) tiffs.get(no), 0);
+    tiffReader[no].close();
+    return b;
   }
 
   /** Obtains a thumbnail for the specified image from the given file. */

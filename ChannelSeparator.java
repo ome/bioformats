@@ -76,15 +76,20 @@ public class ChannelSeparator extends ReaderWrapper {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    if (reader.isRGB(id)) {
-      int c = getSizeC(id);
-      int source = no / c;
-      int channel = no % c;
+    int bytes = 0;
+    switch (getPixelType(id)) {
+      case 0:
+      case 1: bytes = 1; break;
+      case 2:
+      case 3: bytes = 2; break;
+      case 4:
+      case 5:
+      case 6: bytes = 4; break;
+      case 7: bytes = 8; break;
+    };
 
-      BufferedImage sourceImg = reader.openImage(id, source);
-      return ImageTools.splitChannels(sourceImg)[channel];
-    }
-    else return reader.openImage(id, no);
+    return ImageTools.makeImage(openBytes(id, no), getSizeX(id), getSizeY(id),
+      1, false, bytes, isLittleEndian(id));
   }
 
   /** Obtains the specified image from the given file, as a byte array. */
@@ -102,7 +107,7 @@ public class ChannelSeparator extends ReaderWrapper {
 
       byte[] sourceBytes = reader.openBytes(id, source);
       return ImageTools.splitChannels(sourceBytes, c,
-        false, reader.isInterleaved(id))[channel];
+        false, isInterleaved(id))[channel];
     }
     else return reader.openBytes(id, no);
   }

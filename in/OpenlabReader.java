@@ -143,7 +143,7 @@ public class OpenlabReader extends FormatReader {
 
   /** Returns whether or not the channels are interleaved. */
   public boolean isInterleaved(String id) throws FormatException, IOException {
-    return false;
+    return true;
   }
 
   /** Obtains the specified image from the given file as a byte array. */
