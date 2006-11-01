@@ -94,7 +94,8 @@ public class RandomAccessStream extends InputStream implements DataInput {
     this.file = file;
     fp = 0;
     afp = 0;
-    buf = new byte[MAX_OVERHEAD];
+    int len = (int) raf.length();
+    buf = new byte[len < MAX_OVERHEAD ? len : MAX_OVERHEAD];
     raf.readFully(buf);
     raf.seek(0);
     recent = new Vector();
