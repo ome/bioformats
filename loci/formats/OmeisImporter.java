@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.io.*;
+import java.net.URL;
 import java.util.*;
 import org.openmicroscopy.xml.DOMUtil;
 import org.openmicroscopy.xml.OMENode;
@@ -42,6 +43,9 @@ public class OmeisImporter {
 
   /** Debugging flag. */
   private static final boolean DEBUG = true;
+
+  /** Network path to OMEIS. */
+  private static final String OMEIS_PATH = "http://localhost/cgi-bin/omeis";
 
   // -- Fields --
 
@@ -265,7 +269,6 @@ public class OmeisImporter {
     String[] s;
     try { s = omeis("GetLocalPath", "FileID=" + fileId); }
     catch (IOException exc) { throw new OmeisException(exc); }
-    catch (InterruptedException exc) { throw new OmeisException(exc); }
     if (s.length > 1) {
       System.err.println("Warning: ignoring " + (s.length - 1) +
         " extraneous lines in OMEIS GetLocalPath call");
@@ -274,9 +277,7 @@ public class OmeisImporter {
       throw new OmeisException(
         "Failed to obtain local path for file ID " + fileId);
     }
-    /*TEMP
     return s[0];
-    TEMP*/return "/OME/OMEIS/" + s[0]; // until OMEIS paths are absolute
   }
 
   /**
@@ -288,7 +289,6 @@ public class OmeisImporter {
     String[] s;
     try { s = omeis("FileInfo", "FileID=" + fileId); }
     catch (IOException exc) { throw new OmeisException(exc); }
-    catch (InterruptedException exc) { throw new OmeisException(exc); }
     Hashtable info = new Hashtable();
     for (int i=0; i<s.length; i++) {
       int equals = s[i].indexOf("=");
@@ -320,7 +320,6 @@ public class OmeisImporter {
         " IsSigned=" + (isSigned ? 1 : 0) + " IsFloat=" + (isFloat ? 1 : 0));
     }
     catch (IOException exc) { throw new OmeisException(exc); }
-    catch (InterruptedException exc) { throw new OmeisException(exc); }
     if (s.length > 1) {
       System.err.println("Warning: ignoring " + (s.length - 1) +
         " extraneous lines in OMEIS NewPixels call output");
@@ -339,12 +338,10 @@ public class OmeisImporter {
 
   /** Gets whether the local system uses little-endian byte order. */
   public boolean isLittleEndian() throws OmeisException {
-    if (true) return true; // TEMP until OMEIS has this method
     // ./omeis Method=GetNativeEndian
     String[] s;
     try { s = omeis("GetNativeEndian", ""); }
     catch (IOException exc) { throw new OmeisException(exc); }
-    catch (InterruptedException exc) { throw new OmeisException(exc); }
     if (s.length > 1) {
       System.err.println("Warning: ignoring " + (s.length - 1) +
         " extraneous lines in OMEIS GetLocalPath call output");
@@ -363,7 +360,6 @@ public class OmeisImporter {
     String[] s;
     try { s = omeis("GetLocalPath", "PixelsID=" + pixelsId); }
     catch (IOException exc) { throw new OmeisException(exc); }
-    catch (InterruptedException exc) { throw new OmeisException(exc); }
     if (s.length > 1) {
       System.err.println("Warning: ignoring " + (s.length - 1) +
         " extraneous lines in OMEIS GetLocalPath call");
@@ -372,9 +368,7 @@ public class OmeisImporter {
       throw new OmeisException(
         "Failed to obtain local path for pixels ID " + pixelsId);
     }
-    /*TEMP
     return s[0];
-    TEMP*/return "/OME/OMEIS/" + s[0]; // until OMEIS paths are absolute
   }
 
   /**
@@ -387,7 +381,6 @@ public class OmeisImporter {
     String[] s;
     try { s = omeis("FinishPixels", "PixelsID=" + pixelsId); }
     catch (IOException exc) { throw new OmeisException(exc); }
-    catch (InterruptedException exc) { throw new OmeisException(exc); }
     if (s.length > 1) {
       System.err.println("Warning: ignoring " + (s.length - 1) +
         " extraneous lines in OMEIS FinishPixels call output");
@@ -410,7 +403,6 @@ public class OmeisImporter {
     String[] s;
     try { s = omeis("PixelsSHA1", "PixelsID=" + pixelsId); }
     catch (IOException exc) { throw new OmeisException(exc); }
-    catch (InterruptedException exc) { throw new OmeisException(exc); }
     if (s.length > 1) {
       System.err.println("Warning: ignoring " + (s.length - 1) +
         " extraneous lines in OMEIS PixelsSHA1 call");
@@ -425,31 +417,21 @@ public class OmeisImporter {
   // -- Helper methods --
 
   /** Calls OMEIS, returning an array of strings (one per line of output). */
-  private String[] omeis(String method, String params)
-    throws IOException, InterruptedException
-  {
-    // build command argument array
+  private String[] omeis(String method, String params) throws IOException {
+    // build OMEIS URL
+    StringBuffer sb = new StringBuffer(OMEIS_PATH);
+    sb.append("?Method=");
+    sb.append(method);
     StringTokenizer st = new StringTokenizer(params);
-    int num = st.countTokens();
-    String[] cmd = new String[2 + num];
-    cmd[0] = "./omeis";
-    cmd[1] = "Method=" + method;
-    for (int i=2; i<cmd.length; i++) cmd[i] = st.nextToken();
-
-    // spawn process and wait for it to complete
-    Process p = Runtime.getRuntime().exec(cmd);
-    p.waitFor();
-    int rval = p.exitValue();
-    if (rval != 0) {
-      System.err.println("Warning: omeis returned error code " + rval +
-        " on method call: ./omeis Method=" + method + " " + params);
+    while (st.hasMoreTokens()) {
+      sb.append("&");
+      sb.append(st.nextToken());
     }
+    String url = sb.toString();
 
-    // obtain program output -- normally should be buffered and read in a
-    // separate thread, but all our uses of OMEIS return such a small amount
-    // of data that it should not be necessary
-    BufferedReader in =
-      new BufferedReader(new InputStreamReader(p.getInputStream()));
+    // call OMEIS via HTTP
+    BufferedReader in = new BufferedReader(
+      new InputStreamReader(new URL(url).openStream()));
     Vector v = new Vector();
     while (true) {
       String line = in.readLine();
