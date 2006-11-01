@@ -51,7 +51,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
 
   // -- Fields --
 
-  protected RandomAccessFile raf;
+  protected IRandomAccess raf;
   protected DataInputStream dis;
 
   /** The file pointer within the DIS. */
@@ -88,14 +88,14 @@ public class RandomAccessStream extends InputStream implements DataInput {
    * around the given file.
    */
   public RandomAccessStream(String file) throws IOException {
-    raf = new RandomAccessFile(file, "r");
+    raf = new RAFile(file, "r");
     dis = new DataInputStream(new BufferedInputStream(
       new FileInputStream(file), MAX_OVERHEAD));
     this.file = file;
     fp = 0;
     afp = 0;
     buf = new byte[MAX_OVERHEAD];
-    raf.read(buf);
+    raf.readFully(buf);
     raf.seek(0);
     recent = new Vector();
     recent.add(new Integer(MAX_OVERHEAD / 2));
@@ -104,7 +104,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
 
   /** Constructs a random access stream around the given byte array. */
   public RandomAccessStream(byte[] array) throws IOException {
-    raf = new RandomAccessArray(array);
+    raf = new RABytes(array);
     fp = 0;
     afp = 0;
   }
@@ -305,10 +305,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
       System.arraycopy(buf, afp, array, 0, array.length);
     }
     else {
-      if (raf instanceof RandomAccessArray) {
-        ((RandomAccessArray) raf).copyArray(array);
-      }
-      else raf.readFully(array, 0, array.length);
+      raf.readFully(array, 0, array.length);
     }
     afp += array.length;
     if (status == DIS) fp += array.length;
@@ -327,10 +324,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
       System.arraycopy(buf, afp, array, offset, n);
     }
     else {
-      if (raf instanceof RandomAccessArray) {
-        ((RandomAccessArray) raf).copyArray(array, offset, n);
-      }
-      else raf.readFully(array, offset, n);
+      raf.readFully(array, offset, n);
     }
     afp += n;
     if (status == DIS) fp += n;
