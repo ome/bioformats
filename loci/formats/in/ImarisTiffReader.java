@@ -105,7 +105,7 @@ public class ImarisTiffReader extends BaseTiffReader {
 
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return numImages; 
+    return numImages;
   }
 
   /* @see BaseTiffReader#initFile(String) */
@@ -141,7 +141,7 @@ public class ImarisTiffReader extends BaseTiffReader {
     Vector tmp = new Vector();
 
     for (int i=1; i<ifds.length; i++) {
-      long[] byteCounts = TiffTools.getIFDLongArray(ifds[i], 
+      long[] byteCounts = TiffTools.getIFDLongArray(ifds[i],
         TiffTools.TILE_BYTE_COUNTS, false);
       long[] offsets = TiffTools.getIFDLongArray(ifds[i],
         TiffTools.TILE_OFFSETS, false);
@@ -157,16 +157,16 @@ public class ImarisTiffReader extends BaseTiffReader {
     sizeC[0] = ifds.length - 1;
     sizeZ[0] = tmp.size() / sizeC[0];
     sizeT[0] = 1;
-    sizeX[0] = 
+    sizeX[0] =
       TiffTools.getIFDIntValue(ifds[1], TiffTools.IMAGE_WIDTH, false, 0);
-    sizeY[0] = 
+    sizeY[0] =
       TiffTools.getIFDIntValue(ifds[1], TiffTools.IMAGE_LENGTH, false, 0);
 
     ifds = (Hashtable[]) tmp.toArray(new Hashtable[0]);
     numImages = sizeC[0] * sizeZ[0];
     currentOrder[0] = "XYZCT";
- 
-    int bitsPerSample = TiffTools.getIFDIntValue(ifds[0], 
+
+    int bitsPerSample = TiffTools.getIFDIntValue(ifds[0],
       TiffTools.BITS_PER_SAMPLE);
     int bitFormat = TiffTools.getIFDIntValue(ifds[0], TiffTools.SAMPLE_FORMAT);
 
@@ -192,7 +192,7 @@ public class ImarisTiffReader extends BaseTiffReader {
     String comment = (String) metadata.get("Comment");
 
     // likely an INI-style comment, although we can't be sure
-  
+
     if (comment != null && comment.startsWith("[")) {
       // parse key/value pairs
       StringTokenizer st = new StringTokenizer(comment, "\n");
@@ -206,7 +206,7 @@ public class ImarisTiffReader extends BaseTiffReader {
       }
       metadata.remove("Comment");
     }
-  
+
   }
 
   // -- Main method --

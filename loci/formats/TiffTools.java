@@ -1232,21 +1232,21 @@ public final class TiffTools {
 
         b = uncompress(b, compression);
 
-        int rowBytes = (int) (tileWidth * 
+        int rowBytes = (int) (tileWidth *
           (stripByteCounts[0] / (tileWidth*tileLength)));
-       
+
         for (int j=0; j<tileLength; j++) {
           int len = rowBytes;
           if (col*bytes + rowBytes > imageWidth*bytes) {
             len = (int) (imageWidth*bytes - col*bytes);
           }
-        
-          System.arraycopy(b, j*rowBytes, data, 
-            (int) ((row+j)*imageWidth*bytes + col*bytes), len);   
+
+          System.arraycopy(b, j*rowBytes, data,
+            (int) ((row+j)*imageWidth*bytes + col*bytes), len);
         }
 
         // update row and column
-      
+
         col += (int) tileWidth;
         if (col >= imageWidth) {
           row += (int) tileLength;
@@ -1260,7 +1260,7 @@ public final class TiffTools {
     }
     else {
       int overallOffset = 0;
-    
+
       for (int strip=0, row=0; strip<numStrips; strip++, row+=rowsPerStrip) {
         if (DEBUG) debug("reading image strip #" + strip);
         long actualRows = (row + rowsPerStrip > imageLength) ?
@@ -1389,8 +1389,8 @@ public final class TiffTools {
       // First wrap the byte arrays and then use the features of the
       // ByteBuffer to transform to a ShortBuffer. Finally, use the ShortBuffer
       // bulk get method to copy the data into a usable form for makeImage().
-      short[][] sampleData = new short[samplesPerPixel][samples[0].length / 2];
-      for (int i = 0; i < samplesPerPixel; i++) {
+      short[][] sampleData = new short[samples.length][samples[0].length / 2];
+      for (int i = 0; i < sampleData.length; i++) {
         ShortBuffer sampleBuf = ByteBuffer.wrap(samples[i]).asShortBuffer();
         sampleBuf.get(sampleData[i]);
       }

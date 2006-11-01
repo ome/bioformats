@@ -169,7 +169,7 @@ public class ICSReader extends FormatReader {
       int p = 0;
       for (int j=0; j<f[0].length; j++) {
         for (int i=0; i<f.length; i++) {
-          f[i][j] = (short) Float.intBitsToFloat(DataTools.bytesToInt(plane, 
+          f[i][j] = (short) Float.intBitsToFloat(DataTools.bytesToInt(plane,
             p*4, 4, littleEndian));
           p++;
         }
