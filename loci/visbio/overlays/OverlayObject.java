@@ -27,6 +27,7 @@ import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import visad.*;
+import loci.visbio.util.MathUtil;
 
 /** OverlayObject is the superclass of all overlay objects. */
 public abstract class OverlayObject {
@@ -95,6 +96,7 @@ public abstract class OverlayObject {
 
   /** Computes the shortest distance from this overlay to the given point. */
   public abstract double getDistance(double x, double y);
+  //ACS TODO make sure this checks out in OverlayFreeform
 
   /** Retrieves useful statistics about this overlay. */
   public String getStatistics() {
@@ -236,7 +238,6 @@ public abstract class OverlayObject {
     float dy = y1-this.y1;
     this.x1 = x1;
     this.y1 = y1;
-    // ? why update nodes.  What calls this method.
     if (hasNodes) {
       for (int i=0; i<numNodes; i++) {
         nodes[0][i] = nodes[0][i]+dx;
@@ -246,6 +247,7 @@ public abstract class OverlayObject {
     computeGridParameters();
   }
 
+  /** Returns coordinates of node at given index in the node array */
   public float[] getNodeCoords (int index) {
     float[] retvals = new float[2];
     if (index < numNodes && index >= 0) { 
@@ -258,6 +260,12 @@ public abstract class OverlayObject {
     return retvals;
   }
 
+  /** Returns the node array */
+  public float[][] getNodes() { return nodes; }
+  
+  /** Returns the number of real nodes in the array */
+  public int getNumNodes() { return numNodes; }
+  
   /** Gets X coordinate of the overlay's first endpoint. */
   public float getX() { return x1; }
 
@@ -272,207 +280,6 @@ public abstract class OverlayObject {
   /** Gets most recent y-coordinate in node array. */
   public float getLastNodeY() {
     return nodes[1][numNodes-1];
-  }
-
-  public int getLastNodeIndex() {
-    return (numNodes - 1);
-  }
-
-  /** Sets next node coordinates. */
-  public void setNextNode(float x, float y) {
-    //System.out.println("OverlayObject::setNextNode("+ x +","+ y +")");
-    if (numNodes >= maxNodes) {
-      maxNodes *= 2;
-      nodes = resizeNodeArray(nodes, maxNodes);
-      //System.out.println("OverlayObject::resizeNodeArray("+nodes+","+maxNodes+")");
-    }
-    Arrays.fill(nodes[0], numNodes, maxNodes, x);
-    Arrays.fill(nodes[1], numNodes++, maxNodes, y);
-    //i.e., set all remaining nodes (as per maxNodes) to next node coords
-    
-    /*
-    //print the node array.
-    System.out.println ("Printing nodes[] in method setNextNode");
-    System.out.println ("Array nodes[0].length = " + nodes[0].length);
-    System.out.println ("numNodes = " + numNodes);
-    for (int i = 0; i < numNodes; i++) {
-        System.out.print("(" + nodes[0][i] + "," + nodes[1][i] + ")");
-    }
-    System.out.println();
-    
-    System.out.println("What's the nearest node to 0,0? Testing method computeNearestNode"); //TEMP
-    //computeNearestNode(0, 0); // TEMP
-    */ // all temp stuff
-               
-  }
-
-  //--------------------------------------------------------------
-  // ACS 9/28/06
-  // loop through the nodes array and find nearest node to a point
-  // should this test for boundary values of floats? 
-  //------------------------------------------------------------
-  /** Computes the closest node to the given point, returning an array of floats.  The zeroth item in the array is the index of the node in the OverlayObject's node array.  The first is the distance itself. */
-  public float[] computeNearestNode(float x, float y) {
-    int indexNearestNode = 0;
-    float minDistance = Float.MAX_VALUE;
-    
-    //System.out.println("computeNearestNode("+ x + "," + y + ")");
-    
-    for (int i = 0; i < numNodes; i++) {
-      float xx = nodes[0][i];
-      float yy = nodes[1][i];
-      //System.out.println ("Coords of node under comparison: (" + xx + "," + yy +")"); //TEMP
-      float dx = x - xx;
-      float dy = y - yy;
-      float distance = (float) Math.sqrt(dx* dx + dy * dy);
-      
-      if (distance < minDistance) {
-        minDistance = distance;
-        indexNearestNode = i;
-        //System.out.println("indexNearestNode reassigned to " + indexNearestNode);
-      }
-    }
-
-    //System.out.println("Nearest node: " + indexNearestNode + " Distance: " + minDistance);
-    float [] retVals = {(float) indexNearestNode, minDistance};
-    return retVals;
-
- }
-
- /** Computes the nearest node to the node specified */
- public float[] computeNearestNodeToNode(int index) {
-   int indexNearestNode = -1; 
-   float minDistance = Float.MAX_VALUE;
-  
-   //System.out.println("computeNearestNode("+ x + "," + y + ")");
-
-   float x = nodes[0][index];
-   float y = nodes[1][index];
- 
-   for (int i = 0; i < numNodes; i++) {
-     if (i != index) {
-       float xx = nodes[0][i];
-       float yy = nodes[1][i];
-       //System.out.println ("Coords of node under comparison: (" + xx + "," + yy +")"); //TEMP
-       float dx = x - xx;
-       float dy = y - yy;
-       float distance = (float) Math.sqrt(dx* dx + dy * dy);
-      
-       if (distance < minDistance) {
-         minDistance = distance;
-         indexNearestNode = i;
-         //System.out.println("indexNearestNode reassigned to " + indexNearestNode);
-       }
-     }
-   }
-   float[] retvals = {(float) indexNearestNode, minDistance};
-   return retvals;
-  }
-
- public float[] computeNearestNodeAhead(int index) {
-   int indexNearestNode = -1; 
-   float minDistance = Float.MAX_VALUE;
-  
-   //System.out.println("computeNearestNode("+ x + "," + y + ")");
-
-   float x = nodes[0][index];
-   float y = nodes[1][index];
-   for (int i = index + 1; i < numNodes; i++) {
-     float xx = nodes[0][i];
-     float yy = nodes[1][i];
-     //System.out.println ("Coords of node under comparison: (" + xx + "," + yy +")"); //TEMP
-     float dx = x - xx;
-     float dy = y - yy;
-     float distance = (float) Math.sqrt(dx* dx + dy * dy);
-    
-     if (distance < minDistance) {
-       minDistance = distance;
-       indexNearestNode = i;
-       //System.out.println("indexNearestNode reassigned to " + indexNearestNode);
-     }
-   } 
-   float[] retvals = {(float) indexNearestNode, minDistance};
-   return retvals;
-
- }
-  
- //---------------------------------------------------------------
- // ACS 10/3/06
- // inserts a node point _before_ the node at the given index
- // -------------------------------------------------------------
-  public void insertNode (int index, float x, float y) {
-    //System.out.println("insertNode called. index = " + index + " numNodes = " +  numNodes + " nodes[0].length = " + nodes[0].length + " maxNodes = " + maxNodes);
-    //printNodeArray();
-    //System.out.println("new node request at (" + x + "," + y + ")");
-    if (index >= 0 && index < numNodes) {
-      // if array is full, make some more room.
-      if (numNodes >= maxNodes) { // numNodes should never exceed maxNodes but..
-        maxNodes *= 2;
-        nodes = resizeNodeArray(nodes, maxNodes);
-        //System.out.println("resized. printingNodeArray :");
-      }
-      for (int j = 0; j < 2; j++) {
-        for (int i = numNodes; i > index; i--) {
-         nodes[j][i] = nodes[j][i-1];
-        }
-      }
-      nodes[0][index] = x;
-      nodes[1][index] = y;
-      numNodes++;
-    } else {
-      //System.out.println ("index not in range (0, numNodes).  No node inserted");
-    }
-    //System.out.println("Inserted. Printing node Array :");
-    printNodeArray();
-  }
-   
-  /** inserts *quantity nodes before nodes[index], colocational with nodes[][index] */
-  public void addNodes (int index, int quantity) {
-    // note: in the end, there are quantity + 1 nodes at location nodes[][index]
-    if (index < 0 || index >= numNodes) { }
-    else {
-      float[][] newNodes = new float[2][numNodes + quantity];
-      System.arraycopy(nodes[0], 0, newNodes[0], 0, index);
-      System.arraycopy(nodes[1], 0, newNodes[0], 0, index);
-      // now insert quantity colocational nodes
-      for (int i=0; i < quantity; i++) {
-        newNodes[0][index + i] = nodes[0][index];
-        newNodes[1][index + i] = nodes[1][index];
-      }
-      // now copy remaining nodes
-      System.arraycopy(nodes[0], index, newNodes[0], index + quantity, numNodes - index);
-      System.arraycopy(nodes[1], index, newNodes[1], index + quantity, numNodes - index);
-      numNodes = numNodes + quantity;
-      maxNodes = maxNodes + quantity;
-      nodes = newNodes;
-    }
-  }
-
-   
-  /**deletes a node from the node array */
-  public void deleteNode(int index) {
-    if (index >=0 && index < numNodes) {
-      float [][] newNodes =  new float[2][numNodes-1];
-      System.arraycopy(nodes[0], 0, newNodes[0], 0, index);
-      System.arraycopy(nodes[0], index+1, newNodes[0], index, numNodes-index-1);
-      System.arraycopy(nodes[1], 0, newNodes[1], 0, index);
-      System.arraycopy(nodes[1], index+1, newNodes[1], index, numNodes-index-1);
-      numNodes--;
-      maxNodes--;
-      nodes = newNodes;
-    }
-  }
-   
-        
-  public void printNodeArray() {
-    for (int i = 0; i < maxNodes; i++) { //print all (even fake) nodes
-      //System.out.println("(" + nodes[0][i] + "," + nodes[1][i] + ")");
-    }
-  }
-  
-  public void truncateNodeArray() {
-    //System.out.println("OverlayObject::truncateNodeArray() (immediate call to resizeNodeArray(nodes, numNodes)");
-    nodes = resizeNodeArray(nodes, numNodes);
   }
 
   /** Changes X coordinate of the overlay's second endpoint. */
@@ -503,12 +310,22 @@ public abstract class OverlayObject {
   /** Gets Y coordinate of the overlay's second endpoint. */
   public float getY2() { return y2; }
 
-  /** Gets value of largest and smallest x, y values. */
-  protected void setBoundaries(float x, float y) {
-    x1 = Math.min(x1, x);
-    x2 = Math.max(x2, x);
-    y1 = Math.min(y1, y);
-    y2 = Math.max(y2, y);
+  /** Updates the coordinates of the bounding box of a noded object */
+  public void updateBoundingBox() {
+    if (!hasNodes || numNodes == 0) return;
+    float xmin, xmax, ymin, ymax;
+    xmin = xmax = nodes[0][0];
+    ymin = ymax = nodes[1][0];
+    for (int i=1; i < numNodes; i++) {
+      if (nodes[0][i] < xmin) xmin = nodes[0][i];
+      if (nodes[0][i] > xmax) xmax = nodes[0][i];
+      if (nodes[1][i] < ymin) ymin = nodes[1][i];
+      if (nodes[1][i] > ymax) ymax = nodes[1][i];
+    }
+    this.x1 = xmin;
+    this.y1 = ymin;
+    this.x2 = xmax;
+    this.y2 = ymax;
   }
 
   /** Changes text to render. */
@@ -558,36 +375,166 @@ public abstract class OverlayObject {
     this.drawing = drawing;
     overlay.setTextDrawn(!drawing);
   }
-
-  // ACS TODO double check this
+  
+  /** Gets whether this overlay is still being initially drawn. */
+  public boolean isDrawing() { return drawing; }
+  
+  // -- OverlayObject API Methods: node array mutators --
+  // note: call updateBoundingBox() after a series of changes to the node array
+  
+  /** Sets coordinates of an existing node */ 
   public void setNodeCoords(int nodeIndex, float newX, float newY) {
-    if (nodeIndex < 0 && nodeIndex < numNodes) {
-      //System.out.println("OverlayObject: resetting node " + nodeIndex + " to (" + newX + "," + newY + ")");
+    if (nodeIndex >= 0 && nodeIndex < numNodes) {
       nodes[0][nodeIndex] = newX;
       nodes[1][nodeIndex] = newY;
     } else {
-      //System.out.println("Out of bounds error. Can't reset node coordinates");
+      //System.out.println("Out of bounds error. Can't reset node coordinates"); // TEMP
     }
+  } 
+
+  /** Sets next node coordinates. */
+  public void setNextNode(float x, float y) {
+    if (numNodes >= maxNodes) {
+      maxNodes *= 2;
+      nodes = resizeNodeArray(nodes, maxNodes);
+    }
+    Arrays.fill(nodes[0], numNodes, maxNodes, x);
+    Arrays.fill(nodes[1], numNodes++, maxNodes, y);
+    // i.e., set all remaining nodes (as per maxNodes) to next node coords
   }
 
-  /** Gets whether this overlay is still being initially drawn. */
-  public boolean isDrawing() { return drawing; }
+ // This could belong to MathUtil.java ACS TODO
+ /**  Gets actual distance to curve: finds out if the nearest point is a node or a segment; 
+   * 
+   *  @param x x coordinate of point in question
+   *  @param y y coordinate of point in question
+   *  @return an array float[3], with element 0 being node index i of one end of 
+   *  closest line segment (the other end being i+1), and the third being the weight 
+   *  between zero and one for interpolation along the segment (i, i+1)
+   */ 
+  public double[] getDistanceEtc(float x, float y) {
+    double minDist = Double.MAX_VALUE;
+    int seg = 0;
+    double weight = 0;   
 
-  // -- Internal OverlayObject API methods --
+    // toss out the trivial case
+    if (numNodes == 1) {
+      //then distance is the distance to the trivial bounding box after all; could invoke the 
+      //getDistance method from OverlayFreeform instead.
+      double xdist = x - nodes[0][0];
+      double ydist = y - nodes[1][0];
+      minDist = Math.sqrt(xdist * xdist + ydist * ydist);
+    } else {
 
-  /** Computes parameters needed for selection grid computation. */
-  protected abstract void computeGridParameters();
+      for (int i=0; i<numNodes-1; i++) {
+         double[] a = {(double) nodes[0][i], (double) nodes[1][i]};
+         double[] b = {(double) nodes[0][i+1], (double) nodes[1][i+1]};
+         double[] p = {(double) x, (double) y};
+
+         double[] proj = MathUtil.getProjection(a, b, p, true);
+         double dist = MathUtil.getDistance(p, proj);
+
+         if (dist < minDist) {
+           minDist = dist;
+           seg = i;
+           double segDist = MathUtil.getDistance (a, b);
+           double fracDist = MathUtil.getDistance (a, proj);
+           weight = fracDist / segDist;
+         }
+       } 
+    }
+    double[] retvals = {minDist, (double) seg, weight};
+    return retvals;
+  }
+
+  /** Inserts a node at coordinates provided before the node at the index provided */
+  public void insertNode (int index, float x, float y) {
+    if (index >= 0 && index < numNodes) {
+      // if array is full, make some more room.
+      if (numNodes >= maxNodes) { // numNodes should never exceed maxNodes but..
+        maxNodes *= 2;
+        nodes = resizeNodeArray(nodes, maxNodes);
+      }
+      for (int j = 0; j < 2; j++) {
+        for (int i = numNodes; i > index; i--) {
+         nodes[j][i] = nodes[j][i-1]; // right shift every node right of index by 1
+        }
+      }
+      nodes[0][index] = x;
+      nodes[1][index] = y;
+      numNodes++;
+    } else {
+      //System.out.println ("index not in range (0, numNodes).  No node inserted");
+    }
+  }
+  
+  /** Deletes a range of nodes from the node array */
+  public void deleteBetween (int i1, int i2) {
+    //assumes i1 < i2, both in bounds (less than numNodes)
+    //checks whether i1 + 1 < i2, i.e., is there a nonzero number of nodes to delete
+    if (0 <= i1 && i2 < numNodes && i1 + 1 < i2 ) { 
+      int victims = i2 - i1 - 1;
+      float[][] newNodes = new float[2][maxNodes - victims];
+      System.arraycopy(nodes[0], 0, newNodes[0], 0, i1 + 1);
+      System.arraycopy(nodes[1], 0, newNodes[1], 0, i1 + 1);
+      System.arraycopy(nodes[0], i2, newNodes[0], i1+1, maxNodes - i2);
+      System.arraycopy(nodes[1], i2, newNodes[1], i1+1, maxNodes - i2);
+      numNodes -= victims;
+      maxNodes -= victims;
+      nodes = newNodes;
+    } else {
+      //System.out.println("deleteBetween(int, int) out of bounds error");
+    }
+  }
+   
+  /** Deletes a node from the node array */
+  public void deleteNode(int index) {
+    if (index >=0 && index < numNodes) {
+      float [][] newNodes =  new float[2][numNodes-1];
+      System.arraycopy(nodes[0], 0, newNodes[0], 0, index);
+      System.arraycopy(nodes[0], index+1, newNodes[0], index, numNodes-index-1);
+      System.arraycopy(nodes[1], 0, newNodes[1], 0, index);
+      System.arraycopy(nodes[1], index+1, newNodes[1], index, numNodes-index-1);
+      numNodes--;
+      maxNodes--;
+      nodes = newNodes;
+    }
+  }
+    
+  /** Reverses the node array (and therefore its internal orientation) */
+  public void reverseNodes() {
+    truncateNodeArray();
+    // Q: Is the above call ever necessary? 
+    // truncateNodeArray() is called at mouseUp in FreeformTool.  
+    // Will there ever be an extension 
+    // of the node array s.t. maxNodes > numNodes during an interior edit before
+    // an extension
+    // A: Yes, if extend mode is entered directly from edit mode
+    float[][] temp = new float[2][maxNodes];
+    for (int j = 0; j < 2; j++) {
+      for (int i = 0; i < maxNodes; i++) {
+        temp[j][maxNodes-i-1] = nodes[j][i];
+      }
+    }
+    nodes = temp;
+  }
+
+  /** Deletes buffer nodes from the tail of the node array */
+  public void truncateNodeArray() {
+    nodes = resizeNodeArray(nodes, numNodes);
+  }
 
   /** Resizes the node array, truncating if necessary. */
   protected float[][] resizeNodeArray(float[][] a, int newLength) {
-    //System.out.println("resizing node array to "+ newLength);
+    //System.out.println("resizing node array to "+ newLength); // TEMP
     int loopMax = Math.min(a[0].length, newLength);
     float[][] a2 = new float[2][newLength];
     for (int j=0; j<2; j++) { //manually copy a to a2
       for (int i=0; i<loopMax; i++) {
         a2[j][i] = a[j][i];
       }
-      // new loop - fills extra array with nodes co-locational with last node
+      // case where newLength > a.length:
+      // fills rest of new array with nodes co-locational with last node
       for (int i=loopMax; i < a2[0].length; i++) { 
         a2[j][i] = a[j][loopMax-1];
       }
@@ -596,4 +543,18 @@ public abstract class OverlayObject {
     //System.out.println("resize completed. maxNodes = " + maxNodes);
     return a2;
   }
-}
+
+  // -- Internal OverlayObject API methods --
+
+  /** Computes parameters needed for selection grid computation. */
+  protected abstract void computeGridParameters();
+
+  /** Sets value of largest and smallest x, y values. */
+  protected void setBoundaries(float x, float y) {
+    x1 = Math.min(x1, x);
+    x2 = Math.max(x2, x);
+    y1 = Math.min(y1, y);
+    y2 = Math.max(y2, y);
+  }
+
+}// end class

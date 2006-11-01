@@ -25,7 +25,6 @@ package loci.visbio.overlays;
 
 import java.rmi.RemoteException;
 import java.util.Arrays;
-import loci.visbio.util.MathUtil;
 import visad.*;
 
 /**
@@ -104,33 +103,6 @@ public class OverlayFreeform extends OverlayObject {
     if (y < y1 && y < y2) ydist = Math.min(y1, y2) - y;
     else if (y > y1 && y > y2) ydist = y - Math.max(y1, y2);
     return Math.sqrt(xdist * xdist + ydist * ydist);
-  }
-
-  /** Computes the shortest distance from this freeform to the given point */
-  public double getTrueDistance(double x, double y) {
-    //for each node pair, compute distance to segment joining node pair
-    //MathUtil.getdistance(double[] a, double[] b, double[] v, boolean segment)
-    
-    double minDist = Double.MAX_VALUE;
-    if (numNodes == 1) {
-      //System.out.println("OverlayFreeform: this instance has only one node."); // TEMP
-      //then distance is the distance to the trivial bounding box after all
-      double xdist = x - nodes[0][0];
-      double ydist = y - nodes[1][0];
-      minDist = Math.sqrt(xdist * xdist + ydist * ydist);
-    }
-    // System.out.println("OverlayFreeform: this object has >=2 nodes."); // TEMP 
-    for (int i = 1; i < numNodes; i++) {
-       double[] n1 = {(double) nodes[0][i-1], (double) nodes[1][i-1]};
-       double[] n2 = {(double) nodes[0][i], (double) nodes[1][i]};
-       double[] p = {(double) x, (double) y};
-       double dist = MathUtil.getDistance(n1, n2, p, true);
-       if (dist < minDist) {   
-          minDist = dist;
-       } 
-    } 
-    //System.out.println("OverlayFreeform: distance to this object is " + minDist); // TEMP
-    return minDist;
   }
 
   /** Retrieves useful statistics about this overlay. */
