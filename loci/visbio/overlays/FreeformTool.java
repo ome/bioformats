@@ -221,42 +221,12 @@ public class FreeformTool extends OverlayTool {
           //debug(x, y); // TEMP
           //print ("mouseDrag", ("prevNodeIndex=" + prevNodeIndex + " nextNodeIndex=" + nextNodeIndex)); // TEMP
           if (prevNodeIndex == nextNodeIndex && !shift) {
-            //print ("mouseDrag", "mystery case: prevNode == nextNode"); // TEMP
-            // debug(x,y);
-            // ACS TODO insert a node at drag point, but where does it belong in node array
-            freeform.setNodeCoords(prevNodeIndex, x, y);
-            float[] prev = freeform.getNodeCoords(prevNodeIndex - 1);
-            float[] next = freeform.getNodeCoords(prevNodeIndex + 1);
-            // ACS TODO use a MathUtil method here
-            float pDist = (float) Math.sqrt ((x - prev[0]) * (x - prev[0]) + (y - prev[1]) * (y - prev[1]));
-            float nDist = (float) Math.sqrt ((x - next[0]) * (x - next[0]) + (y - next[1]) * (y - next[1]));
-            if (pDist > DRAGTHRESH) { // subdivide 
-              int subs = (int) Math.ceil(pDist / DRAGTHRESH); // ACS TODO should this be ceiling?
-              float dx = (x - prev[0])/(subs);
-              float dy = (y - prev[1])/(subs);
-              for (int i=1; i<subs-1; i++) {
-                float xx = prev[0] + dx * i;
-                float yy = prev[1] + dy * i;
-                freeform.insertNode(prevNodeIndex, x, y);  //insert after prev Node
-                prevNodeIndex++;
-                nextNodeIndex++;
-              }
-            }
-
-            if (nDist > DRAGTHRESH) { // subdivide
-              int subs = (int) Math.ceil(nDist / DRAGTHRESH); // ACS TODO should this be ceiling?
-              float dx = (x - next[0])/(subs);
-              float dy = (y - next[1])/(subs);
-              for (int i=1; i<subs-1; i++) {
-                float xx = next[0] + dx * i;
-                float yy = next[1] + dy * i;
-                freeform.insertNode(nextNodeIndex + i, x, y);  //insert after prev Node
-              }
-            }
-            // determine whether to insert nodes on either side of prevNode
-            //
-            //freeform.insertNode(, x, y); 
-          } else if (prevNodeIndex > nextNodeIndex) {
+            // replace prevnode with two colocational nodes, insert new node at drag point
+            float[] prev = freeform.getNodeCoords(prevNodeIndex);
+            freeform.insertNode(prevNodeIndex+1, prev[0], prev[1]);
+            freeform.insertNode(prevNodeIndex+1, x, y);
+            prevNodeIndex++;
+            } else if (prevNodeIndex > nextNodeIndex) {
             //print ("mouseDrag", "prevNode > nextNode. Deleting between nextNode and prevNode"); // TEMP
             //debug(x,y); // TEMP
             freeform.deleteBetween(nextNodeIndex, prevNodeIndex); 
