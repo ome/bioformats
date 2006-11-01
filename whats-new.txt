@@ -55,5 +55,11 @@
   when available
 * Better notification when JAR libraries are missing
 
+2006 Sep 6:
+* Leica LIF: multiple distinct image series within a single file
+* Zeiss ZVI: fixes and improvements contributed by Michel Boudinot
+* Zeiss LSM: fixed bugs preventing the import of certain LSM files
+* TIFF: fixed a bug preventing import of TIFFs created with Bio-Rad software
+
 2006 Mar 31:
 * First release
