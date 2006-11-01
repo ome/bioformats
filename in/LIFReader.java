@@ -41,7 +41,7 @@ public class LIFReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessFile in;
+  protected RandomAccessStream in;
 
   /** Flag indicating whether current file is little endian. */
   protected boolean littleEndian;
@@ -188,7 +188,7 @@ public class LIFReader extends FormatReader {
   /** Initializes the given LIF file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessFile(id, "r");
+    in = new RandomAccessStream(id);
     offsets = new Vector();
 
     littleEndian = true;
