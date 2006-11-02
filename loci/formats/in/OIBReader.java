@@ -138,7 +138,7 @@ public class OIBReader extends FormatReader {
 
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
-    return true;
+    return false;
   }
 
   /** Returns whether or not the channels are interleaved. */
