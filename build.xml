@@ -286,7 +286,7 @@ Apache XML-RPC
   </target>
 
   <target name="docs" depends="copy-source"
-    description="generate Javadocs for LOCI software packages">
+    description="generate javadocs for LOCI software packages">
     <javadoc sourcepath="${dest.dir}" destdir="${docs.dir}/api"
       classpath="${ext.jars}" author="true" version="true" use="true"
       windowtitle="LOCI Software API">
@@ -303,6 +303,27 @@ Apache XML-RPC
 
   <target name="clean" description="remove all build files">
     <delete dir="${build.dir}"/>
+  </target>
+
+  <target name="clean-classes" description="remove classes from build folder">
+    <delete dir="${build.dir}/classes"/>
+  </target>
+
+  <target name="clean-dist"
+    description="remove distribution bundles from build folder">
+    <delete dir="${build.dir}/dist"/>
+  </target>
+
+  <target name="clean-docs" description="remove javadocs from build folder">
+    <delete dir="${build.dir}/docs"/>
+  </target>
+
+  <target name="clean-jars" description="remove JAR files from build folder">
+    <delete dir="${build.dir}/jar"/>
+  </target>
+
+  <target name="clean-src" description="remove source files from build folder">
+    <delete dir="${build.dir}/src"/>
   </target>
 
   <target name="dev-compile" description="compile classes in-place (no copy)">
@@ -410,7 +431,7 @@ Apache XML-RPC
   </target>
 
   <target name="docs-visbio" depends="copy-source"
-    description="generate Javadocs for VisBio">
+    description="generate javadocs for VisBio">
     <javadoc sourcepath="${dest.dir}" destdir="${visbio.docs-dir}/docs/api"
       author="true" version="true" use="true" windowtitle="LOCI Software API">
       <packageset dir="${dest.dir}" includes="loci/visbio/**"/>
@@ -771,7 +792,7 @@ Apache XML-RPC
 
   <!-- ImageJ -->
 
-  <target name="ij-jws" depends="jars"
+  <target name="ij-jws" depends="tools"
     description="create JAR file encompassing ImageJ plus LOCI plugins">
     <for list="${ij-jws.libraries}" param="jar" delimiter=" " trim="true">
       <sequential>
