@@ -93,7 +93,7 @@ public class RAFile implements IRandomAccess {
 
   /* @see IRandomAccess.read(byte[], int, int) */
   public int read(byte[] b, int off, int len) throws IOException {
-    return read(b, off, len);
+    return raf.read(b, off, len);
   }
 
   /* @see IRandomAccess.seek(long) */
