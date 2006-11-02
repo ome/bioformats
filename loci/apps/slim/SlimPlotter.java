@@ -59,9 +59,10 @@ public class SlimPlotter implements ActionListener,
   // data parameters
   private int width, height;
   private int channels, timeBins;
-  private double timeRange;
-  private int minWave, waveStep;
+  private float timeRange;
+  private int minWave, waveStep, maxWave;
   private boolean adjustPeaks;
+  private boolean[] cVisible;
   private int maxPeak;
 
   // ROI parameters
@@ -82,6 +83,7 @@ public class SlimPlotter implements ActionListener,
 
   // GUI components for intensity pane
   private JSlider cSlider;
+  private JCheckBox cToggle;
 
   // GUI components for decay pane
   private JLabel decayLabel;
@@ -100,9 +102,10 @@ public class SlimPlotter implements ActionListener,
   private OutputConsole console;
 
   // VisAD objects
-  private RealType cType;
+  private Unit[] bcUnits;
+  private RealType bType, cType;
+  private RealTupleType bc;
   private FunctionType bcvFunc, bcvFuncFit, bcvFuncRes;
-  private Linear2DSet bcSet;
   private ScalarMap zMap, zMapFit, zMapRes, vMap, vMapFit, vMapRes;
   private DataRenderer decayRend, fitRend, resRend;
   private DataReferenceImpl decayRef, fitRef, resRef;
@@ -155,7 +158,7 @@ public class SlimPlotter implements ActionListener,
     height = info.height;
     timeBins = info.timeBins;
     channels = info.channels;
-    timeRange = 12.5;
+    timeRange = 12.5f;
     minWave = 400;
     waveStep = 10;
     progress.setMaximum(adjustPeaks ?
@@ -196,7 +199,7 @@ public class SlimPlotter implements ActionListener,
     paramDialog.setLocation((screenSize.width - ps.width) / 2,
       (screenSize.height - ps.height) / 2);
     paramDialog.setVisible(true);
-    int maxWave = minWave + (channels - 1) * waveStep;
+    maxWave = minWave + (channels - 1) * waveStep;
     roiCount = width * height;
     roiPercent = 100;
     progress.setProgress(++p);
@@ -217,7 +220,8 @@ public class SlimPlotter implements ActionListener,
     RealType yType = RealType.getRealType("line");
     ScaledUnit ns = new ScaledUnit(1e-9, SI.second, "ns");
     ScaledUnit nm = new ScaledUnit(1e-9, SI.meter, "nm");
-    RealType bType = RealType.getRealType("bin", ns);
+    bcUnits = new Unit[] {ns, nm};
+    bType = RealType.getRealType("bin", ns);
     cType = RealType.getRealType("channel", nm);
     RealType vType = RealType.getRealType("value");
     RealTupleType xy = new RealTupleType(xType, yType);
@@ -226,10 +230,8 @@ public class SlimPlotter implements ActionListener,
     FunctionType cxyvFunc = new FunctionType(cType, xyvFunc);
     Linear1DSet cSet = new Linear1DSet(cType,
       minWave, maxWave, channels, null, new Unit[] {nm}, null);
-    RealTupleType bc = new RealTupleType(bType, cType);
+    bc = new RealTupleType(bType, cType);
     bcvFunc = new FunctionType(bc, vType);
-    bcSet = new Linear2DSet(bc, 0, timeRange, timeBins,
-      minWave, maxWave, channels, null, new Unit[] {ns, nm}, null);
     RealType vTypeFit = RealType.getRealType("value_fit");
     bcvFuncFit = new FunctionType(bc, vTypeFit);
     RealType vTypeRes = RealType.getRealType("value_res");
@@ -466,8 +468,12 @@ public class SlimPlotter implements ActionListener,
     intensityFrame.addWindowListener(this);
     JPanel intensityPane = new JPanel();
     intensityPane.setLayout(new BorderLayout());
+    intensityFrame.setContentPane(intensityPane);
     intensityPane.add(iPlot.getComponent(), BorderLayout.CENTER);
 
+    JPanel sliderPane = new JPanel();
+    sliderPane.setLayout(new BoxLayout(sliderPane, BoxLayout.X_AXIS));
+    intensityPane.add(sliderPane, BorderLayout.SOUTH);
     cSlider = new JSlider(1, channels, 1);
     cSlider.setSnapToTicks(true);
     cSlider.setMajorTickSpacing(channels / 4);
@@ -475,8 +481,10 @@ public class SlimPlotter implements ActionListener,
     cSlider.setPaintTicks(true);
     cSlider.addChangeListener(this);
     cSlider.setBorder(new EmptyBorder(8, 5, 8, 5));
-    intensityPane.add(cSlider, BorderLayout.SOUTH);
-    intensityFrame.setContentPane(intensityPane);
+    sliderPane.add(cSlider);
+    cToggle = new JCheckBox("", true);
+    cToggle.addActionListener(this);
+    sliderPane.add(cToggle);
 
     intensityRef.setData(field);
     ColorControl cc = (ColorControl) iPlot.getControl(ColorControl.class);
@@ -671,7 +679,13 @@ public class SlimPlotter implements ActionListener,
   /** Handles checkbox and button presses. */
   public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
-    if (src == dataSurface || src == dataLines) plotData(false, false);
+    if (src == cToggle) {
+      // toggle visibility of this channel
+      int c = cSlider.getValue() - 1;
+      cVisible[c] = !cVisible[c];
+      plotData(true, false);
+    }
+    else if (src == dataSurface || src == dataLines) plotData(false, false);
     else if (src == fitSurface || src == fitLines ||
       src == resSurface || src == resLines)
     {
@@ -749,6 +763,8 @@ public class SlimPlotter implements ActionListener,
       minWave = parse(wlField.getText(), minWave);
       waveStep = parse(sField.getText(), waveStep);
       adjustPeaks = peaksBox.isSelected();
+      cVisible = new boolean[channels];
+      Arrays.fill(cVisible, true);
       paramDialog.setVisible(false);
     }
   }
@@ -759,9 +775,12 @@ public class SlimPlotter implements ActionListener,
   public void stateChanged(ChangeEvent e) {
     Object src = e.getSource();
     if (src == cSlider) {
-      int c = cSlider.getValue();
-      try { ac.setCurrent(c - 1); }
+      int c = cSlider.getValue() - 1;
+      try { ac.setCurrent(c); }
       catch (Exception exc) { exc.printStackTrace(); }
+      cToggle.removeActionListener(this);
+      cToggle.setSelected(cVisible[c]);
+      cToggle.addActionListener(this);
     }
     else if (src == numCurves) plotData(false, true);
   }
@@ -849,11 +868,16 @@ public class SlimPlotter implements ActionListener,
     boolean doLog = log.isSelected();
 
     // calculate samples
-    samps = new float[channels * timeBins];
-    maxVal = 0;
+    int numChanVis = 0;
     for (int c=0; c<channels; c++) {
+      if (cVisible[c]) numChanVis++;
+    }
+    samps = new float[numChanVis * timeBins];
+    maxVal = 0;
+    for (int c=0, cc=0; c<channels; c++) {
+      if (!cVisible[c]) continue;
       for (int t=0; t<timeBins; t++) {
-        int ndx = timeBins * c + t;
+        int ndx = timeBins * cc + t;
         int sum = 0;
         if (roiCount == 1) sum = values[c][roiY][roiX][t];
         else {
@@ -871,6 +895,7 @@ public class SlimPlotter implements ActionListener,
         if (plotCanceled) break;
       }
       if (plotCanceled) break;
+      cc++;
     }
 
     double[][] fitResults = null;
@@ -908,9 +933,13 @@ public class SlimPlotter implements ActionListener,
       float[] weights = new float[num];
       Arrays.fill(weights, 1); // no weighting
       log("Computing fit parameters: y(t) = a * e^(-t/" + TAU + ") + c");
-      for (int c=0; c<channels; c++) {
+      for (int c=0, cc=0; c<channels; c++) {
+        if (!cVisible[c]) {
+          fitResults[c] = null;
+          continue;
+        }
         log("\tChannel #" + (c + 1) + ":");
-        System.arraycopy(samps, timeBins * c + maxPeak, yVals, 0, num);
+        System.arraycopy(samps, timeBins * cc + maxPeak, yVals, 0, num);
         LMA lma = null;
         lma = new LMA(func, params, new float[][] {xVals, yVals},
           weights, new JAMAMatrix(params.length, params.length));
@@ -925,23 +954,39 @@ public class SlimPlotter implements ActionListener,
         }
         fitResults[c] = lma.parameters;
         progress.setProgress(++p);
+        cc++;
       }
     }
 
     try {
+      // construct domain set for 3D surface plots
+      float[][] bcGrid = new float[2][timeBins * numChanVis];
+      for (int c=0, cc=0; c<channels; c++) {
+        if (!cVisible[c]) continue;
+        for (int t=0; t<timeBins; t++) {
+          int ndx = timeBins * cc + t;
+          bcGrid[0][ndx] = t * timeRange / (timeBins - 1);
+          bcGrid[1][ndx] = c * (maxWave - minWave) / (channels - 1) + minWave;
+        }
+        cc++;
+      }
+      Gridded2DSet bcSet = new Gridded2DSet(bc, bcGrid,
+        timeBins, numChanVis, null, bcUnits, null, false);
+
       // construct "Data" plot
       FlatField ff = new FlatField(bcvFunc, bcSet);
       ff.setSamples(new float[][] {samps}, false);
-      decayRef.setData(doDataLines ? ff.domainFactor(cType) : ff);
+      decayRef.setData(doDataLines ? makeLines(ff) : ff);
 
       if (fitResults != null) {
         // compute finite sampling matching fitted exponentials
-        float[] fitSamps = new float[channels * timeBins];
-        float[] residuals = new float[channels * timeBins];
-        for (int c=0; c<channels; c++) {
+        float[] fitSamps = new float[numChanVis * timeBins];
+        float[] residuals = new float[numChanVis * timeBins];
+        for (int c=0, cc=0; c<channels; c++) {
+          if (!cVisible[c]) continue;
           double[] q = fitResults[c];
           for (int t=0; t<timeBins; t++) {
-            int ndx = timeBins * c + t;
+            int ndx = timeBins * cc + t;
             int et = t - maxPeak; // adjust for peak alignment
             if (et < 0) fitSamps[ndx] = residuals[ndx] = 0;
             else {
@@ -954,17 +999,18 @@ public class SlimPlotter implements ActionListener,
               residuals[ndx] = samps[ndx] - fitSamps[ndx];
             }
           }
+          cc++;
         }
 
         // construct "Fit" plot
         FlatField fit = new FlatField(bcvFuncFit, bcSet);
         fit.setSamples(new float[][] {fitSamps}, false);
-        fitRef.setData(doFitLines ? fit.domainFactor(cType) : fit);
+        fitRef.setData(doFitLines ? makeLines(fit) : fit);
 
         // construct "Residuals" plot
         FlatField res = new FlatField(bcvFuncRes, bcSet);
         res.setSamples(new float[][] {residuals}, false);
-        resRef.setData(doResLines ? res.domainFactor(cType) : res);
+        resRef.setData(doResLines ? makeLines(res) : res);
       }
 
       if (doRescale) {
@@ -1010,6 +1056,37 @@ public class SlimPlotter implements ActionListener,
     b1.addActionListener(this);
     b2.addActionListener(this);
     return p;
+  }
+
+  private FieldImpl makeLines(FlatField surface) {
+    try {
+      // HACK - horrible conversion from aligned Gridded2DSet to ProductSet
+      // probably could eliminate this by writing cleaner logic to convert
+      // from 2D surface to 1D lines...
+      Linear1DSet timeSet = new Linear1DSet(bType, 0,
+        timeRange, timeBins, null, new Unit[] {bcUnits[0]}, null);
+      int numChanVis = 0;
+      for (int c=0; c<channels; c++) {
+        if (cVisible[c]) numChanVis++;
+      }
+      float[][] cGrid = new float[1][numChanVis];
+      for (int c=0, cc=0; c<channels; c++) {
+        if (!cVisible[c]) continue;
+        cGrid[0][cc++] = c * (maxWave - minWave) / (channels - 1) + minWave;
+      }
+      Gridded1DSet waveSet = new Gridded1DSet(cType,
+        cGrid, numChanVis, null, new Unit[] {bcUnits[1]}, null, false);
+      ProductSet prodSet = new ProductSet(new SampledSet[] {timeSet, waveSet});
+      float[][] samples = surface.getFloats(false);
+      FunctionType ffType = (FunctionType) surface.getType();
+      surface = new FlatField(ffType, prodSet);
+      surface.setSamples(samples, false);
+
+      return (FieldImpl) surface.domainFactor(cType);
+    }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
+    return null;
   }
 
   // -- Utility methods --
@@ -1097,8 +1174,8 @@ public class SlimPlotter implements ActionListener,
     catch (NumberFormatException exc) { return last; }
   }
 
-  public static double parse(String s, double last) {
-    try { return Double.parseDouble(s); }
+  public static float parse(String s, float last) {
+    try { return Float.parseFloat(s); }
     catch (NumberFormatException exc) { return last; }
   }
 
