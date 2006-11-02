@@ -194,7 +194,7 @@ public class OIBReader extends FormatReader {
       RandomAccessStream stream = new RandomAccessStream(b);
       Hashtable[] ifds = TiffTools.getIFDs(stream);
       littleEndian = TiffTools.isLittleEndian(ifds[0]);
-      byte[][] samples = TiffTools.getSamples(ifds[0], stream, 0);
+      byte[][] samples = TiffTools.getSamples(ifds[0], stream);
 
       byte[] rtn = new byte[samples.length * samples[0].length];
       for (int i=0; i<samples.length; i++) {

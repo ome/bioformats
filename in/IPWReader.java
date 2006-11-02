@@ -142,7 +142,7 @@ public class IPWReader extends BaseTiffReader {
       ifds = TiffTools.getIFDs(stream);
       little = TiffTools.isLittleEndian(ifds[0]);
       byte[][] samples =
-        TiffTools.getSamples(ifds[0], stream, 0, ignoreColorTable);
+        TiffTools.getSamples(ifds[0], stream, ignoreColorTable);
 
       byte[] rtn = new byte[samples.length * samples[0].length];
       for (int i=0; i<samples.length; i++) {
