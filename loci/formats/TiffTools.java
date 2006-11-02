@@ -237,18 +237,8 @@ public final class TiffTools {
    * if the given file is not a valid TIFF file.
    */
   public static Hashtable[] getIFDs(RandomAccessStream in) throws IOException {
-    return getIFDs(in, 0);
-  }
-
-  /**
-   * Gets all IFDs within the given TIFF file, or null
-   * if the given file is not a valid TIFF file.
-   */
-  public static Hashtable[] getIFDs(RandomAccessStream in, long globalOffset)
-    throws IOException
-  {
     // check TIFF header
-    Boolean result = checkHeader(in, globalOffset);
+    Boolean result = checkHeader(in);
     if (result == null) return null;
 
     long offset = getFirstOffset(in);
@@ -261,7 +251,7 @@ public final class TiffTools {
     // read in IFDs
     Vector v = new Vector();
     for (long ifdNum=0; ifdNum<ifdMax; ifdNum++) {
-      Hashtable ifd = getIFD(in, ifdNum, globalOffset, offset);
+      Hashtable ifd = getIFD(in, ifdNum, offset);
       if (ifd == null || ifd.size() <= 1) break;
       v.add(ifd);
       offset = in.readInt();
@@ -279,23 +269,13 @@ public final class TiffTools {
    */
   public static Hashtable getFirstIFD(RandomAccessStream in) throws IOException
   {
-    return getFirstIFD(in, 0);
-  }
-
-  /**
-   * Gets the first IFD within the given TIFF file, or null
-   * if the given file is not a valid TIFF file.
-   */
-  public static Hashtable getFirstIFD(RandomAccessStream in, long globalOffset)
-    throws IOException
-  {
     // check TIFF header
-    Boolean result = checkHeader(in, globalOffset);
+    Boolean result = checkHeader(in);
     if (result == null) return null;
 
     long offset = getFirstOffset(in);
 
-    return getIFD(in, 0, globalOffset, offset);
+    return getIFD(in, 0, offset);
   }
 
   /**
@@ -311,7 +291,7 @@ public final class TiffTools {
     throws IOException
   {
     // First lets re-position the file pointer by checking the TIFF header
-    Boolean result = checkHeader(in, 0);
+    Boolean result = checkHeader(in);
     if (result == null) return null;
 
     // Get the offset of the first IFD
@@ -357,13 +337,11 @@ public final class TiffTools {
    *         false if big-endian,
    *         or null if not a TIFF.
    */
-  public static Boolean checkHeader(RandomAccessStream in, long globalOffset)
-    throws IOException
-  {
+  public static Boolean checkHeader(RandomAccessStream in) throws IOException {
     if (DEBUG) debug("getIFDs: reading IFD entries");
 
     // start at the beginning of the file
-    in.seek((int) globalOffset);
+    in.seek(0);
 
     byte[] header = new byte[4];
     in.readFully(header);
@@ -385,7 +363,7 @@ public final class TiffTools {
 
   /** Gets the IFD stored at the given offset. */
   public static Hashtable getIFD(RandomAccessStream in,
-    long ifdNum, long globalOffset, long offset) throws IOException
+    long ifdNum, long offset) throws IOException
   {
     Hashtable ifd = new Hashtable();
 
@@ -394,17 +372,16 @@ public final class TiffTools {
 
     // read in directory entries for this IFD
     if (DEBUG) {
-      debug("getIFDs: seeking IFD #" + ifdNum + " at " +
-        (globalOffset != 0 ? (globalOffset + "+" + offset) : ("" + offset)));
+      debug("getIFDs: seeking IFD #" + ifdNum + " at " + offset);
     }
-    in.seek((int) (globalOffset + offset));
+    in.seek((int) offset);
     int numEntries = in.readShort();
     if (numEntries < 0) numEntries += 65536;
     if (DEBUG) debug("getIFDs: " + numEntries + " directory entries to read");
     if (numEntries == 0 || numEntries == 1) return ifd;
 
     for (int i=0; i<numEntries; i++) {
-      in.seek((int) (globalOffset + offset + 2 + 12 * i));
+      in.seek((int) (offset + 2 + 12 * i));
       int tag = in.readShort();
       if (tag < 0) tag += 65536;
       int type = in.readShort();
@@ -423,7 +400,7 @@ public final class TiffTools {
         short[] bytes = new short[count];
         if (count > 4) {
           long pointer = in.readInt();
-          in.seek((int) (globalOffset + pointer));
+          in.seek((int) pointer);
         }
         for (int j=0; j<count; j++) {
           bytes[j] = (byte) in.read();
@@ -438,7 +415,7 @@ public final class TiffTools {
         byte[] ascii = new byte[count];
         if (count > 4) {
           long pointer = in.readInt();
-          in.seek((int) (globalOffset + pointer));
+          in.seek((int) pointer);
         }
         in.read(ascii);
 
@@ -469,7 +446,7 @@ public final class TiffTools {
         int[] shorts = new int[count];
         if (count > 2) {
           long pointer = in.readInt();
-          in.seek((int) (globalOffset + pointer));
+          in.seek((int) pointer);
         }
         for (int j=0; j<count; j++) {
           shorts[j] = in.readShort();
@@ -483,7 +460,7 @@ public final class TiffTools {
         long[] longs = new long[count];
         if (count > 1) {
           long pointer = in.readInt();
-          in.seek((int) (globalOffset + pointer));
+          in.seek((int) pointer);
         }
         for (int j=0; j<count; j++) {
           longs[j] = in.readInt();
@@ -496,7 +473,7 @@ public final class TiffTools {
         // the second, the denominator
         TiffRational[] rationals = new TiffRational[count];
         long pointer = in.readInt();
-        in.seek((int) (globalOffset + pointer));
+        in.seek((int) pointer);
         for (int j=0; j<count; j++) {
           long numer = in.readInt();
           long denom = in.readInt();
@@ -512,7 +489,7 @@ public final class TiffTools {
         byte[] sbytes = new byte[count];
         if (count > 4) {
           long pointer = in.readInt();
-          in.seek((int) (globalOffset + pointer));
+          in.seek((int) pointer);
         }
         in.read(sbytes);
         if (sbytes.length == 1) value = new Byte(sbytes[0]);
@@ -523,7 +500,7 @@ public final class TiffTools {
         short[] sshorts = new short[count];
         if (count > 2) {
           long pointer = in.readInt();
-          in.seek((int) (globalOffset + pointer));
+          in.seek((int) pointer);
         }
         for (int j=0; j<count; j++) {
           sshorts[j] = in.readShort();
@@ -536,7 +513,7 @@ public final class TiffTools {
         int[] slongs = new int[count];
         if (count > 1) {
           long pointer = in.readInt();
-          in.seek((int) (globalOffset + pointer));
+          in.seek((int) pointer);
         }
         for (int j=0; j<count; j++) {
           slongs[j] = in.readInt();
@@ -549,7 +526,7 @@ public final class TiffTools {
         // the second the denominator
         TiffRational[] srationals = new TiffRational[count];
         long pointer = in.readInt();
-        in.seek((int) (globalOffset + pointer));
+        in.seek((int) pointer);
         for (int j=0; j<count; j++) {
           int numer = in.readInt();
           int denom = in.readInt();
@@ -563,7 +540,7 @@ public final class TiffTools {
         float[] floats = new float[count];
         if (count > 1) {
           long pointer = in.readInt();
-          in.seek((int) (globalOffset + pointer));
+          in.seek((int) pointer);
         }
         for (int j=0; j<count; j++) {
           floats[j] = in.readFloat();
@@ -575,7 +552,7 @@ public final class TiffTools {
         // Double precision (8-byte) IEEE format
         double[] doubles = new double[count];
         long pointer = in.readInt();
-        in.seek((int) (globalOffset + pointer));
+        in.seek((int) pointer);
         for (int j=0; j<count; j++) {
           doubles[j] = in.readDouble();
         }
@@ -584,7 +561,7 @@ public final class TiffTools {
       }
       if (value != null) ifd.put(new Integer(tag), value);
     }
-    in.seek((int) (globalOffset + offset + 2 + 12 * numEntries));
+    in.seek((int) (offset + 2 + 12 * numEntries));
 
     return ifd;
   }
@@ -818,17 +795,10 @@ public final class TiffTools {
   // -- Image reading methods --
 
   /** Reads the image defined in the given IFD from the specified file. */
-  public static BufferedImage getImage(Hashtable ifd, RandomAccessStream in)
+  public static byte[][] getSamples(Hashtable ifd, RandomAccessStream in)
     throws FormatException, IOException
   {
-    return getImage(ifd, in, 0);
-  }
-
-  /** Reads the image defined in the given IFD from the specified file. */
-  public static byte[][] getSamples(Hashtable ifd, RandomAccessStream in,
-    long globalOffset) throws FormatException, IOException
-  {
-    return getSamples(ifd, in, globalOffset, false);
+    return getSamples(ifd, in, false);
   }
 
   /**
@@ -837,7 +807,7 @@ public final class TiffTools {
    * grayscale images.
    */
   public static byte[][] getSamples(Hashtable ifd, RandomAccessStream in,
-    long globalOffset, boolean ignore) throws FormatException, IOException
+    boolean ignore) throws FormatException, IOException
   {
     if (DEBUG) debug("parsing IFD entries");
 
@@ -1354,10 +1324,10 @@ public final class TiffTools {
   }
 
   /** Reads the image defined in the given IFD from the specified file. */
-  public static BufferedImage getImage(Hashtable ifd, RandomAccessStream in,
-    long globalOffset) throws FormatException, IOException
+  public static BufferedImage getImage(Hashtable ifd, RandomAccessStream in) 
+    throws FormatException, IOException
   {
-    return getImage(ifd, in, globalOffset, false);
+    return getImage(ifd, in, false);
   }
 
   /**
@@ -1366,12 +1336,12 @@ public final class TiffTools {
    * grayscale images.
    */
   public static BufferedImage getImage(Hashtable ifd, RandomAccessStream in,
-    long globalOffset, boolean ignore) throws FormatException, IOException
+    boolean ignore) throws FormatException, IOException
   {
     // construct field
     if (DEBUG) debug("constructing image");
 
-    byte[][] samples = getSamples(ifd, in, globalOffset, ignore);
+    byte[][] samples = getSamples(ifd, in, ignore);
     int[] bitsPerSample = getBitsPerSample(ifd);
     long imageWidth = getImageWidth(ifd);
     long imageLength = getImageLength(ifd);

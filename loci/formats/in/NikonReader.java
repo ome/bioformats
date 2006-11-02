@@ -211,7 +211,7 @@ public class NikonReader extends BaseTiffReader {
       offset = (int) array[array.length - 1];
     }
 
-    Hashtable realImage = TiffTools.getIFD(in, 1, 0, offset);
+    Hashtable realImage = TiffTools.getIFD(in, 1, offset);
 
     original = ifds[0];
     ifds[0] = realImage;
@@ -250,7 +250,7 @@ public class NikonReader extends BaseTiffReader {
     try {
       int exif = TiffTools.getIFDIntValue(original, EXIF_IFD_POINTER);
       if (exif != -1) {
-        Hashtable exifIFD = TiffTools.getIFD(in, 0, 0, exif);
+        Hashtable exifIFD = TiffTools.getIFD(in, 0, exif);
 
         // put all the EXIF data in the metadata hashtable
 
@@ -278,7 +278,7 @@ public class NikonReader extends BaseTiffReader {
     try {
       byte[] offsets = (byte[]) metadata.get("Offset to maker note");
       makerNoteOffset = offsets[0];
-      Hashtable makerNote = TiffTools.getIFD(in, 0, 0, makerNoteOffset);
+      Hashtable makerNote = TiffTools.getIFD(in, 0, makerNoteOffset);
       if (makerNote != null) {
         Enumeration e = makerNote.keys();
         Integer key;

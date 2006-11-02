@@ -744,7 +744,7 @@ public abstract class BaseTiffReader extends FormatReader {
     if (!id.equals(currentId)) initFile(id);
 
     byte[][] p = null;
-    p = TiffTools.getSamples(ifds[no], in, 0, ignoreColorTable);
+    p = TiffTools.getSamples(ifds[no], in, ignoreColorTable);
     for (int i=0; i<p.length; i++) {
       swapIfRequired(p[i]);
       System.arraycopy(p[i], 0, buf, i * p[0].length, p[0].length);
@@ -808,7 +808,7 @@ public abstract class BaseTiffReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    return TiffTools.getImage(ifds[no], in, 0, ignoreColorTable);
+    return TiffTools.getImage(ifds[no], in, ignoreColorTable);
   }
 
   /** Closes any open files. */

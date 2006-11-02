@@ -140,7 +140,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     }
 
     ifds = TiffTools.getIFDs(in);
-    byte[][] p = TiffTools.getSamples(ifds[2*no], in, 0);
+    byte[][] p = TiffTools.getSamples(ifds[2*no], in);
     byte[] b = new byte[p.length * p[0].length];
 
     for (int i=0; i<p.length; i++) {

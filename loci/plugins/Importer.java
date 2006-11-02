@@ -53,7 +53,6 @@ public class Importer implements ActionListener, ItemListener {
   private JCheckBox merge = null;
   private JCheckBox ignore = null;
   private JCheckBox newWindows = null;
-  private JCheckBox colorize = null;
   private JCheckBox showMeta = null;
   private JCheckBox stitching = null;
   private JCheckBox ranges = null;
@@ -63,7 +62,6 @@ public class Importer implements ActionListener, ItemListener {
   private boolean mergeChannels;
   private boolean ignoreTables;
   private boolean splitWindows;
-  private boolean colorizeChannels;
   private boolean showMetadata;
   private boolean stitchFiles;
   private boolean specifyRanges;
@@ -83,7 +81,6 @@ public class Importer implements ActionListener, ItemListener {
     mergeChannels = Prefs.get("bioformats.mergeChannels", false);
     ignoreTables = Prefs.get("bioformats.ignoreTable", false);
     splitWindows = Prefs.get("bioformats.splitWindows", true);
-    colorizeChannels = Prefs.get("bioformats.colorizeChannels", false);
     showMetadata = Prefs.get("bioformats.showMetadata", false);
     stitchFiles = Prefs.get("bioformats.stitchFiles", false);
     specifyRanges = Prefs.get("bioformats.specifyRanges", false);
@@ -97,8 +94,6 @@ public class Importer implements ActionListener, ItemListener {
     String mergeString = "Merge channels to RGB";
     String ignoreString = "Ignore color lookup table";
     String splitString = "Open each channel in its own window";
-    String colorizeString = "Colorize channels (must open each channel" +
-      "in its own window)";
     String metadataString = "Display associated metadata";
     String stitchString = "Stitch files with similar names";
     String rangeString = "Specify range for each series";
@@ -114,7 +109,6 @@ public class Importer implements ActionListener, ItemListener {
       gd.addCheckbox(mergeString, mergeChannels);
       gd.addCheckbox(ignoreString, ignoreTables);
       gd.addCheckbox(splitString, splitWindows);
-      gd.addCheckbox(colorizeString, colorizeChannels);
       gd.addCheckbox(metadataString, showMetadata);
       gd.addCheckbox(stitchString, stitchFiles);
       gd.addCheckbox(rangeString, specifyRanges);
@@ -126,7 +120,6 @@ public class Importer implements ActionListener, ItemListener {
       mergeChannels = gd.getNextBoolean();
       ignoreTables = gd.getNextBoolean();
       splitWindows = gd.getNextBoolean();
-      colorizeChannels = gd.getNextBoolean();
       showMetadata = gd.getNextBoolean();
       stitchFiles = gd.getNextBoolean();
       specifyRanges = gd.getNextBoolean();
@@ -151,21 +144,18 @@ public class Importer implements ActionListener, ItemListener {
       merge = new JCheckBox(mergeString, mergeChannels);
       ignore = new JCheckBox(ignoreString, ignoreTables);
       newWindows = new JCheckBox(splitString, splitWindows);
-      colorize = new JCheckBox(colorizeString, colorizeChannels);
       showMeta = new JCheckBox(metadataString, showMetadata);
       stitching = new JCheckBox(stitchString, stitchFiles);
       ranges = new JCheckBox(rangeString, specifyRanges);
       merge.addItemListener(this);
       ignore.addItemListener(this);
       newWindows.addItemListener(this);
-      colorize.addItemListener(this);
       showMeta.addItemListener(this);
       stitching.addItemListener(this);
       ranges.addItemListener(this);
       panel.add(merge);
       panel.add(ignore);
       panel.add(newWindows);
-      panel.add(colorize);
       panel.add(showMeta);
       panel.add(stitching);
       panel.add(ranges);
@@ -548,7 +538,6 @@ public class Importer implements ActionListener, ItemListener {
       Prefs.set("bioformats.mergeChannels", mergeChannels);
       Prefs.set("bioformats.ignoreTables", ignoreTables);
       Prefs.set("bioformats.splitWindows", splitWindows);
-      Prefs.set("bioformats.colorizeChannels", colorizeChannels);
       Prefs.set("bioformats.showMetadata", showMetadata);
       Prefs.set("bioformats.stitchFiles", stitchFiles);
       Prefs.set("bioformats.specifyRanges", specifyRanges);
@@ -575,7 +564,6 @@ public class Importer implements ActionListener, ItemListener {
     if (source == merge) mergeChannels = selected;
     else if (source == ignore) ignoreTables = selected;
     else if (source == newWindows) splitWindows = selected;
-    else if (source == colorize) colorizeChannels = selected;
     else if (source == showMeta) showMetadata = selected;
     else if (source == stitching) stitchFiles = selected;
     else if (source == ranges) specifyRanges = selected;
@@ -670,28 +658,26 @@ public class Importer implements ActionListener, ItemListener {
       }
 
 
-      if (colorizeChannels) {
-        // mostly copied from the ImageJ source
+      // mostly copied from the ImageJ source
         
-        fi.reds = new byte[256];
-        fi.greens = new byte[256];
-        fi.blues = new byte[256];
+      fi.reds = new byte[256];
+      fi.greens = new byte[256];
+      fi.blues = new byte[256];
        
-        for (int j=0; j<256; j++) {
-          switch (i) {
-            case 0: fi.reds[j] = (byte) j; break;
-            case 1: fi.greens[j] = (byte) j; break;
-            case 2: fi.blues[j] = (byte) j; break;
-          }
+      for (int j=0; j<256; j++) {
+        switch (i) {
+          case 0: fi.reds[j] = (byte) j; break;
+          case 1: fi.greens[j] = (byte) j; break;
+          case 2: fi.blues[j] = (byte) j; break;
         }
-
-        ImageProcessor ip = imp.getProcessor();
-        ColorModel cm = 
-          new IndexColorModel(8, 256, fi.reds, fi.greens, fi.blues);
-        
-        ip.setColorModel(cm);
-        if (imp.getStackSize() > 1) imp.getStack().setColorModel(cm);
       }
+
+      ImageProcessor ip = imp.getProcessor();
+      ColorModel cm = 
+        new IndexColorModel(8, 256, fi.reds, fi.greens, fi.blues);
+        
+      ip.setColorModel(cm);
+      if (imp.getStackSize() > 1) imp.getStack().setColorModel(cm);
 
       imp.setFileInfo(fi);
       imp.show();
