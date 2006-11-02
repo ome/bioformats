@@ -586,14 +586,15 @@ Apache XML-RPC
 
   <target name="jar-plugins" depends="compile-plugins, copy-jars, jar-formats"
     description="generate JAR file for LOCI Plugins for ImageJ">
-    <jar jarfile="${jar.dir}/${plugins.jar}"
-      basedir="${src.dir}/loci/plugins" includes="plugins.config">
+    <jar jarfile="${jar.dir}/${plugins.jar}" basedir="${src.dir}/loci/plugins"
+      includes="plugins.config IJ_Props.txt">
       <manifest>
         <attribute name="Main-Class" value="${plugins.main}"/>
       </manifest>
     </jar>
     <jar jarfile="${jar.dir}/${plugins.jar}" basedir="${classes.dir}"
-      includes="${plugins.files}" excludes="loci/plugins/plugins.config"
+      includes="${plugins.files}"
+      excludes="loci/plugins/plugins.config loci/plugins/IJ_Props.txt"
       update="true">
     </jar>
   </target>
