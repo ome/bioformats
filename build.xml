@@ -740,14 +740,14 @@ Apache XML-RPC
   <!-- LOCI Checkstyle checks -->
 
   <target name="style-checks" depends="copy-source, jar-checks"
-    description="check source code style for Slim Plotter">
+    description="check source code style for LOCI Checkstyle checks">
     <checkstyle config="checkstyle.xml" failOnViolation="false">
       <fileset dir="${dest.dir}" includes="${checks.source}"/>
     </checkstyle>
   </target>
 
   <target name="compile-checks" depends="copy-source"
-    description="compile classes for Slim Plotter">
+    description="compile classes for LOCI Checkstyle checks">
     <mkdir dir="${classes.dir}"/>
     <javac srcdir="${dest.dir}" destdir="${classes.dir}"
       includes="${checks.source}" classpath="${ext.jars}"
@@ -755,7 +755,7 @@ Apache XML-RPC
   </target>
 
   <target name="jar-checks" depends="compile-checks, copy-jars"
-    description="generate JAR file for Slim Plotter">
+    description="generate JAR file for LOCI Checkstyle checks">
     <copy todir="${classes.dir}" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="${checks.resources}"/>
     </copy>
@@ -766,6 +766,27 @@ Apache XML-RPC
         <attribute name="Class-Path" value="${checks.classpath}"/>
       </manifest>
     </jar>
+  </target>
+
+  <!-- ImageJ -->
+
+  <target name="ij-jws" depends="jars"
+    description="create JAR file encompassing ImageJ plus LOCI plugins">
+    <for list="${ij-jws.libraries}" param="jar" delimiter=" " trim="true">
+      <sequential>
+        <unjar src="${jar.dir}/@{jar}" dest="${ij-jws.dir}">
+          <patternset>
+            <exclude name="META-INF/**"/>
+          </patternset>
+        </unjar>
+      </sequential>
+    </for>
+    <jar jarfile="${jar.dir}/${ij-jws.jar}" basedir="${ij-jws.dir}">
+      <manifest>
+        <attribute name="Main-Class" value="${ij-jws.main}"/>
+      </manifest>
+    </jar>
+    <delete dir="${ij-jws.dir}"/>
   </target>
 
 </project>
