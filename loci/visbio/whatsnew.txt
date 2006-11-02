@@ -1,7 +1,8 @@
-Development version
+v3.31 - Thursday, November 2, 2006
 
 - TWEAK: Ability to change Look & Feel on the fly
 
+- FIXED: Exception when exporting datasets
 - FIXED: Layout bugs with some Look & Feels
 
 
