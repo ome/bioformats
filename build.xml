@@ -741,7 +741,7 @@ Apache XML-RPC
   <target name="dist-slim" if="isUnix" depends="copy-jars, jar-slim"
     description="create distribution bundle for Slim Plotter">
     <copy todir="${slim.dist-dir}" preservelastmodified="true">
-      <fileset dir="${dist.dir}/slim"/>
+      <fileset dir="dist/slim"/>
       <fileset dir="${jar.dir}" includes="SlimPlotter.jar ${slim.classpath}"/>
     </copy>
     <!-- HACK - copy does not preserve permissions; chmod them back -->
