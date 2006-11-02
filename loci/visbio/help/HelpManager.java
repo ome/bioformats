@@ -201,7 +201,8 @@ public class HelpManager extends LogicManager {
   /** Brings up VisBio's about dialog. */
   public void helpAbout() {
     String about = VisBio.TITLE + " " + VisBio.VERSION +
-      ", built " + VisBio.DATE + "\nWritten by " + VisBio.AUTHOR + "\n" +
+      (VisBio.DATE.equals("@da" + "te@") ? "" : (", built " + VisBio.DATE)) +
+      "\nWritten by " + VisBio.AUTHOR + "\n" +
       "http://www.loci.wisc.edu/visbio/";
     JOptionPane.showMessageDialog(bio, about,
       "About VisBio", JOptionPane.INFORMATION_MESSAGE);

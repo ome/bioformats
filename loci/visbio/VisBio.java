@@ -49,7 +49,8 @@ public final class VisBio extends Thread {
 
   /** Application version (of the form "#.##"). */
   public static final String VERSION =
-    V.substring(0, V.length() - 2) + "." + V.substring(V.length() - 2);
+    V.equals("@visbio" + ".version@") ? "(internal build)" :
+    (V.substring(0, V.length() - 2) + "." + V.substring(V.length() - 2));
 
   /** Application author. */
   public static final String AUTHOR = "Curtis Rueden, LOCI";
