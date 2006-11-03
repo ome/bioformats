@@ -96,6 +96,7 @@ public abstract class FormatReader extends FormatHandler
   /** Dimension fields. */
   protected int[] sizeX, sizeY, sizeZ, sizeC, sizeT, pixelType;
   protected String[] currentOrder;
+  protected boolean orderCertain;
 
   /** Whether or not we're doing channel stat calculation (no by default). */
   protected boolean enableChannelStatCalculation = false;
@@ -138,6 +139,7 @@ public abstract class FormatReader extends FormatHandler
     sizeT = new int[1];
     pixelType = new int[1];
     currentOrder = new String[1];
+    orderCertain = true;
 
     // reinitialize the MetadataStore
     getMetadataStore(id).createRoot();
@@ -202,20 +204,20 @@ public abstract class FormatReader extends FormatHandler
     return sizeT[series];
   }
 
-  /* @see FormatReader#getPixelType(String) */
+  /* @see IFormatReader#getPixelType(String) */
   public int getPixelType(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return pixelType[series];
   }
 
-  /* @see FormatReader#getChannelGlobalMinimum(String, int) */
+  /* @see IFormatReader#getChannelGlobalMinimum(String, int) */
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
   {
     return null;
   }
 
-  /* @see FormatReader#getChannelGlobalMaximum(String, int) */
+  /* @see IFormatReader#getChannelGlobalMaximum(String, int) */
   public Double getChannelGlobalMaximum(String id, int theC)
     throws FormatException, IOException
   {
@@ -232,14 +234,11 @@ public abstract class FormatReader extends FormatHandler
     return THUMBNAIL_DIMENSION;
   }
 
-  /** Return true if the data is in little-endian format. */
+  /* @see IFormatReader.isLittleEndian(String) */
   public abstract boolean isLittleEndian(String id)
     throws FormatException, IOException;
 
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
+  /* @see IFormatReader#getDimensionOrder(String) */
   public String getDimensionOrder(String id)
     throws FormatException, IOException
   {
@@ -247,12 +246,18 @@ public abstract class FormatReader extends FormatHandler
     return currentOrder[series];
   }
 
-  /* @see FormatReader#setChannelStatCalculationStatus(boolean) */
+  /* @see IFormatReader.isOrderCertain(String) */
+  public boolean isOrderCertain(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return orderCertain;
+  }
+
+  /* @see IFormatReader#setChannelStatCalculationStatus(boolean) */
   public void setChannelStatCalculationStatus(boolean on) {
     enableChannelStatCalculation = on;
   }
 
-  /* @see FormatReader#getChannelStatCalculationStatus() */
+  /* @see IFormatReader#getChannelStatCalculationStatus() */
   public boolean getChannelStatCalculationStatus() {
     return enableChannelStatCalculation;
   }

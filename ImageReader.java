@@ -257,14 +257,16 @@ public class ImageReader implements IFormatReader {
     return getReader(id).isLittleEndian(id);
   }
 
-  /**
-   * Return a five-character string representing the dimension order
-   * within the file.
-   */
+  /* @see IFormatReader#getDimensionOrder(String) */
   public String getDimensionOrder(String id)
     throws FormatException, IOException
   {
     return getReader(id).getDimensionOrder(id);
+  }
+
+  /* @see IFormatReader#isOrderCertain(String) */
+  public boolean isOrderCertain(String id) throws FormatException, IOException {
+    return getReader(id).isOrderCertain(id);
   }
 
   /* @see IFormatReader#setChannelStatCalculationStatus(boolean) */

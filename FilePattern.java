@@ -38,8 +38,10 @@ import java.util.Vector;
  * <ul>
  *   <li>C:\data\BillM\sdub&lt;1-12&gt;.pic</li>
  *   <li>C:\data\Kevin\80&lt;01-59&gt;0&lt;2-3&gt;.pic</li>
- *   <li>/data/Josiah/cell-Z&lt;0-39&gt;0.C&lt;0-1&gt;.tiff</li>
+ *   <li>/data/Josiah/cell-Z&lt;0-39&gt;.C&lt;0-1&gt;.tiff</li>
  * </ul>
+ *
+ * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class FilePattern {
 
@@ -236,6 +238,13 @@ public class FilePattern {
   public String getBlock(int i) {
     if (i < 0 || i >= startIndex.length) return null;
     return pattern.substring(startIndex[i], endIndex[i]);
+  }
+
+  /** Gets each numerical block. */
+  public String[] getBlocks() {
+    String[] s = new String[startIndex.length];
+    for (int i=0; i<s.length; i++) s[i] = getBlock(i);
+    return s;
   }
 
   /** Gets the pattern's text string before any numerical ranges. */
@@ -483,7 +492,7 @@ public class FilePattern {
     File file = args.length < 1 ?
       new File(System.getProperty("user.dir")).listFiles()[0] :
       new File(args[0]);
-    System.out.println("File: " + file.getAbsoluteFile());
+    System.out.println("File = " + file.getAbsoluteFile());
     String pat = findPattern(file);
     if (pat == null) System.out.println("No pattern found.");
     else {
