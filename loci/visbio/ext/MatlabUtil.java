@@ -24,8 +24,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.visbio.ext;
 
 import java.rmi.RemoteException;
+import loci.formats.ReflectException;
+import loci.formats.ReflectedUniverse;
 import visad.*;
-import visad.util.ReflectedUniverse;
 
 /** MatlabUtil contains useful MATLAB functions. */
 public final class MatlabUtil {
@@ -51,7 +52,7 @@ public final class MatlabUtil {
         r.exec("matlab = new Matlab()");
         r.setDebug(true);
       }
-      catch (VisADException exc) { }
+      catch (ReflectException exc) { }
     }
     try {
       r.setVar("version", "version");
@@ -59,7 +60,7 @@ public final class MatlabUtil {
       if (version.startsWith("ans =")) version = version.substring(5);
       return version.trim();
     }
-    catch (VisADException exc) { }
+    catch (ReflectException exc) { }
     return null;
   }
 
@@ -176,7 +177,7 @@ public final class MatlabUtil {
       r.setVar("zero", 0);
       return r.exec("matlab.mtFeval(func, args, zero)");
     }
-    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (ReflectException exc) { exc.printStackTrace(); }
     return null;
   }
 

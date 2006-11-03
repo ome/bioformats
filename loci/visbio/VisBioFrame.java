@@ -32,6 +32,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Vector;
 import javax.swing.*;
+import loci.formats.ReflectedUniverse;
 import loci.visbio.data.DataManager;
 import loci.visbio.data.DataTransform;
 import loci.visbio.ext.ExtManager;
@@ -43,7 +44,8 @@ import loci.visbio.state.OptionManager;
 import loci.visbio.state.StateManager;
 import loci.visbio.util.*;
 import loci.visbio.view.DisplayManager;
-import visad.util.*;
+import visad.util.GUIFrame;
+import visad.util.Util;
 
 /** VisBioFrame is the main GUI frame for VisBio. */
 public class VisBioFrame extends GUIFrame implements Runnable, SpawnListener {

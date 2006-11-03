@@ -36,13 +36,13 @@ import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.*;
+import loci.formats.ReflectException;
+import loci.formats.ReflectedUniverse;
 import loci.visbio.*;
 import loci.visbio.ome.OMEManager;
 import loci.visbio.util.*;
 import loci.visbio.view.DisplayWindow;
 import loci.visbio.view.DisplayManager;
-import visad.VisADException;
-import visad.util.ReflectedUniverse;
 
 /** DataControls is the control panel for managing data. */
 public class DataControls extends ControlPanel
@@ -411,7 +411,7 @@ public class DataControls extends ControlPanel
           r.exec("need = " + n + ".isParentRequired()");
           needParent = ((Boolean) r.getVar("need")).booleanValue();
         }
-        catch (VisADException exc) { exc.printStackTrace(); }
+        catch (ReflectException exc) { exc.printStackTrace(); }
 
         // add menu item for compatible transform type
         JMenuItem item = new JMenuItem(dataLabels[i]);
@@ -516,7 +516,7 @@ public class DataControls extends ControlPanel
         r.exec("data = " + n + ".makeTransform(dm)");
         data = (DataTransform) r.getVar("data");
       }
-      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (ReflectException exc) { exc.printStackTrace(); }
       if (data != null) dm.addData(data);
     }
   }

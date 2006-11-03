@@ -29,9 +29,10 @@ import java.awt.event.KeyEvent;
 import java.rmi.RemoteException;
 import java.util.Hashtable;
 import java.util.Vector;
+import loci.formats.ReflectException;
+import loci.formats.ReflectedUniverse;
 import visad.*;
 import visad.java2d.*;
-import visad.util.ReflectedUniverse;
 import visad.util.Util;
 
 /** DisplayUtil contains useful VisAD display functions. */
@@ -78,7 +79,7 @@ public final class DisplayUtil {
           }
           d = (DisplayImpl) r.getVar("d");
         }
-        catch (VisADException exc) { exc.printStackTrace(); }
+        catch (ReflectException exc) { exc.printStackTrace(); }
         //d = config == null ? new DisplayImplJ3D(name) :
         //  new DisplayImplJ3D(name, config);
       }
@@ -100,7 +101,7 @@ public final class DisplayUtil {
             }
             d = (DisplayImpl) r.getVar("d");
           }
-          catch (VisADException exc) { exc.printStackTrace(); }
+          catch (ReflectException exc) { exc.printStackTrace(); }
           //TwoDDisplayRendererJ3D renderer = new TwoDDisplayRendererJ3D();
           //d = config == null ? new DisplayImplJ3D(name, renderer) :
           //  new DisplayImplJ3D(name, renderer, config);
@@ -158,7 +159,7 @@ public final class DisplayUtil {
           }
           kb = (KeyboardBehavior) r.getVar("kb");
         }
-        catch (VisADException exc) { exc.printStackTrace(); }
+        catch (ReflectException exc) { exc.printStackTrace(); }
         //DisplayRendererJ3D dr = (DisplayRendererJ3D) d.getDisplayRenderer();
         //kb = new KeyboardBehaviorJ3D(dr);
         //dr.addKeyboardBehavior((KeyboardBehaviorJ3D) kb);
@@ -231,7 +232,7 @@ public final class DisplayUtil {
       r.exec("body.setLeftEyePosition(lpos)");
       r.exec("body.setRightEyePosition(rpos)");
     }
-    catch (VisADException exc) { } // fails for non-stereo displays
+    catch (ReflectException exc) { } // fails for non-stereo displays
   }
 
   /** Gets a graphics configuration for use with stereo displays. */
@@ -250,7 +251,7 @@ public final class DisplayUtil {
       r.exec("config = gct3d.getBestConfiguration(cfgs)");
       config = (GraphicsConfiguration) r.getVar("config");
     }
-    catch (VisADException exc) { config = null; }
+    catch (ReflectException exc) { config = null; }
     return config;
   }
 
@@ -413,7 +414,7 @@ public final class DisplayUtil {
         r.setVar("zero", 0);
         r.exec("canvas.renderField(zero)");
       }
-      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (ReflectException exc) { exc.printStackTrace(); }
       //VisADCanvasJ3D canvas = ((DisplayRendererJ3D) dr).getCanvas();
       //canvas.renderField(0);
 
@@ -445,7 +446,7 @@ public final class DisplayUtil {
           "DisplayImplJ3D.PERSPECTIVE_PROJECTION)");
       }
     }
-    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (ReflectException exc) { exc.printStackTrace(); }
   }
 
 }
