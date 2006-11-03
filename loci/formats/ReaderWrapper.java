@@ -127,6 +127,10 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getDimensionOrder(id);
   }
 
+  public boolean isOrderCertain(String id) throws FormatException, IOException {
+    return reader.isOrderCertain(id);
+  }
+
   public void setChannelStatCalculationStatus(boolean on) {
     reader.setChannelStatCalculationStatus(on);
   }

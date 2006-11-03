@@ -113,6 +113,11 @@ public interface IFormatReader extends IFormatHandler {
   String getDimensionOrder(String id) throws FormatException, IOException;
 
   /**
+   * Gets whether the dimension order and sizes are known, or merely guesses.
+   */
+  boolean isOrderCertain(String id) throws FormatException, IOException;
+
+  /**
    * Readers can implement potentially performance hindering statistics
    * calculation as part of metadata parsing. This method allows the user of
    * the reader to turn such calculations on or off.
