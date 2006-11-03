@@ -26,6 +26,7 @@ package loci.formats;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
 
 /**
  * AxisGuesser guesses which blocks in a file pattern correspond to which
@@ -39,13 +40,25 @@ public class AxisGuesser {
   // -- Constants --
 
   /** Axis type for focal planes. */
-  public static final int Z = 1;
+  public static final int Z_AXIS = 1;
 
   /** Axis type for time points. */
-  public static final int T = 2;
+  public static final int T_AXIS = 2;
 
   /** Axis type for channels. */
-  public static final int C = 3;
+  public static final int C_AXIS = 3;
+
+  /** Prefix endings indicating time dimension. */
+  protected static final String[] T = {"t", "tl", "tp"};
+
+  /** Prefix endings indicating space dimension. */
+  protected static final String[] Z = {
+    "fp", "sec", "z", "zs", "focal", "focalplane"
+  };
+
+  /** Prefix endings indicating channel dimension. */
+  protected static final String[] C = {"c", "ch", "w"};
+
 
   // -- Fields --
 
@@ -83,10 +96,55 @@ public class AxisGuesser {
   {
     this.fp = fp;
     this.dimOrder = dimOrder;
-    // CTR TODO
+
     newOrder = dimOrder;
+    String[] prefixes = fp.getPrefixes();
+    BigInteger[] first = fp.getFirst();
+    BigInteger[] last = fp.getLast();
+    BigInteger[] step = fp.getStep();
     int[] count = fp.getCount();
     axes = new int[count.length];
+
+    // -- 1) fill in "known" axes based on known patterns and conventions --
+
+    for (int i=0; i<prefixes.length; i++) {
+      String p = prefixes[i];
+
+      // strip trailing digits and divider characters
+      p = p.replaceFirst("[\\d -_\\.]+$", "");
+
+      // strip off trailing alphanumeric characters
+
+      // CTR START HERE
+      //
+      // strip off trailing non-alphabetic characters
+      // then pull off only trailing alphabetic characters
+      // compare pulled off string to known Z, C and T suffixes
+      // if match is found, we *know* a given dimension
+      //
+      // check for special 2-3 channel case in Bio-Rad files
+    }
+
+// known internal axes (ZCT) have isCertain == true
+// known dimensional axes have a known pattern or convention
+// After that, we are left with only unknown slots, which we must guess.
+// 
+
+    // -- 2) check for special cases where dimension order should be swapped --
+
+//      * if a Z block was found, but not a T block:
+//          if !isOrderCertain, and sizeZ > 1, and sizeT == 1, swap 'em
+//      * else if a T block was found, but not a Z block:
+//          if !isOrderCertain and sizeT > 1, and sizeZ == 1, swap 'em
+
+    // -- 3) fill in remaining axis types --
+
+//    Set canBeZ to true iff no Z block is assigned and sizeZ == 1.
+//    Set canBeT to true iff no T block is assigned and sizeT == 1.
+//    Go through the blocks in order from left to right:
+//      * If canBeZ, assign Z and set canBeZ to false.
+//      * If canBeT, assign T and set canBeT to false.
+//      * Otherwise, assign C.
   }
 
   // -- AxisGuesser API methods --
@@ -160,13 +218,13 @@ public class AxisGuesser {
           for (int i=0; i<blocks.length; i++) {
             String axis;
             switch (axes[i]) {
-              case Z:
+              case Z_AXIS:
                 axis = "Z";
                 break;
-              case T:
+              case T_AXIS:
                 axis = "T";
                 break;
-              case C:
+              case C_AXIS:
                 axis = "C";
                 break;
               default:
@@ -205,8 +263,7 @@ public class AxisGuesser {
 // 
 // 3) Set canBeZ to true iff no Z block is assigned and sizeZ == 1.
 //    Set canBeT to true iff no T block is assigned and sizeT == 1.
-// 
-// 4) Go through the blocks in order from left to right:
+//    Go through the blocks in order from left to right:
 //      * If canBeZ, assign Z and set canBeZ to false.
 //      * If canBeT, assign T and set canBeT to false.
 //      * Otherwise, assign C.
