@@ -90,6 +90,9 @@ public class TiffReader extends BaseTiffReader {
       }
       metadata.remove("Comment");
     }
+
+    if (comment != null) orderCertain[0] = comment.indexOf("ome.xsd") >= 0;
+    else if (ifds.length > 1) orderCertain[0] = false;
   }
 
   /** Parses OME-XML metadata. */
