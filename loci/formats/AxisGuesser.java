@@ -132,9 +132,7 @@ public class AxisGuesser {
       {
         f--;
       }
-      System.out.println("#" + i + ": old prefix = " + p);//TEMP
       p = p.substring(f + 1, l + 1);
-      System.out.println("#" + i + ": new prefix = " + p);//TEMP
 
       boolean isZ = false, isT = false, isC = false;
 
@@ -269,11 +267,11 @@ public class AxisGuesser {
           boolean certain = reader.isOrderCertain(id);
           reader.close();
           System.out.println("[done]");
-          System.out.println("\tdimOrder = " + dimOrder);
+          System.out.println("\tdimOrder = " + dimOrder +
+            (certain ? " (certain)" : " (uncertain)"));
           System.out.println("\tsizeZ = " + sizeZ);
           System.out.println("\tsizeT = " + sizeT);
           System.out.println("\tsizeC = " + sizeC);
-          System.out.println("\tcertain = " + certain);
 
           // guess axes
           AxisGuesser ag = new AxisGuesser(fp,
