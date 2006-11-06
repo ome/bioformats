@@ -231,6 +231,8 @@ public class BioRadReader extends FormatReader {
     int cSize = 1;
     int tSize = 1;
 
+    orderCertain[0] = false;
+
     // read notes
     int noteCount = 0;
     while (notes) {
@@ -246,6 +248,17 @@ public class BioRadReader extends FormatReader {
       s = new byte[80];
       in.read(s);
       String text = new String(s);
+
+      // be sure to remove binary data from the note text
+      int ndx = text.length();
+      for (int i=0; i<text.length(); i++) {
+        if (text.charAt(i) == 0) {
+          ndx = i;
+          i = text.length();
+        }
+      }
+
+      text = text.substring(0, ndx).trim();
 
       // add note to list
       noteCount++;
@@ -280,10 +293,13 @@ public class BioRadReader extends FormatReader {
               pixelSize.add(dy);
               break;
             case 2:
-              metadata.put(key + " time (X) in seconds", params.get(0));
-              metadata.put(key + " time (Y) in seconds", params.get(1));
-              zSize = 1;
-              tSize = npic;
+              if (text.indexOf("AXIS_4") != -1) {
+                metadata.put(key + " time (X) in seconds", params.get(0));
+                metadata.put(key + " time (Y) in seconds", params.get(1));
+                zSize = 1;
+                tSize = npic;
+                orderCertain[0] = true;
+              }
               break;
             case 3:
               metadata.put(key + " angle (X) in degrees", params.get(0));
@@ -431,7 +447,6 @@ public class BioRadReader extends FormatReader {
     sizeC[0] = 1;
     sizeT[0] = nt;
     currentOrder[0] = order;
-    orderCertain[0] = false;
 
     store.setPixels(
       new Integer(nx), // SizeX
