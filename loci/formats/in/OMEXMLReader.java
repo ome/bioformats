@@ -26,8 +26,7 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.*;
 import java.util.zip.*;
 import loci.formats.*;
 import org.openmicroscopy.xml.OMENode;
@@ -414,6 +413,8 @@ public class OMEXMLReader extends FormatReader {
     sizeC = numChannels;
     sizeT = numT;
     currentOrder = order;
+    orderCertain = new boolean[currentOrder.length];
+    Arrays.fill(orderCertain, true);
   }
 
   // -- Helper methods --

@@ -26,6 +26,7 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Arrays;
 import java.util.Vector;
 import loci.formats.*;
 
@@ -619,6 +620,8 @@ public class OpenlabReader extends FormatReader {
     sizeT = new int[numSeries];
     pixelType = new int[numSeries];
     currentOrder = new String[numSeries];
+    orderCertain = new boolean[numSeries];
+    Arrays.fill(orderCertain, true);
 
     // populate MetadataStore
 

@@ -431,6 +431,7 @@ public class BioRadReader extends FormatReader {
     sizeC[0] = 1;
     sizeT[0] = nt;
     currentOrder[0] = order;
+    orderCertain[0] = false;
 
     store.setPixels(
       new Integer(nx), // SizeX

@@ -26,9 +26,7 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Hashtable;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.*;
 import loci.formats.*;
 
 /**
@@ -479,6 +477,8 @@ public class LIFReader extends FormatReader {
     sizeT = new int[numDatasets];
     pixelType = new int[numDatasets];
     currentOrder = new String[numDatasets];
+    orderCertain = new boolean[numDatasets];
+    Arrays.fill(orderCertain, true);
 
     for (int i=0; i<numDatasets; i++) {
       sizeX[i] = dims[i][0];

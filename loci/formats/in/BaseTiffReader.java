@@ -525,6 +525,7 @@ public abstract class BaseTiffReader extends FormatReader {
       }
 
       currentOrder[0] = "XYCZT";
+      orderCertain[0] = false;
     }
     catch (Exception e) { }
   }

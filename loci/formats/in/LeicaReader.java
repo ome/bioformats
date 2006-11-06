@@ -26,8 +26,7 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.*;
 import loci.formats.*;
 
 /**
@@ -787,6 +786,8 @@ public class LeicaReader extends BaseTiffReader {
     sizeT = new int[numSeries];
     pixelType = new int[numSeries];
     currentOrder = new String[numSeries];
+    orderCertain = new boolean[numSeries];
+    Arrays.fill(orderCertain, true);
 
     try {
       int oldSeries = getSeries(currentId);
