@@ -124,6 +124,7 @@ public class ImarisTiffReader extends BaseTiffReader {
     sizeT = new int[1];
     pixelType = new int[1];
     currentOrder = new String[1];
+    orderCertain = new boolean[] {true};
     getMetadataStore(id).createRoot();
 
     channelMinMax = null;

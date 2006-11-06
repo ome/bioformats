@@ -192,6 +192,7 @@ public class NikonReader extends BaseTiffReader {
     pixelType = new int[1];
     currentOrder = new String[1];
     getMetadataStore(id).createRoot();
+    orderCertain = new boolean[] {true};
 
     channelMinMax = null;
     in = new RandomAccessStream(getMappedId(id));

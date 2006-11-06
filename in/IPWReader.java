@@ -302,6 +302,7 @@ public class IPWReader extends BaseTiffReader {
     sizeT = new int[1];
     pixelType = new int[1];
     currentOrder = new String[1];
+    orderCertain = new boolean[] {true};
 
     Hashtable h = ifds[0];
     sizeX[0] = TiffTools.getIFDIntValue(h, TiffTools.IMAGE_WIDTH);
