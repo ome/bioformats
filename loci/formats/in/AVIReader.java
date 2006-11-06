@@ -143,14 +143,12 @@ public class AVIReader extends FormatReader {
         in.read(rawData, rawOffset, len);
       }
       else {
-        byte b, g, r;
+        byte[] b = new byte[dwWidth * 3];
+        in.read(b);
         for (int j=0; j<dwWidth; j++) {
-          b = (byte) in.read();
-          g = (byte) in.read();
-          r = (byte) in.read();
-          rawData[rawOffset + j*3] = r;
-          rawData[rawOffset + j*3 + 1] = g;
-          rawData[rawOffset + j*3 + 2] = b;
+          rawData[rawOffset + j*3 + 2] = b[j*3];
+          rawData[rawOffset + j*3 + 1] = b[j*3 + 1];
+          rawData[rawOffset + j*3] = b[j*3 + 2];
         }
       }
 

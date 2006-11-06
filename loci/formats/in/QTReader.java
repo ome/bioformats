@@ -176,7 +176,7 @@ public class QTReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  private RandomAccessFile in;
+  private RandomAccessStream in;
 
   /** Flag indicating whether the current file is little endian. */
   private boolean little = false;
@@ -557,7 +557,7 @@ public class QTReader extends FormatReader {
   /** Initializes the given QuickTime file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessFile(id, "r");
+    in = new RandomAccessStream(id);
 
     spork = true;
     offsets = new Vector();
@@ -618,7 +618,7 @@ public class QTReader extends FormatReader {
 
       File f = new File(getMappedId(base + ".qtr"));
       if (f.exists()) {
-        in = new RandomAccessFile(f.getAbsolutePath(), "r");
+        in = new RandomAccessStream(f.getAbsolutePath());
 
         stripHeader();
         parse(0, 0, in.length());
@@ -630,7 +630,7 @@ public class QTReader extends FormatReader {
           base.lastIndexOf(File.separator) + 1) + "._" +
           base.substring(base.lastIndexOf(File.separator) + 1)));
         if (f.exists()) {
-          in = new RandomAccessFile(f.getAbsolutePath(), "r");
+          in = new RandomAccessStream(f.getAbsolutePath());
           stripHeader();
           parse(0, 0, in.length());
           numImages = offsets.size();
@@ -639,7 +639,7 @@ public class QTReader extends FormatReader {
         else {
           f = new File(getMappedId(base + "/rsrc"));
           if (f.exists()) {
-            in = new RandomAccessFile(f.getAbsolutePath(), "r");
+            in = new RandomAccessStream(f.getAbsolutePath());
             stripHeader();
             parse(0, 0, in.length());
             numImages = offsets.size();
@@ -720,6 +720,11 @@ public class QTReader extends FormatReader {
 
       if (atomSize < 0) {
         System.out.println("Invalid atom size : " + atomSize);
+      }
+
+      if (DEBUG) {
+        System.out.println("seeking to " + offset + "; atomType=" + atomType +
+          "; atomSize=" + atomSize);
       }
 
       byte[] data = new byte[0];
