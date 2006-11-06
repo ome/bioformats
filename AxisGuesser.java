@@ -295,7 +295,9 @@ public class AxisGuesser {
             System.out.println("\t" + blocks[i] + "\t" +
               axis + " (prefix = " + prefixes[i] + ")");
           }
-          System.out.println("Adjusted dimension order = " + newOrder);
+          if (!dimOrder.equals(newOrder)) {
+            System.out.println("Adjusted dimension order = " + newOrder);
+          }
         }
       }
       else System.out.println("Pattern is invalid: " + fp.getErrorMessage());
