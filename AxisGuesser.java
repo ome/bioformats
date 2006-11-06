@@ -39,6 +39,9 @@ public class AxisGuesser {
 
   // -- Constants --
 
+  /** Axis type for unclassified axes. */
+  public static final int UNKNOWN_AXIS = 0;
+
   /** Axis type for focal planes. */
   public static final int Z_AXIS = 1;
 
@@ -48,17 +51,19 @@ public class AxisGuesser {
   /** Axis type for channels. */
   public static final int C_AXIS = 3;
 
-  /** Prefix endings indicating time dimension. */
-  protected static final String[] T = {"t", "tl", "tp"};
-
   /** Prefix endings indicating space dimension. */
   protected static final String[] Z = {
     "fp", "sec", "z", "zs", "focal", "focalplane"
   };
 
+  /** Prefix endings indicating time dimension. */
+  protected static final String[] T = {"t", "tl", "tp"};
+
   /** Prefix endings indicating channel dimension. */
   protected static final String[] C = {"c", "ch", "w"};
 
+  protected static final BigInteger TWO = new BigInteger("2");
+  protected static final BigInteger THREE = new BigInteger("2");
 
   // -- Fields --
 
@@ -104,47 +109,112 @@ public class AxisGuesser {
     BigInteger[] step = fp.getStep();
     int[] count = fp.getCount();
     axes = new int[count.length];
+    boolean foundZ = false, foundT = false, foundC = false;
 
     // -- 1) fill in "known" axes based on known patterns and conventions --
 
-    for (int i=0; i<prefixes.length; i++) {
+    for (int i=0; i<axes.length; i++) {
       String p = prefixes[i];
 
       // strip trailing digits and divider characters
-      p = p.replaceFirst("[\\d -_\\.]+$", "");
+      char[] c = p.toCharArray();
+      int l = c.length - 1;
+      while (l >= 0 && (c[l] >= '0' && c[l] <= '9' ||
+        c[l] == ' ' || c[l] == '-' || c[l] == '_' || c[l] == '.'))
+      {
+        l--;
+      }
 
-      // strip off trailing alphanumeric characters
+      // useful prefix segment consists of trailing alphanumeric characters
+      int f = l;
+      while (f >= 0 &&
+        (c[f] >= 'A' && c[f] <= 'Z' || c[f] >= 'a' && c[f] <= 'z'))
+      {
+        f--;
+      }
+      System.out.println("#" + i + ": old prefix = " + p);//TEMP
+      p = p.substring(f + 1, l + 1);
+      System.out.println("#" + i + ": new prefix = " + p);//TEMP
 
-      // CTR START HERE
-      //
-      // strip off trailing non-alphabetic characters
-      // then pull off only trailing alphabetic characters
-      // compare pulled off string to known Z, C and T suffixes
-      // if match is found, we *know* a given dimension
-      //
-      // check for special 2-3 channel case in Bio-Rad files
+      boolean isZ = false, isT = false, isC = false;
+
+      // check against known Z prefixes
+      for (int j=0; j<Z.length; j++) {
+        if (p.equals(Z[j])) {
+          axes[i] = Z_AXIS;
+          foundZ = true;
+          break;
+        }
+      }
+      if (axes[i] != UNKNOWN_AXIS) continue;
+
+      // check against known T prefixes
+      for (int j=0; j<T.length; j++) {
+        if (p.equals(T[j])) {
+          axes[i] = T_AXIS;
+          foundT = true;
+          break;
+        }
+      }
+      if (axes[i] != UNKNOWN_AXIS) continue;
+
+      // check against known C prefixes
+      for (int j=0; j<C.length; j++) {
+        if (p.equals(C[j])) {
+          axes[i] = C_AXIS;
+          foundC = true;
+          break;
+        }
+      }
+      if (axes[i] != UNKNOWN_AXIS) continue;
+
+      // check special case: <2-3> (Bio-Rad PIC)
+      if (first[i].equals(TWO) && last[i].equals(THREE) &&
+        step[i].equals(BigInteger.ONE))
+      {
+        axes[i] = C_AXIS;
+        foundC = true;
+        break;
+      }
     }
-
-// known internal axes (ZCT) have isCertain == true
-// known dimensional axes have a known pattern or convention
-// After that, we are left with only unknown slots, which we must guess.
-// 
 
     // -- 2) check for special cases where dimension order should be swapped --
 
-//      * if a Z block was found, but not a T block:
-//          if !isOrderCertain, and sizeZ > 1, and sizeT == 1, swap 'em
-//      * else if a T block was found, but not a Z block:
-//          if !isOrderCertain and sizeT > 1, and sizeZ == 1, swap 'em
+    if (!isCertain) { // only switch if dimension order is uncertain
+      if (foundZ && !foundT && sizeZ > 1 && sizeT == 1 ||
+        foundT && !foundZ && sizeT > 1 && sizeZ == 1)
+      {
+        // swap Z and T dimensions
+        int indexZ = newOrder.indexOf('Z');
+        int indexT = newOrder.indexOf('T');
+        char[] c = newOrder.toCharArray();
+        c[indexZ] = 'T';
+        c[indexT] = 'Z';
+        newOrder = new String(c);
+        int s = sizeT;
+        sizeT = sizeZ;
+        sizeZ = s;
+      }
+    }
 
     // -- 3) fill in remaining axis types --
 
-//    Set canBeZ to true iff no Z block is assigned and sizeZ == 1.
-//    Set canBeT to true iff no T block is assigned and sizeT == 1.
-//    Go through the blocks in order from left to right:
-//      * If canBeZ, assign Z and set canBeZ to false.
-//      * If canBeT, assign T and set canBeT to false.
-//      * Otherwise, assign C.
+    boolean canBeZ = !foundZ && sizeZ == 1;
+    boolean canBeT = !foundT && sizeT == 1;
+
+    for (int i=0; i<axes.length; i++) {
+      if (axes[i] != UNKNOWN_AXIS) continue;
+
+      if (canBeZ) {
+        axes[i] = Z_AXIS;
+        canBeZ = false;
+      }
+      else if (canBeT) {
+        axes[i] = T_AXIS;
+        canBeT = false;
+      }
+      else axes[i] = C_AXIS;
+    }
   }
 
   // -- AxisGuesser API methods --
@@ -245,13 +315,13 @@ public class AxisGuesser {
 // -- Notes --
 
 // INPUTS: file pattern, dimOrder, sizeZ, sizeT, sizeC, isCertain
-// 
+//
 // 1) Fill in all "known" dimensional axes based on known patterns and
 //    conventions
 //      * known internal axes (ZCT) have isCertain == true
 //      * known dimensional axes have a known pattern or convention
 //    After that, we are left with only unknown slots, which we must guess.
-// 
+//
 // 2) First, we decide whether we really "believe" the reader. There is a
 //    special case where we may decide that it got Z and T mixed up:
 //      * if a Z block was found, but not a T block:
@@ -260,12 +330,12 @@ public class AxisGuesser {
 //          if !isOrderCertain and sizeT > 1, and sizeZ == 1, swap 'em
 //    At this point, we can (have to) trust the internal ordering, and use it
 //    to decide how to fill in the remaining dimensional blocks.
-// 
+//
 // 3) Set canBeZ to true iff no Z block is assigned and sizeZ == 1.
 //    Set canBeT to true iff no T block is assigned and sizeT == 1.
 //    Go through the blocks in order from left to right:
 //      * If canBeZ, assign Z and set canBeZ to false.
 //      * If canBeT, assign T and set canBeT to false.
 //      * Otherwise, assign C.
-// 
+//
 // OUTPUTS: list of axis assignments, new dimOrder

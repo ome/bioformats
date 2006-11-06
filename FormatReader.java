@@ -96,7 +96,7 @@ public abstract class FormatReader extends FormatHandler
   /** Dimension fields. */
   protected int[] sizeX, sizeY, sizeZ, sizeC, sizeT, pixelType;
   protected String[] currentOrder;
-  protected boolean orderCertain;
+  protected boolean[] orderCertain;
 
   /** Whether or not we're doing channel stat calculation (no by default). */
   protected boolean enableChannelStatCalculation = false;
@@ -139,7 +139,7 @@ public abstract class FormatReader extends FormatHandler
     sizeT = new int[1];
     pixelType = new int[1];
     currentOrder = new String[1];
-    orderCertain = true;
+    orderCertain = new boolean[] {true};
 
     // reinitialize the MetadataStore
     getMetadataStore(id).createRoot();
@@ -249,7 +249,7 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader.isOrderCertain(String) */
   public boolean isOrderCertain(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return orderCertain;
+    return orderCertain[series];
   }
 
   /* @see IFormatReader#setChannelStatCalculationStatus(boolean) */
@@ -608,6 +608,7 @@ public abstract class FormatReader extends FormatHandler
       int thumbSizeY = reader.getThumbSizeY(id);
       boolean little = reader.isLittleEndian(id);
       String dimOrder = reader.getDimensionOrder(id);
+      boolean orderCertain = reader.isOrderCertain(id);
       int pixelType = reader.getPixelType(id);
 
       // output basic metadata for series #i
@@ -631,7 +632,8 @@ public abstract class FormatReader extends FormatHandler
         thumbSizeX + " x " + thumbSizeY);
       System.out.println("\tEndianness = " +
         (little ? "intel (little)" : "motorola (big)"));
-      System.out.println("\tDimension order = " + dimOrder);
+      System.out.println("\tDimension order = " + dimOrder +
+        (orderCertain ? " (certain)" : " (uncertain)"));
       System.out.println("\tPixel type = " + getPixelTypeString(pixelType));
       if (doMeta) {
         System.out.println("\t-----");
