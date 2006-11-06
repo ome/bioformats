@@ -63,7 +63,7 @@ public class AxisGuesser {
   protected static final String[] C = {"c", "ch", "w"};
 
   protected static final BigInteger TWO = new BigInteger("2");
-  protected static final BigInteger THREE = new BigInteger("2");
+  protected static final BigInteger THREE = new BigInteger("3");
 
   // -- Fields --
 
@@ -114,27 +114,21 @@ public class AxisGuesser {
     // -- 1) fill in "known" axes based on known patterns and conventions --
 
     for (int i=0; i<axes.length; i++) {
-      String p = prefixes[i];
+      String p = prefixes[i].toLowerCase();
 
       // strip trailing digits and divider characters
-      char[] c = p.toCharArray();
-      int l = c.length - 1;
-      while (l >= 0 && (c[l] >= '0' && c[l] <= '9' ||
-        c[l] == ' ' || c[l] == '-' || c[l] == '_' || c[l] == '.'))
+      char[] ch = p.toCharArray();
+      int l = ch.length - 1;
+      while (l >= 0 && (ch[l] >= '0' && ch[l] <= '9' ||
+        ch[l] == ' ' || ch[l] == '-' || ch[l] == '_' || ch[l] == '.'))
       {
         l--;
       }
 
       // useful prefix segment consists of trailing alphanumeric characters
       int f = l;
-      while (f >= 0 &&
-        (c[f] >= 'A' && c[f] <= 'Z' || c[f] >= 'a' && c[f] <= 'z'))
-      {
-        f--;
-      }
+      while (f >= 0 && ch[f] >= 'a' && ch[f] <= 'z') f--;
       p = p.substring(f + 1, l + 1);
-
-      boolean isZ = false, isT = false, isC = false;
 
       // check against known Z prefixes
       for (int j=0; j<Z.length; j++) {
@@ -185,13 +179,13 @@ public class AxisGuesser {
         // swap Z and T dimensions
         int indexZ = newOrder.indexOf('Z');
         int indexT = newOrder.indexOf('T');
-        char[] c = newOrder.toCharArray();
-        c[indexZ] = 'T';
-        c[indexT] = 'Z';
-        newOrder = new String(c);
-        int s = sizeT;
+        char[] ch = newOrder.toCharArray();
+        ch[indexZ] = 'T';
+        ch[indexT] = 'Z';
+        newOrder = new String(ch);
+        int sz = sizeT;
         sizeT = sizeZ;
-        sizeZ = s;
+        sizeZ = sz;
       }
     }
 
