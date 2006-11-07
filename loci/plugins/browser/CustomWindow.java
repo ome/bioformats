@@ -112,7 +112,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     };
 
 //    imagePane.setLayout(getLayout()); // ImageLayout
-    imagePane.setBackground(Color.white);
+//    imagePane.setBackground(Color.white);
 
     // redo layout for master window
     remove(ic);
@@ -218,18 +218,14 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
     setC(2);
 
-    Panel mainPane = new Panel();
-    mainPane.setBackground(Color.white);
+    setBackground(Color.white);
     FormLayout layout2 = new FormLayout(
       TAB + ",pref:grow," + TAB,
-      TAB + ",pref:grow," + TAB + ",pref," + TAB);
-    mainPane.setLayout(layout2);
+      TAB + "," + TAB + ",pref:grow," + TAB + ",pref," + TAB);
+    setLayout(layout2);
     CellConstraints cc2 = new CellConstraints();
-    mainPane.add(imagePane, cc2.xy(2,2));
-    mainPane.add(lowPane, cc2.xy(2,4));
-
-    setLayout(new GridLayout());
-    add(mainPane);
+    add(imagePane, cc2.xyw(1,3,3));
+    add(lowPane, cc2.xy(2,5));
 
     //final GUI tasks
     pack();
