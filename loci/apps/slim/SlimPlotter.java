@@ -124,6 +124,39 @@ public class SlimPlotter implements ActionListener,
     progress.setMillisToDecideToPopup(0);
     int p = 0;
 
+    // check for required libraries
+    try {
+      Class.forName("javax.vecmath.Point3d");
+    }
+    catch (Throwable t) {
+      String os = System.getProperty("os.name").toLowerCase();
+      String url = null;
+      if (os.indexOf("windows") >= 0 ||
+        os.indexOf("linux") >= 0 || os.indexOf("solaris") >= 0)
+      {
+        url = "https://java3d.dev.java.net/binary-builds.html";
+      }
+      else if (os.indexOf("mac os x") >= 0) {
+        url = "http://www.apple.com/downloads/macosx/apple/" +
+          "java3dandjavaadvancedimagingupdate.html";
+      }
+      else if (os.indexOf("aix") >= 0) {
+        url = "http://www-128.ibm.com/developerworks/java/jdk/aix/index.html";
+      }
+      else if (os.indexOf("hp-ux") >= 0) {
+        url = "http://www.hp.com/products1/unix/java/java2/java3d/downloads/" +
+          "index.html";
+      }
+      else if (os.indexOf("irix") >= 0) {
+        url = "http://www.sgi.com/products/evaluation/6.5_java3d_1.3.1/";
+      }
+      JOptionPane.showMessageDialog(null,
+        "SlimPlotter requires Java3D, but it was not found." +
+        (url == null ? "" : ("\nPlease install it from:\n" + url)),
+        "SlimPlotter", JOptionPane.ERROR_MESSAGE);
+      System.exit(3);
+    }
+
     // parse command line arguments
     String filename = null;
     File file = null;
