@@ -140,7 +140,7 @@ Ant-Contrib
     URL:       http://ant-contrib.sourceforge.net/
     Notes:     Used by tools target to iterate over JAR files ("for" task)
     License:   Apache
- 
+
 Checkstyle
     JAR file:  checkstyle-all-4.2.jar
     URL:       http://checkstyle.sourceforge.net/
@@ -738,7 +738,8 @@ Apache XML-RPC
     </jar>
   </target>
 
-  <target name="dist-slim" if="isUnix" depends="copy-jars, jar-slim"
+  <target name="dist-slim" if="isUnix"
+    depends="copy-jars, jar-formats, jar-slim"
     description="create distribution bundle for Slim Plotter">
     <copy todir="${slim.dist-dir}" preservelastmodified="true">
       <fileset dir="dist/slim"/>
