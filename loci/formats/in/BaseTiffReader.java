@@ -112,7 +112,7 @@ public abstract class BaseTiffReader extends FormatReader {
   // -- Internal BaseTiffReader API methods --
 
   /** Populates the metadata hashtable and metadata store. */
-  protected void initMetadata() {
+  protected void initMetadata() throws FormatException {
     initStandardMetadata();
     initMetadataStore();
   }
@@ -124,7 +124,7 @@ public abstract class BaseTiffReader extends FormatReader {
    * this method or methods that override this method. Data <b>will</b> be
    * overwritten if you do so.
    */
-  protected void initStandardMetadata() {
+  protected void initStandardMetadata() throws FormatException {
     Hashtable ifd = ifds[0];
     if (metadata == null) metadata = new Hashtable();
     put("ImageWidth", ifd, TiffTools.IMAGE_WIDTH);
