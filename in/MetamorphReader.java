@@ -107,7 +107,7 @@ public class MetamorphReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /** Populates the metadata hashtable. */
-  protected void initStandardMetadata() {
+  protected void initStandardMetadata() throws FormatException {
     super.initStandardMetadata();
 
     try {

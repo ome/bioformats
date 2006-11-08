@@ -228,7 +228,7 @@ public class NikonReader extends BaseTiffReader {
   }
 
   /* @see BaseTiffReader#initStandardMetadata() */
-  protected void initStandardMetadata() {
+  protected void initStandardMetadata() throws FormatException {
     super.initStandardMetadata();
 
     // look for the TIFF_EPS_STANDARD tag

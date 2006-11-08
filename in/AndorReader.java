@@ -99,7 +99,7 @@ public class AndorReader extends BaseTiffReader {
   // -- Internal BaseTiffReader API methods --
 
   /* @see loci.formats.BaseTiffReader#initStandardMetadata() */
-  protected void initStandardMetadata() {
+  protected void initStandardMetadata() throws FormatException {
     super.initStandardMetadata();
 
     boolean little = false;
