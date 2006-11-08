@@ -57,6 +57,8 @@ public class BreakawayPanel extends JPanel implements ActionListener {
   /** Flag indicating whether owner window gets intelligently resized. */
   protected boolean autoSize;
 
+  /** Arrow buttons. */
+  protected BioArrowButton top, bottom, left, right;
 
   // -- Constructor --
 
@@ -78,14 +80,14 @@ public class BreakawayPanel extends JPanel implements ActionListener {
 
     // up arrow button
     Dimension tallArrow = new Dimension(12, Integer.MAX_VALUE);
-    BioArrowButton top = new BioArrowButton(BioArrowButton.NORTH);
+    top = new BioArrowButton(BioArrowButton.NORTH);
     top.setActionCommand("Top");
     top.addActionListener(this);
     top.setPreferredSize(tallArrow);
     top.setMaximumSize(tallArrow);
 
     // down arrow button
-    BioArrowButton bottom = new BioArrowButton(BioArrowButton.SOUTH);
+    bottom = new BioArrowButton(BioArrowButton.SOUTH);
     bottom.setActionCommand("Bottom");
     bottom.addActionListener(this);
     bottom.setPreferredSize(tallArrow);
@@ -93,14 +95,14 @@ public class BreakawayPanel extends JPanel implements ActionListener {
 
     // left arrow button
     Dimension wideArrow = new Dimension(Integer.MAX_VALUE, 12);
-    BioArrowButton left = new BioArrowButton(BioArrowButton.WEST);
+    left = new BioArrowButton(BioArrowButton.WEST);
     left.setActionCommand("Left");
     left.addActionListener(this);
     left.setPreferredSize(wideArrow);
     left.setMaximumSize(wideArrow);
 
     // right arrow button
-    BioArrowButton right = new BioArrowButton(BioArrowButton.EAST);
+    right = new BioArrowButton(BioArrowButton.EAST);
     right.setActionCommand("Right");
     right.addActionListener(this);
     right.setPreferredSize(wideArrow);
@@ -121,7 +123,6 @@ public class BreakawayPanel extends JPanel implements ActionListener {
 
     window.getContentPane().add(this);
   }
-
 
   // -- BreakawayPanel API methods --
 
@@ -241,6 +242,25 @@ public class BreakawayPanel extends JPanel implements ActionListener {
     if (edge == null) window.setSize(SwingUtil.getRepackSize(window));
   }
 
+  /** Toggles availability of up arrow button. */
+  public void setUpEnabled(boolean enabled) {
+    top.setVisible(enabled);
+  }
+
+  /** Toggles availability of down arrow button. */
+  public void setDownEnabled(boolean enabled) {
+    bottom.setVisible(enabled);
+  }
+
+  /** Toggles availability of left arrow button. */
+  public void setLeftEnabled(boolean enabled) {
+    left.setVisible(enabled);
+  }
+
+  /** Toggles availability of right arrow button. */
+  public void setRightEnabled(boolean enabled) {
+    right.setVisible(enabled);
+  }
 
   // -- ActionListener API methods --
 
