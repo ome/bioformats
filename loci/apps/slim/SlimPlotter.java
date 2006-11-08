@@ -26,6 +26,7 @@ import loci.formats.in.SDTInfo;
 import loci.formats.in.SDTReader;
 import loci.formats.DataTools;
 import loci.formats.ExtensionFileFilter;
+import loci.visbio.util.BreakawayPanel;
 import loci.visbio.util.OutputConsole;
 import visad.*;
 import visad.bom.CurveManipulationRendererJ3D;
@@ -92,8 +93,8 @@ public class SlimPlotter implements ActionListener,
   private JRadioButton dataSurface, dataLines;
   private JRadioButton fitSurface, fitLines;
   private JRadioButton resSurface, resLines;
-  private JCheckBox showData, showLog;
-  private JCheckBox showBox, showScale;
+  private JCheckBox showData, showScale;
+  private JCheckBox showBox, showLine;
   private JCheckBox showFit, showResiduals;
   private JSpinner numCurves;
   private JButton exportData;
@@ -107,7 +108,7 @@ public class SlimPlotter implements ActionListener,
   private RealTupleType bc;
   private FunctionType bcvFunc, bcvFuncFit, bcvFuncRes;
   private ScalarMap zMap, zMapFit, zMapRes, vMap, vMapFit, vMapRes;
-  private DataRenderer decayRend, fitRend, resRend;
+  private DataRenderer decayRend, fitRend, resRend, lineRend;
   private DataReferenceImpl decayRef, fitRef, resRef;
   private DisplayImpl iPlot, decayPlot;
   private AnimationControl ac;
@@ -117,6 +118,8 @@ public class SlimPlotter implements ActionListener,
   public SlimPlotter(String[] args) throws Exception {
     console = new OutputConsole("Log");
     System.setErr(new ConsoleStream(new PrintStream(console)));
+    console.getTextArea().setColumns(54);
+    console.getTextArea().setRows(20);
 
     ProgressMonitor progress = new ProgressMonitor(null,
       "Launching SlimPlotter", "Initializing", 0, 16 + 8);
@@ -484,25 +487,45 @@ public class SlimPlotter implements ActionListener,
       if (progress.isCanceled()) System.exit(0);
 
       // add yellow line to indicate adjusted peak position
+      lineRend = new DefaultRendererJ3D();
       DataReferenceImpl peakRef = new DataReferenceImpl("peaks");
       float peakTime = (float) (maxPeak * timeRange / timeBins);
       peakRef.setData(new Gridded2DSet(bc,
         new float[][] {{peakTime, peakTime}, {minWave, maxWave}}, 2));
-      decayPlot.addReference(peakRef, new ConstantMap[] {
+      decayPlot.addReferences(lineRend, peakRef, new ConstantMap[] {
         new ConstantMap(-1, Display.ZAxis),
         new ConstantMap(0, Display.Blue),
 //        new ConstantMap(2, Display.LineWidth)
       });
     }
 
-    // construct 2D window
+    // construct 2D pane
     progress.setNote("Creating plots");
-    JFrame intensityFrame = new JFrame("Intensity Data - " + file.getName());
-    intensityFrame.addWindowListener(this);
+    JFrame masterWindow = new JFrame("Slim Plotter - " + file.getName());
+    masterWindow.addWindowListener(this);
+    JPanel masterPane = new JPanel();
+    masterPane.setLayout(new BorderLayout());
+    masterWindow.setContentPane(masterPane);
     JPanel intensityPane = new JPanel();
     intensityPane.setLayout(new BorderLayout());
-    intensityFrame.setContentPane(intensityPane);
-    intensityPane.add(iPlot.getComponent(), BorderLayout.CENTER);
+    JPanel iPlotPane = new JPanel() {
+      private int height = 380;
+      public Dimension getMinimumSize() {
+        Dimension min = super.getMinimumSize();
+        return new Dimension(min.width, height);
+      }
+      public Dimension getPreferredSize() {
+        Dimension pref = super.getPreferredSize();
+        return new Dimension(pref.width, height);
+      }
+      public Dimension getMaximumSize() {
+        Dimension max = super.getMaximumSize();
+        return new Dimension(max.width, height);
+      }
+    };
+    iPlotPane.setLayout(new BorderLayout());
+    iPlotPane.add(iPlot.getComponent(), BorderLayout.CENTER);
+    intensityPane.add(iPlotPane, BorderLayout.CENTER);
 
     JPanel sliderPane = new JPanel();
     sliderPane.setLayout(new BoxLayout(sliderPane, BoxLayout.X_AXIS));
@@ -526,10 +549,7 @@ public class SlimPlotter implements ActionListener,
     progress.setProgress(++p);
     if (progress.isCanceled()) System.exit(0);
 
-    // construct 3D window
-    JFrame decayFrame = new JFrame("Spectral Lifetime Data - " +
-      file.getName());
-    decayFrame.addWindowListener(this);
+    // construct 3D pane
     JPanel decayPane = new JPanel();
     decayPane.setLayout(new BorderLayout());
     decayPane.add(decayPlot.getComponent(), BorderLayout.CENTER);
@@ -538,7 +558,7 @@ public class SlimPlotter implements ActionListener,
     decayPane.add(decayLabel, BorderLayout.NORTH);
 
     JPanel options = new JPanel();
-    options.setBorder(new EmptyBorder(8, 5, 8, 5));
+    options.setBorder(new EmptyBorder(8, 5, 8, 20));
     options.setLayout(new BoxLayout(options, BoxLayout.X_AXIS));
 
     linear = new JRadioButton("Linear", true);
@@ -568,15 +588,16 @@ public class SlimPlotter implements ActionListener,
     showData = new JCheckBox("Data", true);
     showData.addActionListener(this);
     showPanel1.add(showData);
-    showLog = new JCheckBox("Log", true);
-    showLog.addActionListener(this);
-    showPanel1.add(showLog);
+    showScale = new JCheckBox("Scale", true);
+    showScale.addActionListener(this);
+    showPanel1.add(showScale);
     showBox = new JCheckBox("Box", true);
     showBox.addActionListener(this);
     showPanel2.add(showBox);
-    showScale = new JCheckBox("Scale", true);
-    showScale.addActionListener(this);
-    showPanel2.add(showScale);
+    showLine = new JCheckBox("Line", adjustPeaks);
+    showLine.setEnabled(adjustPeaks);
+    showLine.addActionListener(this);
+    showPanel2.add(showLine);
     showFit = new JCheckBox("Fit", false);
     showFit.setEnabled(adjustPeaks);
     showFit.addActionListener(this);
@@ -593,9 +614,22 @@ public class SlimPlotter implements ActionListener,
     exportData = new JButton("Export");
     exportData.addActionListener(this);
 
-    console.getWindow().addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) { showLog.setSelected(false); }
-    });
+    JPanel leftPanel = new JPanel() {
+      public Dimension getMaximumSize() {
+        Dimension pref = getPreferredSize();
+        Dimension max = super.getMaximumSize();
+        return new Dimension(pref.width, max.height);
+      }
+    };
+    leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+    leftPanel.add(intensityPane);
+    leftPanel.add(console.getWindow().getContentPane());
+    BreakawayPanel breakawayPanel = new BreakawayPanel(masterPane,
+      "Intensity Data - " + file.getName(), false);
+    breakawayPanel.setEdge(BorderLayout.WEST);
+    breakawayPanel.setUpEnabled(false);
+    breakawayPanel.setDownEnabled(false);
+    breakawayPanel.setContentPane(leftPanel);
 
     options.add(makeRadioPanel("Scale", linear, log));
     options.add(makeRadioPanel("Projection", perspective, parallel));
@@ -607,48 +641,11 @@ public class SlimPlotter implements ActionListener,
     options.add(Box.createHorizontalStrut(5));
     options.add(exportData);
     decayPane.add(options, BorderLayout.SOUTH);
-    decayFrame.setContentPane(decayPane);
+    masterPane.add(decayPane, BorderLayout.CENTER);
 
-    // adjust window sizes
-    intensityFrame.pack();
-    int intensityWidth = intensityFrame.getSize().width;
-    int intensityHeight = intensityFrame.getSize().height;
-    if (intensityWidth < 400) {
-      // enforce minimum reasonable width
-      intensityHeight = 400 * intensityHeight / intensityWidth;
-      intensityWidth = 400;
-    }
-    int decayHeight = intensityHeight;
-    int decayWidth = 100 * decayHeight / 100; // 100% of width
-
-    // enlarge 3D window to fill more of the screen
-    int padWidth = 30, padHeight = 70;
-    int pw = padWidth / 2, ph = padHeight / 2;
-    int availWidth = screenSize.width - intensityWidth - padWidth;
-    int availHeight = screenSize.height - padHeight;
-    int growWidth = availWidth - decayWidth;
-    int growHeight = availHeight - decayHeight;
-    int grow = growWidth < growHeight ? growWidth : growHeight;
-    if (grow > 0) {
-      decayWidth += grow;
-      decayHeight += grow;
-    }
-
-    // widen 2D window to fill any leftover space
-    grow = screenSize.width - intensityWidth - decayWidth - padWidth;
-    intensityWidth += grow;
-    intensityHeight += grow;
-    decayFrame.setBounds(pw + intensityWidth, ph, decayWidth, decayHeight);
-    intensityFrame.setBounds(pw, ph, intensityWidth, intensityHeight);
-
-    // adjust console window to match
-    console.getWindow().setBounds(pw, ph + intensityHeight,
-      intensityWidth, decayHeight - intensityHeight);
-
-    // show windows on screen
-    intensityFrame.setVisible(true);
-    decayFrame.setVisible(true);
-    console.setVisible(true);
+    // show window on screen
+    masterWindow.pack();
+    masterWindow.setVisible(true);
     progress.setProgress(++p);
     progress.close();
     plotData(true, true);
@@ -733,10 +730,8 @@ public class SlimPlotter implements ActionListener,
       }
       catch (Exception exc) { exc.printStackTrace(); }
     }
-    else if (src == showData) {
-      decayRend.toggle(showData.isSelected());
-    }
-    else if (src == showLog) { console.setVisible(showLog.isSelected()); }
+    else if (src == showData) decayRend.toggle(showData.isSelected());
+    else if (src == showLine) lineRend.toggle(showLine.isSelected());
     else if (src == showBox) {
       try { decayPlot.getDisplayRenderer().setBoxOn(showBox.isSelected()); }
       catch (Exception exc) { exc.printStackTrace(); }
