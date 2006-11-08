@@ -113,10 +113,10 @@ public class CacheManager implements Runnable {
 
   /** Holds the total size of the various dimensions of the file(s).*/
   private int sizeZ, sizeT, sizeC;
-  
+
   /** Holds the current priority of each axis.*/
   private int curZPriority, curTPriority, curCPriority;
-  
+
   /** Holds the previous priority of each axis.*/
   private int oldZPriority, oldTPriority, oldCPriority;
 
@@ -131,7 +131,6 @@ public class CacheManager implements Runnable {
   * should wrap around to the begining/end for animation purposes.
   */
   private boolean loop;
-
 
   /** A list of indeces to be loaded by the caching thread.*/
   protected int[] loadList;
@@ -222,7 +221,7 @@ public class CacheManager implements Runnable {
     curMode = mode;
     this.strategy = strategy;
     this.oldStrategy = strategy;
-    
+
     //set default axes' priorities
     curTPriority = 2;
     curZPriority = 1;
@@ -320,7 +319,7 @@ public class CacheManager implements Runnable {
     curForwardC = forwardC;
     updateCache();
   }
-  
+
   /**
   * A method to set which axis to cache first.
   * @param top The axis constant with the highest priority.
@@ -329,13 +328,13 @@ public class CacheManager implements Runnable {
   */
   public void setPriority(int top, int mid, int low) {
     if (top == mid || mid == low || top == low) return;
-    
+
     quit = true;
-    
+
     int storeZ = curZPriority;
     int storeT = curTPriority;
     int storeC = curCPriority;
-    
+
     if (top == Z_AXIS) curZPriority = 2;
     else if (top == T_AXIS) curTPriority = 2;
     else if (top == C_AXIS) curCPriority = 2;
@@ -345,7 +344,7 @@ public class CacheManager implements Runnable {
       curCPriority = storeC;
       return;
     }
-    
+
     if (mid == Z_AXIS) curZPriority = 1;
     else if (mid == T_AXIS) curTPriority = 1;
     else if (mid == C_AXIS) curCPriority = 1;
@@ -355,7 +354,7 @@ public class CacheManager implements Runnable {
       curCPriority = storeC;
       return;
     }
-    
+
     if (low == Z_AXIS) curZPriority = 0;
     else if (low == T_AXIS) curTPriority = 0;
     else if (low == C_AXIS) curCPriority = 0;
@@ -365,11 +364,11 @@ public class CacheManager implements Runnable {
       curCPriority = storeC;
       return;
     }
-    
+
     oldZPriority = curZPriority;
     oldTPriority = curTPriority;
     oldCPriority = curCPriority;
-    
+
     updateCache();
   }
 
@@ -652,7 +651,7 @@ public class CacheManager implements Runnable {
       {
         int firstLowBound, firstUpBound, secondLowBound, secondUpBound;
         int firstAxis, secondAxis;
-        
+
         if( axis == (Z_AXIS | T_AXIS) ) {
           if (tPriority > zPriority) {
             firstLowBound = t - backT;
@@ -707,7 +706,7 @@ public class CacheManager implements Runnable {
             secondAxis = T_AXIS;
           }
         }
-        
+
         if (strategy == FORWARD_FIRST) {
           result = getRect(firstAxis,firstLowBound,firstUpBound,
             secondAxis,secondLowBound,secondUpBound,z,t,c);
@@ -720,12 +719,12 @@ public class CacheManager implements Runnable {
       else if (axis == (Z_AXIS | T_AXIS | C_AXIS)) {
         //f: first | s: second | t: third
         int fLow,fUp,sLow,sUp,tLow,tUp,fAxis,sAxis,tAxis;
-        
+
         if (zPriority > tPriority && zPriority > cPriority) {
           fLow = z - backZ;
           fUp = z + forwardZ;
           fAxis = Z_AXIS;
-          
+
           if(tPriority > cPriority) {
             sLow = t - backT;
             sUp = t + forwardT;
@@ -747,7 +746,7 @@ public class CacheManager implements Runnable {
           fLow = t - backT;
           fUp = t + forwardT;
           fAxis = T_AXIS;
-          
+
           if(zPriority > cPriority) {
             sLow = z - backZ;
             sUp = z + forwardZ;
@@ -769,7 +768,7 @@ public class CacheManager implements Runnable {
           fLow = c - backC;
           fUp = c + forwardC;
           fAxis = C_AXIS;
-          
+
           if(tPriority > zPriority) {
             sLow = t - backT;
             sUp = t + forwardT;
@@ -787,7 +786,7 @@ public class CacheManager implements Runnable {
             tAxis = T_AXIS;
           }
         }
-        
+
         if (strategy == FORWARD_FIRST) {
           result = getBrick(fAxis,fLow,fUp,
             sAxis,sLow,sUp,tAxis,tLow,tUp,z,t,c);
@@ -828,7 +827,7 @@ public class CacheManager implements Runnable {
     if(lowSet.length == 0 && upSet.length != 0) return upSet;
     else if(lowSet.length != 0 && upSet.length == 0) return lowSet;
     else if(lowSet.length == 0 && upSet.length == 0) return lowSet;
-  
+
     int[] result = new int[upSet.length + lowSet.length];
     int count = 0;
 
@@ -1159,7 +1158,7 @@ public class CacheManager implements Runnable {
 
     return result;
   }
-  
+
   /**
   * A method to get a 2d "ring" of indeces around a given point.
   * Note that if the ring would be outside of the maximum values
@@ -1183,14 +1182,14 @@ public class CacheManager implements Runnable {
         index = read.getIndex(fileName, z, c, t);
       }
       catch(Exception exc) {if(DEBUG) exc.printStackTrace();}
-      
-      int[] result = {index};     
+
+      int[] result = {index};
       return result;
     }
     else {
       int[] result = {};
       int fUp,fLow,fSize,sUp,sLow,sSize;
-      
+
       if (fAxis == Z_AXIS) {
         fSize = sizeZ;
         fUp = z + r;
@@ -1206,7 +1205,7 @@ public class CacheManager implements Runnable {
         fUp = c + r;
         fLow = c - r;
       }
-      
+
       if (sAxis == Z_AXIS) {
         sSize = sizeZ;
         sUp = z + r;
@@ -1222,15 +1221,15 @@ public class CacheManager implements Runnable {
         sUp = c + r;
         sLow = c - r;
       }
-      
+
       Vector temp = new Vector();
-      
+
       //The following code could be made more concise.
       if(fUp < fSize) {
         for(int s = sLow;s<=sUp;s++) {
           if(s >= 0 && s < sSize) {
             int index = -1;
-            
+
             synchronized (read) {
               try {
                 if (fAxis == Z_AXIS) {
@@ -1260,22 +1259,22 @@ public class CacheManager implements Runnable {
               }
               catch(Exception exc) {if(DEBUG) exc.printStackTrace();}
             }
-            
+
             if (index != -1) {
               Integer indexObj = new Integer(index);
-              
+
               temp.add(indexObj);
             }
           }
           else continue;
         }
       }
-      
+
       if(fLow >= 0) {
         for(int s = sLow;s<=sUp;s++) {
           if(s >= 0 && s < sSize) {
             int index = -1;
-            
+
             synchronized (read) {
               try {
                 if (fAxis == Z_AXIS) {
@@ -1305,22 +1304,22 @@ public class CacheManager implements Runnable {
               }
               catch(Exception exc) {if(DEBUG) exc.printStackTrace();}
             }
-            
+
             if (index != -1) {
               Integer indexObj = new Integer(index);
-              
+
               temp.add(indexObj);
             }
           }
           else continue;
         }
       }
-      
+
       if(sUp < sSize) {
         for(int f = fLow + 1;f < fUp;f++) {
           if(f >= 0 && f < fSize) {
             int index = -1;
-            
+
             synchronized (read) {
               try {
                 if (sAxis == Z_AXIS) {
@@ -1350,22 +1349,22 @@ public class CacheManager implements Runnable {
               }
               catch(Exception exc) {if(DEBUG) exc.printStackTrace();}
             }
-            
+
             if (index != -1) {
               Integer indexObj = new Integer(index);
-              
+
               temp.add(indexObj);
             }
           }
           else continue;
         }
       }
-      
+
       if(sLow >= 0) {
         for(int f = fLow + 1;f < fUp;f++) {
           if(f >= 0 && f < fSize) {
             int index = -1;
-            
+
             synchronized (read) {
               try {
                 if (sAxis == Z_AXIS) {
@@ -1395,27 +1394,27 @@ public class CacheManager implements Runnable {
               }
               catch(Exception exc) {if(DEBUG) exc.printStackTrace();}
             }
-            
+
             if (index != -1) {
               Integer indexObj = new Integer(index);
-              
+
               temp.add(indexObj);
             }
           }
           else continue;
         }
       }
-  
+
       Object[] tempArray = temp.toArray();
       result = new int[tempArray.length];
       for(int i = 0;i<tempArray.length;i++) {
         result[i] = ((Integer)tempArray[i]).intValue();
       }
-        
+
       return result;
     }
   }
-  
+
   /**
   * A method to get a 2d rectangular cache in FORWARD_FIRST strategy.
   * @param fAxis The axis constant to be cached first.
@@ -1447,7 +1446,7 @@ public class CacheManager implements Runnable {
       fSize = sizeC;
       fMid = c;
     }
-    
+
     if (sAxis == Z_AXIS) {
       sSize = sizeZ;
       sMid = z;
@@ -1460,19 +1459,19 @@ public class CacheManager implements Runnable {
       sSize = sizeC;
       sMid = c;
     }
-    
+
     //clip bounds, no looping in RECT_MODE
     if(fLow < 0) fLow = 0;
     if(fUp >= fSize) fUp = fSize - 1;
     if(sLow < 0) sLow = 0;
     if(sUp >= sSize) sUp = sSize - 1;
-    
+
     if(DEBUG) {
       System.out.println("fSize: " + fSize + " | fMid:" + fMid +
         " | fUp:" + fUp + " | fLow:" + fLow + " | sSize:" + sSize +
         " | sMid:" + sMid + " | sUp:" + sUp + " | sLow:" + sLow);
     }
-    
+
     for(int sRow = sMid;sRow<=sUp;sRow++) {
       int[] toAdd = {};
 
@@ -1480,33 +1479,33 @@ public class CacheManager implements Runnable {
         if (sAxis == Z_AXIS) toAdd = getUpSet(fLow,fUp,fAxis,sRow,t,c);
         else if (sAxis == T_AXIS) toAdd =
           getUpSet(fLow,fUp,fAxis,z,sRow,c);
-        else toAdd = getUpSet(fLow,fUp,fAxis,z,t,sRow); 
+        else toAdd = getUpSet(fLow,fUp,fAxis,z,t,sRow);
       }
       catch (Exception exc) {
         exc.printStackTrace();
       }
-      
+
       result = append(toAdd,result);
     }
-    
+
     if(sMid - 1 >= 0) {
       for(int sRow = sMid - 1;sRow>=sLow;sRow--) {
         int[] toAdd = {};
-  
+
         try {
           if (sAxis == Z_AXIS) toAdd = getUpSet(fLow,fUp,fAxis,sRow,t,c);
           else if (sAxis == T_AXIS) toAdd =
             getUpSet(fLow,fUp,fAxis,z,sRow,c);
-          else toAdd = getUpSet(fLow,fUp,fAxis,z,t,sRow); 
+          else toAdd = getUpSet(fLow,fUp,fAxis,z,t,sRow);
         }
         catch (Exception exc) {
           exc.printStackTrace();
         }
-        
+
         result = append(toAdd,result);
       }
     }
-    
+
     for(int sRow = sMid;sRow<=sUp;sRow++) {
       int[] toAdd = {};
 
@@ -1514,36 +1513,36 @@ public class CacheManager implements Runnable {
         if (sAxis == Z_AXIS) toAdd = getLowSet(fLow,fUp,fAxis,sRow,t,c);
         else if (sAxis == T_AXIS) toAdd =
           getLowSet(fLow,fUp,fAxis,z,sRow,c);
-        else toAdd = getLowSet(fLow,fUp,fAxis,z,t,sRow); 
+        else toAdd = getLowSet(fLow,fUp,fAxis,z,t,sRow);
       }
       catch (Exception exc) {
         exc.printStackTrace();
       }
-      
+
       result = append(toAdd,result);
     }
-    
+
     if(sMid - 1 >= 0) {
       for(int sRow = sMid - 1;sRow>=sLow;sRow--) {
         int[] toAdd = {};
-  
+
         try {
           if (sAxis == Z_AXIS) toAdd = getLowSet(fLow,fUp,fAxis,sRow,t,c);
           else if (sAxis == T_AXIS) toAdd =
             getLowSet(fLow,fUp,fAxis,z,sRow,c);
-          else toAdd = getLowSet(fLow,fUp,fAxis,z,t,sRow); 
+          else toAdd = getLowSet(fLow,fUp,fAxis,z,t,sRow);
         }
         catch (Exception exc) {
           exc.printStackTrace();
         }
-        
+
         result = append(toAdd,result);
       }
     }
-       
+
     return result;
   }
-  
+
   /**
   * A method to get a 3d "brick" cache in FORWARD_FIRST strategy.
   * @param fAxis The axis constant to be cached first.
@@ -1579,7 +1578,7 @@ public class CacheManager implements Runnable {
       fSize = sizeC;
       fMid = c;
     }
-    
+
     if (sAxis == Z_AXIS) {
       sSize = sizeZ;
       sMid = z;
@@ -1592,7 +1591,7 @@ public class CacheManager implements Runnable {
       sSize = sizeC;
       sMid = c;
     }
-    
+
     if (tAxis == Z_AXIS) {
       tSize = sizeZ;
       tMid = z;
@@ -1605,7 +1604,7 @@ public class CacheManager implements Runnable {
       tSize = sizeC;
       tMid = c;
     }
-    
+
     //clip bounds, no looping in RECT_MODE
     if(fLow < 0) fLow = 0;
     if(fUp >= fSize) fUp = fSize - 1;
@@ -1613,36 +1612,36 @@ public class CacheManager implements Runnable {
     if(sUp >= sSize) sUp = sSize - 1;
     if(tLow < 0) tLow = 0;
     if(tUp >= tSize) tUp = tSize - 1;
-    
+
     for(int tRow = tMid;tRow<=tUp;tRow++) {
       int[] toAdd = {};
-      if (tAxis == Z_AXIS) 
+      if (tAxis == Z_AXIS)
         toAdd = getRect(fAxis,fLow,fUp,sAxis,sLow,sUp,tRow,t,c);
       else if(tAxis == T_AXIS)
         toAdd = getRect(fAxis,fLow,fUp,sAxis,sLow,sUp,z,tRow,c);
       else //tAxis == C_AXIS
         toAdd = getRect(fAxis,fLow,fUp,sAxis,sLow,sUp,z,t,tRow);
-      
+
       result = append(toAdd,result);
     }
-    
+
     if(tMid - 1 >= 0) {
       for(int tRow = tMid - 1;tRow>=tLow;tRow--) {
         int[] toAdd = {};
-        if (tAxis == Z_AXIS) 
+        if (tAxis == Z_AXIS)
           toAdd = getRect(fAxis,fLow,fUp,sAxis,sLow,sUp,tRow,t,c);
         else if(tAxis == T_AXIS)
           toAdd = getRect(fAxis,fLow,fUp,sAxis,sLow,sUp,z,tRow,c);
         else //tAxis == C_AXIS
           toAdd = getRect(fAxis,fLow,fUp,sAxis,sLow,sUp,z,t,tRow);
-        
+
         result = append(toAdd,result);
       }
     }
-    
+
     return result;
   }
-  
+
   /**
   * A method to get a 2d rectangular cache in SURROUND_FIRST strategy.
   * @param fAxis The axis constant to be cached first.
@@ -1662,7 +1661,7 @@ public class CacheManager implements Runnable {
   {
     int [] result = {};
     int fMax, sMax, rMax;
-    
+
     if (fAxis == Z_AXIS) {
       fMax = Math.max(z-fLow,fUp-z);
     }
@@ -1672,7 +1671,7 @@ public class CacheManager implements Runnable {
     else { //fAxis == C_AXIS
       fMax = Math.max(z-fLow,fUp-z);
     }
-    
+
     if (sAxis == Z_AXIS) {
       sMax = Math.max(z-sLow,sUp-z);
     }
@@ -1682,16 +1681,16 @@ public class CacheManager implements Runnable {
     else { //sAxis == C_AXIS
       sMax = Math.max(c-sLow,sUp-c);
     }
-    
+
     rMax = Math.max(fMax,sMax);
-    
+
     for(int r = 0;r <= rMax;r++) {
       int toAdd[];
-      
+
       toAdd = getRing(fAxis,sAxis,z,t,c,r);
       result = append(toAdd,result);
     }
-    
+
     return result;
   }
 
@@ -1727,10 +1726,10 @@ public class CacheManager implements Runnable {
     else { //tAxis == C_AXIS
       tMid = c;
     }
-    
+
     int[] upSet = {};
     int[] lowSet = {};
-    
+
     for(int tRow = tMid;tRow <= tUp;tRow++) {
       int[] toAdd = {};
 
@@ -1740,25 +1739,25 @@ public class CacheManager implements Runnable {
         sAxis,sLow,sUp,z,tRow,c);
       else toAdd = getSpiral(fAxis,fLow,fUp,
         sAxis,sLow,sUp,z,t,tRow);
-        
-      upSet = append(toAdd,upSet); 
+
+      upSet = append(toAdd,upSet);
     }
-    
+
     if(tMid - 1 >= 0) {
       for(int tRow = tMid - 1;tRow >= tLow;tRow--) {
         int[] toAdd = {};
-  
+
         if(tAxis == Z_AXIS) toAdd = getSpiral(fAxis,fLow,fUp,
           sAxis,sLow,sUp,tRow,t,c);
         else if(tAxis == T_AXIS) toAdd = getSpiral(fAxis,fLow,fUp,
           sAxis,sLow,sUp,z,tRow,c);
         else toAdd = getSpiral(fAxis,fLow,fUp,
           sAxis,sLow,sUp,z,t,tRow);
-          
-        lowSet = append(toAdd,lowSet); 
+
+        lowSet = append(toAdd,lowSet);
       }
     }
-  
+
     result = getMix(lowSet,upSet);
     return result;
   }
@@ -1797,7 +1796,7 @@ public class CacheManager implements Runnable {
             System.out.print(oldIndex[i]);
           }
           System.out.println("}");
-          
+
           System.out.print("NewIndex = {");
           for (int i = 0; i<newIndex.length; i++) {
             if ( i != 0) System.out.print(",");

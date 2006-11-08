@@ -50,28 +50,28 @@ public class OptionsWindow extends JFrame implements
 
   /** Parent window. */
   private CustomWindow cw;
-  
+
   /** The CacheManager for this instance of data browser.*/
   private CacheManager manager;
-  
+
   /** CheckBoxes to indicate which axes to store.*/
   private JCheckBox zCheck,tCheck,cCheck;
 
   /** Spinners for slice storage.*/
   private JSpinner zFSpin,zBSpin,tFSpin,tBSpin,cFSpin,cBSpin;
-  
+
   /** Combo Boxes for cache mode selection.*/
   private JComboBox modeBox,stratBox;
-  
+
   /** Combo Boxes for dimensional priority selection.*/
   private JComboBox topBox,midBox,lowBox;
 
   /** Button to reset CacheManager to default modes. */
   private JButton resetBtn;
-  
+
   /** A flag to turn off listening to gui components.*/
   private boolean update;
-  
+
   /** Storage of what priority settings used to be.*/
   private int oldTop,oldMid,oldLow;
 
@@ -81,9 +81,9 @@ public class OptionsWindow extends JFrame implements
     setBackground(Color.gray);
 
     cw = c;
-    
+
     manager = cw.db.manager;
-    
+
     update = true;
 
     Border etchB = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
@@ -102,7 +102,7 @@ public class OptionsWindow extends JFrame implements
     zLab.setForeground(Color.red);
     JLabel tLab = new JLabel("Time:");
     tLab.setForeground(Color.blue);
-    
+
     JPanel custPanel = new JPanel();
     custPanel.add(custLab);
     custPanel.setBackground(Color.darkGray);
@@ -170,12 +170,12 @@ public class OptionsWindow extends JFrame implements
 
     aniPane.add(fpsLab,cc2.xy(2,1));
     aniPane.add(fps,cc2.xy(4,1));
-    
+
     JPanel cachePane = new JPanel();
     TitledBorder cacheB = BorderFactory.createTitledBorder(
       etchB, "CacheManager Options");
     cachePane.setBorder(cacheB);
-    
+
     JLabel typeL = new JLabel("\u00B7" + "Cache Type" + "\u00B7");
     JLabel axesL = new JLabel("Axes to Cache:");
     JLabel modeL = new JLabel("Cache Mode:");
@@ -190,7 +190,7 @@ public class OptionsWindow extends JFrame implements
     JLabel topL = new JLabel("Top Priority:");
     JLabel midL = new JLabel("Mid Priority:");
     JLabel lowL = new JLabel("Low Priority:");
-    
+
     JPanel typePanel = new JPanel();
     typePanel.add(typeL);
     typePanel.setBackground(Color.darkGray);
@@ -203,7 +203,7 @@ public class OptionsWindow extends JFrame implements
     priorPanel.add(priorL);
     priorPanel.setBackground(Color.darkGray);
     priorL.setForeground(Color.lightGray);
-    
+
     zCheck = new JCheckBox("Z");
     tCheck = new JCheckBox("T");
     tCheck.setSelected(true);
@@ -215,7 +215,7 @@ public class OptionsWindow extends JFrame implements
     zCheck.addItemListener(this);
     tCheck.addItemListener(this);
     cCheck.addItemListener(this);
-    
+
     String[] modes = {"Crosshair", "Rectangle", "Cross/Rect"};
     modeBox = new JComboBox(modes);
     String[] strats = {"Forward","Surround"};
@@ -232,7 +232,7 @@ public class OptionsWindow extends JFrame implements
     topBox.addActionListener(this);
     midBox.addActionListener(this);
     lowBox.addActionListener(this);
-    
+
     SpinnerNumberModel zFMod = new SpinnerNumberModel(0,0,9999,1);
     zFSpin = new JSpinner(zFMod);
     SpinnerNumberModel zBMod = new SpinnerNumberModel(0,0,9999,1);
@@ -251,17 +251,17 @@ public class OptionsWindow extends JFrame implements
     tBSpin.addChangeListener(this);
     cFSpin.addChangeListener(this);
     cBSpin.addChangeListener(this);
-    
+
     resetBtn = new JButton("Reset CacheManager to Default");
     resetBtn.addActionListener(this);
-    
+
     FormLayout layout3 = new FormLayout(
       TAB + ",pref," + TAB + ",pref:grow," + TAB + ",pref:grow," + TAB,
       "pref,pref,pref,pref," + TAB + ",pref,pref,pref,pref,pref,"
       + TAB + ",pref," + TAB + ",pref,pref,pref," + TAB + ",pref");
     cachePane.setLayout(layout3);
     CellConstraints cc3 = new CellConstraints();
-    
+
     cachePane.add(typePanel,cc3.xyw(1,1,7));
     cachePane.add(axesL,cc3.xyw(2,2,3));
     cachePane.add(checkPanel,cc3.xy(6,2));
@@ -289,7 +289,7 @@ public class OptionsWindow extends JFrame implements
     cachePane.add(lowL,cc3.xyw(2,16,3));
     cachePane.add(lowBox,cc3.xy(6,16));
     cachePane.add(resetBtn,cc3.xyw(2,18,5,"right,center"));
-    
+
     if(!cw.db.virtual) enableCache(false);
 
     //configure/layout content pane
@@ -298,11 +298,11 @@ public class OptionsWindow extends JFrame implements
       "pref,pref,pref");
     setLayout(lastLayout);
     CellConstraints ccs = new CellConstraints();
-    
+
     add(aniPane,ccs.xy(1,1));
     add(cachePane,ccs.xy(1,2));
     add(disPane,ccs.xy(1,3));
-    
+
     oldTop = topBox.getSelectedIndex();
     oldMid = midBox.getSelectedIndex();
     oldLow = lowBox.getSelectedIndex();
@@ -315,7 +315,7 @@ public class OptionsWindow extends JFrame implements
     pack();
     setVisible(true);
   }
-  
+
   /**
   * Converts a combo box index into a CacheManager constant
   * signifying an axis.
@@ -331,26 +331,26 @@ public class OptionsWindow extends JFrame implements
     }
     return -1;
   }
-  
+
   /** Enables/Disables CacheManager options in option window.*/
   private void enableCache(boolean enable) {
     zCheck.setEnabled(enable);
     tCheck.setEnabled(enable);
     cCheck.setEnabled(enable);
-    
+
     modeBox.setEnabled(enable);
     stratBox.setEnabled(enable);
     topBox.setEnabled(enable);
     midBox.setEnabled(enable);
     lowBox.setEnabled(enable);
-    
+
     zBSpin.setEnabled(enable);
     zFSpin.setEnabled(enable);
     tBSpin.setEnabled(enable);
     tFSpin.setEnabled(enable);
     cBSpin.setEnabled(enable);
     cFSpin.setEnabled(enable);
-    
+
     resetBtn.setEnabled(enable);
   }
 
@@ -359,7 +359,7 @@ public class OptionsWindow extends JFrame implements
   public void actionPerformed(ActionEvent e) {
     if(update) {
       Object source = e.getSource();
-      
+
       if (source == modeBox) {
         if(modeBox.getSelectedIndex() == 0)
           manager.setMode(CacheManager.CROSS_MODE);
@@ -389,7 +389,7 @@ public class OptionsWindow extends JFrame implements
         lowBox.setSelectedIndex(2);
         manager.setPriority(CacheManager.T_AXIS,CacheManager.Z_AXIS,
           CacheManager.C_AXIS);
-        
+
         Integer zeroI = new Integer(0);
         Integer twentyI = new Integer(20);
         zFSpin.setValue(zeroI);
@@ -397,9 +397,9 @@ public class OptionsWindow extends JFrame implements
         tFSpin.setValue(twentyI);
         tBSpin.setValue(zeroI);
         cFSpin.setValue(zeroI);
-        cBSpin.setValue(zeroI); 
+        cBSpin.setValue(zeroI);
         manager.setSize(0,0,0,20,0,0);
-        
+
         oldTop = topBox.getSelectedIndex();
         oldMid = midBox.getSelectedIndex();
         oldLow = lowBox.getSelectedIndex();
@@ -420,11 +420,11 @@ public class OptionsWindow extends JFrame implements
           oldLow = oldTop;
           update = true;
         }
-        
+
         oldTop = newTop;
         manager.setPriority(getConv(topBox.getSelectedIndex()),
          getConv(midBox.getSelectedIndex()),
-         getConv(lowBox.getSelectedIndex()));        
+         getConv(lowBox.getSelectedIndex()));
       }
       else if (source == midBox) {
         int newMid = midBox.getSelectedIndex();
@@ -441,11 +441,11 @@ public class OptionsWindow extends JFrame implements
           oldLow = oldMid;
           update = true;
         }
-        
+
         oldMid = newMid;
         manager.setPriority(getConv(topBox.getSelectedIndex()),
          getConv(midBox.getSelectedIndex()),
-         getConv(lowBox.getSelectedIndex()));        
+         getConv(lowBox.getSelectedIndex()));
       }
       else if (source == lowBox) {
         int newLow = lowBox.getSelectedIndex();
@@ -462,19 +462,19 @@ public class OptionsWindow extends JFrame implements
           oldMid = oldLow;
           update = true;
         }
-        
+
         oldLow = newLow;
         manager.setPriority(getConv(topBox.getSelectedIndex()),
          getConv(midBox.getSelectedIndex()),
-         getConv(lowBox.getSelectedIndex()));        
+         getConv(lowBox.getSelectedIndex()));
       }
     }
   }
-  
+
   public void itemStateChanged(ItemEvent e) {
     if(update) {
       Object source = e.getItemSelectable();
-      
+
       //if this is the only selected checkbox, leave it selected
       if (source == zCheck && e.getStateChange() == ItemEvent.DESELECTED &&
         !tCheck.isSelected() && !cCheck.isSelected())
@@ -500,13 +500,13 @@ public class OptionsWindow extends JFrame implements
         update = true;
         return;
       }
-    
+
       int zState = 0x00,tState = 0x00,cState = 0x00;
-      
+
       if (zCheck.isSelected()) zState = CacheManager.Z_AXIS;
       if (tCheck.isSelected()) tState = CacheManager.T_AXIS;
       if (cCheck.isSelected()) cState = CacheManager.C_AXIS;
-      
+
       int finalState = (zState | tState | cState);
       manager.setAxis(finalState);
     }
