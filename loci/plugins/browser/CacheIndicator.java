@@ -22,16 +22,19 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+package loci.plugins.browser;
+
 import javax.swing.*;
 import java.awt.*;
 
-public class CacheIndicator extends JComponent
-{
-  public static final int COMPONENT_HEIGHT = 3;
+public class CacheIndicator extends JComponent {
+
+  private static final int COMPONENT_HEIGHT = 3;
+
   protected int [] cache,loadList;
   protected int cacheLength;
   double ratio;
-  
+
   public CacheIndicator() {
     setBackground(Color.white);
     cache = null;
@@ -92,7 +95,7 @@ public class CacheIndicator extends JComponent
       }
     }
   }
-  
+
   private int translate(int cacheIndex) {
     Integer width = new Integer(getWidth());
     double compSize = width.doubleValue();
@@ -101,10 +104,10 @@ public class CacheIndicator extends JComponent
     double cLength = length.doubleValue();
     Integer thisIndex = new Integer(cacheIndex);
     double dIndex = thisIndex.doubleValue();
-    
+
     ratio = compSize/cLength;
     double dPixel = ratio * dIndex;
-    
+
     Double pixel = new Double(dPixel);
     return pixel.intValue();
   }
@@ -112,4 +115,5 @@ public class CacheIndicator extends JComponent
   public Dimension getPreferredSize() {
     return new Dimension(0,COMPONENT_HEIGHT);
   }
+
 }
