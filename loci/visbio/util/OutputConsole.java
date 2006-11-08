@@ -105,6 +105,8 @@ public class OutputConsole extends OutputStream {
 
   public JFrame getWindow() { return frame; }
 
+  public JTextArea getTextArea() { return area; }
+
   public void addOutputListener(OutputListener l) {
     synchronized (listeners) { listeners.addElement(l); }
   }
