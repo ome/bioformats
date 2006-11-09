@@ -102,7 +102,7 @@ public abstract class FormatReader extends FormatHandler
   protected boolean enableChannelStatCalculation = false;
 
   /** Whether or not to ignore color tables, if present. */
-  protected boolean ignoreColorTable;
+  protected boolean ignoreColorTable = false;
 
   /**
    * Current metadata store. Should <b>never</b> be accessed directly as the
@@ -576,7 +576,10 @@ public abstract class FormatReader extends FormatHandler
       System.out.println(reader.isThisType(id) ? "[yes]" : "[no]");
     }
 
-    if (stitch) reader = new FileStitcher(reader);
+    if (stitch) {
+      reader = new FileStitcher(reader, true);
+      id = FilePattern.findPattern(new File(map == null ? id : map));
+    }
     if (separate) reader = new ChannelSeparator(reader);
     if (merge) reader = new ChannelMerger(reader);
 
@@ -585,11 +588,7 @@ public abstract class FormatReader extends FormatHandler
     // read basic metadata
     System.out.println();
     System.out.println("Reading core metadata");
-    if (stitch) {
-      String p = FilePattern.findPattern(new File(map == null ? id : map));
-      System.out.println("File pattern = " + p);
-    }
-    else System.out.println("Filename = " + id);
+    System.out.println((stitch ? "File pattern" : "Filename") + " = " + id);
     if (map != null) System.out.println("Mapped filename = " + map);
     int seriesCount = reader.getSeriesCount(id);
     System.out.println("Series count = " + seriesCount);
