@@ -158,8 +158,7 @@ public final class DataTools {
   }
 
   /** Get a pair of bytes representing a short value. */
-  public static byte[] shortToBytes(short v, boolean little) throws IOException
-  {
+  public static byte[] shortToBytes(short v, boolean little) {
     byte[] rtn = new byte[2];
     if (little) {
       rtn[0] = (byte) (v & 0xff);
@@ -171,6 +170,59 @@ public final class DataTools {
     }
     return rtn;
   }
+
+  /** Get four bytes representing an int value. */
+  public static byte[] intToBytes(int v, boolean little) {
+    byte[] rtn = new byte[4];
+    if (little) {
+      rtn[0] = (byte) (v & 0xff);
+      rtn[1] = (byte) ((v >> 8) & 0xff);
+      rtn[2] = (byte) ((v >> 16) & 0xff);
+      rtn[3] = (byte) ((v >> 24) & 0xff);
+    }
+    else {
+      rtn[0] = (byte) ((v >> 24) & 0xff);
+      rtn[1] = (byte) ((v >> 16) & 0xff);
+      rtn[2] = (byte) ((v >> 8) & 0xff);
+      rtn[3] = (byte) (v & 0xff);
+    }
+    return rtn;
+  }
+
+  /** Get four bytes representing a float value. */
+  public static byte[] floatToBytes(float v, boolean little) {
+    int i = Float.floatToIntBits(v);
+    return intToBytes(i, little);
+  }
+
+  /** Get eight bytes representing a double value. */
+  public static byte[] doubleToBytes(double v, boolean little) {
+    byte[] rtn = new byte[8];
+    long l = Double.doubleToLongBits(v);
+    
+    if (little) {
+      rtn[0] = (byte) (l & 0xff);
+      rtn[1] = (byte) ((l >> 8) & 0xff);
+      rtn[2] = (byte) ((l >> 16) & 0xff);
+      rtn[3] = (byte) ((l >> 24) & 0xff);
+      rtn[4] = (byte) ((l >> 32) & 0xff);
+      rtn[5] = (byte) ((l >> 40) & 0xff);
+      rtn[6] = (byte) ((l >> 48) & 0xff);
+      rtn[7] = (byte) ((l >> 56) & 0xff);
+    }
+    else {
+      rtn[0] = (byte) ((l >> 56) & 0xff);
+      rtn[1] = (byte) ((l >> 48) & 0xff);
+      rtn[2] = (byte) ((l >> 40) & 0xff);
+      rtn[3] = (byte) ((l >> 32) & 0xff);
+      rtn[4] = (byte) ((l >> 24) & 0xff);
+      rtn[5] = (byte) ((l >> 16) & 0xff);
+      rtn[6] = (byte) ((l >> 8) & 0xff);
+      rtn[7] = (byte) (l & 0xff);
+    }
+    return rtn;
+  } 
+
 
   // -- Word decoding --
 
