@@ -312,7 +312,7 @@ public class AndorReader extends BaseTiffReader {
       else if (order.indexOf("C") < 0) order = order + "C";
     }
     currentOrder[series] = order;
-  
+
     orderCertain[series] = true;
   }
 

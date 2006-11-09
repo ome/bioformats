@@ -327,7 +327,7 @@ public class OIBReader extends FormatReader {
       pixelType = new int[1];
       currentOrder = new String[1];
       orderCertain = new boolean[] {true};
-        
+
       sizeX[0] = width;
       sizeY[0] = height;
       sizeZ[0] = zSize;
