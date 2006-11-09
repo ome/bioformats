@@ -119,7 +119,7 @@ public class SlimPlotter implements ActionListener,
     console = new OutputConsole("Log");
     System.setErr(new ConsoleStream(new PrintStream(console)));
     console.getTextArea().setColumns(54);
-    console.getTextArea().setRows(20);
+    console.getTextArea().setRows(10);
 
     ProgressMonitor progress = new ProgressMonitor(null,
       "Launching SlimPlotter", "Initializing", 0, 16 + 8);
@@ -558,8 +558,8 @@ public class SlimPlotter implements ActionListener,
     decayPane.add(decayLabel, BorderLayout.NORTH);
 
     JPanel options = new JPanel();
-    options.setBorder(new EmptyBorder(8, 5, 8, 20));
-    options.setLayout(new BoxLayout(options, BoxLayout.X_AXIS));
+    options.setBorder(new EmptyBorder(8, 5, 8, 5));
+    options.setLayout(new BoxLayout(options, BoxLayout.Y_AXIS));
 
     linear = new JRadioButton("Linear", true);
     log = new JRadioButton("Log", false);
@@ -575,37 +575,28 @@ public class SlimPlotter implements ActionListener,
     JPanel showPanel = new JPanel();
     showPanel.setBorder(new TitledBorder("Show"));
     showPanel.setLayout(new BoxLayout(showPanel, BoxLayout.X_AXIS));
-    JPanel showPanel1 = new JPanel();
-    showPanel1.setLayout(new BoxLayout(showPanel1, BoxLayout.Y_AXIS));
-    showPanel.add(showPanel1);
-    JPanel showPanel2 = new JPanel();
-    showPanel2.setLayout(new BoxLayout(showPanel2, BoxLayout.Y_AXIS));
-    showPanel.add(showPanel2);
-    JPanel showPanel3 = new JPanel();
-    showPanel3.setLayout(new BoxLayout(showPanel3, BoxLayout.Y_AXIS));
-    showPanel.add(showPanel3);
 
     showData = new JCheckBox("Data", true);
     showData.addActionListener(this);
-    showPanel1.add(showData);
+    showPanel.add(showData);
     showScale = new JCheckBox("Scale", true);
     showScale.addActionListener(this);
-    showPanel1.add(showScale);
+    showPanel.add(showScale);
     showBox = new JCheckBox("Box", true);
     showBox.addActionListener(this);
-    showPanel2.add(showBox);
+    showPanel.add(showBox);
     showLine = new JCheckBox("Line", adjustPeaks);
     showLine.setEnabled(adjustPeaks);
     showLine.addActionListener(this);
-    showPanel2.add(showLine);
+    showPanel.add(showLine);
     showFit = new JCheckBox("Fit", false);
     showFit.setEnabled(adjustPeaks);
     showFit.addActionListener(this);
-    showPanel3.add(showFit);
+    showPanel.add(showFit);
     showResiduals = new JCheckBox("Residuals", false);
     showResiduals.setEnabled(adjustPeaks);
     showResiduals.addActionListener(this);
-    showPanel3.add(showResiduals);
+    showPanel.add(showResiduals);
 
     numCurves = new JSpinner(new SpinnerNumberModel(1, 1, 9, 1));
     numCurves.setMaximumSize(numCurves.getPreferredSize());
@@ -631,15 +622,21 @@ public class SlimPlotter implements ActionListener,
     breakawayPanel.setDownEnabled(false);
     breakawayPanel.setContentPane(leftPanel);
 
-    options.add(makeRadioPanel("Scale", linear, log));
-    options.add(makeRadioPanel("Projection", perspective, parallel));
-    options.add(makeRadioPanel("Data", dataSurface, dataLines));
-    options.add(makeRadioPanel("Fit", fitSurface, fitLines));
-    options.add(makeRadioPanel("Residuals", resSurface, resLines));
-    options.add(showPanel);
-//    options.add(numCurves);
-    options.add(Box.createHorizontalStrut(5));
-    options.add(exportData);
+    JPanel options1 = new JPanel();
+    options1.setLayout(new BoxLayout(options1, BoxLayout.X_AXIS));
+    options1.add(makeRadioPanel("Scale", linear, log));
+    options1.add(makeRadioPanel("Projection", perspective, parallel));
+    options1.add(makeRadioPanel("Data", dataSurface, dataLines));
+    options1.add(makeRadioPanel("Fit", fitSurface, fitLines));
+    options1.add(makeRadioPanel("Residuals", resSurface, resLines));
+//    options1.add(numCurves);
+    JPanel options2 = new JPanel();
+    options2.setLayout(new BoxLayout(options2, BoxLayout.X_AXIS));
+    options2.add(showPanel);
+    options2.add(Box.createHorizontalStrut(5));
+    options2.add(exportData);
+    options.add(options1);
+    options.add(options2);
     decayPane.add(options, BorderLayout.SOUTH);
     masterPane.add(decayPane, BorderLayout.CENTER);
 
