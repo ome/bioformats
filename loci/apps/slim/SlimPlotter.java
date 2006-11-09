@@ -645,6 +645,10 @@ public class SlimPlotter implements ActionListener,
 
     // show window on screen
     masterWindow.pack();
+    Dimension size = masterWindow.getSize();
+    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    masterWindow.setLocation((screen.width - size.width) / 2,
+      (screen.height - size.height) / 2);
     masterWindow.setVisible(true);
     progress.setProgress(++p);
     progress.close();
