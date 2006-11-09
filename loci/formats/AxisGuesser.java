@@ -79,6 +79,9 @@ public class AxisGuesser {
   /** Guessed axis types. */
   protected int[] axes;
 
+  /** Whether the guesser is confident that all axis types are correct. */
+  protected boolean certain;
+
   // -- Constructor --
 
   /**
@@ -89,8 +92,8 @@ public class AxisGuesser {
    * @param fp The file pattern of the files
    * @param dimOrder The dimension order (e.g., XYZTC) within each file
    * @param sizeZ The number of Z positions within each file
-   * @param sizeT The number of Z positions within each file
-   * @param sizeC The number of Z positions within each file
+   * @param sizeT The number of T positions within each file
+   * @param sizeC The number of C positions within each file
    * @param isCertain Whether the dimension order given is known to be good,
    *   or merely a guess
    *
@@ -194,8 +197,11 @@ public class AxisGuesser {
     boolean canBeZ = !foundZ && sizeZ == 1;
     boolean canBeT = !foundT && sizeT == 1;
 
+    certain = isCertain;
+
     for (int i=0; i<axes.length; i++) {
       if (axes[i] != UNKNOWN_AXIS) continue;
+      certain = false;
 
       if (canBeZ) {
         axes[i] = Z_AXIS;
@@ -220,16 +226,44 @@ public class AxisGuesser {
   /** Gets the adjusted dimension order. */
   public String getAdjustedOrder() { return newOrder; }
 
+  /** Gets whether the guesser is confident that all axes are correct. */
+  public boolean isCertain() { return certain; }
+
   /**
    * Gets the guessed axis type for each dimensional block.
    * @return An array containing values from the enumeration:
    *   <ul>
-   *     <li>Z: focal planes</li>
-   *     <li>T: time points</li>
-   *     <li>C: channels</li>
+   *     <li>Z_AXIS: focal planes</li>
+   *     <li>T_AXIS: time points</li>
+   *     <li>C_AXIS: channels</li>
    *   </ul>
    */
   public int[] getAxisTypes() { return axes; }
+
+  /** Gets the number of Z axes in the pattern. */
+  public int getAxisCountZ() { return getAxisCount(Z_AXIS); }
+
+  /** Gets the number of T axes in the pattern. */
+  public int getAxisCountT() { return getAxisCount(T_AXIS); }
+
+  /** Gets the number of C axes in the pattern. */
+  public int getAxisCountC() { return getAxisCount(C_AXIS); }
+
+  /** Gets the number of axes in the pattern of the given type.
+   *  @param axisType One of:
+   *   <ul>
+   *     <li>Z_AXIS: focal planes</li>
+   *     <li>T_AXIS: time points</li>
+   *     <li>C_AXIS: channels</li>
+   *   </ul>
+   */
+  public int getAxisCount(int axisType) {
+    int num = 0;
+    for (int i=0; i<axes.length; i++) {
+      if (axes[i] == axisType) num++;
+    }
+    return num;
+  }
 
   // -- Main method --
 

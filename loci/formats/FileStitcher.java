@@ -27,60 +27,20 @@ package loci.formats;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.Vector;
+import java.util.*;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
 
-/** Logic to stitch together files with similar names. */
-public class FileStitcher extends ReaderWrapper {
-
-  // -- Constants --
-
-  /** Prefix endings indicating time dimension. */
-  private static final String[] T = {"t", "tl", "tp"};
-
-  /** Prefix endings indicating space dimension. */
-  private static final String[] Z = {"bf", "focal", "fp", "sec", "z", "zs"};
-
-  /** Prefix endings indicating channel dimension. */
-  private static final String[] C = {"c", "ch", "w"};
+/**
+ * Logic to stitch together files with similar names. Only stitches the first
+ * series for each file, and assumes that all files have the same dimensions.
+ */
+public class FileStitcher implements IFormatReader {
 
   // -- Fields --
 
-  /** FilePattern used to build the list of files. */
-  private FilePattern fp;
-
-  /** The X, Y, Z, C and T dimensions. */
-  private int[] dimensions;
-
-  /** Total number of images. */
-  private int numImages;
-
-  /** Image count for each file. */
-  private int[] imageCounts;
-
-  /** The matching files. */
-  private String[] files;
-
-  /** Dimension order. */
-  private String order;
-
-  /** Next plane number to open. */
-  private int number;
-
-  /** Initialized series. */
-  private int validSeries = -1;
-
-  /** Index into the array of readers. */
-  private int current = 0;
-
-  /** Whether each dimension size varies between files. */
-  private boolean varyZ, varyC, varyT;
-
-  /** Reader used for each file. */
-  private IFormatReader[] readers;
-
-  /** Whether to use a separate reader for each file. */
-  private boolean multipleReaders = true;
+  /** FormatReader to use as a template for constituent readers. */
+  private IFormatReader reader;
 
   /**
    * Whether string ids given should be treated
@@ -88,154 +48,423 @@ public class FileStitcher extends ReaderWrapper {
    */
   private boolean patternIds = false;
 
+  /** Current file pattern string. */
+  private String currentId;
+
+  /** File pattern object used to build the list of files. */
+  private FilePattern fp;
+
+  /** Axis guesser object used to guess which dimensional axes are which. */
+  private AxisGuesser ag;
+
+  /** The matching files. */
+  private String[] files;
+
+  /** Reader used for each file. */
+  private IFormatReader[] readers;
+
+  /** Image dimensions. */
+  private int width, height;
+
+  /** Number of images per file. */
+  private int imagesPerFile;
+
+  /** Dimensional axis lengths per file. */
+  private int sizeZ, sizeC, sizeT;
+
+  /** Total number of image planes. */
+  private int totalImages;
+
+  /** Total dimensional axis lengths. */
+  private int totalSizeZ, totalSizeC, totalSizeT;
+
+  /** Dimension order. */
+  private String order;
+
+  /** Component lengths for each axis type. */
+  private int[] lenZ, lenC, lenT;
+
+  /** Whether or not we're doing channel stat calculation (no by default). */
+  protected boolean enableChannelStatCalculation = false;
+
+  /** Whether or not to ignore color tables, if present. */
+  protected boolean ignoreColorTable = false;
+
   // -- Constructors --
 
   /** Constructs a FileStitcher around a new image reader. */
-  public FileStitcher() { super(); }
+  public FileStitcher() { this(new ImageReader()); }
 
   /**
    * Constructs a FileStitcher with the given reader.
    * @param r The reader to use for reading stitched files.
    */
-  public FileStitcher(IFormatReader r) { super(r); }
+  public FileStitcher(IFormatReader r) { this(r, false); }
 
   /**
    * Constructs a FileStitcher with the given reader.
    * @param r The reader to use for reading stitched files.
-   * @param multipleReaders Whether to use a separate reader for each file.
-   */
-  public FileStitcher(IFormatReader r, boolean multipleReaders) {
-    super(r);
-    this.multipleReaders = multipleReaders;
-  }
-
-  /**
-   * Constructs a FileStitcher with the given reader.
-   * @param multipleReaders Whether to use a separate reader for each file.
    * @param patternIds Whether string ids given should be treated as file
    *   patterns rather than single file paths.
    */
-  public FileStitcher(IFormatReader r, boolean multipleReaders,
-    boolean patternIds)
-  {
-    super(r);
-    this.multipleReaders = multipleReaders;
+  public FileStitcher(IFormatReader r, boolean patternIds) {
+    reader = r;
     this.patternIds = patternIds;
   }
 
   // -- IFormatReader API methods --
 
-  /** Determines the number of images in the given file. */
+  /* @see IFormatReader#isThisType(byte[]) */
+  public boolean isThisType(byte[] block) {
+    return reader.isThisType(block);
+  }
+
+  /** Determines the number of images in the given file series. */
   public int getImageCount(String id) throws FormatException, IOException {
-    if (getSeries(id) != validSeries) initFile(id);
-    return numImages;
+    if (!id.equals(currentId)) initFile(id);
+    return totalImages;
   }
 
-  /** Get the size of the X dimension. */
+  /** Checks if the images in the file are RGB. */
+  public boolean isRGB(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.isRGB(files[0]);
+  }
+
+  /* @see IFormatReader#getSizeX(String) */
   public int getSizeX(String id) throws FormatException, IOException {
-    if (getSeries(id) != validSeries) initFile(id);
-    return dimensions[0];
+    if (!id.equals(currentId)) initFile(id);
+    return width;
   }
 
-  /** Get the size of the Y dimension. */
+  /* @see IFormatReader#getSizeY(String) */
   public int getSizeY(String id) throws FormatException, IOException {
-    if (getSeries(id) != validSeries) initFile(id);
-    return dimensions[1];
+    if (!id.equals(currentId)) initFile(id);
+    return height;
   }
 
-  /** Get the size of the Z dimension. */
+  /* @see IFormatReader#getSizeZ(String) */
   public int getSizeZ(String id) throws FormatException, IOException {
-    if (getSeries(id) != validSeries) initFile(id);
-    return dimensions[2];
+    if (!id.equals(currentId)) initFile(id);
+    return totalSizeZ;
   }
 
-  /** Get the size of the C dimension. */
+  /* @see IFormatReader#getSizeC(String) */
   public int getSizeC(String id) throws FormatException, IOException {
-    if (getSeries(id) != validSeries) initFile(id);
-    return dimensions[3];
+    if (!id.equals(currentId)) initFile(id);
+    return totalSizeC;
   }
 
-  /** Get the size of the T dimension. */
+  /* @see IFormatReader#getSizeT(String) */
   public int getSizeT(String id) throws FormatException, IOException {
-    if (getSeries(id) != validSeries) initFile(id);
-    return dimensions[4];
+    if (!id.equals(currentId)) initFile(id);
+    return totalSizeT;
+  }
+
+  /* @see IFormatReader#getPixelType(String) */
+  public int getPixelType(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.getPixelType(files[0]);
+  }
+
+  /* @see IFormatReader#getChannelGlobalMinimum(String, int) */
+  public Double getChannelGlobalMinimum(String id, int theC)
+    throws FormatException, IOException
+  {
+    int[] include = getIncludeList(id, theC);
+    Double min = new Double(Double.POSITIVE_INFINITY);
+    for (int i=0; i<readers.length; i++) {
+      if (include[i] >= 0) {
+        Double d = readers[i].getChannelGlobalMinimum(files[i], include[i]);
+        if (d.compareTo(min) < 0) min = d;
+      }
+    }
+    return min;
+  }
+
+  /* @see IFormatReader#getChannelGlobalMaximum(String, int) */
+  public Double getChannelGlobalMaximum(String id, int theC)
+    throws FormatException, IOException
+  {
+    int[] include = getIncludeList(id, theC);
+    Double max = new Double(Double.NEGATIVE_INFINITY);
+    for (int i=0; i<readers.length; i++) {
+      if (include[i] >= 0) {
+        Double d = readers[i].getChannelGlobalMaximum(files[i], include[i]);
+        if (d.compareTo(max) > 0) max = d;
+      }
+    }
+    return max;
+  }
+
+  /* @see IFormatReader#getThumbSizeX(String) */
+  public int getThumbSizeX(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.getThumbSizeX(files[0]);
+  }
+
+  /* @see IFormatReader#getThumbSizeY(String) */
+  public int getThumbSizeY(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.getThumbSizeY(files[0]);
+  }
+
+  /* @see IFormatReader#isLittleEndian(String) */
+  public boolean isLittleEndian(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.isLittleEndian(files[0]);
   }
 
   /**
-   * Return a five-character string representing the dimension order
-   * within the file.
+   * Gets a five-character string representing the
+   * dimension order across the file series.
    */
   public String getDimensionOrder(String id)
     throws FormatException, IOException
   {
-    if (getSeries(id) != validSeries) initFile(id);
+    if (!id.equals(currentId)) initFile(id);
     return order;
   }
 
-  /** Obtains the specified image from the given file. */
+  /* @see IFormatReader#isOrderCertain(String) */
+  public boolean isOrderCertain(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return ag.isCertain();
+  }
+
+  /* @see IFormatReader#setChannelStatCalculationStatus(boolean) */
+  public void setChannelStatCalculationStatus(boolean on) {
+    enableChannelStatCalculation = on;
+  }
+
+  /* @see IFormatReader#getChannelStatCalculationStatus */
+  public boolean getChannelStatCalculationStatus() {
+    return enableChannelStatCalculation;
+  }
+
+  /* @see IFormatReader#isInterleaved(String) */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.isInterleaved(files[0]);
+  }
+
+  /** Obtains the specified image from the given file series. */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    if (getSeries(id) != validSeries) initFile(id);
-    return readers[current].openImage(findFile(no), number);
+    int[] q = computeIndices(id, no);
+    int fno = q[0], ino = q[1];
+    return readers[fno].openImage(files[fno], ino);
+
+    //CTR TODO - come up with an API for Chris, for setting the axes for the
+    //various blocks (pretty easy -- just setAxisType(int num, int type) or
+    //something similar), and also the internal ordering within each file,
+    //but make it intelligible (only show the internal dimensions that actually
+    //have size > 1). Similar to the current VisBio API?
   }
 
-  /** Obtains the specified image from the given file as a byte array. */
+  /** Obtains the specified image from the given file series as a byte array. */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (getSeries(id) != validSeries) initFile(id);
-    return readers[current].openBytes(findFile(no), number);
+    int[] q = computeIndices(id, no);
+    int fno = q[0], ino = q[1];
+    return readers[fno].openBytes(files[fno], ino);
   }
 
+  /* @see IFormatReader#openBytes(String, int, byte[]) */
+  public byte[] openBytes(String id, int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    int[] q = computeIndices(id, no);
+    int fno = q[0], ino = q[1];
+    return readers[fno].openBytes(files[fno], ino, buf);
+  }
+
+  /* @see IFormatReader#openThumbImage(String, int) */
+  public BufferedImage openThumbImage(String id, int no)
+    throws FormatException, IOException
+  {
+    int[] q = computeIndices(id, no);
+    int fno = q[0], ino = q[1];
+    return readers[fno].openThumbImage(files[fno], ino);
+  }
+
+  /* @see IFormatReader#openThumbImage(String, int) */
+  public byte[] openThumbBytes(String id, int no)
+    throws FormatException, IOException
+  {
+    int[] q = computeIndices(id, no);
+    int fno = q[0], ino = q[1];
+    return readers[fno].openThumbBytes(files[fno], ino);
+  }
+
+  /* @see IFormatReader#close() */
+  public void close() throws FormatException, IOException {
+    if (readers != null) {
+      for (int i=0; i<readers.length; i++) readers[i].close();
+    }
+    readers = null;
+    currentId = null;
+  }
+
+  /* @see IFormatReader#getSeriesCount(String) */
+  public int getSeriesCount(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.getSeriesCount(files[0]);
+  }
+
+  /* @see IFormatReader#setSeries(String, int) */
+  public void setSeries(String id, int no) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    reader.setSeries(files[0], no);
+  }
+
+  /* @see IFormatReader#getSeries(String) */
+  public int getSeries(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.getSeries(files[0]);
+  }
+
+  /* @see IFormatReader#setIgnoreColorTable(boolean) */
+  public void setIgnoreColorTable(boolean ignore) {
+    ignoreColorTable = ignore;
+  }
+
+  /* @see IFormatReader#swapDimensions(String, String) */
+  public void swapDimensions(String id, String order)
+    throws FormatException, IOException
+  {
+    throw new FormatException("Unimplemented");
+  }
+
+  /* @see IFormatReader#getIndex(String, int, int, int) */
   public int getIndex(String id, int z, int c, int t)
     throws FormatException, IOException
   {
     return FormatReader.getIndex(this, id, z, c, t);
   }
 
+  /* @see IFormatReader#getZCTCoords(String, int) */
   public int[] getZCTCoords(String id, int index)
     throws FormatException, IOException
   {
     return FormatReader.getZCTCoords(this, id, index);
   }
 
+
+  /* @see IFormatReader#getMetadataValue(String, String) */
+  public Object getMetadataValue(String id, String field)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.getMetadataValue(files[0], field);
+  }
+
+  /* @see IFormatReader#getMetadata(String) */
+  public Hashtable getMetadata(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.getMetadata(files[0]);
+  }
+
+  /* @see IFormatReader#setMetadataStore(MetadataStore) */
+  public void setMetadataStore(MetadataStore store) {
+    reader.setMetadataStore(store);
+  }
+
+  /* @see IFormatReader#getMetadataStore(String) */
+  public MetadataStore getMetadataStore(String id)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.getMetadataStore(files[0]);
+  }
+
+  /* @see IFormatReader#getMetadataStoreRoot(String) */
+  public Object getMetadataStoreRoot(String id)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return reader.getMetadataStoreRoot(files[0]);
+  }
+
+  /* @see IFormatReader#testRead(String[]) */
   public boolean testRead(String[] args) throws FormatException, IOException {
     return FormatReader.testRead(this, args);
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see IFormatHandler#isThisType(String) */
+  public boolean isThisType(String name) {
+    return reader.isThisType(name);
+  }
+
+  /* @see IFormatHandler#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    return reader.isThisType(name, open);
+  }
+
+  /* @see IFormatHandler#getFormat() */
+  public String getFormat() {
+    return reader.getFormat();
+  }
+
+  /* @see IFormatHandler#getSuffixes() */
+  public String[] getSuffixes() {
+    return reader.getSuffixes();
+  }
+
+  /* @see IFormatHandler#getFileFilters() */
+  public FileFilter[] getFileFilters() {
+    return reader.getFileFilters();
+  }
+
+  /* @see IFormatHandler#getFileChooser() */
+  public JFileChooser getFileChooser() {
+    return reader.getFileChooser();
+  }
+
+  /* @see IFormatHandler#mapId(String, String) */
+  public void mapId(String id, String filename) {
+    System.err.println("FileStitcher.mapId: unimplemented"); // CTR TODO
+  }
+
+  /* @see IFormatHandler#getMappedId(String) */
+  public String getMappedId(String id) {
+    System.err.println("FileStitcher.getMappedId: unimplemented"); // CTR TODO
+    return null;
   }
 
   // -- Helper methods --
 
   /** Initializes the given file. */
   protected void initFile(String id) throws FormatException, IOException {
-    numImages = 0;
-    dimensions = new int[5];
-    validSeries = getSeries(id);
-
-    // get the matching files
-    if (patternIds) {
-      // id is a file pattern
-      fp = new FilePattern(id);
-    }
-    else {
+    currentId = id;
+    if (!patternIds) {
       // id is a file path; find the containing pattern
-      fp = new FilePattern(new File(id));
+      id = FilePattern.findPattern(new File(id));
     }
+    fp = new FilePattern(id);
 
+    // verify that file pattern is valid and matches existing files
     String msg = " Please rename your files or disable file stitching.";
     if (!fp.isValid()) {
       throw new FormatException("Invalid " +
-        (patternIds ? "file pattern" : "filename") + " (" + id + "): " +
-        fp.getErrorMessage() + msg);
+        (patternIds ? "file pattern" : "filename") +
+        " (" + currentId + "): " + fp.getErrorMessage() + msg);
     }
-
     files = fp.getFiles();
     if (files == null) {
       throw new FormatException("No files matching pattern (" +
         fp.getPattern() + "). " + msg);
     }
-
-    imageCounts = new int[files.length];
+    for (int i=0; i<files.length; i++) {
+      if (!new File(files[i]).exists()) {
+        throw new FormatException("File #" + i +
+          " (" + files[i] + ") does not exist.");
+      }
+    }
 
     // determine reader type for these files; assume all are the same type
     Vector classes = new Vector();
@@ -247,276 +476,210 @@ public class FileStitcher extends ReaderWrapper {
     if (r instanceof ImageReader) r = ((ImageReader) r).getReader(files[0]);
     classes.add(r.getClass());
 
+    // construct list of readers for all files
     readers = new IFormatReader[files.length];
-    if (multipleReaders) {
-      // instantiate a reader object of the proper type for each file
-      readers[0] = reader;
-      for (int i=1; i<readers.length; i++) {
-        try {
-          r = null;
-          for (int j=classes.size()-1; j>=0; j--) {
-            Class c = (Class) classes.elementAt(j);
-            if (r == null) r = (IFormatReader) c.newInstance();
-            else {
-              r = (IFormatReader) c.getConstructor(
-                new Class[] {c}).newInstance(new Object[] {r});
-            }
+    readers[0] = reader;
+    for (int i=1; i<readers.length; i++) {
+      // use crazy reflection to instantiate a reader of the proper type
+      try {
+        r = null;
+        for (int j=classes.size()-1; j>=0; j--) {
+          Class c = (Class) classes.elementAt(j);
+          if (r == null) r = (IFormatReader) c.newInstance();
+          else {
+            r = (IFormatReader) c.getConstructor(
+              new Class[] {c}).newInstance(new Object[] {r});
           }
-          readers[i] = (IFormatReader) r;
         }
-        catch (InstantiationException exc) { exc.printStackTrace(); }
-        catch (IllegalAccessException exc) { exc.printStackTrace(); }
-        catch (NoSuchMethodException exc) { exc.printStackTrace(); }
-        catch (InvocationTargetException exc) { exc.printStackTrace(); }
+        readers[i] = (IFormatReader) r;
+      }
+      catch (InstantiationException exc) { exc.printStackTrace(); }
+      catch (IllegalAccessException exc) { exc.printStackTrace(); }
+      catch (NoSuchMethodException exc) { exc.printStackTrace(); }
+      catch (InvocationTargetException exc) { exc.printStackTrace(); }
+    }
+    String f0 = files[0];
+
+    // analyze first file; assume each file has the same parameters
+    width = reader.getSizeX(f0);
+    height = reader.getSizeY(f0);
+    imagesPerFile = reader.getImageCount(f0);
+    sizeZ = reader.getSizeZ(f0);
+    sizeC = reader.getSizeC(f0);
+    sizeT = reader.getSizeT(f0);
+    int pixelType = reader.getPixelType(f0);
+    boolean little = reader.isLittleEndian(f0);
+    order = reader.getDimensionOrder(f0);
+    boolean certain = reader.isOrderCertain(f0);
+
+    // guess at dimensions corresponding to file numbering
+    ag = new AxisGuesser(fp, order, sizeZ, sizeT, sizeC, certain);
+
+    // order may need to be adjusted
+    order = ag.getAdjustedOrder();
+    reader.swapDimensions(f0, order);
+    sizeZ = reader.getSizeZ(f0);
+    sizeC = reader.getSizeC(f0);
+    sizeT = reader.getSizeT(f0);
+
+    // compute total axis lengths
+    int[] count = fp.getCount();
+    int[] axes = ag.getAxisTypes();
+    int numZ = ag.getAxisCountZ();
+    int numC = ag.getAxisCountC();
+    int numT = ag.getAxisCountT();
+    totalImages = files.length * imagesPerFile;
+    totalSizeZ = sizeZ;
+    totalSizeC = sizeC;
+    totalSizeT = sizeT;
+    lenZ = new int[numZ + 1];
+    lenC = new int[numC + 1];
+    lenT = new int[numT + 1];
+    lenZ[0] = sizeZ;
+    lenC[0] = sizeC;
+    lenT[0] = sizeT;
+    int z = 1, c = 1, t = 1;
+    for (int i=0; i<axes.length; i++) {
+      switch (axes[i]) {
+        case AxisGuesser.Z_AXIS:
+          totalSizeZ *= count[i];
+          lenZ[z++] = count[i];
+          break;
+        case AxisGuesser.C_AXIS:
+          totalSizeC *= count[i];
+          lenC[c++] = count[i];
+          break;
+        case AxisGuesser.T_AXIS:
+          totalSizeT *= count[i];
+          lenT[t++] = count[i];
+          break;
+        default:
+          throw new FormatException("Unknown axis type for axis #" +
+            i + ": " + axes[i]);
       }
     }
-    else Arrays.fill(readers, reader);
 
-    // determine the total number of images and build a list of dimensions
-    // for each file
-
-    int[][] dims = new int[files.length][5];
-
-    for (int i=0; i<files.length; i++) {
-      imageCounts[i] = readers[i].getImageCount(files[i]);
-      numImages += imageCounts[i];
-      dims[i][0] = readers[i].getSizeX(files[i]);
-      dims[i][1] = readers[i].getSizeY(files[i]);
-      dims[i][2] = readers[i].getSizeZ(files[i]);
-      dims[i][3] = readers[i].getSizeC(files[i]);
-      dims[i][4] = readers[i].getSizeT(files[i]);
-    }
-
-    // determine how many varying dimensions there are
-
-    for (int i=1; i<dims.length; i++) {
-      varyZ = dims[i][2] != dims[i-1][2];
-      varyC = dims[i][3] != dims[i-1][3];
-      varyT = dims[i][4] != dims[i-1][4];
-    }
-
-    // always set the width and height to the maximum values
-
-    for (int i=0; i<dims.length; i++) {
-      if (dims[i][0] > dimensions[0]) dimensions[0] = dims[i][0];
-      if (dims[i][1] > dimensions[1]) dimensions[1] = dims[i][1];
-    }
-
-    if (varyZ || varyC || varyT) {
-      int max = 0;
-      int maxIndex = 0;
-      for (int i=0; i<dims.length; i++) {
-        if (dims[i][2] > max) {
-          max = dims[i][2];
-          maxIndex = i;
-        }
-      }
-
-      dimensions[2] = dims[maxIndex][2];
-    }
-    else {
-      dimensions[2] = dims[0][2];
-      dimensions[3] = dims[0][3];
-      dimensions[4] = dims[0][4];
-    }
-    setDimensions(id, dims);
-
-    MetadataStore s = reader.getMetadataStore(id);
-    s.setPixels(new Integer(dimensions[0]), new Integer(dimensions[1]),
-      new Integer(dimensions[2]), new Integer(dimensions[3]),
-      new Integer(dimensions[4]), null, null, null, null);
+    // populate metadata store
+    MetadataStore s = reader.getMetadataStore(f0);
+    s.setPixels(new Integer(width), new Integer(height),
+      new Integer(totalSizeZ), new Integer(totalSizeC),
+      new Integer(totalSizeT), new Integer(pixelType),
+      new Boolean(!little), order, null);
     setMetadataStore(s);
   }
 
   /**
-   * Set the X, Y, Z, C, and T dimensions; uses some special heuristics on the
-   * filename patterns to determine how Z, C and T should be set.
+   * Gets the file index, and image index into that file,
+   * corresponding to the given global image index.
    *
-   * @param dims - the dimensions of each file in the dataset
+   * @return An array of size 2, dimensioned {file index, image index}.
    */
-  private void setDimensions(String id, int[][] dims)
+  protected int[] computeIndices(String id, int no)
     throws FormatException, IOException
   {
-    // first set X and Y
-    // this is relatively easy - we can just take the maximum value
+    if (!id.equals(currentId)) initFile(id);
 
-    int maxX = 0;
-    int maxY = 0;
+    int[] axes = ag.getAxisTypes();
+    int[] count = fp.getCount();
 
-    for (int i=0; i<dims.length; i++) {
-      if (dims[i][0] > maxX) {
-        maxX = dims[i][0];
-      }
-      if (dims[i][1] > maxY) {
-        maxY = dims[i][1];
-      }
-    }
+    // get Z, C and T positions
+    int[] zct = getZCTCoords(id, no);
+    int[] posZ = rasterToPosition(lenZ, zct[0]);
+    int[] posC = rasterToPosition(lenC, zct[1]);
+    int[] posT = rasterToPosition(lenT, zct[2]);
 
-    for (int i=0; i<dimensions.length; i++) {
-      if (dimensions[i] == 0) dimensions[i]++;
-    }
-
-    // now the tricky part - setting Z, C and T
-
-    // first we'll get a list of the prefix blocks
-
-    String[] prefixes = fp.getPrefixes();
-    int[] counts = fp.getCount();
-
-    int zSize = 1;
-    int cSize = 1;
-    int tSize = 1;
-
-    String ordering = "";
-
-    for (int j=0; j<counts.length; j++) {
-      // which dimension is this?
-
-      int zndx = -1;
-      int cndx = -1;
-      int tndx = -1;
-
-      String p = prefixes[j].toLowerCase();
-      for (int k=0; k<Z.length; k++) {
-        if (p.indexOf(Z[k]) >= 0) zndx = k;
-      }
-
-      if (counts[j] <= 4) {
-        for (int k=0; k<C.length; k++) {
-          if (p.indexOf(C[k]) >= 0) cndx = k;
-        }
-      }
-
-      for (int k=0; k<T.length; k++) {
-        if (p.indexOf(T[k]) >= 0) tndx = k;
-      }
-
-      if (zndx >= 0 || cndx >= 0 || tndx >= 0) {
-        // the largest of these three is the dimension we will choose
-        int zpos = zndx < 0 ? -1 : p.indexOf(Z[zndx]);
-        int cpos = cndx < 0 ? -1 : p.indexOf(C[cndx]);
-        int tpos = tndx < 0 ? -1 : p.indexOf(T[tndx]);
-
-        int max = zpos;
-        if (cpos > max) max = cpos;
-        if (tpos > max) max = tpos;
-
-        if (max == zpos) {
-          ordering += "Z";
-          zSize = counts[j];
-        }
-        else if (max == cpos) {
-          if (cSize == 1 && !isRGB(id)) {
-            ordering += "C";
-            cSize = counts[j];
-          }
-          else {
-            if (zSize == 1) {
-              ordering += "Z";
-              zSize = counts[j];
-            }
-            else if (tSize == 1) {
-              ordering += "T";
-              tSize = counts[j];
-            }
-            else cSize *= counts[j];
-          }
-        }
-        else {
-          ordering += "T";
-          tSize = counts[j];
-        }
-      }
+    // convert Z, C and T position lists into file index and image index
+    int[] pos = new int[axes.length];
+    int z = 1, c = 1, t = 1;
+    for (int i=0; i<axes.length; i++) {
+      if (axes[i] == AxisGuesser.Z_AXIS) pos[i] = posZ[z++];
+      else if (axes[i] == AxisGuesser.C_AXIS) pos[i] = posC[c++];
+      else if (axes[i] == AxisGuesser.T_AXIS) pos[i] = posT[t++];
       else {
-        // our simple check failed, so let's try some more complex stuff
-
-        // if the count is 2 or 3, it's probably a C size
-        if (counts[j] == 2 || counts[j] == 3) {
-          if (!varyZ && !varyC && !varyT) {
-            if (counts[j] != 1) {
-              // we already set this dimension
-              if (zSize == 1) {
-                zSize = cSize;
-                ordering += "Z";
-              }
-              else if (tSize == 1) {
-                tSize = cSize;
-                ordering += "T";
-              }
-            }
-
-            if (ordering.indexOf("C") < 0) ordering += "C";
-            cSize = counts[j];
-          }
-        }
-        else {
-          // the most likely choice is whichever dimension is currently set to 1
-
-          if (dimensions[2] == 1) {
-            ordering += "Z";
-            zSize = counts[j];
-          }
-          else if (dimensions[4] == 1) {
-            ordering += "T";
-            tSize = counts[j];
-          }
-        }
+        throw new FormatException("Unknown axis type for axis #" +
+          i + ": " + axes[i]);
       }
     }
+    int fno = positionToRaster(count, pos);
+    int ino = FormatReader.getIndex(order, sizeZ, sizeC, sizeT,
+      imagesPerFile, isRGB(id), posZ[0], posC[0], posT[0]);
 
-    // reset the dimensions, preserving internal sizes
+    // configure the reader, in case we haven't done this one yet
+    readers[fno].setChannelStatCalculationStatus(enableChannelStatCalculation);
+    readers[fno].setSeries(files[fno], reader.getSeries(files[0]));
+    readers[fno].setIgnoreColorTable(ignoreColorTable);
+    readers[fno].swapDimensions(files[fno], order);
 
-    dimensions[3] *= cSize;
-
-    if (zSize > 1 && dimensions[2] > 1) {
-      if (dimensions[4] == 1) {
-        dimensions[4] = dimensions[2];
-        dimensions[2] = zSize;
-      }
-      else dimensions[2] *= zSize;
-    }
-    else dimensions[2] *= zSize;
-
-    if (tSize > 1 && dimensions[4] > 1) {
-      if (dimensions[2] == 1) {
-        dimensions[2] = dimensions[4];
-        dimensions[4] = tSize;
-      }
-      else dimensions[4] *= tSize;
-    }
-    else dimensions[4] *= tSize;
-
-    // make sure ordering is right
-    String begin = "";
-    String readerOrder = reader.getDimensionOrder(id);
-    for (int j=0; j<readerOrder.length(); j++) {
-      if (ordering.indexOf(readerOrder.substring(j, j+1)) < 0) {
-        begin += readerOrder.substring(j, j+1);
-      }
-    }
-
-    ordering = begin + ordering;
-    order = ordering.substring(0, 5);
+    return new int[] {fno, ino};
   }
 
-  /** Determine which file to open, if we want the specified image. */
-  private String findFile(int no) {
-    boolean found = false;
-    String file = files[0];
-    int ndx = 1; // index into the array of file names
-    while (!found) {
-      if (no < imageCounts[ndx - 1]) {
-        found = true;
-      }
-      else {
-        no -= imageCounts[ndx - 1];
-        file = files[ndx];
-        current = ndx;
-        ndx++;
+  /**
+   * Gets a list of readers to include in relation to the given C position.
+   * @return Array with indices corresponding to the list of readers, and
+   *   values indicating the internal channel index to use for that reader.
+   */
+  protected int[] getIncludeList(String id, int theC)
+    throws FormatException, IOException
+  {
+    int[] include = new int[readers.length];
+    Arrays.fill(include, -1);
+    for (int t=0; t<sizeT; t++) {
+      for (int z=0; z<sizeZ; z++) {
+        int no = getIndex(id, z, theC, t);
+        int[] q = computeIndices(id, no);
+        int fno = q[0], ino = q[1];
+        include[fno] = ino;
       }
     }
-    number = no;
-    return file;
+    return include;
+  }
+
+  // -- Utility methods --
+
+  /**
+   * Computes a unique 1-D index corresponding to the multidimensional
+   * position given in the pos array, using the specified lengths array
+   * as the maximum value at each positional dimension.
+   */
+  public static int positionToRaster(int[] lengths, int[] pos) {
+    int[] offsets = new int[lengths.length];
+    if (offsets.length > 0) offsets[0] = 1;
+    for (int i=1; i<offsets.length; i++) {
+      offsets[i] = offsets[i - 1] * lengths[i - 1];
+    }
+    int raster = 0;
+    for (int i=0; i<pos.length; i++) raster += offsets[i] * pos[i];
+    return raster;
+  }
+
+  /**
+   * Computes a unique 3-D position corresponding to the given raster
+   * value, using the specified lengths array as the maximum value at
+   * each positional dimension.
+   */
+  public static int[] rasterToPosition(int[] lengths, int raster) {
+    int[] offsets = new int[lengths.length];
+    if (offsets.length > 0) offsets[0] = 1;
+    for (int i=1; i<offsets.length; i++) {
+      offsets[i] = offsets[i - 1] * lengths[i - 1];
+    }
+    int[] pos = new int[lengths.length];
+    for (int i=0; i<pos.length; i++) {
+      int q = i < pos.length - 1 ? raster % offsets[i + 1] : raster;
+      pos[i] = q / offsets[i];
+      raster -= q;
+    }
+    return pos;
+  }
+
+  /**
+   * Computes the maximum raster value of a positional array with
+   * the given maximum values.
+   */
+  public static int getRasterLength(int[] lengths) {
+    int len = 1;
+    for (int i=0; i<lengths.length; i++) len *= lengths[i];
+    return len;
   }
 
 }
