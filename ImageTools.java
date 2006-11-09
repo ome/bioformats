@@ -73,12 +73,11 @@ public final class ImageTools {
       return ImageTools.makeImage(data, w, h, 3, interleaved);
     }
     else if (bps == 4) {
-      float[] floats = new float[data.length / bps];
-      for (int i=0; i<floats.length; i++) {
-        floats[i] =
-          Float.intBitsToFloat(DataTools.bytesToInt(data, i*4, 4, little));
+      int[] ints = new int[data.length / bps];
+      for (int i=0; i<ints.length; i++) {
+        ints[i] = DataTools.bytesToInt(data, i*4, 4, little);
       }
-      return makeImage(floats, w, h, c, interleaved);
+      return makeImage(ints, w, h, c, interleaved);
     }
     else if (bps == 6) {
       short[][] shorts = new short[3][data.length / 6];
@@ -458,7 +457,12 @@ public final class ImageTools {
         }
       }
     }
-    return getInts(makeType(image, DataBuffer.TYPE_INT));
+    
+    int w = image.getWidth(), h = image.getHeight(), c = r.getNumBands();
+    int[][] samples = new int[c][w * h];
+    for (int i=0; i<c; i++) r.getSamples(0, 0, w, h, i, samples[i]);
+    return samples;
+    //return getInts(makeType(image, DataBuffer.TYPE_INT));
   }
 
   /** Extracts pixel data as arrays of floats, one per channel. */
@@ -503,6 +507,63 @@ public final class ImageTools {
     for (int i=0; i<c; i++) r.getSamples(0, 0, w, h, i, samples[i]);
     return samples;
     //return getDoubles(makeType(image, DataBuffer.TYPE_DOUBLE));
+  }
+
+  /**
+   * Return a 2D array of bytes representing the image.  If the transfer type
+   * is something other than DataBuffer.TYPE_BYTE, then each pixel value is
+   * converted to the appropriate number of bytes.  In other words, if we
+   * are given an image with 16-bit data, each channel of the resulting array
+   * will have width * height * 2 bytes.
+   */
+  public static byte[][] getPixelBytes(BufferedImage img, boolean little) {
+    Object pixels = getPixels(img);
+
+    if (pixels instanceof byte[][]) return (byte[][]) pixels;
+    else if (pixels instanceof short[][]) {
+      short[][] s = (short[][]) pixels;
+      byte[][] b = new byte[s.length][s[0].length * 2];
+      for (int i=0; i<b.length; i++) {
+        for (int j=0; j<s[0].length; j++) {
+          byte[] v = DataTools.shortToBytes(s[i][j], little);
+          b[i][j*2] = v[0];
+          b[i][j*2 + 1] = v[1];
+        }
+      }
+      return b;
+    }
+    else if (pixels instanceof int[][]) {
+      int[][] in = (int[][]) pixels;
+      byte[][] b = new byte[in.length][in[0].length * 4];
+      for (int i=0; i<b.length; i++) {
+        for (int j=0; j<in[0].length; j++) {
+          byte[] v = DataTools.intToBytes(in[i][j], little);
+          b[i][j*4] = v[0];
+          b[i][j*4 + 1] = v[1];
+          b[i][j*4 + 2] = v[2];
+          b[i][j*4 + 3] = v[3];
+        }
+      }
+      return b;
+    }
+    else if (pixels instanceof float[][]) {
+      float[][] in = (float[][]) pixels;
+      byte[][] b = new byte[in.length][in[0].length * 4];
+      for (int i=0; i<b.length; i++) {
+        for (int j=0; j<in[0].length; j++) {
+          byte[] v = DataTools.floatToBytes(in[i][j], little);
+          b[i][j*4] = v[0];
+          b[i][j*4 + 1] = v[1];
+          b[i][j*4 + 2] = v[2];
+          b[i][j*4 + 3] = v[3];
+        }
+      }
+      return b;
+    }
+    else if (pixels instanceof double[][]) {
+
+    }
+    return null;
   }
 
   /**
