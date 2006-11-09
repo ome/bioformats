@@ -13,8 +13,9 @@ Bio-Formats
     Folders:       loci/formats
                    loci/formats/*
     Main class:    loci.formats.ImageViewer
-    Dependencies:  ome-java.jar
-                   poi-loci.jar
+    Dependencies:  jj2000-5.1.jar (reflected)
+                   ome-java.jar (reflected)
+                   poi-loci.jar (reflected)
     Targets:       style-formats
                    compile-formats
                    jar-formats
@@ -30,6 +31,7 @@ VisBio
                    commons-logging.jar (ome-java.jar)
                    forms-1.0.4.jar
                    ij.jar
+                   jj2000-5.1.jar (bio-formats.jar)
                    looks-1.2.2.jar
                    ome-java.jar
                    poi-loci.jar (bio-formats.jar)
@@ -56,6 +58,7 @@ LOCI Plugins for ImageJ
     Dependencies:  bio-formats.jar
                    commons-httpclient-2.0-rc2.jar (ome-java.jar)
                    commons-logging.jar (ome-java.jar)
+                   jj2000-5.1.jar (bio-formats.jar)
                    ome-java.jar (bio-formats.jar)
                    poi-loci.jar (bio-formats.jar)
                    xmlrpc-1.2-b1.jar (ome-java.jar)
@@ -73,7 +76,9 @@ OME Metadata Notebook
                    commons-httpclient-2.0-rc2.jar (ome-java.jar)
                    commons-logging.jar (ome-java.jar)
                    forms-1.0.4.jar
+                   jj2000-5.1.jar (bio-formats.jar)
                    ome-java.jar
+                   poi-loci.jar (bio-formats.jar)
                    xmlrpc-1.2-b1.jar (ome-java.jar)
     Targets:       style-notebook
                    compile-notebook
@@ -170,6 +175,12 @@ ImageJ
     URL:       http://rsb.info.nih.gov/ij/
     Notes:     Bundled with VisBio to achieve ImageJ interconnectivity
     License:   Public domain
+
+JJ2000
+    JAR file:  jj2000-5.1.jar
+    URL:       http://jj2000.epfl.ch/
+    Notes:     Used by Bio-Formats for JPEG2000 support (ND2, JP2)
+    License:   http://jj2000.epfl.ch/jj_download/copyright-software.html
 
 JGoodies Looks
     JAR file:  looks-1.2.2.jar
