@@ -284,6 +284,18 @@ public class ND2Reader extends FormatReader {
     orderCertain[0] = false;
     currentOrder[0] = sizeC[0] == 3 ? "XYCTZ" : "XYTZC";
     pixelType[0] = ImageTools.getPixelType(img);
+  
+    MetadataStore store = getMetadataStore(id);
+    store.setPixels(
+      new Integer(sizeX[0]),
+      new Integer(sizeY[0]),
+      new Integer(1),
+      new Integer(sizeC[0]),
+      new Integer(numImages),
+      new Integer(pixelType[0]),
+      new Boolean(isLittleEndian(id)),
+      currentOrder[0],
+      null);
   }
 
   // -- Main method --
