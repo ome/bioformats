@@ -812,7 +812,7 @@ public class LeicaReader extends BaseTiffReader {
 
     for (int i=0; i<numSeries; i++) {
       orderCertain[i] = true;
-      
+
       if (sizeC[i] == 0) sizeC[i] = 1;
       sizeT[i] += 1;
       currentOrder[i] = "XYZTC";

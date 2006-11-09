@@ -167,7 +167,7 @@ public class ZeissLSMReader extends BaseTiffReader {
         long subFileType = TiffTools.getIFDLongValue(ifds[i],
           TiffTools.NEW_SUBFILE_TYPE, true, 0);
         long[] offsets = TiffTools.getStripOffsets(ifds[i]);
-        
+
         if (subFileType == 1) {
           ifds[i] = null;
           numThumbs++;

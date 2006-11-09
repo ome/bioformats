@@ -34,11 +34,11 @@ public class ND2Reader extends FormatReader {
 
   // -- Constants --
 
-  private static final String NO_JJ2000_MSG = "You need to install JJ2000 " +
-    "from http://jj2000.epfl.ch";
+  private static final String NO_JJ2000_MSG =
+    "You need to install JJ2000 from http://jj2000.epfl.ch";
 
   // -- Static fields --
- 
+
   private static boolean noJJ2000 = false;
   private static ReflectedUniverse r = createReflectedUniverse();
 
@@ -68,7 +68,6 @@ public class ND2Reader extends FormatReader {
     return r;
   }
 
-
   // -- Fields --
 
   /** Number of image planes in the file. */
@@ -87,7 +86,7 @@ public class ND2Reader extends FormatReader {
   /** Checks if the given block is a valid header for an ND2 file. */
   public boolean isThisType(byte[] block) {
     if (block.length < 8) return false;
-    return block[4] == 0x6a && block[5] == 0x50 && block[6] == 0x20 && 
+    return block[4] == 0x6a && block[5] == 0x50 && block[6] == 0x20 &&
       block[7] == 0x20;
   }
 
@@ -128,14 +127,14 @@ public class ND2Reader extends FormatReader {
     }
 
     byte[][] pixels = ImageTools.getPixelBytes(openImage(id, no), false);
-    
+
     if (pixels.length == 1) {
       return pixels[0];
     }
 
     byte[] b = new byte[pixels.length * pixels[0].length];
     for (int i=0; i<pixels.length; i++) {
-      System.arraycopy(pixels[i], 0, b, i*pixels[0].length, pixels[i].length); 
+      System.arraycopy(pixels[i], 0, b, i*pixels[0].length, pixels[i].length);
     }
     return b;
   }
@@ -253,7 +252,7 @@ public class ND2Reader extends FormatReader {
     numImages = offsets.length;
 
     BufferedImage img = openImage(id, 0);
-    
+
     sizeX[0] = img.getWidth();
     sizeY[0] = img.getHeight();
 
@@ -276,14 +275,14 @@ public class ND2Reader extends FormatReader {
     }
     offsets = tempOffsets;
     numImages = offsets.length;
- 
+
     sizeC[0] = img.getRaster().getNumBands();
     sizeT[0] = numImages;
     sizeZ[0] = 1;
     orderCertain[0] = false;
     currentOrder[0] = sizeC[0] == 3 ? "XYCTZ" : "XYTZC";
     pixelType[0] = ImageTools.getPixelType(img);
- 
+
     MetadataStore store = getMetadataStore(id);
     store.setPixels(
       new Integer(sizeX[0]),
