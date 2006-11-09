@@ -166,8 +166,7 @@ public class ND2Reader extends FormatReader {
 
       r.exec("pl = new ParameterList(defpl)");
 
-      long[] offs = (long[]) r.getVar("offsets");
-      int off = (int) offs[no];
+      int off = (int) offsets[no];
       r.setVar("off", off);
 
       r.exec("in.seek(off)");
@@ -277,14 +276,14 @@ public class ND2Reader extends FormatReader {
     }
     offsets = tempOffsets;
     numImages = offsets.length;
-
+ 
     sizeC[0] = img.getRaster().getNumBands();
     sizeT[0] = numImages;
     sizeZ[0] = 1;
     orderCertain[0] = false;
     currentOrder[0] = sizeC[0] == 3 ? "XYCTZ" : "XYTZC";
     pixelType[0] = ImageTools.getPixelType(img);
-  
+ 
     MetadataStore store = getMetadataStore(id);
     store.setPixels(
       new Integer(sizeX[0]),
