@@ -27,6 +27,7 @@ package loci.formats.in;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.StringTokenizer;
 import loci.formats.*;
 
 /** ND2Reader is the file format reader for Nikon ND2 files. */
@@ -276,7 +277,126 @@ public class ND2Reader extends FormatReader {
     offsets = tempOffsets;
     numImages = offsets.length;
 
-    sizeC[0] = img.getRaster().getNumBands();
+    // read XML metadata from the end of the file
+
+    RandomAccessStream ras = new RandomAccessStream(getMappedId(id));
+    ras.seek(offsets[offsets.length - 1]);
+
+    boolean found = false;
+    int off = -1;
+    byte[] buf = new byte[2048];
+    while (!found) {
+      int read = 0;
+      if (ras.getFilePointer() == offsets[offsets.length - 1]) {
+        read = ras.read(buf);
+      }
+      else {
+        System.arraycopy(buf, buf.length - 10, buf, 0, 10);
+        read = ras.read(buf, 10, buf.length - 10);
+      }
+
+      if (read == buf.length) read -= 10;
+      for (int i=0; i<read+9; i++) {
+        if (buf[i] == (byte) 0xff && buf[i+1] == (byte) 0xd9) {
+          found = true;
+          off = (int) (ras.getFilePointer() - (read+10) + i);
+          i = buf.length;
+          break;
+        }
+      }
+    }
+
+    if (off > 0 && off < ras.length() - 5) {
+      ras.seek(off + 5);
+      byte[] b = new byte[(int) (ras.length() - off)];
+      ras.read(b);
+      String xml = new String(b);
+    
+      // assume that this XML string will be malformed, since that's how both
+      // sample files are; this means we need to manually parse it :-(
+
+      // first, let's strip out all comments
+
+      while (xml.indexOf("<!--") != -1) {
+        int start = xml.indexOf("<!--");
+        int end = xml.indexOf("-->", start);
+        String pre = xml.substring(0, start);
+        String post = xml.substring(end + 3);
+        xml = pre + post;
+      }
+
+      // strip out binary data at the end - this is irrelevant for our purposes
+      xml = xml.substring(0, xml.lastIndexOf("</MetadataSeq>") + 14);
+   
+      // each chunk appears on a separate line, so split up the chunks
+
+      StringTokenizer st = new StringTokenizer(xml, "\r\n");
+      while (st.hasMoreTokens()) {
+        String token = st.nextToken().trim();
+        if (token.indexOf("<") != -1) {
+          String prefix = token.substring(1, token.indexOf(">")).trim();
+          token = token.substring(token.indexOf(">") + 1);
+
+          while (token.indexOf("<") != -1) {
+            int start = token.indexOf("<");
+            String s = token.substring(start + 1, token.indexOf(">", start));
+            token = token.substring(token.indexOf(">", start));
+
+            // get the prefix for this tag
+            if (s.indexOf(" ") != -1) {
+              String pre = s.substring(0, s.indexOf(" ")).trim();
+              s = s.substring(s.indexOf(" ") + 1);
+
+              // get key/value pairs
+              while (s.indexOf("=") != -1) {
+                int eq = s.indexOf("=");
+                String key = s.substring(0, eq).trim();
+                String value = 
+                  s.substring(eq + 2, s.indexOf("\"", eq + 2)).trim();
+                
+                // strip out the data types
+                if (key.indexOf("runtype") == -1) {
+                  metadata.put(prefix + " " + pre + " " + key, value);
+                }
+                s = s.substring(s.indexOf("\"", eq + 2) + 1);
+             }
+            }
+          }
+        }
+      }
+    }
+
+    // TODO : use sigBits to compute pixel type
+    String sigBits = 
+      (String) metadata.get("AdvancedImageAttributes SignificantBits value");
+    int bits = 0;
+    if (sigBits != null && sigBits.length() > 0) {
+      bits = Integer.parseInt(sigBits.trim());
+    }
+
+    // determine the pixel size
+    String pixX = (String) metadata.get(
+      "CalibrationSeq _SEQUENCE_INDEX=\"0\" dCalibration value");
+    String pixZ = (String) metadata.get(
+      "CalibrationSeq _SEQUENCE_INDEX=\"0\" dAspect value");
+
+    float pixSizeX = 0f;
+    float pixSizeZ = 0f;
+
+    if (pixX != null && pixX.length() > 0) {
+      pixSizeX = Float.parseFloat(pixX.trim());
+    }
+    if (pixZ != null && pixZ.length() > 0) {
+      pixSizeZ = Float.parseFloat(pixZ.trim());
+    }
+
+    String channels = 
+      (String) metadata.get("AdvancedImageAttributes VirtualComponents value");
+    if (channels != null && channels.length() > 0) {
+      sizeC[0] = 3 - Integer.parseInt(channels.trim());
+    }
+    else sizeC[0] = img.getRaster().getNumBands();
+
     sizeT[0] = numImages;
     sizeZ[0] = 1;
     orderCertain[0] = false;
@@ -294,6 +414,10 @@ public class ND2Reader extends FormatReader {
       new Boolean(isLittleEndian(id)),
       currentOrder[0],
       null);
+  
+    store.setDimensions(new Float(pixSizeX), new Float(pixSizeX),
+      new Float(pixSizeZ), null, null, null);
+  
   }
 
   // -- Main method --
