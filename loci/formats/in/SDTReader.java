@@ -114,6 +114,12 @@ public class SDTReader extends FormatReader {
     return false;
   }
 
+  /** Get the size of the C dimension. */
+  public int getSizeC(String id) throws FormatException, IOException {
+    int sc = super.getSizeC(id);
+    return intensity ? sc : (timeBins * sc);
+  }
+
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     return true;
