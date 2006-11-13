@@ -277,18 +277,46 @@ public class FilePattern {
 
   // -- Utility methods --
 
-  /** Identifies the group pattern from a given file within that group. */
+  /**
+   * Identifies the group pattern from a given file within that group.
+   * @param file The file to use as a template for the match.
+   */
   public static String findPattern(File file) {
     return findPattern(file.getName(), file.getAbsoluteFile().getParent());
   }
 
-  /** Identifies the group pattern from a given file within that group. */
+  /**
+   * Identifies the group pattern from a given file within that group.
+   * @param name The filename to use as a template for the match.
+   * @param dir The directory in which to search for matching files.
+   */
   public static String findPattern(String name, String dir) {
     if (dir == null) dir = ""; // current directory
     else if (!dir.equals("") && !dir.endsWith(File.separator)) {
       dir += File.separator;
     }
     File dirFile = new File(dir.equals("") ? "." : dir);
+
+    // list files in the given directory
+    File[] f = dirFile.listFiles();
+    if (f == null) return null;
+    String[] nameList = new String[f.length];
+    for (int i=0; i<nameList.length; i++) nameList[i] = f[i].getName();
+ 
+    return findPattern(name, dir, nameList);
+  }
+
+  /**
+   * Identifies the group pattern from a given file within that group.
+   * @param name The filename to use as a template for the match.
+   * @param dir The directory prefix to use for matching files.
+   * @param nameList The names through which to search for matching files.
+   */
+  public static String findPattern(String name, String dir, String[] nameList) {
+    if (dir == null) dir = ""; // current directory
+    else if (!dir.equals("") && !dir.endsWith(File.separator)) {
+      dir += File.separator;
+    }
 
     // compile list of numerical blocks
     int len = name.length();
@@ -331,7 +359,7 @@ public class FilePattern {
       String post = name.substring(endList[i]);
 
       NumberFilter filter = new NumberFilter(pre, post);
-      File[] list = dirFile.listFiles(filter);
+      String[] list = matchFiles(nameList, filter);
       if (list == null || list.length == 0) return null;
       if (list.length == 1) {
         // false alarm; this number block is constant
@@ -340,7 +368,7 @@ public class FilePattern {
       }
       boolean fix = true;
       for (int j=0; j<list.length; j++) {
-        if (list[j].getName().length() != len) {
+        if (list[j].length() != len) {
           fix = false;
           break;
         }
@@ -356,7 +384,7 @@ public class FilePattern {
           int jx = indexList[i] + j;
           char c = name.charAt(jx);
           for (int k=0; k<list.length; k++) {
-            if (list[k].getName().charAt(jx) != c) {
+            if (list[k].charAt(jx) != c) {
               same[j] = false;
               break;
             }
@@ -373,7 +401,7 @@ public class FilePattern {
           }
           else {
             while (j < width && !same[j]) j++;
-            String p = findPattern(name, dirFile, jx, indexList[i] + j, "");
+            String p = findPattern(name, nameList, jx, indexList[i] + j, "");
             if (p == null) {
               // unable to find an appropriate breakdown of numerical blocks
               return null;
@@ -386,7 +414,7 @@ public class FilePattern {
         // assume variable-width block represents only one numbering
         BigInteger[] numbers = new BigInteger[list.length];
         for (int j=0; j<list.length; j++) {
-          numbers[j] = filter.getNumber(list[j].getName());
+          numbers[j] = filter.getNumber(list[j]);
         }
         Arrays.sort(numbers);
         String bounds = getBounds(numbers, false);
@@ -402,21 +430,21 @@ public class FilePattern {
 
   /** Recursive method for parsing a fixed-width numerical block. */
   private static String findPattern(String name,
-    File dirFile, int ndx, int end, String p)
+    String[] nameList, int ndx, int end, String p)
   {
     if (ndx == end) return p;
     for (int i=end-ndx; i>=1; i--) {
       NumberFilter filter = new NumberFilter(
         name.substring(0, ndx), name.substring(ndx + i));
-      File[] list = dirFile.listFiles(filter);
+      String[] list = matchFiles(nameList, filter);
       BigInteger[] numbers = new BigInteger[list.length];
       for (int j=0; j<list.length; j++) {
-        numbers[j] = new BigInteger(list[j].getName().substring(ndx, ndx + i));
+        numbers[j] = new BigInteger(list[j].substring(ndx, ndx + i));
       }
       Arrays.sort(numbers);
       String bounds = getBounds(numbers, true);
       if (bounds == null) continue;
-      String pat = findPattern(name, dirFile, ndx + i, end, p + bounds);
+      String pat = findPattern(name, nameList, ndx + i, end, p + bounds);
       if (pat != null) return pat;
     }
     // no combination worked; this parse path is infeasible
@@ -460,6 +488,17 @@ public class FilePattern {
     return bounds.toString();
   }
 
+  /** Filters the given list of filenames according to the specified filter. */
+  private static String[] matchFiles(String[] inFiles, NumberFilter filter) {
+    Vector v = new Vector();
+    for (int i=0; i<inFiles.length; i++) {
+      if (filter.accept(inFiles[i])) v.add(inFiles[i]);
+    }
+    String[] s = new String[v.size()];
+    v.copyInto(s);
+    return s;
+  }
+
   // -- Helper methods --
 
   /** Recursive method for building filenames for the file listing. */
@@ -489,11 +528,31 @@ public class FilePattern {
 
   /** Method for testing file pattern logic. */
   public static void main(String[] args) {
-    File file = args.length < 1 ?
-      new File(System.getProperty("user.dir")).listFiles()[0] :
-      new File(args[0]);
-    System.out.println("File = " + file.getAbsoluteFile());
-    String pat = findPattern(file);
+    String pat = null;
+    if (args.length > 0) {
+      // test file pattern detection based on the given file on disk
+      File file = new File(args[0]);
+      System.out.println("File = " + file.getAbsoluteFile());
+      pat = findPattern(file);
+    }
+    else {
+      // test file pattern detection from a virtual file list
+      String[] nameList = new String[2 * 4 * 3 * 12 + 1];
+      nameList[0] = "outlier.ext";
+      int count = 1;
+      for (int i=1; i<=2; i++) {
+        for (int j=1; j<=4; j++) {
+          for (int k=0; k<=2; k++) {
+            for (int l=1; l<=12; l++) {
+              String sl = (l < 10 ? "0" : "") + l;
+              nameList[count++] =
+                "hypothetical" + sl + k + j + "c" + i + ".ext";
+            }
+          }
+        }
+      }
+      pat = findPattern(nameList[1], null, nameList);
+    }
     if (pat == null) System.out.println("No pattern found.");
     else {
       System.out.println("Pattern = " + pat);

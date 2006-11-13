@@ -61,11 +61,16 @@ public class NumberFilter implements FileFilter {
     catch (NumberFormatException exc) { return null; }
   }
 
+  /** Tests if a specified file should be included in a file list. */
+  public boolean accept(String name) {
+    return getNumber(name) != null;
+  }
+
   // -- FileFilter API methods --
 
   /** Tests if a specified file should be included in a file list. */
   public boolean accept(File pathname) {
-    return getNumber(pathname.getName()) != null;
+    return accept(pathname.getName());
   }
 
 }
