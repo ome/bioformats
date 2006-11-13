@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import java.util.Hashtable;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
@@ -74,5 +75,20 @@ public interface IFormatHandler {
    * @see #mapId(String, String)
    */
   String getMappedId(String id);
+
+  /**
+   * Gets a hashtable containing mappings from ids to actual filenames on disk.
+   * @see #mapId(String, String)
+   * @see #getMappedId(String)
+   */
+  Hashtable getIdMap();
+
+  /**
+   * Sets the mappings from ids to actual filenames on disk to match those
+   * given in the.
+   * @see #mapId(String, String)
+   * @see #getMappedId(String)
+   */
+  void setIdMap(Hashtable map);
 
 }

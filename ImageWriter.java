@@ -29,9 +29,7 @@ import java.awt.image.ColorModel;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Vector;
+import java.util.*;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
@@ -124,9 +122,15 @@ public class ImageWriter implements IFormatWriter {
   public ImageWriter() {
     // add built-in writers to the list
     Vector v = new Vector();
+    Hashtable map = null;
     for (int i=0; i<writerClasses.length; i++) {
       FormatWriter writer = null;
-      try { writer = (FormatWriter) writerClasses[i].newInstance(); }
+      try {
+        writer = (FormatWriter) writerClasses[i].newInstance();
+        // NB: ensure all writers share the same ID map
+        if (i == 0) map = writer.getIdMap();
+        else writer.setIdMap(map);
+      }
       catch (IllegalAccessException exc) { }
       catch (InstantiationException exc) { }
       if (writer == null) {
@@ -318,14 +322,23 @@ public class ImageWriter implements IFormatWriter {
 
   /* @see IFormatHandler#mapId(String, String) */
   public void mapId(String id, String filename) {
-    for (int i=0; i<writers.length; i++) {
-      writers[i].mapId(id, filename);
-    }
+    // NB: all writers share the same ID map
+    writers[0].mapId(id, filename);
   }
 
   /* @see IFormatHandler#getMappedId(String) */
   public String getMappedId(String id) {
     return writers[0].getMappedId(id);
+  }
+
+  /* @see IFormatHandler.getIdMap() */
+  public Hashtable getIdMap() {
+    return writers[0].getIdMap();
+  }
+
+  /* @see IFormatHandler.setIdMap(Hashtable) */
+  public void setIdMap(Hashtable map) {
+    for (int i=0; i<writers.length; i++) writers[i].setIdMap(map);
   }
 
   // -- Main method --
