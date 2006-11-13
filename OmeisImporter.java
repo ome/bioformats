@@ -47,6 +47,14 @@ public class OmeisImporter {
   /** Network path to OMEIS. */
   private static final String OMEIS_PATH = "http://localhost/cgi-bin/omeis";
 
+  // -- Static fields --
+
+  /**
+   * Whether or not to print an HTTP header,
+   * specified by -http-response CLI flag.
+   */
+  private static boolean httpResponse = false;
+
   // -- Fields --
 
   /** Reader for handling file formats. */
@@ -81,6 +89,7 @@ public class OmeisImporter {
     // check types
     for (int i=0; i<fileIds.length; i++) {
       if (ids[i] != null && reader.isThisType(ids[i])) {
+        if (httpResponse) printHttpResponseHeader();
         System.out.println(fileIds[i]);
       }
     }
@@ -253,6 +262,7 @@ public class OmeisImporter {
     // output OME-XML to standard output
     try {
       xml.close();
+      if (httpResponse) printHttpResponseHeader();
       System.out.println(new String(xml.toByteArray()));
     }
     catch (IOException exc) {
@@ -449,6 +459,18 @@ public class OmeisImporter {
     if (nl) System.err.println(msg);
     else System.err.print(msg);
   }
+  
+  /** Prints an HTTP error response header. */
+  private void printHttpErrorHeader() {
+    System.out.print ("Status: 500 Server Error\r\n");
+    System.out.print ("Content-Type: text/plain\r\n\r\n");
+  }
+  
+  /** Prints an HTTP response header. */
+  private void printHttpResponseHeader() {
+    System.out.print ("Status: 200 OK\r\n");
+    System.out.print ("Content-Type: text/plain\r\n\r\n");
+  }
 
   // -- Main method --
 
@@ -460,12 +482,14 @@ public class OmeisImporter {
   public static void main(String[] args) {
     OmeisImporter importer = new OmeisImporter();
     boolean test = false;
+    boolean fatal_stdout = false;
     int[] fileIds = new int[args.length];
 
     // parse command line arguments
     int num = 0;
     for (int i=0; i<args.length; i++) {
       if ("-test".equalsIgnoreCase(args[i])) test = true;
+      else if ("-http-response".equalsIgnoreCase(args[i])) httpResponse = true;
       else {
         try {
           int q = Integer.parseInt(args[i]);
@@ -486,6 +510,11 @@ public class OmeisImporter {
       else importer.importIds(fileIds);
     }
     catch (Exception exc) {
+      if (httpResponse) {
+        importer.printHttpErrorHeader();
+        System.out.println("An exception occurred while processing FileIDs:");
+        exc.printStackTrace(System.out);
+      }
       System.err.println("An exception occurred:");
       exc.printStackTrace();
       System.exit(1);
