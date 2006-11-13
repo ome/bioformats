@@ -427,14 +427,25 @@ public class FileStitcher implements IFormatReader {
 
   /* @see IFormatHandler#mapId(String, String) */
   public void mapId(String id, String filename) {
-    System.err.println("FileStitcher.mapId: unimplemented"); // CTR TODO
+    // NB: all readers share the same ID map
+    reader.mapId(id, filename);
   }
 
   /* @see IFormatHandler#getMappedId(String) */
   public String getMappedId(String id) {
-    System.err.println("FileStitcher.getMappedId: unimplemented"); // CTR TODO
-    return null;
+    return reader.getMappedId(id);
   }
+
+  /* @see IFormatHandler#getIdMap() */
+  public Hashtable getIdMap() {
+    return reader.getIdMap();
+  }
+
+  /* @see IFormatHandler#setIdMap(Hashtable) */
+  public void setIdMap(Hashtable map) {
+    for (int i=0; i<readers.length; i++) readers[i].setIdMap(map);
+  }
+
 
   // -- Helper methods --
 
@@ -479,6 +490,7 @@ public class FileStitcher implements IFormatReader {
     // construct list of readers for all files
     readers = new IFormatReader[files.length];
     readers[0] = reader;
+    Hashtable map = reader.getIdMap();
     for (int i=1; i<readers.length; i++) {
       // use crazy reflection to instantiate a reader of the proper type
       try {
@@ -492,6 +504,8 @@ public class FileStitcher implements IFormatReader {
           }
         }
         readers[i] = (IFormatReader) r;
+        // NB: ensure all readers share the same ID map
+        readers[i].setIdMap(map);
       }
       catch (InstantiationException exc) { exc.printStackTrace(); }
       catch (IllegalAccessException exc) { exc.printStackTrace(); }

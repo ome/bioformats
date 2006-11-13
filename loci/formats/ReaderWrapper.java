@@ -275,4 +275,12 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getMappedId(id);
   }
 
+  public Hashtable getIdMap() {
+    return reader.getIdMap();
+  }
+
+  public void setIdMap(Hashtable map) {
+    reader.setIdMap(map);
+  }
+
 }

@@ -29,10 +29,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.*;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
@@ -125,9 +122,15 @@ public class ImageReader implements IFormatReader {
   public ImageReader(MetadataStore store) {
     // add built-in readers to the list
     Vector v = new Vector();
+    Hashtable map = null;
     for (int i=0; i<readerClasses.length; i++) {
       IFormatReader reader = null;
-      try { reader = (IFormatReader) readerClasses[i].newInstance(); }
+      try {
+        reader = (IFormatReader) readerClasses[i].newInstance();
+        // NB: ensure all readers share the same ID map
+        if (i == 0) map = reader.getIdMap();
+        else reader.setIdMap(map);
+      }
       catch (IllegalAccessException exc) { }
       catch (InstantiationException exc) { }
       if (reader == null) {
@@ -503,14 +506,23 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatHandler#mapId(String, String) */
   public void mapId(String id, String filename) {
-    for (int i=0; i<readers.length; i++) {
-      readers[i].mapId(id, filename);
-    }
+    // NB: all readers share the same ID map
+    readers[0].mapId(id, filename);
   }
 
   /* @see IFormatHandler#getMappedId(String) */
   public String getMappedId(String id) {
     return readers[0].getMappedId(id);
+  }
+
+  /* @see IFormatHandler.getIdMap() */
+  public Hashtable getIdMap() {
+    return readers[0].getIdMap();
+  }
+
+  /* @see IFormatHandler.setIdMap(Hashtable) */
+  public void setIdMap(Hashtable map) {
+    for (int i=0; i<readers.length; i++) readers[i].setIdMap(map);
   }
 
   // -- Utility methods --

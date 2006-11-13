@@ -125,6 +125,16 @@ public abstract class FormatHandler implements IFormatHandler {
     return filename == null ? id : filename;
   }
 
+  /* @see IFormatHandler#getIdMap() */
+  public Hashtable getIdMap() {
+    return idMap;
+  }
+
+  /* @see IFormatHandler#setIdMap(Hashtable) */
+  public void setIdMap(Hashtable map) {
+    idMap = map;
+  }
+
   // -- Utility methods --
 
   /**
