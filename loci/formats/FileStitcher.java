@@ -453,8 +453,21 @@ public class FileStitcher implements IFormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     currentId = id;
     if (!patternIds) {
-      // id is a file path; find the containing pattern
-      id = FilePattern.findPattern(new File(id));
+      // find the containing pattern
+      Hashtable map = getIdMap();
+      if (map.containsKey(id)) {
+        // search ID map for pattern, rather than files on disk
+        String[] idList = new String[map.size()];
+        Enumeration en = map.keys();
+        for (int i=0; i<idList.length; i++) {
+          idList[i] = (String) en.nextElement();
+        }
+        id = FilePattern.findPattern(id, null, idList);
+      }
+      else {
+        // id is an unmapped file path; look to similar files on disk
+        id = FilePattern.findPattern(new File(id)); // id == getMapped(id)
+      }
     }
     fp = new FilePattern(id);
 
@@ -471,7 +484,7 @@ public class FileStitcher implements IFormatReader {
         fp.getPattern() + "). " + msg);
     }
     for (int i=0; i<files.length; i++) {
-      if (!new File(files[i]).exists()) {
+      if (!new File(getMappedId(files[i])).exists()) {
         throw new FormatException("File #" + i +
           " (" + files[i] + ") does not exist.");
       }
@@ -695,5 +708,12 @@ public class FileStitcher implements IFormatReader {
     for (int i=0; i<lengths.length; i++) len *= lengths[i];
     return len;
   }
+
+  // -- Main method --
+
+  public static void main(String[] args) throws FormatException, IOException {
+    if (!new FileStitcher().testRead(args)) System.exit(1);
+  }
+
 
 }
