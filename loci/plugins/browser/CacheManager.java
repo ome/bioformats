@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Vector;
 import loci.formats.*;
+import javax.swing.JScrollBar;
 
 public class CacheManager implements Runnable {
 
@@ -63,8 +64,17 @@ public class CacheManager implements Runnable {
   /** The array of cached images.*/
   private ImageProcessor[] cache;
 
+  /** The LociDataBrowser associated with this cache.*/
+  private LociDataBrowser db;
+
   /** The IFormatReader that handles conversion of formats.*/
   private IFormatReader read;
+  
+  /** The two axes scrollbars in the CustomWindow.*/
+  private JScrollBar zSel, tSel;
+  
+  /** The two indicators of the cache.*/
+  private CacheIndicator zInd, tInd;
 
   /** Holds the current axes to be cached.*/
   private int curAxis;
@@ -137,15 +147,15 @@ public class CacheManager implements Runnable {
 
   // -- Constructors --
 
-  public CacheManager(int size, IFormatReader read, String fileName) {
-    this(0, size, read, fileName, T_AXIS, CROSS_MODE);
+  public CacheManager(int size, LociDataBrowser db, String fileName) {
+    this(0, size, db, fileName, T_AXIS, CROSS_MODE);
   }
 
   public CacheManager(int back, int forward,
-    IFormatReader read, String fileName, int axis, int mode)
+    LociDataBrowser db, String fileName, int axis, int mode)
   {
     this(0, 0, 0, back, forward, back, forward, back,
-      forward, read, fileName, axis, mode, FORWARD_FIRST);
+      forward, db, fileName, axis, mode, FORWARD_FIRST);
   }
 
   /**
@@ -179,7 +189,7 @@ public class CacheManager implements Runnable {
   */
   public CacheManager(int z, int t, int c, int backZ, int forwardZ,
     int backT, int forwardT, int backC, int forwardC,
-    IFormatReader read, String fileName, int axis, int mode, int strategy)
+    LociDataBrowser db, String fileName, int axis, int mode, int strategy)
   {
     //Initialize fields
     loop = true;
@@ -191,7 +201,12 @@ public class CacheManager implements Runnable {
     oldC = c;
     quit = false;
     this.fileName = fileName;
-    this.read = read;
+    this.db = db;
+    this.read = db.reader;
+    zInd = null;
+    tInd = null;
+    zSel = null;
+    tSel = null;
     synchronized (read) {
       try {
         sizeZ = read.getSizeZ(fileName);
@@ -1816,6 +1831,82 @@ public class CacheManager implements Runnable {
 
     if (DEBUG) System.out.println("Cache Size after clear: " + getSize());
   }
+  
+  protected void setIndicators(int aZ, int aT, int aC) {
+    zInd = db.cw.zIndicator;
+    tInd = db.cw.tIndicator;
+  
+    Vector zInCache = new Vector();
+    Vector tInCache = new Vector();
+    
+    for(int i = 0;i < sizeZ;i++) {
+      int index = -1;
+      try {
+        index = read.getIndex(fileName, i, aC - 1, aT - 1);
+      }
+      catch(Exception exc) {}
+      
+      if (index != -1 && cache[index] != null) zInCache.add(new Integer(i));
+    }
+    
+    for(int i = 0;i < sizeT;i++) {
+      int index = -1; 
+      try {
+        index = read.getIndex(fileName, aZ - 1, aC - 1, i);
+      }
+      catch(Exception exc) {}
+      
+      if (index != -1 && cache[index] != null) tInCache.add(new Integer(i));
+    }
+    
+    int[] loadCopy = new int[loadList.length];
+    System.arraycopy(loadList, 0, loadCopy, 0, loadList.length);
+    Arrays.sort(loadCopy);
+    
+    Vector zLoad = new Vector();
+    Vector tLoad = new Vector();
+    
+    for(int i = 0;i < loadCopy.length;i++) {
+      int[] coords = null;
+      try {
+        coords = read.getZCTCoords(fileName, loadCopy[i]);
+      }
+      catch(Exception exc) {}
+      if (coords != null) {
+        int myZ = coords[0];
+        int myC = coords[1];
+        int myT = coords[2];
+        if (myC == aC - 1 && myT == aT - 1) zLoad.add(new Integer(myZ));
+        if (myC == aC - 1 && myZ == aZ - 1) tLoad.add(new Integer(myT));
+      }
+    }
+    
+    int[] zC = makeInt(zInCache.toArray());
+    int[] tC = makeInt(tInCache.toArray());
+    int[] zL = makeInt(zLoad.toArray());
+    int[] tL = makeInt(tLoad.toArray());
+    
+    if(DEBUG) {
+      System.out.println(zInCache);
+      System.out.println(tInCache);
+      System.out.println(zLoad);
+      System.out.println(tLoad);
+    }
+    
+    Arrays.sort(zL);
+    Arrays.sort(tL);
+    
+    zInd.setIndicator(zC, zL, sizeZ);
+    tInd.setIndicator(tC, tL, sizeT);
+  }
+  
+  private static int [] makeInt(Object[] array) {
+    int [] result  = new int[array.length];
+    for(int i = 0;i<result.length;i++) {
+      result[i] = ((Integer) array[i]).intValue();
+    }
+    return result;
+  }
 
   // -- Runnable API methods --
 
@@ -1831,6 +1922,14 @@ public class CacheManager implements Runnable {
         ImageProcessor imp = ImagePlusWrapper.getImageProcessor(
           fileName, read, loadList[i]);
         cache[loadList[i]] = imp;
+      }
+      
+      if(db.cw != null) {
+        int aC = 1;
+        zSel = db.cw.zSliceSel;
+        tSel = db.cw.tSliceSel;
+        if (sizeC != 0) aC = ((Integer)db.cw.channelSpin.getValue()).intValue();
+        setIndicators(zSel.getValue(), tSel.getValue(), aC);
       }
     }
   }

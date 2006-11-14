@@ -52,6 +52,9 @@ public class LociDataBrowser {
 
   /** The file format reader used by the plugin. */
   protected IFormatReader reader;
+  
+  /** The CustomWindow used to display data.*/
+  protected CustomWindow cw;
 
   /** The current file name. */
   protected String id;
@@ -103,7 +106,7 @@ public class LociDataBrowser {
       return;
     }
 
-    new CustomWindow(this, imp, new ImageCanvas(imp));
+    cw = new CustomWindow(this, imp, new ImageCanvas(imp));
   }
 
   /** Set the length of each dimensional axis and the dimension order. */
@@ -220,7 +223,7 @@ public class LociDataBrowser {
             }
 
             manager = new CacheManager(0, 0, 0, 0, 0, 0, 20, 0, 0,
-              reader, id, CacheManager.T_AXIS,
+              this, id, CacheManager.T_AXIS,
               CacheManager.CROSS_MODE, CacheManager.FORWARD_FIRST);
 
             try {

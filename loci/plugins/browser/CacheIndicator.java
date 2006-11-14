@@ -29,13 +29,16 @@ import java.awt.*;
 
 public class CacheIndicator extends JComponent {
 
-  private static final int COMPONENT_HEIGHT = 3;
+  private static final int COMPONENT_HEIGHT = 5;
 
   protected int [] cache,loadList;
   protected int cacheLength;
-  double ratio;
+  protected double ratio;
+  protected JScrollBar scroll;
+  
 
-  public CacheIndicator() {
+  public CacheIndicator(JScrollBar scroll) {
+    this.scroll = scroll;
     setBackground(Color.white);
     cache = null;
     loadList = null;
@@ -46,12 +49,16 @@ public class CacheIndicator extends JComponent {
     cache = someCache;
     loadList = someLoadList;
     cacheLength = length;
+    int setRatio = translate(0);
     repaint();
   }
 
   public void paint(Graphics g) {
+    g.setColor(Color.white);
+    g.fillRect(0,0,getWidth()-1,COMPONENT_HEIGHT - 1);
     g.setColor(Color.black);
-    g.drawRect(0,0,getWidth(),COMPONENT_HEIGHT);
+    g.drawRect(0,0,getWidth()-1,COMPONENT_HEIGHT - 1);
+//    System.out.println("Ratio = " + ratio);
     if(ratio < 1) {
     }
     else {
@@ -60,20 +67,24 @@ public class CacheIndicator extends JComponent {
       g.setColor(Color.red);
       for(int i = 0;i<loadList.length;i++) {
         int toLoad = loadList[i];
+
         if(startLoad == -1) {
           startLoad = toLoad;
           prevLoad = toLoad;
         }
-        else if(toLoad == prevLoad + 1 && startLoad != -1) {
+        else if(toLoad == prevLoad + 1 && startLoad != -1 && i != loadList.length - 1) {
           prevLoad = toLoad;
         }
         else {
-          startLoad = -1;
+          prevLoad = prevLoad + 2;
           int x = translate(startLoad);
           int wid = translate(prevLoad) - x;
-          g.fillRect(x,0,wid,COMPONENT_HEIGHT);
+//          System.out.println("Rectangle: x = " + x + "; width = " + wid);
+          g.fillRect(x,1,wid,COMPONENT_HEIGHT - 2);
+          startLoad = -1;
         }
       }
+      
       prevLoad = -1;
       startLoad = -1;
       g.setColor(Color.blue);
@@ -83,21 +94,22 @@ public class CacheIndicator extends JComponent {
           startLoad = toLoad;
           prevLoad = toLoad;
         }
-        else if(toLoad == prevLoad + 1 && startLoad != -1) {
+        else if(toLoad == prevLoad + 1 && startLoad != -1 && i != cache.length - 1) {
           prevLoad = toLoad;
         }
         else {
-          startLoad = -1;
+          prevLoad = prevLoad + 2;
           int x = translate(startLoad);
           int wid = translate(prevLoad) - x;
-          g.fillRect(x,0,wid,HEIGHT);
+          g.fillRect(x,1,wid,COMPONENT_HEIGHT - 2);
+          startLoad = -1;
         }
       }
     }
   }
 
   private int translate(int cacheIndex) {
-    Integer width = new Integer(getWidth());
+    Integer width = new Integer(scroll.getWidth());
     double compSize = width.doubleValue();
     if(cacheLength == 0) return -1;
     Integer length = new Integer(cacheLength);
@@ -113,7 +125,7 @@ public class CacheIndicator extends JComponent {
   }
 
   public Dimension getPreferredSize() {
-    return new Dimension(0,COMPONENT_HEIGHT);
+    return new Dimension(scroll.getWidth(),COMPONENT_HEIGHT);
   }
 
 }

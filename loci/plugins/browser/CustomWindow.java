@@ -58,6 +58,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   // -- Fields - state --
 
   protected LociDataBrowser db;
+  protected CacheIndicator zIndicator,tIndicator;
   private OptionsWindow ow;
   private String zString = Z_STRING;
   private String tString = T_STRING;
@@ -71,14 +72,14 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   // -- Fields - widgets --
 
   private JLabel zLabel, tLabel, cLabel;
-  private JScrollBar zSliceSel, tSliceSel;
+  protected JScrollBar zSliceSel, tSliceSel;
   private JButton xml;
   private Timer animationTimer;
   private JButton animate;
   private JButton options;
   private Panel lowPane;
   private CellConstraints cc;
-  private JSpinner channelSpin;
+  protected JSpinner channelSpin;
   private JCheckBox channelBox;
   private Color textColor;
 
@@ -194,6 +195,18 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     }
     else c = 1;
 
+    JPanel zPanel = new JPanel(new BorderLayout());
+    JPanel tPanel = new JPanel(new BorderLayout());
+    zPanel.add(zSliceSel,BorderLayout.CENTER);
+    tPanel.add(tSliceSel,BorderLayout.CENTER);
+    
+    if(db.virtual) {
+      zIndicator = new CacheIndicator(zSliceSel);
+      tIndicator = new CacheIndicator(tSliceSel);
+      zPanel.add(zIndicator,BorderLayout.SOUTH);
+      tPanel.add(tIndicator,BorderLayout.SOUTH);
+    }
+
     //setup the layout
     lowPane = new Panel();
     FormLayout layout = new FormLayout(
@@ -206,10 +219,10 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     cc = new CellConstraints();
 
     lowPane.add(zLabel, cc.xy(2,2));
-    lowPane.add(zSliceSel, cc.xyw(4,2,5));
+    lowPane.add(zPanel, cc.xyw(4,2,5));
     lowPane.add(channelBox, cc.xy(12,2));
     lowPane.add(tLabel, cc.xy(2,4));
-    lowPane.add(tSliceSel, cc.xyw(4,4,5));
+    lowPane.add(tPanel, cc.xyw(4,4,5));
     lowPane.add(cLabel, cc.xy(10,4));
     lowPane.add(channelSpin, cc.xy(12,4));
     lowPane.add(options, cc.xy(6,6));
@@ -504,8 +517,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       }
     }
     else if (cmd.equals("options")) {
-      if (ow!=null) ow.dispose();
-      ow = new OptionsWindow(db.hasZ ? db.numZ : 1,
+      if (ow == null) ow = new OptionsWindow(db.hasZ ? db.numZ : 1,
         db.hasT ? db.numT : 1, this);
       ow.setVisible(true);
     }
