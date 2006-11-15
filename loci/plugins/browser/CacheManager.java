@@ -1799,9 +1799,26 @@ public class CacheManager implements Runnable {
     quit = true;
 
     int[] oldIndex = getToCache(true);
+    
     oldZ = curZ;
     oldT = curT;
     oldC = curC;
+
+    oldStrategy = strategy;
+    oldMode = curMode;
+    oldAxis = curAxis;
+    
+    oldBackZ = curBackZ;
+    oldBackT = curBackT;
+    oldBackC = curBackC;
+    oldForwardZ = curForwardZ;
+    oldForwardT = curForwardT;
+    oldForwardC = curForwardC;
+    
+    oldZPriority = curZPriority;
+    oldTPriority = curZPriority;
+    oldCPriority = curCPriority;
+    
     int[] newIndex = getToCache(false);
 
     if (DEBUG) {
@@ -1818,6 +1835,14 @@ public class CacheManager implements Runnable {
             System.out.print(newIndex[i]);
           }
           System.out.println("}");
+          System.out.println("oldBackZ = " + oldBackZ + "; oldForwardZ = " +
+            oldForwardZ + "; oldBackT = " + oldBackT + "; oldForwardT = " +
+            oldForwardT + "; oldBackC = " + oldBackC + "; oldForwardC = " +
+            oldForwardC);
+          System.out.println("curBackZ = " + curBackZ + "; curForwardZ = " +
+            curForwardZ + "; curBackT = " + curBackT + "; curForwardT = " +
+            curForwardT + "; curBackC = " + curBackC + "; curForwardC = " +
+            curForwardC);
     }
 
     loadList = new int[newIndex.length];
@@ -1885,13 +1910,6 @@ public class CacheManager implements Runnable {
     int[] tC = makeInt(tInCache.toArray());
     int[] zL = makeInt(zLoad.toArray());
     int[] tL = makeInt(tLoad.toArray());
-    
-    if(DEBUG) {
-      System.out.println(zInCache);
-      System.out.println(tInCache);
-      System.out.println(zLoad);
-      System.out.println(tLoad);
-    }
     
     Arrays.sort(zL);
     Arrays.sort(tL);

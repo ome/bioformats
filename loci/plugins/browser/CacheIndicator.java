@@ -48,7 +48,7 @@ public class CacheIndicator extends JComponent {
   public void setIndicator(int [] someCache, int [] someLoadList, int length) {
     cache = someCache;
     loadList = someLoadList;
-    cacheLength = length;
+    cacheLength = length - 1;
     int setRatio = translate(0);
     repaint();
   }
@@ -76,7 +76,7 @@ public class CacheIndicator extends JComponent {
           prevLoad = toLoad;
         }
         else {
-          prevLoad = prevLoad + 2;
+          prevLoad = prevLoad + 1;
           int x = translate(startLoad);
           int wid = translate(prevLoad) - x;
 //          System.out.println("Rectangle: x = " + x + "; width = " + wid);
@@ -98,7 +98,7 @@ public class CacheIndicator extends JComponent {
           prevLoad = toLoad;
         }
         else {
-          prevLoad = prevLoad + 2;
+          prevLoad = prevLoad + 1;
           int x = translate(startLoad);
           int wid = translate(prevLoad) - x;
           g.fillRect(x,1,wid,COMPONENT_HEIGHT - 2);
@@ -108,7 +108,7 @@ public class CacheIndicator extends JComponent {
     }
   }
 
-  private int translate(int cacheIndex) {
+  private int translate(int cacheIndex) { 
     Integer width = new Integer(scroll.getWidth());
     double compSize = width.doubleValue();
     if(cacheLength == 0) return -1;

@@ -84,7 +84,7 @@ public class OptionsWindow extends JFrame implements
 
     manager = cw.db.manager;
 
-    update = true;
+    update = false;
 
     Border etchB = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
 
@@ -314,6 +314,8 @@ public class OptionsWindow extends JFrame implements
 //    ((JComponent) getContentPane()).setPreferredSize(new Dimension(300,500));
     pack();
     setVisible(true);
+    
+    update = true;
   }
 
   /**
@@ -357,7 +359,6 @@ public class OptionsWindow extends JFrame implements
   // -- ActionListener API methods --
 
   public void actionPerformed(ActionEvent e) {
-///*
     if(update) {
       Object source = e.getSource();
 
@@ -470,11 +471,9 @@ public class OptionsWindow extends JFrame implements
          getConv(lowBox.getSelectedIndex()));
       }
     }
-//*/
   }
 
   public void itemStateChanged(ItemEvent e) {
-///*
     if(update) {
       Object source = e.getItemSelectable();
 
@@ -513,13 +512,11 @@ public class OptionsWindow extends JFrame implements
       int finalState = (zState | tState | cState);
       manager.setAxis(finalState);
     }
-//*/
   }
 
   // -- ChangeListener API methods --
 
   public void stateChanged(ChangeEvent e) {
-///*
     if(update) {
       if (e.getSource() == fps) {
         // the frames per second changed
@@ -536,6 +533,5 @@ public class OptionsWindow extends JFrame implements
         manager.setSize(zB,zF,tB,tF,cB,cF);
       }
     }
-//*/
   }
 }
