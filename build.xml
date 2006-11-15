@@ -358,6 +358,7 @@ Apache XML-RPC
     </copy>
     <!-- copy source files with filtering -->
     <filter token="date" value="${DATE}"/>
+    <filter token="year" value="${YEAR}"/>
     <filter token="visbio.version" value="${visbio.version}"/>
     <copy todir="${dest.dir}" filtering="true" preservelastmodified="true">
       <fileset dir="${src.dir}" includes="loci/**"
