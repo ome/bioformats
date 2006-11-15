@@ -70,7 +70,7 @@ public final class OverlayIO {
       int count = st.countTokens();
       if (!foundHeader) {
         // parse table header from first valid line
-        int numDims = count - 10;
+       int numDims = count - 10; // why 10?
         if (numDims < 0) {
           JOptionPane.showMessageDialog(owner,
             "Invalid table header: insufficient column headings.",

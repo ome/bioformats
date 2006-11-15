@@ -1,4 +1,4 @@
-//
+
 // OverlayObject.java
 //
 
@@ -27,7 +27,6 @@ import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import visad.*;
-import loci.visbio.util.MathUtil;
 
 /** OverlayObject is the superclass of all overlay objects. */
 public abstract class OverlayObject {
@@ -401,50 +400,6 @@ public abstract class OverlayObject {
     Arrays.fill(nodes[0], numNodes, maxNodes, x);
     Arrays.fill(nodes[1], numNodes++, maxNodes, y);
     // i.e., set all remaining nodes (as per maxNodes) to next node coords
-  }
-
- // This could belong to MathUtil.java ACS TODO
- /**  Gets actual distance to curve: finds out if the nearest point is a node or a segment; 
-   * 
-   *  @param x x coordinate of point in question
-   *  @param y y coordinate of point in question
-   *  @return an array float[3], with element 0 being node index i of one end of 
-   *  closest line segment (the other end being i+1), and the third being the weight 
-   *  between zero and one for interpolation along the segment (i, i+1)
-   */ 
-  public double[] getDistanceEtc(float x, float y) {
-    double minDist = Double.MAX_VALUE;
-    int seg = 0;
-    double weight = 0;   
-
-    // toss out the trivial case
-    if (numNodes == 1) {
-      //then distance is the distance to the trivial bounding box after all; could invoke the 
-      //getDistance method from OverlayFreeform instead.
-      double xdist = x - nodes[0][0];
-      double ydist = y - nodes[1][0];
-      minDist = Math.sqrt(xdist * xdist + ydist * ydist);
-    } else {
-
-      for (int i=0; i<numNodes-1; i++) {
-         double[] a = {(double) nodes[0][i], (double) nodes[1][i]};
-         double[] b = {(double) nodes[0][i+1], (double) nodes[1][i+1]};
-         double[] p = {(double) x, (double) y};
-
-         double[] proj = MathUtil.getProjection(a, b, p, true);
-         double dist = MathUtil.getDistance(p, proj);
-
-         if (dist < minDist) {
-           minDist = dist;
-           seg = i;
-           double segDist = MathUtil.getDistance (a, b);
-           double fracDist = MathUtil.getDistance (a, proj);
-           weight = fracDist / segDist;
-         }
-       } 
-    }
-    double[] retvals = {minDist, (double) seg, weight};
-    return retvals;
   }
 
   /** Inserts a node at coordinates provided before the node at the index provided */
