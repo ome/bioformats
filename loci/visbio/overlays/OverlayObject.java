@@ -27,6 +27,7 @@ import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import visad.*;
+import loci.visbio.util.MathUtil;
 
 /** OverlayObject is the superclass of all overlay objects. */
 public abstract class OverlayObject {
@@ -79,6 +80,9 @@ public abstract class OverlayObject {
 
   /** Number of horizontal and vertical dividing lines for selection grid. */
   protected int horizGridCount, vertGridCount;
+
+  /** Length of curve of a noded object */
+  protected float curveLength;
 
   // -- Constructor --
 
@@ -377,7 +381,25 @@ public abstract class OverlayObject {
   
   /** Gets whether this overlay is still being initially drawn. */
   public boolean isDrawing() { return drawing; }
+
+  /** Gets length of curve */
+  public float getCurveLength() { return curveLength; }
   
+  /** Sets length of curve */
+  public void setCurveLength(float len) { curveLength = len; }
+
+  /** Computes length of curve */
+  public void computeLength() {
+    truncateNodeArray();
+    double length = 0;
+    for (int i=0; i<numNodes-1; i++) {
+      double[] a = {(double) nodes[0][i], (double)nodes[1][i]};
+      double[] b = {(double) nodes[0][i+1], (double) nodes[1][i+1]};
+      length += MathUtil.getDistance(a, b);
+    }
+    this.curveLength = (float) length;
+  }
+ 
   // -- OverlayObject API Methods: node array mutators --
   // note: call updateBoundingBox() after a series of changes to the node array
   
@@ -504,6 +526,7 @@ public abstract class OverlayObject {
   /** Computes parameters needed for selection grid computation. */
   protected abstract void computeGridParameters();
 
+  
   /** Sets value of largest and smallest x, y values. */
   protected void setBoundaries(float x, float y) {
     x1 = Math.min(x1, x);

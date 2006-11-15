@@ -55,6 +55,7 @@ public class OverlayFreeform extends OverlayObject {
     Arrays.fill(nodes[1], y1);
     numNodes = 1;
     computeGridParameters();
+    computeLength();
   }
 
   // -- OverlayObject API methods --
@@ -108,7 +109,8 @@ public class OverlayFreeform extends OverlayObject {
   /** Retrieves useful statistics about this overlay. */
   public String getStatistics() {
     return "Bounds = (" + x1 + ", " + y1 + "), (" + x2 + ", " + y2 + ")\n" +
-      "Number of Nodes = " + numNodes + "\n";
+      "Number of Nodes = " + numNodes + "\n" +
+      "Curve Length = " + curveLength + "\n";
   }
 
   /** True iff this overlay has an endpoint coordinate pair. */

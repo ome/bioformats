@@ -177,7 +177,6 @@ public class FreeformTool extends OverlayTool {
       freeform.deleteBetween(tendril.start-1, tendril.stop+1);
       if (tendril.nodal) {
         freeform.insertNode(tendril.start, c[0], c[1]);
-        printNodes();
       }
     }
 
@@ -187,6 +186,7 @@ public class FreeformTool extends OverlayTool {
       inserted = 0;
       editing = false;
       freeform.truncateNodeArray();
+      freeform.computeLength();
       freeform.updateBoundingBox();
       freeform.computeGridParameters();
       freeform.setDrawing(false);
@@ -290,6 +290,7 @@ public class FreeformTool extends OverlayTool {
             freeform.deleteBetween(endIndex, tendril.tip);
           }
           editing = false;
+          freeform.computeLength();
         }           
       } // end reconnect logic
     } else if (extending) { 
@@ -300,6 +301,8 @@ public class FreeformTool extends OverlayTool {
 
       if (dist > RECONNECT_THRESH) {
         freeform.setNextNode(x, y);
+        float len = freeform.getCurveLength();
+        freeform.setCurveLength(len + (float) dist);
       }
     } else {
       // case !extending !editing
