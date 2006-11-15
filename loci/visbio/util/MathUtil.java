@@ -132,6 +132,50 @@ public final class MathUtil {
     else return b;
   }
   
+   /**  Gets distance to curve: finds out if the nearest point is a node or a segment; 
+   * 
+   *  @param x x coordinate of point in question
+   *  @param y y coordinate of point in question
+   *  @return an array double[3], with element 0 being node index i of one end of 
+   *  closest line segment (the other end being i+1), and the third being the weight 
+   *  between zero and one for interpolation along the segment (i, i+1)
+   */ 
+  public static double[] getDistSegWt(float[][] nodes, float x, float y) {
+    // assumes a non-ragged array of float[2][numNodes]
+    double minDist = Double.MAX_VALUE;
+    int seg = 0;
+    double weight = 0;   
+
+    int numNodes = nodes[0].length;
+
+    // toss out the trivial case
+    if (numNodes == 1) {
+      double xdist = x - nodes[0][0];
+      double ydist = y - nodes[1][0];
+      minDist = Math.sqrt(xdist * xdist + ydist * ydist);
+    } else {
+
+      for (int i=0; i<numNodes-1; i++) {
+         double[] a = {(double) nodes[0][i], (double) nodes[1][i]};
+         double[] b = {(double) nodes[0][i+1], (double) nodes[1][i+1]};
+         double[] p = {(double) x, (double) y};
+
+         double[] proj = getProjection(a, b, p, true);
+         double dist = getDistance(p, proj);
+
+         if (dist < minDist) {
+           minDist = dist;
+           seg = i;
+           double segDist = getDistance (a, b);
+           double fracDist = getDistance (a, proj);
+           weight = fracDist / segDist;
+         }
+       } 
+    }
+    double[] retvals = {minDist, (double) seg, weight};
+    return retvals;
+  }
+
   /** Rounds the value to nearest value along the given progression. */
   public static int getNearest(double val, int min, int max, int step) {
     int lo = (int) ((val - min) / step);
