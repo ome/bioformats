@@ -32,21 +32,26 @@ public final class About {
 
   private About() { }
 
-  public static void main(String[] args) {
+  public static void about() {
     JOptionPane.showMessageDialog(null,
       "LOCI Plugins for ImageJ\n" +
       "Built @date@\n\n" +
-      "The 4D Data Browser is LOCI software written by\n" +
-      "Christopher Peterson, Francis Wong, Curtis Rueden\n" +
-      "and Melissa Linkert.\n" +
+      "Copyright 2006 Laboratory for Optical and Computational\n" +
+      "Instrumentation; http://www.loci.wisc.edu/software\n\n" +
+      "The 4D Data Browser is written by Christopher Peterson,\n" +
+      "Francis Wong, Curtis Rueden and Melissa Linkert.\n" +
       "http://www.loci.wisc.edu/4d/#browser\n\n" +
-      "The Bio-Formats Importer and Exporter are LOCI software\n" +
-      "written by Melissa Linkert and Curtis Rueden.\n" +
+      "The Bio-Formats Importer and Exporter are written by\n" +
+      "Melissa Linkert and Curtis Rueden.\n" +
       "http://www.loci.wisc.edu/ome/formats.html\n\n" +
-      "The OME Plugin for ImageJ is LOCI software written by\n" +
-      "Philip Huettl and Melissa Linkert.\n" +
+      "The OME Plugin for ImageJ is written by Philip Huettl\n" +
+      "and Melissa Linkert.\n" +
       "http://www.loci.wisc.edu/ome/imagej.html",
       "LOCI Plugins for ImageJ", JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  public static void main(String[] args) {
+    about();
     System.exit(0);
   }
 

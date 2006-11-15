@@ -51,9 +51,12 @@ public class LociImporter implements PlugIn {
   public synchronized void run(String arg) {
     canceled = false;
     success = false;
-    if (!Util.checkVersion()) return;
-    if (!Util.checkLibraries(true, true, false, false)) return;
-    new Importer(this).run(arg);
+    if ("about".equals(arg)) About.about();
+    else if (Util.checkVersion() &&
+      Util.checkLibraries(true, true, false, false))
+    {
+      new Importer(this).run(arg);
+    }
   }
 
 }
