@@ -303,6 +303,7 @@ utilities10="Capture Screen [G]",ij.plugin.ScreenGrabber
 # Plugins installed in the Help/About submenu
 about01="Inverter...",Inverter_("about")
 about02="MemoryMonitor...",ij.plugin.MemoryMonitor("about")
+about03="LOCI Plugins...",loci.plugins.LociImporter("about")
 
 # URL of directory containing the sample images
 # Used when Image/J is running as an application,
