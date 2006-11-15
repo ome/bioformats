@@ -31,8 +31,7 @@ import ij.io.FileInfo;
 import ij.io.OpenDialog;
 import ij.measure.Calibration;
 import ij.process.*;
-import java.awt.Dimension;
-import java.awt.event.*;
+import java.awt.*;
 import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
@@ -46,28 +45,9 @@ import loci.formats.*;
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at cs.wisc.edu
  */
-public class Importer implements ActionListener, ItemListener {
+public class Importer {
 
   // -- Fields --
-
-  private JCheckBox merge = null;
-  private JCheckBox ignore = null;
-  private JCheckBox colorizeChannels = null;
-  private JCheckBox newWindows = null;
-  private JCheckBox showMeta = null;
-  private JCheckBox stitching = null;
-  private JCheckBox ranges = null;
-  private JCheckBox[] boxes = null;
-  private JButton okButton = null;
-  private JFrame seriesFrame = null;
-  private boolean mergeChannels;
-  private boolean ignoreTables;
-  private boolean colorize;
-  private boolean splitWindows;
-  private boolean showMetadata;
-  private boolean stitchFiles;
-  private boolean specifyRanges;
-  private boolean[] series = null;
 
   private LociImporter plugin;
 
@@ -79,131 +59,117 @@ public class Importer implements ActionListener, ItemListener {
 
   /** Executes the plugin. */
   public void run(String arg) {
-    // load preferences from IJ_Prefs.txt
-    mergeChannels = Prefs.get("bioformats.mergeChannels", false);
-    ignoreTables = Prefs.get("bioformats.ignoreTable", false);
-    colorize = Prefs.get("bioformats.colorize", false);
-    splitWindows = Prefs.get("bioformats.splitWindows", true);
-    showMetadata = Prefs.get("bioformats.showMetadata", false);
-    stitchFiles = Prefs.get("bioformats.stitchFiles", false);
-    specifyRanges = Prefs.get("bioformats.specifyRanges", false);
+    boolean quiet = arg != null && !arg.equals("");
+    String options = Macro.getOptions();
 
-    boolean quiet = !"".equals(arg);
+    // -- Step 1: get filename to open --
 
     String id = null;
+
+    // try to get filename from argument
+    if (quiet) id = arg;
+
+    if (id == null) {
+      // try to get filename from macro options
+      if (options != null) {
+        String open = Macro.getValue(options, "open", null);
+        if (open != null) id = open;
+      }
+    }
+
+    // if necessary, prompt the user for the filename
+    OpenDialog od = new OpenDialog("Open", id);
+    String directory = od.getDirectory();
+    String fileName = od.getFileName();
+    if (fileName == null) {
+      plugin.canceled = true;
+      return;
+    }
+    id = directory + fileName;
+
+    // if no valid filename, give up
+    if (id == null || !new File(id).exists()) {
+      if (!quiet) {
+        IJ.error("LOCI Bio-Formats", "The specified file " +
+          (id == null ? "" : ("(" + id + ") ")) + "does not exist.");
+      }
+      return;
+    }
+
+    // -- Step 2: identify file --
+
+    IJ.showStatus("Identifying " + fileName);
+
+    // determine whether we can handle this file
     ImageReader reader = new ImageReader();
     IFormatReader r = null;
-
-    String mergeString = "Merge channels to RGB";
-    String ignoreString = "Ignore color lookup table";
-    String colorizeString = "Colorize channels";
-    String splitString = "Open each channel in its own window";
-    String metadataString = "Display associated metadata";
-    String stitchString = "Stitch files with similar names";
-    String rangeString = "Specify range for each series";
-    if (quiet && new File(arg).exists()) { // try to open the given file
-      id = arg;
-
-      // first determine whether we can handle this file
-      try { r = reader.getReader(id); }
-      catch (Exception exc) { return; }
-
-      // we still want to prompt for channel merge/split
-      GenericDialog gd = new GenericDialog("LOCI Bio-Formats Import Options");
-      gd.addCheckbox(mergeString, mergeChannels);
-      gd.addCheckbox(ignoreString, ignoreTables);
-      gd.addCheckbox(colorizeString, colorize);
-      gd.addCheckbox(splitString, splitWindows);
-      gd.addCheckbox(metadataString, showMetadata);
-      gd.addCheckbox(stitchString, stitchFiles);
-      gd.addCheckbox(rangeString, specifyRanges);
-      gd.showDialog();
-      if (gd.wasCanceled()) {
-        plugin.canceled = true;
-        return;
+    try { r = reader.getReader(id); }
+    catch (Exception exc) {
+      exc.printStackTrace();
+      IJ.showStatus("");
+      if (!quiet) {
+        String msg = exc.getMessage();
+        IJ.error("LOCI Bio-Formats", "Sorry, there was a problem " +
+          "reading the file" + (msg == null ? "." : (":\n" + msg)));
       }
-      mergeChannels = gd.getNextBoolean();
-      ignoreTables = gd.getNextBoolean();
-      colorize = gd.getNextBoolean();
-      splitWindows = gd.getNextBoolean();
-      showMetadata = gd.getNextBoolean();
-      stitchFiles = gd.getNextBoolean();
-      specifyRanges = gd.getNextBoolean();
-    }
-    else { // prompt the user for a file using a file chooser
-      // use system L&F, to match ImageJ's appearance to the extent possible
-      LookAndFeel laf = null;
-      try {
-        laf = UIManager.getLookAndFeel();
-        String sys = UIManager.getSystemLookAndFeelClassName();
-        UIManager.setLookAndFeel(sys);
-      }
-      catch (Exception exc) { exc.printStackTrace(); }
-
-      JFileChooser chooser = reader.getFileChooser();
-      String dir = OpenDialog.getDefaultDirectory();
-      if (dir != null) chooser.setCurrentDirectory(new File(dir));
-
-      // add some additional options to the file chooser
-      JPanel panel = new JPanel();
-      panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-      merge = new JCheckBox(mergeString, mergeChannels);
-      ignore = new JCheckBox(ignoreString, ignoreTables);
-      colorizeChannels = new JCheckBox(colorizeString, colorize);
-      newWindows = new JCheckBox(splitString, splitWindows);
-      showMeta = new JCheckBox(metadataString, showMetadata);
-      stitching = new JCheckBox(stitchString, stitchFiles);
-      ranges = new JCheckBox(rangeString, specifyRanges);
-      merge.addItemListener(this);
-      ignore.addItemListener(this);
-      colorizeChannels.addItemListener(this);
-      newWindows.addItemListener(this);
-      showMeta.addItemListener(this);
-      stitching.addItemListener(this);
-      ranges.addItemListener(this);
-      panel.add(merge);
-      panel.add(ignore);
-      panel.add(colorizeChannels);
-      panel.add(newWindows);
-      panel.add(showMeta);
-      panel.add(stitching);
-      panel.add(ranges);
-      chooser.setAccessory(panel);
-
-      int rval = chooser.showOpenDialog(null);
-
-      // restore original L&F
-      if (laf != null) {
-        try { UIManager.setLookAndFeel(laf); }
-        catch (UnsupportedLookAndFeelException exc) { exc.printStackTrace(); }
-      }
-
-      if (rval == JFileChooser.APPROVE_OPTION) {
-        final File file = chooser.getSelectedFile();
-        if (file != null) {
-          id = file.getAbsolutePath();
-          OpenDialog.setDefaultDirectory(
-            chooser.getCurrentDirectory().getPath());
-        }
-      }
-      else {
-        plugin.canceled = true;
-        return;
-      }
+      return;
     }
 
-    if (id == null) return;
-    String fileName = id.substring(id.lastIndexOf(File.separator) + 1);
+    // -- Step 3: get parameter values --
 
-    IJ.showStatus("Opening " + fileName);
+    IJ.showStatus("");
 
-    boolean doRGBMerge = false;
+    final String mergeString = "Merge channels to RGB";
+    final String ignoreString = "Ignore color lookup table";
+    final String colorizeString = "Colorize channels";
+    final String splitString = "Open each channel in its own window";
+    final String metadataString = "Display associated metadata";
+    final String stitchString = "Stitch files with similar names";
+    final String rangeString = "Specify range for each series";
+
+    // load preferences from IJ_Prefs.txt
+    boolean mergeChannels = Prefs.get("bioformats.mergeChannels", false);
+    boolean ignoreTables = Prefs.get("bioformats.ignoreTable", false);
+    boolean colorize = Prefs.get("bioformats.colorize", false);
+    boolean splitWindows = Prefs.get("bioformats.splitWindows", true);
+    boolean showMetadata = Prefs.get("bioformats.showMetadata", false);
+    boolean stitchFiles = Prefs.get("bioformats.stitchFiles", false);
+    boolean specifyRanges = Prefs.get("bioformats.specifyRanges", false);
+
+    // prompt for parameters, if necessary
+    GenericDialog pd = new GenericDialog("LOCI Bio-Formats Import Options");
+    pd.addCheckbox(mergeString, mergeChannels);
+    pd.addCheckbox(ignoreString, ignoreTables);
+    pd.addCheckbox(colorizeString, colorize);
+    pd.addCheckbox(splitString, splitWindows);
+    pd.addCheckbox(metadataString, showMetadata);
+    pd.addCheckbox(stitchString, stitchFiles);
+    pd.addCheckbox(rangeString, specifyRanges);
+    pd.showDialog();
+    if (pd.wasCanceled()) {
+      plugin.canceled = true;
+      return;
+    }
+    mergeChannels = pd.getNextBoolean();
+    ignoreTables = pd.getNextBoolean();
+    colorize = pd.getNextBoolean();
+    splitWindows = pd.getNextBoolean();
+    showMetadata = pd.getNextBoolean();
+    stitchFiles = pd.getNextBoolean();
+    specifyRanges = pd.getNextBoolean();
+
+    // -- Step 4: open file --
+
+    IJ.showStatus("Analyzing " + fileName);
 
     try {
-      if (r == null) r = reader.getReader(id);
-      if (stitchFiles) r = new FileStitcher(r);
+      boolean doRGBMerge = false;
+
+      // -- Step 4a: do some preparatory work --
+
       if (mergeChannels) r = new ChannelMerger(r);
       else r = new ChannelSeparator(r);
+      if (stitchFiles) r = new FileStitcher(r);
 
       if (!ignoreTables) {
         if (r.isRGB(id) && r.getPixelType(id) >= FormatReader.INT16) {
@@ -216,7 +182,6 @@ public class Importer implements ActionListener, ItemListener {
           }
         }
       }
-
       r.setIgnoreColorTable(ignoreTables);
 
       // store OME metadata into OME-XML structure, if available
@@ -224,52 +189,128 @@ public class Importer implements ActionListener, ItemListener {
       store.createRoot();
       r.setMetadataStore(store);
 
-      // if necessary, prompt for the series to open
-
       int seriesCount = r.getSeriesCount(id);
-      series = new boolean[seriesCount];
+      boolean[] series = new boolean[seriesCount];
       series[0] = true;
-      store = (OMEXMLMetadataStore) r.getMetadataStore(id);
+//      store = (OMEXMLMetadataStore) r.getMetadataStore(id);
 
-      JPanel pane = new JPanel();
-      pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
-      pane.setMaximumSize(new Dimension(350, 350));
-      boxes = new JCheckBox[seriesCount];
-
+      // build descriptive string and range for each series
+      String[] seriesStrings = new String[seriesCount];
+      int[] num = new int[seriesCount];
+      int[] begin = new int[seriesCount];
+      int[] end = new int[seriesCount];
+      int[] step = new int[seriesCount];
       for (int i=0; i<seriesCount; i++) {
         r.setSeries(id, i);
-        int sizeX = r.getSizeX(id);
-        int sizeY = r.getSizeY(id);
-        int imageCount = r.getImageCount(id);
+        num[i] = r.getImageCount(id);
+        StringBuffer sb = new StringBuffer();
+        sb.append("Series_");
+        sb.append(i + 1);
+        sb.append(" - ");
         String name = store.getImageName(new Integer(i));
-        if (name == null || name.length() == 0) {
-          name = "Series " + (i + 1);
+        if (name != null && name.length() > 0) {
+          sb.append(name);
+          sb.append(": ");
         }
-        boxes[i] = new JCheckBox(name + " : " + sizeX + " x " + sizeY +
-          " x " + imageCount, i == 0);
-        boxes[i].addItemListener(this);
-        pane.add(boxes[i]);
+        sb.append(r.getSizeX(id));
+        sb.append(" x ");
+        sb.append(r.getSizeY(id));
+        sb.append("; ");
+        sb.append(num[i]);
+        sb.append(" planes");
+        if (r.isOrderCertain(id)) {
+          sb.append(" (");
+          boolean first = true;
+          int sizeC = r.getSizeC(id);
+          int sizeZ = r.getSizeZ(id);
+          int sizeT = r.getSizeT(id);
+          if (sizeC > 1) {
+            sb.append(sizeC);
+            sb.append("C");
+            first = false;
+          }
+          if (sizeZ > 1) {
+            if (!first) sb.append(" x ");
+            sb.append(sizeZ);
+            sb.append("Z");
+            first = false;
+          }
+          if (sizeT > 1) {
+            if (!first) sb.append(" x ");
+            sb.append(sizeT);
+            sb.append("T");
+            first = false;
+          }
+          sb.append(")");
+        }
+        seriesStrings[i] = sb.toString();
+        begin[i] = 0;
+        end[i] = num[i] - 1;
+        step[i] = 1;
       }
+
+      // -- Step 4a: prompt for the series to open, if necessary --
 
       if (seriesCount > 1) {
-        okButton = new JButton("OK");
-        okButton.addActionListener(this);
-        pane.add(okButton);
+        IJ.showStatus("");
 
-        JScrollPane scroller = new JScrollPane(pane);
-
-        seriesFrame = new JFrame("LOCI Bio-Formats Series Chooser");
-        scroller.setMaximumSize(new Dimension(350, 350));
-        seriesFrame.setContentPane(scroller);
-        seriesFrame.pack();
-        seriesFrame.setSize(350, 350);
-        seriesFrame.setVisible(true);
-        seriesFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        seriesFrame.setVisible(true);
-        while (seriesFrame.isShowing());
+        GenericDialog sd = new GenericDialog("LOCI Bio-Formats Series Options");
+        for (int i=0; i<seriesCount; i++) {
+          sd.addCheckbox(seriesStrings[i], series[i]);
+        }
+//        addScrollBars(sd);
+        sd.showDialog();
+        if (sd.wasCanceled()) {
+          plugin.canceled = true;
+          return;
+        }
+        for (int i=0; i<seriesCount; i++) series[i] = sd.getNextBoolean();
       }
 
+      // -- Step 4b: prompt for the range of planes to import, if necessary --
+
+      if (specifyRanges) {
+        boolean needRange = false;
+        for (int i=0; i<seriesCount; i++) {
+          if (series[i] && num[i] > 1) needRange = true;
+        }
+        if (needRange) {
+          IJ.showStatus("");
+          GenericDialog rd =
+            new GenericDialog("LOCI Bio-Formats Range Options");
+          for (int i=0; i<seriesCount; i++) {
+            if (!series[i]) continue;
+            rd.addMessage(seriesStrings[i].replaceAll("_", " "));
+            String s = "_" + (i + 1);
+            rd.addNumericField("Begin" + s, begin[i] + 1, 0);
+            rd.addNumericField("End" + s, end[i] + 1, 0);
+            rd.addNumericField("Step" + s, step[i], 0);
+          }
+//          addScrollBars(rd);
+          rd.showDialog();
+          if (rd.wasCanceled()) {
+            plugin.canceled = true;
+            return;
+          }
+          for (int i=0; i<seriesCount; i++) {
+            if (!series[i]) continue;
+            begin[i] = (int) rd.getNextNumber() - 1;
+            end[i] = (int) rd.getNextNumber() - 1;
+            step[i] = (int) rd.getNextNumber();
+            if (begin[i] < 0) begin[i] = 0;
+            if (begin[i] >= num[i]) begin[i] = num[i] - 1;
+            if (end[i] < begin[i]) end[i] = begin[i];
+            if (end[i] >= num[i]) end[i] = num[i] - 1;
+            if (step[i] < 1) step[i] = 1;
+          }
+        }
+      }
+
+      // -- Step 4c: display metadata, when appropriate --
+
       if (showMetadata) {
+        IJ.showStatus("Populating metadata");
+
         // display standard metadata in a table in its own window
         Hashtable meta = r.getMetadata(id);
         meta.put("\tSizeX", new Integer(r.getSizeX(id)));
@@ -289,36 +330,22 @@ public class Importer implements ActionListener, ItemListener {
         frame.pack();
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        WindowManager.addWindow(frame);
       }
 
-      for (int i=0; i<series.length; i++) {
+      // -- Step 4d: read pixel data --
+
+      IJ.showStatus("Reading " + fileName);
+
+      for (int i=0; i<seriesCount; i++) {
         if (!series[i]) continue;
         r.setSeries(id, i);
 
-        String name = id + " - " + store.getImageName(new Integer(i));
+        String name = store.getImageName(new Integer(i));
+        String imageName = fileName;
+        if (name != null && name.length() > 0) imageName += " - " + name;
 
-        int num = r.getImageCount(id);
-        int begin = 0, end = num - 1, step = 1;
-        if (specifyRanges && num > 1) {
-          // prompt for range of image planes to import
-          GenericDialog range =
-            new GenericDialog("LOCI Bio-Formats Range Chooser");
-          range.addMessage("Series " + (i + 1) + ": " + num + " planes");
-          range.addNumericField("Series_" + (i + 1) + "_Begin: ", 1, 0);
-          range.addNumericField("Series_" + (i + 1) + "_End: ", num, 0);
-          range.addNumericField("Series_" + (i + 1) + "_Step: ", 1, 0);
-          range.showDialog();
-          if (range.wasCanceled()) continue;
-          begin = (int) range.getNextNumber() - 1;
-          end = (int) range.getNextNumber() - 1;
-          step = (int) range.getNextNumber();
-        }
-        if (begin < 0) begin = 0;
-        if (begin >= num) begin = num - 1;
-        if (end < begin) end = begin;
-        if (end >= num) end = num - 1;
-        if (step < 1) step = 1;
-        int total = (end - begin) / step + 1;
+        int total = (end[i] - begin[i]) / step[i] + 1;
 
         // dump OME-XML to ImageJ's description field, if available
         FileInfo fi = new FileInfo();
@@ -331,40 +358,41 @@ public class Importer implements ActionListener, ItemListener {
         int sizeZ = r.getSizeZ(id);
         int sizeT = r.getSizeT(id);
 
-        if (specifyRanges && num > 1) {
+        if (specifyRanges && num[i] > 1) {
           // reset sizeZ and sizeT if we aren't opening the entire series
-          sizeZ = begin;
-          sizeT = end;
+          sizeZ = begin[i];
+          sizeT = end[i];
+          // CTR: huh? this makes no sense
           if (channels > 1) {
             channels = r.getIndex(id, 0, 1, 0) - r.getIndex(id, 0, 0, 0);
           }
         }
 
         int q = 0;
-        for (int j=begin; j<=end; j+=step) {
+        for (int j=begin[i]; j<=end[i]; j+=step[i]) {
           // limit message update rate
           long clock = System.currentTimeMillis();
-          if (clock - time >= 50) {
-            IJ.showStatus("Reading plane " + (j + 1) + "/" + (end + 1));
+          if (clock - time >= 100) {
+            IJ.showStatus("Reading " + (seriesCount > 1 ? "series " +
+              (i + 1) + ", " : "") + "plane " + (j + 1) + "/" + (end[i] + 1));
             time = clock;
           }
           IJ.showProgress((double) q++ / total);
           BufferedImage img = r.openImage(id, j);
 
-          if (img.getWidth() < r.getSizeX(id) ||
-            img.getHeight() < r.getSizeY(id))
-          {
-            img = ImageTools.padImage(img, r.getSizeX(id), r.getSizeY(id));
+          int sizeX = r.getSizeX(id), sizeY = r.getSizeY(id);
+          if (img.getWidth() < sizeX || img.getHeight() < sizeY) {
+            img = ImageTools.padImage(img, sizeX, sizeY);
           }
 
-          int cCoord = r.getZCTCoords(id, j)[1];
-
+          // autoscale >8-bit data to that RGB merge looks reasonable
+//          int cCoord = r.getZCTCoords(id, j)[1];
 //          Double min = r.getChannelGlobalMinimum(id, cCoord);
 //          Double max = r.getChannelGlobalMaximum(id, cCoord);
           Double min = null, max = null;
-
-          if (r.isRGB(id) && r.getPixelType(id) >= FormatReader.INT16) {
-
+          if (!doRGBMerge && r.isRGB(id) &&
+            r.getPixelType(id) >= FormatReader.INT16)
+          {
             if (min == null || max == null) {
               // call ImageJ's RGB merge utility after we display
               doRGBMerge = true;
@@ -375,6 +403,7 @@ public class Importer implements ActionListener, ItemListener {
             }
           }
 
+          // extract bytes from buffered image
           ImageProcessor ip = null;
           WritableRaster raster = img.getRaster();
           int c = raster.getNumBands();
@@ -391,7 +420,7 @@ public class Importer implements ActionListener, ItemListener {
               }
               ip = new ByteProcessor(w, h, b, null);
               if (stackB == null) stackB = new ImageStack(w, h);
-              stackB.addSlice(name + ":" + (j + 1), ip);
+              stackB.addSlice(imageName + ":" + (j + 1), ip);
             }
             else if (tt == DataBuffer.TYPE_USHORT) {
               short[] s = ImageTools.getShorts(img)[0];
@@ -402,7 +431,7 @@ public class Importer implements ActionListener, ItemListener {
               }
               ip = new ShortProcessor(w, h, s, null);
               if (stackS == null) stackS = new ImageStack(w, h);
-              stackS.addSlice(name + ":" + (j + 1), ip);
+              stackS.addSlice(imageName + ":" + (j + 1), ip);
             }
             else if (tt == DataBuffer.TYPE_FLOAT) {
               float[] f = ImageTools.getFloats(img)[0];
@@ -416,49 +445,54 @@ public class Importer implements ActionListener, ItemListener {
 
               if (stackB != null) {
                 ip = ip.convertToByte(true);
-                stackB.addSlice(name + ":" + (j + 1), ip);
+                stackB.addSlice(imageName + ":" + (j + 1), ip);
                 stackF = null;
               }
               else if (stackS != null) {
                 ip = ip.convertToShort(true);
-                stackS.addSlice(name + ":" + (j + 1), ip);
+                stackS.addSlice(imageName + ":" + (j + 1), ip);
                 stackF = null;
               }
-              else stackF.addSlice(name + ":" + (j + 1), ip);
+              else stackF.addSlice(imageName + ":" + (j + 1), ip);
             }
           }
           if (ip == null) {
             ip = new ImagePlus(null, img).getProcessor(); // slow
             if (stackO == null) stackO = new ImageStack(w, h);
-            stackO.addSlice(name + ":" + (j + 1), ip);
+            stackO.addSlice(imageName + ":" + (j + 1), ip);
           }
         }
+
         IJ.showStatus("Creating image");
         IJ.showProgress(1);
         ImagePlus imp = null;
         if (stackB != null) {
           if (!mergeChannels && splitWindows) {
-            slice(stackB, id, sizeZ, channels, sizeT, fi, r, specifyRanges);
+            slice(stackB, id, sizeZ, channels, sizeT,
+              fi, r, specifyRanges, colorize);
           }
-          else imp = new ImagePlus(name, stackB);
+          else imp = new ImagePlus(imageName, stackB);
         }
         if (stackS != null) {
           if (!mergeChannels && splitWindows) {
-            slice(stackS, id, sizeZ, channels, sizeT, fi, r, specifyRanges);
+            slice(stackS, id, sizeZ, channels, sizeT,
+              fi, r, specifyRanges, colorize);
           }
-          else imp = new ImagePlus(name, stackS);
+          else imp = new ImagePlus(imageName, stackS);
         }
         if (stackF != null) {
           if (!mergeChannels && splitWindows) {
-            slice(stackF, id, sizeZ, channels, sizeT, fi, r, specifyRanges);
+            slice(stackF, id, sizeZ, channels, sizeT,
+              fi, r, specifyRanges, colorize);
           }
-          else imp = new ImagePlus(name, stackF);
+          else imp = new ImagePlus(imageName, stackF);
         }
         if (stackO != null) {
           if (!mergeChannels && splitWindows) {
-            slice(stackO, id, sizeZ, channels, sizeT, fi, r, specifyRanges);
+            slice(stackO, id, sizeZ, channels, sizeT,
+              fi, r, specifyRanges, colorize);
           }
-          else imp = new ImagePlus(name, stackO);
+          else imp = new ImagePlus(imageName, stackO);
         }
 
         if (imp != null) {
@@ -528,11 +562,11 @@ public class Importer implements ActionListener, ItemListener {
 
         long endTime = System.currentTimeMillis();
         double elapsed = (endTime - startTime) / 1000.0;
-        if (num == 1) {
+        if (num[i] == 1) {
           IJ.showStatus("LOCI Bio-Formats: " + elapsed + " seconds");
         }
         else {
-          long average = (endTime - startTime) / num;
+          long average = (endTime - startTime) / num[i];
           IJ.showStatus("LOCI Bio-Formats: " + elapsed + " seconds (" +
             average + " ms per plane)");
         }
@@ -540,10 +574,8 @@ public class Importer implements ActionListener, ItemListener {
 
       r.close();
       plugin.success = true;
-      doRGBMerge = false;
 
-      // save checkbox values to IJ_Prefs.txt
-
+      // save parameter values to IJ_Prefs.txt
       Prefs.set("bioformats.mergeChannels", mergeChannels);
       Prefs.set("bioformats.ignoreTables", ignoreTables);
       Prefs.set("bioformats.colorize", colorize);
@@ -551,9 +583,6 @@ public class Importer implements ActionListener, ItemListener {
       Prefs.set("bioformats.showMetadata", showMetadata);
       Prefs.set("bioformats.stitchFiles", stitchFiles);
       Prefs.set("bioformats.specifyRanges", specifyRanges);
-
-      mergeChannels = true;
-      splitWindows = false;
     }
     catch (Exception exc) {
       exc.printStackTrace();
@@ -566,48 +595,16 @@ public class Importer implements ActionListener, ItemListener {
     }
   }
 
-  // -- ItemListener API methods --
-
-  public void itemStateChanged(ItemEvent e) {
-    Object source = e.getItemSelectable();
-    boolean selected = e.getStateChange() == ItemEvent.SELECTED;
-    if (source == merge) mergeChannels = selected;
-    else if (source == ignore) ignoreTables = selected;
-    else if (source == colorizeChannels) colorize = selected;
-    else if (source == newWindows) splitWindows = selected;
-    else if (source == showMeta) showMetadata = selected;
-    else if (source == stitching) stitchFiles = selected;
-    else if (source == ranges) specifyRanges = selected;
-    else {
-      if (series != null) {
-        for (int i=0; i<boxes.length; i++) {
-          if (source == boxes[i]) {
-            series[i] = selected;
-            return;
-          }
-        }
-      }
-    }
-  }
-
-  // -- ActionListener API methods --
-
-  public void actionPerformed(ActionEvent e) {
-    Object source = e.getSource();
-    if (source == okButton) seriesFrame.dispose();
-  }
-
   // -- Helper methods --
 
-  private void slice(ImageStack is, String file, int z, int c, int t,
-    FileInfo fi, IFormatReader r, boolean range)
+  private void slice(ImageStack is, String id, int z, int c, int t,
+    FileInfo fi, IFormatReader r, boolean range, boolean colorize)
     throws FormatException, IOException
   {
-
     int step = 1;
     if (range) {
       step = c;
-      c = r.getSizeC(file);
+      c = r.getSizeC(id);
     }
 
     ImageStack[] newStacks = new ImageStack[c];
@@ -627,7 +624,7 @@ public class Importer implements ActionListener, ItemListener {
       else {
         for (int j=0; j<z; j++) {
           for (int k=0; k<t; k++) {
-            int s = r.getIndex(file, j, i, k) + 1;
+            int s = r.getIndex(id, j, i, k) + 1;
             newStacks[i].addSlice(is.getSliceLabel(s), is.getProcessor(s));
           }
         }
@@ -637,9 +634,9 @@ public class Importer implements ActionListener, ItemListener {
     // retrieve the spatial calibration information, if available
 
     OMEXMLMetadataStore store =
-      (OMEXMLMetadataStore) r.getMetadataStore(file);
+      (OMEXMLMetadataStore) r.getMetadataStore(id);
     double xcal = Double.NaN, ycal = Double.NaN, zcal = Double.NaN;
-    Integer ii = new Integer(r.getSeries(file));
+    Integer ii = new Integer(r.getSeries(id));
 
     Float xf = store.getPixelSizeX(ii);
     if (xf != null) xcal = xf.floatValue();
@@ -649,7 +646,7 @@ public class Importer implements ActionListener, ItemListener {
     if (zf != null) zcal = zf.floatValue();
 
     for (int i=0; i<newStacks.length; i++) {
-      ImagePlus imp = new ImagePlus(file + " - Ch" + (i+1), newStacks[i]);
+      ImagePlus imp = new ImagePlus(id + " - Ch" + (i+1), newStacks[i]);
 
       if (xcal != Double.NaN || ycal != Double.NaN || zcal != Double.NaN) {
         Calibration cal = new Calibration();
@@ -668,8 +665,7 @@ public class Importer implements ActionListener, ItemListener {
         imp.setCalibration(cal);
       }
 
-
-      // mostly copied from the ImageJ source
+      // colorize channels; mostly copied from the ImageJ source
  
       if (colorize) {
         fi.reds = new byte[256];
@@ -695,6 +691,22 @@ public class Importer implements ActionListener, ItemListener {
       imp.setFileInfo(fi);
       imp.show();
     }
+  }
+
+  private void addScrollBars(Container pane) {
+    LayoutManager layout = pane.getLayout();
+    int count = pane.getComponentCount();
+    Component[] c = new Component[count];
+    for (int i=0; i<count; i++) c[i] = pane.getComponent(i);
+    pane.removeAll();
+    pane.setLayout(new BorderLayout());
+
+    Panel newPane = new Panel();
+    newPane.setLayout(layout);
+    for (int i=0; i<count; i++) newPane.add(c[i]);
+    ScrollPane scroll = new ScrollPane();
+    scroll.add(newPane);
+    pane.add(scroll, BorderLayout.CENTER);
   }
 
 }
