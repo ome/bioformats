@@ -605,7 +605,7 @@ public class FileStitcher implements IFormatReader {
 
     // order may need to be adjusted
     order = ag.getAdjustedOrder();
-    swapDimensions(id, order);
+    swapDimensions(currentId, order);
   }
 
   /** Computes axis length arrays, and total axis lengths. */
