@@ -32,8 +32,9 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 /**
- * Logic to stitch together files with similar names. Only stitches the first
- * series for each file, and assumes that all files have the same dimensions.
+ * Logic to stitch together files with similar names. Stitches based on the
+ * first series for each file, and assumes that all files have the same
+ * dimensions.
  */
 public class FileStitcher implements IFormatReader {
 
@@ -69,17 +70,17 @@ public class FileStitcher implements IFormatReader {
   /** Number of images per file. */
   private int imagesPerFile;
 
-  /** Dimensional axis lengths per file. */
-  private int sizeZ, sizeC, sizeT;
-
   /** Total number of image planes. */
   private int totalImages;
 
-  /** Total dimensional axis lengths. */
-  private int totalSizeZ, totalSizeC, totalSizeT;
-
   /** Dimension order. */
   private String order;
+
+  /** Dimensional axis lengths per file. */
+  private int sizeZ, sizeC, sizeT;
+
+  /** Total dimensional axis lengths. */
+  private int totalSizeZ, totalSizeC, totalSizeT;
 
   /** Component lengths for each axis type. */
   private int[] lenZ, lenC, lenT;
@@ -110,6 +111,60 @@ public class FileStitcher implements IFormatReader {
   public FileStitcher(IFormatReader r, boolean patternIds) {
     reader = r;
     this.patternIds = patternIds;
+  }
+
+  // -- FileStitcher API methods --
+
+  /**
+   * Gets the axis type for each dimensional block.
+   * @return An array containing values from the enumeration:
+   *   <ul>
+   *     <li>AxisGuesser.Z_AXIS: focal planes</li>
+   *     <li>AxisGuesser.T_AXIS: time points</li>
+   *     <li>AxisGuesser.C_AXIS: channels</li>
+   *   </ul>
+   */
+  public int[] getAxisTypes(String id)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return ag.getAxisTypes();
+  }
+
+  /**
+   * Sets the axis type for each dimensional block.
+   * @param axes An array containing values from the enumeration:
+   *   <ul>
+   *     <li>AxisGuesser.Z_AXIS: focal planes</li>
+   *     <li>AxisGuesser.T_AXIS: time points</li>
+   *     <li>AxisGuesser.C_AXIS: channels</li>
+   *   </ul>
+   */
+  public void setAxisTypes(String id, int[] axes)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    ag.setAxisTypes(axes);
+    computeAxisLengths();
+  }
+
+  /** Gets the file pattern object used to build the list of files. */
+  public FilePattern getFilePattern(String id)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return fp;
+  }
+
+  /**
+   * Gets the axis guesser object used to guess
+   * which dimensional axes are which.
+   */
+  public AxisGuesser getAxisGuesser(String id)
+    throws FormatException, IOException
+  {
+    if (!id.equals(currentId)) initFile(id);
+    return ag;
   }
 
   // -- IFormatReader API methods --
@@ -335,7 +390,14 @@ public class FileStitcher implements IFormatReader {
   public void swapDimensions(String id, String order)
     throws FormatException, IOException
   {
-    throw new FormatException("Unimplemented");
+    if (!id.equals(currentId)) initFile(id);
+    this.order = order;
+    String f0 = files[0];
+    reader.swapDimensions(f0, order);
+    sizeZ = reader.getSizeZ(f0);
+    sizeC = reader.getSizeC(f0);
+    sizeT = reader.getSizeT(f0);
+    computeAxisLengths();
   }
 
   /* @see IFormatReader#getIndex(String, int, int, int) */
@@ -531,12 +593,11 @@ public class FileStitcher implements IFormatReader {
     width = reader.getSizeX(f0);
     height = reader.getSizeY(f0);
     imagesPerFile = reader.getImageCount(f0);
+    totalImages = files.length * imagesPerFile;
+    order = reader.getDimensionOrder(f0);
     sizeZ = reader.getSizeZ(f0);
     sizeC = reader.getSizeC(f0);
     sizeT = reader.getSizeT(f0);
-    int pixelType = reader.getPixelType(f0);
-    boolean little = reader.isLittleEndian(f0);
-    order = reader.getDimensionOrder(f0);
     boolean certain = reader.isOrderCertain(f0);
 
     // guess at dimensions corresponding to file numbering
@@ -544,18 +605,16 @@ public class FileStitcher implements IFormatReader {
 
     // order may need to be adjusted
     order = ag.getAdjustedOrder();
-    reader.swapDimensions(f0, order);
-    sizeZ = reader.getSizeZ(f0);
-    sizeC = reader.getSizeC(f0);
-    sizeT = reader.getSizeT(f0);
+    swapDimensions(id, order);
+  }
 
-    // compute total axis lengths
+  /** Computes axis length arrays, and total axis lengths. */
+  protected void computeAxisLengths() throws FormatException, IOException {
     int[] count = fp.getCount();
     int[] axes = ag.getAxisTypes();
     int numZ = ag.getAxisCountZ();
     int numC = ag.getAxisCountC();
     int numT = ag.getAxisCountT();
-    totalImages = files.length * imagesPerFile;
     totalSizeZ = sizeZ;
     totalSizeC = sizeC;
     totalSizeT = sizeT;
@@ -587,12 +646,14 @@ public class FileStitcher implements IFormatReader {
     }
 
     // populate metadata store
+    String f0 = files[0];
+    int pixelType = reader.getPixelType(f0);
+    boolean little = reader.isLittleEndian(f0);
     MetadataStore s = reader.getMetadataStore(f0);
     s.setPixels(new Integer(width), new Integer(height),
       new Integer(totalSizeZ), new Integer(totalSizeC),
       new Integer(totalSizeT), new Integer(pixelType),
       new Boolean(!little), order, null);
-    setMetadataStore(s);
   }
 
   /**
