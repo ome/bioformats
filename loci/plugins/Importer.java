@@ -258,7 +258,7 @@ public class Importer {
         for (int i=0; i<seriesCount; i++) {
           sd.addCheckbox(seriesStrings[i], series[i]);
         }
-//        addScrollBars(sd);
+        addScrollBars(sd);
         sd.showDialog();
         if (sd.wasCanceled()) {
           plugin.canceled = true;
@@ -286,7 +286,7 @@ public class Importer {
             rd.addNumericField("End" + s, end[i] + 1, 0);
             rd.addNumericField("Step" + s, step[i], 0);
           }
-//          addScrollBars(rd);
+          addScrollBars(rd);
           rd.showDialog();
           if (rd.wasCanceled()) {
             plugin.canceled = true;
@@ -694,19 +694,63 @@ public class Importer {
   }
 
   private void addScrollBars(Container pane) {
-    LayoutManager layout = pane.getLayout();
+    GridBagLayout layout = (GridBagLayout) pane.getLayout();
+
+    // extract components
     int count = pane.getComponentCount();
     Component[] c = new Component[count];
-    for (int i=0; i<count; i++) c[i] = pane.getComponent(i);
-    pane.removeAll();
-    pane.setLayout(new BorderLayout());
+    GridBagConstraints[] gbc = new GridBagConstraints[count];
+    for (int i=0; i<count; i++) {
+      c[i] = pane.getComponent(i);
+      gbc[i] = layout.getConstraints(c[i]);
+    }
 
+    // clear components
+    pane.removeAll();
+    layout.invalidateLayout(pane);
+
+    // create new container panel
     Panel newPane = new Panel();
-    newPane.setLayout(layout);
-    for (int i=0; i<count; i++) newPane.add(c[i]);
+    GridBagLayout newLayout = new GridBagLayout();
+    newPane.setLayout(newLayout);
+    for (int i=0; i<count; i++) {
+      newLayout.setConstraints(c[i], gbc[i]);
+      newPane.add(c[i]);
+    }
+
+    // get preferred size for container panel
+    // NB: don't know a better way:
+    // - newPane.getPreferredSize() doesn't work
+    // - newLayout.preferredLayoutSize(newPane) doesn't work
+    Frame f = new Frame();
+    f.setLayout(new BorderLayout());
+    f.add(newPane, BorderLayout.CENTER);
+    f.pack();
+    Dimension size = newPane.getSize();
+    f.remove(newPane);
+    f.dispose();
+
+    // compute best size for scrollable viewport
+    size.width += 15;
+    size.height += 15;
+    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    int maxWidth = 3 * screen.width / 4;
+    int maxHeight = 3 * screen.height / 4;
+    if (size.width > maxWidth) size.width = maxWidth;
+    if (size.height > maxHeight) size.height = maxHeight;
+
+    // create scroll pane
     ScrollPane scroll = new ScrollPane();
+    scroll.setPreferredSize(size);
     scroll.add(newPane);
-    pane.add(scroll, BorderLayout.CENTER);
+
+    // add scroll pane to original container
+    GridBagConstraints constraints = new GridBagConstraints();
+    constraints.fill = GridBagConstraints.BOTH;
+    constraints.weightx = 1.0;
+    constraints.weighty = 1.0;
+    layout.setConstraints(scroll, constraints);
+    pane.add(scroll);
   }
 
 }
