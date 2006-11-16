@@ -57,7 +57,7 @@ public class CacheManager implements Runnable {
   public static final int SURROUND_FIRST = 0x0200;
 
   /** Flags debug messages on/off.*/
-  public static final boolean DEBUG = true;
+  public static final boolean DEBUG = false;
 
   // -- Fields --
 

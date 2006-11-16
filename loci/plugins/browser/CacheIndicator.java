@@ -58,8 +58,63 @@ public class CacheIndicator extends JComponent {
     g.fillRect(0,0,getWidth()-1,COMPONENT_HEIGHT - 1);
     g.setColor(Color.black);
     g.drawRect(0,0,getWidth()-1,COMPONENT_HEIGHT - 1);
-//    System.out.println("Ratio = " + ratio);
+
     if(ratio < 1) {
+      int [] loadColor = new int[getWidth()];
+      int [] cacheColor = new int[getWidth()];
+      
+      for(int i = 0;i < loadColor.length;i++) {
+        loadColor[i] = -1;
+        cacheColor[i] = -1;
+      }
+      
+      //find how many entries of the cache are handled per pixel of indicator
+      int perPixel;
+      double integers = 2;
+      double dPerPixel = ratio * integers;  
+      
+      System.out.println("Ratio: " + ratio);
+      while(dPerPixel < 1) {
+        integers++;
+        dPerPixel = ratio * integers;
+      }
+      
+      Double temp = new Double(integers);
+      perPixel = temp.intValue();
+      
+      System.out.println("PerPixel: " + perPixel);
+      
+      int colorAmount = 255 / perPixel;
+      System.out.println("ColorAmount: " + colorAmount);
+      
+      for(int i = 0;i<loadList.length;i++) {
+        int index = translate(loadList[i]);
+        if (loadColor[index] == -1) loadColor[index] = 0;
+        loadColor[index] = loadColor[index] + colorAmount;
+        if (loadColor[index] > 255) {
+          System.out.println("RED: " + loadColor[index]);
+          loadColor[index] = 255;
+        }
+      }
+      for(int i = 0;i<cache.length;i++) {
+        int index = translate(cache[i]);
+        if (cacheColor[index] == -1) cacheColor[index] = 0;
+        cacheColor[index] = cacheColor[index] + colorAmount;
+        if (cacheColor[index] > 255) {
+          System.out.println("BLUE: " + cacheColor[index]);
+          cacheColor[index] = 255;
+        }
+      }
+      
+      for(int i = 0;i < getWidth();i++) {
+        if(loadColor[i] != -1 || cacheColor[i] != -1) {
+          if(loadColor[i] == -1) loadColor[i] = 0;
+          if(cacheColor[i] == -1) cacheColor[i] = 0;
+          g.setColor(new Color(loadColor[i],0,cacheColor[i]));
+          g.drawLine(i,1,i,COMPONENT_HEIGHT - 2);
+        }
+        else continue;
+      }
     }
     else {
       int prevLoad = -1;
@@ -79,7 +134,6 @@ public class CacheIndicator extends JComponent {
           prevLoad = prevLoad + 1;
           int x = translate(startLoad);
           int wid = translate(prevLoad) - x;
-//          System.out.println("Rectangle: x = " + x + "; width = " + wid);
           g.fillRect(x,1,wid,COMPONENT_HEIGHT - 2);
           startLoad = -1;
         }
