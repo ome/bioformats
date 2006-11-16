@@ -482,7 +482,6 @@ public class OmeisImporter {
   public static void main(String[] args) {
     OmeisImporter importer = new OmeisImporter();
     boolean test = false;
-    boolean fatal_stdout = false;
     int[] fileIds = new int[args.length];
 
     // parse command line arguments
