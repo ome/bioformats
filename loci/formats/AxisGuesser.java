@@ -240,6 +240,17 @@ public class AxisGuesser {
    */
   public int[] getAxisTypes() { return axes; }
 
+  /**
+   * Sets the axis type for each dimensional block.
+   * @param axes An array containing values from the enumeration:
+   *   <ul>
+   *     <li>Z_AXIS: focal planes</li>
+   *     <li>T_AXIS: time points</li>
+   *     <li>C_AXIS: channels</li>
+   *   </ul>
+   */
+  public void setAxisTypes(int[] axes) { this.axes = axes; }
+
   /** Gets the number of Z axes in the pattern. */
   public int getAxisCountZ() { return getAxisCount(Z_AXIS); }
 
