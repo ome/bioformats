@@ -81,7 +81,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   private CellConstraints cc;
   protected JSpinner channelSpin;
   private JCheckBox channelBox;
-  private Color textColor;
+  private CardLayout switcher;
+  private JPanel channelPanel;
 
   // -- Constructor --
 
@@ -173,19 +174,26 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       xml.setActionCommand("xml");
     }
 
+    switcher = new CardLayout();
+    channelPanel = new JPanel(switcher);
+    channelPanel.setOpaque(false);
+    
     channelBox = new JCheckBox("Transmitted");
+    channelBox.setBackground(Color.white);
+    channelPanel.add("one", channelBox);
 
+    JPanel subPane = new JPanel(new FlowLayout());
+    subPane.setBackground(Color.white);
     cLabel = new JLabel("channel");
-    textColor = cLabel.getForeground();
     SpinnerModel model = new SpinnerNumberModel(1, 1, db.numC, 1);
     channelSpin = new JSpinner(model);
     channelSpin.setEditor(new JSpinner.NumberEditor(channelSpin));
+    channelSpin.addChangeListener(this);
+    subPane.add(cLabel);
+    subPane.add(channelSpin);
+    channelPanel.add("many", subPane);
 
-    if(db.numC > 2) channelBox.setVisible(false);
-    else {
-      channelSpin.setVisible(false);
-      cLabel.setForeground(Color.white);
-    }
+    setC(2);
 
     // repack to take extra panel into account
     c = db.numC;
@@ -211,7 +219,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     lowPane = new Panel();
     FormLayout layout = new FormLayout(
         TAB + ",pref," + TAB + ",pref:grow," + TAB + ",pref," + TAB + ",pref,"
-        + TAB + ",pref," + TAB + ",pref," + TAB,
+        + TAB + ",pref," + TAB,
         TAB + ",pref," + TAB + ",pref," + TAB + ",pref," + TAB);
     lowPane.setLayout(layout);
     lowPane.setBackground(Color.white);
@@ -220,14 +228,12 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
     lowPane.add(zLabel, cc.xy(2,2));
     lowPane.add(zPanel, cc.xyw(4,2,5));
-    lowPane.add(channelBox, cc.xy(12,2));
+    lowPane.add(channelPanel, cc.xy(10,2));
     lowPane.add(tLabel, cc.xy(2,4));
     lowPane.add(tPanel, cc.xyw(4,4,5));
-    lowPane.add(cLabel, cc.xy(10,4));
-    lowPane.add(channelSpin, cc.xy(12,4));
     lowPane.add(options, cc.xy(6,6));
     if(xml != null) lowPane.add(xml, cc.xy(8,6));
-    lowPane.add(animate, cc.xyw(10,6,3, "right,center"));
+    lowPane.add(animate, cc.xy(10,6, "right,center"));
 
     setC(2);
 
@@ -276,28 +282,17 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     }
     if (numThis > 2) {
       // C spinner
+      switcher.last(channelPanel);
       SpinnerNumberModel snm = (SpinnerNumberModel) channelSpin.getModel();
       snm.setMaximum((Comparable) new Integer(numThis));
       snm.setValue(new Integer(value));
-      channelSpin.setVisible(true);
-      cLabel.setForeground(textColor);
       if (!hasThis) channelSpin.setEnabled(false);
-      channelSpin.addChangeListener(this);
-
-      // C label
       if (!hasThis) cLabel.setEnabled(false);
-
-      channelBox.setVisible(false);
     }
     else {
       // C checkbox
-      channelBox.setVisible(true);
+      switcher.first(channelPanel);
       if (!hasThis) channelBox.setEnabled(false);
-      channelBox.addItemListener(this);
-      channelBox.setBackground(Color.white);
-
-      channelSpin.setVisible(false);
-      cLabel.setForeground(Color.white);
     }
   }
 
@@ -643,25 +638,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     else showTempSlice(z,t,c);
   }
 
-  // -- ChangeListener methods --
-
-  public void stateChanged(ChangeEvent e) {
-    JSpinner channels = (JSpinner) e.getSource();
-    switch(cMap) {
-      case 0:
-        z = ((Integer) channels.getValue()).intValue();
-        break;
-      case 1:
-        t = ((Integer) channels.getValue()).intValue();
-        break;
-      case 2:
-        c = ((Integer) channels.getValue()).intValue();
-        break;
-    }
-
-    showSlice(z, t, c);
-  }
-
   // -- ItemListener methods --
 
   public synchronized void itemStateChanged(ItemEvent e) {
@@ -679,6 +655,28 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     }
 
     showSlice(z, t, c);
+  }
+  
+  // -- ChangeListener methods --
+  
+  public void stateChanged(ChangeEvent e) {
+    if( (JSpinner) e.getSource() == channelSpin) {
+      int value = ((Integer) channelSpin.getValue()).intValue();
+        
+      switch(cMap) {
+        case 0:
+          z = value;
+          break;
+        case 1:
+          t = value;
+          break;
+        case 2:
+          c = value;
+          break;
+      }
+      
+      showSlice(z, t, c);
+    }
   }
 
   // -- KeyListener methods --
