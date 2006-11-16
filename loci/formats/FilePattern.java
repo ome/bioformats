@@ -259,6 +259,11 @@ public class FilePattern {
     return s <= e ? pattern.substring(s, e) : "";
   }
 
+  /** Gets the pattern's text string after all numerical ranges. */
+  public String getSuffix() {
+    return pattern.substring(endIndex.length > 0 ? endIndex[0] : 0);
+  }
+
   /** Gets the pattern's text string before the given numerical block. */
   public String getPrefix(int i) {
     if (i < 0 || i >= startIndex.length) return null;
