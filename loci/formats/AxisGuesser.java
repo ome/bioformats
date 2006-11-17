@@ -107,6 +107,7 @@ public class AxisGuesser {
 
     newOrder = dimOrder;
     String[] prefixes = fp.getPrefixes();
+    String suffix = fp.getSuffix();
     BigInteger[] first = fp.getFirst();
     BigInteger[] last = fp.getLast();
     BigInteger[] step = fp.getStep();
@@ -165,7 +166,7 @@ public class AxisGuesser {
 
       // check special case: <2-3> (Bio-Rad PIC)
       if (first[i].equals(TWO) && last[i].equals(THREE) &&
-        step[i].equals(BigInteger.ONE))
+        step[i].equals(BigInteger.ONE) && suffix.equalsIgnoreCase(".pic"))
       {
         axes[i] = C_AXIS;
         foundC = true;
