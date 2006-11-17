@@ -27,7 +27,6 @@ package loci.formats.in;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import loci.formats.FormatReader;
-import loci.formats.ImageReader;
 
 /**
  * A class which represents an entire 2D plane.
@@ -70,7 +69,7 @@ public class Plane2D {
     this.data.order(isLittleEndian ?
       ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
 
-    this.bytesPerPixel = ImageReader.getBytesPerPixel(type);
+    this.bytesPerPixel = FormatReader.getBytesPerPixel(type);
   }
 
   /**

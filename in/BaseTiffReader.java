@@ -29,14 +29,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 import java.util.Hashtable;
-import loci.formats.DataTools;
-import loci.formats.FormatException;
-import loci.formats.FormatReader;
-import loci.formats.ImageReader;
-import loci.formats.MetadataStore;
-import loci.formats.RandomAccessStream;
-import loci.formats.TiffRational;
-import loci.formats.TiffTools;
+import loci.formats.*;
 
 /**
  * BaseTiffReader is the superclass for file format readers compatible with
@@ -768,7 +761,7 @@ public abstract class BaseTiffReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    int bytesPerPixel = ImageReader.getBytesPerPixel(getPixelType(id));
+    int bytesPerPixel = FormatReader.getBytesPerPixel(getPixelType(id));
     byte[] buf = new byte[getSizeX(id) * getSizeY(id) * getSizeC(id) *
       bytesPerPixel];
     return openBytes(id, no, buf);
