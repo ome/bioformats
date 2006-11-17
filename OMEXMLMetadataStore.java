@@ -448,6 +448,10 @@ public class OMEXMLMetadataStore implements MetadataStore {
     pixels.setPixelType(pixelTypeAsString(pixelType));
     pixels.setBigEndian(bigEndian);
     pixels.setDimensionOrder(dimensionOrder);
+    if (ndx == 0) {
+      // assign Pixels as default for the Image
+      image.setDefaultPixels(pixels);
+    }
   }
 
   /* @see MetadataStore#setStageLabel(String, Float, Float, Float, Integer) */
