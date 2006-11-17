@@ -182,7 +182,7 @@ public class Importer {
           }
         }
       }
-      r.setIgnoreColorTable(ignoreTables);
+      r.setColorTableIgnored(ignoreTables);
 
       // store OME metadata into OME-XML structure, if available
       OMEXMLMetadataStore store = new OMEXMLMetadataStore();
