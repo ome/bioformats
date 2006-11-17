@@ -242,7 +242,6 @@ public class OmeisImporter {
           // inject important extra attributes into proper Pixels element
           Element pixels = (Element) pix.elementAt(s);
           pixels.setAttribute("FileSHA1", sha1);
-//          pixels.setAttribute("Repository", "urn:lsid:skyking.microscopy.wisc.edu:OME_SemanticType_BootstrapRepository:4-1gbDg1");
           pixels.setAttribute("ImageServerID", "" + pixelsId);
           if (DEBUG) log("Pixel attributes injected.");
         }
@@ -254,7 +253,7 @@ public class OmeisImporter {
       }
       catch (Exception exc) {
         System.err.println(
-          "Error: an exception occurred reading '" + path + "':");
+          "Error: an exception occurred reading " + path + ":");
         exc.printStackTrace();
       }
     }
@@ -462,14 +461,14 @@ public class OmeisImporter {
 
   /** Prints an HTTP error response header. */
   private void printHttpErrorHeader() {
-    System.out.print ("Status: 500 Server Error\r\n");
-    System.out.print ("Content-Type: text/plain\r\n\r\n");
+    System.out.print("Status: 500 Server Error\r\n");
+    System.out.print("Content-Type: text/plain\r\n\r\n");
   }
 
   /** Prints an HTTP response header. */
   private void printHttpResponseHeader() {
-    System.out.print ("Status: 200 OK\r\n");
-    System.out.print ("Content-Type: text/plain\r\n\r\n");
+    System.out.print("Status: 200 OK\r\n");
+    System.out.print("Content-Type: text/plain\r\n\r\n");
   }
 
   // -- Main method --
