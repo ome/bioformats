@@ -377,7 +377,8 @@ public class FluoviewReader extends BaseTiffReader {
 
       // set the number of valid bits per pixel
 
-      String bits = (String) metadata.get("Map Ch" + (sizeC[0] - 1) + ": Range");
+      String bits = (String)
+        metadata.get("Map Ch" + (sizeC[0] - 1) + ": Range");
       int[] validBits = null;
       int vb = -1;
       if (bits != null && bits.length() > 0) {

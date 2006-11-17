@@ -392,7 +392,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
       while (fp > (length() - dis.available())) {
         dis.skipBytes((int) (fp - (length() - dis.available())));
       }
-    }  
+    }
 
     if (dis != null && raf != null &&
       afp + toRead < MAX_OVERHEAD && afp + toRead < raf.length())
