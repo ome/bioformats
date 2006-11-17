@@ -64,6 +64,9 @@ public class FileStitcher implements IFormatReader {
   /** Reader used for each file. */
   private IFormatReader[] readers;
 
+  /** Blank image to use when image counts are not consistent between files. */
+  private BufferedImage blank;
+
   /** Image dimensions. */
   private int width, height;
 
@@ -315,16 +318,13 @@ public class FileStitcher implements IFormatReader {
     if (ino < readers[fno].getImageCount(files[fno])) {
       return readers[fno].openImage(files[fno], ino);
     }
-    // inserting a blank image may not be the best way to handle files with
-    // different image counts, but we need to do something
-    return ImageTools.blankImage(width, height,
-      readers[fno].getSizeC(files[fno]), readers[fno].getPixelType(files[fno]));
-
-    //CTR TODO - come up with an API for Chris, for setting the axes for the
-    //various blocks (pretty easy -- just setAxisType(int num, int type) or
-    //something similar), and also the internal ordering within each file,
-    //but make it intelligible (only show the internal dimensions that actually
-    //have size > 1). Similar to the current VisBio API?
+    // return a blank image to cover for the fact that
+    // this file does not contain enough image planes
+    if (blank == null) {
+      blank = ImageTools.blankImage(width, height,
+        sizeC, getPixelType(currentId));
+    }
+    return blank;
   }
 
   /** Obtains the specified image from the given file series as a byte array. */
@@ -337,18 +337,10 @@ public class FileStitcher implements IFormatReader {
       return readers[fno].openBytes(files[fno], ino);
     }
 
-    int bytes = 0;
-    switch (readers[fno].getPixelType(files[fno])) {
-      case FormatReader.INT8:
-      case FormatReader.UINT8: bytes = 1; break;
-      case FormatReader.INT16:
-      case FormatReader.UINT16: bytes = 2; break;
-      case FormatReader.INT32:
-      case FormatReader.UINT32:
-      case FormatReader.FLOAT: bytes = 4; break;
-      case FormatReader.DOUBLE: bytes = 8; break;
-    }
-    return new byte[width * height * bytes * readers[fno].getSizeC(files[fno])];
+    // return a blank image to cover for the fact that
+    // this file does not contain enough image planes
+    int bytes = FormatReader.getBytesPerPixel(getPixelType(currentId));
+    return new byte[width * height * bytes * sizeC];
   }
 
   /* @see IFormatReader#openBytes(String, int, byte[]) */
@@ -384,6 +376,7 @@ public class FileStitcher implements IFormatReader {
       for (int i=0; i<readers.length; i++) readers[i].close();
     }
     readers = null;
+    blank = null;
     currentId = null;
   }
 
@@ -409,6 +402,9 @@ public class FileStitcher implements IFormatReader {
   public void setIgnoreColorTable(boolean ignore) {
     ignoreColorTable = ignore;
   }
+
+  /* @see IFormatReader#getIgnoreColorTable() */
+  public boolean getIgnoreColorTable() { return ignoreColorTable; }
 
   /* @see IFormatReader#setNormalize(boolean) */
   public void setNormalize(boolean normalize) {
@@ -679,7 +675,7 @@ public class FileStitcher implements IFormatReader {
 
     // populate metadata store
     String f0 = files[0];
-    int pixelType = reader.getPixelType(f0);
+    int pixelType = getPixelType(currentId);
     boolean little = reader.isLittleEndian(f0);
     MetadataStore s = reader.getMetadataStore(f0);
     s.setPixels(new Integer(width), new Integer(height),

@@ -193,6 +193,10 @@ public abstract class ReaderWrapper implements IFormatReader {
     reader.setIgnoreColorTable(ignore);
   }
 
+  public boolean getIgnoreColorTable() {
+    return reader.getIgnoreColorTable();
+  }
+
   public void setNormalize(boolean normalize) {
     reader.setNormalize(normalize);
   }

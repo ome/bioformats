@@ -181,13 +181,16 @@ public interface IFormatReader extends IFormatHandler {
   /** Gets the currently active series. */
   int getSeries(String id) throws FormatException, IOException;
 
-  /** Specify whether or not to ignore color tables, if present. */
+  /** Specifies whether or not to ignore color tables, if present. */
   void setIgnoreColorTable(boolean ignore);
 
-  /** Specify whether or not to normalize float data. */
+  /** Returns true if we should ignore color tables, if present. */
+  boolean getIgnoreColorTable();
+
+  /** Specifies whether or not to normalize float data. */
   void setNormalize(boolean normalize);
 
-  /** Return true if we should normalize float data. */
+  /** Returns true if we should normalize float data. */
   boolean getNormalize();
 
   /**
@@ -253,9 +256,9 @@ public interface IFormatReader extends IFormatHandler {
    * @param id a fully qualified path to the file.
    * @return current metadata store's root object fully populated.
    * @throws IOException if there is an IO error when reading the file specified
-   * by <code>path</code>.
+   *   by <code>path</code>.
    * @throws FormatException if the file specified by <code>path</code> is of an
-   * unsupported type.
+   *   unsupported type.
    */
   Object getMetadataStoreRoot(String id) throws FormatException, IOException;
 

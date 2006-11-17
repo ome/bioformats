@@ -35,6 +35,8 @@ import javax.swing.filechooser.FileFilter;
 
 /**
  * ImageReader is the master file format reader for all supported formats.
+ * It uses one instance of each reader subclass (specified in readers.txt)
+ * to identify file formats and read data.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -183,7 +185,7 @@ public class ImageReader implements IFormatReader {
 
   // -- IFormatReader API methods --
 
-  /** Checks if the given block is a valid header for an image file. */
+  /* @see IFormatReader.isThisType(byte[]) */
   public boolean isThisType(byte[] block) {
     for (int i=0; i<readers.length; i++) {
       if (readers[i].isThisType(block)) return true;
@@ -191,37 +193,37 @@ public class ImageReader implements IFormatReader {
     return false;
   }
 
-  /** Determines the number of images in the given image file. */
+  /* @see IFormatReader.getImageCount(String) */
   public int getImageCount(String id) throws FormatException, IOException {
     return getReader(id).getImageCount(id);
   }
 
-  /** Checks if the images in the file are RGB. */
+  /* @see IFormatReader.isRGB(String) */
   public boolean isRGB(String id) throws FormatException, IOException {
     return getReader(id).isRGB(id);
   }
 
-  /** Get the size of the X dimension. */
+  /* @see IFormatReader.getSizeX(String) */
   public int getSizeX(String id) throws FormatException, IOException {
     return getReader(id).getSizeX(id);
   }
 
-  /** Get the size of the Y dimension. */
+  /* @see IFormatReader.getSizeY(String) */
   public int getSizeY(String id) throws FormatException, IOException {
     return getReader(id).getSizeY(id);
   }
 
-  /** Get the size of the Z dimension. */
+  /* @see IFormatReader.getSizeZ(String) */
   public int getSizeZ(String id) throws FormatException, IOException {
     return getReader(id).getSizeZ(id);
   }
 
-  /** Get the size of the C dimension. */
+  /* @see IFormatReader.getSizeC(String) */
   public int getSizeC(String id) throws FormatException, IOException {
     return getReader(id).getSizeC(id);
   }
 
-  /** Get the size of the T dimension. */
+  /* @see IFormatReader.getSizeT(String) */
   public int getSizeT(String id) throws FormatException, IOException {
     return getReader(id).getSizeT(id);
   }
@@ -245,17 +247,17 @@ public class ImageReader implements IFormatReader {
     return getReader(id).getChannelGlobalMaximum(id, theC);
   }
 
-  /** Get the size of the X dimension for the thumbnail. */
+  /* @see IFormatReader#getThumbSizeX(String) */
   public int getThumbSizeX(String id) throws FormatException, IOException {
     return getReader(id).getThumbSizeX(id);
   }
 
-  /** Get the size of the Y dimension for the thumbnail. */
+  /* @see IFormatReader#getThumbSizeY(String) */
   public int getThumbSizeY(String id) throws FormatException, IOException {
     return getReader(id).getThumbSizeY(id);
   }
 
-  /** Return true if the data is in little-endian format. */
+  /* @see IFormatReader#isLittleEndian(String) */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     return getReader(id).isLittleEndian(id);
   }
@@ -285,19 +287,19 @@ public class ImageReader implements IFormatReader {
     return readers[0].getChannelStatCalculationStatus();
   }
 
-  /** Returns whether or not the channels are interleaved. */
+  /* @see IFormatReader#isInterleaved(String) */
   public boolean isInterleaved(String id) throws FormatException, IOException {
     return getReader(id).isInterleaved(id);
   }
 
-  /** Obtains the specified image from the given image file. */
+  /* @see IFormatReader#openImage(String, int) */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
     return getReader(id).openImage(id, no);
   }
 
-  /** Obtains the specified image from the given image file as a byte array. */
+  /* @see IFormatReader#openBytes(String, int) */
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
@@ -311,41 +313,36 @@ public class ImageReader implements IFormatReader {
     return getReader(id).openBytes(id, no, buf);
   }
 
-  /** Obtains a thumbnail for the specified image from the given file. */
+  /* @see IFormatReader#openThumbImage(String, int) */
   public BufferedImage openThumbImage(String id, int no)
     throws FormatException, IOException
   {
     return getReader(id).openThumbImage(id, no);
   }
 
-  /**
-   * Obtains a thumbnail for the specified image from the given file,
-   * as a byte array.  We assume that the thumbnail has the same number of
-   * channels as the original image.  If there is more than one channel, then
-   * the resulting byte array will be of the format "RRR...BBB...GGG...".
-   */
+  /* @see IFormatReader#openThumbBytes(String, int) */
   public byte[] openThumbBytes(String id, int no)
     throws FormatException, IOException
   {
     return getReader(id).openThumbBytes(id, no);
   }
 
-  /** Closes any open files. */
+  /* @see IFormatReader#close() */
   public void close() throws FormatException, IOException {
     for (int i=0; i<readers.length; i++) readers[i].close();
   }
 
-  /** Gets the number of series in the file. */
+  /* @see IFormatReader#getSeriesCount(String) */
   public int getSeriesCount(String id) throws FormatException, IOException {
     return getReader(id).getSeriesCount(id);
   }
 
-  /** Activates the specified series. */
+  /* @see IFormatReader#setSeries(String, int) */
   public void setSeries(String id, int no) throws FormatException, IOException {
     getReader(id).setSeries(id, no);
   }
 
-  /** Gets the currently active series. */
+  /* @see IFormatReader#getSeries(String) */
   public int getSeries(String id) throws FormatException, IOException {
     return getReader(id).getSeries(id);
   }
@@ -355,27 +352,29 @@ public class ImageReader implements IFormatReader {
     for (int i=0; i<readers.length; i++) readers[i].setIgnoreColorTable(ignore);
   }
 
+  /* @see IFormatReader#getIgnoreColorTable() */
+  public boolean getIgnoreColorTable() {
+    return readers[0].getIgnoreColorTable();
+  }
+
   /* @see IFormatReader#setNormalize(boolean) */
   public void setNormalize(boolean normalize) {
     for (int i=0; i<readers.length; i++) readers[i].setNormalize(normalize);
   }
 
   /* @see IFormatReader#getNormalize() */
-  public boolean getNormalize() { return readers[0].getNormalize(); }
+  public boolean getNormalize() {
+    return readers[0].getNormalize();
+  }
 
-  /**
-   * Swaps the dimensions according to the given dimension order.  If the given
-   * order is identical to the file's native order, then nothing happens.
-   */
+  /* @see IFormatReader#swapDimensions(String, String) */
   public void swapDimensions(String id, String order)
     throws FormatException, IOException
   {
     getReader(id).swapDimensions(id, order);
   }
 
-  /*
-   * @see IFormatReader#getIndex(String, int, int, int)
-   */
+  /* @see IFormatReader#getIndex(String, int, int, int) */
   public int getIndex(String id, int z, int c, int t)
     throws FormatException, IOException
   {
@@ -389,25 +388,14 @@ public class ImageReader implements IFormatReader {
     return getReader(id).getZCTCoords(id, index);
   }
 
-  /**
-   * Obtains the specified metadata field's value for the given file.
-   *
-   * @param field the name associated with the metadata field
-   * @return the value, or null if the field doesn't exist
-   */
+  /* @see IFormatReader#getMetadataValue(String, String) */
   public Object getMetadataValue(String id, String field)
     throws FormatException, IOException
   {
     return getReader(id).getMetadataValue(id, field);
   }
 
-  /**
-   * Obtains the hashtable containing the metadata field/value pairs from
-   * the given file.
-   *
-   * @param id the filename
-   * @return the hashtable containing all metadata from the file
-   */
+  /* @see IFormatReader#getMetadata(String) */
   public Hashtable getMetadata(String id) throws FormatException, IOException {
     return getReader(id).getMetadata(id);
   }
@@ -433,10 +421,7 @@ public class ImageReader implements IFormatReader {
     return getReader(id).getMetadataStoreRoot(id);
   }
 
-  /**
-   * A utility method for test reading a file from the command line,
-   * and displaying the results in a simple display.
-   */
+  /* @see IFormatReader#testRead(String[]) */
   public boolean testRead(String[] args) throws FormatException, IOException {
     if (args.length == 0) {
       JFileChooser box = getFileChooser();
@@ -451,9 +436,7 @@ public class ImageReader implements IFormatReader {
 
   // -- IFormatHandler API methods --
 
-  /**
-   * Checks if the given string is a valid filename for any supported format.
-   */
+  /* @see IFormatHandler#isThisType(String) */
   public boolean isThisType(String name) {
     // NB: Unlike individual format readers, ImageReader defaults to *not*
     // allowing files to be opened to analyze type, because doing so is
@@ -461,11 +444,7 @@ public class ImageReader implements IFormatReader {
     return isThisType(name, false);
   }
 
-  /**
-   * Checks if the given string is a valid filename for any supported format.
-   * @param open If true, and the file extension is insufficient to determine
-   *   the file type, the (existing) file is opened for further analysis.
-   */
+  /* @see IFormatHandler#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
     for (int i=0; i<readers.length; i++) {
       if (readers[i].isThisType(name, open)) return true;
@@ -531,33 +510,6 @@ public class ImageReader implements IFormatReader {
   /* @see IFormatHandler.setIdMap(Hashtable) */
   public void setIdMap(Hashtable map) {
     for (int i=0; i<readers.length; i++) readers[i].setIdMap(map);
-  }
-
-  // -- Utility methods --
-
-  /**
-   * Retrieves how many bytes per pixel the current plane or section has.
-   * @param type the pixel type as retrieved from
-   *   {@link IFormatReader#getPixelType(String)}.
-   * @return the number of bytes per pixel.
-   * @see IFormatReader#getPixelType(String)
-   */
-  public static int getBytesPerPixel(int type) {
-    switch (type) {
-      case FormatReader.INT8:
-      case FormatReader.UINT8:
-        return 1;
-      case FormatReader.INT16:
-      case FormatReader.UINT16:
-        return 2;
-      case FormatReader.INT32:
-      case FormatReader.UINT32:
-      case FormatReader.FLOAT:
-        return 4;
-      case FormatReader.DOUBLE:
-        return 8;
-    }
-    throw new RuntimeException("Unknown type with id: '" + type + "'");
   }
 
   // -- Main method --

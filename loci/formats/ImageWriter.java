@@ -34,7 +34,9 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 /**
- * ImageWriter is master file format writer for all supported formats.
+ * ImageWriter is the master file format writer for all supported formats.
+ * It uses one instance of each writer subclass (specified in writers.txt)
+ * to identify file formats based on extension and write data.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -179,44 +181,41 @@ public class ImageWriter implements IFormatWriter {
 
   // -- IFormatWriter API methods --
 
-  /**
-   * Saves the given image to the specified (possibly already open) file.
-   * If this image is the last one in the file, the last flag must be set.
-   */
+  /* @see IFormatWriter#save(String, Image, boolean) */
   public void save(String id, Image image, boolean last)
     throws FormatException, IOException
   {
     getWriter(id).save(id, image, last);
   }
 
-  /** Reports whether the writer can save multiple images to a single file. */
+  /* @see IFormatWriter#canDoStacks(String) */
   public boolean canDoStacks(String id) throws FormatException {
     return getWriter(id).canDoStacks(id);
   }
 
-  /** Sets the color model. */
+  /* @see IFormatWriter#setColorModel(ColorModel) */
   public void setColorModel(ColorModel cm) {
     for (int i=0; i<writers.length; i++) writers[i].setColorModel(cm);
   }
 
-  /** Gets the color model. */
+  /* @see IFormatWriter#getColorModel() */
   public ColorModel getColorModel() {
     // NB: all writers should have the same color model
     return writers[0].getColorModel();
   }
 
-  /** Sets the frames per second to use when writing. */
+  /* @see IFormatWriter#setFramesPerSecond(int) */
   public void setFramesPerSecond(int rate) {
     for (int i=0; i<writers.length; i++) writers[i].setFramesPerSecond(rate);
   }
 
-  /** Gets the frames per second to use when writing. */
+  /* @see IFormatWriter#getFramesPerSecond() */
   public int getFramesPerSecond() {
     // NB: all writers should have the same frames per second
     return writers[0].getFramesPerSecond();
   }
 
-  /** Gets the available compression types. */
+  /* @see IFormatWriter#getCompressionTypes() */
   public String[] getCompressionTypes() {
     if (compressionTypes == null) {
       HashSet set = new HashSet();
@@ -231,7 +230,7 @@ public class ImageWriter implements IFormatWriter {
     return compressionTypes;
   }
 
-  /** Sets the current compression type. */
+  /* @see IFormatWriter#setCompression(String) */
   public void setCompression(String compress) throws FormatException {
     boolean ok = false;
     for (int i=0; i<writers.length; i++) {
@@ -247,7 +246,7 @@ public class ImageWriter implements IFormatWriter {
     if (!ok) throw new FormatException("Invalid compression type: " + compress);
   }
 
-  /** A utility method for converting a file from the command line. */
+  /* @see IFormatWriter#testConvert(String[]) */
   public boolean testConvert(String[] args)
     throws FormatException, IOException
   {
@@ -261,7 +260,7 @@ public class ImageWriter implements IFormatWriter {
 
   // -- IFormatHandler API methods --
 
-  /** Checks if the given string is a valid filename for this file format. */
+  /* @see IFormatHandler#isThisType(String) */
   public boolean isThisType(String name) {
     // NB: Unlike individual format writers, ImageWriter defaults to *not*
     // allowing files to be opened to analyze type, because doing so is
@@ -269,11 +268,7 @@ public class ImageWriter implements IFormatWriter {
     return isThisType(name, false);
   }
 
-  /**
-   * Checks if the given string is a valid filename for any supported format.
-   * @param open If true, and the file extension is insufficient to determine
-   *   the file type, the (existing) file is opened for further analysis.
-   */
+  /* @see IFormatHandler#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
     for (int i=0; i<writers.length; i++) {
       if (writers[i].isThisType(name, open)) return true;
@@ -281,10 +276,10 @@ public class ImageWriter implements IFormatWriter {
     return false;
   }
 
-  /** Gets the name of this file format. */
+  /* @see IFormatHandler#getFormat() */
   public String getFormat() { return "image"; }
 
-  /** Gets the default file suffixes for this file format. */
+  /* @see IFormatHandler#getSuffixes() */
   public String[] getSuffixes() {
     if (suffixes == null) {
       HashSet set = new HashSet();
@@ -299,7 +294,7 @@ public class ImageWriter implements IFormatWriter {
     return suffixes;
   }
 
-  /** Gets file filters for this file format, for use with a JFileChooser. */
+  /* @see IFormatHandler#getFileFilters() */
   public FileFilter[] getFileFilters() {
     if (filters == null) {
       Vector v = new Vector();
@@ -312,7 +307,7 @@ public class ImageWriter implements IFormatWriter {
     return filters;
   }
 
-  /** Gets a JFileChooser that recognizes accepted file types. */
+  /* @see IFormatHandler#getFileChooser() */
   public JFileChooser getFileChooser() {
     if (chooser == null) {
       chooser = FormatHandler.buildFileChooser(getFileFilters());

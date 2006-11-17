@@ -167,42 +167,42 @@ public abstract class FormatReader extends FormatHandler
 
   // -- IFormatReader API methods --
 
-  /** Checks if the given block is a valid header for this file format. */
+  /* @see IFormatReader#isThisType(byte[]) */
   public abstract boolean isThisType(byte[] block);
 
-  /** Determines the number of images in the given file. */
+  /* @see IFormatReader#getImageCount(String) */
   public abstract int getImageCount(String id)
     throws FormatException, IOException;
 
-  /** Checks if the images in the file are RGB. */
+  /* @see IFormatReader#isRGB(String) */
   public abstract boolean isRGB(String id)
     throws FormatException, IOException;
 
-  /** Get the size of the X dimension. */
+  /* @see IFormatReader#getSizeX(String) */
   public int getSizeX(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return sizeX[series];
   }
 
-  /** Get the size of the Y dimension. */
+  /* @see IFormatReader#getSizeY(String) */
   public int getSizeY(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return sizeY[series];
   }
 
-  /** Get the size of the Z dimension. */
+  /* @see IFormatReader#getSizeZ(String) */
   public int getSizeZ(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return sizeZ[series];
   }
 
-  /** Get the size of the C dimension. */
+  /* @see IFormatReader#getSizeC(String) */
   public int getSizeC(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return sizeC[series];
   }
 
-  /** Get the size of the T dimension. */
+  /* @see IFormatReader#getSizeT(String) */
   public int getSizeT(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return sizeT[series];
@@ -228,12 +228,12 @@ public abstract class FormatReader extends FormatHandler
     return null;
   }
 
-  /** Get the size of the X dimension for the thumbnail. */
+  /* @see IFormatReader#getThumbSizeX(String) */
   public int getThumbSizeX(String id) throws FormatException, IOException {
     return THUMBNAIL_DIMENSION;
   }
 
-  /** Get the size of the Y dimension for the thumbnail. */
+  /* @see IFormatReader#getThumbSizeY(String) */
   public int getThumbSizeY(String id) throws FormatException, IOException {
     return THUMBNAIL_DIMENSION;
   }
@@ -266,21 +266,19 @@ public abstract class FormatReader extends FormatHandler
     return enableChannelStatCalculation;
   }
 
-  /** Returns whether or not the channels are interleaved. */
+  /* @see IFormatReader#isInterleaved(String) */
   public abstract boolean isInterleaved(String id)
     throws FormatException, IOException;
 
-  /** Obtains the specified image from the given file. */
+  /* @see IFormatReader#openImage(String, int) */
   public abstract BufferedImage openImage(String id, int no)
     throws FormatException, IOException;
 
-  /**
-   * Obtains the specified image from the given file as a byte array.
-   */
+  /* @see IFormatReader#openBytes(String, int) */
   public abstract byte[] openBytes(String id, int no)
     throws FormatException, IOException;
 
-  /* @see FormatReader#openBytes(String, int, byte[]) */
+  /* @see IFormatReader#openBytes(String, int, byte[]) */
   public byte[] openBytes(String id, int no, byte[] buf)
     throws FormatException, IOException
   {
@@ -288,7 +286,7 @@ public abstract class FormatReader extends FormatHandler
     return buf;
   }
 
-  /** Obtains a thumbnail for the specified image from the given file. */
+  /* @see IFormatReader#openThumbImage(String, int) */
   public BufferedImage openThumbImage(String id, int no)
     throws FormatException, IOException
   {
@@ -296,12 +294,7 @@ public abstract class FormatReader extends FormatHandler
       getThumbSizeX(id), getThumbSizeY(id), true, true);
   }
 
-  /**
-   * Obtains a thumbnail for the specified image from the given file,
-   * as a byte array.  We assume that the thumbnail has the same number of
-   * channels as the original image.  If there is more than one channel, then
-   * the resulting byte array will be of the format "RRR...BBB...GGG...".
-   */
+  /* @see IFormatReader#openThumbBytes(String, int) */
   public byte[] openThumbBytes(String id, int no)
     throws FormatException, IOException
   {
@@ -315,16 +308,16 @@ public abstract class FormatReader extends FormatHandler
     return rtn;
   }
 
-  /** Closes the currently open file. */
+  /* @see IFormatReader#close() */
   public abstract void close() throws FormatException, IOException;
 
-  /** Return the number of series in this file. */
+  /* @see IFormatReader#getSeriesCount(String) */
   public int getSeriesCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return 1;
   }
 
-  /** Activates the specified series. */
+  /* @see IFormatReader#setSeries(String, int) */
   public void setSeries(String id, int no) throws FormatException, IOException {
     if (no < 0 || no >= getSeriesCount(id)) {
       throw new FormatException("Invalid series: " + no);
@@ -332,29 +325,33 @@ public abstract class FormatReader extends FormatHandler
     series = no;
   }
 
-  /** Returns the currently active series. */
+  /* @see IFormatReader#getSeries(String) */
   public int getSeries(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return series;
   }
 
-  /** Specify whether or not to ignore color tables, if present. */
+  /* @see IFormatReader#setIgnoreColorTable(boolean) */
   public void setIgnoreColorTable(boolean ignore) {
     ignoreColorTable = ignore;
   }
 
-  /** Specify whether or not to normalize float data. */
+  /* @see IFormatReader#getIgnoreColorTable() */
+  public boolean getIgnoreColorTable() {
+    return ignoreColorTable;
+  }
+
+  /* @see IFormatReader#setNormalize(boolean) */
   public void setNormalize(boolean normalize) {
     normalizeData = normalize;
   }
 
-  /** Return true if we should normalize float data. */
-  public boolean getNormalize() { return normalizeData; }
+  /* @see IFormatReader#getNormalize() */
+  public boolean getNormalize() {
+    return normalizeData;
+  }
 
-  /**
-   * Swaps the dimensions according to the given dimension order.  If the given
-   * order is identical to the file's native order, then nothing happens.
-   */
+  /* @see IFormatReader#swapDimensions(String, String) */
   public void swapDimensions(String id, String order)
     throws FormatException, IOException
   {
@@ -388,32 +385,21 @@ public abstract class FormatReader extends FormatHandler
       new Integer(sizeT[series]), null, null, order, new Integer(series));
   }
 
-  /**
-   * Gets the rasterized index corresponding
-   * to the given Z, C and T coordinates.
-   */
+  /* @see IFormatReader#getIndex(String, int, int, int) */
   public int getIndex(String id, int z, int c, int t)
     throws FormatException, IOException
   {
     return getIndex(this, id, z, c, t);
   }
 
-  /**
-   * Gets the Z, C and T coordinates corresponding
-   * to the given rasterized index value.
-   */
+  /* @see IFormatReader#getZCTCoords(String, int) */
   public int[] getZCTCoords(String id, int index)
     throws FormatException, IOException
   {
     return getZCTCoords(this, id, index);
   }
 
-  /**
-   * Obtains the specified metadata field's value for the given file.
-   *
-   * @param field the name associated with the metadata field
-   * @return the value, or null if the field doesn't exist
-   */
+  /* @see IFormatReader#getMetadataValue(String, String) */
   public Object getMetadataValue(String id, String field)
     throws FormatException, IOException
   {
@@ -421,31 +407,18 @@ public abstract class FormatReader extends FormatHandler
     return metadata.get(field);
   }
 
-  /**
-   * Obtains the hashtable containing the metadata field/value pairs from
-   * the given file.
-   *
-   * @param id the filename
-   * @return the hashtable containing all metadata from the file
-   */
+  /* @see IFormatReader#getMetadata */
   public Hashtable getMetadata(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return metadata;
   }
 
-  /**
-   * Sets the default metadata store for this reader.
-   *
-   * @param store a metadata store implementation.
-   */
-  public void setMetadataStore(MetadataStore store) { metadataStore = store; }
+  /* @see IFormatReader#setMetadataStore(MetadataStore) */
+  public void setMetadataStore(MetadataStore store) {
+    metadataStore = store;
+  }
 
-  /**
-   * Retrieves the current metadata store for this reader. You can be
-   * assured that this method will <b>never</b> return a <code>null</code>
-   * metadata store.
-   * @return a metadata store implementation.
-   */
+  /* @see IFormatReader#getMetadataStore(String) */
   public MetadataStore getMetadataStore(String id)
     throws FormatException, IOException
   {
@@ -453,17 +426,7 @@ public abstract class FormatReader extends FormatHandler
     return metadataStore;
   }
 
-  /**
-   * Retrieves the current metadata store's root object. It is guaranteed that
-   * all file parsing has been performed by the reader prior to retrieval.
-   * Requests for a full populated root object should be made using this method.
-   * @param id a fully qualified path to the file.
-   * @return current metadata store's root object fully populated.
-   * @throws IOException if there is an IO error when reading the file specified
-   * by <code>path</code>.
-   * @throws FormatException if the file specified by <code>path</code> is of an
-   * unsupported type.
-   */
+  /* @see IFormatReader#getMetadataStoreRoot(String) */
   public Object getMetadataStoreRoot(String id)
     throws FormatException, IOException
   {
@@ -949,6 +912,31 @@ public abstract class FormatReader extends FormatHandler
   public static String getPixelTypeString(int pixelType) {
     return pixelType < 0 || pixelType >= pixelTypes.length ?
       "unknown (" + pixelType + ")" : pixelTypes[pixelType];
+  }
+
+  /**
+   * Retrieves how many bytes per pixel the current plane or section has.
+   * @param type the pixel type as retrieved from
+   *   {@link IFormatReader#getPixelType(String)}.
+   * @return the number of bytes per pixel.
+   * @see IFormatReader#getPixelType(String)
+   */
+  public static int getBytesPerPixel(int type) {
+    switch (type) {
+      case FormatReader.INT8:
+      case FormatReader.UINT8:
+        return 1;
+      case FormatReader.INT16:
+      case FormatReader.UINT16:
+        return 2;
+      case FormatReader.INT32:
+      case FormatReader.UINT32:
+      case FormatReader.FLOAT:
+        return 4;
+      case FormatReader.DOUBLE:
+        return 8;
+    }
+    throw new RuntimeException("Unknown type with id: '" + type + "'");
   }
 
 }
