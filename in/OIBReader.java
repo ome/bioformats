@@ -79,7 +79,7 @@ public class OIBReader extends FormatReader {
   /** Number of timepoints. */
   private int tSize;
 
-  /* Number of Z slices. */
+  /** Number of Z slices. */
   private int zSize;
 
   /** Number of bytes per pixel. */
@@ -108,6 +108,9 @@ public class OIBReader extends FormatReader {
 
   /** Vector containing T indices. */
   private Vector tIndices;
+
+  /** Number of valid bits per pixel. */
+  private int[] validBits;
 
   private boolean littleEndian;
 
@@ -222,7 +225,7 @@ public class OIBReader extends FormatReader {
     byte[] b = openBytes(id, no);
     int bytes = b.length / (width * height);
     return ImageTools.makeImage(b, width, height, bytes == 3 ? 3 : 1,
-      false, bytes == 3 ? 1 : bytes, !littleEndian);
+      false, bytes == 3 ? 1 : bytes, !littleEndian, validBits);
   }
 
   /** Closes any open files. */
@@ -359,6 +362,21 @@ public class OIBReader extends FormatReader {
       sizeZ[0] = zSize;
       sizeC[0] = nChannels;
       sizeT[0] = tSize;
+
+      validBits = new int[nChannels == 2 ? 3 : nChannels];
+      int vb = 0;
+      Enumeration k = metadata.keys();
+      while (k.hasMoreElements()) {
+        String key = k.nextElement().toString();
+        if (key.indexOf("ValidBitCounts") != -1) {
+          vb = Integer.parseInt((String) metadata.get(key));
+        }
+      }
+      if (vb > 0) { 
+        for (int i=0; i<validBits.length; i++) validBits[i] = vb;
+      }
+      else validBits = null;
+
     }
     catch (Throwable t) {
       noPOI = true;
