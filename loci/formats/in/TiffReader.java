@@ -138,6 +138,13 @@ public class TiffReader extends BaseTiffReader {
           sizeT[i] = Integer.parseInt(pixels[i].getAttribute("SizeT"));
           pixelType[i] = FormatReader.pixelTypeFromString(
             pixels[i].getAttribute("PixelType"));
+          if (pixelType[i] == FormatReader.INT8 || 
+            pixelType[i] == FormatReader.INT16 || 
+            pixelType[i] == FormatReader.INT32)
+          {
+            pixelType[i]++;
+          }
+          
           currentOrder[i] = pixels[i].getAttribute("DimensionOrder");
           orderCertain[i] = true;
 
