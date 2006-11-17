@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.awt.Image;
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.io.*;
 import java.util.StringTokenizer;
 import loci.formats.*;
@@ -76,6 +76,9 @@ public class ND2Reader extends FormatReader {
 
   /** Array of image offsets. */
   private long[] offsets;
+
+  /** Number of valid bits per pixel */
+  private int[] validBits;
 
   // -- Constructor --
 
@@ -222,6 +225,20 @@ public class ND2Reader extends FormatReader {
       r.exec("img = BlkImgDataSrcImageProducer.createImage(decodedImage)");
 
       Image img = (Image) r.getVar("img");
+
+      int dataType = 0;
+      switch (pixelType[0]) {
+        case FormatReader.INT8:
+        case FormatReader.UINT8: dataType = DataBuffer.TYPE_BYTE; break;
+        case FormatReader.INT16:
+        case FormatReader.UINT16: dataType = DataBuffer.TYPE_USHORT; break;
+        case FormatReader.INT32:
+        case FormatReader.UINT32: dataType = DataBuffer.TYPE_INT; break;
+        case FormatReader.FLOAT: dataType = DataBuffer.TYPE_FLOAT; break;
+        case FormatReader.DOUBLE: dataType = DataBuffer.TYPE_DOUBLE; break;
+      }
+
+      ColorModel cm = ImageTools.makeColorModel(sizeC[0], dataType, validBits);
       return ImageTools.makeBuffered(img);
     }
     catch (ReflectException e) {
@@ -311,7 +328,7 @@ public class ND2Reader extends FormatReader {
       byte[] b = new byte[(int) (ras.length() - off)];
       ras.read(b);
       String xml = new String(b);
-    
+
       // assume that this XML string will be malformed, since that's how both
       // sample files are; this means we need to manually parse it :-(
 
@@ -327,7 +344,7 @@ public class ND2Reader extends FormatReader {
 
       // strip out binary data at the end - this is irrelevant for our purposes
       xml = xml.substring(0, xml.lastIndexOf("</MetadataSeq>") + 14);
-   
+
       // each chunk appears on a separate line, so split up the chunks
 
       StringTokenizer st = new StringTokenizer(xml, "\r\n");
@@ -351,9 +368,9 @@ public class ND2Reader extends FormatReader {
               while (s.indexOf("=") != -1) {
                 int eq = s.indexOf("=");
                 String key = s.substring(0, eq).trim();
-                String value = 
+                String value =
                   s.substring(eq + 2, s.indexOf("\"", eq + 2)).trim();
-                
+
                 // strip out the data types
                 if (key.indexOf("runtype") == -1) {
                   metadata.put(prefix + " " + pre + " " + key, value);
@@ -366,8 +383,7 @@ public class ND2Reader extends FormatReader {
       }
     }
 
-    // TODO : use sigBits to compute pixel type
-    String sigBits = 
+    String sigBits =
       (String) metadata.get("AdvancedImageAttributes SignificantBits value");
     int bits = 0;
     if (sigBits != null && sigBits.length() > 0) {
@@ -390,7 +406,7 @@ public class ND2Reader extends FormatReader {
       pixSizeZ = Float.parseFloat(pixZ.trim());
     }
 
-    String channels = 
+    String channels =
       (String) metadata.get("AdvancedImageAttributes VirtualComponents value");
     if (channels != null && channels.length() > 0) {
       sizeC[0] = 3 - Integer.parseInt(channels.trim());
@@ -403,6 +419,12 @@ public class ND2Reader extends FormatReader {
     currentOrder[0] = sizeC[0] == 3 ? "XYCTZ" : "XYTZC";
     pixelType[0] = ImageTools.getPixelType(img);
 
+    if (bits != 0) {
+      validBits = new int[sizeC[0]];
+      for (int i=0; i<validBits.length; i++) validBits[i] = bits;
+    }
+    else validBits = null;
+
     MetadataStore store = getMetadataStore(id);
     store.setPixels(
       new Integer(sizeX[0]),
@@ -414,10 +436,10 @@ public class ND2Reader extends FormatReader {
       new Boolean(isLittleEndian(id)),
       currentOrder[0],
       null);
-  
+
     store.setDimensions(new Float(pixSizeX), new Float(pixSizeX),
       new Float(pixSizeZ), null, null, null);
-  
+
   }
 
   // -- Main method --

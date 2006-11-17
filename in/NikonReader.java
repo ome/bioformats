@@ -213,6 +213,7 @@ public class NikonReader extends BaseTiffReader {
     }
 
     Hashtable realImage = TiffTools.getIFD(in, 1, offset);
+    realImage.put(new Integer(TiffTools.VALID_BITS), new int[] {12, 12, 12});
 
     original = ifds[0];
     ifds[0] = realImage;

@@ -347,6 +347,8 @@ public class IPWReader extends BaseTiffReader {
     while (bitsPerSample % 8 != 0) bitsPerSample++;
     if (bitsPerSample == 24 || bitsPerSample == 48) bitsPerSample /= 3;
 
+    pixelType[0] = FormatReader.UINT8;
+
     if (bitFormat == 3) pixelType[0] = FormatReader.FLOAT;
     else if (bitFormat == 2) {
       switch (bitsPerSample) {

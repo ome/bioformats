@@ -500,7 +500,7 @@ public abstract class BaseTiffReader extends FormatReader {
       else if (bitFormat == 2) {
         switch (bitsPerSample) {
           case 8:
-            pixelType[0] = FormatReader.INT8;
+            pixelType[0] = FormatReader.UINT8;
             break;
           case 16:
             pixelType[0] = FormatReader.INT16;
@@ -508,6 +508,7 @@ public abstract class BaseTiffReader extends FormatReader {
           case 32:
             pixelType[0] = FormatReader.INT32;
             break;
+          default: pixelType[0] = FormatReader.UINT8;
         }
       }
       else {
@@ -521,6 +522,7 @@ public abstract class BaseTiffReader extends FormatReader {
           case 32:
             pixelType[0] = FormatReader.UINT32;
             break;
+          default: pixelType[0] = FormatReader.UINT8;
         }
       }
 
@@ -743,6 +745,10 @@ public abstract class BaseTiffReader extends FormatReader {
   {
     if (!id.equals(currentId)) initFile(id);
 
+    if (no < 0 || no >= getImageCount(id)) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+
     byte[][] p = null;
     p = TiffTools.getSamples(ifds[no], in, ignoreColorTable);
     for (int i=0; i<p.length; i++) {
@@ -757,6 +763,11 @@ public abstract class BaseTiffReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
+
+    if (no < 0 || no >= getImageCount(id)) {
+      throw new FormatException("Invalid image number: " + no);
+    }
+
     int bytesPerPixel = ImageReader.getBytesPerPixel(getPixelType(id));
     byte[] buf = new byte[getSizeX(id) * getSizeY(id) * getSizeC(id) *
       bytesPerPixel];

@@ -115,7 +115,7 @@ public class AVIReader extends FormatReader {
 
   /** Returns whether or not the channels are interleaved. */
   public boolean isInterleaved(String id) throws FormatException, IOException {
-    return true;
+    return false;
   }
 
   /** Obtains the specified image from the given AVI file as a byte array. */

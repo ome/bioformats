@@ -355,6 +355,14 @@ public class ImageReader implements IFormatReader {
     for (int i=0; i<readers.length; i++) readers[i].setIgnoreColorTable(ignore);
   }
 
+  /* @see IFormatReader#setNormalize(boolean) */
+  public void setNormalize(boolean normalize) {
+    for (int i=0; i<readers.length; i++) readers[i].setNormalize(normalize);
+  }
+
+  /* @see IFormatReader#getNormalize() */
+  public boolean getNormalize() { return readers[0].getNormalize(); }
+
   /**
    * Swaps the dimensions according to the given dimension order.  If the given
    * order is identical to the file's native order, then nothing happens.

@@ -116,6 +116,9 @@ public class ZeissZVIReader extends FormatReader {
   /** Vector containing T indices. */
   private Vector tIndices;
 
+  /** Valid bits per pixel */
+  private int[] validBits;
+
   private Hashtable offsets;
 
   // -- Constructor --
@@ -207,7 +210,7 @@ public class ZeissZVIReader extends FormatReader {
 
   /** Returns whether or not the channels are interleaved. */
   public boolean isInterleaved(String id) throws FormatException, IOException {
-    return true;
+    return false;
   }
 
   /* @see IFormatHandler#mapId(String, String) */
@@ -294,7 +297,7 @@ public class ZeissZVIReader extends FormatReader {
     }
 
     return ImageTools.makeImage(openBytes(id, no), width, height,
-      isRGB(id) ? 3 : 1, true, bpp == 3 ? 1 : bpp, true);
+      isRGB(id) ? 3 : 1, true, bpp == 3 ? 1 : bpp, true, validBits);
   }
 
   /** Closes any open files. */
@@ -371,6 +374,16 @@ public class ZeissZVIReader extends FormatReader {
       sizeZ[0] = zSize;
       sizeC[0] = nChannels;
       sizeT[0] = tSize;
+
+      String s = (String) metadata.get("Acquisition Bit Depth");
+      if (s != null && s.trim().length() > 0) {
+        validBits = new int[nChannels];
+        if (nChannels == 2) validBits = new int[3];
+        for (int i=0; i<nChannels; i++) {
+          validBits[i] = Integer.parseInt(s.trim());
+        }
+      }
+      else validBits = null;
 
       Object check = metadata.get("Image Channel Index");
       if (check != null && !check.toString().trim().equals("")) {

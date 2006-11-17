@@ -72,7 +72,7 @@ public abstract class ImageIOReader extends FormatReader {
 
   /** Returns whether or not the channels are interleaved. */
   public boolean isInterleaved(String id) throws FormatException, IOException {
-    return false;
+    return true;
   }
 
   /** Obtains the specified image from the given file as a byte array. */
@@ -112,7 +112,7 @@ public abstract class ImageIOReader extends FormatReader {
 
     MetadataStore store = getMetadataStore(id);
 
-    pixelType[0] = FormatReader.INT8;
+    pixelType[0] = FormatReader.UINT8;
     store.setPixels(
       new Integer(getSizeX(id)),
       new Integer(getSizeY(id)),

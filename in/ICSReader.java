@@ -96,7 +96,8 @@ public class ICSReader extends FormatReader {
   /** Determines the number of images in the given ICS file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
-    return numImages / (rgb ? 3 : 1);
+    if (numImages == 1) return 1;
+    return numImages / (isRGB(id) ? 3 : 1);
   }
 
   /** Checks if the images in the file are RGB. */
@@ -108,7 +109,7 @@ public class ICSReader extends FormatReader {
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
     if (!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
-    return !littleEndian;
+    return littleEndian;
   }
 
   /** Returns whether or not the channels are interleaved. */
@@ -142,6 +143,7 @@ public class ICSReader extends FormatReader {
       }
       return t;
     }
+
     return plane;
   }
 
@@ -154,30 +156,25 @@ public class ICSReader extends FormatReader {
     byte[] plane = openBytes(id, no);
     int width = dimensions[1];
     int height = dimensions[2];
-    int channels = rgb ? 3 : 1;
+    int channels = isRGB(id) ? 3 : 1;
 
-    if (dimensions[0] == 32) {
-      // Some justification for this approach:
-      // Java won't allow us to create a grayscale BufferedImage with float
-      // data.  We could (theoretically) display all floating point data as
-      // RGB, effectively tripling the amount of memory needed.  However, tests
-      // showed that the images produced using float + RGB were worse than
-      // those produced by the following method.  So, yes this wrong, and yes
-      // it will result in some data loss.  Feel free to change this if you
-      // have any better ideas (just remember to update the pixel type as well).
-      short[][] f = new short[channels][plane.length / 4];
-      int p = 0;
-      for (int j=0; j<f[0].length; j++) {
-        for (int i=0; i<f.length; i++) {
-          f[i][j] = (short) Float.intBitsToFloat(DataTools.bytesToInt(plane,
-            p*4, 4, littleEndian));
-          p++;
-        }
+    int bytes = dimensions[0] / 8;
+
+    if (bytes == 4) {
+      float[] f = new float[width * height * channels];
+      int pt = 0;
+      for (int i=0; i<f.length; i++) {
+        int p = DataTools.bytesToInt(plane, i*4, 4, littleEndian);
+        f[i] = Float.intBitsToFloat(p);
       }
-      return ImageTools.makeImage(f, width, height);
+
+      if (normalizeData) f = DataTools.normalizeFloats(f);
+
+      return ImageTools.makeImage(f, width, height, channels, true);
     }
-    else return ImageTools.makeImage(plane, width, height, channels, false,
-      dimensions[0] / 8, !littleEndian);
+
+    return ImageTools.makeImage(plane, width, height, channels, true,
+      bytes, !littleEndian);
   }
 
   /** Closes any open files. */
@@ -190,7 +187,7 @@ public class ICSReader extends FormatReader {
     data = null;
   }
 
-  /** Initializes the given IPLab file. */
+  /** Initializes the given ICS file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
@@ -308,6 +305,7 @@ public class ICSReader extends FormatReader {
     int height = dimensions[2];
 
     numImages = dimensions[3] * dimensions[4] * dimensions[5];
+    if (numImages == 0) numImages++;
 
     String endian = (String) metadata.get("byte_order");
     littleEndian = true;
@@ -386,7 +384,7 @@ public class ICSReader extends FormatReader {
     String fmt = (String) metadata.get("format");
     String sign = (String) metadata.get("sign");
 
-    if (fmt.equals("real")) pixelType[0] = FormatReader.UINT16;
+    if (fmt.equals("real")) pixelType[0] = FormatReader.FLOAT;
     else if (fmt.equals("integer")) {
       while (bitsPerPixel % 8 != 0) bitsPerPixel++;
       if (bitsPerPixel == 24 || bitsPerPixel == 48) bitsPerPixel /= 3;

@@ -129,7 +129,7 @@ public class MetamorphReader extends BaseTiffReader {
               // read a null-terminated string (key), followed by an int value
               StringBuffer sb = new StringBuffer();
               char c = (char) in.read();
-              while (c != 0) {
+              while (c != 0 || sb.length() < 256) {
                 sb = sb.append(c);
                 c = (char) in.read();
               }

@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.image.BufferedImage;
+//import java.awt.image.DataBuffer;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -103,6 +104,9 @@ public abstract class FormatReader extends FormatHandler
 
   /** Whether or not to ignore color tables, if present. */
   protected boolean ignoreColorTable = false;
+
+  /** Whether or not to normalize float data. */
+  protected boolean normalizeData;
 
   /**
    * Current metadata store. Should <b>never</b> be accessed directly as the
@@ -339,6 +343,14 @@ public abstract class FormatReader extends FormatHandler
     ignoreColorTable = ignore;
   }
 
+  /** Specify whether or not to normalize float data. */
+  public void setNormalize(boolean normalize) {
+    normalizeData = normalize;
+  }
+
+  /** Return true if we should normalize float data. */
+  public boolean getNormalize() { return normalizeData; }
+
   /**
    * Swaps the dimensions according to the given dimension order.  If the given
    * order is identical to the file's native order, then nothing happens.
@@ -492,6 +504,7 @@ public abstract class FormatReader extends FormatHandler
     boolean separate = false;
     boolean omexml = false;
     boolean ignoreColors = false;
+    boolean normalize = false;
     int start = 0;
     int end = 0;
     int series = 0;
@@ -507,6 +520,7 @@ public abstract class FormatReader extends FormatHandler
           else if (args[i].equals("-separate")) separate = true;
           else if (args[i].equals("-nocolors")) ignoreColors = true;
           else if (args[i].equals("-omexml")) omexml = true;
+          else if (args[i].equals("-normalize")) normalize = true;
           else if (args[i].equals("-range")) {
             try {
               start = Integer.parseInt(args[++i]);
@@ -549,6 +563,10 @@ public abstract class FormatReader extends FormatHandler
       System.out.println("  -omexml: populate OME-XML metadata");
       System.out.println("   -range: specify range of planes to read");
       System.out.println("  -series: specify which image series to read");
+      System.out.println("   -normalize: normalize floating point images " +
+        "(may result in loss of precision)");
+      System.out.println("    -fast: paint RGB images as quickly as possible" +
+        "(may result in loss of precision)");
       System.out.println();
       return false;
     }
@@ -584,6 +602,13 @@ public abstract class FormatReader extends FormatHandler
     if (merge) reader = new ChannelMerger(reader);
 
     reader.setIgnoreColorTable(ignoreColors);
+    reader.setNormalize(normalize);
+
+    if (!normalize && reader.getPixelType(id) == FLOAT && !reader.isRGB(id)) {
+      throw new FormatException("Sorry, unnormalized grayscale floating " +
+        "point data is not supported.  Please use the '-normalize' option.");
+    }
+
 
     // read basic metadata
     System.out.println();

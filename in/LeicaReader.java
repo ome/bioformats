@@ -73,6 +73,9 @@ public class LeicaReader extends BaseTiffReader {
   /** Total number of planes in each series. */
   private int[] numPlanes;
 
+  /** Number of significant bits per pixel. */
+  private int[][] validBits;
+
   // -- Constructor --
 
   /** Constructs a new Leica reader. */
@@ -179,6 +182,9 @@ public class LeicaReader extends BaseTiffReader {
     tiff[series][no].setIgnoreColorTable(ignoreColorTable);
     BufferedImage b =
       tiff[series][no].openImage((String) files[series].get(no), 0);
+    b = ImageTools.makeBuffered(b,
+      ImageTools.makeColorModel(b.getRaster().getNumBands(),
+      b.getRaster().getTransferType(), validBits[series]));
     tiff[series][no].close();
     return b;
   }
@@ -803,6 +809,20 @@ public class LeicaReader extends BaseTiffReader {
       // BaseTiffReader.initMetadata
     }
 
+    Integer v = (Integer) metadata.get("Real world resolution");
+
+    if (v != null) {
+      validBits = new int[sizeC.length][];
+
+      for (int i=0; i<validBits.length; i++) {
+        validBits[i] = new int[sizeC[i]];
+        for (int j=0; j<validBits[i].length; j++) {
+          validBits[i][j] = v.intValue();
+        }
+      }
+    }
+    else validBits = null;
+
     // The metadata store we're working with.
     MetadataStore store = new DummyMetadataStore();
     try {
@@ -859,6 +879,7 @@ public class LeicaReader extends BaseTiffReader {
       }
       catch (NullPointerException n) { }
     }
+
   }
 
   // -- Main method --

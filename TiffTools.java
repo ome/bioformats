@@ -50,6 +50,7 @@ public final class TiffTools {
 
   // non-IFD tags (for internal use)
   public static final int LITTLE_ENDIAN = 0;
+  public static final int VALID_BITS = 1;
 
   // IFD types
   public static final int BYTE = 1;
@@ -186,6 +187,7 @@ public final class TiffTools {
   public static final int MAGIC_NUMBER = 42;
   public static final int LITTLE = 0x49;
   public static final int BIG = 0x4d;
+
 
   // -- Constructor --
 
@@ -832,6 +834,16 @@ public final class TiffTools {
 
     long maxValue = getIFDLongValue(ifd, MAX_SAMPLE_VALUE, false, 0);
 
+    if (ifd.get(new Integer(VALID_BITS)) == null && bitsPerSample[0] > 0) {
+      int[] validBits = bitsPerSample;
+      if (photoInterp == RGB_PALETTE || photoInterp == CFA_ARRAY) {
+        int vb = validBits[0];
+        validBits = new int[3];
+        for (int i=0; i<validBits.length; i++) validBits[i] = vb;
+      }
+      putIFDValue(ifd, VALID_BITS, validBits);
+    }
+
     if (ignore && (photoInterp == RGB_PALETTE || photoInterp == CFA_ARRAY)) {
       photoInterp = BLACK_IS_ZERO;
     }
@@ -1324,7 +1336,7 @@ public final class TiffTools {
   }
 
   /** Reads the image defined in the given IFD from the specified file. */
-  public static BufferedImage getImage(Hashtable ifd, RandomAccessStream in) 
+  public static BufferedImage getImage(Hashtable ifd, RandomAccessStream in)
     throws FormatException, IOException
   {
     return getImage(ifd, in, false);
@@ -1351,6 +1363,8 @@ public final class TiffTools {
       photoInterp = BLACK_IS_ZERO;
     }
 
+    int[] validBits = getIFDIntArray(ifd, VALID_BITS, false);
+
     if (photoInterp == RGB_PALETTE || photoInterp == CFA_ARRAY) {
       samplesPerPixel = 3;
     }
@@ -1367,7 +1381,7 @@ public final class TiffTools {
 
       // Now make our image.
       return ImageTools.makeImage(sampleData,
-        (int) imageWidth, (int) imageLength);
+        (int) imageWidth, (int) imageLength, validBits);
     }
     else if (bitsPerSample[0] == 32) {
       int type = getIFDIntValue(ifd, SAMPLE_FORMAT);
@@ -1379,7 +1393,7 @@ public final class TiffTools {
           sampleBuf.get(floatData[i]);
         }
         return ImageTools.makeImage(floatData,
-          (int) imageWidth, (int) imageLength);
+          (int) imageWidth, (int) imageLength, validBits);
       }
       else {
         // int data
@@ -1397,10 +1411,11 @@ public final class TiffTools {
         }
 
         return ImageTools.makeImage(shortData,
-          (int) imageWidth, (int) imageLength);
+          (int) imageWidth, (int) imageLength, validBits);
       }
     }
-    return ImageTools.makeImage(samples, (int) imageWidth, (int) imageLength);
+    return ImageTools.makeImage(samples, (int) imageWidth, (int) imageLength,
+      validBits);
   }
 
   /**

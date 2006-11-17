@@ -48,6 +48,9 @@ public class AndorReader extends BaseTiffReader {
   /** The dimension order of the file */
   private String order;
 
+  /** Valid bits per pixel */
+  private int[] validBits;
+
   // -- Constructor --
 
   /** Constructs a new Andor reader. */
@@ -108,6 +111,8 @@ public class AndorReader extends BaseTiffReader {
     }
     catch (Exception e) { }
 
+    int vb = 0; // number of valid bits per pixel
+
     // look for MMHEADER
     short[] header = (short[]) TiffTools.getIFDValue(ifds[0], MMHEADER);
 
@@ -139,44 +144,58 @@ public class AndorReader extends BaseTiffReader {
       int type = (int) header[pos];
       pos++;
       String imgType;
+
       switch (type) {
         case 1:
           imgType = "1 bit binary";
+          vb = 1;
           break;
         case 2:
           imgType = "4 bit binary";
+          vb = 4;
           break;
         case 3:
           imgType = "8 bit binary";
+          vb = 8;
           break;
         case 4:
           imgType = "8 bit greyscale";
+          vb = 8;
           break;
         case 5:
           imgType = "12 bit greyscale";
+          vb = 12;
           break;
         case 6:
           imgType = "16 bit greyscale";
+          vb = 16;
           break;
         case 7:
           imgType = "32 bit greyscale";
+          vb = 32;
           break;
         case 8:
           imgType = "64 bit greyscale";
+          vb = 64;
           break;
         case 9:
           imgType = "24 bit color";
+          vb = 8;
           break;
         case 10:
           imgType = "32 bit float";
+          vb = 32;
           break;
         case 11:
           imgType = "64 bit float";
+          vb = 64;
           break;
         default:
           imgType = "unknown";
       }
       metadata.put("Image type", imgType);
+
+      sizeT[0] = 1;
 
       for (int i=1; i<=10; i++) {
         if (DEBUG) {
@@ -211,12 +230,14 @@ public class AndorReader extends BaseTiffReader {
 
         // set OME-XML dimensions appropriately
 
+        name = name.trim();
         if (name.equals("Z")) sizeZ[series] = size;
-        else if (name.equals("Time")) sizeT[series] = size;
-        else if (!name.trim().equals("") && !name.equals("x") &&
-          !name.equals("y"))
+        else if (name.equals("Time")) sizeT[series] *= size;
+        else if (name.equals("Wavelength")) sizeC[series] = size;
+        else if (!name.trim().equals("") && !name.toLowerCase().equals("x") &&
+          !name.toLowerCase().equals("y"))
         {
-          sizeC[series] *= size;
+          sizeT[series] *= size;
         }
       }
     }
@@ -299,21 +320,21 @@ public class AndorReader extends BaseTiffReader {
     }
 
     order = "XY";
-    for (int i=0; i<dimOrder.length; i++) {
-      String name = names[dimOrder[i]].trim();
-      if (name.equals("Z") && order.indexOf("Z") < 0) order = order + "Z";
-      else if (name.equals("Time") && order.indexOf("T") < 0) order=order+"T";
-      else if (order.indexOf("C") < 0) order = order + "C";
-    }
+    if (sizeC[0] > 1) order += "C";
+    if (sizeZ[0] > sizeT[0]) order += "TZ";
+    else order += "ZT";
+    if (order.length() == 4) order += "C";
 
-    if (order.length() == 4) {
-      if (order.indexOf("Z") < 0) order = order + "Z";
-      else if (order.indexOf("T") < 0) order = order + "T";
-      else if (order.indexOf("C") < 0) order = order + "C";
-    }
     currentOrder[series] = order;
 
     orderCertain[series] = true;
+
+    validBits = new int[sizeC[0]];
+    if (validBits.length == 2) validBits = new int[3];
+    for (int i=0; i<validBits.length; i++) validBits[i] = vb;
+    for (int i=0; i<ifds.length; i++) {
+      ifds[i].put(new Integer(TiffTools.VALID_BITS), validBits);
+    }
   }
 
   protected void initMetadataStore() {

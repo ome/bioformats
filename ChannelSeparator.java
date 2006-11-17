@@ -88,8 +88,20 @@ public class ChannelSeparator extends ReaderWrapper {
       case 7: bytes = 8; break;
     };
 
-    return ImageTools.makeImage(openBytes(id, no), getSizeX(id), getSizeY(id),
-      1, false, bytes, isLittleEndian(id));
+    byte[] b = openBytes(id, no);
+
+    if (getPixelType(id) == FormatReader.FLOAT) {
+      float[] f = new float[b.length / 4];
+      for (int i=0; i<b.length; i+=4) {
+        f[i/4] = Float.intBitsToFloat(DataTools.bytesToInt(b, i, 4,
+          isLittleEndian(id)));
+      }
+      if (getNormalize()) f = DataTools.normalizeFloats(f);
+      return ImageTools.makeImage(f, getSizeX(id), getSizeY(id));
+    }
+
+    return ImageTools.makeImage(b, getSizeX(id), getSizeY(id), 1, false,
+      bytes, isLittleEndian(id));
   }
 
   /** Obtains the specified image from the given file, as a byte array. */
