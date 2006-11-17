@@ -54,6 +54,9 @@ public class OIFReader extends FormatReader {
   /** Helper reader to open the thumbnail. */
   protected BMPReader thumbReader;
 
+  /** Number of valid bits per pixel. */
+  private int[] validBits;
+
   // -- Constructor --
 
   /** Constructs a new OIF reader. */
@@ -154,6 +157,9 @@ public class OIFReader extends FormatReader {
 
     tiffReader[no].setColorTableIgnored(ignoreColorTable);
     BufferedImage b = tiffReader[no].openImage((String) tiffs.get(no), 0);
+    b = ImageTools.makeBuffered(b,
+      ImageTools.makeColorModel(b.getRaster().getNumBands(),
+      b.getRaster().getTransferType(), validBits));
     tiffReader[no].close();
     return b;
   }
@@ -346,6 +352,13 @@ public class OIFReader extends FormatReader {
       default:
         throw new RuntimeException(
           "Unknown matching for pixel depth of: " + imageDepth);
+    }
+
+    validBits = new int[sizeC[0]];
+    if (validBits.length == 2) validBits = new int[3];
+    for (int i=0; i<validBits.length; i++) {
+      validBits[i] = Integer.parseInt((String) metadata.get("Image " + i + 
+        " : ValidBitCounts"));
     }
 
     store.setPixels(
