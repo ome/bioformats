@@ -97,9 +97,8 @@ public abstract class BaseTiffReader extends FormatReader {
   public Plane2D openPlane2D(String id, int no)
     throws FormatException, IOException
   {
-    return new Plane2D(
-      ByteBuffer.wrap(openBytes(id, no)), getPixelType(id), isLittleEndian(id),
-                      getSizeX(id), getSizeY(id));
+    return new Plane2D(ByteBuffer.wrap(openBytes(id, no)),
+      getPixelType(id), isLittleEndian(id), getSizeX(id), getSizeY(id));
   }
 
   // -- Internal BaseTiffReader API methods --
