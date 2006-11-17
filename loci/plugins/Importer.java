@@ -380,7 +380,7 @@ public class Importer {
             time = clock;
           }
           IJ.showProgress((double) q++ / total);
-          
+
           byte[] b = r.openBytes(id, j);
 
           int w = r.getSizeX(id);
@@ -394,7 +394,7 @@ public class Importer {
           // construct image processor and add to stack
 
           ImageProcessor ip = null;
-   
+
           int bpp = 0;
           switch (type) {
             case FormatReader.INT8:
@@ -406,9 +406,9 @@ public class Importer {
             case FormatReader.FLOAT: bpp = 4; break;
             case FormatReader.DOUBLE: bpp = 8; break;
           }
-   
-          Object pixels = DataTools.makeDataArray(b, bpp, 
-            type == FormatReader.FLOAT || type == FormatReader.DOUBLE, 
+
+          Object pixels = DataTools.makeDataArray(b, bpp,
+            type == FormatReader.FLOAT || type == FormatReader.DOUBLE,
             r.isLittleEndian(id));
 
           if (c == 1) {
@@ -484,7 +484,7 @@ public class Importer {
             if (pixels instanceof float[]) {
               pixels = (Object) DataTools.normalizeFloats((float[]) pixels);
             }
-            ip = new ColorProcessor(w, h, 
+            ip = new ColorProcessor(w, h,
               ImageTools.make24Bits(pixels, w, h, r.isInterleaved(id)));
             if (stackO == null) stackO = new ImageStack(w, h);
             stackO.addSlice(imageName + ":" + (j + 1), ip);
@@ -694,12 +694,12 @@ public class Importer {
       }
 
       // colorize channels; mostly copied from the ImageJ source
- 
+
       if (colorize) {
         fi.reds = new byte[256];
         fi.greens = new byte[256];
         fi.blues = new byte[256];
-       
+
         for (int j=0; j<256; j++) {
           switch (i) {
             case 0: fi.reds[j] = (byte) j; break;
@@ -709,9 +709,9 @@ public class Importer {
         }
 
         ImageProcessor ip = imp.getProcessor();
-        ColorModel cm = 
+        ColorModel cm =
           new IndexColorModel(8, 256, fi.reds, fi.greens, fi.blues);
-        
+
         ip.setColorModel(cm);
         if (imp.getStackSize() > 1) imp.getStack().setColorModel(cm);
       }
