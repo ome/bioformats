@@ -395,7 +395,19 @@ public class BioRadReader extends FormatReader {
         colors[i][2][l] = (float) qb;
       }
     }
-    metadata.put("luts", colors);
+
+    String colorString = "";
+    for (int i=0; i<numLuts; i++) {
+      for (int j=0; j<256; j++) {
+        for (int k=0; k<3; k++) {
+          colorString += (colors[i][k][j]);
+          if (!(j == 255 && k == 2)) colorString += ",";
+        }
+      }
+      colorString += "\n\n";
+    }
+
+    metadata.put("luts", colorString);
 
     // Populate the metadata store
 

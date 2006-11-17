@@ -459,13 +459,13 @@ public class OmeisImporter {
     if (nl) System.err.println(msg);
     else System.err.print(msg);
   }
-  
+
   /** Prints an HTTP error response header. */
   private void printHttpErrorHeader() {
     System.out.print ("Status: 500 Server Error\r\n");
     System.out.print ("Content-Type: text/plain\r\n\r\n");
   }
-  
+
   /** Prints an HTTP response header. */
   private void printHttpResponseHeader() {
     System.out.print ("Status: 200 OK\r\n");

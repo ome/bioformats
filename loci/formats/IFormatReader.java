@@ -184,6 +184,12 @@ public interface IFormatReader extends IFormatHandler {
   /** Specify whether or not to ignore color tables, if present. */
   void setIgnoreColorTable(boolean ignore);
 
+  /** Specify whether or not to normalize float data. */
+  void setNormalize(boolean normalize);
+
+  /** Return true if we should normalize float data. */
+  boolean getNormalize();
+
   /**
    * Swaps the dimensions according to the given dimension order.  If the given
    * order is identical to the file's native order, then nothing happens.

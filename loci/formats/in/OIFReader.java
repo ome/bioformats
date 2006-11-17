@@ -175,14 +175,8 @@ public class OIFReader extends FormatReader {
     dir += id.substring(id.lastIndexOf(File.separator) + 1) + ".files" +
       File.separator;
 
-    if (id.indexOf("_") != -1) {
-      thumbId = dir + id.substring(id.lastIndexOf(File.separator) + 1,
-        id.lastIndexOf("_") + 1) + "Thumb.bmp";
-    }
-    else {
-      thumbId = dir + id.substring(id.lastIndexOf(File.separator) + 1,
-        id.lastIndexOf(".")) + "_Thumb.bmp";
-    }
+    thumbId = dir + id.substring(id.lastIndexOf(File.separator) + 1,
+      id.lastIndexOf(".")) + "_Thumb.bmp";
     thumbReader.setIgnoreColorTable(ignoreColorTable);
     return thumbReader.openImage(thumbId, 0);
   }

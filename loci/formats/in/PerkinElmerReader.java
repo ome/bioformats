@@ -492,7 +492,7 @@ public class PerkinElmerReader extends FormatReader {
       }
     }
 
-    currentOrder[0] = "XY";
+    currentOrder[0] = "XYC";
 
     if (sizeZ[0] <= 0) {
       sizeZ[0] = 1;
@@ -504,32 +504,8 @@ public class PerkinElmerReader extends FormatReader {
     }
     if (sizeT[0] <= 0) sizeT[0] = 1;
 
-    int[] sizes = {sizeZ[0], sizeC[0], sizeT[0]};
-
-    int largest = 0;
-    int largestIndex = 0;
-    int smallest = Integer.MAX_VALUE;
-    int smallestIndex = 0;
-    for (int i=0; i<sizes.length; i++) {
-      if (sizes[i] > largest) {
-        largest = sizes[i];
-        largestIndex = i;
-      }
-      else if (sizes[i] < smallest) {
-        smallest = sizes[i];
-        smallestIndex = i;
-      }
-    }
-
-    String[] names = {"Z", "C", "T"};
-    currentOrder[0] += names[largestIndex];
-    for (int i=0; i<names.length; i++) {
-      if (i != largestIndex && i != smallestIndex) {
-        currentOrder[0] += names[i];
-        break;
-      }
-    }
-    currentOrder[0] += names[smallestIndex];
+    if (sizeZ[0] < sizeT[0]) currentOrder[0] += "ZT";
+    else currentOrder[0] += "TZ";
 
     // Populate metadata store
 

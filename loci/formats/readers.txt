@@ -31,6 +31,7 @@ loci.formats.in.DicomReader       # dcm, dicom
 loci.formats.in.BioRadReader      # pic
 loci.formats.in.IPLabReader       # ipl
 loci.formats.in.DeltavisionReader # dv, r3d
+loci.formats.in.MRCReader         # mrc
 loci.formats.in.GatanReader       # dm3
 loci.formats.in.ImarisReader      # ims
 loci.formats.in.OpenlabRawReader  # raw

@@ -106,7 +106,7 @@ public class IPLabReader extends FormatReader {
 
   /** Returns whether or not the channels are interleaved. */
   public boolean isInterleaved(String id) throws FormatException, IOException {
-    return false;
+    return true;
   }
 
   /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */

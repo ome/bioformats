@@ -91,6 +91,9 @@ public class FileStitcher implements IFormatReader {
   /** Whether or not to ignore color tables, if present. */
   protected boolean ignoreColorTable = false;
 
+  /** Whether or not to normalize float data. */
+  protected boolean normalizeData = false;
+
   // -- Constructors --
 
   /** Constructs a FileStitcher around a new image reader. */
@@ -309,7 +312,13 @@ public class FileStitcher implements IFormatReader {
   {
     int[] q = computeIndices(id, no);
     int fno = q[0], ino = q[1];
-    return readers[fno].openImage(files[fno], ino);
+    if (ino < readers[fno].getImageCount(files[fno])) {
+      return readers[fno].openImage(files[fno], ino);
+    }
+    // inserting a blank image may not be the best way to handle files with
+    // different image counts, but we need to do something
+    return ImageTools.blankImage(width, height,
+      readers[fno].getSizeC(files[fno]), readers[fno].getPixelType(files[fno]));
 
     //CTR TODO - come up with an API for Chris, for setting the axes for the
     //various blocks (pretty easy -- just setAxisType(int num, int type) or
@@ -324,7 +333,22 @@ public class FileStitcher implements IFormatReader {
   {
     int[] q = computeIndices(id, no);
     int fno = q[0], ino = q[1];
-    return readers[fno].openBytes(files[fno], ino);
+    if (ino < readers[fno].getImageCount(files[fno])) {
+      return readers[fno].openBytes(files[fno], ino);
+    }
+
+    int bytes = 0;
+    switch (readers[fno].getPixelType(files[fno])) {
+      case FormatReader.INT8:
+      case FormatReader.UINT8: bytes = 1; break;
+      case FormatReader.INT16:
+      case FormatReader.UINT16: bytes = 2; break;
+      case FormatReader.INT32:
+      case FormatReader.UINT32:
+      case FormatReader.FLOAT: bytes = 4; break;
+      case FormatReader.DOUBLE: bytes = 8; break;
+    }
+    return new byte[width * height * bytes * readers[fno].getSizeC(files[fno])];
   }
 
   /* @see IFormatReader#openBytes(String, int, byte[]) */
@@ -385,6 +409,14 @@ public class FileStitcher implements IFormatReader {
   public void setIgnoreColorTable(boolean ignore) {
     ignoreColorTable = ignore;
   }
+
+  /* @see IFormatReader#setNormalize(boolean) */
+  public void setNormalize(boolean normalize) {
+    normalizeData = normalize;
+  }
+
+  /* @see IFormatReader#getNormalize() */
+  public boolean getNormalize() { return normalizeData; }
 
   /* @see IFormatReader#swapDimensions(String, String) */
   public void swapDimensions(String id, String order)

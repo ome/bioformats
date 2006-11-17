@@ -64,6 +64,9 @@ public class LIFReader extends FormatReader {
    */
   protected int[][] dims;
 
+  /** Number of valid bits per pixel */
+  private int[][] validBits;
+
   private int width;
   private int height;
   private int c;
@@ -152,7 +155,7 @@ public class LIFReader extends FormatReader {
     width = dims[series][0];
     height = dims[series][1];
     c = dims[series][4];
-    if (c == 2) c--;
+    //if (c == 2) c--;
     bpp = dims[series][5];
     while (bpp % 8 != 0) bpp++;
     int bytesPerPixel = bpp / 8;
@@ -173,7 +176,7 @@ public class LIFReader extends FormatReader {
     throws FormatException, IOException
   {
     return ImageTools.makeImage(openBytes(id, no), width, height,
-      !isRGB(id) ? 1 : c, false, bpp / 8, littleEndian);
+      !isRGB(id) ? 1 : c, false, bpp / 8, littleEndian, validBits[series]);
   }
 
   /** Closes any open files. */
@@ -426,7 +429,7 @@ public class LIFReader extends FormatReader {
           catch (Exception e) { break; }
         }
         extraDims.add(new Integer(extras));
-        if (numChannels == 2) numChannels--;
+        //if (numChannels == 2) numChannels--;
         if (numChannels == 0) numChannels++;
         channels.add(new Integer(numChannels));
 
@@ -480,6 +483,8 @@ public class LIFReader extends FormatReader {
     orderCertain = new boolean[numDatasets];
     Arrays.fill(orderCertain, true);
 
+    validBits = new int[numDatasets][1];
+
     for (int i=0; i<numDatasets; i++) {
       sizeX[i] = dims[i][0];
       sizeY[i] = dims[i][1];
@@ -487,6 +492,11 @@ public class LIFReader extends FormatReader {
       sizeC[i] = dims[i][4];
       sizeT[i] = dims[i][3];
       currentOrder[i] = (sizeZ[i] > sizeT[i]) ? "XYCZT" : "XYCTZ";
+
+      validBits[i] = new int[sizeC[i] != 2 ? sizeC[i] : 3];
+      for (int j=0; j<validBits[i].length; j++) {
+        validBits[i][j] = dims[i][5];
+      }
 
       while (dims[i][5] % 8 != 0) dims[i][5]++;
       switch (dims[i][5]) {

@@ -405,6 +405,9 @@ public class DeltavisionReader extends FormatReader {
       case 2:
         imageSequence = "ZWT"; dimOrder = "XYZCT";
         break;
+      case 65536:
+        imageSequence = "WZT"; dimOrder = "XYCZT";
+        break;
       default:
         imageSequence = "unknown"; dimOrder = "XYZTC";
     }

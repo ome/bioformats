@@ -193,6 +193,12 @@ public abstract class ReaderWrapper implements IFormatReader {
     reader.setIgnoreColorTable(ignore);
   }
 
+  public void setNormalize(boolean normalize) {
+    reader.setNormalize(normalize);
+  }
+
+  public boolean getNormalize() { return reader.getNormalize(); }
+
   public void swapDimensions(String id, String order)
     throws FormatException, IOException
   {

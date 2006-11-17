@@ -307,7 +307,7 @@ public class FilePattern {
     if (f == null) return null;
     String[] nameList = new String[f.length];
     for (int i=0; i<nameList.length; i++) nameList[i] = f[i].getName();
- 
+
     return findPattern(name, dir, nameList);
   }
 
