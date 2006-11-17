@@ -262,7 +262,9 @@ public class OmeisImporter {
     try {
       xml.close();
       if (httpResponse) printHttpResponseHeader();
-      System.out.println(new String(xml.toByteArray()));
+      String xmlString = new String(xml.toByteArray());
+      System.out.println(xmlString);
+      if (DEBUG) log(xmlString);
     }
     catch (IOException exc) {
       System.err.println("Error: an exception occurred compiling OME-XML");
