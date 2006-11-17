@@ -64,8 +64,11 @@ public class FileStitcher implements IFormatReader {
   /** Reader used for each file. */
   private IFormatReader[] readers;
 
-  /** Blank image to use when image counts are not consistent between files. */
-  private BufferedImage blank;
+  /** Blank buffered image, for use when image counts vary between files. */
+  private BufferedImage blankImage;
+
+  /** Blank image bytes, for use when image counts vary between files. */
+  private byte[] blankBytes;
 
   /** Image dimensions. */
   private int width, height;
@@ -320,11 +323,11 @@ public class FileStitcher implements IFormatReader {
     }
     // return a blank image to cover for the fact that
     // this file does not contain enough image planes
-    if (blank == null) {
-      blank = ImageTools.blankImage(width, height,
+    if (blankImage == null) {
+      blankImage = ImageTools.blankImage(width, height,
         sizeC, getPixelType(currentId));
     }
-    return blank;
+    return blankImage;
   }
 
   /** Obtains the specified image from the given file series as a byte array. */
@@ -336,11 +339,13 @@ public class FileStitcher implements IFormatReader {
     if (ino < readers[fno].getImageCount(files[fno])) {
       return readers[fno].openBytes(files[fno], ino);
     }
-
     // return a blank image to cover for the fact that
     // this file does not contain enough image planes
-    int bytes = FormatReader.getBytesPerPixel(getPixelType(currentId));
-    return new byte[width * height * bytes * sizeC];
+    if (blankBytes == null) {
+      int bytes = FormatReader.getBytesPerPixel(getPixelType(currentId));
+      blankBytes = new byte[width * height * bytes * sizeC];
+    }
+    return blankBytes;
   }
 
   /* @see IFormatReader#openBytes(String, int, byte[]) */
@@ -376,7 +381,8 @@ public class FileStitcher implements IFormatReader {
       for (int i=0; i<readers.length; i++) readers[i].close();
     }
     readers = null;
-    blank = null;
+    blankImage = null;
+    blankBytes = null;
     currentId = null;
   }
 
