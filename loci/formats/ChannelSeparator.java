@@ -96,7 +96,7 @@ public class ChannelSeparator extends ReaderWrapper {
         f[i/4] = Float.intBitsToFloat(DataTools.bytesToInt(b, i, 4,
           isLittleEndian(id)));
       }
-      if (getNormalize()) f = DataTools.normalizeFloats(f);
+      if (isNormalized()) f = DataTools.normalizeFloats(f);
       return ImageTools.makeImage(f, getSizeX(id), getSizeY(id));
     }
 

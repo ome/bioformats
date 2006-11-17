@@ -82,7 +82,7 @@ public class PerkinElmerReader extends FormatReader {
       initFile(id);
     }
     if (isTiff) {
-      tiff[0].setIgnoreColorTable(ignoreColorTable);
+      tiff[0].setColorTableIgnored(ignoreColorTable);
       return tiff[0].isRGB(files[0]);
     }
     return false;
@@ -108,7 +108,7 @@ public class PerkinElmerReader extends FormatReader {
       initFile(id);
     }
     if (isTiff) {
-      tiff[no / channels].setIgnoreColorTable(ignoreColorTable);
+      tiff[no / channels].setColorTableIgnored(ignoreColorTable);
       return tiff[no / channels].openBytes(files[no / channels], 0);
     }
 
@@ -133,7 +133,7 @@ public class PerkinElmerReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
     if (isTiff) {
-      tiff[no / channels].setIgnoreColorTable(ignoreColorTable);
+      tiff[no / channels].setColorTableIgnored(ignoreColorTable);
       return tiff[no / channels].openImage(files[no / channels], 0);
     }
 

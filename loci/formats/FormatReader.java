@@ -331,23 +331,23 @@ public abstract class FormatReader extends FormatHandler
     return series;
   }
 
-  /* @see IFormatReader#setIgnoreColorTable(boolean) */
-  public void setIgnoreColorTable(boolean ignore) {
+  /* @see IFormatReader#setColorTableIgnored(boolean) */
+  public void setColorTableIgnored(boolean ignore) {
     ignoreColorTable = ignore;
   }
 
-  /* @see IFormatReader#getIgnoreColorTable() */
-  public boolean getIgnoreColorTable() {
+  /* @see IFormatReader#isColorTableIgnored() */
+  public boolean isColorTableIgnored() {
     return ignoreColorTable;
   }
 
-  /* @see IFormatReader#setNormalize(boolean) */
-  public void setNormalize(boolean normalize) {
+  /* @see IFormatReader#setNormalized(boolean) */
+  public void setNormalized(boolean normalize) {
     normalizeData = normalize;
   }
 
-  /* @see IFormatReader#getNormalize() */
-  public boolean getNormalize() {
+  /* @see IFormatReader#isNormalized() */
+  public boolean isNormalized() {
     return normalizeData;
   }
 
@@ -564,8 +564,8 @@ public abstract class FormatReader extends FormatHandler
     if (separate) reader = new ChannelSeparator(reader);
     if (merge) reader = new ChannelMerger(reader);
 
-    reader.setIgnoreColorTable(ignoreColors);
-    reader.setNormalize(normalize);
+    reader.setColorTableIgnored(ignoreColors);
+    reader.setNormalized(normalize);
 
     if (!normalize && reader.getPixelType(id) == FLOAT && !reader.isRGB(id)) {
       throw new FormatException("Sorry, unnormalized grayscale floating " +

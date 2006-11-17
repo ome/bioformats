@@ -404,21 +404,21 @@ public class FileStitcher implements IFormatReader {
     return reader.getSeries(files[0]);
   }
 
-  /* @see IFormatReader#setIgnoreColorTable(boolean) */
-  public void setIgnoreColorTable(boolean ignore) {
+  /* @see IFormatReader#setColorTableIgnored(boolean) */
+  public void setColorTableIgnored(boolean ignore) {
     ignoreColorTable = ignore;
   }
 
-  /* @see IFormatReader#getIgnoreColorTable() */
-  public boolean getIgnoreColorTable() { return ignoreColorTable; }
+  /* @see IFormatReader#isColorTableIgnored() */
+  public boolean isColorTableIgnored() { return ignoreColorTable; }
 
-  /* @see IFormatReader#setNormalize(boolean) */
-  public void setNormalize(boolean normalize) {
+  /* @see IFormatReader#setNormalized(boolean) */
+  public void setNormalized(boolean normalize) {
     normalizeData = normalize;
   }
 
-  /* @see IFormatReader#getNormalize() */
-  public boolean getNormalize() { return normalizeData; }
+  /* @see IFormatReader#isNormalized() */
+  public boolean isNormalized() { return normalizeData; }
 
   /* @see IFormatReader#swapDimensions(String, String) */
   public void swapDimensions(String id, String order)
@@ -729,7 +729,7 @@ public class FileStitcher implements IFormatReader {
     // configure the reader, in case we haven't done this one yet
     readers[fno].setChannelStatCalculationStatus(enableChannelStatCalculation);
     readers[fno].setSeries(files[fno], reader.getSeries(files[0]));
-    readers[fno].setIgnoreColorTable(ignoreColorTable);
+    readers[fno].setColorTableIgnored(ignoreColorTable);
     readers[fno].swapDimensions(files[fno], order);
 
     return new int[] {fno, ino};
