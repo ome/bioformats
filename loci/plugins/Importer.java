@@ -363,9 +363,11 @@ public class Importer {
           sizeZ = begin[i];
           sizeT = end[i];
           // CTR: huh? this makes no sense
+          /*
           if (channels > 1) {
             channels = r.getIndex(id, 0, 1, 0) - r.getIndex(id, 0, 0, 0);
           }
+          */
         }
 
         int q = 0;
@@ -378,52 +380,51 @@ public class Importer {
             time = clock;
           }
           IJ.showProgress((double) q++ / total);
-          BufferedImage img = r.openImage(id, j);
+          
+          byte[] b = r.openBytes(id, j);
 
-          int sizeX = r.getSizeX(id), sizeY = r.getSizeY(id);
-          if (img.getWidth() < sizeX || img.getHeight() < sizeY) {
-            img = ImageTools.padImage(img, sizeX, sizeY);
-          }
+          int w = r.getSizeX(id);
+          int h = r.getSizeY(id);
+          int c = r.isRGB(id) ? r.getSizeC(id) : 1;
+          int type = r.getPixelType(id);
 
-          // autoscale >8-bit data to that RGB merge looks reasonable
-//          int cCoord = r.getZCTCoords(id, j)[1];
-//          Double min = r.getChannelGlobalMinimum(id, cCoord);
-//          Double max = r.getChannelGlobalMaximum(id, cCoord);
-          Double min = null, max = null;
-          if (!doRGBMerge && r.isRGB(id) &&
-            r.getPixelType(id) >= FormatReader.INT16)
-          {
-            if (min == null || max == null) {
-              // call ImageJ's RGB merge utility after we display
-              doRGBMerge = true;
-            }
-            else {
-              // we can autoscale on our own
-              img = ImageTools.autoscale(img, min.intValue(), max.intValue());
-            }
-          }
+          // TODO : pad the byte array to the appropriate size
 
-          // extract bytes from buffered image
+
+          // construct image processor and add to stack
+
           ImageProcessor ip = null;
-          WritableRaster raster = img.getRaster();
-          int c = raster.getNumBands();
-          int tt = raster.getTransferType();
-          int w = img.getWidth(), h = img.getHeight();
+   
+          int bpp = 0;
+          switch (type) {
+            case FormatReader.INT8:
+            case FormatReader.UINT8: bpp = 1; break;
+            case FormatReader.INT16:
+            case FormatReader.UINT16: bpp = 2; break;
+            case FormatReader.INT32:
+            case FormatReader.UINT32:
+            case FormatReader.FLOAT: bpp = 4; break;
+            case FormatReader.DOUBLE: bpp = 8; break;
+          }
+   
+          Object pixels = DataTools.makeDataArray(b, bpp, 
+            type == FormatReader.FLOAT || type == FormatReader.DOUBLE, 
+            r.isLittleEndian(id));
 
           if (c == 1) {
-            if (tt == DataBuffer.TYPE_BYTE) {
-              byte[] b = ImageTools.getBytes(img)[0];
-              if (b.length > w*h) {
-                byte[] tmp = b;
-                b = new byte[w*h];
-                System.arraycopy(tmp, 0, b, 0, b.length);
+            if (pixels instanceof byte[]) {
+              byte[] bytes = (byte[]) pixels;
+              if (bytes.length > w*h) {
+                byte[] tmp = bytes;
+                bytes = new byte[w*h];
+                System.arraycopy(tmp, 0, bytes, 0, bytes.length);
               }
-              ip = new ByteProcessor(w, h, b, null);
+              ip = new ByteProcessor(w, h, bytes, null);
               if (stackB == null) stackB = new ImageStack(w, h);
               stackB.addSlice(imageName + ":" + (j + 1), ip);
             }
-            else if (tt == DataBuffer.TYPE_USHORT) {
-              short[] s = ImageTools.getShorts(img)[0];
+            else if (pixels instanceof short[]) {
+              short[] s = (short[]) pixels;
               if (s.length > w*h) {
                 short[] tmp = s;
                 s = new short[w*h];
@@ -433,8 +434,20 @@ public class Importer {
               if (stackS == null) stackS = new ImageStack(w, h);
               stackS.addSlice(imageName + ":" + (j + 1), ip);
             }
-            else if (tt == DataBuffer.TYPE_FLOAT) {
-              float[] f = ImageTools.getFloats(img)[0];
+            else if (pixels instanceof int[]) {
+              int[] ints = (int[]) pixels;
+              if (ints.length > w*h) {
+                int[] tmp = ints;
+                ints = new int[w*h];
+                System.arraycopy(tmp, 0, ints, 0, ints.length);
+              }
+              ip = new FloatProcessor(w, h, ints);
+              if (stackF == null) stackF = new ImageStack(w, h);
+              stackF.addSlice(imageName + ":" + (j + 1), ip);
+            }
+            else if (pixels instanceof float[]) {
+              float[] f = (float[]) pixels;
+              f = DataTools.normalizeFloats(f);
               if (f.length > w*h) {
                 float[] tmp = f;
                 f = new float[w*h];
@@ -455,9 +468,24 @@ public class Importer {
               }
               else stackF.addSlice(imageName + ":" + (j + 1), ip);
             }
+            else if (pixels instanceof double[]) {
+              double[] d = (double[]) pixels;
+              if (d.length > w*h) {
+                double[] tmp = d;
+                d = new double[w*h];
+                System.arraycopy(tmp, 0, d, 0, d.length);
+              }
+              ip = new FloatProcessor(w, h, d);
+              if (stackF == null) stackF = new ImageStack(w, h);
+              stackF.addSlice(imageName + ":" + (j + 1), ip);
+            }
           }
           if (ip == null) {
-            ip = new ImagePlus(null, img).getProcessor(); // slow
+            if (pixels instanceof float[]) {
+              pixels = (Object) DataTools.normalizeFloats((float[]) pixels);
+            }
+            ip = new ColorProcessor(w, h, 
+              ImageTools.make24Bits(pixels, w, h, r.isInterleaved(id)));
             if (stackO == null) stackO = new ImageStack(w, h);
             stackO.addSlice(imageName + ":" + (j + 1), ip);
           }
