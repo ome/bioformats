@@ -543,7 +543,7 @@ public class ImageReader implements IFormatReader {
    * @see IFormatReader#getPixelType(String)
    */
   public static int getBytesPerPixel(int type) {
-    switch(type) {
+    switch (type) {
       case FormatReader.INT8:
       case FormatReader.UINT8:
         return 1;
