@@ -229,13 +229,26 @@ public class ND2Reader extends FormatReader {
       int dataType = 0;
       switch (pixelType[0]) {
         case FormatReader.INT8:
-        case FormatReader.UINT8: dataType = DataBuffer.TYPE_BYTE; break;
+          throw new FormatException("Unsupported pixel type: int8");
+        case FormatReader.UINT8:
+          dataType = DataBuffer.TYPE_BYTE;
+          break;
         case FormatReader.INT16:
-        case FormatReader.UINT16: dataType = DataBuffer.TYPE_USHORT; break;
+          dataType = DataBuffer.TYPE_SHORT;
+          break;
+        case FormatReader.UINT16:
+          dataType = DataBuffer.TYPE_USHORT;
+          break;
         case FormatReader.INT32:
-        case FormatReader.UINT32: dataType = DataBuffer.TYPE_INT; break;
-        case FormatReader.FLOAT: dataType = DataBuffer.TYPE_FLOAT; break;
-        case FormatReader.DOUBLE: dataType = DataBuffer.TYPE_DOUBLE; break;
+        case FormatReader.UINT32:
+          dataType = DataBuffer.TYPE_INT;
+          break;
+        case FormatReader.FLOAT:
+          dataType = DataBuffer.TYPE_FLOAT;
+          break;
+        case FormatReader.DOUBLE:
+          dataType = DataBuffer.TYPE_DOUBLE;
+          break;
       }
 
       ColorModel cm = ImageTools.makeColorModel(sizeC[0], dataType, validBits);
