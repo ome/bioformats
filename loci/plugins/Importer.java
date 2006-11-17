@@ -171,17 +171,6 @@ public class Importer {
       else r = new ChannelSeparator(r);
       if (stitchFiles) r = new FileStitcher(r);
 
-      if (!ignoreTables) {
-        if (r.isRGB(id) && r.getPixelType(id) >= FormatReader.INT16) {
-//        Double min = r.getChannelGlobalMinimum(id, 0);
-//        Double max = r.getChannelGlobalMaximum(id, 0);
-          Double min = null, max = null;
-          if (min == null || max == null) {
-            doRGBMerge = true;
-            r = new ChannelSeparator(r);
-          }
-        }
-      }
       r.setColorTableIgnored(ignoreTables);
 
       // store OME metadata into OME-XML structure, if available
@@ -447,7 +436,6 @@ public class Importer {
             }
             else if (pixels instanceof float[]) {
               float[] f = (float[]) pixels;
-              f = DataTools.normalizeFloats(f);
               if (f.length > w*h) {
                 float[] tmp = f;
                 f = new float[w*h];
@@ -481,9 +469,6 @@ public class Importer {
             }
           }
           if (ip == null) {
-            if (pixels instanceof float[]) {
-              pixels = (Object) DataTools.normalizeFloats((float[]) pixels);
-            }
             ip = new ColorProcessor(w, h,
               ImageTools.make24Bits(pixels, w, h, r.isInterleaved(id)));
             if (stackO == null) stackO = new ImageStack(w, h);
