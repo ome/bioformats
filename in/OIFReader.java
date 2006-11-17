@@ -97,7 +97,7 @@ public class OIFReader extends FormatReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    tiffReader[0].setIgnoreColorTable(ignoreColorTable);
+    tiffReader[0].setColorTableIgnored(ignoreColorTable);
     return tiffReader[0].isRGB((String) tiffs.get(0));
   }
 
@@ -134,7 +134,7 @@ public class OIFReader extends FormatReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    tiffReader[no].setIgnoreColorTable(ignoreColorTable);
+    tiffReader[no].setColorTableIgnored(ignoreColorTable);
     byte[] b = tiffReader[no].openBytes((String) tiffs.get(no), 0);
     tiffReader[no].close();
     return b;
@@ -152,7 +152,7 @@ public class OIFReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    tiffReader[no].setIgnoreColorTable(ignoreColorTable);
+    tiffReader[no].setColorTableIgnored(ignoreColorTable);
     BufferedImage b = tiffReader[no].openImage((String) tiffs.get(no), 0);
     tiffReader[no].close();
     return b;
@@ -177,7 +177,7 @@ public class OIFReader extends FormatReader {
 
     thumbId = dir + id.substring(id.lastIndexOf(File.separator) + 1,
       id.lastIndexOf(".")) + "_Thumb.bmp";
-    thumbReader.setIgnoreColorTable(ignoreColorTable);
+    thumbReader.setColorTableIgnored(ignoreColorTable);
     return thumbReader.openImage(thumbId, 0);
   }
 

@@ -182,16 +182,16 @@ public interface IFormatReader extends IFormatHandler {
   int getSeries(String id) throws FormatException, IOException;
 
   /** Specifies whether or not to ignore color tables, if present. */
-  void setIgnoreColorTable(boolean ignore);
+  void setColorTableIgnored(boolean ignore);
 
   /** Returns true if we should ignore color tables, if present. */
-  boolean getIgnoreColorTable();
+  boolean isColorTableIgnored();
 
   /** Specifies whether or not to normalize float data. */
-  void setNormalize(boolean normalize);
+  void setNormalized(boolean normalize);
 
   /** Returns true if we should normalize float data. */
-  boolean getNormalize();
+  boolean isNormalized();
 
   /**
    * Swaps the dimensions according to the given dimension order.  If the given

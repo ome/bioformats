@@ -347,24 +347,26 @@ public class ImageReader implements IFormatReader {
     return getReader(id).getSeries(id);
   }
 
-  /* @see IFormatReader#setIgnoreColorTable(boolean) */
-  public void setIgnoreColorTable(boolean ignore) {
-    for (int i=0; i<readers.length; i++) readers[i].setIgnoreColorTable(ignore);
+  /* @see IFormatReader#setColorTableIgnored(boolean) */
+  public void setColorTableIgnored(boolean ignore) {
+    for (int i=0; i<readers.length; i++) {
+      readers[i].setColorTableIgnored(ignore);
+    }
   }
 
-  /* @see IFormatReader#getIgnoreColorTable() */
-  public boolean getIgnoreColorTable() {
-    return readers[0].getIgnoreColorTable();
+  /* @see IFormatReader#isColorTableIgnored() */
+  public boolean isColorTableIgnored() {
+    return readers[0].isColorTableIgnored();
   }
 
-  /* @see IFormatReader#setNormalize(boolean) */
-  public void setNormalize(boolean normalize) {
-    for (int i=0; i<readers.length; i++) readers[i].setNormalize(normalize);
+  /* @see IFormatReader#setNormalized(boolean) */
+  public void setNormalized(boolean normalize) {
+    for (int i=0; i<readers.length; i++) readers[i].setNormalized(normalize);
   }
 
-  /* @see IFormatReader#getNormalize() */
-  public boolean getNormalize() {
-    return readers[0].getNormalize();
+  /* @see IFormatReader#isNormalized() */
+  public boolean isNormalized() {
+    return readers[0].isNormalized();
   }
 
   /* @see IFormatReader#swapDimensions(String, String) */
