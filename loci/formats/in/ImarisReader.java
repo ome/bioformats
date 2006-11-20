@@ -233,7 +233,6 @@ public class ImarisReader extends FormatReader {
   /* @see loci.formats.IFormatHandler#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
     if (!super.isThisType(name, open)) return false; // check extension
-    System.out.println("ImarisReader: isThisType(\"" + name + "\", " + open + ")");//TEMP
     if (!open) return true; // not allowed to check the file contents
     try {
       DataInputStream dis = new DataInputStream(new FileInputStream(name));
