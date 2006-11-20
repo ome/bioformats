@@ -617,7 +617,7 @@ public class FileStitcher implements IFormatReader {
           if (r == null) r = (IFormatReader) c.newInstance();
           else {
             r = (IFormatReader) c.getConstructor(
-              new Class[] {c}).newInstance(new Object[] {r});
+              new Class[] {IFormatReader.class}).newInstance(new Object[] {r});
           }
         }
         readers[i] = (IFormatReader) r;
