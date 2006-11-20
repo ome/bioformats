@@ -176,6 +176,31 @@ public class FileStitcher implements IFormatReader {
     return ag;
   }
 
+  /**
+   * Finds the file pattern for the given ID, based on the state of the file
+   * stitcher. Takes both ID map entries and the patternIds flag into account.
+   */
+  public FilePattern findPattern(String id) {
+    if (!patternIds) {
+      // find the containing pattern
+      Hashtable map = getIdMap();
+      if (map.containsKey(id)) {
+        // search ID map for pattern, rather than files on disk
+        String[] idList = new String[map.size()];
+        Enumeration en = map.keys();
+        for (int i=0; i<idList.length; i++) {
+          idList[i] = (String) en.nextElement();
+        }
+        id = FilePattern.findPattern(id, null, idList);
+      }
+      else {
+        // id is an unmapped file path; look to similar files on disk
+        id = FilePattern.findPattern(new File(id)); // id == getMapped(id)
+      }
+    }
+    return new FilePattern(id);
+  }
+
   // -- IFormatReader API methods --
 
   /* @see IFormatReader#isThisType(byte[]) */
@@ -183,13 +208,13 @@ public class FileStitcher implements IFormatReader {
     return reader.isThisType(block);
   }
 
-  /** Determines the number of images in the given file series. */
+  /* @see IFormatReader#getImageCount(String) */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return totalImages;
   }
 
-  /** Checks if the images in the file are RGB. */
+  /* @see IFormatReader#isRGB(String) */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return reader.isRGB(files[0]);
@@ -548,24 +573,7 @@ public class FileStitcher implements IFormatReader {
   /** Initializes the given file. */
   protected void initFile(String id) throws FormatException, IOException {
     currentId = id;
-    if (!patternIds) {
-      // find the containing pattern
-      Hashtable map = getIdMap();
-      if (map.containsKey(id)) {
-        // search ID map for pattern, rather than files on disk
-        String[] idList = new String[map.size()];
-        Enumeration en = map.keys();
-        for (int i=0; i<idList.length; i++) {
-          idList[i] = (String) en.nextElement();
-        }
-        id = FilePattern.findPattern(id, null, idList);
-      }
-      else {
-        // id is an unmapped file path; look to similar files on disk
-        id = FilePattern.findPattern(new File(id)); // id == getMapped(id)
-      }
-    }
-    fp = new FilePattern(id);
+    fp = findPattern(id);
 
     // verify that file pattern is valid and matches existing files
     String msg = " Please rename your files or disable file stitching.";
