@@ -40,7 +40,7 @@ public class ImarisTiffReader extends BaseTiffReader {
 
   /** Constructs a new Imaris TIFF reader. */
   public ImarisTiffReader() {
-    super("Imaris 5 (TIFF)", new String[] {"ims"});
+    super("Imaris 5 (TIFF)", "ims");
   }
 
   // -- FormatReader API methods --
@@ -48,10 +48,7 @@ public class ImarisTiffReader extends BaseTiffReader {
   /** Checks if the given block is a valid header for an Imaris TIFF file. */
   public boolean isThisType(byte[] block) {
     // adapted from MetamorphReader.isThisType(byte[])
-
-    if (block.length < 3) {
-      return false;
-    }
+    if (block.length < 3) return false;
     if (block.length < 8) {
       return true; // we have no way of verifying further
     }
@@ -82,22 +79,16 @@ public class ImarisTiffReader extends BaseTiffReader {
 
   // -- FormatHandler API methods --
 
-  /* @see loci.formats.IFormatHandler#isThisType(String) */
-  public boolean isThisType(String name) {
-    return isThisType(name, true);
-  }
-
   /**
    * Checks if the given string is a valid filename for an Imaris TIFF file.
    * @param open If true, and the file extension is insufficient to determine
    *  the file type, the (existing) file is opened for further analysis.
    */
   public boolean isThisType(String name, boolean open) {
-    String lname = name.toLowerCase();
-    if (lname.endsWith(".ims")) return true;
+    if (!super.isThisType(name, open)) return false; // check extension
 
     // just checking the filename isn't enough to differentiate between
-    // Imaris and regular TIFF; open the file and check more thoroughly
+    // Andor and regular TIFF; open the file and check more thoroughly
     return open ? checkBytes(getMappedId(name), 1024) : true;
   }
 
