@@ -98,7 +98,7 @@ public class FluoviewReader extends BaseTiffReader {
    *   Fluoview TIFF format.
    */
   public boolean isThisType(String name, boolean open) {
-    if (!super.isThisType(name, open)) return false;
+    if (!super.isThisType(name, open)) return false; // check extension
 
     // just checking the filename isn't enough to differentiate between
     // Fluoview and regular TIFF; open the file and check more thoroughly

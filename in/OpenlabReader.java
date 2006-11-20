@@ -103,7 +103,7 @@ public class OpenlabReader extends FormatReader {
    * the file type, the (existing) file is opened for further analysis.
    */
   public boolean isThisType(String name, boolean open) {
-    if (super.isThisType(name, open)) return true;
+    if (super.isThisType(name, open)) return true; // check extension
 
     if (open) {
       byte[] b = new byte[8];
