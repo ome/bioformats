@@ -498,7 +498,7 @@ public class DeltavisionReader extends FormatReader {
     }
 
     for (int w=0; w<numW; w++) {
-      store.setLogicalChannel(w, "happypuppy",
+      store.setLogicalChannel(w, null,
         new Float(extHdrFields[0][w][0].getNdFilter()),
         (Integer) metadata.get("Wavelength " + (w+1) + " (in nm)"),
         new Integer((int) extHdrFields[0][w][0].getExFilter()),
