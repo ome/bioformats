@@ -36,6 +36,7 @@ import org.w3c.dom.Element;
  * A command line utility used by OMEIS to interface with Bio-Formats.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
+ * @author Ilya Goldberg igg at nih.gov
  */
 public class OmeisImporter {
 
@@ -208,10 +209,10 @@ public class OmeisImporter {
           int imageCount = reader.getImageCount(id);
           if (DEBUG) {
             log("Processing " + imageCount + " planes (sizeZ=" + sizeZ +
-              ", sizeC=" + sizeC + ", sizeT=" + sizeT + "): ", false);
+              ", sizeC=" + sizeC + ", sizeT=" + sizeT + "): ");
           }
           for (int j=0; j<imageCount; j++) {
-            if (DEBUG) log(".", false);
+            if (DEBUG) log("  Reading plane #" + j);
             byte[] plane = reader.openBytes(id, j);
             if (swap && bytesPerPixel > 1 && !isFloat) { // swap endianness
               for (int b=0; b<plane.length; b+=bytesPerPixel) {
@@ -229,7 +230,7 @@ public class OmeisImporter {
           }
           out.close();
           reader.close();
-          if (DEBUG) log(" [done]");
+          if (DEBUG) log("[done]");
 
           // tell OMEIS we're done
           pixelsId = finishPixels(pixelsId);
@@ -454,11 +455,8 @@ public class OmeisImporter {
     return results;
   }
 
-  private void log(String msg) { log(msg, true); }
-
-  private void log(String msg, boolean nl) {
-    if (nl) System.err.println(msg);
-    else System.err.print(msg);
+  private void log(String msg) {
+    System.err.println(msg);
   }
 
   /** Prints an HTTP error response header. */
