@@ -82,7 +82,7 @@ public abstract class OverlayObject {
   protected int horizGridCount, vertGridCount;
 
   /** Length of curve of a noded object */
-  protected float curveLength;
+  protected double curveLength;
 
   // -- Constructor --
 
@@ -250,6 +250,12 @@ public abstract class OverlayObject {
     computeGridParameters();
   }
 
+  // TEMP // TEMP // TEMP
+  public float[] getGridParameters() {
+    float[] retvals = {xGrid1, yGrid1, xGrid2, yGrid2, xGrid3, yGrid3, xGrid4, yGrid4};
+    return retvals;
+  }
+
   /** Returns coordinates of node at given index in the node array */
   public float[] getNodeCoords (int index) {
     float[] retvals = new float[2];
@@ -268,6 +274,9 @@ public abstract class OverlayObject {
   
   /** Returns the number of real nodes in the array */
   public int getNumNodes() { return numNodes; }
+  
+  /** Returns total number of nodes in array */
+  public int getMaxNodes() { return maxNodes; }
   
   /** Gets X coordinate of the overlay's first endpoint. */
   public float getX() { return x1; }
@@ -383,10 +392,10 @@ public abstract class OverlayObject {
   public boolean isDrawing() { return drawing; }
 
   /** Gets length of curve */
-  public float getCurveLength() { return curveLength; }
+  public double getCurveLength() { return curveLength; }
   
   /** Sets length of curve */
-  public void setCurveLength(float len) { curveLength = len; }
+  public void setCurveLength(double len) { curveLength = len; }
 
   /** Computes length of curve */
   public void computeLength() {
@@ -397,7 +406,7 @@ public abstract class OverlayObject {
       double[] b = {(double) nodes[0][i+1], (double) nodes[1][i+1]};
       length += MathUtil.getDistance(a, b);
     }
-    this.curveLength = (float) length;
+    this.curveLength = length;
   }
  
   // -- OverlayObject API Methods: node array mutators --
@@ -413,8 +422,18 @@ public abstract class OverlayObject {
     }
   } 
 
+  /** Prints node array of current freeform; for debugging */
+  private void printNodes(float[][] nodes) {
+    System.out.println("Printing nodes...");
+    for (int i = 0; i < nodes[0].length; i++){
+      System.out.println(i+":("+nodes[0][i]+","+nodes[1][i]+")");
+    }
+  }
+
   /** Sets next node coordinates. */
   public void setNextNode(float x, float y) {
+   // System.out.println("OverlayObject.setNextNode(...) called.  numNodes = " + numNodes + ", maxNodes = " + maxNodes);
+    //printNodes(getNodes());
     if (numNodes >= maxNodes) {
       maxNodes *= 2;
       nodes = resizeNodeArray(nodes, maxNodes);
@@ -459,6 +478,7 @@ public abstract class OverlayObject {
       numNodes -= victims;
       maxNodes -= victims;
       nodes = newNodes;
+      if (numNodes == 0) overlay.removeObject(this);
     } else {
       //System.out.println("deleteBetween(int, int) out of bounds error");
     }
@@ -467,14 +487,21 @@ public abstract class OverlayObject {
   /** Deletes a node from the node array */
   public void deleteNode(int index) {
     if (index >=0 && index < numNodes) {
+      //built-in truncation
+      //System.out.println("OverlayObject.deleteNode(" + index +") called.  numNodes = " + numNodes + ", maxNodes = " + maxNodes);
       float [][] newNodes =  new float[2][numNodes-1];
       System.arraycopy(nodes[0], 0, newNodes[0], 0, index);
       System.arraycopy(nodes[0], index+1, newNodes[0], index, numNodes-index-1);
       System.arraycopy(nodes[1], 0, newNodes[1], 0, index);
       System.arraycopy(nodes[1], index+1, newNodes[1], index, numNodes-index-1);
       numNodes--;
-      maxNodes--;
+      maxNodes = numNodes;
       nodes = newNodes;
+
+      if (numNodes == 0) {
+        //System.out.println("destroying " + this);
+        overlay.removeObject(this);
+      }
     }
   }
     
@@ -517,7 +544,7 @@ public abstract class OverlayObject {
       }
     }
     maxNodes = newLength;
-    //System.out.println("resize completed. maxNodes = " + maxNodes);
+    //System.out.println("resize completed. maxNodes = " + maxNodes + " numNodes =  " + numNodes);
     return a2;
   }
 

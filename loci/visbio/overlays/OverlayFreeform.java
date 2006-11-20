@@ -26,6 +26,7 @@ package loci.visbio.overlays;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import visad.*;
+import loci.visbio.util.MathUtil;
 
 /**
  * OverlayFreeform is a freeform overlay.
@@ -54,6 +55,18 @@ public class OverlayFreeform extends OverlayObject {
     Arrays.fill(nodes[0], x1);
     Arrays.fill(nodes[1], y1);
     numNodes = 1;
+    computeGridParameters();
+    computeLength();
+  }
+  
+  public OverlayFreeform(OverlayTransform overlay, float[][] nodes) {
+    super(overlay);
+    x1=x2=y1=y2=0f;
+    hasNodes = true;
+    this.nodes = nodes;
+    numNodes = nodes[0].length;
+    maxNodes = nodes[0].length;
+    updateBoundingBox();
     computeGridParameters();
     computeLength();
   }
@@ -96,7 +109,7 @@ public class OverlayFreeform extends OverlayObject {
   }
 
   /** Computes the shortest distance from this object's bounding box to the given point. */
-  public double getDistance(double x, double y) {
+  public double getDistanceToBoundingBox(double x, double y) {
     double xdist = 0;
     if (x < x1 && x < x2) xdist = Math.min(x1, x2) - x;
     else if (x > x1 && x > x2) xdist = x - Math.max(x1, x2);
@@ -105,12 +118,18 @@ public class OverlayFreeform extends OverlayObject {
     else if (y > y1 && y > y2) ydist = y - Math.max(y1, y2);
     return Math.sqrt(xdist * xdist + ydist * ydist);
   }
+  
+  /** Compute the shortest distance from this object to the given point */
+  public double getDistance (double x, double y) {
+     double[] distSegWt = MathUtil.getDistSegWt(nodes, (float) x, (float) y);
+     return distSegWt[0];
+  }
 
   /** Retrieves useful statistics about this overlay. */
   public String getStatistics() {
     return "Bounds = (" + x1 + ", " + y1 + "), (" + x2 + ", " + y2 + ")\n" +
       "Number of Nodes = " + numNodes + "\n" +
-      "Curve Length = " + curveLength + "\n";
+      "Curve Length = " + (float) curveLength + "\n";
   }
 
   /** True iff this overlay has an endpoint coordinate pair. */
