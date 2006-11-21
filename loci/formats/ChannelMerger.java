@@ -113,7 +113,7 @@ public class ChannelMerger extends ReaderWrapper {
   {
     if (!canMerge(id)) return super.openThumbImage(id, no);
     return ImageTools.scale(openImage(id, no), getThumbSizeX(id),
-      getThumbSizeY(id), true, true);
+      getThumbSizeY(id), true);
   }
 
   public int getIndex(String id, int z, int c, int t)
