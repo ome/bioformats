@@ -189,7 +189,7 @@ public class LIFReader extends FormatReader {
   /** Initializes the given LIF file. */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessStream(id);
+    in = new RandomAccessStream(getMappedId(id));
     offsets = new Vector();
 
     littleEndian = true;
