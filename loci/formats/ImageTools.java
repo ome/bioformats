@@ -1289,41 +1289,23 @@ public final class ImageTools {
   public static short[] padImage(short[] b, boolean interleaved, int c, 
     int oldWidth, int width, int height)
   {
-    boolean needsPadding =
-      (oldWidth != width) || ((b.length / (oldWidth*c)) != height);
+    int oldHeight = b.length / (oldWidth * c);
+    if (width < oldWidth) width = oldWidth;
+    if (height < oldHeight) height = oldHeight;
+    if (width == oldWidth && height == oldHeight) return b;
 
-    if (needsPadding) {
-      int oldHeight = b.length / (oldWidth * c);
+    int wClip = (width - oldWidth) / 2;
+    int hClip = (height - oldHeight) / 2;
 
-      // adjust to correct width
+    short[] padded = new short[width * height * c];
 
-      short[] padded = new short[width * oldHeight * c];
-      int clip = (width - oldWidth) / 2;
-
-      for (int i=0; i<oldHeight; i++) {
-        System.arraycopy(b, i*oldWidth*c, padded, i*width*c, 
-          clip < 0 ? width*c : oldWidth*c);
-      }
-
-      // adjust to correct height
-
-      short[] rtn = new short[width * height * c];
-      clip = (height - oldHeight) / 2;
-
-      if (clip < 0) {
-        clip *= -1;
-        for (int i=0; i<height; i++) {
-          System.arraycopy(padded, (i+clip)*width*c, rtn, i*width*c, width*c);
-        }
-      }
-      else {
-        for (int i=clip; i<height+clip; i++) {
-          System.arraycopy(padded, i*width*c, rtn, (i-clip)*width*c, width*c);
-        }
-      }
-      return rtn;
+    for (int oy=0, y=0; oy<oldHeight; oy++, y++) {
+      int oldIndex = oldWidth * c * oy;
+      int index = width * c * (y + hClip) + c * wClip;
+      System.arraycopy(b, oldIndex, padded, index, oldWidth * c);
     }
-    return b; 
+
+    return padded;
   }
 
   /**
@@ -1333,41 +1315,23 @@ public final class ImageTools {
   public static int[] padImage(int[] b, boolean interleaved, int c, 
     int oldWidth, int width, int height)
   {
-    boolean needsPadding =
-      (oldWidth != width) || ((b.length / (oldWidth*c)) != height);
+    int oldHeight = b.length / (oldWidth * c);
+    if (width < oldWidth) width = oldWidth;
+    if (height < oldHeight) height = oldHeight;
+    if (width == oldWidth && height == oldHeight) return b;
 
-    if (needsPadding) {
-      int oldHeight = b.length / (oldWidth * c);
+    int wClip = (width - oldWidth) / 2;
+    int hClip = (height - oldHeight) / 2;
 
-      // adjust to correct width
+    int[] padded = new int[width * height * c];
 
-      int[] padded = new int[width * oldHeight * c];
-      int clip = (width - oldWidth) / 2;
-
-      for (int i=0; i<oldHeight; i++) {
-        System.arraycopy(b, i*oldWidth*c, padded, i*width*c, 
-          clip < 0 ? width*c : oldWidth*c);
-      }
-
-      // adjust to correct height
-
-      int[] rtn = new int[width * height * c];
-      clip = (height - oldHeight) / 2;
-
-      if (clip < 0) {
-        clip *= -1;
-        for (int i=0; i<height; i++) {
-          System.arraycopy(padded, (i+clip)*width*c, rtn, i*width*c, width*c);
-        }
-      }
-      else {
-        for (int i=clip; i<height+clip; i++) {
-          System.arraycopy(padded, i*width*c, rtn, (i-clip)*width*c, width*c);
-        }
-      }
-      return rtn;
+    for (int oy=0, y=0; oy<oldHeight; oy++, y++) {
+      int oldIndex = oldWidth * c * oy;
+      int index = width * c * (y + hClip) + c * wClip;
+      System.arraycopy(b, oldIndex, padded, index, oldWidth * c);
     }
-    return b; 
+
+    return padded;
   }
 
   /**
@@ -1377,41 +1341,23 @@ public final class ImageTools {
   public static float[] padImage(float[] b, boolean interleaved, int c, 
     int oldWidth, int width, int height)
   {
-    boolean needsPadding =
-      (oldWidth != width) || ((b.length / (oldWidth*c)) != height);
+    int oldHeight = b.length / (oldWidth * c);
+    if (width < oldWidth) width = oldWidth;
+    if (height < oldHeight) height = oldHeight;
+    if (width == oldWidth && height == oldHeight) return b;
 
-    if (needsPadding) {
-      int oldHeight = b.length / (oldWidth * c);
+    int wClip = (width - oldWidth) / 2;
+    int hClip = (height - oldHeight) / 2;
 
-      // adjust to correct width
+    float[] padded = new float[width * height * c];
 
-      float[] padded = new float[width * oldHeight * c];
-      int clip = (width - oldWidth) / 2;
-
-      for (int i=0; i<oldHeight; i++) {
-        System.arraycopy(b, i*oldWidth*c, padded, i*width*c, 
-          clip < 0 ? width*c : oldWidth*c);
-      }
-
-      // adjust to correct height
-
-      float[] rtn = new float[width * height * c];
-      clip = (height - oldHeight) / 2;
-
-      if (clip < 0) {
-        clip *= -1;
-        for (int i=0; i<height; i++) {
-          System.arraycopy(padded, (i+clip)*width*c, rtn, i*width*c, width*c);
-        }
-      }
-      else {
-        for (int i=clip; i<height+clip; i++) {
-          System.arraycopy(padded, i*width*c, rtn, (i-clip)*width*c, width*c);
-        }
-      }
-      return rtn;
+    for (int oy=0, y=0; oy<oldHeight; oy++, y++) {
+      int oldIndex = oldWidth * c * oy;
+      int index = width * c * (y + hClip) + c * wClip;
+      System.arraycopy(b, oldIndex, padded, index, oldWidth * c);
     }
-    return b; 
+
+    return padded;
   }
 
   /**
@@ -1421,41 +1367,23 @@ public final class ImageTools {
   public static double[] padImage(double[] b, boolean interleaved, int c, 
     int oldWidth, int width, int height)
   {
-    boolean needsPadding =
-      (oldWidth != width) || ((b.length / (oldWidth*c)) != height);
+    int oldHeight = b.length / (oldWidth * c);
+    if (width < oldWidth) width = oldWidth;
+    if (height < oldHeight) height = oldHeight;
+    if (width == oldWidth && height == oldHeight) return b;
 
-    if (needsPadding) {
-      int oldHeight = b.length / (oldWidth * c);
+    int wClip = (width - oldWidth) / 2;
+    int hClip = (height - oldHeight) / 2;
 
-      // adjust to correct width
+    double[] padded = new double[width * height * c];
 
-      double[] padded = new double[width * oldHeight * c];
-      int clip = (width - oldWidth) / 2;
-
-      for (int i=0; i<oldHeight; i++) {
-        System.arraycopy(b, i*oldWidth*c, padded, i*width*c, 
-          clip < 0 ? width*c : oldWidth*c);
-      }
-
-      // adjust to correct height
-
-      double[] rtn = new double[width * height * c];
-      clip = (height - oldHeight) / 2;
-
-      if (clip < 0) {
-        clip *= -1;
-        for (int i=0; i<height; i++) {
-          System.arraycopy(padded, (i+clip)*width*c, rtn, i*width*c, width*c);
-        }
-      }
-      else {
-        for (int i=clip; i<height+clip; i++) {
-          System.arraycopy(padded, i*width*c, rtn, (i-clip)*width*c, width*c);
-        }
-      }
-      return rtn;
+    for (int oy=0, y=0; oy<oldHeight; oy++, y++) {
+      int oldIndex = oldWidth * c * oy;
+      int index = width * c * (y + hClip) + c * wClip;
+      System.arraycopy(b, oldIndex, padded, index, oldWidth * c);
     }
-    return b; 
+
+    return padded;
   }
 
   /** Perform demosaicing on a byte array, assuming a {B, G, G, R} mosaic. */
