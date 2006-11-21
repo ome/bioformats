@@ -27,7 +27,6 @@ package loci.plugins.browser;
 import ij.*;
 import ij.gui.*;
 import ij.measure.Calibration;
-import java.io.File;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
