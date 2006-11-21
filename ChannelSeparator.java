@@ -131,7 +131,7 @@ public class ChannelSeparator extends ReaderWrapper {
     throws FormatException, IOException
   {
     return ImageTools.scale(openImage(id, no), getThumbSizeX(id),
-      getThumbSizeY(id), true, true);
+      getThumbSizeY(id), true);
   }
 
   public int getIndex(String id, int z, int c, int t)

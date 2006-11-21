@@ -1263,41 +1263,23 @@ public final class ImageTools {
   public static byte[] padImage(byte[] b, boolean interleaved, int c,
     int oldWidth, int width, int height)
   {
-    boolean needsPadding =
-      (oldWidth != width) || ((b.length / (oldWidth*c)) != height);
+    int oldHeight = b.length / (oldWidth * c);
+    if (width < oldWidth) width = oldWidth;
+    if (height < oldHeight) height = oldHeight;
+    if (width == oldWidth && height == oldHeight) return b;
 
-    if (needsPadding) {
-      int oldHeight = b.length / (oldWidth * c);
+    int wClip = (width - oldWidth) / 2;
+    int hClip = (height - oldHeight) / 2;
 
-      // adjust to correct width
+    byte[] padded = new byte[width * height * c];
 
-      byte[] padded = new byte[width * oldHeight * c];
-      int clip = (width - oldWidth) / 2;
-
-      for (int i=0; i<oldHeight; i++) {
-        System.arraycopy(b, i*oldWidth*c, padded, i*width*c, 
-          clip < 0 ? width*c : oldWidth*c);
-      }
-
-      // adjust to correct height
-
-      byte[] rtn = new byte[width * height * c];
-      clip = (height - oldHeight) / 2;
-
-      if (clip < 0) {
-        clip *= -1;
-        for (int i=0; i<height; i++) {
-          System.arraycopy(padded, (i+clip)*width*c, rtn, i*width*c, width*c);
-        }
-      }
-      else {
-        for (int i=clip; i<height+clip; i++) {
-          System.arraycopy(padded, i*width*c, rtn, (i-clip)*width*c, width*c);
-        }
-      }
-      return rtn;
+    for (int oy=0, y=0; oy<oldHeight; oy++, y++) {
+      int oldIndex = oldWidth * c * oy;
+      int index = width * c * (y + hClip) + c * wClip;
+      System.arraycopy(b, oldIndex, padded, index, oldWidth * c);
     }
-    return b; 
+
+    return padded;
   }
 
   /**
@@ -1841,32 +1823,39 @@ public final class ImageTools {
    * having the same color model as the original image.
    */
   public static BufferedImage scale(BufferedImage source,
-    int width, int height, boolean preserve, boolean pad)
+    int width, int height, boolean pad)
   {
     int w = source.getWidth();
     int h = source.getHeight();
     if (w == width && h == height) return source;
 
-    int oldHeight = height;
+    int finalWidth = width, finalHeight = height;
 
-    if (preserve) {
-      // keep the width the same, but adjust height accordingly
-      height = (h * width) / w;
+    if (pad) {
+      // keep aspect ratio the same
+      double r = (double) w / h;
+      double ratio = (double) width / height;
+      if (r > ratio) {
+        // bounded by width; adjust height
+        height = (h * width) / w;
+      }
+      else {
+        // bounded by height; adjust width
+        width = (w * height) / h;
+      }
     }
 
+    BufferedImage result;
     if ((width * height) / (w * h) > 0) {
       // use Java2D to enlarge
-      source = scale2D(source, width, height, null, source.getColorModel());
-      if (pad) return padImage(source, width, oldHeight);
-      return source;
+      result = scale2D(source, width, height, null, source.getColorModel());
     }
     else {
       // use AWT to shrink
-      source = makeBuffered(scaleAWT(source, width, height,
+      result = makeBuffered(scaleAWT(source, width, height,
         Image.SCALE_AREA_AVERAGING), source.getColorModel());
-      if (pad) return padImage(source, width, oldHeight);
-      return source;
     }
+    return padImage(result, finalWidth, finalHeight);
   }
 
   // -- AWT images --
