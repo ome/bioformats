@@ -282,6 +282,7 @@ public class ND2Reader extends FormatReader {
     catch (ReflectException e) { throw new FormatException(e); }
     numImages = offsets.length;
 
+    pixelType[0] = FormatReader.UINT8;
     BufferedImage img = openImage(id, 0);
 
     sizeX[0] = img.getWidth();

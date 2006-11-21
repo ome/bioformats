@@ -377,9 +377,6 @@ public class Importer {
           int c = r.isRGB(id) ? r.getSizeC(id) : 1;
           int type = r.getPixelType(id);
 
-          // TODO : pad the byte array to the appropriate size
-
-
           // construct image processor and add to stack
 
           ImageProcessor ip = null;
@@ -396,6 +393,12 @@ public class Importer {
             case FormatReader.DOUBLE: bpp = 8; break;
           }
 
+          if (b.length != w * h * c * bpp) {
+            BufferedImage bi = r.openImage(id, j);
+            b = ImageTools.padImage(b, r.isInterleaved(id), c, bi.getWidth()*bpp,
+              w, h);
+          }
+          
           Object pixels = DataTools.makeDataArray(b, bpp,
             type == FormatReader.FLOAT || type == FormatReader.DOUBLE,
             r.isLittleEndian(id));

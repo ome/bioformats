@@ -468,6 +468,7 @@ public abstract class FormatReader extends FormatHandler
     boolean omexml = false;
     boolean ignoreColors = false;
     boolean normalize = false;
+    boolean fastBlit = false;
     int start = 0;
     int end = 0;
     int series = 0;
@@ -484,6 +485,7 @@ public abstract class FormatReader extends FormatHandler
           else if (args[i].equals("-nocolors")) ignoreColors = true;
           else if (args[i].equals("-omexml")) omexml = true;
           else if (args[i].equals("-normalize")) normalize = true;
+          else if (args[i].equals("-fast")) fastBlit = true;
           else if (args[i].equals("-range")) {
             try {
               start = Integer.parseInt(args[++i]);
@@ -671,12 +673,27 @@ public abstract class FormatReader extends FormatHandler
       long s2 = System.currentTimeMillis();
       boolean mismatch = false;
       for (int i=start; i<end; i++) {
-        images[i - start] = thumbs ?
-          reader.openThumbImage(id, i) : reader.openImage(id, i);
+        if (!fastBlit) {
+          images[i - start] = thumbs ?
+            reader.openThumbImage(id, i) : reader.openImage(id, i);
+        }
+        else {
+          int x = reader.getSizeX(id);
+          int y = reader.getSizeY(id);
+          byte[] b = thumbs ? reader.openThumbBytes(id, i) : 
+            reader.openBytes(id, i);
+          Object pix = DataTools.makeDataArray(b, 
+            FormatReader.getBytesPerPixel(reader.getPixelType(id)),
+            reader.getPixelType(id) == FormatReader.FLOAT, 
+            reader.isLittleEndian(id));
+          images[i - start] = 
+            ImageTools.makeImage(ImageTools.make24Bits(pix, x, y, 
+              reader.isInterleaved(id), false), x, y);
+        }
 
         // check for pixel type mismatch
         int pixType = ImageTools.getPixelType(images[i - start]);
-        if (pixType != pixelType) {
+        if (pixType != pixelType && !fastBlit) {
           if (!mismatch) {
             System.out.println();
             mismatch = true;
