@@ -944,29 +944,45 @@ public final class ImageTools {
     
     byte[] b = null;
 
+    // adapted from ImageJ's TypeConverter methods
+
     if (pixels instanceof byte[]) b = (byte[]) pixels;
     else if (pixels instanceof short[]) {
       short[] s = (short[]) pixels;
       b = new byte[s.length];
-      for (int i=0; i<s.length; i++) b[i] = (byte) ((255 * s[i]) / 65535);
+      for (int i=0; i<s.length; i++) {
+        int v = s[i] & 0xffff;
+        if (v > 255) v = 255;
+        b[i] = (byte) v;
+      }
     }
     else if (pixels instanceof int[]) {
       int[] s = (int[]) pixels;
       b = new byte[s.length];
-      for (int i=0; i<s.length; i++) b[i] = (byte) ((255 * s[i]) / 4294967295L);
+      for (int i=0; i<s.length; i++) {
+        int value = s[i] & 0xffffffff;
+        if (value > 255) value = 255;
+        b[i] = (byte) value;
+      }
     }
     else if (pixels instanceof float[]) {
       float[] s = (float[]) pixels;
       b = new byte[s.length];
       for (int i=0; i<s.length; i++) {
-        b[i] = (byte) ((255 * Float.floatToIntBits(s[i])) / 4294967295L);
+        float value = s[i];
+        if (value < 0f) value = 0f;
+        if (value > 255f) value = 255f;
+        b[i] = (byte) Math.round(value);
       }
     }
     else if (pixels instanceof double[]) {
       double[] s = (double[]) pixels;
       b = new byte[s.length];
       for (int i=0; i<s.length; i++) {
-        b[i] = (byte) ((255 * Double.doubleToLongBits(s[i])) / 8589934590L);
+        double value = s[i];
+        if (value < 0d) value = 0d;
+        if (value > 255d) value = 255d;
+        b[i] = (byte) Math.round(value);
       }
     }
     
