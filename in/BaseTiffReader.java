@@ -761,8 +761,13 @@ public abstract class BaseTiffReader extends FormatReader {
     }
 
     int bytesPerPixel = FormatReader.getBytesPerPixel(getPixelType(id));
-    byte[] buf = new byte[getSizeX(id) * getSizeY(id) * getSizeC(id) *
-      bytesPerPixel];
+    byte[] buf = null;
+    if (isRGB(id)) {
+      buf = 
+        new byte[getSizeX(id) * getSizeY(id) * getSizeC(id) * bytesPerPixel];
+    }
+    else buf = new byte[getSizeX(id) * getSizeY(id) * bytesPerPixel];
+
     return openBytes(id, no, buf);
   }
 

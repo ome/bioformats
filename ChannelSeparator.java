@@ -118,6 +118,8 @@ public class ChannelSeparator extends ReaderWrapper {
       int channel = no % c;
 
       byte[] sourceBytes = reader.openBytes(id, source);
+      sourceBytes = ImageTools.padImage(sourceBytes, isInterleaved(id), c,
+        reader.openImage(id, source).getWidth(), getSizeX(id), getSizeY(id));
       return ImageTools.splitChannels(sourceBytes, c,
         false, isInterleaved(id))[channel];
     }
