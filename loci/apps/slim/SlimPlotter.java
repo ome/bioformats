@@ -121,11 +121,17 @@ public class SlimPlotter implements ActionListener,
     console.getTextArea().setColumns(54);
     console.getTextArea().setRows(10);
 
+    // progress estimate:
+    // * Reading data - 70%
+    // * Creating types - 1%
+    // * Building displays - 7%
+    // * Constructing images - 14%
+    // * Adjusting peaks - 4%
+    // * Creating plots - 4%
     ProgressMonitor progress = new ProgressMonitor(null,
-      "Launching SlimPlotter", "Initializing", 0, 16 + 8);
+      "Launching SlimPlotter", "Initializing", 0, 1000);
     progress.setMillisToPopup(0);
     progress.setMillisToDecideToPopup(0);
-    int p = 0;
 
     // check for required libraries
     try {
@@ -197,9 +203,6 @@ public class SlimPlotter implements ActionListener,
     timeRange = 12.5f;
     minWave = 400;
     waveStep = 10;
-    progress.setMaximum(adjustPeaks ?
-      (channels * height + 2 * channels + 10) : (channels * height + 8));
-    progress.setNote("Creating user interface");
 
     // show dialog confirming data parameters
     paramDialog = new JDialog((Frame) null, "SlimPlotter", true);
@@ -238,17 +241,26 @@ public class SlimPlotter implements ActionListener,
     maxWave = minWave + (channels - 1) * waveStep;
     roiCount = width * height;
     roiPercent = 100;
-    progress.setProgress(++p);
-    progress.setNote("Reading data");
+
+    // pop up progress monitor
+    progress.setProgress(1); // estimate: 0.1%
+    if (progress.isCanceled()) System.exit(0);
 
     // read pixel data
+    progress.setNote("Reading data");
     DataInputStream fin = new DataInputStream(new FileInputStream(file));
     fin.skipBytes(offset); // skip to data
     byte[] data = new byte[2 * channels * height * width * timeBins];
-    fin.readFully(data);
+    int blockSize = 65536;
+    for (int off=0; off<data.length; off+=blockSize) {
+      int len = data.length - off;
+      if (len > blockSize) len = blockSize;
+      fin.readFully(data, off, len);
+      progress.setProgress(700 *
+        (off + blockSize) / data.length); // estimate: 0% -> 70%
+      if (progress.isCanceled()) System.exit(0);
+    }
     fin.close();
-    progress.setProgress(++p);
-    if (progress.isCanceled()) System.exit(0);
 
     // create types
     progress.setNote("Creating types");
@@ -259,7 +271,7 @@ public class SlimPlotter implements ActionListener,
     bcUnits = new Unit[] {ns, nm};
     bType = RealType.getRealType("bin", ns);
     cType = RealType.getRealType("channel", nm);
-    RealType vType = RealType.getRealType("value");
+    RealType vType = RealType.getRealType("count");
     RealTupleType xy = new RealTupleType(xType, yType);
     FunctionType xyvFunc = new FunctionType(xy, vType);
     Integer2DSet xySet = new Integer2DSet(xy, width, height);
@@ -267,12 +279,14 @@ public class SlimPlotter implements ActionListener,
     Linear1DSet cSet = new Linear1DSet(cType,
       minWave, maxWave, channels, null, new Unit[] {nm}, null);
     bc = new RealTupleType(bType, cType);
-    bcvFunc = new FunctionType(bc, vType);
+    RealType vType2 = RealType.getRealType("color");
+    RealTupleType vv = new RealTupleType(vType, vType2);
+    bcvFunc = new FunctionType(bc, vv);
     RealType vTypeFit = RealType.getRealType("value_fit");
     bcvFuncFit = new FunctionType(bc, vTypeFit);
     RealType vTypeRes = RealType.getRealType("value_res");
     bcvFuncRes = new FunctionType(bc, vTypeRes);
-    progress.setProgress(++p);
+    progress.setProgress(710); // estimate: 71%
     if (progress.isCanceled()) System.exit(0);
 
     // plot intensity data in 2D display
@@ -288,6 +302,8 @@ public class SlimPlotter implements ActionListener,
     });
     iPlot.enableEvent(DisplayEvent.MOUSE_DRAGGED);
     iPlot.addDisplayListener(this);
+    progress.setProgress(720); // estimate: 72%
+    if (progress.isCanceled()) System.exit(0);
 
     iPlot.addMap(new ScalarMap(xType, Display.XAxis));
     iPlot.addMap(new ScalarMap(yType, Display.YAxis));
@@ -295,6 +311,8 @@ public class SlimPlotter implements ActionListener,
     iPlot.addMap(new ScalarMap(cType, Display.Animation));
     DataReferenceImpl intensityRef = new DataReferenceImpl("intensity");
     iPlot.addReference(intensityRef);
+    progress.setProgress(730); // estimate: 73%
+    if (progress.isCanceled()) System.exit(0);
 
     // set up curve manipulation renderer in 2D display
     roiGrid = new float[2][width * height];
@@ -328,11 +346,14 @@ public class SlimPlotter implements ActionListener,
       new ConstantMap(0, Display.Blue),
       new ConstantMap(0.1, Display.Alpha)
     });
+    progress.setProgress(740); // estimate: 74%
+    if (progress.isCanceled()) System.exit(0);
 
     ac = (AnimationControl) iPlot.getControl(AnimationControl.class);
     iPlot.getProjectionControl().setMatrix(
       iPlot.make_matrix(0, 0, 0, 0.85, 0, 0, 0));
-    progress.setProgress(++p);
+
+    progress.setProgress(750); // estimate: 75%
     if (progress.isCanceled()) System.exit(0);
 
     // plot decay curves in 3D display
@@ -353,6 +374,8 @@ public class SlimPlotter implements ActionListener,
     decayPlot.addMap(vMap);
     //decayPlot.addMap(vMapFit);
     decayPlot.addMap(vMapRes);
+    progress.setProgress(760); // estimate: 76%
+    if (progress.isCanceled()) System.exit(0);
 
     decayRend = new DefaultRendererJ3D();
     decayRef = new DataReferenceImpl("decay");
@@ -371,6 +394,8 @@ public class SlimPlotter implements ActionListener,
       decayPlot.addReferences(resRend, resRef);
       resRend.toggle(false);
     }
+    progress.setProgress(770); // estimate: 77%
+    if (progress.isCanceled()) System.exit(0);
 
     xMap.setRange(0, timeRange);
     yMap.setRange(minWave, maxWave);
@@ -397,11 +422,11 @@ public class SlimPlotter implements ActionListener,
     pc.setMatrix(MATRIX);
     pc.setAspectCartesian(
       new double[] {2, 1, 1});
-    progress.setProgress(++p);
+    progress.setProgress(780); // estimate: 78%
     if (progress.isCanceled()) System.exit(0);
 
     // convert byte data to unsigned shorts
-    progress.setNote("Constructing images ");
+    progress.setNote("Constructing images");
     values = new int[channels][height][width][timeBins];
     float[][][] pix = new float[channels][1][width * height];
     FieldImpl field = new FieldImpl(cxyvFunc, cSet);
@@ -410,8 +435,6 @@ public class SlimPlotter implements ActionListener,
     for (int c=0; c<channels; c++) {
       int oc = timeBins * width * height * c;
       for (int h=0; h<height; h++) {
-        progress.setProgress(++p);
-        if (progress.isCanceled()) System.exit(0);
         int oh = timeBins * width * h;
         for (int w=0; w<width; w++) {
           int ow = timeBins * w;
@@ -428,21 +451,20 @@ public class SlimPlotter implements ActionListener,
           }
           pix[c][0][width * h + w] = sum;
         }
+        progress.setProgress(780 + 140 *
+          (height * c + h + 1) / (channels * height)); // estimate: 78% -> 92%
+        if (progress.isCanceled()) System.exit(0);
       }
       FlatField ff = new FlatField(xyvFunc, xySet);
       ff.setSamples(pix[c], false);
       field.setSample(c, ff);
     }
-    progress.setProgress(++p);
-    if (progress.isCanceled()) System.exit(0);
 
     // adjust peaks
     if (adjustPeaks) {
-      progress.setNote("Adjusting peaks ");
+      progress.setNote("Adjusting peaks");
       int[] peaks = new int[channels];
       for (int c=0; c<channels; c++) {
-        progress.setProgress(++p);
-        if (progress.isCanceled()) System.exit(0);
         int[] sum = new int[timeBins];
         for (int h=0; h<height; h++) {
           for (int w=0; w<width; w++) {
@@ -458,17 +480,16 @@ public class SlimPlotter implements ActionListener,
           else if (t > 20) break; // HACK - too early to give up
         }
         peaks[c] = ndx;
+        progress.setProgress(920 + 20 *
+          (c + 1) / channels); // estimate: 92% -> 94%
+        if (progress.isCanceled()) System.exit(0);
       }
-      progress.setProgress(++p);
-      if (progress.isCanceled()) System.exit(0);
       maxPeak = 0;
       for (int c=1; c<channels; c++) {
         if (maxPeak < peaks[c]) maxPeak = peaks[c];
       }
       log("Aligning peaks to tmax = " + maxPeak);
       for (int c=0; c<channels; c++) {
-        progress.setProgress(++p);
-        if (progress.isCanceled()) System.exit(0);
         int shift = maxPeak - peaks[c];
         if (shift > 0) {
           for (int h=0; h<height; h++) {
@@ -482,9 +503,10 @@ public class SlimPlotter implements ActionListener,
           log("\tChannel #" + (c + 1) + ": tmax = " + peaks[c] +
             " (shifting by " + shift + ")");
         }
+        progress.setProgress(940 + 20 *
+          (c + 1) / channels); // estimate: 94% -> 96%
+        if (progress.isCanceled()) System.exit(0);
       }
-      progress.setProgress(++p);
-      if (progress.isCanceled()) System.exit(0);
 
       // add yellow line to indicate adjusted peak position
       lineRend = new DefaultRendererJ3D();
@@ -527,6 +549,9 @@ public class SlimPlotter implements ActionListener,
     iPlotPane.add(iPlot.getComponent(), BorderLayout.CENTER);
     intensityPane.add(iPlotPane, BorderLayout.CENTER);
 
+    progress.setProgress(970); // estimate: 97%
+    if (progress.isCanceled()) System.exit(0);
+
     JPanel sliderPane = new JPanel();
     sliderPane.setLayout(new BoxLayout(sliderPane, BoxLayout.X_AXIS));
     intensityPane.add(sliderPane, BorderLayout.SOUTH);
@@ -546,7 +571,7 @@ public class SlimPlotter implements ActionListener,
     ColorControl cc = (ColorControl) iPlot.getControl(ColorControl.class);
     cc.setTable(ColorControl.initTableGreyWedge(new float[3][256]));
 
-    progress.setProgress(++p);
+    progress.setProgress(980); // estimate: 98%
     if (progress.isCanceled()) System.exit(0);
 
     // construct 3D pane
@@ -605,6 +630,9 @@ public class SlimPlotter implements ActionListener,
     exportData = new JButton("Export");
     exportData.addActionListener(this);
 
+    progress.setProgress(99); // estimate: 99%
+    if (progress.isCanceled()) System.exit(0);
+
     JPanel leftPanel = new JPanel() {
       public Dimension getMaximumSize() {
         Dimension pref = getPreferredSize();
@@ -640,6 +668,9 @@ public class SlimPlotter implements ActionListener,
     decayPane.add(options, BorderLayout.SOUTH);
     masterPane.add(decayPane, BorderLayout.CENTER);
 
+    progress.setProgress(999); // estimate: 99.9%
+    if (progress.isCanceled()) System.exit(0);
+
     // show window on screen
     masterWindow.pack();
     Dimension size = masterWindow.getSize();
@@ -647,7 +678,7 @@ public class SlimPlotter implements ActionListener,
     masterWindow.setLocation((screen.width - size.width) / 2,
       (screen.height - size.height) / 2);
     masterWindow.setVisible(true);
-    progress.setProgress(++p);
+    progress.setProgress(1000);
     progress.close();
     plotData(true, true);
 
@@ -1002,9 +1033,20 @@ public class SlimPlotter implements ActionListener,
       Gridded2DSet bcSet = new Gridded2DSet(bc, bcGrid,
         timeBins, numChanVis, null, bcUnits, null, false);
 
+      // compile color values for 3D surface plot
+      float[] colors = new float[numChanVis * timeBins];
+      for (int c=0, cc=0; c<channels; c++) {
+        if (!cVisible[c]) continue;
+        for (int t=0; t<timeBins; t++) {
+          int ndx = timeBins * c + t;
+          colors[ndx] = samps[ndx]; // CTR TODO: use Tau value for this channel
+        }
+        cc++;
+      }
+
       // construct "Data" plot
       FlatField ff = new FlatField(bcvFunc, bcSet);
-      ff.setSamples(new float[][] {samps}, false);
+      ff.setSamples(new float[][] {samps, colors}, false);
       decayRef.setData(doDataLines ? makeLines(ff) : ff);
 
       if (fitResults != null) {
