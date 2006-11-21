@@ -44,7 +44,7 @@ public class ImagePlusWrapper {
    *   of the file names if you use file stitching
    * @param stitch true if use file stitching
    */
-  public ImagePlusWrapper(String name, IFormatReader r, boolean stitch)
+  public ImagePlusWrapper(String name, IFormatReader r, FileStitcher fs, boolean stitch)
     throws IOException, FormatException
   {
     store = new OMEXMLMetadataStore();
@@ -56,17 +56,21 @@ public class ImagePlusWrapper {
       catch (Exception e) { e.printStackTrace(); }
 
       // get # images in all matching files
-      numTotal = r.getImageCount(name);
-
-      dim = r.getDimensionOrder(name);
-      sizeX = r.getSizeX(name);
-      sizeY = r.getSizeY(name);
-      sizeZ = r.getSizeZ(name);
-      sizeT = r.getSizeT(name);
-      sizeC = r.getSizeC(name);
-      if (LociDataBrowser.DEBUG) {
-        System.err.println("numTotal = "+numTotal);
+      
+      try {
+        numTotal = fs.getImageCount(name);
+        
+        dim = fs.getDimensionOrder(name);
+        sizeX = fs.getSizeX(name);
+        sizeY = fs.getSizeY(name);
+        sizeZ = fs.getSizeZ(name);
+        sizeT = fs.getSizeT(name);
+        sizeC = fs.getSizeC(name);
+        if (LociDataBrowser.DEBUG) {
+          System.err.println("numTotal = "+numTotal);
+        }
       }
+      catch(Exception exc) { exc.printStackTrace();}
 
       int num = r.getImageCount(name);
       ImageStack stackB = null, stackS = null,

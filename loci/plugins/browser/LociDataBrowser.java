@@ -53,6 +53,9 @@ public class LociDataBrowser {
   /** The file format reader used by the plugin. */
   protected IFormatReader reader;
   
+  /** The file stitcher used by the reader.*/
+  protected FileStitcher fStitch;
+  
   /** The CustomWindow used to display data.*/
   protected CustomWindow cw;
 
@@ -86,7 +89,8 @@ public class LociDataBrowser {
 
   /** Constructs a new data browser. */
   public LociDataBrowser() {
-    reader = new ChannelSeparator(new FileStitcher());
+    fStitch = new FileStitcher();
+    reader = new ChannelSeparator(fStitch);
   }
 
   // -- LociDataBrowser API methods --
@@ -108,27 +112,33 @@ public class LociDataBrowser {
 
     cw = new CustomWindow(this, imp, new ImageCanvas(imp));
   }
-
-  /** Set the length of each dimensional axis and the dimension order. */
-  public void setDimensions(int sizeZ, int sizeC, int sizeT, int z,
-    int c, int t)
-  {
-    numZ = sizeZ;
-    numC = sizeC;
-    numT = sizeT;
-
+  
+  /** Reset all dimensional data in case they've switched.*/
+  public void setDimensions() {
+    String order = null;
+  
+    try {
+      numZ = fStitch.getSizeZ(id);
+      numC = fStitch.getSizeC(id);
+      numT = fStitch.getSizeT(id);
+      order = fStitch.getDimensionOrder(id);
+    }
+    catch (Exception exc) {
+      if (DEBUG) exc.printStackTrace();
+      return;
+    }
+    
     hasZ = numZ > 1;
     hasC = numC > 1;
     hasT = numT > 1;
+    
+    zIndex = order.indexOf("Z") - 2;
+    cIndex = order.indexOf("C") - 2;
+    tIndex = order.indexOf("T") - 2;
 
-    lengths = new int[3];
-    lengths[z] = numZ;
-    lengths[c] = numC;
-    lengths[t] = numT;
-
-    zIndex = z;
-    cIndex = c;
-    tIndex = t;
+    lengths[zIndex] = numZ;
+    lengths[tIndex] = numT;
+    lengths[cIndex] = numC;
   }
 
   /** Gets the slice number for the given Z, T and C indices. */
@@ -197,55 +207,16 @@ public class LociDataBrowser {
 
             int num = reader.getImageCount(id);
 
-            int size = 20;
-            if (num < size) size = num;
-
-            String ord = reader.getDimensionOrder(id);
-            ord = ord.substring(2);
-            int minor, major;
-            if (ord.charAt(0) == 'Z') {
-              minor = reader.getSizeZ(id);
-              major = reader.getSizeT(id);
-            }
-            else if (ord.charAt(0) == 'T') {
-              major = reader.getSizeZ(id);
-              minor = reader.getSizeT(id);
-            }
-            else {
-              if (ord.charAt(1) == 'Z') {
-                minor = reader.getSizeZ(id);
-                major = reader.getSizeT(id);
-              }
-              else {
-                major = reader.getSizeZ(id);
-                minor = reader.getSizeT(id);
-              }
-            }
-
             manager = new CacheManager(0, 0, 0, 0, 0, 0, 20, 0, 0,
               this, id, CacheManager.T_AXIS,
               CacheManager.CROSS_MODE, CacheManager.FORWARD_FIRST);
 
             try {
-              numZ = reader.getSizeZ(id);
-              numC = reader.getSizeC(id);
+              setDimensions();
               if (reader.isRGB(id)) {
                 if (numC <= 3) numC = 1;
                 else numC /= 3;
               }
-              numT = reader.getSizeT(id);
-              hasZ = numZ > 1;
-              hasC = numC > 1;
-              hasT = numT > 1;
-
-              String order = reader.getDimensionOrder(id);
-              zIndex = order.indexOf("Z") - 2;
-              cIndex = order.indexOf("C") - 2;
-              tIndex = order.indexOf("T") - 2;
-
-              lengths[zIndex] = numZ;
-              lengths[tIndex] = numT;
-              lengths[cIndex] = numC;
 
               // CTR: stack must not be null
               int sizeX = reader.getSizeX(id);
@@ -276,23 +247,12 @@ public class LociDataBrowser {
           show(imp);
         }
         else {
-          ipw = new ImagePlusWrapper(id, reader, true);
-          numZ = ipw.sizeZ; numT = ipw.sizeT; numC = ipw.sizeC;
-          zIndex = ipw.dim.indexOf('Z') - 2;
-          tIndex = ipw.dim.indexOf('T') - 2;
-          cIndex = ipw.dim.indexOf('C') - 2;
+          ipw = new ImagePlusWrapper(id, reader, fStitch, true);
+          setDimensions();
 
           if (ipw.getImagePlus().getStackSize() != numZ * numT * numC) {
             numC = 1;
           }
-
-          lengths[zIndex] = numZ;
-          lengths[tIndex] = numT;
-          lengths[cIndex] = numC;
-
-          hasZ = numZ > 1;
-          hasT = numT > 1;
-          hasC = numC > 1;
 
           FileInfo fi = ipw.getImagePlus().getOriginalFileInfo();
           if (fi == null) fi = new FileInfo();

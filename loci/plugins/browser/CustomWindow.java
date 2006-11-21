@@ -35,6 +35,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import loci.formats.ReflectedUniverse;
 import loci.formats.ReflectException;
+import loci.formats.FilePattern;
 //import loci.ome.notebook.MetadataNotebook;
 
 import com.jgoodies.forms.layout.CellConstraints;
@@ -83,6 +84,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   private JCheckBox channelBox;
   private CardLayout switcher;
   private JPanel channelPanel;
+  private String patternTitle;
 
   // -- Constructor --
 
@@ -91,8 +93,28 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     super(imp, canvas);
     this.db = db;
     ow = null;
-    String title = imp.getTitle();
-    this.setTitle(title.substring(title.lastIndexOf(File.separatorChar) + 1));
+    
+    String id = db.id;    
+    if(db.virtual) {
+      FilePattern fp = null;
+      try { fp = db.fStitch.getFilePattern(id); }
+      catch (Exception exc) {exc.printStackTrace();}
+      
+      String[] prefixes = fp.getPrefixes();
+      String[] blocks = fp.getBlocks();
+      String suffix = fp.getSuffix();
+      
+      StringBuffer sb = new StringBuffer();
+      for (int i=0; i<prefixes.length; i++) {
+        sb.append(prefixes[i]);
+        sb.append(blocks[i]);
+      }
+      sb.append(suffix);
+
+      patternTitle = sb.toString();
+      setTitle(patternTitle);
+    }
+    else setTitle(id);
 
     //setup which variables the sliders are set to
     zMap = 0;
@@ -310,8 +332,12 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   public void showSlice(int index) {
     index++;
 
+    String title = null;
+    if(db.virtual) title = patternTitle;
+    else title = db.id;
+
     if (db.manager != null) {
-      imp.setProcessor("", db.manager.getSlice(index - 1));
+      imp.setProcessor(title, db.manager.getSlice(index - 1));
       index = 1;
     }
 
@@ -340,8 +366,10 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   }
 
   public void showTempSlice(int index) {
-
-    imp.setProcessor("", db.manager.getTempSlice(index));
+    String title = null;
+    if(db.virtual) title = patternTitle;
+    else title = db.id;
+    imp.setProcessor(title, db.manager.getTempSlice(index));
     imp.updateAndDraw();
 
     if (LociDataBrowser.DEBUG) {
