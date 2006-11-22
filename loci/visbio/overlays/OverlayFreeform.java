@@ -163,6 +163,6 @@ public class OverlayFreeform extends OverlayObject {
   // -- Object API methods --
 
   /** Gets a short string representation of this freeform. */
-  public String toString() { return getStatistics(); }
+  public String toString() { return "Freeform"; }
 
 }
