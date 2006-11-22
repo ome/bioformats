@@ -9,7 +9,3 @@ Codecs:
 Implement readers for other file formats:
 * Anything listed online: http://www.loci.wisc.edu/ome/formats.html
 * MNG (low)
-
-API/Other:
-* improve efficiency of BufferedImage construction and
-  harvesting pixels from a BufferedImage

@@ -56,9 +56,8 @@ public class ImarisTiffReader extends BaseTiffReader {
     boolean little = (block[0] == 0x49 && block[1] == 0x49);
 
     int ifdlocation = DataTools.bytesToInt(block, 4, little);
-    if (ifdlocation < 0 || ifdlocation + 1 > block.length) {
-      return false;
-    }
+    if (ifdlocation < 0) return false;
+    else if (ifdlocation + 1 > block.length) return true;
     else {
       int ifdnumber = DataTools.bytesToInt(block, ifdlocation, 2, little);
       for (int i=0; i<ifdnumber; i++) {
@@ -94,9 +93,16 @@ public class ImarisTiffReader extends BaseTiffReader {
 
   // -- Internal BaseTiffReader API methods --
 
+  /* @see BaseTiffReader#getImageCount(String) */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return numImages;
+  }
+
+  /* @see BaseTiffReader#isInterleaved(String) */
+  public boolean isInterleaved(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return false;
   }
 
   /* @see BaseTiffReader#initFile(String) */
