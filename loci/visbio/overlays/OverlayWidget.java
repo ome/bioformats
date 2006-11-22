@@ -493,6 +493,7 @@ public class OverlayWidget extends JPanel implements ActionListener,
       sel = draw;
     }
     boolean enableXY1 = false, enableXY2 = false;
+    boolean editXY1 = false, editXY2 = false;
     String xval1 = "", yval1 = "", xval2 = "", yval2 = "";
     String words = "";
     boolean fill = true;
@@ -510,6 +511,8 @@ public class OverlayWidget extends JPanel implements ActionListener,
         // fill in values based on parameters of first selected overlay
         enableXY1 = obj.hasEndpoint();
         enableXY2 = obj.hasEndpoint2();
+        editXY1 = obj.areBoundsEditable();
+        editXY2 = obj.areBoundsEditable();
         if (enableXY1) xval1 = "" + obj.getX();
         if (enableXY1) yval1 = "" + obj.getY();
         if (enableXY2) xval2 = "" + obj.getX2();
@@ -541,6 +544,10 @@ public class OverlayWidget extends JPanel implements ActionListener,
     y1.setEnabled(enableXY1);
     x2.setEnabled(enableXY2);
     y2.setEnabled(enableXY2);
+    x1.setEditable(editXY1);
+    y1.setEditable(editXY1);
+    x2.setEditable(editXY2);
+    y2.setEditable(editXY2);
     x1.setText(xval1);
     y1.setText(yval1);
     x2.setText(xval2);

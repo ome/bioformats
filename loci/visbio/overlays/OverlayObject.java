@@ -117,6 +117,10 @@ public abstract class OverlayObject {
 
   /** True iff this overlay supports the filled parameter. */
   public boolean canBeFilled() { return false; }
+  
+  /** True iff this overlay can be resized using X1, X2, Y1, Y2 entry boxes */
+  public boolean areBoundsEditable() { return !hasNodes; }
+  // currently, only noded objects can't be resized this way.  (Actually could perform some rad scaling on all nodes)
 
   /** True iff this overlay returns text to render. */
   public boolean hasText() { return false; }
