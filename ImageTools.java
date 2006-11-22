@@ -924,8 +924,8 @@ public final class ImageTools {
       byte r = (byte) ((pix[i] >> 16) & 0xff);
       rtn[1][i] = (byte) ((pix[i] >> 8) & 0xff);
       byte b = (byte) (pix[i] & 0xff);
-      rtn[0][i] = reverse ? b : r;
-      rtn[2][i] = reverse ? r : b;
+      rtn[0][i] = reverse ? r : b;
+      rtn[2][i] = reverse ? b : r;
     }
     return rtn;
   }

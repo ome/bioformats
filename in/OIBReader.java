@@ -146,7 +146,7 @@ public class OIBReader extends FormatReader {
 
   /** Returns whether or not the channels are interleaved. */
   public boolean isInterleaved(String id) throws FormatException, IOException {
-    return true;
+    return false;
   }
 
   /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */

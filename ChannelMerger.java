@@ -43,7 +43,7 @@ public class ChannelMerger extends ReaderWrapper {
   /** Determines whether the channels in the file can be merged. */
   public boolean canMerge(String id) throws FormatException, IOException {
     int c = getSizeC(id);
-    return c > 1 && c <= 4 && !(c >= 3 && reader.isRGB(id));
+    return c > 1 && c <= 4 && !(c > 1 && reader.isRGB(id));
   }
 
   // -- IFormatReader API methods --

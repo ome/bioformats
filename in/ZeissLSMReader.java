@@ -434,20 +434,10 @@ public class ZeissLSMReader extends BaseTiffReader {
 
       channels = cSize;
 
-      // some LSM files will have a thumbnail associated with each plane; this
-      // thumbnail is counted as an extra channel, but since we strip out the
-      // thumbnails, we need to correct the channel count
-      while (zSize * cSize * tSize > numImages) {
-        cSize--;
-      }
+      if (channels == 0) channels++;
+      if (channels == 2) channels--;
 
-      if (cSize == 0) cSize++;
-
-      if (isRGB(currentId) && cSize == 1 && channels > 2) cSize = 3;
-
-      channels = cSize;
-
-      while (numImages > zSize * cSize * tSize) {
+      while (numImages > zSize * channels * tSize) {
         if (zSize > tSize) zSize++;
         else tSize++;
       }
@@ -459,7 +449,7 @@ public class ZeissLSMReader extends BaseTiffReader {
         new Integer(imageWidth), // SizeX
         new Integer(imageLength), // SizeY
         new Integer(zSize), // SizeZ
-        new Integer(cSize), // SizeC
+        new Integer(channels), // SizeC
         new Integer(tSize), // SizeT
         new Integer(pixelType[0]), // PixelType
         null, // BigEndian

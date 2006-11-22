@@ -125,23 +125,23 @@ public class MetamorphReader extends BaseTiffReader {
         for (int i=1; i<uic1.length; i+=2) {
           if (uic1[i] >= in.length() / 2) {
             in.seek(uic1[i] + 12);
-            while (in.getFilePointer() < in.length()) {
-              // read a null-terminated string (key), followed by an int value
-              StringBuffer sb = new StringBuffer();
-              char c = (char) in.read();
-              while (c != 0 || sb.length() < 128) {
-                sb = sb.append(c);
-                c = (char) in.read();
-              }
+         
+            // read a null-terminated string (key), followed by an int value
+              
+            byte[] b = new byte[(int) (in.length() - in.getFilePointer())];
+            in.read(b);
 
-              String key = sb.toString().trim();
-              int value = in.readInt();
-              if (!key.trim().equals("") && key.trim().length() > 3 &&
-                key.trim().indexOf("?") == -1)
-              {
-                metadata.put(key, new Integer(value));
+            StringBuffer sb = new StringBuffer(new String(b));
+
+            int pt = 0;
+            while (pt < sb.length()) {  
+              if (!Character.isDefined(sb.charAt(i))) {
+                sb = sb.deleteCharAt(i);
               }
+              else pt++;
             }
+
+            metadata.put("Extra data", sb.toString().trim());
           }
         }
       }
