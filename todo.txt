@@ -8,4 +8,3 @@ Codecs:
 
 Implement readers for other file formats:
 * Anything listed online: http://www.loci.wisc.edu/ome/formats.html
-* MNG (low)
