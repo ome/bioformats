@@ -901,7 +901,7 @@ public final class ImageTools {
    */
   public static byte[] getBytes(BufferedImage img, boolean separated, int c) {
     byte[][] p = getBytes(img);
-    if (separated) return p[0];
+    if (separated || p.length == 1) return p[0];
     else {
       byte[] rtn = new byte[p.length * p[0].length];
       for (int i=0; i<p.length; i++) {
