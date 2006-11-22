@@ -40,6 +40,11 @@ import loci.formats.*;
  */
 public abstract class ImageIOReader extends FormatReader {
 
+  // -- Fields --
+
+  /** Flag indicating image is RGB. */
+  private boolean rgb;
+
   // -- Constructors --
 
   /** Constructs a new ImageIOReader. */
@@ -62,7 +67,7 @@ public abstract class ImageIOReader extends FormatReader {
 
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
-    return true;
+    return rgb;
   }
 
   /** Return true if the data is in little-endian format. */
@@ -79,7 +84,17 @@ public abstract class ImageIOReader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    return ImageTools.getBytes(openImage(id, no), false, no);
+    byte[] b = ImageTools.getBytes(openImage(id, no), false, no);
+    int bytesPerChannel = getSizeX(id) * getSizeY(id);
+    if (b.length > bytesPerChannel) {
+      byte[] tmp = b;
+      b = new byte[bytesPerChannel * 3];
+      for (int i=0; i<3; i++) {
+        System.arraycopy(tmp, i * bytesPerChannel, b, i*bytesPerChannel, 
+          bytesPerChannel);
+      }
+    }
+    return b;
   }
 
   /** Obtains the image from the given image file. */
@@ -103,8 +118,11 @@ public abstract class ImageIOReader extends FormatReader {
 
     sizeX[0] = openImage(id, 0).getWidth();
     sizeY[0] = openImage(id, 0).getHeight();
+    
+    rgb = openBytes(id, 0).length > getSizeX(id) * getSizeY(id);
+    
     sizeZ[0] = 1;
-    sizeC[0] = 3;
+    sizeC[0] = rgb ? 3 : 1;
     sizeT[0] = 1;
     currentOrder[0] = "XYCZT";
 
