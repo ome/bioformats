@@ -29,6 +29,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
+import loci.formats.*;
+import java.util.Vector;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -42,9 +44,6 @@ public class OptionsWindow extends JFrame implements
   /**Constant dlu size for indents in GUI*/
   private static final String TAB = "7dlu";
 
-  /**ComboBoxes for Custom Axes*/
-  protected JComboBox zBox, tBox;
-
   /** FPS spinner */
   private JSpinner fps;
 
@@ -53,6 +52,9 @@ public class OptionsWindow extends JFrame implements
 
   /** The CacheManager for this instance of data browser.*/
   private CacheManager manager;
+  
+  /** The FileStitcher used to stich files together.*/
+  private FileStitcher fStitch;
 
   /** CheckBoxes to indicate which axes to store.*/
   private JCheckBox zCheck,tCheck,cCheck;
@@ -83,71 +85,131 @@ public class OptionsWindow extends JFrame implements
     cw = c;
 
     manager = cw.db.manager;
+    
+    FileStitcher fs = cw.db.fStitch;
 
     update = false;
 
     Border etchB = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
+    
+    // get FilePattern Data
+      String id = null,order = null,suffix = null;
+      String[] prefixes = null,blocks = null;
+      int sizeZ = -1,sizeT = -1,sizeC = -1;
+      int[] axes = null;
+      FilePattern fp = null;
+    try {
+      id = cw.db.id;
+      order = fs.getDimensionOrder(id);
+      sizeZ = fs.getSizeZ(id);
+      sizeT = fs.getSizeT(id);
+      sizeC = fs.getSizeC(id);
+      axes = fs.getAxisTypes(id);
+      fp = fs.getFilePattern(id);
+      prefixes = fp.getPrefixes();
+      blocks = fp.getBlocks();
+      suffix = fp.getSuffix();
+    }
+    catch(Exception exc) {exc.printStackTrace();}
 
     // add Display Pane
 
     JPanel disPane = new JPanel();
     TitledBorder disB = BorderFactory.createTitledBorder(etchB,
-      "Display Options");
+      "Custom Axes");
 
     disPane.setBorder(disB);
 
-    JLabel custLab = new JLabel("\u00B7" + "Custom Axes" + "\u00B7");
+    JLabel sliceLab = new JLabel("\u00B7" + "Slice-Groups in File" + "\u00B7");
+    JLabel zLab = new JLabel(sizeZ + " slice(s):");
+    JLabel tLab = new JLabel(sizeT + " slice(s):");
+    JLabel cLab = new JLabel(sizeC + " slice(s):");
+    JLabel blockLab = new JLabel("\u00B7" + "Blocks in Filenames" + "\u00B7");
     JLabel fileLab = new JLabel("Filename:");
-    JLabel zLab = new JLabel("Z axis:");
-    zLab.setForeground(Color.red);
-    JLabel tLab = new JLabel("Time:");
-    tLab.setForeground(Color.blue);
+    Vector blockLabelsV = new Vector();
+    for(int i = 0;i<blocks.length;i++) {
+      JLabel temp = new JLabel("Block " + blocks[i] + ":");
+      blockLabelsV.add(temp);
+    }
+    Object[] blockLabelsO = blockLabelsV.toArray();
+    JLabel[] blockLabels = new JLabel[blockLabelsO.length];
+    for(int i = 0;i<blockLabelsO.length;i++) {
+      blockLabels[i] = (JLabel) blockLabelsO[i];
+    }
+    
+    Object[] choices = {"Z-Depth", "Time", "Channel"};
+    JComboBox zGroup = new JComboBox(choices);
+    JComboBox tGroup = new JComboBox(choices);
+    tGroup.setSelectedIndex(1);
+    JComboBox cGroup = new JComboBox(choices);
+    cGroup.setSelectedIndex(2);
+    zGroup.addActionListener(this);
+    tGroup.addActionListener(this);
+    cGroup.addActionListener(this);
+    Vector blockBoxesV = new Vector();
+    for(int i = 0;i<blocks.length;i++) {
+      JComboBox temp = new JComboBox(choices);
+      if (axes[i] == AxisGuesser.Z_AXIS) temp.setSelectedIndex(0);
+      else if (axes[i] == AxisGuesser.T_AXIS) temp.setSelectedIndex(1);
+      else temp.setSelectedIndex(2);
+      temp.setActionCommand("Block1");
+      temp.addActionListener(this);
+      blockBoxesV.add(temp);
+    }
+    Object[] blockBoxesO = blockBoxesV.toArray();
+    JComboBox[] blockBoxes = new JComboBox[blockBoxesO.length];
+    for(int i = 0;i<blockBoxesO.length;i++) {
+      JComboBox temp = (JComboBox) blockBoxesO[i];
+      temp.setForeground(getColor(i));
+      blockBoxes[i] = temp;
+    }
+    
+    JPanel slicePanel = new JPanel();
+    slicePanel.add(sliceLab);
+    slicePanel.setBackground(Color.darkGray);
+    sliceLab.setForeground(Color.lightGray);
+    JPanel blockPanel = new JPanel();
+    blockPanel.add(blockLab);
+    blockPanel.setBackground(Color.darkGray);
+    blockLab.setForeground(Color.lightGray);
 
-    JPanel custPanel = new JPanel();
-    custPanel.add(custLab);
-    custPanel.setBackground(Color.darkGray);
-    custLab.setForeground(Color.lightGray);
-
-    JPanel filePane = new JPanel();
-
-    zBox = new JComboBox();
-    zBox.setForeground(Color.red);
-    tBox = new JComboBox();
-    tBox.setForeground(Color.blue);
-
-    zBox.addItem(c.db.hasZ ?
-      "\"z:\" <1-" + (c.db.numZ + 1) + ">" : "\"z:\" (no range)");
-    zBox.addItem(c.db.hasT ?
-      "\"t:\" <1-" + (c.db.numT + 1) + ">" : "\"t:\" (no range)");
-    zBox.addItem(c.db.hasC ?
-      "\"c:\" <1-" + (c.db.numC + 1) + ">" : "\"c:\" (no range)");
-    zBox.setSelectedIndex(c.zMap);
-    zBox.addActionListener(c);
-    zBox.setActionCommand("mappingZ");
-
-    tBox.addItem(c.db.hasZ ?
-      "\"z:\" <1-" + (c.db.numZ + 1) + ">" : "\"z:\" (no range)");
-    tBox.addItem(c.db.hasT ?
-      "\"t:\" <1-" + (c.db.numT + 1) + ">" : "\"t:\" (no range)");
-    tBox.addItem(c.db.hasC ?
-      "\"c:\" <1-" + (c.db.numC + 1) + ">" : "\"c:\" (no range)");
-    tBox.setSelectedIndex(c.tMap);
-    tBox.addActionListener(c);
-    tBox.setActionCommand("mappingT");
-
+    JPanel filePane = new JPanel(new FlowLayout());
+    for(int i = 0;i<prefixes.length;i++) {
+      JLabel prefLab = new JLabel(prefixes[i]);
+      JLabel blokLab = new JLabel(blocks[i]);
+      blokLab.setForeground(getColor(i));
+      filePane.add(prefLab);
+      filePane.add(blokLab);
+    }
+    JLabel sufLab = new JLabel(suffix);
+    filePane.add(sufLab);
+    
+    String rowString = "pref," + TAB + ",pref,pref,pref," + TAB +
+      ",pref,pref";
+    for(int i = 0; i<blockLabels.length;i++) {
+      rowString += ",pref";
+    }
+    
     FormLayout layout = new FormLayout(
         TAB + ",pref," + TAB + ",pref:grow," + TAB,
-        "pref,pref,pref,pref");
+        rowString);
     disPane.setLayout(layout);
     CellConstraints cc = new CellConstraints();
 
-    disPane.add(custPanel,cc.xyw(1,1,5));
-    disPane.add(fileLab,cc.xy(2,2));
-    disPane.add(filePane,cc.xy(4,2));
+    disPane.add(slicePanel,cc.xyw(1,1,5));
     disPane.add(zLab,cc.xy(2,3));
-    disPane.add(zBox,cc.xy(4,3));
+    disPane.add(zGroup,cc.xy(4,3));
     disPane.add(tLab,cc.xy(2,4));
-    disPane.add(tBox,cc.xy(4,4));
+    disPane.add(tGroup,cc.xy(4,4));
+    disPane.add(cLab,cc.xy(2,5));
+    disPane.add(cGroup,cc.xy(4,5));
+    disPane.add(blockPanel,cc.xyw(1,7,5));
+    disPane.add(fileLab,cc.xy(2,8));
+    disPane.add(filePane,cc.xy(4,8));
+    for(int i = 0;i<blockLabels.length;i++) {
+      disPane.add(blockLabels[i], cc.xy(2,9+i));
+      disPane.add(blockBoxes[i], cc.xy(4,9+i)); 
+    }
 
     //set up animation options pane
 
@@ -220,10 +282,10 @@ public class OptionsWindow extends JFrame implements
     modeBox = new JComboBox(modes);
     String[] strats = {"Forward","Surround"};
     stratBox = new JComboBox(strats);
-    String[] axes = {"Z","T","C"};
-    topBox = new JComboBox(axes);
-    midBox = new JComboBox(axes);
-    lowBox = new JComboBox(axes);
+    String[] boxAxes = {"Z","T","C"};
+    topBox = new JComboBox(boxAxes);
+    midBox = new JComboBox(boxAxes);
+    lowBox = new JComboBox(boxAxes);
     topBox.setSelectedIndex(1);
     midBox.setSelectedIndex(0);
     lowBox.setSelectedIndex(2);
@@ -316,6 +378,34 @@ public class OptionsWindow extends JFrame implements
     setVisible(true);
     
     update = true;
+  }
+
+  private Color getColor(int i) {
+    switch(i) {
+      case 0:
+        return Color.blue;
+      case 1:
+        return Color.cyan;
+      case 2:
+        return Color.green;
+      case 3:
+        return Color.yellow;
+      case 4:
+        return Color.red;
+      case 5:
+        return Color.orange;
+      case 6:
+        return Color.magenta;
+      case 7:
+        return Color.pink;
+      default:
+        Exception exc = new Exception();
+        exc.printStackTrace();
+        System.out.println("Too many dimensional blocks in filename"
+          + "for handling FileStitcher in the OptionsWindow in this"
+          + "4d Browser.");
+        return getColor(i%8); 
+    }
   }
 
   /**

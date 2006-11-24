@@ -113,6 +113,28 @@ public class LociDataBrowser {
     cw = new CustomWindow(this, imp, new ImageCanvas(imp));
   }
   
+  /** Set the length of each dimensional axis and the dimension order. */
+  public void setDimensions(int sizeZ, int sizeC, int sizeT, int z,
+    int c, int t)
+  {
+    numZ = sizeZ;
+    numC = sizeC;
+    numT = sizeT;
+
+    hasZ = numZ > 1;
+    hasC = numC > 1;
+    hasT = numT > 1;
+
+    lengths = new int[3];
+    lengths[z] = numZ;
+    lengths[c] = numC;
+    lengths[t] = numT;
+
+    zIndex = z;
+    cIndex = c;
+    tIndex = t;
+  }
+  
   /** Reset all dimensional data in case they've switched.*/
   public void setDimensions() {
     String order = null;

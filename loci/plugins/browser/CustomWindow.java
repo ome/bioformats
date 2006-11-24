@@ -64,10 +64,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   private String tString = T_STRING;
   private int fps = 10;
   private int z = 1, t = 1, c = 1;
-  private boolean customVirtualization = false;
-  private int z1 = 1, z2 = 1, t1 = 1, t2 = 1;
-  protected int zMap,tMap,cMap,prevZ,prevT;
-  private boolean setup;
 
   // -- Fields - widgets --
 
@@ -94,35 +90,11 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     ow = null;
     
     String id = db.id;    
-    if(db.virtual) {
-      FilePattern fp = null;
-      try { fp = db.fStitch.getFilePattern(id); }
-      catch (Exception exc) {exc.printStackTrace();}
-      
-      String[] prefixes = fp.getPrefixes();
-      String[] blocks = fp.getBlocks();
-      String suffix = fp.getSuffix();
-      
-      StringBuffer sb = new StringBuffer();
-      for (int i=0; i<prefixes.length; i++) {
-        sb.append(prefixes[i]);
-        sb.append(blocks[i]);
-      }
-      sb.append(suffix);
-
-      patternTitle = sb.toString();
-      setTitle(patternTitle);
-    }
-    else setTitle(id);
-
-    //setup which variables the sliders are set to
-    zMap = 0;
-    tMap = 1;
-    cMap = 2;
-    prevZ = 0;
-    prevT = 1;
-
-    setup = false;
+    FilePattern fp = null;
+    try { fp = db.fStitch.getFilePattern(id); }
+    catch (Exception exc) {exc.printStackTrace();}
+    patternTitle = fp.getPattern();
+    setTitle(patternTitle);
 
     // create panel for image canvas
     Panel imagePane = new Panel() {
@@ -214,8 +186,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     subPane.add(channelSpin);
     channelPanel.add("many", subPane);
 
-    setC(2);
-
     // repack to take extra panel into account
     c = db.numC;
 
@@ -256,8 +226,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     if(xml != null) lowPane.add(xml, cc.xy(8,6));
     lowPane.add(animate, cc.xy(10,6, "right,center"));
 
-    setC(2);
-
     setBackground(Color.white);
     FormLayout layout2 = new FormLayout(
       TAB + ",pref:grow," + TAB,
@@ -279,28 +247,13 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   // -- CustomWindow methods --
 
-  public void setC(int cMap) {
-    this.cMap = cMap;
+  public void setC() {
     boolean hasThis = false;
     int numThis = -1;
     int value = -1;
-    switch (cMap) {
-      case 0:
-        hasThis = db.hasZ;
-        numThis = db.numZ;
-        value = z;
-        break;
-      case 1:
-        hasThis = db.hasT;
-        numThis = db.numT;
-        value = t;
-        break;
-      case 2:
-        hasThis = db.hasC;
-        numThis = db.numC;
-        value = c;
-        break;
-    }
+    hasThis = db.hasC;
+    numThis = db.numC;
+    value = c;
     if (numThis > 2) {
       // C spinner
       switcher.last(channelPanel);
@@ -331,12 +284,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   public void showSlice(int index) {
     index++;
 
-    String title = null;
-    if(db.virtual) title = patternTitle;
-    else title = db.id;
-
     if (db.manager != null) {
-      imp.setProcessor(title, db.manager.getSlice(index - 1));
+      imp.setProcessor(patternTitle, db.manager.getSlice(index - 1));
       index = 1;
     }
 
@@ -365,10 +314,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   }
 
   public void showTempSlice(int index) {
-    String title = null;
-    if(db.virtual) title = patternTitle;
-    else title = db.id;
-    imp.setProcessor(title, db.manager.getTempSlice(index));
+    imp.setProcessor(patternTitle, db.manager.getTempSlice(index));
     imp.updateAndDraw();
 
     if (LociDataBrowser.DEBUG) {
@@ -403,17 +349,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       sb.append(": ");
       sb.append(zVal);
       sb.append("/");
-      switch(zMap) {
-        case 0:
-          sb.append(db.numZ);
-          break;
-        case 1:
-          sb.append(db.numT);
-          break;
-        case 2:
-          sb.append(db.numC);
-          break;
-      }
+      sb.append(db.numZ);
       sb.append("; ");
     }
     if (db.hasT) {
@@ -421,17 +357,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       sb.append(": ");
       sb.append(tVal);
       sb.append("/");
-      switch(tMap) {
-        case 0:
-          sb.append(db.numZ);
-          break;
-        case 1:
-          sb.append(db.numT);
-          break;
-        case 2:
-          sb.append(db.numC);
-          break;
-      }
+      sb.append(db.numT);
       sb.append("; ");
     }
     if (db.names != null) {
@@ -494,18 +420,6 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     g.drawString(sb.toString(), 5, insets.top + textGap);
   }
 
-  /** Sets the Z/T values for a custom virtualization. */
-  public void setVirtualization(int[] values) {
-    z1 = values[0];
-    z2 = values[1];
-    t1 = values[2];
-    t2 = values[3];
-    customVirtualization = true;
-  }
-
-  /** Returns true if we are using a custom virtualization. */
-  public boolean isCustom() { return customVirtualization; }
-
   /** Sets the frames per second, and adjust the timer accordingly. */
   public void setFps(int value) {
     fps = value;
@@ -544,23 +458,9 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       ow.setVisible(true);
     }
     else if (src instanceof Timer) {
-      switch (tMap) {
-        case 0:
-          z = tSliceSel.getValue() + 1;
-          if ((z > db.numZ)) z = 1;
-          tSliceSel.setValue(z);
-          break;
-        case 1:
           t = tSliceSel.getValue() + 1;
           if ((t > db.numT)) t = 1;
           tSliceSel.setValue(t);
-          break;
-        case 2:
-          c = tSliceSel.getValue() + 1;
-          if ((c > db.numC)) c = 1;
-          tSliceSel.setValue(c);
-          break;
-      }
     }
     else if (src instanceof JButton) {
       if (animate.getText().equals(ANIM_STRING)) {
@@ -574,93 +474,20 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         animate.setText(ANIM_STRING);
       }
     }
-    else if (src instanceof JComboBox &&
-      e.getActionCommand().startsWith("mapping"))
-    {
-      setup = true;
-      JComboBox jcb = (JComboBox) src;
-      if(e.getActionCommand().endsWith("Z")) {
-        zMap = jcb.getSelectedIndex();
-        switch (zMap) {
-          case 0:
-            zSliceSel.setMaximum(db.hasZ ? db.numZ + 1 : 2);
-            zSliceSel.setValue(z);
-            if (db.hasZ) zSliceSel.setEnabled(true);
-            else zSliceSel.setEnabled(false);
-            if(tMap == 1) setC(2);
-            else setC(1);
-            break;
-          case 1:
-            zSliceSel.setMaximum(db.hasT ? db.numT + 1 : 2);
-            zSliceSel.setValue(t);
-            if (db.hasT) zSliceSel.setEnabled(true);
-            else zSliceSel.setEnabled(false);
-            if(tMap == 0) setC(2);
-            else setC(0);
-            break;
-          case 2:
-            zSliceSel.setMaximum(db.hasC ? db.numC + 1 : 2);
-            zSliceSel.setValue(c);
-            if (db.hasC) zSliceSel.setEnabled(true);
-            else zSliceSel.setEnabled(false);
-            if(tMap == 0) setC(1);
-            else setC(0);
-            break;
-        }
-        if(zMap == tMap) ow.tBox.setSelectedIndex(prevZ);
-        prevZ = zMap;
-      }
-      else if(e.getActionCommand().endsWith("T")) {
-        tMap = jcb.getSelectedIndex();
-        switch (tMap) {
-          case 0:
-            tSliceSel.setMaximum(db.hasZ ? db.numZ + 1 : 2);
-            tSliceSel.setValue(z);
-            if (db.hasZ) tSliceSel.setEnabled(true);
-            else tSliceSel.setEnabled(false);
-            if(zMap == 1) setC(2);
-            else setC(1);
-            break;
-          case 1:
-            tSliceSel.setMaximum(db.hasT ? db.numT + 1 : 2);
-            tSliceSel.setValue(t);
-            if (db.hasT) tSliceSel.setEnabled(true);
-            else tSliceSel.setEnabled(false);
-            if(zMap == 0) setC(2);
-            else setC(0);
-            break;
-          case 2:
-            tSliceSel.setMaximum(db.hasC ? db.numC + 1 : 2);
-            tSliceSel.setValue(c);
-            if (db.hasC) tSliceSel.setEnabled(true);
-            else tSliceSel.setEnabled(false);
-            if(zMap == 0) setC(1);
-            else setC(0);
-            break;
-        }
-        if(zMap == tMap) ow.zBox.setSelectedIndex(prevT);
-        prevT = tMap;
-      }
-      setup = false;
-    }
   }
 
   // -- AdjustmentListener methods --
 
   public void adjustmentValueChanged(AdjustmentEvent adjustmentEvent) {
     JScrollBar src = (JScrollBar) adjustmentEvent.getSource();
-    if(!setup) {
-      if (src == zSliceSel) {
-        if(zMap == 0) z = zSliceSel.getValue();
-        else if(zMap == 1) t = zSliceSel.getValue();
-        else if(zMap == 2) c = zSliceSel.getValue();
-      }
-      else if (src == tSliceSel) {
-        if(tMap == 0) z = tSliceSel.getValue();
-        else if(tMap == 1) t = tSliceSel.getValue();
-        else if(tMap == 2) c = tSliceSel.getValue();
-      }
+
+    if (src == zSliceSel) {
+      z = zSliceSel.getValue();
     }
+    else if (src == tSliceSel) {
+      t = tSliceSel.getValue();
+    }
+
     if (!src.getValueIsAdjusting() || db.manager == null) showSlice(z, t, c);
     else showTempSlice(z,t,c);
   }
@@ -669,17 +496,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   public synchronized void itemStateChanged(ItemEvent e) {
     JCheckBox channels = (JCheckBox) e.getSource();
-    switch(cMap) {
-      case 0:
-        z = channels.isSelected() ? 1 : 2;
-        break;
-      case 1:
-        t = channels.isSelected() ? 1 : 2;
-        break;
-      case 2:
-        c = channels.isSelected() ? 1 : 2;
-        break;
-    }
+    
+    c = channels.isSelected() ? 1 : 2;
 
     showSlice(z, t, c);
   }
@@ -688,20 +506,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   
   public void stateChanged(ChangeEvent e) {
     if( (JSpinner) e.getSource() == channelSpin) {
-      int value = ((Integer) channelSpin.getValue()).intValue();
-        
-      switch(cMap) {
-        case 0:
-          z = value;
-          break;
-        case 1:
-          t = value;
-          break;
-        case 2:
-          c = value;
-          break;
-      }
-      
+      c = ((Integer) channelSpin.getValue()).intValue();
       showSlice(z, t, c);
     }
   }
