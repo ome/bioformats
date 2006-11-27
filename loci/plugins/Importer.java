@@ -395,55 +395,139 @@ public class Importer {
 
           if (b.length != w * h * c * bpp) {
             BufferedImage bi = r.openImage(id, j);
-            b = ImageTools.padImage(b, r.isInterleaved(id), c, bi.getWidth()*bpp,
-              w, h);
+            b = ImageTools.padImage(b, r.isInterleaved(id), c, 
+              bi.getWidth()*bpp, w, h);
           }
           
           Object pixels = DataTools.makeDataArray(b, bpp,
             type == FormatReader.FLOAT || type == FormatReader.DOUBLE,
             r.isLittleEndian(id));
 
-          if (c == 1) {
-            if (pixels instanceof byte[]) {
-              byte[] bytes = (byte[]) pixels;
-              if (bytes.length > w*h) {
-                byte[] tmp = bytes;
-                bytes = new byte[w*h];
-                System.arraycopy(tmp, 0, bytes, 0, bytes.length);
-              }
+          if (pixels instanceof byte[]) {
+            byte[] bytes = (byte[]) pixels;
+            if (bytes.length > w*h*c) {
+              byte[] tmp = bytes;
+              bytes = new byte[w*h*c];
+              System.arraycopy(tmp, 0, bytes, 0, bytes.length);
+            }
+            if (c == 1) {
               ip = new ByteProcessor(w, h, bytes, null);
               if (stackB == null) stackB = new ImageStack(w, h);
               stackB.addSlice(imageName + ":" + (j + 1), ip);
             }
-            else if (pixels instanceof short[]) {
-              short[] s = (short[]) pixels;
-              if (s.length > w*h) {
-                short[] tmp = s;
-                s = new short[w*h];
-                System.arraycopy(tmp, 0, s, 0, s.length);
+            else {
+              if (stackO == null) stackO = new ImageStack(w, h);
+              ip = new ColorProcessor(w, h);
+              byte[][] pix = new byte[c][w*h];
+              if (r.isInterleaved(id)) {
+                for (int k=0; k<bytes.length; k+=c) {
+                  for (int l=0; l<c; l++) {
+                    pix[l][k / 3] = bytes[k + l];
+                  }
+                }
               }
+              else {
+                for (int k=0; k<c; k++) {
+                  System.arraycopy(bytes, 0, pix[k], 0, pix[k].length);
+                  System.arraycopy(bytes, pix[k].length, pix[k], 0, 
+                    pix[k].length);
+                  System.arraycopy(bytes, 2*pix[k].length, pix[k], 0, 
+                    pix[k].length);
+                }
+              }
+              ((ColorProcessor) ip).setRGB(pix[0], pix[1], 
+                pix.length >= 3 ? pix[2] : new byte[w*h]);
+              stackO.addSlice(imageName + ":" + (j + 1), ip);
+            }
+          }
+          else if (pixels instanceof short[]) {
+            short[] s = (short[]) pixels;
+            if (s.length > w*h*c) {
+              short[] tmp = s;
+              s = new short[w*h*c];
+              System.arraycopy(tmp, 0, s, 0, s.length);
+            }
+            if (c == 1) {
               ip = new ShortProcessor(w, h, s, null);
               if (stackS == null) stackS = new ImageStack(w, h);
               stackS.addSlice(imageName + ":" + (j + 1), ip);
             }
-            else if (pixels instanceof int[]) {
-              int[] ints = (int[]) pixels;
-              if (ints.length > w*h) {
-                int[] tmp = ints;
-                ints = new int[w*h];
-                System.arraycopy(tmp, 0, ints, 0, ints.length);
+            else {
+              if (stackO == null) stackO = new ImageStack(w, h);
+              short[][] pix = new short[c][w*h];
+              if (r.isInterleaved(id)) {
+                for (int k=0; k<s.length; k+=c) {
+                  for (int l=0; l<c; l++) {
+                    pix[l][k / 3] = s[k + l];
+                  }
+                }
               }
-              ip = new FloatProcessor(w, h, ints);
+              else {
+                for (int k=0; k<c; k++) {
+                  System.arraycopy(s, k*pix[k].length, pix[k], 0, 
+                    pix[k].length);
+                }
+              }
+              byte[][] bytes = new byte[c][w*h];
+              for (int k=0; k<c; k++) {
+                ip = new ShortProcessor(w, h, pix[k], null);
+                ip = ip.convertToByte(true);
+                bytes[k] = (byte[]) ip.getPixels();
+              }
+              ip = new ColorProcessor(w, h);
+              ((ColorProcessor) ip).setRGB(bytes[0], bytes[1], 
+                pix.length >= 3 ? bytes[2] : new byte[w*h]);
+              stackO.addSlice(imageName + ":" + (j + 1), ip);
+            }
+          }
+          else if (pixels instanceof int[]) {
+            int[] s = (int[]) pixels;
+            if (s.length > w*h*c) {
+              int[] tmp = s;
+              s = new int[w*h*c];
+              System.arraycopy(tmp, 0, s, 0, s.length);
+            }
+            if (c == 1) {
+              ip = new FloatProcessor(w, h, s);
               if (stackF == null) stackF = new ImageStack(w, h);
               stackF.addSlice(imageName + ":" + (j + 1), ip);
             }
-            else if (pixels instanceof float[]) {
-              float[] f = (float[]) pixels;
-              if (f.length > w*h) {
-                float[] tmp = f;
-                f = new float[w*h];
-                System.arraycopy(tmp, 0, f, 0, f.length);
+            else {
+              if (stackO == null) stackO = new ImageStack(w, h);
+              int[][] pix = new int[c][w*h];
+              if (r.isInterleaved(id)) {
+                for (int k=0; k<s.length; k+=c) {
+                  for (int l=0; l<c; l++) {
+                    pix[l][k / 3] = s[k + l];
+                  }
+                }
               }
+              else {
+                for (int k=0; k<c; k++) {
+                  System.arraycopy(s, k*pix[k].length, pix[k], 0, 
+                    pix[k].length);
+                }
+              }
+              byte[][] bytes = new byte[c][w*h];
+              for (int k=0; k<c; k++) {
+                ip = new FloatProcessor(w, h, pix[k]);
+                ip = ip.convertToByte(true);
+                bytes[k] = (byte[]) ip.getPixels();
+              }
+              ip = new ColorProcessor(w, h);
+              ((ColorProcessor) ip).setRGB(bytes[0], bytes[1], 
+                pix.length >= 3 ? bytes[2] : new byte[w*h]);
+              stackO.addSlice(imageName + ":" + (j + 1), ip);
+            }
+          }
+          else if (pixels instanceof float[]) {
+            float[] f = (float[]) pixels;
+            if (f.length > w*h*c) {
+              float[] tmp = f;
+              f = new float[w*h*c];
+              System.arraycopy(tmp, 0, f, 0, f.length);
+            }
+            if (c == 1) {
               ip = new FloatProcessor(w, h, f, null);
               if (stackF == null) stackF = new ImageStack(w, h);
 
@@ -459,25 +543,83 @@ public class Importer {
               }
               else stackF.addSlice(imageName + ":" + (j + 1), ip);
             }
-            else if (pixels instanceof double[]) {
-              double[] d = (double[]) pixels;
-              if (d.length > w*h) {
-                double[] tmp = d;
-                d = new double[w*h];
-                System.arraycopy(tmp, 0, d, 0, d.length);
+            else {
+              if (stackO == null) stackO = new ImageStack(w, h);
+              float[][] pix = new float[c][w*h];
+              if (r.isInterleaved(id)) {
+                for (int k=0; k<f.length; k+=c) {
+                  for (int l=0; l<c; l++) {
+                    pix[l][k / 3] = f[k + l];
+                  }
+                }
               }
+              else {
+                for (int k=0; k<c; k++) {
+                  System.arraycopy(f, k*pix[k].length, pix[k], 0, 
+                    pix[k].length);
+                }
+              }
+              byte[][] bytes = new byte[c][w*h];
+              for (int k=0; k<c; k++) {
+                ip = new FloatProcessor(w, h, pix[k], null);
+                ip = ip.convertToByte(true);
+                bytes[k] = (byte[]) ip.getPixels();
+              }
+              ip = new ColorProcessor(w, h);
+              ((ColorProcessor) ip).setRGB(bytes[0], bytes[1], 
+                pix.length >= 3 ? bytes[2] : new byte[w*h]);
+              stackO.addSlice(imageName + ":" + (j + 1), ip);
+            }
+          }
+          else if (pixels instanceof double[]) {
+            double[] d = (double[]) pixels;
+            if (d.length > w*h*c) {
+              double[] tmp = d;
+              d = new double[w*h*c];
+              System.arraycopy(tmp, 0, d, 0, d.length);
+            }
+            if (c == 1) {
               ip = new FloatProcessor(w, h, d);
               if (stackF == null) stackF = new ImageStack(w, h);
               stackF.addSlice(imageName + ":" + (j + 1), ip);
             }
+            else {
+              if (stackO == null) stackO = new ImageStack(w, h);
+              double[][] pix = new double[c][w*h];
+              if (r.isInterleaved(id)) {
+                for (int k=0; k<d.length; k+=c) {
+                  for (int l=0; l<c; l++) {
+                    pix[l][k / 3] = d[k + l];
+                  }
+                }
+              }
+              else {
+                for (int k=0; k<c; k++) {
+                  System.arraycopy(d, k*pix[k].length, pix[k], 0, 
+                    pix[k].length);
+                }
+              }
+              byte[][] bytes = new byte[c][w*h];
+              for (int k=0; k<c; k++) {
+                ip = new FloatProcessor(w, h, pix[k]);
+                ip = ip.convertToByte(true);
+                bytes[k] = (byte[]) ip.getPixels();
+              }
+              ip = new ColorProcessor(w, h);
+              ((ColorProcessor) ip).setRGB(bytes[0], bytes[1], 
+                pix.length >= 3 ? bytes[2] : new byte[w*h]);
+              stackO.addSlice(imageName + ":" + (j + 1), ip);
+            }
           }
+        }
+          /*
           if (ip == null) {
             ip = new ColorProcessor(w, h,
               ImageTools.make24Bits(pixels, w, h, r.isInterleaved(id)));
             if (stackO == null) stackO = new ImageStack(w, h);
             stackO.addSlice(imageName + ":" + (j + 1), ip);
           }
-        }
+          */
 
         IJ.showStatus("Creating image");
         IJ.showProgress(1);

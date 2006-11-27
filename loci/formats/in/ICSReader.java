@@ -114,7 +114,7 @@ public class ICSReader extends FormatReader {
 
   /** Returns whether or not the channels are interleaved. */
   public boolean isInterleaved(String id) throws FormatException, IOException {
-    return false;
+    return rgb;
   }
 
   /** Obtains the specified image from the given ICS file, as a byte array. */

@@ -924,8 +924,8 @@ public final class ImageTools {
       byte r = (byte) ((pix[i] >> 16) & 0xff);
       rtn[1][i] = (byte) ((pix[i] >> 8) & 0xff);
       byte b = (byte) (pix[i] & 0xff);
-      rtn[0][i] = reverse ? r : b;
-      rtn[2][i] = reverse ? b : r;
+      rtn[0][i] = reverse ? b : r;
+      rtn[2][i] = reverse ? r : b;
     }
     return rtn;
   }
@@ -941,7 +941,7 @@ public final class ImageTools {
   {
     int[] rtn = new int[w * h];
     int stride = interleaved ? w * h : 1;
-    
+  
     byte[] b = null;
 
     // adapted from ImageJ's TypeConverter methods
@@ -952,7 +952,6 @@ public final class ImageTools {
       b = new byte[s.length];
       for (int i=0; i<s.length; i++) {
         int v = s[i] & 0xffff;
-        if (v > 255) v = 255;
         b[i] = (byte) v;
       }
     }
@@ -961,7 +960,6 @@ public final class ImageTools {
       b = new byte[s.length];
       for (int i=0; i<s.length; i++) {
         int value = s[i] & 0xffffffff;
-        if (value > 255) value = 255;
         b[i] = (byte) value;
       }
     }
@@ -970,9 +968,7 @@ public final class ImageTools {
       b = new byte[s.length];
       for (int i=0; i<s.length; i++) {
         float value = s[i];
-        if (value < 0f) value = 0f;
-        if (value > 255f) value = 255f;
-        b[i] = (byte) Math.round(value);
+        b[i] = (byte) (255 * value);
       }
     }
     else if (pixels instanceof double[]) {
@@ -980,8 +976,6 @@ public final class ImageTools {
       b = new byte[s.length];
       for (int i=0; i<s.length; i++) {
         double value = s[i];
-        if (value < 0d) value = 0d;
-        if (value > 255d) value = 255d;
         b[i] = (byte) Math.round(value);
       }
     }
@@ -993,9 +987,12 @@ public final class ImageTools {
       for (int j=c-1; j>=0; j--) {
         a[j] = b[interleaved ? i*c + j : i + j*w*h];
       }
+      byte tmp = a[0];
+      a[0] = a[2];
+      a[2] = tmp;
       rtn[i] = DataTools.bytesToInt(a, true);
     }
-    
+
     return rtn;
   }
 
