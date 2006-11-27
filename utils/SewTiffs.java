@@ -48,7 +48,7 @@ public class SewTiffs {
       if (t == 0) {
         // read first IFD
         RandomAccessStream ras = new RandomAccessStream(inId);
-        Hashtable ifd = TiffTools.getFirstIFD(ras, 0);
+        Hashtable ifd = TiffTools.getFirstIFD(ras);
         ras.close();
 
         // preserve TIFF comment
