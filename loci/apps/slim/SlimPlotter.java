@@ -33,8 +33,8 @@ import visad.bom.CurveManipulationRendererJ3D;
 import visad.java3d.*;
 
 /** A tool for visualization of spectral lifetime data. */
-public class SlimPlotter implements ActionListener,
-  ChangeListener, DisplayListener, Runnable, WindowListener
+public class SlimPlotter implements ActionListener, ChangeListener,
+  DisplayListener, DocumentListener, Runnable, WindowListener
 {
 
   // -- Constants --
@@ -93,10 +93,13 @@ public class SlimPlotter implements ActionListener,
   private JRadioButton dataSurface, dataLines;
   private JRadioButton fitSurface, fitLines;
   private JRadioButton resSurface, resLines;
+  private JRadioButton colorHeight, colorTau;
+  private JSpinner numCurves;
   private JCheckBox showData, showScale;
   private JCheckBox showBox, showLine;
   private JCheckBox showFit, showResiduals;
-  private JSpinner numCurves;
+  private JCheckBox zOverride;
+  private JTextField zScaleValue;
   private JButton exportData;
 
   // other GUI components
@@ -556,6 +559,8 @@ public class SlimPlotter implements ActionListener,
     sliderPane.setLayout(new BoxLayout(sliderPane, BoxLayout.X_AXIS));
     intensityPane.add(sliderPane, BorderLayout.SOUTH);
     cSlider = new JSlider(1, channels, 1);
+    cSlider.setToolTipText(
+      "Selects the channel to display in the 2D intensity plot above");
     cSlider.setSnapToTicks(true);
     cSlider.setMajorTickSpacing(channels / 4);
     cSlider.setMinorTickSpacing(1);
@@ -564,6 +569,8 @@ public class SlimPlotter implements ActionListener,
     cSlider.setBorder(new EmptyBorder(8, 5, 8, 5));
     sliderPane.add(cSlider);
     cToggle = new JCheckBox("", true);
+    cToggle.setToolTipText(
+      "Toggles the selected channel's visibility in the 3D data plot");
     cToggle.addActionListener(this);
     sliderPane.add(cToggle);
 
@@ -580,6 +587,8 @@ public class SlimPlotter implements ActionListener,
     decayPane.add(decayPlot.getComponent(), BorderLayout.CENTER);
 
     decayLabel = new JLabel("Decay curve for all pixels");
+    decayLabel.setToolTipText(
+      "Displays information about the selected region of interest");
     decayPane.add(decayLabel, BorderLayout.NORTH);
 
     JPanel options = new JPanel();
@@ -587,50 +596,95 @@ public class SlimPlotter implements ActionListener,
     options.setLayout(new BoxLayout(options, BoxLayout.Y_AXIS));
 
     linear = new JRadioButton("Linear", true);
+    linear.setToolTipText("Plots 3D data with a linear scale");
     log = new JRadioButton("Log", false);
+    log.setToolTipText("Plots 3D data with a logarithmic scale");
     perspective = new JRadioButton("Perspective", true);
+    perspective.setToolTipText(
+      "Displays 3D plot with a perspective projection");
     parallel = new JRadioButton("Parallel", false);
+    parallel.setToolTipText(
+      "Displays 3D plot with a parallel (orthographic) projection");
     dataSurface = new JRadioButton("Surface", true);
+    dataSurface.setToolTipText("Displays raw data as a 2D surface");
     dataLines = new JRadioButton("Lines", false);
+    dataLines.setToolTipText("Displays raw data as a series of lines");
     fitSurface = new JRadioButton("Surface", false);
+    fitSurface.setToolTipText("Displays fitted curves as a 2D surface");
     fitLines = new JRadioButton("Lines", true);
+    fitLines.setToolTipText("Displays fitted curves as a series of lines");
     resSurface = new JRadioButton("Surface", false);
+    resSurface.setToolTipText(
+      "Displays fitted curve residuals as a 2D surface");
     resLines = new JRadioButton("Lines", true);
+    resLines.setToolTipText(
+      "Displays fitted curve residuals as a series of lines");
+    colorHeight = new JRadioButton("Counts", true);
+    colorHeight.setToolTipText(
+      "Colorizes data according to the height (histogram count)");
+    colorTau = new JRadioButton("Lifetimes", false);
+    colorTau.setToolTipText(
+      "Colorizes data according to aggregate lifetime value");
+
+    numCurves = new JSpinner(new SpinnerNumberModel(1, 1, 9, 1));
+    numCurves.setToolTipText("Number of components in exponential fit");
+    numCurves.setMaximumSize(numCurves.getPreferredSize());
+    numCurves.addChangeListener(this);
 
     JPanel showPanel = new JPanel();
     showPanel.setBorder(new TitledBorder("Show"));
     showPanel.setLayout(new BoxLayout(showPanel, BoxLayout.X_AXIS));
 
     showData = new JCheckBox("Data", true);
+    showData.setToolTipText("Toggles visibility of raw data");
     showData.addActionListener(this);
     showPanel.add(showData);
     showScale = new JCheckBox("Scale", true);
+    showScale.setToolTipText("Toggles visibility of scale bars");
     showScale.addActionListener(this);
     showPanel.add(showScale);
     showBox = new JCheckBox("Box", true);
+    showBox.setToolTipText("Toggles visibility of bounding box");
     showBox.addActionListener(this);
     showPanel.add(showBox);
     showLine = new JCheckBox("Line", adjustPeaks);
+    showLine.setToolTipText(
+      "Toggles visibility of aligned peaks indicator line");
     showLine.setEnabled(adjustPeaks);
     showLine.addActionListener(this);
     showPanel.add(showLine);
     showFit = new JCheckBox("Fit", false);
+    showFit.setToolTipText("Toggles visibility of fitted curves");
     showFit.setEnabled(adjustPeaks);
     showFit.addActionListener(this);
     showPanel.add(showFit);
     showResiduals = new JCheckBox("Residuals", false);
+    showResiduals.setToolTipText(
+      "Toggles visibility of fitted curve residuals");
     showResiduals.setEnabled(adjustPeaks);
     showResiduals.addActionListener(this);
     showPanel.add(showResiduals);
 
-    numCurves = new JSpinner(new SpinnerNumberModel(1, 1, 9, 1));
-    numCurves.setMaximumSize(numCurves.getPreferredSize());
-    numCurves.addChangeListener(this);
+    JPanel scalePanel = new JPanel();
+    scalePanel.setBorder(new TitledBorder("Z Scale Override"));
+    scalePanel.setLayout(new BoxLayout(scalePanel, BoxLayout.X_AXIS));
+
+    zOverride = new JCheckBox("", false);
+    zOverride.setToolTipText("Toggles manual override of Z axis scale (Count)");
+    zOverride.addActionListener(this);
+    scalePanel.add(zOverride);
+    zScaleValue = new JTextField(9);
+    zScaleValue.setToolTipText("Overridden Z axis scale value");
+    zScaleValue.setEnabled(false);
+    zScaleValue.getDocument().addDocumentListener(this);
+    scalePanel.add(zScaleValue);
 
     exportData = new JButton("Export");
+    exportData.setToolTipText(
+      "Exports the selected ROI's raw data to a text file");
     exportData.addActionListener(this);
 
-    progress.setProgress(99); // estimate: 99%
+    progress.setProgress(990); // estimate: 99%
     if (progress.isCanceled()) System.exit(0);
 
     JPanel leftPanel = new JPanel() {
@@ -657,10 +711,12 @@ public class SlimPlotter implements ActionListener,
     options1.add(makeRadioPanel("Data", dataSurface, dataLines));
     options1.add(makeRadioPanel("Fit", fitSurface, fitLines));
     options1.add(makeRadioPanel("Residuals", resSurface, resLines));
+    options1.add(makeRadioPanel("Colors", colorHeight, colorTau));
 //    options1.add(numCurves);
     JPanel options2 = new JPanel();
     options2.setLayout(new BoxLayout(options2, BoxLayout.X_AXIS));
     options2.add(showPanel);
+    options2.add(scalePanel);
     options2.add(Box.createHorizontalStrut(5));
     options2.add(exportData);
     options.add(options1);
@@ -680,7 +736,7 @@ public class SlimPlotter implements ActionListener,
     masterWindow.setVisible(true);
     progress.setProgress(1000);
     progress.close();
-    plotData(true, true);
+    plotData(true, true, true);
 
     try { Thread.sleep(200); }
     catch (InterruptedException exc) { exc.printStackTrace(); }
@@ -691,10 +747,12 @@ public class SlimPlotter implements ActionListener,
 
   private Thread plotThread;
   private boolean plotCanceled;
-  private boolean doRescale, doRefit;
+  private boolean doRecalc, doRescale, doRefit;
 
   /** Plots the data in a separate thread. */
-  public void plotData(final boolean rescale, final boolean refit) {
+  public void plotData(final boolean recalc,
+    final boolean rescale, final boolean refit)
+  {
     final SlimPlotter sp = this;
     new Thread("PlotSpawner") {
       public void run() {
@@ -705,6 +763,7 @@ public class SlimPlotter implements ActionListener,
             try { plotThread.join(); }
             catch (InterruptedException exc) { exc.printStackTrace(); }
           }
+          sp.doRecalc = recalc;
           sp.doRescale = rescale;
           sp.doRefit = refit;
           plotCanceled = false;
@@ -725,7 +784,7 @@ public class SlimPlotter implements ActionListener,
     if (roiY < 0) roiY = 0;
     if (roiY >= height) roiY = height - 1;
     roiCount = 1;
-    plotData(rescale, refit);
+    plotData(true, rescale, refit);
   }
 
   /** Logs the given output to the appropriate location. */
@@ -745,15 +804,19 @@ public class SlimPlotter implements ActionListener,
       // toggle visibility of this channel
       int c = cSlider.getValue() - 1;
       cVisible[c] = !cVisible[c];
-      plotData(true, false);
+      plotData(true, true, false);
     }
-    else if (src == dataSurface || src == dataLines) plotData(false, false);
+    else if (src == linear || src == log) plotData(true, true, true);
+    else if (src == dataSurface || src == dataLines ||
+      src == colorHeight || src == colorTau)
+    {
+      plotData(true, false, false);
+    }
     else if (src == fitSurface || src == fitLines ||
       src == resSurface || src == resLines)
     {
-      plotData(false, true);
+      plotData(true, false, true);
     }
-    else if (src == linear || src == log) plotData(true, true);
     else if (src == perspective || src == parallel) {
       try {
         decayPlot.getGraphicsModeControl().setProjectionPolicy(
@@ -780,6 +843,11 @@ public class SlimPlotter implements ActionListener,
     }
     else if (src == showResiduals) {
       resRend.toggle(showResiduals.isSelected());
+    }
+    else if (src == zOverride) {
+      boolean manual = zOverride.isSelected();
+      zScaleValue.setEnabled(manual);
+      if (!manual) plotData(true, true, false);
     }
     else if (src == exportData) {
       // get output file from user
@@ -842,7 +910,7 @@ public class SlimPlotter implements ActionListener,
       cToggle.setSelected(cVisible[c]);
       cToggle.addActionListener(this);
     }
-    else if (src == numCurves) plotData(false, true);
+    else if (src == numCurves) plotData(true, false, true);
   }
 
   // -- DisplayListener methods --
@@ -886,7 +954,7 @@ public class SlimPlotter implements ActionListener,
             }
           }
           roiPercent = 100000 * roiCount / (width * height) / 1000.0;
-          plotData(true, true);
+          plotData(true, true, true);
         }
       }
       catch (VisADException exc) {
@@ -906,198 +974,224 @@ public class SlimPlotter implements ActionListener,
     }
   }
 
+  // -- DocumentListener methods --
+
+  public void changedUpdate(DocumentEvent e) { updateZAxis(); }
+  public void insertUpdate(DocumentEvent e) { updateZAxis(); }
+  public void removeUpdate(DocumentEvent e) { updateZAxis(); }
+
   // -- Runnable methods --
 
   public void run() {
-    ProgressMonitor progress = new ProgressMonitor(null, "Plotting data",
-      "Calculating sums", 0,
-      channels * timeBins + (doRefit ? channels : 0) + 1);
-    progress.setMillisToPopup(100);
-    progress.setMillisToDecideToPopup(50);
-    int p = 0;
-    if (roiCount == 1) {
-      decayLabel.setText("Decay curve for " + "(" + roiX + ", " + roiY + ")");
-    }
-    else {
-      decayLabel.setText("Decay curve for " + roiCount +
-        " pixels (" + roiPercent + "%)");
-    }
-    boolean doDataLines = dataLines.isSelected();
-    boolean doFitLines = fitLines.isSelected();
-    boolean doResLines = resLines.isSelected();
-    boolean doLog = log.isSelected();
+    if (doRecalc) {
+      ProgressMonitor progress = new ProgressMonitor(null, "Plotting data",
+        "Calculating sums", 0,
+        channels * timeBins + (doRefit ? channels : 0) + 1);
+      progress.setMillisToPopup(100);
+      progress.setMillisToDecideToPopup(50);
+      int p = 0;
+      if (roiCount == 1) {
+        decayLabel.setText("Decay curve for " + "(" + roiX + ", " + roiY + ")");
+      }
+      else {
+        decayLabel.setText("Decay curve for " + roiCount +
+          " pixels (" + roiPercent + "%)");
+      }
+      boolean doLog = log.isSelected();
+      boolean doDataLines = dataLines.isSelected();
+      boolean doFitLines = fitLines.isSelected();
+      boolean doResLines = resLines.isSelected();
+      boolean doTauColors = colorTau.isSelected();
 
-    // calculate samples
-    int numChanVis = 0;
-    for (int c=0; c<channels; c++) {
-      if (cVisible[c]) numChanVis++;
-    }
-    samps = new float[numChanVis * timeBins];
-    maxVal = 0;
-    for (int c=0, cc=0; c<channels; c++) {
-      if (!cVisible[c]) continue;
-      for (int t=0; t<timeBins; t++) {
-        int ndx = timeBins * cc + t;
-        int sum = 0;
-        if (roiCount == 1) sum = values[c][roiY][roiX][t];
-        else {
-          for (int h=0; h<height; h++) {
-            for (int w=0; w<width; w++) {
-              if (roiMask[h][w]) sum += values[c][h][w][t];
-            }
-          }
-        }
-        samps[ndx] = sum;
-        if (doLog) samps[ndx] = (float) Math.log(samps[ndx] + 1);
-        if (samps[ndx] > maxVal) maxVal = samps[ndx];
-        progress.setProgress(++p);
-        if (progress.isCanceled()) plotCanceled = true;
-        if (plotCanceled) break;
+      // calculate samples
+      int numChanVis = 0;
+      for (int c=0; c<channels; c++) {
+        if (cVisible[c]) numChanVis++;
       }
-      if (plotCanceled) break;
-      cc++;
-    }
-
-    double[][] fitResults = null;
-    int numExp = ((Integer) numCurves.getValue()).intValue();
-    if (adjustPeaks && doRefit) {
-      // perform exponential curve fitting: y(x) = a * e^(-b*t) + c
-      progress.setNote("Fitting curves");
-      fitResults = new double[channels][];
-      ExpFunction func = new ExpFunction(numExp);
-      float[] params = new float[3 * numExp];
-      if (numExp == 1) {
-        params[0] = maxVal;
-        params[1] = 1;
-        params[2] = 0;
-      }
-      else if (numExp == 2) {
-        params[0] = maxVal / 2;
-        params[1] = 0.8f;
-        params[2] = 0;
-        params[0] = maxVal / 2;
-        params[1] = 2;
-        params[2] = 0;
-      }
-//      for (int i=0; i<numExp; i++) {
-//        // initial guess for (a, b, c)
-//        int e = 3 * i;
-//        params[e] = (numExp - i) * maxVal / (numExp + 1);
-//        params[e + 1] = 1;
-//        params[e + 2] = 0;
-//      }
-      int num = timeBins - maxPeak;
-      float[] xVals = new float[num];
-      for (int i=0; i<num; i++) xVals[i] = i;
-      float[] yVals = new float[num];
-      float[] weights = new float[num];
-      Arrays.fill(weights, 1); // no weighting
-      log("Computing fit parameters: y(t) = a * e^(-t/" + TAU + ") + c");
-      for (int c=0, cc=0; c<channels; c++) {
-        if (!cVisible[c]) {
-          fitResults[c] = null;
-          continue;
-        }
-        log("\tChannel #" + (c + 1) + ":");
-        System.arraycopy(samps, timeBins * cc + maxPeak, yVals, 0, num);
-        LMA lma = null;
-        lma = new LMA(func, params, new float[][] {xVals, yVals},
-          weights, new JAMAMatrix(params.length, params.length));
-        lma.fit();
-        log("\t\titerations=" + lma.iterationCount);
-        log("\t\tchi2=" + lma.chi2);
-        for (int i=0; i<numExp; i++) {
-          int e = 3 * i;
-          log("\t\ta" + i + "=" + lma.parameters[e]);
-          log("\t\t" + TAU + i + "=" + (1 / lma.parameters[e + 1]));
-          log("\t\tc" + i + "=" + lma.parameters[e + 2]);
-        }
-        fitResults[c] = lma.parameters;
-        progress.setProgress(++p);
-        cc++;
-      }
-    }
-
-    try {
-      // construct domain set for 3D surface plots
-      float[][] bcGrid = new float[2][timeBins * numChanVis];
+      samps = new float[numChanVis * timeBins];
+      maxVal = 0;
       for (int c=0, cc=0; c<channels; c++) {
         if (!cVisible[c]) continue;
         for (int t=0; t<timeBins; t++) {
           int ndx = timeBins * cc + t;
-          bcGrid[0][ndx] = t * timeRange / (timeBins - 1);
-          bcGrid[1][ndx] = c * (maxWave - minWave) / (channels - 1) + minWave;
+          int sum = 0;
+          if (roiCount == 1) sum = values[c][roiY][roiX][t];
+          else {
+            for (int h=0; h<height; h++) {
+              for (int w=0; w<width; w++) {
+                if (roiMask[h][w]) sum += values[c][h][w][t];
+              }
+            }
+          }
+          samps[ndx] = sum;
+          if (doLog) samps[ndx] = (float) Math.log(samps[ndx] + 1);
+          if (samps[ndx] > maxVal) maxVal = samps[ndx];
+          progress.setProgress(++p);
+          if (progress.isCanceled()) plotCanceled = true;
+          if (plotCanceled) break;
         }
+        if (plotCanceled) break;
         cc++;
       }
-      Gridded2DSet bcSet = new Gridded2DSet(bc, bcGrid,
-        timeBins, numChanVis, null, bcUnits, null, false);
 
-      // compile color values for 3D surface plot
-      float[] colors = new float[numChanVis * timeBins];
-      for (int c=0, cc=0; c<channels; c++) {
-        if (!cVisible[c]) continue;
-        for (int t=0; t<timeBins; t++) {
-          int ndx = timeBins * c + t;
-          colors[ndx] = samps[ndx]; // CTR TODO: use Tau value for this channel
+      double[][] fitResults = null;
+      int numExp = ((Integer) numCurves.getValue()).intValue();
+      float[][] tau = new float[channels][numExp];
+      for (int c=0; c<channels; c++) Arrays.fill(tau[c], Float.NaN);
+      if (adjustPeaks && doRefit) {
+        // perform exponential curve fitting: y(x) = a * e^(-b*t) + c
+        progress.setNote("Fitting curves");
+        fitResults = new double[channels][];
+        ExpFunction func = new ExpFunction(numExp);
+        float[] params = new float[3 * numExp];
+        if (numExp == 1) {
+          params[0] = maxVal;
+          params[1] = 1;
+          params[2] = 0;
         }
-        cc++;
+        else if (numExp == 2) {
+          params[0] = maxVal / 2;
+          params[1] = 0.8f;
+          params[2] = 0;
+          params[0] = maxVal / 2;
+          params[1] = 2;
+          params[2] = 0;
+        }
+  //      for (int i=0; i<numExp; i++) {
+  //        // initial guess for (a, b, c)
+  //        int e = 3 * i;
+  //        params[e] = (numExp - i) * maxVal / (numExp + 1);
+  //        params[e + 1] = 1;
+  //        params[e + 2] = 0;
+  //      }
+        int num = timeBins - maxPeak;
+        float[] xVals = new float[num];
+        for (int i=0; i<num; i++) xVals[i] = i;
+        float[] yVals = new float[num];
+        float[] weights = new float[num];
+        Arrays.fill(weights, 1); // no weighting
+        log("Computing fit parameters: y(t) = a * e^(-t/" + TAU + ") + c");
+        for (int c=0, cc=0; c<channels; c++) {
+          if (!cVisible[c]) {
+            fitResults[c] = null;
+            continue;
+          }
+          log("\tChannel #" + (c + 1) + ":");
+          System.arraycopy(samps, timeBins * cc + maxPeak, yVals, 0, num);
+          LMA lma = null;
+          lma = new LMA(func, params, new float[][] {xVals, yVals},
+            weights, new JAMAMatrix(params.length, params.length));
+          lma.fit();
+          log("\t\titerations=" + lma.iterationCount);
+          log("\t\tchi2=" + lma.chi2);
+          for (int i=0; i<numExp; i++) {
+            int e = 3 * i;
+            log("\t\ta" + i + "=" + lma.parameters[e]);
+            tau[c][i] = (float) (1 / lma.parameters[e + 1]);
+            log("\t\t" + TAU + i + "=" + tau[c][i]);
+            log("\t\tc" + i + "=" + lma.parameters[e + 2]);
+          }
+          fitResults[c] = lma.parameters;
+          progress.setProgress(++p);
+          cc++;
+        }
       }
 
-      // construct "Data" plot
-      FlatField ff = new FlatField(bcvFunc, bcSet);
-      ff.setSamples(new float[][] {samps, colors}, false);
-      decayRef.setData(doDataLines ? makeLines(ff) : ff);
-
-      if (fitResults != null) {
-        // compute finite sampling matching fitted exponentials
-        float[] fitSamps = new float[numChanVis * timeBins];
-        float[] residuals = new float[numChanVis * timeBins];
+      try {
+        // construct domain set for 3D surface plots
+        float[][] bcGrid = new float[2][timeBins * numChanVis];
         for (int c=0, cc=0; c<channels; c++) {
           if (!cVisible[c]) continue;
-          double[] q = fitResults[c];
           for (int t=0; t<timeBins; t++) {
             int ndx = timeBins * cc + t;
-            int et = t - maxPeak; // adjust for peak alignment
-            if (et < 0) fitSamps[ndx] = residuals[ndx] = 0;
-            else {
-              float sum = 0;
-              for (int i=0; i<numExp; i++) {
-                int e = 3 * i;
-                sum += (float) (q[e] * Math.exp(-q[e + 1] * et) + q[e + 2]);
-              }
-              fitSamps[ndx] = sum;
-              residuals[ndx] = samps[ndx] - fitSamps[ndx];
-            }
+            bcGrid[0][ndx] = t * timeRange / (timeBins - 1);
+            bcGrid[1][ndx] = c * (maxWave - minWave) / (channels - 1) + minWave;
+          }
+          cc++;
+        }
+        Gridded2DSet bcSet = new Gridded2DSet(bc, bcGrid,
+          timeBins, numChanVis, null, bcUnits, null, false);
+
+        // compile color values for 3D surface plot
+        float[] colors = new float[numChanVis * timeBins];
+        for (int c=0, cc=0; c<channels; c++) {
+          if (!cVisible[c]) continue;
+          for (int t=0; t<timeBins; t++) {
+            int ndx = timeBins * c + t;
+            colors[ndx] = doTauColors ? tau[c][0] : samps[ndx];
           }
           cc++;
         }
 
-        // construct "Fit" plot
-        FlatField fit = new FlatField(bcvFuncFit, bcSet);
-        fit.setSamples(new float[][] {fitSamps}, false);
-        fitRef.setData(doFitLines ? makeLines(fit) : fit);
+        // construct "Data" plot
+        FlatField ff = new FlatField(bcvFunc, bcSet);
+        ff.setSamples(new float[][] {samps, colors}, false);
+        decayRef.setData(doDataLines ? makeLines(ff) : ff);
 
-        // construct "Residuals" plot
-        FlatField res = new FlatField(bcvFuncRes, bcSet);
-        res.setSamples(new float[][] {residuals}, false);
-        resRef.setData(doResLines ? makeLines(res) : res);
+        if (fitResults != null) {
+          // compute finite sampling matching fitted exponentials
+          float[] fitSamps = new float[numChanVis * timeBins];
+          float[] residuals = new float[numChanVis * timeBins];
+          for (int c=0, cc=0; c<channels; c++) {
+            if (!cVisible[c]) continue;
+            double[] q = fitResults[c];
+            for (int t=0; t<timeBins; t++) {
+              int ndx = timeBins * cc + t;
+              int et = t - maxPeak; // adjust for peak alignment
+              if (et < 0) fitSamps[ndx] = residuals[ndx] = 0;
+              else {
+                float sum = 0;
+                for (int i=0; i<numExp; i++) {
+                  int e = 3 * i;
+                  sum += (float) (q[e] * Math.exp(-q[e + 1] * et) + q[e + 2]);
+                }
+                fitSamps[ndx] = sum;
+                residuals[ndx] = samps[ndx] - fitSamps[ndx];
+              }
+            }
+            cc++;
+          }
+
+          // construct "Fit" plot
+          FlatField fit = new FlatField(bcvFuncFit, bcSet);
+          fit.setSamples(new float[][] {fitSamps}, false);
+          fitRef.setData(doFitLines ? makeLines(fit) : fit);
+
+          // construct "Residuals" plot
+          FlatField res = new FlatField(bcvFuncRes, bcSet);
+          res.setSamples(new float[][] {residuals}, false);
+          resRef.setData(doResLines ? makeLines(res) : res);
+        }
       }
+      catch (Exception exc) { exc.printStackTrace(); }
+      progress.setProgress(++p);
+      progress.close();
+    }
 
-      if (doRescale) {
-        float max = maxVal == 0 ? 1 : maxVal;
-        zMap.setRange(0, max);
-        zMapFit.setRange(0, max);
-        zMapRes.setRange(0, max);
-        vMap.setRange(0, max);
+    if (doRescale) {
+      float d = Float.NaN;
+      boolean manual = zOverride.isSelected();
+      if (manual) {
+        try { d = Float.parseFloat(zScaleValue.getText()); }
+        catch (NumberFormatException exc) { }
+      }
+      else {
+        zScaleValue.getDocument().removeDocumentListener(this);
+        zScaleValue.setText("" + maxVal);
+        zScaleValue.getDocument().addDocumentListener(this);
+      }
+      float maxZ = d == d ? d : (maxVal == 0 ? 1 : maxVal);
+      try {
+        zMap.setRange(0, maxZ);
+        zMapFit.setRange(0, maxZ);
+        zMapRes.setRange(0, maxZ);
+        //vMap.setRange(0, max);
         //vMapFit.setRange(0, max);
         //vMapRes.setRange(0, max);
-        //decayPlot.reAutoScale();
+        decayPlot.reAutoScale();
       }
+      catch (Exception exc) { exc.printStackTrace(); }
     }
-    catch (Exception exc) { exc.printStackTrace(); }
-    progress.setProgress(++p);
-    progress.close();
     plotThread = null;
   }
 
@@ -1158,6 +1252,13 @@ public class SlimPlotter implements ActionListener,
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
     return null;
+  }
+
+  private void updateZAxis() {
+    float f = Float.NaN;
+    try { f = Float.parseFloat(zScaleValue.getText()); }
+    catch (NumberFormatException exc) { }
+    if (f == f) plotData(false, true, false);
   }
 
   // -- Utility methods --
