@@ -419,21 +419,9 @@ public class Importer {
               if (stackO == null) stackO = new ImageStack(w, h);
               ip = new ColorProcessor(w, h);
               byte[][] pix = new byte[c][w*h];
-              if (r.isInterleaved(id)) {
-                for (int k=0; k<bytes.length; k+=c) {
-                  for (int l=0; l<c; l++) {
-                    pix[l][k / 3] = bytes[k + l];
-                  }
-                }
-              }
-              else {
-                for (int k=0; k<c; k++) {
-                  System.arraycopy(bytes, 0, pix[k], 0, pix[k].length);
-                  System.arraycopy(bytes, pix[k].length, pix[k], 0, 
-                    pix[k].length);
-                  System.arraycopy(bytes, 2*pix[k].length, pix[k], 0, 
-                    pix[k].length);
-                }
+              for (int k=0; k<c; k++) {
+                System.arraycopy(bytes, k*pix[k].length, pix[k], 0, 
+                  pix[k].length);
               }
               ((ColorProcessor) ip).setRGB(pix[0], pix[1], 
                 pix.length >= 3 ? pix[2] : new byte[w*h]);
@@ -455,18 +443,9 @@ public class Importer {
             else {
               if (stackO == null) stackO = new ImageStack(w, h);
               short[][] pix = new short[c][w*h];
-              if (r.isInterleaved(id)) {
-                for (int k=0; k<s.length; k+=c) {
-                  for (int l=0; l<c; l++) {
-                    pix[l][k / 3] = s[k + l];
-                  }
-                }
-              }
-              else {
-                for (int k=0; k<c; k++) {
-                  System.arraycopy(s, k*pix[k].length, pix[k], 0, 
-                    pix[k].length);
-                }
+              for (int k=0; k<c; k++) {
+                System.arraycopy(s, k*pix[k].length, pix[k], 0, 
+                  pix[k].length);
               }
               byte[][] bytes = new byte[c][w*h];
               for (int k=0; k<c; k++) {
@@ -495,18 +474,9 @@ public class Importer {
             else {
               if (stackO == null) stackO = new ImageStack(w, h);
               int[][] pix = new int[c][w*h];
-              if (r.isInterleaved(id)) {
-                for (int k=0; k<s.length; k+=c) {
-                  for (int l=0; l<c; l++) {
-                    pix[l][k / 3] = s[k + l];
-                  }
-                }
-              }
-              else {
-                for (int k=0; k<c; k++) {
-                  System.arraycopy(s, k*pix[k].length, pix[k], 0, 
-                    pix[k].length);
-                }
+              for (int k=0; k<c; k++) {
+                System.arraycopy(s, k*pix[k].length, pix[k], 0, 
+                  pix[k].length);
               }
               byte[][] bytes = new byte[c][w*h];
               for (int k=0; k<c; k++) {
@@ -586,18 +556,9 @@ public class Importer {
             else {
               if (stackO == null) stackO = new ImageStack(w, h);
               double[][] pix = new double[c][w*h];
-              if (r.isInterleaved(id)) {
-                for (int k=0; k<d.length; k+=c) {
-                  for (int l=0; l<c; l++) {
-                    pix[l][k / 3] = d[k + l];
-                  }
-                }
-              }
-              else {
-                for (int k=0; k<c; k++) {
-                  System.arraycopy(d, k*pix[k].length, pix[k], 0, 
-                    pix[k].length);
-                }
+              for (int k=0; k<c; k++) {
+                System.arraycopy(d, k*pix[k].length, pix[k], 0, 
+                  pix[k].length);
               }
               byte[][] bytes = new byte[c][w*h];
               for (int k=0; k<c; k++) {
@@ -612,14 +573,6 @@ public class Importer {
             }
           }
         }
-          /*
-          if (ip == null) {
-            ip = new ColorProcessor(w, h,
-              ImageTools.make24Bits(pixels, w, h, r.isInterleaved(id)));
-            if (stackO == null) stackO = new ImageStack(w, h);
-            stackO.addSlice(imageName + ":" + (j + 1), ip);
-          }
-          */
 
         IJ.showStatus("Creating image");
         IJ.showProgress(1);
