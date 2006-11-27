@@ -688,7 +688,7 @@ public abstract class FormatReader extends FormatHandler
             reader.isLittleEndian(id));
           images[i - start] = 
             ImageTools.makeImage(ImageTools.make24Bits(pix, x, y, 
-              reader.isInterleaved(id), false), x, y);
+              false, false), x, y);
         }
 
         // check for pixel type mismatch
