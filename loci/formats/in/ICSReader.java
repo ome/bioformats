@@ -422,7 +422,7 @@ public class ICSReader extends FormatReader {
       new Integer(dimensions[5]), // SizeT
       new Integer(pixelType[0]), // PixelType
       new Boolean(!littleEndian), // BigEndian
-      ord, // DimensionOrder
+      order.trim(), // DimensionOrder
       null); // Use index 0
   }
 
