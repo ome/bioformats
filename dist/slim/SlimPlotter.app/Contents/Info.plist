@@ -32,7 +32,7 @@
 		<string>1.4+</string>
 		<key>ClassPath</key>
 			<array>
-      <string>$APP_PACKAGE/../SlimPlotter.jar</string>
+			<string>$APP_PACKAGE/../SlimPlotter.jar</string>
 			<string>$APP_PACKAGE/../bio-formats.jar</string>
 			<string>$APP_PACKAGE/../lma.jar</string>
 			<string>$APP_PACKAGE/../visad-lite.jar</string>
