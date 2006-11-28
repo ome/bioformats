@@ -32,10 +32,10 @@
 		<string>1.4+</string>
 		<key>ClassPath</key>
 			<array>
-      <string>$JAVAROOT/SlimPlotter.jar</string>
-			<string>$JAVAROOT/bio-formats.jar</string>
-			<string>$JAVAROOT/lma.jar</string>
-			<string>$JAVAROOT/visad-lite.jar</string>
+      <string>$APP_PACKAGE/../SlimPlotter.jar</string>
+			<string>$APP_PACKAGE/../bio-formats.jar</string>
+			<string>$APP_PACKAGE/../lma.jar</string>
+			<string>$APP_PACKAGE/../visad-lite.jar</string>
 			</array>
 		<key>Properties</key>
 		<dict>

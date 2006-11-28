@@ -464,7 +464,7 @@ Apache XML-RPC
     <copy todir="${visbio.win32-dir}/VisBio" preservelastmodified="true">
       <fileset dir="dist/visbio/win32"/>
       <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
-      <fileset dir="${jar.dir}" includes="visbio.jar ${visbio.classpath}"/>
+      <fileset dir="${jar.dir}" includes="${visbio.jar} ${visbio.classpath}"/>
     </copy>
     <fixcrlf srcdir="${visbio.win32-dir}/VisBio" eol="dos"
       includes="${visbio.text-files}"/>
@@ -481,7 +481,7 @@ Apache XML-RPC
       <fileset dir="dist/visbio/win32" excludes="launcher.cfg"/>
       <fileset dir="dist/visbio/win32-nojre"/>
       <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
-      <fileset dir="${jar.dir}" includes="visbio.jar ${visbio.classpath}"/>
+      <fileset dir="${jar.dir}" includes="${visbio.jar} ${visbio.classpath}"/>
     </copy>
     <fixcrlf srcdir="${visbio.win32-nojre-dir}/VisBio" eol="dos"
       includes="${visbio.text-files}"/>
@@ -507,7 +507,7 @@ Apache XML-RPC
     </chmod>
     <copy
       todir="${visbio.macosx-dir}/VisBio/VisBio.app/Contents/Resources/Java">
-      <fileset dir="${jar.dir}" includes="visbio.jar ${visbio.classpath}"/>
+      <fileset dir="${jar.dir}" includes="${visbio.jar} ${visbio.classpath}"/>
     </copy>
 <!--
     <tar destfile="${dist.dir}/visbio${visbio.version}_macosx.tar.gz"
@@ -532,7 +532,7 @@ Apache XML-RPC
       preservelastmodified="true">
       <fileset dir="dist/visbio/linux"/>
       <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
-      <fileset dir="${jar.dir}" includes="visbio.jar ${visbio.classpath}"/>
+      <fileset dir="${jar.dir}" includes="${visbio.jar} ${visbio.classpath}"/>
     </copy>
     <fixcrlf srcdir="${visbio.linux-dir}/visbio${visbio.version}" eol="unix"
       includes="${visbio.text-files}"/>
@@ -577,7 +577,7 @@ Apache XML-RPC
       preservelastmodified="true">
       <fileset dir="dist/visbio/linux"/>
       <fileset dir="loci/visbio" includes="${visbio.dist-files}"/>
-      <fileset dir="${jar.dir}" includes="visbio.jar ${visbio.classpath}"/>
+      <fileset dir="${jar.dir}" includes="${visbio.jar} ${visbio.classpath}"/>
     </copy>
     <fixcrlf srcdir="${visbio.nojre-dir}/visbio${visbio.version}" eol="unix"
       includes="${visbio.text-files}"/>
@@ -755,7 +755,7 @@ Apache XML-RPC
     description="create distribution bundle for Slim Plotter">
     <copy todir="${slim.dist-dir}" preservelastmodified="true">
       <fileset dir="dist/slim"/>
-      <fileset dir="${jar.dir}" includes="SlimPlotter.jar ${slim.classpath}"/>
+      <fileset dir="${jar.dir}" includes="${slim.jar} ${slim.classpath}"/>
     </copy>
     <!-- HACK - copy does not preserve permissions; chmod them back -->
     <chmod perm="+x">

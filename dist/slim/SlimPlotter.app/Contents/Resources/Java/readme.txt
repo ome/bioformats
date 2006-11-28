@@ -1,1 +1,1 @@
-JAR files go here.
+Find JAR files in the main Slim Plotter folder.
