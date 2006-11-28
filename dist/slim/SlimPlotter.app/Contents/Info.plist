@@ -4,8 +4,10 @@
 <dict>
 	<key>CFBundleName</key>
 	<string>Slim Plotter</string>
+<!--
 	<key>CFBundleVersion</key>
-	<string>3.x</string>
+	<string>1.0</string>
+-->
 	<key>CFBundleAllowMixedLocalizations</key>
 	<string>true</string>
 	<key>CFBundleExecutable</key>
