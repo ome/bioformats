@@ -77,6 +77,9 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   private double roiPercent;
   private float maxVal;
 
+  // fit parameters
+  private float[][] tau;
+
   // GUI components for parameter dialog box
   private JDialog paramDialog;
   private JTextField wField, hField, tField, cField, trField, wlField, sField;
@@ -246,7 +249,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     roiPercent = 100;
 
     // pop up progress monitor
-    progress.setProgress(1); // estimate: 0.1%
+    setProgress(progress, 1); // estimate: 0.1%
     if (progress.isCanceled()) System.exit(0);
 
     // read pixel data
@@ -259,8 +262,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       int len = data.length - off;
       if (len > blockSize) len = blockSize;
       fin.readFully(data, off, len);
-      progress.setProgress(700 *
-        (off + blockSize) / data.length); // estimate: 0% -> 70%
+      setProgress(progress, (int) (700L *
+        (off + blockSize) / data.length)); // estimate: 0% -> 70%
       if (progress.isCanceled()) System.exit(0);
     }
     fin.close();
@@ -289,7 +292,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     bcvFuncFit = new FunctionType(bc, vTypeFit);
     RealType vTypeRes = RealType.getRealType("value_res");
     bcvFuncRes = new FunctionType(bc, vTypeRes);
-    progress.setProgress(710); // estimate: 71%
+    setProgress(progress, 710); // estimate: 71%
     if (progress.isCanceled()) System.exit(0);
 
     // plot intensity data in 2D display
@@ -305,7 +308,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     });
     iPlot.enableEvent(DisplayEvent.MOUSE_DRAGGED);
     iPlot.addDisplayListener(this);
-    progress.setProgress(720); // estimate: 72%
+    setProgress(progress, 720); // estimate: 72%
     if (progress.isCanceled()) System.exit(0);
 
     iPlot.addMap(new ScalarMap(xType, Display.XAxis));
@@ -314,7 +317,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     iPlot.addMap(new ScalarMap(cType, Display.Animation));
     DataReferenceImpl intensityRef = new DataReferenceImpl("intensity");
     iPlot.addReference(intensityRef);
-    progress.setProgress(730); // estimate: 73%
+    setProgress(progress, 730); // estimate: 73%
     if (progress.isCanceled()) System.exit(0);
 
     // set up curve manipulation renderer in 2D display
@@ -349,14 +352,14 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       new ConstantMap(0, Display.Blue),
       new ConstantMap(0.1, Display.Alpha)
     });
-    progress.setProgress(740); // estimate: 74%
+    setProgress(progress, 740); // estimate: 74%
     if (progress.isCanceled()) System.exit(0);
 
     ac = (AnimationControl) iPlot.getControl(AnimationControl.class);
     iPlot.getProjectionControl().setMatrix(
       iPlot.make_matrix(0, 0, 0, 0.85, 0, 0, 0));
 
-    progress.setProgress(750); // estimate: 75%
+    setProgress(progress, 750); // estimate: 75%
     if (progress.isCanceled()) System.exit(0);
 
     // plot decay curves in 3D display
@@ -366,7 +369,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     zMap = new ScalarMap(vType, Display.ZAxis);
     zMapFit = new ScalarMap(vTypeFit, Display.ZAxis);
     zMapRes = new ScalarMap(vTypeRes, Display.ZAxis);
-    vMap = new ScalarMap(vType, Display.RGB);
+    vMap = new ScalarMap(vType2, Display.RGB);
     //vMapFit = new ScalarMap(vTypeFit, Display.RGB);
     vMapRes = new ScalarMap(vTypeRes, Display.RGB);
     decayPlot.addMap(xMap);
@@ -377,7 +380,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     decayPlot.addMap(vMap);
     //decayPlot.addMap(vMapFit);
     decayPlot.addMap(vMapRes);
-    progress.setProgress(760); // estimate: 76%
+    setProgress(progress, 760); // estimate: 76%
     if (progress.isCanceled()) System.exit(0);
 
     decayRend = new DefaultRendererJ3D();
@@ -397,7 +400,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       decayPlot.addReferences(resRend, resRef);
       resRend.toggle(false);
     }
-    progress.setProgress(770); // estimate: 77%
+    setProgress(progress, 770); // estimate: 77%
     if (progress.isCanceled()) System.exit(0);
 
     xMap.setRange(0, timeRange);
@@ -425,7 +428,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     pc.setMatrix(MATRIX);
     pc.setAspectCartesian(
       new double[] {2, 1, 1});
-    progress.setProgress(780); // estimate: 78%
+    setProgress(progress, 780); // estimate: 78%
     if (progress.isCanceled()) System.exit(0);
 
     // convert byte data to unsigned shorts
@@ -454,7 +457,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           }
           pix[c][0][width * h + w] = sum;
         }
-        progress.setProgress(780 + 140 *
+        setProgress(progress, 780 + 140 *
           (height * c + h + 1) / (channels * height)); // estimate: 78% -> 92%
         if (progress.isCanceled()) System.exit(0);
       }
@@ -483,7 +486,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           else if (t > 20) break; // HACK - too early to give up
         }
         peaks[c] = ndx;
-        progress.setProgress(920 + 20 *
+        setProgress(progress, 920 + 20 *
           (c + 1) / channels); // estimate: 92% -> 94%
         if (progress.isCanceled()) System.exit(0);
       }
@@ -506,7 +509,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           log("\tChannel #" + (c + 1) + ": tmax = " + peaks[c] +
             " (shifting by " + shift + ")");
         }
-        progress.setProgress(940 + 20 *
+        setProgress(progress, 940 + 20 *
           (c + 1) / channels); // estimate: 94% -> 96%
         if (progress.isCanceled()) System.exit(0);
       }
@@ -552,7 +555,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     iPlotPane.add(iPlot.getComponent(), BorderLayout.CENTER);
     intensityPane.add(iPlotPane, BorderLayout.CENTER);
 
-    progress.setProgress(970); // estimate: 97%
+    setProgress(progress, 970); // estimate: 97%
     if (progress.isCanceled()) System.exit(0);
 
     JPanel sliderPane = new JPanel();
@@ -578,7 +581,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     ColorControl cc = (ColorControl) iPlot.getControl(ColorControl.class);
     cc.setTable(ColorControl.initTableGreyWedge(new float[3][256]));
 
-    progress.setProgress(980); // estimate: 98%
+    setProgress(progress, 980); // estimate: 98%
     if (progress.isCanceled()) System.exit(0);
 
     // construct 3D pane
@@ -684,7 +687,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       "Exports the selected ROI's raw data to a text file");
     exportData.addActionListener(this);
 
-    progress.setProgress(990); // estimate: 99%
+    setProgress(progress, 990); // estimate: 99%
     if (progress.isCanceled()) System.exit(0);
 
     JPanel leftPanel = new JPanel() {
@@ -724,7 +727,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     decayPane.add(options, BorderLayout.SOUTH);
     masterPane.add(decayPane, BorderLayout.CENTER);
 
-    progress.setProgress(999); // estimate: 99.9%
+    setProgress(progress, 999); // estimate: 99.9%
     if (progress.isCanceled()) System.exit(0);
 
     // show window on screen
@@ -734,7 +737,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     masterWindow.setLocation((screen.width - size.width) / 2,
       (screen.height - size.height) / 2);
     masterWindow.setVisible(true);
-    progress.setProgress(1000);
+    setProgress(progress, 1000);
     progress.close();
     plotData(true, true, true);
 
@@ -990,13 +993,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       progress.setMillisToPopup(100);
       progress.setMillisToDecideToPopup(50);
       int p = 0;
-      if (roiCount == 1) {
-        decayLabel.setText("Decay curve for " + "(" + roiX + ", " + roiY + ")");
-      }
-      else {
-        decayLabel.setText("Decay curve for " + roiCount +
-          " pixels (" + roiPercent + "%)");
-      }
+
       boolean doLog = log.isSelected();
       boolean doDataLines = dataLines.isSelected();
       boolean doFitLines = fitLines.isSelected();
@@ -1026,7 +1023,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           samps[ndx] = sum;
           if (doLog) samps[ndx] = (float) Math.log(samps[ndx] + 1);
           if (samps[ndx] > maxVal) maxVal = samps[ndx];
-          progress.setProgress(++p);
+          setProgress(progress, ++p);
           if (progress.isCanceled()) plotCanceled = true;
           if (plotCanceled) break;
         }
@@ -1036,12 +1033,12 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
       double[][] fitResults = null;
       int numExp = ((Integer) numCurves.getValue()).intValue();
-      float[][] tau = new float[channels][numExp];
-      for (int c=0; c<channels; c++) Arrays.fill(tau[c], Float.NaN);
       if (adjustPeaks && doRefit) {
         // perform exponential curve fitting: y(x) = a * e^(-b*t) + c
         progress.setNote("Fitting curves");
         fitResults = new double[channels][];
+        tau = new float[channels][numExp];
+        for (int c=0; c<channels; c++) Arrays.fill(tau[c], Float.NaN);
         ExpFunction func = new ExpFunction(numExp);
         float[] params = new float[3 * numExp];
         if (numExp == 1) {
@@ -1092,10 +1089,44 @@ public class SlimPlotter implements ActionListener, ChangeListener,
             log("\t\tc" + i + "=" + lma.parameters[e + 2]);
           }
           fitResults[c] = lma.parameters;
-          progress.setProgress(++p);
+          setProgress(progress, ++p);
           cc++;
         }
       }
+
+      float tauMin = Float.NaN, tauMax = Float.NaN;
+      if (tau != null) {
+        tauMin = tauMax = tau[0][0];
+        for (int i=1; i<tau.length; i++) {
+          if (tau[i][0] < tauMin) tauMin = tau[i][0];
+          if (tau[i][0] > tauMax) tauMax = tau[i][0];
+        }
+      }
+      StringBuffer sb = new StringBuffer();
+      sb.append("Decay curve for ");
+      if (roiCount == 1) {
+        sb.append("(");
+        sb.append(roiX);
+        sb.append(", ");
+        sb.append(roiY);
+        sb.append(")");
+      }
+      else {
+        sb.append(roiCount);
+        sb.append(" pixels (");
+        sb.append(roiPercent);
+        sb.append("%)");
+      }
+      if (tauMin == tauMin && tauMax == tauMax) {
+        sb.append("; ");
+        sb.append(TAU);
+        sb.append("=[");
+        sb.append(tauMin);
+        sb.append(", ");
+        sb.append(tauMax);
+        sb.append("]");
+      }
+      decayLabel.setText(sb.toString());
 
       try {
         // construct domain set for 3D surface plots
@@ -1117,8 +1148,9 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         for (int c=0, cc=0; c<channels; c++) {
           if (!cVisible[c]) continue;
           for (int t=0; t<timeBins; t++) {
-            int ndx = timeBins * c + t;
-            colors[ndx] = doTauColors ? tau[c][0] : samps[ndx];
+            int ndx = timeBins * cc + t;
+            colors[ndx] = doTauColors ?
+              (tau == null ? Float.NaN : tau[c][0]) : samps[ndx];
           }
           cc++;
         }
@@ -1164,7 +1196,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         }
       }
       catch (Exception exc) { exc.printStackTrace(); }
-      progress.setProgress(++p);
+      setProgress(progress, ++p);
       progress.close();
     }
 
@@ -1349,6 +1381,11 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   public static float parse(String s, float last) {
     try { return Float.parseFloat(s); }
     catch (NumberFormatException exc) { return last; }
+  }
+
+  /** Updates progress monitor status; mainly for debugging. */
+  private static void setProgress(ProgressMonitor progress, int p) {
+    progress.setProgress(p);
   }
 
   // -- Helper classes --
