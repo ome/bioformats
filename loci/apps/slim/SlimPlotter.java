@@ -614,20 +614,26 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     dataLines.setToolTipText("Displays raw data as a series of lines");
     fitSurface = new JRadioButton("Surface", false);
     fitSurface.setToolTipText("Displays fitted curves as a 2D surface");
+    fitSurface.setEnabled(adjustPeaks);
     fitLines = new JRadioButton("Lines", true);
     fitLines.setToolTipText("Displays fitted curves as a series of lines");
+    fitLines.setEnabled(adjustPeaks);
     resSurface = new JRadioButton("Surface", false);
     resSurface.setToolTipText(
       "Displays fitted curve residuals as a 2D surface");
+    resSurface.setEnabled(adjustPeaks);
     resLines = new JRadioButton("Lines", true);
     resLines.setToolTipText(
       "Displays fitted curve residuals as a series of lines");
+    resLines.setEnabled(adjustPeaks);
     colorHeight = new JRadioButton("Counts", true);
     colorHeight.setToolTipText(
       "Colorizes data according to the height (histogram count)");
+    colorHeight.setEnabled(adjustPeaks);
     colorTau = new JRadioButton("Lifetimes", false);
     colorTau.setToolTipText(
       "Colorizes data according to aggregate lifetime value");
+    colorTau.setEnabled(adjustPeaks);
 
     numCurves = new JSpinner(new SpinnerNumberModel(1, 1, 9, 1));
     numCurves.setToolTipText("Number of components in exponential fit");
