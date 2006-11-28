@@ -298,6 +298,16 @@ public abstract class OverlayObject {
     return nodes[1][numNodes-1];
   }
 
+  /** Sets the node array to that provided--for loading from saved */
+  public void setNodes(float[][] nodes) {
+    this.nodes = nodes;
+    numNodes = nodes[0].length;
+    maxNodes = numNodes;
+    computeLength();
+    updateBoundingBox();
+    computeGridParameters();
+  }
+
   /** Changes X coordinate of the overlay's second endpoint. */
   public void setX2(float x2) {
     if (!hasEndpoint2()) return;
@@ -403,7 +413,7 @@ public abstract class OverlayObject {
 
   /** Computes length of curve */
   public void computeLength() {
-    truncateNodeArray();
+    if (maxNodes != numNodes) truncateNodeArray();
     double length = 0;
     for (int i=0; i<numNodes-1; i++) {
       double[] a = {(double) nodes[0][i], (double)nodes[1][i]};

@@ -257,7 +257,13 @@ public class FreeformTool extends OverlayTool {
     boolean shift = (mods & InputEvent.SHIFT_MASK) != 0; 
     boolean ctl = (mods & InputEvent.CTRL_MASK) != 0; 
 
+    if (ctl && mode == DRAW) {
+        freeform.truncateNodeArray();
+        setMode(ERASE);
+    }
+
     if (mode == DRAW) {
+      
       // compute distance to endpoints of nearby freeforms
       int index = -1;
       boolean closerToHead = false;
@@ -311,65 +317,49 @@ public class FreeformTool extends OverlayTool {
         if (target != null) freeform = target;
       }
 
-      if (!ctl) {
-        float lastX = freeform.getLastNodeX();
-        float lastY = freeform.getLastNodeY();
-        float dx = x - lastX; 
-        float dy = y - lastY; 
-        // compute distance
-        double dist = Math.sqrt (dx*dx + dy*dy);
+      // delete an end node if you're near enough
+      float[] beg = freeform.getNodeCoords (0);
+      float[] end = freeform.getNodeCoords (freeform.getNumNodes() - 1);
+
+      double[] drag = {(double) x, (double) y};
+      double[] begd = {(double) beg[0], (double) beg[1]};
+      double[] endd = {(double) end[0], (double) end[1]};
       
-        if (dist > DRAW_THRESH) {
-          freeform.setNextNode(x, y);
-          double len = freeform.getCurveLength();
-          freeform.setCurveLength(len + dist);
-        }
-
-        setMode(DRAW);
-      } else {
-        // delete an end node if you're near enough
-        float[] beg = freeform.getNodeCoords (0);
-        float[] end = freeform.getNodeCoords (freeform.getNumNodes() - 1);
-
-        double[] drag = {(double) x, (double) y};
-        double[] begd = {(double) beg[0], (double) beg[1]};
-        double[] endd = {(double) end[0], (double) end[1]};
+      double bdist = MathUtil.getDistance (drag, begd);
+      double edist = MathUtil.getDistance (drag, endd);
+      
+      boolean closerToEnd = edist < bdist ? true : false;
+      double mdist = closerToEnd ? edist : bdist;
+      
+      if (mdist < DRAW_THRESH) {
+        if (!closerToEnd) freeform.reverseNodes();
+        if (ctl) {
+          double[] nearest = new double[2], pd = new double[2];
+          float[] p;
+          double delta;
+          int index;
+          if (closerToEnd) nearest = endd;
+          else nearest = begd;
         
-        double bdist = MathUtil.getDistance (drag, begd);
-        double edist = MathUtil.getDistance (drag, endd);
-        
-        boolean closerToEnd = edist < bdist ? true : false;
-        double mdist = closerToEnd ? edist : bdist;
-        
-        if (mdist < DRAW_THRESH) {
-          double[] nearest;
-          int index, offset;
-
-          if (closerToEnd) {
-            index = freeform.getNumNodes()-1;
-            offset = -1;
-            nearest = endd;
-          } else {
-            index = 0;
-            offset = 1;
-            nearest = begd;
-          }
           // adjust curve length
-          float[] p = freeform.getNodeCoords(index + offset);
-          double[] pd = {(double) p[0], (double) p[1]};
+          index = freeform.getNumNodes()-1; // last node in freef
+          p = freeform.getNodeCoords(index);
+          pd[0] = (double) p[0];
+          pd[1] = (double) p[1];
 
-          double delta = MathUtil.getDistance (nearest, pd);
+          delta = MathUtil.getDistance (nearest, pd);
           freeform.setCurveLength(freeform.getCurveLength() - delta);
 
-          // delete appropriate node
+          // delete last node node
           freeform.deleteNode(index);
           freeform.updateBoundingBox(); // WARNING this is O(n) expensive.  Maybe remove it and just update at
                                         // mouseUp?
+        } else {
+          setMode(DRAW);
         }
-
-        if (freeform.getNumNodes() == 0) {
-          setMode(CHILL);
-        }
+        if (freeform.getNumNodes() == 0) setMode(CHILL);
+      } else {
+        // do nothing if too far from curve
       }
     } else if (mode == EDIT) {
       // extend tendril and or reconnect

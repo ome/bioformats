@@ -56,6 +56,8 @@ public final class OverlayIO {
     JComponent owner = trans.getControls();
 
     Vector[] loadedOverlays = null;
+    Vector loadedFreeforms = new Vector();
+    int nextFreeformToRestore = 0;
     boolean foundHeader = false;
     int lineNum = 0;
     while (true) {
@@ -111,87 +113,135 @@ public final class OverlayIO {
           loadedOverlays[i] = new Vector();
         }
         foundHeader = true;
-      }
-      else {
+      } else {
         // parse table entry
-        if (count != lengths.length + 10) {
-          System.err.println("Warning: line " + lineNum +
-            " has the incorrect number of columns (" + count +
-            " instead of " + (lengths.length + 10) + ") and will be ignored.");
-          continue;
-        }
         String type = st.nextToken().substring(1); // remove initial #
-        int[] pos = new int[lengths.length];
-        for (int i=0; i<pos.length; i++) {
-          try { pos[i] = Integer.parseInt(st.nextToken()); }
-          catch (NumberFormatException exc) {
-            pos = null;
-            break;
+        if (type.indexOf(',') == -1) { // if not a line of freeform nodes 
+          if (count != lengths.length + 10) {
+            System.err.println("Warning: line " + lineNum +
+              " has the incorrect number of columns (" + count +
+              " instead of " + (lengths.length + 10) + ") and will be ignored.");
+            continue;
           }
-        }
-        if (pos == null) {
-          System.err.println("Warning: line " + lineNum +
-            " has an invalid dimensional position and will be ignored.");
-          continue;
-        }
-        String sx1 = st.nextToken();
-        String sy1 = st.nextToken();
-        String sx2 = st.nextToken();
-        String sy2 = st.nextToken();
-        float x1, y1, x2, y2;
-        try {
-          x1 = sx1.equals(NOT_APPLICABLE) ? Float.NaN : Float.parseFloat(sx1);
-          y1 = sy1.equals(NOT_APPLICABLE) ? Float.NaN : Float.parseFloat(sy1);
-          x2 = sx2.equals(NOT_APPLICABLE) ? Float.NaN : Float.parseFloat(sx2);
-          y2 = sy2.equals(NOT_APPLICABLE) ? Float.NaN : Float.parseFloat(sy2);
-        }
-        catch (NumberFormatException exc) {
-          System.err.println("Warning: line " + lineNum +
-            " has invalid coordinate values and will be ignored.");
-          continue;
-        }
-        String text = st.nextToken();
-        Color color = ColorUtil.hexToColor(st.nextToken());
-        if (color == null) {
-          System.err.println("Warning: line " + lineNum +
-            " has an invalid color value and will be ignored.");
-          continue;
-        }
-        boolean filled = st.nextToken().equalsIgnoreCase("true");
-        String group = st.nextToken();
-        String notes = st.nextToken();
-        notes = notes.substring(0, notes.length() - 1); // remove trailing #
 
-        String className = "loci.visbio.overlays.Overlay" + type;
-        OverlayObject obj = createOverlay(className, trans, lineNum);
-        if (obj == null) continue;
+          int[] pos = new int[lengths.length];
+          for (int i=0; i<pos.length; i++) {
+            try { pos[i] = Integer.parseInt(st.nextToken()); }
+            catch (NumberFormatException exc) {
+              pos = null;
+              break;
+            }
+          }
+          if (pos == null) {
+            System.err.println("Warning: line " + lineNum +
+              " has an invalid dimensional position and will be ignored.");
+            continue;
+          }
+          String sx1 = st.nextToken();
+          String sy1 = st.nextToken();
+          String sx2 = st.nextToken();
+          String sy2 = st.nextToken();
+          float x1, y1, x2, y2;
+          try {
+            x1 = sx1.equals(NOT_APPLICABLE) ? Float.NaN : Float.parseFloat(sx1);
+            y1 = sy1.equals(NOT_APPLICABLE) ? Float.NaN : Float.parseFloat(sy1);
+            x2 = sx2.equals(NOT_APPLICABLE) ? Float.NaN : Float.parseFloat(sx2);
+            y2 = sy2.equals(NOT_APPLICABLE) ? Float.NaN : Float.parseFloat(sy2);
+          }
+          catch (NumberFormatException exc) {
+            System.err.println("Warning: line " + lineNum +
+              " has invalid coordinate values and will be ignored.");
+            continue;
+          }
+          String text = st.nextToken();
+          Color color = ColorUtil.hexToColor(st.nextToken());
+          if (color == null) {
+            System.err.println("Warning: line " + lineNum +
+              " has an invalid color value and will be ignored.");
+            continue;
+          }
+          boolean filled = st.nextToken().equalsIgnoreCase("true");
+          String group = st.nextToken();
+          String notes = st.nextToken();
+          notes = notes.substring(0, notes.length() - 1); // remove trailing #
 
-        // assign overlay parameters
-        int r = MathUtil.positionToRaster(lengths, pos);
-        if (r < 0 || r >= loadedOverlays.length) {
-          System.err.println("Warning: could not reconstruct " + type +
-            "overlay defined on line " + lineNum +
-            ": invalid dimensional position.");
-          continue;
+          String className = "loci.visbio.overlays.Overlay" + type;
+          OverlayObject obj = createOverlay(className, trans, lineNum);
+          if (obj == null) continue;
+          
+          boolean hasNodes = false;
+          if (obj instanceof OverlayFreeform) {
+            loadedFreeforms.add(obj);
+            hasNodes = true;
+          }
+
+          // assign overlay parameters
+          int r = MathUtil.positionToRaster(lengths, pos);
+          if (r < 0 || r >= loadedOverlays.length) {
+            System.err.println("Warning: could not reconstruct " + type +
+              "overlay defined on line " + lineNum +
+              ": invalid dimensional position.");
+            continue;
+          }
+          
+          obj.x1 = x1;
+          obj.y1 = y1;
+          obj.x2 = x2;
+          obj.y2 = y2;
+          obj.text = text;
+          obj.color = color;
+          obj.filled = filled;
+          obj.group = group;
+          obj.notes = notes;
+          obj.hasNodes = hasNodes; // necessary to distinguish freeforms
+          obj.drawing = false;
+          obj.selected = false;
+          obj.computeGridParameters();
+
+          // add overlay to list
+          loadedOverlays[r].add(obj);
+        } else {
+          // parse freeform nodes
+          String nodeList = type.substring (0, type.indexOf('#'));
+          StringTokenizer st2 = new StringTokenizer (nodeList, " ");
+          int numNodes = st2.countTokens();
+          float[][] nodes = new float[2][numNodes];
+
+          int i = 0;
+          while (st2.hasMoreTokens()) {
+            String node = st2.nextToken();
+            int comma = node.indexOf(',');
+            String x, y;
+            try {
+              x = node.substring(1, comma);
+              y = node.substring(comma + 1, node.length()-1);
+              nodes[0][i] = Float.parseFloat(x);        
+              nodes[1][i] = Float.parseFloat(y);
+              i++;
+            } catch (StringIndexOutOfBoundsException exc) { // if no comma, extra spaces
+              JOptionPane.showMessageDialog(owner, "Invalid overlay file: malformatted Freeform node list.\n" 
+                  + "Error found near following string: " + node + "", "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
+              return null;
+            } catch (NumberFormatException exc) { // if parseFloat fails
+              JOptionPane.showMessageDialog(owner, "Invalid overlay file: malformatted Freeform node list.\n" 
+                  + "Error found near following string: " + node + "", "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
+              return null;
+            }
+          }
+
+          // set nodes of corresponding freeform 
+          OverlayFreeform f =  (OverlayFreeform) loadedFreeforms.elementAt(nextFreeformToRestore++);
+          f.setNodes(nodes);
         }
-        obj.x1 = x1;
-        obj.y1 = y1;
-        obj.x2 = x2;
-        obj.y2 = y2;
-        obj.text = text;
-        obj.color = color;
-        obj.filled = filled;
-        obj.group = group;
-        obj.notes = notes;
-        obj.drawing = false;
-        obj.selected = false;
-        obj.computeGridParameters();
-
-        // add overlay to list
-        loadedOverlays[r].add(obj);
       }
     }
 
+    if (nextFreeformToRestore < loadedFreeforms.size()) {
+      JOptionPane.showMessageDialog(owner, "Invalid overlay file: missing node lists for one or more Freeforms.", 
+          "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
+      return null;
+    }
+    
     if (loadedOverlays == null) {
       JOptionPane.showMessageDialog(owner,
         "Invalid overlay file: no table header found.",
@@ -207,6 +257,7 @@ public final class OverlayIO {
     String[] dims = trans.getDimTypes();
     int[] lengths = trans.getLengths();
     Vector[] overlays = trans.overlays;
+    Vector savedFreeforms = new Vector();
 
     // file header
     out.println("# " + VisBio.TITLE + " " + VisBio.VERSION +
@@ -228,6 +279,7 @@ public final class OverlayIO {
       String posString = sb.toString();
       for (int j=0; j<overlays[i].size(); j++) {
         OverlayObject obj = (OverlayObject) overlays[i].elementAt(j);
+        if (obj instanceof OverlayFreeform) savedFreeforms.add(obj);
         out.print(obj.toString());
         out.print("\t");
         out.print(posString);
@@ -250,6 +302,16 @@ public final class OverlayIO {
         out.println(obj.notes.replaceAll("\t", " "));
       }
     }
+
+    // nodes of freeforms, one freeform per line
+    for (int i=0; i<savedFreeforms.size(); i++) {
+      OverlayFreeform of = (OverlayFreeform) savedFreeforms.get(i);
+      float[][] nodes = of.getNodes();
+      for (int j=0; j<nodes[0].length; j++) {
+        out.print("("+nodes[0][j]+","+nodes[1][j]+") ");
+      }
+      out.println();
+    } 
   }
 
   /** Instantiates an overlay object of the given class. */
