@@ -235,10 +235,6 @@ public class LociDataBrowser {
 
             try {
               setDimensions();
-              if (reader.isRGB(id)) {
-                if (numC <= 3) numC = 1;
-                else numC /= 3;
-              }
 
               // CTR: stack must not be null
               int sizeX = reader.getSizeX(id);
@@ -273,7 +269,9 @@ public class LociDataBrowser {
           setDimensions();
 
           if (ipw.getImagePlus().getStackSize() != numZ * numT * numC) {
-            numC = 1;
+            System.err.println("Error, stack size mismatch with dimension
+              sizes! StackSize = " + ipw.getImagePlus().getStackSize() +
+              " numZ = " + numZ + " numT = "  + numt + " numC = " + numC);
           }
 
           FileInfo fi = ipw.getImagePlus().getOriginalFileInfo();

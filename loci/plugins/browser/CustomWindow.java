@@ -247,6 +247,19 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   // -- CustomWindow methods --
 
+  public void updateControls() {
+    zSliceSel.setMinimum(1);
+    zSliceSel.setMaximum(db.hasZ ? db.numZ + 1 : 2);
+    if (!db.hasZ) zSliceSel.setEnabled(false);
+    else zSliceSel.setEnabled(true);
+    tSliceSel.setMinimum(1);
+    tSliceSel.setMaximum(db.hasT ? db.numT + 1 : 2);
+    if (!db.hasT) tSliceSel.setEnabled(false);
+    else tSliceSel.setEnabled(true);
+    setC();
+    repaint();
+  }
+
   public void setC() {
     boolean hasThis = false;
     int numThis = -1;
@@ -335,7 +348,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
     int textGap = 0;
 
-    int nSlices = db.numZ * db.numT * c;
+    int nSlices = db.numZ * db.numT * db.numC;
     int currentSlice = imp.getCurrentSlice();
     if (db.manager != null) currentSlice = db.manager.getSlice();
 

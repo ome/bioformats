@@ -76,6 +76,17 @@ public class OptionsWindow extends JFrame implements
 
   /** Storage of what priority settings used to be.*/
   private int oldTop,oldMid,oldLow;
+  
+  FileStitcher fs;
+  
+  JComboBox[] blockBoxes;
+  String id = null,order = null,suffix = null;
+  String[] prefixes = null,blocks = null;
+  int sizeZ = -1,sizeT = -1,sizeC = -1;
+  int[] axes = null;
+  FilePattern fp = null;
+  
+  JComboBox zGroup,tGroup,cGroup;
 
   // -- Constructor --
   public OptionsWindow(int numZ, int numT, CustomWindow c) {
@@ -86,21 +97,16 @@ public class OptionsWindow extends JFrame implements
 
     manager = cw.db.manager;
     
-    FileStitcher fs = cw.db.fStitch;
+    fs = cw.db.fStitch;
 
     update = false;
 
     Border etchB = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
     
     // get FilePattern Data
-      String id = null,order = null,suffix = null;
-      String[] prefixes = null,blocks = null;
-      int sizeZ = -1,sizeT = -1,sizeC = -1;
-      int[] axes = null;
-      FilePattern fp = null;
     try {
       id = cw.db.id;
-      order = fs.getDimensionOrder(id);
+      order = fs.getDimensionOrder(id).substring(2);
       sizeZ = fs.getSizeZ(id);
       sizeT = fs.getSizeT(id);
       sizeC = fs.getSizeC(id);
@@ -135,14 +141,16 @@ public class OptionsWindow extends JFrame implements
     JLabel[] blockLabels = new JLabel[blockLabelsO.length];
     for(int i = 0;i<blockLabelsO.length;i++) {
       blockLabels[i] = (JLabel) blockLabelsO[i];
+      blockLabels[i].setForeground(getColor(i));
     }
     
     Object[] choices = {"Z-Depth", "Time", "Channel"};
-    JComboBox zGroup = new JComboBox(choices);
-    JComboBox tGroup = new JComboBox(choices);
-    tGroup.setSelectedIndex(1);
-    JComboBox cGroup = new JComboBox(choices);
-    cGroup.setSelectedIndex(2);
+    zGroup = new JComboBox(choices);
+    setBox(zGroup,0);
+    tGroup = new JComboBox(choices);
+    setBox(tGroup,1);
+    cGroup = new JComboBox(choices);
+    setBox(cGroup,2);
     zGroup.addActionListener(this);
     tGroup.addActionListener(this);
     cGroup.addActionListener(this);
@@ -157,7 +165,7 @@ public class OptionsWindow extends JFrame implements
       blockBoxesV.add(temp);
     }
     Object[] blockBoxesO = blockBoxesV.toArray();
-    JComboBox[] blockBoxes = new JComboBox[blockBoxesO.length];
+    blockBoxes = new JComboBox[blockBoxesO.length];
     for(int i = 0;i<blockBoxesO.length;i++) {
       JComboBox temp = (JComboBox) blockBoxesO[i];
       temp.setForeground(getColor(i));
@@ -248,7 +256,7 @@ public class OptionsWindow extends JFrame implements
     JLabel zL = new JLabel("Z:");
     JLabel tL = new JLabel("T:");
     JLabel cL = new JLabel("C:");
-    JLabel priorL = new JLabel("\u00B7" + "Axis Priority" + "\u00B7");
+    JLabel priorL = new JLabel("\u00B7" + "Axis Cacheing Priority" + "\u00B7");
     JLabel topL = new JLabel("Top Priority:");
     JLabel midL = new JLabel("Mid Priority:");
     JLabel lowL = new JLabel("Low Priority:");
@@ -379,6 +387,13 @@ public class OptionsWindow extends JFrame implements
     
     update = true;
   }
+  
+  private int getBoxIndex(JComboBox jcb) {
+    for(int i = 0;i<blockBoxes.length;i++) {
+      if (jcb == blockBoxes[i]) return i;
+    }
+    return -1;
+  }
 
   private Color getColor(int i) {
     switch(i) {
@@ -422,6 +437,60 @@ public class OptionsWindow extends JFrame implements
         return CacheManager.C_AXIS;
     }
     return -1;
+  }
+  
+  /** Set up the combo box to reflect appropriate axis.*/
+  private void setBox(JComboBox thisBox, int index) {
+    switch(order.charAt(index)) {
+      case 'Z':
+        thisBox.setSelectedIndex(0);
+        break;
+      case 'T':
+        thisBox.setSelectedIndex(1);
+        break;
+      case 'C':
+        thisBox.setSelectedIndex(2);
+        break;
+    }
+  }
+  
+  private char convertInt(int index) {
+    switch (index) {
+      case 0:
+        return 'Z';
+      case 1:
+        return 'T';
+      case 2:
+        return 'C';
+      default:
+        return 'Q';
+    }
+  }
+  
+  private int convertChar(char c) {
+    switch (c) {
+      case 'Z':
+        return 0;
+      case 'T':
+        return 1;
+      case 'C':
+        return 2;
+      default:
+        return 'Q';
+    }
+  }
+  
+  private int getAxis(int i) {
+    switch (i) {
+      case 0:
+        return AxisGuesser.Z_AXIS;
+      case 1:
+        return AxisGuesser.T_AXIS;
+      case 2:
+        return AxisGuesser.C_AXIS;
+      default:
+        return -55555;
+    }
   }
 
   /** Enables/Disables CacheManager options in option window.*/
@@ -559,6 +628,106 @@ public class OptionsWindow extends JFrame implements
         manager.setPriority(getConv(topBox.getSelectedIndex()),
          getConv(midBox.getSelectedIndex()),
          getConv(lowBox.getSelectedIndex()));
+      }
+      else if (source == zGroup) {
+        char oldChar = order.charAt(0);
+        int sel = zGroup.getSelectedIndex();
+        char zChar = convertInt(sel);
+        
+        sel = tGroup.getSelectedIndex();
+        char tChar = convertInt(sel);
+        if(tChar == zChar) tChar = oldChar;
+        
+        sel = cGroup.getSelectedIndex();
+        char cChar = convertInt(sel);
+        if(cChar == zChar) cChar = oldChar;
+        
+        order = String.valueOf(zChar) + String.valueOf(tChar)
+          + String.valueOf(cChar);
+        try {
+          fs.swapDimensions(id,"XY" + order);
+          sizeZ = fs.getSizeZ(id);
+          sizeT = fs.getSizeT(id);
+          sizeC = fs.getSizeC(id);
+        }
+        catch(Exception exc) {exc.printStackTrace();}
+        update = false;
+        setBox(zGroup,0);
+        setBox(tGroup,1);
+        setBox(cGroup,2);
+        update = true;
+        cw.db.setDimensions();
+        cw.updateControls();
+      }
+      else if (source == tGroup) {
+        char oldChar = order.charAt(1);
+        int sel = tGroup.getSelectedIndex();
+        char tChar = convertInt(sel);
+        
+        sel = zGroup.getSelectedIndex();
+        char zChar = convertInt(sel);
+        if(zChar == tChar) zChar = oldChar;
+        
+        sel = cGroup.getSelectedIndex();
+        char cChar = convertInt(sel);
+        if(cChar == tChar) cChar = oldChar;
+        
+        order = String.valueOf(zChar) + String.valueOf(tChar)
+          + String.valueOf(cChar);
+        try {
+          fs.swapDimensions(id,"XY" + order);
+          sizeZ = fs.getSizeZ(id);
+          sizeT = fs.getSizeT(id);
+          sizeC = fs.getSizeC(id);
+        }
+        catch(Exception exc) {exc.printStackTrace();}
+        update = false;
+        setBox(zGroup,0);
+        setBox(tGroup,1);
+        setBox(cGroup,2);
+        update = true;
+        cw.db.setDimensions();
+        cw.updateControls();
+      }
+      else if (source == cGroup) {
+        char oldChar = order.charAt(2);
+        int sel = cGroup.getSelectedIndex();
+        char cChar = convertInt(sel);
+        
+        sel = zGroup.getSelectedIndex();
+        char zChar = convertInt(sel);
+        if(zChar == cChar) zChar = oldChar;
+        
+        sel = tGroup.getSelectedIndex();
+        char tChar = convertInt(sel);
+        if(tChar == cChar) tChar = oldChar;
+        
+        order = String.valueOf(zChar) + String.valueOf(tChar)
+          + String.valueOf(cChar);
+        try {
+          fs.swapDimensions(id,"XY" + order);
+          sizeZ = fs.getSizeZ(id);
+          sizeT = fs.getSizeT(id);
+          sizeC = fs.getSizeC(id);
+        }
+        catch(Exception exc) {exc.printStackTrace();}
+        update = false;
+        setBox(zGroup,0);
+        setBox(tGroup,1);
+        setBox(cGroup,2);
+        update = true;
+        cw.db.setDimensions();
+        cw.updateControls();
+      }
+      else if (getBoxIndex((JComboBox)source) >= 0) {
+        int index = getBoxIndex((JComboBox)source);
+        axes[index] = getAxis(blockBoxes[index].getSelectedIndex());
+        try {
+          fs.setAxisTypes(id,axes);
+        }
+        catch(Exception exc) {exc.printStackTrace();}
+        cw.db.setDimensions();
+        cw.updateControls();
       }
     }
   }
