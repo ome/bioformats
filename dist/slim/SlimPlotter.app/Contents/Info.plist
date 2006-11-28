@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
+<plist version="0.9">
+<dict>
+	<key>CFBundleName</key>
+	<string>Slim Plotter</string>
+	<key>CFBundleVersion</key>
+	<string>3.x</string>
+	<key>CFBundleAllowMixedLocalizations</key>
+	<string>true</string>
+	<key>CFBundleExecutable</key>
+	<string>JavaApplicationStub</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+<!--
+	<key>CFBundleIconFile</key>
+	<string>slim.icns</string>
+-->
+	<key>Java</key>
+	<dict>
+		<key>VMOptions</key>
+		<string>-Xmx128m</string>
+		<key>MainClass</key>
+		<string>loci.apps.slim.SlimPlotter</string>
+		<key>JVMVersion</key>
+		<string>1.4+</string>
+		<key>ClassPath</key>
+			<array>
+      <string>$JAVAROOT/SlimPlotter.jar</string>
+			<string>$JAVAROOT/bio-formats.jar</string>
+			<string>$JAVAROOT/lma.jar</string>
+			<string>$JAVAROOT/visad-lite.jar</string>
+			</array>
+		<key>Properties</key>
+		<dict>
+			<key>apple.laf.useScreenMenuBar</key>
+			<string>true</string>
+			<key>apple.j3d.CheckForContextUpdateEachFrame</key>
+			<string>true</string>
+			<key>apple.awt.showGrowBox</key>
+			<string>true</string>
+			<key>swing.defaultlaf</key>
+			<string>apple.laf.AquaLookAndFeel</string>
+		</dict>
+	</dict>
+</dict>
+</plist>
