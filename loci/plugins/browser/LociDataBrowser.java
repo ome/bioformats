@@ -268,10 +268,11 @@ public class LociDataBrowser {
           ipw = new ImagePlusWrapper(id, reader, fStitch, true);
           setDimensions();
 
-          if (ipw.getImagePlus().getStackSize() != numZ * numT * numC) {
-            System.err.println("Error, stack size mismatch with dimension
-              sizes! StackSize = " + ipw.getImagePlus().getStackSize() +
-              " numZ = " + numZ + " numT = "  + numt + " numC = " + numC);
+          int stackSize = ipw.getImagePlus().getStackSize();
+          if (stackSize != numZ * numT * numC) {
+            System.err.println("Error, stack size mismatch with dimension " +
+              "sizes: stackSize=" + stackSize + ", numZ=" + numZ +
+              ", numT=" + numT + ", numC=" + numC);
           }
 
           FileInfo fi = ipw.getImagePlus().getOriginalFileInfo();
