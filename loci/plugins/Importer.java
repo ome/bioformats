@@ -181,17 +181,38 @@ public class Importer {
       int seriesCount = r.getSeriesCount(id);
       boolean[] series = new boolean[seriesCount];
       series[0] = true;
-//      store = (OMEXMLMetadataStore) r.getMetadataStore(id);
 
       // build descriptive string and range for each series
       String[] seriesStrings = new String[seriesCount];
       int[] num = new int[seriesCount];
-      int[] begin = new int[seriesCount];
-      int[] end = new int[seriesCount];
-      int[] step = new int[seriesCount];
+      int[] sizeC = new int[seriesCount];
+      int[] sizeZ = new int[seriesCount];
+      int[] sizeT = new int[seriesCount];
+      boolean[] certain = new boolean[seriesCount];
+      int[] cBegin = new int[seriesCount];
+      int[] cEnd = new int[seriesCount];
+      int[] cStep = new int[seriesCount];
+      int[] zBegin = new int[seriesCount];
+      int[] zEnd = new int[seriesCount];
+      int[] zStep = new int[seriesCount];
+      int[] tBegin = new int[seriesCount];
+      int[] tEnd = new int[seriesCount];
+      int[] tStep = new int[seriesCount];
       for (int i=0; i<seriesCount; i++) {
         r.setSeries(id, i);
         num[i] = r.getImageCount(id);
+        sizeC[i] = r.getSizeC(id);
+        sizeZ[i] = r.getSizeZ(id);
+        sizeT[i] = r.getSizeT(id);
+        certain[i] = r.isOrderCertain(id);
+        cBegin[i] = zBegin[i] = tBegin[i] = 0;
+        if (certain[i]) {
+          cEnd[i] = sizeC[i] - 1;
+          zEnd[i] = sizeZ[i] - 1;
+          tEnd[i] = sizeT[i] - 1;
+        }
+        else cEnd[i] = num[i] - 1;
+        cStep[i] = zStep[i] = tStep[i] = 1;
         StringBuffer sb = new StringBuffer();
         sb.append("Series_");
         sb.append(i + 1);
@@ -207,35 +228,29 @@ public class Importer {
         sb.append("; ");
         sb.append(num[i]);
         sb.append(" planes");
-        if (r.isOrderCertain(id)) {
+        if (certain[i]) {
           sb.append(" (");
           boolean first = true;
-          int sizeC = r.getSizeC(id);
-          int sizeZ = r.getSizeZ(id);
-          int sizeT = r.getSizeT(id);
-          if (sizeC > 1) {
-            sb.append(sizeC);
+          if (sizeC[i] > 1) {
+            sb.append(sizeC[i]);
             sb.append("C");
             first = false;
           }
-          if (sizeZ > 1) {
+          if (sizeZ[i] > 1) {
             if (!first) sb.append(" x ");
-            sb.append(sizeZ);
+            sb.append(sizeZ[i]);
             sb.append("Z");
             first = false;
           }
-          if (sizeT > 1) {
+          if (sizeT[i] > 1) {
             if (!first) sb.append(" x ");
-            sb.append(sizeT);
+            sb.append(sizeT[i]);
             sb.append("T");
             first = false;
           }
           sb.append(")");
         }
         seriesStrings[i] = sb.toString();
-        begin[i] = 0;
-        end[i] = num[i] - 1;
-        step[i] = 1;
       }
 
       // -- Step 4a: prompt for the series to open, if necessary --
@@ -271,9 +286,28 @@ public class Importer {
             if (!series[i]) continue;
             rd.addMessage(seriesStrings[i].replaceAll("_", " "));
             String s = "_" + (i + 1);
-            rd.addNumericField("Begin" + s, begin[i] + 1, 0);
-            rd.addNumericField("End" + s, end[i] + 1, 0);
-            rd.addNumericField("Step" + s, step[i], 0);
+            if (certain[i]) {
+              if (sizeC[i] > 1) {
+                rd.addNumericField("C_Begin" + s, cBegin[i] + 1, 0);
+                rd.addNumericField("C_End" + s, cEnd[i] + 1, 0);
+                rd.addNumericField("C_Step" + s, cStep[i], 0);
+              }
+              if (sizeZ[i] > 1) {
+                rd.addNumericField("Z_Begin" + s, zBegin[i] + 1, 0);
+                rd.addNumericField("Z_End" + s, zEnd[i] + 1, 0);
+                rd.addNumericField("Z_Step" + s, zStep[i], 0);
+              }
+              if (sizeT[i] > 1) {
+                rd.addNumericField("T_Begin" + s, tBegin[i] + 1, 0);
+                rd.addNumericField("T_End" + s, tEnd[i] + 1, 0);
+                rd.addNumericField("T_Step" + s, tStep[i], 0);
+              }
+            }
+            else {
+              rd.addNumericField("Begin" + s, cBegin[i] + 1, 0);
+              rd.addNumericField("End" + s, cEnd[i] + 1, 0);
+              rd.addNumericField("Step" + s, cStep[i], 0);
+            }
           }
           addScrollBars(rd);
           rd.showDialog();
@@ -283,14 +317,44 @@ public class Importer {
           }
           for (int i=0; i<seriesCount; i++) {
             if (!series[i]) continue;
-            begin[i] = (int) rd.getNextNumber() - 1;
-            end[i] = (int) rd.getNextNumber() - 1;
-            step[i] = (int) rd.getNextNumber();
-            if (begin[i] < 0) begin[i] = 0;
-            if (begin[i] >= num[i]) begin[i] = num[i] - 1;
-            if (end[i] < begin[i]) end[i] = begin[i];
-            if (end[i] >= num[i]) end[i] = num[i] - 1;
-            if (step[i] < 1) step[i] = 1;
+            if (certain[i]) {
+              if (sizeC[i] > 1) {
+                cBegin[i] = (int) rd.getNextNumber() - 1;
+                cEnd[i] = (int) rd.getNextNumber() - 1;
+                cStep[i] = (int) rd.getNextNumber();
+              }
+              if (sizeZ[i] > 1) {
+                zBegin[i] = (int) rd.getNextNumber() - 1;
+                zEnd[i] = (int) rd.getNextNumber() - 1;
+                zStep[i] = (int) rd.getNextNumber();
+              }
+              if (sizeT[i] > 1) {
+                tBegin[i] = (int) rd.getNextNumber() - 1;
+                tEnd[i] = (int) rd.getNextNumber() - 1;
+                tStep[i] = (int) rd.getNextNumber();
+              }
+            }
+            else {
+              cBegin[i] = (int) rd.getNextNumber() - 1;
+              cEnd[i] = (int) rd.getNextNumber() - 1;
+              cStep[i] = (int) rd.getNextNumber();
+            }
+            int maxC = certain[i] ? sizeC[i] : num[i];
+            if (cBegin[i] < 0) cBegin[i] = 0;
+            if (cBegin[i] >= maxC) cBegin[i] = maxC - 1;
+            if (cEnd[i] < cBegin[i]) cEnd[i] = cBegin[i];
+            if (cEnd[i] >= maxC) cEnd[i] = maxC - 1;
+            if (cStep[i] < 1) cStep[i] = 1;
+            if (zBegin[i] < 0) zBegin[i] = 0;
+            if (zBegin[i] >= sizeZ[i]) zBegin[i] = sizeZ[i] - 1;
+            if (zEnd[i] < zBegin[i]) zEnd[i] = zBegin[i];
+            if (zEnd[i] >= sizeZ[i]) zEnd[i] = sizeZ[i] - 1;
+            if (zStep[i] < 1) zStep[i] = 1;
+            if (tBegin[i] < 0) tBegin[i] = 0;
+            if (tBegin[i] >= sizeT[i]) tBegin[i] = sizeT[i] - 1;
+            if (tEnd[i] < tBegin[i]) tEnd[i] = tBegin[i];
+            if (tEnd[i] >= sizeT[i]) tEnd[i] = sizeT[i] - 1;
+            if (tStep[i] < 1) tStep[i] = 1;
           }
         }
       }
@@ -334,7 +398,22 @@ public class Importer {
         String imageName = fileName;
         if (name != null && name.length() > 0) imageName += " - " + name;
 
-        int total = (end[i] - begin[i]) / step[i] + 1;
+        boolean[] load = new boolean[num[i]];
+        if (certain[i]) {
+          for (int c=cBegin[i]; c<=cEnd[i]; c+=cStep[i]) {
+            for (int z=zBegin[i]; z<=zEnd[i]; z+=zStep[i]) {
+              for (int t=tBegin[i]; t<=tEnd[i]; t+=tStep[i]) {
+                int index = r.getIndex(id, z, c, t);
+                load[index] = true;
+              }
+            }
+          }
+        }
+        else {
+          for (int j=cBegin[i]; j<=cEnd[i]; j+=cStep[i]) load[j] = true;
+        }
+        int total = 0;
+        for (int j=0; j<num[i]; j++) if (load[j]) total++;
 
         // dump OME-XML to ImageJ's description field, if available
         FileInfo fi = new FileInfo();
@@ -343,29 +422,17 @@ public class Importer {
         long startTime = System.currentTimeMillis();
         long time = startTime;
         ImageStack stackB = null, stackS = null, stackF = null, stackO = null;
-        int channels = r.getSizeC(id);
-        int sizeZ = r.getSizeZ(id);
-        int sizeT = r.getSizeT(id);
-
-        if (specifyRanges && num[i] > 1) {
-          // reset sizeZ and sizeT if we aren't opening the entire series
-          sizeZ = begin[i];
-          sizeT = end[i];
-          // CTR: huh? this makes no sense
-          /*
-          if (channels > 1) {
-            channels = r.getIndex(id, 0, 1, 0) - r.getIndex(id, 0, 0, 0);
-          }
-          */
-        }
 
         int q = 0;
-        for (int j=begin[i]; j<=end[i]; j+=step[i]) {
+        for (int j=0; j<num[i]; j++) {
+          if (!load[j]) continue;
+
           // limit message update rate
           long clock = System.currentTimeMillis();
           if (clock - time >= 100) {
-            IJ.showStatus("Reading " + (seriesCount > 1 ? "series " +
-              (i + 1) + ", " : "") + "plane " + (j + 1) + "/" + (end[i] + 1));
+            IJ.showStatus("Reading " +
+              (seriesCount > 1 ? ("series " + (i + 1) + ", ") : "") +
+              "plane " + (j + 1) + "/" + num[i]);
             time = clock;
           }
           IJ.showProgress((double) q++ / total);
@@ -579,28 +646,28 @@ public class Importer {
         ImagePlus imp = null;
         if (stackB != null) {
           if (!mergeChannels && splitWindows) {
-            slice(stackB, id, sizeZ, channels, sizeT,
+            slice(stackB, id, sizeZ[i], sizeC[i], sizeT[i],
               fi, r, specifyRanges, colorize);
           }
           else imp = new ImagePlus(imageName, stackB);
         }
         if (stackS != null) {
           if (!mergeChannels && splitWindows) {
-            slice(stackS, id, sizeZ, channels, sizeT,
+            slice(stackS, id, sizeZ[i], sizeC[i], sizeT[i],
               fi, r, specifyRanges, colorize);
           }
           else imp = new ImagePlus(imageName, stackS);
         }
         if (stackF != null) {
           if (!mergeChannels && splitWindows) {
-            slice(stackF, id, sizeZ, channels, sizeT,
+            slice(stackF, id, sizeZ[i], sizeC[i], sizeT[i],
               fi, r, specifyRanges, colorize);
           }
           else imp = new ImagePlus(imageName, stackF);
         }
         if (stackO != null) {
           if (!mergeChannels && splitWindows) {
-            slice(stackO, id, sizeZ, channels, sizeT,
+            slice(stackO, id, sizeZ[i], sizeC[i], sizeT[i],
               fi, r, specifyRanges, colorize);
           }
           else imp = new ImagePlus(imageName, stackO);
