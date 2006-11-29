@@ -39,10 +39,11 @@ import javax.swing.text.Document;
 import loci.formats.ExtensionFileFilter;
 import loci.visbio.data.*;
 import loci.visbio.util.*;
+import visad.util.Util;
 
 /** OverlayWidget is a set of GUI controls for an overlay transform. */
 public class OverlayWidget extends JPanel implements ActionListener,
-  DocumentListener, ListSelectionListener, TransformListener
+  DocumentListener, ListSelectionListener, Runnable, TransformListener
 {
 
   // -- Fields --
@@ -437,15 +438,7 @@ public class OverlayWidget extends JPanel implements ActionListener,
 
   /** Updates items on overlay list based on current transform state. */
   public void refreshListObjects() {
-    OverlayObject[] obj = overlay.getObjects();
-    ignoreEvents = true;
-    overlayListModel.clear();
-    if (obj != null) {
-      overlayListModel.ensureCapacity(obj.length);
-      for (int i=0; i<obj.length; i++) overlayListModel.addElement(obj[i]);
-    }
-    ignoreEvents = false;
-    refreshListSelection();
+    Util.invoke(false, this);
   }
 
   /** Updates overlay list's selection based on current transform state. */
@@ -763,6 +756,21 @@ public class OverlayWidget extends JPanel implements ActionListener,
       remove.setEnabled(sel.length > 0);
       notifyListeners(true);
     }
+  }
+
+  // -- Runnable API methods --
+
+  /** Refreshes the list selection. */
+  public void run() {
+    OverlayObject[] obj = overlay.getObjects();
+    ignoreEvents = true;
+    overlayListModel.clear();
+    if (obj != null) {
+      overlayListModel.ensureCapacity(obj.length);
+      for (int i=0; i<obj.length; i++) overlayListModel.addElement(obj[i]);
+    }
+    ignoreEvents = false;
+    refreshListSelection();
   }
 
   // -- TransformListener API methods --

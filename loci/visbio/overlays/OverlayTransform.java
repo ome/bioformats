@@ -133,7 +133,9 @@ public class OverlayTransform extends DataTransform
   public void addObject(OverlayObject obj, int[] pos) {
     int ndx = MathUtil.positionToRaster(lengths, pos);
     if (ndx < 0 || ndx >= overlays.length) return;
-    overlays[ndx].add(obj);
+    synchronized (overlays) {
+      overlays[ndx].add(obj);
+    }
     if (ObjectUtil.arraysEqual(pos, this.pos)) controls.refreshListObjects();
     notifyListeners(new TransformEvent(this));
   }
@@ -145,7 +147,9 @@ public class OverlayTransform extends DataTransform
   public void removeObject(OverlayObject obj, int[] pos) {
     int ndx = MathUtil.positionToRaster(lengths, pos);
     if (ndx < 0 || ndx >= overlays.length) return;
-    overlays[ndx].remove(obj);
+    synchronized (overlays) {
+      overlays[ndx].remove(obj);
+    }
     if (ObjectUtil.arraysEqual(pos, this.pos)) controls.refreshListObjects();
     notifyListeners(new TransformEvent(this));
   }
@@ -159,13 +163,15 @@ public class OverlayTransform extends DataTransform
     if (ndx < 0 || ndx >= overlays.length) return;
     boolean anyRemoved = false;
     int i = 0;
-    while (i < overlays[ndx].size()) {
-      OverlayObject obj = (OverlayObject) overlays[ndx].elementAt(i);
-      if (obj.isSelected()) {
-        overlays[ndx].removeElementAt(i);
-        anyRemoved = true;
+    synchronized (overlays) {
+      while (i < overlays[ndx].size()) {
+        OverlayObject obj = (OverlayObject) overlays[ndx].elementAt(i);
+        if (obj.isSelected()) {
+          overlays[ndx].removeElementAt(i);
+          anyRemoved = true;
+        }
+        else i++;
       }
-      else i++;
     }
     if (anyRemoved) {
       if (ObjectUtil.arraysEqual(pos, this.pos)) controls.refreshListObjects();
@@ -186,13 +192,15 @@ public class OverlayTransform extends DataTransform
   public void copySelectedObjects(int[] pos) {
     int ndx = MathUtil.positionToRaster(lengths, pos);
     if (ndx < 0 || ndx >= overlays.length) return;
-    clipboard.removeAllElements();
-    clipboardPos = pos;
-    for (int i=0; i<overlays[ndx].size(); i++) {
-      OverlayObject obj = (OverlayObject) overlays[ndx].elementAt(i);
-      if (obj.isSelected()) clipboard.add(obj);
+    synchronized (overlays) {
+      clipboard.removeAllElements();
+      clipboardPos = pos;
+      for (int i=0; i<overlays[ndx].size(); i++) {
+        OverlayObject obj = (OverlayObject) overlays[ndx].elementAt(i);
+        if (obj.isSelected()) clipboard.add(obj);
+      }
+      controls.refreshPasteComponent(!clipboard.isEmpty());
     }
-    controls.refreshPasteComponent(!clipboard.isEmpty());
   }
 
   /** Pastes copied objects at the current dimensional position. */
@@ -200,26 +208,28 @@ public class OverlayTransform extends DataTransform
 
   /** Pastes copied objects at the given dimensional position. */
   public void pasteObjects(int[] pos) {
-    if (clipboard.isEmpty()) return;
     int ndx = MathUtil.positionToRaster(lengths, pos);
     if (ndx < 0 || ndx >= overlays.length) return;
-    for (int i=0; i<clipboard.size(); i++) {
-      OverlayObject orig = (OverlayObject) clipboard.elementAt(i);
-      OverlayObject obj =
-        OverlayIO.createOverlay(orig.getClass().getName(), this);
-      obj.x1 = orig.x1;
-      obj.y1 = orig.y1;
-      obj.x2 = orig.x2;
-      obj.y2 = orig.y2;
-      obj.text = orig.text;
-      obj.color = orig.color;
-      obj.filled = orig.filled;
-      obj.group = orig.group;
-      obj.notes = orig.notes;
-      obj.drawing = false;
-      obj.selected = true;
-      obj.computeGridParameters();
-      overlays[ndx].add(obj);
+    synchronized (overlays) {
+      if (clipboard.isEmpty()) return;
+      for (int i=0; i<clipboard.size(); i++) {
+        OverlayObject orig = (OverlayObject) clipboard.elementAt(i);
+        OverlayObject obj =
+          OverlayIO.createOverlay(orig.getClass().getName(), this);
+        obj.x1 = orig.x1;
+        obj.y1 = orig.y1;
+        obj.x2 = orig.x2;
+        obj.y2 = orig.y2;
+        obj.text = orig.text;
+        obj.color = orig.color;
+        obj.filled = orig.filled;
+        obj.group = orig.group;
+        obj.notes = orig.notes;
+        obj.drawing = false;
+        obj.selected = true;
+        obj.computeGridParameters();
+        overlays[ndx].add(obj);
+      }
     }
     controls.refreshListObjects();
     notifyListeners(new TransformEvent(this));
@@ -251,94 +261,96 @@ public class OverlayTransform extends DataTransform
       return "Invalid dimensional position.";
     }
 
-    // grab overlay from the clipboard
-    int size = clipboard.size();
-    if (size == 0) {
-      return "You must first copy an overlay to the clipboard.";
-    }
-    else if (size > 1) {
-      return "There must not be multiple overlays on the clipboard.";
-    }
-    OverlayObject clip = (OverlayObject) clipboard.firstElement();
-
-    // grab currently selected overlay
-    OverlayObject sel = null;
-    for (int i=0; i<overlays[ndx].size(); i++) {
-      OverlayObject obj = (OverlayObject) overlays[ndx].elementAt(i);
-      if (obj.isSelected()) {
-        if (sel != null) {
-          return "There must not be multiple overlays selected.";
-        }
-        sel = obj;
+    synchronized (overlays) {
+      // grab overlay from the clipboard
+      int size = clipboard.size();
+      if (size == 0) {
+        return "You must first copy an overlay to the clipboard.";
       }
-    }
-    if (sel == null) return "There must be an overlay selected.";
-
-    // ensure matching types
-    if (!clip.getClass().equals(sel.getClass())) {
-      return "The overlay on the clipboard must " +
-        "be the same kind as the selected overlay.";
-    }
-
-    // check dimensional positions
-    if (pos.length != clipboardPos.length) return "Incompatible overlays.";
-    int diffIndex = -1;
-    for (int i=0; i<pos.length; i++) {
-      if (pos[i] != clipboardPos[i]) {
-        if (diffIndex != -1) {
-          return "Dimensional positions of copied overlay and selected " +
-            "overlay must not vary across multiple axes.";
-        }
-        diffIndex = i;
+      else if (size > 1) {
+        return "There must not be multiple overlays on the clipboard.";
       }
-    }
-    if (diffIndex == -1) {
-      return "Nothing to distribute -- copied overlay and selected overlay " +
-        "have identical dimensional positions.";
-    }
-    int distance = pos[diffIndex] - clipboardPos[diffIndex];
-    boolean reverse = distance < 0;
-    if (reverse) distance = -distance;
-    if (distance < 2) {
-      return "Nothing to distribute -- there are no frames between copied " +
-        "overlay and selected overlay.";
-    }
+      OverlayObject clip = (OverlayObject) clipboard.firstElement();
 
-    // compile some information about the overlays
-    String className = sel.getClass().getName();
-    boolean filled = clip.filled && sel.filled;
-    String group = ObjectUtil.objectsEqual(clip.group, sel.group) ?
-      clip.group : null;
-    String notes = ObjectUtil.objectsEqual(clip.notes, sel.notes) ?
-      clip.notes : null;
+      // grab currently selected overlay
+      OverlayObject sel = null;
+      for (int i=0; i<overlays[ndx].size(); i++) {
+        OverlayObject obj = (OverlayObject) overlays[ndx].elementAt(i);
+        if (obj.isSelected()) {
+          if (sel != null) {
+            return "There must not be multiple overlays selected.";
+          }
+          sel = obj;
+        }
+      }
+      if (sel == null) return "There must be an overlay selected.";
 
-    // loop through intermediate dimensional positions
-    int inc = reverse ? 1 : -1;
-    int[] p = new int[pos.length];
-    System.arraycopy(pos, 0, p, 0, pos.length);
-    for (int i=1; i<distance; i++) {
-      p[diffIndex] = pos[diffIndex] + i * inc;
-      ndx = MathUtil.positionToRaster(lengths, p);
+      // ensure matching types
+      if (!clip.getClass().equals(sel.getClass())) {
+        return "The overlay on the clipboard must " +
+          "be the same kind as the selected overlay.";
+      }
 
-      OverlayObject obj = OverlayIO.createOverlay(className, this);
+      // check dimensional positions
+      if (pos.length != clipboardPos.length) return "Incompatible overlays.";
+      int diffIndex = -1;
+      for (int i=0; i<pos.length; i++) {
+        if (pos[i] != clipboardPos[i]) {
+          if (diffIndex != -1) {
+            return "Dimensional positions of copied overlay and selected " +
+              "overlay must not vary across multiple axes.";
+          }
+          diffIndex = i;
+        }
+      }
+      if (diffIndex == -1) {
+        return "Nothing to distribute -- copied overlay and selected overlay " +
+          "have identical dimensional positions.";
+      }
+      int distance = pos[diffIndex] - clipboardPos[diffIndex];
+      boolean reverse = distance < 0;
+      if (reverse) distance = -distance;
+      if (distance < 2) {
+        return "Nothing to distribute -- there are no frames between copied " +
+          "overlay and selected overlay.";
+      }
 
-      float q = (float) i / distance;
-      obj.x1 = q * clip.x1 + (1 - q) * sel.x1;
-      obj.y1 = q * clip.y1 + (1 - q) * sel.y1;
-      obj.x2 = q * clip.x2 + (1 - q) * sel.x2;
-      obj.y2 = q * clip.y2 + (1 - q) * sel.y2;
-      obj.color = new Color(
-        (int) (q * clip.color.getRed() + (1 - q) * sel.color.getRed()),
-        (int) (q * clip.color.getGreen() + (1 - q) * sel.color.getGreen()),
-        (int) (q * clip.color.getBlue() + (1 - q) * sel.color.getBlue()));
-      obj.filled = filled;
-      obj.group = group;
-      obj.notes = notes;
-      obj.drawing = false;
-      obj.selected = false;
-      obj.computeGridParameters();
+      // compile some information about the overlays
+      String className = sel.getClass().getName();
+      boolean filled = clip.filled && sel.filled;
+      String group = ObjectUtil.objectsEqual(clip.group, sel.group) ?
+        clip.group : null;
+      String notes = ObjectUtil.objectsEqual(clip.notes, sel.notes) ?
+        clip.notes : null;
 
-      overlays[ndx].add(obj);
+      // loop through intermediate dimensional positions
+      int inc = reverse ? 1 : -1;
+      int[] p = new int[pos.length];
+      System.arraycopy(pos, 0, p, 0, pos.length);
+      for (int i=1; i<distance; i++) {
+        p[diffIndex] = pos[diffIndex] + i * inc;
+        ndx = MathUtil.positionToRaster(lengths, p);
+
+        OverlayObject obj = OverlayIO.createOverlay(className, this);
+
+        float q = (float) i / distance;
+        obj.x1 = q * clip.x1 + (1 - q) * sel.x1;
+        obj.y1 = q * clip.y1 + (1 - q) * sel.y1;
+        obj.x2 = q * clip.x2 + (1 - q) * sel.x2;
+        obj.y2 = q * clip.y2 + (1 - q) * sel.y2;
+        obj.color = new Color(
+          (int) (q * clip.color.getRed() + (1 - q) * sel.color.getRed()),
+          (int) (q * clip.color.getGreen() + (1 - q) * sel.color.getGreen()),
+          (int) (q * clip.color.getBlue() + (1 - q) * sel.color.getBlue()));
+        obj.filled = filled;
+        obj.group = group;
+        obj.notes = notes;
+        obj.drawing = false;
+        obj.selected = false;
+        obj.computeGridParameters();
+
+        overlays[ndx].add(obj);
+      }
     }
 
     notifyListeners(new TransformEvent(this));
@@ -493,76 +505,77 @@ public class OverlayTransform extends DataTransform
       System.err.println(name + ": invalid dimensionality (" + dim + ")");
       return null;
     }
-
     int q = MathUtil.positionToRaster(lengths, pos);
     if (q < 0 || q >= overlays.length) return null;
-    int size = overlays[q].size();
-    FieldImpl rgbField = null, txtField = null;
-    try {
-      if (size > 0) {
-        // compute number of selected objects and number of text objects
-        int rgbSize = 0, txtSize = 0, sel = 0, outline = 0;
-        for (int i=0; i<size; i++) {
-          OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
-          if (obj.hasText()) {
-            if (drawText || obj.isSelected()) txtSize++;
-            else outline++;
+    synchronized (overlays) {
+      int size = overlays[q].size();
+      FieldImpl rgbField = null, txtField = null;
+      try {
+        if (size > 0) {
+          // compute number of selected objects and number of text objects
+          int rgbSize = 0, txtSize = 0, sel = 0, outline = 0;
+          for (int i=0; i<size; i++) {
+            OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
+            if (obj.hasText()) {
+              if (drawText || obj.isSelected()) txtSize++;
+              else outline++;
+            }
+            else rgbSize++;
+            // do not paint grids for objects still in the initial draw phase
+            if (obj.isSelected() && !obj.isDrawing()) sel++;
           }
-          else rgbSize++;
-          // do not paint grids for objects still in the initial draw phase
-          if (obj.isSelected() && !obj.isDrawing()) sel++;
-        }
-        RealType index = RealType.getRealType("overlay_index");
+          RealType index = RealType.getRealType("overlay_index");
 
-        // compile standard objects into RGB field
-        if (rgbSize > 0 || sel > 0 || outline > 0) {
-          FunctionType fieldType = new FunctionType(index,
-            new FunctionType(getDomainType(), getRangeType()));
-          GriddedSet fieldSet = new Integer1DSet(rgbSize + sel + outline);
-          rgbField = new FieldImpl(fieldType, fieldSet);
-          // compute overlay data for each non-text object
-          for (int i=0, c=0; i<size && c<rgbSize; i++) {
-            OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
-            if (obj.hasText()) continue;
-            rgbField.setSample(c++, obj.getData(), false);
+          // compile standard objects into RGB field
+          if (rgbSize > 0 || sel > 0 || outline > 0) {
+            FunctionType fieldType = new FunctionType(index,
+              new FunctionType(getDomainType(), getRangeType()));
+            GriddedSet fieldSet = new Integer1DSet(rgbSize + sel + outline);
+            rgbField = new FieldImpl(fieldType, fieldSet);
+            // compute overlay data for each non-text object
+            for (int i=0, c=0; i<size && c<rgbSize; i++) {
+              OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
+              if (obj.hasText()) continue;
+              rgbField.setSample(c++, obj.getData(), false);
+            }
+            // compute selection grid for each selected object
+            for (int i=0, c=0; i<size && c<sel; i++) {
+              OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
+              if (!obj.isSelected() || obj.isDrawing()) continue;
+              rgbField.setSample(rgbSize + c++, obj.getSelectionGrid(), false);
+            }
+            // compute outline grid for each invisible text object
+            for (int i=0, c=0; i<size && c<outline; i++) {
+              OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
+              if (!obj.hasText() || obj.isSelected()) continue;
+              rgbField.setSample(rgbSize + sel + c++,
+                obj.getSelectionGrid(true), false);
+            }
           }
-          // compute selection grid for each selected object
-          for (int i=0, c=0; i<size && c<sel; i++) {
-            OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
-            if (!obj.isSelected() || obj.isDrawing()) continue;
-            rgbField.setSample(rgbSize + c++, obj.getSelectionGrid(), false);
-          }
-          // compute outline grid for each invisible text object
-          for (int i=0, c=0; i<size && c<outline; i++) {
-            OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
-            if (!obj.hasText() || obj.isSelected()) continue;
-            rgbField.setSample(rgbSize + sel + c++,
-              obj.getSelectionGrid(true), false);
-          }
-        }
 
-        // compile text objects into text field
-        if (txtSize > 0) {
-          FunctionType fieldType = new FunctionType(index,
-            new FunctionType(getDomainType(), getTextRangeType()));
-          GriddedSet fieldSet = new Integer1DSet(txtSize);
-          txtField = new FieldImpl(fieldType, fieldSet);
-          // compute overlay data for each text object
-          int c = 0;
-          for (int i=0; i<size && c<txtSize; i++) {
-            OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
-            if (!obj.hasText() || !drawText) continue;
-            txtField.setSample(c++, obj.getData(), false);
+          // compile text objects into text field
+          if (txtSize > 0) {
+            FunctionType fieldType = new FunctionType(index,
+              new FunctionType(getDomainType(), getTextRangeType()));
+            GriddedSet fieldSet = new Integer1DSet(txtSize);
+            txtField = new FieldImpl(fieldType, fieldSet);
+            // compute overlay data for each text object
+            int c = 0;
+            for (int i=0; i<size && c<txtSize; i++) {
+              OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
+              if (!obj.hasText() || !drawText) continue;
+              txtField.setSample(c++, obj.getData(), false);
+            }
           }
         }
+        if (rgbField == null && txtField == null) return null;
+        else if (rgbField == null) return txtField;
+        else if (txtField == null) return rgbField;
+        else return new Tuple(new Data[] {rgbField, txtField}, false);
       }
-      if (rgbField == null && txtField == null) return null;
-      else if (rgbField == null) return txtField;
-      else if (txtField == null) return rgbField;
-      else return new Tuple(new Data[] {rgbField, txtField}, false);
+      catch (VisADException exc) { exc.printStackTrace(); }
+      catch (RemoteException exc) { exc.printStackTrace(); }
     }
-    catch (VisADException exc) { exc.printStackTrace(); }
-    catch (RemoteException exc) { exc.printStackTrace(); }
     return null;
   }
 
