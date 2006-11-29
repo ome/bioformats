@@ -504,8 +504,13 @@ public class PerkinElmerReader extends FormatReader {
     }
     if (sizeT[0] <= 0) sizeT[0] = 1;
 
-    if (sizeZ[0] < sizeT[0]) currentOrder[0] += "ZT";
-    else currentOrder[0] += "TZ";
+    Object o = metadata.get("Z slice space");
+    if (o != null) {
+      float spacing = Float.parseFloat(o.toString());
+      if (spacing <= 1f) currentOrder[0] += "TZ";
+      else currentOrder[0] += "ZT";
+    }
+    else currentOrder[0] += "ZT"; // doesn't matter, since Z = T = 1 
 
     // Populate metadata store
 

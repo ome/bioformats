@@ -359,12 +359,51 @@ public class LeicaReader extends BaseTiffReader {
         Vector f = new Vector();
         byte[] tempData = (byte[]) headerIFDs[i].get(new Integer(15));
         int tempImages = DataTools.bytesToInt(tempData, 0, 4, littleEndian);
-        String dirPrefix = new File(getMappedId(id)).getParent();
+        String dirPrefix = 
+          new File(getMappedId(id)).getAbsoluteFile().getParent();
         dirPrefix = dirPrefix == null ? "" : (dirPrefix + File.separator);
         for (int j=0; j<tempImages; j++) {
           // read in each filename
           f.add(dirPrefix + DataTools.stripString(
             new String(tempData, 20 + 2*(j*nameLength), 2*nameLength)));
+          // test to make sure the path is valid
+          File test = new File((String) f.get(f.size() - 1));
+          if (!test.exists()) {
+            // TIFF files were renamed
+
+            File[] dirListing = (new File(dirPrefix)).listFiles();
+            
+            int pos = 0;  
+            int maxChars = 0;
+            for (int k=0; k<dirListing.length; k++) {
+              int pt = 0;
+              int chars = 0;
+              String path = dirListing[k].getAbsolutePath();
+              if (path.toLowerCase().endsWith("tif") || 
+                path.toLowerCase().endsWith("tiff"))  
+              {
+                while (path.charAt(pt) == test.getAbsolutePath().charAt(pt)) {
+                  pt++;
+                  chars++;
+                }
+                int newPt = path.length() - 1;
+                int oldPt = test.getAbsolutePath().length() - 1;
+                while (path.charAt(newPt) == 
+                  test.getAbsolutePath().charAt(oldPt)) 
+                {
+                  newPt--;
+                  oldPt--;
+                  chars++;
+                }
+                if (chars > maxChars) {
+                  maxChars = chars;
+                  pos = k;
+                }
+              }
+            }
+
+            f.set(f.size() - 1, dirListing[pos].getAbsolutePath());
+          }
         }
 
         files[i] = f;
