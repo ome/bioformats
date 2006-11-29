@@ -432,6 +432,12 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#setColorTableIgnored(boolean) */
   public void setColorTableIgnored(boolean ignore) {
     ignoreColorTable = ignore;
+    reader.setColorTableIgnored(ignore);
+    if (readers != null) {
+      for (int i=0; i<readers.length; i++) {
+        readers[i].setColorTableIgnored(ignore);
+      }
+    }
   }
 
   /* @see IFormatReader#isColorTableIgnored() */

@@ -675,7 +675,7 @@ public abstract class BaseTiffReader extends FormatReader {
     try {
       int p = TiffTools.getIFDIntValue(ifds[0],
         TiffTools.PHOTOMETRIC_INTERPRETATION, true, 0);
-      return (!ignoreColorTable &&
+      return (!isColorTableIgnored() &&
         (p == TiffTools.RGB_PALETTE || p == TiffTools.CFA_ARRAY)) ||
         p == TiffTools.RGB;
     }

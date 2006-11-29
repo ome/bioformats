@@ -1261,21 +1261,40 @@ public final class ImageTools {
     int oldWidth, int width, int height)
   {
     int oldHeight = b.length / (oldWidth * c);
-    if (width < oldWidth) width = oldWidth;
-    if (height < oldHeight) height = oldHeight;
-    if (width == oldWidth && height == oldHeight) return b;
+    byte[] padded = new byte[height * width * c];
 
     int wClip = (width - oldWidth) / 2;
     int hClip = (height - oldHeight) / 2;
 
-    byte[] padded = new byte[width * height * c];
-
-    for (int oy=0, y=0; oy<oldHeight; oy++, y++) {
-      int oldIndex = oldWidth * c * oy;
-      int index = width * c * (y + hClip) + c * wClip;
-      System.arraycopy(b, oldIndex, padded, index, oldWidth * c);
+    int h = height < oldHeight ? height : oldHeight;
+   
+    if (interleaved) {
+      int len = oldWidth < width ? oldWidth : width;
+      if (h == oldHeight) {
+        for (int y=0; y<h*c; y++) {
+          int oldIndex = oldWidth * y;
+          int index = width * y;
+          System.arraycopy(b, oldIndex, padded, index, len);
+        }
+      }
+      else {
+        for (int ch=0; ch<c; ch++) {
+          for (int y=0; y<h; y++) {
+            int oldIndex = oldWidth * ch * oldHeight + oldWidth * y;
+            int index = width * ch * height + width * y;
+            System.arraycopy(b, oldIndex, padded, index, len);
+          }
+        }
+      }
     }
-
+    else {
+      int len = oldWidth < width ? oldWidth * c : width * c;
+      for (int oy=0, y=0; oy<oldHeight; oy++, y++) {
+        int oldIndex = oldWidth * c * y;
+        int index = width * c * (y + hClip) + c * wClip;
+        System.arraycopy(b, oldIndex, padded, index, len);
+      }
+    }  
     return padded;
   }
 
@@ -1287,21 +1306,40 @@ public final class ImageTools {
     int oldWidth, int width, int height)
   {
     int oldHeight = b.length / (oldWidth * c);
-    if (width < oldWidth) width = oldWidth;
-    if (height < oldHeight) height = oldHeight;
-    if (width == oldWidth && height == oldHeight) return b;
+    short[] padded = new short[height * width * c];
 
     int wClip = (width - oldWidth) / 2;
     int hClip = (height - oldHeight) / 2;
 
-    short[] padded = new short[width * height * c];
-
-    for (int oy=0, y=0; oy<oldHeight; oy++, y++) {
-      int oldIndex = oldWidth * c * oy;
-      int index = width * c * (y + hClip) + c * wClip;
-      System.arraycopy(b, oldIndex, padded, index, oldWidth * c);
+    int h = height < oldHeight ? height : oldHeight;
+   
+    if (interleaved) {
+      int len = oldWidth < width ? oldWidth : width;
+      if (h == oldHeight) {
+        for (int y=0; y<h*c; y++) {
+          int oldIndex = oldWidth * y;
+          int index = width * y;
+          System.arraycopy(b, oldIndex, padded, index, len);
+        }
+      }
+      else {
+        for (int ch=0; ch<c; ch++) {
+          for (int y=0; y<h; y++) {
+            int oldIndex = oldWidth * ch * oldHeight + oldWidth * y;
+            int index = width * ch * height + width * y;
+            System.arraycopy(b, oldIndex, padded, index, len);
+          }
+        }
+      }
     }
-
+    else {
+      int len = oldWidth < width ? oldWidth * c : width * c;
+      for (int oy=0, y=0; oy<oldHeight; oy++, y++) {
+        int oldIndex = oldWidth * c * y;
+        int index = width * c * (y + hClip) + c * wClip;
+        System.arraycopy(b, oldIndex, padded, index, len);
+      }
+    }  
     return padded;
   }
 
@@ -1313,21 +1351,40 @@ public final class ImageTools {
     int oldWidth, int width, int height)
   {
     int oldHeight = b.length / (oldWidth * c);
-    if (width < oldWidth) width = oldWidth;
-    if (height < oldHeight) height = oldHeight;
-    if (width == oldWidth && height == oldHeight) return b;
+    int[] padded = new int[height * width * c];
 
     int wClip = (width - oldWidth) / 2;
     int hClip = (height - oldHeight) / 2;
 
-    int[] padded = new int[width * height * c];
-
-    for (int oy=0, y=0; oy<oldHeight; oy++, y++) {
-      int oldIndex = oldWidth * c * oy;
-      int index = width * c * (y + hClip) + c * wClip;
-      System.arraycopy(b, oldIndex, padded, index, oldWidth * c);
+    int h = height < oldHeight ? height : oldHeight;
+   
+    if (interleaved) {
+      int len = oldWidth < width ? oldWidth : width;
+      if (h == oldHeight) {
+        for (int y=0; y<h*c; y++) {
+          int oldIndex = oldWidth * y;
+          int index = width * y;
+          System.arraycopy(b, oldIndex, padded, index, len);
+        }
+      }
+      else {
+        for (int ch=0; ch<c; ch++) {
+          for (int y=0; y<h; y++) {
+            int oldIndex = oldWidth * ch * oldHeight + oldWidth * y;
+            int index = width * ch * height + width * y;
+            System.arraycopy(b, oldIndex, padded, index, len);
+          }
+        }
+      }
     }
-
+    else {
+      int len = oldWidth < width ? oldWidth * c : width * c;
+      for (int oy=0, y=0; oy<oldHeight; oy++, y++) {
+        int oldIndex = oldWidth * c * y;
+        int index = width * c * (y + hClip) + c * wClip;
+        System.arraycopy(b, oldIndex, padded, index, len);
+      }
+    }  
     return padded;
   }
 
@@ -1339,21 +1396,40 @@ public final class ImageTools {
     int oldWidth, int width, int height)
   {
     int oldHeight = b.length / (oldWidth * c);
-    if (width < oldWidth) width = oldWidth;
-    if (height < oldHeight) height = oldHeight;
-    if (width == oldWidth && height == oldHeight) return b;
+    float[] padded = new float[height * width * c];
 
     int wClip = (width - oldWidth) / 2;
     int hClip = (height - oldHeight) / 2;
 
-    float[] padded = new float[width * height * c];
-
-    for (int oy=0, y=0; oy<oldHeight; oy++, y++) {
-      int oldIndex = oldWidth * c * oy;
-      int index = width * c * (y + hClip) + c * wClip;
-      System.arraycopy(b, oldIndex, padded, index, oldWidth * c);
+    int h = height < oldHeight ? height : oldHeight;
+   
+    if (interleaved) {
+      int len = oldWidth < width ? oldWidth : width;
+      if (h == oldHeight) {
+        for (int y=0; y<h*c; y++) {
+          int oldIndex = oldWidth * y;
+          int index = width * y;
+          System.arraycopy(b, oldIndex, padded, index, len);
+        }
+      }
+      else {
+        for (int ch=0; ch<c; ch++) {
+          for (int y=0; y<h; y++) {
+            int oldIndex = oldWidth * ch * oldHeight + oldWidth * y;
+            int index = width * ch * height + width * y;
+            System.arraycopy(b, oldIndex, padded, index, len);
+          }
+        }
+      }
     }
-
+    else {
+      int len = oldWidth < width ? oldWidth * c : width * c;
+      for (int oy=0, y=0; oy<oldHeight; oy++, y++) {
+        int oldIndex = oldWidth * c * y;
+        int index = width * c * (y + hClip) + c * wClip;
+        System.arraycopy(b, oldIndex, padded, index, len);
+      }
+    }  
     return padded;
   }
 
@@ -1365,21 +1441,40 @@ public final class ImageTools {
     int oldWidth, int width, int height)
   {
     int oldHeight = b.length / (oldWidth * c);
-    if (width < oldWidth) width = oldWidth;
-    if (height < oldHeight) height = oldHeight;
-    if (width == oldWidth && height == oldHeight) return b;
+    double[] padded = new double[height * width * c];
 
     int wClip = (width - oldWidth) / 2;
     int hClip = (height - oldHeight) / 2;
 
-    double[] padded = new double[width * height * c];
-
-    for (int oy=0, y=0; oy<oldHeight; oy++, y++) {
-      int oldIndex = oldWidth * c * oy;
-      int index = width * c * (y + hClip) + c * wClip;
-      System.arraycopy(b, oldIndex, padded, index, oldWidth * c);
+    int h = height < oldHeight ? height : oldHeight;
+   
+    if (interleaved) {
+      int len = oldWidth < width ? oldWidth : width;
+      if (h == oldHeight) {
+        for (int y=0; y<h*c; y++) {
+          int oldIndex = oldWidth * y;
+          int index = width * y;
+          System.arraycopy(b, oldIndex, padded, index, len);
+        }
+      }
+      else {
+        for (int ch=0; ch<c; ch++) {
+          for (int y=0; y<h; y++) {
+            int oldIndex = oldWidth * ch * oldHeight + oldWidth * y;
+            int index = width * ch * height + width * y;
+            System.arraycopy(b, oldIndex, padded, index, len);
+          }
+        }
+      }
     }
-
+    else {
+      int len = oldWidth < width ? oldWidth * c : width * c;
+      for (int oy=0, y=0; oy<oldHeight; oy++, y++) {
+        int oldIndex = oldWidth * c * y;
+        int index = width * c * (y + hClip) + c * wClip;
+        System.arraycopy(b, oldIndex, padded, index, len);
+      }
+    }  
     return padded;
   }
 

@@ -193,8 +193,6 @@ public class ImageViewer extends JFrame
       for (int i=0; i<num; i++) {
         if (progress.isCanceled()) break;
         img[i] = myReader.openImage(id, i);
-        img[i] = ImageTools.padImage(img[i], myReader.getSizeX(id),
-          myReader.getSizeY(id));
         if (i == 0) setImages(id, myReader, img);
         progress.setProgress(i + 2);
       }
