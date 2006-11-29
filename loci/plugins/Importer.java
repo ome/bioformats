@@ -202,6 +202,7 @@ public class Importer {
         r.setSeries(id, i);
         num[i] = r.getImageCount(id);
         sizeC[i] = r.getSizeC(id);
+        if (r.isRGB(id)) sizeC[i] = sizeC[i] < 3 ? 1 : (sizeC[i] / 3);
         sizeZ[i] = r.getSizeZ(id);
         sizeT[i] = r.getSizeT(id);
         certain[i] = r.isOrderCertain(id);
