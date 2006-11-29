@@ -839,6 +839,7 @@ public class LeicaReader extends BaseTiffReader {
       for (int i=0; i<sizeC.length; i++) {
         setSeries(currentId, i);
         if (isRGB(currentId)) sizeC[i] = 3;
+        else sizeC[i] = 1;
       }
       setSeries(currentId, oldSeries);
     }
