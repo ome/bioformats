@@ -570,10 +570,9 @@ public abstract class FormatReader extends FormatHandler
     reader.setNormalized(normalize);
 
     if (!normalize && reader.getPixelType(id) == FLOAT) {
-      throw new FormatException("Sorry, unnormalized grayscale floating " +
-        "point data is not supported.  Please use the '-normalize' option.");
+      throw new FormatException("Sorry, unnormalized floating point " +
+        "data is not supported. Please use the '-normalize' option.");
     }
-
 
     // read basic metadata
     System.out.println();
