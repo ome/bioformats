@@ -1,3 +1,13 @@
+2006 Nov 29:
+* Added support for ND2/JPEG-2000
+* Added support for MRC
+* Added support for MNG
+* Improved support for floating-point images
+* Fixed problem with 2-channel Leica LIF data 
+* Minor tweaks and bugfixes in many readers
+* Improved file stitching logic
+* Allow ImageJ plugin to be called from a macro
+
 2006 Nov 2:
 * Bugfixes and improvements for Leica LIF, Zeiss LSM, OIF and OIB
 * Colorize channels when they are split into separate windows
