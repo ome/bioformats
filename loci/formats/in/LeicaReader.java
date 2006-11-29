@@ -135,7 +135,7 @@ public class LeicaReader extends BaseTiffReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    tiff[series][0].setColorTableIgnored(ignoreColorTable);
+    tiff[series][0].setColorTableIgnored(isColorTableIgnored());
     return tiff[series][0].isRGB((String) files[series].get(0));
   }
 
