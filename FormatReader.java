@@ -569,7 +569,7 @@ public abstract class FormatReader extends FormatHandler
     reader.setColorTableIgnored(ignoreColors);
     reader.setNormalized(normalize);
 
-    if (!normalize && reader.getPixelType(id) == FLOAT && !reader.isRGB(id)) {
+    if (!normalize && reader.getPixelType(id) == FLOAT) {
       throw new FormatException("Sorry, unnormalized grayscale floating " +
         "point data is not supported.  Please use the '-normalize' option.");
     }
