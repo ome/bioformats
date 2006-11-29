@@ -1143,13 +1143,13 @@ public final class TiffTools {
     if (isTiled) numStrips = stripOffsets.length;
     if (planarConfig == 2) numStrips *= samplesPerPixel;
 
-    if (stripOffsets.length != numStrips) {
+    if (stripOffsets.length < numStrips) {
       throw new FormatException("StripOffsets length (" +
         stripOffsets.length + ") does not match expected " +
         "number of strips (" + numStrips + ")");
     }
 
-    if (stripByteCounts.length != numStrips) {
+    if (stripByteCounts.length < numStrips) {
       throw new FormatException("StripByteCounts length (" +
         stripByteCounts.length + ") does not match expected " +
         "number of strips (" + numStrips + ")");
