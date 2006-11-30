@@ -4,7 +4,7 @@
 
 /*
 LOCI Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden, Chris Allan
+Copyright (C) 2005-2006 Melissa Linkert, Curtis Rueden, Chris Allan
 and Eric Kjellman.
 
 This program is free software; you can redistribute it and/or modify
@@ -278,6 +278,23 @@ public class ZeissZVIReader extends FormatReader {
         }
       }
       b = null;
+      
+      if (a.length != bpp * sizeX[0] * sizeY[0]) {
+        byte[] tmp = a;
+        a = new byte[bpp * sizeX[0] * sizeY[0]];
+        System.arraycopy(tmp, 0, a, 0, a.length);
+      }
+
+      Object type = metadata.get("PixelType");
+      if (type == null || type.toString().trim().equals("1")) {
+        byte[] tmp = a;
+        a = new byte[tmp.length];
+        for (int i=0; i<tmp.length / 3; i++) {
+          a[i] = tmp[i*3];
+          a[i + tmp.length / 3] = tmp[i*3 + 1];
+          a[i + ((2*tmp.length) / 3)] = tmp[i*3 + 2];
+        }
+      }
       return a;
     }
     catch (ReflectException e) {
@@ -431,15 +448,8 @@ public class ZeissZVIReader extends FormatReader {
     MetadataStore store = getMetadataStore(currentId);
     store.setImage((String) metadata.get("File Name"), null, null, null);
 
-    switch (bpp % 3) {
-      case 0:
-      case 1:
-        pixelType[0] = FormatReader.UINT8;
-        break;
-      case 2:
-        pixelType[0] = FormatReader.UINT16;
-        break;
-    }
+    if (bpp == 1 || bpp == 3) pixelType[0] = FormatReader.UINT8;
+    else if (bpp == 2 || bpp == 6) pixelType[0] = FormatReader.UINT16;
 
     store.setPixels(
       new Integer(getSizeX(currentId)),
