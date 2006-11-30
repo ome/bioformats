@@ -462,9 +462,12 @@ public class Importer {
           }
 
           if (b.length != w * h * c * bpp) {
+            // HACK - byte array dimensions are incorrect - image is probably
+            // a different size, but we have no way of knowing what size;
+            // so open this plane as a BufferedImage instead
             BufferedImage bi = r.openImage(id, j);
             b = ImageTools.padImage(b, r.isInterleaved(id), c, 
-              bi.getWidth()*bpp, w, h);
+              bi.getWidth() * bpp, w, h);
           }
           
           Object pixels = DataTools.makeDataArray(b, bpp,
