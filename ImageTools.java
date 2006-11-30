@@ -1194,15 +1194,6 @@ public final class ImageTools {
     boolean needsPadding = img.getWidth() != width || img.getHeight() != height;
 
     if (needsPadding) {
-      int totalX = width - img.getWidth();
-      int totalY = height - img.getHeight();
-
-      int xpad = totalX / 2;
-      int ypad = totalY / 2;
-
-      if (xpad == 0 && totalX > 0) xpad = totalX;
-      if (ypad == 0 && totalY > 0) ypad = totalY;
-
       Object pixels = getPixels(img);
 
       if (pixels instanceof byte[][]) {
@@ -1254,8 +1245,8 @@ public final class ImageTools {
   }
 
   /**
-   * Pad the byte array to the given width and height. The image will be
-   * centered within the new bounds.
+   * Pads (or crops) the byte array to the given width and height.
+   * The image will be centered within the new bounds.
    */
   public static byte[] padImage(byte[] b, boolean interleaved, int c,
     int oldWidth, int width, int height)
@@ -1299,8 +1290,8 @@ public final class ImageTools {
   }
 
   /**
-   * Pad the short array to the given width and height. The image will be
-   * centered within the new bounds.
+   * Pads (or crops) the short array to the given width and height.
+   * The image will be centered within the new bounds.
    */
   public static short[] padImage(short[] b, boolean interleaved, int c, 
     int oldWidth, int width, int height)
@@ -1344,8 +1335,8 @@ public final class ImageTools {
   }
 
   /**
-   * Pad the int array to the given width and height. The image will be
-   * centered within the new bounds.
+   * Pads (or crops) the int array to the given width and height.
+   * The image will be centered within the new bounds.
    */
   public static int[] padImage(int[] b, boolean interleaved, int c, 
     int oldWidth, int width, int height)
@@ -1389,8 +1380,8 @@ public final class ImageTools {
   }
 
   /**
-   * Pad the float array to the given width and height. The image will be
-   * centered within the new bounds.
+   * Pads (or crops) the float array to the given width and height.
+   * The image will be centered within the new bounds.
    */
   public static float[] padImage(float[] b, boolean interleaved, int c, 
     int oldWidth, int width, int height)
@@ -1434,8 +1425,8 @@ public final class ImageTools {
   }
 
   /**
-   * Pad the double array to the given width and height. The image will be
-   * centered within the new bounds.
+   * Pads (or crops) the double array to the given width and height.
+   * The image will be centered within the new bounds.
    */
   public static double[] padImage(double[] b, boolean interleaved, int c, 
     int oldWidth, int width, int height)
@@ -1480,7 +1471,6 @@ public final class ImageTools {
 
   /** Perform demosaicing on a byte array, assuming a {B, G, G, R} mosaic. */
   public static short[][] demosaic(short[][] input, int w, int h) {
-
     for (int i=0; i<input[0].length; i++) {
       // determine which color components need to be calculated
 
