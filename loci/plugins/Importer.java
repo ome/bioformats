@@ -584,7 +584,7 @@ public class Importer {
             else {
               if (stackO == null) stackO = new ImageStack(w, h);
               float[][] pix = new float[c][w*h];
-              if (r.isInterleaved(id)) {
+              if (!r.isInterleaved(id)) {
                 for (int k=0; k<f.length; k+=c) {
                   for (int l=0; l<c; l++) {
                     pix[l][k / 3] = f[k + l];
