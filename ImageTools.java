@@ -1252,7 +1252,6 @@ public final class ImageTools {
     int oldWidth, int width, int height)
   {
     int oldHeight = b.length / (oldWidth * c);
-    System.out.println("padding image from " + oldWidth+"x"+oldHeight+" to "+width+"x"+height);//TEMP
     byte[] padded = new byte[height * width * c];
 
     int wClip = (width - oldWidth) / 2;
