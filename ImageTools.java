@@ -1181,8 +1181,8 @@ public final class ImageTools {
   }
 
   /**
-   * Pad the image to the given width and height. The image will be centered
-   * within the new bounds.
+   * Pads (or crops) the image to the given width and height.
+   * The image will be centered within the new bounds.
    */
   public static BufferedImage padImage(BufferedImage img, int width, int height)
   {
@@ -1252,6 +1252,7 @@ public final class ImageTools {
     int oldWidth, int width, int height)
   {
     int oldHeight = b.length / (oldWidth * c);
+    System.out.println("padding image from " + oldWidth+"x"+oldHeight+" to "+width+"x"+height);//TEMP
     byte[] padded = new byte[height * width * c];
 
     int wClip = (width - oldWidth) / 2;
