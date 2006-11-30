@@ -140,7 +140,7 @@ public abstract class DataTransform implements Dynamic, Saveable {
   public DataTransform getParent() { return parent; }
 
   /** Gets the name of this transform. */
-  public String getName() { return name; }
+  public String getName() { return name == null ? "Untitled" : name; }
 
   /** Gets the data transform ID. */
   public int getTransformId() { return transformId; }
