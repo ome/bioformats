@@ -126,7 +126,9 @@ public class OmeisImporter {
    * OME-XML metadata block describing the successfully imported data is
    * dumped to standard output.
    */
-  public void importIds(int[] fileIds) throws OmeisException {
+  public void importIds(int[] fileIds)
+    throws OmeisException, FormatException, IOException
+  {
     boolean doLittle = isLittleEndian();
 
     // set up file path mappings
@@ -142,24 +144,18 @@ public class OmeisImporter {
     String id = ids[0];
     String path = reader.getMappedId(ids[0]);
     if (DEBUG) log("Reading file '" + id + "' --> " + path);
-    try {
+
       // verify that all given file IDs were grouped by the file stitcher
       FilePattern fp = reader.getFilePattern(id);
       if (!fp.isValid()) {
-        log("Error: invalid file pattern for " + path);
-        if (http) printHttpErrorHeader();
-        return;
+        throw new FormatException("Invalid file pattern for " + path);
       }
       String[] files = fp.getFiles();
       if (files == null) {
-        log("Error: invalid file list for " + path);
-        if (http) printHttpErrorHeader();
-        return;
+        throw new FormatException("Invalid file list for " + path);
       }
       if (files.length != ids.length) {
-        log("Error: file list length mismatch for " + path);
-        if (http) printHttpErrorHeader();
-        return;
+        throw new FormatException("File list length mismatch for " + path);
       }
       boolean[] done = new boolean[ids.length];
       int numLeft = ids.length;
@@ -174,23 +170,32 @@ public class OmeisImporter {
         }
       }
       if (numLeft > 0) {
-        log("Error: file list does not correspond to ID list for " + path);
-        if (http) printHttpErrorHeader();
-        return;
+        throw new FormatException(
+          "File list does not correspond to ID list for " + path);
       }
 
       int seriesCount = reader.getSeriesCount(id);
 
       // get DOM and Pixels elements for the file's OME-XML metadata
       OMENode ome = (OMENode) store.getRoot();
-      Document omeDoc = ome.getOMEDocument(false);
+      Document omeDoc = null;
+      try {
+        omeDoc = ome.getOMEDocument(false);
+      }
+      catch (javax.xml.transform.TransformerException exc) {
+        throw new FormatException(exc);
+      }
+      catch (org.xml.sax.SAXException exc) {
+        throw new FormatException(exc);
+      }
+      catch (javax.xml.parsers.ParserConfigurationException exc) {
+        throw new FormatException(exc);
+      }
       Vector pix = DOMUtil.findElementList("Pixels", omeDoc);
       if (pix.size() != seriesCount) {
-        log("Error: Pixels element count (" +
+        throw new FormatException("Pixels element count (" +
           pix.size() + ") does not match series count (" +
           seriesCount + ") for '" + id + "'");
-        if (http) printHttpErrorHeader();
-        return;
       }
       if (DEBUG) log(seriesCount + " series detected.");
 
@@ -248,10 +253,8 @@ public class OmeisImporter {
             isFloat = true;
             break;
           default:
-            log("Error: unknown pixel type for '" +
+            throw new FormatException("Unknown pixel type for '" +
               id + "' series #" + s + ": " + pixelType);
-            if (http) printHttpErrorHeader();
-            return;
         }
         boolean little = reader.isLittleEndian(id);
         boolean swap = doLittle != little;
@@ -309,7 +312,12 @@ public class OmeisImporter {
 
       // accumulate XML into buffer
       ByteArrayOutputStream xml = new ByteArrayOutputStream();
-      DOMUtil.writeXML(xml, omeDoc);
+      try {
+        DOMUtil.writeXML(xml, omeDoc);
+      }
+      catch (javax.xml.transform.TransformerException exc) {
+        throw new FormatException(exc);
+      }
 
       // output OME-XML to standard output
       xml.close();
@@ -317,12 +325,6 @@ public class OmeisImporter {
       if (DEBUG) log(xmlString);
       if (http) printHttpResponseHeader();
       System.out.println(xmlString);
-    }
-    catch (Exception exc) {
-      log("Error: an exception occurred importing " + path + ":");
-      exc.printStackTrace();
-      if (http) printHttpErrorHeader();
-    }
   }
 
   // -- OmeisImporter API methods - OMEIS method calls --
