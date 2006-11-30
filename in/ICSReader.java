@@ -115,7 +115,7 @@ public class ICSReader extends FormatReader {
   /** Returns whether or not the channels are interleaved. */
   public boolean isInterleaved(String id) throws FormatException, IOException {
     if (!id.equals(currentIdsId) && !id.equals(currentIcsId)) initFile(id);
-    return rgb;
+    return !rgb;
   }
 
   /** Obtains the specified image from the given ICS file, as a byte array. */
@@ -175,7 +175,7 @@ public class ICSReader extends FormatReader {
     }
 
     return ImageTools.makeImage(plane, width, height, channels, true,
-      bytes, !littleEndian);
+      bytes, littleEndian);
   }
 
   /** Closes any open files. */
@@ -384,6 +384,8 @@ public class ICSReader extends FormatReader {
       Integer.parseInt((String) metadata.get("significant_bits"));
     String fmt = (String) metadata.get("format");
     String sign = (String) metadata.get("sign");
+
+    if (bitsPerPixel < 32) littleEndian = !littleEndian;
 
     if (fmt.equals("real")) pixelType[0] = FormatReader.FLOAT;
     else if (fmt.equals("integer")) {
