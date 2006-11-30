@@ -1,4 +1,4 @@
-2006 Nov 29:
+2006 Nov 30:
 * Added support for ND2/JPEG-2000
 * Added support for MRC
 * Added support for MNG
