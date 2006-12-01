@@ -2,7 +2,6 @@ Testing:
 * quicktime/haining/video2.mov (both legacy and native)
 
 Codecs:
-* Zeiss LSM - MDB metadata (lowish)
 * QuickTime - svq3 codec (low)
 * AVI - msrle codec (very low)
 
