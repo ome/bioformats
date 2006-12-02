@@ -132,12 +132,12 @@ public class ND2Reader extends FormatReader {
 
     byte[][] pixels = ImageTools.getPixelBytes(openImage(id, no), false);
 
-    if (pixels.length == 1) {
+    if (pixels.length == 1 || sizeC[0] == 1) {
       return pixels[0];
     }
 
-    byte[] b = new byte[pixels.length * pixels[0].length];
-    for (int i=0; i<pixels.length; i++) {
+    byte[] b = new byte[sizeC[0] * pixels[0].length];
+    for (int i=0; i<sizeC[0]; i++) {
       System.arraycopy(pixels[i], 0, b, i*pixels[0].length, pixels[i].length);
     }
     return b;
@@ -453,7 +453,6 @@ public class ND2Reader extends FormatReader {
 
     store.setDimensions(new Float(pixSizeX), new Float(pixSizeX),
       new Float(pixSizeZ), null, null, null);
-
   }
 
   // -- Main method --
