@@ -109,6 +109,10 @@ public class ReflectedUniverse {
       try {
         c = Class.forName(command, true, loader);
       }
+      catch (NoClassDefFoundError err) {
+        if (debug) err.printStackTrace();
+        throw new ReflectException("No such class: " + command, err);
+      }
       catch (ClassNotFoundException exc) {
         if (debug) exc.printStackTrace();
         throw new ReflectException("No such class: " + command, exc);
