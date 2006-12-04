@@ -127,11 +127,8 @@ public class OptionsWindow extends JFrame implements
     disPane.setBorder(disB);
 
     JLabel sliceLab = new JLabel("\u00B7" + "Slice-Groups in File" + "\u00B7");
-    JLabel zLab = new JLabel(sizeZ + " slice(s):");
-    JLabel tLab = new JLabel(sizeT + " slice(s):");
-    JLabel cLab = new JLabel(sizeC + " slice(s):");
     JLabel blockLab = new JLabel("\u00B7" + "Blocks in Filenames" + "\u00B7");
-    JLabel fileLab = new JLabel("Filename:");
+
     Vector blockLabelsV = new Vector();
     for(int i = 0;i<blocks.length;i++) {
       JLabel temp = new JLabel("Block " + blocks[i] + ":");
@@ -192,6 +189,16 @@ public class OptionsWindow extends JFrame implements
     JLabel sufLab = new JLabel(suffix);
     filePane.add(sufLab);
     
+    int[] internalSizes = new int[3];
+    for(int i = 0;i<internalSizes.length;i++) {
+      internalSizes[i] = getOrderSize(i);
+    }
+    
+    JLabel zLab = new JLabel("First ("+ internalSizes[0] + "):");
+    JLabel tLab = new JLabel("Second (" + internalSizes[1] + "):");
+    JLabel cLab = new JLabel("Third (" + internalSizes[2] + "):");
+    JLabel fileLab = new JLabel("Filename:");
+    
     String rowString = "pref," + TAB + ",pref,pref,pref," + TAB +
       ",pref,pref";
     for(int i = 0; i<blockLabels.length;i++) {
@@ -207,10 +214,14 @@ public class OptionsWindow extends JFrame implements
     disPane.add(slicePanel,cc.xyw(1,1,5));
     disPane.add(zLab,cc.xy(2,3));
     disPane.add(zGroup,cc.xy(4,3));
-    disPane.add(tLab,cc.xy(2,4));
-    disPane.add(tGroup,cc.xy(4,4));
-    disPane.add(cLab,cc.xy(2,5));
-    disPane.add(cGroup,cc.xy(4,5));
+    if(internalSizes[1] != 1) {
+      disPane.add(tLab,cc.xy(2,4));
+      disPane.add(tGroup,cc.xy(4,4));
+    }
+    if(internalSizes[2] != 1) {
+      disPane.add(cLab,cc.xy(2,5));
+      disPane.add(cGroup,cc.xy(4,5));
+    }
     disPane.add(blockPanel,cc.xyw(1,7,5));
     disPane.add(fileLab,cc.xy(2,8));
     disPane.add(filePane,cc.xy(4,8));
@@ -478,6 +489,37 @@ public class OptionsWindow extends JFrame implements
       default:
         return 'Q';
     }
+  }
+  
+  private int getOrderSize(int i) {
+    int thisSize = 1;
+    switch(order.charAt(i)) {
+      case 'Z':
+        thisSize = sizeZ;
+        thisSize /= getBlockCount(0);
+        break;
+      case 'T':
+        thisSize = sizeT;
+        thisSize /= getBlockCount(1);
+        break;
+      case 'C':
+        thisSize = sizeC;
+        thisSize /= getBlockCount(2);
+        break;
+    }
+    return thisSize;
+  }
+  
+  private int getBlockCount(int index) {
+    int total = 0;
+    int[] blockSizes = fp.getCount();
+    for(int i = 0;i<blockBoxes.length;i++) {
+      if (blockBoxes[i].getSelectedIndex() == index) {
+        total += blockSizes[i];
+      }
+    }
+    if (total == 0) total = 1;
+    return total;
   }
   
   private int getAxis(int i) {
