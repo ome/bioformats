@@ -48,6 +48,9 @@ public class OMEUploader implements Uploader {
   /** Name of the current user. */
   private String user;
 
+  /** Password */
+  private String pass;
+
   /** Unique key for this session. */
   private String sessionKey;
 
@@ -84,6 +87,7 @@ public class OMEUploader implements Uploader {
   {
     this.server = server;
     this.user = user;
+    this.pass = pass;
     login(server, user, pass);
     files = new Vector();
   }
@@ -654,8 +658,7 @@ public class OMEUploader implements Uploader {
     catch (Exception e) { throw new UploadException(e); }
 
     rc = rs.getRemoteCaller();
-    rc.login("melissa", "blahblah");
-    //rc.setSessionKey(sessionKey);
+    rc.login(user, pass);
    
     df = (DataFactory) rs.getService(DataFactory.class);
     im = (ImportManager) rs.getService(ImportManager.class);
@@ -765,12 +768,6 @@ public class OMEUploader implements Uploader {
     pixels.setImage(image);
     pixels.setModuleExecution(ii);
     pixels.setImageServerID(new Long(id));
-    pixels.setSizeX(xml.getSizeX(null));
-    pixels.setSizeY(xml.getSizeY(null));
-    pixels.setSizeZ(xml.getSizeZ(null));
-    pixels.setSizeC(xml.getSizeC(null));
-    pixels.setSizeT(xml.getSizeT(null));
-    pixels.setPixelType(xml.getPixelType(null));
     df.update(pixels);
 
     // create a thumbnail
