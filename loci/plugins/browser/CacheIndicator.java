@@ -59,7 +59,7 @@ public class CacheIndicator extends JComponent {
     g.setColor(Color.black);
     g.drawRect(0,0,getWidth()-1,COMPONENT_HEIGHT - 1);
 
-    if(ratio < 1) {
+    if(ratio < 1 && ratio != 0) {
       int [] loadColor = new int[getWidth()];
       int [] cacheColor = new int[getWidth()];
       
@@ -116,7 +116,7 @@ public class CacheIndicator extends JComponent {
         else continue;
       }
     }
-    else {
+    else if (ratio >= 1) {
       int prevLoad = -1;
       int startLoad = -1;
       g.setColor(Color.red);
