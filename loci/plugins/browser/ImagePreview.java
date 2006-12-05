@@ -71,7 +71,10 @@ public class ImagePreview extends JComponent
 
       thumbnail = new ImageIcon(image);
     }
-    catch (Exception e) { e.printStackTrace(); }
+    catch (Exception e) {
+      thumbnail = null;
+      return;
+    }
   }
 
   public void propertyChange(PropertyChangeEvent e) {
