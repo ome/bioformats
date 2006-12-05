@@ -820,7 +820,7 @@ public abstract class FormatReader extends FormatHandler
       // or else the input file is invalid
       throw new FormatException("ZCT size vs image count mismatch (rgb=" +
         rgb + "; sizeZ=" + zSize + ", sizeC=" +
-        origSizeC + ", sizeT=" + tSize + ", total=" + num);
+        origSizeC + ", sizeT=" + tSize + ", total=" + num + ")");
     }
 
     // assign rasterization order
@@ -889,7 +889,7 @@ public abstract class FormatReader extends FormatHandler
       // or else the input file is invalid
       throw new FormatException("ZCT size vs image count mismatch (rgb=" +
         rgb + "; sizeZ=" + zSize + ", sizeC=" +
-        origSizeC + ", sizeT=" + tSize + ", total=" + num);
+        origSizeC + ", sizeT=" + tSize + ", total=" + num + ")");
     }
     if (index < 0 || index >= num) {
       throw new FormatException("Invalid image index: " + index + "/" + num);
