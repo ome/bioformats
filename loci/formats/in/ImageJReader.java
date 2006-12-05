@@ -132,9 +132,8 @@ public class ImageJReader extends FormatReader {
       return ImageTools.makeBuffered(img);
     }
     catch (Exception exc) {
-      exc.printStackTrace();
+      throw new FormatException(exc);
     }
-    return null;
   }
 
   /** Initializes the given file. */
