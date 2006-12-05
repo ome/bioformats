@@ -193,6 +193,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       c = db.numC;
     }
     else c = 1;
+    
+    setC();
 
     JPanel zPanel = new JPanel(new BorderLayout());
     JPanel tPanel = new JPanel(new BorderLayout());

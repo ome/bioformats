@@ -30,6 +30,7 @@ import java.awt.*;
 public class CacheIndicator extends JComponent {
 
   private static final int COMPONENT_HEIGHT = 5;
+  private static final boolean DEBUG = false;
 
   protected int [] cache,loadList;
   protected int cacheLength;
@@ -73,7 +74,7 @@ public class CacheIndicator extends JComponent {
       double integers = 2;
       double dPerPixel = ratio * integers;  
       
-//      System.out.println("Ratio: " + ratio);
+      if(DEBUG) System.out.println("Ratio: " + ratio);
       while(dPerPixel < 1) {
         integers++;
         dPerPixel = ratio * integers;
@@ -82,17 +83,17 @@ public class CacheIndicator extends JComponent {
       Double temp = new Double(integers);
       perPixel = temp.intValue();
       
-//      System.out.println("PerPixel: " + perPixel);
+      if(DEBUG) System.out.println("PerPixel: " + perPixel);
       
       int colorAmount = 255 / perPixel;
-//      System.out.println("ColorAmount: " + colorAmount);
+      if(DEBUG) System.out.println("ColorAmount: " + colorAmount);
       
       for(int i = 0;i<loadList.length;i++) {
         int index = translate(loadList[i]);
         if (loadColor[index] == -1) loadColor[index] = 0;
         loadColor[index] = loadColor[index] + colorAmount;
         if (loadColor[index] > 255) {
-//          System.out.println("RED: " + loadColor[index]);
+        if(DEBUG) System.out.println("RED: " + loadColor[index]);
           loadColor[index] = 255;
         }
       }
@@ -101,7 +102,7 @@ public class CacheIndicator extends JComponent {
         if (cacheColor[index] == -1) cacheColor[index] = 0;
         cacheColor[index] = cacheColor[index] + colorAmount;
         if (cacheColor[index] > 255) {
-//          System.out.println("BLUE: " + cacheColor[index]);
+        if(DEBUG) System.out.println("BLUE: " + cacheColor[index]);
           cacheColor[index] = 255;
         }
       }
