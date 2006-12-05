@@ -19,7 +19,7 @@ GNU Library General Public License for more details.
 
 You should have received a copy of the GNU Library General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1G307  USA
 */
 
 package loci.plugins.browser;
@@ -80,6 +80,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   private CardLayout switcher;
   private JPanel channelPanel;
   private String patternTitle;
+  private boolean update;
 
   // -- Constructor --
 
@@ -88,6 +89,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     super(imp, canvas);
     this.db = db;
     ow = null;
+    update = true;
     
     String id = db.id;    
     FilePattern fp = null;
@@ -250,6 +252,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   // -- CustomWindow methods --
 
   public void updateControls() {
+    update = false;
     zSliceSel.setMinimum(1);
     zSliceSel.setMaximum(db.hasZ ? db.numZ + 1 : 2);
     if (!db.hasZ) zSliceSel.setEnabled(false);
@@ -260,6 +263,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     else tSliceSel.setEnabled(true);
     setC();
     repaint();
+    update = true;
   }
 
   public void setC() {
@@ -275,13 +279,21 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       SpinnerNumberModel snm = (SpinnerNumberModel) channelSpin.getModel();
       snm.setMaximum((Comparable) new Integer(numThis));
       snm.setValue(new Integer(value));
-      if (!hasThis) channelSpin.setEnabled(false);
-      if (!hasThis) cLabel.setEnabled(false);
+      c = ((Integer) channelSpin.getValue()).intValue();
+      if (!hasThis) {
+        channelSpin.setEnabled(false);
+        cLabel.setEnabled(false);
+        c = 1;
+      }
     }
     else {
       // C checkbox
       switcher.first(channelPanel);
-      if (!hasThis) channelBox.setEnabled(false);
+      c = channelBox.isSelected() ? 1 : 2;
+      if (!hasThis) {
+        channelBox.setEnabled(false);    
+        c = 1;
+      }
     }
   }
 
@@ -494,35 +506,41 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   // -- AdjustmentListener methods --
 
   public void adjustmentValueChanged(AdjustmentEvent adjustmentEvent) {
-    JScrollBar src = (JScrollBar) adjustmentEvent.getSource();
-
-    if (src == zSliceSel) {
+    if(update) {
+      JScrollBar src = (JScrollBar) adjustmentEvent.getSource();
+  
       z = zSliceSel.getValue();
-    }
-    else if (src == tSliceSel) {
       t = tSliceSel.getValue();
+  
+      if (!src.getValueIsAdjusting() || db.manager == null) showSlice(z, t, c);
+      else showTempSlice(z,t,c);
     }
-
-    if (!src.getValueIsAdjusting() || db.manager == null) showSlice(z, t, c);
-    else showTempSlice(z,t,c);
   }
 
   // -- ItemListener methods --
 
   public synchronized void itemStateChanged(ItemEvent e) {
-    JCheckBox channels = (JCheckBox) e.getSource();
-    
-    c = channels.isSelected() ? 1 : 2;
-
-    showSlice(z, t, c);
+    if(update) {
+      JCheckBox channels = (JCheckBox) e.getSource();
+      
+      z = zSliceSel.getValue();
+      t = tSliceSel.getValue();
+      c = channels.isSelected() ? 1 : 2;
+  
+      showSlice(z, t, c);
+    }
   }
   
   // -- ChangeListener methods --
   
   public void stateChanged(ChangeEvent e) {
-    if( (JSpinner) e.getSource() == channelSpin) {
-      c = ((Integer) channelSpin.getValue()).intValue();
-      showSlice(z, t, c);
+    if(update) {
+      if( (JSpinner) e.getSource() == channelSpin) {
+        c = ((Integer) channelSpin.getValue()).intValue();
+        z = zSliceSel.getValue();
+        t = tSliceSel.getValue();
+        showSlice(z, t, c);
+      }
     }
   }
 

@@ -70,6 +70,9 @@ public class CacheManager implements Runnable {
   /** The IFormatReader that handles conversion of formats.*/
   private IFormatReader read;
   
+  /** The FileStitcher we're using to stitch files.*/
+  private FileStitcher fs;
+  
   /** The two axes scrollbars in the CustomWindow.*/
   private JScrollBar zSel, tSel;
   
@@ -141,6 +144,9 @@ public class CacheManager implements Runnable {
   * should wrap around to the begining/end for animation purposes.
   */
   private boolean loop;
+  
+  /**flag to zap the cache entirely if dimensions are switched*/
+  private boolean zapCache;
 
   /** A list of indeces to be loaded by the caching thread.*/
   protected int[] loadList;
@@ -192,6 +198,7 @@ public class CacheManager implements Runnable {
     LociDataBrowser db, String fileName, int axis, int mode, int strategy)
   {
     //Initialize fields
+    zapCache = false;
     loop = true;
     curZ = z;
     curT = t;
@@ -203,16 +210,17 @@ public class CacheManager implements Runnable {
     this.fileName = fileName;
     this.db = db;
     this.read = db.reader;
+    fs = db.fStitch;
     zInd = null;
     tInd = null;
     zSel = null;
     tSel = null;
-    synchronized (read) {
+    synchronized (fs) {
       try {
-        sizeZ = read.getSizeZ(fileName);
-        sizeT = read.getSizeT(fileName);
-        sizeC = read.getSizeC(fileName);
-        cache = new ImageProcessor[read.getImageCount(fileName)];
+        sizeZ = fs.getSizeZ(fileName);
+        sizeT = fs.getSizeT(fileName);
+        sizeC = fs.getSizeC(fileName);
+        cache = new ImageProcessor[fs.getImageCount(fileName)];
       }
       catch (Exception exc) {
         if (DEBUG) System.out.println("Error reading size of file.");
@@ -1797,8 +1805,20 @@ public class CacheManager implements Runnable {
   private void clearCache() {
     if (DEBUG) System.out.println("CLEARING CACHE");
     quit = true;
-
-    int[] oldIndex = getToCache(true);
+    
+    int[] oldIndex = null;
+    
+    boolean erase = true;
+    if(!zapCache) {
+      oldIndex = getToCache(true);
+    }
+    else {
+      try {
+        cache = new ImageProcessor[fs.getImageCount(fileName)];
+      }
+      catch(Exception exc){}
+      erase = false;
+    }
     
     oldZ = curZ;
     oldT = curT;
@@ -1849,12 +1869,29 @@ public class CacheManager implements Runnable {
     System.arraycopy(newIndex, 0, loadList, 0, newIndex.length);
     Arrays.sort(newIndex);
 
-    for (int i = 0; i<oldIndex.length; i++) {
-      if (Arrays.binarySearch(newIndex, oldIndex[i]) < 0)
-        cache[oldIndex[i]] = null;
+    if(erase) {
+      for (int i = 0; i<oldIndex.length; i++) {
+        if (Arrays.binarySearch(newIndex, oldIndex[i]) < 0)
+          cache[oldIndex[i]] = null;
+      }
     }
 
     if (DEBUG) System.out.println("Cache Size after clear: " + getSize());
+  }
+  
+  protected void dimChange() {
+    zapCache = true;
+    synchronized (fs) {
+      try {
+        sizeZ = fs.getSizeZ(fileName);
+        sizeT = fs.getSizeT(fileName);
+        sizeC = fs.getSizeC(fileName);
+        cache = new ImageProcessor[fs.getImageCount(fileName)];
+      }
+      catch (Exception exc) {
+        if (DEBUG) System.out.println("Error reading size of file.");
+      }
+    }
   }
   
   protected void setIndicators(int aZ, int aT, int aC) {

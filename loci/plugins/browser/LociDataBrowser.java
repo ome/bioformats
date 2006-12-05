@@ -165,7 +165,7 @@ public class LociDataBrowser {
 
   /** Gets the slice number for the given Z, T and C indices. */
   public int getIndex(int z, int t, int c) {
-    int result = -1;
+    int result = -23;
     synchronized(reader) {
       try {
         result = reader.getIndex(id,z,c,t);

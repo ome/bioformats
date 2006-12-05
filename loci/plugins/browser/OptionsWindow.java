@@ -699,6 +699,7 @@ public class OptionsWindow extends JFrame implements
         setBox(cGroup,2);
         update = true;
         cw.db.setDimensions();
+        if(cw.db.virtual) cw.db.manager.dimChange();
         cw.updateControls();
       }
       else if (source == tGroup) {
@@ -729,6 +730,7 @@ public class OptionsWindow extends JFrame implements
         setBox(cGroup,2);
         update = true;
         cw.db.setDimensions();
+        if(cw.db.virtual) cw.db.manager.dimChange();
         cw.updateControls();
       }
       else if (source == cGroup) {
@@ -759,6 +761,7 @@ public class OptionsWindow extends JFrame implements
         setBox(cGroup,2);
         update = true;
         cw.db.setDimensions();
+        if(cw.db.virtual) cw.db.manager.dimChange();
         cw.updateControls();
       }
       else if (getBoxIndex((JComboBox)source) >= 0) {
@@ -769,6 +772,7 @@ public class OptionsWindow extends JFrame implements
         }
         catch(Exception exc) {exc.printStackTrace();}
         cw.db.setDimensions();
+        if(cw.db.virtual) cw.db.manager.dimChange();
         cw.updateControls();
       }
     }
