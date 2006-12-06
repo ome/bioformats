@@ -97,6 +97,10 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getPixelType(id);
   }
 
+  public int getEffectiveSizeC(String id) throws FormatException, IOException {
+    return reader.getEffectiveSizeC(id);
+  }
+
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
   {

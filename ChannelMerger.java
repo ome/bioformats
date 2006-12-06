@@ -60,6 +60,11 @@ public class ChannelMerger extends ReaderWrapper {
     return canMerge(id) || reader.isRGB(id);
   }
 
+  /* @see IFormatReader#getEffectiveSizeC(String) */
+  public int getEffectiveSizeC(String id) throws FormatException, IOException {
+    return isRGB(id) ? (getSizeC(id) + 2) / 3 : getSizeC(id);
+  }
+
   /** Obtains the specified image from the given file. */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException

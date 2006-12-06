@@ -65,6 +65,12 @@ public interface IFormatReader extends IFormatHandler {
    */
   int getPixelType(String id) throws FormatException, IOException;
 
+  /** 
+   * Get the effective size of the C dimension.  If isRGB(String) returns
+   * true, this will return 1; otherwise, it returns the value of getSizeC.
+   */
+  int getEffectiveSizeC(String id) throws FormatException, IOException;
+
   /**
    * Retrieves a specified channel's global minimum.
    * @param id the filename of the base image.

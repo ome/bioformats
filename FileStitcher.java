@@ -256,6 +256,12 @@ public class FileStitcher implements IFormatReader {
     return reader.getPixelType(files[0]);
   }
 
+  /* @see IFormatReader#getEffectiveSizeC(String) */
+  public int getEffectiveSizeC(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return isRGB(id) ? (getSizeC(id) + 2) / 3 : getSizeC(id);
+  }
+ 
   /* @see IFormatReader#getChannelGlobalMinimum(String, int) */
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
