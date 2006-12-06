@@ -411,26 +411,21 @@ public class OptionsWindow extends JFrame implements
       case 0:
         return Color.blue;
       case 1:
-        return Color.cyan;
-      case 2:
         return Color.green;
-      case 3:
-        return Color.yellow;
-      case 4:
+      case 2:
         return Color.red;
-      case 5:
-        return Color.orange;
-      case 6:
+      case 3:
         return Color.magenta;
-      case 7:
-        return Color.pink;
+      case 4:
+        return Color.orange;
       default:
-        Exception exc = new Exception();
-        exc.printStackTrace();
-        System.out.println("Too many dimensional blocks in filename"
-          + "for handling FileStitcher in the OptionsWindow in this"
-          + "4d Browser.");
-        return getColor(i%8); 
+        int next = i;
+        Color tempColor = getColor(i%5);
+        while (next > 4) {
+          next -= 5;
+          tempColor = tempColor.darker();
+        }
+        return tempColor; 
     }
   }
 
