@@ -68,6 +68,11 @@ public class ChannelSeparator extends ReaderWrapper {
     return false;
   }
 
+  /* @see IFormatReader#getEffectiveSizeC(String) */
+  public int getEffectiveSizeC(String id) throws FormatException, IOException {
+    return getSizeC(id);
+  }
+
   /** Obtains the specified image from the given file. */
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException

@@ -40,7 +40,7 @@ public abstract class FormatReader extends FormatHandler
   // -- Constants --
 
   /** Debugging flag. */
-  protected static final boolean DEBUG = false;
+  protected static final boolean DEBUG = true;
 
   /** Debugging level. 1=basic, 2=extended, 3=everything. */
   protected static final int DEBUG_LEVEL = 1;
@@ -212,6 +212,12 @@ public abstract class FormatReader extends FormatHandler
   public int getPixelType(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     return pixelType[series];
+  }
+
+  /* @see IFormatReader#getEffectiveSizeC(String) */
+  public int getEffectiveSizeC(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return isRGB(id) ? (getSizeC(id) + 2) / 3 : getSizeC(id);
   }
 
   /* @see IFormatReader#getChannelGlobalMinimum(String, int) */

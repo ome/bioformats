@@ -24,52 +24,47 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.awt.Image;
 import java.awt.image.*;
 import java.io.*;
 import java.util.StringTokenizer;
+import javax.imageio.*;
 import loci.formats.*;
 
-/** ND2Reader is the file format reader for Nikon ND2 files. */
+/** 
+ * ND2Reader is the file format reader for Nikon ND2 files.
+ * The JAI library is required to use this reader; it is available from
+ * http://jai-imageio.dev.java.net.  Note that JAI is bundled with a version
+ * of the JJ2000 library, so it is important that either (1) the JJ2000 jar
+ * file is *not* in the classpath; or (2) the JAI jar file precedes JJ2000 in
+ * the classpath.
+ */
 public class ND2Reader extends FormatReader {
 
   // -- Constants --
 
-  private static final String NO_JJ2000_MSG =
-    "You need to install JJ2000 from http://jj2000.epfl.ch";
+  private static final String NO_JAI_MSG =
+    "You need to install JAI from http://jai-imageio.dev.java.net";
 
   // -- Static fields --
-
-  private static boolean noJJ2000 = false;
+ 
+  private static boolean noJAI = false;
   private static ReflectedUniverse r = createReflectedUniverse();
 
   private static ReflectedUniverse createReflectedUniverse() {
     r = null;
     try {
       r = new ReflectedUniverse();
-      r.exec("import colorspace.ColorSpace");
-      r.exec("import jj2000.disp.BlkImgDataSrcImageProducer");
-      r.exec("import jj2000.j2k.codestream.HeaderInfo");
-      r.exec("import jj2000.j2k.codestream.reader.BitstreamReaderAgent");
-      r.exec("import jj2000.j2k.codestream.reader.HeaderDecoder");
-      r.exec("import jj2000.j2k.decoder.Decoder");
-      r.exec("import jj2000.j2k.decoder.DecoderSpecs");
-      r.exec("import jj2000.j2k.entropy.decoder.EntropyDecoder");
       r.exec("import jj2000.j2k.fileformat.reader.FileFormatReader");
-      r.exec("import jj2000.j2k.image.BlkImgDataSrc");
-      r.exec("import jj2000.j2k.image.ImgDataConverter");
-      r.exec("import jj2000.j2k.image.invcomptransf.InvCompTransf");
       r.exec("import jj2000.j2k.io.BEBufferedRandomAccessFile");
-      r.exec("import jj2000.j2k.quantization.dequantizer.Dequantizer");
-      r.exec("import jj2000.j2k.roi.ROIDeScaler");
-      r.exec("import jj2000.j2k.util.ParameterList");
-      r.exec("import jj2000.j2k.wavelet.synthesis.InverseWT");
     }
-    catch (Throwable exc) { noJJ2000 = true; }
+    catch (Throwable exc) { noJAI = true; }
     return r;
   }
 
   // -- Fields --
+
+  /** Current file */
+  private RandomAccessStream in;
 
   /** Number of image planes in the file. */
   protected int numImages = 0;
@@ -79,6 +74,8 @@ public class ND2Reader extends FormatReader {
 
   /** Number of valid bits per pixel */
   private int[] validBits;
+
+  private boolean rgb;
 
   // -- Constructor --
 
@@ -103,7 +100,7 @@ public class ND2Reader extends FormatReader {
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return sizeC[0] > 1;
+    return rgb;
   }
 
   /** Return true if the data is in little-endian format. */
@@ -113,7 +110,7 @@ public class ND2Reader extends FormatReader {
 
   /** Returns whether or not the channels are interleaved. */
   public boolean isInterleaved(String id) throws FormatException, IOException {
-    return false;
+    return true;
   }
 
   /**
@@ -123,7 +120,6 @@ public class ND2Reader extends FormatReader {
   public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
-    if (noJJ2000) throw new FormatException(NO_JJ2000_MSG);
     if (!id.equals(currentId)) initFile(id);
 
     if (no < 0 || no >= getImageCount(id)) {
@@ -147,116 +143,50 @@ public class ND2Reader extends FormatReader {
   public BufferedImage openImage(String id, int no)
     throws FormatException, IOException
   {
-    if (noJJ2000) throw new FormatException(NO_JJ2000_MSG);
     if (!id.equals(currentId)) initFile(id);
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    try {
-      r.exec("defpl = new ParameterList()");
-      r.exec("tmpDec = new Decoder(defpl)");
-      r.exec("param = tmpDec.getAllParameters()");
+    in.seek(offsets[no]);
 
-      String[][] param = (String[][]) r.getVar("param");
-      for (int i=param.length-1; i>=0; i--) {
-        if (param[i][3] != null) {
-          r.setVar("key", param[i][0]);
-          r.setVar("value", param[i][3]);
-          r.exec("defpl.put(key, value)");
-        }
-      }
-
-      r.exec("pl = new ParameterList(defpl)");
-
-      int off = (int) offsets[no];
-      r.setVar("off", off);
-
-      r.exec("in.seek(off)");
-
-      r.exec("hi = new HeaderInfo()");
-      r.exec("hd = new HeaderDecoder(in, pl, hi)");
-
-      r.exec("numComponents = hd.getNumComps()");
-      r.setVar("siz", r.getVar("hi.siz"));
-      r.exec("numTiles = siz.getNumTiles()");
-      r.exec("specs = hd.getDecoderSpecs()");
-
-      int[] depth = new int[((Integer) r.getVar("numComponents")).intValue()];
-      for (int i=0; i<depth.length; i++) {
-        r.setVar("i", i);
-        r.exec("val = hd.getOriginalBitDepth(i)");
-        depth[i] = ((Integer) r.getVar("val")).intValue();
-      }
-
-      r.setVar("depth", depth);
-
-      r.setVar("false", false);
-      r.exec("breader = " +
-        "BitstreamReaderAgent.createInstance(in, hd, pl, specs, false, hi)");
-      r.exec("entdec = hd.createEntropyDecoder(breader, pl)");
-      r.exec("roi = hd.createROIDeScaler(entdec, pl, specs)");
-      r.exec("deq = hd.createDequantizer(roi, depth, specs)");
-
-      r.exec("invWT = InverseWT.createInstance(deq, specs)");
-      r.exec("res = breader.getImgRes()");
-      r.exec("invWT.setImgResLevel(res)");
-      r.setVar("zero", 0);
-      r.exec("converter = new ImgDataConverter(invWT, zero)");
-      r.exec("ictransf = new InvCompTransf(converter, specs, depth, pl)");
-
-      boolean jpg2ff = ((Boolean) r.getVar("ff.JP2FFUsed")).booleanValue();
-
-      if (jpg2ff) {
-        r.exec("csMap = new ColorSpace(in, hd, pl)");
-        r.exec("channels = hd.createChannelDefinitionMapper(ictransf, csMap)");
-        r.exec("resampled = hd.createResampler(channels, csMap)");
-        r.exec("palettized = " +
-          "hd.createPalettizedColorSpaceMapper(resampled, csMap)");
-        r.exec("color = hd.createColorSpaceMapper(palettized, csMap)");
-      }
-      else r.exec("color = ictransf");
-
-      r.setVar("decodedImage", r.getVar("color"));
-      if (r.getVar("color") == null) {
-        r.setVar("decodedImage", r.getVar("ictransf"));
-      }
-
-      r.exec("img = BlkImgDataSrcImageProducer.createImage(decodedImage)");
-
-      Image img = (Image) r.getVar("img");
-
-      int dataType = 0;
-      switch (pixelType[0]) {
-        case FormatReader.INT8:
-          throw new FormatException("Unsupported pixel type: int8");
-        case FormatReader.UINT8:
-          dataType = DataBuffer.TYPE_BYTE;
-          break;
-        case FormatReader.INT16:
-          dataType = DataBuffer.TYPE_SHORT;
-          break;
-        case FormatReader.UINT16:
-          dataType = DataBuffer.TYPE_USHORT;
-          break;
-        case FormatReader.INT32:
-        case FormatReader.UINT32:
-          dataType = DataBuffer.TYPE_INT;
-          break;
-        case FormatReader.FLOAT:
-          dataType = DataBuffer.TYPE_FLOAT;
-          break;
-        case FormatReader.DOUBLE:
-          dataType = DataBuffer.TYPE_DOUBLE;
-          break;
-      }
-
-      ColorModel cm = ImageTools.makeColorModel(sizeC[0], dataType, validBits);
-      return ImageTools.makeBuffered(img);
+    byte[] b = new byte[0];
+   
+    if (no < getImageCount(id) - 1) {
+      b = new byte[(int) (offsets[no + 1] - offsets[no])];
     }
-    catch (ReflectException e) {
-      throw new FormatException(e);
+    else b = new byte[(int) (in.length() - offsets[no])]; 
+    in.read(b);
+
+    BufferedImage img = ImageIO.read(new ByteArrayInputStream(b));
+
+    int dataType = 0;
+    switch (pixelType[0]) {
+      case FormatReader.INT8:
+        throw new FormatException("Unsupported pixel type: int8");
+      case FormatReader.UINT8:
+        dataType = DataBuffer.TYPE_BYTE;
+        break;
+      case FormatReader.INT16:
+        dataType = DataBuffer.TYPE_SHORT;
+        break;
+      case FormatReader.UINT16:
+        dataType = DataBuffer.TYPE_USHORT;
+        break;
+      case FormatReader.INT32:
+      case FormatReader.UINT32:
+        dataType = DataBuffer.TYPE_INT;
+        break;
+      case FormatReader.FLOAT:
+        dataType = DataBuffer.TYPE_FLOAT;
+        break;
+      case FormatReader.DOUBLE:
+        dataType = DataBuffer.TYPE_DOUBLE;
+        break;
     }
+
+    ColorModel cm = ImageTools.makeColorModel(sizeC[0], dataType, validBits);
+    return ImageTools.makeBuffered(img);
   }
 
   /** Closes any open files. */
@@ -266,27 +196,41 @@ public class ND2Reader extends FormatReader {
 
   /** Initializes the given ND2 file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (noJJ2000) throw new FormatException(NO_JJ2000_MSG);
+    if (noJAI) throw new FormatException(NO_JAI_MSG);
     super.initFile(id);
+
+    // make sure that a JPEG 2000 reader is available
+    String[] fnames = ImageIO.getReaderFormatNames();
+    boolean foundReader = false;
+    for (int i=0; i<fnames.length; i++) {
+      foundReader = fnames[i].equals("JPEG 2000");
+      if (foundReader) i = fnames.length;
+    }
+    if (!foundReader) throw new FormatException(NO_JAI_MSG);
+
+    in = new RandomAccessStream(getMappedId(id));
 
     try {
       r.setVar("id", getMappedId(id));
       r.setVar("read", "r");
       r.exec("in = new BEBufferedRandomAccessFile(id, read)");
-      r.exec("ff = new FileFormatReader(in)");
+      r.setVar("j2kMetadata", null);
+      r.exec("ff = new FileFormatReader(in, j2kMetadata)");
 
       r.exec("ff.readFileFormat()");
       r.exec("offsets = ff.getCodeStreamPos()");
       offsets = (long[]) r.getVar("offsets");
     }
     catch (ReflectException e) { throw new FormatException(e); }
+
     numImages = offsets.length;
 
     pixelType[0] = FormatReader.UINT8;
-    BufferedImage img = openImage(id, 0);
 
+    BufferedImage img = openImage(id, 0);
     sizeX[0] = img.getWidth();
     sizeY[0] = img.getHeight();
+    rgb = img.getRaster().getNumBands() > 1;
 
     int numInvalid = 0;
 
@@ -310,37 +254,36 @@ public class ND2Reader extends FormatReader {
 
     // read XML metadata from the end of the file
 
-    RandomAccessStream ras = new RandomAccessStream(getMappedId(id));
-    ras.seek(offsets[offsets.length - 1]);
+    in.seek(offsets[offsets.length - 1]);
 
     boolean found = false;
     int off = -1;
     byte[] buf = new byte[2048];
     while (!found) {
       int read = 0;
-      if (ras.getFilePointer() == offsets[offsets.length - 1]) {
-        read = ras.read(buf);
+      if (in.getFilePointer() == offsets[offsets.length - 1]) {
+        read = in.read(buf);
       }
       else {
         System.arraycopy(buf, buf.length - 10, buf, 0, 10);
-        read = ras.read(buf, 10, buf.length - 10);
+        read = in.read(buf, 10, buf.length - 10);
       }
 
       if (read == buf.length) read -= 10;
       for (int i=0; i<read+9; i++) {
         if (buf[i] == (byte) 0xff && buf[i+1] == (byte) 0xd9) {
           found = true;
-          off = (int) (ras.getFilePointer() - (read+10) + i);
+          off = (int) (in.getFilePointer() - (read+10) + i);
           i = buf.length;
           break;
         }
       }
     }
 
-    if (off > 0 && off < ras.length() - 5) {
-      ras.seek(off + 5);
-      byte[] b = new byte[(int) (ras.length() - off)];
-      ras.read(b);
+    if (off > 0 && off < in.length() - 5) {
+      in.seek(off + 5);
+      byte[] b = new byte[(int) (in.length() - off)];
+      in.read(b);
       String xml = new String(b);
 
       // assume that this XML string will be malformed, since that's how both
@@ -427,14 +370,18 @@ public class ND2Reader extends FormatReader {
     }
     else sizeC[0] = img.getRaster().getNumBands();
 
-    sizeT[0] = numImages;
+    sizeT[0] = numImages / (!rgb ? sizeC[0] : 1);
     sizeZ[0] = 1;
     orderCertain[0] = false;
-    currentOrder[0] = sizeC[0] == 3 ? "XYCTZ" : "XYTZC";
+    currentOrder[0] = sizeC[0] > 1 ? "XYCTZ" : "XYTZC";
     pixelType[0] = ImageTools.getPixelType(img);
 
+    if (!rgb) {
+      while (sizeC[0] * sizeT[0] * sizeZ[0] < numImages) numImages--;
+    }
+
     if (bits != 0) {
-      validBits = new int[sizeC[0]];
+      validBits = new int[sizeC[0] == 2 ? 3 : sizeC[0]];
       for (int i=0; i<validBits.length; i++) validBits[i] = bits;
     }
     else validBits = null;

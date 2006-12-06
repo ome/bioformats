@@ -228,9 +228,14 @@ public class ImageReader implements IFormatReader {
     return getReader(id).getSizeT(id);
   }
 
-  /* @see IFormatReader#getPixelType() */
+  /* @see IFormatReader#getPixelType(String) */
   public int getPixelType(String id) throws FormatException, IOException {
     return getReader(id).getPixelType(id);
+  }
+
+  /* @see IFormatReader#getEffectiveSizeC(String) */
+  public int getEffectiveSizeC(String id) throws FormatException, IOException {
+    return getReader(id).getEffectiveSizeC(id);
   }
 
   /* @see IFormatReader#getChannelGlobalMinimum(int) */
