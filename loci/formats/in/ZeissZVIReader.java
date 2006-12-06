@@ -263,6 +263,8 @@ public class ZeissZVIReader extends FormatReader {
       byte[] a = new byte[b.length - offset];
       System.arraycopy(b, b.length - a.length, a, 0, a.length);
 
+      if (bpp > 6) bpp = 1;
+
       if (bpp == 3) {
         // reverse bytes in groups of 3 to account for BGR storage
 
@@ -285,16 +287,6 @@ public class ZeissZVIReader extends FormatReader {
         System.arraycopy(tmp, 0, a, 0, a.length);
       }
 
-      Object type = metadata.get("PixelType");
-      if (type == null || type.toString().trim().equals("1")) {
-        byte[] tmp = a;
-        a = new byte[tmp.length];
-        for (int i=0; i<tmp.length / 3; i++) {
-          a[i] = tmp[i*3];
-          a[i + tmp.length / 3] = tmp[i*3 + 1];
-          a[i + ((2*tmp.length) / 3)] = tmp[i*3 + 2];
-        }
-      }
       return a;
     }
     catch (ReflectException e) {
@@ -504,8 +496,6 @@ public class ZeissZVIReader extends FormatReader {
         String entryName = (String) r.getVar("entryName");
         String dirName = (String) r.getVar("dirName");
 
-        /* debug */ System.out.println(dirName + " - " + entryName);
-
         boolean isContents = entryName.toUpperCase().equals("CONTENTS");
         Object directory = r.getVar("dir");
 
@@ -701,8 +691,6 @@ public class ZeissZVIReader extends FormatReader {
           int version = DataTools.bytesToInt(data, pt, 4, true);
           pt += 4;
 
-          /* debug */ System.out.println("version : " + version);
-
           int vt = DataTools.bytesToInt(data, pt, 2, true);
           pt += 2;
           if (vt == 3) {
@@ -729,13 +717,12 @@ public class ZeissZVIReader extends FormatReader {
             pt += 6 + len;
           }
 
-          width = DataTools.bytesToInt(data, pt, 4, true);
+          int tw = DataTools.bytesToInt(data, pt, 4, true);
+          if (width == 0 || (tw < width && tw > 0)) width = tw;
           pt += 6;
-          height = DataTools.bytesToInt(data, pt, 4, true);
+          int th = DataTools.bytesToInt(data, pt, 4, true);
+          if (height == 0 || (th < height && th > 0)) height = th;
           pt += 6;
-
-          /* debug */ System.out.println("dimensions : (" + width + "x" + 
-            height + ")");
 
           int zDepth = DataTools.bytesToInt(data, pt, 4, true);
           pt += 6;
@@ -745,8 +732,6 @@ public class ZeissZVIReader extends FormatReader {
           pt += 6;
           int validBitsPerPixel = DataTools.bytesToInt(data, pt, 4, true);
           pt += 4;
-
-          /* debug */ System.out.println("num images : " + numImageContainers);
 
           // VT_CLSID - PluginCLSID
           while (DataTools.bytesToInt(data, pt, 2, true) != 65) {
