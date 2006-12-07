@@ -176,6 +176,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     channelBox = new JCheckBox("Transmitted");
     channelBox.setBackground(Color.white);
     channelPanel.add("one", channelBox);
+    channelBox.addItemListener(this);
 
     JPanel subPane = new JPanel(new FlowLayout());
     subPane.setBackground(Color.white);
@@ -264,6 +265,10 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     setC();
     repaint();
     update = true;
+  }
+  
+  public int getC() {
+    return c;
   }
 
   public void setC() {

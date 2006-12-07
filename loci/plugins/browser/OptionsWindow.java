@@ -406,7 +406,7 @@ public class OptionsWindow extends JFrame implements
     return -1;
   }
 
-  private Color getColor(int i) {
+  public static Color getColor(int i) {
     switch(i) {
       case 0:
         return Color.blue;

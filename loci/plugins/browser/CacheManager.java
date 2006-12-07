@@ -1983,7 +1983,7 @@ public class CacheManager implements Runnable {
         int aC = 1;
         zSel = db.cw.zSliceSel;
         tSel = db.cw.tSliceSel;
-        if (sizeC != 0) aC = ((Integer)db.cw.channelSpin.getValue()).intValue();
+        if (sizeC != 0) aC = (db.cw.getC());
         setIndicators(zSel.getValue(), tSel.getValue(), aC);
       }
     }
