@@ -163,8 +163,6 @@ public class Importer {
     IJ.showStatus("Analyzing " + fileName);
 
     try {
-      boolean doRGBMerge = false;
-
       // -- Step 4a: do some preparatory work --
 
       if (stitchFiles) r = new FileStitcher(r);
@@ -707,42 +705,10 @@ public class Importer {
             imp.setCalibration(c);
           }
 
-          /* debug */ System.out.println(fi.description);
           imp.setFileInfo(fi);
-          /* debug */ System.out.println(fi);
 
           int c = r.getSizeC(id);
           r.close();
-
-          /*
-          if (doRGBMerge) {
-            ImageStack is = imp.getImageStack();
-
-            int w = is.getWidth(), h = is.getHeight();
-            ImageStack newStack = new ImageStack(w, h);
-
-            ImageProcessor[] procs = new ImageProcessor[c];
-            for (int k=0; k<is.getSize(); k+=c) {
-              for (int j=0; j<c; j++) {
-                procs[j] = is.getProcessor(k + j + 1);
-                procs[j] = procs[j].convertToByte(true);
-              }
-
-              byte[] red = new byte[w * h];
-              byte[] green = new byte[w * h];
-              byte[] blue = new byte[w * h];
-
-              red = (byte[]) procs[0].getPixels();
-              if (c > 1) green = (byte[]) procs[1].getPixels();
-              if (c > 2) blue = (byte[]) procs[2].getPixels();
-
-              ColorProcessor color = new ColorProcessor(w, h);
-              color.setRGB(red, green, blue);
-              newStack.addSlice(is.getSliceLabel(k + 1), color);
-            }
-            imp.setStack(imp.getTitle(), newStack);
-          }
-          */
           imp.show();
         }
 
