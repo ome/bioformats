@@ -704,7 +704,6 @@ public abstract class BaseTiffReader extends FormatReader {
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
   {
-    if (true) return null;//TEMP
     if (!id.equals(currentId)) initFile(id);
     if (channelMinMax == null || channelMinMax[theC] == null)
       return null;
