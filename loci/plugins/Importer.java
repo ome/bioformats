@@ -167,9 +167,9 @@ public class Importer {
 
       // -- Step 4a: do some preparatory work --
 
+      if (stitchFiles) r = new FileStitcher(r);
       if (mergeChannels) r = new ChannelMerger(r);
       else r = new ChannelSeparator(r);
-      if (stitchFiles) r = new FileStitcher(r);
 
       r.setColorTableIgnored(ignoreTables);
 
@@ -707,11 +707,14 @@ public class Importer {
             imp.setCalibration(c);
           }
 
+          /* debug */ System.out.println(fi.description);
           imp.setFileInfo(fi);
+          /* debug */ System.out.println(fi);
 
           int c = r.getSizeC(id);
           r.close();
 
+          /*
           if (doRGBMerge) {
             ImageStack is = imp.getImageStack();
 
@@ -739,6 +742,7 @@ public class Importer {
             }
             imp.setStack(imp.getTitle(), newStack);
           }
+          */
           imp.show();
         }
 

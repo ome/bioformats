@@ -101,6 +101,11 @@ public class OMEUploader implements Uploader {
     this.server = server + "/shoola";
     omeis = server + "/cgi-bin/omeis";
 
+    if (!omeis.startsWith("http://")) omeis = "http://" + omeis;
+    if (!this.server.startsWith("http://")) {
+      this.server = "http://" + this.server;
+    }
+
     Vector v = new Vector();
     v.add(user);
     v.add(pass);
@@ -121,6 +126,7 @@ public class OMEUploader implements Uploader {
       throw new UploadException("Login failed - invalid server response.", e);
     }
     validLogin = true;
+    setupImport(0);
   }
   
   /** Log all users out of the current server. */
@@ -141,8 +147,6 @@ public class OMEUploader implements Uploader {
    */
   public int uploadFile(String file, boolean stitch) throws UploadException {
     if (!validLogin) throw new UploadException("Not logged in to the server.");
-
-    setupImport((new File(file)).length());
 
     try {
       IFormatReader f = reader.getReader(file);
@@ -197,8 +201,6 @@ public class OMEUploader implements Uploader {
   {
     if (!validLogin) throw new UploadException("Not logged in to the server.");
 
-    setupImport((new File(file)).length());
-    
     try {
       IFormatReader f = reader.getReader(file);
       OMEXMLMetadataStore store = new OMEXMLMetadataStore();
@@ -650,7 +652,7 @@ public class OMEUploader implements Uploader {
    * @param int size - the number of pixel bytes we expect to upload
    */
   private void setupImport(long size) throws UploadException {
-    files.clear();
+    if (files != null) files.clear();
     
     try {
       rs = DataServer.getDefaultServices(server);

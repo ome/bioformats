@@ -50,10 +50,12 @@ LOCI Plugins for ImageJ
     Folders:       loci/plugins
                    loci/plugins/*
                    loci/ome/viewer (temporary)
+                   loci/ome/upload
     Main class:    loci.plugins.About
     IJ plugins:    loci.plugins.browser.LociDataBrowser
                    loci.plugins.LociImporter
                    loci.plugins.LociExporter
+                   loci.plugins.LociUploader
                    loci.plugins.ome.OMEPlugin
     Dependencies:  bio-formats.jar
                    commons-httpclient-2.0-rc2.jar (ome-java.jar)
