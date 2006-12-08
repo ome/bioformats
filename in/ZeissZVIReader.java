@@ -367,7 +367,7 @@ public class ZeissZVIReader extends FormatReader {
 
       zSize = zIndices.size();
       tSize = tIndices.size();
-      nChannels *= cIndices.size();
+      if (nChannels != cIndices.size()) nChannels *= cIndices.size();
 
       sizeX = new int[1];
       sizeY = new int[1];
@@ -767,12 +767,13 @@ public class ZeissZVIReader extends FormatReader {
           if (!tIndices.contains(tndx)) tIndices.add(tndx);
 
           pt = oldPt + 4 + len;
-      
+     
           boolean foundWidth = DataTools.bytesToInt(data, pt, 4, true) == width;
           boolean foundHeight =
             DataTools.bytesToInt(data, pt + 4, 4, true) == height;
+          boolean findFailed = false;
           try {
-            while (!foundWidth || !foundHeight) {
+            while ((!foundWidth || !foundHeight) && pt < data.length) {
               pt++;
               foundWidth = DataTools.bytesToInt(data, pt, 4, true) == width;
               foundHeight = 
@@ -781,13 +782,14 @@ public class ZeissZVIReader extends FormatReader {
           }
           catch (Exception e) { } 
           pt -= 8;
+          findFailed = !foundWidth && !foundHeight;
 
           // image header and data
 
           if (dirName.toUpperCase().indexOf("ITEM") != -1 ||
             (dirName.equals("Image") && numImageContainers == 0))
           {
-            if (data.length - pt <= 0) pt = oldPt + 4 + len;
+            if (findFailed) pt = oldPt + 4 + len + 88;
             byte[] o = new byte[data.length - pt];
             System.arraycopy(data, pt, o, 0, o.length);
 

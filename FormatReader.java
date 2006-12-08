@@ -40,7 +40,7 @@ public abstract class FormatReader extends FormatHandler
   // -- Constants --
 
   /** Debugging flag. */
-  protected static final boolean DEBUG = true;
+  protected static final boolean DEBUG = false;
 
   /** Debugging level. 1=basic, 2=extended, 3=everything. */
   protected static final int DEBUG_LEVEL = 1;
