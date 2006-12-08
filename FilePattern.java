@@ -261,7 +261,8 @@ public class FilePattern {
 
   /** Gets the pattern's text string after all numerical ranges. */
   public String getSuffix() {
-    return pattern.substring(endIndex.length > 0 ? endIndex[endIndex.length - 1] : 0);
+    return endIndex.length > 0 ?
+      pattern.substring(endIndex[endIndex.length - 1]) : pattern;
   }
 
   /** Gets the pattern's text string before the given numerical block. */
