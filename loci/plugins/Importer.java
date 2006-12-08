@@ -878,7 +878,7 @@ public class Importer {
     f.setLayout(new BorderLayout());
     f.add(newPane, BorderLayout.CENTER);
     f.pack();
-    Dimension size = newPane.getSize();
+    final Dimension size = newPane.getSize();
     f.remove(newPane);
     f.dispose();
 
@@ -892,8 +892,11 @@ public class Importer {
     if (size.height > maxHeight) size.height = maxHeight;
 
     // create scroll pane
-    ScrollPane scroll = new ScrollPane();
-    scroll.setPreferredSize(size);
+    ScrollPane scroll = new ScrollPane() {
+      public Dimension getPreferredSize() {
+        return size;
+      }
+    };
     scroll.add(newPane);
 
     // add scroll pane to original container
