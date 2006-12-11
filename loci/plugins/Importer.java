@@ -126,6 +126,11 @@ public class Importer {
     final String metadataString = "Display associated metadata";
     final String stitchString = "Stitch files with similar names";
     final String rangeString = "Specify range for each series";
+    final String stackString = "Open stack with: ";
+
+    final String[] stackFormats = new String[] {
+      "Standard ImageJ", "LOCI 4D Data Browser", "Image5D", "View 5D"
+    };
 
     // load preferences from IJ_Prefs.txt
     boolean mergeChannels = Prefs.get("bioformats.mergeChannels", false);
@@ -135,6 +140,7 @@ public class Importer {
     boolean showMetadata = Prefs.get("bioformats.showMetadata", false);
     boolean stitchFiles = Prefs.get("bioformats.stitchFiles", false);
     boolean specifyRanges = Prefs.get("bioformats.specifyRanges", false);
+    String stackFormat = Prefs.get("bioformats.stackFormat", "Standard ImageJ");
 
     // prompt for parameters, if necessary
     GenericDialog pd = new GenericDialog("LOCI Bio-Formats Import Options");
@@ -145,6 +151,7 @@ public class Importer {
     pd.addCheckbox(metadataString, showMetadata);
     pd.addCheckbox(stitchString, stitchFiles);
     pd.addCheckbox(rangeString, specifyRanges);
+    pd.addChoice(stackString, stackFormats, stackFormats[0]);
     pd.showDialog();
     if (pd.wasCanceled()) {
       plugin.canceled = true;
@@ -157,6 +164,7 @@ public class Importer {
     showMetadata = pd.getNextBoolean();
     stitchFiles = pd.getNextBoolean();
     specifyRanges = pd.getNextBoolean();
+    stackFormat = stackFormats[pd.getNextChoiceIndex()];
 
     // -- Step 4: open file --
 
@@ -709,7 +717,35 @@ public class Importer {
 
           int c = r.getSizeC(id);
           r.close();
-          imp.show();
+        
+          if (stackFormat.equals("Standard ImageJ")) {
+            imp.show();
+          }
+          else if (stackFormat.equals("LOCI 4D Data Browser")) {
+          }
+          else if (stackFormat.equals("Image5D")) {
+            ReflectedUniverse ru = null;
+            try {
+              ru = new ReflectedUniverse();
+              ru.exec("import i5d.Image5D");
+            }
+            catch (Throwable t) { 
+              IJ.error("Image5D plugin not found.");
+              return;
+            }
+            
+            ru.setVar("title", imp.getTitle());
+            ru.setVar("stack", imp.getStack());
+            ru.setVar("sizeC", r.getSizeC(id));
+            ru.setVar("sizeZ", r.getSizeZ(id));
+            ru.setVar("sizeT", r.getSizeT(id));
+            ru.exec("i5d = new Image5D(title, stack, sizeC, sizeZ, sizeT)");
+            ru.exec("i5d.show()");
+          }
+          else if (stackFormat.equals("View 5D")) {
+            WindowManager.setTempCurrentImage(imp);
+            IJ.runPlugIn("View5D_", "");
+          }
         }
 
         long endTime = System.currentTimeMillis();
@@ -735,6 +771,7 @@ public class Importer {
       Prefs.set("bioformats.showMetadata", showMetadata);
       Prefs.set("bioformats.stitchFiles", stitchFiles);
       Prefs.set("bioformats.specifyRanges", specifyRanges);
+      Prefs.set("bioformats.stackFormat", stackFormat);
     }
     catch (Exception exc) {
       exc.printStackTrace();
