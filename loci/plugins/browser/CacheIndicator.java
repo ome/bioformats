@@ -26,6 +26,7 @@ package loci.plugins.browser;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
 
 public class CacheIndicator extends JComponent {
 
@@ -61,12 +62,12 @@ public class CacheIndicator extends JComponent {
     g.drawRect(0,0,getWidth()-1,COMPONENT_HEIGHT - 1);
 
     if(ratio < 1 && ratio != 0) {
-      int [] loadColor = new int[getWidth()];
-      int [] cacheColor = new int[getWidth()];
+      int [] loadCount = new int[getWidth()];
+      int [] cacheCount = new int[getWidth()];
       
-      for(int i = 0;i < loadColor.length;i++) {
-        loadColor[i] = -1;
-        cacheColor[i] = -1;
+      for(int i = 0;i < loadCount.length;i++) {
+        loadCount[i] = 0;
+        cacheCount[i] = 0;
       }
       
       //find how many entries of the cache are handled per pixel of indicator
@@ -89,32 +90,24 @@ public class CacheIndicator extends JComponent {
       if(DEBUG) System.out.println("ColorAmount: " + colorAmount);
       
       for(int i = 0;i<loadList.length;i++) {
+        boolean isLoaded = false;
+        if( Arrays.binarySearch(cache, loadList[i]) >= 0) isLoaded = true;
         int index = translate(loadList[i]);
-        if (loadColor[index] == -1) loadColor[index] = 0;
-        loadColor[index] = loadColor[index] + colorAmount;
-        if (loadColor[index] > 255) {
-        if(DEBUG) System.out.println("RED: " + loadColor[index]);
-          loadColor[index] = 255;
-        }
+        if(!isLoaded) loadCount[index]++;
       }
       for(int i = 0;i<cache.length;i++) {
         int index = translate(cache[i]);
-        if (cacheColor[index] == -1) cacheColor[index] = 0;
-        cacheColor[index] = cacheColor[index] + colorAmount;
-        if (cacheColor[index] > 255) {
-        if(DEBUG) System.out.println("BLUE: " + cacheColor[index]);
-          cacheColor[index] = 255;
-        }
+        cacheCount[index]++;
       }
-      
+
       for(int i = 0;i < getWidth();i++) {
-        if(loadColor[i] != -1 || cacheColor[i] != -1) {
-          if(loadColor[i] == -1) loadColor[i] = 0;
-          if(cacheColor[i] == -1) cacheColor[i] = 0;
-          g.setColor(new Color(loadColor[i],0,cacheColor[i]));
+        int loadColor,cacheColor;
+        loadColor = colorAmount * loadCount[i];
+        cacheColor = colorAmount * cacheCount[i];
+        if(loadColor != 0 || cacheColor != 0) {
+          g.setColor(new Color(loadColor,0,cacheColor));
           g.drawLine(i,1,i,COMPONENT_HEIGHT - 2);
         }
-        else continue;
       }
     }
     else if (ratio >= 1) {
