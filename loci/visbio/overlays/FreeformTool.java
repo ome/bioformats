@@ -121,11 +121,13 @@ public class FreeformTool extends OverlayTool {
         }
       }// end else
     } else { 
-      deselectAll();
-      freeform = new OverlayFreeform(overlay, x, y, x, y);
-      configureOverlay(freeform);
-      overlay.addObject(freeform, pos);
-      setMode(DRAW);
+      if (!ctl) {
+        deselectAll();
+        freeform = new OverlayFreeform(overlay, x, y, x, y);
+        configureOverlay(freeform);
+        overlay.addObject(freeform, pos);
+        setMode(DRAW);
+      }
     } 
 
     overlay.notifyListeners(new TransformEvent(overlay));
@@ -479,6 +481,7 @@ public class FreeformTool extends OverlayTool {
     overlay.removeObject(f2);
     configureOverlay(f3);
     overlay.addObject(f3);
+    freeform = f3; // store the new freeform
   }
 
   /** Returns the closest (subject to a threshhold) OverlayFreeform object to 
