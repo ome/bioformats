@@ -36,14 +36,16 @@ import loci.formats.*;
 
 /** ImagePreview.java is a 1.4 example used by FileChooserDemo2.java. */
 public class ImagePreview extends JComponent
-  implements PropertyChangeListener
+  implements PropertyChangeListener, Runnable
 {
   protected ImageReader ir;
   protected ImageIcon thumbnail = null;
   protected File file = null;
+  protected boolean initial;
 
   public ImagePreview(JFileChooser fc, ImageReader ir) {
     setPreferredSize(new Dimension(100, 50));
+    initial = true;
     fc.addPropertyChangeListener(this);
     this.ir = ir;
   }
@@ -62,14 +64,17 @@ public class ImagePreview extends JComponent
         System.err.println("file path: "+file.getAbsolutePath());
       }
 
-      String path = file.getAbsolutePath();
-      int sizeZ = ir.getSizeZ(path);
-      int sizeT = ir.getSizeT(path);
-      int index = ir.getIndex(path, sizeZ / 2, 0, sizeT / 2);
-      BufferedImage image = ir.openThumbImage(path, index);
-      ir.close();
+      
 
-      thumbnail = new ImageIcon(image);
+      synchronized(ir) {
+        String path = file.getAbsolutePath();
+        int sizeZ = ir.getSizeZ(path);
+        int sizeT = ir.getSizeT(path);
+        int index = ir.getIndex(path, sizeZ / 2, 0, sizeT / 2);
+        BufferedImage image = ir.openThumbImage(path, index);
+        ir.close();
+        thumbnail = new ImageIcon(image);
+      }
     }
     catch (Exception e) {
       thumbnail = null;
@@ -96,15 +101,27 @@ public class ImagePreview extends JComponent
     if (update) {
       thumbnail = null;
       if (isShowing()) {
-        loadImage();
         repaint();
       }
     }
   }
+  
+  // -- Runnable API methods --
+
+  /** The thread method that does the slice loading.*/
+  public void run() {
+    loadImage();
+    repaint();
+  }
 
   protected void paintComponent(Graphics g) {
-    if (thumbnail == null) loadImage();
-    if (thumbnail != null) {
+    if (initial) initial = false;
+    else if (thumbnail == null && !initial) {
+      g.drawString("Loading Preview...",5,getHeight()/2);
+      Thread loader = new Thread(this, "Browser-Thumbnail-Loader");
+      loader.start();
+    }
+    else if (thumbnail != null && !initial) {
       int x = getWidth()/2 - thumbnail.getIconWidth()/2;
       int y = getHeight()/2 - thumbnail.getIconHeight()/2;
       if (y < 0) y = 0;

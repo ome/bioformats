@@ -57,6 +57,7 @@ public class LociOpener implements ItemListener {
     p.add(new ImagePreview(fc, ir), BorderLayout.CENTER);
     p.add(c, BorderLayout.SOUTH);
     c.addItemListener(this);
+    c.setSelected(true);
     fc.setAccessory(p);
   }
 
