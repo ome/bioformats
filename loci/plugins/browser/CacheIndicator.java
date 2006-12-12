@@ -116,7 +116,13 @@ public class CacheIndicator extends JComponent {
       g.setColor(Color.red);
       for(int i = 0;i<loadList.length;i++) {
         int toLoad = loadList[i];
-
+        
+        //correct for bug with length 1
+        if(loadList.length == 1) {
+          startLoad = toLoad;
+          prevLoad = toLoad;
+        }
+        
         if(startLoad == -1) {
           startLoad = toLoad;
           prevLoad = toLoad;
@@ -138,6 +144,13 @@ public class CacheIndicator extends JComponent {
       g.setColor(Color.blue);
       for(int i = 0;i<cache.length;i++) {
         int toLoad = cache[i];
+        
+        //correct for bug with length 1
+        if(loadList.length == 1) {
+          startLoad = toLoad;
+          prevLoad = toLoad;
+        }
+        
         if(startLoad == -1) {
           startLoad = toLoad;
           prevLoad = toLoad;

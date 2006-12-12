@@ -1943,6 +1943,13 @@ public class CacheManager implements Runnable {
       }
     }
     
+    if(DEBUG) {
+      System.out.println("Z in Cache: " + zInCache);
+      System.out.println("T in Cache: " + tInCache);
+      System.out.println("Z in Load: " + zLoad);
+      System.out.println("T in Load: " + tLoad);
+    }
+    
     int[] zC = makeInt(zInCache.toArray());
     int[] tC = makeInt(tInCache.toArray());
     int[] zL = makeInt(zLoad.toArray());
