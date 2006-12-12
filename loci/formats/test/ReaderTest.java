@@ -73,6 +73,10 @@ public class ReaderTest {
 
   /** Reset the format reader. */
   public static void resetReader() {
+    try {
+      reader.close();
+    }
+    catch (Exception e) { }
     reader = new FileStitcher();
     OMEXMLMetadataStore store = new OMEXMLMetadataStore();
     store.createRoot();
@@ -131,7 +135,6 @@ public class ReaderTest {
       }
     }
     catch (Exception e) {
-      e.printStackTrace();
       success = false; 
     }
     try {
@@ -140,7 +143,7 @@ public class ReaderTest {
         logFile.flush();
       }
     }
-    catch (IOException io) { io.printStackTrace(); }
+    catch (IOException io) { }
     assertTrue(success);
   }
 
@@ -167,7 +170,6 @@ public class ReaderTest {
       }
     }
     catch (Exception e) { 
-      e.printStackTrace();
       success = false; 
     }
     try {
@@ -176,7 +178,7 @@ public class ReaderTest {
         logFile.flush();
       }
     }
-    catch (IOException io) { io.printStackTrace(); }
+    catch (IOException io) { }
     assertTrue(success);
   }
 
@@ -197,7 +199,7 @@ public class ReaderTest {
           logFile.flush();
         }
       }
-      catch (IOException io) { io.printStackTrace(); }
+      catch (IOException io) { }
       assertTrue(success);
     }
     catch (Exception e) { 
@@ -205,7 +207,7 @@ public class ReaderTest {
         logFile.write(currentFile + " failed image count test\n");
         logFile.flush();
       }
-      catch (IOException io) { io.printStackTrace(); }
+      catch (IOException io) { }
       assertTrue(false); 
     }
   }
@@ -244,7 +246,7 @@ public class ReaderTest {
           logFile.write(currentFile + " failed OME-XML sanity test\n");
           logFile.flush();
         }
-        catch (IOException io) { io.printStackTrace(); }
+        catch (IOException io) { }
       }
       assertTrue(success); 
     }
@@ -253,7 +255,7 @@ public class ReaderTest {
         logFile.write(currentFile + " failed OME-XML sanity test\n");
         logFile.flush();
       }
-      catch (IOException io) { io.printStackTrace(); }
+      catch (IOException io) { }
       assertTrue(false); 
     }
   }
