@@ -89,11 +89,14 @@ public class ImagePreview extends JComponent
     //If the directory changed, don't show an image.
     if (JFileChooser.DIRECTORY_CHANGED_PROPERTY.equals(prop)) {
       file = null;
+      initial = true;
       update = true;
     }
     //If a file became selected, find out which one.
     else if (JFileChooser.SELECTED_FILE_CHANGED_PROPERTY.equals(prop)) {
       file = (File) e.getNewValue();
+      if (file == null) initial = true;
+      else if (file != null && file.isDirectory()) initial = true; 
       update = true;
     }
 
