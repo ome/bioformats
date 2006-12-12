@@ -294,7 +294,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     else {
       // C checkbox
       switcher.first(channelPanel);
-      c = channelBox.isSelected() ? 1 : 2;
+      c = channelBox.isSelected() ? 2 : 1;
       if (!hasThis) {
         channelBox.setEnabled(false);    
         c = 1;
@@ -530,7 +530,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       
       z = zSliceSel.getValue();
       t = tSliceSel.getValue();
-      c = channels.isSelected() ? 1 : 2;
+      c = channels.isSelected() ? 2 : 1;
   
       showSlice(z, t, c);
     }
