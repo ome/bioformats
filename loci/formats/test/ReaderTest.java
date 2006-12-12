@@ -24,81 +24,256 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.test;
 
+import java.awt.image.BufferedImage;
 import java.io.*;
-import junit.framework.*;
-import loci.formats.FileStitcher;
-import loci.formats.FormatException;
+import java.util.*;
+import loci.formats.*;
+import org.junit.*;
+import org.junit.runner.*;
+import static org.junit.Assert.*;
 
-/** Tests the Bio-Formats file format readers. */
-public class ReaderTest extends TestCase {
+/**
+ * Class that provides automated testing of the Bio-Formats library using JUnit.
+ * Failed tests are written to a logfile, for easier processing.
+ */
+public class ReaderTest {
 
-  private String id;
-  private FileStitcher reader;
+  // -- Fields --
 
-  // -- Constructor --
+  private static Vector files;
+  private static Vector badFiles;
+  private static String currentFile;
+  private static IFormatReader reader;
+  private static FileWriter logFile;
 
-  public ReaderTest(String dataFile) {
-    super("testReader");
-    id = dataFile;
+  // -- API methods --
+
+  /** Set the file to process. */
+  public static void setFile(String file) {
+    currentFile = file;
   }
 
-  // -- ReaderTest API methods --
-
-  public void testReader() {
-    boolean success = false;
-    System.out.print(id + ": ");
-    try {
-      int sizeZ = reader.getSizeZ(id);
-      System.out.print("sizeZ=" + sizeZ + "; ");
-      int sizeC = reader.getSizeC(id);
-      System.out.print("sizeC=" + sizeC + "; ");
-      int sizeT = reader.getSizeT(id);
-      System.out.println("sizeT=" + sizeT);
-      success = true;
+  /** Determine if the given filename is a "bad" file. */
+  public static boolean isBadFile(String file) {
+    if (badFiles == null) {
+      try {
+        badFiles = new Vector();
+        BufferedReader in = new BufferedReader(new FileReader("bad-files.txt"));
+        while (true) {
+          String line = in.readLine();
+          if (line == null) break;
+          badFiles.add(line);
+        }
+        in.close();
+      }
+      catch (IOException io) { }
     }
-    catch (FormatException exc) { }
-    catch (IOException exc) { }
+    return badFiles.contains(file);
+  }
+
+  /** Reset the format reader. */
+  public static void resetReader() {
+    reader = new FileStitcher();
+    OMEXMLMetadataStore store = new OMEXMLMetadataStore();
+    store.createRoot();
+    reader.setMetadataStore(store);
+  }
+
+  /** Recursively generate a list of files to test. */
+  public static void getFiles(String root, Vector files) {
+    if (reader == null) {
+      reader = new FileStitcher();
+      OMEXMLMetadataStore store = new OMEXMLMetadataStore();
+      store.createRoot();
+      reader.setMetadataStore(store);
+    
+      Date date = new Date();
+      try {
+        logFile = new FileWriter("bioformats-test-" + date.toString() + ".log");
+        logFile.flush();
+      }
+      catch (IOException io) { }
+    }
+    
+    File f = new File(root);
+    String[] subs = f.list();
+    if (subs != null) {
+      for (int i=0; i<subs.length; i++) {
+        if (!isBadFile(subs[i])) {
+          subs[i] = root + File.separator + subs[i];
+          File tmp = new File(subs[i]);
+          if (!tmp.isDirectory() && reader.isThisType(subs[i])) {
+            files.add(subs[i]);
+          }
+          else if (tmp.isDirectory()) getFiles(subs[i], files);
+        }
+      }
+    }
+  }
+
+  // -- Testing methods --
+
+  /** 
+   * Check the SizeX and SizeY dimensions against the actual dimensions of
+   * the BufferedImages.
+   */
+  @Test public void testBufferedImageDimensions() {
+   boolean success = true;
+    try {
+      int imageCount = reader.getImageCount(currentFile);
+      int sizeX = reader.getSizeX(currentFile);
+      int sizeY = reader.getSizeY(currentFile);
+      for (int j=0; j<imageCount; j++) {
+        BufferedImage b = reader.openImage(currentFile, j);
+        if ((b.getWidth() != sizeX) || (b.getHeight() != sizeY)) {
+          success = false;
+        }
+      }
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      success = false; 
+    }
+    try {
+      if (!success) {
+        logFile.write(currentFile + " failed BufferedImage test\n");
+        logFile.flush();
+      }
+    }
+    catch (IOException io) { io.printStackTrace(); }
     assertTrue(success);
   }
 
-  // -- TestCase API methods --
+  /**
+   * Check the SizeX and SizeY dimensions against the actual dimensions of
+   * the byte array returned by openBytes.
+   */
+  @Test public void testByteArrayDimensions() {
+    boolean success = true;
+    try {
+      int imageCount = reader.getImageCount(currentFile);
+      int sizeX = reader.getSizeX(currentFile);
+      int sizeY = reader.getSizeY(currentFile);
+      int bytesPerPixel = 
+        FormatReader.getBytesPerPixel(reader.getPixelType(currentFile));
+      int sizeC = reader.getSizeC(currentFile);
+      boolean rgb = reader.isRGB(currentFile);
 
-  protected void setUp() {
-    reader = new FileStitcher();
+      int expectedBytes = sizeX * sizeY * bytesPerPixel * (rgb ? sizeC : 1);
+
+      for (int i=0; i<imageCount; i++) {
+        byte[] b = reader.openBytes(currentFile, i);
+        if (b.length != expectedBytes) success = false; 
+      }
+    }
+    catch (Exception e) { 
+      e.printStackTrace();
+      success = false; 
+    }
+    try {
+      if (!success) {
+        logFile.write(currentFile + " failed byte array test\n");
+        logFile.flush();
+      }
+    }
+    catch (IOException io) { io.printStackTrace(); }
+    assertTrue(success);
   }
 
-  protected void tearDown() {
-    reader = null;
+  /**
+   * Check the SizeZ, SizeC, and SizeT dimensions against the 
+   * total image count.
+   */
+  @Test public void testImageCount() {
+    try {
+      int imageCount = reader.getImageCount(currentFile);
+      int sizeZ = reader.getSizeZ(currentFile);
+      int sizeC = reader.getEffectiveSizeC(currentFile);
+      int sizeT = reader.getSizeT(currentFile);
+      boolean success = imageCount == sizeZ * sizeC * sizeT;
+      try {
+        if (!success) {
+          logFile.write(currentFile + " failed image count test\n");
+          logFile.flush();
+        }
+      }
+      catch (IOException io) { io.printStackTrace(); }
+      assertTrue(success);
+    }
+    catch (Exception e) { 
+      try {
+        logFile.write(currentFile + " failed image count test\n");
+        logFile.flush();
+      }
+      catch (IOException io) { io.printStackTrace(); }
+      assertTrue(false); 
+    }
+  }
+
+  /**
+   * Check that the OME-XML attribute values match the values of the core
+   * metadata (Size*, DimensionOrder, etc.).
+   */
+  @Test public void testOMEXML() {
+    try {
+      OMEXMLMetadataStore store = 
+        (OMEXMLMetadataStore) reader.getMetadataStore(currentFile);
+  
+      int sizeX = reader.getSizeX(currentFile);
+      int sizeY = reader.getSizeY(currentFile);
+      int sizeZ = reader.getSizeZ(currentFile);
+      int sizeC = reader.getSizeC(currentFile);
+      int sizeT = reader.getSizeT(currentFile);
+      boolean bigEndian = !reader.isLittleEndian(currentFile);
+      String type = 
+        FormatReader.getPixelTypeString(reader.getPixelType(currentFile));
+      String dimensionOrder = reader.getDimensionOrder(currentFile);
+
+      boolean success =  
+        (sizeX == store.getSizeX(null)) &&
+        (sizeY == store.getSizeY(null)) &&
+        (sizeZ == store.getSizeZ(null)) &&
+        (sizeC == store.getSizeC(null)) &&
+        (sizeT == store.getSizeT(null)) &&
+        (bigEndian == store.getBigEndian(null)) &&
+        type.toLowerCase().equals(store.getPixelType(null).toLowerCase()) &&
+        dimensionOrder.equals(store.getDimensionOrder(null));
+   
+      if (!success) {
+        try {
+          logFile.write(currentFile + " failed OME-XML sanity test\n");
+          logFile.flush();
+        }
+        catch (IOException io) { io.printStackTrace(); }
+      }
+      assertTrue(success); 
+    }
+    catch (Exception e) { 
+      try {
+        logFile.write(currentFile + " failed OME-XML sanity test\n");
+        logFile.flush();
+      }
+      catch (IOException io) { io.printStackTrace(); }
+      assertTrue(false); 
+    }
   }
 
   // -- Main method --
 
   public static void main(String[] args) {
-    String base = args[0];
-
-    // construct test suite
-    TestSuite suite = new TestSuite();
-    try {
-      BufferedReader in = new BufferedReader(new FileReader("data-files.txt"));
-      while (true) {
-        String line = in.readLine();
-        if (line == null) break;
-        suite.addTest(new ReaderTest(base + File.separator + line));
-      }
-      in.close();
+    Vector files = new Vector();  
+    ReaderTest.getFiles(args[0], files);
+    for (int i=0; i<files.size(); i++) {
+      JUnitCore core = new JUnitCore();
+      ReaderTest.setFile((String) files.get(i));
+      ReaderTest.resetReader();
+      Result r = core.run(Request.aClass(ReaderTest.class));
+      int total = r.getRunCount();
+      int failed = r.getFailureCount();
+      float failPercent = (float) (100 * ((double) failed / (double) total));
+      System.out.println(files.get(i) + " - " + failed + " failures in " + 
+        total + " tests (" + failPercent + "% failed)");
     }
-    catch (IOException exc) {
-      exc.printStackTrace();
-      System.exit(1);
-    }
-
-    // run test suite
-    TestResult result = new TestResult();
-    suite.run(result);
-    System.out.println();
-    System.out.println("Tests complete.");
-    System.out.println(result.failureCount() + " failures, " +
-      result.errorCount() + " errors.");
   }
 
 }
