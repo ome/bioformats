@@ -189,6 +189,19 @@ public class LeicaReader extends BaseTiffReader {
     return b;
   }
 
+  /* @see IFormatReader#getUsedFiles(String) */
+  public String[] getUsedFiles(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    Vector v = new Vector();
+    v.add(getMappedId(id));
+    for (int i=0; i<files.length; i++) {
+      for (int j=0; j<files[i].size(); j++) {
+        v.add(files[i].get(j));
+      }
+    }
+    return (String[]) v.toArray(new String[0]);
+  }
+
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
     if (in != null) in.close();

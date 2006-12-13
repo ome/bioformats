@@ -357,11 +357,18 @@ public abstract class FormatReader extends FormatHandler
     return normalizeData;
   }
 
+  /* @see IFormatReader#getUsedFiles(String) */
+  public String[] getUsedFiles(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return new String[] {getMappedId(id)};
+  }
+
   /* @see IFormatReader#swapDimensions(String, String) */
   public void swapDimensions(String id, String order)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
+    if (order == null) return;
     if (order.equals(currentOrder[series])) return;
 
     int[] dims = new int[5];

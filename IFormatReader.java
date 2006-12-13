@@ -199,6 +199,9 @@ public interface IFormatReader extends IFormatHandler {
   /** Returns true if we should normalize float data. */
   boolean isNormalized();
 
+  /** Returns an array of filenames needed to open this dataset. */
+  String[] getUsedFiles(String id) throws FormatException, IOException;
+
   /**
    * Swaps the dimensions according to the given dimension order.  If the given
    * order is identical to the file's native order, then nothing happens.
