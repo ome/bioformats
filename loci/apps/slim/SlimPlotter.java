@@ -1141,8 +1141,9 @@ public class SlimPlotter implements ActionListener, ChangeListener,
           if (!cVisible[c]) continue;
           for (int t=0; t<timeBins; t++) {
             int ndx = timeBins * cc + t;
-            bcGrid[0][ndx] = t * timeRange / (timeBins - 1);
-            bcGrid[1][ndx] = c * (maxWave - minWave) / (channels - 1) + minWave;
+            bcGrid[0][ndx] = timeBins > 1 ? t * timeRange / (timeBins - 1) : 0;
+            bcGrid[1][ndx] = channels > 1 ?
+              c * (maxWave - minWave) / (channels - 1) + minWave : 0;
           }
           cc++;
         }
@@ -1275,7 +1276,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       float[][] cGrid = new float[1][numChanVis];
       for (int c=0, cc=0; c<channels; c++) {
         if (!cVisible[c]) continue;
-        cGrid[0][cc++] = c * (maxWave - minWave) / (channels - 1) + minWave;
+        cGrid[0][cc++] = channels > 1 ?
+          c * (maxWave - minWave) / (channels - 1) + minWave : 0;
       }
       Gridded1DSet waveSet = new Gridded1DSet(cType,
         cGrid, numChanVis, null, new Unit[] {bcUnits[1]}, null, false);
