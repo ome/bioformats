@@ -127,15 +127,19 @@ public class Importer {
     final String metadataString = "Display associated metadata";
     final String stitchString = "Stitch files with similar names";
     final String rangeString = "Specify range for each series";
-    final String stackString = "Open stack with: ";
+    final String stackString = "View stack with: ";
 
+    final String viewStandard = "Standard ImageJ";
+    final String viewBrowser = "4D Data Browser";
+    final String viewImage5D = "Image5D";
+    final String viewView5D = "View5D";
     Vector stackTypes = new Vector();
-    stackTypes.add("Standard ImageJ");
+    stackTypes.add(viewStandard);
     if (Util.checkClass("loci.plugins.browser.LociDataBrowser")) {
-      stackTypes.add("4D Data Browser");
+      stackTypes.add(viewBrowser);
     }
-    if (Util.checkClass("i5d.Image5D")) stackTypes.add("Image5D");
-    if (Util.checkClass("View5D")) stackTypes.add("View5D");
+    if (Util.checkClass("i5d.Image5D")) stackTypes.add(viewImage5D);
+    if (Util.checkClass("View5D")) stackTypes.add(viewView5D);
     final String[] stackFormats = new String[stackTypes.size()];
     stackTypes.copyInto(stackFormats);
 
@@ -147,7 +151,7 @@ public class Importer {
     boolean showMetadata = Prefs.get("bioformats.showMetadata", false);
     boolean stitchFiles = Prefs.get("bioformats.stitchFiles", false);
     boolean specifyRanges = Prefs.get("bioformats.specifyRanges", false);
-    String stackFormat = Prefs.get("bioformats.stackFormat", "Standard ImageJ");
+    String stackFormat = Prefs.get("bioformats.stackFormat", viewStandard);
 
     // prompt for parameters, if necessary
     GenericDialog pd = new GenericDialog("LOCI Bio-Formats Import Options");
@@ -725,22 +729,14 @@ public class Importer {
           int c = r.getSizeC(id);
           r.close();
         
-          if (stackFormat.equals("Standard ImageJ")) {
-            imp.show();
-          }
+          // display image stack using appropriate format
+          if (stackFormat.equals(viewStandard)) imp.show();
           else if (stackFormat.equals("LOCI 4D Data Browser")) {
           }
-          else if (stackFormat.equals("Image5D")) {
+          else if (stackFormat.equals(viewImage5D)) {
             ReflectedUniverse ru = null;
-            try {
-              ru = new ReflectedUniverse();
-              ru.exec("import i5d.Image5D");
-            }
-            catch (Throwable t) { 
-              IJ.error("Image5D plugin not found.");
-              return;
-            }
-            
+            ru = new ReflectedUniverse();
+            ru.exec("import i5d.Image5D");
             ru.setVar("title", imp.getTitle());
             ru.setVar("stack", imp.getStack());
             ru.setVar("sizeC", r.getSizeC(id));
@@ -749,7 +745,7 @@ public class Importer {
             ru.exec("i5d = new Image5D(title, stack, sizeC, sizeZ, sizeT)");
             ru.exec("i5d.show()");
           }
-          else if (stackFormat.equals("View5D")) {
+          else if (stackFormat.equals(viewView5D)) {
             WindowManager.setTempCurrentImage(imp);
             IJ.runPlugIn("View5D_", "");
           }
