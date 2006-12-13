@@ -30,7 +30,7 @@ import java.util.*;
 import loci.formats.*;
 import org.junit.*;
 import org.junit.runner.*;
-import static org.junit.Assert.*;
+import org.junit.Assert;
 
 /**
  * Class that provides automated testing of the Bio-Formats library using JUnit.
@@ -172,7 +172,7 @@ public class ReaderTest {
       }
     }
     catch (IOException io) { }
-    assertTrue(success);
+    Assert.assertTrue(success);
   }
 
   /**
@@ -215,7 +215,7 @@ public class ReaderTest {
       }
     }
     catch (IOException io) { }
-    assertTrue(success);
+    Assert.assertTrue(success);
   }
 
   /**
@@ -236,12 +236,12 @@ public class ReaderTest {
           if (!success) {
             logFile.write(currentFile + " failed image count test\n");
             logFile.flush();
-            assertTrue(false);
+            Assert.assertTrue(false);
           }
         }
         catch (IOException io) { }
       }
-      assertTrue(success);
+      Assert.assertTrue(success);
     }
     catch (Exception e) { 
       try {
@@ -249,7 +249,7 @@ public class ReaderTest {
         logFile.flush();
       }
       catch (IOException io) { }
-      assertTrue(false); 
+      Assert.assertTrue(false); 
     }
   }
 
@@ -276,12 +276,12 @@ public class ReaderTest {
         String dimensionOrder = reader.getDimensionOrder(currentFile);
 
         success =  
-          (sizeX == store.getSizeX(null)) &&
-          (sizeY == store.getSizeY(null)) &&
-          (sizeZ == store.getSizeZ(null)) &&
-          (sizeC == store.getSizeC(null)) &&
-          (sizeT == store.getSizeT(null)) &&
-          (bigEndian == store.getBigEndian(null)) &&
+          (sizeX == store.getSizeX(null).intValue()) &&
+          (sizeY == store.getSizeY(null).intValue()) &&
+          (sizeZ == store.getSizeZ(null).intValue()) &&
+          (sizeC == store.getSizeC(null).intValue()) &&
+          (sizeT == store.getSizeT(null).intValue()) &&
+          (bigEndian == store.getBigEndian(null).booleanValue()) &&
           type.toLowerCase().equals(store.getPixelType(null).toLowerCase()) &&
           dimensionOrder.equals(store.getDimensionOrder(null));
    
@@ -289,12 +289,12 @@ public class ReaderTest {
           try {
             logFile.write(currentFile + " failed OME-XML sanity test\n");
             logFile.flush();
-            assertTrue(false);
+            Assert.assertTrue(false);
           }
           catch (IOException io) { }
         }
       }
-      assertTrue(success); 
+      Assert.assertTrue(success); 
     }
     catch (Exception e) { 
       try {
@@ -302,7 +302,7 @@ public class ReaderTest {
         logFile.flush();
       }
       catch (IOException io) { }
-      assertTrue(false); 
+      Assert.assertTrue(false); 
     }
   }
 
