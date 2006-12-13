@@ -98,11 +98,17 @@ public final class Util {
     return true;
   }
 
+  /** Checks whether the given class is available. */
+  public static boolean checkClass(String className) {
+    try { Class.forName(className); }
+    catch (Throwable t) { return false; }
+    return true;
+  }
+
   private static void checkLibrary(String className,
     String jarFile, HashSet hs)
   {
-    try { Class.forName(className); }
-    catch (Throwable t) { hs.add(jarFile); }
+    if (!checkClass(className)) hs.add(jarFile);
   }
 
 }

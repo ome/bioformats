@@ -36,6 +36,7 @@ import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.Vector;
 import javax.swing.*;
 import loci.formats.*;
 
@@ -128,9 +129,13 @@ public class Importer {
     final String rangeString = "Specify range for each series";
     final String stackString = "Open stack with: ";
 
-    final String[] stackFormats = new String[] {
-      "Standard ImageJ", "LOCI 4D Data Browser", "Image5D", "View 5D"
-    };
+    Vector stackTypes = new Vector();
+    stackTypes.add("Standard ImageJ");
+    stackTypes.add("4D Data Browser");
+    if (Util.checkClass("i5d.Image5D")) stackTypes.add("Image5D");
+    if (Util.checkClass("View5D")) stackTypes.add("View5D");
+    final String[] stackFormats = new String[stackTypes.size()];
+    stackTypes.copyInto(stackFormats);
 
     // load preferences from IJ_Prefs.txt
     boolean mergeChannels = Prefs.get("bioformats.mergeChannels", false);
@@ -742,7 +747,7 @@ public class Importer {
             ru.exec("i5d = new Image5D(title, stack, sizeC, sizeZ, sizeT)");
             ru.exec("i5d.show()");
           }
-          else if (stackFormat.equals("View 5D")) {
+          else if (stackFormat.equals("View5D")) {
             WindowManager.setTempCurrentImage(imp);
             IJ.runPlugIn("View5D_", "");
           }
