@@ -40,7 +40,6 @@ public class ReaderTest {
 
   // -- Fields --
 
-  private static Vector files;
   private static Vector badFiles;
   private static String currentFile;
   private static IFormatReader reader;
@@ -68,7 +67,11 @@ public class ReaderTest {
       }
       catch (IOException io) { }
     }
-    return badFiles.contains(file);
+    if (badFiles.contains(file)) return true;
+    for (int i=0; i<badFiles.size(); i++) {
+      if (file.endsWith((String) badFiles.get(i))) return true;
+    }
+    return false; 
   }
 
   /** Reset the format reader. */
@@ -81,6 +84,17 @@ public class ReaderTest {
     OMEXMLMetadataStore store = new OMEXMLMetadataStore();
     store.createRoot();
     reader.setMetadataStore(store);
+  }
+
+  /** 
+   * Returns true if any of the given file names are in the 
+   * list of files to test. 
+   */
+  public static boolean isStitchedFile(Vector files, String[] related) {
+    for (int i=0; i<related.length; i++) {
+      if (files.contains(related[i])) return true;  
+    }
+    return false;
   }
 
   /** Recursively generate a list of files to test. */
@@ -104,10 +118,18 @@ public class ReaderTest {
     if (subs != null) {
       for (int i=0; i<subs.length; i++) {
         if (!isBadFile(subs[i])) {
-          subs[i] = root + File.separator + subs[i];
+          subs[i] = root + 
+            (root.endsWith(File.separator) ? "" : File.separator) + subs[i];
           File tmp = new File(subs[i]);
           if (!tmp.isDirectory() && reader.isThisType(subs[i])) {
-            files.add(subs[i]);
+            try {
+              if (!isStitchedFile(files, reader.getUsedFiles(subs[i]))) {
+                files.add(subs[i]);
+                /* debug */ System.out.println("adding " + subs[i]);
+              }
+            }
+            catch (IOException io) { }
+            catch (FormatException fe) { }
           }
           else if (tmp.isDirectory()) getFiles(subs[i], files);
         }
@@ -124,13 +146,19 @@ public class ReaderTest {
   @Test public void testBufferedImageDimensions() {
    boolean success = true;
     try {
-      int imageCount = reader.getImageCount(currentFile);
-      int sizeX = reader.getSizeX(currentFile);
-      int sizeY = reader.getSizeY(currentFile);
-      for (int j=0; j<imageCount; j++) {
-        BufferedImage b = reader.openImage(currentFile, j);
-        if ((b.getWidth() != sizeX) || (b.getHeight() != sizeY)) {
-          success = false;
+      for (int i=0; i<reader.getSeriesCount(currentFile); i++) {
+        reader.setSeries(currentFile, i);
+        int imageCount = reader.getImageCount(currentFile);
+        int sizeX = reader.getSizeX(currentFile);
+        int sizeY = reader.getSizeY(currentFile);
+        for (int j=0; j<imageCount; j++) {
+          BufferedImage b = reader.openImage(currentFile, j);
+          if ((b.getWidth() != sizeX) || (b.getHeight() != sizeY)) {
+            success = false;
+            j = imageCount;
+            i = reader.getSeriesCount(currentFile);
+            break;
+          }
         }
       }
     }
@@ -154,19 +182,27 @@ public class ReaderTest {
   @Test public void testByteArrayDimensions() {
     boolean success = true;
     try {
-      int imageCount = reader.getImageCount(currentFile);
-      int sizeX = reader.getSizeX(currentFile);
-      int sizeY = reader.getSizeY(currentFile);
-      int bytesPerPixel = 
-        FormatReader.getBytesPerPixel(reader.getPixelType(currentFile));
-      int sizeC = reader.getSizeC(currentFile);
-      boolean rgb = reader.isRGB(currentFile);
+      for (int i=0; i<reader.getSeriesCount(currentFile); i++) {
+        reader.setSeries(currentFile, i);
+        int imageCount = reader.getImageCount(currentFile);
+        int sizeX = reader.getSizeX(currentFile);
+        int sizeY = reader.getSizeY(currentFile);
+        int bytesPerPixel = 
+          FormatReader.getBytesPerPixel(reader.getPixelType(currentFile));
+        int sizeC = reader.getSizeC(currentFile);
+        boolean rgb = reader.isRGB(currentFile);
 
-      int expectedBytes = sizeX * sizeY * bytesPerPixel * (rgb ? sizeC : 1);
+        int expectedBytes = sizeX * sizeY * bytesPerPixel * (rgb ? sizeC : 1);
 
-      for (int i=0; i<imageCount; i++) {
-        byte[] b = reader.openBytes(currentFile, i);
-        if (b.length != expectedBytes) success = false; 
+        for (int j=0; j<imageCount; j++) {
+          byte[] b = reader.openBytes(currentFile, j);
+          if (b.length != expectedBytes) {
+            success = false; 
+            j = imageCount;
+            i = reader.getSeriesCount(currentFile);
+            break;
+          }
+        }
       }
     }
     catch (Exception e) { 
@@ -187,19 +223,24 @@ public class ReaderTest {
    * total image count.
    */
   @Test public void testImageCount() {
+    boolean success = true;
     try {
-      int imageCount = reader.getImageCount(currentFile);
-      int sizeZ = reader.getSizeZ(currentFile);
-      int sizeC = reader.getEffectiveSizeC(currentFile);
-      int sizeT = reader.getSizeT(currentFile);
-      boolean success = imageCount == sizeZ * sizeC * sizeT;
-      try {
-        if (!success) {
-          logFile.write(currentFile + " failed image count test\n");
-          logFile.flush();
+      for (int i=0; i<reader.getSeriesCount(currentFile); i++) {
+        reader.setSeries(currentFile, i);
+        int imageCount = reader.getImageCount(currentFile);
+        int sizeZ = reader.getSizeZ(currentFile);
+        int sizeC = reader.getEffectiveSizeC(currentFile);
+        int sizeT = reader.getSizeT(currentFile);
+        success = imageCount == sizeZ * sizeC * sizeT;
+        try {
+          if (!success) {
+            logFile.write(currentFile + " failed image count test\n");
+            logFile.flush();
+            assertTrue(false);
+          }
         }
+        catch (IOException io) { }
       }
-      catch (IOException io) { }
       assertTrue(success);
     }
     catch (Exception e) { 
@@ -220,33 +261,38 @@ public class ReaderTest {
     try {
       OMEXMLMetadataStore store = 
         (OMEXMLMetadataStore) reader.getMetadataStore(currentFile);
-  
-      int sizeX = reader.getSizeX(currentFile);
-      int sizeY = reader.getSizeY(currentFile);
-      int sizeZ = reader.getSizeZ(currentFile);
-      int sizeC = reader.getSizeC(currentFile);
-      int sizeT = reader.getSizeT(currentFile);
-      boolean bigEndian = !reader.isLittleEndian(currentFile);
-      String type = 
-        FormatReader.getPixelTypeString(reader.getPixelType(currentFile));
-      String dimensionOrder = reader.getDimensionOrder(currentFile);
+ 
+      boolean success = true;
+      for (int i=0; i<reader.getSeries(currentFile); i++) {
+        reader.setSeries(currentFile, i);
+        int sizeX = reader.getSizeX(currentFile);
+        int sizeY = reader.getSizeY(currentFile);
+        int sizeZ = reader.getSizeZ(currentFile);
+        int sizeC = reader.getSizeC(currentFile);
+        int sizeT = reader.getSizeT(currentFile);
+        boolean bigEndian = !reader.isLittleEndian(currentFile);
+        String type = 
+          FormatReader.getPixelTypeString(reader.getPixelType(currentFile));
+        String dimensionOrder = reader.getDimensionOrder(currentFile);
 
-      boolean success =  
-        (sizeX == store.getSizeX(null)) &&
-        (sizeY == store.getSizeY(null)) &&
-        (sizeZ == store.getSizeZ(null)) &&
-        (sizeC == store.getSizeC(null)) &&
-        (sizeT == store.getSizeT(null)) &&
-        (bigEndian == store.getBigEndian(null)) &&
-        type.toLowerCase().equals(store.getPixelType(null).toLowerCase()) &&
-        dimensionOrder.equals(store.getDimensionOrder(null));
+        success =  
+          (sizeX == store.getSizeX(null)) &&
+          (sizeY == store.getSizeY(null)) &&
+          (sizeZ == store.getSizeZ(null)) &&
+          (sizeC == store.getSizeC(null)) &&
+          (sizeT == store.getSizeT(null)) &&
+          (bigEndian == store.getBigEndian(null)) &&
+          type.toLowerCase().equals(store.getPixelType(null).toLowerCase()) &&
+          dimensionOrder.equals(store.getDimensionOrder(null));
    
-      if (!success) {
-        try {
-          logFile.write(currentFile + " failed OME-XML sanity test\n");
-          logFile.flush();
+        if (!success) {
+          try {
+            logFile.write(currentFile + " failed OME-XML sanity test\n");
+            logFile.flush();
+            assertTrue(false);
+          }
+          catch (IOException io) { }
         }
-        catch (IOException io) { }
       }
       assertTrue(success); 
     }

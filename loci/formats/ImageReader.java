@@ -374,6 +374,11 @@ public class ImageReader implements IFormatReader {
     return readers[0].isNormalized();
   }
 
+  /* @see IFormatReader#getUsedFiles(String) */
+  public String[] getUsedFiles(String id) throws FormatException, IOException {
+    return getReader(id).getUsedFiles(id);
+  }
+
   /* @see IFormatReader#swapDimensions(String, String) */
   public void swapDimensions(String id, String order)
     throws FormatException, IOException

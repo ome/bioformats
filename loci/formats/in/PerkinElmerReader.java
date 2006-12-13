@@ -55,6 +55,9 @@ public class PerkinElmerReader extends FormatReader {
   /** Flag indicating that the image data is in TIFF format. */
   private boolean isTiff = true;
 
+  /** List of all files to open */
+  private Vector allFiles;
+
   // -- Constructor --
 
   /** Constructs a new PerkinElmer reader. */
@@ -142,6 +145,12 @@ public class PerkinElmerReader extends FormatReader {
     return ImageTools.makeImage(b, sizeX[0], sizeY[0], 1, false, bpp, true);
   }
 
+  /* @see IFormatReader#getUsedFiles(String) */
+  public String[] getUsedFiles(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return (String[]) allFiles.toArray(new String[0]);
+  }
+
   /** Closes any open files. */
   public void close() throws FormatException, IOException {
     currentId = null;
@@ -157,12 +166,16 @@ public class PerkinElmerReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
+    allFiles = new Vector();
+
     // get the working directory
     File tempFile = new File(getMappedId(id));
     File workingDir = tempFile.getParentFile();
     if (workingDir == null) workingDir = new File(".");
     String workingDirPath = workingDir.getPath() + File.separator;
     String[] ls = workingDir.list();
+
+    allFiles.add(getMappedId(id));
 
     // check if we have any of the required header file types
 
@@ -319,6 +332,8 @@ public class PerkinElmerReader extends FormatReader {
       }
     }
 
+    for (int i=0; i<files.length; i++) allFiles.add(files[i]);
+
     numImages = files.length;
     BufferedReader read;
     char[] data;
@@ -334,6 +349,7 @@ public class PerkinElmerReader extends FormatReader {
 
     if (timPos != -1) {
       tempFile = new File(workingDir, ls[timPos]);
+      allFiles.add(tempFile.getAbsolutePath());
       read = new BufferedReader(new FileReader(tempFile));
       data = new char[(int) tempFile.length()];
       read.read(data);
@@ -366,6 +382,7 @@ public class PerkinElmerReader extends FormatReader {
 
     if (csvPos != -1) {
       tempFile = new File(workingDir, ls[csvPos]);
+      allFiles.add(tempFile.getAbsolutePath());
       read = new BufferedReader(new FileReader(tempFile));
       data = new char[(int) tempFile.length()];
       read.read(data);
@@ -394,6 +411,7 @@ public class PerkinElmerReader extends FormatReader {
     }
     else if (zpoPos != -1) {
       tempFile = new File(workingDir, ls[zpoPos]);
+      allFiles.add(tempFile.getAbsolutePath());
       read = new BufferedReader(new FileReader(tempFile));
       data = new char[(int) tempFile.length()];
       read.read(data);
@@ -409,9 +427,8 @@ public class PerkinElmerReader extends FormatReader {
     // explicitly defines the number of wavelengths and timepoints
 
     if (htmPos != -1) {
-      // ooh, pretty HTML
-
       tempFile = new File(workingDir, ls[htmPos]);
+      allFiles.add(tempFile.getAbsolutePath());
       read = new BufferedReader(new FileReader(tempFile));
       data = new char[(int) tempFile.length()];
       read.read(data);

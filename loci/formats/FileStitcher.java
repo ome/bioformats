@@ -457,6 +457,12 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#isNormalized() */
   public boolean isNormalized() { return normalizeData; }
 
+  /* @see IFormatReader#getUsedFiles() */
+  public String[] getUsedFiles(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return files;
+  }
+
   /* @see IFormatReader#swapDimensions(String, String) */
   public void swapDimensions(String id, String order)
     throws FormatException, IOException

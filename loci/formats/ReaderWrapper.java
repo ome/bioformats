@@ -207,6 +207,10 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   public boolean isNormalized() { return reader.isNormalized(); }
 
+  public String[] getUsedFiles(String id) throws FormatException, IOException {
+    return reader.getUsedFiles(id);
+  }
+
   public void swapDimensions(String id, String order)
     throws FormatException, IOException
   {
