@@ -47,10 +47,18 @@ import loci.formats.*;
  * @author Melissa Linkert linkert at cs.wisc.edu
  */
 public class Importer {
+  
+  // -- Constants --
+
+  private static final String VIEW_STANDARD= "Standard ImageJ";
+  private static final String VIEW_BROWSER = "4D Data Browser";
+  private static final String VIEW_IMAGE_5D = "Image5D";
+  private static final String VIEW_VIEW_5D = "View5D";
 
   // -- Fields --
 
   private LociImporter plugin;
+  private String stackFormat = "";
 
   // -- Constructor --
 
@@ -129,17 +137,13 @@ public class Importer {
     final String rangeString = "Specify range for each series";
     final String stackString = "View stack with: ";
 
-    final String viewStandard = "Standard ImageJ";
-    final String viewBrowser = "4D Data Browser";
-    final String viewImage5D = "Image5D";
-    final String viewView5D = "View5D";
     Vector stackTypes = new Vector();
-    stackTypes.add(viewStandard);
+    stackTypes.add(VIEW_STANDARD);
     if (Util.checkClass("loci.plugins.browser.LociDataBrowser")) {
-      stackTypes.add(viewBrowser);
+      stackTypes.add(VIEW_BROWSER);
     }
-    if (Util.checkClass("i5d.Image5D")) stackTypes.add(viewImage5D);
-    if (Util.checkClass("View5D")) stackTypes.add(viewView5D);
+    if (Util.checkClass("i5d.Image5D")) stackTypes.add(VIEW_IMAGE_5D);
+    stackTypes.add(VIEW_VIEW_5D);
     final String[] stackFormats = new String[stackTypes.size()];
     stackTypes.copyInto(stackFormats);
 
@@ -151,7 +155,7 @@ public class Importer {
     boolean showMetadata = Prefs.get("bioformats.showMetadata", false);
     boolean stitchFiles = Prefs.get("bioformats.stitchFiles", false);
     boolean specifyRanges = Prefs.get("bioformats.specifyRanges", false);
-    String stackFormat = Prefs.get("bioformats.stackFormat", viewStandard);
+    stackFormat = Prefs.get("bioformats.stackFormat", VIEW_STANDARD);
 
     // prompt for parameters, if necessary
     GenericDialog pd = new GenericDialog("LOCI Bio-Formats Import Options");
@@ -697,58 +701,12 @@ public class Importer {
         if (imp != null) {
           // retrieve the spatial calibration information, if available
 
-          double xcal = Double.NaN, ycal = Double.NaN, zcal = Double.NaN;
-          Integer ii = new Integer(i);
-
-          Float xf = store.getPixelSizeX(ii);
-          if (xf != null) xcal = xf.floatValue();
-          Float yf = store.getPixelSizeY(ii);
-          if (yf != null) ycal = yf.floatValue();
-          Float zf = store.getPixelSizeZ(ii);
-          if (zf != null) zcal = zf.floatValue();
-
-          if (xcal != Double.NaN || ycal != Double.NaN || zcal != Double.NaN) {
-            Calibration c = new Calibration();
-            if (xcal == xcal) {
-              c.pixelWidth = xcal;
-              c.setUnit("micron");
-            }
-            if (ycal == ycal) {
-              c.pixelHeight = ycal;
-              c.setUnit("micron");
-            }
-            if (zcal == zcal) {
-              c.pixelDepth = zcal;
-              c.setUnit("micron");
-            }
-            imp.setCalibration(c);
-          }
-
+          applyCalibration(store, imp, i);
           imp.setFileInfo(fi);
 
           int c = r.getSizeC(id);
+          displayStack(imp, r, id);
           r.close();
-        
-          // display image stack using appropriate format
-          if (stackFormat.equals(viewStandard)) imp.show();
-          else if (stackFormat.equals("LOCI 4D Data Browser")) {
-          }
-          else if (stackFormat.equals(viewImage5D)) {
-            ReflectedUniverse ru = null;
-            ru = new ReflectedUniverse();
-            ru.exec("import i5d.Image5D");
-            ru.setVar("title", imp.getTitle());
-            ru.setVar("stack", imp.getStack());
-            ru.setVar("sizeC", r.getSizeC(id));
-            ru.setVar("sizeZ", r.getSizeZ(id));
-            ru.setVar("sizeT", r.getSizeT(id));
-            ru.exec("i5d = new Image5D(title, stack, sizeC, sizeZ, sizeT)");
-            ru.exec("i5d.show()");
-          }
-          else if (stackFormat.equals(viewView5D)) {
-            WindowManager.setTempCurrentImage(imp);
-            IJ.runPlugIn("View5D_", "");
-          }
         }
 
         long endTime = System.currentTimeMillis();
@@ -789,6 +747,7 @@ public class Importer {
 
   // -- Helper methods --
 
+  /** Opens each channel of the source stack in a separate window. */
   private void slice(ImageStack is, String id, int z, int c, int t,
     FileInfo fi, IFormatReader r, boolean range, boolean colorize)
     throws FormatException, IOException
@@ -825,38 +784,11 @@ public class Importer {
 
     // retrieve the spatial calibration information, if available
 
-    OMEXMLMetadataStore store =
-      (OMEXMLMetadataStore) r.getMetadataStore(id);
-    double xcal = Double.NaN, ycal = Double.NaN, zcal = Double.NaN;
-    Integer ii = new Integer(r.getSeries(id));
-
-    Float xf = store.getPixelSizeX(ii);
-    if (xf != null) xcal = xf.floatValue();
-    Float yf = store.getPixelSizeY(ii);
-    if (yf != null) ycal = yf.floatValue();
-    Float zf = store.getPixelSizeZ(ii);
-    if (zf != null) zcal = zf.floatValue();
-
     for (int i=0; i<newStacks.length; i++) {
       ImagePlus imp = new ImagePlus(id + " - Ch" + (i+1), newStacks[i]);
-
-      if (xcal != Double.NaN || ycal != Double.NaN || zcal != Double.NaN) {
-        Calibration cal = new Calibration();
-        if (xcal == xcal) {
-          cal.pixelWidth = xcal;
-          cal.setUnit("micron");
-        }
-        if (ycal == ycal) {
-          cal.pixelHeight = ycal;
-          cal.setUnit("micron");
-        }
-        if (zcal == zcal) {
-          cal.pixelDepth = zcal;
-          cal.setUnit("micron");
-        }
-        imp.setCalibration(cal);
-      }
-
+      applyCalibration((OMEXMLMetadataStore) r.getMetadataStore(id), imp, 
+        r.getSeries(id));
+       
       // colorize channels; mostly copied from the ImageJ source
 
       if (colorize) {
@@ -881,7 +813,62 @@ public class Importer {
       }
 
       imp.setFileInfo(fi);
-      imp.show();
+      displayStack(imp, r, id);
+    }
+  }
+
+  /** Apply spatial calibrations to an image stack. */
+  private void applyCalibration(OMEXMLMetadataStore store, ImagePlus imp, 
+    int series) 
+  {
+    double xcal = Double.NaN, ycal = Double.NaN, zcal = Double.NaN;
+    Integer ii = new Integer(series);
+
+    Float xf = store.getPixelSizeX(ii);
+    if (xf != null) xcal = xf.floatValue();
+    Float yf = store.getPixelSizeY(ii);
+    if (yf != null) ycal = yf.floatValue();
+    Float zf = store.getPixelSizeZ(ii);
+    if (zf != null) zcal = zf.floatValue();
+
+    if (xcal != Double.NaN || ycal != Double.NaN || zcal != Double.NaN) {
+      Calibration cal = new Calibration();
+      cal.setUnit("micron");
+      cal.pixelWidth = xcal;
+      cal.pixelHeight = ycal;
+      cal.pixelDepth = zcal;
+      imp.setCalibration(cal);
+    }
+  }
+
+  /** Display the image stack using the appropriate plugin */
+  private void displayStack(ImagePlus imp, IFormatReader r, String id) {
+    try {
+      if (stackFormat.equals(VIEW_STANDARD)) imp.show();
+      else if (stackFormat.equals(VIEW_BROWSER)) {
+      }
+      else if (stackFormat.equals(VIEW_IMAGE_5D)) {
+        int sizeC = r.getSizeC(id);
+        if (imp.getStackSize() == r.getSizeZ(id) * r.getSizeT(id)) sizeC = 1;
+        
+        ReflectedUniverse ru = null;
+        ru = new ReflectedUniverse();
+        ru.exec("import i5d.Image5D");
+        ru.setVar("title", imp.getTitle());
+        ru.setVar("stack", imp.getStack());
+        ru.setVar("sizeC", sizeC);
+        ru.setVar("sizeZ", r.getSizeZ(id));
+        ru.setVar("sizeT", r.getSizeT(id));
+        ru.exec("i5d = new Image5D(title, stack, sizeC, sizeZ, sizeT)");
+        ru.exec("i5d.show()");
+      }
+      else if (stackFormat.equals(VIEW_VIEW_5D)) {
+        WindowManager.setTempCurrentImage(imp);
+        IJ.runPlugIn("View5D_", "");
+      }
+    }
+    catch (Exception e) { 
+      imp.show(); 
     }
   }
 
