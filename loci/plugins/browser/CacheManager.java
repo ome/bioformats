@@ -182,7 +182,7 @@ public class CacheManager implements Runnable {
   * the C axis.
   * @param forwardC the amount of forward slices to cache with respect
   * to the C Axis.
-  * @param read the IFormatReader being used to store the image slices.
+  * @param db the associated data browser object.
   * @param fileName the name of the file that has the slices. If file
   * stiching is being used, the name of one of the files.
   * @param axis the axes that should be cached, e.g. Z_AXIS, T_AXIS,
