@@ -39,12 +39,20 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
   // -- Constants --
 
-  /** Default orientation for decay curves display. */
-  private static final double[] MATRIX = {
+  /** Default orientation for 3D decay curves display. */
+  private static final double[] MATRIX_3D = {
     0.2821, 0.1503, -0.0201, 0.0418,
     -0.0500, 0.1323, 0.2871, 0.1198,
     0.1430, -0.2501, 0.1408, 0.0089,
     0.0000, 0.0000, 0.0000, 1.0000
+  };
+
+  /** Default orientation for 2D decay curve display. */
+  private static final double[] MATRIX_2D = {
+    0.400, 0.000, 0.000, 0.160,
+    0.000, 0.400, 0.000, 0.067,
+    0.000, 0.000, 0.400, 0.000,
+    0.000, 0.000, 0.000, 1.000
   };
 
   private static final char TAU = 'T';
@@ -363,17 +371,19 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     if (progress.isCanceled()) System.exit(0);
 
     // plot decay curves in 3D display
-    decayPlot = new DisplayImplJ3D("decay");
+    decayPlot = channels > 1 ? new DisplayImplJ3D("decay") :
+      new DisplayImplJ3D("decay", new TwoDDisplayRendererJ3D());
     ScalarMap xMap = new ScalarMap(bType, Display.XAxis);
     ScalarMap yMap = new ScalarMap(cType, Display.YAxis);
-    zMap = new ScalarMap(vType, Display.ZAxis);
-    zMapFit = new ScalarMap(vTypeFit, Display.ZAxis);
-    zMapRes = new ScalarMap(vTypeRes, Display.ZAxis);
+    DisplayRealType heightAxis = channels > 1 ? Display.ZAxis : Display.YAxis;
+    zMap = new ScalarMap(vType, heightAxis);
+    zMapFit = new ScalarMap(vTypeFit, heightAxis);
+    zMapRes = new ScalarMap(vTypeRes, heightAxis);
     vMap = new ScalarMap(vType2, Display.RGB);
     //vMapFit = new ScalarMap(vTypeFit, Display.RGB);
     vMapRes = new ScalarMap(vTypeRes, Display.RGB);
     decayPlot.addMap(xMap);
-    decayPlot.addMap(yMap);
+    if (channels > 1) decayPlot.addMap(yMap);
     decayPlot.addMap(zMap);
     decayPlot.addMap(zMapFit);
     decayPlot.addMap(zMapRes);
@@ -425,7 +435,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     gmc.setScaleEnable(true);
     gmc.setTextureEnable(false);
     ProjectionControl pc = decayPlot.getProjectionControl();
-    pc.setMatrix(MATRIX);
+    pc.setMatrix(channels > 1 ? MATRIX_3D : MATRIX_2D);
     pc.setAspectCartesian(
       new double[] {2, 1, 1});
     setProgress(progress, 780); // estimate: 78%
@@ -483,7 +493,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
             peak = sum[t];
             ndx = t;
           }
-          else if (t > 20) break; // HACK - too early to give up
+          else if (t > timeBins / 3) break; // HACK - too early to give up
         }
         peaks[c] = ndx;
         setProgress(progress, 920 + 20 *
@@ -491,7 +501,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
         if (progress.isCanceled()) System.exit(0);
       }
       maxPeak = 0;
-      for (int c=1; c<channels; c++) {
+      for (int c=0; c<channels; c++) {
         if (maxPeak < peaks[c]) maxPeak = peaks[c];
       }
       log("Aligning peaks to tmax = " + maxPeak);
@@ -570,11 +580,13 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     cSlider.setPaintTicks(true);
     cSlider.addChangeListener(this);
     cSlider.setBorder(new EmptyBorder(8, 5, 8, 5));
+    cSlider.setEnabled(channels > 1);
     sliderPane.add(cSlider);
     cToggle = new JCheckBox("", true);
     cToggle.setToolTipText(
       "Toggles the selected channel's visibility in the 3D data plot");
     cToggle.addActionListener(this);
+    cToggle.setEnabled(channels > 1);
     sliderPane.add(cToggle);
 
     intensityRef.setData(field);
@@ -605,35 +617,39 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     perspective = new JRadioButton("Perspective", true);
     perspective.setToolTipText(
       "Displays 3D plot with a perspective projection");
+    perspective.setEnabled(channels > 1);
     parallel = new JRadioButton("Parallel", false);
     parallel.setToolTipText(
       "Displays 3D plot with a parallel (orthographic) projection");
-    dataSurface = new JRadioButton("Surface", true);
+    parallel.setEnabled(channels > 1);
+    dataSurface = new JRadioButton("Surface", channels > 1);
     dataSurface.setToolTipText("Displays raw data as a 2D surface");
-    dataLines = new JRadioButton("Lines", false);
+    dataSurface.setEnabled(channels > 1);
+    dataLines = new JRadioButton("Lines", channels == 1);
     dataLines.setToolTipText("Displays raw data as a series of lines");
+    dataLines.setEnabled(channels > 1);
     fitSurface = new JRadioButton("Surface", false);
     fitSurface.setToolTipText("Displays fitted curves as a 2D surface");
-    fitSurface.setEnabled(adjustPeaks);
+    fitSurface.setEnabled(adjustPeaks && channels > 1);
     fitLines = new JRadioButton("Lines", true);
     fitLines.setToolTipText("Displays fitted curves as a series of lines");
-    fitLines.setEnabled(adjustPeaks);
+    fitLines.setEnabled(adjustPeaks && channels > 1);
     resSurface = new JRadioButton("Surface", false);
     resSurface.setToolTipText(
       "Displays fitted curve residuals as a 2D surface");
-    resSurface.setEnabled(adjustPeaks);
+    resSurface.setEnabled(adjustPeaks && channels > 1);
     resLines = new JRadioButton("Lines", true);
     resLines.setToolTipText(
       "Displays fitted curve residuals as a series of lines");
-    resLines.setEnabled(adjustPeaks);
+    resLines.setEnabled(adjustPeaks && channels > 1);
     colorHeight = new JRadioButton("Counts", true);
     colorHeight.setToolTipText(
       "Colorizes data according to the height (histogram count)");
-    colorHeight.setEnabled(adjustPeaks);
+    colorHeight.setEnabled(adjustPeaks && channels > 1);
     colorTau = new JRadioButton("Lifetimes", false);
     colorTau.setToolTipText(
       "Colorizes data according to aggregate lifetime value");
-    colorTau.setEnabled(adjustPeaks);
+    colorTau.setEnabled(adjustPeaks && channels > 1);
 
     numCurves = new JSpinner(new SpinnerNumberModel(1, 1, 9, 1));
     numCurves.setToolTipText("Number of components in exponential fit");
