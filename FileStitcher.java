@@ -56,7 +56,7 @@ public class FileStitcher implements IFormatReader {
   private FilePattern fp;
 
   /** Axis guesser object used to guess which dimensional axes are which. */
-  private AxisGuesser ag;
+  private AxisGuesser[] ag;
 
   /** The matching files. */
   private String[] files;
@@ -65,31 +65,31 @@ public class FileStitcher implements IFormatReader {
   private IFormatReader[] readers;
 
   /** Blank buffered image, for use when image counts vary between files. */
-  private BufferedImage blankImage;
+  private BufferedImage[] blankImage;
 
   /** Blank image bytes, for use when image counts vary between files. */
-  private byte[] blankBytes;
+  private byte[][] blankBytes;
 
   /** Image dimensions. */
-  private int width, height;
+  private int[] width, height;
 
   /** Number of images per file. */
-  private int imagesPerFile;
+  private int[] imagesPerFile;
 
   /** Total number of image planes. */
-  private int totalImages;
+  private int[] totalImages;
 
   /** Dimension order. */
-  private String order;
+  private String[] order;
 
   /** Dimensional axis lengths per file. */
-  private int sizeZ, sizeC, sizeT;
+  private int[] sizeZ, sizeC, sizeT;
 
   /** Total dimensional axis lengths. */
-  private int totalSizeZ, totalSizeC, totalSizeT;
+  private int[] totalSizeZ, totalSizeC, totalSizeT;
 
   /** Component lengths for each axis type. */
-  private int[] lenZ, lenC, lenT;
+  private int[][] lenZ, lenC, lenT;
 
   /** Whether or not we're doing channel stat calculation (no by default). */
   protected boolean enableChannelStatCalculation = false;
@@ -137,7 +137,7 @@ public class FileStitcher implements IFormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return ag.getAxisTypes();
+    return ag[getSeries(id)].getAxisTypes();
   }
 
   /**
@@ -153,7 +153,7 @@ public class FileStitcher implements IFormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    ag.setAxisTypes(axes);
+    ag[getSeries(id)].setAxisTypes(axes);
     computeAxisLengths();
   }
 
@@ -173,7 +173,7 @@ public class FileStitcher implements IFormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return ag;
+    return ag[getSeries(id)];
   }
 
   /**
@@ -211,7 +211,7 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#getImageCount(String) */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return totalImages;
+    return totalImages[getSeries(id)];
   }
 
   /* @see IFormatReader#isRGB(String) */
@@ -223,31 +223,31 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#getSizeX(String) */
   public int getSizeX(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return width;
+    return width[getSeries(id)];
   }
 
   /* @see IFormatReader#getSizeY(String) */
   public int getSizeY(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return height;
+    return height[getSeries(id)];
   }
 
   /* @see IFormatReader#getSizeZ(String) */
   public int getSizeZ(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return totalSizeZ;
+    return totalSizeZ[getSeries(id)];
   }
 
   /* @see IFormatReader#getSizeC(String) */
   public int getSizeC(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return totalSizeC;
+    return totalSizeC[getSeries(id)];
   }
 
   /* @see IFormatReader#getSizeT(String) */
   public int getSizeT(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return totalSizeT;
+    return totalSizeT[getSeries(id)];
   }
 
   /* @see IFormatReader#getPixelType(String) */
@@ -259,7 +259,7 @@ public class FileStitcher implements IFormatReader {
   /* @see IFormatReader#getEffectiveSizeC(String) */
   public int getEffectiveSizeC(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return isRGB(id) ? (getSizeC(id) + 2) / 3 : getSizeC(id);
+    return isRGB(id) ? 1 : getSizeC(id);
   }
  
   /* @see IFormatReader#getChannelGlobalMinimum(String, int) */
@@ -318,13 +318,13 @@ public class FileStitcher implements IFormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return order;
+    return order[getSeries(id)];
   }
 
   /* @see IFormatReader#isOrderCertain(String) */
   public boolean isOrderCertain(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return ag.isCertain();
+    return ag[getSeries(id)].isCertain();
   }
 
   /* @see IFormatReader#setChannelStatCalculationStatus(boolean) */
@@ -354,11 +354,12 @@ public class FileStitcher implements IFormatReader {
     }
     // return a blank image to cover for the fact that
     // this file does not contain enough image planes
-    if (blankImage == null) {
-      blankImage = ImageTools.blankImage(width, height,
-        sizeC, getPixelType(currentId));
+    int sno = getSeries(id);
+    if (blankImage[sno] == null) {
+      blankImage[sno] = ImageTools.blankImage(width[sno], height[sno],
+        sizeC[sno], getPixelType(currentId));
     }
-    return blankImage;
+    return blankImage[sno];
   }
 
   /** Obtains the specified image from the given file series as a byte array. */
@@ -372,11 +373,13 @@ public class FileStitcher implements IFormatReader {
     }
     // return a blank image to cover for the fact that
     // this file does not contain enough image planes
-    if (blankBytes == null) {
+    int sno = getSeries(id);
+    if (blankBytes[sno] == null) {
       int bytes = FormatReader.getBytesPerPixel(getPixelType(currentId));
-      blankBytes = new byte[width * height * bytes * sizeC];
+      blankBytes[sno] = new byte[width[sno] * height[sno] * bytes * 
+        (isRGB(id) ? sizeC[sno] : 1)];
     }
-    return blankBytes;
+    return blankBytes[sno];
   }
 
   /* @see IFormatReader#openBytes(String, int, byte[]) */
@@ -468,12 +471,12 @@ public class FileStitcher implements IFormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    this.order = order;
+    this.order[getSeries(id)] = order;
     String f0 = files[0];
     reader.swapDimensions(f0, order);
-    sizeZ = reader.getSizeZ(f0);
-    sizeC = reader.getSizeC(f0);
-    sizeT = reader.getSizeT(f0);
+    sizeZ[getSeries(id)] = reader.getSizeZ(f0);
+    sizeC[getSeries(id)] = reader.getSizeC(f0);
+    sizeT[getSeries(id)] = reader.getSizeT(f0);
     computeAxisLengths();
   }
 
@@ -649,55 +652,93 @@ public class FileStitcher implements IFormatReader {
     }
     String f0 = files[0];
 
+    int seriesCount = getSeriesCount(f0);
+    ag = new AxisGuesser[seriesCount];
+    blankImage = new BufferedImage[seriesCount];
+    blankBytes = new byte[seriesCount][];
+    width = new int[seriesCount];
+    height = new int[seriesCount];
+    imagesPerFile = new int[seriesCount];
+    totalImages = new int[seriesCount];
+    order = new String[seriesCount];
+    sizeZ = new int[seriesCount];
+    sizeC = new int[seriesCount];
+    sizeT = new int[seriesCount];
+    totalSizeZ = new int[seriesCount];
+    totalSizeC = new int[seriesCount];
+    totalSizeT = new int[seriesCount];
+    lenZ = new int[seriesCount][];
+    lenC = new int[seriesCount][];
+    lenT = new int[seriesCount][];
+
     // analyze first file; assume each file has the same parameters
-    width = reader.getSizeX(f0);
-    height = reader.getSizeY(f0);
-    imagesPerFile = reader.getImageCount(f0);
-    totalImages = files.length * imagesPerFile;
-    order = reader.getDimensionOrder(f0);
-    sizeZ = reader.getSizeZ(f0);
-    sizeC = reader.getSizeC(f0);
-    sizeT = reader.getSizeT(f0);
+    
+    int oldSeries = getSeries(f0);
+    for (int i=0; i<seriesCount; i++) {
+      setSeries(f0, i);
+      reader.setSeries(f0, i);
+      width[i] = reader.getSizeX(f0);
+      height[i] = reader.getSizeY(f0);
+      imagesPerFile[i] = reader.getImageCount(f0);
+      totalImages[i] = files.length * imagesPerFile[i];
+      /* debug */ System.out.println("setting image count to " +
+        imagesPerFile[i] + " for series " + getSeries(f0));
+      order[i] = reader.getDimensionOrder(f0);
+      sizeZ[i] = reader.getSizeZ(f0);
+      sizeC[i] = reader.getSizeC(f0);
+      sizeT[i] = reader.getSizeT(f0);
+    }
+    setSeries(f0, oldSeries);
     boolean certain = reader.isOrderCertain(f0);
 
     // guess at dimensions corresponding to file numbering
-    ag = new AxisGuesser(fp, order, sizeZ, sizeT, sizeC, certain);
+    for (int i=0; i<seriesCount; i++) {
+      ag[i] = new AxisGuesser(fp, order[i], sizeZ[i], sizeT[i], sizeC[i], 
+        certain);
+    }
 
     // order may need to be adjusted
-    order = ag.getAdjustedOrder();
-    swapDimensions(currentId, order);
+    for (int i=0; i<seriesCount; i++) {
+      setSeries(f0, i);
+      order[i] = ag[i].getAdjustedOrder();
+      swapDimensions(currentId, order[i]);
+    }
+    setSeries(f0, oldSeries);
   }
 
   /** Computes axis length arrays, and total axis lengths. */
   protected void computeAxisLengths() throws FormatException, IOException {
+    int sno = getSeries(currentId);
+    
     int[] count = fp.getCount();
-    int[] axes = ag.getAxisTypes();
-    int numZ = ag.getAxisCountZ();
-    int numC = ag.getAxisCountC();
-    int numT = ag.getAxisCountT();
-    totalSizeZ = sizeZ;
-    totalSizeC = sizeC;
-    totalSizeT = sizeT;
-    lenZ = new int[numZ + 1];
-    lenC = new int[numC + 1];
-    lenT = new int[numT + 1];
-    lenZ[0] = sizeZ;
-    lenC[0] = sizeC;
-    lenT[0] = sizeT;
+    int[] axes = ag[sno].getAxisTypes();
+    int numZ = ag[sno].getAxisCountZ();
+    int numC = ag[sno].getAxisCountC();
+    int numT = ag[sno].getAxisCountT();
+    
+    totalSizeZ[sno] = sizeZ[sno];
+    totalSizeC[sno] = sizeC[sno];
+    totalSizeT[sno] = sizeT[sno];
+    lenZ[sno] = new int[numZ + 1];
+    lenC[sno] = new int[numC + 1];
+    lenT[sno] = new int[numT + 1];
+    lenZ[sno][0] = sizeZ[sno];
+    lenC[sno][0] = sizeC[sno];
+    lenT[sno][0] = sizeT[sno];
     int z = 1, c = 1, t = 1;
     for (int i=0; i<axes.length; i++) {
       switch (axes[i]) {
         case AxisGuesser.Z_AXIS:
-          totalSizeZ *= count[i];
-          lenZ[z++] = count[i];
+          totalSizeZ[sno] *= count[i];
+          lenZ[sno][z++] = count[i];
           break;
         case AxisGuesser.C_AXIS:
-          totalSizeC *= count[i];
-          lenC[c++] = count[i];
+          totalSizeC[sno] *= count[i];
+          lenC[sno][c++] = count[i];
           break;
         case AxisGuesser.T_AXIS:
-          totalSizeT *= count[i];
-          lenT[t++] = count[i];
+          totalSizeT[sno] *= count[i];
+          lenT[sno][t++] = count[i];
           break;
         default:
           throw new FormatException("Unknown axis type for axis #" +
@@ -710,10 +751,10 @@ public class FileStitcher implements IFormatReader {
     int pixelType = getPixelType(currentId);
     boolean little = reader.isLittleEndian(f0);
     MetadataStore s = reader.getMetadataStore(f0);
-    s.setPixels(new Integer(width), new Integer(height),
-      new Integer(totalSizeZ), new Integer(totalSizeC),
-      new Integer(totalSizeT), new Integer(pixelType),
-      new Boolean(!little), order, null);
+    s.setPixels(new Integer(width[sno]), new Integer(height[sno]),
+      new Integer(totalSizeZ[sno]), new Integer(totalSizeC[sno]),
+      new Integer(totalSizeT[sno]), new Integer(pixelType),
+      new Boolean(!little), order[sno], new Integer(sno));
   }
 
   /**
@@ -726,15 +767,16 @@ public class FileStitcher implements IFormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
+    int sno = getSeries(id);
 
-    int[] axes = ag.getAxisTypes();
+    int[] axes = ag[sno].getAxisTypes();
     int[] count = fp.getCount();
 
     // get Z, C and T positions
     int[] zct = getZCTCoords(id, no);
-    int[] posZ = rasterToPosition(lenZ, zct[0]);
-    int[] posC = rasterToPosition(lenC, zct[1]);
-    int[] posT = rasterToPosition(lenT, zct[2]);
+    int[] posZ = rasterToPosition(lenZ[sno], zct[0]);
+    int[] posC = rasterToPosition(lenC[sno], zct[1]);
+    int[] posT = rasterToPosition(lenT[sno], zct[2]);
 
     // convert Z, C and T position lists into file index and image index
     int[] pos = new int[axes.length];
@@ -749,14 +791,14 @@ public class FileStitcher implements IFormatReader {
       }
     }
     int fno = positionToRaster(count, pos);
-    int ino = FormatReader.getIndex(order, sizeZ, sizeC, sizeT,
-      imagesPerFile, isRGB(id), posZ[0], posC[0], posT[0]);
+    int ino = FormatReader.getIndex(order[sno], sizeZ[sno], sizeC[sno], 
+      sizeT[sno], imagesPerFile[sno], isRGB(id), posZ[0], posC[0], posT[0]);
 
     // configure the reader, in case we haven't done this one yet
     readers[fno].setChannelStatCalculationStatus(enableChannelStatCalculation);
     readers[fno].setSeries(files[fno], reader.getSeries(files[0]));
     readers[fno].setColorTableIgnored(ignoreColorTable);
-    readers[fno].swapDimensions(files[fno], order);
+    readers[fno].swapDimensions(files[fno], order[sno]);
 
     return new int[] {fno, ino};
   }
@@ -771,8 +813,8 @@ public class FileStitcher implements IFormatReader {
   {
     int[] include = new int[readers.length];
     Arrays.fill(include, -1);
-    for (int t=0; t<sizeT; t++) {
-      for (int z=0; z<sizeZ; z++) {
+    for (int t=0; t<sizeT[getSeries(id)]; t++) {
+      for (int z=0; z<sizeZ[getSeries(id)]; z++) {
         int no = getIndex(id, z, theC, t);
         int[] q = computeIndices(id, no);
         int fno = q[0], ino = q[1];
