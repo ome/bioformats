@@ -376,8 +376,8 @@ public class FileStitcher implements IFormatReader {
     int sno = getSeries(id);
     if (blankBytes[sno] == null) {
       int bytes = FormatReader.getBytesPerPixel(getPixelType(currentId));
-      blankBytes[sno] = new byte[width[sno] * height[sno] * bytes * 
-        (isRGB(id) ? sizeC[sno] : 1)];
+      blankBytes[sno] = new byte[width[sno] * height[sno] *
+        bytes * (isRGB(id) ? sizeC[sno] : 1)];
     }
     return blankBytes[sno];
   }
@@ -652,7 +652,7 @@ public class FileStitcher implements IFormatReader {
     }
     String f0 = files[0];
 
-    int seriesCount = getSeriesCount(f0);
+    int seriesCount = reader.getSeriesCount(f0);
     ag = new AxisGuesser[seriesCount];
     blankImage = new BufferedImage[seriesCount];
     blankBytes = new byte[seriesCount][];
@@ -664,6 +664,7 @@ public class FileStitcher implements IFormatReader {
     sizeZ = new int[seriesCount];
     sizeC = new int[seriesCount];
     sizeT = new int[seriesCount];
+    boolean[] certain = new boolean[seriesCount];
     totalSizeZ = new int[seriesCount];
     totalSizeC = new int[seriesCount];
     totalSizeT = new int[seriesCount];
@@ -673,37 +674,34 @@ public class FileStitcher implements IFormatReader {
 
     // analyze first file; assume each file has the same parameters
     
-    int oldSeries = getSeries(f0);
+    int oldSeries = reader.getSeries(f0);
     for (int i=0; i<seriesCount; i++) {
-      setSeries(f0, i);
       reader.setSeries(f0, i);
       width[i] = reader.getSizeX(f0);
       height[i] = reader.getSizeY(f0);
       imagesPerFile[i] = reader.getImageCount(f0);
       totalImages[i] = files.length * imagesPerFile[i];
-      /* debug */ System.out.println("setting image count to " +
-        imagesPerFile[i] + " for series " + getSeries(f0));
       order[i] = reader.getDimensionOrder(f0);
       sizeZ[i] = reader.getSizeZ(f0);
       sizeC[i] = reader.getSizeC(f0);
       sizeT[i] = reader.getSizeT(f0);
+      certain[i] = reader.isOrderCertain(f0);
     }
-    setSeries(f0, oldSeries);
-    boolean certain = reader.isOrderCertain(f0);
+    reader.setSeries(f0, oldSeries);
 
     // guess at dimensions corresponding to file numbering
     for (int i=0; i<seriesCount; i++) {
-      ag[i] = new AxisGuesser(fp, order[i], sizeZ[i], sizeT[i], sizeC[i], 
-        certain);
+      ag[i] = new AxisGuesser(fp, order[i],
+        sizeZ[i], sizeT[i], sizeC[i], certain[i]);
     }
 
     // order may need to be adjusted
     for (int i=0; i<seriesCount; i++) {
-      setSeries(f0, i);
+      setSeries(currentId, i);
       order[i] = ag[i].getAdjustedOrder();
       swapDimensions(currentId, order[i]);
     }
-    setSeries(f0, oldSeries);
+    setSeries(currentId, oldSeries);
   }
 
   /** Computes axis length arrays, and total axis lengths. */
