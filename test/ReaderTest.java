@@ -112,14 +112,18 @@ public class ReaderTest {
       }
       catch (IOException io) { }
     }
-    
+  
+    Runtime rt = Runtime.getRuntime();
+    /* debug */ System.out.println("memory used : " + 
+      (rt.freeMemory() / (1024*1024)) + " MB");
+
+    if (!root.endsWith(File.separator)) root += File.separator;
     File f = new File(root);
     String[] subs = f.list();
     if (subs != null) {
       for (int i=0; i<subs.length; i++) {
         if (!isBadFile(subs[i])) {
-          subs[i] = root + 
-            (root.endsWith(File.separator) ? "" : File.separator) + subs[i];
+          subs[i] = root + subs[i]; 
           File tmp = new File(subs[i]);
           if (!tmp.isDirectory() && reader.isThisType(subs[i])) {
             try {
@@ -128,13 +132,21 @@ public class ReaderTest {
                 /* debug */ System.out.println("adding " + subs[i]);
               }
             }
-            catch (IOException io) { }
-            catch (FormatException fe) { }
+            catch (IOException io) { files.add(subs[i]); }
+            catch (FormatException fe) { files.add(subs[i]); }
           }
           else if (tmp.isDirectory()) getFiles(subs[i], files);
+          else /* debug */ System.out.println(subs[i] + "has invalid type");
+          tmp = null;
+          try { reader.close(); }
+          catch (Exception e) { }
         }
+        else /* debug */ System.out.println(subs[i] + " is a bad file");
       }
     }
+    else System.out.println("Invalid directory : " + root + "(" + f.isDirectory() +
+      ")");
+    f = null;
   }
 
   // -- Testing methods --

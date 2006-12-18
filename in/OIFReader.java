@@ -374,7 +374,7 @@ public class OIFReader extends FormatReader {
       new Integer(Integer.parseInt((String) metadata.get("ImageWidth"))),
       new Integer(Integer.parseInt((String) metadata.get("ImageHeight"))),
       new Integer(sizeZ[0]),
-      new Integer(getSizeC(id)),
+      new Integer(sizeC[0]),
       new Integer(sizeT[0]),
       new Integer(pixelType[0]),
       new Boolean(false),

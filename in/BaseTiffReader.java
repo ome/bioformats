@@ -479,18 +479,15 @@ public abstract class BaseTiffReader extends FormatReader {
       sizeC[0] = isRGB(currentId) ? 3 : 1;
       sizeT[0] = ifds.length;
 
-      int bitsPerSample = TiffTools.getIFDIntValue(ifds[0],
-        TiffTools.BITS_PER_SAMPLE);
       int bitFormat = TiffTools.getIFDIntValue(ifds[0],
         TiffTools.SAMPLE_FORMAT);
 
-      //if (bitsPerSample == 12) bitsPerSample = 8;  // special case
-      while (bitsPerSample % 8 != 0) bitsPerSample++;
-      if (bitsPerSample == 24 || bitsPerSample == 48) bitsPerSample /= 3;
+      while (bps % 8 != 0) bps++;
+      if (bps == 24 || bps == 48) bps /= 3;
 
       if (bitFormat == 3) pixelType[0] = FormatReader.FLOAT;
       else if (bitFormat == 2) {
-        switch (bitsPerSample) {
+        switch (bps) {
           case 8:
             pixelType[0] = FormatReader.UINT8;
             break;
@@ -504,7 +501,7 @@ public abstract class BaseTiffReader extends FormatReader {
         }
       }
       else {
-        switch (bitsPerSample) {
+        switch (bps) {
           case 8:
             pixelType[0] = FormatReader.UINT8;
             break;
@@ -520,7 +517,7 @@ public abstract class BaseTiffReader extends FormatReader {
 
       currentOrder[0] = "XYCZT";
     }
-    catch (Exception e) { }
+    catch (Exception e) { /* debug */ e.printStackTrace(); }
   }
 
   /**

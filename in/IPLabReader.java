@@ -258,7 +258,7 @@ public class IPLabReader extends FormatReader {
 
     in.read(fourBytes);
     String tag = new String(fourBytes);
-    while (!tag.equals("fini")) {
+    while (!tag.equals("fini") && in.getFilePointer() < in.length() - 4) {
       if (tag.equals("clut")) {
         // read in Color Lookup Table
         int size = in.readInt();
