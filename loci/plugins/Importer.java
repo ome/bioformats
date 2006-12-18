@@ -158,28 +158,28 @@ public class Importer {
     stackFormat = Prefs.get("bioformats.stackFormat", VIEW_STANDARD);
 
     // prompt for parameters, if necessary
-    GenericDialog pd = new GenericDialog("LOCI Bio-Formats Import Options");
-    pd.addCheckbox(mergeString, mergeChannels);
-    pd.addCheckbox(ignoreString, ignoreTables);
-    pd.addCheckbox(colorizeString, colorize);
-    pd.addCheckbox(splitString, splitWindows);
-    pd.addCheckbox(metadataString, showMetadata);
-    pd.addCheckbox(stitchString, stitchFiles);
-    pd.addCheckbox(rangeString, specifyRanges);
-    pd.addChoice(stackString, stackFormats, stackFormats[0]);
-    pd.showDialog();
-    if (pd.wasCanceled()) {
+    GenericDialog gd = new GenericDialog("LOCI Bio-Formats Import Options");
+    gd.addCheckbox(mergeString, mergeChannels);
+    gd.addCheckbox(ignoreString, ignoreTables);
+    gd.addCheckbox(colorizeString, colorize);
+    gd.addCheckbox(splitString, splitWindows);
+    gd.addCheckbox(metadataString, showMetadata);
+    gd.addCheckbox(stitchString, stitchFiles);
+    gd.addCheckbox(rangeString, specifyRanges);
+    gd.addChoice(stackString, stackFormats, stackFormats[0]);
+    gd.showDialog();
+    if (gd.wasCanceled()) {
       plugin.canceled = true;
       return;
     }
-    mergeChannels = pd.getNextBoolean();
-    ignoreTables = pd.getNextBoolean();
-    colorize = pd.getNextBoolean();
-    splitWindows = pd.getNextBoolean();
-    showMetadata = pd.getNextBoolean();
-    stitchFiles = pd.getNextBoolean();
-    specifyRanges = pd.getNextBoolean();
-    stackFormat = stackFormats[pd.getNextChoiceIndex()];
+    mergeChannels = gd.getNextBoolean();
+    ignoreTables = gd.getNextBoolean();
+    colorize = gd.getNextBoolean();
+    splitWindows = gd.getNextBoolean();
+    showMetadata = gd.getNextBoolean();
+    stitchFiles = gd.getNextBoolean();
+    specifyRanges = gd.getNextBoolean();
+    stackFormat = stackFormats[gd.getNextChoiceIndex()];
 
     // -- Step 4: open file --
 
@@ -188,7 +188,22 @@ public class Importer {
     try {
       // -- Step 4a: do some preparatory work --
 
-      if (stitchFiles) r = new FileStitcher(r);
+      FileStitcher fs = null;
+      if (stitchFiles) {
+        r = new FileStitcher(r, true);
+        // prompt user to confirm detected file pattern
+        id = FilePattern.findPattern(new File(id));
+        gd = new GenericDialog("LOCI Bio-Formats File Stitching");
+        int len = id.length() + 1;
+        if (len > 80) len = 80;
+        gd.addStringField("Pattern: ", id, len);
+        gd.showDialog();
+        if (gd.wasCanceled()) {
+          plugin.canceled = true;
+          return;
+        }
+        id = gd.getNextString();
+      }
       if (mergeChannels) r = new ChannelMerger(r);
       else r = new ChannelSeparator(r);
 
@@ -280,17 +295,17 @@ public class Importer {
       if (seriesCount > 1) {
         IJ.showStatus("");
 
-        GenericDialog sd = new GenericDialog("LOCI Bio-Formats Series Options");
+        gd = new GenericDialog("LOCI Bio-Formats Series Options");
         for (int i=0; i<seriesCount; i++) {
-          sd.addCheckbox(seriesStrings[i], series[i]);
+          gd.addCheckbox(seriesStrings[i], series[i]);
         }
-        addScrollBars(sd);
-        sd.showDialog();
-        if (sd.wasCanceled()) {
+        addScrollBars(gd);
+        gd.showDialog();
+        if (gd.wasCanceled()) {
           plugin.canceled = true;
           return;
         }
-        for (int i=0; i<seriesCount; i++) series[i] = sd.getNextBoolean();
+        for (int i=0; i<seriesCount; i++) series[i] = gd.getNextBoolean();
       }
 
       // -- Step 4b: prompt for the range of planes to import, if necessary --
@@ -302,38 +317,37 @@ public class Importer {
         }
         if (needRange) {
           IJ.showStatus("");
-          GenericDialog rd =
-            new GenericDialog("LOCI Bio-Formats Range Options");
+          gd = new GenericDialog("LOCI Bio-Formats Range Options");
           for (int i=0; i<seriesCount; i++) {
             if (!series[i]) continue;
-            rd.addMessage(seriesStrings[i].replaceAll("_", " "));
+            gd.addMessage(seriesStrings[i].replaceAll("_", " "));
             String s = "_" + (i + 1);
             if (certain[i]) {
               if (sizeC[i] > 1) {
-                rd.addNumericField("C_Begin" + s, cBegin[i] + 1, 0);
-                rd.addNumericField("C_End" + s, cEnd[i] + 1, 0);
-                rd.addNumericField("C_Step" + s, cStep[i], 0);
+                gd.addNumericField("C_Begin" + s, cBegin[i] + 1, 0);
+                gd.addNumericField("C_End" + s, cEnd[i] + 1, 0);
+                gd.addNumericField("C_Step" + s, cStep[i], 0);
               }
               if (sizeZ[i] > 1) {
-                rd.addNumericField("Z_Begin" + s, zBegin[i] + 1, 0);
-                rd.addNumericField("Z_End" + s, zEnd[i] + 1, 0);
-                rd.addNumericField("Z_Step" + s, zStep[i], 0);
+                gd.addNumericField("Z_Begin" + s, zBegin[i] + 1, 0);
+                gd.addNumericField("Z_End" + s, zEnd[i] + 1, 0);
+                gd.addNumericField("Z_Step" + s, zStep[i], 0);
               }
               if (sizeT[i] > 1) {
-                rd.addNumericField("T_Begin" + s, tBegin[i] + 1, 0);
-                rd.addNumericField("T_End" + s, tEnd[i] + 1, 0);
-                rd.addNumericField("T_Step" + s, tStep[i], 0);
+                gd.addNumericField("T_Begin" + s, tBegin[i] + 1, 0);
+                gd.addNumericField("T_End" + s, tEnd[i] + 1, 0);
+                gd.addNumericField("T_Step" + s, tStep[i], 0);
               }
             }
             else {
-              rd.addNumericField("Begin" + s, cBegin[i] + 1, 0);
-              rd.addNumericField("End" + s, cEnd[i] + 1, 0);
-              rd.addNumericField("Step" + s, cStep[i], 0);
+              gd.addNumericField("Begin" + s, cBegin[i] + 1, 0);
+              gd.addNumericField("End" + s, cEnd[i] + 1, 0);
+              gd.addNumericField("Step" + s, cStep[i], 0);
             }
           }
-          addScrollBars(rd);
-          rd.showDialog();
-          if (rd.wasCanceled()) {
+          addScrollBars(gd);
+          gd.showDialog();
+          if (gd.wasCanceled()) {
             plugin.canceled = true;
             return;
           }
@@ -341,25 +355,25 @@ public class Importer {
             if (!series[i]) continue;
             if (certain[i]) {
               if (sizeC[i] > 1) {
-                cBegin[i] = (int) rd.getNextNumber() - 1;
-                cEnd[i] = (int) rd.getNextNumber() - 1;
-                cStep[i] = (int) rd.getNextNumber();
+                cBegin[i] = (int) gd.getNextNumber() - 1;
+                cEnd[i] = (int) gd.getNextNumber() - 1;
+                cStep[i] = (int) gd.getNextNumber();
               }
               if (sizeZ[i] > 1) {
-                zBegin[i] = (int) rd.getNextNumber() - 1;
-                zEnd[i] = (int) rd.getNextNumber() - 1;
-                zStep[i] = (int) rd.getNextNumber();
+                zBegin[i] = (int) gd.getNextNumber() - 1;
+                zEnd[i] = (int) gd.getNextNumber() - 1;
+                zStep[i] = (int) gd.getNextNumber();
               }
               if (sizeT[i] > 1) {
-                tBegin[i] = (int) rd.getNextNumber() - 1;
-                tEnd[i] = (int) rd.getNextNumber() - 1;
-                tStep[i] = (int) rd.getNextNumber();
+                tBegin[i] = (int) gd.getNextNumber() - 1;
+                tEnd[i] = (int) gd.getNextNumber() - 1;
+                tStep[i] = (int) gd.getNextNumber();
               }
             }
             else {
-              cBegin[i] = (int) rd.getNextNumber() - 1;
-              cEnd[i] = (int) rd.getNextNumber() - 1;
-              cStep[i] = (int) rd.getNextNumber();
+              cBegin[i] = (int) gd.getNextNumber() - 1;
+              cEnd[i] = (int) gd.getNextNumber() - 1;
+              cStep[i] = (int) gd.getNextNumber();
             }
             int maxC = certain[i] ? sizeC[i] : num[i];
             if (cBegin[i] < 0) cBegin[i] = 0;
@@ -831,7 +845,7 @@ public class Importer {
     Float zf = store.getPixelSizeZ(ii);
     if (zf != null) zcal = zf.floatValue();
 
-    if (xcal != Double.NaN || ycal != Double.NaN || zcal != Double.NaN) {
+    if (xcal == xcal || ycal == ycal || zcal == zcal) {
       Calibration cal = new Calibration();
       cal.setUnit("micron");
       cal.pixelWidth = xcal;
