@@ -51,7 +51,7 @@ public class ReaderTest extends TestCase {
 
   // -- TestCase API methods --
 
-  /** Release resources after tests have completed */
+  /** Releases resources after tests have completed. */
   protected void tearDown() {
     try {
       reader.close();
@@ -62,7 +62,7 @@ public class ReaderTest extends TestCase {
     catch (IOException io) { }
   }
 
-  /** Make our results available to a TestRunner */
+  /** Makes our results available to a TestRunner. */
   public static Test suite() {
     TestSuite suite = new TestSuite();
     suite.addTest(new ReaderTest("testBufferedImageDimensions"));
@@ -74,12 +74,15 @@ public class ReaderTest extends TestCase {
 
   // -- ReaderTest API methods --
 
-  /** Set the file to process. */
+  /** Sets the file to process. */
   public static void setFile(String file) {
     currentFile = file;
   }
 
-  /** Determine if the given filename is a "bad" file. */
+  /**
+   * Determines if the given filename is a "bad" file.
+   * Bad files are skipped rather than tested.
+   */
   public static boolean isBadFile(String file) {
     if (badFiles == null) {
       try {
@@ -101,7 +104,7 @@ public class ReaderTest extends TestCase {
     return false; 
   }
 
-  /** Reset the format reader. */
+  /** Resets the format reader. */
   public static void resetReader() {
     try {
       reader.close();
@@ -124,7 +127,7 @@ public class ReaderTest extends TestCase {
     return false;
   }
 
-  /** Recursively generate a list of files to test. */
+  /** Recursively generates a list of files to test. */
   public static void getFiles(String root, Vector files) {
     if (reader == null) {
       reader = new FileStitcher();
@@ -174,7 +177,7 @@ public class ReaderTest extends TestCase {
   // -- Testing methods --
 
   /** 
-   * Check the SizeX and SizeY dimensions against the actual dimensions of
+   * Checks the SizeX and SizeY dimensions against the actual dimensions of
    * the BufferedImages.
    */
   public void testBufferedImageDimensions() {
@@ -210,7 +213,7 @@ public class ReaderTest extends TestCase {
   }
 
   /**
-   * Check the SizeX and SizeY dimensions against the actual dimensions of
+   * Checks the SizeX and SizeY dimensions against the actual dimensions of
    * the byte array returned by openBytes.
    */
   public void testByteArrayDimensions() {
@@ -253,7 +256,7 @@ public class ReaderTest extends TestCase {
   }
 
   /**
-   * Check the SizeZ, SizeC, and SizeT dimensions against the 
+   * Checks the SizeZ, SizeC, and SizeT dimensions against the 
    * total image count.
    */
   public void testImageCount() {
@@ -288,7 +291,7 @@ public class ReaderTest extends TestCase {
   }
 
   /**
-   * Check that the OME-XML attribute values match the values of the core
+   * Checks that the OME-XML attribute values match the values of the core
    * metadata (Size*, DimensionOrder, etc.).
    */
   public void testOMEXML() {
