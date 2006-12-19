@@ -52,7 +52,6 @@ import java.io.InputStream;
 /**
  * An input stream that decompresses from the BZip2 format (without the file
  * header chars) to be read as any other stream.
- *
  */
 public class CBZip2InputStream extends InputStream implements BZip2Constants {
   private static void cadvise() {

@@ -828,9 +828,7 @@ public abstract class BaseTiffReader extends FormatReader {
 
   /** Initializes the given TIFF file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) {
-      System.out.println("calling BaseTiffReader.initFile(" + id + ")");
-    }
+    if (debug) debug("initFile(" + id + ")");
     super.initFile(id);
     channelMinMax = null;
     in = new RandomAccessStream(getMappedId(id));

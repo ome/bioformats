@@ -179,7 +179,7 @@ public class PictReader extends FormatReader {
 
   /** Initializes the given PICT file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) System.out.println("calling PictReader.initFile(" + id + ")");
+    if (debug) debug("initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(getMappedId(id));
 
@@ -222,9 +222,7 @@ public class PictReader extends FormatReader {
     }
     int w = DataTools.bytesToInt(stuff, 6, 2, little);
     int h = DataTools.bytesToInt(stuff, 8, 2, little);
-    if (debug) {
-      System.out.println("PictReader.getDimensions: " + w + " x " + h);
-    }
+    if (debug) debug("getDimensions: " + w + " x " + h);
     return new Dimension(h, w);
   }
 
@@ -232,7 +230,7 @@ public class PictReader extends FormatReader {
   public BufferedImage open(byte[] pix) throws FormatException {
     // handles case when we call this method directly, instead of
     // through initFile(String)
-    if (debug) System.out.println("PictReader.open");
+    if (debug) debug("open");
 
     strips = new Vector();
 
@@ -286,8 +284,8 @@ public class PictReader extends FormatReader {
       }
 
       if (debug) {
-        System.out.println("PictReader.openBytes: 8-bit data, " + width +
-          " x " + height + ", length=" + data.length + "x" + data[0].length);
+        debug("openBytes: 8-bit data, " + width + " x " + height +
+          ", length=" + data.length + "x" + data[0].length);
       }
       return ImageTools.makeImage(data, width, height);
     }
@@ -317,8 +315,8 @@ public class PictReader extends FormatReader {
       }
 
       if (debug) {
-        System.out.println("PictReader.openBytes: 24-bit data, " + width +
-          " x " + height + ", length=" + data.length + "x" + data[0].length);
+        debug("openBytes: 24-bit data, " + width + " x " + height +
+          ", length=" + data.length + "x" + data[0].length);
       }
       return ImageTools.makeImage(data, width, height);
     }
@@ -340,8 +338,8 @@ public class PictReader extends FormatReader {
       }
 
       if (debug) {
-        System.out.println("PictReader.openBytes: 32-bit data, " + width +
-          " x " + height + ", length=" + data.length + "x" + data[0].length);
+        debug("openBytes: 32-bit data, " + width + " x " + height +
+          ", length=" + data.length + "x" + data[0].length);
       }
       return ImageTools.makeImage(data, width, height);
     }
@@ -368,8 +366,8 @@ public class PictReader extends FormatReader {
       }
 
       if (debug) {
-        System.out.println("PictReader.openBytes: 16-bit data, " +
-          width + " x " + height + ", length=" + data.length);
+        debug("openBytes: 16-bit data, " + width + " x " + height +
+          ", length=" + data.length);
       }
       return ImageTools.makeImage(data, width, height, 3, true);
     }
@@ -379,7 +377,7 @@ public class PictReader extends FormatReader {
 
   /** Loop through the remainder of the file and find relevant opcodes. */
   private boolean driveDecoder() throws FormatException {
-    if (debug) System.out.println("PictReader.driveDecoder");
+    if (debug) debug("driveDecoder");
     int opcode;
 
     switch (pictState) {
@@ -432,7 +430,7 @@ public class PictReader extends FormatReader {
 
   /** Handles the opcodes in the PICT file. */
   private boolean drivePictDecoder(int opcode) throws FormatException {
-    if (debug) System.out.println("PictReader.drivePictDecoder");
+    if (debug) debug("drivePictDecoder");
 
     switch (opcode) {
       case PICT_BITSRGN:  // rowBytes must be < 8
@@ -461,7 +459,7 @@ public class PictReader extends FormatReader {
 
   /** Handles bitmap and pixmap opcodes of PICT format. */
   private void handlePackBits(int opcode) throws FormatException {
-    if (debug) System.out.println("PictReader.handlePackBits(" + opcode + ")");
+    if (debug) debug("handlePackBits(" + opcode + ")");
     if (opcode == PICT_9A) {
       // special case
       handlePixmap(opcode);
@@ -476,7 +474,7 @@ public class PictReader extends FormatReader {
 
   /** Extract the image data in a PICT bitmap structure. */
   private void handleBitmap(int opcode) throws FormatException {
-    if (debug) System.out.println("PictReader.handleBitmap(" + opcode + ")");
+    if (debug) debug("handleBitmap(" + opcode + ")");
     int row;
     byte[] buf;  // raw byte buffer for data from file
     byte[] uBuf; // uncompressed data -- possibly still pixel packed
@@ -553,7 +551,7 @@ public class PictReader extends FormatReader {
 
   /** Extracts the image data in a PICT pixmap structure. */
   private void handlePixmap(int opcode) throws FormatException {
-    if (debug) System.out.println("PictReader.handlePixmap(" + opcode + ")");
+    if (debug) debug("handlePixmap(" + opcode + ")");
     int pixelSize;
     int compCount;
 
@@ -664,8 +662,8 @@ public class PictReader extends FormatReader {
     throws FormatException
   {
     if (debug) {
-      System.out.println("PictReader.handlePixmap(" +
-        rBytes + ", " + pixelSize + ", " + compCount + ")");
+      debug("handlePixmap(" + rBytes + ", " +
+        pixelSize + ", " + compCount + ")");
     }
     int rawLen;
     byte[] buf;  // row raw bytes
@@ -702,8 +700,7 @@ public class PictReader extends FormatReader {
 
     if (!compressed) {
       if (debug) {
-        System.out.println("Pixel data is uncompressed (pixelSize=" +
-          pixelSize + ").");
+        debug("Pixel data is uncompressed (pixelSize=" + pixelSize + ").");
       }
       buf = new byte[bufSize];
       for (int row=0; row<height; row++) {
@@ -727,7 +724,7 @@ public class PictReader extends FormatReader {
     }
     else {
       if (debug) {
-        System.out.println("Pixel data is compressed (pixelSize=" +
+        debug("Pixel data is compressed (pixelSize=" +
           pixelSize + "; compCount=" + compCount + ").");
       }
       buf = new byte[bufSize + 1 + bufSize / 128];
@@ -805,7 +802,7 @@ public class PictReader extends FormatReader {
     throws FormatException
   {
     if (debug) {
-      System.out.println("PictReader.expandPixels(" + bitSize + ", " +
+      debug("expandPixels(" + bitSize + ", " +
         ib.length + ", " + ob.length + ", " + outLen + ")");
     }
     if (bitSize == 1) {
@@ -885,9 +882,7 @@ public class PictReader extends FormatReader {
 
   /** PackBits variant that outputs an int array. */
   private void unpackBits(byte[] ib, int[] ob) {
-    if (debug) {
-      System.out.println("PictReader.unpackBits(" + ib + ", " + ob + ")");
-    }
+    if (debug) debug("unpackBits(" + ib + ", " + ob + ")");
     int i = 0;
     int o = 0;
     int b;

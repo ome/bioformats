@@ -128,16 +128,18 @@ public class AndorReader extends BaseTiffReader {
       pos += 4;  // data flag
       metadata.put("Number of colors",
         "" + DataTools.bytesToInt(header, pos, 4, little));
-      if (debug) {
-        System.out.println("bytes for 'number of colors'");
-        for (int i=pos; i<pos+4; i++) { System.out.print(header[i] + " "); }
-        System.out.println();
+      if (debug && debugLevel >= 2) {
+        debug("bytes for 'number of colors'");
+        StringBuffer sb = new StringBuffer();
+        for (int i=pos; i<pos+4; i++) sb.append(header[i] + " ");
+        debug(sb.toString());
       }
       pos += 4;
-      if (debug) {
-        System.out.println("bytes for color and comment flags");
-        for (int i=pos; i<pos+16; i++) { System.out.print(header[i] + " "); }
-        System.out.println();
+      if (debug && debugLevel >= 2) {
+        debug("bytes for color and comment flags");
+        StringBuffer sb = new StringBuffer();
+        for (int i=pos; i<pos+16; i++) sb.append(header[i] + " ");
+        debug(sb.toString());
       }
       pos += 8;  // color flags
       pos += 8;  // comment flags
@@ -198,15 +200,15 @@ public class AndorReader extends BaseTiffReader {
       sizeT[0] = 1;
 
       for (int i=1; i<=10; i++) {
-        if (debug) {
-          System.out.println("bytes for dimension " + i + " name");
-          for (int j=pos; j<pos+64; j++) { System.out.print(header[j] + " "); }
-          System.out.println();
-          System.out.println("remainder of MM_DIM_INFO bytes for dim. " +i);
-          for (int j=pos+64; j<pos+100; j++) {
-            System.out.print(header[j] + " ");
-          }
-          System.out.println();
+        if (debug && debugLevel >= 2) {
+          debug("bytes for dimension " + i + " name");
+          StringBuffer sb = new StringBuffer();
+          for (int j=pos; j<pos+64; j++) sb.append(header[j] + " ");
+          debug(sb.toString());
+          debug("remainder of MM_DIM_INFO bytes for dim. " + i);
+          sb.setLength(0);
+          for (int j=pos+64; j<pos+100; j++) sb.append(header[j] + " ");
+          debug(sb.toString());
         }
 
         // name is supposed to be 64 bytes but in practice appears to be 16

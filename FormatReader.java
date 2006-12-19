@@ -39,9 +39,6 @@ public abstract class FormatReader extends FormatHandler
 
   // -- Constants --
 
-  /** Debugging level. 1=basic, 2=extended, 3=everything. */
-  protected static final int DEBUG_LEVEL = 1;
-
   /** Default thumbnail width and height. */
   protected static final int THUMBNAIL_DIMENSION = 128;
 
@@ -87,6 +84,9 @@ public abstract class FormatReader extends FormatHandler
 
   /** Debugging flag. */
   protected static boolean debug = false;
+
+  /** Debugging level. 1=basic, 2=extended, 3=everything. */
+  protected static int debugLevel = 1;
 
   // -- Fields --
 
@@ -164,7 +164,16 @@ public abstract class FormatReader extends FormatHandler
       fin.close();
       return isThisType(buf);
     }
-    catch (IOException e) { return false; }
+    catch (IOException exc) { return false; }
+  }
+
+  /** Issues a debugging statement. */
+  protected void debug(String s) {
+    // NB: could use a logger class or other means of output here, if desired
+    String name = getClass().getName();
+    String prefix = "loci.formats.in.";
+    if (name.startsWith(prefix)) name = name.substring(prefix.length());
+    System.out.println(System.currentTimeMillis() + ": " + name + ": " + s);
   }
 
   // -- IFormatReader API methods --
@@ -502,18 +511,24 @@ public abstract class FormatReader extends FormatHandler
           else if (args[i].equals("-normalize")) normalize = true;
           else if (args[i].equals("-fast")) fastBlit = true;
           else if (args[i].equals("-debug")) debug = true;
+          else if (args[i].equals("-level")) {
+            try {
+              debugLevel = Integer.parseInt(args[++i]);
+            }
+            catch (Exception exc) { }
+          }
           else if (args[i].equals("-range")) {
             try {
               start = Integer.parseInt(args[++i]);
               end = Integer.parseInt(args[++i]);
             }
-            catch (Exception e) { }
+            catch (Exception exc) { }
           }
           else if (args[i].equals("-series")) {
             try {
               series = Integer.parseInt(args[++i]);
             }
-            catch (Exception e) { }
+            catch (Exception exc) { }
           }
           else if (args[i].equals("-map")) map = args[++i];
           else System.out.println("Ignoring unknown command flag: " + args[i]);
@@ -524,6 +539,7 @@ public abstract class FormatReader extends FormatHandler
         }
       }
     }
+    if (debug) System.out.println("Debugging at level " + debugLevel);
     if (id == null) {
       String className = reader.getClass().getName();
       String format = reader.getFormat();

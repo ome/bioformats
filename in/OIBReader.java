@@ -253,7 +253,7 @@ public class OIBReader extends FormatReader {
 
   /** Initializes the given OIB file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) System.out.println("calling OIBReader.initFile(" + id + ")");
+    if (debug) debug("initFile(" + id + ")");
     if (noPOI) throw new FormatException(NO_POI_MSG);
     currentId = id;
 
@@ -616,12 +616,12 @@ public class OIBReader extends FormatReader {
     }
   }
 
-  /** Debugging utility method. */
-  public static final void print(int depth, String s) {
+  /** Debugging helper method. */
+  protected void print(int depth, String s) {
     StringBuffer sb = new StringBuffer();
     for (int i=0; i<depth; i++) sb.append("  ");
     sb.append(s);
-    System.out.println(sb.toString());
+    debug(sb.toString());
   }
 
   // -- Main method --

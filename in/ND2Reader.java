@@ -196,7 +196,7 @@ public class ND2Reader extends FormatReader {
 
   /** Initializes the given ND2 file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) System.out.println("calling ND2Reader.initFile(" + id + ")");
+    if (debug) debug("initFile(" + id + ")");
     if (noJAI) throw new FormatException(NO_JAI_MSG);
     super.initFile(id);
 

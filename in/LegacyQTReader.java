@@ -156,9 +156,7 @@ public class LegacyQTReader extends FormatReader {
   protected void initFile(String id)
     throws FormatException, IOException
   {
-    if (debug) {
-      System.out.println("calling LegacyQTReader.initFile(" + id + ")");
-    }
+    if (debug) debug("initFile(" + id + ")");
     if (tools == null) {
       tools = new LegacyQTTools();
       r = tools.getUniverse();
