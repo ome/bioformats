@@ -485,7 +485,7 @@ public abstract class FormatReader extends FormatHandler
     boolean normalize = false;
     boolean fastBlit = false;
     int start = 0;
-    int end = 0;
+    int end = Integer.MAX_VALUE;
     int series = 0;
     String map = null;
     if (args != null) {
@@ -545,7 +545,7 @@ public abstract class FormatReader extends FormatHandler
         "-normalize: normalize floating point images*",
         "     -fast: paint RGB images as quickly as possible*",
         "    -debug: turn on debugging output",
-        "    -range: specify range of planes to read",
+        "    -range: specify range of planes to read (inclusive)",
         "   -series: specify which image series to read",
         "      -map: specify file on disk to which name should be mapped",
         "",
@@ -683,17 +683,18 @@ public abstract class FormatReader extends FormatHandler
       System.out.print("Reading" + s + " pixel data ");
       long s1 = System.currentTimeMillis();
       int num = reader.getImageCount(id);
-      if (end == 0 || end > num) end = num;
-      if (end < 0) end = 0;
       if (start < 0) start = 0;
       if (start >= num) start = num - 1;
+      if (end < 0) end = 0;
+      if (end >= num) end = num - 1;
+      if (end < start) end = start;
 
-      System.out.print("(" + (end - start) + ") ");
+      System.out.print("(" + start + "-" + end + ") ");
       long e1 = System.currentTimeMillis();
-      BufferedImage[] images = new BufferedImage[end - start];
+      BufferedImage[] images = new BufferedImage[end - start + 1];
       long s2 = System.currentTimeMillis();
       boolean mismatch = false;
-      for (int i=start; i<end; i++) {
+      for (int i=start; i<=end; i++) {
         if (!fastBlit) {
           images[i - start] = thumbs ?
             reader.openThumbImage(id, i) : reader.openImage(id, i);
@@ -733,7 +734,7 @@ public abstract class FormatReader extends FormatHandler
 
       // output timing results
       float sec = (e2 - s1) / 1000f;
-      float avg = (float) (e2 - s2) / (end - start);
+      float avg = (float) (e2 - s2) / images.length;
       long initial = e1 - s1;
       System.out.println(sec + "s elapsed (" +
         avg + "ms per image, " + initial + "ms overhead)");
