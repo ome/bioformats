@@ -218,6 +218,7 @@ public class GIFReader extends FormatReader {
 
   /** Initializes the given GIF file. */
   protected void initFile(String id) throws FormatException, IOException {
+    if (debug) System.out.println("calling GIFReader.initFile(" + id + ")");
     super.initFile(id);
 
     status = STATUS_OK;

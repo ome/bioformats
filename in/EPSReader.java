@@ -169,6 +169,7 @@ public class EPSReader extends FormatReader {
 
   /** Initializes the given EPS file. */
   protected void initFile(String id) throws FormatException, IOException {
+    if (debug) System.out.println("calling EPSReader.initFile(" + id + ")");
     super.initFile(id);
     in = new BufferedReader(new FileReader(getMappedId(id)));
     String line = in.readLine();

@@ -253,6 +253,7 @@ public class OIBReader extends FormatReader {
 
   /** Initializes the given OIB file. */
   protected void initFile(String id) throws FormatException, IOException {
+    if (debug) System.out.println("calling OIBReader.initFile(" + id + ")");
     if (noPOI) throw new FormatException(NO_POI_MSG);
     currentId = id;
 
@@ -432,7 +433,7 @@ public class OIBReader extends FormatReader {
     }
     catch (Throwable t) {
       noPOI = true;
-      if (DEBUG) t.printStackTrace();
+      if (debug) t.printStackTrace();
       initFile(id);
     }
 
@@ -504,7 +505,7 @@ public class OIBReader extends FormatReader {
       }
       else if (isDocument) {
         r.exec("entryName = entry.getName()");
-        if (DEBUG) {
+        if (debug) {
           print(depth + 1, "Found document: " + r.getVar("entryName"));
         }
         r.exec("dis = new DocumentInputStream(entry)");
