@@ -27,16 +27,14 @@ package loci.formats.test;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
+import junit.framework.*;
 import loci.formats.*;
-import org.junit.*;
-import org.junit.runner.*;
-import org.junit.Assert;
 
 /**
  * Class that provides automated testing of the Bio-Formats library using JUnit.
  * Failed tests are written to a logfile, for easier processing.
  */
-public class ReaderTest {
+public class ReaderTest extends TestCase {
 
   // -- Fields --
 
@@ -45,7 +43,36 @@ public class ReaderTest {
   private static IFormatReader reader;
   private static FileWriter logFile;
 
-  // -- API methods --
+  // -- Constructor --
+ 
+  public ReaderTest(String s) {
+    super(s);
+  }
+
+  // -- TestCase API methods --
+
+  /** Release resources after tests have completed */
+  protected void tearDown() {
+    try {
+      reader.close();
+      badFiles = null;
+      if (logFile != null) logFile.close();
+    }
+    catch (FormatException fe) { }
+    catch (IOException io) { }
+  }
+
+  /** Make our results available to a TestRunner */
+  public static Test suite() {
+    TestSuite suite = new TestSuite();
+    suite.addTest(new ReaderTest("testBufferedImageDimensions"));
+    suite.addTest(new ReaderTest("testByteArrayDimensions"));
+    suite.addTest(new ReaderTest("testImageCount"));
+    suite.addTest(new ReaderTest("testOMEXML"));
+    return suite;
+  }
+
+  // -- ReaderTest API methods --
 
   /** Set the file to process. */
   public static void setFile(String file) {
@@ -113,10 +140,6 @@ public class ReaderTest {
       catch (IOException io) { }
     }
   
-    Runtime rt = Runtime.getRuntime();
-    /* debug */ System.out.println("memory used : " + 
-      (rt.freeMemory() / (1024*1024)) + " MB");
-
     if (!root.endsWith(File.separator)) root += File.separator;
     File f = new File(root);
     String[] subs = f.list();
@@ -136,7 +159,7 @@ public class ReaderTest {
             catch (FormatException fe) { files.add(subs[i]); }
           }
           else if (tmp.isDirectory()) getFiles(subs[i], files);
-          else /* debug */ System.out.println(subs[i] + "has invalid type");
+          else /* debug */ System.out.println(subs[i] + " has invalid type");
           tmp = null;
           try { reader.close(); }
           catch (Exception e) { }
@@ -144,8 +167,7 @@ public class ReaderTest {
         else /* debug */ System.out.println(subs[i] + " is a bad file");
       }
     }
-    else System.out.println("Invalid directory : " + root + "(" + f.isDirectory() +
-      ")");
+    else System.out.println("Invalid directory : " + root); 
     f = null;
   }
 
@@ -155,7 +177,7 @@ public class ReaderTest {
    * Check the SizeX and SizeY dimensions against the actual dimensions of
    * the BufferedImages.
    */
-  @Test public void testBufferedImageDimensions() {
+  public void testBufferedImageDimensions() {
    boolean success = true;
     try {
       for (int i=0; i<reader.getSeriesCount(currentFile); i++) {
@@ -184,14 +206,14 @@ public class ReaderTest {
       }
     }
     catch (IOException io) { }
-    Assert.assertTrue(success);
+    assertTrue(success);
   }
 
   /**
    * Check the SizeX and SizeY dimensions against the actual dimensions of
    * the byte array returned by openBytes.
    */
-  @Test public void testByteArrayDimensions() {
+  public void testByteArrayDimensions() {
     boolean success = true;
     try {
       for (int i=0; i<reader.getSeriesCount(currentFile); i++) {
@@ -227,14 +249,14 @@ public class ReaderTest {
       }
     }
     catch (IOException io) { }
-    Assert.assertTrue(success);
+    assertTrue(success);
   }
 
   /**
    * Check the SizeZ, SizeC, and SizeT dimensions against the 
    * total image count.
    */
-  @Test public void testImageCount() {
+  public void testImageCount() {
     boolean success = true;
     try {
       for (int i=0; i<reader.getSeriesCount(currentFile); i++) {
@@ -248,12 +270,12 @@ public class ReaderTest {
           if (!success) {
             logFile.write(currentFile + " failed image count test\n");
             logFile.flush();
-            Assert.assertTrue(false);
+            assertTrue(false);
           }
         }
         catch (IOException io) { }
       }
-      Assert.assertTrue(success);
+      assertTrue(success);
     }
     catch (Exception e) { 
       try {
@@ -261,7 +283,7 @@ public class ReaderTest {
         logFile.flush();
       }
       catch (IOException io) { }
-      Assert.assertTrue(false); 
+      assertTrue(false); 
     }
   }
 
@@ -269,7 +291,7 @@ public class ReaderTest {
    * Check that the OME-XML attribute values match the values of the core
    * metadata (Size*, DimensionOrder, etc.).
    */
-  @Test public void testOMEXML() {
+  public void testOMEXML() {
     try {
       OMEXMLMetadataStore store = 
         (OMEXMLMetadataStore) reader.getMetadataStore(currentFile);
@@ -301,12 +323,12 @@ public class ReaderTest {
           try {
             logFile.write(currentFile + " failed OME-XML sanity test\n");
             logFile.flush();
-            Assert.assertTrue(false);
+            assertTrue(false);
           }
           catch (IOException io) { }
         }
       }
-      Assert.assertTrue(success); 
+      assertTrue(success); 
     }
     catch (Exception e) { 
       try {
@@ -314,7 +336,7 @@ public class ReaderTest {
         logFile.flush();
       }
       catch (IOException io) { }
-      Assert.assertTrue(false); 
+      assertTrue(false); 
     }
   }
 
@@ -323,16 +345,18 @@ public class ReaderTest {
   public static void main(String[] args) {
     Vector files = new Vector();  
     ReaderTest.getFiles(args[0], files);
+    System.out.println();
     for (int i=0; i<files.size(); i++) {
-      JUnitCore core = new JUnitCore();
+      System.out.println("Testing " + files.get(i));
       ReaderTest.setFile((String) files.get(i));
-      ReaderTest.resetReader();
-      Result r = core.run(Request.aClass(ReaderTest.class));
-      int total = r.getRunCount();
-      int failed = r.getFailureCount();
+      TestResult result = new TestResult();
+      ReaderTest.suite().run(result);
+      int total = result.runCount();
+      int failed = result.failureCount();
       float failPercent = (float) (100 * ((double) failed / (double) total));
-      System.out.println(files.get(i) + " - " + failed + " failures in " + 
+      System.out.println(files.get(i) + " - " + failed + " failures in " +
         total + " tests (" + failPercent + "% failed)");
+      ReaderTest.resetReader();
     }
   }
 
