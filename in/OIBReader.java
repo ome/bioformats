@@ -65,25 +65,25 @@ public class OIBReader extends FormatReader {
   // -- Fields --
 
   /** Number of images. */
-  private int nImages;
+  private Vector nImages;
 
   /** Image width. */
-  private int width;
+  private Vector width;
 
   /** Image height. */
-  private int height;
+  private Vector height;
 
   /** Number of channels. */
-  private int nChannels = 1;
+  private Vector nChannels;
 
   /** Number of timepoints. */
-  private int tSize;
+  private Vector tSize;
 
   /** Number of Z slices. */
-  private int zSize;
+  private Vector zSize;
 
   /** Number of bytes per pixel. */
-  private int bpp;
+  private Vector bpp;
 
   /** Thumbnail width. */
   private int thumbWidth;
@@ -92,27 +92,28 @@ public class OIBReader extends FormatReader {
   private int thumbHeight;
 
   /** Hashtable containing the directory entry for each plane. */
-  private Hashtable pixels;
+  private Vector pixels;
 
   /**
    * Hashtable containing the document name for each plane,
    * indexed by the plane number.
    */
-  private Hashtable names;
+  private Vector names;
 
   /** Vector containing Z indices. */
-  private Vector zIndices;
+  private Vector[] zIndices;
 
   /** Vector containing C indices. */
-  private Vector cIndices;
+  private Vector[] cIndices;
 
   /** Vector containing T indices. */
-  private Vector tIndices;
+  private Vector[] tIndices;
 
   /** Number of valid bits per pixel. */
-  private int[] validBits;
+  private int[][] validBits;
 
-  private boolean littleEndian;
+  private boolean[] littleEndian;
+  private Vector rgb;
 
   // -- Constructor --
 
@@ -130,23 +131,30 @@ public class OIBReader extends FormatReader {
   /** Determines the number of images in the given OIB file. */
   public int getImageCount(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return nImages;
+    return ((Integer) nImages.get(getSeries(id))).intValue();
   }
 
   /** Checks if the images in the file are RGB. */
   public boolean isRGB(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return nChannels > 1 && (nChannels * zSize * tSize != nImages);
+    return ((Boolean) rgb.get(getSeries(id))).booleanValue();
   }
 
   /** Return true if the data is in little-endian format. */
   public boolean isLittleEndian(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
     return false;
   }
 
   /** Returns whether or not the channels are interleaved. */
   public boolean isInterleaved(String id) throws FormatException, IOException {
     return false;
+  }
+
+  /* @see loci.formats.IFormatReader#getSeriesCount(String) */
+  public int getSeriesCount(String id) throws FormatException, IOException {
+    if (!id.equals(currentId)) initFile(id);
+    return width.size();
   }
 
   /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(String, int) */
@@ -179,8 +187,10 @@ public class OIBReader extends FormatReader {
     }
 
     try {
-      String directory = (String) pixels.get(new Integer(no));
-      String name = (String) names.get(new Integer(no));
+      int s = getSeries(id);
+      String directory = 
+        (String) ((Hashtable) pixels.get(s)).get(new Integer(no));
+      String name = (String) ((Hashtable) names.get(s)).get(new Integer(no));
 
       r.setVar("dirName", directory);
       r.exec("root = fs.getRoot()");
@@ -196,7 +206,7 @@ public class OIBReader extends FormatReader {
 
       RandomAccessStream stream = new RandomAccessStream(b);
       Hashtable[] ifds = TiffTools.getIFDs(stream);
-      littleEndian = TiffTools.isLittleEndian(ifds[0]);
+      littleEndian[s] = TiffTools.isLittleEndian(ifds[0]);
       byte[][] samples = TiffTools.getSamples(ifds[0], stream);
 
       byte[] rtn = new byte[samples.length * samples[0].length];
@@ -204,7 +214,9 @@ public class OIBReader extends FormatReader {
         System.arraycopy(samples[i], 0, rtn, i*samples[i].length,
           samples[i].length);
       }
+      
       stream.close();
+
       return rtn;
     }
     catch (ReflectException e) {
@@ -223,9 +235,10 @@ public class OIBReader extends FormatReader {
     }
 
     byte[] b = openBytes(id, no);
-    int bytes = b.length / (width * height);
-    return ImageTools.makeImage(b, width, height, bytes == 3 ? 3 : 1,
-      false, bytes == 3 ? 1 : bytes, !littleEndian, validBits);
+    int s = getSeries(id);
+    int bytes = b.length / (sizeX[s] * sizeY[s]);
+    return ImageTools.makeImage(b, sizeX[s], sizeY[s], bytes == 3 ? 3 : 1, 
+      false, bytes == 3 ? 1 : bytes, !littleEndian[s], validBits[s]);
   }
 
   /** Closes any open files. */
@@ -238,19 +251,27 @@ public class OIBReader extends FormatReader {
     for (int i=0; i<vars.length; i++) r.setVar(vars[i], null);
   }
 
-  /** Initializes the given ZVI file. */
+  /** Initializes the given OIB file. */
   protected void initFile(String id) throws FormatException, IOException {
     if (noPOI) throw new FormatException(NO_POI_MSG);
     currentId = id;
 
     metadata = new Hashtable();
-    pixels = new Hashtable();
-    names = new Hashtable();
-    zIndices = new Vector();
-    cIndices = new Vector();
-    tIndices = new Vector();
+    zIndices = new Vector[] {new Vector()};
+    cIndices = new Vector[] {new Vector()};
+    tIndices = new Vector[] {new Vector()};
 
-    nImages = 0;
+    width = new Vector();
+    height = new Vector();
+    nChannels = new Vector();
+    zSize = new Vector();
+    tSize = new Vector();
+    pixels = new Vector();
+    names = new Vector();
+    nImages = new Vector();
+    bpp = new Vector();
+    bpp.add(new Integer(0));
+    rgb = new Vector();
 
     try {
       RandomAccessStream ras = new RandomAccessStream(getMappedId(id));
@@ -262,39 +283,43 @@ public class OIBReader extends FormatReader {
       r.exec("dir = fs.getRoot()");
       parseDir(0, r.getVar("dir"));
 
+      int numSeries = width.size();
+
       // sort names
 
-      Vector newKeys = new Vector();
-      Vector comps = new Vector();
-      Enumeration keys = names.keys();
-      while (keys.hasMoreElements()) {
-        Object key = keys.nextElement();
-        String value = (String) names.get(key);
-        int comp = Integer.parseInt(value.substring(value.indexOf("0")));
-        int size = newKeys.size();
-        for (int i=0; i<size; i++) {
-          if (comp < ((Integer) comps.get(i)).intValue()) {
-            newKeys.add(i, value);
-            comps.add(i, new Integer(comp));
-            i = size;
+      for (int i=0; i<numSeries; i++) {
+        Vector newKeys = new Vector();
+        Vector comps = new Vector();
+        Enumeration keys = ((Hashtable) names.get(i)).keys();
+        while (keys.hasMoreElements()) {
+          Object key = keys.nextElement();
+          String value = (String) ((Hashtable) names.get(i)).get(key);
+          int comp = Integer.parseInt(value.substring(value.indexOf("0")));
+          int size = newKeys.size();
+          for (int j=0; j<size; j++) {
+            if (comp < ((Integer) comps.get(j)).intValue()) {
+              newKeys.add(j, value);
+              comps.add(j, new Integer(comp));
+              j = size;
+            }
+            else if (j == size - 1) {
+              newKeys.add(value);
+              comps.add(new Integer(comp));
+              j = size;
+            }
           }
-          else if (i == size - 1) {
+          if (newKeys.size() == 0) {
             newKeys.add(value);
             comps.add(new Integer(comp));
-            i = size;
           }
         }
-        if (newKeys.size() == 0) {
-          newKeys.add(value);
-          comps.add(new Integer(comp));
-        }
-      }
 
-      Hashtable newNames = new Hashtable();
-      for (int i=0; i<newKeys.size(); i++) {
-        newNames.put(new Integer(i), newKeys.get(i));
+        Hashtable newNames = new Hashtable();
+        for (int j=0; j<newKeys.size(); j++) {
+          newNames.put(new Integer(j), newKeys.get(j));
+        }
+        names.setElementAt(newNames, i);
       }
-      names = newNames;
 
       String[] labels = new String[9];
       String[] dims = new String[9];
@@ -306,77 +331,104 @@ public class OIBReader extends FormatReader {
           (String) metadata.get("[Axis " + i + " Parameters Common] - MaxSize");
       }
 
-      if (nChannels == 0) nChannels++;
-
       for (int i=0; i<labels.length; i++) {
-        if (labels[i].equals("\"X\"")) width = Integer.parseInt(dims[i]);
-        else if (labels[i].equals("\"Y\"")) height = Integer.parseInt(dims[i]);
+        if (labels[i].equals("\"X\"") || labels[i].equals("\"Y\"")) { }
         else if (labels[i].equals("\"C\"")) {
-          nChannels = Integer.parseInt(dims[i]);
+          nChannels.add(new Integer(dims[i]));
         }
-        else if (labels[i].equals("\"Z\"")) zSize = Integer.parseInt(dims[i]);
-        else if (labels[i].equals("\"T\"")) tSize = Integer.parseInt(dims[i]);
-        else if (!dims[i].equals("0")) nChannels *= Integer.parseInt(dims[i]);
-      }
-
-      if (zSize == 0) zSize++;
-      if (tSize == 0) tSize++;
-
-      sizeX = new int[1];
-      sizeY = new int[1];
-      sizeZ = new int[1];
-      sizeC = new int[1];
-      sizeT = new int[1];
-      pixelType = new int[1];
-      currentOrder = new String[1];
-      orderCertain = new boolean[] {true};
-
-      sizeX[0] = width;
-      sizeY[0] = height;
-      sizeZ[0] = zSize;
-      sizeC[0] = nChannels;
-      sizeT[0] = tSize;
-      currentOrder[0] = (zSize > tSize) ? "XYCZT" : "XYCTZ";
-
-      if (nImages == zSize * tSize * nChannels + 1) nImages--;
-
-      if (nImages > zSize * tSize * nChannels) {
-        int diff = nImages - (zSize * tSize * nChannels);
-
-        if (diff % zSize == 0 && zSize > 1) {
-          while (nImages > zSize * tSize * nChannels) tSize++;
+        else if (labels[i].equals("\"Z\"")) {
+          zSize.add(new Integer(dims[i]));
         }
-        else if (diff % tSize == 0 && tSize > 1) {
-          while (nImages > zSize * tSize * nChannels) zSize++;
+        else if (labels[i].equals("\"T\"")) {
+          tSize.add(new Integer(dims[i]));
         }
-        else if (diff % nChannels == 0) {
-          if (zSize > tSize) {
-            while (nImages > zSize * tSize * nChannels) zSize++;
+        else if (!dims[i].equals("0")) {
+          if (nChannels.size() > 0) {
+            int ch = ((Integer) nChannels.get(nChannels.size() - 1)).intValue();
+            ch *= Integer.parseInt(dims[i]);
+            nChannels.setElementAt(new Integer(ch), nChannels.size() - 1);
           }
-          else {
-            while (nImages > zSize * tSize * nChannels) tSize++;
+          else nChannels.add(new Integer(dims[i]));
+        }
+      }
+
+      //if (zSize[0] == 0) zSize[0]++;
+      //if (tSize[0] == 0) tSize[0]++;
+
+      pixelType = new int[numSeries];
+      currentOrder = new String[numSeries];
+      orderCertain = new boolean[numSeries];
+      littleEndian = new boolean[numSeries];
+
+      sizeX = new int[numSeries];
+      sizeY = new int[numSeries];
+      sizeZ = new int[numSeries];
+      sizeC = new int[numSeries];
+      sizeT = new int[numSeries];
+      validBits = new int[numSeries][];
+
+      for (int i=0; i<numSeries; i++) {
+        sizeX[i] = ((Integer) width.get(i)).intValue();
+        sizeY[i] = ((Integer) height.get(i)).intValue();
+        
+        if (i < zSize.size()) sizeZ[i] = ((Integer) zSize.get(i)).intValue();
+        else sizeZ[i] = 1;
+        
+        if (i < nChannels.size()) {
+          sizeC[i] = ((Integer) nChannels.get(i)).intValue();
+        }
+        else sizeC[i] = 1;
+        
+        if (i < tSize.size()) sizeT[i] = ((Integer) tSize.get(i)).intValue();
+        else sizeT[i] = 1;
+
+        if (sizeZ[i] == 0) sizeZ[i]++;
+        if (sizeT[i] == 0) sizeT[i]++;
+
+        currentOrder[i] = (sizeZ[i] > sizeT[i]) ? "XYCZT" : "XYCTZ";
+
+        int numImages = ((Integer) nImages.get(i)).intValue();
+        if (numImages > sizeZ[i] * sizeT[i] * sizeC[i]) {
+          int diff = numImages - (sizeZ[i] * sizeT[i] * sizeC[i]);
+
+          if (diff % sizeZ[i] == 0 && sizeZ[i] > 1) {
+            while (numImages > sizeZ[i] * sizeT[i] * sizeC[i]) sizeT[i]++;
+          }
+          else if (diff % sizeT[i] == 0 && sizeT[i] > 1) {
+            while (numImages > sizeZ[i] * sizeT[i] * sizeC[i]) sizeZ[i]++;
+          }
+          else if (diff % sizeC[i] == 0) {
+            if (sizeZ[i] > sizeT[i]) {
+              while (numImages > sizeZ[i] * sizeC[i] * sizeT[i]) sizeZ[i]++;
+            }
+            else {
+              while (numImages > sizeZ[i] * sizeC[i] * sizeT[i]) sizeT[i]++;
+            }
           }
         }
-      }
-
-      sizeZ[0] = zSize;
-      sizeC[0] = nChannels;
-      sizeT[0] = tSize;
-
-      validBits = new int[nChannels == 2 ? 3 : nChannels];
-      int vb = 0;
-      Enumeration k = metadata.keys();
-      while (k.hasMoreElements()) {
-        String key = k.nextElement().toString();
-        if (key.indexOf("ValidBitCounts") != -1) {
-          vb = Integer.parseInt((String) metadata.get(key));
+       
+        int oldSeries = getSeries(id);
+        setSeries(id, i);
+        while (numImages < sizeZ[i] * sizeT[i] * getEffectiveSizeC(id)) {
+          numImages++;
         }
-      }
-      if (vb > 0) { 
-        for (int i=0; i<validBits.length; i++) validBits[i] = vb;
-      }
-      else validBits = null;
+        nImages.setElementAt(new Integer(numImages), i);
+        setSeries(id, oldSeries);
 
+        validBits[i] = new int[sizeC[i] == 2 ? 3 : sizeC[i]];
+        int vb = 0;
+        Enumeration k = metadata.keys();
+        while (k.hasMoreElements()) {
+          String key = k.nextElement().toString();
+          if (key.indexOf("ValidBitCounts") != -1) {
+            vb = Integer.parseInt((String) metadata.get(key));
+          }
+        }
+        if (vb > 0) { 
+          for (int j=0; j<validBits[i].length; j++) validBits[i][j] = vb;
+        }
+        else validBits[i] = null;
+      }
     }
     catch (Throwable t) {
       noPOI = true;
@@ -395,38 +447,40 @@ public class OIBReader extends FormatReader {
     MetadataStore store = getMetadataStore(currentId);
     store.setImage((String) metadata.get("DataName"), null, null, null);
 
-    switch (bpp % 3) {
-      case 0:
-      case 1:
-        pixelType[0] = FormatReader.UINT8;
-        break;
-      case 2:
-        pixelType[0] = FormatReader.UINT16;
-        break;
-      case 4:
-        pixelType[0] = FormatReader.UINT32;
-        break;
-      default:
-        throw new RuntimeException(
-          "Unknown matching for pixel byte width of: " + bpp);
+    for (int i=0; i<width.size(); i++) {
+      switch (((Integer) bpp.get(0)).intValue() % 3) {
+        case 0:
+        case 1:
+          pixelType[i] = FormatReader.UINT8;
+          break;
+        case 2:
+          pixelType[i] = FormatReader.UINT16;
+          break;
+        case 4:
+          pixelType[i] = FormatReader.UINT32;
+          break;
+        default:
+          throw new RuntimeException(
+            "Unknown matching for pixel byte width of: " + bpp);
+      }
+
+      store.setPixels(
+        new Integer(sizeX[i]),
+        new Integer(sizeY[i]),
+        new Integer(sizeZ[i]),
+        new Integer(sizeC[i]),
+        new Integer(sizeT[i]),
+        new Integer(pixelType[i]),
+        new Boolean(false),
+        currentOrder[i],
+        new Integer(i));
+
+      Float pixX = new Float(metadata.get(
+        "[Reference Image Parameter] - WidthConvertValue").toString());
+      Float pixY = new Float(metadata.get(
+        "[Reference Image Parameter] - HeightConvertValue").toString());
+      store.setDimensions(pixX, pixY, null, null, null, new Integer(i));
     }
-
-    store.setPixels(
-      new Integer(getSizeX(currentId)),
-      new Integer(getSizeY(currentId)),
-      new Integer(getSizeZ(currentId)),
-      new Integer(getSizeC(currentId)),
-      new Integer(getSizeT(currentId)),
-      new Integer(pixelType[0]),
-      new Boolean(false),
-      getDimensionOrder(currentId),
-      null);
-
-    Float pixX = new Float(metadata.get(
-      "[Reference Image Parameter] - WidthConvertValue").toString());
-    Float pixY = new Float(metadata.get(
-      "[Reference Image Parameter] - HeightConvertValue").toString());
-    store.setDimensions(pixX, pixY, null, null, null, null);
   }
 
   protected void parseDir(int depth, Object dir)
@@ -477,10 +531,45 @@ public class OIBReader extends FormatReader {
         }
         else if (TiffTools.checkHeader(b) != null) {
           // this is an actual image plane
-          Integer num = new Integer(nImages);
-          pixels.put(num, dirName);
-          names.put(num, entryName);
-          nImages++;
+          RandomAccessStream ras = new RandomAccessStream(data);
+          Hashtable ifd = TiffTools.getIFDs(ras)[0];
+          ras.close();
+          int w = (int) TiffTools.getImageWidth(ifd);
+          int h = (int) TiffTools.getImageLength(ifd);
+        
+          boolean isRGB = TiffTools.getSamplesPerPixel(ifd) > 1;
+          if (!isRGB) {
+            int p = TiffTools.getPhotometricInterpretation(ifd);
+            isRGB = !isColorTableIgnored() && (p == TiffTools.RGB_PALETTE ||
+              p == TiffTools.CFA_ARRAY) || p == TiffTools.RGB;
+          }
+
+          boolean added = false;
+          for (int i=0; i<width.size(); i++) {
+            if (((Integer) width.get(i)).intValue() == w &&
+              ((Integer) height.get(i)).intValue() == h)
+            {
+              int num = ((Integer) nImages.get(i)).intValue();
+              ((Hashtable) pixels.get(i)).put(new Integer(num), dirName);
+              ((Hashtable) names.get(i)).put(new Integer(num), entryName);
+              num++;
+              nImages.setElementAt(new Integer(num), i);
+              added = true;
+            }
+          }
+          
+          if (!added) {
+            Hashtable ht = new Hashtable();
+            ht.put(new Integer(0), dirName);
+            pixels.add(ht);
+            ht = new Hashtable();
+            ht.put(new Integer(0), entryName);
+            names.add(ht);
+            nImages.add(new Integer(1));
+            width.add(new Integer(w));
+            height.add(new Integer(h));
+            rgb.add(new Boolean(isRGB));
+          }
         }
         else if (entryName.equals("OibInfo.txt")) { /* ignore this */ }
         else {
@@ -503,8 +592,12 @@ public class OIBReader extends FormatReader {
               String s = (prefix + key).trim();
               if (s.equals("[FileInformation] - Resolution")) {
                 int max = Integer.parseInt(value.trim());
-                while (Math.pow(2, bpp) < max) bpp++;
-                bpp /= 8;
+                int bytes = ((Integer) bpp.get(0)).intValue();
+                while (Math.pow(2, bytes) < max) bytes++;
+                bytes /= 8;
+                for (int i=0; i<bpp.size(); i++) {
+                  bpp.setElementAt(new Integer(bytes), i);
+                }
               }
               metadata.put(prefix + key.trim(), value.trim());
             }
