@@ -526,30 +526,33 @@ public abstract class FormatReader extends FormatHandler
     }
     if (id == null) {
       String className = reader.getClass().getName();
-      System.out.println("To test read a file in " +
-        reader.getFormat() + " format, run:");
-      System.out.println("  java " + className +
-        " [-nopix] [-nometa] [-thumbs] [-merge]");
-      System.out.println("    [-stitch] [-separate] [-omexml] " +
-        "[-range start end] [-series num] file");
-      System.out.println();
-      System.out.println("     file: the image file to read");
-      System.out.println("   -nopix: read metadata only, not pixels");
-      System.out.println("  -nometa: output only core metadata");
-      System.out.println("  -thumbs: read thumbnails instead of normal pixels");
-      System.out.println("   -merge: combine separate channels into RGB image");
-      System.out.println("  -stitch: stitch files with similar names");
-      System.out.println("-separate: split RGB image into separate channels");
-      System.out.println("-nocolors: ignore color lookup tables, if present");
-      System.out.println("  -omexml: populate OME-XML metadata");
-      System.out.println("   -range: specify range of planes to read");
-      System.out.println("  -series: specify which image series to read");
-      System.out.println("   -normalize: normalize floating point images " +
-        "(may result in loss of precision)");
-      System.out.println("    -fast: paint RGB images as quickly as possible" +
-        "(may result in loss of precision)");
-      System.out.println("   -debug: turn on debugging output");
-      System.out.println();
+      String format = reader.getFormat();
+      String[] s = {
+        "To test read a file in " + format + " format, run:",
+        "  java " + className + " [-nopix] [-nometa] [-thumbs] [-merge]",
+        "    [-stitch] [-separate] [-nocolors] [-omexml] [-normalize] [-fast]",
+        "    [-debug] [-range start end] [-series num] [-map id] file",
+        "",
+        "      file: the image file to read",
+        "    -nopix: read metadata only, not pixels",
+        "   -nometa: output only core metadata",
+        "   -thumbs: read thumbnails instead of normal pixels",
+        "    -merge: combine separate channels into RGB image",
+        "   -stitch: stitch files with similar names",
+        " -separate: split RGB image into separate channels",
+        " -nocolors: ignore color lookup tables, if present",
+        "   -omexml: populate OME-XML metadata",
+        "-normalize: normalize floating point images*",
+        "     -fast: paint RGB images as quickly as possible*",
+        "    -debug: turn on debugging output",
+        "    -range: specify range of planes to read",
+        "   -series: specify which image series to read",
+        "      -map: specify file on disk to which name should be mapped",
+        "",
+        "* = may result in loss of precision",
+        ""
+      };
+      for (int i=0; i<s.length; i++) System.out.println(s[i]);
       return false;
     }
     if (map != null) reader.mapId(id, map);
