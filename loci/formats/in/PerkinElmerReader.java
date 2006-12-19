@@ -164,9 +164,7 @@ public class PerkinElmerReader extends FormatReader {
 
   /** Initializes the given PerkinElmer file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) {
-      System.out.println("calling PerkinElmerReader.initFile(" + id + ")");
-    }
+    if (debug) debug("initFile(" + id + ")");
     super.initFile(id);
 
     allFiles = new Vector();

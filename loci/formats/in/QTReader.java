@@ -317,8 +317,7 @@ public class QTReader extends FormatReader {
       !code.equals("jpeg") && !code.equals("mjpb") && !code.equals("rpza"))
     {
       if (debug) {
-        System.out.println("Unsupported codec (" +
-          code + "); using QTJava reader");
+        debug("Unsupported codec (" + code + "); using QTJava reader");
       }
       doLegacy = true;
     }
@@ -498,8 +497,7 @@ public class QTReader extends FormatReader {
       !code.equals("jpeg") && !code.equals("mjpb") && !code.equals("rpza"))
     {
       if (debug) {
-        System.out.println("Unsupported codec (" +
-          code + "); using QTJava reader");
+        debug("Unsupported codec (" + code + "); using QTJava reader");
       }
       doLegacy = true;
     }
@@ -556,7 +554,7 @@ public class QTReader extends FormatReader {
 
   /** Initializes the given QuickTime file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) System.out.println("calling QTReader.initFile(" + id + ")");
+    if (debug) debug("initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
 
@@ -658,8 +656,8 @@ public class QTReader extends FormatReader {
       // uses a JPEG-compatible codec.  In this case, we can do some guesswork
       // to read the file; otherwise we will fail gracefully.
 
-      if (DEBUG) {
-        System.out.println("Failed to find the QuickTime resource fork. " +
+      if (debug) {
+        debug("Failed to find the QuickTime resource fork. " +
           "Attempting to proceed using only the data fork.");
       }
 
@@ -720,12 +718,12 @@ public class QTReader extends FormatReader {
       }
 
       if (atomSize < 0) {
-        System.out.println("Invalid atom size : " + atomSize);
+        System.err.println("QTReader: invalid atom size: " + atomSize);
       }
 
       if (debug) {
-        System.out.println("seeking to " + offset + "; atomType=" + atomType +
-          "; atomSize=" + atomSize);
+        debug("Seeking to " + offset +
+          "; atomType=" + atomType + "; atomSize=" + atomSize);
       }
 
       byte[] data = new byte[0];
@@ -888,8 +886,10 @@ public class QTReader extends FormatReader {
 
   /** Debugging method; prints information on an atom. */
   public void print(int depth, long size, String type, byte[] data) {
-    for (int i=0; i<depth; i++) System.out.print(" ");
-    System.out.print(type + " : [" + size + "]\n");
+    StringBuffer sb = new StringBuffer();
+    for (int i=0; i<depth; i++) sb.append(" ");
+    sb.append(type + " : [" + size + "]");
+    debug(sb.toString());
   }
 
   /** Uncompresses an image plane according to the the codec identifier. */

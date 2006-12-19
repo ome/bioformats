@@ -192,7 +192,7 @@ public class IPWReader extends BaseTiffReader {
 
   /** Initializes the given IPW file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) System.out.println("calling IPWReader.initFile(" + id + ")");
+    if (debug) debug("initFile(" + id + ")");
     if (noPOI) throw new FormatException(NO_POI_MSG);
     currentId = id;
 
@@ -468,12 +468,12 @@ public class IPWReader extends BaseTiffReader {
     }
   }
 
-  /** Debugging utility method. */
-  public static final void print(int depth, String s) {
+  /** Debugging helper method. */
+  protected void print(int depth, String s) {
     StringBuffer sb = new StringBuffer();
     for (int i=0; i<depth; i++) sb.append("  ");
     sb.append(s);
-    System.out.println(sb.toString());
+    debug(sb.toString());
   }
 
   // -- Main method --

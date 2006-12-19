@@ -329,9 +329,7 @@ public class ZeissZVIReader extends FormatReader {
 
   /** Initializes the given ZVI file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) {
-      System.out.println("calling ZeissZVIReader.initFile(" + id + ")");
-    }
+    if (debug) debug("initFile(" + id + ")");
 
     if (noPOI || needLegacy) {
       legacy.initFile(id);
@@ -814,12 +812,12 @@ public class ZeissZVIReader extends FormatReader {
     }
   }
 
-  /** Debugging utility method. */
-  public static final void print(int depth, String s) {
+  /** Debugging helper method. */
+  protected void print(int depth, String s) {
     StringBuffer sb = new StringBuffer();
     for (int i=0; i<depth; i++) sb.append("  ");
     sb.append(s);
-    System.out.println(sb.toString());
+    debug(sb.toString());
   }
 
   /** Parse a plane of data. */

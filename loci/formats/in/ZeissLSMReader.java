@@ -153,9 +153,7 @@ public class ZeissLSMReader extends BaseTiffReader {
 
   /** Initializes the given Zeiss LSM file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) {
-      System.out.println("calling ZeissLSMReader.initFile(" + id + ")");
-    }
+    if (debug) debug("initFile(" + id + ")");
     super.initFile(id);
     channels = 0;
 

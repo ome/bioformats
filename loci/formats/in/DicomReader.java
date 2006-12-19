@@ -242,7 +242,7 @@ public class DicomReader extends FormatReader {
 
   /** Initializes the given DICOM file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) System.out.println("calling DicomReader.initFile(" + id + ")");
+    if (debug) debug("initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(getMappedId(id));
     in.order(true);

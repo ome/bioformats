@@ -371,7 +371,7 @@ public class OpenlabReader extends FormatReader {
 
   /** Initialize the given Openlab LIFF file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) System.out.println("calling OpenlabReader.initFile(" + id + ")");
+    if (debug) debug("initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(getMappedId(id));
 
