@@ -31,7 +31,7 @@ import junit.framework.*;
 import loci.formats.*;
 
 /**
- * Class that provides automated testing of the Bio-Formats library using JUnit.
+ * JUnit tester for Bio-Formats file format readers.
  * Failed tests are written to a logfile, for easier processing.
  */
 public class ReaderTest extends TestCase {
