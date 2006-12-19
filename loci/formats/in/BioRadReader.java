@@ -167,6 +167,7 @@ public class BioRadReader extends FormatReader {
 
   /** Initializes the given IPLab file. */
   protected void initFile(String id) throws FormatException, IOException {
+    if (debug) System.out.println("calling BioRadReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(getMappedId(id));
     in.order(true);
@@ -374,11 +375,11 @@ public class BioRadReader extends FormatReader {
       }
       catch (Exception exc) {
         eof = true;
-        if (DEBUG) exc.printStackTrace();
+        if (debug) exc.printStackTrace();
       }
     }
 
-    if (DEBUG && DEBUG_LEVEL >= 2) {
+    if (debug && DEBUG_LEVEL >= 2) {
       System.out.println(numLuts + " color table" +
         (numLuts == 1 ? "" : "s") + " present.");
     }

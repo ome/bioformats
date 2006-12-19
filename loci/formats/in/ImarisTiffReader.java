@@ -107,6 +107,9 @@ public class ImarisTiffReader extends BaseTiffReader {
 
   /* @see BaseTiffReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
+    if (debug) {
+      System.out.println("calling ImarisTiffReader.initFile(" + id + ")");
+    }
     super.initFile(id);
     super.initMetadata();
 

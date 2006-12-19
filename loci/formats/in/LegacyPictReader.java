@@ -106,6 +106,9 @@ public class LegacyPictReader extends FormatReader {
 
   /** Initializes the given PICT file. */
   protected void initFile(String id) throws FormatException, IOException {
+    if (debug) {
+      System.out.println("calling LegacyPictReader.initFile(" + id + ")");
+    }
     super.initFile(id);
     sizeX[0] = openImage(id, 0).getWidth();
     sizeY[0] = openImage(id, 0).getHeight();

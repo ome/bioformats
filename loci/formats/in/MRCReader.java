@@ -123,6 +123,7 @@ public class MRCReader extends FormatReader {
 
   /** Initializes the given MRC file. */
   public void initFile(String id) throws FormatException, IOException {
+    if (debug) System.out.println("calling MRCReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(getMappedId(id));
 

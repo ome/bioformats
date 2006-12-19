@@ -128,13 +128,13 @@ public class AndorReader extends BaseTiffReader {
       pos += 4;  // data flag
       metadata.put("Number of colors",
         "" + DataTools.bytesToInt(header, pos, 4, little));
-      if (DEBUG) {
+      if (debug) {
         System.out.println("bytes for 'number of colors'");
         for (int i=pos; i<pos+4; i++) { System.out.print(header[i] + " "); }
         System.out.println();
       }
       pos += 4;
-      if (DEBUG) {
+      if (debug) {
         System.out.println("bytes for color and comment flags");
         for (int i=pos; i<pos+16; i++) { System.out.print(header[i] + " "); }
         System.out.println();
@@ -198,7 +198,7 @@ public class AndorReader extends BaseTiffReader {
       sizeT[0] = 1;
 
       for (int i=1; i<=10; i++) {
-        if (DEBUG) {
+        if (debug) {
           System.out.println("bytes for dimension " + i + " name");
           for (int j=pos; j<pos+64; j++) { System.out.print(header[j] + " "); }
           System.out.println();

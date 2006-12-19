@@ -329,6 +329,9 @@ public class ZeissZVIReader extends FormatReader {
 
   /** Initializes the given ZVI file. */
   protected void initFile(String id) throws FormatException, IOException {
+    if (debug) {
+      System.out.println("calling ZeissZVIReader.initFile(" + id + ")");
+    }
 
     if (noPOI || needLegacy) {
       legacy.initFile(id);
@@ -425,7 +428,7 @@ public class ZeissZVIReader extends FormatReader {
     }
     catch (Throwable t) {
       needLegacy = true;
-      if (DEBUG) t.printStackTrace();
+      if (debug) t.printStackTrace();
       initFile(id);
     }
 
@@ -483,7 +486,7 @@ public class ZeissZVIReader extends FormatReader {
       }
       else if (isDocument) {
         r.exec("entryName = entry.getName()");
-        if (DEBUG) {
+        if (debug) {
           print(depth + 1, "Found document: " + r.getVar("entryName"));
         }
         r.exec("dis = new DocumentInputStream(entry)");

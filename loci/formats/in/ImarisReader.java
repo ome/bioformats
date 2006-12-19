@@ -68,6 +68,7 @@ public class ImarisReader extends FormatReader {
 
   /** Initializes the given Imaris file. */
   protected void initFile(String id) throws FormatException, IOException {
+    if (debug) System.out.println("calling ImarisReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(getMappedId(id));
     in.order(IS_LITTLE);

@@ -517,7 +517,7 @@ public abstract class BaseTiffReader extends FormatReader {
 
       currentOrder[0] = "XYCZT";
     }
-    catch (Exception e) { /* debug */ e.printStackTrace(); }
+    catch (Exception e) { }
   }
 
   /**
@@ -828,6 +828,9 @@ public abstract class BaseTiffReader extends FormatReader {
 
   /** Initializes the given TIFF file. */
   protected void initFile(String id) throws FormatException, IOException {
+    if (debug) {
+      System.out.println("calling BaseTiffReader.initFile(" + id + ")");
+    }
     super.initFile(id);
     channelMinMax = null;
     in = new RandomAccessStream(getMappedId(id));

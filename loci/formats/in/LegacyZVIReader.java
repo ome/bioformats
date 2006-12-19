@@ -137,7 +137,7 @@ public class LegacyZVIReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    if (DEBUG) System.out.println("Reading image #" + no + "...");
+    if (debug) System.out.println("Reading image #" + no + "...");
 
     ZVIBlock zviBlock = (ZVIBlock) blockList.elementAt(no);
 
@@ -153,6 +153,9 @@ public class LegacyZVIReader extends FormatReader {
 
   /** Initializes the given ZVI file. */
   protected void initFile(String id) throws FormatException, IOException {
+    if (debug) {
+      System.out.println("calling LegacyZVIReader.initFile(" + id + ")");
+    }
     super.initFile(id);
     in = new RandomAccessFile(getMappedId(id), "r");
 
@@ -213,7 +216,7 @@ public class LegacyZVIReader extends FormatReader {
       }
       pos = header + ZVI_MAGIC_BLOCK_1.length;
 
-      if (DEBUG) System.err.println("Found potential image block: " + header);
+      if (debug) System.err.println("Found potential image block: " + header);
 
       // these byte don't matter
       in.skipBytes(19);
@@ -364,7 +367,7 @@ public class LegacyZVIReader extends FormatReader {
 
       ZVIBlock zviBlock = new ZVIBlock(theZ, theC, theT, width, height,
         alwaysOne, bytesPerPixel, pixType, bitDepth, pos);
-      if (DEBUG) System.out.println(zviBlock);
+      if (debug) System.out.println(zviBlock);
 
       // perform some checks on the header info
       // populate Z, C and T index collections

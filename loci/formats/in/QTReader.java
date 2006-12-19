@@ -316,7 +316,7 @@ public class QTReader extends FormatReader {
     if (!doLegacy && !code.equals("raw ") && !code.equals("rle ") &&
       !code.equals("jpeg") && !code.equals("mjpb") && !code.equals("rpza"))
     {
-      if (DEBUG) {
+      if (debug) {
         System.out.println("Unsupported codec (" +
           code + "); using QTJava reader");
       }
@@ -497,7 +497,7 @@ public class QTReader extends FormatReader {
     if (!doLegacy && !code.equals("raw ") && !code.equals("rle ") &&
       !code.equals("jpeg") && !code.equals("mjpb") && !code.equals("rpza"))
     {
-      if (DEBUG) {
+      if (debug) {
         System.out.println("Unsupported codec (" +
           code + "); using QTJava reader");
       }
@@ -556,6 +556,7 @@ public class QTReader extends FormatReader {
 
   /** Initializes the given QuickTime file. */
   protected void initFile(String id) throws FormatException, IOException {
+    if (debug) System.out.println("calling QTReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
 
@@ -722,7 +723,7 @@ public class QTReader extends FormatReader {
         System.out.println("Invalid atom size : " + atomSize);
       }
 
-      if (DEBUG) {
+      if (debug) {
         System.out.println("seeking to " + offset + "; atomType=" + atomType +
           "; atomSize=" + atomSize);
       }
@@ -873,7 +874,7 @@ public class QTReader extends FormatReader {
 
       // if a 'udta' atom, skip ahead 4 bytes
       if (atomType.equals("udta")) offset += 4;
-      if (DEBUG) print(depth, atomSize, atomType, data);
+      if (debug) print(depth, atomSize, atomType, data);
     }
   }
 

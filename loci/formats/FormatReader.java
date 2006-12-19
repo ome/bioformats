@@ -39,9 +39,6 @@ public abstract class FormatReader extends FormatHandler
 
   // -- Constants --
 
-  /** Debugging flag. */
-  protected static final boolean DEBUG = false;
-
   /** Debugging level. 1=basic, 2=extended, 3=everything. */
   protected static final int DEBUG_LEVEL = 1;
 
@@ -85,6 +82,11 @@ public abstract class FormatReader extends FormatHandler
     pixelTypes[FormatReader.FLOAT] = "float";
     pixelTypes[FormatReader.DOUBLE] = "double";
   }
+
+  // -- Static fields --
+
+  /** Debugging flag. */
+  protected static boolean debug = false;
 
   // -- Fields --
 
@@ -499,6 +501,7 @@ public abstract class FormatReader extends FormatHandler
           else if (args[i].equals("-omexml")) omexml = true;
           else if (args[i].equals("-normalize")) normalize = true;
           else if (args[i].equals("-fast")) fastBlit = true;
+          else if (args[i].equals("-debug")) debug = true;
           else if (args[i].equals("-range")) {
             try {
               start = Integer.parseInt(args[++i]);
@@ -545,6 +548,7 @@ public abstract class FormatReader extends FormatHandler
         "(may result in loss of precision)");
       System.out.println("    -fast: paint RGB images as quickly as possible" +
         "(may result in loss of precision)");
+      System.out.println("   -debug: turn on debugging output");
       System.out.println();
       return false;
     }
