@@ -519,7 +519,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
     // but don't have a place really to store this in OME-XML we're just going
     // to store it in instance variables.
     if (channelMinimum == null) {
-      Float sizeC = getPixelSizeC(i);
+      Integer sizeC = getSizeC(i);
       if (sizeC == null) {
         warn("Out of order access or missing metadata 'sizeC'.");
         return;
@@ -528,7 +528,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
     }
 
     if (channelMaximum == null) {
-      Float sizeC = getPixelSizeC(i);
+      Integer sizeC = getSizeC(i);
       if (sizeC == null) {
         warn("Out of order access or missing metadata 'sizeC'.");
         return;
@@ -555,12 +555,12 @@ public class OMEXMLMetadataStore implements MetadataStore {
   public void setDefaultDisplaySettings(Integer i) {
     int ndx = i == null ? 0 : i.intValue();
 
-    Float sizeCAsFloat = getPixelSizeC(i);
-    if (sizeCAsFloat == null) {
+    Integer sizeCAsInteger = getSizeC(i);
+    if (sizeCAsInteger == null) {
       warn("Out of order access or missing metadata 'sizeC'.");
       return;
     }
-    int sizeC = sizeCAsFloat.intValue();
+    int sizeC = sizeCAsInteger.intValue();
 
     // Sanity check
     if (sizeC < 1) {
@@ -748,6 +748,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
   private void warn(String msg) {
     //log.warn(msg);
     System.err.println(msg);
+    new Exception(msg).printStackTrace();
   }
 
 }
