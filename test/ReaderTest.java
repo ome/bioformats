@@ -60,7 +60,7 @@ public class ReaderTest extends TestCase {
   // -- Constants --
 
   /** Debugging flag. */
-  private static final boolean DEBUG = true;
+  private static final boolean DEBUG = false;
 
   // -- Static fields --
 
