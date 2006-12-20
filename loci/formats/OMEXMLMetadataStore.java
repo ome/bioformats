@@ -748,7 +748,6 @@ public class OMEXMLMetadataStore implements MetadataStore {
   private void warn(String msg) {
     //log.warn(msg);
     System.err.println(msg);
-    new Exception(msg).printStackTrace();
   }
 
 }
