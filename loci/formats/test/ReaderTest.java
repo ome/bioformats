@@ -60,7 +60,7 @@ public class ReaderTest extends TestCase {
   // -- Constants --
 
   /** Debugging flag. */
-  private static final boolean DEBUG = false;
+  private static final boolean DEBUG = true;
 
   // -- Static fields --
 
@@ -335,11 +335,12 @@ public class ReaderTest extends TestCase {
         if (DEBUG) debug(subs[i] + " is a bad file");
         continue;
       }
-      if (new File(subs[i]).isDirectory()) getFiles(subs[i], files);
+      File file = new File(subs[i]);
+      if (file.isDirectory()) getFiles(subs[i], files);
       else {
         if (ir.isThisType(subs[i])) {
           if (DEBUG) debug("Adding " + subs[i]);
-          files.add(subs[i]);
+          files.add(file.getAbsolutePath());
         }
         else if (DEBUG) debug(subs[i] + " has invalid type");
       }
@@ -383,15 +384,10 @@ public class ReaderTest extends TestCase {
     if (DEBUG) System.out.println();
     getFiles(args[0], files);
     System.out.println(files.size() + " found.");
-    FileStitcher stitcher = new FileStitcher();
     while (files.size() > 0) {
       String id = (String) files.get(0);
-      try {
-        FilePattern fp = stitcher.getFilePattern(id);
-        System.out.println("Testing " + fp.getPattern());
-      }
-      catch (FormatException exc) { exc.printStackTrace(); }
-      catch (IOException exc) { exc.printStackTrace(); }
+      String pattern = FilePattern.findPattern(new File(id));
+      System.out.println("Testing " + pattern);
       TestResult result = new TestResult();
       TestSuite suite = suite(id);
       suite.run(result);
@@ -405,7 +401,7 @@ public class ReaderTest extends TestCase {
       ReaderTest test = (ReaderTest) suite.testAt(0);
       String[] used = test.getUsedFiles();
       for (int i=0; i<used.length; i++) {
-        if (DEBUG) System.out.println("Removing " + used[i]);
+        if (DEBUG) System.out.println(id + ": Removing " + used[i]);
         files.removeElement(used[i]);
       }
     }
