@@ -400,10 +400,16 @@ public class ReaderTest extends TestCase {
       // remove files part of the just-tested dataset from the list
       ReaderTest test = (ReaderTest) suite.testAt(0);
       String[] used = test.getUsedFiles();
-      for (int i=0; i<used.length; i++) {
-        if (DEBUG) System.out.println("Removing " + used[i]);
-        files.removeElement(used[i]);
+      if (used == null) {
+        System.out.println("Warning: used files list is null for " + id);
       }
+      else {
+        for (int i=0; i<used.length; i++) {
+          if (DEBUG) System.out.println("Removing " + used[i]);
+          files.removeElement(used[i]);
+        }
+      }
+      files.removeElement(id);
     }
   }
 
