@@ -532,11 +532,16 @@ public abstract class BaseTiffReader extends FormatReader {
   protected void initMetadataStore() {
     Hashtable ifd = ifds[0];
     try {
-      // Set the pixel values in the metadata store.
-      setPixels();
-
-      // The metadata store we're working with.
+      // the metadata store we're working with
       MetadataStore store = getMetadataStore(currentId);
+
+      // set the pixel values in the metadata store
+      store.setPixels(new Integer(getSizeX(currentId)),
+        new Integer(getSizeY(currentId)), new Integer(getSizeZ(currentId)),
+        new Integer(getSizeC(currentId)), new Integer(getSizeT(currentId)),
+        new Integer(getPixelType(currentId)),
+        new Boolean(!isLittleEndian(currentId)),
+        getDimensionOrder(currentId), null);
 
       // populate Experimenter element
       String artist = (String) TiffTools.getIFDValue(ifd, TiffTools.ARTIST);
@@ -555,7 +560,8 @@ public abstract class BaseTiffReader extends FormatReader {
       }
 
       // populate Image element
-      setImage();
+      store.setImage(getImageName(),
+        getImageCreationDate(), getImageDescription(), null);
 
       // populate Logical Channel elements
       for (int i=0; i<getSizeC(currentId); i++) {
@@ -571,10 +577,10 @@ public abstract class BaseTiffReader extends FormatReader {
         catch (Exception e) { }
       }
 
-      //Populate the default display options
-      store.setDefaultDisplaySettings(null);
+      // populate the default display options
+//      store.setDefaultDisplaySettings(null);
 
-      // Use a default "real" pixel dimension of 1 for each dimensionality.
+      // use a default "real" pixel dimension of 1 for each dimensionality.
       Float f = new Float(1);
       store.setDimensions(f, f, f, f, f, null);
 
@@ -614,16 +620,6 @@ public abstract class BaseTiffReader extends FormatReader {
     }
     catch (FormatException exc) { exc.printStackTrace(); }
     catch (IOException ex) { ex.printStackTrace(); }
-  }
-
-  /**
-   * If the TIFF is big-endian.
-   * @return <code>true</code> if the TIFF is big-endian, <code>false</code>
-   * otherwise.
-   * @throws FormatException if there is a problem parsing this metadata.
-   */
-  protected Boolean getBigEndian() throws FormatException {
-    return new Boolean(!TiffTools.isLittleEndian(ifds[0]));
   }
 
   /**
@@ -841,54 +837,6 @@ public abstract class BaseTiffReader extends FormatReader {
   }
 
   // -- Helper methods --
-
-  /**
-   * Performs the actual setting of the pixels attributes in the active
-   * metadata store by calling:
-   *
-   * <ul>
-   *   <li>{@link #getSizeX()}</li>
-   *   <li>{@link #getSizeY()}</li>
-   *   <li>{@link #getSizeZ()}</li>
-   *   <li>{@link #getSizeC()}</li>
-   *   <li>{@link #getSizeT()}</li>
-   *   <li>{@link #getPixelType()}</li>
-   *   <li>{@link #getDimensionOrder()}</li>
-   *   <li>{@link #getBigEndian()}</li>
-   * </ul>
-   *
-   * If the retrieval of any of these attributes is non-standard, the sub-class
-   * should override the corresponding method.
-   * @throws FormatException if there is a problem parsing any of the
-   * attributes.
-   */
-  private void setPixels() throws FormatException, IOException {
-    getMetadataStore(currentId).setPixels(
-      new Integer(getSizeX(currentId)), new Integer(getSizeY(currentId)),
-      new Integer(getSizeZ(currentId)), new Integer(getSizeC(currentId)),
-      new Integer(getSizeT(currentId)), new Integer(getPixelType(currentId)),
-      getBigEndian(), getDimensionOrder(currentId), null);
-  }
-
-  /**
-   * Performs the actual setting of the image attributes in the active metadata
-   * store by calling:
-   *
-   * <ul>
-   *   <li>{@link #getImageName()}</li>
-   *   <li>{@link #getImageCreationDate()}</li>
-   *   <li>{@link #getgetImageDescription()}</li>
-   * </ul>
-   *
-   * If the retrieval of any of these attributes is non-standard, the sub-class
-   * should override the corresponding method.
-   * @throws FormatException if there is a problem parsing any of the
-   * attributes.
-   */
-  private void setImage() throws FormatException, IOException {
-    getMetadataStore(currentId).setImage(getImageName(),
-        getImageCreationDate(), getImageDescription(), null);
-  }
 
   /**
    * Sets the channels global min and max in the metadata store.
