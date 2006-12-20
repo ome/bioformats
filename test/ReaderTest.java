@@ -401,7 +401,7 @@ public class ReaderTest extends TestCase {
       ReaderTest test = (ReaderTest) suite.testAt(0);
       String[] used = test.getUsedFiles();
       for (int i=0; i<used.length; i++) {
-        if (DEBUG) System.out.println(id + ": Removing " + used[i]);
+        if (DEBUG) System.out.println("Removing " + used[i]);
         files.removeElement(used[i]);
       }
     }
