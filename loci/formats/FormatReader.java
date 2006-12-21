@@ -371,7 +371,7 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getUsedFiles(String) */
   public String[] getUsedFiles(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    return new String[] {getMappedId(id)};
+    return new String[] {id};
   }
 
   /* @see IFormatReader#swapDimensions(String, String) */

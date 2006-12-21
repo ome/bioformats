@@ -181,8 +181,8 @@ public class ICSReader extends FormatReader {
   /* @see IFormatReader#getUsedFiles(String) */
   public String[] getUsedFiles(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
-    if (versionTwo) return new String[] {getMappedId(currentIdsId)};
-    return new String[] {getMappedId(currentIdsId), getMappedId(currentIcsId)};
+    if (versionTwo) return new String[] {currentIdsId};
+    return new String[] {currentIdsId, currentIcsId};
   }
 
   /** Closes any open files. */

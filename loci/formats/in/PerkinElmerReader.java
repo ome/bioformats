@@ -176,7 +176,7 @@ public class PerkinElmerReader extends FormatReader {
     String workingDirPath = workingDir.getPath() + File.separator;
     String[] ls = workingDir.list();
 
-    allFiles.add(getMappedId(id));
+    allFiles.add(id);
 
     // check if we have any of the required header file types
 
