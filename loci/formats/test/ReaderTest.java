@@ -385,8 +385,9 @@ public class ReaderTest extends TestCase {
     getFiles(args[0], files);
     System.out.println(files.size() + " found.");
     while (files.size() > 0) {
-      String id = (String) files.get(0);
+      String id = (String) files.elementAt(0);
       String pattern = FilePattern.findPattern(new File(id));
+      if (pattern == null) pattern = id;
       System.out.println("Testing " + pattern);
       TestResult result = new TestResult();
       TestSuite suite = suite(id);
@@ -409,7 +410,6 @@ public class ReaderTest extends TestCase {
           files.removeElement(used[i]);
         }
       }
-      files.removeElement(id);
     }
   }
 

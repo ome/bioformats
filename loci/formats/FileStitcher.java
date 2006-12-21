@@ -184,6 +184,7 @@ public class FileStitcher implements IFormatReader {
     if (!patternIds) {
       // find the containing pattern
       Hashtable map = getIdMap();
+      String pattern = null;
       if (map.containsKey(id)) {
         // search ID map for pattern, rather than files on disk
         String[] idList = new String[map.size()];
@@ -191,12 +192,13 @@ public class FileStitcher implements IFormatReader {
         for (int i=0; i<idList.length; i++) {
           idList[i] = (String) en.nextElement();
         }
-        id = FilePattern.findPattern(id, null, idList);
+        pattern = FilePattern.findPattern(id, null, idList);
       }
       else {
         // id is an unmapped file path; look to similar files on disk
-        id = FilePattern.findPattern(new File(id)); // id == getMapped(id)
+        pattern = FilePattern.findPattern(new File(id)); // id == getMapped(id)
       }
+      if (pattern != null) id = pattern;
     }
     return new FilePattern(id);
   }
