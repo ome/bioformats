@@ -193,7 +193,7 @@ public class LeicaReader extends BaseTiffReader {
   public String[] getUsedFiles(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     Vector v = new Vector();
-    v.add(getMappedId(id));
+    v.add(id);
     for (int i=0; i<files.length; i++) {
       for (int j=0; j<files[i].size(); j++) {
         v.add(files[i].get(j));

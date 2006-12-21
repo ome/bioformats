@@ -201,8 +201,8 @@ public class OIFReader extends FormatReader {
   public String[] getUsedFiles(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     String[] s = new String[tiffs.size() + 1];
-    s[0] = getMappedId(currentId);
-    for (int i=1; i<s.length; i++) s[i] = getMappedId((String) tiffs.get(i-1));
+    s[0] = currentId;
+    for (int i=1; i<s.length; i++) s[i] = (String) tiffs.get(i-1);
     return s;
   }
 
