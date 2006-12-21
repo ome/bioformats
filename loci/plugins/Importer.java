@@ -430,6 +430,11 @@ public class Importer {
         if (!series[i]) continue;
         r.setSeries(id, i);
 
+        if (stackFormat.equals(VIEW_IMAGE_5D)) {
+          // Image5D needs planes in CZT order
+          r.swapDimensions(id, "XYCZT");
+        }
+                
         String name = store.getImageName(new Integer(i));
         String imageName = fileName;
         if (name != null && name.length() > 0) imageName += " - " + name;
