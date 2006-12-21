@@ -207,8 +207,8 @@ public class BMPReader extends FormatReader {
       }
     }
 
-    byte[] p = new byte[tempPx.length * tempPx[0].length];
-    for (int i=0; i<tempPx.length; i++) {
+    byte[] p = new byte[sizeC[0] * tempPx[0].length];
+    for (int i=0; i<sizeC[0]; i++) {
       System.arraycopy(tempPx[i], 0, p, i * tempPx[i].length,
         tempPx[i].length);
     }
