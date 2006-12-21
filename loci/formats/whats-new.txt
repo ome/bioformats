@@ -1,7 +1,9 @@
-* Fixed bugs in Zeiss ZVI reader
+2006 Dec 21:
 * Improved support for ND2 and JPEG-2000 files
+* Expanded ImageJ plugin to optionally use Image5D or View5D
 * Added automated testing framework
-* Expanded ImageJ plugin to optionally use Image5D and View5D
+* Fixed bugs in Zeiss ZVI reader
+* Miscellaneous bugfixes
 
 2006 Nov 30:
 * Added support for ND2/JPEG-2000
