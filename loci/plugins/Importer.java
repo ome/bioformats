@@ -139,9 +139,9 @@ public class Importer {
 
     Vector stackTypes = new Vector();
     stackTypes.add(VIEW_STANDARD);
-    if (Util.checkClass("loci.plugins.browser.LociDataBrowser")) {
-      stackTypes.add(VIEW_BROWSER);
-    }
+//    if (Util.checkClass("loci.plugins.browser.LociDataBrowser")) {
+//      stackTypes.add(VIEW_BROWSER);
+//    }
     if (Util.checkClass("i5d.Image5D")) stackTypes.add(VIEW_IMAGE_5D);
     stackTypes.add(VIEW_VIEW_5D);
     final String[] stackFormats = new String[stackTypes.size()];
