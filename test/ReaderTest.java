@@ -403,6 +403,7 @@ public class ReaderTest extends TestCase {
       String[] used = test.getUsedFiles();
       if (used == null) {
         System.out.println("Warning: used files list is null for " + id);
+        files.removeElementAt(0);
       }
       else {
         for (int i=0; i<used.length; i++) {
