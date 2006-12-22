@@ -40,6 +40,12 @@ boolean isInterleaved(String) throws FormatException, IOException :
   is equal to the current file; if not, initFile(String) should be called 
   (see below).
 
+String[] getUsedFiles(String) throws FormatException, IOException :
+  You only need to override this if your format uses multiple files in a single
+  dataset.  This method should return a list of all the files associated with
+  the given file name (i.e. every file needed to display the current dataset).
+  For an example of how this works, see loci.formats.in.PerkinElmerReader.
+
 byte[] openBytes(String, int) throws FormatException, IOException :
   Returns a byte array containing the pixel data for the specified image from
   the given file.  Should throw a FormatException if the image number is invalid
@@ -82,8 +88,10 @@ protected void initFile(String) throws FormatException, IOException :
     int pixelType[0] : corresponds to the number of bytes per pixel; see 
                        constant values in FormatReader for a list of valid
                        values
+    boolean orderCertain[0] : set to true if you are certain that the dimension
+                              order is correct
 
-  Note that each variable is intialized to 0 or null when
+  Note that each variable is initialized to 0 or null when
   super.initFile(String) is called.
   Also, super.initFile(String) constructs a Hashtable called "metadata" where
   you should store any relevant metadata.
@@ -136,6 +144,8 @@ and IFormatHandler.getMappedId(String).
 - Several common image compression types are supported in
   loci.formats.Compression.  These include LZW, LZO, Base64, ZIP and RLE.
 
+- Debugging statements can be added using FormatReader.debug(String).
+
 - If you wish to convert a file's metadata to OME-XML (strongly encouraged),
   loci.formats.OMEXMLMetadataStore provides methods for creating OME-XML from
   metadata values.  Note that OMEXMLMetadataStore is a subclass of 
@@ -172,8 +182,12 @@ and IFormatHandler.getMappedId(String).
     -separate           Force RGB images to be split into separate channels.
     -nocolors           Intepret indexed color images as grayscale.
     -omexml             Output the OME-XML for the file.
+    -normalize          Normalize floating point images.
+    -fast               Display RGB images as quickly as possible.
+    -debug              Turn on debugging output.
     -range              Specify a range of images to open.
     -series             Set the series number (for container file formats).
+    -map                Specify file on disk to which name should be mapped.
 
 - For more details, please look at the source code and javadocs.  Studying
   existing readers is probably the best way to get a feel for the API; I would
