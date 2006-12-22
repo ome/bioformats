@@ -188,6 +188,8 @@ public class Importer {
     try {
       // -- Step 4a: do some preparatory work --
 
+      if (stackFormat.equals(VIEW_IMAGE_5D)) mergeChannels = false;
+
       FileStitcher fs = null;
       if (stitchFiles) {
         r = new FileStitcher(r, true);
@@ -430,11 +432,6 @@ public class Importer {
         if (!series[i]) continue;
         r.setSeries(id, i);
 
-        if (stackFormat.equals(VIEW_IMAGE_5D)) {
-          // Image5D needs planes in CZT order
-          r.swapDimensions(id, "XYCZT");
-        }
-                
         String name = store.getImageName(new Integer(i));
         String imageName = fileName;
         if (name != null && name.length() > 0) imageName += " - " + name;
@@ -869,12 +866,28 @@ public class Importer {
       else if (stackFormat.equals(VIEW_IMAGE_5D)) {
         int sizeC = r.getSizeC(id);
         if (imp.getStackSize() == r.getSizeZ(id) * r.getSizeT(id)) sizeC = 1;
-        
+    
+        // need to re-order the stack so that the order is XYCZT 
+
+        ImageStack is = new ImageStack(r.getSizeX(id), r.getSizeY(id));
+        ImageStack old = imp.getStack();
+        if (r.getDimensionOrder(id).equals("XYCZT")) is = old;
+        else {
+          for (int t=0; t<r.getSizeT(id); t++) {
+            for (int z=0; z<r.getSizeZ(id); z++) {
+              for (int c=0; c<sizeC; c++) {
+                int ndx = r.getIndex(id, z, c, t) + 1;
+                is.addSlice(old.getSliceLabel(ndx), old.getProcessor(ndx));
+              }
+            }
+          }
+        }
+
         ReflectedUniverse ru = null;
         ru = new ReflectedUniverse();
         ru.exec("import i5d.Image5D");
         ru.setVar("title", imp.getTitle());
-        ru.setVar("stack", imp.getStack());
+        ru.setVar("stack", is);
         ru.setVar("sizeC", sizeC);
         ru.setVar("sizeZ", r.getSizeZ(id));
         ru.setVar("sizeT", r.getSizeT(id));
