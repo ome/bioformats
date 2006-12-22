@@ -739,7 +739,7 @@ public class OMEXMLMetadataStore implements MetadataStore {
   private OMEXMLNode findNode(String name, int i) {
     Element rel = root.getDOMElement();
     Vector elements = DOMUtil.findElementList(name, rel.getOwnerDocument());
-    if (elements == null || elements.size() == 0) return null;
+    if (elements == null || i <= elements.size()) return null;
     Element el = (Element) elements.get(i);
     return OMEXMLNode.createNode(el);
   }
