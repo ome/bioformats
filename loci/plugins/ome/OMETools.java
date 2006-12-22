@@ -30,7 +30,7 @@ import ij.gui.GenericDialog;
 import java.awt.Panel;
 import java.util.Hashtable;
 
-import loci.plugins.browser.LociDataBrowser;
+//import loci.plugins.browser.LociDataBrowser;
 
 import org.openmicroscopy.ds.*;
 import org.openmicroscopy.ds.dto.*;
@@ -87,8 +87,7 @@ public class OMETools {
   private RemoteCaller rc;
   private DataServices rs;
 
-  private LociDataBrowser viewer;
-
+//  private LociDataBrowser viewer;
 
   // -- Runnable API methods --
 
@@ -698,10 +697,11 @@ public class OMETools {
       metas[1] = OMEMetaDataHandler.exportMeta(image, imageP, df);
     }
     IJ.showStatus("Displaying Image");
-    viewer = new LociDataBrowser();
+//    viewer = new LociDataBrowser();
 
-    viewer.setDimensions(sizeZ, sizeC, sizeT, 0, 2, 1);
-    viewer.show(imageP);
+//    viewer.setDimensions(sizeZ, sizeC, sizeT, 0, 2, 1);
+//    viewer.show(imageP);
+    imageP.show();
     OMESidePanel.hashInImage(-image.getID(), metas);
   }
 
