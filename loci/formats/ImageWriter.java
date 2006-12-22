@@ -45,7 +45,7 @@ public class ImageWriter implements IFormatWriter {
   // -- Static fields --
 
   /** List of writer classes. */
-  protected static Class[] writerClasses;
+  protected static Vector writerClasses;
 
   // -- Static initializer --
 
@@ -53,7 +53,7 @@ public class ImageWriter implements IFormatWriter {
     // read built-in writer classes from writers.txt file
     BufferedReader in = new BufferedReader(new InputStreamReader(
       ImageWriter.class.getResourceAsStream("writers.txt")));
-    Vector v = new Vector();
+    writerClasses = new Vector();
     while (true) {
       String line = null;
       try { line = in.readLine(); }
@@ -75,12 +75,10 @@ public class ImageWriter implements IFormatWriter {
           "\" is not a valid format writer.");
         continue;
       }
-      v.add(c);
+      writerClasses.add(c);
     }
     try { in.close(); }
     catch (IOException exc) { exc.printStackTrace(); }
-    writerClasses = new Class[v.size()];
-    v.copyInto(writerClasses);
   }
 
   // -- Fields --
@@ -125,10 +123,11 @@ public class ImageWriter implements IFormatWriter {
     // add built-in writers to the list
     Vector v = new Vector();
     Hashtable map = null;
-    for (int i=0; i<writerClasses.length; i++) {
+    for (int i=0; i<writerClasses.size(); i++) {
+      Class writerClass = (Class) writerClasses.elementAt(i);
       FormatWriter writer = null;
       try {
-        writer = (FormatWriter) writerClasses[i].newInstance();
+        writer = (FormatWriter) writerClass.newInstance();
         // NB: ensure all writers share the same ID map
         if (i == 0) map = writer.getIdMap();
         else writer.setIdMap(map);
@@ -136,7 +135,7 @@ public class ImageWriter implements IFormatWriter {
       catch (IllegalAccessException exc) { }
       catch (InstantiationException exc) { }
       if (writer == null) {
-        System.err.println("Error: " + writerClasses[i].getName() +
+        System.err.println("Error: " + writerClass.getName() +
           " cannot be instantiated.");
         continue;
       }
@@ -334,6 +333,28 @@ public class ImageWriter implements IFormatWriter {
   /* @see IFormatHandler.setIdMap(Hashtable) */
   public void setIdMap(Hashtable map) {
     for (int i=0; i<writers.length; i++) writers[i].setIdMap(map);
+  }
+
+  // -- Static ImageWriter API methods --
+
+  /**
+   * Adds the given class, which must implement IFormatWriter,
+   * to the writer list.
+   *
+   * @throws FormatException if the class does not implement
+   *   the IFormatWriter interface.
+   */
+  public static void addWriterType(Class c) throws FormatException {
+    if (!IFormatWriter.class.isAssignableFrom(c)) {
+      throw new FormatException(
+        "Writer class must implement IFormatWriter interface");
+    }
+    writerClasses.add(c);
+  }
+
+  /** Removes the given class from the writer list. */
+  public static void removeWriterType(Class c) {
+    writerClasses.remove(c);
   }
 
   // -- Main method --

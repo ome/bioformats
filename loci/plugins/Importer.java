@@ -39,6 +39,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 import javax.swing.*;
 import loci.formats.*;
+import loci.formats.in.ImageJReader;
 
 /**
  * Core logic for the LOCI Importer ImageJ plugin.
@@ -50,7 +51,7 @@ public class Importer {
   
   // -- Constants --
 
-  private static final String VIEW_STANDARD= "Standard ImageJ";
+  private static final String VIEW_STANDARD = "Standard ImageJ";
   private static final String VIEW_BROWSER = "4D Data Browser";
   private static final String VIEW_IMAGE_5D = "Image5D";
   private static final String VIEW_VIEW_5D = "View5D";
@@ -62,7 +63,10 @@ public class Importer {
 
   // -- Constructor --
 
-  public Importer(LociImporter plugin) { this.plugin = plugin; }
+  public Importer(LociImporter plugin) {
+    this.plugin = plugin;
+    ImageReader.removeReaderType(ImageJReader.class);
+  }
 
   // -- Importer API methods --
 
