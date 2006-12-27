@@ -40,12 +40,12 @@ public final class OverlayIO {
   
   // file parsing state machine states and events
   // states
+  protected static final int WAIT = 0;
   protected static final int TABLE = 1;
   protected static final int NODES = 2;
-  protected static final int BARF = -1;
-  protected static final int WAIT = 0;
 
   // events
+  protected static final int BARF = -1;
   protected static final int IGNORE = 0;
   protected static final int PARSE = 1;
   protected static final int INIT = 2;
@@ -58,72 +58,39 @@ public final class OverlayIO {
   private OverlayIO() { }
 
   // -- OverlayIO API methods --
-
-  /** Method for determining how to handle next line read from input file */
-  private static int[] getEventTypeAndNewState(String trim, int current) {
-    // logic for parsing overlays file
-    //
-    // I visualized this as a 'state machine' (I guess a D/NFA) producing an output 
-    // called 'event' at each transition
-
-    int state = BARF, event = BARF;
-    if (current == WAIT) {
-      if (trim.matches("^\\s*#\\s*[Ff][Rr][Ee][Ee][Ff][Oo][Rr][Mm].*")) {state = NODES; event = INIT;}
-      else if (trim.matches("^\\s*$") || trim.startsWith("#")) {state = WAIT; event = IGNORE;}
-      else if (trim.startsWith("Overlay")) {state = TABLE; event = INIT;}
-    } else if (current == TABLE) {
-      if (trim.equals("")) {state = TABLE; event = IGNORE;}
-      else if (trim.matches("^\\s*#\\s*[Ff][Rr][Ee][Ee][Ff][Oo][Rr][Mm].*")) {state = NODES; event = INIT;}
-      else if (trim.startsWith("Line") || trim.startsWith("Freeform") 
-          || trim.startsWith("Marker") || trim.startsWith("Text") || trim.startsWith("Oval")
-          || trim.startsWith("Box") || trim.startsWith("Arrow")) {
-        state = TABLE;
-        event = PARSE;
-      } 
-      else if (trim.startsWith("#")) {state = TABLE; event = IGNORE;}
-      else {
-        event = BARF;
-        state = BARF;
-      }
-    } else if (current == NODES) {
-      if (trim.equals("")) {state = NODES; event = IGNORE;}
-      else if (trim.matches("^\\s*#\\s*[Ff][Rr][Ee][Ee][Ff][Oo][Rr][Mm].*")) {state = NODES; event = INIT;}
-      else if (trim.startsWith("#") || trim.matches("^[Xx]\t[Yy]")) {state = NODES; event = IGNORE;}
-      else if (trim.matches("^[0-9]+\\.[0-9]+\\s[0-9]+\\.[0-9]+$")) {state = NODES; event = PARSE;} 
-      else {
-        state = BARF;
-        event = BARF;
-      }
-    }
-
-    int[] retvals = {event, state};
-    return retvals;
-  }
-
+  
   /** Reads the overlays from the given reader. */
   public static Vector[] loadOverlays(BufferedReader in,
     OverlayTransform trans) throws IOException
   {
-    // housekeeping
     String[] dims = trans.getDimTypes();
     int[] lengths = trans.getLengths();
     JComponent owner = trans.getControls();
 
-    Vector[] loadedOverlays = null;
-    Vector loadedFreeforms = new Vector();
+    // stores all overlays
+    Vector[] loadedOverlays = null; 
+    boolean foundOverlays = false;
+    
+    // tracks addresses of stored freeforms
+    Vector loadedFreeforms = new Vector(); 
+    boolean nodesChanged = false; // used in event INIT, state NODES
+    int numberOfFreeformsRead = 0;
     int numFreeformsRestored = 0;
-    boolean nodesChanged = false;
-    int lineNum = 0;
 
+    // tracks line number for error messages
+    int lineNum = 0; 
+
+    // stores freeform nodes as they're read from file
     float[][] nodes = new float[2][50];
     int numNodes = 0;
 
     int state = WAIT;
 
-    // parse table
+    // read file line by line
     // actions are grouped by event type, then by current state
     while (true) {
       lineNum++;
+
       String line = in.readLine();
       if (line == null) break;
       String trim = line.trim();
@@ -132,28 +99,27 @@ public final class OverlayIO {
       int event = eventState[0];
       state = eventState[1];
 
-      // depending on state, parse appropriately
       if (event == IGNORE) continue;
+
       else if (event == BARF) {
         // barf appropriately based on state
         String s = "";
         if (state == TABLE) s = "invalid line in overlay table";
-        if (state == NODES) s = "invalid line in freeform table";
+        else if (state == NODES) s = "invalid line in freeform node lists";
+        else if (state == WAIT) s = "invalid line before overlay data";
 
-        JOptionPane.showMessageDialog(owner, "Invalid overlay file: " + s
-            + "\nError in following line: " + trim,
-            "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
+        displayErrorMsg(owner, lineNum, s);
         return null;
+
       } else if (event == INIT) {
         if (state == TABLE) {
           StringTokenizer st = new StringTokenizer("#" + line + "#", "\t");
           int count = st.countTokens();
           // parse table header from first valid line
-          int numDims = count - 10; // why 10?
+          int numDims = count - 10; // 12: number of non-dim. fields in overlay description
+          
           if (numDims < 0) {
-            JOptionPane.showMessageDialog(owner,
-              "Invalid table header: insufficient column headings.",
-              "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
+            displayErrorMsg(owner, lineNum, "insufficient column headings");
             return null;
           }
           st.nextToken(); // skip "Overlay" column heading
@@ -174,24 +140,29 @@ public final class OverlayIO {
           }
           
           if (!ObjectUtil.arraysEqual(dims, theDims)) {
-            JOptionPane.showMessageDialog(owner,
-              "Invalid table header: dimensional axis types do not match.",
-              "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
+            displayErrorMsg(owner, lineNum, "dimensional axis types do not match");
             return null;
           }
           if (!ObjectUtil.arraysEqual(lengths, theLengths)) {
-            JOptionPane.showMessageDialog(owner,
-              "Invalid table header: dimensional axis lengths do not match.",
-              "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
+            displayErrorMsg(owner, lineNum, "dimensional axis lengths do not match");
             return null;
           }
+          
           // initialize replacement overlay lists
           loadedOverlays = new Vector[MathUtil.getRasterLength(lengths)];
           for (int i=0; i<loadedOverlays.length; i++) {
             loadedOverlays[i] = new Vector();
           }
+          
         } else if (state == NODES) {
-          // store nodes of previously read freeform and move on
+          if (numberOfFreeformsRead == loadedFreeforms.size()) {
+            String s = "more Freeform node lists than Freeforms (" + numberOfFreeformsRead 
+              + ") specified in table";
+            displayErrorMsg(owner, lineNum, s);
+            return null;
+          }
+
+          // store nodes of previously read freeform 
           if (nodesChanged) {
             OverlayFreeform of = (OverlayFreeform) loadedFreeforms.elementAt(numFreeformsRestored++);
             float[][] temp = new float[2][numNodes];
@@ -200,30 +171,35 @@ public final class OverlayIO {
             nodes = new float[2][50];
             numNodes = 0;
           }
+          numberOfFreeformsRead++;
           nodesChanged = true;
         }
+
       } else if (event == PARSE) {
-        // parse appropriately based on state
         if (state == TABLE) {
           StringTokenizer st = new StringTokenizer("#" + line + "#", "\t");
           int count = st.countTokens();
           String type = st.nextToken().substring(1); // remove initial #
           int tok = 0;
-
-          // if count is in this range it's likely essential fields are absent 
-          if (count < lengths.length + 5) { 
-            System.err.println("Warning: line " + lineNum +
-              " has an insufficient number of columns (" + count +
-              " instead of " + (lengths.length + 10) + ") and will be ignored. [" + 
-              line + "]");
-            continue;
+          
+          if (count != lengths.length + 10) { // 10 == number of non-dim. fields in the overlay description
+            String s = "line in data table has an insufficient number of fields (" + count + " instead of "
+              + (lengths.length + 10) + ")";
+            displayErrorMsg(owner, lineNum, s); 
+            return null;
           }
 
           int[] pos = new int[lengths.length];
           for (int i=0; i<pos.length; i++) {
             try { 
-              pos[i] = Integer.parseInt(st.nextToken());
-              tok++;
+              int p = Integer.parseInt(st.nextToken());
+              if (p >= 0 && p < lengths[i]) { // is coordinate within range?
+                pos[i] = p; 
+                tok++;
+              } else {
+                pos = null;
+                break;
+              }
             }
             catch (NumberFormatException exc) {
               pos = null;
@@ -232,24 +208,16 @@ public final class OverlayIO {
           }
 
           if (pos == null) {
-            System.err.println("Warning: line " + lineNum +
-              " has an invalid dimensional position and will be ignored.");
-            continue;
+            displayErrorMsg(owner, lineNum, "line has an invalid dimensional position");
+            return null;
           }
           
           String sx1, sx2, sy1, sy2;
 
-          try {
-            sx1 = st.nextToken(); 
-            sy1 = st.nextToken();
-            sx2 = st.nextToken(); 
-            sy2 = st.nextToken();
-          } catch (NoSuchElementException exc) {
-            JOptionPane.showMessageDialog(owner, "Invalid overlay file: missing XY coordinate(s) in line "
-                +  lineNum, "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
-            return null;
-          }
-
+          sx1 = st.nextToken(); 
+          sy1 = st.nextToken();
+          sx2 = st.nextToken(); 
+          sy2 = st.nextToken();
             
           float x1, y1, x2, y2;
 
@@ -261,53 +229,28 @@ public final class OverlayIO {
           }
 
           catch (NumberFormatException exc) {
-            System.err.println("Warning: line " + lineNum +
-              " has invalid coordinate values and will be ignored.");
-            System.err.println(sx1+sy1+sx2+sy2);
-            continue;
+            displayErrorMsg(owner, lineNum, "line has invalid coordinate values");
+            return null;
           }
           
-          String text;
-          try { text = st.nextToken(); } catch (NoSuchElementException exc) { 
-            System.err.println("Warning: line " + lineNum +
-              " has an invalid text value.");
-            text = "N\\A";
-          }
+          String text = st.nextToken();
 
           Color color;
-          try { color = ColorUtil.hexToColor(st.nextToken()); } catch (NoSuchElementException exc) {
-            System.err.println("Warning: line " + lineNum +
-              " has an invalid color value: color will be set to #ffffff.");
-            color = ColorUtil.hexToColor("ffffff");
+          try {
+            color = ColorUtil.hexToColor(st.nextToken());
+          } catch (NumberFormatException exc) {
+            displayErrorMsg(owner, lineNum, "line has invalid color value");
+            continue;
           }
 
           boolean filled = false;
-          try { filled = st.nextToken().equalsIgnoreCase("true"); } catch (NoSuchElementException exc) {
-            System.err.println("Warning: line " + lineNum +
-              " has an invalid value for field 'filled': will be set to false.");
-            color = ColorUtil.hexToColor("ffffff");
-          }
+          filled = st.nextToken().equalsIgnoreCase("true"); 
   
-          String group = "None";
-          try {group = st.nextToken();} catch (NoSuchElementException exc) {
-            System.err.println("Warning: line " + lineNum +
-              " has an invalid value for field 'group' and will be set to 'None'.");
-          }
+          String group = st.nextToken();
 
           String notes = "";
-          try { 
-            notes = st.nextToken(); 
-            notes = notes.substring(0, notes.length() - 1); // remove trailing #
-          } catch (NoSuchElementException exc) {
-            System.err.println("warning: line " + lineNum +
-              " has an invalid value for field 'notes' (possibly a missing trailing [tab].");
-          }
-
-          if (st.hasMoreTokens()) {
-            System.err.println("warning: line " + lineNum +
-              " has extra fields.");
-          }
-
+          notes = st.nextToken(); 
+          notes = notes.substring(0, notes.length() - 1); // remove trailing #
 
           String className = "loci.visbio.overlays.Overlay" + type;
           OverlayObject obj = createOverlay(className, trans, lineNum);
@@ -319,15 +262,16 @@ public final class OverlayIO {
             hasNodes = true;
           }
 
-          // assign overlay parameters
           int r = MathUtil.positionToRaster(lengths, pos);
+          // this error should never fire--will be caught above ("is coordinate w/in range?")
+          /*
           if (r < 0 || r >= loadedOverlays.length) {
-            System.err.println("Warning: could not reconstruct " + type +
-              "overlay defined on line " + lineNum +
-              ": invalid dimensional position.");
-            continue;
+            displayErrorMsg(owner, lineNum, "could not reconstruct overlay: invalid dimensional position");
+            return null;
           }
+          */
           
+          // assign overlay parameters
           obj.x1 = x1;
           obj.y1 = y1;
           obj.x2 = x2;
@@ -344,29 +288,19 @@ public final class OverlayIO {
 
           // add overlay to list
           loadedOverlays[r].add(obj);
-          
+          foundOverlays = true;
         } else if (state == NODES) {
-          /*
-          JOptionPane.showMessageDialog(owner, "Invalid overlay file: missing node lists for one or more Freeforms.", "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
-          return null;
-          */
-        
-          // try to parse floats
-          String[] toks = trim.split("\\s");// split on whitespace
-          if (toks.length != 2)  {
-            JOptionPane.showMessageDialog(owner, "Invalid overlay file: Unexpected token near node coordinates", "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
-            return null;
-          }
 
+          String[] toks = trim.split("\\s");// split on whitespace
+          
           float x, y;
           try {
             x = Float.parseFloat(toks[0]);
             y = Float.parseFloat(toks[1]);
           } 
-          catch (NumberFormatException exc) { // if parseFloat fails
-            JOptionPane.showMessageDialog(owner, "Invalid overlay file: " +
-                "malformatted Freeform node list.\nError found near following string: " + trim, 
-                "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
+          catch (NumberFormatException exc) { 
+            // this error message won't fire: covered by regular expressions in getEventAndState
+            displayErrorMsg(owner, lineNum, "error parsing node coordinates"); 
             return null;
           }
 
@@ -380,73 +314,30 @@ public final class OverlayIO {
             nodes = temp;
           }
         }
-      } // end event == PARSE
+      } // end (event == PARSE)
     } // end while(true)
 
-     
-    if (numFreeformsRestored + 1 < loadedFreeforms.size()) {
-      JOptionPane.showMessageDialog(owner, "Invalid overlay file: missing node lists for one or more Freeforms.", 
-          "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
+    // after parsing all lines: 
+    if (!foundOverlays) {
+      displayErrorMsg(owner, lineNum, "no overlays found");
       return null;
-    } else if (numFreeformsRestored == loadedFreeforms.size()) { // >= should cause a problem earlier
-      JOptionPane.showMessageDialog(owner, "Invalid overlay file: more node lists than Freeforms" + 
-          " specified in table.", 
-          "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
-      return null;
-    } else {
-      // store last freeform read
-      OverlayFreeform of = (OverlayFreeform) loadedFreeforms.elementAt(numFreeformsRestored++);
-      float[][] temp = new float[2][numNodes];
-      for (int i=0; i<2; i++) System.arraycopy(nodes[i], 0, temp[i], 0, numNodes);
-      of.setNodes(temp);
-    }
-
-    if (loadedOverlays == null) {
-      JOptionPane.showMessageDialog(owner,
-        "Invalid overlay file: no table header found.",
-        "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
-      return null;
+    } else if (loadedFreeforms != null) {
+      if (numFreeformsRestored + 1 < loadedFreeforms.size()) {
+        displayErrorMsg(owner, lineNum, "missing node lists for one or more Freeforms"); 
+        return null;
+      } else {
+        // store last freeform read
+        OverlayFreeform of = (OverlayFreeform) loadedFreeforms.elementAt(numFreeformsRestored++);
+        float[][] temp = new float[2][numNodes];
+        for (int i=0; i<2; i++) System.arraycopy(nodes[i], 0, temp[i], 0, numNodes);
+        of.setNodes(temp);
+      }
     }
 
     trans.setTextDrawn(true);
     return loadedOverlays;
   }
   
-  /*
-  private static void parseFreeformBlock(BufferedReader in, Vector loadedOverlays) {
-
-    String l = in.readLine();
-    String lt = l.trim();
-
-    while (!lt.equals("\n")) {
-      if (lt.matches("X\tY")) continue;
-        StringTokenizer st = new StringTokenizer (lt, "\t");
-        if (st.countTokens != 2) {
-          JOptionPane.showMessageDialog(owner, "Invalid overlay file: malformatted Freeform node list.\n" 
-              + "Error found near following string: " + line + "", "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
-          return null;
-        }
-
-        String x, y;
-        try {
-          x = node.substring(1, comma);
-          y = node.substring(comma + 1, node.length()-1);
-          nodes[0][i] = Float.parseFloat(x);        
-          nodes[1][i] = Float.parseFloat(y);
-          i++;
-        } catch (StringIndexOutOfBoundsException exc) { // if no comma, extra spaces
-          JOptionPane.showMessageDialog(owner, "Invalid overlay file: malformatted Freeform node list.\n" 
-              + "Error found near following string: " + node + "", "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
-          return null;
-        } catch (NumberFormatException exc) { // if parseFloat fails
-          JOptionPane.showMessageDialog(owner, "Invalid overlay file: malformatted Freeform node list.\n" 
-              + "Error found near following string: " + node + "", "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
-          return null;
-        }
-    }
-  }
-  */
-
   /** Writes the overlays to the given writer. */
   public static void saveOverlays(PrintWriter out, OverlayTransform trans) {
     String[] dims = trans.getDimTypes();
@@ -498,7 +389,7 @@ public final class OverlayIO {
       }
     }
 
-    // nodes of freeforms, one freeform per line
+    // nodes of freeforms, one node per line
     for (int i=0; i<savedFreeforms.size(); i++) {
       OverlayFreeform of = (OverlayFreeform) savedFreeforms.get(i);
       out.println();
@@ -507,6 +398,7 @@ public final class OverlayIO {
       yy1 = of.getY();
       xx2 = of.getX2();
       yy2 = of.getY2();
+      // nodes header
       out.println("# Freeform line " + i + " (" + xx1 + "," + yy1 + ")(" + xx2 + "," + yy2 + ")");
       out.println("X\tY");
       float[][] nodes = of.getNodes();
@@ -567,6 +459,67 @@ public final class OverlayIO {
         "no appropriate constructor for class " + className + ".");
     }
     return obj;
+  }
+
+
+  // -- Private helper methods --
+  
+  /** Method for determining how to handle next line read from input file */
+  private static int[] getEventTypeAndNewState(String input, int current) {
+    // logic for parsing overlays file --ACS 12/06
+    // 
+    // I visualized the process of parsing an overlay file as a 'state machine':
+    // at each input (a line of text), the machine changes state and spits out an event
+    // telling the method loadOverlays to parse the line, display an error message, etc.
+    // This method getEventTypeAndNewState describes the state machine's behavior: each 
+    // top-level if/elseif clause corresponds to a different state, and the interior
+    // if/elseif/else clauses describe possible transitions from that state.
+    //
+    // As a result of the state machine, I've managed to put most the error messages for
+    // unexpected lines in one place (if (event == BARF) under loadOverlays); however
+    // there are still many cases which generate errors elsewhere in loadOverlays.
+    // Adding more states to the machine and/or more rigorous checking for acceptable line formats
+    // in this machine would help reduce the number of exceptional cases not handled here.
+
+    int state = WAIT, event = BARF;
+    if (current == WAIT) {
+      if (input.matches("^\\s*$") || input.startsWith("#")) {state = WAIT; event = IGNORE;}
+      else if (input.startsWith("Overlay")) {state = TABLE; event = INIT;}
+      else {state = WAIT; event = BARF;}
+    } else if (current == TABLE) {
+      if (input.equals("")) {state = TABLE; event = IGNORE;}
+      else if (input.matches("^\\s*#\\s*[Ff][Rr][Ee][Ee][Ff][Oo][Rr][Mm].*")) {state = NODES; event = INIT;}
+      else if (input.startsWith("Line") || input.startsWith("Freeform") 
+          || input.startsWith("Marker") || input.startsWith("Text") || input.startsWith("Oval")
+          || input.startsWith("Box") || input.startsWith("Arrow")) {
+        state = TABLE;
+        event = PARSE;
+      } 
+      else if (input.startsWith("#")) {state = TABLE; event = IGNORE;} // must check for freeform header first
+      else {
+        event = BARF;
+        state = TABLE;
+      }
+    } else if (current == NODES) {
+      if (input.equals("")) {state = NODES; event = IGNORE;}
+      else if (input.matches("^\\s*#\\s*[Ff][Rr][Ee][Ee][Ff][Oo][Rr][Mm].*")) {state = NODES; event = INIT;}
+      else if (input.startsWith("#") || input.matches("^[Xx]\t[Yy]")) {state = NODES; event = IGNORE;}
+      else if (input.matches("^[0-9]+\\.[0-9]+\\s[0-9]+\\.[0-9]+$")) {state = NODES; event = PARSE;} 
+      else {
+        state = NODES;
+        event = BARF;
+      }
+    }
+
+    int[] retvals = {event, state};
+    return retvals;
+  }
+
+  /** Displays an alarm box */
+  private static void displayErrorMsg(JComponent owner, int line, String msg) {
+    JOptionPane.showMessageDialog(owner, "Invalid overlay file: " 
+      + msg + "\n" + "Error in line " + line ,
+      "Cannot load overlays", JOptionPane.ERROR_MESSAGE);
   }
 
 }
