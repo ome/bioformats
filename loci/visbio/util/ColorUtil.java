@@ -616,7 +616,7 @@ public final class ColorUtil {
   }
 
   /** Gets the corresponding Color object for this hexidecimal string. */
-  public static Color hexToColor(String hex) {
+  public static Color hexToColor(String hex) throws NumberFormatException {
     if (hex == null) return null;
     int len = hex.length();
     if (len == 0 || len % 3 != 0) return null;
@@ -629,8 +629,7 @@ public final class ColorUtil {
       float g = Integer.parseInt(hex.substring(len3, 2 * len3), 16) / max;
       float b = Integer.parseInt(hex.substring(2 * len3), 16) / max;
       color = new Color(r, g, b);
-    }
-    catch (NumberFormatException exc) { }
+    } catch (NumberFormatException exc) { throw exc; } 
     return color;
   }
 
