@@ -92,11 +92,23 @@ public class LociDataBrowser {
     fStitch = new FileStitcher();
     reader = new ChannelSeparator(fStitch);
   }
+  
+  public LociDataBrowser(IFormatReader r, String name) {
+    virtual = true;
+    reader = r;
+    if (r instanceof FileStitcher) fStitch = (FileStitcher) r;
+    else fStitch = new FileStitcher(r);
+    id = name;
+    run("");
+  }
 
   // -- LociDataBrowser API methods --
 
-  /** Displays the given ImageJ image in a 4D browser window. */
-  public void show(ImagePlus imp) {
+  /** 
+  * Displays the given ImageJ image in a 4D browser window.
+  * NB: this method is needed only internally. Do not call.
+  */
+  private void show(ImagePlus imp) {
     int stackSize = imp == null ? 0 : imp.getStackSize();
 
     if (stackSize == 0) {
@@ -141,7 +153,7 @@ public class LociDataBrowser {
   
     try {
       numZ = fStitch.getSizeZ(id);
-      numC = fStitch.getSizeC(id);
+      numC = fStitch.getEffectiveSizeC(id);
       numT = fStitch.getSizeT(id);
       order = fStitch.getDimensionOrder(id);
     }
@@ -202,23 +214,26 @@ public class LociDataBrowser {
     stack = null;
     while (!done2) {
       try {
-        lociOpener.show();
-        directory = lociOpener.getDirectory();
-        name = lociOpener.getAbsolutePath();
-        virtual = lociOpener.getVirtual();
-        if (name == null || lociOpener.isCanceled()) return;
-        if (DEBUG) {
-          IJ.log("directory = " + directory);
-          IJ.log("name = " + name);
-          IJ.log("virtual = " + virtual);
+        if(id == null) {
+          lociOpener.show();
+          directory = lociOpener.getDirectory();
+          name = lociOpener.getAbsolutePath();
+          virtual = lociOpener.getVirtual();
+          if (name == null || lociOpener.isCanceled()) return;
+          if (DEBUG) {
+            IJ.log("directory = " + directory);
+            IJ.log("name = " + name);
+            IJ.log("virtual = " + virtual);
+          }
+        
+          id = name;
+          if (DEBUG) System.err.println("id = " + id);
         }
+
         ImagePlusWrapper ipw = null;
 
         // process input
         lengths = new int[3];
-
-        id = name;
-        if (DEBUG) System.err.println("id = " + id);
 
         if (virtual) {
           OMEXMLMetadataStore store = new OMEXMLMetadataStore();

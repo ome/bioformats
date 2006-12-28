@@ -40,6 +40,7 @@ import java.util.Vector;
 import javax.swing.*;
 import loci.formats.*;
 import loci.formats.in.ImageJReader;
+import loci.plugins.browser.LociDataBrowser;
 
 /**
  * Core logic for the LOCI Importer ImageJ plugin.
@@ -866,6 +867,7 @@ public class Importer {
     try {
       if (stackFormat.equals(VIEW_STANDARD)) imp.show();
       else if (stackFormat.equals(VIEW_BROWSER)) {
+        LociDataBrowser ldb = new LociDataBrowser(r,id);
       }
       else if (stackFormat.equals(VIEW_IMAGE_5D)) {
         int sizeC = r.getSizeC(id);
