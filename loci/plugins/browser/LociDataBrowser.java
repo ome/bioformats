@@ -26,14 +26,17 @@ package loci.plugins.browser;
 
 import ij.*;
 import ij.gui.GenericDialog;
+import ij.gui.MessageDialog;
 import ij.gui.ImageCanvas;
 import ij.io.FileInfo;
+import java.awt.Frame;
 import loci.formats.*;
 
 /**
  * LociDataBrowser is a plugin for ImageJ that allows for browsing of 4D
  * image data (stacks of image planes over time) with two-channel support.
  *
+ * @author Christopher Peterson at wisc.edu
  * @author Francis Wong yutaiwong at wisc.edu
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at cs.wisc.edu
@@ -99,6 +102,8 @@ public class LociDataBrowser {
     if (r instanceof FileStitcher) fStitch = (FileStitcher) r;
     else fStitch = new FileStitcher(r);
     id = name;
+//    MessageDialog dia = new MessageDialog((Frame) null, 
+//      "Progress", "Got through most of constructor");
     run("");
   }
 

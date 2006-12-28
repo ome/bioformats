@@ -27,6 +27,7 @@ package loci.plugins;
 
 import ij.*;
 import ij.gui.GenericDialog;
+import ij.gui.MessageDialog;
 import ij.io.FileInfo;
 import ij.io.OpenDialog;
 import ij.measure.Calibration;
@@ -144,9 +145,9 @@ public class Importer {
 
     Vector stackTypes = new Vector();
     stackTypes.add(VIEW_STANDARD);
-//    if (Util.checkClass("loci.plugins.browser.LociDataBrowser")) {
-//      stackTypes.add(VIEW_BROWSER);
-//    }
+    if (Util.checkClass("loci.plugins.browser.LociDataBrowser")) {
+      stackTypes.add(VIEW_BROWSER);
+    }
     if (Util.checkClass("i5d.Image5D")) stackTypes.add(VIEW_IMAGE_5D);
     if (Util.checkClass("View5D_")) stackTypes.add(VIEW_VIEW_5D);
     final String[] stackFormats = new String[stackTypes.size()];
@@ -863,11 +864,10 @@ public class Importer {
   }
 
   /** Display the image stack using the appropriate plugin */
-  private void displayStack(ImagePlus imp, IFormatReader r, String id) {
+  private void displayStack(ImagePlus imp, IFormatReader r, String id) {   
     try {
       if (stackFormat.equals(VIEW_STANDARD)) imp.show();
       else if (stackFormat.equals(VIEW_BROWSER)) {
-        System.out.println("Well at least this is working.");
         LociDataBrowser ldb = new LociDataBrowser(r,id);
       }
       else if (stackFormat.equals(VIEW_IMAGE_5D)) {
@@ -906,7 +906,7 @@ public class Importer {
         IJ.runPlugIn("View5D_", "");
       }
     }
-    catch (Exception e) { 
+    catch (Exception e) {
       imp.show(); 
     }
   }
