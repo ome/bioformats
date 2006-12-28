@@ -93,9 +93,13 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     
     String id = db.id;    
     FilePattern fp = null;
-    try { fp = db.fStitch.getFilePattern(id); }
+    try {
+      fp = db.fStitch.getFilePattern(id); 
+      patternTitle = fp.getPattern();
+    }
     catch (Exception exc) {exc.printStackTrace();}
-    patternTitle = fp.getPattern();
+
+    if (fp == null) patternTitle = id;
     setTitle(patternTitle);
 
     // create panel for image canvas

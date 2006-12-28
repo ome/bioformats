@@ -96,14 +96,11 @@ public class LociDataBrowser {
     reader = new ChannelSeparator(fStitch);
   }
   
-  public LociDataBrowser(IFormatReader r, String name) {
+  public LociDataBrowser(IFormatReader r, FileStitcher fs, String name) {
     virtual = true;
     reader = r;
-    if (r instanceof FileStitcher) fStitch = (FileStitcher) r;
-    else fStitch = new FileStitcher(r);
+    fStitch = fs;
     id = name;
-//    MessageDialog dia = new MessageDialog((Frame) null, 
-//      "Progress", "Got through most of constructor");
     run("");
   }
 
@@ -155,16 +152,30 @@ public class LociDataBrowser {
   /** Reset all dimensional data in case they've switched.*/
   public void setDimensions() {
     String order = null;
-  
-    try {
-      numZ = fStitch.getSizeZ(id);
-      numC = fStitch.getEffectiveSizeC(id);
-      numT = fStitch.getSizeT(id);
-      order = fStitch.getDimensionOrder(id);
+    
+    if (fStitch != null) {
+      try {
+        numZ = fStitch.getSizeZ(id);
+        numC = fStitch.getEffectiveSizeC(id);
+        numT = fStitch.getSizeT(id);
+        order = fStitch.getDimensionOrder(id);
+      }
+      catch (Exception exc) {
+        if (DEBUG) exc.printStackTrace();
+        return;
+      }
     }
-    catch (Exception exc) {
-      if (DEBUG) exc.printStackTrace();
-      return;
+    else {
+      try {
+        numZ = reader.getSizeZ(id);
+        numC = reader.getEffectiveSizeC(id);
+        numT = reader.getSizeT(id);
+        order = reader.getDimensionOrder(id);
+      }
+      catch (Exception exc) {
+        if (DEBUG) exc.printStackTrace();
+        return;
+      }
     }
     
     hasZ = numZ > 1;
@@ -311,7 +322,12 @@ public class LociDataBrowser {
         exc.printStackTrace();
         IJ.showStatus("");
         if (!quiet) {
-          String msg = exc.getMessage();
+           String msg = exc.toString();
+           StackTraceElement[] ste = exc.getStackTrace();
+           for(int i = 0;i<ste.length;i++) {
+             msg = msg + "\n" + ste[i].toString();
+           }
+//          String msg = exc.getMessage();
           IJ.showMessage("LOCI Bio-Formats", "Sorry, there was a problem " +
             "reading the data" + (msg == null ? "." : (": " + msg)));
         }

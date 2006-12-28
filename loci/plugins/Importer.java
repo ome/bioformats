@@ -62,6 +62,7 @@ public class Importer {
 
   private LociImporter plugin;
   private String stackFormat = "";
+  private String oldId = null;
 
   // -- Constructor --
 
@@ -145,9 +146,9 @@ public class Importer {
 
     Vector stackTypes = new Vector();
     stackTypes.add(VIEW_STANDARD);
-    if (Util.checkClass("loci.plugins.browser.LociDataBrowser")) {
-      stackTypes.add(VIEW_BROWSER);
-    }
+//    if (Util.checkClass("loci.plugins.browser.LociDataBrowser")) {
+//      stackTypes.add(VIEW_BROWSER);
+//    }
     if (Util.checkClass("i5d.Image5D")) stackTypes.add(VIEW_IMAGE_5D);
     if (Util.checkClass("View5D_")) stackTypes.add(VIEW_VIEW_5D);
     final String[] stackFormats = new String[stackTypes.size()];
@@ -196,9 +197,10 @@ public class Importer {
 
       if (stackFormat.equals(VIEW_IMAGE_5D)) mergeChannels = false;
 
+      oldId = id;
       FileStitcher fs = null;
       if (stitchFiles) {
-        r = new FileStitcher(r, true);
+        fs = new FileStitcher(r, true);
         // prompt user to confirm detected file pattern
         id = FilePattern.findPattern(new File(id));
         gd = new GenericDialog("LOCI Bio-Formats File Stitching");
@@ -212,8 +214,14 @@ public class Importer {
         }
         id = gd.getNextString();
       }
-      if (mergeChannels) r = new ChannelMerger(r);
-      else r = new ChannelSeparator(r);
+      if(fs != null) {
+        if (mergeChannels) r = new ChannelMerger(fs);
+        else r = new ChannelSeparator(fs);
+      }
+      else {
+        if (mergeChannels) r = new ChannelMerger(r);
+        else r = new ChannelSeparator(r);
+      }
 
       r.setColorTableIgnored(ignoreTables);
 
@@ -694,28 +702,28 @@ public class Importer {
         if (stackB != null) {
           if (!mergeChannels && splitWindows) {
             slice(stackB, id, sizeZ[i], sizeC[i], sizeT[i],
-              fi, r, specifyRanges, colorize);
+              fi, r, fs, specifyRanges, colorize);
           }
           else imp = new ImagePlus(imageName, stackB);
         }
         if (stackS != null) {
           if (!mergeChannels && splitWindows) {
             slice(stackS, id, sizeZ[i], sizeC[i], sizeT[i],
-              fi, r, specifyRanges, colorize);
+              fi, r, fs, specifyRanges, colorize);
           }
           else imp = new ImagePlus(imageName, stackS);
         }
         if (stackF != null) {
           if (!mergeChannels && splitWindows) {
             slice(stackF, id, sizeZ[i], sizeC[i], sizeT[i],
-              fi, r, specifyRanges, colorize);
+              fi, r, fs, specifyRanges, colorize);
           }
           else imp = new ImagePlus(imageName, stackF);
         }
         if (stackO != null) {
           if (!mergeChannels && splitWindows) {
             slice(stackO, id, sizeZ[i], sizeC[i], sizeT[i],
-              fi, r, specifyRanges, colorize);
+              fi, r, fs, specifyRanges, colorize);
           }
           else imp = new ImagePlus(imageName, stackO);
         }
@@ -727,7 +735,7 @@ public class Importer {
           imp.setFileInfo(fi);
 
           int c = r.getSizeC(id);
-          displayStack(imp, r, id);
+          displayStack(imp, r, fs, id);
           r.close();
         }
 
@@ -760,7 +768,11 @@ public class Importer {
       exc.printStackTrace();
       IJ.showStatus("");
       if (!quiet) {
-        String msg = exc.getMessage();
+        String msg = exc.toString();
+        StackTraceElement[] ste = exc.getStackTrace();
+        for(int i = 0;i<ste.length;i++) {
+          msg = msg + "\n" + ste[i].toString();
+        }
         IJ.error("LOCI Bio-Formats", "Sorry, there was a problem " +
           "reading the data" + (msg == null ? "." : (":\n" + msg)));
       }
@@ -771,7 +783,7 @@ public class Importer {
 
   /** Opens each channel of the source stack in a separate window. */
   private void slice(ImageStack is, String id, int z, int c, int t,
-    FileInfo fi, IFormatReader r, boolean range, boolean colorize)
+    FileInfo fi, IFormatReader r, FileStitcher fs, boolean range, boolean colorize)
     throws FormatException, IOException
   {
     int step = 1;
@@ -835,7 +847,7 @@ public class Importer {
       }
 
       imp.setFileInfo(fi);
-      displayStack(imp, r, id);
+      displayStack(imp, r, fs, id);
     }
   }
 
@@ -864,11 +876,11 @@ public class Importer {
   }
 
   /** Display the image stack using the appropriate plugin */
-  private void displayStack(ImagePlus imp, IFormatReader r, String id) {   
+  private void displayStack(ImagePlus imp, IFormatReader r, FileStitcher fs, String id) {   
     try {
       if (stackFormat.equals(VIEW_STANDARD)) imp.show();
       else if (stackFormat.equals(VIEW_BROWSER)) {
-        LociDataBrowser ldb = new LociDataBrowser(r,id);
+        LociDataBrowser ldb = new LociDataBrowser(r, fs, id);
       }
       else if (stackFormat.equals(VIEW_IMAGE_5D)) {
         int sizeC = r.getSizeC(id);

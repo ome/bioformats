@@ -215,15 +215,30 @@ public class CacheManager implements Runnable {
     tInd = null;
     zSel = null;
     tSel = null;
-    synchronized (fs) {
-      try {
-        sizeZ = fs.getSizeZ(fileName);
-        sizeT = fs.getSizeT(fileName);
-        sizeC = fs.getSizeC(fileName);
-        cache = new ImageProcessor[fs.getImageCount(fileName)];
+    if (fs != null) {
+      synchronized (fs) {
+        try {
+          sizeZ = fs.getSizeZ(fileName);
+          sizeT = fs.getSizeT(fileName);
+          sizeC = fs.getSizeC(fileName);
+          cache = new ImageProcessor[fs.getImageCount(fileName)];
+        }
+        catch (Exception exc) {
+          if (DEBUG) System.out.println("Error reading size of file.");
+        }
       }
-      catch (Exception exc) {
-        if (DEBUG) System.out.println("Error reading size of file.");
+    }
+    else {
+      synchronized (read) {
+        try {
+          sizeZ = read.getSizeZ(fileName);
+          sizeT = read.getSizeT(fileName);
+          sizeC = read.getSizeC(fileName);
+          cache = new ImageProcessor[read.getImageCount(fileName)];
+        }
+        catch (Exception exc) {
+          if (DEBUG) System.out.println("Error reading size of file.");
+        }
       }
     }
     oldAxis = axis;
