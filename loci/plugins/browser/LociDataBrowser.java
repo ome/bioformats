@@ -96,6 +96,11 @@ public class LociDataBrowser {
     reader = new ChannelSeparator(fStitch);
   }
   
+  public LociDataBrowser(String name) {
+    this();
+    id = name;
+  }
+  
   public LociDataBrowser(IFormatReader r, FileStitcher fs, String name) {
     virtual = true;
     reader = r;
@@ -162,6 +167,7 @@ public class LociDataBrowser {
       }
       catch (Exception exc) {
         if (DEBUG) exc.printStackTrace();
+        exceptionMessage(exc);
         return;
       }
     }
@@ -174,6 +180,7 @@ public class LociDataBrowser {
       }
       catch (Exception exc) {
         if (DEBUG) exc.printStackTrace();
+        exceptionMessage(exc);
         return;
       }
     }
@@ -198,7 +205,10 @@ public class LociDataBrowser {
       try {
         result = reader.getIndex(id,z,c,t);
       }
-      catch (Exception exc) {if (DEBUG) exc.printStackTrace();}
+      catch (Exception exc) {
+        if (DEBUG) exc.printStackTrace();
+        exceptionMessage(exc);
+      }
     }
     return result;
   }
@@ -217,6 +227,16 @@ public class LociDataBrowser {
     if (num > 1) datasets.showDialog();
 
     series = Integer.parseInt(datasets.getNextChoice());
+  }
+  
+  public static void exceptionMessage(Exception exc) {
+    String msg = exc.toString();
+    StackTraceElement[] ste = exc.getStackTrace();
+    for(int i = 0;i<ste.length;i++) {
+     msg = msg + "\n" + ste[i].toString();
+    }
+    
+    IJ.showMessage(msg);
   }
 
   public void run(String arg) {
@@ -290,7 +310,10 @@ public class LociDataBrowser {
           try {
             fi.description = store.dumpXML();
           }
-          catch (Exception exc) { exc.printStackTrace(); }
+          catch (Exception exc) {
+            exc.printStackTrace();
+            exceptionMessage(exc);
+          }
 
           imp.setFileInfo(fi);
           show(imp);
@@ -311,7 +334,9 @@ public class LociDataBrowser {
           try {
             fi.description = ((OMEXMLMetadataStore) ipw.store).dumpXML();
           }
-          catch (Exception e) { }
+          catch (Exception exc) {
+            exceptionMessage(exc);
+          }
           ipw.getImagePlus().setFileInfo(fi);
 
           show(ipw.getImagePlus());
@@ -322,12 +347,8 @@ public class LociDataBrowser {
         exc.printStackTrace();
         IJ.showStatus("");
         if (!quiet) {
-           String msg = exc.toString();
-           StackTraceElement[] ste = exc.getStackTrace();
-           for(int i = 0;i<ste.length;i++) {
-             msg = msg + "\n" + ste[i].toString();
-           }
-//          String msg = exc.getMessage();
+          exceptionMessage(exc);
+          String msg = exc.getMessage();
           IJ.showMessage("LOCI Bio-Formats", "Sorry, there was a problem " +
             "reading the data" + (msg == null ? "." : (": " + msg)));
         }

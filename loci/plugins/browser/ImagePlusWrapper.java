@@ -53,7 +53,10 @@ public class ImagePlusWrapper {
         store.createRoot();
         r.setMetadataStore(store);
       }
-      catch (Exception e) { e.printStackTrace(); }
+      catch (Exception e) {
+        e.printStackTrace();
+        LociDataBrowser.exceptionMessage(e);
+      }
 
       // get # images in all matching files
       
@@ -70,7 +73,10 @@ public class ImagePlusWrapper {
           System.err.println("numTotal = "+numTotal);
         }
       }
-      catch(Exception exc) { exc.printStackTrace();}
+      catch(Exception exc) {
+        exc.printStackTrace();
+        LociDataBrowser.exceptionMessage(exc);
+      }
 
       int num = r.getImageCount(name);
       ImageStack stackB = null, stackS = null,
@@ -194,8 +200,14 @@ public class ImagePlusWrapper {
         sizeT = read.getSizeT(name);
         sizeC = read.getSizeC(name);
       }
-      catch (FormatException exc) { problem = exc; }
-      catch (IOException exc) { problem = exc; }
+      catch (FormatException exc) {
+        problem = exc;
+        LociDataBrowser.exceptionMessage(exc);
+      }
+      catch (IOException exc) {
+        problem = exc;
+        LociDataBrowser.exceptionMessage(exc);
+      }
       if (problem != null) {
         problem.printStackTrace();
         return null;
@@ -205,8 +217,14 @@ public class ImagePlusWrapper {
       try {
         img = read.openImage(name, index);
       }
-      catch (FormatException exc) { exc.printStackTrace(); }
-      catch (IOException exc) { exc.printStackTrace(); }
+      catch (FormatException exc) {
+        exc.printStackTrace();
+        LociDataBrowser.exceptionMessage(exc);
+      }
+      catch (IOException exc) {
+        exc.printStackTrace();
+        LociDataBrowser.exceptionMessage(exc);
+      }
     }
 
     if (img == null) {

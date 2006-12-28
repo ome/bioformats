@@ -116,7 +116,10 @@ public class OptionsWindow extends JFrame implements
       blocks = fp.getBlocks();
       suffix = fp.getSuffix();
     }
-    catch(Exception exc) {exc.printStackTrace();}
+    catch(Exception exc) {
+      exc.printStackTrace();
+      LociDataBrowser.exceptionMessage(exc);
+    }
 
     // add Display Pane
 
@@ -687,7 +690,10 @@ public class OptionsWindow extends JFrame implements
           sizeT = fs.getSizeT(id);
           sizeC = fs.getSizeC(id);
         }
-        catch(Exception exc) {exc.printStackTrace();}
+        catch(Exception exc) {
+          exc.printStackTrace();
+          LociDataBrowser.exceptionMessage(exc);
+        }
         update = false;
         setBox(zGroup,0);
         setBox(tGroup,1);
@@ -718,7 +724,10 @@ public class OptionsWindow extends JFrame implements
           sizeT = fs.getSizeT(id);
           sizeC = fs.getSizeC(id);
         }
-        catch(Exception exc) {exc.printStackTrace();}
+        catch(Exception exc) {
+          exc.printStackTrace();
+          LociDataBrowser.exceptionMessage(exc);
+        }
         update = false;
         setBox(zGroup,0);
         setBox(tGroup,1);
@@ -749,7 +758,10 @@ public class OptionsWindow extends JFrame implements
           sizeT = fs.getSizeT(id);
           sizeC = fs.getSizeC(id);
         }
-        catch(Exception exc) {exc.printStackTrace();}
+        catch(Exception exc) {
+          exc.printStackTrace();
+          LociDataBrowser.exceptionMessage(exc);
+        }
         update = false;
         setBox(zGroup,0);
         setBox(tGroup,1);
@@ -765,7 +777,10 @@ public class OptionsWindow extends JFrame implements
         try {
           fs.setAxisTypes(id,axes);
         }
-        catch(Exception exc) {exc.printStackTrace();}
+        catch(Exception exc) {
+          exc.printStackTrace();
+          LociDataBrowser.exceptionMessage(exc);
+        }
         cw.db.setDimensions();
         if(cw.db.virtual) cw.db.manager.dimChange();
         cw.updateControls();

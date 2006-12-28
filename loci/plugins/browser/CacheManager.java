@@ -225,6 +225,7 @@ public class CacheManager implements Runnable {
         }
         catch (Exception exc) {
           if (DEBUG) System.out.println("Error reading size of file.");
+          LociDataBrowser.exceptionMessage(exc);
         }
       }
     }
@@ -238,6 +239,7 @@ public class CacheManager implements Runnable {
         }
         catch (Exception exc) {
           if (DEBUG) System.out.println("Error reading size of file.");
+          LociDataBrowser.exceptionMessage(exc);
         }
       }
     }
@@ -435,7 +437,10 @@ public class CacheManager implements Runnable {
       try {
         index = read.getIndex(fileName, curZ, curC, curT);
       }
-      catch (Exception exc) { return -1; }
+      catch (Exception exc) {
+        LociDataBrowser.exceptionMessage(exc);
+        return -1;
+      }
     }
     return index;
   }
@@ -456,8 +461,14 @@ public class CacheManager implements Runnable {
         curC = coords[1];
         curT = coords[2];
       }
-      catch (FormatException exc) { exc.printStackTrace(); }
-      catch (IOException exc) { exc.printStackTrace(); }
+      catch (FormatException exc) {
+        exc.printStackTrace();
+        LociDataBrowser.exceptionMessage(exc);
+      }
+      catch (IOException exc) {
+        exc.printStackTrace();
+        LociDataBrowser.exceptionMessage(exc);
+      }
     }
 
     ImageProcessor result = cache[index];
@@ -497,6 +508,7 @@ public class CacheManager implements Runnable {
       }
       catch (Exception exc) {
         if (DEBUG) exc.printStackTrace();
+        LociDataBrowser.exceptionMessage(exc);
         return null;
       }
     }
@@ -528,6 +540,7 @@ public class CacheManager implements Runnable {
       }
       catch (Exception exc) {
         if (DEBUG) exc.printStackTrace();
+        LociDataBrowser.exceptionMessage(exc);
         return null;
       }
     }
@@ -1094,6 +1107,7 @@ public class CacheManager implements Runnable {
           }
           catch (Exception exc) {
             exc.printStackTrace();
+            LociDataBrowser.exceptionMessage(exc);
             return null;
           }
         }
@@ -1185,6 +1199,7 @@ public class CacheManager implements Runnable {
           }
           catch (Exception exc) {
             exc.printStackTrace();
+            LociDataBrowser.exceptionMessage(exc);
             return null;
           }
         }
@@ -1219,7 +1234,10 @@ public class CacheManager implements Runnable {
       try {
         index = read.getIndex(fileName, z, c, t);
       }
-      catch(Exception exc) {if(DEBUG) exc.printStackTrace();}
+      catch(Exception exc) {
+        if(DEBUG) exc.printStackTrace();
+        LociDataBrowser.exceptionMessage(exc);
+      }
 
       int[] result = {index};
       return result;
@@ -1295,7 +1313,10 @@ public class CacheManager implements Runnable {
                   }
                 }
               }
-              catch(Exception exc) {if(DEBUG) exc.printStackTrace();}
+              catch(Exception exc) {
+                if(DEBUG) exc.printStackTrace();
+                LociDataBrowser.exceptionMessage(exc);
+              }
             }
 
             if (index != -1) {
@@ -1340,7 +1361,10 @@ public class CacheManager implements Runnable {
                   }
                 }
               }
-              catch(Exception exc) {if(DEBUG) exc.printStackTrace();}
+              catch(Exception exc) {
+                if(DEBUG) exc.printStackTrace();
+                LociDataBrowser.exceptionMessage(exc);
+              }
             }
 
             if (index != -1) {
@@ -1385,7 +1409,10 @@ public class CacheManager implements Runnable {
                   }
                 }
               }
-              catch(Exception exc) {if(DEBUG) exc.printStackTrace();}
+              catch(Exception exc) {
+                if(DEBUG) exc.printStackTrace();
+                LociDataBrowser.exceptionMessage(exc);
+              }
             }
 
             if (index != -1) {
@@ -1430,7 +1457,10 @@ public class CacheManager implements Runnable {
                   }
                 }
               }
-              catch(Exception exc) {if(DEBUG) exc.printStackTrace();}
+              catch(Exception exc) {
+                if(DEBUG) exc.printStackTrace();
+                LociDataBrowser.exceptionMessage(exc);
+              }
             }
 
             if (index != -1) {
@@ -1521,6 +1551,7 @@ public class CacheManager implements Runnable {
       }
       catch (Exception exc) {
         exc.printStackTrace();
+        LociDataBrowser.exceptionMessage(exc);
       }
 
       result = append(toAdd,result);
@@ -1538,6 +1569,7 @@ public class CacheManager implements Runnable {
         }
         catch (Exception exc) {
           exc.printStackTrace();
+          LociDataBrowser.exceptionMessage(exc);
         }
 
         result = append(toAdd,result);
@@ -1555,6 +1587,7 @@ public class CacheManager implements Runnable {
       }
       catch (Exception exc) {
         exc.printStackTrace();
+        LociDataBrowser.exceptionMessage(exc);
       }
 
       result = append(toAdd,result);
@@ -1572,6 +1605,7 @@ public class CacheManager implements Runnable {
         }
         catch (Exception exc) {
           exc.printStackTrace();
+          LociDataBrowser.exceptionMessage(exc);
         }
 
         result = append(toAdd,result);
@@ -1831,7 +1865,9 @@ public class CacheManager implements Runnable {
       try {
         cache = new ImageProcessor[fs.getImageCount(fileName)];
       }
-      catch(Exception exc){}
+      catch(Exception exc){
+        LociDataBrowser.exceptionMessage(exc);
+      }
       erase = false;
     }
     
@@ -1905,6 +1941,7 @@ public class CacheManager implements Runnable {
       }
       catch (Exception exc) {
         if (DEBUG) System.out.println("Error reading size of file.");
+        LociDataBrowser.exceptionMessage(exc);
       }
     }
   }
@@ -1921,7 +1958,9 @@ public class CacheManager implements Runnable {
       try {
         index = read.getIndex(fileName, i, aC - 1, aT - 1);
       }
-      catch(Exception exc) {}
+      catch(Exception exc) {
+        LociDataBrowser.exceptionMessage(exc);
+      }
       
       if (index != -1 && cache[index] != null) zInCache.add(new Integer(i));
     }
@@ -1931,7 +1970,9 @@ public class CacheManager implements Runnable {
       try {
         index = read.getIndex(fileName, aZ - 1, aC - 1, i);
       }
-      catch(Exception exc) {}
+      catch(Exception exc) {
+        LociDataBrowser.exceptionMessage(exc);
+      }
       
       if (index != -1 && cache[index] != null) tInCache.add(new Integer(i));
     }
@@ -1948,7 +1989,9 @@ public class CacheManager implements Runnable {
       try {
         coords = read.getZCTCoords(fileName, loadCopy[i]);
       }
-      catch(Exception exc) {}
+      catch(Exception exc) {
+        LociDataBrowser.exceptionMessage(exc);
+      }
       if (coords != null) {
         int myZ = coords[0];
         int myC = coords[1];

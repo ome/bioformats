@@ -97,7 +97,10 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       fp = db.fStitch.getFilePattern(id); 
       patternTitle = fp.getPattern();
     }
-    catch (Exception exc) {exc.printStackTrace();}
+    catch (Exception exc) {
+      exc.printStackTrace();
+      LociDataBrowser.exceptionMessage(exc);
+    }
 
     if (fp == null) patternTitle = id;
     setTitle(patternTitle);
@@ -165,7 +168,9 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       Class.forName("loci.ome.notebook.MetadataNotebook"); // ome-notebook.jar
       Class.forName("com.jgoodies.forms.layout.FormLayout"); // forms-1.0.4.jar
     }
-    catch (Throwable e) { canDoXML = false; }
+    catch (Throwable e) { 
+      canDoXML = false;
+    }
     xml = null;
     if (canDoXML) {
       xml = new JButton("Metadata");
@@ -486,6 +491,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
         JOptionPane.showMessageDialog(this,
           "Sorry, there has been an error creating the metadata editor.",
           "LOCI 4D Data Browser", JOptionPane.ERROR_MESSAGE);
+        LociDataBrowser.exceptionMessage(exc);
       }
     }
     else if (cmd.equals("options")) {
