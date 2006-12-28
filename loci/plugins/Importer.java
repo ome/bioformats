@@ -867,6 +867,7 @@ public class Importer {
     try {
       if (stackFormat.equals(VIEW_STANDARD)) imp.show();
       else if (stackFormat.equals(VIEW_BROWSER)) {
+        System.out.println("Well at least this is working.");
         LociDataBrowser ldb = new LociDataBrowser(r,id);
       }
       else if (stackFormat.equals(VIEW_IMAGE_5D)) {
