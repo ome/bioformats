@@ -91,15 +91,19 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     ow = null;
     update = true;
     
-    String id = db.id;    
+    String id = db.id;
+    
     FilePattern fp = null;
-    try {
-      fp = db.fStitch.getFilePattern(id); 
-      patternTitle = fp.getPattern();
-    }
-    catch (Exception exc) {
-      exc.printStackTrace();
-      LociDataBrowser.exceptionMessage(exc);
+
+    if(db.fStitch != null) {
+      try {
+        fp = db.fStitch.getFilePattern(id); 
+        patternTitle = fp.getPattern();
+      }
+      catch (Exception exc) {
+        exc.printStackTrace();
+        LociDataBrowser.exceptionMessage(exc);
+      }
     }
 
     if (fp == null) patternTitle = id;
