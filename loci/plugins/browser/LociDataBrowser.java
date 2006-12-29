@@ -250,6 +250,25 @@ public class LociDataBrowser {
     
     IJ.showMessage(msg);
   }
+  
+  public void toggleCache(boolean cached) {
+    if(cached) {
+      if(!virtual) {
+        cw.ow.dispose();
+        cw.dispose();
+        virtual = true;
+        run("");
+      }
+    }
+    else {
+      if(virtual) {
+        cw.ow.dispose();
+        cw.dispose();
+        virtual = false;
+        run("");
+      }
+    }
+  }
 
   public void run(String arg) {
     LociOpener lociOpener = new LociOpener();

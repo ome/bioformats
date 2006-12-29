@@ -58,6 +58,9 @@ public class OptionsWindow extends JFrame implements
 
   /** CheckBoxes to indicate which axes to store.*/
   private JCheckBox zCheck,tCheck,cCheck;
+  
+  /** CheckBoxes to control if caching is on or off */
+  private JCheckBox cacheToggle;
 
   /** Spinners for slice storage.*/
   private JSpinner zFSpin,zBSpin,tFSpin,tBSpin,cFSpin,cBSpin;
@@ -274,6 +277,7 @@ public class OptionsWindow extends JFrame implements
     JLabel topL = new JLabel("Top Priority:");
     JLabel midL = new JLabel("Mid Priority:");
     JLabel lowL = new JLabel("Low Priority:");
+    JLabel genL = new JLabel("\u00B7" + "General Controls" + "\u00B7");
 
     JPanel typePanel = new JPanel();
     typePanel.add(typeL);
@@ -287,6 +291,10 @@ public class OptionsWindow extends JFrame implements
     priorPanel.add(priorL);
     priorPanel.setBackground(Color.darkGray);
     priorL.setForeground(Color.lightGray);
+    JPanel genPanel = new JPanel();
+    genPanel.add(genL);
+    genPanel.setBackground(Color.darkGray);
+    genL.setForeground(Color.lightGray);
 
     zCheck = new JCheckBox("Z");
     tCheck = new JCheckBox("T");
@@ -299,6 +307,11 @@ public class OptionsWindow extends JFrame implements
     zCheck.addItemListener(this);
     tCheck.addItemListener(this);
     cCheck.addItemListener(this);
+    
+    cacheToggle = new JCheckBox("Cache Images (on/off)");
+    cacheToggle.setSelected(cw.db.virtual);
+    cacheToggle.addItemListener(this);
+    
 
     String[] modes = {"Crosshair", "Rectangle", "Cross/Rect"};
     modeBox = new JComboBox(modes);
@@ -342,7 +355,7 @@ public class OptionsWindow extends JFrame implements
     FormLayout layout3 = new FormLayout(
       TAB + ",pref," + TAB + ",pref:grow," + TAB + ",pref:grow," + TAB,
       "pref,pref,pref,pref," + TAB + ",pref,pref,pref,pref,pref,"
-      + TAB + ",pref," + TAB + ",pref,pref,pref," + TAB + ",pref");
+      + TAB + ",pref," + TAB + ",pref,pref,pref," + TAB + ",pref," + TAB + ",pref," + TAB + ",pref");
     cachePane.setLayout(layout3);
     CellConstraints cc3 = new CellConstraints();
 
@@ -372,7 +385,9 @@ public class OptionsWindow extends JFrame implements
     cachePane.add(midBox,cc3.xy(6,15));
     cachePane.add(lowL,cc3.xyw(2,16,3));
     cachePane.add(lowBox,cc3.xy(6,16));
-    cachePane.add(resetBtn,cc3.xyw(2,18,5,"right,center"));
+    cachePane.add(genPanel,cc3.xyw(1,18,7));
+    cachePane.add(cacheToggle,cc3.xyw(2,20,5,"left,center"));
+    cachePane.add(resetBtn,cc3.xyw(2,22,5,"right,center"));
 
     if(!cw.db.virtual) enableCache(false);
 
@@ -818,6 +833,14 @@ public class OptionsWindow extends JFrame implements
         cCheck.setSelected(true);
         update = true;
         return;
+      }
+      else if (source == cacheToggle) {
+        if(e.getStateChange() == ItemEvent.DESELECTED) {
+          cw.db.toggleCache(false);
+        }
+        else {
+          cw.db.toggleCache(true);
+        }
       }
 
       int zState = 0x00,tState = 0x00,cState = 0x00;

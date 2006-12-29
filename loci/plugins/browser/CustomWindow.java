@@ -59,7 +59,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   protected LociDataBrowser db;
   protected CacheIndicator zIndicator,tIndicator;
-  private OptionsWindow ow;
+  protected OptionsWindow ow;
   private String zString = Z_STRING;
   private String tString = T_STRING;
   private int fps = 10;
