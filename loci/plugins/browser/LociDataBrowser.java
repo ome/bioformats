@@ -102,12 +102,23 @@ public class LociDataBrowser {
     virtual = true;
   }
   
+  public LociDataBrowser(boolean merged) {
+    fStitch = new FileStitcher();
+    if(merged) reader = new ChannelMerger(fStitch);
+    else reader = new ChannelSeparator(fStitch);
+  }
+  
+  public LociDataBrowser(String name, boolean merged) {
+    this(merged);
+    id = name;
+    virtual = true;
+  }
+  
   public LociDataBrowser(IFormatReader r, FileStitcher fs, String name) {
     virtual = true;
     reader = r;
     fStitch = fs;
     id = name;
-    run("");
   }
 
   // -- LociDataBrowser API methods --

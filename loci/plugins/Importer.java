@@ -196,7 +196,7 @@ public class Importer {
       // -- Step 4a: do some preparatory work --
 
       if (stackFormat.equals(VIEW_BROWSER)) {
-        LociDataBrowser ldb = new LociDataBrowser(id);
+        LociDataBrowser ldb = new LociDataBrowser(id,mergeChannels);
         ldb.run("");
         return;
       }
