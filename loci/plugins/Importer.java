@@ -223,6 +223,7 @@ public class Importer {
       if(fs != null) {
         if (mergeChannels) r = new ChannelMerger(fs);
         else r = new ChannelSeparator(fs);
+        IJ.showMessage("fs != null");
       }
       else {
         if (mergeChannels) r = new ChannelMerger(r);

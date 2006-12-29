@@ -772,6 +772,7 @@ public class OptionsWindow extends JFrame implements
         cw.updateControls();
       }
       else if (getBoxIndex((JComboBox)source) >= 0) {
+        cw.update = false;
         int index = getBoxIndex((JComboBox)source);
         axes[index] = getAxis(blockBoxes[index].getSelectedIndex());
         try {
@@ -784,6 +785,7 @@ public class OptionsWindow extends JFrame implements
         cw.db.setDimensions();
         if(cw.db.virtual) cw.db.manager.dimChange();
         cw.updateControls();
+        cw.update = true;
       }
     }
   }

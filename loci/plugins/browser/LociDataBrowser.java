@@ -99,6 +99,7 @@ public class LociDataBrowser {
   public LociDataBrowser(String name) {
     this();
     id = name;
+    virtual = true;
   }
   
   public LociDataBrowser(IFormatReader r, FileStitcher fs, String name) {

@@ -80,7 +80,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   private CardLayout switcher;
   private JPanel channelPanel;
   private String patternTitle;
-  private boolean update;
+  protected boolean update;
 
   // -- Constructor --
 
@@ -370,95 +370,97 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   /** Adds 3rd and 4th dimension slice position. */
   public void drawInfo(Graphics g) {
-    if (db == null) return;
-    int zVal = zSliceSel == null ? 1 : zSliceSel.getValue();
-    int tVal = tSliceSel == null ? 1 : tSliceSel.getValue();
-
-    int textGap = 0;
-
-    int nSlices = db.numZ * db.numT * db.numC;
-    int currentSlice = imp.getCurrentSlice();
-    if (db.manager != null) currentSlice = db.manager.getSlice();
-
-    StringBuffer sb = new StringBuffer();
-    sb.append(currentSlice);
-    sb.append("/");
-    sb.append(nSlices);
-    sb.append("; ");
-    if (db.hasZ) {
-      sb.append(zString);
-      sb.append(": ");
-      sb.append(zVal);
+    if(update) {
+      if (db == null) return;
+      int zVal = zSliceSel == null ? 1 : zSliceSel.getValue();
+      int tVal = tSliceSel == null ? 1 : tSliceSel.getValue();
+  
+      int textGap = 0;
+  
+      int nSlices = db.numZ * db.numT * db.numC;
+      int currentSlice = imp.getCurrentSlice();
+      if (db.manager != null) currentSlice = db.manager.getSlice();
+  
+      StringBuffer sb = new StringBuffer();
+      sb.append(currentSlice);
       sb.append("/");
-      sb.append(db.numZ);
+      sb.append(nSlices);
       sb.append("; ");
-    }
-    if (db.hasT) {
-      sb.append(tString);
-      sb.append(": ");
-      sb.append(tVal);
-      sb.append("/");
-      sb.append(db.numT);
-      sb.append("; ");
-    }
-    if (db.names != null) {
-      String name = db.names[currentSlice - 1];
-      if (name != null) {
-        sb.append(name);
+      if (db.hasZ) {
+        sb.append(zString);
+        sb.append(": ");
+        sb.append(zVal);
+        sb.append("/");
+        sb.append(db.numZ);
         sb.append("; ");
       }
+      if (db.hasT) {
+        sb.append(tString);
+        sb.append(": ");
+        sb.append(tVal);
+        sb.append("/");
+        sb.append(db.numT);
+        sb.append("; ");
+      }
+      if (db.names != null) {
+        String name = db.names[currentSlice - 1];
+        if (name != null) {
+          sb.append(name);
+          sb.append("; ");
+        }
+      }
+  
+      int width = imp.getWidth(), height = imp.getHeight();
+      Calibration cal = imp.getCalibration();
+      if (cal.pixelWidth != 1.0 || cal.pixelHeight != 1.0) {
+        sb.append(IJ.d2s(width * cal.pixelWidth, 2));
+        sb.append("x");
+        sb.append(IJ.d2s(height * cal.pixelHeight, 2));
+        sb.append(" ");
+        sb.append(cal.getUnits());
+        sb.append(" (");
+        sb.append(width);
+        sb.append("x");
+        sb.append(height);
+        sb.append("); ");
+      }
+      else {
+        sb.append(width);
+        sb.append("x");
+        sb.append(height);
+        sb.append(" pixels; ");
+      }
+      int type = imp.getType();
+      int stackSize = imp.getStackSize();
+      if (db.manager != null) stackSize = db.manager.getSize();
+      int size = (width * height * stackSize) / 1048576;
+      switch (type) {
+        case ImagePlus.GRAY8:
+          sb.append("8-bit grayscale");
+          break;
+        case ImagePlus.GRAY16:
+          sb.append("16-bit grayscale");
+          size *= 2;
+          break;
+        case ImagePlus.GRAY32:
+          sb.append("32-bit grayscale");
+          size *= 4;
+          break;
+        case ImagePlus.COLOR_256:
+          sb.append("8-bit color");
+          break;
+        case ImagePlus.COLOR_RGB:
+          sb.append("RGB");
+          size *= 4;
+          break;
+      }
+      sb.append("; ");
+      sb.append(size);
+      sb.append("M");
+  
+      Insets insets = super.getInsets();
+      g.drawString(sb.toString(), 5, insets.top + textGap);
     }
-
-    int width = imp.getWidth(), height = imp.getHeight();
-    Calibration cal = imp.getCalibration();
-    if (cal.pixelWidth != 1.0 || cal.pixelHeight != 1.0) {
-      sb.append(IJ.d2s(width * cal.pixelWidth, 2));
-      sb.append("x");
-      sb.append(IJ.d2s(height * cal.pixelHeight, 2));
-      sb.append(" ");
-      sb.append(cal.getUnits());
-      sb.append(" (");
-      sb.append(width);
-      sb.append("x");
-      sb.append(height);
-      sb.append("); ");
-    }
-    else {
-      sb.append(width);
-      sb.append("x");
-      sb.append(height);
-      sb.append(" pixels; ");
-    }
-    int type = imp.getType();
-    int stackSize = imp.getStackSize();
-    if (db.manager != null) stackSize = db.manager.getSize();
-    int size = (width * height * stackSize) / 1048576;
-    switch (type) {
-      case ImagePlus.GRAY8:
-        sb.append("8-bit grayscale");
-        break;
-      case ImagePlus.GRAY16:
-        sb.append("16-bit grayscale");
-        size *= 2;
-        break;
-      case ImagePlus.GRAY32:
-        sb.append("32-bit grayscale");
-        size *= 4;
-        break;
-      case ImagePlus.COLOR_256:
-        sb.append("8-bit color");
-        break;
-      case ImagePlus.COLOR_RGB:
-        sb.append("RGB");
-        size *= 4;
-        break;
-    }
-    sb.append("; ");
-    sb.append(size);
-    sb.append("M");
-
-    Insets insets = super.getInsets();
-    g.drawString(sb.toString(), 5, insets.top + textGap);
   }
 
   /** Sets the frames per second, and adjust the timer accordingly. */
