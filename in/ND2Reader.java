@@ -26,7 +26,7 @@ package loci.formats.in;
 
 import java.awt.image.*;
 import java.io.*;
-import java.util.StringTokenizer;
+import java.util.*;
 import javax.imageio.*;
 import loci.formats.*;
 
@@ -158,7 +158,10 @@ public class ND2Reader extends FormatReader {
     else b = new byte[(int) (in.length() - offsets[no])];
     in.read(b);
 
-    BufferedImage img = ImageIO.read(new ByteArrayInputStream(b));
+    ByteArrayInputStream bis = new ByteArrayInputStream(b);
+    BufferedImage img = ImageIO.read(bis);
+    bis.close();
+    b = null;
 
     int dataType = 0;
     switch (pixelType[0]) {
@@ -228,31 +231,6 @@ public class ND2Reader extends FormatReader {
 
     pixelType[0] = FormatReader.UINT8;
 
-    BufferedImage img = openImage(id, 0);
-    sizeX[0] = img.getWidth();
-    sizeY[0] = img.getHeight();
-    rgb = img.getRaster().getNumBands() > 1;
-
-    int numInvalid = 0;
-
-    for (int i=1; i<offsets.length; i++) {
-      if (offsets[i] - offsets[i - 1] < (sizeX[0] * sizeY[0] / 4)) {
-        offsets[i - 1] = 0;
-        numInvalid++;
-      }
-    }
-
-    long[] tempOffsets = new long[numImages - numInvalid];
-    int pt = 0;
-    for (int i=0; i<offsets.length; i++) {
-      if (offsets[i] != 0) {
-        tempOffsets[pt] = offsets[i];
-        pt++;
-      }
-    }
-    offsets = tempOffsets;
-    numImages = offsets.length;
-
     // read XML metadata from the end of the file
 
     in.seek(offsets[offsets.length - 1]);
@@ -292,13 +270,12 @@ public class ND2Reader extends FormatReader {
 
       // first, let's strip out all comments
 
-      while (xml.indexOf("<!--") != -1) {
-        int start = xml.indexOf("<!--");
-        int end = xml.indexOf("-->", start);
-        String pre = xml.substring(0, start);
-        String post = xml.substring(end + 3);
-        xml = pre + post;
+      StringBuffer sb = new StringBuffer(xml);
+      while (sb.indexOf("<!--") != -1) {
+        int ndx = sb.indexOf("<!--");
+        sb.delete(ndx, sb.indexOf("-->", ndx));
       }
+      xml = sb.toString();
 
       // strip out binary data at the end - this is irrelevant for our purposes
       xml = xml.substring(0, xml.lastIndexOf("</MetadataSeq>") + 14);
@@ -331,15 +308,69 @@ public class ND2Reader extends FormatReader {
 
                 // strip out the data types
                 if (key.indexOf("runtype") == -1) {
-                  metadata.put(prefix + " " + pre + " " + key, value);
+                  String effectiveKey = prefix + " " + pre + " " + key;
+                  if (!metadata.containsKey(effectiveKey)) {
+                    metadata.put(effectiveKey, value);
+                  }
+                  else {
+                    String v = (String) metadata.get(effectiveKey);
+                    try {
+                      if (Integer.parseInt(v) < Integer.parseInt(value)) {
+                        metadata.put(effectiveKey, value);
+                      }
+                    }
+                    catch (Exception e) { }
+                  }
                 }
                 s = s.substring(s.indexOf("\"", eq + 2) + 1);
-             }
+              }
             }
           }
         }
       }
     }
+
+    sizeX[0] = Integer.parseInt((String) metadata.get(
+      "MetadataSeq _SEQUENCE_INDEX=\"0\" right value"));
+    sizeY[0] = Integer.parseInt((String) metadata.get(
+      "MetadataSeq _SEQUENCE_INDEX=\"0\" bottom value"));
+
+    if (sizeX[0] == 0 || sizeY[0] == 0) {
+      String s = (String) metadata.get("ReportObjects " +
+       "_DOCTYPE=\"ReportObjectsDocument\" _VERSION=\"1.100000\" " +
+       "Container page_size");
+      if (s != null) {
+        String x = s.substring(1, s.indexOf(","));
+        sizeX[0] = (int) Float.parseFloat(x);
+        String y = s.substring(s.indexOf(",") + 1, s.indexOf(")"));
+        sizeY[0] = (int) Float.parseFloat(y);
+      }
+      else {
+        BufferedImage img = openImage(id, 0);
+        sizeX[0] = img.getWidth();
+        sizeY[0] = img.getHeight();
+      }
+    }
+
+    int numInvalid = 0;
+
+    for (int i=1; i<offsets.length; i++) {
+      if (offsets[i] - offsets[i - 1] < (sizeX[0] * sizeY[0] / 4)) {
+        offsets[i - 1] = 0;
+        numInvalid++;
+      }
+    }
+
+    long[] tempOffsets = new long[numImages - numInvalid];
+    int pt = 0;
+    for (int i=0; i<offsets.length; i++) {
+      if (offsets[i] != 0) {
+        tempOffsets[pt] = offsets[i];
+        pt++;
+      }
+    }
+    offsets = tempOffsets;
+    numImages = offsets.length;
 
     String sigBits =
       (String) metadata.get("AdvancedImageAttributes SignificantBits value");
@@ -364,21 +395,59 @@ public class ND2Reader extends FormatReader {
       pixSizeZ = Float.parseFloat(pixZ.trim());
     }
 
-    String channels =
-      (String) metadata.get("AdvancedImageAttributes VirtualComponents value");
-    if (channels != null && channels.length() > 0) {
-      sizeC[0] = 3 - Integer.parseInt(channels.trim());
+    sizeC[0] = Integer.parseInt((String) metadata.get(
+      "MetadataSeq _SEQUENCE_INDEX=\"0\" uiCompCount value"));
+    if (sizeC[0] == 2) sizeC[0] = 1;
+
+    long[] timestamps = new long[numImages];
+    long[] zstamps = new long[numImages];
+
+    for (int i=0; i<numImages; i++) {
+      timestamps[i] = (long) Float.parseFloat((String) metadata.get(
+        "MetadataSeq _SEQUENCE_INDEX=\"" + i + "\" dTimeMSec value"));
+      zstamps[i] = (long) Float.parseFloat((String) metadata.get(
+        "MetadataSeq _SEQUENCE_INDEX=\"" + i + "\" dZPos value"));
     }
-    else sizeC[0] = img.getRaster().getNumBands();
 
-    sizeT[0] = numImages / (!rgb ? sizeC[0] : 1);
-    sizeZ[0] = 1;
-    orderCertain[0] = false;
-    currentOrder[0] = sizeC[0] > 1 ? "XYCTZ" : "XYTZC";
-    pixelType[0] = ImageTools.getPixelType(img);
+    Vector zs = new Vector();
+    Vector ts = new Vector();
+    for (int i=0; i<numImages; i++) {
+      if (!zs.contains(new Long(zstamps[i]))) {
+        sizeZ[0]++;
+        zs.add(new Long(zstamps[i]));
+      }
+      if (!ts.contains(new Long(timestamps[i]))) {
+        sizeT[0]++;
+        ts.add(new Long(timestamps[i]));
+      }
+    }
+   
+    currentOrder[0] = "XY";
+    long deltaT = timestamps[1] - timestamps[0];
+    long deltaZ = zstamps[1] - zstamps[0];
 
-    if (!rgb) {
-      while (sizeC[0] * sizeT[0] * sizeZ[0] < numImages) numImages--;
+    if (deltaT < deltaZ || deltaZ == 0) currentOrder[0] += "CTZ";
+    else currentOrder[0] += "CZT";
+
+    if (numImages < sizeZ[0] * sizeT[0]) {
+      if (sizeT[0] == numImages) {
+        sizeT[0] /= sizeZ[0] * getEffectiveSizeC(id);
+        while (numImages > sizeZ[0] * sizeT[0] * getEffectiveSizeC(id)) {
+          sizeT[0]++;
+        }
+      }
+      if (sizeZ[0] == numImages) {
+        sizeZ[0] /= sizeT[0] * getEffectiveSizeC(id);
+        while (numImages > sizeZ[0] * sizeT[0] * getEffectiveSizeC(id)) {
+          sizeZ[0]++;
+        }
+      }
+    }
+   
+    if (numImages != sizeZ[0] * sizeT[0] * getEffectiveSizeC(id)) {
+      sizeZ[0] = numImages;
+      sizeT[0] = 1;
+      orderCertain[0] = false;
     }
 
     if (bits != 0) {
@@ -387,13 +456,29 @@ public class ND2Reader extends FormatReader {
     }
     else validBits = null;
 
+    if (validBits == null) pixelType[0] = FormatReader.UINT8;
+    else {
+      int bpp = validBits[0];
+      while (bpp % 8 != 0) bpp++;
+      switch (bpp) {
+        case 8: pixelType[0] = FormatReader.UINT8; break;
+        case 16: pixelType[0] = FormatReader.UINT16; break;
+        case 32: pixelType[0] = FormatReader.UINT32; break;
+        default: 
+          throw new FormatException("Unsupported bits per pixel : " + bpp);
+      }
+
+    }
+
+    rgb = sizeC[0] == 3;
+
     MetadataStore store = getMetadataStore(id);
     store.setPixels(
       new Integer(sizeX[0]),
       new Integer(sizeY[0]),
-      new Integer(1),
+      new Integer(sizeZ[0]),
       new Integer(sizeC[0]),
-      new Integer(numImages),
+      new Integer(sizeT[0]),
       new Integer(pixelType[0]),
       new Boolean(isLittleEndian(id)),
       currentOrder[0],
