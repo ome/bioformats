@@ -368,8 +368,18 @@ public class OIFReader extends FormatReader {
     validBits = new int[sizeC[0]];
     if (validBits.length == 2) validBits = new int[3];
     for (int i=0; i<validBits.length; i++) {
-      validBits[i] = Integer.parseInt((String) metadata.get("Image " + i + 
-        " : ValidBitCounts"));
+      String s = (String) metadata.get("Image " + i + " : ValidBitCounts");
+      if (s != null) {
+        validBits[i] = Integer.parseInt(s);
+      }
+      else {
+        i = validBits.length;
+      }
+    }
+
+    int len = validBits.length;
+    for (int i=0; i<len; i++) {
+      if (validBits[i] == 0) validBits = null;
     }
 
     store.setPixels(
