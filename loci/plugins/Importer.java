@@ -896,20 +896,22 @@ public class Importer {
         LociDataBrowser ldb = new LociDataBrowser(r, fs, id);
       }
       else if (stackFormat.equals(VIEW_IMAGE_5D)) {
+        int sizeZ = r.getSizeZ(id);
+        int sizeT = r.getSizeT(id);
         int sizeC = r.getSizeC(id);
-        if (imp.getStackSize() == r.getSizeZ(id) * r.getSizeT(id)) sizeC = 1;
+        if (imp.getStackSize() == sizeZ * sizeT) sizeC = 1;
 
-        // need to re-order the stack so that the order is XYCZT
-
-        ImageStack is = new ImageStack(r.getSizeX(id), r.getSizeY(id));
-        ImageStack old = imp.getStack();
-        if (r.getDimensionOrder(id).equals("XYCZT")) is = old;
+        // reorder stack to Image5D's preferred order: XYZTC
+        ImageStack is;
+        ImageStack stack = imp.getStack();
+        if (r.getDimensionOrder(id).equals("XYCZT")) is = stack;
         else {
-          for (int t=0; t<r.getSizeT(id); t++) {
-            for (int z=0; z<r.getSizeZ(id); z++) {
+          is = new ImageStack(r.getSizeX(id), r.getSizeY(id));
+          for (int t=0; t<sizeT; t++) {
+            for (int z=0; z<sizeZ; z++) {
               for (int c=0; c<sizeC; c++) {
                 int ndx = r.getIndex(id, z, c, t) + 1;
-                is.addSlice(old.getSliceLabel(ndx), old.getProcessor(ndx));
+                is.addSlice(stack.getSliceLabel(ndx), stack.getProcessor(ndx));
               }
             }
           }
@@ -921,13 +923,33 @@ public class Importer {
         ru.setVar("title", imp.getTitle());
         ru.setVar("stack", is);
         ru.setVar("sizeC", sizeC);
-        ru.setVar("sizeZ", r.getSizeZ(id));
-        ru.setVar("sizeT", r.getSizeT(id));
+        ru.setVar("sizeZ", sizeZ);
+        ru.setVar("sizeT", sizeT);
         ru.exec("i5d = new Image5D(title, stack, sizeC, sizeZ, sizeT)");
         ru.exec("i5d.show()");
       }
       else if (stackFormat.equals(VIEW_VIEW_5D)) {
+        // reorder stack to View5D's preferred order: XYZCT
+        int sizeZ = r.getSizeZ(id);
+        int sizeC = r.getSizeC(id);
+        int sizeT = r.getSizeT(id);
+        if (imp.getStackSize() == sizeZ * sizeT) sizeC = 1;
+        ImageStack stack = imp.getStack();
+        ImageStack is = new ImageStack(r.getSizeX(id), r.getSizeY(id));
+        if (!r.getDimensionOrder(id).equals("XYZCT")) {
+          for (int t=0; t<sizeT; t++) {
+            for (int c=0; c<sizeC; c++) {
+              for (int z=0; z<sizeZ; z++) {
+                int ndx = r.getIndex(id, z, c, t) + 1;
+                is.addSlice(stack.getSliceLabel(ndx), stack.getProcessor(ndx));
+              }
+            }
+          }
+          imp.setStack(imp.getTitle(), is);
+        }
+
         WindowManager.setTempCurrentImage(imp);
+//        IJ.runPlugIn("View5D_", "z=" + sizeZ + " t=" + sizeT);
         IJ.runPlugIn("View5D_", "");
       }
     }
