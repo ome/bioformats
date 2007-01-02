@@ -37,6 +37,12 @@ public class PointerTool extends OverlayTool {
   /** Location where an object was first "grabbed" with a mouse press. */
   protected float grabX, grabY;
 
+  /** Location where mouseDown occurs */
+  protected float downX, downY; 
+
+  /** Selection box */
+  protected TransientSelectBox select;
+
   // -- Constructor --
 
   /** Constructs an overlay manipulation tool. */
@@ -51,6 +57,14 @@ public class PointerTool extends OverlayTool {
     boolean shift = (mods & InputEvent.SHIFT_MASK) != 0;
     boolean ctrl = (mods & InputEvent.CTRL_MASK) != 0;
 
+    // record location of click
+    downX = x;
+    downY = y;
+
+    // instantiate selection box
+    select = new TransientSelectBox(overlay, downX, downY);
+    overlay.addTSB (select);
+ 
     // pick nearest object
     OverlayObject[] obj = overlay.getObjects(pos);
     double dist = Double.POSITIVE_INFINITY;
@@ -97,6 +111,10 @@ public class PointerTool extends OverlayTool {
       grabIndex = -1;
       overlay.setTextDrawn(true);
       overlay.notifyListeners(new TransformEvent(overlay));
+    } else {
+      select = null;
+      overlay.removeTSB();
+      overlay.notifyListeners(new TransformEvent(overlay));
     }
   }
 
@@ -115,7 +133,10 @@ public class PointerTool extends OverlayTool {
       grabX = x;
       grabY = y;
       overlay.notifyListeners(new TransformEvent(overlay));
+    } else if (x != downX && y != downY) {
+      // extend selection box
+      select.setCorner (x, y);
+      overlay.notifyListeners(new TransformEvent(overlay));
     }
   }
-
 }

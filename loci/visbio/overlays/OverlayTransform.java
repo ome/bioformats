@@ -106,6 +106,9 @@ public class OverlayTransform extends DataTransform
   /** Dimensional position of overlays stored in the clipboard. */
   protected int[] clipboardPos = null;
 
+  /** Transient Select Box, if active */
+  protected TransientSelectBox selectBox;
+
   // -- Constructor --
 
   /** Creates an overlay object for the given transform. */
@@ -156,6 +159,12 @@ public class OverlayTransform extends DataTransform
 
   /** Removes selected overlay objects at the current dimensional position. */
   public void removeSelectedObjects() { removeSelectedObjects(pos); }
+
+  /** Adds a transient selection box. */ 
+  public void addTSB (TransientSelectBox tsb) { selectBox = tsb; }
+
+  /** Removes transient selection box. */
+  public void removeTSB () { selectBox = null; }
 
   /** Removes selected overlay objects at the given dimensional position. */
   public void removeSelectedObjects(int[] pos) {
@@ -513,7 +522,8 @@ public class OverlayTransform extends DataTransform
       try {
         if (size > 0) {
           // compute number of selected objects and number of text objects
-          int rgbSize = 0, txtSize = 0, sel = 0, outline = 0;
+          int rgbSize = 0, txtSize = 0, sel = 0, outline = 0, tsb = 0;
+          if (selectBox != null) tsb = 1; 
           for (int i=0; i<size; i++) {
             OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
             if (obj.hasText()) {
@@ -530,7 +540,7 @@ public class OverlayTransform extends DataTransform
           if (rgbSize > 0 || sel > 0 || outline > 0) {
             FunctionType fieldType = new FunctionType(index,
               new FunctionType(getDomainType(), getRangeType()));
-            GriddedSet fieldSet = new Integer1DSet(rgbSize + sel + outline);
+            GriddedSet fieldSet = new Integer1DSet(rgbSize + sel + outline + tsb);
             rgbField = new FieldImpl(fieldType, fieldSet);
             // compute overlay data for each non-text object
             for (int i=0, c=0; i<size && c<rgbSize; i++) {
@@ -550,6 +560,10 @@ public class OverlayTransform extends DataTransform
               if (!obj.hasText() || obj.isSelected()) continue;
               rgbField.setSample(rgbSize + sel + c++,
                 obj.getSelectionGrid(true), false);
+            }
+            // compute visual data for selectBox
+            if (selectBox != null) {
+              rgbField.setSample(rgbSize + sel + outline, selectBox.getData(), false);
             }
           }
 
