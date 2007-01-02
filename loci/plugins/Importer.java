@@ -929,14 +929,15 @@ public class Importer {
         ru.exec("i5d.show()");
       }
       else if (stackFormat.equals(VIEW_VIEW_5D)) {
-        // reorder stack to View5D's preferred order: XYZCT
         int sizeZ = r.getSizeZ(id);
         int sizeC = r.getSizeC(id);
         int sizeT = r.getSizeT(id);
         if (imp.getStackSize() == sizeZ * sizeT) sizeC = 1;
-        ImageStack stack = imp.getStack();
-        ImageStack is = new ImageStack(r.getSizeX(id), r.getSizeY(id));
+
+        // reorder stack to View5D's preferred order: XYZCT
         if (!r.getDimensionOrder(id).equals("XYZCT")) {
+          ImageStack is = new ImageStack(r.getSizeX(id), r.getSizeY(id));
+          ImageStack stack = imp.getStack();
           for (int t=0; t<sizeT; t++) {
             for (int c=0; c<sizeC; c++) {
               for (int z=0; z<sizeZ; z++) {
