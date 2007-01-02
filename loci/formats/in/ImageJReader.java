@@ -72,8 +72,9 @@ public class ImageJReader extends FormatReader {
       r.exec("import ij.io.Opener");
       r.exec("import ij.process.ImageProcessor");
       r.exec("opener = new Opener()");
+      r.setVar("false", false);
     }
-    catch (Exception exc) { noImageJ = true; }
+    catch (Throwable t) { noImageJ = true; }
   }
 
   // -- FormatReader API methods --
@@ -125,13 +126,28 @@ public class ImageJReader extends FormatReader {
       File file = new File(getMappedId(id));
       r.setVar("dir", file.getParent() + System.getProperty("file.separator"));
       r.setVar("name", file.getName());
-      r.exec("image = opener.openImage(dir, name)");
+      synchronized (ImageJReader.class) {
+        try {
+          r.exec("state = Opener.getOpenUsingPlugins()");
+          r.exec("Opener.setOpenUsingPlugins(false)");
+        }
+        catch (ReflectException exc) {
+          // probably ImageJ version < 1.38f
+        }
+        r.exec("image = opener.openImage(dir, name)");
+        try {
+          r.exec("Opener.setOpenUsingPlugins(state)");
+        }
+        catch (ReflectException exc) {
+          // probably ImageJ version < 1.38f
+        }
+      }
       r.exec("size = image.getStackSize()");
       Image img = (Image) r.exec("image.getImage()");
 
       return ImageTools.makeBuffered(img);
     }
-    catch (Exception exc) {
+    catch (ReflectException exc) {
       throw new FormatException(exc);
     }
   }

@@ -39,7 +39,6 @@ import java.util.Hashtable;
 import java.util.Vector;
 import javax.swing.*;
 import loci.formats.*;
-import loci.formats.in.ImageJReader;
 import loci.plugins.browser.LociDataBrowser;
 
 /**
@@ -67,7 +66,6 @@ public class Importer {
 
   public Importer(LociImporter plugin) {
     this.plugin = plugin;
-    ImageReader.removeReaderType(ImageJReader.class);
   }
 
   // -- Importer API methods --
