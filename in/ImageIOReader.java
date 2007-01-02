@@ -90,7 +90,7 @@ public abstract class ImageIOReader extends FormatReader {
       byte[] tmp = b;
       b = new byte[bytesPerChannel * 3];
       for (int i=0; i<3; i++) {
-        System.arraycopy(tmp, i * bytesPerChannel, b, i*bytesPerChannel, 
+        System.arraycopy(tmp, i * bytesPerChannel, b, i*bytesPerChannel,
           bytesPerChannel);
       }
     }
@@ -119,9 +119,9 @@ public abstract class ImageIOReader extends FormatReader {
 
     sizeX[0] = openImage(id, 0).getWidth();
     sizeY[0] = openImage(id, 0).getHeight();
-    
+
     rgb = openBytes(id, 0).length > getSizeX(id) * getSizeY(id);
-    
+
     sizeZ[0] = 1;
     sizeC[0] = rgb ? 3 : 1;
     sizeT[0] = 1;

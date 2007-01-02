@@ -657,10 +657,10 @@ public class ZeissLSMReader extends BaseTiffReader {
       store.setDimensions(pixX, pixY, pixZ, null, null, null);
     }
     catch (Exception e) { }
-  
+
     // see if we have an associated MDB file
 
-    File dir = 
+    File dir =
       new File(getMappedId(currentId)).getAbsoluteFile().getParentFile();
     String[] dirList = dir.list();
 
@@ -673,7 +673,7 @@ public class ZeissLSMReader extends BaseTiffReader {
         i = dirList.length;
       }
     }
-  
+
   }
 
   // -- Helper methods --

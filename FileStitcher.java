@@ -263,7 +263,7 @@ public class FileStitcher implements IFormatReader {
     if (!id.equals(currentId)) initFile(id);
     return isRGB(id) ? 1 : getSizeC(id);
   }
- 
+
   /* @see IFormatReader#getChannelGlobalMinimum(String, int) */
   public Double getChannelGlobalMinimum(String id, int theC)
     throws FormatException, IOException
@@ -597,7 +597,7 @@ public class FileStitcher implements IFormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (FormatReader.debug) {
       System.out.println("calling FileStitcher.initFile(" + id + ")");
-    } 
+    }
 
     currentId = id;
     fp = findPattern(id);
@@ -679,7 +679,7 @@ public class FileStitcher implements IFormatReader {
     lenT = new int[seriesCount][];
 
     // analyze first file; assume each file has the same parameters
-    
+
     int oldSeries = reader.getSeries(f0);
     for (int i=0; i<seriesCount; i++) {
       reader.setSeries(f0, i);
@@ -713,13 +713,13 @@ public class FileStitcher implements IFormatReader {
   /** Computes axis length arrays, and total axis lengths. */
   protected void computeAxisLengths() throws FormatException, IOException {
     int sno = getSeries(currentId);
-    
+
     int[] count = fp.getCount();
     int[] axes = ag[sno].getAxisTypes();
     int numZ = ag[sno].getAxisCountZ();
     int numC = ag[sno].getAxisCountC();
     int numT = ag[sno].getAxisCountT();
-    
+
     totalSizeZ[sno] = sizeZ[sno];
     totalSizeC[sno] = sizeC[sno];
     totalSizeT[sno] = sizeT[sno];
@@ -795,7 +795,7 @@ public class FileStitcher implements IFormatReader {
       }
     }
     int fno = positionToRaster(count, pos);
-    int ino = FormatReader.getIndex(order[sno], sizeZ[sno], sizeC[sno], 
+    int ino = FormatReader.getIndex(order[sno], sizeZ[sno], sizeC[sno],
       sizeT[sno], imagesPerFile[sno], isRGB(id), posZ[0], posC[0], posT[0]);
 
     // configure the reader, in case we haven't done this one yet

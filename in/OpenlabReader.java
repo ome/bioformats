@@ -332,7 +332,7 @@ public class OpenlabReader extends FormatReader {
         throw new FormatException("Unsupported image type : " + volumeType);
       }
     }
- 
+
     int bpp = b.length / (width[series] * height[series]);
     int expected = width[series] * height[series] * bpp;
     if (b.length > expected) {

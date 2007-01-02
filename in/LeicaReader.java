@@ -373,7 +373,7 @@ public class LeicaReader extends BaseTiffReader {
         Vector f = new Vector();
         byte[] tempData = (byte[]) headerIFDs[i].get(new Integer(15));
         int tempImages = DataTools.bytesToInt(tempData, 0, 4, littleEndian);
-        String dirPrefix = 
+        String dirPrefix =
           new File(getMappedId(id)).getAbsoluteFile().getParent();
         dirPrefix = dirPrefix == null ? "" : (dirPrefix + File.separator);
         for (int j=0; j<tempImages; j++) {
@@ -386,15 +386,15 @@ public class LeicaReader extends BaseTiffReader {
             // TIFF files were renamed
 
             File[] dirListing = (new File(dirPrefix)).listFiles();
-            
-            int pos = 0;  
+
+            int pos = 0;
             int maxChars = 0;
             for (int k=0; k<dirListing.length; k++) {
               int pt = 0;
               int chars = 0;
               String path = dirListing[k].getAbsolutePath();
-              if (path.toLowerCase().endsWith("tif") || 
-                path.toLowerCase().endsWith("tiff"))  
+              if (path.toLowerCase().endsWith("tif") ||
+                path.toLowerCase().endsWith("tiff"))
               {
                 while (path.charAt(pt) == test.getAbsolutePath().charAt(pt)) {
                   pt++;
@@ -402,8 +402,8 @@ public class LeicaReader extends BaseTiffReader {
                 }
                 int newPt = path.length() - 1;
                 int oldPt = test.getAbsolutePath().length() - 1;
-                while (path.charAt(newPt) == 
-                  test.getAbsolutePath().charAt(oldPt)) 
+                while (path.charAt(newPt) ==
+                  test.getAbsolutePath().charAt(oldPt))
                 {
                   newPt--;
                   oldPt--;

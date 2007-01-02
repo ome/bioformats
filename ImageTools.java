@@ -941,7 +941,7 @@ public final class ImageTools {
   {
     int[] rtn = new int[w * h];
     int stride = interleaved ? w * h : 1;
-  
+
     byte[] b = null;
 
     // adapted from ImageJ's TypeConverter methods
@@ -979,7 +979,7 @@ public final class ImageTools {
         b[i] = (byte) Math.round(value);
       }
     }
-    
+
     int c = b.length / rtn.length;
 
     for (int i=0; i<rtn.length; i++) {
@@ -1208,7 +1208,7 @@ public final class ImageTools {
         short[][] b = (short[][]) pixels;
         short[][] newShorts = new short[b.length][width * height];
         for (int i=0; i<b.length; i++) {
-          newShorts[i] = 
+          newShorts[i] =
             padImage(b[i], false, 1, img.getWidth(), width, height);
         }
         return makeImage(newShorts, width, height);
@@ -1225,7 +1225,7 @@ public final class ImageTools {
         float[][] b = (float[][]) pixels;
         float[][] newFloats = new float[b.length][width * height];
         for (int i=0; i<b.length; i++) {
-          newFloats[i] = 
+          newFloats[i] =
             padImage(b[i], false, 1, img.getWidth(), width, height);
         }
         return makeImage(newFloats, width, height);
@@ -1234,7 +1234,7 @@ public final class ImageTools {
         double[][] b = (double[][]) pixels;
         double[][] newDoubles = new double[b.length][width * height];
         for (int i=0; i<b.length; i++) {
-          newDoubles[i] = 
+          newDoubles[i] =
             padImage(b[i], false, 1, img.getWidth(), width, height);
         }
         return makeImage(newDoubles, width, height);
@@ -1258,7 +1258,7 @@ public final class ImageTools {
     int hClip = (height - oldHeight) / 2;
 
     int h = height < oldHeight ? height : oldHeight;
-   
+
     if (interleaved) {
       int len = oldWidth < width ? oldWidth : width;
       if (h == oldHeight) {
@@ -1285,7 +1285,7 @@ public final class ImageTools {
         int index = width * c * (y + hClip) + c * wClip;
         System.arraycopy(b, oldIndex, padded, index, len);
       }
-    }  
+    }
     return padded;
   }
 
@@ -1293,7 +1293,7 @@ public final class ImageTools {
    * Pads (or crops) the short array to the given width and height.
    * The image will be centered within the new bounds.
    */
-  public static short[] padImage(short[] b, boolean interleaved, int c, 
+  public static short[] padImage(short[] b, boolean interleaved, int c,
     int oldWidth, int width, int height)
   {
     int oldHeight = b.length / (oldWidth * c);
@@ -1303,7 +1303,7 @@ public final class ImageTools {
     int hClip = (height - oldHeight) / 2;
 
     int h = height < oldHeight ? height : oldHeight;
-   
+
     if (interleaved) {
       int len = oldWidth < width ? oldWidth : width;
       if (h == oldHeight) {
@@ -1330,7 +1330,7 @@ public final class ImageTools {
         int index = width * c * (y + hClip) + c * wClip;
         System.arraycopy(b, oldIndex, padded, index, len);
       }
-    }  
+    }
     return padded;
   }
 
@@ -1338,7 +1338,7 @@ public final class ImageTools {
    * Pads (or crops) the int array to the given width and height.
    * The image will be centered within the new bounds.
    */
-  public static int[] padImage(int[] b, boolean interleaved, int c, 
+  public static int[] padImage(int[] b, boolean interleaved, int c,
     int oldWidth, int width, int height)
   {
     int oldHeight = b.length / (oldWidth * c);
@@ -1348,7 +1348,7 @@ public final class ImageTools {
     int hClip = (height - oldHeight) / 2;
 
     int h = height < oldHeight ? height : oldHeight;
-   
+
     if (interleaved) {
       int len = oldWidth < width ? oldWidth : width;
       if (h == oldHeight) {
@@ -1375,7 +1375,7 @@ public final class ImageTools {
         int index = width * c * (y + hClip) + c * wClip;
         System.arraycopy(b, oldIndex, padded, index, len);
       }
-    }  
+    }
     return padded;
   }
 
@@ -1383,7 +1383,7 @@ public final class ImageTools {
    * Pads (or crops) the float array to the given width and height.
    * The image will be centered within the new bounds.
    */
-  public static float[] padImage(float[] b, boolean interleaved, int c, 
+  public static float[] padImage(float[] b, boolean interleaved, int c,
     int oldWidth, int width, int height)
   {
     int oldHeight = b.length / (oldWidth * c);
@@ -1393,7 +1393,7 @@ public final class ImageTools {
     int hClip = (height - oldHeight) / 2;
 
     int h = height < oldHeight ? height : oldHeight;
-   
+
     if (interleaved) {
       int len = oldWidth < width ? oldWidth : width;
       if (h == oldHeight) {
@@ -1420,7 +1420,7 @@ public final class ImageTools {
         int index = width * c * (y + hClip) + c * wClip;
         System.arraycopy(b, oldIndex, padded, index, len);
       }
-    }  
+    }
     return padded;
   }
 
@@ -1428,7 +1428,7 @@ public final class ImageTools {
    * Pads (or crops) the double array to the given width and height.
    * The image will be centered within the new bounds.
    */
-  public static double[] padImage(double[] b, boolean interleaved, int c, 
+  public static double[] padImage(double[] b, boolean interleaved, int c,
     int oldWidth, int width, int height)
   {
     int oldHeight = b.length / (oldWidth * c);
@@ -1438,7 +1438,7 @@ public final class ImageTools {
     int hClip = (height - oldHeight) / 2;
 
     int h = height < oldHeight ? height : oldHeight;
-   
+
     if (interleaved) {
       int len = oldWidth < width ? oldWidth : width;
       if (h == oldHeight) {
@@ -1465,7 +1465,7 @@ public final class ImageTools {
         int index = width * c * (y + hClip) + c * wClip;
         System.arraycopy(b, oldIndex, padded, index, len);
       }
-    }  
+    }
     return padded;
   }
 

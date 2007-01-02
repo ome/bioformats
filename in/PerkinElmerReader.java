@@ -528,7 +528,7 @@ public class PerkinElmerReader extends FormatReader {
       if (spacing <= 1f) currentOrder[0] += "TZ";
       else currentOrder[0] += "ZT";
     }
-    else currentOrder[0] += "ZT"; // doesn't matter, since Z = T = 1 
+    else currentOrder[0] += "ZT"; // doesn't matter, since Z = T = 1
 
     // Populate metadata store
 

@@ -30,7 +30,7 @@ import java.util.StringTokenizer;
 import javax.imageio.*;
 import loci.formats.*;
 
-/** 
+/**
  * ND2Reader is the file format reader for Nikon ND2 files.
  * The JAI library is required to use this reader; it is available from
  * http://jai-imageio.dev.java.net.  Note that JAI is bundled with a version
@@ -46,7 +46,7 @@ public class ND2Reader extends FormatReader {
     "You need to install JAI from http://jai-imageio.dev.java.net";
 
   // -- Static fields --
- 
+
   private static boolean noJAI = false;
   private static ReflectedUniverse r = createReflectedUniverse();
 
@@ -151,11 +151,11 @@ public class ND2Reader extends FormatReader {
     in.seek(offsets[no]);
 
     byte[] b = new byte[0];
-   
+
     if (no < getImageCount(id) - 1) {
       b = new byte[(int) (offsets[no + 1] - offsets[no])];
     }
-    else b = new byte[(int) (in.length() - offsets[no])]; 
+    else b = new byte[(int) (in.length() - offsets[no])];
     in.read(b);
 
     BufferedImage img = ImageIO.read(new ByteArrayInputStream(b));

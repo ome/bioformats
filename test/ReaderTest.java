@@ -74,7 +74,7 @@ public class ReaderTest extends TestCase {
   private FileStitcher reader;
 
   // -- Constructor --
- 
+
   public ReaderTest(String s) {
     super(s);
     throw new RuntimeException("Sorry, ReaderTest must be constructed with " +
@@ -94,7 +94,7 @@ public class ReaderTest extends TestCase {
 
   // -- ReaderTest API methods - tests --
 
-  /** 
+  /**
    * Checks the SizeX and SizeY dimensions against the actual dimensions of
    * the BufferedImages.
    */
@@ -123,7 +123,7 @@ public class ReaderTest extends TestCase {
     }
     catch (Exception e) {
       if (DEBUG) e.printStackTrace();
-      success = false; 
+      success = false;
     }
     if (!success) writeLog(id + " failed BufferedImage test");
     assertTrue(success);
@@ -141,7 +141,7 @@ public class ReaderTest extends TestCase {
         int imageCount = reader.getImageCount(id);
         int sizeX = reader.getSizeX(id);
         int sizeY = reader.getSizeY(id);
-        int bytesPerPixel = 
+        int bytesPerPixel =
           FormatReader.getBytesPerPixel(reader.getPixelType(id));
         int sizeC = reader.getSizeC(id);
         boolean rgb = reader.isRGB(id);
@@ -151,7 +151,7 @@ public class ReaderTest extends TestCase {
         for (int j=0; j<imageCount; j++) {
           byte[] b = reader.openBytes(id, j);
           if (b.length != expectedBytes) {
-            success = false; 
+            success = false;
             j = imageCount;
             i = reader.getSeriesCount(id);
             break;
@@ -159,16 +159,16 @@ public class ReaderTest extends TestCase {
         }
       }
     }
-    catch (Exception e) { 
+    catch (Exception e) {
       if (DEBUG) e.printStackTrace();
-      success = false; 
+      success = false;
     }
     if (!success) writeLog(id + " failed byte array test");
     assertTrue(success);
   }
 
   /**
-   * Checks the SizeZ, SizeC, and SizeT dimensions against the 
+   * Checks the SizeZ, SizeC, and SizeT dimensions against the
    * total image count.
    */
   public void testImageCount() {
@@ -188,10 +188,10 @@ public class ReaderTest extends TestCase {
       }
       assertTrue(success);
     }
-    catch (Exception e) { 
+    catch (Exception e) {
       if (DEBUG) e.printStackTrace();
       writeLog(id + " failed image count test");
-      assertTrue(false); 
+      assertTrue(false);
     }
   }
 
@@ -214,7 +214,7 @@ public class ReaderTest extends TestCase {
         int sizeC = reader.getSizeC(id);
         int sizeT = reader.getSizeT(id);
         boolean bigEndian = !reader.isLittleEndian(id);
-        String type = 
+        String type =
           FormatReader.getPixelTypeString(reader.getPixelType(id));
         String dimensionOrder = reader.getDimensionOrder(id);
 
@@ -243,12 +243,12 @@ public class ReaderTest extends TestCase {
           assertTrue(false);
         }
       }
-      assertTrue(success); 
+      assertTrue(success);
     }
-    catch (Exception e) { 
+    catch (Exception e) {
       if (DEBUG) e.printStackTrace();
       writeLog(id + " failed OME-XML sanity test");
-      assertTrue(false); 
+      assertTrue(false);
     }
   }
 
@@ -316,7 +316,7 @@ public class ReaderTest extends TestCase {
       String bad = (String) badFiles.elementAt(i);
       if (absFile.endsWith(bad)) return true;
     }
-    return false; 
+    return false;
   }
 
   /** Recursively generates a list of files to test. */
@@ -324,13 +324,13 @@ public class ReaderTest extends TestCase {
     File f = new File(root);
     String[] subs = f.list();
     if (subs == null) {
-      System.out.println("Invalid directory: " + root); 
+      System.out.println("Invalid directory: " + root);
       return;
     }
     ImageReader ir = new ImageReader();
     for (int i=0; i<subs.length; i++) {
       if (DEBUG) debug("Checking file " + subs[i]);
-      subs[i] = root + File.separator + subs[i]; 
+      subs[i] = root + File.separator + subs[i];
       if (isBadFile(subs[i])) {
         if (DEBUG) debug(subs[i] + " is a bad file");
         continue;
@@ -374,7 +374,7 @@ public class ReaderTest extends TestCase {
 
   public static void main(String[] args) {
     if (DEBUG) FormatReader.debug = true;
-    Vector files = new Vector();  
+    Vector files = new Vector();
     if (args == null || args.length == 0) {
       System.out.println(
         "Please specify root folder to search for data files.");
