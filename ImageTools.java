@@ -930,7 +930,6 @@ public final class ImageTools {
     return rtn;
   }
 
-
   /**
    * Convert an arbitrary primitive type array with 3 samples per pixel to
    * an int array, i.e. RGB color with 8 bits per pixel.

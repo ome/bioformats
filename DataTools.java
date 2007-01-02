@@ -223,7 +223,6 @@ public final class DataTools {
     return rtn;
   }
 
-
   // -- Word decoding --
 
   /**

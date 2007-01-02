@@ -188,7 +188,6 @@ public final class TiffTools {
   public static final int LITTLE = 0x49;
   public static final int BIG = 0x4d;
 
-
   // -- Constructor --
 
   private TiffTools() { }
