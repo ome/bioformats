@@ -49,7 +49,7 @@ public class LociUploader implements PlugIn {
   private String pass;
 
   // -- PlugIn API methods --
- 
+
   public synchronized void run(String arg) {
     // check that we can safely execute the plugin
 
@@ -62,10 +62,10 @@ public class LociUploader implements PlugIn {
   }
 
   // -- Helper methods --
- 
+
   /** Open a dialog box that prompts for a username, password, and server. */
   private void promptForLogin() {
-    GenericDialog prompt = new GenericDialog("Login to OME"); 
+    GenericDialog prompt = new GenericDialog("Login to OME");
     prompt.addStringField("Server:   ", Prefs.get("uploader.server", ""), 120);
     prompt.addStringField("Username: ", Prefs.get("uploader.user", ""), 120);
     prompt.addStringField("Password: ", "", 120);
@@ -73,10 +73,10 @@ public class LociUploader implements PlugIn {
     ((TextField) prompt.getStringFields().get(2)).setEchoChar('*');
     prompt.showDialog();
 
-    server = prompt.getNextString(); 
-    user = prompt.getNextString(); 
-    pass = prompt.getNextString(); 
-   
+    server = prompt.getNextString();
+    user = prompt.getNextString();
+    pass = prompt.getNextString();
+
     Prefs.set("uploader.server", server);
     Prefs.set("uploader.user", user);
   }
@@ -96,11 +96,11 @@ public class LociUploader implements PlugIn {
       Vector pixels = new Vector();
       FileInfo fi = imp.getOriginalFileInfo();
       OMEXMLMetadataStore store = new OMEXMLMetadataStore();
-      
+
       // if we opened this stack with the Bio-Formats importer, then the
       // appropriate OME-XML is in fi.description
       if (fi.description != null && fi.description.endsWith("</OME>")) {
-        store.createRoot(fi.description);  
+        store.createRoot(fi.description);
       }
       else {
         store.createRoot();
@@ -111,7 +111,7 @@ public class LociUploader implements PlugIn {
         }
 
         store.setPixels(
-          new Integer(imp.getWidth()),  
+          new Integer(imp.getWidth()),
           new Integer(imp.getHeight()),
           new Integer(imp.getNSlices()),
           new Integer(imp.getNChannels()),
@@ -120,18 +120,18 @@ public class LociUploader implements PlugIn {
           new Boolean(!fi.intelByteOrder),
           "XYCZT",  // TODO : figure out a way to calculate the dimension order
           null);
-      
+
         store.setImage(fi.fileName, null, fi.info, null);
-      
+
       }
       boolean little = !store.getBigEndian(null).booleanValue();
-      
+
       for (int i=0; i<is.getSize(); i++) {
         IJ.showStatus("Reading plane " + (i+1) + "/" + is.getSize());
         Object pix = is.getProcessor(i + 1).getPixels();
-      
+
         if (pix instanceof byte[]) {
-          pixels.add((byte[]) pix);    
+          pixels.add((byte[]) pix);
         }
         else if (pix instanceof short[]) {
           short[] s = (short[]) pix;

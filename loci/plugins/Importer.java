@@ -27,7 +27,6 @@ package loci.plugins;
 
 import ij.*;
 import ij.gui.GenericDialog;
-import ij.gui.MessageDialog;
 import ij.io.FileInfo;
 import ij.io.OpenDialog;
 import ij.measure.Calibration;
@@ -50,7 +49,7 @@ import loci.plugins.browser.LociDataBrowser;
  * @author Melissa Linkert linkert at cs.wisc.edu
  */
 public class Importer {
-  
+
   // -- Constants --
 
   private static final String VIEW_STANDARD = "Standard ImageJ";
@@ -204,7 +203,7 @@ public class Importer {
 
       oldId = id;
       FileStitcher fs = null;
-      
+
       if (stitchFiles) {
         fs = new FileStitcher(r, true);
         // prompt user to confirm detected file pattern
@@ -448,15 +447,15 @@ public class Importer {
       // -- Step 4d: read pixel data --
       if(!stackFormat.equals(VIEW_BROWSER)) {
         IJ.showStatus("Reading " + fileName);
-  
+
         for (int i=0; i<seriesCount; i++) {
           if (!series[i]) continue;
           r.setSeries(id, i);
-  
+
           String name = store.getImageName(new Integer(i));
           String imageName = fileName;
           if (name != null && name.length() > 0) imageName += " - " + name;
-  
+
           boolean[] load = new boolean[num[i]];
           if (certain[i]) {
             for (int c=cBegin[i]; c<=cEnd[i]; c+=cStep[i]) {
@@ -473,19 +472,19 @@ public class Importer {
           }
           int total = 0;
           for (int j=0; j<num[i]; j++) if (load[j]) total++;
-  
+
           // dump OME-XML to ImageJ's description field, if available
           FileInfo fi = new FileInfo();
           fi.description = store.dumpXML();
-  
+
           long startTime = System.currentTimeMillis();
           long time = startTime;
           ImageStack stackB = null, stackS = null, stackF = null, stackO = null;
-  
+
           int q = 0;
           for (int j=0; j<num[i]; j++) {
             if (!load[j]) continue;
-  
+
             // limit message update rate
             long clock = System.currentTimeMillis();
             if (clock - time >= 100) {
@@ -495,17 +494,17 @@ public class Importer {
               time = clock;
             }
             IJ.showProgress((double) q++ / total);
-  
+
             byte[] b = r.openBytes(id, j);
-  
+
             int w = r.getSizeX(id);
             int h = r.getSizeY(id);
             int c = r.isRGB(id) ? r.getSizeC(id) : 1;
             int type = r.getPixelType(id);
-  
+
             // construct image processor and add to stack
             ImageProcessor ip = null;
-  
+
             int bpp = 0;
             switch (type) {
               case FormatReader.INT8:
@@ -517,20 +516,20 @@ public class Importer {
               case FormatReader.FLOAT: bpp = 4; break;
               case FormatReader.DOUBLE: bpp = 8; break;
             }
-  
+
             if (b.length != w * h * c * bpp) {
               // HACK - byte array dimensions are incorrect - image is probably
               // a different size, but we have no way of knowing what size;
               // so open this plane as a BufferedImage instead
               BufferedImage bi = r.openImage(id, j);
-              b = ImageTools.padImage(b, r.isInterleaved(id), c, 
+              b = ImageTools.padImage(b, r.isInterleaved(id), c,
                 bi.getWidth() * bpp, w, h);
             }
-            
+
             Object pixels = DataTools.makeDataArray(b, bpp,
               type == FormatReader.FLOAT || type == FormatReader.DOUBLE,
               r.isLittleEndian(id));
-  
+
             if (pixels instanceof byte[]) {
               byte[] bytes = (byte[]) pixels;
               if (bytes.length > w*h*c) {
@@ -548,10 +547,10 @@ public class Importer {
                 ip = new ColorProcessor(w, h);
                 byte[][] pix = new byte[c][w*h];
                 for (int k=0; k<c; k++) {
-                  System.arraycopy(bytes, k*pix[k].length, pix[k], 0, 
+                  System.arraycopy(bytes, k*pix[k].length, pix[k], 0,
                     pix[k].length);
                 }
-                ((ColorProcessor) ip).setRGB(pix[0], pix[1], 
+                ((ColorProcessor) ip).setRGB(pix[0], pix[1],
                   pix.length >= 3 ? pix[2] : new byte[w*h]);
                 stackO.addSlice(imageName + ":" + (j + 1), ip);
               }
@@ -572,7 +571,7 @@ public class Importer {
                 if (stackO == null) stackO = new ImageStack(w, h);
                 short[][] pix = new short[c][w*h];
                 for (int k=0; k<c; k++) {
-                  System.arraycopy(s, k*pix[k].length, pix[k], 0, 
+                  System.arraycopy(s, k*pix[k].length, pix[k], 0,
                     pix[k].length);
                 }
                 byte[][] bytes = new byte[c][w*h];
@@ -582,7 +581,7 @@ public class Importer {
                   bytes[k] = (byte[]) ip.getPixels();
                 }
                 ip = new ColorProcessor(w, h);
-                ((ColorProcessor) ip).setRGB(bytes[0], bytes[1], 
+                ((ColorProcessor) ip).setRGB(bytes[0], bytes[1],
                   pix.length >= 3 ? bytes[2] : new byte[w*h]);
                 stackO.addSlice(imageName + ":" + (j + 1), ip);
               }
@@ -603,7 +602,7 @@ public class Importer {
                 if (stackO == null) stackO = new ImageStack(w, h);
                 int[][] pix = new int[c][w*h];
                 for (int k=0; k<c; k++) {
-                  System.arraycopy(s, k*pix[k].length, pix[k], 0, 
+                  System.arraycopy(s, k*pix[k].length, pix[k], 0,
                     pix[k].length);
                 }
                 byte[][] bytes = new byte[c][w*h];
@@ -613,7 +612,7 @@ public class Importer {
                   bytes[k] = (byte[]) ip.getPixels();
                 }
                 ip = new ColorProcessor(w, h);
-                ((ColorProcessor) ip).setRGB(bytes[0], bytes[1], 
+                ((ColorProcessor) ip).setRGB(bytes[0], bytes[1],
                   pix.length >= 3 ? bytes[2] : new byte[w*h]);
                 stackO.addSlice(imageName + ":" + (j + 1), ip);
               }
@@ -628,7 +627,7 @@ public class Importer {
               if (c == 1) {
                 ip = new FloatProcessor(w, h, f, null);
                 if (stackF == null) stackF = new ImageStack(w, h);
-  
+
                 if (stackB != null) {
                   ip = ip.convertToByte(true);
                   stackB.addSlice(imageName + ":" + (j + 1), ip);
@@ -653,7 +652,7 @@ public class Importer {
                 }
                 else {
                   for (int k=0; k<c; k++) {
-                    System.arraycopy(f, k*pix[k].length, pix[k], 0, 
+                    System.arraycopy(f, k*pix[k].length, pix[k], 0,
                       pix[k].length);
                   }
                 }
@@ -664,7 +663,7 @@ public class Importer {
                   bytes[k] = (byte[]) ip.getPixels();
                 }
                 ip = new ColorProcessor(w, h);
-                ((ColorProcessor) ip).setRGB(bytes[0], bytes[1], 
+                ((ColorProcessor) ip).setRGB(bytes[0], bytes[1],
                   pix.length >= 3 ? bytes[2] : new byte[w*h]);
                 stackO.addSlice(imageName + ":" + (j + 1), ip);
               }
@@ -685,7 +684,7 @@ public class Importer {
                 if (stackO == null) stackO = new ImageStack(w, h);
                 double[][] pix = new double[c][w*h];
                 for (int k=0; k<c; k++) {
-                  System.arraycopy(d, k*pix[k].length, pix[k], 0, 
+                  System.arraycopy(d, k*pix[k].length, pix[k], 0,
                     pix[k].length);
                 }
                 byte[][] bytes = new byte[c][w*h];
@@ -695,13 +694,13 @@ public class Importer {
                   bytes[k] = (byte[]) ip.getPixels();
                 }
                 ip = new ColorProcessor(w, h);
-                ((ColorProcessor) ip).setRGB(bytes[0], bytes[1], 
+                ((ColorProcessor) ip).setRGB(bytes[0], bytes[1],
                   pix.length >= 3 ? bytes[2] : new byte[w*h]);
                 stackO.addSlice(imageName + ":" + (j + 1), ip);
               }
             }
           }
-  
+
           IJ.showStatus("Creating image");
           IJ.showProgress(1);
           ImagePlus imp = null;
@@ -733,18 +732,18 @@ public class Importer {
             }
             else imp = new ImagePlus(imageName, stackO);
           }
-  
+
           if (imp != null) {
             // retrieve the spatial calibration information, if available
-  
+
             applyCalibration(store, imp, i);
             imp.setFileInfo(fi);
-  
+
 //            int c = r.getSizeC(id);
             displayStack(imp, r, fs, id);
             r.close();
           }
-  
+
           long endTime = System.currentTimeMillis();
           double elapsed = (endTime - startTime) / 1000.0;
           if (num[i] == 1) {
@@ -756,9 +755,9 @@ public class Importer {
               average + " ms per plane)");
           }
         }
-  
+
         r.close();
-        
+
       }
 
       plugin.success = true;
@@ -772,7 +771,7 @@ public class Importer {
       Prefs.set("bioformats.stitchFiles", stitchFiles);
       Prefs.set("bioformats.specifyRanges", specifyRanges);
       Prefs.set("bioformats.stackFormat", stackFormat);
-      
+
       if (stackFormat.equals(VIEW_BROWSER)) {
         LociDataBrowser ldb = new LociDataBrowser(r,fs,id);
         ldb.run("");
@@ -797,8 +796,8 @@ public class Importer {
 
   /** Opens each channel of the source stack in a separate window. */
   private void slice(ImageStack is, String id, int z, int c, int t,
-    FileInfo fi, IFormatReader r, FileStitcher fs, boolean range, boolean colorize)
-    throws FormatException, IOException
+    FileInfo fi, IFormatReader r, FileStitcher fs, boolean range,
+    boolean colorize) throws FormatException, IOException
   {
     int step = 1;
     if (range) {
@@ -834,9 +833,9 @@ public class Importer {
 
     for (int i=0; i<newStacks.length; i++) {
       ImagePlus imp = new ImagePlus(id + " - Ch" + (i+1), newStacks[i]);
-      applyCalibration((OMEXMLMetadataStore) r.getMetadataStore(id), imp, 
+      applyCalibration((OMEXMLMetadataStore) r.getMetadataStore(id), imp,
         r.getSeries(id));
-       
+
       // colorize channels; mostly copied from the ImageJ source
 
       if (colorize) {
@@ -865,9 +864,9 @@ public class Importer {
     }
   }
 
-  /** Apply spatial calibrations to an image stack. */
-  private void applyCalibration(OMEXMLMetadataStore store, ImagePlus imp, 
-    int series) 
+  /** Applies spatial calibrations to an image stack. */
+  private void applyCalibration(OMEXMLMetadataStore store, ImagePlus imp,
+    int series)
   {
     double xcal = Double.NaN, ycal = Double.NaN, zcal = Double.NaN;
     Integer ii = new Integer(series);
@@ -889,8 +888,10 @@ public class Importer {
     }
   }
 
-  /** Display the image stack using the appropriate plugin */
-  private void displayStack(ImagePlus imp, IFormatReader r, FileStitcher fs, String id) {   
+  /** Displays the image stack using the appropriate plugin. */
+  private void displayStack(ImagePlus imp, IFormatReader r,
+    FileStitcher fs, String id)
+  {
     try {
       if (stackFormat.equals(VIEW_STANDARD)) imp.show();
       else if (stackFormat.equals(VIEW_BROWSER)) {
@@ -899,8 +900,8 @@ public class Importer {
       else if (stackFormat.equals(VIEW_IMAGE_5D)) {
         int sizeC = r.getSizeC(id);
         if (imp.getStackSize() == r.getSizeZ(id) * r.getSizeT(id)) sizeC = 1;
-    
-        // need to re-order the stack so that the order is XYCZT 
+
+        // need to re-order the stack so that the order is XYCZT
 
         ImageStack is = new ImageStack(r.getSizeX(id), r.getSizeY(id));
         ImageStack old = imp.getStack();
@@ -933,7 +934,7 @@ public class Importer {
       }
     }
     catch (Exception e) {
-      imp.show(); 
+      imp.show();
     }
   }
 
