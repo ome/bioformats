@@ -40,7 +40,6 @@ public final class MatlabUtil {
   /** Reflected universe containing singleton MATLAB instance. */
   private static ReflectedUniverse r;
 
-
   // -- MatlabUtil API methods --
 
   /** Gets the version of MATLAB available, or null if none. */

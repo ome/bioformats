@@ -48,7 +48,6 @@ public class SliceToggler extends DialogPane {
   /** Option for hiding selected slices. */
   protected JRadioButton hidden;
 
-
   // -- Other fields --
 
   /** Stack handler for this slice toggler. */
@@ -56,7 +55,6 @@ public class SliceToggler extends DialogPane {
 
   /** Data transform upon which this slice toggler operates. */
   protected DataTransform transform;
-
 
   // -- Constructor --
 
@@ -99,12 +97,10 @@ public class SliceToggler extends DialogPane {
     ));
   }
 
-
   // -- SliceToggler API methods --
 
   /** Sets the transform affected by this slice toggler. */
   public void setTransform(DataTransform trans) { transform = trans; }
-
 
   // -- DialogPane API methods --
 
@@ -117,7 +113,6 @@ public class SliceToggler extends DialogPane {
     step.setText("1");
     visible.setSelected(true);
   }
-
 
   // -- ActionListener API methods --
 

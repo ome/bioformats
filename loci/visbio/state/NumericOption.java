@@ -41,7 +41,6 @@ public class NumericOption extends BioOption {
   /** Text field GUI component. */
   private JTextField field;
 
-
   // -- Constructor --
 
   /** Constructs a new option. */
@@ -68,7 +67,6 @@ public class NumericOption extends BioOption {
       FormsUtil.makeRow(text, field, unit);
   }
 
-
   // -- NumericOption API methods --
 
   /** Gets this option's current setting as an integer value. */
@@ -90,7 +88,6 @@ public class NumericOption extends BioOption {
     return value;
   }
 
-
   // -- BioOption API methods --
 
   /** Gets a GUI component representing this option. */
@@ -98,7 +95,6 @@ public class NumericOption extends BioOption {
 
   /** Sets the GUI component to reflect the given value. */
   public void setValue(String value) { field.setText(value); }
-
 
   // -- Saveable API methods --
 

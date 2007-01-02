@@ -40,7 +40,6 @@ public class ControlPanel extends JPanel {
   /** Tip for this control panel. */
   protected String tip;
 
-
   // -- Constructor --
 
   /** Constructs a control panel. */
@@ -51,7 +50,6 @@ public class ControlPanel extends JPanel {
     this.tip = tip;
     setLayout(new BorderLayout());
   }
-
 
   // -- ControlPanel API methods --
 

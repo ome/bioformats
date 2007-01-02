@@ -39,7 +39,6 @@ public class WindowInfo implements WindowListener {
   /** Current gap from top left edge of screen. */
   protected static int gap;
 
-
   // -- Fields --
 
   /** Window for which this object stores additional information. */
@@ -50,7 +49,6 @@ public class WindowInfo implements WindowListener {
 
   /** True if the window has not yet been shown onscreen. */
   protected boolean first;
-
 
   // -- Constructor --
 
@@ -65,7 +63,6 @@ public class WindowInfo implements WindowListener {
     first = true;
     window.addWindowListener(this);
   }
-
 
   // -- WindowInfo API methods --
 
@@ -99,7 +96,6 @@ public class WindowInfo implements WindowListener {
 
   /** Gets the associated window. */
   public Window getWindow() { return window; }
-
 
   // -- WindowListener API methods --
 

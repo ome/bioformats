@@ -33,14 +33,12 @@ public class LineTool extends OverlayTool {
   /** Line currently being drawn. */
   protected OverlayLine line;
 
-
   // -- Constructor --
 
   /** Constructs a measurement line creation tool. */
   public LineTool(OverlayTransform overlay) {
     super(overlay, "Line", "Line", "line.png");
   }
-
 
   // -- OverlayTool API methods --
 

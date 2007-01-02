@@ -48,7 +48,6 @@ public class WindowManager extends LogicManager implements WindowListener {
   public static final String HIDE_ALL =
     "Hide all windows when main window is minimized";
 
-
   // -- Fields --
 
   /** Table for keeping track of registered windows. */
@@ -72,18 +71,15 @@ public class WindowManager extends LogicManager implements WindowListener {
   /** Whether to distribute the menu bar across all registered frames. */
   protected boolean distributed;
 
-
   // -- Fields - initial state --
 
   /** Table of window states read during state restore. */
   protected Hashtable windowStates = new Hashtable();
 
-
   // -- Constructor --
 
   /** Constructs a window manager. */
   public WindowManager(VisBioFrame bio) { super(bio); }
-
 
   // -- WindowManager API methods --
 
@@ -210,7 +206,6 @@ public class WindowManager extends LogicManager implements WindowListener {
     doMenuBars(dist ? bio.getJMenuBar() : null);
   }
 
-
   // -- LogicManager API methods --
 
   /** Called to notify the logic manager of a VisBio event. */
@@ -236,7 +231,6 @@ public class WindowManager extends LogicManager implements WindowListener {
   /** Gets the number of tasks required to initialize this logic manager. */
   public int getTasks() { return 2; }
 
-
   // -- WindowListener API methods --
 
   public void windowDeiconified(WindowEvent e) {
@@ -258,7 +252,6 @@ public class WindowManager extends LogicManager implements WindowListener {
   public void windowClosing(WindowEvent e) { }
   public void windowDeactivated(WindowEvent e) { }
   public void windowOpened(WindowEvent e) { }
-
 
   // -- Saveable API methods --
 
@@ -299,7 +292,6 @@ public class WindowManager extends LogicManager implements WindowListener {
       else winfo.setState(ws); // window already exists; set position
     }
   }
-
 
   // -- Helper methods --
 

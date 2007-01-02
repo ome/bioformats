@@ -55,10 +55,10 @@ public class LociDataBrowser {
 
   /** The file format reader used by the plugin. */
   protected IFormatReader reader;
-  
+
   /** The file stitcher used by the reader.*/
   protected FileStitcher fStitch;
-  
+
   /** The CustomWindow used to display data.*/
   protected CustomWindow cw;
 
@@ -95,25 +95,25 @@ public class LociDataBrowser {
     fStitch = new FileStitcher();
     reader = new ChannelSeparator(fStitch);
   }
-  
+
   public LociDataBrowser(String name) {
     this();
     id = name;
     virtual = true;
   }
-  
+
   public LociDataBrowser(boolean merged) {
     fStitch = new FileStitcher();
     if(merged) reader = new ChannelMerger(fStitch);
     else reader = new ChannelSeparator(fStitch);
   }
-  
+
   public LociDataBrowser(String name, boolean merged) {
     this(merged);
     id = name;
     virtual = true;
   }
-  
+
   public LociDataBrowser(IFormatReader r, FileStitcher fs, String name) {
     virtual = true;
     reader = r;
@@ -123,7 +123,7 @@ public class LociDataBrowser {
 
   // -- LociDataBrowser API methods --
 
-  /** 
+  /**
   * Displays the given ImageJ image in a 4D browser window.
   * NB: this method is needed only internally. Do not call.
   */
@@ -143,7 +143,7 @@ public class LociDataBrowser {
 
     cw = new CustomWindow(this, imp, new ImageCanvas(imp));
   }
-  
+
   /** Set the length of each dimensional axis and the dimension order. */
   public void setDimensions(int sizeZ, int sizeC, int sizeT, int z,
     int c, int t)
@@ -165,11 +165,11 @@ public class LociDataBrowser {
     cIndex = c;
     tIndex = t;
   }
-  
+
   /** Reset all dimensional data in case they've switched.*/
   public void setDimensions() {
     String order = null;
-    
+
     if (fStitch != null) {
       try {
         numZ = fStitch.getSizeZ(id);
@@ -201,11 +201,11 @@ public class LociDataBrowser {
         return;
       }
     }
-    
+
     hasZ = numZ > 1;
     hasC = numC > 1;
     hasT = numT > 1;
-    
+
     zIndex = order.indexOf("Z") - 2;
     cIndex = order.indexOf("C") - 2;
     tIndex = order.indexOf("T") - 2;
@@ -245,17 +245,17 @@ public class LociDataBrowser {
 
     series = Integer.parseInt(datasets.getNextChoice());
   }
-  
+
   public static void exceptionMessage(Exception exc) {
     String msg = exc.toString();
     StackTraceElement[] ste = exc.getStackTrace();
     for(int i = 0;i<ste.length;i++) {
      msg = msg + "\n" + ste[i].toString();
     }
-    
+
     IJ.showMessage(msg);
   }
-  
+
   public void toggleCache(boolean cached) {
     if(cached) {
       if(!virtual) {
@@ -297,7 +297,7 @@ public class LociDataBrowser {
             IJ.log("name = " + name);
             IJ.log("virtual = " + virtual);
           }
-        
+
           id = name;
           if (DEBUG) System.err.println("id = " + id);
         }

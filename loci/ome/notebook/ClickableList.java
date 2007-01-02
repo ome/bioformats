@@ -189,7 +189,6 @@ public class ClickableList extends JList
           String dbPrefix = "LOCI." +
             tableP.el.getAttribute("XMLName").toUpperCase() + "_ANNOTATION.";
 
-
           childE = DOMUtil.createChild(stE, "Element");
           childE.setAttribute("Name", "Name");
           childE.setAttribute("DBLocation", dbPrefix + "NAME");

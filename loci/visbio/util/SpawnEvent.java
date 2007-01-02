@@ -31,12 +31,10 @@ public class SpawnEvent {
   /** The arguments passed from the spawned application instance. */
   protected String[] args;
 
-
   // -- Constructor --
 
   /** Constructs an application instance spawn event. */
   public SpawnEvent(String[] args) { this.args = args; }
-
 
   // -- SpawnEvent API methods --
 

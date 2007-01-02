@@ -44,7 +44,6 @@ public class CollapseWidget extends JPanel implements ActionListener {
   /** Dropdown combo box listing available dimensions for collapse. */
   protected BioComboBox axes;
 
-
   // -- Constructor --
 
   /** Creates a new dimensional collapse widget. */
@@ -74,7 +73,6 @@ public class CollapseWidget extends JPanel implements ActionListener {
     setLayout(new BorderLayout());
     add(FormsUtil.makeColumn(row1, row2));
   }
-
 
   // -- ActionListener API methods --
 

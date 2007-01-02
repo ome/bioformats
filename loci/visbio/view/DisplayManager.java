@@ -63,24 +63,20 @@ public class DisplayManager extends LogicManager {
   public static final String WARN_IMAGEJ =
     "Warn about problem where quitting VisBio also quits ImageJ";
 
-
   // -- Fields --
 
   /** Counter for display names. */
   protected int nextId;
-
 
   // -- Control panel --
 
   /** Displays control panel. */
   protected DisplayControls displayControls;
 
-
   // -- Constructor --
 
   /** Constructs a display manager. */
   public DisplayManager(VisBioFrame bio) { super(bio); }
-
 
   // -- DisplayManager API methods --
 
@@ -163,7 +159,6 @@ public class DisplayManager extends LogicManager {
   /** Gets associated control panel. */
   public DisplayControls getControls() { return displayControls; }
 
-
   // -- LogicManager API methods --
 
   /** Called to notify the logic manager of a VisBio event. */
@@ -189,7 +184,6 @@ public class DisplayManager extends LogicManager {
 
   /** Gets the number of tasks required to initialize this logic manager. */
   public int getTasks() { return 3; }
-
 
   // -- Saveable API methods --
 
@@ -236,7 +230,6 @@ public class DisplayManager extends LogicManager {
       if (!vn.contains(display)) removeDisplay(display);
     }
   }
-
 
   // -- Helper methods --
 

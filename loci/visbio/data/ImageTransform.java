@@ -40,7 +40,6 @@ public abstract class ImageTransform extends DataTransform {
   public static final ScaledUnit MICRON =
     new ScaledUnit(1e-6, SI.meter, "mu"); // VisAD font does not show MU char
 
-
   // -- Fields --
 
   /** Physical image dimensions in microns. */
@@ -60,7 +59,6 @@ public abstract class ImageTransform extends DataTransform {
 
   /** MathType of generated images. */
   private FunctionType functionType;
-
 
   // -- Constructors --
 
@@ -101,7 +99,6 @@ public abstract class ImageTransform extends DataTransform {
     if (step == step) zType = DataUtil.getRealType(name + "_Z_mu", MICRON);
     else zType = DataUtil.getRealType(name + "_Z", null);
   }
-
 
   // -- ImageTransform API methods --
 
@@ -190,7 +187,6 @@ public abstract class ImageTransform extends DataTransform {
     if (micronStep != micronStep) return null;
     return new ScaledUnit(getMicronStep(axis), MICRON);
   }
-
 
   // -- DataTransform API methods --
 

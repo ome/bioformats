@@ -67,7 +67,7 @@ public final class MathUtil {
     double[] p = getProjection(a, b, v, segment);
     return getDistance(p, v);
   }
-  
+
   /**
    * Computes the minimum distance between the point p and the point v.
    *
@@ -79,7 +79,7 @@ public final class MathUtil {
     int len = p.length;  // redundant with getProjection
     double sum = 0;
     for (int i=0; i<len; i++) {
-      double dist = p[i] - v[i]; 
+      double dist = p[i] - v[i];
       sum += dist * dist;
     }
     return Math.sqrt(sum);
@@ -90,12 +90,12 @@ public final class MathUtil {
    *
    * @param a Coordinates of the segment's first endpoint
    * @param b Coordinates of the segment's second endpoint
-   * @param v Coordinates of the point to be projected 
-   * @param segment Whether the projection should be constrained to the given line segment 
+   * @param v Coordinates of the point to be projected
+   * @param segment Whether the projection should be constrained to the given line segment
    *
    */
 
-  public static double[] getProjection (double[] a, double[] b, double[] v, boolean segment) 
+  public static double[] getProjection (double[] a, double[] b, double[] v, boolean segment)
   {
     int len = a.length;
     // vectors
@@ -116,7 +116,7 @@ public final class MathUtil {
     double c = numer / denom;
     double[] p = new double[len];
     for (int i=0; i<len; i++) p[i] = c * ab[i] + a[i];
-    
+
     int flag = 0;
     if (segment) {
       for (int i=0; i<len; i++) {
@@ -131,20 +131,20 @@ public final class MathUtil {
     else if (flag == 1) return a;
     else return b;
   }
-  
-   /**  Gets distance to curve: finds out if the nearest point is a node or a segment; 
-   * 
+
+   /**  Gets distance to curve: finds out if the nearest point is a node or a segment;
+   *
    *  @param x x coordinate of point in question
    *  @param y y coordinate of point in question
-   *  @return an array double[3], with element 0 being node index i of one end of 
-   *  closest line segment (the other end being i+1), and the third being the weight 
+   *  @return an array double[3], with element 0 being node index i of one end of
+   *  closest line segment (the other end being i+1), and the third being the weight
    *  between zero and one for interpolation along the segment (i, i+1)
-   */ 
+   */
   public static double[] getDistSegWt(float[][] nodes, float x, float y) {
     // assumes a non-ragged array of float[2][numNodes]
     double minDist = Double.MAX_VALUE;
     int seg = 0;
-    double weight = 0;   
+    double weight = 0;
 
     int numNodes = nodes[0].length;
 
@@ -170,7 +170,7 @@ public final class MathUtil {
            double fracDist = getDistance (a, proj);
            weight = fracDist / segDist;
          }
-       } 
+       }
     }
     double[] retvals = {minDist, (double) seg, weight};
     return retvals;

@@ -49,12 +49,10 @@ public class SystemControls extends ControlPanel implements ActionListener {
   /** Look &amp; Feel text field. */
   private JTextField lafField;
 
-
   // -- Fields --
 
   /** Current memory usage. */
   protected String memUsage;
-
 
   // -- Constructor --
 
@@ -240,7 +238,6 @@ public class SystemControls extends ControlPanel implements ActionListener {
     t.start();
   }
 
-
   // -- ActionListener API methods --
 
   /** Handles action events. */
@@ -349,7 +346,6 @@ public class SystemControls extends ControlPanel implements ActionListener {
       }
     }
   }
-
 
   // -- Utility methods --
 

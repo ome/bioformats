@@ -58,7 +58,7 @@ public class OverlayFreeform extends OverlayObject {
     computeGridParameters();
     computeLength();
   }
-  
+
   public OverlayFreeform(OverlayTransform overlay, float[][] nodes) {
     super(overlay);
     x1=x2=y1=y2=0f;
@@ -118,7 +118,7 @@ public class OverlayFreeform extends OverlayObject {
     else if (y > y1 && y > y2) ydist = y - Math.max(y1, y2);
     return Math.sqrt(xdist * xdist + ydist * ydist);
   }
-  
+
   /** Compute the shortest distance from this object to the given point */
   public double getDistance (double x, double y) {
      double[] distSegWt = MathUtil.getDistSegWt(nodes, (float) x, (float) y);

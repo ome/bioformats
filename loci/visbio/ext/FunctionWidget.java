@@ -47,7 +47,6 @@ public class FunctionWidget extends JPanel implements ActionListener {
   /** Fields corresponding to function parameters. */
   protected JTextField[] paramFields;
 
-
   // -- Constructor --
 
   public FunctionWidget(ExternalFunction function) {
@@ -87,7 +86,6 @@ public class FunctionWidget extends JPanel implements ActionListener {
     setLayout(new BorderLayout());
     add(builder.getPanel());
   }
-
 
   // -- ActionListener API methods --
 

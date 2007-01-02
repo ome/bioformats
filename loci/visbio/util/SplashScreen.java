@@ -49,7 +49,6 @@ public class SplashScreen extends JWindow {
   /** Total number of tasks. */
   private int tasks = 0;
 
-
   // -- Constructor --
 
   /**

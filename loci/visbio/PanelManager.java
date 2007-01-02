@@ -62,12 +62,10 @@ public class PanelManager extends LogicManager {
   /** Pane containing control panels. */
   private JPanel pane;
 
-
   // -- Constructor --
 
   /** Constructs a panel manager. */
   public PanelManager(VisBioFrame bio) { super(bio); }
-
 
   // -- PanelManager API methods --
 
@@ -102,7 +100,6 @@ public class PanelManager extends LogicManager {
     }
     return null;
   }
-
 
   // -- LogicManager API methods --
 
@@ -169,7 +166,6 @@ public class PanelManager extends LogicManager {
 
   /** Gets the number of tasks required to initialize this logic manager. */
   public int getTasks() { return 2; }
-
 
   // -- Helper methods --
 

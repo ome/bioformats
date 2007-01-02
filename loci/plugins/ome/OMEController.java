@@ -121,7 +121,6 @@ public class OMEController {
 
     cleanup(toRemove, true);
 
-
     // iterate through the list and look for duplicates
     // if we find a pair of duplicates, remove the first from the list
     // and kill it in ImageJ (latter may or may not work)

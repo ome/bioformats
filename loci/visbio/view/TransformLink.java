@@ -86,12 +86,10 @@ public class TransformLink
   /** Last cached dimensional position of the link. */
   protected int[] cachedPos;
 
-
   // -- Fields - initial state --
 
   /** Whether data transform is visible onscreen. */
   protected boolean visible;
-
 
   // -- Constructor --
 
@@ -109,7 +107,6 @@ public class TransformLink
     visible = true;
     initState(null);
   }
-
 
   // -- TransformLink API methods --
 
@@ -190,7 +187,6 @@ public class TransformLink
     doMessages(false);
   }
 
-
   // -- DisplayListener API methods --
 
   /** Handles VisAD display events. */
@@ -212,7 +208,6 @@ public class TransformLink
     // pass along DisplayEvents to linked transform
     trans.displayChanged(e);
   }
-
 
   // -- Dynamic API methods --
 
@@ -291,7 +286,6 @@ public class TransformLink
    */
   public void discard() { destroy(); }
 
-
   // -- Runnable API methods --
 
   /** Executes full-resolution burn-in operations. */
@@ -329,7 +323,6 @@ public class TransformLink
     }
   }
 
-
   // -- Saveable API methods --
 
   /** Writes the current state to the given DOM element ("LinkedData"). */
@@ -353,7 +346,6 @@ public class TransformLink
     if (colorHandler != null) colorHandler.restoreState(el);
     visible = el.getAttribute("visible").equalsIgnoreCase("true");
   }
-
 
   // -- TransformListener API methods --
 
@@ -399,7 +391,6 @@ public class TransformLink
       }
     }
   }
-
 
   // -- Internal TransformLink API methods --
 
@@ -582,7 +573,6 @@ public class TransformLink
         range[i].getName() + " = " + rangeValues[i]);
     }
   }
-
 
   // -- Helper methods --
 

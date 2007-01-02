@@ -221,7 +221,6 @@ public class OMETools {
     exc.printStackTrace();
   }
 
-
   // -- Upload methods --
 
   /** Does the work for uploading data to OME. */

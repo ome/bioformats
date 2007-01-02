@@ -36,7 +36,6 @@ public class VisBioEvent extends EventObject {
   /** Indicates the state of one of VisBio's logic managers has changed. */
   public static final int STATE_CHANGED = 2;
 
-
   // -- Fields --
 
   /** The type of this event. */
@@ -47,7 +46,6 @@ public class VisBioEvent extends EventObject {
 
   /** Flag indicating whether event is undoable. */
   private boolean undoable;
-
 
   // -- Constructor --
 
@@ -60,7 +58,6 @@ public class VisBioEvent extends EventObject {
     this.message = message;
     this.undoable = undoable;
   }
-
 
   // -- VisBioEvent API methods --
 

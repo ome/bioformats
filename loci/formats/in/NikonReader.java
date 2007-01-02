@@ -114,7 +114,6 @@ public class NikonReader extends BaseTiffReader {
   /** The original IFD. */
   protected Hashtable original;
 
-
   // -- Constructor --
 
   /** Constructs a new Nikon reader. */

@@ -58,7 +58,6 @@ public class CaptureHandler implements Saveable {
   /** File chooser for movie output. */
   protected JFileChooser movieBox;
 
-
   // -- Fields - initial state --
 
   /** List of positions. */
@@ -73,12 +72,10 @@ public class CaptureHandler implements Saveable {
   /** Whether transitions use a smoothing sine function. */
   protected boolean movieSmooth = true;
 
-
   // -- Constructor --
 
   /** Creates a display capture handler. */
   public CaptureHandler(DisplayWindow dw) { window = dw; }
-
 
   // -- CaptureHandler API methods --
 
@@ -279,7 +276,6 @@ public class CaptureHandler implements Saveable {
     }.start();
   }
 
-
   // -- CaptureHandler API methods - state logic --
 
   /** Tests whether two objects are in equivalent states. */
@@ -340,7 +336,6 @@ public class CaptureHandler implements Saveable {
     captureWindow.setSmooth(movieSmooth);
   }
 
-
   // -- Saveable API methods --
 
   /** Writes the current state to the given DOM element ("Display"). */
@@ -387,7 +382,6 @@ public class CaptureHandler implements Saveable {
     movieSmooth = child.getAttribute("smooth").equalsIgnoreCase("true");
   }
 
-
   // -- Helper methods --
 
   /**
@@ -425,7 +419,6 @@ public class CaptureHandler implements Saveable {
       }
     });
   }
-
 
   // -- Utility methods --
 

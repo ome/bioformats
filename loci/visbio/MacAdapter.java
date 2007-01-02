@@ -43,12 +43,10 @@ public class MacAdapter extends ApplicationAdapter {
   /** Linked VisBio frame. */
   private VisBioFrame bio;
 
-
   // -- Constructor --
 
   /** Constructs a Mac OS X adapter. */
   public MacAdapter(VisBioFrame bio) { this.bio = bio; }
-
 
   // -- MacAdapter API methods --
 
@@ -58,7 +56,6 @@ public class MacAdapter extends ApplicationAdapter {
     app.setEnabledPreferencesMenu(true);
     app.addApplicationListener(new MacAdapter(bio));
   }
-
 
   // -- ApplicationAdapter API methods --
 

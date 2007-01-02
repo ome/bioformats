@@ -33,14 +33,12 @@ public class BoxTool extends OverlayTool {
   /** Box currently being drawn. */
   protected OverlayBox box;
 
-
   // -- Constructor --
 
   /** Constructs a box overlay creation tool. */
   public BoxTool(OverlayTransform overlay) {
     super(overlay, "Box", "Box", "box.png");
   }
-
 
   // -- OverlayTool API methods --
 
@@ -50,7 +48,7 @@ public class BoxTool extends OverlayTool {
     box = new OverlayBox(overlay, x, y, x, y);
     configureOverlay(box);
     OverlayWidget panel = (OverlayWidget) overlay.getControls();
-    box.setFilled(panel.isFilled()); 
+    box.setFilled(panel.isFilled());
     overlay.addObject(box, pos);
   }
 

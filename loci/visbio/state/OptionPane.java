@@ -36,7 +36,6 @@ public class OptionPane extends DialogPane {
   /** Flag indicating options should be divided into separate tabs. */
   protected static final boolean USE_TABS = false;
 
-
   // -- Fields --
 
   /** Options manager. */
@@ -47,7 +46,6 @@ public class OptionPane extends DialogPane {
 
   /** Non-tabbed pane. */
   protected JPanel noTabs;
-
 
   // -- Constructor --
 
@@ -66,7 +64,6 @@ public class OptionPane extends DialogPane {
     }
   }
 
-
   // -- OptionPane API methods --
 
   /** Adds an option with a boolean value to the specified tab. */
@@ -83,12 +80,10 @@ public class OptionPane extends DialogPane {
   /** Initializes a tab with the given name. */
   public void addTab(String tab) { if (USE_TABS) getTab(tab); }
 
-
   // -- DialogPane API methods --
 
   /** Resets the dialog pane's components to their default states. */
   public void resetComponents() { if (USE_TABS) tabs.setSelectedIndex(0); }
-
 
   // -- Helper methods --
 

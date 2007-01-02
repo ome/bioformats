@@ -33,7 +33,6 @@ public class CustomOption extends BioOption {
   /** Custom GUI component. */
   private Component c;
 
-
   // -- Constructor --
 
   /** Constructs a new option. */
@@ -41,7 +40,6 @@ public class CustomOption extends BioOption {
     super("[Custom]");
     this.c = c;
   }
-
 
   // -- BioOption API methods --
 

@@ -39,7 +39,6 @@ public class WarningPane extends MessagePane {
     super("VisBio Warning", makePanel(text), allowCancel);
   }
 
-
   // -- Helper methods --
 
   /** Creates a panel containing the given text. */

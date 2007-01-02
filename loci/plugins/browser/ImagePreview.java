@@ -64,8 +64,6 @@ public class ImagePreview extends JComponent
         System.err.println("file path: "+file.getAbsolutePath());
       }
 
-      
-
       synchronized(ir) {
         String path = file.getAbsolutePath();
         int sizeZ = ir.getSizeZ(path);
@@ -96,7 +94,7 @@ public class ImagePreview extends JComponent
     else if (JFileChooser.SELECTED_FILE_CHANGED_PROPERTY.equals(prop)) {
       file = (File) e.getNewValue();
       if (file == null) initial = true;
-      else if (file != null && file.isDirectory()) initial = true; 
+      else if (file != null && file.isDirectory()) initial = true;
       update = true;
     }
 
@@ -108,7 +106,7 @@ public class ImagePreview extends JComponent
       }
     }
   }
-  
+
   // -- Runnable API methods --
 
   /** The thread method that does the slice loading.*/

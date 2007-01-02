@@ -38,7 +38,6 @@ public class MetadataPane extends JPanel {
   /** Column headings for metadata table. */
   protected static final String[] META_COLUMNS = {"Name", "Value"};
 
-
   // -- Fields --
 
   /** Associated metadata. */
@@ -52,7 +51,6 @@ public class MetadataPane extends JPanel {
 
   /** Table model backing metadata table. */
   protected DefaultTableModel metaTableModel;
-
 
   // -- Constructor --
 

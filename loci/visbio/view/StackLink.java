@@ -43,7 +43,6 @@ public class StackLink extends TransformLink {
   /** Dummy data to avoid "Data is null" message for volume reference. */
   protected static final Data DUMMY = new Real(0);
 
-
   // -- Fields --
 
   /** Data references linking data to the display. */
@@ -75,7 +74,6 @@ public class StackLink extends TransformLink {
   /** Resolution of rendered volumes. */
   protected int volumeRes = StackHandler.DEFAULT_VOLUME_RESOLUTION;
 
-
   // -- Fields - initial state --
 
   /** Data transform's current slice. */
@@ -87,7 +85,6 @@ public class StackLink extends TransformLink {
    */
   protected boolean[] visSlices;
 
-
   // -- Constructor --
 
   /** Constructs an uninitialized stack link. */
@@ -98,7 +95,6 @@ public class StackLink extends TransformLink {
    * the specified stack handler's display.
    */
   public StackLink(StackHandler h, DataTransform t) { super(h, t); }
-
 
   // -- StackLink API methods --
 
@@ -216,7 +212,6 @@ public class StackLink extends TransformLink {
 
   /** Gets maximum resolution per axis of rendered volumes. */
   public int getVolumeResolution() { return volumeRes; }
-
 
   // -- TransformLink API methods --
 
@@ -336,7 +331,6 @@ public class StackLink extends TransformLink {
     return vis;
   }
 
-
   // -- Dynamic API methods --
 
   /** Tests whether two dynamic objects are equivalent. */
@@ -393,7 +387,6 @@ public class StackLink extends TransformLink {
     setStackAxis(stackAxis);
   }
 
-
   // -- Saveable API methods --
 
   /** Writes the current state to the given DOM element ("LinkedData"). */
@@ -428,7 +421,6 @@ public class StackLink extends TransformLink {
     volume = el.getAttribute("isVolume").equalsIgnoreCase("true");
     volumeRes = Integer.parseInt(el.getAttribute("volumeResolution"));
   }
-
 
   // -- Internal StackLink API methods
 
@@ -469,7 +461,6 @@ public class StackLink extends TransformLink {
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
   }
-
 
   // -- Internal TransformLink API methods --
 

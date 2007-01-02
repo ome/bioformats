@@ -35,7 +35,6 @@ public class ProgramState {
   /** State object for use in state restoration. */
   public Document state;
 
-
   // -- Constructor --
 
   /** Constructs a VisBio state wrapper. */

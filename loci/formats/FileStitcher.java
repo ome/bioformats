@@ -496,7 +496,6 @@ public class FileStitcher implements IFormatReader {
     return FormatReader.getZCTCoords(this, id, index);
   }
 
-
   /* @see IFormatReader#getMetadataValue(String, String) */
   public Object getMetadataValue(String id, String field)
     throws FormatException, IOException
@@ -589,7 +588,6 @@ public class FileStitcher implements IFormatReader {
   public void setIdMap(Hashtable map) {
     for (int i=0; i<readers.length; i++) readers[i].setIdMap(map);
   }
-
 
   // -- Helper methods --
 
@@ -881,6 +879,5 @@ public class FileStitcher implements IFormatReader {
   public static void main(String[] args) throws FormatException, IOException {
     if (!new FileStitcher().testRead(args)) System.exit(1);
   }
-
 
 }

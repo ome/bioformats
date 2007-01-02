@@ -43,7 +43,6 @@ public class OptionManager extends LogicManager {
   /** Configuration file for storing VisBio options. */
   private static final File CONFIG_FILE = new File("visbio.ini");
 
-
   // -- Fields --
 
   /** Option pane. */
@@ -51,7 +50,6 @@ public class OptionManager extends LogicManager {
 
   /** List of options. */
   private Vector list;
-
 
   // -- Constructor --
 
@@ -67,7 +65,6 @@ public class OptionManager extends LogicManager {
     options.addTab("Warnings");
     options.addTab("Debug");
   }
-
 
   // -- OptionManager API methods --
 
@@ -199,7 +196,6 @@ public class OptionManager extends LogicManager {
     return success;
   }
 
-
   // -- LogicManager API methods --
 
   /** Called to notify the logic manager of a VisBio event. */
@@ -225,7 +221,6 @@ public class OptionManager extends LogicManager {
   /** Gets the number of tasks required to initialize this logic manager. */
   public int getTasks() { return 1; }
 
-
   // -- Saveable API methods --
 
   /** Writes the current state to the given DOM element ("VisBio"). */
@@ -248,7 +243,6 @@ public class OptionManager extends LogicManager {
     }
   }
 
-
   // -- Helper methods --
 
   /** Adds options-related GUI components to VisBio. */
@@ -256,7 +250,6 @@ public class OptionManager extends LogicManager {
     // options menu
     bio.setSplashStatus("Initializing options logic");
   }
-
 
   // -- Menu commands --
 

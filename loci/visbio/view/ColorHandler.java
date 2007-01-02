@@ -46,7 +46,6 @@ public class ColorHandler {
   /** Starting opacity value. */
   protected static final int NORMAL_OPACITY = 256;
 
-
   // -- Fields --
 
   /** Associated link between data object and display. */
@@ -70,7 +69,6 @@ public class ColorHandler {
   /** Red, green and blue components of images. */
   protected RealType red, green, blue;
 
-
   // -- Fields - initial state --
 
   /** Minimum and maximum color range values. */
@@ -81,7 +79,6 @@ public class ColorHandler {
 
   /** Color tables. */
   protected float[][][] colorTables;
-
 
   // -- Constructor --
 
@@ -97,7 +94,6 @@ public class ColorHandler {
     colorModel = ColorUtil.RGB_MODEL;
     red = green = blue = ColorUtil.CLEAR;
   }
-
 
   // -- ColorHandler API methods --
 
@@ -326,7 +322,6 @@ public class ColorHandler {
     }
     return tables;
   }
-
 
   // -- ColorHandler API methods - state logic --
 

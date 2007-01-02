@@ -49,7 +49,6 @@ public class CollapseTransform extends ImageTransform {
   /** Controls for this dimensional collapse. */
   protected CollapseWidget controls;
 
-
   // -- Constructors --
 
   /** Creates an uninitialized dimensional collapse. */
@@ -62,7 +61,6 @@ public class CollapseTransform extends ImageTransform {
     initState(null);
   }
 
-
   // -- CollapseTransform API methods --
 
   /** Assigns the parameters for this dimensional collapse. */
@@ -74,7 +72,6 @@ public class CollapseTransform extends ImageTransform {
     // signal parameter change to listeners
     notifyListeners(new TransformEvent(this));
   }
-
 
   // -- ImageTransform API methods --
 
@@ -90,7 +87,6 @@ public class CollapseTransform extends ImageTransform {
 
   /** Gets number of range components at each pixel. */
   public int getRangeCount() { return range.length; }
-
 
   // -- Static DataTransform API methods --
 
@@ -121,7 +117,6 @@ public class CollapseTransform extends ImageTransform {
 
   /** Indicates whether this transform type requires a parent transform. */
   public static boolean isParentRequired() { return true; }
-
 
   // -- DataTransform API methods --
 
@@ -170,7 +165,6 @@ public class CollapseTransform extends ImageTransform {
   /** Gets associated GUI controls for this transform. */
   public JComponent getControls() { return controls; }
 
-
   // -- Dynamic API methods --
 
   /** Tests whether two dynamic objects are equivalent. */
@@ -209,7 +203,6 @@ public class CollapseTransform extends ImageTransform {
     thumbs = new ThumbnailHandler(this, getCacheFilename());
   }
 
-
   // -- Saveable API methods --
 
   /** Writes the current state to the given DOM element ("DataTransforms"). */
@@ -227,7 +220,6 @@ public class CollapseTransform extends ImageTransform {
     super.restoreState(el);
     axis = Integer.parseInt(el.getAttribute("axis"));
   }
-
 
   // -- Utility methods --
 
@@ -260,7 +252,6 @@ public class CollapseTransform extends ImageTransform {
     catch (RemoteException exc) { exc.printStackTrace(); }
     return ff;
   }
-
 
   // -- Helper methods --
 

@@ -40,12 +40,10 @@ public class MetadataViewer extends JFrame
   public static final int MENU_MASK =
     Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
-
   // -- Fields --
 
   protected JFileChooser chooser;
   protected MetadataPane metadata;
-
 
   // -- Constructor --
 
@@ -88,11 +86,9 @@ public class MetadataViewer extends JFrame
     setVisible(true);
   }
 
-
   // -- MetadataViewer API methods --
 
   public void openFile(File file) { metadata.setOMEXML(file); }
-
 
   // -- ActionListener API methods --
 
@@ -116,7 +112,6 @@ public class MetadataViewer extends JFrame
     }
   }
 
-
   // -- Runnable API methods --
 
   /** Opens a file in a separate thread. */
@@ -128,14 +123,12 @@ public class MetadataViewer extends JFrame
     wait(false);
   }
 
-
   // -- Helper methods --
 
   /** Toggles wait cursor. */
   protected void wait(boolean wait) {
     setCursor(wait ? Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR) : null);
   }
-
 
   // -- Main method --
 

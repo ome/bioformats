@@ -56,7 +56,6 @@ public class VisBioFrame extends GUIFrame implements Runnable, SpawnListener {
   public static final boolean DEBUG =
     "true".equalsIgnoreCase(System.getProperty("visbio.debug"));
 
-
   // -- Fields --
 
   /** Logic managers. */
@@ -70,7 +69,6 @@ public class VisBioFrame extends GUIFrame implements Runnable, SpawnListener {
 
   /** Instance server for this instance of VisBio. */
   protected InstanceServer instanceServer;
-
 
   // -- Constructor --
 
@@ -219,7 +217,6 @@ public class VisBioFrame extends GUIFrame implements Runnable, SpawnListener {
       else System.exit(0);
     }
   }
-
 
   // -- VisBioFrame API methods --
 
@@ -375,7 +372,6 @@ public class VisBioFrame extends GUIFrame implements Runnable, SpawnListener {
     dispose();
   }
 
-
   // -- ActionListener API methods --
 
   /**
@@ -387,7 +383,6 @@ public class VisBioFrame extends GUIFrame implements Runnable, SpawnListener {
     if (cmd.lastIndexOf(".") < 0) super.actionPerformed(e);
     else call(cmd);
   }
-
 
   // -- Runnable API methods --
 
@@ -432,7 +427,6 @@ public class VisBioFrame extends GUIFrame implements Runnable, SpawnListener {
     }
     task.setCompleted();
   }
-
 
   // -- SpawnListener API methods --
 

@@ -51,7 +51,6 @@ public class FontChooserPane extends DialogPane implements ChangeListener {
     "palpably not true. It is the chief occupation of mankind.\"\n" +
     "--H. L. Mencken";
 
-
   // -- Fields --
 
   /** Dropdown combo box containing available font names. */
@@ -68,7 +67,6 @@ public class FontChooserPane extends DialogPane implements ChangeListener {
 
   /** Text area containing preview text with the chosen font settings. */
   protected JTextArea previewText;
-
 
   // -- Constructors --
 
@@ -105,7 +103,6 @@ public class FontChooserPane extends DialogPane implements ChangeListener {
       }
       fontNames = filteredNames;
     }
-
 
     int ndx = -1;
     String family = font.getFamily();
@@ -165,12 +162,10 @@ public class FontChooserPane extends DialogPane implements ChangeListener {
     add(builder.getPanel());
   }
 
-
   // -- FontChooserPane API methods --
 
   /** Gets the font indicated by the font chooser. */
   public Font getSelectedFont() { return previewText.getFont(); }
-
 
   // -- ActionListener API methods --
 
@@ -181,12 +176,10 @@ public class FontChooserPane extends DialogPane implements ChangeListener {
     super.actionPerformed(e);
   }
 
-
   // -- ChangeListener API methods --
 
   /** Handles GUI events. */
   public void stateChanged(ChangeEvent e) { refreshFont(); }
-
 
   // -- Helper methods --
 

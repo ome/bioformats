@@ -55,7 +55,6 @@ public class ArbitrarySlice extends DataTransform
   private static final float T4COS = (float) (RADIUS6 * Math.cos(THETA4));
   private static final float T4SIN = (float) (RADIUS6 * Math.sin(THETA4));
 
-
   // -- Fields --
 
   /** Dimensional axis to slice through. */
@@ -82,7 +81,6 @@ public class ArbitrarySlice extends DataTransform
   /** Controls for the arbitrary slice. */
   protected SliceWidget controls;
 
-
   // -- Constructor --
 
   /** Creates an uninitialized arbitrary slice. */
@@ -94,7 +92,6 @@ public class ArbitrarySlice extends DataTransform
     initState(null);
     parent.addTransformListener(this);
   }
-
 
   // -- ArbitrarySlice API methods --
 
@@ -180,7 +177,6 @@ public class ArbitrarySlice extends DataTransform
   /** Gets whether arbitary slice is computed. */
   public boolean isSliceComputed() { return compute; }
 
-
   // -- Static DataTransform API methods --
 
   /** Creates a new set of overlays, with user interaction. */
@@ -205,7 +201,6 @@ public class ArbitrarySlice extends DataTransform
 
   /** Indicates whether this transform type requires a parent transform. */
   public static boolean isParentRequired() { return true; }
-
 
   // -- DataTransform API methods --
 
@@ -502,7 +497,6 @@ public class ArbitrarySlice extends DataTransform
   /** Gets associated GUI controls for this transform. */
   public JComponent getControls() { return controls; }
 
-
   // -- Dynamic API methods --
 
   /** Tests whether two dynamic objects are equivalent. */
@@ -555,7 +549,6 @@ public class ArbitrarySlice extends DataTransform
     controls = new SliceWidget(this);
   }
 
-
   // -- Saveable API methods --
 
   /** Writes the current state to the given DOM element ("DataTransforms"). */
@@ -585,7 +578,6 @@ public class ArbitrarySlice extends DataTransform
     compute = "true".equals(el.getAttribute("onTheFly"));
   }
 
-
   // -- TransformListener API methods --
 
   /** Called when parent data transform's parameters are updated. */
@@ -596,7 +588,6 @@ public class ArbitrarySlice extends DataTransform
       notifyListeners(new TransformEvent(this));
     }
   }
-
 
   // -- Helper methods --
 

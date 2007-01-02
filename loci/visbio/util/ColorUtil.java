@@ -537,7 +537,6 @@ public final class ColorUtil {
     catch (RemoteException exc) { exc.printStackTrace(); }
   }
 
-
   // -- Color table I/O --
 
   /** Color table file length. */
@@ -629,7 +628,7 @@ public final class ColorUtil {
       float g = Integer.parseInt(hex.substring(len3, 2 * len3), 16) / max;
       float b = Integer.parseInt(hex.substring(2 * len3), 16) / max;
       color = new Color(r, g, b);
-    } catch (NumberFormatException exc) { throw exc; } 
+    } catch (NumberFormatException exc) { throw exc; }
     return color;
   }
 

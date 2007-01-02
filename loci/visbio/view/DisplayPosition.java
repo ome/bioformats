@@ -41,7 +41,6 @@ public class DisplayPosition implements Dynamic, Saveable {
   /** Matrix representing the position. */
   private double[] matrix;
 
-
   // -- Constructor --
 
   /** Constructs an uninitialized display position. */
@@ -53,7 +52,6 @@ public class DisplayPosition implements Dynamic, Saveable {
     this.matrix = matrix;
   }
 
-
   // -- DisplayPosition API methods --
 
   /** Gets the position's string representation (name). */
@@ -64,7 +62,6 @@ public class DisplayPosition implements Dynamic, Saveable {
 
   /** Gets the position's description. */
   public double[] getMatrix() { return matrix; }
-
 
   // -- Dynamic API methods --
 
@@ -101,7 +98,6 @@ public class DisplayPosition implements Dynamic, Saveable {
    * another object with a matching state.
    */
   public void discard() { }
-
 
   // -- Saveable API methods --
 

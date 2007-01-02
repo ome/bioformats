@@ -51,7 +51,6 @@ public class HelpWindow extends JFrame
   /** Minimum width of tree pane. */
   private static final int MIN_TREE_WIDTH = 300;
 
-
   // -- Fields --
 
   /** Help topic tree root node. */
@@ -62,7 +61,6 @@ public class HelpWindow extends JFrame
 
   /** Pane containing the current help topic. */
   private JEditorPane pane;
-
 
   // -- Constructor --
 
@@ -98,14 +96,12 @@ public class HelpWindow extends JFrame
     setContentPane(split);
   }
 
-
   // -- HelpWindow API methods --
 
   /** Adds the given topic to the list, from the given source file. */
   public void addTopic(String topic, String source) {
     addTopic(root, topic, source);
   }
-
 
   // -- JFrame API methods --
 
@@ -126,7 +122,6 @@ public class HelpWindow extends JFrame
     topics.setSelectionPath(new TreePath(firstChild.getPath()));
     super.pack();
   }
-
 
   // -- HyperlinkListener API methods --
 
@@ -154,7 +149,6 @@ public class HelpWindow extends JFrame
       }
     }
   }
-
 
   // -- TreeSelectionListener API methods --
 

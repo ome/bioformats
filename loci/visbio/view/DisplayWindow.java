@@ -53,7 +53,6 @@ public class DisplayWindow extends JFrame
   protected static final GraphicsConfiguration STEREO =
     DisplayUtil.getStereoConfiguration();
 
-
   // -- Fields --
 
   /** Name of this display. */
@@ -61,7 +60,6 @@ public class DisplayWindow extends JFrame
 
   /** True if this display is 3D, false if 2D. */
   protected boolean threeD;
-
 
   // -- Fields - handlers --
 
@@ -73,7 +71,6 @@ public class DisplayWindow extends JFrame
 
   /** Handles logic for linking data transforms to the VisAD display. */
   protected TransformHandler transformHandler;
-
 
   // -- Fields - GUI components --
 
@@ -89,18 +86,15 @@ public class DisplayWindow extends JFrame
   /** Breakaway panel for display controls. */
   protected BreakawayPanel controls;
 
-
   // -- Fields - initial state --
 
   /** Initial edge of breakaway panel. */
   protected String initialEdge;
 
-
   // -- Fields - other --
 
   /** String representation of this display. */
   protected String string;
-
 
   // -- Constructors --
 
@@ -121,7 +115,6 @@ public class DisplayWindow extends JFrame
     this.threeD = threeD;
     initState(null);
   }
-
 
   // -- DisplayWindow API methods --
 
@@ -237,7 +230,6 @@ public class DisplayWindow extends JFrame
     catch (RemoteException exc) { exc.printStackTrace(); }
   }
 
-
   // -- Component API methods --
 
   /** Shows or hides this window. */
@@ -246,12 +238,10 @@ public class DisplayWindow extends JFrame
     if (b) controls.reshow();
   }
 
-
   // -- Object API methods --
 
   /** Gets a string representation of this display (just its name). */
   public String toString() { return string; }
-
 
   // -- ActionListener API methods --
 
@@ -259,7 +249,6 @@ public class DisplayWindow extends JFrame
   public void actionPerformed(ActionEvent e) {
     String cmd = e.getActionCommand();
   }
-
 
   // -- DisplayListener API methods --
 
@@ -273,7 +262,6 @@ public class DisplayWindow extends JFrame
       keyReleased((KeyEvent) e.getInputEvent());
     }
   }
-
 
   // -- Dynamic API methods --
 
@@ -416,7 +404,6 @@ public class DisplayWindow extends JFrame
     // still not GCed. I do not understand why not. Frustrating.
   }
 
-
   // -- KeyListener API methods --
 
   /** Handles key presses. */
@@ -446,7 +433,6 @@ public class DisplayWindow extends JFrame
   /** Handles key strokes. */
   public void keyTyped(KeyEvent e) { }
 
-
   // -- Saveable API methods --
 
   /** Writes the current state to the given DOM element ("Displays"). */
@@ -473,7 +459,6 @@ public class DisplayWindow extends JFrame
     transformHandler.restoreState(el);
   }
 
-
   // -- Helper methods --
 
   /** Constructs logic handlers. */
@@ -491,7 +476,6 @@ public class DisplayWindow extends JFrame
     if (transformHandler.getTransformCount() == 0) setVisible(false);
     manager.getControls().refresh();
   }
-
 
   // -- Utility methods --
 

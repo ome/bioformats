@@ -53,7 +53,6 @@ public class ViewPanel extends JPanel
   /** Aspect ratio Z component text field. */
   protected JTextField aspectZ;
 
-
   // -- Constructor --
 
   /** Creates a panel containing view handler GUI controls. */
@@ -66,7 +65,6 @@ public class ViewPanel extends JPanel
     add(FormsUtil.makeColumn(new Object[] {"Appearance", doOrientationPanel(),
       doAspectPanel(), doAppearancePanel()}, "pref:grow", false));
   }
-
 
   // -- ViewPanel API methods --
 
@@ -83,7 +81,6 @@ public class ViewPanel extends JPanel
     if (aspectZ != null) aspectZ.getDocument().addDocumentListener(this);
     doAspect();
   }
-
 
   // -- ActionListener API methods --
 
@@ -115,7 +112,6 @@ public class ViewPanel extends JPanel
     }
   }
 
-
   // -- DocumentListener API methods --
 
   /** Handles text field changes. */
@@ -126,7 +122,6 @@ public class ViewPanel extends JPanel
 
   /** Handles text removals from a text field. */
   public void removeUpdate(DocumentEvent e) { doAspect(); }
-
 
   // -- Helper methods --
 

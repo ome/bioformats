@@ -40,7 +40,6 @@ public class ArrowTool extends OverlayTool {
     super(overlay, "Arrow", "Arrow", "arrow.png");
   }
 
-
   // -- OverlayTool API methods --
 
   /** Instructs this tool to respond to a mouse press. */

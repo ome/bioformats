@@ -323,7 +323,6 @@ public class MetadataNotebook extends JFrame
     }
   }
 
-
   // -- ActionListener API methods --
 
   /** Handles menu commands. */

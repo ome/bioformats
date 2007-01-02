@@ -33,7 +33,6 @@ public class HelpTopic extends DefaultMutableTreeNode {
   /** Content source for this help topic. */
   private String source;
 
-
   // -- Constructor --
 
   /** Creates a VisBio help topic. */
@@ -41,7 +40,6 @@ public class HelpTopic extends DefaultMutableTreeNode {
     super(name);
     this.source = source;
   }
-
 
   // -- HelpWindow API methods --
 

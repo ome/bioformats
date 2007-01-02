@@ -35,12 +35,10 @@ public class LogicManager implements Saveable {
   /** VisBio frame. */
   protected VisBioFrame bio;
 
-
   // -- Constructor --
 
   /** Constructs a logic manager. */
   public LogicManager(VisBioFrame bio) { this.bio = bio; }
-
 
   // -- LogicManager API methods --
 
@@ -52,7 +50,6 @@ public class LogicManager implements Saveable {
 
   /** Gets the number of tasks required to initialize this logic manager. */
   public int getTasks() { return 0; }
-
 
   // -- Saveable API methods --
 

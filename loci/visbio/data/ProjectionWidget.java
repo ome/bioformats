@@ -45,7 +45,6 @@ public class ProjectionWidget extends JPanel implements ActionListener {
   /** Dropdown combo box listing available dimensions for projection. */
   protected BioComboBox axes;
 
-
   // -- Constructor --
 
   /** Creates a new maximum intensity projection widget. */
@@ -75,7 +74,6 @@ public class ProjectionWidget extends JPanel implements ActionListener {
     setLayout(new BorderLayout());
     add(FormsUtil.makeColumn(row1, row2));
   }
-
 
   // -- ActionListener API methods --
 

@@ -46,12 +46,10 @@ public class WizardPane extends DialogPane {
   /** Wizard's back button. */
   protected JButton back;
 
-
   // -- Other fields --
 
   /** The current page. */
   protected int page;
-
 
   // -- Constructor --
 
@@ -60,7 +58,6 @@ public class WizardPane extends DialogPane {
     super(title);
     page = -1;
   }
-
 
   // -- WizardPane API methods --
 
@@ -117,7 +114,6 @@ public class WizardPane extends DialogPane {
     cancel.setEnabled(false);
   }
 
-
   // -- DialogPane API methods --
 
   /** Resets the wizard pane's components to their default states. */
@@ -150,7 +146,6 @@ public class WizardPane extends DialogPane {
   protected JPanel doButtonLayout() {
     return ButtonBarFactory.buildWizardBar(back, next, ok, cancel);
   }
-
 
   // -- ActionListener API methods --
 

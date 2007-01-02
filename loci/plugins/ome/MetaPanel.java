@@ -168,7 +168,6 @@ public class MetaPanel implements ActionListener, TreeSelectionListener {
     window.setLocation(x, y);
   }
 
-
   // -- OMEMetaDataHandler methods --
 
   /**Method that begins the process of getting metadata from an OME_TIFF file*/

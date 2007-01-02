@@ -172,7 +172,6 @@ public final class DataUtil {
     return ff;
   }
 
-
   /**
    * Creates a field of the form (z -> type) from the given list of fields,
    * where type is the MathType of each component field.

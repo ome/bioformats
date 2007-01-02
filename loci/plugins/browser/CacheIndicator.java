@@ -37,7 +37,6 @@ public class CacheIndicator extends JComponent {
   protected int cacheLength;
   protected double ratio;
   protected JScrollBar scroll;
-  
 
   public CacheIndicator(JScrollBar scroll) {
     this.scroll = scroll;
@@ -64,31 +63,31 @@ public class CacheIndicator extends JComponent {
     if(ratio < 1 && ratio != 0) {
       int [] loadCount = new int[getWidth()];
       int [] cacheCount = new int[getWidth()];
-      
+
       for(int i = 0;i < loadCount.length;i++) {
         loadCount[i] = 0;
         cacheCount[i] = 0;
       }
-      
+
       //find how many entries of the cache are handled per pixel of indicator
       int perPixel;
       double integers = 2;
-      double dPerPixel = ratio * integers;  
-      
+      double dPerPixel = ratio * integers;
+
       if(DEBUG) System.out.println("Ratio: " + ratio);
       while(dPerPixel < 1) {
         integers++;
         dPerPixel = ratio * integers;
       }
-      
+
       Double temp = new Double(integers);
       perPixel = temp.intValue();
-      
+
       if(DEBUG) System.out.println("PerPixel: " + perPixel);
-      
+
       int colorAmount = 255 / perPixel;
       if(DEBUG) System.out.println("ColorAmount: " + colorAmount);
-      
+
       for(int i = 0;i<loadList.length;i++) {
         boolean isLoaded = false;
         if( Arrays.binarySearch(cache, loadList[i]) >= 0) isLoaded = true;
@@ -116,13 +115,13 @@ public class CacheIndicator extends JComponent {
       g.setColor(Color.red);
       for(int i = 0;i<loadList.length;i++) {
         int toLoad = loadList[i];
-        
+
         //correct for bug with length 1
         if(loadList.length == 1) {
           startLoad = toLoad;
           prevLoad = toLoad;
         }
-        
+
         if(startLoad == -1) {
           startLoad = toLoad;
           prevLoad = toLoad;
@@ -138,19 +137,19 @@ public class CacheIndicator extends JComponent {
           startLoad = -1;
         }
       }
-      
+
       prevLoad = -1;
       startLoad = -1;
       g.setColor(Color.blue);
       for(int i = 0;i<cache.length;i++) {
         int toLoad = cache[i];
-        
+
         //correct for bug with length 1
         if(loadList.length == 1) {
           startLoad = toLoad;
           prevLoad = toLoad;
         }
-        
+
         if(startLoad == -1) {
           startLoad = toLoad;
           prevLoad = toLoad;
@@ -169,7 +168,7 @@ public class CacheIndicator extends JComponent {
     }
   }
 
-  private int translate(int cacheIndex) { 
+  private int translate(int cacheIndex) {
     Integer width = new Integer(scroll.getWidth());
     double compSize = width.doubleValue();
     if(cacheLength == 0) return -1;

@@ -47,12 +47,10 @@ public class ImageUploader {
   /** List of objects listening for updates to upload tasks. */
   protected Vector listeners;
 
-
   // -- Constructor --
 
   /** Constructs a new OME image uploader. */
   public ImageUploader() { listeners = new Vector(); }
-
 
   // -- ImageUploader API methods --
 
@@ -344,7 +342,6 @@ public class ImageUploader {
       }
     }
   }
-
 
   // -- Main method --
 

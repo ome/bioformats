@@ -87,12 +87,10 @@ public class DataControls extends ControlPanel
   /** Pane for configuring ImageJ export parameters. */
   private SendToIJPane sender;
 
-
   // -- Other fields --
 
   /** Table of control frames corresponding to each data transform. */
   private Hashtable frameTable;
-
 
   // -- Constructor --
 
@@ -208,7 +206,6 @@ public class DataControls extends ControlPanel
     dataTree.setTransferHandler(dropHandler);
     dataInfo.setTransferHandler(dropHandler);
   }
-
 
   // -- DataControls API methods --
 
@@ -380,7 +377,6 @@ public class DataControls extends ControlPanel
     wm.showWindow(window);
   }
 
-
   // -- ActionListener API methods --
 
   /** Handles button presses. */
@@ -521,7 +517,6 @@ public class DataControls extends ControlPanel
     }
   }
 
-
   // -- TransformListener API methods --
 
   /** Updates data info panel if a data transform changes while selected. */
@@ -533,14 +528,12 @@ public class DataControls extends ControlPanel
     doDataInfo(data);
   }
 
-
   // -- TreeSelectionListener API methods --
 
   /** Handles tree selection changes. */
   public void valueChanged(TreeSelectionEvent e) {
     doDataInfo(getSelectedData());
   }
-
 
   // -- Helper methods --
 

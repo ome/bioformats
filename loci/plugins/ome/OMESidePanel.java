@@ -257,7 +257,6 @@ public class OMESidePanel implements ActionListener {
     return (Object[]) table.get(new Integer(ijID));
   }
 
-
   // -- ActionListener methods --
 
   /** implements the ActionListener actionPerformed method */
@@ -307,7 +306,6 @@ public class OMESidePanel implements ActionListener {
       dia.dispose();
     }
   }
-
 
   // -- Utility methods --
 

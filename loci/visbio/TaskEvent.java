@@ -37,7 +37,6 @@ public class TaskEvent {
   /** Current status message. */
   protected String status;
 
-
   // -- Constructor --
 
   /** Constructs a task event. */
@@ -46,7 +45,6 @@ public class TaskEvent {
     this.maximum = maximum;
     status = message;
   }
-
 
   // -- TaskEvent API methods --
 

@@ -45,7 +45,6 @@ public abstract class DataTransform implements Dynamic, Saveable {
   /** Next free transform id number. */
   protected static int nextId = 0;
 
-
   // -- Fields --
 
   /** Parent transform from which this transform obtains its data. */
@@ -81,7 +80,6 @@ public abstract class DataTransform implements Dynamic, Saveable {
   /** List of transform listeners. */
   protected Vector listeners = new Vector();
 
-
   // -- Constructors --
 
   /** Constructs an uninitialized data transform. */
@@ -93,7 +91,6 @@ public abstract class DataTransform implements Dynamic, Saveable {
     this.name = name;
     transformId = nextId++;
   }
-
 
   // -- DataTransform API methods --
 
@@ -242,7 +239,6 @@ public abstract class DataTransform implements Dynamic, Saveable {
     }
   }
 
-
   // -- Internal DataTransform API methods --
 
   /** Creates labels based on data transform parameters. */
@@ -254,12 +250,10 @@ public abstract class DataTransform implements Dynamic, Saveable {
     }
   }
 
-
   // -- Object API methods --
 
   /** Gets a string representation of this transform. */
   public String toString() { return name; }
-
 
   // -- Dynamic API methods --
 
@@ -307,7 +301,6 @@ public abstract class DataTransform implements Dynamic, Saveable {
     listeners.removeAllElements();
   }
 
-
   // -- Saveable API methods --
 
   /**
@@ -335,7 +328,6 @@ public abstract class DataTransform implements Dynamic, Saveable {
     lengths = ObjectUtil.stringToIntArray(el.getAttribute("lengths"));
     dims = ObjectUtil.stringToStringArray(el.getAttribute("dims"));
   }
-
 
   // -- Utility methods --
 

@@ -47,12 +47,10 @@ public class SystemManager extends LogicManager
   /** JFrame containing system information control panel. */
   private JFrame systemFrame;
 
-
   // -- Constructor --
 
   /** Constructs a system manager. */
   public SystemManager(VisBioFrame bio) { super(bio); }
-
 
   // -- SystemManager API methods --
 
@@ -195,7 +193,6 @@ public class SystemManager extends LogicManager
     return systemControls;
   }
 
-
   // -- Menu commands --
 
   /** Displays the system information window. */
@@ -204,7 +201,6 @@ public class SystemManager extends LogicManager
     WindowManager wm = (WindowManager) bio.getManager(WindowManager.class);
     wm.showWindow(systemFrame);
   }
-
 
   // -- LogicManager API methods --
 
@@ -220,14 +216,12 @@ public class SystemManager extends LogicManager
   /** Gets the number of tasks required to initialize this logic manager. */
   public int getTasks() { return 2; }
 
-
   // -- ActionListener API methods --
 
   /** Outputs current RAM usage to console. */
   public void actionPerformed(ActionEvent e) {
     System.out.println(System.currentTimeMillis() + ": " + getMemoryUsage());
   }
-
 
   // -- Runnable API methods --
 
@@ -238,7 +232,6 @@ public class SystemManager extends LogicManager
     gc();
     wm.setWaitCursor(false);
   }
-
 
   // -- Helper methods --
 
@@ -263,7 +256,6 @@ public class SystemManager extends LogicManager
     // RAM usage debugging output
     if (VisBioFrame.DEBUG) new Timer(500, this).start();
   }
-
 
   // -- Utility methods --
 

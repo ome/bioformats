@@ -33,14 +33,12 @@ public class OvalTool extends OverlayTool {
   /** Oval currently being drawn. */
   protected OverlayOval oval;
 
-
   // -- Constructor --
 
   /** Constructs an oval overlay creation tool. */
   public OvalTool(OverlayTransform overlay) {
     super(overlay, "Oval", "Oval", "oval.png");
   }
-
 
   // -- OverlayTool API methods --
 

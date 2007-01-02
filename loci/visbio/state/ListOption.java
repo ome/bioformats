@@ -39,7 +39,6 @@ public class ListOption extends BioOption {
   /** Text box GUI component. */
   private BioComboBox box;
 
-
   // -- Constructor --
 
   /** Constructs a new option. */
@@ -55,18 +54,15 @@ public class ListOption extends BioOption {
     panel = FormsUtil.makeRow(text, box);
   }
 
-
   // -- ListOption API methods --
 
   /** Gets this option's current setting. */
   public String getValue() { return (String) box.getSelectedItem(); }
 
-
   // -- BioOption API methods --
 
   /** Gets a GUI component representing this option. */
   public Component getComponent() { return panel; }
-
 
   // -- Saveable API methods --
 

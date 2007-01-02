@@ -57,12 +57,10 @@ public class DataManager extends LogicManager {
   /** String for thumbnail resolution option. */
   public static final String THUMB_RES = "Thumbnail resolution";
 
-
   // -- Control panel --
 
   /** Datasets control panel. */
   protected DataControls dataControls;
-
 
   // -- Other fields --
 
@@ -72,12 +70,10 @@ public class DataManager extends LogicManager {
   /** List of registered data transform type labels. */
   protected Vector transformLabels;
 
-
   // -- Constructor --
 
   /** Constructs a dataset manager. */
   public DataManager(VisBioFrame bio) { super(bio); }
-
 
   // -- DataManager API methods --
 
@@ -327,7 +323,6 @@ public class DataManager extends LogicManager {
   /** Gets associated control panel. */
   public DataControls getControls() { return dataControls; }
 
-
   // -- LogicManager API methods --
 
   /** Called to notify the logic manager of a VisBio event. */
@@ -341,7 +336,6 @@ public class DataManager extends LogicManager {
 
   /** Gets the number of tasks required to initialize this logic manager. */
   public int getTasks() { return 5; }
-
 
   // -- Saveable API methods --
 
@@ -440,7 +434,6 @@ public class DataManager extends LogicManager {
       if (!vn.contains(data)) removeData(data);
     }
   }
-
 
   // -- Helper methods --
 

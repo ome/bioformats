@@ -33,12 +33,10 @@ public class TaskManager extends LogicManager {
   /** Tasks control panel. */
   protected TaskControls taskControls;
 
-
   // -- Constructor --
 
   /** Constructs a tasks manager. */
   public TaskManager(VisBioFrame bio) { super(bio); }
-
 
   // -- TaskManager API methods --
 
@@ -55,7 +53,6 @@ public class TaskManager extends LogicManager {
   /** Gets associated control panel. */
   public TaskControls getControls() { return taskControls; }
 
-
   // -- LogicManager API methods --
 
   /** Called to notify the logic manager of a VisBio event. */
@@ -69,7 +66,6 @@ public class TaskManager extends LogicManager {
 
   /** Gets the number of tasks required to initialize this logic manager. */
   public int getTasks() { return 2; }
-
 
   // -- Helper methods --
 

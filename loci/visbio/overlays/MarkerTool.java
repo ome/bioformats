@@ -33,14 +33,12 @@ public class MarkerTool extends OverlayTool {
   /** Marker currently being drawn. */
   protected OverlayMarker marker;
 
-
   // -- Constructor --
 
   /** Constructs a measurement marker creation tool. */
   public MarkerTool(OverlayTransform overlay) {
     super(overlay, "Marker", "Marker", "marker.png");
   }
-
 
   // -- OverlayTool API methods --
 

@@ -247,7 +247,6 @@ public final class SwingUtil {
     return reader.getFileChooser();
   }
 
-
   /** Pops up a message box, blocking the current thread. */
   public static void pause(String msg) {
     JOptionPane.showMessageDialog(null, msg, "VisBio",

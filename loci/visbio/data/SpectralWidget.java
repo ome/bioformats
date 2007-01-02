@@ -48,7 +48,6 @@ public class SpectralWidget extends JPanel implements ActionListener {
   /** Granularity of the weighted sliders. */
   protected static final int PRECISION = 100;
 
-
   // -- Fields --
 
   /** Associated spectral mapping. */
@@ -59,7 +58,6 @@ public class SpectralWidget extends JPanel implements ActionListener {
 
   /** Labels indicating current slider values. */
   protected JLabel[][] labels;
-
 
   // -- Constructor --
 
@@ -173,7 +171,6 @@ public class SpectralWidget extends JPanel implements ActionListener {
     add(builder.getPanel());
   }
 
-
   // -- ActionListener API methods --
 
   /** Applies changes to this spectral mapping's parameters. */
@@ -203,7 +200,6 @@ public class SpectralWidget extends JPanel implements ActionListener {
       catch (NumberFormatException exc) { return; }
     }
   }
-
 
   // -- Helper methods --
 

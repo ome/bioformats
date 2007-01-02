@@ -31,7 +31,6 @@ public class SaveException extends Exception {
   /** The exception upon which the save exception is based. */
   private Exception exc;
 
-
   // -- Constructors --
 
   /** Constructs a save exception with the given message. */
@@ -40,12 +39,10 @@ public class SaveException extends Exception {
   /** Constructs a save exception based on the given exception. */
   public SaveException(Exception exc) { this.exc = exc; }
 
-
   // -- SaveException API methods --
 
   /** Gets the exception upon which this save exception is based. */
   public Exception getException() { return exc; }
-
 
   // -- Exception API methods --
 

@@ -52,7 +52,6 @@ public class SpectralTransform extends ImageTransform
   /** Controls for this spectral mapping. */
   protected SpectralWidget controls;
 
-
   // -- Constructors --
 
   /** Creates an uninitialized spectral mapping. */
@@ -80,7 +79,6 @@ public class SpectralTransform extends ImageTransform
     parent.addTransformListener(this);
   }
 
-
   // -- SpectralTransform API methods --
 
   /** Assigns the parameters for this spectral mapping. */
@@ -101,7 +99,6 @@ public class SpectralTransform extends ImageTransform
   /** Gets spectral channel weights. */
   public double[][] getWeights() { return weights; }
 
-
   // -- ImageTransform API methods --
 
   /** Gets width of each image. */
@@ -116,7 +113,6 @@ public class SpectralTransform extends ImageTransform
 
   /** Gets number of range components at each pixel. */
   public int getRangeCount() { return range.length; }
-
 
   // -- Static DataTransform API methods --
 
@@ -146,7 +142,6 @@ public class SpectralTransform extends ImageTransform
 
   /** Indicates whether this transform type requires a parent transform. */
   public static boolean isParentRequired() { return true; }
-
 
   // -- DataTransform API methods --
 
@@ -188,7 +183,6 @@ public class SpectralTransform extends ImageTransform
 
   /** Gets associated GUI controls for this transform. */
   public JComponent getControls() { return controls; }
-
 
   // -- Dynamic API methods --
 
@@ -241,7 +235,6 @@ public class SpectralTransform extends ImageTransform
     thumbs = new ThumbnailHandler(this, getCacheFilename());
   }
 
-
   // -- Saveable API methods --
 
   /** Writes the current state to the given DOM element ("DataTransforms"). */
@@ -266,7 +259,6 @@ public class SpectralTransform extends ImageTransform
     }
   }
 
-
   // -- TransformListener API methods --
 
   /** Called when parent data transform's parameters are updated. */
@@ -280,7 +272,6 @@ public class SpectralTransform extends ImageTransform
       notifyListeners(new TransformEvent(this));
     }
   }
-
 
   // -- Utility methods --
 
@@ -318,7 +309,6 @@ public class SpectralTransform extends ImageTransform
     catch (RemoteException exc) { exc.printStackTrace(); }
     return null;
   }
-
 
   // -- Helper methods --
 

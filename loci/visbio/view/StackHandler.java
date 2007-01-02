@@ -52,12 +52,10 @@ public class StackHandler extends TransformHandler {
   /** Default length of each volume rendered spatial axis. */
   public static final int DEFAULT_VOLUME_RESOLUTION = 96;
 
-
   // -- Fields --
 
   /** Dimensional positions. */
   protected Vector positions;
-
 
   // -- Constructor --
 
@@ -66,7 +64,6 @@ public class StackHandler extends TransformHandler {
     super(dw);
     positions = new Vector();
   }
-
 
   // -- TransformHandler API methods --
 
@@ -81,7 +78,6 @@ public class StackHandler extends TransformHandler {
     rebuild();
     panel.addTransform(trans);
   }
-
 
   // -- Internal TransformHandler API methods --
 
@@ -112,7 +108,6 @@ public class StackHandler extends TransformHandler {
       display.addMap(zMap);
     }
   }
-
 
   // -- Saveable API methods --
 

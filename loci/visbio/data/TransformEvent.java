@@ -42,12 +42,10 @@ public class TransformEvent extends EventObject {
   /** Transform event indicating transform is being deleted. */
   public static final int DATA_REMOVED = 3;
 
-
   // -- Fields --
 
   /** The type of transform event. */
   protected int id;
-
 
   // -- Constructors --
 
@@ -59,7 +57,6 @@ public class TransformEvent extends EventObject {
     super(source);
     this.id = id;
   }
-
 
   // -- TransformEvent API methods --
 

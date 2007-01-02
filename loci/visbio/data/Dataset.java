@@ -66,7 +66,6 @@ public class Dataset extends ImageTransform {
   /** Dataset import dialog. */
   protected static DatasetPane datasetImporter;
 
-
   // -- Data fields --
 
   /** A string pattern describing this dataset. */
@@ -77,7 +76,6 @@ public class Dataset extends ImageTransform {
 
   /** Optional listener for constructor progress. */
   protected TaskListener listener;
-
 
   // -- Computed fields --
 
@@ -116,7 +114,6 @@ public class Dataset extends ImageTransform {
 
   /** Types mapped to color components (RGBA). */
   protected RealType[] color;
-
 
   // -- Constructors --
 
@@ -182,7 +179,6 @@ public class Dataset extends ImageTransform {
     initState(null);
   }
 
-
   // -- Dataset API methods --
 
   /** Close all open ids. */
@@ -207,7 +203,6 @@ public class Dataset extends ImageTransform {
 
   /** Gets the OME node associated with each source file. */
   public OMENode[] getOMENodes() { return ome; }
-
 
   // -- ImageTransform API methods --
 
@@ -280,7 +275,6 @@ public class Dataset extends ImageTransform {
   /** Gets number of range components at each pixel. */
   public int getRangeCount() { return numRange; }
 
-
   // -- Static DataTransform API methods --
 
   /** Creates a new dataset, with user interaction. */
@@ -335,7 +329,6 @@ public class Dataset extends ImageTransform {
 
   /** Indicates whether this transform type requires a parent transform. */
   public static boolean isParentRequired() { return false; }
-
 
   // -- DataTransform API methods --
 
@@ -439,7 +432,6 @@ public class Dataset extends ImageTransform {
 
   /** Gets associated GUI controls for this transform. */
   public JComponent getControls() { return controls; }
-
 
   // -- Dynamic API methods --
 
@@ -606,7 +598,6 @@ public class Dataset extends ImageTransform {
     status(ids.length + 4, numTasks, "Done");
   }
 
-
   // -- Saveable API methods --
 
   /** Writes the current state to the given DOM element ("DataTransforms"). */
@@ -628,7 +619,6 @@ public class Dataset extends ImageTransform {
     ids = new String[els.length];
     for (int i=0; i<ids.length; i++) ids[i] = XMLUtil.getText(els[i]);
   }
-
 
   // -- Helper methods --
 

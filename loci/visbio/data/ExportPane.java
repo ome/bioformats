@@ -60,7 +60,6 @@ public class ExportPane extends WizardPane {
   /** File format combo box. */
   private BioComboBox formatBox;
 
-
   // -- GUI components, page 2 --
 
   /** Panel for dynamic second page components. */
@@ -78,7 +77,6 @@ public class ExportPane extends WizardPane {
   /** Combo boxes for mapping each star to corresponding dimensional axes. */
   private BioComboBox[] letterBoxes;
 
-
   // -- GUI components, page 3 --
 
   /** Panel for dynamic third page components. */
@@ -86,7 +84,6 @@ public class ExportPane extends WizardPane {
 
   /** Pane containing export summary. */
   private JEditorPane summary;
-
 
   // -- Other fields --
 
@@ -113,7 +110,6 @@ public class ExportPane extends WizardPane {
 
   /** Number of total files to export. */
   private int numFiles;
-
 
   // -- Constructor --
 
@@ -186,7 +182,6 @@ public class ExportPane extends WizardPane {
     // lay out pages
     setPages(new JPanel[] {first, second, third});
   }
-
 
   // -- ExportPane API methods --
 
@@ -313,7 +308,6 @@ public class ExportPane extends WizardPane {
     }.start();
   }
 
-
   // -- DialogPane API methods --
 
   /** Resets the wizard pane's components to their default states. */
@@ -322,7 +316,6 @@ public class ExportPane extends WizardPane {
     patternField.setText("");
     formatBox.setSelectedIndex(0);
   }
-
 
   // -- ActionListener API methods --
 

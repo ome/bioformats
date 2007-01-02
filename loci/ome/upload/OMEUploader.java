@@ -76,14 +76,14 @@ public class OMEUploader implements Uploader {
   // -- Constructors --
 
   /** Construct a new OMEUploader for the specified server. */
-  public OMEUploader(String server) { 
-    this.server = server; 
+  public OMEUploader(String server) {
+    this.server = server;
     files = new Vector();
   }
 
   /** Construct a new OMEUploader for the specified user on the server. */
-  public OMEUploader(String server, String user, String pass) 
-    throws UploadException 
+  public OMEUploader(String server, String user, String pass)
+    throws UploadException
   {
     this.server = server;
     this.user = user;
@@ -95,7 +95,7 @@ public class OMEUploader implements Uploader {
   // -- Uploader API methods --
 
   /** Log in to the specified server, with the specified credentials. */
-  public void login(String server, String user, String pass) 
+  public void login(String server, String user, String pass)
     throws UploadException
   {
     this.server = server + "/shoola";
@@ -109,7 +109,7 @@ public class OMEUploader implements Uploader {
     Vector v = new Vector();
     v.add(user);
     v.add(pass);
-   
+
     String xml = buildXML("createSession", v);
 
     sessionKey = sendRequest(xml);
@@ -119,7 +119,7 @@ public class OMEUploader implements Uploader {
 
     try {
       int ndx = sessionKey.indexOf("<string>");
-      sessionKey = sessionKey.substring(ndx + 8, 
+      sessionKey = sessionKey.substring(ndx + 8,
         sessionKey.indexOf("</string>"));
     }
     catch (Exception e) {
@@ -128,7 +128,7 @@ public class OMEUploader implements Uploader {
     validLogin = true;
     setupImport(0);
   }
-  
+
   /** Log all users out of the current server. */
   public void logout() {
     Vector v = new Vector();
@@ -142,7 +142,7 @@ public class OMEUploader implements Uploader {
    * Upload the planes in the given file to the server, creating a new
    * image in the process.  If the "stitch" flag is set to true, then all files
    * that are similar to the given file will be uploaded as well.
-   * 
+   *
    * @return the number of pixel bytes uploaded
    */
   public int uploadFile(String file, boolean stitch) throws UploadException {
@@ -169,15 +169,15 @@ public class OMEUploader implements Uploader {
         bytesPerPixel = Integer.parseInt(pixelType) / 8;
       }
 
-      String id = newPixels(f.getSizeX(file), f.getSizeY(file), 
-        f.getSizeZ(file), f.getSizeC(file), f.getSizeT(file), bytesPerPixel); 
- 
+      String id = newPixels(f.getSizeX(file), f.getSizeY(file),
+        f.getSizeZ(file), f.getSizeC(file), f.getSizeT(file), bytesPerPixel);
+
       int num = f.getImageCount(file);
       int bytesUploaded = 0;
 
       for (int i=0; i<num; i++) {
         int[] coords = f.getZCTCoords(file, i);
-        bytesUploaded += uploadPlane(f.openBytes(file, i), coords[0], 
+        bytesUploaded += uploadPlane(f.openBytes(file, i), coords[0],
           coords[1], coords[2], id, !f.isLittleEndian(file));
       }
 
@@ -193,10 +193,10 @@ public class OMEUploader implements Uploader {
    * given image, and optionally the given dataset.  If the "stitch" flag is
    * set to true, then all files that are similar to the given file will be
    * uploaded as well.
-   * 
+   *
    * @return the number of pixel bytes uploaded
    */
-  public int uploadFile(String file, boolean stitch, Integer image, 
+  public int uploadFile(String file, boolean stitch, Integer image,
     Integer dataset) throws UploadException
   {
     if (!validLogin) throw new UploadException("Not logged in to the server.");
@@ -232,14 +232,14 @@ public class OMEUploader implements Uploader {
     catch (Exception e) { throw new UploadException(e); }
   }
 
-  /** 
-   * Upload a single BufferedImage to the server, creating a new 
-   * image in the process.  If the 'close' flag is set, 
+  /**
+   * Upload a single BufferedImage to the server, creating a new
+   * image in the process.  If the 'close' flag is set,
    * the pixels file will be closed.
-   * 
+   *
    * @return the number of pixel bytes uploaded
    */
-  public int uploadPlane(BufferedImage plane, int num, MetadataStore store, 
+  public int uploadPlane(BufferedImage plane, int num, MetadataStore store,
     boolean close) throws UploadException
   {
     if (!validLogin) throw new UploadException("Not logged in to the server.");
@@ -255,18 +255,18 @@ public class OMEUploader implements Uploader {
     return uploadPlane(data, num, store, close);
   }
 
-  /** 
-   * Upload a single BufferedImage to the server, placing it in the 
+  /**
+   * Upload a single BufferedImage to the server, placing it in the
    * given image, and optionally the given dataset.  If the 'close' flag is
    * set, the pixels file will be closed.
-   * 
+   *
    * @return the number of pixel bytes uploaded
    */
-  public int uploadPlane(BufferedImage plane, int num, MetadataStore store, 
+  public int uploadPlane(BufferedImage plane, int num, MetadataStore store,
     Integer image, Integer dataset, boolean close) throws UploadException
   {
     if (!validLogin) throw new UploadException("Not logged in to the server.");
-  
+
     byte[][] b = ImageTools.getBytes(plane);
     byte[] data = new byte[b.length * b[0].length];
     if (b.length == 1) data = b[0];
@@ -281,10 +281,10 @@ public class OMEUploader implements Uploader {
   /**
    * Upload a single byte array to the server, creating a new
    * image in the process.  Assumes the byte array represents the first plane.
-   * 
+   *
    * @return the number of pixel bytes uploaded
    */
-  public int uploadPlane(byte[] plane, int num, MetadataStore store, 
+  public int uploadPlane(byte[] plane, int num, MetadataStore store,
     boolean close) throws UploadException
   {
     if (!validLogin) throw new UploadException("Not logged in to the server.");
@@ -316,10 +316,10 @@ public class OMEUploader implements Uploader {
   /**
    * Upload a single byte array to the server, placing it in the given image,
    * and optionally the given dataset.
-   * 
+   *
    * @return the number of pixel bytes uploaded
    */
-  public int uploadPlane(byte[] plane, int num, MetadataStore store, 
+  public int uploadPlane(byte[] plane, int num, MetadataStore store,
     Integer image, Integer dataset, boolean close) throws UploadException
   {
     if (!validLogin) throw new UploadException("Not logged in to the server.");
@@ -342,7 +342,7 @@ public class OMEUploader implements Uploader {
 
     // check if the plane contains multiple channels; if so, we need to split
     // the plane and upload each channel separately
- 
+
     int bytesPerChannel = sizeX * sizeY * bytesPerPixel;
     int bytesUploaded = 0;
     try {
@@ -351,11 +351,11 @@ public class OMEUploader implements Uploader {
         for (int i=0; i<plane.length / bytesPerChannel; i++) {
           System.arraycopy(plane, i*bytesPerChannel, b, 0, bytesPerChannel);
           int[] indices = FormatReader.getZCTCoords(
-            xmlStore.getDimensionOrder(null), sizeZ, sizeC, sizeT, 
-            sizeZ * sizeC * sizeT, false, num);  
-          bytesUploaded += 
+            xmlStore.getDimensionOrder(null), sizeZ, sizeC, sizeT,
+            sizeZ * sizeC * sizeT, false, num);
+          bytesUploaded +=
             uploadPlane(plane, indices[0], indices[1], indices[2], id,
-              xmlStore.getBigEndian(null).booleanValue());  
+              xmlStore.getBigEndian(null).booleanValue());
         }
 
         if (close) {
@@ -366,11 +366,11 @@ public class OMEUploader implements Uploader {
         return bytesUploaded;
       }
       int[] indices = FormatReader.getZCTCoords(
-        xmlStore.getDimensionOrder(null), sizeZ, sizeC, sizeT, 
-        sizeZ * sizeC * sizeT, false, num);  
+        xmlStore.getDimensionOrder(null), sizeZ, sizeC, sizeT,
+        sizeZ * sizeC * sizeT, false, num);
       int bytes = uploadPlane(plane, indices[0], indices[1], indices[2], id,
-        xmlStore.getBigEndian(null).booleanValue());  
-       
+        xmlStore.getBigEndian(null).booleanValue());
+
       if (close) {
         id = closePixels(id).trim();
         uploadMetadata(store, id);
@@ -383,10 +383,10 @@ public class OMEUploader implements Uploader {
   /**
    * Upload an array of BufferedImages to the server, creating a new image
    * in the process.
-   * 
+   *
    * @return the number of pixel bytes uploaded
    */
-  public int uploadPlanes(BufferedImage[] planes, int first, int last, 
+  public int uploadPlanes(BufferedImage[] planes, int first, int last,
     int step, MetadataStore store, boolean close) throws UploadException
   {
     if (!validLogin) throw new UploadException("Not logged in to the server.");
@@ -406,19 +406,19 @@ public class OMEUploader implements Uploader {
     }
 
     String id = newPixels(sizeX, sizeY, sizeZ, sizeC, sizeT, bytesPerPixel);
-    
-    return uploadPlanes(planes, first, last, step, store, new Integer(id), 
-      null, close); 
+
+    return uploadPlanes(planes, first, last, step, store, new Integer(id),
+      null, close);
   }
 
   /**
    * Upload an array of BufferedImages to the server, placing them in the given
    * image, and optionally the given dataset.
-   * 
+   *
    * @return the number of pixel bytes uploaded
    */
-  public int uploadPlanes(BufferedImage[] planes, int first, int last, 
-    int step, MetadataStore store, Integer image, Integer dataset, 
+  public int uploadPlanes(BufferedImage[] planes, int first, int last,
+    int step, MetadataStore store, Integer image, Integer dataset,
     boolean close) throws UploadException
   {
     if (!validLogin) throw new UploadException("Not logged in to the server.");
@@ -426,7 +426,7 @@ public class OMEUploader implements Uploader {
     int uploaded = 0;
     int ndx = 0;
     for (int i=first; i<=last; i+=step) {
-      uploaded += uploadPlane(planes[ndx], i, store, image, dataset, 
+      uploaded += uploadPlane(planes[ndx], i, store, image, dataset,
         i == last && close);
       ndx++;
     }
@@ -436,10 +436,10 @@ public class OMEUploader implements Uploader {
   /**
    * Upload an array of byte arrays to the server, creating a new image
    * in the process.
-   * 
+   *
    * @return the number of pixel bytes uploaded
    */
-  public int uploadPlanes(byte[][] planes, int first, int last, int step, 
+  public int uploadPlanes(byte[][] planes, int first, int last, int step,
     MetadataStore store, boolean close) throws UploadException
   {
     if (!validLogin) throw new UploadException("Not logged in to the server.");
@@ -457,9 +457,9 @@ public class OMEUploader implements Uploader {
       pixelType = pixelType.substring(pixelType.indexOf("int") + 3);
       bytesPerPixel = Integer.parseInt(pixelType) / 8;
     }
- 
+
     String id = newPixels(sizeX, sizeY, sizeZ, sizeC, sizeT, bytesPerPixel);
-    
+
     return uploadPlanes(planes, first, last, step, store, new Integer(id),
       null, close);
   }
@@ -467,11 +467,11 @@ public class OMEUploader implements Uploader {
   /**
    * Upload an array of byte arrays to the server, placing them in the given
    * image, and optionally the given dataset.
-   * 
+   *
    * @return the number of pixel bytes uploaded
    */
-  public int uploadPlanes(byte[][] planes, int first, int last, int step, 
-    MetadataStore store, Integer image, Integer dataset, boolean close) 
+  public int uploadPlanes(byte[][] planes, int first, int last, int step,
+    MetadataStore store, Integer image, Integer dataset, boolean close)
     throws UploadException
   {
     if (!validLogin) throw new UploadException("Not logged in to the server.");
@@ -479,7 +479,7 @@ public class OMEUploader implements Uploader {
     int uploaded = 0;
     int ndx = 0;
     for (int i=first; i<=last; i+=step) {
-      uploaded += uploadPlane(planes[ndx], i, store, image, dataset, 
+      uploaded += uploadPlane(planes[ndx], i, store, image, dataset,
         i == last && close);
       ndx++;
     }
@@ -491,9 +491,9 @@ public class OMEUploader implements Uploader {
   /** Send a request string to the server and return the response. */
   private String sendRequest(String request) throws UploadException {
     try {
-      HttpURLConnection conn = 
-        (HttpURLConnection) (new URL(server)).openConnection();  
-    
+      HttpURLConnection conn =
+        (HttpURLConnection) (new URL(server)).openConnection();
+
       conn.setRequestMethod("POST");
       conn.setDoOutput(true);
       OutputStream os = conn.getOutputStream();
@@ -524,10 +524,10 @@ public class OMEUploader implements Uploader {
 
       for (int i=0; i<params.size(); i++) {
         request += "<param><value>" + params.get(i) + "</value></param>";
-      } 
+      }
 
       request += "</params></methodCall>";
-    
+
       return request;
     }
     catch (Exception e) { throw new UploadException(e); }
@@ -538,7 +538,7 @@ public class OMEUploader implements Uploader {
     throws UploadException
   {
     try {
-      String boundary = "------------------------------" + 
+      String boundary = "------------------------------" +
         System.currentTimeMillis();
 
       String lf = "\r\n";
@@ -559,10 +559,10 @@ public class OMEUploader implements Uploader {
         os.write(("Content-Disposition: form-data; ").getBytes());
         os.write(("name=\"" + keys.get(i) + "\"").getBytes());
         if (keys.get(i).toString().equals("File")) {
-          String file = files == null || files.size() == 0 ? "unknown" : 
+          String file = files == null || files.size() == 0 ? "unknown" :
             files.get(0).toString();
-          os.write(("; filename=\"" + file + "\"" + lf + 
-            "Content-Type: application/octet-stream").getBytes()); 
+          os.write(("; filename=\"" + file + "\"" + lf +
+            "Content-Type: application/octet-stream").getBytes());
         }
         os.write((lf + lf + values.get(i) + lf + boundary + lf).getBytes());
       }
@@ -618,7 +618,7 @@ public class OMEUploader implements Uploader {
   }
 
   /** Upload a single plane to the given OMEIS pixels file. */
-  private int uploadPlane(byte[] b, int z, int c, int t, String id, 
+  private int uploadPlane(byte[] b, int z, int c, int t, String id,
     boolean bigEndian) throws UploadException
   {
     Vector keys = new Vector();
@@ -641,19 +641,19 @@ public class OMEUploader implements Uploader {
     values.add("" + t);
     values.add(bigEndian ? "1" : "0");
     values.add(new String(b));
-  
+
     int bytes = Integer.parseInt(buildMultipart(keys, values).trim());
     return bytes;
   }
 
-  /** 
-   * Set everything up to begin the import. 
+  /**
+   * Set everything up to begin the import.
    *
    * @param int size - the number of pixel bytes we expect to upload
    */
   private void setupImport(long size) throws UploadException {
     if (files != null) files.clear();
-    
+
     try {
       rs = DataServer.getDefaultServices(server);
     }
@@ -661,7 +661,7 @@ public class OMEUploader implements Uploader {
 
     rc = rs.getRemoteCaller();
     rc.login(user, pass);
-   
+
     df = (DataFactory) rs.getService(DataFactory.class);
     im = (ImportManager) rs.getService(ImportManager.class);
     rim = (RemoteImportManager) rs.getService(RemoteImportManager.class);
@@ -678,20 +678,20 @@ public class OMEUploader implements Uploader {
       r = pf.findRepository(size);
     }
     catch (Exception e) { throw new UploadException(e); }
-    
+
     im.startImport(exp);
   }
 
-  /** 
-   * Parse and upload the given MetadataStore and link 
+  /**
+   * Parse and upload the given MetadataStore and link
    * it to the given OMEIS ID.
    */
-  private void uploadMetadata(MetadataStore store, String id) 
+  private void uploadMetadata(MetadataStore store, String id)
     throws UploadException
   {
     OMEXMLMetadataStore xml = (OMEXMLMetadataStore) store;
 
-    // upload the OME-XML 
+    // upload the OME-XML
 
     String xmlString = "";
 
@@ -720,7 +720,7 @@ public class OMEUploader implements Uploader {
     v.add(new Long(xmlID));
 
     List imageIDs = rim.importFiles(v);
-    
+
     // set the Image information
 
     Image image = (Image) df.createNew(Image.class);
@@ -775,7 +775,7 @@ public class OMEUploader implements Uploader {
     // create a thumbnail
     try {
       pf.setThumbnail(pixels, CompositingSettings.createDefaultPGISettings(
-        xml.getSizeZ(null).intValue(), xml.getSizeC(null).intValue(), 
+        xml.getSizeZ(null).intValue(), xml.getSizeC(null).intValue(),
         xml.getSizeT(null).intValue()));
     }
     catch (Exception e) { throw new UploadException(e); }

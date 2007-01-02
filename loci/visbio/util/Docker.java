@@ -51,7 +51,6 @@ public class Docker implements ComponentListener {
   /** A docking priority higher than the default. */
   public static final int HIGH_PRIORITY = 10;
 
-
   // -- Fields --
 
   /** List of windows able to be docked to one another. */
@@ -74,7 +73,6 @@ public class Docker implements ComponentListener {
 
   /** Whether to snap to the edges of the screen. */
   protected boolean edges = true;
-
 
   // -- Docker API methods --
 
@@ -124,7 +122,6 @@ public class Docker implements ComponentListener {
 
   /** Sets whether windows should snap to the screen edges when close. */
   public void setSnapToScreenEdges(boolean snap) { edges = snap; }
-
 
   // -- ComponentListener API methods --
 
@@ -203,7 +200,6 @@ public class Docker implements ComponentListener {
     for (int i=0; i<windows.size(); i++) getDockSet(i).remove(w);
   }
 
-
   // -- Internal methods - get window characteristics from an index --
 
   /** Gets the window at the specified index. */
@@ -226,7 +222,6 @@ public class Docker implements ComponentListener {
     return ((Integer) priorities.elementAt(ndx)).intValue();
   }
 
-
   // -- Internal methods - get window characteristics from a window --
 
   /** Gets the given window's index. */
@@ -241,7 +236,6 @@ public class Docker implements ComponentListener {
   /** Gets the docking priority for the given window. */
   protected int getPriority(Window w) { return getPriority(getIndex(w)); }
 
-
   // -- Internal methods - dock/undock windows to/from each other --
 
   /** Docks window A to window B. */
@@ -249,7 +243,6 @@ public class Docker implements ComponentListener {
 
   /** Undocks window A from window B. */
   protected void undock(Window a, Window b) { getDockSet(b).remove(a); }
-
 
   // -- Internal methods - edge comparison/snapping --
 
@@ -330,7 +323,6 @@ public class Docker implements ComponentListener {
     if (enabled) w.addComponentListener(this);
   }
 
-
   // -- Helper methods --
 
   /** Recursively builds a list of windows docked together into a group. */
@@ -343,7 +335,6 @@ public class Docker implements ComponentListener {
       if (group.indexOf(w) < 0) buildGroup(getIndex(w), group);
     }
   }
-
 
   // -- Main method --
 

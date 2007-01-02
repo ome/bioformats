@@ -43,12 +43,10 @@ public class ImageDownloader {
   /** List of objects listening for updates to download tasks. */
   protected Vector listeners;
 
-
   // -- Constructor --
 
   /** Constructs a new OME image downloader. */
   public ImageDownloader() { listeners = new Vector(); }
-
 
   // -- ImageDownloader API methods --
 
@@ -190,7 +188,6 @@ public class ImageDownloader {
       }
     }
   }
-
 
   // -- Helper methods --
 

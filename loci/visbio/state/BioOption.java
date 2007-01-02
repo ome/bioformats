@@ -34,12 +34,10 @@ public abstract class BioOption implements Saveable {
   /** String identifying this option. */
   protected String text;
 
-
   // -- Constructor --
 
   /** Constructs a new option. */
   public BioOption(String text) { this.text = text; }
-
 
   // -- BioOption API methods --
 
@@ -48,7 +46,6 @@ public abstract class BioOption implements Saveable {
 
   /** Gets a GUI component representing this option. */
   public abstract Component getComponent();
-
 
   // -- Saveable API methods --
 

@@ -33,12 +33,10 @@ import loci.visbio.help.HelpManager;
  */
 public class ExtManager extends LogicManager {
 
-
   // -- Constructor --
 
   /** Constructs an external interface manager. */
   public ExtManager(VisBioFrame bio) { super(bio); }
-
 
   // -- LogicManager API methods --
 
@@ -53,7 +51,6 @@ public class ExtManager extends LogicManager {
 
   /** Gets the number of tasks required to initialize this logic manager. */
   public int getTasks() { return 3; }
-
 
   // -- Helper methods --
 

@@ -45,7 +45,6 @@ public class ConsoleManager extends LogicManager implements OutputListener {
   private static final String DEBUG_MODE =
     "Dump output to console rather than graphical windows";
 
-
   // -- Fields --
 
   /** Standard output console. */
@@ -66,12 +65,10 @@ public class ConsoleManager extends LogicManager implements OutputListener {
   /** Whether output should be dumped to the default console window. */
   private boolean debug;
 
-
   // -- Constructor --
 
   /** Constructs an exit manager. */
   public ConsoleManager(VisBioFrame bio) { super(bio); }
-
 
   // -- ConsoleManager API methods --
 
@@ -99,7 +96,6 @@ public class ConsoleManager extends LogicManager implements OutputListener {
   /** Gets whether debugging mode is enabled. */
   public boolean isDebug() { return debug; }
 
-
   // -- Menu commands --
 
   /** Displays the given output console window. */
@@ -108,7 +104,6 @@ public class ConsoleManager extends LogicManager implements OutputListener {
     if (console.equals("err")) wm.showWindow(err.getWindow());
     else if (console.equals("out")) wm.showWindow(out.getWindow());
   }
-
 
   // -- LogicManager API methods --
 
@@ -134,7 +129,6 @@ public class ConsoleManager extends LogicManager implements OutputListener {
   /** Gets the number of tasks required to initialize this logic manager. */
   public int getTasks() { return 2; }
 
-
   // -- OutputListener API methods --
 
   /** Handles output and error console window updates. */
@@ -149,7 +143,6 @@ public class ConsoleManager extends LogicManager implements OutputListener {
       wm.showWindow(frame);
     }
   }
-
 
   // -- Helper methods --
 

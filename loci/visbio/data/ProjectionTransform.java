@@ -49,7 +49,6 @@ public class ProjectionTransform extends ImageTransform {
   /** Controls for this maximum intensity projection. */
   protected ProjectionWidget controls;
 
-
   // -- Constructors --
 
   /** Creates an uninitialized maximum intensity projection. */
@@ -62,7 +61,6 @@ public class ProjectionTransform extends ImageTransform {
     initState(null);
   }
 
-
   // -- ProjectionTransform API methods --
 
   /** Assigns the parameters for this maximum intensity projection. */
@@ -74,7 +72,6 @@ public class ProjectionTransform extends ImageTransform {
     // signal parameter change to listeners
     notifyListeners(new TransformEvent(this));
   }
-
 
   // -- ImageTransform API methods --
 
@@ -92,7 +89,6 @@ public class ProjectionTransform extends ImageTransform {
   public int getRangeCount() {
     return ((ImageTransform) parent).getRangeCount();
   }
-
 
   // -- Static DataTransform API methods --
 
@@ -123,7 +119,6 @@ public class ProjectionTransform extends ImageTransform {
 
   /** Indicates whether this transform type requires a parent transform. */
   public static boolean isParentRequired() { return true; }
-
 
   // -- DataTransform API methods --
 
@@ -172,7 +167,6 @@ public class ProjectionTransform extends ImageTransform {
   /** Gets associated GUI controls for this transform. */
   public JComponent getControls() { return controls; }
 
-
   // -- Dynamic API methods --
 
   /** Tests whether two dynamic objects are equivalent. */
@@ -211,7 +205,6 @@ public class ProjectionTransform extends ImageTransform {
     thumbs = new ThumbnailHandler(this, getCacheFilename());
   }
 
-
   // -- Saveable API methods --
 
   /** Writes the current state to the given DOM element ("DataTransforms"). */
@@ -230,7 +223,6 @@ public class ProjectionTransform extends ImageTransform {
     axis = Integer.parseInt(el.getAttribute("axis"));
   }
 
-
   // -- Utility methods --
 
   /** Performs a maximum intensity projection across the given fields. */
@@ -245,7 +237,6 @@ public class ProjectionTransform extends ImageTransform {
     catch (RemoteException exc) { exc.printStackTrace(); }
     return ff;
   }
-
 
   // -- Helper methods --
 

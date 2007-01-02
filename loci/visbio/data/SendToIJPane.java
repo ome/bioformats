@@ -57,7 +57,6 @@ public class SendToIJPane extends DialogPane {
   /** Axis to use for ImageJ stack. */
   private BioComboBox stackAxis;
 
-
   // -- Constructor --
 
   /** Creates a dialog for specifying ImageJ export parameters. */
@@ -68,7 +67,6 @@ public class SendToIJPane extends DialogPane {
     stackAxis = new BioComboBox();
     stackAxis.setActionCommand("stackAxis");
   }
-
 
   // -- SendToIJPane API methods --
 
@@ -144,7 +142,6 @@ public class SendToIJPane extends DialogPane {
     }.start();
   }
 
-
   // -- DialogPane API methods --
 
   /** Lays out components before displaying the dialog. */
@@ -181,7 +178,6 @@ public class SendToIJPane extends DialogPane {
     }
     return super.showDialog();
   }
-
 
   // -- ActionListener API methods --
 

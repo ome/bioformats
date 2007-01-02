@@ -88,7 +88,6 @@ public class TransformPanel extends JPanel
   /** List of axes for animation. */
   protected BioComboBox animBox;
 
-
   // -- Constructor --
 
   /** Creates a panel containing view handler GUI controls. */
@@ -101,7 +100,6 @@ public class TransformPanel extends JPanel
     add(FormsUtil.makeColumn(doDataPanel(), "Position", doAnimationPanel()),
       BorderLayout.CENTER);
   }
-
 
   // -- TransformPanel API methods --
 
@@ -196,7 +194,6 @@ public class TransformPanel extends JPanel
     }
   }
 
-
   // -- ActionListener API methods --
 
   /** Handles button presses and combo box selections. */
@@ -273,7 +270,6 @@ public class TransformPanel extends JPanel
     }
   }
 
-
   // -- ChangeListener API methods --
 
   /** Handles spinner changes. */
@@ -287,7 +283,6 @@ public class TransformPanel extends JPanel
     }
   }
 
-
   // -- ListSelectionListener API methods --
 
   /** Handles list selection changes. */
@@ -295,7 +290,6 @@ public class TransformPanel extends JPanel
     DataTransform data = (DataTransform) transformList.getSelectedValue();
     updateControls();
   }
-
 
   // -- Helper methods --
 

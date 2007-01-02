@@ -144,7 +144,6 @@ public class MetadataPane extends JPanel
   /** Whether XML is being displayed in raw form. */
   protected boolean raw;
 
-
   // -- Constructor --
 
   /** Constructs default widget for displaying OME-XML metadata. */
@@ -698,7 +697,6 @@ public class MetadataPane extends JPanel
       TablePanel p = (TablePanel) panelList.get(i);
       p.setEditor();
     }
-
 
     //set the displayed tab to be by default the first image
     TabPanel firstImageTab = null;

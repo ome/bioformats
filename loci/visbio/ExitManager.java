@@ -35,18 +35,15 @@ public class ExitManager extends LogicManager implements WindowListener {
   /** Flag indicating shutdown process may continue. */
   private boolean exitOk;
 
-
   // -- Constructor --
 
   /** Constructs an exit manager. */
   public ExitManager(VisBioFrame bio) { super(bio); }
 
-
   // -- ExitManager API methods --
 
   /** Trip flag indicating shutdown process should not continue. */
   public void cancelShutdown() { exitOk = false; }
-
 
   // -- LogicManager API methods --
 
@@ -61,7 +58,6 @@ public class ExitManager extends LogicManager implements WindowListener {
 
   /** Gets the number of tasks required to initialize this logic manager. */
   public int getTasks() { return 2; }
-
 
   // -- Helper methods --
 
@@ -80,7 +76,6 @@ public class ExitManager extends LogicManager implements WindowListener {
       SwingUtil.setMenuShortcut(bio, "File", "Exit", KeyEvent.VK_Q);
     }
   }
-
 
   // -- WindowListener API methods --
 
@@ -104,7 +99,6 @@ public class ExitManager extends LogicManager implements WindowListener {
 
   /** Unused WindowListener method. */
   public void windowOpened(WindowEvent e) { }
-
 
   // -- Menu commands --
 

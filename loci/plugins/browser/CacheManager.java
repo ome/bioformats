@@ -69,13 +69,13 @@ public class CacheManager implements Runnable {
 
   /** The IFormatReader that handles conversion of formats.*/
   private IFormatReader read;
-  
+
   /** The FileStitcher we're using to stitch files.*/
   private FileStitcher fs;
-  
+
   /** The two axes scrollbars in the CustomWindow.*/
   private JScrollBar zSel, tSel;
-  
+
   /** The two indicators of the cache.*/
   private CacheIndicator zInd, tInd;
 
@@ -144,7 +144,7 @@ public class CacheManager implements Runnable {
   * should wrap around to the begining/end for animation purposes.
   */
   private boolean loop;
-  
+
   /**flag to zap the cache entirely if dimensions are switched*/
   private boolean zapCache;
 
@@ -1854,9 +1854,9 @@ public class CacheManager implements Runnable {
   private void clearCache() {
     if (DEBUG) System.out.println("CLEARING CACHE");
     quit = true;
-    
+
     int[] oldIndex = null;
-    
+
     boolean erase = true;
     if(!zapCache) {
       oldIndex = getToCache(true);
@@ -1870,7 +1870,7 @@ public class CacheManager implements Runnable {
       }
       erase = false;
     }
-    
+
     oldZ = curZ;
     oldT = curT;
     oldC = curC;
@@ -1878,18 +1878,18 @@ public class CacheManager implements Runnable {
     oldStrategy = strategy;
     oldMode = curMode;
     oldAxis = curAxis;
-    
+
     oldBackZ = curBackZ;
     oldBackT = curBackT;
     oldBackC = curBackC;
     oldForwardZ = curForwardZ;
     oldForwardT = curForwardT;
     oldForwardC = curForwardC;
-    
+
     oldZPriority = curZPriority;
     oldTPriority = curZPriority;
     oldCPriority = curCPriority;
-    
+
     int[] newIndex = getToCache(false);
 
     if (DEBUG) {
@@ -1929,7 +1929,7 @@ public class CacheManager implements Runnable {
 
     if (DEBUG) System.out.println("Cache Size after clear: " + getSize());
   }
-  
+
   protected void dimChange() {
     zapCache = true;
     synchronized (fs) {
@@ -1945,14 +1945,14 @@ public class CacheManager implements Runnable {
       }
     }
   }
-  
+
   protected void setIndicators(int aZ, int aT, int aC) {
     zInd = db.cw.zIndicator;
     tInd = db.cw.tIndicator;
-  
+
     Vector zInCache = new Vector();
     Vector tInCache = new Vector();
-    
+
     for(int i = 0;i < sizeZ;i++) {
       int index = -1;
       try {
@@ -1961,29 +1961,29 @@ public class CacheManager implements Runnable {
       catch(Exception exc) {
         LociDataBrowser.exceptionMessage(exc);
       }
-      
+
       if (index != -1 && cache[index] != null) zInCache.add(new Integer(i));
     }
-    
+
     for(int i = 0;i < sizeT;i++) {
-      int index = -1; 
+      int index = -1;
       try {
         index = read.getIndex(fileName, aZ - 1, aC - 1, i);
       }
       catch(Exception exc) {
         LociDataBrowser.exceptionMessage(exc);
       }
-      
+
       if (index != -1 && cache[index] != null) tInCache.add(new Integer(i));
     }
-    
+
     int[] loadCopy = new int[loadList.length];
     System.arraycopy(loadList, 0, loadCopy, 0, loadList.length);
     Arrays.sort(loadCopy);
-    
+
     Vector zLoad = new Vector();
     Vector tLoad = new Vector();
-    
+
     for(int i = 0;i < loadCopy.length;i++) {
       int[] coords = null;
       try {
@@ -2000,26 +2000,26 @@ public class CacheManager implements Runnable {
         if (myC == aC - 1 && myZ == aZ - 1) tLoad.add(new Integer(myT));
       }
     }
-    
+
     if(DEBUG) {
       System.out.println("Z in Cache: " + zInCache);
       System.out.println("T in Cache: " + tInCache);
       System.out.println("Z in Load: " + zLoad);
       System.out.println("T in Load: " + tLoad);
     }
-    
+
     int[] zC = makeInt(zInCache.toArray());
     int[] tC = makeInt(tInCache.toArray());
     int[] zL = makeInt(zLoad.toArray());
     int[] tL = makeInt(tLoad.toArray());
-    
+
     Arrays.sort(zL);
     Arrays.sort(tL);
-    
+
     zInd.setIndicator(zC, zL, sizeZ);
     tInd.setIndicator(tC, tL, sizeT);
   }
-  
+
   private static int [] makeInt(Object[] array) {
     int [] result  = new int[array.length];
     for(int i = 0;i<result.length;i++) {
@@ -2043,7 +2043,7 @@ public class CacheManager implements Runnable {
           fileName, read, loadList[i]);
         cache[loadList[i]] = imp;
       }
-      
+
       if(db.cw != null) {
         int aC = 1;
         zSel = db.cw.zSliceSel;

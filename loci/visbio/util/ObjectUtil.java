@@ -174,7 +174,6 @@ public final class ObjectUtil {
     return o1.equals(o2);
   }
 
-
   // -- String-to-array conversions --
 
   /** Converts the given String into an array of Strings. */
@@ -267,7 +266,6 @@ public final class ObjectUtil {
     return a;
   }
 
-
   // -- String-to-object conversions --
 
   /** Converts the given string into a double value. */
@@ -293,7 +291,6 @@ public final class ObjectUtil {
     if (a.length == 3) return new Color(a[0], a[1], a[2]);
     else return new Color(a[0], a[1], a[2], a[3]);
   }
-
 
   // -- Array-to-string conversions --
 
@@ -414,7 +411,6 @@ public final class ObjectUtil {
     return sb.toString();
   }
 
-
   // -- Object-to-string conversions --
 
   /** Writes the given color object to the given output stream. */
@@ -433,7 +429,6 @@ public final class ObjectUtil {
     }
     return sb.toString();
   }
-
 
   // -- Array copying --
 

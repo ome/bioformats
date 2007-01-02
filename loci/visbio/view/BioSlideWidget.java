@@ -57,7 +57,6 @@ public class BioSlideWidget extends JPanel
   /** Next step button. */
   protected JButton next;
 
-
   // -- Other fields --
 
   /** Slider name. */
@@ -74,7 +73,6 @@ public class BioSlideWidget extends JPanel
 
   /** Indices into affected transforms. */
   protected Vector indices;
-
 
   // -- Constructor --
 
@@ -120,7 +118,6 @@ public class BioSlideWidget extends JPanel
     setLayout(new BorderLayout());
     add(builder.getPanel());
   }
-
 
   // -- BioSlideWidget API methods --
 
@@ -188,7 +185,6 @@ public class BioSlideWidget extends JPanel
   /** Gets the slider component. */
   public JSlider getSlider() { return slider; }
 
-
   // -- Component API methods --
 
   /** Enables or disables this dimensional slider widget. */
@@ -200,14 +196,12 @@ public class BioSlideWidget extends JPanel
     next.setEnabled(enabled);
   }
 
-
   // -- ActionListener API methods --
 
   /** Called when previous or next button is pushed. */
   public void actionPerformed(ActionEvent e) {
     step(e.getActionCommand().equals("next"));
   }
-
 
   // -- ChangeListener API methods --
 

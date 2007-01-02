@@ -64,7 +64,6 @@ public class ColorPane extends DialogPane
     ColorUtil.LUT_FIRE, ColorUtil.LUT_ICE
   };
 
-
   // -- GUI components --
 
   /** LUT file chooser. */
@@ -130,7 +129,6 @@ public class ColorPane extends DialogPane
   /** Button for selecting a color look-up table from a list of presets. */
   protected JButton lutPresets;
 
-
   // -- Other fields --
 
   /** Color handler for this color pane. */
@@ -141,7 +139,6 @@ public class ColorPane extends DialogPane
 
   /** Should changes to the color components be ignored? */
   protected boolean ignore = false;
-
 
   // -- Constructor --
 
@@ -179,7 +176,6 @@ public class ColorPane extends DialogPane
     builder.add(right, cc.xy(3, 1));
     add(builder.getPanel());
   }
-
 
   // -- ColorPane API methods - mutators --
 
@@ -293,7 +289,6 @@ public class ColorPane extends DialogPane
     cmw.setTableView(table);
   }
 
-
   // -- ColorPane API methods - accessors --
 
   /** Gets current brightness value. */
@@ -358,7 +353,6 @@ public class ColorPane extends DialogPane
     return tables;
   }
 
-
   // -- DialogPane API methods --
 
   /** Resets the color pane's components to their default states. */
@@ -413,7 +407,6 @@ public class ColorPane extends DialogPane
     }
     ignore = false;
   }
-
 
   // -- ActionListener API methods --
 
@@ -486,7 +479,6 @@ public class ColorPane extends DialogPane
     super.actionPerformed(e);
   }
 
-
   // -- ChangeListener API methods --
 
   /** Handles slider changes. */
@@ -494,7 +486,6 @@ public class ColorPane extends DialogPane
     if (e.getSource() == opacity) doAlphas();
     else doColorTables();
   }
-
 
   // -- DocumentListener API methods --
 
@@ -506,7 +497,6 @@ public class ColorPane extends DialogPane
 
   /** Handles text field deletions. */
   public void removeUpdate(DocumentEvent e) { doColorRanges(); }
-
 
   // -- ItemListener API methods --
 
@@ -521,7 +511,6 @@ public class ColorPane extends DialogPane
     }
     else doColorTables();
   }
-
 
   // -- Helper methods --
 

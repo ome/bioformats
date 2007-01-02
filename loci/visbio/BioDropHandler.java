@@ -43,7 +43,6 @@ public class BioDropHandler extends TransferHandler {
   /** Associated VisBio frame. */
   private VisBioFrame bio;
 
-
   // -- Constructor --
 
   /** Constructs a new transfer handler for VisBio file drops. */
@@ -51,7 +50,6 @@ public class BioDropHandler extends TransferHandler {
     super();
     this.bio = bio;
   }
-
 
   // -- TransferHandler API methods --
 

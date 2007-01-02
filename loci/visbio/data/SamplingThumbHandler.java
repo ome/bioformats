@@ -38,7 +38,6 @@ public class SamplingThumbHandler extends ThumbnailHandler {
     super(data, filename);
   }
 
-
   // -- Internal ThumbnailHandler API methods --
 
   /**

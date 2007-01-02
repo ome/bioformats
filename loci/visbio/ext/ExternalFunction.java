@@ -61,7 +61,6 @@ public abstract class ExternalFunction extends ImageTransform {
   /** Controls for this external function transform. */
   protected FunctionWidget controls;
 
-
   // -- Constructors --
 
   /** Creates an uninitialized external function transform. */
@@ -73,7 +72,6 @@ public abstract class ExternalFunction extends ImageTransform {
     this.function = function;
     initState(null);
   }
-
 
   // -- ExternalFunction API methods --
 
@@ -136,7 +134,6 @@ public abstract class ExternalFunction extends ImageTransform {
    */
   public String[] getParameters() { return params; }
 
-
   // -- ImageTransform API methods --
 
   /** Gets width of each image. */
@@ -147,7 +144,6 @@ public abstract class ExternalFunction extends ImageTransform {
 
   /** Gets number of range components at each pixel. */
   public int getRangeCount() { return numRange; }
-
 
   // -- DataTransform API methods --
 
@@ -188,7 +184,6 @@ public abstract class ExternalFunction extends ImageTransform {
 
   /** Gets associated GUI controls for this transform. */
   public JComponent getControls() { return controls; }
-
 
   // -- Dynamic API methods --
 
@@ -238,7 +233,6 @@ public abstract class ExternalFunction extends ImageTransform {
     thumbs = new ThumbnailHandler(this, getCacheFilename());
   }
 
-
   // -- Saveable API methods --
 
   /** Writes the current state to the given DOM element ("DataTransforms"). */
@@ -256,7 +250,6 @@ public abstract class ExternalFunction extends ImageTransform {
     super.restoreState(el);
     function = el.getAttribute("function");
   }
-
 
   // -- Helper methods --
 

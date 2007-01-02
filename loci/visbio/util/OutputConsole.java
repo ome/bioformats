@@ -43,7 +43,6 @@ public class OutputConsole extends OutputStream {
   /** Monospaced font. */
   private static final Font MONO = new Font("Monospaced", Font.PLAIN, 11);
 
-
   // -- Fields --
 
   private JFrame frame;
@@ -51,7 +50,6 @@ public class OutputConsole extends OutputStream {
   private JTextArea area;
   private String log;
   private Vector listeners;
-
 
   // -- Constructors --
 
@@ -96,7 +94,6 @@ public class OutputConsole extends OutputStream {
     frame.pack();
   }
 
-
   // -- OutputConsole API methods --
 
   public void show() { setVisible(true); }
@@ -127,7 +124,6 @@ public class OutputConsole extends OutputStream {
       }
     }
   }
-
 
   // -- OutputStream API methods --
 

@@ -46,7 +46,6 @@ public class ResolutionOption extends BioOption {
   /** Y resolution text field GUI component. */
   private JTextField resY;
 
-
   // -- Constructor --
 
   /** Constructs a new option. */
@@ -68,7 +67,6 @@ public class ResolutionOption extends BioOption {
       {text + ":", resX, new JLabel("x"), resY});
   }
 
-
   // -- ResolutionOption API methods --
 
   /** Gets this option's current X resolution. */
@@ -87,12 +85,10 @@ public class ResolutionOption extends BioOption {
     return valueY;
   }
 
-
   // -- BioOption API methods --
 
   /** Gets a GUI component representing this option. */
   public Component getComponent() { return panel; }
-
 
   // -- Saveable API methods --
 

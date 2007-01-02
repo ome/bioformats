@@ -52,7 +52,6 @@ public class ResolutionToggleOption extends BioOption
   /** Y resolution text field GUI component. */
   private JTextField resY;
 
-
   // -- Constructor --
 
   /** Constructs a new option. */
@@ -82,7 +81,6 @@ public class ResolutionToggleOption extends BioOption
     panel = FormsUtil.makeRow(new Object[] {box, resX, new JLabel("x"), resY});
   }
 
-
   // -- ResolutionToggleOption API methods --
 
   /** Gets whether resolution toggle is on. */
@@ -104,12 +102,10 @@ public class ResolutionToggleOption extends BioOption
     return valueY;
   }
 
-
   // -- BioOption API methods --
 
   /** Gets a GUI component representing this option. */
   public Component getComponent() { return panel; }
-
 
   // -- ActionListener API methods --
 
@@ -119,7 +115,6 @@ public class ResolutionToggleOption extends BioOption
     resX.setEnabled(b);
     resY.setEnabled(b);
   }
-
 
   // -- Saveable API methods --
 

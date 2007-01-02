@@ -48,7 +48,6 @@ public class DatasetWidget extends JPanel
   /** Column headings for metadata table. */
   protected static final String[] META_COLUMNS = {"Name", "Value"};
 
-
   // -- Fields --
 
   /** Associated dataset. */
@@ -83,7 +82,6 @@ public class DatasetWidget extends JPanel
 
   /** Table model backing metadata table. */
   protected DefaultTableModel metaTableModel;
-
 
   // -- Constructor --
 
@@ -170,7 +168,6 @@ public class DatasetWidget extends JPanel
     list.setSelectedIndex(0);
   }
 
-
   // -- ListSelectionListener API methods --
 
   /** Called when the filename list selection changes. */
@@ -201,7 +198,6 @@ public class DatasetWidget extends JPanel
     }
   }
 
-
   // -- TreeSelectionListener API methods --
 
   /** Called when the OME-XML tree selection changes. */
@@ -224,7 +220,6 @@ public class DatasetWidget extends JPanel
     }
   }
 
-
   // -- Helper methods --
 
   /** Builds a tree by wrapping XML elements with JTree nodes. */
@@ -238,7 +233,6 @@ public class DatasetWidget extends JPanel
       if (n instanceof Element) buildTree((Element) n, child);
     }
   }
-
 
   // -- Helper classes --
 

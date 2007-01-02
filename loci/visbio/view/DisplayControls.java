@@ -63,7 +63,6 @@ public class DisplayControls extends ControlPanel
   /** Button for removing a display from the list. */
   protected JButton remove;
 
-
   // -- Constructor --
 
   /** Constructs a tool panel for adjusting data parameters. */
@@ -136,7 +135,6 @@ public class DisplayControls extends ControlPanel
     add(builder.getPanel());
   }
 
-
   // -- DisplayControls API methods --
 
   /** Adds a display to the list of current displays. */
@@ -174,7 +172,6 @@ public class DisplayControls extends ControlPanel
     remove.setEnabled(d != null);
   }
 
-
   // -- ActionListener API methods --
 
   /** Handles button presses. */
@@ -193,7 +190,6 @@ public class DisplayControls extends ControlPanel
     }
   }
 
-
   // -- ListSelectionListener API methods --
 
   /** Handles list selection changes. */
@@ -201,7 +197,6 @@ public class DisplayControls extends ControlPanel
     refresh();
     showDisplay();
   }
-
 
   // -- Helper methods --
 

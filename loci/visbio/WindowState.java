@@ -43,7 +43,6 @@ public class WindowState {
   /** Dimensions of the window. */
   protected int width, height;
 
-
   // -- Constructor --
 
   /** Creates a new window state object. */
@@ -57,7 +56,6 @@ public class WindowState {
     this.width = width;
     this.height = height;
   }
-
 
   // -- WindowInfo API methods --
 
@@ -92,7 +90,6 @@ public class WindowState {
 
   /** Gets window height. */
   public int getHeight() { return height; }
-
 
   // -- Object API methods --
 

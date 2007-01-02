@@ -42,7 +42,6 @@ public class CapturePanel extends JPanel implements ActionListener {
   /** Capture window. */
   protected CaptureWindow captureWindow;
 
-
   // -- Constructor --
 
   /** Creates a panel containing capture handler GUI controls. */
@@ -65,7 +64,6 @@ public class CapturePanel extends JPanel implements ActionListener {
     add(capture);
   }
 
-
   // -- CapturePanel API methods --
 
   /** Displays the capture window pane onscreen. */
@@ -77,7 +75,6 @@ public class CapturePanel extends JPanel implements ActionListener {
 
   /** Gets the capture pane. */
   public CaptureWindow getCaptureWindow() { return captureWindow; }
-
 
   // -- ActionListener API methods --
 

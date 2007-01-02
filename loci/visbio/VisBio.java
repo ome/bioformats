@@ -61,12 +61,10 @@ public final class VisBio extends Thread {
   /** Port to use for communicating between application instances. */
   public static final int INSTANCE_PORT = 0xabcd;
 
-
   // -- Constructor --
 
   /** Ensure this class can't be externally instantiated. */
   private VisBio() { }
-
 
   // -- VisBio API methods --
 
@@ -109,7 +107,6 @@ public final class VisBio extends Thread {
     return con.newInstance(new Object[] {ss, args});
   }
 
-
   // -- Thread API methods --
 
   /** Launches the VisBio GUI with no arguments. */
@@ -117,7 +114,6 @@ public final class VisBio extends Thread {
     try { launch(new String[0]); }
     catch (Exception exc) { exc.printStackTrace(); }
   }
-
 
   // -- Main --
 

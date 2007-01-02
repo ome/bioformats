@@ -34,7 +34,6 @@ public class FunctionParam {
   /** Default value of this parameter. */
   protected String value;
 
-
   // -- Constructor --
 
   /**
@@ -45,7 +44,6 @@ public class FunctionParam {
     this.name = name;
     this.value = value;
   }
-
 
   // -- FunctionParam API methods --
 

@@ -34,12 +34,10 @@ public class BioArrowButton extends BasicArrowButton {
   /** Default size for arrow buttons. */
   protected static final int BUTTON_SIZE = 24;
 
-
   // -- Fields --
 
   /** Size of the arrow button in pixels. */
   protected Dimension size;
-
 
   // -- Constructors --
 

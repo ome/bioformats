@@ -74,7 +74,6 @@ public class CaptureWindow extends JFrame implements ActionListener,
   /** Progress bar for movie capture operation. */
   protected JProgressBar progress;
 
-
   // -- Constructor --
 
   /** Constructs a window for capturing display screenshots and movies. */
@@ -228,7 +227,6 @@ public class CaptureWindow extends JFrame implements ActionListener,
     setContentPane(pane);
   }
 
-
   // -- CaptureWindow API methods --
 
   /** Sets the progress bar's value. */
@@ -279,7 +277,6 @@ public class CaptureWindow extends JFrame implements ActionListener,
 
   /** Gets whether transitions use a smoothing sine function. */
   public boolean isSmooth() { return smooth.isSelected(); }
-
 
   // -- ActionListener API methods --
 
@@ -372,7 +369,6 @@ public class CaptureWindow extends JFrame implements ActionListener,
     }
   }
 
-
   // -- ChangeListener API methods --
 
   /** Called when slider or spinner is adjusted. */
@@ -393,7 +389,6 @@ public class CaptureWindow extends JFrame implements ActionListener,
     }
   }
 
-
   // -- ItemListener API methods --
 
   /** Called when check box is toggled. */
@@ -404,7 +399,6 @@ public class CaptureWindow extends JFrame implements ActionListener,
       (smooth.isSelected() ? "en" : "dis") +
       "able transition emphasis for " + display.getName(), true);
   }
-
 
   // -- ListSelectionListener API methods --
 

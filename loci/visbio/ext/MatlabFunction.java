@@ -40,7 +40,6 @@ public class MatlabFunction extends ExternalFunction {
     super(parent, name, function);
   }
 
-
   // -- ExternalFunction API methods --
 
   /**
@@ -67,7 +66,6 @@ public class MatlabFunction extends ExternalFunction {
     for (int i=0; i<params.length; i++) p[i] = Double.parseDouble(params[i]);
     return MatlabUtil.evaluate(function, input, p, getRangeTypes());
   }
-
 
   // -- Static DataTransform API methods --
 

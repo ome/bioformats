@@ -38,7 +38,6 @@ public class TaskControls extends ControlPanel {
   /** Scroll pane wrapping pane. */
   private JScrollPane scroll;
 
-
   // -- Constructor --
 
   /** Constructs a tool panel for controlling tasks. */
@@ -57,7 +56,6 @@ public class TaskControls extends ControlPanel {
 
     add(scroll);
   }
-
 
   // -- TaskControls API methods --
 

@@ -52,13 +52,13 @@ public class OptionsWindow extends JFrame implements
 
   /** The CacheManager for this instance of data browser.*/
   private CacheManager manager;
-  
+
   /** The FileStitcher used to stich files together.*/
   private FileStitcher fStitch;
 
   /** CheckBoxes to indicate which axes to store.*/
   private JCheckBox zCheck,tCheck,cCheck;
-  
+
   /** CheckBoxes to control if caching is on or off */
   private JCheckBox cacheToggle;
 
@@ -79,16 +79,16 @@ public class OptionsWindow extends JFrame implements
 
   /** Storage of what priority settings used to be.*/
   private int oldTop,oldMid,oldLow;
-  
+
   FileStitcher fs;
-  
+
   JComboBox[] blockBoxes;
   String id = null,order = null,suffix = null;
   String[] prefixes = null,blocks = null;
   int sizeZ = -1,sizeT = -1,sizeC = -1;
   int[] axes = null;
   FilePattern fp = null;
-  
+
   JComboBox zGroup,tGroup,cGroup;
 
   // -- Constructor --
@@ -99,13 +99,13 @@ public class OptionsWindow extends JFrame implements
     cw = c;
 
     manager = cw.db.manager;
-    
+
     fs = cw.db.fStitch;
 
     update = false;
 
     Border etchB = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
-    
+
     // get FilePattern Data
     try {
       id = cw.db.id;
@@ -146,7 +146,7 @@ public class OptionsWindow extends JFrame implements
       blockLabels[i] = (JLabel) blockLabelsO[i];
       blockLabels[i].setForeground(getColor(i));
     }
-    
+
     Object[] choices = {"Z-Depth", "Time", "Channel"};
     zGroup = new JComboBox(choices);
     setBox(zGroup,0);
@@ -174,7 +174,7 @@ public class OptionsWindow extends JFrame implements
       temp.setForeground(getColor(i));
       blockBoxes[i] = temp;
     }
-    
+
     JPanel slicePanel = new JPanel();
     slicePanel.add(sliceLab);
     slicePanel.setBackground(Color.darkGray);
@@ -194,23 +194,23 @@ public class OptionsWindow extends JFrame implements
     }
     JLabel sufLab = new JLabel(suffix);
     filePane.add(sufLab);
-    
+
     int[] internalSizes = new int[3];
     for(int i = 0;i<internalSizes.length;i++) {
       internalSizes[i] = getOrderSize(i);
     }
-    
+
     JLabel zLab = new JLabel("First ("+ internalSizes[0] + "):");
     JLabel tLab = new JLabel("Second (" + internalSizes[1] + "):");
     JLabel cLab = new JLabel("Third (" + internalSizes[2] + "):");
     JLabel fileLab = new JLabel("Filename:");
-    
+
     String rowString = "pref," + TAB + ",pref,pref,pref," + TAB +
       ",pref,pref";
     for(int i = 0; i<blockLabels.length;i++) {
       rowString += ",pref";
     }
-    
+
     FormLayout layout = new FormLayout(
         TAB + ",pref," + TAB + ",pref:grow," + TAB,
         rowString);
@@ -233,7 +233,7 @@ public class OptionsWindow extends JFrame implements
     disPane.add(filePane,cc.xy(4,8));
     for(int i = 0;i<blockLabels.length;i++) {
       disPane.add(blockLabels[i], cc.xy(2,9+i));
-      disPane.add(blockBoxes[i], cc.xy(4,9+i)); 
+      disPane.add(blockBoxes[i], cc.xy(4,9+i));
     }
 
     //set up animation options pane
@@ -307,11 +307,10 @@ public class OptionsWindow extends JFrame implements
     zCheck.addItemListener(this);
     tCheck.addItemListener(this);
     cCheck.addItemListener(this);
-    
+
     cacheToggle = new JCheckBox("Cache Images (on/off)");
     cacheToggle.setSelected(cw.db.virtual);
     cacheToggle.addItemListener(this);
-    
 
     String[] modes = {"Crosshair", "Rectangle", "Cross/Rect"};
     modeBox = new JComboBox(modes);
@@ -413,10 +412,10 @@ public class OptionsWindow extends JFrame implements
 //    ((JComponent) getContentPane()).setPreferredSize(new Dimension(300,500));
     pack();
     setVisible(true);
-    
+
     update = true;
   }
-  
+
   private int getBoxIndex(JComboBox jcb) {
     for(int i = 0;i<blockBoxes.length;i++) {
       if (jcb == blockBoxes[i]) return i;
@@ -443,7 +442,7 @@ public class OptionsWindow extends JFrame implements
           next -= 5;
           tempColor = tempColor.darker();
         }
-        return tempColor; 
+        return tempColor;
     }
   }
 
@@ -462,7 +461,7 @@ public class OptionsWindow extends JFrame implements
     }
     return -1;
   }
-  
+
   /** Set up the combo box to reflect appropriate axis.*/
   private void setBox(JComboBox thisBox, int index) {
     switch(order.charAt(index)) {
@@ -477,7 +476,7 @@ public class OptionsWindow extends JFrame implements
         break;
     }
   }
-  
+
   private char convertInt(int index) {
     switch (index) {
       case 0:
@@ -490,7 +489,7 @@ public class OptionsWindow extends JFrame implements
         return 'Q';
     }
   }
-  
+
   private int convertChar(char c) {
     switch (c) {
       case 'Z':
@@ -503,7 +502,7 @@ public class OptionsWindow extends JFrame implements
         return 'Q';
     }
   }
-  
+
   private int getOrderSize(int i) {
     int thisSize = 1;
     switch(order.charAt(i)) {
@@ -522,7 +521,7 @@ public class OptionsWindow extends JFrame implements
     }
     return thisSize;
   }
-  
+
   private int getBlockCount(int index) {
     int total = 0;
     int[] blockSizes = fp.getCount();
@@ -534,7 +533,7 @@ public class OptionsWindow extends JFrame implements
     if (total == 0) total = 1;
     return total;
   }
-  
+
   private int getAxis(int i) {
     switch (i) {
       case 0:
@@ -688,15 +687,15 @@ public class OptionsWindow extends JFrame implements
         char oldChar = order.charAt(0);
         int sel = zGroup.getSelectedIndex();
         char zChar = convertInt(sel);
-        
+
         sel = tGroup.getSelectedIndex();
         char tChar = convertInt(sel);
         if(tChar == zChar) tChar = oldChar;
-        
+
         sel = cGroup.getSelectedIndex();
         char cChar = convertInt(sel);
         if(cChar == zChar) cChar = oldChar;
-        
+
         order = String.valueOf(zChar) + String.valueOf(tChar)
           + String.valueOf(cChar);
         try {
@@ -722,15 +721,15 @@ public class OptionsWindow extends JFrame implements
         char oldChar = order.charAt(1);
         int sel = tGroup.getSelectedIndex();
         char tChar = convertInt(sel);
-        
+
         sel = zGroup.getSelectedIndex();
         char zChar = convertInt(sel);
         if(zChar == tChar) zChar = oldChar;
-        
+
         sel = cGroup.getSelectedIndex();
         char cChar = convertInt(sel);
         if(cChar == tChar) cChar = oldChar;
-        
+
         order = String.valueOf(zChar) + String.valueOf(tChar)
           + String.valueOf(cChar);
         try {
@@ -756,15 +755,15 @@ public class OptionsWindow extends JFrame implements
         char oldChar = order.charAt(2);
         int sel = cGroup.getSelectedIndex();
         char cChar = convertInt(sel);
-        
+
         sel = zGroup.getSelectedIndex();
         char zChar = convertInt(sel);
         if(zChar == cChar) zChar = oldChar;
-        
+
         sel = tGroup.getSelectedIndex();
         char tChar = convertInt(sel);
         if(tChar == cChar) tChar = oldChar;
-        
+
         order = String.valueOf(zChar) + String.valueOf(tChar)
           + String.valueOf(cChar);
         try {

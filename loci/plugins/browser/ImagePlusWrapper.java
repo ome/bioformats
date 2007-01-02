@@ -59,10 +59,10 @@ public class ImagePlusWrapper {
       }
 
       // get # images in all matching files
-      
+
       try {
         numTotal = fs.getImageCount(name);
-        
+
         dim = fs.getDimensionOrder(name);
         sizeX = fs.getSizeX(name);
         sizeY = fs.getSizeY(name);

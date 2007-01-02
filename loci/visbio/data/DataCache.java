@@ -35,18 +35,15 @@ public class DataCache {
   /** Debugging flag. */
   protected static final boolean DEBUG = false;
 
-
   // -- Fields --
 
   /** Hashtable backing this cache of full-resolution data. */
   protected Hashtable hash;
 
-
   // -- Constructor --
 
   /** Constructs a cache for managing full-resolution data in memory. */
   public DataCache() { hash = new Hashtable(); }
-
 
   // -- DataCache API methods --
 
@@ -114,7 +111,6 @@ public class DataCache {
   /** Removes everything from the cache. */
   public synchronized void dumpAll() { hash.clear(); }
 
-
   // -- Internal DataCache API methods --
 
   /** Gets the data in the cache at the specified key. */
@@ -137,7 +133,6 @@ public class DataCache {
       if (DEBUG) System.out.println("DataCache: dumped " + key);
     }
   }
-
 
   // -- Helper methods --
 

@@ -42,7 +42,6 @@ public class StateManager extends LogicManager {
   /** Extension for VisBio state files. */
   protected static final String STATE_EXTENSION = "xml";
 
-
   // -- Fields --
 
   /** File chooser for state saves. */
@@ -75,7 +74,6 @@ public class StateManager extends LogicManager {
   /** Has the user saved the most recent state? */
   private boolean saved = true;
 
-
   // -- Constructors --
 
   /** Constructs a VisBio state management object. */
@@ -86,7 +84,6 @@ public class StateManager extends LogicManager {
     super(bio);
     this.stateFile = new File(stateFile);
   }
-
 
   // -- StateManager API methods --
 
@@ -153,7 +150,6 @@ public class StateManager extends LogicManager {
     }
   }
 
-
   // -- Menu commands --
 
   /** Restores the current state from a text file specified by the user. */
@@ -218,7 +214,6 @@ public class StateManager extends LogicManager {
     bio.generateEvent(this, "reset state", true);
   }
 
-
   // -- Saveable API methods --
 
   /** Writes the current state to the given DOM element ("VisBio"). */
@@ -242,7 +237,6 @@ public class StateManager extends LogicManager {
     }
     finally { restoring = false; }
   }
-
 
   // -- LogicManager API methods --
 
@@ -281,7 +275,6 @@ public class StateManager extends LogicManager {
 
   /** Gets the number of tasks required to initialize this logic manager. */
   public int getTasks() { return 3; }
-
 
   // -- Helper methods --
 
@@ -367,7 +360,6 @@ public class StateManager extends LogicManager {
       editRedo.setEnabled(true);
     }
   }
-
 
   // -- Utility methods --
 

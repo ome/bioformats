@@ -43,7 +43,6 @@ public class BioTask extends JPanel implements ActionListener {
   /** Whether the task has been stopped. */
   protected boolean stopped = false;
 
-
   // -- GUI components --
 
   /** Label displaying name of the task. */
@@ -57,7 +56,6 @@ public class BioTask extends JPanel implements ActionListener {
 
   /** Button for halting and resuming the task. */
   protected JButton stop;
-
 
   // -- Constructor --
 
@@ -93,7 +91,6 @@ public class BioTask extends JPanel implements ActionListener {
     builder.add(stop, cc.xywh(5, 1, 1, 2, "center,center"));
     add(builder.getPanel());
   }
-
 
   // -- BioTask API methods --
 
@@ -131,7 +128,6 @@ public class BioTask extends JPanel implements ActionListener {
   /** Gets whether the task has been stopped. */
   public boolean isStopped() { return stopped; }
 
-
   // -- Component API methods --
 
   public Dimension getMaximumSize() {
@@ -139,7 +135,6 @@ public class BioTask extends JPanel implements ActionListener {
     Dimension pref = super.getPreferredSize();
     return new Dimension(max.width, pref.height);
   }
-
 
   // -- ActionListener methods --
 

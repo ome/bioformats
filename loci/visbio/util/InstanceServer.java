@@ -52,7 +52,6 @@ public class InstanceServer implements Runnable {
   /** Whether this instance server is still listening for spawn events. */
   protected boolean alive = true;
 
-
   // -- Static InstanceServer API methods --
 
   /**
@@ -75,7 +74,6 @@ public class InstanceServer implements Runnable {
     socket.close();
   }
 
-
   // -- Constructor --
 
   /** Creates a new instance server on the given port. */
@@ -84,7 +82,6 @@ public class InstanceServer implements Runnable {
     listeners = new Vector();
     new Thread(this, "InstanceServer").start();
   }
-
 
   // -- InstanceServer API methods --
 
@@ -109,7 +106,6 @@ public class InstanceServer implements Runnable {
     try { serverSocket.close(); }
     catch (IOException exc) { exc.printStackTrace(); }
   }
-
 
   // -- Runnable API methods --
 
@@ -140,7 +136,6 @@ public class InstanceServer implements Runnable {
       }
     }
   }
-
 
   // -- Helper methods --
 

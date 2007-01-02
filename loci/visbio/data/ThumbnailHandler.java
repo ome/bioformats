@@ -66,7 +66,6 @@ public class ThumbnailHandler implements Runnable, TransformListener {
   /** Flag indicating background thumbnail generation is enabled. */
   protected boolean on = false;
 
-
   // -- Constructor --
 
   /** Creates a thumbnail handler. */
@@ -79,7 +78,6 @@ public class ThumbnailHandler implements Runnable, TransformListener {
     }
     clear();
   }
-
 
   // -- ThumbnailHandler API methods --
 
@@ -147,7 +145,6 @@ public class ThumbnailHandler implements Runnable, TransformListener {
   /** Gets the associated thumbnail disk cache object. */
   public ThumbnailCache getCache() { return cache; }
 
-
   // -- Internal ThumbnailHandler API methods --
 
   /** Computes the ith thumbnail. */
@@ -187,7 +184,6 @@ public class ThumbnailHandler implements Runnable, TransformListener {
     return makeThumb(d);
   }
 
-
   // -- Runnable API methods --
 
   /** Loads all thumbnails in the background. */
@@ -215,7 +211,6 @@ public class ThumbnailHandler implements Runnable, TransformListener {
     }
   }
 
-
   // -- TransformListener API methods --
 
   /** Handles data transform parameter changes. */
@@ -223,7 +218,6 @@ public class ThumbnailHandler implements Runnable, TransformListener {
     int id = e.getId();
     if (id == TransformEvent.DATA_CHANGED) clear();
   }
-
 
   // -- Helper methods --
 

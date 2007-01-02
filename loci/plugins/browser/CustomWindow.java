@@ -90,14 +90,14 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     this.db = db;
     ow = null;
     update = true;
-    
+
     String id = db.id;
-    
+
     FilePattern fp = null;
 
     if(db.fStitch != null) {
       try {
-        fp = db.fStitch.getFilePattern(id); 
+        fp = db.fStitch.getFilePattern(id);
         patternTitle = fp.getPattern();
       }
       catch (Exception exc) {
@@ -172,7 +172,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       Class.forName("loci.ome.notebook.MetadataNotebook"); // ome-notebook.jar
       Class.forName("com.jgoodies.forms.layout.FormLayout"); // forms-1.0.4.jar
     }
-    catch (Throwable e) { 
+    catch (Throwable e) {
       canDoXML = false;
     }
     xml = null;
@@ -185,7 +185,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     switcher = new CardLayout();
     channelPanel = new JPanel(switcher);
     channelPanel.setOpaque(false);
-    
+
     channelBox = new JCheckBox("Transmitted");
     channelBox.setBackground(Color.white);
     channelPanel.add("one", channelBox);
@@ -209,14 +209,14 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       c = db.numC;
     }
     else c = 1;
-    
+
     setC();
 
     JPanel zPanel = new JPanel(new BorderLayout());
     JPanel tPanel = new JPanel(new BorderLayout());
     zPanel.add(zSliceSel,BorderLayout.CENTER);
     tPanel.add(tSliceSel,BorderLayout.CENTER);
-    
+
     if(db.virtual) {
       zIndicator = new CacheIndicator(zSliceSel);
       tIndicator = new CacheIndicator(tSliceSel);
@@ -279,7 +279,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     repaint();
     update = true;
   }
-  
+
   public int getC() {
     return c;
   }
@@ -309,7 +309,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       switcher.first(channelPanel);
       c = channelBox.isSelected() ? 2 : 1;
       if (!hasThis) {
-        channelBox.setEnabled(false);    
+        channelBox.setEnabled(false);
         c = 1;
       }
     }
@@ -378,13 +378,13 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       if (db == null) return;
       int zVal = zSliceSel == null ? 1 : zSliceSel.getValue();
       int tVal = tSliceSel == null ? 1 : tSliceSel.getValue();
-  
+
       int textGap = 0;
-  
+
       int nSlices = db.numZ * db.numT * db.numC;
       int currentSlice = imp.getCurrentSlice();
       if (db.manager != null) currentSlice = db.manager.getSlice();
-  
+
       StringBuffer sb = new StringBuffer();
       sb.append(currentSlice);
       sb.append("/");
@@ -413,7 +413,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
           sb.append("; ");
         }
       }
-  
+
       int width = imp.getWidth(), height = imp.getHeight();
       Calibration cal = imp.getCalibration();
       if (cal.pixelWidth != 1.0 || cal.pixelHeight != 1.0) {
@@ -461,7 +461,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       sb.append("; ");
       sb.append(size);
       sb.append("M");
-  
+
       Insets insets = super.getInsets();
       g.drawString(sb.toString(), 5, insets.top + textGap);
     }
@@ -529,10 +529,10 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   public void adjustmentValueChanged(AdjustmentEvent adjustmentEvent) {
     if(update) {
       JScrollBar src = (JScrollBar) adjustmentEvent.getSource();
-  
+
       z = zSliceSel.getValue();
       t = tSliceSel.getValue();
-  
+
       if (!src.getValueIsAdjusting() || db.manager == null) showSlice(z, t, c);
       else showTempSlice(z,t,c);
     }
@@ -543,17 +543,17 @@ public class CustomWindow extends ImageWindow implements ActionListener,
   public synchronized void itemStateChanged(ItemEvent e) {
     if(update) {
       JCheckBox channels = (JCheckBox) e.getSource();
-      
+
       z = zSliceSel.getValue();
       t = tSliceSel.getValue();
       c = channels.isSelected() ? 2 : 1;
-  
+
       showSlice(z, t, c);
     }
   }
-  
+
   // -- ChangeListener methods --
-  
+
   public void stateChanged(ChangeEvent e) {
     if(update) {
       if( (JSpinner) e.getSource() == channelSpin) {

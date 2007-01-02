@@ -37,7 +37,6 @@ public class BooleanOption extends BioOption {
   /** Check box GUI component. */
   private JCheckBox box;
 
-
   // -- Constructor --
 
   /** Constructs a new option. */
@@ -48,18 +47,15 @@ public class BooleanOption extends BioOption {
     box.setToolTipText(tip);
   }
 
-
   // -- BooleanOption API methods --
 
   /** Gets this option's current setting. */
   public boolean getValue() { return box.isSelected(); }
 
-
   // -- BioOption API methods --
 
   /** Gets a GUI component representing this option. */
   public Component getComponent() { return box; }
-
 
   // -- Saveable API methods --
 

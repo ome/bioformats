@@ -48,7 +48,6 @@ public class OverlayArrow extends OverlayObject {
     computeGridParameters();
   }
 
-
   // -- OverlayObject API methods --
 
   /** Gets VisAD data object representing this overlay. */
@@ -135,7 +134,6 @@ public class OverlayArrow extends OverlayObject {
   /** True iff this overlay supports the filled parameter. */
   public boolean canBeFilled() { return true; }
 
-
   // -- Internal OverlayObject API methods --
 
   /** Computes parameters needed for selection grid computation. */
@@ -150,7 +148,6 @@ public class OverlayArrow extends OverlayObject {
     xGrid4 = corners2[0]; yGrid4 = corners2[1];
     horizGridCount = 3; vertGridCount = 2;
   }
-
 
   // -- Object API methods --
 

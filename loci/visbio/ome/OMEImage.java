@@ -52,7 +52,6 @@ public class OMEImage extends ImageTransform {
   /** OMEImage import dialog. */
   protected static OMELoginPane login;
 
-
   // -- Data fields --
 
   /** Associated OME server. */
@@ -72,7 +71,6 @@ public class OMEImage extends ImageTransform {
 
   /** Optional task for constructor progress. */
   protected BioTask task;
-
 
   // -- Computed fields --
 
@@ -115,7 +113,6 @@ public class OMEImage extends ImageTransform {
   /** Index for Time dimension. */
   protected int indexT;
 
-
   // -- Constructors --
 
   /** Constructs an uninitialized OME image object. */
@@ -152,7 +149,6 @@ public class OMEImage extends ImageTransform {
     initState(null);
   }
 
-
   // -- OMEImage API methods --
 
   /** Gets the full URL of the OME server from which to access the image. */
@@ -182,7 +178,6 @@ public class OMEImage extends ImageTransform {
   /** Gets the image ID for the associated OME image. */
   public int getImageId() { return imageId; }
 
-
   // -- ImageTransform API methods --
 
   /** Gets width of each image. */
@@ -193,7 +188,6 @@ public class OMEImage extends ImageTransform {
 
   /** Gets number of range components at each pixel. */
   public int getRangeCount() { return sizeC; }
-
 
   // -- Static DataTransform API methods --
 
@@ -274,7 +268,6 @@ public class OMEImage extends ImageTransform {
   /** Indicates whether this transform type requires a parent transform. */
   public static boolean isParentRequired() { return false; }
 
-
   // -- DataTransform API methods --
 
   /** Obtains an image from the source(s) at the given dimensional position. */
@@ -325,7 +318,6 @@ public class OMEImage extends ImageTransform {
     sb.append(super.getHTMLDescription());
     return sb.toString();
   }
-
 
   // -- Dynamic API methods --
 

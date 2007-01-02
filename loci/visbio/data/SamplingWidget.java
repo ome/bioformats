@@ -59,7 +59,6 @@ public class SamplingWidget extends JPanel implements ActionListener {
   /** Check boxes for included range components. */
   protected JCheckBox[] rangeBoxes;
 
-
   // -- Constructor --
 
   public SamplingWidget(DataSampling sampling) {
@@ -132,7 +131,6 @@ public class SamplingWidget extends JPanel implements ActionListener {
     add(builder.getPanel());
   }
 
-
   // -- ActionListener API methods --
 
   /** Applies changes to this data sampling's parameters. */
@@ -186,7 +184,6 @@ public class SamplingWidget extends JPanel implements ActionListener {
 
     sampling.setParameters(min, max, step, resX, resY, range);
   }
-
 
   // -- Helper methods --
 

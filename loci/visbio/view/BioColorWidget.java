@@ -45,7 +45,6 @@ public class BioColorWidget extends JPanel {
     {"Hue", "Saturation", "Value"}
   };
 
-
   // -- GUI components --
 
   /** Label naming color component. */
@@ -57,7 +56,6 @@ public class BioColorWidget extends JPanel {
   /** List of range component scalars. */
   protected Vector scalars;
 
-
   // -- Other fields --
 
   /** Color model: RGB or HSV. */
@@ -65,7 +63,6 @@ public class BioColorWidget extends JPanel {
 
   /** Color type: 1=Red/Hue, 2=Green/Saturation, 3=Blue/Value. */
   protected int type;
-
 
   // -- Constructor --
 
@@ -92,7 +89,6 @@ public class BioColorWidget extends JPanel {
     add(p);
     add(box);
   }
-
 
   // -- BioColorWidget API methods --
 

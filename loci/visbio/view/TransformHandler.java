@@ -56,7 +56,6 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
   /** Starting FPS for animation. */
   public static final int DEFAULT_ANIMATION_RATE = 10;
 
-
   // -- Fields --
 
   /** Associated display window. */
@@ -95,12 +94,10 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
   /** Synchronization object for animation. */
   protected Object animSync = new Object();
 
-
   // -- Fields - initial state --
 
   /** List of uninitialized links. */
   protected Vector newLinks;
-
 
   // -- Constructor --
 
@@ -115,7 +112,6 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
     fps = DEFAULT_ANIMATION_RATE;
     makePanel();
   }
-
 
   // -- TransformHandler API methods --
 
@@ -294,7 +290,6 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
     return -1;
   }
 
-
   // -- TransformHandler API methods - state logic --
 
   /** Tests whether two objects are in equivalent states. */
@@ -346,7 +341,6 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
     rebuild();
     if (animating) startAnimation();
   }
-
 
   // -- Internal TransformHandler API methods --
 
@@ -516,7 +510,6 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
     animThread.start();
   }
 
-
   // -- ChangeListener API methods --
 
   /** Handles slider updates. */
@@ -539,7 +532,6 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
     // update GUI to reflect new dimensional position
     panel.updateControls();
   }
-
 
   // -- Runnable API methods --
 
@@ -565,7 +557,6 @@ public class TransformHandler implements ChangeListener, Runnable, Saveable {
       link.doTransform();
     }
   }
-
 
   // -- Saveable API methods --
 

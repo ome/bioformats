@@ -40,7 +40,6 @@ public class MessagePane extends DialogPane {
   /** Checkbox within dialog. */
   protected JCheckBox always;
 
-
   // -- Constructor --
 
   /** Creates a new message pane linked to the given checkbox. */
@@ -59,7 +58,6 @@ public class MessagePane extends DialogPane {
     builder.add(always, cc.xy(1, 3));
     add(builder.getPanel());
   }
-
 
   // -- MessagePane API methods --
 

@@ -62,7 +62,6 @@ public class DataSampling extends ImageTransform {
   /** Controls for this data sampling. */
   protected SamplingWidget controls;
 
-
   // -- Constructors --
 
   /** Creates an uninitialized data sampling. */
@@ -84,7 +83,6 @@ public class DataSampling extends ImageTransform {
     this.range = range;
     initState(null);
   }
-
 
   // -- DataSampling API methods --
 
@@ -125,7 +123,6 @@ public class DataSampling extends ImageTransform {
   /** Gets included range components. */
   public boolean[] getRange() { return range; }
 
-
   // -- ImageTransform API methods --
 
   /** Gets width of each image. */
@@ -157,7 +154,6 @@ public class DataSampling extends ImageTransform {
     int q = axis < 0 ? 1 : step[axis];
     return q * super.getMicronStep(axis);
   }
-
 
   // -- Static DataTransform API methods --
 
@@ -199,7 +195,6 @@ public class DataSampling extends ImageTransform {
 
   /** Indicates whether this transform type requires a parent transform. */
   public static boolean isParentRequired() { return true; }
-
 
   // -- DataTransform API methods --
 
@@ -322,7 +317,6 @@ public class DataSampling extends ImageTransform {
     return sb.toString();
   }
 
-
   // -- Internal DataTransform API methods --
 
   /** Creates labels based on data transform parameters. */
@@ -335,7 +329,6 @@ public class DataSampling extends ImageTransform {
       }
     }
   }
-
 
   // -- Dynamic API methods --
 
@@ -387,7 +380,6 @@ public class DataSampling extends ImageTransform {
     thumbs = makeThumbnailHandler();
   }
 
-
   // -- Saveable API methods --
 
   /** Writes the current state to the given DOM element ("DataTransforms"). */
@@ -414,7 +406,6 @@ public class DataSampling extends ImageTransform {
     resY = Integer.parseInt(el.getAttribute("resY"));
     range = ObjectUtil.stringToBooleanArray(el.getAttribute("range"));
   }
-
 
   // -- Helper methods --
 

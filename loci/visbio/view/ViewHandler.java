@@ -56,7 +56,6 @@ public class ViewHandler implements Saveable {
   /** How far display pans each time. */
   public static final double PAN_AMOUNT = 0.25;
 
-
   // -- Fields --
 
   /** Associated display window. */
@@ -74,18 +73,15 @@ public class ViewHandler implements Saveable {
   /** Whether display is in parallel projection mode. */
   protected boolean parallel;
 
-
   // -- Fields - initial state --
 
   /** Matrix representing current display projection. */
   protected double[] matrix;
 
-
   // -- GUI components --
 
   /** GUI controls for view handler. */
   protected ViewPanel panel;
-
 
   // -- Constructor --
 
@@ -99,7 +95,6 @@ public class ViewHandler implements Saveable {
     boundingBox = true;
     parallel = false;
   }
-
 
   // -- ViewHandler API methods --
 
@@ -297,7 +292,6 @@ public class ViewHandler implements Saveable {
   /** Gets whether 3D display uses a parallel projection. */
   public boolean isParallel() { return parallel; }
 
-
   // -- ViewHandler API methods - state logic --
 
   /** Tests whether two objects are in equivalent states. */
@@ -345,7 +339,6 @@ public class ViewHandler implements Saveable {
     if (panel == null) panel = new ViewPanel(this);
   }
 
-
   // -- Saveable API methods --
 
   /** Writes the current state to the given DOM element ("Display"). */
@@ -371,7 +364,6 @@ public class ViewHandler implements Saveable {
     boundingBox = child.getAttribute("boundingBox").equalsIgnoreCase("true");
     parallel = child.getAttribute("parallel").equalsIgnoreCase("true");
   }
-
 
   // -- Helper methods --
 

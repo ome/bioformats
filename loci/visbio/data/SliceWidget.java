@@ -83,7 +83,6 @@ public class SliceWidget extends JPanel
   /** Check box for whether slice is recomputed on the fly. */
   protected JCheckBox recompute;
 
-
   // -- Constructor --
 
   /** Creates a new arbitrary slice widget. */
@@ -179,7 +178,6 @@ public class SliceWidget extends JPanel
     add(builder.getPanel());
   }
 
-
   // -- SliceWidget API methods --
 
   /** Updates the widget to reflect the arbitrary slice's current values. */
@@ -193,7 +191,6 @@ public class SliceWidget extends JPanel
     value = slice.getResolution();
     if (res.getValue() != value) res.setValue(value);
   }
-
 
   // -- ChangeListener API methods --
 
@@ -210,12 +207,10 @@ public class SliceWidget extends JPanel
     updateSlice();
   }
 
-
   // -- ItemListener API methods --
 
   /** Handles combo box updates. */
   public void itemStateChanged(ItemEvent e) { updateSlice(); }
-
 
   // -- Helper methods --
 

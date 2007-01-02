@@ -40,12 +40,10 @@ public class OMEManager extends LogicManager {
   /** OME login pane. */
   private OMELoginPane loginPane;
 
-
   // -- Constructor --
 
   /** Constructs an OME manager. */
   public OMEManager(VisBioFrame bio) { super(bio); }
-
 
   // -- OMEManager API methods --
 
@@ -114,7 +112,6 @@ public class OMEManager extends LogicManager {
   /** Gets pane for logging into an OME server. */
   public OMELoginPane getLoginPane() { return loginPane; }
 
-
   // -- Static OMEManager API methods --
 
   /** Gets a standardized server string for the given server. */
@@ -131,7 +128,6 @@ public class OMEManager extends LogicManager {
     return "http://" + server + "/shoola/";
   }
 
-
   // -- LogicManager API methods --
 
   /** Called to notify the logic manager of a VisBio event. */
@@ -145,7 +141,6 @@ public class OMEManager extends LogicManager {
 
   /** Gets the number of tasks required to initialize this logic manager. */
   public int getTasks() { return 3; }
-
 
   // -- Helper methods --
 

@@ -43,18 +43,15 @@ public class HelpManager extends LogicManager {
   public static final String DISPLAY_DATA =
     "Ask about displaying new data objects";
 
-
   // -- Fields --
 
   /** Help dialog for detailing basic program usage. */
   protected HelpWindow helpWindow;
 
-
   // -- Constructor --
 
   /** Constructs an exit manager. */
   public HelpManager(VisBioFrame bio) { super(bio); }
-
 
   // -- HelpManager API methods --
 
@@ -120,7 +117,6 @@ public class HelpManager extends LogicManager {
     }
   }
 
-
   // -- LogicManager API methods --
 
   /** Called to notify the logic manager of a VisBio event. */
@@ -146,7 +142,6 @@ public class HelpManager extends LogicManager {
 
   /** Gets the number of tasks required to initialize this logic manager. */
   public int getTasks() { return 4; }
-
 
   // -- Helper methods --
 
@@ -188,7 +183,6 @@ public class HelpManager extends LogicManager {
 
   private void makeVisPanel() {
   }
-
 
   // -- Menu commands --
 

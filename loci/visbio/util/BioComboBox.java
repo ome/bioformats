@@ -41,7 +41,6 @@ public class BioComboBox extends JComboBox {
   /** Constructs a new combo box. */
   public BioComboBox(String[] s) { super(s); }
 
-
   // -- Component API methods --
 
   /**

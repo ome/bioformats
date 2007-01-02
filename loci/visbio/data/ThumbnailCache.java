@@ -57,7 +57,6 @@ public class ThumbnailCache {
   /** Last retrieved thumbnail index. */
   protected int last;
 
-
   // -- Constructor --
 
   /** Constructs a thumbnail cache that uses the given disk file. */
@@ -108,7 +107,6 @@ public class ThumbnailCache {
     catch (IOException exc) { exc.printStackTrace(); }
   }
 
-
   // -- API methods --
 
   /** Retrieves the thumbnail with the given id string from the disk cache. */
@@ -152,7 +150,6 @@ public class ThumbnailCache {
    * the one supplied to the constructor was unavailable.
    */
   public boolean isDefault() { return file.equals(DEFAULT_CACHE); }
-
 
   // -- Helper methods --
 

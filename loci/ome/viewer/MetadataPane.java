@@ -50,7 +50,6 @@ public class MetadataPane extends JPanel
   /** Column headings for OME-XML attributes table. */
   protected static final String[] TREE_COLUMNS = {"Attribute", "Value"};
 
-
   // -- Fields - XML tree --
 
   /** Pane containing XML tree. */
@@ -68,7 +67,6 @@ public class MetadataPane extends JPanel
   /** Table model backing OME-XML attributes table. */
   protected DefaultTableModel treeTableModel;
 
-
   // -- Fields - raw panel --
 
   /** Panel containing raw XML dump. */
@@ -79,7 +77,6 @@ public class MetadataPane extends JPanel
 
   /** Whether XML is being displayed in raw form. */
   protected boolean raw;
-
 
   // -- Constructor --
 
@@ -154,7 +151,6 @@ public class MetadataPane extends JPanel
     rawPanel.setVisible(false);
     add(rawPanel);
   }
-
 
   // -- MetadataPane API methods --
 
@@ -232,12 +228,10 @@ public class MetadataPane extends JPanel
     }
   }
 
-
   // -- Component API methods --
 
   /** Sets the initial size of the metadata pane to be reasonable. */
   public Dimension getPreferredSize() { return new Dimension(700, 500); }
-
 
   // -- Runnable API methods --
 
@@ -275,7 +269,6 @@ public class MetadataPane extends JPanel
     }
   }
 
-
   // -- Helper methods --
 
   /** Builds a tree by wrapping XML elements with JTree nodes. */
@@ -290,7 +283,6 @@ public class MetadataPane extends JPanel
     }
   }
 
-
   // -- Utility methods --
 
   /** Fully expands the given JTree from the specified node. */
@@ -302,7 +294,6 @@ public class MetadataPane extends JPanel
       expandTree(tree, (DefaultMutableTreeNode) e.nextElement());
     }
   }
-
 
   // -- Helper classes --
 

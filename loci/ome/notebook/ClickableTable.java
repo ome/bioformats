@@ -282,7 +282,6 @@ public class ClickableTable extends JTable
     else return labelE;
   }
 
-
   // -- Static ClickableTable API Methods --
 
   /**

@@ -58,12 +58,10 @@ public class StackPanel extends TransformPanel {
   /** Spinner for volume rendering resolution. */
   protected JSpinner renderRes;
 
-
   // -- Constructor --
 
   /** Creates a panel containing view handler GUI controls. */
   public StackPanel(StackHandler h) { super(h); }
-
 
   // -- TransformPanel API methods --
 
@@ -119,7 +117,6 @@ public class StackPanel extends TransformPanel {
     }
   }
 
-
   // -- ActionListener API methods --
 
   /** Handles button presses and combo box selections. */
@@ -159,7 +156,6 @@ public class StackPanel extends TransformPanel {
     else super.actionPerformed(e);
   }
 
-
   // -- ChangeListener API methods --
 
   /** Handles spinner changes. */
@@ -172,7 +168,6 @@ public class StackPanel extends TransformPanel {
     }
     else super.stateChanged(e);
   }
-
 
   // -- Helper methods --
 

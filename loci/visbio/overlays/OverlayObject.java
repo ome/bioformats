@@ -117,7 +117,7 @@ public abstract class OverlayObject {
 
   /** True iff this overlay supports the filled parameter. */
   public boolean canBeFilled() { return false; }
-  
+
   /** True iff this overlay can be resized using X1, X2, Y1, Y2 entry boxes */
   public boolean areBoundsEditable() { return !hasNodes; }
   // currently, only noded objects can't be resized this way.  (Actually could perform some rad scaling on all nodes)
@@ -263,7 +263,7 @@ public abstract class OverlayObject {
   /** Returns coordinates of node at given index in the node array */
   public float[] getNodeCoords (int index) {
     float[] retvals = new float[2];
-    if (index < numNodes && index >= 0) { 
+    if (index < numNodes && index >= 0) {
       retvals[0] = nodes[0][index];
       retvals[1] = nodes[1][index];
     } else {
@@ -275,13 +275,13 @@ public abstract class OverlayObject {
 
   /** Returns the node array */
   public float[][] getNodes() { return nodes; }
-  
+
   /** Returns the number of real nodes in the array */
   public int getNumNodes() { return numNodes; }
-  
+
   /** Returns total number of nodes in array */
   public int getMaxNodes() { return maxNodes; }
-  
+
   /** Gets X coordinate of the overlay's first endpoint. */
   public float getX() { return x1; }
 
@@ -401,13 +401,13 @@ public abstract class OverlayObject {
     this.drawing = drawing;
     overlay.setTextDrawn(!drawing);
   }
-  
+
   /** Gets whether this overlay is still being initially drawn. */
   public boolean isDrawing() { return drawing; }
 
   /** Gets length of curve */
   public double getCurveLength() { return curveLength; }
-  
+
   /** Sets length of curve */
   public void setCurveLength(double len) { curveLength = len; }
 
@@ -422,11 +422,11 @@ public abstract class OverlayObject {
     }
     this.curveLength = length;
   }
- 
+
   // -- OverlayObject API Methods: node array mutators --
   // note: call updateBoundingBox() after a series of changes to the node array
-  
-  /** Sets coordinates of an existing node */ 
+
+  /** Sets coordinates of an existing node */
   public void setNodeCoords(int nodeIndex, float newX, float newY) {
     if (nodeIndex >= 0 && nodeIndex < numNodes) {
       nodes[0][nodeIndex] = newX;
@@ -434,7 +434,7 @@ public abstract class OverlayObject {
     } else {
       //System.out.println("Out of bounds error. Can't reset node coordinates"); // TEMP
     }
-  } 
+  }
 
   /** Prints node array of current freeform; for debugging */
   private void printNodes(float[][] nodes) {
@@ -477,12 +477,12 @@ public abstract class OverlayObject {
       //System.out.println ("index not in range (0, numNodes).  No node inserted");
     }
   }
-  
+
   /** Deletes a range of nodes from the node array */
   public void deleteBetween (int i1, int i2) {
     //assumes i1 < i2, both in bounds (less than numNodes)
     //checks whether i1 + 1 < i2, i.e., is there a nonzero number of nodes to delete
-    if (0 <= i1 && i2 < numNodes && i1 + 1 < i2 ) { 
+    if (0 <= i1 && i2 < numNodes && i1 + 1 < i2 ) {
       int victims = i2 - i1 - 1;
       float[][] newNodes = new float[2][maxNodes - victims];
       System.arraycopy(nodes[0], 0, newNodes[0], 0, i1 + 1);
@@ -497,7 +497,7 @@ public abstract class OverlayObject {
       //System.out.println("deleteBetween(int, int) out of bounds error");
     }
   }
-   
+
   /** Deletes a node from the node array */
   public void deleteNode(int index) {
     if (index >=0 && index < numNodes) {
@@ -518,13 +518,13 @@ public abstract class OverlayObject {
       }
     }
   }
-    
+
   /** Reverses the node array (and therefore its internal orientation) */
   public void reverseNodes() {
     truncateNodeArray();
-    // Q: Is the above call ever necessary? 
-    // truncateNodeArray() is called at mouseUp in FreeformTool.  
-    // Will there ever be an extension 
+    // Q: Is the above call ever necessary?
+    // truncateNodeArray() is called at mouseUp in FreeformTool.
+    // Will there ever be an extension
     // of the node array s.t. maxNodes > numNodes during an interior edit before
     // an extension
     // A: Yes, if extend mode is entered directly from edit mode
@@ -553,7 +553,7 @@ public abstract class OverlayObject {
       }
       // case where newLength > a.length:
       // fills rest of new array with nodes co-locational with last node
-      for (int i=loopMax; i < a2[0].length; i++) { 
+      for (int i=loopMax; i < a2[0].length; i++) {
         a2[j][i] = a[j][loopMax-1];
       }
     }
@@ -567,7 +567,6 @@ public abstract class OverlayObject {
   /** Computes parameters needed for selection grid computation. */
   protected abstract void computeGridParameters();
 
-  
   /** Sets value of largest and smallest x, y values. */
   protected void setBoundaries(float x, float y) {
     x1 = Math.min(x1, x);

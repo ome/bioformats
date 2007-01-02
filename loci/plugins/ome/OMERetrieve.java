@@ -254,7 +254,6 @@ public class OMERetrieve {
     return imas[0];
   }
 
-
   /** method that returns all image IDs in a certain project */
   public static ArrayList getProjectImageIDs(Project project) {
     Object[] ob = project.getDatasets().toArray();

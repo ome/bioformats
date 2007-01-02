@@ -46,7 +46,6 @@ public class OMELoginPane extends DialogPane {
   /** Text field for OME password. */
   protected JPasswordField pass;
 
-
   // -- Constructor --
 
   /** Constructs an OME login dialog. */
@@ -81,7 +80,6 @@ public class OMELoginPane extends DialogPane {
 
     add(builder.getPanel());
   }
-
 
   // -- OMELoginPane API methods --
 

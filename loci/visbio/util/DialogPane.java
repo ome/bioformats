@@ -47,7 +47,6 @@ public class DialogPane extends JPanel implements ActionListener {
   /** Return value if cancel is chosen. */
   public static final int CANCEL_OPTION = 2;
 
-
   // -- GUI components --
 
   /** Ok button. */
@@ -62,7 +61,6 @@ public class DialogPane extends JPanel implements ActionListener {
   /** Content pane for dialog. */
   protected JPanel pane;
 
-
   // -- Other fields --
 
   /** Dialog's title. */
@@ -70,7 +68,6 @@ public class DialogPane extends JPanel implements ActionListener {
 
   /** Return value of dialog. */
   protected int rval;
-
 
   // -- Constructors --
 
@@ -93,7 +90,6 @@ public class DialogPane extends JPanel implements ActionListener {
     builder.add(doButtonLayout(), cc.xy(1, 3));
     pane = builder.getPanel();
   }
-
 
   // -- DialogPane API methods --
 
@@ -146,7 +142,6 @@ public class DialogPane extends JPanel implements ActionListener {
     ok.addActionListener(this);
   }
 
-
   // -- ActionListener API methods --
 
   /** Handles button press events. */
@@ -161,7 +156,6 @@ public class DialogPane extends JPanel implements ActionListener {
       dialog.setVisible(false);
     }
   }
-
 
   // -- Helper methods --
 

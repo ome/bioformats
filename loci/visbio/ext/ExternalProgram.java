@@ -40,7 +40,6 @@ public class ExternalProgram extends ExternalFunction {
   /** Runtime object for running JVM. */
   protected static Runtime rt = Runtime.getRuntime();
 
-
   // -- Constructors --
 
   /** Creates an uninitialized external program transform. */
@@ -50,7 +49,6 @@ public class ExternalProgram extends ExternalFunction {
   public ExternalProgram(DataTransform parent, String name, String function) {
     super(parent, name, function);
   }
-
 
   // -- ExternalFunction API methods --
 
@@ -245,7 +243,6 @@ public class ExternalProgram extends ExternalFunction {
     catch (VisADException exc) { exc.printStackTrace(); }
     return null;
   }
-
 
   // -- Static DataTransform API methods --
 

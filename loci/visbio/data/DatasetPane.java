@@ -63,7 +63,6 @@ public class DatasetPane extends WizardPane implements DocumentListener {
   /** Suffix codes indicating Channel axis type. */
   private static final String[] C_CODES = {"c", "ch"};
 
-
   // -- GUI components, page 1 --
 
   /** Choose file dialog box. */
@@ -71,7 +70,6 @@ public class DatasetPane extends WizardPane implements DocumentListener {
 
   /** File group text field. */
   private JTextField groupField;
-
 
   // -- GUI components, page 2 --
 
@@ -102,7 +100,6 @@ public class DatasetPane extends WizardPane implements DocumentListener {
   /** Panel containing micron-related widgets. */
   private JPanel micronPanel;
 
-
   // -- Other fields --
 
   /** Associate data manager. */
@@ -119,7 +116,6 @@ public class DatasetPane extends WizardPane implements DocumentListener {
 
   /** Next free id number for dataset naming scheme. */
   private int nameId;
-
 
   // -- Constructor --
 
@@ -195,7 +191,6 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     next.setEnabled(false);
   }
 
-
   // -- DatasetPane API methods --
 
   /** Examines the given file to determine if it is part of a file group. */
@@ -211,7 +206,6 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     }
     groupField.setText(pattern);
   }
-
 
   // -- ActionListener API methods --
 
@@ -303,7 +297,6 @@ public class DatasetPane extends WizardPane implements DocumentListener {
     else super.actionPerformed(e);
   }
 
-
   // -- DocumentListener API methods --
 
   /** Gives notification that an attribute or set of attributes changed. */
@@ -314,7 +307,6 @@ public class DatasetPane extends WizardPane implements DocumentListener {
 
   /** Gives notification that a portion of the document has been removed. */
   public void removeUpdate(DocumentEvent e) { checkText(); }
-
 
   // -- Helper methods --
 
