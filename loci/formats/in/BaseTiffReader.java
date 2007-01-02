@@ -723,7 +723,7 @@ public abstract class BaseTiffReader extends FormatReader {
   public boolean isInterleaved(String id) throws FormatException, IOException {
     if (!id.equals(currentId)) initFile(id);
     int pi = TiffTools.getPhotometricInterpretation(ifds[0]);
-    return pi == TiffTools.RGB || pi == TiffTools.RGB_PALETTE || 
+    return pi == TiffTools.RGB || pi == TiffTools.RGB_PALETTE ||
       pi == TiffTools.CFA_ARRAY;
   }
 
@@ -759,7 +759,7 @@ public abstract class BaseTiffReader extends FormatReader {
     int bytesPerPixel = FormatReader.getBytesPerPixel(getPixelType(id));
     byte[] buf = null;
     if (isRGB(id)) {
-      buf = 
+      buf =
         new byte[getSizeX(id) * getSizeY(id) * getSizeC(id) * bytesPerPixel];
     }
     else buf = new byte[getSizeX(id) * getSizeY(id) * bytesPerPixel];

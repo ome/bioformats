@@ -188,7 +188,7 @@ public class OIBReader extends FormatReader {
 
     try {
       int s = getSeries(id);
-      String directory = 
+      String directory =
         (String) ((Hashtable) pixels.get(s)).get(new Integer(no));
       String name = (String) ((Hashtable) names.get(s)).get(new Integer(no));
 
@@ -214,7 +214,7 @@ public class OIBReader extends FormatReader {
         System.arraycopy(samples[i], 0, rtn, i*samples[i].length,
           samples[i].length);
       }
-      
+
       stream.close();
 
       return rtn;
@@ -237,7 +237,7 @@ public class OIBReader extends FormatReader {
     byte[] b = openBytes(id, no);
     int s = getSeries(id);
     int bytes = b.length / (sizeX[s] * sizeY[s]);
-    return ImageTools.makeImage(b, sizeX[s], sizeY[s], bytes == 3 ? 3 : 1, 
+    return ImageTools.makeImage(b, sizeX[s], sizeY[s], bytes == 3 ? 3 : 1,
       false, bytes == 3 ? 1 : bytes, !littleEndian[s], validBits[s]);
   }
 
@@ -371,15 +371,15 @@ public class OIBReader extends FormatReader {
       for (int i=0; i<numSeries; i++) {
         sizeX[i] = ((Integer) width.get(i)).intValue();
         sizeY[i] = ((Integer) height.get(i)).intValue();
-        
+
         if (i < zSize.size()) sizeZ[i] = ((Integer) zSize.get(i)).intValue();
         else sizeZ[i] = 1;
-        
+
         if (i < nChannels.size()) {
           sizeC[i] = ((Integer) nChannels.get(i)).intValue();
         }
         else sizeC[i] = 1;
-        
+
         if (i < tSize.size()) sizeT[i] = ((Integer) tSize.get(i)).intValue();
         else sizeT[i] = 1;
 
@@ -407,7 +407,7 @@ public class OIBReader extends FormatReader {
             }
           }
         }
-       
+
         int oldSeries = getSeries(id);
         setSeries(id, i);
         while (numImages < sizeZ[i] * sizeT[i] * getEffectiveSizeC(id)) {
@@ -425,7 +425,7 @@ public class OIBReader extends FormatReader {
             vb = Integer.parseInt((String) metadata.get(key));
           }
         }
-        if (vb > 0) { 
+        if (vb > 0) {
           for (int j=0; j<validBits[i].length; j++) validBits[i][j] = vb;
         }
         else validBits[i] = null;
@@ -537,7 +537,7 @@ public class OIBReader extends FormatReader {
           ras.close();
           int w = (int) TiffTools.getImageWidth(ifd);
           int h = (int) TiffTools.getImageLength(ifd);
-        
+
           boolean isRGB = TiffTools.getSamplesPerPixel(ifd) > 1;
           if (!isRGB) {
             int p = TiffTools.getPhotometricInterpretation(ifd);
@@ -558,7 +558,7 @@ public class OIBReader extends FormatReader {
               added = true;
             }
           }
-          
+
           if (!added) {
             Hashtable ht = new Hashtable();
             ht.put(new Integer(0), dirName);

@@ -280,7 +280,7 @@ public class ZeissZVIReader extends FormatReader {
         }
       }
       b = null;
-      
+
       if (a.length != bpp * sizeX[0] * sizeY[0]) {
         byte[] tmp = a;
         a = new byte[bpp * sizeX[0] * sizeY[0]];
@@ -478,7 +478,7 @@ public class ZeissZVIReader extends FormatReader {
       boolean isDocument = ((Boolean) r.getVar("isDocument")).booleanValue();
       r.setVar("dir", dir);
       r.exec("dirName = dir.getName()");
-      
+
       if (isInstance)  {
         parseDir(depth + 1, r.getVar("entry"));
       }
@@ -768,7 +768,7 @@ public class ZeissZVIReader extends FormatReader {
           if (!tIndices.contains(tndx)) tIndices.add(tndx);
 
           pt = oldPt + 4 + len;
-     
+
           boolean foundWidth = DataTools.bytesToInt(data, pt, 4, true) == width;
           boolean foundHeight =
             DataTools.bytesToInt(data, pt + 4, 4, true) == height;
@@ -777,11 +777,11 @@ public class ZeissZVIReader extends FormatReader {
             while ((!foundWidth || !foundHeight) && pt < data.length) {
               pt++;
               foundWidth = DataTools.bytesToInt(data, pt, 4, true) == width;
-              foundHeight = 
+              foundHeight =
                 DataTools.bytesToInt(data, pt + 4, 4, true) == height;
             }
           }
-          catch (Exception e) { } 
+          catch (Exception e) { }
           pt -= 8;
           findFailed = !foundWidth && !foundHeight;
 

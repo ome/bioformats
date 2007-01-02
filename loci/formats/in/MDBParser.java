@@ -32,7 +32,7 @@ public class MDBParser {
 
   // -- Constants --
 
-  private static final String NO_MDB_MSG = 
+  private static final String NO_MDB_MSG =
     "You need to install the Java port of MDB tools from " +
     "http://www.loci.wisc.edu/ome/formats.html.";
 
@@ -63,14 +63,14 @@ public class MDBParser {
     return r;
   }
 
-  public static void parseDatabase(String filename, Hashtable h) 
+  public static void parseDatabase(String filename, Hashtable h)
     throws FormatException
   {
     if (noMDB) throw new FormatException(NO_MDB_MSG);
-   
+
     try {
       // initialize
-    
+
       r.setVar("twoFiveSix", 256);
       r.exec("boundValues = new Vector()");
       r.setVar("delimiter", ",");
@@ -90,16 +90,16 @@ public class MDBParser {
         r.setVar("c", (List) r.getVar("mdb.catalog"));
         r.setVar("i", i);
         r.exec("entry = c.get(i)");
-        r.setVar("objType", 
+        r.setVar("objType",
           ((Integer) r.getVar("entry.object_type")).intValue());
         r.setVar("objName", (String) r.getVar("entry.object_name"));
-        
+
         int objType = ((Integer) r.getVar("objType")).intValue();
         int tableType = ((Integer) r.getVar("Constants.MDB_TABLE")).intValue();
         boolean isTable = objType == tableType;
-        
+
         String objName = (String) r.getVar("objName");
-      
+
         if (isTable && !objName.startsWith("MSys")) {
           r.exec("table = Table.mdb_read_table(entry)");
           try {
@@ -108,10 +108,10 @@ public class MDBParser {
           catch (ReflectException e) { break; }
           r.exec("Data.mdb_rewind_table(table)");
 
-          r.setVar("numCols", 
+          r.setVar("numCols",
             ((Integer) r.getVar("table.num_cols")).intValue());
 
-          int numCols = ((Integer) r.getVar("numCols")).intValue(); 
+          int numCols = ((Integer) r.getVar("numCols")).intValue();
 
           for (int j=0; j<numCols; j++) {
             r.setVar("j", j);
@@ -120,7 +120,7 @@ public class MDBParser {
             r.exec("Data.mdb_bind_column(table, l, blah)");
             r.exec("boundValues.add(blah)");
           }
-      
+
           StringBuffer[] sbs = new StringBuffer[numCols];
           for (int j=0; j<sbs.length; j++) sbs[j] = new StringBuffer();
 
@@ -155,7 +155,7 @@ public class MDBParser {
             r.setVar("j", j);
             r.setVar("columns", (List) r.getVar("table.columns"));
             r.exec("col = columns.get(j)");
-            h.put(objName + " - " + (String) r.getVar("col.name"), 
+            h.put(objName + " - " + (String) r.getVar("col.name"),
               sbs[j].toString());
           }
         }

@@ -114,7 +114,7 @@ public class MNGReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-  
+
     int offset = ((Integer) offsets.get(no)).intValue();
     in.seek(offset);
     int end = ((Integer) lengths.get(no)).intValue();
@@ -178,9 +178,9 @@ public class MNGReader extends FormatReader {
 
       int fp = in.getFilePointer();
 
-      if (code.equals("IHDR")) { 
+      if (code.equals("IHDR")) {
         offsets.add(new Integer((int) in.getFilePointer() - 8));
-        numImages++; 
+        numImages++;
       }
       else if (code.equals("IEND")) {
         lengths.add(new Integer(fp + (int) len + 4));
@@ -202,7 +202,7 @@ public class MNGReader extends FormatReader {
           currentIteration = 0;
         }
       }
-    
+
       in.seek(fp + (int) len + 4);
     }
 

@@ -719,14 +719,14 @@ public abstract class FormatReader extends FormatHandler
         else {
           int x = reader.getSizeX(id);
           int y = reader.getSizeY(id);
-          byte[] b = thumbs ? reader.openThumbBytes(id, i) : 
+          byte[] b = thumbs ? reader.openThumbBytes(id, i) :
             reader.openBytes(id, i);
-          Object pix = DataTools.makeDataArray(b, 
+          Object pix = DataTools.makeDataArray(b,
             FormatReader.getBytesPerPixel(reader.getPixelType(id)),
-            reader.getPixelType(id) == FormatReader.FLOAT, 
+            reader.getPixelType(id) == FormatReader.FLOAT,
             reader.isLittleEndian(id));
-          images[i - start] = 
-            ImageTools.makeImage(ImageTools.make24Bits(pix, x, y, 
+          images[i - start] =
+            ImageTools.makeImage(ImageTools.make24Bits(pix, x, y,
               false, false), x, y);
         }
 
