@@ -112,55 +112,25 @@ public class AVIWriter extends FormatWriter {
 
       file = new File(id);
       raFile = new RandomAccessFile(file, "rw");
+      raFile.seek(raFile.length());
+      saveFileSize = 4;
+      saveLIST1Size = 16; 
+      saveLIST1subSize = 23 * 4;
+      frameOffset = 44;
+      frameOffset2 = 35 * 4;
+      savestrfSize = 42 * 4;
+      savestrnPos = savestrfSize + 44 + (bytesPerPixel == 1 ? 4 * 256 : 0);
+      saveJUNKsignature = savestrnPos + 16;
+      saveLIST2Size = 4088;
+      savemovi = 4092;
 
-      DataTools.writeString(raFile, "RIFF"); // signature
-      saveFileSize = raFile.getFilePointer();
-      // Bytes 4 thru 7 contain the length of the file. This length does
-      // not include bytes 0 thru 7.
-      DataTools.writeInt(raFile, 0, true); // for now write 0 for size
-      DataTools.writeString(raFile, "AVI "); // RIFF type
-      // Write the first LIST chunk, which contains
-      // information on data decoding
-      DataTools.writeString(raFile, "LIST"); // CHUNK signature
-      // Write the length of the LIST CHUNK not including the first 8 bytes
-      // with LIST and size. Note that the end of the LIST CHUNK is followed
-      // by JUNK.
-      saveLIST1Size = raFile.getFilePointer();
-      DataTools.writeInt(raFile, (bytesPerPixel == 1) ? 1240 : 216, true);
-      DataTools.writeString(raFile, "hdrl"); // CHUNK type
-      DataTools.writeString(raFile, "avih"); // Write the avih sub-CHUNK
+      savedbLength = new Vector();
 
-      // Write the length of the avih sub-CHUNK (38H) not including the
-      // the first 8 bytes for avihSignature and the length
-      DataTools.writeInt(raFile, 0x38, true);
-
-      // dwMicroSecPerFrame - Write the microseconds per frame
-      microSecPerFrame = (int) (1.0 / fps * 1.0e6);
-      DataTools.writeInt(raFile, microSecPerFrame, true);
-
-      // Write the maximum data rate of the file in bytes per second
-      DataTools.writeInt(raFile, 0, true); // dwMaxBytesPerSec
-
-      DataTools.writeInt(raFile, 0, true); // dwReserved1 - set to 0
-      // dwFlags - just set the bit for AVIF_HASINDEX
-      DataTools.writeInt(raFile, 0x10, true);
-
-      // 10H AVIF_HASINDEX: The AVI file has an idx1 chunk containing
-      //   an index at the end of the file. For good performance, all
-      //   AVI files should contain an index.
-      // 20H AVIF_MUSTUSEINDEX: Index CHUNK, rather than the physical
-      // ordering of the chunks in the file, must be used to determine the
-      // order of the frames.
-      // 100H AVIF_ISINTERLEAVED: Indicates that the AVI file is interleaved.
-      //   This is used to read data from a CD-ROM more efficiently.
-      // 800H AVIF_TRUSTCKTYPE: USE CKType to find key frames
-      // 10000H AVIF_WASCAPTUREFILE: The AVI file is used for capturing
-      //   real-time video. Applications should warn the user before
-      //   writing over a file with this fla set because the user
-      //   probably defragmented this file.
-      // 20000H AVIF_COPYRIGHTED: The AVI file contains copyrighted data
-      //   and software. When, this flag is used, software should not
-      //   permit the data to be duplicated.
+      dataSignature = new byte[4];
+      dataSignature[0] = 48; // 0
+      dataSignature[1] = 48; // 0
+      dataSignature[2] = 100; // d
+      dataSignature[3] = 98; // b
 
       tDim = 1;
       zDim = 1;
@@ -174,251 +144,282 @@ public class AVIWriter extends FormatWriter {
         xDim += xPad;
       }
 
-      frameOffset = raFile.getFilePointer();
+      if (raFile.length() == 0) {
+        DataTools.writeString(raFile, "RIFF"); // signature
+        // Bytes 4 thru 7 contain the length of the file. This length does
+        // not include bytes 0 thru 7.
+        DataTools.writeInt(raFile, 0, true); // for now write 0 for size
+        DataTools.writeString(raFile, "AVI "); // RIFF type
+        // Write the first LIST chunk, which contains
+        // information on data decoding
+        DataTools.writeString(raFile, "LIST"); // CHUNK signature
+        // Write the length of the LIST CHUNK not including the first 8 bytes
+        // with LIST and size. Note that the end of the LIST CHUNK is followed
+        // by JUNK.
+        DataTools.writeInt(raFile, (bytesPerPixel == 1) ? 1240 : 216, true);
+        DataTools.writeString(raFile, "hdrl"); // CHUNK type
+        DataTools.writeString(raFile, "avih"); // Write the avih sub-CHUNK
 
-      // dwTotalFrames - total frame number
-      DataTools.writeInt(raFile, zDim * tDim, true);
+        // Write the length of the avih sub-CHUNK (38H) not including the
+        // the first 8 bytes for avihSignature and the length
+        DataTools.writeInt(raFile, 0x38, true);
 
-      // dwInitialFrames -Initial frame for interleaved files.
-      // Noninterleaved files should specify 0.
-      DataTools.writeInt(raFile, 0, true);
+        // dwMicroSecPerFrame - Write the microseconds per frame
+        microSecPerFrame = (int) (1.0 / fps * 1.0e6);
+        DataTools.writeInt(raFile, microSecPerFrame, true);
 
-      // dwStreams - number of streams in the file - here 1 video and
-      // zero audio.
-      DataTools.writeInt(raFile, 1, true);
+        // Write the maximum data rate of the file in bytes per second
+        DataTools.writeInt(raFile, 0, true); // dwMaxBytesPerSec
 
-      // dwSuggestedBufferSize - Suggested buffer size for reading the file.
-      // Generally, this size should be large enough to contain the largest
-      // chunk in the file.
-      DataTools.writeInt(raFile, 0, true);
+        DataTools.writeInt(raFile, 0, true); // dwReserved1 - set to 0
+        // dwFlags - just set the bit for AVIF_HASINDEX
+        DataTools.writeInt(raFile, 0x10, true);
 
-      // dwWidth - image width in pixels
-      DataTools.writeInt(raFile, xDim - xPad, true);
-      DataTools.writeInt(raFile, yDim, true); // dwHeight - height in pixels
+        // 10H AVIF_HASINDEX: The AVI file has an idx1 chunk containing
+        //   an index at the end of the file. For good performance, all
+        //   AVI files should contain an index.
+        // 20H AVIF_MUSTUSEINDEX: Index CHUNK, rather than the physical
+        // ordering of the chunks in the file, must be used to determine the
+        // order of the frames.
+        // 100H AVIF_ISINTERLEAVED: Indicates that the AVI file is interleaved.
+        //   This is used to read data from a CD-ROM more efficiently.
+        // 800H AVIF_TRUSTCKTYPE: USE CKType to find key frames
+        // 10000H AVIF_WASCAPTUREFILE: The AVI file is used for capturing
+        //   real-time video. Applications should warn the user before
+        //   writing over a file with this fla set because the user
+        //   probably defragmented this file.
+        // 20000H AVIF_COPYRIGHTED: The AVI file contains copyrighted data
+        //   and software. When, this flag is used, software should not
+        //   permit the data to be duplicated.
 
-      // dwReserved[4] - Microsoft says to set the following 4 values to 0.
-      DataTools.writeInt(raFile, 0, true);
-      DataTools.writeInt(raFile, 0, true);
-      DataTools.writeInt(raFile, 0, true);
-      DataTools.writeInt(raFile, 0, true);
+        // dwTotalFrames - total frame number
+        DataTools.writeInt(raFile, zDim * tDim, true);
 
-      // Write the Stream line header CHUNK
-      DataTools.writeString(raFile, "LIST");
+        // dwInitialFrames -Initial frame for interleaved files.
+        // Noninterleaved files should specify 0.
+        DataTools.writeInt(raFile, 0, true);
 
-      // Write the size of the first LIST subCHUNK not including the first 8
-      // bytes with LIST and size. Note that saveLIST1subSize = saveLIST1Size +
-      // 76, and that the length written to saveLIST1subSize is 76 less than
-      // the length written to saveLIST1Size. The end of the first LIST
-      // subCHUNK is followed by JUNK.
+        // dwStreams - number of streams in the file - here 1 video and
+        // zero audio.
+        DataTools.writeInt(raFile, 1, true);
 
-      saveLIST1subSize = raFile.getFilePointer();
-      DataTools.writeInt(raFile, (bytesPerPixel == 1) ? 1164 : 140 , true);
-      DataTools.writeString(raFile, "strl");   // Write the chunk type
-      DataTools.writeString(raFile, "strh"); // Write the strh sub-CHUNK
-      DataTools.writeInt(raFile, 56, true); // Write length of strh sub-CHUNK
+        // dwSuggestedBufferSize - Suggested buffer size for reading the file.
+        // Generally, this size should be large enough to contain the largest
+        // chunk in the file.
+        DataTools.writeInt(raFile, 0, true);
 
-      // fccType - Write the type of data stream - here vids for video stream
-      DataTools.writeString(raFile, "vids");
+        // dwWidth - image width in pixels
+        DataTools.writeInt(raFile, xDim - xPad, true);
+        DataTools.writeInt(raFile, yDim, true); // dwHeight - height in pixels
 
-      // Write DIB for Microsoft Device Independent Bitmap.
-      // Note: Unfortunately, at least 3 other four character codes are
-      // sometimes used for uncompressed AVI videos: 'RGB ', 'RAW ', 0x00000000
-      DataTools.writeString(raFile, "DIB ");
+        // dwReserved[4] - Microsoft says to set the following 4 values to 0.
+        DataTools.writeInt(raFile, 0, true);
+        DataTools.writeInt(raFile, 0, true);
+        DataTools.writeInt(raFile, 0, true);
+        DataTools.writeInt(raFile, 0, true);
 
-      DataTools.writeInt(raFile, 0, true); // dwFlags
+        // Write the Stream line header CHUNK
+        DataTools.writeString(raFile, "LIST");
 
-      // 0x00000001 AVISF_DISABLED The stram data should be rendered only when
-      // explicitly enabled.
-      // 0x00010000 AVISF_VIDEO_PALCHANGES Indicates that a palette change is
-      // included in the AVI file. This flag warns the playback software that
-      // it will need to animate the palette.
+        // Write the size of the first LIST subCHUNK not including the first 8
+        // bytes with LIST and size. Note that saveLIST1subSize = saveLIST1Size +
+        // 76, and that the length written to saveLIST1subSize is 76 less than
+        // the length written to saveLIST1Size. The end of the first LIST
+        // subCHUNK is followed by JUNK.
 
-      // dwPriority - priority of a stream type. For example, in a file with
-      // multiple audio streams, the one with the highest priority might be the
-      // default one.
-      DataTools.writeInt(raFile, 0, true);
+        DataTools.writeInt(raFile, (bytesPerPixel == 1) ? 1164 : 140 , true);
+        DataTools.writeString(raFile, "strl");   // Write the chunk type
+        DataTools.writeString(raFile, "strh"); // Write the strh sub-CHUNK
+        DataTools.writeInt(raFile, 56, true); // Write length of strh sub-CHUNK
 
-      // dwInitialFrames - Specifies how far audio data is skewed ahead of
-      // video frames in interleaved files. Typically, this is about 0.75
-      // seconds. In interleaved files specify the number of frames in the file
-      // prior to the initial frame of the AVI sequence.
-      // Noninterleaved files should use zero.
-      DataTools.writeInt(raFile, 0, true);
+        // fccType - Write the type of data stream - here vids for video stream
+        DataTools.writeString(raFile, "vids");
 
-      // rate/scale = samples/second
-      DataTools.writeInt(raFile, 1, true); // dwScale
+        // Write DIB for Microsoft Device Independent Bitmap.
+        // Note: Unfortunately, at least 3 other four character codes are
+        // sometimes used for uncompressed AVI videos: 'RGB ', 'RAW ', 0x00000000
+        DataTools.writeString(raFile, "DIB ");
 
-      //  dwRate - frame rate for video streams
-      DataTools.writeInt(raFile, fps, true);
+        DataTools.writeInt(raFile, 0, true); // dwFlags
 
-      // dwStart - this field is usually set to zero
-      DataTools.writeInt(raFile, 0, true);
+        // 0x00000001 AVISF_DISABLED The stram data should be rendered only when
+        // explicitly enabled.
+        // 0x00010000 AVISF_VIDEO_PALCHANGES Indicates that a palette change is
+        // included in the AVI file. This flag warns the playback software that
+        // it will need to animate the palette.
 
-      // dwLength - playing time of AVI file as defined by scale and rate
-      // Set equal to the number of frames
-      frameOffset2 = raFile.getFilePointer();
-      DataTools.writeInt(raFile, tDim * zDim, true);
+        // dwPriority - priority of a stream type. For example, in a file with
+        // multiple audio streams, the one with the highest priority might be the
+        // default one.
+        DataTools.writeInt(raFile, 0, true);
 
-      // dwSuggestedBufferSize - Suggested buffer size for reading the stream.
-      // Typically, this contains a value corresponding to the largest chunk
-      // in a stream.
-      DataTools.writeInt(raFile, 0, true);
+        // dwInitialFrames - Specifies how far audio data is skewed ahead of
+        // video frames in interleaved files. Typically, this is about 0.75
+        // seconds. In interleaved files specify the number of frames in the file
+        // prior to the initial frame of the AVI sequence.
+        // Noninterleaved files should use zero.
+        DataTools.writeInt(raFile, 0, true);
 
-      // dwQuality - encoding quality given by an integer between 0 and 10,000.
-      // If set to -1, drivers use the default quality value.
-      DataTools.writeInt(raFile, -1, true);
+        // rate/scale = samples/second
+        DataTools.writeInt(raFile, 1, true); // dwScale
 
-      // dwSampleSize #
-      // 0 if the video frames may or may not vary in size
-      // If 0, each sample of data(such as a video frame) must be in a separate
-      // chunk. If nonzero, then multiple samples of data can be grouped into
-      // a single chunk within the file.
-      DataTools.writeInt(raFile, 0, true);
+        //  dwRate - frame rate for video streams
+        DataTools.writeInt(raFile, fps, true);
+  
+        // dwStart - this field is usually set to zero
+        DataTools.writeInt(raFile, 0, true);
 
-      // rcFrame - Specifies the destination rectangle for a text or video
-      // stream within the movie rectangle specified by the dwWidth and
-      // dwHeight members of the AVI main header structure. The rcFrame member
-      // is typically used in support of multiple video streams. Set this
-      // rectangle to the coordinates corresponding to the movie rectangle to
-      // update the whole movie rectangle. Units for this member are pixels.
-      // The upper-left corner of the destination rectangle is relative to the
-      // upper-left corner of the movie rectangle.
-      DataTools.writeShort(raFile, (short) 0, true); // left
-      DataTools.writeShort(raFile, (short) 0, true); // top
-      DataTools.writeShort(raFile, (short) 0, true); // right
-      DataTools.writeShort(raFile, (short) 0, true); // bottom
+        // dwLength - playing time of AVI file as defined by scale and rate
+        // Set equal to the number of frames
+        DataTools.writeInt(raFile, tDim * zDim, true);
 
-      // Write the size of the stream format CHUNK not including the first 8
-      // bytes for strf and the size. Note that the end of the stream format
-      // CHUNK is followed by strn.
-      DataTools.writeString(raFile, "strf"); // Write the stream format chunk
+        // dwSuggestedBufferSize - Suggested buffer size for reading the stream.
+        // Typically, this contains a value corresponding to the largest chunk
+        // in a stream.
+        DataTools.writeInt(raFile, 0, true);
 
-      savestrfSize = raFile.getFilePointer();
+        // dwQuality - encoding quality given by an integer between 0 and 10,000.
+        // If set to -1, drivers use the default quality value.
+        DataTools.writeInt(raFile, -1, true);
 
-      // write the strf CHUNK size
-      DataTools.writeInt(raFile, (bytesPerPixel == 1) ? 1068 : 44, true);
+        // dwSampleSize #
+        // 0 if the video frames may or may not vary in size
+        // If 0, each sample of data(such as a video frame) must be in a separate
+        // chunk. If nonzero, then multiple samples of data can be grouped into
+        // a single chunk within the file.
+        DataTools.writeInt(raFile, 0, true);
 
-      // Applications should use this size to determine which BITMAPINFO header
-      // structure is being used. This size includes this biSize field.
-      // biSize- Write header size of BITMAPINFO header structure
+        // rcFrame - Specifies the destination rectangle for a text or video
+        // stream within the movie rectangle specified by the dwWidth and
+        // dwHeight members of the AVI main header structure. The rcFrame member
+        // is typically used in support of multiple video streams. Set this
+        // rectangle to the coordinates corresponding to the movie rectangle to
+        // update the whole movie rectangle. Units for this member are pixels.
+        // The upper-left corner of the destination rectangle is relative to the
+        // upper-left corner of the movie rectangle.
+        DataTools.writeShort(raFile, (short) 0, true); // left
+        DataTools.writeShort(raFile, (short) 0, true); // top
+        DataTools.writeShort(raFile, (short) 0, true); // right
+        DataTools.writeShort(raFile, (short) 0, true); // bottom
 
-      DataTools.writeInt(raFile, 40, true);
+        // Write the size of the stream format CHUNK not including the first 8
+        // bytes for strf and the size. Note that the end of the stream format
+        // CHUNK is followed by strn.
+        DataTools.writeString(raFile, "strf"); // Write the stream format chunk
 
-      // biWidth - image width in pixels
-      DataTools.writeInt(raFile, xDim - xPad, true);
+        // write the strf CHUNK size
+        DataTools.writeInt(raFile, (bytesPerPixel == 1) ? 1068 : 44, true);
 
-      // biHeight - image height in pixels. If height is positive, the bitmap
-      // is a bottom up DIB and its origin is in the lower left corner. If
-      // height is negative, the bitmap is a top-down DIB and its origin is the
-      // upper left corner. This negative sign feature is supported by the
-      // Windows Media Player, but it is not supported by PowerPoint.
-      DataTools.writeInt(raFile, yDim, true);
+        // Applications should use this size to determine which BITMAPINFO header
+        // structure is being used. This size includes this biSize field.
+        // biSize- Write header size of BITMAPINFO header structure
 
-      // biPlanes - number of color planes in which the data is stored
-      // This must be set to 1.
-      DataTools.writeShort(raFile, 1, true);
+        DataTools.writeInt(raFile, 40, true);
 
-      int bitsPerPixel = (bytesPerPixel == 3) ? 24 : 8;
+        // biWidth - image width in pixels
+        DataTools.writeInt(raFile, xDim - xPad, true);
 
-      // biBitCount - number of bits per pixel #
-      // 0L for BI_RGB, uncompressed data as bitmap
-      DataTools.writeShort(raFile, (short) bitsPerPixel, true);
+        // biHeight - image height in pixels. If height is positive, the bitmap
+        // is a bottom up DIB and its origin is in the lower left corner. If
+        // height is negative, the bitmap is a top-down DIB and its origin is the
+        // upper left corner. This negative sign feature is supported by the
+        // Windows Media Player, but it is not supported by PowerPoint.
+        DataTools.writeInt(raFile, yDim, true);
 
-      //writeInt(bytesPerPixel * xDim * yDim * zDim * tDim); // biSizeImage #
-      DataTools.writeInt(raFile, 0, true); // biSizeImage #
-      DataTools.writeInt(raFile, 0, true); // biCompression - compression type
-      // biXPelsPerMeter - horizontal resolution in pixels
-      DataTools.writeInt(raFile, 0, true);
-      // biYPelsPerMeter - vertical resolution in pixels per meter
-      DataTools.writeInt(raFile, 0, true);
-      if (bitsPerPixel == 8)
-        DataTools.writeInt(raFile, 256, true); // biClrUsed
-      else
-        DataTools.writeInt(raFile, 0, true); // biClrUsed
+        // biPlanes - number of color planes in which the data is stored
+        // This must be set to 1.
+        DataTools.writeShort(raFile, 1, true);
 
-      // biClrImportant - specifies that the first x colors of the color table
-      // are important to the DIB. If the rest of the colors are not available,
-      // the image still retains its meaning in an acceptable manner. When this
-      // field is set to zero, all the colors are important, or, rather, their
-      // relative importance has not been computed.
-      DataTools.writeInt(raFile, 0, true);
+        int bitsPerPixel = (bytesPerPixel == 3) ? 24 : 8;
 
-      // Write the LUTa.getExtents()[1] color table entries here. They are
-      // written: blue byte, green byte, red byte, 0 byte
-      if (bytesPerPixel == 1) {
-        byte[] lutWrite = new byte[4 * 256];
-        for (int i=0; i<256; i++) {
-          lutWrite[4*i] = (byte) i; // blue
-          lutWrite[4*i+1] = (byte) i; // green
-          lutWrite[4*i+2] = (byte) i; // red
-          lutWrite[4*i+3] = 0;
+        // biBitCount - number of bits per pixel #
+        // 0L for BI_RGB, uncompressed data as bitmap
+        DataTools.writeShort(raFile, (short) bitsPerPixel, true);
+
+        //writeInt(bytesPerPixel * xDim * yDim * zDim * tDim); // biSizeImage #
+        DataTools.writeInt(raFile, 0, true); // biSizeImage #
+        DataTools.writeInt(raFile, 0, true); // biCompression - compression type
+        // biXPelsPerMeter - horizontal resolution in pixels
+        DataTools.writeInt(raFile, 0, true);
+        // biYPelsPerMeter - vertical resolution in pixels per meter
+        DataTools.writeInt(raFile, 0, true);
+        if (bitsPerPixel == 8) DataTools.writeInt(raFile, 256, true);
+        else DataTools.writeInt(raFile, 0, true); // biClrUsed
+
+        // biClrImportant - specifies that the first x colors of the color table
+        // are important to the DIB. If the rest of the colors are not available,
+        // the image still retains its meaning in an acceptable manner. When this
+        // field is set to zero, all the colors are important, or, rather, their
+        // relative importance has not been computed.
+        DataTools.writeInt(raFile, 0, true);
+
+        // Write the LUTa.getExtents()[1] color table entries here. They are
+        // written: blue byte, green byte, red byte, 0 byte
+        if (bytesPerPixel == 1) {
+          byte[] lutWrite = new byte[4 * 256];
+          for (int i=0; i<256; i++) {
+            lutWrite[4*i] = (byte) i; // blue
+            lutWrite[4*i+1] = (byte) i; // green
+            lutWrite[4*i+2] = (byte) i; // red
+            lutWrite[4*i+3] = 0;
+          }
+          raFile.write(lutWrite);
         }
-        raFile.write(lutWrite);
+
+        raFile.seek(savestrfSize);
+        DataTools.writeInt(raFile,
+          (int) (savestrnPos - (savestrfSize + 4)), true);
+        raFile.seek(savestrnPos);
+
+        // Use strn to provide zero terminated text string describing the stream
+        DataTools.writeString(raFile, "strn");
+        DataTools.writeInt(raFile, 16, true); // Write length of strn sub-CHUNK
+        text = new byte[16];
+        text[0] = 70; // F
+        text[1] = 105; // i
+        text[2] = 108; // l
+        text[3] = 101; // e
+        text[4] = 65; // A
+        text[5] = 118; // v
+        text[6] = 105; // i
+        text[7] = 32; // space
+        text[8] = 119; // w
+        text[9] = 114; // r
+        text[10] = 105; // i
+        text[11] = 116; // t
+        text[12] = 101; // e
+        text[13] = 32; // space
+        text[14] = 32; // space
+        text[15] = 0; // termination byte
+        raFile.write(text);
+
+        raFile.seek(saveLIST1Size);
+        DataTools.writeInt(raFile,
+          (int) (saveJUNKsignature - (saveLIST1Size + 4)), true);
+        raFile.seek(saveLIST1subSize);
+        DataTools.writeInt(raFile,
+          (int) (saveJUNKsignature - (saveLIST1subSize + 4)), true);
+        raFile.seek(saveJUNKsignature);
+
+        // write a JUNK CHUNK for padding
+        DataTools.writeString(raFile, "JUNK");
+        paddingBytes = (int) (4084 - (saveJUNKsignature + 8));
+        DataTools.writeInt(raFile, paddingBytes, true);
+        for (int i=0; i<paddingBytes/2; i++) {
+          DataTools.writeShort(raFile, (short) 0, true);
+        }
+
+        // Write the second LIST chunk, which contains the actual data
+        DataTools.writeString(raFile, "LIST");
+
+        // Write the length of the LIST CHUNK not including the first 8 bytes
+        // with LIST and size. The end of the second LIST CHUNK is followed by
+        // idx1.
+        saveLIST2Size = raFile.getFilePointer();
+
+        DataTools.writeInt(raFile, 0, true);  // For now write 0
+        DataTools.writeString(raFile, "movi"); // Write CHUNK type 'movi'
       }
-
-      savestrnPos = raFile.getFilePointer();
-      raFile.seek(savestrfSize);
-      DataTools.writeInt(raFile,
-        (int) (savestrnPos - (savestrfSize + 4)), true);
-      raFile.seek(savestrnPos);
-
-      // Use strn to provide zero terminated text string describing the stream
-      DataTools.writeString(raFile, "strn");
-      DataTools.writeInt(raFile, 16, true); // Write length of strn sub-CHUNK
-      text = new byte[16];
-      text[0] = 70; // F
-      text[1] = 105; // i
-      text[2] = 108; // l
-      text[3] = 101; // e
-      text[4] = 65; // A
-      text[5] = 118; // v
-      text[6] = 105; // i
-      text[7] = 32; // space
-      text[8] = 119; // w
-      text[9] = 114; // r
-      text[10] = 105; // i
-      text[11] = 116; // t
-      text[12] = 101; // e
-      text[13] = 32; // space
-      text[14] = 32; // space
-      text[15] = 0; // termination byte
-      raFile.write(text);
-
-      saveJUNKsignature = raFile.getFilePointer();
-      raFile.seek(saveLIST1Size);
-      DataTools.writeInt(raFile,
-        (int) (saveJUNKsignature - (saveLIST1Size + 4)), true);
-      raFile.seek(saveLIST1subSize);
-      DataTools.writeInt(raFile,
-        (int) (saveJUNKsignature - (saveLIST1subSize + 4)), true);
-      raFile.seek(saveJUNKsignature);
-
-      // write a JUNK CHUNK for padding
-      DataTools.writeString(raFile, "JUNK");
-      paddingBytes = (int) (4084 - (saveJUNKsignature + 8));
-      DataTools.writeInt(raFile, paddingBytes, true);
-      for (int i=0; i<paddingBytes/2; i++) {
-        DataTools.writeShort(raFile, (short) 0, true);
-      }
-
-      // Write the second LIST chunk, which contains the actual data
-      DataTools.writeString(raFile, "LIST");
-
-      // Write the length of the LIST CHUNK not including the first 8 bytes
-      // with LIST and size. The end of the second LIST CHUNK is followed by
-      // idx1.
-      saveLIST2Size = raFile.getFilePointer();
-
-      DataTools.writeInt(raFile, 0, true);  // For now write 0
-      savemovi = raFile.getFilePointer();
-      DataTools.writeString(raFile, "movi"); // Write CHUNK type 'movi'
-      savedbLength = new Vector();
-
-      dataSignature = new byte[4];
-      dataSignature[0] = 48; // 0
-      dataSignature[1] = 48; // 0
-      dataSignature[2] = 100; // d
-      dataSignature[3] = 98; // b
     }
 
     // Write the data. Each 3-byte triplet in the bitmap array represents the
