@@ -275,6 +275,15 @@ public class LegacyQTWriter extends FormatWriter {
     }
   }
 
+  /* @see IFormatWriter#close() */
+  public void close() throws FormatException, IOException {
+    r = null;
+    numWritten = 0;
+    width = 0;
+    height = 0;
+    pixels2 = null;
+  }
+
   /** Reports whether the writer can save multiple images to a single file. */
   public boolean canDoStacks(String id) { return true; }
 

@@ -511,6 +511,13 @@ public class AVIWriter extends FormatWriter {
     }
   }
 
+  /* @see IFormatWriter#close() */
+  public void close() throws FormatException, IOException {
+    if (raFile != null) raFile.close();
+    raFile = null;
+    currentId = null;
+  }
+
   /** Reports whether the writer can save multiple images to a single file. */
   public boolean canDoStacks(String id) { return true; }
 

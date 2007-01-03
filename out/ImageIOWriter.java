@@ -44,6 +44,7 @@ public abstract class ImageIOWriter extends FormatWriter {
   // -- Fields --
 
   protected String kind;
+  protected DataOutputStream out;
 
   // -- Constructors --
 
@@ -75,8 +76,19 @@ public abstract class ImageIOWriter extends FormatWriter {
   {
     BufferedImage img = (cm == null) ?
       ImageTools.makeBuffered(image) : ImageTools.makeBuffered(image, cm);
-    ImageIO.write(img, kind, new DataOutputStream(
-      new BufferedOutputStream(new FileOutputStream(id), 4096)));
+    if (ImageTools.getPixelType(img) == FormatReader.FLOAT) {
+      throw new FormatException("Floating point data not supported.");
+    }
+    out = new DataOutputStream(new BufferedOutputStream(
+      new FileOutputStream(id), 4096));
+    ImageIO.write(img, kind, out); 
+  }
+
+  /* @see IFormatWriter#close() */
+  public void close() throws FormatException, IOException {
+    if (out != null) out.close();
+    out = null;
+    currentId = null;
   }
 
   /** Reports whether the writer can save multiple images to a single file. */

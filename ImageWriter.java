@@ -187,6 +187,11 @@ public class ImageWriter implements IFormatWriter {
     getWriter(id).save(id, image, last);
   }
 
+  /* @see IFormatWriter#close() */
+  public void close() throws FormatException, IOException {
+    getWriter(currentId).close();
+  }
+
   /* @see IFormatWriter#canDoStacks(String) */
   public boolean canDoStacks(String id) throws FormatException {
     return getWriter(id).canDoStacks(id);

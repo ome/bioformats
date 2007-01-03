@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -2074,41 +2075,7 @@ public final class TiffTools {
     if (img == null) throw new FormatException("Image is null");
     if (DEBUG) debug("writeImage (offset=" + offset + "; last=" + last + ")");
 
-    // get pixels
-
-    //Object data = ImageTools.getPixels(img);
-
-    /*
-    int[][] values = new int[0][0];
-
-    if (data instanceof byte[][]) {
-      byte[][] pix = (byte[][]) data;
-      values = new int[pix.length][pix[0].length];
-      for (int i=0; i<pix.length; i++) {
-        for (int j=0; j<pix[i].length; j++) {
-          values[i][j] = (int) pix[i][j];
-        }
-      }
-    }
-    else if (data instanceof short[][]) {
-      short[][] pix = (short[][]) data;
-      values = new int[pix.length][pix[0].length];
-      for (int i=0; i<pix.length; i++) {
-        for (int j=0; j<pix[i].length; j++) {
-          values[i][j] = (int) pix[i][j];
-        }
-      }
-    }
-    else if (data instanceof int[][]) {
-      values = (int[][]) data;
-    }
-    else {
-      // should add cases for float/double data...later
-      throw new FormatException("data type not supported");
-    }
-    */
-
-    byte[][] values = ImageTools.getBytes(img);
+    byte[][] values = ImageTools.getPixelBytes(img, false);
 
     int width = img.getWidth();
     int height = img.getHeight();
@@ -2123,28 +2090,21 @@ public final class TiffTools {
         values[0], values[1], new byte[values[0].length]
       };
     }
+  
+    int bytesPerPixel = values[0].length / (width * height);
 
     // populate required IFD directory entries (except strip information)
     if (ifd == null) ifd = new Hashtable();
     putIFDValue(ifd, IMAGE_WIDTH, width);
     putIFDValue(ifd, IMAGE_LENGTH, height);
     if (getIFDValue(ifd, BITS_PER_SAMPLE) == null) {
-      int max = 0;
-      for (int c=0; c<values.length; c++) {
-        for (int ndx=0; ndx<values[c].length; ndx++) {
-          int v = values[c][ndx];
-          int iv = v;
-          if (v != iv) {
-            throw new FormatException("Sample #" + ndx +
-              " of range component #" + c + " is not an integer (" + v + ")");
-          }
-          if (iv > max) max = iv;
-        }
-      }
-      int bps = max < 256 ? 8 : (max < 65536 ? 16 : 32);
+      int bps = 8 * bytesPerPixel;
       int[] bpsArray = new int[values.length];
       Arrays.fill(bpsArray, bps);
       putIFDValue(ifd, BITS_PER_SAMPLE, bpsArray);
+    }
+    if (img.getRaster().getTransferType() == DataBuffer.TYPE_FLOAT) {
+      putIFDValue(ifd, SAMPLE_FORMAT, 3);
     }
     if (getIFDValue(ifd, COMPRESSION) == null) {
       putIFDValue(ifd, COMPRESSION, UNCOMPRESSED);
@@ -2170,7 +2130,7 @@ public final class TiffTools {
 
     // create pixel output buffers
     int stripSize = 8192;
-    int rowsPerStrip = stripSize / width;
+    int rowsPerStrip = stripSize / (width * bytesPerPixel);
     int stripsPerImage = (height + rowsPerStrip - 1) / rowsPerStrip;
     int[] bps = (int[]) getIFDValue(ifd, BITS_PER_SAMPLE, true, int[].class);
     ByteArrayOutputStream[] stripBuf =
@@ -2185,12 +2145,19 @@ public final class TiffTools {
     for (int y=0; y<height; y++) {
       int strip = y / rowsPerStrip;
       for (int x=0; x<width; x++) {
-        int ndx = y * width + x;
+        int ndx = y * width * bytesPerPixel + x * bytesPerPixel;
         for (int c=0; c<values.length; c++) {
           int q = values[c][ndx];
           if (bps[c] == 8) stripOut[strip].writeByte(q);
-          else if (bps[c] == 16) stripOut[strip].writeShort(q);
-          else if (bps[c] == 32) stripOut[strip].writeInt(q);
+          else if (bps[c] == 16) {
+            stripOut[strip].writeByte(q);
+            stripOut[strip].writeByte(values[c][ndx+1]);
+          }
+          else if (bps[c] == 32) {
+            for (int i=0; i<4; i++) {
+              stripOut[strip].writeByte(values[c][ndx + i]);
+            }
+          }
           else {
             throw new FormatException("Unsupported bits per sample value (" +
               bps[c] + ")");

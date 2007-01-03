@@ -38,6 +38,9 @@ public interface IFormatWriter extends IFormatHandler {
   void save(String id, Image image, boolean last)
     throws FormatException, IOException;
 
+  /** Closes open files */
+  void close() throws FormatException, IOException;
+
   /** Reports whether the writer can save multiple images to a single file. */
   boolean canDoStacks(String id) throws FormatException;
 

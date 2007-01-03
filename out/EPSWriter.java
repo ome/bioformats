@@ -143,6 +143,13 @@ public class EPSWriter extends FormatWriter {
     out.close();
   }
 
+  /* @see IFormatWriter#close() */
+  public void close() throws FormatException, IOException {
+    if (out != null) out.close();
+    out = null;
+    currentId = null;
+  }
+
   /** Reports whether the writer can save multiple images to a single file. */
   public boolean canDoStacks(String id) { return false; }
 
