@@ -61,13 +61,10 @@ public class TiffWriter extends FormatWriter {
     throws IOException, FormatException
   {
     if (!id.equals(currentId)) {
-      if (out != null) {
-        System.err.println("Warning: abandoning previous TIFF file (" +
-          currentId + ")");
-        out.close();
-      }
+      close();
       currentId = id;
-      out = new BufferedOutputStream(new FileOutputStream(currentId), 4096);
+      out = 
+        new BufferedOutputStream(new FileOutputStream(currentId, true), 4096);
       DataOutputStream dataOut = new DataOutputStream(out);
       dataOut.writeByte(TiffTools.BIG);
       dataOut.writeByte(TiffTools.BIG);
@@ -81,9 +78,7 @@ public class TiffWriter extends FormatWriter {
 
     lastOffset += TiffTools.writeImage(img, ifd, out, lastOffset, last);
     if (last) {
-      out.close();
-      out = null;
-      currentId = null;
+      close();
     }
   }
 
@@ -101,6 +96,14 @@ public class TiffWriter extends FormatWriter {
     h.put(new Integer(TiffTools.COMPRESSION), compression.equals("LZW") ?
       new Integer(TiffTools.LZW) : new Integer(TiffTools.UNCOMPRESSED));
     saveImage(id, image, h, last);
+  }
+
+  /* @see IFormatWriter#close() */
+  public void close() throws FormatException, IOException {
+    if (out != null) out.close();
+    out = null;
+    currentId = null;
+    lastOffset = 0;
   }
 
   /** Reports whether the writer can save multiple images to a single file. */

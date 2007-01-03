@@ -24,8 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.out;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
-import loci.formats.FormatException;
+import loci.formats.*;
 
 /** JPEGWriter is the file format writer for JPEG files. */
 public class JPEGWriter extends ImageIOWriter {
@@ -35,6 +37,21 @@ public class JPEGWriter extends ImageIOWriter {
   public JPEGWriter() {
     super("Joint Photographic Experts Group",
       new String[] {"jpg", "jpeg", "jpe"}, "jpeg");
+  }
+
+  // -- FormatWriter API methods --
+
+  /* @see ImageIOWriter#save(String, Image, boolean) */
+  public void save(String id, Image image, boolean last)
+    throws FormatException, IOException
+  {
+    BufferedImage img = (cm == null) ?
+      ImageTools.makeBuffered(image) : ImageTools.makeBuffered(image, cm);
+    int type = ImageTools.getPixelType(img);
+    if (type == FormatReader.UINT16 || type == FormatReader.INT16) {
+      throw new FormatException("16-bit data not supported.");
+    }
+    super.save(id, image, last);
   }
 
   // -- Main method --

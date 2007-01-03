@@ -177,7 +177,7 @@ public class QTWriter extends FormatWriter {
     int height = img.getHeight();
 
     // retrieve pixel data for this plane
-    byte[][] byteData = ImageTools.getBytes(img);
+    byte[][] byteData = ImageTools.getPixelBytes(img, false);
 
     // need to check if the width is a multiple of 8
     // if it is, great; if not, we need to pad each scanline with enough
@@ -186,19 +186,23 @@ public class QTWriter extends FormatWriter {
     int pad = width % 4;
     pad = (4 - pad) % 4;
 
+    int bytesPerPixel = byteData[0].length / (width * height);
+    
+    if (bytesPerPixel > 1) {
+      throw new FormatException("Unsupported bits per pixel : " + 
+        (8 * bytesPerPixel) + ".");
+    }
+    
+    pad *= bytesPerPixel;
+
     byte[][] temp = byteData;
     byteData = new byte[temp.length][temp[0].length + height*pad];
 
+    int rowLength = width * bytesPerPixel;
     for (int oldScanline=0; oldScanline<height; oldScanline++) {
       for (int k=0; k<temp.length; k++) {
-        System.arraycopy(temp[k], oldScanline*width, byteData[k],
-          oldScanline*(width+pad), width);
-
-        // add padding bytes
-
-        for (int i=0; i<pad; i++) {
-          byteData[k][oldScanline*(width+pad) + width + i] = 0;
-        }
+        System.arraycopy(temp[k], oldScanline*rowLength, byteData[k],
+          oldScanline*(rowLength + pad), rowLength);
       }
     }
 
@@ -206,7 +210,7 @@ public class QTWriter extends FormatWriter {
     // this will makes the colors look right in other readers (e.g. xine),
     // but needs to be reversed in QTReader
 
-    if (byteData.length == 1) {
+    if (byteData.length == 1 && bytesPerPixel == 1) {
       for (int i=0; i<byteData.length; i++) {
         for (int k=0; k<byteData[0].length; k++) {
           byteData[i][k] = (byte) (255 - byteData[i][k]);
@@ -215,6 +219,7 @@ public class QTWriter extends FormatWriter {
     }
 
     if (!id.equals(currentId)) {
+      close();
       setCodec();
       if (codec != 0) {
         needLegacy = true;
@@ -244,10 +249,8 @@ public class QTWriter extends FormatWriter {
       DataTools.writeInt(out, numBytes + 8, false);
       DataTools.writeString(out, "mdat");
 
-      for (int i=0; i<byteData[0].length; i++) {
-        for (int j=0; j<byteData.length; j++) {
-          out.write(byteData[j][i]);
-        }
+      for (int i=0; i<byteData.length; i++) {
+        out.write(byteData[i]);
       }
 
       offsets.add(new Integer(16));
@@ -261,11 +264,9 @@ public class QTWriter extends FormatWriter {
 
       // write this plane's pixel data
       out.seek(out.length());
-
-      for (int i=0; i<byteData[0].length; i++) {
-        for (int j=0; j<byteData.length; j++) {
-          out.write(byteData[j][i]);
-        }
+    
+      for (int i=0; i<byteData.length; i++) {
+        out.write(byteData[i]);
       }
 
       offsets.add(new Integer(planeOffset + 16));
@@ -275,8 +276,9 @@ public class QTWriter extends FormatWriter {
     if (last) {
       int timeScale = 100;
       int duration = numWritten * (timeScale / fps);
-      int bitsPerPixel = (byteData.length > 1) ? 24 : 40;
-      int channels = (bitsPerPixel == 40) ? 1 : 3;
+      int bitsPerPixel = (byteData.length > 1) ? bytesPerPixel * 24 : 
+        bytesPerPixel * 8 + 32;
+      int channels = (bitsPerPixel >= 40) ? 1 : 3;
 
       // -- write moov atom --
 
@@ -297,7 +299,7 @@ public class QTWriter extends FormatWriter {
       out.write(new byte[] {0, 1, 0, 0});  // preferred rate & volume
       out.write(new byte[] {0, -1, 0, 0, 0, 0, 0, 0, 0, 0}); // reserved
 
-      // 3x3 matrix - unsure of significance
+      // 3x3 matrix - tells reader how to rotate image  
 
       DataTools.writeInt(out, 1, false);
       DataTools.writeInt(out, 0, false);
@@ -342,7 +344,8 @@ public class QTWriter extends FormatWriter {
       DataTools.writeShort(out, 0, false); // reserved
 
       DataTools.writeInt(out, 0, false); // unknown
-      // 3x3 matrix - unsure of significance
+
+      // 3x3 matrix - tells reader how to rotate the image 
 
       DataTools.writeInt(out, 1, false);
       DataTools.writeInt(out, 0, false);
@@ -534,7 +537,8 @@ public class QTWriter extends FormatWriter {
       DataTools.writeInt(out, numWritten, false); // number of planes
       for (int i=0; i<numWritten; i++) {
         // sample size
-        DataTools.writeInt(out, channels*height*(width+pad), false);
+        DataTools.writeInt(out, channels*height*(width+pad)*bytesPerPixel, 
+          false);
       }
 
       // -- write stco atom --
@@ -552,6 +556,17 @@ public class QTWriter extends FormatWriter {
 
       out.close();
     }
+  }
+
+  /* @see IFormatWriter#close() */
+  public void close() throws FormatException, IOException {
+    if (out != null) out.close();
+    out = null;
+    numWritten = 0;
+    byteCountOffset = 0;
+    numBytes = 0;
+    created = 0;
+    offsets = null;
   }
 
   /** Reports whether the writer can save multiple images to a single file. */
