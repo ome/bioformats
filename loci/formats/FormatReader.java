@@ -173,7 +173,8 @@ public abstract class FormatReader extends FormatHandler
     String name = getClass().getName();
     String prefix = "loci.formats.in.";
     if (name.startsWith(prefix)) name = name.substring(prefix.length());
-    System.out.println(System.currentTimeMillis() + ": " + name + ": " + s);
+    String msg = System.currentTimeMillis() + ": " + name + ": " + s;
+    System.out.println(msg);
   }
 
   // -- IFormatReader API methods --
@@ -227,8 +228,7 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatReader#getEffectiveSizeC(String) */
   public int getEffectiveSizeC(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
-    return isRGB(id) ? (getSizeC(id) + 2) / 3 : getSizeC(id);
+    return getEffectiveSizeC(isRGB(id), getSizeC(id));
   }
 
   /* @see IFormatReader#getChannelGlobalMinimum(String, int) */
@@ -629,6 +629,7 @@ public abstract class FormatReader extends FormatHandler
       int sizeY = reader.getSizeY(id);
       int sizeZ = reader.getSizeZ(id);
       int sizeC = reader.getSizeC(id);
+      int effSizeC = reader.getEffectiveSizeC(id);
       int sizeT = reader.getSizeT(id);
       int thumbSizeX = reader.getThumbSizeX(id);
       int thumbSizeY = reader.getThumbSizeY(id);
@@ -648,7 +649,8 @@ public abstract class FormatReader extends FormatHandler
       System.out.println("\tWidth = " + sizeX);
       System.out.println("\tHeight = " + sizeY);
       System.out.println("\tSizeZ = " + sizeZ);
-      System.out.println("\tSizeC = " + sizeC);
+      System.out.println("\tSizeC = " + sizeC +
+        " (effectively " + effSizeC + ")");
       System.out.println("\tSizeT = " + sizeT);
       if (imageCount != sizeZ * sizeC * sizeT /
         ((rgb || (sizeC > 1 && merge)) ? sizeC : 1))
@@ -945,6 +947,14 @@ public abstract class FormatReader extends FormatHandler
     int t = it == 0 ? v0 : (it == 1 ? v1 : v2);
 
     return new int[] {z, c, t};
+  }
+
+  /**
+   * Gets the effective size of the C dimension.
+   * @see IFormatReader#getEffectiveSizeC(String)
+   */
+  public static int getEffectiveSizeC(boolean rgb, int sizeC) {
+    return rgb ? (sizeC + 2) / 3 : sizeC;
   }
 
   /**
