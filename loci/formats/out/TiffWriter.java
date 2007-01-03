@@ -75,6 +75,19 @@ public class TiffWriter extends FormatWriter {
         dataOut.writeInt(8); // offset to first IFD
         lastOffset = 8;
       }
+      else {
+        // compute the offset to the last IFD
+        TiffTools.checkHeader(tmp);
+        long offset = TiffTools.getFirstOffset(tmp);
+        long ifdMax = (tmp.length() - 8) / 18;
+
+        for (long ifdNum=0; ifdNum<ifdMax; ifdNum++) {
+          TiffTools.getIFD(tmp, ifdNum, offset);
+          offset = tmp.readInt();
+          if (offset <= 0 || offset >= tmp.length()) break;
+        }
+        lastOffset = (int) offset;
+      }
       tmp.close();
     }
 
