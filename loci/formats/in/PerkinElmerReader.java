@@ -62,7 +62,7 @@ public class PerkinElmerReader extends FormatReader {
 
   /** Constructs a new PerkinElmer reader. */
   public PerkinElmerReader() {
-    super("PerkinElmer", new String[] {"rec", "cfg", "ano", "2", "3", "4",
+    super("PerkinElmer", new String[] {"rec", "ano", "2", "3", "4",
       "csv", "htm", "tim", "zpo"});
   }
 
