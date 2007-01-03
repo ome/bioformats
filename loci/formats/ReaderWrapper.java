@@ -98,7 +98,7 @@ public abstract class ReaderWrapper implements IFormatReader {
   }
 
   public int getEffectiveSizeC(String id) throws FormatException, IOException {
-    return reader.getEffectiveSizeC(id);
+    return FormatReader.getEffectiveSizeC(isRGB(id), getSizeC(id));
   }
 
   public Double getChannelGlobalMinimum(String id, int theC)
