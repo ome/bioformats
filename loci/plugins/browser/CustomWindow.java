@@ -383,7 +383,10 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
       int nSlices = db.numZ * db.numT * db.numC;
       int currentSlice = imp.getCurrentSlice();
-      if (db.manager != null) currentSlice = db.manager.getSlice();
+      if (db.manager != null) {
+        currentSlice = db.manager.getSlice();
+        currentSlice++;
+      }
 
       StringBuffer sb = new StringBuffer();
       sb.append(currentSlice);

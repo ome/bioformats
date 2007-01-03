@@ -49,7 +49,7 @@ public class CacheIndicator extends JComponent {
   public void setIndicator(int [] someCache, int [] someLoadList, int length) {
     cache = someCache;
     loadList = someLoadList;
-    cacheLength = length - 1;
+    cacheLength = length;
     int setRatio = translate(0);
     repaint();
   }

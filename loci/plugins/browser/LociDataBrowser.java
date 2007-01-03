@@ -170,36 +170,16 @@ public class LociDataBrowser {
   public void setDimensions() {
     String order = null;
 
-    if (fStitch != null) {
-      try {
-        numZ = fStitch.getSizeZ(id);
-        if(reader instanceof ChannelMerger) {
-          numC = fStitch.getEffectiveSizeC(id);
-//          IJ.showMessage("ChannelMerger Detected!! Size C = " + numC);
-        }
-        else numC = fStitch.getEffectiveSizeC(id);
-        numT = fStitch.getSizeT(id);
-        order = fStitch.getDimensionOrder(id);
-      }
-      catch (Exception exc) {
-        if (DEBUG) exc.printStackTrace();
-        exceptionMessage(exc);
-        return;
-      }
+    try {
+      numZ = reader.getSizeZ(id);
+      numC = reader.getEffectiveSizeC(id);
+      numT = reader.getSizeT(id);
+      order = reader.getDimensionOrder(id);
     }
-    else {
-      try {
-        numZ = reader.getSizeZ(id);
-        if(reader instanceof ChannelMerger) numC = reader.getEffectiveSizeC(id);
-        else numC = reader.getSizeC(id);
-        numT = reader.getSizeT(id);
-        order = reader.getDimensionOrder(id);
-      }
-      catch (Exception exc) {
-        if (DEBUG) exc.printStackTrace();
-        exceptionMessage(exc);
-        return;
-      }
+    catch (Exception exc) {
+      if (DEBUG) exc.printStackTrace();
+      exceptionMessage(exc);
+      return;
     }
 
     hasZ = numZ > 1;
@@ -273,6 +253,29 @@ public class LociDataBrowser {
         run("");
       }
     }
+  }
+  
+  public void toggleMerge() {    
+    if (reader instanceof ChannelMerger) {
+      IFormatReader parent = ((ReaderWrapper)reader).getReader();
+      reader = new ChannelSeparator(parent);
+      cw.ow.dispose();
+      cw.dispose();
+      run("");
+    }
+    else if(reader instanceof ChannelSeparator) {
+      IFormatReader parent = ((ReaderWrapper)reader).getReader();
+      reader = new ChannelMerger(parent);
+      cw.ow.dispose();
+      cw.dispose();
+      run("");
+    }
+    else throw new RuntimeException("Unsuported reader class: " + reader.getClass().getName());
+  }
+  
+  public boolean isMerged() {
+    if (reader instanceof ChannelMerger) return true;
+    else return false;
   }
 
   public void run(String arg) {

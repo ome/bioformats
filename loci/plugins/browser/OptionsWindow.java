@@ -60,7 +60,7 @@ public class OptionsWindow extends JFrame implements
   private JCheckBox zCheck,tCheck,cCheck;
 
   /** CheckBoxes to control if caching is on or off */
-  private JCheckBox cacheToggle;
+  private JCheckBox cacheToggle,mergeCheck;
 
   /** Spinners for slice storage.*/
   private JSpinner zFSpin,zBSpin,tFSpin,tBSpin,cFSpin,cBSpin;
@@ -390,10 +390,14 @@ public class OptionsWindow extends JFrame implements
 
     if(!cw.db.virtual) enableCache(false);
 
+    mergeCheck = new JCheckBox("Merge Channels");
+    mergeCheck.setSelected(cw.db.isMerged());
+    mergeCheck.addItemListener(this);
+
     //configure/layout content pane
     FormLayout lastLayout = new FormLayout(
       "pref:grow",
-      "pref,pref,pref");
+      "pref,pref,pref,pref");
     setLayout(lastLayout);
     CellConstraints ccs = new CellConstraints();
 
@@ -840,6 +844,9 @@ public class OptionsWindow extends JFrame implements
         else {
           cw.db.toggleCache(true);
         }
+      }
+      else if (source == mergeCheck) {
+        cw.db.toggleMerge();
       }
 
       int zState = 0x00,tState = 0x00,cState = 0x00;
