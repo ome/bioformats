@@ -65,12 +65,17 @@ public class TiffWriter extends FormatWriter {
       currentId = id;
       out = 
         new BufferedOutputStream(new FileOutputStream(currentId, true), 4096);
-      DataOutputStream dataOut = new DataOutputStream(out);
-      dataOut.writeByte(TiffTools.BIG);
-      dataOut.writeByte(TiffTools.BIG);
-      dataOut.writeShort(TiffTools.MAGIC_NUMBER);
-      dataOut.writeInt(8); // offset to first IFD
-      lastOffset = 8;
+      
+      RandomAccessStream tmp = new RandomAccessStream(currentId);
+      if (tmp.length() == 0) {
+        DataOutputStream dataOut = new DataOutputStream(out);
+        dataOut.writeByte(TiffTools.BIG);
+        dataOut.writeByte(TiffTools.BIG);
+        dataOut.writeShort(TiffTools.MAGIC_NUMBER);
+        dataOut.writeInt(8); // offset to first IFD
+        lastOffset = 8;
+      }
+      tmp.close();
     }
 
     BufferedImage img = (cm == null) ?
