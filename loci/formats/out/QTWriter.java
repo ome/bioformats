@@ -234,26 +234,46 @@ public class QTWriter extends FormatWriter {
       currentId = id;
       out = new RandomAccessFile(id, "rw");
       created = (int) System.currentTimeMillis();
-      numWritten = 1;
+      numWritten = 0;
+      numBytes = byteData.length * byteData[0].length;
+      byteCountOffset = 8;
 
-      // -- write the first header --
+      if (out.length() == 0) {
+        // -- write the first header --
 
-      DataTools.writeInt(out, 8, false);
-      DataTools.writeString(out, "wide");
+        DataTools.writeInt(out, 8, false);
+        DataTools.writeString(out, "wide");
+      
+        DataTools.writeInt(out, numBytes + 8, false);
+        DataTools.writeString(out, "mdat");
+      }
+      else {
+        out.seek(byteCountOffset);
+        numBytes = (int) DataTools.read4UnsignedBytes(out, false) - 8;
+        numWritten = numBytes / (byteData[0].length * byteData.length);
+        
+        numBytes += byteData.length * byteData[0].length;
 
+        out.seek(byteCountOffset);
+        DataTools.writeInt(out, numBytes + 8, false);
+
+        for (int i=0; i<numWritten; i++) {
+          offsets.add(
+            new Integer(16 + i * byteData.length * byteData[0].length));
+        }
+
+        out.seek(out.length()); 
+      }
+      
       // -- write the first plane of pixel data (mdat) --
 
-      numBytes = byteData[0].length * byteData.length;
-
-      byteCountOffset = out.getFilePointer();
-      DataTools.writeInt(out, numBytes + 8, false);
-      DataTools.writeString(out, "mdat");
+      offsets.add(new Integer((int) out.length()));
+      
+      numWritten++;
 
       for (int i=0; i<byteData.length; i++) {
         out.write(byteData[i]);
       }
-
-      offsets.add(new Integer(16));
     }
     else {
       // update the number of pixel bytes written
