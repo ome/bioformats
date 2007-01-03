@@ -216,6 +216,7 @@ public class PrairieReader extends FormatReader {
           s = s.substring(s.indexOf(">", ndx) + 1);
           elements.add(sub);
         }
+        else break;
       }
 
       int zt = 0;
