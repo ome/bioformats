@@ -192,11 +192,6 @@ public class Importer {
     try {
       // -- Step 4a: do some preparatory work --
 
-//      if (stackFormat.equals(VIEW_BROWSER)) {
-//        LociDataBrowser ldb = new LociDataBrowser(id,mergeChannels);
-//        ldb.run("");
-//        return;
-//      }
       if (stackFormat.equals(VIEW_IMAGE_5D)) mergeChannels = false;
 
       oldId = id;
@@ -220,7 +215,6 @@ public class Importer {
       if(fs != null) {
         if (mergeChannels) r = new ChannelMerger(fs);
         else r = new ChannelSeparator(fs);
-//        IJ.showMessage("fs != null");
       }
       else {
         if (mergeChannels) r = new ChannelMerger(r);
@@ -443,6 +437,8 @@ public class Importer {
       }
 
       // -- Step 4d: read pixel data --
+      
+      //test to see if using LociDataBrowser to open images.
       if(!stackFormat.equals(VIEW_BROWSER)) {
         IJ.showStatus("Reading " + fileName);
 
@@ -892,9 +888,7 @@ public class Importer {
   {
     try {
       if (stackFormat.equals(VIEW_STANDARD)) imp.show();
-      else if (stackFormat.equals(VIEW_BROWSER)) {
-        LociDataBrowser ldb = new LociDataBrowser(r, fs, id);
-      }
+      else if (stackFormat.equals(VIEW_BROWSER)) {}
       else if (stackFormat.equals(VIEW_IMAGE_5D)) {
         int sizeZ = r.getSizeZ(id);
         int sizeT = r.getSizeT(id);

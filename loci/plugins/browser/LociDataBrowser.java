@@ -177,7 +177,7 @@ public class LociDataBrowser {
           numC = fStitch.getEffectiveSizeC(id);
 //          IJ.showMessage("ChannelMerger Detected!! Size C = " + numC);
         }
-        else numC = fStitch.getSizeC(id);
+        else numC = fStitch.getEffectiveSizeC(id);
         numT = fStitch.getSizeT(id);
         order = fStitch.getDimensionOrder(id);
       }
