@@ -79,7 +79,7 @@ public class PrairieReader extends FormatReader {
 
     // just checking the filename isn't enough to differentiate between
     // Prairie and regular TIFF; open the file and check more thoroughly
-    return open ? checkBytes(getMappedId(name), 1024) : true;
+    return open ? checkBytes(getMappedId(name), 524304) : true;
   }
 
   // -- FormatReader API methods --
@@ -95,6 +95,7 @@ public class PrairieReader extends FormatReader {
     boolean little = (block[0] == 0x49 && block[1] == 0x49);
 
     int ifdlocation = DataTools.bytesToInt(block, 4, little);
+    
     if (ifdlocation < 0) return false;
     else if (ifdlocation + 1 > block.length) return true;
     else {
