@@ -57,7 +57,7 @@ public class CacheManager implements Runnable {
   public static final int SURROUND_FIRST = 0x0200;
 
   /** Flags debug messages on/off.*/
-  public static final boolean DEBUG = false;
+  public static final boolean DEBUG = true;
 
   // -- Fields --
 
@@ -2043,12 +2043,14 @@ public class CacheManager implements Runnable {
           fileName, read, loadList[i]);
         cache[loadList[i]] = imp;
       }
-
+      
+      if (quit) break;
       if(db.cw != null) {
         int aC = 1;
         zSel = db.cw.zSliceSel;
         tSel = db.cw.tSliceSel;
         if (sizeC != 0) aC = (db.cw.getC());
+        if (quit) break;
         setIndicators(zSel.getValue(), tSel.getValue(), aC);
       }
     }

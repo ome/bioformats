@@ -54,9 +54,8 @@ public class CacheIndicator extends JComponent {
     repaint();
   }
 
-  public void paint(Graphics g) {
-    g.setColor(Color.white);
-    g.fillRect(0,0,getWidth()-1,COMPONENT_HEIGHT - 1);
+  public void paintComponent(Graphics g) {
+    super.paintComponent(g);
     g.setColor(Color.black);
     g.drawRect(0,0,getWidth()-1,COMPONENT_HEIGHT - 1);
 
@@ -126,10 +125,19 @@ public class CacheIndicator extends JComponent {
           startLoad = toLoad;
           prevLoad = toLoad;
         }
-        else if(toLoad == prevLoad + 1 && startLoad != -1 && i != loadList.length - 1) {
+        else if(toLoad == prevLoad + 1 && startLoad != -1) {
           prevLoad = toLoad;
         }
-        else {
+        else if (toLoad != prevLoad +1 && startLoad != -1 && cache.length - 1 != i) {
+          prevLoad = prevLoad + 1;
+          int x = translate(startLoad);
+          int wid = translate(prevLoad) - x;
+          g.fillRect(x,1,wid,COMPONENT_HEIGHT - 2);
+          startLoad = -1;
+        }
+        
+        
+        if (i == loadList.length - 1) {
           prevLoad = prevLoad + 1;
           int x = translate(startLoad);
           int wid = translate(prevLoad) - x;
@@ -154,10 +162,18 @@ public class CacheIndicator extends JComponent {
           startLoad = toLoad;
           prevLoad = toLoad;
         }
-        else if(toLoad == prevLoad + 1 && startLoad != -1 && i != cache.length - 1) {
+        else if(toLoad == prevLoad + 1 && startLoad != -1) {
           prevLoad = toLoad;
         }
-        else {
+        else if (toLoad != prevLoad +1 && startLoad != -1 && cache.length - 1 != i) {
+          prevLoad = prevLoad + 1;
+          int x = translate(startLoad);
+          int wid = translate(prevLoad) - x;
+          g.fillRect(x,1,wid,COMPONENT_HEIGHT - 2);
+          startLoad = -1;
+        }
+        
+        if (i == cache.length - 1) {
           prevLoad = prevLoad + 1;
           int x = translate(startLoad);
           int wid = translate(prevLoad) - x;
