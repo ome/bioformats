@@ -867,20 +867,14 @@ public final class TiffTools {
       }
     }
 
+    boolean lastBitsZero = bitsPerSample[bitsPerSample.length - 1] == 0;
+
     if (fakeRPS && !isTiled) {
       // create a false rowsPerStripArray if one is not present
       // it's sort of a cheap hack, but here's how it's done:
       // RowsPerStrip = stripByteCounts / (imageLength * bitsPerSample)
       // since stripByteCounts and bitsPerSample are arrays, we have to
       // iterate through each item
-
-      if (bitsPerSample.length == 2 ||
-        bitsPerSample[bitsPerSample.length - 1] == 0)
-      {
-        int t = bitsPerSample[0];
-        bitsPerSample = new int[1];
-        bitsPerSample[0] = t;
-      }
 
       rowsPerStripArray = new long[bitsPerSample.length];
 
@@ -1009,6 +1003,11 @@ public final class TiffTools {
       samplesPerPixel = stripOffsets.length;
     }
 
+    if (lastBitsZero) {
+      bitsPerSample[bitsPerSample.length - 1] = 0;
+      samplesPerPixel--;
+    }
+
     TiffRational xResolution = getIFDRationalValue(ifd, X_RESOLUTION, false);
     TiffRational yResolution = getIFDRationalValue(ifd, Y_RESOLUTION, false);
     int planarConfig = getIFDIntValue(ifd, PLANAR_CONFIGURATION, false, 1);
@@ -1092,7 +1091,7 @@ public final class TiffTools {
       debug(sb.toString());
     }
 
-    for (int i=0; i<bitsPerSample.length; i++) {
+    for (int i=0; i<samplesPerPixel; i++) {
       if (bitsPerSample[i] < 1) {
         throw new FormatException("Illegal BitsPerSample (" +
           bitsPerSample[i] + ")");
@@ -1244,38 +1243,52 @@ public final class TiffTools {
       int overallOffset = 0;
 
       for (int strip=0, row=0; strip<numStrips; strip++, row+=rowsPerStrip) {
-        if (DEBUG) debug("reading image strip #" + strip);
-        long actualRows = (row + rowsPerStrip > imageLength) ?
-          imageLength - row : rowsPerStrip;
-        in.seek((int) stripOffsets[strip]);
+        try {
+          if (DEBUG) debug("reading image strip #" + strip);
+          long actualRows = (row + rowsPerStrip > imageLength) ?
+            imageLength - row : rowsPerStrip;
+          in.seek((int) stripOffsets[strip]);
 
-        if (stripByteCounts[strip] > Integer.MAX_VALUE) {
-          throw new FormatException("Sorry, StripByteCounts > " +
-            Integer.MAX_VALUE + " is not supported");
-        }
-        byte[] bytes = new byte[(int) stripByteCounts[strip]];
-        in.read(bytes);
-        if (compression != PACK_BITS) {
-          bytes = uncompress(bytes, compression);
-          undifference(bytes, bitsPerSample,
-            imageWidth, planarConfig, predictor);
-          int offset = (int) (imageWidth * row);
-          if (planarConfig == 2) {
-            offset = overallOffset / samplesPerPixel;
+          if (stripByteCounts[strip] > Integer.MAX_VALUE) {
+            throw new FormatException("Sorry, StripByteCounts > " +
+              Integer.MAX_VALUE + " is not supported");
           }
-          unpackBytes(samples, offset, bytes, bitsPerSample,
-            photoInterp, colorMap, littleEndian, maxValue, planarConfig, strip,
-            (int) numStrips);
-          overallOffset += bytes.length / bitsPerSample.length;
+          byte[] bytes = new byte[(int) stripByteCounts[strip]];
+          in.read(bytes);
+          if (compression != PACK_BITS) {
+            bytes = uncompress(bytes, compression);
+            undifference(bytes, bitsPerSample,
+              imageWidth, planarConfig, predictor);
+            int offset = (int) (imageWidth * row);
+            if (planarConfig == 2) {
+              offset = overallOffset / samplesPerPixel;
+            }
+            unpackBytes(samples, offset, bytes, bitsPerSample,
+              photoInterp, colorMap, littleEndian, maxValue, planarConfig, 
+              strip, (int) numStrips);
+            overallOffset += bytes.length / bitsPerSample.length;
+          }
+          else {
+            // concatenate contents of bytes to altBytes
+            byte[] tempPackBits = new byte[altBytes.length];
+            System.arraycopy(altBytes, 0, tempPackBits, 0, altBytes.length);
+            altBytes = new byte[altBytes.length + bytes.length];
+            System.arraycopy(tempPackBits, 0, altBytes, 0, tempPackBits.length);
+            System.arraycopy(bytes, 0, altBytes,
+              tempPackBits.length, bytes.length);
+          }
         }
-        else {
-          // concatenate contents of bytes to altBytes
-          byte[] tempPackBits = new byte[altBytes.length];
-          System.arraycopy(altBytes, 0, tempPackBits, 0, altBytes.length);
-          altBytes = new byte[altBytes.length + bytes.length];
-          System.arraycopy(tempPackBits, 0, altBytes, 0, tempPackBits.length);
-          System.arraycopy(bytes, 0, altBytes,
-            tempPackBits.length, bytes.length);
+        catch (Exception e) {
+          if (strip == 0) throw new FormatException(e);
+          byte[] bytes = new byte[samples[0].length];
+          undifference(bytes, bitsPerSample, imageWidth, planarConfig, 
+            predictor);
+          int offset = (int) (imageWidth * row);
+          if (planarConfig == 2) offset = overallOffset / samplesPerPixel;
+          unpackBytes(samples, offset, bytes, bitsPerSample, photoInterp, 
+            colorMap, littleEndian, maxValue, planarConfig, 
+            strip, (int) numStrips);
+          overallOffset += bytes.length / bitsPerSample.length;
         }
       }
     }
@@ -1414,6 +1427,12 @@ public final class TiffTools {
           (int) imageWidth, (int) imageLength, validBits);
       }
     }
+    if (samples.length == 2) {
+      byte[][] s = new byte[3][samples[0].length];
+      System.arraycopy(samples[0], 0, s[0], 0, s[0].length);
+      System.arraycopy(samples[1], 0, s[1], 0, s[1].length);
+      samples = s;
+    }
     return ImageTools.makeImage(samples, (int) imageWidth, (int) imageLength,
       validBits);
   }
@@ -1430,15 +1449,13 @@ public final class TiffTools {
     int strip, int numStrips) throws FormatException
   {
     int numChannels = bitsPerSample.length;  // this should always be 3
+    if (bitsPerSample[bitsPerSample.length - 1] == 0) numChannels--;
 
     // determine which channel the strip belongs to
 
-    int channelNum = strip % numChannels;
+    int channelNum = strip / (numStrips / numChannels);
 
-    if (channelNum > 0) {
-      startIndex = (strip % numChannels) * (strip / numChannels) *
-        bytes.length / numChannels;
-    }
+    startIndex = (strip % (numStrips / numChannels)) * bytes.length;
 
     int index = 0;
     int counter = 0;
@@ -1452,7 +1469,6 @@ public final class TiffTools {
         // specs, it's a bad idea to write bits per sample values that aren't
         // divisible by 8
 
-        // -- MELISSA TODO -- improve this as time permits
         if (index == bytes.length) {
           //throw new FormatException("bad index : i = " + i + ", j = " + j);
           index--;
@@ -1785,9 +1801,11 @@ public final class TiffTools {
   {
     if (predictor == 2) {
       if (DEBUG) debug("reversing horizontal differencing");
+      int len = bitsPerSample.length;
+      if (bitsPerSample[len - 1] == 0) len = 1;
       for (int b=0; b<input.length; b++) {
-        if (b / bitsPerSample.length % width == 0) continue;
-        input[b] += input[b - bitsPerSample.length];
+        if (b / len % width == 0) continue;
+        input[b] += input[b - len];
       }
     }
     else if (predictor != 1) {
