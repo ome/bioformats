@@ -58,7 +58,7 @@ public class CacheManager implements Runnable {
   public static final int SURROUND_FIRST = 0x0200;
 
   /** Flags debug messages on/off.*/
-  public static final boolean DEBUG = false;
+  public static final boolean DEBUG = true;
 
   // -- Fields --
 
@@ -2059,5 +2059,8 @@ public class CacheManager implements Runnable {
       if(db == null) quit = true;
     }
   }
-  
+
+  public void finish() {
+    quit = true;
+  }  
 }

@@ -602,6 +602,7 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
   public void windowClosed(WindowEvent e) {
     if (animationTimer != null) animationTimer.stop();
+    db.manager.finish();
     super.windowClosed(e);
   }
 
