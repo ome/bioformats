@@ -32,6 +32,8 @@ import ij.io.OpenDialog;
 import ij.measure.Calibration;
 import ij.process.*;
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +49,7 @@ import loci.plugins.browser.LociDataBrowser;
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
  */
-public class Importer {
+public class Importer implements ItemListener {
 
   // -- Constants --
 
@@ -60,7 +62,14 @@ public class Importer {
 
   private LociImporter plugin;
   private String stackFormat = "";
-  private String oldId = null;
+  private Checkbox mergeBox;
+  private Checkbox ignoreBox;
+  private Checkbox colorizeBox;
+  private Checkbox splitBox;
+  private Checkbox metadataBox;
+  private Checkbox stitchBox;
+  private Checkbox rangeBox;
+  private Choice stackChoice;
 
   // -- Constructor --
 
@@ -132,15 +141,6 @@ public class Importer {
 
     IJ.showStatus("");
 
-    final String mergeString = "Merge channels to RGB";
-    final String ignoreString = "Ignore color lookup table";
-    final String colorizeString = "Colorize channels";
-    final String splitString = "Open each channel in its own window";
-    final String metadataString = "Display associated metadata";
-    final String stitchString = "Stitch files with similar names";
-    final String rangeString = "Specify range for each series";
-    final String stackString = "View stack with: ";
-
     Vector stackTypes = new Vector();
     stackTypes.add(VIEW_STANDARD);
     if (Util.checkClass("loci.plugins.browser.LociDataBrowser")) {
@@ -161,6 +161,15 @@ public class Importer {
     boolean specifyRanges = Prefs.get("bioformats.specifyRanges", false);
     stackFormat = Prefs.get("bioformats.stackFormat", VIEW_STANDARD);
 
+    final String mergeString = "Merge channels to RGB";
+    final String ignoreString = "Ignore color lookup table";
+    final String colorizeString = "Colorize channels";
+    final String splitString = "Open each channel in its own window";
+    final String metadataString = "Display associated metadata";
+    final String stitchString = "Stitch files with similar names";
+    final String rangeString = "Specify range for each series";
+    final String stackString = "View stack with: ";
+
     // prompt for parameters, if necessary
     GenericDialog gd = new GenericDialog("LOCI Bio-Formats Import Options");
     gd.addCheckbox(mergeString, mergeChannels);
@@ -171,6 +180,29 @@ public class Importer {
     gd.addCheckbox(stitchString, stitchFiles);
     gd.addCheckbox(rangeString, specifyRanges);
     gd.addChoice(stackString, stackFormats, stackFormat);
+
+    // extract GUI components from dialog and add listeners
+    Vector boxes = gd.getCheckboxes();
+    if (boxes != null) {
+      mergeBox = (Checkbox) boxes.get(0);
+      ignoreBox = (Checkbox) boxes.get(1);
+      colorizeBox = (Checkbox) boxes.get(2);
+      splitBox = (Checkbox) boxes.get(3);
+      metadataBox = (Checkbox) boxes.get(4);
+      stitchBox = (Checkbox) boxes.get(5);
+      rangeBox = (Checkbox) boxes.get(6);
+      for (int i=0; i<boxes.size(); i++) {
+        ((Checkbox) boxes.get(i)).addItemListener(this);
+      }
+    }
+    Vector choices = gd.getChoices();
+    if (choices != null) {
+      stackChoice = (Choice) choices.get(0);
+      for (int i=0; i<choices.size(); i++) {
+        ((Choice) choices.get(i)).addItemListener(this);
+      }
+    }
+
     gd.showDialog();
     if (gd.wasCanceled()) {
       plugin.canceled = true;
@@ -194,7 +226,6 @@ public class Importer {
 
       if (stackFormat.equals(VIEW_IMAGE_5D)) mergeChannels = false;
 
-      oldId = id;
       FileStitcher fs = null;
 
       if (stitchFiles) {
@@ -438,8 +469,8 @@ public class Importer {
 
       // -- Step 4d: read pixel data --
       
-      //test to see if using LociDataBrowser to open images.
-      if(!stackFormat.equals(VIEW_BROWSER)) {
+      // only read data explicitly if not using 4D Data Browser
+      if (!stackFormat.equals(VIEW_BROWSER)) {
         IJ.showStatus("Reading " + fileName);
 
         for (int i=0; i<seriesCount; i++) {
@@ -751,7 +782,6 @@ public class Importer {
         }
 
         r.close();
-
       }
 
       plugin.success = true;
@@ -767,7 +797,7 @@ public class Importer {
       Prefs.set("bioformats.stackFormat", stackFormat);
 
       if (stackFormat.equals(VIEW_BROWSER)) {
-        LociDataBrowser ldb = new LociDataBrowser(r,fs,id);
+        LociDataBrowser ldb = new LociDataBrowser(r, fs, id);
         ldb.run("");
       }
     }
@@ -782,6 +812,61 @@ public class Importer {
         }
         IJ.error("LOCI Bio-Formats", "Sorry, there was a problem " +
           "reading the data" + (msg == null ? "." : (":\n" + msg)));
+      }
+    }
+  }
+
+  // -- ItemListener API methods --
+
+  /** Handles toggling of mutually exclusive options. */
+  public void itemStateChanged(ItemEvent e) {
+    Object src = e.getSource();
+    if (src == mergeBox) {
+      if (mergeBox.getState()) {
+        colorizeBox.setState(false);
+        splitBox.setState(false);
+      }
+    }
+    else if (src == ignoreBox) {
+    }
+    else if (src == colorizeBox) {
+      if (colorizeBox.getState()) {
+        mergeBox.setState(false);
+        splitBox.setState(true);
+        // NB: temporary
+        String s = stackChoice.getSelectedItem();
+        if (s.equals(VIEW_BROWSER)) stackChoice.select(VIEW_STANDARD);
+      }
+    }
+    else if (src == splitBox) {
+      if (splitBox.getState()) {
+        mergeBox.setState(false);
+        String s = stackChoice.getSelectedItem();
+        if (s.equals(VIEW_BROWSER)) stackChoice.select(VIEW_STANDARD);
+      }
+    }
+    else if (src == metadataBox) {
+    }
+    else if (src == stitchBox) {
+    }
+    else if (src == rangeBox) {
+      if (rangeBox.getState()) {
+        String s = stackChoice.getSelectedItem();
+        if (s.equals(VIEW_BROWSER)) stackChoice.select(VIEW_STANDARD);
+      }
+    }
+    else if (src == stackChoice) {
+      String s = stackChoice.getSelectedItem();
+      if (s.equals(VIEW_STANDARD)) {
+      }
+      else if (s.equals(VIEW_BROWSER)) {
+        colorizeBox.setState(false); // NB: temporary
+        splitBox.setState(false);
+        rangeBox.setState(false);
+      }
+      else if (s.equals(VIEW_IMAGE_5D)) {
+      }
+      else if (s.equals(VIEW_VIEW_5D)) {
       }
     }
   }
