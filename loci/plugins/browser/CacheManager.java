@@ -221,32 +221,16 @@ public class CacheManager implements Runnable {
     tInd = null;
     zSel = null;
     tSel = null;
-    if (fs != null) {
-      synchronized (fs) {
-        try {
-          sizeZ = fs.getSizeZ(fileName);
-          sizeT = fs.getSizeT(fileName);
-          sizeC = fs.getSizeC(fileName);
-          cache = new ImageProcessor[fs.getImageCount(fileName)];
-        }
-        catch (Exception exc) {
-          if (DEBUG) System.out.println("Error reading size of file.");
-          LociDataBrowser.exceptionMessage(exc);
-        }
+    synchronized (read) {
+      try {
+        sizeZ = read.getSizeZ(fileName);
+        sizeT = read.getSizeT(fileName);
+        sizeC = read.getSizeC(fileName);
+        cache = new ImageProcessor[read.getImageCount(fileName)];
       }
-    }
-    else {
-      synchronized (read) {
-        try {
-          sizeZ = read.getSizeZ(fileName);
-          sizeT = read.getSizeT(fileName);
-          sizeC = read.getSizeC(fileName);
-          cache = new ImageProcessor[read.getImageCount(fileName)];
-        }
-        catch (Exception exc) {
-          if (DEBUG) System.out.println("Error reading size of file.");
-          LociDataBrowser.exceptionMessage(exc);
-        }
+      catch (Exception exc) {
+        if (DEBUG) System.out.println("Error reading size of file.");
+        LociDataBrowser.exceptionMessage(exc);
       }
     }
     oldAxis = axis;
@@ -1850,12 +1834,12 @@ public class CacheManager implements Runnable {
 
   protected void dimChange() {
     zapCache = true;
-    synchronized (fs) {
+    synchronized (read) {
       try {
-        sizeZ = fs.getSizeZ(fileName);
-        sizeT = fs.getSizeT(fileName);
-        sizeC = fs.getSizeC(fileName);
-        cache = new ImageProcessor[fs.getImageCount(fileName)];
+        sizeZ = read.getSizeZ(fileName);
+        sizeT = read.getSizeT(fileName);
+        sizeC = read.getSizeC(fileName);
+        cache = new ImageProcessor[read.getImageCount(fileName)];
       }
       catch (Exception exc) {
         if (DEBUG) System.out.println("Error reading size of file.");
@@ -1962,7 +1946,9 @@ public class CacheManager implements Runnable {
     }
     else {
       try {
-        cache = new ImageProcessor[fs.getImageCount(fileName)];
+        synchronized(read) {
+          cache = new ImageProcessor[read.getImageCount(fileName)];
+        }
       }
       catch(Exception exc){
         LociDataBrowser.exceptionMessage(exc);

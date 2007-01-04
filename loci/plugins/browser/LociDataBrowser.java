@@ -227,15 +227,15 @@ public class LociDataBrowser {
   }
 
   public static void exceptionMessage(Exception exc) {
-/*
-    String msg = exc.toString();
-    StackTraceElement[] ste = exc.getStackTrace();
-    for(int i = 0;i<ste.length;i++) {
-     msg = msg + "\n" + ste[i].toString();
+    if(DEBUG) {
+      String msg = exc.toString();
+      StackTraceElement[] ste = exc.getStackTrace();
+      for(int i = 0;i<ste.length;i++) {
+       msg = msg + "\n" + ste[i].toString();
+      }
+  
+      IJ.showMessage(msg);
     }
-
-    IJ.showMessage(msg);
-*/
   }
 
   public void toggleCache(boolean cached) {

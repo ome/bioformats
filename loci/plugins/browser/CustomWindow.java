@@ -258,9 +258,12 @@ public class CustomWindow extends ImageWindow implements ActionListener,
 
     showSlice(z, t, c);
 
+    updateControls();
+    
     // listen for arrow key presses
     addKeyListener(this);
     ic.addKeyListener(this);
+    
   }
 
   // -- CustomWindow methods --
@@ -269,12 +272,18 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     update = false;
     zSliceSel.setMinimum(1);
     zSliceSel.setMaximum(db.hasZ ? db.numZ + 1 : 2);
-    if (!db.hasZ) zSliceSel.setEnabled(false);
-    else zSliceSel.setEnabled(true);
+    zSliceSel.setEnabled(db.hasZ);
+    if(zIndicator != null) {
+      zIndicator.setVisible(db.hasZ);
+      zIndicator.repaint();
+    }
     tSliceSel.setMinimum(1);
     tSliceSel.setMaximum(db.hasT ? db.numT + 1 : 2);
-    if (!db.hasT) tSliceSel.setEnabled(false);
-    else tSliceSel.setEnabled(true);
+    tSliceSel.setEnabled(db.hasT);
+    if(tIndicator != null) {
+      tIndicator.setVisible(db.hasT);
+      tIndicator.repaint();
+    }
     setC();
     repaint();
     update = true;
@@ -332,6 +341,8 @@ public class CustomWindow extends ImageWindow implements ActionListener,
     if (db.manager != null) {
       imp.setProcessor(patternTitle, db.manager.getSlice(index - 1));
       index = 1;
+//      repaint();
+      return;
     }
 
     if (index >= 1 && index <= imp.getStackSize()) {
