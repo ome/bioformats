@@ -59,10 +59,11 @@ public class OverlayLine extends OverlayObject {
     float r = color.getRed() / 255f;
     float g = color.getGreen() / 255f;
     float b = color.getBlue() / 255f;
-    float[][] rangeSamples = new float[3][setSamples[0].length];
+    float[][] rangeSamples = new float[4][setSamples[0].length];
     Arrays.fill(rangeSamples[0], r);
     Arrays.fill(rangeSamples[1], g);
     Arrays.fill(rangeSamples[2], b);
+    Arrays.fill(rangeSamples[3], 1.0f);
 
     FlatField field = null;
     try {

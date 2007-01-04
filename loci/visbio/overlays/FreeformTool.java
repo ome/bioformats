@@ -488,8 +488,10 @@ public class FreeformTool extends OverlayTool {
    *  the given point
    */
   private OverlayFreeform getClosestFreeform(float x, float y) {
+    // returns only objects at the current dimensional position
     OverlayObject[] objects = overlay.getObjects();
     //Q: Hey, are all of these OverlayFreeforms?  A: No, it returns OverlayObjects of all types
+
     OverlayFreeform closestFreeform = null;
     if (objects != null) {
       double minDistance = Double.MAX_VALUE;

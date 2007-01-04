@@ -40,7 +40,7 @@ public class PointerTool extends OverlayTool {
   /** Location where mouseDown occurs */
   protected float downX, downY; 
 
-  /** Selection box */
+  /** The selection box which may be created by this tool */
   protected TransientSelectBox select;
 
   // -- Constructor --
@@ -57,14 +57,6 @@ public class PointerTool extends OverlayTool {
     boolean shift = (mods & InputEvent.SHIFT_MASK) != 0;
     boolean ctrl = (mods & InputEvent.CTRL_MASK) != 0;
 
-    // record location of click
-    downX = x;
-    downY = y;
-
-    // instantiate selection box
-    select = new TransientSelectBox(overlay, downX, downY);
-    overlay.addTSB (select);
- 
     // pick nearest object
     OverlayObject[] obj = overlay.getObjects(pos);
     double dist = Double.POSITIVE_INFINITY;
@@ -79,7 +71,7 @@ public class PointerTool extends OverlayTool {
 
     double threshold = 0.02 * overlay.getScalingValue();
     boolean selected = dist < threshold && obj[ndx].isSelected();
-
+    
     if (!shift && !ctrl) {
       // deselect all previously selected objects
       for (int i=0; i<obj.length; i++) obj[i].setSelected(false);
@@ -94,6 +86,14 @@ public class PointerTool extends OverlayTool {
       }
       // select (or deselect) picked object
       obj[ndx].setSelected(ctrl ? !selected : true);
+    } else {
+      // record location of click
+      downX = x;
+      downY = y;
+
+      // instantiate selection box
+      select = new TransientSelectBox(overlay, downX, downY);
+      overlay.addTSB (select);
     }
 
     ((OverlayWidget) overlay.getControls()).refreshListSelection();
@@ -111,7 +111,7 @@ public class PointerTool extends OverlayTool {
       grabIndex = -1;
       overlay.setTextDrawn(true);
       overlay.notifyListeners(new TransformEvent(overlay));
-    } else {
+    } else if (select != null) {
       select = null;
       overlay.removeTSB();
       overlay.notifyListeners(new TransformEvent(overlay));
@@ -133,7 +133,7 @@ public class PointerTool extends OverlayTool {
       grabX = x;
       grabY = y;
       overlay.notifyListeners(new TransformEvent(overlay));
-    } else if (x != downX && y != downY) {
+    } else if (select != null) {
       // extend selection box
       select.setCorner (x, y);
       overlay.notifyListeners(new TransformEvent(overlay));

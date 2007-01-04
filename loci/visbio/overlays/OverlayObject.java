@@ -203,11 +203,12 @@ public abstract class OverlayObject {
     float r = c.getRed() / 255f;
     float g = c.getGreen() / 255f;
     float b = c.getBlue() / 255f;
-    float[][] fieldSamples = new float[3][count];
+    float[][] fieldSamples = new float[4][count];
     for (int i=0; i<count; i++) {
       fieldSamples[0][i] = r;
       fieldSamples[1][i] = g;
       fieldSamples[2][i] = b;
+      fieldSamples[3][i] = 1.0f;
     }
 
     // construct field

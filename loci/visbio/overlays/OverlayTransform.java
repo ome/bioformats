@@ -44,17 +44,21 @@ public class OverlayTransform extends DataTransform
 
   // -- Constants --
 
-  /** MathType for blue color mappings. */
+  /** MathType for red color mappings. */
   protected static final RealType RED_TYPE =
     RealType.getRealType("overlay_red");
 
-  /** MathType for blue color mappings. */
+  /** MathType for green color mappings. */
   protected static final RealType GREEN_TYPE =
     RealType.getRealType("overlay_green");
 
   /** MathType for blue color mappings. */
   protected static final RealType BLUE_TYPE =
     RealType.getRealType("overlay_blue");
+
+  /** MathType for alpha color mappings. */
+  protected static final RealType ALPHA_TYPE =
+    RealType.getRealType("overlay_alpha");
 
   /** Overlay range type. */
   protected static final RealTupleType RANGE_TUPLE = makeRangeTuple();
@@ -64,7 +68,7 @@ public class OverlayTransform extends DataTransform
     RealTupleType rtt = null;
     try {
       rtt = new RealTupleType(new RealType[] {
-        RED_TYPE, GREEN_TYPE, BLUE_TYPE
+        RED_TYPE, GREEN_TYPE, BLUE_TYPE, ALPHA_TYPE
       });
     }
     catch (VisADException exc) { exc.printStackTrace(); }
@@ -119,7 +123,7 @@ public class OverlayTransform extends DataTransform
     textType = TextType.getTextType("overlay_text_" + transformId);
     try {
       textRangeTuple = new TupleType(new ScalarType[] {
-        textType, RED_TYPE, GREEN_TYPE, BLUE_TYPE
+        textType, RED_TYPE, GREEN_TYPE, BLUE_TYPE, ALPHA_TYPE
       });
     }
     catch (VisADException exc) { exc.printStackTrace(); }
@@ -419,7 +423,7 @@ public class OverlayTransform extends DataTransform
 
   /** Constructs a range value with the given component values. */
   public Tuple getTextRangeValue(String text,
-    float r, float g, float b)
+    float r, float g, float b, float a)
   {
     Tuple tuple = null;
     try {
@@ -427,7 +431,8 @@ public class OverlayTransform extends DataTransform
         new Text(textType, text),
         new Real(RED_TYPE, r),
         new Real(GREEN_TYPE, g),
-        new Real(BLUE_TYPE, b)
+        new Real(BLUE_TYPE, b),
+        new Real(ALPHA_TYPE, a)
       });
     }
     catch (VisADException exc) { exc.printStackTrace(); }
@@ -518,12 +523,12 @@ public class OverlayTransform extends DataTransform
     if (q < 0 || q >= overlays.length) return null;
     synchronized (overlays) {
       int size = overlays[q].size();
+      DataImpl selectData = null;
       FieldImpl rgbField = null, txtField = null;
       try {
         if (size > 0) {
-          // compute number of selected objects and number of text objects
-          int rgbSize = 0, txtSize = 0, sel = 0, outline = 0, tsb = 0;
-          if (selectBox != null) tsb = 1; 
+          // compute number of selected objects, text objects
+          int rgbSize = 0, txtSize = 0, sel = 0, outline = 0;
           for (int i=0; i<size; i++) {
             OverlayObject obj = (OverlayObject) overlays[q].elementAt(i);
             if (obj.hasText()) {
@@ -540,7 +545,7 @@ public class OverlayTransform extends DataTransform
           if (rgbSize > 0 || sel > 0 || outline > 0) {
             FunctionType fieldType = new FunctionType(index,
               new FunctionType(getDomainType(), getRangeType()));
-            GriddedSet fieldSet = new Integer1DSet(rgbSize + sel + outline + tsb);
+            GriddedSet fieldSet = new Integer1DSet(rgbSize + sel + outline);
             rgbField = new FieldImpl(fieldType, fieldSet);
             // compute overlay data for each non-text object
             for (int i=0, c=0; i<size && c<rgbSize; i++) {
@@ -561,10 +566,6 @@ public class OverlayTransform extends DataTransform
               rgbField.setSample(rgbSize + sel + c++,
                 obj.getSelectionGrid(true), false);
             }
-            // compute visual data for selectBox
-            if (selectBox != null) {
-              rgbField.setSample(rgbSize + sel + outline, selectBox.getData(), false);
-            }
           }
 
           // compile text objects into text field
@@ -582,10 +583,20 @@ public class OverlayTransform extends DataTransform
             }
           }
         }
-        if (rgbField == null && txtField == null) return null;
-        else if (rgbField == null) return txtField;
-        else if (txtField == null) return rgbField;
-        else return new Tuple(new Data[] {rgbField, txtField}, false);
+
+        // retrieve select box data
+        if (selectBox != null && selectBox.isVisible()) {
+            selectData = selectBox.getData();
+        }
+
+        Vector v = new Vector();
+        if (selectData != null) v.add(selectData);
+        if (rgbField != null) v.add(rgbField);
+        if (txtField != null) v.add(txtField);
+        if (v.size() == 0) return null;
+        else if (v.size() == 1) return (Data) v.elementAt(0);
+        Data[] data = (Data[]) v.toArray(new Data[0]);
+        return new Tuple(data, false);
       }
       catch (VisADException exc) { exc.printStackTrace(); }
       catch (RemoteException exc) { exc.printStackTrace(); }
@@ -614,10 +625,12 @@ public class OverlayTransform extends DataTransform
       ScalarMap rMap = new ScalarMap(RED_TYPE, Display.Red);
       ScalarMap gMap = new ScalarMap(GREEN_TYPE, Display.Green);
       ScalarMap bMap = new ScalarMap(BLUE_TYPE, Display.Blue);
+      ScalarMap aMap = new ScalarMap(ALPHA_TYPE, Display.Alpha);
       rMap.setRange(0, 1);
       gMap.setRange(0, 1);
       bMap.setRange(0, 1);
-      maps = new ScalarMap[] {xMap, yMap, tMap, rMap, gMap, bMap};
+      aMap.setRange(0, 1);
+      maps = new ScalarMap[] {xMap, yMap, tMap, rMap, gMap, bMap, aMap};
     }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }

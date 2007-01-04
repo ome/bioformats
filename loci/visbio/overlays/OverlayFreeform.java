@@ -94,10 +94,11 @@ public class OverlayFreeform extends OverlayObject {
       }
 
       int len = fieldSet.getSamples(false)[0].length;
-      float[][] rangeSamples = new float[3][len];
+      float[][] rangeSamples = new float[4][len];
       Arrays.fill(rangeSamples[0], r);
       Arrays.fill(rangeSamples[1], g);
       Arrays.fill(rangeSamples[2], b);
+      Arrays.fill(rangeSamples[3], 1.0f);
 
       FunctionType fieldType = new FunctionType(domain, range);
       field = new FlatField(fieldType, fieldSet);
