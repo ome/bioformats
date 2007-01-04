@@ -54,7 +54,7 @@ public class OptionsWindow extends JFrame implements
   private CacheManager manager;
 
   /** The FileStitcher used to stich files together.*/
-  private FileStitcher fStitch;
+  private FileStitcher fs;
 
   /** CheckBoxes to indicate which axes to store.*/
   private JCheckBox zCheck,tCheck,cCheck;
@@ -80,7 +80,7 @@ public class OptionsWindow extends JFrame implements
   /** Storage of what priority settings used to be.*/
   private int oldTop,oldMid,oldLow;
 
-  FileStitcher fs;
+
 
   JComboBox[] blockBoxes;
   String id = null,order = null,suffix = null;
@@ -107,21 +107,36 @@ public class OptionsWindow extends JFrame implements
     Border etchB = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
 
     // get FilePattern Data
-    try {
-      id = cw.db.id;
-      order = fs.getDimensionOrder(id).substring(2);
-      sizeZ = fs.getSizeZ(id);
-      sizeT = fs.getSizeT(id);
-      sizeC = fs.getSizeC(id);
-      axes = fs.getAxisTypes(id);
-      fp = fs.getFilePattern(id);
-      prefixes = fp.getPrefixes();
-      blocks = fp.getBlocks();
-      suffix = fp.getSuffix();
+    if(fs != null) {
+      try {
+        id = cw.db.id;
+        order = fs.getDimensionOrder(id).substring(2);
+        sizeZ = fs.getSizeZ(id);
+        sizeT = fs.getSizeT(id);
+        sizeC = fs.getSizeC(id);
+        axes = fs.getAxisTypes(id);
+        fp = fs.getFilePattern(id);
+        prefixes = fp.getPrefixes();
+        blocks = fp.getBlocks();
+        suffix = fp.getSuffix();
+      }
+      catch(Exception exc) {
+        exc.printStackTrace();
+        LociDataBrowser.exceptionMessage(exc);
+      }
     }
-    catch(Exception exc) {
-      exc.printStackTrace();
-      LociDataBrowser.exceptionMessage(exc);
+    else {
+      try {
+        id = cw.db.id;
+        order = cw.db.reader.getDimensionOrder(id).substring(2);
+        sizeZ = cw.db.reader.getSizeZ(id);
+        sizeT = cw.db.reader.getSizeT(id);
+        sizeC = cw.db.reader.getSizeC(id);
+      }
+      catch(Exception exc) {
+        exc.printStackTrace();
+        LociDataBrowser.exceptionMessage(exc);
+      }
     }
 
     // add Display Pane
@@ -136,43 +151,49 @@ public class OptionsWindow extends JFrame implements
     JLabel blockLab = new JLabel("\u00B7" + "Blocks in Filenames" + "\u00B7");
 
     Vector blockLabelsV = new Vector();
-    for(int i = 0;i<blocks.length;i++) {
-      JLabel temp = new JLabel("Block " + blocks[i] + ":");
-      blockLabelsV.add(temp);
-    }
-    Object[] blockLabelsO = blockLabelsV.toArray();
-    JLabel[] blockLabels = new JLabel[blockLabelsO.length];
-    for(int i = 0;i<blockLabelsO.length;i++) {
-      blockLabels[i] = (JLabel) blockLabelsO[i];
-      blockLabels[i].setForeground(getColor(i));
+    JLabel[] blockLabels = {new JLabel()};
+    if(fs != null) {
+      for(int i = 0;i<blocks.length;i++) {
+        JLabel temp = new JLabel("Block " + blocks[i] + ":");
+        blockLabelsV.add(temp);
+      }
+      Object[] blockLabelsO = blockLabelsV.toArray();
+      blockLabels = new JLabel[blockLabelsO.length];
+      for(int i = 0;i<blockLabelsO.length;i++) {
+        blockLabels[i] = (JLabel) blockLabelsO[i];
+        blockLabels[i].setForeground(getColor(i));
+      }
     }
 
     Object[] choices = {"Z-Depth", "Time", "Channel"};
     zGroup = new JComboBox(choices);
-    setBox(zGroup,0);
     tGroup = new JComboBox(choices);
-    setBox(tGroup,1);
     cGroup = new JComboBox(choices);
+    setBox(zGroup,0);
+    setBox(tGroup,1);
     setBox(cGroup,2);
     zGroup.addActionListener(this);
     tGroup.addActionListener(this);
     cGroup.addActionListener(this);
-    Vector blockBoxesV = new Vector();
-    for(int i = 0;i<blocks.length;i++) {
-      JComboBox temp = new JComboBox(choices);
-      if (axes[i] == AxisGuesser.Z_AXIS) temp.setSelectedIndex(0);
-      else if (axes[i] == AxisGuesser.T_AXIS) temp.setSelectedIndex(1);
-      else temp.setSelectedIndex(2);
-      temp.setActionCommand("Block1");
-      temp.addActionListener(this);
-      blockBoxesV.add(temp);
-    }
-    Object[] blockBoxesO = blockBoxesV.toArray();
-    blockBoxes = new JComboBox[blockBoxesO.length];
-    for(int i = 0;i<blockBoxesO.length;i++) {
-      JComboBox temp = (JComboBox) blockBoxesO[i];
-      temp.setForeground(getColor(i));
-      blockBoxes[i] = temp;
+    
+    if(fs != null) {
+      Vector blockBoxesV = new Vector();
+      for(int i = 0;i<blocks.length;i++) {
+        JComboBox temp = new JComboBox(choices);
+        if (axes[i] == AxisGuesser.Z_AXIS) temp.setSelectedIndex(0);
+        else if (axes[i] == AxisGuesser.T_AXIS) temp.setSelectedIndex(1);
+        else temp.setSelectedIndex(2);
+        temp.setActionCommand("Block1");
+        temp.addActionListener(this);
+        blockBoxesV.add(temp);
+      }
+      Object[] blockBoxesO = blockBoxesV.toArray();
+      blockBoxes = new JComboBox[blockBoxesO.length];
+      for(int i = 0;i<blockBoxesO.length;i++) {
+        JComboBox temp = (JComboBox) blockBoxesO[i];
+        temp.setForeground(getColor(i));
+        blockBoxes[i] = temp;
+      }
     }
 
     JPanel slicePanel = new JPanel();
@@ -184,26 +205,33 @@ public class OptionsWindow extends JFrame implements
     blockPanel.setBackground(Color.darkGray);
     blockLab.setForeground(Color.lightGray);
 
-    JPanel filePane = new JPanel(new FlowLayout());
-    for(int i = 0;i<prefixes.length;i++) {
-      JLabel prefLab = new JLabel(prefixes[i]);
-      JLabel blokLab = new JLabel(blocks[i]);
-      blokLab.setForeground(getColor(i));
-      filePane.add(prefLab);
-      filePane.add(blokLab);
+    JPanel filePane = new JPanel();
+    if(fs!=null) {
+      filePane = new JPanel(new FlowLayout());
+      for(int i = 0;i<prefixes.length;i++) {
+        JLabel prefLab = new JLabel(prefixes[i]);
+        JLabel blokLab = new JLabel(blocks[i]);
+        blokLab.setForeground(getColor(i));
+        filePane.add(prefLab);
+        filePane.add(blokLab);
+      }
+      JLabel sufLab = new JLabel(suffix);
+      filePane.add(sufLab);
     }
-    JLabel sufLab = new JLabel(suffix);
-    filePane.add(sufLab);
 
-    int[] internalSizes = new int[3];
+    JLabel zLab,tLab,cLab, fileLab;
+    int[] internalSizes = null;
+
+    internalSizes = new int[3];
     for(int i = 0;i<internalSizes.length;i++) {
       internalSizes[i] = getOrderSize(i);
     }
 
-    JLabel zLab = new JLabel("First ("+ internalSizes[0] + "):");
-    JLabel tLab = new JLabel("Second (" + internalSizes[1] + "):");
-    JLabel cLab = new JLabel("Third (" + internalSizes[2] + "):");
-    JLabel fileLab = new JLabel("Filename:");
+    zLab = new JLabel("First ("+ internalSizes[0] + "):");
+    tLab = new JLabel("Second (" + internalSizes[1] + "):");
+    cLab = new JLabel("Third (" + internalSizes[2] + "):");
+    fileLab = new JLabel("Filename:");
+    
 
     String rowString = "pref," + TAB + ",pref,pref,pref," + TAB +
       ",pref,pref";
@@ -228,12 +256,14 @@ public class OptionsWindow extends JFrame implements
       disPane.add(cLab,cc.xy(2,5));
       disPane.add(cGroup,cc.xy(4,5));
     }
-    disPane.add(blockPanel,cc.xyw(1,7,5));
-    disPane.add(fileLab,cc.xy(2,8));
-    disPane.add(filePane,cc.xy(4,8));
-    for(int i = 0;i<blockLabels.length;i++) {
-      disPane.add(blockLabels[i], cc.xy(2,9+i));
-      disPane.add(blockBoxes[i], cc.xy(4,9+i));
+    if(fs != null) {
+      disPane.add(blockPanel,cc.xyw(1,7,5));
+      disPane.add(fileLab,cc.xy(2,8));
+      disPane.add(filePane,cc.xy(4,8));
+      for(int i = 0;i<blockLabels.length;i++) {
+        disPane.add(blockLabels[i], cc.xy(2,9+i));
+        disPane.add(blockBoxes[i], cc.xy(4,9+i));
+      }
     }
 
     //set up animation options pane
@@ -512,15 +542,15 @@ public class OptionsWindow extends JFrame implements
     switch(order.charAt(i)) {
       case 'Z':
         thisSize = sizeZ;
-        thisSize /= getBlockCount(0);
+        if(fs != null) thisSize /= getBlockCount(0);
         break;
       case 'T':
         thisSize = sizeT;
-        thisSize /= getBlockCount(1);
+        if(fs != null) thisSize /= getBlockCount(1);
         break;
       case 'C':
         thisSize = sizeC;
-        thisSize /= getBlockCount(2);
+        if(fs != null) thisSize /= getBlockCount(2);
         break;
     }
     return thisSize;
@@ -703,10 +733,10 @@ public class OptionsWindow extends JFrame implements
         order = String.valueOf(zChar) + String.valueOf(tChar)
           + String.valueOf(cChar);
         try {
-          fs.swapDimensions(id,"XY" + order);
-          sizeZ = fs.getSizeZ(id);
-          sizeT = fs.getSizeT(id);
-          sizeC = fs.getSizeC(id);
+          cw.db.reader.swapDimensions(id,"XY" + order);
+          sizeZ = cw.db.reader.getSizeZ(id);
+          sizeT = cw.db.reader.getSizeT(id);
+          sizeC = cw.db.reader.getSizeC(id);
         }
         catch(Exception exc) {
           exc.printStackTrace();
@@ -737,10 +767,10 @@ public class OptionsWindow extends JFrame implements
         order = String.valueOf(zChar) + String.valueOf(tChar)
           + String.valueOf(cChar);
         try {
-          fs.swapDimensions(id,"XY" + order);
-          sizeZ = fs.getSizeZ(id);
-          sizeT = fs.getSizeT(id);
-          sizeC = fs.getSizeC(id);
+          cw.db.reader.swapDimensions(id,"XY" + order);
+          sizeZ = cw.db.reader.getSizeZ(id);
+          sizeT = cw.db.reader.getSizeT(id);
+          sizeC = cw.db.reader.getSizeC(id);
         }
         catch(Exception exc) {
           exc.printStackTrace();
@@ -771,10 +801,10 @@ public class OptionsWindow extends JFrame implements
         order = String.valueOf(zChar) + String.valueOf(tChar)
           + String.valueOf(cChar);
         try {
-          fs.swapDimensions(id,"XY" + order);
-          sizeZ = fs.getSizeZ(id);
-          sizeT = fs.getSizeT(id);
-          sizeC = fs.getSizeC(id);
+          cw.db.reader.swapDimensions(id,"XY" + order);
+          sizeZ = cw.db.reader.getSizeZ(id);
+          sizeT = cw.db.reader.getSizeT(id);
+          sizeC = cw.db.reader.getSizeC(id);
         }
         catch(Exception exc) {
           exc.printStackTrace();

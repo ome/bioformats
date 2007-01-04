@@ -227,6 +227,7 @@ public class LociDataBrowser {
   }
 
   public static void exceptionMessage(Exception exc) {
+/*
     String msg = exc.toString();
     StackTraceElement[] ste = exc.getStackTrace();
     for(int i = 0;i<ste.length;i++) {
@@ -234,6 +235,7 @@ public class LociDataBrowser {
     }
 
     IJ.showMessage(msg);
+*/
   }
 
   public void toggleCache(boolean cached) {
