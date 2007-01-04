@@ -437,7 +437,7 @@ public class ZeissLSMReader extends BaseTiffReader {
       channels = cSize;
 
       if (channels == 0) channels++;
-      if (channels == 2) channels--;
+      //if (channels == 2) channels--;
 
       while (numImages > zSize * channels * tSize) {
         if (zSize > tSize) zSize++;
