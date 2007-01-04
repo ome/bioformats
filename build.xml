@@ -340,8 +340,10 @@ Apache XML-RPC
   </target>
 
   <target name="dev-compile" description="compile classes in-place (no copy)">
-    <javac srcdir="loci" destdir="." debug="true"
-      classpath="${ext.jars}" deprecation="true" source="1.4" target="1.4"/>
+    <javac srcdir="." destdir="." debug="true" classpath="${ext.jars}"
+      deprecation="true" source="1.4" target="1.4">
+      <include name="loci/**"/>
+    </javac>
   </target>
 
   <target name="dev-clean" description="remove classes in-place (no copy)">
