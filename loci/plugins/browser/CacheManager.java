@@ -58,7 +58,7 @@ public class CacheManager implements Runnable {
   public static final int SURROUND_FIRST = 0x0200;
 
   /** Flags debug messages on/off.*/
-  public static final boolean DEBUG = false;
+  public static final boolean DEBUG = true;
 
   // -- Fields --
 
@@ -149,7 +149,7 @@ public class CacheManager implements Runnable {
   */
   private boolean loop;
 
-  /**flag to zap the cache entirely if dimensions are switched*/
+  /**flag to zap the cache entirely if dimensions are switched.*/
   private boolean zapCache;
 
   /** A list of indeces to be loaded by the caching thread.*/
@@ -525,17 +525,8 @@ public class CacheManager implements Runnable {
   * @return The ImageProcessor of the given slice.
   */
   public ImageProcessor getTempSlice(int index) {
-    if (Arrays.binarySearch(loadList, index) >= 0) {
-      if (cache[index] != null) return cache[index];
-      return ImagePlusWrapper.getImageProcessor(fileName, read, index);
-    }
-    else {
-      ImageProcessor result = ImagePlusWrapper.getImageProcessor(fileName, read, index);
-      cache[index] = result;
-
-      updateCache();
-      return result;
-    }
+    if (cache[index] != null) return cache[index];
+    return ImagePlusWrapper.getImageProcessor(fileName, read, index);
   }
 
   /**
@@ -2051,7 +2042,7 @@ public class CacheManager implements Runnable {
     while(!quit) {
       if(!queue.empty()) {
         int index = ((Integer)queue.pop()).intValue();
-        System.out.println("Loading index " + index);
+        if(DEBUG) System.out.println("Loading index " + index);
         ImageProcessor imp = ImagePlusWrapper.getImageProcessor(
           fileName, read, index);
         cache[index] = imp;
