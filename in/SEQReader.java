@@ -31,7 +31,7 @@ import loci.formats.*;
 /**
  * SEQReader is the file format reader for Image-Pro Sequence files.
  *
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class SEQReader extends BaseTiffReader {
 

@@ -31,7 +31,7 @@ import loci.formats.*;
 /**
  * IPLabReader is the file format reader for IPLab (.IPL) files.
  *
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class IPLabReader extends FormatReader {

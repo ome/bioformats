@@ -32,7 +32,7 @@ import loci.formats.*;
 /**
  * LIFReader is the file format reader for Leica LIF files.
  *
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class LIFReader extends FormatReader {
 

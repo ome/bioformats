@@ -32,7 +32,7 @@ import loci.formats.*;
 /**
  * SlidebookReader is the file format reader for 3I Slidebook files.
  *
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class SlidebookReader extends FormatReader {
 

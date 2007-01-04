@@ -35,7 +35,7 @@ import loci.formats.*;
  * ICSReader is the file format reader for ICS (Image Cytometry Standard)
  * files. More information on ICS can be found at http://libics.sourceforge.net
  *
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 
 public class ICSReader extends FormatReader {

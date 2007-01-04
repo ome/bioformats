@@ -37,7 +37,7 @@ import org.xml.sax.SAXException;
  * TiffReader is the file format reader for TIFF files, including OME-TIFF.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class TiffReader extends BaseTiffReader {
 

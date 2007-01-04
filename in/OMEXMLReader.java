@@ -34,7 +34,7 @@ import org.openmicroscopy.xml.OMENode;
 /**
  * OMEXMLReader is the file format reader for OME-XML files.
  *
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class OMEXMLReader extends FormatReader {
 

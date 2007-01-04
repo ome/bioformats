@@ -33,7 +33,7 @@ import loci.formats.*;
  * NikonReader is the file format reader for
  * Nikon NEF (TIFF) files.
  *
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class NikonReader extends BaseTiffReader {
 

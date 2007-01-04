@@ -34,7 +34,7 @@ import loci.formats.*;
  * Olympus Fluoview TIFF files.
  *
  * @author Eric Kjellman egkjellman at wisc.edu
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class FluoviewReader extends BaseTiffReader {

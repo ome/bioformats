@@ -32,7 +32,7 @@ import loci.formats.*;
  * ImarisTiffReader is the file format reader for
  * Imaris 5 files (TIFF variant).
  *
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class ImarisTiffReader extends BaseTiffReader {
 

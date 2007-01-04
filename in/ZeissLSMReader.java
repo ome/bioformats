@@ -34,7 +34,7 @@ import loci.formats.*;
  * ZeissLSMReader is the file format reader for Zeiss LSM files.
  *
  * @author Eric Kjellman egkjellman at wisc.edu
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class ZeissLSMReader extends BaseTiffReader {
@@ -577,6 +577,9 @@ public class ZeissLSMReader extends BaseTiffReader {
           data = in.readInt();
           put("EventType" + i, data);
 
+          if (numBytes > in.length() - in.getFilePointer()) {
+            numBytes = in.length() - in.getFilePointer();
+          }
           byte[] descr = new byte[(int) (numBytes - 16)];
           in.read(descr);
           put("Description" + i, new String(descr));

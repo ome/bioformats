@@ -33,7 +33,7 @@ import loci.formats.*;
  * Specifications available at
  * http://flash.bitplane.com/support/faqs/faqsview.cfm?inCat=6&inQuestionID=104
  *
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class ImarisReader extends FormatReader {
 

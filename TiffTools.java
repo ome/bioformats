@@ -37,7 +37,7 @@ import java.util.*;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Eric Kjellman egkjellman at wisc.edu
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  * @author Chris Allan callan at blackcat.ca
  */
 public final class TiffTools {

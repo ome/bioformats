@@ -34,7 +34,7 @@ import loci.formats.*;
  * Specifications available at
  * http://www.improvision.com/support/tech_notes/detail.php?id=344
  *
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class OpenlabRawReader extends FormatReader {
 

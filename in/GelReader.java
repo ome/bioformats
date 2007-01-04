@@ -31,7 +31,7 @@ import loci.formats.*;
  * GelReader is the file format reader for
  * Molecular Dynamics GEL TIFF files.
  *
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class GelReader extends BaseTiffReader {
 

@@ -34,7 +34,7 @@ import loci.formats.*;
  * BioRadReader is the file format reader for Bio-Rad PIC files.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 
 public class BioRadReader extends FormatReader {

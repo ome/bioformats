@@ -31,7 +31,7 @@ import java.util.Vector;
  * RandomAccessStream provides methods for "intelligent" reading of files and
  * byte arrays.
  *
- * @author Melissa Linkert, linkert at cs.wisc.edu
+ * @author Melissa Linkert, linkert at wisc.edu
  */
 public class RandomAccessStream extends InputStream implements DataInput {
 
