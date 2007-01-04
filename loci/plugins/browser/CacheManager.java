@@ -225,7 +225,7 @@ public class CacheManager implements Runnable {
       try {
         sizeZ = read.getSizeZ(fileName);
         sizeT = read.getSizeT(fileName);
-        sizeC = read.getSizeC(fileName);
+        sizeC = read.getEffectiveSizeC(fileName);
         cache = new ImageProcessor[read.getImageCount(fileName)];
       }
       catch (Exception exc) {
@@ -1838,7 +1838,7 @@ public class CacheManager implements Runnable {
       try {
         sizeZ = read.getSizeZ(fileName);
         sizeT = read.getSizeT(fileName);
-        sizeC = read.getSizeC(fileName);
+        sizeC = read.getEffectiveSizeC(fileName);
         cache = new ImageProcessor[read.getImageCount(fileName)];
       }
       catch (Exception exc) {

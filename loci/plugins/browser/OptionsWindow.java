@@ -346,10 +346,9 @@ public class OptionsWindow extends JFrame implements
     modeBox = new JComboBox(modes);
     String[] strats = {"Forward","Surround"};
     stratBox = new JComboBox(strats);
-    String[] boxAxes = {"Z","T","C"};
-    topBox = new JComboBox(boxAxes);
-    midBox = new JComboBox(boxAxes);
-    lowBox = new JComboBox(boxAxes);
+    topBox = new JComboBox(choices);
+    midBox = new JComboBox(choices);
+    lowBox = new JComboBox(choices);
     topBox.setSelectedIndex(1);
     midBox.setSelectedIndex(0);
     lowBox.setSelectedIndex(2);
@@ -441,26 +440,32 @@ public class OptionsWindow extends JFrame implements
 
     //configure/layout content pane
 
+    JPanel viewPanel = new JPanel();
+
     FormLayout lastLayout = new FormLayout(
       "pref:grow",
       "pref,pref,pref,pref");
-    setLayout(lastLayout);
+    viewPanel.setLayout(lastLayout);
     CellConstraints ccs = new CellConstraints();
 
-    add(aniPane,ccs.xy(1,1));
-    add(cachePane,ccs.xy(1,2));
-    add(disPane,ccs.xy(1,3));
-    add(inputPane,ccs.xy(1,4));
+    viewPanel.add(aniPane,ccs.xy(1,1));
+    viewPanel.add(cachePane,ccs.xy(1,2));
+    viewPanel.add(disPane,ccs.xy(1,3));
+    viewPanel.add(inputPane,ccs.xy(1,4));
 
     oldTop = topBox.getSelectedIndex();
     oldMid = midBox.getSelectedIndex();
     oldLow = lowBox.getSelectedIndex();
+    
+    JScrollPane jsp = new JScrollPane((Component)viewPanel);
+    Dimension viewSize = viewPanel.getPreferredSize();
+    jsp.setPreferredSize(new Dimension(viewSize.width + 20,600));
+    setContentPane(jsp);
 
     //useful frame method that handles closing of window
     setDefaultCloseOperation(HIDE_ON_CLOSE);
     //put frame in the right place, with the right size, and make visible
     setLocation(100, 100);
-//    ((JComponent) getContentPane()).setPreferredSize(new Dimension(300,500));
     pack();
     setVisible(true);
 

@@ -317,7 +317,10 @@ public class LociDataBrowser {
             reader.setSeries(id, series);
 
             int num = reader.getImageCount(id);
-
+            if(manager != null) {
+              manager.finish();
+              manager = null;
+            }
             manager = new CacheManager(0, 0, 0, 0, 0, 0, 20, 0, 0,
               this, id, CacheManager.T_AXIS,
               CacheManager.CROSS_MODE, CacheManager.FORWARD_FIRST);
