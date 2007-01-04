@@ -170,7 +170,7 @@ public class Importer {
     gd.addCheckbox(metadataString, showMetadata);
     gd.addCheckbox(stitchString, stitchFiles);
     gd.addCheckbox(rangeString, specifyRanges);
-    gd.addChoice(stackString, stackFormats, stackFormats[0]);
+    gd.addChoice(stackString, stackFormats, stackFormat);
     gd.showDialog();
     if (gd.wasCanceled()) {
       plugin.canceled = true;
