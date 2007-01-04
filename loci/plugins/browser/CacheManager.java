@@ -28,6 +28,7 @@ import ij.process.ImageProcessor;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Vector;
+import java.util.Stack;
 import loci.formats.*;
 import javax.swing.JScrollBar;
 
@@ -57,7 +58,7 @@ public class CacheManager implements Runnable {
   public static final int SURROUND_FIRST = 0x0200;
 
   /** Flags debug messages on/off.*/
-  public static final boolean DEBUG = true;
+  public static final boolean DEBUG = false;
 
   // -- Fields --
 
@@ -137,7 +138,10 @@ public class CacheManager implements Runnable {
   private String fileName;
 
   /** Stop-flag used to stop the caching thread.*/
-  private boolean quit;
+  private volatile boolean quit;
+  
+  /** The loading images thread.*/
+  private Thread loader;
 
   /**
   * A flag used to designate whether or not the forward/back slices
@@ -150,6 +154,9 @@ public class CacheManager implements Runnable {
 
   /** A list of indeces to be loaded by the caching thread.*/
   protected int[] loadList;
+  
+  /** The actual queue used by the loader thread to load images.*/
+  protected Stack queue;
 
   // -- Constructors --
 
@@ -206,7 +213,6 @@ public class CacheManager implements Runnable {
     oldZ = z;
     oldT = t;
     oldC = c;
-    quit = false;
     this.fileName = fileName;
     this.db = db;
     this.read = db.reader;
@@ -269,6 +275,10 @@ public class CacheManager implements Runnable {
     oldTPriority = 2;
     oldZPriority = 1;
     oldCPriority = 0;
+    queue = new Stack();
+    loader = new Thread(this,"Browser-Loader");
+    loader.setPriority(Thread.MIN_PRIORITY);
+    loader.start();
 
     //Start the caching thread.
     updateCache();
@@ -283,7 +293,6 @@ public class CacheManager implements Runnable {
   * etc.
   */
   public void setAxis(int axis) {
-    quit = true;
     oldAxis = curAxis;
     curAxis = axis;
     updateCache();
@@ -296,7 +305,6 @@ public class CacheManager implements Runnable {
   * CROSS_MODE | RECT_MODE
   */
   public void setMode(int mode) {
-    quit = true;
     oldMode = curMode;
     curMode = mode;
     updateCache();
@@ -309,7 +317,6 @@ public class CacheManager implements Runnable {
   * parameters: FORWARD_FIRST, SURROUND_FIRST
   */
   public void setStrategy(int strategy) {
-    quit = true;
     oldStrategy = this.strategy;
     this.strategy = strategy;
     updateCache();
@@ -344,7 +351,6 @@ public class CacheManager implements Runnable {
   public void setSize(int backZ, int forwardZ, int backT,
     int forwardT, int backC, int forwardC)
   {
-    quit = true;
     oldBackZ = curBackZ;
     curBackZ = backZ;
     oldForwardZ = curForwardZ;
@@ -368,8 +374,6 @@ public class CacheManager implements Runnable {
   */
   public void setPriority(int top, int mid, int low) {
     if (top == mid || mid == low || top == low) return;
-
-    quit = true;
 
     int storeZ = curZPriority;
     int storeT = curTPriority;
@@ -521,8 +525,17 @@ public class CacheManager implements Runnable {
   * @return The ImageProcessor of the given slice.
   */
   public ImageProcessor getTempSlice(int index) {
-    if (cache[index] != null) return cache[index];
-    return ImagePlusWrapper.getImageProcessor(fileName, read, index);
+    if (Arrays.binarySearch(loadList, index) >= 0) {
+      if (cache[index] != null) return cache[index];
+      return ImagePlusWrapper.getImageProcessor(fileName, read, index);
+    }
+    else {
+      ImageProcessor result = ImagePlusWrapper.getImageProcessor(fileName, read, index);
+      cache[index] = result;
+
+      updateCache();
+      return result;
+    }
   }
 
   /**
@@ -1838,96 +1851,10 @@ public class CacheManager implements Runnable {
   * Clears the cache, starts the thread to load the new slices
   * we want to cache in the background.
   */
-  private void updateCache() {
+  private synchronized void updateCache() {
     if (DEBUG) System.out.println("UPDATING CACHE");
 
     clearCache();
-
-    Thread loader = new Thread(this, "Browser-Loader");
-    loader.start();
-  }
-
-  /**
-  * Clears the cache and sets the new loadList that the loader
-  * thread will use to start loading slices into the cache.
-  */
-  private void clearCache() {
-    if (DEBUG) System.out.println("CLEARING CACHE");
-    quit = true;
-
-    int[] oldIndex = null;
-
-    boolean erase = true;
-    if(!zapCache) {
-      oldIndex = getToCache(true);
-    }
-    else {
-      try {
-        cache = new ImageProcessor[fs.getImageCount(fileName)];
-      }
-      catch(Exception exc){
-        LociDataBrowser.exceptionMessage(exc);
-      }
-      erase = false;
-    }
-
-    oldZ = curZ;
-    oldT = curT;
-    oldC = curC;
-
-    oldStrategy = strategy;
-    oldMode = curMode;
-    oldAxis = curAxis;
-
-    oldBackZ = curBackZ;
-    oldBackT = curBackT;
-    oldBackC = curBackC;
-    oldForwardZ = curForwardZ;
-    oldForwardT = curForwardT;
-    oldForwardC = curForwardC;
-
-    oldZPriority = curZPriority;
-    oldTPriority = curZPriority;
-    oldCPriority = curCPriority;
-
-    int[] newIndex = getToCache(false);
-
-    if (DEBUG) {
-          System.out.print("OldIndex = {");
-          for (int i = 0; i<oldIndex.length; i++) {
-            if ( i != 0) System.out.print(",");
-            System.out.print(oldIndex[i]);
-          }
-          System.out.println("}");
-
-          System.out.print("NewIndex = {");
-          for (int i = 0; i<newIndex.length; i++) {
-            if ( i != 0) System.out.print(",");
-            System.out.print(newIndex[i]);
-          }
-          System.out.println("}");
-          System.out.println("oldBackZ = " + oldBackZ + "; oldForwardZ = " +
-            oldForwardZ + "; oldBackT = " + oldBackT + "; oldForwardT = " +
-            oldForwardT + "; oldBackC = " + oldBackC + "; oldForwardC = " +
-            oldForwardC);
-          System.out.println("curBackZ = " + curBackZ + "; curForwardZ = " +
-            curForwardZ + "; curBackT = " + curBackT + "; curForwardT = " +
-            curForwardT + "; curBackC = " + curBackC + "; curForwardC = " +
-            curForwardC);
-    }
-
-    loadList = new int[newIndex.length];
-    System.arraycopy(newIndex, 0, loadList, 0, newIndex.length);
-    Arrays.sort(newIndex);
-
-    if(erase) {
-      for (int i = 0; i<oldIndex.length; i++) {
-        if (Arrays.binarySearch(newIndex, oldIndex[i]) < 0)
-          cache[oldIndex[i]] = null;
-      }
-    }
-
-    if (DEBUG) System.out.println("Cache Size after clear: " + getSize());
   }
 
   protected void dimChange() {
@@ -2027,6 +1954,93 @@ public class CacheManager implements Runnable {
     }
     return result;
   }
+  
+  /**
+  * Clears the cache and sets the new loadList that the loader
+  * thread will use to start loading slices into the cache.
+  */
+  private void clearCache() {
+    if (DEBUG) System.out.println("CLEARING CACHE");
+
+    queue = new Stack();
+    int[] oldIndex = null;
+
+    boolean erase = true;
+    if(!zapCache) {
+      oldIndex = getToCache(true);
+    }
+    else {
+      try {
+        cache = new ImageProcessor[fs.getImageCount(fileName)];
+      }
+      catch(Exception exc){
+        LociDataBrowser.exceptionMessage(exc);
+      }
+      erase = false;
+    }
+
+    oldZ = curZ;
+    oldT = curT;
+    oldC = curC;
+
+    oldStrategy = strategy;
+    oldMode = curMode;
+    oldAxis = curAxis;
+
+    oldBackZ = curBackZ;
+    oldBackT = curBackT;
+    oldBackC = curBackC;
+    oldForwardZ = curForwardZ;
+    oldForwardT = curForwardT;
+    oldForwardC = curForwardC;
+
+    oldZPriority = curZPriority;
+    oldTPriority = curZPriority;
+    oldCPriority = curCPriority;
+
+    int[] newIndex = getToCache(false);
+
+    if (DEBUG) {
+      System.out.print("OldIndex = {");
+      for (int i = 0; i<oldIndex.length; i++) {
+        if ( i != 0) System.out.print(",");
+        System.out.print(oldIndex[i]);
+      }
+      System.out.println("}");
+
+      System.out.print("NewIndex = {");
+      for (int i = 0; i<newIndex.length; i++) {
+        if ( i != 0) System.out.print(",");
+        System.out.print(newIndex[i]);
+      }
+      System.out.println("}");
+      System.out.println("oldBackZ = " + oldBackZ + "; oldForwardZ = " +
+        oldForwardZ + "; oldBackT = " + oldBackT + "; oldForwardT = " +
+        oldForwardT + "; oldBackC = " + oldBackC + "; oldForwardC = " +
+        oldForwardC);
+      System.out.println("curBackZ = " + curBackZ + "; curForwardZ = " +
+        curForwardZ + "; curBackT = " + curBackT + "; curForwardT = " +
+        curForwardT + "; curBackC = " + curBackC + "; curForwardC = " +
+        curForwardC);
+    }
+
+    loadList = new int[newIndex.length];
+    System.arraycopy(newIndex, 0, loadList, 0, newIndex.length);
+    for(int i = loadList.length -1;i>=0;i--) {
+      Integer temp = new Integer(loadList[i]);
+      queue.push(temp);
+    }
+    Arrays.sort(newIndex);
+
+    if(erase) {
+      for (int i = 0; i<oldIndex.length; i++) {
+        if (Arrays.binarySearch(newIndex, oldIndex[i]) < 0)
+          cache[oldIndex[i]] = null;
+      }
+    }
+
+    if (DEBUG) System.out.println("Cache Size after clear: " + getSize());
+  }
 
   // -- Runnable API methods --
 
@@ -2034,26 +2048,25 @@ public class CacheManager implements Runnable {
   public void run() {
     quit = false;
 
-    for (int i = 0; i<loadList.length; i++) {
-      if (quit) break;
-      if (cache[loadList[i]] == null) {
-        if (DEBUG) System.out.println("CACHING... index: " + loadList[i]);
-
+    while(!quit) {
+      if(!queue.empty()) {
+        int index = ((Integer)queue.pop()).intValue();
+        System.out.println("Loading index " + index);
         ImageProcessor imp = ImagePlusWrapper.getImageProcessor(
-          fileName, read, loadList[i]);
-        cache[loadList[i]] = imp;
+          fileName, read, index);
+        cache[index] = imp;
+        
+        if(db.cw != null) {
+          int aC = 1;
+          zSel = db.cw.zSliceSel;
+          tSel = db.cw.tSliceSel;
+          if (sizeC != 0) aC = (db.cw.getC());
+          if (quit) break;
+          setIndicators(zSel.getValue(), tSel.getValue(), aC);
+        }
       }
-      
-      if (quit) break;
-      if(db.cw != null) {
-        int aC = 1;
-        zSel = db.cw.zSliceSel;
-        tSel = db.cw.tSliceSel;
-        if (sizeC != 0) aC = (db.cw.getC());
-        if (quit) break;
-        setIndicators(zSel.getValue(), tSel.getValue(), aC);
-      }
+      if(db == null) quit = true;
     }
   }
-
+  
 }

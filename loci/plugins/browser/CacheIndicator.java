@@ -37,8 +37,10 @@ public class CacheIndicator extends JComponent {
   protected int cacheLength;
   protected double ratio;
   protected JScrollBar scroll;
+  protected boolean doUpdate;
 
   public CacheIndicator(JScrollBar scroll) {
+    doUpdate = true;
     this.scroll = scroll;
     setBackground(Color.white);
     cache = null;
@@ -47,138 +49,144 @@ public class CacheIndicator extends JComponent {
   }
 
   public void setIndicator(int [] someCache, int [] someLoadList, int length) {
+    doUpdate = false;
     cache = someCache;
     loadList = someLoadList;
     cacheLength = length;
     int setRatio = translate(0);
+    doUpdate = true;
     repaint();
   }
 
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
-    g.setColor(Color.black);
-    g.drawRect(0,0,getWidth()-1,COMPONENT_HEIGHT - 1);
-
-    if(ratio < 1 && ratio != 0) {
-      int [] loadCount = new int[getWidth()];
-      int [] cacheCount = new int[getWidth()];
-
-      for(int i = 0;i < loadCount.length;i++) {
-        loadCount[i] = 0;
-        cacheCount[i] = 0;
-      }
-
-      //find how many entries of the cache are handled per pixel of indicator
-      int perPixel;
-      double integers = 2;
-      double dPerPixel = ratio * integers;
-
-      if(DEBUG) System.out.println("Ratio: " + ratio);
-      while(dPerPixel < 1) {
-        integers++;
-        dPerPixel = ratio * integers;
-      }
-
-      Double temp = new Double(integers);
-      perPixel = temp.intValue();
-
-      if(DEBUG) System.out.println("PerPixel: " + perPixel);
-
-      int colorAmount = 255 / perPixel;
-      if(DEBUG) System.out.println("ColorAmount: " + colorAmount);
-
-      for(int i = 0;i<loadList.length;i++) {
-        boolean isLoaded = false;
-        if( Arrays.binarySearch(cache, loadList[i]) >= 0) isLoaded = true;
-        int index = translate(loadList[i]);
-        if(!isLoaded) loadCount[index]++;
-      }
-      for(int i = 0;i<cache.length;i++) {
-        int index = translate(cache[i]);
-        cacheCount[index]++;
-      }
-
-      for(int i = 0;i < getWidth();i++) {
-        int loadColor,cacheColor;
-        loadColor = colorAmount * loadCount[i];
-        cacheColor = colorAmount * cacheCount[i];
-        if(loadColor != 0 || cacheColor != 0) {
-          g.setColor(new Color(loadColor,0,cacheColor));
-          g.drawLine(i,1,i,COMPONENT_HEIGHT - 2);
+    if(doUpdate) {
+      g.setColor(Color.black);
+      g.drawRect(0,0,getWidth()-1,COMPONENT_HEIGHT - 1);
+  
+      if(ratio < 1 && ratio != 0) {
+        int [] loadCount = new int[getWidth()];
+        int [] cacheCount = new int[getWidth()];
+  
+        for(int i = 0;i < loadCount.length;i++) {
+          loadCount[i] = 0;
+          cacheCount[i] = 0;
+        }
+  
+        //find how many entries of the cache are handled per pixel of indicator
+        int perPixel;
+        double integers = 2;
+        double dPerPixel = ratio * integers;
+  
+        if(DEBUG) System.out.println("Ratio: " + ratio);
+        while(dPerPixel < 1) {
+          integers++;
+          dPerPixel = ratio * integers;
+        }
+  
+        Double temp = new Double(integers);
+        perPixel = temp.intValue();
+  
+        if(DEBUG) System.out.println("PerPixel: " + perPixel);
+  
+        int colorAmount = 255 / perPixel;
+        if(DEBUG) System.out.println("ColorAmount: " + colorAmount);
+  
+        for(int i = 0;i<loadList.length;i++) {
+          boolean isLoaded = false;
+          if( Arrays.binarySearch(cache, loadList[i]) >= 0) isLoaded = true;
+          int index = translate(loadList[i]);
+          if(!isLoaded) loadCount[index]++;
+        }
+        for(int i = 0;i<cache.length;i++) {
+          int index = translate(cache[i]);
+          cacheCount[index]++;
+        }
+  
+        for(int i = 0;i < getWidth();i++) {
+          int loadColor,cacheColor;
+          loadColor = colorAmount * loadCount[i];
+          cacheColor = colorAmount * cacheCount[i];
+          if(loadColor != 0 || cacheColor != 0) {
+            g.setColor(new Color(loadColor,0,cacheColor));
+            g.drawLine(i,1,i,COMPONENT_HEIGHT - 2);
+          }
         }
       }
-    }
-    else if (ratio >= 1) {
-      int prevLoad = -1;
-      int startLoad = -1;
-      g.setColor(Color.red);
-      for(int i = 0;i<loadList.length;i++) {
-        int toLoad = loadList[i];
-
-        //correct for bug with length 1
-        if(loadList.length == 1) {
-          startLoad = toLoad;
-          prevLoad = toLoad;
+      else if (ratio >= 1) {
+        int prevLoad = -1;
+        int startLoad = -1;
+        g.setColor(Color.red);
+        for(int i = 0;i<loadList.length;i++) {
+          if(!doUpdate) break;
+          int toLoad = loadList[i];
+  
+          //correct for bug with length 1
+          if(loadList.length == 1) {
+            startLoad = toLoad;
+            prevLoad = toLoad;
+          }
+  
+          if(startLoad == -1) {
+            startLoad = toLoad;
+            prevLoad = toLoad;
+          }
+          else if(toLoad == prevLoad + 1 && startLoad != -1) {
+            prevLoad = toLoad;
+          }
+          else if (toLoad != prevLoad +1 && startLoad != -1 && cache.length - 1 != i) {
+            prevLoad = prevLoad + 1;
+            int x = translate(startLoad);
+            int wid = translate(prevLoad) - x;
+            g.fillRect(x,1,wid,COMPONENT_HEIGHT - 2);
+            startLoad = -1;
+          }
+          
+          
+          if (i == loadList.length - 1) {
+            prevLoad = prevLoad + 1;
+            int x = translate(startLoad);
+            int wid = translate(prevLoad) - x;
+            g.fillRect(x,1,wid,COMPONENT_HEIGHT - 2);
+            startLoad = -1;
+          }
         }
-
-        if(startLoad == -1) {
-          startLoad = toLoad;
-          prevLoad = toLoad;
-        }
-        else if(toLoad == prevLoad + 1 && startLoad != -1) {
-          prevLoad = toLoad;
-        }
-        else if (toLoad != prevLoad +1 && startLoad != -1 && cache.length - 1 != i) {
-          prevLoad = prevLoad + 1;
-          int x = translate(startLoad);
-          int wid = translate(prevLoad) - x;
-          g.fillRect(x,1,wid,COMPONENT_HEIGHT - 2);
-          startLoad = -1;
-        }
-        
-        
-        if (i == loadList.length - 1) {
-          prevLoad = prevLoad + 1;
-          int x = translate(startLoad);
-          int wid = translate(prevLoad) - x;
-          g.fillRect(x,1,wid,COMPONENT_HEIGHT - 2);
-          startLoad = -1;
-        }
-      }
-
-      prevLoad = -1;
-      startLoad = -1;
-      g.setColor(Color.blue);
-      for(int i = 0;i<cache.length;i++) {
-        int toLoad = cache[i];
-
-        //correct for bug with length 1
-        if(loadList.length == 1) {
-          startLoad = toLoad;
-          prevLoad = toLoad;
-        }
-
-        if(startLoad == -1) {
-          startLoad = toLoad;
-          prevLoad = toLoad;
-        }
-        else if(toLoad == prevLoad + 1 && startLoad != -1) {
-          prevLoad = toLoad;
-        }
-        else if (toLoad != prevLoad +1 && startLoad != -1 && cache.length - 1 != i) {
-          prevLoad = prevLoad + 1;
-          int x = translate(startLoad);
-          int wid = translate(prevLoad) - x;
-          g.fillRect(x,1,wid,COMPONENT_HEIGHT - 2);
-          startLoad = -1;
-        }
-        
-        if (i == cache.length - 1) {
-          prevLoad = prevLoad + 1;
-          int x = translate(startLoad);
-          int wid = translate(prevLoad) - x;
-          g.fillRect(x,1,wid,COMPONENT_HEIGHT - 2);
-          startLoad = -1;
+  
+        prevLoad = -1;
+        startLoad = -1;
+        g.setColor(Color.blue);
+        for(int i = 0;i<cache.length;i++) {
+          if(!doUpdate) break;
+          int toLoad = cache[i];
+  
+          //correct for bug with length 1
+          if(loadList.length == 1) {
+            startLoad = toLoad;
+            prevLoad = toLoad;
+          }
+  
+          if(startLoad == -1) {
+            startLoad = toLoad;
+            prevLoad = toLoad;
+          }
+          else if(toLoad == prevLoad + 1 && startLoad != -1) {
+            prevLoad = toLoad;
+          }
+          else if (toLoad != prevLoad +1 && startLoad != -1 && cache.length - 1 != i) {
+            prevLoad = prevLoad + 1;
+            int x = translate(startLoad);
+            int wid = translate(prevLoad) - x;
+            g.fillRect(x,1,wid,COMPONENT_HEIGHT - 2);
+            startLoad = -1;
+          }
+          
+          if (i == cache.length - 1) {
+            prevLoad = prevLoad + 1;
+            int x = translate(startLoad);
+            int wid = translate(prevLoad) - x;
+            g.fillRect(x,1,wid,COMPONENT_HEIGHT - 2);
+            startLoad = -1;
+          }
         }
       }
     }
