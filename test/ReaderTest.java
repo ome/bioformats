@@ -92,6 +92,14 @@ public class ReaderTest extends TestCase {
   /** Gets all constituent files in the tested dataset. */
   public String[] getUsedFiles() { return used; }
 
+  /** Close the reader */
+  public void close() { 
+    try {
+      reader.close(); 
+    }
+    catch (Exception e) { }
+  }
+
   // -- ReaderTest API methods - tests --
 
   /**
@@ -126,6 +134,8 @@ public class ReaderTest extends TestCase {
       success = false;
     }
     if (!success) writeLog(id + " failed BufferedImage test");
+    try { reader.close(); }
+    catch (Exception e) { }
     assertTrue(success);
   }
 
@@ -164,6 +174,8 @@ public class ReaderTest extends TestCase {
       success = false;
     }
     if (!success) writeLog(id + " failed byte array test");
+    try { reader.close(); }
+    catch (Exception e) { }
     assertTrue(success);
   }
 
@@ -180,19 +192,18 @@ public class ReaderTest extends TestCase {
         int sizeZ = reader.getSizeZ(id);
         int sizeC = reader.getEffectiveSizeC(id);
         int sizeT = reader.getSizeT(id);
-        success = imageCount == sizeZ * sizeC * sizeT;
-        if (!success) {
-          writeLog(id + " failed image count test");
-          assertTrue(false);
-        }
+        if (success) success = imageCount == sizeZ * sizeC * sizeT;
+        else break;
       }
-      assertTrue(success);
     }
     catch (Exception e) {
       if (DEBUG) e.printStackTrace();
-      writeLog(id + " failed image count test");
-      assertTrue(false);
+      success = false;
     }
+    if (!success) writeLog(id + " failed image count test");
+    try { reader.close(); }
+    catch (Exception e) { }
+    assertTrue(success);
   }
 
   /**
@@ -200,12 +211,12 @@ public class ReaderTest extends TestCase {
    * metadata (Size*, DimensionOrder, etc.).
    */
   public void testOMEXML() {
+    boolean success = true;
     try {
       OMEXMLMetadataStore store = new OMEXMLMetadataStore();
       store.createRoot();
       reader.setMetadataStore(store);
 
-      boolean success = true;
       for (int i=0; i<reader.getSeries(id); i++) {
         reader.setSeries(id, i);
         int sizeX = reader.getSizeX(id);
@@ -237,19 +248,22 @@ public class ReaderTest extends TestCase {
         if (failDE) {
           writeLog(id + " failed OME-XML DimensionOrder test");
         }
-        if (failX || failY || failZ || failC || failT ||
-          failBE || failType || failDE)
-        {
-          assertTrue(false);
+        
+        if (success) {
+          success = failX || failY || failZ || failC || 
+            failT || failBE || failType || failDE;
         }
+        else break;
       }
-      assertTrue(success);
     }
     catch (Exception e) {
       if (DEBUG) e.printStackTrace();
-      writeLog(id + " failed OME-XML sanity test");
-      assertTrue(false);
+      success = false;
     }
+    if (!success) writeLog(id + " failed OME-XML sanity test");
+    try { reader.close(); }
+    catch (Exception e) { }
+    assertTrue(success);
   }
 
   // -- TestCase API methods --
@@ -411,6 +425,8 @@ public class ReaderTest extends TestCase {
           files.removeElement(used[i]);
         }
       }
+
+      test.close();
     }
   }
 
