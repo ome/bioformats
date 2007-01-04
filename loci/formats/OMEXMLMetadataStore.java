@@ -41,7 +41,7 @@ import org.xml.sax.SAXException;
  * the org.openmicroscopy.xml package to compile (part of ome-java.jar).
  *
  * @author Curtis Rueden ctrueden at wisc.edu
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class OMEXMLMetadataStore implements MetadataStore {
 

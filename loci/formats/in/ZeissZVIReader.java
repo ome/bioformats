@@ -34,7 +34,7 @@ import loci.formats.*;
 /**
  * ZeissZVIReader is the file format reader for Zeiss ZVI files.
  *
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class ZeissZVIReader extends FormatReader {
 

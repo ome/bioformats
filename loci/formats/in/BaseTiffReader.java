@@ -36,7 +36,7 @@ import loci.formats.*;
  * or derived from the TIFF 6.0 file format.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public abstract class BaseTiffReader extends FormatReader {
 

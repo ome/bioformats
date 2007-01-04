@@ -32,7 +32,7 @@ import loci.plugins.Util;
  * the OME database. It also views OME-XML metadata present in OME-TIFF files.
  *
  * @author Philip Huettl pmhuettl at wisc.edu
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class OMEPlugin implements PlugIn {
   private static OMESidePanel omeSidePanel;

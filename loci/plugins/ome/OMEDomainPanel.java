@@ -35,7 +35,7 @@ import java.awt.event.*;
  * to allow it to be read in ImageJ.
  *
  * @author Philip Huettl pmhuettl at wisc.edu
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class OMEDomainPanel implements ActionListener, ChangeListener {
 

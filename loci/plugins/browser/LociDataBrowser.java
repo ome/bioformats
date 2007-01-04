@@ -39,7 +39,7 @@ import loci.formats.*;
  * @author Christopher Peterson at wisc.edu
  * @author Francis Wong yutaiwong at wisc.edu
  * @author Curtis Rueden ctrueden at wisc.edu
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class LociDataBrowser {
 

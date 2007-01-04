@@ -34,7 +34,7 @@ import org.openmicroscopy.ds.dto.*;
  * to enter image search criteria.
  *
  * @author Philip Huettl pmhuettl at wisc.edu
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class OMEDownPanel implements ActionListener {
   //Fields

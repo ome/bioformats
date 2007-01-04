@@ -34,7 +34,7 @@ import loci.formats.*;
 /**
  * IPWReader is the file format reader for Image-Pro Workspace (IPW) files.
  *
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class IPWReader extends BaseTiffReader {
 

@@ -33,7 +33,7 @@ import loci.formats.*;
 /**
  * QTWriter is the file format writer for uncompressed QuickTime movie files.
  *
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 
 public class QTWriter extends FormatWriter {

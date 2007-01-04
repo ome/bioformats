@@ -32,7 +32,7 @@ import loci.formats.*;
  * AndorReader is the file format reader for
  * Andor Bio-imaging Division (ABD) TIFF files.
  *
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class AndorReader extends BaseTiffReader {
 

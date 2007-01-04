@@ -36,7 +36,7 @@ import javax.swing.border.*;
  * OMESidePanel is the class that handles the window alongside ImageJ.
  *
  * @author Philip Huettl pmhuettl at wisc.edu
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class OMESidePanel implements ActionListener {

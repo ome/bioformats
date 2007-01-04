@@ -31,7 +31,7 @@ import java.util.*;
  * OMEController keeps track of all open images, their names, IDs, and
  * associated XML nodes for use with OMESidePanel.
  *
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class OMEController {

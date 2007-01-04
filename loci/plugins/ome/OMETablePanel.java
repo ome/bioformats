@@ -36,7 +36,7 @@ import java.util.ArrayList;
  * in displaying the images selectable for download.
  *
  * @author Philip Huettl pmhuettl at wisc.edu
- * @author Melissa Linkert, linkert at cs.wisc.edu
+ * @author Melissa Linkert, linkert at wisc.edu
  */
 public class OMETablePanel implements ActionListener {
 

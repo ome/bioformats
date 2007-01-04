@@ -32,7 +32,7 @@ import loci.formats.*;
 /**
  * OIBReader is the file format reader for Fluoview FV1000 OIB files.
  *
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class OIBReader extends FormatReader {
 
@@ -330,6 +330,8 @@ public class OIBReader extends FormatReader {
           metadata.get("[Axis " + i + " Parameters Common] - AxisCode");
         dims[i] =
           (String) metadata.get("[Axis " + i + " Parameters Common] - MaxSize");
+        if (labels[i] == null) labels[i] = "";
+        if (dims[i] == null) dims[i] = "0";
       }
 
       for (int i=0; i<labels.length; i++) {
@@ -532,6 +534,7 @@ public class OIBReader extends FormatReader {
         }
         else if (TiffTools.checkHeader(b) != null) {
           // this is an actual image plane
+          
           RandomAccessStream ras = new RandomAccessStream(data);
           Hashtable ifd = TiffTools.getIFDs(ras)[0];
           ras.close();
@@ -576,23 +579,19 @@ public class OIBReader extends FormatReader {
         else {
           // INI-style metadata
 
-          String ini = new String(data);
-          if (ini.indexOf("????????") != -1) ini = "";
-
+          String ini = DataTools.stripString(new String(data));
           StringTokenizer st = new StringTokenizer(ini, "\n");
-
           String prefix = "";
-
           while (st.hasMoreTokens()) {
-            String token = st.nextToken();
-            token = DataTools.stripString(token);
-            if (token.indexOf("!!!!!!") != -1) token = "";
-            if (token.indexOf("=") != -1) {
-              String key = token.substring(0, token.indexOf("="));
-              String value = token.substring(token.indexOf("=") + 1);
-              String s = (prefix + key).trim();
-              if (s.equals("[FileInformation] - Resolution")) {
-                int max = Integer.parseInt(value.trim());
+            String line = st.nextToken().trim();
+            if (!line.startsWith("[") && (line.indexOf("=") > 0)) {
+              String key = line.substring(0, line.indexOf("=")).trim();
+              String value = line.substring(line.indexOf("=") + 1).trim();
+
+              if (prefix.equals("[FileInformation] - ") && 
+                key.equals("Resolution")) 
+              {
+                int max = Integer.parseInt(value);
                 int bytes = ((Integer) bpp.get(0)).intValue();
                 while (Math.pow(2, bytes) < max) bytes++;
                 bytes /= 8;
@@ -600,14 +599,20 @@ public class OIBReader extends FormatReader {
                   bpp.setElementAt(new Integer(bytes), i);
                 }
               }
-              metadata.put(prefix + key.trim(), value.trim());
+
+              if (prefix.indexOf("Red") == -1 && 
+                prefix.indexOf("Green") == -1 && prefix.indexOf("Blue") == -1)
+              {
+                metadata.put(prefix + key, value);
+              }
             }
             else {
-              prefix = token.trim() + " - ";
-              if (prefix.charAt(2) == '[') prefix = prefix.substring(2);
+              if (line.indexOf("[") == 2) {
+                line = line.substring(2, line.length());
+              }
+              prefix = line + " - ";
             }
           }
-
           data = null;
         }
 

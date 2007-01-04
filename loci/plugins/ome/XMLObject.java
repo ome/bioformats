@@ -28,7 +28,7 @@ package loci.plugins.ome;
  * editing of a piece of metadata in the tree.
  *
  * @author Philip Huettl pmhuettl at wisc.edu
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class XMLObject {
 

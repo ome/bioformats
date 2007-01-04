@@ -37,7 +37,7 @@ import org.openmicroscopy.ds.st.*;
  * Utility methods for retrieving images.
  *
  * @author Philip Huettl pmhuettl at wisc.edu
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class OMERetrieve {
 

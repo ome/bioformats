@@ -32,7 +32,7 @@ import loci.formats.*;
 /**
  * EPSWriter is the file format writer for Encapsulated PostScript (EPS) files.
  *
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class EPSWriter extends FormatWriter {
 

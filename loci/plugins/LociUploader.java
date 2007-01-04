@@ -38,7 +38,7 @@ import loci.ome.upload.*;
 /**
  * ImageJ plugin for uploading images to an OME server.
  *
- * @author Melissa Linkert linket at cs.wisc.edu
+ * @author Melissa Linkert linket at wisc.edu
  */
 public class LociUploader implements PlugIn {
 

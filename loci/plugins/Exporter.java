@@ -40,7 +40,7 @@ import loci.formats.ImageWriter;
 /**
  * Core logic for the LOCI Exporter ImageJ plugin.
  *
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class Exporter implements ItemListener {
 

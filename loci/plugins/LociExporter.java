@@ -34,7 +34,7 @@ import ij.process.ImageProcessor;
  * Wraps core logic in loci.plugins.Exporter, to avoid direct references
  * to classes in the external Bio-Formats library.
  *
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class LociExporter implements PlugInFilter {
 

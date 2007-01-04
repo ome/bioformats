@@ -33,7 +33,7 @@ import java.awt.event.*;
  * to obtain the information needed to log into the OME database.
  *
  * @author Philip Huettl pmhuettl at wisc.edu
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class OMELoginPanel implements ActionListener {
   //Fields

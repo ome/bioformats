@@ -42,7 +42,7 @@ import org.openmicroscopy.is.*;
  * Handles uploading and downloading images.
  *
  * @author Philip Huettl pmhuettl at wisc.edu
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class OMETools {

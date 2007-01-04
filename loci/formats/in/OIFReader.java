@@ -33,7 +33,7 @@ import loci.formats.*;
 /**
  * OIFReader is the file format reader for Fluoview FV 1000 OIF files.
  *
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class OIFReader extends FormatReader {
 
@@ -119,7 +119,7 @@ public class OIFReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return new Double((String) metadata.get("Image 0 : DataMin"));
+    return new Double((String) metadata.get("[Image Parameters] - DataMin"));
   }
 
   /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
@@ -127,7 +127,7 @@ public class OIFReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return new Double((String) metadata.get("Image 0: DataMax"));
+    return new Double((String) metadata.get("[Image Parameters] - DataMax"));
   }
 
   /** Obtains the specified image from the given OIF file as a byte array. */
@@ -262,17 +262,23 @@ public class OIFReader extends FormatReader {
 
     Hashtable filenames = new Hashtable();
     String line = reader.readLine();
+    String prefix = "";
     while (line != null) {
+      line = DataTools.stripString(line);
       if (!line.startsWith("[") && (line.indexOf("=") > 0)) {
-        String key = line.substring(0, line.indexOf("=") - 1).trim();
+        String key = line.substring(0, line.indexOf("=")).trim();
         String value = line.substring(line.indexOf("=") + 1).trim();
-        key = DataTools.stripString(key);
-        value = DataTools.stripString(value);
         if (key.startsWith("IniFileName") && key.indexOf("Thumb") == -1) {
           int pos = Integer.parseInt(key.substring(11));
           filenames.put(new Integer(pos), value);
         }
-        metadata.put(key, value);
+        metadata.put(prefix + key, value);
+      }
+      else if (line.length() > 0) {
+        if (line.indexOf("[") == 2) {  
+          line = line.substring(2, line.length());
+        }
+        prefix = line + " - ";
       }
       line = reader.readLine();
     }
@@ -315,9 +321,28 @@ public class OIFReader extends FormatReader {
       ptyReader.close();
     }
 
-    sizeX[0] = Integer.parseInt((String) metadata.get("ImageWidth"));
-    sizeY[0] = Integer.parseInt((String) metadata.get("ImageHeight"));
-    String metadataOrder = (String) metadata.get("AxisOrder");
+    for (int i=0; i<9; i++) {
+      String pre = "[Axis " + i + " Parameters Common] - ";
+      String code = (String) metadata.get(pre + "AxisCode");
+      String size = (String) metadata.get(pre + "MaxSize");
+      if (code.equals("\"X\"")) sizeX[0] = Integer.parseInt(size);
+      else if (code.equals("\"Y\"")) sizeY[0] = Integer.parseInt(size);
+      else if (code.equals("\"C\"")) sizeC[0] = Integer.parseInt(size);
+      else if (code.equals("\"T\"")) sizeT[0] = Integer.parseInt(size);
+      else if (code.equals("\"Z\"")) sizeZ[0] = Integer.parseInt(size);
+    }
+   
+    if (sizeZ[0] == 0) sizeZ[0] = 1;
+    if (sizeC[0] == 0) sizeC[0] = 1;
+    if (sizeT[0] == 0) sizeT[0] = 1;
+
+    while (numImages > sizeZ[0] * sizeT[0] * getEffectiveSizeC(id)) {
+      if (sizeZ[0] == 1) sizeT[0]++;
+      else if (sizeT[0] == 1) sizeZ[0]++;
+    }
+
+    String metadataOrder = 
+      (String) metadata.get("[Axis Parameter Common] - AxisOrder");
     metadataOrder = metadataOrder.substring(1, metadataOrder.length() - 1);
     if (metadataOrder == null) metadataOrder = "XYZTC";
     else {
@@ -330,26 +355,11 @@ public class OIFReader extends FormatReader {
     }
     currentOrder[0] = metadataOrder;
 
-    String axis = (String) metadata.get("View Max CH");
-    int axisCount = 1;
-    if (axis != null) {
-      axis = axis.substring(1, axis.length() -1 );
-      axisCount = Integer.parseInt(axis.trim());
-    }
-    if (isRGB(currentId)) axisCount *= 3;
-
-    sizeC[0] = axisCount;
-    int remainingImages = numImages;
-    if (metadataOrder.indexOf("C") == 2) remainingImages /= axisCount;
-    sizeZ[0] = metadataOrder.indexOf("Z") < metadataOrder.indexOf("T") ?
-      remainingImages : 1;
-    sizeT[0] = metadataOrder.indexOf("T") < metadataOrder.indexOf("Z") ?
-      remainingImages : 1;
-
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(oifFile);
 
-    int imageDepth = Integer.parseInt((String) metadata.get("ImageDepth"));
+    int imageDepth = Integer.parseInt(
+      (String) metadata.get("[Reference Image Parameter] - ImageDepth"));
     switch (imageDepth) {
       case 1:
         pixelType[0] = FormatReader.UINT8;
@@ -368,7 +378,8 @@ public class OIFReader extends FormatReader {
     validBits = new int[sizeC[0]];
     if (validBits.length == 2) validBits = new int[3];
     for (int i=0; i<validBits.length; i++) {
-      String s = (String) metadata.get("Image " + i + " : ValidBitCounts");
+      String s = 
+        (String) metadata.get("[Reference Image Parameter] - ValidBitCounts");
       if (s != null) {
         validBits[i] = Integer.parseInt(s);
       }
@@ -383,8 +394,8 @@ public class OIFReader extends FormatReader {
     }
 
     store.setPixels(
-      new Integer(Integer.parseInt((String) metadata.get("ImageWidth"))),
-      new Integer(Integer.parseInt((String) metadata.get("ImageHeight"))),
+      new Integer(sizeX[0]),
+      new Integer(sizeY[0]),
       new Integer(sizeZ[0]),
       new Integer(sizeC[0]),
       new Integer(sizeT[0]),
@@ -393,10 +404,10 @@ public class OIFReader extends FormatReader {
       "XYZTC",
       null);
 
-    Float pixX =
-      new Float(metadata.get("Image 0 : WidthConvertValue").toString());
-    Float pixY =
-      new Float(metadata.get("Image 0 : HeightConvertValue").toString());
+    Float pixX = new Float((String) 
+      metadata.get("[Reference Image Parameter] - WidthConvertValue"));
+    Float pixY = new Float((String) 
+      metadata.get("[Reference Image Parameter] - HeightConvertValue"));
 
     store.setDimensions(pixX, pixY, null, null, null, null);
   }

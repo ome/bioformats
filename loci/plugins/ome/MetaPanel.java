@@ -47,7 +47,7 @@ import java.awt.event.*;
  * associated with an image.
  *
  * @author Philip Huettl pmhuettl at wisc.edu
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class MetaPanel implements ActionListener, TreeSelectionListener {
 

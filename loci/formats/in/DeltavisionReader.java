@@ -31,7 +31,7 @@ import loci.formats.*;
 /**
  * DeltavisionReader is the file format reader for Deltavision files.
  *
- * @author Melissa Linkert linkert at cs.wisc.edu
+ * @author Melissa Linkert linkert at wisc.edu
  */
 public class DeltavisionReader extends FormatReader {
 
