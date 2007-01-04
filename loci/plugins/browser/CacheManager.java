@@ -2007,6 +2007,7 @@ public class CacheManager implements Runnable {
       Integer temp = new Integer(loadList[i]);
       queue.push(temp);
     }
+    
     Arrays.sort(newIndex);
 
     if(erase) {
@@ -2042,7 +2043,6 @@ public class CacheManager implements Runnable {
           zSel = db.cw.zSliceSel;
           tSel = db.cw.tSliceSel;
           if (sizeC != 0) aC = (db.cw.getC());
-          if (quit) break;
           setIndicators(zSel.getValue(), tSel.getValue(), aC);
         }
       }

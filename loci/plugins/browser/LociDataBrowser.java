@@ -140,7 +140,12 @@ public class LociDataBrowser {
       imp.show();
       return;
     }
-
+    if(cw != null) {
+      cw.ow.dispose();
+      cw.ow = null;
+      cw.dispose();
+      cw = null;
+    }
     cw = new CustomWindow(this, imp, new ImageCanvas(imp));
   }
 
@@ -241,16 +246,12 @@ public class LociDataBrowser {
   public void toggleCache(boolean cached) {
     if(cached) {
       if(!virtual) {
-        cw.ow.dispose();
-        cw.dispose();
         virtual = true;
         run("");
       }
     }
     else {
       if(virtual) {
-        cw.ow.dispose();
-        cw.dispose();
         virtual = false;
         run("");
       }
@@ -261,15 +262,11 @@ public class LociDataBrowser {
     if (reader instanceof ChannelMerger) {
       IFormatReader parent = ((ReaderWrapper)reader).getReader();
       reader = new ChannelSeparator(parent);
-      cw.ow.dispose();
-      cw.dispose();
       run("");
     }
     else if(reader instanceof ChannelSeparator) {
       IFormatReader parent = ((ReaderWrapper)reader).getReader();
       reader = new ChannelMerger(parent);
-      cw.ow.dispose();
-      cw.dispose();
       run("");
     }
     else throw new RuntimeException("Unsuported reader class: " + reader.getClass().getName());

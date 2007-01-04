@@ -420,11 +420,27 @@ public class OptionsWindow extends JFrame implements
 
     if(!cw.db.virtual) enableCache(false);
 
+    // --Input Options Panel--
+
+    JPanel inputPane = new JPanel();
+    TitledBorder inputB = BorderFactory.createTitledBorder(
+      etchB, "Input Options");
+    inputPane.setBorder(inputB);
+
     mergeCheck = new JCheckBox("Merge Channels");
     mergeCheck.setSelected(cw.db.isMerged());
     mergeCheck.addItemListener(this);
+    
+    FormLayout inputLayout = new FormLayout(
+      TAB + ",pref:grow," + TAB,
+      "pref");
+    inputPane.setLayout(inputLayout);
+    CellConstraints cci = new CellConstraints();
+    
+    inputPane.add(mergeCheck,cci.xy(2,1,"left,center"));
 
     //configure/layout content pane
+
     FormLayout lastLayout = new FormLayout(
       "pref:grow",
       "pref,pref,pref,pref");
@@ -434,6 +450,7 @@ public class OptionsWindow extends JFrame implements
     add(aniPane,ccs.xy(1,1));
     add(cachePane,ccs.xy(1,2));
     add(disPane,ccs.xy(1,3));
+    add(inputPane,ccs.xy(1,4));
 
     oldTop = topBox.getSelectedIndex();
     oldMid = midBox.getSelectedIndex();
