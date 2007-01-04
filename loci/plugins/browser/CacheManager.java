@@ -268,7 +268,7 @@ public class CacheManager implements Runnable {
     this.strategy = strategy;
     this.oldStrategy = strategy;
 
-    //set default axes' priorities
+    // set default axes' priorities
     curTPriority = 2;
     curZPriority = 1;
     curCPriority = 0;
@@ -276,11 +276,11 @@ public class CacheManager implements Runnable {
     oldZPriority = 1;
     oldCPriority = 0;
     queue = new Stack();
-    loader = new Thread(this,"Browser-Loader");
+    loader = new Thread(this, "Browser-Loader");
     loader.setPriority(Thread.MIN_PRIORITY);
     loader.start();
 
-    //Start the caching thread.
+    // start the caching thread
     updateCache();
   }
 
@@ -2035,12 +2035,16 @@ public class CacheManager implements Runnable {
 
   // -- Runnable API methods --
 
-  /** The thread method that does the slice loading.*/
+  /** Loads the slices. */
   public void run() {
-    quit = false;
-
-    while(!quit) {
-      if(!queue.empty()) {
+    while(!quit && db != null) {
+      if (queue.empty()) {
+        try {
+          Thread.sleep(50);
+        }
+        catch (InterruptedException exc) { exc.printStackTrace(); }
+      }
+      else {
         int index = ((Integer)queue.pop()).intValue();
         if(DEBUG) System.out.println("Loading index " + index);
         ImageProcessor imp = ImagePlusWrapper.getImageProcessor(
@@ -2056,10 +2060,10 @@ public class CacheManager implements Runnable {
           setIndicators(zSel.getValue(), tSel.getValue(), aC);
         }
       }
-      if(db == null) quit = true;
     }
   }
 
+  /** Terminates the slice loading thread. */
   public void finish() {
     quit = true;
   }  
