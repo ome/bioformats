@@ -352,7 +352,7 @@ public final class Compression {
    * Adapted from the TIFF 6.0 specification, page 42.
    */
   public static byte[] packBitsUncompress(byte[] input) {
-    // Written by Melissa Linkert linkert at cs.wisc.edu
+    // Written by Melissa Linkert linkert at wisc.edu
     ByteVector output = new ByteVector(input.length);
     int pt = 0;
     while (pt < input.length) {
