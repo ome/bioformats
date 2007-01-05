@@ -182,10 +182,6 @@ public class PointerTool extends OverlayTool {
         if (ty1 < ty2) { by1 = ty1; by2 = ty2; }
         else { by1 = ty2; by2 = ty1; }
 
-        System.out.println ("TSB coords: ("+tx1+","+ty1+"),("+tx2+","+ty2+")");
-        System.out.println ("TSB adjust: ("+bx1+","+by1+"),("+bx2+","+by2+")");
-        System.out.println ("Object coords: ("+ox1+","+oy1+"),("+ox2+","+oy2+")");
-
         // determine whether object i is inside or outside of selection box 
         if (bx1 < ox1 && ox1 < bx2 && 
             bx1 < ox2 && ox2 < bx2 &&
