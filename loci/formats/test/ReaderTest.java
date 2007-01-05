@@ -92,10 +92,10 @@ public class ReaderTest extends TestCase {
   /** Gets all constituent files in the tested dataset. */
   public String[] getUsedFiles() { return used; }
 
-  /** Close the reader */
-  public void close() { 
+  /** Closes the reader. */
+  public void close() {
     try {
-      reader.close(); 
+      reader.close();
     }
     catch (Exception e) { }
   }
@@ -248,9 +248,9 @@ public class ReaderTest extends TestCase {
         if (failDE) {
           writeLog(id + " failed OME-XML DimensionOrder test");
         }
-        
+
         if (success) {
-          success = failX || failY || failZ || failC || 
+          success = failX || failY || failZ || failC ||
             failT || failBE || failType || failDE;
         }
         else break;
@@ -387,7 +387,7 @@ public class ReaderTest extends TestCase {
   // -- Main method --
 
   public static void main(String[] args) {
-    if (DEBUG) FormatReader.debug = true;
+    if (DEBUG) FormatReader.setDebug(true);
     Vector files = new Vector();
     if (args == null || args.length == 0) {
       System.out.println(
