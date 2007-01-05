@@ -1005,4 +1005,16 @@ public abstract class FormatReader extends FormatHandler
     throw new RuntimeException("Unknown type with id: '" + type + "'");
   }
 
+  /** Toggles debug mode (more verbose output and error messages). */
+  public static void setDebug(boolean debug) {
+    FormatReader.debug = debug;
+  }
+
+  /**
+   * Toggles debug mode verbosity (which kinds of output are produced).
+   * @param debugLevel 1=basic, 2=extended, 3=everything.
+   */
+  public static void setDebugLevel(int debugLevel) {
+    FormatReader.debugLevel = debugLevel;
+  }
 }
