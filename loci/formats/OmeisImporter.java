@@ -145,186 +145,186 @@ public class OmeisImporter {
     String path = reader.getMappedId(ids[0]);
     if (DEBUG) log("Reading file '" + id + "' --> " + path);
 
-      // verify that all given file IDs were grouped by the file stitcher
-      FilePattern fp = reader.getFilePattern(id);
-      if (!fp.isValid()) {
-        throw new FormatException("Invalid file pattern for " + path);
-      }
-      String[] files = fp.getFiles();
-      if (files == null) {
-        throw new FormatException("Invalid file list for " + path);
-      }
-      if (files.length != ids.length) {
-        throw new FormatException("File list length mismatch for " + path);
-      }
-      boolean[] done = new boolean[ids.length];
-      int numLeft = ids.length;
-      for (int i=0; i<files.length; i++) {
-        for (int j=0; j<ids.length; j++) {
-          if (done[j]) continue;
-          if (files[i].equals(ids[j])) {
-            done[j] = true;
-            numLeft--;
-            break;
-          }
+    // verify that all given file IDs were grouped by the file stitcher
+    FilePattern fp = reader.getFilePattern(id);
+    if (!fp.isValid()) {
+      throw new FormatException("Invalid file pattern for " + path);
+    }
+    String[] files = fp.getFiles();
+    if (files == null) {
+      throw new FormatException("Invalid file list for " + path);
+    }
+    if (files.length != ids.length) {
+      throw new FormatException("File list length mismatch for " + path);
+    }
+    boolean[] done = new boolean[ids.length];
+    int numLeft = ids.length;
+    for (int i=0; i<files.length; i++) {
+      for (int j=0; j<ids.length; j++) {
+        if (done[j]) continue;
+        if (files[i].equals(ids[j])) {
+          done[j] = true;
+          numLeft--;
+          break;
         }
       }
-      if (numLeft > 0) {
-        throw new FormatException(
-          "File list does not correspond to ID list for " + path);
+    }
+    if (numLeft > 0) {
+      throw new FormatException(
+        "File list does not correspond to ID list for " + path);
+    }
+
+    int seriesCount = reader.getSeriesCount(id);
+
+    // get DOM and Pixels elements for the file's OME-XML metadata
+    OMENode ome = (OMENode) store.getRoot();
+    Document omeDoc = null;
+    try {
+      omeDoc = ome.getOMEDocument(false);
+    }
+    catch (javax.xml.transform.TransformerException exc) {
+      throw new FormatException(exc);
+    }
+    catch (org.xml.sax.SAXException exc) {
+      throw new FormatException(exc);
+    }
+    catch (javax.xml.parsers.ParserConfigurationException exc) {
+      throw new FormatException(exc);
+    }
+    Vector pix = DOMUtil.findElementList("Pixels", omeDoc);
+    if (pix.size() != seriesCount) {
+      throw new FormatException("Pixels element count (" +
+        pix.size() + ") does not match series count (" +
+        seriesCount + ") for '" + id + "'");
+    }
+    if (DEBUG) log(seriesCount + " series detected.");
+
+    for (int s=0; s<seriesCount; s++) {
+      reader.setSeries(id, s);
+
+      // gather pixels information for this series
+      int sizeX = reader.getSizeX(id);
+      int sizeY = reader.getSizeY(id);
+      int sizeZ = reader.getSizeZ(id);
+      int sizeC = reader.getSizeC(id);
+      int sizeT = reader.getSizeT(id);
+      int pixelType = reader.getPixelType(id);
+      int bytesPerPixel;
+      boolean isSigned, isFloat;
+      switch (pixelType) {
+        case FormatReader.INT8:
+          bytesPerPixel = 1;
+          isSigned = true;
+          isFloat = false;
+          break;
+        case FormatReader.UINT8:
+          bytesPerPixel = 1;
+          isSigned = false;
+          isFloat = false;
+          break;
+        case FormatReader.INT16:
+          bytesPerPixel = 2;
+          isSigned = true;
+          isFloat = false;
+          break;
+        case FormatReader.UINT16:
+          bytesPerPixel = 2;
+          isSigned = false;
+          isFloat = false;
+          break;
+        case FormatReader.INT32:
+          bytesPerPixel = 4;
+          isSigned = true;
+          isFloat = false;
+          break;
+        case FormatReader.UINT32:
+          bytesPerPixel = 4;
+          isSigned = false;
+          isFloat = false;
+          break;
+        case FormatReader.FLOAT:
+          bytesPerPixel = 4;
+          isSigned = true;
+          isFloat = true;
+          break;
+        case FormatReader.DOUBLE:
+          bytesPerPixel = 8;
+          isSigned = true;
+          isFloat = true;
+          break;
+        default:
+          throw new FormatException("Unknown pixel type for '" +
+            id + "' series #" + s + ": " + pixelType);
+      }
+      boolean little = reader.isLittleEndian(id);
+      boolean swap = doLittle != little;
+
+      // ask OMEIS to allocate new pixels file
+      int pixelsId = newPixels(sizeX, sizeY, sizeZ, sizeC, sizeT,
+        bytesPerPixel, isSigned, isFloat);
+      String pixelsPath = getLocalPixelsPath(pixelsId);
+      if (DEBUG) {
+        log("Series #" + s + ": id=" + pixelsId + ", path=" + pixelsPath);
       }
 
-      int seriesCount = reader.getSeriesCount(id);
-
-      // get DOM and Pixels elements for the file's OME-XML metadata
-      OMENode ome = (OMENode) store.getRoot();
-      Document omeDoc = null;
-      try {
-        omeDoc = ome.getOMEDocument(false);
+      // write pixels to file
+      FileOutputStream out = new FileOutputStream(pixelsPath);
+      int imageCount = reader.getImageCount(id);
+      if (DEBUG) {
+        log("Processing " + imageCount + " planes (sizeZ=" + sizeZ +
+          ", sizeC=" + sizeC + ", sizeT=" + sizeT + "): ");
       }
-      catch (javax.xml.transform.TransformerException exc) {
-        throw new FormatException(exc);
-      }
-      catch (org.xml.sax.SAXException exc) {
-        throw new FormatException(exc);
-      }
-      catch (javax.xml.parsers.ParserConfigurationException exc) {
-        throw new FormatException(exc);
-      }
-      Vector pix = DOMUtil.findElementList("Pixels", omeDoc);
-      if (pix.size() != seriesCount) {
-        throw new FormatException("Pixels element count (" +
-          pix.size() + ") does not match series count (" +
-          seriesCount + ") for '" + id + "'");
-      }
-      if (DEBUG) log(seriesCount + " series detected.");
-
-      for (int s=0; s<seriesCount; s++) {
-        reader.setSeries(id, s);
-
-        // gather pixels information for this series
-        int sizeX = reader.getSizeX(id);
-        int sizeY = reader.getSizeY(id);
-        int sizeZ = reader.getSizeZ(id);
-        int sizeC = reader.getSizeC(id);
-        int sizeT = reader.getSizeT(id);
-        int pixelType = reader.getPixelType(id);
-        int bytesPerPixel;
-        boolean isSigned, isFloat;
-        switch (pixelType) {
-          case FormatReader.INT8:
-            bytesPerPixel = 1;
-            isSigned = true;
-            isFloat = false;
-            break;
-          case FormatReader.UINT8:
-            bytesPerPixel = 1;
-            isSigned = false;
-            isFloat = false;
-            break;
-          case FormatReader.INT16:
-            bytesPerPixel = 2;
-            isSigned = true;
-            isFloat = false;
-            break;
-          case FormatReader.UINT16:
-            bytesPerPixel = 2;
-            isSigned = false;
-            isFloat = false;
-            break;
-          case FormatReader.INT32:
-            bytesPerPixel = 4;
-            isSigned = true;
-            isFloat = false;
-            break;
-          case FormatReader.UINT32:
-            bytesPerPixel = 4;
-            isSigned = false;
-            isFloat = false;
-            break;
-          case FormatReader.FLOAT:
-            bytesPerPixel = 4;
-            isSigned = true;
-            isFloat = true;
-            break;
-          case FormatReader.DOUBLE:
-            bytesPerPixel = 8;
-            isSigned = true;
-            isFloat = true;
-            break;
-          default:
-            throw new FormatException("Unknown pixel type for '" +
-              id + "' series #" + s + ": " + pixelType);
-        }
-        boolean little = reader.isLittleEndian(id);
-        boolean swap = doLittle != little;
-
-        // ask OMEIS to allocate new pixels file
-        int pixelsId = newPixels(sizeX, sizeY, sizeZ, sizeC, sizeT,
-          bytesPerPixel, isSigned, isFloat);
-        String pixelsPath = getLocalPixelsPath(pixelsId);
-        if (DEBUG) {
-          log("Series #" + s + ": id=" + pixelsId + ", path=" + pixelsPath);
-        }
-
-        // write pixels to file
-        FileOutputStream out = new FileOutputStream(pixelsPath);
-        int imageCount = reader.getImageCount(id);
-        if (DEBUG) {
-          log("Processing " + imageCount + " planes (sizeZ=" + sizeZ +
-            ", sizeC=" + sizeC + ", sizeT=" + sizeT + "): ");
-        }
-        for (int j=0; j<imageCount; j++) {
-          if (DEBUG) log("  Reading plane #" + j);
-          byte[] plane = reader.openBytes(id, j);
-          if (swap && bytesPerPixel > 1 && !isFloat) { // swap endianness
-            for (int b=0; b<plane.length; b+=bytesPerPixel) {
-              for (int k=0; k<bytesPerPixel/2; k++) {
-                int i1 = b + k;
-                int i2 = b + bytesPerPixel - k - 1;
-                byte b1 = plane[i1];
-                byte b2 = plane[i2];
-                plane[i1] = b2;
-                plane[i2] = b1;
-              }
+      for (int j=0; j<imageCount; j++) {
+        if (DEBUG) log("  Reading plane #" + j);
+        byte[] plane = reader.openBytes(id, j);
+        if (swap && bytesPerPixel > 1 && !isFloat) { // swap endianness
+          for (int b=0; b<plane.length; b+=bytesPerPixel) {
+            for (int k=0; k<bytesPerPixel/2; k++) {
+              int i1 = b + k;
+              int i2 = b + bytesPerPixel - k - 1;
+              byte b1 = plane[i1];
+              byte b2 = plane[i2];
+              plane[i1] = b2;
+              plane[i2] = b1;
             }
           }
-          out.write(plane);
         }
-        out.close();
-        reader.close();
-        if (DEBUG) log("[done]");
-
-        // tell OMEIS we're done
-        pixelsId = finishPixels(pixelsId);
-        if (DEBUG) log("finishPixels called (new id=" + pixelsId + ")");
-
-        // get SHA1 hash for finished pixels
-        String sha1 = getPixelsSHA1(pixelsId);
-        if (DEBUG) log("SHA1=" + sha1);
-
-        // inject important extra attributes into proper Pixels element
-        Element pixels = (Element) pix.elementAt(s);
-        pixels.setAttribute("FileSHA1", sha1);
-        pixels.setAttribute("ImageServerID", "" + pixelsId);
-        if (DEBUG) log("Pixel attributes injected.");
+        out.write(plane);
       }
+      out.close();
+      reader.close();
+      if (DEBUG) log("[done]");
 
-      // accumulate XML into buffer
-      ByteArrayOutputStream xml = new ByteArrayOutputStream();
-      try {
-        DOMUtil.writeXML(xml, omeDoc);
-      }
-      catch (javax.xml.transform.TransformerException exc) {
-        throw new FormatException(exc);
-      }
+      // tell OMEIS we're done
+      pixelsId = finishPixels(pixelsId);
+      if (DEBUG) log("finishPixels called (new id=" + pixelsId + ")");
 
-      // output OME-XML to standard output
-      xml.close();
-      String xmlString = new String(xml.toByteArray());
-      if (DEBUG) log(xmlString);
-      if (http) printHttpResponseHeader();
-      System.out.println(xmlString);
+      // get SHA1 hash for finished pixels
+      String sha1 = getPixelsSHA1(pixelsId);
+      if (DEBUG) log("SHA1=" + sha1);
+
+      // inject important extra attributes into proper Pixels element
+      Element pixels = (Element) pix.elementAt(s);
+      pixels.setAttribute("FileSHA1", sha1);
+      pixels.setAttribute("ImageServerID", "" + pixelsId);
+      if (DEBUG) log("Pixel attributes injected.");
+    }
+
+    // accumulate XML into buffer
+    ByteArrayOutputStream xml = new ByteArrayOutputStream();
+    try {
+      DOMUtil.writeXML(xml, omeDoc);
+    }
+    catch (javax.xml.transform.TransformerException exc) {
+      throw new FormatException(exc);
+    }
+
+    // output OME-XML to standard output
+    xml.close();
+    String xmlString = new String(xml.toByteArray());
+    if (DEBUG) log(xmlString);
+    if (http) printHttpResponseHeader();
+    System.out.println(xmlString);
   }
 
   // -- OmeisImporter API methods - OMEIS method calls --
