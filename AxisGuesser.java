@@ -77,7 +77,7 @@ public class AxisGuesser {
   protected String newOrder;
 
   /** Guessed axis types. */
-  protected int[] axes;
+  protected int[] axisTypes;
 
   /** Whether the guesser is confident that all axis types are correct. */
   protected boolean certain;
@@ -112,12 +112,12 @@ public class AxisGuesser {
     BigInteger[] last = fp.getLast();
     BigInteger[] step = fp.getStep();
     int[] count = fp.getCount();
-    axes = new int[count.length];
+    axisTypes = new int[count.length];
     boolean foundZ = false, foundT = false, foundC = false;
 
     // -- 1) fill in "known" axes based on known patterns and conventions --
 
-    for (int i=0; i<axes.length; i++) {
+    for (int i=0; i<axisTypes.length; i++) {
       String p = prefixes[i].toLowerCase();
 
       // strip trailing digits and divider characters
@@ -137,38 +137,38 @@ public class AxisGuesser {
       // check against known Z prefixes
       for (int j=0; j<Z.length; j++) {
         if (p.equals(Z[j])) {
-          axes[i] = Z_AXIS;
+          axisTypes[i] = Z_AXIS;
           foundZ = true;
           break;
         }
       }
-      if (axes[i] != UNKNOWN_AXIS) continue;
+      if (axisTypes[i] != UNKNOWN_AXIS) continue;
 
       // check against known T prefixes
       for (int j=0; j<T.length; j++) {
         if (p.equals(T[j])) {
-          axes[i] = T_AXIS;
+          axisTypes[i] = T_AXIS;
           foundT = true;
           break;
         }
       }
-      if (axes[i] != UNKNOWN_AXIS) continue;
+      if (axisTypes[i] != UNKNOWN_AXIS) continue;
 
       // check against known C prefixes
       for (int j=0; j<C.length; j++) {
         if (p.equals(C[j])) {
-          axes[i] = C_AXIS;
+          axisTypes[i] = C_AXIS;
           foundC = true;
           break;
         }
       }
-      if (axes[i] != UNKNOWN_AXIS) continue;
+      if (axisTypes[i] != UNKNOWN_AXIS) continue;
 
       // check special case: <2-3> (Bio-Rad PIC)
       if (first[i].equals(TWO) && last[i].equals(THREE) &&
         step[i].equals(BigInteger.ONE) && suffix.equalsIgnoreCase(".pic"))
       {
-        axes[i] = C_AXIS;
+        axisTypes[i] = C_AXIS;
         foundC = true;
         break;
       }
@@ -200,19 +200,19 @@ public class AxisGuesser {
 
     certain = isCertain;
 
-    for (int i=0; i<axes.length; i++) {
-      if (axes[i] != UNKNOWN_AXIS) continue;
+    for (int i=0; i<axisTypes.length; i++) {
+      if (axisTypes[i] != UNKNOWN_AXIS) continue;
       certain = false;
 
       if (canBeZ) {
-        axes[i] = Z_AXIS;
+        axisTypes[i] = Z_AXIS;
         canBeZ = false;
       }
       else if (canBeT) {
-        axes[i] = T_AXIS;
+        axisTypes[i] = T_AXIS;
         canBeT = false;
       }
-      else axes[i] = C_AXIS;
+      else axisTypes[i] = C_AXIS;
     }
   }
 
@@ -239,7 +239,7 @@ public class AxisGuesser {
    *     <li>C_AXIS: channels</li>
    *   </ul>
    */
-  public int[] getAxisTypes() { return axes; }
+  public int[] getAxisTypes() { return axisTypes; }
 
   /**
    * Sets the axis type for each dimensional block.
@@ -250,7 +250,7 @@ public class AxisGuesser {
    *     <li>C_AXIS: channels</li>
    *   </ul>
    */
-  public void setAxisTypes(int[] axes) { this.axes = axes; }
+  public void setAxisTypes(int[] axes) { axisTypes = axes; }
 
   /** Gets the number of Z axes in the pattern. */
   public int getAxisCountZ() { return getAxisCount(Z_AXIS); }
@@ -271,8 +271,8 @@ public class AxisGuesser {
    */
   public int getAxisCount(int axisType) {
     int num = 0;
-    for (int i=0; i<axes.length; i++) {
-      if (axes[i] == axisType) num++;
+    for (int i=0; i<axisTypes.length; i++) {
+      if (axisTypes[i] == axisType) num++;
     }
     return num;
   }
