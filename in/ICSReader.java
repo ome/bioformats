@@ -359,8 +359,8 @@ public class ICSReader extends FormatReader {
         data = v.toByteArray();
       }
       catch (Exception dfe) {
-        dfe.printStackTrace();
-        throw new FormatException("Error uncompressing gzip'ed data.");
+        // CTR TODO - eliminate catch-all exception handling
+        throw new FormatException("Error uncompressing gzip'ed data", dfe);
       }
     }
     else idsIn.readFully(data);

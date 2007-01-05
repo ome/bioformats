@@ -512,7 +512,10 @@ public class DicomReader extends FormatReader {
       try {
         in.skipBytes((int) skipCount);
       }
-      catch (Exception e) { }
+      catch (Exception e) {
+        // CTR TODO - eliminate catch-all exception handling
+        if (debug) e.printStackTrace();
+      }
       location += elementLength;
       value = "";
     }

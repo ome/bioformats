@@ -328,7 +328,10 @@ public class OMEXMLReader extends FormatReader {
     try {
       ome = new OMENode(new File(getMappedId(id)));
     }
-    catch (Exception exc) { throw new FormatException(exc); }
+    catch (Exception exc) {
+      // CTR TODO - eliminate catch-all exception handling
+      throw new FormatException(exc);
+    }
     MetadataStore store = getMetadataStore(id);
     store.setRoot(ome);
 

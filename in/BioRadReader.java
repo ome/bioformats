@@ -374,6 +374,7 @@ public class BioRadReader extends FormatReader {
         numLuts++;
       }
       catch (Exception exc) {
+        // CTR TODO - eliminate catch-all exception handling
         eof = true;
         if (debug) exc.printStackTrace();
       }

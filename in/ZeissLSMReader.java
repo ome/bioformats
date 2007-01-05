@@ -201,7 +201,10 @@ public class ZeissLSMReader extends BaseTiffReader {
         prevOffset = offsets[0];
       }
     }
-    catch (Exception e) { }
+    catch (Exception e) {
+      // CTR TODO - eliminate catch-all exception handling
+      if (debug) e.printStackTrace();
+    }
 
     // now copy ifds to a temp array so that we can get rid of
     // any null entries
@@ -642,9 +645,16 @@ public class ZeissLSMReader extends BaseTiffReader {
 
       in.seek(pos);
     }
-    catch (FormatException e) { if (debug) e.printStackTrace(); }
-    catch (IOException e) { if (debug) e.printStackTrace(); }
-    catch (Exception e) { }
+    catch (FormatException e) {
+      if (debug) e.printStackTrace();
+    }
+    catch (IOException e) {
+      if (debug) e.printStackTrace();
+    }
+    catch (Exception e) {
+      // CTR TODO - eliminate catch-all exception handling
+      if (debug) e.printStackTrace();
+    }
 
     sizeZ[0] = zSize > 0 ? zSize : 1;
     sizeC[0] = channels > 0 ? channels : 1;
@@ -659,7 +669,10 @@ public class ZeissLSMReader extends BaseTiffReader {
       MetadataStore store = getMetadataStore(currentId);
       store.setDimensions(pixX, pixY, pixZ, null, null, null);
     }
-    catch (Exception e) { }
+    catch (Exception e) {
+      // CTR TODO - eliminate catch-all exception handling
+      if (debug) e.printStackTrace();
+    }
 
     // see if we have an associated MDB file
 
@@ -672,7 +685,9 @@ public class ZeissLSMReader extends BaseTiffReader {
         try {
           MDBParser.parseDatabase(dirList[i], metadata);
         }
-        catch (FormatException f) { }
+        catch (FormatException f) {
+          if (debug) f.printStackTrace();
+        }
         i = dirList.length;
       }
     }

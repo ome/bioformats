@@ -746,7 +746,10 @@ public class LeicaReader extends BaseTiffReader {
             pt += 64;
           }
         }
-        catch (Throwable t) { }
+        catch (Throwable t) {
+          // CTR TODO - eliminate catch-all exception handling
+          if (debug) t.printStackTrace();
+        }
       }
 
       temp = (byte[]) headerIFDs[i].get(new Integer(50));
@@ -862,6 +865,9 @@ public class LeicaReader extends BaseTiffReader {
       // NullPointerException caught here if the file we opened was a TIFF.
       // However, the sizeC field will be adjusted anyway by a later call to
       // BaseTiffReader.initMetadata
+
+      // CTR TODO - eliminate catch-all exception handling
+      if (debug) e.printStackTrace();
     }
 
     Integer v = (Integer) metadata.get("Real world resolution");
@@ -883,7 +889,10 @@ public class LeicaReader extends BaseTiffReader {
     try {
       store = getMetadataStore(currentId);
     }
-    catch (Exception e) { }
+    catch (Exception e) {
+      // CTR TODO - eliminate catch-all exception handling
+      if (debug) e.printStackTrace();
+    }
 
     for (int i=0; i<numSeries; i++) {
       orderCertain[i] = true;

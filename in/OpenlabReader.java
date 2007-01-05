@@ -111,7 +111,10 @@ public class OpenlabReader extends FormatReader {
         in = new RandomAccessStream(getMappedId(name));
         in.read(b);
       }
-      catch (Exception e) { }
+      catch (Exception e) {
+        // CTR TODO - eliminate catch-all exception handling
+        if (debug) e.printStackTrace();
+      }
       return isThisType(b);
     }
     else {
@@ -212,6 +215,9 @@ public class OpenlabReader extends FormatReader {
         }
       }
       catch (Exception e) {
+        // CTR TODO - eliminate catch-all exception handling
+        if (debug) e.printStackTrace();
+
         b = null;
         in.seek(info.layerStart + 12);
         int blockSize = DataTools.read4SignedBytes(in, false);
@@ -409,6 +415,9 @@ public class OpenlabReader extends FormatReader {
         nextTag = readTagHeader();
       }
       catch (Exception e) {
+        // CTR TODO - eliminate catch-all exception handling
+        if (debug) e.printStackTrace();
+
         if (in.getFilePointer() >= in.length()) break;
         else throw new FormatException(e.getMessage());
       }
@@ -521,6 +530,8 @@ public class OpenlabReader extends FormatReader {
         in.seek(nextTag);
       }
       catch (Exception e) {
+        // CTR TODO - eliminate catch-all exception handling
+        if (debug) e.printStackTrace();
         in.seek(nextTag);
       }
     }

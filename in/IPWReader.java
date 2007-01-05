@@ -58,7 +58,9 @@ public class IPWReader extends BaseTiffReader {
       r.exec("import org.apache.poi.poifs.filesystem.DocumentInputStream");
       r.exec("import java.util.Iterator");
     }
-    catch (Throwable exc) { noPOI = true; }
+    catch (Throwable t) {
+      noPOI = true;
+    }
     return r;
   }
 

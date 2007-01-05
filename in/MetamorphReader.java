@@ -145,7 +145,10 @@ public class MetamorphReader extends BaseTiffReader {
           }
         }
       }
-      catch (Exception e) { }
+      catch (Exception e) {
+        // CTR TODO - eliminate catch-all exception handling
+        if (debug) e.printStackTrace();
+      }
 
       // copy ifds into a new array of Hashtables that will accomodate the
       // additional image planes
@@ -234,8 +237,13 @@ public class MetamorphReader extends BaseTiffReader {
     catch (IOException io) { io.printStackTrace(); }
     catch (FormatException e) { e.printStackTrace(); }
 
-    try { super.initStandardMetadata(); }
-    catch (Throwable t) { t.printStackTrace(); }
+    try {
+      super.initStandardMetadata();
+    }
+    catch (Throwable t) {
+      // CTR TODO - eliminate catch-all exception handling
+      t.printStackTrace();
+    }
 
     // parse (mangle) TIFF comment
     String descr = (String) metadata.get("Comment");
@@ -288,7 +296,10 @@ public class MetamorphReader extends BaseTiffReader {
       sizeZ[0] = TiffTools.getIFDLongArray(ifds[0], UIC2TAG, true).length;
       sizeT[0] = getImageCount(currentId) / sizeZ[0];
     }
-    catch (Exception e) { }
+    catch (Exception e) {
+      // CTR TODO - eliminate catch-all exception handling
+      if (debug) e.printStackTrace();
+    }
   }
 
   /*@see loci.formats.BaseTiffReader#getImageName() */

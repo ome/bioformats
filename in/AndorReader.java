@@ -109,7 +109,10 @@ public class AndorReader extends BaseTiffReader {
     try {
       little = isLittleEndian(currentId);
     }
-    catch (Exception e) { }
+    catch (Exception e) {
+      // CTR TODO - eliminate catch-all exception handling
+      if (debug) e.printStackTrace();
+    }
 
     int vb = 0; // number of valid bits per pixel
 
@@ -360,7 +363,10 @@ public class AndorReader extends BaseTiffReader {
       store.setDimensions(new Float(pixelSizeX), new Float(pixelSizeY),
         new Float(pixelSizeZ), null, null, null);
     }
-    catch (Exception e) { }
+    catch (Exception e) {
+      // CTR TODO - eliminate catch-all exception handling
+      if (debug) e.printStackTrace();
+    }
   }
 
   // -- Main method --

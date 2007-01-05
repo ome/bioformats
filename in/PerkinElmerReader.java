@@ -273,6 +273,9 @@ public class PerkinElmerReader extends FormatReader {
           filesPt++;
         }
         catch (Exception e) {
+          // CTR TODO - eliminate catch-all exception handling
+          if (debug) e.printStackTrace();
+
           try {
             String ext = filename.substring(filename.lastIndexOf(".") + 1);
             int num = Integer.parseInt(ext, 16);
@@ -281,6 +284,8 @@ public class PerkinElmerReader extends FormatReader {
             filesPt++;
           }
           catch (Exception f) {
+            // CTR TODO - eliminate catch-all exception handling
+            if (debug) f.printStackTrace();
           }
         }
       }
@@ -374,7 +379,7 @@ public class PerkinElmerReader extends FormatReader {
 
         if (tNum == 4) {
           try { Integer.parseInt(token); }
-          catch (Exception e) { tNum++; }
+          catch (NumberFormatException e) { tNum++; }
         }
         metadata.put(hashKeys[tNum], token);
         tNum++;
@@ -445,7 +450,10 @@ public class PerkinElmerReader extends FormatReader {
         tokens = (String[]) split.invoke(new String(data),
           new Object[] {regex});
       }
-      catch (Throwable e) { }
+      catch (Throwable th) {
+        // CTR TODO - eliminate catch-all exception handling
+        if (debug) th.printStackTrace();
+      }
 
       for (int j=0; j<tokens.length; j++) {
         if (tokens[j].indexOf("<") != -1) tokens[j] = "";
@@ -569,7 +577,10 @@ public class PerkinElmerReader extends FormatReader {
       store.setStageLabel(null, new Float(originX), new Float(originY),
                         new Float(originZ), null);
     }
-    catch (Exception e) { }
+    catch (Exception e) {
+      // CTR TODO - eliminate catch-all exception handling
+      if (debug) e.printStackTrace();
+    }
   }
 
   // -- Main method --
