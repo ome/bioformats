@@ -1,3 +1,10 @@
+* Added support for Prairie TIFF
+* Fixed bugs in Zeiss LSM, OIB, OIF, and ND2
+* Improved API for writing files
+* Added feature to read files over HTTP
+* Fixed bugs in automated testing framework
+* Miscellaneous bugfixes
+
 2006 Dec 22:
 * Expanded ImageJ plugin to optionally use Image5D or View5D
 * Improved support for ND2 and JPEG-2000 files
