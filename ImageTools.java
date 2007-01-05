@@ -597,8 +597,7 @@ public final class ImageTools {
   }
 
   /** Create a blank image with the given dimensions and transfer type. */
-  public static BufferedImage blankImage(int w, int h, int c, int type)
-  {
+  public static BufferedImage blankImage(int w, int h, int c, int type) {
     int tt = 0;
     DataBuffer buffer = null;
     switch (type) {

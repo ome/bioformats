@@ -83,10 +83,10 @@ public abstract class FormatReader extends FormatHandler
   // -- Static fields --
 
   /** Debugging flag. */
-  public static boolean debug = false;
+  protected static boolean debug = false;
 
   /** Debugging level. 1=basic, 2=extended, 3=everything. */
-  public static int debugLevel = 1;
+  protected static int debugLevel = 1;
 
   // -- Fields --
 

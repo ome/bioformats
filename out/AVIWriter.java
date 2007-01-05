@@ -37,7 +37,6 @@ import loci.formats.*;
  * AVI Movie Writer plugin for ImageJ
  * (available at http://rsb.info.nih.gov/ij/).
  */
-
 public class AVIWriter extends FormatWriter {
 
   // -- Fields --
@@ -222,8 +221,8 @@ public class AVIWriter extends FormatWriter {
         DataTools.writeString(raFile, "LIST");
 
         // Write the size of the first LIST subCHUNK not including the first 8
-        // bytes with LIST and size. Note that saveLIST1subSize = saveLIST1Size +
-        // 76, and that the length written to saveLIST1subSize is 76 less than
+        // bytes with LIST and size. Note that saveLIST1subSize = saveLIST1Size
+        // + 76, and that the length written to saveLIST1subSize is 76 less than
         // the length written to saveLIST1Size. The end of the first LIST
         // subCHUNK is followed by JUNK.
 
@@ -237,7 +236,8 @@ public class AVIWriter extends FormatWriter {
 
         // Write DIB for Microsoft Device Independent Bitmap.
         // Note: Unfortunately, at least 3 other four character codes are
-        // sometimes used for uncompressed AVI videos: 'RGB ', 'RAW ', 0x00000000
+        // sometimes used for uncompressed AVI videos: 'RGB ', 'RAW ',
+        // 0x00000000
         DataTools.writeString(raFile, "DIB ");
 
         DataTools.writeInt(raFile, 0, true); // dwFlags
@@ -249,14 +249,14 @@ public class AVIWriter extends FormatWriter {
         // it will need to animate the palette.
 
         // dwPriority - priority of a stream type. For example, in a file with
-        // multiple audio streams, the one with the highest priority might be the
-        // default one.
+        // multiple audio streams, the one with the highest priority might be
+        // the default one.
         DataTools.writeInt(raFile, 0, true);
 
         // dwInitialFrames - Specifies how far audio data is skewed ahead of
         // video frames in interleaved files. Typically, this is about 0.75
-        // seconds. In interleaved files specify the number of frames in the file
-        // prior to the initial frame of the AVI sequence.
+        // seconds. In interleaved files specify the number of frames in the
+        // file prior to the initial frame of the AVI sequence.
         // Noninterleaved files should use zero.
         DataTools.writeInt(raFile, 0, true);
 
@@ -278,15 +278,15 @@ public class AVIWriter extends FormatWriter {
         // in a stream.
         DataTools.writeInt(raFile, 0, true);
 
-        // dwQuality - encoding quality given by an integer between 0 and 10,000.
-        // If set to -1, drivers use the default quality value.
+        // dwQuality - encoding quality given by an integer between 0 and
+        // 10,000. If set to -1, drivers use the default quality value.
         DataTools.writeInt(raFile, -1, true);
 
         // dwSampleSize #
         // 0 if the video frames may or may not vary in size
-        // If 0, each sample of data(such as a video frame) must be in a separate
-        // chunk. If nonzero, then multiple samples of data can be grouped into
-        // a single chunk within the file.
+        // If 0, each sample of data(such as a video frame) must be in a
+        // separate chunk. If nonzero, then multiple samples of data can be
+        // grouped into a single chunk within the file.
         DataTools.writeInt(raFile, 0, true);
 
         // rcFrame - Specifies the destination rectangle for a text or video
@@ -310,8 +310,8 @@ public class AVIWriter extends FormatWriter {
         // write the strf CHUNK size
         DataTools.writeInt(raFile, (bytesPerPixel == 1) ? 1068 : 44, true);
 
-        // Applications should use this size to determine which BITMAPINFO header
-        // structure is being used. This size includes this biSize field.
+        // Applications should use this size to determine which BITMAPINFO
+        // header structure is being used. This size includes this biSize field.
         // biSize- Write header size of BITMAPINFO header structure
 
         DataTools.writeInt(raFile, 40, true);
@@ -321,8 +321,8 @@ public class AVIWriter extends FormatWriter {
 
         // biHeight - image height in pixels. If height is positive, the bitmap
         // is a bottom up DIB and its origin is in the lower left corner. If
-        // height is negative, the bitmap is a top-down DIB and its origin is the
-        // upper left corner. This negative sign feature is supported by the
+        // height is negative, the bitmap is a top-down DIB and its origin is
+        // the upper left corner. This negative sign feature is supported by the
         // Windows Media Player, but it is not supported by PowerPoint.
         DataTools.writeInt(raFile, yDim, true);
 
@@ -347,10 +347,10 @@ public class AVIWriter extends FormatWriter {
         else DataTools.writeInt(raFile, 0, true); // biClrUsed
 
         // biClrImportant - specifies that the first x colors of the color table
-        // are important to the DIB. If the rest of the colors are not available,
-        // the image still retains its meaning in an acceptable manner. When this
-        // field is set to zero, all the colors are important, or, rather, their
-        // relative importance has not been computed.
+        // are important to the DIB. If the rest of the colors are not
+        // available, the image still retains its meaning in an acceptable
+        // manner. When this field is set to zero, all the colors are important,
+        // or, rather, their relative importance has not been computed.
         DataTools.writeInt(raFile, 0, true);
 
         // Write the LUTa.getExtents()[1] color table entries here. They are
@@ -527,4 +527,5 @@ public class AVIWriter extends FormatWriter {
   public static void main(String[] args) throws IOException, FormatException {
     new AVIWriter().testConvert(args);
   }
+
 }

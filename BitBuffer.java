@@ -23,9 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 package loci.formats;
-// Used in main method test.
-import loci.formats.BitWriter;
-import java.util.Random;
+
+import java.util.Random; // used in main method test
 
 /**
  * A class for reading arbitrary numbers of bits from a byte array.
@@ -90,7 +89,8 @@ public class BitBuffer {
           toStore += (cb<0 ? (int) 256 + cb : (int) cb);
           bitsToRead -= 8;
           currentByte++;
-        } else {
+        }
+        else {
           // otherwise, only read the appropriate number of bits off the back
           // side of the byte, in order to "finish" the current byte in the
           // buffer.
@@ -101,7 +101,8 @@ public class BitBuffer {
           currentBit = 0;
           currentByte++;
         }
-      } else {
+      }
+      else {
         // We will be able to finish using the current byte.
         // read the appropriate number of bits off the front side of the byte,
         // then push them into the int.
@@ -123,11 +124,10 @@ public class BitBuffer {
   }
 
   /**
-   * Testing method
+   * Testing method.
    * @param args Ignored.
    */
-
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     int trials = 50000;
     int[] nums = new int[trials];
     int[] len = new int[trials];
@@ -145,7 +145,8 @@ public class BitBuffer {
     for(int i = 0; i < trials; i++) {
       if(31 == i % 32) {
         nums[i] = r.nextInt();
-      } else {
+      }
+      else {
         nums[i] = r.nextInt(1 << (i % 32));
       }
       // How many bits are required to represent this number?

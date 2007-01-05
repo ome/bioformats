@@ -60,9 +60,7 @@ public class RAUrl implements IRandomAccess {
 
   // -- Constructors --
 
-  public RAUrl(String url, String mode)
-    throws MalformedURLException, IOException
-  {
+  public RAUrl(String url, String mode) throws IOException {
     conn = (HttpURLConnection) (new URL(url)).openConnection();
     if (mode.equals("r")) is = new DataInputStream(conn.getInputStream());
     else if (mode.equals("w")) {

@@ -79,14 +79,22 @@ public class ChannelSeparator extends ReaderWrapper {
     int bytes = 0;
     switch (getPixelType(id)) {
       case 0:
-      case 1: bytes = 1; break;
+      case 1:
+        bytes = 1;
+        break;
       case 2:
-      case 3: bytes = 2; break;
+      case 3:
+        bytes = 2;
+        break;
       case 4:
       case 5:
-      case 6: bytes = 4; break;
-      case 7: bytes = 8; break;
-    };
+      case 6:
+        bytes = 4;
+        break;
+      case 7:
+        bytes = 8;
+        break;
+    }
 
     byte[] b = openBytes(id, no);
 

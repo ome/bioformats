@@ -149,14 +149,37 @@ public class MRCReader extends FormatReader {
     in.read(b);
     int mode = DataTools.bytesToInt(b, little);
     switch (mode) {
-      case 0: bpp = 1; pixelType[0] = FormatReader.UINT8; break;
-      case 1: bpp = 2; pixelType[0] = FormatReader.UINT16; break;
-      case 2: bpp = 4; isFloat = true; pixelType[0] = FormatReader.FLOAT; break;
-      case 3: bpp = 4; pixelType[0] = FormatReader.UINT32; break;
-      case 4: bpp = 8; isFloat = true; pixelType[0] = FormatReader.DOUBLE;
-              break;
-      case 6: bpp = 2; pixelType[0] = FormatReader.UINT16; break;
-      case 16: bpp = 2; sizeC[0] = 3; pixelType[0] = FormatReader.UINT16; break;
+      case 0:
+        bpp = 1;
+        pixelType[0] = FormatReader.UINT8;
+        break;
+      case 1:
+        bpp = 2;
+        pixelType[0] = FormatReader.UINT16;
+        break;
+      case 2:
+        bpp = 4;
+        isFloat = true;
+        pixelType[0] = FormatReader.FLOAT;
+        break;
+      case 3:
+        bpp = 4;
+        pixelType[0] = FormatReader.UINT32;
+        break;
+      case 4:
+        bpp = 8;
+        isFloat = true;
+        pixelType[0] = FormatReader.DOUBLE;
+        break;
+      case 6:
+        bpp = 2;
+        pixelType[0] = FormatReader.UINT16;
+        break;
+      case 16:
+        bpp = 2;
+        sizeC[0] = 3;
+        pixelType[0] = FormatReader.UINT16;
+        break;
     }
 
     in.read(b);
@@ -244,12 +267,23 @@ public class MRCReader extends FormatReader {
 
     String type = "";
     switch (idtype) {
-      case 0: type = "mono"; break;
-      case 1: type = "tilt"; break;
-      case 2: type = "tilts"; break;
-      case 3: type = "lina"; break;
-      case 4: type = "lins"; break;
-      default: type = "unknown";
+      case 0:
+        type = "mono";
+        break;
+      case 1:
+        type = "tilt";
+        break;
+      case 2:
+        type = "tilts";
+        break;
+      case 3:
+        type = "lina";
+        break;
+      case 4:
+        type = "lins";
+        break;
+      default:
+        type = "unknown";
     }
 
     metadata.put("Series type", type);
