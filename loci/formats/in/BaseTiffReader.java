@@ -517,7 +517,10 @@ public abstract class BaseTiffReader extends FormatReader {
 
       currentOrder[0] = "XYCZT";
     }
-    catch (Exception e) { }
+    catch (Exception e) {
+      // CTR TODO - eliminate catch-all exception handling
+      if (debug) e.printStackTrace();
+    }
   }
 
   /**
@@ -574,7 +577,10 @@ public abstract class BaseTiffReader extends FormatReader {
             setChannelGlobalMinMax(i);
           }
         }
-        catch (Exception e) { }
+        catch (Exception e) {
+          // CTR TODO - eliminate catch-all exception handling
+          if (debug) e.printStackTrace();
+        }
       }
 
       // populate the default display options
@@ -673,6 +679,8 @@ public abstract class BaseTiffReader extends FormatReader {
         p == TiffTools.RGB;
     }
     catch (Exception e) {
+      // CTR TODO - eliminate catch-all exception handling
+      if (debug) e.printStackTrace();
       return TiffTools.getIFDIntValue(ifds[0],
         TiffTools.SAMPLES_PER_PIXEL, true, 0) > 1;
     }

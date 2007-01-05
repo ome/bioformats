@@ -74,7 +74,9 @@ public class ImageJReader extends FormatReader {
       r.exec("opener = new Opener()");
       r.setVar("false", false);
     }
-    catch (Throwable t) { noImageJ = true; }
+    catch (Throwable t) {
+      noImageJ = true;
+    }
   }
 
   // -- FormatReader API methods --

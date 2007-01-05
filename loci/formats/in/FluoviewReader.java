@@ -431,7 +431,10 @@ public class FluoviewReader extends BaseTiffReader {
       }
       currentOrder[series] = order;
     }
-    catch (Exception e) { e.printStackTrace(); }
+    catch (Exception e) {
+      // CTR TODO - eliminate catch-all exception handling
+      if (debug) e.printStackTrace();
+    }
   }
 
   // -- Main method --

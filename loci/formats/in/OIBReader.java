@@ -439,8 +439,13 @@ public class OIBReader extends FormatReader {
       initFile(id);
     }
 
-    try { initMetadata(); }
-    catch (Exception e) { }
+    try {
+      initMetadata();
+    }
+    catch (Exception e) {
+      // CTR TODO - eliminate catch-all exception handling
+      if (debug) e.printStackTrace();
+    }
   }
 
   // -- Helper methods --

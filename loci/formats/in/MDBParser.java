@@ -59,7 +59,9 @@ public class MDBParser {
       r.exec("import mdbtools.libmdb.file");
       r.exec("import mdbtools.libmdb.mem");
     }
-    catch (Throwable exc) { noMDB = true; }
+    catch (Throwable exc) {
+      noMDB = true;
+    }
     return r;
   }
 

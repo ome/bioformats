@@ -57,7 +57,9 @@ public class ND2Reader extends FormatReader {
       r.exec("import jj2000.j2k.fileformat.reader.FileFormatReader");
       r.exec("import jj2000.j2k.io.BEBufferedRandomAccessFile");
     }
-    catch (Throwable exc) { noJAI = true; }
+    catch (Throwable exc) {
+      noJAI = true;
+    }
     return r;
   }
 
@@ -319,7 +321,10 @@ public class ND2Reader extends FormatReader {
                         metadata.put(effectiveKey, value);
                       }
                     }
-                    catch (Exception e) { }
+                    catch (Exception e) {
+                      // CTR TODO - eliminate catch-all exception handling
+                      if (debug) e.printStackTrace();
+                    }
                   }
                 }
                 s = s.substring(s.indexOf("\"", eq + 2) + 1);

@@ -389,7 +389,10 @@ public class LIFReader extends FormatReader {
                   channelMins.add(new Integer((String) tmp.get("Min")));
                   channelMaxs.add(new Integer((String) tmp.get("Maxs")));
                 }
-                catch (Exception e) { }
+                catch (Exception e) {
+                  // CTR TODO - eliminate catch-all exception handling
+                  if (debug) e.printStackTrace();
+                }
               }
             }
             else if (tmp.get("DimensionDescription DimID") != null) {
@@ -427,7 +430,11 @@ public class LIFReader extends FormatReader {
           try {
             token = (String) elements.get(ndx);
           }
-          catch (Exception e) { break; }
+          catch (Exception e) {
+            // CTR TODO - eliminate catch-all exception handling
+            if (debug) e.printStackTrace();
+            break;
+          }
         }
         extraDims.add(new Integer(extras));
         //if (numChannels == 2) numChannels--;

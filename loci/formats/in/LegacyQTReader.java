@@ -232,6 +232,7 @@ public class LegacyQTReader extends FormatReader {
       currentOrder[0] = "XYCTZ";
     }
     catch (Exception e) {
+      // CTR TODO - eliminate catch-all exception handling
       throw new FormatException("Open movie failed", e);
     }
   }

@@ -195,6 +195,8 @@ public class EPSReader extends FormatReader {
             bps = Integer.parseInt(t.nextToken());
           }
           catch (Exception exc) {
+            // CTR TODO - eliminate catch-all exception handling
+            if (debug) exc.printStackTrace();
             channels = Integer.parseInt(t.nextToken());
           }
         }

@@ -208,6 +208,8 @@ public class NikonReader extends BaseTiffReader {
       offset = TiffTools.getIFDIntValue(ifds[0], 330, false, 0);
     }
     catch (Exception e) {
+      // CTR TODO - eliminate catch-all exception handling
+      if (debug) e.printStackTrace();
       long[] array = TiffTools.getIFDLongArray(ifds[0], 330, false);
       offset = (int) array[array.length - 1];
     }
@@ -225,7 +227,10 @@ public class NikonReader extends BaseTiffReader {
       realImage.put(new Integer(TiffTools.COLOR_MAP),
         metadata.get("CFA pattern"));
     }
-    catch (Exception e) { }
+    catch (Exception e) {
+      // CTR TODO - eliminate catch-all exception handling
+      if (debug) e.printStackTrace();
+    }
   }
 
   /* @see BaseTiffReader#initStandardMetadata() */
@@ -291,7 +296,10 @@ public class NikonReader extends BaseTiffReader {
         }
       }
     }
-    catch (Exception io) { }
+    catch (Exception io) {
+      // CTR TODO - eliminate catch-all exception handling
+      if (debug) io.printStackTrace();
+    }
   }
 
   // -- Helper methods --

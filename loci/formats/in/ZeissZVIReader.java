@@ -59,7 +59,9 @@ public class ZeissZVIReader extends FormatReader {
       r.exec("import org.apache.poi.poifs.filesystem.DocumentInputStream");
       r.exec("import java.util.Iterator");
     }
-    catch (Throwable exc) { noPOI = true; }
+    catch (Throwable t) {
+      noPOI = true;
+    }
     return r;
   }
 
@@ -425,13 +427,19 @@ public class ZeissZVIReader extends FormatReader {
       else currentOrder[0] = (zSize > tSize) ? "XYCZT" : "XYCTZ";
     }
     catch (Throwable t) {
+      // CTR TODO - eliminate catch-all exception handling
       needLegacy = true;
       if (debug) t.printStackTrace();
       initFile(id);
     }
 
-    try { initMetadata(); }
-    catch (Exception e) { }
+    try {
+      initMetadata();
+    }
+    catch (Exception e) {
+      // CTR TODO - eliminate catch-all exception handling
+      if (debug) e.printStackTrace();
+    }
   }
 
   // -- Helper methods --
@@ -644,7 +652,11 @@ public class ZeissZVIReader extends FormatReader {
                   value = new String(data, pt, len);
                   pt += len;
                 }
-                catch (Exception e) { return; }
+                catch (Exception e) {
+                  // CTR TODO - eliminate catch-all exception handling
+                  if (debug) e.printStackTrace();
+                  return;
+                }
                 break;
               case 20:
               case 21:
@@ -672,7 +684,11 @@ public class ZeissZVIReader extends FormatReader {
                 try {
                   value = new String(data, oldPt, pt - oldPt);
                 }
-                catch (Exception e) { return; }
+                catch (Exception e) {
+                  // CTR TODO - eliminate catch-all exception handling
+                  if (debug) e.printStackTrace();
+                  return;
+                }
             }
 
             pt += 2;
@@ -709,7 +725,11 @@ public class ZeissZVIReader extends FormatReader {
             String typeDescription = new String(data, pt, len);
             pt += len;
           }
-          catch (Exception e) { break; }
+          catch (Exception e) {
+            // CTR TODO - eliminate catch-all exception handling
+            if (debug) e.printStackTrace();
+            break;
+          }
 
           vt = DataTools.bytesToInt(data, pt, 2, true);
           pt += 2;
@@ -781,7 +801,10 @@ public class ZeissZVIReader extends FormatReader {
                 DataTools.bytesToInt(data, pt + 4, 4, true) == height;
             }
           }
-          catch (Exception e) { }
+          catch (Exception e) {
+            // CTR TODO - eliminate catch-all exception handling
+            if (debug) e.printStackTrace();
+          }
           pt -= 8;
           findFailed = !foundWidth && !foundHeight;
 

@@ -449,8 +449,11 @@ public class IPLabReader extends FormatReader {
         in.read(fourBytes);
         tag = new String(fourBytes);
       }
-      catch (Exception e) { tag = "fini"; }
-
+      catch (Exception e) {
+        // CTR TODO - eliminate catch-all exception handling
+        if (debug) e.printStackTrace();
+        tag = "fini";
+      }
     }
 
     sizeX[0] = width;

@@ -273,7 +273,10 @@ public class AVIReader extends FormatReader {
                 try {
                   in.seek((int) (spos + size));
                 }
-                catch (Exception e) { }
+                catch (Exception e) {
+                  // CTR TODO - eliminate catch-all exception handling
+                  if (debug) e.printStackTrace();
+                }
               }
             }
           }
@@ -320,7 +323,10 @@ public class AVIReader extends FormatReader {
                 try {
                   in.seek((int) (spos + size));
                 }
-                catch (Exception e) { }
+                catch (Exception e) {
+                  // CTR TODO - eliminate catch-all exception handling
+                  if (debug) e.printStackTrace();
+                }
               }
 
               type = readStringBytes();
@@ -436,7 +442,10 @@ public class AVIReader extends FormatReader {
           try {
             in.seek(startPos + 8 + streamSize);
           }
-          catch (Exception e) { }
+          catch (Exception e) {
+            // CTR TODO - eliminate catch-all exception handling
+            if (debug) e.printStackTrace();
+          }
         }
         else if (fcc.equals("movi")) {
           type = readStringBytes();
@@ -498,7 +507,10 @@ public class AVIReader extends FormatReader {
           size = in.readInt();
           in.skipBytes(size);
         }
-        catch (Exception iae) { }
+        catch (Exception iae) {
+          // CTR TODO - eliminate catch-all exception handling
+          if (debug) iae.printStackTrace();
+        }
       }
       pos = in.getFilePointer();
     }
