@@ -253,7 +253,7 @@ public class PrairieReader extends FormatReader {
             while (el.indexOf("=") != -1) {
               int eq = el.indexOf("=");
               String key = el.substring(0, eq);
-                String value = el.substring(eq + 2, el.indexOf("\"", eq + 2));
+              String value = el.substring(eq + 2, el.indexOf("\"", eq + 2));
               if (prefix.equals("File")) {
                 metadata.put(pastPrefix + " " + prefix + " " + fileIndex +
                   " " + key, value);

@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.io.*;
 import java.util.*;
 import loci.formats.*;
@@ -182,9 +183,9 @@ public class LeicaReader extends BaseTiffReader {
     tiff[series][no].setColorTableIgnored(ignoreColorTable);
     BufferedImage b =
       tiff[series][no].openImage((String) files[series].get(no), 0);
-    b = ImageTools.makeBuffered(b,
-      ImageTools.makeColorModel(b.getRaster().getNumBands(),
-      b.getRaster().getTransferType(), validBits[series]));
+    ColorModel cm = ImageTools.makeColorModel(b.getRaster().getNumBands(),
+      b.getRaster().getTransferType(), validBits[series]);
+    b = ImageTools.makeBuffered(b, cm);
     tiff[series][no].close();
     return b;
   }

@@ -468,13 +468,13 @@ public class FileStitcher implements IFormatReader {
   }
 
   /* @see IFormatReader#swapDimensions(String, String) */
-  public void swapDimensions(String id, String order)
+  public void swapDimensions(String id, String dimOrder)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    this.order[getSeries(id)] = order;
+    order[getSeries(id)] = dimOrder;
     String f0 = files[0];
-    reader.swapDimensions(f0, order);
+    reader.swapDimensions(f0, dimOrder);
     sizeZ[getSeries(id)] = reader.getSizeZ(f0);
     sizeC[getSeries(id)] = reader.getSizeC(f0);
     sizeT[getSeries(id)] = reader.getSizeT(f0);

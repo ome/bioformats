@@ -287,7 +287,6 @@ public final class TiffTools {
    * @param tag the tag of the entry to be retrieved.
    * @return an object representing the entry's fields.
    * @throws IOException when there is an error accessing the stream <i>in</i>.
-   * @throws UnknownTagException if the <i>tag</i> is not found or unknown.
    */
   public static TiffIFDEntry getFirstIFDEntry(RandomAccessStream in, int tag)
     throws IOException
@@ -321,9 +320,9 @@ public final class TiffTools {
 
       // Parse the entry's "ValueCount"
       int valueCount = in.readInt();
-      if (valueCount < 0)
-        throw new RuntimeException(
-            "Count of '" + valueCount + "' unexpected.");
+      if (valueCount < 0) {
+        throw new RuntimeException("Count of '" + valueCount + "' unexpected.");
+      }
 
       // Parse the entry's "ValueOffset"
       int valueOffset = in.readInt();

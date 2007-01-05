@@ -342,8 +342,8 @@ public class ND2Reader extends FormatReader {
 
     if (sizeX[0] == 0 || sizeY[0] == 0) {
       String s = (String) metadata.get("ReportObjects " +
-       "_DOCTYPE=\"ReportObjectsDocument\" _VERSION=\"1.100000\" " +
-       "Container page_size");
+        "_DOCTYPE=\"ReportObjectsDocument\" _VERSION=\"1.100000\" " +
+        "Container page_size");
       if (s != null) {
         String x = s.substring(1, s.indexOf(","));
         sizeX[0] = (int) Float.parseFloat(x);
@@ -466,11 +466,17 @@ public class ND2Reader extends FormatReader {
       int bpp = validBits[0];
       while (bpp % 8 != 0) bpp++;
       switch (bpp) {
-        case 8: pixelType[0] = FormatReader.UINT8; break;
-        case 16: pixelType[0] = FormatReader.UINT16; break;
-        case 32: pixelType[0] = FormatReader.UINT32; break;
+        case 8:
+          pixelType[0] = FormatReader.UINT8;
+          break;
+        case 16:
+          pixelType[0] = FormatReader.UINT16;
+          break;
+        case 32:
+          pixelType[0] = FormatReader.UINT32;
+          break;
         default:
-          throw new FormatException("Unsupported bits per pixel : " + bpp);
+          throw new FormatException("Unsupported bits per pixel: " + bpp);
       }
 
     }

@@ -37,14 +37,14 @@ public class LZWTreeNode {
   protected LZWTreeNode[] children;
 
   /** Code corresponding to this node. */
-  protected int code;
+  protected int theCode;
 
   // -- Constructor --
 
   /** Constructs a new LZW symbol tree node. */
   public LZWTreeNode(int code) {
     children = new LZWTreeNode[256];
-    this.code = code;
+    theCode = code;
   }
 
   // -- LZWTreeNode API methods --
@@ -56,7 +56,7 @@ public class LZWTreeNode {
 
   /** Gets the code corresponding to this node. */
   public int getCode() {
-    return code;
+    return theCode;
   }
 
   /** Gets this node's indexth child. */
@@ -74,7 +74,7 @@ public class LZWTreeNode {
   /** Gets the code for the given byte sequence, or -1 if none. */
   public int codeFromString(ByteVector string) {
     LZWTreeNode node = nodeFromString(string);
-    return node == null ? -1 : node.code;
+    return node == null ? -1 : node.theCode;
   }
 
   /** Gets the node for the given byte sequence, or null if none. */

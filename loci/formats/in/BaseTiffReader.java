@@ -446,7 +446,8 @@ public abstract class BaseTiffReader extends FormatReader {
 
     int p = TiffTools.getIFDIntValue(ifd, TiffTools.PHOTOMETRIC_INTERPRETATION);
     if (!ignoreColorTable &&
-      (p == TiffTools.RGB_PALETTE || p == TiffTools.CFA_ARRAY)) {
+      (p == TiffTools.RGB_PALETTE || p == TiffTools.CFA_ARRAY))
+    {
       numC = 3;
       bps *= 3;
     }
@@ -497,7 +498,8 @@ public abstract class BaseTiffReader extends FormatReader {
           case 32:
             pixelType[0] = FormatReader.INT32;
             break;
-          default: pixelType[0] = FormatReader.UINT8;
+          default:
+            pixelType[0] = FormatReader.UINT8;
         }
       }
       else {
@@ -511,7 +513,8 @@ public abstract class BaseTiffReader extends FormatReader {
           case 32:
             pixelType[0] = FormatReader.UINT32;
             break;
-          default: pixelType[0] = FormatReader.UINT8;
+          default:
+            pixelType[0] = FormatReader.UINT8;
         }
       }
 

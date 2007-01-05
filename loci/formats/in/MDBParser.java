@@ -27,8 +27,8 @@ package loci.formats.in;
 import java.util.*;
 import loci.formats.*;
 
-/** Parse table structure for a specified MDB file */
-public class MDBParser {
+/** Utility class for parsing MDB database files. */
+public final class MDBParser {
 
   // -- Constants --
 
@@ -65,6 +65,13 @@ public class MDBParser {
     return r;
   }
 
+  // -- Constructor --
+
+  private MDBParser() { }
+
+  // -- Utility methods --
+
+  /** Parses table structure for a specified MDB file. */
   public static void parseDatabase(String filename, Hashtable h)
     throws FormatException
   {
@@ -167,4 +174,5 @@ public class MDBParser {
       re.printStackTrace();
     }
   }
+
 }

@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.io.*;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -157,9 +158,9 @@ public class OIFReader extends FormatReader {
 
     tiffReader[no].setColorTableIgnored(ignoreColorTable);
     BufferedImage b = tiffReader[no].openImage((String) tiffs.get(no), 0);
-    b = ImageTools.makeBuffered(b,
-      ImageTools.makeColorModel(b.getRaster().getNumBands(),
-      b.getRaster().getTransferType(), validBits));
+    ColorModel cm = ImageTools.makeColorModel(b.getRaster().getNumBands(),
+      b.getRaster().getTransferType(), validBits);
+    b = ImageTools.makeBuffered(b, cm);
     tiffReader[no].close();
     return b;
   }

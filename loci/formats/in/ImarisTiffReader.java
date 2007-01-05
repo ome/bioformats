@@ -175,16 +175,28 @@ public class ImarisTiffReader extends BaseTiffReader {
     if (bitFormat == 3) pixelType[0] = FormatReader.FLOAT;
     else if (bitFormat == 2) {
       switch (bitsPerSample) {
-        case 8: pixelType[0] = FormatReader.INT8; break;
-        case 16: pixelType[0] = FormatReader.INT16; break;
-        case 32: pixelType[0] = FormatReader.INT32; break;
+        case 8:
+          pixelType[0] = FormatReader.INT8;
+          break;
+        case 16:
+          pixelType[0] = FormatReader.INT16;
+          break;
+        case 32:
+          pixelType[0] = FormatReader.INT32;
+          break;
       }
     }
     else {
       switch (bitsPerSample) {
-        case 8: pixelType[0] = FormatReader.UINT8; break;
-        case 16: pixelType[0] = FormatReader.UINT16; break;
-        case 32: pixelType[0] = FormatReader.UINT32; break;
+        case 8:
+          pixelType[0] = FormatReader.UINT8;
+          break;
+        case 16:
+          pixelType[0] = FormatReader.UINT16;
+          break;
+        case 32:
+          pixelType[0] = FormatReader.UINT32;
+          break;
       }
     }
 
