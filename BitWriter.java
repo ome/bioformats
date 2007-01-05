@@ -21,8 +21,9 @@ You should have received a copy of the GNU Library General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 package loci.formats;
+
+import java.util.*;
 
 /**
  * A class for writing arbitrary numbers of bits to a byte array.
@@ -75,6 +76,35 @@ public class BitWriter {
     }
   }
 
+  /**
+   *  Writes the bits represented by a bit string to the buffer.
+   *  All characters in the string must be 0 or 1, or this will
+   *  throw an IllegalArgumentException */
+   
+  public void write(String bitString) {
+    for(int i = 0; i < bitString.length(); i++) {
+      if('1' == bitString.charAt(i)) {
+        int b = 1 << (7 - bit);
+        buf[index] |= b;
+      } else if('0' != bitString.charAt(i)) {
+        throw new IllegalArgumentException(bitString.charAt(i) + "found at "
+            + "character " + i + "; 0 or 1 expected. Write only partially "
+            + "completed.");
+      }
+      bit++;
+      if (bit > 7) {
+        bit = 0;
+        index++;
+        if (index >= buf.length) {
+          // buffer is full; increase the size
+          byte[] newBuf = new byte[buf.length * 2];
+          System.arraycopy(buf, 0, newBuf, 0, buf.length);
+          buf = newBuf;
+        }
+      }
+    }
+  }
+
   /** Gets an array containing all bits written thus far. */
   public byte[] toByteArray() {
     int size = index;
@@ -89,7 +119,6 @@ public class BitWriter {
   /** Tests the BitWriter class. */
   public static void main(String[] args) {
     int max = 50000;
-
     // randomize values
     System.out.println("Generating random list of " + max + " values");
     int[] values = new int[max];
@@ -114,6 +143,27 @@ public class BitWriter {
       if (value != values[i]) {
         System.out.println("Value #" + i + " does not match (got " +
           value + "; expected " + values[i] + "; " + bits[i] + " bits)");
+      }
+    }
+    
+    // Testing string functionality
+    Random r = new Random();
+    System.out.println("Generating 5000 random bits for String test");
+    StringBuffer sb = new StringBuffer(5000);
+    for(int i = 0; i < 5000; i++) {
+      sb.append(r.nextInt(2));
+    }
+    out = new BitWriter();
+    System.out.println("Writing values to byte array");
+    out.write(sb.toString());
+    System.out.println("Reading values from byte array");
+    bb = new BitBuffer(out.toByteArray());
+    for(int i = 0; i < 5000; i++) {
+      int value = bb.getBits(1);
+      int expected = (sb.charAt(i) == '1') ? 1 : 0;
+      if(value != expected) {
+        System.out.println("Bit #" + i + " does not match (got " + value +
+          "; expected " + expected + ".");
       }
     }
   }
