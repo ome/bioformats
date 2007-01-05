@@ -141,7 +141,7 @@ public class TransientSelectBox {
       outField.setSamples(outlineRangeSamples);
   
       wholeTeam = new DataImpl[] {inField, outField};
-      ret = new Tuple (wholeTeam);
+      ret = new Tuple (wholeTeam, false);
     }
     catch (VisADException exc) { exc.printStackTrace(); }
     catch (RemoteException exc) { exc.printStackTrace(); }
@@ -150,4 +150,16 @@ public class TransientSelectBox {
 
   /** Whether this select box is visible */
   public boolean isVisible() { return visible; }
+
+  /** Gets X coordinate of the overlay's first endpoint. */
+  public float getX1() { return x1; } 
+
+  /** Gets X coordinate of the overlay's second endpoint. */
+  public float getX2() { return x2; } 
+  
+  /** Gets Y coordinate of the overlay's second endpoint. */
+  public float getY1() { return y1; } 
+  
+  /** Gets Y coordinate of the overlay's first endpoint. */
+  public float getY2() { return y2; } 
 }

@@ -43,11 +43,18 @@ public class PointerTool extends OverlayTool {
   /** The selection box which may be created by this tool */
   protected TransientSelectBox select;
 
+  /** Array of OverlayObjects at current dimensional position */
+  protected OverlayObject[] objs;
+
+  /** Array of the bounds of the OverlayObjects at the current dimensional position */
+  protected float[][] bounds;
+
   // -- Constructor --
 
   /** Constructs an overlay manipulation tool. */
   public PointerTool(OverlayTransform overlay) {
     super(overlay, "Pointer", "Pointer", "pointer.png");
+    bounds = null;
   }
 
   // -- OverlayTool API methods --
@@ -58,23 +65,38 @@ public class PointerTool extends OverlayTool {
     boolean ctrl = (mods & InputEvent.CTRL_MASK) != 0;
 
     // pick nearest object
-    OverlayObject[] obj = overlay.getObjects(pos);
+    objs = overlay.getObjects(pos);
+    bounds = new float[objs.length][4];
+
     double dist = Double.POSITIVE_INFINITY;
     int ndx = -1;
-    for (int i=0; i<obj.length; i++) {
-      double d = obj[i].getDistance(x, y);
+    for (int i=0; i<objs.length; i++) {
+      double d = objs[i].getDistance(x, y);
       if (d < dist) {
         dist = d;
         ndx = i;
       }
+
+      // assemble array of distances
+      float[] bound = new float[4];
+      bound[0] = objs[i].getX();
+      bound[1] = objs[i].getY();
+      if (objs[i].hasEndpoint2()) {
+        bound[2] = objs[i].getX2();
+        bound[3] = objs[i].getY2();
+      } else {
+        bound[2] = bound[0];
+        bound[3] = bound[1];
+      }
+      bounds[i] = bound; 
     }
 
     double threshold = 0.02 * overlay.getScalingValue();
-    boolean selected = dist < threshold && obj[ndx].isSelected();
+    boolean selected = dist < threshold && objs[ndx].isSelected();
     
     if (!shift && !ctrl) {
       // deselect all previously selected objects
-      for (int i=0; i<obj.length; i++) obj[i].setSelected(false);
+      for (int i=0; i<objs.length; i++) objs[i].setSelected(false);
     }
 
     if (dist < threshold) {
@@ -85,7 +107,7 @@ public class PointerTool extends OverlayTool {
         grabY = y;
       }
       // select (or deselect) picked object
-      obj[ndx].setSelected(ctrl ? !selected : true);
+      objs[ndx].setSelected(ctrl ? !selected : true);
     } else {
       // record location of click
       downX = x;
@@ -136,6 +158,41 @@ public class PointerTool extends OverlayTool {
     } else if (select != null) {
       // extend selection box
       select.setCorner (x, y);
+
+      // select objects inside the box
+      for (int i=0; i<bounds.length; i++) {
+        float bx1, bx2, by1, by2;
+        float tx1, tx2, ty1, ty2;
+        float ox1, ox2, oy1, oy2;
+        
+        ox1 = bounds[i][0];
+        oy1 = bounds[i][1];
+        ox2 = bounds[i][2];
+        oy2 = bounds[i][3];
+
+        // un-oriented (disoriented?) box coordinates
+        tx1 = select.getX1();
+        tx2 = select.getX2();
+        ty1 = select.getY1();
+        ty2 = select.getY2();
+
+        // assign oriented coordinates of seletion box
+        if (tx1 < tx2) { bx1 = tx1; bx2 = tx2; }
+        else { bx1 = tx2; bx2 = tx1; }
+        if (ty1 < ty2) { by1 = ty1; by2 = ty2; }
+        else { by1 = ty2; by2 = ty1; }
+
+        System.out.println ("TSB coords: ("+tx1+","+ty1+"),("+tx2+","+ty2+")");
+        System.out.println ("TSB adjust: ("+bx1+","+by1+"),("+bx2+","+by2+")");
+        System.out.println ("Object coords: ("+ox1+","+oy1+"),("+ox2+","+oy2+")");
+
+        // determine whether object i is inside or outside of selection box 
+        if (bx1 < ox1 && ox1 < bx2 && 
+            bx1 < ox2 && ox2 < bx2 &&
+            by1 < oy1 && oy1 < by2 &&
+            by1 < oy2 && oy2 < by2 ) objs[i].setSelected(true);
+        else objs[i].setSelected (false);
+      }
       overlay.notifyListeners(new TransformEvent(overlay));
     }
   }
