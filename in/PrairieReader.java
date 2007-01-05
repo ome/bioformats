@@ -77,9 +77,22 @@ public class PrairieReader extends FormatReader {
   public boolean isThisType(String name, boolean open) {
     if (!super.isThisType(name, open)) return false; // check extension
 
+    // check if there is an XML file in the same directory
+    File f = new File(name);
+    f = f.getAbsoluteFile();
+    File parent = f.getParentFile();
+    FileFilter ff = new FileFilter() {
+      public boolean accept(File pathname) {
+        String path = pathname.getPath().toLowerCase();
+        return path.endsWith(".xml");
+      }
+    };
+    File[] listing = parent.listFiles(ff);
+    boolean xml = listing.length > 0;
+
     // just checking the filename isn't enough to differentiate between
     // Prairie and regular TIFF; open the file and check more thoroughly
-    return open ? checkBytes(getMappedId(name), 524304) : true;
+    return open ? checkBytes(getMappedId(name), 524304) && xml : xml;
   }
 
   // -- FormatReader API methods --
