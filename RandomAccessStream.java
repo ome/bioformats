@@ -88,19 +88,25 @@ public class RandomAccessStream extends InputStream implements DataInput {
    * around the given file.
    */
   public RandomAccessStream(String file) throws IOException {
-    raf = new RAFile(file, "r");
-    dis = new DataInputStream(new BufferedInputStream(
-      new FileInputStream(file), MAX_OVERHEAD));
+    File f = new File(file);
+    if (f.exists()) {
+      raf = new RAFile(file, "r");
+      dis = new DataInputStream(new BufferedInputStream(
+        new FileInputStream(file), MAX_OVERHEAD));
+      int len = (int) raf.length();
+      buf = new byte[len < MAX_OVERHEAD ? len : MAX_OVERHEAD];
+      raf.readFully(buf);
+      raf.seek(0);
+      recent = new Vector();
+      recent.add(new Integer(MAX_OVERHEAD / 2));
+      nextMark = MAX_OVERHEAD;
+    }
+    else {
+      raf = new RAUrl(file, "r");
+    }
     this.file = file;
     fp = 0;
     afp = 0;
-    int len = (int) raf.length();
-    buf = new byte[len < MAX_OVERHEAD ? len : MAX_OVERHEAD];
-    raf.readFully(buf);
-    raf.seek(0);
-    recent = new Vector();
-    recent.add(new Integer(MAX_OVERHEAD / 2));
-    nextMark = MAX_OVERHEAD;
   }
 
   /** Constructs a random access stream around the given byte array. */
