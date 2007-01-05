@@ -642,8 +642,8 @@ public class ZeissLSMReader extends BaseTiffReader {
 
       in.seek(pos);
     }
-    catch (FormatException e) { e.printStackTrace(); }
-    catch (IOException e) { e.printStackTrace(); }
+    catch (FormatException e) { if (debug) e.printStackTrace(); }
+    catch (IOException e) { if (debug) e.printStackTrace(); }
     catch (Exception e) { }
 
     sizeZ[0] = zSize > 0 ? zSize : 1;
