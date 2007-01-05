@@ -63,9 +63,9 @@ public class TiffWriter extends FormatWriter {
     if (!id.equals(currentId)) {
       close();
       currentId = id;
-      out = 
+      out =
         new BufferedOutputStream(new FileOutputStream(currentId, true), 4096);
-      
+
       RandomAccessStream tmp = new RandomAccessStream(currentId);
       if (tmp.length() == 0) {
         DataOutputStream dataOut = new DataOutputStream(out);

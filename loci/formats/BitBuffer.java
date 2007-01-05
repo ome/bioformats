@@ -121,18 +121,18 @@ public class BitBuffer {
     }
     return toStore;
   }
-  
+
   /**
    * Testing method
    * @param args Ignored.
    */
-  
+
   public static void main(String args[]) {
     int trials = 50000;
     int[] nums = new int[trials];
     int[] len = new int[trials];
     BitWriter bw = new BitWriter();
-    
+
     Random r = new Random();
     System.out.println("Generating " + trials + " trials.");
     System.out.println("Writing to byte array");

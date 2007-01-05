@@ -187,12 +187,12 @@ public class QTWriter extends FormatWriter {
     pad = (4 - pad) % 4;
 
     int bytesPerPixel = byteData[0].length / (width * height);
-    
+
     if (bytesPerPixel > 1) {
-      throw new FormatException("Unsupported bits per pixel : " + 
+      throw new FormatException("Unsupported bits per pixel : " +
         (8 * bytesPerPixel) + ".");
     }
-    
+
     pad *= bytesPerPixel;
 
     byte[][] temp = byteData;
@@ -243,7 +243,7 @@ public class QTWriter extends FormatWriter {
 
         DataTools.writeInt(out, 8, false);
         DataTools.writeString(out, "wide");
-      
+
         DataTools.writeInt(out, numBytes + 8, false);
         DataTools.writeString(out, "mdat");
       }
@@ -251,7 +251,7 @@ public class QTWriter extends FormatWriter {
         out.seek(byteCountOffset);
         numBytes = (int) DataTools.read4UnsignedBytes(out, false) - 8;
         numWritten = numBytes / (byteData[0].length * byteData.length);
-        
+
         numBytes += byteData.length * byteData[0].length;
 
         out.seek(byteCountOffset);
@@ -262,13 +262,13 @@ public class QTWriter extends FormatWriter {
             new Integer(16 + i * byteData.length * byteData[0].length));
         }
 
-        out.seek(out.length()); 
+        out.seek(out.length());
       }
-      
+
       // -- write the first plane of pixel data (mdat) --
 
       offsets.add(new Integer((int) out.length()));
-      
+
       numWritten++;
 
       for (int i=0; i<byteData.length; i++) {
@@ -284,7 +284,7 @@ public class QTWriter extends FormatWriter {
 
       // write this plane's pixel data
       out.seek(out.length());
-    
+
       for (int i=0; i<byteData.length; i++) {
         out.write(byteData[i]);
       }
@@ -296,7 +296,7 @@ public class QTWriter extends FormatWriter {
     if (last) {
       int timeScale = 100;
       int duration = numWritten * (timeScale / fps);
-      int bitsPerPixel = (byteData.length > 1) ? bytesPerPixel * 24 : 
+      int bitsPerPixel = (byteData.length > 1) ? bytesPerPixel * 24 :
         bytesPerPixel * 8 + 32;
       int channels = (bitsPerPixel >= 40) ? 1 : 3;
 
@@ -319,7 +319,7 @@ public class QTWriter extends FormatWriter {
       out.write(new byte[] {0, 1, 0, 0});  // preferred rate & volume
       out.write(new byte[] {0, -1, 0, 0, 0, 0, 0, 0, 0, 0}); // reserved
 
-      // 3x3 matrix - tells reader how to rotate image  
+      // 3x3 matrix - tells reader how to rotate image
 
       DataTools.writeInt(out, 1, false);
       DataTools.writeInt(out, 0, false);
@@ -365,7 +365,7 @@ public class QTWriter extends FormatWriter {
 
       DataTools.writeInt(out, 0, false); // unknown
 
-      // 3x3 matrix - tells reader how to rotate the image 
+      // 3x3 matrix - tells reader how to rotate the image
 
       DataTools.writeInt(out, 1, false);
       DataTools.writeInt(out, 0, false);
@@ -557,7 +557,7 @@ public class QTWriter extends FormatWriter {
       DataTools.writeInt(out, numWritten, false); // number of planes
       for (int i=0; i<numWritten; i++) {
         // sample size
-        DataTools.writeInt(out, channels*height*(width+pad)*bytesPerPixel, 
+        DataTools.writeInt(out, channels*height*(width+pad)*bytesPerPixel,
           false);
       }
 

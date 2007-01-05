@@ -81,7 +81,7 @@ public abstract class ImageIOWriter extends FormatWriter {
     }
     out = new DataOutputStream(new BufferedOutputStream(
       new FileOutputStream(id), 4096));
-    ImageIO.write(img, kind, out); 
+    ImageIO.write(img, kind, out);
   }
 
   /* @see IFormatWriter#close() */

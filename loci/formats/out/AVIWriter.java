@@ -114,7 +114,7 @@ public class AVIWriter extends FormatWriter {
       raFile = new RandomAccessFile(file, "rw");
       raFile.seek(raFile.length());
       saveFileSize = 4;
-      saveLIST1Size = 16; 
+      saveLIST1Size = 16;
       saveLIST1subSize = 23 * 4;
       frameOffset = 44;
       frameOffset2 = 35 * 4;
@@ -265,7 +265,7 @@ public class AVIWriter extends FormatWriter {
 
         //  dwRate - frame rate for video streams
         DataTools.writeInt(raFile, fps, true);
-  
+
         // dwStart - this field is usually set to zero
         DataTools.writeInt(raFile, 0, true);
 
