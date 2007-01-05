@@ -23,6 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 package loci.formats;
+// Used in main method test.
+import loci.formats.BitWriter;
+import java.util.Random;
 
 /**
  * A class for reading arbitrary numbers of bits from a byte array.
@@ -30,10 +33,12 @@ package loci.formats;
  */
 public class BitBuffer {
 
+  // Various bitmasks for the 0000xxxx side of a byte
   private static final int[] BACK_MASK = {
-    0x0000, 0x0001, 0x0003, 0x0007, 0x000F, 0x001F, 0x003F, 0x007F
+    0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F
   };
 
+  // Various bitmasks for the xxxx0000 side of a byte
   private static final int[] FRONT_MASK = {
     0x0000, 0x0080, 0x00C0, 0x00E0, 0x00F0, 0x00F8, 0x00FC, 0x00FE
   };
@@ -44,6 +49,9 @@ public class BitBuffer {
   private int eofByte;
   private boolean eofFlag;
 
+  /**
+   *  Default constructor.
+   */
   public BitBuffer(byte[] byteBuffer) {
     this.byteBuffer = byteBuffer;
     currentByte = 0;
@@ -51,20 +59,41 @@ public class BitBuffer {
     eofByte = byteBuffer.length;
   }
 
+  /**
+   * Returns an int value representing the value of the bits read from
+   * the byte array, from the current position. Bits are extracted from the
+   * "left side" or high side of the byte.<p>
+   * The current position is modified by this call.<p>
+   * Bits are pushed into the int from the right, endianness is not
+   * considered by the method on its own. So, if 5 bits were read from the
+   * buffer "10101", the int would be the integer representation of
+   * 000...0010101 on the target machine. <p>
+   * In general, this also means the result will be positive unless a full
+   * 32 bits are read. <p>
+   * Requesting more than 32 bits is allowed, but only up to 32 bits worth of
+   * data will be returned (the last 32 bits read). <p>
+   *
+   * @param bitsToRead the number of bits to read from the bit buffer
+   * @return the value of the bits read
+   */
   public int getBits(int bitsToRead) {
     if (bitsToRead == 0) return 0;
     if (eofFlag) return -1; // Already at end of file
     int toStore = 0;
     while (bitsToRead != 0 && !eofFlag) {
+      // if we need to read from more than the current byte in the buffer...
       if (bitsToRead >= 8 - currentBit) {
-        if (currentBit == 0) { // special
+        if (currentBit == 0) {
+          // we can read in a whole byte, so we'll do that.
           toStore = toStore << 8;
           int cb = ((int) byteBuffer[currentByte]);
           toStore += (cb<0 ? (int) 256 + cb : (int) cb);
           bitsToRead -= 8;
           currentByte++;
-        }
-        else {
+        } else {
+          // otherwise, only read the appropriate number of bits off the back
+          // side of the byte, in order to "finish" the current byte in the
+          // buffer.
           toStore = toStore << (8 - currentBit);
           toStore += ((int)
             byteBuffer[currentByte]) & BACK_MASK[8 - currentBit];
@@ -72,8 +101,10 @@ public class BitBuffer {
           currentBit = 0;
           currentByte++;
         }
-      }
-      else {
+      } else {
+        // We will be able to finish using the current byte.
+        // read the appropriate number of bits off the front side of the byte,
+        // then push them into the int.
         toStore = toStore << bitsToRead;
         int cb = ((int) byteBuffer[currentByte]);
         cb = (cb<0 ? (int) 256 + cb : (int) cb);
@@ -82,6 +113,7 @@ public class BitBuffer {
         currentBit += bitsToRead;
         bitsToRead = 0;
       }
+      // If we reach the end of the buffer, return what we currently have.
       if (currentByte == eofByte) {
         eofFlag = true;
         return toStore;
@@ -89,5 +121,46 @@ public class BitBuffer {
     }
     return toStore;
   }
-
+  
+  /**
+   * Testing method
+   * @param args Ignored.
+   */
+  
+  public static void main(String args[]) {
+    int trials = 50000;
+    int[] nums = new int[trials];
+    int[] len = new int[trials];
+    BitWriter bw = new BitWriter();
+    
+    Random r = new Random();
+    System.out.println("Generating " + trials + " trials.");
+    System.out.println("Writing to byte array");
+    // we want the trials to be able to be all possible bit lengths.
+    // r.nextInt() by itself is not sufficient... in 50000 trials it would be
+    // extremely unlikely to produce bit strings of 1 bit.
+    // instead, we randomly choose from 0 to 2^(i % 32).
+    // Except, 1 << 31 is a negative number in two's complement, so we make it
+    // a random number in the entire range.
+    for(int i = 0; i < trials; i++) {
+      if(31 == i % 32) {
+        nums[i] = r.nextInt();
+      } else {
+        nums[i] = r.nextInt(1 << (i % 32));
+      }
+      // How many bits are required to represent this number?
+      len[i] = (Integer.toBinaryString(nums[i])).length();
+      bw.write(nums[i], len[i]);
+    }
+    BitBuffer bb = new BitBuffer(bw.toByteArray());
+    int readint;
+    System.out.println("Reading from BitBuffer");
+    for(int i = 0; i < trials; i++) {
+      readint = bb.getBits(len[i]);
+      if(readint != nums[i]) {
+        System.out.println("Error at #" + i + ": " + readint + " received, " +
+                           nums[i] + " expected.");
+      }
+    }
+  }
 }
