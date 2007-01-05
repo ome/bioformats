@@ -194,9 +194,7 @@ public class RAUrl implements IRandomAccess {
 
   /* @see DataInput#readLine() */
   public String readLine() throws IOException {
-    String s = is.readLine();
-    fp += s.length();
-    return s;
+    throw new IOException("Unimplemented");
   }
 
   /* @see DataInput#readLong() */
