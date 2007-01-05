@@ -60,10 +60,10 @@ public class RAUrl implements IRandomAccess {
 
   // -- Constructors --
 
-  public RAUrl(String url, String mode) 
-    throws MalformedURLException, IOException 
+  public RAUrl(String url, String mode)
+    throws MalformedURLException, IOException
   {
-    conn = (HttpURLConnection) (new URL(url)).openConnection(); 
+    conn = (HttpURLConnection) (new URL(url)).openConnection();
     if (mode.equals("r")) is = new DataInputStream(conn.getInputStream());
     else if (mode.equals("w")) {
       conn.setDoOutput(true);
@@ -124,7 +124,7 @@ public class RAUrl implements IRandomAccess {
   public void seek(long pos) throws IOException {
     if (pos < fp) {
       close();
-      conn = (HttpURLConnection) (new URL(url)).openConnection(); 
+      conn = (HttpURLConnection) (new URL(url)).openConnection();
       conn.setDoOutput(true);
       if (is != null) is = new DataInputStream(conn.getInputStream());
       if (os != null) os = new DataOutputStream(conn.getOutputStream());
@@ -139,11 +139,11 @@ public class RAUrl implements IRandomAccess {
 
   /* @see IRandomAccess#setLength(long) */
   public void setLength(long newLength) throws IOException {
-    length = newLength;    
+    length = newLength;
   }
 
   // -- DataInput API methods --
-  
+
   /* @see DataInput#readBoolean() */
   public boolean readBoolean() throws IOException {
     fp++;

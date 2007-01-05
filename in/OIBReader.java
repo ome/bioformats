@@ -539,7 +539,7 @@ public class OIBReader extends FormatReader {
         }
         else if (TiffTools.checkHeader(b) != null) {
           // this is an actual image plane
-          
+
           RandomAccessStream ras = new RandomAccessStream(data);
           Hashtable ifd = TiffTools.getIFDs(ras)[0];
           ras.close();
@@ -593,8 +593,8 @@ public class OIBReader extends FormatReader {
               String key = line.substring(0, line.indexOf("=")).trim();
               String value = line.substring(line.indexOf("=") + 1).trim();
 
-              if (prefix.equals("[FileInformation] - ") && 
-                key.equals("Resolution")) 
+              if (prefix.equals("[FileInformation] - ") &&
+                key.equals("Resolution"))
               {
                 int max = Integer.parseInt(value);
                 int bytes = ((Integer) bpp.get(0)).intValue();
@@ -605,7 +605,7 @@ public class OIBReader extends FormatReader {
                 }
               }
 
-              if (prefix.indexOf("Red") == -1 && 
+              if (prefix.indexOf("Red") == -1 &&
                 prefix.indexOf("Green") == -1 && prefix.indexOf("Blue") == -1)
               {
                 metadata.put(prefix + key, value);

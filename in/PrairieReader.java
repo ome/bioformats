@@ -30,7 +30,7 @@ import java.util.*;
 import loci.formats.*;
 
 /**
- * PrairieReader is the file format reader for 
+ * PrairieReader is the file format reader for
  * Prairie Technologies' TIFF variant.
  */
 public class PrairieReader extends FormatReader {
@@ -44,7 +44,7 @@ public class PrairieReader extends FormatReader {
   private static final int PRAIRIE_TAG_1 = 33628;
   private static final int PRAIRIE_TAG_2 = 33629;
   private static final int PRAIRIE_TAG_3 = 33630;
- 
+
   // -- Fields --
 
   /** Number of images */
@@ -108,7 +108,7 @@ public class PrairieReader extends FormatReader {
     boolean little = (block[0] == 0x49 && block[1] == 0x49);
 
     int ifdlocation = DataTools.bytesToInt(block, 4, little);
-    
+
     if (ifdlocation < 0) return false;
     else if (ifdlocation + 1 > block.length) return true;
     else {
@@ -120,8 +120,8 @@ public class PrairieReader extends FormatReader {
         else {
           int ifdtag = DataTools.bytesToInt(block,
             ifdlocation + 2 + (i*12), 2, little);
-          if (ifdtag == PRAIRIE_TAG_1 || ifdtag == PRAIRIE_TAG_2 || 
-            ifdtag == PRAIRIE_TAG_3) 
+          if (ifdtag == PRAIRIE_TAG_1 || ifdtag == PRAIRIE_TAG_2 ||
+            ifdtag == PRAIRIE_TAG_3)
           {
             return true;
           }
@@ -166,7 +166,7 @@ public class PrairieReader extends FormatReader {
   }
 
   /* @see IFormatReader#openBytes(String, int) */
-  public byte[] openBytes(String id, int no) 
+  public byte[] openBytes(String id, int no)
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
@@ -184,7 +184,7 @@ public class PrairieReader extends FormatReader {
     if (no < 0 || no >= getImageCount(id)) {
       throw new FormatException("Invalid image number: " + no);
     }
-    return tiff.openImage(files[no], 0); 
+    return tiff.openImage(files[no], 0);
   }
 
   /* @see IFormatReader#close() */
@@ -200,10 +200,10 @@ public class PrairieReader extends FormatReader {
   /* @see IFormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("initFile(" + id + ")");
-    
+
     if (id.endsWith("xml") || id.endsWith("cfg")) {
       // we have been given the XML file that lists TIFF files (best case)
-  
+
       if (id.endsWith("xml")) {
         super.initFile(id);
         tiff = new TiffReader();
@@ -247,7 +247,7 @@ public class PrairieReader extends FormatReader {
             zt++;
             fileIndex = 1;
           }
-        
+
           if (!prefix.equals("Key") && !prefix.equals("Frame")) {
             el = el.substring(el.indexOf(" ") + 1);
             while (el.indexOf("=") != -1) {
@@ -262,7 +262,7 @@ public class PrairieReader extends FormatReader {
               else metadata.put(pastPrefix + " " + prefix + " " + key, value);
               el = el.substring(el.indexOf("\"", eq + 2) + 1).trim();
               if (prefix.equals("File") && key.equals("filename")) {
-                f.add(value); 
+                f.add(value);
               }
             }
           }
@@ -270,7 +270,7 @@ public class PrairieReader extends FormatReader {
             int keyIndex = el.indexOf("key") + 5;
             int valueIndex = el.indexOf("value") + 7;
             String key = el.substring(keyIndex, el.indexOf("\"", keyIndex));
-            String value = 
+            String value =
               el.substring(valueIndex, el.indexOf("\"", valueIndex));
             metadata.put(key, value);
           }
@@ -289,7 +289,7 @@ public class PrairieReader extends FormatReader {
         files = new String[f.size()];
         f.copyInto(files);
 
-        boolean isZ = 
+        boolean isZ =
           ((String) metadata.get("PVScan Sequence type")).equals("ZSeries");
         if (zt == 0) zt = 1;
 
@@ -300,12 +300,12 @@ public class PrairieReader extends FormatReader {
         sizeC[0] = numImages / (sizeZ[0] * sizeT[0]);
         currentOrder[0] = "XYC" + (isZ ? "ZT" : "TZ");
         pixelType[0] = FormatReader.UINT16;
-      
-        float pixSizeX = 
+
+        float pixSizeX =
           Float.parseFloat((String) metadata.get("micronsPerPixel_XAxis"));
-        float pixSizeY = 
+        float pixSizeY =
           Float.parseFloat((String) metadata.get("micronsPerPixel_YAxis"));
-      
+
         MetadataStore store = getMetadataStore(id);
 
         store.setPixels(
@@ -318,10 +318,10 @@ public class PrairieReader extends FormatReader {
           new Boolean(isLittleEndian(id)),
           currentOrder[0],
           null);
-        store.setDimensions(new Float(pixSizeX), new Float(pixSizeY), null, 
+        store.setDimensions(new Float(pixSizeX), new Float(pixSizeY), null,
           null, null, null);
       }
-    
+
       if (!readXML || !readCFG) {
         File file = new File(id);
         file = file.getAbsoluteFile();
@@ -338,7 +338,7 @@ public class PrairieReader extends FormatReader {
     }
     else {
       // we have been given a TIFF file - reinitialize with the proper XML file
-    
+
       String tiffFile = getMappedId(id);
       File f = new File(tiffFile);
       f = f.getAbsoluteFile();

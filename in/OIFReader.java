@@ -275,7 +275,7 @@ public class OIFReader extends FormatReader {
         metadata.put(prefix + key, value);
       }
       else if (line.length() > 0) {
-        if (line.indexOf("[") == 2) {  
+        if (line.indexOf("[") == 2) {
           line = line.substring(2, line.length());
         }
         prefix = line + " - ";
@@ -331,7 +331,7 @@ public class OIFReader extends FormatReader {
       else if (code.equals("\"T\"")) sizeT[0] = Integer.parseInt(size);
       else if (code.equals("\"Z\"")) sizeZ[0] = Integer.parseInt(size);
     }
-   
+
     if (sizeZ[0] == 0) sizeZ[0] = 1;
     if (sizeC[0] == 0) sizeC[0] = 1;
     if (sizeT[0] == 0) sizeT[0] = 1;
@@ -341,7 +341,7 @@ public class OIFReader extends FormatReader {
       else if (sizeT[0] == 1) sizeZ[0]++;
     }
 
-    String metadataOrder = 
+    String metadataOrder =
       (String) metadata.get("[Axis Parameter Common] - AxisOrder");
     metadataOrder = metadataOrder.substring(1, metadataOrder.length() - 1);
     if (metadataOrder == null) metadataOrder = "XYZTC";
@@ -378,7 +378,7 @@ public class OIFReader extends FormatReader {
     validBits = new int[sizeC[0]];
     if (validBits.length == 2) validBits = new int[3];
     for (int i=0; i<validBits.length; i++) {
-      String s = 
+      String s =
         (String) metadata.get("[Reference Image Parameter] - ValidBitCounts");
       if (s != null) {
         validBits[i] = Integer.parseInt(s);
@@ -404,9 +404,9 @@ public class OIFReader extends FormatReader {
       "XYZTC",
       null);
 
-    Float pixX = new Float((String) 
+    Float pixX = new Float((String)
       metadata.get("[Reference Image Parameter] - WidthConvertValue"));
-    Float pixY = new Float((String) 
+    Float pixY = new Float((String)
       metadata.get("[Reference Image Parameter] - HeightConvertValue"));
 
     store.setDimensions(pixX, pixY, null, null, null, null);

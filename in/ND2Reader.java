@@ -426,7 +426,7 @@ public class ND2Reader extends FormatReader {
         ts.add(new Long(timestamps[i]));
       }
     }
-   
+
     currentOrder[0] = "XY";
     long deltaT = timestamps[1] - timestamps[0];
     long deltaZ = zstamps[1] - zstamps[0];
@@ -448,7 +448,7 @@ public class ND2Reader extends FormatReader {
         }
       }
     }
-   
+
     if (numImages != sizeZ[0] * sizeT[0] * getEffectiveSizeC(id)) {
       sizeZ[0] = numImages;
       sizeT[0] = 1;
@@ -469,7 +469,7 @@ public class ND2Reader extends FormatReader {
         case 8: pixelType[0] = FormatReader.UINT8; break;
         case 16: pixelType[0] = FormatReader.UINT16; break;
         case 32: pixelType[0] = FormatReader.UINT32; break;
-        default: 
+        default:
           throw new FormatException("Unsupported bits per pixel : " + bpp);
       }
 

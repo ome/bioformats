@@ -1264,7 +1264,7 @@ public final class TiffTools {
               offset = overallOffset / samplesPerPixel;
             }
             unpackBytes(samples, offset, bytes, bitsPerSample,
-              photoInterp, colorMap, littleEndian, maxValue, planarConfig, 
+              photoInterp, colorMap, littleEndian, maxValue, planarConfig,
               strip, (int) numStrips);
             overallOffset += bytes.length / bitsPerSample.length;
           }
@@ -1281,12 +1281,12 @@ public final class TiffTools {
         catch (Exception e) {
           if (strip == 0) throw new FormatException(e);
           byte[] bytes = new byte[samples[0].length];
-          undifference(bytes, bitsPerSample, imageWidth, planarConfig, 
+          undifference(bytes, bitsPerSample, imageWidth, planarConfig,
             predictor);
           int offset = (int) (imageWidth * row);
           if (planarConfig == 2) offset = overallOffset / samplesPerPixel;
-          unpackBytes(samples, offset, bytes, bitsPerSample, photoInterp, 
-            colorMap, littleEndian, maxValue, planarConfig, 
+          unpackBytes(samples, offset, bytes, bitsPerSample, photoInterp,
+            colorMap, littleEndian, maxValue, planarConfig,
             strip, (int) numStrips);
           overallOffset += bytes.length / bitsPerSample.length;
         }
@@ -2108,7 +2108,7 @@ public final class TiffTools {
         values[0], values[1], new byte[values[0].length]
       };
     }
-  
+
     int bytesPerPixel = values[0].length / (width * height);
 
     // populate required IFD directory entries (except strip information)

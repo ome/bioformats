@@ -80,7 +80,7 @@ public class BitWriter {
    *  Writes the bits represented by a bit string to the buffer.
    *  All characters in the string must be 0 or 1, or this will
    *  throw an IllegalArgumentException */
-   
+
   public void write(String bitString) {
     for(int i = 0; i < bitString.length(); i++) {
       if('1' == bitString.charAt(i)) {
@@ -145,7 +145,7 @@ public class BitWriter {
           value + "; expected " + values[i] + "; " + bits[i] + " bits)");
       }
     }
-    
+
     // Testing string functionality
     Random r = new Random();
     System.out.println("Generating 5000 random bits for String test");
