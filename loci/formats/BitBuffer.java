@@ -59,6 +59,12 @@ public class BitBuffer {
   }
 
 
+  /**
+   * Skips a number of bits in the BitBuffer.
+   * 
+   * @param bits Number of bits to skip      
+   */
+   
   public void skipBits(long bits) {
     // TODO: Consider whether negative bits should be allowed as a "rewind"
     if(bits < 0) {
@@ -99,6 +105,7 @@ public class BitBuffer {
    * @param bitsToRead the number of bits to read from the bit buffer
    * @return the value of the bits read
    */
+   
   public int getBits(int bitsToRead) {
     if (bitsToRead == 0) return 0;
     if (eofFlag) return -1; // Already at end of file
