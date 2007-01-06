@@ -58,6 +58,30 @@ public class BitBuffer {
     eofByte = byteBuffer.length;
   }
 
+
+  public void skipBits(long bits) {
+    // TODO: Consider whether negative bits should be allowed as a "rewind"
+    if(bits < 0) {
+      throw new IllegalArgumentException("Bits to skip may not be negative");
+    }
+    long skipBytes = bits / 8;
+    int skipBits = (int) bits % 8;
+    // If we would overflow the currentByte value, well, we're larger than
+    // the array anyway, so...
+    if(skipBytes + currentByte > Integer.MAX_VALUE) {
+      eofFlag = true;
+    }
+    currentByte = (int) (skipBytes + currentByte);
+    currentBit += skipBits;
+    if(currentBit > 8) {
+      currentByte++;
+      currentBit -= 8;
+    }
+    if(currentByte >= eofByte) {
+      eofFlag = true;
+    }
+  }
+
   /**
    * Returns an int value representing the value of the bits read from
    * the byte array, from the current position. Bits are extracted from the
@@ -132,6 +156,7 @@ public class BitBuffer {
     int[] nums = new int[trials];
     int[] len = new int[trials];
     BitWriter bw = new BitWriter();
+    int totallen = 0;
 
     Random r = new Random();
     System.out.println("Generating " + trials + " trials.");
@@ -151,17 +176,35 @@ public class BitBuffer {
       }
       // How many bits are required to represent this number?
       len[i] = (Integer.toBinaryString(nums[i])).length();
+      totallen += len[i];
       bw.write(nums[i], len[i]);
     }
     BitBuffer bb = new BitBuffer(bw.toByteArray());
     int readint;
     System.out.println("Reading from BitBuffer");
+    // Randomly skip or read bytes
     for(int i = 0; i < trials; i++) {
-      readint = bb.getBits(len[i]);
-      if(readint != nums[i]) {
-        System.out.println("Error at #" + i + ": " + readint + " received, " +
-                           nums[i] + " expected.");
+      int c = r.nextInt(100);
+      if(c > 50) {
+        readint = bb.getBits(len[i]);
+        if(readint != nums[i]) {
+          System.out.println("Error at #" + i + ": " + readint + " received, " +
+                             nums[i] + " expected.");
+        }
       }
+      else {
+        bb.skipBits(len[i]);
+      }
+    }
+    // Test reading past end of buffer.
+    System.out.println("Testing end of buffer");
+    bb = new BitBuffer(bw.toByteArray());
+    // The total length could be mid byte. Add one byte to test.
+    bb.skipBits(totallen + 8);
+    int read = bb.getBits(1);
+    if(-1 != read) {
+      System.out.println("-1 expected at end of buffer, " +
+                         read + " received.");
     }
   }
 }
