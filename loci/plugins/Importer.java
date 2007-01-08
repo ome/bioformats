@@ -58,6 +58,10 @@ public class Importer implements ItemListener {
   private static final String VIEW_IMAGE_5D = "Image5D";
   private static final String VIEW_VIEW_5D = "View5D";
 
+  private static final String LOCAL_FILE = "Local machine";
+  private static final String OME_FILE = "OME server";
+  private static final String HTTP_FILE = "Internet";
+
   // -- Fields --
 
   private LociImporter plugin;
@@ -99,23 +103,49 @@ public class Importer implements ItemListener {
       }
     }
 
-    // if necessary, prompt the user for the filename
-    OpenDialog od = new OpenDialog("Open", id);
-    String directory = od.getDirectory();
-    String fileName = od.getFileName();
-    if (fileName == null) {
-      plugin.canceled = true;
-      return;
-    }
-    id = directory + fileName;
+    String fileName = id;
 
-    // if no valid filename, give up
-    if (id == null || !new File(id).exists()) {
-      if (!quiet) {
-        IJ.error("LOCI Bio-Formats", "The specified file " +
-          (id == null ? "" : ("(" + id + ") ")) + "does not exist.");
+    if (id == null || id.length() == 0) { 
+      // open a dialog asking the user where their dataset is
+      GenericDialog g = new GenericDialog("Specify location");
+      g.addChoice("File location: ", 
+        new String[] {LOCAL_FILE, OME_FILE, HTTP_FILE}, LOCAL_FILE); 
+      g.showDialog();
+    
+      String location = g.getNextChoice();
+
+      if (location.equals(LOCAL_FILE)) {
+        // if necessary, prompt the user for the filename
+        OpenDialog od = new OpenDialog("Open", id);
+        String directory = od.getDirectory();
+        fileName = od.getFileName();
+        if (fileName == null) {
+          plugin.canceled = true;
+          return;
+        }
+        id = directory + fileName;
+
+        // if no valid filename, give up
+        if (id == null || !new File(id).exists()) {
+          if (!quiet) {
+            IJ.error("LOCI Bio-Formats", "The specified file " +
+              (id == null ? "" : ("(" + id + ") ")) + "does not exist.");
+          }
+          return;
+        }
       }
-      return;
+      else if (location.equals(OME_FILE)) {
+        IJ.runPlugIn("loci.plugins.ome.OMEPlugin", "");
+        return;
+      }
+      else {
+        // prompt for URL
+        GenericDialog urlBox = new GenericDialog("Open");
+        urlBox.addStringField("URL: ", "", 30);
+        urlBox.showDialog();
+        id = urlBox.getNextString();
+        fileName = id;
+      } 
     }
 
     // -- Step 2: identify file --

@@ -23,13 +23,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.ome;
 
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
+import ij.IJ;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.event.*;
+import javax.swing.table.DefaultTableModel;
 
 /**
  * OMETablePanel is the class that handles the table used
@@ -157,7 +159,15 @@ public class OMETablePanel implements ActionListener {
     mainpane.add(label);
 
     //create table
-    MyTableModel tableModel = new MyTableModel(tableData, columns);
+    //MyTableModel tableModel = new MyTableModel(tableData, columns);
+    DefaultTableModel tableModel = new DefaultTableModel(tableData, columns) {
+      public Class getColumnClass(int c) {
+        return getValueAt(0, c).getClass();
+      }
+      public boolean isCellEditable(int row, int col) {
+        return col == 0;
+      }
+    };
     sorter = new TableSorter(tableModel);
 
     // set whether each column is numerically sorted
@@ -228,7 +238,6 @@ public class OMETablePanel implements ActionListener {
     mainpane.setBorder(bord);
     mainpane.setMinimumSize(new Dimension(800,300));
     dialog.pack();
-    OMESidePanel.centerWindow(frame, dialog);
   }
 
   // -- Methods --
@@ -312,9 +321,8 @@ public class OMETablePanel implements ActionListener {
       results[i] = Integer.parseInt((String) al.get(i));
     }
     if (results.length == 0) {
-      OMEDownPanel.error((Frame)dialog.getOwner(),
-      "No images were selected to download.  Try again.",
-        "OME Download");
+      IJ.error("OME Download", 
+        "No images were selected to download.  Try again.");
       return getInput();
     }
     return results;

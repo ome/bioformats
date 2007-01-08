@@ -23,7 +23,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.ome;
 
-import ij.IJ;
 import ij.plugin.PlugIn;
 import loci.plugins.Util;
 
@@ -35,16 +34,12 @@ import loci.plugins.Util;
  * @author Melissa Linkert linkert at wisc.edu
  */
 public class OMEPlugin implements PlugIn {
-  private static OMESidePanel omeSidePanel;
 
   /** shows and retrieves info from the SidePanel */
   public void run(String arg) {
     if (!Util.checkVersion()) return;
     if (!Util.checkLibraries(true, true, true, true)) return;
-    if (omeSidePanel == null) omeSidePanel = new OMESidePanel(IJ.getInstance());
-    WindowMonitor monitor = new WindowMonitor();
-    monitor.start();
-    OMESidePanel.showIt();
+    new OMETools().run();
   }
 
 }
