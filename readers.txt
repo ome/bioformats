@@ -79,3 +79,5 @@ loci.formats.in.OpenlabReader     # liff [slow isThisType]
 
 # if nothing else works, try ImageJ
 loci.formats.in.ImageJReader      # various [ImageJ]
+
+loci.formats.in.OMEReader
