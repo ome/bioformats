@@ -367,6 +367,12 @@ public class LIFReader extends FormatReader {
           if (token.indexOf("=") != -1) {
             // create a small hashtable to store just this element's data
 
+            if (token.startsWith("Element Name")) {
+              // hack to override first series name
+              seriesNames.setElementAt(token.substring(token.indexOf("=") + 2,
+                token.length() - 1), seriesNames.size() - 1);
+            }
+            
             Hashtable tmp = new Hashtable();
             while (token.length() > 2) {
               key = token.substring(0, token.indexOf("\"") - 1);
