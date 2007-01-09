@@ -1059,8 +1059,7 @@ public class Importer implements ItemListener {
         }
 
         WindowManager.setTempCurrentImage(imp);
-//        IJ.runPlugIn("View5D_", "z=" + sizeZ + " t=" + sizeT);
-        IJ.runPlugIn("View5D_", "");
+        IJ.run("View5D ", "slicecount=" + sizeZ + " timecount=" + sizeT);
       }
     }
     catch (Exception e) {
