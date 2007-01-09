@@ -560,17 +560,7 @@ public class Importer implements ItemListener {
             // construct image processor and add to stack
             ImageProcessor ip = null;
 
-            int bpp = 0;
-            switch (type) {
-              case FormatReader.INT8:
-              case FormatReader.UINT8: bpp = 1; break;
-              case FormatReader.INT16:
-              case FormatReader.UINT16: bpp = 2; break;
-              case FormatReader.INT32:
-              case FormatReader.UINT32:
-              case FormatReader.FLOAT: bpp = 4; break;
-              case FormatReader.DOUBLE: bpp = 8; break;
-            }
+            int bpp = FormatReader.getBytesPerPixel(type);;
 
             if (b.length != w * h * c * bpp) {
               // HACK - byte array dimensions are incorrect - image is probably
@@ -1001,6 +991,18 @@ public class Importer implements ItemListener {
   private void displayStack(ImagePlus imp, IFormatReader r,
     FileStitcher fs, String id)
   {
+    ImageStack s = imp.getStack();
+    double min = Double.MAX_VALUE;
+    double max = Double.MIN_VALUE;
+    for (int i=0; i<s.getSize(); i++) {
+      ImageProcessor p = s.getProcessor(i + 1);
+      p.resetMinAndMax();
+      if (p.getMin() < min) min = p.getMin();
+      if (p.getMax() > max) max = p.getMax();
+    }
+   
+    imp.getProcessor().setMinAndMax(min, max);
+
     try {
       if (stackFormat.equals(VIEW_STANDARD)) imp.show();
       else if (stackFormat.equals(VIEW_BROWSER)) {}
