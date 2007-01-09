@@ -35,9 +35,11 @@ import org.openmicroscopy.is.*;
 /** 
  * OMEReader retrieves images on demand from an OME database. 
  * Authentication with the OME server is handled, provided the 'id' parameter
- * is properly formed.  The 'id' parameter should take the following form:
+ * is properly formed.  
+ * The 'id' parameter should take one of the following forms:
  *
  * <server>?user=<username>&password=<password>&id=<image id>
+ * <server>?key=<session key>&id=<image id>
  *
  * where <server> is the URL of the OME data server (not the image server).
  */
@@ -193,10 +195,19 @@ public class OMEReader extends FormatReader {
 
     server = id.substring(0, id.lastIndexOf("?"));
     int ndx = id.indexOf("&");
-    String user = id.substring(id.lastIndexOf("?") + 6, ndx);
-    String pass = id.substring(ndx + 10, id.indexOf("&", ndx + 1));
-    ndx = id.indexOf("&", ndx + 1);
-    imageId = id.substring(ndx + 4);
+    String user = null;
+    String pass = null;
+    if (id.indexOf("server") != -1) {
+      user = id.substring(id.lastIndexOf("?") + 6, ndx);
+      pass = id.substring(ndx + 10, id.indexOf("&", ndx + 1));
+      ndx = id.indexOf("&", ndx + 1);
+      imageId = id.substring(ndx + 4);
+    }
+    else {
+      sessionKey = id.substring(id.lastIndexOf("?") + 5, ndx);
+      ndx = id.indexOf("&", ndx + 1);
+      imageId = id.substring(ndx + 4);
+    }
   
     Criteria c = new Criteria();
     c.addWantedField("id");
@@ -223,7 +234,8 @@ public class OMEReader extends FormatReader {
     catch (Exception e) { throw new FormatException(e); }
 
     rc = rs.getRemoteCaller();
-    rc.login(user, pass);
+    if (user != null && pass != null) rc.login(user, pass);
+    else if (sessionKey != null) rc.setSessionKey(sessionKey);
 
     df = (DataFactory) rs.getService(DataFactory.class);
     pf = (PixelsFactory) rs.getService(PixelsFactory.class);

@@ -263,7 +263,7 @@ public class ND2Reader extends FormatReader {
 
     if (off > 0 && off < in.length() - 5) {
       in.seek(off + 5);
-      byte[] b = new byte[(int) (in.length() - off)];
+      byte[] b = new byte[(int) (in.length() - off - 5)];
       in.read(b);
       String xml = new String(b);
 
@@ -335,19 +335,20 @@ public class ND2Reader extends FormatReader {
       }
     }
 
-    sizeX[0] = Integer.parseInt((String) metadata.get(
-      "MetadataSeq _SEQUENCE_INDEX=\"0\" right value"));
-    sizeY[0] = Integer.parseInt((String) metadata.get(
-      "MetadataSeq _SEQUENCE_INDEX=\"0\" bottom value"));
+    String m = "MetadataSeq _SEQUENCE_INDEX=\"0\"";
+    String x = (String) metadata.get(m + " right value");
+    String y = (String) metadata.get(m + " bottom value");
+    if (x != null) sizeX[0] = Integer.parseInt(x);
+    if (y != null) sizeY[0] = Integer.parseInt(y);
 
     if (sizeX[0] == 0 || sizeY[0] == 0) {
       String s = (String) metadata.get("ReportObjects " +
         "_DOCTYPE=\"ReportObjectsDocument\" _VERSION=\"1.100000\" " +
         "Container page_size");
       if (s != null) {
-        String x = s.substring(1, s.indexOf(","));
+        x = s.substring(1, s.indexOf(","));
         sizeX[0] = (int) Float.parseFloat(x);
-        String y = s.substring(s.indexOf(",") + 1, s.indexOf(")"));
+        y = s.substring(s.indexOf(",") + 1, s.indexOf(")"));
         sizeY[0] = (int) Float.parseFloat(y);
       }
       else {
@@ -400,18 +401,21 @@ public class ND2Reader extends FormatReader {
       pixSizeZ = Float.parseFloat(pixZ.trim());
     }
 
-    sizeC[0] = Integer.parseInt((String) metadata.get(
-      "MetadataSeq _SEQUENCE_INDEX=\"0\" uiCompCount value"));
+    String c = (String) 
+      metadata.get("MetadataSeq _SEQUENCE_INDEX=\"0\" uiCompCount value");
+    if (c != null) sizeC[0] = Integer.parseInt(c);
+    else sizeC[0] = openImage(id, 0).getRaster().getNumBands();
     if (sizeC[0] == 2) sizeC[0] = 1;
 
     long[] timestamps = new long[numImages];
     long[] zstamps = new long[numImages];
 
     for (int i=0; i<numImages; i++) {
-      timestamps[i] = (long) Float.parseFloat((String) metadata.get(
-        "MetadataSeq _SEQUENCE_INDEX=\"" + i + "\" dTimeMSec value"));
-      zstamps[i] = (long) Float.parseFloat((String) metadata.get(
-        "MetadataSeq _SEQUENCE_INDEX=\"" + i + "\" dZPos value"));
+      String pre = "MetadataSeq _SEQUENCE_INDEX=\"" + i + "\" ";
+      String tstamp = (String) metadata.get(pre + "dTimeMSec value");
+      String zstamp = (String) metadata.get(pre + "dZPos value");
+      if (tstamp != null) timestamps[i] = (long) Float.parseFloat(tstamp);
+      if (zstamp != null) zstamps[i] = (long) Float.parseFloat(zstamp);
     }
 
     Vector zs = new Vector();
@@ -428,8 +432,8 @@ public class ND2Reader extends FormatReader {
     }
 
     currentOrder[0] = "XY";
-    long deltaT = timestamps[1] - timestamps[0];
-    long deltaZ = zstamps[1] - zstamps[0];
+    long deltaT = timestamps.length > 1 ? timestamps[1] - timestamps[0] : 1;
+    long deltaZ = zstamps.length > 1 ? zstamps[1] - zstamps[0] : 1; 
 
     if (deltaT < deltaZ || deltaZ == 0) currentOrder[0] += "CTZ";
     else currentOrder[0] += "CZT";

@@ -444,8 +444,9 @@ public class RandomAccessStream extends InputStream implements DataInput {
 
         if (valid) {
           dis.mark(newBufferSize);
-          fp = mark;
+          //fp = mark;
 
+          fp = (int) (length() - dis.available());
           while (fp < afp) {
             int skip = dis.skipBytes(afp - fp);
             if (skip == 0) break;
