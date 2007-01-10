@@ -165,6 +165,8 @@ public class ZeissLSMReader extends BaseTiffReader {
     int numThumbs = 0;
     try {
       long prevOffset = 0;
+      byte[] b = new byte[48];
+      byte[] c = new byte[48];
       for (int i=0; i<ifds.length; i++) {
         long subFileType = TiffTools.getIFDLongValue(ifds[i],
           TiffTools.NEW_SUBFILE_TYPE, true, 0);
@@ -179,10 +181,8 @@ public class ZeissLSMReader extends BaseTiffReader {
           // there's probably a better way to do this
 
           in.seek(prevOffset);
-          byte[] b = new byte[48];
           in.read(b);
           in.seek(offsets[0]);
-          byte[] c = new byte[48];
           in.read(c);
 
           boolean equal = true;
@@ -447,6 +447,11 @@ public class ZeissLSMReader extends BaseTiffReader {
         else tSize++;
       }
 
+      sizeC[0] = channels;
+      while (numImages > zSize * tSize * getEffectiveSizeC(currentId)) {
+        numImages--;
+      }
+
       // The metadata store we're working with.
       MetadataStore store = getMetadataStore(currentId);
 
@@ -572,20 +577,22 @@ public class ZeissLSMReader extends BaseTiffReader {
         int numEvents = in.readInt();
         in.seek((int) (pos + data + 8));
 
-        for (int i=0; i<numEvents; i++) {
-          in.readInt();
-          ddata = in.readDouble();
-          put("Time" + i, ddata);
+        if (numEvents <= numImages) {
+          for (int i=0; i<numEvents; i++) {
+            in.readInt();
+            ddata = in.readDouble();
+            put("Time" + i, ddata);
 
-          data = in.readInt();
-          put("EventType" + i, data);
+            data = in.readInt();
+            put("EventType" + i, data);
 
-          if (numBytes > in.length() - in.getFilePointer()) {
-            numBytes = in.length() - in.getFilePointer();
+            if (numBytes > in.length() - in.getFilePointer()) {
+              numBytes = in.length() - in.getFilePointer();
+            }
+            byte[] descr = new byte[(int) (numBytes - 16)];
+            in.read(descr);
+            put("Description" + i, new String(descr));
           }
-          byte[] descr = new byte[(int) (numBytes - 16)];
-          in.read(descr);
-          put("Description" + i, new String(descr));
         }
         in.seek(pos);
       }
