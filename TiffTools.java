@@ -1767,7 +1767,11 @@ public final class TiffTools {
       throw new FormatException("Sorry, CCITT T.6 bi-level encoding " +
         "(Group 4 Fax) compression mode is not supported");
     }
-    else if (compression == LZW) return Compression.lzwUncompress(input);
+    else if (compression == LZW) {
+      LZWCompressor c = new LZWCompressor();
+      return c.decompress(input);
+      // return Compression.lzwUncompress(input);
+    }
     else if (compression == JPEG) {
       throw new FormatException(
         "Sorry, JPEG compression mode is not supported");
@@ -2405,7 +2409,12 @@ public final class TiffTools {
       throw new FormatException("Sorry, CCITT T.6 bi-level encoding " +
         "(Group 4 Fax) compression mode is not supported");
     }
-    else if (compression == LZW) return Compression.lzwCompress(input);
+    else if (compression == LZW) {
+      LZWCompressor c = new LZWCompressor();
+      return c.compress(input, null, null);
+      // return Compression.lzwCompress(input);
+    }
+
     else if (compression == JPEG) {
       throw new FormatException(
         "Sorry, JPEG compression mode is not supported");
