@@ -154,7 +154,9 @@ public class OMEXMLReader extends FormatReader {
       pix = pix.substring(0, pix.indexOf("<"));
     }
 
-    byte[] pixels = Compression.base64Decode(pix);
+    //byte[] pixels = Compression.base64Decode(pix);
+    Base64Encoder e = new Base64Encoder();
+    byte[] pixels = e.base64Decode(pix);
 
     if (compression[series].equals("bzip2")) {
       byte[] tempPixels = pixels;
