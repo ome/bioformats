@@ -1385,8 +1385,9 @@ public final class TiffTools {
       // First wrap the byte arrays and then use the features of the
       // ByteBuffer to transform to a ShortBuffer. Finally, use the ShortBuffer
       // bulk get method to copy the data into a usable form for makeImage().
-      short[][] sampleData = new short[samples.length][samples[0].length / 2];
-      for (int i = 0; i < sampleData.length; i++) {
+      int len = samples.length == 2 ? 3 : samples.length;
+      short[][] sampleData = new short[len][samples[0].length / 2];
+      for (int i = 0; i < samples.length; i++) {
         ShortBuffer sampleBuf = ByteBuffer.wrap(samples[i]).asShortBuffer();
         sampleBuf.get(sampleData[i]);
       }
