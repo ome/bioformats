@@ -81,7 +81,8 @@ public class OMEReader extends FormatReader {
 
   /* @see IFormatHandler#isThisType(String) */
   public boolean isThisType(String id) {
-    return id.startsWith("http");
+    return id.indexOf("id") != -1 && (id.indexOf("password") != -1 ||
+      id.indexOf("sessionKey") != -1);
   }
 
   // -- FormatReader API methods --
@@ -214,7 +215,11 @@ public class OMEReader extends FormatReader {
       imageId = id.substring(ndx + 4);
     }
     currentId = imageId;
- 
+
+    // do sanity check on server name
+    if (!server.startsWith("http")) server = "http://" + server;
+    if (!server.endsWith("shoola")) server += "/shoola";
+
     Criteria c = new Criteria();
     c.addWantedField("id");
     c.addWantedField("default_pixels");
