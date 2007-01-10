@@ -217,8 +217,16 @@ public class OMEReader extends FormatReader {
     currentId = imageId;
 
     // do sanity check on server name
-    if (!server.startsWith("http")) server = "http://" + server;
-    if (!server.endsWith("shoola")) server += "/shoola";
+    if (server.startsWith("http:")) {
+      server = server.substring(5);
+    }
+    while (server.startsWith("/")) server = server.substring(1);
+    int slash = server.indexOf("/");
+    if (slash >= 0) server = server.substring(0, slash);
+    int colon = server.indexOf(":");
+    if (colon >= 0) server = server.substring(0, colon);
+
+    server = "http://" + server + "/shoola/";
 
     Criteria c = new Criteria();
     c.addWantedField("id");
