@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import java.util.Random;
+
 /**
  * Implements encoding (compress) and decoding (decompress) methods for
  * Base64.
@@ -268,4 +270,71 @@ public class Base64Encoder implements Compressor {
     byte[] base64Data = s.getBytes();
     return decompress(base64Data);
   }
+  
+    /**
+   * Main testing method.
+   *
+   * @param args ignored
+   * @throws FormatException Can only occur if there is a bug in the
+   *                         compress method.
+   */
+  public static void main(String[] args) throws FormatException {
+    byte[] testdata = new byte[50000];
+    Random r = new Random();
+    System.out.println("Generating random data");
+    r.nextBytes(testdata);
+    Base64Encoder c = new Base64Encoder();
+    System.out.println("Compressing data");
+    byte[] compressed = c.compress(testdata, null, null);
+    System.out.println("Decompressing data");
+    byte[] decompressed = c.decompress(compressed);
+    System.out.print("Comparing data... ");
+    if(testdata.length != decompressed.length) {
+      System.out.println("Test data differs in length from uncompressed data");
+      System.out.println("Exiting...");
+      System.exit(-1);
+    }
+    else {
+      boolean equalsFlag = true;
+      for(int i = 0; i < testdata.length; i++) {
+        if(testdata[i] != decompressed[i]) {
+          System.out.println("Test data and uncompressed data differs at byte" +
+                             i);
+          equalsFlag = false;
+        }
+      }
+      if(!equalsFlag) {
+        System.out.println("Comparison failed. \nExiting...");
+        System.exit(-1);
+      }
+    }
+    System.out.println("Success.");
+    System.out.println("Generating 2D byte array test");
+    byte[][] twoDtest = new byte[100][500];
+    for(int i = 0; i < 100; i++) {
+      System.arraycopy(testdata, 500*i, twoDtest[i], 0, 500);
+    }
+    byte[] twoDcompressed = c.compress(twoDtest, null, null);
+    System.out.print("Comparing compressed data... ");
+    if(twoDcompressed.length != compressed.length) {
+      System.out.println("1D and 2D compressed data not same length");
+      System.out.println("Exiting...");
+      System.exit(-1);
+    }
+    boolean equalsFlag = true;
+    for(int i = 0; i < twoDcompressed.length; i++) {
+      if(twoDcompressed[i] != compressed[i]) {
+        System.out.println("1D data and 2D compressed data differs at byte" +
+                           i);
+        equalsFlag = false;
+      }
+      if(!equalsFlag) {
+        System.out.println("Comparison failed. \nExiting...");
+        System.exit(-1);
+      }
+    }
+    System.out.println("Success.");
+    System.out.println("Test complete");
+  }
+  
 }
