@@ -74,6 +74,7 @@ public class Importer implements ItemListener {
   private Checkbox stitchBox;
   private Checkbox rangeBox;
   private Choice stackChoice;
+  private boolean mergeChannels;
 
   // -- Constructor --
 
@@ -182,7 +183,7 @@ public class Importer implements ItemListener {
     stackTypes.copyInto(stackFormats);
 
     // load preferences from IJ_Prefs.txt
-    boolean mergeChannels = Prefs.get("bioformats.mergeChannels", false);
+    mergeChannels = Prefs.get("bioformats.mergeChannels", false);
     boolean ignoreTables = Prefs.get("bioformats.ignoreTable", false);
     boolean colorize = Prefs.get("bioformats.colorize", false);
     boolean splitWindows = Prefs.get("bioformats.splitWindows", true);
@@ -273,15 +274,24 @@ public class Importer implements ItemListener {
         }
         id = gd.getNextString();
       }
-      if(fs != null) {
-        if (mergeChannels) r = new ChannelMerger(fs);
+      if (fs != null) {
+        if (mergeChannels) {
+          if (r.getPixelType(id) == FormatReader.FLOAT) {
+            r = new ChannelMerger(fs);
+          }
+          else r = new ChannelSeparator(fs);
+        }
         else r = new ChannelSeparator(fs);
       }
       else {
-        if (mergeChannels) r = new ChannelMerger(r);
+        if (mergeChannels) {
+          if (r.getPixelType(id) == FormatReader.FLOAT) {
+            r = new ChannelMerger(r);
+          }
+          else r = new ChannelSeparator(r);
+        }
         else r = new ChannelSeparator(r);
       }
-
       r.setColorTableIgnored(ignoreTables);
 
       // store OME metadata into OME-XML structure, if available
@@ -583,34 +593,9 @@ public class Importer implements ItemListener {
                 System.arraycopy(tmp, 0, bytes, 0, bytes.length);
               }
               
-              for (int ch=0; ch<c; ch++) {
-                byte[] nb = new byte[w * h];
-                if (c == 1) nb = bytes;
-                else System.arraycopy(bytes, ch*w*h, nb, 0, nb.length);
-                ip = new ByteProcessor(w, h, nb, null);
-                if (stackB == null) stackB = new ImageStack(w, h);
-                stackB.addSlice(imageName + ":" + (j + 1), ip);
-              }
-              
-              /*
-              if (c == 1) {
-                ip = new ByteProcessor(w, h, bytes, null);
-                if (stackB == null) stackB = new ImageStack(w, h);
-                stackB.addSlice(imageName + ":" + (j + 1), ip);
-              }
-              else {
-                if (stackO == null) stackO = new ImageStack(w, h);
-                ip = new ColorProcessor(w, h);
-                byte[][] pix = new byte[c][w*h];
-                for (int k=0; k<c; k++) {
-                  System.arraycopy(bytes, k*pix[k].length, pix[k], 0,
-                    pix[k].length);
-                }
-                ((ColorProcessor) ip).setRGB(pix[0], pix[1],
-                  pix.length >= 3 ? pix[2] : new byte[w*h]);
-                stackO.addSlice(imageName + ":" + (j + 1), ip);
-              }
-              */
+              ip = new ByteProcessor(w, h, bytes, null);
+              if (stackB == null) stackB = new ImageStack(w, h);
+              stackB.addSlice(imageName + ":" + (j + 1), ip);
             }
             else if (pixels instanceof short[]) {
               short[] s = (short[]) pixels;
@@ -620,14 +605,9 @@ public class Importer implements ItemListener {
                 System.arraycopy(tmp, 0, s, 0, s.length);
               }
               
-              for (int ch=0; ch<c; ch++) {
-                short[] nb = new short[w * h];
-                if (c == 1) nb = s;
-                else System.arraycopy(s, ch*w*h, nb, 0, nb.length);
-                ip = new ShortProcessor(w, h, nb, null);
-                if (stackS == null) stackS = new ImageStack(w, h);
-                stackS.addSlice(imageName + ":" + (j + 1), ip);
-              }
+              ip = new ShortProcessor(w, h, s, null);
+              if (stackS == null) stackS = new ImageStack(w, h);
+              stackS.addSlice(imageName + ":" + (j + 1), ip);
             }
             else if (pixels instanceof int[]) {
               int[] s = (int[]) pixels;
@@ -637,14 +617,9 @@ public class Importer implements ItemListener {
                 System.arraycopy(tmp, 0, s, 0, s.length);
               }
 
-              for (int ch=0; ch<c; ch++) {
-                int[] nb = new int[w * h];
-                if (c == 1) nb = s;
-                else System.arraycopy(s, ch*w*h, nb, 0, nb.length);
-                ip = new FloatProcessor(w, h, nb);
-                if (stackF == null) stackF = new ImageStack(w, h);
-                stackF.addSlice(imageName + ":" + (j + 1), ip);
-              }
+              ip = new FloatProcessor(w, h, s);
+              if (stackF == null) stackF = new ImageStack(w, h);
+              stackF.addSlice(imageName + ":" + (j + 1), ip);
             }
             else if (pixels instanceof float[]) {
               float[] f = (float[]) pixels;
@@ -654,13 +629,10 @@ public class Importer implements ItemListener {
                 System.arraycopy(tmp, 0, f, 0, f.length);
               }
 
-              for (int ch=0; ch<c; ch++) {
-                float[] nb = new float[w * h];
-                if (c == 1) nb = f;
-                else System.arraycopy(f, ch*w*h, nb, 0, nb.length);
-                ip = new FloatProcessor(w, h, nb, null);
+              if (c == 1) {
+                ip = new FloatProcessor(w, h, f, null);
                 if (stackF == null) stackF = new ImageStack(w, h);
-                
+
                 if (stackB != null) {
                   ip = ip.convertToByte(true);
                   stackB.addSlice(imageName + ":" + (j + 1), ip);
@@ -673,6 +645,33 @@ public class Importer implements ItemListener {
                 }
                 else stackF.addSlice(imageName + ":" + (j + 1), ip);
               }
+              else {
+                if (stackO == null) stackO = new ImageStack(w, h);
+                float[][] pix = new float[c][w*h];
+                if (!r.isInterleaved(id)) {
+                  for (int k=0; k<f.length; k+=c) {
+                    for (int l=0; l<c; l++) {
+                      pix[l][k / c] = f[k + l];
+                    }
+                  }
+                }
+                else {
+                  for (int k=0; k<c; k++) {
+                    System.arraycopy(f, k*pix[k].length, pix[k], 0,
+                      pix[k].length);
+                  }
+                }
+                byte[][] bytes = new byte[c][w*h];
+                for (int k=0; k<c; k++) {
+                  ip = new FloatProcessor(w, h, pix[k], null);
+                  ip = ip.convertToByte(true);
+                  bytes[k] = (byte[]) ip.getPixels();
+                }
+                ip = new ColorProcessor(w, h);
+                ((ColorProcessor) ip).setRGB(bytes[0], bytes[1],
+                  pix.length >= 3 ? bytes[2] : new byte[w*h]);
+                stackO.addSlice(imageName + ":" + (j + 1), ip);  
+              }
             }
             else if (pixels instanceof double[]) {
               double[] d = (double[]) pixels;
@@ -682,14 +681,9 @@ public class Importer implements ItemListener {
                 System.arraycopy(tmp, 0, d, 0, d.length);
               }
              
-              for (int ch=0; ch<c; ch++) {
-                double[] nb = new double[w * h];
-                if (c == 1) nb = d;
-                else System.arraycopy(d, ch*w*h, nb, 0, nb.length);
-                ip = new FloatProcessor(w, h, nb);
-                if (stackF == null) stackF = new ImageStack(w, h);
-                stackF.addSlice(imageName + ":" + (j + 1), ip);
-              }
+              ip = new FloatProcessor(w, h, d);
+              if (stackF == null) stackF = new ImageStack(w, h);
+              stackF.addSlice(imageName + ":" + (j + 1), ip);
             }
           }
 
@@ -938,33 +932,57 @@ public class Importer implements ItemListener {
   private void displayStack(ImagePlus imp, IFormatReader r,
     FileStitcher fs, String id)
   {
-    adjustDisplay(imp);
-    
-    // convert to RGB if needed
+    adjustDisplay(imp); 
+
+    try {  
+      // convert to RGB if needed
    
-    try {
-      if (r.isRGB(id)) {
+      if (mergeChannels && r.getSizeC(id) > 1 && 
+        r.getPixelType(id) != FormatReader.FLOAT) 
+      {
         int c = r.getSizeC(id);
         ImageStack s = imp.getStack();
         ImageStack newStack = new ImageStack(s.getWidth(), s.getHeight());
-        for (int i=0; i<r.getImageCount(id); i++) {
-          byte[][] bytes = new byte[c][];
-          for (int j=0; j<c; j++) {
-            ImageProcessor p = s.getProcessor(i*c + j + 1).convertToByte(true);
-            bytes[j] = (byte[]) p.getPixels();
+        for (int i=0; i<s.getSize(); i++) {
+          if (r.getPixelType(id) != FormatReader.FLOAT) {
+            ImageProcessor p = s.getProcessor(i + 1).convertToByte(true);
+            newStack.addSlice(s.getSliceLabel(i + 1), p);
           }
-          ColorProcessor cp = new ColorProcessor(s.getWidth(), s.getHeight());
-          cp.setRGB(bytes[0], bytes[1], bytes.length == 3 ? bytes[2] : 
-            new byte[s.getWidth() * s.getHeight()]);
-          newStack.addSlice(s.getSliceLabel(i*c + 1), cp);
+          else {
+            float[] f = (float[]) s.getProcessor(i + 1).getPixels();
+            byte[] bytes = new byte[f.length];
+            for (int j=0; j<f.length; j++) {
+              bytes[j] = (byte) Float.floatToIntBits(f[j]);
+            }
+            
+            ByteProcessor p = new ByteProcessor(s.getWidth(), 
+              s.getHeight(), bytes, null);
+            newStack.addSlice(s.getSliceLabel(i + 1), p);
+          }
+        }
+        imp.setStack(imp.getTitle(), newStack);
+        adjustDisplay(imp);
+
+        s = imp.getStack();
+        newStack = new ImageStack(s.getWidth(), s.getHeight());
+
+        for (int z=0; z<r.getSizeZ(id); z++) {
+          for (int t=0; t<r.getSizeT(id); t++) {
+            byte[][] bytes = new byte[c][];
+            for (int ch=0; ch<c; ch++) {
+              int ndx = r.getIndex(id, z, ch, t) + 1;
+              bytes[ch] = (byte[]) s.getProcessor(ndx).getPixels();
+            }
+            ColorProcessor cp = new ColorProcessor(s.getWidth(), s.getHeight());
+            cp.setRGB(bytes[0], bytes[1], bytes.length == 3 ? bytes[2] :
+              new byte[s.getWidth() * s.getHeight()]);
+            newStack.addSlice(s.getSliceLabel(
+              r.getIndex(id, z, c - 1, t) + 1), cp);
+          }
         }
         imp.setStack(imp.getTitle(), newStack);
       }
-    }
-    catch (FormatException e) { }
-    catch (IOException e) { }
     
-    try {
       if (stackFormat.equals(VIEW_STANDARD)) {
         imp.show();
       }
