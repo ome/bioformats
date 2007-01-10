@@ -270,7 +270,7 @@ public class Base64Encoder implements Compressor {
     byte[] base64Data = s.getBytes();
     return decompress(base64Data);
   }
-  
+
     /**
    * Main testing method.
    *
@@ -336,5 +336,5 @@ public class Base64Encoder implements Compressor {
     System.out.println("Success.");
     System.out.println("Test complete");
   }
-  
+
 }
