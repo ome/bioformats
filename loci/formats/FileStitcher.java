@@ -467,6 +467,9 @@ public class FileStitcher implements IFormatReader {
     return files;
   }
 
+  /* @see IFormatReader#getCurrentFile() */
+  public String getCurrentFile() { return currentId; }
+
   /* @see IFormatReader#swapDimensions(String, String) */
   public void swapDimensions(String id, String dimOrder)
     throws FormatException, IOException

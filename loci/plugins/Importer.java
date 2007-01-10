@@ -501,14 +501,14 @@ public class Importer implements ItemListener {
       
       // only read data explicitly if not using 4D Data Browser
       if (!stackFormat.equals(VIEW_BROWSER)) {
-        IJ.showStatus("Reading " + fileName);
+        IJ.showStatus("Reading " + r.getCurrentFile());
 
         for (int i=0; i<seriesCount; i++) {
           if (!series[i]) continue;
           r.setSeries(id, i);
 
           String name = store.getImageName(new Integer(i));
-          String imageName = fileName;
+          String imageName = r.getCurrentFile();
           if (name != null && name.length() > 0) imageName += " - " + name;
 
           boolean[] load = new boolean[num[i]];
@@ -991,20 +991,11 @@ public class Importer implements ItemListener {
   private void displayStack(ImagePlus imp, IFormatReader r,
     FileStitcher fs, String id)
   {
-    ImageStack s = imp.getStack();
-    double min = Double.MAX_VALUE;
-    double max = Double.MIN_VALUE;
-    for (int i=0; i<s.getSize(); i++) {
-      ImageProcessor p = s.getProcessor(i + 1);
-      p.resetMinAndMax();
-      if (p.getMin() < min) min = p.getMin();
-      if (p.getMax() > max) max = p.getMax();
-    }
-   
-    imp.getProcessor().setMinAndMax(min, max);
-
     try {
-      if (stackFormat.equals(VIEW_STANDARD)) imp.show();
+      if (stackFormat.equals(VIEW_STANDARD)) {
+        adjustDisplay(imp);
+        imp.show();
+      }
       else if (stackFormat.equals(VIEW_BROWSER)) {}
       else if (stackFormat.equals(VIEW_IMAGE_5D)) {
         int sizeZ = r.getSizeZ(id);
@@ -1027,6 +1018,8 @@ public class Importer implements ItemListener {
             }
           }
         }
+
+        adjustDisplay(imp);
 
         ReflectedUniverse ru = null;
         ru = new ReflectedUniverse();
@@ -1059,14 +1052,34 @@ public class Importer implements ItemListener {
           }
           imp.setStack(imp.getTitle(), is);
         }
-
+        adjustDisplay(imp);
         WindowManager.setTempCurrentImage(imp);
         IJ.run("View5D ", "slicecount=" + sizeZ + " timecount=" + sizeT);
       }
     }
     catch (Exception e) {
+      adjustDisplay(imp);
       imp.show();
     }
+  }
+
+  private void adjustDisplay(ImagePlus imp) {
+    ImageStack s = imp.getStack();
+    double min = Double.MAX_VALUE;
+    double max = Double.MIN_VALUE;
+    for (int i=0; i<s.getSize(); i++) {
+      ImageProcessor p = s.getProcessor(i + 1);
+      p.resetMinAndMax();
+      if (p.getMin() < min) min = p.getMin();
+      if (p.getMax() > max) max = p.getMax();
+    }
+  
+    ImageProcessor p = imp.getProcessor();
+    if (p instanceof ColorProcessor) {
+      ((ColorProcessor) p).setMinAndMax(min, max, 3);
+    }
+    else p.setMinAndMax(min, max);
+    imp.setProcessor(imp.getTitle(), p);
   }
 
   private void addScrollBars(Container pane) {

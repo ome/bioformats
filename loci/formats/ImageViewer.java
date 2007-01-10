@@ -275,7 +275,7 @@ public class ImageViewer extends JFrame
     updateLabel(-1, -1);
     sb.setLength(0);
     if (id != null) {
-      sb.append(new File(id).getName());
+      sb.append(reader.getCurrentFile());
       sb.append(" ");
     }
     String format = reader.getFormat();

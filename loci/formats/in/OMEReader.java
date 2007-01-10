@@ -47,6 +47,9 @@ public class OMEReader extends FormatReader {
 
   // -- Fields --
 
+  /** String containing authentication information */
+  private String loginString;
+  
   /** Number of images */
   private int numImages;
 
@@ -191,13 +194,15 @@ public class OMEReader extends FormatReader {
 
   /* @see IFormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
+    if (id.equals(loginString) || id.equals(imageId)) return;
     super.initFile(id);
 
+    loginString = id;
     server = id.substring(0, id.lastIndexOf("?"));
     int ndx = id.indexOf("&");
     String user = null;
     String pass = null;
-    if (id.indexOf("server") != -1) {
+    if (id.indexOf("user") != -1) {
       user = id.substring(id.lastIndexOf("?") + 6, ndx);
       pass = id.substring(ndx + 10, id.indexOf("&", ndx + 1));
       ndx = id.indexOf("&", ndx + 1);
@@ -208,7 +213,8 @@ public class OMEReader extends FormatReader {
       ndx = id.indexOf("&", ndx + 1);
       imageId = id.substring(ndx + 4);
     }
-  
+    currentId = imageId;
+ 
     Criteria c = new Criteria();
     c.addWantedField("id");
     c.addWantedField("default_pixels");
@@ -234,6 +240,7 @@ public class OMEReader extends FormatReader {
     catch (Exception e) { throw new FormatException(e); }
 
     rc = rs.getRemoteCaller();
+    
     if (user != null && pass != null) rc.login(user, pass);
     else if (sessionKey != null) rc.setSessionKey(sessionKey);
 

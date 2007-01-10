@@ -211,6 +211,8 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getUsedFiles(id);
   }
 
+  public String getCurrentFile() { return reader.getCurrentFile(); }
+
   public void swapDimensions(String id, String order)
     throws FormatException, IOException
   {

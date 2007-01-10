@@ -374,6 +374,11 @@ public abstract class FormatReader extends FormatHandler
     return new String[] {id};
   }
 
+  /* @see IFormatReader#getCurrentFile() */
+  public String getCurrentFile() { 
+    return currentId; 
+  }
+
   /* @see IFormatReader#swapDimensions(String, String) */
   public void swapDimensions(String id, String order)
     throws FormatException, IOException
@@ -614,7 +619,8 @@ public abstract class FormatReader extends FormatHandler
     // read basic metadata
     System.out.println();
     System.out.println("Reading core metadata");
-    System.out.println((stitch ? "File pattern" : "Filename") + " = " + id);
+    System.out.println((stitch ? "File pattern = " + id :
+      "Filename = " + reader.getCurrentFile()));
     if (map != null) System.out.println("Mapped filename = " + map);
     int seriesCount = reader.getSeriesCount(id);
     System.out.println("Series count = " + seriesCount);
