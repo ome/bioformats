@@ -378,6 +378,16 @@ public class ImageReader implements IFormatReader {
     return getReader(id).getUsedFiles(id);
   }
 
+  /* @see IFormatReader#getCurrentFile() */
+  public String getCurrentFile() {
+    try {
+      return getReader(currentId).getCurrentFile();
+    }
+    catch (FormatException e) { e.printStackTrace(); }
+    catch (IOException e) { e.printStackTrace(); }
+    return null;
+  }
+
   /* @see IFormatReader#swapDimensions(String, String) */
   public void swapDimensions(String id, String order)
     throws FormatException, IOException
