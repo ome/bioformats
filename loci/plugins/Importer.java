@@ -582,6 +582,17 @@ public class Importer implements ItemListener {
                 bytes = new byte[w*h*c];
                 System.arraycopy(tmp, 0, bytes, 0, bytes.length);
               }
+              
+              for (int ch=0; ch<c; ch++) {
+                byte[] nb = new byte[w * h];
+                if (c == 1) nb = bytes;
+                else System.arraycopy(bytes, ch*w*h, nb, 0, nb.length);
+                ip = new ByteProcessor(w, h, nb, null);
+                if (stackB == null) stackB = new ImageStack(w, h);
+                stackB.addSlice(imageName + ":" + (j + 1), ip);
+              }
+              
+              /*
               if (c == 1) {
                 ip = new ByteProcessor(w, h, bytes, null);
                 if (stackB == null) stackB = new ImageStack(w, h);
@@ -599,6 +610,7 @@ public class Importer implements ItemListener {
                   pix.length >= 3 ? pix[2] : new byte[w*h]);
                 stackO.addSlice(imageName + ":" + (j + 1), ip);
               }
+              */
             }
             else if (pixels instanceof short[]) {
               short[] s = (short[]) pixels;
@@ -607,28 +619,14 @@ public class Importer implements ItemListener {
                 s = new short[w*h*c];
                 System.arraycopy(tmp, 0, s, 0, s.length);
               }
-              if (c == 1) {
-                ip = new ShortProcessor(w, h, s, null);
+              
+              for (int ch=0; ch<c; ch++) {
+                short[] nb = new short[w * h];
+                if (c == 1) nb = s;
+                else System.arraycopy(s, ch*w*h, nb, 0, nb.length);
+                ip = new ShortProcessor(w, h, nb, null);
                 if (stackS == null) stackS = new ImageStack(w, h);
                 stackS.addSlice(imageName + ":" + (j + 1), ip);
-              }
-              else {
-                if (stackO == null) stackO = new ImageStack(w, h);
-                short[][] pix = new short[c][w*h];
-                for (int k=0; k<c; k++) {
-                  System.arraycopy(s, k*pix[k].length, pix[k], 0,
-                    pix[k].length);
-                }
-                byte[][] bytes = new byte[c][w*h];
-                for (int k=0; k<c; k++) {
-                  ip = new ShortProcessor(w, h, pix[k], null);
-                  ip = ip.convertToByte(true);
-                  bytes[k] = (byte[]) ip.getPixels();
-                }
-                ip = new ColorProcessor(w, h);
-                ((ColorProcessor) ip).setRGB(bytes[0], bytes[1],
-                  pix.length >= 3 ? bytes[2] : new byte[w*h]);
-                stackO.addSlice(imageName + ":" + (j + 1), ip);
               }
             }
             else if (pixels instanceof int[]) {
@@ -638,28 +636,14 @@ public class Importer implements ItemListener {
                 s = new int[w*h*c];
                 System.arraycopy(tmp, 0, s, 0, s.length);
               }
-              if (c == 1) {
-                ip = new FloatProcessor(w, h, s);
+
+              for (int ch=0; ch<c; ch++) {
+                int[] nb = new int[w * h];
+                if (c == 1) nb = s;
+                else System.arraycopy(s, ch*w*h, nb, 0, nb.length);
+                ip = new FloatProcessor(w, h, nb);
                 if (stackF == null) stackF = new ImageStack(w, h);
                 stackF.addSlice(imageName + ":" + (j + 1), ip);
-              }
-              else {
-                if (stackO == null) stackO = new ImageStack(w, h);
-                int[][] pix = new int[c][w*h];
-                for (int k=0; k<c; k++) {
-                  System.arraycopy(s, k*pix[k].length, pix[k], 0,
-                    pix[k].length);
-                }
-                byte[][] bytes = new byte[c][w*h];
-                for (int k=0; k<c; k++) {
-                  ip = new FloatProcessor(w, h, pix[k]);
-                  ip = ip.convertToByte(true);
-                  bytes[k] = (byte[]) ip.getPixels();
-                }
-                ip = new ColorProcessor(w, h);
-                ((ColorProcessor) ip).setRGB(bytes[0], bytes[1],
-                  pix.length >= 3 ? bytes[2] : new byte[w*h]);
-                stackO.addSlice(imageName + ":" + (j + 1), ip);
               }
             }
             else if (pixels instanceof float[]) {
@@ -669,10 +653,14 @@ public class Importer implements ItemListener {
                 f = new float[w*h*c];
                 System.arraycopy(tmp, 0, f, 0, f.length);
               }
-              if (c == 1) {
-                ip = new FloatProcessor(w, h, f, null);
-                if (stackF == null) stackF = new ImageStack(w, h);
 
+              for (int ch=0; ch<c; ch++) {
+                float[] nb = new float[w * h];
+                if (c == 1) nb = f;
+                else System.arraycopy(f, ch*w*h, nb, 0, nb.length);
+                ip = new FloatProcessor(w, h, nb, null);
+                if (stackF == null) stackF = new ImageStack(w, h);
+                
                 if (stackB != null) {
                   ip = ip.convertToByte(true);
                   stackB.addSlice(imageName + ":" + (j + 1), ip);
@@ -685,33 +673,6 @@ public class Importer implements ItemListener {
                 }
                 else stackF.addSlice(imageName + ":" + (j + 1), ip);
               }
-              else {
-                if (stackO == null) stackO = new ImageStack(w, h);
-                float[][] pix = new float[c][w*h];
-                if (!r.isInterleaved(id)) {
-                  for (int k=0; k<f.length; k+=c) {
-                    for (int l=0; l<c; l++) {
-                      pix[l][k / 3] = f[k + l];
-                    }
-                  }
-                }
-                else {
-                  for (int k=0; k<c; k++) {
-                    System.arraycopy(f, k*pix[k].length, pix[k], 0,
-                      pix[k].length);
-                  }
-                }
-                byte[][] bytes = new byte[c][w*h];
-                for (int k=0; k<c; k++) {
-                  ip = new FloatProcessor(w, h, pix[k], null);
-                  ip = ip.convertToByte(true);
-                  bytes[k] = (byte[]) ip.getPixels();
-                }
-                ip = new ColorProcessor(w, h);
-                ((ColorProcessor) ip).setRGB(bytes[0], bytes[1],
-                  pix.length >= 3 ? bytes[2] : new byte[w*h]);
-                stackO.addSlice(imageName + ":" + (j + 1), ip);
-              }
             }
             else if (pixels instanceof double[]) {
               double[] d = (double[]) pixels;
@@ -720,28 +681,14 @@ public class Importer implements ItemListener {
                 d = new double[w*h*c];
                 System.arraycopy(tmp, 0, d, 0, d.length);
               }
-              if (c == 1) {
-                ip = new FloatProcessor(w, h, d);
+             
+              for (int ch=0; ch<c; ch++) {
+                double[] nb = new double[w * h];
+                if (c == 1) nb = d;
+                else System.arraycopy(d, ch*w*h, nb, 0, nb.length);
+                ip = new FloatProcessor(w, h, nb);
                 if (stackF == null) stackF = new ImageStack(w, h);
                 stackF.addSlice(imageName + ":" + (j + 1), ip);
-              }
-              else {
-                if (stackO == null) stackO = new ImageStack(w, h);
-                double[][] pix = new double[c][w*h];
-                for (int k=0; k<c; k++) {
-                  System.arraycopy(d, k*pix[k].length, pix[k], 0,
-                    pix[k].length);
-                }
-                byte[][] bytes = new byte[c][w*h];
-                for (int k=0; k<c; k++) {
-                  ip = new FloatProcessor(w, h, pix[k]);
-                  ip = ip.convertToByte(true);
-                  bytes[k] = (byte[]) ip.getPixels();
-                }
-                ip = new ColorProcessor(w, h);
-                ((ColorProcessor) ip).setRGB(bytes[0], bytes[1],
-                  pix.length >= 3 ? bytes[2] : new byte[w*h]);
-                stackO.addSlice(imageName + ":" + (j + 1), ip);
               }
             }
           }
@@ -991,9 +938,34 @@ public class Importer implements ItemListener {
   private void displayStack(ImagePlus imp, IFormatReader r,
     FileStitcher fs, String id)
   {
+    adjustDisplay(imp);
+    
+    // convert to RGB if needed
+   
+    try {
+      if (r.isRGB(id)) {
+        int c = r.getSizeC(id);
+        ImageStack s = imp.getStack();
+        ImageStack newStack = new ImageStack(s.getWidth(), s.getHeight());
+        for (int i=0; i<r.getImageCount(id); i++) {
+          byte[][] bytes = new byte[c][];
+          for (int j=0; j<c; j++) {
+            ImageProcessor p = s.getProcessor(i*c + j + 1).convertToByte(true);
+            bytes[j] = (byte[]) p.getPixels();
+          }
+          ColorProcessor cp = new ColorProcessor(s.getWidth(), s.getHeight());
+          cp.setRGB(bytes[0], bytes[1], bytes.length == 3 ? bytes[2] : 
+            new byte[s.getWidth() * s.getHeight()]);
+          newStack.addSlice(s.getSliceLabel(i*c + 1), cp);
+        }
+        imp.setStack(imp.getTitle(), newStack);
+      }
+    }
+    catch (FormatException e) { }
+    catch (IOException e) { }
+    
     try {
       if (stackFormat.equals(VIEW_STANDARD)) {
-        adjustDisplay(imp);
         imp.show();
       }
       else if (stackFormat.equals(VIEW_BROWSER)) {}
@@ -1018,8 +990,6 @@ public class Importer implements ItemListener {
             }
           }
         }
-
-        adjustDisplay(imp);
 
         ReflectedUniverse ru = null;
         ru = new ReflectedUniverse();
@@ -1052,13 +1022,11 @@ public class Importer implements ItemListener {
           }
           imp.setStack(imp.getTitle(), is);
         }
-        adjustDisplay(imp);
         WindowManager.setTempCurrentImage(imp);
         IJ.run("View5D ", "slicecount=" + sizeZ + " timecount=" + sizeT);
       }
     }
     catch (Exception e) {
-      adjustDisplay(imp);
       imp.show();
     }
   }
