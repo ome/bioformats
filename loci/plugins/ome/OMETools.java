@@ -26,6 +26,7 @@ package loci.plugins.ome;
 import ij.*;
 import ij.gui.GenericDialog;
 import ij.process.*;
+import java.awt.TextField;
 import java.util.*;
 import loci.formats.*;
 import org.openmicroscopy.ds.*;
@@ -86,6 +87,12 @@ public class OMETools {
     gd.addStringField("Server:   ", "", 30);
     gd.addStringField("Username: ", "", 30);
     gd.addStringField("Password: ", "", 30);
+    
+    // star out the password field
+    
+    Vector v = gd.getStringFields();
+    ((TextField) v.get(2)).setEchoChar('*');
+    
     gd.showDialog();
 
     server = gd.getNextString();
