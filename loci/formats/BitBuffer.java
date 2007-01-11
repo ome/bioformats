@@ -49,7 +49,7 @@ public class BitBuffer {
   private boolean eofFlag;
 
   /**
-   *  Default constructor.
+   * Default constructor.
    */
   public BitBuffer(byte[] byteBuffer) {
     this.byteBuffer = byteBuffer;
@@ -64,25 +64,25 @@ public class BitBuffer {
    * @param bits Number of bits to skip
    */
   public void skipBits(long bits) {
-    // TODO: Consider whether negative bits should be allowed as a "rewind"
     if(bits < 0) {
       throw new IllegalArgumentException("Bits to skip may not be negative");
     }
-    long skipBytes = bits / 8;
-    int skipBits = (int) bits % 8;
-    // If we would overflow the currentByte value, well, we're larger than
-    // the array anyway, so...
-    if(skipBytes + currentByte > Integer.MAX_VALUE) {
+
+    // handles skipping past eof
+    if((long) eofByte * 8 < (long) currentByte * 8 + currentBit + bits) {
       eofFlag = true;
+      currentByte = eofByte;
+      currentBit = 0;
+      return;
     }
-    currentByte = (int) (skipBytes + currentByte);
+
+    int skipBytes = (int) (bits / 8);
+    int skipBits = (int) (bits % 8);
+    currentByte += skipBytes;
     currentBit += skipBits;
-    if(currentBit > 8) {
+    if(currentBit >= 8) {
       currentByte++;
       currentBit -= 8;
-    }
-    if(currentByte >= eofByte) {
-      eofFlag = true;
     }
   }
 
@@ -194,7 +194,7 @@ public class BitBuffer {
         readint = bb.getBits(len[i]);
         if(readint != nums[i]) {
           System.out.println("Error at #" + i + ": " + readint + " received, " +
-                             nums[i] + " expected.");
+            nums[i] + " expected.");
         }
       }
       else {
