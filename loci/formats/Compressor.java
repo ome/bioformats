@@ -45,21 +45,29 @@ public interface Compressor {
    * Compresses a block of data.
    *
    * @param data the data to be compressed
-   * @param dims the dimensions (if appropriate) of the contained pixel data
-   * @param options an Object representing an options required by the compressor
+   * @param x length of the x dimension of the image data, if appropriate
+   * @param y length of the y dimension of the image data, if appropriate
+   * @param dims the dimensions of the image data, if appropriate
+   * @param options options to be used during compression, if appropriate
    * @return The compressed data
+   * @throws FormatException If input is not an LZW-compressed data block.
    */
-  byte[] compress(byte[] data, int[] dims, Object options);
+  byte[] compress(byte[] data, int x, int y,
+      int[] dims, Object options) throws FormatException;
 
   /**
    * Compresses a block of data.
    *
    * @param data the data to be compressed
-   * @param dims the dimensions (if appropriate) of the contained pixel data
-   * @param options an Object representing an options required by the compressor
+   * @param x length of the x dimension of the image data, if appropriate
+   * @param y length of the y dimension of the image data, if appropriate
+   * @param dims the dimensions of the image data, if appropriate
+   * @param options options to be used during compression, if appropriate
    * @return The compressed data
+   * @throws FormatException If input is not an LZW-compressed data block.
    */
-  byte[] compress(byte[][] data, int[] dims, Object options);
+  byte[] compress(byte[][] data, int x, int y,
+      int[] dims, Object options) throws FormatException;
 
   /**
    * Decompresses a block of data.
