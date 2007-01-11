@@ -604,7 +604,9 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     minLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
     minPane.add(minLabel);
     minSlider = new JSlider(0, max, 0);
-    minSlider.setToolTipText("TODO");
+    minSlider.setToolTipText("<html>" +
+      "Adjusts intensity plot's minimum color value.<br>" +
+      "Anything less than this value appears black.</html>");
     minSlider.setMajorTickSpacing(max);
     int minor = max / 16;
     if (minor < 1) minor = 1;
@@ -621,7 +623,9 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     maxLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
     maxPane.add(maxLabel);
     maxSlider = new JSlider(0, max, max);
-    maxSlider.setToolTipText("TODO");
+    maxSlider.setToolTipText("<html>" +
+      "Adjusts intensity plot's maximum color value.<br>" +
+      "Anything greater than this value appears white.</html>");
     maxSlider.setMajorTickSpacing(max);
     maxSlider.setMinorTickSpacing(minor);
     maxSlider.setPaintTicks(true);
