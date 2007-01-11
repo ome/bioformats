@@ -95,6 +95,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
   // GUI components for intensity pane
   private JSlider cSlider;
+  private JLabel minLabel, maxLabel;
+  private JSlider minSlider, maxSlider;
   private JCheckBox cToggle;
 
   // GUI components for decay pane
@@ -125,6 +127,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
   private DataRenderer decayRend, fitRend, resRend, lineRend;
   private DataReferenceImpl decayRef, fitRef, resRef;
   private DisplayImpl iPlot, decayPlot;
+  private ScalarMap intensityMap;
   private AnimationControl ac;
 
   // -- Constructor --
@@ -321,7 +324,8 @@ public class SlimPlotter implements ActionListener, ChangeListener,
 
     iPlot.addMap(new ScalarMap(xType, Display.XAxis));
     iPlot.addMap(new ScalarMap(yType, Display.YAxis));
-    iPlot.addMap(new ScalarMap(vType, Display.RGB));
+    intensityMap = new ScalarMap(vType, Display.RGB);
+    iPlot.addMap(intensityMap);
     iPlot.addMap(new ScalarMap(cType, Display.Animation));
     DataReferenceImpl intensityRef = new DataReferenceImpl("intensity");
     iPlot.addReference(intensityRef);
@@ -545,7 +549,7 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     masterPane.setLayout(new BorderLayout());
     masterWindow.setContentPane(masterPane);
     JPanel intensityPane = new JPanel();
-    intensityPane.setLayout(new BorderLayout());
+    intensityPane.setLayout(new BoxLayout(intensityPane, BoxLayout.Y_AXIS));
     JPanel iPlotPane = new JPanel() {
       private int height = 380;
       public Dimension getMinimumSize() {
@@ -563,14 +567,14 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     };
     iPlotPane.setLayout(new BorderLayout());
     iPlotPane.add(iPlot.getComponent(), BorderLayout.CENTER);
-    intensityPane.add(iPlotPane, BorderLayout.CENTER);
+    intensityPane.add(iPlotPane);
 
     setProgress(progress, 970); // estimate: 97%
     if (progress.isCanceled()) System.exit(0);
 
     JPanel sliderPane = new JPanel();
     sliderPane.setLayout(new BoxLayout(sliderPane, BoxLayout.X_AXIS));
-    intensityPane.add(sliderPane, BorderLayout.SOUTH);
+    intensityPane.add(sliderPane);
     cSlider = new JSlider(1, channels, 1);
     cSlider.setToolTipText(
       "Selects the channel to display in the 2D intensity plot above");
@@ -588,6 +592,42 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     cToggle.addActionListener(this);
     cToggle.setEnabled(channels > 1);
     sliderPane.add(cToggle);
+
+    JPanel minMaxPane = new JPanel();
+    minMaxPane.setLayout(new BoxLayout(minMaxPane, BoxLayout.X_AXIS));
+    intensityPane.add(minMaxPane);
+
+    JPanel minPane = new JPanel();
+    minPane.setLayout(new BoxLayout(minPane, BoxLayout.Y_AXIS));
+    minMaxPane.add(minPane);
+    minLabel = new JLabel("min=0");
+    minLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+    minPane.add(minLabel);
+    minSlider = new JSlider(0, max, 0);
+    minSlider.setToolTipText("TODO");
+    minSlider.setMajorTickSpacing(max);
+    int minor = max / 16;
+    if (minor < 1) minor = 1;
+    minSlider.setMinorTickSpacing(minor);
+    minSlider.setPaintTicks(true);
+    minSlider.addChangeListener(this);
+    minSlider.setBorder(new EmptyBorder(0, 5, 8, 5));
+    minPane.add(minSlider);
+
+    JPanel maxPane = new JPanel();
+    maxPane.setLayout(new BoxLayout(maxPane, BoxLayout.Y_AXIS));
+    minMaxPane.add(maxPane);
+    maxLabel = new JLabel("max=" + max);
+    maxLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+    maxPane.add(maxLabel);
+    maxSlider = new JSlider(0, max, max);
+    maxSlider.setToolTipText("TODO");
+    maxSlider.setMajorTickSpacing(max);
+    maxSlider.setMinorTickSpacing(minor);
+    maxSlider.setPaintTicks(true);
+    maxSlider.addChangeListener(this);
+    maxSlider.setBorder(new EmptyBorder(0, 5, 8, 5));
+    maxPane.add(maxSlider);
 
     intensityRef.setData(field);
     ColorControl cc = (ColorControl) iPlot.getControl(ColorControl.class);
@@ -934,6 +974,27 @@ public class SlimPlotter implements ActionListener, ChangeListener,
       cToggle.removeActionListener(this);
       cToggle.setSelected(cVisible[c]);
       cToggle.addActionListener(this);
+    }
+    else if (src == minSlider) {
+      int min = minSlider.getValue();
+      int max = maxSlider.getMaximum();
+      maxSlider.setMajorTickSpacing(max - min);
+      int minor = (max - min) / 16;
+      if (minor < 1) minor = 1;
+      maxSlider.setMinorTickSpacing(minor);
+      maxSlider.setMinimum(min);
+      minLabel.setText("min=" + min);
+      rescaleMinMax();
+    }
+    else if (src == maxSlider) {
+      int max = maxSlider.getValue();
+      minSlider.setMajorTickSpacing(max);
+      int minor = max / 16;
+      if (minor < 1) minor = 1;
+      minSlider.setMinorTickSpacing(minor);
+      minSlider.setMaximum(max);
+      maxLabel.setText("max=" + max);
+      rescaleMinMax();
     }
     else if (src == numCurves) plotData(true, false, true);
   }
@@ -1315,6 +1376,14 @@ public class SlimPlotter implements ActionListener, ChangeListener,
     try { f = Float.parseFloat(zScaleValue.getText()); }
     catch (NumberFormatException exc) { }
     if (f == f) plotData(false, true, false);
+  }
+
+  private void rescaleMinMax() {
+    int min = minSlider.getValue();
+    int max = maxSlider.getValue();
+    try { intensityMap.setRange(min, max); }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
   }
 
   // -- Utility methods --
