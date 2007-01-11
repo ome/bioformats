@@ -24,15 +24,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.util.Random;
-
 /**
  * Implements basic LZW compression and decompression, as outlined in the
  * TIFF 6.0 Specification at
  * http://partners.adobe.com/asn/developer/pdfs/tn/TIFF6.pdf (page 61).
  *
  */
-public class LZWCompressor implements Compressor {
+public class LZWCompressor extends BaseCompressor implements Compressor {
 
   // LZW compression codes
   protected static final int CLEAR_CODE = 256;
@@ -43,11 +41,15 @@ public class LZWCompressor implements Compressor {
    * 0 length, simply returns input.
    *
    * @param input the data to be compressed
+   * @param x ignored for LZW.
+   * @param y ignored for LZW.
    * @param dims ignored for LZW.
    * @param options ignored for LZW.
    * @return The compressed data
    */
-  public byte[] compress(byte[] input, int[] dims, Object options) {
+  public byte[] compress(byte[] input, int x, int y, int[] dims,
+    Object options) throws FormatException
+  {
 
     if (input == null || input.length == 0) return input;
 
@@ -89,53 +91,6 @@ public class LZWCompressor implements Compressor {
     out.write(EOI_CODE, numBits);
 
     return out.toByteArray();
-  }
-
-  /**
-   * Compresses a block of data using LZW compression.
-   * This method simply concatenates data[0] + data[1] + ... + data[i] into
-   * a 1D block of data, then calls the 1D version of compress.
-   *
-   * @param data the data to be compressed
-   * @param dims ignored for LZW.
-   * @param options ignored for LZW.
-   * @return The compressed data
-   */
-  public byte[] compress(byte[][] data, int[] dims, Object options) {
-    int len = 0;
-    for(int i = 0; i < data.length; i++) {
-      len += data[i].length;
-    }
-    byte[] toCompress = new byte[len];
-    int curPos = 0;
-    for(int i = 0; i < data.length; i++) {
-      System.arraycopy(data[i], 0, toCompress, curPos, data[i].length);
-      curPos += data[i].length;
-    }
-    return compress(toCompress, dims, options);
-  }
-
-  /**
-   * Decodes an LZW-compressed data block.
-   * This method simply concatenates data[0] + data[1] + ... + data[i] into
-   * a 1D block of data, then calls the 1D version of decompress.
-   *
-   * @param data the data to be decompressed
-   * @return The decompressed data
-   * @throws FormatException If input is not an LZW-compressed data block.
-   */
-  public byte[] decompress(byte[][] data) throws FormatException {
-    int len = 0;
-    for(int i = 0; i < data.length; i++) {
-      len += data[i].length;
-    }
-    byte[] toDecompress = new byte[len];
-    int curPos = 0;
-    for(int i = 0; i < data.length; i++) {
-      System.arraycopy(data[i], 0, toDecompress, curPos, data[i].length);
-      curPos += data[i].length;
-    }
-    return decompress(toDecompress);
   }
 
   /**
@@ -216,62 +171,10 @@ public class LZWCompressor implements Compressor {
    * @throws FormatException Can only occur if there is a bug in the
    *                         compress method.
    */
+
   public static void main(String[] args) throws FormatException {
-    byte[] testdata = new byte[50000];
-    Random r = new Random();
-    System.out.println("Generating random data");
-    r.nextBytes(testdata);
     LZWCompressor c = new LZWCompressor();
-    System.out.println("Compressing data");
-    byte[] compressed = c.compress(testdata, null, null);
-    System.out.println("Decompressing data");
-    byte[] decompressed = c.decompress(compressed);
-    System.out.print("Comparing data... ");
-    if(testdata.length != decompressed.length) {
-      System.out.println("Test data differs in length from uncompressed data");
-      System.out.println("Exiting...");
-      System.exit(-1);
-    }
-    else {
-      boolean equalsFlag = true;
-      for(int i = 0; i < testdata.length; i++) {
-        if(testdata[i] != decompressed[i]) {
-          System.out.println("Test data and uncompressed data differs at byte" +
-                             i);
-          equalsFlag = false;
-        }
-      }
-      if(!equalsFlag) {
-        System.out.println("Comparison failed. \nExiting...");
-        System.exit(-1);
-      }
-    }
-    System.out.println("Success.");
-    System.out.println("Generating 2D byte array test");
-    byte[][] twoDtest = new byte[100][500];
-    for(int i = 0; i < 100; i++) {
-      System.arraycopy(testdata, 500*i, twoDtest[i], 0, 500);
-    }
-    byte[] twoDcompressed = c.compress(twoDtest, null, null);
-    System.out.print("Comparing compressed data... ");
-    if(twoDcompressed.length != compressed.length) {
-      System.out.println("1D and 2D compressed data not same length");
-      System.out.println("Exiting...");
-      System.exit(-1);
-    }
-    boolean equalsFlag = true;
-    for(int i = 0; i < twoDcompressed.length; i++) {
-      if(twoDcompressed[i] != compressed[i]) {
-        System.out.println("1D data and 2D compressed data differs at byte" +
-                           i);
-        equalsFlag = false;
-      }
-      if(!equalsFlag) {
-        System.out.println("Comparison failed. \nExiting...");
-        System.exit(-1);
-      }
-    }
-    System.out.println("Success.");
-    System.out.println("Test complete");
+    c.test();
   }
+
 }

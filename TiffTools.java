@@ -2411,7 +2411,7 @@ public final class TiffTools {
     }
     else if (compression == LZW) {
       LZWCompressor c = new LZWCompressor();
-      return c.compress(input, null, null);
+      return c.compress(input, 0, 0, null, null);
       // return Compression.lzwCompress(input);
     }
 
