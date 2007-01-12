@@ -321,7 +321,7 @@ public class OMETablePanel implements ActionListener {
       results[i] = Integer.parseInt((String) al.get(i));
     }
     if (results.length == 0) {
-      IJ.error("OME Download", 
+      IJ.error("OME Download",
         "No images were selected to download.  Try again.");
       return getInput();
     }

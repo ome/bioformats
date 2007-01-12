@@ -87,13 +87,17 @@ public class OMETools {
     gd.addStringField("Server:   ", "", 30);
     gd.addStringField("Username: ", "", 30);
     gd.addStringField("Password: ", "", 30);
-    
+
     // star out the password field
-    
+
     Vector v = gd.getStringFields();
     ((TextField) v.get(2)).setEchoChar('*');
-    
+
     gd.showDialog();
+    if (gd.wasCanceled()) {
+      cancelPlugin = true;
+      return;
+    }
 
     server = gd.getNextString();
     username = gd.getNextString();
@@ -197,12 +201,12 @@ public class OMETools {
   private Image[] getDownPicks(Image[] ima, DataFactory df, PixelsFactory pf) {
     //table array
     Object[][] props = new Object[ima.length][4];
-    
+
     //details array
     Object[][] details = new Object[ima.length][10];
-    
+
     //build a hashtable of experimenters to display names
-    
+
     Criteria criteria = new Criteria();
     criteria.addWantedField("FirstName");
     criteria.addWantedField("LastName");
@@ -214,12 +218,12 @@ public class OMETools {
       expers[1][i] = ((Experimenter) l.get(i)).getLastName();
       expers[2][i] = "" + ((Experimenter) l.get(i)).getID();
     }
-    
+
     Hashtable hm = new Hashtable(expers.length);
     for (int i=0; i<expers[0].length; i++) {
       hm.put(new Integer(expers[2][i]), expers[1][i] + ", " + expers[0][i]);
     }
-    
+
     //assemble the table array
     Pixels p;
     for (int i=0 ; i<props.length; i++) {
@@ -283,7 +287,7 @@ public class OMETools {
 
       //get database info to use in search
       IJ.showStatus("Getting database info..");
-      
+
       Criteria criteria = new Criteria();
       criteria.addWantedField("FirstName");
       criteria.addWantedField("LastName");
@@ -306,7 +310,7 @@ public class OMETools {
       criteria.addWantedField("datasets", "id");
       criteria.addWantedField("datasets", "name");
       criteria.addWantedField("datasets", "images");
-     
+
       FieldsSpecification fs = new FieldsSpecification();
       fs.addWantedField("id");
       fs.addWantedField("experimenter");
@@ -332,14 +336,18 @@ public class OMETools {
       gd.addStringField("Image ID:   ", "", 30);
       gd.addStringField("Image Name: ", "", 30);
       gd.showDialog();
-      
+      if (gd.wasCanceled()) {
+        pluginCancelled();
+        return;
+      }
+
       Image[] images = new Image[0];
 
       //do the image search
       IJ.showStatus("Searching for images...");
       while (images.length == 0) {
         //get search results
-       
+
         String project = gd.getNextChoice();
         String owner = gd.getNextChoice();
         String img = gd.getNextString();
@@ -382,7 +390,7 @@ public class OMETools {
 
         if(images == null) images = new Image[0];
         if (images.length == 0) {
-          IJ.showMessage("OME Download", 
+          IJ.showMessage("OME Download",
             "No images matched the specified criteria.");
         }
         else {

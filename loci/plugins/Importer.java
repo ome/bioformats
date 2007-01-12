@@ -44,7 +44,7 @@ import loci.formats.*;
 import loci.plugins.browser.LociDataBrowser;
 
 /**
- * Core logic for the LOCI Importer ImageJ plugin.
+ * Core logic for the Bio-Formats Importer ImageJ plugin.
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert linkert at wisc.edu
@@ -86,8 +86,14 @@ public class Importer implements ItemListener {
 
   /** Executes the plugin. */
   public void run(String arg) {
+    String location = null;
+    if (arg != null && arg.startsWith("location=")) {
+      // parse location from argument
+      location = Macro.getValue(arg, "location", null);
+      arg = null;
+    }
+
     boolean quiet = arg != null && !arg.equals("");
-    String options = Macro.getOptions();
 
     // -- Step 1: get filename to open --
 
@@ -98,6 +104,7 @@ public class Importer implements ItemListener {
 
     if (id == null) {
       // try to get filename from macro options
+      String options = Macro.getOptions();
       if (options != null) {
         String open = Macro.getValue(options, "open", null);
         if (open != null) id = open;
@@ -106,14 +113,20 @@ public class Importer implements ItemListener {
 
     String fileName = id;
 
-    if (id == null || id.length() == 0) { 
-      // open a dialog asking the user where their dataset is
-      GenericDialog g = new GenericDialog("Specify location");
-      g.addChoice("File location: ", 
-        new String[] {LOCAL_FILE, OME_FILE, HTTP_FILE}, LOCAL_FILE); 
-      g.showDialog();
-    
-      String location = g.getNextChoice();
+    GenericDialog gd;
+    if (id == null || id.length() == 0) {
+      if (location == null) {
+        // open a dialog asking the user where their dataset is
+        gd = new GenericDialog("LOCI Bio-Formats Dataset Location");
+        gd.addChoice("Location: ",
+          new String[] {LOCAL_FILE, OME_FILE, HTTP_FILE}, LOCAL_FILE);
+        gd.showDialog();
+        if (gd.wasCanceled()) {
+          plugin.canceled = true;
+          return;
+        }
+        location = gd.getNextChoice();
+      }
 
       if (location.equals(LOCAL_FILE)) {
         // if necessary, prompt the user for the filename
@@ -139,14 +152,19 @@ public class Importer implements ItemListener {
         IJ.runPlugIn("loci.plugins.ome.OMEPlugin", "");
         return;
       }
-      else {
+      else if (location.equals(HTTP_FILE)) {
         // prompt for URL
-        GenericDialog urlBox = new GenericDialog("Open");
-        urlBox.addStringField("URL: ", "", 30);
-        urlBox.showDialog();
-        id = urlBox.getNextString();
+        gd = new GenericDialog("LOCI Bio-Formats URL");
+        gd.addStringField("URL: ", "http://", 30);
+        gd.showDialog();
+        if (gd.wasCanceled()) {
+          plugin.canceled = true;
+          return;
+        }
+        id = gd.getNextString();
         fileName = id;
-      } 
+      }
+      else IJ.error("LOCI Bio-Formats", "Invalid location: " + location);
     }
 
     // -- Step 2: identify file --
@@ -202,7 +220,7 @@ public class Importer implements ItemListener {
     final String stackString = "View stack with: ";
 
     // prompt for parameters, if necessary
-    GenericDialog gd = new GenericDialog("LOCI Bio-Formats Import Options");
+    gd = new GenericDialog("LOCI Bio-Formats Import Options");
     gd.addCheckbox(mergeString, mergeChannels);
     gd.addCheckbox(ignoreString, ignoreTables);
     gd.addCheckbox(colorizeString, colorize);
@@ -508,7 +526,7 @@ public class Importer implements ItemListener {
       }
 
       // -- Step 4d: read pixel data --
-      
+
       // only read data explicitly if not using 4D Data Browser
       if (!stackFormat.equals(VIEW_BROWSER)) {
         IJ.showStatus("Reading " + r.getCurrentFile());
@@ -592,7 +610,7 @@ public class Importer implements ItemListener {
                 bytes = new byte[w*h*c];
                 System.arraycopy(tmp, 0, bytes, 0, bytes.length);
               }
-              
+
               ip = new ByteProcessor(w, h, bytes, null);
               if (stackB == null) stackB = new ImageStack(w, h);
               stackB.addSlice(imageName + ":" + (j + 1), ip);
@@ -604,7 +622,7 @@ public class Importer implements ItemListener {
                 s = new short[w*h*c];
                 System.arraycopy(tmp, 0, s, 0, s.length);
               }
-              
+
               ip = new ShortProcessor(w, h, s, null);
               if (stackS == null) stackS = new ImageStack(w, h);
               stackS.addSlice(imageName + ":" + (j + 1), ip);
@@ -670,7 +688,7 @@ public class Importer implements ItemListener {
                 ip = new ColorProcessor(w, h);
                 ((ColorProcessor) ip).setRGB(bytes[0], bytes[1],
                   pix.length >= 3 ? bytes[2] : new byte[w*h]);
-                stackO.addSlice(imageName + ":" + (j + 1), ip);  
+                stackO.addSlice(imageName + ":" + (j + 1), ip);
               }
             }
             else if (pixels instanceof double[]) {
@@ -680,7 +698,7 @@ public class Importer implements ItemListener {
                 d = new double[w*h*c];
                 System.arraycopy(tmp, 0, d, 0, d.length);
               }
-             
+
               ip = new FloatProcessor(w, h, d);
               if (stackF == null) stackF = new ImageStack(w, h);
               stackF.addSlice(imageName + ":" + (j + 1), ip);
@@ -932,13 +950,13 @@ public class Importer implements ItemListener {
   private void displayStack(ImagePlus imp, IFormatReader r,
     FileStitcher fs, String id)
   {
-    adjustDisplay(imp); 
+    adjustDisplay(imp);
 
-    try {  
+    try {
       // convert to RGB if needed
-   
-      if (mergeChannels && r.getSizeC(id) > 1 && 
-        r.getPixelType(id) != FormatReader.FLOAT) 
+
+      if (mergeChannels && r.getSizeC(id) > 1 &&
+        r.getPixelType(id) != FormatReader.FLOAT)
       {
         int c = r.getSizeC(id);
         ImageStack s = imp.getStack();
@@ -954,8 +972,8 @@ public class Importer implements ItemListener {
             for (int j=0; j<f.length; j++) {
               bytes[j] = (byte) Float.floatToIntBits(f[j]);
             }
-            
-            ByteProcessor p = new ByteProcessor(s.getWidth(), 
+
+            ByteProcessor p = new ByteProcessor(s.getWidth(),
               s.getHeight(), bytes, null);
             newStack.addSlice(s.getSliceLabel(i + 1), p);
           }
@@ -982,7 +1000,7 @@ public class Importer implements ItemListener {
         }
         imp.setStack(imp.getTitle(), newStack);
       }
-    
+
       if (stackFormat.equals(VIEW_STANDARD)) {
         imp.show();
       }
@@ -1059,7 +1077,7 @@ public class Importer implements ItemListener {
       if (p.getMin() < min) min = p.getMin();
       if (p.getMax() > max) max = p.getMax();
     }
-  
+
     ImageProcessor p = imp.getProcessor();
     if (p instanceof ColorProcessor) {
       ((ColorProcessor) p).setMinAndMax(min, max, 3);

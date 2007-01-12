@@ -35,7 +35,7 @@ import loci.plugins.Util;
  */
 public class OMEPlugin implements PlugIn {
 
-  /** shows and retrieves info from the SidePanel */
+  /** Executes the plugin. */
   public void run(String arg) {
     if (!Util.checkVersion()) return;
     if (!Util.checkLibraries(true, true, true, true)) return;
