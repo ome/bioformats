@@ -58,9 +58,9 @@ public class Importer implements ItemListener {
   private static final String VIEW_IMAGE_5D = "Image5D";
   private static final String VIEW_VIEW_5D = "View5D";
 
-  private static final String LOCAL_FILE = "Local machine";
-  private static final String OME_FILE = "OME server";
-  private static final String HTTP_FILE = "Internet";
+  private static final String LOCATION_LOCAL = "Local machine";
+  private static final String LOCATION_OME = "OME server";
+  private static final String LOCATION_HTTP = "Internet";
 
   // -- Fields --
 
@@ -119,7 +119,7 @@ public class Importer implements ItemListener {
         // open a dialog asking the user where their dataset is
         gd = new GenericDialog("LOCI Bio-Formats Dataset Location");
         gd.addChoice("Location: ",
-          new String[] {LOCAL_FILE, OME_FILE, HTTP_FILE}, LOCAL_FILE);
+          new String[] {LOCATION_LOCAL, LOCATION_OME, LOCATION_HTTP}, LOCATION_LOCAL);
         gd.showDialog();
         if (gd.wasCanceled()) {
           plugin.canceled = true;
@@ -128,7 +128,7 @@ public class Importer implements ItemListener {
         location = gd.getNextChoice();
       }
 
-      if (location.equals(LOCAL_FILE)) {
+      if (LOCATION_LOCAL.equals(location)) {
         // if necessary, prompt the user for the filename
         OpenDialog od = new OpenDialog("Open", id);
         String directory = od.getDirectory();
@@ -148,11 +148,11 @@ public class Importer implements ItemListener {
           return;
         }
       }
-      else if (location.equals(OME_FILE)) {
+      else if (LOCATION_OME.equals(location)) {
         IJ.runPlugIn("loci.plugins.ome.OMEPlugin", "");
         return;
       }
-      else if (location.equals(HTTP_FILE)) {
+      else if (LOCATION_HTTP.equals(location)) {
         // prompt for URL
         gd = new GenericDialog("LOCI Bio-Formats URL");
         gd.addStringField("URL: ", "http://", 30);
@@ -166,6 +166,11 @@ public class Importer implements ItemListener {
       }
       else IJ.error("LOCI Bio-Formats", "Invalid location: " + location);
     }
+
+    String idType = "ID";
+    if (LOCATION_LOCAL.equals(location)) idType = "Filename";
+    else if (LOCATION_OME.equals(location)) idType = "OME address";
+    else if (LOCATION_HTTP.equals(location)) idType = "URL";
 
     // -- Step 2: identify file --
 
@@ -505,7 +510,7 @@ public class Importer implements ItemListener {
 
         // display standard metadata in a table in its own window
         Hashtable meta = r.getMetadata(id);
-        meta.put("\t\tFilename", r.getCurrentFile());
+        meta.put("\t\t" + idType, r.getCurrentFile());
         meta.put("\tSizeX", new Integer(r.getSizeX(id)));
         meta.put("\tSizeY", new Integer(r.getSizeY(id)));
         meta.put("\tSizeZ", new Integer(r.getSizeZ(id)));
