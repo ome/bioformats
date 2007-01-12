@@ -42,7 +42,7 @@ public class LZOCompressor extends BaseCompressor implements Compressor {
    * @param dims the dimensions of the image data, if appropriate
    * @param options options to be used during compression, if appropriate
    * @return The compressed data
-   * @throws FormatException If input is not an LZW-compressed data block.
+   * @throws FormatException If input is not an LZO-compressed data block.
    */
   public byte[] compress(byte[] data, int x, int y,
       int[] dims, Object options) throws FormatException
