@@ -505,6 +505,7 @@ public class Importer implements ItemListener {
 
         // display standard metadata in a table in its own window
         Hashtable meta = r.getMetadata(id);
+        meta.put("\t\tFilename", r.getCurrentFile());
         meta.put("\tSizeX", new Integer(r.getSizeX(id)));
         meta.put("\tSizeY", new Integer(r.getSizeY(id)));
         meta.put("\tSizeZ", new Integer(r.getSizeZ(id)));
