@@ -100,18 +100,25 @@ public class OMETools {
     }
 
     server = gd.getNextString();
+  
+    // do sanity check on server name
+    if (server.startsWith("http:")) {
+      server = server.substring(5);
+    }
+    while (server.startsWith("/")) server = server.substring(1);
+    int slash = server.indexOf("/");
+    if (slash >= 0) server = server.substring(0, slash);
+    int colon = server.indexOf(":");
+    if (colon >= 0) server = server.substring(0, colon);
+
+    server = "http://" + server + "/shoola/";
+    
     username = gd.getNextString();
     password = gd.getNextString();
   }
 
   public static void setPlugin(boolean isCancelled) {
     cancelPlugin = isCancelled;
-  }
-
-  public void pluginCancelled() {
-    IJ.showProgress(1);
-    IJ.showStatus("OME: Exited.");
-    cancelPlugin = false;
   }
 
   /**
@@ -124,15 +131,13 @@ public class OMETools {
     try {
       IJ.showProgress(0);
       getInput();
-      if(cancelPlugin) {
-        pluginCancelled();
+      if (cancelPlugin) {
         return;
       }
       rs = DataServer.getDefaultServices(server);
       rc = rs.getRemoteCaller();
       while(!loggedIn) {
         if(cancelPlugin) {
-          pluginCancelled();
           return;
         }
         if(error) {
@@ -146,9 +151,6 @@ public class OMETools {
     catch(Exception e) {
       IJ.error("Input Error", "The login information is not valid.");
       login();
-      if(cancelPlugin) {
-        pluginCancelled();
-      }
     }
   }
 
@@ -158,7 +160,6 @@ public class OMETools {
       IJ.showStatus("OME: Getting image information...");
       IJ.showProgress(.1);
       if(cancelPlugin) {
-        pluginCancelled();
         return;
       }
       df = (DataFactory) rs.getService(DataFactory.class);
@@ -199,6 +200,8 @@ public class OMETools {
 
   /** returns a list of images that the user chooses */
   private Image[] getDownPicks(Image[] ima, DataFactory df, PixelsFactory pf) {
+    if (cancelPlugin) return null;
+    
     //table array
     Object[][] props = new Object[ima.length][4];
 
@@ -264,7 +267,6 @@ public class OMETools {
     int[] results = tp.getInput();
     if (results == null) {
       cancelPlugin = true;
-      pluginCancelled();
       return null;
     }
     Image[] returns = new Image[results.length];
@@ -283,6 +285,10 @@ public class OMETools {
   public void run() {
     try {
       login();
+      if (cancelPlugin) {
+        cancelPlugin = false;
+        return;
+      }
       getHelpers();
 
       //get database info to use in search
@@ -337,7 +343,6 @@ public class OMETools {
       gd.addStringField("Image Name: ", "", 30);
       gd.showDialog();
       if (gd.wasCanceled()) {
-        pluginCancelled();
         return;
       }
 
@@ -397,7 +402,6 @@ public class OMETools {
           //pick from results
           images = getDownPicks(images,df, pf);
           if (cancelPlugin) {
-            pluginCancelled();
             return;
           }
         }
@@ -411,7 +415,6 @@ public class OMETools {
         IJ.runPlugIn("loci.plugins.LociImporter", file);
 
         if (cancelPlugin) {
-          pluginCancelled();
           return;
         }
       }
@@ -419,7 +422,6 @@ public class OMETools {
     }
     catch(NullPointerException e) {
       e.printStackTrace();
-      pluginCancelled();
     }
     catch(IllegalArgumentException f) {
       // do nothing; this means that the user cancelled the login procedure

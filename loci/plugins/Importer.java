@@ -35,7 +35,6 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.image.*;
-import java.io.File;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -140,7 +139,7 @@ public class Importer implements ItemListener {
         id = directory + fileName;
 
         // if no valid filename, give up
-        if (id == null || !new File(id).exists()) {
+        if (id == null || !new FileWrapper(id).exists()) {
           if (!quiet) {
             IJ.error("LOCI Bio-Formats", "The specified file " +
               (id == null ? "" : ("(" + id + ") ")) + "does not exist.");
@@ -285,7 +284,7 @@ public class Importer implements ItemListener {
       if (stitchFiles) {
         fs = new FileStitcher(r, true);
         // prompt user to confirm detected file pattern
-        id = FilePattern.findPattern(new File(id));
+        id = FilePattern.findPattern(new FileWrapper(id));
         gd = new GenericDialog("LOCI Bio-Formats File Stitching");
         int len = id.length() + 1;
         if (len > 80) len = 80;

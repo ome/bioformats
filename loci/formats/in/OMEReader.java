@@ -195,7 +195,7 @@ public class OMEReader extends FormatReader {
 
   /* @see IFormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (id.equals(loginString) || id.equals(imageId)) return;
+    if (id.equals(loginString)) return;
     super.initFile(id);
 
     loginString = id;
@@ -214,7 +214,6 @@ public class OMEReader extends FormatReader {
       ndx = id.indexOf("&", ndx + 1);
       imageId = id.substring(ndx + 4);
     }
-    currentId = imageId;
 
     // do sanity check on server name
     if (server.startsWith("http:")) {
@@ -225,6 +224,8 @@ public class OMEReader extends FormatReader {
     if (slash >= 0) server = server.substring(0, slash);
     int colon = server.indexOf(":");
     if (colon >= 0) server = server.substring(0, colon);
+
+    currentId = server + ":" + imageId;
 
     server = "http://" + server + "/shoola/";
 
