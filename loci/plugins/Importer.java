@@ -522,7 +522,7 @@ public class Importer implements ItemListener {
         meta.put("\tDimensionOrder", r.getDimensionOrder(id));
         meta.put("\tIsInterleaved", new Boolean(r.isInterleaved(id)));
         MetadataPane mp = new MetadataPane(meta);
-        JFrame frame = new JFrame(id + " Metadata");
+        JFrame frame = new JFrame("Metadata - " + r.getCurrentFile());
         frame.setContentPane(mp);
         frame.pack();
         frame.setVisible(true);
