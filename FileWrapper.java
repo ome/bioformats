@@ -120,7 +120,10 @@ public class FileWrapper extends File {
         url.getContent();
         return true;
       }
-      catch (IOException e) { return false; }
+      catch (IOException e) { 
+        /* debug */ e.printStackTrace();
+        return false; 
+      }
     }
     return super.exists();
   }
@@ -224,20 +227,24 @@ public class FileWrapper extends File {
       try {
         URLConnection c = url.openConnection();
         InputStream is = c.getInputStream();
-        int len = c.getContentLength();
-        if (len == -1) len = is.available();
-        byte[] b = new byte[len];
-        int read = is.read(b);
-        while (read < b.length) read += is.read(b, read, b.length - read);
-        String s = new String(b);
-      
+        boolean foundEnd = false;
+
         Vector files = new Vector();
-        while (s.indexOf("a href") != -1) {
-          int ndx = s.indexOf("a href") + 8;
-          String f = s.substring(ndx, s.indexOf("\"", ndx));
-          s = s.substring(s.indexOf("\"", ndx) + 1);
-          FileWrapper check = new FileWrapper(getAbsolutePath(), f);
-          if (check.exists()) files.add(check.getName());
+        while (!foundEnd) {
+          byte[] b = new byte[is.available()];
+          int read = is.read(b);
+          String s = new String(b);
+          if (s.toLowerCase().indexOf("</html>") != -1) foundEnd = true;
+
+          while (s.indexOf("a href") != -1) {
+            int ndx = s.indexOf("a href") + 8;
+            String f = s.substring(ndx, s.indexOf("\"", ndx));
+            s = s.substring(s.indexOf("\"", ndx) + 1);
+            FileWrapper check = new FileWrapper(getAbsolutePath(), f);
+            if (check.exists()) {
+              files.add(check.getName());
+            }
+          }
         }
         return (String[]) files.toArray(new String[0]);
       }
