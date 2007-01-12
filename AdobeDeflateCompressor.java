@@ -33,7 +33,8 @@ import java.util.zip.InflaterInputStream;
  * implemented.
  */
 public class AdobeDeflateCompressor
-    extends BaseCompressor implements Compressor {
+    extends BaseCompressor implements Compressor
+{
 
   /**
    * Compresses a block of Adobe Deflate data. Currently not supported.
@@ -47,15 +48,16 @@ public class AdobeDeflateCompressor
    * @throws FormatException If input is not an Adobe data block.
    */
   public byte[] compress(byte[] data, int x, int y,
-      int[] dims, Object options) throws FormatException {
+      int[] dims, Object options) throws FormatException
+  {
     // TODO: Add compression support.
-    throw new FormatException
-      ("Adobe Deflate Compression not currently supported");
+    throw new FormatException("Adobe Deflate Compression not currently " +
+                               "supported");
   }
 
   /** Decodes an Adobe Deflate (Zip) compressed image strip.
    *
-   * @param src the data to be decompressed
+   * @param input the data to be decompressed
    * @return The decompressed data
    * @throws FormatException if data is not valid compressed data for this
    *                         decompressor
