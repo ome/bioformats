@@ -119,7 +119,6 @@ public abstract class BaseCompressor implements Compressor {
    * This method tests whether the data is the same after compressing and
    * decompressing, as well as doing a basic test of the 2D methods.
    *
-   * @param args ignored
    * @throws FormatException Can only occur if there is a bug in the
    *                         compress method.
    */
