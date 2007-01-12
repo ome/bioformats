@@ -303,7 +303,14 @@ public class OpenlabReader extends FormatReader {
       byte[] c = new byte[compressedSize];
       in.read(c);
 
-      Compression.lzoUncompress(c, size, b);
+//      Compression.lzoUncompress(c, size, b);
+      LZOCompressor lzoc = new LZOCompressor();
+      b = lzoc.decompress(c);
+      if(b.length != size) {
+        System.err.println("LZOCompressor failed to predict image size");
+        System.err.println(size + " expected, got " + b.length +
+                           ". The image displayed may not be correct.");
+      }
 
       if (volumeType == MAC_24_BIT) {
         bytesPerPixel = b.length >= width[series] * height[series] * 4 ? 4 : 3;
