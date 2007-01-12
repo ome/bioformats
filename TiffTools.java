@@ -1787,7 +1787,9 @@ public final class TiffTools {
       return Compression.packBitsUncompress(input);
     }
     else if (compression == PROPRIETARY_DEFLATE || compression == DEFLATE) {
-      return Compression.deflateUncompress(input);
+      //return Compression.deflateUncompress(input);
+      AdobeDeflateCompressor c = new AdobeDeflateCompressor();
+      return c.decompress(input);
     }
     else if (compression == THUNDERSCAN) {
       throw new FormatException("Sorry, " +
