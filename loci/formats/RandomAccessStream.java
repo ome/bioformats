@@ -344,7 +344,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
   // -- InputStream API methods --
 
   public int available() throws IOException {
-    return dis != null ? dis.available() + ext : 
+    return dis != null ? dis.available() + ext :
       (int) (length() - getFilePointer());
   }
 
