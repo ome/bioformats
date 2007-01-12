@@ -1784,7 +1784,10 @@ public final class TiffTools {
         "supported; it will be added in the near future");
     }
     else if (compression == PACK_BITS) {
-      return Compression.packBitsUncompress(input);
+      PackbitsCompressor c = new PackbitsCompressor();
+      return c.decompress(input);
+
+      //return Compression.packBitsUncompress(input);
     }
     else if (compression == PROPRIETARY_DEFLATE || compression == DEFLATE) {
       //return Compression.deflateUncompress(input);
