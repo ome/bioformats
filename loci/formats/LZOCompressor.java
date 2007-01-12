@@ -34,7 +34,7 @@ public class LZOCompressor extends BaseCompressor implements Compressor {
   private static final int LZO_OVERRUN = -6;
 
   /**
-   * Compresses a block of lzo data.
+   * Compresses a block of lzo data. Currently not supported.
    *
    * @param data the data to be compressed
    * @param x length of the x dimension of the image data, if appropriate
@@ -56,7 +56,7 @@ public class LZOCompressor extends BaseCompressor implements Compressor {
    * Adapted from LZO for Java, available at
    * http://www.oberhumer.com/opensource/lzo/
    *
-   * @param data the data to be decompressed
+   * @param src the data to be decompressed
    * @return The decompressed data
    * @throws FormatException if data is not valid compressed data for this
    *                         decompressor
