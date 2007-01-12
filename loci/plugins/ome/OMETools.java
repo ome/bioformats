@@ -84,8 +84,8 @@ public class OMETools {
    */
   private void getInput() {
     GenericDialog gd = new GenericDialog("OME Login");
-    gd.addStringField("Server:   ", "", 30);
-    gd.addStringField("Username: ", "", 30);
+    gd.addStringField("Server:   ", Prefs.get("downloader.server", ""), 30);
+    gd.addStringField("Username: ", Prefs.get("downloader.user", ""), 30);
     gd.addStringField("Password: ", "", 30);
 
     // star out the password field
@@ -115,6 +115,9 @@ public class OMETools {
     
     username = gd.getNextString();
     password = gd.getNextString();
+
+    Prefs.set("downloader.server", server);
+    Prefs.set("downloader.user", username);
   }
 
   public static void setPlugin(boolean isCancelled) {
