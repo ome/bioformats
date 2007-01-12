@@ -538,7 +538,9 @@ public class PictReader extends FormatReader {
           throw new FormatException("Sorry, vector data not supported.");
         }
 
-        uBuf = Compression.packBitsUncompress(buf);
+        PackbitsCompressor c = new PackbitsCompressor();
+        uBuf = c.decompress(buf);
+        //uBuf = Compression.packBitsUncompress(buf);
 
         // invert the pixels -- PICT images map zero to white
         for (int j=0; j<uBuf.length; j++) uBuf[j] = (byte) ~uBuf[j];
@@ -757,7 +759,11 @@ public class PictReader extends FormatReader {
           unpackBits(buf, uBufI);
           strips.add(uBufI);
         }
-        else uBuf = Compression.packBitsUncompress(buf);
+        else {
+          PackbitsCompressor c = new PackbitsCompressor();
+          uBuf = c.decompress(buf);
+          //uBuf = Compression.packBitsUncompress(buf);
+        }
 
         if (pixelSize < 8) {
           expandPixels(pixelSize, uBuf, outBuf, outBuf.length);
