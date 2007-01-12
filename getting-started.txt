@@ -126,6 +126,10 @@ and IFormatHandler.getMappedId(String).
   InputStream, and implements the DataInput interface.
   It is recommended that you use this for reading binary files.
 
+- loci.formats.FileWrapper extends java.io.File to support reading from URLs.
+  It is recommended that you use this instead of File.  See the JavaDoc for
+  additional information.
+
 - loci.formats.DataTools provides a number of methods for converting bytes to
   shorts, ints, longs, etc.  It also supports reading most primitive types
   directly from a RandomAccessStream (or other DataInput implementation).

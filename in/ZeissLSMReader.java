@@ -684,7 +684,7 @@ public class ZeissLSMReader extends BaseTiffReader {
     // see if we have an associated MDB file
 
     File dir =
-      new File(getMappedId(currentId)).getAbsoluteFile().getParentFile();
+      new FileWrapper(getMappedId(currentId)).getAbsoluteFile().getParentFile();
     String[] dirList = dir.list();
 
     for (int i=0; i<dirList.length; i++) {

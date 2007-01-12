@@ -156,12 +156,12 @@ public abstract class FormatReader extends FormatHandler
    * isThisType(byte[]) to check whether it matches this format.
    */
   protected boolean checkBytes(String name, int maxLen) {
-    long len = new File(name).length();
-    byte[] buf = new byte[len < maxLen ? (int) len : maxLen];
     try {
-      DataInputStream fin = new DataInputStream(new FileInputStream(name));
-      fin.readFully(buf);
-      fin.close();
+      RandomAccessStream ras = new RandomAccessStream(name);
+      long len = ras.length();
+      byte[] buf = new byte[len < maxLen ? (int) len : maxLen];
+      ras.readFully(buf);
+      ras.close();
       return isThisType(buf);
     }
     catch (IOException exc) { return false; }
@@ -602,7 +602,8 @@ public abstract class FormatReader extends FormatHandler
 
     if (stitch) {
       reader = new FileStitcher(reader, true);
-      String pat = FilePattern.findPattern(new File(map == null ? id : map));
+      String pat = 
+        FilePattern.findPattern(new FileWrapper(map == null ? id : map));
       if (pat != null) id = pat;
     }
     if (separate) reader = new ChannelSeparator(reader);

@@ -325,7 +325,7 @@ public class ReaderTest extends TestCase {
         if (DEBUG) io.printStackTrace();
       }
     }
-    String absFile = new File(file).getAbsolutePath();
+    String absFile = new FileWrapper(file).getAbsolutePath();
     for (int i=0; i<badFiles.size(); i++) {
       String bad = (String) badFiles.elementAt(i);
       if (absFile.endsWith(bad)) return true;
@@ -335,7 +335,7 @@ public class ReaderTest extends TestCase {
 
   /** Recursively generates a list of files to test. */
   public static void getFiles(String root, Vector files) {
-    File f = new File(root);
+    File f = new FileWrapper(root);
     String[] subs = f.list();
     if (subs == null) {
       System.out.println("Invalid directory: " + root);
@@ -349,7 +349,7 @@ public class ReaderTest extends TestCase {
         if (DEBUG) debug(subs[i] + " is a bad file");
         continue;
       }
-      File file = new File(subs[i]);
+      File file = new FileWrapper(subs[i]);
       if (file.isDirectory()) getFiles(subs[i], files);
       else {
         if (ir.isThisType(subs[i])) {
@@ -400,7 +400,7 @@ public class ReaderTest extends TestCase {
     System.out.println(files.size() + " found.");
     while (files.size() > 0) {
       String id = (String) files.elementAt(0);
-      String pattern = FilePattern.findPattern(new File(id));
+      String pattern = FilePattern.findPattern(new FileWrapper(id));
       if (pattern == null) pattern = id;
       System.out.println("Testing " + pattern);
       TestResult result = new TestResult();

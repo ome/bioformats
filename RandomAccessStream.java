@@ -89,8 +89,9 @@ public class RandomAccessStream extends InputStream implements DataInput {
    */
   public RandomAccessStream(String file) throws IOException {
     File f = new File(file);
+    f = f.getAbsoluteFile();
     if (f.exists()) {
-      raf = new RAFile(file, "r");
+      raf = new RAFile(f, "r");
       dis = new DataInputStream(new BufferedInputStream(
         new FileInputStream(file), MAX_OVERHEAD));
       int len = (int) raf.length();
@@ -117,6 +118,9 @@ public class RandomAccessStream extends InputStream implements DataInput {
   }
 
   // -- RandomAccessStream API methods --
+
+  /** Return the underlying InputStream */
+  public DataInputStream getInputStream() { return dis; }
 
   /**
    * Sets the number of bytes by which to extend the stream.  This only applies
@@ -340,7 +344,8 @@ public class RandomAccessStream extends InputStream implements DataInput {
   // -- InputStream API methods --
 
   public int available() throws IOException {
-    return dis.available() + ext;
+    return dis != null ? dis.available() + ext : 
+      (int) (length() - getFilePointer());
   }
 
   public void mark(int readLimit) {

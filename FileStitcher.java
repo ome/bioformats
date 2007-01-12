@@ -196,7 +196,9 @@ public class FileStitcher implements IFormatReader {
       }
       else {
         // id is an unmapped file path; look to similar files on disk
-        pattern = FilePattern.findPattern(new File(id)); // id == getMapped(id)
+
+        // id == getMapped(id)
+        pattern = FilePattern.findPattern(new FileWrapper(id));
       }
       if (pattern != null) id = pattern;
     }
@@ -615,7 +617,7 @@ public class FileStitcher implements IFormatReader {
         fp.getPattern() + "). " + msg);
     }
     for (int i=0; i<files.length; i++) {
-      if (!new File(getMappedId(files[i])).exists()) {
+      if (!new FileWrapper(getMappedId(files[i])).exists()) {
         throw new FormatException("File #" + i +
           " (" + files[i] + ") does not exist.");
       }

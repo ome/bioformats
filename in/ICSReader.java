@@ -217,11 +217,11 @@ public class ICSReader extends FormatReader {
     }
 
     if (icsId == null) throw new FormatException("No ICS file found.");
-    File icsFile = new File(getMappedId(icsId));
+    File icsFile = new FileWrapper(getMappedId(icsId));
     if (!icsFile.exists()) throw new FormatException("ICS file not found.");
 
     // check if we have a v2 ICS file
-    RandomAccessFile f = new RandomAccessFile(getMappedId(icsId), "r");
+    RandomAccessStream f = new RandomAccessStream(getMappedId(icsId));
     byte[] b = new byte[17];
     f.read(b);
     f.close();
@@ -231,7 +231,7 @@ public class ICSReader extends FormatReader {
     }
     else {
       if (idsId == null) throw new FormatException("No IDS file found.");
-      File idsFile = new File(getMappedId(idsId));
+      File idsFile = new FileWrapper(getMappedId(idsId));
       if (!idsFile.exists()) throw new FormatException("IDS file not found.");
       currentIdsId = idsId;
       idsIn = new RandomAccessStream(getMappedId(idsId));
@@ -241,11 +241,15 @@ public class ICSReader extends FormatReader {
 
     icsIn = icsFile;
 
-    BufferedReader reader = new BufferedReader(new FileReader(icsIn));
-    String line = reader.readLine();
-    line = reader.readLine();
+    RandomAccessStream reader = new RandomAccessStream(icsIn.getAbsolutePath());
     StringTokenizer t;
     String token;
+    b = new byte[(int) reader.length()];
+    reader.read(b);
+    String s = new String(b);
+    StringTokenizer st = new StringTokenizer(s, "\n");
+    String line = st.nextToken();
+    line = st.nextToken();
     while (line != null && !line.trim().equals("end")) {
       t = new StringTokenizer(line);
       while(t.hasMoreTokens()) {
@@ -269,7 +273,10 @@ public class ICSReader extends FormatReader {
           }
         }
       }
-      line = reader.readLine();
+      try {
+        line = st.nextToken();
+      }
+      catch (NoSuchElementException e) { line = null; }
     }
 
     String images = (String) metadata.get("sizes");
@@ -335,7 +342,7 @@ public class ICSReader extends FormatReader {
     boolean gzip = (test == null) ? false : test.equals("gzip");
 
     if (versionTwo) {
-      String s = idsIn.readLine();
+      s = idsIn.readLine();
       while(!s.trim().equals("end")) s = idsIn.readLine();
     }
     data = new byte[(int) (idsIn.length() - idsIn.getFilePointer())];

@@ -206,7 +206,7 @@ public class IPWReader extends BaseTiffReader {
     numImages = 0;
 
     try {
-      r.setVar("fis", new FileInputStream(getMappedId(id)));
+      r.setVar("fis", in);
       r.exec("fs = new POIFSFileSystem(fis)");
       r.exec("dir = fs.getRoot()");
       parseDir(0, r.getVar("dir"));

@@ -58,17 +58,25 @@ public class RAUrl implements IRandomAccess {
   /** Number of bytes in the stream */
   private long length;
 
+  /** Reset marker */
+  private long mark;
+
   // -- Constructors --
 
   public RAUrl(String url, String mode) throws IOException {
+    if (!url.startsWith("http")) url = "http://" + url;
     conn = (HttpURLConnection) (new URL(url)).openConnection();
-    if (mode.equals("r")) is = new DataInputStream(conn.getInputStream());
+    if (mode.equals("r")) {
+      is = new DataInputStream(new BufferedInputStream(
+        conn.getInputStream(), 65536));
+    }
     else if (mode.equals("w")) {
       conn.setDoOutput(true);
       os = new DataOutputStream(conn.getOutputStream());
     }
     fp = 0;
     length = conn.getContentLength();
+    if (is != null) is.mark((int) length);
     this.url = url;
   }
 
@@ -94,45 +102,58 @@ public class RAUrl implements IRandomAccess {
     int value = is.read();
     while (value == -1 && fp < length()) value = is.read();
     if (value != -1) fp++;
+    markManager();
     return value;
   }
 
   /* @see IRandomAccess#read(byte[]) */
   public int read(byte[] b) throws IOException {
-    int read = is.read(b);
-    while (read < b.length && fp < length()) {
-      read += read(b, read, b.length - read);
-    }
-    if (read != -1) fp += read;
-    return read;
+    return read(b, 0, b.length);
   }
 
   /* @see IRandomAccess#read(byte[], int, int) */
   public int read(byte[] b, int off, int len) throws IOException {
     int read = is.read(b, off, len);
-    while (read < len && fp + read < length()) {
-      b[off + read] = (byte) is.read();
-      read++;
-    }
     if (read != -1) fp += read;
-    return read;
+    if (read == -1) read = 0;
+    markManager();
+    while (read < len && fp < length()) {
+      int oldRead = read;
+      read += read(b, off + read, len - read);
+      if (read < oldRead) read = oldRead;
+    }
+    return read == 0 ? -1 : read;
   }
 
   /* @see IRandomAccess#seek(long) */
   public void seek(long pos) throws IOException {
-    if (pos < fp) {
-      close();
-      conn = (HttpURLConnection) (new URL(url)).openConnection();
-      conn.setDoOutput(true);
-      if (is != null) is = new DataInputStream(conn.getInputStream());
-      if (os != null) os = new DataOutputStream(conn.getOutputStream());
-      this.url = url;
-      fp = 0;
-      skipBytes((int) pos);
-    }
-    else {
+    if (pos >= fp) {
       skipBytes((int) (pos - fp));
+      return;
     }
+    else if (pos >= mark) {
+      try {
+        is.reset();
+        fp = mark;
+        skipBytes((int) (pos - fp));
+        return;
+      }
+      catch (IOException e) { }
+    }
+  
+    close();
+    conn = (HttpURLConnection) (new URL(url)).openConnection();
+    conn.setDoOutput(true);
+    if (is != null) {
+      is = new DataInputStream(new BufferedInputStream(
+        conn.getInputStream(), 65536));
+      is.mark((int) length());
+      mark = 0;
+    }
+    if (os != null) os = new DataOutputStream(conn.getOutputStream());
+    this.url = url;
+    fp = 0;
+    skipBytes((int) pos);
   }
 
   /* @see IRandomAccess#setLength(long) */
@@ -227,8 +248,12 @@ public class RAUrl implements IRandomAccess {
 
   /* @see DataInput#skipBytes(int) */
   public int skipBytes(int n) throws IOException {
-    fp += n;
-    return is.skipBytes(n);
+    int skipped = 0;
+    for (int i=0; i<n; i++) {
+      if (read() != -1) skipped++;
+      markManager();
+    }
+    return skipped;
   }
 
   // -- DataOutput API methods --
@@ -303,4 +328,12 @@ public class RAUrl implements IRandomAccess {
     os.writeUTF(str);
   }
 
+  // -- Helper methods --
+
+  private void markManager() throws IOException {
+    if (fp >= mark + 65535) {
+      mark = fp;
+      is.mark((int) length());
+    }
+  }
 }

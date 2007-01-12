@@ -172,7 +172,7 @@ public class LegacyQTReader extends FormatReader {
       r.exec("QTSession.open()");
 
       // open movie file
-      File file = new File(getMappedId(id));
+      File file = new FileWrapper(getMappedId(id));
       r.setVar("path", file.getAbsolutePath());
       r.exec("qtf = new QTFile(path)");
       r.exec("openMovieFile = OpenMovieFile.asRead(qtf)");

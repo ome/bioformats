@@ -77,7 +77,7 @@ public class LegacyQTTools {
     StringTokenizer st = new StringTokenizer(windir, ";");
 
     while (st.hasMoreTokens()) {
-      File f = new File(st.nextToken(), "QTJava.zip");
+      File f = new FileWrapper(st.nextToken(), "QTJava.zip");
       if (f.exists()) {
         try {
           paths = new URL[] {f.toURL()};

@@ -26,7 +26,6 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
@@ -67,7 +66,7 @@ public class LegacyZVIReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected RandomAccessFile in;
+  protected RandomAccessStream in;
 
   /** List of image blocks. */
   private Vector blockList;
@@ -155,7 +154,7 @@ public class LegacyZVIReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("initFile(" + id + ")");
     super.initFile(id);
-    in = new RandomAccessFile(getMappedId(id), "r");
+    in = new RandomAccessStream(getMappedId(id));
 
     // Highly questionable decoding strategy:
     //
@@ -444,7 +443,7 @@ public class LegacyZVIReader extends FormatReader {
    * Finds the first occurence of the given byte block within the file,
    * starting from the given file position.
    */
-  private static long findBlock(RandomAccessFile in, byte[] block, long start)
+  private static long findBlock(RandomAccessStream in, byte[] block, long start)
     throws IOException
   {
     long filePos = start;
@@ -536,7 +535,7 @@ public class LegacyZVIReader extends FormatReader {
     }
 
     /** Reads in this block's image data from the given file. */
-    public BufferedImage readImage(RandomAccessFile raf)
+    public BufferedImage readImage(RandomAccessStream raf)
       throws IOException, FormatException
     {
       long fileSize = raf.length();
