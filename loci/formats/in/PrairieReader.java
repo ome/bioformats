@@ -78,7 +78,7 @@ public class PrairieReader extends FormatReader {
     if (!super.isThisType(name, open)) return false; // check extension
 
     // check if there is an XML file in the same directory
-    File f = new File(name);
+    File f = new FileWrapper(name);
     f = f.getAbsoluteFile();
     File parent = f.getParentFile();
     FileFilter ff = new FileFilter() {
@@ -88,7 +88,7 @@ public class PrairieReader extends FormatReader {
       }
     };
     File[] listing = parent.listFiles(ff);
-    boolean xml = listing.length > 0;
+    boolean xml = listing != null && listing.length > 0;
 
     // just checking the filename isn't enough to differentiate between
     // Prairie and regular TIFF; open the file and check more thoroughly
@@ -262,7 +262,9 @@ public class PrairieReader extends FormatReader {
               else metadata.put(pastPrefix + " " + prefix + " " + key, value);
               el = el.substring(el.indexOf("\"", eq + 2) + 1).trim();
               if (prefix.equals("File") && key.equals("filename")) {
-                f.add(value);
+                File current = new FileWrapper(getMappedId(id));
+                current = current.getAbsoluteFile();
+                f.add(current.getParent() + "/" + value);
               }
             }
           }
@@ -323,7 +325,7 @@ public class PrairieReader extends FormatReader {
       }
 
       if (!readXML || !readCFG) {
-        File file = new File(id);
+        File file = new FileWrapper(id);
         file = file.getAbsoluteFile();
         File parent = file.getParentFile();
         FileFilter ff = new FileFilter() {
@@ -340,7 +342,7 @@ public class PrairieReader extends FormatReader {
       // we have been given a TIFF file - reinitialize with the proper XML file
 
       String tiffFile = getMappedId(id);
-      File f = new File(tiffFile);
+      File f = new FileWrapper(tiffFile);
       f = f.getAbsoluteFile();
       File parent = f.getParentFile();
       FileFilter ff = new FileFilter() {

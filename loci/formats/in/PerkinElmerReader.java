@@ -170,9 +170,9 @@ public class PerkinElmerReader extends FormatReader {
     allFiles = new Vector();
 
     // get the working directory
-    File tempFile = new File(getMappedId(id));
+    File tempFile = new FileWrapper(getMappedId(id));
     File workingDir = tempFile.getParentFile();
-    if (workingDir == null) workingDir = new File(".");
+    if (workingDir == null) workingDir = new FileWrapper(".");
     String workingDirPath = workingDir.getPath() + File.separator;
     String[] ls = workingDir.list();
 
@@ -341,8 +341,8 @@ public class PerkinElmerReader extends FormatReader {
     for (int i=0; i<files.length; i++) allFiles.add(files[i]);
 
     numImages = files.length;
-    BufferedReader read;
-    char[] data;
+    RandomAccessStream read;
+    byte[] data;
     StringTokenizer t;
 
     tiff = new TiffReader[numImages];
@@ -354,10 +354,10 @@ public class PerkinElmerReader extends FormatReader {
     // either the .csv file or the .zpo file
 
     if (timPos != -1) {
-      tempFile = new File(workingDir, ls[timPos]);
+      tempFile = new FileWrapper(workingDir, ls[timPos]);
       allFiles.add(tempFile.getAbsolutePath());
-      read = new BufferedReader(new FileReader(tempFile));
-      data = new char[(int) tempFile.length()];
+      read = new RandomAccessStream(tempFile.getAbsolutePath());
+      data = new byte[(int) tempFile.length()];
       read.read(data);
       t = new StringTokenizer(new String(data));
       int tNum = 0;
@@ -387,10 +387,10 @@ public class PerkinElmerReader extends FormatReader {
     }
 
     if (csvPos != -1) {
-      tempFile = new File(workingDir, ls[csvPos]);
+      tempFile = new FileWrapper(workingDir, ls[csvPos]);
       allFiles.add(tempFile.getAbsolutePath());
-      read = new BufferedReader(new FileReader(tempFile));
-      data = new char[(int) tempFile.length()];
+      read = new RandomAccessStream(tempFile.getAbsolutePath());
+      data = new byte[(int) tempFile.length()];
       read.read(data);
       t = new StringTokenizer(new String(data));
       int tNum = 0;
@@ -416,10 +416,10 @@ public class PerkinElmerReader extends FormatReader {
       }
     }
     else if (zpoPos != -1) {
-      tempFile = new File(workingDir, ls[zpoPos]);
+      tempFile = new FileWrapper(workingDir, ls[zpoPos]);
       allFiles.add(tempFile.getAbsolutePath());
-      read = new BufferedReader(new FileReader(tempFile));
-      data = new char[(int) tempFile.length()];
+      read = new RandomAccessStream(tempFile.getAbsolutePath());
+      data = new byte[(int) tempFile.length()];
       read.read(data);
       t = new StringTokenizer(new String(data));
       int tNum = 0;
@@ -433,10 +433,10 @@ public class PerkinElmerReader extends FormatReader {
     // explicitly defines the number of wavelengths and timepoints
 
     if (htmPos != -1) {
-      tempFile = new File(workingDir, ls[htmPos]);
+      tempFile = new FileWrapper(workingDir, ls[htmPos]);
       allFiles.add(tempFile.getAbsolutePath());
-      read = new BufferedReader(new FileReader(tempFile));
-      data = new char[(int) tempFile.length()];
+      read = new RandomAccessStream(tempFile.getAbsolutePath());
+      data = new byte[(int) tempFile.length()];
       read.read(data);
 
       String regex = "<p>|</p>|<br>|<hr>|<b>|</b>|<HTML>|<HEAD>|</HTML>|" +

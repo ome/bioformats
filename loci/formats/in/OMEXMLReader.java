@@ -328,7 +328,18 @@ public class OMEXMLReader extends FormatReader {
 
     OMENode ome = null;
     try {
-      ome = new OMENode(new File(getMappedId(id)));
+      File f = new File(getMappedId(id));
+      f = f.getAbsoluteFile();
+      if (f.exists()) ome = new OMENode(f);
+      else {
+        byte[] b = new byte[(int) in.length()];
+        long oldFp = in.getFilePointer();
+        in.seek(0);
+        in.read(b);
+        in.seek(oldFp);
+        ome = new OMENode(new String(b));
+        b = null;
+      }
     }
     catch (Exception exc) {
       // CTR TODO - eliminate catch-all exception handling

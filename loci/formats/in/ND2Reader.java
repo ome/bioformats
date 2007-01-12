@@ -55,9 +55,10 @@ public class ND2Reader extends FormatReader {
     try {
       r = new ReflectedUniverse();
       r.exec("import jj2000.j2k.fileformat.reader.FileFormatReader");
-      r.exec("import jj2000.j2k.io.BEBufferedRandomAccessFile");
+      r.exec("import jj2000.j2k.util.ISRandomAccessIO");
     }
     catch (Throwable exc) {
+      /* debug */ exc.printStackTrace();
       noJAI = true;
     }
     return r;
@@ -217,9 +218,8 @@ public class ND2Reader extends FormatReader {
     in = new RandomAccessStream(getMappedId(id));
 
     try {
-      r.setVar("id", getMappedId(id));
-      r.setVar("read", "r");
-      r.exec("in = new BEBufferedRandomAccessFile(id, read)");
+      r.setVar("id", in);
+      r.exec("in = new ISRandomAccessIO(id)");
       r.setVar("j2kMetadata", null);
       r.exec("ff = new FileFormatReader(in, j2kMetadata)");
 
@@ -231,6 +231,8 @@ public class ND2Reader extends FormatReader {
 
     numImages = offsets.length;
 
+    /* debug */ System.out.println("num images : " + numImages);
+
     pixelType[0] = FormatReader.UINT8;
 
     // read XML metadata from the end of the file
@@ -240,7 +242,7 @@ public class ND2Reader extends FormatReader {
     boolean found = false;
     int off = -1;
     byte[] buf = new byte[2048];
-    while (!found) {
+    while (!found && in.getFilePointer() < in.length()) {
       int read = 0;
       if (in.getFilePointer() == offsets[offsets.length - 1]) {
         read = in.read(buf);

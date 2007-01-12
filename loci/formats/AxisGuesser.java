@@ -282,8 +282,8 @@ public class AxisGuesser {
   /** Method for testing pattern guessing logic. */
   public static void main(String[] args) throws FormatException, IOException {
     File file = args.length < 1 ?
-      new File(System.getProperty("user.dir")).listFiles()[0] :
-      new File(args[0]);
+      new FileWrapper(System.getProperty("user.dir")).listFiles()[0] :
+      new FileWrapper(args[0]);
     System.out.println("File = " + file.getAbsoluteFile());
     String pat = FilePattern.findPattern(file);
     if (pat == null) System.out.println("No pattern found.");
@@ -293,7 +293,7 @@ public class AxisGuesser {
       if (fp.isValid()) {
         System.out.println("Pattern is valid.");
         String id = fp.getFiles()[0];
-        if (!new File(id).exists()) {
+        if (!new FileWrapper(id).exists()) {
           System.out.println("File '" + id + "' does not exist.");
         }
         else {

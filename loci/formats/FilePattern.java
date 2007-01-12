@@ -301,7 +301,7 @@ public class FilePattern {
     else if (!dir.equals("") && !dir.endsWith(File.separator)) {
       dir += File.separator;
     }
-    File dirFile = new File(dir.equals("") ? "." : dir);
+    File dirFile = new FileWrapper(dir.equals("") ? "." : dir);
 
     // list files in the given directory
     File[] f = dirFile.listFiles();
@@ -537,7 +537,7 @@ public class FilePattern {
     String pat = null;
     if (args.length > 0) {
       // test file pattern detection based on the given file on disk
-      File file = new File(args[0]);
+      File file = new FileWrapper(args[0]);
       System.out.println("File = " + file.getAbsoluteFile());
       pat = findPattern(file);
     }

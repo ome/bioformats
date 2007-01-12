@@ -88,7 +88,7 @@ public class LegacyPictReader extends FormatReader {
     }
 
     // read in PICT data
-    File file = new File(getMappedId(id));
+    File file = new FileWrapper(getMappedId(id));
     int len = (int) (file.length() - 512);
     byte[] bytes = new byte[len];
     FileInputStream fin = new FileInputStream(file);

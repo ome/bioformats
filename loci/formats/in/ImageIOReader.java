@@ -27,7 +27,6 @@ package loci.formats.in;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import loci.formats.*;
@@ -105,8 +104,8 @@ public abstract class ImageIOReader extends FormatReader {
       throw new FormatException("Invalid image number: " + no);
     }
 
-    return ImageIO.read(new DataInputStream(
-      new BufferedInputStream(new FileInputStream(getMappedId(id)), 4096)));
+    return ImageIO.read(new DataInputStream(new BufferedInputStream(
+      new RandomAccessStream(getMappedId(id)), 4096)));
   }
 
   /** Closes any open files. */

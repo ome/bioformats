@@ -27,8 +27,7 @@ package loci.formats.in;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.io.*;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.*;
 import loci.formats.*;
 
 /**
@@ -41,7 +40,7 @@ public class OIFReader extends FormatReader {
   // -- Fields --
 
   /** Current file. */
-  protected BufferedReader reader;
+  protected RandomAccessStream reader;
 
   /** Number of image planes in the file. */
   protected int numImages = 0;
@@ -230,10 +229,10 @@ public class OIFReader extends FormatReader {
 
     String oifFile = id;
     if (!id.toLowerCase().endsWith("oif")) {
-      File current = new File(getMappedId(id));
+      File current = new FileWrapper(getMappedId(id));
       current = current.getAbsoluteFile();
       String parent = current.getParent();
-      File tmp = new File(parent);
+      File tmp = new FileWrapper(parent);
       parent = tmp.getParent();
 
       // strip off the filename
@@ -243,10 +242,10 @@ public class OIFReader extends FormatReader {
       oifFile = id.substring(id.lastIndexOf(File.separator));
       oifFile = parent + oifFile.substring(0, oifFile.indexOf("_")) + ".oif";
 
-      tmp = new File(getMappedId(oifFile));
+      tmp = new FileWrapper(getMappedId(oifFile));
       if (!tmp.exists()) {
         oifFile = oifFile.substring(0, oifFile.lastIndexOf(".")) + ".OIF";
-        tmp = new File(getMappedId(oifFile));
+        tmp = new FileWrapper(getMappedId(oifFile));
         if (!tmp.exists()) throw new FormatException("OIF file not found");
         currentId = oifFile;
       }
@@ -254,18 +253,22 @@ public class OIFReader extends FormatReader {
     }
 
     super.initFile(oifFile);
-    reader = new BufferedReader(new FileReader(getMappedId(oifFile)));
+    reader = new RandomAccessStream(getMappedId(oifFile));
 
     int slash = oifFile.lastIndexOf(File.separator);
     String path = slash < 0 ? "." : oifFile.substring(0, slash);
 
     // parse each key/value pair (one per line)
 
+    byte[] b = new byte[(int) reader.length()];
+    reader.read(b);
+    String s = new String(b);
+    StringTokenizer st = new StringTokenizer(s, "\r\n");
+
     Hashtable filenames = new Hashtable();
-    String line = reader.readLine();
     String prefix = "";
-    while (line != null) {
-      line = DataTools.stripString(line);
+    while (st.hasMoreTokens()) {
+      String line = DataTools.stripString(st.nextToken().trim());
       if (!line.startsWith("[") && (line.indexOf("=") > 0)) {
         String key = line.substring(0, line.indexOf("=")).trim();
         String value = line.substring(line.indexOf("=") + 1).trim();
@@ -281,7 +284,6 @@ public class OIFReader extends FormatReader {
         }
         prefix = line + " - ";
       }
-      line = reader.readLine();
     }
 
     thumbReader = new BMPReader();
@@ -294,7 +296,7 @@ public class OIFReader extends FormatReader {
     // open each INI file (.pty extension)
 
     String tiffPath;
-    BufferedReader ptyReader;
+    RandomAccessStream ptyReader;
     for (int i=0; i<numImages; i++) {
       String file = (String) filenames.get(new Integer(i));
       file = file.substring(1, file.length() - 1);
@@ -303,9 +305,14 @@ public class OIFReader extends FormatReader {
       file = path + File.separator + file;
       tiffPath = file.substring(0, file.lastIndexOf(File.separator));
 
-      ptyReader = new BufferedReader(new FileReader(getMappedId(file)));
-      line = ptyReader.readLine();
-      while (line != null) {
+      ptyReader = new RandomAccessStream(getMappedId(file));
+      b = new byte[(int) ptyReader.length()];
+      ptyReader.read(b);
+      s = new String(b);
+      st = new StringTokenizer(s, "\n");
+
+      while (st.hasMoreTokens()) {
+        String line = st.nextToken().trim();
         if (!line.startsWith("[") && (line.indexOf("=") > 0)) {
           String key = line.substring(0, line.indexOf("=") - 1).trim();
           String value = line.substring(line.indexOf("=") + 1).trim();
@@ -317,7 +324,6 @@ public class OIFReader extends FormatReader {
           }
           metadata.put("Image " + i + " : " + key, value);
         }
-        line = ptyReader.readLine();
       }
       ptyReader.close();
     }
@@ -379,8 +385,7 @@ public class OIFReader extends FormatReader {
     validBits = new int[sizeC[0]];
     if (validBits.length == 2) validBits = new int[3];
     for (int i=0; i<validBits.length; i++) {
-      String s =
-        (String) metadata.get("[Reference Image Parameter] - ValidBitCounts");
+      s = (String) metadata.get("[Reference Image Parameter] - ValidBitCounts");
       if (s != null) {
         validBits[i] = Integer.parseInt(s);
       }
