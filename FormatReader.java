@@ -375,8 +375,8 @@ public abstract class FormatReader extends FormatHandler
   }
 
   /* @see IFormatReader#getCurrentFile() */
-  public String getCurrentFile() { 
-    return currentId; 
+  public String getCurrentFile() {
+    return currentId;
   }
 
   /* @see IFormatReader#swapDimensions(String, String) */
@@ -602,7 +602,7 @@ public abstract class FormatReader extends FormatHandler
 
     if (stitch) {
       reader = new FileStitcher(reader, true);
-      String pat = 
+      String pat =
         FilePattern.findPattern(new FileWrapper(map == null ? id : map));
       if (pat != null) id = pat;
     }

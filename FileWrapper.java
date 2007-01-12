@@ -28,16 +28,16 @@ import java.io.*;
 import java.net.*;
 import java.util.Vector;
 
-/** 
+/**
  * Extension of java.io.File that supports reading over HTTP.
  * Note that it is not a good idea to construct a FileInputStream using a
- * FileWrapper, unless you are certain that the filename points to a file 
+ * FileWrapper, unless you are certain that the filename points to a file
  * on disk.
  */
 public class FileWrapper extends File {
 
   // -- Fields --
-  
+
   private boolean isURL = true;
   private String path;
   private URL url;
@@ -71,7 +71,7 @@ public class FileWrapper extends File {
   }
 
   // -- File API methods --
-  
+
   /* @see java.io.File#canRead() */
   public boolean canRead() {
     return isURL ? true : super.canRead();
@@ -120,9 +120,9 @@ public class FileWrapper extends File {
         url.getContent();
         return true;
       }
-      catch (IOException e) { 
+      catch (IOException e) {
         /* debug */ e.printStackTrace();
-        return false; 
+        return false;
       }
     }
     return super.exists();
@@ -248,8 +248,8 @@ public class FileWrapper extends File {
         }
         return (String[]) files.toArray(new String[0]);
       }
-      catch (IOException e) { 
-        return null; 
+      catch (IOException e) {
+        return null;
       }
     }
     return super.list();

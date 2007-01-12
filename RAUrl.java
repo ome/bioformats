@@ -140,7 +140,7 @@ public class RAUrl implements IRandomAccess {
       }
       catch (IOException e) { }
     }
-  
+
     close();
     conn = (HttpURLConnection) (new URL(url)).openConnection();
     conn.setDoOutput(true);
