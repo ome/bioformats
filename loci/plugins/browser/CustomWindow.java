@@ -106,7 +106,9 @@ public class CustomWindow extends ImageWindow implements ActionListener,
       }
     }
 
-    if (fp == null) patternTitle = id;
+    if (fp == null) {
+      patternTitle = db.reader == null ? id : db.reader.getCurrentFile();
+    }
     setTitle(patternTitle);
 
     // create panel for image canvas
