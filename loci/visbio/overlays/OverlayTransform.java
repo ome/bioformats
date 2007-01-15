@@ -98,6 +98,9 @@ public class OverlayTransform extends DataTransform
   /** Whether left mouse button is currently being pressed. */
   protected boolean mouseDownLeft;
 
+  /** Whether right mouse button is currently being pressed. */
+  protected boolean mouseDownRight;
+
   /** Font metrics for the current font. */
   protected FontMetrics fontMetrics;
 
@@ -685,7 +688,13 @@ public class OverlayTransform extends DataTransform
     DisplayImpl display = (DisplayImpl) e.getDisplay();
 
     if (id == DisplayEvent.TRANSFORM_DONE) updatePosition(display);
+    else if (id == DisplayEvent.MOUSE_PRESSED_RIGHT) {
+      mouseDownRight = true;
+      if (mouseDownLeft) releaseLeft(e, display, tool); 
+    }
+    else if (id == DisplayEvent.MOUSE_RELEASED_RIGHT) mouseDownRight = false;
     else if (id == DisplayEvent.MOUSE_PRESSED_LEFT) {
+      if (mouseDownRight) return;
       mouseDownLeft = true;
       updatePosition(display);
       if (tool != null) {
@@ -696,14 +705,8 @@ public class OverlayTransform extends DataTransform
       }
     }
     else if (id == DisplayEvent.MOUSE_RELEASED_LEFT) {
-      mouseDownLeft = false;
-      updatePosition(display);
-      if (tool != null) {
-        double[] coords =
-          DisplayUtil.pixelToDomain(display, e.getX(), e.getY());
-        tool.mouseUp((float) coords[0], (float) coords[1],
-          pos, e.getModifiers());
-      }
+      if (!mouseDownLeft) return;
+      releaseLeft(e, display, tool);
     }
     else if (mouseDownLeft && id == DisplayEvent.MOUSE_DRAGGED) {
       updatePosition(display);
@@ -756,6 +759,18 @@ public class OverlayTransform extends DataTransform
       updatePosition(display);
       // No tools use keyReleased functionality, so it is disabled for now
       //if (tool != null) tool.keyReleased(e.getKeyCode(), e.getModifiers());
+    }
+  }
+ 
+  /** Helper method for Display Changed -- releases left mouse button */
+  protected void releaseLeft(DisplayEvent e, DisplayImpl display, OverlayTool tool) {
+    mouseDownLeft = false;
+    updatePosition(display);
+    if (tool != null) {
+      double[] coords =
+        DisplayUtil.pixelToDomain(display, e.getX(), e.getY());
+      tool.mouseUp((float) coords[0], (float) coords[1],
+        pos, e.getModifiers());
     }
   }
 
