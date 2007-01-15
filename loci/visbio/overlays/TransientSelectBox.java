@@ -59,7 +59,9 @@ public class TransientSelectBox {
   /** Constructs a selection box
    *  Initially, the box has zero area and is not visible
    */
-  public TransientSelectBox(OverlayTransform overlay, float downX, float downY) {
+  public TransientSelectBox(OverlayTransform overlay,
+    float downX, float downY)
+  {
     this.overlay = overlay;
     x1 = downX;
     x2 = downX;

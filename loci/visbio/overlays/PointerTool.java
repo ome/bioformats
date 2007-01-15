@@ -46,7 +46,10 @@ public class PointerTool extends OverlayTool {
   /** Array of OverlayObjects at current dimensional position */
   protected OverlayObject[] objs;
 
-  /** Array of the bounds of the OverlayObjects at the current dimensional position */
+  /**
+   * Array of the bounds of the OverlayObjects
+   * at the current dimensional position.
+   */
   protected float[][] bounds;
 
   // -- Constructor --

@@ -763,7 +763,9 @@ public class OverlayTransform extends DataTransform
   }
 
   /** Helper method for Display Changed -- releases left mouse button */
-  protected void releaseLeft(DisplayEvent e, DisplayImpl display, OverlayTool tool) {
+  protected void releaseLeft(DisplayEvent e,
+    DisplayImpl display, OverlayTool tool)
+  {
     mouseDownLeft = false;
     updatePosition(display);
     if (tool != null) {

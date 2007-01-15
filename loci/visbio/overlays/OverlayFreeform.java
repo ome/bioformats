@@ -109,7 +109,10 @@ public class OverlayFreeform extends OverlayObject {
     return field;
   }
 
-  /** Computes the shortest distance from this object's bounding box to the given point. */
+  /**
+   * Computes the shortest distance from this
+   * object's bounding box to the given point.
+   */
   public double getDistanceToBoundingBox(double x, double y) {
     double xdist = 0;
     if (x < x1 && x < x2) xdist = Math.min(x1, x2) - x;

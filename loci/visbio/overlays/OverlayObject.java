@@ -120,7 +120,8 @@ public abstract class OverlayObject {
 
   /** True iff this overlay can be resized using X1, X2, Y1, Y2 entry boxes */
   public boolean areBoundsEditable() { return !hasNodes; }
-  // currently, only noded objects can't be resized this way.  (Actually could perform some rad scaling on all nodes)
+  // currently, only noded objects can't be resized this way.
+  // (Actually could perform some rad scaling on all nodes)
 
   /** True iff this overlay returns text to render. */
   public boolean hasText() { return false; }
@@ -257,7 +258,9 @@ public abstract class OverlayObject {
 
   // TEMP // TEMP // TEMP
   public float[] getGridParameters() {
-    float[] retvals = {xGrid1, yGrid1, xGrid2, yGrid2, xGrid3, yGrid3, xGrid4, yGrid4};
+    float[] retvals = {
+      xGrid1, yGrid1, xGrid2, yGrid2, xGrid3, yGrid3, xGrid4, yGrid4
+    };
     return retvals;
   }
 
@@ -432,8 +435,10 @@ public abstract class OverlayObject {
     if (nodeIndex >= 0 && nodeIndex < numNodes) {
       nodes[0][nodeIndex] = newX;
       nodes[1][nodeIndex] = newY;
-    } else {
-      //System.out.println("Out of bounds error. Can't reset node coordinates"); // TEMP
+    }
+    else {
+      //TEMP:
+      //System.out.println("Out of bounds error. Can't reset node coordinates");
     }
   }
 
@@ -447,7 +452,8 @@ public abstract class OverlayObject {
 
   /** Sets next node coordinates. */
   public void setNextNode(float x, float y) {
-   // System.out.println("OverlayObject.setNextNode(...) called.  numNodes = " + numNodes + ", maxNodes = " + maxNodes);
+    //System.out.println("OverlayObject.setNextNode(...) called. " +
+    //  "numNodes = " + numNodes + ", maxNodes = " + maxNodes);
     //printNodes(getNodes());
     if (numNodes >= maxNodes) {
       maxNodes *= 2;
@@ -458,8 +464,11 @@ public abstract class OverlayObject {
     // i.e., set all remaining nodes (as per maxNodes) to next node coords
   }
 
-  /** Inserts a node at coordinates provided before the node at the index provided */
-  public void insertNode (int index, float x, float y) {
+  /**
+   * Inserts a node at coordinates provided
+   * before the node at the index provided.
+   */
+  public void insertNode(int index, float x, float y) {
     if (index >= 0 && index < numNodes) {
       // if array is full, make some more room.
       if (numNodes >= maxNodes) { // numNodes should never exceed maxNodes but..
@@ -468,21 +477,25 @@ public abstract class OverlayObject {
       }
       for (int j = 0; j < 2; j++) {
         for (int i = numNodes; i > index; i--) {
-         nodes[j][i] = nodes[j][i-1]; // right shift every node right of index by 1
+          // right shift every node right of index by 1
+          nodes[j][i] = nodes[j][i-1];
         }
       }
       nodes[0][index] = x;
       nodes[1][index] = y;
       numNodes++;
-    } else {
-      //System.out.println ("index not in range (0, numNodes).  No node inserted");
+    }
+    else {
+      //System.out.println("index not in range (0, numNodes). " +
+      //  "No node inserted");
     }
   }
 
   /** Deletes a range of nodes from the node array */
   public void deleteBetween (int i1, int i2) {
-    //assumes i1 < i2, both in bounds (less than numNodes)
-    //checks whether i1 + 1 < i2, i.e., is there a nonzero number of nodes to delete
+    // assumes i1 < i2, both in bounds (less than numNodes)
+    // checks whether i1 + 1 < i2, i.e., is there a non-zero
+    // number of nodes to delete
     if (0 <= i1 && i2 < numNodes && i1 + 1 < i2 ) {
       int victims = i2 - i1 - 1;
       float[][] newNodes = new float[2][maxNodes - victims];
@@ -502,8 +515,9 @@ public abstract class OverlayObject {
   /** Deletes a node from the node array */
   public void deleteNode(int index) {
     if (index >=0 && index < numNodes) {
-      //built-in truncation
-      //System.out.println("OverlayObject.deleteNode(" + index +") called.  numNodes = " + numNodes + ", maxNodes = " + maxNodes);
+      // built-in truncation
+      //System.out.println("OverlayObject.deleteNode(" + index +") called. " +
+      //  "numNodes = " + numNodes + ", maxNodes = " + maxNodes);
       float [][] newNodes =  new float[2][numNodes-1];
       System.arraycopy(nodes[0], 0, newNodes[0], 0, index);
       System.arraycopy(nodes[0], index+1, newNodes[0], index, numNodes-index-1);
@@ -559,7 +573,8 @@ public abstract class OverlayObject {
       }
     }
     maxNodes = newLength;
-    //System.out.println("resize completed. maxNodes = " + maxNodes + " numNodes =  " + numNodes);
+    //System.out.println("resize completed. maxNodes = " +
+    //  maxNodes + " numNodes =  " + numNodes);
     return a2;
   }
 

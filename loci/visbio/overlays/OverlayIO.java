@@ -116,7 +116,8 @@ public final class OverlayIO {
           StringTokenizer st = new StringTokenizer("#" + line + "#", "\t");
           int count = st.countTokens();
           // parse table header from first valid line
-          int numDims = count - 10; // 12: number of non-dim. fields in overlay description
+          // 12: number of non-dim. fields in overlay description
+          int numDims = count - 10;
 
           if (numDims < 0) {
             displayErrorMsg(owner, lineNum, "insufficient column headings");
@@ -140,11 +141,13 @@ public final class OverlayIO {
           }
 
           if (!ObjectUtil.arraysEqual(dims, theDims)) {
-            displayErrorMsg(owner, lineNum, "dimensional axis types do not match");
+            displayErrorMsg(owner, lineNum,
+              "dimensional axis types do not match");
             return null;
           }
           if (!ObjectUtil.arraysEqual(lengths, theLengths)) {
-            displayErrorMsg(owner, lineNum, "dimensional axis lengths do not match");
+            displayErrorMsg(owner, lineNum,
+              "dimensional axis lengths do not match");
             return null;
           }
 

@@ -33,20 +33,31 @@ public class FreeformTool extends OverlayTool {
 
   // -- Constants --
 
-  /** When drawing or editing, how far mouse must be dragged before new node is added */
+  /**
+   * When drawing or editing, how far mouse
+   * must be dragged before new node is added.
+   */
   protected static final double DRAW_THRESH = 2.0;
-  /** Threshhold within which click must occur to invoke edit mode */
+
+  /** Threshhold within which click must occur to invoke edit mode. */
   protected static final double EDIT_THRESH = 5.0;
-  /** Threshhold within which click must occur to invoke extend mode or reconnect a tendril */
+
+  /**
+   * Threshhold within which click must occur to
+   * invoke extend mode or reconnect a tendril.
+   */
   protected static final double RECONNECT_THRESH = 0.5;
 
-  /** 4 constants describing edit modes */
-  // There are four edit modes.  The method setMode(int) is called to change the mode, in order to
-  // properties related to the current mode; e.g., whether a freeform is selected in the list of
-  // overlays
+  /** Constant for "erase" edit mode. */
   protected static final int ERASE = -1;
+
+  /** Constant for "chill" edit mode. */
   protected static final int CHILL = 0; // could call this WAIT...
+
+  /** Consant for "draw" edit mode. */
   protected static final int DRAW = 1;
+
+  /** Constant for "edit" edit mode. */
   protected static final int EDIT = 2;
 
   // -- Fields --
@@ -206,9 +217,11 @@ public class FreeformTool extends OverlayTool {
     }
   }
 
-  /** Splits the node array into two parts.  The first part goes from a[0] to a[index-1], the second
-    * from a[index2] to a[a.length -1] */
-  private void splitNodes (int index, int index2) {
+  /**
+   * Splits the node array into two parts.  The first part goes from a[0] to
+   * a[index-1], the second from a[index2] to a[a.length -1].
+   */
+  private void splitNodes(int index, int index2) {
     // splits the array a into two (before the index specified)
     float[][] a = freeform.getNodes();
     // print these guys
@@ -242,7 +255,10 @@ public class FreeformTool extends OverlayTool {
     ((OverlayWidget) overlay.getControls()).refreshListSelection();
   }
 
-  /** Sets variables related to edit mode */
+  /**
+   * Changes the edit mode. Depending on the new mode, some properties may
+   * change: e.g., whether a freeform is selected in the list of overlays.
+   */
   private void setMode(int newMode) {
     mode = newMode;
     if (mode == DRAW || mode == EDIT || mode == ERASE) {
@@ -254,7 +270,9 @@ public class FreeformTool extends OverlayTool {
       // create list of freeforms
       OverlayObject[] objs = overlay.getObjects();
       for (int i=0; i<objs.length; i++) {
-        if (objs[i] instanceof OverlayFreeform && objs[i] != freeform) otherFreefs.add(objs[i]);
+        if (objs[i] instanceof OverlayFreeform && objs[i] != freeform) {
+          otherFreefs.add(objs[i]);
+        }
       }
     }
     else {
@@ -271,7 +289,9 @@ public class FreeformTool extends OverlayTool {
   }
 
   /** Instructs this tool to respond to a mouse drag. */
-  public void mouseDrag(int px, int py, float dx, float dy, int[] pos, int mods) {
+  public void mouseDrag(int px, int py,
+    float dx, float dy, int[] pos, int mods)
+  {
     boolean shift = (mods & InputEvent.SHIFT_MASK) != 0;
     boolean ctl = (mods & InputEvent.CTRL_MASK) != 0;
 
@@ -374,12 +394,11 @@ public class FreeformTool extends OverlayTool {
 
           // delete last node node
           freeform.deleteNode(index);
-          freeform.updateBoundingBox(); // WARNING this is O(n) expensive.  Maybe remove it and just update at
-                                        // mouseUp?
+          // WARNING: this is O(n) expensive.
+          // Maybe remove it and just update at mouseUp?
+          freeform.updateBoundingBox();
         }
-        else {
-          setMode(DRAW);
-        }
+        else setMode(DRAW);
         if (freeform.getNumNodes() == 0) setMode(CHILL);
       }
       else {
@@ -437,11 +456,11 @@ public class FreeformTool extends OverlayTool {
             tendril.stop += 2;
           }
         }
-        // tendril.tip always points to a lone node (except for before first drag, where it doesn't point to a
-        // node at all
-
+        // tendril.tip always points to a lone node (except for before first
+        // drag, where it doesn't point to a node at all)
       }
-      else if (!shift && !equalsCase) { // reconnect with curve and delete nodes;
+      else if (!shift && !equalsCase) {
+        // reconnect with curve and delete nodes;
         if (tendril.tip < 0) {
           // tendril hasn't begun.  Do nothing.
         }
@@ -464,7 +483,8 @@ public class FreeformTool extends OverlayTool {
             endIndex = seg + 1 + offset;
           }
           else {
-            float[] a = freeform.getNodeCoords(seg + offset); // determine projection on seg.
+            // determine projection on seg.
+            float[] a = freeform.getNodeCoords(seg + offset);
             float[] b = freeform.getNodeCoords(seg + 1 + offset);
             float[] newXY = computePtOnSegment(a, b, (float) weight);
             int insertIndex = seg + 1 + offset;
@@ -492,11 +512,12 @@ public class FreeformTool extends OverlayTool {
 
   //-- Additional methods
 
-  /** Connects a pair of freeforms
-   *  @param f1 the freeform being drawn
-   *  @param f2 the freeform to be appended to f2
-   *  @param head whether the tail of f1 should be connected to the head (or if not, the tail)
-   *  of f2
+  /**
+   * Connects a pair of freeforms.
+   * @param f1 the freeform being drawn.
+   * @param f2 the freeform to be appended to f2.
+   * @param head whether the tail of f1 should be connected to the head
+   *   (or if not, the tail) of f2.
    */
   private void connectFreeforms(OverlayFreeform f1, OverlayFreeform f2,
     boolean head)
@@ -506,7 +527,8 @@ public class FreeformTool extends OverlayTool {
 
     for (int i=0; i<2; i++) {
       System.arraycopy(f1.getNodes()[i], 0, newNodes[i], 0, f1.getNumNodes());
-      System.arraycopy(f2.getNodes()[i], 0, newNodes[i], f1.getNumNodes(), f2.getNumNodes());
+      System.arraycopy(f2.getNodes()[i], 0, newNodes[i],
+        f1.getNumNodes(), f2.getNumNodes());
     }
 
     OverlayFreeform f3 = new OverlayFreeform (overlay, newNodes);
@@ -523,7 +545,8 @@ public class FreeformTool extends OverlayTool {
   private OverlayFreeform getClosestFreeform(float dx, float dy) {
     // returns only objects at the current dimensional position
     OverlayObject[] objects = overlay.getObjects();
-    //Q: Hey, are all of these OverlayFreeforms?  A: No, it returns OverlayObjects of all types
+    // Q: Hey, are all of these OverlayFreeforms?
+    // A: No, it returns OverlayObjects of all types
 
     OverlayFreeform closestFreeform = null;
     if (objects != null) {
@@ -534,7 +557,8 @@ public class FreeformTool extends OverlayTool {
           OverlayFreeform currentFreeform = (OverlayFreeform) currentObject;
           // rough check: is point within EDIT_THRESH of bounding box (fast)
           if (currentFreeform.getDistance(dx, dy) < EDIT_THRESH) {
-            // fine check: actually compute minimum distance to freeform (slower)
+            // fine check: actually compute minimum
+            // distance to freeform (slower)
             double[] distSegWt =
               MathUtil.getDistSegWt(currentFreeform.getNodes(), dx, dy);
             double distance = distSegWt[0];
@@ -549,7 +573,10 @@ public class FreeformTool extends OverlayTool {
     return closestFreeform;
   }
 
-  /** Computes a point along the line segment a[]-b[] (2D) based on parameter weight */
+  /**
+   * Computes a point along the line segment
+   * a[]-b[] (2D) based on parameter weight.
+   */
   private float[] computePtOnSegment(float[] a, float[] b, float weight) {
     float dx = b[0] - a[0];
     float dy = b[1] - a[1];
