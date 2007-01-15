@@ -36,7 +36,7 @@ click the "Up" button to move them up in the rendering order.</i>
 
 To draw an overlay, choose the appropriate tool from the "Tools" section of the
 overlay controls. The tools shown above (from left to right) are: pointer,
-line, marker, text, oval, box and arrow. In many ways, they behave like
+line, freeform, marker, text, oval, box and arrow. In many ways, they behave like
 similar tools available in many image editing programs.
 
 <ul>
@@ -48,6 +48,15 @@ similar tools available in many image editing programs.
     at the bottom of the overlay controls.</li>
   <li>The <b>line tool</b> draws lines from one point to another. Click and
     drag across the display to draw a new line.</li>
+  <li>The <b>freeform tool</b> draws freeform curves Click and
+    drag across the display to draw a new line.  The freeform tool has several built-in editing features:
+    <ul>
+      <li>To <b>erase</b> a portion of a freeform, Ctrl+drag backwards along the freeform from one end.</li>
+    <li>To <b>split</b> a freeform in two, Ctrl+click on a point along the curve.</li>
+      <li>To <b>resume</b> drawing an existing freeform, click near the end of an existing freeform and drag.</li>
+      <li>To <b>splice</b> two freeform curves together end-to-end, simply drag near the end of an existing freeform while drawing.  A freeform in the process of being drawn will automatically connect to a nearby end of an existing freeform.</li>
+      <li>To <b>redraw</b> a portion of a freeform curve, click on the curve and drag the mouse.  Dragging produces a tendril-like extension of the curve.  When the tendril approaches the original curve, it automatically reconnects, replacing the subtended segment of the original curve.  To prevent the tendril from reconnecting to the original curve, hold Shift.  Release Shift to allow the tendril to reconnect to the curve.  If the mouse is released before the tendril reconnects, the original curve is restored.</li>
+    </ul>
   <li>The <b>marker tool</b> draws markers at a given point. Click a point in
     the display to place a crosshairs there.</li>
   <li>The <b>text tool</b> draws text at a given point. Click a point in the
