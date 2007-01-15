@@ -220,6 +220,15 @@ public class DisplayWindow extends JFrame
     catch (RemoteException exc) { exc.printStackTrace(); }
   }
 
+  /** Sets wehther texture mapping is enabled. */
+  public void setTextureMapping(boolean textureMapping) {
+    try {
+      display.getGraphicsModeControl().setTextureEnable(textureMapping);
+    }
+    catch (VisADException exc) { exc.printStackTrace(); }
+    catch (RemoteException exc) { exc.printStackTrace(); }
+  }
+
   /** Sets whether volume rendering uses 3D texturing. */
   public void set3DTexturing(boolean texture3d) {
     try {
@@ -304,6 +313,7 @@ public class DisplayWindow extends JFrame
     if (display == null) {
       display = DisplayUtil.makeDisplay(name, threeD, STEREO);
       setTransparencyMode(manager.isNiceTransparency());
+      setTextureMapping(manager.isTextureMapped());
       set3DTexturing(manager.is3DTextured());
       display.addDisplayListener(this);
     }

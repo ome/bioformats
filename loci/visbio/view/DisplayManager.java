@@ -53,6 +53,9 @@ public class DisplayManager extends LogicManager {
   /** String for nicest transparency option. */
   public static final String NICE_ALPHA = "Use nicest transparency";
 
+  /** String for texture mapping option. */
+  public static final String TEXTURE_MAP = "Use texture mapping";
+
   /** String for 3D texturing option. */
   public static final String TEXTURE3D = "Use 3D texturing";
 
@@ -146,6 +149,12 @@ public class DisplayManager extends LogicManager {
   public boolean isNiceTransparency() {
     OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
     BooleanOption opt = (BooleanOption) om.getOption(NICE_ALPHA);
+    return opt.getValue();
+  }
+
+  public boolean isTextureMapped() {
+    OptionManager om = (OptionManager) bio.getManager(OptionManager.class);
+    BooleanOption opt = (BooleanOption) om.getOption(TEXTURE_MAP);
     return opt.getValue();
   }
 
@@ -249,6 +258,8 @@ public class DisplayManager extends LogicManager {
       "Adjusts resolution limit of image stacks", true, stackRes, stackRes));
     om.addBooleanOption("Visualization", NICE_ALPHA, 'n',
       "Toggles quality of transparency behavior", true);
+    om.addBooleanOption("Visualization", TEXTURE_MAP, 't',
+      "Toggles whether texture mapping is used for image planes", true);
     om.addBooleanOption("Visualization", TEXTURE3D, '3',
       "Toggles whether 3D textures are used for volume rendering", true);
     om.addNumericOption("Visualization", EYE_DISTANCE, null,
