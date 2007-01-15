@@ -43,15 +43,19 @@ public class LineTool extends OverlayTool {
   // -- OverlayTool API methods --
 
   /** Instructs this tool to respond to a mouse press. */
-  public void mouseDown(float x, float y, int[] pos, int mods) {
+  public void mouseDown(int px, int py,
+    float dx, float dy, int[] pos, int mods)
+  {
     deselectAll();
-    line = new OverlayLine(overlay, x, y, x, y);
+    line = new OverlayLine(overlay, dx, dy, dx, dy);
     configureOverlay(line);
     overlay.addObject(line, pos);
   }
 
   /** Instructs this tool to respond to a mouse release. */
-  public void mouseUp(float x, float y, int[] pos, int mods) {
+  public void mouseUp(int px, int py,
+    float dx, float dy, int[] pos, int mods)
+  {
     if (line == null) return;
     line.setDrawing(false);
     line = null;
@@ -59,9 +63,11 @@ public class LineTool extends OverlayTool {
   }
 
   /** Instructs this tool to respond to a mouse drag. */
-  public void mouseDrag(float x, float y, int[] pos, int mods) {
+  public void mouseDrag(int px, int py,
+    float dx, float dy, int[] pos, int mods)
+  {
     if (line == null) return;
-    line.setCoords2(x, y);
+    line.setCoords2(dx, dy);
     overlay.notifyListeners(new TransformEvent(overlay));
   }
 

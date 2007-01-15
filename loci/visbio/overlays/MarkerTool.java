@@ -43,15 +43,19 @@ public class MarkerTool extends OverlayTool {
   // -- OverlayTool API methods --
 
   /** Instructs this tool to respond to a mouse press. */
-  public void mouseDown(float x, float y, int[] pos, int mods) {
+  public void mouseDown(int px, int py,
+    float dx, float dy, int[] pos, int mods)
+  {
     deselectAll();
-    marker = new OverlayMarker(overlay, x, y);
+    marker = new OverlayMarker(overlay, dx, dy);
     configureOverlay(marker);
     overlay.addObject(marker, pos);
   }
 
   /** Instructs this tool to respond to a mouse release. */
-  public void mouseUp(float x, float y, int[] pos, int mods) {
+  public void mouseUp(int px, int py,
+    float dx, float dy, int[] pos, int mods)
+  {
     if (marker == null) return;
     marker.setDrawing(false);
     marker = null;
@@ -59,9 +63,11 @@ public class MarkerTool extends OverlayTool {
   }
 
   /** Instructs this tool to respond to a mouse drag. */
-  public void mouseDrag(float x, float y, int[] pos, int mods) {
+  public void mouseDrag(int px, int py,
+    float dx, float dy, int[] pos, int mods)
+  {
     if (marker == null) return;
-    marker.setCoords(x, y);
+    marker.setCoords(dx, dy);
     overlay.notifyListeners(new TransformEvent(overlay));
   }
 

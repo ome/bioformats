@@ -28,12 +28,19 @@ import java.util.Arrays;
 import visad.*;
 import java.awt.Color;
 
-/** TransientSelectBox represents the square that appears in a VisBio display
- *  as a user drags the mouse to select overlays */
+/**
+ * TransientSelectBox represents the square that appears in a VisBio display
+ * as a user drags the mouse to select overlays.
+ */
 public class TransientSelectBox {
 
+  // -- Constants --
+
+  /** Sets the transparency of the interior of the select box */
+  private static final float ALPHA_VALUE = 0.3f;
+
   // -- Fields --
-  
+
   /** Color of box */
   private Color color;
 
@@ -46,14 +53,10 @@ public class TransientSelectBox {
   /** Whether the box is visible; toggled off if box
    *  boundaries would form an invalid GriddedSet */
   private boolean visible;
-  
-  // -- Constants -- 
-  /** Sets the transparency of the interior of the select box */
-  private float ALPHA_VALUE = 0.3f;
 
-  // -- Constructor -- 
+  // -- Constructor --
 
-  /** Constructs a selection box 
+  /** Constructs a selection box
    *  Initially, the box has zero area and is not visible
    */
   public TransientSelectBox(OverlayTransform overlay, float downX, float downY) {
@@ -66,7 +69,7 @@ public class TransientSelectBox {
     visible = false;
   }
 
-  // -- TransientSelectBox API Methods -- 
+  // -- TransientSelectBox API Methods --
 
   /** Sets coordinates of draggable box corner */
   public void setCorner (float x, float y) {
@@ -77,7 +80,7 @@ public class TransientSelectBox {
     else visible = false;
   }
 
-  /** Returns a VisAD data object representing this box 
+  /** Returns a VisAD data object representing this box
    *  The data object is compound, consisting of 2 parts:
    *  1) a solid GriddedSet of manifold dimension 1, the outline
    *  2) a semi-transparent GriddedSet of manifold dimension 2, the interior
@@ -93,19 +96,19 @@ public class TransientSelectBox {
 
     try {
       shadeSamples = new float[][] {
-        {x1, x2, x1, x2}, 
+        {x1, x2, x1, x2},
         {y1, y1, y2, y2}
       };
 
       outlineSamples = new float[][] {
-        {x1, x1, x2, x2, x1}, 
+        {x1, x1, x2, x2, x1},
         {y1, y2, y2, y1, y1}
       };
-    
+
       shadeSet = new Gridded2DSet(domain,
           shadeSamples, 2, 2, null, null, null, false);
 
-      outlineSet = new Gridded2DSet(domain, outlineSamples, 
+      outlineSet = new Gridded2DSet(domain, outlineSamples,
           outlineSamples[0].length, null, null, null, false);
     }
     catch (SetException set ) { set.printStackTrace(); }
@@ -139,7 +142,7 @@ public class TransientSelectBox {
       // outline field
       outField = new FlatField(fieldType, outlineSet);
       outField.setSamples(outlineRangeSamples);
-  
+
       wholeTeam = new DataImpl[] {inField, outField};
       ret = new Tuple (wholeTeam, false);
     }
@@ -152,14 +155,14 @@ public class TransientSelectBox {
   public boolean isVisible() { return visible; }
 
   /** Gets X coordinate of the overlay's first endpoint. */
-  public float getX1() { return x1; } 
+  public float getX1() { return x1; }
 
   /** Gets X coordinate of the overlay's second endpoint. */
-  public float getX2() { return x2; } 
-  
+  public float getX2() { return x2; }
+
   /** Gets Y coordinate of the overlay's second endpoint. */
-  public float getY1() { return y1; } 
-  
+  public float getY1() { return y1; }
+
   /** Gets Y coordinate of the overlay's first endpoint. */
-  public float getY2() { return y2; } 
+  public float getY2() { return y2; }
 }

@@ -43,9 +43,11 @@ public class OvalTool extends OverlayTool {
   // -- OverlayTool API methods --
 
   /** Instructs this tool to respond to a mouse press. */
-  public void mouseDown(float x, float y, int[] pos, int mods) {
+  public void mouseDown(int px, int py,
+    float dx, float dy, int[] pos, int mods)
+  {
     deselectAll();
-    oval = new OverlayOval(overlay, x, y, x, y);
+    oval = new OverlayOval(overlay, dx, dy, dx, dy);
     configureOverlay(oval);
     OverlayWidget panel = (OverlayWidget) overlay.getControls();
     oval.setFilled(panel.isFilled());
@@ -53,7 +55,9 @@ public class OvalTool extends OverlayTool {
   }
 
   /** Instructs this tool to respond to a mouse release. */
-  public void mouseUp(float x, float y, int[] pos, int mods) {
+  public void mouseUp(int px, int py,
+    float dx, float dy, int[] pos, int mods)
+  {
     if (oval == null) return;
     oval.setDrawing(false);
     oval = null;
@@ -61,9 +65,11 @@ public class OvalTool extends OverlayTool {
   }
 
   /** Instructs this tool to respond to a mouse drag. */
-  public void mouseDrag(float x, float y, int[] pos, int mods) {
+  public void mouseDrag(int px, int py,
+    float dx, float dy, int[] pos, int mods)
+  {
     if (oval == null) return;
-    oval.setCoords2(x, y);
+    oval.setCoords2(dx, dy);
     overlay.notifyListeners(new TransformEvent(overlay));
   }
 

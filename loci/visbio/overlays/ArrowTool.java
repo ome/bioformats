@@ -43,9 +43,11 @@ public class ArrowTool extends OverlayTool {
   // -- OverlayTool API methods --
 
   /** Instructs this tool to respond to a mouse press. */
-  public void mouseDown(float x, float y, int[] pos, int mods) {
+  public void mouseDown(int px, int py,
+    float dx, float dy, int[] pos, int mods)
+  {
     deselectAll();
-    arrow = new OverlayArrow(overlay, x, y, x, y);
+    arrow = new OverlayArrow(overlay, dx, dy, dx, dy);
     configureOverlay(arrow);
     OverlayWidget panel = (OverlayWidget) overlay.getControls();
     arrow.setFilled(panel.isFilled());
@@ -53,7 +55,9 @@ public class ArrowTool extends OverlayTool {
   }
 
   /** Instructs this tool to respond to a mouse release. */
-  public void mouseUp(float x, float y, int[] pos, int mods) {
+  public void mouseUp(int px, int py,
+    float dx, float dy, int[] pos, int mods)
+  {
     if (arrow == null) return;
     arrow.setDrawing(false);
     arrow = null;
@@ -61,9 +65,11 @@ public class ArrowTool extends OverlayTool {
   }
 
   /** Instructs this tool to respond to a mouse drag. */
-  public void mouseDrag(float x, float y, int[] pos, int mods) {
+  public void mouseDrag(int px, int py,
+    float dx, float dy, int[] pos, int mods)
+  {
     if (arrow == null) return;
-    arrow.setCoords2(x, y);
+    arrow.setCoords2(dx, dy);
     overlay.notifyListeners(new TransformEvent(overlay));
   }
 

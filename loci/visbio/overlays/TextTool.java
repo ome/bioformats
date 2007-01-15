@@ -43,16 +43,20 @@ public class TextTool extends OverlayTool {
   // -- OverlayTool API methods --
 
   /** Instructs this tool to respond to a mouse press. */
-  public void mouseDown(float x, float y, int[] pos, int mods) {
+  public void mouseDown(int px, int py,
+    float dx, float dy, int[] pos, int mods)
+  {
     deselectAll();
     OverlayWidget controls = (OverlayWidget) overlay.getControls();
-    text = new OverlayText(overlay, x, y, controls.getText());
+    text = new OverlayText(overlay, dx, dy, controls.getText());
     configureOverlay(text);
     overlay.addObject(text, pos);
   }
 
   /** Instructs this tool to respond to a mouse release. */
-  public void mouseUp(float x, float y, int[] pos, int mods) {
+  public void mouseUp(int px, int py,
+    float dx, float dy, int[] pos, int mods)
+  {
     if (text == null) return;
     text.setDrawing(false);
     text = null;
@@ -60,9 +64,11 @@ public class TextTool extends OverlayTool {
   }
 
   /** Instructs this tool to respond to a mouse drag. */
-  public void mouseDrag(float x, float y, int[] pos, int mods) {
+  public void mouseDrag(int px, int py,
+    float dx, float dy, int[] pos, int mods)
+  {
     if (text == null) return;
-    text.setCoords(x, y);
+    text.setCoords(dx, dy);
     overlay.notifyListeners(new TransformEvent(overlay));
   }
 

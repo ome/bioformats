@@ -54,19 +54,60 @@ public class OverlayTool {
 
   // -- OverlayTool API methods --
 
-  /** Instructs this tool to respond to a mouse press. */
-  public void mouseDown(float x, float y, int[] pos, int mods) { }
+  /**
+   * Instructs this tool to respond to a mouse press.
+   * @param px X coordinate of mouse press in pixel coordinate system.
+   * @param py Y coordinate of mouse press in pixel coordinate system.
+   * @param dx X coordinate of mouse press in data coordinate system.
+   * @param dy Y coordinate of mouse press in data coordinate system.
+   * @param pos Dimensional position of mouse press.
+   * @param mods Modifiers of mouse press.
+   */
+  public void mouseDown(int px, int py,
+    float dx, float dy, int[] pos, int mods)
+  {
+  }
 
-  /** Instructs this tool to respond to a mouse release. */
-  public void mouseUp(float x, float y, int[] pos, int mods) { }
+  /**
+   * Instructs this tool to respond to a mouse release.
+   * @param px X coordinate of mouse release in pixel coordinate system.
+   * @param py Y coordinate of mouse release in pixel coordinate system.
+   * @param dx X coordinate of mouse release in data coordinate system.
+   * @param dy Y coordinate of mouse release in data coordinate system.
+   * @param pos Dimensional position of mouse release.
+   * @param mods Modifiers of mouse release.
+   */
+  public void mouseUp(int px, int py,
+    float dx, float dy, int[] pos, int mods)
+  {
+  }
 
-  /** Instructs this tool to respond to a mouse drag. */
-  public void mouseDrag(float x, float y, int[] pos, int mods) { }
+  /**
+   * Instructs this tool to respond to a mouse drag.
+   * @param px X coordinate of mouse drag in pixel coordinate system.
+   * @param py Y coordinate of mouse drag in pixel coordinate system.
+   * @param dx X coordinate of mouse drag in data coordinate system.
+   * @param dy Y coordinate of mouse drag in data coordinate system.
+   * @param pos Dimensional position of mouse drag.
+   * @param mods Modifiers of mouse drag.
+   */
+  public void mouseDrag(int px, int py,
+    float dx, float dy, int[] pos, int mods)
+  {
+  }
 
-  /** Instructs this tool to respond to a key press. */
+  /**
+   * Instructs this tool to respond to a key press.
+   * @param code Key code of pressed key.
+   * @param mods Modifiers of pressed key.
+   */
   public void keyPressed(int code, int mods) { }
 
-  /** Instructs this tool to respond to a key release. */
+  /**
+   * Instructs this tool to respond to a key release.
+   * @param code Key code of released key.
+   * @param mods Modifiers of released key.
+   */
   public void keyReleased(int code, int mods) { }
 
   /** Gets associated overlay transform. */
