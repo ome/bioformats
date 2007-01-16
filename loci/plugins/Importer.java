@@ -346,8 +346,7 @@ public class Importer implements ItemListener {
       for (int i=0; i<seriesCount; i++) {
         r.setSeries(id, i);
         num[i] = r.getImageCount(id);
-        sizeC[i] = r.getSizeC(id);
-        if (r.isRGB(id)) sizeC[i] = sizeC[i] < 3 ? 1 : (sizeC[i] / 3);
+        sizeC[i] = r.getEffectiveSizeC(id);
         sizeZ[i] = r.getSizeZ(id);
         sizeT[i] = r.getSizeT(id);
         certain[i] = r.isOrderCertain(id);
@@ -373,28 +372,31 @@ public class Importer implements ItemListener {
         sb.append(r.getSizeY(id));
         sb.append("; ");
         sb.append(num[i]);
-        sb.append(" planes");
-        if (certain[i]) {
-          sb.append(" (");
-          boolean first = true;
-          if (sizeC[i] > 1) {
-            sb.append(sizeC[i]);
-            sb.append("C");
-            first = false;
+        sb.append(" plane");
+        if (num[i] > 1) {
+          sb.append("s");
+          if (certain[i]) {
+            sb.append(" (");
+            boolean first = true;
+            if (sizeC[i] > 1) {
+              sb.append(sizeC[i]);
+              sb.append("C");
+              first = false;
+            }
+            if (sizeZ[i] > 1) {
+              if (!first) sb.append(" x ");
+              sb.append(sizeZ[i]);
+              sb.append("Z");
+              first = false;
+            }
+            if (sizeT[i] > 1) {
+              if (!first) sb.append(" x ");
+              sb.append(sizeT[i]);
+              sb.append("T");
+              first = false;
+            }
+            sb.append(")");
           }
-          if (sizeZ[i] > 1) {
-            if (!first) sb.append(" x ");
-            sb.append(sizeZ[i]);
-            sb.append("Z");
-            first = false;
-          }
-          if (sizeT[i] > 1) {
-            if (!first) sb.append(" x ");
-            sb.append(sizeT[i]);
-            sb.append("T");
-            first = false;
-          }
-          sb.append(")");
         }
         seriesStrings[i] = sb.toString();
       }
@@ -591,7 +593,7 @@ public class Importer implements ItemListener {
 
             int w = r.getSizeX(id);
             int h = r.getSizeY(id);
-            int c = r.isRGB(id) ? r.getSizeC(id) : 1;
+            int c = r.getEffectiveSizeC(id);
             int type = r.getPixelType(id);
 
             // construct image processor and add to stack
