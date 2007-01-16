@@ -52,6 +52,7 @@ public class Importer implements ItemListener {
 
   // -- Constants --
 
+  private static final String VIEW_NONE = "Metadata only";
   private static final String VIEW_STANDARD = "Standard ImageJ";
   private static final String VIEW_BROWSER = "4D Data Browser";
   private static final String VIEW_IMAGE_5D = "Image5D";
@@ -195,6 +196,7 @@ public class Importer implements ItemListener {
     IJ.showStatus("");
 
     Vector stackTypes = new Vector();
+    stackTypes.add(VIEW_NONE);
     stackTypes.add(VIEW_STANDARD);
     if (Util.checkClass("loci.plugins.browser.LociDataBrowser")) {
       stackTypes.add(VIEW_BROWSER);
@@ -344,7 +346,8 @@ public class Importer implements ItemListener {
       for (int i=0; i<seriesCount; i++) {
         r.setSeries(id, i);
         num[i] = r.getImageCount(id);
-        sizeC[i] = r.getEffectiveSizeC(id);
+        sizeC[i] = r.getSizeC(id);
+        if (r.isRGB(id)) sizeC[i] = sizeC[i] < 3 ? 1 : (sizeC[i] / 3);
         sizeZ[i] = r.getSizeZ(id);
         sizeT[i] = r.getSizeT(id);
         certain[i] = r.isOrderCertain(id);
@@ -370,31 +373,28 @@ public class Importer implements ItemListener {
         sb.append(r.getSizeY(id));
         sb.append("; ");
         sb.append(num[i]);
-        sb.append(" plane");
-        if (num[i] > 1) {
-          sb.append("s");
-          if (certain[i]) {
-            sb.append(" (");
-            boolean first = true;
-            if (sizeC[i] > 1) {
-              sb.append(sizeC[i]);
-              sb.append("C");
-              first = false;
-            }
-            if (sizeZ[i] > 1) {
-              if (!first) sb.append(" x ");
-              sb.append(sizeZ[i]);
-              sb.append("Z");
-              first = false;
-            }
-            if (sizeT[i] > 1) {
-              if (!first) sb.append(" x ");
-              sb.append(sizeT[i]);
-              sb.append("T");
-              first = false;
-            }
-            sb.append(")");
+        sb.append(" planes");
+        if (certain[i]) {
+          sb.append(" (");
+          boolean first = true;
+          if (sizeC[i] > 1) {
+            sb.append(sizeC[i]);
+            sb.append("C");
+            first = false;
           }
+          if (sizeZ[i] > 1) {
+            if (!first) sb.append(" x ");
+            sb.append(sizeZ[i]);
+            sb.append("Z");
+            first = false;
+          }
+          if (sizeT[i] > 1) {
+            if (!first) sb.append(" x ");
+            sb.append(sizeT[i]);
+            sb.append("T");
+            first = false;
+          }
+          sb.append(")");
         }
         seriesStrings[i] = sb.toString();
       }
@@ -547,18 +547,20 @@ public class Importer implements ItemListener {
           if (name != null && name.length() > 0) imageName += " - " + name;
 
           boolean[] load = new boolean[num[i]];
-          if (certain[i]) {
-            for (int c=cBegin[i]; c<=cEnd[i]; c+=cStep[i]) {
-              for (int z=zBegin[i]; z<=zEnd[i]; z+=zStep[i]) {
-                for (int t=tBegin[i]; t<=tEnd[i]; t+=tStep[i]) {
-                  int index = r.getIndex(id, z, c, t);
-                  load[index] = true;
+          if (!stackFormat.equals(VIEW_NONE)) {
+            if (certain[i]) {
+              for (int c=cBegin[i]; c<=cEnd[i]; c+=cStep[i]) {
+                for (int z=zBegin[i]; z<=zEnd[i]; z+=zStep[i]) {
+                  for (int t=tBegin[i]; t<=tEnd[i]; t+=tStep[i]) {
+                    int index = r.getIndex(id, z, c, t);
+                    load[index] = true;
+                  }
                 }
               }
             }
-          }
-          else {
-            for (int j=cBegin[i]; j<=cEnd[i]; j+=cStep[i]) load[j] = true;
+            else {
+              for (int j=cBegin[i]; j<=cEnd[i]; j+=cStep[i]) load[j] = true;
+            }
           }
           int total = 0;
           for (int j=0; j<num[i]; j++) if (load[j]) total++;
@@ -589,7 +591,7 @@ public class Importer implements ItemListener {
 
             int w = r.getSizeX(id);
             int h = r.getSizeY(id);
-            int c = r.getEffectiveSizeC(id);
+            int c = r.isRGB(id) ? r.getSizeC(id) : 1;
             int type = r.getPixelType(id);
 
             // construct image processor and add to stack
@@ -832,17 +834,27 @@ public class Importer implements ItemListener {
       }
     }
     else if (src == metadataBox) {
+      if (!metadataBox.getState()) {
+        String s = stackChoice.getSelectedItem();
+        if (s.equals(VIEW_NONE)) stackChoice.select(VIEW_STANDARD);
+      }
     }
     else if (src == stitchBox) {
     }
     else if (src == rangeBox) {
       if (rangeBox.getState()) {
         String s = stackChoice.getSelectedItem();
-        if (s.equals(VIEW_BROWSER)) stackChoice.select(VIEW_STANDARD);
+        if (s.equals(VIEW_NONE) || s.equals(VIEW_BROWSER)) {
+          stackChoice.select(VIEW_STANDARD);
+        }
       }
     }
     else if (src == stackChoice) {
       String s = stackChoice.getSelectedItem();
+      if (s.equals(VIEW_NONE)) {
+        metadataBox.setState(true);
+        rangeBox.setState(false);
+      }
       if (s.equals(VIEW_STANDARD)) {
       }
       else if (s.equals(VIEW_BROWSER)) {
