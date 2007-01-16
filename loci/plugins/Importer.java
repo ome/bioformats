@@ -514,17 +514,35 @@ public class Importer implements ItemListener {
         // display standard metadata in a table in its own window
         Hashtable meta = r.getMetadata(id);
         meta.put("\t\t" + idType, r.getCurrentFile());
-        meta.put("\tSizeX", new Integer(r.getSizeX(id)));
-        meta.put("\tSizeY", new Integer(r.getSizeY(id)));
-        meta.put("\tSizeZ", new Integer(r.getSizeZ(id)));
-        meta.put("\tSizeT", new Integer(r.getSizeT(id)));
-        meta.put("\tSizeC", new Integer(r.getSizeC(id)));
-        meta.put("\tIsRGB", new Boolean(r.isRGB(id)));
-        meta.put("\tPixelType",
-          FormatReader.getPixelTypeString(r.getPixelType(id)));
-        meta.put("\tLittleEndian", new Boolean(r.isLittleEndian(id)));
-        meta.put("\tDimensionOrder", r.getDimensionOrder(id));
-        meta.put("\tIsInterleaved", new Boolean(r.isInterleaved(id)));
+        int digits = digits(seriesCount);
+        for (int i=0; i<seriesCount; i++) {
+          if (!series[i]) continue;
+          r.setSeries(id, i);
+          String s;
+          if (seriesCount > 1) {
+            StringBuffer sb = new StringBuffer();
+            sb.append("Series ");
+            int zeroes = digits - digits(i + 1);
+            for (int j=0; j<zeroes; j++) sb.append(0);
+            sb.append(i + 1);
+            sb.append(" ");
+            s = sb.toString();
+          }
+          else s = "";
+          meta.put("\t" + s + "SizeX", new Integer(r.getSizeX(id)));
+          meta.put("\t" + s + "SizeY", new Integer(r.getSizeY(id)));
+          meta.put("\t" + s + "SizeZ", new Integer(r.getSizeZ(id)));
+          meta.put("\t" + s + "SizeT", new Integer(r.getSizeT(id)));
+          meta.put("\t" + s + "SizeC", new Integer(r.getSizeC(id)));
+          meta.put("\t" + s + "IsRGB", new Boolean(r.isRGB(id)));
+          meta.put("\t" + s + "PixelType",
+            FormatReader.getPixelTypeString(r.getPixelType(id)));
+          meta.put("\t" + s + "LittleEndian",
+            new Boolean(r.isLittleEndian(id)));
+          meta.put("\t" + s + "DimensionOrder", r.getDimensionOrder(id));
+          meta.put("\t" + s + "IsInterleaved",
+            new Boolean(r.isInterleaved(id)));
+        }
         MetadataPane mp = new MetadataPane(meta);
         JFrame frame = new JFrame("Metadata - " + r.getCurrentFile());
         frame.setContentPane(mp);
@@ -1168,6 +1186,15 @@ public class Importer implements ItemListener {
     constraints.weighty = 1.0;
     layout.setConstraints(scroll, constraints);
     pane.add(scroll);
+  }
+
+  private int digits(int value) {
+    int digits = 0;
+    while (value > 0) {
+      value /= 10;
+      digits++;
+    }
+    return digits;
   }
 
 }
