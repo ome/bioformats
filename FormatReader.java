@@ -812,11 +812,10 @@ public abstract class FormatReader extends FormatHandler
   {
     String order = reader.getDimensionOrder(id);
     int zSize = reader.getSizeZ(id);
-    int cSize = reader.getSizeC(id);
+    int cSize = reader.getEffectiveSizeC(id);
     int tSize = reader.getSizeT(id);
     int num = reader.getImageCount(id);
-    boolean rgb = reader.isRGB(id);
-    return getIndex(order, zSize, cSize, tSize, num, rgb, z, c, t);
+    return getIndex(order, zSize, cSize, tSize, num, z, c, t);
   }
 
   /**
@@ -824,7 +823,7 @@ public abstract class FormatReader extends FormatHandler
    * to the given Z, C and T coordinates.
    */
   public static int getIndex(String order, int zSize, int cSize, int tSize,
-    int num, boolean rgb, int z, int c, int t)
+    int num, int z, int c, int t)
     throws FormatException, IOException
   {
     // check DimensionOrder
@@ -850,8 +849,6 @@ public abstract class FormatReader extends FormatHandler
     if (c < 0 || c >= cSize) {
       throw new FormatException("Invalid C index: " + c + "/" + cSize);
     }
-    int origSizeC = cSize;
-    if (rgb) cSize = 1;
 
     // check SizeT
     if (tSize <= 0) throw new FormatException("Invalid T size: " + tSize);
@@ -865,9 +862,9 @@ public abstract class FormatReader extends FormatHandler
       // if this happens, there is probably a bug in metadata population --
       // either one of the ZCT sizes, or the total number of images --
       // or else the input file is invalid
-      throw new FormatException("ZCT size vs image count mismatch (rgb=" +
-        rgb + "; sizeZ=" + zSize + ", sizeC=" +
-        origSizeC + ", sizeT=" + tSize + ", total=" + num + ")");
+      throw new FormatException("ZCT size vs image count mismatch (sizeZ=" +
+        zSize + ", sizeC=" + cSize + ", sizeT=" + tSize + ", total=" + num +
+        ")");
     }
 
     // assign rasterization order
@@ -890,19 +887,18 @@ public abstract class FormatReader extends FormatHandler
   {
     String order = reader.getDimensionOrder(id);
     int zSize = reader.getSizeZ(id);
-    int cSize = reader.getSizeC(id);
+    int cSize = reader.getEffectiveSizeC(id);
     int tSize = reader.getSizeT(id);
     int num = reader.getImageCount(id);
-    boolean rgb = reader.isRGB(id);
-    return getZCTCoords(order, zSize, cSize, tSize, num, rgb, index);
+    return getZCTCoords(order, zSize, cSize, tSize, num, index);
   }
 
   /**
    * Gets the Z, C and T coordinates corresponding to the given rasterized
    * index value.
    */
-  public static int[] getZCTCoords(String order, int zSize, int cSize,
-    int tSize, int num, boolean rgb, int index)
+  public static int[] getZCTCoords(String order,
+    int zSize, int cSize, int tSize, int num, int index)
     throws FormatException, IOException
   {
     // check DimensionOrder
@@ -922,8 +918,6 @@ public abstract class FormatReader extends FormatHandler
 
     // check SizeC
     if (cSize <= 0) throw new FormatException("Invalid C size: " + cSize);
-    int origSizeC = cSize;
-    if (rgb) cSize = 1;
 
     // check SizeT
     if (tSize <= 0) throw new FormatException("Invalid T size: " + tSize);
@@ -934,9 +928,9 @@ public abstract class FormatReader extends FormatHandler
       // if this happens, there is probably a bug in metadata population --
       // either one of the ZCT sizes, or the total number of images --
       // or else the input file is invalid
-      throw new FormatException("ZCT size vs image count mismatch (rgb=" +
-        rgb + "; sizeZ=" + zSize + ", sizeC=" +
-        origSizeC + ", sizeT=" + tSize + ", total=" + num + ")");
+      throw new FormatException("ZCT size vs image count mismatch (sizeZ=" +
+        zSize + ", sizeC=" + cSize + ", sizeT=" + tSize + ", total=" + num +
+        ")");
     }
     if (index < 0 || index >= num) {
       throw new FormatException("Invalid image index: " + index + "/" + num);
