@@ -798,7 +798,7 @@ public class FileStitcher implements IFormatReader {
     }
     int fno = positionToRaster(count, pos);
     int ino = FormatReader.getIndex(order[sno], sizeZ[sno], sizeC[sno],
-      sizeT[sno], imagesPerFile[sno], isRGB(id), posZ[0], posC[0], posT[0]);
+      sizeT[sno], imagesPerFile[sno], posZ[0], posC[0], posT[0]);
 
     // configure the reader, in case we haven't done this one yet
     readers[fno].setChannelStatCalculationStatus(enableChannelStatCalculation);
