@@ -26,6 +26,7 @@ package loci.formats.in;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Vector;
 import loci.formats.*;
 
 /**
@@ -50,6 +51,9 @@ public class GatanReader extends FormatReader {
   /** Array of pixel bytes. */
   protected byte[] pixelData;
 
+  /** List of pixel sizes. */
+  private Vector pixelSizes;
+  
   /** Dimensions -- width, height, bytes per pixel. */
   protected int[] dims = new int[3];
 
@@ -159,6 +163,7 @@ public class GatanReader extends FormatReader {
     in = new RandomAccessStream(getMappedId(id));
 
     littleEndian = false;
+    pixelSizes = new Vector();
 
     byte[] temp = new byte[4];
     in.read(temp);
@@ -177,7 +182,7 @@ public class GatanReader extends FormatReader {
     in.read(temp);
     parseTags(DataTools.bytesToInt(temp, !littleEndian), "initFile");
 
-    int datatype = ((Integer) metadata.get("DataType")).intValue();
+    int datatype = Integer.parseInt((String) metadata.get("DataType"));
 
     pixelType[0] = FormatReader.INT8;
     switch (datatype) {
@@ -246,6 +251,23 @@ public class GatanReader extends FormatReader {
       new Boolean(!littleEndian), // BigEndian
       "XYZTC", // DimensionOrder
       null); // Use index 0
+  
+    Float pixX = null;
+    Float pixY = null;
+    Float pixZ = null;
+
+    if (pixelSizes.size() > 0) {
+      pixX = new Float((String) pixelSizes.get(0));
+    }
+    if (pixelSizes.size() > 1) {
+      pixY = new Float((String) pixelSizes.get(1));
+    }
+    if (pixelSizes.size() > 2) {
+      pixZ = new Float((String) pixelSizes.get(2));
+    }
+
+    store.setDimensions(pixX, pixY, pixZ, null, null, null);
+  
   }
 
   // -- Helper method --
@@ -279,45 +301,50 @@ public class GatanReader extends FormatReader {
         if (n == 1) {
           in.read(temp);
           dataType = DataTools.bytesToInt(temp, !littleEndian);
-          int data;
+          String data;
           switch (dataType) {
             case 2:
-              data = DataTools.read2SignedBytes(in, littleEndian);
+              data = "" + DataTools.read2SignedBytes(in, littleEndian);
               break;
             case 3:
-              data = DataTools.read4SignedBytes(in, littleEndian);
+              data = "" + DataTools.read4SignedBytes(in, littleEndian);
               break;
             case 4:
-              data = DataTools.read2UnsignedBytes(in, littleEndian);
+              data = "" + DataTools.read2UnsignedBytes(in, littleEndian);
               break;
             case 5:
-              data = (int) DataTools.read4UnsignedBytes(in, littleEndian);
+              data = "" + DataTools.read4UnsignedBytes(in, littleEndian);
               break;
             case 6:
-              data = (int) DataTools.readFloat(in, littleEndian);
+              data = "" + DataTools.readFloat(in, littleEndian);
               break;
             case 7:
-              data = (int) DataTools.readFloat(in, littleEndian);
+              data = "" + DataTools.readFloat(in, littleEndian);
               in.skipBytes(4);
               break;
             case 8:
-              data = DataTools.readSignedByte(in);
+              data = "" + DataTools.readSignedByte(in);
               break;
             case 9:
-              data = DataTools.readSignedByte(in);
+              data = "" + DataTools.readSignedByte(in);
               break;
             case 10:
-              data = DataTools.readSignedByte(in);
+              data = "" + DataTools.readSignedByte(in);
               break;
             default:
-              data = 0;
+              data = "0";
           }
           if (parent.equals("Dimensions")) {
-            if (i == 0) dims[0] = data;
-            else if (i == 1) dims[1] = data;
+            if (i == 0) dims[0] = Integer.parseInt(data);
+            else if (i == 1) dims[1] = Integer.parseInt(data);
           }
-          if ("PixelDepth".equals(labelString)) dims[2] = data;
-          metadata.put(labelString, new Integer(data));
+          if (labelString.equals("PixelDepth")) {
+            dims[2] = Integer.parseInt(data);
+          }
+          else if (labelString.equals("Scale")) {
+            pixelSizes.add(data);
+          }
+          metadata.put(labelString, data);
         }
         else if (n == 2) {
           in.read(temp);
