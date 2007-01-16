@@ -561,7 +561,7 @@ public class ZeissZVIReader extends FormatReader {
                 case 8:
                   int len = DataTools.bytesToInt(data, pt, 2, true);
                   pt += 2;
-                  value = new String(data, pt, len);
+                  value = new String(data, pt - 2, len + 2);
                   pt += len;
                   break;
                 case 20:
@@ -577,7 +577,7 @@ public class ZeissZVIReader extends FormatReader {
                 case 66:
                   int l = DataTools.bytesToInt(data, pt, 2, true);
                   pt += 2;
-                  value = new String(data, pt, l);
+                  value = new String(data, pt - 2, l + 2);
                   pt += l;
                   break;
                 default:
@@ -587,7 +587,7 @@ public class ZeissZVIReader extends FormatReader {
                   {
                     pt += 2;
                   }
-                  value = new String(data, oldPt, pt - oldPt);
+                  value = new String(data, oldPt - 2, pt - oldPt + 2);
               }
 
               pt += 2;
@@ -649,7 +649,7 @@ public class ZeissZVIReader extends FormatReader {
                 int len = DataTools.bytesToInt(data, pt, 2, true);
                 pt += 2;
                 try {
-                  value = new String(data, pt, len);
+                  value = new String(data, pt - 2, len + 2);
                   pt += len;
                 }
                 catch (Exception e) {
@@ -671,7 +671,7 @@ public class ZeissZVIReader extends FormatReader {
               case 66:
                 int l = DataTools.bytesToInt(data, pt, 2, true);
                 pt += 2;
-                value = new String(data, pt, l);
+                value = new String(data, pt - 2, l + 2);
                 pt += l;
                 break;
               default:
@@ -682,7 +682,7 @@ public class ZeissZVIReader extends FormatReader {
                   pt += 2;
                 }
                 try {
-                  value = new String(data, oldPt, pt - oldPt);
+                  value = new String(data, oldPt - 2, pt - oldPt + 2);
                 }
                 catch (Exception e) {
                   // CTR TODO - eliminate catch-all exception handling
