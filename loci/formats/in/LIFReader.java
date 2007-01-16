@@ -294,6 +294,8 @@ public class LIFReader extends FormatReader {
     Vector bps = new Vector();
     Vector extraDims = new Vector();
 
+    String prefix = "";
+
     while (ndx < elements.size()) {
       token = (String) elements.get(ndx);
 
@@ -305,13 +307,13 @@ public class LIFReader extends FormatReader {
         token = token.substring(0, token.length() - 1).trim();
         key = token.substring(0, token.indexOf(" ")).trim();
         int count = 1;
-        while (metadata.containsKey(key)) {
+        while (metadata.containsKey(prefix + " - " + key)) {
           if (key.indexOf(" ") != -1) key = key.substring(0, key.indexOf(" "));
           key = key + " " + count;
           count++;
         }
         value = token.substring(token.indexOf(" ") + 1).trim();
-        metadata.put(key, value);
+        metadata.put(prefix + " - " + key, value);
       }
       token = tmpToken;
 
@@ -371,6 +373,7 @@ public class LIFReader extends FormatReader {
               // hack to override first series name
               seriesNames.setElementAt(token.substring(token.indexOf("=") + 2,
                 token.length() - 1), seriesNames.size() - 1);
+              prefix = (String) seriesNames.get(seriesNames.size() - 1);
             }
             
             Hashtable tmp = new Hashtable();
