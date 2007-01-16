@@ -239,6 +239,9 @@ public abstract class BaseTiffReader extends FormatReader {
     putInt("SamplesPerPixel", ifd, TiffTools.SAMPLES_PER_PIXEL);
 
     put("Software", ifd, TiffTools.SOFTWARE);
+    put("Instrument Make", ifd, TiffTools.MAKE);
+    put("Instrument Model", ifd, TiffTools.MODEL);
+    put("Document Name", ifd, TiffTools.DOCUMENT_NAME);
     put("DateTime", ifd, TiffTools.DATE_TIME);
     put("Artist", ifd, TiffTools.ARTIST);
 
