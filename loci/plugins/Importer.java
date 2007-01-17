@@ -72,9 +72,13 @@ public class Importer implements ItemListener {
   private Checkbox splitBox;
   private Checkbox metadataBox;
   private Checkbox stitchBox;
+  private Checkbox stitchStackBox;
   private Checkbox rangeBox;
   private Choice stackChoice;
   private boolean mergeChannels;
+  private boolean stitchStack;
+
+  private Vector imps = new Vector();
 
   // -- Constructor --
 
@@ -119,7 +123,8 @@ public class Importer implements ItemListener {
         // open a dialog asking the user where their dataset is
         gd = new GenericDialog("LOCI Bio-Formats Dataset Location");
         gd.addChoice("Location: ",
-          new String[] {LOCATION_LOCAL, LOCATION_OME, LOCATION_HTTP}, LOCATION_LOCAL);
+          new String[] {LOCATION_LOCAL, LOCATION_OME, LOCATION_HTTP}, 
+            LOCATION_LOCAL);
         gd.showDialog();
         if (gd.wasCanceled()) {
           plugin.canceled = true;
@@ -213,6 +218,7 @@ public class Importer implements ItemListener {
     boolean splitWindows = Prefs.get("bioformats.splitWindows", true);
     boolean showMetadata = Prefs.get("bioformats.showMetadata", false);
     boolean stitchFiles = Prefs.get("bioformats.stitchFiles", false);
+    stitchStack = Prefs.get("bioformats.stitchStack", false);
     boolean specifyRanges = Prefs.get("bioformats.specifyRanges", false);
     stackFormat = Prefs.get("bioformats.stackFormat", VIEW_STANDARD);
 
@@ -222,6 +228,7 @@ public class Importer implements ItemListener {
     final String splitString = "Open each channel in its own window";
     final String metadataString = "Display associated metadata";
     final String stitchString = "Stitch files with similar names";
+    final String stitchStackString = "Stitch compatible series";
     final String rangeString = "Specify range for each series";
     final String stackString = "View stack with: ";
 
@@ -233,6 +240,7 @@ public class Importer implements ItemListener {
     gd.addCheckbox(splitString, splitWindows);
     gd.addCheckbox(metadataString, showMetadata);
     gd.addCheckbox(stitchString, stitchFiles);
+    gd.addCheckbox(stitchStackString, stitchStack);
     gd.addCheckbox(rangeString, specifyRanges);
     gd.addChoice(stackString, stackFormats, stackFormat);
 
@@ -245,7 +253,8 @@ public class Importer implements ItemListener {
       splitBox = (Checkbox) boxes.get(3);
       metadataBox = (Checkbox) boxes.get(4);
       stitchBox = (Checkbox) boxes.get(5);
-      rangeBox = (Checkbox) boxes.get(6);
+      stitchStackBox = (Checkbox) boxes.get(6);
+      rangeBox = (Checkbox) boxes.get(7);
       for (int i=0; i<boxes.size(); i++) {
         ((Checkbox) boxes.get(i)).addItemListener(this);
       }
@@ -269,6 +278,7 @@ public class Importer implements ItemListener {
     splitWindows = gd.getNextBoolean();
     showMetadata = gd.getNextBoolean();
     stitchFiles = gd.getNextBoolean();
+    stitchStack = gd.getNextBoolean();
     specifyRanges = gd.getNextBoolean();
     stackFormat = stackFormats[gd.getNextChoiceIndex()];
 
@@ -416,7 +426,36 @@ public class Importer implements ItemListener {
           plugin.canceled = true;
           return;
         }
-        for (int i=0; i<seriesCount; i++) series[i] = gd.getNextBoolean();
+        
+        int[] widths = new int[seriesCount];
+        int[] heights = new int[seriesCount];
+        int[] types = new int[seriesCount];
+        int[] channels = new int[seriesCount];
+
+        for (int i=0; i<seriesCount; i++) {
+          series[i] = gd.getNextBoolean();
+          r.setSeries(id, i);
+          widths[i] = r.getSizeX(id);
+          heights[i] = r.getSizeY(id);
+          types[i] = r.getPixelType(id);
+          channels[i] = r.getSizeC(id);
+        }
+
+        if (stitchStack) {
+          for (int i=0; i<seriesCount; i++) {
+            if (!series[i]) {
+              for (int j=0; j<seriesCount; j++) {
+                if ((j != i) && series[j] && (widths[j] == widths[i]) && 
+                  (heights[j] == heights[i]) && (types[j] == types[i]) && 
+                  (channels[j] == channels[i]))
+                {
+                  series[i] = true;
+                  j = seriesCount;
+                }
+              }
+            }
+          }
+        }
       }
 
       // -- Step 4b: prompt for the range of planes to import, if necessary --
@@ -789,6 +828,50 @@ public class Importer implements ItemListener {
           }
         }
 
+        if (stitchStack) {
+          Vector widths = new Vector();
+          Vector heights = new Vector();
+          Vector types = new Vector();
+          Vector newImps = new Vector();
+
+          for (int i=0; i<imps.size(); i++) {
+            ImagePlus imp = (ImagePlus) imps.get(i);
+            int w = imp.getWidth();
+            int h = imp.getHeight();
+            int type = imp.getBitDepth();
+            boolean append = false;
+            for (int j=0; j<widths.size(); j++) {
+              int width = ((Integer) widths.get(j)).intValue();
+              int height = ((Integer) heights.get(j)).intValue();
+              int t = ((Integer) types.get(j)).intValue();
+              
+              if (width == w && height == h && type == t) { 
+                ImagePlus oldImp = (ImagePlus) newImps.get(j);
+                ImageStack is = oldImp.getStack();
+                ImageStack newStack = imp.getStack();
+                for (int k=0; k<newStack.getSize(); k++) {
+                  is.addSlice(newStack.getSliceLabel(k+1), 
+                    newStack.getProcessor(k+1));
+                }
+                oldImp.setStack(oldImp.getTitle(), is);
+                newImps.setElementAt(oldImp, j);
+                append = true;
+                j = widths.size();
+              }
+            }
+            if (!append) {
+              widths.add(new Integer(w));
+              heights.add(new Integer(h));
+              types.add(new Integer(type));
+              newImps.add(imp);
+            }
+          }
+       
+          for (int i=0; i<newImps.size(); i++) {
+            ((ImagePlus) newImps.get(i)).show();
+          }
+        }
+
         r.close();
       }
 
@@ -801,6 +884,7 @@ public class Importer implements ItemListener {
       Prefs.set("bioformats.splitWindows", splitWindows);
       Prefs.set("bioformats.showMetadata", showMetadata);
       Prefs.set("bioformats.stitchFiles", stitchFiles);
+      Prefs.set("bioformats.stitchStack", stitchStack);
       Prefs.set("bioformats.specifyRanges", specifyRanges);
       Prefs.set("bioformats.stackFormat", stackFormat);
 
@@ -1041,7 +1125,8 @@ public class Importer implements ItemListener {
       }
 
       if (stackFormat.equals(VIEW_STANDARD)) {
-        imp.show();
+        if (!stitchStack) imp.show();
+        else imps.add(imp); 
       }
       else if (stackFormat.equals(VIEW_BROWSER)) {}
       else if (stackFormat.equals(VIEW_IMAGE_5D)) {
@@ -1102,7 +1187,8 @@ public class Importer implements ItemListener {
       }
     }
     catch (Exception e) {
-      imp.show();
+      if (!stitchStack) imp.show();
+      else imps.add(imp);
     }
   }
 
