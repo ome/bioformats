@@ -352,7 +352,7 @@ public class OMEUploader implements Uploader {
           System.arraycopy(plane, i*bytesPerChannel, b, 0, bytesPerChannel);
           int[] indices = FormatReader.getZCTCoords(
             xmlStore.getDimensionOrder(null), sizeZ, sizeC, sizeT,
-            sizeZ * sizeC * sizeT, false, num);
+            sizeZ * sizeC * sizeT, num);
           bytesUploaded +=
             uploadPlane(plane, indices[0], indices[1], indices[2], id,
               xmlStore.getBigEndian(null).booleanValue());
@@ -367,7 +367,7 @@ public class OMEUploader implements Uploader {
       }
       int[] indices = FormatReader.getZCTCoords(
         xmlStore.getDimensionOrder(null), sizeZ, sizeC, sizeT,
-        sizeZ * sizeC * sizeT, false, num);
+        sizeZ * sizeC * sizeT, num);
       int bytes = uploadPlane(plane, indices[0], indices[1], indices[2], id,
         xmlStore.getBigEndian(null).booleanValue());
 
