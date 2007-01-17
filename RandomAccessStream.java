@@ -88,12 +88,12 @@ public class RandomAccessStream extends InputStream implements DataInput {
    * around the given file.
    */
   public RandomAccessStream(String file) throws IOException {
-    File f = new File(file);
+    File f = new File(Location.getMappedId(file));
     f = f.getAbsoluteFile();
     if (f.exists()) {
       raf = new RAFile(f, "r");
       dis = new DataInputStream(new BufferedInputStream(
-        new FileInputStream(file), MAX_OVERHEAD));
+        new FileInputStream(Location.getMappedId(file)), MAX_OVERHEAD));
       int len = (int) raf.length();
       buf = new byte[len < MAX_OVERHEAD ? len : MAX_OVERHEAD];
       raf.readFully(buf);
@@ -103,7 +103,7 @@ public class RandomAccessStream extends InputStream implements DataInput {
       nextMark = MAX_OVERHEAD;
     }
     else {
-      raf = new RAUrl(file, "r");
+      raf = new RAUrl(Location.getMappedId(file), "r");
     }
     this.file = file;
     fp = 0;
