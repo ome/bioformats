@@ -42,7 +42,8 @@ public class ChannelSeparator extends ReaderWrapper {
 
   /** Determines the number of images in the given file. */
   public int getImageCount(String id) throws FormatException, IOException {
-    return reader.isRGB(id) ? getSizeC(id) * reader.getImageCount(id) :
+    return reader.isRGB(id) ? 
+      (getSizeC(id) / reader.getEffectiveSizeC(id)) * reader.getImageCount(id) :
       reader.getImageCount(id);
   }
 
@@ -121,7 +122,7 @@ public class ChannelSeparator extends ReaderWrapper {
     }
 
     if (reader.isRGB(id)) {
-      int c = getSizeC(id);
+      int c = getSizeC(id) / reader.getEffectiveSizeC(id);
       int source = no / c;
       int channel = no % c;
 

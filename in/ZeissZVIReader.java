@@ -231,8 +231,8 @@ public class ZeissZVIReader extends FormatReader {
   public void swapDimensions(String id, String order)
     throws FormatException, IOException
   {
-    super.swapDimensions(id, order);
     if (noPOI || needLegacy) legacy.swapDimensions(id, order);
+    else super.swapDimensions(id, order);
   }
 
   /** Obtains the specified image from the given ZVI file, as a byte array. */
@@ -288,7 +288,6 @@ public class ZeissZVIReader extends FormatReader {
         a = new byte[bpp * sizeX[0] * sizeY[0]];
         System.arraycopy(tmp, 0, a, 0, a.length);
       }
-
       return a;
     }
     catch (ReflectException e) {
@@ -350,6 +349,15 @@ public class ZeissZVIReader extends FormatReader {
     cIndices = new Vector();
     tIndices = new Vector();
 
+    sizeX = new int[1];
+    sizeY = new int[1];
+    sizeZ = new int[1];
+    sizeC = new int[1];
+    sizeT = new int[1];
+    pixelType = new int[1];
+    currentOrder = new String[1];
+    orderCertain = new boolean[] {true};
+
     nImages = 0;
 
     try {
@@ -370,22 +378,15 @@ public class ZeissZVIReader extends FormatReader {
 
       zSize = zIndices.size();
       tSize = tIndices.size();
-      if (nChannels != cIndices.size()) nChannels *= cIndices.size();
-
-      sizeX = new int[1];
-      sizeY = new int[1];
-      sizeZ = new int[1];
-      sizeC = new int[1];
-      sizeT = new int[1];
-      pixelType = new int[1];
-      currentOrder = new String[1];
-      orderCertain = new boolean[] {true};
+      if (nChannels != cIndices.size()) nChannels *= cIndices.size(); 
 
       sizeX[0] = width;
       sizeY[0] = height;
       sizeZ[0] = zSize;
       sizeC[0] = nChannels;
       sizeT[0] = tSize;
+
+      nImages = sizeZ[0] * sizeT[0] * getEffectiveSizeC(id);
 
       String s = (String) metadata.get("Acquisition Bit Depth");
       if (s != null && s.trim().length() > 0) {
