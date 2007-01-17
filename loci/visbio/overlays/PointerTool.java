@@ -25,6 +25,7 @@ package loci.visbio.overlays;
 
 import java.awt.event.InputEvent;
 import loci.visbio.data.TransformEvent;
+import java.util.Vector;
 
 /** PointerTool is the tool for manipulating existing overlays. */
 public class PointerTool extends OverlayTool {
@@ -36,6 +37,9 @@ public class PointerTool extends OverlayTool {
 
   /** Location where an object was first "grabbed" with a mouse press. */
   protected float grabX, grabY;
+
+  /** Vector of "grabbed" objects */
+  protected Vector grabees;  // (the user being the grabber)
 
   /** Location where mouseDown occurs */
   protected float downX, downY;
@@ -52,6 +56,9 @@ public class PointerTool extends OverlayTool {
    */
   protected float[][] bounds;
 
+  /** Array of whether objects are selected at time of mouse press */
+  protected boolean[] selected;
+  
   // -- Constructor --
 
   /** Constructs an overlay manipulation tool. */
@@ -68,10 +75,11 @@ public class PointerTool extends OverlayTool {
   {
     boolean shift = (mods & InputEvent.SHIFT_MASK) != 0;
     boolean ctrl = (mods & InputEvent.CTRL_MASK) != 0;
-
+    
     // pick nearest object
     objs = overlay.getObjects(pos);
     bounds = new float[objs.length][4];
+    selected = new boolean[objs.length];
 
     double dist = Double.POSITIVE_INFINITY;
     int ndx = -1;
@@ -81,8 +89,10 @@ public class PointerTool extends OverlayTool {
         dist = d;
         ndx = i;
       }
-
-      // assemble array of distances
+    }
+    
+    // assemble array of objects' bounding boxes 
+    for (int i=0; i<objs.length; i++) {
       float[] bound = new float[4];
       bound[0] = objs[i].getX();
       bound[1] = objs[i].getY();
@@ -97,22 +107,25 @@ public class PointerTool extends OverlayTool {
     }
 
     double threshold = 0.02 * overlay.getScalingValue();
-    boolean selected = dist < threshold && objs[ndx].isSelected();
+    boolean sel = dist < threshold && objs[ndx].isSelected();
 
     if (!shift && !ctrl) {
       // deselect all previously selected objects
       for (int i=0; i<objs.length; i++) objs[i].setSelected(false);
     }
 
+    // compile array tracking initial selection state of all objs at this position
+    for (int i=0; i<objs.length; i++) { selected[i] = objs[i].isSelected(); }
+
     if (dist < threshold) {
-      if (selected && !ctrl && !shift) {
+      if (sel && !ctrl && !shift) {
         // grab object if it is already selected
         grabIndex = ndx;
         grabX = dx;
         grabY = dy;
       }
       // select (or deselect) picked object
-      objs[ndx].setSelected(ctrl ? !selected : true);
+      objs[ndx].setSelected(ctrl ? !sel : true);
     } else {
       // record location of click
       downX = dx;
@@ -171,6 +184,7 @@ public class PointerTool extends OverlayTool {
       select.setCorner(dx, dy);
 
       // select objects inside the box
+      boolean stateChanged = false;
       for (int i=0; i<bounds.length; i++) {
         float bx1, bx2, by1, by2;
         float tx1, tx2, ty1, ty2;
@@ -205,14 +219,57 @@ public class PointerTool extends OverlayTool {
           by2 = ty1;
         }
 
-        // determine whether object i is inside or outside of selection box
+        // determine whether object i is inside or outside of selection box 
+        boolean inside = false;
         if (bx1 < ox1 && ox1 < bx2 && bx1 < ox2 && ox2 < bx2 &&
           by1 < oy1 && oy1 < by2 && by1 < oy2 && oy2 < by2)
         {
-          objs[i].setSelected(true);
+          inside = true;
         }
-        else objs[i].setSelected(false);
-      }
+
+        // code for static list refresh
+        // (add a refreshListSelection line to mouseUp
+        /*
+        if (inside) {
+          if (ctrl && !shift) objs[i].setSelected(!selected[i]);
+          else objs[i].setSelected(true);
+        }
+        else {
+          if (shift || ctrl) objs[i].setSelected(selected[i]);
+          else objs[i].setSelected(false);
+        }
+        */
+
+        // code for dynamic list refresh
+        if (inside) {
+          if (ctrl && !shift) {
+            if (objs[i].isSelected() == selected[i]) {
+              objs[i].setSelected(!selected[i]);
+              stateChanged = true;
+            }
+          }
+          else if (!objs[i].isSelected()) {
+            objs[i].setSelected(true);
+            stateChanged = true;
+          }
+        }
+        else {
+          if (shift || ctrl) {
+            if (objs[i].isSelected() != selected[i]) {
+              objs[i].setSelected(selected[i]);
+              stateChanged = true;
+            }
+          }
+          else {
+            if (objs[i].isSelected()) {
+              objs[i].setSelected(false);
+              stateChanged = true;
+            }
+          }
+        }
+      } // end for
+      // do this only if state changed?
+      if (stateChanged) ((OverlayWidget) overlay.getControls()).refreshListSelection();
       overlay.notifyListeners(new TransformEvent(overlay));
     }
   }
