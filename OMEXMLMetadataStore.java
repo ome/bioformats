@@ -388,11 +388,11 @@ public class OMEXMLMetadataStore implements MetadataStore {
   {
     int ndx = i == null ? 0 : i.intValue();
     // TODO find a better way to specify which Dimensions we want
-    ImageNode image = (ImageNode) getChild(root, "Image", 0);
+    ImageNode image = (ImageNode) getChild(root, "Image", ndx);
     CustomAttributesNode ca = (CustomAttributesNode)
       getChild(image, "CustomAttributes", 0);
     DimensionsNode dimensions =
-      (DimensionsNode) getChild(ca, "Dimensions", ndx);
+      (DimensionsNode) getChild(ca, "Dimensions", 0);
     dimensions.setPixelSizeX(pixelSizeX);
     dimensions.setPixelSizeY(pixelSizeY);
     dimensions.setPixelSizeZ(pixelSizeZ);
@@ -410,11 +410,11 @@ public class OMEXMLMetadataStore implements MetadataStore {
   {
     int ndx = i == null ? 0 : i.intValue();
     // TODO find a better way to specify which DisplayROI we want
-    ImageNode image = (ImageNode) getChild(root, "Image", 0);
+    ImageNode image = (ImageNode) getChild(root, "Image", ndx);
     CustomAttributesNode ca = (CustomAttributesNode)
       getChild(image, "CustomAttributes", 0);
     DisplayROINode displayROI = (DisplayROINode)
-      getChild(ca, "DisplayROI", ndx);
+      getChild(ca, "DisplayROI", 0);
     displayROI.setX0(x0);
     displayROI.setY0(y0);
     displayROI.setZ0(z0);
@@ -436,10 +436,10 @@ public class OMEXMLMetadataStore implements MetadataStore {
   {
     int ndx = i == null ? 0 : i.intValue();
     // TODO find a better way to specify which Pixels we want
-    ImageNode image = (ImageNode) getChild(root, "Image", 0);
+    ImageNode image = (ImageNode) getChild(root, "Image", ndx);
     CustomAttributesNode ca = (CustomAttributesNode)
       getChild(image, "CustomAttributes", 0);
-    PixelsNode pixels = (PixelsNode) getChild(ca, "Pixels", ndx);
+    PixelsNode pixels = (PixelsNode) getChild(ca, "Pixels", 0);
     pixels.setSizeX(sizeX);
     pixels.setSizeY(sizeY);
     pixels.setSizeZ(sizeZ);
@@ -458,11 +458,11 @@ public class OMEXMLMetadataStore implements MetadataStore {
   public void setStageLabel(String name, Float x, Float y, Float z, Integer i) {
     int ndx = i == null ? 0 : i.intValue();
     // TODO find a better way to specify which StageLabel we want
-    ImageNode image = (ImageNode) getChild(root, "Image", 0);
+    ImageNode image = (ImageNode) getChild(root, "Image", ndx);
     CustomAttributesNode ca = (CustomAttributesNode)
       getChild(image, "CustomAttributes", 0);
     StageLabelNode stageLabel =
-      (StageLabelNode) getChild(ca, "StageLabel", ndx);
+      (StageLabelNode) getChild(ca, "StageLabel", 0);
     stageLabel.setName(name);
     stageLabel.setX(x);
     stageLabel.setY(y);
@@ -479,11 +479,11 @@ public class OMEXMLMetadataStore implements MetadataStore {
   {
     int ndx = i == null ? 0 : i.intValue();
     // TODO find a better way to specify which LogicalChannel we want
-    ImageNode image = (ImageNode) getChild(root, "Image", 0);
+    ImageNode image = (ImageNode) getChild(root, "Image", ndx);
     CustomAttributesNode ca = (CustomAttributesNode)
       getChild(image, "CustomAttributes", 0);
     LogicalChannelNode logicalChannel =
-      (LogicalChannelNode) getChild(ca, "LogicalChannel", ndx);
+      (LogicalChannelNode) getChild(ca, "LogicalChannel", 0);
     logicalChannel.setName(name);
     logicalChannel.setNDFilter(ndFilter);
     logicalChannel.setEmissionWavelength(emWave);
