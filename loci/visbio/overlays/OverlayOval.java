@@ -83,6 +83,7 @@ public class OverlayOval extends OverlayObject {
 
   /** Gets VisAD data object representing this overlay. */
   public DataImpl getData() {
+    if (x1 == x2 || y1 == y2) return null; // don't try to render a zero-area ellipse
     RealTupleType domain = overlay.getDomainType();
     TupleType range = overlay.getRangeType();
 
