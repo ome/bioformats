@@ -112,7 +112,7 @@ public class EPSReader extends FormatReader {
 
     byte[] p = new byte[width * height * channels * (bps / 8)];
 
-    RandomAccessStream ras = new RandomAccessStream(getMappedId(id));
+    RandomAccessStream ras = new RandomAccessStream(id);
     int line = 0;
 
     while (line <= start) {
@@ -171,7 +171,7 @@ public class EPSReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("initFile(" + id + ")");
     super.initFile(id);
-    in = new BufferedReader(new FileReader(getMappedId(id)));
+    in = new BufferedReader(new FileReader(id));
     String line = in.readLine();
     if (!line.trim().startsWith("%!PS")) {
       throw new FormatException("Invalid EPS file.");

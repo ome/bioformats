@@ -216,12 +216,12 @@ public class ND2Reader extends FormatReader {
     }
     if (!foundReader) throw new FormatException(NO_JAI_MSG);
 
-    in = new RandomAccessStream(getMappedId(id));
+    in = new RandomAccessStream(id);
 
     try {
-      File f = new File(getMappedId(id));
+      File f = new File(Location.getMappedId(id));
       if (f.exists()) {
-        r.setVar("id", getMappedId(id));
+        r.setVar("id", Location.getMappedId(id));
         r.setVar("read", "r");
         r.setVar("size", 4096);
         r.exec("in = new BEBufferedRandomAccessFile(id, read, size)");

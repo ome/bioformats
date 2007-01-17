@@ -179,7 +179,7 @@ public class ImageViewer extends JFrame
   public void open(String id) {
     wait(true);
     try {
-      File f = new FileWrapper(id);
+      Location f = new Location(id);
       id = f.getAbsolutePath();
       int num = myReader.getImageCount(id);
       ProgressMonitor progress = new ProgressMonitor(this,

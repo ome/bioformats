@@ -841,7 +841,7 @@ public abstract class BaseTiffReader extends FormatReader {
     if (debug) debug("initFile(" + id + ")");
     super.initFile(id);
     channelMinMax = null;
-    in = new RandomAccessStream(getMappedId(id));
+    in = new RandomAccessStream(id);
     if (in.readShort() == 0x4949) in.order(true);
 
     ifds = TiffTools.getIFDs(in);

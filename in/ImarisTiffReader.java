@@ -88,7 +88,7 @@ public class ImarisTiffReader extends BaseTiffReader {
 
     // just checking the filename isn't enough to differentiate between
     // Andor and regular TIFF; open the file and check more thoroughly
-    return open ? checkBytes(getMappedId(name), 1024) : true;
+    return open ? checkBytes(name, 1024) : true;
   }
 
   // -- Internal BaseTiffReader API methods --
@@ -126,7 +126,7 @@ public class ImarisTiffReader extends BaseTiffReader {
     getMetadataStore(id).createRoot();
 
     channelMinMax = null;
-    in = new RandomAccessStream(getMappedId(id));
+    in = new RandomAccessStream(id);
     if (in.readShort() == 0x4949) in.order(true);
 
     ifds = TiffTools.getIFDs(in);

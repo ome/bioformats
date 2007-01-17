@@ -275,7 +275,7 @@ public class OIBReader extends FormatReader {
     rgb = new Vector();
 
     try {
-      RandomAccessStream ras = new RandomAccessStream(getMappedId(id));
+      RandomAccessStream ras = new RandomAccessStream(id);
       if (ras.length() % 4096 != 0) {
         ras.setExtend(4096 - (int) (ras.length() % 4096));
       }

@@ -86,7 +86,7 @@ public class OmeisImporter {
       Hashtable fileInfo = getFileInfo(fileIds[i]);
       ids[i] = (String) fileInfo.get("Name");
       String path = getLocalFilePath(fileIds[i]);
-      reader.mapId(ids[i], path);
+      Location.mapId(ids[i], path);
     }
 
     // check types and groups
@@ -137,12 +137,12 @@ public class OmeisImporter {
       Hashtable fileInfo = getFileInfo(fileIds[i]);
       ids[i] = (String) fileInfo.get("Name");
       String path = getLocalFilePath(fileIds[i]);
-      reader.mapId(ids[i], path);
+      Location.mapId(ids[i], path);
     }
 
     // read file group
     String id = ids[0];
-    String path = reader.getMappedId(ids[0]);
+    String path = Location.getMappedId(ids[0]);
     if (DEBUG) log("Reading file '" + id + "' --> " + path);
 
     // verify that all given file IDs were grouped by the file stitcher

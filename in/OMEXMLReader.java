@@ -206,7 +206,7 @@ public class OMEXMLReader extends FormatReader {
     close();
     currentId = id;
     metadata = new Hashtable();
-    in = new RandomAccessStream(getMappedId(id));
+    in = new RandomAccessStream(id);
 
     in.skipBytes(200);
 
@@ -328,7 +328,7 @@ public class OMEXMLReader extends FormatReader {
 
     OMENode ome = null;
     try {
-      File f = new File(getMappedId(id));
+      File f = new File(Location.getMappedId(id));
       f = f.getAbsoluteFile();
       if (f.exists()) ome = new OMENode(f);
       else {

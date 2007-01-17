@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 
@@ -281,9 +280,9 @@ public class AxisGuesser {
 
   /** Method for testing pattern guessing logic. */
   public static void main(String[] args) throws FormatException, IOException {
-    File file = args.length < 1 ?
-      new FileWrapper(System.getProperty("user.dir")).listFiles()[0] :
-      new FileWrapper(args[0]);
+    Location file = args.length < 1 ?
+      new Location(System.getProperty("user.dir")).listFiles()[0] :
+      new Location(args[0]);
     System.out.println("File = " + file.getAbsoluteFile());
     String pat = FilePattern.findPattern(file);
     if (pat == null) System.out.println("No pattern found.");
@@ -293,7 +292,7 @@ public class AxisGuesser {
       if (fp.isValid()) {
         System.out.println("Pattern is valid.");
         String id = fp.getFiles()[0];
-        if (!new FileWrapper(id).exists()) {
+        if (!new Location(id).exists()) {
           System.out.println("File '" + id + "' does not exist.");
         }
         else {

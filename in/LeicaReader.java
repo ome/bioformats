@@ -227,7 +227,7 @@ public class LeicaReader extends BaseTiffReader {
     if (idLow.endsWith("tif") || idLow.endsWith("tiff")) {
       if (ifds == null) super.initFile(id);
 
-      in = new RandomAccessStream(getMappedId(id));
+      in = new RandomAccessStream(id);
 
       if (in.readShort() == 0x4949) {
         in.order(true);
@@ -308,7 +308,7 @@ public class LeicaReader extends BaseTiffReader {
         if (currentId != id) currentId = id;
       }
 
-      in = new RandomAccessStream(getMappedId(id));
+      in = new RandomAccessStream(id);
 
       byte[] fourBytes = new byte[4];
       in.read(fourBytes);
@@ -376,18 +376,18 @@ public class LeicaReader extends BaseTiffReader {
         byte[] tempData = (byte[]) headerIFDs[i].get(new Integer(15));
         int tempImages = DataTools.bytesToInt(tempData, 0, 4, littleEndian);
         String dirPrefix =
-          new FileWrapper(getMappedId(id)).getAbsoluteFile().getParent();
+          new Location(id).getAbsoluteFile().getParent();
         dirPrefix = dirPrefix == null ? "" : (dirPrefix + File.separator);
         for (int j=0; j<tempImages; j++) {
           // read in each filename
           f.add(dirPrefix + DataTools.stripString(
             new String(tempData, 20 + 2*(j*nameLength), 2*nameLength)));
           // test to make sure the path is valid
-          File test = new FileWrapper((String) f.get(f.size() - 1));
+          Location test = new Location((String) f.get(f.size() - 1));
           if (!test.exists()) {
             // TIFF files were renamed
 
-            File[] dirListing = (new FileWrapper(dirPrefix)).listFiles();
+            Location[] dirListing = (new Location(dirPrefix)).listFiles();
 
             int pos = 0;
             int maxChars = 0;
@@ -455,13 +455,13 @@ public class LeicaReader extends BaseTiffReader {
 
     // just checking the filename isn't enough to differentiate between
     // Leica and regular TIFF; open the file and check more thoroughly
-    File file = new FileWrapper(getMappedId(name));
+    Location file = new Location(name);
     if (!file.exists()) return false;
     long len = file.length();
     if (len < 4) return false;
 
     try {
-      RandomAccessStream ras = new RandomAccessStream(getMappedId(name));
+      RandomAccessStream ras = new RandomAccessStream(name);
       Hashtable ifd = TiffTools.getFirstIFD(ras);
       if (ifd == null) return false;
 
@@ -477,7 +477,7 @@ public class LeicaReader extends BaseTiffReader {
       String dir = name.substring(0, name.lastIndexOf("/") + 1);
       lei = dir + lei;
 
-      File check = new FileWrapper(getMappedId(lei));
+      Location check = new Location(lei);
       return check.exists();
     }
     catch (IOException exc) { }

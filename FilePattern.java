@@ -86,7 +86,7 @@ public class FilePattern {
   // -- Constructors --
 
   /** Creates a pattern object using the given file as a template. */
-  public FilePattern(File file) { this(FilePattern.findPattern(file)); }
+  public FilePattern(Location file) { this(FilePattern.findPattern(file)); }
 
   /**
    * Creates a pattern object using the given
@@ -287,7 +287,7 @@ public class FilePattern {
    * Identifies the group pattern from a given file within that group.
    * @param file The file to use as a template for the match.
    */
-  public static String findPattern(File file) {
+  public static String findPattern(Location file) {
     return findPattern(file.getName(), file.getAbsoluteFile().getParent());
   }
 
@@ -301,10 +301,10 @@ public class FilePattern {
     else if (!dir.equals("") && !dir.endsWith(File.separator)) {
       dir += File.separator;
     }
-    File dirFile = new FileWrapper(dir.equals("") ? "." : dir);
+    Location dirFile = new Location(dir.equals("") ? "." : dir);
 
     // list files in the given directory
-    File[] f = dirFile.listFiles();
+    Location[] f = dirFile.listFiles();
     if (f == null) return null;
     String[] nameList = new String[f.length];
     for (int i=0; i<nameList.length; i++) nameList[i] = f[i].getName();
@@ -537,7 +537,7 @@ public class FilePattern {
     String pat = null;
     if (args.length > 0) {
       // test file pattern detection based on the given file on disk
-      File file = new FileWrapper(args[0]);
+      Location file = new Location(args[0]);
       System.out.println("File = " + file.getAbsoluteFile());
       pat = findPattern(file);
     }

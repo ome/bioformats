@@ -27,7 +27,6 @@ package loci.formats;
 import java.awt.*;
 import java.awt.image.DirectColorModel;
 import java.awt.image.MemoryImageSource;
-import java.io.File;
 import java.net.*;
 import java.util.StringTokenizer;
 
@@ -77,7 +76,7 @@ public class LegacyQTTools {
     StringTokenizer st = new StringTokenizer(windir, ";");
 
     while (st.hasMoreTokens()) {
-      File f = new FileWrapper(st.nextToken(), "QTJava.zip");
+      Location f = new Location(st.nextToken(), "QTJava.zip");
       if (f.exists()) {
         try {
           paths = new URL[] {f.toURL()};

@@ -160,7 +160,7 @@ public class GatanReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("initFile(" + id + ")");
     super.initFile(id);
-    in = new RandomAccessStream(getMappedId(id));
+    in = new RandomAccessStream(id);
 
     littleEndian = false;
     pixelSizes = new Vector();

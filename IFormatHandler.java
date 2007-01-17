@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
-import java.util.Hashtable;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
@@ -52,43 +51,4 @@ public interface IFormatHandler {
 
   /** Gets a JFileChooser that recognizes accepted file types. */
   JFileChooser getFileChooser();
-
-  /**
-   * Maps the given id to the actual filename on disk. Typically actual
-   * filenames are used for ids, making this step unnecessary, but in some
-   * cases it is useful; e.g., if the file has been renamed to conform to a
-   * standard naming scheme and the original file extension is lost, then using
-   * the original filename as the id assists format handlers with type
-   * identification and pattern matching, and the id can be mapped to the
-   * actual filename for reading the file's contents.
-   * @see #getMappedId(String)
-   */
-  void mapId(String id, String filename);
-
-  /**
-   * Gets the actual filename on disk for the given id. Typically the id itself
-   * is the filename, but in some cases may not be; e.g., if OMEIS has renamed
-   * a file from its original name to a standard location such as Files/101,
-   * the original filename is useful for checking the file extension and doing
-   * pattern matching, but the renamed filename is required to read its
-   * contents.
-   * @see #mapId(String, String)
-   */
-  String getMappedId(String id);
-
-  /**
-   * Gets a hashtable containing mappings from ids to actual filenames on disk.
-   * @see #mapId(String, String)
-   * @see #getMappedId(String)
-   */
-  Hashtable getIdMap();
-
-  /**
-   * Sets the mappings from ids to actual filenames on disk to match those
-   * given in the.
-   * @see #mapId(String, String)
-   * @see #getMappedId(String)
-   */
-  void setIdMap(Hashtable map);
-
 }

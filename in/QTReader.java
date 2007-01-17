@@ -615,7 +615,7 @@ public class QTReader extends FormatReader {
       }
       else base = id;
 
-      File f = new FileWrapper(getMappedId(base + ".qtr"));
+      Location f = new Location(base + ".qtr");
       if (f.exists()) {
         in = new RandomAccessStream(f.getAbsolutePath());
 
@@ -625,9 +625,9 @@ public class QTReader extends FormatReader {
         return;
       }
       else {
-        f = new FileWrapper(getMappedId(base.substring(0,
+        f = new Location(base.substring(0,
           base.lastIndexOf(File.separator) + 1) + "._" +
-          base.substring(base.lastIndexOf(File.separator) + 1)));
+          base.substring(base.lastIndexOf(File.separator) + 1));
         if (f.exists()) {
           in = new RandomAccessStream(f.getAbsolutePath());
           stripHeader();
@@ -636,7 +636,7 @@ public class QTReader extends FormatReader {
           return;
         }
         else {
-          f = new FileWrapper(getMappedId(base + "/rsrc"));
+          f = new Location(base + "/rsrc");
           if (f.exists()) {
             in = new RandomAccessStream(f.getAbsolutePath());
             stripHeader();
@@ -1605,7 +1605,7 @@ public class QTReader extends FormatReader {
   /** Creates a legacy QT reader. */
   private LegacyQTReader createLegacyReader() {
     // use the same id mappings that this reader does
-    return new LegacyQTReader(idMap);
+    return new LegacyQTReader();
   }
 
   // -- Main method --

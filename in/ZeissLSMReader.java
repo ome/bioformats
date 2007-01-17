@@ -25,7 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.Hashtable;
 import loci.formats.*;
@@ -693,8 +692,7 @@ public class ZeissLSMReader extends BaseTiffReader {
 
     // see if we have an associated MDB file
 
-    File dir =
-      new FileWrapper(getMappedId(currentId)).getAbsoluteFile().getParentFile();
+    Location dir = new Location(currentId).getAbsoluteFile().getParentFile();
     String[] dirList = dir.list();
 
     for (int i=0; i<dirList.length; i++) {
