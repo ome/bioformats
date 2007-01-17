@@ -48,7 +48,7 @@ public class ICSReader extends FormatReader {
 
   /** Current file. */
   protected RandomAccessStream idsIn; // IDS file
-  protected File icsIn; // ICS file
+  protected Location icsIn; // ICS file
 
   /** Flag indicating whether current file is little endian. */
   protected boolean littleEndian;
@@ -217,24 +217,24 @@ public class ICSReader extends FormatReader {
     }
 
     if (icsId == null) throw new FormatException("No ICS file found.");
-    File icsFile = new FileWrapper(getMappedId(icsId));
+    Location icsFile = new Location(icsId);
     if (!icsFile.exists()) throw new FormatException("ICS file not found.");
 
     // check if we have a v2 ICS file
-    RandomAccessStream f = new RandomAccessStream(getMappedId(icsId));
+    RandomAccessStream f = new RandomAccessStream(icsId);
     byte[] b = new byte[17];
     f.read(b);
     f.close();
     if (new String(b).trim().equals("ics_version\t2.0")) {
-      idsIn = new RandomAccessStream(getMappedId(icsId));
+      idsIn = new RandomAccessStream(icsId);
       versionTwo = true;
     }
     else {
       if (idsId == null) throw new FormatException("No IDS file found.");
-      File idsFile = new FileWrapper(getMappedId(idsId));
+      Location idsFile = new Location(idsId);
       if (!idsFile.exists()) throw new FormatException("IDS file not found.");
       currentIdsId = idsId;
-      idsIn = new RandomAccessStream(getMappedId(idsId));
+      idsIn = new RandomAccessStream(idsId);
     }
 
     currentIcsId = icsId;

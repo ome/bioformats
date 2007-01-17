@@ -25,7 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Hashtable;
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
@@ -40,9 +39,6 @@ public abstract class FormatHandler implements IFormatHandler {
 
   /** Valid suffixes for this file format. */
   protected String[] suffixes;
-
-  /** Map from given filenames to actual filenames. */
-  protected Hashtable idMap;
 
   /** File filters for this file format, for use with a JFileChooser. */
   protected FileFilter[] filters;
@@ -64,7 +60,6 @@ public abstract class FormatHandler implements IFormatHandler {
   public FormatHandler(String format, String[] suffixes) {
     this.format = format;
     this.suffixes = suffixes == null ? new String[0] : suffixes;
-    idMap = new Hashtable();
   }
 
   // -- IFormatHandler API methods --
@@ -110,29 +105,6 @@ public abstract class FormatHandler implements IFormatHandler {
   public JFileChooser getFileChooser() {
     if (chooser == null) chooser = buildFileChooser(getFileFilters());
     return chooser;
-  }
-
-  /* @see IFormatHandler#mapId(String, String) */
-  public void mapId(String id, String filename) {
-    if (id == null) return;
-    if (filename == null) idMap.remove(id);
-    else idMap.put(id, filename);
-  }
-
-  /* @see IFormatHandler#getMappedId(String) */
-  public String getMappedId(String id) {
-    String filename = id == null ? null : (String) idMap.get(id);
-    return filename == null ? id : filename;
-  }
-
-  /* @see IFormatHandler#getIdMap() */
-  public Hashtable getIdMap() {
-    return idMap;
-  }
-
-  /* @see IFormatHandler#setIdMap(Hashtable) */
-  public void setIdMap(Hashtable map) {
-    idMap = map;
   }
 
   // -- Utility methods --

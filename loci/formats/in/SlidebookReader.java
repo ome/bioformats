@@ -132,7 +132,7 @@ public class SlidebookReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("initFile(" + id + ")");
     super.initFile(id);
-    in = new RandomAccessStream(getMappedId(id));
+    in = new RandomAccessStream(id);
 
     in.skipBytes(4);
     little = in.read() == 0x49;

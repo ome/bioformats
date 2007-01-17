@@ -26,7 +26,6 @@ package loci.formats.in;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import javax.swing.filechooser.FileFilter;
 import loci.formats.*;
@@ -125,7 +124,7 @@ public class ImageJReader extends FormatReader {
     if (noImageJ) throw new FormatException(NO_IJ);
 
     try {
-      File file = new FileWrapper(getMappedId(id));
+      Location file = new Location(id);
       r.setVar("dir", file.getParent() + System.getProperty("file.separator"));
       r.setVar("name", file.getName());
       synchronized (ImageJReader.class) {

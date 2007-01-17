@@ -27,7 +27,6 @@ package loci.formats.in;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageProducer;
-import java.io.File;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -67,7 +66,6 @@ public class LegacyQTReader extends FormatReader {
   /** Constructs a new QT reader with the given id mappings. */
   public LegacyQTReader(Hashtable idMap) {
     super("QuickTime", "mov");
-    if (idMap != null) this.idMap = idMap;
   }
 
   // -- FormatReader API methods --
@@ -172,7 +170,7 @@ public class LegacyQTReader extends FormatReader {
       r.exec("QTSession.open()");
 
       // open movie file
-      File file = new FileWrapper(getMappedId(id));
+      Location file = new Location(id);
       r.setVar("path", file.getAbsolutePath());
       r.exec("qtf = new QTFile(path)");
       r.exec("openMovieFile = OpenMovieFile.asRead(qtf)");

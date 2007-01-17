@@ -116,7 +116,7 @@ public class PerkinElmerReader extends FormatReader {
     }
 
     String file = files[no];
-    RandomAccessStream ras = new RandomAccessStream(getMappedId(file));
+    RandomAccessStream ras = new RandomAccessStream(file);
     byte[] b = new byte[(int) ras.length() - 6]; // each file has 6 magic bytes
     ras.skipBytes(6);
     ras.read(b);
@@ -170,9 +170,9 @@ public class PerkinElmerReader extends FormatReader {
     allFiles = new Vector();
 
     // get the working directory
-    File tempFile = new FileWrapper(getMappedId(id));
-    File workingDir = tempFile.getParentFile();
-    if (workingDir == null) workingDir = new FileWrapper(".");
+    Location tempFile = new Location(id);
+    Location workingDir = tempFile.getParentFile();
+    if (workingDir == null) workingDir = new Location(".");
     String workingDirPath = workingDir.getPath() + File.separator;
     String[] ls = workingDir.list();
 
@@ -354,7 +354,7 @@ public class PerkinElmerReader extends FormatReader {
     // either the .csv file or the .zpo file
 
     if (timPos != -1) {
-      tempFile = new FileWrapper(workingDir, ls[timPos]);
+      tempFile = new Location(workingDir, ls[timPos]);
       allFiles.add(tempFile.getAbsolutePath());
       read = new RandomAccessStream(tempFile.getAbsolutePath());
       data = new byte[(int) tempFile.length()];
@@ -387,7 +387,7 @@ public class PerkinElmerReader extends FormatReader {
     }
 
     if (csvPos != -1) {
-      tempFile = new FileWrapper(workingDir, ls[csvPos]);
+      tempFile = new Location(workingDir, ls[csvPos]);
       allFiles.add(tempFile.getAbsolutePath());
       read = new RandomAccessStream(tempFile.getAbsolutePath());
       data = new byte[(int) tempFile.length()];
@@ -416,7 +416,7 @@ public class PerkinElmerReader extends FormatReader {
       }
     }
     else if (zpoPos != -1) {
-      tempFile = new FileWrapper(workingDir, ls[zpoPos]);
+      tempFile = new Location(workingDir, ls[zpoPos]);
       allFiles.add(tempFile.getAbsolutePath());
       read = new RandomAccessStream(tempFile.getAbsolutePath());
       data = new byte[(int) tempFile.length()];
@@ -433,7 +433,7 @@ public class PerkinElmerReader extends FormatReader {
     // explicitly defines the number of wavelengths and timepoints
 
     if (htmPos != -1) {
-      tempFile = new FileWrapper(workingDir, ls[htmPos]);
+      tempFile = new Location(workingDir, ls[htmPos]);
       allFiles.add(tempFile.getAbsolutePath());
       read = new RandomAccessStream(tempFile.getAbsolutePath());
       data = new byte[(int) tempFile.length()];

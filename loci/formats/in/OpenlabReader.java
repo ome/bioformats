@@ -108,7 +108,7 @@ public class OpenlabReader extends FormatReader {
     if (open) {
       byte[] b = new byte[8];
       try {
-        in = new RandomAccessStream(getMappedId(name));
+        in = new RandomAccessStream(name);
         in.read(b);
       }
       catch (Exception e) {
@@ -386,7 +386,7 @@ public class OpenlabReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     if (debug) debug("initFile(" + id + ")");
     super.initFile(id);
-    in = new RandomAccessStream(getMappedId(id));
+    in = new RandomAccessStream(id);
 
     in.skipBytes(4);
     byte[] b = new byte[4];

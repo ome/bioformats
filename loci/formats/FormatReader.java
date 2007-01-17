@@ -576,7 +576,7 @@ public abstract class FormatReader extends FormatHandler
       for (int i=0; i<s.length; i++) System.out.println(s[i]);
       return false;
     }
-    if (map != null) reader.mapId(id, map);
+    if (map != null) Location.mapId(id, map);
     if (omexml) {
       try {
         Class c = Class.forName("loci.formats.OMEXMLMetadataStore");
@@ -603,7 +603,7 @@ public abstract class FormatReader extends FormatHandler
     if (stitch) {
       reader = new FileStitcher(reader, true);
       String pat =
-        FilePattern.findPattern(new FileWrapper(map == null ? id : map));
+        FilePattern.findPattern(new Location(map == null ? id : map));
       if (pat != null) id = pat;
     }
     if (separate) reader = new ChannelSeparator(reader);

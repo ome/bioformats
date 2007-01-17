@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
+import java.io.File;
 import java.util.*;
 import loci.formats.*;
 
@@ -88,7 +89,8 @@ public final class MDBParser {
 
       // print out all data
 
-      r.setVar("dbfile", new FileWrapper(filename));
+      // TODO: this doesn't work in general
+      r.setVar("dbfile", new File(filename));
       r.exec("mdb = file.mdb_open(dbfile)");
       r.exec("Catalog.mdb_read_catalog(mdb, Constants.MDB_TABLE)");
 

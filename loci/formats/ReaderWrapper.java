@@ -287,20 +287,4 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getFileChooser();
   }
 
-  public void mapId(String id, String filename) {
-    reader.mapId(id, filename);
-  }
-
-  public String getMappedId(String id) {
-    return reader.getMappedId(id);
-  }
-
-  public Hashtable getIdMap() {
-    return reader.getIdMap();
-  }
-
-  public void setIdMap(Hashtable map) {
-    reader.setIdMap(map);
-  }
-
 }

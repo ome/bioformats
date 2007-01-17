@@ -198,7 +198,7 @@ public class IPWReader extends BaseTiffReader {
     if (noPOI) throw new FormatException(NO_POI_MSG);
     currentId = id;
 
-    in = new RandomAccessStream(getMappedId(id));
+    in = new RandomAccessStream(id);
 
     metadata = new Hashtable();
     pixels = new Hashtable();

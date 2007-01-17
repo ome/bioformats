@@ -155,7 +155,7 @@ public class OMEUploader implements Uploader {
       f.setMetadataStore(store);
       if (stitch) {
         f = new FileStitcher(f);
-        FilePattern fp = new FilePattern(new File(file));
+        FilePattern fp = new FilePattern(new loci.formats.Location(file));
         String[] names = fp.getFiles();
         for (int i=0; i<names.length; i++) files.add(names[i]);
       }
@@ -209,7 +209,7 @@ public class OMEUploader implements Uploader {
       f = new ChannelSeparator(f);
       if (stitch) {
         f = new FileStitcher(f);
-        FilePattern fp = new FilePattern(new File(file));
+        FilePattern fp = new FilePattern(new loci.formats.Location(file));
         String[] names = fp.getFiles();
         for (int i=0; i<names.length; i++) files.add(names[i]);
       }

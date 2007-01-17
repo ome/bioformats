@@ -183,7 +183,7 @@ public class FileStitcher implements IFormatReader {
   public FilePattern findPattern(String id) {
     if (!patternIds) {
       // find the containing pattern
-      Hashtable map = getIdMap();
+      Hashtable map = Location.getIdMap();
       String pattern = null;
       if (map.containsKey(id)) {
         // search ID map for pattern, rather than files on disk
@@ -197,8 +197,7 @@ public class FileStitcher implements IFormatReader {
       else {
         // id is an unmapped file path; look to similar files on disk
 
-        // id == getMapped(id)
-        pattern = FilePattern.findPattern(new FileWrapper(id));
+        pattern = FilePattern.findPattern(new Location(id));
       }
       if (pattern != null) id = pattern;
     }
@@ -572,27 +571,6 @@ public class FileStitcher implements IFormatReader {
     return reader.getFileChooser();
   }
 
-  /* @see IFormatHandler#mapId(String, String) */
-  public void mapId(String id, String filename) {
-    // NB: all readers share the same ID map
-    reader.mapId(id, filename);
-  }
-
-  /* @see IFormatHandler#getMappedId(String) */
-  public String getMappedId(String id) {
-    return reader.getMappedId(id);
-  }
-
-  /* @see IFormatHandler#getIdMap() */
-  public Hashtable getIdMap() {
-    return reader.getIdMap();
-  }
-
-  /* @see IFormatHandler#setIdMap(Hashtable) */
-  public void setIdMap(Hashtable map) {
-    for (int i=0; i<readers.length; i++) readers[i].setIdMap(map);
-  }
-
   // -- Helper methods --
 
   /** Initializes the given file. */
@@ -617,7 +595,7 @@ public class FileStitcher implements IFormatReader {
         fp.getPattern() + "). " + msg);
     }
     for (int i=0; i<files.length; i++) {
-      if (!new FileWrapper(getMappedId(files[i])).exists()) {
+      if (!new Location(files[i]).exists()) {
         throw new FormatException("File #" + i +
           " (" + files[i] + ") does not exist.");
       }
@@ -636,7 +614,6 @@ public class FileStitcher implements IFormatReader {
     // construct list of readers for all files
     readers = new IFormatReader[files.length];
     readers[0] = reader;
-    Hashtable map = reader.getIdMap();
     for (int i=1; i<readers.length; i++) {
       // use crazy reflection to instantiate a reader of the proper type
       try {
@@ -650,8 +627,6 @@ public class FileStitcher implements IFormatReader {
           }
         }
         readers[i] = (IFormatReader) r;
-        // NB: ensure all readers share the same ID map
-        readers[i].setIdMap(map);
       }
       catch (InstantiationException exc) { exc.printStackTrace(); }
       catch (IllegalAccessException exc) { exc.printStackTrace(); }

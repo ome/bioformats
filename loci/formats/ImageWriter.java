@@ -122,15 +122,11 @@ public class ImageWriter implements IFormatWriter {
   public ImageWriter() {
     // add built-in writers to the list
     Vector v = new Vector();
-    Hashtable map = null;
     for (int i=0; i<writerClasses.size(); i++) {
       Class writerClass = (Class) writerClasses.elementAt(i);
       FormatWriter writer = null;
       try {
         writer = (FormatWriter) writerClass.newInstance();
-        // NB: ensure all writers share the same ID map
-        if (i == 0) map = writer.getIdMap();
-        else writer.setIdMap(map);
       }
       catch (IllegalAccessException exc) { }
       catch (InstantiationException exc) { }
@@ -317,27 +313,6 @@ public class ImageWriter implements IFormatWriter {
       chooser = FormatHandler.buildFileChooser(getFileFilters());
     }
     return chooser;
-  }
-
-  /* @see IFormatHandler#mapId(String, String) */
-  public void mapId(String id, String filename) {
-    // NB: all writers share the same ID map
-    writers[0].mapId(id, filename);
-  }
-
-  /* @see IFormatHandler#getMappedId(String) */
-  public String getMappedId(String id) {
-    return writers[0].getMappedId(id);
-  }
-
-  /* @see IFormatHandler.getIdMap() */
-  public Hashtable getIdMap() {
-    return writers[0].getIdMap();
-  }
-
-  /* @see IFormatHandler.setIdMap(Hashtable) */
-  public void setIdMap(Hashtable map) {
-    for (int i=0; i<writers.length; i++) writers[i].setIdMap(map);
   }
 
   // -- Static ImageWriter API methods --

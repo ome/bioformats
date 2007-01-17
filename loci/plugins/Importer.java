@@ -145,7 +145,7 @@ public class Importer implements ItemListener {
         id = directory + fileName;
 
         // if no valid filename, give up
-        if (id == null || !new FileWrapper(id).exists()) {
+        if (id == null || !new Location(id).exists()) {
           if (!quiet) {
             IJ.error("LOCI Bio-Formats", "The specified file " +
               (id == null ? "" : ("(" + id + ") ")) + "does not exist.");
@@ -296,7 +296,7 @@ public class Importer implements ItemListener {
       if (stitchFiles) {
         fs = new FileStitcher(r, true);
         // prompt user to confirm detected file pattern
-        id = FilePattern.findPattern(new FileWrapper(id));
+        id = FilePattern.findPattern(new Location(id));
         gd = new GenericDialog("LOCI Bio-Formats File Stitching");
         int len = id.length() + 1;
         if (len > 80) len = 80;

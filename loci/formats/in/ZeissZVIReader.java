@@ -215,12 +215,6 @@ public class ZeissZVIReader extends FormatReader {
     return false;
   }
 
-  /* @see IFormatHandler#mapId(String, String) */
-  public void mapId(String id, String filename) {
-    super.mapId(id, filename);
-    legacy.mapId(id, filename);
-  }
-
   /* @see FormatReader#setMetadataStore(MetadataStore) */
   public void setMetadataStore(MetadataStore store) {
     super.setMetadataStore(store);
@@ -361,7 +355,7 @@ public class ZeissZVIReader extends FormatReader {
     nImages = 0;
 
     try {
-      ras = new RandomAccessStream(getMappedId(id));
+      ras = new RandomAccessStream(id);
 
       // Don't uncomment this block.  Even though OIBReader has something
       // like this, it's really a bad idea here.  Every ZVI file we have *will*

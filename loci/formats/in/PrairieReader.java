@@ -78,21 +78,20 @@ public class PrairieReader extends FormatReader {
     if (!super.isThisType(name, open)) return false; // check extension
 
     // check if there is an XML file in the same directory
-    File f = new FileWrapper(name);
+    Location  f = new Location(name);
     f = f.getAbsoluteFile();
-    File parent = f.getParentFile();
-    FileFilter ff = new FileFilter() {
-      public boolean accept(File pathname) {
-        String path = pathname.getPath().toLowerCase();
-        return path.endsWith(".xml");
-      }
-    };
-    File[] listing = parent.listFiles(ff);
-    boolean xml = listing != null && listing.length > 0;
+    Location parent = f.getParentFile();
+    String[] listing = parent.list();
+    int xmlCount = 0;
+    for (int i=0; i<listing.length; i++) {
+      if (listing[i].toLowerCase().endsWith(".xml")) xmlCount++; 
+    }
+
+    boolean xml = xmlCount > 0;
 
     // just checking the filename isn't enough to differentiate between
     // Prairie and regular TIFF; open the file and check more thoroughly
-    return open ? checkBytes(getMappedId(name), 524304) && xml : xml;
+    return open ? checkBytes(name, 524304) && xml : xml;
   }
 
   // -- FormatReader API methods --
@@ -216,7 +215,7 @@ public class PrairieReader extends FormatReader {
         readCFG = true;
       }
 
-      RandomAccessStream is = new RandomAccessStream(getMappedId(id));
+      RandomAccessStream is = new RandomAccessStream(id);
       byte[] b = new byte[(int) is.length()];
       is.read(b);
       String s = new String(b);
@@ -262,7 +261,7 @@ public class PrairieReader extends FormatReader {
               else metadata.put(pastPrefix + " " + prefix + " " + key, value);
               el = el.substring(el.indexOf("\"", eq + 2) + 1).trim();
               if (prefix.equals("File") && key.equals("filename")) {
-                File current = new FileWrapper(getMappedId(id));
+                Location current = new Location(id);
                 current = current.getAbsoluteFile();
                 f.add(current.getParent() + "/" + value);
               }
@@ -325,35 +324,34 @@ public class PrairieReader extends FormatReader {
       }
 
       if (!readXML || !readCFG) {
-        File file = new FileWrapper(id);
+        Location file = new Location(id);
         file = file.getAbsoluteFile();
-        File parent = file.getParentFile();
-        FileFilter ff = new FileFilter() {
-          public boolean accept(File pathname) {
-            String path = pathname.getPath().toLowerCase();
-            return !readXML ? path.endsWith(".xml") : path.endsWith(".cfg");
+        Location parent = file.getParentFile();
+        String[] listing = parent.list();
+        Location next = null;
+        for (int i=0; i<listing.length; i++) {
+          String path = listing[i].toLowerCase();
+          if ((!readXML && path.endsWith(".xml")) || 
+            (readXML && path.endsWith(".cfg")))
+          {
+            next = new Location(path);
           }
-        };
-        File[] listing = parent.listFiles(ff);
-        if (listing.length > 0) initFile(listing[0].getAbsolutePath());
+        }
+        if (next != null) initFile(next.getAbsolutePath());
       }
     }
     else {
       // we have been given a TIFF file - reinitialize with the proper XML file
 
-      String tiffFile = getMappedId(id);
-      File f = new FileWrapper(tiffFile);
+      Location f = new Location(id);
       f = f.getAbsoluteFile();
-      File parent = f.getParentFile();
-      FileFilter ff = new FileFilter() {
-        public boolean accept(File pathname) {
-          String path = pathname.getPath().toLowerCase();
-          return path.endsWith(".xml") || path.endsWith(".cfg");
-        }
-      };
-      File[] listing = parent.listFiles(ff);
+      Location parent = f.getParentFile();
+      String[] listing = parent.list();
       for (int i=0; i<listing.length; i++) {
-        initFile(listing[i].getAbsolutePath());
+        String path = listing[i].toLowerCase();
+        if (path.endsWith(".xml") || path.endsWith(".cfg")) {
+          initFile(new Location(path).getAbsolutePath());
+        }
       }
     }
   }
