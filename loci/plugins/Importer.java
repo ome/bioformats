@@ -634,9 +634,9 @@ public class Importer implements ItemListener {
 
             if (pixels instanceof byte[]) {
               byte[] bytes = (byte[]) pixels;
-              if (bytes.length > w*h*c) {
+              if (bytes.length > w*h) {
                 byte[] tmp = bytes;
-                bytes = new byte[w*h*c];
+                bytes = new byte[w*h];
                 System.arraycopy(tmp, 0, bytes, 0, bytes.length);
               }
 
@@ -646,9 +646,9 @@ public class Importer implements ItemListener {
             }
             else if (pixels instanceof short[]) {
               short[] s = (short[]) pixels;
-              if (s.length > w*h*c) {
+              if (s.length > w*h) {
                 short[] tmp = s;
-                s = new short[w*h*c];
+                s = new short[w*h];
                 System.arraycopy(tmp, 0, s, 0, s.length);
               }
 
@@ -658,9 +658,9 @@ public class Importer implements ItemListener {
             }
             else if (pixels instanceof int[]) {
               int[] s = (int[]) pixels;
-              if (s.length > w*h*c) {
+              if (s.length > w*h) {
                 int[] tmp = s;
-                s = new int[w*h*c];
+                s = new int[w*h];
                 System.arraycopy(tmp, 0, s, 0, s.length);
               }
 
@@ -670,9 +670,9 @@ public class Importer implements ItemListener {
             }
             else if (pixels instanceof float[]) {
               float[] f = (float[]) pixels;
-              if (f.length > w*h*c) {
+              if (f.length > w*h) {
                 float[] tmp = f;
-                f = new float[w*h*c];
+                f = new float[w*h];
                 System.arraycopy(tmp, 0, f, 0, f.length);
               }
 
@@ -722,9 +722,9 @@ public class Importer implements ItemListener {
             }
             else if (pixels instanceof double[]) {
               double[] d = (double[]) pixels;
-              if (d.length > w*h*c) {
+              if (d.length > w*h) {
                 double[] tmp = d;
-                d = new double[w*h*c];
+                d = new double[w*h];
                 System.arraycopy(tmp, 0, d, 0, d.length);
               }
 
