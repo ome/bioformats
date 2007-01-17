@@ -955,7 +955,11 @@ public abstract class FormatReader extends FormatHandler
    * @see IFormatReader#getEffectiveSizeC(String)
    */
   public static int getEffectiveSizeC(boolean rgb, int sizeC) {
-    return rgb ? (sizeC + 2) / 3 : sizeC;
+    if (sizeC <= 4) {
+      return rgb ? (sizeC + 3) / 4 : sizeC;
+    }
+    else if (sizeC % 3 == 0) return rgb ? sizeC / 3 : sizeC;
+    return rgb ? sizeC / 4 : sizeC;
   }
 
   /**

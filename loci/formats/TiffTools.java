@@ -978,6 +978,11 @@ public final class TiffTools {
       for (int i=0; i<bitsPerSample.length; i++) {
         // case 1: we're still within bitsPerSample array bounds
         if (i < bitsPerSample.length) {
+          if (i == samplesPerPixel) {
+            bitsPerSample[i] = 0;
+            lastBitsZero = true;
+          }
+
           // remember that the universe collapses when we divide by 0
           if (bitsPerSample[i] != 0) {
             rowsPerStripArray[i] = (long) stripByteCounts[i] /

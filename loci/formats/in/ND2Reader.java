@@ -55,6 +55,7 @@ public class ND2Reader extends FormatReader {
     try {
       r = new ReflectedUniverse();
       r.exec("import jj2000.j2k.fileformat.reader.FileFormatReader");
+      r.exec("import jj2000.j2k.io.BEBufferedRandomAccessFile");
       r.exec("import jj2000.j2k.util.ISRandomAccessIO");
     }
     catch (Throwable exc) {
@@ -218,8 +219,21 @@ public class ND2Reader extends FormatReader {
     in = new RandomAccessStream(getMappedId(id));
 
     try {
-      r.setVar("id", in);
-      r.exec("in = new ISRandomAccessIO(id)");
+      File f = new File(getMappedId(id));
+      if (f.exists()) {
+        r.setVar("id", getMappedId(id));
+        r.setVar("read", "r");
+        r.setVar("size", 4096);
+        r.exec("in = new BEBufferedRandomAccessFile(id, read, size)");
+      }
+      else {
+        r.setVar("id", in);
+        r.setVar("size", 65536);
+        r.setVar("inc", 4096);
+        r.setVar("max", (int) in.length());
+        r.exec("in = new ISRandomAccessIO(id, size, inc, max)");
+      }
+
       r.setVar("j2kMetadata", null);
       r.exec("ff = new FileFormatReader(in, j2kMetadata)");
 
@@ -230,8 +244,6 @@ public class ND2Reader extends FormatReader {
     catch (ReflectException e) { throw new FormatException(e); }
 
     numImages = offsets.length;
-
-    /* debug */ System.out.println("num images : " + numImages);
 
     pixelType[0] = FormatReader.UINT8;
 
@@ -337,28 +349,9 @@ public class ND2Reader extends FormatReader {
       }
     }
 
-    String m = "MetadataSeq _SEQUENCE_INDEX=\"0\"";
-    String x = (String) metadata.get(m + " right value");
-    String y = (String) metadata.get(m + " bottom value");
-    if (x != null) sizeX[0] = Integer.parseInt(x);
-    if (y != null) sizeY[0] = Integer.parseInt(y);
-
-    if (sizeX[0] == 0 || sizeY[0] == 0) {
-      String s = (String) metadata.get("ReportObjects " +
-        "_DOCTYPE=\"ReportObjectsDocument\" _VERSION=\"1.100000\" " +
-        "Container page_size");
-      if (s != null) {
-        x = s.substring(1, s.indexOf(","));
-        sizeX[0] = (int) Float.parseFloat(x);
-        y = s.substring(s.indexOf(",") + 1, s.indexOf(")"));
-        sizeY[0] = (int) Float.parseFloat(y);
-      }
-      else {
-        BufferedImage img = openImage(id, 0);
-        sizeX[0] = img.getWidth();
-        sizeY[0] = img.getHeight();
-      }
-    }
+    BufferedImage img = openImage(id, 0);
+    sizeX[0] = img.getWidth();
+    sizeY[0] = img.getHeight();
 
     int numInvalid = 0;
 
@@ -447,18 +440,36 @@ public class ND2Reader extends FormatReader {
           sizeT[0]++;
         }
       }
-      if (sizeZ[0] == numImages) {
+      else if (sizeZ[0] == numImages) {
         sizeZ[0] /= sizeT[0] * getEffectiveSizeC(id);
         while (numImages > sizeZ[0] * sizeT[0] * getEffectiveSizeC(id)) {
           sizeZ[0]++;
         }
       }
-    }
-
-    if (numImages != sizeZ[0] * sizeT[0] * getEffectiveSizeC(id)) {
-      sizeZ[0] = numImages;
-      sizeT[0] = 1;
-      orderCertain[0] = false;
+      
+      if (numImages < sizeZ[0] * sizeT[0] * getEffectiveSizeC(id)) {
+        if (sizeZ[0] < sizeT[0]) {
+          sizeZ[0]--;
+          while (numImages > sizeZ[0] * sizeT[0] * getEffectiveSizeC(id)) {
+            sizeT[0]++;
+          }
+          while (numImages < sizeZ[0] * sizeT[0] * getEffectiveSizeC(id)) {
+            sizeT[0]--;
+          }
+        }
+        else {
+          sizeT[0]--;
+          while (numImages > sizeZ[0] * sizeT[0] * getEffectiveSizeC(id)) {
+            sizeZ[0]++;
+          }
+          if (numImages < sizeZ[0] * sizeT[0] * getEffectiveSizeC(id)) {
+            sizeZ[0]--;
+          }
+        }
+        while (numImages > sizeZ[0] * sizeT[0] * getEffectiveSizeC(id)) {
+          numImages--;
+        }
+      }
     }
 
     if (bits != 0) {

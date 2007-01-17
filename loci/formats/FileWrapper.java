@@ -121,7 +121,6 @@ public class FileWrapper extends File {
         return true;
       }
       catch (IOException e) {
-        /* debug */ e.printStackTrace();
         return false;
       }
     }

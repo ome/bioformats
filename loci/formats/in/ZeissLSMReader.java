@@ -401,7 +401,17 @@ public class ZeissLSMReader extends BaseTiffReader {
           pixelType[0] = FormatReader.FLOAT;
           break;
         default:
-          pixelType[0] = FormatReader.UINT8;
+          pixelType[0] = -1;
+      }
+
+      if (pixelType[0] == -1) {
+        int[] bps = TiffTools.getBitsPerSample(ifd);
+        switch (bps[0]) {
+          case 8: pixelType[0] = FormatReader.UINT8; break;
+          case 16: pixelType[0] = FormatReader.UINT16; break;
+          case 32: pixelType[0] = FormatReader.FLOAT; break;
+          default: pixelType[0] = FormatReader.UINT8;
+        }
       }
 
       short scanType = DataTools.bytesToShort(omeData, 88, little);
@@ -757,11 +767,16 @@ public class ZeissLSMReader extends BaseTiffReader {
     put("Circle-" + suffix, in.read());
     put("Rectangle-" + suffix, in.read());
     put("Line-" + suffix, in.read());
-    int drawingEl = (size - 194) / nde;
-    for (int i=0; i<nde; i++) {
-      byte[] draw = new byte[drawingEl];
-      in.read(draw);
-      put("DrawingElement" + i + "-" + suffix, new String(draw));
+    try {
+      int drawingEl = (size - 194) / nde;
+      for (int i=0; i<nde; i++) {
+        byte[] draw = new byte[drawingEl];
+        in.read(draw);
+        put("DrawingElement" + i + "-" + suffix, new String(draw));
+      }
+    }
+    catch (ArithmeticException e) {
+      if (debug) e.printStackTrace();
     }
   }
 
