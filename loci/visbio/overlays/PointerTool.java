@@ -137,7 +137,7 @@ public class PointerTool extends OverlayTool {
     }
 
     ((OverlayWidget) overlay.getControls()).refreshListSelection();
-    if (grabIndex >= 0) overlay.setTextDrawn(false);
+    if (grabIndex >= 0 || select != null) overlay.setTextDrawn(false);
     overlay.notifyListeners(new TransformEvent(overlay));
   }
 
@@ -157,6 +157,7 @@ public class PointerTool extends OverlayTool {
     else if (select != null) {
       select = null;
       overlay.removeTSB();
+      overlay.setTextDrawn(true);
       overlay.notifyListeners(new TransformEvent(overlay));
     }
   }
