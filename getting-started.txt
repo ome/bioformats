@@ -105,19 +105,24 @@ Bio-Formats, it is more efficient to make the new reader a subclass of the
 existing reader (rather than subclassing FormatReader).  In this case, it is
 usually sufficient to override initFile(String) and isThisType(byte[]).
 
-Any time you read a file from disk (e.g., when constructing a file stream), you
-*must* read from the file name returned by FormatHandler.getMappedId(String),
-not the file name passed to the reader.  Thus, a stub for initFile(String)
-might look like this:
+
+If you read from a file using something other than RandomAccessStream or
+Location, you *must* use the file name returned by Location.getMappedId(String),
+not the file name passed to the reader.
+Thus, a stub for initFile(String) might look like this:
 
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    RandomAccessStream in = new RandomAccessStream(getMappedId(id));
+    
+    RandomAccessStream in = new RandomAccessStream(id);
+    // alternatively,
+    //FileInputStream in = new FileInputStream(Location.getMappedId(id));
+
     // read basic file structure and metadata from stream
   }
 
-For more details, see the javadoc for IFormatHandler.mapId(String, String)
-and IFormatHandler.getMappedId(String).
+For more details, see the javadoc for Location.mapId(String, String)
+and Location.getMappedId(String).
 
 ---=== Other useful things ===---
 
@@ -126,9 +131,9 @@ and IFormatHandler.getMappedId(String).
   InputStream, and implements the DataInput interface.
   It is recommended that you use this for reading binary files.
 
-- loci.formats.FileWrapper extends java.io.File to support reading from URLs.
-  It is recommended that you use this instead of File.  See the JavaDoc for
-  additional information.
+- loci.formats.Location provides an API similar to java.io.File, and supports 
+  File-like operations on URLs.  It is highly recommended that you use this 
+  instead of File.  See the javadoc for additional information.
 
 - loci.formats.DataTools provides a number of methods for converting bytes to
   shorts, ints, longs, etc.  It also supports reading most primitive types
@@ -145,8 +150,9 @@ and IFormatHandler.getMappedId(String).
   loci.formats.ReflectedUniverse object.  For an example of how this works,
   see loci.formats.in.ZeissZVIReader.
 
-- Several common image compression types are supported in
-  loci.formats.Compression.  These include LZW, LZO, Base64, ZIP and RLE.
+- Several common image compression types are supported through subclasses of
+  loci.formats.BaseCompressor.  These include LZW, LZO, Base64, ZIP and 
+  RLE (PackBits).
 
 - Debugging statements can be added using FormatReader.debug(String).
 
