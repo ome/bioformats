@@ -355,6 +355,15 @@ public class LIFReader extends FormatReader {
             ts.setElementAt(new Integer(t), ts.size() - 1);
           }
         }
+        else if (token.indexOf("dblVoxel") != -1) {
+          int index = token.indexOf("Variant") + 7;
+          String size = token.substring(index + 2, 
+            token.indexOf("\"", index + 3));
+          float cal = Float.parseFloat(size) * 1000000;
+          if (token.indexOf("X") != -1) xcal.add(new Float(cal));
+          else if (token.indexOf("Y") != -1) ycal.add(new Float(cal));
+          else if (token.indexOf("Z") != -1) zcal.add(new Float(cal));
+        }
       }
       else if (token.startsWith("Element Name")) {
         // loop until we find "/ImageDescription"
@@ -408,23 +417,18 @@ public class LIFReader extends FormatReader {
               // found dimension description block
 
               int w = Integer.parseInt((String) tmp.get("NumberOfElements"));
-              float cal = Float.parseFloat((String) tmp.get("Length"));
-              cal *= 1000;
               int id = Integer.parseInt((String)
                 tmp.get("DimensionDescription DimID"));
 
               switch (id) {
                 case 1:
                   widths.add(new Integer(w));
-                  xcal.add(new Float(cal));
                   break;
                 case 2:
                   heights.add(new Integer(w));
-                  ycal.add(new Float(cal));
                   break;
                 case 3:
                   zs.add(new Integer(w));
-                  zcal.add(new Float(cal));
                   break;
                 case 4:
                   ts.add(new Integer(w));
