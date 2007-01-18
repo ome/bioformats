@@ -599,6 +599,9 @@ public class Importer implements ItemListener {
       if (!stackFormat.equals(VIEW_BROWSER)) {
         IJ.showStatus("Reading " + r.getCurrentFile());
 
+        r.close();
+        store = (OMEXMLMetadataStore) r.getMetadataStore(id);
+        
         for (int i=0; i<seriesCount; i++) {
           if (!series[i]) continue;
           r.setSeries(id, i);
@@ -1201,7 +1204,6 @@ public class Importer implements ItemListener {
       }
     }
     catch (Exception e) {
-      /* debug */ e.printStackTrace();
       if (!stitchStack) imp.show();
       else imps.add(imp);
     }
