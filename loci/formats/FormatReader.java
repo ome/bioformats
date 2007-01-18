@@ -602,8 +602,7 @@ public abstract class FormatReader extends FormatHandler
 
     if (stitch) {
       reader = new FileStitcher(reader, true);
-      String pat =
-        FilePattern.findPattern(new Location(map == null ? id : map));
+      String pat = FilePattern.findPattern(new Location(id));
       if (pat != null) id = pat;
     }
     if (separate) reader = new ChannelSeparator(reader);

@@ -419,7 +419,10 @@ public class ZeissZVIReader extends FormatReader {
           currentOrder[0] = legacy.getDimensionOrder(id);
         }
       }
-      else currentOrder[0] = (zSize > tSize) ? "XYCZT" : "XYCTZ";
+      else if (metadata.get("MultiChannel Color") != null) {
+        currentOrder[0] = (zSize > tSize) ? "XYCZT" : "XYCTZ";
+      }
+      else currentOrder[0] = (zSize > tSize) ? "XYZTC" : "XYTZC";
     }
     catch (Throwable t) {
       // CTR TODO - eliminate catch-all exception handling
@@ -495,7 +498,16 @@ public class ZeissZVIReader extends FormatReader {
         int numbytes = ((Integer) r.getVar("numBytes")).intValue();
         byte[] data = new byte[numbytes + 4]; // append 0 for final offset
         r.setVar("data", data);
-        r.exec("dis.read(data)");
+        
+        // Suppressing an exception here looks like poor style.
+        // However, this at least gives us a chance at reading files with
+        // corrupt blocks.
+        try {
+          r.exec("dis.read(data)");
+        }
+        catch (ReflectException e) { 
+          if (debug) e.printStackTrace();
+        }
 
         String entryName = (String) r.getVar("entryName");
         String dirName = (String) r.getVar("dirName");

@@ -293,6 +293,8 @@ public class Importer implements ItemListener {
 
       FileStitcher fs = null;
 
+      int pixelType = r.getPixelType(id);
+
       if (stitchFiles) {
         fs = new FileStitcher(r, true);
         // prompt user to confirm detected file pattern
@@ -310,7 +312,7 @@ public class Importer implements ItemListener {
       }
       if (fs != null) {
         if (mergeChannels) {
-          if (r.getPixelType(id) == FormatReader.FLOAT) {
+          if (pixelType == FormatReader.FLOAT) {
             r = new ChannelMerger(fs);
           }
           else r = new ChannelSeparator(fs);
@@ -657,8 +659,8 @@ public class Importer implements ItemListener {
             ImageProcessor ip = null;
 
             int bpp = FormatReader.getBytesPerPixel(type);;
-
-            if (b.length != w * h * c * bpp) {
+            
+            if (b.length != w * h * c * bpp && b.length != w * h * bpp) {
               // HACK - byte array dimensions are incorrect - image is probably
               // a different size, but we have no way of knowing what size;
               // so open this plane as a BufferedImage instead
@@ -1107,18 +1109,30 @@ public class Importer implements ItemListener {
         s = imp.getStack();
         newStack = new ImageStack(s.getWidth(), s.getHeight());
 
-        for (int z=0; z<r.getSizeZ(id); z++) {
-          for (int t=0; t<r.getSizeT(id); t++) {
+        int sizeZ = r.getSizeZ(id);
+        int sizeT = r.getSizeT(id);
+        
+        int extraC = 1;
+        if (c > 4) {
+          extraC *= (c % 3 == 0 ? 4 : 3);
+          c /= extraC;
+        }
+
+        for (int z=0; z<sizeZ; z++) {
+          for (int t=0; t<sizeT; t++) {
             byte[][] bytes = new byte[c][];
-            for (int ch=0; ch<c; ch++) {
-              int ndx = r.getIndex(id, z, ch, t) + 1;
-              bytes[ch] = (byte[]) s.getProcessor(ndx).getPixels();
+            for (int ch1=0; ch1<extraC; ch1++) {
+              for (int ch2=0; ch2<c; ch2++) {
+                int ndx = r.getIndex(id, z, ch1*c + ch2, t) + 1;
+                bytes[ch2] = (byte[]) s.getProcessor(ndx).getPixels();
+              }
+              ColorProcessor cp = 
+                new ColorProcessor(s.getWidth(), s.getHeight());
+              cp.setRGB(bytes[0], bytes[1], bytes.length == 3 ? bytes[2] :
+                new byte[s.getWidth() * s.getHeight()]);
+              newStack.addSlice(s.getSliceLabel(
+                r.getIndex(id, z, ch1*c + c - 1, t) + 1), cp);
             }
-            ColorProcessor cp = new ColorProcessor(s.getWidth(), s.getHeight());
-            cp.setRGB(bytes[0], bytes[1], bytes.length == 3 ? bytes[2] :
-              new byte[s.getWidth() * s.getHeight()]);
-            newStack.addSlice(s.getSliceLabel(
-              r.getIndex(id, z, c - 1, t) + 1), cp);
           }
         }
         imp.setStack(imp.getTitle(), newStack);
@@ -1187,6 +1201,7 @@ public class Importer implements ItemListener {
       }
     }
     catch (Exception e) {
+      /* debug */ e.printStackTrace();
       if (!stitchStack) imp.show();
       else imps.add(imp);
     }
