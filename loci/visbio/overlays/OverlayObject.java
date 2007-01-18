@@ -256,14 +256,6 @@ public abstract class OverlayObject {
     computeGridParameters();
   }
 
-  // TEMP // TEMP // TEMP
-  public float[] getGridParameters() {
-    float[] retvals = {
-      xGrid1, yGrid1, xGrid2, yGrid2, xGrid3, yGrid3, xGrid4, yGrid4
-    };
-    return retvals;
-  }
-
   /** Returns coordinates of node at given index in the node array */
   public float[] getNodeCoords (int index) {
     float[] retvals = new float[2];

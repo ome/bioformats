@@ -58,6 +58,9 @@ public class LineTool extends OverlayTool {
   {
     if (line == null) return;
     line.setDrawing(false);
+    if (line.getX() == line.getX2() && line.getY() == line.getY2()) {
+      overlay.removeObject(line);
+    }
     line = null;
     overlay.notifyListeners(new TransformEvent(overlay));
   }

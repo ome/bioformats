@@ -60,6 +60,11 @@ public class OvalTool extends OverlayTool {
   {
     if (oval == null) return;
     oval.setDrawing(false);
+
+    if (oval.getX() == oval.getX2() || oval.getY() == oval.getY2()) {
+      overlay.removeObject(oval);
+    }
+
     oval = null;
     overlay.notifyListeners(new TransformEvent(overlay));
   }
