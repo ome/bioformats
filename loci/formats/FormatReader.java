@@ -85,7 +85,7 @@ public abstract class FormatReader extends FormatHandler
   /** Debugging flag. */
   protected static boolean debug = false;
 
-  /** Debugging level. 1=basic, 2=extended, 3=everything. */
+  /** Debugging level. 1=basic, 2=extended, 3=everything, 4=insane. */
   protected static int debugLevel = 1;
 
   // -- Fields --
@@ -206,7 +206,8 @@ public abstract class FormatReader extends FormatHandler
     String prefix = "loci.formats.in.";
     if (name.startsWith(prefix)) name = name.substring(prefix.length());
     String msg = System.currentTimeMillis() + ": " + name + ": " + s;
-    System.out.println(msg);
+    if (debugLevel > 3) new Exception(msg).printStackTrace();
+    else System.out.println(msg);
   }
 
   // -- IFormatReader API methods --
