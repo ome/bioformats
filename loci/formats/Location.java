@@ -43,7 +43,7 @@ public class Location {
   private File file;
 
   /** Map from given filenames to actual filenames. */
-  private static Hashtable idMap;
+  private static Hashtable idMap = new Hashtable();
 
   // -- Constructors --
 
@@ -107,7 +107,10 @@ public class Location {
 
   public static Hashtable getIdMap() { return idMap; }
 
-  public static void setIdMap(Hashtable map) { idMap = map; }
+  public static void setIdMap(Hashtable map) { 
+    if (map != null) idMap = map; 
+    else idMap = new Hashtable();
+  }
 
   /* @see java.io.File#canRead() */
   public boolean canRead() {
