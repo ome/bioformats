@@ -114,7 +114,7 @@ public class IPLabReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return (Double) metadata.get("NormalizationMin" + theC);
+    return (Double) getMeta("NormalizationMin" + theC);
   }
 
   /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
@@ -122,7 +122,7 @@ public class IPLabReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return (Double) metadata.get("NormalizationMax" + theC);
+    return (Double) getMeta("NormalizationMax" + theC);
   }
 
   /** Obtains the specified image from the given IPLab file as a byte array. */
@@ -183,11 +183,11 @@ public class IPLabReader extends FormatReader {
 
     numImages = zDepth * tDepth;
 
-    metadata.put("Width", new Long(width));
-    metadata.put("Height", new Long(height));
-    metadata.put("Channels", new Long(c));
-    metadata.put("ZDepth", new Long(zDepth));
-    metadata.put("TDepth", new Long(tDepth));
+    addMeta("Width", new Long(width));
+    addMeta("Height", new Long(height));
+    addMeta("Channels", new Long(c));
+    addMeta("ZDepth", new Long(zDepth));
+    addMeta("TDepth", new Long(tDepth));
 
     String ptype;
     bps = 1;
@@ -236,7 +236,7 @@ public class IPLabReader extends FormatReader {
         ptype = "reserved"; // for values 7-9
     }
 
-    metadata.put("PixelType", ptype);
+    addMeta("PixelType", ptype);
     in.skipBytes(dataSize);
 
     order = "XY";
@@ -307,7 +307,7 @@ public class IPLabReader extends FormatReader {
               clutType = "saturated pixels";
               break;
           }
-          metadata.put("LUT type", clutType);
+          addMeta("LUT type", clutType);
         }
         else {
           // explicitly defined lookup table
@@ -353,7 +353,7 @@ public class IPLabReader extends FormatReader {
             default:
               sourceType = "user";
           }
-          metadata.put("NormalizationSource" + i, sourceType);
+          addMeta("NormalizationSource" + i, sourceType);
 
           double min = in.readDouble();
           double max = in.readDouble();
@@ -361,11 +361,11 @@ public class IPLabReader extends FormatReader {
           double black = in.readDouble();
           double white = in.readDouble();
 
-          metadata.put("NormalizationMin" + i, new Double(min));
-          metadata.put("NormalizationMax" + i, new Double(max));
-          metadata.put("NormalizationGamma" + i, new Double(gamma));
-          metadata.put("NormalizationBlack" + i, new Double(black));
-          metadata.put("NormalizationWhite" + i, new Double(white));
+          addMeta("NormalizationMin" + i, new Double(min));
+          addMeta("NormalizationMax" + i, new Double(max));
+          addMeta("NormalizationGamma" + i, new Double(gamma));
+          addMeta("NormalizationBlack" + i, new Double(black));
+          addMeta("NormalizationWhite" + i, new Double(white));
         }
       }
       else if (tag.equals("head")) {
@@ -377,7 +377,7 @@ public class IPLabReader extends FormatReader {
           int num = in.readShort();
           in.read(fourBytes);
           String name = new String(fourBytes);
-          metadata.put("Header" + num, name);
+          addMeta("Header" + num, name);
         }
       }
       else if (tag.equals("roi ")) {
@@ -411,15 +411,15 @@ public class IPLabReader extends FormatReader {
           int unitsPerPixel = in.readInt();
           int xUnitName = in.readInt();
 
-          metadata.put("ResolutionStyle" + i, new Long(xResStyle));
-          metadata.put("UnitsPerPixel" + i, new Long(unitsPerPixel));
+          addMeta("ResolutionStyle" + i, new Long(xResStyle));
+          addMeta("UnitsPerPixel" + i, new Long(unitsPerPixel));
 
           if (i == 0) {
             Float pixelSize = new Float(unitsPerPixel);
             store.setDimensions(pixelSize, pixelSize, null, null, null, null);
           }
 
-          metadata.put("UnitName" + i, new Long(xUnitName));
+          addMeta("UnitName" + i, new Long(xUnitName));
         }
       }
       else if (tag.equals("view")) {
@@ -440,8 +440,8 @@ public class IPLabReader extends FormatReader {
         temp = new byte[512];
         in.read(temp);
         String notes = new String(temp);
-        metadata.put("Descriptor", descriptor);
-        metadata.put("Notes", notes);
+        addMeta("Descriptor", descriptor);
+        addMeta("Notes", notes);
 
         store.setImage(id, null, notes, null);
       }
@@ -458,9 +458,9 @@ public class IPLabReader extends FormatReader {
 
     sizeX[0] = width;
     sizeY[0] = height;
-    sizeZ[0] = (int) ((Long) metadata.get("ZDepth")).longValue();
+    sizeZ[0] = (int) ((Long) getMeta("ZDepth")).longValue();
     sizeC[0] = c;
-    sizeT[0] = (int) ((Long) metadata.get("TDepth")).longValue();
+    sizeT[0] = (int) ((Long) getMeta("TDepth")).longValue();
     currentOrder[0] = order;
 
   }

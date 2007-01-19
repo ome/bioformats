@@ -382,7 +382,7 @@ public class ZeissZVIReader extends FormatReader {
 
       nImages = sizeZ[0] * sizeT[0] * getEffectiveSizeC(id);
 
-      String s = (String) metadata.get("Acquisition Bit Depth");
+      String s = (String) getMeta("Acquisition Bit Depth");
       if (s != null && s.trim().length() > 0) {
         validBits = new int[nChannels];
         if (nChannels == 2) validBits = new int[3];
@@ -392,7 +392,7 @@ public class ZeissZVIReader extends FormatReader {
       }
       else validBits = null;
 
-      Object check = metadata.get("Image Channel Index");
+      Object check = getMeta("Image Channel Index");
       if (check != null && !check.toString().trim().equals("")) {
         int[] dims = {sizeZ[0], sizeC[0], sizeT[0]};
         int max = 0, min = Integer.MAX_VALUE, maxNdx = 0, minNdx = 0;
@@ -419,7 +419,7 @@ public class ZeissZVIReader extends FormatReader {
           currentOrder[0] = legacy.getDimensionOrder(id);
         }
       }
-      else if (metadata.get("MultiChannel Color") != null) {
+      else if (getMeta("MultiChannel Color") != null) {
         currentOrder[0] = (zSize > tSize) ? "XYCZT" : "XYCTZ";
       }
       else currentOrder[0] = (zSize > tSize) ? "XYZTC" : "XYTZC";
@@ -445,7 +445,7 @@ public class ZeissZVIReader extends FormatReader {
   /** Initialize metadata hashtable and OME-XML structure. */
   private void initMetadata() throws FormatException, IOException {
     MetadataStore store = getMetadataStore(currentId);
-    store.setImage((String) metadata.get("File Name"), null, null, null);
+    store.setImage((String) getMeta("File Name"), null, null, null);
 
     if (bpp == 1 || bpp == 3) pixelType[0] = FormatReader.UINT8;
     else if (bpp == 2 || bpp == 6) pixelType[0] = FormatReader.UINT16;
@@ -462,9 +462,9 @@ public class ZeissZVIReader extends FormatReader {
       null);
 
     store.setDimensions(
-      new Float((String) metadata.get("Scale Factor for X")),
-      new Float((String) metadata.get("Scale Factor for Y")),
-      new Float((String) metadata.get("Scale Factor for Z")),
+      new Float((String) getMeta("Scale Factor for X")),
+      new Float((String) getMeta("Scale Factor for Y")),
+      new Float((String) getMeta("Scale Factor for Z")),
       null, null, null);
   }
 
@@ -880,1232 +880,1232 @@ public class ZeissZVIReader extends FormatReader {
   private void parseTag(String data, int tagID, int attribute) {
     switch (tagID) {
       case 222:
-        metadata.put("Compression", data);
+        addMeta("Compression", data);
         break;
       case 258:
-        metadata.put("BlackValue", data);
+        addMeta("BlackValue", data);
         break;
       case 259:
-        metadata.put("WhiteValue", data);
+        addMeta("WhiteValue", data);
         break;
       case 260:
-        metadata.put("ImageDataMappingAutoRange", data);
+        addMeta("ImageDataMappingAutoRange", data);
         break;
       case 261:
-        metadata.put("Thumbnail", data);
+        addMeta("Thumbnail", data);
         break;
       case 262:
-        metadata.put("GammaValue", data);
+        addMeta("GammaValue", data);
         break;
       case 264:
-        metadata.put("ImageOverExposure", data);
+        addMeta("ImageOverExposure", data);
         break;
       case 265:
-        metadata.put("ImageRelativeTime1", data);
+        addMeta("ImageRelativeTime1", data);
         break;
       case 266:
-        metadata.put("ImageRelativeTime2", data);
+        addMeta("ImageRelativeTime2", data);
         break;
       case 267:
-        metadata.put("ImageRelativeTime3", data);
+        addMeta("ImageRelativeTime3", data);
         break;
       case 268:
-        metadata.put("ImageRelativeTime4", data);
+        addMeta("ImageRelativeTime4", data);
         break;
       case 333:
-        metadata.put("RelFocusPosition1", data);
+        addMeta("RelFocusPosition1", data);
         break;
       case 334:
-        metadata.put("RelFocusPosition2", data);
+        addMeta("RelFocusPosition2", data);
         break;
       case 513:
-        metadata.put("tagID_513", data);
+        addMeta("tagID_513", data);
         break;
       case 515:
-        metadata.put("ImageWidth", data);
+        addMeta("ImageWidth", data);
         break;
       case 516:
-        metadata.put("ImageHeight", data);
+        addMeta("ImageHeight", data);
         break;
       case 517:
-        metadata.put("tagID_517", data);
+        addMeta("tagID_517", data);
         break;
       case 518:
-        metadata.put("PixelType", data);
+        addMeta("PixelType", data);
         break;
       case 519:
-        metadata.put("NumberOfRawImages", data);
+        addMeta("NumberOfRawImages", data);
         break;
       case 520:
-        metadata.put("ImageSize", data);
+        addMeta("ImageSize", data);
         break;
       case 523:
-        metadata.put("Acquisition pause annotation", data);
+        addMeta("Acquisition pause annotation", data);
         break;
       case 530:
-        metadata.put("Document Subtype", data);
+        addMeta("Document Subtype", data);
         break;
       case 531:
-        metadata.put("Acquisition Bit Depth", data);
+        addMeta("Acquisition Bit Depth", data);
         break;
       case 532:
-        metadata.put("Image Memory Usage (RAM)", data);
+        addMeta("Image Memory Usage (RAM)", data);
         break;
       case 534:
-        metadata.put("Z-Stack single representative", data);
+        addMeta("Z-Stack single representative", data);
         break;
       case 769:
-        metadata.put("Scale Factor for X", data);
+        addMeta("Scale Factor for X", data);
         break;
       case 770:
-        metadata.put("Scale Unit for X", data);
+        addMeta("Scale Unit for X", data);
         break;
       case 771:
-        metadata.put("Scale Width", data);
+        addMeta("Scale Width", data);
         break;
       case 772:
-        metadata.put("Scale Factor for Y", data);
+        addMeta("Scale Factor for Y", data);
         break;
       case 773:
-        metadata.put("Scale Unit for Y", data);
+        addMeta("Scale Unit for Y", data);
         break;
       case 774:
-        metadata.put("Scale Height", data);
+        addMeta("Scale Height", data);
         break;
       case 775:
-        metadata.put("Scale Factor for Z", data);
+        addMeta("Scale Factor for Z", data);
         break;
       case 776:
-        metadata.put("Scale Unit for Z", data);
+        addMeta("Scale Unit for Z", data);
         break;
       case 777:
-        metadata.put("Scale Depth", data);
+        addMeta("Scale Depth", data);
         break;
       case 778:
-        metadata.put("Scaling Parent", data);
+        addMeta("Scaling Parent", data);
         break;
       case 1001:
-        metadata.put("Date", data);
+        addMeta("Date", data);
         break;
       case 1002:
-        metadata.put("code", data);
+        addMeta("code", data);
         break;
       case 1003:
-        metadata.put("Source", data);
+        addMeta("Source", data);
         break;
       case 1004:
-        metadata.put("Message", data);
+        addMeta("Message", data);
         break;
       case 1025:
-        metadata.put("Acquisition Date", data);
+        addMeta("Acquisition Date", data);
         break;
       case 1026:
-        metadata.put("8-bit acquisition", data);
+        addMeta("8-bit acquisition", data);
         break;
       case 1027:
-        metadata.put("Camera Bit Depth", data);
+        addMeta("Camera Bit Depth", data);
         break;
       case 1029:
-        metadata.put("MonoReferenceLow", data);
+        addMeta("MonoReferenceLow", data);
         break;
       case 1030:
-        metadata.put("MonoReferenceHigh", data);
+        addMeta("MonoReferenceHigh", data);
         break;
       case 1031:
-        metadata.put("RedReferenceLow", data);
+        addMeta("RedReferenceLow", data);
         break;
       case 1032:
-        metadata.put("RedReferenceHigh", data);
+        addMeta("RedReferenceHigh", data);
         break;
       case 1033:
-        metadata.put("GreenReferenceLow", data);
+        addMeta("GreenReferenceLow", data);
         break;
       case 1034:
-        metadata.put("GreenReferenceHigh", data);
+        addMeta("GreenReferenceHigh", data);
         break;
       case 1035:
-        metadata.put("BlueReferenceLow", data);
+        addMeta("BlueReferenceLow", data);
         break;
       case 1036:
-        metadata.put("BlueReferenceHigh", data);
+        addMeta("BlueReferenceHigh", data);
         break;
       case 1041:
-        metadata.put("FrameGrabber Name", data);
+        addMeta("FrameGrabber Name", data);
         break;
       case 1042:
-        metadata.put("Camera", data);
+        addMeta("Camera", data);
         break;
       case 1044:
-        metadata.put("CameraTriggerSignalType", data);
+        addMeta("CameraTriggerSignalType", data);
         break;
       case 1045:
-        metadata.put("CameraTriggerEnable", data);
+        addMeta("CameraTriggerEnable", data);
         break;
       case 1046:
-        metadata.put("GrabberTimeout", data);
+        addMeta("GrabberTimeout", data);
         break;
       case 1281:
-        metadata.put("MultiChannelEnabled", data);
+        addMeta("MultiChannelEnabled", data);
         break;
       case 1282:
-        metadata.put("MultiChannel Color", data);
+        addMeta("MultiChannel Color", data);
         break;
       case 1283:
-        metadata.put("MultiChannel Weight", data);
+        addMeta("MultiChannel Weight", data);
         break;
       case 1284:
-        metadata.put("Channel Name", data);
+        addMeta("Channel Name", data);
         break;
       case 1536:
-        metadata.put("DocumentInformationGroup", data);
+        addMeta("DocumentInformationGroup", data);
         break;
       case 1537:
-        metadata.put("Title", data);
+        addMeta("Title", data);
         break;
       case 1538:
-        metadata.put("Author", data);
+        addMeta("Author", data);
         break;
       case 1539:
-        metadata.put("Keywords", data);
+        addMeta("Keywords", data);
         break;
       case 1540:
-        metadata.put("Comments", data);
+        addMeta("Comments", data);
         break;
       case 1541:
-        metadata.put("SampleID", data);
+        addMeta("SampleID", data);
         break;
       case 1542:
-        metadata.put("Subject", data);
+        addMeta("Subject", data);
         break;
       case 1543:
-        metadata.put("RevisionNumber", data);
+        addMeta("RevisionNumber", data);
         break;
       case 1544:
-        metadata.put("Save Folder", data);
+        addMeta("Save Folder", data);
         break;
       case 1545:
-        metadata.put("FileLink", data);
+        addMeta("FileLink", data);
         break;
       case 1546:
-        metadata.put("Document Type", data);
+        addMeta("Document Type", data);
         break;
       case 1547:
-        metadata.put("Storage Media", data);
+        addMeta("Storage Media", data);
         break;
       case 1548:
-        metadata.put("File ID", data);
+        addMeta("File ID", data);
         break;
       case 1549:
-        metadata.put("Reference", data);
+        addMeta("Reference", data);
         break;
       case 1550:
-        metadata.put("File Date", data);
+        addMeta("File Date", data);
         break;
       case 1551:
-        metadata.put("File Size", data);
+        addMeta("File Size", data);
         break;
       case 1553:
-        metadata.put("Filename", data);
+        addMeta("Filename", data);
         break;
       case 1792:
-        metadata.put("ProjectGroup", data);
+        addMeta("ProjectGroup", data);
         break;
       case 1793:
-        metadata.put("Acquisition Date", data);
+        addMeta("Acquisition Date", data);
         break;
       case 1794:
-        metadata.put("Last modified by", data);
+        addMeta("Last modified by", data);
         break;
       case 1795:
-        metadata.put("User company", data);
+        addMeta("User company", data);
         break;
       case 1796:
-        metadata.put("User company logo", data);
+        addMeta("User company logo", data);
         break;
       case 1797:
-        metadata.put("Image", data);
+        addMeta("Image", data);
         break;
       case 1800:
-        metadata.put("User ID", data);
+        addMeta("User ID", data);
         break;
       case 1801:
-        metadata.put("User Name", data);
+        addMeta("User Name", data);
         break;
       case 1802:
-        metadata.put("User City", data);
+        addMeta("User City", data);
         break;
       case 1803:
-        metadata.put("User Address", data);
+        addMeta("User Address", data);
         break;
       case 1804:
-        metadata.put("User Country", data);
+        addMeta("User Country", data);
         break;
       case 1805:
-        metadata.put("User Phone", data);
+        addMeta("User Phone", data);
         break;
       case 1806:
-        metadata.put("User Fax", data);
+        addMeta("User Fax", data);
         break;
       case 2049:
-        metadata.put("Objective Name", data);
+        addMeta("Objective Name", data);
         break;
       case 2050:
-        metadata.put("Optovar", data);
+        addMeta("Optovar", data);
         break;
       case 2051:
-        metadata.put("Reflector", data);
+        addMeta("Reflector", data);
         break;
       case 2052:
-        metadata.put("Condenser Contrast", data);
+        addMeta("Condenser Contrast", data);
         break;
       case 2053:
-        metadata.put("Transmitted Light Filter 1", data);
+        addMeta("Transmitted Light Filter 1", data);
         break;
       case 2054:
-        metadata.put("Transmitted Light Filter 2", data);
+        addMeta("Transmitted Light Filter 2", data);
         break;
       case 2055:
-        metadata.put("Reflected Light Shutter", data);
+        addMeta("Reflected Light Shutter", data);
         break;
       case 2056:
-        metadata.put("Condenser Front Lens", data);
+        addMeta("Condenser Front Lens", data);
         break;
       case 2057:
-        metadata.put("Excitation Filter Name", data);
+        addMeta("Excitation Filter Name", data);
         break;
       case 2060:
-        metadata.put("Transmitted Light Fieldstop Aperture", data);
+        addMeta("Transmitted Light Fieldstop Aperture", data);
         break;
       case 2061:
-        metadata.put("Reflected Light Aperture", data);
+        addMeta("Reflected Light Aperture", data);
         break;
       case 2062:
-        metadata.put("Condenser N.A.", data);
+        addMeta("Condenser N.A.", data);
         break;
       case 2063:
-        metadata.put("Light Path", data);
+        addMeta("Light Path", data);
         break;
       case 2064:
-        metadata.put("HalogenLampOn", data);
+        addMeta("HalogenLampOn", data);
         break;
       case 2065:
-        metadata.put("Halogen Lamp Mode", data);
+        addMeta("Halogen Lamp Mode", data);
         break;
       case 2066:
-        metadata.put("Halogen Lamp Voltage", data);
+        addMeta("Halogen Lamp Voltage", data);
         break;
       case 2068:
-        metadata.put("Fluorescence Lamp Level", data);
+        addMeta("Fluorescence Lamp Level", data);
         break;
       case 2069:
-        metadata.put("Fluorescence Lamp Intensity", data);
+        addMeta("Fluorescence Lamp Intensity", data);
         break;
       case 2070:
-        metadata.put("LightManagerEnabled", data);
+        addMeta("LightManagerEnabled", data);
         break;
       case 2071:
-        metadata.put("tag_ID_2071", data);
+        addMeta("tag_ID_2071", data);
         break;
       case 2072:
-        metadata.put("Focus Position", data);
+        addMeta("Focus Position", data);
         break;
       case 2073:
-        metadata.put("Stage Position X", data);
+        addMeta("Stage Position X", data);
         break;
       case 2074:
-        metadata.put("Stage Position Y", data);
+        addMeta("Stage Position Y", data);
         break;
       case 2075:
-        metadata.put("Microscope Name", data);
+        addMeta("Microscope Name", data);
         break;
       case 2076:
-        metadata.put("Objective Magnification", data);
+        addMeta("Objective Magnification", data);
         break;
       case 2077:
-        metadata.put("Objective N.A.", data);
+        addMeta("Objective N.A.", data);
         break;
       case 2078:
-        metadata.put("MicroscopeIllumination", data);
+        addMeta("MicroscopeIllumination", data);
         break;
       case 2079:
-        metadata.put("External Shutter 1", data);
+        addMeta("External Shutter 1", data);
         break;
       case 2080:
-        metadata.put("External Shutter 2", data);
+        addMeta("External Shutter 2", data);
         break;
       case 2081:
-        metadata.put("External Shutter 3", data);
+        addMeta("External Shutter 3", data);
         break;
       case 2082:
-        metadata.put("External Filter Wheel 1 Name", data);
+        addMeta("External Filter Wheel 1 Name", data);
         break;
       case 2083:
-        metadata.put("External Filter Wheel 2 Name", data);
+        addMeta("External Filter Wheel 2 Name", data);
         break;
       case 2084:
-        metadata.put("Parfocal Correction", data);
+        addMeta("Parfocal Correction", data);
         break;
       case 2086:
-        metadata.put("External Shutter 4", data);
+        addMeta("External Shutter 4", data);
         break;
       case 2087:
-        metadata.put("External Shutter 5", data);
+        addMeta("External Shutter 5", data);
         break;
       case 2088:
-        metadata.put("External Shutter 6", data);
+        addMeta("External Shutter 6", data);
         break;
       case 2089:
-        metadata.put("External Filter Wheel 3 Name", data);
+        addMeta("External Filter Wheel 3 Name", data);
         break;
       case 2090:
-        metadata.put("External Filter Wheel 4 Name", data);
+        addMeta("External Filter Wheel 4 Name", data);
         break;
       case 2103:
-        metadata.put("Objective Turret Position", data);
+        addMeta("Objective Turret Position", data);
         break;
       case 2104:
-        metadata.put("Objective Contrast Method", data);
+        addMeta("Objective Contrast Method", data);
         break;
       case 2105:
-        metadata.put("Objective Immersion Type", data);
+        addMeta("Objective Immersion Type", data);
         break;
       case 2107:
-        metadata.put("Reflector Position", data);
+        addMeta("Reflector Position", data);
         break;
       case 2109:
-        metadata.put("Transmitted Light Filter 1 Position", data);
+        addMeta("Transmitted Light Filter 1 Position", data);
         break;
       case 2110:
-        metadata.put("Transmitted Light Filter 2 Position", data);
+        addMeta("Transmitted Light Filter 2 Position", data);
         break;
       case 2112:
-        metadata.put("Excitation Filter Position", data);
+        addMeta("Excitation Filter Position", data);
         break;
       case 2113:
-        metadata.put("Lamp Mirror Position", data);
+        addMeta("Lamp Mirror Position", data);
         break;
       case 2114:
-        metadata.put("External Filter Wheel 1 Position", data);
+        addMeta("External Filter Wheel 1 Position", data);
         break;
       case 2115:
-        metadata.put("External Filter Wheel 2 Position", data);
+        addMeta("External Filter Wheel 2 Position", data);
         break;
       case 2116:
-        metadata.put("External Filter Wheel 3 Position", data);
+        addMeta("External Filter Wheel 3 Position", data);
         break;
       case 2117:
-        metadata.put("External Filter Wheel 4 Position", data);
+        addMeta("External Filter Wheel 4 Position", data);
         break;
       case 2118:
-        metadata.put("Lightmanager Mode", data);
+        addMeta("Lightmanager Mode", data);
         break;
       case 2119:
-        metadata.put("Halogen Lamp Calibration", data);
+        addMeta("Halogen Lamp Calibration", data);
         break;
       case 2120:
-        metadata.put("CondenserNAGoSpeed", data);
+        addMeta("CondenserNAGoSpeed", data);
         break;
       case 2121:
-        metadata.put("TransmittedLightFieldstopGoSpeed", data);
+        addMeta("TransmittedLightFieldstopGoSpeed", data);
         break;
       case 2122:
-        metadata.put("OptovarGoSpeed", data);
+        addMeta("OptovarGoSpeed", data);
         break;
       case 2123:
-        metadata.put("Focus calibrated", data);
+        addMeta("Focus calibrated", data);
         break;
       case 2124:
-        metadata.put("FocusBasicPosition", data);
+        addMeta("FocusBasicPosition", data);
         break;
       case 2125:
-        metadata.put("FocusPower", data);
+        addMeta("FocusPower", data);
         break;
       case 2126:
-        metadata.put("FocusBacklash", data);
+        addMeta("FocusBacklash", data);
         break;
       case 2127:
-        metadata.put("FocusMeasurementOrigin", data);
+        addMeta("FocusMeasurementOrigin", data);
         break;
       case 2128:
-        metadata.put("FocusMeasurementDistance", data);
+        addMeta("FocusMeasurementDistance", data);
         break;
       case 2129:
-        metadata.put("FocusSpeed", data);
+        addMeta("FocusSpeed", data);
         break;
       case 2130:
-        metadata.put("FocusGoSpeed", data);
+        addMeta("FocusGoSpeed", data);
         break;
       case 2131:
-        metadata.put("FocusDistance", data);
+        addMeta("FocusDistance", data);
         break;
       case 2132:
-        metadata.put("FocusInitPosition", data);
+        addMeta("FocusInitPosition", data);
         break;
       case 2133:
-        metadata.put("Stage calibrated", data);
+        addMeta("Stage calibrated", data);
         break;
       case 2134:
-        metadata.put("StagePower", data);
+        addMeta("StagePower", data);
         break;
       case 2135:
-        metadata.put("StageXBacklash", data);
+        addMeta("StageXBacklash", data);
         break;
       case 2136:
-        metadata.put("StageYBacklash", data);
+        addMeta("StageYBacklash", data);
         break;
       case 2137:
-        metadata.put("StageSpeedX", data);
+        addMeta("StageSpeedX", data);
         break;
       case 2138:
-        metadata.put("StageSpeedY", data);
+        addMeta("StageSpeedY", data);
         break;
       case 2139:
-        metadata.put("StageSpeed", data);
+        addMeta("StageSpeed", data);
         break;
       case 2140:
-        metadata.put("StageGoSpeedX", data);
+        addMeta("StageGoSpeedX", data);
         break;
       case 2141:
-        metadata.put("StageGoSpeedY", data);
+        addMeta("StageGoSpeedY", data);
         break;
       case 2142:
-        metadata.put("StageStepDistanceX", data);
+        addMeta("StageStepDistanceX", data);
         break;
       case 2143:
-        metadata.put("StageStepDistanceY", data);
+        addMeta("StageStepDistanceY", data);
         break;
       case 2144:
-        metadata.put("StageInitialisationPositionX", data);
+        addMeta("StageInitialisationPositionX", data);
         break;
       case 2145:
-        metadata.put("StageInitialisationPositionY", data);
+        addMeta("StageInitialisationPositionY", data);
         break;
       case 2146:
-        metadata.put("MicroscopeMagnification", data);
+        addMeta("MicroscopeMagnification", data);
         break;
       case 2147:
-        metadata.put("ReflectorMagnification", data);
+        addMeta("ReflectorMagnification", data);
         break;
       case 2148:
-        metadata.put("LampMirrorPosition", data);
+        addMeta("LampMirrorPosition", data);
         break;
       case 2149:
-        metadata.put("FocusDepth", data);
+        addMeta("FocusDepth", data);
         break;
       case 2150:
-        metadata.put("MicroscopeType", data);
+        addMeta("MicroscopeType", data);
         break;
       case 2151:
-        metadata.put("Objective Working Distance", data);
+        addMeta("Objective Working Distance", data);
         break;
       case 2152:
-        metadata.put("ReflectedLightApertureGoSpeed", data);
+        addMeta("ReflectedLightApertureGoSpeed", data);
         break;
       case 2153:
-        metadata.put("External Shutter", data);
+        addMeta("External Shutter", data);
         break;
       case 2154:
-        metadata.put("ObjectiveImmersionStop", data);
+        addMeta("ObjectiveImmersionStop", data);
         break;
       case 2155:
-        metadata.put("Focus Start Speed", data);
+        addMeta("Focus Start Speed", data);
         break;
       case 2156:
-        metadata.put("Focus Acceleration", data);
+        addMeta("Focus Acceleration", data);
         break;
       case 2157:
-        metadata.put("ReflectedLightFieldstop", data);
+        addMeta("ReflectedLightFieldstop", data);
         break;
       case 2158:
-        metadata.put("ReflectedLightFieldstopGoSpeed", data);
+        addMeta("ReflectedLightFieldstopGoSpeed", data);
         break;
       case 2159:
-        metadata.put("ReflectedLightFilter 1", data);
+        addMeta("ReflectedLightFilter 1", data);
         break;
       case 2160:
-        metadata.put("ReflectedLightFilter 2", data);
+        addMeta("ReflectedLightFilter 2", data);
         break;
       case 2161:
-        metadata.put("ReflectedLightFilter1Position", data);
+        addMeta("ReflectedLightFilter1Position", data);
         break;
       case 2162:
-        metadata.put("ReflectedLightFilter2Position", data);
+        addMeta("ReflectedLightFilter2Position", data);
         break;
       case 2163:
-        metadata.put("TransmittedLightAttenuator", data);
+        addMeta("TransmittedLightAttenuator", data);
         break;
       case 2164:
-        metadata.put("ReflectedLightAttenuator", data);
+        addMeta("ReflectedLightAttenuator", data);
         break;
       case 2165:
-        metadata.put("Transmitted Light Shutter", data);
+        addMeta("Transmitted Light Shutter", data);
         break;
       case 2166:
-        metadata.put("TransmittedLightAttenuatorGoSpeed", data);
+        addMeta("TransmittedLightAttenuatorGoSpeed", data);
         break;
       case 2167:
-        metadata.put("ReflectedLightAttenuatorGoSpeed", data);
+        addMeta("ReflectedLightAttenuatorGoSpeed", data);
         break;
       case 2176:
-        metadata.put("TransmittedLightVirtualFilterPosition", data);
+        addMeta("TransmittedLightVirtualFilterPosition", data);
         break;
       case 2177:
-        metadata.put("TransmittedLightVirtualFilter", data);
+        addMeta("TransmittedLightVirtualFilter", data);
         break;
       case 2178:
-        metadata.put("ReflectedLightVirtualFilterPosition", data);
+        addMeta("ReflectedLightVirtualFilterPosition", data);
         break;
       case 2179:
-        metadata.put("ReflectedLightVirtualFilter", data);
+        addMeta("ReflectedLightVirtualFilter", data);
         break;
       case 2180:
-        metadata.put("ReflectedLightHalogenLampMode", data);
+        addMeta("ReflectedLightHalogenLampMode", data);
         break;
       case 2181:
-        metadata.put("ReflectedLightHalogenLampVoltage", data);
+        addMeta("ReflectedLightHalogenLampVoltage", data);
         break;
       case 2182:
-        metadata.put("ReflectedLightHalogenLampColorTemperature", data);
+        addMeta("ReflectedLightHalogenLampColorTemperature", data);
         break;
       case 2183:
-        metadata.put("ContrastManagerMode", data);
+        addMeta("ContrastManagerMode", data);
         break;
       case 2184:
-        metadata.put("Dazzle Protection Active", data);
+        addMeta("Dazzle Protection Active", data);
         break;
       case 2195:
-        metadata.put("Zoom", data);
+        addMeta("Zoom", data);
         break;
       case 2196:
-        metadata.put("ZoomGoSpeed", data);
+        addMeta("ZoomGoSpeed", data);
         break;
       case 2197:
-        metadata.put("LightZoom", data);
+        addMeta("LightZoom", data);
         break;
       case 2198:
-        metadata.put("LightZoomGoSpeed", data);
+        addMeta("LightZoomGoSpeed", data);
         break;
       case 2199:
-        metadata.put("LightZoomCoupled", data);
+        addMeta("LightZoomCoupled", data);
         break;
       case 2200:
-        metadata.put("TransmittedLightHalogenLampMode", data);
+        addMeta("TransmittedLightHalogenLampMode", data);
         break;
       case 2201:
-        metadata.put("TransmittedLightHalogenLampVoltage", data);
+        addMeta("TransmittedLightHalogenLampVoltage", data);
         break;
       case 2202:
-        metadata.put("TransmittedLightHalogenLampColorTemperature", data);
+        addMeta("TransmittedLightHalogenLampColorTemperature", data);
         break;
       case 2203:
-        metadata.put("Reflected Coldlight Mode", data);
+        addMeta("Reflected Coldlight Mode", data);
         break;
       case 2204:
-        metadata.put("Reflected Coldlight Intensity", data);
+        addMeta("Reflected Coldlight Intensity", data);
         break;
       case 2205:
-        metadata.put("Reflected Coldlight Color Temperature", data);
+        addMeta("Reflected Coldlight Color Temperature", data);
         break;
       case 2206:
-        metadata.put("Transmitted Coldlight Mode", data);
+        addMeta("Transmitted Coldlight Mode", data);
         break;
       case 2207:
-        metadata.put("Transmitted Coldlight Intensity", data);
+        addMeta("Transmitted Coldlight Intensity", data);
         break;
       case 2208:
-        metadata.put("Transmitted Coldlight Color Temperature", data);
+        addMeta("Transmitted Coldlight Color Temperature", data);
         break;
       case 2209:
-        metadata.put("Infinityspace Portchanger Position", data);
+        addMeta("Infinityspace Portchanger Position", data);
         break;
       case 2210:
-        metadata.put("Beamsplitter Infinity Space", data);
+        addMeta("Beamsplitter Infinity Space", data);
         break;
       case 2211:
-        metadata.put("TwoTv VisCamChanger Position", data);
+        addMeta("TwoTv VisCamChanger Position", data);
         break;
       case 2212:
-        metadata.put("Beamsplitter Ocular", data);
+        addMeta("Beamsplitter Ocular", data);
         break;
       case 2213:
-        metadata.put("TwoTv CamerasChanger Position", data);
+        addMeta("TwoTv CamerasChanger Position", data);
         break;
       case 2214:
-        metadata.put("Beamsplitter Cameras", data);
+        addMeta("Beamsplitter Cameras", data);
         break;
       case 2215:
-        metadata.put("Ocular Shutter", data);
+        addMeta("Ocular Shutter", data);
         break;
       case 2216:
-        metadata.put("TwoTv CamerasChangerCube", data);
+        addMeta("TwoTv CamerasChangerCube", data);
         break;
       case 2218:
-        metadata.put("Ocular Magnification", data);
+        addMeta("Ocular Magnification", data);
         break;
       case 2219:
-        metadata.put("Camera Adapter Magnification", data);
+        addMeta("Camera Adapter Magnification", data);
         break;
       case 2220:
-        metadata.put("Microscope Port", data);
+        addMeta("Microscope Port", data);
         break;
       case 2221:
-        metadata.put("Ocular Total Magnification", data);
+        addMeta("Ocular Total Magnification", data);
         break;
       case 2222:
-        metadata.put("Field of View", data);
+        addMeta("Field of View", data);
         break;
       case 2223:
-        metadata.put("Ocular", data);
+        addMeta("Ocular", data);
         break;
       case 2224:
-        metadata.put("CameraAdapter", data);
+        addMeta("CameraAdapter", data);
         break;
       case 2225:
-        metadata.put("StageJoystickEnabled", data);
+        addMeta("StageJoystickEnabled", data);
         break;
       case 2226:
-        metadata.put("ContrastManager Contrast Method", data);
+        addMeta("ContrastManager Contrast Method", data);
         break;
       case 2229:
-        metadata.put("CamerasChanger Beamsplitter Type", data);
+        addMeta("CamerasChanger Beamsplitter Type", data);
         break;
       case 2235:
-        metadata.put("Rearport Slider Position", data);
+        addMeta("Rearport Slider Position", data);
         break;
       case 2236:
-        metadata.put("Rearport Source", data);
+        addMeta("Rearport Source", data);
         break;
       case 2237:
-        metadata.put("Beamsplitter Type Infinity Space", data);
+        addMeta("Beamsplitter Type Infinity Space", data);
         break;
       case 2238:
-        metadata.put("Fluorescence Attenuator", data);
+        addMeta("Fluorescence Attenuator", data);
         break;
       case 2239:
-        metadata.put("Fluorescence Attenuator Position", data);
+        addMeta("Fluorescence Attenuator Position", data);
         break;
       case 2261:
-        metadata.put("Objective ID", data);
+        addMeta("Objective ID", data);
         break;
       case 2262:
-        metadata.put("Reflector ID", data);
+        addMeta("Reflector ID", data);
         break;
       case 2307:
-        metadata.put("Camera Framestart Left", data);
+        addMeta("Camera Framestart Left", data);
         break;
       case 2308:
-        metadata.put("Camera Framestart Top", data);
+        addMeta("Camera Framestart Top", data);
         break;
       case 2309:
-        metadata.put("Camera Frame Width", data);
+        addMeta("Camera Frame Width", data);
         break;
       case 2310:
-        metadata.put("Camera Frame Height", data);
+        addMeta("Camera Frame Height", data);
         break;
       case 2311:
-        metadata.put("Camera Binning", data);
+        addMeta("Camera Binning", data);
         break;
       case 2312:
-        metadata.put("CameraFrameFull", data);
+        addMeta("CameraFrameFull", data);
         break;
       case 2313:
-        metadata.put("CameraFramePixelDistance", data);
+        addMeta("CameraFramePixelDistance", data);
         break;
       case 2318:
-        metadata.put("DataFormatUseScaling", data);
+        addMeta("DataFormatUseScaling", data);
         break;
       case 2319:
-        metadata.put("CameraFrameImageOrientation", data);
+        addMeta("CameraFrameImageOrientation", data);
         break;
       case 2320:
-        metadata.put("VideoMonochromeSignalType", data);
+        addMeta("VideoMonochromeSignalType", data);
         break;
       case 2321:
-        metadata.put("VideoColorSignalType", data);
+        addMeta("VideoColorSignalType", data);
         break;
       case 2322:
-        metadata.put("MeteorChannelInput", data);
+        addMeta("MeteorChannelInput", data);
         break;
       case 2323:
-        metadata.put("MeteorChannelSync", data);
+        addMeta("MeteorChannelSync", data);
         break;
       case 2324:
-        metadata.put("WhiteBalanceEnabled", data);
+        addMeta("WhiteBalanceEnabled", data);
         break;
       case 2325:
-        metadata.put("CameraWhiteBalanceRed", data);
+        addMeta("CameraWhiteBalanceRed", data);
         break;
       case 2326:
-        metadata.put("CameraWhiteBalanceGreen", data);
+        addMeta("CameraWhiteBalanceGreen", data);
         break;
       case 2327:
-        metadata.put("CameraWhiteBalanceBlue", data);
+        addMeta("CameraWhiteBalanceBlue", data);
         break;
       case 2331:
-        metadata.put("CameraFrameScalingFactor", data);
+        addMeta("CameraFrameScalingFactor", data);
         break;
       case 2562:
-        metadata.put("Meteor Camera Type", data);
+        addMeta("Meteor Camera Type", data);
         break;
       case 2564:
-        metadata.put("Exposure Time [ms]", data);
+        addMeta("Exposure Time [ms]", data);
         break;
       case 2568:
-        metadata.put("CameraExposureTimeAutoCalculate", data);
+        addMeta("CameraExposureTimeAutoCalculate", data);
         break;
       case 2569:
-        metadata.put("Meteor Gain Value", data);
+        addMeta("Meteor Gain Value", data);
         break;
       case 2571:
-        metadata.put("Meteor Gain Automatic", data);
+        addMeta("Meteor Gain Automatic", data);
         break;
       case 2572:
-        metadata.put("MeteorAdjustHue", data);
+        addMeta("MeteorAdjustHue", data);
         break;
       case 2573:
-        metadata.put("MeteorAdjustSaturation", data);
+        addMeta("MeteorAdjustSaturation", data);
         break;
       case 2574:
-        metadata.put("MeteorAdjustRedLow", data);
+        addMeta("MeteorAdjustRedLow", data);
         break;
       case 2575:
-        metadata.put("MeteorAdjustGreenLow", data);
+        addMeta("MeteorAdjustGreenLow", data);
         break;
       case 2576:
-        metadata.put("Meteor Blue Low", data);
+        addMeta("Meteor Blue Low", data);
         break;
       case 2577:
-        metadata.put("MeteorAdjustRedHigh", data);
+        addMeta("MeteorAdjustRedHigh", data);
         break;
       case 2578:
-        metadata.put("MeteorAdjustGreenHigh", data);
+        addMeta("MeteorAdjustGreenHigh", data);
         break;
       case 2579:
-        metadata.put("MeteorBlue High", data);
+        addMeta("MeteorBlue High", data);
         break;
       case 2582:
-        metadata.put("CameraExposureTimeCalculationControl", data);
+        addMeta("CameraExposureTimeCalculationControl", data);
         break;
       case 2585:
-        metadata.put("AxioCamFadingCorrectionEnable", data);
+        addMeta("AxioCamFadingCorrectionEnable", data);
         break;
       case 2587:
-        metadata.put("CameraLiveImage", data);
+        addMeta("CameraLiveImage", data);
         break;
       case 2588:
-        metadata.put("CameraLiveEnabled", data);
+        addMeta("CameraLiveEnabled", data);
         break;
       case 2589:
-        metadata.put("LiveImageSyncObjectName", data);
+        addMeta("LiveImageSyncObjectName", data);
         break;
       case 2590:
-        metadata.put("CameraLiveSpeed", data);
+        addMeta("CameraLiveSpeed", data);
         break;
       case 2591:
-        metadata.put("CameraImage", data);
+        addMeta("CameraImage", data);
         break;
       case 2592:
-        metadata.put("CameraImageWidth", data);
+        addMeta("CameraImageWidth", data);
         break;
       case 2593:
-        metadata.put("CameraImageHeight", data);
+        addMeta("CameraImageHeight", data);
         break;
       case 2594:
-        metadata.put("CameraImagePixelType", data);
+        addMeta("CameraImagePixelType", data);
         break;
       case 2595:
-        metadata.put("CameraImageShMemoryName", data);
+        addMeta("CameraImageShMemoryName", data);
         break;
       case 2596:
-        metadata.put("CameraLiveImageWidth", data);
+        addMeta("CameraLiveImageWidth", data);
         break;
       case 2597:
-        metadata.put("CameraLiveImageHeight", data);
+        addMeta("CameraLiveImageHeight", data);
         break;
       case 2598:
-        metadata.put("CameraLiveImagePixelType", data);
+        addMeta("CameraLiveImagePixelType", data);
         break;
       case 2599:
-        metadata.put("CameraLiveImageShMemoryName", data);
+        addMeta("CameraLiveImageShMemoryName", data);
         break;
       case 2600:
-        metadata.put("CameraLiveMaximumSpeed", data);
+        addMeta("CameraLiveMaximumSpeed", data);
         break;
       case 2601:
-        metadata.put("CameraLiveBinning", data);
+        addMeta("CameraLiveBinning", data);
         break;
       case 2602:
-        metadata.put("CameraLiveGainValue", data);
+        addMeta("CameraLiveGainValue", data);
         break;
       case 2603:
-        metadata.put("CameraLiveExposureTimeValue", data);
+        addMeta("CameraLiveExposureTimeValue", data);
         break;
       case 2604:
-        metadata.put("CameraLiveScalingFactor", data);
+        addMeta("CameraLiveScalingFactor", data);
         break;
       case 2819:
-        metadata.put("Image Index Z", data);
+        addMeta("Image Index Z", data);
         break;
       case 2820:
-        metadata.put("Image Channel Index", data);
+        addMeta("Image Channel Index", data);
         break;
       case 2821:
-        metadata.put("Image Index T", data);
+        addMeta("Image Index T", data);
         break;
       case 2822:
-        metadata.put("ImageTile Index", data);
+        addMeta("ImageTile Index", data);
         break;
       case 2823:
-        metadata.put("Image acquisition Index", data);
+        addMeta("Image acquisition Index", data);
         break;
       case 2827:
-        metadata.put("Image IndexS", data);
+        addMeta("Image IndexS", data);
         break;
       case 2841:
-        metadata.put("Original Stage Position X", data);
+        addMeta("Original Stage Position X", data);
         break;
       case 2842:
-        metadata.put("Original Stage Position Y", data);
+        addMeta("Original Stage Position Y", data);
         break;
       case 3088:
-        metadata.put("LayerDrawFlags", data);
+        addMeta("LayerDrawFlags", data);
         break;
       case 3334:
-        metadata.put("RemainingTime", data);
+        addMeta("RemainingTime", data);
         break;
       case 3585:
-        metadata.put("User Field 1", data);
+        addMeta("User Field 1", data);
         break;
       case 3586:
-        metadata.put("User Field 2", data);
+        addMeta("User Field 2", data);
         break;
       case 3587:
-        metadata.put("User Field 3", data);
+        addMeta("User Field 3", data);
         break;
       case 3588:
-        metadata.put("User Field 4", data);
+        addMeta("User Field 4", data);
         break;
       case 3589:
-        metadata.put("User Field 5", data);
+        addMeta("User Field 5", data);
         break;
       case 3590:
-        metadata.put("User Field 6", data);
+        addMeta("User Field 6", data);
         break;
       case 3591:
-        metadata.put("User Field 7", data);
+        addMeta("User Field 7", data);
         break;
       case 3592:
-        metadata.put("User Field 8", data);
+        addMeta("User Field 8", data);
         break;
       case 3593:
-        metadata.put("User Field 9", data);
+        addMeta("User Field 9", data);
         break;
       case 3594:
-        metadata.put("User Field 10", data);
+        addMeta("User Field 10", data);
         break;
       case 3840:
-        metadata.put("ID", data);
+        addMeta("ID", data);
         break;
       case 3841:
-        metadata.put("Name", data);
+        addMeta("Name", data);
         break;
       case 3842:
-        metadata.put("Value", data);
+        addMeta("Value", data);
         break;
       case 5501:
-        metadata.put("PvCamClockingMode", data);
+        addMeta("PvCamClockingMode", data);
         break;
       case 8193:
-        metadata.put("Autofocus Status Report", data);
+        addMeta("Autofocus Status Report", data);
         break;
       case 8194:
-        metadata.put("Autofocus Position", data);
+        addMeta("Autofocus Position", data);
         break;
       case 8195:
-        metadata.put("Autofocus Position Offset", data);
+        addMeta("Autofocus Position Offset", data);
         break;
       case 8196:
-        metadata.put("Autofocus Empty Field Threshold", data);
+        addMeta("Autofocus Empty Field Threshold", data);
         break;
       case 8197:
-        metadata.put("Autofocus Calibration Name", data);
+        addMeta("Autofocus Calibration Name", data);
         break;
       case 8198:
-        metadata.put("Autofocus Current Calibration Item", data);
+        addMeta("Autofocus Current Calibration Item", data);
         break;
       case 20478:
-        metadata.put("tag_ID_20478", data);
+        addMeta("tag_ID_20478", data);
         break;
       case 65537:
-        metadata.put("CameraFrameFullWidth", data);
+        addMeta("CameraFrameFullWidth", data);
         break;
       case 65538:
-        metadata.put("CameraFrameFullHeight", data);
+        addMeta("CameraFrameFullHeight", data);
         break;
       case 65541:
-        metadata.put("AxioCam Shutter Signal", data);
+        addMeta("AxioCam Shutter Signal", data);
         break;
       case 65542:
-        metadata.put("AxioCam Delay Time", data);
+        addMeta("AxioCam Delay Time", data);
         break;
       case 65543:
-        metadata.put("AxioCam Shutter Control", data);
+        addMeta("AxioCam Shutter Control", data);
         break;
       case 65544:
-        metadata.put("AxioCam BlackRefIsCalculated", data);
+        addMeta("AxioCam BlackRefIsCalculated", data);
         break;
       case 65545:
-        metadata.put("AxioCam Black Reference", data);
+        addMeta("AxioCam Black Reference", data);
         break;
       case 65547:
-        metadata.put("Camera Shading Correction", data);
+        addMeta("Camera Shading Correction", data);
         break;
       case 65550:
-        metadata.put("AxioCam Enhance Color", data);
+        addMeta("AxioCam Enhance Color", data);
         break;
       case 65551:
-        metadata.put("AxioCam NIR Mode", data);
+        addMeta("AxioCam NIR Mode", data);
         break;
       case 65552:
-        metadata.put("CameraShutterCloseDelay", data);
+        addMeta("CameraShutterCloseDelay", data);
         break;
       case 65553:
-        metadata.put("CameraWhiteBalanceAutoCalculate", data);
+        addMeta("CameraWhiteBalanceAutoCalculate", data);
         break;
       case 65556:
-        metadata.put("AxioCam NIR Mode Available", data);
+        addMeta("AxioCam NIR Mode Available", data);
         break;
       case 65557:
-        metadata.put("AxioCam Fading Correction Available", data);
+        addMeta("AxioCam Fading Correction Available", data);
         break;
       case 65559:
-        metadata.put("AxioCam Enhance Color Available", data);
+        addMeta("AxioCam Enhance Color Available", data);
         break;
       case 65565:
-        metadata.put("MeteorVideoNorm", data);
+        addMeta("MeteorVideoNorm", data);
         break;
       case 65566:
-        metadata.put("MeteorAdjustWhiteReference", data);
+        addMeta("MeteorAdjustWhiteReference", data);
         break;
       case 65567:
-        metadata.put("MeteorBlackReference", data);
+        addMeta("MeteorBlackReference", data);
         break;
       case 65568:
-        metadata.put("MeteorChannelInputCountMono", data);
+        addMeta("MeteorChannelInputCountMono", data);
         break;
       case 65570:
-        metadata.put("MeteorChannelInputCountRGB", data);
+        addMeta("MeteorChannelInputCountRGB", data);
         break;
       case 65571:
-        metadata.put("MeteorEnableVCR", data);
+        addMeta("MeteorEnableVCR", data);
         break;
       case 65572:
-        metadata.put("Meteor Brightness", data);
+        addMeta("Meteor Brightness", data);
         break;
       case 65573:
-        metadata.put("Meteor Contrast", data);
+        addMeta("Meteor Contrast", data);
         break;
       case 65575:
-        metadata.put("AxioCam Selector", data);
+        addMeta("AxioCam Selector", data);
         break;
       case 65576:
-        metadata.put("AxioCam Type", data);
+        addMeta("AxioCam Type", data);
         break;
       case 65577:
-        metadata.put("AxioCam Info", data);
+        addMeta("AxioCam Info", data);
         break;
       case 65580:
-        metadata.put("AxioCam Resolution", data);
+        addMeta("AxioCam Resolution", data);
         break;
       case 65581:
-        metadata.put("AxioCam Color Model", data);
+        addMeta("AxioCam Color Model", data);
         break;
       case 65582:
-        metadata.put("AxioCam MicroScanning", data);
+        addMeta("AxioCam MicroScanning", data);
         break;
       case 65585:
-        metadata.put("Amplification Index", data);
+        addMeta("Amplification Index", data);
         break;
       case 65586:
-        metadata.put("Device Command", data);
+        addMeta("Device Command", data);
         break;
       case 65587:
-        metadata.put("BeamLocation", data);
+        addMeta("BeamLocation", data);
         break;
       case 65588:
-        metadata.put("ComponentType", data);
+        addMeta("ComponentType", data);
         break;
       case 65589:
-        metadata.put("ControllerType", data);
+        addMeta("ControllerType", data);
         break;
       case 65590:
-        metadata.put("CameraWhiteBalanceCalculationRedPaint", data);
+        addMeta("CameraWhiteBalanceCalculationRedPaint", data);
         break;
       case 65591:
-        metadata.put("CameraWhiteBalanceCalculationBluePaint", data);
+        addMeta("CameraWhiteBalanceCalculationBluePaint", data);
         break;
       case 65592:
-        metadata.put("CameraWhiteBalanceSetRed", data);
+        addMeta("CameraWhiteBalanceSetRed", data);
         break;
       case 65593:
-        metadata.put("CameraWhiteBalanceSetGreen", data);
+        addMeta("CameraWhiteBalanceSetGreen", data);
         break;
       case 65594:
-        metadata.put("CameraWhiteBalanceSetBlue", data);
+        addMeta("CameraWhiteBalanceSetBlue", data);
         break;
       case 65595:
-        metadata.put("CameraWhiteBalanceSetTargetRed", data);
+        addMeta("CameraWhiteBalanceSetTargetRed", data);
         break;
       case 65596:
-        metadata.put("CameraWhiteBalanceSetTargetGreen", data);
+        addMeta("CameraWhiteBalanceSetTargetGreen", data);
         break;
       case 65597:
-        metadata.put("CameraWhiteBalanceSetTargetBlue", data);
+        addMeta("CameraWhiteBalanceSetTargetBlue", data);
         break;
       case 65598:
-        metadata.put("ApotomeCamCalibrationMode", data);
+        addMeta("ApotomeCamCalibrationMode", data);
         break;
       case 65599:
-        metadata.put("ApoTome Grid Position", data);
+        addMeta("ApoTome Grid Position", data);
         break;
       case 65600:
-        metadata.put("ApotomeCamScannerPosition", data);
+        addMeta("ApotomeCamScannerPosition", data);
         break;
       case 65601:
-        metadata.put("ApoTome Full Phase Shift", data);
+        addMeta("ApoTome Full Phase Shift", data);
         break;
       case 65602:
-        metadata.put("ApoTome Grid Name", data);
+        addMeta("ApoTome Grid Name", data);
         break;
       case 65603:
-        metadata.put("ApoTome Staining", data);
+        addMeta("ApoTome Staining", data);
         break;
       case 65604:
-        metadata.put("ApoTome Processing Mode", data);
+        addMeta("ApoTome Processing Mode", data);
         break;
       case 65605:
-        metadata.put("ApotmeCamLiveCombineMode", data);
+        addMeta("ApotmeCamLiveCombineMode", data);
         break;
       case 65606:
-        metadata.put("ApoTome Filter Name", data);
+        addMeta("ApoTome Filter Name", data);
         break;
       case 65607:
-        metadata.put("Apotome Filter Strength", data);
+        addMeta("Apotome Filter Strength", data);
         break;
       case 65608:
-        metadata.put("ApotomeCamFilterHarmonics", data);
+        addMeta("ApotomeCamFilterHarmonics", data);
         break;
       case 65609:
-        metadata.put("ApoTome Grating Period", data);
+        addMeta("ApoTome Grating Period", data);
         break;
       case 65610:
-        metadata.put("ApoTome Auto Shutter Used", data);
+        addMeta("ApoTome Auto Shutter Used", data);
         break;
       case 65611:
-        metadata.put("Apotome Cam Status", data);
+        addMeta("Apotome Cam Status", data);
         break;
       case 65612:
-        metadata.put("ApotomeCamNormalize", data);
+        addMeta("ApotomeCamNormalize", data);
         break;
       case 65613:
-        metadata.put("ApotomeCamSettingsManager", data);
+        addMeta("ApotomeCamSettingsManager", data);
         break;
       case 65614:
-        metadata.put("DeepviewCamSupervisorMode", data);
+        addMeta("DeepviewCamSupervisorMode", data);
         break;
       case 65615:
-        metadata.put("DeepView Processing", data);
+        addMeta("DeepView Processing", data);
         break;
       case 65616:
-        metadata.put("DeepviewCamFilterName", data);
+        addMeta("DeepviewCamFilterName", data);
         break;
       case 65617:
-        metadata.put("DeepviewCamStatus", data);
+        addMeta("DeepviewCamStatus", data);
         break;
       case 65618:
-        metadata.put("DeepviewCamSettingsManager", data);
+        addMeta("DeepviewCamSettingsManager", data);
         break;
       case 65619:
-        metadata.put("DeviceScalingName", data);
+        addMeta("DeviceScalingName", data);
         break;
       case 65620:
-        metadata.put("CameraShadingIsCalculated", data);
+        addMeta("CameraShadingIsCalculated", data);
         break;
       case 65621:
-        metadata.put("CameraShadingCalculationName", data);
+        addMeta("CameraShadingCalculationName", data);
         break;
       case 65622:
-        metadata.put("CameraShadingAutoCalculate", data);
+        addMeta("CameraShadingAutoCalculate", data);
         break;
       case 65623:
-        metadata.put("CameraTriggerAvailable", data);
+        addMeta("CameraTriggerAvailable", data);
         break;
       case 65626:
-        metadata.put("CameraShutterAvailable", data);
+        addMeta("CameraShutterAvailable", data);
         break;
       case 65627:
-        metadata.put("AxioCam ShutterMicroScanningEnable", data);
+        addMeta("AxioCam ShutterMicroScanningEnable", data);
         break;
       case 65628:
-        metadata.put("ApotomeCamLiveFocus", data);
+        addMeta("ApotomeCamLiveFocus", data);
         break;
       case 65629:
-        metadata.put("DeviceInitStatus", data);
+        addMeta("DeviceInitStatus", data);
         break;
       case 65630:
-        metadata.put("DeviceErrorStatus", data);
+        addMeta("DeviceErrorStatus", data);
         break;
       case 65631:
-        metadata.put("ApotomeCamSliderInGridPosition", data);
+        addMeta("ApotomeCamSliderInGridPosition", data);
         break;
       case 65632:
-        metadata.put("Orca NIR Mode Used", data);
+        addMeta("Orca NIR Mode Used", data);
         break;
       case 65633:
-        metadata.put("Orca Analog Gain", data);
+        addMeta("Orca Analog Gain", data);
         break;
       case 65634:
-        metadata.put("Orca Analog Offset", data);
+        addMeta("Orca Analog Offset", data);
         break;
       case 65635:
-        metadata.put("Orca Binning", data);
+        addMeta("Orca Binning", data);
         break;
       case 65636:
-        metadata.put("Orca Bit Depth", data);
+        addMeta("Orca Bit Depth", data);
         break;
       case 65637:
-        metadata.put("ApoTome Averaging Count", data);
+        addMeta("ApoTome Averaging Count", data);
         break;
       case 65638:
-        metadata.put("DeepView DoF", data);
+        addMeta("DeepView DoF", data);
         break;
       case 65639:
-        metadata.put("DeepView EDoF", data);
+        addMeta("DeepView EDoF", data);
         break;
       case 65643:
-        metadata.put("DeepView Slider Name", data);
+        addMeta("DeepView Slider Name", data);
         break;
       case 65655:
-        metadata.put("DeepView Slider Name", data);
+        addMeta("DeepView Slider Name", data);
         break;
       case 5439491:
-        metadata.put("Acquisition Sofware", data);
+        addMeta("Acquisition Sofware", data);
         break;
       case 16777488:
-        metadata.put("Excitation Wavelength", data);
+        addMeta("Excitation Wavelength", data);
         break;
       case 16777489:
-        metadata.put("Emission Wavelength", data);
+        addMeta("Emission Wavelength", data);
         break;
       case 101515267:
-        metadata.put("File Name", data);
+        addMeta("File Name", data);
         break;
       case 101253123:
       case 101777411:
-        metadata.put("Image Name", data);
+        addMeta("Image Name", data);
         break;
       default:
-        metadata.put("" + tagID, data);
+        addMeta("" + tagID, data);
     }
   }
 

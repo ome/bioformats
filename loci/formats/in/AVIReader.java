@@ -257,18 +257,18 @@ public class AVIReader extends FormatReader {
                 dwStart = in.readInt();
                 dwLength = in.readInt();
 
-                metadata.put("Microseconds per frame",
+                addMeta("Microseconds per frame",
                   new Integer(dwMicroSecPerFrame));
-                metadata.put("Max. bytes per second",
+                addMeta("Max. bytes per second",
                   new Integer(dwMaxBytesPerSec));
-                metadata.put("Total frames", new Integer(dwTotalFrames));
-                metadata.put("Initial frames", new Integer(dwInitialFrames));
-                metadata.put("Frame width", new Integer(dwWidth));
-                metadata.put("Frame height", new Integer(dwHeight));
-                metadata.put("Scale factor", new Integer(dwScale));
-                metadata.put("Frame rate", new Integer(dwRate));
-                metadata.put("Start time", new Integer(dwStart));
-                metadata.put("Length", new Integer(dwLength));
+                addMeta("Total frames", new Integer(dwTotalFrames));
+                addMeta("Initial frames", new Integer(dwInitialFrames));
+                addMeta("Frame width", new Integer(dwWidth));
+                addMeta("Frame height", new Integer(dwHeight));
+                addMeta("Scale factor", new Integer(dwScale));
+                addMeta("Frame rate", new Integer(dwRate));
+                addMeta("Start time", new Integer(dwStart));
+                addMeta("Length", new Integer(dwLength));
 
                 try {
                   in.seek((int) (spos + size));
@@ -316,9 +316,8 @@ public class AVIReader extends FormatReader {
                 dwStreamQuality = in.readInt();
                 dwStreamSampleSize = in.readInt();
 
-                metadata.put("Stream quality", new Integer(dwStreamQuality));
-                metadata.put("Stream sample size",
-                  new Integer(dwStreamSampleSize));
+                addMeta("Stream quality", new Integer(dwStreamQuality));
+                addMeta("Stream sample size", new Integer(dwStreamSampleSize));
 
                 try {
                   in.seek((int) (spos + size));
@@ -349,15 +348,15 @@ public class AVIReader extends FormatReader {
                 bmpTopDown = (bmpHeight < 0);
                 bmpNoOfPixels = bmpWidth * bmpHeight;
 
-                metadata.put("Bitmap compression value",
+                addMeta("Bitmap compression value",
                   new Integer(bmpCompression));
-                metadata.put("Horizontal resolution",
+                addMeta("Horizontal resolution",
                   new Integer(bmpHorzResolution));
-                metadata.put("Vertical resolution",
+                addMeta("Vertical resolution",
                   new Integer(bmpVertResolution));
-                metadata.put("Number of colors used",
+                addMeta("Number of colors used",
                   new Integer(bmpColorsUsed));
-                metadata.put("Bits per pixel", new Integer(bmpBitsPerPixel));
+                addMeta("Bits per pixel", new Integer(bmpBitsPerPixel));
 
                 // scan line is padded with zeros to be a multiple of 4 bytes
                 int npad = bmpWidth % 4;
@@ -531,7 +530,7 @@ public class AVIReader extends FormatReader {
 
   /** Initialize the OME-XML tree. */
   public void initOMEMetadata() throws FormatException, IOException {
-    int bitsPerPixel = ((Integer) metadata.get("Bits per pixel")).intValue();
+    int bitsPerPixel = ((Integer) getMeta("Bits per pixel")).intValue();
     int bytesPerPixel = bitsPerPixel / 8;
 
     if (bitsPerPixel == 8) pixelType[0] = FormatReader.UINT8;
@@ -547,8 +546,8 @@ public class AVIReader extends FormatReader {
     else order += "TCZ";
 
     getMetadataStore(currentId).setPixels(
-      (Integer) metadata.get("Frame width"), // SizeX
-      (Integer) metadata.get("Frame height"), // SizeY
+      (Integer) getMeta("Frame width"), // SizeX
+      (Integer) getMeta("Frame height"), // SizeY
       new Integer(1), // SizeZ
       new Integer(bytesPerPixel), // SizeC
       new Integer(numImages), // SizeT

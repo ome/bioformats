@@ -74,7 +74,7 @@ public class FluoviewReader extends BaseTiffReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    String s = (String) metadata.get("Map Ch" + theC + ": Range");
+    String s = (String) getMeta("Map Ch" + theC + ": Range");
     s = s.substring(0, s.indexOf("to") - 1).trim();
     return new Double(Integer.parseInt(s));
   }
@@ -84,7 +84,7 @@ public class FluoviewReader extends BaseTiffReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    String s = (String) metadata.get("Map Ch" + theC + ": Range");
+    String s = (String) getMeta("Map Ch" + theC + ": Range");
     s = s.substring(s.indexOf("to") + 2).trim();
     return new Double(Integer.parseInt(s));
   }
@@ -243,7 +243,7 @@ public class FluoviewReader extends BaseTiffReader {
       store.setStageLabel(null, new Float(stageX), new Float(stageY),
         new Float(stageZ), null);
 
-      String descr = (String) metadata.get("Comment");
+      String descr = (String) getMeta("Comment");
       metadata.remove("Comment");
 
       // strip LUT data from image description
@@ -274,16 +274,16 @@ public class FluoviewReader extends BaseTiffReader {
       while(eqIndex != -1) {
         key = descr.substring(0, eqIndex);
         value = descr.substring(eqIndex+1, descr.indexOf("\n", eqIndex));
-        metadata.put(key.trim(), value.trim());
+        addMeta(key.trim(), value.trim());
         descr = descr.substring(descr.indexOf("\n", eqIndex));
         eqIndex = descr.indexOf("=");
       }
 
       // finally, set descr to be the value of "FLUOVIEW Version"
 
-      descr = (String) metadata.get("FLUOVIEW Version");
+      descr = (String) getMeta("FLUOVIEW Version");
       if (descr == null) {
-        descr = (String) metadata.get("File Version");
+        descr = (String) getMeta("File Version");
       }
       store.setImage(imageName, null, descr, null);
 
@@ -377,8 +377,7 @@ public class FluoviewReader extends BaseTiffReader {
 
       // set the number of valid bits per pixel
 
-      String bits = (String)
-        metadata.get("Map Ch" + (sizeC[0] - 1) + ": Range");
+      String bits = (String) getMeta("Map Ch" + (sizeC[0] - 1) + ": Range");
       int[] validBits = null;
       int vb = -1;
       if (bits != null && bits.length() > 0) {

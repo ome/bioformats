@@ -92,7 +92,7 @@ public class OIFReader extends FormatReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    return metadata.get(field);
+    return getMeta(field);
   }
 
   /** Checks if the images in the file are RGB. */
@@ -119,7 +119,7 @@ public class OIFReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return new Double((String) metadata.get("[Image Parameters] - DataMin"));
+    return new Double((String) getMeta("[Image Parameters] - DataMin"));
   }
 
   /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
@@ -127,7 +127,7 @@ public class OIFReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return new Double((String) metadata.get("[Image Parameters] - DataMax"));
+    return new Double((String) getMeta("[Image Parameters] - DataMax"));
   }
 
   /** Obtains the specified image from the given OIF file as a byte array. */
@@ -276,7 +276,7 @@ public class OIFReader extends FormatReader {
           int pos = Integer.parseInt(key.substring(11));
           filenames.put(new Integer(pos), value);
         }
-        metadata.put(prefix + key, value);
+        addMeta(prefix + key, value);
       }
       else if (line.length() > 0) {
         if (line.indexOf("[") == 2) {
@@ -322,7 +322,7 @@ public class OIFReader extends FormatReader {
             value = value.substring(1, value.length() - 1);
             tiffs.add(i, tiffPath + File.separator + value);
           }
-          metadata.put("Image " + i + " : " + key, value);
+          addMeta("Image " + i + " : " + key, value);
         }
       }
       ptyReader.close();
@@ -330,8 +330,8 @@ public class OIFReader extends FormatReader {
 
     for (int i=0; i<9; i++) {
       String pre = "[Axis " + i + " Parameters Common] - ";
-      String code = (String) metadata.get(pre + "AxisCode");
-      String size = (String) metadata.get(pre + "MaxSize");
+      String code = (String) getMeta(pre + "AxisCode");
+      String size = (String) getMeta(pre + "MaxSize");
       if (code.equals("\"X\"")) sizeX[0] = Integer.parseInt(size);
       else if (code.equals("\"Y\"")) sizeY[0] = Integer.parseInt(size);
       else if (code.equals("\"C\"")) sizeC[0] = Integer.parseInt(size);
@@ -348,8 +348,8 @@ public class OIFReader extends FormatReader {
       else if (sizeT[0] == 1) sizeZ[0]++;
     }
 
-    String metadataOrder =
-      (String) metadata.get("[Axis Parameter Common] - AxisOrder");
+    String metadataOrder = (String)
+      getMeta("[Axis Parameter Common] - AxisOrder");
     metadataOrder = metadataOrder.substring(1, metadataOrder.length() - 1);
     if (metadataOrder == null) metadataOrder = "XYZTC";
     else {
@@ -365,8 +365,8 @@ public class OIFReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(oifFile);
 
-    int imageDepth = Integer.parseInt(
-      (String) metadata.get("[Reference Image Parameter] - ImageDepth"));
+    int imageDepth = Integer.parseInt((String)
+      getMeta("[Reference Image Parameter] - ImageDepth"));
     switch (imageDepth) {
       case 1:
         pixelType[0] = FormatReader.UINT8;
@@ -385,7 +385,7 @@ public class OIFReader extends FormatReader {
     validBits = new int[sizeC[0]];
     if (validBits.length == 2) validBits = new int[3];
     for (int i=0; i<validBits.length; i++) {
-      s = (String) metadata.get("[Reference Image Parameter] - ValidBitCounts");
+      s = (String) getMeta("[Reference Image Parameter] - ValidBitCounts");
       if (s != null) {
         validBits[i] = Integer.parseInt(s);
       }
@@ -411,9 +411,9 @@ public class OIFReader extends FormatReader {
       null);
 
     Float pixX = new Float((String)
-      metadata.get("[Reference Image Parameter] - WidthConvertValue"));
+      getMeta("[Reference Image Parameter] - WidthConvertValue"));
     Float pixY = new Float((String)
-      metadata.get("[Reference Image Parameter] - HeightConvertValue"));
+      getMeta("[Reference Image Parameter] - HeightConvertValue"));
 
     store.setDimensions(pixX, pixY, null, null, null, null);
   }

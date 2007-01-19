@@ -152,7 +152,7 @@ public class OpenlabRawReader extends FormatReader {
     }
 
     int version = in.readInt();
-    metadata.put("Version", new Integer(version));
+    addMeta("Version", new Integer(version));
 
     numImages = in.readInt();
     offsets = new int[numImages];
@@ -167,15 +167,15 @@ public class OpenlabRawReader extends FormatReader {
 
     if (channels <= 1) channels = 1;
     else channels = 3;
-    metadata.put("Width", new Integer(width));
-    metadata.put("Height", new Integer(height));
-    metadata.put("Bytes per pixel", new Integer(bytesPerPixel));
+    addMeta("Width", new Integer(width));
+    addMeta("Height", new Integer(height));
+    addMeta("Bytes per pixel", new Integer(bytesPerPixel));
 
     for (int i=1; i<numImages; i++) {
       offsets[i] = offsets[i-1] + 288 + width*height*bytesPerPixel;
     }
 
-    bytesPerPixel = ((Integer) metadata.get("Bytes per pixel")).intValue();
+    bytesPerPixel = ((Integer) getMeta("Bytes per pixel")).intValue();
 
     sizeX[0] = width;
     sizeY[0] = height;
@@ -202,8 +202,8 @@ public class OpenlabRawReader extends FormatReader {
     }
 
     store.setPixels(
-      (Integer) metadata.get("Width"),
-      (Integer) metadata.get("Height"),
+      (Integer) getMeta("Width"),
+      (Integer) getMeta("Height"),
       new Integer(numImages),
       new Integer(channels),
       new Integer(1),

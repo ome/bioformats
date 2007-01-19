@@ -254,11 +254,11 @@ public class PrairieReader extends FormatReader {
               String key = el.substring(0, eq);
               String value = el.substring(eq + 2, el.indexOf("\"", eq + 2));
               if (prefix.equals("File")) {
-                metadata.put(pastPrefix + " " + prefix + " " + fileIndex +
+                addMeta(pastPrefix + " " + prefix + " " + fileIndex +
                   " " + key, value);
                 if (key.equals("filename")) fileIndex++;
               }
-              else metadata.put(pastPrefix + " " + prefix + " " + key, value);
+              else addMeta(pastPrefix + " " + prefix + " " + key, value);
               el = el.substring(el.indexOf("\"", eq + 2) + 1).trim();
               if (prefix.equals("File") && key.equals("filename")) {
                 Location current = new Location(id);
@@ -273,7 +273,7 @@ public class PrairieReader extends FormatReader {
             String key = el.substring(keyIndex, el.indexOf("\"", keyIndex));
             String value =
               el.substring(valueIndex, el.indexOf("\"", valueIndex));
-            metadata.put(key, value);
+            addMeta(key, value);
           }
           if (!closed) {
             pastPrefix = prefix;
@@ -291,11 +291,11 @@ public class PrairieReader extends FormatReader {
         f.copyInto(files);
 
         boolean isZ =
-          ((String) metadata.get("PVScan Sequence type")).equals("ZSeries");
+          ((String) getMeta("PVScan Sequence type")).equals("ZSeries");
         if (zt == 0) zt = 1;
 
-        sizeX[0] = Integer.parseInt((String) metadata.get("pixelsPerLine"));
-        sizeY[0] = Integer.parseInt((String) metadata.get("linesPerFrame"));
+        sizeX[0] = Integer.parseInt((String) getMeta("pixelsPerLine"));
+        sizeY[0] = Integer.parseInt((String) getMeta("linesPerFrame"));
         sizeZ[0] = isZ ? zt : 1;
         sizeT[0] = isZ ? 1 : zt;
         sizeC[0] = numImages / (sizeZ[0] * sizeT[0]);
@@ -303,9 +303,9 @@ public class PrairieReader extends FormatReader {
         pixelType[0] = FormatReader.UINT16;
 
         float pixSizeX =
-          Float.parseFloat((String) metadata.get("micronsPerPixel_XAxis"));
+          Float.parseFloat((String) getMeta("micronsPerPixel_XAxis"));
         float pixSizeY =
-          Float.parseFloat((String) metadata.get("micronsPerPixel_YAxis"));
+          Float.parseFloat((String) getMeta("micronsPerPixel_YAxis"));
 
         MetadataStore store = getMetadataStore(id);
 

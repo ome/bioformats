@@ -69,7 +69,7 @@ public class SEQReader extends BaseTiffReader {
       if (tag1 != null) {
         String seqId = "";
         for (int i=0; i<tag1.length; i++) seqId = seqId + tag1[i];
-        metadata.put("Image-Pro SEQ ID", seqId);
+        addMeta("Image-Pro SEQ ID", seqId);
       }
 
       int tag2 = TiffTools.getIFDIntValue(ifds[0], IMAGE_PRO_TAG_2);
@@ -77,10 +77,10 @@ public class SEQReader extends BaseTiffReader {
       if (tag2 != -1) {
         // should be one of these for every image plane
         zSize++;
-        metadata.put("Frame Rate", new Integer(tag2));
+        addMeta("Frame Rate", new Integer(tag2));
       }
 
-      metadata.put("Number of images", new Integer(zSize));
+      addMeta("Number of images", new Integer(zSize));
     }
 
     if (zSize == 0) zSize++;
@@ -90,12 +90,12 @@ public class SEQReader extends BaseTiffReader {
     }
 
     // default values
-    metadata.put("frames", "" + zSize);
-    metadata.put("channels", metadata.get("NumberOfChannels").toString());
-    metadata.put("slices", "" + tSize);
+    addMeta("frames", "" + zSize);
+    addMeta("channels", getMeta("NumberOfChannels").toString());
+    addMeta("slices", "" + tSize);
 
     // parse the description to get channels, slices and times where applicable
-    String descr = (String) metadata.get("Comment");
+    String descr = (String) getMeta("Comment");
     metadata.remove("Comment");
     if (descr != null) {
       StringTokenizer tokenizer = new StringTokenizer(descr, "\n");
@@ -103,13 +103,13 @@ public class SEQReader extends BaseTiffReader {
         String token = tokenizer.nextToken();
         String label = token.substring(0, token.indexOf("="));
         String data = token.substring(token.indexOf("=") + 1);
-        metadata.put(label, data);
+        addMeta(label, data);
       }
     }
 
-    sizeC[0] = Integer.parseInt((String) metadata.get("channels"));
-    sizeZ[0] = Integer.parseInt((String) metadata.get("frames"));
-    sizeT[0] = Integer.parseInt((String) metadata.get("slices"));
+    sizeC[0] = Integer.parseInt((String) getMeta("channels"));
+    sizeZ[0] = Integer.parseInt((String) getMeta("frames"));
+    sizeT[0] = Integer.parseInt((String) getMeta("slices"));
 
     try {
       if (isRGB(currentId) && sizeC[0] != 3) sizeC[0] *= 3;

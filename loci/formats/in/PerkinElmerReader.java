@@ -381,7 +381,7 @@ public class PerkinElmerReader extends FormatReader {
           try { Integer.parseInt(token); }
           catch (NumberFormatException e) { tNum++; }
         }
-        metadata.put(hashKeys[tNum], token);
+        addMeta(hashKeys[tNum], token);
         tNum++;
       }
     }
@@ -405,12 +405,11 @@ public class PerkinElmerReader extends FormatReader {
           t.nextToken();
         }
         else if (pt < hashKeys.length) {
-          metadata.put(hashKeys[pt], t.nextToken());
+          addMeta(hashKeys[pt], t.nextToken());
           pt++;
         }
         else {
-          metadata.put(t.nextToken() + t.nextToken(),
-            t.nextToken());
+          addMeta(t.nextToken() + t.nextToken(), t.nextToken());
         }
         tNum++;
       }
@@ -424,7 +423,7 @@ public class PerkinElmerReader extends FormatReader {
       t = new StringTokenizer(new String(data));
       int tNum = 0;
       while (t.hasMoreTokens()) {
-        metadata.put("Z slice #" + tNum + " position", t.nextToken());
+        addMeta("Z slice #" + tNum + " position", t.nextToken());
         tNum++;
       }
     }
@@ -461,11 +460,11 @@ public class PerkinElmerReader extends FormatReader {
 
       for (int j=0; j<tokens.length-1; j+=2) {
         if (tokens[j].indexOf("Wavelength") != -1) {
-          metadata.put("Camera Data " + tokens[j].charAt(13), tokens[j]);
+          addMeta("Camera Data " + tokens[j].charAt(13), tokens[j]);
           j--;
         }
         else if (!tokens[j].trim().equals("")) {
-          metadata.put(tokens[j], tokens[j+1]);
+          addMeta(tokens[j], tokens[j+1]);
         }
       }
     }
@@ -473,7 +472,7 @@ public class PerkinElmerReader extends FormatReader {
       throw new FormatException("Valid header files not found.");
     }
 
-    String details = (String) metadata.get("Experiment details:");
+    String details = (String) getMeta("Experiment details:");
     // parse details to get number of wavelengths and timepoints
 
     t = new StringTokenizer(details);
@@ -494,9 +493,9 @@ public class PerkinElmerReader extends FormatReader {
 
     channels = Integer.parseInt(wavelengths);
 
-    sizeX[0] = Integer.parseInt((String) metadata.get("Image Width"));
-    sizeY[0] = Integer.parseInt((String) metadata.get("Image Length"));
-    sizeZ[0] = Integer.parseInt((String) metadata.get("Number of slices"));
+    sizeX[0] = Integer.parseInt((String) getMeta("Image Width"));
+    sizeY[0] = Integer.parseInt((String) getMeta("Image Length"));
+    sizeZ[0] = Integer.parseInt((String) getMeta("Number of slices"));
     sizeC[0] = channels;
     sizeT[0] = getImageCount(currentId) / (sizeZ[0] * sizeC[0]);
     if (isTiff) pixelType[0] = tiff[0].getPixelType(files[0]);
@@ -530,7 +529,7 @@ public class PerkinElmerReader extends FormatReader {
     }
     if (sizeT[0] <= 0) sizeT[0] = 1;
 
-    Object o = metadata.get("Z slice space");
+    Object o = getMeta("Z slice space");
     if (o != null) {
       float spacing = Float.parseFloat(o.toString());
       if (spacing <= 1f) currentOrder[0] += "TZ";
@@ -544,20 +543,20 @@ public class PerkinElmerReader extends FormatReader {
     MetadataStore store = getMetadataStore(id);
 
     // populate Dimensions element
-    String pixelSizeX = (String) metadata.get("Pixel Size X");
-    String pixelSizeY = (String) metadata.get("Pixel Size Y");
+    String pixelSizeX = (String) getMeta("Pixel Size X");
+    String pixelSizeY = (String) getMeta("Pixel Size Y");
     store.setDimensions(new Float(pixelSizeX),
         new Float(pixelSizeY), null, null, null, null);
 
     // populate Image element
-    String time = (String) metadata.get("Finish Time:");
+    String time = (String) getMeta("Finish Time:");
     time = time.substring(1).trim();
     store.setImage(null, time, null, null);
 
     // populate Pixels element
-    String x = (String) metadata.get("Image Width");
-    String y = (String) metadata.get("Image Length");
-    String z = (String) metadata.get("Number of slices");
+    String x = (String) getMeta("Image Width");
+    String y = (String) getMeta("Image Length");
+    String z = (String) getMeta("Number of slices");
     store.setPixels(
       new Integer(x), // SizeX
       new Integer(y), // SizeY
@@ -570,9 +569,9 @@ public class PerkinElmerReader extends FormatReader {
       null); // Use index 0
 
     // populate StageLabel element
-    String originX = (String) metadata.get("Origin X");
-    String originY = (String) metadata.get("Origin Y");
-    String originZ = (String) metadata.get("Origin Z");
+    String originX = (String) getMeta("Origin X");
+    String originY = (String) getMeta("Origin Y");
+    String originZ = (String) getMeta("Origin Z");
     try {
       store.setStageLabel(null, new Float(originX), new Float(originY),
                         new Float(originZ), null);

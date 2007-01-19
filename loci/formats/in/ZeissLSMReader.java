@@ -678,9 +678,9 @@ public class ZeissLSMReader extends BaseTiffReader {
     currentOrder[0] = "XYZCT";
 
     try {
-      Float pixX = new Float(metadata.get("VoxelSizeX").toString());
-      Float pixY = new Float(metadata.get("VoxelSizeY").toString());
-      Float pixZ = new Float(metadata.get("VoxelSizeZ").toString());
+      Float pixX = new Float(getMeta("VoxelSizeX").toString());
+      Float pixY = new Float(getMeta("VoxelSizeY").toString());
+      Float pixZ = new Float(getMeta("VoxelSizeZ").toString());
 
       MetadataStore store = getMetadataStore(currentId);
       store.setDimensions(pixX, pixY, pixZ, null, null, null);

@@ -118,7 +118,7 @@ public class BioRadReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return new Double(((Integer) metadata.get("ramp1_min")).intValue());
+    return new Double(((Integer) getMeta("ramp1_min")).intValue());
   }
 
   /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
@@ -126,7 +126,7 @@ public class BioRadReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return new Double(((Integer) metadata.get("ramp1_max")).intValue());
+    return new Double(((Integer) getMeta("ramp1_max")).intValue());
   }
 
   /** Obtains the specified image from the given file as a byte array. */
@@ -202,24 +202,24 @@ public class BioRadReader extends FormatReader {
     }
 
     // populate metadata fields
-    metadata.put("nx", new Integer(nx));
-    metadata.put("ny", new Integer(ny));
-    metadata.put("npic", new Integer(npic));
-    metadata.put("ramp1_min", new Integer(ramp1min));
-    metadata.put("ramp1_max", new Integer(ramp1max));
-    metadata.put("notes", new Boolean(notes));
-    metadata.put("byte_format", new Boolean(byteFormat));
-    metadata.put("image_number", new Integer(imageNumber));
-    metadata.put("name", name);
-    metadata.put("merged", MERGE_NAMES[merged]);
-    metadata.put("color1", new Integer(color1));
-    metadata.put("file_id", new Integer(fileId));
-    metadata.put("ramp2_min", new Integer(ramp2min));
-    metadata.put("ramp2_max", new Integer(ramp2max));
-    metadata.put("color2", new Integer(color2));
-    metadata.put("edited", new Integer(edited));
-    metadata.put("lens", new Integer(lens));
-    metadata.put("mag_factor", new Float(magFactor));
+    addMeta("nx", new Integer(nx));
+    addMeta("ny", new Integer(ny));
+    addMeta("npic", new Integer(npic));
+    addMeta("ramp1_min", new Integer(ramp1min));
+    addMeta("ramp1_max", new Integer(ramp1max));
+    addMeta("notes", new Boolean(notes));
+    addMeta("byte_format", new Boolean(byteFormat));
+    addMeta("image_number", new Integer(imageNumber));
+    addMeta("name", name);
+    addMeta("merged", MERGE_NAMES[merged]);
+    addMeta("color1", new Integer(color1));
+    addMeta("file_id", new Integer(fileId));
+    addMeta("ramp2_min", new Integer(ramp2min));
+    addMeta("ramp2_max", new Integer(ramp2max));
+    addMeta("color2", new Integer(color2));
+    addMeta("edited", new Integer(edited));
+    addMeta("lens", new Integer(lens));
+    addMeta("mag_factor", new Float(magFactor));
 
     // skip image data
     int imageLen = nx * ny;
@@ -264,7 +264,7 @@ public class BioRadReader extends FormatReader {
       // add note to list
       noteCount++;
 
-      metadata.put("note" + noteCount,
+      addMeta("note" + noteCount,
         noteString(num, level, status, type, x, y, text));
 
       // if the text of the note contains "AXIS", parse the text
@@ -289,73 +289,71 @@ public class BioRadReader extends FormatReader {
           switch (axisType) {
             case 1:
               String dx = (String) params.get(0), dy = (String) params.get(1);
-              metadata.put(key + " distance (X) in microns", dx);
-              metadata.put(key + " distance (Y) in microns", dy);
+              addMeta(key + " distance (X) in microns", dx);
+              addMeta(key + " distance (Y) in microns", dy);
               pixelSize.add(dy);
               break;
             case 2:
               if (text.indexOf("AXIS_4") != -1) {
-                metadata.put(key + " time (X) in seconds", params.get(0));
-                metadata.put(key + " time (Y) in seconds", params.get(1));
+                addMeta(key + " time (X) in seconds", params.get(0));
+                addMeta(key + " time (Y) in seconds", params.get(1));
                 zSize = 1;
                 tSize = npic;
                 orderCertain[0] = true;
               }
               break;
             case 3:
-              metadata.put(key + " angle (X) in degrees", params.get(0));
-              metadata.put(key + " angle (Y) in degrees", params.get(1));
+              addMeta(key + " angle (X) in degrees", params.get(0));
+              addMeta(key + " angle (Y) in degrees", params.get(1));
               break;
             case 4:
-              metadata.put(key + " intensity (X)", params.get(0));
-              metadata.put(key + " intensity (Y)", params.get(1));
+              addMeta(key + " intensity (X)", params.get(0));
+              addMeta(key + " intensity (Y)", params.get(1));
               break;
             case 6:
-              metadata.put(key + " ratio (X)", params.get(0));
-              metadata.put(key + " ratio (Y)", params.get(1));
+              addMeta(key + " ratio (X)", params.get(0));
+              addMeta(key + " ratio (Y)", params.get(1));
               break;
             case 7:
-              metadata.put(key + " log ratio (X)", params.get(0));
-              metadata.put(key + " log ratio (Y)", params.get(1));
+              addMeta(key + " log ratio (X)", params.get(0));
+              addMeta(key + " log ratio (Y)", params.get(1));
               break;
             case 9:
-              metadata.put(key + " noncalibrated intensity min",
-                params.get(0));
-              metadata.put(key + " noncalibrated intensity max",
-                params.get(1));
-              metadata.put(key + " calibrated intensity min", params.get(2));
-              metadata.put(key + " calibrated intensity max", params.get(3));
+              addMeta(key + " noncalibrated intensity min", params.get(0));
+              addMeta(key + " noncalibrated intensity max", params.get(1));
+              addMeta(key + " calibrated intensity min", params.get(2));
+              addMeta(key + " calibrated intensity max", params.get(3));
               break;
             case 11:
-              metadata.put(key + " RGB type (X)", params.get(0));
-              metadata.put(key + " RGB type (Y)", params.get(1));
+              addMeta(key + " RGB type (X)", params.get(0));
+              addMeta(key + " RGB type (Y)", params.get(1));
               break;
             case 14:
-              metadata.put(key + " time course type (X)", params.get(0));
-              metadata.put(key + " time course type (Y)", params.get(1));
+              addMeta(key + " time course type (X)", params.get(0));
+              addMeta(key + " time course type (Y)", params.get(1));
               break;
             case 15:
-              metadata.put(key + " inverse sigmoid calibrated intensity (min)",
+              addMeta(key + " inverse sigmoid calibrated intensity (min)",
                 params.get(0));
-              metadata.put(key + " inverse sigmoid calibrated intensity (max)",
+              addMeta(key + " inverse sigmoid calibrated intensity (max)",
                 params.get(1));
-              metadata.put(key +
+              addMeta(key +
                 " inverse sigmoid calibrated intensity (beta)", params.get(2));
-              metadata.put(key + " inverse sigmoid calibrated intensity (Kd)",
+              addMeta(key + " inverse sigmoid calibrated intensity (Kd)",
                 params.get(3));
-              metadata.put(key + " inverse sigmoid calibrated intensity " +
+              addMeta(key + " inverse sigmoid calibrated intensity " +
                 "(calibrated max)", params.get(0));
               break;
             case 16:
-              metadata.put(key + " log inverse sigmoid calibrated " +
+              addMeta(key + " log inverse sigmoid calibrated " +
                 "intensity (min)", params.get(0));
-              metadata.put(key + " log inverse sigmoid calibrated " +
+              addMeta(key + " log inverse sigmoid calibrated " +
                 "intensity (max)", params.get(1));
-              metadata.put(key + " log inverse sigmoid calibrated " +
+              addMeta(key + " log inverse sigmoid calibrated " +
                 "intensity (beta)", params.get(2));
-              metadata.put(key + " log inverse sigmoid calibrated " +
+              addMeta(key + " log inverse sigmoid calibrated " +
                 "intensity (Kd)", params.get(3));
-              metadata.put(key + " log inverse sigmoid calibrated " +
+              addMeta(key + " log inverse sigmoid calibrated " +
                 "intensity (calibrated max)", params.get(0));
               break;
           }
@@ -408,7 +406,7 @@ public class BioRadReader extends FormatReader {
       colorString += "\n\n";
     }
 
-    metadata.put("luts", colorString);
+    addMeta("luts", colorString);
 
     // Populate the metadata store
 

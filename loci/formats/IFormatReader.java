@@ -248,6 +248,18 @@ public interface IFormatReader extends IFormatHandler {
   Hashtable getMetadata(String id) throws FormatException, IOException;
 
   /**
+   * Specifies whether ugly metadata (entries with unprintable characters,
+   * and extremely large entries) should be discarded from the metadata table.
+   */
+  void setMetadataFiltered(boolean filter);
+
+  /**
+   * Returns true if ugly metadata (entries with unprintable characters,
+   * and extremely large entries) are discarded from the metadata table.
+   */
+  boolean isMetadataFiltered();
+
+  /**
    * Sets the default metadata store for this reader.
    *
    * @param store a metadata store implementation.

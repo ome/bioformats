@@ -224,8 +224,7 @@ public class NikonReader extends BaseTiffReader {
     initMetadata();
 
     try {
-      realImage.put(new Integer(TiffTools.COLOR_MAP),
-        metadata.get("CFA pattern"));
+      realImage.put(new Integer(TiffTools.COLOR_MAP), getMeta("CFA pattern"));
     }
     catch (Exception e) {
       // CTR TODO - eliminate catch-all exception handling
@@ -244,7 +243,7 @@ public class NikonReader extends BaseTiffReader {
       TiffTools.getIFDValue(original, TIFF_EPS_STANDARD);
     String v = "";
     for (int i=0; i<version.length; i++) v += version[i];
-    metadata.put("Version", v);
+    addMeta("Version", v);
 
     littleEndian = true;
     try {
@@ -271,9 +270,9 @@ public class NikonReader extends BaseTiffReader {
               byte[] cfa = (byte[]) exifIFD.get(key);
               int[] colorMap = new int[cfa.length];
               for (int i=0; i<cfa.length; i++) colorMap[i] = (int) cfa[i];
-              metadata.put(getTagName(tag), colorMap);
+              addMeta(getTagName(tag), colorMap);
             }
-            else metadata.put(getTagName(tag), exifIFD.get(key));
+            else addMeta(getTagName(tag), exifIFD.get(key));
           }
         }
       }
@@ -283,7 +282,7 @@ public class NikonReader extends BaseTiffReader {
     // read the maker note
 
     try {
-      byte[] offsets = (byte[]) metadata.get("Offset to maker note");
+      byte[] offsets = (byte[]) getMeta("Offset to maker note");
       makerNoteOffset = offsets[0];
       Hashtable makerNote = TiffTools.getIFD(in, 0, makerNoteOffset);
       if (makerNote != null) {
@@ -292,7 +291,7 @@ public class NikonReader extends BaseTiffReader {
         while (e.hasMoreElements()) {
           key = (Integer) e.nextElement();
           int tag = key.intValue();
-          metadata.put(getTagName(tag), makerNote.get(key));
+          addMeta(getTagName(tag), makerNote.get(key));
         }
       }
     }

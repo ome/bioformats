@@ -68,7 +68,7 @@ public class TiffReader extends BaseTiffReader {
   /** Parses standard metadata. */
   protected void initStandardMetadata() throws FormatException {
     super.initStandardMetadata();
-    String comment = (String) metadata.get("Comment");
+    String comment = (String) getMeta("Comment");
 
     // check for OME-XML in TIFF comment (OME-TIFF format)
     boolean omeTiff = comment != null && comment.indexOf("ome.xsd") >= 0;
@@ -444,7 +444,7 @@ public class TiffReader extends BaseTiffReader {
         if (equals < 0) continue;
         String key = line.substring(0, equals);
         String value = line.substring(equals + 1);
-        metadata.put(key, value);
+        addMeta(key, value);
       }
       metadata.remove("Comment");
     }
@@ -456,7 +456,7 @@ public class TiffReader extends BaseTiffReader {
     // we need an extra check to make sure that any XML we find is indeed
     // OME-XML (and not some other XML variant)
 
-    String comment = (String) metadata.get("Comment");
+    String comment = (String) getMeta("Comment");
     if (comment != null && comment.indexOf("ome.xsd") >= 0) {
       metadata.remove("Comment");
       if (metadataStore instanceof OMEXMLMetadataStore) {

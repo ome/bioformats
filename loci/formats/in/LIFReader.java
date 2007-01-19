@@ -274,7 +274,7 @@ public class LIFReader extends FormatReader {
     String token = (String) elements.get(0);
     String key = token.substring(0, token.indexOf("\""));
     String value = token.substring(token.indexOf("\"") + 1, token.length()-1);
-    metadata.put(key, value);
+    addMeta(key, value);
 
     // what we have right now is a vector of XML elements, which need to
     // be parsed into the appropriate image dimensions
@@ -313,7 +313,7 @@ public class LIFReader extends FormatReader {
           count++;
         }
         value = token.substring(token.indexOf(" ") + 1).trim();
-        metadata.put(prefix + " - " + key, value);
+        addMeta(prefix + " - " + key, value);
       }
       token = tmpToken;
 

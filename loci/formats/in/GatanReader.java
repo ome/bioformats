@@ -106,7 +106,7 @@ public class GatanReader extends FormatReader {
     if (!id.equals(currentId)) initFile(id);
     // yes, we really do want to get the value for "EstimatedMax"
     // for some reason, all of our files have max and min reversed
-    return new Double(((Integer) metadata.get("EstimatedMax")).intValue());
+    return new Double(((Integer) getMeta("EstimatedMax")).intValue());
   }
 
   /* @see loci.formats.IFormatReader#getChannelGlobalMaximum(String, int) */
@@ -114,7 +114,7 @@ public class GatanReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return new Double(((Integer) metadata.get("EstimatedMin")).intValue());
+    return new Double(((Integer) getMeta("EstimatedMin")).intValue());
   }
 
   /** Obtains the specified image from the given Gatan file as a byte array. */
@@ -182,7 +182,7 @@ public class GatanReader extends FormatReader {
     in.read(temp);
     parseTags(DataTools.bytesToInt(temp, !littleEndian), "initFile");
 
-    int datatype = Integer.parseInt((String) metadata.get("DataType"));
+    int datatype = Integer.parseInt((String) getMeta("DataType"));
 
     pixelType[0] = FormatReader.INT8;
     switch (datatype) {
@@ -344,7 +344,7 @@ public class GatanReader extends FormatReader {
           else if (labelString.equals("Scale")) {
             pixelSizes.add(data);
           }
-          metadata.put(labelString, data);
+          addMeta(labelString, data);
         }
         else if (n == 2) {
           in.read(temp);
@@ -355,7 +355,7 @@ public class GatanReader extends FormatReader {
           }
           byte[] data = new byte[length];
           in.read(data);
-          metadata.put(labelString, new String(label));
+          addMeta(labelString, new String(label));
         }
         else if (n == 3) {
           in.read(temp);

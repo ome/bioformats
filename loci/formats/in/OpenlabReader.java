@@ -527,7 +527,7 @@ public class OpenlabReader extends FormatReader {
                   throw new FormatException("Invalid revision.");
                 }
 
-                metadata.put(varName, varStringValue);
+                addMeta(varName, varStringValue);
                 numVars--;
               }
             }
@@ -627,16 +627,16 @@ public class OpenlabReader extends FormatReader {
     if (bytesPerPixel == 0) bytesPerPixel++;
 
     // finish populating metadata hashtable
-    metadata.put("Version", new Integer(version));
-    metadata.put("Number of Series", new Integer(numSeries));
+    addMeta("Version", new Integer(version));
+    addMeta("Number of Series", new Integer(numSeries));
     for (int i=0; i<numSeries; i++) {
-      metadata.put("Width (Series " + i + ")", new Integer(width[i]));
-      metadata.put("Height (Series " + i + ")", new Integer(height[i]));
-      metadata.put("Bit depth (Series " + i + ")",
+      addMeta("Width (Series " + i + ")", new Integer(width[i]));
+      addMeta("Height (Series " + i + ")", new Integer(height[i]));
+      addMeta("Bit depth (Series " + i + ")",
         new Integer(bpp[i] * 8));
-      metadata.put("Number of channels (Series " + i + ")",
+      addMeta("Number of channels (Series " + i + ")",
         new Integer(channelCount[i]));
-      metadata.put("Number of images (Series " + i + ")",
+      addMeta("Number of images (Series " + i + ")",
         new Integer(numImages[i]));
     }
 

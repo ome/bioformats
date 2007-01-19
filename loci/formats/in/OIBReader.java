@@ -162,7 +162,7 @@ public class OIBReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    String s = (String) metadata.get("[Image Parameters] - DataMin");
+    String s = (String) getMeta("[Image Parameters] - DataMin");
     try { return new Double(s); }
     catch (NumberFormatException exc) { return null; }
   }
@@ -172,7 +172,7 @@ public class OIBReader extends FormatReader {
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    String s = (String) metadata.get("[Image Parameters] - DataMax");
+    String s = (String) getMeta("[Image Parameters] - DataMax");
     try { return new Double(s); }
     catch (NumberFormatException exc) { return null; }
   }
@@ -327,9 +327,9 @@ public class OIBReader extends FormatReader {
 
       for (int i=0; i<labels.length; i++) {
         labels[i] = (String)
-          metadata.get("[Axis " + i + " Parameters Common] - AxisCode");
+          getMeta("[Axis " + i + " Parameters Common] - AxisCode");
         dims[i] =
-          (String) metadata.get("[Axis " + i + " Parameters Common] - MaxSize");
+          (String) getMeta("[Axis " + i + " Parameters Common] - MaxSize");
         if (labels[i] == null) labels[i] = "";
         if (dims[i] == null) dims[i] = "0";
       }
@@ -424,7 +424,7 @@ public class OIBReader extends FormatReader {
         while (k.hasMoreElements()) {
           String key = k.nextElement().toString();
           if (key.indexOf("ValidBitCounts") != -1) {
-            vb = Integer.parseInt((String) metadata.get(key));
+            vb = Integer.parseInt((String) getMeta(key));
           }
         }
         if (vb > 0) {
@@ -453,7 +453,7 @@ public class OIBReader extends FormatReader {
   /** Initialize metadata hashtable and OME-XML structure. */
   private void initMetadata() throws FormatException, IOException {
     MetadataStore store = getMetadataStore(currentId);
-    store.setImage((String) metadata.get("DataName"), null, null, null);
+    store.setImage((String) getMeta("DataName"), null, null, null);
 
     for (int i=0; i<width.size(); i++) {
       switch (((Integer) bpp.get(0)).intValue() % 3) {
@@ -483,9 +483,9 @@ public class OIBReader extends FormatReader {
         currentOrder[i],
         new Integer(i));
 
-      Float pixX = new Float(metadata.get(
+      Float pixX = new Float(getMeta(
         "[Reference Image Parameter] - WidthConvertValue").toString());
-      Float pixY = new Float(metadata.get(
+      Float pixY = new Float(getMeta(
         "[Reference Image Parameter] - HeightConvertValue").toString());
       store.setDimensions(pixX, pixY, null, null, null, new Integer(i));
     }
@@ -608,7 +608,7 @@ public class OIBReader extends FormatReader {
               if (prefix.indexOf("Red") == -1 &&
                 prefix.indexOf("Green") == -1 && prefix.indexOf("Blue") == -1)
               {
-                metadata.put(prefix + key, value);
+                addMeta(prefix + key, value);
               }
             }
             else {

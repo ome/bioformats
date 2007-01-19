@@ -160,8 +160,8 @@ public class DicomReader extends FormatReader {
         data[i] = (byte) (255 - data[i]);
       }
 
-      String windowCenter = (String) metadata.get("Window Center");
-      String windowWidth = (String) metadata.get("Window Width");
+      String windowCenter = (String) getMeta("Window Center");
+      String windowWidth = (String) getMeta("Window Width");
       if (windowCenter != null && windowCenter.indexOf("\\") != -1) {
         windowCenter = windowCenter.substring(windowCenter.indexOf("\\") + 1);
       }
@@ -186,7 +186,7 @@ public class DicomReader extends FormatReader {
         if (shortData[i/2] > maxValue) maxValue = shortData[i/2];
       }
 
-      String rescale = (String) metadata.get("Rescale Intercept");
+      String rescale = (String) getMeta("Rescale Intercept");
       double scale = 0;
       if (rescale != null) {
         rescale = rescale.trim();
@@ -261,7 +261,7 @@ public class DicomReader extends FormatReader {
       in.seek(pos);
       byte[] header = new byte[128];
       in.read(header);
-      metadata.put("Header information", new String(header));
+      addMeta("Header information", new String(header));
       in.readInt();
       location = 128;
     }
@@ -405,8 +405,8 @@ public class DicomReader extends FormatReader {
 
     // populate OME-XML node
     store.setPixels(
-      new Integer((String) metadata.get("Columns")), // SizeX
-      new Integer((String) metadata.get("Rows")), // SizeY
+      new Integer((String) getMeta("Columns")), // SizeX
+      new Integer((String) getMeta("Rows")), // SizeY
       new Integer(numImages), // SizeZ
       new Integer(1), // SizeC
       new Integer(1), // SizeT
@@ -417,14 +417,14 @@ public class DicomReader extends FormatReader {
 
     store.setImage(
       null, // name
-      ((String) metadata.get("Content Date")) + "T" +
-      ((String) metadata.get("Content Time")),  // CreationDate
-      (String) metadata.get("Image Type"),
+      ((String) getMeta("Content Date")) + "T" +
+      ((String) getMeta("Content Time")),  // CreationDate
+      (String) getMeta("Image Type"),
       null); // Use index 0
 
     store.setInstrument(
-      (String) metadata.get("Manufacturer"),
-      (String) metadata.get("Manufacturer's Model Name"),
+      (String) getMeta("Manufacturer"),
+      (String) getMeta("Manufacturer's Model Name"),
       null, null, null);
   }
 
@@ -436,7 +436,7 @@ public class DicomReader extends FormatReader {
     if (info != null && tag != ITEM) {
       String key = (String) TYPES.get(new Integer(tag));
       if (key == null) key = "" + tag;
-      if (tag != PIXEL_DATA) metadata.put(key, info);
+      if (tag != PIXEL_DATA) addMeta(key, info);
     }
   }
 

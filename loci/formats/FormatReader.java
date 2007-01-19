@@ -110,6 +110,9 @@ public abstract class FormatReader extends FormatHandler
   /** Whether or not to normalize float data. */
   protected boolean normalizeData;
 
+  /** Whether or not to filter out invalid metadata. */
+  protected boolean filterMetadata;
+
   /**
    * Current metadata store. Should <b>never</b> be accessed directly as the
    * semantics of {@link #getMetadataStore(String)} prevent "null" access.
@@ -165,6 +168,16 @@ public abstract class FormatReader extends FormatHandler
       return isThisType(buf);
     }
     catch (IOException exc) { return false; }
+  }
+
+  /** Adds an entry to the metadata table. */
+  protected void addMeta(String key, Object value) {
+    metadata.put(key, value);
+  }
+
+  /** Gets a value from the metadata table. */
+  protected Object getMeta(String key) {
+    return metadata.get(key);
   }
 
   /** Issues a debugging statement. */
@@ -433,7 +446,7 @@ public abstract class FormatReader extends FormatHandler
     throws FormatException, IOException
   {
     if (!id.equals(currentId)) initFile(id);
-    return metadata.get(field);
+    return getMeta(field);
   }
 
   /* @see IFormatReader#getMetadata */
@@ -441,6 +454,17 @@ public abstract class FormatReader extends FormatHandler
     if (!id.equals(currentId)) initFile(id);
     return metadata;
   }
+
+  /* @see IFormatReader#setMetadataFiltered(boolean) */
+  public void setMetadataFiltered(boolean filter) {
+    filterMetadata = filter;
+  }
+
+  /* @see IFormatReader#isMetadataFiltered() */
+  public boolean isMetadataFiltered() {
+    return filterMetadata;
+  }
+
 
   /* @see IFormatReader#setMetadataStore(MetadataStore) */
   public void setMetadataStore(MetadataStore store) {

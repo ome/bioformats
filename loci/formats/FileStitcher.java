@@ -513,6 +513,16 @@ public class FileStitcher implements IFormatReader {
     return reader.getMetadata(files[0]);
   }
 
+  /* @see IFormatReader#setMetadataFiltered(boolean) */
+  public void setMetadataFiltered(boolean filter) {
+    reader.setMetadataFiltered(filter);
+  }
+
+  /* @see IFormatReader#isMetadataFiltered() */
+  public boolean isMetadataFiltered() {
+    return reader.isMetadataFiltered();
+  }
+
   /* @see IFormatReader#setMetadataStore(MetadataStore) */
   public void setMetadataStore(MetadataStore store) {
     reader.setMetadataStore(store);

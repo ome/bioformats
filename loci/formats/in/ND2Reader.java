@@ -326,13 +326,13 @@ public class ND2Reader extends FormatReader {
                 if (key.indexOf("runtype") == -1) {
                   String effectiveKey = prefix + " " + pre + " " + key;
                   if (!metadata.containsKey(effectiveKey)) {
-                    metadata.put(effectiveKey, value);
+                    addMeta(effectiveKey, value);
                   }
                   else {
-                    String v = (String) metadata.get(effectiveKey);
+                    String v = (String) getMeta(effectiveKey);
                     try {
                       if (Integer.parseInt(v) < Integer.parseInt(value)) {
-                        metadata.put(effectiveKey, value);
+                        addMeta(effectiveKey, value);
                       }
                     }
                     catch (Exception e) {
@@ -374,17 +374,17 @@ public class ND2Reader extends FormatReader {
     numImages = offsets.length;
 
     String sigBits =
-      (String) metadata.get("AdvancedImageAttributes SignificantBits value");
+      (String) getMeta("AdvancedImageAttributes SignificantBits value");
     int bits = 0;
     if (sigBits != null && sigBits.length() > 0) {
       bits = Integer.parseInt(sigBits.trim());
     }
 
     // determine the pixel size
-    String pixX = (String) metadata.get(
-      "CalibrationSeq _SEQUENCE_INDEX=\"0\" dCalibration value");
-    String pixZ = (String) metadata.get(
-      "CalibrationSeq _SEQUENCE_INDEX=\"0\" dAspect value");
+    String pixX = (String)
+      getMeta("CalibrationSeq _SEQUENCE_INDEX=\"0\" dCalibration value");
+    String pixZ = (String)
+      getMeta("CalibrationSeq _SEQUENCE_INDEX=\"0\" dAspect value");
 
     float pixSizeX = 0f;
     float pixSizeZ = 0f;
@@ -397,7 +397,7 @@ public class ND2Reader extends FormatReader {
     }
 
     String c = (String) 
-      metadata.get("MetadataSeq _SEQUENCE_INDEX=\"0\" uiCompCount value");
+      getMeta("MetadataSeq _SEQUENCE_INDEX=\"0\" uiCompCount value");
     if (c != null) sizeC[0] = Integer.parseInt(c);
     else sizeC[0] = openImage(id, 0).getRaster().getNumBands();
     if (sizeC[0] == 2) sizeC[0] = 1;
@@ -407,8 +407,8 @@ public class ND2Reader extends FormatReader {
 
     for (int i=0; i<numImages; i++) {
       String pre = "MetadataSeq _SEQUENCE_INDEX=\"" + i + "\" ";
-      String tstamp = (String) metadata.get(pre + "dTimeMSec value");
-      String zstamp = (String) metadata.get(pre + "dZPos value");
+      String tstamp = (String) getMeta(pre + "dTimeMSec value");
+      String zstamp = (String) getMeta(pre + "dZPos value");
       if (tstamp != null) timestamps[i] = (long) Float.parseFloat(tstamp);
       if (zstamp != null) zstamps[i] = (long) Float.parseFloat(zstamp);
     }

@@ -205,9 +205,9 @@ public class MRCReader extends FormatReader {
     in.read(b);
     float zlen = Float.intBitsToFloat(DataTools.bytesToInt(b, little));
 
-    metadata.put("Pixel size (X)", "" + (xlen / mx));
-    metadata.put("Pixel size (Y)", "" + (ylen / my));
-    metadata.put("Pixel size (Z)", "" + (zlen / mz));
+    addMeta("Pixel size (X)", "" + (xlen / mx));
+    addMeta("Pixel size (Y)", "" + (ylen / my));
+    addMeta("Pixel size (Z)", "" + (zlen / mz));
 
     in.read(b);
     float alpha = Float.intBitsToFloat(DataTools.bytesToInt(b, little));
@@ -216,9 +216,9 @@ public class MRCReader extends FormatReader {
     in.read(b);
     float gamma = Float.intBitsToFloat(DataTools.bytesToInt(b, little));
 
-    metadata.put("Alpha angle", "" + alpha);
-    metadata.put("Beta angle", "" + beta);
-    metadata.put("Gamma angle", "" + gamma);
+    addMeta("Alpha angle", "" + alpha);
+    addMeta("Beta angle", "" + beta);
+    addMeta("Gamma angle", "" + gamma);
 
     in.skipBytes(12);
 
@@ -231,9 +231,9 @@ public class MRCReader extends FormatReader {
     in.read(b);
     float mean = Float.intBitsToFloat(DataTools.bytesToInt(b, little));
 
-    metadata.put("Minimum pixel value", "" + min);
-    metadata.put("Maximum pixel value", "" + max);
-    metadata.put("Mean pixel value", "" + mean);
+    addMeta("Minimum pixel value", "" + min);
+    addMeta("Maximum pixel value", "" + max);
+    addMeta("Mean pixel value", "" + mean);
 
     in.skipBytes(4);
     in.read(b);
@@ -286,31 +286,31 @@ public class MRCReader extends FormatReader {
         type = "unknown";
     }
 
-    metadata.put("Series type", type);
-    metadata.put("Lens", "" + lens);
-    metadata.put("ND1", "" + nd1);
-    metadata.put("ND2", "" + nd2);
-    metadata.put("VD1", "" + vd1);
-    metadata.put("VD2", "" + vd2);
+    addMeta("Series type", type);
+    addMeta("Lens", "" + lens);
+    addMeta("ND1", "" + nd1);
+    addMeta("ND2", "" + nd2);
+    addMeta("VD1", "" + vd1);
+    addMeta("VD2", "" + vd2);
 
     b = new byte[4];
     float[] angles = new float[6];
     for (int i=0; i<angles.length; i++) {
       in.read(b);
       angles[i] = Float.intBitsToFloat(DataTools.bytesToInt(b, little));
-      metadata.put("Angle " + (i+1), "" + angles[i]);
+      addMeta("Angle " + (i+1), "" + angles[i]);
     }
 
     in.skipBytes(24);
 
     in.read(b);
     int nUsefulLabels = DataTools.bytesToInt(b, little);
-    metadata.put("Number of useful labels", "" + nUsefulLabels);
+    addMeta("Number of useful labels", "" + nUsefulLabels);
 
     b = new byte[80];
     for (int i=0; i<10; i++) {
       in.read(b);
-      metadata.put("Label " + (i+1), new String(b));
+      addMeta("Label " + (i+1), new String(b));
     }
 
     in.skipBytes(extHeaderSize);

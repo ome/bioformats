@@ -183,7 +183,7 @@ public class AliconaReader extends FormatReader {
       key = key.trim();
       value = value.trim();
 
-      metadata.put(key, value);
+      addMeta(key, value);
 
       if (key.equals("TagCount")) count += Integer.parseInt(value);
       else if (key.equals("Rows")) height = Integer.parseInt(value);
@@ -199,7 +199,7 @@ public class AliconaReader extends FormatReader {
     numBytes =
       (int) (in.length() - textureOffset) / (width * height * numImages);
 
-    boolean hasC = !((String) metadata.get("TexturePtr")).trim().equals("7");
+    boolean hasC = !((String) getMeta("TexturePtr")).trim().equals("7");
 
     sizeX[0] = width;
     sizeY[0] = height;
@@ -224,9 +224,9 @@ public class AliconaReader extends FormatReader {
     );
 
     store.setDimensions(
-      new Float(((String) metadata.get("PlanePntX")).trim()),
-      new Float(((String) metadata.get("PlanePntY")).trim()),
-      new Float(((String) metadata.get("PlanePntZ")).trim()), null, null, null);
+      new Float(((String) getMeta("PlanePntX")).trim()),
+      new Float(((String) getMeta("PlanePntY")).trim()),
+      new Float(((String) getMeta("PlanePntZ")).trim()), null, null, null);
   }
 
   // -- Main method --

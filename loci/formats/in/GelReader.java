@@ -68,7 +68,7 @@ public class GelReader extends BaseTiffReader {
 
     try {
       long fmt = TiffTools.getIFDLongValue(ifds[1], MD_FILETAG, true, 128);
-      metadata.put("Data format", fmt == 2 ? "square root" : "linear");
+      addMeta("Data format", fmt == 2 ? "square root" : "linear");
     }
     catch (FormatException f) {
       f.printStackTrace();
@@ -76,25 +76,24 @@ public class GelReader extends BaseTiffReader {
 
     TiffRational scale =
       (TiffRational) TiffTools.getIFDValue(ifds[1], MD_SCALE_PIXEL);
-    metadata.put("Scale factor",
-      (scale == null) ? new TiffRational(1, 1) : scale);
+    addMeta("Scale factor", scale == null ? new TiffRational(1, 1) : scale);
 
     // ignore MD_COLOR_TABLE
 
     String lab = (String) TiffTools.getIFDValue(ifds[1], MD_LAB_NAME);
-    metadata.put("Lab name", lab == null ? "unknown" : lab);
+    addMeta("Lab name", lab == null ? "unknown" : lab);
 
     String info = (String) TiffTools.getIFDValue(ifds[1], MD_SAMPLE_INFO);
-    metadata.put("Sample info", info == null ? "unknown" : info);
+    addMeta("Sample info", info == null ? "unknown" : info);
 
     String prepDate = (String) TiffTools.getIFDValue(ifds[1], MD_PREP_DATE);
-    metadata.put("Date prepared", prepDate == null ? "unknown" : prepDate);
+    addMeta("Date prepared", prepDate == null ? "unknown" : prepDate);
 
     String prepTime = (String) TiffTools.getIFDValue(ifds[1], MD_PREP_TIME);
-    metadata.put("Time prepared", prepTime == null ? "unknown" : prepTime);
+    addMeta("Time prepared", prepTime == null ? "unknown" : prepTime);
 
     String units = (String) TiffTools.getIFDValue(ifds[1], MD_FILE_UNITS);
-    metadata.put("File units", units == null ? "unknown" : units);
+    addMeta("File units", units == null ? "unknown" : units);
 
     sizeT[series] = numImages;
   }
