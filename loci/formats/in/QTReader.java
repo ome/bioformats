@@ -554,7 +554,7 @@ public class QTReader extends FormatReader {
 
   /** Initializes the given QuickTime file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("initFile(" + id + ")");
+    if (debug) debug("QTReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
 

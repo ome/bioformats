@@ -158,7 +158,7 @@ public class GatanReader extends FormatReader {
 
   /** Initializes the given Gatan file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("initFile(" + id + ")");
+    if (debug) debug("GatanReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
 

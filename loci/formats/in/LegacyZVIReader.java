@@ -152,7 +152,7 @@ public class LegacyZVIReader extends FormatReader {
 
   /** Initializes the given ZVI file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("initFile(" + id + ")");
+    if (debug) debug("LegacyZVIReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
 

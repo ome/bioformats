@@ -324,7 +324,7 @@ public class ZeissZVIReader extends FormatReader {
 
   /** Initializes the given ZVI file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("initFile(" + id + ")");
+    if (debug) debug("ZeissZVIReader.initFile(" + id + ")");
 
     if (noPOI || needLegacy) {
       legacy.initFile(id);

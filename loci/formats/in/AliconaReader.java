@@ -151,7 +151,7 @@ public class AliconaReader extends FormatReader {
 
   /** Initializes the given Alicona file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("initFile(" + id + ")");
+    if (debug) debug("AliconaReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessStream(id);
 

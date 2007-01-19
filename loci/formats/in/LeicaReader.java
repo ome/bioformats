@@ -211,7 +211,7 @@ public class LeicaReader extends BaseTiffReader {
 
   /** Initializes the given Leica file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("initFile(" + id + ")");
+    if (debug) debug("LeicaReader.initFile(" + id + ")");
     String idLow = id.toLowerCase();
     close();
     if (idLow.endsWith("tif") || idLow.endsWith("tiff")) {

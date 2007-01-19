@@ -253,7 +253,7 @@ public class OIBReader extends FormatReader {
 
   /** Initializes the given OIB file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("initFile(" + id + ")");
+    if (debug) debug("OIBReader.initFile(" + id + ")");
     if (noPOI) throw new FormatException(NO_POI_MSG);
     currentId = id;
 
