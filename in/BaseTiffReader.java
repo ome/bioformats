@@ -653,7 +653,7 @@ public abstract class BaseTiffReader extends FormatReader {
    * @return the image description.
    */
   protected String getImageDescription() {
-    return (String) metadata.get("Comment");
+    return (String) getMeta("Comment");
   }
 
   // -- FormatReader API methods --
@@ -704,7 +704,7 @@ public abstract class BaseTiffReader extends FormatReader {
     if (!id.equals(currentId) && !DataTools.samePrefix(id, currentId)) {
       initFile(id);
     }
-    return metadata.get(field);
+    return getMeta(field);
   }
 
   /* @see loci.formats.IFormatReader#getChannelGlobalMinimum(int) */
@@ -936,12 +936,12 @@ public abstract class BaseTiffReader extends FormatReader {
   protected void put(String key, Object value) {
     if (value == null) return;
     if (value instanceof String) value = ((String) value).trim();
-    metadata.put(key, value);
+    addMeta(key, value);
   }
 
   protected void put(String key, int value) {
     if (value == -1) return; // indicates missing value
-    metadata.put(key, new Integer(value));
+    addMeta(key, new Integer(value));
   }
 
   protected void put(String key, boolean value) {

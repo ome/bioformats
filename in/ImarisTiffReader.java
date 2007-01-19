@@ -200,7 +200,7 @@ public class ImarisTiffReader extends BaseTiffReader {
       }
     }
 
-    String comment = (String) metadata.get("Comment");
+    String comment = (String) getMeta("Comment");
 
     // likely an INI-style comment, although we can't be sure
 
@@ -213,7 +213,7 @@ public class ImarisTiffReader extends BaseTiffReader {
         if (equals < 0) continue;
         String key = line.substring(0, equals);
         String value = line.substring(equals + 1);
-        metadata.put(key.trim(), value.trim());
+        addMeta(key.trim(), value.trim());
       }
       metadata.remove("Comment");
     }

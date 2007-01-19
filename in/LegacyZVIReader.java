@@ -357,10 +357,10 @@ public class LegacyZVIReader extends FormatReader {
           type = "undefined pixel type (" + pixType + ")";
       }
 
-      metadata.put("Width", new Integer(width));
-      metadata.put("Height", new Integer(height));
-      metadata.put("PixelType", type);
-      metadata.put("BPP", new Integer(bytesPerPixel));
+      addMeta("Width", new Integer(width));
+      addMeta("Height", new Integer(height));
+      addMeta("PixelType", type);
+      addMeta("BPP", new Integer(bytesPerPixel));
 
       ZVIBlock zviBlock = new ZVIBlock(theZ, theC, theT, width, height,
         alwaysOne, bytesPerPixel, pixType, bitDepth, pos);

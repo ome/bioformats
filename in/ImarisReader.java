@@ -81,13 +81,13 @@ public class ImarisReader extends FormatReader {
     }
 
     int version = in.readInt();
-    metadata.put("Version", new Integer(version));
+    addMeta("Version", new Integer(version));
     in.readInt();
 
     byte[] name = new byte[128];
     in.read(name);
     String iName = new String(name);
-    metadata.put("Image name", iName);
+    addMeta("Image name", iName);
 
     dims[0] = in.readShort();
     dims[1] = in.readShort();
@@ -101,7 +101,7 @@ public class ImarisReader extends FormatReader {
     byte[] date = new byte[32];
     in.read(date);
     String origDate = new String(date);
-    metadata.put("Original date", origDate);
+    addMeta("Original date", origDate);
 
     float dx = in.readFloat();
     float dy = in.readFloat();
@@ -111,9 +111,9 @@ public class ImarisReader extends FormatReader {
     byte[] com = new byte[128];
     in.read(com);
     String comment = new String(com);
-    metadata.put("Image comment", comment);
+    addMeta("Image comment", comment);
     int isSurvey = in.readInt();
-    metadata.put("Survey performed", isSurvey == 0 ? "true" : "false");
+    addMeta("Survey performed", isSurvey == 0 ? "true" : "false");
 
     numImages = dims[2] * dims[3];
     offsets = new int[numImages];
@@ -148,9 +148,9 @@ public class ImarisReader extends FormatReader {
       null);
 
     store.setImage(
-      (String) metadata.get("Image name"),
-      (String) metadata.get("Original date"),
-      (String) metadata.get("Image comment"),
+      (String) getMeta("Image name"),
+      (String) getMeta("Original date"),
+      (String) getMeta("Image comment"),
       null);
 
     store.setDimensions(

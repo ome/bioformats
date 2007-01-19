@@ -235,7 +235,7 @@ public class LeicaReader extends BaseTiffReader {
 
       if (ifds == null) throw new FormatException("No IFDs found");
 
-      String descr = (String) metadata.get("Comment");
+      String descr = (String) getMeta("Comment");
       metadata.remove("Comment");
 
       int ndx = descr.indexOf("Series Name");
@@ -276,7 +276,7 @@ public class LeicaReader extends BaseTiffReader {
         newLineNdx = descr.indexOf("\n", eqIndex);
         if (newLineNdx == -1) newLineNdx = descr.length();
         value = descr.substring(eqIndex+1, newLineNdx);
-        metadata.put(key.trim(), value.trim());
+        addMeta(key.trim(), value.trim());
         newLineNdx = descr.indexOf("\n", eqIndex);
         if (newLineNdx == -1) newLineNdx = descr.length();
         descr = descr.substring(newLineNdx);
@@ -602,16 +602,16 @@ public class LeicaReader extends BaseTiffReader {
       if (temp != null) {
         // the series data
         // ID_SERIES
-        metadata.put("Version",
+        addMeta("Version",
           new Integer(DataTools.bytesToInt(temp, 0, 4, littleEndian)));
-        metadata.put("Number of Series",
+        addMeta("Number of Series",
           new Integer(DataTools.bytesToInt(temp, 4, 4, littleEndian)));
-        metadata.put("Length of filename",
+        addMeta("Length of filename",
           new Integer(DataTools.bytesToInt(temp, 8, 4, littleEndian)));
-        metadata.put("Length of file extension",
+        addMeta("Length of file extension",
           new Integer(DataTools.bytesToInt(temp, 12, 4, littleEndian)));
-        Integer fileExtLen = (Integer) metadata.get("Length of file extension");
-        metadata.put("Image file extension",
+        Integer fileExtLen = (Integer) getMeta("Length of file extension");
+        addMeta("Image file extension",
           DataTools.stripString(new String(temp, 16, fileExtLen.intValue())));
       }
 
@@ -624,13 +624,13 @@ public class LeicaReader extends BaseTiffReader {
         widths[i] = DataTools.bytesToInt(temp, 4, 4, littleEndian);
         heights[i] = DataTools.bytesToInt(temp, 8, 4, littleEndian);
 
-        metadata.put("Number of images", new Integer(zs[i]));
-        metadata.put("Image width", new Integer(widths[i]));
-        metadata.put("Image height", new Integer(heights[i]));
-        metadata.put("Bits per Sample", new Integer(
-          DataTools.bytesToInt(temp, 12, 4, littleEndian)));
-        metadata.put("Samples per pixel", new Integer(
-          DataTools.bytesToInt(temp, 16, 4, littleEndian)));
+        addMeta("Number of images", new Integer(zs[i]));
+        addMeta("Image width", new Integer(widths[i]));
+        addMeta("Image height", new Integer(heights[i]));
+        addMeta("Bits per Sample",
+          new Integer(DataTools.bytesToInt(temp, 12, 4, littleEndian)));
+        addMeta("Samples per pixel",
+          new Integer(DataTools.bytesToInt(temp, 16, 4, littleEndian)));
       }
 
       temp = (byte[]) headerIFDs[i].get(new Integer(20));
@@ -638,7 +638,7 @@ public class LeicaReader extends BaseTiffReader {
         // dimension description
         // ID_DIMDESCR
         int pt = 0;
-        metadata.put("Voxel Version", new Integer(
+        addMeta("Voxel Version", new Integer(
           DataTools.bytesToInt(temp, 0, 4, littleEndian)));
         int voxelType = DataTools.bytesToInt(temp, 4, 4, littleEndian);
         String type = "";
@@ -654,18 +654,18 @@ public class LeicaReader extends BaseTiffReader {
             break;
         }
 
-        metadata.put("VoxelType", type);
+        addMeta("VoxelType", type);
 
-        metadata.put("Bytes per pixel", new Integer(
-          DataTools.bytesToInt(temp, 8, 4, littleEndian)));
-        metadata.put("Real world resolution", new Integer(
-          DataTools.bytesToInt(temp, 12, 4, littleEndian)));
+        addMeta("Bytes per pixel",
+          new Integer(DataTools.bytesToInt(temp, 8, 4, littleEndian)));
+        addMeta("Real world resolution",
+          new Integer(DataTools.bytesToInt(temp, 12, 4, littleEndian)));
         int length = DataTools.bytesToInt(temp, 16, 4, littleEndian);
-        metadata.put("Maximum voxel intensity",
+        addMeta("Maximum voxel intensity",
           DataTools.stripString(new String(temp, 20, length)));
         pt = 20 + length;
         pt += 4;
-        metadata.put("Minimum voxel intensity",
+        addMeta("Minimum voxel intensity",
           DataTools.stripString(new String(temp, pt, length)));
         pt += length;
         length = DataTools.bytesToInt(temp, pt, 4, littleEndian);
@@ -760,36 +760,36 @@ public class LeicaReader extends BaseTiffReader {
           }
 
           //if (dimType.equals("channel")) numChannels++;
-          metadata.put("Dim" + j + " type", dimType);
+          addMeta("Dim" + j + " type", dimType);
           pt += 4;
-          metadata.put("Dim" + j + " size", new Integer(
+          addMeta("Dim" + j + " size", new Integer(
             DataTools.bytesToInt(temp, pt, 4, littleEndian)));
           pt += 4;
-          metadata.put("Dim" + j + " distance between sub-dimensions",
+          addMeta("Dim" + j + " distance between sub-dimensions",
             new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
           pt += 4;
 
           int len = DataTools.bytesToInt(temp, pt, 4, littleEndian);
           pt += 4;
-          metadata.put("Dim" + j + " physical length",
+          addMeta("Dim" + j + " physical length",
             DataTools.stripString(new String(temp, pt, len)));
           pt += len;
 
           len = DataTools.bytesToInt(temp, pt, 4, littleEndian);
           pt += 4;
-          metadata.put("Dim" + j + " physical origin",
+          addMeta("Dim" + j + " physical origin",
             DataTools.stripString(new String(temp, pt, len)));
           pt += len;
 
           len = DataTools.bytesToInt(temp, pt, 4, littleEndian);
           pt += 4;
-          metadata.put("Dim" + j + " name",
+          addMeta("Dim" + j + " name",
             DataTools.stripString(new String(temp, pt, len)));
           pt += len;
 
           len = DataTools.bytesToInt(temp, pt, 4, littleEndian);
           pt += 4;
-          metadata.put("Dim" + j + " description",
+          addMeta("Dim" + j + " description",
             DataTools.stripString(new String(temp, pt, len)));
         }
       }
@@ -807,48 +807,48 @@ public class LeicaReader extends BaseTiffReader {
         // time data
         // ID_TIMEINFO
         try {
-          metadata.put("Number of time-stamped dimensions",
+          addMeta("Number of time-stamped dimensions",
             new Integer(DataTools.bytesToInt(temp, 0, 4, littleEndian)));
           int nDims = DataTools.bytesToInt(temp, 4, 4, littleEndian);
-          metadata.put("Time-stamped dimension", new Integer(nDims));
+          addMeta("Time-stamped dimension", new Integer(nDims));
 
           int pt = 8;
 
           for (int j=0; j < nDims; j++) {
-            metadata.put("Dimension " + j + " ID",
+            addMeta("Dimension " + j + " ID",
               new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
             pt += 4;
-            metadata.put("Dimension " + j + " size",
+            addMeta("Dimension " + j + " size",
               new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
             pt += 4;
-            metadata.put("Dimension " + j + " distance between dimensions",
+            addMeta("Dimension " + j + " distance between dimensions",
               new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
             pt += 4;
           }
 
           int numStamps = DataTools.bytesToInt(temp, pt, 4, littleEndian);
           pt += 4;
-          metadata.put("Number of time-stamps", new Integer(numStamps));
+          addMeta("Number of time-stamps", new Integer(numStamps));
           for (int j=0; j<numStamps; j++) {
-            metadata.put("Timestamp " + j,
+            addMeta("Timestamp " + j,
               DataTools.stripString(new String(temp, pt, 64)));
             pt += 64;
           }
 
           int numTMs = DataTools.bytesToInt(temp, pt, 4, littleEndian);
           pt += 4;
-          metadata.put("Number of time-markers", new Integer(numTMs));
+          addMeta("Number of time-markers", new Integer(numTMs));
           for (int j=0; j<numTMs; j++) {
             int numDims = DataTools.bytesToInt(temp, pt, 4, littleEndian);
             pt += 4;
 
             for (int k=0; k<numDims; k++) {
-              metadata.put("Time-marker " + j +
+              addMeta("Time-marker " + j +
                 " Dimension " + k + " coordinate",
                 new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
               pt += 4;
             }
-            metadata.put("Time-marker " + j,
+            addMeta("Time-marker " + j,
               DataTools.stripString(new String(temp, pt, 64)));
             pt += 64;
           }
@@ -875,25 +875,25 @@ public class LeicaReader extends BaseTiffReader {
         int len = DataTools.bytesToInt(temp, pt, 4, littleEndian);
         pt += 4;
 
-        metadata.put("Image Description",
+        addMeta("Image Description",
           DataTools.stripString(new String(temp, pt, 2*len)));
         pt += 2*len;
         len = DataTools.bytesToInt(temp, pt, 4, littleEndian);
         pt += 4;
 
-        metadata.put("Main file extension",
+        addMeta("Main file extension",
           DataTools.stripString(new String(temp, pt, 2*len)));
         pt += 2*len;
 
         len = DataTools.bytesToInt(temp, pt, 4, littleEndian);
         pt += 4;
-        metadata.put("Single image format identifier",
+        addMeta("Single image format identifier",
           DataTools.stripString(new String(temp, pt, 2*len)));
         pt += 2*len;
 
         len = DataTools.bytesToInt(temp, pt, 4, littleEndian);
         pt += 4;
-        metadata.put("Single image extension",
+        addMeta("Single image extension",
           DataTools.stripString(new String(temp, pt, 2*len)));
       }
 
@@ -904,33 +904,33 @@ public class LeicaReader extends BaseTiffReader {
         int pt = 0;
         int nChannels = DataTools.bytesToInt(temp, pt, 4, littleEndian);
         pt += 4;
-        metadata.put("Number of LUT channels", new Integer(nChannels));
-        metadata.put("ID of colored dimension",
+        addMeta("Number of LUT channels", new Integer(nChannels));
+        addMeta("ID of colored dimension",
           new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
         pt += 4;
 
         numChannels[i] = nChannels;
 
         for (int j=0; j<nChannels; j++) {
-          metadata.put("LUT Channel " + j + " version",
+          addMeta("LUT Channel " + j + " version",
             new Integer(DataTools.bytesToInt(temp, pt, 4, littleEndian)));
           pt += 4;
 
           int invert = DataTools.bytesToInt(temp, pt, 1, littleEndian);
           pt += 1;
           boolean inverted = invert == 1;
-          metadata.put("LUT Channel " + j + " inverted?",
+          addMeta("LUT Channel " + j + " inverted?",
             new Boolean(inverted).toString());
 
           int length = DataTools.bytesToInt(temp, pt, 4, littleEndian);
           pt += 4;
-          metadata.put("LUT Channel " + j + " description",
+          addMeta("LUT Channel " + j + " description",
             DataTools.stripString(new String(temp, pt, length)));
 
           pt += length;
           length = DataTools.bytesToInt(temp, pt, 4, littleEndian);
           pt += 4;
-          metadata.put("LUT Channel " + j + " filename",
+          addMeta("LUT Channel " + j + " filename",
             DataTools.stripString(new String(temp, pt, length)));
           pt += length;
           length = DataTools.bytesToInt(temp, pt, 4, littleEndian);
@@ -941,7 +941,7 @@ public class LeicaReader extends BaseTiffReader {
           {
             numChannels[i] = 3;
           }
-          metadata.put("LUT Channel " + j + " name", name);
+          addMeta("LUT Channel " + j + " name", name);
           pt += length;
 
           pt += 8;
@@ -977,7 +977,7 @@ public class LeicaReader extends BaseTiffReader {
       if (debug) e.printStackTrace();
     }
 
-    Integer v = (Integer) metadata.get("Real world resolution");
+    Integer v = (Integer) getMeta("Real world resolution");
 
     if (v != null) {
       validBits = new int[sizeC.length][];
@@ -1008,7 +1008,7 @@ public class LeicaReader extends BaseTiffReader {
       sizeT[i] += 1;
       currentOrder[i] = "XYZTC";
 
-      int tPixelType = ((Integer) metadata.get("Bytes per pixel")).intValue();
+      int tPixelType = ((Integer) getMeta("Bytes per pixel")).intValue();
       switch (tPixelType) {
         case 1:
           pixelType[i] = FormatReader.UINT8;
@@ -1041,8 +1041,8 @@ public class LeicaReader extends BaseTiffReader {
         "XYZTC", // DimensionOrder
         new Integer(i));
 
-      String timestamp = (String) metadata.get("Timestamp " + (i+1));
-      String description = (String) metadata.get("Image Description");
+      String timestamp = (String) getMeta("Timestamp " + (i+1));
+      String description = (String) getMeta("Image Description");
 
       try {
         store.setImage(null, timestamp.substring(3),

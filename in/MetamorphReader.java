@@ -141,7 +141,7 @@ public class MetamorphReader extends BaseTiffReader {
               else pt++;
             }
 
-            metadata.put("Extra data", sb.toString().trim());
+            addMeta("Extra data", sb.toString().trim());
           }
         }
       }
@@ -246,7 +246,7 @@ public class MetamorphReader extends BaseTiffReader {
     }
 
     // parse (mangle) TIFF comment
-    String descr = (String) metadata.get("Comment");
+    String descr = (String) getMeta("Comment");
     if (descr != null) {
       StringTokenizer st = new StringTokenizer(descr, "\n");
       StringBuffer sb = new StringBuffer();
@@ -317,8 +317,8 @@ public class MetamorphReader extends BaseTiffReader {
   protected void setChannelGlobalMinMax(int i)
     throws FormatException, IOException
   {
-    Double globalMin = (Double) metadata.get("grayMin");
-    Double globalMax = (Double) metadata.get("grayMax");
+    Double globalMin = (Double) getMeta("grayMin");
+    Double globalMax = (Double) getMeta("grayMax");
     if (globalMin != null || globalMax != null) {
       getMetadataStore(currentId).setChannelGlobalMinMax(i,
         globalMin, globalMax, null);

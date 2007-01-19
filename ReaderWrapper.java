@@ -241,6 +241,12 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getMetadata(id);
   }
 
+  public void setMetadataFiltered(boolean filter) {
+    reader.setMetadataFiltered(filter);
+  }
+
+  public boolean isMetadataFiltered() { return reader.isMetadataFiltered(); }
+
   public void setMetadataStore(MetadataStore store) {
     reader.setMetadataStore(store);
   }

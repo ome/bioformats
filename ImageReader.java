@@ -417,6 +417,16 @@ public class ImageReader implements IFormatReader {
     return getReader(id).getMetadata(id);
   }
 
+  /* @see IFormatReader#setMetadataFiltered(boolean) */
+  public void setMetadataFiltered(boolean filter) {
+    for (int i=0; i<readers.length; i++) readers[i].setMetadataFiltered(filter);
+  }
+
+  /* @see IFormatReader#isMetadataFiltered() */
+  public boolean isMetadataFiltered() {
+    return readers[0].isNormalized();
+  }
+
   /* @see FormatReader#setMetadataStore(MetadataStore) */
   public void setMetadataStore(MetadataStore store) {
     for (int i=0; i<readers.length; i++) {

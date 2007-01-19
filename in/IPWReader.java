@@ -266,12 +266,12 @@ public class IPWReader extends BaseTiffReader {
 
     // parse the image description
     String description = new String(tags, 22, tags.length-22);
-    metadata.put("Image Description", description);
+    addMeta("Image Description", description);
 
     // default values
-    metadata.put("slices", "1");
-    metadata.put("channels", "1");
-    metadata.put("frames", new Integer(getImageCount(id)));
+    addMeta("slices", "1");
+    addMeta("channels", "1");
+    addMeta("frames", new Integer(getImageCount(id)));
 
     // parse the description to get channels/slices/times where applicable
     // basically the same as in ImageProSeqForm
@@ -288,15 +288,15 @@ public class IPWReader extends BaseTiffReader {
         else {
           data = token.trim();
         }
-        metadata.put(label, data);
+        addMeta(label, data);
       }
     }
 
-    metadata.put("Version", new String(header).trim());
+    addMeta("Version", new String(header).trim());
 
-    Integer tSize = Integer.valueOf((String) metadata.get("slices"));
-    Integer cSize = Integer.valueOf((String) metadata.get("channels"));
-    Integer zSize = Integer.valueOf(metadata.get("frames").toString());
+    Integer tSize = Integer.valueOf((String) getMeta("slices"));
+    Integer cSize = Integer.valueOf((String) getMeta("channels"));
+    Integer zSize = Integer.valueOf(getMeta("frames").toString());
 
     sizeX = new int[1];
     sizeY = new int[1];
@@ -310,9 +310,9 @@ public class IPWReader extends BaseTiffReader {
     Hashtable h = ifds[0];
     sizeX[0] = TiffTools.getIFDIntValue(h, TiffTools.IMAGE_WIDTH);
     sizeY[0] = TiffTools.getIFDIntValue(h, TiffTools.IMAGE_LENGTH);
-    sizeZ[0] = Integer.valueOf(metadata.get("frames").toString()).intValue();
-    sizeC[0] = Integer.parseInt((String) metadata.get("channels"));
-    sizeT[0] = Integer.parseInt((String) metadata.get("slices"));
+    sizeZ[0] = Integer.valueOf(getMeta("frames").toString()).intValue();
+    sizeC[0] = Integer.parseInt((String) getMeta("channels"));
+    sizeT[0] = Integer.parseInt((String) getMeta("slices"));
     currentOrder[0] = "XY";
 
     if (rgb) sizeC[0] *= 3;
@@ -385,7 +385,7 @@ public class IPWReader extends BaseTiffReader {
 
     store.setPixels(null, null, zSize, cSize, tSize, new Integer(pixelType[0]),
       new Boolean(!isLittleEndian(id)), getDimensionOrder(id), null);
-    store.setImage(null, null, (String) metadata.get("Version"), null);
+    store.setImage(null, null, (String) getMeta("Version"), null);
   }
 
   // -- Helper methods --
@@ -431,13 +431,12 @@ public class IPWReader extends BaseTiffReader {
         else if (entryName.equals("FrameRate")) {
           // should always be exactly 4 bytes
           // only exists if the file has more than one image
-          metadata.put("Frame Rate",
-            new Long(DataTools.bytesToInt(data, true)));
+          addMeta("Frame Rate", new Long(DataTools.bytesToInt(data, true)));
         }
         else if (entryName.equals("FrameInfo")) {
           // should always be 16 bytes (if present)
           for(int i=0; i<data.length/2; i++) {
-            metadata.put("FrameInfo "+i,
+            addMeta("FrameInfo "+i,
               new Short(DataTools.bytesToShort(data, i*2, true)));
           }
         }

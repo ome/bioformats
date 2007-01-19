@@ -124,12 +124,11 @@ public class AndorReader extends BaseTiffReader {
     // "getSizeT()" and "getDimensionOrder()".
     if (header != null) {
       int pos = 3;
-      metadata.put("Name", DataTools.bytesToString(header, pos, 256));
+      addMeta("Name", DataTools.bytesToString(header, pos, 256));
       pos += 256;
-      metadata.put("Data flag",
-        "" + DataTools.bytesToInt(header, pos, 4, little));
+      addMeta("Data flag", "" + DataTools.bytesToInt(header, pos, 4, little));
       pos += 4;  // data flag
-      metadata.put("Number of colors",
+      addMeta("Number of colors",
         "" + DataTools.bytesToInt(header, pos, 4, little));
       if (debug && debugLevel >= 2) {
         debug("bytes for 'number of colors'");
@@ -198,7 +197,7 @@ public class AndorReader extends BaseTiffReader {
         default:
           imgType = "unknown";
       }
-      metadata.put("Image type", imgType);
+      addMeta("Image type", imgType);
 
       sizeT[0] = 1;
 
@@ -216,18 +215,18 @@ public class AndorReader extends BaseTiffReader {
 
         // name is supposed to be 64 bytes but in practice appears to be 16
         String name = DataTools.bytesToString(header, pos, 16);
-        metadata.put("Dimension " + i + " Name", name);
+        addMeta("Dimension " + i + " Name", name);
         pos += 16;
         int size = DataTools.bytesToInt(header, pos, little);
-        metadata.put("Dimension " + i + " Size", "" + size);
+        addMeta("Dimension " + i + " Size", "" + size);
         pos += 4;
-        metadata.put("Dimension " + i + " Origin", "" +
+        addMeta("Dimension " + i + " Origin", "" +
           Double.longBitsToDouble(DataTools.bytesToLong(header, pos, little)));
         pos += 8;
-        metadata.put("Dimension " + i + " Resolution", "" +
+        addMeta("Dimension " + i + " Resolution", "" +
           Double.longBitsToDouble(DataTools.bytesToLong(header, pos, little)));
         pos += 8;
-        metadata.put("Dimension " + i + " Calibration units",
+        addMeta("Dimension " + i + " Calibration units",
           "" + DataTools.bytesToString(header, pos, 16));
         pos += 16;
         // skip last 48 bytes (adjust for name discrepancy)
@@ -255,14 +254,14 @@ public class AndorReader extends BaseTiffReader {
       StringBuffer dataStamp = new StringBuffer();
       for (int i=0; i<8; i++) {
         if (i > 0) dataStamp.append(", ");
-        String name = (String) metadata.get("Dimension " + (i + 3) + " Name");
+        String name = (String) getMeta("Dimension " + (i + 3) + " Name");
         if (name == null || name.equals("")) break; // no more dimensions
         dataStamp.append(name);
         dataStamp.append("=");
         dataStamp.append(Double.longBitsToDouble(
           DataTools.bytesToLong(stamp, 8*i, little)));
       }
-      metadata.put("Data Stamp for plane #" + (j + 1), dataStamp.toString());
+      addMeta("Data Stamp for plane #" + (j + 1), dataStamp.toString());
     }
 
     // compute the dimension order from the data stamps
@@ -274,7 +273,7 @@ public class AndorReader extends BaseTiffReader {
     if (ifds.length < 10) numPlanes = ifds.length;
     String[] values = new String[numPlanes];
     for (int i=0; i<numPlanes; i++) {
-      values[i] = (String) metadata.get("Data Stamp for plane #" + (i+1));
+      values[i] = (String) getMeta("Data Stamp for plane #" + (i+1));
     }
 
     // determine the number of '=' characters in a data stamp
@@ -349,8 +348,8 @@ public class AndorReader extends BaseTiffReader {
       float pixelSizeX = 0.0f, pixelSizeY = 0.0f, pixelSizeZ = 0.0f;
 
       for (int i=1; i<10; i++) {
-        String name = (String) metadata.get("Dimension " + i + " Name");
-        String size = (String) metadata.get("Dimension " + i + " Resolution");
+        String name = (String) getMeta("Dimension " + i + " Name");
+        String size = (String) getMeta("Dimension " + i + " Resolution");
 
         if (name != null && size != null) {
           if (name.equals("x")) pixelSizeX = Float.parseFloat(size);

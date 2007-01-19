@@ -813,14 +813,14 @@ public class QTReader extends FormatReader {
               in.readDouble();
               int fieldsPerPlane = in.read();
               interlaced = fieldsPerPlane == 2;
-              metadata.put("Codec", codec);
-              metadata.put("Bits per pixel", new Integer(bitsPerPixel));
+              addMeta("Codec", codec);
+              addMeta("Bits per pixel", new Integer(bitsPerPixel));
               in.readDouble();
               in.read();
             }
             else {
               altCodec = new String(b);
-              metadata.put("Second codec", altCodec);
+              addMeta("Second codec", altCodec);
             }
           }
         }
@@ -859,7 +859,7 @@ public class QTReader extends FormatReader {
           in.readDouble();
           in.readInt();
           int fps = in.readInt();
-          metadata.put("Frames per second", new Integer(fps));
+          addMeta("Frames per second", new Integer(fps));
         }
         if (oldpos + atomSize < in.length()) {
           in.seek(oldpos + atomSize);

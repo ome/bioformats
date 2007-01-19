@@ -208,8 +208,8 @@ public class SDTReader extends FormatReader {
     off = info.dataBlockOffs + 22;
     timeBins = info.timeBins;
     channels = info.channels;
-    metadata.put("time bins", new Integer(timeBins));
-    metadata.put("channels", new Integer(channels));
+    addMeta("time bins", new Integer(timeBins));
+    addMeta("channels", new Integer(channels));
 
     sizeX[0] = info.width;
     sizeY[0] = info.height;

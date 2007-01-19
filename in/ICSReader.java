@@ -260,7 +260,7 @@ public class ICSReader extends FormatReader {
         {
           if (t.countTokens() < 3) {
             try {
-              metadata.put(token, t.nextToken());
+              addMeta(token, t.nextToken());
             }
             catch (NoSuchElementException e) { }
           }
@@ -269,7 +269,7 @@ public class ICSReader extends FormatReader {
             while (t.hasMoreTokens()) {
               meta = meta + " " + t.nextToken();
             }
-            metadata.put(token, meta);
+            addMeta(token, meta);
           }
         }
       }
@@ -279,8 +279,8 @@ public class ICSReader extends FormatReader {
       catch (NoSuchElementException e) { line = null; }
     }
 
-    String images = (String) metadata.get("sizes");
-    String ord = (String) metadata.get("order");
+    String images = (String) getMeta("sizes");
+    String ord = (String) getMeta("order");
     ord = ord.trim();
     // bpp, width, height, z, channels
     StringTokenizer t1 = new StringTokenizer(images);
@@ -323,7 +323,7 @@ public class ICSReader extends FormatReader {
     numImages = dimensions[3] * dimensions[4] * dimensions[5];
     if (numImages == 0) numImages++;
 
-    String endian = (String) metadata.get("byte_order");
+    String endian = (String) getMeta("byte_order");
     littleEndian = true;
 
     if (endian != null) {
@@ -338,7 +338,7 @@ public class ICSReader extends FormatReader {
       if (lastByte < firstByte) littleEndian = false;
     }
 
-    String test = (String) metadata.get("compression");
+    String test = (String) getMeta("compression");
     boolean gzip = (test == null) ? false : test.equals("gzip");
 
     if (versionTwo) {
@@ -377,11 +377,11 @@ public class ICSReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore(id);
 
-    store.setImage((String) metadata.get("filename"), null, null, null);
+    store.setImage((String) getMeta("filename"), null, null, null);
 
     // populate Pixels element
 
-    String o = (String) metadata.get("order");
+    String o = (String) getMeta("order");
     o = o.trim();
     o = o.substring(o.indexOf("x")).trim();
     char[] tempOrder = new char[(o.length() / 2) + 1];
@@ -396,9 +396,9 @@ public class ICSReader extends FormatReader {
     if (o.indexOf("C") == -1) o = o + "C";
 
     int bitsPerPixel =
-      Integer.parseInt((String) metadata.get("significant_bits"));
-    String fmt = (String) metadata.get("format");
-    String sign = (String) metadata.get("sign");
+      Integer.parseInt((String) getMeta("significant_bits"));
+    String fmt = (String) getMeta("format");
+    String sign = (String) getMeta("sign");
 
     if (bitsPerPixel < 32) littleEndian = !littleEndian;
 
