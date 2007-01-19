@@ -329,6 +329,7 @@ public class Importer implements ItemListener {
         else r = new ChannelSeparator(r);
       }
       r.setColorTableIgnored(ignoreTables);
+      r.setMetadataFiltered(true);
 
       // store OME metadata into OME-XML structure, if available
       OMEXMLMetadataStore store = new OMEXMLMetadataStore();
