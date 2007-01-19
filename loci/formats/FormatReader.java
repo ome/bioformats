@@ -699,8 +699,11 @@ public abstract class FormatReader extends FormatHandler
       System.out.println("\tWidth = " + sizeX);
       System.out.println("\tHeight = " + sizeY);
       System.out.println("\tSizeZ = " + sizeZ);
-      System.out.println("\tSizeC = " + sizeC +
-        " (effectively " + effSizeC + ")");
+      System.out.print("\tSizeC = " + sizeC);
+      if (sizeC != effSizeC) {
+        System.out.print(" (effectively " + effSizeC + ")");
+      }
+      System.out.println();
       System.out.println("\tSizeT = " + sizeT);
       if (imageCount != sizeZ * effSizeC * sizeT) {
         System.out.println("\t************ Warning: ZCT mismatch ************");
