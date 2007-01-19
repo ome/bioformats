@@ -222,7 +222,7 @@ public class OIFReader extends FormatReader {
 
   /** Initializes the given OIF file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("initFile(" + id + ")");
+    if (debug) debug("OIFReader.initFile(" + id + ")");
 
     // check to make sure that we have the OIF file
     // if not, we need to look for it in the parent directory

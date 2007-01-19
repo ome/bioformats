@@ -194,7 +194,7 @@ public class IPWReader extends BaseTiffReader {
 
   /** Initializes the given IPW file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("initFile(" + id + ")");
+    if (debug) debug("IPWReader.initFile(" + id + ")");
     if (noPOI) throw new FormatException(NO_POI_MSG);
     currentId = id;
 

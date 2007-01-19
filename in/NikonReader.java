@@ -179,7 +179,7 @@ public class NikonReader extends BaseTiffReader {
 
   /* @see BaseTiffReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("initFile(" + id + ")");
+    if (debug) debug("NikonReader.initFile(" + id + ")");
     close();
     currentId = id;
     metadata = new Hashtable();

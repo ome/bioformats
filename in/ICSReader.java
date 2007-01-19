@@ -197,7 +197,7 @@ public class ICSReader extends FormatReader {
 
   /** Initializes the given ICS file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("initFile(" + id + ")");
+    if (debug) debug("ICSReader.initFile(" + id + ")");
     super.initFile(id);
 
     String icsId = id, idsId = id;

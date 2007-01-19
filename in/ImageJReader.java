@@ -155,7 +155,7 @@ public class ImageJReader extends FormatReader {
 
   /** Initializes the given file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("initFile(" + id + ")");
+    if (debug) debug("ImageJReader.initFile(" + id + ")");
     super.initFile(id);
 
     sizeX[0] = openImage(id, 0).getWidth();

@@ -202,7 +202,7 @@ public class OMEXMLReader extends FormatReader {
 
   /** Initializes the given OME-XML file. */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("initFile(" + id + ")");
+    if (debug) debug("OMEXMLReader.initFile(" + id + ")");
     close();
     currentId = id;
     metadata = new Hashtable();

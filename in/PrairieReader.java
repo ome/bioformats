@@ -198,7 +198,7 @@ public class PrairieReader extends FormatReader {
 
   /* @see IFormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (debug) debug("initFile(" + id + ")");
+    if (debug) debug("PrairieReader.initFile(" + id + ")");
 
     if (id.endsWith("xml") || id.endsWith("cfg")) {
       // we have been given the XML file that lists TIFF files (best case)
