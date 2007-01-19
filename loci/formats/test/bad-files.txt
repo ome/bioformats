@@ -18,7 +18,7 @@ tiff/curtis/bad1.tif
 tiff/curtis/bad2.tif
 tiff/curtis/bad3.tif
 
-# these are Bio-Rad metadata, unsupported for now
+# these files are Bio-Rad metadata, unsupported for now
 keck/radiance/data.raw
 biorad/keck/radiance/lse.xml
 leica/julie/biorad/data.raw
