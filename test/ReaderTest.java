@@ -317,6 +317,8 @@ public class ReaderTest extends TestCase {
         while (true) {
           String line = in.readLine();
           if (line == null) break;
+          if (line.trim().equals("")) continue; // blank line
+          if (line.startsWith("#")) continue; // comment
           badFiles.add(line);
         }
         in.close();
