@@ -58,6 +58,11 @@ public class Location {
     if (!isURL) file = new File(getMappedId(pathname));
   }
 
+  public Location(File file) {
+    isURL = false;
+    this.file = file;
+  }
+
   public Location(String parent, String child) {
     this(parent + "/" + child);
   }
