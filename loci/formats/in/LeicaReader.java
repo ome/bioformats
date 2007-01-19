@@ -1053,6 +1053,7 @@ public class LeicaReader extends BaseTiffReader {
   }
 
   private boolean usedFile(String s) {
+    if (files == null) return false;
     for (int i=0; i<files.length; i++) {
       if (files[i] == null) continue;
       if (files[i].contains(s)) return true;
