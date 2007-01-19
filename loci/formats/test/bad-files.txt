@@ -107,6 +107,7 @@ deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z29_t00.t
 iplab/kevino/stack1
 leica/julie/biorad/data.raw
 leica/julie/biorad/lse.xml
+leica/samples/Leica_sample_Image001_ch00.tif
 leica/samples/Leica_sample.lei
 tiff/curtis/bad.tiff
 tiff/curtis/bad1.tif
