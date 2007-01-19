@@ -8,11 +8,105 @@ biorad/curtis/worse3.pic
 biorad/curtis/worse4.pic
 biorad/curtis/worst1.pic
 biorad/curtis/worst2.pic
+keck/radiance/data.raw
+biorad/keck/radiance/lse.xml
 bmp/curtis/bad1.bmp
 bmp/curtis/bad.bmp
 bmp/curtis/bad2.bmp
 bmp/curtis/bad3.bmp
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z00_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z01_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z02_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z03_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z04_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z05_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z06_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z07_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z08_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z09_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z10_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z11_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z12_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z13_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z14_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z15_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z16_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z17_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z18_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z19_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z20_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z21_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z22_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z23_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z24_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z25_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z26_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z27_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z28_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w457_z29_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z00_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z01_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z02_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z03_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z04_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z05_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z06_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z07_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z08_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z09_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z10_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z11_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z12_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z13_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z14_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z15_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z16_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z17_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z18_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z19_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z20_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z21_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z22_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z23_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z24_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z25_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z26_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z27_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z28_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w528_z29_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z00_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z01_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z02_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z03_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z04_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z05_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z06_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z07_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z08_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z09_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z10_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z11_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z12_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z13_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z14_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z15_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z16_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z17_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z18_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z19_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z20_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z21_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z22_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z23_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z24_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z25_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z26_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z27_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z28_t00.tif
+deltavision/s2 cell/tiffs produced by Softworx Explorer/s2cell_01_w617_z29_t00.tif
 iplab/kevino/stack1
+leica/julie/biorad/data.raw
+leica/julie/biorad/lse.xml
 leica/samples/Leica_sample.lei
 tiff/curtis/bad.tiff
 tiff/curtis/bad1.tif
