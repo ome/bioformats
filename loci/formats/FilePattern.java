@@ -293,6 +293,14 @@ public class FilePattern {
 
   /**
    * Identifies the group pattern from a given file within that group.
+   * @param file The file to use as a template for the match.
+   */
+  public static String findPattern(File file) {
+    return findPattern(file.getName(), file.getAbsoluteFile().getParent());
+  }
+
+  /**
+   * Identifies the group pattern from a given file within that group.
    * @param name The filename to use as a template for the match.
    * @param dir The directory in which to search for matching files.
    */
