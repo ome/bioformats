@@ -231,7 +231,9 @@ public class LeicaReader extends BaseTiffReader {
       try {
         super.initMetadata();
       }
-      catch (NullPointerException n) { }
+      catch (NullPointerException n) {
+        if (debug) n.printStackTrace();
+      }
 
       if (ifds == null) throw new FormatException("No IFDs found");
 
@@ -586,8 +588,12 @@ public class LeicaReader extends BaseTiffReader {
       }
       return false;
     }
-    catch (IOException exc) { }
-    catch (NullPointerException exc) { }
+    catch (IOException exc) {
+      if (debug) exc.printStackTrace();
+    }
+    catch (NullPointerException exc) {
+      if (debug) exc.printStackTrace();
+    }
     return false;
   }
 
@@ -959,22 +965,25 @@ public class LeicaReader extends BaseTiffReader {
     orderCertain = new boolean[numSeries];
     Arrays.fill(orderCertain, true);
 
-    try {
-      int oldSeries = getSeries(currentId);
-      for (int i=0; i<sizeC.length; i++) {
-        setSeries(currentId, i);
-        if (isRGB(currentId)) sizeC[i] = 3;
-        else sizeC[i] = 1;
+    // sizeC is null here if the file we opened was a TIFF.
+    // However, the sizeC field will be adjusted anyway by
+    // a later call to BaseTiffReader.initMetadata.
+    if (sizeC != null) {
+      try {
+        int oldSeries = getSeries(currentId);
+        for (int i=0; i<sizeC.length; i++) {
+          setSeries(currentId, i);
+          if (isRGB(currentId)) sizeC[i] = 3;
+          else sizeC[i] = 1;
+        }
+        setSeries(currentId, oldSeries);
       }
-      setSeries(currentId, oldSeries);
-    }
-    catch (Exception e) {
-      // NullPointerException caught here if the file we opened was a TIFF.
-      // However, the sizeC field will be adjusted anyway by a later call to
-      // BaseTiffReader.initMetadata
-
-      // CTR TODO - eliminate catch-all exception handling
-      if (debug) e.printStackTrace();
+      catch (FormatException exc) {
+        exc.printStackTrace();
+      }
+      catch (IOException exc) {
+        exc.printStackTrace();
+      }
     }
 
     Integer v = (Integer) getMeta("Real world resolution");
@@ -1048,7 +1057,9 @@ public class LeicaReader extends BaseTiffReader {
         store.setImage(null, timestamp.substring(3),
           description, new Integer(i));
       }
-      catch (NullPointerException n) { }
+      catch (NullPointerException n) {
+        if (debug) n.printStackTrace();
+      }
     }
   }
 
