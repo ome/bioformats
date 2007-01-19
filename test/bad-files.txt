@@ -125,8 +125,10 @@ iplab/kevino/stack1
 leica/samples/Leica_sample_Image001_ch00.tif
 leica/samples/Leica_sample.lei
 
-# these LSM files appear to be seriously screwed up
+# this LSM file appears to be seriously screwed up
 zeiss-lsm/billm/16stack.lsm
+
+# these LSM files are a bit strange, but seem to work now
 #zeiss-lsm/billm/FC152_L1_B1_R1.lsm
 #zeiss-lsm/billm/FC152_L1_B1_R10.lsm
 #zeiss-lsm/billm/FC152_L1_B1_R2.lsm
