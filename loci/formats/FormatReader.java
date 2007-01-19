@@ -172,6 +172,25 @@ public abstract class FormatReader extends FormatHandler
 
   /** Adds an entry to the metadata table. */
   protected void addMeta(String key, Object value) {
+    if (key == null || value == null) return;
+    if (filterMetadata) {
+      // verify key & value are not empty
+      if (key.length() == 0) return;
+      String val = value.toString();
+      if (val.length() == 0) return;
+
+      // verify key & value are reasonable length
+      int maxLen = 8192;
+      if (key.length() > maxLen) return;
+      if (val.length() > maxLen) return;
+
+      // verify key & value start with printable characters
+      if (key.charAt(0) < 32) return;
+      if (val.charAt(0) < 32) return;
+
+      // verify key contains at least one alphabetic character
+      if (!key.matches(".*[a-zA-Z].*")) return;
+    }
     metadata.put(key, value);
   }
 
@@ -634,6 +653,7 @@ public abstract class FormatReader extends FormatHandler
 
     reader.setColorTableIgnored(ignoreColors);
     reader.setNormalized(normalize);
+    reader.setMetadataFiltered(true);
 
     if (!normalize && reader.getPixelType(id) == FLOAT) {
       throw new FormatException("Sorry, unnormalized floating point " +
@@ -682,9 +702,7 @@ public abstract class FormatReader extends FormatHandler
       System.out.println("\tSizeC = " + sizeC +
         " (effectively " + effSizeC + ")");
       System.out.println("\tSizeT = " + sizeT);
-      if (imageCount != sizeZ * sizeC * sizeT /
-        ((rgb || (sizeC > 1 && merge)) ? sizeC : 1))
-      {
+      if (imageCount != sizeZ * effSizeC * sizeT) {
         System.out.println("\t************ Warning: ZCT mismatch ************");
       }
       System.out.println("\tThumbnail size = " +
